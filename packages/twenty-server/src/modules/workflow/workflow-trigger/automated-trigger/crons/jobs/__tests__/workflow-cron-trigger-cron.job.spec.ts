@@ -4,14 +4,19 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { CronTriggerDeduplicationService } from 'src/engine/core-modules/cron/services/cron-trigger-deduplication.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import {
+  MessageQueueException,
+  MessageQueueExceptionCode,
+} from 'src/engine/core-modules/message-queue/message-queue.exception';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
-import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
+import { CoreWorkflowTriggerService } from 'src/engine/core-modules/workflow/services/core-workflow-trigger.service';
 import { WORKFLOW_CRON_TRIGGER_CACHE_KEY } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/constants/workflow-cron-trigger-cache-key.constant';
 import { WORKFLOW_CRON_TRIGGER_CACHE_TTL_MS } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/constants/workflow-cron-trigger-cache-ttl.constant';
 import { WorkflowCronTriggerCronJob } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/jobs/workflow-cron-trigger-cron.job';
 import { WorkflowTriggerJob } from 'src/modules/workflow/workflow-trigger/jobs/workflow-trigger.job';
+import { CoreWorkflowRunnerService } from 'src/modules/workflow/workflow-runner/services/core-workflow-runner.service';
+import { WorkflowTriggerDispatchWorkspaceService } from 'src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger-dispatch.workspace-service';
 
 const WORKSPACE_1 = '20202020-0000-0000-0000-000000000001';
 const WORKSPACE_2 = '20202020-0000-0000-0000-000000000002';
@@ -43,18 +48,19 @@ const mockWorkspaceCacheService = {
   getOrRecompute: jest.fn(),
 };
 
-const mockWorkflowCoreSyncService = {
+const mockCoreWorkflowTriggerService = {
+  findCoreVersionById: jest.fn(),
+  findCoreWorkflowById: jest.fn(),
   findCoreWorkflowByIdOrWorkspaceWorkflowId: jest.fn(),
 };
 
-const mockWorkflowVersionCoreSyncService = {
-  findCoreVersionById: jest.fn(),
+const mockCoreWorkflowRunnerService = {
+  createFailedRun: jest.fn(),
 };
 
 const buildCronTrigger = (index: number) => ({
   workflowId: `workflow-${index}`,
   coreWorkflowVersionId: `core-version-${index}`,
-  workspaceWorkflowVersionId: `workspace-version-${index}`,
   type: 'CRON',
   settings: { pattern: '* * * * *' },
 });
@@ -102,8 +108,8 @@ describe('WorkflowCronTriggerCronJob', () => {
     jest.setSystemTime(new Date('2026-04-02T15:00:30.000Z'));
     mockCronTriggerDeduplicationService.shouldDispatch.mockResolvedValue(true);
     mockWorkspaceCaches({});
-    mockWorkflowCoreSyncService.findCoreWorkflowByIdOrWorkspaceWorkflowId.mockImplementation(
-      async (_workspaceId: string, workflowId: string) => ({
+    mockCoreWorkflowTriggerService.findCoreWorkflowByIdOrWorkspaceWorkflowId.mockImplementation(
+      async ({ workflowId }: { workflowId: string }) => ({
         id: workflowId,
         applicationId: 'application-id',
         workspaceWorkflowId: workflowId,
@@ -113,14 +119,16 @@ describe('WorkflowCronTriggerCronJob', () => {
         ),
       }),
     );
-    mockWorkflowVersionCoreSyncService.findCoreVersionById.mockImplementation(
+    mockCoreWorkflowTriggerService.findCoreWorkflowById.mockImplementation(
+      async ({ coreWorkflowId }: { coreWorkflowId: string }) => ({
+        id: coreWorkflowId,
+        name: coreWorkflowId,
+      }),
+    );
+    mockCoreWorkflowTriggerService.findCoreVersionById.mockImplementation(
       async (_workspaceId: string, versionId: string) => ({
         id: versionId,
         coreWorkflowId: versionId.replace('core-version-', 'workflow-'),
-        workspaceWorkflowVersionId: versionId.replace(
-          'core-version-',
-          'workspace-version-',
-        ),
         status: 'ACTIVE',
         triggers: [
           {
@@ -134,6 +142,11 @@ describe('WorkflowCronTriggerCronJob', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         WorkflowCronTriggerCronJob,
+        WorkflowTriggerDispatchWorkspaceService,
+        {
+          provide: CoreWorkflowRunnerService,
+          useValue: mockCoreWorkflowRunnerService,
+        },
         {
           provide: getRepositoryToken(WorkspaceEntity),
           useValue: mockWorkspaceRepository,
@@ -159,12 +172,8 @@ describe('WorkflowCronTriggerCronJob', () => {
           useValue: mockWorkspaceCacheService,
         },
         {
-          provide: WorkflowCoreSyncService,
-          useValue: mockWorkflowCoreSyncService,
-        },
-        {
-          provide: WorkflowVersionCoreSyncService,
-          useValue: mockWorkflowVersionCoreSyncService,
+          provide: CoreWorkflowTriggerService,
+          useValue: mockCoreWorkflowTriggerService,
         },
       ],
     }).compile();
@@ -211,7 +220,6 @@ describe('WorkflowCronTriggerCronJob', () => {
           workspaceId: WORKSPACE_1,
           workflowId: 'workflow-1',
           coreWorkflowVersionId: 'core-version-1',
-          workspaceWorkflowVersionId: 'workspace-version-1',
           payload: {},
         },
         {
@@ -228,7 +236,6 @@ describe('WorkflowCronTriggerCronJob', () => {
           workspaceId: WORKSPACE_1,
           workflowId: 'workflow-1',
           coreWorkflowVersionId: 'core-version-1',
-          workspaceWorkflowVersionId: 'workspace-version-1',
           pattern: '* * * * *',
         }),
       ]);
@@ -241,7 +248,6 @@ describe('WorkflowCronTriggerCronJob', () => {
           workspaceId: WORKSPACE_1,
           workflowId: 'workflow-1',
           coreWorkflowVersionId: 'core-version-1',
-          workspaceWorkflowVersionId: 'workspace-version-1',
           payload: {},
         },
         {
@@ -252,8 +258,134 @@ describe('WorkflowCronTriggerCronJob', () => {
       );
     });
 
+    it('should send the core workflow id and keep the legacy lock key for an old cached entry', async () => {
+      mockCoreWorkflowTriggerService.findCoreWorkflowByIdOrWorkspaceWorkflowId.mockResolvedValue(
+        {
+          id: 'core-workflow-1',
+          applicationId: 'application-id',
+          workspaceWorkflowId: 'legacy-workflow-1',
+          lastPublishedCoreWorkflowVersionId: 'core-version-1',
+        },
+      );
+      mockCoreWorkflowTriggerService.findCoreVersionById.mockResolvedValue({
+        id: 'core-version-1',
+        coreWorkflowId: 'core-workflow-1',
+        status: 'ACTIVE',
+        triggers: [
+          {
+            type: 'CRON',
+            settings: { type: 'CUSTOM', pattern: '* * * * *' },
+          },
+        ],
+      });
+      mockCacheStorageService.hashGetValues.mockResolvedValue([
+        JSON.stringify({
+          workspaceId: WORKSPACE_1,
+          workflowId: 'legacy-workflow-1',
+          pattern: '* * * * *',
+        }),
+      ]);
+
+      await job.handle();
+
+      expect(
+        mockCronTriggerDeduplicationService.shouldDispatch,
+      ).toHaveBeenCalledWith(
+        `workflow-cron:${WORKSPACE_1}:legacy-workflow-1`,
+        '* * * * *',
+        expect.any(Date),
+      );
+      expect(mockMessageQueueService.add).toHaveBeenCalledWith(
+        WorkflowTriggerJob.name,
+        {
+          workspaceId: WORKSPACE_1,
+          workflowId: 'core-workflow-1',
+          coreWorkflowVersionId: 'core-version-1',
+          payload: {},
+        },
+        expect.anything(),
+      );
+    });
+
+    it('should record a failed run when the queue refuses a trigger job and keep dispatching', async () => {
+      mockMessageQueueService.add.mockRejectedValueOnce(
+        new MessageQueueException(
+          'Job memory limit reached',
+          MessageQueueExceptionCode.JOB_QUEUE_MEMORY_LIMIT_REACHED,
+          {
+            requestedBytes: 2048,
+            availableBytes: 512,
+            refusedGroupKeys: [`workspace:${WORKSPACE_1}`],
+          },
+        ),
+      );
+      mockCacheStorageService.hashGetValues.mockResolvedValue(
+        [1, 2].map((index) =>
+          JSON.stringify({
+            workspaceId: WORKSPACE_1,
+            workflowId: `workflow-${index}`,
+            pattern: '* * * * *',
+          }),
+        ),
+      );
+
+      await job.handle();
+
+      expect(mockMessageQueueService.add).toHaveBeenCalledTimes(2);
+      expect(
+        mockCoreWorkflowRunnerService.createFailedRun,
+      ).toHaveBeenCalledTimes(1);
+      expect(
+        mockCoreWorkflowRunnerService.createFailedRun,
+      ).toHaveBeenCalledWith(
+        expect.objectContaining({
+          workspaceId: WORKSPACE_1,
+          coreWorkflowVersionId: 'core-version-1',
+          payload: {},
+          error:
+            'Workflow could not start: queue memory limit reached (requested: 2048 bytes, available: 512 bytes). Try again when queued jobs have finished.',
+        }),
+      );
+      expect(
+        mockExceptionHandlerService.captureExceptions,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('should report a failure to record the refused dispatch', async () => {
+      mockMessageQueueService.add.mockRejectedValueOnce(
+        new MessageQueueException(
+          'Job too large',
+          MessageQueueExceptionCode.JOB_TOO_LARGE,
+          { index: 0, sizeBytes: 6_000_000, maxBytes: 5_242_880 },
+        ),
+      );
+      mockCoreWorkflowRunnerService.createFailedRun.mockRejectedValueOnce(
+        new Error('database unavailable'),
+      );
+      mockCacheStorageService.hashGetValues.mockResolvedValue([
+        JSON.stringify({
+          workspaceId: WORKSPACE_1,
+          workflowId: 'workflow-1',
+          pattern: '* * * * *',
+        }),
+      ]);
+
+      await job.handle();
+
+      expect(
+        mockExceptionHandlerService.captureExceptions,
+      ).toHaveBeenCalledWith(
+        [
+          new Error(
+            `Failed to record the refused trigger dispatch of workflow workflow-1 in workspace ${WORKSPACE_1} (JOB_TOO_LARGE): database unavailable`,
+          ),
+        ],
+        { workspace: { id: WORKSPACE_1 } },
+      );
+    });
+
     it('should fall back to the workspace scope when the owning application cannot be resolved', async () => {
-      mockWorkflowCoreSyncService.findCoreWorkflowByIdOrWorkspaceWorkflowId.mockResolvedValue(
+      mockCoreWorkflowTriggerService.findCoreWorkflowByIdOrWorkspaceWorkflowId.mockResolvedValue(
         {
           id: 'workflow-1',
           applicationId: 'unknown-application-id',
@@ -396,7 +528,6 @@ describe('WorkflowCronTriggerCronJob', () => {
             workflowId: 'workflow-1',
             legacyWorkflowId: 'workflow-1',
             coreWorkflowVersionId: 'core-version-1',
-            workspaceWorkflowVersionId: 'workspace-version-1',
             pattern: '* * * * *',
           }),
           ttlMs: WORKFLOW_CRON_TRIGGER_CACHE_TTL_MS,
@@ -412,7 +543,6 @@ describe('WorkflowCronTriggerCronJob', () => {
             workflowId: 'workflow-2',
             legacyWorkflowId: 'workflow-2',
             coreWorkflowVersionId: 'core-version-2',
-            workspaceWorkflowVersionId: 'workspace-version-2',
             pattern: '* * * * *',
           }),
           ttlMs: WORKFLOW_CRON_TRIGGER_CACHE_TTL_MS,
@@ -479,7 +609,6 @@ describe('WorkflowCronTriggerCronJob', () => {
           workspaceId: WORKSPACE_2,
           workflowId: 'workflow-1',
           coreWorkflowVersionId: 'core-version-1',
-          workspaceWorkflowVersionId: 'workspace-version-1',
           payload: {},
         },
         {
@@ -516,7 +645,6 @@ describe('WorkflowCronTriggerCronJob', () => {
           workspaceId: WORKSPACE_2,
           workflowId: 'workflow-1',
           coreWorkflowVersionId: 'core-version-1',
-          workspaceWorkflowVersionId: 'workspace-version-1',
           payload: {},
         },
         {

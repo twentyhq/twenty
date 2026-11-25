@@ -5,8 +5,8 @@ import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 type SettingsAccountsBlocklistTableProps = {
   blocklist: BlocklistItem[];
@@ -25,6 +25,7 @@ export const SettingsAccountsBlocklistTable = ({
   blocklist,
   handleBlockedEmailRemove,
 }: SettingsAccountsBlocklistTableProps) => {
+  const { t } = useLingui();
   return (
     <>
       {blocklist.length > 0 && (

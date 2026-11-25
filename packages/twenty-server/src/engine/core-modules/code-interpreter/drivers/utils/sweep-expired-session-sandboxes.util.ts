@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { SESSION_SANDBOX_METADATA_KEY } from 'src/engine/core-modules/code-interpreter/constants/session-sandbox-metadata-key.constant';
 
-type SandboxApi = typeof Sandbox;
+type SandboxApi = Pick<typeof Sandbox, 'list' | 'kill'>;
 
 // E2B retains paused sandboxes indefinitely, so abandoned sessions need an age bound.
 export const sweepExpiredSessionSandboxes = async (

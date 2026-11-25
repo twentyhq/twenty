@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 
 import { usePersistLogicFunction } from '@/logic-functions/hooks/usePersistLogicFunction';
 import { useToast } from 'twenty-ui/components/feedback';
+import { useLingui } from '@lingui/react/macro';
 
 export const useCreateTool = () => {
+  const { t } = useLingui();
   const navigate = useNavigate();
   const { enqueueToast } = useToast();
   const { createLogicFunction } = usePersistLogicFunction();

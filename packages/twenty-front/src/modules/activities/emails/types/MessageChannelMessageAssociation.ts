@@ -5,4 +5,5 @@ export type MessageChannelMessageAssociation = {
   messageChannelId: string;
   messageThreadExternalId: string;
   messageExternalId: string;
+  direction: 'INCOMING' | 'OUTGOING';
 };

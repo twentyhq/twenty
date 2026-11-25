@@ -1,7 +1,10 @@
+import { ConfigService } from '@nestjs/config';
+
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
-import { type EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';
+import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
+import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';
 
 export const buildSecretEncryptionServiceFromEnv =
   (): SecretEncryptionService => {
@@ -13,9 +16,7 @@ export const buildSecretEncryptionServiceFromEnv =
       );
     }
 
-    const driver = {
-      get: (key: string) => process.env[key],
-    } as unknown as EnvironmentConfigDriver;
-
-    return new SecretEncryptionService(driver);
+    return new SecretEncryptionService(
+      new EnvironmentConfigDriver(new ConfigService(), new ConfigVariables()),
+    );
   };

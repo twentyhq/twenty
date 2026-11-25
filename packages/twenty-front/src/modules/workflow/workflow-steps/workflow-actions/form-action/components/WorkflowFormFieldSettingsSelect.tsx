@@ -8,9 +8,9 @@ import { type WorkflowFormActionField } from '@/workflow/workflow-steps/workflow
 import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getDefaultFormFieldSettings';
 import { getFormFieldDisplayText } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getFormFieldDisplayText';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import camelCase from 'lodash.camelcase';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 type WorkflowFormFieldSettingsSelectProps = {
   field: WorkflowFormActionField;
@@ -33,6 +33,7 @@ export const WorkflowFormFieldSettingsSelect = ({
   field,
   onChange,
 }: WorkflowFormFieldSettingsSelectProps) => {
+  const { t } = useLingui();
   const selectTypeOptions = [
     {
       label: t`Existing Field`,

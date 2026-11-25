@@ -10,6 +10,7 @@ const mocks = vi.hoisted(() => ({
   listUnipileChatMessagesPage: vi.fn(),
   getUnipileChat: vi.fn(),
   ingestLinkedinMessages: vi.fn(),
+  setLinkedinAccountOwnerAvatar: vi.fn(),
 }));
 
 vi.mock('twenty-sdk/define', () => ({
@@ -42,7 +43,14 @@ vi.mock('src/logic-functions/utils/ingest-linkedin-messages.util', () => ({
   ingestLinkedinMessages: mocks.ingestLinkedinMessages,
 }));
 
-const { UnipileRateLimitError } =
+vi.mock(
+  'src/logic-functions/utils/set-linkedin-account-owner-avatar.util',
+  () => ({
+    setLinkedinAccountOwnerAvatar: mocks.setLinkedinAccountOwnerAvatar,
+  }),
+);
+
+const { UnipileRateLimitError, UnipileRequestError } =
   await import('src/unipile/utils/request-unipile.util');
 
 const { linkedinImportHistoryHandler } =
@@ -132,6 +140,49 @@ describe('linkedinImportHistoryHandler', () => {
       .mockResolvedValueOnce(SKIPPED);
   });
 
+  it('starts the next conversation from its first page when the one it resumed was deleted meanwhile', async () => {
+    mocks.kvStore.set(PROGRESS_KEY, {
+      ...PROGRESS_BEFORE_CHUNK_2,
+      currentChatCursor: 'page-2',
+      isCurrentChatImported: true,
+    });
+    mocks.kvStore.set(getChatsKey(2), [
+      { id: 'chat-gone' },
+      LISTED_CHAT_WITH_ATTENDEE,
+    ]);
+    mocks.getUnipileChat.mockRejectedValue(
+      new UnipileRequestError('Chat not found', 404),
+    );
+    mocks.ingestLinkedinMessages.mockReset().mockResolvedValue(IMPORTED);
+
+    await expect(linkedinImportHistoryHandler(PAYLOAD)).resolves.toEqual({
+      status: 'COMPLETED',
+      importedConversationCount: 2,
+    });
+    expect(mocks.listUnipileChatMessagesPage).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        chatId: LISTED_CHAT_WITH_ATTENDEE.id,
+        cursor: undefined,
+      }),
+    );
+  });
+
+  it('skips a conversation deleted on LinkedIn since it was selected', async () => {
+    mocks.getUnipileChat.mockRejectedValue(
+      new UnipileRequestError('Chat not found', 404),
+    );
+    mocks.ingestLinkedinMessages.mockReset().mockResolvedValue(IMPORTED);
+
+    await expect(linkedinImportHistoryHandler(PAYLOAD)).resolves.toEqual({
+      status: 'COMPLETED',
+      importedConversationCount: 1,
+    });
+    expect(mocks.ingestLinkedinMessages).toHaveBeenCalledOnce();
+    expect(mocks.kvStore.get(PROGRESS_KEY)).toEqual(
+      expect.objectContaining({ completedChunkCount: 3 }),
+    );
+  });
+
   it('imports its page and adds it to the run progress', async () => {
     await expect(linkedinImportHistoryHandler(PAYLOAD)).resolves.toEqual({
       status: 'COMPLETED',
@@ -143,8 +194,18 @@ describe('linkedinImportHistoryHandler', () => {
       chatId: 'chat-2',
     });
     expect(mocks.ingestLinkedinMessages).toHaveBeenCalledWith(
-      expect.objectContaining({ unipileAccountId: 'acc_1' }),
+      expect.objectContaining({
+        unipileAccountId: 'acc_1',
+        counterparts: [LISTED_CHAT_WITH_ATTENDEE.user],
+      }),
     );
+    expect(
+      new Set(
+        mocks.ingestLinkedinMessages.mock.calls.map(
+          ([input]) => input.resolveCounterpart,
+        ),
+      ).size,
+    ).toBe(1);
     expect(mocks.kvStore.get(PROGRESS_KEY)).toEqual({
       completedChunkCount: 3,
       completedConversationCount: 42,
@@ -155,6 +216,30 @@ describe('linkedinImportHistoryHandler', () => {
       expect.stringMatching(
         /chunk 2: 2 chats .*1 conversations imported, 12 messages, 1 people matched, 1 people created, 2 attachments, skipped 1 without contact/,
       ),
+    );
+  });
+
+  it('sets the account owner avatar on the first chunk only', async () => {
+    await linkedinImportHistoryHandler(PAYLOAD);
+
+    expect(mocks.setLinkedinAccountOwnerAvatar).not.toHaveBeenCalled();
+
+    mocks.kvStore.set(PROGRESS_KEY, {
+      completedChunkCount: 0,
+      completedConversationCount: 0,
+      importedConversationCount: 0,
+      currentChunkProcessedCount: 0,
+    });
+    mocks.kvStore.set(getChatsKey(0), [LISTED_CHAT_WITH_ATTENDEE]);
+    mocks.ingestLinkedinMessages.mockReset().mockResolvedValue(IMPORTED);
+
+    await linkedinImportHistoryHandler({ ...PAYLOAD, chunkIndex: 0 });
+
+    expect(mocks.setLinkedinAccountOwnerAvatar).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        unipileAccountId: 'acc_1',
+        channelHandle: 'linkedin.com/in/me',
+      }),
     );
   });
 

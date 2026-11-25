@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { Fragment, type ReactNode } from 'react';
 import { StyledBubbleMenuContainer } from '@/advanced-text-editor/components/StyledBubbleMenuContainer';
@@ -26,12 +25,14 @@ import {
   IconStrikethrough,
   IconUnderline,
 } from 'twenty-ui/icon';
+import { useLingui } from '@lingui/react/macro';
 
 type TextBubbleMenuProps = {
   editor: Editor;
 };
 
 export const TextBubbleMenu = ({ editor }: TextBubbleMenuProps) => {
+  const { t } = useLingui();
   const state = useTextBubbleState(editor);
   const menuActions = [
     {

@@ -143,7 +143,7 @@ export class ImpersonationService {
     });
 
     void eventLogContext.insertWorkspaceEvent(IMPERSONATION_EVENT, {
-      level: 'workspace',
+      level: impersonationContext.level,
       action: 'ended',
       message: `Impersonation ended by impersonatorUserWorkspaceId=${impersonationContext.impersonatorUserWorkspaceId}; workspaceId=${workspaceId}`,
     });
@@ -192,7 +192,7 @@ export class ImpersonationService {
 
       if (
         payload.type !== JwtTokenTypeEnum.ACCESS ||
-        payload.isImpersonating === true ||
+        payload.isImpersonating ||
         payload.userWorkspaceId !== impersonatorUserWorkspaceId
       ) {
         return false;

@@ -8,7 +8,9 @@ import { type FetchedCalendarEventParticipant } from 'src/modules/calendar/commo
 export const extractAttendeesFromEvent = (
   event: ical.VEvent,
 ): FetchedCalendarEventParticipant[] => {
-  if (!isDefined(event.attendee)) return [];
+  if (!isDefined(event.attendee)) {
+    return [];
+  }
 
   const attendees = Array.isArray(event.attendee)
     ? event.attendee

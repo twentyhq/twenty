@@ -42,7 +42,7 @@ export const computeEffectiveValueRange = ({
           COMMON_CHART_CONSTANTS.MINIMUM_POSITIVE_RANGE_PADDING,
         );
 
-  let effectiveMinimumValue = baseMinimumValue;
+  const effectiveMinimumValue = baseMinimumValue;
   let effectiveMaximumValue = paddedMaximumForNonNegative;
 
   if (!isDefined(rangeMax) && !isDefined(rangeMin)) {

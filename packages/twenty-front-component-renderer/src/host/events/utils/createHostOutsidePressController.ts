@@ -6,6 +6,7 @@ import { type HostOutsidePressController } from '@/host/events/types/HostOutside
 import { type HostPointerCaptureController } from '@/host/events/types/HostPointerCaptureController';
 import { type PressEventTransport } from '@/host/events/types/PressEventTransport';
 import { applyEventDispatchProperties } from '@/host/events/utils/applyEventDispatchProperties';
+import { isHostUiEvent } from '@/host/events/utils/isHostUiEvent';
 import { resolveNativeHostEvent } from '@/host/events/utils/resolveNativeHostEvent';
 import { serializeEvent } from '@/host/events/utils/serializeEvent';
 import { trackHostOutsidePress } from '@/host/events/utils/trackHostOutsidePress';
@@ -53,6 +54,7 @@ export const createHostOutsidePressController = ({
       !isObservedByWorker ||
       !isDefined(pressEventTransport) ||
       forwardedBubblingHostEvents.has(hostEvent) ||
+      isHostUiEvent(resolveNativeHostEvent(hostEvent)) ||
       !isDefined(
         geometryTracker.findRemoteElementIdContainingNode(hostEvent.target),
       ) ||

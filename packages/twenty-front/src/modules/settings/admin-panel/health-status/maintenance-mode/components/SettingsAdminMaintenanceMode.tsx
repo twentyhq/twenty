@@ -13,7 +13,6 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -23,6 +22,7 @@ import { IconLink, IconTool } from 'twenty-ui/icon';
 import { Status } from 'twenty-ui/primitives/data-display';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledFormContainer = styled.div`
   display: flex;
@@ -36,6 +36,7 @@ const StyledStatusRow = styled.div`
 `;
 
 export const SettingsAdminMaintenanceMode = () => {
+  const { t } = useLingui();
   const apolloAdminClient = useApolloAdminClient();
   const [adminPanelMaintenanceMode, setAdminPanelMaintenanceMode] =
     useAtomState(adminPanelMaintenanceModeState);
@@ -105,7 +106,7 @@ export const SettingsAdminMaintenanceMode = () => {
         });
       }
     },
-    [setMaintenanceModeMutation, setMaintenanceMode, enqueueToast],
+    [setMaintenanceModeMutation, setMaintenanceMode, enqueueToast, t],
   );
 
   const handleToggle = useCallback(

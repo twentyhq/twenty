@@ -1,8 +1,8 @@
 import { BaseChip } from '@/ui/input/components/BaseChip';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { NodeViewWrapper, type NodeViewProps } from '@tiptap/react';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledWrapper = styled.span`
   display: inline-block;
@@ -19,13 +19,16 @@ export const VariableChip = ({
   editor,
   label,
   title,
-}: VariableChipProps) => (
-  <NodeViewWrapper as={StyledWrapper} style={{ whiteSpace: 'nowrap' }}>
-    <BaseChip
-      label={label}
-      title={title}
-      onRemove={editor.isEditable ? deleteNode : undefined}
-      removeAriaLabel={t`Remove variable`}
-    />
-  </NodeViewWrapper>
-);
+}: VariableChipProps) => {
+  const { t } = useLingui();
+  return (
+    <NodeViewWrapper as={StyledWrapper} style={{ whiteSpace: 'nowrap' }}>
+      <BaseChip
+        label={label}
+        title={title}
+        onRemove={editor.isEditable ? deleteNode : undefined}
+        removeAriaLabel={t`Remove variable`}
+      />
+    </NodeViewWrapper>
+  );
+};

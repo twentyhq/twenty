@@ -26,7 +26,7 @@ export const doesRecordBelongToGroup = (
         continue;
       }
 
-      let recordValue = record[fieldName];
+      const recordValue = record[fieldName];
 
       if (!isDefined(recordValue)) {
         return false;
@@ -48,19 +48,18 @@ export const doesRecordBelongToGroup = (
     }
 
     return true;
-  } else {
-    const recordGroupNames = Object.keys(groupByConfig);
+  }
+  const recordGroupNames = Object.keys(groupByConfig);
 
-    for (const recordGroupName of recordGroupNames) {
-      if (groupByConfig[recordGroupName] === true) {
-        const recordGroupValue = record[recordGroupName];
+  for (const recordGroupName of recordGroupNames) {
+    if (groupByConfig[recordGroupName] === true) {
+      const recordGroupValue = record[recordGroupName];
 
-        if (groupByDimensionValues.includes(recordGroupValue)) {
-          return true;
-        }
+      if (groupByDimensionValues.includes(recordGroupValue)) {
+        return true;
       }
     }
-
-    return false;
   }
+
+  return false;
 };

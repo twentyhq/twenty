@@ -5,13 +5,13 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import groupBy from 'lodash.groupby';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -30,8 +30,9 @@ export const TaskGroupsContent = ({
   onCreateTask,
   tasks,
 }: TaskGroupsContentProps) => {
+  const { t } = useLingui();
   const { objectMetadataItem: taskObjectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: CoreObjectNameSingular.Task,
+    objectNameSingular: StandardObjectNameSingular.Task,
   });
 
   const taskStatusOptions = taskObjectMetadataItem.fields.find(

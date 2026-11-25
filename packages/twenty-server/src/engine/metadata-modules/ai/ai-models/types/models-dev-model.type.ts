@@ -1,3 +1,4 @@
+import { type ModelsDevCostTier } from './models-dev-cost-tier.type';
 import { type ModelsDevCost } from './models-dev-cost.type';
 
 export type ModelsDevModel = {
@@ -7,7 +8,10 @@ export type ModelsDevModel = {
   status?: 'deprecated' | 'beta';
   reasoning?: boolean;
   tool_call?: boolean;
-  cost?: ModelsDevCost & { context_over_200k?: ModelsDevCost };
+  cost?: ModelsDevCost & {
+    context_over_200k?: ModelsDevCost;
+    tiers?: ModelsDevCostTier[];
+  };
   limit?: { context?: number; output?: number };
   modalities?: { input?: string[]; output?: string[] };
   knowledge?: string;

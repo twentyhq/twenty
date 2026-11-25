@@ -1,0 +1,359 @@
+import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
+import {
+  type ChangeEvent,
+  type ClipboardEvent,
+  type KeyboardEvent,
+  useId,
+  useRef,
+  useState,
+} from 'react';
+import TextareaAutosize from 'react-textarea-autosize';
+import { MAX_APP_MESSAGE_ATTACHMENTS_PER_MESSAGE } from 'twenty-shared/application';
+import { isNonEmptyArray } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/components/feedback';
+import { IconButton, LightIconButton } from 'twenty-ui/components/input';
+import { IconArrowUp, IconPlus } from 'twenty-ui/icon';
+import { themeCssVariables } from 'twenty-ui/theme';
+import { useIsTouchDevice } from 'twenty-ui/utilities';
+import { v4 } from 'uuid';
+
+import { ChatThreadPendingMessage } from '@/activities/emails/components/ChatThreadPendingMessage';
+import { useComposerDraft } from '@/activities/emails/hooks/useComposerDraft';
+import { chatThreadComposerDraftFamilyState } from '@/activities/emails/states/chatThreadComposerDraftFamilyState';
+import { type PendingChatMessage } from '@/activities/emails/types/PendingChatMessage';
+import { ChatFilePreview } from '@/chat/components/ChatFilePreview';
+import { StyledChatComposerBox } from '@/chat/components/StyledChatComposerBox';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
+import { useRemoveFocusItemFromFocusStackOnUnmount } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackOnUnmount';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
+
+const StyledContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  gap: ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing[4]};
+`;
+
+const StyledPendingMessages = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
+  max-height: ${themeCssVariables.spacing[30]};
+  overflow-y: auto;
+`;
+
+const StyledTextarea = styled(TextareaAutosize)`
+  background: transparent;
+  border: none;
+  color: ${themeCssVariables.font.color.primary};
+  font-family: inherit;
+  font-size: ${themeCssVariables.font.size.md};
+  line-height: ${themeCssVariables.text.lineHeight.lg};
+  outline: none;
+  padding: 0;
+  resize: none;
+
+  &::placeholder {
+    color: ${themeCssVariables.font.color.light};
+  }
+`;
+
+const StyledFiles = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: ${themeCssVariables.spacing[1]};
+`;
+
+const StyledActions = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+`;
+
+const StyledLeftActions = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing['0.5']};
+`;
+
+const StyledFileInput = styled.input`
+  display: none;
+`;
+
+type ChatThreadComposerProps = {
+  channelName: string;
+  recipientName: string | null;
+  isDisconnected: boolean;
+  isSendDisabled?: boolean;
+  onSendMessage: (pendingMessage: PendingChatMessage) => Promise<unknown>;
+  onMessageSent: () => Promise<unknown>;
+  draftKey?: string;
+};
+
+export const ChatThreadComposer = ({
+  channelName,
+  recipientName,
+  isDisconnected,
+  isSendDisabled = false,
+  onSendMessage,
+  onMessageSent,
+  draftKey,
+}: ChatThreadComposerProps) => {
+  const { t } = useLingui();
+  const { enqueueToast } = useToast();
+  const isTouchDevice = useIsTouchDevice();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const textareaFocusId = `chat-thread-composer-${useId()}`;
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+  const { removeFocusItemFromFocusStackById } =
+    useRemoveFocusItemFromFocusStackById();
+
+  useRemoveFocusItemFromFocusStackOnUnmount({
+    focusId: textareaFocusId,
+    isEnabled: true,
+  });
+  const [draft, setDraft] = useComposerDraft({
+    draftFamilyState: chatThreadComposerDraftFamilyState,
+    draftKey,
+    defaultDraft: '',
+  });
+  const [files, setFiles] = useState<File[]>([]);
+  const [pendingMessages, setPendingMessages] = useState<PendingChatMessage[]>(
+    [],
+  );
+
+  const text = draft.trim();
+  const canSend =
+    !isDisconnected &&
+    !isSendDisabled &&
+    (isNonEmptyString(text) || isNonEmptyArray(files));
+
+  const updatePendingMessage = (
+    id: string,
+    update: Pick<PendingChatMessage, 'status' | 'errorMessage'>,
+  ) =>
+    setPendingMessages((currentPendingMessages) =>
+      currentPendingMessages.map((message) =>
+        message.id === id ? { ...message, ...update } : message,
+      ),
+    );
+
+  const discardPendingMessage = (id: string) =>
+    setPendingMessages((currentPendingMessages) =>
+      currentPendingMessages.filter((message) => message.id !== id),
+    );
+
+  const send = async (pendingMessage: PendingChatMessage) => {
+    updatePendingMessage(pendingMessage.id, {
+      status: 'sending',
+      errorMessage: undefined,
+    });
+
+    try {
+      await onSendMessage(pendingMessage);
+    } catch (error) {
+      updatePendingMessage(pendingMessage.id, {
+        status: 'failed',
+        errorMessage:
+          error instanceof Error
+            ? getErrorMessageFromApolloError(error)
+            : undefined,
+      });
+
+      return;
+    }
+
+    const isRefetched = await onMessageSent().then(
+      () => true,
+      () => false,
+    );
+
+    if (isRefetched) {
+      setPendingMessages((currentPendingMessages) =>
+        currentPendingMessages.filter(
+          (message) =>
+            message.id !== pendingMessage.id && message.status !== 'sent',
+        ),
+      );
+
+      return;
+    }
+
+    updatePendingMessage(pendingMessage.id, { status: 'sent' });
+  };
+
+  const handleSubmit = () => {
+    if (!canSend) {
+      return;
+    }
+
+    const pendingMessage: PendingChatMessage = {
+      id: v4(),
+      text,
+      files,
+      status: 'sending',
+    };
+
+    setPendingMessages((currentPendingMessages) => [
+      ...currentPendingMessages,
+      pendingMessage,
+    ]);
+    setDraft('');
+    setFiles([]);
+    send(pendingMessage);
+  };
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === 'Enter' && !event.shiftKey && !isTouchDevice) {
+      event.preventDefault();
+      handleSubmit();
+    }
+  };
+
+  const handleTextareaFocus = () => {
+    pushFocusItemToFocusStack({
+      focusId: textareaFocusId,
+      component: {
+        type: FocusComponentType.TEXT_AREA,
+        instanceId: textareaFocusId,
+      },
+      globalHotkeysConfig: {
+        enableGlobalHotkeysConflictingWithKeyboard: false,
+      },
+    });
+  };
+
+  const handleTextareaBlur = () => {
+    removeFocusItemFromFocusStackById({ focusId: textareaFocusId });
+  };
+
+  const addFiles = (selectedFiles: File[]) => {
+    const acceptedFiles = selectedFiles.slice(
+      0,
+      Math.max(MAX_APP_MESSAGE_ATTACHMENTS_PER_MESSAGE - files.length, 0),
+    );
+
+    if (acceptedFiles.length < selectedFiles.length) {
+      const maxAttachmentCount = MAX_APP_MESSAGE_ATTACHMENTS_PER_MESSAGE;
+
+      enqueueToast({
+        status: 'error',
+        children: t`A message can have up to ${maxAttachmentCount} files`,
+      });
+    }
+
+    setFiles((currentFiles) => [...currentFiles, ...acceptedFiles]);
+  };
+
+  const handleFileInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    addFiles(Array.from(event.target.files ?? []));
+    event.target.value = '';
+  };
+
+  const handlePaste = (event: ClipboardEvent<HTMLTextAreaElement>) => {
+    const pastedFiles = Array.from(event.clipboardData.files);
+
+    // Rich text copies (Word, Excel, web pages) also carry an image rendition: paste them as text
+    if (
+      !isNonEmptyArray(pastedFiles) ||
+      event.clipboardData.types.includes('text/html')
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+    addFiles(pastedFiles);
+  };
+
+  const getPlaceholder = () => {
+    if (isDisconnected) {
+      return t`Reconnect ${channelName} to send messages`;
+    }
+
+    return isNonEmptyString(recipientName)
+      ? t`Message ${recipientName}`
+      : t`Write a message`;
+  };
+
+  return (
+    <StyledContainer>
+      {pendingMessages.length > 0 && (
+        <StyledPendingMessages>
+          {pendingMessages.map((pendingMessage) => (
+            <ChatThreadPendingMessage
+              key={pendingMessage.id}
+              pendingMessage={pendingMessage}
+              isRetryDisabled={isSendDisabled || isDisconnected}
+              onRetry={send}
+              onDiscard={({ id }) => discardPendingMessage(id)}
+            />
+          ))}
+        </StyledPendingMessages>
+      )}
+      <StyledChatComposerBox>
+        <StyledTextarea
+          aria-label={t`Message`}
+          placeholder={getPlaceholder()}
+          minRows={1}
+          maxRows={8}
+          value={draft}
+          disabled={isDisconnected}
+          onChange={(event) => setDraft(event.target.value)}
+          onKeyDown={handleKeyDown}
+          onPaste={handlePaste}
+          onFocus={handleTextareaFocus}
+          onBlur={handleTextareaBlur}
+        />
+        {isNonEmptyArray(files) && (
+          <StyledFiles>
+            {files.map((file, index) => (
+              <ChatFilePreview
+                key={`${index}-${file.name}`}
+                file={file}
+                onRemove={() =>
+                  setFiles((currentFiles) =>
+                    currentFiles.filter((currentFile) => currentFile !== file),
+                  )
+                }
+              />
+            ))}
+          </StyledFiles>
+        )}
+        <StyledActions>
+          <StyledLeftActions>
+            <StyledFileInput
+              ref={fileInputRef}
+              type="file"
+              multiple
+              onChange={handleFileInputChange}
+            />
+            <LightIconButton
+              aria-label={t`Attach files`}
+              disabled={isDisconnected}
+              emphasis="subtle"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <IconPlus />
+            </LightIconButton>
+          </StyledLeftActions>
+          <IconButton
+            variant="solid"
+            color="accent"
+            shape="round"
+            size="sm"
+            aria-label={t`Send`}
+            disabled={!canSend}
+            onClick={handleSubmit}
+          >
+            <IconArrowUp />
+          </IconButton>
+        </StyledActions>
+      </StyledChatComposerBox>
+    </StyledContainer>
+  );
+};

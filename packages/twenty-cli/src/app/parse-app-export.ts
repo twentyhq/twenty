@@ -1,8 +1,10 @@
 import { isArray, isNull, isString } from '@sniptt/guards';
 import { isPlainObject } from 'twenty-shared/utils';
+
 import { isSameUniversalIdentifier } from '@/app/is-same-universal-identifier';
-import { parsePullDependencyFiles } from '@/app/pull/parse-pull-dependency-files';
+import { parsePullFiles } from '@/app/pull/parse-pull-files';
 import { isExportedManifest } from '@/app/pull/is-exported-manifest';
+import { toPullManifest } from '@/app/pull/to-pull-manifest';
 import {
   type AppExport,
   type AppExportCoverageEntry,
@@ -50,6 +52,8 @@ export const parseAppExport = ({
     });
   }
 
+  const manifest = toPullManifest(applicationExport.manifest);
+
   return {
     application: {
       universalIdentifier: applicationExport.application.universalIdentifier,
@@ -58,6 +62,10 @@ export const parseAppExport = ({
     },
     manifest: applicationExport.manifest,
     coverage: applicationExport.coverage,
-    files: parsePullDependencyFiles(applicationExport.files),
+    files: parsePullFiles({
+      value: applicationExport.files,
+      logicFunctions: manifest.logicFunctions ?? [],
+      frontComponents: manifest.frontComponents ?? [],
+    }),
   };
 };

@@ -5,7 +5,7 @@ LinkedIn accounts are connected through [Unipile](https://www.unipile.com) (API 
 ## Prerequisites
 
 - Node.js (version in `.nvmrc`) and Yarn 4
-- A Twenty server on 2.53 or later
+- A Twenty server on 2.59 or later
 - A Unipile application on [dashboardv2.unipile.com](https://dashboardv2.unipile.com)
 - A public HTTPS URL reaching the Twenty server, so Unipile can deliver webhooks (a tunnel such as `cloudflared tunnel --url http://localhost:3000` in development)
 
@@ -28,16 +28,18 @@ LinkedIn accounts are connected through [Unipile](https://www.unipile.com) (API 
 2. In **Settings → Applications → LinkedIn → Application registration**, set:
    - `UNIPILE_API_KEY`: the Unipile account key
    - `UNIPILE_WEBHOOK_SECRET`: the webhook endpoint's signing secret
-3. Members connect from **Settings → App preferences → LinkedIn**. This page needs the `IS_APP_PREFERENCES_ENABLED` feature flag on the workspace.
+3. Members connect from **Settings → App preferences → LinkedIn**.
 
 ## How it works
 
 | Step | Logic function | What it does |
 | --- | --- | --- |
 | Connect | `linkedin-authorize`, `linkedin-callback` | Sends the member to Unipile's hosted sign-in, then confirms the account it returns |
-| On connect | `linkedin-on-connect` | Creates a private message channel matched on the Person **LinkedIn** field, and routes the Unipile account's webhooks to this workspace |
+| On connect | `linkedin-on-connect` | Creates a private message channel matched on the Person **LinkedIn** field and bound to the `linkedin-messaging` provider, and routes the Unipile account's webhooks to this workspace |
 | Webhook | `linkedin-webhook-resolver` | Checks the `unipile-signature` header and dispatches the event to the workspace that connected the account |
 | New message | `linkedin-handle-webhook-event` | Ingests the message into the member's channel; flags the connection when LinkedIn signs the account out |
+| Reply | `linkedin-send-message` | Sends a reply written in Twenty to the conversation's Unipile chat; the `message.new` webhook that follows is de-duplicated on the returned message id |
+| Install, upgrade | `linkedin-post-install` | Binds channels connected before replies existed to the `linkedin-messaging` provider |
 | Disconnect, uninstall | `linkedin-on-disconnect`, `linkedin-uninstall` | Deletes the channel and the Unipile account, which Unipile bills per connected account |
 
 Unipile only exposes internal `ACo…` profile ids on messages, so the app looks up each participant's public profile URL once and caches it. LinkedIn limits profile lookups to roughly 100 a day per account.

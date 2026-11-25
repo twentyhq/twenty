@@ -1,5 +1,5 @@
 import { activityTargetableEntityArrayState } from '@/activities/states/activityTargetableEntityArrayState';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
 import { isUpsertingActivityInDBState } from '@/activities/states/isCreatingActivityInDBState';
@@ -19,8 +19,8 @@ export const useOpenCreateActivityDrawer = ({
   activityObjectNameSingular,
 }: {
   activityObjectNameSingular:
-    | CoreObjectNameSingular.Note
-    | CoreObjectNameSingular.Task;
+    | StandardObjectNameSingular.Note
+    | StandardObjectNameSingular.Task;
 }) => {
   const { createOneRecord: createOneActivity } = useCreateOneRecord<
     (Task | Note) & { position: 'first' | 'last' }
@@ -57,7 +57,7 @@ export const useOpenCreateActivityDrawer = ({
     customAssignee?: WorkspaceMember;
   }) => {
     const activity = await createOneActivity({
-      ...(activityObjectNameSingular === CoreObjectNameSingular.Task
+      ...(activityObjectNameSingular === StandardObjectNameSingular.Task
         ? {
             assigneeId: customAssignee?.id,
           }

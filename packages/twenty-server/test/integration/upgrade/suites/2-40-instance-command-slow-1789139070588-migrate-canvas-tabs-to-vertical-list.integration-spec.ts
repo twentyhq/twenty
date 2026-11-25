@@ -1,9 +1,11 @@
+import { Test } from '@nestjs/testing';
+
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource, type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { MigrateCanvasTabsToVerticalListSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-slow-1789139070588-migrate-canvas-tabs-to-vertical-list';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 jest.useRealTimers();
 
@@ -157,9 +159,14 @@ describe('MigrateCanvasTabsToVerticalListSlowInstanceCommand (integration)', () 
     });
     await dataSource.initialize();
 
-    command = new MigrateCanvasTabsToVerticalListSlowInstanceCommand(
-      workspaceCacheService as unknown as WorkspaceCacheService,
-    );
+    const module = await Test.createTestingModule({
+      providers: [
+        MigrateCanvasTabsToVerticalListSlowInstanceCommand,
+        { provide: WorkspaceCacheService, useValue: workspaceCacheService },
+      ],
+    }).compile();
+
+    command = module.get(MigrateCanvasTabsToVerticalListSlowInstanceCommand);
 
     const [source] = (await dataSource.query(
       `SELECT "id" AS "workspaceId", "workspaceCustomApplicationId" AS "applicationId"

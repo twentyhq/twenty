@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -9,6 +8,10 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
+import { findFlatViewVisibleToCaller } from 'src/engine/metadata-modules/flat-view/utils/find-flat-view-visible-to-caller.util';
+import { findManyFlatViewChildrenVisibleToCaller } from 'src/engine/metadata-modules/flat-view/utils/find-many-flat-view-children-visible-to-caller.util';
+import { sortViewGroupsByPosition } from 'src/engine/metadata-modules/flat-view/utils/sort-view-groups-by-position.util';
 import { fromCreateViewGroupInputToFlatViewGroupToCreate } from 'src/engine/metadata-modules/flat-view-group/utils/from-create-view-group-input-to-flat-view-group-to-create.util';
 import { fromDestroyViewGroupInputToFlatViewGroupOrThrow } from 'src/engine/metadata-modules/flat-view-group/utils/from-destroy-view-group-input-to-flat-view-group-or-throw.util';
 import { fromUpdateViewGroupInputToFlatViewGroupToUpdateOrThrow } from 'src/engine/metadata-modules/flat-view-group/utils/from-update-view-group-input-to-flat-view-group-to-update-or-throw.util';
@@ -17,22 +20,20 @@ import { DeleteViewGroupInput } from 'src/engine/metadata-modules/view-group/dto
 import { DestroyViewGroupInput } from 'src/engine/metadata-modules/view-group/dtos/inputs/destroy-view-group.input';
 import { UpdateViewGroupInput } from 'src/engine/metadata-modules/view-group/dtos/inputs/update-view-group.input';
 import { ViewGroupDTO } from 'src/engine/metadata-modules/view-group/dtos/view-group.dto';
-import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 import {
   ViewGroupException,
   ViewGroupExceptionCode,
+  ViewGroupExceptionMessageKey,
+  generateViewGroupExceptionMessage,
+  generateViewGroupUserFriendlyExceptionMessage,
 } from 'src/engine/metadata-modules/view-group/exceptions/view-group.exception';
 import { fromFlatViewGroupToViewGroupDto } from 'src/engine/metadata-modules/view-group/utils/from-flat-view-group-to-view-group-dto.util';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 @Injectable()
 export class ViewGroupService {
   constructor(
-    @InjectWorkspaceScopedRepository(ViewGroupEntity)
-    private readonly viewGroupRepository: WorkspaceScopedRepository<ViewGroupEntity>,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
@@ -314,48 +315,103 @@ export class ViewGroupService {
       );
     }
 
-    return fromFlatViewGroupToViewGroupDto({
-      ...existingFlatViewGroup,
-      deletedAt: new Date().toISOString(),
-    });
+    return fromFlatViewGroupToViewGroupDto(existingFlatViewGroup);
   }
 
-  async findByWorkspaceId(workspaceId: string): Promise<ViewGroupEntity[]> {
-    return this.viewGroupRepository.find(workspaceId, {
-      where: {
-        deletedAt: IsNull(),
-      },
-      order: { position: 'ASC', id: 'ASC' },
-      relations: ['workspace', 'view'],
+  async findByWorkspaceId({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<ViewGroupDTO[]> {
+    const flatViewGroups = await this.findManyFlatViewGroupsVisibleToCaller({
+      workspaceId,
     });
+
+    return flatViewGroups.map(fromFlatViewGroupToViewGroupDto);
   }
 
-  async findByViewId(
-    workspaceId: string,
-    viewId: string,
-  ): Promise<ViewGroupEntity[]> {
-    return this.viewGroupRepository.find(workspaceId, {
-      where: {
+  async findByViewId({
+    workspaceId,
+    viewId,
+  }: {
+    workspaceId: string;
+    viewId: string;
+  }): Promise<ViewGroupDTO[]> {
+    const flatViewGroups = await this.findManyFlatViewGroupsVisibleToCaller({
+      workspaceId,
+      viewId,
+    });
+
+    return flatViewGroups.map(fromFlatViewGroupToViewGroupDto);
+  }
+
+  private async findManyFlatViewGroupsVisibleToCaller({
+    workspaceId,
+    viewId,
+  }: {
+    workspaceId: string;
+    viewId?: string;
+  }): Promise<FlatViewGroup[]> {
+    const { flatViewGroupMaps, flatViewMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatViewGroupMaps', 'flatViewMaps'],
+        },
+      );
+
+    return sortViewGroupsByPosition(
+      findManyFlatViewChildrenVisibleToCaller({
+        flatViewMaps,
+        flatViewChildMaps: flatViewGroupMaps,
+        flatViewChildIdsKey: 'viewGroupIds',
         viewId,
-        deletedAt: IsNull(),
-      },
-      order: { position: 'ASC', id: 'ASC' },
-      relations: ['workspace', 'view'],
-    });
+      }),
+    );
   }
 
-  async findById(
-    id: string,
-    workspaceId: string,
-  ): Promise<ViewGroupEntity | null> {
-    const viewGroup = await this.viewGroupRepository.findOne(workspaceId, {
-      where: {
-        id,
-        deletedAt: IsNull(),
-      },
-      relations: ['workspace', 'view'],
+  async findByIdOrThrow({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<ViewGroupDTO> {
+    const { flatViewGroupMaps, flatViewMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatViewGroupMaps', 'flatViewMaps'],
+        },
+      );
+    const flatViewGroup = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: id,
+      flatEntityMaps: flatViewGroupMaps,
     });
 
-    return viewGroup || null;
+    if (
+      !isDefined(flatViewGroup) ||
+      !isDefined(
+        findFlatViewVisibleToCaller({
+          viewId: flatViewGroup.viewId,
+          flatViewMaps,
+        }),
+      )
+    ) {
+      throw new ViewGroupException(
+        generateViewGroupExceptionMessage(
+          ViewGroupExceptionMessageKey.VIEW_GROUP_NOT_FOUND,
+          id,
+        ),
+        ViewGroupExceptionCode.VIEW_GROUP_NOT_FOUND,
+        {
+          userFriendlyMessage: generateViewGroupUserFriendlyExceptionMessage(
+            ViewGroupExceptionMessageKey.VIEW_GROUP_NOT_FOUND,
+          ),
+        },
+      );
+    }
+
+    return fromFlatViewGroupToViewGroupDto(flatViewGroup);
   }
 }

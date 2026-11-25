@@ -8,10 +8,10 @@ import {
   type FormFieldLinksValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { Field } from 'twenty-ui/primitives/input';
+import { useLingui } from '@lingui/react/macro';
 
 type FormLinksFieldInputProps = {
   label?: string;
@@ -34,6 +34,7 @@ export const FormLinksFieldInput = ({
   maxNumberOfValues,
   isPrimaryLinkUrlOnly = false,
 }: FormLinksFieldInputProps) => {
+  const { t } = useLingui();
   const allowsSecondaryLinks = maxNumberOfValues !== 1;
   const secondaryLinks = defaultValue?.secondaryLinks;
 

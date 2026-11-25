@@ -3,7 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type RecordInput } from 'src/types/bulk-enrich-input';
 
 export const extractRecordIds = (
-  records: RecordInput | RecordInput[],
+  records: RecordInput | RecordInput[] | null | undefined,
 ): string[] => {
   const recordsAsArray =
     records === null || records === undefined

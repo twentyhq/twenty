@@ -1,0 +1,30 @@
+import { type Manifest } from 'twenty-shared/application';
+
+export const EMPTY_MANIFEST: Manifest = {
+  application: {
+    universalIdentifier: '6a0c9d8e-8f5f-4c43-9b8e-0e1f2a3b4c5d',
+    displayName: 'App',
+    description: '',
+    defaultRoleUniversalIdentifier: 'c8c1213a-e037-41e6-bd76-2f5c828f58cd',
+    packageJsonChecksum: 'package-json-checksum',
+    yarnLockChecksum: null,
+  },
+  objects: [],
+  fields: [],
+  logicFunctions: [],
+  frontComponents: [],
+  permissionFlags: [],
+  roles: [],
+  skills: [],
+  agents: [],
+  publicAssets: [],
+  views: [],
+  viewFields: [],
+  navigationMenuItems: [],
+  pageLayouts: [],
+  pageLayoutTabs: [],
+  pageLayoutWidgets: [],
+  commandMenuItems: [],
+  timelineActivityTypes: [],
+  settingsMenuItems: [],
+};

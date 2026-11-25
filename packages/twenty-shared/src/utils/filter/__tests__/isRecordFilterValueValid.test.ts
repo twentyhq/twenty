@@ -20,7 +20,7 @@ describe('isRecordFilterValueValid', () => {
         expect(
           isRecordFilterValueValid({
             operand,
-            value: undefined as unknown as string,
+            value: undefined,
           }),
         ).toBe(true);
         expect(isRecordFilterValueValid({ operand, value: '[]' })).toBe(true);
@@ -66,7 +66,7 @@ describe('isRecordFilterValueValid', () => {
         expect(
           isRecordFilterValueValid({
             operand,
-            value: undefined as unknown as string,
+            value: undefined,
           }),
         ).toBe(false);
       },

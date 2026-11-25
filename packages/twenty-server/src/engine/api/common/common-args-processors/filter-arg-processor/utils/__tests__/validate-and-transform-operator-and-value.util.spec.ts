@@ -26,11 +26,7 @@ describe('validateAndTransformOperatorAndValue', () => {
     const fieldMetadata = createFieldMetadata(FieldMetadataType.TEXT);
 
     expect(() =>
-      validateAndTransformOperatorAndValue(
-        'testField',
-        null as unknown as Record<string, unknown>,
-        fieldMetadata,
-      ),
+      validateAndTransformOperatorAndValue('testField', null, fieldMetadata),
     ).toThrow(CommonQueryRunnerException);
   });
 

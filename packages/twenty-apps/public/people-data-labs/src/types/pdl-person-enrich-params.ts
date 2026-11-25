@@ -5,4 +5,5 @@ export type PdlPersonEnrichParams = {
   name?: string;
   company?: string;
   minLikelihood?: number;
+  required?: string;
 };

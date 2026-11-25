@@ -1,5 +1,4 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { applyMeetingInteractions } from 'src/utils/apply-meeting-interactions';
 
@@ -54,7 +53,7 @@ const buildClient = (participants: Record<string, unknown>[] = []) => {
     client: {
       query: queryMock,
       mutation: mutationMock,
-    } as unknown as CoreApiClient,
+    },
     queryMock,
     mutationMock,
   };

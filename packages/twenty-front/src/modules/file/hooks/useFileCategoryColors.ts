@@ -1,6 +1,6 @@
 import { type AttachmentFileCategory } from '@/activities/files/types/AttachmentFileCategory';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useTheme, type ThemeColor } from 'twenty-ui/theme';
 
@@ -11,7 +11,7 @@ export const useFileCategoryColors = (): Record<
   const theme = useTheme();
 
   const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: CoreObjectNameSingular.Attachment,
+    objectNameSingular: StandardObjectNameSingular.Attachment,
   });
 
   const fileCategoryField = objectMetadataItem.fields.find(

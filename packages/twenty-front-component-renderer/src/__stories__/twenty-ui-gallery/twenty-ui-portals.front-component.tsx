@@ -19,6 +19,7 @@ const PortalsExample = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isOversizedOpen, setIsOversizedOpen] = useState(false);
   const [actionCount, setActionCount] = useState(0);
+  const [portalWheelCount, setPortalWheelCount] = useState(0);
 
   return (
     <TwentyUiGalleryCard title="Portals">
@@ -39,9 +40,15 @@ const PortalsExample = () => {
       <Text role="status" aria-label="Portal actions">
         Portal actions: {actionCount}
       </Text>
+      <Text role="status" aria-label="Portal wheel events">
+        Portal wheel events: {portalWheelCount}
+      </Text>
       {isOpen &&
         createPortal(
-          <div style={{ position: 'absolute', top: '100%', left: 0 }}>
+          <div
+            style={{ position: 'absolute', top: '100%', left: 0 }}
+            onWheel={() => setPortalWheelCount((count) => count + 1)}
+          >
             <Button onClick={() => setActionCount(actionCount + 1)}>
               Portal action
             </Button>

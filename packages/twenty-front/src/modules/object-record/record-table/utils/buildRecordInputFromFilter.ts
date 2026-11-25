@@ -1,5 +1,6 @@
 import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { buildValueFromFilter } from '@/object-record/record-table/utils/buildValueFromFilter';
@@ -9,12 +10,18 @@ import { deepMerge, isDefined } from 'twenty-shared/utils';
 export const buildRecordInputFromFilter = ({
   currentRecordFilters,
   objectMetadataItem,
+  uneditableFields = [],
   currentWorkspaceMember,
   currentRecordId,
   timeZone,
 }: {
   currentRecordFilters: RecordFilter[];
-  objectMetadataItem: EnrichedObjectMetadataItem;
+  objectMetadataItem: {
+    fields: (Pick<FieldMetadataItem, 'id' | 'name' | 'type' | 'options'> & {
+      relation?: Pick<FieldMetadataItemRelation, 'type'> | null;
+    })[];
+  };
+  uneditableFields?: string[];
   currentWorkspaceMember?: CurrentWorkspaceMember;
   currentRecordId?: string;
   timeZone: string;
@@ -27,6 +34,10 @@ export const buildRecordInputFromFilter = ({
     );
 
     if (!isDefined(fieldMetadataItem)) {
+      return;
+    }
+
+    if (uneditableFields.includes(fieldMetadataItem.id)) {
       return;
     }
 

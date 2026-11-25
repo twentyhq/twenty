@@ -3,7 +3,7 @@ import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailR
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { Dropdown } from 'twenty-ui/components/navigation';
@@ -33,7 +33,7 @@ export const EmailRecipientChipMenuContent = ({
   const { enqueueToast } = useToast();
 
   const { createOneRecord: createPerson } = useCreateOneRecord({
-    objectNameSingular: CoreObjectNameSingular.Person,
+    objectNameSingular: StandardObjectNameSingular.Person,
   });
 
   const workspaceMember = resolution?.workspaceMember;

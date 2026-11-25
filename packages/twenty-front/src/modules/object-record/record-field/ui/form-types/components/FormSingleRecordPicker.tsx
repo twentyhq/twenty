@@ -22,13 +22,13 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { hasFullFormFieldBorder } from '@/ui/input/utils/hasFullFormFieldBorder';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { type KeyboardEvent, useCallback, useId, useState } from 'react';
 import { CustomError, isDefined, isValidUuid } from 'twenty-shared/utils';
 import { Key } from 'ts-key-enum';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { IconChevronDown, IconForbid } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledFormSelectContainerWrapper = styled.div<{
   readonly?: boolean;
@@ -114,6 +114,7 @@ export const FormSingleRecordPicker = ({
   dropdownId: dropdownIdFromProps,
   variant,
 }: FormSingleRecordPickerProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
 
   const resolvedObjectNameSingular =

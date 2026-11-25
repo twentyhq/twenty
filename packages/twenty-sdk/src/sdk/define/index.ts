@@ -43,6 +43,15 @@ export type {
   TimelineActivityTypeManifest,
 } from '@/sdk/define/common/types/loose-shared-types.type';
 
+export { defineValidationRule } from '@/sdk/define/validation-rules/define-validation-rule';
+export type { ValidationRuleConfig } from '@/sdk/define/validation-rules/define-validation-rule';
+export { ruleExpression } from '@/sdk/define/validation-rules/rule-expression';
+export type {
+  RuleExpression,
+  RuleExpressionOperand,
+} from '@/sdk/define/validation-rules/rule-expression';
+export type { ValidationRuleManifest } from 'twenty-shared/application';
+
 export { defineSettingsMenuItem } from '@/sdk/define/settings-menu-items/define-settings-menu-item';
 export type {
   SettingsMenuItemConfig,
@@ -53,6 +62,7 @@ export type { SettingsMenuItemScope } from 'twenty-shared/application';
 export {
   canAccessFullAdminPanel,
   canImpersonate,
+  currentView,
   every,
   everyDefined,
   everyEquals,
@@ -125,6 +135,7 @@ export { ApplicationHealthStatus } from 'twenty-shared/application';
 export type { LogicFunctionConfig } from '@/sdk/define/common/types/loose-shared-types.type';
 export type {
   LogicFunctionHandler,
+  LogicFunctionJobFailureHandler,
   ServerRouteResolverResult,
 } from '@/sdk/define/logic-functions/logic-function-config';
 export type { ServerRouteDispatchResult } from 'twenty-shared/application';
@@ -196,6 +207,9 @@ export { defineRole } from '@/sdk/define/roles/define-role';
 export type {
   RowLevelPermissionPredicateManifest,
   RowLevelPermissionPredicateGroupManifest,
+  RoleRecordsPermissionsManifest,
+  ObjectRecordsPermissionsManifest,
+  RowLevelRecordsPermissionsManifest,
 } from '@/sdk/define/common/types/loose-shared-types.type';
 export {
   RowLevelPermissionPredicateGroupLogicalOperator,
@@ -245,10 +259,14 @@ export {
   PageLayoutTabLayoutMode,
   PageLayoutWidgetVerticalListHeightBehavior,
   PageLayoutType,
+  RecordFilterGroupLogicalOperator,
+  StepLogicalOperator,
   ViewCalendarLayout,
   ViewFilterGroupLogicalOperator,
   ViewFilterOperand,
+  ViewFilterOperandDeprecated,
   ViewOpenRecordIn,
+  ViewPresetFilter,
   ViewSortDirection,
   ViewType,
   ViewVisibility,

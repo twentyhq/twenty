@@ -1,10 +1,18 @@
 import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
 
 import { STANDARD_TASK_NOTE_LAYOUT_MIGRATION_TARGETS } from 'src/database/commands/upgrade-version-command/2-38/constants/standard-task-note-layout-migration-targets.constant';
 import {
   computeStandardTaskNoteLayoutMigrationOperations,
   type TaskNoteLayoutMigrationFlatMaps,
 } from 'src/database/commands/upgrade-version-command/2-38/utils/compute-standard-task-note-layout-migration-operations.util';
+import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
+import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
+import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
+import { type FlatViewFieldGroup } from 'src/engine/metadata-modules/flat-view-field-group/types/flat-view-field-group.type';
+import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
+import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
+import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 
 const STANDARD_APPLICATION_ID = '20202020-0000-0000-0000-0000000000aa';
 const CUSTOM_APPLICATION_ID = '20202020-0000-0000-0000-0000000000bb';
@@ -27,7 +35,34 @@ const buildByUniversalIdentifierMap = <
       flatEntity,
     ]),
   ),
+  universalIdentifierById: {},
+  universalIdentifiersByApplicationId: {},
 });
+
+const STANDARD_FLAT_MAPS = computeTwentyStandardApplicationAllFlatEntityMaps({
+  now: '2026-01-01T00:00:00.000Z',
+  workspaceId: '20202020-0000-0000-0000-000000000001',
+  twentyStandardApplicationId: STANDARD_APPLICATION_ID,
+}).allFlatEntityMaps;
+
+const [BASE_PAGE_LAYOUT] = Object.values(
+  STANDARD_FLAT_MAPS.flatPageLayoutMaps.byUniversalIdentifier,
+).filter(isDefined);
+const [BASE_PAGE_LAYOUT_TAB] = Object.values(
+  STANDARD_FLAT_MAPS.flatPageLayoutTabMaps.byUniversalIdentifier,
+).filter(isDefined);
+const [BASE_PAGE_LAYOUT_WIDGET] = Object.values(
+  STANDARD_FLAT_MAPS.flatPageLayoutWidgetMaps.byUniversalIdentifier,
+).filter(isDefined);
+const [BASE_VIEW] = Object.values(
+  STANDARD_FLAT_MAPS.flatViewMaps.byUniversalIdentifier,
+).filter(isDefined);
+const [BASE_VIEW_FIELD] = Object.values(
+  STANDARD_FLAT_MAPS.flatViewFieldMaps.byUniversalIdentifier,
+).filter(isDefined);
+const [BASE_VIEW_FIELD_GROUP] = Object.values(
+  STANDARD_FLAT_MAPS.flatViewFieldGroupMaps.byUniversalIdentifier,
+).filter(isDefined);
 
 const buildStandardFlatEntity = (universalIdentifier: string) => ({
   applicationId: STANDARD_APPLICATION_ID,
@@ -44,27 +79,15 @@ const buildFlatMaps = ({
 }: {
   state?: 'preMigration' | 'postMigration';
   hasCustomTaskTab?: boolean;
-  taskFieldsViewOverrides?: object | null;
+  taskFieldsViewOverrides?: FlatView['overrides'];
   missingTaskChild?: 'tab' | 'viewField';
 } = {}): TaskNoteLayoutMigrationFlatMaps => {
-  const pageLayouts: Array<
-    Record<string, unknown> & { universalIdentifier: string }
-  > = [];
-  const pageLayoutTabs: Array<
-    Record<string, unknown> & { universalIdentifier: string }
-  > = [];
-  const pageLayoutWidgets: Array<
-    Record<string, unknown> & { universalIdentifier: string }
-  > = [];
-  const views: Array<
-    Record<string, unknown> & { universalIdentifier: string }
-  > = [];
-  const viewFields: Array<
-    Record<string, unknown> & { universalIdentifier: string }
-  > = [];
-  const viewFieldGroups: Array<
-    Record<string, unknown> & { universalIdentifier: string }
-  > = [];
+  const pageLayouts: FlatPageLayout[] = [];
+  const pageLayoutTabs: FlatPageLayoutTab[] = [];
+  const pageLayoutWidgets: FlatPageLayoutWidget[] = [];
+  const views: FlatView[] = [];
+  const viewFields: FlatViewField[] = [];
+  const viewFieldGroups: FlatViewFieldGroup[] = [];
 
   for (const targetLayout of STANDARD_TASK_NOTE_LAYOUT_MIGRATION_TARGETS) {
     const pageLayoutIdentifiers =
@@ -96,15 +119,17 @@ const buildFlatMaps = ({
 
       const widgetUniversalIdentifiers = Object.values(widgets).map(
         ({ universalIdentifier: widgetUniversalIdentifier }) => {
-          pageLayoutWidgets.push(
-            buildStandardFlatEntity(widgetUniversalIdentifier),
-          );
+          pageLayoutWidgets.push({
+            ...BASE_PAGE_LAYOUT_WIDGET,
+            ...buildStandardFlatEntity(widgetUniversalIdentifier),
+          });
 
           return widgetUniversalIdentifier;
         },
       );
 
       pageLayoutTabs.push({
+        ...BASE_PAGE_LAYOUT_TAB,
         ...buildStandardFlatEntity(universalIdentifier),
         widgetUniversalIdentifiers,
       });
@@ -113,6 +138,7 @@ const buildFlatMaps = ({
     if (targetLayout.label === 'Task' && hasCustomTaskTab) {
       tabUniversalIdentifiers.push(CUSTOM_TASK_TAB_UNIVERSAL_IDENTIFIER);
       pageLayoutTabs.push({
+        ...BASE_PAGE_LAYOUT_TAB,
         ...buildStandardFlatEntity(CUSTOM_TASK_TAB_UNIVERSAL_IDENTIFIER),
         applicationId: CUSTOM_APPLICATION_ID,
         widgetUniversalIdentifiers: [],
@@ -120,20 +146,28 @@ const buildFlatMaps = ({
     }
 
     pageLayouts.push({
+      ...BASE_PAGE_LAYOUT,
       applicationId: STANDARD_APPLICATION_ID,
       tabUniversalIdentifiers,
       universalIdentifier: targetLayout.pageLayoutUniversalIdentifier,
     });
 
     for (const universalIdentifier of viewFieldUniversalIdentifiers) {
-      viewFields.push(buildStandardFlatEntity(universalIdentifier));
+      viewFields.push({
+        ...BASE_VIEW_FIELD,
+        ...buildStandardFlatEntity(universalIdentifier),
+      });
     }
 
     for (const universalIdentifier of viewFieldGroupUniversalIdentifiers) {
-      viewFieldGroups.push(buildStandardFlatEntity(universalIdentifier));
+      viewFieldGroups.push({
+        ...BASE_VIEW_FIELD_GROUP,
+        ...buildStandardFlatEntity(universalIdentifier),
+      });
     }
 
     views.push({
+      ...BASE_VIEW,
       ...buildStandardFlatEntity(targetLayout.fieldsViewUniversalIdentifier),
       overrides: targetLayout.label === 'Task' ? taskFieldsViewOverrides : null,
       viewFieldGroupUniversalIdentifiers,
@@ -152,7 +186,7 @@ const buildFlatMaps = ({
     flatViewMaps: buildByUniversalIdentifierMap(views),
     flatViewFieldMaps: buildByUniversalIdentifierMap(viewFields),
     flatViewFieldGroupMaps: buildByUniversalIdentifierMap(viewFieldGroups),
-  } as unknown as TaskNoteLayoutMigrationFlatMaps;
+  };
 };
 
 describe('computeStandardTaskNoteLayoutMigrationOperations', () => {
@@ -229,7 +263,11 @@ describe('computeStandardTaskNoteLayoutMigrationOperations', () => {
 
   it('skips a layout whose fields view has overrides', () => {
     const operations = computeOperations(
-      buildFlatMaps({ taskFieldsViewOverrides: { name: 'Custom' } }),
+      buildFlatMaps({
+        taskFieldsViewOverrides: {
+          [CUSTOM_APPLICATION_ID]: { name: 'Custom' },
+        },
+      }),
     );
 
     expect(operations.viewFieldsToDelete).toHaveLength(5);

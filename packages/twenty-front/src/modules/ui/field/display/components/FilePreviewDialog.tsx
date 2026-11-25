@@ -1,12 +1,18 @@
+import { FilePreviewDialogNavigationHotkeysEffect } from '@/ui/field/display/components/FilePreviewDialogNavigationHotkeysEffect';
 import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { lazy, Suspense, type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconButton } from 'twenty-ui/components/input';
-import { IconDownload, IconX } from 'twenty-ui/icon';
+import {
+  IconChevronLeft,
+  IconChevronRight,
+  IconDownload,
+  IconX,
+} from 'twenty-ui/icon';
 import { Dialog } from 'twenty-ui/primitives/surfaces';
+import { useLingui } from '@lingui/react/macro';
 
 const DocumentViewer = lazy(() =>
   import('@/activities/files/components/DocumentViewer').then((module) => ({
@@ -51,6 +57,18 @@ const StyledPreviewContent = styled.div`
   flex-direction: column;
 `;
 
+const StyledNavigation = styled.div`
+  align-items: center;
+  display: flex;
+  gap: var(--t-spacing-1);
+`;
+
+const StyledNavigationPosition = styled.span`
+  color: var(--t-font-color-tertiary);
+  font-size: var(--t-font-size-sm);
+  font-variant-numeric: tabular-nums;
+`;
+
 type FilePreviewDialogProps = {
   dialogId: string;
   scrollWrapperId: string;
@@ -59,6 +77,9 @@ type FilePreviewDialogProps = {
   documentUrl: string;
   documentExtension?: string;
   onClose: () => void;
+  positionLabel?: string;
+  onPrevious?: () => void;
+  onNext?: () => void;
   onDownload?: () => void;
   downloadLabel: string;
   loadingFallback: ReactNode;
@@ -72,55 +93,94 @@ export const FilePreviewDialog = ({
   documentUrl,
   documentExtension,
   onClose,
+  positionLabel,
+  onPrevious,
+  onNext,
   onDownload,
   downloadLabel,
   loadingFallback,
-}: FilePreviewDialogProps) => (
-  <DialogInstance
-    dialogId={dialogId}
-    dismissible
-    onClose={onClose}
-    renderInDocumentBody
-  >
-    {({ onKeyDown }) => (
-      <Dialog.Popup onKeyDown={onKeyDown} size="lg">
-        <StyledPreviewLayout>
-          <StyledHeader>
-            <Dialog.Title size="md" render={<StyledTitle />}>
-              {title}
-            </Dialog.Title>
-            <StyledActions>
-              {isDefined(onDownload) && (
+}: FilePreviewDialogProps) => {
+  const { t } = useLingui();
+  const hasNavigation = isDefined(positionLabel);
+
+  return (
+    <DialogInstance
+      dialogId={dialogId}
+      dismissible
+      onClose={onClose}
+      renderInDocumentBody
+    >
+      {({ onKeyDown }) => (
+        <Dialog.Popup onKeyDown={onKeyDown} size="lg">
+          {hasNavigation && (
+            <FilePreviewDialogNavigationHotkeysEffect
+              dialogId={dialogId}
+              onPrevious={onPrevious}
+              onNext={onNext}
+            />
+          )}
+          <StyledPreviewLayout>
+            <StyledHeader>
+              <Dialog.Title size="md" render={<StyledTitle />}>
+                {title}
+              </Dialog.Title>
+              <StyledActions>
+                {hasNavigation && (
+                  <StyledNavigation>
+                    <IconButton
+                      aria-label={t`Previous file`}
+                      disabled={!isDefined(onPrevious)}
+                      onClick={onPrevious}
+                      size="sm"
+                    >
+                      <IconChevronLeft />
+                    </IconButton>
+                    <StyledNavigationPosition>
+                      {positionLabel}
+                    </StyledNavigationPosition>
+                    <IconButton
+                      aria-label={t`Next file`}
+                      disabled={!isDefined(onNext)}
+                      onClick={onNext}
+                      size="sm"
+                    >
+                      <IconChevronRight />
+                    </IconButton>
+                  </StyledNavigation>
+                )}
+                {isDefined(onDownload) && (
+                  <IconButton
+                    aria-label={downloadLabel}
+                    onClick={onDownload}
+                    size="sm"
+                  >
+                    <IconDownload />
+                  </IconButton>
+                )}
                 <IconButton
-                  aria-label={downloadLabel}
-                  onClick={onDownload}
+                  aria-label={t`Close preview`}
+                  onClick={onClose}
                   size="sm"
                 >
-                  <IconDownload />
+                  <IconX />
                 </IconButton>
-              )}
-              <IconButton
-                aria-label={t`Close preview`}
-                onClick={onClose}
-                size="sm"
-              >
-                <IconX />
-              </IconButton>
-            </StyledActions>
-          </StyledHeader>
-          <ScrollWrapper componentInstanceId={scrollWrapperId}>
-            <StyledPreviewContent>
-              <Suspense fallback={loadingFallback}>
-                <DocumentViewer
-                  documentName={documentName}
-                  documentUrl={documentUrl}
-                  documentExtension={documentExtension}
-                />
-              </Suspense>
-            </StyledPreviewContent>
-          </ScrollWrapper>
-        </StyledPreviewLayout>
-      </Dialog.Popup>
-    )}
-  </DialogInstance>
-);
+              </StyledActions>
+            </StyledHeader>
+            <ScrollWrapper componentInstanceId={scrollWrapperId}>
+              <StyledPreviewContent>
+                <Suspense fallback={loadingFallback}>
+                  <DocumentViewer
+                    key={documentUrl}
+                    documentName={documentName}
+                    documentUrl={documentUrl}
+                    documentExtension={documentExtension}
+                  />
+                </Suspense>
+              </StyledPreviewContent>
+            </ScrollWrapper>
+          </StyledPreviewLayout>
+        </Dialog.Popup>
+      )}
+    </DialogInstance>
+  );
+};

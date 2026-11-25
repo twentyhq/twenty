@@ -1,5 +1,4 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { MEMBER_ROLE_UNIVERSAL_IDENTIFIER } from 'twenty-shared/constants';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -17,6 +16,7 @@ import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { Section } from 'twenty-ui/components/layout';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledInputsContainer = styled.div`
   display: flex;
@@ -41,6 +41,7 @@ export const SettingsRoleSettings = ({
   isEditable,
   isCreateMode,
 }: SettingsRoleSettingsProps) => {
+  const { t } = useLingui();
   const settingsDraftRole = useAtomFamilyStateValue(
     settingsDraftRoleFamilyState,
     roleId,

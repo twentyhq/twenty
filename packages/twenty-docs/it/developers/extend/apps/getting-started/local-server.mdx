@@ -93,7 +93,7 @@ Per un checkout del codice sorgente di Twenty, funziona anche l'ambiente di svil
 ```bash
 bash packages/twenty-utils/setup-dev-env.sh
 yarn start
-twenty auth login --url http://localhost:3000 --name local
+twenty auth login --url http://localhost:3000 --name local --use
 ```
 
 Usa l'URL e la porta effettivi del tuo server. Per gli spazi di lavoro con sottodomini, usa il
@@ -102,8 +102,9 @@ nome host dello spazio di lavoro. Per la distribuzione in produzione, segui la
 
 ## Dipendenze del progetto
 
-Installa `twenty-sdk` e `twenty-client-sdk` come dipendenze del progetto. Installa globalmente la
-CLI `twenty`, quindi esegui `twenty app typecheck`, `twenty app build` e
-`twenty app apply` dalla directory dell'app.
+`twenty app init` dichiara `twenty-sdk`, `twenty-client-sdk` e `twenty-ui` in
+`devDependencies`, ma non li installa. Con la CLI `twenty` installata
+globalmente, esegui `yarn install` dalla directory dell'app generata prima di eseguire
+`twenty app typecheck`, `twenty app build` o `twenty app apply`.
 
 <PageBanner illustration="dev-self-host" />

@@ -1,11 +1,11 @@
-import { type RadioGroupProps } from '@ui/primitives/input/RadioGroup/types/RadioGroupProps';
+import { type RadioGroup as RadioGroupPrimitive } from '@base-ui/react/radio-group';
 
 import { type SegmentedControlOption } from './SegmentedControlOption';
 import { type SegmentedControlSize } from './SegmentedControlSize';
 import { type SegmentedControlVariant } from './SegmentedControlVariant';
 
 export type SegmentedControlProps<TValue extends string = string> = Omit<
-  RadioGroupProps<TValue>,
+  RadioGroupPrimitive.Props<TValue>,
   'aria-label' | 'aria-labelledby' | 'children' | 'orientation' | 'role'
 > & {
   fullWidth?: boolean;

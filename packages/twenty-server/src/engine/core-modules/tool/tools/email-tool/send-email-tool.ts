@@ -1,4 +1,5 @@
 import { EmailOperation } from 'twenty-shared/types';
+import { convertEmailBodyInputToEmailDocument } from 'twenty-shared/utils';
 import { Injectable, Logger } from '@nestjs/common';
 
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
@@ -34,7 +35,10 @@ export class SendEmailTool implements Tool {
   ): Promise<ToolOutput> {
     try {
       const result = await this.emailComposerService.composeEmail({
-        parameters,
+        parameters: {
+          ...parameters,
+          body: convertEmailBodyInputToEmailDocument(parameters.body),
+        },
         context,
         operation: EmailOperation.SEND,
       });
@@ -52,11 +56,12 @@ export class SendEmailTool implements Tool {
       const sendResult = await this.sendEmailService.sendComposedEmail(data);
 
       const persistedMessage = data.shouldPersistMessage
-        ? await this.sendEmailService.persistSentMessage(
+        ? await this.sendEmailService.persistSentMessage({
             sendResult,
             data,
-            context.workspaceId,
-          )
+            workspaceId: context.workspaceId,
+            createdBy: context.actorMetadata,
+          })
         : undefined;
 
       this.logger.log(

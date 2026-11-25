@@ -126,7 +126,8 @@ describe('validateAndTransformGroupByFieldsOrThrow unnest', () => {
     { unnest: true, extra: true },
   ])('rejects invalid runtime unnest input %j', (definition) => {
     expect(() =>
-      validateGroupBy([{ tags: definition }] as unknown as ObjectRecordGroupBy),
+      // @ts-expect-error runtime API input the types forbid
+      validateGroupBy([{ tags: definition }]),
     ).toThrow(
       expect.objectContaining({
         code: CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
@@ -160,7 +161,7 @@ describe('validateAndTransformGroupByFieldsOrThrow unnest', () => {
             granularity: ObjectRecordGroupByDateGranularity.MONTH,
           },
         },
-      ] as unknown as ObjectRecordGroupBy),
+      ]),
     ).toThrow(
       expect.objectContaining({
         code: CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,

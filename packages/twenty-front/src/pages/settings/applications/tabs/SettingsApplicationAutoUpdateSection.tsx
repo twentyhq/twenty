@@ -1,12 +1,12 @@
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 
 import { useMutation } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
 import { IconRefresh } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { UpdateApplicationDocument } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 export const SettingsApplicationAutoUpdateSection = ({
   applicationId,
@@ -15,6 +15,7 @@ export const SettingsApplicationAutoUpdateSection = ({
   applicationId: string;
   autoUpgrade: boolean;
 }) => {
+  const { t } = useLingui();
   const { enqueueToast } = useToast();
 
   const [updateApplication] = useMutation(UpdateApplicationDocument);

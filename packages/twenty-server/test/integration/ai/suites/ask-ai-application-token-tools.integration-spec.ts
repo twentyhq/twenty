@@ -16,10 +16,7 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 import { createScriptedLanguageModel } from 'test/utils/create-scripted-language-model.util';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 
-import {
-  type AiModelRegistryService,
-  type RegisteredAiModel,
-} from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 
 const WORKFLOW_TOOL_NAME = 'list_workflows';
 const CHAT_TURN_TIMEOUT_MS = 60_000;
@@ -60,7 +57,7 @@ const mockAnsweringModel = (): string[] => {
     modelId: TEST_AI_MODEL_ID,
     sdkPackage: '@ai-sdk/openai',
     model,
-  } as unknown as RegisteredAiModel);
+  });
   jest
     .spyOn(aiModelRegistryService, 'getAvailableModels')
     .mockReturnValue([{ modelId: TEST_AI_MODEL_ID }] as never);

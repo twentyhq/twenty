@@ -1,6 +1,5 @@
 import { putFileToUploadTarget } from '@/file/utils/putFileToUploadTarget';
 import { useApolloClient, useMutation } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
   CompleteFileUploadDocument,
@@ -8,6 +7,7 @@ import {
   type FileFolder,
   type FileWithSignedUrl,
 } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 type DirectFileUploadOptions = {
   fileFolder: FileFolder;
@@ -16,6 +16,7 @@ type DirectFileUploadOptions = {
 };
 
 export const useDirectFileUpload = () => {
+  const { t } = useLingui();
   const apolloClient = useApolloClient();
   const [createFileUpload] = useMutation(CreateFileUploadDocument, {
     client: apolloClient,

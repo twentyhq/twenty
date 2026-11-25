@@ -8,7 +8,16 @@ const MCP_SERVER_FIELDS = `
   label
   url
   connectionProviderId
+  signInScope
   isActive
+  tools {
+    name
+    description
+    inputSchema
+    annotations
+  }
+  toolsSyncedAt
+  toolsSyncError
   applicationId
 `;
 
@@ -23,6 +32,14 @@ const CREATE_MCP_SERVER_MUTATION = gql`
 const UPDATE_MCP_SERVER_MUTATION = gql`
   mutation UpdateMcpServer($input: UpdateMcpServerInput!) {
     updateMcpServer(input: $input) {
+      ${MCP_SERVER_FIELDS}
+    }
+  }
+`;
+
+const SYNC_MCP_SERVER_TOOLS_MUTATION = gql`
+  mutation SyncMcpServerTools($id: UUID!) {
+    syncMcpServerTools(id: $id) {
       ${MCP_SERVER_FIELDS}
     }
   }
@@ -50,6 +67,7 @@ export type McpServerInput = {
   url: string;
   connectionProviderId?: string | null;
   isActive?: boolean;
+  signInScope?: 'USER' | 'WORKSPACE';
 };
 
 export const createMcpServer = (input: McpServerInput) =>
@@ -70,6 +88,12 @@ export const updateMcpServer = ({
     variables: { input: { id, update } },
   });
 
+export const syncMcpServerTools = (id: string) =>
+  makeMetadataApiRequest({
+    query: SYNC_MCP_SERVER_TOOLS_MUTATION,
+    variables: { id },
+  });
+
 export const deleteMcpServer = (id: string) =>
   makeMetadataApiRequest({
     query: DELETE_MCP_SERVER_MUTATION,
@@ -81,3 +105,40 @@ export const getMcpServer = (id: string) =>
     query: GET_MCP_SERVER_QUERY,
     variables: { id },
   });
+
+const MY_CONNECTED_ACCOUNTS_QUERY = gql`
+  query MyConnectedAccounts {
+    myConnectedAccounts {
+      id
+      handle
+      provider
+      scope
+      userWorkspaceId
+      connectionProviderId
+      authFailedAt
+    }
+  }
+`;
+
+const DELETE_CONNECTED_ACCOUNT_MUTATION = gql`
+  mutation DeleteConnectedAccount($id: UUID!) {
+    deleteConnectedAccount(id: $id) {
+      id
+    }
+  }
+`;
+
+export const getMyConnectedAccounts = (token?: string) =>
+  makeMetadataApiRequest({ query: MY_CONNECTED_ACCOUNTS_QUERY }, token);
+
+export const deleteConnectedAccount = ({
+  id,
+  token,
+}: {
+  id: string;
+  token?: string;
+}) =>
+  makeMetadataApiRequest(
+    { query: DELETE_CONNECTED_ACCOUNT_MUTATION, variables: { id } },
+    token,
+  );

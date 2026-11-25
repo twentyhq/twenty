@@ -39,6 +39,20 @@ describe('enrichCompany', () => {
     });
   });
 
+  it('forwards required output fields when provided', async () => {
+    await enrichCompany([
+      { website: 'acme.com', required: 'industry AND employee_count' },
+    ]);
+
+    expect(postPdlSingleEnrichMock).toHaveBeenCalledWith({
+      path: '/company/enrich',
+      params: {
+        website: 'acme.com',
+        required: 'industry AND employee_count',
+      },
+    });
+  });
+
   it('returns one outcome per request, preserving order', async () => {
     postPdlSingleEnrichMock
       .mockResolvedValueOnce({ outcome: 'matched', httpStatus: 200, data: { id: '1' } })

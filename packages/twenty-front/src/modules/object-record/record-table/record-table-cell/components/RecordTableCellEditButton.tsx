@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import { useGetButtonIcon } from '@/object-record/record-field/ui/hooks/useGetButtonIcon';
 import { useIsFieldInputOnly } from '@/object-record/record-field/ui/hooks/useIsFieldInputOnly';
 
@@ -9,8 +8,10 @@ import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/rec
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconArrowUpRight, IconPencil } from 'twenty-ui/icon';
+import { useLingui } from '@lingui/react/macro';
 
 export const RecordTableCellEditButton = () => {
+  const { t } = useLingui();
   const { columnIndex } = useContext(RecordTableCellContext);
   const { openTableCell } = useOpenRecordTableCellFromCell();
   const isFieldInputOnly = useIsFieldInputOnly();

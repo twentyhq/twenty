@@ -122,7 +122,15 @@ describe('parseTeamsAssistantRequest', () => {
           ],
         }),
       ),
-    ).toEqual({ request: null, skipReason: 'Empty request text' });
+    ).toEqual({
+      request: null,
+      skipReason: 'Empty request text',
+      emptyRequest: {
+        teamsActivityId: '1700000000000',
+        teamsConversationId: 'a:personal-conversation',
+        teamsServiceUrl: SERVICE_URL,
+      },
+    });
   });
 
   it('should skip activities that are not messages', () => {

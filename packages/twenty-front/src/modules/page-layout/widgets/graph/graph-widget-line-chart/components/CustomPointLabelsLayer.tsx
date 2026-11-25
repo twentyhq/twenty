@@ -1,6 +1,7 @@
 import { GraphDataLabel } from '@/page-layout/widgets/graph/components/GraphDataLabel';
 import { computeLineChartGroupedLabels } from '@/page-layout/widgets/graph/graph-widget-line-chart/utils/computeLineChartGroupedLabels';
 import { computeLineChartStackedLabels } from '@/page-layout/widgets/graph/graph-widget-line-chart/utils/computeLineChartStackedLabels';
+import { filterLineChartLabelsToFit } from '@/page-layout/widgets/graph/graph-widget-line-chart/utils/filterLineChartLabelsToFit';
 import { type LineCustomSvgLayerProps, type LineSeries } from '@nivo/line';
 
 type CustomPointLabelsLayerProps = Pick<
@@ -31,9 +32,14 @@ export const CustomPointLabelsLayer = ({
       ? computeLineChartStackedLabels(points)
       : computeLineChartGroupedLabels(points);
 
-  const lineChartLabelsToRender = omitNullValues
+  const nonNullLineChartLabels = omitNullValues
     ? lineChartLabels.filter((label) => label.value !== 0)
     : lineChartLabels;
+
+  const lineChartLabelsToRender = filterLineChartLabelsToFit({
+    labels: nonNullLineChartLabels,
+    formatValue,
+  });
 
   return (
     <>

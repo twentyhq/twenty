@@ -2,14 +2,14 @@ import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objec
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { isDefined } from 'twenty-shared/utils';
 
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { type GraphWidgetFieldSelection } from '@/page-layout/types/GraphWidgetFieldSelection';
 
 export const useOpportunityDefaultChartConfig = () => {
   const opportunityObjectMetadata = useAtomFamilySelectorValue(
     objectMetadataItemFamilySelector,
     {
-      objectName: CoreObjectNameSingular.Opportunity,
+      objectName: StandardObjectNameSingular.Opportunity,
       objectNameType: 'singular',
     },
   );

@@ -12,12 +12,12 @@ import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { WidgetCard } from '@/page-layout/widgets/widget-card/components/WidgetCard';
 import { WidgetCardContent } from '@/page-layout/widgets/widget-card/components/WidgetCardContent';
-import { WidgetCardHeader } from '@/page-layout/widgets/widget-card/components/WidgetCardHeader';
+import { PageLayoutWidgetCardHeader } from '@/page-layout/widgets/widget-card/components/PageLayoutWidgetCardHeader';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { StyledWidgetScrollContainer } from '@/ui/layout/components/WidgetContentContainer';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type Decorator } from '@storybook/react-vite';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   FieldMetadataType,
@@ -79,7 +79,7 @@ export const getCallRecordingWidgetStoryDecorator =
 
     const testObjectMetadataItems = getTestEnrichedObjectMetadataItemsMock();
     const calendarEventObjectMetadataItem = getMockObjectMetadataItemOrThrow(
-      CoreObjectNameSingular.CalendarEvent,
+      StandardObjectNameSingular.CalendarEvent,
     );
     const createCallRecordingFieldMetadataItem = ({
       id,
@@ -149,7 +149,7 @@ export const getCallRecordingWidgetStoryDecorator =
       {
         ...calendarEventObjectMetadataItem,
         id: CALL_RECORDING_OBJECT_METADATA_ID,
-        nameSingular: CoreObjectNameSingular.CallRecording,
+        nameSingular: StandardObjectNameSingular.CallRecording,
         namePlural: 'callRecordings',
         labelSingular: 'Call Recording',
         labelPlural: 'Call Recordings',
@@ -163,16 +163,16 @@ export const getCallRecordingWidgetStoryDecorator =
     jotaiStore.set(currentUserWorkspaceState.atom, {
       permissionFlags: [],
       twoFactorAuthenticationMethodSummary: null,
-      objectsPermissions: [
+      objectRecordsPermissions: [
         {
           objectMetadataId: CALL_RECORDING_OBJECT_METADATA_ID,
-          canReadObjectRecords: !isDefined(context.args.restriction),
-          canUpdateObjectRecords: true,
-          canSoftDeleteObjectRecords: true,
-          canDestroyObjectRecords: true,
-          restrictedFields: {},
-          rowLevelPermissionPredicates: [],
-          rowLevelPermissionPredicateGroups: [],
+          canCreateAllRecords: true,
+          canReadAllRecords: !isDefined(context.args.restriction),
+          canUpdateAllRecords: true,
+          canSoftDeleteAllRecords: true,
+          canDestroyAllRecords: true,
+          unreadableFields: [],
+          uneditableFields: [],
         },
       ],
     });
@@ -197,7 +197,8 @@ export const getCallRecordingWidgetStoryDecorator =
               layoutType: PageLayoutType.RECORD_PAGE,
               targetRecordIdentifier: {
                 id: 'calendar-event-id',
-                targetObjectNameSingular: CoreObjectNameSingular.CalendarEvent,
+                targetObjectNameSingular:
+                  StandardObjectNameSingular.CalendarEvent,
               },
             }}
           >
@@ -218,7 +219,7 @@ export const getCallRecordingWidgetStoryDecorator =
                   isDragging={false}
                   isResizing={false}
                 >
-                  <WidgetCardHeader
+                  <PageLayoutWidgetCardHeader
                     className="widget-card-header"
                     widgetId={widget.id}
                     variant="flush"

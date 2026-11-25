@@ -4,7 +4,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CoreCommonApiModule } from 'src/engine/api/common/core-common-api.module';
 import { ActorModule } from 'src/engine/core-modules/actor/actor.module';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
-import { RecordCrudModule } from 'src/engine/core-modules/record-crud/record-crud.module';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { AddPeopleToMessageListJobService } from 'src/modules/emailing/services/add-people-to-message-list-job.service';
 import { AddPeopleToMessageListService } from 'src/modules/emailing/services/add-people-to-message-list.service';
@@ -20,7 +19,6 @@ import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channe
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { MessageChannelMetadataModule } from 'src/engine/metadata-modules/message-channel/message-channel-metadata.module';
 import { PermissionsModule } from 'src/engine/permissions/permissions.module';
-import { UserRoleModule } from 'src/engine/permissions/role-assignment/user-role.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -73,14 +71,12 @@ import { SendCampaignTool } from 'src/modules/emailing/tools/send-campaign.tool'
     ActorModule,
     CacheLockModule,
     CoreCommonApiModule,
-    RecordCrudModule,
     UserWorkspaceModule,
     EmailingDomainModule,
     ThrottlerModule,
     MessageChannelMetadataModule,
     FileUrlModule,
     PermissionsModule,
-    UserRoleModule,
     BillingModule,
     WorkspaceCacheModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,

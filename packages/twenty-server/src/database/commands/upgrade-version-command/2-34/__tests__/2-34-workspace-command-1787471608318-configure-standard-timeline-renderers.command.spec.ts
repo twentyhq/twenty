@@ -1,10 +1,11 @@
+import { Test } from '@nestjs/testing';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { STANDARD_TIMELINE_ACTIVITY_RENDERER_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/timeline';
 
-import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { ConfigureStandardTimelineRenderersCommand } from 'src/database/commands/upgrade-version-command/2-34/2-34-workspace-command-1787471608318-configure-standard-timeline-renderers.command';
-import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const WORKSPACE_ID = '00000000-0000-4000-8000-000000000001';
 const STANDARD_APPLICATION_ID = '00000000-0000-4000-8000-000000000002';
@@ -21,20 +22,30 @@ describe('ConfigureStandardTimelineRenderersCommand', () => {
   it('attaches trusted renderer identifiers to their standard types', async () => {
     const query = jest.fn().mockResolvedValue([[], 2]);
     const invalidateAndRecompute = jest.fn().mockResolvedValue(undefined);
-    const command = new ConfigureStandardTimelineRenderersCommand(
-      {} as WorkspaceIteratorService,
-      {
-        findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
-          .fn()
-          .mockResolvedValue({
-            twentyStandardFlatApplication: { id: STANDARD_APPLICATION_ID },
-          }),
-      } as unknown as ApplicationService,
-      {
-        getOrRecompute: getOrRecomputeWithTimelineActivity(),
-        invalidateAndRecompute,
-      } as unknown as WorkspaceCacheService,
-    );
+    const module = await Test.createTestingModule({
+      providers: [
+        ConfigureStandardTimelineRenderersCommand,
+        { provide: WorkspaceIteratorService, useValue: {} },
+        {
+          provide: ApplicationService,
+          useValue: {
+            findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
+              .fn()
+              .mockResolvedValue({
+                twentyStandardFlatApplication: { id: STANDARD_APPLICATION_ID },
+              }),
+          },
+        },
+        {
+          provide: WorkspaceCacheService,
+          useValue: {
+            getOrRecompute: getOrRecomputeWithTimelineActivity(),
+            invalidateAndRecompute,
+          },
+        },
+      ],
+    }).compile();
+    const command = module.get(ConfigureStandardTimelineRenderersCommand);
 
     await command.runOnWorkspace({
       workspaceId: WORKSPACE_ID,
@@ -66,20 +77,30 @@ describe('ConfigureStandardTimelineRenderersCommand', () => {
 
   it('does not block the fleet when an optional standard renderer is missing', async () => {
     const invalidateAndRecompute = jest.fn().mockResolvedValue(undefined);
-    const command = new ConfigureStandardTimelineRenderersCommand(
-      {} as WorkspaceIteratorService,
-      {
-        findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
-          .fn()
-          .mockResolvedValue({
-            twentyStandardFlatApplication: { id: STANDARD_APPLICATION_ID },
-          }),
-      } as unknown as ApplicationService,
-      {
-        getOrRecompute: getOrRecomputeWithTimelineActivity(),
-        invalidateAndRecompute,
-      } as unknown as WorkspaceCacheService,
-    );
+    const module = await Test.createTestingModule({
+      providers: [
+        ConfigureStandardTimelineRenderersCommand,
+        { provide: WorkspaceIteratorService, useValue: {} },
+        {
+          provide: ApplicationService,
+          useValue: {
+            findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
+              .fn()
+              .mockResolvedValue({
+                twentyStandardFlatApplication: { id: STANDARD_APPLICATION_ID },
+              }),
+          },
+        },
+        {
+          provide: WorkspaceCacheService,
+          useValue: {
+            getOrRecompute: getOrRecomputeWithTimelineActivity(),
+            invalidateAndRecompute,
+          },
+        },
+      ],
+    }).compile();
+    const command = module.get(ConfigureStandardTimelineRenderersCommand);
 
     await command.runOnWorkspace({
       workspaceId: WORKSPACE_ID,
@@ -94,18 +115,28 @@ describe('ConfigureStandardTimelineRenderersCommand', () => {
   it('skips workspaces without timeline metadata', async () => {
     const query = jest.fn();
     const findStandardApplication = jest.fn();
-    const command = new ConfigureStandardTimelineRenderersCommand(
-      {} as WorkspaceIteratorService,
-      {
-        findWorkspaceTwentyStandardAndCustomApplicationOrThrow:
-          findStandardApplication,
-      } as unknown as ApplicationService,
-      {
-        getOrRecompute: jest.fn().mockResolvedValue({
-          flatObjectMetadataMaps: { byUniversalIdentifier: {} },
-        }),
-      } as unknown as WorkspaceCacheService,
-    );
+    const module = await Test.createTestingModule({
+      providers: [
+        ConfigureStandardTimelineRenderersCommand,
+        { provide: WorkspaceIteratorService, useValue: {} },
+        {
+          provide: ApplicationService,
+          useValue: {
+            findWorkspaceTwentyStandardAndCustomApplicationOrThrow:
+              findStandardApplication,
+          },
+        },
+        {
+          provide: WorkspaceCacheService,
+          useValue: {
+            getOrRecompute: jest.fn().mockResolvedValue({
+              flatObjectMetadataMaps: { byUniversalIdentifier: {} },
+            }),
+          },
+        },
+      ],
+    }).compile();
+    const command = module.get(ConfigureStandardTimelineRenderersCommand);
 
     await command.runOnWorkspace({
       workspaceId: WORKSPACE_ID,

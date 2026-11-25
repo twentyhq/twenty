@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import { MenuItemWithOptionDropdown } from '@/ui/navigation/menu-item/components/MenuItemWithOptionDropdown';
 import React, { useState } from 'react';
 import { Dropdown } from 'twenty-ui/components/navigation';
@@ -9,6 +8,7 @@ import {
   IconPencil,
   IconTrash,
 } from 'twenty-ui/icon';
+import { useLingui } from '@lingui/react/macro';
 
 type MultiItemFieldMenuItemProps<TValue> = {
   dropdownId: string;
@@ -37,6 +37,7 @@ export const MultiItemFieldMenuItem = <TValue,>({
   showCopyButton,
   onCopy,
 }: MultiItemFieldMenuItemProps<TValue>) => {
+  const { t } = useLingui();
   const [isHovered, setIsHovered] = useState(false);
 
   const handleMouseEnter = () => setIsHovered(true);

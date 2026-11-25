@@ -1,8 +1,30 @@
-import { gql } from '@apollo/client';
-import { type Operation } from '@apollo/client/core';
+import {
+  ApolloClient,
+  ApolloLink,
+  gql,
+  InMemoryCache,
+  type Operation,
+} from '@apollo/client';
+import { OperationTypeNode } from 'graphql';
 import { StreamingRestLink } from '@/apollo/utils/streamingRestLink';
 
 global.fetch = jest.fn();
+
+const buildOperation = (
+  operationFields: Pick<Operation, 'query' | 'variables'> & Partial<Operation>,
+): Operation => ({
+  client: new ApolloClient({
+    cache: new InMemoryCache(),
+    link: ApolloLink.empty(),
+  }),
+  extensions: {},
+  getContext: () => ({}),
+  operationName: undefined,
+  operationType: OperationTypeNode.QUERY,
+  setContext: jest.fn(),
+  ...operationFields,
+});
+
 describe('StreamingRestLink', () => {
   let streamingLink: StreamingRestLink;
   let mockForward: jest.MockedFunction<(operation: Operation) => any>;
@@ -17,7 +39,7 @@ describe('StreamingRestLink', () => {
 
   describe('request', () => {
     it('should forward operations without @stream directive', () => {
-      const operation = {
+      const operation = buildOperation({
         query: gql`
           query Test {
             test
@@ -25,7 +47,7 @@ describe('StreamingRestLink', () => {
         `,
         variables: {},
         getContext: () => ({}),
-      } as unknown as Operation;
+      });
 
       const result = streamingLink.request(operation, mockForward);
 
@@ -34,7 +56,7 @@ describe('StreamingRestLink', () => {
     });
 
     it('should handle operations with @stream directive', async () => {
-      const operation = {
+      const operation = buildOperation({
         query: gql`
           query StreamTest($threadId: String!) {
             streamChatResponse(threadId: $threadId)
@@ -50,7 +72,7 @@ describe('StreamingRestLink', () => {
         operationName: 'StreamTest',
         extensions: {},
         setContext: jest.fn(),
-      } as unknown as Operation;
+      });
 
       const mockResponse = {
         ok: true,
@@ -92,7 +114,7 @@ describe('StreamingRestLink', () => {
         credentials: 'include',
       });
 
-      const operation = {
+      const operation = buildOperation({
         query: gql`
           query StreamTest($threadId: String!) {
             streamChatResponse(threadId: $threadId)
@@ -108,7 +130,7 @@ describe('StreamingRestLink', () => {
         operationName: 'StreamTest',
         extensions: {},
         setContext: jest.fn(),
-      } as unknown as Operation;
+      });
 
       (global.fetch as jest.Mock).mockResolvedValue({
         ok: true,
@@ -133,7 +155,7 @@ describe('StreamingRestLink', () => {
     });
 
     it('should omit credentials when the link is not configured with them', () => {
-      const operation = {
+      const operation = buildOperation({
         query: gql`
           query StreamTest($threadId: String!) {
             streamChatResponse(threadId: $threadId)
@@ -149,7 +171,7 @@ describe('StreamingRestLink', () => {
         operationName: 'StreamTest',
         extensions: {},
         setContext: jest.fn(),
-      } as unknown as Operation;
+      });
 
       (global.fetch as jest.Mock).mockResolvedValue({
         ok: true,
@@ -174,7 +196,7 @@ describe('StreamingRestLink', () => {
     });
 
     it('should handle network errors', async () => {
-      const operation = {
+      const operation = buildOperation({
         query: gql`
           query StreamTest {
             test @stream(path: "/stream", method: "GET")
@@ -182,7 +204,7 @@ describe('StreamingRestLink', () => {
         `,
         variables: {},
         getContext: () => ({}),
-      } as unknown as Operation;
+      });
 
       (global.fetch as jest.Mock).mockRejectedValue(new Error('Network error'));
 
@@ -201,7 +223,7 @@ describe('StreamingRestLink', () => {
     });
 
     it('should handle non-ok responses', async () => {
-      const operation = {
+      const operation = buildOperation({
         query: gql`
           query StreamTest {
             test @stream(path: "/stream", method: "GET")
@@ -209,7 +231,7 @@ describe('StreamingRestLink', () => {
         `,
         variables: {},
         getContext: () => ({}),
-      } as unknown as Operation;
+      });
 
       const mockResponse = { ok: false, status: 404 };
       (global.fetch as jest.Mock).mockResolvedValue(mockResponse);
@@ -233,7 +255,7 @@ describe('StreamingRestLink', () => {
 
   describe('extractStreamDirective', () => {
     it('should extract directive arguments correctly', () => {
-      const operation = {
+      const operation = buildOperation({
         query: gql`
           query Test($threadId: String!) {
             streamChatResponse(threadId: $threadId)
@@ -247,7 +269,7 @@ describe('StreamingRestLink', () => {
         `,
         variables: {},
         getContext: () => ({}),
-      } as unknown as Operation;
+      });
 
       const directive = (streamingLink as any).extractStreamDirective(
         operation,
@@ -262,7 +284,7 @@ describe('StreamingRestLink', () => {
     });
 
     it('should return null for operations without @stream directive', () => {
-      const operation = {
+      const operation = buildOperation({
         query: gql`
           query Test {
             test
@@ -270,7 +292,7 @@ describe('StreamingRestLink', () => {
         `,
         variables: {},
         getContext: () => ({}),
-      } as unknown as Operation;
+      });
 
       const directive = (streamingLink as any).extractStreamDirective(
         operation,
@@ -282,7 +304,7 @@ describe('StreamingRestLink', () => {
 
   describe('buildUrl', () => {
     it('should build URL with variable substitution', () => {
-      const operation = {
+      const operation = buildOperation({
         variables: { threadId: '123' },
         query: gql`
           query Test {
@@ -293,7 +315,7 @@ describe('StreamingRestLink', () => {
         extensions: {},
         setContext: jest.fn(),
         getContext: () => ({}),
-      } as unknown as Operation;
+      });
 
       const directive = {
         path: '/agent-chat/stream/{args.threadId}',

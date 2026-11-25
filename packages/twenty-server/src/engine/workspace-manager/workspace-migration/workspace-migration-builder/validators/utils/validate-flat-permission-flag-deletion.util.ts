@@ -16,8 +16,11 @@ export const validateFlatPermissionFlagDeletion = ({
     flatPermissionFlagMaps: optimisticFlatPermissionFlagMaps,
   },
   buildOptions,
-}: UniversalFlatEntityValidationArgs<
-  typeof ALL_METADATA_NAME.permissionFlag
+}: Pick<
+  UniversalFlatEntityValidationArgs<typeof ALL_METADATA_NAME.permissionFlag>,
+  | 'buildOptions'
+  | 'flatEntityToValidate'
+  | 'optimisticFlatEntityMapsAndRelatedFlatEntityMaps'
 >): FailedFlatEntityValidation<'permissionFlag', 'delete'> => {
   const validationResult = getEmptyFlatEntityValidationError({
     flatEntityMinimalInformation: {

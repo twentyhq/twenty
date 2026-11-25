@@ -11,7 +11,7 @@ import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticat
 import { type RequestContext } from 'src/engine/api/rest/types/request-context.type';
 
 export const parseLimitRestRequest = (
-  request: AuthenticatedRequest | RequestContext,
+  request: Pick<AuthenticatedRequest | RequestContext, 'query'>,
   defaultLimit = QUERY_DEFAULT_LIMIT_RECORDS,
   maxLimit = QUERY_MAX_RECORDS,
 ): number => {

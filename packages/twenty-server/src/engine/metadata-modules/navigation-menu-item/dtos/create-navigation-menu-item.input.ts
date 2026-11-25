@@ -1,7 +1,14 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 import {
+  BUILT_IN_SECTION_KEYS,
+  type BuiltInSectionKey,
+  NATIVE_PAGE_KEYS,
+  type NativePageKey,
+} from 'twenty-shared/types';
+import {
   IsEnum,
+  IsIn,
   IsNumber,
   IsOptional,
   IsString,
@@ -53,6 +60,16 @@ export class CreateNavigationMenuItemInput {
   link?: string | null;
 
   @IsOptional()
+  @IsIn(NATIVE_PAGE_KEYS)
+  @Field(() => String, { nullable: true })
+  nativePageKey?: NativePageKey | null;
+
+  @IsOptional()
+  @IsIn(BUILT_IN_SECTION_KEYS)
+  @Field(() => String, { nullable: true })
+  builtInSectionKey?: BuiltInSectionKey | null;
+
+  @IsOptional()
   @IsString()
   @Field(() => String, { nullable: true })
   icon?: string | null;
@@ -65,6 +82,15 @@ export class CreateNavigationMenuItemInput {
   @IsUUID()
   @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })
+  parentId?: string;
+
+  // TODO(@thomtrp): remove the deprecated folderId alias once API clients use parentId
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, {
+    nullable: true,
+    deprecationReason: 'Use parentId instead.',
+  })
   folderId?: string;
 
   @IsUUID()
@@ -76,6 +102,16 @@ export class CreateNavigationMenuItemInput {
   @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })
   agentChatChannelId?: string | null;
+
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  workflowId?: string | null;
+
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  agentId?: string | null;
 
   @IsNumber()
   @IsOptional()

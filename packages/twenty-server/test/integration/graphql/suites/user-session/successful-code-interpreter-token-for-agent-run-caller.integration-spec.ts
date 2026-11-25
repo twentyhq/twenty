@@ -33,11 +33,6 @@ const captureSandboxTokenForAgentRun = async ({
         token,
       })
     ).executionContext.authContext,
-    rolePermissionConfig: {
-      intersectionOf: {
-        applicationRoleId: globalTestContext.applicationRoleId,
-      },
-    },
   });
 
 describe('Code interpreter sandbox token for an agent run should follow the caller', () => {
@@ -55,9 +50,9 @@ describe('Code interpreter sandbox token for an agent run should follow the call
         [application.agentId],
       );
 
-    const [{ defaultRoleId: applicationRoleId }] =
+    const [{ requestedRoleId: applicationRoleId }] =
       await globalThis.testDataSource.query(
-        `SELECT "defaultRoleId" FROM core."application" WHERE id = $1`,
+        `SELECT "requestedRoleId" FROM core."application" WHERE id = $1`,
         [application.id],
       );
 

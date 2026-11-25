@@ -1,4 +1,4 @@
-import { ViewFilterOperand as RecordFilterOperand } from '@/types';
+import { RecordFilterOperand } from '@/types';
 
 export const isEmptinessOperand = (operand: RecordFilterOperand): boolean => {
   return [

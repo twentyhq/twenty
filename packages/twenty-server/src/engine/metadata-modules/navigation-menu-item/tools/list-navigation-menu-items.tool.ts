@@ -6,6 +6,7 @@ import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/def
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { NAVIGATION_MENU_ITEM_READ_ACCESS_POLICY } from 'src/engine/metadata-modules/navigation-menu-item/constants/navigation-menu-item-read-access-policy.constant';
 import { NavigationMenuItemService } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.service';
 import { navigationMenuItemTypeSchema } from 'src/engine/metadata-modules/navigation-menu-item/tools/schemas/navigation-menu-item-type.schema';
 
@@ -17,15 +18,13 @@ const listNavigationMenuItemsInputSchema = z.object({
     .describe(
       "'workspace' = shared navigation, 'user' = current user's favorites, 'all' = both merged (default).",
     ),
-  folderId: z
+  parentId: z
     .uuid()
     .optional()
-    .describe('Only return items inside this folder.'),
+    .describe('Only return items inside this folder, section or tab.'),
   type: navigationMenuItemTypeSchema
     .optional()
-    .describe(
-      'Filter by item type (FOLDER, LINK, OBJECT, VIEW, RECORD, PAGE_LAYOUT).',
-    ),
+    .describe('Filter by item type.'),
   limit: z
     .number()
     .int()
@@ -38,8 +37,9 @@ const listNavigationMenuItemsInputSchema = z.object({
 
 @DefineTool({
   name: 'list_navigation_menu_items',
+  isReadOnly: true,
   category: ToolCategory.NAVIGATION_MENU_ITEM,
-  requiredPermissionFlags: [],
+  accessPolicy: NAVIGATION_MENU_ITEM_READ_ACCESS_POLICY,
   description: `List navigation menu items (shared workspace navigation and/or the current user's personal favorites). Returns items sorted by position.`,
 })
 export class ListNavigationMenuItemsTool extends BaseTool<
@@ -64,7 +64,7 @@ export class ListNavigationMenuItemsTool extends BaseTool<
         workspaceId,
         userWorkspaceId,
         scope: input.scope,
-        folderId: input.folderId,
+        parentId: input.parentId,
         type: input.type,
         limit: input.limit,
       });
@@ -78,7 +78,7 @@ export class ListNavigationMenuItemsTool extends BaseTool<
             type: item.type,
             name: item.name,
             scope: isDefined(item.userWorkspaceId) ? 'user' : 'workspace',
-            folderId: item.folderId,
+            parentId: item.parentId,
             position: item.position,
             icon: item.icon,
             color: item.color,
@@ -88,6 +88,11 @@ export class ListNavigationMenuItemsTool extends BaseTool<
             viewId: item.viewId,
             pageLayoutId: item.pageLayoutId,
             agentChatChannelId: item.agentChatChannelId,
+            nativePageKey: item.nativePageKey,
+            builtInSectionKey: item.builtInSectionKey,
+            isActive: item.isActive,
+            workflowId: item.workflowId,
+            agentId: item.agentId,
           })),
           count: items.length,
         },

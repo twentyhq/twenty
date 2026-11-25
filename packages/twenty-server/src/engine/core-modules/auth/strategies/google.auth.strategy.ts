@@ -3,6 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 
 import { type Request } from 'express';
 import {
+  type AuthenticateOptionsGoogle,
   Strategy,
   type Profile as GoogleProfile,
   type VerifyCallback,
@@ -48,8 +49,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     });
   }
 
-  // oxlint-disable-next-line typescript/no-explicit-any
-  authenticate(req: Request, options: any) {
+  authenticate(req: Request, options: AuthenticateOptionsGoogle) {
     options = {
       ...options,
       state: JSON.stringify({
@@ -75,9 +75,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     const { name, emails, photos } = profile;
     const state = parseJson<SocialSsoState>(request.query.state as string);
 
-    const firstVerifiedEmail = emails?.find(
-      (email) => email?.verified === true,
-    )?.value;
+    const firstVerifiedEmail = emails?.find((email) => email?.verified)?.value;
 
     if (!firstVerifiedEmail) {
       throw new AuthException(

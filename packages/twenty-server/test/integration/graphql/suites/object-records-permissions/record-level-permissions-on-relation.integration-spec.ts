@@ -11,7 +11,8 @@ import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
+import { revokeObjectRecordsPermissions } from 'test/integration/metadata/suites/object-permission/utils/revoke-object-records-permissions.util';
+import { upsertRowLevelPermissionRules } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-rules.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
@@ -262,21 +263,31 @@ describe('row-level permission predicates comparing two relation fields', () => 
 
     customRoleId = roleId;
 
-    await upsertRowLevelPermissionPredicates({
+    await revokeObjectRecordsPermissions({
+      roleId: customRoleId,
+      objectMetadataId: companyObjectMetadataId,
+    });
+    await upsertRowLevelPermissionRules({
       expectToFail: false,
       input: {
         roleId: customRoleId,
         objectMetadataId: companyObjectMetadataId,
-        predicates: [
+        rules: [
           {
-            id: PREDICATE_ID,
-            fieldMetadataId: companyRegionFieldMetadataId,
-            operand: RowLevelPermissionPredicateOperand.IS,
-            workspaceMemberFieldMetadataId:
-              workspaceMemberRegionFieldMetadataId,
+            canCreateRecords: true,
+            canReadRecords: true,
+            canUpdateRecords: true,
+            predicates: [
+              {
+                id: PREDICATE_ID,
+                fieldMetadataId: companyRegionFieldMetadataId,
+                operand: RowLevelPermissionPredicateOperand.IS,
+                workspaceMemberFieldMetadataId:
+                  workspaceMemberRegionFieldMetadataId,
+              },
+            ],
           },
         ],
-        predicateGroups: [],
       },
     });
 
@@ -373,41 +384,47 @@ describe('row-level permission predicates comparing two relation fields', () => 
   });
 
   it('rejects a predicate whose relations point to different objects', async () => {
-    await upsertRowLevelPermissionPredicates({
+    await upsertRowLevelPermissionRules({
       expectToFail: true,
       input: {
         roleId: customRoleId,
         objectMetadataId: companyObjectMetadataId,
-        predicates: [
+        rules: [
           {
-            id: PREDICATE_ID,
-            fieldMetadataId: companyRegionFieldMetadataId,
-            operand: RowLevelPermissionPredicateOperand.IS,
-            workspaceMemberFieldMetadataId:
-              workspaceMemberCompanyFieldMetadataId,
+            predicates: [
+              {
+                id: PREDICATE_ID,
+                fieldMetadataId: companyRegionFieldMetadataId,
+                operand: RowLevelPermissionPredicateOperand.IS,
+                workspaceMemberFieldMetadataId:
+                  workspaceMemberCompanyFieldMetadataId,
+              },
+            ],
           },
         ],
-        predicateGroups: [],
       },
     });
   });
 
   it('rejects a relation predicate with an operand the query filter cannot express', async () => {
-    await upsertRowLevelPermissionPredicates({
+    await upsertRowLevelPermissionRules({
       expectToFail: true,
       input: {
         roleId: customRoleId,
         objectMetadataId: companyObjectMetadataId,
-        predicates: [
+        rules: [
           {
-            id: PREDICATE_ID,
-            fieldMetadataId: companyRegionFieldMetadataId,
-            operand: RowLevelPermissionPredicateOperand.CONTAINS,
-            workspaceMemberFieldMetadataId:
-              workspaceMemberRegionFieldMetadataId,
+            predicates: [
+              {
+                id: PREDICATE_ID,
+                fieldMetadataId: companyRegionFieldMetadataId,
+                operand: RowLevelPermissionPredicateOperand.CONTAINS,
+                workspaceMemberFieldMetadataId:
+                  workspaceMemberRegionFieldMetadataId,
+              },
+            ],
           },
         ],
-        predicateGroups: [],
       },
     });
   });

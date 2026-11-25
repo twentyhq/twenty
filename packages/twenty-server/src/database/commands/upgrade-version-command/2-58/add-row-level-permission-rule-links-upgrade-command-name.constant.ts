@@ -1,0 +1,2 @@
+export const ADD_ROW_LEVEL_PERMISSION_RULE_LINKS_UPGRADE_COMMAND_NAME =
+  '2.58.0_AddRowLevelPermissionRuleLinksFastInstanceCommand_1794337540366';

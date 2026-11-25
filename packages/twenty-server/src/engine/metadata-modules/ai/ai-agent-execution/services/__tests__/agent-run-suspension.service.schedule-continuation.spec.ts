@@ -6,10 +6,12 @@ const WORKSPACE_ID = 'workspace-id';
 const buildService = (wakeUp: object | null) => {
   const messageQueueService = { add: jest.fn().mockResolvedValue(undefined) };
   const agentRunJobScopeService = {
-    resolve: jest.fn(async ({ agentId }: { agentId: string }) => ({
-      workspaceId: WORKSPACE_ID,
-      applicationUniversalIdentifier: `application-of-${agentId}`,
-    })),
+    resolve: jest.fn(
+      async ({ spec: { agentId } }: { spec: { agentId: string } }) => ({
+        workspaceId: WORKSPACE_ID,
+        applicationUniversalIdentifier: `application-of-${agentId}`,
+      }),
+    ),
   };
 
   const service = new AgentRunSuspensionService(
@@ -46,7 +48,10 @@ describe('AgentRunSuspensionService scheduleContinuation', () => {
       CONTINUE_AGENT_RUN_JOB_NAME,
       jobData,
       {
-        deduplication: { id: 'continue-agent-run-wake-up-id' },
+        deduplication: {
+          id: 'continue-agent-run-wake-up-id-message',
+          keepLastIfActive: true,
+        },
         workspaceId: WORKSPACE_ID,
         applicationUniversalIdentifier: 'application-of-agent-a',
       },
@@ -62,7 +67,10 @@ describe('AgentRunSuspensionService scheduleContinuation', () => {
       CONTINUE_AGENT_RUN_JOB_NAME,
       jobData,
       {
-        deduplication: { id: 'continue-agent-run-wake-up-id' },
+        deduplication: {
+          id: 'continue-agent-run-wake-up-id-message',
+          keepLastIfActive: true,
+        },
         workspaceId: WORKSPACE_ID,
         isWorkspaceJob: true,
       },

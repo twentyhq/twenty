@@ -4,9 +4,9 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { t } from '@lingui/core/macro';
 import { type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
+import { useLingui } from '@lingui/react/macro';
 
 type RecordGroupReorderConfirmationModalProps = {
   onConfirmClick: () => void;
@@ -15,6 +15,7 @@ type RecordGroupReorderConfirmationModalProps = {
 export const RecordGroupReorderConfirmationModal = ({
   onConfirmClick,
 }: RecordGroupReorderConfirmationModalProps): ReactNode => {
+  const { t } = useLingui();
   const { recordIndexId } = useRecordIndexContextOrThrow();
   const recordIndexRecordGroupSort = useAtomComponentStateValue(
     recordIndexRecordGroupSortComponentState,

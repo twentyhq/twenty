@@ -16,25 +16,9 @@ import { ApplicationTargetArgs } from 'src/engine/decorators/auth/application-ta
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
-@UseGuards(
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
-    },
-    apiKey: true,
-    oauthClient: true,
-    application: true,
-  }),
-  NoPermissionGuard,
-)
 @MetadataResolver()
 @UseFilters(
   ApplicationVariableEntityExceptionFilter,
@@ -48,18 +32,20 @@ export class UserApplicationVariableValueResolver {
 
   @Mutation(() => Boolean)
   @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: { withUser: true, withoutUser: false },
       },
-      apiKey: false,
-      oauthClient: false,
-      application: { withUser: true, withoutUser: false },
+      requiredPermissionFlags: [PermissionFlagType.CONNECTED_ACCOUNTS],
     }),
-    SettingsPermissionGuard(PermissionFlagType.CONNECTED_ACCOUNTS),
     ApplicationTargetGuard,
   )
   async updateMyUserApplicationVariable(
@@ -90,6 +76,22 @@ export class UserApplicationVariableValueResolver {
   }
 
   @Query(() => [WorkspaceMemberApplicationVariablesDTO])
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: true,
+        oauthClient: true,
+        application: true,
+      },
+      requiredPermissionFlags: [],
+    }),
+  )
   async myUserApplicationVariables(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthApplication() callingApplication: FlatApplication,

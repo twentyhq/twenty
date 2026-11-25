@@ -12,6 +12,7 @@ import { PageBanner } from "/snippets/page-banner.mdx"
 ```text filename="my-twenty-app/"
 my-twenty-app/
   package.json
+  yarn.lock                                 # Created by app init; used by yarn install
   src/
     application-config.ts                   # Required — your app's entry point
     default-role.ts                         # Permissions for logic functions
@@ -28,6 +29,7 @@ my-twenty-app/
     __tests__/
       application-config.test.ts            # Unit test
       global-setup.ts                       # Integration test setup (sync + uninstall)
+      run-twenty.ts                         # CLI subprocess helper for tests
       schema.integration-test.ts            # Integration test against a live server
   .github/workflows/
     ci.yml                                  # Lint, typecheck, unit + integration tests
@@ -67,20 +69,9 @@ my-twenty-app/
 
 ## التبعيات
 
-تنتمي حزم Twenty SDK وUI ضمن `devDependencies`:
+يضع `twenty app init` الحزم `twenty-sdk` و`twenty-client-sdk` و`twenty-ui` ضمن `devDependencies`، مع تثبيتها على إصدار SDK الذي يحدده إصدار CLI ذلك. احتفظ بالإصدارات المُنشأة لتطبيق جديد، وحافظ على تزامن الحزم الثلاث جميعًا عند الترقية. يمكن أن يتلقى CLI إصدارات تصحيحية بشكل مستقل، لذا لا يلزم أن يتطابق إصداره مع هذه الحزم.
 
-```json filename="package.json"
-{
-  "dependencies": {},
-  "devDependencies": {
-    "twenty-client-sdk": "2.40.0",
-    "twenty-sdk": "2.40.0",
-    "twenty-ui": "2.40.0"
-  }
-}
-```
-
-يثبّت `twenty app init` الحزم `twenty-sdk` و`twenty-client-sdk` و`twenty-ui` على إصداره الخاص. أبقِ الحزم الثلاث متزامنة عند الترقية.
+يضبط `engines.twenty` المُنشأ الحد الأدنى لإصدار الخادم على الإصدار الرئيسي والفرعي الخاصين بـ SDK تلك. تُثبّت مهام سير عمل GitHub Actions المُنشأة إصدار CLI بشكل منفصل.
 
 * يوفّر **`twenty-sdk`** تعريفات التطبيقات، ومساعدات وقت التشغيل، والتكامل مع العارض. استخدم حزمة **`twenty`** المثبّتة بشكل منفصل لأوامر CLI وأدوات البناء وإنشاء الهياكل.
 * يتم استيراد **`twenty-client-sdk`** بواسطة كود تطبيقك (`CoreApiClient`، `MetadataApiClient`، `RestApiClient`)؛ لكن Twenty توفّره في وقت التشغيل — حيث تحصل عليه دوال المنطق من طبقة SDK مُولَّدة، وتحصل عليه مكوّنات الواجهة من وحدات يتم تقديمها من الخادم. يُستخدَم الإصدار المثبّت لديك فقط لفحص الأنواع (typechecking) ولبناء النشر (deploy-time build)، لذا لا يلزم أبدًا أن يتم تضمينه في حزمة النشر.

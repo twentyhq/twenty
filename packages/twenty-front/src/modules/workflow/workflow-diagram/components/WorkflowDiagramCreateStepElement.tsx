@@ -3,10 +3,11 @@ import { VERTICAL_DISTANCE_BETWEEN_TWO_NODES } from '@/workflow/workflow-diagram
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { type WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
+import { useReactFlow } from '@xyflow/react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/components/input';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -35,15 +36,23 @@ export const WorkflowDiagramCreateStepElement = ({
   data,
   Label,
 }: WorkflowDiagramCreateStepElementProps) => {
+  const { t } = useLingui();
   const { startNodeCreation } = useStartNodeCreation();
+  const { getNode } = useReactFlow();
 
   const addNode = () => {
+    const parentNodePosition = getNode(data.stepId)?.position;
+
+    if (!isDefined(parentNodePosition)) {
+      return;
+    }
+
     startNodeCreation({
       parentStepId: data.stepId,
       nextStepId: undefined,
       position: {
-        x: data.position.x,
-        y: data.position.y + VERTICAL_DISTANCE_BETWEEN_TWO_NODES,
+        x: parentNodePosition.x,
+        y: parentNodePosition.y + VERTICAL_DISTANCE_BETWEEN_TWO_NODES,
       },
     });
   };

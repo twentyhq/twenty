@@ -78,4 +78,26 @@ describe('extractCompanyMatchParams', () => {
       }),
     ).toBeUndefined();
   });
+
+  it('requires the fields for new matches but not for pdlId refreshes', () => {
+    expect(
+      extractCompanyMatchParams({
+        node: { ...COMPANY_NODE_MOCK, name: 'Acme' },
+        minLikelihoods: MIN_LIKELIHOODS,
+        required: 'employee_count',
+      }),
+    ).toEqual({
+      website: 'acme.com',
+      name: 'Acme',
+      minLikelihood: 3,
+      required: 'employee_count',
+    });
+    expect(
+      extractCompanyMatchParams({
+        node: { ...COMPANY_NODE_MOCK, pdlId: 'pdl-c' },
+        minLikelihoods: MIN_LIKELIHOODS,
+        required: 'employee_count',
+      }),
+    ).toStrictEqual({ pdlId: 'pdl-c', minLikelihood: 3 });
+  });
 });

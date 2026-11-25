@@ -1,7 +1,6 @@
 import { useParams } from 'react-router-dom';
 
 import { useQuery } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 
@@ -14,8 +13,10 @@ import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLo
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { type GetAdminChatThreadMessagesQuery } from '~/generated-admin/graphql';
 import { Section } from 'twenty-ui/components/layout';
+import { useLingui } from '@lingui/react/macro';
 
 export const SettingsAdminWorkspaceChatThread = () => {
+  const { t } = useLingui();
   const { workspaceId, threadId } = useParams<{
     workspaceId: string;
     threadId: string;

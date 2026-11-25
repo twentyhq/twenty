@@ -21,6 +21,10 @@ import {
   RULE_NAME as folderStructureName,
 } from './rules/folder-structure';
 import {
+  rule as graphqlFieldResolversShouldDeclareAccess,
+  RULE_NAME as graphqlFieldResolversShouldDeclareAccessName,
+} from './rules/graphql-field-resolvers-should-declare-access';
+import {
   rule as graphqlResolversShouldBeGuarded,
   RULE_NAME as graphqlResolversShouldBeGuardedName,
 } from './rules/graphql-resolvers-should-be-guarded';
@@ -85,6 +89,10 @@ import {
   RULE_NAME as noTwentyUiOverrideName,
 } from './rules/no-twenty-ui-override';
 import {
+  rule as moduleImportDirection,
+  RULE_NAME as moduleImportDirectionName,
+} from './rules/module-import-direction';
+import {
   rule as noWindowOpen,
   RULE_NAME as noWindowOpenName,
 } from './rules/no-window-open';
@@ -121,6 +129,8 @@ export default definePlugin({
     [effectComponentsName]: effectComponents,
     [enforceModuleBoundariesName]: enforceModuleBoundaries,
     [folderStructureName]: folderStructure,
+    [graphqlFieldResolversShouldDeclareAccessName]:
+      graphqlFieldResolversShouldDeclareAccess,
     [graphqlResolversShouldBeGuardedName]: graphqlResolversShouldBeGuarded,
     [injectWorkspaceRepositoryName]: injectWorkspaceRepository,
     [matchingStateVariableName]: matchingStateVariable,
@@ -138,6 +148,7 @@ export default definePlugin({
     [noStateUserefName]: noStateUseref,
     [noStorybookA11yDisableName]: noStorybookA11yDisable,
     [noTwentyUiOverrideName]: noTwentyUiOverride,
+    [moduleImportDirectionName]: moduleImportDirection,
     [noWindowOpenName]: noWindowOpen,
     [preferWorkspaceScopedRepositoryName]: preferWorkspaceScopedRepository,
     [restApiMethodsShouldBeGuardedName]: restApiMethodsShouldBeGuarded,

@@ -1,11 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
-import {
-  FieldMetadataType,
-  type ObjectRecord,
-  type ObjectsPermissions,
-} from 'twenty-shared/types';
+import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
@@ -24,7 +20,7 @@ import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
-import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import { buildApplicationApiRateLimitedLogEntry } from 'src/engine/api/common/common-query-runners/utils/build-application-api-rate-limited-log-entry.util';
 import { buildApplicationApiRateLimitedLogLine } from 'src/engine/api/common/common-query-runners/utils/build-application-api-rate-limited-log-line.util';
 import { buildMutationQueryBuilder } from 'src/engine/api/common/common-query-runners/utils/build-mutation-query-builder.util';
@@ -42,10 +38,15 @@ import {
 import {
   CommonQueryExecutionResult,
   CommonQueryResult,
+  CommonQueryRunResult,
 } from 'src/engine/api/common/types/common-query-result.type';
+import { type CommonQueryResultProcessingArgs } from 'src/engine/api/common/types/common-query-result-processing-args.type';
+import { type CommonRelationsAggregatedValues } from 'src/engine/api/common/types/common-aggregated-values.type';
+import { type CommonSelection } from 'src/engine/api/common/types/common-selection.type';
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { type NestedRelationsReadPathOptions } from 'src/engine/api/common/types/nested-relations-read-path-options.type';
-import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
+import { CommonQueryParser } from 'src/engine/api/common/common-query-parsers/common-query.parser';
+import { buildColumnsToReturn } from 'src/engine/api/common/utils/build-columns-to-return';
 import { WorkspacePreQueryHookPayload } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
 import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
 import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
@@ -72,10 +73,11 @@ import { RelationNestedQueries } from 'src/engine/twenty-orm/field-operations/re
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type MutationKind } from 'src/engine/twenty-orm/sql/utils/build-mutation-statement.util';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
-import { resolveRolePermissionConfig } from 'src/engine/permissions/principal/utils/resolve-role-permission-config.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { addTimelineActivityObjectColumnsToSelect } from 'src/modules/timeline/utils/add-timeline-activity-object-columns-to-select.util';
+import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
+import { RecordFieldPermissionsReadService } from 'src/engine/permissions/record-field-permissions-read.service';
 
 @Injectable()
 export abstract class CommonBaseQueryRunnerService<
@@ -118,6 +120,8 @@ export abstract class CommonBaseQueryRunnerService<
   protected readonly metricsService: MetricsService;
   @Inject()
   protected readonly applicationRepeatedEventRecorderService: ApplicationRepeatedEventRecorderService;
+  @Inject()
+  protected readonly recordFieldPermissionsReadService: RecordFieldPermissionsReadService;
 
   protected abstract readonly operationName: CommonQueryNames;
 
@@ -143,11 +147,11 @@ export abstract class CommonBaseQueryRunnerService<
 
     await this.validate(args, queryRunnerContext);
 
-    const commonQueryParser = new GraphqlQueryParser(
+    const commonQueryParser = new CommonQueryParser({
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-    );
+    });
 
     const selectedFieldsResult = commonQueryParser.parseSelectedFields(
       args.selectedFields,
@@ -174,18 +178,20 @@ export abstract class CommonBaseQueryRunnerService<
       );
     }
 
-    const results = await this.workspaceOrmManager.executeInWorkspaceContext(
-      async () =>
-        this.executeQueryAndEnrichResults(
-          processedArgs,
-          queryRunnerContext,
-          commonQueryParser,
-        ),
-      authContext,
-    );
+    const { result, relationAggregatedValues } =
+      await this.workspaceOrmManager.executeInWorkspaceContext(
+        async () =>
+          this.executeQueryAndEnrichResults(
+            processedArgs,
+            queryRunnerContext,
+            commonQueryParser,
+          ),
+        authContext,
+      );
 
     return {
-      results,
+      results: result,
+      relationAggregatedValues,
       args: processedArgs,
     };
   }
@@ -193,7 +199,7 @@ export abstract class CommonBaseQueryRunnerService<
   protected abstract run(
     args: CommonExtendedInput<Args>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
-  ): Promise<Output>;
+  ): Promise<CommonQueryRunResult<Output>>;
 
   protected abstract validate(
     args: CommonInput<Args>,
@@ -206,18 +212,10 @@ export abstract class CommonBaseQueryRunnerService<
   ): Promise<CommonInput<Args>>;
 
   protected abstract processQueryResult(
-    queryResult: Output,
-    flatObjectMetadata: FlatObjectMetadata,
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
-    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
-    authContext: WorkspaceAuthContext,
+    args: CommonQueryResultProcessingArgs<Output>,
   ): Promise<Output>;
 
-  protected getResultRecords(results: Output): ObjectRecord[] {
-    return (
-      (Array.isArray(results) ? results : [results]) as ObjectRecord[]
-    ).filter(isDefined);
-  }
+  protected abstract getResultRecords(results: Output): ObjectRecord[];
 
   protected computeQueryComplexity(
     selectedFieldsResult: CommonSelectedFieldsResult,
@@ -226,7 +224,7 @@ export abstract class CommonBaseQueryRunnerService<
   ): number {
     const simpleFieldsComplexity = 1;
     const selectedFieldsComplexity =
-      simpleFieldsComplexity + (selectedFieldsResult.relationFieldsCount ?? 0);
+      simpleFieldsComplexity + selectedFieldsResult.relationFieldsCount;
 
     return selectedFieldsComplexity;
   }
@@ -243,7 +241,7 @@ export abstract class CommonBaseQueryRunnerService<
     } = queryRunnerContext;
 
     return computeMaxFieldCountPerRecord({
-      selectedFieldsResult,
+      selection: selectedFieldsResult,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -274,27 +272,24 @@ export abstract class CommonBaseQueryRunnerService<
   private async executeQueryAndEnrichResults(
     processedArgs: CommonExtendedInput<Args>,
     queryRunnerContext: CommonBaseQueryRunnerContext,
-    commonQueryParser: GraphqlQueryParser,
-  ): Promise<Output> {
+    commonQueryParser: CommonQueryParser,
+  ): Promise<CommonQueryRunResult<Output>> {
     const extendedQueryRunnerContext =
       await this.prepareExtendedQueryRunnerContextWithGlobalDatasource(
         queryRunnerContext,
       );
 
-    const results = await this.run(
+    const { result, relationAggregatedValues } = await this.run(
       {
         ...processedArgs,
-        selectedFieldsResult: {
-          ...processedArgs.selectedFieldsResult,
-          select: addTimelineActivityObjectColumnsToSelect({
-            select: processedArgs.selectedFieldsResult.select,
-            flatObjectMetadata: queryRunnerContext.flatObjectMetadata,
-            objectsPermissions:
-              extendedQueryRunnerContext.repository.objectRecordsPermissions,
-            flatObjectMetadataMaps: queryRunnerContext.flatObjectMetadataMaps,
-            flatFieldMetadataMaps: queryRunnerContext.flatFieldMetadataMaps,
-          }),
-        },
+        selectedFieldsResult: addTimelineActivityObjectColumnsToSelect({
+          selection: processedArgs.selectedFieldsResult,
+          flatObjectMetadata: queryRunnerContext.flatObjectMetadata,
+          recordReadRestrictions:
+            extendedQueryRunnerContext.recordReadRestrictions,
+          flatObjectMetadataMaps: queryRunnerContext.flatObjectMetadataMaps,
+          flatFieldMetadataMaps: queryRunnerContext.flatFieldMetadataMaps,
+        }),
       },
       {
         ...extendedQueryRunnerContext,
@@ -302,53 +297,59 @@ export abstract class CommonBaseQueryRunnerService<
       },
     );
 
-    return this.enrichResultsWithGettersAndHooks({
-      results,
+    const enrichedResult = await this.enrichResultsWithGettersAndHooks({
+      results: result,
+      selection: processedArgs.selectedFieldsResult,
       operationName: this.operationName,
       authContext: extendedQueryRunnerContext.authContext,
       flatObjectMetadata: queryRunnerContext.flatObjectMetadata,
       flatObjectMetadataMaps: queryRunnerContext.flatObjectMetadataMaps,
       flatFieldMetadataMaps: queryRunnerContext.flatFieldMetadataMaps,
       transactionScope: queryRunnerContext.transactionScope,
-      objectsPermissions:
-        extendedQueryRunnerContext.repository.objectRecordsPermissions,
+      recordReadRestrictions: extendedQueryRunnerContext.recordReadRestrictions,
     });
+
+    return { result: enrichedResult, relationAggregatedValues };
   }
 
   private async enrichResultsWithGettersAndHooks({
     results,
+    selection,
     operationName,
     authContext,
     flatObjectMetadata,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
     transactionScope,
-    objectsPermissions,
+    recordReadRestrictions,
   }: {
     results: Output;
+    selection: CommonSelection;
     operationName: CommonQueryNames;
     authContext: WorkspaceAuthContext;
     flatObjectMetadata: FlatObjectMetadata;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     transactionScope: CommonBaseQueryRunnerContext['transactionScope'];
-    objectsPermissions: ObjectsPermissions;
+    recordReadRestrictions: RecordReadRestrictions;
   }): Promise<Output> {
-    const resultWithGetters = await this.processQueryResult(
-      results,
+    const resultWithGetters = await this.processQueryResult({
+      queryResult: results,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-      authContext,
-    );
+      workspaceId: authContext.workspace.id,
+      selection,
+    });
 
     await this.commonRecordVisibilityService.applyVisibilityRestrictions({
       records: this.getResultRecords(resultWithGetters),
       flatObjectMetadata,
+      selection,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       authContext,
-      objectsPermissions,
+      recordReadRestrictions,
     });
 
     const executePostQueryHooks = () =>
@@ -373,40 +374,23 @@ export abstract class CommonBaseQueryRunnerService<
   ): Promise<Omit<CommonExtendedQueryRunnerContext, 'commonQueryParser'>> {
     const context = getWorkspaceContext();
 
-    const rolePermissionConfig =
-      queryRunnerContext.rolePermissionConfig ??
-      resolveRolePermissionConfig({
-        authContext: context.authContext,
-        userWorkspaceRoleMap: context.userWorkspaceRoleMap,
-        apiKeyRoleMap: context.apiKeyRoleMap,
-        flatRoleTargetByAgentIdMaps: context.flatRoleTargetByAgentIdMaps,
-      });
-
-    if (!rolePermissionConfig) {
-      throw new CommonQueryRunnerException(
-        'Invalid auth context',
-        CommonQueryRunnerExceptionCode.INVALID_AUTH_CONTEXT,
-        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
-      );
-    }
-
     const repository = isDefined(queryRunnerContext.transactionScope)
       ? queryRunnerContext.transactionScope.getRepository<ObjectRecord>(
           queryRunnerContext.flatObjectMetadata.nameSingular,
-          rolePermissionConfig,
         )
       : this.workspaceOrmManager.getRepository<ObjectRecord>(
           queryRunnerContext.flatObjectMetadata.nameSingular,
-          rolePermissionConfig,
           { useReplica: this.isReadOnly },
         );
 
     return {
       ...queryRunnerContext,
       authContext: context.authContext,
-      rolePermissionConfig,
       repository,
       featureFlagsMap: context.featureFlagsMap,
+      flatFieldMetadataOptionMaps: context.flatFieldMetadataOptionMaps,
+      permissionsPrincipals: context.permissionsPrincipals,
+      recordReadRestrictions: context.recordReadRestrictions,
     };
   }
 
@@ -444,18 +428,32 @@ export abstract class CommonBaseQueryRunnerService<
   protected async runFilteredMutation({
     queryRunnerContext,
     filter,
-    columnsToReturn,
+    selection,
     kind,
     data,
+    shouldWriteAtLeastOneRecord,
   }: {
     queryRunnerContext: CommonExtendedQueryRunnerContext;
     filter: Partial<ObjectRecordFilter>;
-    columnsToReturn: string[];
+    selection: CommonSelection;
     kind: MutationKind;
     data?: Partial<ObjectRecord>;
-  }): Promise<ObjectRecord[]> {
-    const { flatObjectMetadata, commonQueryParser } = queryRunnerContext;
+    shouldWriteAtLeastOneRecord?: boolean;
+  }): Promise<CommonQueryRunResult<ObjectRecord[]>> {
+    const {
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      commonQueryParser,
+    } = queryRunnerContext;
     const alias = flatObjectMetadata.nameSingular;
+
+    const columnsToReturn = buildColumnsToReturn({
+      selection,
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    });
 
     if (isRecordFilterEmpty(filter)) {
       throw new CommonQueryRunnerException(
@@ -479,7 +477,7 @@ export abstract class CommonBaseQueryRunnerService<
         : data;
 
     const { selectQueryBuilder, rowLevelPermissionsApplied } =
-      buildMutationQueryBuilder({
+      await buildMutationQueryBuilder({
         repository: writeRepository,
         alias,
         filter,
@@ -487,13 +485,22 @@ export abstract class CommonBaseQueryRunnerService<
         kind,
       });
 
-    return writeRepository.runMutation({
+    const records = await writeRepository.runMutation({
       selectQueryBuilder,
       rowLevelPermissionsApplied,
       kind,
       columnsToReturn,
       data: resolvedData,
+      shouldWriteAtLeastOneRecord,
     });
+
+    const relationAggregatedValues = await this.processNestedRelations({
+      records,
+      selection,
+      queryRunnerContext,
+    });
+
+    return { result: records, relationAggregatedValues };
   }
 
   protected async resolveNestedRelations({
@@ -556,6 +563,38 @@ export abstract class CommonBaseQueryRunnerService<
       }
 
       return columnKeyedRecord;
+    });
+  }
+
+  protected async processNestedRelations({
+    records,
+    selection,
+    queryRunnerContext,
+    limit = QUERY_MAX_RECORDS_FROM_RELATION,
+    repository,
+  }: {
+    records: ObjectRecord[];
+    selection: CommonSelection;
+    queryRunnerContext: Pick<
+      CommonExtendedQueryRunnerContext,
+      | 'flatObjectMetadataMaps'
+      | 'flatFieldMetadataMaps'
+      | 'flatObjectMetadata'
+      | 'authContext'
+    >;
+    limit?: number;
+    repository?: WorkspaceRepository;
+  }): Promise<CommonRelationsAggregatedValues> {
+    return this.processNestedRelationsHelper.processNestedRelations({
+      flatObjectMetadataMaps: queryRunnerContext.flatObjectMetadataMaps,
+      flatFieldMetadataMaps: queryRunnerContext.flatFieldMetadataMaps,
+      parentObjectMetadataItem: queryRunnerContext.flatObjectMetadata,
+      parentObjectRecords: records,
+      selection,
+      limit,
+      authContext: queryRunnerContext.authContext,
+      repository,
+      ...this.getNestedRelationsReadPathOptions(),
     });
   }
 

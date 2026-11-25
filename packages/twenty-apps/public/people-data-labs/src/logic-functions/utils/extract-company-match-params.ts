@@ -10,9 +10,11 @@ import { pruneUndefined } from 'src/utils/prune-undefined';
 export const extractCompanyMatchParams = ({
   node,
   minLikelihoods,
+  required,
 }: {
   node: CompanyNode;
   minLikelihoods: MinLikelihoods;
+  required?: string;
 }): PdlCompanyEnrichParams | undefined => {
   const existingPdlId = toText(node.pdlId);
   if (isDefined(existingPdlId)) {
@@ -43,5 +45,6 @@ export const extractCompanyMatchParams = ({
     minLikelihood: hasStrongIdentifier
       ? minLikelihoods.strongIdentifierMinLikelihood
       : minLikelihoods.weakIdentifierMinLikelihood,
+    required,
   };
 };

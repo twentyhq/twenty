@@ -1,4 +1,3 @@
-import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { cleanupOrphanedRecallBots } from 'src/logic-functions/flows/cleanup-orphaned-recall-bots.util';
@@ -42,8 +41,8 @@ class FakeCoreApiClient {
   }
 }
 
-const buildClient = (callRecordings: CallRecordingNode[]): CoreApiClient =>
-  new FakeCoreApiClient(callRecordings) as unknown as CoreApiClient;
+const buildClient = (callRecordings: CallRecordingNode[]) =>
+  new FakeCoreApiClient(callRecordings);
 
 const buildAccessToken = (payload: Record<string, unknown>): string =>
   [
@@ -407,8 +406,6 @@ describe('cleanupOrphanedRecallBots', () => {
   });
 
   it('ejects an orphaned bot that already joined when deletion is rejected', async () => {
-    // 409s are retryable, so fake timers skip the cancel backoff sleeps.
-    vi.useFakeTimers();
     stubRecallApi({
       bots: [
         buildCurrentWorkspaceBot({
@@ -416,18 +413,16 @@ describe('cleanupOrphanedRecallBots', () => {
           twentyCallRecordingId: 'call-recording-gone',
         }),
       ],
-      cancelStatus: 409,
+      cancelStatus: 405,
     });
 
-    const resultPromise = cleanupOrphanedRecallBots({
+    const result = await cleanupOrphanedRecallBots({
       client: buildClient([]),
       joinAtAfter: JOIN_AT_AFTER,
       joinAtBefore: JOIN_AT_BEFORE,
     });
 
-    await vi.runAllTimersAsync();
-
-    expect(await resultPromise).toEqual({
+    expect(result).toEqual({
       scannedBotCount: 1,
       truncatedBotList: false,
       canceledExternalBotIds: ['in-call-orphan'],

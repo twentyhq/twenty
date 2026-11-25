@@ -14,12 +14,14 @@ export const TabsTab = ({
   badge,
   highlighted = false,
   size = 'sm',
+  variant = 'plain',
   ...props
 }: TabsTabProps) => (
   <TabsPrimitive.Tab
     {...props}
     className={mergeClassNames(styles.tab, className)}
     data-size={size}
+    data-variant={variant}
     data-highlighted={highlighted || undefined}
   >
     <TabsTabContent startIcon={startIcon} endIcon={endIcon} badge={badge}>

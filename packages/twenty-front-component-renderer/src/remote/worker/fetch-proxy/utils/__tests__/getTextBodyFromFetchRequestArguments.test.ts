@@ -6,12 +6,11 @@ const createRequestInput = ({
 }: {
   headers?: Record<string, string>;
   body?: string;
-}): Request =>
-  ({
-    url: 'https://api.twenty.test/graphql',
-    headers: new Headers(headers),
-    clone: () => ({ text: async () => body ?? '' }),
-  }) as unknown as Request;
+}) => ({
+  url: 'https://api.twenty.test/graphql',
+  headers: new Headers(headers),
+  clone: () => ({ text: async () => body ?? '' }),
+});
 
 describe('getTextBodyFromFetchRequestArguments', () => {
   it('should return the init body when it is a string', async () => {

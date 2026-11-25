@@ -1,5 +1,3 @@
-import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
-
 import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-ui-message-parts-to-db-parts.util';
 
 describe('mapUIMessagePartsToDBParts', () => {
@@ -11,7 +9,7 @@ describe('mapUIMessagePartsToDBParts', () => {
           toolCallId: 'call-1',
           state: 'input-available',
           input: { query: 'acme' },
-        } as unknown as ExtendedUIMessagePart,
+        },
       ],
       'message-id',
     );
@@ -24,6 +22,26 @@ describe('mapUIMessagePartsToDBParts', () => {
     });
   });
 
+  it('stores malformed tool call arguments as an empty input', () => {
+    const [storedPart] = mapUIMessagePartsToDBParts(
+      [
+        {
+          type: 'tool-search',
+          toolCallId: 'call-1',
+          state: 'output-error',
+          input: '{"query": "unescaped " quote"}',
+          errorText: 'Invalid tool input',
+        },
+      ],
+      'message-id',
+    );
+
+    expect(storedPart).toMatchObject({
+      toolInput: {},
+      errorMessage: 'Invalid tool input',
+    });
+  });
+
   it('drops a tool call still streaming its input', () => {
     expect(
       mapUIMessagePartsToDBParts(
@@ -33,7 +51,7 @@ describe('mapUIMessagePartsToDBParts', () => {
             type: 'tool-search',
             toolCallId: 'call-1',
             state: 'input-streaming',
-          } as unknown as ExtendedUIMessagePart,
+          },
         ],
         'message-id',
       ),

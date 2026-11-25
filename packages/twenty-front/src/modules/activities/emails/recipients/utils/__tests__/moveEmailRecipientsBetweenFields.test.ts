@@ -1,7 +1,5 @@
-import {
-  type EmailRecipientsByFieldId,
-  moveEmailRecipientsBetweenFields,
-} from '@/activities/emails/recipients/utils/moveEmailRecipientsBetweenFields';
+import { type EmailRecipientsByFieldId } from '@/activities/emails/recipients/types/EmailRecipientsByFieldId';
+import { moveEmailRecipientsBetweenFields } from '@/activities/emails/recipients/utils/moveEmailRecipientsBetweenFields';
 
 const buildRecipientsByFieldId = (
   overrides: Partial<EmailRecipientsByFieldId> = {},

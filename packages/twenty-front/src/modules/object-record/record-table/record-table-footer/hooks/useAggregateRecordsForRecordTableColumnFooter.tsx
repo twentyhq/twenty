@@ -24,6 +24,7 @@ import { UserContext } from '@/users/contexts/UserContext';
 import { useContext } from 'react';
 import { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from 'twenty-shared/constants';
 import {
+  combineFilters,
   computeRecordGqlOperationFilter,
   findById,
   isDefined,
@@ -31,6 +32,7 @@ import {
   turnAnyFieldFilterIntoRecordGqlFilter,
 } from 'twenty-shared/utils';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
+import { useCurrentViewPresetFilterAsRecordGqlOperationFilter } from '@/views/hooks/useCurrentViewPresetFilterAsRecordGqlOperationFilter';
 
 export const useAggregateRecordsForRecordTableColumnFooter = (
   aggregateFieldMetadataId: string,
@@ -115,14 +117,18 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
       filterValue: anyFieldFilterValue,
     });
 
+  const currentViewPresetFilterAsRecordGqlOperationFilter =
+    useCurrentViewPresetFilterAsRecordGqlOperationFilter();
+
   const { data, loading, refetch } = useAggregateRecords({
     objectNameSingular: objectMetadataItem.nameSingular,
     recordGqlFieldsAggregate,
-    filter: {
-      ...requestFilters,
-      ...recordGroupFilter,
-      ...anyFieldFilter,
-    },
+    filter: combineFilters([
+      requestFilters,
+      recordGroupFilter,
+      anyFieldFilter,
+      currentViewPresetFilterAsRecordGqlOperationFilter,
+    ]),
     skip: !isDefined(aggregateOperationForViewField),
   });
 

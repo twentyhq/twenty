@@ -9,6 +9,8 @@ import {
   recordIndexAllRecordIdsComponentSelector,
 } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
+import { useGetLookupRelationRecordKeys } from '@/object-record/record-column-scope/hooks/useGetLookupRelationRecordKeys';
+import { getRecordsWithLookupRelatedRecords } from '@/object-record/record-column-lookup/utils/getRecordsWithLookupRelatedRecords';
 import { RECORD_TABLE_HORIZONTAL_SCROLL_SHADOW_VISIBILITY_CSS_VARIABLE_NAME } from '@/object-record/record-table/constants/RecordTableHorizontalScrollShadowVisibilityCssVariableName';
 import { RECORD_TABLE_VERTICAL_SCROLL_SHADOW_VISIBILITY_CSS_VARIABLE_NAME } from '@/object-record/record-table/constants/RecordTableVerticalScrollShadowVisibilityCssVariableName';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
@@ -84,6 +86,8 @@ export const useTriggerInitialRecordTableDataLoad = () => {
 
   const { resetTableFocuses } = useResetTableFocuses(recordTableId);
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
+  const getLookupRelationRecordKeys =
+    useGetLookupRelationRecordKeys(recordTableId);
 
   const { loadRecordsAtRowIndexes } = useLoadRecordsAtRowIndexes();
 
@@ -157,7 +161,12 @@ export const useTriggerInitialRecordTableDataLoad = () => {
         );
 
         if (isDefined(records)) {
-          upsertRecordsInStore({ partialRecords: records });
+          upsertRecordsInStore({
+            partialRecords: getRecordsWithLookupRelatedRecords({
+              records: records,
+              lookupRelationRecordKeys: getLookupRelationRecordKeys(),
+            }),
+          });
 
           loadRecordsAtRowIndexes({
             records,
@@ -203,6 +212,7 @@ export const useTriggerInitialRecordTableDataLoad = () => {
       findManyRecordsLazy,
       totalNumberOfRowsCallbackState,
       upsertRecordsInStore,
+      getLookupRelationRecordKeys,
       loadRecordsAtRowIndexes,
       reapplyRowSelection,
       recordTableId,

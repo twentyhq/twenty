@@ -16,7 +16,7 @@ import { useImapSmtpCaldavConnectionForm } from '@/settings/accounts/hooks/useIm
 export const SettingsAccountsNewImapSmtpCaldavConnection = () => {
   const { t } = useLingui();
   const navigate = useNavigateSettings();
-  const accountsBreadcrumbLink = useAccountsSettingsBreadcrumbLink(t`Accounts`);
+  const accountsBreadcrumbLink = useAccountsSettingsBreadcrumbLink();
 
   const {
     formMethods,
@@ -47,7 +47,7 @@ export const SettingsAccountsNewImapSmtpCaldavConnection = () => {
             isSaveDisabled={!canSave}
             isCancelDisabled={isSubmitting}
             isLoading={loading}
-            onCancel={() => navigate(SettingsPath.Accounts)}
+            onCancel={() => navigate(SettingsPath.AppPreferences)}
             onSave={handleSubmit((data) => handleSave(data))}
           />
         }

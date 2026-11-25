@@ -1,21 +1,18 @@
 import { Window } from '@remote-dom/polyfill';
 
 import { setHostEventDispatchTarget } from '@/polyfills/events/utils/setHostEventDispatchTarget';
+import { toDomWindow } from '@/testing/toDomWindow';
 
 import { installHostEventRetargetingPolyfill } from '../installHostEventRetargetingPolyfill';
 
 const createNestedButton = () => {
-  const polyfillWindow = new Window();
-
-  installHostEventRetargetingPolyfill(
-    polyfillWindow.Element.prototype as unknown as EventTarget,
-  );
-
-  const document = polyfillWindow.document as unknown as Document;
+  const domWindow = toDomWindow(new Window());
+  installHostEventRetargetingPolyfill(domWindow.Element.prototype);
+  const document = domWindow.document;
   const container = document.createElement('div');
   const button = document.createElement('button');
   const createEvent = (type: string, eventInit?: EventInit): Event =>
-    new polyfillWindow.Event(type, eventInit) as unknown as Event;
+    new domWindow.Event(type, eventInit);
 
   container.append(button);
   document.body.append(container);

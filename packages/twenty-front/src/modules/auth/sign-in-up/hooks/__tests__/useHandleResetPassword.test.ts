@@ -6,11 +6,9 @@ import { type ReactNode, createElement } from 'react';
 
 import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
-import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
-import { useCaptcha } from '@/client-config/hooks/useCaptcha';
+import { useGetCaptchaToken } from '@/captcha/hooks/useGetCaptchaToken';
 
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { useMutation } from '@apollo/client/react';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { type PublicWorkspaceData } from '~/generated-metadata/graphql';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
@@ -21,9 +19,12 @@ jest.mock('twenty-ui/components/feedback', () => ({
   ...jest.requireActual('twenty-ui/components/feedback'),
   useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
-jest.mock('@apollo/client/react');
-jest.mock('@/captcha/hooks/useReadCaptchaToken');
-jest.mock('@/client-config/hooks/useCaptcha');
+const mockUseMutation = jest.fn();
+
+jest.mock('@apollo/client/react', () => ({
+  useMutation: () => mockUseMutation(),
+}));
+jest.mock('@/captcha/hooks/useGetCaptchaToken');
 
 dynamicActivate(SOURCE_LOCALE);
 
@@ -63,12 +64,9 @@ describe('useHandleResetPassword', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    (useMutation as unknown as jest.Mock).mockReturnValue([
-      emailPasswordResetLinkMock,
-    ]);
-    (useCaptcha as jest.Mock).mockReturnValue({ isCaptchaReady: true });
-    (useReadCaptchaToken as jest.Mock).mockReturnValue({
-      readCaptchaToken: () => 'mock-captcha-token',
+    mockUseMutation.mockReturnValue([emailPasswordResetLinkMock]);
+    jest.mocked(useGetCaptchaToken).mockReturnValue({
+      getCaptchaToken: async () => 'mock-captcha-token',
     });
   });
 
@@ -123,19 +121,6 @@ describe('useHandleResetPassword', () => {
       children:
         'If this email is registered, a password reset link has been sent',
     });
-  });
-
-  it('should show error message if captcha is not ready', async () => {
-    (useCaptcha as jest.Mock).mockReturnValue({ isCaptchaReady: false });
-
-    const { result } = renderHooks();
-    await act(() => result.current.handleResetPassword('test@example.com')());
-
-    expect(mockEnqueueToast).toHaveBeenCalledWith({
-      status: 'error',
-      children: 'Captcha (anti-bot check) is still loading, try again',
-    });
-    expect(emailPasswordResetLinkMock).not.toHaveBeenCalled();
   });
 
   it('should show error message if sending reset link fails', async () => {

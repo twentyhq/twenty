@@ -13,11 +13,11 @@ import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSke
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetAccessDenialInfo';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { type CallRecordingParsedTranscriptEntry } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledRecordingLayout = styled.div<{ hasTranscriptEntries: boolean }>`
   display: ${({ hasTranscriptEntries }) =>
@@ -56,6 +56,7 @@ export const CallRecordingTranscriptBody = ({
   restriction,
   refetchCallRecording,
 }: CallRecordingTranscriptBodyProps) => {
+  const { t } = useLingui();
   const widget = useCurrentWidget();
   const [mediaElement, setMediaElement] = useState<HTMLMediaElement | null>(
     null,

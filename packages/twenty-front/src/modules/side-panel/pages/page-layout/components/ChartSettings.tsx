@@ -16,7 +16,6 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { hasWidgetTooManyGroupsComponentState } from '@/page-layout/widgets/graph/states/hasWidgetTooManyGroupsComponentState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isFieldMetadataDateKind } from 'twenty-shared/utils';
 
 import { GraphType } from '@/side-panel/pages/page-layout/types/GraphType';
@@ -24,6 +23,7 @@ import { assertChartWidgetOrThrow } from '@/side-panel/pages/page-layout/utils/a
 import { getCurrentGraphTypeFromConfig } from '@/side-panel/pages/page-layout/utils/getCurrentGraphTypeFromConfig';
 import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledSidePanelContainer = styled.div`
   display: flex;
@@ -33,6 +33,7 @@ const StyledSidePanelContainer = styled.div`
 `;
 
 export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
+  const { t } = useLingui();
   const { updateSidePanelPageInfo } = useUpdateSidePanelPageInfo();
   const { pageLayoutId } = usePageLayoutSidePanelTarget();
   const { updateCurrentWidgetConfig } =

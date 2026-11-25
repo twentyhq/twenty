@@ -2,8 +2,8 @@ import { RuleTester } from 'oxlint/plugins-dev';
 
 import { rule, RULE_NAME } from './application-target-guards';
 
-const PRINCIPAL_GUARD =
-  'AuthPrincipalGuard({ userSession: true, apiKey: true, oauthClient: true, application: true })';
+const ACCESS_POLICY_GUARD =
+  'AccessPolicyGuard({ authPrincipals: { userSession: true, apiKey: true, oauthClient: true, application: true }, requiredPermissionFlags: [] })';
 
 const targetArg = (requireApplicationRegistrationOwnership: string) =>
   `@ApplicationTargetArg('id', { kind: 'applicationRegistrationId', requireApplicationRegistrationOwnership: ${requireApplicationRegistrationOwnership} }) id: string`;
@@ -16,7 +16,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         class TestResolver {
           @Query()
-          @UseGuards(${PRINCIPAL_GUARD}, SettingsPermissionGuard(PermissionFlagType.APPLICATIONS), ApplicationTargetGuard)
+          @UseGuards(AccessPolicyGuard(APPLICATION_WRITE_ACCESS_POLICY), ApplicationTargetGuard)
           testQuery(${targetArg('true')}) {}
         }
       `,
@@ -24,7 +24,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        @UseGuards(${PRINCIPAL_GUARD}, NoPermissionGuard)
+        @UseGuards(${ACCESS_POLICY_GUARD}, NoPermissionGuard)
         class TestResolver {
           @Mutation()
           @UseGuards(ApplicationTargetGuard)
@@ -36,9 +36,9 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         class TestResolver {
-          @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS), ApplicationTargetGuard)
+          @UseGuards(CustomPermissionGuard, ApplicationTargetGuard)
           @Query()
-          @UseGuards(${PRINCIPAL_GUARD})
+          @UseGuards(${ACCESS_POLICY_GUARD})
           testQuery(${targetArg('false')}) {}
         }
       `,
@@ -58,7 +58,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         class TestResolver {
           @Query()
-          @UseGuards(${PRINCIPAL_GUARD}, NoPermissionGuard)
+          @UseGuards(${ACCESS_POLICY_GUARD}, NoPermissionGuard)
           testQuery(@Args('id') id: string) {}
         }
       `,
@@ -78,7 +78,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         class TestResolver {
           @Query()
-          @UseGuards(${PRINCIPAL_GUARD}, NoPermissionGuard)
+          @UseGuards(${ACCESS_POLICY_GUARD}, NoPermissionGuard)
           testQuery(${targetArg('true')}) {}
         }
       `,
@@ -89,7 +89,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         class TestResolver {
           @Query()
-          @UseGuards(${PRINCIPAL_GUARD}, ApplicationTargetGuard, NoPermissionGuard)
+          @UseGuards(${ACCESS_POLICY_GUARD}, ApplicationTargetGuard, NoPermissionGuard)
           testQuery(${targetArg('false')}) {}
         }
       `,
@@ -99,9 +99,9 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         class TestResolver {
-          @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
+          @UseGuards(CustomPermissionGuard)
           @Query()
-          @UseGuards(${PRINCIPAL_GUARD}, ApplicationTargetGuard)
+          @UseGuards(${ACCESS_POLICY_GUARD}, ApplicationTargetGuard)
           testQuery(${targetArg('false')}) {}
         }
       `,
@@ -112,7 +112,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         class TestResolver {
           @Query()
-          @UseGuards(${PRINCIPAL_GUARD}, ApplicationTargetGuard, ApplicationTargetGuard)
+          @UseGuards(${ACCESS_POLICY_GUARD}, ApplicationTargetGuard, ApplicationTargetGuard)
           testQuery(${targetArg('true')}) {}
         }
       `,
@@ -121,7 +121,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        @UseGuards(${PRINCIPAL_GUARD}, NoPermissionGuard, ApplicationTargetGuard)
+        @UseGuards(${ACCESS_POLICY_GUARD}, NoPermissionGuard, ApplicationTargetGuard)
         class TestResolver {
           @Query()
           testQuery(${targetArg('false')}) {}
@@ -137,7 +137,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         class TestResolver {
           @Query()
-          @UseGuards(${PRINCIPAL_GUARD}, NoPermissionGuard, ApplicationTargetGuard)
+          @UseGuards(${ACCESS_POLICY_GUARD}, NoPermissionGuard, ApplicationTargetGuard)
           testQuery(@Args('id') id: string) {}
         }
       `,
@@ -148,7 +148,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         class TestResolver {
           @Query()
-          @UseGuards(${PRINCIPAL_GUARD}, NoPermissionGuard, ApplicationTargetGuard)
+          @UseGuards(${ACCESS_POLICY_GUARD}, NoPermissionGuard, ApplicationTargetGuard)
           testQuery(${targetArg('requiresOwnership')}) {}
         }
       `,

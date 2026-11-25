@@ -6,7 +6,7 @@ import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/get
 import { useOpenNewRecordTitleCell } from '@/object-record/record-title-cell/hooks/useOpenNewRecordTitleCell';
 import { newRecordTitleCellToOpenState } from '@/object-record/record-title-cell/states/newRecordTitleCellToOpenState';
 import { setRecordPageActiveTabId } from '@/page-layout/utils/setRecordPageActiveTabId';
-import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
+import { AppPath, StandardObjectNameSingular } from 'twenty-shared/types';
 
 import { useRunWorkflowRunOpeningInSidePanelEffects } from '@/workflow/hooks/useRunWorkflowRunOpeningInSidePanelEffects';
 import { t } from '@lingui/core/macro';
@@ -143,7 +143,7 @@ export const useOpenRecordInSidePanel = () => {
         return null;
       }
 
-      if (objectNameSingular === CoreObjectNameSingular.WorkflowRun) {
+      if (objectNameSingular === StandardObjectNameSingular.WorkflowRun) {
         runWorkflowRunOpeningInSidePanelEffects({
           objectMetadataItem,
           recordId,

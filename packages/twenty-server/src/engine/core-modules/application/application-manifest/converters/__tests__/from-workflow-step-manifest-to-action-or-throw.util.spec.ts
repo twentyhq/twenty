@@ -145,6 +145,10 @@ const inputs = {
     agentUniversalIdentifier: REFERENCE_ID,
     prompt: 'Summarize {{trigger.text}}',
   },
+  CODE: {
+    code: 'export const main = async (params: { text: string }) => ({ length: params.text.length });',
+    logicFunctionInput: { text: '{{trigger.text}}' },
+  },
   SEND_CHAT_MESSAGE: {
     workspaceMemberId: '{{trigger.assigneeId}}',
     title: 'Approve',
@@ -181,17 +185,29 @@ const stepFor = (type: WorkflowStepManifest['type']) =>
 const convert = (type: WorkflowStepManifest['type']) =>
   fromWorkflowStepManifestToActionOrThrow({
     step: stepFor(type),
-    index: 0,
     references,
   });
 
 describe('application workflow actions', () => {
+  it('keeps a declared position and leaves an undeclared one unset', () => {
+    const step = stepFor(WorkflowActionType.LOGIC_FUNCTION);
+
+    expect(convert(WorkflowActionType.LOGIC_FUNCTION)).not.toHaveProperty(
+      'position',
+    );
+    expect(
+      fromWorkflowStepManifestToActionOrThrow({
+        step: { ...step, position: { x: 4, y: 2 } },
+        references,
+      }).position,
+    ).toEqual({ x: 4, y: 2 });
+  });
+
   it('derives a nested function output schema from an expected result', () => {
     const step = stepFor(WorkflowActionType.LOGIC_FUNCTION);
     step.expectedOutputSchema = { company: { name: 'Example' }, count: 2 };
     const result = fromWorkflowStepManifestToActionOrThrow({
       step,
-      index: 0,
       references,
     });
     expect(result.settings.outputSchema).toMatchObject({
@@ -211,7 +227,6 @@ describe('application workflow actions', () => {
     };
     const result = fromWorkflowStepManifestToActionOrThrow({
       step: stepFor(WorkflowActionType.LOGIC_FUNCTION),
-      index: 0,
       references: {
         ...references,
         logicFunctionOutputSchemaByUniversalIdentifier: new Map([
@@ -227,10 +242,93 @@ describe('application workflow actions', () => {
     Object.values(WorkflowActionType).filter(
       (type) =>
         type !== WorkflowActionType.CODE &&
+        type !== WorkflowActionType.MCP_TOOL &&
         type !== WorkflowActionType.SEND_CHAT_MESSAGE,
     ),
   )('converts %s to its runtime action', (type) => {
     expect(convert(type)).toMatchObject({ id: STEP_ID, type, valid: true });
+  });
+
+  it('keeps an agent step that carries its own config as is, with no agent to resolve', () => {
+    const input = {
+      instructions: 'Qualify the lead.',
+      modelId: 'auto-select-workspace-default-model',
+      scope: {
+        objectPermissions: [
+          {
+            objectUniversalIdentifier: REFERENCE_ID,
+            canReadObjectRecords: true,
+          },
+        ],
+      },
+      prompt: 'Qualify {{trigger.name}}',
+    };
+    const result = fromWorkflowStepManifestToActionOrThrow({
+      step: workflowStepManifestSchema.parse({
+        universalIdentifier: STEP_ID,
+        name: 'Qualify',
+        type: 'AI_AGENT',
+        input,
+        nextStepIds: [],
+      }),
+      references: { ...references, agentIdByUniversalIdentifier: new Map() },
+    });
+
+    expect(result.settings.input).toEqual(input);
+    expect(result.settings.outputSchema).toMatchObject({
+      response: { type: 'string' },
+    });
+  });
+
+  it.each([
+    {
+      case: 'an object that is not available',
+      scope: {
+        objectPermissions: [
+          { objectUniversalIdentifier: LOCAL_ID, canReadObjectRecords: true },
+        ],
+      },
+      error: 'missing object',
+    },
+    {
+      case: 'a field that is not available',
+      scope: {
+        fieldPermissions: [
+          {
+            objectUniversalIdentifier: REFERENCE_ID,
+            fieldUniversalIdentifier: LOCAL_ID,
+            canReadFieldValue: false,
+          },
+        ],
+      },
+      error: 'missing field',
+    },
+    {
+      case: 'a field of another object',
+      scope: {
+        fieldPermissions: [
+          {
+            objectUniversalIdentifier: LOCAL_ID,
+            fieldUniversalIdentifier: FIELD_ID,
+            canReadFieldValue: false,
+          },
+        ],
+      },
+      error: 'does not belong',
+    },
+  ])('rejects a step scope naming $case', ({ scope, error }) => {
+    expect(() =>
+      fromWorkflowStepManifestToActionOrThrow({
+        step: workflowStepManifestSchema.parse({
+          universalIdentifier: STEP_ID,
+          name: 'Qualify',
+          type: 'AI_AGENT',
+          input: { prompt: 'Qualify {{trigger.name}}', scope },
+          nextStepIds: [],
+        }),
+        references,
+      }),
+    ).toThrow(error);
   });
 
   it('resolves functions, agents, objects and filter fields', () => {
@@ -260,10 +358,11 @@ describe('application workflow actions', () => {
           },
         ],
       },
-      orderBy: {
-        recordSorts: [{ fieldMetadataId: LOCAL_ID, direction: 'ASC' }],
-        gqlOperationOrderBy: [{ owner: 'AscNullsLast' }],
-      },
+    });
+    expect(
+      convert(WorkflowActionType.FIND_RECORDS).settings.input,
+    ).toHaveProperty('orderBy', {
+      recordSorts: [{ fieldMetadataId: LOCAL_ID, direction: 'ASC' }],
     });
     expect(
       convert(WorkflowActionType.PICK_RECORD).settings.input,
@@ -295,7 +394,6 @@ describe('application workflow actions', () => {
           type: 'SELECT',
           settings: { selectedFieldUniversalIdentifier: RECORD_FILTER_ID },
         }),
-        index: 0,
         references,
       }),
     ).toThrow('missing field');
@@ -305,7 +403,6 @@ describe('application workflow actions', () => {
           type: 'MULTI_SELECT',
           settings: { selectedFieldUniversalIdentifier: SELECT_FIELD_ID },
         }),
-        index: 0,
         references,
       }),
     ).toThrow('must reference a MULTI_SELECT field');
@@ -336,8 +433,8 @@ describe('application workflow actions', () => {
     });
 
     expect(
-      fromWorkflowStepManifestToActionOrThrow({ step, index: 0, references })
-        .settings.input,
+      fromWorkflowStepManifestToActionOrThrow({ step, references }).settings
+        .input,
     ).toMatchObject({
       filter: {
         recordFilters: [
@@ -359,14 +456,12 @@ describe('application workflow actions', () => {
     expect(() =>
       fromWorkflowStepManifestToActionOrThrow({
         step: stepFor(WorkflowActionType.AI_AGENT),
-        index: 0,
         references: { ...references, agentIdByUniversalIdentifier: new Map() },
       }),
     ).toThrow('missing application agent');
     expect(() =>
       fromWorkflowStepManifestToActionOrThrow({
         step: stepFor(WorkflowActionType.FIND_RECORDS),
-        index: 0,
         references: {
           ...references,
           fieldByUniversalIdentifier: new Map([
@@ -436,7 +531,6 @@ describe('application workflow actions', () => {
           input: { ...input, connectedAccountHandle: handle },
           nextStepIds: [],
         }),
-        index: 0,
         references: { ...references, connectedAccounts: accounts },
       }).settings.input;
     };
@@ -495,7 +589,6 @@ describe('application workflow actions', () => {
             input: { ...email, connectedAccountId },
             nextStepIds: [],
           }),
-          index: 0,
           references: { ...references, connectedAccounts },
         }).settings.input,
       ).toMatchObject({ connectedAccountId });
@@ -536,6 +629,12 @@ describe('application workflow actions', () => {
     });
   });
 
+  it('keeps the source of a code step as written, with no logic function', () => {
+    expect(convert(WorkflowActionType.CODE).settings.input).toEqual(
+      inputs.CODE,
+    );
+  });
+
   it('preserves branches, loop entries, outputs and error handling', () => {
     expect(convert(WorkflowActionType.IF_ELSE).settings.input).toEqual(
       inputs.IF_ELSE,
@@ -554,7 +653,6 @@ describe('application workflow actions', () => {
     };
     const action = fromWorkflowStepManifestToActionOrThrow({
       step,
-      index: 0,
       references,
     });
     expect(action.settings).toMatchObject({

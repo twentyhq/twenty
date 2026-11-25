@@ -6,7 +6,9 @@ export const makeAndFilterVariables = (
 ): RecordGqlOperationFilter | undefined => {
   const definedFilters = filters.filter(isDefined);
 
-  if (!definedFilters.length) return undefined;
+  if (!definedFilters.length) {
+    return undefined;
+  }
 
   return definedFilters.length === 1
     ? definedFilters[0]

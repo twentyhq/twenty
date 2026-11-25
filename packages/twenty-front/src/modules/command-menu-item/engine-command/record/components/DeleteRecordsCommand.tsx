@@ -1,9 +1,5 @@
 import { DeleteCoreWorkflowsCommand } from '@/object-core/workflows/components/DeleteCoreWorkflowsCommand';
-import { t } from '@lingui/core/macro';
-import {
-  CoreObjectNameSingular,
-  type RecordGqlOperationFilter,
-} from 'twenty-shared/types';
+import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useRemoveNavigationMenuItemByTargetRecordId } from '@/navigation-menu-item/common/hooks/useRemoveNavigationMenuItemByTargetRecordId';
@@ -16,8 +12,10 @@ import { useResetRecordSelection } from '@/object-record/record-selection/hooks/
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
+import { useLingui } from '@lingui/react/macro';
 
 const DeleteWorkspaceRecordsCommand = () => {
+  const { t } = useLingui();
   const { recordIndexId, objectMetadataItem, selectedRecords, graphqlFilter } =
     useHeadlessCommandContextApi();
 
@@ -84,9 +82,8 @@ const DeleteWorkspaceRecordsCommand = () => {
 };
 
 export const DeleteRecordsCommand = () => {
-  const { objectMetadataItem } = useHeadlessCommandContextApi();
-  return objectMetadataItem?.nameSingular ===
-    CoreObjectNameSingular.Workflow ? (
+  const { coreObjectName } = useHeadlessCommandContextApi();
+  return coreObjectName === 'workflow' ? (
     <DeleteCoreWorkflowsCommand />
   ) : (
     <DeleteWorkspaceRecordsCommand />

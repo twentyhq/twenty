@@ -11,7 +11,7 @@ import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticat
 import { type MetadataCursorPagination } from 'src/engine/metadata-modules/pagination/types/metadata-cursor-pagination.type';
 
 export const parseMetadataRestPagination = (
-  request: AuthenticatedRequest,
+  request: Pick<AuthenticatedRequest, 'query'>,
 ): MetadataCursorPagination => {
   const startingAfter = parseStartingAfterRestRequest(request);
   const endingBefore = parseEndingBeforeRestRequest(request);

@@ -11,6 +11,7 @@ import { ApplicationOAuthResolver } from 'src/engine/core-modules/application/ap
 import { OAuthDiscoveryController } from 'src/engine/core-modules/application/application-oauth/controllers/oauth-discovery.controller';
 import { OAuthRegistrationController } from 'src/engine/core-modules/application/application-oauth/controllers/oauth-registration.controller';
 import { OAuthTokenController } from 'src/engine/core-modules/application/application-oauth/controllers/oauth-token.controller';
+import { OAuthClientRegistrationModule } from 'src/engine/core-modules/application/application-oauth/oauth-client-registration/oauth-client-registration.module';
 import { OAuthService } from 'src/engine/core-modules/application/application-oauth/oauth.service';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
@@ -28,6 +29,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
       UserWorkspaceEntity,
     ]),
     ApplicationRegistrationModule,
+    OAuthClientRegistrationModule,
     ApplicationAuthorizationModule,
     ApplicationCoreModule,
     ApplicationInstallModule,

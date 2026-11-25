@@ -15,12 +15,18 @@ describe('enrichCompanies', () => {
   });
 
   it('posts every record to the company bulk endpoint with only the provided params', async () => {
-    await enrichCompanies([{ website: 'acme.com' }, { pdlId: 'abc' }]);
+    await enrichCompanies([
+      { website: 'acme.com', required: 'industry AND employee_count' },
+      { pdlId: 'abc' },
+    ]);
 
     expect(postPdlBulkEnrichMock).toHaveBeenCalledTimes(1);
     expect(postPdlBulkEnrichMock).toHaveBeenCalledWith({
       path: '/company/enrich/bulk',
-      requests: [{ website: 'acme.com' }, { pdl_id: 'abc' }],
+      requests: [
+        { website: 'acme.com', required: 'industry AND employee_count' },
+        { pdl_id: 'abc' },
+      ],
     });
   });
 });

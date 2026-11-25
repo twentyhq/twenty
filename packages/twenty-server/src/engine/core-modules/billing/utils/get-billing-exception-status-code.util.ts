@@ -17,6 +17,7 @@ export const getBillingExceptionStatusCode = (
     case BillingExceptionCode.BILLING_SUBSCRIPTION_ITEM_NOT_FOUND:
     case BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_FOUND:
     case BillingExceptionCode.BILLING_CREDIT_GRANT_NOT_FOUND:
+    case BillingExceptionCode.BILLING_ARRANGEMENT_NOT_FOUND:
       return 404;
     case BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_IN_TRIAL_PERIOD:
     case BillingExceptionCode.BILLING_MISSING_REQUEST_BODY:
@@ -25,9 +26,17 @@ export const getBillingExceptionStatusCode = (
     case BillingExceptionCode.BILLING_CREDIT_GRANT_TYPE_NOT_GRANTABLE:
     case BillingExceptionCode.BILLING_SUBSCRIPTION_ALREADY_EXISTS:
     case BillingExceptionCode.BILLING_PLAN_NOT_ALLOWED:
+    case BillingExceptionCode.BILLING_PARTNER_CODE_INVALID:
+    case BillingExceptionCode.BILLING_PARTNER_CODE_LOCKED:
+    case BillingExceptionCode.BILLING_PARTNER_CODE_NOT_ELIGIBLE:
+    case BillingExceptionCode.BILLING_ARRANGEMENT_INVALID:
+    case BillingExceptionCode.BILLING_ARRANGEMENT_OVERLAP:
+    case BillingExceptionCode.BILLING_ARRANGEMENT_NOT_MANAGEABLE:
+    case BillingExceptionCode.BILLING_ARRANGEMENT_SEAT_CAP_BELOW_MEMBERS:
       return 400;
     case BillingExceptionCode.BILLING_SUBSCRIPTION_INACTIVE:
     case BillingExceptionCode.BILLING_UPGRADE_INVOICE_PAYMENT_FAILED:
+    case BillingExceptionCode.BILLING_SEAT_LIMIT_REACHED:
       return 402;
     case BillingExceptionCode.BILLING_CUSTOMER_EVENT_WORKSPACE_NOT_FOUND:
     case BillingExceptionCode.BILLING_PRICE_NOT_FOUND:

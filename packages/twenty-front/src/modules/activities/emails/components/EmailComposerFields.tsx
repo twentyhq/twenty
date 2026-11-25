@@ -1,17 +1,12 @@
 import { EmailOperation } from 'twenty-shared/types';
 import { useQuery } from '@apollo/client/react';
-import { DragDropProvider } from '@dnd-kit/react';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import {
   canConnectedAccountPerformEmailOperation,
-  getSendableEmailHandles,
   isDefined,
 } from 'twenty-shared/utils';
 import { IconPaperclip } from 'twenty-ui/icon';
-import { useRef } from 'react';
-import { flushSync } from 'react-dom';
 import { LightButton } from 'twenty-ui/components/input';
 import { Input } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -21,22 +16,16 @@ import { ComposerHeader } from '@/activities/components/ComposerHeader';
 import { EmailAttachmentsField } from '@/activities/emails/components/EmailAttachmentsField';
 import { INLINE_EMAIL_BODY_EDITOR_PROFILE } from '@/activities/emails/editor/constants/InlineEmailBodyEditorProfile';
 import { useUploadEmailImage } from '@/activities/emails/hooks/useUploadEmailImage';
-import { EmailRecipientsFieldInput } from '@/activities/emails/recipients/components/EmailRecipientsFieldInput';
-import { useEmailRecipientsDragAndDrop } from '@/activities/emails/recipients/hooks/useEmailRecipientsDragAndDrop';
+import { EmailRecipientsFields } from '@/activities/emails/recipients/components/EmailRecipientsFields';
 import { type EmailComposerContextRecord } from '@/activities/emails/recipients/types/EmailComposerContextRecord';
-import { type EmailRecipientDragData } from '@/activities/emails/recipients/types/EmailRecipientDragData';
-import { type EmailRecipientsFieldId } from '@/activities/emails/recipients/types/EmailRecipientsFieldId';
-import { getEmailRecipientKey } from '@/activities/emails/recipients/utils/getEmailRecipientKey';
-import { type EmailRecipientsByFieldId } from '@/activities/emails/recipients/utils/moveEmailRecipientsBetweenFields';
+import { type AppReplyTarget } from '@/activities/emails/types/AppReplyTarget';
 import { type EmailComposerState } from '@/activities/emails/types/EmailComposerState';
+import { getEmailComposerSenderPicker } from '@/activities/emails/utils/getEmailComposerSenderPicker';
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
-import { buildConnectedAccountSenderOptions } from '@/accounts/utils/buildConnectedAccountSenderOptions';
 import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
 import { Select } from '@/ui/input/components/Select';
-import { DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION } from '@/ui/utilities/drag-and-drop/constants/DndKitProviderPluginsWithoutDropAnimation';
-import { DND_KIT_SENSORS } from '@/ui/utilities/drag-and-drop/constants/DndKitSensors';
-import { DragDropItemDndContext } from '@/ui/utilities/drag-and-drop/context/DragDropItemDndContext';
 import { GET_MY_CONNECTED_ACCOUNTS } from '@/settings/accounts/graphql/queries/getMyConnectedAccounts';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledFieldsContainer = styled.div`
   display: flex;
@@ -76,14 +65,16 @@ type EmailComposerFieldsProps = {
   contextRecord?: EmailComposerContextRecord | null;
   // For surfaces without a composer footer of their own.
   onAttachFiles?: () => void;
+  appSender?: Pick<AppReplyTarget, 'connectedAccountId' | 'handle'> | null;
 };
 
 export const EmailComposerFields = ({
   composerState,
   contextRecord,
   onAttachFiles,
+  appSender,
 }: EmailComposerFieldsProps) => {
-  const ccInputRef = useRef<HTMLInputElement>(null);
+  const { t } = useLingui();
   const { uploadEmailImage } = useUploadEmailImage();
   const { data: accountsData } = useQuery<{
     myConnectedAccounts: Pick<
@@ -100,168 +91,57 @@ export const EmailComposerFields = ({
       }),
   );
 
-  const senderOptions = buildConnectedAccountSenderOptions(sendableAccounts);
+  const {
+    options: senderOptions,
+    selectedValue: selectedSenderValue,
+    getSenderForValue,
+  } = getEmailComposerSenderPicker({
+    sendableAccounts,
+    appSender,
+    sender: composerState,
+  });
 
   const hasMultipleSenders = senderOptions.length > 1;
 
-  const selectedAccount = sendableAccounts.find(
-    (account) => account.id === composerState.connectedAccountId,
-  );
+  const handleSenderChange = (value: string) => {
+    const nextSender = getSenderForValue(value);
 
-  const selectedSenderValue =
-    composerState.fromHandle ?? selectedAccount?.handle;
-
-  const handleSenderChange = (handle: string) => {
-    const senderAccount = sendableAccounts.find((account) =>
-      getSendableEmailHandles(account).includes(handle),
-    );
-
-    if (!isDefined(senderAccount)) {
-      return;
+    if (isDefined(nextSender)) {
+      composerState.setSender(nextSender);
     }
-
-    composerState.setSender({
-      connectedAccountId: senderAccount.id,
-      fromHandle: handle,
-    });
-  };
-
-  const allRecipientKeys = [
-    ...composerState.to,
-    ...composerState.cc,
-    ...composerState.bcc,
-  ].map((recipient) => getEmailRecipientKey(recipient.address));
-
-  const recipientsByFieldId: EmailRecipientsByFieldId = {
-    to: composerState.to,
-    cc: composerState.cc,
-    bcc: composerState.bcc,
-  };
-
-  const handleRecipientsByFieldIdChange = (
-    nextRecipientsByFieldId: EmailRecipientsByFieldId,
-  ) => {
-    composerState.setTo(nextRecipientsByFieldId.to);
-    composerState.setCc(nextRecipientsByFieldId.cc);
-    composerState.setBcc(nextRecipientsByFieldId.bcc);
-
-    if (
-      nextRecipientsByFieldId.cc.length > 0 ||
-      nextRecipientsByFieldId.bcc.length > 0
-    ) {
-      composerState.setShowCcBcc(true);
-    }
-  };
-
-  const { contextValues, draggedRecipients, handlers } =
-    useEmailRecipientsDragAndDrop({
-      recipientsByFieldId,
-      onRecipientsByFieldIdChange: handleRecipientsByFieldIdChange,
-    });
-
-  const isDraggingRecipients = isDefined(draggedRecipients);
-
-  const getDraggedIndicesForField = (fieldId: EmailRecipientsFieldId) =>
-    draggedRecipients?.fieldId === fieldId ? draggedRecipients.indices : null;
-
-  const areCcBccFieldsVisible = composerState.showCcBcc || isDraggingRecipients;
-
-  const handleShowCcBcc = () => {
-    flushSync(() => composerState.setShowCcBcc(true));
-    ccInputRef.current?.focus();
   };
 
   return (
     <StyledFieldsContainer>
-      <DragDropItemDndContext.Provider value={contextValues}>
-        <DragDropProvider<EmailRecipientDragData>
-          sensors={DND_KIT_SENSORS}
-          plugins={DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION}
-          onDragStart={handlers.onDragStart}
-          onDragMove={handlers.onDragMove}
-          onDragEnd={handlers.onDragEnd}
-        >
-          <ComposerHeader>
-            {hasMultipleSenders && (
-              <ComposerFieldRow label={t`From`}>
-                <Select
-                  dropdownId="email-composer-from-account"
-                  fullWidth
-                  variant="transparent"
-                  value={selectedSenderValue}
-                  options={senderOptions}
-                  onChange={handleSenderChange}
-                />
-              </ComposerFieldRow>
-            )}
-            <ComposerFieldRow
-              label={t`To`}
-              trailing={
-                !areCcBccFieldsVisible && (
-                  <LightButton
-                    emphasis="subtle"
-                    size="sm"
-                    onClick={handleShowCcBcc}
-                  >
-                    {t`Cc/Bcc`}
-                  </LightButton>
-                )
-              }
-            >
-              <EmailRecipientsFieldInput
-                fieldId="to"
-                draggedSourceIndices={getDraggedIndicesForField('to')}
-                label={t`To`}
-                recipients={composerState.to}
-                onChange={composerState.setTo}
-                onSubmit={composerState.handleSend}
-                excludedSuggestionKeys={allRecipientKeys}
-                contextRecord={contextRecord}
-              />
-            </ComposerFieldRow>
-            {areCcBccFieldsVisible && (
-              <>
-                <ComposerFieldRow label={t`Cc`}>
-                  <EmailRecipientsFieldInput
-                    fieldId="cc"
-                    inputRef={ccInputRef}
-                    draggedSourceIndices={getDraggedIndicesForField('cc')}
-                    label={t`Cc`}
-                    recipients={composerState.cc}
-                    onChange={composerState.setCc}
-                    onSubmit={composerState.handleSend}
-                    excludedSuggestionKeys={allRecipientKeys}
-                    contextRecord={contextRecord}
-                  />
-                </ComposerFieldRow>
-                <ComposerFieldRow label={t`Bcc`}>
-                  <EmailRecipientsFieldInput
-                    fieldId="bcc"
-                    draggedSourceIndices={getDraggedIndicesForField('bcc')}
-                    label={t`Bcc`}
-                    recipients={composerState.bcc}
-                    onChange={composerState.setBcc}
-                    onSubmit={composerState.handleSend}
-                    excludedSuggestionKeys={allRecipientKeys}
-                    contextRecord={contextRecord}
-                  />
-                </ComposerFieldRow>
-              </>
-            )}
-            <ComposerFieldRow label={t`Subject`} hasDivider={false}>
-              <Input
-                variant="plain"
-                type="text"
-                aria-label={t`Subject`}
-                defaultValue={composerState.initialSubject}
-                onChange={(event) =>
-                  composerState.setSubject(event.target.value)
-                }
-              />
-            </ComposerFieldRow>
-          </ComposerHeader>
-        </DragDropProvider>
-      </DragDropItemDndContext.Provider>
+      <ComposerHeader>
+        {hasMultipleSenders && (
+          <ComposerFieldRow label={t`From`}>
+            <Select
+              dropdownId="email-composer-from-account"
+              fullWidth
+              variant="transparent"
+              value={selectedSenderValue}
+              options={senderOptions}
+              onChange={handleSenderChange}
+            />
+          </ComposerFieldRow>
+        )}
+        <EmailRecipientsFields
+          recipientsByFieldId={composerState.recipientsByFieldId}
+          onChange={composerState.setRecipientsByFieldId}
+          onSubmit={composerState.handleSend}
+          contextRecord={contextRecord}
+        />
+        <ComposerFieldRow label={t`Subject`} hasDivider={false}>
+          <Input
+            variant="plain"
+            type="text"
+            aria-label={t`Subject`}
+            value={composerState.subject}
+            onChange={(event) => composerState.setSubject(event.target.value)}
+          />
+        </ComposerFieldRow>
+      </ComposerHeader>
       {composerState.exceedsRecipientLimit && (
         <StyledRecipientLimitWarning>
           {t`Too many recipients (${composerState.recipientCount}/${composerState.maxRecipients}).`}
@@ -269,7 +149,7 @@ export const EmailComposerFields = ({
       )}
       <StyledBody>
         <FormAdvancedTextFieldInput
-          defaultValue={composerState.initialBody}
+          value={composerState.body}
           onChange={composerState.setBody}
           profile={INLINE_EMAIL_BODY_EDITOR_PROFILE}
           onImageUpload={uploadEmailImage}

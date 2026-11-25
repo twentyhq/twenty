@@ -1,16 +1,17 @@
 import { triggerAttachRelationOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerAttachRelationOptimisticEffect';
 import { triggerDestroyRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDestroyRecordsOptimisticEffect';
 import { triggerDetachRelationOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDetachRelationOptimisticEffect';
+import { invalidateCachedRelationsWithArguments } from '@/apollo/optimistic-effect/utils/invalidateCachedRelationsWithArguments';
 import {
-  CoreObjectNameSingular,
   FieldMetadataType,
+  type ObjectRecordsPermissions,
   RelationType,
-  type ObjectPermissions,
 } from 'twenty-shared/types';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
+import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { type RecordGqlConnectionEdgesRequired } from '@/object-record/graphql/types/RecordGqlConnectionEdgesRequired';
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
@@ -33,12 +34,11 @@ type TriggerUpdateRelationsOptimisticEffectArgs = {
   currentSourceRecord: RecordGqlNode | null;
   updatedSourceRecord: RecordGqlNode | null;
   objectMetadataItems: EnrichedObjectMetadataItem[];
-  objectPermissionsByObjectMetadataId: Record<
-    string,
-    ObjectPermissions & { objectMetadataId: string }
-  >;
+  objectPermissionsByObjectMetadataId: Record<string, ObjectRecordsPermissions>;
   upsertRecordsInStore: (props: { partialRecords: ObjectRecord[] }) => void;
 };
+
+const COMMENT_OBJECT_NAME_SINGULAR = 'comment';
 
 // A junction only links its two sides, so detaching destroys it; comments are the one non-junction cascade.
 const shouldCascadeDeleteOnDetach = ({
@@ -49,7 +49,7 @@ const shouldCascadeDeleteOnDetach = ({
   junctionObjectMetadataIds: ReadonlySet<string>;
 }) =>
   junctionObjectMetadataIds.has(targetObjectMetadata.id) ||
-  targetObjectMetadata.nameSingular === CoreObjectNameSingular.Comment;
+  targetObjectMetadata.nameSingular === COMMENT_OBJECT_NAME_SINGULAR;
 
 export const triggerUpdateRelationsOptimisticEffect = ({
   cache,
@@ -126,10 +126,7 @@ const triggerUpdateRelationOptimisticEffect = ({
   cache: ApolloCache;
   isDeletion: boolean;
   upsertRecordsInStore: (props: { partialRecords: ObjectRecord[] }) => void;
-  objectPermissionsByObjectMetadataId: Record<
-    string,
-    ObjectPermissions & { objectMetadataId: string }
-  >;
+  objectPermissionsByObjectMetadataId: Record<string, ObjectRecordsPermissions>;
   junctionObjectMetadataIds: ReadonlySet<string>;
 }) => {
   const fieldDoesNotExist =
@@ -183,6 +180,23 @@ const triggerUpdateRelationOptimisticEffect = ({
     { strict: true },
   );
   if (noDiff && !isDeletion) {
+    // The record stays attached, but its new values may move it in or out of its target's copies with arguments
+    if (
+      relation.type === RelationType.MANY_TO_ONE &&
+      isDefined(updatedFieldValueOnSourceRecord)
+    ) {
+      invalidateCachedRelationsWithArguments({
+        cache,
+        recordCacheId: cache.identify({
+          id: updatedFieldValueOnSourceRecord.id,
+          __typename: getObjectTypename(
+            fullTargetObjectMetadataItem.nameSingular,
+          ),
+        }),
+        relationFieldName: targetFieldMetadataFullObject.name,
+      });
+    }
+
     return;
   }
 
@@ -282,10 +296,7 @@ const triggerUpdateMorphRelationOptimisticEffect = ({
   cache: ApolloCache;
   isDeletion: boolean;
   upsertRecordsInStore: (props: { partialRecords: ObjectRecord[] }) => void;
-  objectPermissionsByObjectMetadataId: Record<
-    string,
-    ObjectPermissions & { objectMetadataId: string }
-  >;
+  objectPermissionsByObjectMetadataId: Record<string, ObjectRecordsPermissions>;
   junctionObjectMetadataIds: ReadonlySet<string>;
 }) => {
   const morphRelations = fieldMetadataItemOnSourceRecord.morphRelations;

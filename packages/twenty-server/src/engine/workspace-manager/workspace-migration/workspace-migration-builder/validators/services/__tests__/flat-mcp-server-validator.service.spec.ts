@@ -19,6 +19,7 @@ const APPLICATION_UNIVERSAL_IDENTIFIER = v4();
 const OTHER_APPLICATION_UNIVERSAL_IDENTIFIER = v4();
 const PROVIDER_UNIVERSAL_IDENTIFIER = v4();
 const OTHER_APPLICATION_PROVIDER_UNIVERSAL_IDENTIFIER = v4();
+const SECOND_PROVIDER_UNIVERSAL_IDENTIFIER = v4();
 const now = new Date().toISOString();
 
 const buildProvider = (
@@ -34,6 +35,7 @@ const buildProvider = (
   scope: 'WORKSPACE',
   oauthConfig: null,
   customConfig: null,
+  oauthDiscoveryConfig: null,
   identifyAccountLogicFunctionUniversalIdentifier: null,
   onConnectLogicFunctionUniversalIdentifier: null,
   onDisconnectLogicFunctionUniversalIdentifier: null,
@@ -51,6 +53,9 @@ const buildMcpServer = (
   url: 'https://docs.example.com/mcp',
   connectionProviderUniversalIdentifier: null,
   isActive: true,
+  tools: [],
+  toolsSyncedAt: null,
+  toolsSyncError: null,
   createdAt: now,
   updatedAt: now,
   ...overrides,
@@ -80,6 +85,10 @@ const buildValidationArgs = (
     buildProvider(
       OTHER_APPLICATION_PROVIDER_UNIVERSAL_IDENTIFIER,
       OTHER_APPLICATION_UNIVERSAL_IDENTIFIER,
+    ),
+    buildProvider(
+      SECOND_PROVIDER_UNIVERSAL_IDENTIFIER,
+      APPLICATION_UNIVERSAL_IDENTIFIER,
     ),
   ]) {
     addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
@@ -189,6 +198,16 @@ describe('FlatMcpServerValidatorService', () => {
       const result = validate({
         url: 'https://other.example.com/mcp',
         connectionProviderUniversalIdentifier: null,
+      });
+
+      expect(errorCodes(result)).toEqual([]);
+    });
+
+    it('accepts a url change that moves to another provider in the same update', () => {
+      const result = validate({
+        url: 'https://other.example.com/mcp',
+        connectionProviderUniversalIdentifier:
+          SECOND_PROVIDER_UNIVERSAL_IDENTIFIER,
       });
 
       expect(errorCodes(result)).toEqual([]);

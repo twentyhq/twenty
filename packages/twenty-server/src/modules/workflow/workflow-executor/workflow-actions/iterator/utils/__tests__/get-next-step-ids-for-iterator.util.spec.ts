@@ -1,13 +1,11 @@
+import { createMockIteratorStep } from 'src/modules/workflow/workflow-executor/utils/create-mock-workflow-steps.util';
 import { getNextStepIdsForIterator } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/utils/get-next-step-ids-for-iterator.util';
-import { type WorkflowIteratorAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
-const iteratorStep = {
-  id: 'iterator',
-  type: 'ITERATOR',
-  name: 'Iterator',
-  nextStepIds: ['afterLoop'],
-  settings: { input: { initialLoopStepIds: ['loopBody'] } },
-} as unknown as WorkflowIteratorAction;
+const iteratorStep = createMockIteratorStep(
+  'iterator',
+  ['afterLoop'],
+  ['loopBody'],
+);
 
 describe('getNextStepIdsForIterator', () => {
   it('should run the loop body while items remain', () => {

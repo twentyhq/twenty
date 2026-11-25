@@ -1,4 +1,3 @@
-import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { extractTwentyWorkspaceIdFromRecallWebhook } from 'src/logic-functions/recall-api/utils/extractTwentyWorkspaceIdFromRecallWebhook';
 import { createDesktopRecordingUpload } from 'src/logic-functions/flows/utils/createDesktopRecordingUpload';
@@ -35,7 +34,7 @@ const BODY = {
 };
 const query = vi.fn();
 const mutation = vi.fn();
-const client = { query, mutation } as unknown as CoreApiClient;
+const client = { query, mutation };
 
 beforeEach(() => {
   vi.resetAllMocks();

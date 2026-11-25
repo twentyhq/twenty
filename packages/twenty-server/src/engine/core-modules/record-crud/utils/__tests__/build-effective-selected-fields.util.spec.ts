@@ -1,47 +1,51 @@
-import {
-  FieldMetadataType,
-  type ObjectsPermissions,
-  RelationType,
-} from 'twenty-shared/types';
+import { canAccessThroughAllRecordsOrRlsPermission } from 'twenty-shared/utils';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { buildRelationSelectionFromDepth } from 'src/engine/api/common/common-select-fields/utils/build-relation-selection-from-depth.util';
 import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { buildEffectiveSelectedFields } from 'src/engine/core-modules/record-crud/utils/build-effective-selected-fields.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 const buildFlatFieldMetadataMaps = (
   fields: Array<{ id: string; name: string; type: FieldMetadataType }>,
 ): FlatEntityMaps<FlatFieldMetadata> => {
   const universalIdentifierById: Partial<Record<string, string>> = {};
-  const byUniversalIdentifier: Partial<
-    Record<string, Partial<FlatFieldMetadata>>
-  > = {};
+  const byUniversalIdentifier: Partial<Record<string, FlatFieldMetadata>> = {};
 
   for (const field of fields) {
-    const uid = `uid-${field.id}`;
+    const universalIdentifier = `uid-${field.id}`;
 
-    universalIdentifierById[field.id] = uid;
-    byUniversalIdentifier[uid] = { name: field.name, type: field.type };
+    universalIdentifierById[field.id] = universalIdentifier;
+    byUniversalIdentifier[universalIdentifier] = getFlatFieldMetadataMock({
+      universalIdentifier,
+      objectMetadataId: 'object-id',
+      name: field.name,
+      type: field.type,
+    });
   }
 
   return {
     universalIdentifierById,
     byUniversalIdentifier,
     universalIdentifiersByApplicationId: {},
-  } as unknown as FlatEntityMaps<FlatFieldMetadata>;
+  };
 };
 
 const buildFlatObjectMetadata = (
   labelIdentifierFieldMetadataId: string | undefined,
   fieldIds: string[],
 ): FlatObjectMetadata =>
-  ({
+  getFlatObjectMetadataMock({
+    universalIdentifier: 'object-universal-identifier',
     labelIdentifierFieldMetadataId,
     fieldIds,
-  }) as unknown as FlatObjectMetadata;
+  });
 
 const emptyFlatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> = {
   byUniversalIdentifier: {},
@@ -79,11 +83,15 @@ const defaultFlatObjectMetadata = buildFlatObjectMetadata(FIELD_IDS.name, [
 ]);
 
 const defaultSelectedFields: CommonSelectedFields = {
-  id: true,
-  name: true,
-  email: true,
-  searchVector: true,
-  body: { blocknote: true, markdown: true },
+  fields: {
+    id: true,
+    name: true,
+    email: true,
+    searchVector: true,
+    body: { blocknote: true, markdown: true },
+  },
+  aggregates: [],
+  relations: {},
 };
 
 describe('buildEffectiveSelectedFields', () => {
@@ -100,14 +108,14 @@ describe('buildEffectiveSelectedFields', () => {
           flatFieldMetadataMaps: defaultFlatFieldMetadataMaps,
           selectedFields: defaultSelectedFields,
           selectableRelationFields: {},
-          objectsPermissions: {},
+          unreadableFieldMetadataIds: new Set<string>(),
         });
 
       expect(warnings).toEqual([]);
-      expect(effectiveSelectedFields).toHaveProperty('id');
-      expect(effectiveSelectedFields).toHaveProperty('name');
-      expect(effectiveSelectedFields).toHaveProperty('email');
-      expect(effectiveSelectedFields).not.toHaveProperty('searchVector');
+      expect(effectiveSelectedFields.fields).toHaveProperty('id');
+      expect(effectiveSelectedFields.fields).toHaveProperty('name');
+      expect(effectiveSelectedFields.fields).toHaveProperty('email');
+      expect(effectiveSelectedFields.fields).not.toHaveProperty('searchVector');
     });
   });
 
@@ -124,14 +132,14 @@ describe('buildEffectiveSelectedFields', () => {
           flatFieldMetadataMaps: defaultFlatFieldMetadataMaps,
           selectedFields: defaultSelectedFields,
           selectableRelationFields: {},
-          objectsPermissions: {},
+          unreadableFieldMetadataIds: new Set<string>(),
         });
 
       expect(warnings).toEqual([]);
-      expect(effectiveSelectedFields).toHaveProperty('id');
-      expect(effectiveSelectedFields).toHaveProperty('name');
-      expect(effectiveSelectedFields).not.toHaveProperty('email');
-      expect(effectiveSelectedFields).not.toHaveProperty('searchVector');
+      expect(effectiveSelectedFields.fields).toHaveProperty('id');
+      expect(effectiveSelectedFields.fields).toHaveProperty('name');
+      expect(effectiveSelectedFields.fields).not.toHaveProperty('email');
+      expect(effectiveSelectedFields.fields).not.toHaveProperty('searchVector');
     });
 
     it('should always include id even if not listed in select', () => {
@@ -145,10 +153,10 @@ describe('buildEffectiveSelectedFields', () => {
         flatFieldMetadataMaps: defaultFlatFieldMetadataMaps,
         selectedFields: defaultSelectedFields,
         selectableRelationFields: {},
-        objectsPermissions: {},
+        unreadableFieldMetadataIds: new Set<string>(),
       });
 
-      expect(effectiveSelectedFields).toHaveProperty('id');
+      expect(effectiveSelectedFields.fields).toHaveProperty('id');
     });
   });
 
@@ -164,7 +172,7 @@ describe('buildEffectiveSelectedFields', () => {
         flatFieldMetadataMaps: defaultFlatFieldMetadataMaps,
         selectedFields: defaultSelectedFields,
         selectableRelationFields: {},
-        objectsPermissions: {},
+        unreadableFieldMetadataIds: new Set<string>(),
       });
 
       expect(warnings).toHaveLength(1);
@@ -183,7 +191,7 @@ describe('buildEffectiveSelectedFields', () => {
         flatFieldMetadataMaps: defaultFlatFieldMetadataMaps,
         selectedFields: defaultSelectedFields,
         selectableRelationFields: {},
-        objectsPermissions: {},
+        unreadableFieldMetadataIds: new Set<string>(),
       });
 
       expect(warnings).toHaveLength(1);
@@ -204,7 +212,7 @@ describe('buildEffectiveSelectedFields', () => {
         flatFieldMetadataMaps: defaultFlatFieldMetadataMaps,
         selectedFields: defaultSelectedFields,
         selectableRelationFields: {},
-        objectsPermissions: {},
+        unreadableFieldMetadataIds: new Set<string>(),
       });
 
       expect(warnings).toHaveLength(2);
@@ -223,10 +231,10 @@ describe('buildEffectiveSelectedFields', () => {
         flatFieldMetadataMaps: defaultFlatFieldMetadataMaps,
         selectedFields: defaultSelectedFields,
         selectableRelationFields: {},
-        objectsPermissions: {},
+        unreadableFieldMetadataIds: new Set<string>(),
       });
 
-      expect(effectiveSelectedFields).not.toHaveProperty('searchVector');
+      expect(effectiveSelectedFields.fields).not.toHaveProperty('searchVector');
     });
 
     it('should emit a warning when searchVector is explicitly requested', () => {
@@ -241,12 +249,12 @@ describe('buildEffectiveSelectedFields', () => {
           flatFieldMetadataMaps: defaultFlatFieldMetadataMaps,
           selectedFields: defaultSelectedFields,
           selectableRelationFields: {},
-          objectsPermissions: {},
+          unreadableFieldMetadataIds: new Set<string>(),
         });
 
       expect(warnings).toHaveLength(1);
       expect(warnings[0]).toContain('searchVector');
-      expect(effectiveSelectedFields).not.toHaveProperty('searchVector');
+      expect(effectiveSelectedFields.fields).not.toHaveProperty('searchVector');
     });
   });
 
@@ -261,15 +269,18 @@ describe('buildEffectiveSelectedFields', () => {
         flatObjectMetadata: defaultFlatObjectMetadata,
         flatFieldMetadataMaps: defaultFlatFieldMetadataMaps,
         selectedFields: {
-          id: true,
-          richText: { blocknote: true, markdown: true },
+          fields: {
+            id: true,
+            richText: { blocknote: true, markdown: true },
+          },
+          aggregates: [],
+          relations: {},
         },
         selectableRelationFields: {},
-        objectsPermissions: {},
+        unreadableFieldMetadataIds: new Set<string>(),
       });
 
-      const richTextFields =
-        effectiveSelectedFields.richText as CommonSelectedFields;
+      const richTextFields = effectiveSelectedFields.fields.richText;
 
       expect(richTextFields).not.toHaveProperty('blocknote');
       expect(richTextFields).toHaveProperty('markdown');
@@ -298,16 +309,19 @@ describe('buildEffectiveSelectedFields', () => {
         flatObjectMetadata: nonRichTextObjectMetadata,
         flatFieldMetadataMaps: nonRichTextMaps,
         selectedFields: {
-          id: true,
-          name: true,
-          richText: { blocknote: true, markdown: true },
+          fields: {
+            id: true,
+            name: true,
+            richText: { blocknote: true, markdown: true },
+          },
+          aggregates: [],
+          relations: {},
         },
         selectableRelationFields: {},
-        objectsPermissions: {},
+        unreadableFieldMetadataIds: new Set<string>(),
       });
 
-      const richTextFields =
-        effectiveSelectedFields.richText as CommonSelectedFields;
+      const richTextFields = effectiveSelectedFields.fields.richText;
 
       expect(richTextFields).toHaveProperty('blocknote');
       expect(richTextFields).toHaveProperty('markdown');
@@ -315,44 +329,49 @@ describe('buildEffectiveSelectedFields', () => {
   });
 
   describe('relation field hydration', () => {
-    const leadNameField = {
+    const leadNameField = getFlatFieldMetadataMock({
       id: FIELD_IDS.name,
       universalIdentifier: `uid-${FIELD_IDS.name}`,
+      objectMetadataId: 'investor-lead-object-id',
       name: 'name',
       type: FieldMetadataType.TEXT,
-    } as unknown as FlatFieldMetadata;
-    const fundField = {
+    });
+    const fundField = getFlatFieldMetadataMock({
       id: 'fund-field',
       universalIdentifier: 'uid-fund-field',
+      objectMetadataId: 'investor-lead-object-id',
       name: 'fund',
       type: FieldMetadataType.RELATION,
       settings: { relationType: RelationType.ONE_TO_MANY },
       relationTargetObjectMetadataId: 'company-object-id',
       relationTargetFieldMetadataId: 'investor-pipeline-field',
-    } as unknown as FlatFieldMetadata;
-    const companyIdField = {
+    });
+    const companyIdField = getFlatFieldMetadataMock({
       id: 'company-id-field',
       universalIdentifier: 'uid-company-id-field',
+      objectMetadataId: 'company-object-id',
       name: 'id',
       type: FieldMetadataType.UUID,
-    } as unknown as FlatFieldMetadata;
-    const companyNameField = {
+    });
+    const companyNameField = getFlatFieldMetadataMock({
       id: 'company-name-field',
       universalIdentifier: 'uid-company-name-field',
+      objectMetadataId: 'company-object-id',
       name: 'name',
       type: FieldMetadataType.TEXT,
-    } as unknown as FlatFieldMetadata;
-    const investorPipelineField = {
+    });
+    const investorPipelineField = getFlatFieldMetadataMock({
       id: 'investor-pipeline-field',
       universalIdentifier: 'uid-investor-pipeline-field',
+      objectMetadataId: 'company-object-id',
       name: 'investorPipeline',
       type: FieldMetadataType.RELATION,
       settings: { relationType: RelationType.MANY_TO_ONE },
       relationTargetObjectMetadataId: 'investor-lead-object-id',
       relationTargetFieldMetadataId: 'fund-field',
-    } as unknown as FlatFieldMetadata;
+    });
 
-    const relationFieldMaps = {
+    const relationFieldMaps: FlatEntityMaps<FlatFieldMetadata> = {
       byUniversalIdentifier: Object.fromEntries(
         [
           leadNameField,
@@ -372,16 +391,16 @@ describe('buildEffectiveSelectedFields', () => {
         ].map((field) => [field.id, field.universalIdentifier]),
       ),
       universalIdentifiersByApplicationId: {},
-    } as unknown as FlatEntityMaps<FlatFieldMetadata>;
+    };
 
-    const investorLeadObjectMetadata = {
+    const investorLeadObjectMetadata = getFlatObjectMetadataMock({
       id: 'investor-lead-object-id',
       universalIdentifier: 'uid-investor-lead-object-id',
       nameSingular: 'investorLead',
       labelIdentifierFieldMetadataId: FIELD_IDS.name,
       fieldIds: [FIELD_IDS.name, 'fund-field'],
-    } as unknown as FlatObjectMetadata;
-    const companyObjectMetadata = {
+    });
+    const companyObjectMetadata = getFlatObjectMetadataMock({
       id: 'company-object-id',
       universalIdentifier: 'uid-company-object-id',
       nameSingular: 'company',
@@ -391,9 +410,9 @@ describe('buildEffectiveSelectedFields', () => {
         'company-name-field',
         'investor-pipeline-field',
       ],
-    } as unknown as FlatObjectMetadata;
+    });
 
-    const relationObjectMaps = {
+    const relationObjectMaps: FlatEntityMaps<FlatObjectMetadata> = {
       byUniversalIdentifier: {
         [investorLeadObjectMetadata.universalIdentifier]:
           investorLeadObjectMetadata,
@@ -405,28 +424,53 @@ describe('buildEffectiveSelectedFields', () => {
         [companyObjectMetadata.id]: companyObjectMetadata.universalIdentifier,
       },
       universalIdentifiersByApplicationId: {},
-    } as unknown as FlatEntityMaps<FlatObjectMetadata>;
+    };
 
-    const buildObjectsPermissions = ({
+    const buildRecordsPermissions = ({
       canReadCompany = true,
-      sourceRestrictedFields = {},
+      sourceUnreadableFields = [],
     }: {
       canReadCompany?: boolean;
-      sourceRestrictedFields?: Record<string, { canRead: boolean }>;
-    }) =>
-      ({
+      sourceUnreadableFields?: string[];
+    }): Pick<RoleRecordsPermissions, 'objects'> => ({
+      objects: {
         'investor-lead-object-id': {
-          canReadObjectRecords: true,
-          restrictedFields: sourceRestrictedFields,
+          canCreateAllRecords: false,
+          canReadAllRecords: true,
+          canUpdateAllRecords: false,
+          canSoftDeleteAllRecords: false,
+          canDestroyAllRecords: false,
+          unreadableFields: sourceUnreadableFields,
+          uneditableFields: sourceUnreadableFields,
         },
         'company-object-id': {
-          canReadObjectRecords: canReadCompany,
-          restrictedFields: {},
+          canCreateAllRecords: false,
+          canReadAllRecords: canReadCompany,
+          canUpdateAllRecords: false,
+          canSoftDeleteAllRecords: false,
+          canDestroyAllRecords: false,
+          unreadableFields: [],
+          uneditableFields: [],
         },
-      }) as unknown as ObjectsPermissions;
+      },
+    });
+
+    const buildUnreadableFieldMetadataIds = (
+      recordsPermissions: Pick<RoleRecordsPermissions, 'objects'>,
+    ) =>
+      new Set(
+        [investorLeadObjectMetadata, companyObjectMetadata].flatMap(
+          (objectMetadata) =>
+            objectMetadata.fieldIds.filter((fieldId) =>
+              recordsPermissions.objects[
+                objectMetadata.id
+              ]?.unreadableFields.includes(fieldId),
+            ),
+        ),
+      );
 
     const buildSelectableRelationFields = (
-      objectsPermissions: ObjectsPermissions,
+      recordsPermissions: Pick<RoleRecordsPermissions, 'objects'>,
     ) =>
       buildRelationSelectionFromDepth({
         flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
@@ -435,12 +479,15 @@ describe('buildEffectiveSelectedFields', () => {
         }),
         flatObjectMetadataMaps: relationObjectMaps,
         flatFieldMetadataMaps: relationFieldMaps,
-        flatObjectMetadata: investorLeadObjectMetadata,
-        objectsPermissions,
+        unreadableFieldMetadataIds:
+          buildUnreadableFieldMetadataIds(recordsPermissions),
         readableObjectMetadataIds: new Set(
-          Object.entries(objectsPermissions)
-            .filter(
-              ([, objectPermissions]) => objectPermissions.canReadObjectRecords,
+          Object.entries(recordsPermissions.objects)
+            .filter(([, objectRecordsPermissions]) =>
+              canAccessThroughAllRecordsOrRlsPermission({
+                objectRecordsPermissions,
+                operationType: 'read',
+              }),
             )
             .map(([objectMetadataId]) => objectMetadataId),
         ),
@@ -448,8 +495,22 @@ describe('buildEffectiveSelectedFields', () => {
         onlyUseLabelIdentifierFieldsInRelations: true,
       });
 
+    const investorLeadSelectedFields: CommonSelectedFields = {
+      fields: { id: true, name: true, fund: true },
+      aggregates: [],
+      relations: {},
+    };
+    const hydratedFundRelation = {
+      fieldName: 'fund',
+      selectedFields: {
+        fields: { id: true, name: true },
+        aggregates: [],
+        relations: {},
+      },
+    };
+
     it('should hydrate a selected one-to-many relation instead of its unresolvable boolean entry', () => {
-      const objectsPermissions = buildObjectsPermissions({});
+      const recordsPermissions = buildRecordsPermissions({});
 
       const { effectiveSelectedFields, warnings } =
         buildEffectiveSelectedFields({
@@ -460,22 +521,23 @@ describe('buildEffectiveSelectedFields', () => {
           flatObjectMetadataMaps: relationObjectMaps,
           flatObjectMetadata: investorLeadObjectMetadata,
           flatFieldMetadataMaps: relationFieldMaps,
-          selectedFields: { id: true, name: true, fund: true },
+          selectedFields: investorLeadSelectedFields,
           selectableRelationFields:
-            buildSelectableRelationFields(objectsPermissions),
-          objectsPermissions,
+            buildSelectableRelationFields(recordsPermissions),
+          unreadableFieldMetadataIds:
+            buildUnreadableFieldMetadataIds(recordsPermissions),
         });
 
       expect(warnings).toEqual([]);
       expect(effectiveSelectedFields).toEqual({
-        id: true,
-        name: true,
-        fund: { id: true, name: true },
+        fields: { id: true, name: true },
+        aggregates: [],
+        relations: { fund: hydratedFundRelation },
       });
     });
 
     it('should hydrate a selected relation that also appears in orderBy', () => {
-      const objectsPermissions = buildObjectsPermissions({});
+      const recordsPermissions = buildRecordsPermissions({});
 
       const { effectiveSelectedFields, warnings } =
         buildEffectiveSelectedFields({
@@ -486,22 +548,23 @@ describe('buildEffectiveSelectedFields', () => {
           flatObjectMetadataMaps: relationObjectMaps,
           flatObjectMetadata: investorLeadObjectMetadata,
           flatFieldMetadataMaps: relationFieldMaps,
-          selectedFields: { id: true, name: true, fund: true },
+          selectedFields: investorLeadSelectedFields,
           selectableRelationFields:
-            buildSelectableRelationFields(objectsPermissions),
-          objectsPermissions,
+            buildSelectableRelationFields(recordsPermissions),
+          unreadableFieldMetadataIds:
+            buildUnreadableFieldMetadataIds(recordsPermissions),
         });
 
       expect(warnings).toEqual([]);
       expect(effectiveSelectedFields).toEqual({
-        id: true,
-        name: true,
-        fund: { id: true, name: true },
+        fields: { id: true, name: true },
+        aggregates: [],
+        relations: { fund: hydratedFundRelation },
       });
     });
 
     it('should hydrate readable relations in wildcard selection', () => {
-      const objectsPermissions = buildObjectsPermissions({});
+      const recordsPermissions = buildRecordsPermissions({});
 
       const { effectiveSelectedFields, warnings } =
         buildEffectiveSelectedFields({
@@ -512,22 +575,23 @@ describe('buildEffectiveSelectedFields', () => {
           flatObjectMetadataMaps: relationObjectMaps,
           flatObjectMetadata: investorLeadObjectMetadata,
           flatFieldMetadataMaps: relationFieldMaps,
-          selectedFields: { id: true, name: true, fund: true },
+          selectedFields: investorLeadSelectedFields,
           selectableRelationFields:
-            buildSelectableRelationFields(objectsPermissions),
-          objectsPermissions,
+            buildSelectableRelationFields(recordsPermissions),
+          unreadableFieldMetadataIds:
+            buildUnreadableFieldMetadataIds(recordsPermissions),
         });
 
       expect(warnings).toEqual([]);
       expect(effectiveSelectedFields).toEqual({
-        id: true,
-        name: true,
-        fund: { id: true, name: true },
+        fields: { id: true, name: true },
+        aggregates: [],
+        relations: { fund: hydratedFundRelation },
       });
     });
 
     it('should warn when selecting a relation whose target is not readable', () => {
-      const objectsPermissions = buildObjectsPermissions({
+      const recordsPermissions = buildRecordsPermissions({
         canReadCompany: false,
       });
 
@@ -540,21 +604,26 @@ describe('buildEffectiveSelectedFields', () => {
           flatObjectMetadataMaps: relationObjectMaps,
           flatObjectMetadata: investorLeadObjectMetadata,
           flatFieldMetadataMaps: relationFieldMaps,
-          selectedFields: { id: true, name: true, fund: true },
+          selectedFields: investorLeadSelectedFields,
           selectableRelationFields:
-            buildSelectableRelationFields(objectsPermissions),
-          objectsPermissions,
+            buildSelectableRelationFields(recordsPermissions),
+          unreadableFieldMetadataIds:
+            buildUnreadableFieldMetadataIds(recordsPermissions),
         });
 
-      expect(effectiveSelectedFields).toEqual({ id: true, name: true });
+      expect(effectiveSelectedFields).toEqual({
+        fields: { id: true, name: true },
+        aggregates: [],
+        relations: {},
+      });
       expect(warnings).toEqual([
         "Field 'fund' on investorLead cannot be selected because you do not have read access to company.",
       ]);
     });
 
     it('should warn when the relation field itself is restricted for the role', () => {
-      const objectsPermissions = buildObjectsPermissions({
-        sourceRestrictedFields: { 'fund-field': { canRead: false } },
+      const recordsPermissions = buildRecordsPermissions({
+        sourceUnreadableFields: ['fund-field'],
       });
 
       const { effectiveSelectedFields, warnings } =
@@ -566,20 +635,25 @@ describe('buildEffectiveSelectedFields', () => {
           flatObjectMetadataMaps: relationObjectMaps,
           flatObjectMetadata: investorLeadObjectMetadata,
           flatFieldMetadataMaps: relationFieldMaps,
-          selectedFields: { id: true, name: true, fund: true },
+          selectedFields: investorLeadSelectedFields,
           selectableRelationFields:
-            buildSelectableRelationFields(objectsPermissions),
-          objectsPermissions,
+            buildSelectableRelationFields(recordsPermissions),
+          unreadableFieldMetadataIds:
+            buildUnreadableFieldMetadataIds(recordsPermissions),
         });
 
-      expect(effectiveSelectedFields).toEqual({ id: true, name: true });
+      expect(effectiveSelectedFields).toEqual({
+        fields: { id: true, name: true },
+        aggregates: [],
+        relations: {},
+      });
       expect(warnings).toEqual([
         "Field 'fund' on investorLead cannot be selected because your role restricts access to this field.",
       ]);
     });
 
     it('should suggest relation field names for near-miss selections', () => {
-      const objectsPermissions = buildObjectsPermissions({});
+      const recordsPermissions = buildRecordsPermissions({});
 
       const { warnings } = buildEffectiveSelectedFields({
         select: ['fundd'],
@@ -589,10 +663,11 @@ describe('buildEffectiveSelectedFields', () => {
         flatObjectMetadataMaps: relationObjectMaps,
         flatObjectMetadata: investorLeadObjectMetadata,
         flatFieldMetadataMaps: relationFieldMaps,
-        selectedFields: { id: true, name: true, fund: true },
+        selectedFields: investorLeadSelectedFields,
         selectableRelationFields:
-          buildSelectableRelationFields(objectsPermissions),
-        objectsPermissions,
+          buildSelectableRelationFields(recordsPermissions),
+        unreadableFieldMetadataIds:
+          buildUnreadableFieldMetadataIds(recordsPermissions),
       });
 
       expect(warnings).toHaveLength(1);

@@ -3,6 +3,7 @@ import { promises as fs } from 'fs';
 import { tmpdir } from 'os';
 import { dirname, join } from 'path';
 import { NODE_ESM_CJS_BANNER } from 'twenty-shared/application';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { YARN_ENGINE_DIRNAME } from 'src/engine/core-modules/application/application-package/constants/yarn-engine-dirname';
 import {
@@ -28,7 +29,6 @@ import {
   type TranspileParams,
   type TranspileResult,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/types/transpile.type';
-import { ConsoleListener } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/intercept-console';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
 import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 import { frontComponentBuildResultSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-build-result.schema';
@@ -47,6 +47,10 @@ import {
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { isLogicFunctionReadyForPrebuiltInstall } from 'src/engine/metadata-modules/logic-function/utils/is-logic-function-ready-for-prebuilt-install.util';
+import { executeHttpEgressRequest } from 'src/engine/core-modules/tool/tools/http-tool/utils/execute-http-egress-request.util';
+import { type SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
+import { type HttpEgressRequest } from 'src/engine/core-modules/tool/tools/http-tool/types/http-egress-request.type';
+import { type HttpEgressResponse } from 'src/engine/core-modules/tool/tools/http-tool/types/http-egress-response.type';
 
 export { type LocalDriverOptions } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/types/local-driver.type';
 
@@ -55,9 +59,11 @@ export class LocalDriver implements LogicFunctionDriver {
   private readonly layerManager: LocalLayerManagerService;
   private readonly childProcessRunner: LocalChildProcessRunnerService;
   private readonly prebuiltBundle: LocalPrebuiltBundleService;
+  private readonly secureHttpClientService: SecureHttpClientService;
 
   constructor(options: LocalDriverOptions) {
     this.logicFunctionResourceService = options.logicFunctionResourceService;
+    this.secureHttpClientService = options.secureHttpClientService;
     this.layerManager = new LocalLayerManagerService(
       options.cacheLockService,
       options.logicFunctionResourceService,
@@ -111,6 +117,21 @@ export class LocalDriver implements LogicFunctionDriver {
         sourcemap: true,
         packages: 'external',
         banner: NODE_ESM_CJS_BANNER,
+      }).catch((error: unknown) => {
+        // esbuild reports source diagnostics in `errors`; anything else is not the user's code
+        if (
+          !(error instanceof Error) ||
+          !('errors' in error) ||
+          !Array.isArray(error.errors) ||
+          !isNonEmptyArray(error.errors)
+        ) {
+          throw error;
+        }
+
+        throw new LogicFunctionException(
+          `Function code compilation failed: ${error.message}`,
+          LogicFunctionExceptionCode.LOGIC_FUNCTION_COMPILATION_FAILED,
+        );
       });
 
       const builtCode = await fs.readFile(builtBundleFilePath, 'utf-8');
@@ -251,99 +272,76 @@ export class LocalDriver implements LogicFunctionDriver {
             });
 
       let logs = '';
-      const consoleListener = new ConsoleListener();
 
-      consoleListener.intercept((type, args) => {
-        const formattedArgs = args.map((arg) => {
-          if (typeof arg === 'object' && arg !== null) {
-            const seen = new WeakSet();
-
-            return JSON.stringify(
-              arg,
-              (_key, value) => {
-                if (typeof value === 'object' && value !== null) {
-                  if (seen.has(value)) {
-                    return '[Circular]';
-                  }
-                  seen.add(value);
-                }
-
-                return value;
-              },
-              2,
-            );
-          }
-
-          return arg;
-        });
-
-        const formattedType = type === 'log' ? 'info' : type;
-
-        logs += `${new Date().toISOString()} ${formattedType.toUpperCase()} ${formattedArgs.join(' ')}\n`;
+      const runnerPath = await this.childProcessRunner.writeBootstrapRunner({
+        dir: sourceTemporaryDir,
+        builtFileAbsPath: inMemoryBuiltHandlerPath,
+        handlerName: flatLogicFunction.handlerName,
       });
 
-      try {
-        const runnerPath = await this.childProcessRunner.writeBootstrapRunner({
-          dir: sourceTemporaryDir,
-          builtFileAbsPath: inMemoryBuiltHandlerPath,
-          handlerName: flatLogicFunction.handlerName,
+      const { ok, result, errorType, error, stack, stdout, stderr } =
+        await this.childProcessRunner.runChildWithEnv({
+          runnerPath,
+          executionDirectory: sourceTemporaryDir,
+          flatApplication,
+          env: env ?? {},
+          payload,
+          context,
+          timeoutMs,
         });
 
-        const { ok, result, errorType, error, stack, stdout, stderr } =
-          await this.childProcessRunner.runChildWithEnv({
-            runnerPath,
-            executionDirectory: sourceTemporaryDir,
-            flatApplication,
-            env: env ?? {},
-            payload,
-            context,
-            timeoutMs,
-          });
+      if (stdout) {
+        logs +=
+          stdout
+            .split('\n')
+            .filter(Boolean)
+            .map((l) => `${new Date().toISOString()} INFO ${l}`)
+            .join('\n') + '\n';
+      }
+      if (stderr) {
+        logs +=
+          stderr
+            .split('\n')
+            .filter(Boolean)
+            .map((l) => `${new Date().toISOString()} ERROR ${l}`)
+            .join('\n') + '\n';
+      }
 
-        if (stdout)
-          logs +=
-            stdout
-              .split('\n')
-              .filter(Boolean)
-              .map((l) => `${new Date().toISOString()} INFO ${l}`)
-              .join('\n') + '\n';
-        if (stderr)
-          logs +=
-            stderr
-              .split('\n')
-              .filter(Boolean)
-              .map((l) => `${new Date().toISOString()} ERROR ${l}`)
-              .join('\n') + '\n';
+      const duration = Date.now() - startTime;
 
-        const duration = Date.now() - startTime;
-
-        if (ok) {
-          return {
-            data: (result ?? null) as object | null,
-            logs,
-            duration,
-            billedDurationMs: duration,
-            status: LogicFunctionExecutionStatus.SUCCESS,
-          };
-        }
-
+      if (ok) {
         return {
-          data: null,
+          data: (result ?? null) as object | null,
           logs,
           duration,
           billedDurationMs: duration,
-          error: {
-            errorType: errorType ?? 'UnhandledError',
-            errorMessage: error || 'Unknown error',
-            stackTrace: stack ? String(stack).split('\n') : [],
-          },
-          status: LogicFunctionExecutionStatus.ERROR,
+          status: LogicFunctionExecutionStatus.SUCCESS,
         };
-      } finally {
-        consoleListener.release();
       }
+
+      return {
+        data: null,
+        logs,
+        duration,
+        billedDurationMs: duration,
+        error: {
+          errorType: errorType ?? 'UnhandledError',
+          errorMessage: error || 'Unknown error',
+          stackTrace: stack ? String(stack).split('\n') : [],
+        },
+        status: LogicFunctionExecutionStatus.ERROR,
+      };
     } finally {
       await temporaryDirManager.clean();
     }
+  }
+
+  async executeHttpRequest(
+    request: HttpEgressRequest,
+  ): Promise<HttpEgressResponse> {
+    return executeHttpEgressRequest(
+      request,
+      this.secureHttpClientService.getHttpClient(),
+    );
   }
 }

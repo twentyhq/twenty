@@ -4,7 +4,6 @@ import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
@@ -16,6 +15,7 @@ import {
   GetInstanceAndAllWorkspacesUpgradeStatusDocument,
   RefreshUpgradeStatusDocument,
 } from '~/generated-admin/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledRefreshButtonContainer = styled.div`
   display: flex;
@@ -25,6 +25,7 @@ const StyledRefreshButtonContainer = styled.div`
 `;
 
 export const SettingsAdminInferredVersion = () => {
+  const { t } = useLingui();
   const apolloAdminClient = useApolloAdminClient();
   const { enqueueToast } = useToast();
 

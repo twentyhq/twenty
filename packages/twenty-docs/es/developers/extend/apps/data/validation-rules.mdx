@@ -1,0 +1,94 @@
+---
+title: Reglas de validación
+description: Declara las condiciones que debe cumplir un registro antes de poder guardarse.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Resumen
+
+Una regla de validación es una condición aplicada a un registro. Cuando se evalúa como falsa, Twenty rechaza el registro y muestra el mensaje de la regla.
+
+Para configurar reglas en Configuración, consulte la [guía del usuario de reglas de validación](/es/user-guide/data-model/capabilities/validation-rules).
+
+<Note>
+  Las reglas de validación solo se aplican en espacios de trabajo donde la función está disponible.
+</Note>
+
+Define una regla con `defineValidationRule` de `twenty-sdk/define`:
+
+```ts filename="src/validation-rules/invoice-has-amount.ts"
+import { defineValidationRule, ruleExpression } from 'twenty-sdk/define';
+
+import { INVOICE_UNIVERSAL_IDENTIFIER } from '../objects/invoice.object';
+
+const { and, field, gt, isNonEmptyString } = ruleExpression;
+
+export default defineValidationRule({
+  universalIdentifier: '8d3f2c6e-1b7a-4f0e-9c52-6a1e0d4b7f31',
+  objectUniversalIdentifier: INVOICE_UNIVERSAL_IDENTIFIER,
+  name: 'Invoice has an amount',
+  expression: and(gt(field('amount'), 0), isNonEmptyString(field('reference'))),
+  message: 'An invoice needs an amount and a reference',
+});
+```
+
+También puedes generar una con la CLI:
+
+```bash
+twenty app add validation-rule --name invoice-has-amount --object <object-uuid>
+```
+
+| Propiedad                       | Obligatorio | Descripción                                                                                     |
+| ------------------------------- | ----------- | ----------------------------------------------------------------------------------------------- |
+| `universalIdentifier`           | Sí          | Identificador estable de la regla                                                               |
+| `objectUniversalIdentifier`     | Sí          | El objeto al que se aplica la regla. Puede ser un objeto de tu aplicación o un objeto estándar. |
+| `name`                          | Sí          | Nombre mostrado en la configuración                                                             |
+| `expresión`                     | Sí          | Una `ruleExpression` o una cadena                                                               |
+| `mensaje`                       | Sí          | Mensaje mostrado cuando falla la regla                                                          |
+| `errorFieldUniversalIdentifier` | No          | Campo al que está asociado el mensaje. Debe pertenecer al objeto de la regla.                   |
+| `description`                   | No          | Descripción más larga                                                                           |
+| `icon`                          | No          | Nombre del icono                                                                                |
+
+## Escribir expresiones
+
+`ruleExpression` proporciona:
+
+* `field('name')` lee un campo y `field('company.employees')` lee un campo a través de una relación de muchos a uno.
+* `now` es la fecha y hora actuales.
+* `previous('stage')` lee el valor almacenado antes de la actualización, para restringir las transiciones. Está vacío cuando se crea un registro y lee los propios campos del registro, no los campos a través de una relación.
+* `and`, `or` y `not` combinan condiciones.
+* `eq`, `notEq`, `gt`, `gte`, `lt` y `lte` comparan valores.
+* `add`, `subtract`, `multiply` y `divide` calculan valores.
+* `isIn(field('stage'), ['NEW', 'WON'])` compara un valor con una lista.
+* Funciones como `isNonEmptyString` e `isDefined`, y las funciones de fecha `daysSince(date)` (días completos desde la fecha, negativos para una fecha futura) e `isInRelativeDateRange(date, direction, amount, unit)`, con la dirección `'PAST'`, `'NEXT'` o `'THIS'` y la unidad `'DAY'`, `'WEEK'`, `'MONTH'`, `'QUARTER'` o `'YEAR'`, como `isInRelativeDateRange(closeDate, 'PAST', 30, 'DAY')`.
+
+El generador produce una cadena simple, que es lo que [`twenty app pull`](/es/developers/extend/apps/operations/cli) escribe de vuelta. Puedes escribir esa cadena directamente:
+
+```ts
+expression: 'amount > 0 and isNonEmptyString(reference)',
+```
+
+Las cadenas usan `and`, `or`, `not`, `==`, `!=`, `\<`, `\<=`, `>`, `>=`, `+`, `-`, `*`, `/` e `in [...]`, no `&&` ni `||`. El texto va entre comillas simples o dobles. Un valor anterior se escribe `previous.stage`:
+
+```ts
+// A proposal only follows a meeting
+expression: 'stage != "PROPOSAL" or previous.stage in ["MEETING", "PROPOSAL"]',
+```
+
+Una regla puede leer los campos que declaras y los [campos del sistema](/es/developers/extend/apps/data/system-fields) que proporciona Twenty, como `createdAt`. La CLI comprueba las expresiones con los objetos propios de tu aplicación. En un objeto fuera de tu aplicación, solo comprueba la sintaxis y el servidor comprueba los campos durante la sincronización.
+
+## Campos que dejan de estar disponibles
+
+| Situación                                                                                          | Resultado                                                                                                                   |
+| -------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| Tu aplicación elimina un campo que lee su regla                                                    | La sincronización falla con un error que indica la regla y el campo                                                         |
+| Un espacio de trabajo desactiva un campo fuera de tu aplicación                                    | La sincronización se realiza correctamente y la regla permanece desactivada                                                 |
+| Un espacio de trabajo elimina un campo fuera de tu aplicación y la expresión de tu regla no cambia | La sincronización se realiza correctamente y la regla permanece desactivada                                                 |
+| Un espacio de trabajo cambia el nombre de un campo fuera de tu aplicación                          | La sincronización se realiza correctamente y mantiene la regla con el nuevo nombre, que `twenty app pull` escribe de vuelta |
+| Una regla nueva o editada indica un campo que no existe                                            | La sincronización falla                                                                                                     |
+| Un espacio de trabajo elimina el campo de error de la regla                                        | La sincronización se realiza correctamente y la regla ya no está asociada a ese campo                                       |
+
+Una sincronización mantiene el `isActive` de una regla existente, por lo que una regla que un administrador del espacio de trabajo desactivó permanece desactivada. Solo las reglas nuevas comienzan activadas.
+
+<PageBanner illustration="card-page-validation-rules" />

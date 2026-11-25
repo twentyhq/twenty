@@ -448,16 +448,6 @@ export const SETTINGS_BILLING_PLAN_COMPARISON_ROWS = [
     type: 'feature',
   },
   {
-    featureLabel: msg`Onboarding Packs`,
-    plans: {
-      [BillingPlanKey.ENTERPRISE]: { kind: 'included' },
-      [BillingPlanKey.ORGANIZATION_V2]: { kind: 'included' },
-      [BillingPlanKey.PRO]: { kind: 'included' },
-      [BillingPlanKey.PRO_V2]: { kind: 'included' },
-    },
-    type: 'feature',
-  },
-  {
     featureLabel: msg`Implementation partners`,
     plans: {
       [BillingPlanKey.ENTERPRISE]: { kind: 'included' },

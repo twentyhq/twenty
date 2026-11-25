@@ -1,5 +1,5 @@
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
-import { expectPermissionDenied } from 'test/integration/metadata/suites/application/utils/expect-permission-denied.util';
+import { expectPermissionDenied } from 'test/integration/permissions/utils/expect-permission-denied.util';
 import { myUserApplicationVariables } from 'test/integration/metadata/suites/application/utils/my-user-application-variables.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import {

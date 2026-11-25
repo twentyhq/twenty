@@ -72,6 +72,7 @@ describe('linkedinUpdateSettingsHandler', () => {
       contactAutoCreationPolicy: 'NONE',
       isNameMatchingEnabled: 'yes',
       importPolicy: 'SOME',
+      historyConversationLimit: 30,
     });
 
     expect(view).toEqual(
@@ -79,9 +80,12 @@ describe('linkedinUpdateSettingsHandler', () => {
         isConnected: true,
         settings: {
           importPolicy: 'ALL',
+          selectedChats: [],
           areGroupChatsImported: true,
+          historyConversationLimit: 20,
           contactAutoCreationPolicy: 'NONE',
           isNameMatchingEnabled: true,
+          areChatsMarkedAsRead: false,
           visibility: 'METADATA',
         },
       }),
@@ -91,6 +95,35 @@ describe('linkedinUpdateSettingsHandler', () => {
     );
     expect(mocks.updateMessageChannel).not.toHaveBeenCalled();
     expect(mocks.enqueueJobs).not.toHaveBeenCalled();
+  });
+
+  it.each([0, 10, 20, 50])(
+    'saves %i past conversations to import',
+    async (historyConversationLimit) => {
+      const view = await updateSettings({ historyConversationLimit });
+
+      expect(view).toEqual(
+        expect.objectContaining({
+          settings: expect.objectContaining({ historyConversationLimit }),
+        }),
+      );
+      expect(mocks.kvStore.get('linkedin-settings:connection-id')).toEqual(
+        expect.objectContaining({ historyConversationLimit }),
+      );
+    },
+  );
+
+  it('saves whether chats opened in Twenty are marked as read on LinkedIn', async () => {
+    const view = await updateSettings({ areChatsMarkedAsRead: true });
+
+    expect(view).toEqual(
+      expect.objectContaining({
+        settings: expect.objectContaining({ areChatsMarkedAsRead: true }),
+      }),
+    );
+    expect(mocks.kvStore.get('linkedin-settings:connection-id')).toEqual(
+      expect.objectContaining({ areChatsMarkedAsRead: true }),
+    );
   });
 
   it('applies the visibility to the message channel instead of the kv settings', async () => {
@@ -109,6 +142,7 @@ describe('linkedinUpdateSettingsHandler', () => {
     [{ importPolicy: 'ALL' }],
     [{ importPolicy: 'CONTACTS_ONLY' }],
     [{ areGroupChatsImported: true }],
+    [{ historyConversationLimit: 50 }],
   ])('leaves importing to the Sync button when saving %o', async (update) => {
     setHistoryImport('CONTACTS_ONLY');
 

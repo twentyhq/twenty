@@ -6,7 +6,7 @@ import { type WidgetCallRecordingCandidate } from '@/page-layout/widgets/call-re
 import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetAccessDenialInfo';
 import { useCallback, useMemo } from 'react';
 import {
-  CoreObjectNameSingular,
+  StandardObjectNameSingular,
   type RecordGqlFields,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -66,7 +66,7 @@ export const useCallRecordingForWidget = ({
     error: callRecordingError,
     refetch: refetchCallRecordingRecord,
   } = useFindOneRecord<WidgetCallRecordingCandidate>({
-    objectNameSingular: CoreObjectNameSingular.CallRecording,
+    objectNameSingular: StandardObjectNameSingular.CallRecording,
     objectRecordId: callRecordingId,
     recordGqlFields,
     withSoftDeleted: targetKind === 'callRecording',

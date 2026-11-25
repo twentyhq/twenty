@@ -7,7 +7,7 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { isString } from '@sniptt/guards';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import {
   formatTemplateVariableWithFallback,
   listCampaignVariablesForFields,
@@ -17,7 +17,7 @@ export const useCampaignEmailEditorVariables = () => {
   const { t } = useLingui();
   const { objectMetadataItem: personObjectMetadataItem } =
     useObjectMetadataItem({
-      objectNameSingular: CoreObjectNameSingular.Person,
+      objectNameSingular: StandardObjectNameSingular.Person,
     });
   const activeEmailCampaignId = useAtomStateValue(activeEmailCampaignIdState);
   const activeEmailEditor = useAtomStateValue(activeEmailEditorState);

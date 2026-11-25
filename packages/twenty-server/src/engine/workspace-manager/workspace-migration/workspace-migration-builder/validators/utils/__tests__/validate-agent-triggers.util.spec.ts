@@ -32,21 +32,39 @@ describe('validateAgentTriggers', () => {
     ).toEqual([]);
   });
 
-  it('should accept watched fields on an updated event', () => {
-    expect(
-      validateAgentTriggers({
-        triggers: [
-          {
-            ...DATABASE_EVENT_TRIGGER,
-            type: 'DATABASE_EVENT',
-            settings: {
-              eventName: 'opportunity.updated',
-              updatedFields: ['stage'],
+  it.each(['opportunity.updated', 'opportunity.upserted'])(
+    'should accept watched fields and a condition on %s',
+    (eventName) => {
+      expect(
+        validateAgentTriggers({
+          triggers: [
+            {
+              ...DATABASE_EVENT_TRIGGER,
+              type: 'DATABASE_EVENT',
+              settings: {
+                eventName,
+                updatedFields: ['stage'],
+                condition: "stage == 'CUSTOMER'",
+              },
             },
-          },
-        ],
-      }),
-    ).toEqual([]);
+          ],
+        }),
+      ).toEqual([]);
+    },
+  );
+
+  it('should reject a condition that is not text', () => {
+    const errors = validateAgentTriggers({
+      triggers: [
+        {
+          ...DATABASE_EVENT_TRIGGER,
+          type: 'DATABASE_EVENT',
+          settings: { eventName: 'company.created', condition: 42 },
+        },
+      ],
+    });
+
+    expect(errors).toHaveLength(1);
   });
 
   it.each([

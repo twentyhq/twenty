@@ -35,6 +35,7 @@ import { type PieChartConfiguration } from '~/generated-metadata/graphql';
 type GraphWidgetPieChartProps = {
   data: PieChartDataItemWithColor[];
   showLegend?: boolean;
+  isLegendInteractive?: boolean;
   id: string;
   objectMetadataItemId: string;
   configuration: PieChartConfiguration;
@@ -77,6 +78,7 @@ const StyledPieChartWrapper = styled.div<{ preventHover: boolean }>`
 export const GraphWidgetPieChart = ({
   data,
   showLegend = true,
+  isLegendInteractive = true,
   id,
   objectMetadataItemId,
   configuration,
@@ -125,7 +127,9 @@ export const GraphWidgetPieChart = ({
       datum: ComputedDatum<PieChartDataItemWithColor>,
       event: ReactMouseEvent<SVGElement>,
     ) => {
-      if (!isDefined(containerRef.current)) return;
+      if (!isDefined(containerRef.current)) {
+        return;
+      }
 
       const containerRect = containerRef.current.getBoundingClientRect();
       setGraphWidgetPieTooltip({
@@ -245,7 +249,11 @@ export const GraphWidgetPieChart = ({
         onSliceClick={onSliceClick}
       />
       {showLegend && data.length > 0 && (
-        <GraphWidgetLegend show items={legendItems} />
+        <GraphWidgetLegend
+          items={legendItems}
+          show
+          isInteractive={isLegendInteractive}
+        />
       )}
     </StyledContainer>
   );

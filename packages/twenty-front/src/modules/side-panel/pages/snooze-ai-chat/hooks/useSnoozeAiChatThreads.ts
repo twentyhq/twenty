@@ -1,20 +1,18 @@
 import { useStore } from 'jotai';
 
-import { useSnoozeAgentChatThreadsInChannel } from '@/ai/hooks/useSnoozeAgentChatThreadsInChannel';
-import { useUpdateAgentChatThreadInboxState } from '@/ai/hooks/useUpdateAgentChatThreadInboxState';
-import { isSnoozeAiChatForChannelComponentState } from '@/side-panel/pages/snooze-ai-chat/states/isSnoozeAiChatForChannelComponentState';
+import { useSnoozeInboxThreadsInChannel } from '@/inbox/hooks/useSnoozeInboxThreadsInChannel';
+import { useUpdateAiChatThreadInboxState } from '@/ai-chat/threads/hooks/useUpdateAiChatThreadInboxState';
+import { isSnoozeInboxForChannelComponentState } from '@/side-panel/states/isSnoozeInboxForChannelComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { AgentChatInboxAction } from '~/generated-metadata/graphql';
 
 export const useSnoozeAiChatThreads = () => {
   const store = useStore();
-  const isSnoozeAiChatForChannelState = useAtomComponentStateCallbackState(
-    isSnoozeAiChatForChannelComponentState,
+  const isSnoozeInboxForChannelState = useAtomComponentStateCallbackState(
+    isSnoozeInboxForChannelComponentState,
   );
-  const { updateAgentChatThreadInboxState } =
-    useUpdateAgentChatThreadInboxState();
-  const { snoozeAgentChatThreadsInChannel } =
-    useSnoozeAgentChatThreadsInChannel();
+  const { updateAiChatThreadInboxState } = useUpdateAiChatThreadInboxState();
+  const { snoozeInboxThreadsInChannel } = useSnoozeInboxThreadsInChannel();
 
   const snoozeAiChatThreads = ({
     threadIds,
@@ -23,9 +21,9 @@ export const useSnoozeAiChatThreads = () => {
     threadIds: string[];
     snoozedUntil: Date;
   }) =>
-    store.get(isSnoozeAiChatForChannelState)
-      ? snoozeAgentChatThreadsInChannel({ threadIds, snoozedUntil })
-      : updateAgentChatThreadInboxState({
+    store.get(isSnoozeInboxForChannelState)
+      ? snoozeInboxThreadsInChannel({ threadIds, snoozedUntil })
+      : updateAiChatThreadInboxState({
           threadIds,
           action: AgentChatInboxAction.SNOOZE,
           snoozedUntil,

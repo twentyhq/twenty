@@ -6,12 +6,13 @@ import { PERCENT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-tabl
 import { useViewFieldAggregateOperation } from '@/object-record/record-table/record-table-footer/hooks/useViewFieldAggregateOperation';
 import { getAvailableAggregateOperationsForFieldMetadataType } from '@/object-record/record-table/record-table-footer/utils/getAvailableAggregateOperationsForFieldMetadataType';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { t } from '@lingui/core/macro';
 import { useContext, useMemo } from 'react';
 import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
+import { useLingui } from '@lingui/react/macro';
 
 export const RecordTableColumnAggregateFooterMenuContent = () => {
+  const { t } = useLingui();
   const { fieldMetadataId, dropdownId, fieldMetadataType } = useContext(
     RecordTableColumnAggregateFooterDropdownContext,
   );

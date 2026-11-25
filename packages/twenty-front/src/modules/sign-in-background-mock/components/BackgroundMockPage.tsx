@@ -1,5 +1,4 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { TintedIconTile } from 'twenty-ui/components/data-display';
 import { LightIconButton } from 'twenty-ui/components/input';
 import {
@@ -15,6 +14,7 @@ import { BackgroundMockTable } from '@/sign-in-background-mock/components/Backgr
 import { BackgroundMockViewBar } from '@/sign-in-background-mock/components/BackgroundMockViewBar';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledTableContainer = styled.div`
   display: flex;
@@ -26,6 +26,7 @@ const StyledTableContainer = styled.div`
 `;
 
 export const BackgroundMockPage = () => {
+  const { t } = useLingui();
   const theme = useTheme();
 
   return (

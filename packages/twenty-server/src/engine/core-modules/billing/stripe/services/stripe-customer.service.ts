@@ -35,7 +35,47 @@ export class StripeCustomerService {
     workspaceId: string,
   ) {
     await this.stripe.customers.update(stripeCustomerId, {
-      metadata: { workspaceId: workspaceId },
+      metadata: { workspaceId },
+    });
+  }
+
+  async getCustomerPartnerAndEmail(
+    stripeCustomerId: string,
+  ): Promise<{ partner: string | null; email: string | null }> {
+    const customer = await this.stripe.customers.retrieve(stripeCustomerId);
+
+    if ('deleted' in customer && customer.deleted === true) {
+      return { partner: null, email: null };
+    }
+
+    const partner = customer.metadata.partner;
+
+    return {
+      partner: isNonEmptyString(partner) ? partner : null,
+      email: customer.email,
+    };
+  }
+
+  async isPreviousCustomer({
+    email,
+    currentStripeCustomerId,
+  }: {
+    email: string;
+    currentStripeCustomerId?: string;
+  }): Promise<boolean> {
+    const { data: customers } = await this.stripe.customers.list({
+      email,
+      limit: 2,
+    });
+
+    return customers.some(
+      (customer) => customer.id !== currentStripeCustomerId,
+    );
+  }
+
+  async updateCustomerPartner(stripeCustomerId: string, partner: string) {
+    await this.stripe.customers.update(stripeCustomerId, {
+      metadata: { partner },
     });
   }
 
@@ -61,15 +101,15 @@ export class StripeCustomerService {
     });
   }
 
-  async ensureDefaultPaymentMethod(stripeCustomerId: string): Promise<void> {
+  async ensureDefaultPaymentMethod(stripeCustomerId: string): Promise<boolean> {
     const customer = await this.stripe.customers.retrieve(stripeCustomerId);
 
     if ('deleted' in customer && customer.deleted === true) {
-      return;
+      return false;
     }
 
     if (isDefined(customer.invoice_settings?.default_payment_method)) {
-      return;
+      return true;
     }
 
     const { data: paymentMethods } =
@@ -79,12 +119,14 @@ export class StripeCustomerService {
     const paymentMethodId = paymentMethods[0]?.id;
 
     if (!isDefined(paymentMethodId)) {
-      return;
+      return false;
     }
 
     await this.stripe.customers.update(stripeCustomerId, {
       invoice_settings: { default_payment_method: paymentMethodId },
     });
+
+    return true;
   }
 
   async setDefaultPaymentMethod({
@@ -103,24 +145,27 @@ export class StripeCustomerService {
     userEmail,
     workspaceId,
     customerName,
-    partner,
+    affiliatePartnerName,
   }: {
     userEmail: string;
     workspaceId: string;
     customerName: string | undefined;
-    partner?: string;
+    affiliatePartnerName?: string;
   }) {
     const customer = await this.stripe.customers.create({
       name: customerName,
       email: userEmail,
       metadata: {
         workspaceId,
-        ...(isNonEmptyString(partner) ? { partner } : {}),
+        ...(isNonEmptyString(affiliatePartnerName)
+          ? { partner: affiliatePartnerName }
+          : {}),
       },
     });
 
     await this.billingCustomerRepository.insert(workspaceId, {
       stripeCustomerId: customer.id,
+      stripeCustomerEmail: customer.email,
       hasPaymentMethod: false,
     });
 

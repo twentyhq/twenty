@@ -40,6 +40,41 @@ const OPPORTUNITY_FIELDS: ValidationRuleFieldDescriptor[] = [
 ];
 
 describe('getValidationRuleErrorMessage', () => {
+  it.each([
+    [
+      'dateDiff(now, now, "DAYS") > 0',
+      'Invalid date unit. Use MINUTE, HOUR, DAY, WEEK, MONTH, QUARTER or YEAR.',
+    ],
+    [
+      'datePart(now, "CENTURY") > 0',
+      'Invalid date part. Use YEAR, QUARTER, MONTH, WEEK, DAY, DAY_OF_WEEK, HOUR or MINUTE.',
+    ],
+  ])('translates the date error for %s', (expression, expectedMessage) => {
+    const result = compileValidationRuleExpression({
+      expression,
+      fields: OPPORTUNITY_FIELDS,
+    });
+
+    expect(result.isValid).toBe(false);
+    if (!result.isValid) {
+      expect(getValidationRuleErrorMessage(result)).toBe(expectedMessage);
+    }
+  });
+
+  it('translates an aggregate used outside a formula', () => {
+    const result = compileValidationRuleExpression({
+      expression: 'sum(amount.amountMicros) > 0',
+      fields: OPPORTUNITY_FIELDS,
+    });
+
+    expect(result.isValid).toBe(false);
+    if (!result.isValid) {
+      expect(getValidationRuleErrorMessage(result)).toBe(
+        'sum() reads related records, which only a formula can do',
+      );
+    }
+  });
+
   it('should return the message for a known error code', () => {
     expect(
       getValidationRuleErrorMessage({

@@ -3,17 +3,18 @@ import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsF
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useMutation } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { IconEye } from 'twenty-ui/icon';
 import { useToast } from 'twenty-ui/components';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 import { doNotTranslate } from 'twenty-shared/i18n';
+import { useLingui } from '@lingui/react/macro';
 
 type OpenTrackingSwitchProps = {
   divider?: boolean;
 };
 
 export const OpenTrackingSwitch = ({ divider }: OpenTrackingSwitchProps) => {
+  const { t } = useLingui();
   const { enqueueToast } = useToast();
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,

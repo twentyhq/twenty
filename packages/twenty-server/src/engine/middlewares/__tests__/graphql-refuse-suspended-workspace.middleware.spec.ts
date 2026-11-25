@@ -1,24 +1,33 @@
-import { type NextFunction, type Request, type Response } from 'express';
+import { Test } from '@nestjs/testing';
+
+import { type NextFunction, type Response } from 'express';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { AuthExceptionCode } from 'src/engine/core-modules/auth/auth.exception';
 import { GraphQLRefuseSuspendedWorkspaceMiddleware } from 'src/engine/middlewares/graphql-refuse-suspended-workspace.middleware';
-import { type MiddlewareService } from 'src/engine/middlewares/middleware.service';
+import { MiddlewareService } from 'src/engine/middlewares/middleware.service';
 
 describe('GraphQLRefuseSuspendedWorkspaceMiddleware', () => {
-  let middlewareService: jest.Mocked<MiddlewareService>;
+  const writeGraphqlResponseOnExceptionCaught = jest.fn();
   let middleware: GraphQLRefuseSuspendedWorkspaceMiddleware;
   let next: NextFunction;
 
   const response = {} as Response;
 
-  beforeEach(() => {
-    middlewareService = {
-      writeGraphqlResponseOnExceptionCaught: jest.fn(),
-    } as unknown as jest.Mocked<MiddlewareService>;
-    middleware = new GraphQLRefuseSuspendedWorkspaceMiddleware(
-      middlewareService,
-    );
+  beforeEach(async () => {
+    jest.clearAllMocks();
+
+    const module = await Test.createTestingModule({
+      providers: [
+        GraphQLRefuseSuspendedWorkspaceMiddleware,
+        {
+          provide: MiddlewareService,
+          useValue: { writeGraphqlResponseOnExceptionCaught },
+        },
+      ],
+    }).compile();
+
+    middleware = module.get(GraphQLRefuseSuspendedWorkspaceMiddleware);
     next = jest.fn();
   });
 
@@ -29,15 +38,13 @@ describe('GraphQLRefuseSuspendedWorkspaceMiddleware', () => {
     'should refuse a %s workspace without calling next',
     (activationStatus) => {
       const request = {
-        workspace: { id: 'workspace-id', activationStatus },
-      } as unknown as Request;
+        workspace: { activationStatus, deletedAt: undefined },
+      };
 
       middleware.use(request, response, next);
 
       expect(next).not.toHaveBeenCalled();
-      expect(
-        middlewareService.writeGraphqlResponseOnExceptionCaught,
-      ).toHaveBeenCalledWith(
+      expect(writeGraphqlResponseOnExceptionCaught).toHaveBeenCalledWith(
         response,
         expect.objectContaining({
           code: AuthExceptionCode.WORKSPACE_SUSPENDED,
@@ -49,15 +56,16 @@ describe('GraphQLRefuseSuspendedWorkspaceMiddleware', () => {
   it.each([
     [
       'an active workspace',
-      { activationStatus: WorkspaceActivationStatus.ACTIVE },
+      {
+        activationStatus: WorkspaceActivationStatus.ACTIVE,
+        deletedAt: undefined,
+      },
     ],
     ['no workspace', undefined],
   ])('should call next for %s', (_label, workspace) => {
-    middleware.use({ workspace } as unknown as Request, response, next);
+    middleware.use({ workspace }, response, next);
 
     expect(next).toHaveBeenCalled();
-    expect(
-      middlewareService.writeGraphqlResponseOnExceptionCaught,
-    ).not.toHaveBeenCalled();
+    expect(writeGraphqlResponseOnExceptionCaught).not.toHaveBeenCalled();
   });
 });

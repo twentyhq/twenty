@@ -46,6 +46,26 @@ describe('formatExpiration', () => {
     const resultWithExpiresMention = formatExpiration(expiresAt, true, false);
     expect(resultWithExpiresMention).toEqual('Expires in 8 years and 9 days');
   });
+  it('should format properly when expiresAt is less than a day away', () => {
+    const expiresAt = '2024-01-01T06:00:00.000Z';
+    expect(formatExpiration(expiresAt)).toEqual('In less than a day');
+    expect(formatExpiration(expiresAt, true)).toEqual(
+      'Expires in less than a day',
+    );
+    expect(formatExpiration(expiresAt, true, false)).toEqual(
+      'Expires in less than a day',
+    );
+  });
+  it('should format properly when expiresAt passed less than a day ago', () => {
+    const expiresAt = '2023-12-31T21:00:00.000Z';
+    expect(formatExpiration(expiresAt)).toEqual('Expired');
+    expect(formatExpiration(expiresAt, true, false)).toEqual('Expired');
+  });
+  it('should format properly when expiresAt passed several days ago', () => {
+    const expiresAt = '2023-12-22T00:00:00.000Z';
+    expect(formatExpiration(expiresAt)).toEqual('Expired');
+    expect(formatExpiration(expiresAt, true, false)).toEqual('Expired');
+  });
 });
 
 describe('isExpired', () => {
@@ -57,6 +77,16 @@ describe('isExpired', () => {
   it('should return true for past dates', () => {
     const expiresAt = '2023-12-01T00:00:00.000Z';
     expect(isExpired(expiresAt)).toBe(true);
+  });
+
+  it('should return true for dates passed less than a day ago', () => {
+    const expiresAt = '2023-12-31T21:00:00.000Z';
+    expect(isExpired(expiresAt)).toBe(true);
+  });
+
+  it('should return false for dates less than a day away', () => {
+    const expiresAt = '2024-01-01T06:00:00.000Z';
+    expect(isExpired(expiresAt)).toBe(false);
   });
 
   it('should return false for null dates', () => {

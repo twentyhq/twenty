@@ -191,7 +191,9 @@ export const Dropdown = ({
 
   const handleClickableComponentClick = useCallback(
     async (event: MouseEvent) => {
-      if (disableClickForClickableComponent) return;
+      if (disableClickForClickableComponent) {
+        return;
+      }
       event.stopPropagation();
       event.preventDefault();
 

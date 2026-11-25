@@ -1,10 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { type ProviderOptions } from '@ai-sdk/provider-utils';
+import { type Context, type ProviderOptions } from '@ai-sdk/provider-utils';
 import {
   isStepCount,
   type ModelMessage,
   NoOutputGeneratedError,
+  type OutputInterface,
   type StepResult,
   type StopCondition,
   streamText,
@@ -26,6 +27,7 @@ import { resolveToolName } from 'src/engine/core-modules/tool-provider/utils/res
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 import { endsOnPausingToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/ends-on-pausing-tool-call.util';
+import { AgentFilePartService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-file-part.service';
 import {
   getCacheProviderOptions,
   injectCacheBreakpoint,
@@ -37,10 +39,6 @@ import {
   type WebSearchOperationType,
 } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { type StepDebitResult } from 'src/engine/metadata-modules/ai/ai-billing/types/step-debit-result.type';
-import {
-  extractCacheCreationTokens,
-  extractCacheCreationTokensFromSteps,
-} from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { type RegisteredAiModel } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
@@ -51,6 +49,8 @@ import {
 
 // chat and agent runs report to their own metric keys, so existing dashboards keep their series
 type AgentStepLoopMetricsScope = 'chat' | 'agent';
+
+type AgentStepLoopOutput = OutputInterface<unknown, unknown, never>;
 
 type ToolMetricKeys = {
   succeeded: MetricsKeys;
@@ -91,12 +91,13 @@ const METRICS_CONFIG_BY_SCOPE: Record<
 
 export type AgentStepLoopInput = {
   registeredModel: RegisteredAiModel;
-  modelConfig: Pick<AiModelConfig, 'sdkPackage' | 'modelFamily'>;
+  modelConfig: Pick<AiModelConfig, 'sdkPackage' | 'modelFamily' | 'modalities'>;
   systemPrompt: string;
   contextMessages?: SystemModelMessage[];
   messages: ModelMessage[];
   tools: ToolSet;
   toolChoice?: 'auto' | 'required';
+  output?: AgentStepLoopOutput;
   abortSignal?: AbortSignal;
   offeredPausingToolNames: string[];
   shouldStopAfterStep?: StopCondition<ToolSet>;
@@ -119,8 +120,10 @@ export type AgentStepLoopInput = {
 };
 
 export type AgentStepLoop = {
-  stream: ReturnType<typeof streamText<ToolSet>>;
+  stream: ReturnType<typeof streamText<ToolSet, Context, AgentStepLoopOutput>>;
   getStopReason: () => StepDebitResult['stopReason'];
+  // what a loop that ended early, such as a stopped one, did before it ended
+  getFinishedSteps: () => StepResult<ToolSet>[];
 };
 
 const sumSteps = (
@@ -142,6 +145,7 @@ export class AgentStepLoopService {
     private readonly aiBillingService: AiBillingService,
     private readonly metricsService: MetricsService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
+    private readonly agentFilePartService: AgentFilePartService,
   ) {}
 
   start({
@@ -152,6 +156,7 @@ export class AgentStepLoopService {
     messages,
     tools,
     toolChoice = 'auto',
+    output,
     abortSignal,
     offeredPausingToolNames,
     shouldStopAfterStep,
@@ -174,6 +179,18 @@ export class AgentStepLoopService {
     let stepStartedAt = startedAt;
     let isUsageRecorded = false;
     let isFirstTokenRecorded = !recordsTurnMetrics;
+    const {
+      model: modelWithFileDelivery,
+      prepareFileParts,
+      downloadFiles,
+    } = this.agentFilePartService.createFileDelivery({
+      model: registeredModel.model,
+      modelConfig,
+      modelId: registeredModel.modelId,
+      workspaceId: billing.workspaceId,
+      operationType: billing.operationType,
+      spenders: billing.spenders,
+    });
 
     const notifyUserCreditsCrossing = async (debit: StepDebitResult) => {
       if (
@@ -225,7 +242,7 @@ export class AgentStepLoopService {
         ],
         [
           MetricsKeys.AiChatCacheWriteTokens,
-          extractCacheCreationTokensFromSteps(steps),
+          sumSteps(steps, (usage) => usage.inputTokenDetails?.cacheWriteTokens),
         ],
       ] as const) {
         this.metricsService.incrementCounterBy({
@@ -250,12 +267,13 @@ export class AgentStepLoopService {
       providerOptions: getCacheProviderOptions(modelConfig),
     };
 
-    const stream = streamText({
-      model: registeredModel.model,
+    const stream = streamText<ToolSet, Context, AgentStepLoopOutput>({
+      model: modelWithFileDelivery,
       instructions: [systemMessage, ...contextMessages],
       messages,
       tools,
       toolChoice,
+      output,
       abortSignal,
       streamRetries,
       stopWhen: async (step) =>
@@ -268,6 +286,7 @@ export class AgentStepLoopService {
         (await (shouldStopAfterStep?.(step) ?? false)),
       ...buildAiTelemetry(telemetry),
       providerOptions,
+      experimental_download: downloadFiles,
       // keys are sorted and the last message carries the cache point, so the prompt prefix stays cacheable
       prepareStep: async ({ messages: stepMessages }) => {
         await beforeStep?.();
@@ -275,7 +294,7 @@ export class AgentStepLoopService {
 
         return {
           messages: injectCacheBreakpoint(
-            stepMessages.map(sortKeysDeeply),
+            await prepareFileParts(stepMessages.map(sortKeysDeeply)),
             modelConfig,
           ),
         };
@@ -326,12 +345,7 @@ export class AgentStepLoopService {
         const stepDebit =
           await this.aiBillingService.decrementAndCheckAvailableCredits({
             modelId: registeredModel.modelId,
-            billingInput: {
-              usage: step.usage,
-              cacheCreationTokens: extractCacheCreationTokens(
-                step.providerMetadata,
-              ),
-            },
+            billingInput: { usage: step.usage },
             workspaceId: billing.workspaceId,
             operationType: billing.operationType,
             spenders: billing.spenders,
@@ -364,6 +378,7 @@ export class AgentStepLoopService {
           model: registeredModel.model,
           billingContext: {
             aiBillingService: this.aiBillingService,
+            isContentRecordingAllowed: telemetry.isContentRecordingAllowed,
             modelId: registeredModel.modelId,
             workspaceId: billing.workspaceId,
             spenders: billing.spenders,
@@ -391,6 +406,7 @@ export class AgentStepLoopService {
     return {
       stream,
       getStopReason: () => stopReason,
+      getFinishedSteps: () => [...finishedSteps],
     };
   }
 
@@ -411,7 +427,6 @@ export class AgentStepLoopService {
         `inputTokens(fullContext)=${step.usage.inputTokens ?? 0}, ` +
         `cacheReadTokens=${step.usage.inputTokenDetails?.cacheReadTokens ?? 0}, ` +
         `cacheWriteTokens=${step.usage.inputTokenDetails?.cacheWriteTokens ?? 0}, ` +
-        `cacheCreationTokens=${extractCacheCreationTokens(step.providerMetadata)}, ` +
         `totalTokens=${step.usage.totalTokens ?? 0}`,
     );
   }

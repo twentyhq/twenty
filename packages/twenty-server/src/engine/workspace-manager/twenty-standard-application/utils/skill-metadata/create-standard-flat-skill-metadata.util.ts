@@ -42,7 +42,27 @@ You help users create and manage automation workflows.
 - **Triggers**: DATABASE_EVENT, MANUAL, CRON, WEBHOOK
 - **Steps**: CREATE_RECORD, SEND_EMAIL, CODE, LOGIC_FUNCTION, PICK_RECORD, CLASSIFY, etc.
 - **Data flow**: Use {{stepId.fieldName}} to reference previous step outputs
-- **Relationships**: Use nested objects like {"company": {"id": "{{reference}}"}}
+- **Relationships**: Set a relation by its foreign key, e.g. {"companyId": "{{reference}}"}. In UPDATE_RECORD, list that same key (companyId) in fieldsToUpdate
+
+## Linking Emails, Events, Notes and Tasks to Records
+
+Emails, calendar events, notes and tasks have no company, person or opportunity field. Each link is a separate junction record:
+
+| Linked item    | Junction object           | Parent key            |
+| -------------- | ------------------------- | --------------------- |
+| Email thread   | \`messageThreadTarget\`   | \`messageThreadId\`   |
+| Calendar event | \`calendarEventTarget\`   | \`calendarEventId\`   |
+| Note           | \`noteTarget\`            | \`noteId\`            |
+| Task           | \`taskTarget\`            | \`taskId\`            |
+
+Each junction has one foreign key per linkable object: \`targetCompanyId\`, \`targetPersonId\`, \`targetOpportunityId\`. Set exactly one. Custom objects add a \`target<ObjectName>Id\` key on \`noteTarget\` and \`taskTarget\` only. Check the junction's metadata for exact field names.
+
+To link, use CREATE_RECORD on the junction. Linking to several records means one junction record each:
+{ "objectName": "noteTarget", "objectRecord": { "noteId": "...", "targetCompanyId": "..." } }
+
+To react to a link, trigger on \`<junction>.created\`. The same keys are on {{trigger.properties.after}}. Email and calendar sync also create \`messageThreadTarget\` and \`calendarEventTarget\` records automatically (\`isManuallyAssigned\` false), so filter on \`isManuallyAssigned\` when only links made by a user should count.
+
+Not to be confused with \`attachment\`, which stores files.
 
 ## CRON Trigger Settings Schema
 
@@ -438,18 +458,19 @@ Loop STEP 6 for all the custom objects
         icon: 'IconLayoutDashboard',
         content: `# Dashboard Building Skill
 
-You help users create and manage dashboards with widgets.
+You help users create and manage dashboards and place saved components on existing dashboard or record-page layouts.
 
 ## Tools
 
 - list_dashboards, get_dashboard
+- list_front_components, list_record_page_layouts, place_front_component
 - create_complete_dashboard
-- add_dashboard_tab, add_dashboard_widget, update_dashboard_widget, delete_dashboard_widget
+- add_page_layout_tab, add_page_layout_widget, update_page_layout_widget, delete_page_layout_widget
 - get_object_metadata / get_field_metadata (resolve object + field IDs)
 
 ## Confirmation gate (ALWAYS ask before creating or updating)
 
-Before calling ANY tool that creates or modifies a dashboard (\`create_complete_dashboard\`, \`add_dashboard_tab\`, \`add_dashboard_widget\`, \`update_dashboard_widget\`, \`delete_dashboard_widget\`), you MUST first present a short plan and get explicit user confirmation.
+Before calling ANY tool that creates or modifies a dashboard or record-page layout (\`place_front_component\`, \`create_complete_dashboard\`, \`add_page_layout_tab\`, \`add_page_layout_widget\`, \`update_page_layout_widget\`, \`delete_page_layout_widget\`), you MUST first present a short plan and get explicit user confirmation.
 
 - Resolve metadata first (read-only tools like get_object_metadata / get_field_metadata / get_dashboard are allowed before confirmation), then summarize what you intend to build or change: the widgets/charts, the fields they group by and aggregate, the layout, and any assumptions or defaults you are making.
 - Ask the user to confirm (or adjust) and then STOP and wait for their answer. Do NOT call any creation/update tool in the same turn as the plan.
@@ -462,12 +483,12 @@ Once the user has confirmed the plan, your job is to deliver the dashboard in th
 
 1. Resolve metadata in as few calls as possible: call get_object_metadata and get_field_metadata for the relevant object(s) once, and batch field lookups. Do NOT re-fetch metadata you already have in context.
 2. Build the full widget configuration using the rules below.
-3. **Emit \`create_complete_dashboard\` with ALL widgets in a single call.** Prefer one-shot \`create_complete_dashboard\` over building the dashboard incrementally with multiple \`add_dashboard_widget\` calls — fewer round-trips means lower cost and fewer points to stall.
+3. **Emit \`create_complete_dashboard\` with ALL widgets in a single call.** Prefer one-shot \`create_complete_dashboard\` over building the dashboard incrementally with multiple \`add_page_layout_widget\` calls — fewer round-trips means lower cost and fewer points to stall.
 4. After the tool returns success, confirm to the user what was built (and restate any assumptions you made).
 
 ### Completion guard (critical, applies once confirmed)
 
-- After the user has confirmed, you MUST call the appropriate dashboard tool for the requested change in that turn (e.g. \`create_complete_dashboard\`, \`add_dashboard_widget\`, \`update_dashboard_widget\`, or \`delete_dashboard_widget\`). **Never end your turn on a "now let me…" / "I'll build this…" preamble without actually calling the tool.** A preamble with no following tool call (after confirmation) is a failure.
+- After the user has confirmed, you MUST call the appropriate dashboard tool for the requested change in that turn (e.g. \`create_complete_dashboard\`, \`add_page_layout_widget\`, \`update_page_layout_widget\`, or \`delete_page_layout_widget\`). **Never end your turn on a "now let me…" / "I'll build this…" preamble without actually calling the tool.** A preamble with no following tool call (after confirmation) is a failure.
 - Do NOT yield or hand back to the user until at least one dashboard tool has returned success — unless you are still waiting on confirmation or genuinely blocked on something only the user can answer.
 
 ### Default-and-proceed (resolve defaults in the plan, do not stall)
@@ -475,9 +496,15 @@ Once the user has confirmed the plan, your job is to deliver the dashboard in th
 - If the request references a field or concept that does not exist in the workspace (e.g. "Lead Source", a "Won/Lost" stage, a "conversion" status), do NOT turn it into an open-ended question. Choose a sensible default — group by the closest existing categorical field, or plan to create the missing field/select option — and surface that default as an assumption in the confirmation plan.
 - Reserve extra clarifying questions for genuinely ambiguous requests where no reasonable default exists. Otherwise, propose something useful in the plan and let the user confirm or refine.
 
+## Placing a saved component
+
+- Read list_front_components to resolve the saved component by name. Use get_dashboard or list_record_page_layouts to find an active tab and its layout mode.
+- Present the component, target page/tab and position, then get explicit confirmation before place_front_component. Saving a component does not authorize placing it.
+- Explain that record-page changes affect the shared object layout, not only the open record.
+
 ## Modifying an existing dashboard
 
-- Call get_dashboard first to read the current layout, then present the intended changes and get confirmation (see the confirmation gate above) before calling add_dashboard_widget / update_dashboard_widget / delete_dashboard_widget. Use activeTabId from context if available.
+- Call get_dashboard first to read the current layout, then present the intended changes and get confirmation (see the confirmation gate above) before calling add_page_layout_widget / update_page_layout_widget / delete_page_layout_widget. Use activeTabId from context if available.
 - Only call get_dashboard when modifying — never before creating a brand-new dashboard.
 
 ## Field Resolution Rules
@@ -535,7 +562,7 @@ Once the user has confirmed the plan, your job is to deliver the dashboard in th
     - Include 4–6 of the most relevant fields (label identifier + key SELECT/DATE/CURRENCY fields). Order in the array IS the column order.
     - Add filters/sorts to focus the table (e.g. filter out DONE/CANCELLED records, sort by a date field).
   - Never reuse a record index view — widget views and record index views must be separate
-  - Leave the view's visibility as WORKSPACE (the default) — never set UNLISTED on a widget-backing view, or the widget will render a blank table
+  - Leave isPrivate unset or false (the default) on the view. Never make a widget-backing view private, or the widget will render a blank table
   - Set objectMetadataId on the widget (top-level, required)
   - Set configuration.viewId to the UUID returned by upsert_complete_view (required)
   - columnSpan 12 (full width) or 6 (half width), rowSpan 6–10
@@ -555,13 +582,13 @@ Step 1 — upsert_complete_view: {
   "filters": [{ "fieldName": "status", "operand": "IS_NOT", "value": ["DONE"] }],
   "sorts": [{ "fieldName": "createdAt", "direction": "DESC" }]
 } → { "success": true, "message": "...", "result": { "id": "<view-uuid>", ... } }
-Step 2 — add_dashboard_widget: { "type": "RECORD_TABLE", "objectMetadataId": "<repair-object-uuid>", "configuration": { "configurationType": "RECORD_TABLE", "viewId": "<view-uuid>" }, "position": { "layoutMode": "GRID", "row": 0, "column": 0, "rowSpan": 8, "columnSpan": 12 } }
+Step 2 — add_page_layout_widget: { "type": "RECORD_TABLE", "objectMetadataId": "<repair-object-uuid>", "configuration": { "configurationType": "RECORD_TABLE", "viewId": "<view-uuid>" }, "position": { "layoutMode": "GRID", "row": 0, "column": 0, "rowSpan": 8, "columnSpan": 12 } }
 
 ## Tabs
 
-Use add_dashboard_tab to create multiple tabs in a dashboard. Each tab has its own set of widgets.
+Use add_page_layout_tab to create multiple tabs in a dashboard. Each tab has its own set of widgets.
 Good tab structure: one overview tab (KPIs + charts) + one or more detail tabs (RECORD_TABLE + focused charts).
-After creating a tab, use its returned tabId as pageLayoutTabId when calling add_dashboard_widget.
+After creating a tab, use its returned tabId as pageLayoutTabId when calling add_page_layout_widget.
 
 ## Grid System
 
@@ -1382,7 +1409,8 @@ Example: { "objectNameSingular": "opportunity", "type": "KANBAN", "name": "Pipel
 
 | Field Type | Available Operators |
 |---|---|
-| TEXT, EMAILS, FULL_NAME, ADDRESS, LINKS, PHONES | CONTAINS, DOES_NOT_CONTAIN, IS_EMPTY, IS_NOT_EMPTY |
+| TEXT | CONTAINS, DOES_NOT_CONTAIN, IS, IS_NOT, IS_EMPTY, IS_NOT_EMPTY |
+| EMAILS, FULL_NAME, ADDRESS, LINKS, PHONES | CONTAINS, DOES_NOT_CONTAIN, IS_EMPTY, IS_NOT_EMPTY |
 | NUMBER, NUMERIC | IS, IS_NOT, GREATER_THAN_OR_EQUAL, LESS_THAN_OR_EQUAL, IS_EMPTY, IS_NOT_EMPTY |
 | CURRENCY | GREATER_THAN_OR_EQUAL, LESS_THAN_OR_EQUAL, IS_EMPTY, IS_NOT_EMPTY |
 | DATE, DATE_TIME | IS, IS_RELATIVE, IS_IN_PAST, IS_IN_FUTURE, IS_TODAY, IS_BEFORE, IS_AFTER, IS_EMPTY, IS_NOT_EMPTY |
@@ -1672,7 +1700,7 @@ Permissions decide who can see and change company data, so a wrong guess is expe
 
 Dropping an override silently widens access. Treat "I only sent the object I changed" as a bug.
 
-\`upsert_row_level_permission_rules\` behaves the same way for a given role + object: the \`predicates\` and \`predicateGroups\` arrays are the complete rule set, anything omitted is deleted, and empty arrays clear all rules.
+\`upsert_row_level_permission_rules\` behaves the same way for a given role + object: the \`rules\` array is the complete rule set, any rule, group or predicate omitted is deleted, and an empty array clears all rules. Send a rule's id to update it rather than replace it.
 
 ## Permission rules the API enforces
 

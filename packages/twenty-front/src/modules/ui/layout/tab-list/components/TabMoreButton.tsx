@@ -1,10 +1,10 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { IconChevronDown } from 'twenty-ui/icon';
 import { Dropdown, TabButton } from 'twenty-ui/components/navigation';
 
 import { TAB_LIST_HEIGHT } from '@/ui/layout/tab-list/constants/TabListHeight';
 import { TAB_LIST_ROW_HEIGHT_CSS_VARIABLE } from '@/ui/layout/tab-list/constants/TabListRowHeightCssVariable';
+import { useLingui } from '@lingui/react/macro';
 
 const TAB_MORE_BUTTON_TEST_ID = 'tab-tab-more-button';
 
@@ -26,6 +26,7 @@ export const TabMoreButton = ({
   disableTestId,
   isDropdownTrigger = false,
 }: TabMoreButtonProps) => {
+  const { t } = useLingui();
   const testId = disableTestId ? undefined : TAB_MORE_BUTTON_TEST_ID;
 
   const tabButton = (

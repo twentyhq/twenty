@@ -15,6 +15,7 @@ export default defineConnectionProvider({
   displayName: 'LinkedIn',
   type: 'custom',
   scope: 'USER',
+  logo: 'public/linkedin-logomark.svg',
   custom: {
     authorizeLogicFunction: {
       universalIdentifier: LINKEDIN_AUTHORIZE_UNIVERSAL_IDENTIFIER,

@@ -1,37 +1,37 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { addAllFlatEntitiesToFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/__tests__/add-all-flat-entities-to-flat-entity-maps.test-util';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { getChartLabelIdentifierColumnNames } from 'src/modules/dashboard/chart-data/utils/get-chart-label-identifier-column-names.util';
 
 const labelFieldMetadataId = 'label-field-id';
 
-const buildFlatFieldMetadataMaps = (
-  labelField: Partial<FlatFieldMetadata>,
-): FlatEntityMaps<FlatFieldMetadata> =>
-  ({
-    byUniversalIdentifier: {
-      'label-field-universal-id': {
+const buildFlatFieldMetadataMaps = (labelField: Partial<FlatFieldMetadata>) =>
+  addAllFlatEntitiesToFlatEntityMaps({
+    flatEntities: [
+      getFlatFieldMetadataMock({
         id: labelFieldMetadataId,
         universalIdentifier: 'label-field-universal-id',
+        objectMetadataId: 'target-object-id',
+        type: FieldMetadataType.TEXT,
         ...labelField,
-      },
-    },
-    universalIdentifierById: {
-      [labelFieldMetadataId]: 'label-field-universal-id',
-    },
-    universalIdentifiersByApplicationId: {},
-  }) as unknown as FlatEntityMaps<FlatFieldMetadata>;
+      }),
+    ],
+    flatEntityMaps: createEmptyFlatEntityMaps(),
+  });
 
 const buildFlatObjectMetadata = (
   labelIdentifierFieldMetadataId: string | null,
-): FlatObjectMetadata =>
-  ({
+) =>
+  getFlatObjectMetadataMock({
     id: 'target-object-id',
+    universalIdentifier: 'target-object-universal-id',
     nameSingular: 'agent',
     labelIdentifierFieldMetadataId,
-  }) as unknown as FlatObjectMetadata;
+  });
 
 describe('getChartLabelIdentifierColumnNames', () => {
   it('should return id and the column name for a TEXT label identifier', () => {

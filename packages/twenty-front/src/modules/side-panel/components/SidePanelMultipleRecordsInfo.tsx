@@ -1,9 +1,9 @@
 import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
 import { useFindManyRecordsSelectedInContextStore } from '@/context-store/hooks/useFindManyRecordsSelectedInContextStore';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
-import { t } from '@lingui/core/macro';
 import { IconPencil } from 'twenty-ui/icon';
 import { useTheme } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 type SidePanelMultipleRecordsInfoProps = {
   sidePanelPageInstanceId: string;
@@ -12,6 +12,7 @@ type SidePanelMultipleRecordsInfoProps = {
 export const SidePanelMultipleRecordsInfo = ({
   sidePanelPageInstanceId,
 }: SidePanelMultipleRecordsInfoProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const { formatNumber } = useNumberFormat();
   const { totalCount } = useFindManyRecordsSelectedInContextStore({

@@ -13,7 +13,6 @@ import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { type ViewType } from '@/views/types/ViewType';
-import { t } from '@lingui/core/macro';
 import { isUndefined } from '@sniptt/guards';
 import { useCallback, useContext } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -28,6 +27,7 @@ import {
 } from 'twenty-ui/icon';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { useLingui } from '@lingui/react/macro';
 
 type UseRecordGroupActionsParams = {
   viewType: ViewType;
@@ -36,6 +36,7 @@ type UseRecordGroupActionsParams = {
 export const useRecordGroupActions = ({
   viewType,
 }: UseRecordGroupActionsParams) => {
+  const { t } = useLingui();
   const { recordIndexId } = useRecordIndexIdFromCurrentContextStore();
   const navigate = useNavigateSettings();
   const location = useLocation();

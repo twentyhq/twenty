@@ -5,7 +5,7 @@ import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graph
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { DatabaseEventAction } from 'src/engine/workspace-event-emitter/enums/database-event-action';
 import { type WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
@@ -147,7 +147,7 @@ describe('Record API chat creation initializes personal inbox state', () => {
   it('preserves an existing owner when creator initialization is repeated by another member', async () => {
     const threadId = await context.createThread();
     const participantsBefore = await context.readParticipants(threadId);
-    const authContext = await context.sharingService.getAuthContext({
+    const authContext = await context.sharingService.getAuthContextOrThrow({
       workspaceId: context.workspaceId,
       workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
     });

@@ -4,16 +4,17 @@ import { getSortLabelSuffixForFieldType } from '@/side-panel/pages/page-layout/u
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
-import { t } from '@lingui/core/macro';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { GraphOrderBy } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 export const useGraphXSortOptionLabels = ({
   objectMetadataId,
 }: {
   objectMetadataId: string;
 }) => {
+  const { t } = useLingui();
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
   const objectMetadataItem = objectMetadataItems.find(

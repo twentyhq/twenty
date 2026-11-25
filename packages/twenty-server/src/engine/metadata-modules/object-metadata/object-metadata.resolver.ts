@@ -7,7 +7,6 @@ import {
   Query,
   ResolveField,
 } from '@nestjs/graphql';
-
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -21,9 +20,6 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { FieldFilterInput } from 'src/engine/metadata-modules/field-metadata/dtos/field-filter.input';
 import { fromFlatObjectMetadataToObjectMetadataDto } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-to-object-metadata-dto.util';
@@ -61,9 +57,14 @@ import { fromObjectMetadataEntityToObjectMetadataDto } from 'src/engine/metadata
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { OBJECT_METADATA_READ_ACCESS_POLICY } from 'src/engine/metadata-modules/object-metadata/constants/object-metadata-read-access-policy.constant';
+import { OBJECT_METADATA_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/object-metadata/constants/object-metadata-write-access-policy.constant';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 
-@UseGuards(
-  AuthPrincipalGuard({
+const OBJECT_RECORD_STATISTICS_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
     userSession: {
       standard: true,
       impersonated: true,
@@ -73,8 +74,10 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
     apiKey: true,
     oauthClient: true,
     application: true,
-  }),
-)
+  },
+  requiredPermissionFlags: [PermissionFlagType.DATA_MODEL],
+};
+
 @MetadataResolver(() => ObjectMetadataDTO)
 @UsePipes(ResolverValidationPipe)
 @UseFilters(
@@ -92,7 +95,7 @@ export class ObjectMetadataResolver {
     private readonly objectMetadataRepository: WorkspaceScopedRepository<ObjectMetadataEntity>,
   ) {}
 
-  @UseGuards(NoPermissionGuard)
+  @UseGuards(AccessPolicyGuard(OBJECT_METADATA_READ_ACCESS_POLICY))
   @Query(() => ObjectConnectionDTO)
   @AllowSuspendedWorkspace()
   async objects(
@@ -136,7 +139,7 @@ export class ObjectMetadataResolver {
     };
   }
 
-  @UseGuards(NoPermissionGuard)
+  @UseGuards(AccessPolicyGuard(OBJECT_METADATA_READ_ACCESS_POLICY))
   @Query(() => ObjectMetadataDTO)
   async object(
     @Args('id', {
@@ -161,6 +164,7 @@ export class ObjectMetadataResolver {
   }
 
   @ResolveField(() => ObjectFieldsConnectionDTO)
+  @UseGuards(NoPermissionGuard)
   async fields(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Parent() objectMetadata: Pick<ObjectMetadataDTO, 'id'>,
@@ -188,6 +192,7 @@ export class ObjectMetadataResolver {
   }
 
   @ResolveField(() => ObjectIndexMetadatasConnectionDTO)
+  @UseGuards(NoPermissionGuard)
   async indexMetadatas(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Parent() objectMetadata: Pick<ObjectMetadataDTO, 'id'>,
@@ -217,13 +222,14 @@ export class ObjectMetadataResolver {
   @ResolveField(() => Boolean, {
     deprecationReason: 'Use isUIEditable',
   })
+  @UseGuards(NoPermissionGuard)
   async isUIReadOnly(
     @Parent() objectMetadata: ObjectMetadataDTO,
   ): Promise<boolean> {
     return !objectMetadata.isUIEditable;
   }
 
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
+  @UseGuards(AccessPolicyGuard(OBJECT_RECORD_STATISTICS_ACCESS_POLICY))
   @Query(() => [ObjectRecordCountDTO])
   async objectRecordCounts(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -231,7 +237,7 @@ export class ObjectMetadataResolver {
     return this.objectRecordCountService.getRecordCounts(workspaceId);
   }
 
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
+  @UseGuards(AccessPolicyGuard(OBJECT_RECORD_STATISTICS_ACCESS_POLICY))
   @Query(() => [UUIDScalarType])
   async mostlyEmptyFieldMetadataIds(
     @Args('objectMetadataId', { type: () => UUIDScalarType })
@@ -281,6 +287,7 @@ export class ObjectMetadataResolver {
   }
 
   @ResolveField(() => String, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   async labelPlural(
     @Parent() objectMetadata: ObjectMetadataDTO,
     @Context() context: { loaders: IDataloaders } & I18nContext,
@@ -295,6 +302,7 @@ export class ObjectMetadataResolver {
   }
 
   @ResolveField(() => String, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   async labelSingular(
     @Parent() objectMetadata: ObjectMetadataDTO,
     @Context() context: { loaders: IDataloaders } & I18nContext,
@@ -309,6 +317,7 @@ export class ObjectMetadataResolver {
   }
 
   @ResolveField(() => String, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   async description(
     @Parent() objectMetadata: ObjectMetadataDTO,
     @Context() context: { loaders: IDataloaders } & I18nContext,
@@ -322,8 +331,8 @@ export class ObjectMetadataResolver {
     );
   }
 
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
   @ResolveField(() => String, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   async icon(
     @Parent() objectMetadata: ObjectMetadataDTO,
     @Context() context: { loaders: IDataloaders } & I18nContext,
@@ -338,6 +347,7 @@ export class ObjectMetadataResolver {
   }
 
   @ResolveField(() => String, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   async color(
     @Parent() objectMetadata: ObjectMetadataDTO,
     @Context() context: { loaders: IDataloaders } & I18nContext,
@@ -352,13 +362,14 @@ export class ObjectMetadataResolver {
   }
 
   @ResolveField(() => UUIDScalarType, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   imageIdentifierFieldMetadataId(
     @Parent() objectMetadata: ObjectMetadataDTO,
   ): string | null {
     return getEffectiveImageIdentifierFieldMetadataId(objectMetadata);
   }
 
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
+  @UseGuards(AccessPolicyGuard(OBJECT_METADATA_WRITE_ACCESS_POLICY))
   @Mutation(() => ObjectMetadataDTO)
   async createOneObject(
     @Args('input') input: CreateOneObjectInput,
@@ -377,7 +388,7 @@ export class ObjectMetadataResolver {
     }
   }
 
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
+  @UseGuards(AccessPolicyGuard(OBJECT_METADATA_WRITE_ACCESS_POLICY))
   @Mutation(() => ObjectMetadataDTO)
   async deleteOneObject(
     @Args('input') deleteObjectInput: DeleteOneObjectInput,
@@ -396,7 +407,7 @@ export class ObjectMetadataResolver {
     }
   }
 
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
+  @UseGuards(AccessPolicyGuard(OBJECT_METADATA_WRITE_ACCESS_POLICY))
   @Mutation(() => ObjectMetadataDTO)
   async updateOneObject(
     @Args('input') updateObjectInput: UpdateOneObjectInput,
@@ -415,7 +426,7 @@ export class ObjectMetadataResolver {
     }
   }
 
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
+  @UseGuards(AccessPolicyGuard(OBJECT_METADATA_WRITE_ACCESS_POLICY))
   @Mutation(() => [ObjectMetadataDTO])
   async updateManyObjects(
     @Args('inputs', { type: () => [UpdateOneObjectInput] })
@@ -436,6 +447,7 @@ export class ObjectMetadataResolver {
   }
 
   @ResolveField(() => [FieldMetadataDTO], { nullable: false })
+  @UseGuards(NoPermissionGuard)
   async fieldsList(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Parent() objectMetadata: ObjectMetadataDTO,
@@ -459,6 +471,7 @@ export class ObjectMetadataResolver {
   }
 
   @ResolveField(() => [IndexMetadataDTO], { nullable: false })
+  @UseGuards(NoPermissionGuard)
   async indexMetadataList(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Parent() objectMetadata: ObjectMetadataDTO,
@@ -481,6 +494,7 @@ export class ObjectMetadataResolver {
   }
 
   @ResolveField(() => [SearchFieldMetadataDTO], { nullable: false })
+  @UseGuards(NoPermissionGuard)
   async searchFieldMetadataList(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Parent() objectMetadata: ObjectMetadataDTO,

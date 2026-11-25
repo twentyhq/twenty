@@ -4,8 +4,7 @@ import { mapAgentStepsToToolCallLogs } from 'src/engine/metadata-modules/ai/ai-a
 
 type StepContentPart = StepResult<ToolSet>['content'][number];
 
-const buildStep = (content: StepContentPart[]): StepResult<ToolSet> =>
-  ({ content }) as unknown as StepResult<ToolSet>;
+const buildStep = (content: StepContentPart[]) => ({ content });
 
 describe('mapAgentStepsToToolCallLogs', () => {
   it('returns an empty array when there are no steps', () => {

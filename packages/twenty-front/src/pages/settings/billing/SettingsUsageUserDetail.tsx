@@ -9,7 +9,6 @@ import { useUsageAnalyticsData } from '@/settings/usage/hooks/useUsageAnalyticsD
 import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueFormatter';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
 
 import { useParams } from 'react-router-dom';
@@ -43,6 +42,7 @@ const StyledUserCredits = styled.span`
 `;
 
 export const SettingsUsageUserDetail = () => {
+  const { t } = useLingui();
   const { t: tLingui } = useLingui();
   const { userWorkspaceId } = useParams<{ userWorkspaceId: string }>();
   const { formatUsageValue } = useUsageValueFormatter();

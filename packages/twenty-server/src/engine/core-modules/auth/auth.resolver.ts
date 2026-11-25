@@ -12,7 +12,11 @@ import {
   FileFolder,
   TwoFactorAuthenticationStrategy,
 } from 'twenty-shared/types';
-import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  isDefined,
+  isNonEmptyString,
+} from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
@@ -76,12 +80,14 @@ import { FileUploadTargetDTO } from 'src/engine/core-modules/file/file-upload/dt
 import { FileUploadGraphqlApiExceptionFilter } from 'src/engine/core-modules/file/file-upload/filters/file-upload-graphql-api-exception.filter';
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
+import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { IMPERSONATION_DENIAL_BY_REASON } from 'src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant';
 import { IMPERSONATION_DENIAL_LOG_MESSAGE_BY_REASON } from 'src/engine/core-modules/impersonation/constants/impersonation-denial-log-message-by-reason.constant';
 import { ImpersonationAuthorizationService } from 'src/engine/core-modules/impersonation/services/impersonation-authorization.service';
+import { SsoGraphqlApiExceptionFilter } from 'src/engine/core-modules/sso/filters/sso-graphql-api-exception.filter';
 import { SsoService } from 'src/engine/core-modules/sso/services/sso.service';
 import { TwoFactorAuthenticationRecoveryCodeRedemptionDTO } from 'src/engine/core-modules/two-factor-authentication/dto/two-factor-authentication-recovery-code-redemption.dto';
 import { TwoFactorAuthenticationRecoveryCodeVerificationInput } from 'src/engine/core-modules/two-factor-authentication/dto/two-factor-authentication-recovery-code-verification.input';
@@ -104,8 +110,6 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/permissions/utils/permissions-graphql-api-exception.filter';
 import { getRequestBaseUrl } from 'src/utils/get-request-base-url.util';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
@@ -117,14 +121,57 @@ import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-log
 import { GetAuthTokensFromSsoExchangeTokenInput } from './dto/get-auth-tokens-from-sso-exchange-token.input';
 import { LoginTokenDTO } from './dto/login-token.dto';
 import { SignUpInNewWorkspaceInput } from './dto/sign-up-in-new-workspace.input';
+import { SignUpWithoutWorkspaceInput } from './dto/sign-up-without-workspace.input';
 import { SignUpInput } from './dto/sign-up.input';
 import { UserCredentialsInput } from './dto/user-credentials.input';
 import { CheckUserExistDTO } from './dto/user-exists.dto';
 import { EmailAndCaptchaInput } from './dto/user-exists.input';
+import { WorkspaceFromInviteHashDTO } from './dto/workspace-from-invite-hash.dto';
 import { WorkspaceInviteHashValidDTO } from './dto/workspace-invite-hash-valid.dto';
 import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input';
 import { AuthService } from './services/auth.service';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 
+const WORKSPACE_CREATION_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: false,
+      playground: false,
+      workspaceAgnostic: true,
+    },
+    apiKey: false,
+    oauthClient: { withUser: true, withoutUser: false },
+    application: { withUser: true, withoutUser: false },
+  },
+  requiredPermissionFlags: [],
+};
+
+const NEW_WORKSPACE_SIGN_UP_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: false,
+      playground: false,
+      workspaceAgnostic: true,
+    },
+    apiKey: false,
+    oauthClient: false,
+    application: false,
+  },
+  requiredPermissionFlags: [],
+};
+
+const AUTH_WRITE_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: true,
+    apiKey: false,
+    oauthClient: false,
+    application: false,
+  },
+  requiredPermissionFlags: [],
+};
 const PASSWORD_RESET_EMAIL_RATE_LIMIT_MAX = 3;
 const PASSWORD_RESET_EMAIL_RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
 
@@ -137,6 +184,7 @@ const PASSWORD_RESET_EMAIL_RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
   EmailVerificationExceptionFilter,
   TwoFactorAuthenticationExceptionFilter,
   WorkspaceGraphqlApiExceptionFilter,
+  SsoGraphqlApiExceptionFilter,
   FileUploadGraphqlApiExceptionFilter,
   ThrottlerGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
@@ -176,6 +224,7 @@ export class AuthResolver {
     private readonly fileUploadService: FileUploadService,
     private readonly userSessionService: UserSessionService,
     private readonly userSessionCookieService: UserSessionCookieService,
+    private readonly fileUrlService: FileUrlService,
   ) {}
 
   @UseGuards(CaptchaGuard, PublicEndpointGuard, NoPermissionGuard)
@@ -210,14 +259,27 @@ export class AuthResolver {
     );
   }
 
-  @Query(() => WorkspaceEntity)
+  @Query(() => WorkspaceFromInviteHashDTO)
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async findWorkspaceFromInviteHash(
     @Args() workspaceInviteHashValidInput: WorkspaceInviteHashValidInput,
-  ): Promise<WorkspaceEntity> {
-    return await this.authService.findWorkspaceFromInviteHashOrFail(
+  ): Promise<WorkspaceFromInviteHashDTO> {
+    const workspace = await this.authService.findWorkspaceFromInviteHashOrFail(
       workspaceInviteHashValidInput.inviteHash,
     );
+
+    return {
+      id: workspace.id,
+      displayName: workspace.displayName ?? null,
+      logo: isDefined(workspace.logoFileId)
+        ? await this.fileUrlService.signFileByIdUrl({
+            fileId: workspace.logoFileId,
+            workspaceId: workspace.id,
+            fileFolder: FileFolder.CorePicture,
+          })
+        : '',
+      allowImpersonation: workspace.allowImpersonation,
+    };
   }
 
   @Mutation(() => LoginTokenDTO)
@@ -437,6 +499,8 @@ export class AuthResolver {
 
     const user = await this.userService.findUserByEmailOrThrow(email);
 
+    await this.authService.checkIsEmailVerified(user.isEmailVerified);
+
     await this.twoFactorAuthenticationService.validateStrategy(
       user.id,
       twoFactorAuthenticationVerificationInput.otp,
@@ -482,7 +546,9 @@ export class AuthResolver {
 
     const user = await this.userService.findUserByEmailOrThrow(email);
 
-    const { provisioningUri } =
+    await this.authService.checkIsEmailVerified(user.isEmailVerified);
+
+    const { provisioningUri, isTwoFactorAuthenticationReset } =
       await this.twoFactorAuthenticationRecoveryService.redeemRecoveryCode({
         userId: user.id,
         userEmail: email,
@@ -491,7 +557,7 @@ export class AuthResolver {
       });
 
     if (isDefined(provisioningUri)) {
-      return { tokens: null, provisioningUri };
+      return { tokens: null, provisioningUri, isTwoFactorAuthenticationReset };
     }
 
     await this.loginTokenService.consumeLoginTokenOrThrow(loginTokenPayload);
@@ -508,14 +574,18 @@ export class AuthResolver {
       origin: 'sign_in',
     });
 
-    return { tokens: authTokens.tokens, provisioningUri: null };
+    return {
+      tokens: authTokens.tokens,
+      provisioningUri: null,
+      isTwoFactorAuthenticationReset,
+    };
   }
 
   @Mutation(() => AvailableWorkspacesAndAccessTokensDTO)
   @UseGuards(CaptchaGuard, PublicEndpointGuard, NoPermissionGuard)
   @AllowSuspendedWorkspace()
   async signUp(
-    @Args() signUpInput: UserCredentialsInput,
+    @Args() signUpInput: SignUpWithoutWorkspaceInput,
     @Context() context: { req: Request },
   ): Promise<AvailableWorkspacesAndAccessTokensDTO> {
     const user = await this.signInUpService.signUpWithoutWorkspace(
@@ -540,6 +610,7 @@ export class AuthResolver {
       workspace: undefined,
       locale: signUpInput.locale ?? SOURCE_LOCALE,
       verifyEmailRedirectPath: signUpInput.verifyEmailRedirectPath,
+      affiliatePartnerName: signUpInput.affiliatePartnerName,
       verificationTrigger: EmailVerificationTrigger.SIGN_UP,
     });
 
@@ -650,15 +721,7 @@ export class AuthResolver {
   }
 
   @Query(() => SubdomainAvailabilityDTO)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: true,
-      apiKey: false,
-      oauthClient: { withUser: true, withoutUser: false },
-      application: { withUser: true, withoutUser: false },
-    }),
-    NoPermissionGuard,
-  )
+  @UseGuards(AccessPolicyGuard(WORKSPACE_CREATION_ACCESS_POLICY))
   async checkWorkspaceSubdomainAvailability(
     @Args('subdomain') subdomain: string,
   ): Promise<SubdomainAvailabilityDTO> {
@@ -666,15 +729,7 @@ export class AuthResolver {
   }
 
   @Query(() => WorkspaceCreationDefaultsDTO)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: true,
-      apiKey: false,
-      oauthClient: { withUser: true, withoutUser: false },
-      application: { withUser: true, withoutUser: false },
-    }),
-    NoPermissionGuard,
-  )
+  @UseGuards(AccessPolicyGuard(WORKSPACE_CREATION_ACCESS_POLICY))
   async getWorkspaceCreationDefaults(
     @AuthUser() currentUser: AuthContextUser,
   ): Promise<WorkspaceCreationDefaultsDTO> {
@@ -687,14 +742,8 @@ export class AuthResolver {
 
   @Mutation(() => SignUpDTO)
   @UseGuards(
-    AuthPrincipalGuard({
-      userSession: true,
-      apiKey: false,
-      oauthClient: false,
-      application: false,
-    }),
+    AccessPolicyGuard(NEW_WORKSPACE_SIGN_UP_ACCESS_POLICY),
     WorkspaceCreationCaptchaGuard,
-    NoPermissionGuard,
   )
   @AllowSuspendedWorkspace()
   async signUpInNewWorkspace(
@@ -717,7 +766,7 @@ export class AuthResolver {
       {
         displayName: input?.displayName,
         subdomain: input?.subdomain,
-        partner: input?.partner,
+        affiliatePartnerName: input?.affiliatePartnerName,
       },
     );
 
@@ -740,15 +789,7 @@ export class AuthResolver {
     deprecationReason:
       'Use createNewWorkspaceLogoUpload and completeNewWorkspaceLogoUpload, which send the logo straight to file storage.',
   })
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: true,
-      apiKey: false,
-      oauthClient: { withUser: true, withoutUser: false },
-      application: { withUser: true, withoutUser: false },
-    }),
-    NoPermissionGuard,
-  )
+  @UseGuards(AccessPolicyGuard(WORKSPACE_CREATION_ACCESS_POLICY))
   @AllowSuspendedWorkspace()
   async uploadNewWorkspaceLogo(
     @AuthUser() currentUser: AuthContextUser,
@@ -777,15 +818,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => FileUploadTargetDTO)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: true,
-      apiKey: false,
-      oauthClient: { withUser: true, withoutUser: false },
-      application: { withUser: true, withoutUser: false },
-    }),
-    NoPermissionGuard,
-  )
+  @UseGuards(AccessPolicyGuard(WORKSPACE_CREATION_ACCESS_POLICY))
   @AllowSuspendedWorkspace()
   async createNewWorkspaceLogoUpload(
     @AuthUser() currentUser: AuthContextUser,
@@ -812,15 +845,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => FileWithSignedUrlDTO)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: true,
-      apiKey: false,
-      oauthClient: { withUser: true, withoutUser: false },
-      application: { withUser: true, withoutUser: false },
-    }),
-    NoPermissionGuard,
-  )
+  @UseGuards(AccessPolicyGuard(WORKSPACE_CREATION_ACCESS_POLICY))
   @AllowSuspendedWorkspace()
   async completeNewWorkspaceLogoUpload(
     @AuthUser() currentUser: AuthContextUser,
@@ -843,15 +868,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => TransientTokenDTO)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: true,
-      apiKey: false,
-      oauthClient: false,
-      application: false,
-    }),
-    NoPermissionGuard,
-  )
+  @UseGuards(AccessPolicyGuard(AUTH_WRITE_ACCESS_POLICY))
   async generateTransientToken(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -905,6 +922,7 @@ export class AuthResolver {
         impersonatedUserWorkspaceId,
         impersonatorUserId,
         impersonatedUserId,
+        impersonationLevel,
       } = await this.validateAndLogImpersonation(
         tokenPayload,
         workspace,
@@ -920,6 +938,7 @@ export class AuthResolver {
           impersonatedUserWorkspaceId,
           _impersonatorUserId: impersonatorUserId,
           impersonatedUserId,
+          impersonationLevel,
         });
     } else {
       await this.validateRegularAuthentication(workspace, userWorkspace);
@@ -1048,6 +1067,13 @@ export class AuthResolver {
   ) {
     const { impersonatorUserWorkspaceId } = tokenPayload;
 
+    if (!isNonEmptyString(impersonatorUserWorkspaceId)) {
+      throw new AuthException(
+        'Impersonation login token does not name an impersonator',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
     const impersonatorUserWorkspace =
       await this.userWorkspaceRepository.findOne({
         where: { id: impersonatorUserWorkspaceId },
@@ -1135,18 +1161,26 @@ export class AuthResolver {
       impersonatedUserWorkspaceId: toImpersonateUserWorkspace.id,
       impersonatorUserId: impersonatorUserWorkspace.user.id,
       impersonatedUserId: toImpersonateUserWorkspace.user.id,
+      impersonationLevel: authorizationResult.level,
     };
   }
 
   @Mutation(() => AuthorizeAppDTO)
   @UseGuards(
-    AuthPrincipalGuard({
-      userSession: true,
-      apiKey: false,
-      oauthClient: false,
-      application: false,
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: false,
+          playground: true,
+          workspaceAgnostic: true,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
     }),
-    NoPermissionGuard,
   )
   async authorizeApp(
     @Args() authorizeAppInput: AuthorizeAppInput,
@@ -1159,6 +1193,7 @@ export class AuthResolver {
       user,
       workspace,
       requestBaseUrl: getRequestBaseUrl(context.req),
+      requestIp: context.req.ip,
     });
   }
 
@@ -1211,21 +1246,23 @@ export class AuthResolver {
   }
 
   @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: false,
-        workspaceAgnostic: false,
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: false,
+          playground: false,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
       },
-      apiKey: false,
-      oauthClient: false,
-      application: false,
+      requiredPermissionFlags: [
+        PermissionFlagType.API_KEYS_AND_WEBHOOKS,
+        PermissionFlagType.ROLES,
+      ],
     }),
-    SettingsPermissionGuard([
-      PermissionFlagType.API_KEYS_AND_WEBHOOKS,
-      PermissionFlagType.ROLES,
-    ]),
   )
   @Mutation(() => ApiKeyToken)
   async generateApiKeyToken(
@@ -1240,18 +1277,20 @@ export class AuthResolver {
   }
 
   @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: false,
-        workspaceAgnostic: false,
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: false,
+          playground: false,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
       },
-      apiKey: false,
-      oauthClient: false,
-      application: false,
+      requiredPermissionFlags: [PermissionFlagType.API_KEYS_AND_WEBHOOKS],
     }),
-    SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
   )
   @Mutation(() => AuthToken)
   async generatePlaygroundToken(

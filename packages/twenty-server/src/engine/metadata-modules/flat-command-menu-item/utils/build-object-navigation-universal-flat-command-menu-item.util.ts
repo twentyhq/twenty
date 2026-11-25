@@ -1,7 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { getSystemNavigationCommandMenuItemUniversalIdentifier } from 'twenty-shared/application';
 import { getMetadataLabelPlaceholder } from 'twenty-shared/i18n';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -22,23 +21,12 @@ export const NAVIGATION_INTERPOLATED_SHORT_LABEL =
 export const NAVIGATION_INTERPOLATED_ICON =
   getMetadataLabelPlaceholder('objectIcon');
 
-const HIDDEN_NAVIGATION_OBJECT_UNIVERSAL_IDENTIFIERS = new Set<string>([
-  STANDARD_OBJECTS.workflowVersion.universalIdentifier,
-]);
-
 export const buildNavigationConditionalAvailabilityExpression = ({
-  universalIdentifier,
   nameSingular,
 }: {
   universalIdentifier: string;
   nameSingular: string;
-}): string => {
-  if (HIDDEN_NAVIGATION_OBJECT_UNIVERSAL_IDENTIFIERS.has(universalIdentifier)) {
-    return 'false';
-  }
-
-  return `targetObjectReadPermissions.${nameSingular}`;
-};
+}): string => `targetObjectReadPermissions.${nameSingular}`;
 
 export const buildObjectNavigationUniversalFlatCommandMenuItem = ({
   objectMetadata,
@@ -92,6 +80,7 @@ export const buildObjectNavigationUniversalFlatCommandMenuItem = ({
     workflowVersionId: null,
     coreWorkflowVersionId: null,
     availabilityObjectMetadataUniversalIdentifier: null,
+    availabilityCoreObjectName: null,
     pageLayoutUniversalIdentifier: null,
     isActive: objectMetadata.isActive,
     isSystemSideEffect: true,

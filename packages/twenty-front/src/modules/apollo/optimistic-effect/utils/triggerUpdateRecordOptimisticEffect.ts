@@ -5,7 +5,7 @@ import { triggerUpdateRootQueriesOptimisticEffect } from '@/apollo/optimistic-ef
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { type ObjectPermissions } from 'twenty-shared/types';
+import { type ObjectRecordsPermissions } from 'twenty-shared/types';
 
 export const triggerUpdateRecordOptimisticEffect = ({
   cache,
@@ -21,10 +21,7 @@ export const triggerUpdateRecordOptimisticEffect = ({
   currentRecord: RecordGqlNode;
   updatedRecord: RecordGqlNode;
   objectMetadataItems: EnrichedObjectMetadataItem[];
-  objectPermissionsByObjectMetadataId: Record<
-    string,
-    ObjectPermissions & { objectMetadataId: string }
-  >;
+  objectPermissionsByObjectMetadataId: Record<string, ObjectRecordsPermissions>;
   upsertRecordsInStore: (props: { partialRecords: ObjectRecord[] }) => void;
 }) => {
   triggerUpdateRelationsOptimisticEffect({

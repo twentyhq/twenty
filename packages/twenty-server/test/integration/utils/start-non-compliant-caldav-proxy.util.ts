@@ -13,6 +13,7 @@ const SUPPORTED_REPORT_PATTERN =
   /<((?:[\w.-]+:)?)supported-report>[\s\S]*?<\/\1supported-report>/g;
 const RESPONSE_PATTERN = /<((?:[\w.-]+:)?)response>[\s\S]*?<\/\1response>/g;
 const HREF_PATTERN = /<(?:[\w.-]+:)?href>\s*([^<]*?)\s*<\/(?:[\w.-]+:)?href>/;
+const FULL_URL_HREF_PATTERN = /<(?:[\w.-]+:)?href>\s*https?:/;
 
 export type NonCompliantCalDavProxy = {
   host: string;
@@ -20,6 +21,7 @@ export type NonCompliantCalDavProxy = {
   degradations: {
     blankLastModified: boolean;
     hideCollectionMembers: boolean;
+    hideFullUrlMultigetMembers: boolean;
   };
   stop: () => Promise<void>;
 };
@@ -77,6 +79,7 @@ export const startNonCompliantCalDavProxy = async ({
   const degradations = {
     blankLastModified: false,
     hideCollectionMembers: false,
+    hideFullUrlMultigetMembers: false,
   };
 
   const server = createServer((incoming, outgoing) => {
@@ -119,6 +122,14 @@ export const startNonCompliantCalDavProxy = async ({
                 if (
                   degradations.hideCollectionMembers &&
                   incoming.method === 'PROPFIND'
+                ) {
+                  rewrites.push(dropMemberResponses);
+                }
+
+                if (
+                  degradations.hideFullUrlMultigetMembers &&
+                  incoming.method === 'REPORT' &&
+                  FULL_URL_HREF_PATTERN.test(requestBody.toString('utf8'))
                 ) {
                   rewrites.push(dropMemberResponses);
                 }

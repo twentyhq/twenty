@@ -49,6 +49,7 @@ export const fromWorkflowManifestToUniversalFlatCommandMenuItem = ({
     availabilityObjectMetadataUniversalIdentifier: isRecordSelection
       ? availability.objectUniversalIdentifier
       : null,
+    availabilityCoreObjectName: null,
     navigationTargetObjectMetadataUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.TRIGGER_WORKFLOW_VERSION,
     payload: null,

@@ -8,14 +8,15 @@ import { UsageDailyChartSection } from '@/settings/usage/components/UsageDailyCh
 import { UsageSectionSkeleton } from '@/settings/usage/components/UsageSectionSkeleton';
 import { useUsageAnalyticsData } from '@/settings/usage/hooks/useUsageAnalyticsData';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { IconSparkles } from 'twenty-ui/icon';
 import { SETTINGS_AI_TABS } from '@/settings/ai/constants/SettingsAiTabs';
+import { useLingui } from '@lingui/react/macro';
 
 export const SettingsUsageAnalyticsSection = () => {
+  const { t } = useLingui();
   const isClickHouseConfigured = useAtomStateValue(isClickHouseConfiguredState);
 
   const { analytics, isInitialLoading } = useUsageAnalyticsData({

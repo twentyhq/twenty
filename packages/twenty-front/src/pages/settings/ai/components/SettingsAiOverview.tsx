@@ -1,9 +1,9 @@
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { type SettingsAiOverviewProps } from '~/pages/settings/ai/types/SettingsAiOverviewProps';
+import { useLingui } from '@lingui/react/macro';
 
 export const SettingsAiOverview = ({
   avatarSection,
@@ -14,6 +14,7 @@ export const SettingsAiOverview = ({
   workspaceInstructionsSection,
   systemPromptSection,
 }: SettingsAiOverviewProps) => {
+  const { t } = useLingui();
   return (
     <SettingsPageLayout
       title={t`AI`}

@@ -6,6 +6,7 @@ import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { APPLICATION_SOURCE_ENTRY_EXTENSIONS } from 'src/engine/core-modules/file-storage/constants/application-source-entry-extensions.constant';
 import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { validateFrontComponentUniversalWidgetAvailability } from 'src/engine/metadata-modules/flat-front-component/validators/utils/validate-front-component-universal-widget-availability.util';
@@ -61,6 +62,7 @@ export class FlatFrontComponentValidatorService {
       const sourcePathResult = validateFilePath({
         resourcePath: flatFrontComponent.sourceComponentPath,
         fileFolder: FileFolder.Source,
+        allowedExtensions: APPLICATION_SOURCE_ENTRY_EXTENSIONS,
       });
 
       if (!sourcePathResult.isValid) {
@@ -170,6 +172,7 @@ export class FlatFrontComponentValidatorService {
       const sourcePathResult = validateFilePath({
         resourcePath: flatEntityUpdate.sourceComponentPath,
         fileFolder: FileFolder.Source,
+        allowedExtensions: APPLICATION_SOURCE_ENTRY_EXTENSIONS,
       });
 
       if (!sourcePathResult.isValid) {

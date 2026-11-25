@@ -1,9 +1,12 @@
+import { Test } from '@nestjs/testing';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
-import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { RelabelAttachmentTargetFieldsCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790266078808-relabel-attachment-target-fields.command';
-import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { type WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 
 const WORKSPACE_ID = '20202020-0000-0000-0000-000000000001';
 const STANDARD_APPLICATION_ID = '20202020-0000-0000-0000-0000000000aa';
@@ -39,25 +42,38 @@ describe('RelabelAttachmentTargetFieldsCommand', () => {
   let updateMock: jest.Mock;
   let invalidateCacheMock: jest.Mock;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     findMock = jest.fn();
     updateMock = jest.fn();
     invalidateCacheMock = jest.fn();
 
-    command = new RelabelAttachmentTargetFieldsCommand(
-      {} as WorkspaceIteratorService,
-      {
-        findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
-          .fn()
-          .mockResolvedValue({
-            twentyStandardFlatApplication: { id: STANDARD_APPLICATION_ID },
-          }),
-      } as unknown as ApplicationService,
-      {
-        invalidateCache: invalidateCacheMock,
-      } as unknown as WorkspaceMigrationRunnerService,
-      { find: findMock, update: updateMock } as never,
-    );
+    const module = await Test.createTestingModule({
+      providers: [
+        RelabelAttachmentTargetFieldsCommand,
+        { provide: WorkspaceIteratorService, useValue: {} },
+        {
+          provide: ApplicationService,
+          useValue: {
+            findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
+              .fn()
+              .mockResolvedValue({
+                twentyStandardFlatApplication: { id: STANDARD_APPLICATION_ID },
+              }),
+          },
+        },
+        {
+          provide: WorkspaceMigrationRunnerService,
+          useValue: {
+            invalidateCache: invalidateCacheMock,
+          },
+        },
+        {
+          provide: getWorkspaceScopedRepositoryToken(FieldMetadataEntity),
+          useValue: { find: findMock, update: updateMock },
+        },
+      ],
+    }).compile();
+    command = module.get(RelabelAttachmentTargetFieldsCommand);
   });
 
   const runOnWorkspace = (dryRun = false) =>

@@ -5,26 +5,28 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { LineChartDataInput } from 'src/modules/dashboard/chart-data/dtos/inputs/line-chart-data.input';
 import { LineChartDataDTO } from 'src/modules/dashboard/chart-data/dtos/line-chart-data.dto';
 import { ChartDataGraphqlApiExceptionFilter } from 'src/modules/dashboard/chart-data/filters/chart-data-graphql-api-exception.filter';
 import { LineChartDataService } from 'src/modules/dashboard/chart-data/services/line-chart-data.service';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @MetadataResolver()
 @UseFilters(ChartDataGraphqlApiExceptionFilter)
 @UseGuards(
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
+  AccessPolicyGuard({
+    authPrincipals: {
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: true,
     },
-    apiKey: true,
-    oauthClient: true,
-    application: true,
+    requiredPermissionFlags: [],
   }),
 )
 @UsePipes(ResolverValidationPipe)
@@ -32,7 +34,6 @@ export class LineChartDataResolver {
   constructor(private readonly lineChartDataService: LineChartDataService) {}
 
   @Query(() => LineChartDataDTO)
-  @UseGuards(NoPermissionGuard)
   async lineChartData(
     @Args('input') input: LineChartDataInput,
     @Context() context: I18nContext,

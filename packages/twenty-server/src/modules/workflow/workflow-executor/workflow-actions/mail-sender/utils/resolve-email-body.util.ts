@@ -1,48 +1,25 @@
 import {
-  convertEmailBodyToEmailDocument,
   type EmailDocument,
   getFullHtmlEmailIfWholeBody,
   isDefined,
   isEmailDocumentShape,
-  parseEmailDocument,
   parseJson,
 } from 'twenty-shared/utils';
 
 import { resolveEmailDocumentBindings } from 'src/engine/core-modules/email/utils/resolve-email-document-bindings.util';
+import { parseEmailDocumentOrThrow } from 'src/engine/core-modules/tool/tools/email-tool/utils/parse-email-document-or-throw.util';
 import { resolveWorkflowEmailTemplateString } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/utils/resolve-workflow-email-template-string.util';
 
-const parseIfSerializedEmailDocument = (
-  text: string,
-): EmailDocument | undefined => {
-  const textAsJson = parseJson<unknown>(text);
-
-  if (!isEmailDocumentShape(textAsJson)) {
-    return undefined;
-  }
-
-  const parseResult = parseEmailDocument(textAsJson);
-
-  if (!parseResult.success) {
-    throw new Error(`Invalid workflow email document: ${parseResult.error}`);
-  }
-
-  return parseResult.document;
-};
-
-export const resolveEmailBody = async (
-  body: string,
-  context: Record<string, unknown>,
-): Promise<string> => {
-  const conversionResult = convertEmailBodyToEmailDocument(body);
-
-  if (!conversionResult.success) {
-    throw new Error(
-      `Invalid workflow email document: ${conversionResult.error}`,
-    );
-  }
-
+// A whole-body variable may itself hold a serialized email document
+export const resolveEmailBody = ({
+  body,
+  context,
+}: {
+  body: string;
+  context: Record<string, unknown>;
+}): EmailDocument => {
   const documentWithVariableValues = resolveEmailDocumentBindings(
-    conversionResult.document,
+    parseEmailDocumentOrThrow(parseJson<unknown>(body)),
     (value, stringContext) =>
       resolveWorkflowEmailTemplateString(value, context, {
         escapeValues: stringContext === 'html',
@@ -50,11 +27,11 @@ export const resolveEmailBody = async (
   );
 
   const fullHtmlEmail = getFullHtmlEmailIfWholeBody(documentWithVariableValues);
-  const emailDocumentFromVariableValue = isDefined(fullHtmlEmail)
-    ? parseIfSerializedEmailDocument(fullHtmlEmail)
+  const documentFromVariableValue = isDefined(fullHtmlEmail)
+    ? parseJson<unknown>(fullHtmlEmail)
     : undefined;
 
-  return JSON.stringify(
-    emailDocumentFromVariableValue ?? documentWithVariableValues,
-  );
+  return isEmailDocumentShape(documentFromVariableValue)
+    ? parseEmailDocumentOrThrow(documentFromVariableValue)
+    : documentWithVariableValues;
 };

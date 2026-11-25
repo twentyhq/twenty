@@ -12,8 +12,7 @@ const VALID_LOG_LEVELS = [
 export const CastToLogLevelArray = () =>
   Transform(({ value }: { value: string }) => toLogLevelArray(value));
 
-// oxlint-disable-next-line typescript/no-explicit-any
-const toLogLevelArray = (value: any) => {
+const toLogLevelArray = (value: unknown) => {
   if (typeof value === 'string') {
     const rawLogLevels = value.split(',').map((level) => level.trim());
     const invalidLevels = rawLogLevels.filter(

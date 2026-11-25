@@ -35,14 +35,16 @@ export default defineNavigationMenuItem({
   | ------------------------------------ | ------------------------------------ | ----------------------------------------------------------------------------- |
   | `NavigationMenuItemType.VIEW`        | Opens a saved view                   | `viewUniversalIdentifier`                                                     |
   | `NavigationMenuItemType.LINK`        | Opens an external URL                | `link`                                                                        |
-  | `NavigationMenuItemType.FOLDER`      | Groups nested items under a label    | `name` (and child items reference the folder via `folderUniversalIdentifier`) |
+  | `NavigationMenuItemType.FOLDER`      | Groups nested items under a label    | `name` (and child items reference the folder via `parentUniversalIdentifier`) |
   | `NavigationMenuItemType.OBJECT`      | Opens an object's default index page | `targetObjectUniversalIdentifier`                                             |
   | `NavigationMenuItemType.PAGE_LAYOUT` | Opens a standalone page layout       | `pageLayoutUniversalIdentifier`                                               |
+  | `NavigationMenuItemType.NATIVE_PAGE` | Opens a built-in page                | `nativePageKey`: `'workflows'` or `'agents'`                                  |
 
 - `position` controls ordering in the sidebar.
-- The enum also contains `NavigationMenuItemType.RECORD`, used internally for user-created record favorites, and `NavigationMenuItemType.AGENT_CHAT_CHANNEL`, used for chat channels pinned to favorites. Neither is usable from an app manifest (there is no field to reference a record or a channel).
+- A `NATIVE_PAGE` item is hidden from members who lack the page's permission (Workflows for `'workflows'`, AI for `'agents'`).
+- The enum also contains `NavigationMenuItemType.RECORD`, used internally for user-created record favorites, `NavigationMenuItemType.AGENT_CHAT_CHANNEL`, used for chat channels pinned to favorites, and `NavigationMenuItemType.WORKFLOW` and `NavigationMenuItemType.AGENT`, used for workflows and agents pinned to the sidebar. None of them is usable from an app manifest (there is no field to reference a record, a channel, a workflow or an agent).
 - `icon` and `color` are optional and customize how the entry looks.
-- `folderUniversalIdentifier` is also available on any item to nest it inside a `FOLDER`-type parent.
+- `parentUniversalIdentifier` is also available on any item to nest it inside a `FOLDER`-type parent. The previous name, `folderUniversalIdentifier`, is deprecated but still accepted.
 - `twenty app pull` writes your navigation menu items back as `defineNavigationMenuItem()` files. An item a workspace member added to their own sidebar, and one pinned to a record, belong to that workspace rather than to your app and are reported instead; see [what pull does not write](/developers/extend/apps/operations/sync-and-recovery#pulling-an-installed-app-back-to-source).
 
 <Note>

@@ -1,4 +1,5 @@
 import { StrictMode } from 'react';
+import { useLingui } from '@lingui/react';
 import { Outlet, useLocation } from 'react-router-dom';
 
 import { TrackPageViewEffect } from '@/analytics/components/TrackPageViewEffect';
@@ -21,6 +22,8 @@ import { getPageTitleFromPath } from '~/utils/title-utils';
 
 export const RootAppProviders = () => {
   const { pathname } = useLocation();
+  // getPageTitleFromPath reads the global i18n, so subscribe to re-render on locale change
+  useLingui();
   const pageTitle = getPageTitleFromPath(pathname);
 
   return (

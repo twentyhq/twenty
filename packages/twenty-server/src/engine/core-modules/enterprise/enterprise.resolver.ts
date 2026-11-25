@@ -18,8 +18,7 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { ConfigVariableExceptionCode } from 'src/engine/core-modules/twenty-config/twenty-config.exception';
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 import { BillingDisabledGuard } from 'src/engine/guards/billing-disabled.guard';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 const SERVER_BINDING_REJECTION_CODES: EnterpriseExceptionCode[] = [
   EnterpriseExceptionCode.ENTERPRISE_KEY_BOUND_TO_ANOTHER_SERVER,
@@ -30,20 +29,22 @@ const SERVER_BINDING_REJECTION_CODES: EnterpriseExceptionCode[] = [
 
 @Resolver()
 @UseGuards(
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
+  AccessPolicyGuard({
+    authPrincipals: {
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: false,
+      application: false,
     },
-    apiKey: false,
-    oauthClient: false,
-    application: false,
+    requiredPermissionFlags: [],
   }),
   BillingDisabledGuard,
   AdminPanelGuard,
-  NoPermissionGuard,
 )
 @UsePipes(ResolverValidationPipe)
 @UseFilters(EnterpriseExceptionFilter, PreventNestToAutoLogGraphqlErrorsFilter)

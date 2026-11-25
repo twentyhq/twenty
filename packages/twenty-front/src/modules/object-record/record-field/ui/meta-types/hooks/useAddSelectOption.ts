@@ -15,7 +15,9 @@ export const useAddSelectOption = (fieldMetadataId: string) => {
 
   const addSelectOption = useCallback(
     (optionName: string) => {
-      if (!fieldName || !objectNamePlural) return;
+      if (!fieldName || !objectNamePlural) {
+        return;
+      }
 
       navigateSettings(
         SettingsPath.ObjectFieldEdit,

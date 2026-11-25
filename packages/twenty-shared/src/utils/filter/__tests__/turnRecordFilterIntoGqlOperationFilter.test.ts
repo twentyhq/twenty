@@ -1,8 +1,4 @@
-import {
-  FieldMetadataType,
-  RelationType,
-  ViewFilterOperand as RecordFilterOperand,
-} from '@/types';
+import { FieldMetadataType, RelationType, RecordFilterOperand } from '@/types';
 import { type RecordFilter } from '@/utils';
 import {
   type FieldShared,
@@ -235,6 +231,28 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
       });
 
       expect(result).toEqual({ not: { name: { ilike: '%test%' } } });
+    });
+
+    it('should handle IS operand as case-sensitive exact match', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter('f-text', RecordFilterOperand.IS, 'test'),
+        fieldMetadataItemById,
+      });
+
+      expect(result).toEqual({ name: { eq: 'test' } });
+    });
+
+    it('should handle IS_NOT operand and include NULL rows', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter('f-text', RecordFilterOperand.IS_NOT, 'test'),
+        fieldMetadataItemById,
+      });
+
+      expect(result).toEqual({
+        or: [{ name: { neq: 'test' } }, { name: { is: 'NULL' } }],
+      });
     });
   });
 

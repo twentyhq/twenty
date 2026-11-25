@@ -1,3 +1,4 @@
+import { AgentChatTurnCancellationReason } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-turn-cancellation-reason.enum';
 import {
   classifyAgentChatTurnOutcome,
   resolveSupersededTurnOutcome,
@@ -46,7 +47,10 @@ describe('classifyAgentChatTurnOutcome', () => {
         hasText: false,
         isAborted: true,
       }),
-    ).toEqual({ kind: 'cancelled', reason: 'user_cancelled' });
+    ).toEqual({
+      kind: 'cancelled',
+      reason: AgentChatTurnCancellationReason.USER_CANCELLED,
+    });
   });
 
   it('counts a turn that chose not to reply as silent rather than failed', () => {
@@ -164,7 +168,10 @@ describe('resolveSupersededTurnOutcome', () => {
   it('supersedes a completed turn, whose answer may never have landed', () => {
     expect(
       resolveSupersededTurnOutcome({ kind: 'completed', outcome: 'answered' }),
-    ).toEqual({ kind: 'cancelled', reason: 'superseded' });
+    ).toEqual({
+      kind: 'cancelled',
+      reason: AgentChatTurnCancellationReason.SUPERSEDED,
+    });
   });
 
   it('supersedes a turn that was awaiting a user answer', () => {
@@ -173,15 +180,21 @@ describe('resolveSupersededTurnOutcome', () => {
         kind: 'completed',
         outcome: 'awaiting_user',
       }),
-    ).toEqual({ kind: 'cancelled', reason: 'superseded' });
+    ).toEqual({
+      kind: 'cancelled',
+      reason: AgentChatTurnCancellationReason.SUPERSEDED,
+    });
   });
 
   it('supersedes a user cancellation', () => {
     expect(
       resolveSupersededTurnOutcome({
         kind: 'cancelled',
-        reason: 'user_cancelled',
+        reason: AgentChatTurnCancellationReason.USER_CANCELLED,
       }),
-    ).toEqual({ kind: 'cancelled', reason: 'superseded' });
+    ).toEqual({
+      kind: 'cancelled',
+      reason: AgentChatTurnCancellationReason.SUPERSEDED,
+    });
   });
 });

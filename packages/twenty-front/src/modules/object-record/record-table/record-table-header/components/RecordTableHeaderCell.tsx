@@ -13,7 +13,7 @@ import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/reco
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
 import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
-import { resizedFieldMetadataIdComponentState } from '@/object-record/record-table/states/resizedFieldMetadataIdComponentState';
+import { resizedRecordFieldIdComponentState } from '@/object-record/record-table/states/resizedRecordFieldIdComponentState';
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
 import { useDisableDragSelectOnPointerDown } from '@/ui/utilities/drag-select/hooks/useDisableDragSelectOnPointerDown';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
@@ -73,11 +73,11 @@ export const RecordTableHeaderCell = ({
     hasRecordGroupsComponentSelector,
   );
 
-  const resizedFieldMetadataId = useAtomComponentStateValue(
-    resizedFieldMetadataIdComponentState,
+  const resizedRecordFieldId = useAtomComponentStateValue(
+    resizedRecordFieldIdComponentState,
   );
 
-  const isResizingAnyColumn = isDefined(resizedFieldMetadataId);
+  const isResizingAnyColumn = isDefined(resizedRecordFieldId);
 
   const shouldDisplayBorderBottom =
     hasRecordGroups ||
@@ -90,7 +90,7 @@ export const RecordTableHeaderCell = ({
         'header-cell',
         getRecordTableColumnFieldWidthClassName(recordFieldIndex),
       )}
-      key={recordField.fieldMetadataItemId}
+      key={recordField.id}
       onPointerCancel={handlePointerCancel}
       onPointerDown={handlePointerDown}
       onPointerUp={handlePointerUp}

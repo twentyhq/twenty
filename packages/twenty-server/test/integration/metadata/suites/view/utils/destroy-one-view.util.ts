@@ -7,9 +7,11 @@ import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/
 export const destroyOneView = async ({
   viewId,
   expectToFail,
+  token,
 }: {
   viewId: string;
   expectToFail?: boolean;
+  token?: string;
 }): CommonResponseBody<{
   destroyView: boolean;
 }> => {
@@ -17,7 +19,7 @@ export const destroyOneView = async ({
     viewId,
   });
 
-  const response = await makeMetadataApiRequest(graphqlOperation);
+  const response = await makeMetadataApiRequest(graphqlOperation, token);
 
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({

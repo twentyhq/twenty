@@ -1,4 +1,4 @@
-import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
+import { CoreWorkflowTriggerService } from 'src/engine/core-modules/workflow/services/core-workflow-trigger.service';
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
@@ -69,7 +69,7 @@ type WorkflowBillingSpenders = {
 @Injectable()
 export class WorkflowExecutorWorkspaceService {
   constructor(
-    private readonly workflowCoreSyncService: WorkflowCoreSyncService,
+    private readonly coreWorkflowTriggerService: CoreWorkflowTriggerService,
     private readonly workflowActionFactory: WorkflowActionFactory,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly usageQuotaAdmissionService: UsageQuotaAdmissionService,
@@ -144,10 +144,10 @@ export class WorkflowExecutorWorkspaceService {
     }
 
     const workflow = isDefined(workflowRun.coreWorkflowId)
-      ? await this.workflowCoreSyncService.findCoreWorkflowById(
+      ? await this.coreWorkflowTriggerService.findCoreWorkflowById({
           workspaceId,
-          workflowRun.coreWorkflowId,
-        )
+          coreWorkflowId: workflowRun.coreWorkflowId,
+        })
       : null;
 
     if (!isDefined(workflow)) {
@@ -157,7 +157,7 @@ export class WorkflowExecutorWorkspaceService {
     }
 
     const billingSpenders = {
-      workflowId: workflow.workspaceWorkflowId ?? workflow.id,
+      workflowId: workflow.id,
       applicationId: workflow.applicationId,
     };
 
@@ -198,7 +198,7 @@ export class WorkflowExecutorWorkspaceService {
             retryDelayMs: getStepRetryDelayMs({ stepInfo: stepInfos[stepId] }),
             workflowRunId,
             workspaceId,
-            applicationId: workflow.applicationId,
+            coreWorkflowId: workflow.id,
           });
 
           return;
@@ -274,7 +274,7 @@ export class WorkflowExecutorWorkspaceService {
         lastExecutedStepId: stepId,
         workflowRunId,
         workspaceId,
-        applicationId: workflow.applicationId,
+        coreWorkflowId: workflow.id,
       });
 
       return;
@@ -762,14 +762,14 @@ export class WorkflowExecutorWorkspaceService {
     retryDelayMs,
     workflowRunId,
     workspaceId,
-    applicationId,
+    coreWorkflowId,
   }: {
     stepId: string;
     error: string;
     retryDelayMs: number;
     workflowRunId: string;
     workspaceId: string;
-    applicationId: string;
+    coreWorkflowId: string;
   }) {
     await this.workflowRunWorkspaceService.moveStepToRetry({
       stepId,
@@ -790,8 +790,8 @@ export class WorkflowExecutorWorkspaceService {
           ...buildRunWorkflowJobOptions({
             workflowRunId,
             scope:
-              await this.workflowRunJobScopeWorkspaceService.resolveForApplication(
-                { workspaceId, applicationId },
+              await this.workflowRunJobScopeWorkspaceService.resolveForCoreWorkflow(
+                { workspaceId, coreWorkflowId },
               ),
           }),
           delay: retryDelayMs,
@@ -812,12 +812,12 @@ export class WorkflowExecutorWorkspaceService {
     lastExecutedStepId,
     workflowRunId,
     workspaceId,
-    applicationId,
+    coreWorkflowId,
   }: {
     lastExecutedStepId: string;
     workflowRunId: string;
     workspaceId: string;
-    applicationId: string;
+    coreWorkflowId: string;
   }) {
     await this.messageQueueService.add<RunWorkflowJobData>(
       RUN_WORKFLOW_JOB_NAME,
@@ -829,10 +829,12 @@ export class WorkflowExecutorWorkspaceService {
       buildRunWorkflowJobOptions({
         workflowRunId,
         scope:
-          await this.workflowRunJobScopeWorkspaceService.resolveForApplication({
-            workspaceId,
-            applicationId,
-          }),
+          await this.workflowRunJobScopeWorkspaceService.resolveForCoreWorkflow(
+            {
+              workspaceId,
+              coreWorkflowId,
+            },
+          ),
       }),
     );
   }

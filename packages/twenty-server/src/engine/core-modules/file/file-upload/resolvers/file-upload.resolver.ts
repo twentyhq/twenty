@@ -14,24 +14,10 @@ import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { UsageLimitGraphqlApiExceptionFilter } from 'src/engine/core-modules/usage-limit/filters/usage-limit-graphql-api-exception.filter';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
-@UseGuards(
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
-    },
-    apiKey: true,
-    oauthClient: true,
-    application: true,
-  }),
-)
 @UsePipes(ResolverValidationPipe)
 @UseFilters(
   UsageLimitGraphqlApiExceptionFilter,
@@ -44,7 +30,23 @@ export class FileUploadResolver {
   constructor(private readonly fileUploadService: FileUploadService) {}
 
   @Mutation(() => FileUploadTargetDTO)
-  @UseGuards(CreateFileUploadPermissionGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: true,
+        oauthClient: true,
+        application: true,
+      },
+      requiredPermissionFlags: [],
+    }),
+    CreateFileUploadPermissionGuard,
+  )
   async createFileUpload(
     @AuthWorkspace()
     { id: workspaceId }: WorkspaceEntity,
@@ -74,7 +76,22 @@ export class FileUploadResolver {
   }
 
   @Mutation(() => FileWithSignedUrlDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE))
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: true,
+        oauthClient: true,
+        application: true,
+      },
+      requiredPermissionFlags: [PermissionFlagType.UPLOAD_FILE],
+    }),
+  )
   async completeFileUpload(
     @AuthWorkspace()
     { id: workspaceId }: WorkspaceEntity,

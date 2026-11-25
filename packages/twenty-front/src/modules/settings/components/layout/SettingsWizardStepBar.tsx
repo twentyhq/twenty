@@ -1,9 +1,9 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { type ReactNode } from 'react';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { IconChevronLeft } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 type SettingsWizardStepBarProps = {
   label: ReactNode;
@@ -46,21 +46,24 @@ export const SettingsWizardStepBar = ({
   label,
   onBack,
   trailing,
-}: SettingsWizardStepBarProps) => (
-  <StyledStepBar>
-    <StyledLeft>
-      {onBack && (
-        <LightIconButton
-          size="sm"
-          emphasis="subtle"
-          onClick={onBack}
-          aria-label={t`Previous`}
-        >
-          <IconChevronLeft />
-        </LightIconButton>
-      )}
-    </StyledLeft>
-    <StyledLabel>{label}</StyledLabel>
-    <StyledRight>{trailing}</StyledRight>
-  </StyledStepBar>
-);
+}: SettingsWizardStepBarProps) => {
+  const { t } = useLingui();
+  return (
+    <StyledStepBar>
+      <StyledLeft>
+        {onBack && (
+          <LightIconButton
+            size="sm"
+            emphasis="subtle"
+            onClick={onBack}
+            aria-label={t`Previous`}
+          >
+            <IconChevronLeft />
+          </LightIconButton>
+        )}
+      </StyledLeft>
+      <StyledLabel>{label}</StyledLabel>
+      <StyledRight>{trailing}</StyledRight>
+    </StyledStepBar>
+  );
+};

@@ -19,8 +19,7 @@ import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrap
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 import { EVENT_STREAM_REAUTHORIZATION_INTERVAL_MS } from 'src/engine/metadata-modules/event-metadata/constants/event-stream.constant';
 import { AppEventStreamPayloadDTO } from 'src/engine/metadata-modules/event-metadata/dtos/app-event-stream-payload.dto';
 import { OnAppEventInput } from 'src/engine/metadata-modules/event-metadata/dtos/on-app-event.input';
@@ -39,13 +38,15 @@ import { wrapAsyncIteratorWithLifecycle } from 'src/engine/subscriptions/utils/w
 type AppEventSubscriptionPayload = { onAppEvent: AppEventStreamPayloadDTO };
 
 @UseGuards(
-  AuthPrincipalGuard({
-    userSession: false,
-    apiKey: false,
-    oauthClient: false,
-    application: { withUser: true, withoutUser: false },
+  AccessPolicyGuard({
+    authPrincipals: {
+      userSession: false,
+      apiKey: false,
+      oauthClient: false,
+      application: { withUser: true, withoutUser: false },
+    },
+    requiredPermissionFlags: [],
   }),
-  NoPermissionGuard,
 )
 @UseInterceptors(EventMetadataGraphqlApiExceptionInterceptor)
 @UsePipes(ResolverValidationPipe)

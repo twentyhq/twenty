@@ -10,8 +10,8 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
-import { UserRoleService } from 'src/engine/permissions/role-assignment/user-role.service';
+import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
+import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -22,7 +22,6 @@ import {
 } from 'src/modules/emailing/exceptions/message-list.exception';
 import { type MessageListMemberWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list-member.workspace-entity';
 import { type MessageListWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list.workspace-entity';
-import { buildEmailingRolePermissionConfig } from 'src/modules/emailing/utils/build-emailing-role-permission-config.util';
 
 const DUPLICATED_OBJECT_UNIVERSAL_IDENTIFIERS = [
   STANDARD_OBJECTS.messageList.universalIdentifier,
@@ -33,8 +32,8 @@ const DUPLICATED_OBJECT_UNIVERSAL_IDENTIFIERS = [
 export class MessageListDuplicationService {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    private readonly userRoleService: UserRoleService,
-    private readonly permissionsService: PermissionsService,
+    private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
+    private readonly recordPermissionsReadService: RecordPermissionsReadService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly actorFromAuthContextService: ActorFromAuthContextService,
   ) {}
@@ -55,22 +54,14 @@ export class MessageListDuplicationService {
       userWorkspaceId,
     });
 
-    const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
-      workspaceId,
-      userWorkspaceId,
-    });
-
     // One transaction so a failed member insert never leaves a list copy without its members
-    return this.workspaceOrmManager.executeInWorkspaceContext(
-      () =>
-        this.workspaceOrmManager.runInWorkspaceTransaction((transactionScope) =>
-          this.duplicateInTransaction({
-            messageListId,
-            roleId,
-            authContext,
-            transactionScope,
-          }),
-        ),
+    return this.workspaceOrmManager.executeTransactionInWorkspaceContext(
+      (transactionScope) =>
+        this.duplicateInTransaction({
+          messageListId,
+          authContext,
+          transactionScope,
+        }),
       authContext,
     );
   }
@@ -83,56 +74,61 @@ export class MessageListDuplicationService {
     workspaceId: string;
     userWorkspaceId: string;
   }): Promise<void> {
-    const [{ objectsPermissions }, { flatObjectMetadataMaps }] =
-      await Promise.all([
-        this.permissionsService.getUserWorkspacePermissions({
-          workspaceId,
-          userWorkspaceId,
-        }),
-        this.workspaceCacheService.getOrRecompute(workspaceId, [
-          'flatObjectMetadataMaps',
-        ]),
-      ]);
+    const [principals, { flatObjectMetadataMaps }] = await Promise.all([
+      this.principalPermissionsReadService.resolveUserWorkspacePermissionsPrincipalsOrThrow(
+        { workspaceId, userWorkspaceId },
+      ),
+      this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+      ]),
+    ]);
 
-    for (const objectUniversalIdentifier of DUPLICATED_OBJECT_UNIVERSAL_IDENTIFIERS) {
-      const objectMetadata =
-        flatObjectMetadataMaps.byUniversalIdentifier[objectUniversalIdentifier];
-      const objectPermissions = isDefined(objectMetadata)
-        ? objectsPermissions[objectMetadata.id]
-        : undefined;
+    const duplicatedObjects = DUPLICATED_OBJECT_UNIVERSAL_IDENTIFIERS.map(
+      (objectUniversalIdentifier) =>
+        flatObjectMetadataMaps.byUniversalIdentifier[objectUniversalIdentifier],
+    );
 
-      if (
-        !objectPermissions?.canReadObjectRecords ||
-        !objectPermissions.canUpdateObjectRecords
-      ) {
-        throw new PermissionsException(
-          PermissionsExceptionMessage.PERMISSION_DENIED,
-          PermissionsExceptionCode.PERMISSION_DENIED,
-        );
-      }
+    const canReadAndCreateDuplicatedObjects =
+      duplicatedObjects.every(isDefined) &&
+      (
+        await Promise.all(
+          duplicatedObjects.flatMap(({ id: objectMetadataId }) => [
+            this.recordPermissionsReadService.canAccessSomeRecords({
+              operationType: 'read',
+              principals,
+              objectMetadataId,
+            }),
+            this.recordPermissionsReadService.canAccessSomeRecords({
+              operationType: 'create',
+              principals,
+              objectMetadataId,
+            }),
+          ]),
+        )
+      ).every((isGranted) => isGranted);
+
+    if (!canReadAndCreateDuplicatedObjects) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
     }
   }
 
   private async duplicateInTransaction({
     messageListId,
-    roleId,
     authContext,
     transactionScope,
   }: {
     messageListId: string;
-    roleId: string;
     authContext: WorkspaceAuthContext;
     transactionScope: WorkspaceTransactionScope;
   }): Promise<DuplicatedMessageListDTO> {
     const messageListRepository =
-      transactionScope.getRepository<MessageListWorkspaceEntity>(
-        'messageList',
-        buildEmailingRolePermissionConfig(roleId),
-      );
+      transactionScope.getRepository<MessageListWorkspaceEntity>('messageList');
     const messageListMemberRepository =
       transactionScope.getRepository<MessageListMemberWorkspaceEntity>(
         'messageListMember',
-        buildEmailingRolePermissionConfig(roleId),
       );
 
     const originalMessageList = await messageListRepository.findOne({

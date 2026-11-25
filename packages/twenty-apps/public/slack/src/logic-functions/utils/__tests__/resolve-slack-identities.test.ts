@@ -1,4 +1,3 @@
-import { type WebClient } from '@slack/web-api';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -44,7 +43,7 @@ const SLACK_CONNECTION_ID = 'connection-1';
 const slackClient = {
   auth: { test: authTestMock },
   users: { info: usersInfoMock },
-} as unknown as WebClient;
+};
 
 const identity = (
   overrides: Partial<SlackUserIdentity> = {},

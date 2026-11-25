@@ -12,6 +12,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { type Response } from 'express';
 import Stripe from 'stripe';
 import { ApiPath } from 'twenty-shared/types';
@@ -124,6 +125,7 @@ export class BillingWebhookController {
         );
 
       case BillingWebhookEvent.CUSTOMER_CREATED:
+      case BillingWebhookEvent.CUSTOMER_UPDATED:
       case BillingWebhookEvent.PAYMENT_METHOD_ATTACHED:
       case BillingWebhookEvent.PAYMENT_METHOD_DETACHED:
         return await this.billingWebhookCustomerService.processStripeEvent(
@@ -135,7 +137,7 @@ export class BillingWebhookController {
       case BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_DELETED: {
         const workspaceId = event.data.object.metadata?.workspaceId;
 
-        if (!workspaceId) {
+        if (!isNonEmptyString(workspaceId)) {
           throw new BillingException(
             'Workspace ID is required for subscription events',
             BillingExceptionCode.BILLING_SUBSCRIPTION_EVENT_WORKSPACE_NOT_FOUND,

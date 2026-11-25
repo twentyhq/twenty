@@ -35,7 +35,10 @@ import { recordStoreFamilySelector } from '@/object-record/record-store/states/s
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { RecordInlineCellEditMode } from '@/object-record/record-inline-cell/components/RecordInlineCellEditMode';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
-import { CoreObjectNameSingular, FieldMetadataType } from 'twenty-shared/types';
+import {
+  StandardObjectNameSingular,
+  FieldMetadataType,
+} from 'twenty-shared/types';
 import { RelationType } from '~/generated-metadata/graphql';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
@@ -88,7 +91,7 @@ const RelationOneToManyFieldInputWithContext = ({
         fieldName: 'people',
         relationType: RelationType.ONE_TO_MANY,
         relationObjectMetadataNamePlural: 'people',
-        relationObjectMetadataNameSingular: CoreObjectNameSingular.Person,
+        relationObjectMetadataNameSingular: StandardObjectNameSingular.Person,
         relationObjectMetadataId: personMetadata.id,
         objectMetadataNameSingular: 'company',
         relationFieldMetadataId: companyFieldOnPerson.id,

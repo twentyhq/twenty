@@ -1,3 +1,4 @@
+import { parseChatReferences } from 'twenty-shared/ai';
 import { Editor } from '@tiptap/core';
 import { Document } from '@tiptap/extension-document';
 import { Paragraph } from '@tiptap/extension-paragraph';
@@ -5,6 +6,13 @@ import { Text } from '@tiptap/extension-text';
 
 import { MentionTag } from '@/mention/extensions/MentionTag';
 import { getMentionTagContent } from '@/mention/utils/getMentionTagContent';
+import { serializeJsonContentAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeJsonContentAsAdvancedTextEditorDocument';
+import { isAiChatAssistantMentionedInSerializedDocument } from '@/ai-chat/composer/utils/isAiChatAssistantMentionedInSerializedDocument';
+import { tipTapDocumentToMarkdown } from 'twenty-shared/utils';
+
+jest.mock('@/mention/components/MentionChip', () => ({
+  MentionChip: () => null,
+}));
 
 // Mock ReactNodeViewRenderer since we're testing in a non-DOM environment
 jest.mock('@tiptap/react', () => ({
@@ -43,6 +51,53 @@ describe('MentionTag', () => {
   });
 
   describe('renderText', () => {
+    it('preserves assistant identity and its saved label through editor reload and markdown export', () => {
+      const label = 'Scout Bot: [team] *helper* 100%';
+
+      editor.commands.setContent({
+        type: 'doc',
+        content: [
+          {
+            type: 'paragraph',
+            content: [
+              { type: 'text', text: 'Ask ' },
+              {
+                type: 'mentionTag',
+                attrs: {
+                  recordId: 'agentChatAssistant',
+                  objectNameSingular: 'agentChatAssistant',
+                  label,
+                },
+              },
+              { type: 'text', text: ', @Ada wrote this.' },
+            ],
+          },
+        ],
+      });
+
+      const savedDocument = serializeJsonContentAsAdvancedTextEditorDocument(
+        editor.getJSON(),
+      );
+      const messageText = editor.getText();
+
+      editor.commands.setContent(JSON.parse(savedDocument));
+
+      expect(editor.getText()).toBe(messageText);
+      expect(tipTapDocumentToMarkdown(savedDocument)).toBe(messageText);
+      expect(parseChatReferences(messageText)).toEqual([
+        expect.objectContaining({
+          kind: 'record',
+          objectNameSingular: 'agentChatAssistant',
+          recordId: 'agentChatAssistant',
+          displayName: label,
+        }),
+      ]);
+      expect(messageText.endsWith(', @Ada wrote this.')).toBe(true);
+      expect(
+        isAiChatAssistantMentionedInSerializedDocument(savedDocument),
+      ).toBe(true);
+    });
+
     it('should serialize a mention to [[record:...]] markdown format', () => {
       editor.commands.setContent({
         type: 'doc',

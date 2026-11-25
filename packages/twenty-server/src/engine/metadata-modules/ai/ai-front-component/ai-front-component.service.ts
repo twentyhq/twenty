@@ -5,7 +5,7 @@ import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { validateFrontComponentSampleRecordsOrThrow } from 'src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-sample-records-or-throw.util';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { v4 } from 'uuid';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 import { type FrontComponentDraft } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-draft.type';
 import { type FrontComponentDraftInput } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-draft-input.type';
 import { FrontComponentCompilerService } from 'src/engine/metadata-modules/ai/ai-front-component/front-component-compiler.service';
@@ -31,6 +31,7 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { CommonApiContextBuilderService } from 'src/engine/core-modules/record-crud/services/common-api-context-builder.service';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { type FrontComponentQuery } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-query.type';
+import { buildFrontComponentPreviewContext } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-preview-context.util';
 import { PUBLISH_FRONT_COMPONENT_TOOL } from 'src/engine/metadata-modules/ai/ai-front-component/constants/publish-front-component-tool.constant';
 
 const DRAFT_TIME_TO_LIVE_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
@@ -43,7 +44,7 @@ export class AiFrontComponentService {
     private readonly queryContext: CommonApiContextBuilderService,
     private readonly compiler: FrontComponentCompilerService,
     private readonly postgresAdvisoryLockService: PostgresAdvisoryLockService,
-    private readonly permissions: PermissionsService,
+    private readonly settingPermissionsService: SettingPermissionsService,
     private readonly fileStorageService: FileStorageService,
     private readonly frontComponentService: FrontComponentService,
     @InjectWorkspaceScopedRepository(FrontComponentEntity)
@@ -76,12 +77,10 @@ export class AiFrontComponentService {
   }) {
     await this.assertEnabledOrThrow(workspaceId);
     if (
-      !(await this.permissions.userHasWorkspaceSettingPermission({
+      !(await this.settingPermissionsService.userWorkspaceHasPermissionFlag({
         workspaceId,
         userWorkspaceId,
-        setting: PermissionFlagType.APPLICATIONS,
-        applicationId: undefined,
-        agentId: undefined,
+        permissionFlag: PermissionFlagType.APPLICATIONS,
       }))
     ) {
       throw new ApplicationException(
@@ -198,11 +197,7 @@ export class AiFrontComponentService {
     draftInput: FrontComponentDraftInput;
     context: Pick<
       ToolProviderContext,
-      | 'workspaceId'
-      | 'userWorkspaceId'
-      | 'threadId'
-      | 'authContext'
-      | 'rolePermissionConfig'
+      'workspaceId' | 'userWorkspaceId' | 'threadId' | 'authContext'
     >;
   }) {
     const { userWorkspaceId, threadId } = context;
@@ -233,10 +228,9 @@ export class AiFrontComponentService {
       workspaceId: context.workspaceId,
       userWorkspaceId,
     });
-    const objectNamePlural = await this.getQueryObjectNamePluralOrThrow({
+    const queryObject = await this.getQueryObjectOrThrow({
       query: input.query,
       authContext: context.authContext,
-      rolePermissionConfig: context.rolePermissionConfig,
     });
     validateFrontComponentSampleRecordsOrThrow({
       sampleRecords: input.sampleRecords,
@@ -296,7 +290,8 @@ export class AiFrontComponentService {
         entrySource: built.source,
         componentName: built.componentName,
         hasSdkClientImport: built.hasSdkClientImport,
-        objectNamePlural,
+        objectNamePlural: queryObject.namePlural,
+        objectMetadataId: queryObject.id,
         id,
         applicationId: application.id,
         expiresAt: Date.now() + DRAFT_TIME_TO_LIVE_IN_MILLISECONDS,
@@ -361,6 +356,7 @@ export class AiFrontComponentService {
       applicationId: draft.applicationId,
       sharedDependenciesChecksum:
         application.frontComponentSharedDependenciesChecksum,
+      ...buildFrontComponentPreviewContext(draft),
       mockQueryResult: {
         [draft.objectNamePlural]: {
           edges: draft.sampleRecords.map((node) => ({ node })),
@@ -414,7 +410,6 @@ export class AiFrontComponentService {
       | 'authContext'
       | 'approvedToolName'
       | 'threadId'
-      | 'rolePermissionConfig'
     >;
   }) {
     const { workspaceId, userWorkspaceId, authContext } = context;
@@ -505,10 +500,9 @@ export class AiFrontComponentService {
         }
 
         if (!isDefined(existing)) {
-          await this.getQueryObjectNamePluralOrThrow({
+          await this.getQueryObjectOrThrow({
             query: draft.query,
             authContext,
-            rolePermissionConfig: context.rolePermissionConfig,
           });
           await this.saveDraft({
             workspaceId,
@@ -595,24 +589,21 @@ export class AiFrontComponentService {
     });
   }
 
-  private async getQueryObjectNamePluralOrThrow({
+  private async getQueryObjectOrThrow({
     query,
     authContext,
-    rolePermissionConfig,
   }: {
     query: FrontComponentQuery;
     authContext: WorkspaceAuthContext;
-    rolePermissionConfig?: ToolProviderContext['rolePermissionConfig'];
   }) {
     const { selectedFields, flatObjectMetadata } =
       await this.queryContext.build({
         authContext,
         objectName: query.objectName,
-        rolePermissionConfig,
       });
 
     for (const fieldName of query.select) {
-      if (!isDefined(selectedFields[fieldName])) {
+      if (!isDefined(selectedFields.fields[fieldName])) {
         throw new ApplicationException(
           doNotTranslate(
             `Field ${query.objectName}.${fieldName} is unavailable. Select accessible top-level fields.`,
@@ -625,6 +616,6 @@ export class AiFrontComponentService {
       }
     }
 
-    return flatObjectMetadata.namePlural;
+    return flatObjectMetadata;
   }
 }

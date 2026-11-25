@@ -12,6 +12,7 @@ Una nuova app generata da `twenty app init` si presenta così:
 ```text filename="my-twenty-app/"
 my-twenty-app/
   package.json
+  yarn.lock                                 # Created by app init; used by yarn install
   src/
     application-config.ts                   # Required — your app's entry point
     default-role.ts                         # Permissions for logic functions
@@ -28,6 +29,7 @@ my-twenty-app/
     __tests__/
       application-config.test.ts            # Unit test
       global-setup.ts                       # Integration test setup (sync + uninstall)
+      run-twenty.ts                         # CLI subprocess helper for tests
       schema.integration-test.ts            # Integration test against a live server
   .github/workflows/
     ci.yml                                  # Lint, typecheck, unit + integration tests
@@ -65,20 +67,9 @@ my-twenty-app/
 
 ## Dipendenze
 
-I pacchetti SDK e UI di Twenty devono trovarsi in `devDependencies`:
+`twenty app init` inserisce `twenty-sdk`, `twenty-client-sdk` e `twenty-ui` in `devDependencies`, bloccati alla versione dell'SDK selezionata da quella versione della CLI. Mantieni le versioni generate per una nuova app e mantieni tutti e tre i pacchetti sincronizzati durante l'aggiornamento. La CLI può ricevere versioni patch in modo indipendente, quindi la sua versione non deve necessariamente corrispondere a quella di questi pacchetti.
 
-```json filename="package.json"
-{
-  "dependencies": {},
-  "devDependencies": {
-    "twenty-client-sdk": "2.40.0",
-    "twenty-sdk": "2.40.0",
-    "twenty-ui": "2.40.0"
-  }
-}
-```
-
-`twenty app init` vincola `twenty-sdk`, `twenty-client-sdk` e `twenty-ui` alla propria versione. Mantieni tutti e tre sincronizzati durante l'aggiornamento.
+Il valore `engines.twenty` generato imposta la versione minima del server alla versione major e minor di quell'SDK. I flussi di lavoro GitHub Actions generati bloccano separatamente la CLI.
 
 * **`twenty-sdk`** fornisce definizioni delle app, helper di runtime e integrazione del renderer. Usa il pacchetto **`twenty`** installato separatamente per i comandi CLI e gli strumenti di build/scaffolding.
 * **`twenty-client-sdk`** *viene* importato dal codice della tua app (`CoreApiClient`, `MetadataApiClient`, `RestApiClient`), ma Twenty lo fornisce a runtime: le funzioni di logica lo ricevono da un layer SDK generato e i componenti di front-end lo risolvono da moduli forniti dal server. La copia installata viene utilizzata solo per il type checking e per la build al momento del deploy, quindi non è mai necessario includerla nel bundle distribuito.

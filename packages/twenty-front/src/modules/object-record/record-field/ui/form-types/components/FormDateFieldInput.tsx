@@ -276,7 +276,7 @@ export const FormDateFieldInput = ({
           >
             {draftValue.type === 'static' ? (
               <StyledDateInputTextContainer
-                isReadonly={readonly === true}
+                isReadonly={readonly}
                 onPointerDownCapture={handleMaskedDatePointerDownCapture}
               >
                 <DatePickerInput

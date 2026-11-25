@@ -2,15 +2,23 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import * as fs from 'fs/promises';
 
+import {
+  decodeFrontComponentTypeReferences,
+  encodeFrontComponentTypeReferencesOrThrow,
+} from 'twenty-shared/front-component-build';
 import { FileFolder } from 'twenty-shared/types';
+import { isDefined, readLruEntry, writeLruEntry } from 'twenty-shared/utils';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import {
   FileStorageException,
   FileStorageExceptionCode,
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { type SdkModuleName } from 'src/engine/core-modules/sdk-client/constants/allowed-sdk-modules';
+import { SDK_CLIENT_ARCHIVE_NAME } from 'src/engine/core-modules/sdk-client/constants/sdk-client-archive-name';
+import { SDK_CLIENT_GENERATION_LOCK_OPTIONS } from 'src/engine/core-modules/sdk-client/constants/sdk-client-generation-lock-options';
 import {
   SdkClientException,
   SdkClientExceptionCode,
@@ -21,10 +29,16 @@ import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
-const SDK_CLIENT_ARCHIVE_NAME = 'twenty-client-sdk.zip';
+const SDK_TYPE_REFERENCES_CACHE_MAX_ENTRIES = 8;
+const SDK_TYPE_REFERENCES_CACHE_MAX_ENTRY_BYTES = 1024 * 1024;
 
 @Injectable()
 export class SdkClientArchiveService {
+  private readonly typeReferencesCache = new Map<
+    string,
+    { checksum: string; content: Buffer }
+  >();
+
   private readonly logger = new Logger(SdkClientArchiveService.name);
 
   constructor(
@@ -33,6 +47,7 @@ export class SdkClientArchiveService {
     private readonly applicationRepository: WorkspaceScopedRepository<ApplicationEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly sdkClientGenerationService: SdkClientGenerationService,
+    private readonly cacheLockService: CacheLockService,
   ) {}
 
   async downloadAndExtractToPackage({
@@ -113,6 +128,80 @@ export class SdkClientArchiveService {
     return entry.buffer();
   }
 
+  async getClientTypeReferences(params: {
+    workspaceId: string;
+    applicationId: string;
+    applicationUniversalIdentifier: string;
+  }): Promise<Record<string, string>> {
+    const archiveIdentifier = {
+      workspaceId: params.workspaceId,
+      applicationUniversalIdentifier: params.applicationUniversalIdentifier,
+      fileFolder: FileFolder.GeneratedSdkClient,
+      resourcePath: SDK_CLIENT_ARCHIVE_NAME,
+    };
+    const metadata =
+      await this.fileStorageService.getFileMetadata(archiveIdentifier);
+    const checksum = metadata?.checksum;
+    const cacheKey = `${params.workspaceId}:${params.applicationUniversalIdentifier}`;
+    const cached = readLruEntry({
+      map: this.typeReferencesCache,
+      key: cacheKey,
+    });
+
+    if (isDefined(checksum) && cached?.checksum === checksum) {
+      return decodeFrontComponentTypeReferences(cached.content);
+    }
+
+    this.typeReferencesCache.delete(cacheKey);
+
+    const archiveBuffer = await this.downloadArchiveBufferOrGenerate(params);
+    const { default: unzipper } = await import('unzipper');
+    const directory = await unzipper.Open.buffer(archiveBuffer);
+    const archiveFiles = directory.files.map((file) => ({
+      file,
+      path: file.path.replace(/^\.\//, ''),
+    }));
+    const files = await Promise.all(
+      archiveFiles
+        .filter(
+          ({ path }) =>
+            /\.[cm]?ts$/.test(path) || path.endsWith('package.json'),
+        )
+        .map(
+          async ({ file, path }) =>
+            [
+              `/node_modules/twenty-client-sdk/${path}`,
+              (await file.buffer()).toString(),
+            ] as const,
+        ),
+    );
+    const references = Object.fromEntries(files);
+
+    if (!isDefined(checksum)) {
+      return references;
+    }
+
+    const currentMetadata =
+      await this.fileStorageService.getFileMetadata(archiveIdentifier);
+
+    if (currentMetadata?.checksum !== checksum) {
+      return references;
+    }
+
+    const content = encodeFrontComponentTypeReferencesOrThrow(references);
+
+    if (content.length <= SDK_TYPE_REFERENCES_CACHE_MAX_ENTRY_BYTES) {
+      writeLruEntry({
+        map: this.typeReferencesCache,
+        key: cacheKey,
+        value: { checksum, content },
+        maxEntries: SDK_TYPE_REFERENCES_CACHE_MAX_ENTRIES,
+      });
+    }
+
+    return references;
+  }
+
   async markSdkLayerFresh({
     applicationId,
     workspaceId,
@@ -140,6 +229,45 @@ export class SdkClientArchiveService {
     applicationId: string;
     applicationUniversalIdentifier: string;
   }): Promise<Buffer> {
+    const storedArchiveBuffer = await this.readStoredArchiveBuffer({
+      workspaceId,
+      applicationUniversalIdentifier,
+    });
+
+    if (isDefined(storedArchiveBuffer)) {
+      return storedArchiveBuffer;
+    }
+
+    this.logger.warn(
+      `SDK client archive missing for application "${applicationUniversalIdentifier}" in workspace "${workspaceId}", generating on-the-fly`,
+    );
+
+    // Once the generation key changes every archive is missing at once:
+    // concurrent first requests for one application wait for a single build.
+    return this.cacheLockService.withLock(
+      async () =>
+        (await this.readStoredArchiveBuffer({
+          workspaceId,
+          applicationUniversalIdentifier,
+        })) ??
+        this.sdkClientGenerationService.generateSdkClientForApplication({
+          workspaceId,
+          applicationId,
+          applicationUniversalIdentifier,
+          trigger: 'missing-archive',
+        }),
+      `sdk-client-generation:${workspaceId}:${applicationId}`,
+      SDK_CLIENT_GENERATION_LOCK_OPTIONS,
+    );
+  }
+
+  private async readStoredArchiveBuffer({
+    workspaceId,
+    applicationUniversalIdentifier,
+  }: {
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
+  }): Promise<Buffer | null> {
     try {
       const stream = await this.fileStorageService.readFile({
         workspaceId,
@@ -151,22 +279,13 @@ export class SdkClientArchiveService {
       return await streamToBuffer(stream);
     } catch (error) {
       if (
-        !(error instanceof FileStorageException) ||
-        error.code !== FileStorageExceptionCode.FILE_NOT_FOUND
+        error instanceof FileStorageException &&
+        error.code === FileStorageExceptionCode.FILE_NOT_FOUND
       ) {
-        throw error;
+        return null;
       }
+
+      throw error;
     }
-
-    this.logger.warn(
-      `SDK client archive missing for application "${applicationUniversalIdentifier}" in workspace "${workspaceId}", generating on-the-fly`,
-    );
-
-    return this.sdkClientGenerationService.generateSdkClientForApplication({
-      workspaceId,
-      applicationId,
-      applicationUniversalIdentifier,
-      trigger: 'missing-archive',
-    });
   }
 }

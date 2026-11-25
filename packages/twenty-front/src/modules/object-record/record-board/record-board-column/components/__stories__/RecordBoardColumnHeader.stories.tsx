@@ -66,7 +66,7 @@ const BoardHeaderExample = () => (
         updateOneRecord: () => {},
         deleteOneRecord: async () => {},
         recordBoardId: BOARD_ID,
-        objectPermissions: getDefaultObjectPermissions(company.id),
+        objectPermissions: getDefaultObjectPermissions(),
       }}
     >
       <RecordBoardColumnContext.Provider

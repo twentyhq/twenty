@@ -20,7 +20,7 @@ type DesktopRecord = {
 };
 
 const getSession = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'query' | 'mutation'>,
   id: string,
 ): Promise<DesktopRecord | undefined> => {
   const result = await client.query({
@@ -35,7 +35,7 @@ const getSession = async (
 };
 
 export const failDesktopRecordingCapture = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'query' | 'mutation'>,
   userWorkspaceId: string,
   body: Record<string, unknown>,
 ) => {

@@ -9,13 +9,13 @@ import {
   FieldActorSource,
   type FullNameMetadata,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isWorkDomain, isWorkEmail } from 'twenty-shared/utils';
 import { type DeepPartial, type Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceInternalImportService } from 'src/engine/core-modules/workspace/services/workspace-internal-import.service';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -32,7 +32,6 @@ import { addPersonEmailFiltersToQueryBuilder } from 'src/modules/match-participa
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { computeDisplayName } from 'src/utils/compute-display-name';
-import { isWorkDomain, isWorkEmail } from 'src/utils/is-work-email';
 
 @Injectable()
 export class CreateCompanyAndPersonService {
@@ -45,8 +44,7 @@ export class CreateCompanyAndPersonService {
     private readonly exceptionHandlerService: ExceptionHandlerService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
-    @InjectRepository(WorkspaceEntity)
-    private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    private readonly workspaceInternalImportService: WorkspaceInternalImportService,
   ) {}
 
   async createCompaniesAndPeople(
@@ -63,31 +61,29 @@ export class CreateCompanyAndPersonService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const personRepository = this.workspaceOrmManager.getRepository(
-        PersonWorkspaceEntity,
-        {
-          shouldBypassPermissionChecks: true,
-        },
-      );
+      const personRepository =
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+          PersonWorkspaceEntity,
+        );
 
-      const workspaceMemberRepository = this.workspaceOrmManager.getRepository(
-        WorkspaceMemberWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
-      );
+      const workspaceMemberRepository =
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+          WorkspaceMemberWorkspaceEntity,
+        );
 
       const workspaceMembers = await workspaceMemberRepository.find();
 
-      const workspace = await this.workspaceRepository.findOne({
-        where: { id: workspaceId },
-        select: ['id', 'isInternalMessagesImportEnabled'],
-      });
+      const isInternalImportEnabled =
+        await this.workspaceInternalImportService.isInternalImportEnabled({
+          workspaceId,
+        });
 
       const peopleToCreateFromOtherCompanies =
         filterOutContactsThatBelongToSelfOrWorkspaceMembers(
           contactsToCreate,
           connectedAccount,
           workspaceMembers,
-          workspace?.isInternalMessagesImportEnabled ?? false,
+          isInternalImportEnabled,
         );
 
       const { uniqueContacts, uniqueHandles } = getUniqueContactsAndHandles(
@@ -104,7 +100,8 @@ export class CreateCompanyAndPersonService {
       });
 
       const alreadyCreatedPeople = await queryBuilder
-        .orderBy('person.createdAt', 'ASC')
+        .orderBy('person.deletedAt', 'ASC', 'NULLS FIRST')
+        .addOrderBy('person.createdAt', 'ASC')
         .withDeleted()
         .getMany<PersonWorkspaceEntity>();
 
@@ -194,9 +191,8 @@ export class CreateCompanyAndPersonService {
     const accountOwner =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
         const workspaceMemberRepository =
-          this.workspaceOrmManager.getRepository(
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
             WorkspaceMemberWorkspaceEntity,
-            { shouldBypassPermissionChecks: true },
           );
 
         return workspaceMemberRepository.findOne({
@@ -204,11 +200,13 @@ export class CreateCompanyAndPersonService {
         });
       }, authContext);
 
-    for (const contactsBatch of contactsBatches) {
+    const createCompaniesAndPeopleIgnoringDuplicates = async (
+      contacts: Contact[],
+    ): Promise<{ hasHitDuplicateEntry: boolean }> => {
       try {
         await this.createCompaniesAndPeople(
           connectedAccount,
-          contactsBatch,
+          contacts,
           workspaceId,
           source,
           accountOwner,
@@ -216,7 +214,7 @@ export class CreateCompanyAndPersonService {
       } catch (error) {
         // Concurrent imports can race on a unique company domain or person email; the record exists either way
         if (isDuplicateEntryError(error)) {
-          continue;
+          return { hasHitDuplicateEntry: true };
         }
 
         this.exceptionHandlerService.captureExceptions([error], {
@@ -224,6 +222,21 @@ export class CreateCompanyAndPersonService {
             id: workspaceId,
           },
         });
+      }
+
+      return { hasHitDuplicateEntry: false };
+    };
+
+    for (const contactsBatch of contactsBatches) {
+      const { hasHitDuplicateEntry } =
+        await createCompaniesAndPeopleIgnoringDuplicates(contactsBatch);
+
+      if (!hasHitDuplicateEntry || contactsBatch.length === 1) {
+        continue;
+      }
+
+      for (const contact of contactsBatch) {
+        await createCompaniesAndPeopleIgnoringDuplicates([contact]);
       }
     }
   }
@@ -276,7 +289,9 @@ export class CreateCompanyAndPersonService {
         },
       );
 
-      if (!isDefined(existingPersonOnAdditionalEmails)) continue;
+      if (!isDefined(existingPersonOnAdditionalEmails)) {
+        continue;
+      }
 
       shouldCreateOrRestorePeopleByHandleMap.set(contact.handle.toLowerCase(), {
         existingPerson: existingPersonOnAdditionalEmails,
@@ -314,8 +329,12 @@ export class CreateCompanyAndPersonService {
             ? getDomainNameFromHandle(contact.handle)
             : undefined;
 
-          if (!isDefined(companyDomainName) || !isWorkDomain(companyDomainName))
+          if (
+            !isDefined(companyDomainName) ||
+            !isWorkDomain(companyDomainName)
+          ) {
             return undefined;
+          }
 
           return {
             domainName: companyDomainName,
@@ -488,8 +507,9 @@ export class CreateCompanyAndPersonService {
         handle.toLowerCase(),
       )?.existingPerson;
 
-      if (!isDefined(existingPerson) || isNull(existingPerson.deletedAt))
+      if (!isDefined(existingPerson) || isNull(existingPerson.deletedAt)) {
         continue;
+      }
 
       const companyId = companiesMap[getDomainNameFromHandle(handle)];
 

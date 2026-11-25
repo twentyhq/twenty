@@ -1,28 +1,11 @@
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useMergeRecordsActions } from '@/object-record/record-merge/hooks/useMergeRecordsActions';
+import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { styled } from '@linaria/react';
 import { Key } from 'ts-key-enum';
-import { t } from '@lingui/core/macro';
 import { IconArrowMerge } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme';
-
-const StyledFooterContainer = styled.div`
-  align-items: flex-end;
-  background: ${themeCssVariables.background.primary};
-  border-top: 1px solid ${themeCssVariables.border.color.light};
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-  justify-content: flex-end;
-  padding: ${themeCssVariables.spacing[3]};
-`;
-
-const StyledFooterActions = styled.div`
-  align-items: flex-end;
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-`;
+import { useLingui } from '@lingui/react/macro';
 
 type MergeRecordsFooterProps = {
   objectNameSingular: string;
@@ -31,6 +14,7 @@ type MergeRecordsFooterProps = {
 export const MergeRecordsFooter = ({
   objectNameSingular,
 }: MergeRecordsFooterProps) => {
+  const { t } = useLingui();
   const { handleMergeRecords, isMerging } = useMergeRecordsActions({
     objectNameSingular,
   });
@@ -47,9 +31,10 @@ export const MergeRecordsFooter = ({
   });
 
   return (
-    <StyledFooterContainer>
-      <StyledFooterActions>
+    <SidePanelFooter
+      actions={[
         <Button
+          key="merge"
           size="md"
           startIcon={<IconArrowMerge />}
           shortcut={isMerging ? undefined : ['Mod', 'Enter']}
@@ -59,8 +44,8 @@ export const MergeRecordsFooter = ({
           color="accent"
         >
           {isMerging ? t`Merging...` : t`Merge`}
-        </Button>
-      </StyledFooterActions>
-    </StyledFooterContainer>
+        </Button>,
+      ]}
+    />
   );
 };

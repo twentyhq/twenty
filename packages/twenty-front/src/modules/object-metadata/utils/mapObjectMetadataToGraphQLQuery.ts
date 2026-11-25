@@ -4,13 +4,15 @@ import { getRelationIdFieldNames } from '@/object-metadata/utils/getRelationIdFi
 import { mapFieldMetadataToGraphQLQuery } from '@/object-metadata/utils/mapFieldMetadataToGraphQLQuery';
 import { shouldFieldBeQueried } from '@/object-metadata/utils/shouldFieldBeQueried';
 import {
-  type RecordGqlFields,
   FieldMetadataType,
+  type ObjectRecordsPermissions,
+  type RecordGqlFields,
   RelationType,
-  type ObjectPermissions,
 } from 'twenty-shared/types';
+import { type ReadableRelationWithArguments } from '@/object-record/graphql/types/ReadableRelationWithArguments';
 import { isRecordGqlFieldsNode } from '@/object-record/graphql/utils/isRecordGraphlFieldsNode';
 import {
+  canAccessThroughAllRecordsOrRlsPermission,
   computeMorphRelationGqlFieldName,
   isDefined,
 } from 'twenty-shared/utils';
@@ -25,10 +27,8 @@ type MapObjectMetadataToGraphQLQueryArgs = {
   recordGqlFields?: RecordGqlFields;
   computeReferences?: boolean;
   isRootLevel?: boolean;
-  objectPermissionsByObjectMetadataId: Record<
-    string,
-    ObjectPermissions & { objectMetadataId: string }
-  >;
+  objectPermissionsByObjectMetadataId: Record<string, ObjectRecordsPermissions>;
+  readableRelationsWithArguments?: ReadableRelationWithArguments[];
 };
 
 export const mapObjectMetadataToGraphQLQuery = ({
@@ -38,6 +38,7 @@ export const mapObjectMetadataToGraphQLQuery = ({
   computeReferences = false,
   isRootLevel = true,
   objectPermissionsByObjectMetadataId,
+  readableRelationsWithArguments = [],
 }: MapObjectMetadataToGraphQLQueryArgs): string => {
   if (
     !isRootLevel &&
@@ -48,7 +49,12 @@ export const mapObjectMetadataToGraphQLQuery = ({
       objectPermissionsByObjectMetadataId,
       objectMetadataItem.id,
     );
-    if (!objectPermission.canReadObjectRecords) {
+    if (
+      !canAccessThroughAllRecordsOrRlsPermission({
+        objectRecordsPermissions: objectPermission,
+        operationType: 'read',
+      })
+    ) {
       return '';
     }
   }
@@ -152,6 +158,25 @@ export const mapObjectMetadataToGraphQLQuery = ({
         objectPermissionsByObjectMetadataId,
       });
     })
+    .concat(
+      readableRelationsWithArguments.map(
+        ({
+          fieldMetadataItem,
+          recordGqlFields,
+          selectionHead,
+          connectionGqlFieldNames,
+        }) =>
+          mapFieldMetadataToGraphQLQuery({
+            objectMetadataItems,
+            gqlField: selectionHead,
+            fieldMetadata: fieldMetadataItem,
+            relationRecordGqlFields: recordGqlFields,
+            relationConnectionGqlFieldNames: connectionGqlFieldNames,
+            computeReferences,
+            objectPermissionsByObjectMetadataId,
+          }),
+      ),
+    )
     .filter((field) => field !== '')
     .join('\n');
 

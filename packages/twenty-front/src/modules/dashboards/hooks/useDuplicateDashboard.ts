@@ -2,15 +2,19 @@ import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetad
 import { useAddDuplicatedRecordToCache } from '@/object-record/cache/hooks/useAddDuplicatedRecordToCache';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
-import { CoreObjectNameSingular, CrudOperationType } from 'twenty-shared/types';
+import {
+  StandardObjectNameSingular,
+  CrudOperationType,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { DuplicateDashboardDocument } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 export const useDuplicateDashboard = () => {
+  const { t } = useLingui();
   const { addDuplicatedRecordToCache } = useAddDuplicatedRecordToCache({
-    objectNameSingular: CoreObjectNameSingular.Dashboard,
+    objectNameSingular: StandardObjectNameSingular.Dashboard,
   });
 
   const [mutate] = useMutation(DuplicateDashboardDocument);
@@ -25,7 +29,9 @@ export const useDuplicateDashboard = () => {
         update: (cache, { data }) => {
           const record = data?.duplicateDashboard;
 
-          if (!isDefined(record)) return;
+          if (!isDefined(record)) {
+            return;
+          }
 
           addDuplicatedRecordToCache({ cache, record });
         },

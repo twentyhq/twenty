@@ -115,7 +115,15 @@ const syncTestManifest = async ({
   });
 
 const findSearchFieldMetadataList = async () => {
-  const { objects } = await findManyObjectMetadata({
+  const { objects } = await findManyObjectMetadata<
+    ObjectMetadataDTO & {
+      searchFieldMetadataList: Pick<
+        SearchFieldMetadataDTO,
+        'id' | 'fieldMetadataId' | 'position'
+      >[];
+      fieldsList: { id: string; name: string; isSearchable: boolean }[];
+    }
+  >({
     expectToFail: false,
     input: {
       filter: { universalIdentifier: { eq: OBJECT_UNIVERSAL_IDENTIFIER } },
@@ -136,13 +144,7 @@ const findSearchFieldMetadataList = async () => {
     `,
   });
 
-  return objects[0] as unknown as ObjectMetadataDTO & {
-    searchFieldMetadataList: Pick<
-      SearchFieldMetadataDTO,
-      'id' | 'fieldMetadataId' | 'position'
-    >[];
-    fieldsList: { id: string; name: string; isSearchable: boolean }[];
-  };
+  return objects[0];
 };
 
 describe('Application manifest sync with field-level isSearchable', () => {

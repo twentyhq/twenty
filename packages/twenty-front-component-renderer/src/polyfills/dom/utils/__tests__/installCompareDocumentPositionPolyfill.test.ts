@@ -1,16 +1,12 @@
 import { Window } from '@remote-dom/polyfill';
 
+import { toDomWindow } from '@/testing/toDomWindow';
+
 import { installCompareDocumentPositionPolyfill } from '../installCompareDocumentPositionPolyfill';
 
-type PolyfillNodeConstructor = typeof Node;
-
-const createPolyfillDocument = (): {
-  document: Document;
-  nodeConstructor: PolyfillNodeConstructor;
-} => {
+const createPolyfillDocument = () => {
   const polyfillWindow = new Window();
-  const nodeConstructor =
-    polyfillWindow.Node as unknown as PolyfillNodeConstructor;
+  const nodeConstructor = toDomWindow(polyfillWindow).Node;
 
   installCompareDocumentPositionPolyfill({
     nodeConstructor,
@@ -18,7 +14,7 @@ const createPolyfillDocument = (): {
   });
 
   return {
-    document: polyfillWindow.document as unknown as Document,
+    document: polyfillWindow.document,
     nodeConstructor,
   };
 };
@@ -48,15 +44,13 @@ describe('installCompareDocumentPositionPolyfill', () => {
     const { document } = createPolyfillDocument();
     const element = document.createElement('div');
 
-    expect(() =>
-      element.compareDocumentPosition(null as unknown as Node),
-    ).toThrow(TypeError);
+    expect(() => element.compareDocumentPosition(null)).toThrow(TypeError);
     expect(() => element.compareDocumentPosition({} as Node)).toThrow(
       TypeError,
     );
-    expect(() =>
-      element.compareDocumentPosition({ parentNode: null } as unknown as Node),
-    ).toThrow(TypeError);
+    expect(() => element.compareDocumentPosition({ parentNode: null })).toThrow(
+      TypeError,
+    );
   });
 
   it('should keep disconnected ordering stable and reverse it when arguments reverse', () => {

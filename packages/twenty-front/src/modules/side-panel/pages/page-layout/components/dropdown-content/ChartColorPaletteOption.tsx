@@ -2,11 +2,11 @@ import { CHART_SETTINGS_PALETTE_COLOR_GROUP_COUNT } from '@/side-panel/pages/pag
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import { getColorSchemeByIndex } from '@/page-layout/widgets/graph/utils/getColorSchemeByIndex';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { ColorSample } from 'twenty-ui/primitives/data-display';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { getMainColorNameFromPaletteColorName } from 'twenty-ui/utilities';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledColorSamplesContainer = styled.div`
   align-items: center;
@@ -15,6 +15,7 @@ const StyledColorSamplesContainer = styled.div`
 `;
 
 export const ChartColorPaletteOption = () => {
+  const { t } = useLingui();
   const theme = useTheme();
   const colorRegistry = createGraphColorRegistry(theme.color);
 

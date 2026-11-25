@@ -2,6 +2,7 @@ import { isRecordFilterAboutSoftDelete } from '@/object-record/record-filter/uti
 import type { Store } from 'jotai/vanilla/store';
 
 import { type HeadlessEngineCommandContextApi } from '@/command-menu-item/engine-command/types/HeadlessCommandContextApi';
+import { contextStoreCurrentCoreObjectNameComponentState } from '@/context-store/states/contextStoreCurrentCoreObjectNameComponentState';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
@@ -36,6 +37,12 @@ export const buildHeadlessCommandContextApi = ({
 }): HeadlessEngineCommandContextApi => {
   const objectMetadataItemId = store.get(
     contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
+      instanceId: contextStoreInstanceId,
+    }),
+  );
+
+  const coreObjectName = store.get(
+    contextStoreCurrentCoreObjectNameComponentState.atomFamily({
       instanceId: contextStoreInstanceId,
     }),
   );
@@ -92,6 +99,7 @@ export const buildHeadlessCommandContextApi = ({
     ),
     contextStoreInstanceId,
     objectMetadataItem: objectMetadataItem ?? null,
+    coreObjectName,
     currentViewId,
     recordIndexId,
     targetedRecordsRule,

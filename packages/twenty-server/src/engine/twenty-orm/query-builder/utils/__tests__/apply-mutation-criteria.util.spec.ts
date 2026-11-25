@@ -6,6 +6,7 @@ import { TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.
 import { applyMutationCriteriaToQueryBuilder } from 'src/engine/twenty-orm/query-builder/utils/apply-mutation-criteria.util';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
+import { NO_RECORD_READ_RESTRICTIONS } from 'src/engine/permissions/constants/no-record-read-restrictions.constant';
 
 const buildColumn = (columnName: string) => ({
   columnName,
@@ -33,7 +34,7 @@ const buildQueryBuilder = () =>
   new WorkspaceSelectQueryBuilder('person', {
     tableShape: personTableShape,
     executor: { execute: async () => [] },
-    objectRecordsPermissions: {},
+    recordReadRestrictions: NO_RECORD_READ_RESTRICTIONS,
     tableShapeByObjectMetadataId: () => personTableShape,
     onBeforeExecute: () => undefined,
     formatResult: (records) => records as never,

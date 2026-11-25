@@ -2,6 +2,7 @@ import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/
 import { isDefined } from 'twenty-shared/utils';
 
 import { MessageChannelVisibility } from 'twenty-shared/types';
+import { type TimelineThreadChannelDTO } from 'src/engine/core-modules/messaging/dtos/timeline-thread-channel.dto';
 import { type TimelineThreadDTO } from 'src/engine/core-modules/messaging/dtos/timeline-thread.dto';
 import { extractParticipantSummary } from 'src/engine/core-modules/messaging/utils/extract-participant-summary.util';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
@@ -14,13 +15,13 @@ export const formatThreads = (
     | 'participantCount'
     | 'read'
     | 'visibility'
+    | 'channel'
   >[],
   threadParticipantsByThreadId: {
     [key: string]: MessageParticipantWorkspaceEntity[];
   },
-  threadVisibilityByThreadId: {
-    [key: string]: MessageChannelVisibility;
-  },
+  threadVisibilityByThreadId: Record<string, MessageChannelVisibility>,
+  threadChannelByThreadId: Record<string, TimelineThreadChannelDTO>,
 ): TimelineThreadDTO[] => {
   return threads
     .filter((thread) => isDefined(threadParticipantsByThreadId[thread.id]))
@@ -42,6 +43,7 @@ export const formatThreads = (
             : FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
         ...extractParticipantSummary(threadParticipantsByThreadId[thread.id]),
         visibility,
+        channel: threadChannelByThreadId[thread.id] ?? null,
         read: true,
       };
     });

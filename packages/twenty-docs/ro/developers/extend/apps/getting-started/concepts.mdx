@@ -18,6 +18,7 @@ your-app/
 │   ├── roles/                   ← defineRole
 │   ├── objects/                 ← defineObject
 │   ├── fields/                  ← defineField
+│   ├── validation-rules/        ← defineValidationRule
 │   ├── logic-functions/         ← defineLogicFunction
 │   ├── front-components/        ← defineFrontComponent
 │   ├── skills/                  ← defineSkill
@@ -46,6 +47,7 @@ your-app/
 | **Obiect**                        | Tipuri de înregistrări personalizate cu câmpuri                                            | [Objects](/ro/developers/extend/apps/data/objects)                                                                      |
 | **Câmp**                          | Adăugați câmpuri la obiecte din alte aplicații                                             | [Extending Objects](/ro/developers/extend/apps/data/extending-objects)                                                  |
 | **Relație**                       | Legături bidirecționale între obiecte                                                      | [Relations](/ro/developers/extend/apps/data/relations)                                                                  |
+| **Regulă de validare**            | Condiții pe care o înregistrare trebuie să le îndeplinească înainte de a putea fi salvată  | [Reguli de validare](/ro/developers/extend/apps/data/validation-rules)                                                  |
 | **Funcție logică**                | TypeScript pe partea de server cu declanșatoare                                            | [Funcții logice](/ro/developers/extend/apps/logic/logic-functions)                                                      |
 | **Abilitate**                     | Instrucțiuni reutilizabile pentru agenți AI                                                | [Abilități și agenți](/ro/developers/extend/apps/logic/skills-and-agents)                                               |
 | **Agent**                         | Agenți AI cu prompturi personalizate                                                       | [Abilități și agenți](/ro/developers/extend/apps/logic/skills-and-agents)                                               |
@@ -86,7 +88,7 @@ your-app/
 └─────────────────────────────────────────────────────────┘
 ```
 
-* **`douăzeci de aplicații dev`** — îți urmărește fișierele sursă și modificările live-syncs la un server conectat. Clientul API tipizat este regenerat automat atunci când schema se schimbă.
+* **`douăzeci de aplicații dev`** — îți urmărește fișierele sursă și modificările live-syncs la un server conectat. După o sincronizare reușită, regenerează clientul API tipizat atunci când schema sau pachetul generator instalat s-au modificat ori când fișierele client generate lipsesc sau au fost modificate. Pentru a reîmprospăta tipurile după schimbarea spațiului de lucru în interfața cu utilizatorul, rulează `twenty app generate-client`.
 * **`douăzeci de aplicații construite`** — compilează TypeScript, împachetează funcțiile logice și componentele frontale cu esbuild, și produce un manifest.
 * **Hook-uri pre/post-instalare și dezinstalare** — funcții opționale care rulează în timpul instalării sau chiar înainte de eliminare. Vezi [Install Hooks](/ro/developers/extend/apps/config/install-hooks) pentru detalii.
 

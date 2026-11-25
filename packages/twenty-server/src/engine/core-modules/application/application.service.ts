@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
-import { FileFolder } from 'twenty-shared/types';
+import { FileFolder, type IframeMediaPermission } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type DataSource,
@@ -28,7 +28,13 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { WORKSPACE_CUSTOM_APPLICATION_NAME } from 'src/engine/core-modules/application/constants/workspace-custom-application.constant';
+import { type ApplicationCallerOperation } from 'src/engine/core-modules/application/types/application-caller-operation.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { APPLICATION_INSTALLATION_CHANGED_EVENT } from 'src/engine/core-modules/application/constants/application-installation-changed.constant';
+import { type ApplicationInstallationChangedEvent } from 'src/engine/core-modules/application/types/application-installation-changed.type';
+import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
+import { buildApplicationIframeMediaPermissionGrantQuery } from 'src/engine/core-modules/application/utils/build-application-iframe-media-permission-grant-query.util';
+import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
@@ -45,6 +51,7 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 @Injectable()
 export class ApplicationService {
@@ -77,6 +84,7 @@ export class ApplicationService {
     private readonly applicationVariableRepository: WorkspaceScopedRepository<ApplicationVariableEntity>,
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
     private readonly applicationLookupService: ApplicationLookupService,
+    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
   ) {}
 
   async findApplicationRoleId(
@@ -87,14 +95,14 @@ export class ApplicationService {
       where: { id: applicationId },
     });
 
-    if (!isDefined(application) || !isDefined(application.defaultRoleId)) {
+    if (!isDefined(application) || !isDefined(application.requestedRoleId)) {
       throw new ApplicationException(
         `Could not find application ${applicationId}`,
         ApplicationExceptionCode.APPLICATION_NOT_FOUND,
       );
     }
 
-    return application.defaultRoleId;
+    return application.requestedRoleId;
   }
 
   async findWorkspaceTwentyStandardAndCustomApplicationOrThrow({
@@ -170,6 +178,46 @@ export class ApplicationService {
     return this.applicationRepository.find(workspaceId, {
       relations: ['applicationRegistration'],
     });
+  }
+
+  async findInstalledFlatApplication({
+    applicationId,
+    workspaceId,
+  }: {
+    applicationId: string;
+    workspaceId: string;
+  }): Promise<FlatApplication | undefined> {
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatApplicationMaps',
+      ]);
+
+    return findActiveFlatApplicationById(flatApplicationMaps, applicationId);
+  }
+
+  async findReadableInstalledFlatApplication({
+    applicationId,
+    workspaceId,
+    workspaceCustomApplicationId,
+    callingApplication,
+  }: {
+    applicationId: string;
+    workspaceId: string;
+    workspaceCustomApplicationId: string;
+    callingApplication: ApplicationCallerOperation['callingApplication'];
+  }): Promise<FlatApplication | undefined> {
+    if (
+      !canCallerReachApplication({
+        applicationId,
+        callingApplication,
+        operation: 'read',
+        workspaceCustomApplicationId,
+      })
+    ) {
+      return undefined;
+    }
+
+    return this.findInstalledFlatApplication({ applicationId, workspaceId });
   }
 
   async findManyInstalledFlatApplications(
@@ -807,6 +855,44 @@ export class ApplicationService {
     }
   }
 
+  async grantIframeMediaPermissions({
+    applicationId,
+    workspaceId,
+    permissions,
+  }: {
+    applicationId: string;
+    workspaceId: string;
+    permissions: IframeMediaPermission[];
+  }): Promise<ApplicationEntity> {
+    const grantQuery =
+      buildApplicationIframeMediaPermissionGrantQuery(permissions);
+
+    await this.applicationRepository
+      .createQueryBuilder()
+      .update()
+      .set({ grantedIframeMediaPermissions: () => grantQuery.query })
+      .where({ id: applicationId, workspaceId, deletedAt: IsNull() })
+      .setParameters(grantQuery.parameters)
+      .execute();
+
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'flatApplicationMaps',
+    ]);
+
+    const application = await this.findOneApplicationOrThrow({
+      id: applicationId,
+      workspaceId,
+    });
+
+    await this.broadcastApplicationEvent({
+      type: 'updated',
+      application,
+      updatedFields: ['grantedIframeMediaPermissions'],
+    });
+
+    return application;
+  }
+
   async update(
     id: string,
     data: QueryDeepPartialEntity<ApplicationEntity> & {
@@ -920,5 +1006,21 @@ export class ApplicationService {
       type: 'deleted',
       application,
     });
+
+    this.emitInstallationChanged({ universalIdentifier, workspaceId });
+  }
+
+  emitInstallationChanged({
+    universalIdentifier,
+    workspaceId,
+  }: {
+    universalIdentifier: string;
+    workspaceId: string;
+  }): void {
+    this.workspaceEventEmitter.emitCustomBatchEvent<ApplicationInstallationChangedEvent>(
+      APPLICATION_INSTALLATION_CHANGED_EVENT,
+      [{ applicationUniversalIdentifier: universalIdentifier }],
+      workspaceId,
+    );
   }
 }

@@ -1,8 +1,5 @@
 import { ToolCategory } from 'twenty-shared/ai';
-import {
-  FIELD_TYPE_DEFAULT_ICONS,
-  PermissionFlagType,
-} from 'twenty-shared/constants';
+import { FIELD_TYPE_DEFAULT_ICONS } from 'twenty-shared/constants';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { z } from 'zod';
 
@@ -11,6 +8,7 @@ import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { normalizeIconName } from 'src/engine/core-modules/tool-provider/utils/normalize-icon-name.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { FIELD_METADATA_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/field-metadata/constants/field-metadata-write-access-policy.constant';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { RELATION_TYPE_DESCRIPTION } from 'src/engine/metadata-modules/field-metadata/tools/constants/relation-type-description.constant';
 
@@ -44,7 +42,7 @@ const createManyRelationFieldsInputSchema = z.object({
 @DefineTool({
   name: 'create_many_relation_fields',
   category: ToolCategory.METADATA,
-  requiredPermissionFlags: [PermissionFlagType.DATA_MODEL],
+  accessPolicy: FIELD_METADATA_WRITE_ACCESS_POLICY,
   icon: 'IconSettings',
   description: 'Create multiple relation fields between objects at once.',
 })

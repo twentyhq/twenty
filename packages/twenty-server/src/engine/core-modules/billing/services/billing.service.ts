@@ -2,6 +2,8 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -44,12 +46,12 @@ export class BillingService {
     userEmail,
     workspaceId,
     workspaceDisplayName,
-    partner,
+    affiliatePartnerName,
   }: {
     userEmail: string;
     workspaceId: string;
     workspaceDisplayName: string | undefined;
-    partner?: string;
+    affiliatePartnerName?: string;
   }): Promise<void> {
     const existingBillingCustomer =
       await this.billingCustomerRepository.findOne(workspaceId, { where: {} });
@@ -58,11 +60,25 @@ export class BillingService {
       return;
     }
 
+    const isPartnerEligible =
+      isNonEmptyString(affiliatePartnerName) &&
+      !(await this.stripeCustomerService.isPreviousCustomer({
+        email: userEmail,
+      }));
+
+    if (isNonEmptyString(affiliatePartnerName) && !isPartnerEligible) {
+      this.logger.log(
+        `Partner code ${affiliatePartnerName} dropped for workspace ${workspaceId}: previous customer`,
+      );
+    }
+
     await this.stripeCustomerService.createStripeCustomer({
       userEmail,
       workspaceId,
       customerName: workspaceDisplayName,
-      partner,
+      affiliatePartnerName: isPartnerEligible
+        ? affiliatePartnerName
+        : undefined,
     });
   }
 

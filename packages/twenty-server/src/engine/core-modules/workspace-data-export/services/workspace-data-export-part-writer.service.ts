@@ -134,10 +134,11 @@ export class WorkspaceDataExportPartWriterService {
     return this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
         this.workspaceOrmManager
-          .getRepository<ObjectRecord>(
+          .getRepositoryWithoutPermissionChecks<ObjectRecord>(
             object.nameSingular,
-            { shouldBypassPermissionChecks: true },
-            { useReplica: true },
+            {
+              useReplica: true,
+            },
           )
           .find({
             where: isDefined(after) ? { id: MoreThan(after) } : {},

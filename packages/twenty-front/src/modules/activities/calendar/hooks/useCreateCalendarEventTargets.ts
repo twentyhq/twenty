@@ -4,13 +4,13 @@ import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords
 import { useObjectMorphJunctionConfig } from '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfig';
 import { findTargetFieldInfo } from '@/object-record/record-field/ui/utils/junction/findTargetFieldInfo';
 import { useCallback } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useCreateCalendarEventTargets = () => {
   const { objectMetadataItems } = useObjectMetadataItems();
   const junctionConfig = useObjectMorphJunctionConfig({
-    objectNameSingular: CoreObjectNameSingular.CalendarEvent,
+    objectNameSingular: StandardObjectNameSingular.CalendarEvent,
   });
 
   const { createManyRecords: createCalendarEventTargetRecords } =
@@ -19,7 +19,7 @@ export const useCreateCalendarEventTargets = () => {
       // the CalendarEvent fallback is never written to, since there is no junction config.
       objectNameSingular:
         junctionConfig?.junctionObjectMetadata.nameSingular ??
-        CoreObjectNameSingular.CalendarEvent,
+        StandardObjectNameSingular.CalendarEvent,
     });
 
   const createCalendarEventTargets = useCallback(

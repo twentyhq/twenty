@@ -1,13 +1,14 @@
 import { useJsonFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useJsonFieldDisplay';
 import { JsonDisplay } from '@/ui/field/display/components/JsonDisplay/JsonDisplay';
 import { ExpandedFieldDisplay } from '@/ui/layout/expandable-list/components/ExpandedFieldDisplay';
-import { t } from '@lingui/core/macro';
 import { useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { JsonTree } from 'twenty-ui/components/data-display';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
+import { useLingui } from '@lingui/react/macro';
 
 export const JsonFieldDisplay = () => {
+  const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
 
   const { fieldValue, maxWidth, isRecordFieldReadOnly } = useJsonFieldDisplay();

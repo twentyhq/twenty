@@ -6,6 +6,7 @@ import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { ViewSortService } from 'src/engine/metadata-modules/view-sort/services/view-sort.service';
+import { VIEW_SORT_ACCESS_POLICY } from 'src/engine/metadata-modules/view-sort/constants/view-sort-access-policy.constant';
 
 const getViewSortsInputSchema = z.object({
   viewId: z
@@ -16,8 +17,9 @@ const getViewSortsInputSchema = z.object({
 
 @DefineTool({
   name: 'get_view_sorts',
+  isReadOnly: true,
   category: ToolCategory.VIEW,
-  requiredPermissionFlags: [],
+  accessPolicy: VIEW_SORT_ACCESS_POLICY,
   description:
     'List all sorts applied to a view. Each sort defines a field and direction that determines the order records appear in the view.',
 })
@@ -32,10 +34,10 @@ export class GetViewSortsTool extends BaseTool<typeof getViewSortsInputSchema> {
     input,
     context: { workspaceId },
   }: ToolExecuteArgs<typeof getViewSortsInputSchema>): Promise<ToolOutput> {
-    const sorts = await this.viewSortService.findByViewId(
+    const sorts = await this.viewSortService.findByViewId({
       workspaceId,
-      input.viewId,
-    );
+      viewId: input.viewId,
+    });
 
     return {
       success: true,

@@ -22,29 +22,32 @@ import {
   SDK_CLIENT_MODULE_NO_STORE_CACHE_CONTROL,
 } from 'src/engine/core-modules/sdk-client/constants/sdk-client-module-cache-control';
 import { SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
+import { buildServedSdkClientCoreChecksum } from 'src/engine/core-modules/sdk-client/utils/build-served-sdk-client-core-checksum.util';
 import { getInstalledSdkMetadataModule } from 'src/engine/core-modules/sdk-client/utils/get-installed-sdk-metadata-module.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ApplicationTargetParam } from 'src/engine/decorators/auth/application-target-param.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @Controller(`${ApiPath.Rest}/sdk-client`)
 @AllowSuspendedWorkspace()
 @UseGuards(
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
+  AccessPolicyGuard({
+    authPrincipals: {
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: true,
     },
-    apiKey: true,
-    oauthClient: true,
-    application: true,
+    requiredPermissionFlags: [],
   }),
 )
 @UseFilters(ApplicationRestApiExceptionFilter)
@@ -55,7 +58,6 @@ export class SdkClientController {
   ) {}
 
   @Get(['metadata', 'metadata/:checksum'])
-  @UseGuards(NoPermissionGuard)
   async getInstanceSdkMetadataModule(
     @Res() res: Response,
     @Param('checksum') checksum?: string,
@@ -72,7 +74,7 @@ export class SdkClientController {
   }
 
   @Get([':applicationId/:moduleName', ':applicationId/:moduleName/:checksum'])
-  @UseGuards(NoPermissionGuard, ApplicationTargetGuard)
+  @UseGuards(ApplicationTargetGuard)
   async getSdkModule(
     @Res() res: Response,
     @ApplicationTargetParam('applicationId', {
@@ -114,7 +116,9 @@ export class SdkClientController {
                 applicationUniversalIdentifier: application.universalIdentifier,
                 moduleName,
               }),
-            checksum: application.sdkClientCoreChecksum,
+            checksum: buildServedSdkClientCoreChecksum(
+              application.sdkClientCoreChecksum,
+            ),
           };
 
     this.sendSdkModule({

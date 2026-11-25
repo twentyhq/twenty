@@ -6,16 +6,15 @@ import { finalizeDanglingToolParts } from 'src/engine/metadata-modules/ai/ai-his
 import { mapDBPartToUIMessagePart } from 'src/engine/metadata-modules/ai/ai-history/utils/map-db-parts-to-ui-message-parts.util';
 import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-ui-message-parts-to-db-parts.util';
 
-const toolPart = (
-  state: string,
-  overrides: Record<string, unknown>,
-): ExtendedUIMessagePart =>
-  ({
-    type: 'tool-execute_tool',
-    input: { name: 'nav item' },
-    state,
-    ...overrides,
-  }) as unknown as ExtendedUIMessagePart;
+const pendingToolPart = (
+  state: 'input-available' | 'input-streaming',
+  toolCallId: string,
+): ExtendedUIMessagePart => ({
+  type: 'tool-execute_tool',
+  input: { name: 'nav item' },
+  state,
+  toolCallId,
+});
 
 const persistAndReload = (
   parts: ExtendedUIMessagePart[],
@@ -26,20 +25,19 @@ const persistAndReload = (
     )
     .filter((part): part is ExtendedUIMessagePart => part !== null);
 
-const buildThread = (assistantParts: ExtendedUIMessagePart[]): UIMessage[] =>
-  [
-    {
-      id: 'u1',
-      role: 'user',
-      parts: [{ type: 'text', text: 'create 3 items' }],
-    },
-    { id: 'a1', role: 'assistant', parts: assistantParts },
-    {
-      id: 'u2',
-      role: 'user',
-      parts: [{ type: 'text', text: 'now revert them' }],
-    },
-  ] as unknown as UIMessage[];
+const buildThread = (assistantParts: ExtendedUIMessagePart[]): UIMessage[] => [
+  {
+    id: 'u1',
+    role: 'user',
+    parts: [{ type: 'text', text: 'create 3 items' }],
+  },
+  { id: 'a1', role: 'assistant', parts: assistantParts },
+  {
+    id: 'u2',
+    role: 'user',
+    parts: [{ type: 'text', text: 'now revert them' }],
+  },
+];
 
 const unresolvedToolCallIds = async (
   messages: UIMessage[],
@@ -93,13 +91,16 @@ const toolCallInputs = async (messages: UIMessage[]): Promise<unknown[]> => {
 describe('finalizeDanglingToolParts round-trip', () => {
   const interruptedBatch: ExtendedUIMessagePart[] = [
     { type: 'text', text: 'Creating items…' } as ExtendedUIMessagePart,
-    toolPart('output-available', {
+    {
+      type: 'tool-execute_tool',
+      input: { name: 'nav item' },
+      state: 'output-available',
       toolCallId: 'done_1',
       output: { success: true },
-    }),
-    toolPart('input-available', { toolCallId: 'pending_1' }),
-    toolPart('input-available', { toolCallId: 'pending_2' }),
-    toolPart('input-streaming', { toolCallId: 'streaming_1' }),
+    },
+    pendingToolPart('input-available', 'pending_1'),
+    pendingToolPart('input-available', 'pending_2'),
+    pendingToolPart('input-streaming', 'streaming_1'),
   ];
 
   it('reproduces the bug: input-available calls are left unresolved (input-streaming is not)', async () => {
@@ -155,8 +156,9 @@ describe('finalizeDanglingToolParts round-trip', () => {
     type: 'tool-execute_tool',
     toolCallId: 'validation_failed_1',
     state: 'output-error',
+    input: undefined,
     errorText: 'Invalid input for tool execute_tool: Type validation failed',
-  } as unknown as ExtendedUIMessagePart;
+  };
 
   it('replays a validation-errored tool part with a defined input', async () => {
     const reloaded = persistAndReload(

@@ -7,6 +7,7 @@ const SESSION_KEYS_TO_CLEAR = [
   'ai/agentChatDraftsByThreadIdState',
   'companyEnrichmentState',
   'personEnrichmentState',
+  'currentUserWorkspaceState:v2',
   'locale',
   'currentUserState',
   'currentWorkspaceState',

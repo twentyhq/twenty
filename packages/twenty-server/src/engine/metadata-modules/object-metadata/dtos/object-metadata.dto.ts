@@ -6,7 +6,7 @@ import {
 } from '@nestjs/graphql';
 
 import { ObjectOpenRecordIn } from 'twenty-shared/types';
-import { type ObjectPermissionAction } from 'twenty-shared/application';
+import { type DisableableObjectPermissionAction } from 'twenty-shared/application';
 
 import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
 import { type WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
@@ -81,7 +81,7 @@ export class ObjectMetadataDTO {
   openRecordIn: ObjectOpenRecordIn;
 
   @Field(() => [String], { nullable: true })
-  disabledObjectPermissionActions?: ObjectPermissionAction[] | null;
+  disabledObjectPermissionActions?: DisableableObjectPermissionAction[] | null;
 
   @HideField()
   workspaceId: string;

@@ -45,7 +45,9 @@ export const computeMessageFolderTree = (
   };
 
   const rootFolders = folders.filter((folder) => {
-    if (!folder.parentFolderId) return true;
+    if (!folder.parentFolderId) {
+      return true;
+    }
 
     return !folderByExternalIdMap.has(folder.parentFolderId);
   });

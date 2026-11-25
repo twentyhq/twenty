@@ -1,4 +1,4 @@
-import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
+import { AppPath, StandardObjectNameSingular } from 'twenty-shared/types';
 import { appendCopySuffix, isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { v4 } from 'uuid';
@@ -17,11 +17,11 @@ export const DuplicateMessageCampaignSingleRecordCommand = () => {
   const navigateApp = useNavigateApp();
 
   const { findOneRecord: findCampaign } = useLazyFindOneRecord<MessageCampaign>(
-    { objectNameSingular: CoreObjectNameSingular.MessageCampaign },
+    { objectNameSingular: StandardObjectNameSingular.MessageCampaign },
   );
 
   const { createOneRecord: createMessageCampaign } = useCreateOneRecord({
-    objectNameSingular: CoreObjectNameSingular.MessageCampaign,
+    objectNameSingular: StandardObjectNameSingular.MessageCampaign,
   });
 
   if (!isDefined(campaignId)) {
@@ -59,7 +59,7 @@ export const DuplicateMessageCampaignSingleRecordCommand = () => {
     });
 
     navigateApp(AppPath.RecordShowPage, {
-      objectNameSingular: CoreObjectNameSingular.MessageCampaign,
+      objectNameSingular: StandardObjectNameSingular.MessageCampaign,
       objectRecordId: duplicatedCampaignId,
     });
   };

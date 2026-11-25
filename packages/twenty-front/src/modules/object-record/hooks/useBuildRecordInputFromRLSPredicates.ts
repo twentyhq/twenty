@@ -1,11 +1,12 @@
 /* @license Enterprise */
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { convertPredicateToRecordFilter } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/utils/recordLevelPermissionPredicateConversion';
+import { convertPredicateToRecordFilter } from '@/settings/roles/role-permissions/rule-conditions/utils/rowLevelPermissionPredicateConversion';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { CoreObjectNameSingular, RelationType } from 'twenty-shared/types';
+import { StandardObjectNameSingular, RelationType } from 'twenty-shared/types';
+import { findSingleCreateRowLevelPermissionRule } from '@/object-metadata/utils/findSingleCreateRowLevelPermissionRule';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
@@ -37,13 +38,13 @@ export const useBuildRecordInputFromRLSPredicates = ({
   const { userTimezone } = useUserTimezone();
 
   const { record: currentWorkspaceMemberRecord } = useFindOneRecord({
-    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+    objectNameSingular: StandardObjectNameSingular.WorkspaceMember,
     objectRecordId: currentWorkspaceMember?.id,
   });
 
   const { objectMetadataItem: workspaceMemberObjectMetadataItem } =
     useObjectMetadataItem({
-      objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+      objectNameSingular: StandardObjectNameSingular.WorkspaceMember,
     });
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
@@ -126,7 +127,10 @@ export const useBuildRecordInputFromRLSPredicates = ({
       objectPermissionsByObjectMetadataId,
       objectMetadataItem.id,
     );
-    const rlsPredicates = objectPermissions.rowLevelPermissionPredicates.filter(
+    const rlsPredicates = (
+      findSingleCreateRowLevelPermissionRule(objectPermissions)?.predicates ??
+      []
+    ).filter(
       (predicate) => predicate.objectMetadataId === objectMetadataItem.id,
     );
 

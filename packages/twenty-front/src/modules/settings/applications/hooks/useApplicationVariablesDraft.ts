@@ -1,6 +1,5 @@
 import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
 import { isNonEmptyString } from '@sniptt/guards';
-import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useToast } from 'twenty-ui/components/feedback';
 import {
@@ -8,6 +7,7 @@ import {
   type ApplicationVariableScope,
 } from '~/generated-metadata/graphql';
 import { applicationVariablesDraftFamilyState } from '@/settings/applications/states/applicationVariablesDraftFamilyState';
+import { useLingui } from '@lingui/react/macro';
 
 export const useApplicationVariablesDraft = <
   DraftableApplicationVariable extends Pick<
@@ -29,6 +29,7 @@ export const useApplicationVariablesDraft = <
   ) => Promise<unknown>;
   refetchApplicationVariables: () => Promise<unknown>;
 }) => {
+  const { t } = useLingui();
   const [draftValueByKey, setDraftValueByKey] = useAtomFamilyState(
     applicationVariablesDraftFamilyState,
     { applicationId, scope },
@@ -75,7 +76,7 @@ export const useApplicationVariablesDraft = <
     }));
   };
 
-  const saveApplicationVariables = async () => {
+  const saveApplicationVariables = async (): Promise<boolean> => {
     const submittedValueByKey = Object.fromEntries(
       editedApplicationVariables.map(({ key, value }) => [key, value]),
     );
@@ -103,11 +104,15 @@ export const useApplicationVariablesDraft = <
           ),
         ),
       );
+
+      return true;
     } catch {
       enqueueToast({
         status: 'error',
         children: t`Failed to save the app settings.`,
       });
+
+      return false;
     } finally {
       setIsSavingApplicationVariables(false);
     }

@@ -43,6 +43,35 @@ describe('withLinkedinPublicIdentifier', () => {
     expect(mocks.getUnipileUser).not.toHaveBeenCalled();
   });
 
+  it('leaves an uncached user as is when the caller declines the lookup', async () => {
+    const shouldLookUp = vi.fn().mockResolvedValue(false);
+
+    await expect(
+      withLinkedinPublicIdentifier({
+        unipileAccountId: 'acc_1',
+        user: DAPHNE,
+        shouldLookUp,
+      }),
+    ).resolves.toBe(DAPHNE);
+    expect(shouldLookUp).toHaveBeenCalledOnce();
+    expect(mocks.getUnipileUser).not.toHaveBeenCalled();
+  });
+
+  it('uses the cache without asking whether to look up', async () => {
+    const shouldLookUp = vi.fn().mockResolvedValue(false);
+
+    mocks.kvGet.mockResolvedValue('daphne-muller');
+
+    await expect(
+      withLinkedinPublicIdentifier({
+        unipileAccountId: 'acc_1',
+        user: DAPHNE,
+        shouldLookUp,
+      }),
+    ).resolves.toEqual({ ...DAPHNE, public_identifier: 'daphne-muller' });
+    expect(shouldLookUp).not.toHaveBeenCalled();
+  });
+
   it('reads a cached public identifier without calling Unipile', async () => {
     mocks.kvGet.mockResolvedValue('daphne-muller');
 

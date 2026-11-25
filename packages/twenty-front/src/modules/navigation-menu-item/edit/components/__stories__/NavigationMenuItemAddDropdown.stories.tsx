@@ -48,7 +48,7 @@ export const AddButtonIsTheOnlyTabStop: Story = {
     await userEvent.tab();
     await expect(addButton).toHaveFocus();
     await userEvent.keyboard('{Enter}');
-    const picker = await body.findByRole('dialog', { name: 'Add menu item' });
+    const picker = await body.findByRole('dialog', { name: 'Add item' });
 
     await waitFor(() => expect(picker).toBeVisible());
     await userEvent.keyboard('{Escape}');

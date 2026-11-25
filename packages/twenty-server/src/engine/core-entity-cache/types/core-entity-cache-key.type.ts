@@ -1,3 +1,4 @@
+import { type FlatApplicationAuthorization } from 'src/engine/core-modules/application/application-authorization/types/flat-application-authorization.type';
 import { type MarketplaceAppDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app.dto';
 import { type FlatUserWorkspace } from 'src/engine/core-modules/user-workspace/types/flat-user-workspace.type';
 import { type FlatUser } from 'src/engine/core-modules/user/types/flat-user.type';
@@ -9,6 +10,7 @@ export type CoreEntityCacheDataMap = {
   userWorkspaceEntity: FlatUserWorkspace;
   signingKeyPublicKey: string;
   marketplaceCatalog: Record<string, MarketplaceAppDTO>;
+  applicationAuthorization: FlatApplicationAuthorization;
 };
 
 export type CoreEntityCacheKeyName = keyof CoreEntityCacheDataMap;
@@ -19,4 +21,5 @@ export const CORE_ENTITY_CACHE_KEYS: Record<CoreEntityCacheKeyName, string> = {
   userWorkspaceEntity: 'user-workspace',
   signingKeyPublicKey: 'signing-key-public-key',
   marketplaceCatalog: 'marketplace-catalog',
+  applicationAuthorization: 'application-authorization',
 };

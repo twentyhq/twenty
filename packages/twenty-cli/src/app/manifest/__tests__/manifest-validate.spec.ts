@@ -2,11 +2,16 @@ import { describe, expect, it } from 'vitest';
 
 import {
   getFieldUniversalIdentifier,
+  type ApplicationBillingPrice,
   type ApplicationManifest,
+  type ConnectionProviderManifest,
   type FieldManifest,
+  type FrontComponentManifest,
+  type LogicFunctionManifest,
   type Manifest,
   type PageLayoutTabManifest,
   type PageLayoutWidgetManifest,
+  type ValidationRuleManifest,
 } from 'twenty-shared/application';
 import {
   AggregateOperations,
@@ -296,6 +301,82 @@ describe('manifestValidate', () => {
       );
     });
 
+    it('should fail when two billing prices share a universalIdentifier', () => {
+      const billingPrice: ApplicationBillingPrice = {
+        universalIdentifier: '3f0c9a52-6b1e-4d7a-9c35-8e2f1a4b7d60',
+        label: 'Platform',
+        type: 'RECURRING',
+        billingPeriod: 'MONTHLY',
+        amountCents: 2000,
+      };
+
+      const result = manifestValidate({
+        ...validManifest,
+        application: {
+          ...validApplication,
+          billing: {
+            prices: [billingPrice, { ...billingPrice, label: 'Per member' }],
+          },
+        },
+      });
+
+      expect(result.isValid).toBe(false);
+      expect(result.errors).toContain(
+        'Duplicate universal identifiers: 3f0c9a52-6b1e-4d7a-9c35-8e2f1a4b7d60',
+      );
+    });
+
+    it('should fail when a price per connected account has no connection provider', () => {
+      const result = manifestValidate({
+        ...validManifest,
+        application: {
+          ...validApplication,
+          billing: {
+            prices: [
+              {
+                universalIdentifier: '3f0c9a52-6b1e-4d7a-9c35-8e2f1a4b7d60',
+                label: 'Per connected account',
+                type: 'RECURRING',
+                billingPeriod: 'MONTHLY',
+                amountCents: 1000,
+                per: 'CONNECTED_ACCOUNT',
+              },
+            ],
+          },
+        },
+      });
+
+      expect(result.isValid).toBe(false);
+      expect(result.errors.join(' ')).toContain(
+        'A billing price per CONNECTED_ACCOUNT needs a connection provider',
+      );
+    });
+
+    it('should fail when a billing price universalIdentifier is not a valid UUID', () => {
+      const result = manifestValidate({
+        ...validManifest,
+        application: {
+          ...validApplication,
+          billing: {
+            prices: [
+              {
+                universalIdentifier: 'not-a-uuid',
+                label: 'Platform',
+                type: 'RECURRING',
+                billingPeriod: 'MONTHLY',
+                amountCents: 2000,
+              },
+            ],
+          },
+        },
+      });
+
+      expect(result.isValid).toBe(false);
+      expect(result.errors.join(' ')).toContain(
+        'Invalid universal identifiers',
+      );
+    });
+
     it('should fail when extension field ID conflicts with object field ID', () => {
       const sharedId = '550e8400-e29b-41d4-a716-446655440001';
 
@@ -345,23 +426,29 @@ describe('manifestValidate', () => {
       (lifecycleHookKey) => {
         const logicFunctionId = '550e8400-e29b-41d4-a716-446655440040';
 
-        const logicFunction = {
+        const logicFunction: LogicFunctionManifest = {
           universalIdentifier: logicFunctionId,
           name: lifecycleHookKey,
           sourceHandlerPath: 'src/logic-functions/lifecycle-hook.ts',
           builtHandlerPath: 'dist/lifecycle-hook.js',
           builtHandlerChecksum: '00000000-0000-4000-8000-000000000000',
           handlerName: 'handler',
-        } as unknown as Manifest['logicFunctions'][number];
+        };
 
-        const connectionProvider = {
+        const connectionProvider: ConnectionProviderManifest = {
           universalIdentifier: '550e8400-e29b-41d4-a716-446655440041',
           name: 'slack',
           displayName: 'Slack',
           type: 'oauth',
-          oauth: {},
+          oauth: {
+            authorizationEndpoint: 'https://slack.com/oauth/v2/authorize',
+            tokenEndpoint: 'https://slack.com/api/oauth.v2.access',
+            scopes: [],
+            clientIdVariable: 'SLACK_CLIENT_ID',
+            clientSecretVariable: 'SLACK_CLIENT_SECRET',
+          },
           [lifecycleHookKey]: { universalIdentifier: logicFunctionId },
-        } as unknown as NonNullable<Manifest['connectionProviders']>[number];
+        };
 
         const result = manifestValidate({
           ...validManifest,
@@ -374,9 +461,11 @@ describe('manifestValidate', () => {
       },
     );
 
-    it('should not flag a messaging provider referencing its connection provider and send logic function as duplicates', () => {
+    it('should not flag a messaging provider referencing its connection provider and logic functions as duplicates', () => {
       const connectionProviderId = '550e8400-e29b-41d4-a716-446655440045';
       const sendMessageLogicFunctionId = '550e8400-e29b-41d4-a716-446655440046';
+      const markThreadAsReadLogicFunctionId =
+        '550e8400-e29b-41d4-a716-446655440051';
 
       const result = manifestValidate({
         ...validManifest,
@@ -386,6 +475,14 @@ describe('manifestValidate', () => {
             name: 'send-message',
             sourceHandlerPath: 'src/logic-functions/send-message.ts',
             builtHandlerPath: 'dist/send-message.js',
+            builtHandlerChecksum: '00000000-0000-4000-8000-000000000000',
+            handlerName: 'handler',
+          },
+          {
+            universalIdentifier: markThreadAsReadLogicFunctionId,
+            name: 'mark-thread-as-read',
+            sourceHandlerPath: 'src/logic-functions/mark-thread-as-read.ts',
+            builtHandlerPath: 'dist/mark-thread-as-read.js',
             builtHandlerChecksum: '00000000-0000-4000-8000-000000000000',
             handlerName: 'handler',
           },
@@ -414,6 +511,9 @@ describe('manifestValidate', () => {
             connectionProvider: { universalIdentifier: connectionProviderId },
             sendMessageLogicFunction: {
               universalIdentifier: sendMessageLogicFunctionId,
+            },
+            markThreadAsReadLogicFunction: {
+              universalIdentifier: markThreadAsReadLogicFunctionId,
             },
           },
         ],
@@ -504,7 +604,7 @@ describe('manifestValidate', () => {
     it('should not flag a front component referenced via settingsFrontComponent as a duplicate', () => {
       const frontComponentId = '550e8400-e29b-41d4-a716-446655440050';
 
-      const frontComponent = {
+      const frontComponent: FrontComponentManifest = {
         universalIdentifier: frontComponentId,
         name: 'app-settings',
         componentName: 'AppSettings',
@@ -512,7 +612,7 @@ describe('manifestValidate', () => {
         builtComponentPath: 'dist/app-settings.mjs',
         builtComponentChecksum: '00000000-0000-4000-8000-000000000000',
         isHeadless: false,
-      } as unknown as Manifest['frontComponents'][number];
+      };
 
       const result = manifestValidate({
         ...validManifest,
@@ -571,7 +671,8 @@ describe('manifestValidate', () => {
 
   describe('relation field validation', () => {
     it('should fail when a RELATION field in fields is missing relationType', () => {
-      const relationFieldWithoutSettings = {
+      // @ts-expect-error plain JS authors can omit universalSettings
+      const relationFieldWithoutSettings: FieldManifest = {
         objectUniversalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
         universalIdentifier: '550e8400-e29b-41d4-a716-446655440010',
         type: FieldMetadataType.RELATION,
@@ -581,7 +682,7 @@ describe('manifestValidate', () => {
           '550e8400-e29b-41d4-a716-446655440011',
         relationTargetObjectMetadataUniversalIdentifier:
           '20202020-b374-4779-a561-80086cb2e17f',
-      } as unknown as FieldManifest;
+      };
 
       const result = manifestValidate({
         ...validManifest,
@@ -612,6 +713,7 @@ describe('manifestValidate', () => {
                 name: 'name',
                 label: 'Name',
               },
+              // @ts-expect-error plain JS authors can omit universalSettings
               {
                 universalIdentifier: '550e8400-e29b-41d4-a716-446655440012',
                 type: FieldMetadataType.RELATION,
@@ -621,7 +723,7 @@ describe('manifestValidate', () => {
                   '550e8400-e29b-41d4-a716-446655440013',
                 relationTargetObjectMetadataUniversalIdentifier:
                   '20202020-b374-4779-a561-80086cb2e17f',
-              } as unknown as FieldManifest,
+              },
             ],
           },
         ],
@@ -633,7 +735,7 @@ describe('manifestValidate', () => {
     });
 
     it('should pass when a RELATION field has valid universalSettings with relationType', () => {
-      const validRelationField = {
+      const validRelationField: FieldManifest = {
         objectUniversalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
         universalIdentifier: '550e8400-e29b-41d4-a716-446655440014',
         type: FieldMetadataType.RELATION,
@@ -647,7 +749,7 @@ describe('manifestValidate', () => {
           relationType: RelationType.MANY_TO_ONE,
           joinColumnName: 'companyId',
         },
-      } as unknown as FieldManifest;
+      };
 
       const result = manifestValidate({
         ...validManifest,
@@ -659,7 +761,7 @@ describe('manifestValidate', () => {
     });
 
     it('should fail when a MANY_TO_ONE field is missing joinColumnName', () => {
-      const manyToOneWithoutJoinColumn = {
+      const manyToOneWithoutJoinColumn: FieldManifest = {
         objectUniversalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
         universalIdentifier: '550e8400-e29b-41d4-a716-446655440018',
         type: FieldMetadataType.RELATION,
@@ -672,7 +774,7 @@ describe('manifestValidate', () => {
         universalSettings: {
           relationType: RelationType.MANY_TO_ONE,
         },
-      } as unknown as FieldManifest;
+      };
 
       const result = manifestValidate({
         ...validManifest,
@@ -686,7 +788,7 @@ describe('manifestValidate', () => {
     });
 
     it('should pass when a ONE_TO_MANY field has no joinColumnName', () => {
-      const oneToManyField = {
+      const oneToManyField: FieldManifest = {
         objectUniversalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
         universalIdentifier: '550e8400-e29b-41d4-a716-446655440020',
         type: FieldMetadataType.RELATION,
@@ -699,7 +801,7 @@ describe('manifestValidate', () => {
         universalSettings: {
           relationType: RelationType.ONE_TO_MANY,
         },
-      } as unknown as FieldManifest;
+      };
 
       const result = manifestValidate({
         ...validManifest,
@@ -711,7 +813,7 @@ describe('manifestValidate', () => {
     });
 
     it('should fail when a RELATION field has an invalid relationType', () => {
-      const relationFieldWithBadType = {
+      const relationFieldWithBadType: FieldManifest = {
         objectUniversalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
         universalIdentifier: '550e8400-e29b-41d4-a716-446655440016',
         type: FieldMetadataType.RELATION,
@@ -722,9 +824,10 @@ describe('manifestValidate', () => {
         relationTargetObjectMetadataUniversalIdentifier:
           '20202020-b374-4779-a561-80086cb2e17f',
         universalSettings: {
+          // @ts-expect-error plain JS authors can write any relationType
           relationType: 'INVALID_TYPE',
         },
-      } as unknown as FieldManifest;
+      };
 
       const result = manifestValidate({
         ...validManifest,
@@ -927,11 +1030,15 @@ describe('manifestValidate', () => {
     });
 
     it('should hint at the correct key when the raw aggregateFieldMetadataId was used', () => {
-      const configurationWithRawKey = {
+      const configurationWithRawKey: Extract<
+        PageLayoutWidgetManifest['configuration'],
+        { configurationType: 'AGGREGATE_CHART' }
+      > & { aggregateFieldMetadataId: string } = {
         configurationType: 'AGGREGATE_CHART',
+        aggregateFieldMetadataUniversalIdentifier: null,
         aggregateFieldMetadataId: 'b0a5f0f2-6c2e-4d1c-9d0b-2f8a4c3e1a03',
         aggregateOperation: AggregateOperations.COUNT,
-      } as unknown as PageLayoutWidgetManifest['configuration'];
+      };
 
       const result = manifestValidate({
         ...validManifest,
@@ -955,12 +1062,10 @@ describe('manifestValidate', () => {
     });
 
     it('should not crash on a widget with a missing configuration', () => {
-      const nullConfiguration =
-        null as unknown as PageLayoutWidgetManifest['configuration'];
-
       const result = manifestValidate({
         ...validManifest,
-        pageLayoutTabs: [makeGraphWidgetTab(nullConfiguration)],
+        // @ts-expect-error plain JS authors can leave the configuration null
+        pageLayoutTabs: [makeGraphWidgetTab(null)],
       });
 
       expect(result.isValid).toBe(true);
@@ -1145,6 +1250,103 @@ describe('manifestValidate', () => {
 
         expect(result.errors).toContain(
           `Page layout widget "App" defines heightBehavior, but its parent tab "Details" uses ${layoutMode}. heightBehavior is only supported for VERTICAL_LIST tabs.`,
+        );
+      },
+    );
+  });
+
+  describe('validation rule validation', () => {
+    const objectUniversalIdentifier = '550e8400-e29b-41d4-a716-446655440100';
+    const rule: ValidationRuleManifest = {
+      universalIdentifier: '550e8400-e29b-41d4-a716-446655440101',
+      objectUniversalIdentifier,
+      name: 'Has a score',
+      expression: 'score > 0',
+      message: 'Add a score',
+    };
+    const manifestWith = (validationRule: Partial<ValidationRuleManifest>) => ({
+      ...validManifest,
+      objects: [
+        {
+          universalIdentifier: objectUniversalIdentifier,
+          nameSingular: 'ticket',
+          namePlural: 'tickets',
+          labelSingular: 'Ticket',
+          labelPlural: 'Tickets',
+          labelIdentifierFieldMetadataUniversalIdentifier:
+            validField.universalIdentifier,
+          fields: [{ ...validField, name: 'score' }],
+        },
+      ],
+      validationRules: [{ ...rule, ...validationRule }],
+    });
+
+    it('accepts an expression reading a field of the object', () => {
+      expect(manifestValidate(manifestWith({})).errors).toEqual([]);
+    });
+
+    it('accepts an expression reading a field Twenty generates', () => {
+      expect(
+        manifestValidate(manifestWith({ expression: 'isDefined(createdAt)' }))
+          .errors,
+      ).toEqual([]);
+    });
+
+    it('names the rule when it reads a field the object does not declare', () => {
+      expect(
+        manifestValidate(manifestWith({ expression: 'scor > 0' })).errors,
+      ).toEqual([
+        'Validation rule "Has a score" has an invalid expression: Unknown field "scor"',
+      ]);
+    });
+
+    it('rejects an error field outside the object', () => {
+      expect(
+        manifestValidate(
+          manifestWith({
+            errorFieldUniversalIdentifier:
+              '550e8400-e29b-41d4-a716-446655440102',
+          }),
+        ).errors,
+      ).toEqual([
+        expect.stringContaining("does not belong to the rule's object"),
+      ]);
+    });
+
+    it('only checks the syntax on an object outside the app', () => {
+      const outsideObject = '20202020-b374-4779-a561-80086cb2e17f';
+
+      expect(
+        manifestValidate(
+          manifestWith({ objectUniversalIdentifier: outsideObject }),
+        ).errors,
+      ).toEqual([]);
+      expect(
+        manifestValidate(
+          manifestWith({
+            objectUniversalIdentifier: outsideObject,
+            expression: 'score >',
+          }),
+        ).errors,
+      ).toEqual([expect.stringContaining('"Has a score"')]);
+    });
+
+    it.each([
+      ['company.employees > 0', []],
+      ['score[0] > 0', ['Bracket access is not supported']],
+      ['company . employees > 0', ['without spaces around the dot']],
+    ])(
+      'checks everything but the fields on an object outside the app: %s',
+      (expression, expectedErrors) => {
+        expect(
+          manifestValidate(
+            manifestWith({
+              objectUniversalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
+              expression,
+            }),
+          ).errors,
+        ).toEqual(
+          expectedErrors.map((error) => expect.stringContaining(error)),
         );
       },
     );

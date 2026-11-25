@@ -1,11 +1,11 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { ListItemButton } from 'twenty-ui/components/navigation';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import { IconSettings } from 'twenty-ui/icon';
 import { WorkflowAiAgentPermissionsObjectRow } from './WorkflowAiAgentPermissionsObjectRow';
+import { useLingui } from '@lingui/react/macro';
 
 type WorkflowAiAgentPermissionsObjectsListProps = {
   heading?: string;
@@ -27,6 +27,7 @@ export const WorkflowAiAgentPermissionsObjectsList = ({
   onSystemObjectsClick,
   readonly,
 }: WorkflowAiAgentPermissionsObjectsListProps) => {
+  const { t } = useLingui();
   return (
     <SidePanelGroup heading={heading ?? t`Objects`}>
       {objects.map((objectMetadata) => (

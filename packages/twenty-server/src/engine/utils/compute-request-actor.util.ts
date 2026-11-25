@@ -5,7 +5,7 @@ export type RequestActor = {
   id: string;
 };
 
-type RequestActorCandidates = {
+export type RequestActorCandidates = {
   apiKey?: { id: string } | null;
   application?: { id: string } | null;
   user?: { id: string } | null;

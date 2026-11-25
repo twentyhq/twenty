@@ -1,6 +1,6 @@
 import { formatCallRecordingTranscriptTimestamp } from '@/page-layout/widgets/call-recording-transcript/utils/formatCallRecordingTranscriptTimestamp';
 import { styled } from '@linaria/react';
-import { plural, t } from '@lingui/core/macro';
+import { plural } from '@lingui/core/macro';
 import { useImperativeHandle, useRef, useState, type Ref } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/primitives/feedback';
@@ -12,6 +12,7 @@ import {
 import { Button, Slider } from 'twenty-ui/primitives/input';
 import { IconButton } from 'twenty-ui/components/input';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledAudioBar = styled.div`
   align-items: center;
@@ -52,6 +53,7 @@ export const CallRecordingAudioPlayer = ({
   src,
   onRetry,
 }: CallRecordingAudioPlayerProps) => {
+  const { t } = useLingui();
   const audioElementRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTimeSeconds, setCurrentTimeSeconds] = useState(0);

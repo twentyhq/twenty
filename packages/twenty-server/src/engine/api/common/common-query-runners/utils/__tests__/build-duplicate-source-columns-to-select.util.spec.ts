@@ -31,7 +31,7 @@ const buildArgs = (fields: ReturnType<typeof createField>[]) => ({
     ),
     universalIdentifiersByApplicationId: {},
   },
-  restrictedFields: {},
+  unreadableFieldMetadataIds: new Set<string>(),
 });
 
 const FIELDS = [
@@ -55,7 +55,7 @@ describe('buildDuplicateSourceColumnsToSelect', () => {
     expect(
       buildDuplicateSourceColumnsToSelect({
         ...buildArgs(FIELDS),
-        restrictedFields: { 'name-id': { canRead: false } },
+        unreadableFieldMetadataIds: new Set(['name-id']),
       }),
     ).toEqual({ id: true, emailsPrimaryEmail: true });
   });

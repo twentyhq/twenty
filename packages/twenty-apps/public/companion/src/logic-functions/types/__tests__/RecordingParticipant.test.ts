@@ -1,10 +1,9 @@
-import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { beforeEach, expect, it, vi } from 'vitest';
 
 import { getRecordingParticipants } from 'src/logic-functions/flows/utils/getRecordingParticipants';
 
 const query = vi.fn();
-const client = { query } as unknown as CoreApiClient;
+const client = { query };
 const page = (nodes: object[], next?: string) => ({
   edges: nodes.map((node) => ({ node })),
   pageInfo: { hasNextPage: Boolean(next), endCursor: next ?? null },

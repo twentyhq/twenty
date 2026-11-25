@@ -10,7 +10,9 @@ export const extractOrganizerFromEvent = (
 ): FetchedCalendarEventParticipant | null => {
   const organizer = event.organizer;
 
-  if (!isDefined(organizer)) return null;
+  if (!isDefined(organizer)) {
+    return null;
+  }
 
   const rawValue = isString(organizer) ? organizer : organizer.val;
   const commonName = isString(organizer) ? undefined : organizer.params?.CN;

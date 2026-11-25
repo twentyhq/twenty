@@ -12,7 +12,7 @@ import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/filters/sta
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useContext } from 'react';
 import {
-  CoreObjectNameSingular,
+  StandardObjectNameSingular,
   FieldActorSource,
   type StepFilter,
 } from 'twenty-shared/types';
@@ -102,7 +102,7 @@ export const WorkflowStepFilterValueCompositeInput = ({
           />
         ) : subFieldName === 'workspaceMemberId' ? (
           <FormRelationToOneFieldInput
-            objectNameSingular={CoreObjectNameSingular.WorkspaceMember}
+            objectNameSingular={StandardObjectNameSingular.WorkspaceMember}
             defaultValue={
               stepFilter.value as
                 | FieldRelationValue<FieldRelationToOneValue>

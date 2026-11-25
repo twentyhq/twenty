@@ -14,4 +14,20 @@ describe('getFieldPermissionUniversalIdentifier', () => {
       }),
     ).toBe('d94e301d-96c3-559b-a92c-a1f0dbc218e7');
   });
+
+  it('derives a separate id for a row level permission rule', () => {
+    const fieldPermissionIdentity = {
+      applicationUniversalIdentifier: APP,
+      roleUniversalIdentifier: ROLE,
+      fieldUniversalIdentifier: FIELD,
+    };
+
+    expect(
+      getFieldPermissionUniversalIdentifier({
+        ...fieldPermissionIdentity,
+        rowLevelPermissionPredicateGroupUniversalIdentifier:
+          '44444444-4444-4444-8444-444444444444',
+      }),
+    ).not.toBe(getFieldPermissionUniversalIdentifier(fieldPermissionIdentity));
+  });
 });

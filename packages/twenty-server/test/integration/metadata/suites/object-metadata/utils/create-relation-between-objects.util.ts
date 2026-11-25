@@ -19,6 +19,7 @@ export const createRelationBetweenObjects = async <
   isLabelSyncedWithName,
   targetFieldLabel,
   targetFieldIcon,
+  token,
 }: {
   objectMetadataId: string;
   targetObjectMetadataId: string;
@@ -29,6 +30,7 @@ export const createRelationBetweenObjects = async <
   isLabelSyncedWithName?: boolean;
   targetFieldLabel?: string;
   targetFieldIcon?: string;
+  token?: string;
 }) => {
   const createFieldInput: CreateOneFieldFactoryInput = {
     name: name || 'person',
@@ -44,7 +46,10 @@ export const createRelationBetweenObjects = async <
     },
   };
 
-  const { data } = await createOneFieldMetadata<typeof type>({
+  const { data } = await createOneFieldMetadata<
+    T,
+    FieldMetadataDTO<T> & { relation: RelationDTO }
+  >({
     input: createFieldInput,
     gqlFields: `
             id
@@ -79,9 +84,8 @@ export const createRelationBetweenObjects = async <
             }
           `,
     expectToFail: false,
+    token,
   });
 
-  return data.createOneField as unknown as FieldMetadataDTO<T> & {
-    relation: RelationDTO;
-  };
+  return data.createOneField;
 };

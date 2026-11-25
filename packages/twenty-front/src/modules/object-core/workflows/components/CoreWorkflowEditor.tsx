@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -13,6 +12,7 @@ import { WorkflowDiagramCanvasEditable } from '@/workflow/workflow-diagram/compo
 import { WorkflowDiagramEffect } from '@/workflow/workflow-diagram/components/WorkflowDiagramEffect';
 import { WorkflowVisualizerEffect } from '@/workflow/workflow-diagram/components/WorkflowVisualizerEffect';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
+import { useLingui } from '@lingui/react/macro';
 
 export const CoreWorkflowEditor = ({
   coreWorkflowId,
@@ -23,6 +23,7 @@ export const CoreWorkflowEditor = ({
   coreWorkflowVersionId: string;
   readonly: boolean;
 }) => {
+  const { t } = useLingui();
   const { coreWorkflowVersion, loading, error, refetchCoreWorkflowVersion } =
     useCoreWorkflowVersion(coreWorkflowVersionId);
 
@@ -41,7 +42,10 @@ export const CoreWorkflowEditor = ({
     refetch: refetchCoreWorkflow,
   });
 
-  if (loading && !isDefined(coreWorkflowVersion)) {
+  const isVersionLoading = loading && !isDefined(coreWorkflowVersion);
+
+  // The editable editor stays mounted while a new current version loads, so creating a draft does not blank the canvas
+  if (isVersionLoading && readonly) {
     return null;
   }
   if (isDefined(error)) {
@@ -50,8 +54,9 @@ export const CoreWorkflowEditor = ({
     );
   }
   if (
-    !isDefined(coreWorkflowVersion) ||
-    coreWorkflowVersion.coreWorkflowId !== coreWorkflowId
+    !isVersionLoading &&
+    (!isDefined(coreWorkflowVersion) ||
+      coreWorkflowVersion.coreWorkflowId !== coreWorkflowId)
   ) {
     return (
       <WorkspaceRouteUnavailable>{t`Workflow version not found.`}</WorkspaceRouteUnavailable>

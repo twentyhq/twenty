@@ -9,7 +9,7 @@ import { UPDATE_WORKFLOW_RUN_STEP } from '@/workflow/graphql/mutations/updateWor
 import { type WorkflowRun, type WorkflowStep } from '@/workflow/types/Workflow';
 import { useMutation } from '@apollo/client/react';
 import {
-  CoreObjectNameSingular,
+  StandardObjectNameSingular,
   type RecordGqlFields,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -24,7 +24,7 @@ export const useUpdateWorkflowRunStep = () => {
   const apolloCoreClient = useApolloCoreClient();
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: CoreObjectNameSingular.WorkflowRun,
+    objectNameSingular: StandardObjectNameSingular.WorkflowRun,
   });
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const [mutate] = useMutation<
@@ -35,7 +35,7 @@ export const useUpdateWorkflowRunStep = () => {
   });
 
   const getRecordFromCache = useGetRecordFromCache({
-    objectNameSingular: CoreObjectNameSingular.WorkflowRun,
+    objectNameSingular: StandardObjectNameSingular.WorkflowRun,
   });
   const { enqueueToast } = useToast();
 

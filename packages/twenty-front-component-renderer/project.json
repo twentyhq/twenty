@@ -62,7 +62,7 @@
           "projects": "twenty-ui"
         },
         {
-          "target": "build:individual",
+          "target": "build",
           "projects": "twenty-shared"
         }
       ],
@@ -94,7 +94,7 @@
           "projects": "twenty-ui"
         },
         {
-          "target": "build:individual",
+          "target": "build",
           "projects": "twenty-shared"
         }
       ],

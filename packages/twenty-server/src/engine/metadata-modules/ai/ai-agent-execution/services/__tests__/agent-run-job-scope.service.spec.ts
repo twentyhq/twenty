@@ -22,8 +22,16 @@ const buildService = () => {
     createEmptyFlatEntityMaps(),
   );
 
+  const flatApplicationMaps = {
+    byId: {
+      'application-c-id': { universalIdentifier: 'application-c' },
+    },
+  };
+
   return new AgentRunJobScopeService({
-    getOrRecompute: jest.fn().mockResolvedValue({ flatAgentMaps }),
+    getOrRecompute: jest
+      .fn()
+      .mockResolvedValue({ flatAgentMaps, flatApplicationMaps }),
   } as never);
 };
 
@@ -32,13 +40,19 @@ describe('AgentRunJobScopeService', () => {
     const service = buildService();
 
     await expect(
-      service.resolve({ workspaceId: WORKSPACE_ID, agentId: 'agent-a' }),
+      service.resolve({
+        workspaceId: WORKSPACE_ID,
+        spec: { agentId: 'agent-a' },
+      }),
     ).resolves.toEqual({
       workspaceId: WORKSPACE_ID,
       applicationUniversalIdentifier: 'application-a',
     });
     await expect(
-      service.resolve({ workspaceId: WORKSPACE_ID, agentId: 'agent-b' }),
+      service.resolve({
+        workspaceId: WORKSPACE_ID,
+        spec: { agentId: 'agent-b' },
+      }),
     ).resolves.toEqual({
       workspaceId: WORKSPACE_ID,
       applicationUniversalIdentifier: 'application-b',
@@ -49,7 +63,50 @@ describe('AgentRunJobScopeService', () => {
     await expect(
       buildService().resolve({
         workspaceId: WORKSPACE_ID,
-        agentId: 'deleted-agent',
+        spec: { agentId: 'deleted-agent' },
+      }),
+    ).resolves.toEqual({ workspaceId: WORKSPACE_ID, isWorkspaceJob: true });
+  });
+
+  it('scopes a run without an agent to the application it runs under', async () => {
+    const inlineConfig = {
+      instructions: 'Summarize the record.',
+      modelId: 'model-id',
+      modelConfiguration: null,
+      scope: null,
+      promptCacheKey: 'workflow-step:step-id',
+    };
+
+    await expect(
+      buildService().resolve({
+        workspaceId: WORKSPACE_ID,
+        spec: {
+          agentId: null,
+          inlineConfig: { ...inlineConfig, applicationId: 'application-c-id' },
+        },
+      }),
+    ).resolves.toEqual({
+      workspaceId: WORKSPACE_ID,
+      applicationUniversalIdentifier: 'application-c',
+    });
+  });
+
+  // like a deleted agent's, the run then fails resolving its persona
+  it('falls back to a workspace scope for an application that no longer exists', async () => {
+    await expect(
+      buildService().resolve({
+        workspaceId: WORKSPACE_ID,
+        spec: {
+          agentId: null,
+          inlineConfig: {
+            instructions: 'Summarize the record.',
+            modelId: 'model-id',
+            modelConfiguration: null,
+            scope: null,
+            promptCacheKey: 'workflow-step:step-id',
+            applicationId: 'deleted-application-id',
+          },
+        },
       }),
     ).resolves.toEqual({ workspaceId: WORKSPACE_ID, isWorkspaceJob: true });
   });

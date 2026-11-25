@@ -42,6 +42,8 @@ describe('workspace route objects', () => {
     );
 
     expect(panelRoutes.map(({ path }) => path)).toEqual([
+      AppPath.WorkflowIndexPage,
+      '/objects/workflows',
       AppPath.WorkflowCoreShowPage,
       AppPath.RecordIndexPage,
       AppPath.RecordShowPage,
@@ -143,7 +145,6 @@ describe('workspace route objects', () => {
     '/settings/members/roles/create',
     '/settings/members/roles/role-id',
     '/settings/members/roles/role-id/object/object-id',
-    '/settings/members/roles/role-id/add-object-permission',
   ])('keeps generic expansion off for the stateful route %s', (path) => {
     expect(
       isWorkspaceLocationExpandableFromSidePanel(
@@ -160,5 +161,12 @@ describe('workspace route objects', () => {
         '/workflow/core-workflow-id',
       ),
     ).toBe(true);
+  });
+
+  it('routes the legacy workflows index to a redirect, not the record index', () => {
+    const [match] =
+      matchRoutes(createWorkspaceRouteObjects({}), '/objects/workflows') ?? [];
+
+    expect(match?.route.path).toBe('/objects/workflows');
   });
 });

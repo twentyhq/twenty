@@ -19,6 +19,7 @@ export type GettingStartedKeyValueTypeMap = {
     Key in `${typeof GETTING_STARTED_COMPLETED_STEP_USER_VARIABLE_KEY_PREFIX}${GettingStartedStepActionKey}`
   ]: {
     completedAt: string;
+    chatThreadId?: string;
   };
 } & {
   [

@@ -5,7 +5,7 @@ import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { graphql, HttpResponse } from 'msw';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import {
   type FindManyTimelineActivityTypesQuery,
@@ -89,7 +89,7 @@ const meta: Meta<typeof WidgetActionTimelineFilter> = {
           layoutType: PageLayoutType.RECORD_PAGE,
           targetRecordIdentifier: {
             id: TARGET_RECORD_ID,
-            targetObjectNameSingular: CoreObjectNameSingular.Company,
+            targetObjectNameSingular: StandardObjectNameSingular.Company,
           },
         }}
       >

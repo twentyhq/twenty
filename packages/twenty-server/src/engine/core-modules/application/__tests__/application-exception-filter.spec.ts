@@ -18,16 +18,45 @@ import {
 
 const OBJECT_UNIVERSAL_IDENTIFIER = 'b1b2c3d4-0003-4000-a000-000000000003';
 
-const manifest = {
-  application: { displayName: 'Test Application' },
+const manifest: Manifest = {
+  application: {
+    universalIdentifier: 'application-universal-identifier',
+    defaultRoleUniversalIdentifier: 'default-role-universal-identifier',
+    displayName: 'Test Application',
+    description: '',
+    packageJsonChecksum: '',
+    yarnLockChecksum: null,
+  },
   objects: [
     {
       universalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+      nameSingular: 'invoice',
+      namePlural: 'invoices',
       labelSingular: 'Invoice',
+      labelPlural: 'Invoices',
+      fields: [],
+      labelIdentifierFieldMetadataUniversalIdentifier:
+        'label-identifier-universal-identifier',
     },
   ],
   fields: [],
-} as unknown as Manifest;
+  roles: [],
+  viewFields: [],
+  logicFunctions: [],
+  frontComponents: [],
+  permissionFlags: [],
+  skills: [],
+  agents: [],
+  publicAssets: [],
+  views: [],
+  navigationMenuItems: [],
+  pageLayouts: [],
+  pageLayoutTabs: [],
+  pageLayoutWidgets: [],
+  commandMenuItems: [],
+  timelineActivityTypes: [],
+  settingsMenuItems: [],
+};
 
 const catchAsGraphQLError = (exception: ApplicationException) => {
   const filter = new ApplicationExceptionFilter();

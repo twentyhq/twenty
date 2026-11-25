@@ -1,9 +1,9 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
-import { type ObjectPermissions } from 'twenty-shared/types';
+import { type ObjectRecordsPermissions } from 'twenty-shared/types';
 
 export type IsObjectReadOnlyParams = {
-  objectPermissions: Pick<ObjectPermissions, 'canUpdateObjectRecords'>;
+  objectPermissions: ObjectRecordsPermissions;
   objectMetadataItem: Pick<
     EnrichedObjectMetadataItem,
     'isUIEditable' | 'isRemote'

@@ -1,5 +1,7 @@
 import { Window } from '@remote-dom/polyfill';
 
+import { toDomWindow } from '@/testing/toDomWindow';
+
 import { installTextTreeWalkerPolyfill } from '../installTextTreeWalkerPolyfill';
 
 const createPolyfillDocument = () => {
@@ -7,9 +9,10 @@ const createPolyfillDocument = () => {
   const globalScope: Record<string, unknown> = { window: polyfillWindow };
 
   installTextTreeWalkerPolyfill({ globalScope });
+  const document = toDomWindow(polyfillWindow).document;
 
   return {
-    document: polyfillWindow.document as unknown as Document,
+    document,
     nodeFilter: globalScope.NodeFilter as typeof NodeFilter,
   };
 };

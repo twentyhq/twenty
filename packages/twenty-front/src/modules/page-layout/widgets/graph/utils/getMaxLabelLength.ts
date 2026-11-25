@@ -1,4 +1,4 @@
-export const getMaxLabelLength = (labels?: string[]) => {
+export const getMaxLabelLength = (labels?: (string | null | undefined)[]) => {
   if (!labels || labels.length === 0) {
     return 0;
   }

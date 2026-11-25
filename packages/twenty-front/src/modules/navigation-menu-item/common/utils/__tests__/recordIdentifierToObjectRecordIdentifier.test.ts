@@ -1,5 +1,5 @@
 import { recordIdentifierToObjectRecordIdentifier } from '@/navigation-menu-item/common/utils/recordIdentifierToObjectRecordIdentifier';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 
 jest.mock('@/object-metadata/utils/getAvatarShape', () => ({
@@ -55,10 +55,10 @@ describe('recordIdentifierToObjectRecordIdentifier', () => {
   it('should return empty linkToShowPage for targets and workspace member', () => {
     const objectMetadataItems: EnrichedObjectMetadataItem[] = [
       {
-        nameSingular: CoreObjectNameSingular.NoteTarget,
+        nameSingular: StandardObjectNameSingular.NoteTarget,
       } as EnrichedObjectMetadataItem,
       {
-        nameSingular: CoreObjectNameSingular.WorkspaceMember,
+        nameSingular: StandardObjectNameSingular.WorkspaceMember,
       } as EnrichedObjectMetadataItem,
     ];
 

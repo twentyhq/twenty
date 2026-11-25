@@ -11,13 +11,14 @@ import { UsageSectionSkeleton } from '@/settings/usage/components/UsageSectionSk
 import { AI_OPERATION_TYPES } from '@/settings/usage/constants/AiOperationTypes';
 import { useUsageAnalyticsData } from '@/settings/usage/hooks/useUsageAnalyticsData';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { OrganizationAdornment } from '@/settings/enterprise/components/OrganizationAdornment';
 import { Section } from 'twenty-ui/components/layout';
+import { useLingui } from '@lingui/react/macro';
 
 export const SettingsAiUsageTab = () => {
+  const { t } = useLingui();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const billing = useAtomStateValue(billingState);
   const isBillingEnabled = billing?.isBillingEnabled ?? false;

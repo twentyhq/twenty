@@ -19,7 +19,7 @@ const NAV_ITEM_GQL_FIELDS = `
   icon
   link
   position
-  folderId
+  parentId
   applicationId
 `;
 
@@ -80,7 +80,7 @@ describe('Manifest update - navigation menu items', () => {
             icon: 'IconLink',
             position: 1,
             link: 'https://example.com',
-            folderUniversalIdentifier: TEST_FOLDER_ID,
+            parentUniversalIdentifier: TEST_FOLDER_ID,
           },
           {
             universalIdentifier: TEST_FOLDER_ID,
@@ -115,7 +115,7 @@ describe('Manifest update - navigation menu items', () => {
     expect(child).toMatchObject({
       type: NavigationMenuItemType.LINK,
       name: 'Child Link',
-      folderId: folder!.id,
+      parentId: folder!.id,
     });
   }, 60000);
 
@@ -190,7 +190,7 @@ describe('Manifest update - navigation menu items', () => {
     expect(itemsAfterFirstSync[0]).toMatchObject({
       type: NavigationMenuItemType.LINK,
       name: 'Child Link',
-      folderId: null,
+      parentId: null,
     });
 
     await syncApplication({
@@ -210,7 +210,7 @@ describe('Manifest update - navigation menu items', () => {
             icon: 'IconLink',
             position: 0,
             link: 'https://example.com',
-            folderUniversalIdentifier: TEST_FOLDER_ID,
+            parentUniversalIdentifier: TEST_FOLDER_ID,
           },
         ],
       }),
@@ -233,7 +233,7 @@ describe('Manifest update - navigation menu items', () => {
     expect(child).toMatchObject({
       type: NavigationMenuItemType.LINK,
       name: 'Child Link',
-      folderId: folder!.id,
+      parentId: folder!.id,
     });
   }, 60000);
 
@@ -255,7 +255,7 @@ describe('Manifest update - navigation menu items', () => {
             icon: 'IconLink',
             position: 1,
             link: 'https://example.com',
-            folderUniversalIdentifier: TEST_FOLDER_ID,
+            parentUniversalIdentifier: TEST_FOLDER_ID,
           },
         ],
       }),

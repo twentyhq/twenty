@@ -1,6 +1,6 @@
-import { t } from '@lingui/core/macro';
 import { type IconComponent, IconDeviceFloppy } from 'twenty-ui/icon';
 import { Button, type ButtonColor } from 'twenty-ui/primitives/input';
+import { useLingui } from '@lingui/react/macro';
 
 type SaveButtonProps = {
   onSave?: () => void;
@@ -17,6 +17,7 @@ export const SaveButton = ({
   color = 'accent',
   saveIcon: SaveIcon = IconDeviceFloppy,
 }: SaveButtonProps) => {
+  const { t } = useLingui();
   return (
     <Button
       size="sm"

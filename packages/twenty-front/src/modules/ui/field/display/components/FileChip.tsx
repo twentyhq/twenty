@@ -1,10 +1,10 @@
-import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { FileIcon } from '@/file/components/FileIcon';
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { getFieldFilesValueCategory } from '@/object-record/record-field/ui/utils/getFieldFilesValueCategory';
 import { Chip } from 'twenty-ui/primitives/data-display';
+import { useLingui } from '@lingui/react/macro';
 
 const MAX_WIDTH = 120;
 
@@ -19,6 +19,7 @@ export const FileChip = ({
   onClick,
   forceDisableClick,
 }: FileChipProps) => {
+  const { t } = useLingui();
   const isDeleted = file.isDeleted === true;
   const isClickable = forceDisableClick !== true && !isDeleted;
 

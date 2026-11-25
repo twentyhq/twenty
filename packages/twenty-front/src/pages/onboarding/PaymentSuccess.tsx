@@ -2,16 +2,16 @@ import { SubTitle } from '@/auth/components/SubTitle';
 import { OnboardingAnimatedReveal } from '@/onboarding/components/OnboardingAnimatedReveal';
 import { OnboardingVerifyLayout } from '@/onboarding/components/OnboardingVerifyLayout';
 import { useOnboardingMotionTransition } from '@/onboarding/hooks/useOnboardingMotionTransition';
-import { useShowWelcomeAnimationAfterOnboardingCheckout } from '@/onboarding/hooks/useShowWelcomeAnimationAfterOnboardingCheckout';
+import { useEnterWorkspaceAfterOnboardingCheckout } from '@/onboarding/hooks/useEnterWorkspaceAfterOnboardingCheckout';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { MainButton } from 'twenty-ui/components/input';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const SUBSCRIPTION_CONFIRMATION_POLL_INTERVAL_MS = 2000;
 const SUBSCRIPTION_CONFIRMATION_MAX_ATTEMPTS = 30;
@@ -22,9 +22,10 @@ const StyledRetryButtonContainer = styled.div`
 `;
 
 export const PaymentSuccess = () => {
+  const { t } = useLingui();
   const { loadCurrentUser } = useLoadCurrentUser();
-  const showWelcomeAnimationAfterOnboardingCheckout =
-    useShowWelcomeAnimationAfterOnboardingCheckout();
+  const enterWorkspaceAfterOnboardingCheckout =
+    useEnterWorkspaceAfterOnboardingCheckout();
   const { enqueueToast } = useToast();
   const [hasTimedOut, setHasTimedOut] = useState(false);
   const [confirmationRunIndex, setConfirmationRunIndex] = useState(0);
@@ -51,7 +52,7 @@ export const PaymentSuccess = () => {
         refreshedWorkspace?.currentBillingSubscription?.status;
 
       if (isDefined(refreshedSubscriptionStatus)) {
-        showWelcomeAnimationAfterOnboardingCheckout();
+        enterWorkspaceAfterOnboardingCheckout();
         return;
       }
 

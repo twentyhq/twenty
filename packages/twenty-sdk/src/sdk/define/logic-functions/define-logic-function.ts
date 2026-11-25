@@ -1,7 +1,16 @@
 import { HTTPMethod } from 'twenty-shared/types';
+import {
+  CRON_TRIGGER_MAX_SPREAD_MS,
+  CRON_TRIGGER_MIN_SPREAD_MS,
+  isValidCronTriggerSpreadMs,
+  LOGIC_FUNCTION_MAX_RETRY_LIMIT,
+} from 'twenty-shared/logic-function';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type LogicFunctionConfig } from '@/sdk/define/logic-functions/logic-function-config';
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
+import { getDatabaseEventTriggerSettingsErrors } from '@/sdk/define/common/utils/get-database-event-trigger-settings-errors';
+import { getRecordEventTriggerSettingsErrors } from '@/sdk/define/common/utils/get-record-event-trigger-settings-errors';
 import type { DefineEntity } from '@/sdk/define/common/types/define-entity.type';
 
 export const defineLogicFunction: DefineEntity<LogicFunctionConfig> = (
@@ -41,16 +50,66 @@ export const defineLogicFunction: DefineEntity<LogicFunctionConfig> = (
     );
   }
 
+  if (
+    isDefined(config.onJobFailure) &&
+    typeof config.onJobFailure !== 'function'
+  ) {
+    errors.push('Logic function onJobFailure must be a function');
+  }
+
+  if (
+    isDefined(config.retryLimit) &&
+    (!Number.isInteger(config.retryLimit) ||
+      config.retryLimit < 0 ||
+      config.retryLimit > LOGIC_FUNCTION_MAX_RETRY_LIMIT)
+  ) {
+    errors.push(
+      `Logic function retryLimit must be an integer between 0 and ${LOGIC_FUNCTION_MAX_RETRY_LIMIT}`,
+    );
+  }
+
   if (config.cronTriggerSettings) {
     if (!config.cronTriggerSettings.pattern) {
       errors.push('Cron trigger must have a pattern');
     }
+
+    if (
+      isDefined(config.cronTriggerSettings.spreadMs) &&
+      !isValidCronTriggerSpreadMs(config.cronTriggerSettings.spreadMs)
+    ) {
+      errors.push(
+        `Cron trigger spreadMs must be an integer between ${CRON_TRIGGER_MIN_SPREAD_MS} and ${CRON_TRIGGER_MAX_SPREAD_MS}`,
+      );
+    }
   }
 
-  if (config.databaseEventTriggerSettings) {
-    if (!config.databaseEventTriggerSettings.eventName) {
-      errors.push('Database event trigger must have an eventName');
-    }
+  if (
+    isDefined(config.eventTriggerSettings) &&
+    isDefined(config.databaseEventTriggerSettings)
+  ) {
+    errors.push(
+      'Set eventTriggerSettings or databaseEventTriggerSettings, not both',
+    );
+  }
+
+  if (isDefined(config.eventTriggerSettings)) {
+    errors.push(
+      ...getRecordEventTriggerSettingsErrors({
+        settings: config.eventTriggerSettings,
+        subject: 'Event trigger',
+      }),
+    );
+  }
+
+  // TODO: remove with the legacy databaseEventTriggerSettings / DATABASE_EVENT manifest form
+  if (isDefined(config.databaseEventTriggerSettings)) {
+    errors.push(
+      ...getDatabaseEventTriggerSettingsErrors({
+        settings: config.databaseEventTriggerSettings,
+        subject: 'Database event trigger',
+        replacement: "eventTriggerSettings with on: 'recordEvent'",
+      }),
+    );
   }
 
   return createValidationResult({

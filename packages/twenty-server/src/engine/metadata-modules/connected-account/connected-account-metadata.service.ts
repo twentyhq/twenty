@@ -1,11 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { ChannelVisibilityRuleSyncSchedulerService } from 'src/engine/permissions/channel-visibility/services/channel-visibility-rule-sync-scheduler.service';
+import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { In, IsNull, Repository } from 'typeorm';
 
 import {
   ConnectedAccountProvider,
   EmailOperation,
+  MessageChannelType,
   WebhookSubscriptionStatus,
 } from 'twenty-shared/types';
 import {
@@ -13,6 +16,7 @@ import {
   canConnectedAccountPerformEmailOperation,
   getEmailProvidersForOperation,
   isDefined,
+  isNonEmptyArray,
 } from 'twenty-shared/utils';
 
 import { ConnectionProviderLifecycleHookService } from 'src/engine/core-modules/application/connection-provider/connection-provider-lifecycle-hook.service';
@@ -32,10 +36,12 @@ import { type ConnectedAccountUsableByCaller } from 'src/engine/metadata-modules
 import { buildConnectedAccountUsableByCallerWhere } from 'src/engine/metadata-modules/connected-account/utils/build-connected-account-usable-by-caller-where.util';
 import { getConnectedAccountAdministrationPermissionFlag } from 'src/engine/metadata-modules/connected-account/utils/get-connected-account-administration-permission-flag.util';
 import { isConnectedAccountUsableByCaller } from 'src/engine/metadata-modules/connected-account/utils/is-connected-account-usable-by-caller.util';
+import { CONNECTED_ACCOUNT_CONNECTION_CHANGED_EVENT } from 'src/engine/metadata-modules/connected-account/constants/connected-account-connection-changed.constant';
+import { type ConnectedAccountConnectionChangedEvent } from 'src/engine/metadata-modules/connected-account/types/connected-account-connection-changed.type';
 import { MESSAGE_CHANNEL_DELETED_EVENT } from 'src/engine/metadata-modules/message-channel/constants/message-channel-deleted.constant';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { type MessageChannelDeletedEvent } from 'src/engine/metadata-modules/message-channel/types/message-channel-deleted.type';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { CalendarWebhookSubscriptionService } from 'src/modules/connected-account/webhook-subscription-manager/services/calendar-webhook-subscription.service';
 import { MessagingWebhookSubscriptionService } from 'src/modules/connected-account/webhook-subscription-manager/services/messaging-webhook-subscription.service';
@@ -53,8 +59,9 @@ export class ConnectedAccountMetadataService {
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
     private readonly appOAuthRevokeService: AppOAuthRevokeService,
     private readonly connectionProviderLifecycleHookService: ConnectionProviderLifecycleHookService,
-    private readonly permissionsService: PermissionsService,
+    private readonly settingPermissionsService: SettingPermissionsService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+    private readonly channelVisibilityRuleSyncSchedulerService: ChannelVisibilityRuleSyncSchedulerService,
     private readonly calendarWebhookSubscriptionService: CalendarWebhookSubscriptionService,
     private readonly messagingWebhookSubscriptionService: MessagingWebhookSubscriptionService,
   ) {}
@@ -185,6 +192,20 @@ export class ConnectedAccountMetadataService {
     return this.repository.findOne({ where: { id, workspaceId } });
   }
 
+  async findByIds({
+    ids,
+    workspaceId,
+  }: {
+    ids: string[];
+    workspaceId: string;
+  }): Promise<ConnectedAccountEntity[]> {
+    if (ids.length === 0) {
+      return [];
+    }
+
+    return this.repository.find({ where: { id: In(ids), workspaceId } });
+  }
+
   async findByIdAndUserWorkspaceId({
     id,
     userWorkspaceId,
@@ -225,18 +246,12 @@ export class ConnectedAccountMetadataService {
   async isAdministrableByCaller({
     connectedAccount,
     userWorkspaceId,
-    workspaceId,
-    applicationId,
-    agentId,
   }: {
     connectedAccount: Pick<
       ConnectedAccountEntity,
       'scope' | 'userWorkspaceId' | 'provider'
     >;
     userWorkspaceId: string;
-    workspaceId: string;
-    applicationId?: string;
-    agentId?: string;
   }): Promise<boolean> {
     if (connectedAccount.userWorkspaceId === userWorkspaceId) {
       return true;
@@ -244,12 +259,9 @@ export class ConnectedAccountMetadataService {
 
     switch (connectedAccount.scope) {
       case 'WORKSPACE':
-        return this.permissionsService.userHasWorkspaceSettingPermission({
-          userWorkspaceId,
-          workspaceId,
-          applicationId,
-          agentId,
-          setting: getConnectedAccountAdministrationPermissionFlag(
+        return this.settingPermissionsService.hasPermissionFlag({
+          authContext: workspaceAuthContextStorage.getStore(),
+          permissionFlag: getConnectedAccountAdministrationPermissionFlag(
             connectedAccount.provider,
           ),
         });
@@ -264,23 +276,16 @@ export class ConnectedAccountMetadataService {
     id,
     userWorkspaceId,
     workspaceId,
-    applicationId,
-    agentId,
   }: {
     id: string;
     userWorkspaceId: string;
     workspaceId: string;
-    applicationId?: string;
-    agentId?: string;
   }): Promise<ConnectedAccountEntity> {
     const connectedAccount = await this.findByIdOrThrow({ id, workspaceId });
 
     const isAdministrableByCaller = await this.isAdministrableByCaller({
       connectedAccount,
       userWorkspaceId,
-      workspaceId,
-      applicationId,
-      agentId,
     });
 
     if (!isAdministrableByCaller) {
@@ -334,6 +339,35 @@ export class ConnectedAccountMetadataService {
       },
       order: { createdAt: 'ASC', id: 'ASC' },
     });
+  }
+
+  async hasOwnMailOrCalendarAccount({
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+  }): Promise<boolean> {
+    const ownActiveConnectedAccount = {
+      workspaceId,
+      userWorkspaceId,
+      archivedAt: IsNull(),
+    };
+
+    const [hasEmailChannel, hasCalendarChannel] = await Promise.all([
+      this.messageChannelRepository.exists({
+        where: {
+          workspaceId,
+          type: MessageChannelType.EMAIL,
+          connectedAccount: ownActiveConnectedAccount,
+        },
+      }),
+      this.calendarChannelRepository.exists({
+        where: { workspaceId, connectedAccount: ownActiveConnectedAccount },
+      }),
+    ]);
+
+    return hasEmailChannel || hasCalendarChannel;
   }
 
   async getUserConnectedAccountIds({
@@ -435,6 +469,13 @@ export class ConnectedAccountMetadataService {
       ),
     );
 
+    const latestConnectedAccounts = await this.runOnDisconnectHooksAndReload({
+      connectedAccounts: connectedAccounts.filter(
+        ({ archivedAt }) => !isDefined(archivedAt),
+      ),
+      workspaceId,
+    });
+
     await this.repository.manager.transaction(async (entityManager) => {
       await entityManager.update(
         ConnectedAccountEntity,
@@ -486,8 +527,13 @@ export class ConnectedAccountMetadataService {
       );
     });
 
-    for (const connectedAccount of connectedAccounts) {
-      await this.appOAuthRevokeService.revokeIfApp(connectedAccount);
+    this.emitConnectionChanged({ connectedAccounts, workspaceId });
+    await this.channelVisibilityRuleSyncSchedulerService.scheduleSyncIfEnabled(
+      workspaceId,
+    );
+
+    for (const latestConnectedAccount of latestConnectedAccounts) {
+      await this.appOAuthRevokeService.revokeIfApp(latestConnectedAccount);
     }
   }
 
@@ -502,15 +548,14 @@ export class ConnectedAccountMetadataService {
       where: { id, workspaceId },
     });
 
-    if (isDefined(connectedAccount.connectionProviderId)) {
-      await this.connectionProviderLifecycleHookService.runOnDisconnect({
-        connectionProviderId: connectedAccount.connectionProviderId,
-        workspaceId,
-        connectedAccountId: id,
-      });
-    }
+    const latestConnectedAccounts = await this.runOnDisconnectHooksAndReload({
+      connectedAccounts: [connectedAccount],
+      workspaceId,
+    });
 
-    await this.appOAuthRevokeService.revokeIfApp(connectedAccount);
+    for (const latestConnectedAccount of latestConnectedAccounts) {
+      await this.appOAuthRevokeService.revokeIfApp(latestConnectedAccount);
+    }
 
     const [messageChannels, calendarChannels] = await Promise.all([
       this.messageChannelRepository.find({
@@ -586,6 +631,11 @@ export class ConnectedAccountMetadataService {
       );
     });
 
+    this.emitConnectionChanged({
+      connectedAccounts: [connectedAccount],
+      workspaceId,
+    });
+
     return this.repository.findOneOrFail({ where: { id, workspaceId } });
   }
 
@@ -659,15 +709,10 @@ export class ConnectedAccountMetadataService {
       `WorkspaceId: ${workspaceId} Deleting ${connectedAccounts.length} connected account(s) with ${messageChannels.length} message channel(s) and ${calendarChannels.length} calendar channel(s)`,
     );
 
-    for (const { id, connectionProviderId } of connectedAccounts) {
-      if (isDefined(connectionProviderId)) {
-        await this.connectionProviderLifecycleHookService.runOnDisconnect({
-          connectionProviderId,
-          workspaceId,
-          connectedAccountId: id,
-        });
-      }
-    }
+    const latestConnectedAccounts = await this.runOnDisconnectHooksAndReload({
+      connectedAccounts,
+      workspaceId,
+    });
 
     await this.stopWebhookSubscriptions({
       messageChannels,
@@ -675,16 +720,15 @@ export class ConnectedAccountMetadataService {
       workspaceId,
     });
 
-    // Hooks may have refreshed tokens through getConnection and an overlapping delete may have removed rows
-    const latestConnectedAccounts = await this.repository.find({
-      where: { id: In(connectedAccountIds), workspaceId },
-    });
-
     for (const latestConnectedAccount of latestConnectedAccounts) {
       await this.appOAuthRevokeService.revokeIfApp(latestConnectedAccount);
     }
 
     await this.repository.delete({ id: In(connectedAccountIds), workspaceId });
+
+    await this.channelVisibilityRuleSyncSchedulerService.scheduleSyncIfEnabled(
+      workspaceId,
+    );
 
     this.workspaceEventEmitter.emitCustomBatchEvent<MessageChannelDeletedEvent>(
       MESSAGE_CHANNEL_DELETED_EVENT,
@@ -704,12 +748,66 @@ export class ConnectedAccountMetadataService {
 
     this.workspaceEventEmitter.emitCustomBatchEvent<ConnectedAccountDeletedEvent>(
       CONNECTED_ACCOUNT_DELETED_EVENT,
-      connectedAccounts.map(({ id, userWorkspaceId }) => ({
+      connectedAccounts.map(({ id, userWorkspaceId, applicationId }) => ({
         connectedAccountId: id,
         userWorkspaceId,
+        applicationId,
       })),
       workspaceId,
     );
+  }
+
+  private emitConnectionChanged({
+    connectedAccounts,
+    workspaceId,
+  }: {
+    connectedAccounts: Pick<ConnectedAccountEntity, 'id' | 'applicationId'>[];
+    workspaceId: string;
+  }): void {
+    const events = connectedAccounts.flatMap(({ id, applicationId }) =>
+      isDefined(applicationId)
+        ? [{ connectedAccountId: id, applicationId }]
+        : [],
+    );
+
+    if (!isNonEmptyArray(events)) {
+      return;
+    }
+
+    this.workspaceEventEmitter.emitCustomBatchEvent<ConnectedAccountConnectionChangedEvent>(
+      CONNECTED_ACCOUNT_CONNECTION_CHANGED_EVENT,
+      events,
+      workspaceId,
+    );
+  }
+
+  private async runOnDisconnectHooksAndReload({
+    connectedAccounts,
+    workspaceId,
+  }: {
+    connectedAccounts: Pick<
+      ConnectedAccountEntity,
+      'id' | 'connectionProviderId'
+    >[];
+    workspaceId: string;
+  }): Promise<ConnectedAccountEntity[]> {
+    if (connectedAccounts.length === 0) {
+      return [];
+    }
+
+    for (const { id, connectionProviderId } of connectedAccounts) {
+      if (isDefined(connectionProviderId)) {
+        await this.connectionProviderLifecycleHookService.runOnDisconnect({
+          connectionProviderId,
+          workspaceId,
+          connectedAccountId: id,
+        });
+      }
+    }
+
+    return this.repository.find({
+      where: { id: In(connectedAccounts.map(({ id }) => id)), workspaceId },
+    });
   }
 
   private async stopWebhookSubscriptions({

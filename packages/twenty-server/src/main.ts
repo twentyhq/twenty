@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { type NestExpressApplication } from '@nestjs/platform-express';
 
 import fs from 'fs';
+import { type Server } from 'http';
 import { inspect } from 'util';
 
 import bytes from 'bytes';
@@ -27,6 +28,7 @@ import { AppModule } from './app.module';
 import './instrument';
 
 import { settings } from './engine/constants/settings';
+import { drainHttpServer } from './utils/drain-http-server.util';
 import { enableValidationMetadataCache } from './utils/enable-validation-metadata-cache.util';
 
 const bootstrap = async () => {
@@ -36,6 +38,8 @@ const bootstrap = async () => {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     bufferLogs: process.env.LOGGER_IS_BUFFER_ENABLED === 'true',
     rawBody: true,
+    // Lets app.close() destroy sockets the drain cannot close, such as ones mid TLS handshake.
+    forceCloseConnections: true,
     snapshot: process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT,
     ...(process.env.SSL_KEY_PATH && process.env.SSL_CERT_PATH
       ? {
@@ -104,23 +108,36 @@ const bootstrap = async () => {
   const keepAliveTimeout = twentyConfigService.get(
     'SERVER_KEEP_ALIVE_TIMEOUT_MS',
   );
-  const httpServer = app.getHttpServer();
+  const httpServer: Server = app.getHttpServer();
 
   httpServer.keepAliveTimeout = keepAliveTimeout;
   httpServer.headersTimeout = keepAliveTimeout + 1000;
 
+  // Nest destroys modules before closing the HTTP server, so drain requests first.
+  let shutdownPromise: Promise<void> | undefined;
   const usageRecorder = app.get(UsageRecorderService);
   const applicationRepeatedEventRecorder = app.get(
     ApplicationRepeatedEventRecorderService,
   );
 
+  const shutdown = () =>
+    (shutdownPromise ??= drainHttpServer({ server: httpServer })
+      // Recorder hooks can otherwise run after their storage has been destroyed.
+      .then(() =>
+        Promise.allSettled([
+          usageRecorder.flushAndStop(),
+          applicationRepeatedEventRecorder.flushAndStop(),
+        ]),
+      )
+      .then(() => app.close())
+      .then(() => process.exit(0))
+      .catch((error) => {
+        logger.error('Application shutdown failed', 'Bootstrap', error);
+        process.exit(1);
+      }));
+
   for (const signal of ['SIGTERM', 'SIGINT'] as const) {
-    process.once(signal, () => {
-      void Promise.allSettled([
-        usageRecorder.flushAndStop(),
-        applicationRepeatedEventRecorder.flushAndStop(),
-      ]).finally(() => process.exit(0));
-    });
+    process.once(signal, () => void shutdown());
   }
 
   await app.listen(twentyConfigService.get('NODE_PORT'));

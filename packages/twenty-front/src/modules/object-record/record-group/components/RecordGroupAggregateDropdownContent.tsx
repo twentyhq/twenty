@@ -7,8 +7,8 @@ import { DATE_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/r
 import { NON_STANDARD_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/NonStandardAggregateOperationsOptions';
 import { PERCENT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/PercentAggregateOperationOptions';
 import { getAvailableFieldsIdsForAggregationFromObjectFields } from '@/object-record/utils/getAvailableFieldsIdsForAggregationFromObjectFields';
-import { t } from '@lingui/core/macro';
 import { Dropdown } from 'twenty-ui/components/navigation';
+import { useLingui } from '@lingui/react/macro';
 
 type RecordGroupAggregateDropdownContentProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
@@ -17,6 +17,7 @@ type RecordGroupAggregateDropdownContentProps = {
 export const RecordGroupAggregateDropdownContent = ({
   objectMetadataItem,
 }: RecordGroupAggregateDropdownContentProps) => {
+  const { t } = useLingui();
   const { readableFields } = objectMetadataItem;
 
   const pages = [

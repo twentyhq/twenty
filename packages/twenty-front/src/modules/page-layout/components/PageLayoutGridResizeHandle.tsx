@@ -107,30 +107,50 @@ const StyledResizeHandleWrapper = styled.div<{
   widgetHandleAxis?: WidgetHandleAxis;
 }>`
   bottom: ${({ widgetHandleAxis }) => {
-    if (widgetHandleAxis === 's') return themeCssVariables.spacing[1.5];
-    if (widgetHandleAxis === 'se' || widgetHandleAxis === 'sw') return '0';
+    if (widgetHandleAxis === 's') {
+      return themeCssVariables.spacing[1.5];
+    }
+    if (widgetHandleAxis === 'se' || widgetHandleAxis === 'sw') {
+      return '0';
+    }
     return 'auto';
   }};
 
   left: ${({ widgetHandleAxis }) => {
-    if (widgetHandleAxis === 'w') return themeCssVariables.spacing[1.5];
-    if (widgetHandleAxis === 'n' || widgetHandleAxis === 's') return '50%';
-    if (widgetHandleAxis === 'sw' || widgetHandleAxis === 'nw') return '0';
+    if (widgetHandleAxis === 'w') {
+      return themeCssVariables.spacing[1.5];
+    }
+    if (widgetHandleAxis === 'n' || widgetHandleAxis === 's') {
+      return '50%';
+    }
+    if (widgetHandleAxis === 'sw' || widgetHandleAxis === 'nw') {
+      return '0';
+    }
     return 'auto';
   }};
 
   position: absolute;
 
   right: ${({ widgetHandleAxis }) => {
-    if (widgetHandleAxis === 'e') return themeCssVariables.spacing[1.5];
-    if (widgetHandleAxis === 'se' || widgetHandleAxis === 'ne') return '0';
+    if (widgetHandleAxis === 'e') {
+      return themeCssVariables.spacing[1.5];
+    }
+    if (widgetHandleAxis === 'se' || widgetHandleAxis === 'ne') {
+      return '0';
+    }
     return 'auto';
   }};
 
   top: ${({ widgetHandleAxis }) => {
-    if (widgetHandleAxis === 'w' || widgetHandleAxis === 'e') return '50%';
-    if (widgetHandleAxis === 'n') return themeCssVariables.spacing[1.5];
-    if (widgetHandleAxis === 'ne' || widgetHandleAxis === 'nw') return '0';
+    if (widgetHandleAxis === 'w' || widgetHandleAxis === 'e') {
+      return '50%';
+    }
+    if (widgetHandleAxis === 'n') {
+      return themeCssVariables.spacing[1.5];
+    }
+    if (widgetHandleAxis === 'ne' || widgetHandleAxis === 'nw') {
+      return '0';
+    }
     return 'auto';
   }};
 

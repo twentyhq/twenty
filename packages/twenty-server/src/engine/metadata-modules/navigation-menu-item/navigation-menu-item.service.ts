@@ -9,6 +9,7 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { addFlatNavigationMenuItemToMapsAndUpdateIndex } from 'src/engine/metadata-modules/flat-navigation-menu-item/utils/add-flat-navigation-menu-item-to-maps-and-update-index.util';
+import { computeNavigationMenuItemRemovalOperations } from 'src/engine/metadata-modules/flat-navigation-menu-item/utils/compute-navigation-menu-item-removal-operations.util';
 import { fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate } from 'src/engine/metadata-modules/flat-navigation-menu-item/utils/from-create-navigation-menu-item-input-to-flat-navigation-menu-item-to-create.util';
 import { fromDeleteNavigationMenuItemInputToFlatNavigationMenuItemOrThrow } from 'src/engine/metadata-modules/flat-navigation-menu-item/utils/from-delete-navigation-menu-item-input-to-flat-navigation-menu-item-or-throw.util';
 import { fromFlatNavigationMenuItemToNavigationMenuItemDto } from 'src/engine/metadata-modules/flat-navigation-menu-item/utils/from-flat-navigation-menu-item-to-navigation-menu-item-dto.util';
@@ -21,6 +22,7 @@ import {
   type UpdateOneNavigationMenuItemInput,
 } from 'src/engine/metadata-modules/navigation-menu-item/dtos/update-navigation-menu-item.input';
 import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
+import { getNavigationMenuItemCreationRank } from 'src/engine/metadata-modules/navigation-menu-item/utils/get-navigation-menu-item-creation-rank.util';
 import {
   NavigationMenuItemException,
   NavigationMenuItemExceptionCode,
@@ -45,14 +47,14 @@ export class NavigationMenuItemService {
     workspaceId,
     userWorkspaceId,
     scope = 'all',
-    folderId,
+    parentId,
     type,
     limit,
   }: {
     workspaceId: string;
     userWorkspaceId?: string;
     scope?: 'all' | 'workspace' | 'user';
-    folderId?: string;
+    parentId?: string;
     type?: NavigationMenuItemType;
     limit?: number;
   }): Promise<NavigationMenuItemDTO[]> {
@@ -68,7 +70,9 @@ export class NavigationMenuItemService {
       flatNavigationMenuItemMaps.byUniversalIdentifier,
     )
       .filter((item): item is NonNullable<typeof item> => {
-        if (!isDefined(item)) return false;
+        if (!isDefined(item)) {
+          return false;
+        }
 
         const itemIsUserScoped = isDefined(item.userWorkspaceId);
 
@@ -84,7 +88,7 @@ export class NavigationMenuItemService {
         // scope === 'user'
         return itemIsUserScoped && item.userWorkspaceId === userWorkspaceId;
       })
-      .filter((item) => !isDefined(folderId) || item.folderId === folderId)
+      .filter((item) => !isDefined(parentId) || item.parentId === parentId)
       .filter((item) => !isDefined(type) || item.type === type)
       .sort((a, b) => a.position - b.position);
 
@@ -145,24 +149,15 @@ export class NavigationMenuItemService {
     input,
     workspaceId,
     authUserWorkspaceId,
-    authApiKeyId,
-    authApplicationId,
-    authAgentId,
   }: {
     input: CreateNavigationMenuItemInput;
     workspaceId: string;
     authUserWorkspaceId?: string;
-    authApiKeyId?: string;
-    authApplicationId?: string;
-    authAgentId?: string;
   }): Promise<NavigationMenuItemDTO> {
     const createdItems = await this.createMany({
       inputs: [input],
       workspaceId,
       authUserWorkspaceId,
-      authApiKeyId,
-      authApplicationId,
-      authAgentId,
     });
 
     const created = createdItems[0];
@@ -181,16 +176,10 @@ export class NavigationMenuItemService {
     inputs,
     workspaceId,
     authUserWorkspaceId,
-    authApiKeyId,
-    authApplicationId,
-    authAgentId,
   }: {
     inputs: CreateNavigationMenuItemInput[];
     workspaceId: string;
     authUserWorkspaceId?: string;
-    authApiKeyId?: string;
-    authApplicationId?: string;
-    authAgentId?: string;
   }): Promise<NavigationMenuItemDTO[]> {
     if (inputs.length === 0) {
       return [];
@@ -200,10 +189,6 @@ export class NavigationMenuItemService {
       await this.navigationMenuItemAccessService.canUserCreateNavigationMenuItem(
         {
           userWorkspaceId: authUserWorkspaceId,
-          workspaceId,
-          apiKeyId: authApiKeyId,
-          applicationId: authApplicationId,
-          agentId: authAgentId,
           inputUserWorkspaceId: input.userWorkspaceId,
         },
       );
@@ -220,6 +205,8 @@ export class NavigationMenuItemService {
       flatViewMaps,
       flatPageLayoutMaps,
       flatAgentChatChannelMaps,
+      flatWorkflowMaps,
+      flatAgentMaps,
     } = await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
@@ -229,6 +216,8 @@ export class NavigationMenuItemService {
           'flatViewMaps',
           'flatPageLayoutMaps',
           'flatAgentChatChannelMaps',
+          'flatWorkflowMaps',
+          'flatAgentMaps',
         ],
       },
     );
@@ -237,19 +226,18 @@ export class NavigationMenuItemService {
       existingFlatNavigationMenuItemMaps,
     );
 
-    const foldersFirst = [...inputs].sort((a, b) => {
-      const aIsFolder = a.type === NavigationMenuItemType.FOLDER ? 0 : 1;
-      const bIsFolder = b.type === NavigationMenuItemType.FOLDER ? 0 : 1;
-
-      return aIsFolder - bIsFolder;
-    });
+    const parentsFirst = [...inputs].sort(
+      (a, b) =>
+        getNavigationMenuItemCreationRank(a.type) -
+        getNavigationMenuItemCreationRank(b.type),
+    );
 
     const flatEntityByInput = new Map<
       CreateNavigationMenuItemInput,
       FlatNavigationMenuItem
     >();
 
-    const flatNavigationMenuItemsToCreate = foldersFirst.map((input) => {
+    const flatNavigationMenuItemsToCreate = parentsFirst.map((input) => {
       const normalizedInput: CreateNavigationMenuItemInput = {
         ...input,
         userWorkspaceId:
@@ -268,6 +256,8 @@ export class NavigationMenuItemService {
           flatViewMaps,
           flatPageLayoutMaps,
           flatAgentChatChannelMaps,
+          flatWorkflowMaps,
+          flatAgentMaps,
         });
 
       addFlatNavigationMenuItemToMapsAndUpdateIndex({
@@ -326,16 +316,10 @@ export class NavigationMenuItemService {
     input,
     workspaceId,
     authUserWorkspaceId,
-    authApiKeyId,
-    authApplicationId,
-    authAgentId,
   }: {
     input: UpdateNavigationMenuItemInput & { id: string };
     workspaceId: string;
     authUserWorkspaceId?: string;
-    authApiKeyId?: string;
-    authApplicationId?: string;
-    authAgentId?: string;
   }): Promise<NavigationMenuItemDTO> {
     const { id, ...update } = input;
 
@@ -343,9 +327,6 @@ export class NavigationMenuItemService {
       inputs: [{ id, update }],
       workspaceId,
       authUserWorkspaceId,
-      authApiKeyId,
-      authApplicationId,
-      authAgentId,
     });
 
     const updated = updatedItems[0];
@@ -364,16 +345,10 @@ export class NavigationMenuItemService {
     inputs,
     workspaceId,
     authUserWorkspaceId,
-    authApiKeyId,
-    authApplicationId,
-    authAgentId,
   }: {
     inputs: UpdateOneNavigationMenuItemInput[];
     workspaceId: string;
     authUserWorkspaceId?: string;
-    authApiKeyId?: string;
-    authApplicationId?: string;
-    authAgentId?: string;
   }): Promise<NavigationMenuItemDTO[]> {
     if (inputs.length === 0) {
       return [];
@@ -412,10 +387,6 @@ export class NavigationMenuItemService {
         await this.navigationMenuItemAccessService.canUserUpdateNavigationMenuItem(
           {
             userWorkspaceId: authUserWorkspaceId,
-            workspaceId,
-            apiKeyId: authApiKeyId,
-            applicationId: authApplicationId,
-            agentId: authAgentId,
             existingUserWorkspaceId: existingNavigationMenuItem.userWorkspaceId,
           },
         );
@@ -427,6 +398,8 @@ export class NavigationMenuItemService {
             flatNavigationMenuItemMaps: existingFlatNavigationMenuItemMaps,
             flatPageLayoutMaps,
             updateNavigationMenuItemInput: updateInput,
+            workspaceCustomApplicationUniversalIdentifier:
+              workspaceCustomFlatApplication.universalIdentifier,
           },
         ),
       );
@@ -478,24 +451,15 @@ export class NavigationMenuItemService {
     id,
     workspaceId,
     authUserWorkspaceId,
-    authApiKeyId,
-    authApplicationId,
-    authAgentId,
   }: {
     id: string;
     workspaceId: string;
     authUserWorkspaceId?: string;
-    authApiKeyId?: string;
-    authApplicationId?: string;
-    authAgentId?: string;
   }): Promise<NavigationMenuItemDTO> {
     const deletedItems = await this.deleteMany({
       ids: [id],
       workspaceId,
       authUserWorkspaceId,
-      authApiKeyId,
-      authApplicationId,
-      authAgentId,
     });
 
     const deleted = deletedItems[0];
@@ -514,16 +478,10 @@ export class NavigationMenuItemService {
     ids,
     workspaceId,
     authUserWorkspaceId,
-    authApiKeyId,
-    authApplicationId,
-    authAgentId,
   }: {
     ids: string[];
     workspaceId: string;
     authUserWorkspaceId?: string;
-    authApiKeyId?: string;
-    authApplicationId?: string;
-    authAgentId?: string;
   }): Promise<NavigationMenuItemDTO[]> {
     if (ids.length === 0) {
       return [];
@@ -552,12 +510,7 @@ export class NavigationMenuItemService {
         },
       );
 
-    const flatEntitiesToDeleteOrdered: FlatNavigationMenuItem[] = [];
-    const seenDeleteId = new Set<string>();
-    const deletedNavigationMenuItemDtoByRequestedId = new Map<
-      string,
-      NavigationMenuItemDTO
-    >();
+    const rootNavigationMenuItems: FlatNavigationMenuItem[] = [];
 
     for (const requestedId of uniqueOrderedIds) {
       const flatNavigationMenuItemRoot =
@@ -569,40 +522,22 @@ export class NavigationMenuItemService {
       await this.navigationMenuItemAccessService.canUserDeleteNavigationMenuItem(
         {
           userWorkspaceId: authUserWorkspaceId,
-          workspaceId,
-          apiKeyId: authApiKeyId,
-          applicationId: authApplicationId,
-          agentId: authAgentId,
           existingUserWorkspaceId: flatNavigationMenuItemRoot.userWorkspaceId,
         },
       );
 
-      deletedNavigationMenuItemDtoByRequestedId.set(
-        requestedId,
-        fromFlatNavigationMenuItemToNavigationMenuItemDto(
-          flatNavigationMenuItemRoot,
-        ),
-      );
-
-      const flatEntitiesForRoot = [flatNavigationMenuItemRoot];
-
-      if (flatNavigationMenuItemRoot.type === NavigationMenuItemType.FOLDER) {
-        const userWorkspaceIdKey =
-          flatNavigationMenuItemRoot.userWorkspaceId ?? 'null';
-        const folderChildren =
-          existingFlatNavigationMenuItemMaps.byUserWorkspaceIdAndFolderId[
-            userWorkspaceIdKey
-          ]?.[requestedId] ?? [];
-        flatEntitiesForRoot.unshift(...folderChildren);
-      }
-
-      for (const flatEntity of flatEntitiesForRoot) {
-        if (!seenDeleteId.has(flatEntity.id)) {
-          seenDeleteId.add(flatEntity.id);
-          flatEntitiesToDeleteOrdered.push(flatEntity);
-        }
-      }
+      rootNavigationMenuItems.push(flatNavigationMenuItemRoot);
     }
+
+    const { flatEntityToDelete, flatEntityToUpdate } =
+      computeNavigationMenuItemRemovalOperations({
+        rootNavigationMenuItems,
+        childrenByUserWorkspaceIdAndParentId:
+          existingFlatNavigationMenuItemMaps.byUserWorkspaceIdAndParentId,
+        workspaceCustomApplicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+        now: new Date().toISOString(),
+      });
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -610,8 +545,8 @@ export class NavigationMenuItemService {
           allFlatEntityOperationByMetadataName: {
             navigationMenuItem: {
               flatEntityToCreate: [],
-              flatEntityToDelete: flatEntitiesToDeleteOrdered,
-              flatEntityToUpdate: [],
+              flatEntityToDelete,
+              flatEntityToUpdate,
             },
           },
           workspaceId,
@@ -628,18 +563,15 @@ export class NavigationMenuItemService {
       );
     }
 
-    return uniqueOrderedIds.map((requestedId) => {
-      const dto = deletedNavigationMenuItemDtoByRequestedId.get(requestedId);
+    const updatedById = new Map(
+      flatEntityToUpdate.map((flatEntity) => [flatEntity.id, flatEntity]),
+    );
 
-      if (!isDefined(dto)) {
-        throw new NavigationMenuItemException(
-          'Failed to resolve deleted navigation menu item in batch',
-          NavigationMenuItemExceptionCode.NAVIGATION_MENU_ITEM_NOT_FOUND,
-        );
-      }
-
-      return dto;
-    });
+    return rootNavigationMenuItems.map((rootNavigationMenuItem) =>
+      fromFlatNavigationMenuItemToNavigationMenuItemDto(
+        updatedById.get(rootNavigationMenuItem.id) ?? rootNavigationMenuItem,
+      ),
+    );
   }
 
   async findTargetRecord({

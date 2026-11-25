@@ -1,3 +1,4 @@
+import { isObject } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { describe, expect, it } from 'vitest';
@@ -29,17 +30,13 @@ describe('App installation', () => {
 
 // The published twenty-client-sdk types only export CoreApiClient/CoreSchema;
 // the enum exports appear at runtime after twenty app generate-client regenerates the
-// client against the server, hence the cast and the runtime guard.
-type GeneratedCoreSchemaRuntime = {
-  enumCallRecordingStatusEnum?: Record<string, string>;
-};
-
+// client against the server, hence the runtime guard.
 const getServerCallRecordingStatuses = async (): Promise<string[]> => {
-  const generatedCoreSchema =
-    (await import('twenty-client-sdk/core')) as unknown as GeneratedCoreSchemaRuntime;
+  const generatedCoreSchema: Record<string, unknown> =
+    await import('twenty-client-sdk/core');
   const statusEnum = generatedCoreSchema.enumCallRecordingStatusEnum;
 
-  if (statusEnum === undefined) {
+  if (!isObject(statusEnum)) {
     throw new Error(
       'enumCallRecordingStatusEnum is missing from twenty-client-sdk/core; regenerate the client against a running server (twenty app generate-client) before the integration suite',
     );

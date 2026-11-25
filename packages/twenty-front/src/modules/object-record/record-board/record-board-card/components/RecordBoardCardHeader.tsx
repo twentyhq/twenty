@@ -2,8 +2,6 @@ import { RecordBoardContext } from '@/object-record/record-board/contexts/Record
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { isRecordSelectedComponentFamilyState } from '@/object-record/record-selection/states/isRecordSelectedComponentFamilyState';
 import { useToggleRecordSelection } from '@/object-record/record-selection/hooks/useToggleRecordSelection';
-import { t } from '@lingui/core/macro';
-
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { useActiveRecordBoardCard } from '@/object-record/record-board/hooks/useActiveRecordBoardCard';
 import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/useFocusedRecordBoardCard';
@@ -26,6 +24,7 @@ import { IconEye, IconEyeOff } from 'twenty-ui/icon';
 import { Checkbox } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useIsMobile, useIsTouchDevice } from 'twenty-ui/utilities';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledCompactIconContainer = styled.div`
   align-items: center;
@@ -45,6 +44,7 @@ const StyledRecordChipContainer = styled.div`
 `;
 
 export const RecordBoardCardHeader = () => {
+  const { t } = useLingui();
   const { recordId } = useContext(RecordBoardCardContext);
 
   const { objectMetadataItem, recordBoardId } = useContext(RecordBoardContext);

@@ -26,7 +26,7 @@ describe('extractRecordIds', () => {
   });
 
   it('returns an empty array for nullish input', () => {
-    expect(extractRecordIds(undefined as unknown as [])).toEqual([]);
-    expect(extractRecordIds(null as unknown as [])).toEqual([]);
+    expect(extractRecordIds(undefined)).toEqual([]);
+    expect(extractRecordIds(null)).toEqual([]);
   });
 });

@@ -1,6 +1,12 @@
+import { ApplicationLogicFunctionExportService } from 'src/engine/core-modules/application/application-manifest/services/application-logic-function-export.service';
+import { ApplicationSourceService } from 'src/engine/core-modules/application/application-manifest/services/application-source.service';
+import { ApplicationFrontComponentExportService } from 'src/engine/core-modules/application/application-manifest/services/application-front-component-export.service';
+import { ApplicationPublicAssetExportService } from 'src/engine/core-modules/application/application-manifest/services/application-public-asset-export.service';
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { ApplicationGrantRoleModule } from 'src/engine/core-modules/application/application-grant-role/application-grant-role.module';
 import { ApplicationLookupModule } from 'src/engine/core-modules/application/application-lookup/application-lookup.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -25,7 +31,12 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ApplicationEntity, FrontComponentEntity]),
+    TypeOrmModule.forFeature([
+      ApplicationEntity,
+      FrontComponentEntity,
+      FileEntity,
+    ]),
+    ApplicationGrantRoleModule,
     ApplicationLookupModule,
     ApplicationModule,
     ApplicationHealthModule,
@@ -47,6 +58,11 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     ApplicationUninstallService,
     ComputeApplicationManifestAllUniversalFlatEntityMapsService,
     ApplicationManifestExportService,
+    ApplicationFrontComponentExportService,
+    ApplicationSourceService,
+    ApplicationLogicFunctionExportService,
+    ApplicationPublicAssetExportService,
+    provideWorkspaceScopedRepository(FileEntity),
     provideWorkspaceScopedRepository(ApplicationEntity),
   ],
   exports: [

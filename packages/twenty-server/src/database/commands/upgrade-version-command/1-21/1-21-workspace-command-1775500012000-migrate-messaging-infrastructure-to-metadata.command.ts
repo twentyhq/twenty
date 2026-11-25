@@ -365,9 +365,7 @@ export class MigrateMessagingInfrastructureToMetadataCommand extends Provisioned
     workspaceId: string,
   ): Promise<Map<string, string>> {
     const workspaceMemberRepository =
-      this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>('workspaceMember',
-        { shouldBypassPermissionChecks: true },
-      );
+      this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>('workspaceMember');
 
     const workspaceMembers = await workspaceMemberRepository.find();
     const userWorkspaces = await this.userWorkspaceRepository.find({

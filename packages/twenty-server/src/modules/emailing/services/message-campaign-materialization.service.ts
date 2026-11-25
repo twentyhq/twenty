@@ -18,9 +18,16 @@ import { type SendCampaignEmailBatchJobData } from 'src/engine/core-modules/emai
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import {
+  EmailingDomainException,
+  EmailingDomainExceptionCode,
+} from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { MessageChannelMetadataService } from 'src/engine/metadata-modules/message-channel/message-channel-metadata.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { computeChannelAssociationSource } from 'src/modules/connected-account/utils/compute-channel-association-source.util';
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 import { type CampaignRecipient } from 'src/engine/core-modules/emailing-domain/types/campaign-recipient.type';
@@ -33,6 +40,7 @@ import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/mes
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   MessageCampaignStatus,
   MessageParticipantRole,
@@ -58,6 +66,8 @@ export class MessageCampaignMaterializationService {
     @InjectMessageQueue(MessageQueue.campaignSendQueue)
     private readonly campaignSendQueueService: MessageQueueService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly messageChannelMetadataService: MessageChannelMetadataService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   async processMaterializeJob({
@@ -69,10 +79,10 @@ export class MessageCampaignMaterializationService {
     recipients,
   }: MaterializeCampaignJobData): Promise<void> {
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const campaignRepository = this.workspaceOrmManager.getRepository(
-        MessageCampaignWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
-      );
+      const campaignRepository =
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+          MessageCampaignWorkspaceEntity,
+        );
 
       const campaign = await campaignRepository.findOne({
         where: { id: campaignId },
@@ -91,11 +101,9 @@ export class MessageCampaignMaterializationService {
       });
 
       const existingDeliveries = await this.workspaceOrmManager
-        .getRepository(
-          CampaignDeliveryWorkspaceEntity,
-          { shouldBypassPermissionChecks: true },
-          { shouldSkipEventEmission: true },
-        )
+        .getRepositoryWithoutPermissionChecks(CampaignDeliveryWorkspaceEntity, {
+          shouldSkipEventEmission: true,
+        })
         .find({
           where: { campaignId },
           select: { id: true, state: true },
@@ -207,10 +215,10 @@ export class MessageCampaignMaterializationService {
     recipients,
   }: MaterializeCampaignChunkJobData): Promise<void> {
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const campaignRepository = this.workspaceOrmManager.getRepository(
-        MessageCampaignWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
-      );
+      const campaignRepository =
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+          MessageCampaignWorkspaceEntity,
+        );
 
       const campaign = await campaignRepository.findOne({
         where: { id: campaignId },
@@ -231,6 +239,8 @@ export class MessageCampaignMaterializationService {
         );
 
         await this.insertCampaignMessages({
+          workspaceId,
+          userWorkspaceId,
           campaignId,
           messageChannelId,
           fromAddress: campaign.fromAddress?.primaryEmail ?? '',
@@ -283,10 +293,10 @@ export class MessageCampaignMaterializationService {
       return [];
     }
 
-    const messageRepository = this.workspaceOrmManager.getRepository(
-      MessageWorkspaceEntity,
-      { shouldBypassPermissionChecks: true },
-    );
+    const messageRepository =
+      this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+        MessageWorkspaceEntity,
+      );
 
     const alreadyMaterialized = await messageRepository.find({
       where: {
@@ -378,6 +388,8 @@ export class MessageCampaignMaterializationService {
   }
 
   private async insertCampaignMessages({
+    workspaceId,
+    userWorkspaceId,
     campaignId,
     messageChannelId,
     fromAddress,
@@ -386,6 +398,8 @@ export class MessageCampaignMaterializationService {
     now,
     recipients,
   }: {
+    workspaceId: string;
+    userWorkspaceId: string;
     campaignId: string;
     messageChannelId: string;
     fromAddress: string;
@@ -394,9 +408,39 @@ export class MessageCampaignMaterializationService {
     now: Date;
     recipients: CampaignMessageRecipient[];
   }): Promise<void> {
+    const [messageChannel, { flatFieldMetadataMaps, flatWorkspaceMemberMaps }] =
+      await Promise.all([
+        this.messageChannelMetadataService.findById({
+          id: messageChannelId,
+          workspaceId,
+        }),
+        this.workspaceCacheService.getOrRecompute(workspaceId, [
+          'flatFieldMetadataMaps',
+          'flatWorkspaceMemberMaps',
+        ]),
+      ]);
+
+    if (!isDefined(messageChannel)) {
+      throw new EmailingDomainException(
+        `Campaign ${campaignId} cannot be sent: its message channel ${messageChannelId} no longer exists`,
+        EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE,
+      );
+    }
+
+    const associationSource = computeChannelAssociationSource({
+      accountOwnerFieldUniversalIdentifier:
+        STANDARD_OBJECTS.messageChannelMessageAssociation.fields.accountOwner
+          .universalIdentifier,
+      channel: messageChannel,
+      flatFieldMetadataMaps,
+      flatWorkspaceMemberMaps,
+      userWorkspaceId,
+    });
+
     await this.insertChunk({
       campaignId,
       messageChannelId,
+      associationSource,
       fromAddress,
       subjectTemplate,
       text,
@@ -422,11 +466,9 @@ export class MessageCampaignMaterializationService {
     }
 
     await this.workspaceOrmManager
-      .getRepository(
-        CampaignDeliveryWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
-        { shouldSkipEventEmission: true },
-      )
+      .getRepositoryWithoutPermissionChecks(CampaignDeliveryWorkspaceEntity, {
+        shouldSkipEventEmission: true,
+      })
       .insert(
         recipients.map((recipient) => ({
           id: recipient.messageId,
@@ -442,6 +484,7 @@ export class MessageCampaignMaterializationService {
   private async insertChunk({
     campaignId,
     messageChannelId,
+    associationSource,
     fromAddress,
     subjectTemplate,
     text,
@@ -450,6 +493,12 @@ export class MessageCampaignMaterializationService {
   }: {
     campaignId: string;
     messageChannelId: string;
+    associationSource: Partial<
+      Pick<
+        MessageChannelMessageAssociationWorkspaceEntity,
+        'accountOwnerId' | 'handle'
+      >
+    >;
     fromAddress: string;
     subjectTemplate: string;
     text: string;
@@ -459,11 +508,9 @@ export class MessageCampaignMaterializationService {
     await this.workspaceOrmManager.runInWorkspaceTransaction(
       async (transactionScope) => {
         const repositoryFor = <T extends ObjectLiteral>(objectName: string) =>
-          transactionScope.getRepository<T>(
-            objectName,
-            { shouldBypassPermissionChecks: true },
-            { shouldSkipEventEmission: true },
-          );
+          transactionScope.getRepositoryWithoutPermissionChecks<T>(objectName, {
+            shouldSkipEventEmission: true,
+          });
 
         await repositoryFor<MessageThreadWorkspaceEntity>(
           'messageThread',
@@ -494,6 +541,7 @@ export class MessageCampaignMaterializationService {
               fromAddress,
             }),
             direction: MessageDirection.OUTGOING,
+            ...associationSource,
           })),
         );
 

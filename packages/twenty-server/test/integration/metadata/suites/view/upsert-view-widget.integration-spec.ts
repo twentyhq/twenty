@@ -498,7 +498,7 @@ describe('upsertViewWidget', () => {
       const filterGroups = await global.testDataSource.query(
         `SELECT id, "logicalOperator"
          FROM core."viewFilterGroup"
-         WHERE id = $1 AND "deletedAt" IS NULL`,
+         WHERE id = $1`,
         [filterGroupId],
       );
 
@@ -540,7 +540,7 @@ describe('upsertViewWidget', () => {
       const filterGroups = await global.testDataSource.query(
         `SELECT id, "logicalOperator"
          FROM core."viewFilterGroup"
-         WHERE id = $1 AND "deletedAt" IS NULL`,
+         WHERE id = $1`,
         [filterGroupId],
       );
 
@@ -586,7 +586,7 @@ describe('upsertViewWidget', () => {
 
       const removedGroup = await global.testDataSource.query(
         `SELECT id FROM core."viewFilterGroup"
-         WHERE id = $1 AND "deletedAt" IS NULL`,
+         WHERE id = $1`,
         [groupToRemoveId],
       );
 
@@ -594,7 +594,7 @@ describe('upsertViewWidget', () => {
 
       const keptGroup = await global.testDataSource.query(
         `SELECT id FROM core."viewFilterGroup"
-         WHERE id = $1 AND "deletedAt" IS NULL`,
+         WHERE id = $1`,
         [groupToKeepId],
       );
 
@@ -641,7 +641,7 @@ describe('upsertViewWidget', () => {
       const childGroup = await global.testDataSource.query(
         `SELECT id, "parentViewFilterGroupId"
          FROM core."viewFilterGroup"
-         WHERE id = $1 AND "deletedAt" IS NULL`,
+         WHERE id = $1`,
         [childGroupId],
       );
 
@@ -682,7 +682,7 @@ describe('upsertViewWidget', () => {
       const childGroups = await global.testDataSource.query(
         `SELECT id, "parentViewFilterGroupId"
          FROM core."viewFilterGroup"
-         WHERE id = ANY($1) AND "deletedAt" IS NULL`,
+         WHERE id = ANY($1)`,
         [[firstChildGroupId, secondChildGroupId]],
       );
 
@@ -690,6 +690,122 @@ describe('upsertViewWidget', () => {
       childGroups.forEach((childGroup: { parentViewFilterGroupId: string }) =>
         expect(childGroup.parentViewFilterGroupId).toBe(rootGroupId),
       );
+    });
+
+    it('should keep a nested group under its parent when an update omits the parent, and move it to the root on null', async () => {
+      const parentGroupId = uuidv4();
+      const childGroupId = uuidv4();
+      const parentGroup = {
+        id: parentGroupId,
+        logicalOperator: ViewFilterGroupLogicalOperator.AND,
+      };
+
+      await upsertViewWidget({
+        expectToFail: false,
+        input: {
+          widgetId: testSetup.widgetId,
+          viewFilterGroups: [
+            parentGroup,
+            {
+              id: childGroupId,
+              logicalOperator: ViewFilterGroupLogicalOperator.OR,
+              parentViewFilterGroupId: parentGroupId,
+            },
+          ],
+        },
+      });
+
+      const findChildParentId = async () => {
+        const [childGroup] = await global.testDataSource.query(
+          `SELECT "parentViewFilterGroupId"
+           FROM core."viewFilterGroup"
+           WHERE id = $1`,
+          [childGroupId],
+        );
+
+        return childGroup.parentViewFilterGroupId;
+      };
+
+      await upsertViewWidget({
+        expectToFail: false,
+        input: {
+          widgetId: testSetup.widgetId,
+          viewFilterGroups: [
+            parentGroup,
+            {
+              id: childGroupId,
+              logicalOperator: ViewFilterGroupLogicalOperator.AND,
+            },
+          ],
+        },
+      });
+
+      expect(await findChildParentId()).toBe(parentGroupId);
+
+      await upsertViewWidget({
+        expectToFail: false,
+        input: {
+          widgetId: testSetup.widgetId,
+          viewFilterGroups: [
+            parentGroup,
+            {
+              id: childGroupId,
+              logicalOperator: ViewFilterGroupLogicalOperator.AND,
+              parentViewFilterGroupId: null,
+            },
+          ],
+        },
+      });
+
+      expect(await findChildParentId()).toBeNull();
+    });
+
+    it('should reject keeping a nested group whose parent is being removed', async () => {
+      const parentGroupId = uuidv4();
+      const childGroupId = uuidv4();
+
+      await upsertViewWidget({
+        expectToFail: false,
+        input: {
+          widgetId: testSetup.widgetId,
+          viewFilterGroups: [
+            {
+              id: parentGroupId,
+              logicalOperator: ViewFilterGroupLogicalOperator.AND,
+            },
+            {
+              id: childGroupId,
+              logicalOperator: ViewFilterGroupLogicalOperator.OR,
+              parentViewFilterGroupId: parentGroupId,
+            },
+          ],
+        },
+      });
+
+      const { errors } = await upsertViewWidget({
+        expectToFail: true,
+        input: {
+          widgetId: testSetup.widgetId,
+          viewFilterGroups: [
+            {
+              id: childGroupId,
+              logicalOperator: ViewFilterGroupLogicalOperator.OR,
+            },
+          ],
+        },
+      });
+
+      expect(errors?.[0]?.message).toBe(
+        'A view filter group cannot stay under a parent group that is being removed',
+      );
+
+      const groups = await global.testDataSource.query(
+        `SELECT id FROM core."viewFilterGroup"
+         WHERE id = ANY($1)`,
+        [[parentGroupId, childGroupId]],
+      );
+
+      expect(groups).toHaveLength(2);
     });
   });
 
@@ -869,12 +985,123 @@ describe('upsertViewWidget', () => {
       const filters = await global.testDataSource.query(
         `SELECT id, "viewFilterGroupId"
          FROM core."viewFilter"
-         WHERE id = $1 AND "deletedAt" IS NULL`,
+         WHERE id = $1`,
         [filterId],
       );
 
       expect(filters.length).toBe(1);
       expect(filters[0].viewFilterGroupId).toBe(filterGroupId);
+    });
+
+    it('should keep a filter in its group when an update omits the group, and take it out on null', async () => {
+      const filterGroupId = uuidv4();
+      const filterId = uuidv4();
+      const fieldMetadataId = testSetup.fieldMetadataIds[0];
+      const viewFilterGroups = [
+        {
+          id: filterGroupId,
+          logicalOperator: ViewFilterGroupLogicalOperator.AND,
+        },
+      ];
+
+      const upsertFilter = ({
+        value,
+        viewFilterGroupFields,
+      }: {
+        value: string;
+        viewFilterGroupFields: { viewFilterGroupId?: string | null };
+      }) =>
+        upsertViewWidget({
+          expectToFail: false,
+          input: {
+            widgetId: testSetup.widgetId,
+            viewFilterGroups,
+            viewFilters: [
+              {
+                id: filterId,
+                fieldMetadataId,
+                operand: ViewFilterOperand.CONTAINS,
+                value,
+                ...viewFilterGroupFields,
+              },
+            ],
+          },
+        });
+
+      const findFilter = () =>
+        global.testDataSource.query(
+          `SELECT "viewFilterGroupId", value
+           FROM core."viewFilter"
+           WHERE id = $1`,
+          [filterId],
+        );
+
+      await upsertFilter({
+        value: 'before',
+        viewFilterGroupFields: { viewFilterGroupId: filterGroupId },
+      });
+      await upsertFilter({ value: 'kept', viewFilterGroupFields: {} });
+
+      expect(await findFilter()).toEqual([
+        { viewFilterGroupId: filterGroupId, value: 'kept' },
+      ]);
+
+      await upsertFilter({
+        value: 'detached',
+        viewFilterGroupFields: { viewFilterGroupId: null },
+      });
+
+      expect(await findFilter()).toEqual([
+        { viewFilterGroupId: null, value: 'detached' },
+      ]);
+    });
+
+    it('should reject keeping a filter whose group is being removed', async () => {
+      const filterGroupId = uuidv4();
+      const filterId = uuidv4();
+      const fieldMetadataId = testSetup.fieldMetadataIds[0];
+      const keptFilter = {
+        id: filterId,
+        fieldMetadataId,
+        operand: ViewFilterOperand.CONTAINS,
+        value: 'grouped',
+      };
+
+      await upsertViewWidget({
+        expectToFail: false,
+        input: {
+          widgetId: testSetup.widgetId,
+          viewFilterGroups: [
+            {
+              id: filterGroupId,
+              logicalOperator: ViewFilterGroupLogicalOperator.AND,
+            },
+          ],
+          viewFilters: [{ ...keptFilter, viewFilterGroupId: filterGroupId }],
+        },
+      });
+
+      const { errors } = await upsertViewWidget({
+        expectToFail: true,
+        input: {
+          widgetId: testSetup.widgetId,
+          viewFilterGroups: [],
+          viewFilters: [keptFilter],
+        },
+      });
+
+      expect(errors?.[0]?.message).toBe(
+        'A view filter cannot stay in a view filter group that is being removed',
+      );
+
+      const filters = await global.testDataSource.query(
+        `SELECT "viewFilterGroupId"
+         FROM core."viewFilter"
+         WHERE id = $1`,
+        [filterId],
+      );
+
+      expect(filters).toEqual([{ viewFilterGroupId: filterGroupId }]);
     });
   });
 
@@ -910,7 +1137,7 @@ describe('upsertViewWidget', () => {
       const sorts = await global.testDataSource.query(
         `SELECT id, "fieldMetadataId", direction
          FROM core."viewSort"
-         WHERE id = $1 AND "deletedAt" IS NULL`,
+         WHERE id = $1`,
         [sortId],
       );
 
@@ -954,7 +1181,7 @@ describe('upsertViewWidget', () => {
       const sorts = await global.testDataSource.query(
         `SELECT id, direction
          FROM core."viewSort"
-         WHERE id = $1 AND "deletedAt" IS NULL`,
+         WHERE id = $1`,
         [sortId],
       );
 
@@ -1003,7 +1230,7 @@ describe('upsertViewWidget', () => {
 
       const keptSort = await global.testDataSource.query(
         `SELECT id FROM core."viewSort"
-         WHERE id = $1 AND "deletedAt" IS NULL`,
+         WHERE id = $1`,
         [sortToKeepId],
       );
 
@@ -1011,7 +1238,7 @@ describe('upsertViewWidget', () => {
 
       const removedSort = await global.testDataSource.query(
         `SELECT id FROM core."viewSort"
-         WHERE id = $1 AND "deletedAt" IS NULL`,
+         WHERE id = $1`,
         [sortToRemoveId],
       );
 
@@ -1091,7 +1318,7 @@ describe('upsertViewWidget', () => {
 
       const filterGroups = await global.testDataSource.query(
         `SELECT id FROM core."viewFilterGroup"
-         WHERE id = $1 AND "deletedAt" IS NULL`,
+         WHERE id = $1`,
         [filterGroupId],
       );
 
@@ -1099,7 +1326,7 @@ describe('upsertViewWidget', () => {
 
       const filters = await global.testDataSource.query(
         `SELECT id, value FROM core."viewFilter"
-         WHERE id = $1 AND "deletedAt" IS NULL`,
+         WHERE id = $1`,
         [filterId],
       );
 
@@ -1108,7 +1335,7 @@ describe('upsertViewWidget', () => {
 
       const sorts = await global.testDataSource.query(
         `SELECT id, direction FROM core."viewSort"
-         WHERE id = $1 AND "deletedAt" IS NULL`,
+         WHERE id = $1`,
         [sortId],
       );
 
@@ -1241,7 +1468,7 @@ describe('upsertViewWidget', () => {
 
       const sortsAfter = await global.testDataSource.query(
         `SELECT id FROM core."viewSort"
-         WHERE id = $1 AND "deletedAt" IS NULL`,
+         WHERE id = $1`,
         [sortId],
       );
 

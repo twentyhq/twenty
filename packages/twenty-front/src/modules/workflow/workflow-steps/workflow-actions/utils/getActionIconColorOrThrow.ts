@@ -8,6 +8,7 @@ export const getActionIconColorOrThrow = (
   switch (actionType) {
     case 'CODE':
     case 'LOGIC_FUNCTION':
+    case 'MCP_TOOL':
     case 'HTTP_REQUEST':
     case 'SEND_EMAIL':
     case 'DRAFT_EMAIL':

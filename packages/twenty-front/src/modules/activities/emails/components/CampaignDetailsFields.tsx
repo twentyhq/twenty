@@ -1,8 +1,7 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { useId } from 'react';
 import {
-  CoreObjectNameSingular,
+  StandardObjectNameSingular,
   MessageChannelType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -25,6 +24,7 @@ import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-typ
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledWarningContainer = styled.div`
   padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
@@ -40,6 +40,7 @@ type CampaignDetailsFieldsProps = {
 export const CampaignDetailsFields = ({
   campaign,
 }: CampaignDetailsFieldsProps) => {
+  const { t } = useLingui();
   const detailsState = useCampaignDetailsState({ campaign });
   const instanceId = useId();
   const listDropdownId = `campaign-list-picker-${instanceId}`;
@@ -50,7 +51,7 @@ export const CampaignDetailsFields = ({
   const { channels } = useMyMessageChannels();
   const { unsubscribeTopics } = useUnsubscribeTopics();
   const { createOneRecord: createMessageList } = useCreateOneRecord({
-    objectNameSingular: CoreObjectNameSingular.MessageList,
+    objectNameSingular: StandardObjectNameSingular.MessageList,
   });
 
   const handleCreateList = async (searchInput?: string) => {
@@ -143,7 +144,7 @@ export const CampaignDetailsFields = ({
           key={`list-${detailsState.draftResyncKey}`}
           dropdownId={listDropdownId}
           variant="transparent"
-          objectNameSingulars={[CoreObjectNameSingular.MessageList]}
+          objectNameSingulars={[StandardObjectNameSingular.MessageList]}
           defaultValue={detailsState.listId}
           onChange={detailsState.setListId}
           onCreate={handleCreateList}

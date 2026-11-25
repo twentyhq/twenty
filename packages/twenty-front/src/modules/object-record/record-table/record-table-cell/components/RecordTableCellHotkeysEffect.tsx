@@ -29,6 +29,10 @@ export const RecordTableCellHotkeysEffect = ({
   const clearField = useClearField();
 
   const handleBackspaceOrDelete = () => {
+    if (isReadOnly) {
+      return;
+    }
+
     if (!isFieldInputOnly && isFieldClearable) {
       clearField();
     }

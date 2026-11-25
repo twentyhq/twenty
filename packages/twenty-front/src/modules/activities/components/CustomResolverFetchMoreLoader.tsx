@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { useInView } from 'react-intersection-observer';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 type CustomResolverFetchMoreLoaderProps = {
   loading: boolean;
@@ -26,6 +26,7 @@ export const CustomResolverFetchMoreLoader = ({
   loading,
   onLastRowVisible,
 }: CustomResolverFetchMoreLoaderProps) => {
+  const { t } = useLingui();
   const { ref: tbodyRef } = useInView({
     onChange: (inView) => {
       if (inView) {

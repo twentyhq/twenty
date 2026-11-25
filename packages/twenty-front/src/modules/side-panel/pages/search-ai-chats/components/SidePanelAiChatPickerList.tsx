@@ -1,24 +1,21 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { isNonEmptyString } from '@sniptt/guards';
 import { type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { IconMessage } from 'twenty-ui/icon';
 import { Loader } from 'twenty-ui/primitives/feedback';
 import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
+import { type AiChatThreadDisplayIdentity } from '@/ai-chat/threads/types/AiChatThreadDisplayIdentity';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { SidePanelAiChatPickerSkeleton } from '@/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerSkeleton';
+import { SidePanelAiChatPickerItem } from '@/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerItem';
 import { useOpenAiChatFromPicker } from '@/side-panel/pages/search-ai-chats/hooks/useOpenAiChatFromPicker';
 import { aiChatPickerOpenErrorComponentState } from '@/side-panel/pages/search-ai-chats/states/aiChatPickerOpenErrorComponentState';
 import { aiChatPickerOpeningThreadIdComponentState } from '@/side-panel/pages/search-ai-chats/states/aiChatPickerOpeningThreadIdComponentState';
 import { aiChatPickerUnavailableThreadIdsComponentState } from '@/side-panel/pages/search-ai-chats/states/aiChatPickerUnavailableThreadIdsComponentState';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useWorkspaceSurfaceHeaderPortal } from '@/ui/layout/hooks/useWorkspaceSurfaceHeaderPortal';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
@@ -32,7 +29,7 @@ const StyledStatus = styled.div`
 `;
 
 type SidePanelAiChatPickerListProps = {
-  threads: Pick<AgentChatThreadRecord, 'id' | 'title'>[];
+  threads: (AiChatThreadDisplayIdentity & { id: string })[];
   isLoading: boolean;
   loadingLabel: string;
   noResultsText: string;
@@ -110,25 +107,12 @@ export const SidePanelAiChatPickerList = ({
       {canShowThreads && hasThreads && (
         <SidePanelGroup heading={t`Chats`}>
           {visibleThreads.map((thread) => (
-            <SelectableListItem
+            <SidePanelAiChatPickerItem
               key={thread.id}
-              itemId={thread.id}
-              onEnter={
-                isOpeningThread
-                  ? undefined
-                  : () => void openAiChatFromPicker(thread.id)
-              }
-            >
-              <CommandMenuItem
-                id={thread.id}
-                Icon={IconMessage}
-                label={
-                  isNonEmptyString(thread.title) ? thread.title : t`New chat`
-                }
-                disabled={isOpeningThread}
-                onClick={() => void openAiChatFromPicker(thread.id)}
-              />
-            </SelectableListItem>
+              thread={thread}
+              isOpeningThread={isOpeningThread}
+              onOpen={(threadId) => void openAiChatFromPicker(threadId)}
+            />
           ))}
         </SidePanelGroup>
       )}

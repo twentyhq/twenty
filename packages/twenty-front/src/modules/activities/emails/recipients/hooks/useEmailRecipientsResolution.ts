@@ -1,5 +1,5 @@
 import { MAX_EMAIL_RECIPIENTS } from 'twenty-shared/constants';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { escapeForIlike, isDefined } from 'twenty-shared/utils';
 
 import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailRecipient';
@@ -35,7 +35,7 @@ export const useEmailRecipientsResolution = ({
   ];
 
   const { records: matchedPeople } = useFindManyRecords({
-    objectNameSingular: CoreObjectNameSingular.Person,
+    objectNameSingular: StandardObjectNameSingular.Person,
     filter: {
       or: recipientKeys.map((recipientKey) => ({
         emails: { primaryEmail: { ilike: escapeForIlike(recipientKey) } },

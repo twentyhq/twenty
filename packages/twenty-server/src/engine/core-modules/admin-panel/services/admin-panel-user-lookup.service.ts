@@ -19,7 +19,7 @@ import { UserService } from 'src/engine/core-modules/user/services/user.service'
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { UserRoleService } from 'src/engine/permissions/role-assignment/user-role.service';
+import { RolePermissionsService } from 'src/engine/permissions/role-permissions.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
@@ -30,7 +30,7 @@ export class AdminPanelUserLookupService {
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly fileUrlService: FileUrlService,
     private readonly userService: UserService,
-    private readonly userRoleService: UserRoleService,
+    private readonly rolePermissionsService: RolePermissionsService,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
     @InjectRepository(WorkspaceEntity)
@@ -41,7 +41,7 @@ export class AdminPanelUserLookupService {
     private readonly featureFlagRepository: WorkspaceScopedRepository<FeatureFlagEntity>,
   ) {}
 
-  private buildFallbackAvatarUrlsByUserId(
+  private buildFallbackAvatarFileIdsByUserId(
     workspaceUsers: UserWorkspaceEntity[],
   ): Map<string, string | null> {
     return new Map(
@@ -49,7 +49,7 @@ export class AdminPanelUserLookupService {
         .filter((workspaceUser) => isDefined(workspaceUser.user))
         .map((workspaceUser) => [
           workspaceUser.user.id,
-          workspaceUser.defaultAvatarUrl ?? null,
+          workspaceUser.defaultAvatarFileId,
         ]),
     );
   }
@@ -62,7 +62,7 @@ export class AdminPanelUserLookupService {
     workspaceUsers: UserWorkspaceEntity[];
   }): Promise<Set<string>> {
     const rolesByUserWorkspaceId =
-      await this.userRoleService.getRolesByUserWorkspaces({
+      await this.rolePermissionsService.findRolesByUserWorkspaceIds({
         workspaceId,
         userWorkspaceIds: workspaceUsers.map(
           (workspaceUser) => workspaceUser.id,
@@ -123,8 +123,8 @@ export class AdminPanelUserLookupService {
         const [avatarUrlsByUserId, adminUserIds] = await Promise.all([
           this.userService.loadSignedAvatarUrlsByUserId({
             workspace: userWorkspace.workspace,
-            fallbackAvatarUrlsByUserId:
-              this.buildFallbackAvatarUrlsByUserId(workspaceUsers),
+            fallbackAvatarFileIdsByUserId:
+              this.buildFallbackAvatarFileIdsByUserId(workspaceUsers),
           }),
           this.getAdminUserIds({
             workspaceId: userWorkspace.workspace.id,
@@ -211,7 +211,7 @@ export class AdminPanelUserLookupService {
     const [avatarUrlsByUserId, adminUserIds] = await Promise.all([
       this.userService.loadSignedAvatarUrlsByUserId({
         workspace,
-        fallbackAvatarUrlsByUserId: this.buildFallbackAvatarUrlsByUserId(
+        fallbackAvatarFileIdsByUserId: this.buildFallbackAvatarFileIdsByUserId(
           definedWorkspaceUsers,
         ),
       }),

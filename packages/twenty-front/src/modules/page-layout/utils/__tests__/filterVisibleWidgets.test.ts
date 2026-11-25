@@ -1,7 +1,8 @@
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { filterVisibleWidgets } from '@/page-layout/utils/filterVisibleWidgets';
+import { buildDeviceConditionalAvailability } from 'twenty-shared/conditional-availability';
 import {
-  FieldDisplayMode,
+  FeatureFlagKey,
   PageLayoutTabLayoutMode,
   WidgetConfigurationType,
   WidgetType,
@@ -124,77 +125,46 @@ describe('filterVisibleWidgets', () => {
     expect(widgets).toHaveLength(originalLength);
   });
 
-  describe('hiddenFieldMetadataIdsOrNames', () => {
-    const createMockFieldWidget = (
-      id: string,
-      fieldMetadataId: string,
-    ): PageLayoutTab['widgets'][0] => ({
-      ...createMockWidget(id),
-      type: WidgetType.FIELD,
-      configuration: {
-        __typename: 'FieldConfiguration',
-        configurationType: WidgetConfigurationType.FIELD,
-        fieldMetadataId,
-        fieldDisplayMode: FieldDisplayMode.CARD,
+  describe('when the workspace reads the conditional availability tree only', () => {
+    const context = {
+      device: 'DESKTOP' as const,
+      selectedRecords: [],
+      featureFlags: {
+        [FeatureFlagKey.IS_WIDGET_CONDITIONAL_AVAILABILITY_ENABLED]: true,
       },
-    });
+    };
 
-    it('should filter out a field widget referencing a hidden field by id', () => {
-      const result = filterVisibleWidgets({
-        widgets: [
-          createMockFieldWidget('widget-1', 'field-id-1'),
-          createMockFieldWidget('widget-2', 'field-id-2'),
-        ],
-        context: {
-          device: 'DESKTOP',
-          selectedRecords: [],
-          featureFlags: {},
-          hiddenFieldMetadataIdsOrNames: ['field-id-1'],
+    it('should hide a widget whose tree does not match', () => {
+      const widgets = [
+        createMockWidget('widget-1'),
+        {
+          ...createMockWidget('widget-2'),
+          conditionalAvailability: buildDeviceConditionalAvailability('MOBILE'),
         },
-      });
+      ];
 
-      expect(result).toHaveLength(1);
-      expect(result[0].id).toBe('widget-2');
+      const result = filterVisibleWidgets({ widgets, context });
+
+      expect(result.map((widget) => widget.id)).toEqual(['widget-1']);
     });
 
-    it('should filter out a field widget referencing a hidden field by name', () => {
-      const result = filterVisibleWidgets({
-        widgets: [createMockFieldWidget('widget-1', 'workflow')],
-        context: {
-          device: 'DESKTOP',
-          selectedRecords: [],
-          featureFlags: {},
-          hiddenFieldMetadataIdsOrNames: ['field-id-1', 'workflow'],
+    it('should ignore the legacy rules of a widget', () => {
+      const widgets = [
+        createMockWidget('widget-1', {
+          and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
+        }),
+        {
+          ...createMockWidget('widget-2'),
+          conditionalAvailabilityExpression: 'device == "MOBILE"',
         },
-      });
+      ];
 
-      expect(result).toHaveLength(0);
-    });
+      const result = filterVisibleWidgets({ widgets, context });
 
-    it('should keep non-field widgets referencing a hidden name', () => {
-      const result = filterVisibleWidgets({
-        widgets: [createMockWidget('widget-1')],
-        context: {
-          device: 'DESKTOP',
-          selectedRecords: [],
-          featureFlags: {},
-          hiddenFieldMetadataIdsOrNames: ['workflow'],
-        },
-      });
-
-      expect(result).toHaveLength(1);
-    });
-
-    it('should keep every field widget when nothing is hidden', () => {
-      const result = filterVisibleWidgets({
-        widgets: [
-          createMockFieldWidget('widget-1', 'field-id-1'),
-          createMockFieldWidget('widget-2', 'field-id-2'),
-        ],
-        context: { device: 'DESKTOP', selectedRecords: [], featureFlags: {} },
-      });
-
-      expect(result).toHaveLength(2);
+      expect(result.map((widget) => widget.id)).toEqual([
+        'widget-1',
+        'widget-2',
+      ]);
     });
   });
 });

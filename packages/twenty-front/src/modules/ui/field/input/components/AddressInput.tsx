@@ -18,12 +18,11 @@ import { StyledFieldInputDetails } from '@/ui/field/input/components/StyledField
 import { StyledTextInput } from '@/ui/field/input/components/TextInput';
 import { Autocomplete } from 'twenty-ui/primitives/input';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
-
-import { t } from '@lingui/core/macro';
 import { type AllowedAddressSubField } from 'twenty-shared/types';
 import { useAddressAutocomplete } from '@/ui/field/input/hooks/useAddressAutocomplete';
 import { useAddressInputClickOutside } from '@/ui/field/input/hooks/useAddressInputClickOutside';
 import { useFocusManagement } from '@/ui/field/input/hooks/useFocusManagement';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledAddressContainer = styled.div`
   display: flex;
@@ -54,6 +53,7 @@ export const AddressInput = ({
   onChange,
   subFields,
 }: AddressInputProps) => {
+  const { t } = useLingui();
   const store = useStore();
   const [internalValueAtom] = useState(() =>
     atom<FieldAddressDraftValue>(value),

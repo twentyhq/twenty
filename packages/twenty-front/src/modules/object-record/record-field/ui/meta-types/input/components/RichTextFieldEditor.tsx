@@ -14,7 +14,7 @@ import { serializeJsonContentAsAdvancedTextEditorDocument } from '@/advanced-tex
 import { useMentionSearch } from '@/mention/hooks/useMentionSearch';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
@@ -31,12 +31,12 @@ import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { type Editor } from '@tiptap/core';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { useDebouncedCallback } from 'use-debounce';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledEditorContainer = styled.div`
   box-sizing: border-box;
@@ -65,6 +65,7 @@ export const RichTextFieldEditor = ({
   onBlur: onBlurOverride,
   editorRef,
 }: RichTextFieldEditorProps) => {
+  const { t } = useLingui();
   const store = useStore();
   const [recordInStore] = useAtom(recordStoreFamilyState.atomFamily(recordId));
 
@@ -97,7 +98,7 @@ export const RichTextFieldEditor = ({
   });
 
   const { records: attachments } = useFindManyRecords<Attachment>({
-    objectNameSingular: CoreObjectNameSingular.Attachment,
+    objectNameSingular: StandardObjectNameSingular.Attachment,
     filter: {
       [attachmentTargetFieldIdName]: {
         eq: recordId,
@@ -141,7 +142,9 @@ export const RichTextFieldEditor = ({
       persistDebounceMs: 300,
       resetKey: recordId,
       onPersist: ({ tiptap }) => {
-        if (isRecordFieldReadOnly === true) return;
+        if (isRecordFieldReadOnly === true) {
+          return;
+        }
 
         if (onPersistBody) {
           onPersistBody(tiptap);

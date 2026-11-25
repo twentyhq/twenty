@@ -1,4 +1,3 @@
-import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { beforeEach, expect, it, vi } from 'vitest';
 import { hydrateDesktopRecordingTimestamps } from 'src/logic-functions/flows/utils/hydrateDesktopRecordingTimestamps';
 import { recoverDesktopRecordings } from 'src/logic-functions/flows/utils/recoverDesktopRecordings';
@@ -34,7 +33,7 @@ vi.mock('src/logic-functions/recall-api/utils/getOwnedDesktopUpload', () => ({
 }));
 const query = vi.fn();
 const mutation = vi.fn();
-const client = { query, mutation } as unknown as CoreApiClient;
+const client = { query, mutation };
 beforeEach(() => {
   vi.resetAllMocks();
   mutation.mockResolvedValue({ updateCallRecordings: [{ id: 'desktop-1' }] });

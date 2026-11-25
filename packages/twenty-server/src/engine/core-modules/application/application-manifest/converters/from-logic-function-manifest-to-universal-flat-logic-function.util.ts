@@ -2,6 +2,7 @@ import { parse } from 'path';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { type LogicFunctionManifest } from 'twenty-shared/application';
+import { LOGIC_FUNCTION_MAX_RETRY_LIMIT } from 'twenty-shared/logic-function';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
@@ -13,6 +14,7 @@ import {
   LogicFunctionExecutionMode,
   LogicFunctionRuntime,
 } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import { toStoredDatabaseEventTriggerSettingsOrThrow } from 'src/engine/core-modules/application/application-manifest/utils/to-stored-database-event-trigger-settings-or-throw.util';
 import { type UniversalFlatLogicFunction } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-logic-function.type';
 
 const resolveExecutionMode = ({
@@ -70,6 +72,10 @@ export const fromLogicFunctionManifestToUniversalFlatLogicFunction = ({
     logicFunctionManifest.name ?? parse(logicFunctionManifest.handlerName).name;
 
   const timeoutSeconds = logicFunctionManifest.timeoutSeconds ?? 300;
+  // TODO: remove with the legacy databaseEventTriggerSettings / DATABASE_EVENT manifest form
+  const eventTriggerSettings =
+    logicFunctionManifest.eventTriggerSettings ??
+    logicFunctionManifest.databaseEventTriggerSettings;
 
   return {
     universalIdentifier: logicFunctionManifest.universalIdentifier,
@@ -82,13 +88,21 @@ export const fromLogicFunctionManifestToUniversalFlatLogicFunction = ({
     )
       ? Math.min(timeoutSeconds, CONNECTION_FLOW_LOGIC_FUNCTION_TIMEOUT_SECONDS)
       : timeoutSeconds,
+    jobFailureHandlerName: logicFunctionManifest.jobFailureHandlerName ?? null,
+    retryLimit: isDefined(logicFunctionManifest.retryLimit)
+      ? Math.min(
+          Math.max(Math.trunc(logicFunctionManifest.retryLimit), 0),
+          LOGIC_FUNCTION_MAX_RETRY_LIMIT,
+        )
+      : null,
     sourceHandlerPath: logicFunctionManifest.sourceHandlerPath,
     builtHandlerPath: logicFunctionManifest.builtHandlerPath,
     handlerName: logicFunctionManifest.handlerName,
     checksum: logicFunctionManifest.builtHandlerChecksum,
     cronTriggerSettings: logicFunctionManifest.cronTriggerSettings ?? null,
-    databaseEventTriggerSettings:
-      logicFunctionManifest.databaseEventTriggerSettings ?? null,
+    databaseEventTriggerSettings: isDefined(eventTriggerSettings)
+      ? toStoredDatabaseEventTriggerSettingsOrThrow(eventTriggerSettings)
+      : null,
     httpRouteTriggerSettings:
       logicFunctionManifest.httpRouteTriggerSettings ?? null,
     serverRouteTriggerSettings:

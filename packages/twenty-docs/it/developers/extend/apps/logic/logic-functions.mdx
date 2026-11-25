@@ -44,8 +44,11 @@ export default defineLogicFunction({
     httpMethod: 'POST',
     isAuthRequired: true,
   },
-  /*databaseEventTriggerSettings: {
-    eventName: 'people.created',
+  /*eventTriggerSettings: {
+    on: 'recordEvent',
+    objectUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+    action: 'created',
   },*/
   /*cronTriggerSettings: {
     pattern: '0 0 1 1 *',
@@ -60,9 +63,8 @@ Tipi di trigger disponibili:
 <Note>
 Per richiamare, da un componente front-end (headless), una funzione logica attivata da una rotta, vedi [Chiamare una funzione logica](/it/developers/extend/apps/layout/front-components#calling-a-logic-function).
 </Note>
-* **cron**: Esegue la tua funzione secondo una pianificazione utilizzando un'espressione CRON.
-* **databaseEvent**: Viene eseguito sugli eventi del ciclo di vita degli oggetti dello spazio di lavoro. Quando l'operazione dell'evento è `updated`, è possibile specificare campi specifici da monitorare nell'array `updatedFields`. Se lasciato non definito o vuoto, qualsiasi aggiornamento attiverà la funzione.
-> ad es. `person.updated`, `*.created`, `company.*`
+* **cron**: Esegue la tua funzione secondo una pianificazione utilizzando un'espressione CRON. Imposta `spreadMs` per evitare che ogni workspace lo esegua nello stesso minuto. Vedi [Distribuire un cron tra i workspace](#spread-a-cron-across-workspaces).
+* **databaseEvent**: viene eseguito quando i record di un oggetto vengono creati, aggiornati, eliminati, distrutti, ripristinati o sottoposti a upsert. Puoi limitarlo agli aggiornamenti di alcuni campi e ai record che soddisfano una condizione. Vedi [Payload degli eventi del database](#database-event-trigger-payload).
 * **serverRoute**: espone una singola route HTTP con ambito di registrazione. Una funzione di **resolver** (dichiarata con `serverRouteTriggerSettings`) viene eseguita nel workspace proprietario e restituisce una `Response` sincrona, oppure il workspace di destinazione e la funzione logica di destinazione da mettere in coda; nel percorso di messa in coda la piattaforma conferma con `202` ed esegue tale **destinazione** nella coda dei worker. Vedi [Trigger route del server](#server-route-trigger).
 
 <Note>
@@ -349,7 +351,7 @@ const handler = async (event: RoutePayload) => {
   per i dettagli di fatturazione e operativi.
 </Note>
 
-**Contratto del resolver.** Il tipo `LogicFunctionConfig` dell'SDK impone questo a tempo di compilazione: non appena imposti `serverRouteTriggerSettings`, il tuo handler è vincolato a restituire una `Response`, oppure `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (o una `Promise` di uno dei due). Nel percorso di dispatch, il `workspaceId` deve essere un workspace in cui la funzione di destinazione è installata, altrimenti la richiesta viene rifiutata con `404`. Un risultato che non corrisponde a nessuna delle due forme — incluso uno i cui identificatori non sono UUID — viene rifiutato con `502`.
+**Contratto del resolver.** Il tipo `LogicFunctionConfig` dell'SDK impone questo a tempo di compilazione: non appena imposti `serverRouteTriggerSettings`, il tuo handler è vincolato a restituire una `Response`, oppure `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (o una `Promise` di uno dei due). Nel percorso di dispatch, se l'app non è installata nel `workspaceId`, non viene eseguito nulla e la richiesta viene confermata con `200` e `{ queued: false, reason: "APPLICATION_NOT_INSTALLED" }`, quindi il provider smette di riconsegnare un evento che nessun workspace può elaborare. Se l'app è installata lì ma non dispone di alcuna funzione con quell'`targetLogicFunctionUniversalIdentifier`, la richiesta viene rifiutata con `404`. Un risultato che non corrisponde a nessuna delle due forme — incluso uno i cui identificatori non sono UUID — viene rifiutato con `502`.
 
 | Campo                                    | Tipo                 | Note                                                                         |
 | ---------------------------------------- | -------------------- | ---------------------------------------------------------------------------- |
@@ -432,18 +434,29 @@ Per le eliminazioni logiche, `.deleted` segue la struttura in stile aggiornament
 Per le eliminazioni permanenti, usa `.destroyed`.
 
 <Note>
-  `databaseEventTriggerSettings.updatedFields` filtra quali eventi di aggiornamento
+  `eventTriggerSettings.watchedFieldUniversalIdentifiers` filtra quali eventi di aggiornamento
   attivano la funzione. `event.properties.updatedFields` indica quali campi
   sono effettivamente cambiati nell'evento corrente.
 </Note>
 
-`databaseEventTriggerSettings` accetta:
+`eventTriggerSettings` con `on: 'recordEvent'` accetta:
 
-| Proprietà       | Descrizione                                                                                                                                                                                    |
-| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `eventName`     | Evento da ascoltare, ad esempio `person.updated`. Supporta `*` per il nome dell'oggetto, l'operazione o entrambi.                                                                              |
-| `updatedFields` | Elenco facoltativo di nomi di campo. Negli eventi `.updated`, solo le modifiche che interessano uno di essi attivano la funzione.                                                              |
-| `batchMode`     | Booleano facoltativo. Quando è `true`, l'handler viene chiamato una volta per ogni batch di record anziché una volta per record. Il server decide quanti record contiene un batch, fino a 200. |
+| Proprietà                          | Descrizione                                                                                                                                                                                                                                                 |
+| ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `on`                               | `'recordEvent'`: il trigger resta in ascolto degli eventi dei record.                                                                                                                                                                                       |
+| `objectUniversalIdentifier`        | Oggetto facoltativo su cui restare in ascolto. Ometterlo per restare in ascolto su ogni oggetto.                                                                                                                                                            |
+| `azione`                           | `created`, `updated`, `deleted`, `destroyed`, `restored`, `upserted` o `*` per tutti.                                                                                                                                                                       |
+| `watchedFieldUniversalIdentifiers` | Elenco facoltativo dei campi dell'oggetto. In caso di aggiornamenti e upsert, solo le modifiche che interessano uno di essi attivano la funzione. Le relazioni con molti record non possono essere elencate.                                                |
+| `condizione`                       | [Espressione di regola](/it/user-guide/data-model/capabilities/validation-rules#write-a-condition) facoltativa che il record deve soddisfare. `precedente.\<field>` lo legge prima di un aggiornamento. Richiede `objectUniversalIdentifier`. |
+| `batchMode`                        | Booleano facoltativo. Quando è `true`, l'handler viene chiamato una volta per ogni batch di record anziché una volta per record. Il server decide quanti record contiene un batch, fino a 200.                                                              |
+
+La compilazione non riesce quando un oggetto o un campo è sconosciuto oppure quando la condizione legge un campo che l'oggetto non possiede. Una condizione legge il record nel modo in cui lo restituisce l'API, come una regola di convalida: `company.id` per l'azienda correlata, `company.employees > 100` per uno dei suoi campi. I campi correlati vengono letti quando l'evento viene inviato, con le autorizzazioni dell'applicazione, quindi un record correlato che l'applicazione non può leggere viene considerato vuoto. `previous.` riguarda solo i campi del record stesso.
+
+<Note>
+  Il precedente `databaseEventTriggerSettings`, con `eventName` (ad esempio
+  `person.updated` o `*.created`) e `updatedFields` (nomi dei campi), è ancora
+  accettato, ma verrà rimosso in una versione futura. Impostane uno dei due, non entrambi.
+</Note>
 
 Esempio di evento "created":
 
@@ -481,11 +494,32 @@ const handler = async (event: PersonUpdatedEvent) => {
 Attiva solo sugli aggiornamenti dell'email:
 
 ```ts
+const PERSON = STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person;
+
 export default defineLogicFunction({
   ...,
-  databaseEventTriggerSettings: {
-    eventName: 'person.updated',
-    updatedFields: ['emails'],
+  eventTriggerSettings: {
+    on: 'recordEvent',
+    objectUniversalIdentifier: PERSON.universalIdentifier,
+    action: 'updated',
+    watchedFieldUniversalIdentifiers: [PERSON.fields.emails.universalIdentifier],
+  },
+});
+```
+
+Attiva solo quando un'opportunità passa alla fase cliente:
+
+```ts
+const OPPORTUNITY = STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity;
+
+export default defineLogicFunction({
+  ...,
+  eventTriggerSettings: {
+    on: 'recordEvent',
+    objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+    action: 'updated',
+    watchedFieldUniversalIdentifiers: [OPPORTUNITY.fields.stage.universalIdentifier],
+    condition: "stage == 'CUSTOMER' and previous.stage != 'CUSTOMER'",
   },
 });
 ```
@@ -514,8 +548,11 @@ Una scrittura in blocco genera molti eventi contemporaneamente: l'importazione d
 ```ts
 export default defineLogicFunction({
   ...,
-  databaseEventTriggerSettings: {
-    eventName: 'person.updated',
+  eventTriggerSettings: {
+    on: 'recordEvent',
+    objectUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+    action: 'updated',
     batchMode: true,
   },
 });
@@ -544,7 +581,7 @@ const handler = async (batch: PeopleUpdatedBatch) => {
   Scrivi l'handler in modo che esegua il ciclo su `events`, indipendentemente dalla sua lunghezza.
 </Note>
 
-Gli eventi vengono raggruppati in base all'utente che li ha causati prima di essere inseriti in batch, quindi ogni chiamata riguarda un singolo attore e `context.workspaceMemberId` mantiene il proprio significato. Il filtro `updatedFields` viene applicato prima del raggruppamento in batch, quindi un batch contiene solo i record richiesti.
+Gli eventi vengono raggruppati in base all'utente che li ha causati prima di essere inseriti in batch, quindi ogni chiamata riguarda un singolo attore e `context.workspaceMemberId` mantiene il proprio significato. Il filtraggio dei campi e delle condizioni viene applicato prima del raggruppamento in batch, quindi un batch contiene solo i record richiesti.
 
 Senza `batchMode`, l'handler continua a ricevere un `DatabaseEventPayload` per record.
 
@@ -620,7 +657,7 @@ Controlla `context.workspaceMemberId` quando una funzione si comporta diversamen
 
 </Note>
 
-Gli helper dell'SDK che accedono alle risorse della tua applicazione usano sempre il relativo accesso e ignorano `runAs`: l'[archivio chiave-valore](/it/developers/extend/apps/logic/key-value-store), le [connessioni](/it/developers/extend/apps/logic/connections), i [canali di messaggistica](/it/developers/extend/apps/logic/messaging-channels), `runAgent`, `getPublicAssetUrl` e l'[addebito dei crediti](/it/developers/extend/apps/logic/credits).
+Gli helper dell'SDK che accedono alle risorse della tua applicazione usano sempre il relativo accesso e ignorano `runAs`: l'[archivio chiave-valore](/it/developers/extend/apps/logic/key-value-store), le [connessioni](/it/developers/extend/apps/logic/connections), i [canali di messaggistica](/it/developers/extend/apps/logic/messaging-channels), `runAgent`, `getPublicAssetUrl` e l'[addebito dei crediti](/it/developers/extend/apps/logic/credits). `ai.generate` segue invece i client predefiniti: agisce come la persona che ha avviato l'esecuzione, nell'ambito del ruolo della tua app, oppure come la tua app quando nessuno l'ha avviata.
 
 #### Esporre una funzione come strumento di IA o come azione del flusso di lavoro
 
@@ -629,7 +666,7 @@ Le funzioni logiche possono essere esposte su due superfici, ciascuna con il pro
 * **`toolTriggerSettings`** — rende la funzione individuabile dalle funzionalità di IA di Twenty (chat, MCP, function calling). Usa lo standard JSON Schema, il formato che gli LLM comprendono nativamente.
 * **`workflowActionTriggerSettings`** — fa apparire la funzione come un passaggio nel builder visivo dei flussi di lavoro. Usa il ricco `InputSchema` di Twenty affinché il builder possa visualizzare correttamente editor di campi, selettori di variabili ed etichette.
 
-Una funzione può optare per uno, l'altro o entrambi. Si affiancano a `cronTriggerSettings`, `databaseEventTriggerSettings` e `httpRouteTriggerSettings` — stesso schema, stessa struttura.
+Una funzione può optare per uno, l'altro o entrambi. Si affiancano a `cronTriggerSettings`, `eventTriggerSettings` e `httpRouteTriggerSettings` — stesso schema, stessa struttura.
 
 <Note>
   **Relazione con l'azione Code del workflow.** L'azione **Code** incorporata nel
@@ -775,6 +812,17 @@ export default defineFrontComponent({
 
 Il componente viene montato non appena l'agente ha terminato lo streaming dei suoi argomenti, quindi gestisce l'intera chiamata, non solo il risultato. `toolCall.status` passa attraverso `input-available`, gli stati di approvazione quando lo strumento ne richiede una, e quindi `output-available`, `output-denied` o `output-error`; `input` è ciò che l'agente ha proposto, `output` ciò che il tuo gestore ha restituito. Esegui il rendering di ogni stato che ti interessa, poiché la riga del passaggio non è più presente per gestirli.
 
+Quando l'agente propone una chiamata che attende l'approvazione di una persona, la scheda di approvazione mostra lo stesso componente al posto degli argomenti JSON non elaborati. La scheda mantiene l'intestazione, **Rifiuta**, **Approva** e il feedback. Mentre `toolCall.status` è `approval-requested`, `input` contiene gli argomenti che **Approva** invierà e il componente può modificarli con `setToolCallArguments`:
+
+```tsx
+import { setToolCallArguments, useToolCall } from 'twenty-sdk/front-component';
+
+const toolCall = useToolCall();
+
+// Approve now runs the tool with decision DECLINE and the reason.
+setToolCallArguments({ ...toolCall?.input, decision: 'DECLINE', reason });
+```
+
 Sia `input` sia `output` sono tipizzati come `Record\<string, unknown>`, quindi restringi ogni campo prima di utilizzarlo anziché eseguire un cast. Ciò è particolarmente importante per tutto ciò che passi al DOM: un valore che inserisci in un `href` senza verificare che sia una stringa è un link controllato dall'output dello strumento.
 
 <Note>
@@ -883,6 +931,20 @@ const handler = async (params: { parentMessageId?: string }) => {
 </Note>
 
 <Note>
+**Indirizzi di lavoro.** `isWorkEmail(address)` da `twenty-sdk/email` distingue un indirizzo aziendale da uno personale, utilizzando lo stesso elenco di provider di posta elettronica gratuiti e temporanei usato da Twenty. Ha una propria voce perché quell'elenco pesa circa 240 KB, quindi solo le funzioni che lo importano lo includono nel bundle:
+
+```ts
+import { isWorkEmail } from 'twenty-sdk/email';
+
+isWorkEmail('ada@acme.com'); // true
+isWorkEmail('ada@gmail.com'); // false
+```
+
+Il dominio viene confrontato così come è scritto, quindi converti prima l'indirizzo in minuscolo.
+
+</Note>
+
+<Note>
   **Hook di installazione** — i gestori di pre-installazione, post-installazione e disinstallazione — condividono
   questo runtime, ma sono dichiarati con le proprie funzioni di definizione e non accettano
   impostazioni dei trigger. Consulta Hook di
@@ -924,12 +986,12 @@ export default defineHealthCheck({
 
 Il risultato è un'unione discriminata, non un booleano:
 
-| Campo         | Obbligatorio                   | Descrizione                                                                                                                                                                                                                                                                                                                                                                                            |
-| ------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `stato`       | Sì                             | `OK` quando non c'è nulla da segnalare, altrimenti `SUCCESS`, `INFO`, `WARNING`, `ERROR` o `NEUTRAL`                                                                                                                                                                                                                                                                                                   |
-| `titolo`      | Per ogni stato diverso da `OK` | La prima riga del banner nella pagina delle impostazioni dell'app                                                                                                                                                                                                                                                                                                                                      |
-| `description` | No                             | Una seconda riga sotto il titolo, che indica cosa fare al riguardo                                                                                                                                                                                                                                                                                                                                     |
-| `azione`      | No                             | `{ label, location }` per il pulsante del banner. `location` indica dove reindirizza il pulsante: un percorso all'interno di Twenty, ad esempio `/settings/billing`, facoltativamente con un hash per selezionare una scheda, oppure solo un hash, ad esempio `#variables`, per passare a una scheda della tua pagina delle impostazioni; omettilo per arrivare alla scheda di configurazione dell'app |
+| Campo         | Obbligatorio                   | Descrizione                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ------------- | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `stato`       | Sì                             | `OK` quando non c'è nulla da segnalare, altrimenti `SUCCESS`, `INFO`, `WARNING`, `ERROR` o `NEUTRAL`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| `titolo`      | Per ogni stato diverso da `OK` | La prima riga del banner nella pagina delle impostazioni dell'app                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| `description` | No                             | Una seconda riga sotto il titolo, che indica cosa fare al riguardo                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| `azione`      | No                             | `{ label, location }` per il pulsante del banner. `location` indica dove reindirizza il pulsante: un percorso all'interno di Twenty, ad esempio `/settings/billing`, facoltativamente con un hash per selezionare una scheda, oppure un hash da solo, ad esempio `#variables`, per passare a una scheda della tua pagina delle impostazioni. Aggiungi `/` e una sezione all'hash di quella scheda, ad esempio `#general/connections` per le connessioni dell'app, per scorrere fino a quella sezione ed evidenziarla; ometti la posizione per arrivare alla scheda di configurazione dell'app |
 
 `OK` non mostra alcun banner; ogni altro stato visualizza il titolo in un banner colorato in base allo stato, quindi scegli quello che corrisponde al grado di azione richiesto alla persona. Gli stati sono gli `ApplicationHealthStatus` di Twenty, quindi la stringa semplice e il membro enum sono intercambiabili:
 
@@ -1195,11 +1257,33 @@ Punti chiave:
   Quando il tuo codice viene eseguito su Twenty (funzioni logiche o componenti front-end), la piattaforma inietta le credenziali come variabili d'ambiente:
 
 * `TWENTY_API_URL` — URL di base dell'API di Twenty
+* `TWENTY_INTERNAL_API_URL`: indirizzo privato di Twenty. Solo funzioni logiche, e solo quando l'operatore imposta `SERVER_INTERNAL_URL`, ad esempio dietro un proxy di autenticazione. I client lo usano automaticamente, incluso `RestApiClient.resolveUrl`. Se chiami l'API autonomamente, usalo quando è impostato e ricorri a `TWENTY_API_URL` come alternativa. Crea i collegamenti che fornisci ai browser o ad altri servizi, come gli URL dei webhook, a partire da `TWENTY_API_URL` o `getServerRouteUrl`.
 * `TWENTY_APP_ACCESS_TOKEN` — Chiave a breve durata per l'accesso predefinito: il ruolo di una persona intersecato con quello della tua applicazione quando qualcuno è alle spalle dell'esecuzione, il ruolo della tua applicazione quando non c'è nessuno. La persona è chiunque abbia attivato l'esecuzione in una funzione logica, oppure chiunque stia visualizzando la pagina in un componente front-end.
 * `TWENTY_APP_APPLICATION_ACCESS_TOKEN` — Chiave a breve durata con ambito esclusivamente al ruolo della tua applicazione. Solo funzioni logiche, sempre inserita lì, ed è ciò che utilizza `runAs: 'application'`.
 
 **Non** devi passare questi elementi ai client — vengono letti automaticamente da `process.env` e [Quale accesso utilizza una chiamata](#whose-access-a-call-uses) spiega come scegliere tra di essi. Le autorizzazioni della tua applicazione sono determinate dal ruolo dichiarato con `defineApplicationRole()` (o referenziato tramite `defaultRoleUniversalIdentifier` in `application-config.ts`); un'esecuzione che agisce come una persona non può mai superare né tale ruolo né il proprio.
 
 </Note>
+
+## Distribuire un cron tra i workspace
+
+Un pattern cron corrisponde allo stesso minuto in ogni workspace in cui è installata la tua app. Aggiungi `spreadMs` per spostare le esecuzioni di ogni workspace in base al proprio offset:
+
+```ts
+export default defineLogicFunction({
+  universalIdentifier: 'b7c2e4d1-0f5a-4c3e-9d8b-6a1f2e3c4d5b',
+  name: 'nightly-sweep',
+  cronTriggerSettings: { pattern: '0 3 * * *', spreadMs: 60 * 60 * 1000 },
+  handler,
+});
+```
+
+Ogni workspace riceve un offset in `[0, spreadMs)`, arrotondato per difetto al minuto e derivato dal workspace e da `universalIdentifier` della funzione, così rimane uguale da un'esecuzione alla successiva. Il pattern viene valutato con un ritardo pari a tale valore nel workspace: con l'esempio sopra, un workspace con un offset di 37 minuti viene eseguito alle 03:37 ogni giorno.
+
+* `spreadMs` è un numero intero compreso tra `120000` (2 minuti) e `86400000` (24 ore).
+* L'offset modifica quando viene eseguito il cron, non la frequenza. Un cron eseguito ogni minuto continua a essere eseguito ogni minuto e un cron orario con un `spreadMs` di 24 ore continua a essere eseguito una volta all'ora in ogni workspace.
+* Non esiste un intervallo minimo tra i workspace né un limite al numero di esecuzioni nello stesso minuto: gli offset sono distribuiti, non coordinati.
+* La modifica di `spreadMs` modifica l'offset, quindi l'esecuzione in prossimità della modifica può essere ignorata o avvenire due volte.
+* Senza `spreadMs`, il cron viene eseguito nel minuto in cui il suo pattern corrisponde.
 
 <PageBanner illustration="card-page-logic-functions" />

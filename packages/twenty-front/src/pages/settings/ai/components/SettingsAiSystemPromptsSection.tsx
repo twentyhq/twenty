@@ -1,6 +1,5 @@
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { useQuery } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
@@ -8,8 +7,10 @@ import { IconPrompt } from 'twenty-ui/icon';
 import { useTheme } from 'twenty-ui/theme';
 import { GetAiSystemPromptPreviewDocument } from '~/generated-metadata/graphql';
 import { formatNumber } from '@/localization/utils/formatNumber';
+import { useLingui } from '@lingui/react/macro';
 
 export const SettingsAiSystemPromptsSection = () => {
+  const { t } = useLingui();
   const theme = useTheme();
   const { data: previewData } = useQuery(GetAiSystemPromptPreviewDocument);
 

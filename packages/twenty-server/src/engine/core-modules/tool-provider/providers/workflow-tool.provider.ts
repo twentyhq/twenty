@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { Inject, Injectable, Optional } from '@nestjs/common';
 
 import { type ToolSet } from 'ai';
@@ -10,15 +11,12 @@ import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/
 
 import { WORKFLOW_TOOL_SERVICE_TOKEN } from 'src/engine/core-modules/tool-provider/constants/workflow-tool-service.token';
 import { ToolCategory } from 'twenty-shared/ai';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { executeToolFromToolSet } from 'src/engine/core-modules/tool-provider/utils/execute-tool-from-tool-set.util';
-import { resolveObjectIcon } from 'src/engine/core-modules/tool-provider/utils/resolve-object-icon.util';
 import { toolSetToDescriptors } from 'src/engine/core-modules/tool-provider/utils/tool-set-to-descriptors.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 import type { WorkflowToolWorkspaceService } from 'src/modules/workflow/workflow-tools/services/workflow-tool.workspace-service';
 
 @Injectable()
@@ -29,8 +27,7 @@ export class WorkflowToolProvider implements ToolProvider {
     @Optional()
     @Inject(WORKFLOW_TOOL_SERVICE_TOKEN)
     private readonly workflowToolService: WorkflowToolWorkspaceService | null,
-    private readonly permissionsService: PermissionsService,
-    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly settingPermissionsService: SettingPermissionsService,
   ) {}
 
   async isAvailable(context: ToolProviderContext): Promise<boolean> {
@@ -46,11 +43,10 @@ export class WorkflowToolProvider implements ToolProvider {
       return false;
     }
 
-    return this.permissionsService.checkRolesPermissions(
-      context.rolePermissionConfig,
-      context.workspaceId,
-      PermissionFlagType.WORKFLOWS,
-    );
+    return this.settingPermissionsService.hasPermissionFlag({
+      authContext: context.authContext,
+      permissionFlag: PermissionFlagType.WORKFLOWS,
+    });
   }
 
   async generateDescriptors(
@@ -63,15 +59,9 @@ export class WorkflowToolProvider implements ToolProvider {
       return [];
     }
 
-    const icon = await resolveObjectIcon(
-      this.flatEntityMapsCacheService,
-      context.workspaceId,
-      CoreObjectNameSingular.Workflow,
-    );
-
     return toolSetToDescriptors(toolSet, ToolCategory.WORKFLOW, {
       includeSchemas: options?.includeSchemas ?? true,
-      icon,
+      icon: 'IconSettingsAutomation',
     });
   }
 
@@ -99,13 +89,13 @@ export class WorkflowToolProvider implements ToolProvider {
   private async buildToolSet(
     context: ToolProviderContext,
   ): Promise<ToolSet | null> {
-    if (!this.workflowToolService) {
+    if (!this.workflowToolService || !isDefined(context.authContext)) {
       return null;
     }
 
     return this.workflowToolService.generateWorkflowTools({
       workspaceId: context.workspaceId,
-      rolePermissionConfig: context.rolePermissionConfig,
+      authContext: context.authContext,
       userWorkspaceId: context.userWorkspaceId,
     });
   }

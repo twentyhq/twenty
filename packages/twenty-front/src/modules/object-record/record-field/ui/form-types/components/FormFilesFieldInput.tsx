@@ -5,11 +5,11 @@ import { TextVariableEditor } from '@/object-record/record-field/ui/form-types/c
 import { useTextVariableEditor } from '@/object-record/record-field/ui/form-types/hooks/useTextVariableEditor';
 import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerComponent';
 import { Field } from 'twenty-ui/primitives/input';
-import { t } from '@lingui/core/macro';
 import { useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
+import { useLingui } from '@lingui/react/macro';
 
 type FormFilesFieldInputProps = {
   label?: string;
@@ -32,6 +32,7 @@ export const FormFilesFieldInput = ({
   readonly,
   VariablePicker,
 }: FormFilesFieldInputProps) => {
+  const { t } = useLingui();
   const instanceId = useId();
 
   const stringDefaultValue =

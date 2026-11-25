@@ -7,13 +7,12 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
-import { findApplicationFlatLogicFunction } from 'src/engine/metadata-modules/logic-function/utils/find-application-flat-logic-function.util';
 import {
   MessagingProviderException,
   MessagingProviderExceptionCode,
 } from 'src/engine/metadata-modules/messaging-provider/messaging-provider.exception';
 import { type MessagingProviderSender } from 'src/engine/metadata-modules/messaging-provider/types/messaging-provider-sender.type';
-import { findMessagingProviderOnConnectionProvider } from 'src/engine/metadata-modules/messaging-provider/utils/find-messaging-provider-on-connection-provider.util';
+import { findMessagingProviderLogicFunction } from 'src/engine/metadata-modules/messaging-provider/utils/find-messaging-provider-logic-function.util';
 import { parseSendAppMessageResult } from 'src/engine/metadata-modules/messaging-provider/utils/parse-send-app-message-result.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -45,12 +44,16 @@ export class MessagingProviderMessageSenderService {
       'flatLogicFunctionMaps',
     ]);
 
-    const messagingProvider = findMessagingProviderOnConnectionProvider({
-      flatMessagingProviderMaps,
-      flatConnectionProviderMaps,
-      messagingProviderUniversalIdentifier,
-      connectionProviderId,
-    });
+    const { messagingProvider, logicFunction: sendMessageLogicFunction } =
+      findMessagingProviderLogicFunction({
+        flatMessagingProviderMaps,
+        flatConnectionProviderMaps,
+        flatLogicFunctionMaps,
+        messagingProviderUniversalIdentifier,
+        connectionProviderId,
+        getLogicFunctionUniversalIdentifier: (provider) =>
+          provider.sendMessageLogicFunctionUniversalIdentifier,
+      });
 
     if (!isDefined(messagingProvider)) {
       throw new MessagingProviderException(
@@ -58,13 +61,6 @@ export class MessagingProviderMessageSenderService {
         MessagingProviderExceptionCode.SEND_MESSAGE_NOT_AVAILABLE,
       );
     }
-
-    const sendMessageLogicFunction = findApplicationFlatLogicFunction({
-      flatLogicFunctionMaps,
-      universalIdentifier:
-        messagingProvider.sendMessageLogicFunctionUniversalIdentifier,
-      applicationId: messagingProvider.applicationId,
-    });
 
     if (!isDefined(sendMessageLogicFunction)) {
       throw new MessagingProviderException(
@@ -86,12 +82,12 @@ export class MessagingProviderMessageSenderService {
   }: {
     sender: MessagingProviderSender;
     workspaceId: string;
-    payload: Omit<SendAppMessagePayload, 'messagingProviderName'>;
+    payload: SendAppMessagePayload;
   }): Promise<SendAppMessageResult> {
     const data = await this.logicFunctionExecutorService.executeOrThrow({
       logicFunctionId: sendMessageLogicFunctionId,
       workspaceId,
-      payload: { messagingProviderName: messagingProvider.name, ...payload },
+      payload,
       shouldEnforceUsageLimits: true,
       toException: (reason) =>
         new MessagingProviderException(

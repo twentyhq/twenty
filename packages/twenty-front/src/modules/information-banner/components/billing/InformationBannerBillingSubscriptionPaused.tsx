@@ -3,15 +3,16 @@ import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { InformationBanner } from '@/information-banner/components/InformationBanner';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useQuery } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
   BillingPortalSessionDocument,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 export const InformationBannerBillingSubscriptionPaused = () => {
+  const { t } = useLingui();
   const { redirect } = useRedirect();
 
   const hasPermissionToUpdateBillingDetails = useHasPermissionFlag(

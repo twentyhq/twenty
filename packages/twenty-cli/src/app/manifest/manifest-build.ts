@@ -47,6 +47,7 @@ import {
   type FieldManifest,
   type FrontComponentManifest,
   type IndexManifest,
+  type ValidationRuleManifest,
   type LogicFunctionManifest,
   type Manifest,
   type NavigationMenuItemManifest,
@@ -58,7 +59,7 @@ import {
   type PreInstallLogicFunctionApplicationManifest,
   type UninstallLogicFunctionApplicationManifest,
   type HealthCheckLogicFunctionApplicationManifest,
-  type RoleManifest,
+  type LegacyCompliantRoleManifest,
   type SkillManifest,
   type StandalonePageLayoutWidgetManifest,
   type StandaloneViewFieldManifest,
@@ -66,6 +67,9 @@ import {
   type TimelineActivityTypeManifest,
   type ViewManifest,
   type WorkflowManifest,
+  withDeprecatedConnectionProviderReferences,
+  withDeprecatedMcpServerReferences,
+  withDeprecatedMessagingProviderReferences,
 } from 'twenty-shared/application';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
@@ -111,8 +115,9 @@ export const buildManifest = async (
   const objects: ObjectManifest[] = [];
   const fields: FieldManifest[] = [];
   const indexes: IndexManifest[] = [];
+  const validationRules: ValidationRuleManifest[] = [];
   const permissionFlags: PermissionFlagManifest[] = [];
-  const roles: RoleManifest[] = [];
+  const roles: LegacyCompliantRoleManifest[] = [];
   const skills: SkillManifest[] = [];
   const agents: AgentManifest[] = [];
   const workflows: WorkflowManifest[] = [];
@@ -147,6 +152,7 @@ export const buildManifest = async (
   const objectsFilePaths: string[] = [];
   const fieldsFilePaths: string[] = [];
   const indexesFilePaths: string[] = [];
+  const validationRulesFilePaths: string[] = [];
   const permissionFlagsFilePaths: string[] = [];
   const rolesFilePaths: string[] = [];
   const skillsFilePaths: string[] = [];
@@ -178,7 +184,10 @@ export const buildManifest = async (
       ...validateConditionalAvailabilityUsage(fileContent, relativePath),
     );
 
-    const targetFunctionName = extractDefineEntity(fileContent);
+    const targetFunctionName = extractDefineEntity({
+      fileContent: fileContent,
+      filePath: filePath,
+    });
 
     if (!targetFunctionName) {
       continue;
@@ -292,7 +301,9 @@ export const buildManifest = async (
             appPath,
             filePath,
           });
-        connectionProviders.push(extract.config);
+        connectionProviders.push(
+          withDeprecatedConnectionProviderReferences(extract.config),
+        );
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
         connectionProvidersFilePaths.push(relativePath);
@@ -304,7 +315,9 @@ export const buildManifest = async (
             appPath,
             filePath,
           });
-        messagingProviders.push(extract.config);
+        messagingProviders.push(
+          withDeprecatedMessagingProviderReferences(extract.config),
+        );
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
         messagingProvidersFilePaths.push(relativePath);
@@ -315,7 +328,7 @@ export const buildManifest = async (
           appPath,
           filePath,
         });
-        mcpServers.push(extract.config);
+        mcpServers.push(withDeprecatedMcpServerReferences(extract.config));
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
         mcpServersFilePaths.push(relativePath);
@@ -515,6 +528,18 @@ export const buildManifest = async (
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
         indexesFilePaths.push(relativePath);
+        break;
+      }
+      case 'validationRules': {
+        const extract = await extractManifestFromFile<ValidationRuleManifest>({
+          appPath,
+          filePath,
+        });
+
+        validationRules.push(extract.config);
+        errors.push(...extract.errors);
+        warnings.push(...(extract.warnings ?? []));
+        validationRulesFilePaths.push(relativePath);
         break;
       }
       case 'pageLayoutTabs': {
@@ -792,6 +817,7 @@ export const buildManifest = async (
         commandMenuItems: commandMenuItems.sort(byId),
         timelineActivityTypes: timelineActivityTypes.sort(byId),
         settingsMenuItems: settingsMenuItems.sort(byId),
+        validationRules: validationRules.sort(byId),
         relatedRecordPaths: relatedRecordPaths.sort(byId),
       };
 
@@ -800,6 +826,7 @@ export const buildManifest = async (
     objects: objectsFilePaths,
     fields: fieldsFilePaths,
     indexes: indexesFilePaths,
+    validationRules: validationRulesFilePaths,
     permissionFlags: permissionFlagsFilePaths,
     roles: rolesFilePaths,
     skills: skillsFilePaths,

@@ -1,35 +1,39 @@
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { createListDashboardsTool } from 'src/modules/dashboard/tools/list-dashboards.tool';
-import { type DashboardToolDependencies } from 'src/modules/dashboard/tools/types/dashboard-tool-dependencies.type';
 
 const WORKSPACE_ID = '20202020-aaaa-4d02-bf25-6aeccf7ea419';
-const ROLE_ID = '20202020-bbbb-4d02-bf25-6aeccf7ea419';
+const AUTH_CONTEXT = {
+  type: 'user',
+  workspace: { id: WORKSPACE_ID },
+} as WorkspaceAuthContext;
 
-const buildDeps = () => {
+const buildDependencies = () => {
   const getRepository = jest.fn().mockReturnValue({
     find: jest.fn().mockResolvedValue([]),
   });
 
   return {
     getRepository,
-    deps: {
+    dependencies: {
       workspaceOrmManager: {
         executeInWorkspaceContext: jest
           .fn()
           .mockImplementation(async (fn) => fn()),
         getRepository,
       },
-    } as unknown as Pick<DashboardToolDependencies, 'workspaceOrmManager'>,
+    },
   };
 };
 
 describe('createListDashboardsTool', () => {
-  it('reads dashboards through the caller role rather than bypassing permissions', async () => {
-    const { deps, getRepository } = buildDeps();
+  it('reads dashboards as the caller rather than bypassing permissions', async () => {
+    const { dependencies, getRepository } = buildDependencies();
 
-    const tool = createListDashboardsTool(deps, {
-      workspaceId: WORKSPACE_ID,
-      rolePermissionConfig: {
-        intersectionOf: { userWorkspaceRoleId: ROLE_ID },
+    const tool = createListDashboardsTool({
+      dependencies,
+      context: {
+        workspaceId: WORKSPACE_ID,
+        authContext: AUTH_CONTEXT,
       },
     });
 
@@ -37,8 +41,9 @@ describe('createListDashboardsTool', () => {
 
     expect(result.success).toBe(true);
     expect(getRepository).toHaveBeenCalledTimes(1);
-    expect(getRepository).toHaveBeenCalledWith('dashboard', {
-      intersectionOf: { userWorkspaceRoleId: ROLE_ID },
-    });
+    expect(getRepository).toHaveBeenCalledWith('dashboard');
+    expect(
+      dependencies.workspaceOrmManager.executeInWorkspaceContext,
+    ).toHaveBeenCalledWith(expect.any(Function), AUTH_CONTEXT);
   });
 });

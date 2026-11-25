@@ -20,30 +20,31 @@ import { WorkflowQueryValidationGraphqlApiExceptionFilter } from 'src/engine/cor
 import { WorkflowTriggerGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-trigger-graphql-api-exception.filter';
 import { WorkflowVersionValidationGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-version-validation-graphql-api-exception.filter';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { AuthContext } from 'src/engine/decorators/auth/auth-context.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { BillingEnabledGuard } from 'src/engine/guards/billing-enabled.guard';
-import { FeatureFlagGuard } from 'src/engine/guards/feature-flag.guard';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/permissions/utils/permissions-graphql-api-exception.filter';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @MetadataResolver()
 @UseGuards(
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: false,
-      workspaceAgnostic: false,
+  AccessPolicyGuard({
+    authPrincipals: {
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: false,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: false,
+      application: false,
     },
-    apiKey: false,
-    oauthClient: false,
-    application: false,
+    requiredPermissionFlags: [PermissionFlagType.WORKFLOWS],
+    requiredFeatureFlags: [FeatureFlagKey.IS_GETTING_STARTED_ENABLED],
   }),
   BillingEnabledGuard,
-  FeatureFlagGuard(FeatureFlagKey.IS_GETTING_STARTED_ENABLED),
-  SettingsPermissionGuard(PermissionFlagType.WORKFLOWS),
 )
 @UseFilters(
   GettingStartedGraphqlApiExceptionFilter,
@@ -85,13 +86,13 @@ export class GettingStartedWorkflowResolver {
   @Mutation(() => GettingStartedWorkflowDTO)
   async prepareGettingStartedWorkflow(
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthContext() authContext: WorkspaceAuthContext,
     @Args('stepActionKey', { type: () => GettingStartedStepActionKey })
     stepActionKey: GettingStartedStepActionKey,
   ): Promise<GettingStartedWorkflowDTO> {
     return this.gettingStartedWorkflowWorkspaceService.prepareWorkflowOrThrow({
       workspaceId: workspace.id,
-      userWorkspaceId,
+      authContext,
       stepActionKey,
     });
   }

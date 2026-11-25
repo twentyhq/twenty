@@ -15,7 +15,6 @@ import { getTimeBlocks } from '@/ui/input/components/internal/date/utils/getTime
 import { getTimeMask } from '@/ui/input/components/internal/date/utils/getTimeMask';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { t } from '@lingui/core/macro';
 import { Temporal } from 'temporal-polyfill';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
@@ -30,6 +29,7 @@ import {
   IconClock,
 } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const TIME_INPUT_ICON_SIZE = 16;
 
@@ -100,6 +100,7 @@ export const DateTimePickerHeader = ({
   onChangeMonth,
   onChangeYear,
 }: DateTimePickerHeaderProps) => {
+  const { t } = useLingui();
   const { timeFormat } = useDateTimeFormat();
   const { formatTime, parseTime, isHour12 } = useTimeInput(timeFormat);
   const displayedMonth = Temporal.PlainYearMonth.from(viewedMonth);

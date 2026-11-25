@@ -25,24 +25,6 @@ describe('title-utils', () => {
     expect(getPageTitleFromPath('/settings/experience')).toBe(
       'Experience - Settings',
     );
-    expect(getPageTitleFromPath('/settings/accounts')).toBe(
-      'Account - Settings',
-    );
-    expect(getPageTitleFromPath('/settings/accounts/new')).toBe(
-      'Account - Settings',
-    );
-    expect(getPageTitleFromPath('/settings/accounts/calendars')).toBe(
-      'Account - Settings',
-    );
-    expect(
-      getPageTitleFromPath('/settings/accounts/calendars/:accountUuid'),
-    ).toBe('Account - Settings');
-    expect(getPageTitleFromPath('/settings/accounts/emails')).toBe(
-      'Account - Settings',
-    );
-    expect(getPageTitleFromPath('/settings/accounts/emails/:accountUuid')).toBe(
-      'Account - Settings',
-    );
     expect(getPageTitleFromPath('/settings/app-preferences')).toBe(
       'Apps preferences - Settings',
     );
@@ -51,6 +33,9 @@ describe('title-utils', () => {
     );
     expect(getPageTitleFromPath('/settings/billing/plans')).toBe(
       'Billing - Settings',
+    );
+    expect(getPageTitleFromPath('/settings/partner')).toBe(
+      'Partner - Settings',
     );
     expect(getPageTitleFromPath('/settings/members')).toBe(
       'Members - Settings',

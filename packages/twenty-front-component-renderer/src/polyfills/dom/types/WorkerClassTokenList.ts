@@ -4,7 +4,7 @@ export type WorkerClassTokenList = {
   value: string;
   add: (...tokens: string[]) => void;
   remove: (...tokens: string[]) => void;
-  toggle: (token: string, force?: boolean) => boolean;
+  toggle: (token: string, force?: boolean | null) => boolean;
   replace: (oldToken: string, newToken: string) => boolean;
   contains: (token: string) => boolean;
   item: (index: number) => string | null;

@@ -12,7 +12,7 @@ import { type FieldType } from '@/settings/data-model/types/FieldType';
 import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { styled } from '@linaria/react';
-import { msg, t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
@@ -70,6 +70,7 @@ export const SettingsObjectNewFieldSelector = ({
   excludedFieldTypes = [],
   objectNamePlural,
 }: SettingsObjectNewFieldSelectorProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const { i18n } = useLingui();
   const { control, setValue } =

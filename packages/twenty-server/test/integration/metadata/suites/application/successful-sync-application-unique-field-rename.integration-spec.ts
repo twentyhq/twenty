@@ -62,7 +62,7 @@ const computeExpectedUniqueIndexName = (fieldName: string): string =>
     } as UniversalFlatObjectMetadata,
     orderedIndexColumnNames: [fieldName],
     isUnique: true,
-    indexWhereClause: null,
+    indexWhereClause: '"deletedAt" IS NULL',
   });
 
 const findTestObject = async () => {

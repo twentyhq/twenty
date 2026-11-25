@@ -3,11 +3,12 @@ import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { widgetHeaderCountComponentFamilyState } from '@/page-layout/widgets/states/widgetHeaderCountComponentFamilyState';
 import { WidgetCardHeaderActionLink } from '@/page-layout/widgets/widget-card/components/WidgetCardHeaderActionLink';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconArrowUpRight } from 'twenty-ui/icon';
+import { useLingui } from '@lingui/react/macro';
 
 export const WidgetActionCallRecordingSeeAll = () => {
+  const { t } = useLingui();
   const widget = useCurrentWidget();
   const widgetHeaderCount = useAtomComponentFamilyStateValue(
     widgetHeaderCountComponentFamilyState,

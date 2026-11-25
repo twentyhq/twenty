@@ -50,14 +50,14 @@ const failingBatchCreationTestCases: EachTestingContext<TestContext>[] = [
     },
   },
   {
-    title: 'when batch contains item with invalid folderId',
+    title: 'when batch contains item with invalid parentId',
     context: {
       inputs: [
         {
           type: NavigationMenuItemType.RECORD,
           targetRecordId: faker.string.uuid(),
           targetObjectMetadataId: faker.string.uuid(),
-          folderId: 'not-a-valid-uuid',
+          parentId: 'not-a-valid-uuid',
         },
       ],
     },

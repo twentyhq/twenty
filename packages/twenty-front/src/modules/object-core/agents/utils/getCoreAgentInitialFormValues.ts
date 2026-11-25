@@ -1,15 +1,6 @@
+import { getAgentIcon } from '@/object-core/agents/utils/getAgentIcon';
 import { type FindOneAgentQuery } from '~/generated-metadata/graphql';
 import { type CoreAgentFormValues } from '@/object-core/agents/validation-schemas/coreAgentFormSchema';
-import { coreAgentTriggerSchema } from '@/object-core/agents/validation-schemas/coreAgentTriggerSchema';
-
-const parseAgentTriggers = (
-  triggers: unknown[],
-): CoreAgentFormValues['triggers'] =>
-  triggers.flatMap((trigger) => {
-    const parsedTrigger = coreAgentTriggerSchema.safeParse(trigger);
-
-    return parsedTrigger.success ? [parsedTrigger.data] : [];
-  });
 
 export const getCoreAgentInitialFormValues = (
   agent: FindOneAgentQuery['findOneAgent'],
@@ -18,11 +9,11 @@ export const getCoreAgentInitialFormValues = (
     name: agent.name,
     label: agent.label,
     description: agent.description,
-    icon: agent.icon || 'IconLego',
+    icon: getAgentIcon(agent.icon),
+    avatarColor: agent.avatarColor,
+    avatarShape: agent.avatarShape,
     modelId: agent.modelId,
-    role: agent.roleId,
     prompt: agent.prompt,
     modelConfiguration: agent.modelConfiguration || {},
-    triggers: parseAgentTriggers(agent.triggers ?? []),
   };
 };

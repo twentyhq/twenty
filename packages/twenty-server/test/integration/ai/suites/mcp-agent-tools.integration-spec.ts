@@ -8,12 +8,9 @@ import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util
 import { ToolCategory } from 'twenty-shared/ai';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
-const AGENT_TOOL_NAMES = [
-  'list_agents',
-  'create_agent',
-  'update_agent',
-  'delete_agent',
-];
+const AGENT_WRITE_TOOL_NAMES = ['create_agent', 'update_agent', 'delete_agent'];
+
+const AGENT_TOOL_NAMES = ['list_agents', ...AGENT_WRITE_TOOL_NAMES];
 
 type AgentSummary = {
   id: string;
@@ -202,11 +199,44 @@ describe('MCP agent tools (integration)', () => {
     expect(created.error).toContain('cron');
   });
 
-  // AI_SETTINGS is a settings flag, so the member's canAccessAllTools does not grant it
+  // The member's canAccessAllTools grants AI but not AI_SETTINGS, a settings flag
   describe('for a member without AI_SETTINGS', () => {
-    it('should hide the agent category from the catalog', async () => {
+    it('should list only list_agents in the agent category', async () => {
       const catalog = await getMcpToolCatalog({
         token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      });
+
+      expect(catalog[ToolCategory.AGENT]?.map(({ name }) => name)).toEqual([
+        'list_agents',
+      ]);
+    });
+
+    it('should list the agents', async () => {
+      const result = await callMcpTool({
+        toolName: 'execute_tool',
+        toolArguments: { toolName: 'list_agents', arguments: {} },
+        token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      });
+
+      expect(result.isError).toBe(false);
+      expect(JSON.parse(result.content[0].text)).toMatchObject({
+        success: true,
+      });
+    });
+
+    it.each(AGENT_WRITE_TOOL_NAMES)('should refuse %s', async (toolName) => {
+      await expectToolRefused({
+        toolName,
+        token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      });
+    });
+  });
+
+  // The seeded guest role cannot access tools, so it lacks AI
+  describe('for a guest without AI', () => {
+    it('should hide the agent category from the catalog', async () => {
+      const catalog = await getMcpToolCatalog({
+        token: APPLE_PHIL_GUEST_ACCESS_TOKEN,
       });
 
       expect(Object.keys(catalog)).not.toContain(ToolCategory.AGENT);
@@ -215,7 +245,7 @@ describe('MCP agent tools (integration)', () => {
     it.each(AGENT_TOOL_NAMES)('should refuse %s', async (toolName) => {
       await expectToolRefused({
         toolName,
-        token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+        token: APPLE_PHIL_GUEST_ACCESS_TOKEN,
       });
     });
   });

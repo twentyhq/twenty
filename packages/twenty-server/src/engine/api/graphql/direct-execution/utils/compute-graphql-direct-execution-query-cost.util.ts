@@ -1,3 +1,4 @@
+import { isNumber } from '@sniptt/guards';
 import {
   type FieldNode,
   type FragmentDefinitionNode,
@@ -7,6 +8,7 @@ import {
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
+import { getFindManyPageSize } from 'src/engine/api/common/common-query-runners/utils/get-find-many-page-size.util';
 import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
 import { type WorkspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
@@ -119,9 +121,11 @@ const getRequestedRowCount = ({
 
   const requestedRowCount = args.first ?? args.last;
 
-  return typeof requestedRowCount === 'number'
-    ? Math.max(requestedRowCount, 0)
-    : QUERY_MAX_RECORDS;
+  if (!isNumber(requestedRowCount)) {
+    return QUERY_MAX_RECORDS;
+  }
+
+  return Math.max(getFindManyPageSize({ first: requestedRowCount }), 0);
 };
 
 export const computeGraphQLDirectExecutionQueryCost = ({

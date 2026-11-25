@@ -89,6 +89,25 @@ describe('formatGoogleCalendarEvents', () => {
     );
   });
 
+  it('should list room attendees from the resource flag or the resource email domain as resources', () => {
+    const [formattedEvent] = formatGoogleCalendarEvents([
+      {
+        ...mockGoogleEvent,
+        attendees: [
+          { email: 'person@example.com' },
+          { email: 'Flagged-Room@example.com', resource: true },
+          { email: 'acme.com_188abc@resource.calendar.google.com' },
+        ],
+      },
+    ]);
+
+    expect(formattedEvent.resourceHandles).toEqual([
+      'flagged-room@example.com',
+      'acme.com_188abc@resource.calendar.google.com',
+    ]);
+    expect(formattedEvent.participants).toHaveLength(3);
+  });
+
   const testCases: EachTestingContext<{ input: string; expected: string }>[] = [
     {
       title: 'should sanitize a UCALID with \u0000',

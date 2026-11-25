@@ -46,6 +46,10 @@ Il **data layer** di un'app Twenty è l'insieme dei dati che la tua app *aggiung
     <CardTitle>Tipi di attività Timeline</CardTitle>
     Definire gli eventi di audit automatico e gli eventi espliciti delle app per registrare le cronologie.
   </Card>
+  <Card href="/it/developers/extend/apps/data/validation-rules" img="/images/user-guide/halftone/card-page-validation-rules.svg">
+    <CardTitle>Regole di convalida</CardTitle>
+    `defineValidationRule` — dichiara le condizioni che un record deve soddisfare prima di poter essere salvato.
+  </Card>
 </CardGroup>
 
 ## Entità in sintesi
@@ -58,8 +62,9 @@ Il **data layer** di un'app Twenty è l'insieme dei dati che la tua app *aggiung
 | **Indice**                          | Un indice di database per velocizzare una query ricorrente su uno dei tuoi oggetti                                                      | `defineIndex()`                          |
 | **Tipo di attività della timeline** | Un evento di audit automatico o un evento di dominio esplicito visualizzato nelle timeline dei record                                   | `defineTimelineActivityType()`           |
 | **Percorso del record correlato**   | Una catena di un massimo di tre relazioni attraverso la quale l'accesso a un record si estende ai record correlati                      | `defineRelatedRecordPath()`              |
+| **Regola di convalida**             | Una condizione che un record deve soddisfare prima di poter essere salvato                                                              | `defineValidationRule()`                 |
 
-La CLI rileva questi elementi tramite analisi AST in fase di build, quindi l'organizzazione dei file dipende da te — la convenzione è `src/objects/`, `src/fields/`, `src/indexes/`, `src/timeline-activity-types/` e `src/related-record-paths/`. Gli UUID `universalIdentifier` stabili collegano tutto tra le varie distribuzioni.
+La CLI rileva questi elementi tramite analisi AST in fase di build, quindi l'organizzazione dei file spetta a te — la convenzione è `src/objects/`, `src/validation-rules/`, `src/fields/`, `src/indexes/`, `src/timeline-activity-types/` e `src/related-record-paths/`. Gli UUID `universalIdentifier` stabili collegano tutto tra le varie distribuzioni.
 
 ## Indici (facoltativi)
 

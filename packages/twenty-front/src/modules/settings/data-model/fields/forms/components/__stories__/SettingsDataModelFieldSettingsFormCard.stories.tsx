@@ -92,9 +92,42 @@ export const WithSelectForm: Story = {
     );
     await waitFor(() => expect(optionActions).not.toBeInTheDocument());
 
-    await waitFor(() => expect(optionActionsTrigger).toBeDisabled());
     await userEvent.click(optionActionsTrigger);
-    expect(body.queryByRole('menu')).not.toBeInTheDocument();
+    const defaultOptionActions = await body.findByRole('menu', {
+      name: 'More options',
+    });
+
+    expect(
+      within(defaultOptionActions).queryByRole('menuitem', {
+        name: 'Remove as default',
+      }),
+    ).not.toBeInTheDocument();
+    expect(
+      within(defaultOptionActions).queryByRole('menuitem', {
+        name: 'Remove option',
+      }),
+    ).not.toBeInTheDocument();
+    await userEvent.click(
+      within(defaultOptionActions).getByRole('menuitem', {
+        name: 'Add description',
+      }),
+    );
+    const descriptionInput =
+      await body.findByPlaceholderText('Add a description');
+
+    await userEvent.type(descriptionInput, 'Shown in pickers');
+    expect(descriptionInput).toHaveValue('Shown in pickers');
+    await userEvent.keyboard('{Enter}');
+    await waitFor(() =>
+      expect(body.queryByRole('menu')).not.toBeInTheDocument(),
+    );
+    expect(canvas.getByLabelText('Description')).toBeVisible();
+
+    await userEvent.click(optionActionsTrigger);
+    expect(
+      await body.findByRole('menuitem', { name: 'Edit description' }),
+    ).toBeVisible();
+    await userEvent.keyboard('{Escape}');
 
     const colorTrigger = canvas.getByRole('button', { name: 'Color' });
 

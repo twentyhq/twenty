@@ -146,6 +146,60 @@ describe('Direct application file upload', () => {
     expect(logoRow.mimeType).toBe('image/svg+xml');
   }, 60000);
 
+  it.each([
+    {
+      filePath: 'src/helpers/format.js',
+      content: 'export const format = (value) => String(value);',
+    },
+    {
+      filePath: 'src/styles/chart.css',
+      content: '.chart { color: red; }',
+    },
+  ])(
+    'should preserve imported source $filePath',
+    async ({ filePath, content }) => {
+      jest.useRealTimers();
+
+      const body = Buffer.from(content);
+      const { data: createData, errors: createErrors } =
+        await createApplicationFileUploads({
+          applicationUniversalIdentifier: TEST_APP_UID,
+          files: [{ fileFolder: 'Source', filePath, size: body.length }],
+        });
+
+      expect(createErrors).toBeUndefined();
+      expect(createData!.createApplicationFileUploads.errors).toEqual([]);
+
+      const { targets } = createData!.createApplicationFileUploads;
+
+      expect(targets).toHaveLength(1);
+      expect(targets[0].filePath).toBe(filePath);
+      expect(targets[0].fileFolder).toBe('Source');
+
+      const response = await putApplicationFileUploadTarget({
+        uploadTarget: targets[0],
+        body,
+      });
+
+      expect(response.status).toBe(204);
+
+      const { data: completeData, errors: completeErrors } =
+        await completeApplicationFileUploads({
+          applicationUniversalIdentifier: TEST_APP_UID,
+          fileIds: [targets[0].fileId],
+        });
+
+      jest.useFakeTimers();
+
+      expect(completeErrors).toBeUndefined();
+      expect(completeData!.completeApplicationFileUploads.errors).toEqual([]);
+      expect(completeData!.completeApplicationFileUploads.files).toHaveLength(
+        1,
+      );
+      expect(readStoredFile('source', filePath)).toBe(content);
+    },
+  );
+
   it('should fail slow: reserve valid files and report a disallowed folder as a per-file error', async () => {
     jest.useRealTimers();
 

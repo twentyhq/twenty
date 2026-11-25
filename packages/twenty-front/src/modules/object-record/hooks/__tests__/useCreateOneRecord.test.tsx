@@ -1,7 +1,7 @@
 import { gql, InMemoryCache } from '@apollo/client';
 import { act, renderHook } from '@testing-library/react';
 
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import {
   query,
   responseData,
@@ -51,7 +51,7 @@ describe('useCreateOneRecord', () => {
     const { result } = renderHook(
       () =>
         useCreateOneRecord({
-          objectNameSingular: CoreObjectNameSingular.Person,
+          objectNameSingular: StandardObjectNameSingular.Person,
         }),
       {
         wrapper: Wrapper,
@@ -107,7 +107,7 @@ describe('useCreateOneRecord', () => {
     const { result } = renderHook(
       () =>
         useCreateOneRecord({
-          objectNameSingular: CoreObjectNameSingular.Person,
+          objectNameSingular: StandardObjectNameSingular.Person,
         }),
       { wrapper: RejectingWrapper },
     );

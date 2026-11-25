@@ -19,7 +19,7 @@ export const installOutsidePressObservation = ({
   documentTarget,
 }: {
   hooks: Partial<Hooks> | null;
-  documentTarget: Document;
+  documentTarget: object;
 }): WorkerOutsidePressObservation => {
   if (!isDefined(hooks)) {
     throw new CustomError(

@@ -2,7 +2,7 @@ import { MockedProvider } from '@apollo/client/testing/react';
 import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { textfieldDefinition } from '@/object-record/record-field/ui/__mocks__/fieldDefinitions';
@@ -42,7 +42,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
             <RecordTableContextProvider
               recordTableId={recordTableId}
               viewBarId="viewBarId"
-              objectNameSingular={CoreObjectNameSingular.Person}
+              objectNameSingular={StandardObjectNameSingular.Person}
               onRecordIdentifierClick={() => {}}
             >
               <FieldContext.Provider

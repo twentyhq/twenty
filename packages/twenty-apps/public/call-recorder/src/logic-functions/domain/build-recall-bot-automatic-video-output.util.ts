@@ -1,41 +1,51 @@
-import { isUndefined } from '@sniptt/guards';
-
-import { getBotImageBackground } from 'src/logic-functions/constants/get-bot-image-background';
-import { isWorkspaceLogoBotImageEnabled } from 'src/logic-functions/constants/is-workspace-logo-bot-image-enabled';
-import { getWorkspaceLogo } from 'src/logic-functions/data/get-workspace-logo.util';
-import { buildBotImage } from 'src/logic-functions/domain/build-bot-image.util';
+import { fetchPrebuiltCameraTileFramesOrThrow } from 'src/logic-functions/data/fetch-prebuilt-camera-tile-frames-or-throw.util';
+import { buildRecallBotAutomaticVideoOutputFromFrames } from 'src/logic-functions/domain/build-recall-bot-automatic-video-output-from-frames.util';
+import { buildWorkspaceCameraTileFrames } from 'src/logic-functions/domain/build-workspace-camera-tile-frames.util';
+import { type CameraTileFrames } from 'src/logic-functions/types/camera-tile-frames.type';
 import { type RecallBotAutomaticVideoOutput } from 'src/logic-functions/types/recall-bot-automatic-video-output.type';
+import { getCallRecorderStyle } from 'src/logic-functions/utils/get-call-recorder-style.util';
+
+const tryBuildWorkspaceCameraTileFrames = async (): Promise<
+  CameraTileFrames | undefined
+> => {
+  try {
+    return await buildWorkspaceCameraTileFrames();
+  } catch (error) {
+    console.warn(
+      `[call-recorder] failed to build the workspace camera tile, falling back to the Twenty style: ${error instanceof Error ? error.message : String(error)}`,
+    );
+
+    return undefined;
+  }
+};
 
 export const buildRecallBotAutomaticVideoOutput = async (): Promise<
   RecallBotAutomaticVideoOutput | undefined
 > => {
-  if (!isWorkspaceLogoBotImageEnabled()) {
+  const style = getCallRecorderStyle();
+
+  if (style === 'NONE') {
     return undefined;
   }
 
-  const logoBuffer = await getWorkspaceLogo();
+  try {
+    const workspaceFrames =
+      style === 'WORKSPACE'
+        ? await tryBuildWorkspaceCameraTileFrames()
+        : undefined;
 
-  if (isUndefined(logoBuffer)) {
+    const frames =
+      workspaceFrames ??
+      (await fetchPrebuiltCameraTileFramesOrThrow(
+        style === 'MINIMAL' ? 'MINIMAL' : 'TWENTY',
+      ));
+
+    return buildRecallBotAutomaticVideoOutputFromFrames(frames);
+  } catch (error) {
+    console.warn(
+      `[call-recorder] failed to build the camera tile: ${error instanceof Error ? error.message : String(error)}`,
+    );
+
     return undefined;
   }
-
-  const background = getBotImageBackground();
-
-  const notRecordingImage = await buildBotImage({ logoBuffer, background });
-
-  if (isUndefined(notRecordingImage)) {
-    return undefined;
-  }
-
-  const recordingImage =
-    (await buildBotImage({
-      logoBuffer,
-      background,
-      withRecordingStatusBadge: true,
-    })) ?? notRecordingImage;
-
-  return {
-    in_call_recording: { kind: 'jpeg', b64_data: recordingImage },
-    in_call_not_recording: { kind: 'jpeg', b64_data: notRecordingImage },
-  };
 };

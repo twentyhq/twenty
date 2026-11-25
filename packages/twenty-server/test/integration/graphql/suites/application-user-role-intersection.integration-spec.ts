@@ -81,12 +81,12 @@ const findApplicationId = async (): Promise<string> => {
 
 const findApplicationDefaultRoleId = async (): Promise<string | null> => {
   const rows = await globalThis.testDataSource.query(
-    `SELECT "defaultRoleId" FROM core."application"
+    `SELECT "requestedRoleId" FROM core."application"
      WHERE "universalIdentifier" = $1 AND "workspaceId" = $2`,
     [TEST_APP_UNIVERSAL_IDENTIFIER, SEED_APPLE_WORKSPACE_ID],
   );
 
-  return rows[0]?.defaultRoleId ?? null;
+  return rows[0]?.requestedRoleId ?? null;
 };
 
 const createCompany = async (id: string, name: string) =>
@@ -179,10 +179,13 @@ describe('An application acting for a user is bound by both roles', () => {
     );
   });
 
-  it('should apply the application row-level predicate even though the user has none', async () => {
+  it('should ignore the application row-level predicate', async () => {
     const names = await findCompanyNames(applicationAccessToken);
 
-    expect(names).toEqual([VISIBLE_COMPANY_NAME]);
+    expect(names).toHaveLength(2);
+    expect(names).toEqual(
+      expect.arrayContaining([VISIBLE_COMPANY_NAME, HIDDEN_COMPANY_NAME]),
+    );
   });
 
   it('should refuse an update the application role forbids and the user role allows', async () => {

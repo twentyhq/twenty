@@ -49,7 +49,8 @@
               "pages": [
                 "user-guide/data-model/capabilities/objects",
                 "user-guide/data-model/capabilities/fields",
-                "user-guide/data-model/capabilities/relation-fields"
+                "user-guide/data-model/capabilities/relation-fields",
+                "user-guide/data-model/capabilities/validation-rules"
               ]
             },
             {
@@ -235,7 +236,10 @@
             {
               "key": "aiHowTos",
               "label": "How-Tos",
-              "pages": ["user-guide/ai/how-tos/ai-faq"]
+              "pages": [
+                "user-guide/ai/how-tos/ai-faq",
+                "user-guide/ai/how-tos/inbox-notifications"
+              ]
             }
           ]
         },
@@ -441,7 +445,8 @@
                 "developers/extend/apps/data/extending-objects",
                 "developers/extend/apps/data/system-fields",
                 "developers/extend/apps/data/relations",
-                "developers/extend/apps/data/timeline-activity-types"
+                "developers/extend/apps/data/timeline-activity-types",
+                "developers/extend/apps/data/validation-rules"
               ]
             },
             {
@@ -640,6 +645,7 @@
                   "key": "uiComponentsDataDisplay",
                   "label": "Data display",
                   "pages": [
+                    "ui/components/data-display/assistant-avatar",
                     "ui/components/data-display/avatar-group",
                     "ui/components/data-display/command-block",
                     "ui/components/data-display/details-row",

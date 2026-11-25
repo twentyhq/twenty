@@ -3,7 +3,7 @@ import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldCont
 import { ForbiddenFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/ForbiddenFieldDisplay';
 import { useMorphRelationToOneFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useMorphRelationToOneFieldDisplay';
 import { useContext } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const MorphRelationManyToOneFieldDisplay = () => {
@@ -22,7 +22,7 @@ export const MorphRelationManyToOneFieldDisplay = () => {
 
   const isWorkspaceMemberFieldMetadataRelation =
     morphFieldValuesWithObjectName.objectNameSingular ===
-    CoreObjectNameSingular.WorkspaceMember;
+    StandardObjectNameSingular.WorkspaceMember;
 
   return (
     <RecordChip

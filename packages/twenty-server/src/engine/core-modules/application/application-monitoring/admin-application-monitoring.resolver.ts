@@ -10,8 +10,7 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @UsePipes(ResolverValidationPipe)
 @AdminResolver()
@@ -20,18 +19,20 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
   PreventNestToAutoLogGraphqlErrorsFilter,
 )
 @UseGuards(
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
+  AccessPolicyGuard({
+    authPrincipals: {
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: false,
+      application: false,
     },
-    apiKey: false,
-    oauthClient: false,
-    application: false,
+    requiredPermissionFlags: [],
   }),
-  NoPermissionGuard,
 )
 export class AdminApplicationMonitoringResolver {
   constructor(

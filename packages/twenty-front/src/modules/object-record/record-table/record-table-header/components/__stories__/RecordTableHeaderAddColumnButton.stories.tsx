@@ -1,3 +1,4 @@
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import {
@@ -11,6 +12,7 @@ import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { graphql, HttpResponse } from 'msw';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
@@ -21,6 +23,7 @@ import { RecordTableDecorator } from '~/testing/decorators/RecordTableDecorator'
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
+import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
 const onCreateManyViewFields = fn();
 
@@ -181,6 +184,77 @@ export const AllFieldsVisible: Story = {
     expect(
       within(popup).queryByPlaceholderText('Search fields'),
     ).not.toBeInTheDocument();
+    await userEvent.keyboard('{Escape}');
+  },
+};
+
+export const GroupsFieldsByRelationKind: Story = {
+  beforeEach: () => {
+    const previousWorkspace = jotaiStore.get(currentWorkspaceState.atom);
+    jotaiStore.set(currentWorkspaceState.atom, {
+      ...mockCurrentWorkspace,
+      featureFlags: [
+        { key: FeatureFlagKey.IS_LOOKUP_COLUMNS_ENABLED, value: true },
+      ],
+    });
+
+    return () => jotaiStore.set(currentWorkspaceState.atom, previousWorkspace);
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'Add column' }),
+    );
+    const popup = await body.findByRole('dialog', { name: 'Add column' });
+    const getSectionLabels = () =>
+      within(popup)
+        .getAllByText(/^(Fields|Belongs to|Has many)$/)
+        .map((sectionLabel) => sectionLabel.textContent);
+    const getSectionFieldLabels = (sectionLabel: string) =>
+      within(within(popup).getByRole('group', { name: sectionLabel }))
+        .getAllByRole('button')
+        .map((button) => button.textContent);
+
+    expect(getSectionLabels()).toEqual(['Fields', 'Belongs to', 'Has many']);
+    expect(getSectionFieldLabels('Fields')).toEqual([
+      'ARR',
+      'Deleted at',
+      'ICP',
+      'Intro Video',
+      'Last update',
+      'Tagline',
+      'Updated by',
+      'Visa Sponsorship',
+      'Work Policy',
+      'X',
+    ]);
+    expect(getSectionFieldLabels('Belongs to')).toEqual(['Account Owner']);
+    expect(getSectionFieldLabels('Has many')).toEqual([
+      'Attachments',
+      'Cared For Pets',
+      'Notes',
+      'Opportunities',
+      'People',
+      'Previous Employees',
+      'Tasks',
+      'Timeline Activities',
+    ]);
+
+    await userEvent.type(
+      within(popup).getByPlaceholderText('Search fields'),
+      'at',
+    );
+
+    await waitFor(() =>
+      expect(getSectionLabels()).toEqual(['Fields', 'Has many']),
+    );
+    expect(getSectionFieldLabels('Fields')).toEqual([
+      'Deleted at',
+      'Last update',
+      'Updated by',
+    ]);
+    expect(getSectionFieldLabels('Has many')).toEqual(['Attachments']);
     await userEvent.keyboard('{Escape}');
   },
 };

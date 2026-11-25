@@ -1,3 +1,4 @@
+import { ApplicationGrantRoleLookupModule } from 'src/engine/core-modules/application/application-grant-role-lookup/application-grant-role-lookup.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -5,6 +6,7 @@ import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { ApplicationLookupModule } from 'src/engine/core-modules/application/application-lookup/application-lookup.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUrlModule } from 'src/engine/core-modules/file/file-url/file-url.module';
+import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { PendingWakeUpEntity } from 'src/engine/core-modules/pending-wake-up/entities/pending-wake-up.entity';
 import { PendingWakeUpModule } from 'src/engine/core-modules/pending-wake-up/pending-wake-up.module';
@@ -17,10 +19,13 @@ import { DeliverAgentRunOutcomeJob } from 'src/engine/metadata-modules/ai/ai-age
 import { RunAgentJob } from 'src/engine/metadata-modules/ai/ai-agent-execution/jobs/run-agent.job';
 import { AgentMessagePartResolver } from 'src/engine/metadata-modules/ai/ai-agent-execution/resolvers/agent-message-part.resolver';
 import { AgentMessageResolver } from 'src/engine/metadata-modules/ai/ai-agent-execution/resolvers/agent-message.resolver';
+import { AiGenerateService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/ai-generate.service';
 import { AgentRunResolver } from 'src/engine/metadata-modules/ai/ai-agent-execution/resolvers/agent-run.resolver';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
+import { AgentRunCallerContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-context.service';
 import { AgentCallerConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-caller-conversation.service';
 import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-handler-registry.service';
+import { AgentRunPersonaService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-persona.service';
 import { AgentRunJobScopeService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-job-scope.service';
 import { AgentRunConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-conversation.service';
 import { AgentRunPendingWakeUpHandlerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-pending-wake-up-handler.service';
@@ -28,6 +33,9 @@ import { AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-executi
 import { AgentRunSettlementService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-settlement.service';
 import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
 import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
+import { AgentFileLoaderService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-file-loader.service';
+import { AgentFilePartService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-file-part.service';
+import { AgentFileRejectionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-file-rejection.service';
 import { AgentStepLoopService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-step-loop.service';
 import { AgentToolsetService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-toolset.service';
 import { AgentRunTurnService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-turn.service';
@@ -35,37 +43,41 @@ import { AgentTurnService } from 'src/engine/metadata-modules/ai/ai-agent-execut
 import { RunAgentAttachmentService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/run-agent-attachment.service';
 import { AgentChatStreamStateModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-stream-state.module';
 import { AgentChatThreadModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-thread.module';
+import { AgentChatReplyPolicyModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-reply-policy.module';
 import { AiAgentRoleModule } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.module';
 import { AiAgentModule } from 'src/engine/metadata-modules/ai/ai-agent/ai-agent.module';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { AgentChatThreadLifecycleModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-thread-lifecycle.module';
 import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-billing.module';
 import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
+import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { SkillModule } from 'src/engine/metadata-modules/skill/skill.module';
-import { UserRoleModule } from 'src/engine/permissions/role-assignment/user-role.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
 @Module({
   imports: [
+    ApplicationGrantRoleLookupModule,
     AgentChatThreadLifecycleModule,
     AgentChatStreamStateModule,
     AgentChatThreadModule,
+    AgentChatReplyPolicyModule,
     AgentHistoryModule,
     AiBillingModule,
     AiAgentModule,
     AiAgentRoleModule,
     ApiKeyModule,
     ApplicationLookupModule,
+    FileModule,
     FileUrlModule,
     MetricsModule,
     PendingWakeUpModule,
     UserWorkspaceModule,
-    UserRoleModule,
     PermissionsModule,
     SkillModule,
     ToolProviderModule,
     WorkspaceCacheModule,
+    WorkspaceManyOrAllFlatEntityMapsCacheModule,
     TypeOrmModule.forFeature([
       AgentEntity,
       FileEntity,
@@ -76,16 +88,22 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
   providers: [
     AgentActorContextService,
     AgentCallerConversationService,
+    AgentRunCallerContextService,
     AgentRunCallerHandlerRegistryService,
     AgentRunConversationService,
     AgentRunJobScopeService,
+    AgentRunPersonaService,
     AgentRunSuspensionService,
     AgentMessagePartResolver,
     AgentMessageResolver,
     AgentRunResolver,
     AgentRunService,
+    AiGenerateService,
     AgentRunSettlementService,
     AgentRunnerService,
+    AgentFileLoaderService,
+    AgentFilePartService,
+    AgentFileRejectionService,
     AgentStepLoopService,
     AgentToolsetService,
     AgentRunTurnService,
@@ -105,6 +123,8 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     AgentCallerConversationService,
     AgentRunCallerHandlerRegistryService,
     AgentRunConversationService,
+    AgentRunService,
+    AgentRunPersonaService,
     AgentRunSuspensionService,
     AgentRunnerService,
     AgentTurnService,

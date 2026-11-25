@@ -4,7 +4,7 @@ import {
   RelationType,
 } from 'twenty-shared/types';
 
-import { GraphqlQueryRunnerException } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
+import { CommonQueryRunnerException } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import {
   buildOrderByFromLeaves,
   checkIfLeafCanCarryCursorValue,
@@ -108,20 +108,21 @@ describe('resolveOrderByLeaves', () => {
     universalIdentifiersByApplicationId: {},
   };
 
-  const flatObjectMetadata = {
+  const flatObjectMetadata = getFlatObjectMetadataMock({
     id: objectMetadataId,
+    universalIdentifier: objectMetadataId,
     workspaceId,
     nameSingular: 'opportunity',
     fieldIds: rootFields.map((field) => field.id),
-  } as unknown as FlatObjectMetadata;
+  });
 
-  const companyObjectMetadata = {
+  const companyObjectMetadata = getFlatObjectMetadataMock({
     id: 'company-object-id',
     universalIdentifier: 'company-object-id',
     workspaceId,
     nameSingular: 'company',
     fieldIds: ['company-name-id', 'company-contactname-id'],
-  } as unknown as FlatObjectMetadata;
+  });
 
   const flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> = {
     byUniversalIdentifier: {
@@ -267,7 +268,7 @@ describe('resolveOrderByLeaves', () => {
 
     expect(() =>
       resolve([{ unknownField: OrderByDirection.AscNullsLast }], true),
-    ).toThrow(GraphqlQueryRunnerException);
+    ).toThrow(CommonQueryRunnerException);
   });
 
   it('should reject malformed entries in strict mode', () => {
@@ -356,18 +357,9 @@ describe('resolveOrderByLeaves', () => {
   });
 
   describe('field read permissions', () => {
-    const permissionsRestricting = (
-      fieldMetadataId: string,
-      objectId: string,
-    ) => ({
-      [objectId]: {
-        canReadObjectRecords: true,
-        canUpdateObjectRecords: true,
-        canSoftDeleteObjectRecords: true,
-        canDestroyObjectRecords: true,
-        restrictedFields: { [fieldMetadataId]: { canRead: false } },
-        // oxlint-disable-next-line typescript/no-explicit-any
-      } as any,
+    const restrictionsOnField = (fieldMetadataId: string) => ({
+      unreadableObjectMetadataIds: new Set<string>(),
+      unreadableFieldMetadataIds: new Set([fieldMetadataId]),
     });
 
     it('should reject ordering by a role-restricted root field', () => {
@@ -376,10 +368,7 @@ describe('resolveOrderByLeaves', () => {
           orderBy: [{ closeDate: OrderByDirection.AscNullsLast }],
           flatObjectMetadata,
           flatFieldMetadataMaps,
-          objectsPermissions: permissionsRestricting(
-            'closedate-id',
-            objectMetadataId,
-          ),
+          recordReadRestrictions: restrictionsOnField('closedate-id'),
         }),
       ).toThrow('does not have permission');
     });
@@ -391,10 +380,7 @@ describe('resolveOrderByLeaves', () => {
           flatObjectMetadata,
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,
-          objectsPermissions: permissionsRestricting(
-            'company-name-id',
-            'company-object-id',
-          ),
+          recordReadRestrictions: restrictionsOnField('company-name-id'),
         }),
       ).toThrow('does not have permission');
     });
@@ -459,10 +445,7 @@ describe('resolveOrderByLeaves', () => {
               ]),
             ),
           },
-          objectsPermissions: permissionsRestricting(
-            'company-name-id',
-            'company-object-id',
-          ),
+          recordReadRestrictions: restrictionsOnField('company-name-id'),
         }),
       ).toThrow('does not have permission');
     });

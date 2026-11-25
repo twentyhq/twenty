@@ -1,10 +1,12 @@
 import { downloadFile } from '@/activities/files/utils/downloadFile';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
 import { IconDownload } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -41,6 +43,9 @@ export const UnavailableFilePreview = ({
   message,
 }: UnavailableFilePreviewProps) => {
   const { t } = useLingui();
+  const hasDownloadPermission = useHasPermissionFlag(
+    PermissionFlagType.DOWNLOAD_FILE,
+  );
 
   return (
     <StyledContainer>
@@ -48,11 +53,13 @@ export const UnavailableFilePreview = ({
         <Trans>Preview Not Available</Trans>
       </StyledTitle>
       <StyledMessage>{message}</StyledMessage>
-      <Button
-        startIcon={<IconDownload />}
-        onClick={() => downloadFile(fileUrl, fileName)}
-        variant="outline"
-      >{t`Download File`}</Button>
+      {hasDownloadPermission && (
+        <Button
+          startIcon={<IconDownload />}
+          onClick={() => downloadFile(fileUrl, fileName)}
+          variant="outline"
+        >{t`Download File`}</Button>
+      )}
     </StyledContainer>
   );
 };

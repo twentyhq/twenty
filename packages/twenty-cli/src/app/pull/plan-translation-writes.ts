@@ -22,7 +22,7 @@ import { generateMessageId } from 'twenty-shared/i18n';
 import { isDefined } from 'twenty-shared/utils';
 
 export type TranslationWritePlan = {
-  writes: PullWrite[];
+  writes: PullWrite<string>[];
   deletions: PullDeletion[];
   compiledEntryCountByLocale: Record<string, number>;
 };
@@ -123,7 +123,7 @@ export const planTranslationWrites = async ({
   baseManifest: Manifest | null;
   frontComponentSourcePaths: string[];
 }): Promise<TranslationWritePlan> => {
-  const writes: PullWrite[] = [];
+  const writes: PullWrite<string>[] = [];
   const deletions: PullDeletion[] = [];
   const compiledEntryCountByLocale: Record<string, number> = {};
   const exportedTranslations = manifest.translations;

@@ -19,19 +19,20 @@ import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @UsePipes(ResolverValidationPipe)
 @UseFilters(AuthGraphqlApiExceptionFilter)
 @UseGuards(
-  AuthPrincipalGuard({
-    userSession: true,
-    apiKey: false,
-    oauthClient: false,
-    application: false,
+  AccessPolicyGuard({
+    authPrincipals: {
+      userSession: true,
+      apiKey: false,
+      oauthClient: false,
+      application: false,
+    },
+    requiredPermissionFlags: [],
   }),
-  NoPermissionGuard,
 )
 @MetadataResolver()
 @AllowSuspendedWorkspace()

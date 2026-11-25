@@ -5,7 +5,6 @@ import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFla
 import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
@@ -13,6 +12,7 @@ import { MainButton } from 'twenty-ui/components/input';
 import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { GrantApplicationCapabilitiesDocument } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 type FrontComponentMediaPermissionModalProps = {
   applicationId: string;
@@ -40,6 +40,7 @@ export const FrontComponentMediaPermissionModal = ({
   modalInstanceId,
   request,
 }: FrontComponentMediaPermissionModalProps) => {
+  const { t } = useLingui();
   const canManageApps = useHasPermissionFlag(PermissionFlagType.APPLICATIONS);
   const [grantCapabilities, { loading }] = useMutation(
     GrantApplicationCapabilitiesDocument,

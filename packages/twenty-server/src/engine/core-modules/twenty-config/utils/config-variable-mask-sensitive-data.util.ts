@@ -5,7 +5,9 @@ export const configVariableMaskSensitiveData = (
   strategy: ConfigVariablesMaskingStrategies,
   options?: { chars?: number; variableName?: string },
 ): string => {
-  if (!value || typeof value !== 'string') return value;
+  if (!value || typeof value !== 'string') {
+    return value;
+  }
   switch (strategy) {
     case ConfigVariablesMaskingStrategies.LAST_N_CHARS: {
       const n = Math.max(1, options?.chars ?? 5);

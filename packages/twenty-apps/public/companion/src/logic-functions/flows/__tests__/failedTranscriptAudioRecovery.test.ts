@@ -1,5 +1,4 @@
 import { beforeEach, expect, it, vi } from 'vitest';
-import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { syncCallRecording } from 'src/logic-functions/flows/utils/syncCallRecording';
 import { type SyncableCallRecording } from 'src/logic-functions/types/SyncableCallRecording';
@@ -46,7 +45,7 @@ it.each([false, true])(
         return { updateCallRecordings: [{ id: recording.id }] };
       },
     );
-    const client = { mutation } as unknown as CoreApiClient;
+    const client = { query: vi.fn(), mutation };
     listTranscripts.mockResolvedValue({
       ok: true,
       transcripts: [

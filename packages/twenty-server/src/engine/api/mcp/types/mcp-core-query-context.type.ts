@@ -1,3 +1,4 @@
+import { type McpToolMode } from 'src/engine/api/mcp/types/mcp-tool-mode.type';
 import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
@@ -11,5 +12,5 @@ export type McpCoreQueryContext = {
   apiKey: FlatApiKey | undefined;
   application?: FlatApplication;
   agentId: string | undefined;
-  isDirectMode: boolean;
+  toolMode: McpToolMode;
 };

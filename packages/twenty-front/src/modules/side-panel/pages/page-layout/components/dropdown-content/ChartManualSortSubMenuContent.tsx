@@ -13,11 +13,11 @@ import { getManualSortOrderFromConfig } from '@/side-panel/pages/page-layout/uti
 import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { type WidgetConfiguration } from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
+import { useLingui } from '@lingui/react/macro';
 
 type ChartManualSortSubMenuContentProps = {
   fieldMetadataItem: FieldMetadataItem;
@@ -28,6 +28,7 @@ export const ChartManualSortSubMenuContent = ({
   fieldMetadataItem,
   axis,
 }: ChartManualSortSubMenuContentProps) => {
+  const { t } = useLingui();
   const { pageLayoutId } = usePageLayoutSidePanelTarget();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
   const { updateCurrentWidgetConfig } =

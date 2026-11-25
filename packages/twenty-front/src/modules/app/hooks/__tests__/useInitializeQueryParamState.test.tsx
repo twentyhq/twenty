@@ -35,14 +35,22 @@ describe('useInitializeQueryParamState', () => {
     window.history.pushState({}, '', '/');
   });
 
-  it('should store the normalized partner in the cookie', () => {
-    initializeQueryParamStateAt('/welcome?partner=%20Acme%20');
+  it('should store the normalized partner from the via param in the cookie', () => {
+    initializeQueryParamStateAt('/welcome?via=%20NorthWind%20');
 
-    expect(Cookies.get('partner')).toBe(JSON.stringify({ partner: 'acme' }));
+    expect(Cookies.get('partner')).toBe(
+      JSON.stringify({ partner: 'northwind' }),
+    );
+  });
+
+  it('should ignore the former partner param', () => {
+    initializeQueryParamStateAt('/welcome?partner=acme');
+
+    expect(Cookies.get('partner')).toBeUndefined();
   });
 
   it('should not re-render the caller when it stores the partner', () => {
-    window.history.pushState({}, '', '/welcome?partner=acme');
+    window.history.pushState({}, '', '/welcome?via=acme');
 
     let renderCount = 0;
 
@@ -67,7 +75,7 @@ describe('useInitializeQueryParamState', () => {
   it('should keep the stored partner when the new one is invalid', () => {
     Cookies.set('partner', JSON.stringify({ partner: 'acme' }));
 
-    initializeQueryParamStateAt('/welcome?partner=%3Cx%3E');
+    initializeQueryParamStateAt('/welcome?via=%3Cx%3E');
 
     expect(Cookies.get('partner')).toBe(JSON.stringify({ partner: 'acme' }));
   });

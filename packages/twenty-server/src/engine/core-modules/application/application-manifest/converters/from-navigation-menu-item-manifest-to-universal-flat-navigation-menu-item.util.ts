@@ -1,4 +1,7 @@
-import { type NavigationMenuItemManifest } from 'twenty-shared/application';
+import {
+  normalizeNavigationMenuItemManifest,
+  type NavigationMenuItemManifest,
+} from 'twenty-shared/application';
 
 import { type UniversalFlatNavigationMenuItem } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-navigation-menu-item.type';
 
@@ -23,15 +26,22 @@ export const fromNavigationMenuItemManifestToUniversalFlatNavigationMenuItem =
       viewUniversalIdentifier:
         navigationMenuItemManifest.viewUniversalIdentifier ?? null,
       link: navigationMenuItemManifest.link ?? null,
-      folderUniversalIdentifier:
-        navigationMenuItemManifest.folderUniversalIdentifier ?? null,
+      nativePageKey: navigationMenuItemManifest.nativePageKey ?? null,
+      builtInSectionKey: navigationMenuItemManifest.builtInSectionKey ?? null,
+      parentUniversalIdentifier:
+        normalizeNavigationMenuItemManifest(navigationMenuItemManifest)
+          .parentUniversalIdentifier ?? null,
       targetObjectMetadataUniversalIdentifier:
         navigationMenuItemManifest.targetObjectUniversalIdentifier ?? null,
       pageLayoutUniversalIdentifier:
         navigationMenuItemManifest.pageLayoutUniversalIdentifier ?? null,
       agentChatChannelUniversalIdentifier: null,
+      workflowUniversalIdentifier: null,
+      agentUniversalIdentifier: null,
       targetRecordId: null,
       userWorkspaceId: null,
+      isActive: true,
+      overrides: null,
       createdAt: now,
       updatedAt: now,
     };

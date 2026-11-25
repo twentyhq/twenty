@@ -36,6 +36,8 @@ export const DOCUMENTATION_PATHS = {
     '/developers/extend/apps/data/system-fields',
   DEVELOPERS_EXTEND_APPS_DATA_TIMELINE_ACTIVITY_TYPES:
     '/developers/extend/apps/data/timeline-activity-types',
+  DEVELOPERS_EXTEND_APPS_DATA_VALIDATION_RULES:
+    '/developers/extend/apps/data/validation-rules',
   DEVELOPERS_EXTEND_APPS_GETTING_STARTED_CONCEPTS:
     '/developers/extend/apps/getting-started/concepts',
   DEVELOPERS_EXTEND_APPS_GETTING_STARTED_GOOD_PRACTICES:
@@ -143,6 +145,8 @@ export const DOCUMENTATION_PATHS = {
   UI_ACCESSIBILITY: '/ui/accessibility',
   UI_COMPONENTS_CODE_EDITOR_CODE_EDITOR:
     '/ui/components/code-editor/code-editor',
+  UI_COMPONENTS_DATA_DISPLAY_ASSISTANT_AVATAR:
+    '/ui/components/data-display/assistant-avatar',
   UI_COMPONENTS_DATA_DISPLAY_AVATAR_GROUP:
     '/ui/components/data-display/avatar-group',
   UI_COMPONENTS_DATA_DISPLAY_COMMAND_BLOCK:
@@ -246,6 +250,8 @@ export const DOCUMENTATION_PATHS = {
   USER_GUIDE_AI_CAPABILITIES_PERMISSIONS_ACCESS_CONTROL:
     '/user-guide/ai/capabilities/permissions-access-control',
   USER_GUIDE_AI_HOW_TOS_AI_FAQ: '/user-guide/ai/how-tos/ai-faq',
+  USER_GUIDE_AI_HOW_TOS_INBOX_NOTIFICATIONS:
+    '/user-guide/ai/how-tos/inbox-notifications',
   USER_GUIDE_AI_OVERVIEW: '/user-guide/ai/overview',
   USER_GUIDE_BILLING_CAPABILITIES_CREDITS:
     '/user-guide/billing/capabilities/credits',
@@ -329,6 +335,8 @@ export const DOCUMENTATION_PATHS = {
     '/user-guide/data-model/capabilities/objects',
   USER_GUIDE_DATA_MODEL_CAPABILITIES_RELATION_FIELDS:
     '/user-guide/data-model/capabilities/relation-fields',
+  USER_GUIDE_DATA_MODEL_CAPABILITIES_VALIDATION_RULES:
+    '/user-guide/data-model/capabilities/validation-rules',
   USER_GUIDE_DATA_MODEL_HOW_TOS_CREATE_CUSTOM_FIELDS:
     '/user-guide/data-model/how-tos/create-custom-fields',
   USER_GUIDE_DATA_MODEL_HOW_TOS_CREATE_CUSTOM_OBJECTS:

@@ -1,10 +1,9 @@
 import { z } from 'zod';
 
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
-  type DashboardToolContextWithPermissions,
-  type DashboardToolDependencies,
-} from 'src/modules/dashboard/tools/types/dashboard-tool-dependencies.type';
+  type PageLayoutToolContextWithPermissions,
+  type PageLayoutToolDependencies,
+} from 'src/engine/metadata-modules/page-layout/tools/types/page-layout-tool-dependencies.type';
 
 const listDashboardsSchema = z.object({
   limit: z
@@ -16,27 +15,36 @@ const listDashboardsSchema = z.object({
     .describe('Maximum number of dashboards to return (default: 20, max: 100)'),
 });
 
-export const createListDashboardsTool = (
-  deps: Pick<DashboardToolDependencies, 'workspaceOrmManager'>,
-  context: DashboardToolContextWithPermissions,
-) => ({
+export const createListDashboardsTool = ({
+  dependencies,
+  context,
+}: {
+  dependencies: {
+    workspaceOrmManager: Pick<
+      PageLayoutToolDependencies['workspaceOrmManager'],
+      'executeInWorkspaceContext' | 'getRepository'
+    >;
+  };
+  context: PageLayoutToolContextWithPermissions;
+}) => ({
   name: 'list_dashboards' as const,
+  isReadOnly: true,
   description: `List all dashboards in the workspace. Use get_dashboard to retrieve full layout structure.`,
   inputSchema: listDashboardsSchema,
   execute: async (parameters: { limit?: number }) => {
     try {
       const limit = parameters.limit ?? 20;
-      const authContext = buildSystemAuthContext(context.workspaceId);
 
       const dashboards =
-        await deps.workspaceOrmManager.executeInWorkspaceContext(async () => {
-          const repo = deps.workspaceOrmManager.getRepository(
-            'dashboard',
-            context.rolePermissionConfig,
-          );
+        await dependencies.workspaceOrmManager.executeInWorkspaceContext(
+          async () => {
+            const repo =
+              dependencies.workspaceOrmManager.getRepository('dashboard');
 
-          return repo.find({ take: limit, order: { position: 'ASC' } });
-        }, authContext);
+            return repo.find({ take: limit, order: { position: 'ASC' } });
+          },
+          context.authContext,
+        );
 
       const dashboardList = dashboards.map((d) => ({
         id: d.id,

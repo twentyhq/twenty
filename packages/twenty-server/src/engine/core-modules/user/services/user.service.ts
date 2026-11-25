@@ -5,6 +5,7 @@ import assert from 'assert';
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
+import { FileFolder } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import {
   isWorkspaceProvisioned,
@@ -19,14 +20,17 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { VERIFICATION_EMAIL_SENDING_THROTTLE } from 'src/engine/core-modules/email-verification/constants/verification-email-sending-throttle.constant';
 import { EmailVerificationTrigger } from 'src/engine/core-modules/email-verification/email-verification.constants';
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
+import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserWorkspaceSuccessorTransferService } from 'src/engine/core-modules/user-workspace/services/user-workspace-successor-transfer.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import {
   UpdateWorkspaceMemberEmailJob,
@@ -43,13 +47,11 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
-import { RecordShareOwnershipTransferService } from 'src/engine/permissions/record-share/services/record-share-ownership-transfer.service';
-import { ConnectedAccountOwnershipTransferService } from 'src/engine/metadata-modules/connected-account/services/connected-account-ownership-transfer.service';
 import { detachAgentChatChannelThreadsFromWorkspaceMember } from 'src/engine/metadata-modules/ai/ai-chat/utils/detach-agent-chat-channel-threads-from-workspace-member.util';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
-import { UserRoleService } from 'src/engine/permissions/role-assignment/user-role.service';
+import { RoleAssignmentWriteService } from 'src/engine/permissions/role-assignment/role-assignment-write.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -60,18 +62,18 @@ export class UserService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
-    private readonly connectedAccountOwnershipTransferService: ConnectedAccountOwnershipTransferService,
-    private readonly recordShareOwnershipTransferService: RecordShareOwnershipTransferService,
+    private readonly userWorkspaceSuccessorTransferService: UserWorkspaceSuccessorTransferService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly emailVerificationService: EmailVerificationService,
     private readonly workspaceService: WorkspaceService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    private readonly userRoleService: UserRoleService,
+    private readonly roleAssignmentWriteService: RoleAssignmentWriteService,
     private readonly userWorkspaceService: UserWorkspaceService,
     @InjectMessageQueue(MessageQueue.workspaceQueue)
     private readonly workspaceQueueService: MessageQueueService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly workspaceMemberTranspiler: WorkspaceMemberTranspiler,
+    private readonly fileUrlService: FileUrlService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     @InjectAgentHistoryRepository('agentChatThread')
@@ -113,9 +115,8 @@ export class UserService {
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workspaceMemberRepository =
-        this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>(
           'workspaceMember',
-          { shouldBypassPermissionChecks: true },
         );
 
       return await workspaceMemberRepository.findOne({
@@ -142,9 +143,8 @@ export class UserService {
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workspaceMemberRepository =
-        this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>(
           'workspaceMember',
-          { shouldBypassPermissionChecks: true },
         );
 
       return await workspaceMemberRepository.find({
@@ -155,12 +155,12 @@ export class UserService {
 
   async loadSignedAvatarUrlsByUserId({
     workspace,
-    fallbackAvatarUrlsByUserId,
+    fallbackAvatarFileIdsByUserId,
   }: {
     workspace: Pick<WorkspaceEntity, 'id' | 'activationStatus'>;
-    fallbackAvatarUrlsByUserId: Map<string, string | null>;
+    fallbackAvatarFileIdsByUserId: Map<string, string | null>;
   }): Promise<Map<string, string | null>> {
-    const userIds = Array.from(fallbackAvatarUrlsByUserId.keys());
+    const userIds = Array.from(fallbackAvatarFileIdsByUserId.keys());
 
     if (userIds.length === 0) {
       return new Map();
@@ -188,21 +188,19 @@ export class UserService {
           return [userId, memberSigned];
         }
 
-        const fallbackAvatarUrl = fallbackAvatarUrlsByUserId.get(userId);
+        const fallbackAvatarFileId = fallbackAvatarFileIdsByUserId.get(userId);
 
-        if (!isNonEmptyString(fallbackAvatarUrl)) {
+        if (!isDefined(fallbackAvatarFileId)) {
           return [userId, null];
         }
 
-        const fallbackSigned =
-          await this.workspaceMemberTranspiler.generateSignedAvatarUrl({
-            workspaceId: workspace.id,
-            workspaceMember: { avatarUrl: fallbackAvatarUrl, id: userId },
-          });
-
         return [
           userId,
-          isNonEmptyString(fallbackSigned) ? fallbackSigned : fallbackAvatarUrl,
+          await this.fileUrlService.signFileByIdUrl({
+            fileId: fallbackAvatarFileId,
+            workspaceId: workspace.id,
+            fileFolder: FileFolder.CorePicture,
+          }),
         ];
       }),
     );
@@ -225,9 +223,8 @@ export class UserService {
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workspaceMemberRepository =
-        this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>(
           'workspaceMember',
-          { shouldBypassPermissionChecks: true },
         );
 
       return await workspaceMemberRepository.find({
@@ -248,9 +245,8 @@ export class UserService {
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workspaceMemberRepository =
-        this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>(
           'workspaceMember',
-          { shouldBypassPermissionChecks: true },
         );
 
       return await workspaceMemberRepository.find({
@@ -269,6 +265,10 @@ export class UserService {
     });
 
     userValidator.assertIsDefinedOrThrow(user);
+
+    await this.workspaceService.assertNotRemovingLastServerAdminOrThrow([
+      userId,
+    ]);
 
     for (const userWorkspace of user.userWorkspaces) {
       await this.removeUserFromWorkspaceAndPotentiallyDeleteWorkspace(
@@ -313,12 +313,20 @@ export class UserService {
       throw new Error('User workspace not found.');
     }
 
+    const isLastUserWorkspace = user.userWorkspaces.length === 1;
+
+    if (isLastUserWorkspace) {
+      await this.workspaceService.assertNotRemovingLastServerAdminOrThrow([
+        userId,
+      ]);
+    }
+
     await this.removeUserFromWorkspaceAndPotentiallyDeleteWorkspace(
       userWorkspace,
       actingUserWorkspaceId,
     );
 
-    if (user.userWorkspaces.length === 1) {
+    if (isLastUserWorkspace) {
       await this.userRepository.softDelete(userId);
       await this.coreEntityCacheService.invalidate('user', userId);
     }
@@ -336,9 +344,8 @@ export class UserService {
     const workspaceMembers =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
         const workspaceMemberRepository =
-          this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>(
             'workspaceMember',
-            { shouldBypassPermissionChecks: true },
           );
 
         return workspaceMemberRepository.find();
@@ -355,7 +362,7 @@ export class UserService {
 
     if (workspaceMembers.length > 1) {
       try {
-        await this.userRoleService.validateUserWorkspaceIsNotUniqueAdminOrThrow(
+        await this.roleAssignmentWriteService.assertUserWorkspaceIsNotUniqueAdminOrThrow(
           {
             workspaceId,
             userWorkspaceId: userWorkspace.id,
@@ -385,20 +392,11 @@ export class UserService {
 
     assert(workspaceMember, 'WorkspaceMember not found');
 
-    await this.connectedAccountOwnershipTransferService.transferConnectedAccountsOwnershipToCustodian(
-      {
-        removedUserWorkspace: userWorkspace,
-        actingUserWorkspaceId,
-      },
-    );
-
-    await this.recordShareOwnershipTransferService.transferRecordSharesToCustodian(
-      {
-        removedUserWorkspace: userWorkspace,
-        removedWorkspaceMemberId: workspaceMember.id,
-        actingUserWorkspaceId,
-      },
-    );
+    await this.userWorkspaceSuccessorTransferService.transferToSuccessor({
+      removedUserWorkspace: userWorkspace,
+      removedWorkspaceMemberId: workspaceMember.id,
+      actingUserWorkspaceId,
+    });
 
     const { flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -414,9 +412,8 @@ export class UserService {
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workspaceMemberRepository =
-        this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>(
           'workspaceMember',
-          { shouldBypassPermissionChecks: true },
         );
 
       await workspaceMemberRepository.delete({
@@ -592,9 +589,29 @@ export class UserService {
         workspace,
       );
 
-    await this.emailVerificationService.deleteExistingTokensAfterCooldownOrThrow(
-      { userId: user.id },
+    await this.emailVerificationService.assertVerificationEmailCooldownElapsedOrThrow(
+      {
+        userId: user.id,
+      },
     );
+
+    await this.emailVerificationService.throttleVerificationEmailSendingOrThrow(
+      {
+        key: user.id,
+        limit: VERIFICATION_EMAIL_SENDING_THROTTLE.emailUpdatesByUserLimit,
+      },
+    );
+
+    await this.emailVerificationService.throttleVerificationEmailSendingOrThrow(
+      {
+        key: normalizedEmail,
+        limit: VERIFICATION_EMAIL_SENDING_THROTTLE.byRecipientLimit,
+      },
+    );
+
+    await this.emailVerificationService.deleteExistingVerificationTokens({
+      userId: user.id,
+    });
 
     await this.emailVerificationService.sendVerificationEmail({
       userId: user.id,

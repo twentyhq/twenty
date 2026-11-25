@@ -1,10 +1,21 @@
 import { type StepResult, type ToolSet } from 'ai';
+import { ATTACH_CONVERSATION_TO_RECORDS_TOOL_NAME } from 'twenty-shared/ai';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { buildToolCallStepResult } from 'test/utils/mock-agent-run-turns.util';
 import { randomUUID } from 'node:crypto';
 import { parse } from 'graphql';
 import {
   type AgentRunExecution,
   captureAgentRunExecution,
 } from 'test/integration/graphql/suites/user-session/utils/capture-agent-run-execution.util';
+import {
+  answerWith,
+  mockScriptedAiModel,
+} from 'test/integration/ai/utils/mock-scripted-ai-model.util';
+import { runAgentQueryFactory } from 'test/integration/graphql/suites/user-session/utils/run-agent-query-factory.util';
+import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
+import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import {
@@ -13,12 +24,15 @@ import {
 } from 'test/integration/metadata/suites/application/utils/setup-application-with-resources.util';
 import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
 import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import {
   type EachTestingContext,
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
+import { type AgentRunPersonaService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-persona.service';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -30,24 +44,12 @@ const WORKSPACE_SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 
 // history keeps a turn's tool calls only for the member who sent it
 const TOOL_CALL_STEPS = [
-  {
-    content: [
-      {
-        type: 'tool-call',
-        toolCallId: 'probe-call',
-        toolName: 'probe',
-        input: {},
-      },
-      {
-        type: 'tool-result',
-        toolCallId: 'probe-call',
-        toolName: 'probe',
-        input: {},
-        output: { isProbed: true },
-      },
-    ],
-  },
-] as unknown as StepResult<ToolSet>[];
+  buildToolCallStepResult({
+    toolCallId: 'probe-call',
+    toolName: 'probe',
+    output: { isProbed: true },
+  }),
+];
 
 type GlobalTestContext = {
   agentUniversalIdentifier: string;
@@ -174,6 +176,33 @@ const disownThread = async (threadId: string) => {
   );
 };
 
+const attachThroughRegistry = async ({
+  execution: { workspaceId, threadId, persona, executionContext },
+  record,
+}: {
+  execution: Pick<
+    AgentRunExecution,
+    'workspaceId' | 'threadId' | 'persona' | 'executionContext'
+  >;
+  record: { objectNameSingular: string; recordId: string };
+}) => {
+  const authContext = await getAppProviderByClassName<AgentRunPersonaService>(
+    'AgentRunPersonaService',
+  ).resolveRunAuthContext({
+    workspaceId,
+    persona,
+    authContext: executionContext.authContext,
+  });
+
+  return getAppProviderByClassName<ToolRegistryService>(
+    'ToolRegistryService',
+  ).resolveAndExecute(
+    ATTACH_CONVERSATION_TO_RECORDS_TOOL_NAME,
+    { records: [record] },
+    { workspaceId, threadId, authContext },
+  );
+};
+
 const findPriorMessagePartTypes = ({ priorMessages }: AgentRunExecution) =>
   (priorMessages ?? []).flatMap(({ parts }) => parts.map(({ type }) => type));
 
@@ -181,6 +210,7 @@ describe('Agent run conversation should be recorded for the caller', () => {
   let application: ApplicationWithResources;
   let globalTestContext: GlobalTestContext;
   const threadIds: string[] = [];
+  const createdRecords: { objectNameSingular: string; recordId: string }[] = [];
 
   const runAgent = async ({
     token,
@@ -208,9 +238,74 @@ describe('Agent run conversation should be recorded for the caller', () => {
     return execution;
   };
 
+  const runAgentAndReadSystemPrompt = async ({
+    token,
+    runAsWorkspaceMemberId,
+  }: {
+    token: string;
+    runAsWorkspaceMemberId?: string;
+  }) => {
+    const systemPrompts: string[] = [];
+
+    mockScriptedAiModel(({ options }) => {
+      systemPrompts.push(
+        ...options.prompt.flatMap((message) =>
+          message.role === 'system' ? [message.content] : [],
+        ),
+      );
+
+      return answerWith('Done');
+    });
+
+    try {
+      const response = await makeMetadataApiRequest(
+        runAgentQueryFactory({
+          agentUniversalIdentifier: globalTestContext.agentUniversalIdentifier,
+          prompt: 'Run',
+          thread: { key: randomUUID() },
+          runAsWorkspaceMemberId,
+        }),
+        token,
+      );
+
+      expect(response.body.errors).toBeUndefined();
+      threadIds.push(response.body.data.runAgent.threadId);
+    } finally {
+      jest.restoreAllMocks();
+    }
+
+    return systemPrompts.join('\n');
+  };
+
+  const createRecord = async (objectNameSingular: string) => {
+    const record = { objectNameSingular, recordId: randomUUID() };
+    const response = await makeGraphqlApiRequest(
+      createOneOperationFactory({
+        objectMetadataSingularName: objectNameSingular,
+        gqlFields: 'id',
+        data: { id: record.recordId },
+      }),
+    );
+
+    expect(response.body.errors).toBeUndefined();
+    createdRecords.push(record);
+
+    return record;
+  };
+
   beforeAll(async () => {
     application = await setupApplicationWithResources({
       name: 'Agent Run Conversation Probe',
+      objectPermissions: [
+        {
+          universalIdentifier: randomUUID(),
+          objectUniversalIdentifier:
+            STANDARD_OBJECTS.company.universalIdentifier,
+          canReadObjectRecords: true,
+          canUpdateObjectRecords: true,
+        },
+      ],
+      shouldAssignDefaultRoleToAgent: true,
     });
 
     const [{ universalIdentifier: agentUniversalIdentifier }] =
@@ -255,6 +350,16 @@ describe('Agent run conversation should be recorded for the caller', () => {
       `DELETE FROM "${WORKSPACE_SCHEMA}"."agentChatThread" WHERE id = ANY($1)`,
       [threadIds],
     );
+
+    for (const { objectNameSingular, recordId } of createdRecords) {
+      await makeGraphqlApiRequest(
+        destroyOneOperationFactory({
+          objectMetadataSingularName: objectNameSingular,
+          gqlFields: 'id',
+          recordId,
+        }),
+      );
+    }
 
     if (!isDefined(application)) {
       return;
@@ -397,6 +502,43 @@ describe('Agent run conversation should be recorded for the caller', () => {
     });
   });
 
+  it('should let the member a conversation continues as file it only under records the agent can read', async () => {
+    const execution = await runAgent({
+      token: globalTestContext.applicationToken,
+      threadKey: randomUUID(),
+      runAsWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+    });
+
+    await expect(
+      attachThroughRegistry({
+        execution,
+        record: await createRecord('person'),
+      }),
+    ).resolves.toMatchObject({ success: false });
+
+    await expect(
+      attachThroughRegistry({
+        execution,
+        record: await createRecord('company'),
+      }),
+    ).resolves.toMatchObject({ success: true });
+  });
+
+  it('should offer filing the conversation under records only to a run made as a member', async () => {
+    await expect(
+      runAgentAndReadSystemPrompt({
+        token: globalTestContext.applicationToken,
+        runAsWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      }),
+    ).resolves.toContain(ATTACH_CONVERSATION_TO_RECORDS_TOOL_NAME);
+
+    await expect(
+      runAgentAndReadSystemPrompt({
+        token: globalTestContext.applicationToken,
+      }),
+    ).resolves.not.toContain(ATTACH_CONVERSATION_TO_RECORDS_TOOL_NAME);
+  });
+
   it('should show a member only the text of a turn another member sent in the same thread', async () => {
     const threadKey = randomUUID();
 
@@ -466,5 +608,49 @@ describe('Agent run conversation should be recorded for the caller', () => {
       messages.map(({ senderWorkspaceMemberId }) => senderWorkspaceMemberId),
     ).toContain(WORKSPACE_MEMBER_DATA_SEED_IDS.JANE);
     expect(partTypes.filter((type) => type === 'tool-probe')).toHaveLength(2);
+  });
+
+  it('should show the application the tool output of a turn it ran as a member, and another member only its text', async () => {
+    const threadKey = randomUUID();
+
+    await runAgent({
+      token: globalTestContext.applicationToken,
+      threadKey,
+      runAsWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      steps: TOOL_CALL_STEPS,
+    });
+
+    const readPartTypes = async (token: string) => {
+      const response = await makeMetadataApiRequest(
+        {
+          query: parse(
+            'query($agentUniversalIdentifier: UUID!, $threadKey: String!) { chatMessages(agentUniversalIdentifier: $agentUniversalIdentifier, threadKey: $threadKey) { parts { type } } }',
+          ),
+          variables: {
+            agentUniversalIdentifier:
+              globalTestContext.agentUniversalIdentifier,
+            threadKey,
+          },
+        },
+        token,
+      );
+
+      expect(response.body.errors).toBeUndefined();
+
+      return (
+        response.body.data.chatMessages as { parts: { type: string }[] }[]
+      ).flatMap(({ parts }) => parts.map(({ type }) => type));
+    };
+
+    expect(await readPartTypes(globalTestContext.applicationToken)).toContain(
+      'tool-probe',
+    );
+
+    const partTypesForJane = await readPartTypes(
+      globalTestContext.janeApplicationToken,
+    );
+
+    expect(partTypesForJane).toContain('text');
+    expect(partTypesForJane).not.toContain('tool-probe');
   });
 });

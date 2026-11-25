@@ -9,13 +9,14 @@ import { RecordTableWidgetContext } from '@/object-record/record-table-widget/co
 import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { LightButton } from 'twenty-ui/components/input';
 import { IconPlus } from 'twenty-ui/icon';
+import { useLingui } from '@lingui/react/macro';
 
 export const RecordBoardColumnNewRecordButton = () => {
+  const { t } = useLingui();
   const { objectMetadataItem, selectFieldMetadataItem } =
     useContext(RecordBoardContext);
 

@@ -1,5 +1,5 @@
 import { msg } from '@lingui/core/macro';
-import { OBJECT_PERMISSION_ACTIONS } from 'twenty-shared/application';
+import { DISABLEABLE_OBJECT_PERMISSION_ACTIONS } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatObjectMetadataValidationError } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-validation-error.type';
@@ -26,7 +26,8 @@ export const validateFlatObjectMetadataDisabledObjectPermissionActions = ({
   }
 
   const errors: FlatObjectMetadataValidationError[] = [];
-  const objectPermissionActions: readonly string[] = OBJECT_PERMISSION_ACTIONS;
+  const objectPermissionActions: readonly string[] =
+    DISABLEABLE_OBJECT_PERMISSION_ACTIONS;
 
   for (const action of disabledObjectPermissionActions) {
     if (

@@ -1,5 +1,4 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { CoreApiClient } from 'twenty-client-sdk/core';
 
 const { enqueueJobsMock } = vi.hoisted(() => ({ enqueueJobsMock: vi.fn() }));
 vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
@@ -146,7 +145,7 @@ describe('scheduleUpcomingPersonMeetings', () => {
     });
 
     return {
-      client: { query: queryMock } as unknown as CoreApiClient,
+      client: { query: queryMock },
       queryMock,
     };
   };

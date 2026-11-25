@@ -39,6 +39,14 @@ export class LogEmailingDomainDriver implements EmailingDomainDriverInterface {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
+  async assertDomainIsAvailableOrThrow(
+    input: EmailingDomainResourceInput,
+  ): Promise<void> {
+    this.logger.log(
+      `[log-driver] assertDomainIsAvailableOrThrow(${input.domain})`,
+    );
+  }
+
   async provisionWorkspace(workspaceId: string): Promise<void> {
     this.logger.log(`[log-driver] provisionWorkspace(${workspaceId})`);
   }
@@ -110,6 +118,10 @@ export class LogEmailingDomainDriver implements EmailingDomainDriverInterface {
 
   async registerDomain(input: EmailingDomainResourceInput): Promise<void> {
     this.logger.log(`[log-driver] registerDomain(${input.domain})`);
+  }
+
+  async retryVerification(input: EmailingDomainResourceInput): Promise<void> {
+    this.logger.log(`[log-driver] retryVerification(${input.domain})`);
   }
 
   async cleanupDomain(input: EmailingDomainResourceInput): Promise<void> {

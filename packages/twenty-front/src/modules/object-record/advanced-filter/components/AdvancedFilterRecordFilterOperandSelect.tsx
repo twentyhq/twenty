@@ -7,8 +7,8 @@ import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUs
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledContainer = styled.div`
   width: 100px;
@@ -21,6 +21,7 @@ type AdvancedFilterRecordFilterOperandSelectProps = {
 export const AdvancedFilterRecordFilterOperandSelect = ({
   recordFilterId,
 }: AdvancedFilterRecordFilterOperandSelectProps) => {
+  const { t } = useLingui();
   const currentRecordFilters = useAtomComponentStateValue(
     currentRecordFiltersComponentState,
   );

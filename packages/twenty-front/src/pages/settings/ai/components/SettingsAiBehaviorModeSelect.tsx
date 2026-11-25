@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Select } from 'twenty-ui/primitives/input';
 import { AiChatAssistantMode } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 type SettingsAiBehaviorModeSelectProps = {
   value: AiChatAssistantMode | null;
@@ -26,6 +26,7 @@ export const SettingsAiBehaviorModeSelect = ({
   disabled,
   isLoading,
 }: SettingsAiBehaviorModeSelectProps) => {
+  const { t } = useLingui();
   const options: { value: AiChatAssistantMode; label: string }[] = [
     { value: AiChatAssistantMode.NEVER, label: t`Never` },
     { value: AiChatAssistantMode.MENTION_ONLY, label: t`Only when mentioned` },

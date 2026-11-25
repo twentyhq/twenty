@@ -5,12 +5,12 @@ import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { CodeEditorHeader } from 'twenty-ui/components/code-editor';
 import { IconPlayerPlay } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledTabListContainer = styled.div`
   > * {
@@ -31,6 +31,7 @@ export const SettingsLogicFunctionCodeEditorTab = ({
   isTesting?: boolean;
   applicationVariableKeys?: string[];
 }) => {
+  const { t } = useLingui();
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
     SETTINGS_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID,

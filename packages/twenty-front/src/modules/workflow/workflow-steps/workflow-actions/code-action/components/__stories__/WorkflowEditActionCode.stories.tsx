@@ -21,8 +21,8 @@ const DEFAULT_ACTION: WorkflowCodeAction = {
   valid: false,
   settings: {
     input: {
-      logicFunctionId: '',
-      logicFunctionInput: {},
+      code: 'export const main = async (params: { a: string }) => ({ a: params.a });',
+      logicFunctionInput: { a: null },
     },
     outputSchema: {},
     errorHandlingOptions: {
@@ -43,7 +43,7 @@ const CONFIGURED_ACTION: WorkflowCodeAction = {
   valid: true,
   settings: {
     input: {
-      logicFunctionId: 'test-function-id',
+      code: 'export const main = async (params: { name: string; email: string; score: number }) => ({ result: params.name });',
       logicFunctionInput: {
         name: 'John Doe',
         email: 'john@example.com',
@@ -83,40 +83,10 @@ const meta: Meta<typeof WorkflowEditActionCode> = {
     msw: {
       handlers: [
         ...graphqlMocks.handlers,
-        graphql.query('GetManyLogicFunctions', () => {
+        graphql.query('WorkflowCodeStepAvailablePackages', () => {
           return HttpResponse.json({
             data: {
-              findManyLogicFunctions: [
-                {
-                  id: 'test-function-id',
-                  name: 'Test Function',
-                  description: 'A test logic function',
-                  runtime: 'nodejs22.x',
-                  createdAt: '2024-01-01T00:00:00.000Z',
-                  updatedAt: '2024-01-01T00:00:00.000Z',
-                },
-              ],
-            },
-          });
-        }),
-        graphql.query('GetOneLogicFunction', () => {
-          return HttpResponse.json({
-            data: {
-              findOneLogicFunction: {
-                id: 'test-function-id',
-                name: 'Test Function',
-                description: 'A test logic function',
-                runtime: 'nodejs22.x',
-                createdAt: '2024-01-01T00:00:00.000Z',
-                updatedAt: '2024-01-01T00:00:00.000Z',
-              },
-            },
-          });
-        }),
-        graphql.query('FindManyAvailablePackages', () => {
-          return HttpResponse.json({
-            data: {
-              getAvailablePackages: ['axios', 'lodash', 'moment'],
+              workflowCodeStepAvailablePackages: { axios: '1.0.0' },
             },
           });
         }),

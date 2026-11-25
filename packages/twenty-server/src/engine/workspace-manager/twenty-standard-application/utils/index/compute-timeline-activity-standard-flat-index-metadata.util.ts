@@ -88,30 +88,6 @@ export const buildTimelineActivityStandardFlatIndexMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  workflowIdIndex: createStandardIndexFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      indexName: 'workflowIdIndex',
-      relatedFieldNames: ['targetWorkflow'],
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  workflowVersionIdIndex: createStandardIndexFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      indexName: 'workflowVersionIdIndex',
-      relatedFieldNames: ['targetWorkflowVersion'],
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
   workflowRunIdIndex: createStandardIndexFlatMetadata({
     objectName,
     workspaceId,

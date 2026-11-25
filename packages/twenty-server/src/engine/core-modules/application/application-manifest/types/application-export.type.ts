@@ -4,6 +4,8 @@ import { type AllMetadataName } from 'twenty-shared/metadata';
 import { type ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { type ApplicationExportCoverageStatus } from 'src/engine/core-modules/application/enums/application-export-coverage-status.enum';
 
+export type ApplicationExportCoverageName = AllMetadataName | 'file';
+
 export type ApplicationExportCoverageEntry = {
   metadataName: AllMetadataName;
   universalIdentifier: string;
@@ -11,10 +13,16 @@ export type ApplicationExportCoverageEntry = {
   reason?: string;
 };
 
+export type ApplicationExportFileCoverageEntry = Omit<
+  ApplicationExportCoverageEntry,
+  'metadataName'
+> & { metadataName: 'file' };
+
 export type ApplicationExportFile = {
   folder: string;
   path: string;
   content: string;
+  encoding?: 'base64';
 };
 
 export type ApplicationExport = {
@@ -24,6 +32,9 @@ export type ApplicationExport = {
     sourceType: ApplicationRegistrationSourceType;
   };
   manifest: Manifest;
-  coverage: ApplicationExportCoverageEntry[];
+  coverage: (
+    | ApplicationExportCoverageEntry
+    | ApplicationExportFileCoverageEntry
+  )[];
   files: ApplicationExportFile[];
 };

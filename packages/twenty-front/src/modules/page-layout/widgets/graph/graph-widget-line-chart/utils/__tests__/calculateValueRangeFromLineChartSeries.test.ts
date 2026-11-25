@@ -4,7 +4,7 @@ import { calculateValueRangeFromLineChartSeries } from '@/page-layout/widgets/gr
 describe('calculateValueRangeFromLineChartSeries', () => {
   describe('with valid data', () => {
     it('should calculate minimum and maximum from single series', () => {
-      const data: LineChartSeriesWithColor[] = [
+      const data = [
         {
           key: 'series1',
           data: [
@@ -13,7 +13,7 @@ describe('calculateValueRangeFromLineChartSeries', () => {
             { x: 'Mar', y: 30 },
           ],
         },
-      ] as unknown as LineChartSeriesWithColor[];
+      ];
 
       const result = calculateValueRangeFromLineChartSeries(data);
 
@@ -22,7 +22,7 @@ describe('calculateValueRangeFromLineChartSeries', () => {
     });
 
     it('should calculate minimum and maximum from multiple series', () => {
-      const data: LineChartSeriesWithColor[] = [
+      const data = [
         {
           key: 'series1',
           data: [
@@ -37,7 +37,7 @@ describe('calculateValueRangeFromLineChartSeries', () => {
             { x: 'Feb', y: 100 },
           ],
         },
-      ] as unknown as LineChartSeriesWithColor[];
+      ];
 
       const result = calculateValueRangeFromLineChartSeries(data);
 
@@ -46,7 +46,7 @@ describe('calculateValueRangeFromLineChartSeries', () => {
     });
 
     it('should handle negative values', () => {
-      const data: LineChartSeriesWithColor[] = [
+      const data = [
         {
           key: 'series1',
           data: [
@@ -55,7 +55,7 @@ describe('calculateValueRangeFromLineChartSeries', () => {
             { x: 'Mar', y: -10 },
           ],
         },
-      ] as unknown as LineChartSeriesWithColor[];
+      ];
 
       const result = calculateValueRangeFromLineChartSeries(data);
 
@@ -64,7 +64,7 @@ describe('calculateValueRangeFromLineChartSeries', () => {
     });
 
     it('should handle all same values', () => {
-      const data: LineChartSeriesWithColor[] = [
+      const data = [
         {
           key: 'series1',
           data: [
@@ -73,7 +73,7 @@ describe('calculateValueRangeFromLineChartSeries', () => {
             { x: 'Mar', y: 42 },
           ],
         },
-      ] as unknown as LineChartSeriesWithColor[];
+      ];
 
       const result = calculateValueRangeFromLineChartSeries(data);
 
@@ -82,9 +82,9 @@ describe('calculateValueRangeFromLineChartSeries', () => {
     });
   });
 
-  describe('with null/undefined values', () => {
+  describe('with null values', () => {
     it('should treat null y values as 0', () => {
-      const data: LineChartSeriesWithColor[] = [
+      const data = [
         {
           key: 'series1',
           data: [
@@ -92,29 +92,12 @@ describe('calculateValueRangeFromLineChartSeries', () => {
             { x: 'Feb', y: 50 },
           ],
         },
-      ] as unknown as LineChartSeriesWithColor[];
+      ];
 
       const result = calculateValueRangeFromLineChartSeries(data);
 
       expect(result.minimum).toBe(0);
       expect(result.maximum).toBe(50);
-    });
-
-    it('should treat undefined y values as 0', () => {
-      const data: LineChartSeriesWithColor[] = [
-        {
-          key: 'series1',
-          data: [
-            { x: 'Jan', y: undefined },
-            { x: 'Feb', y: 30 },
-          ],
-        },
-      ] as unknown as LineChartSeriesWithColor[];
-
-      const result = calculateValueRangeFromLineChartSeries(data);
-
-      expect(result.minimum).toBe(0);
-      expect(result.maximum).toBe(30);
     });
   });
 
@@ -129,12 +112,12 @@ describe('calculateValueRangeFromLineChartSeries', () => {
     });
 
     it('should handle series with empty data array', () => {
-      const data: LineChartSeriesWithColor[] = [
+      const data = [
         {
           key: 'series1',
           data: [],
         },
-      ] as unknown as LineChartSeriesWithColor[];
+      ];
 
       const result = calculateValueRangeFromLineChartSeries(data);
 

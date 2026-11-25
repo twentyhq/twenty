@@ -35,17 +35,20 @@ export default defineNavigationMenuItem({
   | ------------------------------------ | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
   | `NavigationMenuItemType.VIEW`        | Abre una vista guardada                              | `viewUniversalIdentifier`                                                                               |
   | `NavigationMenuItemType.LINK`        | Abre una URL externa                                 | `link`                                                                                                  |
-  | `NavigationMenuItemType.FOLDER`      | Agrupa elementos anidados bajo una etiqueta          | `name` (y los elementos secundarios hacen referencia a la carpeta mediante `folderUniversalIdentifier`) |
+  | `NavigationMenuItemType.FOLDER`      | Agrupa elementos anidados bajo una etiqueta          | `name` (y los elementos secundarios hacen referencia a la carpeta mediante `parentUniversalIdentifier`) |
   | `NavigationMenuItemType.OBJECT`      | Abre la página de índice predeterminada de un objeto | `targetObjectUniversalIdentifier`                                                                       |
   | `NavigationMenuItemType.PAGE_LAYOUT` | Abre un diseño de página independiente               | `pageLayoutUniversalIdentifier`                                                                         |
+  | `NavigationMenuItemType.NATIVE_PAGE` | Abre una página integrada                            | `nativePageKey`: `'workflows'` o `'agents'`                                                             |
 
 * `position` controla el orden en la barra lateral.
 
-* El enum también contiene `NavigationMenuItemType.RECORD`, que se usa internamente para los favoritos de registros creados por el usuario, y `NavigationMenuItemType.AGENT_CHAT_CHANNEL`, que se usa para los canales de chat fijados a favoritos. Ninguno de los dos se puede usar desde un manifiesto de aplicación (no hay ningún campo para hacer referencia a un registro o a un canal).
+* Un elemento `NATIVE_PAGE` se oculta para los miembros que no tienen el permiso de la página (Flujos de trabajo para `'workflows'`, IA para `'agents'`).
+
+* La enumeración también contiene `NavigationMenuItemType.RECORD`, que se utiliza internamente para los favoritos de registros creados por el usuario; `NavigationMenuItemType.AGENT_CHAT_CHANNEL`, que se utiliza para los canales de chat fijados a favoritos; y `NavigationMenuItemType.WORKFLOW` y `NavigationMenuItemType.AGENT`, que se utilizan para los flujos de trabajo y agentes fijados a la barra lateral. Ninguno de ellos se puede usar desde un manifiesto de aplicación (no hay ningún campo para hacer referencia a un registro, un canal, un flujo de trabajo o un agente).
 
 * `icon` y `color` son opcionales y personalizan el aspecto de la entrada.
 
-* `folderUniversalIdentifier` también está disponible en cualquier elemento para anidarlo dentro de un elemento padre de tipo `FOLDER`.
+* `parentUniversalIdentifier` también está disponible en cualquier elemento para anidarlo dentro de un elemento padre de tipo `FOLDER`. El nombre anterior, `folderUniversalIdentifier`, está obsoleto, pero aún se acepta.
 
 * `twenty app pull` escribe los elementos de tu menú de navegación como archivos `defineNavigationMenuItem()`. Un elemento que un miembro del espacio de trabajo añadió a su propia barra lateral, y uno fijado a un registro, pertenecen a ese espacio de trabajo en lugar de a tu aplicación y se notifican en su lugar; consulta [lo que pull no escribe](/es/developers/extend/apps/operations/sync-and-recovery#pulling-an-installed-app-back-to-source).
 

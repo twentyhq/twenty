@@ -11,6 +11,7 @@ import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDi
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { TableFooter } from '@/ui/layout/table/components/TableFooter';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -42,10 +43,8 @@ const StyledContent = styled.div`
   gap: ${themeCssVariables.spacing[3]};
 `;
 
-const StyledButtonContainer = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  padding-top: ${themeCssVariables.spacing[2]};
+const StyledTableContainer = styled.div`
+  margin-top: ${themeCssVariables.spacing[3]};
 `;
 
 const DELETE_INDEX_MODAL_ID = 'delete-index-modal';
@@ -154,7 +153,9 @@ export const SettingsObjectIndexesSection = ({
   };
 
   const handleConfirmDelete = async () => {
-    if (pendingDelete === null) return;
+    if (pendingDelete === null) {
+      return;
+    }
     setIsDeleting(true);
 
     const result = await deleteOneIndexMetadataItem({
@@ -196,32 +197,33 @@ export const SettingsObjectIndexesSection = ({
           </DropdownRoot>
         }
       />
-      <SettingsObjectIndexTable
-        items={filteredItems}
-        isReadOnly={isReadOnly}
-        onDeleteIndex={handleRequestDelete}
-      />
-      {!isReadOnly && (
-        <StyledButtonContainer>
-          {canCreate ? (
-            <NavigationButton
-              to={getSettingsPath(SettingsPath.ObjectNewIndex, {
-                objectNamePlural: objectMetadataItem.namePlural,
-              })}
-              startIcon={<IconPlus />}
-              size="sm"
-              variant="outline"
-            >{t`Add Index`}</NavigationButton>
-          ) : (
-            <Button
-              startIcon={<IconPlus />}
-              size="sm"
-              disabled
-              variant="outline"
-            >{t`Add Index`}</Button>
-          )}
-        </StyledButtonContainer>
-      )}
+      <StyledTableContainer>
+        <SettingsObjectIndexTable
+          items={filteredItems}
+          isReadOnly={isReadOnly}
+          onDeleteIndex={handleRequestDelete}
+        />
+        <TableFooter>
+          {!isReadOnly &&
+            (canCreate ? (
+              <NavigationButton
+                to={getSettingsPath(SettingsPath.ObjectNewIndex, {
+                  objectNamePlural: objectMetadataItem.namePlural,
+                })}
+                startIcon={<IconPlus />}
+                size="sm"
+                variant="outline"
+              >{t`Add Index`}</NavigationButton>
+            ) : (
+              <Button
+                startIcon={<IconPlus />}
+                size="sm"
+                disabled
+                variant="outline"
+              >{t`Add Index`}</Button>
+            ))}
+        </TableFooter>
+      </StyledTableContainer>
       <ConfirmationDialog
         dialogId={DELETE_INDEX_MODAL_ID}
         title={t`Delete this index?`}

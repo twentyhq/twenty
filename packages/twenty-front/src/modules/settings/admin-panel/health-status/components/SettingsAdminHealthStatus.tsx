@@ -6,14 +6,15 @@ import { SettingsAdminMaintenanceModeFetchEffect } from '@/settings/admin-panel/
 import { SettingsAdminSigningKeysTable } from '@/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { useQuery } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import {
   GetInstanceAndAllWorkspacesUpgradeStatusDocument,
   GetSystemHealthStatusDocument,
 } from '~/generated-admin/graphql';
 import { Section } from 'twenty-ui/components/layout';
+import { useLingui } from '@lingui/react/macro';
 
 export const SettingsAdminHealthStatus = () => {
+  const { t } = useLingui();
   const apolloAdminClient = useApolloAdminClient();
   const { data, loading: loadingHealthStatus } = useQuery(
     GetSystemHealthStatusDocument,

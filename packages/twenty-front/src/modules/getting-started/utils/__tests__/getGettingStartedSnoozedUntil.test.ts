@@ -3,6 +3,25 @@ import { getGettingStartedSnoozedUntil } from '@/getting-started/utils/getGettin
 describe('getGettingStartedSnoozedUntil', () => {
   it.each([
     {
+      description: 'snoozes until the next local midnight',
+      now: '2026-11-10T09:15:00Z',
+      timeZone: 'Europe/Paris',
+      expected: '2026-11-10T23:00:00.000Z',
+    },
+    {
+      description:
+        'still snoozes until midnight when called a minute before it',
+      now: '2026-11-10T22:59:00Z',
+      timeZone: 'Europe/Paris',
+      expected: '2026-11-10T23:00:00.000Z',
+    },
+    {
+      description: 'snoozes a full day when called exactly at midnight',
+      now: '2026-11-10T23:00:00Z',
+      timeZone: 'Europe/Paris',
+      expected: '2026-11-11T23:00:00.000Z',
+    },
+    {
       description: 'snoozes until the next local midnight across spring DST',
       now: '2026-03-29T00:30:00Z',
       timeZone: 'Europe/Paris',
@@ -16,39 +35,7 @@ describe('getGettingStartedSnoozedUntil', () => {
     },
   ])('$description', ({ now, timeZone, expected }) => {
     expect(
-      getGettingStartedSnoozedUntil({
-        option: 'tomorrow',
-        now: new Date(now),
-        timeZone,
-        trialEnd: null,
-      }),
-    ).toBe(expected);
-  });
-
-  it.each([
-    {
-      description: 'snoozes until exactly 72 hours before the trial ends',
-      trialEnd: new Date('2026-04-05T12:34:00Z'),
-      expected: '2026-04-02T12:34:00.000Z',
-    },
-    {
-      description: 'returns null once the last three days have started',
-      trialEnd: new Date('2026-03-30T12:00:00Z'),
-      expected: null,
-    },
-    {
-      description: 'returns null without a trial end',
-      trialEnd: null,
-      expected: null,
-    },
-  ])('$description', ({ trialEnd, expected }) => {
-    expect(
-      getGettingStartedSnoozedUntil({
-        option: 'lastThreeDays',
-        now: new Date('2026-03-28T22:30:00Z'),
-        timeZone: 'UTC',
-        trialEnd,
-      }),
+      getGettingStartedSnoozedUntil({ now: new Date(now), timeZone }),
     ).toBe(expected);
   });
 });

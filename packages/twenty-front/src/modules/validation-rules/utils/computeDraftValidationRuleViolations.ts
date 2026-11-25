@@ -12,6 +12,7 @@ import {
   evaluateValidationRuleExpression,
   isDefined,
   isPlainObject,
+  isValidationRulePreviousValuePath,
 } from 'twenty-shared/utils';
 import { stripSimpleQuotesFromStringRecursive } from '~/utils/string/stripSimpleQuotesFromString';
 
@@ -111,7 +112,9 @@ const canEvaluateOnDraft = ({
     return false;
   }
 
-  const bindingPaths = Object.keys(compilationResult.bindings);
+  const bindingPaths = Object.keys(compilationResult.bindings).filter(
+    (bindingPath) => !isValidationRulePreviousValuePath(bindingPath),
+  );
 
   const isEveryReferencedRelationLoaded = bindingPaths
     .filter((bindingPath) => bindingPath.includes('.'))
@@ -157,12 +160,14 @@ const withRelationPresenceFromJoinColumns = ({
 export const computeDraftValidationRuleViolations = ({
   validationRules,
   draftRecord,
+  previousRecord,
   fields,
   fieldMetadataItems,
   now,
 }: {
   validationRules: ValidationRule[];
   draftRecord: Record<string, unknown>;
+  previousRecord?: Record<string, unknown>;
   fields: ValidationRuleFieldDescriptor[];
   fieldMetadataItems: DraftFieldMetadataItem[];
   now: string;
@@ -196,6 +201,7 @@ export const computeDraftValidationRuleViolations = ({
             draftRecord: draftRecordWithDefaultValues,
             fields,
           }),
+          previousRecord,
           fields,
           now,
         }).status === 'failed',

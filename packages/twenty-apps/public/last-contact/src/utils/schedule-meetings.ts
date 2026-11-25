@@ -98,7 +98,7 @@ export const scheduleMeetings = async (
 };
 
 export const scheduleUpcomingPersonMeetings = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'query'>,
 ): Promise<void> => {
   const now = Date.now();
   const participants = await collectPersonMeetingParticipants(client, {

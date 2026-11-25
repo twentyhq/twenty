@@ -8,8 +8,13 @@ import { AppPath } from 'twenty-shared/types';
 
 import { AppConnectionHeader } from '@/applications/components/AppConnectionHeader';
 import { AuthorizeActionButtons } from '@/applications/components/AuthorizeActionButtons';
+import { AuthorizeClientIdentityNotice } from '@/applications/components/AuthorizeClientIdentityNotice';
+import { OAUTH_SCOPE_LABELS } from '@/applications/constants/OAuthScopeLabels';
+import { getKnownOAuthClientLogoUrl } from '@/applications/utils/getKnownOAuthClientLogoUrl';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { getUrlSafely, isDefined } from 'twenty-shared/utils';
@@ -29,6 +34,7 @@ import {
   FindApplicationRegistrationByClientIdDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const StyledCardWrapper = styled.div`
   --oauth-modal-content-max-width: calc(
@@ -159,11 +165,7 @@ export const Authorize = () => {
   const navigate = useNavigateApp();
   const [searchParam] = useSearchParams();
   const { redirect } = useRedirect();
-
-  const oauthScopeLabels: { [scope: string]: string | undefined } = {
-    api: t`Access your workspace data`,
-    profile: t`Read your profile`,
-  };
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   // Support both camelCase (legacy) and standard OAuth snake_case params
   const clientId = searchParam.get('client_id') ?? searchParam.get('clientId');
@@ -173,6 +175,7 @@ export const Authorize = () => {
     searchParam.get('redirect_uri') ?? searchParam.get('redirectUrl');
   const state = searchParam.get('state');
   const issuer = searchParam.get('iss');
+  const resource = searchParam.get('resource');
 
   const {
     data,
@@ -191,7 +194,7 @@ export const Authorize = () => {
   const shouldRedirectToNotFound =
     !isDefined(clientId) ||
     !isDefined(redirectUrl) ||
-    (!loading && !isDefined(applicationRegistration));
+    (!loading && !isDefined(queryError) && !isDefined(applicationRegistration));
 
   useEffect(() => {
     if (shouldRedirectToNotFound) {
@@ -223,6 +226,7 @@ export const Authorize = () => {
           redirectUrl,
           state: state ?? undefined,
           issuer: issuer ?? undefined,
+          resource: resource ?? undefined,
         },
         onCompleted: (responseData) => {
           redirect(appendThemeToUrl(responseData.authorizeApp.redirectUrl));
@@ -288,22 +292,42 @@ export const Authorize = () => {
   }
 
   const appName = applicationRegistration.name;
-  const appLogoUrl = applicationRegistration.logoUrl;
   const requestedScopes: string[] = applicationRegistration.oAuthScopes ?? [];
   const redirectHost = getUrlSafely(redirectUrl)?.host;
+  const appLogoUrl =
+    applicationRegistration.logoUrl ?? getKnownOAuthClientLogoUrl(redirectHost);
+  const workspaceName = currentWorkspace?.displayName;
 
   return (
     <StyledAuthContent>
       <StyledCardWrapper>
         <StyledHeader>
-          <AppConnectionHeader appLogoUrl={appLogoUrl} appName={appName} />
+          <AppConnectionHeader
+            appLogoUrl={appLogoUrl}
+            appName={appName}
+            workspaceLogoUrl={getAbsoluteImageUrl(currentWorkspace?.logo)}
+            workspaceName={workspaceName}
+          />
         </StyledHeader>
         <StyledAuthContent
           style={{ alignItems: 'stretch', justifyContent: 'flex-start' }}
         >
           <StyledOAuthTitle level={2} size="lg">
-            <Trans>Connect {appName} to your account</Trans>
+            {isNonEmptyString(workspaceName) ? (
+              <Trans>
+                Connect {appName} to {workspaceName}
+              </Trans>
+            ) : (
+              <Trans>Connect {appName} to your account</Trans>
+            )}
           </StyledOAuthTitle>
+          <AuthorizeClientIdentityNotice
+            appName={appName}
+            isVerified={applicationRegistration.isVerified}
+            isClaimingVerifiedClientName={
+              applicationRegistration.isClaimingVerifiedClientName
+            }
+          />
           {requestedScopes.length > 0 && (
             <StyledPermissionSection>
               <StyledPermissionIntro>
@@ -321,7 +345,11 @@ export const Authorize = () => {
                           stroke={theme.icon.stroke.sm}
                         />
                       </StyledScopeIcon>
-                      <span>{oauthScopeLabels[scope] ?? scope}</span>
+                      <span>
+                        {isDefined(OAUTH_SCOPE_LABELS[scope])
+                          ? t(OAUTH_SCOPE_LABELS[scope])
+                          : scope}
+                      </span>
                     </StyledScopeItem>
                   );
                 })}

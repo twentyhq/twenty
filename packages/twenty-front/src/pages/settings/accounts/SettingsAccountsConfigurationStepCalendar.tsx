@@ -25,9 +25,7 @@ export const SettingsAccountsConfigurationStepCalendar = ({
   onAddAccount,
 }: SettingsAccountsConfigurationStepCalendarProps) => {
   const { t } = useLingui();
-  const accountsBreadcrumbLink = useAccountsSettingsBreadcrumbLink(
-    <Trans>Account</Trans>,
-  );
+  const accountsBreadcrumbLink = useAccountsSettingsBreadcrumbLink();
 
   const stepNumber = isDefined(messageChannel) ? 2 : 1;
   const stepTitle = t`${stepNumber}. Calendar`;

@@ -6,8 +6,8 @@ const OWNER = '20202020-bbbb-4bbb-8bbb-000000000002';
 const view = {
   applicationUniversalIdentifier: OWNER,
   isActive: true,
-  overrides: { [CUSTOM]: { name: 'Mine' } } as unknown,
-  universalOverrides: { [CUSTOM]: { name: 'Mine' } } as unknown,
+  overrides: { [CUSTOM]: { name: 'Mine' } },
+  universalOverrides: { [CUSTOM]: { name: 'Mine' } },
 };
 
 describe('resetAuthoredOverrides', () => {

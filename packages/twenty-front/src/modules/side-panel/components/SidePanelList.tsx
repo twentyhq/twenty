@@ -9,11 +9,13 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
+import { isUndefined } from '@sniptt/guards';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 type SidePanelListProps = {
   selectableItemIds: string[];
+  defaultSelectedItemId?: string | null;
   children: React.ReactNode;
   loading?: boolean;
   noResults?: boolean;
@@ -50,24 +52,30 @@ const StyledEmpty = styled.div`
 
 export const SidePanelList = ({
   selectableItemIds,
+  defaultSelectedItemId,
   children,
   loading = false,
   noResults = false,
   noResultsText,
 }: SidePanelListProps) => {
+  const { t } = useLingui();
   const setHasUserSelectedSidePanelListItem = useSetAtomState(
     hasUserSelectedSidePanelListItemState,
   );
 
   return (
     <>
-      <SidePanelDefaultSelectionEffect selectableItemIds={selectableItemIds} />
+      <SidePanelDefaultSelectionEffect
+        selectableItemIds={selectableItemIds}
+        defaultSelectedItemId={defaultSelectedItemId}
+      />
       <ScrollWrapper componentInstanceId={`scroll-wrapper-side-panel`}>
         <StyledInnerList>
           <SelectableList
             selectableListInstanceId={SIDE_PANEL_SELECTABLE_LIST_ID}
             focusId={SIDE_PANEL_FOCUS_ID}
             selectableItemIdArray={selectableItemIds}
+            shouldPreselectFirstItem={isUndefined(defaultSelectedItemId)}
             onSelect={() => {
               setHasUserSelectedSidePanelListItem(true);
             }}

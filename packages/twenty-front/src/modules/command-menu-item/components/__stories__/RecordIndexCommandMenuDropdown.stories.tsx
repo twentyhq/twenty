@@ -42,6 +42,7 @@ const THIRD_PARTY_APPLICATION = {
   universalIdentifier: 'acme-sync-application',
   logoUrl: null,
   createdAt: '2024-01-01T00:00:00.000Z',
+  runHealthCheckOnUserPreferences: false,
 };
 
 const THIRD_PARTY_COMMAND_MENU_ITEM: CommandMenuItemFieldsFragment = {
@@ -62,6 +63,7 @@ const THIRD_PARTY_COMMAND_MENU_ITEM: CommandMenuItemFieldsFragment = {
   conditionalAvailabilityExpression: null,
   availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
   availabilityObjectMetadataId: null,
+  availabilityCoreObjectName: null,
   payload: null,
   universalIdentifier: null,
   coreWorkflowVersionId: null,

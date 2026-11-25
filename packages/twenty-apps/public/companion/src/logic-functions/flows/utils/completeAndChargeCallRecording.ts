@@ -4,7 +4,7 @@ import { chargeCredits } from 'twenty-sdk/billing';
 import { getCallRecordingCharge } from 'src/logic-functions/flows/utils/getCallRecordingCharge';
 
 export const completeAndChargeCallRecording = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'query' | 'mutation'>,
   { id }: { id: string },
 ): Promise<boolean> => {
   const charge = await getCallRecordingCharge(client, { callRecordingId: id });

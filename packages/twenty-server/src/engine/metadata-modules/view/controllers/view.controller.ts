@@ -22,12 +22,11 @@ import { isDefined } from 'twenty-shared/utils';
 import { parseMetadataRestPagination } from 'src/engine/api/rest/metadata/utils/parse-metadata-rest-pagination.util';
 import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { AuthContext } from 'src/engine/decorators/auth/auth-context.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { RequestLocale } from 'src/engine/decorators/locale/request-locale.decorator';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
@@ -37,36 +36,19 @@ import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/be
 import { CreateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/create-view.input';
 import { UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view.input';
 import { type ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
-import {
-  generateViewExceptionMessage,
-  generateViewUserFriendlyExceptionMessage,
-  ViewException,
-  ViewExceptionCode,
-  ViewExceptionMessageKey,
-} from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { ViewRestApiExceptionFilter } from 'src/engine/metadata-modules/view/filters/view-rest-api-exception.filter';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { FlatEntityMapsRestApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-rest-api-exception.filter';
 import { PermissionsRestApiExceptionFilter } from 'src/engine/permissions/utils/permissions-rest-api-exception.filter';
 import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-rest-api-exception.filter';
-import { ViewPermissionGuard } from 'src/engine/permissions/view/guards/view-permission.guard';
-import { CreateViewPermissionGuard } from 'src/engine/permissions/view/guards/create-view-permission.guard';
+import { ViewPermissionGuard } from 'src/engine/metadata-modules/view/guards/view-permission.guard';
+import { CreateViewPermissionGuard } from 'src/engine/metadata-modules/view/guards/create-view-permission.guard';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
+import { VIEW_READ_ACCESS_POLICY } from 'src/engine/metadata-modules/view/constants/view-read-access-policy.constant';
+import { VIEW_WRITE_BY_VISIBILITY_ACCESS_POLICY } from 'src/engine/metadata-modules/view/constants/view-write-by-visibility-access-policy.constant';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @Controller(`${ApiPath.Rest}/metadata/views`)
-@UseGuards(
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
-    },
-    apiKey: true,
-    oauthClient: true,
-    application: true,
-  }),
-)
 @UseFilters(
   PermissionsRestApiExceptionFilter,
   ViewRestApiExceptionFilter,
@@ -82,19 +64,16 @@ export class ViewController {
   ) {}
 
   @Get()
-  @UseGuards(CustomPermissionGuard)
+  @UseGuards(AccessPolicyGuard(VIEW_READ_ACCESS_POLICY), CustomPermissionGuard)
   async findMany(
     @Req() request: AuthenticatedRequest,
     @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
     @Query('objectMetadataId') objectMetadataId?: string,
   ) {
     const page = await this.viewService.findManyWithRelationsPaginated({
       workspaceId: workspace.id,
       objectMetadataId,
-      userWorkspaceId,
       pagination: parseMetadataRestPagination(request),
     });
 
@@ -110,28 +89,17 @@ export class ViewController {
   }
 
   @Get(':id')
-  @UseGuards(NoPermissionGuard)
+  @UseGuards(AccessPolicyGuard(VIEW_READ_ACCESS_POLICY))
   async findOne(
     @Param('id') id: string,
     @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewDTO> {
-    const view = await this.viewService.findByIdWithRelations(id, workspace.id);
-
-    if (!isDefined(view)) {
-      throw new ViewException(
-        generateViewExceptionMessage(
-          ViewExceptionMessageKey.VIEW_NOT_FOUND,
-          id,
-        ),
-        ViewExceptionCode.VIEW_NOT_FOUND,
-        {
-          userFriendlyMessage: generateViewUserFriendlyExceptionMessage(
-            ViewExceptionMessageKey.VIEW_NOT_FOUND,
-          ),
-        },
-      );
-    }
+    const view =
+      await this.viewService.findByIdWithRelationsVisibleToCallerOrThrow({
+        id,
+        workspaceId: workspace.id,
+      });
 
     const processedViews = await this.processViewsWithTemplates(
       [view],
@@ -143,15 +111,20 @@ export class ViewController {
   }
 
   @Post()
-  @UseGuards(CreateViewPermissionGuard)
+  @UseGuards(
+    AccessPolicyGuard(VIEW_WRITE_BY_VISIBILITY_ACCESS_POLICY),
+    CreateViewPermissionGuard,
+  )
   async create(
     @Body() input: CreateViewInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthContext() authContext: WorkspaceAuthContext,
     @RequestLocale() locale?: keyof typeof APP_LOCALES,
   ): Promise<ViewDTO> {
     const view = await this.viewService.createOne({
       createViewInput: input,
       workspaceId: workspace.id,
+      authContext,
     });
 
     const processedViews = await this.processViewsWithTemplates(
@@ -164,15 +137,17 @@ export class ViewController {
   }
 
   @Patch(':id')
-  @UseGuards(ViewPermissionGuard)
+  @UseGuards(
+    AccessPolicyGuard(VIEW_WRITE_BY_VISIBILITY_ACCESS_POLICY),
+    ViewPermissionGuard,
+  )
   @UsePipes(new ValidationPipe())
   async update(
     @Param('id') id: string,
     @Body() input: UpdateViewInput,
     @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
+    @AuthContext() authContext: WorkspaceAuthContext,
   ): Promise<ViewDTO> {
     const updatedView = await this.viewService.updateOne({
       updateViewInput: {
@@ -180,7 +155,7 @@ export class ViewController {
         id,
       },
       workspaceId: workspace.id,
-      userWorkspaceId,
+      authContext,
     });
 
     const processedViews = await this.processViewsWithTemplates(
@@ -193,7 +168,10 @@ export class ViewController {
   }
 
   @Delete(':id')
-  @UseGuards(ViewPermissionGuard)
+  @UseGuards(
+    AccessPolicyGuard(VIEW_WRITE_BY_VISIBILITY_ACCESS_POLICY),
+    ViewPermissionGuard,
+  )
   async delete(
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

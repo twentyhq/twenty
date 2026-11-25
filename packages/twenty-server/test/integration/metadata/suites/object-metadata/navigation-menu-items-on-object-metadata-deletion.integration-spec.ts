@@ -19,7 +19,7 @@ const NAVIGATION_MENU_ITEM_GQL_FIELDS = `
   targetObjectMetadataId
   targetRecordId
   viewId
-  folderId
+  parentId
   position
 `;
 

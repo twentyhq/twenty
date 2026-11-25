@@ -1,9 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import chunk from 'lodash.chunk';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { StepStatus } from 'twenty-shared/workflow';
-import { type FindOptionsWhere } from 'typeorm';
+import { type FindOptionsWhere, In } from 'typeorm';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
@@ -22,13 +23,21 @@ import {
 import { workflowHasRunningSteps } from 'src/modules/workflow/common/utils/workflow-has-running-steps.util';
 import { workflowShouldFail } from 'src/modules/workflow/workflow-executor/utils/workflow-should-fail.util';
 import { workflowShouldKeepRunning } from 'src/modules/workflow/workflow-executor/utils/workflow-should-keep-running.util';
+import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/constants/run-workflow-job-name';
 import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
+import { buildInFlightWorkflowRunIds } from 'src/modules/workflow/workflow-runner/workflow-run-queue/utils/build-in-flight-workflow-run-ids.util';
+import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
 import { getStaledRunsFindOptions } from 'src/modules/workflow/workflow-runner/workflow-run-queue/utils/get-staled-runs-find-options.util';
 import { getStuckRunningRunsFindOptions } from 'src/modules/workflow/workflow-runner/workflow-run-queue/utils/get-stuck-running-runs-find-options.util';
 import { getStuckRunningRunsMonitorCacheKey } from 'src/modules/workflow/workflow-runner/workflow-run-queue/utils/get-stuck-running-runs-monitor-cache-key.util';
 import { getStuckStoppingRunsFindOptions } from 'src/modules/workflow/workflow-runner/workflow-run-queue/utils/get-stuck-stopping-runs-find-options.util';
-import { WorkflowThrottlingWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-throttling.workspace-service';
+import { WorkflowRunJobScopeWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-job-scope.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
+
+type WorkflowRunReference = Pick<
+  WorkflowRunWorkspaceEntity,
+  'id' | 'coreWorkflowId'
+>;
 
 @Injectable()
 export class WorkflowHandleStaledRunsWorkspaceService {
@@ -37,8 +46,8 @@ export class WorkflowHandleStaledRunsWorkspaceService {
   );
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    private readonly workflowThrottlingWorkspaceService: WorkflowThrottlingWorkspaceService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
+    private readonly workflowRunJobScopeWorkspaceService: WorkflowRunJobScopeWorkspaceService,
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly metricsService: MetricsService,
@@ -46,63 +55,85 @@ export class WorkflowHandleStaledRunsWorkspaceService {
     private readonly cacheStorageService: CacheStorageService,
   ) {}
 
+  // A run of a tenant with a backlog can wait in the queue past the threshold, so only a run whose job is gone gets a new one
   async handleStaledRunsForWorkspace(workspaceId: string) {
-    const authContext = buildSystemAuthContext(workspaceId);
+    const staledRuns = await this.collectRuns({
+      workspaceId,
+      findOptions: getStaledRunsFindOptions(),
+    });
 
-    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const workflowRunRepository = this.workspaceOrmManager.getRepository(
-        WorkflowRunWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
-      );
+    if (staledRuns.length === 0) {
+      return;
+    }
 
-      const staledRunsCount = await workflowRunRepository.count({
-        where: getStaledRunsFindOptions(),
-      });
+    const inFlightWorkflowRunIds = buildInFlightWorkflowRunIds(
+      await this.messageQueueService.getInFlightJobs<RunWorkflowJobData>(),
+    );
+    const lostRuns = staledRuns.filter(
+      ({ id }) => !inFlightWorkflowRunIds.has(id),
+    );
 
-      if (staledRunsCount <= 0) {
-        return;
-      }
+    if (lostRuns.length === 0) {
+      return;
+    }
 
-      const batchCount = Math.ceil(staledRunsCount / QUERY_MAX_RECORDS);
-
-      for (let batchIndex = 0; batchIndex < batchCount; batchIndex++) {
-        const staledWorkflowRuns = await workflowRunRepository.find({
-          where: getStaledRunsFindOptions(),
-          select: {
-            id: true,
-          },
-          order: {
-            createdAt: 'ASC',
-          },
-          take: QUERY_MAX_RECORDS,
-        });
-
-        if (staledWorkflowRuns.length <= 0) {
-          break;
-        }
-
-        await workflowRunRepository.update(
-          staledWorkflowRuns.map((workflowRun) => workflowRun.id),
-          {
-            enqueuedAt: null,
-            status: WorkflowRunStatus.NOT_STARTED,
-          },
-        );
-      }
-
-      await this.workflowThrottlingWorkspaceService.recomputeWorkflowRunNotStartedCount(
+    const resolveJobScope =
+      await this.workflowRunJobScopeWorkspaceService.getCoreWorkflowJobScopeResolver(
         workspaceId,
       );
-    }, authContext);
+
+    // Overlapping sweeps see the same lost runs: a run goes to the sweep whose conditional update claims it first
+    const claimedRuns =
+      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+        const workflowRunRepository =
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+            WorkflowRunWorkspaceEntity,
+          );
+        const claimedRuns: WorkflowRunReference[] = [];
+
+        for (const lostRunsBatch of chunk(lostRuns, QUERY_MAX_RECORDS)) {
+          const { generatedMaps } = await workflowRunRepository.update(
+            {
+              ...getStaledRunsFindOptions(),
+              id: In(lostRunsBatch.map(({ id }) => id)),
+            },
+            {
+              status: WorkflowRunStatus.ENQUEUED,
+              enqueuedAt: new Date().toISOString(),
+            },
+            { columnsToReturn: ['id', 'coreWorkflowId'] },
+          );
+
+          claimedRuns.push(
+            ...generatedMaps.map(({ id, coreWorkflowId }) => ({
+              id,
+              coreWorkflowId,
+            })),
+          );
+        }
+
+        return claimedRuns;
+      }, buildSystemAuthContext(workspaceId));
+
+    for (const { id: workflowRunId, coreWorkflowId } of claimedRuns) {
+      await this.messageQueueService.add<RunWorkflowJobData>(
+        RUN_WORKFLOW_JOB_NAME,
+        { workflowRunId, workspaceId },
+        buildRunWorkflowJobOptions({
+          workflowRunId,
+          scope: resolveJobScope(coreWorkflowId),
+        }),
+      );
+    }
   }
 
   async handleStuckStoppingRunsForWorkspace(workspaceId: string) {
-    const stuckStoppingRunIds = await this.collectRunIds({
+    const stuckStoppingRuns = await this.collectRuns({
       workspaceId,
       findOptions: getStuckStoppingRunsFindOptions(),
     });
 
-    for (const workflowRunId of stuckStoppingRunIds) {
+    for (const { id: workflowRunId } of stuckStoppingRuns) {
       try {
         await this.workflowRunWorkspaceService.endWorkflowRun({
           workflowRunId,
@@ -127,27 +158,24 @@ export class WorkflowHandleStaledRunsWorkspaceService {
       (await this.cacheStorageService.get<Record<string, string>>(cacheKey)) ??
       {};
 
-    const stuckRunningRunIds = await this.collectRunIds({
+    const stuckRunningRuns = await this.collectRuns({
       workspaceId,
       findOptions: getStuckRunningRunsFindOptions(),
     });
 
     if (
-      stuckRunningRunIds.length === 0 &&
+      stuckRunningRuns.length === 0 &&
       Object.keys(flaggedRuns).length === 0
     ) {
       return;
     }
 
-    const inFlightJobs =
-      await this.messageQueueService.getInFlightJobs<RunWorkflowJobData>();
+    const inFlightWorkflowRunIds = buildInFlightWorkflowRunIds(
+      await this.messageQueueService.getInFlightJobs<RunWorkflowJobData>(),
+    );
 
     const hasInFlightJob = (workflowRunId: string) =>
-      inFlightJobs.some(
-        (job) =>
-          job.id?.startsWith(`${workflowRunId}-`) ||
-          job.data?.workflowRunId === workflowRunId,
-      );
+      inFlightWorkflowRunIds.has(workflowRunId);
 
     const stillFlaggedRuns: Record<string, string> = {};
 
@@ -187,7 +215,7 @@ export class WorkflowHandleStaledRunsWorkspaceService {
       }
     }
 
-    for (const workflowRunId of stuckRunningRunIds) {
+    for (const { id: workflowRunId } of stuckRunningRuns) {
       if (
         isDefined(flaggedRuns[workflowRunId]) ||
         hasInFlightJob(workflowRunId)
@@ -273,37 +301,37 @@ export class WorkflowHandleStaledRunsWorkspaceService {
     return WorkflowRunStatus.COMPLETED;
   }
 
-  private async collectRunIds({
+  private async collectRuns({
     workspaceId,
     findOptions,
   }: {
     workspaceId: string;
     findOptions: FindOptionsWhere<WorkflowRunWorkspaceEntity>;
-  }): Promise<string[]> {
+  }): Promise<WorkflowRunReference[]> {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const workflowRunRepository = this.workspaceOrmManager.getRepository(
-        WorkflowRunWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
-      );
+      const workflowRunRepository =
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+          WorkflowRunWorkspaceEntity,
+        );
 
-      const runIds: string[] = [];
-      let page: WorkflowRunWorkspaceEntity[];
+      const runs: WorkflowRunReference[] = [];
+      let page: WorkflowRunReference[];
 
       do {
         page = await workflowRunRepository.find({
           where: findOptions,
-          select: { id: true },
+          select: { id: true, coreWorkflowId: true },
           order: { createdAt: 'ASC', id: 'ASC' },
           take: QUERY_MAX_RECORDS,
-          skip: runIds.length,
+          skip: runs.length,
         });
 
-        runIds.push(...page.map((workflowRun) => workflowRun.id));
+        runs.push(...page);
       } while (page.length === QUERY_MAX_RECORDS);
 
-      return runIds;
+      return runs;
     }, authContext);
   }
 }

@@ -6,11 +6,11 @@ import { type WorkflowDelayAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
-import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
 import { IconCalendar, IconHourglassHigh } from 'twenty-ui/icon';
 import { Separator } from 'twenty-ui/primitives/layout';
 import { type SelectOption } from 'twenty-ui/primitives/input';
+import { useLingui } from '@lingui/react/macro';
 
 type WorkflowEditActionDelayProps = {
   action: WorkflowDelayAction;
@@ -28,6 +28,7 @@ export const WorkflowEditActionDelay = ({
   action,
   actionOptions,
 }: WorkflowEditActionDelayProps) => {
+  const { t } = useLingui();
   const [localDuration, setLocalDuration] = useState<{
     days?: number | string;
     hours?: number | string;

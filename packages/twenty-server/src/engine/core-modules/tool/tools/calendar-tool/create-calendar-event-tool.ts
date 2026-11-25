@@ -74,7 +74,9 @@ export class CreateCalendarEventTool implements Tool {
           startsAt: createdEvent.startsAt,
           endsAt: createdEvent.endsAt,
           conferenceLink: createdEvent.conferenceLinkUrl || undefined,
-          attendeeCount: createdEvent.participants.length,
+          attendeeCount: createdEvent.participants.filter(
+            (participant) => !participant.isOrganizer,
+          ).length,
           connectedAccountId: data.connectedAccount.id,
         },
       };

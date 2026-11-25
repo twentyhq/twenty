@@ -5,6 +5,7 @@ import { type SettingsFrontComponentApplicationManifest } from '@/application/se
 import { type UninstallLogicFunctionApplicationManifest } from '@/application/uninstallLogicFunctionApplicationType';
 import { type FrontComponentSharedDependenciesManifest } from '@/application/frontComponentSharedDependenciesManifestType';
 import { type ApplicationCapability } from '@/application/applicationCapabilityType';
+import { type IframeMediaPermission } from '@/types/IframeMediaPermission';
 import { type ApplicationBilling } from './applicationBillingType';
 import { type ApplicationCategory } from './applicationCategoryType';
 import { type ApplicationVariables } from './applicationVariablesType';
@@ -16,6 +17,7 @@ export type ApplicationManifest = SyncableEntityOptions & {
   displayName: string;
   description: string;
   requestedCapabilities?: ApplicationCapability[];
+  requestedIframeMediaPermissions?: IframeMediaPermission[];
   applicationVariables?: ApplicationVariables;
   billing?: ApplicationBilling;
   serverVariables?: ServerVariables;

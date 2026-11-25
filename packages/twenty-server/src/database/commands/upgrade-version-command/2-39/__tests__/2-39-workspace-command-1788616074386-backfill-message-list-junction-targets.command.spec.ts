@@ -1,19 +1,20 @@
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { Test } from '@nestjs/testing';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   FieldMetadataType,
   RelationOnDeleteAction,
   RelationType,
 } from 'twenty-shared/types';
-import { type Repository } from 'typeorm';
 
-import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { BackfillMessageListJunctionTargetsCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788616074386-backfill-message-list-junction-targets.command';
 import { invalidateFieldMetadataCache } from 'src/database/commands/upgrade-version-command/utils/invalidate-field-metadata-cache.util';
-import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { type WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
 
 jest.mock(
   'src/database/commands/upgrade-version-command/utils/invalidate-field-metadata-cache.util',
@@ -127,7 +128,7 @@ describe('BackfillMessageListJunctionTargetsCommand', () => {
   let getOrRecomputeMock: jest.Mock;
   let command: BackfillMessageListJunctionTargetsCommand;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     jest.clearAllMocks();
 
     findOneMock = jest.fn();
@@ -151,16 +152,26 @@ describe('BackfillMessageListJunctionTargetsCommand', () => {
             }),
         ),
       },
-    } as unknown as Repository<FieldMetadataEntity>;
+    };
 
-    command = new BackfillMessageListJunctionTargetsCommand(
-      {} as WorkspaceIteratorService,
-      {
-        getOrRecompute: getOrRecomputeMock,
-      } as unknown as WorkspaceCacheService,
-      {} as WorkspaceMigrationRunnerService,
-      fieldMetadataRepository,
-    );
+    const module = await Test.createTestingModule({
+      providers: [
+        BackfillMessageListJunctionTargetsCommand,
+        { provide: WorkspaceIteratorService, useValue: {} },
+        {
+          provide: WorkspaceCacheService,
+          useValue: {
+            getOrRecompute: getOrRecomputeMock,
+          },
+        },
+        { provide: WorkspaceMigrationRunnerService, useValue: {} },
+        {
+          provide: getRepositoryToken(FieldMetadataEntity),
+          useValue: fieldMetadataRepository,
+        },
+      ],
+    }).compile();
+    command = module.get(BackfillMessageListJunctionTargetsCommand);
   });
 
   const runOnWorkspace = (dryRun = false) =>
@@ -177,10 +188,13 @@ describe('BackfillMessageListJunctionTargetsCommand', () => {
     getOrRecomputeMock.mockResolvedValue({
       flatFieldMetadataMaps: buildFlatFieldMetadataMaps(flatFieldMetadatas),
     });
-    findOneMock.mockImplementation(({ where: { id } }: { where: { id: string } }) =>
-      Promise.resolve(
-        flatFieldMetadatas.find((flatFieldMetadata) => flatFieldMetadata.id === id),
-      ),
+    findOneMock.mockImplementation(
+      ({ where: { id } }: { where: { id: string } }) =>
+        Promise.resolve(
+          flatFieldMetadatas.find(
+            (flatFieldMetadata) => flatFieldMetadata.id === id,
+          ),
+        ),
     );
   };
 

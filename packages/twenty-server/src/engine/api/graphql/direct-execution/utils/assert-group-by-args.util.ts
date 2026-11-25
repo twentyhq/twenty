@@ -8,7 +8,7 @@ import {
 
 import { isDefined, isEmptyObject } from 'twenty-shared/utils';
 
-import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import {
   GraphqlDirectExecutionException,
   GraphqlDirectExecutionExceptionCode,

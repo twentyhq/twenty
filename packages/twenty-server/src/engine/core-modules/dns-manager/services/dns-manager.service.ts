@@ -8,6 +8,7 @@ import {
   type CustomHostnameListResponse,
 } from 'cloudflare/resources/custom-hostnames/custom-hostnames';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import { z } from 'zod';
 
 import { type DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/domain-valid-records';
 import {
@@ -17,6 +18,17 @@ import {
 import { dnsManagerValidator } from 'src/engine/core-modules/dns-manager/validator/dns-manager.validate';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+
+const sslDcvDelegationSchema = z.object({
+  dcv_delegation_records: z
+    .array(
+      z.object({
+        cname: z.string().optional(),
+        cname_target: z.string().optional(),
+      }),
+    )
+    .optional(),
+});
 
 type DnsManagerOptions = {
   isPublicDomain?: boolean;
@@ -86,8 +98,8 @@ export class DnsManagerService {
 
     const statuses = this.getHostnameStatuses(customHostname);
 
-    // @ts-expect-error - type definition doesn't reflect the real API
-    const dcvRecords = ssl?.dcv_delegation_records?.[0];
+    const dcvRecords =
+      sslDcvDelegationSchema.safeParse(ssl).data?.dcv_delegation_records?.[0];
 
     return {
       id: id,

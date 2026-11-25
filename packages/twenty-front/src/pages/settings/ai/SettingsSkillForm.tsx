@@ -1,5 +1,4 @@
 import { useQuery } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { useParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
@@ -12,9 +11,11 @@ import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { FindOneSkillDocument } from '~/generated-metadata/graphql';
 import { SettingsSkillFormContent } from '~/pages/settings/ai/components/SettingsSkillFormContent';
 import { useNavigateToNotFoundOnLoadFailure } from '~/pages/settings/ai/hooks/useNavigateToNotFoundOnLoadFailure';
-import { getSettingsAiBreadcrumbLinks } from '~/pages/settings/ai/utils/getSettingsAiBreadcrumbLinks';
+import { getSettingsAiBreadcrumbLinks } from '@/settings/ai/utils/getSettingsAiBreadcrumbLinks';
+import { useLingui } from '@lingui/react/macro';
 
 export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const { getIcon } = useIcons();
   const { skillId = '' } = useParams<{ skillId: string }>();
@@ -50,7 +51,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       <SettingsPageLayout
         title={t`Skill`}
         icon={<SkillIcon size={theme.icon.size.md} color={theme.color.blue9} />}
-        links={getSettingsAiBreadcrumbLinks(t`Skill`)}
+        links={getSettingsAiBreadcrumbLinks({ currentPageLabel: t`Skill` })}
       >
         <SettingsPageContainer>
           <Section.Root>

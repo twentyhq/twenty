@@ -6,6 +6,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 export const StyledNavigationDrawerUnreadDot = styled.span`
   background: ${themeCssVariables.color.blue};
   border-radius: 50%;
+  corner-shape: round;
   height: 6px;
   position: absolute;
   right: -2px;

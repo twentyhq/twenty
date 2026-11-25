@@ -1,8 +1,8 @@
-import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { IconCalendarX } from 'twenty-ui/icon';
 import { Text } from 'twenty-ui/primitives/typography';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledSeparator = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
@@ -41,6 +41,7 @@ type DatePickerClearButtonProps = {
 export const DatePickerClearButton = ({
   onClear,
 }: DatePickerClearButtonProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
 
   return (

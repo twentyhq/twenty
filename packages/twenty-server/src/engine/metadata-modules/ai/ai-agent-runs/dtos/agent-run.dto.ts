@@ -8,11 +8,15 @@ export class AgentRunDTO {
   @Field(() => UUIDScalarType)
   id: string;
 
-  @Field(() => UUIDScalarType)
-  threadId: string;
+  // null for a one-shot run, which has no conversation
+  @Field(() => UUIDScalarType, { nullable: true })
+  threadId: string | null;
 
   @Field(() => String, { nullable: true })
   threadTitle: string | null;
+
+  @Field(() => Boolean)
+  canReadThread: boolean;
 
   @Field(() => AgentTurnStatus)
   status: AgentTurnStatus;

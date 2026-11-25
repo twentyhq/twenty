@@ -2,8 +2,9 @@ import { type TimelineActivity } from '@/activities/timeline-activities/types/Ti
 import { groupEventsByMonth } from '@/activities/timeline-activities/utils/groupEventsByMonth';
 import { mockedTimelineActivityRecords } from '~/testing/mock-data/generated/data/timelineActivities/mock-timelineActivities-data';
 
-const mockedTimelineActivities =
-  mockedTimelineActivityRecords as unknown as TimelineActivity[];
+const mockedTimelineActivities = mockedTimelineActivityRecords.map(
+  ({ happensAt }) => ({ happensAt }),
+);
 
 describe('groupEventsByMonth', () => {
   it('groups an event by when it happened rather than when it was persisted', () => {

@@ -13,9 +13,10 @@ export const FLAT_VIEW_EDITABLE_PROPERTIES = [
   'calendarLayout',
   'calendarFieldMetadataId',
   'calendarEndFieldMetadataId',
-  'visibility',
+  'isPrivate',
   'mainGroupByFieldMetadataId',
   'shouldHideEmptyGroups',
+  'shouldDisplayGroupsAsTabs',
   'kanbanColumnWidth',
   'groupLoadLimit',
 ] as const satisfies MetadataEntityPropertyName<'view'>[];

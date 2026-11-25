@@ -7,7 +7,7 @@ import {
 } from 'test/integration/graphql/suites/application-role-intersection/utils/create-workspace-blocklist-entry.util';
 import { deleteBlocklistEntryThroughMcp } from 'test/integration/graphql/suites/application-role-intersection/utils/delete-blocklist-entry-through-mcp.util';
 import { deleteUserFromWorkspace } from 'test/integration/graphql/suites/user-session/utils/delete-user-from-workspace.util';
-import { findObjectMetadataIdByName } from 'test/integration/graphql/suites/application-role-intersection/utils/find-object-metadata-id-by-name.util';
+import { findObjectMetadataIdByName } from 'test/integration/utils/find-object-metadata-id-by-name.util';
 import {
   cleanupDelegatedApplications,
   type DelegatedApplications,
@@ -172,7 +172,7 @@ describe('A delegated application without the flag is refused', () => {
       delegatedApplications;
 
     const { errors } = await deleteOneRole({
-      input: { idToDelete: flaggedApplication.defaultRoleId },
+      input: { idToDelete: flaggedApplication.requestedRoleId },
       token: flaggedApplicationToken,
       expectToFail: true,
     });
@@ -183,13 +183,13 @@ describe('A delegated application without the flag is refused', () => {
       input: { id: flaggedApplication.id },
       gqlFields: `
         id
-        defaultRoleId
+        requestedRoleId
       `,
       expectToFail: false,
     });
 
-    expect(data.findOneApplication.defaultRoleId).toBe(
-      flaggedApplication.defaultRoleId,
+    expect(data.findOneApplication.requestedRoleId).toBe(
+      flaggedApplication.requestedRoleId,
     );
   });
 

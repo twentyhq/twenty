@@ -11,15 +11,32 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import {
+  type BuiltInSectionKey,
+  type NativePageKey,
+} from 'twenty-shared/types';
+
 import { ADD_AGENT_CHAT_CHANNEL_NAVIGATION_MENU_ITEM_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-51/add-agent-chat-channel-navigation-menu-item-upgrade-command-name.constant';
+import { ADD_NATIVE_PAGE_NAVIGATION_MENU_ITEM_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-56/add-native-page-navigation-menu-item-upgrade-command-name.constant';
+import { ADD_WORKFLOW_AND_AGENT_NAVIGATION_MENU_ITEMS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-58/add-workflow-and-agent-navigation-menu-items-upgrade-command-name.constant';
+import { RENAME_NAVIGATION_MENU_ITEM_FOLDER_ID_TO_PARENT_ID_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-60/rename-navigation-menu-item-folder-id-to-parent-id-upgrade-command-name.constant';
+import { ADD_NAVIGATION_MENU_ITEM_BUILT_IN_SECTION_KEY_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-61/add-navigation-menu-item-built-in-section-key-upgrade-command-name.constant';
+import { ADD_NAVIGATION_MENU_ITEM_OVERRIDABLE_ENTITY_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-61/add-navigation-menu-item-overridable-entity-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
+import { WasRenamedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-renamed-in-upgrade.decorator';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { AgentChatChannelEntity } from 'src/engine/metadata-modules/agent-chat-channel/entities/agent-chat-channel.entity';
+import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
-import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity.type';
+
+export type NavigationMenuItemOverrides = {
+  isActive?: boolean;
+};
 
 @Entity({ name: 'navigationMenuItem', schema: 'core' })
 @Index('IDX_NAVIGATION_MENU_ITEM_APPLICATION_ID', ['applicationId'])
@@ -37,8 +54,8 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   'targetObjectMetadataId',
   'workspaceId',
 ])
-@Index('IDX_NAVIGATION_MENU_ITEM_FOLDER_ID_WORKSPACE_ID', [
-  'folderId',
+@Index('IDX_NAVIGATION_MENU_ITEM_PARENT_ID_WORKSPACE_ID', [
+  'parentId',
   'workspaceId',
 ])
 @Index('IDX_NAVIGATION_MENU_ITEM_VIEW_ID_WORKSPACE_ID', [
@@ -53,6 +70,14 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   'agentChatChannelId',
   'workspaceId',
 ])
+@Index('IDX_NAVIGATION_MENU_ITEM_WORKFLOW_ID_WORKSPACE_ID', [
+  'workflowId',
+  'workspaceId',
+])
+@Index('IDX_NAVIGATION_MENU_ITEM_AGENT_ID_WORKSPACE_ID', [
+  'agentId',
+  'workspaceId',
+])
 @Check(
   'CHK_navigation_menu_item_type_fields',
   `("type" = 'FOLDER')
@@ -61,10 +86,15 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   OR ("type" = 'RECORD' AND "targetRecordId" IS NOT NULL AND "targetObjectMetadataId" IS NOT NULL)
   OR ("type" = 'LINK' AND "link" IS NOT NULL)
   OR ("type" = 'PAGE_LAYOUT' AND "pageLayoutId" IS NOT NULL)
-  OR ("type" = 'AGENT_CHAT_CHANNEL' AND "agentChatChannelId" IS NOT NULL)`,
+  OR ("type" = 'AGENT_CHAT_CHANNEL' AND "agentChatChannelId" IS NOT NULL)
+  OR ("type" = 'NATIVE_PAGE' AND "nativePageKey" IS NOT NULL)
+  OR ("type" = 'WORKFLOW' AND "workflowId" IS NOT NULL)
+  OR ("type" = 'AGENT' AND "agentId" IS NOT NULL)
+  OR ("type" = 'TAB')
+  OR ("type" = 'SECTION')`,
 )
 export class NavigationMenuItemEntity
-  extends SyncableEntity
+  extends OverridableEntity<NavigationMenuItemOverrides>
   implements Required<NavigationMenuItemEntity>
 {
   @PrimaryGeneratedColumn('uuid')
@@ -126,11 +156,18 @@ export class NavigationMenuItemEntity
     onDelete: 'CASCADE',
     nullable: true,
   })
-  @JoinColumn({ name: 'folderId' })
-  folder: Relation<NavigationMenuItemEntity> | null;
+  @JoinColumn({ name: 'parentId' })
+  parent: Relation<NavigationMenuItemEntity> | null;
 
+  @WasRenamedInUpgrade([
+    {
+      previousName: 'folderId',
+      upgradeCommandName:
+        RENAME_NAVIGATION_MENU_ITEM_FOLDER_ID_TO_PARENT_ID_UPGRADE_COMMAND_NAME,
+    },
+  ])
   @Column({ nullable: true, type: 'uuid' })
-  folderId: string | null;
+  parentId: string | null;
 
   @ManyToOne(() => PageLayoutEntity, {
     onDelete: 'CASCADE',
@@ -156,6 +193,48 @@ export class NavigationMenuItemEntity
   @Column({ nullable: true, type: 'uuid' })
   agentChatChannelId: string | null;
 
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_NATIVE_PAGE_NAVIGATION_MENU_ITEM_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: true, type: 'text' })
+  nativePageKey: NativePageKey | null;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_NAVIGATION_MENU_ITEM_BUILT_IN_SECTION_KEY_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: true, type: 'text' })
+  builtInSectionKey: BuiltInSectionKey | null;
+
+  @ManyToOne(() => WorkflowEntity, {
+    onDelete: 'CASCADE',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'workflowId' })
+  workflow: Relation<WorkflowEntity> | null;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_WORKFLOW_AND_AGENT_NAVIGATION_MENU_ITEMS_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: true, type: 'uuid' })
+  workflowId: string | null;
+
+  @ManyToOne(() => AgentEntity, {
+    onDelete: 'CASCADE',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'agentId' })
+  agent: Relation<AgentEntity> | null;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_WORKFLOW_AND_AGENT_NAVIGATION_MENU_ITEMS_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: true, type: 'uuid' })
+  agentId: string | null;
+
   @Column({ nullable: false, type: 'double precision' })
   position: number;
 
@@ -165,3 +244,12 @@ export class NavigationMenuItemEntity
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 }
+
+WasIntroducedInUpgrade({
+  upgradeCommandName:
+    ADD_NAVIGATION_MENU_ITEM_OVERRIDABLE_ENTITY_UPGRADE_COMMAND_NAME,
+})(NavigationMenuItemEntity.prototype, 'overrides');
+WasIntroducedInUpgrade({
+  upgradeCommandName:
+    ADD_NAVIGATION_MENU_ITEM_OVERRIDABLE_ENTITY_UPGRADE_COMMAND_NAME,
+})(NavigationMenuItemEntity.prototype, 'isActive');

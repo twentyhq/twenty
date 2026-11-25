@@ -19,7 +19,6 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useId, useState } from 'react';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
@@ -30,6 +29,7 @@ import { IconChevronDown } from 'twenty-ui/icon';
 import { Field } from 'twenty-ui/primitives/input';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledFormSelectContainerWrapper = styled.div<{ readonly?: boolean }>`
   cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};
@@ -74,6 +74,7 @@ export const FormMultiRecordPicker = ({
   testId,
   VariablePicker,
 }: FormMultiRecordPickerProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
 
   const [draftValue, setDraftValue] = useState<FormMultiRecordPickerDraftValue>(

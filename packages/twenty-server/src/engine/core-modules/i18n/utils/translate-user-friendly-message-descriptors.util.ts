@@ -8,7 +8,7 @@ const isMessageDescriptor = (value: unknown): value is MessageDescriptor =>
 
 const translateValueRecursively = (
   value: unknown,
-  i18n: I18n,
+  i18n: Pick<I18n, '_'>,
   parentKey?: string,
 ): unknown => {
   if (parentKey === USER_FRIENDLY_MESSAGE_KEY && isMessageDescriptor(value)) {
@@ -35,6 +35,6 @@ const translateValueRecursively = (
 
 export const translateUserFriendlyMessageDescriptors = (
   payload: object,
-  i18n: I18n,
+  i18n: Pick<I18n, '_'>,
 ): Record<string, unknown> =>
   translateValueRecursively(payload, i18n) as Record<string, unknown>;

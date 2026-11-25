@@ -38,6 +38,7 @@ export const CREATE_ONE_OBJECT_METADATA_ITEM = gql`
         isActive
         isSystem
         isUIEditable
+        isSystemSideEffect
         isNullable
         isUnique
         isSearchable

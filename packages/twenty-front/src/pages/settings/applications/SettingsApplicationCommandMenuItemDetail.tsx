@@ -2,14 +2,15 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useQuery } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { FindOneApplicationDocument } from '~/generated-metadata/graphql';
 import { SettingsApplicationCommandMenuItemSettingsTab } from '~/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab';
+import { useLingui } from '@lingui/react/macro';
 
 export const SettingsApplicationCommandMenuItemDetail = () => {
+  const { t } = useLingui();
   const { applicationId = '', commandMenuItemId = '' } = useParams<{
     applicationId: string;
     commandMenuItemId: string;

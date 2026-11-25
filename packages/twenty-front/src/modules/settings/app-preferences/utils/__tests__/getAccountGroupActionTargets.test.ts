@@ -10,6 +10,7 @@ const CURRENT_WORKSPACE = {
       universalIdentifier: 'fathom-universal-identifier',
       logoUrl: null,
       createdAt: '2024-01-01T00:00:00.000Z',
+      runHealthCheckOnUserPreferences: false,
     },
   ],
   workspaceCustomApplication: null,

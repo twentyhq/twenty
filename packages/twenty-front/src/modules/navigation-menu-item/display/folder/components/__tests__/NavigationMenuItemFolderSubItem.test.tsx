@@ -19,7 +19,7 @@ const linkNavigationMenuItem = {
   type: NavigationMenuItemType.LINK,
   name: 'Q3 deck',
   link: 'https://google.com/search',
-  folderId: 'folder-id',
+  parentId: 'folder-id',
   position: 0,
 } as NavigationMenuItem;
 

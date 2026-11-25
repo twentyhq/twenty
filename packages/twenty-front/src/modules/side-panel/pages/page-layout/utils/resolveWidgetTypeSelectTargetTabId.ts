@@ -1,4 +1,5 @@
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 
@@ -8,7 +9,9 @@ export const resolveWidgetTypeSelectTargetTabId = ({
   widgetCreationTargetTabId,
 }: {
   pageLayoutEditingWidgetId: string | null;
-  tabs: PageLayoutTab[];
+  tabs: (Pick<PageLayoutTab, 'id'> & {
+    widgets: Pick<PageLayoutWidget, 'id'>[];
+  })[];
   widgetCreationTargetTabId: string | null;
 }): string => {
   if (isDefined(pageLayoutEditingWidgetId)) {

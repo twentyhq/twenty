@@ -1,4 +1,4 @@
-import { type ClientRequest, type IncomingMessage } from 'node:http';
+import { type IncomingMessage } from 'node:http';
 import { PassThrough, Readable } from 'node:stream';
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -170,7 +170,7 @@ const stubUploadRequests = () => {
       uploadRequest.emit('response', buildUploadResponse());
     });
 
-    return uploadRequest as unknown as ClientRequest;
+    return uploadRequest;
   });
 };
 

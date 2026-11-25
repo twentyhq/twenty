@@ -317,10 +317,10 @@ export class MessageCampaignBatchDeliveryService {
         bodyTemplate: campaign.bodyTemplate ?? '',
       });
 
-    const personRepository = this.workspaceOrmManager.getRepository(
-      PersonWorkspaceEntity,
-      { shouldBypassPermissionChecks: true },
-    );
+    const personRepository =
+      this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+        PersonWorkspaceEntity,
+      );
 
     const people = await personRepository.find({
       where: {
@@ -524,11 +524,11 @@ export class MessageCampaignBatchDeliveryService {
     template: EmailingDomainEmailTemplate;
     replacements: Record<string, string>;
   }): Promise<void> {
-    const messageRepository = this.workspaceOrmManager.getRepository(
-      MessageWorkspaceEntity,
-      { shouldBypassPermissionChecks: true },
-      { shouldSkipEventEmission: true },
-    );
+    const messageRepository =
+      this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+        MessageWorkspaceEntity,
+        { shouldSkipEventEmission: true },
+      );
 
     await messageRepository.update(deliveryId, {
       headerMessageId,
@@ -536,11 +536,11 @@ export class MessageCampaignBatchDeliveryService {
       text: applyReplacementTags(template.text, replacements),
     });
 
-    const associationRepository = this.workspaceOrmManager.getRepository(
-      MessageChannelMessageAssociationWorkspaceEntity,
-      { shouldBypassPermissionChecks: true },
-      { shouldSkipEventEmission: true },
-    );
+    const associationRepository =
+      this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+        MessageChannelMessageAssociationWorkspaceEntity,
+        { shouldSkipEventEmission: true },
+      );
 
     await associationRepository.update(
       { messageId: deliveryId },
@@ -587,11 +587,9 @@ export class MessageCampaignBatchDeliveryService {
     claimToken: string;
   }): Promise<string[]> {
     const { generatedMaps: claimedDeliveries } = await this.workspaceOrmManager
-      .getRepository(
-        CampaignDeliveryWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
-        { shouldSkipEventEmission: true },
-      )
+      .getRepositoryWithoutPermissionChecks(CampaignDeliveryWorkspaceEntity, {
+        shouldSkipEventEmission: true,
+      })
       .update(
         { id: In(deliveryIds), state: In(CLAIMABLE_CAMPAIGN_DELIVERY_STATES) },
         {
@@ -622,11 +620,9 @@ export class MessageCampaignBatchDeliveryService {
     }
 
     await this.workspaceOrmManager
-      .getRepository(
-        CampaignDeliveryWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
-        { shouldSkipEventEmission: true },
-      )
+      .getRepositoryWithoutPermissionChecks(CampaignDeliveryWorkspaceEntity, {
+        shouldSkipEventEmission: true,
+      })
       .update(
         {
           id: In(recipients.map((recipient) => recipient.messageId)),
@@ -662,11 +658,9 @@ export class MessageCampaignBatchDeliveryService {
     });
 
     const settledRows = await this.workspaceOrmManager
-      .getRepository(
-        CampaignDeliveryWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
-        { shouldSkipEventEmission: true },
-      )
+      .getRepositoryWithoutPermissionChecks(CampaignDeliveryWorkspaceEntity, {
+        shouldSkipEventEmission: true,
+      })
       .executeRaw<{ id: string }>(sql, parameters);
 
     return new Set(settledRows.map((row) => row.id));
@@ -678,11 +672,9 @@ export class MessageCampaignBatchDeliveryService {
     claimToken: string;
   }): Promise<void> {
     await this.workspaceOrmManager
-      .getRepository(
-        CampaignDeliveryWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
-        { shouldSkipEventEmission: true },
-      )
+      .getRepositoryWithoutPermissionChecks(CampaignDeliveryWorkspaceEntity, {
+        shouldSkipEventEmission: true,
+      })
       .update(
         { claimToken },
         {

@@ -7,7 +7,6 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { UserContext } from '@/users/contexts/UserContext';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
@@ -29,6 +28,7 @@ import {
 } from '~/generated-admin/graphql';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
 import { formatDateTimeString } from '@/object-record/record-field/ui/utils/formatDateTimeString';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledRefreshButtonContainer = styled.div`
   display: flex;
@@ -42,6 +42,7 @@ const StyledCommandValue = styled.span`
 `;
 
 export const SettingsAdminInstanceStatus = () => {
+  const { t } = useLingui();
   const apolloAdminClient = useApolloAdminClient();
   const { enqueueToast } = useToast();
   const { dateFormat, timeFormat, timeZone } = useContext(UserContext);

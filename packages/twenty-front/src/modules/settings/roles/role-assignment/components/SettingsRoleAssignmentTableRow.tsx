@@ -5,7 +5,6 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { UserContext } from '@/users/contexts/UserContext';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconKey } from 'twenty-ui/icon';
@@ -17,6 +16,7 @@ import { type ApiKeyForRole } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { formatDateString } from '@/object-record/record-field/ui/utils/formatDateString';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledIconWrapper = styled.div`
   align-items: center;
@@ -50,6 +50,7 @@ type SettingsRoleAssignmentTableRowProps = {
 export const SettingsRoleAssignmentTableRow = ({
   roleTarget,
 }: SettingsRoleAssignmentTableRowProps) => {
+  const { t } = useLingui();
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
   );

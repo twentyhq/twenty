@@ -1,11 +1,11 @@
-import { type DataSource, type QueryRunner } from 'typeorm';
+import { Test } from '@nestjs/testing';
 
 import { NormalizeLegacyIndexNamesCommand } from 'src/database/commands/upgrade-version-command/2-18/2-18-workspace-command-1799200000000-normalize-legacy-index-names.command';
 import { doesPhysicalIndexExist } from 'src/database/commands/upgrade-version-command/2-18/utils/does-physical-index-exist.util';
 import { getPhysicalIndexDefinition } from 'src/database/commands/upgrade-version-command/2-18/utils/get-physical-index-definition.util';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
-import { type WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { generateFlatIndexMetadataWithNameOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/generate-flat-index.util';
 import {
   deleteIndexMetadata,
@@ -28,7 +28,8 @@ jest.mock(
 const generateFlatIndexMetadataWithNameOrThrowMock =
   generateFlatIndexMetadataWithNameOrThrow as jest.Mock;
 const deleteIndexMetadataMock = deleteIndexMetadata as jest.Mock;
-const dropIndexFromWorkspaceSchemaMock = dropIndexFromWorkspaceSchema as jest.Mock;
+const dropIndexFromWorkspaceSchemaMock =
+  dropIndexFromWorkspaceSchema as jest.Mock;
 const doesPhysicalIndexExistMock = doesPhysicalIndexExist as jest.Mock;
 const getPhysicalIndexDefinitionMock = getPhysicalIndexDefinition as jest.Mock;
 
@@ -81,15 +82,14 @@ const buildFlatEntityMaps = (indexes: IndexFixture[]) => {
   );
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return { flatIndexMaps, flatObjectMetadataMaps, flatFieldMetadataMaps } as any;
+  return {
+    flatIndexMaps,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
+  } as any;
 };
 
-const buildQueryRunner = (): {
-  queryRunner: QueryRunner;
-  query: jest.Mock;
-  commit: jest.Mock;
-  rollback: jest.Mock;
-} => {
+const buildQueryRunner = () => {
   const query = jest.fn();
   const commit = jest.fn();
   const rollback = jest.fn();
@@ -101,7 +101,7 @@ const buildQueryRunner = (): {
     rollbackTransaction: rollback,
     release: jest.fn(),
     query,
-  } as unknown as QueryRunner;
+  };
 
   return { queryRunner, query, commit, rollback };
 };
@@ -129,7 +129,7 @@ describe('NormalizeLegacyIndexNamesCommand', () => {
     );
   };
 
-  beforeEach(() => {
+  beforeEach(async () => {
     jest.clearAllMocks();
 
     renameIndexMock = jest.fn();
@@ -137,26 +137,39 @@ describe('NormalizeLegacyIndexNamesCommand', () => {
     getOrRecomputeMock = jest.fn();
     invalidateAndRecomputeMock = jest.fn();
 
-    const workspaceIteratorService = {} as WorkspaceIteratorService;
+    const workspaceIteratorService = {};
     const workspaceCacheService = {
       getOrRecompute: getOrRecomputeMock,
       invalidateAndRecompute: invalidateAndRecomputeMock,
-    } as unknown as WorkspaceCacheService;
+    };
     const workspaceSchemaManagerService = {
       indexManager: {
         renameIndexWithoutRebuild: renameIndexMock,
         dropIndex: dropIndexMock,
       },
-    } as unknown as WorkspaceSchemaManagerService;
+    };
 
-    command = new NormalizeLegacyIndexNamesCommand(
-      workspaceIteratorService,
-      workspaceCacheService,
-      workspaceSchemaManagerService,
-    );
+    const module = await Test.createTestingModule({
+      providers: [
+        NormalizeLegacyIndexNamesCommand,
+        {
+          provide: WorkspaceIteratorService,
+          useValue: workspaceIteratorService,
+        },
+        { provide: WorkspaceCacheService, useValue: workspaceCacheService },
+        {
+          provide: WorkspaceSchemaManagerService,
+          useValue: workspaceSchemaManagerService,
+        },
+      ],
+    }).compile();
+    command = module.get(NormalizeLegacyIndexNamesCommand);
   });
 
-  const runOnWorkspace = (dataSource: DataSource, dryRun = false) =>
+  const runOnWorkspace = (
+    dataSource: { createQueryRunner: () => unknown },
+    dryRun = false,
+  ) =>
     command.runOnWorkspace({
       workspaceId: WORKSPACE_ID,
       dataSource: dataSource as never,
@@ -182,7 +195,7 @@ describe('NormalizeLegacyIndexNamesCommand', () => {
     const { queryRunner, query, commit } = buildQueryRunner();
     const dataSource = {
       createQueryRunner: () => queryRunner,
-    } as unknown as DataSource;
+    };
 
     await runOnWorkspace(dataSource);
 
@@ -228,7 +241,7 @@ describe('NormalizeLegacyIndexNamesCommand', () => {
     const { queryRunner } = buildQueryRunner();
     const dataSource = {
       createQueryRunner: () => queryRunner,
-    } as unknown as DataSource;
+    };
 
     await runOnWorkspace(dataSource);
 
@@ -244,7 +257,10 @@ describe('NormalizeLegacyIndexNamesCommand', () => {
       expect.objectContaining({ indexName: 'legacyB' }),
     );
     expect(deleteIndexMetadataMock).toHaveBeenCalledWith(
-      expect.objectContaining({ entityId: 'index-b', workspaceId: WORKSPACE_ID }),
+      expect.objectContaining({
+        entityId: 'index-b',
+        workspaceId: WORKSPACE_ID,
+      }),
     );
   });
 
@@ -261,7 +277,7 @@ describe('NormalizeLegacyIndexNamesCommand', () => {
     );
 
     const createQueryRunner = jest.fn();
-    const dataSource = { createQueryRunner } as unknown as DataSource;
+    const dataSource = { createQueryRunner };
 
     await runOnWorkspace(dataSource);
 
@@ -283,7 +299,7 @@ describe('NormalizeLegacyIndexNamesCommand', () => {
     );
 
     const createQueryRunner = jest.fn();
-    const dataSource = { createQueryRunner } as unknown as DataSource;
+    const dataSource = { createQueryRunner };
 
     await runOnWorkspace(dataSource, true);
 
@@ -311,7 +327,7 @@ describe('NormalizeLegacyIndexNamesCommand', () => {
     const { queryRunner, query, commit } = buildQueryRunner();
     const dataSource = {
       createQueryRunner: () => queryRunner,
-    } as unknown as DataSource;
+    };
 
     await runOnWorkspace(dataSource);
 
@@ -345,7 +361,7 @@ describe('NormalizeLegacyIndexNamesCommand', () => {
     const { queryRunner, query, commit } = buildQueryRunner();
     const dataSource = {
       createQueryRunner: () => queryRunner,
-    } as unknown as DataSource;
+    };
 
     await runOnWorkspace(dataSource);
 
@@ -385,7 +401,7 @@ describe('NormalizeLegacyIndexNamesCommand', () => {
     const { queryRunner, query, commit } = buildQueryRunner();
     const dataSource = {
       createQueryRunner: () => queryRunner,
-    } as unknown as DataSource;
+    };
 
     await runOnWorkspace(dataSource);
 
@@ -428,7 +444,7 @@ describe('NormalizeLegacyIndexNamesCommand', () => {
     const { queryRunner, query, commit } = buildQueryRunner();
     const dataSource = {
       createQueryRunner: () => queryRunner,
-    } as unknown as DataSource;
+    };
 
     await runOnWorkspace(dataSource);
 
@@ -472,7 +488,7 @@ describe('NormalizeLegacyIndexNamesCommand', () => {
     const { queryRunner, query, commit, rollback } = buildQueryRunner();
     const dataSource = {
       createQueryRunner: () => queryRunner,
-    } as unknown as DataSource;
+    };
 
     await runOnWorkspace(dataSource);
 
@@ -525,7 +541,7 @@ describe('NormalizeLegacyIndexNamesCommand', () => {
 
     const dataSource = {
       createQueryRunner: () => queryRunner,
-    } as unknown as DataSource;
+    };
 
     await expect(runOnWorkspace(dataSource)).rejects.toThrow(
       'savepoint recovery failed',

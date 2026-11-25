@@ -3,7 +3,7 @@ import { TaskGroupsContent } from '@/activities/tasks/components/TaskGroupsConte
 import { useTasks } from '@/activities/tasks/hooks/useTasks';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { WidgetHeaderCountEffect } from '@/page-layout/widgets/components/WidgetHeaderCountEffect';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 type TaskGroupsProps = {
   filterDropdownId?: string;
@@ -18,7 +18,7 @@ export const TaskGroups = ({ targetableObject }: TaskGroupsProps) => {
   const { canCreateActivity, createActivity } =
     useCreateActivityForTargetRecord({
       targetRecord: targetableObject,
-      activityObjectNameSingular: CoreObjectNameSingular.Task,
+      activityObjectNameSingular: StandardObjectNameSingular.Task,
     });
 
   return (

@@ -8,6 +8,7 @@ import { AgentHistoryStorageException } from 'src/engine/metadata-modules/ai/ai-
 import { type AgentHistoryObjectName } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-object-name.type';
 import { type FindOptionsWhere } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -31,7 +32,7 @@ export class AgentHistoryRepository<TRecord extends { id: string }> {
     >,
     private readonly workspaceOrmManager: Pick<
       WorkspaceOrmManager,
-      'executeInWorkspaceContext' | 'getRepository'
+      'executeInWorkspaceContext' | 'getRepositoryWithoutPermissionChecks'
     >,
   ) {}
 
@@ -47,10 +48,11 @@ export class AgentHistoryRepository<TRecord extends { id: string }> {
     return this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
         work(
-          this.workspaceOrmManager.getRepository<TRecord>(
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<TRecord>(
             this.name,
-            { shouldBypassPermissionChecks: true },
-            { shouldSkipEventEmission: true },
+            {
+              shouldSkipEventEmission: true,
+            },
           ),
           context,
         ),
@@ -106,10 +108,10 @@ export class AgentHistoryRepository<TRecord extends { id: string }> {
           AiExceptionCode.MESSAGE_NOT_FOUND,
         );
       }
-      throw new AgentHistoryStorageException(
-        'RECORD_NOT_FOUND',
-        `${this.name} not found`,
-      );
+      throw new AgentHistoryStorageException({
+        code: 'RECORD_NOT_FOUND',
+        message: doNotTranslate(`${this.name} not found`),
+      });
     }
     return record;
   }
@@ -179,6 +181,10 @@ export class AgentHistoryRepository<TRecord extends { id: string }> {
         raw: result.raw,
       };
     });
+  }
+
+  restore(workspaceId: string, where: FindOptionsWhere<TRecord>) {
+    return this.run(workspaceId, (repository) => repository.restore(where));
   }
 
   query<TResult>(

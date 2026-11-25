@@ -1,5 +1,5 @@
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { t } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react/macro';
 
 type MemberNameFieldsProps = {
   memberId: string;
@@ -14,6 +14,7 @@ export const MemberNameFields = ({
   lastName,
   onChange,
 }: MemberNameFieldsProps) => {
+  const { t } = useLingui();
   const firstNameInstanceId = `${memberId}-first-name`;
   const lastNameInstanceId = `${memberId}-last-name`;
 

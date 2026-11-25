@@ -52,6 +52,7 @@ export interface FindManyQueryArgs {
   before?: string;
   after?: string;
   offset?: number;
+  shouldBypassQueryMaxRecords?: boolean;
 }
 
 export interface CreateManyQueryArgs {

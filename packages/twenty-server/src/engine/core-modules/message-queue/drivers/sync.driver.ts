@@ -5,6 +5,7 @@ import { v4 } from 'uuid';
 
 import { QUEUE_RETENTION } from 'src/engine/core-modules/message-queue/constants/queue-retention.constants';
 import {
+  type BulkAddResult,
   type MessageQueueDriver,
   type QueueJobToAdd,
   type QueueJobDetails,
@@ -15,6 +16,7 @@ import {
 } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { computeJobSizeBytes } from 'src/engine/core-modules/message-queue/utils/compute-job-size-bytes.util';
 
 // Synchronous driver for tests and local dev
 export class SyncDriver implements MessageQueueDriver {
@@ -56,16 +58,20 @@ export class SyncDriver implements MessageQueueDriver {
     queueName: MessageQueue,
     jobName: string,
     jobs: QueueJobToAdd<T>[],
-  ): Promise<string[]> {
+  ): Promise<BulkAddResult> {
     let firstError: unknown = undefined;
-    const jobIds: string[] = [];
+    const addedJobs: BulkAddResult['jobs'] = [];
 
     // Each payload is an independent job in BullMQ, so a failing one must not
     // prevent the others from being processed
     for (const { data, jobId } of jobs) {
       const job = this.createJob(jobName, data, jobId);
 
-      jobIds.push(job.id);
+      addedJobs.push({
+        jobId: job.id,
+        sizeBytes: computeJobSizeBytes({ data, options: {} }),
+        scheduledAt: Date.now(),
+      });
 
       try {
         await this.processJob(queueName, job);
@@ -78,7 +84,7 @@ export class SyncDriver implements MessageQueueDriver {
       throw firstError;
     }
 
-    return jobIds;
+    return { jobs: addedJobs, availableBytes: null };
   }
 
   async addCron<T extends MessageQueueJobData | undefined>({
@@ -113,14 +119,16 @@ export class SyncDriver implements MessageQueueDriver {
     const worker = this.workersMap[queueName];
 
     if (worker) {
+      const timestamp = Date.now();
       const details: QueueJobDetails<MessageQueueJobData> = {
         id: job.id,
         data: job.data ?? {},
         state: 'active',
         attemptsMade: 0,
         progress: 0,
-        timestamp: Date.now(),
-        processedOn: Date.now(),
+        timestamp,
+        scheduledAt: timestamp,
+        processedOn: timestamp,
       };
       this.jobs.set(`${queueName}:${job.id}`, details);
       job.updateData = async (data) => {
@@ -169,6 +177,7 @@ export class SyncDriver implements MessageQueueDriver {
       name,
       data,
       retryLimit: 0,
+      attemptsMade: 0,
       updateProgress: async () => {},
       updateData: async (updatedData) => {
         job.data = updatedData;

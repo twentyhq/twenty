@@ -18,6 +18,7 @@ your-app/
 │   ├── roles/                   ← defineRole
 │   ├── objects/                 ← defineObject
 │   ├── fields/                  ← defineField
+│   ├── validation-rules/        ← defineValidationRule
 │   ├── logic-functions/         ← defineLogicFunction
 │   ├── front-components/        ← defineFrontComponent
 │   ├── skills/                  ← defineSkill
@@ -46,6 +47,7 @@ your-app/
 | **Oggetto**                      | Tipi di record personalizzati con campi                                             | [Oggetti](/it/developers/extend/apps/data/objects)                                                                      |
 | **Campo**                        | Aggiungi campi agli oggetti di altre app                                            | [Estensione degli oggetti](/it/developers/extend/apps/data/extending-objects)                                           |
 | **Relazione**                    | Collegamenti bidirezionali tra oggetti                                              | [Relazioni](/it/developers/extend/apps/data/relations)                                                                  |
+| **Regola di convalida**          | Condizioni che un record deve soddisfare prima di poter essere salvato              | [Regole di convalida](/it/developers/extend/apps/data/validation-rules)                                                 |
 | **Funzione logica**              | TypeScript lato server con trigger                                                  | [Funzioni logiche](/it/developers/extend/apps/logic/logic-functions)                                                    |
 | **Abilità**                      | Istruzioni riutilizzabili per agenti IA                                             | [Abilità e agenti](/it/developers/extend/apps/logic/skills-and-agents)                                                  |
 | **Agente**                       | Assistenti IA con prompt personalizzati                                             | [Abilità e agenti](/it/developers/extend/apps/logic/skills-and-agents)                                                  |
@@ -86,7 +88,7 @@ your-app/
 └─────────────────────────────────────────────────────────┘
 ```
 
-* **`venti app dev`** — guarda i tuoi file sorgente e le modifiche live syncs in un server Twenty collegato. Il client API tipizzato viene rigenerato automaticamente quando lo schema cambia.
+* **`venti app dev`** — guarda i tuoi file sorgente e le modifiche live syncs in un server Twenty collegato. Dopo una sincronizzazione riuscita, rigenera il client API tipizzato quando lo schema o il pacchetto del generatore installato sono cambiati, oppure quando i file del client generati sono mancanti o modificati. Per aggiornare i tipi dopo aver modificato l'area di lavoro nell'interfaccia utente, esegui `twenty app generate-client`.
 * **`venti app build`** — compila TypeScript, raggruppa funzioni logiche e componenti frontali con esbuild, e produce un manifesto.
 * **Hook di pre/post-installazione e disinstallazione** — funzioni opzionali che vengono eseguite durante l’installazione o subito prima della rimozione. Vedi [Hook di installazione](/it/developers/extend/apps/config/install-hooks) per i dettagli.
 

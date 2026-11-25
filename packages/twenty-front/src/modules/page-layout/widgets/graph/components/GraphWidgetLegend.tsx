@@ -1,4 +1,3 @@
-import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { GraphWidgetLegendDot } from '@/page-layout/widgets/graph/components/GraphWidgetLegendDot';
 import { LEGEND_HIGHLIGHT_DIMMED_OPACITY } from '@/page-layout/widgets/graph/constants/LegendHighlightDimmedOpacity';
 import { LEGEND_ITEM_ESTIMATED_WIDTH } from '@/page-layout/widgets/graph/constants/LegendItemEstimatedWidth';
@@ -11,13 +10,13 @@ import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDi
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useRef, useState } from 'react';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconChevronLeft, IconChevronRight } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 export type GraphWidgetLegendItem = {
   id: string;
@@ -28,6 +27,7 @@ export type GraphWidgetLegendItem = {
 type GraphWidgetLegendProps = {
   items: GraphWidgetLegendItem[];
   show?: boolean;
+  isInteractive?: boolean;
 };
 
 type AnimationDirection = 'forward' | 'backward';
@@ -76,7 +76,7 @@ const StyledLegendItem = styled.div<{
   display: flex;
   flex-shrink: ${({ canShrink }) => (canShrink ? 1 : 0)};
   font-size: ${themeCssVariables.font.size.xs};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
+  font-weight: ${themeCssVariables.font.weight.regular};
   gap: ${themeCssVariables.spacing[1]};
   min-width: 0;
 `;
@@ -135,7 +135,9 @@ const legendEnterExitVariants = {
 export const GraphWidgetLegend = ({
   items,
   show = true,
+  isInteractive = true,
 }: GraphWidgetLegendProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -146,10 +148,6 @@ export const GraphWidgetLegend = ({
 
   const [animationDirection, setAnimationDirection] =
     useState<AnimationDirection>('forward');
-
-  const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
-
-  const isInteractive = !isPageLayoutInEditMode;
 
   const setGraphWidgetHighlightedLegendId = useSetAtomComponentState(
     graphWidgetHighlightedLegendIdComponentState,
@@ -165,7 +163,7 @@ export const GraphWidgetLegend = ({
     isInteractive,
   });
 
-  if (isPageLayoutInEditMode && graphWidgetHiddenLegendIds.length > 0) {
+  if (!isInteractive && graphWidgetHiddenLegendIds.length > 0) {
     setGraphWidgetHiddenLegendIds([]);
   }
 

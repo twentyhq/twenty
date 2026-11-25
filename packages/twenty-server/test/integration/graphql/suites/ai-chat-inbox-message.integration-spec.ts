@@ -1,6 +1,13 @@
+import { formatRecordReference } from 'twenty-shared/ai';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { parse } from 'graphql';
+import {
+  findMyParticipant,
+  findParticipantEvents,
+  runInboxAction,
+  spyOnParticipantEvents,
+} from 'test/integration/graphql/suites/chat-thread-participant/utils/chat-thread-participant-test.util';
 import { answerToolCall } from 'test/integration/graphql/suites/workflow/utils/answer-tool-call.util';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
@@ -21,6 +28,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { buildInboxMessageIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-message-ids.util';
+import { buildInboxThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-thread-id.util';
 import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -127,7 +135,7 @@ describe('Sending an inbox message as an application', () => {
         .spyOn(aiModelRegistryService, 'getAvailableModels')
         .mockReturnValue([{ modelId: 'test-model' }] as never),
       jest
-        .spyOn(aiModelRegistryService, 'validateModelAvailability')
+        .spyOn(aiModelRegistryService, 'validateModelAvailabilityOrThrow')
         .mockReturnValue(undefined as never),
     );
     enqueueStream = jest
@@ -323,9 +331,9 @@ describe('Sending an inbox message as an application', () => {
       await workspaceOrmManager.executeInWorkspaceContext(
         () =>
           Object.getPrototypeOf(
-            workspaceOrmManager.getRepository('agentMessagePart', {
-              shouldBypassPermissionChecks: true,
-            }),
+            workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+              'agentMessagePart',
+            ),
           ),
         buildSystemAuthContext(SEED_APPLE_WORKSPACE_ID),
         { lite: true },
@@ -420,6 +428,140 @@ describe('Sending an inbox message as an application', () => {
       }),
       expect.anything(),
     );
+  });
+
+  describe('with members mentioned in its text', () => {
+    const { JANE, JONY } = WORKSPACE_MEMBER_DATA_SEED_IDS;
+
+    const mention = (workspaceMemberId: string) =>
+      formatRecordReference({
+        objectNameSingular: 'workspaceMember',
+        recordId: workspaceMemberId,
+        displayName: 'Teammate',
+      });
+
+    const buildThreadId = (threadKey: string) =>
+      buildInboxThreadId({
+        senderKey: `application:${application.id}`,
+        threadKey,
+      });
+
+    it('mentions every member it names, the owner too, once for a message sent twice at once', async () => {
+      const threadKey = `inbox-thread-${uuidv4()}`;
+      const mentionThreadId = buildThreadId(threadKey);
+      const eventSpy = spyOnParticipantEvents();
+
+      try {
+        const responses = await Promise.all(
+          [1, 2].map(() =>
+            sendInboxMessage(applicationToken, {
+              toolCall: null,
+              threadKey,
+              idempotencyKey: 'review-request',
+              text: `${mention(JONY)}, ${mention(JANE)} and ${mention(JONY)} again: the deck is ready.`,
+            }),
+          ),
+        );
+
+        expect(responses.map(({ body }) => body.errors)).toEqual([
+          undefined,
+          undefined,
+        ]);
+        expect(await readMessages(mentionThreadId)).toHaveLength(2);
+        expect(
+          await findMyParticipant(
+            mentionThreadId,
+            APPLE_JONY_MEMBER_ACCESS_TOKEN,
+          ),
+        ).toMatchObject({
+          isSubscribed: true,
+          lastReadAt: null,
+          lastMentionedAt: expect.any(String),
+          mentionsResolvedAt: null,
+        });
+        expect(await findMyParticipant(mentionThreadId)).toMatchObject({
+          lastReadAt: null,
+          lastMentionedAt: expect.any(String),
+          mentionsResolvedAt: null,
+        });
+        expect(
+          findParticipantEvents(eventSpy, mentionThreadId)
+            .map(({ action }) => action)
+            .sort(),
+        ).toEqual(['created', 'created', 'updated']);
+      } finally {
+        eventSpy.mockRestore();
+        await destroyAgentChatThread({ threadId: mentionThreadId });
+      }
+    });
+
+    it('mentions a member again for a new message, never for a message sent again', async () => {
+      const threadKey = `inbox-thread-${uuidv4()}`;
+      const mentionThreadId = buildThreadId(threadKey);
+      const sendComment = (
+        idempotencyKey: string,
+        mentionedWorkspaceMemberId = JONY,
+      ) =>
+        sendInboxMessage(applicationToken, {
+          toolCall: null,
+          threadKey,
+          idempotencyKey,
+          text: `${mention(mentionedWorkspaceMemberId)}, can you check the figures?`,
+        });
+      const findJonyParticipant = () =>
+        findMyParticipant(mentionThreadId, APPLE_JONY_MEMBER_ACCESS_TOKEN);
+
+      try {
+        await sendComment('comment:1');
+        await runInboxAction('READ', mentionThreadId, {
+          token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+        });
+
+        const resolvedParticipant = await findJonyParticipant();
+
+        expect((await sendComment('comment:1')).body.errors).toBeUndefined();
+        expect(await findJonyParticipant()).toMatchObject({
+          lastMentionedAt: resolvedParticipant?.lastMentionedAt,
+          mentionsResolvedAt: resolvedParticipant?.mentionsResolvedAt,
+        });
+
+        expect(
+          (await sendComment('comment:1', JANE)).body.errors,
+        ).toBeUndefined();
+        expect(await findMyParticipant(mentionThreadId)).toMatchObject({
+          lastMentionedAt: null,
+        });
+
+        await sendComment('comment:2');
+
+        expect(
+          new Date((await findJonyParticipant())!.lastMentionedAt!).getTime(),
+        ).toBeGreaterThan(
+          new Date(resolvedParticipant!.mentionsResolvedAt!).getTime(),
+        );
+      } finally {
+        await destroyAgentChatThread({ threadId: mentionThreadId });
+      }
+    });
+
+    it('sends the message and skips a mentioned member who cannot have the conversation', async () => {
+      const threadKey = `inbox-thread-${uuidv4()}`;
+      const mentionThreadId = buildThreadId(threadKey);
+
+      try {
+        const response = await sendInboxMessage(applicationToken, {
+          toolCall: null,
+          threadKey,
+          idempotencyKey: 'stranger',
+          text: `${mention(uuidv4())}, can you check the figures?`,
+        });
+
+        expect(response.body.errors).toBeUndefined();
+        expect(await readMessages(mentionThreadId)).toHaveLength(2);
+      } finally {
+        await destroyAgentChatThread({ threadId: mentionThreadId });
+      }
+    });
   });
 });
 

@@ -19,7 +19,10 @@ import { dropdownPlacementComponentState } from '@/ui/layout/dropdown/states/dro
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { CoreObjectNameSingular, FieldMetadataType } from 'twenty-shared/types';
+import {
+  StandardObjectNameSingular,
+  FieldMetadataType,
+} from 'twenty-shared/types';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
@@ -122,8 +125,9 @@ export const RecordDetailRelationSectionDropdownToOne = ({
   ) => {
     closeDropdown(dropdownId);
 
-    if (!selectedMorphItem?.recordId || !relationFieldMetadataItem?.name)
+    if (!selectedMorphItem?.recordId || !relationFieldMetadataItem?.name) {
       return;
+    }
 
     onSubmit?.({ newValue: { id: selectedMorphItem.recordId } });
   };
@@ -156,7 +160,7 @@ export const RecordDetailRelationSectionDropdownToOne = ({
 
   const shouldAllowCreateNew =
     relationObjectMetadataNameSingular !==
-    CoreObjectNameSingular.WorkspaceMember;
+    StandardObjectNameSingular.WorkspaceMember;
 
   return (
     <Dropdown

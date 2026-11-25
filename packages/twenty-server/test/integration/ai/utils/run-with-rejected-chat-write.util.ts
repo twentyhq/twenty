@@ -1,10 +1,17 @@
 import { randomUUID } from 'node:crypto';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { escapeLiteral } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 const CHAT_WRITE_REJECTION_PREFIX = 'reject_chat_write_';
 const CHAT_WRITE_REJECTION_OPERATIONS = {
+  message: {
+    tableName: 'agentMessage',
+    triggerOperations: 'INSERT',
+    condition: 'NEW."threadId" = TG_ARGV[0]::uuid',
+  },
   restore: {
     tableName: 'agentChatThread',
     triggerOperations: 'UPDATE',
@@ -14,7 +21,8 @@ const CHAT_WRITE_REJECTION_OPERATIONS = {
   share: {
     tableName: 'recordShare',
     triggerOperations: 'INSERT OR UPDATE',
-    condition: 'NEW."recordId" = TG_ARGV[0]::uuid',
+    condition:
+      'NEW."recordId" = TG_ARGV[0]::uuid AND (TG_NARGS < 2 OR NEW."principalId"::text = TG_ARGV[1])',
   },
 };
 
@@ -22,17 +30,28 @@ export const runWithRejectedChatWrite = async <TResult>({
   workspaceId,
   threadId,
   operation,
+  principalId,
   work,
 }: {
   workspaceId: string;
   threadId: string;
-  operation: 'restore' | 'share';
+  operation: 'message' | 'restore' | 'share';
+  principalId?: string;
   work: () => Promise<TResult>;
 }): Promise<TResult> => {
   const schema = getWorkspaceSchemaName(workspaceId);
   const triggerName = `${CHAT_WRITE_REJECTION_PREFIX}${randomUUID()}`;
   const { tableName, triggerOperations, condition } =
     CHAT_WRITE_REJECTION_OPERATIONS[operation];
+  const triggerArguments = [threadId];
+
+  if (isDefined(principalId)) {
+    triggerArguments.push(principalId);
+  }
+
+  const triggerArgumentsSql = triggerArguments
+    .map((argument) => escapeLiteral(argument))
+    .join(', ');
 
   await global.testDataSource.query(
     `CREATE FUNCTION "${schema}"."${triggerName}"() RETURNS trigger LANGUAGE plpgsql AS $body$
@@ -46,7 +65,7 @@ export const runWithRejectedChatWrite = async <TResult>({
   try {
     await global.testDataSource.query(
       `CREATE TRIGGER "${triggerName}" BEFORE ${triggerOperations} ON "${schema}"."${tableName}"
-       FOR EACH ROW EXECUTE FUNCTION "${schema}"."${triggerName}"(${escapeLiteral(threadId)})`,
+       FOR EACH ROW EXECUTE FUNCTION "${schema}"."${triggerName}"(${triggerArgumentsSql})`,
     );
 
     return await work();

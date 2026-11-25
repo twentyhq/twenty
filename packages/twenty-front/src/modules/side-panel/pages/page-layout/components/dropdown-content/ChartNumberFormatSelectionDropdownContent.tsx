@@ -1,5 +1,4 @@
 import { ChartSettingsDropdownSection } from '@/side-panel/pages/page-layout/components/chart-settings/ChartSettingsDropdownSection';
-import { t } from '@lingui/core/macro';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { CHART_NUMBER_FORMAT_DEFAULT } from '@/page-layout/widgets/graph/constants/ChartNumberFormatDefault';
 import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
@@ -9,8 +8,10 @@ import { getChartNumberFormatLabel } from '@/side-panel/pages/page-layout/utils/
 import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { ChartNumberFormat } from '~/generated-metadata/graphql';
 import { doNotTranslate } from 'twenty-shared/i18n';
+import { useLingui } from '@lingui/react/macro';
 
 export const ChartNumberFormatSelectionDropdownContent = () => {
+  const { t } = useLingui();
   const { pageLayoutId } = usePageLayoutSidePanelTarget();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 

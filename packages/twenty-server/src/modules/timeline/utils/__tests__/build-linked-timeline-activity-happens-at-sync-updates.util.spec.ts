@@ -29,18 +29,18 @@ const buildCalendarEventRule = (
 
 const buildStartsAtUpdatedEvent = (
   recordId = CALENDAR_EVENT_ID,
-): ObjectRecordBaseEvent =>
-  ({
-    recordId,
-    properties: {
-      diff: {
-        startsAt: {
-          before: '2026-09-01T10:00:00.000Z',
-          after: '2026-09-12T10:00:00.000Z',
-        },
+): ObjectRecordBaseEvent => ({
+  eventId: 'event-1',
+  recordId,
+  properties: {
+    diff: {
+      startsAt: {
+        before: '2026-09-01T10:00:00.000Z',
+        after: '2026-09-12T10:00:00.000Z',
       },
     },
-  }) as unknown as ObjectRecordBaseEvent;
+  },
+});
 
 const resolveTimelineActivityTypeToNothing = () => undefined;
 
@@ -66,12 +66,13 @@ describe('buildLinkedTimelineActivityHappensAtSyncUpdates', () => {
   });
 
   it('ignores updates not touching the semantic timestamp', () => {
-    const titleOnlyEvent = {
+    const titleOnlyEvent: ObjectRecordBaseEvent = {
+      eventId: 'event-1',
       recordId: CALENDAR_EVENT_ID,
       properties: {
         diff: { title: { before: 'Old', after: 'New' } },
       },
-    } as unknown as ObjectRecordBaseEvent;
+    };
 
     expect(
       buildLinkedTimelineActivityHappensAtSyncUpdates({

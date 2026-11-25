@@ -18,6 +18,7 @@ your-app/
 │   ├── roles/                   ← defineRole
 │   ├── objects/                 ← defineObject
 │   ├── fields/                  ← defineField
+│   ├── validation-rules/        ← defineValidationRule
 │   ├── logic-functions/         ← defineLogicFunction
 │   ├── front-components/        ← defineFrontComponent
 │   ├── skills/                  ← defineSkill
@@ -46,6 +47,7 @@ your-app/
 | **الكائن**               | أنواع سجلات مخصّصة مع حقول                                                          | [الكائنات](/ar/developers/extend/apps/data/objects)                                                                  |
 | **الحقل**                | إضافة حقول إلى الكائنات من تطبيقات أخرى                                             | [توسيع الكائنات](/ar/developers/extend/apps/data/extending-objects)                                                  |
 | **علاقة**                | روابط ثنائية الاتجاه بين الكائنات                                                   | [العلاقات](/ar/developers/extend/apps/data/relations)                                                                |
+| **قاعدة التحقق**         | الشروط التي يجب أن يستوفيها السجل قبل أن يمكن حفظه                                  | [قواعد التحقق](/ar/developers/extend/apps/data/validation-rules)                                                     |
 | **دالة منطقية**          | TypeScript على جانب الخادم مع مشغّلات                                               | [الوظائف المنطقية](/ar/developers/extend/apps/logic/logic-functions)                                                 |
 | **مهارة**                | تعليمات قابلة لإعادة الاستخدام لوكلاء الذكاء الاصطناعي                              | [المهارات والوكلاء](/ar/developers/extend/apps/logic/skills-and-agents)                                              |
 | **وكيل**                 | مساعدو الذكاء الاصطناعي بموجهات مخصّصة                                              | [المهارات والوكلاء](/ar/developers/extend/apps/logic/skills-and-agents)                                              |
@@ -86,7 +88,7 @@ your-app/
 └─────────────────────────────────────────────────────────┘
 ```
 
-* **`20 تطبيق dev`** - يشاهد الملفات المصدرية الخاصة بك والمزامنة المباشرة التغييرات على خادم عشرين متصل. يُعاد توليد عميل API مضبوط الأنواع تلقائيًا عند تغيّر المخطط.
+* **`20 تطبيق dev`** - يشاهد الملفات المصدرية الخاصة بك والمزامنة المباشرة التغييرات على خادم عشرين متصل. بعد مزامنة ناجحة، يعيد إنشاء عميل API مضبوط الأنواع عند تغيير المخطط أو حزمة المُولِّد المثبّتة، أو عند فقدان ملفات العميل المُنشأة أو تغييرها. لتحديث الأنواع بعد تغيير مساحة العمل في واجهة المستخدم، شغّل `twenty app generate-client`.
 * **`بناء عشرين تطبيق`** - تجميع TypeScript، وحزم الدوال المنطقية والمكونات الأمامية مع esbuild، وإنتاج بيان بياني.
 * **خطّافات ما قبل/ما بعد التثبيت وإلغاء التثبيت** — دوال اختيارية تعمل أثناء التثبيت أو مباشرة قبل الإزالة. راجع [خطّافات التثبيت](/ar/developers/extend/apps/config/install-hooks) للتفاصيل.
 

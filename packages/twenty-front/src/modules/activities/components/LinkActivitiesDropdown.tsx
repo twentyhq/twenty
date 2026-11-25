@@ -8,7 +8,7 @@ import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { type ReactElement } from 'react';
-import { type CoreObjectNameSingular } from 'twenty-shared/types';
+import { type StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
 
@@ -17,8 +17,8 @@ type LinkActivitiesDropdownProps<
   TSearchData,
 > = LinkActivitiesDropdownContentProps<TActivity, TSearchData> & {
   activityObjectNameSingular:
-    | CoreObjectNameSingular.MessageThread
-    | CoreObjectNameSingular.CalendarEvent;
+    | StandardObjectNameSingular.MessageThread
+    | StandardObjectNameSingular.CalendarEvent;
   dropdownIdPrefix: string;
   ariaLabel: string;
   trigger: ReactElement;
@@ -34,7 +34,7 @@ export const LinkActivitiesDropdown = <
   trigger,
   searchQuery,
   getSearchResults,
-  timelineQuery,
+  timelineQueries,
   getOption,
   labels,
 }: LinkActivitiesDropdownProps<TActivity, TSearchData>) => {
@@ -65,7 +65,7 @@ export const LinkActivitiesDropdown = <
           activityLinkConfig={activityLinkConfig}
           searchQuery={searchQuery}
           getSearchResults={getSearchResults}
-          timelineQuery={timelineQuery}
+          timelineQueries={timelineQueries}
           getOption={getOption}
           labels={labels}
         />

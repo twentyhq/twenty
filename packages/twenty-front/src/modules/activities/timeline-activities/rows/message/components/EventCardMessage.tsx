@@ -1,7 +1,7 @@
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { styled } from '@linaria/react';
 import { Trans } from '@lingui/react/macro';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined, isFieldValueRestricted } from 'twenty-shared/utils';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -66,7 +66,7 @@ export const EventCardMessage = ({
     loading,
     error,
   } = useFindOneRecord<EmailThreadMessage>({
-    objectNameSingular: CoreObjectNameSingular.Message,
+    objectNameSingular: StandardObjectNameSingular.Message,
     objectRecordId: messageId,
     recordGqlFields: {
       id: true,
@@ -125,7 +125,7 @@ export const EventCardMessage = ({
     if (isDefined(message.messageThreadId)) {
       openRecordInSidePanel({
         recordId: message.messageThreadId,
-        objectNameSingular: CoreObjectNameSingular.MessageThread,
+        objectNameSingular: StandardObjectNameSingular.MessageThread,
       });
     }
   };

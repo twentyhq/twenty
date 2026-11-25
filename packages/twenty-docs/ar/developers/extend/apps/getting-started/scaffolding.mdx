@@ -7,12 +7,13 @@ import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## نظرة عامة
 
-استخدم واجهة CLI المستقلة لإنشاء كائن أو حقل أو دالة منطقية أو مكوّن أمامي:
+استخدم واجهة سطر الأوامر المستقلة لإنشاء كائن أو حقل أو قاعدة تحقق أو دالة منطق أو مكوّن أمامي:
 
 ```bash
 twenty app add
 twenty app add object --name invoice --name-plural invoices --no-input
 twenty app add field --name amount --type NUMBER --object <object-uuid> --no-input
+twenty app add validation-rule --name invoice-has-amount --object <object-uuid> --no-input
 twenty app add logic-function --name send-invoice --no-input
 twenty app add front-component --name invoice-panel --no-input
 ```

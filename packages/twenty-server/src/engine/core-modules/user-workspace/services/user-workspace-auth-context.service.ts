@@ -1,3 +1,4 @@
+import { isOAuthOnlyApplication } from 'src/engine/core-modules/application/utils/is-oauth-only-application.util';
 import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -7,6 +8,7 @@ import { Repository } from 'typeorm';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { ApplicationGrantRoleLookupService } from 'src/engine/core-modules/application/application-grant-role-lookup/services/application-grant-role-lookup.service';
 import {
   AuthException,
   AuthExceptionCode,
@@ -23,6 +25,7 @@ export class UserWorkspaceAuthContextService {
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
+    private readonly applicationGrantRoleLookupService: ApplicationGrantRoleLookupService,
   ) {}
 
   async resolveWorkspaceMember({
@@ -134,23 +137,6 @@ export class UserWorkspaceAuthContextService {
       requestContext.userWorkspaceId === userWorkspaceId
         ? requestContext
         : undefined;
-    let application =
-      applicationId === undefined
-        ? matchingUserContext?.application
-        : undefined;
-    if (isDefined(applicationId)) {
-      const { flatApplicationMaps } =
-        await this.workspaceCacheService.getOrRecompute(workspaceId, [
-          'flatApplicationMaps',
-        ]);
-      application = flatApplicationMaps.byId[applicationId];
-      if (!isDefined(application) || !isDefined(application.defaultRoleId)) {
-        throw new AuthException(
-          'Application no longer has access',
-          AuthExceptionCode.UNAUTHENTICATED,
-        );
-      }
-    }
     const workspace = await this.coreEntityCacheService.get(
       'workspaceEntity',
       workspaceId,
@@ -164,14 +150,42 @@ export class UserWorkspaceAuthContextService {
       ),
     );
 
+    let application =
+      applicationId === undefined
+        ? matchingUserContext?.application
+        : undefined;
+    if (isDefined(applicationId)) {
+      const { flatApplicationMaps } =
+        await this.workspaceCacheService.getOrRecompute(workspaceId, [
+          'flatApplicationMaps',
+        ]);
+      application = flatApplicationMaps.byId[applicationId];
+      // OAuth-only applications have no role and act with the member's role
+      if (
+        !isDefined(application) ||
+        (!isOAuthOnlyApplication(application) &&
+          !isDefined(
+            await this.applicationGrantRoleLookupService.findGrantRoleId({
+              workspaceId,
+              flatApplication: application,
+            }),
+          ))
+      ) {
+        throw new AuthException(
+          'Application no longer has access',
+          AuthExceptionCode.UNAUTHENTICATED,
+        );
+      }
+    }
+
     return buildUserAuthContext({
       workspace,
       application,
-      viaApplication: matchingUserContext?.viaApplication,
       userWorkspaceId,
       user: fromUserEntityToFlat(userWorkspace.user),
       workspaceMemberId,
       workspaceMember,
+      userSessionVariant: matchingUserContext?.userSessionVariant ?? 'standard',
     });
   }
 }

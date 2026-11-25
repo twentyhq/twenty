@@ -15,8 +15,9 @@ export const validateFlatPermissionFlagCreation = ({
   optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
     flatPermissionFlagMaps: optimisticFlatPermissionFlagMaps,
   },
-}: UniversalFlatEntityValidationArgs<
-  typeof ALL_METADATA_NAME.permissionFlag
+}: Pick<
+  UniversalFlatEntityValidationArgs<typeof ALL_METADATA_NAME.permissionFlag>,
+  'flatEntityToValidate' | 'optimisticFlatEntityMapsAndRelatedFlatEntityMaps'
 >): FailedFlatEntityValidation<'permissionFlag', 'create'> => {
   const validationResult = getEmptyFlatEntityValidationError({
     flatEntityMinimalInformation: {

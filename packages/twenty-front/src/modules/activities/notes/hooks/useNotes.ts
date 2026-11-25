@@ -5,7 +5,7 @@ import { currentNotesQueryVariablesState } from '@/activities/notes/states/curre
 import { FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY } from '@/activities/timeline-activities/constants/FindManyTimelineActivitiesOrderBy';
 import { type Note } from '@/activities/types/Note';
 import {
-  CoreObjectNameSingular,
+  StandardObjectNameSingular,
   type RecordGqlOperationVariables,
 } from 'twenty-shared/types';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -29,7 +29,7 @@ export const useNotes = (targetableObject: ActivityTargetableObject) => {
     fetchMoreActivities,
     hasNextPage,
   } = useActivities({
-    objectNameSingular: CoreObjectNameSingular.Note,
+    objectNameSingular: StandardObjectNameSingular.Note,
     activityTargetsOrderByVariables: notesQueryVariables.orderBy ?? [{}],
     targetableObjects: [targetableObject],
     limit: 10,

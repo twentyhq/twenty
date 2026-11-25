@@ -1,30 +1,43 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import ical from 'ical-generator';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuid } from 'uuid';
 
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { CalDavInvitationService } from 'src/modules/calendar/calendar-event-creation-manager/drivers/caldav/services/caldav-invitation.service';
+import { toICalTimeZone } from 'src/modules/calendar/calendar-event-creation-manager/drivers/utils/to-ical-time-zone.util';
 import {
   CalendarEventCreationException,
   CalendarEventCreationExceptionCode,
 } from 'src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception';
 import { type CalendarEventCreationDriver } from 'src/modules/calendar/calendar-event-creation-manager/interfaces/calendar-event-creation-driver.interface';
 import { type CalendarEventToCreate } from 'src/modules/calendar/calendar-event-creation-manager/types/calendar-event-to-create.type';
+import { toCalendarEventTemporalDateTime } from 'src/modules/calendar/calendar-event-creation-manager/utils/to-calendar-event-temporal-date-time.util';
+import { toICalRecurrenceRule } from 'src/modules/calendar/calendar-event-creation-manager/utils/to-ical-recurrence-rule.util';
 import { CalDavClientProvider } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/providers/caldav-client.provider';
 import { CalDavFetchEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-fetch-events.service';
 import { CalendarEventParticipantResponseStatus } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
-import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event.type';
+import {
+  type FetchedCalendarEvent,
+  type FetchedCalendarEventParticipant,
+} from 'src/modules/calendar/common/types/fetched-calendar-event.type';
 
 @Injectable()
 export class CalDavCreateEventService implements CalendarEventCreationDriver {
   constructor(
     private readonly calDavClientProvider: CalDavClientProvider,
     private readonly calDavFetchEventsService: CalDavFetchEventsService,
+    private readonly calDavInvitationService: CalDavInvitationService,
   ) {}
 
   async createCalendarEvent(
     input: CalendarEventToCreate,
-    connectedAccount: Pick<ConnectedAccountEntity, 'id' | 'provider'>,
+    connectedAccount: Pick<
+      ConnectedAccountEntity,
+      'id' | 'provider' | 'handle' | 'connectionParameters'
+    >,
   ): Promise<FetchedCalendarEvent> {
     try {
       const client = await this.calDavClientProvider.getClient(
@@ -41,26 +54,67 @@ export class CalDavCreateEventService implements CalendarEventCreationDriver {
         );
       }
 
+      const organizer =
+        input.attendees.length > 0
+          ? await this.calDavInvitationService.resolveOrganizer({
+              client,
+              calendarUrl: targetCalendar.url,
+              handle: connectedAccount.handle,
+            })
+          : undefined;
+      const organizerEmail = organizer?.email;
+      const invitees = input.attendees.filter(
+        (attendee) =>
+          attendee.email.toLowerCase() !== organizerEmail?.toLowerCase(),
+      );
+
       const uid = uuid();
-      const calendar = ical({ prodId: '//Twenty//Calendar//EN' });
+      const { timeZoneId, vTimezoneBlock } = toICalTimeZone(input.timeZone);
+      const calendar = ical({
+        prodId: '//Twenty//Calendar//EN',
+        timezone: { name: null, generator: () => vTimezoneBlock },
+      });
+      const start = toCalendarEventTemporalDateTime({
+        isoDateTime: input.startsAt,
+        isFullDay: input.isFullDay,
+        timeZone: timeZoneId,
+      });
+      const end = toCalendarEventTemporalDateTime({
+        isoDateTime: input.endsAt,
+        isFullDay: input.isFullDay,
+        timeZone: timeZoneId,
+      });
+      const recurrenceRule = isDefined(input.recurrence)
+        ? toICalRecurrenceRule({
+            recurrence: input.recurrence,
+            isFullDay: input.isFullDay,
+            timeZone: timeZoneId,
+          })
+        : null;
 
       calendar.createEvent({
         id: uid,
-        start: new Date(input.startsAt),
-        end: new Date(input.endsAt),
+        start,
+        end,
         allDay: input.isFullDay,
+        timezone: input.isFullDay ? null : timeZoneId,
+        repeating: recurrenceRule,
         summary: input.title,
         description: input.description,
         location: input.location,
+        organizer: isDefined(organizerEmail)
+          ? { name: organizerEmail, email: organizerEmail }
+          : undefined,
         attendees: input.attendees.map((attendee) => ({
           email: attendee.email,
           name: attendee.displayName,
+          rsvp: true,
         })),
       });
 
       const filename = `${uid}.ics`;
 
-      await client.createCalendarObject({
+      const createResponse = await client.createCalendarObject({
         calendar: targetCalendar,
         filename,
         iCalString: calendar.toString(),
@@ -70,23 +124,55 @@ export class CalDavCreateEventService implements CalendarEventCreationDriver {
       // import keys on, so a later sync reconciles this event instead of
       // duplicating it. Reconstructing the href locally risks a format mismatch
       // (full URL vs the server-relative path the provider returns).
-      const reconstructedHref = new URL(filename, targetCalendar.url).href;
+      const reconstructedUrl = this.resolveCreatedEventUrl({
+        location: createResponse.headers.get('location'),
+        filename,
+        calendarUrl: targetCalendar.url,
+      });
 
-      let id = reconstructedHref;
+      let id = reconstructedUrl.pathname;
 
       try {
         const [syncedEvent] =
           await this.calDavFetchEventsService.fetchEventsByHrefs(client, [
-            reconstructedHref,
+            reconstructedUrl.href,
           ]);
 
-        id = syncedEvent?.id ?? reconstructedHref;
+        id = syncedEvent?.id ?? id;
       } catch {
         // The event was created; resolving its server href is best-effort, so
         // fall back to the reconstructed href rather than failing the create.
       }
 
+      if (isDefined(organizer) && !organizer.isServerScheduling) {
+        await this.calDavInvitationService.sendInvitationEmail({
+          connectedAccount,
+          calendar,
+          organizerEmail: organizer.email,
+          inviteeEmails: invitees.map((invitee) => invitee.email),
+          input,
+        });
+      }
+
       const now = new Date().toISOString();
+
+      const participants: FetchedCalendarEventParticipant[] = invitees.map(
+        (invitee) => ({
+          displayName: invitee.displayName ?? '',
+          handle: invitee.email,
+          responseStatus: CalendarEventParticipantResponseStatus.NEEDS_ACTION,
+          isOrganizer: false,
+        }),
+      );
+
+      if (isDefined(organizerEmail)) {
+        participants.unshift({
+          displayName: organizerEmail,
+          handle: organizerEmail.toLowerCase(),
+          responseStatus: CalendarEventParticipantResponseStatus.ACCEPTED,
+          isOrganizer: true,
+        });
+      }
 
       return {
         id,
@@ -101,17 +187,13 @@ export class CalDavCreateEventService implements CalendarEventCreationDriver {
         isPrivate: false,
         status: 'CONFIRMED',
         organizerHandle: '',
+        resourceHandles: [],
         conferenceLinkLabel: '',
         conferenceLinkUrl: '',
         conferenceSolution: '',
         externalCreatedAt: now,
         externalUpdatedAt: now,
-        participants: input.attendees.map((attendee) => ({
-          displayName: attendee.displayName ?? '',
-          handle: attendee.email,
-          responseStatus: CalendarEventParticipantResponseStatus.NEEDS_ACTION,
-          isOrganizer: false,
-        })),
+        participants,
       };
     } catch (error) {
       if (error instanceof CalendarEventCreationException) {
@@ -123,5 +205,21 @@ export class CalDavCreateEventService implements CalendarEventCreationDriver {
         CalendarEventCreationExceptionCode.PROVIDER_REQUEST_FAILED,
       );
     }
+  }
+
+  private resolveCreatedEventUrl({
+    location,
+    filename,
+    calendarUrl,
+  }: {
+    location: string | null;
+    filename: string;
+    calendarUrl: string;
+  }): URL {
+    const locationUrl = isNonEmptyString(location)
+      ? URL.parse(location, calendarUrl)
+      : null;
+
+    return locationUrl ?? new URL(filename, calendarUrl);
   }
 }

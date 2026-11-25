@@ -1,13 +1,13 @@
-import { useMutation } from '@apollo/client/react';
 import { act, renderHook } from '@testing-library/react';
 
 import { useTriggerAppOAuth } from '@/settings/applications/hooks/useTriggerAppOAuth';
 
 const mockRedirect = jest.fn();
+const mockUseMutation = jest.fn();
 
 jest.mock('@apollo/client/react', () => ({
   ...jest.requireActual('@apollo/client/react'),
-  useMutation: jest.fn(),
+  useMutation: () => mockUseMutation(),
 }));
 
 jest.mock('@/domain-manager/hooks/useRedirect', () => ({
@@ -17,13 +17,13 @@ jest.mock('@/domain-manager/hooks/useRedirect', () => ({
 describe('useTriggerAppOAuth', () => {
   beforeEach(() => {
     mockRedirect.mockClear();
-    jest.mocked(useMutation).mockReturnValue([
+    mockUseMutation.mockReturnValue([
       jest.fn().mockResolvedValue({
         data: {
           generateTransientToken: { transientToken: { token: 'transient' } },
         },
       }),
-    ] as unknown as ReturnType<typeof useMutation>);
+    ]);
   });
 
   it('redirects to the authorize endpoint with the transient token', async () => {

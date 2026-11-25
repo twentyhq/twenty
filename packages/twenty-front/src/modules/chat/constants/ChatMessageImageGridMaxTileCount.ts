@@ -1,0 +1,1 @@
+export const CHAT_MESSAGE_IMAGE_GRID_MAX_TILE_COUNT = 4;

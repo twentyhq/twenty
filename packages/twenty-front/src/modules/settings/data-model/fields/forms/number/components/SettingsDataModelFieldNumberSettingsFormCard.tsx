@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import { SettingsCardSeparator } from '@/settings/components/SettingsCardSeparator';
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 import { SettingsDataModelFieldIsUniqueForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm';
@@ -6,6 +5,7 @@ import { SettingsDataModelFieldNumberForm } from '@/settings/data-model/fields/f
 import { SettingsDataModelFieldPreviewWidget } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewWidget';
 import { useFormContext } from 'react-hook-form';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { useLingui } from '@lingui/react/macro';
 
 type SettingsDataModelFieldNumberSettingsFormCardProps = {
   disabled?: boolean;
@@ -18,6 +18,7 @@ export const SettingsDataModelFieldNumberSettingsFormCard = ({
   existingFieldMetadataId,
   objectNameSingular,
 }: SettingsDataModelFieldNumberSettingsFormCardProps) => {
+  const { t } = useLingui();
   const { watch } = useFormContext();
 
   return (

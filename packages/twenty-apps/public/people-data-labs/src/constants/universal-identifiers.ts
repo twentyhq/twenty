@@ -5,6 +5,8 @@ export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
   'abb2aa9f-8e9c-4e8b-a336-f864ee78b7cd';
 
 export const PDL_APPLICATION_VARIABLE_UNIVERSAL_IDENTIFIERS = {
+  personRequiredFields: '0715dff4-3bcf-425d-b001-743d98105d43',
+  companyRequiredFields: 'd259d523-296d-4cae-9d5d-025f3cb1c1ad',
   personMinLikelihood: 'a45f04fd-ce7b-468a-bc79-5945041dc7e8',
   companyMinLikelihood: '8301c260-5028-42f5-8f10-8b74d5d4d134',
   personWeakIdentifierMinLikelihood: '4160c7ad-fc3f-405d-87ed-7950292fbe22',

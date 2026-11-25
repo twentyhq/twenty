@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { IconSettingsAutomation } from 'twenty-ui/icon';
@@ -13,6 +12,7 @@ import { CoreObjectTable } from '@/object-core/components/CoreObjectTable';
 import { CoreObjectTableAddNewRow } from '@/object-core/components/CoreObjectTableAddNewRow';
 import { useCoreWorkflowsSelection } from '@/object-core/workflows/hooks/useCoreWorkflowsSelection';
 import { useListenToCoreWorkflowEvents } from '@/object-core/workflows/hooks/useListenToCoreWorkflowEvents';
+import { useListenToCoreWorkflowRunEvents } from '@/object-core/workflows/hooks/useListenToCoreWorkflowRunEvents';
 import { useCreateCoreWorkflow } from '@/object-core/workflows/hooks/useCreateCoreWorkflow';
 import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
 import { hasAppliedCoreObjectFilters } from '@/object-core/filters/utils/hasAppliedCoreObjectFilters';
@@ -27,22 +27,26 @@ import {
   CORE_WORKFLOWS_TABLE_ID,
   useCoreWorkflows,
 } from '@/object-core/workflows/hooks/useCoreWorkflows';
-import { type CoreWorkflow } from '@/object-core/workflows/types/CoreWorkflow';
+import { type CoreWorkflowTableRow } from '@/object-core/workflows/types/CoreWorkflowTableRow';
+import { buildCoreWorkflowTableRows } from '@/object-core/workflows/utils/buildCoreWorkflowTableRows';
 import { CoreWorkflowsPermissionGate } from '@/object-core/workflows/components/CoreWorkflowsPermissionGate';
 import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
 import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
 import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
+import { useLingui } from '@lingui/react/macro';
 
-const getCoreWorkflowLink = (workflow: CoreWorkflow) =>
+const getCoreWorkflowLink = (workflow: Pick<CoreWorkflowTableRow, 'id'>) =>
   getAppPath(AppPath.WorkflowCoreShowPage, { coreWorkflowId: workflow.id });
 
 const WorkflowCoreIndexContent = () => {
+  const { t } = useLingui();
   const tableId = useWorkspaceSurfaceScopedComponentInstanceId(
     CORE_WORKFLOWS_TABLE_ID,
   );
 
   const {
     coreWorkflows,
+    runSummaryByCoreWorkflowId,
     hasNextPage,
     loading,
     isInitialLoading,
@@ -64,6 +68,16 @@ const WorkflowCoreIndexContent = () => {
   } = useCoreWorkflowsSelection({ coreWorkflows });
 
   useListenToCoreWorkflowEvents({ refetch: refetchLoadedCoreWorkflows });
+  useListenToCoreWorkflowRunEvents({
+    coreWorkflowIds: coreWorkflows.map(({ id }) => id),
+    queryId: `core-workflows-run-events-${tableId}`,
+    onRunsChanged: refetchLoadedCoreWorkflows,
+  });
+
+  const coreWorkflowTableRows = buildCoreWorkflowTableRows({
+    coreWorkflows: displayedCoreWorkflows,
+    runSummaryByCoreWorkflowId,
+  });
 
   const coreWorkflowsFilterSettings = useAtomStateValue(
     coreWorkflowsFilterSettingsState,
@@ -130,7 +144,7 @@ const WorkflowCoreIndexContent = () => {
       <CoreObjectTable
         tableId={tableId}
         columns={WORKFLOW_CORE_TABLE_COLUMNS}
-        items={displayedCoreWorkflows}
+        items={coreWorkflowTableRows}
         getItemKey={(workflow) => workflow.id}
         getItemLink={getCoreWorkflowLink}
         initialSort={CORE_WORKFLOWS_INITIAL_SORT}

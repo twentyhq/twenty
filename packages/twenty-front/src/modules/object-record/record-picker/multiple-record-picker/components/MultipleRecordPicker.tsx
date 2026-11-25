@@ -27,9 +27,9 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { type RecordPickerLayoutDirection } from '@/object-record/record-picker/types/RecordPickerLayoutDirection';
 import { getMultipleRecordPickerLayoutDirection } from '@/object-record/record-picker/multiple-record-picker/utils/getMultipleRecordPickerLayoutDirection';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { t } from '@lingui/core/macro';
 import { IconPlus } from 'twenty-ui/icon';
 import { logError } from '~/utils/logError';
+import { useLingui } from '@lingui/react/macro';
 
 type MultipleRecordPickerProps = {
   onChange?: (morphItem: RecordPickerPickableMorphItem) => void;
@@ -58,6 +58,7 @@ export const MultipleRecordPicker = ({
   componentInstanceId,
   isCreatePending = false,
 }: MultipleRecordPickerProps) => {
+  const { t } = useLingui();
   const { page, isActive, goBack } = useDropdownPage();
   const { side, align } = useDropdownPlacementOrThrow();
   const resolvedLayoutDirection = getMultipleRecordPickerLayoutDirection({

@@ -3,10 +3,12 @@ import {
   AI_SDK_AZURE,
   AI_SDK_BEDROCK,
   AI_SDK_GOOGLE,
+  AI_SDK_GROQ,
   AI_SDK_MISTRAL,
   AI_SDK_OPENAI,
+  AI_SDK_OPENAI_COMPATIBLE,
   AI_SDK_XAI,
-} from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
+} from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.constant';
 import { buildReasoningProviderOptions } from 'src/engine/metadata-modules/ai/ai-models/utils/build-reasoning-provider-options.util';
 
 describe('buildReasoningProviderOptions', () => {
@@ -129,6 +131,12 @@ describe('buildReasoningProviderOptions', () => {
       { google: { thinkingConfig: { thinkingLevel: 'low' } } },
     ],
     [
+      AI_SDK_GROQ,
+      'groq/openai/gpt-oss-120b@medium',
+      'medium',
+      { groq: { reasoningEffort: 'medium' } },
+    ],
+    [
       AI_SDK_MISTRAL,
       'mistral/mistral-small-latest@none',
       'none',
@@ -139,6 +147,12 @@ describe('buildReasoningProviderOptions', () => {
       'xai/grok-4.6@high',
       'high',
       { xai: { reasoningEffort: 'high' } },
+    ],
+    [
+      AI_SDK_OPENAI_COMPATIBLE,
+      'openrouter/deepseek/deepseek-v4-flash-latest@minimal',
+      'minimal',
+      { openaiCompatible: { reasoningEffort: 'minimal' } },
     ],
   ] as const)(
     'sends the pinned effort under the %s key',

@@ -55,6 +55,18 @@ describe('describeCronExpression', () => {
         'at 09:00 UTC on the last day of the month',
       );
     });
+
+    it('should describe both day of month and day of week when both are set', () => {
+      expect(describeCronExpression('0 9 1 * 1')).toBe(
+        'at 09:00 UTC on the 1st of the month and on Monday',
+      );
+      expect(describeCronExpression('0 9 1 * 1,3')).toBe(
+        'at 09:00 UTC on the 1st of the month and on Monday and Wednesday',
+      );
+      expect(describeCronExpression('0 9 1,15 * 1-5')).toBe(
+        'at 09:00 UTC on the 1st and 15th of the month and on weekdays',
+      );
+    });
   });
 
   describe('month-specific expressions', () => {
@@ -118,6 +130,68 @@ describe('describeCronExpression', () => {
       expect(describeCronExpression('30 9,14 * * *')).toBe(
         'at 09:30 UTC and 14:30 UTC',
       );
+    });
+  });
+
+  describe('minute patterns with fixed or listed hours', () => {
+    it('should describe step minutes with a single hour', () => {
+      expect(describeCronExpression('*/5 9 * * *')).toBe(
+        'every 5 minutes from 09:00 to 09:59 UTC',
+      );
+    });
+
+    it('should describe wildcard minutes with a single hour', () => {
+      expect(describeCronExpression('* 9 * * *')).toBe(
+        'every minute from 09:00 to 09:59 UTC',
+      );
+    });
+
+    it('should describe step minutes with listed hours', () => {
+      expect(describeCronExpression('*/10 9,17 * * *')).toBe(
+        'every 10 minutes from 09:00 to 09:59 and from 17:00 to 17:59 UTC',
+      );
+    });
+
+    it('should describe wildcard minutes with listed hours and weekdays', () => {
+      expect(describeCronExpression('* 9,17 * * 1-5')).toBe(
+        'every minute from 09:00 to 09:59 and from 17:00 to 17:59 UTC on weekdays',
+      );
+    });
+
+    it('should describe minute ranges with a single hour', () => {
+      expect(describeCronExpression('0-30 9 * * *')).toBe(
+        'every minute from 09:00 to 09:30 UTC',
+      );
+    });
+
+    it('should describe minute ranges with listed hours', () => {
+      expect(describeCronExpression('0-30 9,17 * * *')).toBe(
+        'every minute from 09:00 to 09:30 and from 17:00 to 17:30 UTC',
+      );
+    });
+
+    it('should describe minute ranges with more than two listed hours', () => {
+      expect(describeCronExpression('0-30 9,12,17 * * *')).toBe(
+        'every minute from 09:00 to 09:30, from 12:00 to 12:30, and from 17:00 to 17:30 UTC',
+      );
+    });
+
+    it('should describe listed minutes with a single hour', () => {
+      expect(describeCronExpression('15,45 9 * * *')).toBe(
+        'at minutes 15 and 45 from 09:00 to 09:59 UTC',
+      );
+    });
+
+    it('should describe step minutes with more than two listed hours', () => {
+      expect(describeCronExpression('*/10 9,12,15 * * *')).toBe(
+        'every 10 minutes from 09:00 to 09:59, from 12:00 to 12:59, and from 15:00 to 15:59 UTC',
+      );
+    });
+
+    it('should describe step minutes with a single hour in 12-hour format', () => {
+      expect(
+        describeCronExpression('*/5 9 * * *', { use24HourTimeFormat: false }),
+      ).toBe('every 5 minutes from 9:00 AM to 9:59 AM UTC');
     });
   });
 

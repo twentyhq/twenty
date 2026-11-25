@@ -1,11 +1,11 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { EditorContent, type Editor } from '@tiptap/react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { useTextVariableEditor } from '@/object-record/record-field/ui/form-types/hooks/useTextVariableEditor';
 import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/ui/input/constants/FormFieldPlaceholderStyles';
+import { useLingui } from '@lingui/react/macro';
 
 type HtmlNodeInlineEditorProps = {
   html: string;
@@ -41,6 +41,7 @@ export const HtmlNodeInlineEditor = ({
   onChange,
   onFocus,
 }: HtmlNodeInlineEditorProps) => {
+  const { t } = useLingui();
   const htmlEditor = useTextVariableEditor({
     placeholder: t`Paste or write your HTML here`,
     multiline: true,

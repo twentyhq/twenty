@@ -7,7 +7,7 @@ import {
   AI_SDK_ANTHROPIC,
   AI_SDK_AZURE,
   AI_SDK_OPENAI,
-} from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
+} from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.constant';
 import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import { supportsBedrockCachePoint } from 'src/engine/metadata-modules/ai/ai-models/utils/supports-bedrock-cache-point.util';
 
@@ -95,7 +95,9 @@ export const injectCacheBreakpoint = (
   return messages.map((message, index) => {
     const providerOptions = omitBedrockCachePoint(message.providerOptions);
 
-    if (index !== lastIdx) return { ...message, providerOptions };
+    if (index !== lastIdx) {
+      return { ...message, providerOptions };
+    }
 
     return {
       ...message,

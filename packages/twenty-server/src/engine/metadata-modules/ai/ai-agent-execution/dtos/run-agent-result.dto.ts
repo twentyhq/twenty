@@ -10,6 +10,9 @@ export class RunAgentResultDTO implements RunAgentResult {
   @Field(() => UUIDScalarType)
   threadId: string;
 
+  @Field(() => UUIDScalarType)
+  runId: string;
+
   @Field(() => String)
   status: RunAgentResult['status'];
 

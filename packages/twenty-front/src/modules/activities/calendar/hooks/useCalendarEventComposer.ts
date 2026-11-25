@@ -1,6 +1,7 @@
 import { getMissingCreateCalendarEventScopes } from '@/accounts/utils/hasMissingCreateCalendarEventScopes';
 import { useCalendarEventTargetObjectMetadataItems } from '@/activities/calendar/hooks/useCalendarEventTargetObjectMetadataItems';
 import { useCreateCalendarEvent } from '@/activities/calendar/hooks/useCreateCalendarEvent';
+import { useCalendarEventComposerRecurrence } from '@/activities/calendar/hooks/useCalendarEventComposerRecurrence';
 import { useCreateCalendarEventTargets } from '@/activities/calendar/hooks/useCreateCalendarEventTargets';
 import { useRefetchTimelineCalendarEvents } from '@/activities/calendar/hooks/useRefetchTimelineCalendarEvents';
 import { isCalendarEventComposerCreatingState } from '@/activities/calendar/states/isCalendarEventComposerCreatingState';
@@ -9,6 +10,8 @@ import { type CalendarEventComposerTarget } from '@/activities/calendar/types/Ca
 import { getCalendarEventComposerDefaultDates } from '@/activities/calendar/utils/getCalendarEventComposerDefaultDates';
 import { getCalendarEventDatesAfterModeChange } from '@/activities/calendar/utils/getCalendarEventDatesAfterModeChange';
 import { getCalendarEventDatesAfterStartChange } from '@/activities/calendar/utils/getCalendarEventDatesAfterStartChange';
+import { getCalendarEventRecurrenceInput } from '@/activities/calendar/utils/getCalendarEventRecurrenceInput';
+import { getCalendarEventStartDateInTimeZone } from '@/activities/calendar/utils/getCalendarEventStartDateInTimeZone';
 import { isCalendarCreationEnabledForAccount } from '@/activities/calendar/utils/isCalendarCreationEnabledForAccount';
 import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailRecipient';
 import { isValidEmailRecipientAddress } from '@/activities/emails/recipients/utils/isValidEmailRecipientAddress';
@@ -25,7 +28,7 @@ import { useStore } from 'jotai';
 import { useCallback, useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
 import { MAX_EMAIL_RECIPIENTS } from 'twenty-shared/constants';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { useToast } from 'twenty-ui/components/feedback';
@@ -81,6 +84,19 @@ export const useCalendarEventComposer = ({
     }),
   );
 
+  const startDateInTimeZone = getCalendarEventStartDateInTimeZone({
+    startsAt: dates.startsAt,
+    isFullDay,
+    timeZone,
+  });
+  const {
+    recurrence,
+    hasValidRecurrenceEndDate,
+    handleRecurrenceFrequencyChange,
+    handleRecurrenceEndTypeChange,
+    updateRecurrence,
+  } = useCalendarEventComposerRecurrence({ startDateInTimeZone });
+
   const calendarAccounts = accounts.filter(isCalendarCreationEnabledForAccount);
   const accountOptions: SelectOption<string>[] = calendarAccounts.map(
     (account) => ({ label: account.handle, value: account.id }),
@@ -111,7 +127,7 @@ export const useCalendarEventComposer = ({
       // Fallback for records the junction can't target: the query is skipped but needs a resolvable object.
       objectNameSingular:
         contextObjectMetadataItem?.nameSingular ??
-        CoreObjectNameSingular.Person,
+        StandardObjectNameSingular.Person,
       objectRecordId: initialValues?.contextRecord.recordId,
       skip: !isDefined(contextObjectMetadataItem),
     });
@@ -187,6 +203,7 @@ export const useCalendarEventComposer = ({
     invalidAttendeeEmails.length === 0 &&
     !hasTooManyAttendees &&
     hasValidDateRange &&
+    hasValidRecurrenceEndDate &&
     // Creating before it resolves would drop the relation the composer was opened for.
     !(isDefined(contextObjectMetadataItem) && isContextRecordLoading) &&
     !isCreating &&
@@ -252,6 +269,7 @@ export const useCalendarEventComposer = ({
         attendees: serializeEmailRecipients(attendees),
         sendInvitations,
         addConferencing,
+        recurrence: getCalendarEventRecurrenceInput(recurrence),
       });
 
       if (!success) {
@@ -301,6 +319,7 @@ export const useCalendarEventComposer = ({
     isFullDay,
     location,
     onCreated,
+    recurrence,
     refetchTimelineCalendarEvents,
     sendInvitations,
     store,
@@ -322,14 +341,18 @@ export const useCalendarEventComposer = ({
     description,
     handleCreate,
     handleIsFullDayChange,
+    handleRecurrenceEndTypeChange,
+    handleRecurrenceFrequencyChange,
     handleStartsAtChange,
     handleTargetChange,
     hasTooManyAttendees,
     hasValidDateRange,
+    hasValidRecurrenceEndDate,
     invalidAttendeeEmails,
     isFullDay,
     location,
     missingScopes,
+    recurrence,
     selectedAccount,
     sendInvitations,
     setAddConferencing,
@@ -341,7 +364,9 @@ export const useCalendarEventComposer = ({
     setSendInvitations,
     setTimeZone,
     setTitle,
+    startDateInTimeZone,
     targets,
     timeZone,
+    updateRecurrence,
   };
 };

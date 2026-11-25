@@ -10,7 +10,7 @@ const LINKS_PER_PAGE = 200;
 // A link is keyed by the Slack workspace its user belongs to, which for a guest
 // or Slack Connect member is not the workspace the app is installed in.
 export const findSlackUserLinksBySlackUserIds = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'query'>,
   {
     slackUserIdsBySlackTeamId,
   }: { slackUserIdsBySlackTeamId: ReadonlyMap<string, string[]> },

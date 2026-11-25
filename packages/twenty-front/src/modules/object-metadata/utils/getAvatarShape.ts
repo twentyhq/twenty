@@ -1,6 +1,9 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getImageIdentifierFieldMetadataItem } from '@/object-metadata/utils/getImageIdentifierFieldMetadataItem';
-import { CoreObjectNameSingular, FieldMetadataType } from 'twenty-shared/types';
+import {
+  StandardObjectNameSingular,
+  FieldMetadataType,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const getAvatarShape = (
@@ -14,7 +17,8 @@ export const getAvatarShape = (
   }
 
   if (
-    objectMetadataItem.nameSingular === CoreObjectNameSingular.WorkspaceMember
+    objectMetadataItem.nameSingular ===
+    StandardObjectNameSingular.WorkspaceMember
   ) {
     return 'circle';
   }
@@ -32,8 +36,8 @@ export const getAvatarShape = (
   }
 
   if (
-    objectMetadataItem.nameSingular === CoreObjectNameSingular.Task ||
-    objectMetadataItem.nameSingular === CoreObjectNameSingular.Note
+    objectMetadataItem.nameSingular === StandardObjectNameSingular.Task ||
+    objectMetadataItem.nameSingular === StandardObjectNameSingular.Note
   ) {
     return 'rounded-square';
   }

@@ -1,9 +1,10 @@
+import { Test } from '@nestjs/testing';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
-import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { ConfigureTimelineActivityRoutingCommand } from 'src/database/commands/upgrade-version-command/2-34/2-34-workspace-command-1787471608317-configure-timeline-activity-routing.command';
-import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const WORKSPACE_ID = '00000000-0000-4000-8000-000000000001';
 const STANDARD_APPLICATION_ID = '00000000-0000-4000-8000-000000000002';
@@ -42,20 +43,30 @@ describe('ConfigureTimelineActivityRoutingCommand', () => {
       .mockResolvedValueOnce([[], 2]);
     const { dataSource, queryRunner } = createTransactionalDataSource(query);
     const invalidateAndRecompute = jest.fn().mockResolvedValue(undefined);
-    const command = new ConfigureTimelineActivityRoutingCommand(
-      {} as WorkspaceIteratorService,
-      {
-        findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
-          .fn()
-          .mockResolvedValue({
-            twentyStandardFlatApplication: { id: STANDARD_APPLICATION_ID },
-          }),
-      } as unknown as ApplicationService,
-      {
-        getOrRecompute: getOrRecomputeWithTimelineActivity(),
-        invalidateAndRecompute,
-      } as unknown as WorkspaceCacheService,
-    );
+    const module = await Test.createTestingModule({
+      providers: [
+        ConfigureTimelineActivityRoutingCommand,
+        { provide: WorkspaceIteratorService, useValue: {} },
+        {
+          provide: ApplicationService,
+          useValue: {
+            findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
+              .fn()
+              .mockResolvedValue({
+                twentyStandardFlatApplication: { id: STANDARD_APPLICATION_ID },
+              }),
+          },
+        },
+        {
+          provide: WorkspaceCacheService,
+          useValue: {
+            getOrRecompute: getOrRecomputeWithTimelineActivity(),
+            invalidateAndRecompute,
+          },
+        },
+      ],
+    }).compile();
+    const command = module.get(ConfigureTimelineActivityRoutingCommand);
 
     await command.runOnWorkspace({
       workspaceId: WORKSPACE_ID,
@@ -109,20 +120,30 @@ describe('ConfigureTimelineActivityRoutingCommand', () => {
     const { dataSource } = createTransactionalDataSource(
       jest.fn().mockResolvedValueOnce([[], 7]).mockResolvedValueOnce([[], 2]),
     );
-    const command = new ConfigureTimelineActivityRoutingCommand(
-      {} as WorkspaceIteratorService,
-      {
-        findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
-          .fn()
-          .mockResolvedValue({
-            twentyStandardFlatApplication: { id: STANDARD_APPLICATION_ID },
-          }),
-      } as unknown as ApplicationService,
-      {
-        getOrRecompute: getOrRecomputeWithTimelineActivity(),
-        invalidateAndRecompute,
-      } as unknown as WorkspaceCacheService,
-    );
+    const module = await Test.createTestingModule({
+      providers: [
+        ConfigureTimelineActivityRoutingCommand,
+        { provide: WorkspaceIteratorService, useValue: {} },
+        {
+          provide: ApplicationService,
+          useValue: {
+            findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
+              .fn()
+              .mockResolvedValue({
+                twentyStandardFlatApplication: { id: STANDARD_APPLICATION_ID },
+              }),
+          },
+        },
+        {
+          provide: WorkspaceCacheService,
+          useValue: {
+            getOrRecompute: getOrRecomputeWithTimelineActivity(),
+            invalidateAndRecompute,
+          },
+        },
+      ],
+    }).compile();
+    const command = module.get(ConfigureTimelineActivityRoutingCommand);
 
     await command.runOnWorkspace({
       workspaceId: WORKSPACE_ID,
@@ -141,20 +162,30 @@ describe('ConfigureTimelineActivityRoutingCommand', () => {
       .mockRejectedValueOnce(new Error('junction update failed'));
     const { dataSource, queryRunner } = createTransactionalDataSource(query);
     const invalidateAndRecompute = jest.fn();
-    const command = new ConfigureTimelineActivityRoutingCommand(
-      {} as WorkspaceIteratorService,
-      {
-        findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
-          .fn()
-          .mockResolvedValue({
-            twentyStandardFlatApplication: { id: STANDARD_APPLICATION_ID },
-          }),
-      } as unknown as ApplicationService,
-      {
-        getOrRecompute: getOrRecomputeWithTimelineActivity(),
-        invalidateAndRecompute,
-      } as unknown as WorkspaceCacheService,
-    );
+    const module = await Test.createTestingModule({
+      providers: [
+        ConfigureTimelineActivityRoutingCommand,
+        { provide: WorkspaceIteratorService, useValue: {} },
+        {
+          provide: ApplicationService,
+          useValue: {
+            findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
+              .fn()
+              .mockResolvedValue({
+                twentyStandardFlatApplication: { id: STANDARD_APPLICATION_ID },
+              }),
+          },
+        },
+        {
+          provide: WorkspaceCacheService,
+          useValue: {
+            getOrRecompute: getOrRecomputeWithTimelineActivity(),
+            invalidateAndRecompute,
+          },
+        },
+      ],
+    }).compile();
+    const command = module.get(ConfigureTimelineActivityRoutingCommand);
 
     await expect(
       command.runOnWorkspace({
@@ -175,18 +206,28 @@ describe('ConfigureTimelineActivityRoutingCommand', () => {
   it('skips workspaces without timeline metadata', async () => {
     const query = jest.fn();
     const findStandardApplication = jest.fn();
-    const command = new ConfigureTimelineActivityRoutingCommand(
-      {} as WorkspaceIteratorService,
-      {
-        findWorkspaceTwentyStandardAndCustomApplicationOrThrow:
-          findStandardApplication,
-      } as unknown as ApplicationService,
-      {
-        getOrRecompute: jest.fn().mockResolvedValue({
-          flatObjectMetadataMaps: { byUniversalIdentifier: {} },
-        }),
-      } as unknown as WorkspaceCacheService,
-    );
+    const module = await Test.createTestingModule({
+      providers: [
+        ConfigureTimelineActivityRoutingCommand,
+        { provide: WorkspaceIteratorService, useValue: {} },
+        {
+          provide: ApplicationService,
+          useValue: {
+            findWorkspaceTwentyStandardAndCustomApplicationOrThrow:
+              findStandardApplication,
+          },
+        },
+        {
+          provide: WorkspaceCacheService,
+          useValue: {
+            getOrRecompute: jest.fn().mockResolvedValue({
+              flatObjectMetadataMaps: { byUniversalIdentifier: {} },
+            }),
+          },
+        },
+      ],
+    }).compile();
+    const command = module.get(ConfigureTimelineActivityRoutingCommand);
 
     await command.runOnWorkspace({
       workspaceId: WORKSPACE_ID,

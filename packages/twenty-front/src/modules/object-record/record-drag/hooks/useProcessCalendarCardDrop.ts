@@ -51,7 +51,9 @@ export const useProcessCalendarCardDrop = () => {
       // Read before any await: the drag provider clears it once this call returns
       const draggedRecordIds = store.get(draggedRecordIdsCallbackState);
 
-      if (!recordIndexCalendarFieldMetadataId) return;
+      if (!recordIndexCalendarFieldMetadataId) {
+        return;
+      }
 
       const destinationPlainDate = Temporal.PlainDate.from(destinationDate);
       const sourcePlainDate = Temporal.PlainDate.from(sourceDate);
@@ -60,7 +62,9 @@ export const useProcessCalendarCardDrop = () => {
         (field) => field.id === recordIndexCalendarFieldMetadataId,
       );
 
-      if (!calendarFieldMetadata) return;
+      if (!calendarFieldMetadata) {
+        return;
+      }
 
       const destinationRecordIdsIncludingDraggedRecord = store.get(
         calendarDayRecordIdsSelector({

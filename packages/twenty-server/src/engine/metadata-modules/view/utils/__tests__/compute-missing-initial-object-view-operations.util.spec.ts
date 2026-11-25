@@ -35,7 +35,6 @@ type ObjectFixture = {
 type ViewFixture = {
   universalIdentifier: string;
   key: ViewKey | null;
-  deletedAt: string | null;
   viewFieldUniversalIdentifiers: string[];
 };
 
@@ -76,7 +75,6 @@ const PET_OBJECT_WITH_INITIAL_VIEW: ObjectFixture = {
 const PET_INDEX_VIEW: ViewFixture = {
   universalIdentifier: PET_INDEX_VIEW_UNIVERSAL_IDENTIFIER,
   key: ViewKey.INDEX,
-  deletedAt: null,
   viewFieldUniversalIdentifiers: [
     NAME_INDEX_VIEW_FIELD_UNIVERSAL_IDENTIFIER,
     AGE_INDEX_VIEW_FIELD_UNIVERSAL_IDENTIFIER,
@@ -194,31 +192,26 @@ describe('computeMissingInitialObjectViewOperations', () => {
     ).toBe(true);
   });
 
-  it('produces nothing when the initial view already exists, live or soft-deleted', () => {
-    const buildExistingInitialView = (
-      deletedAt: string | null,
-    ): ViewFixture => ({
+  it('produces nothing when the initial view already exists', () => {
+    const existingInitialView: ViewFixture = {
       universalIdentifier: INITIAL_VIEW_UNIVERSAL_IDENTIFIER,
       key: null,
-      deletedAt,
       viewFieldUniversalIdentifiers: [],
-    });
+    };
 
-    for (const deletedAt of [null, '2024-01-01T00:00:00.000Z']) {
-      const { viewsToCreate, viewFieldsToCreate } =
-        computeMissingInitialObjectViewOperations({
-          ...buildMaps({
-            objects: [PET_OBJECT_WITH_INITIAL_VIEW],
-            views: [PET_INDEX_VIEW, buildExistingInitialView(deletedAt)],
-            viewFields: [NAME_INDEX_VIEW_FIELD, AGE_INDEX_VIEW_FIELD],
-          }),
-          initialViewApplicationUniversalIdentifier:
-            WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
-        });
+    const { viewsToCreate, viewFieldsToCreate } =
+      computeMissingInitialObjectViewOperations({
+        ...buildMaps({
+          objects: [PET_OBJECT_WITH_INITIAL_VIEW],
+          views: [PET_INDEX_VIEW, existingInitialView],
+          viewFields: [NAME_INDEX_VIEW_FIELD, AGE_INDEX_VIEW_FIELD],
+        }),
+        initialViewApplicationUniversalIdentifier:
+          WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+      });
 
-      expect(viewsToCreate).toHaveLength(0);
-      expect(viewFieldsToCreate).toHaveLength(0);
-    }
+    expect(viewsToCreate).toHaveLength(0);
+    expect(viewFieldsToCreate).toHaveLength(0);
   });
 
   it('seeds nothing for an object whose standard view already plays that role', () => {

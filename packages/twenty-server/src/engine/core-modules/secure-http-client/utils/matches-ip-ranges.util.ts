@@ -13,12 +13,13 @@ const normalizeToLong = (addr: string): number => {
       return parseInt(part, 8);
     } else if (/^[1-9]\d*$/.test(part) || part === '0') {
       return parseInt(part, 10);
-    } else {
-      return NaN;
     }
+    return NaN;
   });
 
-  if (parts.some(isNaN)) return -1;
+  if (parts.some(isNaN)) {
+    return -1;
+  }
 
   let val = 0;
   const n = parts.length;
@@ -28,15 +29,21 @@ const normalizeToLong = (addr: string): number => {
       val = parts[0];
       break;
     case 2:
-      if (parts[0] > 0xff || parts[1] > 0xffffff) return -1;
+      if (parts[0] > 0xff || parts[1] > 0xffffff) {
+        return -1;
+      }
       val = (parts[0] << 24) | (parts[1] & 0xffffff);
       break;
     case 3:
-      if (parts[0] > 0xff || parts[1] > 0xff || parts[2] > 0xffff) return -1;
+      if (parts[0] > 0xff || parts[1] > 0xff || parts[2] > 0xffff) {
+        return -1;
+      }
       val = (parts[0] << 24) | (parts[1] << 16) | (parts[2] & 0xffff);
       break;
     case 4:
-      if (parts.some((part) => part > 0xff)) return -1;
+      if (parts.some((part) => part > 0xff)) {
+        return -1;
+      }
       val = (parts[0] << 24) | (parts[1] << 16) | (parts[2] << 8) | parts[3];
       break;
     default:

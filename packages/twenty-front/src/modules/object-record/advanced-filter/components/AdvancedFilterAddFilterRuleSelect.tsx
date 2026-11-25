@@ -1,11 +1,12 @@
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
-import { useGetDefaultFieldMetadataItemForFilter } from '@/object-record/advanced-filter/hooks/useGetDefaultFieldMetadataItemForFilter';
+import { useAdvancedFilterFieldMetadataItems } from '@/object-record/advanced-filter/hooks/useAdvancedFilterFieldMetadataItems';
 import { useSetRecordFilterUsedInAdvancedFilterDropdownRow } from '@/object-record/advanced-filter/hooks/useSetRecordFilterUsedInAdvancedFilterDropdownRow';
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
 import { getAdvancedFilterAddFilterRuleSelectDropdownId } from '@/object-record/advanced-filter/utils/getAdvancedFilterAddFilterRuleSelectDropdownId';
 import { getDefaultAdvancedFilterOperand } from '@/object-record/advanced-filter/utils/getDefaultAdvancedFilterOperand';
+import { getDefaultFieldMetadataItemForFilter } from '@/object-record/advanced-filter/utils/getDefaultFieldMetadataItemForFilter';
 import { useUpsertRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useUpsertRecordFilterGroup';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
@@ -14,13 +15,13 @@ import { getDefaultSubFieldNameForCompositeFilterableFieldType } from '@/object-
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { IconLibraryPlus, IconPlus } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
+import { useLingui } from '@lingui/react/macro';
 
 type AdvancedFilterAddFilterRuleSelectProps = {
   recordFilterGroup: RecordFilterGroup;
@@ -29,6 +30,7 @@ type AdvancedFilterAddFilterRuleSelectProps = {
 export const AdvancedFilterAddFilterRuleSelect = ({
   recordFilterGroup,
 }: AdvancedFilterAddFilterRuleSelectProps) => {
+  const { t } = useLingui();
   const dropdownId = getAdvancedFilterAddFilterRuleSelectDropdownId(
     recordFilterGroup.id,
   );
@@ -43,18 +45,21 @@ export const AdvancedFilterAddFilterRuleSelect = ({
 
   const newPositionInRecordFilterGroup = lastChildPosition + 1;
 
-  const { getDefaultFieldMetadataItemForFilter } =
-    useGetDefaultFieldMetadataItemForFilter();
-
   const { setRecordFilterUsedInAdvancedFilterDropdownRow } =
     useSetRecordFilterUsedInAdvancedFilterDropdownRow();
 
   const { objectMetadataItem } = useContext(AdvancedFilterContext);
 
-  const handleAddFilter = () => {
-    const { defaultFieldMetadataItemForFilter } =
-      getDefaultFieldMetadataItemForFilter(objectMetadataItem);
+  const { advancedFilterFieldMetadataItems } =
+    useAdvancedFilterFieldMetadataItems();
 
+  const defaultFieldMetadataItemForFilter =
+    getDefaultFieldMetadataItemForFilter({
+      objectMetadataItem,
+      filterableFieldMetadataItems: advancedFilterFieldMetadataItems,
+    });
+
+  const handleAddFilter = () => {
     if (!isDefined(defaultFieldMetadataItemForFilter)) {
       throw new Error(
         doNotTranslate('Missing default field metadata item for filter'),
@@ -87,9 +92,6 @@ export const AdvancedFilterAddFilterRuleSelect = ({
   };
 
   const handleAddFilterGroup = () => {
-    const { defaultFieldMetadataItemForFilter } =
-      getDefaultFieldMetadataItemForFilter(objectMetadataItem);
-
     if (!isDefined(defaultFieldMetadataItemForFilter)) {
       throw new Error(
         doNotTranslate('Missing default field metadata item for filter'),

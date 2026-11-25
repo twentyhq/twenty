@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { MAX_EMAIL_RECIPIENTS } from 'twenty-shared/constants';
 import {
   ConnectedAccountProvider,
   type EmailAttachment,
@@ -11,27 +10,28 @@ import {
 } from 'twenty-shared/types';
 import {
   canConnectedAccountPerformEmailOperation,
-  convertEmailBodyToEmailDocument,
   getEmailProvidersForOperation,
   isDefined,
   isNonEmptyArray,
   isValidUuid,
 } from 'twenty-shared/utils';
 import { In, IsNull, LessThanOrEqual, type Repository } from 'typeorm';
-import { z } from 'zod';
 
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { compileOutboundEmailContent } from 'src/engine/core-modules/email/utils/compile-outbound-email-content.util';
 import { sanitizeOutboundEmailSubject } from 'src/engine/core-modules/email/utils/sanitize-outbound-email-html.util';
 import { EMAIL_ATTACHMENT_FILE_FOLDERS } from 'src/engine/core-modules/tool/tools/email-tool/constants/email-attachment-file-folders.const';
+import { MAX_EMAIL_ATTACHMENTS_BYTES } from 'src/engine/core-modules/tool/tools/email-tool/constants/max-email-attachments-bytes.const';
 import {
   EmailToolException,
   EmailToolExceptionCode,
 } from 'src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception';
 import { type ComposeEmailParams } from 'src/engine/core-modules/tool/tools/email-tool/types/compose-email-params.type';
 import { EmailComposerResult } from 'src/engine/core-modules/tool/tools/email-tool/types/email-composer-result.type';
-import { parseCommaSeparatedEmails } from 'src/engine/core-modules/tool/tools/email-tool/utils/parse-comma-separated-emails.util';
+import { getEmailRecipientsError } from 'src/engine/core-modules/email/utils/get-email-recipients-error.util';
+import { parseCommaSeparatedEmails } from 'src/engine/core-modules/email/utils/parse-comma-separated-emails.util';
+import { parseEmailDocumentOrThrow } from 'src/engine/core-modules/tool/tools/email-tool/utils/parse-email-document-or-throw.util';
 import { selectConnectedAccountIdForCaller } from 'src/engine/core-modules/tool/tools/email-tool/utils/select-connected-account-id-for-caller.util';
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
@@ -42,6 +42,7 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { type MessageAttachment } from 'src/modules/messaging/message-import-manager/types/message.type';
+import { StreamSizeExceededError } from 'src/utils/stream-size-exceeded-error';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 type ParentThreadContext = {
@@ -202,42 +203,18 @@ export class EmailComposerService {
     };
   }
 
-  private validateEmails(recipients: {
-    to: string[];
-    cc: string[];
-    bcc: string[];
-  }): string[] {
-    const emailSchema = z.string().trim().pipe(z.email());
-    const invalidEmails: string[] = [];
+  private assertAttachmentsSizeWithinLimit(
+    fileEntities: Pick<FileEntity, 'size'>[],
+  ): void {
+    const totalBytes = fileEntities.reduce(
+      (sum, fileEntity) => sum + fileEntity.size,
+      0,
+    );
 
-    const allEmails = [...recipients.to, ...recipients.cc, ...recipients.bcc];
-
-    for (const email of allEmails) {
-      const result = emailSchema.safeParse(email);
-
-      if (!result.success) {
-        invalidEmails.push(email);
-      }
-    }
-
-    return invalidEmails;
-  }
-
-  private assertRecipientCountWithinLimit(recipients: {
-    to: string[];
-    cc: string[];
-    bcc: string[];
-  }): void {
-    const total =
-      recipients.to.length + recipients.cc.length + recipients.bcc.length;
-
-    if (total > MAX_EMAIL_RECIPIENTS) {
+    if (totalBytes > MAX_EMAIL_ATTACHMENTS_BYTES) {
       throw new EmailToolException(
-        `Too many recipients: ${total}. Maximum allowed is ${MAX_EMAIL_RECIPIENTS}.`,
-        EmailToolExceptionCode.TOO_MANY_RECIPIENTS,
-        {
-          userFriendlyMessage: msg`Too many recipients: ${total}. Maximum allowed is ${MAX_EMAIL_RECIPIENTS}.`,
-        },
+        `Attachments are ${totalBytes} bytes. Maximum allowed is ${MAX_EMAIL_ATTACHMENTS_BYTES} bytes.`,
+        EmailToolExceptionCode.ATTACHMENTS_TOO_LARGE,
       );
     }
   }
@@ -275,11 +252,13 @@ export class EmailComposerService {
       );
     }
 
+    this.assertAttachmentsSizeWithinLimit(
+      files.flatMap(({ id }) => fileEntityMap.get(id) ?? []),
+    );
+
     const attachments: MessageAttachment[] = [];
 
     for (const fileMetadata of files) {
-      const fileEntity = fileEntityMap.get(fileMetadata.id);
-
       const fileStream = await this.fileService.getFileStreamById({
         fileId: fileMetadata.id,
         workspaceId,
@@ -293,12 +272,24 @@ export class EmailComposerService {
         );
       }
 
-      const buffer = await streamToBuffer(fileStream.stream);
+      const buffer = await streamToBuffer(
+        fileStream.stream,
+        MAX_EMAIL_ATTACHMENTS_BYTES,
+      ).catch((error) => {
+        if (error instanceof StreamSizeExceededError) {
+          throw new EmailToolException(
+            error.message,
+            EmailToolExceptionCode.ATTACHMENTS_TOO_LARGE,
+          );
+        }
+
+        throw error;
+      });
 
       attachments.push({
         filename: fileMetadata.name,
         content: buffer,
-        contentType: fileEntity?.mimeType ?? 'application/octet-stream',
+        contentType: fileStream.mimeType,
       });
     }
 
@@ -316,9 +307,8 @@ export class EmailComposerService {
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const messageRepository =
-        this.workspaceOrmManager.getRepository<MessageWorkspaceEntity>(
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<MessageWorkspaceEntity>(
           'message',
-          { shouldBypassPermissionChecks: true },
         );
 
       const parentMessage = await messageRepository.findOne({
@@ -334,9 +324,8 @@ export class EmailComposerService {
       }
 
       const associationRepository =
-        this.workspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<MessageChannelMessageAssociationWorkspaceEntity>(
           'messageChannelMessageAssociation',
-          { shouldBypassPermissionChecks: true },
         );
 
       const [association, ancestorMessages] = await Promise.all([
@@ -382,7 +371,6 @@ export class EmailComposerService {
 
     try {
       recipients = this.normalizeRecipients(parameters);
-      this.assertRecipientCountWithinLimit(recipients);
     } catch (error) {
       return {
         success: false,
@@ -393,15 +381,10 @@ export class EmailComposerService {
       };
     }
 
-    const invalidEmails = this.validateEmails(recipients);
+    const recipientsError = getEmailRecipientsError(recipients);
 
-    if (invalidEmails.length > 0) {
-      const invalidEmailList = invalidEmails.join(', ');
-
-      return {
-        success: false,
-        error: msg`Invalid email addresses: ${invalidEmailList}`,
-      };
+    if (isDefined(recipientsError)) {
+      return { success: false, error: recipientsError };
     }
 
     const toRecipientsDisplay = recipients.to.join(', ');
@@ -440,17 +423,8 @@ export class EmailComposerService {
 
     const attachments = await this.getAttachments(files || [], workspaceId);
 
-    const bodyConversionResult = convertEmailBodyToEmailDocument(body ?? '');
-
-    if (!bodyConversionResult.success) {
-      throw new EmailToolException(
-        `Invalid outbound email document: ${bodyConversionResult.error}`,
-        EmailToolExceptionCode.INVALID_EMAIL_BODY,
-      );
-    }
-
     const { html: sanitizedHtmlBody, plainText: plainTextBody } =
-      await compileOutboundEmailContent(bodyConversionResult.document);
+      await compileOutboundEmailContent(parseEmailDocumentOrThrow(body));
     const sanitizedSubject = await sanitizeOutboundEmailSubject(subject || '');
 
     const { threadExternalId, references } =

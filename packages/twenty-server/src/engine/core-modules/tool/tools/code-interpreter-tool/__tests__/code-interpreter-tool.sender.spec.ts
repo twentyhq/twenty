@@ -143,7 +143,7 @@ describe('Code interpreter sandbox token', () => {
     ],
     [
       'an application running its agent as the person',
-      buildUserContext({ viaApplication: { id: CALLING_APPLICATION_ID } }),
+      buildUserContext({ application: { id: CALLING_APPLICATION_ID } }),
       CALLING_APPLICATION_ID,
     ],
     [
@@ -231,7 +231,7 @@ describe('Code interpreter sandbox token', () => {
   it.each([
     [
       'the person through the application',
-      buildUserContext({ viaApplication: { id: CALLING_APPLICATION_ID } }),
+      buildUserContext({ application: { id: CALLING_APPLICATION_ID } }),
       { userId: USER_ID, userWorkspaceId: USER_WORKSPACE_ID },
     ],
     [
@@ -269,7 +269,7 @@ describe('Code interpreter sandbox token', () => {
     const { sandboxContext: directRun } =
       await runInterpreter(buildUserContext());
     const { sandboxContext: applicationRun } = await runInterpreter(
-      buildUserContext({ viaApplication: { id: CALLING_APPLICATION_ID } }),
+      buildUserContext({ application: { id: CALLING_APPLICATION_ID } }),
     );
 
     expect(directRun.sessionId).toBe(applicationRun.sessionId);

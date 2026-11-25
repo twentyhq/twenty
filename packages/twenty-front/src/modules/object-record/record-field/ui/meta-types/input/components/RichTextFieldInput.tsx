@@ -7,13 +7,13 @@ import { type FieldRichTextMetadata } from '@/object-record/record-field/ui/type
 import { useOpenRichTextInSidePanel } from '@/side-panel/hooks/useOpenRichTextInSidePanel';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { Suspense, lazy, useContext, useRef } from 'react';
 import { SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { IconButton } from 'twenty-ui/components/input';
 import { IconLayoutSidebarLeftCollapse } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const ActivityRichTextEditor = lazy(() =>
   import('@/activities/components/ActivityRichTextEditor').then((module) => ({
@@ -69,12 +69,13 @@ const LoadingSkeleton = () => {
 const isActivityObject = (
   objectNameSingular: string,
 ): objectNameSingular is
-  | CoreObjectNameSingular.Note
-  | CoreObjectNameSingular.Task =>
-  objectNameSingular === CoreObjectNameSingular.Note ||
-  objectNameSingular === CoreObjectNameSingular.Task;
+  | StandardObjectNameSingular.Note
+  | StandardObjectNameSingular.Task =>
+  objectNameSingular === StandardObjectNameSingular.Note ||
+  objectNameSingular === StandardObjectNameSingular.Task;
 
 export const RichTextFieldInput = () => {
+  const { t } = useLingui();
   const { fieldDefinition, recordId } = useContext(FieldContext);
 
   const metadata = (fieldDefinition as { metadata: FieldRichTextMetadata })

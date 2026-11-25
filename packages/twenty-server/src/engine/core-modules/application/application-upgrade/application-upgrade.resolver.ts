@@ -6,7 +6,6 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationLifecycleJobService } from 'src/engine/core-modules/application/application-install/services/application-lifecycle-job.service';
 import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
-import { ApplicationUpgradeService } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.service';
 import { TriggerUpgradeApplicationInput } from 'src/engine/core-modules/application/application-upgrade/dtos/trigger-upgrade-application.input';
 import { TriggerUpgradeApplicationResultDTO } from 'src/engine/core-modules/application/application-upgrade/dtos/trigger-upgrade-application-result.dto';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -14,11 +13,9 @@ import { JobStatusDTO } from 'src/engine/core-modules/message-queue/dtos/job-sta
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
@@ -28,51 +25,28 @@ import { ApplicationTargetGuard } from 'src/engine/guards/application-target.gua
   AuthGraphqlApiExceptionFilter,
 )
 @UseGuards(
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
+  AccessPolicyGuard({
+    authPrincipals: {
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: { withUser: true, withoutUser: false },
+      application: false,
     },
-    apiKey: false,
-    oauthClient: { withUser: true, withoutUser: false },
-    application: false,
+    requiredPermissionFlags: [PermissionFlagType.APPLICATIONS],
   }),
-  NoPermissionGuard,
 )
 export class ApplicationUpgradeResolver {
   constructor(
-    private readonly applicationUpgradeService: ApplicationUpgradeService,
     private readonly applicationLifecycleJobService: ApplicationLifecycleJobService,
   ) {}
 
-  @Mutation(() => Boolean)
-  @UseGuards(
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
-    ApplicationTargetGuard,
-  )
-  async upgradeApplication(
-    @ApplicationTargetArg('appRegistrationId', {
-      kind: 'applicationRegistrationId',
-      requireApplicationRegistrationOwnership: false,
-    })
-    appRegistrationId: string,
-    @Args('targetVersion') targetVersion: string,
-    @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<boolean> {
-    return this.applicationUpgradeService.upgradeApplication({
-      appRegistrationId,
-      targetVersion,
-      workspaceId: workspace.id,
-    });
-  }
-
   @Mutation(() => TriggerUpgradeApplicationResultDTO)
-  @UseGuards(
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
-    ApplicationTargetGuard,
-  )
+  @UseGuards(ApplicationTargetGuard)
   async triggerUpgradeApplication(
     @ApplicationTargetArg<TriggerUpgradeApplicationInput>('input', {
       kind: 'applicationUniversalIdentifier',
@@ -90,10 +64,7 @@ export class ApplicationUpgradeResolver {
   }
 
   @Query(() => JobStatusDTO, { nullable: true })
-  @UseGuards(
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
-    ApplicationTargetGuard,
-  )
+  @UseGuards(ApplicationTargetGuard)
   async findUpgradeApplicationJobStatus(
     @ApplicationTargetArg('universalIdentifier', {
       kind: 'applicationUniversalIdentifier',

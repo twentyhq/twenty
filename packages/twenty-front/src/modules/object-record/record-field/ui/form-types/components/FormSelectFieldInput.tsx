@@ -8,7 +8,6 @@ import { type SelectCallToActionButton } from '@/ui/input/types/SelectCallToActi
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useId, useState } from 'react';
 import { Key } from 'ts-key-enum';
@@ -18,6 +17,7 @@ import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { IconCircleOff } from 'twenty-ui/icon';
 import { Field, type SelectOption } from 'twenty-ui/primitives/input';
 import { useTheme } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 type FormSelectFieldInputProps = {
   label?: string;
@@ -44,6 +44,7 @@ export const FormSelectFieldInput = ({
   callToActionButton,
   placeholder,
 }: FormSelectFieldInputProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const instanceId = useId();
 

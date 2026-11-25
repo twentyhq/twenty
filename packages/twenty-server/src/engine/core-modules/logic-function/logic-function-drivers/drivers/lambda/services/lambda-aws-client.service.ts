@@ -41,6 +41,7 @@ export class LambdaAwsClientService {
   constructor(
     private readonly options: LambdaConnectionOptions &
       Pick<LambdaDriverOptions, 'cacheStorageService'>,
+    private readonly maxAttempts: number = LAMBDA_CLIENT_MAX_ATTEMPTS,
   ) {}
 
   async getLambdaClient() {
@@ -54,7 +55,7 @@ export class LambdaAwsClientService {
         ...(isDefined(this.options.subhostingRole) && {
           credentials: await this.getAssumeRoleCredentials(),
         }),
-        maxAttempts: LAMBDA_CLIENT_MAX_ATTEMPTS,
+        maxAttempts: this.maxAttempts,
         retryMode: LAMBDA_CLIENT_RETRY_MODE,
         requestHandler: buildAwsRequestHandlerOptions({
           requestTimeoutMs: LAMBDA_CLIENT_REQUEST_TIMEOUT_MS,

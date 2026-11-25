@@ -4,14 +4,14 @@ import { injectMessageTimestamps } from 'src/engine/metadata-modules/ai/ai-chat/
 
 describe('injectMessageTimestamps', () => {
   it('prefixes a user message with a timestamp part built from metadata.createdAt', () => {
-    const messages = [
+    const messages: ExtendedUIMessage[] = [
       {
         id: '1',
         role: 'user',
         parts: [{ type: 'text', text: 'What happened yesterday?' }],
         metadata: { createdAt: '2026-07-07T09:57:00.000Z' },
       },
-    ] as unknown as ExtendedUIMessage[];
+    ];
 
     const [message] = injectMessageTimestamps(messages, 'UTC');
 
@@ -28,14 +28,14 @@ describe('injectMessageTimestamps', () => {
   });
 
   it('leaves assistant messages untouched', () => {
-    const messages = [
+    const messages: ExtendedUIMessage[] = [
       {
         id: '1',
         role: 'assistant',
         parts: [{ type: 'text', text: 'response' }],
         metadata: { createdAt: '2026-07-07T09:57:00.000Z' },
       },
-    ] as unknown as ExtendedUIMessage[];
+    ];
 
     const [message] = injectMessageTimestamps(messages, 'UTC');
 
@@ -44,14 +44,14 @@ describe('injectMessageTimestamps', () => {
   });
 
   it('does not throw and still injects a timestamp when the timezone is the "system" sentinel', () => {
-    const messages = [
+    const messages: ExtendedUIMessage[] = [
       {
         id: '1',
         role: 'user',
         parts: [{ type: 'text', text: 'What happened yesterday?' }],
         metadata: { createdAt: '2026-07-07T09:57:00.000Z' },
       },
-    ] as unknown as ExtendedUIMessage[];
+    ];
 
     const [message] = injectMessageTimestamps(messages, 'system');
 
@@ -63,7 +63,7 @@ describe('injectMessageTimestamps', () => {
   });
 
   it('leaves user messages without a valid createdAt untouched', () => {
-    const messages = [
+    const messages: ExtendedUIMessage[] = [
       {
         id: '1',
         role: 'user',
@@ -75,7 +75,7 @@ describe('injectMessageTimestamps', () => {
         parts: [{ type: 'text', text: 'world' }],
         metadata: { createdAt: 'not-a-date' },
       },
-    ] as unknown as ExtendedUIMessage[];
+    ];
 
     const result = injectMessageTimestamps(messages, 'UTC');
 

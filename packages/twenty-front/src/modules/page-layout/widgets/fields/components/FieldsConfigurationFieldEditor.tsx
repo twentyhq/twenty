@@ -2,10 +2,10 @@ import { DraggableListRow } from '@/ui/layout/draggable-list/components/Draggabl
 import { ApplicationStackIcon } from '@/applications/components/ApplicationStackIcon';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type FieldsConfigurationFieldItem } from '@/page-layout/types/FieldsConfiguration';
-import { t } from '@lingui/core/macro';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { IconEye, IconEyeOff } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
+import { useLingui } from '@lingui/react/macro';
 
 type FieldsConfigurationFieldEditorProps = {
   field: FieldsConfigurationFieldItem;
@@ -18,6 +18,7 @@ export const FieldsConfigurationFieldEditor = ({
   fieldMetadata,
   onToggleVisibility,
 }: FieldsConfigurationFieldEditorProps) => {
+  const { t } = useLingui();
   const { getIcon } = useIcons();
   const isVisible = field.isVisible ?? true;
   const FieldIcon = getIcon(fieldMetadata.icon);

@@ -5,6 +5,8 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { getFlatIndexMetadataMock } from 'src/engine/metadata-modules/flat-index-metadata/__mocks__/get-flat-index-metadata.mock';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 
 describe('getConflictingFields', () => {
   const workspaceId = 'workspaceId';
@@ -22,14 +24,13 @@ describe('getConflictingFields', () => {
       objectMetadataId,
       isNullable: false,
       isLabelSyncedWithName: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: '2024-01-01T00:00:00.000Z',
+      updatedAt: '2024-01-01T00:00:00.000Z',
       universalIdentifier: overrides.id,
       viewFieldIds: [],
       viewFilterIds: [],
       kanbanAggregateOperationViewIds: [],
       calendarViewIds: [],
-      applicationId: null,
       label: overrides.name,
       ...overrides,
     }) as FlatFieldMetadata;
@@ -51,25 +52,28 @@ describe('getConflictingFields', () => {
     isUnique: boolean;
     fields: MockIndexField[];
   }): FlatIndexMetadata =>
-    ({
+    getFlatIndexMetadataMock({
       id,
       universalIdentifier: id,
       name,
       objectMetadataId,
+      objectMetadataUniversalIdentifier: objectMetadataId,
+      applicationUniversalIdentifier: 'application-id',
       workspaceId,
       isUnique,
       indexWhereClause: null,
-      isCustom: false,
-      applicationId: null,
       flatIndexFieldMetadatas: fields.map((field, index) => ({
         id: `${id}-field-${index}`,
         universalIdentifier: `${id}-field-${index}`,
+        workspaceId,
+        createdAt: '2024-01-01T00:00:00.000Z',
+        updatedAt: '2024-01-01T00:00:00.000Z',
         indexMetadataId: id,
         fieldMetadataId: field.fieldMetadataId,
         subFieldName: field.subFieldName ?? null,
         order: field.order ?? index,
       })),
-    }) as unknown as FlatIndexMetadata;
+    });
 
   const idField = createMockField({
     id: 'id-field-id',
@@ -122,7 +126,7 @@ describe('getConflictingFields', () => {
     fields: FlatFieldMetadata[],
     indexMetadataIds: string[] = [],
   ): FlatObjectMetadata =>
-    ({
+    getFlatObjectMetadataMock({
       id: objectMetadataId,
       workspaceId,
       nameSingular: 'testObject',
@@ -132,14 +136,13 @@ describe('getConflictingFields', () => {
       isRemote: false,
       isActive: true,
       isSystem: false,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: '2024-01-01T00:00:00.000Z',
+      updatedAt: '2024-01-01T00:00:00.000Z',
       universalIdentifier: objectMetadataId,
       fieldIds: fields.map((field) => field.id),
       indexMetadataIds,
       viewIds: [],
-      applicationId: null,
-    }) as unknown as FlatObjectMetadata;
+    });
 
   const buildFlatFieldMetadataMaps = (
     fields: FlatFieldMetadata[],

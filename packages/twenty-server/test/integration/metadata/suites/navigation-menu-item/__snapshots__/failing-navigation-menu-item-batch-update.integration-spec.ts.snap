@@ -12,7 +12,7 @@ exports[`NavigationMenuItem batch update should fail when batch contains an upda
 }
 `;
 
-exports[`NavigationMenuItem batch update should fail when updating with invalid folderId 1`] = `
+exports[`NavigationMenuItem batch update should fail when updating with invalid parentId 1`] = `
 {
   "extensions": {
     "code": "GRAPHQL_VALIDATION_FAILED",

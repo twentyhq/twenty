@@ -18,6 +18,8 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
     flatViewMaps,
     flatPageLayoutMaps,
     flatAgentChatChannelMaps,
+    flatWorkflowMaps,
+    flatAgentMaps,
   }: {
     createNavigationMenuItemInput: CreateNavigationMenuItemInput;
     workspaceId: string;
@@ -29,6 +31,8 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
     | 'flatViewMaps'
     | 'flatPageLayoutMaps'
     | 'flatAgentChatChannelMaps'
+    | 'flatWorkflowMaps'
+    | 'flatAgentMaps'
   >): FlatNavigationMenuItem => {
     const id = createNavigationMenuItemInput.id ?? uuidv4();
     const now = new Date().toISOString();
@@ -38,12 +42,12 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
     if (!isDefined(position)) {
       const userWorkspaceIdKey =
         createNavigationMenuItemInput.userWorkspaceId ?? 'null';
-      const folderIdKey = createNavigationMenuItemInput.folderId ?? 'null';
+      const parentIdKey = createNavigationMenuItemInput.parentId ?? 'null';
 
       const existingItems =
-        flatNavigationMenuItemMaps.byUserWorkspaceIdAndFolderId[
+        flatNavigationMenuItemMaps.byUserWorkspaceIdAndParentId[
           userWorkspaceIdKey
-        ]?.[folderIdKey] ?? [];
+        ]?.[parentIdKey] ?? [];
 
       const maxPosition = existingItems.reduce(
         (max, item) => Math.max(max, item.position),
@@ -56,18 +60,22 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
     const {
       targetObjectMetadataUniversalIdentifier,
       viewUniversalIdentifier,
-      folderUniversalIdentifier,
+      parentUniversalIdentifier,
       pageLayoutUniversalIdentifier,
       agentChatChannelUniversalIdentifier,
+      workflowUniversalIdentifier,
+      agentUniversalIdentifier,
     } = resolveEntityRelationUniversalIdentifiers({
       metadataName: 'navigationMenuItem',
       foreignKeyValues: {
         targetObjectMetadataId:
           createNavigationMenuItemInput.targetObjectMetadataId,
         viewId: createNavigationMenuItemInput.viewId,
-        folderId: createNavigationMenuItemInput.folderId,
+        parentId: createNavigationMenuItemInput.parentId,
         pageLayoutId: createNavigationMenuItemInput.pageLayoutId,
         agentChatChannelId: createNavigationMenuItemInput.agentChatChannelId,
+        workflowId: createNavigationMenuItemInput.workflowId,
+        agentId: createNavigationMenuItemInput.agentId,
       },
       flatEntityMaps: {
         flatObjectMetadataMaps,
@@ -75,6 +83,8 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
         flatNavigationMenuItemMaps,
         flatPageLayoutMaps,
         flatAgentChatChannelMaps,
+        flatWorkflowMaps,
+        flatAgentMaps,
       },
     });
 
@@ -89,21 +99,30 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
       targetObjectMetadataUniversalIdentifier,
       viewId: createNavigationMenuItemInput.viewId ?? null,
       viewUniversalIdentifier,
-      folderId: createNavigationMenuItemInput.folderId ?? null,
-      folderUniversalIdentifier,
+      parentId: createNavigationMenuItemInput.parentId ?? null,
+      parentUniversalIdentifier,
       pageLayoutId: createNavigationMenuItemInput.pageLayoutId ?? null,
       pageLayoutUniversalIdentifier,
       agentChatChannelId:
         createNavigationMenuItemInput.agentChatChannelId ?? null,
       agentChatChannelUniversalIdentifier,
+      workflowId: createNavigationMenuItemInput.workflowId ?? null,
+      workflowUniversalIdentifier,
+      agentId: createNavigationMenuItemInput.agentId ?? null,
+      agentUniversalIdentifier,
       name: createNavigationMenuItemInput.name ?? null,
       link: createNavigationMenuItemInput.link ?? null,
+      nativePageKey: createNavigationMenuItemInput.nativePageKey ?? null,
+      builtInSectionKey:
+        createNavigationMenuItemInput.builtInSectionKey ?? null,
       icon: createNavigationMenuItemInput.icon ?? null,
       color: createNavigationMenuItemInput.color ?? null,
       position,
       workspaceId,
       applicationId: flatApplication.id,
       applicationUniversalIdentifier: flatApplication.universalIdentifier,
+      isActive: true,
+      overrides: null,
       createdAt: now,
       updatedAt: now,
     };

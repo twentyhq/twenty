@@ -44,7 +44,11 @@ export const fetchWorkspaceUrl = async ({
     return parseWorkspaceUrl(workspaceUrl, target.apiUrl);
   }
 
-  const response = await createBoundedFetch({ apiUrl: target.apiUrl, signal })(
+  const response = await createBoundedFetch({
+    apiUrl: target.apiUrl,
+    proxyHeaders: target.proxyHeaders,
+    signal,
+  })(
     resolveRequestUrl({
       apiUrl: target.apiUrl,
       path: '/.well-known/oauth-authorization-server',

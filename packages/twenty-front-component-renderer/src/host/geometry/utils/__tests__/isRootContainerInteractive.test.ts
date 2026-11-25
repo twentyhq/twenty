@@ -4,10 +4,15 @@ const createRootContainer = ({ isRendered }: { isRendered: boolean }) => {
   const rootContainer = document.createElement('div');
   document.body.append(rootContainer);
 
-  rootContainer.getClientRects = () =>
-    (isRendered
-      ? [rootContainer.getBoundingClientRect()]
-      : []) as unknown as DOMRectList;
+  rootContainer.getClientRects = () => {
+    const rects = isRendered ? [rootContainer.getBoundingClientRect()] : [];
+
+    return {
+      ...rects,
+      length: rects.length,
+      item: (index) => rects[index] ?? null,
+    };
+  };
 
   return rootContainer;
 };

@@ -1,4 +1,6 @@
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
+import { isRecordGroupTabsDisplayedComponentSelector } from '@/object-record/record-group/states/selectors/isRecordGroupTabsDisplayedComponentSelector';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useShouldHideRecordGroup } from '@/object-record/record-group/hooks/useShouldHideRecordGroup';
 import { RecordTableRecordGroupEndDropZone } from '@/object-record/record-table/components/RecordTableRecordGroupEndDropZone';
 import { RecordTableRecordGroupRowList } from '@/object-record/record-table/components/RecordTableRecordGroupRowList';
@@ -18,11 +20,15 @@ export const RecordTableRecordGroupRows = () => {
     currentRecordGroupId,
   );
 
+  const isRecordGroupTabsDisplayed = useAtomComponentSelectorValue(
+    isRecordGroupTabsDisplayedComponentSelector,
+  );
+
   if (shouldHide) {
     return null;
   }
 
-  if (!isRecordGroupTableSectionToggled) {
+  if (!isRecordGroupTableSectionToggled && !isRecordGroupTabsDisplayed) {
     return null;
   }
 

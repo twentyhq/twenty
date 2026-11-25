@@ -25,7 +25,7 @@ const buildStore = ({
   store.set(currentUserWorkspaceState.atom, {
     permissionFlags,
     twoFactorAuthenticationMethodSummary: [],
-    objectsPermissions: [],
+    objectRecordsPermissions: [],
     isImpersonating: false,
   });
 

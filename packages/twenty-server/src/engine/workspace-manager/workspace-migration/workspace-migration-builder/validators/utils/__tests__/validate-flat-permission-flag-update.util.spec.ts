@@ -72,6 +72,7 @@ describe('validateFlatPermissionFlagUpdate', () => {
     const result = validateFlatPermissionFlagUpdate(
       buildUpdateArgs({
         universalIdentifier: 'existing-flag',
+        // @ts-expect-error API input can carry a permission type the types forbid
         flatEntityUpdate: { permissionType: 'not-a-permission-type' },
         existingFlags: [existingFlag],
       }),

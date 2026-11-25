@@ -2,13 +2,14 @@ import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApo
 import { GET_SIGNING_KEYS } from '@/settings/admin-panel/signing-keys/graphql/queries/getSigningKeys';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useToast } from 'twenty-ui/components/feedback';
 import { RevokeSigningKeyDocument } from '~/generated-admin/graphql';
 import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
+import { useLingui } from '@lingui/react/macro';
 
 export const useRevokeSigningKey = (onSuccess?: () => void) => {
+  const { t } = useLingui();
   const apolloAdminClient = useApolloAdminClient();
   const { enqueueToast } = useToast();
   const [isRevoking, setIsRevoking] = useState(false);

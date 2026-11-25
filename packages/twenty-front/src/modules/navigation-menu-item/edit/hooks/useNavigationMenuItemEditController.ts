@@ -1,6 +1,10 @@
 import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { useLingui } from '@lingui/react/macro';
-import { type NavigationMenuItemType } from 'twenty-shared/types';
+import {
+  type BuiltInSectionKey,
+  type NavigationMenuItemType,
+  type NativePageKey,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
@@ -20,11 +24,15 @@ export type NewNavigationMenuItemInput = {
   targetObjectMetadataId?: string | null;
   viewId?: string | null;
   pageLayoutId?: string | null;
+  workflowId?: string | null;
+  agentId?: string | null;
   icon?: string | null;
   targetRecordId?: string | null;
   targetRecordIdentifier?: NavigationMenuItem['targetRecordIdentifier'];
   name?: string | null;
   link?: string | null;
+  nativePageKey?: NativePageKey | null;
+  builtInSectionKey?: BuiltInSectionKey | null;
   color?: string | null;
 };
 
@@ -64,14 +72,14 @@ export const useNavigationMenuItemEditController = (
     input: NewNavigationMenuItemInput,
     { targetFolderId, targetIndex }: CreateItemOptions = {},
   ): string => {
-    const folderId = targetFolderId ?? null;
+    const parentId = targetFolderId ?? null;
     const itemsInFolder = currentItems.filter(
-      (item) => (item.folderId ?? null) === folderId,
+      (item) => (item.parentId ?? null) === parentId,
     );
     const index = targetIndex ?? itemsInFolder.length;
     const { flatIndex, position } = computeInsertIndexAndPosition(
       currentItems,
-      folderId,
+      parentId,
       index,
     );
 
@@ -82,17 +90,22 @@ export const useNavigationMenuItemEditController = (
       type: input.type,
       position,
       userWorkspaceId: targetUserWorkspaceId,
-      folderId: folderId ?? undefined,
+      parentId: parentId ?? undefined,
       targetObjectMetadataId: input.targetObjectMetadataId ?? undefined,
       targetRecordId: input.targetRecordId ?? undefined,
       targetRecordIdentifier: input.targetRecordIdentifier,
       viewId: input.viewId ?? undefined,
       pageLayoutId: input.pageLayoutId ?? undefined,
+      workflowId: input.workflowId ?? undefined,
+      agentId: input.agentId ?? undefined,
       icon: input.icon ?? undefined,
       name: input.name ?? undefined,
       link: input.link ?? undefined,
+      nativePageKey: input.nativePageKey ?? undefined,
+      builtInSectionKey: input.builtInSectionKey ?? undefined,
       color: input.color ?? undefined,
       applicationId: undefined,
+      isActive: true,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };

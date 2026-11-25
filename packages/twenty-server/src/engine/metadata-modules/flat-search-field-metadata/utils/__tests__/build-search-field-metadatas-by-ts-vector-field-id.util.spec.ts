@@ -6,14 +6,23 @@ import { getTargetSearchFieldMetadatasForTsVectorField } from 'src/engine/metada
 const buildFlatSearchFieldMetadata = (
   overrides: Partial<FlatSearchFieldMetadata> &
     Pick<FlatSearchFieldMetadata, 'universalIdentifier'>,
-): FlatSearchFieldMetadata =>
-  ({
-    id: overrides.universalIdentifier,
-    tsVectorFieldMetadataId: 'ts-vector-1',
-    fieldMetadataId: 'field-1',
-    position: 0,
-    ...overrides,
-  }) as unknown as FlatSearchFieldMetadata;
+): FlatSearchFieldMetadata => ({
+  id: overrides.universalIdentifier,
+  tsVectorFieldMetadataId: 'ts-vector-1',
+  tsVectorFieldMetadataUniversalIdentifier: 'ts-vector-1',
+  fieldMetadataId: 'field-1',
+  fieldMetadataUniversalIdentifier: 'field-1',
+  position: 0,
+  objectMetadataId: 'object-metadata-id',
+  objectMetadataUniversalIdentifier: 'object-metadata-universal-identifier',
+  isSystemSideEffect: false,
+  workspaceId: 'workspace-id',
+  applicationId: 'application-id',
+  applicationUniversalIdentifier: 'application-universal-identifier',
+  createdAt: '2026-01-01T00:00:00.000Z',
+  updatedAt: '2026-01-01T00:00:00.000Z',
+  ...overrides,
+});
 
 const buildMaps = (
   flatSearchFieldMetadatas: FlatSearchFieldMetadata[],

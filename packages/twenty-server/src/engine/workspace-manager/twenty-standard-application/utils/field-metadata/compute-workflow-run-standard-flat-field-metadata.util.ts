@@ -3,7 +3,6 @@ import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-applicat
 import {
   DateDisplayFormat,
   FieldMetadataType,
-  RelationOnDeleteAction,
   RelationType,
 } from 'twenty-shared/types';
 
@@ -247,17 +246,8 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
       icon: 'IconStatusChange',
       isNullable: false,
       isUIEditable: false,
-      defaultValue: "'NOT_STARTED'",
+      defaultValue: "'ENQUEUED'",
       options: [
-        {
-          id: '20202020-2ec6-40d8-b9e1-1b1e567bcca9',
-          value: 'NOT_STARTED',
-          label: i18nLabel(
-            msg({ message: `Not started`, context: 'fieldMetadata.label' }),
-          ),
-          position: 0,
-          color: 'gray',
-        },
         {
           id: '20202020-3166-46be-995a-67cb1f4c41d5',
           value: 'RUNNING',
@@ -435,19 +425,15 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
       fieldName: 'coreWorkflowId',
       type: FieldMetadataType.UUID,
       label: i18nLabel(
-        msg({
-          message: `Core workflow id`,
-          context: 'fieldMetadata.label',
-        }),
+        msg({ message: `Workflow`, context: 'fieldMetadata.label' }),
       ),
       description: i18nLabel(
         msg({
-          message: `Reference to the core workflow row`,
+          message: `Workflow linked to the run.`,
           context: 'fieldMetadata.description',
         }),
       ),
       icon: 'IconSettingsAutomation',
-      isSystem: true,
       isNullable: true,
       isUIEditable: false,
     },
@@ -529,70 +515,6 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
       isSystem: true,
       isNullable: true,
       isUIEditable: false,
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  workflowVersion: createStandardRelationFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      type: FieldMetadataType.RELATION,
-      morphId: null,
-      fieldName: 'workflowVersion',
-      label: i18nLabel(
-        msg({ message: `Workflow version`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({
-          message: `Workflow version linked to the run.`,
-          context: 'fieldMetadata.description',
-        }),
-      ),
-      icon: 'IconVersions',
-      isNullable: true,
-      isUIEditable: false,
-      targetObjectName: 'workflowVersion',
-      targetFieldName: 'runs',
-      settings: {
-        relationType: RelationType.MANY_TO_ONE,
-        onDelete: RelationOnDeleteAction.SET_NULL,
-        joinColumnName: 'workflowVersionId',
-      },
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  workflow: createStandardRelationFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      type: FieldMetadataType.RELATION,
-      morphId: null,
-      fieldName: 'workflow',
-      label: i18nLabel(
-        msg({ message: `Workflow`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({
-          message: `Workflow linked to the run.`,
-          context: 'fieldMetadata.description',
-        }),
-      ),
-      icon: 'IconSettingsAutomation',
-      isNullable: true,
-      isUIEditable: false,
-      targetObjectName: 'workflow',
-      targetFieldName: 'runs',
-      settings: {
-        relationType: RelationType.MANY_TO_ONE,
-        onDelete: RelationOnDeleteAction.CASCADE,
-        joinColumnName: 'workflowId',
-      },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

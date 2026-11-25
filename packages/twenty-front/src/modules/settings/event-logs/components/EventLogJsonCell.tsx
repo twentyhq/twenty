@@ -1,5 +1,4 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { useRef, useState } from 'react';
 
 import { JsonDisplay } from '@/ui/field/display/components/JsonDisplay/JsonDisplay';
@@ -9,6 +8,7 @@ import { JsonTree } from 'twenty-ui/components/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type JsonValue } from 'type-fest';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
+import { useLingui } from '@lingui/react/macro';
 
 type EventLogJsonCellProps = {
   value: Record<string, unknown> | null | undefined;
@@ -23,6 +23,7 @@ const StyledEmptyCell = styled.span`
 `;
 
 export const EventLogJsonCell = ({ value }: EventLogJsonCellProps) => {
+  const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
   const [isExpanded, setIsExpanded] = useState(false);
   const anchorRef = useRef<HTMLDivElement>(null);

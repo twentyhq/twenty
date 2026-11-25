@@ -2,10 +2,10 @@ import { useNavigateToMoreWidgets } from '@/page-layout/hooks/useNavigateToMoreW
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { IconButton } from 'twenty-ui/components/input';
 import { IconPlus } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const INSERT_BUTTON_CLASS_NAME = css`
   opacity: 0;
@@ -66,6 +66,7 @@ type RecordPageWidgetInsertionSeparatorProps = {
 export const RecordPageWidgetInsertionSeparator = ({
   widget,
 }: RecordPageWidgetInsertionSeparatorProps) => {
+  const { t } = useLingui();
   const { navigateToMoreWidgets } = useNavigateToMoreWidgets();
 
   return (

@@ -2,12 +2,12 @@ import { DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET } from '@/object-record/ad
 import { useRemoveStepFilter } from '@/workflow/workflow-steps/filters/hooks/useRemoveStepFilter';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/filters/states/context/WorkflowStepFilterContext';
 import { useContext } from 'react';
-import { t } from '@lingui/core/macro';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/icon';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { IconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
+import { useLingui } from '@lingui/react/macro';
 
 type WorkflowStepFilterOptionsDropdownProps = {
   stepFilterId: string;
@@ -16,6 +16,7 @@ type WorkflowStepFilterOptionsDropdownProps = {
 export const WorkflowStepFilterOptionsDropdown = ({
   stepFilterId,
 }: WorkflowStepFilterOptionsDropdownProps) => {
+  const { t } = useLingui();
   const { readonly } = useContext(WorkflowStepFilterContext);
 
   const { removeStepFilter } = useRemoveStepFilter();

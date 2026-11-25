@@ -1,7 +1,7 @@
 import { type ObjectRecordUpdateEvent } from 'twenty-shared/database-events';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { DatabaseEventAction } from 'src/engine/workspace-event-emitter/enums/database-event-action';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -10,6 +10,7 @@ import {
   TwentyOrmExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { formatTwentyOrmEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-twenty-orm-event-to-database-batch-event.util';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 
 describe('formatTwentyOrmEventToDatabaseBatchEvent', () => {
   const workspaceId = 'workspace-id';
@@ -27,15 +28,14 @@ describe('formatTwentyOrmEventToDatabaseBatchEvent', () => {
       objectMetadataId,
       isNullable: true,
       isLabelSyncedWithName: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: '2024-01-01T00:00:00.000Z',
+      updatedAt: '2024-01-01T00:00:00.000Z',
       universalIdentifier: overrides.id,
       viewFieldIds: [],
       viewFilterIds: [],
       viewGroupIds: [],
       kanbanAggregateOperationViewIds: [],
       calendarViewIds: [],
-      applicationId: null,
       label: overrides.name,
       ...overrides,
     }) as FlatFieldMetadata;
@@ -57,7 +57,7 @@ describe('formatTwentyOrmEventToDatabaseBatchEvent', () => {
     universalIdentifiersByApplicationId: {},
   };
 
-  const flatObjectMetadata: FlatObjectMetadata = {
+  const flatObjectMetadata: FlatObjectMetadata = getFlatObjectMetadataMock({
     id: objectMetadataId,
     workspaceId,
     nameSingular: 'person',
@@ -67,16 +67,15 @@ describe('formatTwentyOrmEventToDatabaseBatchEvent', () => {
     isRemote: false,
     isActive: true,
     isSystem: false,
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    createdAt: '2024-01-01T00:00:00.000Z',
+    updatedAt: '2024-01-01T00:00:00.000Z',
     universalIdentifier: objectMetadataId,
     fieldIds: ['name-id'],
     indexMetadataIds: [],
     objectPermissionIds: [],
     fieldPermissionIds: [],
     viewIds: [],
-    applicationId: null,
-  } as unknown as FlatObjectMetadata;
+  });
 
   const mockWorkspaceId = 'workspace-id';
   const mockAuthContext = {

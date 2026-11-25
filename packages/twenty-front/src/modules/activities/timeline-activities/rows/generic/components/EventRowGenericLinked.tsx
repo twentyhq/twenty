@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import { type KeyboardEvent, useState } from 'react';
 
 import { EventCard } from '@/activities/timeline-activities/rows/components/EventCard';
@@ -21,6 +20,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
+import { useLingui } from '@lingui/react/macro';
 
 type EventRowGenericLinkedProps = EventRowNativeComponentProps;
 
@@ -32,6 +32,7 @@ export const EventRowGenericLinked = ({
   happensAt,
   hasRenderer,
 }: EventRowGenericLinkedProps) => {
+  const { t } = useLingui();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
   const [isOpen, setIsOpen] = useState(false);
 

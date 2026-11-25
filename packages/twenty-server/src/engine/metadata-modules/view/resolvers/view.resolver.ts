@@ -9,7 +9,7 @@ import {
 } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { ViewType, ViewVisibility } from 'twenty-shared/types';
+import { ViewType } from 'twenty-shared/types';
 import {
   hasObjectMetadataLabelPlaceholder,
   type MetadataLabelPlaceholderValues,
@@ -21,13 +21,11 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
-import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { AuthContext } from 'src/engine/decorators/auth/auth-context.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { buildViewNameObjectLabels } from 'src/engine/metadata-modules/view/utils/build-view-name-object-labels.util';
 import { resolveViewName } from 'src/engine/metadata-modules/view/utils/resolve-view-name.util';
 import { ViewFieldGroupDTO } from 'src/engine/metadata-modules/view-field-group/dtos/view-field-group.dto';
@@ -45,26 +43,17 @@ import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.
 import { ViewWidgetUpsertService } from 'src/engine/metadata-modules/view/services/view-widget-upsert.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
-import { ViewPermissionGuard } from 'src/engine/permissions/view/guards/view-permission.guard';
-import { CreateViewPermissionGuard } from 'src/engine/permissions/view/guards/create-view-permission.guard';
+import { ViewPermissionGuard } from 'src/engine/metadata-modules/view/guards/view-permission.guard';
+import { CreateViewPermissionGuard } from 'src/engine/metadata-modules/view/guards/create-view-permission.guard';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { VIEW_READ_ACCESS_POLICY } from 'src/engine/metadata-modules/view/constants/view-read-access-policy.constant';
+import { VIEW_WRITE_BY_VISIBILITY_ACCESS_POLICY } from 'src/engine/metadata-modules/view/constants/view-write-by-visibility-access-policy.constant';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 
 @MetadataResolver(() => ViewDTO)
 @UseFilters(ViewGraphqlApiExceptionFilter, AuthGraphqlApiExceptionFilter)
-@UseGuards(
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
-    },
-    apiKey: true,
-    oauthClient: true,
-    application: true,
-  }),
-)
 export class ViewResolver {
   constructor(
     private readonly viewService: ViewService,
@@ -73,6 +62,7 @@ export class ViewResolver {
   ) {}
 
   @ResolveField(() => String)
+  @UseGuards(NoPermissionGuard)
   async name(
     @Parent() view: ViewDTO,
     @Context() context: { loaders: IDataloaders } & I18nContext,
@@ -103,6 +93,7 @@ export class ViewResolver {
   @ResolveField(() => Boolean, {
     deprecationReason: IS_CUSTOM_DEPRECATION_REASON,
   })
+  @UseGuards(NoPermissionGuard)
   isCustom(
     @Parent() view: ViewDTO,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -151,12 +142,10 @@ export class ViewResolver {
   }
 
   @Query(() => [ViewDTO])
-  @UseGuards(CustomPermissionGuard)
+  @UseGuards(AccessPolicyGuard(VIEW_READ_ACCESS_POLICY), CustomPermissionGuard)
   @AllowSuspendedWorkspace()
   async getViews(
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
     @Args('objectMetadataId', { type: () => String, nullable: true })
     objectMetadataId?: string,
     @Args('viewTypes', { type: () => [ViewType], nullable: true })
@@ -166,71 +155,66 @@ export class ViewResolver {
       return this.viewService.findByObjectMetadataId(
         workspace.id,
         objectMetadataId,
-        userWorkspaceId,
         viewTypes,
       );
     }
 
-    return this.viewService.findByWorkspaceId(
-      workspace.id,
-      userWorkspaceId,
-      viewTypes,
-    );
+    return this.viewService.findByWorkspaceId(workspace.id, viewTypes);
   }
 
   @Query(() => ViewDTO, { nullable: true })
-  @UseGuards(NoPermissionGuard)
+  @UseGuards(AccessPolicyGuard(VIEW_READ_ACCESS_POLICY))
   async getView(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<ViewDTO | null> {
-    const view = await this.viewService.findById(id, workspace.id);
-
-    if (!view) {
-      return null;
-    }
-
-    return view;
-  }
-
-  @Mutation(() => ViewDTO)
-  @UseGuards(CreateViewPermissionGuard)
-  async createView(
-    @Args('input') input: CreateViewInput,
-    @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
   ): Promise<ViewDTO> {
-    const visibility = input.visibility ?? ViewVisibility.WORKSPACE;
-
-    input.visibility = visibility;
-
-    return await this.viewService.createOne({
-      createViewInput: input,
+    return this.viewService.findByIdVisibleToCallerOrThrow({
+      id,
       workspaceId: workspace.id,
-      createdByUserWorkspaceId: userWorkspaceId,
     });
   }
 
   @Mutation(() => ViewDTO)
-  @UseGuards(ViewPermissionGuard)
+  @UseGuards(
+    AccessPolicyGuard(VIEW_WRITE_BY_VISIBILITY_ACCESS_POLICY),
+    CreateViewPermissionGuard,
+  )
+  async createView(
+    @Args('input') input: CreateViewInput,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthContext() authContext: WorkspaceAuthContext,
+  ): Promise<ViewDTO> {
+    return await this.viewService.createOne({
+      createViewInput: input,
+      workspaceId: workspace.id,
+      authContext,
+    });
+  }
+
+  @Mutation(() => ViewDTO)
+  @UseGuards(
+    AccessPolicyGuard(VIEW_WRITE_BY_VISIBILITY_ACCESS_POLICY),
+    ViewPermissionGuard,
+  )
   @UsePipes(ResolverValidationPipe)
   async updateView(
     @Args('id', { type: () => String }) id: string,
     @Args('input') input: UpdateViewInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
+    @AuthContext() authContext: WorkspaceAuthContext,
   ): Promise<ViewDTO> {
     return await this.viewService.updateOne({
       updateViewInput: { ...input, id },
       workspaceId: workspace.id,
-      userWorkspaceId,
+      authContext,
     });
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(ViewPermissionGuard)
+  @UseGuards(
+    AccessPolicyGuard(VIEW_WRITE_BY_VISIBILITY_ACCESS_POLICY),
+    ViewPermissionGuard,
+  )
   async deleteView(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -244,7 +228,10 @@ export class ViewResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(ViewPermissionGuard)
+  @UseGuards(
+    AccessPolicyGuard(VIEW_WRITE_BY_VISIBILITY_ACCESS_POLICY),
+    ViewPermissionGuard,
+  )
   async destroyView(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -258,7 +245,22 @@ export class ViewResolver {
   }
 
   @Mutation(() => ViewDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.LAYOUTS))
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: true,
+        oauthClient: true,
+        application: true,
+      },
+      requiredPermissionFlags: [PermissionFlagType.LAYOUTS],
+    }),
+  )
   @UsePipes(ResolverValidationPipe)
   async upsertViewWidget(
     @Args('input') input: UpsertViewWidgetInput,
@@ -271,6 +273,7 @@ export class ViewResolver {
   }
 
   @ResolveField(() => [ViewFieldDTO])
+  @UseGuards(NoPermissionGuard)
   async viewFields(
     @Parent() view: ViewDTO,
     @Context() context: { loaders: IDataloaders },
@@ -283,6 +286,7 @@ export class ViewResolver {
   }
 
   @ResolveField(() => [ViewFilterDTO])
+  @UseGuards(NoPermissionGuard)
   async viewFilters(
     @Parent() view: ViewDTO,
     @Context() context: { loaders: IDataloaders },
@@ -295,6 +299,7 @@ export class ViewResolver {
   }
 
   @ResolveField(() => [ViewFilterGroupDTO])
+  @UseGuards(NoPermissionGuard)
   async viewFilterGroups(
     @Parent() view: ViewDTO,
     @Context() context: { loaders: IDataloaders },
@@ -307,6 +312,7 @@ export class ViewResolver {
   }
 
   @ResolveField(() => [ViewSortDTO])
+  @UseGuards(NoPermissionGuard)
   async viewSorts(
     @Parent() view: ViewDTO,
     @Context() context: { loaders: IDataloaders },
@@ -319,6 +325,7 @@ export class ViewResolver {
   }
 
   @ResolveField(() => [ViewGroupDTO])
+  @UseGuards(NoPermissionGuard)
   async viewGroups(
     @Parent() view: ViewDTO,
     @Context() context: { loaders: IDataloaders },
@@ -331,6 +338,7 @@ export class ViewResolver {
   }
 
   @ResolveField(() => [ViewFieldGroupDTO])
+  @UseGuards(NoPermissionGuard)
   async viewFieldGroups(
     @Parent() view: ViewDTO,
     @Context() context: { loaders: IDataloaders },

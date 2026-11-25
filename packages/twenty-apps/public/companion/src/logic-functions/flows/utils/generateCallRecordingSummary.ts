@@ -11,7 +11,7 @@ import { getCompanionAdditionalSummaryPrompt } from 'src/logic-functions/utils/g
 import { isCallRecordingSummaryEnabled } from 'src/logic-functions/utils/isCallRecordingSummaryEnabled';
 
 export const generateCallRecordingSummary = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'query' | 'mutation'>,
   {
     callRecordingId,
     shouldRegenerateExistingSummary = false,

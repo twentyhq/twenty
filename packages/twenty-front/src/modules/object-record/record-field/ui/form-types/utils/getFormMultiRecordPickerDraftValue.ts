@@ -26,12 +26,7 @@ const keepRecordIdsAndVariables = (
   );
 
 export const getFormMultiRecordPickerDraftValue = (
-  defaultValue:
-    | Array<RecordId | Variable>
-    | Variable
-    | string
-    | null
-    | undefined,
+  defaultValue: unknown[] | Variable | string | null | undefined,
 ): FormMultiRecordPickerDraftValue => {
   if (isArray(defaultValue)) {
     return {

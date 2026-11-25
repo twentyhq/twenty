@@ -20,7 +20,7 @@ const AskAiButtonStory = ({
   useEffect(() => {
     jotaiStore.set(currentUserWorkspaceState.atom, {
       permissionFlags: hasAiPermission ? [PermissionFlagType.AI] : [],
-      objectsPermissions: [],
+      objectRecordsPermissions: [],
       isImpersonating: false,
       twoFactorAuthenticationMethodSummary: null,
     });

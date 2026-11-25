@@ -1,8 +1,9 @@
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { AddSelectOptionDropdownSection } from '@/ui/input/components/AddSelectOptionDropdownSection';
+import { SelectOptionDescriptionTooltip } from '@/ui/input/components/SelectOptionDescriptionTooltip';
+import { SelectOptionDescriptionTooltipProvider } from '@/ui/input/components/SelectOptionDescriptionTooltipProvider';
 import { filterSelectOptionsBySearch } from '@/ui/input/utils/filterSelectOptionsBySearch';
 import { isKeyboardEventComposing } from '@/ui/utilities/hotkey/utils/isKeyboardEventComposing';
-import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { createElement, useState } from 'react';
 import { Key } from 'ts-key-enum';
@@ -11,6 +12,7 @@ import { Dropdown } from 'twenty-ui/components/navigation';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
+import { useLingui } from '@lingui/react/macro';
 
 type MultiSelectInputProps = {
   values: FieldMultiSelectValue;
@@ -18,6 +20,7 @@ type MultiSelectInputProps = {
   onOptionSelected: (value: FieldMultiSelectValue) => void;
   onEnter?: () => void;
   onAddSelectOption?: (optionName: string) => void;
+  isExistingOptionName?: (optionName: string) => boolean;
 };
 
 export const MultiSelectInput = ({
@@ -25,8 +28,10 @@ export const MultiSelectInput = ({
   options,
   onOptionSelected,
   onAddSelectOption,
+  isExistingOptionName,
   onEnter,
 }: MultiSelectInputProps) => {
+  const { t } = useLingui();
   const [searchFilter, setSearchFilter] = useState('');
   const filteredOptions = filterSelectOptionsBySearch({
     options,
@@ -67,33 +72,42 @@ export const MultiSelectInput = ({
         aria-label={t`Search`}
       />
       <Dropdown.Separator />
-      <Dropdown.Section scrollable>
-        {filteredOptions.map((option) => (
-          <Dropdown.OptionItem
-            key={option.value}
-            onSelect={() => toggleOption(option.value)}
-            selected={values?.includes(option.value) ?? false}
-            closeOnSelect={false}
-            indicator="checkbox"
-          >
-            <Tag
-              color={option.color ?? 'transparent'}
-              startIcon={
-                isDefined(option.Icon) ? createElement(option.Icon) : undefined
-              }
+      <SelectOptionDescriptionTooltipProvider>
+        <Dropdown.Section scrollable>
+          {filteredOptions.map((option) => (
+            <SelectOptionDescriptionTooltip
+              key={option.value}
+              description={option.description}
             >
-              {option.label}
-            </Tag>
-          </Dropdown.OptionItem>
-        ))}
-        {!isNonEmptyArray(filteredOptions) && (
-          <Dropdown.Empty>{t`No option found`}</Dropdown.Empty>
-        )}
-      </Dropdown.Section>
+              <Dropdown.OptionItem
+                onSelect={() => toggleOption(option.value)}
+                selected={values?.includes(option.value) ?? false}
+                closeOnSelect={false}
+                indicator="checkbox"
+              >
+                <Tag
+                  color={option.color ?? 'transparent'}
+                  startIcon={
+                    isDefined(option.Icon)
+                      ? createElement(option.Icon)
+                      : undefined
+                  }
+                >
+                  {option.label}
+                </Tag>
+              </Dropdown.OptionItem>
+            </SelectOptionDescriptionTooltip>
+          ))}
+          {!isNonEmptyArray(filteredOptions) && (
+            <Dropdown.Empty>{t`No option found`}</Dropdown.Empty>
+          )}
+        </Dropdown.Section>
+      </SelectOptionDescriptionTooltipProvider>
       <AddSelectOptionDropdownSection
         searchFilter={searchFilter}
         filteredOptions={filteredOptions}
         onAddSelectOption={onAddSelectOption}
+        isExistingOptionName={isExistingOptionName}
       />
     </>
   );

@@ -1,5 +1,4 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -35,6 +34,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconDotsVertical, IconPlus } from 'twenty-ui/icon';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledHeader = styled.div<{ isReadOnly: boolean }>`
   align-items: center;
@@ -127,6 +127,7 @@ const StyledDropdownContainer = styled.div`
 `;
 
 export const RecordBoardColumnHeader = () => {
+  const { t } = useLingui();
   const { columnDefinition, columnIndex } = useContext(
     RecordBoardColumnContext,
   );

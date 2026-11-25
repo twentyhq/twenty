@@ -189,7 +189,7 @@ const hasAuthenticationErrorInGraphqlPayload = (
 };
 
 const defaultOptions: MetadataApiClientOptions = {
-  url: `${process.env.TWENTY_API_URL}/metadata`,
+  url: `${process.env.TWENTY_INTERNAL_API_URL || process.env.TWENTY_API_URL}/metadata`,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -263,7 +263,7 @@ export class MetadataApiClient {
     filename,
     fieldMetadataUniversalIdentifier,
   }: {
-    fileBuffer: Buffer;
+    fileBuffer: Uint8Array;
     filename: string;
     fieldMetadataUniversalIdentifier: string;
   }): Promise<FilesFieldUploadedFile> {
@@ -300,7 +300,7 @@ export class MetadataApiClient {
     fileBuffer,
     uploadTarget,
   }: {
-    fileBuffer: Buffer;
+    fileBuffer: Uint8Array;
     uploadTarget: FilesFieldUploadTarget;
   }): Promise<void> {
     const fetchImplementation = this.getFetchImplementationOrThrow();

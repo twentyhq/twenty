@@ -1,5 +1,6 @@
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { getSettingsAiTabs } from '@/settings/ai/utils/getSettingsAiTabs';
+import { SettingsAiWorkspaceAssistantSection } from '~/pages/settings/ai/components/SettingsAiWorkspaceAssistantSection';
 
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -10,8 +11,6 @@ import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFla
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-
-import { t } from '@lingui/core/macro';
 import { Section } from 'twenty-ui/components/layout';
 import { IconPlus, IconSparkle2 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
@@ -23,8 +22,10 @@ import { SETTINGS_AI_TABS } from '@/settings/ai/constants/SettingsAiTabs';
 import McpCoverDark from '@/settings/mcp/assets/mcp-cover-dark.png';
 import McpCoverLight from '@/settings/mcp/assets/mcp-cover-light.png';
 import { SettingsMcpSetup } from '@/settings/mcp/components/SettingsMcpSetup';
+import { SettingsMcpServersSection } from '@/settings/mcp-servers/components/SettingsMcpServersSection';
 import { useCreateTool } from '~/pages/settings/ai/hooks/useCreateTool';
 import { SettingsAiOverview } from '~/pages/settings/ai/components/SettingsAiOverview';
+import { SettingsAiWorkspaceBehaviorSection } from '~/pages/settings/ai/components/SettingsAiWorkspaceBehaviorSection';
 import { SettingsAiMcpSection } from '~/pages/settings/ai/components/SettingsAiMcpSection';
 import { SettingsAiWorkspaceInstructionsSection } from '~/pages/settings/ai/components/SettingsAiWorkspaceInstructionsSection';
 import { SettingsAiSystemPromptsSection } from '~/pages/settings/ai/components/SettingsAiSystemPromptsSection';
@@ -32,6 +33,7 @@ import {
   FeatureFlagKey,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 const AI_HERO_LIGHT = '/images/ai/ai-tools-cover-light.png';
 const AI_HERO_DARK = '/images/ai/ai-tools-cover-dark.png';
@@ -39,6 +41,7 @@ const AI_HERO_DARK = '/images/ai/ai-tools-cover-dark.png';
 const SETTINGS_AI_HERO_INSTANCE_ID_PREFIX = 'settings-ai-hero';
 
 export const SettingsAI = () => {
+  const { t } = useLingui();
   const { handleCreateTool, isCreatingTool } = useCreateTool();
   const canReadSystemPrompts = useHasPermissionFlag(PermissionFlagType.AI);
   const isInboxEnabled = useIsFeatureEnabled(
@@ -68,6 +71,8 @@ export const SettingsAI = () => {
     return (
       <SettingsAiOverview
         secondaryBar={secondaryBar}
+        avatarSection={<SettingsAiWorkspaceAssistantSection />}
+        behaviorSection={<SettingsAiWorkspaceBehaviorSection />}
         mcpSection={<SettingsAiMcpSection />}
         workspaceInstructionsSection={
           <SettingsAiWorkspaceInstructionsSection />
@@ -146,6 +151,7 @@ export const SettingsAI = () => {
         )}
         {isModelsTab && <SettingsAiModelsTab />}
         {isSkillsTab && <SettingsAgentSkillsTab />}
+        {isToolsTab && <SettingsMcpServersSection />}
         {isToolsTab && <SettingsAgentToolsTab />}
         {isUsageTab && <SettingsAiUsageTab />}
       </SettingsPageContainer>

@@ -5,6 +5,7 @@ import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/def
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { VIEW_READ_ACCESS_POLICY } from 'src/engine/metadata-modules/view/constants/view-read-access-policy.constant';
 import { ViewQueryParamsService } from 'src/engine/metadata-modules/view/services/view-query-params.service';
 
 const getViewQueryParamsInputSchema = z.object({
@@ -16,8 +17,9 @@ const getViewQueryParamsInputSchema = z.object({
 
 @DefineTool({
   name: 'get_view_query_parameters',
+  isReadOnly: true,
   category: ToolCategory.VIEW,
-  requiredPermissionFlags: [],
+  accessPolicy: VIEW_READ_ACCESS_POLICY,
   description:
     'Get filter and sort parameters from a view. Use these parameters with find_* tools to query records matching the view.',
 })
@@ -32,19 +34,18 @@ export class GetViewQueryParametersTool extends BaseTool<
 
   async execute({
     input,
-    context: { workspaceId, userWorkspaceId, actorContext },
+    context: { workspaceId, actorMetadata },
   }: ToolExecuteArgs<
     typeof getViewQueryParamsInputSchema
   >): Promise<ToolOutput> {
     const currentWorkspaceMemberId =
-      actorContext?.workspaceMemberId ?? undefined;
+      actorMetadata?.workspaceMemberId ?? undefined;
 
     const queryParameters =
       await this.viewQueryParamsService.resolveViewToQueryParams({
         viewId: input.viewId,
         workspaceId,
         currentWorkspaceMemberId,
-        currentUserWorkspaceId: userWorkspaceId,
       });
 
     return {

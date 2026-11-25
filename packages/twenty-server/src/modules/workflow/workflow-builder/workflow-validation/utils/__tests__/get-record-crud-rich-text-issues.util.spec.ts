@@ -1,23 +1,35 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { addAllFlatEntitiesToFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/__tests__/add-all-flat-entities-to-flat-entity-maps.test-util';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type ObjectMetadataInfo } from 'src/modules/workflow/common/workspace-services/workflow-metadata-read.workspace-service';
 import { getRecordCrudRichTextIssues } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/get-record-crud-rich-text-issues.util';
 
 type TestField = { id: string; name: string; type: FieldMetadataType };
 
-const buildObjectMetadataInfo = (fields: TestField[]): ObjectMetadataInfo => {
-  const byUniversalIdentifier = Object.fromEntries(
-    fields.map((field) => [field.id, field]),
-  );
-  const universalIdentifierById = Object.fromEntries(
-    fields.map((field) => [field.id, field.id]),
-  );
-
-  return {
-    flatObjectMetadata: { fieldIds: fields.map((field) => field.id) },
-    flatFieldMetadataMaps: { byUniversalIdentifier, universalIdentifierById },
-  } as unknown as ObjectMetadataInfo;
-};
+const buildObjectMetadataInfo = (
+  fields: TestField[],
+): Pick<
+  ObjectMetadataInfo,
+  'flatObjectMetadata' | 'flatFieldMetadataMaps'
+> => ({
+  flatObjectMetadata: getFlatObjectMetadataMock({
+    universalIdentifier: 'object-universal-id',
+    fieldIds: fields.map((field) => field.id),
+  }),
+  flatFieldMetadataMaps: addAllFlatEntitiesToFlatEntityMaps({
+    flatEntities: fields.map((field) =>
+      getFlatFieldMetadataMock({
+        ...field,
+        universalIdentifier: field.id,
+        objectMetadataId: 'object-id',
+      }),
+    ),
+    flatEntityMaps: createEmptyFlatEntityMaps(),
+  }),
+});
 
 const objectMetadataInfo = buildObjectMetadataInfo([
   { id: 'field-1', name: 'body', type: FieldMetadataType.RICH_TEXT },

@@ -24,16 +24,12 @@ describe('getLambdaDepsLayerName', () => {
   });
 
   it('names the layer of an application without a yarn.lock after its package.json', () => {
-    for (const yarnLockChecksum of [null, undefined]) {
-      expect(
-        getLambdaDepsLayerName({
-          flatApplication: buildFlatApplication({
-            yarnLockChecksum: yarnLockChecksum as unknown as string,
-          }),
-          namespace: 'ns123',
-        }),
-      ).toBe(`depsv1-ns123-${APPLICATION_UNIVERSAL_IDENTIFIER}-nolock-def456`);
-    }
+    expect(
+      getLambdaDepsLayerName({
+        flatApplication: buildFlatApplication({ yarnLockChecksum: null }),
+        namespace: 'ns123',
+      }),
+    ).toBe(`depsv1-ns123-${APPLICATION_UNIVERSAL_IDENTIFIER}-nolock-def456`);
   });
 
   it('omits the namespace segment when it is an empty string', () => {

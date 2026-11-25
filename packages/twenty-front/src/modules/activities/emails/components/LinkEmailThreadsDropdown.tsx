@@ -1,11 +1,11 @@
+import { TIMELINE_THREADS_REFETCH_QUERIES } from '@/activities/emails/constants/TimelineThreadsRefetchQueries';
 import { LinkActivitiesDropdown } from '@/activities/components/LinkActivitiesDropdown';
-import { getTimelineThreadsFromObjectRecord } from '@/activities/emails/graphql/queries/getTimelineThreadsFromObjectRecord';
 import { searchTimelineThreads } from '@/activities/emails/graphql/queries/searchTimelineThreads';
 import { getEmailParticipantAvatarColorSeed } from '@/activities/emails/utils/getEmailParticipantAvatarColorSeed';
 import { getTimelineThreadLabel } from '@/activities/emails/utils/getTimelineThreadLabel';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactElement } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import {
   type SearchTimelineThreadsQuery,
@@ -27,7 +27,7 @@ export const LinkEmailThreadsDropdown = ({
 
   return (
     <LinkActivitiesDropdown<TimelineThread, SearchTimelineThreadsQuery>
-      activityObjectNameSingular={CoreObjectNameSingular.MessageThread}
+      activityObjectNameSingular={StandardObjectNameSingular.MessageThread}
       dropdownIdPrefix={dropdownIdPrefix}
       ariaLabel={t`Link email threads`}
       trigger={trigger}
@@ -36,7 +36,7 @@ export const LinkEmailThreadsDropdown = ({
         recordActivities: data.searchTimelineThreads.recordTimelineThreads,
         otherActivities: data.searchTimelineThreads.otherTimelineThreads,
       })}
-      timelineQuery={getTimelineThreadsFromObjectRecord}
+      timelineQueries={TIMELINE_THREADS_REFETCH_QUERIES}
       getOption={(thread) => ({
         label: getTimelineThreadLabel(thread),
         description: formatToHumanReadableDate(thread.lastMessageReceivedAt),

@@ -9,6 +9,7 @@ export const FLAT_COMMAND_MENU_ITEM_EDITABLE_PROPERTIES = [
   'hotKeys',
   'availabilityType',
   'availabilityObjectMetadataId',
+  'availabilityCoreObjectName',
   'engineComponentKey',
   'pageLayoutId',
 ] as const satisfies MetadataEntityPropertyName<'commandMenuItem'>[];

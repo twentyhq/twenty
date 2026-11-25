@@ -1,0 +1,1 @@
+export const TEAMS_ANSWER_TEXT_MAX_BYTES = 20_000;

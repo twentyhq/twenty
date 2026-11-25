@@ -32,6 +32,7 @@ export class UpdateFieldInput extends OmitType(
     'applicationId',
     'morphId',
     'disabledFieldPermissionActions',
+    'isSystemSideEffect',
   ] as const,
 ) {
   @HideField()

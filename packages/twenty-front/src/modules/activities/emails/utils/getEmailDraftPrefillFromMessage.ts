@@ -2,12 +2,18 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { formatEmailRecipient } from '@/activities/emails/recipients/utils/formatEmailRecipient';
 import { type EmailDraftPrefill } from '@/activities/emails/types/EmailDraftPrefill';
+import { type EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
 import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
 import { MessageParticipantRole } from 'twenty-shared/types';
 
 export const getEmailDraftPrefillFromMessage = (
-  message: EmailThreadMessageWithSender,
+  message: Pick<EmailThreadMessageWithSender, 'id' | 'subject' | 'text'> & {
+    messageParticipants: Pick<
+      EmailThreadMessageParticipant,
+      'role' | 'handle' | 'displayName'
+    >[];
+  },
 ): EmailDraftPrefill => {
   const joinRecipientsByRole = (role: MessageParticipantRole) =>
     message.messageParticipants

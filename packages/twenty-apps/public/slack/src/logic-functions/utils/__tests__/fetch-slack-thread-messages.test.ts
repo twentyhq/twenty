@@ -1,4 +1,3 @@
-import { type WebClient } from '@slack/web-api';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { fetchSlackThreadMessages } from 'src/logic-functions/utils/fetch-slack-thread-messages';
@@ -11,7 +10,7 @@ const repliesMock = vi.fn();
 
 const client = {
   conversations: { replies: repliesMock },
-} as unknown as WebClient;
+};
 
 const fetchThread = (parentMessageTimestamp = PARENT_TS) =>
   fetchSlackThreadMessages({

@@ -1,8 +1,14 @@
 import { promises as fs, statSync } from 'fs';
 import { join } from 'path';
+import { z } from 'zod';
 
 import { YARN_ENGINE_DIRNAME } from 'src/engine/core-modules/application/application-package/constants/yarn-engine-dirname';
 import { installYarnDependencies } from 'src/engine/core-modules/application/application-package/constants/yarn-engine/install-yarn-dependencies.cjs';
+
+const installErrorOutputSchema = z.object({
+  stdout: z.string().optional(),
+  stderr: z.string().optional(),
+});
 
 export const copyYarnEngineAndBuildDependencies = async (
   buildDirectory: string,
@@ -17,11 +23,14 @@ export const copyYarnEngineAndBuildDependencies = async (
       yarnEngineDirectory: YARN_ENGINE_DIRNAME,
       args: ['workspaces', 'focus', '--all', '--production'],
     });
-    // oxlint-disable-next-line typescript/no-explicit-any
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const parsedError = installErrorOutputSchema.safeParse(error);
     const errorMessage =
-      [error?.stdout, error?.stderr].filter(Boolean).join('\n') ||
-      'Failed to install logic function executor dependencies';
+      (parsedError.success
+        ? [parsedError.data.stdout, parsedError.data.stderr]
+            .filter(Boolean)
+            .join('\n')
+        : '') || 'Failed to install logic function executor dependencies';
 
     throw new Error(errorMessage);
   }

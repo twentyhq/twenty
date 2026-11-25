@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { IconSend } from 'twenty-ui/icon';
@@ -19,6 +18,7 @@ import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFoot
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -36,6 +36,7 @@ const StyledContent = styled.div`
 `;
 
 export const SidePanelSendCampaignTestPage = () => {
+  const { t } = useLingui();
   const sendCampaignTestCampaignId = useAtomComponentStateValue(
     sendCampaignTestCampaignIdComponentState,
   );
@@ -48,7 +49,7 @@ export const SidePanelSendCampaignTestPage = () => {
   const [toAddress, setToAddress] = useState(currentUser?.email ?? '');
 
   const { record: campaign } = useFindOneRecord<MessageCampaign>({
-    objectNameSingular: CoreObjectNameSingular.MessageCampaign,
+    objectNameSingular: StandardObjectNameSingular.MessageCampaign,
     objectRecordId: sendCampaignTestCampaignId ?? '',
     skip: !isDefined(sendCampaignTestCampaignId),
   });

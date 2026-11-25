@@ -1,5 +1,3 @@
-import { type QueryRunner } from 'typeorm';
-
 import {
   SEED_APPLE_WORKSPACE_ID,
   SEED_YCOMBINATOR_WORKSPACE_ID,
@@ -47,8 +45,10 @@ describe('seedAgents', () => {
         return queryBuilder;
       });
       const queryRunner = {
-        manager: { createQueryBuilder: () => queryBuilder },
-      } as unknown as QueryRunner;
+        manager: {
+          createQueryBuilder: jest.fn().mockReturnValue(queryBuilder),
+        },
+      };
 
       await seedAgents({
         queryRunner,

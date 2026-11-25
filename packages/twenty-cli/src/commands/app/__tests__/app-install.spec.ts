@@ -39,14 +39,22 @@ const application = {
   universalIdentifier: UNIVERSAL_IDENTIFIER,
   canBeUninstalled: true,
 };
-const state = {
-  startResult: { jobId: JOB_ID } as unknown,
-  startError: undefined as string | undefined,
-  statuses: [] as unknown[],
-  statusError: undefined as string | undefined,
-  installedApplication: application as unknown,
+const state: {
+  startResult: unknown;
+  startError: string | undefined;
+  statuses: unknown[];
+  statusError: string | undefined;
+  installedApplication: unknown;
+  holdStart: boolean;
+  heldResponse: ServerResponse | undefined;
+} = {
+  startResult: { jobId: JOB_ID },
+  startError: undefined,
+  statuses: [],
+  statusError: undefined,
+  installedApplication: application,
   holdStart: false,
-  heldResponse: undefined as ServerResponse | undefined,
+  heldResponse: undefined,
 };
 const server = await startTestServer((request, response) => {
   const { query } = readGraphqlRequest(request);

@@ -26,8 +26,8 @@ export const warnOnceOnDisallowedBrowserPreflight = ({
   twentyConfigService,
   warnedOrigins,
 }: {
-  request: Request;
-  twentyConfigService: TwentyConfigService;
+  request: Pick<Request, 'method' | 'headers' | 'protocol' | 'get'>;
+  twentyConfigService: Pick<TwentyConfigService, 'get'>;
   warnedOrigins: Set<string>;
 }): void => {
   if (

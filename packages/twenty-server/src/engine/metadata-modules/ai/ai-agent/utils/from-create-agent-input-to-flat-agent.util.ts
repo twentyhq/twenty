@@ -17,6 +17,7 @@ export type FromCreateAgentInputToFlatAgentArgs = {
   createAgentInput: CreateAgentInput;
   isSystem: boolean;
   workspaceId: string;
+  userWorkspaceId: string | undefined;
   flatApplication: FlatApplication;
   flatRoleMaps: AllFlatEntityMaps['flatRoleMaps'];
 };
@@ -25,6 +26,7 @@ export const fromCreateAgentInputToFlatAgent = ({
   createAgentInput: rawCreateAgentInput,
   isSystem,
   workspaceId,
+  userWorkspaceId,
   flatApplication,
   flatRoleMaps,
 }: FromCreateAgentInputToFlatAgentArgs): {
@@ -37,6 +39,8 @@ export const fromCreateAgentInputToFlatAgent = ({
       ['name', 'label', 'icon', 'description', 'prompt', 'modelId', 'roleId'],
     );
 
+  const isPrivate = createAgentInput.isPrivate ?? false;
+
   const createdAt = new Date().toISOString();
   const agentId = v4();
 
@@ -47,6 +51,8 @@ export const fromCreateAgentInputToFlatAgent = ({
       : computeMetadataNameFromLabel({ label: createAgentInput.label }),
     label: createAgentInput.label,
     icon: createAgentInput.icon ?? null,
+    avatarColor: createAgentInput.avatarColor ?? null,
+    avatarShape: createAgentInput.avatarShape ?? null,
     description: createAgentInput.description ?? null,
     prompt: createAgentInput.prompt,
     modelId: createAgentInput.modelId,
@@ -60,6 +66,10 @@ export const fromCreateAgentInputToFlatAgent = ({
     applicationUniversalIdentifier: flatApplication.universalIdentifier,
     modelConfiguration: createAgentInput.modelConfiguration ?? null,
     triggers: createAgentInput.triggers ?? [],
+    isPrivate,
+    createdByUserWorkspaceId: userWorkspaceId ?? null,
+    navigationMenuItemIds: [],
+    navigationMenuItemUniversalIdentifiers: [],
     createdAt,
     updatedAt: createdAt,
     deletedAt: null,
@@ -79,6 +89,7 @@ export const fromCreateAgentInputToFlatAgent = ({
       id: v4(),
       roleId,
       roleUniversalIdentifier,
+      isSystemSideEffect: false,
       userWorkspaceId: null,
       agentId,
       agentUniversalIdentifier: flatAgentToCreate.universalIdentifier,

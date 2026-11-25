@@ -7,7 +7,7 @@ import type {
 import { isDefined } from 'twenty-shared/utils';
 
 import { getLinkNavigationMenuItemComputedLink } from '@/navigation-menu-item/common/utils/getLinkNavigationMenuItemComputedLink';
-import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
+import { isNavigationMenuItemContainer } from '@/navigation-menu-item/common/utils/isNavigationMenuItemContainer';
 import { isNavigationMenuItemLink } from '@/navigation-menu-item/common/utils/isNavigationMenuItemLink';
 import { isNavigationMenuItemObject } from '@/navigation-menu-item/common/utils/isNavigationMenuItemObject';
 
@@ -21,9 +21,10 @@ export const buildCreateNavigationMenuItemInput = (
     position: draftItem.position,
   };
 
-  if (isNavigationMenuItemFolder(draftItem)) {
+  if (isNavigationMenuItemContainer(draftItem)) {
     input.name = draftItem.name ?? undefined;
     input.icon = draftItem.icon ?? null;
+    input.builtInSectionKey = draftItem.builtInSectionKey ?? undefined;
   } else if (isNavigationMenuItemLink(draftItem)) {
     input.name = draftItem.name ?? t`Link`;
     const linkUrl = (draftItem.link ?? '').trim();
@@ -33,6 +34,9 @@ export const buildCreateNavigationMenuItemInput = (
   } else if (isNavigationMenuItemObject(draftItem)) {
     input.targetObjectMetadataId =
       draftItem.targetObjectMetadataId ?? undefined;
+  } else if (isDefined(draftItem.nativePageKey)) {
+    input.nativePageKey = draftItem.nativePageKey;
+    input.name = draftItem.name ?? undefined;
   } else if (isDefined(draftItem.pageLayoutId)) {
     input.pageLayoutId = draftItem.pageLayoutId;
     input.name = draftItem.name ?? undefined;
@@ -43,10 +47,16 @@ export const buildCreateNavigationMenuItemInput = (
     input.targetRecordId = draftItem.targetRecordId;
     input.targetObjectMetadataId =
       draftItem.targetObjectMetadataId ?? undefined;
+  } else if (isDefined(draftItem.workflowId)) {
+    input.workflowId = draftItem.workflowId;
+    input.name = draftItem.name ?? undefined;
+  } else if (isDefined(draftItem.agentId)) {
+    input.agentId = draftItem.agentId;
+    input.name = draftItem.name ?? undefined;
   }
 
-  if (isDefined(draftItem.folderId)) {
-    input.folderId = resolveFolderId(draftItem.folderId);
+  if (isDefined(draftItem.parentId)) {
+    input.parentId = resolveFolderId(draftItem.parentId);
   }
 
   if (isDefined(draftItem.color)) {

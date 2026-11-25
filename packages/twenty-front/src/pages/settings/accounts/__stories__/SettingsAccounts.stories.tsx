@@ -55,7 +55,7 @@ const meta: Meta<PageDecoratorArgs> = {
   component: SettingsAccounts,
   decorators: [PageDecorator],
   args: {
-    routePath: '/settings/accounts',
+    routePath: '/settings/app-preferences',
   },
   parameters: {
     layout: 'fullscreen',
@@ -127,18 +127,6 @@ const accountGroupsStory: Story = {
 const accountsTabStory: Story = {
   ...accountGroupsStory,
   args: { ...accountGroupsStory.args, routeHash: '#accounts' },
-};
-
-export const Default: Story = {
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await canvas.findByText('Connected accounts', undefined, {
-      timeout: 3000,
-    });
-
-    expect(canvas.queryByText('Apps preferences')).not.toBeInTheDocument();
-  },
 };
 
 export const AppsTabOpensByDefault: Story = {
@@ -318,11 +306,11 @@ export const AccountsTabWithoutAccountsOffersConnectCards: Story = {
     const canvas = within(canvasElement);
 
     expect(
-      await canvas.findByText('Connect with Gmail and Calendar', undefined, {
+      await canvas.findByText('Connect with Google', undefined, {
         timeout: 3000,
       }),
     ).toBeVisible();
-    expect(canvas.getByText('Connect with Outlook')).toBeVisible();
+    expect(canvas.getByText('Connect with Microsoft')).toBeVisible();
     const linearCard = await canvas.findByText(
       'Connect with Linear',
       undefined,

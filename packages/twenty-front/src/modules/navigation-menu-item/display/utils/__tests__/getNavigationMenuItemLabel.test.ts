@@ -38,6 +38,7 @@ const baseItem: NavigationMenuItem = {
   id: 'nav-1',
   type: NavigationMenuItemType.OBJECT,
   position: 0,
+  isActive: true,
   createdAt: '',
   updatedAt: '',
 };
@@ -173,6 +174,47 @@ describe('getNavigationMenuItemLabel', () => {
 
       expect(getNavigationMenuItemLabel(item, objectMetadataItems, views)).toBe(
         '',
+      );
+    });
+  });
+
+  describe('when type is NATIVE_PAGE', () => {
+    it('should return the native page label when name is null', () => {
+      const item = {
+        ...baseItem,
+        type: NavigationMenuItemType.NATIVE_PAGE,
+        nativePageKey: 'agents',
+        name: null,
+      };
+
+      expect(getNavigationMenuItemLabel(item, objectMetadataItems, views)).toBe(
+        'Agents',
+      );
+    });
+
+    it('should prefer a custom name', () => {
+      const item = {
+        ...baseItem,
+        type: NavigationMenuItemType.NATIVE_PAGE,
+        nativePageKey: 'workflows',
+        name: 'Automations',
+      };
+
+      expect(getNavigationMenuItemLabel(item, objectMetadataItems, views)).toBe(
+        'Automations',
+      );
+    });
+
+    it('should fall back to the native page label for a blank name', () => {
+      const item = {
+        ...baseItem,
+        type: NavigationMenuItemType.NATIVE_PAGE,
+        nativePageKey: 'workflows',
+        name: '   ',
+      };
+
+      expect(getNavigationMenuItemLabel(item, objectMetadataItems, views)).toBe(
+        'Workflows',
       );
     });
   });

@@ -8,7 +8,9 @@ export const useCountryUtils = () => {
 
   const findCountryCodeByCountryName = useCallback(
     (countryName?: string): string => {
-      if (!isDefined(countryName) || countryName === '') return '';
+      if (!isDefined(countryName) || countryName === '') {
+        return '';
+      }
 
       const foundCountry = countries.find(
         (country) => country.countryName === countryName,
@@ -20,7 +22,9 @@ export const useCountryUtils = () => {
 
   const findCountryNameByCountryCode = useCallback(
     (countryCode?: string): string | null => {
-      if (!isDefined(countryCode) || countryCode === '') return '';
+      if (!isDefined(countryCode) || countryCode === '') {
+        return '';
+      }
 
       const foundCountry = countries.find(
         (country) => country.countryCode === countryCode,

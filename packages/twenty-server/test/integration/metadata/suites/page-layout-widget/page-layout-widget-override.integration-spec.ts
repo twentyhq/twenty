@@ -4,6 +4,7 @@ import { findPageLayoutTabs } from 'test/integration/metadata/suites/page-layout
 import { findPageLayoutWidgets } from 'test/integration/metadata/suites/page-layout-widget/utils/find-page-layout-widgets.util';
 import { updateOnePageLayoutWidget } from 'test/integration/metadata/suites/page-layout-widget/utils/update-one-page-layout-widget.util';
 import { findPageLayouts } from 'test/integration/metadata/suites/page-layout/utils/find-page-layouts.util';
+import { buildDeviceConditionalAvailability } from 'twenty-shared/conditional-availability';
 import { PageLayoutTabLayoutMode, PageLayoutType } from 'twenty-shared/types';
 
 const WIDGET_OVERRIDE_GQL_FIELDS = `
@@ -12,6 +13,7 @@ const WIDGET_OVERRIDE_GQL_FIELDS = `
   type
   pageLayoutTabId
   conditionalDisplay
+  conditionalAvailability
   createdAt
   updatedAt
   deletedAt
@@ -251,5 +253,90 @@ describe('Page layout widget override behavior', () => {
       },
       gqlFields: WIDGET_OVERRIDE_GQL_FIELDS,
     });
+  });
+
+  it('should override the visibility tree independently from title', async () => {
+    const overriddenTitle = `Tree Override ${Date.now()}`;
+    const overriddenConditionalAvailability =
+      buildDeviceConditionalAvailability('MOBILE');
+
+    await updateOnePageLayoutWidget({
+      expectToFail: false,
+      input: {
+        id: seededWidgetId,
+        title: overriddenTitle,
+      },
+      gqlFields: WIDGET_OVERRIDE_GQL_FIELDS,
+    });
+
+    const { data: conditionalData } = await updateOnePageLayoutWidget({
+      expectToFail: false,
+      input: {
+        id: seededWidgetId,
+        conditionalAvailability: overriddenConditionalAvailability,
+      },
+      gqlFields: WIDGET_OVERRIDE_GQL_FIELDS,
+    });
+
+    expect(conditionalData.updatePageLayoutWidget.title).toBe(overriddenTitle);
+    expect(
+      conditionalData.updatePageLayoutWidget.conditionalAvailability,
+    ).toEqual(overriddenConditionalAvailability);
+
+    const { data: clearedData } = await updateOnePageLayoutWidget({
+      expectToFail: false,
+      input: {
+        id: seededWidgetId,
+        title: seededWidgetOriginalTitle,
+        conditionalAvailability: null,
+      },
+      gqlFields: WIDGET_OVERRIDE_GQL_FIELDS,
+    });
+
+    expect(clearedData.updatePageLayoutWidget.title).toBe(
+      seededWidgetOriginalTitle,
+    );
+    expect(
+      clearedData.updatePageLayoutWidget.conditionalAvailability,
+    ).toBeNull();
+  });
+
+  it('should refuse a visibility tree using an unknown variable', async () => {
+    const { errors } = await updateOnePageLayoutWidget({
+      expectToFail: true,
+      input: {
+        id: seededWidgetId,
+        conditionalAvailability: {
+          type: 'COMPARISON',
+          operator: 'EQUAL',
+          left: { type: 'VARIABLE', path: 'devise' },
+          right: { type: 'LITERAL', value: 'MOBILE' },
+        },
+      },
+      gqlFields: WIDGET_OVERRIDE_GQL_FIELDS,
+    });
+
+    expect(errors).toMatchObject([
+      {
+        extensions: {
+          code: 'METADATA_VALIDATION_FAILED',
+          errors: {
+            pageLayoutWidget: [
+              {
+                errors: [
+                  {
+                    code: 'INVALID_PAGE_LAYOUT_WIDGET_DATA',
+                    message: expect.stringContaining('devise'),
+                    value: expect.objectContaining({
+                      errorCode: 'UNKNOWN_NAME',
+                    }),
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      },
+    ]);
   });
 });

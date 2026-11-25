@@ -8,11 +8,14 @@ import { ApplicationModule } from 'src/engine/core-modules/application/applicati
 import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
 import { CronModule } from 'src/engine/core-modules/cron/cron.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { RecordShareModule } from 'src/engine/permissions/record-share/record-share.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 import { WorkflowCronTriggerCronCommand } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/commands/workflow-cron-trigger.cron.command';
 import { WorkflowCronTriggerCronJob } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/jobs/workflow-cron-trigger-cron.job';
+import { WorkflowRunnerModule } from 'src/modules/workflow/workflow-runner/workflow-runner.module';
+import { WorkflowTriggerDispatchWorkspaceService } from 'src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger-dispatch.workspace-service';
 import { WorkflowDatabaseEventTriggerListener } from 'src/modules/workflow/workflow-trigger/automated-trigger/listeners/workflow-database-event-trigger.listener';
 
 @Module({
@@ -23,11 +26,14 @@ import { WorkflowDatabaseEventTriggerListener } from 'src/modules/workflow/workf
     WorkflowCoreModule,
     TypeOrmModule.forFeature([WorkspaceEntity]),
     CronModule,
+    PermissionsModule,
     RecordShareModule,
     WorkflowCommonModule,
+    WorkflowRunnerModule,
     WorkspaceCacheModule,
   ],
   providers: [
+    WorkflowTriggerDispatchWorkspaceService,
     WorkflowDatabaseEventTriggerListener,
     WorkflowCronTriggerCronJob,
     WorkflowCronTriggerCronCommand,

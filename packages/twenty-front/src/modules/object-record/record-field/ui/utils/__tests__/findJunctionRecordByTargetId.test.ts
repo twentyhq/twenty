@@ -58,7 +58,7 @@ describe('findJunctionRecordByTargetId', () => {
 
   it('should skip undefined junction records', () => {
     const junctionRecords = [
-      undefined as unknown as ObjectRecord,
+      undefined,
       createMockJunctionRecord('junction-1', {
         company: { id: 'company-1', name: 'Acme Corp' },
       }),

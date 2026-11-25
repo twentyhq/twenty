@@ -3,8 +3,11 @@ import { getFieldPermissions } from '@/object-metadata/utils/getFieldPermissions
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetAccessDenialInfo';
 import { isNonEmptyString } from '@sniptt/guards';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
+import {
+  canAccessThroughAllRecordsOrRlsPermission,
+  isDefined,
+} from 'twenty-shared/utils';
 
 export const useCallRecordingWidgetRestriction = ({
   requiredFieldNames,
@@ -16,7 +19,7 @@ export const useCallRecordingWidgetRestriction = ({
 } => {
   const { objectMetadataItem: callRecordingObjectMetadataItem } =
     useObjectMetadataItem({
-      objectNameSingular: CoreObjectNameSingular.CallRecording,
+      objectNameSingular: StandardObjectNameSingular.CallRecording,
     });
 
   const callRecordingObjectPermissions = useObjectPermissionsForObject(
@@ -40,7 +43,12 @@ export const useCallRecordingWidgetRestriction = ({
     );
   };
 
-  if (!callRecordingObjectPermissions.canReadObjectRecords) {
+  if (
+    !canAccessThroughAllRecordsOrRlsPermission({
+      objectRecordsPermissions: callRecordingObjectPermissions,
+      operationType: 'read',
+    })
+  ) {
     return {
       restriction: {
         type: 'object',

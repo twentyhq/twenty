@@ -2,6 +2,7 @@ import { type DerivedFieldMetadataIds } from 'src/engine/metadata-modules/derive
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { readAuthoredOverrideProperty } from 'src/engine/metadata-modules/overrides/utils/read-authored-override-property.util';
+import { isFieldMetadataUIEditable } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-field-metadata-ui-editable.util';
 
 const resolveEffectiveEntityIsActive = (entity: {
   isActive: boolean;
@@ -17,7 +18,7 @@ const resolveEffectiveEntityIsActive = (entity: {
   return typeof overrideValue === 'boolean' ? overrideValue : entity.isActive;
 };
 
-// isUnique lives in IndexMetadata, so callers needing it pass the precomputed field id set
+// isUnique lives in IndexMetadata and options in their rows, so callers pass what was derived from them
 export const fromFieldMetadataEntityToFieldMetadataDto = (
   entity: FieldMetadataEntity,
   derivedFieldMetadataIds?: DerivedFieldMetadataIds,
@@ -33,8 +34,9 @@ export const fromFieldMetadataEntityToFieldMetadataDto = (
   overrides: entity.overrides ?? undefined,
   isActive: resolveEffectiveEntityIsActive(entity),
   isSystem: entity.isSystem,
-  isUIEditable: entity.isUIEditable,
-  isUIReadOnly: !entity.isUIEditable,
+  isUIEditable: isFieldMetadataUIEditable(entity),
+  isUIReadOnly: !isFieldMetadataUIEditable(entity),
+  isSystemSideEffect: entity.isSystemSideEffect,
   disabledFieldPermissionActions: entity.disabledFieldPermissionActions,
   isNullable: entity.isNullable ?? false,
   isUnique:
@@ -43,7 +45,10 @@ export const fromFieldMetadataEntityToFieldMetadataDto = (
     derivedFieldMetadataIds?.searchableFieldMetadataIds.has(entity.id) ?? false,
   isAuditLogged: entity.isAuditLogged,
   defaultValue: entity.defaultValue ?? undefined,
-  options: entity.options ?? undefined,
+  options:
+    derivedFieldMetadataIds?.optionsByFieldMetadataId.get(entity.id) ??
+    entity.options ??
+    undefined,
   settings: entity.settings ?? undefined,
   workspaceId: entity.workspaceId,
   objectMetadataId: entity.objectMetadataId,

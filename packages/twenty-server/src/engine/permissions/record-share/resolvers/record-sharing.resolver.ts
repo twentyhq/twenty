@@ -13,32 +13,39 @@ import {
   RecordSharingDTO,
 } from 'src/engine/permissions/record-share/dtos/record-sharing.dto';
 import { RecordShareException } from 'src/engine/permissions/record-share/record-share.exception';
-import { RecordSharingService } from 'src/engine/permissions/record-share/services/record-sharing.service';
+import { RecordSharingPermissionsService } from 'src/engine/permissions/record-sharing-permissions.service';
+import { RecordSharingWriteService } from 'src/engine/permissions/record-share/services/record-sharing-write.service';
 import { recordShareGraphqlApiExceptionHandler } from 'src/engine/permissions/record-share/utils/record-share-graphql-api-exception-handler.util';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { RecordTargetInput } from 'src/engine/permissions/record-permissions/dtos/record-target.input';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @MetadataResolver()
 @UseGuards(
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
+  AccessPolicyGuard({
+    authPrincipals: {
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: { withUser: true, withoutUser: false },
+      application: { withUser: true, withoutUser: false },
     },
-    apiKey: false,
-    oauthClient: { withUser: true, withoutUser: false },
-    application: { withUser: true, withoutUser: false },
+    requiredPermissionFlags: [],
   }),
   CustomPermissionGuard,
 )
 export class RecordSharingResolver {
-  constructor(private readonly sharingService: RecordSharingService) {}
+  constructor(
+    private readonly recordSharingWriteService: RecordSharingWriteService,
+    private readonly recordSharingPermissionsService: RecordSharingPermissionsService,
+  ) {}
 
   @Query(() => RecordSharingDTO)
   recordSharing(@Args('target') target: RecordTargetInput) {
-    return this.sharingService.getSharing({
+    return this.recordSharingPermissionsService.findRecordSharingPanel({
       ...target,
       authContext: this.getUserContext(),
     });
@@ -50,7 +57,7 @@ export class RecordSharingResolver {
     @Args('isPrivate', { type: () => Boolean }) isPrivate: boolean,
   ) {
     return this.handleRecordShareException(() =>
-      this.sharingService.setPrivate({
+      this.recordSharingWriteService.setRecordPrivacy({
         ...target,
         isPrivate,
         authContext: this.getUserContext(),
@@ -66,7 +73,7 @@ export class RecordSharingResolver {
     accessLevel: RecordShareAccessLevel,
   ) {
     return this.handleRecordShareException(() =>
-      this.sharingService.setShare({
+      this.recordSharingWriteService.setShare({
         ...target,
         principal,
         accessLevel,
@@ -81,7 +88,7 @@ export class RecordSharingResolver {
     @Args('principal') principal: RecordSharePrincipalInput,
   ) {
     return this.handleRecordShareException(() =>
-      this.sharingService.removeShare({
+      this.recordSharingWriteService.removeShare({
         ...target,
         principal,
         authContext: this.getUserContext(),

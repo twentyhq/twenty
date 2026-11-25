@@ -22,7 +22,7 @@ import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/con
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { generateAggregateQuery } from '@/object-record/utils/generateAggregateQuery';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { Button } from 'twenty-ui/primitives/input';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import {
@@ -41,19 +41,19 @@ import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectM
 import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 
 const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow(
-  CoreObjectNameSingular.Company,
+  StandardObjectNameSingular.Company,
 );
 
 const personObjectMetadataItem = getMockObjectMetadataItemOrThrow(
-  CoreObjectNameSingular.Person,
+  StandardObjectNameSingular.Person,
 );
 
 const opportunityObjectMetadataItem = getMockObjectMetadataItemOrThrow(
-  CoreObjectNameSingular.Opportunity,
+  StandardObjectNameSingular.Opportunity,
 );
 
 const timelineActivityObjectMetadataItem = getMockObjectMetadataItemOrThrow(
-  CoreObjectNameSingular.TimelineActivity,
+  StandardObjectNameSingular.TimelineActivity,
 );
 
 const nameField = getMockFieldMetadataItemOrThrow({
@@ -269,7 +269,7 @@ const COMPANY_PEOPLE_TOTAL_COUNT = 836;
 
 const enrichedPersonObjectMetadataItem =
   getTestEnrichedObjectMetadataItemsMock().find(
-    ({ nameSingular }) => nameSingular === CoreObjectNameSingular.Person,
+    ({ nameSingular }) => nameSingular === StandardObjectNameSingular.Person,
   );
 
 if (!enrichedPersonObjectMetadataItem) {

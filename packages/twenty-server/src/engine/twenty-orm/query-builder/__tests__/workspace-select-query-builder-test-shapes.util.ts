@@ -2,8 +2,10 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
-import { type CompiledStatement } from 'src/engine/twenty-orm/sql/utils/compile-named-parameters.util';
+import { type CompiledStatement } from 'src/engine/workspace-query-executor/utils/compile-named-parameters.util';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
+import { NO_RECORD_READ_RESTRICTIONS } from 'src/engine/permissions/constants/no-record-read-restrictions.constant';
+import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
 
 export const SCHEMA_NAME = 'workspace_1wgvd1injqtife6y4rvfbu3h5';
 
@@ -102,10 +104,12 @@ export const buildQueryBuilder = ({
   rows = [],
   tableShape = personTableShape,
   onBeforeExecute = () => undefined,
+  recordReadRestrictions = NO_RECORD_READ_RESTRICTIONS,
 }: {
   rows?: Record<string, unknown>[];
   tableShape?: WorkspaceTableShape;
   onBeforeExecute?: (queryBuilder: WorkspaceSelectQueryBuilder) => void;
+  recordReadRestrictions?: RecordReadRestrictions;
 } = {}) => {
   const executedStatements: CompiledStatement[] = [];
 
@@ -118,7 +122,7 @@ export const buildQueryBuilder = ({
         return rows;
       },
     },
-    objectRecordsPermissions: {},
+    recordReadRestrictions,
     tableShapeByObjectMetadataId: () => companyTableShape,
     onBeforeExecute,
     formatResult: (records) => records as never,

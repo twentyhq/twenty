@@ -35,17 +35,20 @@ export default defineNavigationMenuItem({
   | ------------------------------------ | ------------------------------------------------ | ------------------------------------------------------------------------------------ |
   | `NavigationMenuItemType.VIEW`        | Deschide o vizualizare salvată                   | `viewUniversalIdentifier`                                                            |
   | `NavigationMenuItemType.LINK`        | Deschide un URL extern                           | `link`                                                                               |
-  | `NavigationMenuItemType.FOLDER`      | Grupează elementele îmbricate sub o etichetă     | `name` (iar elementele copil fac referire la dosar prin `folderUniversalIdentifier`) |
+  | `NavigationMenuItemType.FOLDER`      | Grupează elementele îmbricate sub o etichetă     | `name` (iar elementele copil fac referire la dosar prin `parentUniversalIdentifier`) |
   | `NavigationMenuItemType.OBJECT`      | Deschide pagina implicită de index a unui obiect | `targetObjectUniversalIdentifier`                                                    |
   | `NavigationMenuItemType.PAGE_LAYOUT` | Deschide un aranjament de pagină independent     | `pageLayoutUniversalIdentifier`                                                      |
+  | `NavigationMenuItemType.NATIVE_PAGE` | Deschide o pagină integrată                      | `nativePageKey`: `'workflows'` sau `'agents'`                                        |
 
 * `position` controlează ordonarea în bara laterală.
 
-* Enumul conține și `NavigationMenuItemType.RECORD`, utilizat intern pentru favoritele de înregistrări create de utilizatori, și `NavigationMenuItemType.AGENT_CHAT_CHANNEL`, utilizat pentru canalele de chat fixate la favorite. Niciunul nu poate fi utilizat dintr-un manifest de aplicație (nu există niciun câmp pentru a face referire la o înregistrare sau la un canal).
+* Un element `NATIVE_PAGE` este ascuns membrilor cărora le lipsește permisiunea paginii (Fluxuri de lucru pentru `'workflows'`, IA pentru `'agents'`).
+
+* Enum-ul conține, de asemenea, `NavigationMenuItemType.RECORD`, utilizat intern pentru favoritele de înregistrări create de utilizatori, `NavigationMenuItemType.AGENT_CHAT_CHANNEL`, utilizat pentru canalele de chat fixate la favorite, precum și `NavigationMenuItemType.WORKFLOW` și `NavigationMenuItemType.AGENT`, utilizate pentru fluxurile de lucru și agenții fixați în bara laterală. Niciunul dintre acestea nu poate fi utilizat din manifestul unei aplicații (nu există niciun câmp pentru a face referire la o înregistrare, un canal, un flux de lucru sau un agent).
 
 * `icon` și `color` sunt opționale și personalizează aspectul intrării.
 
-* `folderUniversalIdentifier` este de asemenea disponibil pe orice element pentru a-l îmbrica într-un părinte de tip `FOLDER`.
+* `parentUniversalIdentifier` este de asemenea disponibil pe orice element pentru a-l plasa într-un părinte de tip `FOLDER`. Numele anterior, `folderUniversalIdentifier`, este depreciat, dar încă acceptat.
 
 * `twenty app pull` scrie elementele meniului de navigare înapoi ca fișiere `defineNavigationMenuItem()`. Un element pe care un membru al spațiului de lucru l-a adăugat la propria bară laterală și unul fixat la o înregistrare aparțin acelui spațiu de lucru, nu aplicației dvs., și sunt raportate în schimb; consultați [ce nu scrie pull](/ro/developers/extend/apps/operations/sync-and-recovery#pulling-an-installed-app-back-to-source).
 

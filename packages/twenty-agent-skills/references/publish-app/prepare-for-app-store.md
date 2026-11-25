@@ -123,6 +123,7 @@ Use plain product language:
 - Explain setup variables by their exact names.
 - Distinguish server admin setup from workspace member usage.
 - For OAuth connections, mention the provider redirect URI: `<SERVER_URL>/auth/apps/callback`.
+- For API-key connections, say where in the service the member finds the key; no redirect URI is needed.
 - Document permissions in terms of user risk: read, create, update, soft delete, destroy, third-party send.
 
 Avoid:
@@ -185,6 +186,8 @@ export default defineApplication({
 ```
 
 Set `requestedCapabilities` only when the app uses microphone or camera capture. Supported values are `'microphone'` and `'camera'`; request only the devices the app needs and explain their use in the README. The installation screen shows these requests for workspace-wide approval by a member who can manage apps. Omitting a capability does not silently grant access: first use pauses capture for approval, including for older apps without declarations. Browser and operating system permissions remain separate, and package updates do not automatically add grants.
+
+Set `requestedIframeMediaPermissions` only when a front component or an `IFRAME` page layout widget embeds a website that needs the microphone or camera. List up to 20 unique exact HTTPS origins, with `microphone` and `camera` set separately and at least one set to `true`; the installation screen shows each website for the same approval.
 
 Only set `aboutDescription` when the marketplace About tab should differ from the npm README. Otherwise keep one source of truth in `README.md`. The About tab renders markdown text only: images and raw HTML (badges, `<div>` blocks) are not rendered, so keep the marketplace-facing content in plain markdown.
 

@@ -66,11 +66,52 @@ Puntos clave:
 * `prompt` es el mensaje del sistema que define el comportamiento del agente.
 * `description` (opcional) proporciona contexto sobre lo que hace el agente.
 * `icon` (opcional) establece el icono mostrado en la interfaz de usuario.
+* `avatarColor` (opcional) establece el color del avatar del agente: `blue`, `sky`, `turquoise`, `green`, `yellow`, `orange`, `red`, `pink`, `purple` o `gray`. Omítelo para obtener un color seleccionado a partir del ID del agente.
+* `avatarShape` (opcional) establece la forma del avatar del agente: `circle`, `cookie`, `cloud`, `clover`, `flower`, `burst`, `pill`, `arch`, `gem` o `hexagon`. El valor predeterminado es `circle`.
 * `modelId` (opcional) reemplaza el modelo de IA predeterminado usado por el agente.
 * `responseFormat` (opcional) establece la estructura de salida predeterminada del agente. De forma predeterminada es `{ type: 'text' }` para texto de formato libre. Usa `{ type: 'json', schema }` para forzar una salida JSON estructurada. Una llamada a `runAgent()` o un paso de IA de un flujo de trabajo puede solicitar una estructura diferente, que tiene prioridad.
 * `roleUniversalIdentifier` (opcional) vincula el agente a un rol que define tu aplicación. Ese rol no debe otorgar más que el rol de la aplicación, o la compilación falla; consulta [Roles de agente](/es/developers/extend/apps/config/roles#agent-roles).
 * `modelConfiguration` (opcional) activa las herramientas nativas del modelo, como lo hace la página de configuración del agente: `{ webSearch: { enabled: true }, twitterSearch: { enabled: true } }`. Cada herramienta solo funciona con los modelos que la admiten. Omítelo para mantenerlas desactivadas.
+* `triggers` (opcional) ejecuta el agente por sí solo, según una programación o cuando cambian los registros. Consulta [Activadores del agente](#agent-triggers).
 * `isSystem` (opcional, el valor predeterminado es `false`) oculta el agente de las listas de agentes, como los agentes que Twenty crea para los pasos de IA de flujo de trabajo. Solo cambia lo que se muestra: los agentes de una aplicación solo se pueden cambiar mediante la aplicación, independientemente de lo que indique esta marca.
+
+#### Activadores del agente
+
+Cada activador inicia una ejecución que aparece en las ejecuciones del agente, junto con el registro que lo activó:
+
+```ts src/agents/deal-watcher.ts
+import {
+  defineAgent,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+const OPPORTUNITY = STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity;
+
+export default defineAgent({
+  ...,
+  triggers: [
+    {
+      universalIdentifier: 'c1f0a7b2-5d3e-4f6a-8b9c-0d1e2f3a4b5c',
+      type: 'EVENT',
+      settings: {
+        on: 'recordEvent',
+        objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+        action: 'updated',
+        watchedFieldUniversalIdentifiers: [OPPORTUNITY.fields.stage.universalIdentifier],
+        condition: "stage == 'CUSTOMER' and previous.stage != 'CUSTOMER'",
+      },
+      instructions: 'Draft the onboarding plan for this new customer.',
+    },
+    {
+      universalIdentifier: 'd2e1b8c3-6e4f-4a7b-9c0d-1e2f3a4b5c6d',
+      type: 'CRON',
+      settings: { pattern: '0 9 * * 1' },
+    },
+  ],
+});
+```
+
+Un activador `EVENT` tiene la misma configuración que [`eventTriggerSettings` de una función lógica](/es/developers/extend/apps/logic/logic-functions#database-event-trigger-payload), excepto que necesita un objeto y una acción. El activador `DATABASE_EVENT` anterior con un `eventName` aún se acepta. `instructions` (opcional) se añaden al prompt del agente para las ejecuciones que inicia el activador.
 
 De forma predeterminada, un agente devuelve texto de formato libre. Para obtener una salida estructurada, establece `responseFormat` en `{ type: 'json' }` y proporciona un `schema`:
 
@@ -131,8 +172,8 @@ export default defineMcpServer({
 Puntos clave:
 * `name` está en snake_case (letras minúsculas, dígitos y guiones bajos, comienza con una letra y tiene como máximo 32 caracteres) y es único en el espacio de trabajo. Sirve de prefijo para los nombres de las herramientas del servidor.
 * `url` debe ser una URL HTTP o HTTPS.
-* `connectionProvider` (opcional) hace referencia a un [proveedor de conexión](/es/developers/extend/apps/logic/connections) declarado por la misma aplicación. Las llamadas envían el token de acceso de esa conexión como un token Bearer. Omítelo para un servidor público.
-* La URL no puede cambiar en una versión posterior mientras haya un proveedor de conexión vinculado, por lo que los tokens nunca se envían a otro host.
+* `connectionProvider` (opcional) hace referencia a un [proveedor de conexión](/es/developers/extend/apps/logic/connections) declarado por la misma aplicación. Las llamadas envían el token de acceso de esa conexión como un token Bearer. Omítelo para un servidor público. Un servidor que publica su propia configuración de OAuth utiliza un proveedor de `oauth-discovery` cuyo `resourceUrl` es la URL del servidor (Twenty 2.59.0 o posterior).
+* La URL no puede cambiar en una versión posterior mientras el mismo proveedor de conexión permanezca vinculado. Cambiar la URL implica vincular un proveedor diferente al mismo tiempo, por lo que los tokens nunca se envían a otro host.
 * Los espacios de trabajo pueden desactivar el servidor; una versión posterior de la aplicación conserva esa elección.
 * Requiere `"engines": { "twenty": ">=2.53.0" }`.
 
@@ -145,7 +186,7 @@ a `defineAgent()` y pasa lo que quieres que procese como `input`:
 ```ts src/logic-functions/run-enricher.ts
 import { runAgent } from 'twenty-sdk/logic-function';
 
-const { threadId, status, result, error, success } = await runAgent({
+const { threadId, runId, status, result, error, success } = await runAgent({
   agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
   input: 'Enrich House Ad <recordId>: fill empty fields from its listing URL.',
 });
@@ -192,7 +233,11 @@ export default defineApplicationRole({
 ```
 
 <Warning>
-  **Evita los bucles:** si llamas a `runAgent()` desde un trigger de evento de base de datos `*.updated` y el agente actualiza el mismo registro, limita el alcance del trigger con `updatedFields` a un campo que el agente nunca escriba (por ejemplo, la URL de origen), o comprueba si algún campo de destino sigue vacío antes de llamar a `runAgent()`.
+  **Evita los bucles:** si llamas a `runAgent()` desde un activador de evento de base de datos `*.updated`
+  y el agente actualiza el mismo registro, limita el alcance del activador con
+  `watchedFieldUniversalIdentifiers` a un campo en el que el agente nunca escribe (p. ej., la
+  URL de origen), o con una `condition` que solo se cumple mientras un campo de destino
+  siga vacío, como `isEmpty(summary)`.
 </Warning>
 
 ### Envío de archivos con un mensaje
@@ -310,6 +355,189 @@ designar a ningún miembro.
   miembro desconocido o eliminado, o uno sin rol. Nunca recurre al
   rol propio del agente, ya que eso otorgaría más acceso del que solicitó quien llama.
 </Warning>
+
+### Siguiendo una conversación
+
+Una aplicación lee las conversaciones que mantiene con sus agentes a través de la misma API
+que el chat: `listConversationMessages()` devuelve su historia, y
+`streamConversation()` produce sus eventos en vivo, token por token. Nombra la conversación
+por el agente y la clave `hilo` que pasas a `runAgent()`; Tú
+puedes empezar a seguirlo antes de que la primera ejecución llegue a él.
+
+```ts src/logic-functions/follow-conversation.ts
+import {
+  isAgentChatTurnEndEvent,
+  listConversationMessages,
+  streamConversation,
+} from 'twenty-sdk/logic-function';
+
+const conversation = {
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  threadKey: `${channelId}:${threadTs}`,
+};
+const abortController = new AbortController();
+let maxCatchupSeq: number | undefined;
+
+// subscribe before reading the history, so nothing streamed in between is lost
+for await (const event of streamConversation({
+  ...conversation,
+  signal: abortController.signal,
+})) {
+  if (event.type === 'keepalive' && maxCatchupSeq === undefined) {
+    const { messages, streamCatchup } =
+      await listConversationMessages(conversation);
+
+    showMessages(messages);
+    for (const chunk of streamCatchup.chunks) showChunk(chunk);
+    maxCatchupSeq = streamCatchup.maxSeq;
+  }
+
+  if (
+    event.type === 'stream-chunk' &&
+    (event.seq ?? 0) > (maxCatchupSeq ?? 0)
+  ) {
+    // an AI SDK UIMessageChunk, such as { type: 'text-delta', delta }
+    showChunk(event.chunk);
+  }
+
+  // the reply's save, or why it stopped, such as credits-exhausted
+  if (isAgentChatTurnEndEvent(event)) {
+    abortController.abort();
+  }
+}
+```
+
+* Los eventos son propios del chat: `stream-chunk` lleva un SDK
+  `UIMessageChunk` y un `seq`, y notificaciones como `message-persisted`
+  (un mensaje fue guardado: un miembro, o la respuesta, que lleva su ejecución
+  `turnId`), `credits-exhausted` (la respuesta se detuvo cuando el espacio de trabajo corrió
+  sin créditos), `queue-updated` o `stream-error` decir cuando
+  para leer la historia de nuevo. Un `keepalive` viene una vez conectado, luego cada
+  pocos segundos: lee la historia en la primera, ya que lo que pasó antes de
+  está ahí.
+* Para convertir chunks en mensajes como lo hace el chat, pipéalos en
+  `readUIMessageStream()` del paquete `ai`.
+* `listConversationMessages()` devuelve `{ mensajes, streamCatchup }`: los mensajes guardados
+  como AI SDK `UIMessage`s, a medida que el chat los construye, y las porciones de
+  una respuesta todavía fluyendo. Muestra esos trozos y luego omite trozos vivos cuyos
+  `seq` es como máximo `streamCatchup.maxSeq`, ya que los repiten.
+* `runAgent()` devuelve `runId`, el giro que abre la llamada: los mensajes de esa ejecución
+  llevan como `metadata.turnId`. Una ejecución que espera en turnos posteriores de
+  la conversación.
+* El stream permanece abierto hasta que abortes su `señal` o `romper`, y arroja si
+  la conexión cae: stream de nuevo para reanudar.
+* Una aplicación sólo lee sus propias conversaciones. Turna un miembro abierto en otro lugar,
+  como en el chat, muestra solo su texto en la historia, viva y en la siguiente carrera del agente
+  : vive, sus otros trozos llegan como trozos
+  `message-metadata`, así que `seq` permanece recolectado. Turna tu aplicación se ha ejecutado como un miembro
+  (ver arriba) permanecen entera cuando lee por sí mismo.
+* Requiere `"engines": { "twenty": ">=2.56.0" }`.
+
+</Accordion>
+<Accordion title="ai.generate" description="Llamar a un modelo desde una función lógica, sin un agente">
+
+`ai.generate()` llama a un modelo desde una función lógica. A diferencia de
+`runAgent()`, no necesita `defineAgent()`: la llamada lleva sus propias instrucciones
+, y no abre ninguna conversación. Úselo para un trabajo de un solo tiro, como
+clasificar, resumir o extraer.
+
+```ts
+import { ai } from 'twenty-sdk/logic-function';
+
+const { success, text, error } = await ai.generate({
+  instructions: 'You qualify inbound leads for a B2B CRM.',
+  input: `Is ${companyName} a good fit? Answer in one sentence.`,
+});
+```
+
+* `input` es una cadena o una lista de mensajes `{ role: 'user' | 'assistant', content }`
+  .
+* `instructions` (opcional) añade las instrucciones del sistema de llamada.
+* `modelId` (opcional) elige el modelo. Sin ella, la llamada utiliza el modelo predeterminado del espacio de trabajo
+  .
+* `responseFormat` (opcional) funciona como en `runAgent()`. Con
+  `{ type: 'json', schema }`, el esquema se incluye en la propia solicitud al modelo, por lo que
+  una respuesta JSON requiere una solicitud (más pasos de herramientas cuando un `scope` concede
+  herramientas).
+* `scope` (opcional) permite a la llamada utilizar la base de datos, como se describe a continuación.
+
+Resuelve a `{ éxito, texto, objeto, error, runId, uso }`:
+
+* `text` es la respuesta de un texto, y `null` para una respuesta JSON.
+* `object` es el resultado de una respuesta JSON, y `null` de otra manera.
+* `error` explica una ejecución fallida, cuando `success` es `false`. Una ejecución que falla
+  resuelve esta manera en lugar de lanzarla; una llamada que no puede iniciar una ejecución, tal
+  como una con entrada no válida, lanza.
+* `runId` identifica la ejecución registrada, con su modelo, uso y créditos.
+* `usage` es `{ inputTokens, outputTokens }`: lo que gastó la ejecución, incluyendo los pasos
+  que terminaron antes de un fallo.
+
+La llamada actúa como quien lo hizo: el miembro a un token con ámbito de usuario pertenece,
+de lo contrario su aplicación, de lo contrario la clave API. Desde una función lógica
+sigue a los clientes predeterminados: actúa como la persona que desencadenó la ejecución, o como
+tu aplicación cuando nadie lo hizo. Nunca excede el rol de tu aplicación, y
+una aplicación sin un rol predeterminado no puede llamarla.
+
+Sin `scope`, la llamada lee y no escribe registros. Para permitir que use la
+base de datos, pasa un `scope`. Usa sus propias propiedades (`canReadAllObjectRecords`,
+`objectPermissions`, `fieldPermissions`), no un bloque `recordsPermissions` de un rol:
+
+```ts
+const { object } = await ai.generate({
+  input: `Find the open opportunities of ${companyName} and rate their risk.`,
+  responseFormat: {
+    type: 'json',
+    schema: {
+      type: 'object',
+      properties: { risk: { type: 'string' } },
+      required: ['risk'],
+    },
+  },
+  scope: {
+    objectPermissions: [
+      { objectUniversalIdentifier: OPPORTUNITY_UID, canReadObjectRecords: true },
+    ],
+  },
+});
+```
+
+Un alcance sólo estrecha: no concede nada que el que llama no tenga ya.
+
+Para mostrar la respuesta mientras está escrita, pase `onChunk`. La llamada todavía resuelve
+al mismo resultado, una vez que el último fragmento fue entregado a `onChunk`. Si el final del streamformat@@0
+nunca llega, deja de esperar una vez que el resultado está dentro y 5 s
+pasa sin un nuevo trozo, y sigue entregando cada trozo recibido entonces:
+
+```ts
+const abortController = new AbortController();
+
+const { text } = await ai.generate({
+  input: `Draft a follow-up email to ${companyName}.`,
+  onChunk: (chunk) => {
+    // an AI SDK UIMessageChunk, such as { type: 'text-delta', delta }
+  },
+  signal: abortController.signal,
+});
+```
+
+* La llamada sigue la ejecución a través de la misma suscripción que
+  `streamConversation()`: se suscribe primero, espera hasta que la suscripción esté
+  en vivo, luego comienza la ejecución, por lo que no pierde ningún chunk.
+* Los trozos son los propios del chat: póngalos en `readUIMessageStream()` desde el paquete
+  `ai` para construir el mensaje.
+* `signal` aborta la llamada: rechaza con el error de aborto y cierra la transmisión
+  . La ejecución en sí misma continúa, y se registra como de costumbre.
+* Una vez que el stream está vivo, un fallo solo detiene los pedazos: la llamada
+  todavía se resuelve con el resultado de la ejecución. que se facturan de cualquier manera. La llamada
+  se rechaza cuando la suscripción falla antes de activarse, por lo que la ejecución nunca
+  comienza, o cuando `onChunk` genera una excepción.
+* Una aplicación sólo sigue sus propias ejecuciones, así que `onChunk` necesita un token de aplicación.
+* Requiere `"engines": { "twenty": ">=2.56.0" }`.
+
+<Note>
+  `ai.generate()` requiere la bandera de permiso de IA en el rol predeterminado de la aplicación,
+  como `runAgent()`.
+</Note>
 
 </Accordion>
 <Accordion title="sendInboxMessage" description="Inicia o continúa una conversación en los chats de los miembros">

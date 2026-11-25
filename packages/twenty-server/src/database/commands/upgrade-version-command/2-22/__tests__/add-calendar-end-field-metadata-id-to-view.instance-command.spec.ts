@@ -1,12 +1,11 @@
-import { type QueryRunner } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 import { AddCalendarEndFieldMetadataIdToViewFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-22/2-22-instance-command-fast-1783956795000-add-calendar-end-field-metadata-id-to-view';
 import { ADD_CALENDAR_END_FIELD_METADATA_ID_TO_VIEW_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-22/add-calendar-end-field-metadata-id-to-view-upgrade-command-name.constant';
 import { getRegisteredInstanceCommandMetadata } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 
 describe('AddCalendarEndFieldMetadataIdToViewFastInstanceCommand', () => {
-  const command =
-    new AddCalendarEndFieldMetadataIdToViewFastInstanceCommand();
+  const command = new AddCalendarEndFieldMetadataIdToViewFastInstanceCommand();
 
   it('is registered against the current version with a matching name', () => {
     const metadata = getRegisteredInstanceCommandMetadata(
@@ -26,7 +25,13 @@ describe('AddCalendarEndFieldMetadataIdToViewFastInstanceCommand', () => {
   it('adds the column, index and foreign key idempotently', async () => {
     const query = jest.fn().mockResolvedValue(undefined);
 
-    await command.up({ query } as unknown as QueryRunner);
+    const queryRunner = new DataSource({
+      type: 'postgres',
+    }).createQueryRunner();
+
+    queryRunner.query = query;
+
+    await command.up(queryRunner);
 
     expect(query.mock.calls.map((call) => call[0] as string)).toEqual([
       'ALTER TABLE "core"."view" ADD COLUMN IF NOT EXISTS "calendarEndFieldMetadataId" uuid',
@@ -38,7 +43,13 @@ describe('AddCalendarEndFieldMetadataIdToViewFastInstanceCommand', () => {
   it('removes the foreign key, index and column idempotently', async () => {
     const query = jest.fn().mockResolvedValue(undefined);
 
-    await command.down({ query } as unknown as QueryRunner);
+    const queryRunner = new DataSource({
+      type: 'postgres',
+    }).createQueryRunner();
+
+    queryRunner.query = query;
+
+    await command.down(queryRunner);
 
     expect(query.mock.calls.map((call) => call[0] as string)).toEqual([
       'ALTER TABLE "core"."view" DROP CONSTRAINT IF EXISTS "FK_e1d69dd7402cd7df3b03ce11311"',

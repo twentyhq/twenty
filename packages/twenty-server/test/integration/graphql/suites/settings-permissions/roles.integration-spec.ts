@@ -6,7 +6,7 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
-import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
+import { upsertRowLevelPermissionRules } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-rules.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -239,24 +239,28 @@ describe('roles permissions', () => {
         const {
           data: rowLevelPermissionData,
           errors: rowLevelPermissionErrors,
-        } = await upsertRowLevelPermissionPredicates({
+        } = await upsertRowLevelPermissionRules({
           expectToFail: false,
           input: {
             roleId: relationsRoleId,
             objectMetadataId: companyObjectMetadata.id,
-            predicates: [
+            rules: [
               {
-                fieldMetadataId: companyNameField.id,
-                operand: RowLevelPermissionPredicateOperand.CONTAINS,
-                value: 'Apple',
+                predicates: [
+                  {
+                    fieldMetadataId: companyNameField.id,
+                    operand: RowLevelPermissionPredicateOperand.CONTAINS,
+                    value: 'Apple',
+                  },
+                ],
               },
-            ],
-            predicateGroups: [
               {
-                objectMetadataId: companyObjectMetadata.id,
-                logicalOperator:
-                  RowLevelPermissionPredicateGroupLogicalOperator.AND,
-                parentRowLevelPermissionPredicateGroupId: null,
+                predicateGroups: [
+                  {
+                    logicalOperator:
+                      RowLevelPermissionPredicateGroupLogicalOperator.AND,
+                  },
+                ],
               },
             ],
           },
@@ -266,10 +270,9 @@ describe('roles permissions', () => {
         jestExpectToBeDefined(rowLevelPermissionData);
 
         relationsPredicateId =
-          rowLevelPermissionData.upsertRowLevelPermissionPredicates
-            .predicates[0].id;
+          rowLevelPermissionData.upsertRowLevelPermissionRules.predicates[0].id;
         relationsPredicateGroupId =
-          rowLevelPermissionData.upsertRowLevelPermissionPredicates
+          rowLevelPermissionData.upsertRowLevelPermissionRules
             .predicateGroups[0].id;
 
         const apiKeyResponse = await makeMetadataApiRequest({
@@ -466,6 +469,38 @@ describe('roles permissions', () => {
       await assertPermissionDeniedForMemberWithMemberRole({
         query: getRoleQuery(guestRoleId),
       });
+    });
+  });
+
+  describe('accessGroupPropagationProgress', () => {
+    const query = {
+      query: `
+        query AccessGroupPropagationProgress {
+          accessGroupPropagationProgress {
+            totalRecordCount
+            remainingRecordCount
+            isInProgress
+          }
+        }
+      `,
+    };
+
+    it('should allow admin to read the propagation progress', async () => {
+      const response = await client
+        .post('/metadata')
+        .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+        .send(query)
+        .expect(200);
+
+      expect(response.body.data.accessGroupPropagationProgress).toEqual({
+        totalRecordCount: expect.any(Number),
+        remainingRecordCount: expect.any(Number),
+        isInProgress: expect.any(Boolean),
+      });
+    });
+
+    it('should throw a permission error when user does not have permission (member role)', async () => {
+      await assertPermissionDeniedForMemberWithMemberRole({ query });
     });
   });
 

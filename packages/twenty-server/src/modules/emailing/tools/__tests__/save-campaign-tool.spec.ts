@@ -5,6 +5,7 @@ import {
   EmailingDomainExceptionCode,
 } from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
 import { toToolJsonSchema } from 'src/engine/core-modules/record-crud/utils/to-tool-json-schema.util';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { MessageCampaignDraftService } from 'src/modules/emailing/services/message-campaign-draft.service';
 import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool';
 import { SaveCampaignToolInputZodSchema } from 'src/modules/emailing/tools/save-campaign-tool.schema';
@@ -14,6 +15,16 @@ describe('SaveCampaignTool', () => {
   let saveDraft: jest.Mock;
 
   const campaignId = '20202020-0000-4000-8000-000000000001';
+  const memberAuthContext = {
+    type: 'user',
+    workspace: { id: 'workspace-1' },
+    userWorkspaceId: 'user-workspace-1',
+  } as WorkspaceAuthContext;
+  const memberContext = {
+    workspaceId: 'workspace-1',
+    userWorkspaceId: 'user-workspace-1',
+    authContext: memberAuthContext,
+  };
 
   beforeEach(async () => {
     saveDraft = jest.fn().mockResolvedValue({
@@ -44,7 +55,7 @@ describe('SaveCampaignTool', () => {
   it('should edit a campaign and reference the record', async () => {
     const output = await tool.execute(
       { campaignId, body: { type: 'doc', content: [] } },
-      { workspaceId: 'workspace-1', userWorkspaceId: 'user-workspace-1' },
+      memberContext,
     );
 
     expect(output.success).toBe(true);
@@ -58,7 +69,7 @@ describe('SaveCampaignTool', () => {
     ]);
     expect(saveDraft).toHaveBeenCalledWith({
       workspaceId: 'workspace-1',
-      userWorkspaceId: 'user-workspace-1',
+      authContext: memberAuthContext,
       campaignId,
       name: undefined,
       subject: undefined,
@@ -76,7 +87,7 @@ describe('SaveCampaignTool', () => {
 
     const output = await tool.execute(
       { name: 'Launch announcement' },
-      { workspaceId: 'workspace-1', userWorkspaceId: 'user-workspace-1' },
+      memberContext,
     );
 
     expect(output.success).toBe(true);
@@ -87,6 +98,16 @@ describe('SaveCampaignTool', () => {
     const output = await tool.execute(
       { name: 'Launch announcement' },
       { workspaceId: 'workspace-1' },
+    );
+
+    expect(output.success).toBe(false);
+    expect(saveDraft).not.toHaveBeenCalled();
+  });
+
+  it('should refuse to run without the permissions it was given', async () => {
+    const output = await tool.execute(
+      { name: 'Launch announcement' },
+      { workspaceId: 'workspace-1', userWorkspaceId: 'user-workspace-1' },
     );
 
     expect(output.success).toBe(false);
@@ -117,7 +138,7 @@ describe('SaveCampaignTool', () => {
 
     const output = await tool.execute(
       { campaignId, subject: 'New subject' },
-      { workspaceId: 'workspace-1', userWorkspaceId: 'user-workspace-1' },
+      memberContext,
     );
 
     expect(output).toEqual({

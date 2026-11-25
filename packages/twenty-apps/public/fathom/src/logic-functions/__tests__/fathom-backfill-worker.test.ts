@@ -137,4 +137,24 @@ describe('fathomBackfillWorkerHandler', () => {
       notFoundError,
     );
   });
+
+  it.each(['WORKSPACE', 'USER'])(
+    'lists every recording a %s connection can access',
+    async (scope) => {
+      mocks.getConnection.mockResolvedValue({
+        id: 'connection-1',
+        scope,
+        handle: 'member@acme.com',
+        accessToken: 'token-1',
+      });
+      mocks.listMeetings.mockRejectedValue(buildFathomNotFoundError());
+
+      await expect(fathomBackfillWorkerHandler(PAYLOAD)).rejects.toThrow();
+
+      expect(mocks.listMeetings).toHaveBeenCalledOnce();
+      expect(mocks.listMeetings.mock.calls[0][0]).not.toHaveProperty(
+        'recordedBy',
+      );
+    },
+  );
 });

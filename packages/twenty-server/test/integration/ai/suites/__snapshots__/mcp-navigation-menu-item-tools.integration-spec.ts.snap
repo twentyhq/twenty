@@ -6,15 +6,15 @@ exports[`MCP navigation menu item tools (integration) should describe the naviga
     "description": "List navigation menu items (shared workspace navigation and/or the current user's personal favorites). Returns items sorted by position.",
     "inputSchema": {
       "properties": {
-        "folderId": {
-          "description": "Only return items inside this folder.",
-          "format": "uuid",
-          "type": "string",
-        },
         "limit": {
           "default": 100,
           "description": "Max number of items to return.",
           "type": "integer",
+        },
+        "parentId": {
+          "description": "Only return items inside this folder, section or tab.",
+          "format": "uuid",
+          "type": "string",
         },
         "scope": {
           "default": "all",
@@ -27,14 +27,17 @@ exports[`MCP navigation menu item tools (integration) should describe the naviga
           "type": "string",
         },
         "type": {
-          "description": "Filter by item type (FOLDER, LINK, OBJECT, VIEW, RECORD, PAGE_LAYOUT).",
+          "description": "Filter by item type.",
           "enum": [
+            "TAB",
+            "SECTION",
             "FOLDER",
             "LINK",
             "OBJECT",
             "VIEW",
             "RECORD",
             "PAGE_LAYOUT",
+            "NATIVE_PAGE",
           ],
           "type": "string",
         },
@@ -47,12 +50,15 @@ exports[`MCP navigation menu item tools (integration) should describe the naviga
     "description": "Create a navigation menu item. With scope='user' it becomes a personal favorite for the current user; with scope='workspace' it is shared with everyone (requires LAYOUTS permission).
 
 Type chooses the variant:
+- TAB: a sidebar tab next to Home, holding sections and items (name required, workspace scope, no parent). Only available when the customizable sidebar is enabled for the workspace.
+- SECTION: a titled group inside a tab or on Home (workspace scope). Only available when the customizable sidebar is enabled. Pass a name for a custom section, or a builtInSectionKey to add a built-in section such as Channels or Recent chats.
 - FOLDER: a group to nest other items into (name required).
 - LINK: an external URL pinned in the sidebar (name + link required).
 - OBJECT: pins an object's standard view (label auto-derived from the object's plural name; only pass 'name' if the user wants a custom label).
 - VIEW: pins a saved view (label auto-derived from the view's name; only pass 'name' for a custom label).
 - RECORD: pins a single record (label auto-derived from the record's identifier; only pass 'name' for a custom label).
 - PAGE_LAYOUT: pins a standalone page layout (name required — no auto-derivation). The referenced page layout must be of type STANDALONE_PAGE; dashboards and record/index page layouts are not reachable this way.
+- NATIVE_PAGE: pins a built-in page, Workflows or Agents (label auto-derived; only pass 'name' for a custom label).
 
 Note: creating a new custom object via create_object_metadata already auto-creates an OBJECT navigation menu item — do not double-create.",
     "inputSchema": {
@@ -63,9 +69,103 @@ Note: creating a new custom object via create_object_metadata already auto-creat
               "description": "Optional hex colour",
               "type": "string",
             },
-            "folderId": {
-              "description": "Parent folder id, if the item should live inside a folder.",
+            "icon": {
+              "description": "Icon identifier (e.g. "IconStar", "IconFolder")",
+              "type": "string",
+            },
+            "name": {
+              "description": "Label shown in the sidebar.",
+              "minLength": 1,
+              "type": "string",
+            },
+            "parentId": {
+              "description": "Parent id: a folder, a section or a tab the item should live inside. A tab takes no parent, a section only a tab, and a folder a tab or a section.",
               "format": "uuid",
+              "type": "string",
+            },
+            "position": {
+              "description": "Position among siblings; defaults to the end.",
+              "type": "number",
+            },
+            "scope": {
+              "description": "'user' creates a personal favorite, visible only to the current user. 'workspace' creates a shared navigation menu item visible to everyone (requires the LAYOUTS permission). Twenty has no separate Favorites concept — favorites are just navigation menu items with scope=user.",
+              "enum": [
+                "workspace",
+                "user",
+              ],
+              "type": "string",
+            },
+            "type": {
+              "const": "TAB",
+              "type": "string",
+            },
+          },
+          "required": [
+            "type",
+            "scope",
+            "name",
+          ],
+          "type": "object",
+        },
+        {
+          "properties": {
+            "builtInSectionKey": {
+              "description": "Adds a built-in section instead of a custom one: favorites (personal favorites), aiChatInbox (Inbox), aiChatFavorites (Favorite chats), aiChatChannels (Channels), aiChatRecents (Recent chats) or aiAgents (Agents).",
+              "enum": [
+                "favorites",
+                "aiChatInbox",
+                "aiChatFavorites",
+                "aiChatChannels",
+                "aiChatRecents",
+                "aiAgents",
+              ],
+              "type": "string",
+            },
+            "color": {
+              "description": "Optional hex colour",
+              "type": "string",
+            },
+            "icon": {
+              "description": "Icon identifier (e.g. "IconStar", "IconFolder")",
+              "type": "string",
+            },
+            "name": {
+              "description": "Label shown in the sidebar. Required for a custom section; omit it for a built-in section to keep its default label.",
+              "minLength": 1,
+              "type": "string",
+            },
+            "parentId": {
+              "description": "Parent id: a folder, a section or a tab the item should live inside. A tab takes no parent, a section only a tab, and a folder a tab or a section.",
+              "format": "uuid",
+              "type": "string",
+            },
+            "position": {
+              "description": "Position among siblings; defaults to the end.",
+              "type": "number",
+            },
+            "scope": {
+              "description": "'user' creates a personal favorite, visible only to the current user. 'workspace' creates a shared navigation menu item visible to everyone (requires the LAYOUTS permission). Twenty has no separate Favorites concept — favorites are just navigation menu items with scope=user.",
+              "enum": [
+                "workspace",
+                "user",
+              ],
+              "type": "string",
+            },
+            "type": {
+              "const": "SECTION",
+              "type": "string",
+            },
+          },
+          "required": [
+            "type",
+            "scope",
+          ],
+          "type": "object",
+        },
+        {
+          "properties": {
+            "color": {
+              "description": "Optional hex colour",
               "type": "string",
             },
             "icon": {
@@ -75,6 +175,11 @@ Note: creating a new custom object via create_object_metadata already auto-creat
             "name": {
               "description": "Label shown in the sidebar.",
               "minLength": 1,
+              "type": "string",
+            },
+            "parentId": {
+              "description": "Parent id: a folder, a section or a tab the item should live inside. A tab takes no parent, a section only a tab, and a folder a tab or a section.",
+              "format": "uuid",
               "type": "string",
             },
             "position": {
@@ -107,11 +212,6 @@ Note: creating a new custom object via create_object_metadata already auto-creat
               "description": "Optional hex colour",
               "type": "string",
             },
-            "folderId": {
-              "description": "Parent folder id, if the item should live inside a folder.",
-              "format": "uuid",
-              "type": "string",
-            },
             "icon": {
               "description": "Icon identifier (e.g. "IconStar", "IconFolder")",
               "type": "string",
@@ -124,6 +224,11 @@ Note: creating a new custom object via create_object_metadata already auto-creat
             "name": {
               "description": "Label shown in the sidebar.",
               "minLength": 1,
+              "type": "string",
+            },
+            "parentId": {
+              "description": "Parent id: a folder, a section or a tab the item should live inside. A tab takes no parent, a section only a tab, and a folder a tab or a section.",
+              "format": "uuid",
               "type": "string",
             },
             "position": {
@@ -157,11 +262,6 @@ Note: creating a new custom object via create_object_metadata already auto-creat
               "description": "Optional hex colour",
               "type": "string",
             },
-            "folderId": {
-              "description": "Parent folder id, if the item should live inside a folder.",
-              "format": "uuid",
-              "type": "string",
-            },
             "icon": {
               "description": "Icon identifier (e.g. "IconStar", "IconFolder")",
               "type": "string",
@@ -169,6 +269,11 @@ Note: creating a new custom object via create_object_metadata already auto-creat
             "name": {
               "description": "Optional custom label. If omitted, the sidebar shows the target's own name (object's plural label / view name / record identifier). Only pass this if the user explicitly wants a different label.",
               "minLength": 1,
+              "type": "string",
+            },
+            "parentId": {
+              "description": "Parent id: a folder, a section or a tab the item should live inside. A tab takes no parent, a section only a tab, and a folder a tab or a section.",
+              "format": "uuid",
               "type": "string",
             },
             "position": {
@@ -206,11 +311,6 @@ Note: creating a new custom object via create_object_metadata already auto-creat
               "description": "Optional hex colour",
               "type": "string",
             },
-            "folderId": {
-              "description": "Parent folder id, if the item should live inside a folder.",
-              "format": "uuid",
-              "type": "string",
-            },
             "icon": {
               "description": "Icon identifier (e.g. "IconStar", "IconFolder")",
               "type": "string",
@@ -218,6 +318,11 @@ Note: creating a new custom object via create_object_metadata already auto-creat
             "name": {
               "description": "Optional custom label. If omitted, the sidebar shows the target's own name (object's plural label / view name / record identifier). Only pass this if the user explicitly wants a different label.",
               "minLength": 1,
+              "type": "string",
+            },
+            "parentId": {
+              "description": "Parent id: a folder, a section or a tab the item should live inside. A tab takes no parent, a section only a tab, and a folder a tab or a section.",
+              "format": "uuid",
               "type": "string",
             },
             "position": {
@@ -255,11 +360,6 @@ Note: creating a new custom object via create_object_metadata already auto-creat
               "description": "Optional hex colour",
               "type": "string",
             },
-            "folderId": {
-              "description": "Parent folder id, if the item should live inside a folder.",
-              "format": "uuid",
-              "type": "string",
-            },
             "icon": {
               "description": "Icon identifier (e.g. "IconStar", "IconFolder")",
               "type": "string",
@@ -267,6 +367,11 @@ Note: creating a new custom object via create_object_metadata already auto-creat
             "name": {
               "description": "Optional custom label. If omitted, the sidebar shows the target's own name (object's plural label / view name / record identifier). Only pass this if the user explicitly wants a different label.",
               "minLength": 1,
+              "type": "string",
+            },
+            "parentId": {
+              "description": "Parent id: a folder, a section or a tab the item should live inside. A tab takes no parent, a section only a tab, and a folder a tab or a section.",
+              "format": "uuid",
               "type": "string",
             },
             "position": {
@@ -310,11 +415,6 @@ Note: creating a new custom object via create_object_metadata already auto-creat
               "description": "Optional hex colour",
               "type": "string",
             },
-            "folderId": {
-              "description": "Parent folder id, if the item should live inside a folder.",
-              "format": "uuid",
-              "type": "string",
-            },
             "icon": {
               "description": "Icon identifier (e.g. "IconStar", "IconFolder")",
               "type": "string",
@@ -326,6 +426,11 @@ Note: creating a new custom object via create_object_metadata already auto-creat
             },
             "pageLayoutId": {
               "description": "Id of the page layout to pin",
+              "type": "string",
+            },
+            "parentId": {
+              "description": "Parent id: a folder, a section or a tab the item should live inside. A tab takes no parent, a section only a tab, and a folder a tab or a section.",
+              "format": "uuid",
               "type": "string",
             },
             "position": {
@@ -353,24 +458,69 @@ Note: creating a new custom object via create_object_metadata already auto-creat
           ],
           "type": "object",
         },
+        {
+          "properties": {
+            "color": {
+              "description": "Optional hex colour",
+              "type": "string",
+            },
+            "icon": {
+              "description": "Icon identifier (e.g. "IconStar", "IconFolder")",
+              "type": "string",
+            },
+            "name": {
+              "description": "Optional custom label. If omitted, the sidebar shows the target's own name (object's plural label / view name / record identifier). Only pass this if the user explicitly wants a different label.",
+              "minLength": 1,
+              "type": "string",
+            },
+            "nativePageKey": {
+              "description": "Built-in page to pin: workflows or agents",
+              "enum": [
+                "workflows",
+                "agents",
+              ],
+              "type": "string",
+            },
+            "parentId": {
+              "description": "Parent id: a folder, a section or a tab the item should live inside. A tab takes no parent, a section only a tab, and a folder a tab or a section.",
+              "format": "uuid",
+              "type": "string",
+            },
+            "position": {
+              "description": "Position among siblings; defaults to the end.",
+              "type": "number",
+            },
+            "scope": {
+              "description": "'user' creates a personal favorite, visible only to the current user. 'workspace' creates a shared navigation menu item visible to everyone (requires the LAYOUTS permission). Twenty has no separate Favorites concept — favorites are just navigation menu items with scope=user.",
+              "enum": [
+                "workspace",
+                "user",
+              ],
+              "type": "string",
+            },
+            "type": {
+              "const": "NATIVE_PAGE",
+              "type": "string",
+            },
+          },
+          "required": [
+            "type",
+            "scope",
+            "nativePageKey",
+          ],
+          "type": "object",
+        },
       ],
     },
     "name": "create_navigation_menu_item",
   },
   {
-    "description": "Update a navigation menu item (rename, recolor, move between folders, reorder). Type and target ids are immutable — delete and recreate to convert one variant into another.",
+    "description": "Update a navigation menu item (rename, recolor, move between folders, sections and tabs, reorder). Type and target ids are immutable — delete and recreate to convert one variant into another.",
     "inputSchema": {
       "properties": {
         "color": {
           "description": "New hex colour",
           "type": "string",
-        },
-        "folderId": {
-          "description": "Move into a different folder. Pass null to move to the top level.",
-          "type": [
-            "string",
-            "null",
-          ],
         },
         "icon": {
           "description": "New icon identifier",
@@ -395,6 +545,13 @@ Note: creating a new custom object via create_object_metadata already auto-creat
           "description": "New page layout id (only meaningful for PAGE_LAYOUT items)",
           "type": "string",
         },
+        "parentId": {
+          "description": "Move into a different folder, section or tab. Pass null to move to the top level (Home).",
+          "type": [
+            "string",
+            "null",
+          ],
+        },
         "position": {
           "description": "New position among siblings",
           "type": "number",
@@ -408,7 +565,7 @@ Note: creating a new custom object via create_object_metadata already auto-creat
     "name": "update_navigation_menu_item",
   },
   {
-    "description": "Delete a navigation menu item. Deleting a folder also deletes everything inside it.",
+    "description": "Delete a navigation menu item. Deleting a tab, a section or a folder also deletes everything inside it.",
     "inputSchema": {
       "properties": {
         "id": {

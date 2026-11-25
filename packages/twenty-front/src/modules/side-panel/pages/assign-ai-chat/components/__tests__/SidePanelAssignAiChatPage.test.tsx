@@ -10,9 +10,10 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { SidePanelAssignAiChatPage } from '@/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage';
-import { assignAiChatThreadIdsComponentState } from '@/side-panel/pages/assign-ai-chat/states/assignAiChatThreadIdsComponentState';
+import { assignAiChatThreadIdsComponentState } from '@/side-panel/states/assignAiChatThreadIdsComponentState';
+import { shouldGoBackAfterAssignAiChatComponentState } from '@/side-panel/states/shouldGoBackAfterAssignAiChatComponentState';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
-import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
+import { setInboxThreadList } from '@/inbox/testing/setInboxThreadList';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -22,15 +23,20 @@ import { messages } from '~/locales/generated/en';
 i18n.load({ [SOURCE_LOCALE]: messages });
 i18n.activate(SOURCE_LOCALE);
 
-const assignAgentChatThreads = jest.fn();
+const assignAiChatThreads = jest.fn();
 const closeSidePanelMenu = jest.fn();
+const goBackFromSidePanel = jest.fn();
 
-jest.mock('@/ai/hooks/useAssignAgentChatThreads', () => ({
-  useAssignAgentChatThreads: () => ({ assignAgentChatThreads }),
+jest.mock('@/ai-chat/threads/hooks/useAssignAiChatThreads', () => ({
+  useAssignAiChatThreads: () => ({ assignAiChatThreads }),
 }));
 
 jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
   useSidePanelMenu: () => ({ closeSidePanelMenu }),
+}));
+
+jest.mock('@/side-panel/hooks/useSidePanelHistory', () => ({
+  useSidePanelHistory: () => ({ goBackFromSidePanel }),
 }));
 
 const PAGE_ID = 'assign-page';
@@ -48,7 +54,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 );
 
 const setThreads = (threads: { id: string; assigneeId: string | null }[]) => {
-  setAgentChatThreadList(
+  setInboxThreadList(
     jotaiStore,
     threads.map(
       ({ id, assigneeId }) =>
@@ -105,8 +111,29 @@ describe('SidePanelAssignAiChatPage', () => {
     await userEvent.click(screen.getByText('Phil Schiler'));
 
     expect(closeSidePanelMenu).toHaveBeenCalled();
-    expect(assignAgentChatThreads).toHaveBeenCalledWith({
+    expect(assignAiChatThreads).toHaveBeenCalledWith({
       threadIds: ['thread-1', 'thread-2'],
+      assigneeWorkspaceMemberId: 'phil',
+    });
+  });
+
+  it('goes back to the opening page instead of closing when asked to', async () => {
+    setThreads([{ id: 'thread-1', assigneeId: null }]);
+    jotaiStore.set(
+      shouldGoBackAfterAssignAiChatComponentState.atomFamily({
+        instanceId: PAGE_ID,
+      }),
+      true,
+    );
+
+    render(<SidePanelAssignAiChatPage />, { wrapper: Wrapper });
+
+    await userEvent.click(screen.getByText('Phil Schiler'));
+
+    expect(goBackFromSidePanel).toHaveBeenCalled();
+    expect(closeSidePanelMenu).not.toHaveBeenCalled();
+    expect(assignAiChatThreads).toHaveBeenCalledWith({
+      threadIds: ['thread-1'],
       assigneeWorkspaceMemberId: 'phil',
     });
   });
@@ -132,7 +159,7 @@ describe('SidePanelAssignAiChatPage', () => {
 
     await userEvent.click(screen.getByText('No assignee'));
 
-    expect(assignAgentChatThreads).toHaveBeenCalledWith({
+    expect(assignAiChatThreads).toHaveBeenCalledWith({
       threadIds: ['thread-1'],
       assigneeWorkspaceMemberId: null,
     });

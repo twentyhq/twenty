@@ -1,4 +1,4 @@
-import { type QueryRunner } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 import { DropMetadataStandardOverridesColumnFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-20/2-20-instance-command-fast-1783511477234-drop-metadata-standard-overrides-column';
 import { DROP_METADATA_STANDARD_OVERRIDES_COLUMN_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-20/drop-metadata-standard-overrides-column-upgrade-command-name.constant';
@@ -38,7 +38,11 @@ describe('DropMetadataStandardOverridesColumnFastInstanceCommand', () => {
   describe('up', () => {
     it('drops standardOverrides from both tables', async () => {
       const query = jest.fn().mockResolvedValue(undefined);
-      const queryRunner = { query } as unknown as QueryRunner;
+      const queryRunner = new DataSource({
+        type: 'postgres',
+      }).createQueryRunner();
+
+      queryRunner.query = query;
 
       await command.up(queryRunner);
 
@@ -54,7 +58,11 @@ describe('DropMetadataStandardOverridesColumnFastInstanceCommand', () => {
   describe('down', () => {
     it('recreates and backfills standardOverrides from overrides', async () => {
       const query = jest.fn().mockResolvedValue(undefined);
-      const queryRunner = { query } as unknown as QueryRunner;
+      const queryRunner = new DataSource({
+        type: 'postgres',
+      }).createQueryRunner();
+
+      queryRunner.query = query;
 
       await command.down(queryRunner);
 

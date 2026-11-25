@@ -1,9 +1,9 @@
-import { type I18n } from '@lingui/core';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
 import { translateStandardLabel } from 'src/engine/core-modules/i18n/utils/translate-standard-label.util';
+import { type MessageIdTranslator } from 'src/engine/metadata-modules/overrides/types/message-id-translator.type';
 import {
   readOverrideTranslation,
   resolveEffectiveEntityProperty,
@@ -29,7 +29,7 @@ const frozenResolveObjectOverride = (
   objectMetadata: AnyOverrides,
   labelKey: 'color' | 'labelPlural' | 'labelSingular' | 'description' | 'icon',
   locale: Locale,
-  i18nInstance: I18n,
+  i18nInstance: MessageIdTranslator,
   isStandardApp: boolean,
   applicationCatalog?: Record<string, string>,
 ): string => {
@@ -86,7 +86,7 @@ const frozenResolveFieldOverride = (
   fieldMetadata: AnyOverrides,
   labelKey: 'label' | 'description' | 'icon',
   locale: Locale,
-  i18nInstance: I18n,
+  i18nInstance: MessageIdTranslator,
   isStandardApp: boolean,
   applicationCatalog?: Record<string, string>,
 ): string => {
@@ -140,9 +140,9 @@ const frozenResolveFlat = (flatEntity: AnyOverrides): AnyOverrides => {
   };
 };
 
-const mockI18n = {
+const mockI18n: MessageIdTranslator = {
   _: (id: string) => `translated:${id}`,
-} as unknown as I18n;
+};
 
 const LOCALES: Locale[] = [undefined, SOURCE_LOCALE, 'fr-FR'];
 const BOOLS = [true, false];
@@ -332,7 +332,7 @@ const frozenResolveBespokeProperty = (
   property: string,
   metadataLabelContext: string,
   _isStandardApp: boolean,
-  i18nInstance: I18n,
+  i18nInstance: MessageIdTranslator,
   applicationCatalog?: Record<string, string>,
 ): string => {
   if (isDefined(overrides?.[property])) {

@@ -1,10 +1,10 @@
 import { SettingsAdminHealthAccountSyncCountersTable } from '@/settings/admin-panel/health-status/components/SettingsAdminHealthAccountSyncCountersTable';
 import { SettingsAdminIndicatorHealthContext } from '@/settings/admin-panel/health-status/contexts/SettingsAdminIndicatorHealthContext';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { AdminPanelHealthServiceStatus } from '~/generated-admin/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledErrorMessage = styled.div`
   color: ${themeCssVariables.color.red};
@@ -18,6 +18,7 @@ const StyledContainer = styled.div`
 `;
 
 export const SettingsAdminConnectedAccountHealthStatus = () => {
+  const { t } = useLingui();
   const { indicatorHealth } = useContext(SettingsAdminIndicatorHealthContext);
   const details = indicatorHealth.details;
   if (!details) {

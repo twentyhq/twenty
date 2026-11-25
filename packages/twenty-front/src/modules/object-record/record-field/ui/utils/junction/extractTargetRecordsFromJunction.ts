@@ -10,7 +10,7 @@ import {
 } from 'twenty-shared/utils';
 
 type ExtractTargetRecordsFromJunctionArgs = {
-  junctionRecords: ObjectRecord[] | undefined | null;
+  junctionRecords: (ObjectRecord | undefined)[] | undefined | null;
   targetFields: FieldMetadataItem[];
   objectMetadataItems: EnrichedObjectMetadataItem[];
   includeRecord?: boolean;

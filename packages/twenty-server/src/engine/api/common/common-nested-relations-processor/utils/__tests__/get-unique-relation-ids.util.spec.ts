@@ -7,8 +7,11 @@ const buildRecords = (
 ): ObjectRecord[] =>
   targetCompanyIds.map((targetCompanyId, index) => ({
     id: `record-${index}`,
+    createdAt: '2024-01-01T00:00:00.000Z',
+    updatedAt: '2024-01-01T00:00:00.000Z',
+    deletedAt: null,
     targetCompanyId,
-  })) as unknown as ObjectRecord[];
+  }));
 
 describe('getUniqueRelationIds', () => {
   it('should drop nullish join column values', () => {

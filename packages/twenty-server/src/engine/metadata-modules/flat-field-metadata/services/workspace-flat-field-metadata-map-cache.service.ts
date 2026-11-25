@@ -57,6 +57,18 @@ const FLAT_FIELD_METADATA_ROWS_REQUIREMENT = {
     columns: ['id', 'universalIdentifier'],
     groupBy: ['fieldMetadataId'],
   },
+  fieldMetadataOption: {
+    columns: ['id', 'universalIdentifier'],
+    groupBy: ['fieldMetadataId'],
+  },
+  rowLevelPermissionPredicate: {
+    columns: ['id', 'universalIdentifier'],
+    groupBy: [
+      'fieldMetadataId',
+      'relationFieldMetadataId',
+      'workspaceMemberFieldMetadataId',
+    ],
+  },
 } as const;
 
 @Injectable()
@@ -96,6 +108,8 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends MetadataFlatEntit
       view: views,
       searchFieldMetadata: searchFieldMetadatas,
       fieldPermission: fieldPermissions,
+      fieldMetadataOption: fieldMetadataOptions,
+      rowLevelPermissionPredicate: rowLevelPermissionPredicates,
     } = rows;
 
     const fieldMetadataIdToUniversalIdentifierMap =
@@ -144,6 +158,22 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends MetadataFlatEntit
           fieldPermissions:
             fieldPermissions.byFieldMetadataId.get(fieldMetadataEntity.id) ||
             [],
+          fieldMetadataOptions:
+            fieldMetadataOptions.byFieldMetadataId.get(
+              fieldMetadataEntity.id,
+            ) || [],
+          rowLevelPermissionPredicates:
+            rowLevelPermissionPredicates.byFieldMetadataId.get(
+              fieldMetadataEntity.id,
+            ) || [],
+          relationRowLevelPermissionPredicates:
+            rowLevelPermissionPredicates.byRelationFieldMetadataId.get(
+              fieldMetadataEntity.id,
+            ) || [],
+          workspaceMemberRowLevelPermissionPredicates:
+            rowLevelPermissionPredicates.byWorkspaceMemberFieldMetadataId.get(
+              fieldMetadataEntity.id,
+            ) || [],
         },
         fieldMetadataIdToUniversalIdentifierMap,
         objectMetadataIdToUniversalIdentifierMap,

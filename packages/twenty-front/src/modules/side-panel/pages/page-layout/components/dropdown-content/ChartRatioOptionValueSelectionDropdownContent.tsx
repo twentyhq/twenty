@@ -4,7 +4,6 @@ import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hoo
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
@@ -12,6 +11,7 @@ import { ChartSettingsDropdownSection } from '@/side-panel/pages/page-layout/com
 import { type ThemeColor } from 'twenty-ui/theme';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
+import { useLingui } from '@lingui/react/macro';
 
 type RatioOption = {
   value: string;
@@ -26,6 +26,7 @@ type ChartRatioOptionValueSelectionDropdownContentProps = {
 export const ChartRatioOptionValueSelectionDropdownContent = ({
   currentFieldMetadataId,
 }: ChartRatioOptionValueSelectionDropdownContentProps) => {
+  const { t } = useLingui();
   const [searchQuery, setSearchQuery] = useState('');
   const { objectMetadataItems } = useObjectMetadataItems();
   const { pageLayoutId } = usePageLayoutSidePanelTarget();

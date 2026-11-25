@@ -1,13 +1,11 @@
 import { NavigationMenuItemFolderContentDispatcherEffect } from '@/navigation-menu-item/edit/components/NavigationMenuItemFolderContentDispatcher';
 import { useNavigationMenuItemsByFolder } from '@/navigation-menu-item/display/folder/hooks/useNavigationMenuItemsByFolder';
 import { MainNavigationDrawerScrollableItems } from '@/navigation/components/MainNavigationDrawerScrollableItems';
-import { currentNavigationMenuItemFolderIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuItemFolderIdState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useCurrentNavigationMenuItemFolderId } from '@/navigation-menu-item/common/hooks/useCurrentNavigationMenuItemFolderId';
 
 export const MainNavigationDrawerNavigationContent = () => {
-  const currentNavigationMenuItemFolderId = useAtomStateValue(
-    currentNavigationMenuItemFolderIdState,
-  );
+  const [currentNavigationMenuItemFolderId] =
+    useCurrentNavigationMenuItemFolderId();
   const { navigationMenuItemsByFolder } = useNavigationMenuItemsByFolder();
 
   const openedNavigationMenuItemFolder = navigationMenuItemsByFolder.find(

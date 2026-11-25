@@ -14,14 +14,13 @@ describe('kv', () => {
   let fetchSpy: MockInstance<typeof fetch>;
 
   beforeEach(() => {
-    process.env.TWENTY_API_URL = 'https://api.test';
-    process.env.TWENTY_APP_ACCESS_TOKEN = 'app-token';
+    vi.stubEnv('TWENTY_API_URL', 'https://api.test');
+    vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', 'app-token');
     fetchSpy = vi.spyOn(globalThis, 'fetch');
   });
 
   afterEach(() => {
-    delete process.env.TWENTY_API_URL;
-    delete process.env.TWENTY_APP_ACCESS_TOKEN;
+    vi.unstubAllEnvs();
     fetchSpy.mockRestore();
   });
 
@@ -53,6 +52,21 @@ describe('kv', () => {
 
     expect(sentBody.query).toContain('appKeyValue(key: $key, scope: $scope)');
     expect(sentBody.variables).toEqual({ key: 'my-key', scope: 'WORKSPACE' });
+  });
+
+  it('calls the internal API url when the runtime provides one', async () => {
+    vi.stubEnv('TWENTY_INTERNAL_API_URL', 'http://twenty-server:3000');
+    fetchSpy.mockResolvedValue(
+      new Response(JSON.stringify({ data: { appKeyValue: null } }), {
+        status: 200,
+      }),
+    );
+
+    await kv.get('my-key');
+
+    const [url] = fetchSpy.mock.calls[0];
+
+    expect(url).toBe('http://twenty-server:3000/metadata');
   });
 
   it('returns null when the key is absent', async () => {

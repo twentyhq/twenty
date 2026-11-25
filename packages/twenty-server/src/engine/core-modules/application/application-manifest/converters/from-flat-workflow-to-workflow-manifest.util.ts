@@ -81,10 +81,9 @@ export const fromFlatWorkflowToWorkflowManifest = ({
 
   const stepManifests: WorkflowStepManifest[] = [];
 
-  for (const [index, action] of steps.entries()) {
+  for (const action of steps) {
     const stepConversion = fromWorkflowActionToWorkflowStepManifest({
       action,
-      index,
       references,
     });
 

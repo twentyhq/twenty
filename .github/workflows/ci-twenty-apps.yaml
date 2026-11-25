@@ -1,9 +1,7 @@
 name: CI Twenty Apps
 
 on:
-  push:
-    branches:
-      - main
+  workflow_call:
   pull_request:
   merge_group:
   workflow_dispatch:
@@ -18,7 +16,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ci-twenty-apps-${{ github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
@@ -104,10 +102,14 @@ jobs:
           app-path: ${{ matrix.app.path }}
           mode: ${{ matrix.server-source == 'local' && 'installation-and-integration-test' || 'integration-test-only' }}
 
+      - name: Dump server and worker logs on failure
+        if: failure() && matrix.server-source == 'local'
+        run: tail -n 150 /tmp/twenty-server.log /tmp/twenty-worker.log || true
+
   ci-twenty-apps-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-2-cores
     needs: [discover, ci, integration]
     steps:
       - name: Fail job if any needs failed

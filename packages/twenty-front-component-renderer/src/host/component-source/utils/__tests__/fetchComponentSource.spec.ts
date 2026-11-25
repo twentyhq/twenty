@@ -1,5 +1,7 @@
+/**
+ * @jest-environment node
+ */
 import { createHash, webcrypto } from 'node:crypto';
-import { TextEncoder as NodeTextEncoder } from 'node:util';
 
 import { fetchComponentSource } from '@/host/component-source/utils/fetchComponentSource';
 
@@ -36,37 +38,29 @@ const LEGACY_MD5_URL = buildFingerprintedUrl(
   createHash('md5').update(COMPONENT_SOURCE).digest('hex'),
 );
 
-const createFakeJsResponse = (body: string) => ({
-  ok: true,
-  status: 200,
-  statusText: 'OK',
-  headers: {
-    get: (name: string) =>
-      name === 'content-type' ? 'application/javascript' : null,
-  },
-  text: jest.fn(async () => body),
-  json: jest.fn(async () => undefined),
-});
+const createFakeJsResponse = (body: string) =>
+  new Response(body, {
+    headers: { 'content-type': 'application/javascript' },
+  });
 
-const createFakeJsonHandoffResponse = (presignedUrl: string) => ({
-  ok: true,
-  status: 200,
-  statusText: 'OK',
-  headers: {
-    get: (name: string) =>
-      name === 'content-type' ? 'application/json' : null,
-  },
-  text: jest.fn(async () => ''),
-  json: jest.fn(async () => ({ url: presignedUrl })),
-});
+const createFakeJsonHandoffResponse = (presignedUrl: string) =>
+  new Response(JSON.stringify({ url: presignedUrl }), {
+    headers: { 'content-type': 'application/json' },
+  });
 
-class FakeCache {
+class FakeCache implements Cache {
   private readonly store = new Map<string, string>();
 
-  match = jest.fn(async (key: string) => {
+  add = jest.fn();
+
+  addAll = jest.fn();
+
+  matchAll = jest.fn();
+
+  match = jest.fn(async (key: string): Promise<Response | undefined> => {
     const cached = this.store.get(key);
 
-    return isDefinedString(cached) ? { text: async () => cached } : undefined;
+    return isDefinedString(cached) ? new Response(cached) : undefined;
   });
 
   put = jest.fn(
@@ -75,12 +69,12 @@ class FakeCache {
     },
   );
 
-  delete = jest.fn(async (key: string | { url: string }) =>
+  delete = jest.fn(async (key: string | Request) =>
     this.store.delete(typeof key === 'string' ? key : key.url),
   );
 
   keys = jest.fn(async () =>
-    Array.from(this.store.keys()).map((key) => ({ url: key })),
+    Array.from(this.store.keys()).map((key) => new Request(key)),
   );
 }
 
@@ -88,52 +82,35 @@ const isDefinedString = (value: string | undefined): value is string =>
   value !== undefined;
 
 const setupCaches = (cache: FakeCache) => {
-  (globalThis as unknown as { caches: unknown }).caches = {
+  globalThis.caches = {
     open: jest.fn(async () => cache),
+    delete: jest.fn(),
+    has: jest.fn(),
+    keys: jest.fn(),
+    match: jest.fn(),
   };
 };
 
 describe('fetchComponentSource', () => {
   const originalFetch = globalThis.fetch;
-  const originalCaches = (globalThis as unknown as { caches?: unknown }).caches;
-  const originalResponse = (globalThis as unknown as { Response?: unknown })
-    .Response;
+  const originalCaches = globalThis.caches;
   const originalCrypto = Object.getOwnPropertyDescriptor(globalThis, 'crypto');
-  const originalTextEncoder = (
-    globalThis as unknown as { TextEncoder?: unknown }
-  ).TextEncoder;
 
   beforeEach(() => {
-    (globalThis as unknown as { Response: unknown }).Response = class {
-      body: string;
-      constructor(body: string) {
-        this.body = body;
-      }
-      async text() {
-        return this.body;
-      }
-    };
-
     Object.defineProperty(globalThis, 'crypto', {
       value: webcrypto,
       configurable: true,
     });
-    (globalThis as unknown as { TextEncoder: unknown }).TextEncoder =
-      NodeTextEncoder;
   });
 
   afterEach(() => {
     globalThis.fetch = originalFetch;
-    (globalThis as unknown as { caches?: unknown }).caches = originalCaches;
-    (globalThis as unknown as { Response?: unknown }).Response =
-      originalResponse;
+    globalThis.caches = originalCaches;
 
     if (originalCrypto !== undefined) {
       Object.defineProperty(globalThis, 'crypto', originalCrypto);
     }
 
-    (globalThis as unknown as { TextEncoder?: unknown }).TextEncoder =
-      originalTextEncoder;
     jest.clearAllMocks();
   });
 
@@ -146,7 +123,7 @@ describe('fetchComponentSource', () => {
       createFakeJsResponse(COMPONENT_SOURCE),
     );
 
-    globalThis.fetch = fetchMock as unknown as typeof fetch;
+    globalThis.fetch = fetchMock;
 
     const source = await fetchComponentSource({ url: FINGERPRINTED_URL });
 
@@ -178,7 +155,7 @@ describe('fetchComponentSource', () => {
       createFakeJsResponse(COMPONENT_SOURCE),
     );
 
-    globalThis.fetch = fetchMock as unknown as typeof fetch;
+    globalThis.fetch = fetchMock;
 
     const source = await fetchComponentSource({ url: FINGERPRINTED_URL });
 
@@ -186,9 +163,15 @@ describe('fetchComponentSource', () => {
     await new Promise((resolve) => setTimeout(resolve, 0));
 
     expect(source).toBe(COMPONENT_SOURCE);
-    expect(cache.delete).toHaveBeenCalledWith({ url: staleUrl });
-    expect(cache.delete).not.toHaveBeenCalledWith({ url: otherComponentUrl });
-    expect(cache.delete).not.toHaveBeenCalledWith({ url: FINGERPRINTED_URL });
+    expect(cache.delete).toHaveBeenCalledWith(
+      expect.objectContaining({ url: staleUrl }),
+    );
+    expect(cache.delete).not.toHaveBeenCalledWith(
+      expect.objectContaining({ url: otherComponentUrl }),
+    );
+    expect(cache.delete).not.toHaveBeenCalledWith(
+      expect.objectContaining({ url: FINGERPRINTED_URL }),
+    );
   });
 
   it('serves a verified cache hit without hitting the network', async () => {
@@ -202,7 +185,7 @@ describe('fetchComponentSource', () => {
 
     const fetchMock = jest.fn();
 
-    globalThis.fetch = fetchMock as unknown as typeof fetch;
+    globalThis.fetch = fetchMock;
 
     const source = await fetchComponentSource({ url: FINGERPRINTED_URL });
 
@@ -223,7 +206,7 @@ describe('fetchComponentSource', () => {
       createFakeJsResponse(COMPONENT_SOURCE),
     );
 
-    globalThis.fetch = fetchMock as unknown as typeof fetch;
+    globalThis.fetch = fetchMock;
 
     const source = await fetchComponentSource({ url: FINGERPRINTED_URL });
 
@@ -237,17 +220,18 @@ describe('fetchComponentSource', () => {
 
     setupCaches(cache);
 
-    cache.match.mockResolvedValueOnce({
-      text: async () => {
-        throw new Error('body unreadable');
-      },
-    });
+    const unreadableResponse = new Response();
+
+    jest
+      .spyOn(unreadableResponse, 'text')
+      .mockRejectedValue(new Error('body unreadable'));
+    cache.match.mockResolvedValueOnce(unreadableResponse);
 
     const fetchMock = jest.fn(async () =>
       createFakeJsResponse(COMPONENT_SOURCE),
     );
 
-    globalThis.fetch = fetchMock as unknown as typeof fetch;
+    globalThis.fetch = fetchMock;
 
     const source = await fetchComponentSource({ url: FINGERPRINTED_URL });
 
@@ -264,7 +248,7 @@ describe('fetchComponentSource', () => {
       createFakeJsResponse(COMPONENT_SOURCE),
     );
 
-    globalThis.fetch = fetchMock as unknown as typeof fetch;
+    globalThis.fetch = fetchMock;
 
     await expect(fetchComponentSource({ url: STALE_URL })).rejects.toThrow(
       CHECKSUM_MISMATCH_MESSAGE,
@@ -284,7 +268,7 @@ describe('fetchComponentSource', () => {
         createFakeJsResponse('globalThis.leak = "SOURCE_MARKER";'),
       );
 
-    globalThis.fetch = fetchMock as unknown as typeof fetch;
+    globalThis.fetch = fetchMock;
 
     const error = await fetchComponentSource({
       url: FINGERPRINTED_URL,
@@ -333,18 +317,18 @@ describe('fetchComponentSource', () => {
       createFakeJsResponse(SHARED_DEPENDENCIES_SOURCE),
     );
 
-    globalThis.fetch = fetchMock as unknown as typeof fetch;
+    globalThis.fetch = fetchMock;
 
     await fetchComponentSource({ url: FINGERPRINTED_SHARED_DEPENDENCIES_URL });
 
     await new Promise((resolve) => setTimeout(resolve, 0));
 
-    expect(cache.delete).toHaveBeenCalledWith({
-      url: staleSharedDependenciesUrl,
-    });
-    expect(cache.delete).not.toHaveBeenCalledWith({
-      url: otherApplicationSharedDependenciesUrl,
-    });
+    expect(cache.delete).toHaveBeenCalledWith(
+      expect.objectContaining({ url: staleSharedDependenciesUrl }),
+    );
+    expect(cache.delete).not.toHaveBeenCalledWith(
+      expect.objectContaining({ url: otherApplicationSharedDependenciesUrl }),
+    );
   });
 
   it('never touches the cache for a non-fingerprinted URL', async () => {
@@ -356,7 +340,7 @@ describe('fetchComponentSource', () => {
       createFakeJsResponse('bare url source'),
     );
 
-    globalThis.fetch = fetchMock as unknown as typeof fetch;
+    globalThis.fetch = fetchMock;
 
     const source = await fetchComponentSource({ url: BARE_URL });
 
@@ -374,7 +358,7 @@ describe('fetchComponentSource', () => {
       createFakeJsResponse(COMPONENT_SOURCE),
     );
 
-    globalThis.fetch = fetchMock as unknown as typeof fetch;
+    globalThis.fetch = fetchMock;
 
     const source = await fetchComponentSource({ url: LEGACY_MD5_URL });
 
@@ -384,13 +368,17 @@ describe('fetchComponentSource', () => {
   });
 
   it('falls back to the network when CacheStorage is unavailable', async () => {
-    (globalThis as unknown as { caches?: unknown }).caches = undefined;
+    Object.defineProperty(globalThis, 'caches', {
+      value: undefined,
+      configurable: true,
+      writable: true,
+    });
 
     const fetchMock = jest.fn(async () =>
       createFakeJsResponse(COMPONENT_SOURCE),
     );
 
-    globalThis.fetch = fetchMock as unknown as typeof fetch;
+    globalThis.fetch = fetchMock;
 
     const source = await fetchComponentSource({ url: FINGERPRINTED_URL });
 
@@ -399,13 +387,17 @@ describe('fetchComponentSource', () => {
   });
 
   it('rejects a mismatched network response when CacheStorage is unavailable', async () => {
-    (globalThis as unknown as { caches?: unknown }).caches = undefined;
+    Object.defineProperty(globalThis, 'caches', {
+      value: undefined,
+      configurable: true,
+      writable: true,
+    });
 
     const fetchMock = jest.fn(async () =>
       createFakeJsResponse(COMPONENT_SOURCE),
     );
 
-    globalThis.fetch = fetchMock as unknown as typeof fetch;
+    globalThis.fetch = fetchMock;
 
     await expect(fetchComponentSource({ url: STALE_URL })).rejects.toThrow(
       CHECKSUM_MISMATCH_MESSAGE,
@@ -431,7 +423,7 @@ describe('fetchComponentSource', () => {
       createFakeJsResponse(COMPONENT_SOURCE),
     );
 
-    globalThis.fetch = fetchMock as unknown as typeof fetch;
+    globalThis.fetch = fetchMock;
 
     const source = await fetchComponentSource({ url: FINGERPRINTED_URL });
 

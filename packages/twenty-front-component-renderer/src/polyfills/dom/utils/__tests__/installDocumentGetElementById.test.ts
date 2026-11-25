@@ -5,7 +5,7 @@ import { patchRemoteElementAttributes } from '@/remote/elements/utils/patchRemot
 import { installDocumentGetElementById } from '../installDocumentGetElementById';
 
 type FakeNode = {
-  childNodes: FakeNode[];
+  childNodes: (FakeNode | HTMLElement)[];
   getAttribute?: (attributeName: string) => string | null;
 };
 
@@ -74,12 +74,10 @@ describe('installDocumentGetElementById', () => {
     patchRemoteElementAttributes();
 
     const documentTarget = createDocumentTarget();
-    const remoteElement = document.createElement(
-      'html-div',
-    ) as unknown as HTMLElement;
+    const remoteElement: HTMLElement = document.createElement('html-div');
 
     remoteElement.id = 'set-by-react';
-    documentTarget.childNodes.push(remoteElement as unknown as FakeNode);
+    documentTarget.childNodes.push(remoteElement);
 
     expect(documentTarget.getElementById('set-by-react')).toBe(remoteElement);
   });

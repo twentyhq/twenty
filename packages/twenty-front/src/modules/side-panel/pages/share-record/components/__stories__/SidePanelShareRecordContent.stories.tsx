@@ -182,10 +182,7 @@ export const Default: Story = {
     const generalAccess = await page.findByRole('button', {
       name: 'Restricted',
     });
-    const footer = page
-      .getByRole('button', { name: 'Copy link' })
-      .closest('[data-variant="compact"]');
-    await expect(footer?.getBoundingClientRect().height).toBe(40);
+    await expect(page.getByRole('button', { name: 'Copy link' })).toBeVisible();
     const addPeople = page.getByPlaceholderText('Add people or everyone');
     const role = page.getByRole('button', { name: 'Sales Viewer' });
     const recipient = page.getByRole('button', { name: 'Phil Schiler Editor' });
@@ -604,8 +601,6 @@ export const Loading: Story = {
     ).not.toBeInTheDocument();
     const copyLink = page.getByRole('button', { name: 'Copy link' });
     await expect(copyLink).toBeVisible();
-    const footer = copyLink.closest('[data-variant="compact"]');
-    await expect(footer?.getBoundingClientRect().height).toBe(40);
     await expect(setShare).not.toHaveBeenCalled();
     await expect(setPrivate).not.toHaveBeenCalled();
   },

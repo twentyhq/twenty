@@ -1,4 +1,3 @@
-import { type ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { createLearnToolsTool } from 'src/engine/core-modules/tool-provider/tools/learn-tools.tool';
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
 
@@ -11,7 +10,8 @@ describe('createLearnToolsTool', () => {
       suggestSimilarToolNames: jest
         .fn()
         .mockResolvedValue({ group_by_person: ['group_by_people'] }),
-    } as unknown as ToolRegistryService;
+      spillToolOutputIfTooLarge: jest.fn(),
+    };
 
     const learnTools = createLearnToolsTool(toolRegistry, context);
 
@@ -38,7 +38,8 @@ describe('createLearnToolsTool', () => {
           { name: 'group_by_people', description: 'Group people' },
         ]),
       suggestSimilarToolNames,
-    } as unknown as ToolRegistryService;
+      spillToolOutputIfTooLarge: jest.fn(),
+    };
 
     const learnTools = createLearnToolsTool(toolRegistry, context);
 
@@ -62,7 +63,8 @@ describe('createLearnToolsTool', () => {
           { name: 'group_by_people' },
         ]),
       suggestSimilarToolNames: jest.fn(),
-    } as unknown as ToolRegistryService;
+      spillToolOutputIfTooLarge: jest.fn(),
+    };
 
     const learnTools = createLearnToolsTool(toolRegistry, context);
 
@@ -76,15 +78,17 @@ describe('createLearnToolsTool', () => {
     );
   });
 
-  it('does not report disallowed tools as not found or suggest alternatives', async () => {
-    const suggestSimilarToolNames = jest.fn();
+  it('reports disallowed names as not found and scopes suggestions to allowed tools', async () => {
     const toolRegistry = {
       getToolInfo: jest.fn().mockResolvedValue([]),
-      suggestSimilarToolNames,
-    } as unknown as ToolRegistryService;
+      suggestSimilarToolNames: jest.fn().mockResolvedValue({}),
+      spillToolOutputIfTooLarge: jest.fn(),
+    };
+    const isToolAllowed = (toolName: string) =>
+      !toolName.startsWith('code_interpreter');
 
     const learnTools = createLearnToolsTool(toolRegistry, context, {
-      isToolAllowed: (toolName) => toolName !== 'code_interpreter',
+      isToolAllowed,
     });
 
     const result = await learnTools.execute({
@@ -92,24 +96,72 @@ describe('createLearnToolsTool', () => {
       aspects: ['description'],
     });
 
+    expect(toolRegistry.getToolInfo).toHaveBeenCalledTimes(1);
     expect(toolRegistry.getToolInfo).toHaveBeenCalledWith([], context, [
       'description',
     ]);
-    expect(result.notFound).toEqual([]);
+    expect(toolRegistry.suggestSimilarToolNames).toHaveBeenCalledTimes(1);
+    expect(toolRegistry.suggestSimilarToolNames).toHaveBeenCalledWith(
+      ['code_interpreter'],
+      context,
+      isToolAllowed,
+    );
+    expect(result.notFound).toEqual(['code_interpreter']);
     expect(result.suggestions).toBeUndefined();
-    expect(suggestSimilarToolNames).not.toHaveBeenCalled();
-    expect(result.message).toBe('No matching tools found.');
+    expect(result.message).toBe('Could not find: code_interpreter.');
+  });
+
+  it('reports a misspelled name outside the allowed set with its suggestions', async () => {
+    const toolRegistry = {
+      getToolInfo: jest.fn().mockResolvedValue([{ name: 'create_one_note' }]),
+      suggestSimilarToolNames: jest.fn().mockResolvedValue({
+        create_one_noteTarget: ['create_one_note_target'],
+      }),
+      spillToolOutputIfTooLarge: jest.fn(),
+    };
+
+    const allowed = new Set(['create_one_note', 'create_one_note_target']);
+    const isToolAllowed = (toolName: string) => allowed.has(toolName);
+    const learnTools = createLearnToolsTool(toolRegistry, context, {
+      isToolAllowed,
+    });
+
+    const result = await learnTools.execute({
+      toolNames: ['create_one_note', 'create_one_noteTarget'],
+      aspects: ['description'],
+    });
+
+    expect(toolRegistry.getToolInfo).toHaveBeenCalledTimes(1);
+    expect(toolRegistry.getToolInfo).toHaveBeenCalledWith(
+      ['create_one_note'],
+      context,
+      ['description'],
+    );
+    expect(toolRegistry.suggestSimilarToolNames).toHaveBeenCalledTimes(1);
+    expect(toolRegistry.suggestSimilarToolNames).toHaveBeenCalledWith(
+      ['create_one_noteTarget'],
+      context,
+      isToolAllowed,
+    );
+    expect(result.notFound).toEqual(['create_one_noteTarget']);
+    expect(result.suggestions).toEqual({
+      create_one_noteTarget: ['create_one_note_target'],
+    });
+    expect(result.message).toContain(
+      'create_one_noteTarget (did you mean: create_one_note_target?)',
+    );
   });
 
   it('only learns tools the predicate allows', async () => {
-    const suggestSimilarToolNames = jest.fn();
     const toolRegistry = {
       getToolInfo: jest.fn().mockResolvedValue([{ name: 'find_many_people' }]),
-      suggestSimilarToolNames,
-    } as unknown as ToolRegistryService;
+      suggestSimilarToolNames: jest.fn().mockResolvedValue({}),
+      spillToolOutputIfTooLarge: jest.fn(),
+    };
+    const isToolAllowed = (toolName: string) => toolName === 'find_many_people';
 
     const learnTools = createLearnToolsTool(toolRegistry, context, {
-      isToolAllowed: (toolName) => toolName === 'find_many_people',
+      isToolAllowed,
     });
 
     const result = await learnTools.execute({
@@ -117,13 +169,21 @@ describe('createLearnToolsTool', () => {
       aspects: ['description'],
     });
 
+    expect(toolRegistry.getToolInfo).toHaveBeenCalledTimes(1);
     expect(toolRegistry.getToolInfo).toHaveBeenCalledWith(
       ['find_many_people'],
       context,
       ['description'],
     );
-    expect(result.notFound).toEqual([]);
-    expect(suggestSimilarToolNames).not.toHaveBeenCalled();
+    expect(toolRegistry.suggestSimilarToolNames).toHaveBeenCalledTimes(1);
+    expect(toolRegistry.suggestSimilarToolNames).toHaveBeenCalledWith(
+      ['create_one_workflow'],
+      context,
+      isToolAllowed,
+    );
+    expect(result.tools).toEqual([{ name: 'find_many_people' }]);
+    expect(result.notFound).toEqual(['create_one_workflow']);
+    expect(result.suggestions).toBeUndefined();
   });
 
   it('does not consult the spill service when spillLargeOutput is not set', async () => {
@@ -136,7 +196,7 @@ describe('createLearnToolsTool', () => {
         ]),
       suggestSimilarToolNames: jest.fn(),
       spillToolOutputIfTooLarge,
-    } as unknown as ToolRegistryService;
+    };
 
     const learnTools = createLearnToolsTool(toolRegistry, context);
 
@@ -160,7 +220,7 @@ describe('createLearnToolsTool', () => {
         ]),
       suggestSimilarToolNames: jest.fn(),
       spillToolOutputIfTooLarge,
-    } as unknown as ToolRegistryService;
+    };
 
     const learnTools = createLearnToolsTool(toolRegistry, context, {
       spillLargeOutput: true,
@@ -216,7 +276,7 @@ describe('createLearnToolsTool', () => {
         .fn()
         .mockResolvedValue({ group_by_person: ['group_by_people'] }),
       spillToolOutputIfTooLarge,
-    } as unknown as ToolRegistryService;
+    };
 
     const learnTools = createLearnToolsTool(toolRegistry, context, {
       spillLargeOutput: true,
@@ -254,7 +314,7 @@ describe('createLearnToolsTool', () => {
         ]),
       suggestSimilarToolNames: jest.fn(),
       spillToolOutputIfTooLarge,
-    } as unknown as ToolRegistryService;
+    };
 
     const learnTools = createLearnToolsTool(toolRegistry, context, {
       spillLargeOutput: true,

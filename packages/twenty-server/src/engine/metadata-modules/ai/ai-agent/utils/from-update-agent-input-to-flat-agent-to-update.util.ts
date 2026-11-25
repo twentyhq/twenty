@@ -6,6 +6,7 @@ import {
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
+import { isPrivatableEntityVisibleToCaller } from 'src/engine/permissions/metadata-permissions/utils/is-privatable-entity-visible-to-caller.util';
 import {
   AiException,
   AiExceptionCode,
@@ -79,6 +80,7 @@ const computeAgentFlatRoleTargetToUpdate = ({
       id: v4(),
       roleId,
       roleUniversalIdentifier: flatRole.universalIdentifier,
+      isSystemSideEffect: false,
       userWorkspaceId: null,
       agentId: flatAgent.id,
       agentUniversalIdentifier: flatAgent.universalIdentifier,
@@ -123,6 +125,7 @@ export type FromUpdateAgentInputToFlatAgentToUpdateArgs = {
   flatRoleTargetByAgentIdMaps: FlatRoleTargetByAgentIdMaps;
   callerApplicationUniversalIdentifier: string;
   workspaceCustomApplicationUniversalIdentifier: string;
+  userWorkspaceId: string | undefined;
 } & Pick<AllFlatEntityMaps, 'flatRoleMaps'>;
 
 export const fromUpdateAgentInputToFlatAgentToUpdate = ({
@@ -132,6 +135,7 @@ export const fromUpdateAgentInputToFlatAgentToUpdate = ({
   flatRoleMaps,
   callerApplicationUniversalIdentifier,
   workspaceCustomApplicationUniversalIdentifier,
+  userWorkspaceId,
 }: FromUpdateAgentInputToFlatAgentToUpdateArgs): {
   flatAgentToUpdate: FlatAgent;
 } & FlatRoleTargetToUpdateCreateDelete => {
@@ -146,7 +150,10 @@ export const fromUpdateAgentInputToFlatAgentToUpdate = ({
     flatEntityMaps: flatAgentMaps,
   });
 
-  if (!isDefined(existingFlatAgent)) {
+  if (
+    !isDefined(existingFlatAgent) ||
+    !isPrivatableEntityVisibleToCaller({ privatableEntity: existingFlatAgent })
+  ) {
     throw new AiException('Agent not found', AiExceptionCode.AGENT_NOT_FOUND, {
       userFriendlyMessage: msg`The agent you are looking for could not be found. It may have been deleted or you may not have access to it.`,
     });
@@ -201,6 +208,8 @@ export const fromUpdateAgentInputToFlatAgentToUpdate = ({
       workspaceCustomApplicationUniversalIdentifier,
     });
 
+  const { isPrivate } = rawUpdateAgentInput;
+
   const flatAgentToUpdate: FlatAgent = {
     ...mergeUpdateInExistingRecord({
       existing: existingFlatAgent,
@@ -208,6 +217,13 @@ export const fromUpdateAgentInputToFlatAgentToUpdate = ({
       update: updatedEditableProperties,
     }),
     overrides,
+    ...(isDefined(isPrivate) && isPrivate !== existingFlatAgent.isPrivate
+      ? {
+          isPrivate,
+          createdByUserWorkspaceId:
+            userWorkspaceId ?? existingFlatAgent.createdByUserWorkspaceId,
+        }
+      : {}),
   };
 
   const {

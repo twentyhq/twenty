@@ -1,5 +1,4 @@
 import { beforeEach, expect, it, vi } from 'vitest';
-import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { importCallRecordingArtifacts } from 'src/logic-functions/flows/utils/importCallRecordingArtifacts';
 
 const { claim, release, hydrate, sync, ownedUpload } = vi.hoisted(() => ({
@@ -36,7 +35,7 @@ vi.mock('src/logic-functions/recall-api/utils/getOwnedDesktopUpload', () => ({
   getOwnedDesktopUpload: ownedUpload,
 }));
 const query = vi.fn();
-const client = { query } as unknown as CoreApiClient;
+const client = { query, mutation: vi.fn() };
 const request = {
   callRecordingId: 'recording-1',
   requestedAt: '2026-09-08T10:00:00.000Z',

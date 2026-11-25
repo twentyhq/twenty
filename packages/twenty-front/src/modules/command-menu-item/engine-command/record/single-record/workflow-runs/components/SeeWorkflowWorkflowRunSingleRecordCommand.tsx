@@ -1,7 +1,7 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useLazyFindOneRecord } from '@/object-record/hooks/useLazyFindOneRecord';
-import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
+import { AppPath, StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
@@ -11,7 +11,7 @@ export const SeeWorkflowWorkflowRunSingleRecordCommand = () => {
   const navigateApp = useNavigateApp();
 
   const { findOneRecord: findWorkflowRun } = useLazyFindOneRecord({
-    objectNameSingular: CoreObjectNameSingular.WorkflowRun,
+    objectNameSingular: StandardObjectNameSingular.WorkflowRun,
     recordGqlFields: { id: true, coreWorkflowId: true },
   });
 

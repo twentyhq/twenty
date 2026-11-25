@@ -1,4 +1,4 @@
-# Microsoft Teams
+# Teams
 
 **Your Microsoft Teams meeting transcripts and AI summaries, right inside your CRM.**
 
@@ -14,7 +14,7 @@
 
 ## 📌 Getting started
 
-1. Install **Microsoft Teams** from **Settings → Applications**.
+1. Install **Teams** from **Settings → Applications**.
 2. Have your Microsoft 365 admin enable **Microsoft Graph access** under
    **Teams admin center → Meetings → Meeting settings → Transcript API access**.
    Enable **Include speaker attribution** there to import speaker names too.

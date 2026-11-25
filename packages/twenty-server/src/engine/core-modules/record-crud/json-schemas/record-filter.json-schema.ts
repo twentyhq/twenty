@@ -1,5 +1,4 @@
 import { type JSONSchema7 } from 'json-schema';
-import { type RestrictedFieldsPermissions } from 'twenty-shared/types';
 import {
   isDefined,
   shouldExcludeFieldFromAgentToolSchema,
@@ -37,12 +36,12 @@ const LOGICAL_FILTER_PROPERTIES: Record<string, JSONSchema7> = {
 
 export const generateRecordFilterJsonSchema = ({
   objectMetadata,
-  restrictedFields,
+  unreadableFieldMetadataIds,
   definitions,
   additionalExcludedFieldNames = [],
 }: {
   objectMetadata: Pick<ObjectMetadataForToolSchema, 'fields'>;
-  restrictedFields?: RestrictedFieldsPermissions;
+  unreadableFieldMetadataIds?: ReadonlySet<string>;
   definitions: JsonSchemaDefinitions;
   additionalExcludedFieldNames?: string[];
 }): { properties: Record<string, JSONSchema7>; reference: JSONSchema7 } => {
@@ -55,7 +54,7 @@ export const generateRecordFilterJsonSchema = ({
         isSystem: field.isSystem,
         additionalExcludedFieldNames,
       }) ||
-      restrictedFields?.[field.id]?.canRead === false
+      unreadableFieldMetadataIds?.has(field.id)
     ) {
       continue;
     }

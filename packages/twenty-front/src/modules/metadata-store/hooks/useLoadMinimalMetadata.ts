@@ -66,6 +66,24 @@ export const useLoadMinimalMetadata = () => {
       }
     }
 
+    // Cached before the fragment selected universalIdentifier, with a matching hash
+    for (const entityKey of ['views', 'navigationMenuItems'] as const) {
+      const cachedEntities = store.get(
+        metadataStoreState.atomFamily(entityKey),
+      ).current;
+
+      if (
+        !staleEntityKeys.includes(entityKey) &&
+        cachedEntities.some(
+          (entity) =>
+            !('universalIdentifier' in entity) ||
+            !isDefined(entity.universalIdentifier),
+        )
+      ) {
+        staleEntityKeys.push(entityKey);
+      }
+    }
+
     const objectsEntry = store.get(
       metadataStoreState.atomFamily('objectMetadataItems'),
     );

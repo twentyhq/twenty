@@ -9,7 +9,6 @@ import {
   RecordShareException,
   RecordShareExceptionCode,
 } from 'src/engine/permissions/record-share/record-share.exception';
-import { type ObjectSharing } from 'src/engine/permissions/record-share/utils/resolve-object-sharing.util';
 
 export type CreatedRecordSharing = {
   shareWith: ShareWithInput[];
@@ -18,13 +17,15 @@ export type CreatedRecordSharing = {
 
 // shareWith also reaches records created through nested relations, whose objects may not be shareable
 export const resolveCreatedRecordSharingOrThrow = ({
-  objectSharing: { isShareable, isPrivateByDefault },
+  isRecordSharingEnabled,
+  isPrivateByDefault,
   shareWith,
 }: {
-  objectSharing: Pick<ObjectSharing, 'isShareable' | 'isPrivateByDefault'>;
+  isRecordSharingEnabled: boolean;
+  isPrivateByDefault: boolean;
   shareWith?: ShareWithInput[] | null;
 }): CreatedRecordSharing | null => {
-  if (!isShareable) {
+  if (!isRecordSharingEnabled) {
     return isPrivateByDefault ? { shareWith: [], isPrivate: true } : null;
   }
 

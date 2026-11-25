@@ -81,7 +81,6 @@ describe('useCreateStep', () => {
       parentStepId: 'parent-step-id',
       nextStepId: undefined,
       parentStepConnectionOptions: undefined,
-      position: undefined,
     });
   });
 });

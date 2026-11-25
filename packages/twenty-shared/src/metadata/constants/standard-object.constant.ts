@@ -33,11 +33,11 @@ export const STANDARD_OBJECTS = {
       dashboardIdIndex: {
         universalIdentifier: 'c10eba2d-ff1a-4eab-9285-50481c12a003',
       },
-      workflowIdIndex: {
-        universalIdentifier: 'fadeab4b-79ee-4173-af79-72c51fbad888',
-      },
       agentChatThreadIdIndex: {
         universalIdentifier: '69857371-6ff9-48fa-a9de-db4f71593431',
+      },
+      messageIdIndex: {
+        universalIdentifier: '83c77988-2dc4-4575-bac5-f0f50c05568e',
       },
     },
     views: {
@@ -56,7 +56,6 @@ export const STANDARD_OBJECTS = {
           'targetTask',
           'targetNote',
           'targetDashboard',
-          'targetWorkflow',
         ],
       }),
       attachmentRecordPageFields: buildStandardObjectRecordPageFieldsView({
@@ -108,6 +107,9 @@ export const STANDARD_OBJECTS = {
       },
       eventExternalIdIndex: {
         universalIdentifier: 'b14d63d0-c1ab-470f-927d-9c0c05277caa',
+      },
+      accountOwnerIdIndex: {
+        universalIdentifier: '740776d1-fe14-41b9-80b9-11c610765f0c',
       },
     },
     views: {
@@ -542,6 +544,9 @@ export const STANDARD_OBJECTS = {
       },
       messageChannelIdMessageIdUniqueIndex: {
         universalIdentifier: '1b86ece8-7ce3-4df3-8771-fd4b5d45b2f2',
+      },
+      accountOwnerIdIndex: {
+        universalIdentifier: '0797b417-8f87-4df1-b838-d85fbb663110',
       },
     },
     views: {
@@ -1041,6 +1046,9 @@ export const STANDARD_OBJECTS = {
       groupHashUniqueIndex: {
         universalIdentifier: 'dcb0d254-43ae-442e-9223-8ac052eddb28',
       },
+      objectMetadataIdIndex: {
+        universalIdentifier: '60e48c2a-a3db-4f11-b25b-49c7e8a385bc',
+      },
     },
     views: {},
   },
@@ -1263,12 +1271,6 @@ export const STANDARD_OBJECTS = {
       taskIdIndex: {
         universalIdentifier: '609cf622-86ef-48d1-812b-e1cab610a46c',
       },
-      workflowIdIndex: {
-        universalIdentifier: 'd6059ec2-92b0-4cfc-9fd8-78050f03108f',
-      },
-      workflowVersionIdIndex: {
-        universalIdentifier: 'd94329b3-5dc8-4141-ae28-31afe28f7135',
-      },
       workflowRunIdIndex: {
         universalIdentifier: '1a2bd046-7c23-4e0a-9f8a-c3ca3a16d3b9',
       },
@@ -1299,76 +1301,18 @@ export const STANDARD_OBJECTS = {
           'targetOpportunity',
           'targetTask',
           'targetNote',
-          'targetWorkflow',
-          'targetWorkflowVersion',
           'targetWorkflowRun',
           'targetDashboard',
         ],
       }),
     },
   },
-  workflow: {
-    universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflow,
-    fields: STANDARD_OBJECT_FIELDS.workflow,
-    indexes: {
-      searchVectorGinIndex: {
-        universalIdentifier: 'c7e64c55-eb0c-4b93-b076-5cfcf2e2e042',
-      },
-    },
-    views: {
-      allWorkflows: buildStandardObjectIndexView({
-        objectUniversalIdentifier:
-          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflow,
-        fields: STANDARD_OBJECT_FIELDS.workflow,
-        viewFieldNames: [
-          'name',
-          'statuses',
-          'updatedAt',
-          'createdBy',
-          'versions',
-          'runs',
-        ],
-      }),
-    },
-  },
-  workflowAutomatedTrigger: {
-    universalIdentifier:
-      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowAutomatedTrigger,
-    fields: STANDARD_OBJECT_FIELDS.workflowAutomatedTrigger,
-    indexes: {
-      workflowIdIndex: {
-        universalIdentifier: '7331ff89-a3f9-4ac0-9fa9-0de5663ae7b2',
-      },
-    },
-    views: {
-      allWorkflowAutomatedTriggers: buildStandardObjectIndexView({
-        objectUniversalIdentifier:
-          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowAutomatedTrigger,
-        fields: STANDARD_OBJECT_FIELDS.workflowAutomatedTrigger,
-        viewFieldNames: ['type', 'workflow', 'createdAt'],
-      }),
-      workflowAutomatedTriggerRecordPageFields:
-        buildStandardObjectRecordPageFieldsView({
-          objectUniversalIdentifier:
-            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowAutomatedTrigger,
-          fields: STANDARD_OBJECT_FIELDS.workflowAutomatedTrigger,
-          viewFieldNames: ['type', 'workflow', 'createdAt', 'createdBy'],
-          viewFieldGroupNames: {
-            general: 'General',
-            system: 'System',
-          },
-        }),
-    },
-  },
   workflowRun: {
     universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowRun,
     fields: STANDARD_OBJECT_FIELDS.workflowRun,
     indexes: {
-      workflowVersionIdIndex: {
-        universalIdentifier: '8183c8d2-9114-4b6e-8c5d-12a3b14a5a14',
-      },
-      workflowIdIndex: {
-        universalIdentifier: '9294d9e3-0225-4c7f-9d6e-23b4c25b6b25',
+      coreWorkflowIdCreatedAtIndex: {
+        universalIdentifier: '5f16fa40-7dd4-4a30-8331-9ad4a106f6be',
       },
       searchVectorGinIndex: {
         universalIdentifier: 'e0ac5ad2-d0c8-4f72-b710-8e53b9dc18d9',
@@ -1379,7 +1323,7 @@ export const STANDARD_OBJECTS = {
         objectUniversalIdentifier:
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowRun,
         fields: STANDARD_OBJECT_FIELDS.workflowRun,
-        viewFieldNames: ['name', 'workflow', 'status'],
+        viewFieldNames: ['name', 'coreWorkflowId', 'status'],
       }),
       workflowRunRecordPageFields: buildStandardObjectRecordPageFieldsView({
         objectUniversalIdentifier:
@@ -1387,8 +1331,7 @@ export const STANDARD_OBJECTS = {
         fields: STANDARD_OBJECT_FIELDS.workflowRun,
         viewFieldNames: [
           'status',
-          'workflow',
-          'workflowVersion',
+          'coreWorkflowId',
           'startedAt',
           'endedAt',
           'createdAt',
@@ -1397,47 +1340,6 @@ export const STANDARD_OBJECTS = {
           'state',
           'updatedAt',
           'updatedBy',
-          'timelineActivities',
-        ],
-        viewFieldGroupNames: {
-          general: 'General',
-          system: 'System',
-        },
-      }),
-    },
-  },
-  workflowVersion: {
-    universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowVersion,
-    fields: STANDARD_OBJECT_FIELDS.workflowVersion,
-    indexes: {
-      workflowIdIndex: {
-        universalIdentifier: '8138c3b3-0b14-4ee1-be0e-debdde6b3219',
-      },
-      searchVectorGinIndex: {
-        universalIdentifier: '6f3a65eb-2aee-4108-b8a0-c62da419d1dc',
-      },
-    },
-    views: {
-      allWorkflowVersions: buildStandardObjectIndexView({
-        objectUniversalIdentifier:
-          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowVersion,
-        fields: STANDARD_OBJECT_FIELDS.workflowVersion,
-        viewFieldNames: ['name', 'workflow', 'status', 'updatedAt', 'runs'],
-      }),
-      workflowVersionRecordPageFields: buildStandardObjectRecordPageFieldsView({
-        objectUniversalIdentifier:
-          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowVersion,
-        fields: STANDARD_OBJECT_FIELDS.workflowVersion,
-        viewFieldNames: [
-          'status',
-          'workflow',
-          'trigger',
-          'createdAt',
-          'steps',
-          'createdBy',
-          'updatedAt',
-          'updatedBy',
-          'runs',
           'timelineActivities',
         ],
         viewFieldGroupNames: {
@@ -1495,6 +1397,9 @@ export const STANDARD_OBJECTS = {
     universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentChatThread,
     fields: STANDARD_OBJECT_FIELDS.agentChatThread,
     indexes: {
+      directMessagePairUniqueIndex: {
+        universalIdentifier: '365c5b24-cd52-4ebc-98d2-23c5684216d5',
+      },
       workspaceMemberIndex: {
         universalIdentifier: '079f2dd7-6c11-4eae-be8a-cce2d1bee0fb',
       },
@@ -1503,6 +1408,42 @@ export const STANDARD_OBJECTS = {
       },
       channelLastActivityIndex: {
         universalIdentifier: 'bd129bd1-db66-4c74-a64e-819d2edd3062',
+      },
+    },
+    views: {
+      open: {
+        universalIdentifier: 'e9a3781b-db78-41bb-a0e4-f6324770432a',
+        viewFields: {},
+      },
+      needsInput: {
+        universalIdentifier: '0b97f7e4-423a-4e2f-93b9-7a5bcde62c03',
+        viewFields: {},
+        viewFilters: {
+          pendingQuestionMessageIdIsNotEmpty: {
+            universalIdentifier: '05baa741-58a6-4641-abe2-267a1268e53b',
+          },
+        },
+      },
+      mentions: {
+        universalIdentifier: '0a5d7727-2263-46b1-a795-9227559faf6f',
+        viewFields: {},
+      },
+      assignedToMe: {
+        universalIdentifier: '1cddfa2c-38c0-4fda-80f3-cd01e37bf8e3',
+        viewFields: {},
+        viewFilters: {
+          assigneeIsMe: {
+            universalIdentifier: 'defbcad5-d91f-4e9a-90c6-9bac578ef374',
+          },
+        },
+      },
+      snoozed: {
+        universalIdentifier: '31e8f41f-53ed-4dfd-aaa7-6d0d5dd2d56d',
+        viewFields: {},
+      },
+      done: {
+        universalIdentifier: '81ee1b41-8035-46d1-85ae-18a75616954a',
+        viewFields: {},
       },
     },
   },
@@ -1561,6 +1502,9 @@ export const STANDARD_OBJECTS = {
     indexes: {
       agentIndex: {
         universalIdentifier: '606e8ba3-f322-426b-bef8-2208f67a541a',
+      },
+      agentIdCreatedAtIndex: {
+        universalIdentifier: '39fbc85e-22ec-4279-8c67-f3f0850b68c9',
       },
       threadIndex: {
         universalIdentifier: '7d351559-4546-4307-ba28-de9fc4c40ef4',

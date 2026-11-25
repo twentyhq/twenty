@@ -80,7 +80,7 @@ const transcriptParticipants = (
 };
 
 export const getRecordingParticipants = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'query'>,
   recordings: RecordingWithParticipants[],
   viewer: RecordingViewer,
 ): Promise<Map<string, RecordingParticipant[]>> => {

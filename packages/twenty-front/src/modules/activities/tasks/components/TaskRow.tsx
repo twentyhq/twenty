@@ -1,5 +1,4 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { LinkifiedText } from '@/ui/field/display/components/LinkifiedText/LinkifiedText';
@@ -17,12 +16,13 @@ import { RecordInlineCell } from '@/object-record/record-inline-cell/components/
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { getRichTextFieldTextLines } from '@/object-record/record-field/ui/utils/getRichTextFieldTextLines';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconCalendar } from 'twenty-ui/icon';
 import { Checkbox } from 'twenty-ui/primitives/input';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledTaskBody = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
@@ -96,6 +96,7 @@ export const TaskRow = ({
   task: Task;
   divider?: boolean;
 }) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
@@ -104,7 +105,7 @@ export const TaskRow = ({
   const { completeTask } = useCompleteTask(task);
 
   const junctionFieldName = useObjectMorphJunctionConfigOrThrow({
-    objectNameSingular: CoreObjectNameSingular.Task,
+    objectNameSingular: StandardObjectNameSingular.Task,
   }).junctionField.name;
 
   const instanceIdPrefix =
@@ -122,7 +123,7 @@ export const TaskRow = ({
       onClick={() => {
         openRecordInSidePanel({
           recordId: task.id,
-          objectNameSingular: CoreObjectNameSingular.Task,
+          objectNameSingular: StandardObjectNameSingular.Task,
         });
       }}
     >
@@ -159,7 +160,7 @@ export const TaskRow = ({
         {
           <Card.Control render={<StyledActivityTargetsContainer />}>
             <FieldContextProvider
-              objectNameSingular={CoreObjectNameSingular.Task}
+              objectNameSingular={StandardObjectNameSingular.Task}
               objectRecordId={task.id}
               fieldMetadataName={junctionFieldName}
               fieldPosition={0}

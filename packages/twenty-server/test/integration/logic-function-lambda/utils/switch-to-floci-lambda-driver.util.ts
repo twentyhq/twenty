@@ -1,6 +1,7 @@
 import { Lambda } from '@aws-sdk/client-lambda';
 
 import { type FlociLambdaDriver } from 'test/integration/logic-function-lambda/types/floci-lambda-driver.type';
+import { clearCachedLambdaFunctions } from 'test/integration/logic-function-lambda/utils/clear-cached-lambda-functions.util';
 import { deleteConfigVariable } from 'test/integration/twenty-config/utils/delete-config-variable.util';
 import { updateConfigVariable } from 'test/integration/twenty-config/utils/update-config-variable.util';
 import { startFlociContainer } from 'test/integration/utils/start-floci-container.util';
@@ -10,16 +11,21 @@ import { LogicFunctionDriverType } from 'src/engine/core-modules/logic-function/
 
 const LAMBDA_REGION = 'us-east-1';
 const LAMBDA_ROLE = 'arn:aws:iam::000000000000:role/twenty-integration-test';
+const LAMBDA_LAYER_BUCKET = 'twenty-integration-test-layers';
 const FLOCI_CREDENTIALS = { accessKeyId: 'test', secretAccessKey: 'test' };
 
 export const switchToFlociLambdaDriver =
   async (): Promise<FlociLambdaDriver> => {
     const floci = await startFlociContainer();
+
+    await clearCachedLambdaFunctions();
+
     const lambdaDriverConfigVariables: Record<string, string> = {
       LOGIC_FUNCTION_TYPE: LogicFunctionDriverType.LAMBDA,
       LOGIC_FUNCTION_LAMBDA_REGION: LAMBDA_REGION,
       LOGIC_FUNCTION_LAMBDA_ENDPOINT: floci.endpoint,
       LOGIC_FUNCTION_LAMBDA_ROLE: LAMBDA_ROLE,
+      LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET: LAMBDA_LAYER_BUCKET,
       LOGIC_FUNCTION_LAMBDA_ACCESS_KEY_ID: FLOCI_CREDENTIALS.accessKeyId,
       LOGIC_FUNCTION_LAMBDA_SECRET_ACCESS_KEY:
         FLOCI_CREDENTIALS.secretAccessKey,

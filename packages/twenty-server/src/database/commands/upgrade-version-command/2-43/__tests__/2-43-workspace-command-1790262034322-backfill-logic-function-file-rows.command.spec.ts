@@ -1,12 +1,13 @@
+import { Test } from '@nestjs/testing';
 import { FileFolder } from 'twenty-shared/types';
 import { In } from 'typeorm';
 
-import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { BackfillLogicFunctionFileRowsCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790262034322-backfill-logic-function-file-rows.command';
-import { type FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
-import { type FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
-import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 
 const WORKSPACE_ID = '20202020-0000-0000-0000-000000000001';
 const APPLICATION = {
@@ -28,7 +29,7 @@ describe('BackfillLogicFunctionFileRowsCommand', () => {
   let insertExecuteMock: jest.Mock;
   let loggerWarnMock: jest.SpyInstance;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     findFileRowsMock = jest.fn().mockResolvedValue([]);
     getFileMetadataMock = jest.fn().mockResolvedValue({ size: 42 });
     invalidateStorageStockMock = jest.fn();
@@ -43,37 +44,50 @@ describe('BackfillLogicFunctionFileRowsCommand', () => {
     insertValuesMock = insertQueryBuilder.values;
     insertExecuteMock = insertQueryBuilder.execute;
 
-    command = new BackfillLogicFunctionFileRowsCommand(
-      {} as WorkspaceIteratorService,
-      {
-        getOrRecompute: jest.fn().mockResolvedValue({
-          flatLogicFunctionMaps: {
-            byUniversalIdentifier: {
-              'logic-function': {
-                id: LOGIC_FUNCTION_ID,
-                applicationId: APPLICATION.id,
-                sourceHandlerPath: `${LOGIC_FUNCTION_ID}/src/index.ts`,
-                builtHandlerPath: `${LOGIC_FUNCTION_ID}/src/index.mjs`,
+    const module = await Test.createTestingModule({
+      providers: [
+        BackfillLogicFunctionFileRowsCommand,
+        { provide: WorkspaceIteratorService, useValue: {} },
+        {
+          provide: WorkspaceCacheService,
+          useValue: {
+            getOrRecompute: jest.fn().mockResolvedValue({
+              flatLogicFunctionMaps: {
+                byUniversalIdentifier: {
+                  'logic-function': {
+                    id: LOGIC_FUNCTION_ID,
+                    applicationId: APPLICATION.id,
+                    sourceHandlerPath: `${LOGIC_FUNCTION_ID}/src/index.ts`,
+                    builtHandlerPath: `${LOGIC_FUNCTION_ID}/src/index.mjs`,
+                  },
+                },
               },
-            },
+              flatApplicationMaps: {
+                byId: { [APPLICATION.id]: APPLICATION },
+                idByUniversalIdentifier: {
+                  [APPLICATION.universalIdentifier]: APPLICATION.id,
+                },
+              },
+            }),
           },
-          flatApplicationMaps: {
-            byId: { [APPLICATION.id]: APPLICATION },
-            idByUniversalIdentifier: {
-              [APPLICATION.universalIdentifier]: APPLICATION.id,
-            },
+        },
+        {
+          provide: FileStorageService,
+          useValue: {
+            getFileMetadata: getFileMetadataMock,
+            invalidateStorageStock: invalidateStorageStockMock,
           },
-        }),
-      } as unknown as WorkspaceCacheService,
-      {
-        getFileMetadata: getFileMetadataMock,
-        invalidateStorageStock: invalidateStorageStockMock,
-      } as unknown as FileStorageService,
-      {
-        find: findFileRowsMock,
-        createQueryBuilder: jest.fn().mockReturnValue(insertQueryBuilder),
-      } as unknown as WorkspaceScopedRepository<FileEntity>,
-    );
+        },
+        {
+          provide: getWorkspaceScopedRepositoryToken(FileEntity),
+          useValue: {
+            find: findFileRowsMock,
+            createQueryBuilder: jest.fn().mockReturnValue(insertQueryBuilder),
+          },
+        },
+      ],
+    }).compile();
+    command = module.get(BackfillLogicFunctionFileRowsCommand);
 
     loggerWarnMock = jest.spyOn(command['logger'], 'warn').mockImplementation();
     jest.spyOn(command['logger'], 'log').mockImplementation();

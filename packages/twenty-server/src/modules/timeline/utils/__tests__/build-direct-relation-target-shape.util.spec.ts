@@ -1,53 +1,78 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { addAllFlatEntitiesToFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/__tests__/add-all-flat-entities-to-flat-entity-maps.test-util';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { buildDirectRelationTargetShape } from 'src/modules/timeline/utils/build-direct-relation-target-shape.util';
 
-type FlatEntityFixture = { id: string; universalIdentifier: string };
+const buildFlatEntityMaps = <TFlatEntity extends SyncableFlatEntity>(
+  flatEntities: TFlatEntity[],
+) =>
+  addAllFlatEntitiesToFlatEntityMaps({
+    flatEntities,
+    flatEntityMaps: createEmptyFlatEntityMaps(),
+  });
 
-const buildFlatEntityMaps = <TEntity extends FlatEntityFixture>(
-  flatEntities: TEntity[],
-): FlatEntityMaps<never> =>
-  ({
-    byUniversalIdentifier: Object.fromEntries(
-      flatEntities.map((flatEntity) => [
-        flatEntity.universalIdentifier,
-        flatEntity,
-      ]),
-    ),
-    universalIdentifierById: Object.fromEntries(
-      flatEntities.map((flatEntity) => [
-        flatEntity.id,
-        flatEntity.universalIdentifier,
-      ]),
-    ),
-    universalIdentifiersByApplicationId: {},
-  }) as unknown as FlatEntityMaps<never>;
-
-const ATTACHMENT_OBJECT = {
+const ATTACHMENT_OBJECT = getFlatObjectMetadataMock({
   id: 'attachment-object',
   universalIdentifier: 'attachment-object-uid',
   nameSingular: 'attachment',
-  fieldIds: ['target-person-field', 'target-company-field'],
-};
+  fieldIds: [
+    'target-person-field',
+    'target-company-field',
+    'target-message-field',
+  ],
+});
 
-const PERSON_OBJECT = {
+const PERSON_OBJECT = getFlatObjectMetadataMock({
   id: 'person-object',
   universalIdentifier: 'person-object-uid',
   nameSingular: 'person',
   fieldIds: [],
-};
+});
 
-const COMPANY_OBJECT = {
+const COMPANY_OBJECT = getFlatObjectMetadataMock({
   id: 'company-object',
   universalIdentifier: 'company-object-uid',
   nameSingular: 'company',
   fieldIds: [],
-};
+});
 
-const TARGET_PERSON_FIELD = {
+const MESSAGE_OBJECT = getFlatObjectMetadataMock({
+  id: 'message-object',
+  universalIdentifier: 'message-object-uid',
+  nameSingular: 'message',
+  fieldIds: [],
+});
+
+const TIMELINE_ACTIVITY_OBJECT = getFlatObjectMetadataMock({
+  id: 'timeline-activity-object',
+  universalIdentifier: STANDARD_OBJECTS.timelineActivity.universalIdentifier,
+  nameSingular: 'timelineActivity',
+  fieldIds: ['timeline-target-person-field', 'timeline-target-company-field'],
+});
+
+const buildTimelineActivityTargetField = ({
+  id,
+  relationTargetObjectMetadataId,
+}: {
+  id: string;
+  relationTargetObjectMetadataId: string;
+}) =>
+  getFlatFieldMetadataMock({
+    id,
+    universalIdentifier: `${id}-uid`,
+    type: FieldMetadataType.MORPH_RELATION,
+    objectMetadataId: TIMELINE_ACTIVITY_OBJECT.id,
+    morphId: STANDARD_OBJECTS.timelineActivity.morphIds.targetMorphId.morphId,
+    relationTargetObjectMetadataId,
+    settings: { relationType: RelationType.MANY_TO_ONE },
+  });
+
+const TARGET_PERSON_FIELD = getFlatFieldMetadataMock({
   id: 'target-person-field',
   universalIdentifier: 'target-person-field-uid',
   name: 'targetPerson',
@@ -59,9 +84,9 @@ const TARGET_PERSON_FIELD = {
     relationType: RelationType.MANY_TO_ONE,
     joinColumnName: 'targetPersonId',
   },
-};
+});
 
-const TARGET_COMPANY_FIELD = {
+const TARGET_COMPANY_FIELD = getFlatFieldMetadataMock({
   id: 'target-company-field',
   universalIdentifier: 'target-company-field-uid',
   name: 'targetCompany',
@@ -73,25 +98,71 @@ const TARGET_COMPANY_FIELD = {
     relationType: RelationType.MANY_TO_ONE,
     joinColumnName: 'targetCompanyId',
   },
-};
+});
+
+const TARGET_MESSAGE_FIELD = getFlatFieldMetadataMock({
+  id: 'target-message-field',
+  universalIdentifier: 'target-message-field-uid',
+  name: 'targetMessage',
+  type: FieldMetadataType.MORPH_RELATION,
+  objectMetadataId: ATTACHMENT_OBJECT.id,
+  morphId: 'target-morph-id',
+  relationTargetObjectMetadataId: MESSAGE_OBJECT.id,
+  settings: {
+    relationType: RelationType.MANY_TO_ONE,
+    joinColumnName: 'targetMessageId',
+  },
+});
 
 const flatObjectMetadataMaps = buildFlatEntityMaps([
   ATTACHMENT_OBJECT,
   PERSON_OBJECT,
   COMPANY_OBJECT,
-]) as unknown as FlatEntityMaps<FlatObjectMetadata>;
+  MESSAGE_OBJECT,
+  TIMELINE_ACTIVITY_OBJECT,
+]);
 
 const flatFieldMetadataMaps = buildFlatEntityMaps([
   TARGET_PERSON_FIELD,
   TARGET_COMPANY_FIELD,
-]) as unknown as FlatEntityMaps<FlatFieldMetadata>;
+  TARGET_MESSAGE_FIELD,
+  buildTimelineActivityTargetField({
+    id: 'timeline-target-person-field',
+    relationTargetObjectMetadataId: PERSON_OBJECT.id,
+  }),
+  buildTimelineActivityTargetField({
+    id: 'timeline-target-company-field',
+    relationTargetObjectMetadataId: COMPANY_OBJECT.id,
+  }),
+]);
 
 describe('buildDirectRelationTargetShape', () => {
   it('expands every target in a direct morph relation', () => {
     expect(
       buildDirectRelationTargetShape({
-        relationFlatFieldMetadata:
-          TARGET_PERSON_FIELD as unknown as FlatFieldMetadata,
+        relationFlatFieldMetadata: TARGET_PERSON_FIELD,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      }),
+    ).toEqual({
+      kind: 'DIRECT_RELATION',
+      targetJoinColumns: [
+        {
+          joinColumnName: 'targetPersonId',
+          targetObjectNameSingular: 'person',
+        },
+        {
+          joinColumnName: 'targetCompanyId',
+          targetObjectNameSingular: 'company',
+        },
+      ],
+    });
+  });
+
+  it('skips a morph target the timeline has no target field for', () => {
+    expect(
+      buildDirectRelationTargetShape({
+        relationFlatFieldMetadata: TARGET_MESSAGE_FIELD,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
       }),
@@ -116,7 +187,7 @@ describe('buildDirectRelationTargetShape', () => {
         relationFlatFieldMetadata: {
           ...TARGET_PERSON_FIELD,
           settings: { relationType: RelationType.ONE_TO_MANY },
-        } as unknown as FlatFieldMetadata,
+        },
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
       }),
@@ -131,12 +202,13 @@ describe('buildDirectRelationTargetShape', () => {
       },
       PERSON_OBJECT,
       COMPANY_OBJECT,
-    ]) as unknown as FlatEntityMaps<FlatObjectMetadata>;
+      MESSAGE_OBJECT,
+      TIMELINE_ACTIVITY_OBJECT,
+    ]);
 
     expect(
       buildDirectRelationTargetShape({
-        relationFlatFieldMetadata:
-          TARGET_PERSON_FIELD as unknown as FlatFieldMetadata,
+        relationFlatFieldMetadata: TARGET_PERSON_FIELD,
         flatObjectMetadataMaps: objectMapsWithMissingMorphField,
         flatFieldMetadataMaps,
       }),

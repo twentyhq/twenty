@@ -4,10 +4,11 @@ import { anyFieldFilterValueComponentState } from '@/object-record/record-filter
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useLingui } from '@lingui/react/macro';
 
 export const useOpenAnyFieldSearchFilterFromViewBar = () => {
+  const { t } = useLingui();
   const setAnyFieldFilterValue = useSetAtomComponentState(
     anyFieldFilterValueComponentState,
   );

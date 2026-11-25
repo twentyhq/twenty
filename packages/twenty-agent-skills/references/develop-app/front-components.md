@@ -62,6 +62,8 @@ Use `openCommandConfirmationModal` from `twenty-sdk/front-component` for confirm
 
 The component runs in a Web Worker with a partial DOM. Prefer CSS flexbox, grid and width-based container queries for layout. Avoid height-based breakpoints, which can oscillate when content determines widget height. `canvas`, `scrollIntoView` and native top-layer APIs are unsupported. Check the current limitations in the front component guide before depending on other browser APIs.
 
+Iframes stay sandboxed. An embedded phone or video tool receives microphone or camera access only through the embed flow in `../concepts/how-apps-work.md`.
+
 ## Record Context And Data
 
 For record-page components, read selection from front component context:

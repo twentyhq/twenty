@@ -155,8 +155,12 @@ export class FieldRecordPageViewFieldOnCreateSideEffectHandlerService extends Me
           sourceFlatFieldMetadata.universalIdentifier,
         ) ?? 0,
       aggregateOperation: null,
+      relationTargetFieldMetadataUniversalIdentifier: null,
+      universalRelationScope: null,
+      label: null,
       isActive: true,
       isSystemSideEffect: true,
+      isCanonical: true,
       universalOverrides: null,
       createdAt,
       updatedAt: createdAt,
@@ -199,8 +203,7 @@ export class FieldRecordPageViewFieldOnCreateSideEffectHandlerService extends Me
           return (
             isDefined(existingFlatViewField) &&
             existingFlatViewField.fieldMetadataUniversalIdentifier ===
-              sourceFlatFieldMetadata.universalIdentifier &&
-            !isDefined(existingFlatViewField.deletedAt)
+              sourceFlatFieldMetadata.universalIdentifier
           );
         },
       );

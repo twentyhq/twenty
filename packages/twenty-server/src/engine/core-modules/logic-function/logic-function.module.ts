@@ -9,6 +9,7 @@ import { LogicFunctionResourceModule } from 'src/engine/core-modules/logic-funct
 import { LogicFunctionTriggerModule } from 'src/engine/core-modules/logic-function/logic-function-trigger/logic-function-trigger.module';
 import { LogicFunctionExecutorModule } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.module';
 import { SdkClientModule } from 'src/engine/core-modules/sdk-client/sdk-client.module';
+import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
@@ -27,6 +28,7 @@ export class LogicFunctionModule {
         LogicFunctionTriggerModule,
         LogicFunctionExecutorModule,
         SdkClientModule,
+        SecureHttpClientModule,
         WorkspaceCacheModule,
       ],
       providers: [

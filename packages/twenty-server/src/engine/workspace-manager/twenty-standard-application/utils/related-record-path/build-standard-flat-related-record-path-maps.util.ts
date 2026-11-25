@@ -129,6 +129,8 @@ export const buildStandardFlatRelatedRecordPathMaps = ({
         thirdFieldMetadataUniversalIdentifier:
           thirdHop?.fieldMetadataUniversalIdentifier ?? null,
         isInherent: standardRelatedRecordPath.isInherent,
+        isActive: true,
+        overrides: null,
         workspaceId,
         applicationId: twentyStandardApplicationId,
         applicationUniversalIdentifier:

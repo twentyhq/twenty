@@ -34,7 +34,8 @@ export default async (_: unknown, projectConfig: JestConfigWithTsJest) => {
 
   // node-fetch rides node:http, which msw patches; native undici fetch
   // escapes interception.
-  globalThis.fetch = nodeFetch as unknown as typeof globalThis.fetch;
+  // @ts-expect-error node-fetch's types differ from the lib.dom fetch it replaces at runtime
+  globalThis.fetch = nodeFetch;
 
   await waitForTestDatabaseReset();
   await rawDataSource.initialize();

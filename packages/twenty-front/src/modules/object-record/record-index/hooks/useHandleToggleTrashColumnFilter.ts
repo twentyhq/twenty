@@ -44,14 +44,18 @@ export const useHandleToggleTrashColumnFilter = ({
       (field: { name: string }) => field.name === 'deletedAt',
     );
 
-    if (!isDefined(trashFieldMetadata)) return;
+    if (!isDefined(trashFieldMetadata)) {
+      return;
+    }
 
     const correspondingColumnDefinition = columnDefinitions.find(
       (columnDefinition) =>
         columnDefinition.fieldMetadataId === trashFieldMetadata.id,
     );
 
-    if (!isDefined(correspondingColumnDefinition)) return;
+    if (!isDefined(correspondingColumnDefinition)) {
+      return;
+    }
 
     const filterType = getFilterTypeFromFieldType(
       correspondingColumnDefinition?.type,

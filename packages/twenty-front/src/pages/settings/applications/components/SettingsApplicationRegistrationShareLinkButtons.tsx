@@ -91,7 +91,11 @@ export const SettingsApplicationRegistrationShareLinkButtons = ({
             defaultRole={defaultRole}
             appObjects={detail?.objects ?? undefined}
             requestedCapabilities={detail?.requestedCapabilities}
+            requestedIframeMediaPermissions={
+              detail?.requestedIframeMediaPermissions
+            }
             billsCredits={detail?.billsCredits}
+            billingPrices={detail?.billingPrices}
             isListed={detail?.isListed}
             onAuthorize={install}
             isInstalling={isInstalling}

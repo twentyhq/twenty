@@ -5,6 +5,9 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { getFlatIndexMetadataMock } from 'src/engine/metadata-modules/flat-index-metadata/__mocks__/get-flat-index-metadata.mock';
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 
 const OBJECT_METADATA_ID = 'messageThreadTargetObjectId';
 
@@ -17,7 +20,7 @@ const buildField = ({
   name: string;
   type: FieldMetadataType;
 }): OrmFlatFieldMetadata =>
-  ({
+  getFlatFieldMetadataMock({
     id,
     universalIdentifier: id,
     objectMetadataId: OBJECT_METADATA_ID,
@@ -27,7 +30,7 @@ const buildField = ({
       type === FieldMetadataType.RELATION
         ? { relationType: RelationType.MANY_TO_ONE }
         : undefined,
-  }) as unknown as OrmFlatFieldMetadata;
+  });
 
 const buildIndex = ({
   id,
@@ -38,18 +41,25 @@ const buildIndex = ({
   isUnique: boolean;
   fieldMetadataIds: string[];
 }): FlatIndexMetadata =>
-  ({
+  getFlatIndexMetadataMock({
     id,
     universalIdentifier: id,
     name: id,
     objectMetadataId: OBJECT_METADATA_ID,
+    objectMetadataUniversalIdentifier: OBJECT_METADATA_ID,
+    applicationUniversalIdentifier: 'application-id',
     isUnique,
     flatIndexFieldMetadatas: fieldMetadataIds.map((fieldMetadataId, order) => ({
+      id: `${id}-field-${order}`,
+      workspaceId: 'workspace-id',
+      indexMetadataId: id,
+      createdAt: '2024-01-01T00:00:00.000Z',
+      updatedAt: '2024-01-01T00:00:00.000Z',
       fieldMetadataId,
       subFieldName: null,
       order,
     })),
-  }) as unknown as FlatIndexMetadata;
+  });
 
 const buildFieldMetadataMaps = (
   fieldMetadatas: OrmFlatFieldMetadata[],
@@ -96,12 +106,13 @@ const fields = [idField, messageThreadField, targetPersonField];
 const buildFlatObjectMetadata = (
   indexMetadataIds: string[],
 ): FlatObjectMetadata =>
-  ({
+  getFlatObjectMetadataMock({
     id: OBJECT_METADATA_ID,
+    universalIdentifier: OBJECT_METADATA_ID,
     nameSingular: 'messageThreadTarget',
     fieldIds: fields.map((field) => field.id),
     indexMetadataIds,
-  }) as unknown as FlatObjectMetadata;
+  });
 
 const computeGroups = ({
   indexes,

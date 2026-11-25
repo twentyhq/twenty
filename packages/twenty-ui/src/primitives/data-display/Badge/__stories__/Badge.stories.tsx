@@ -79,6 +79,7 @@ export const Colors: CatalogStory<Story, typeof Badge> = {
             'tertiary',
             'inherit',
             'primary',
+            'red',
             'secondary',
             'accent',
           ] satisfies BadgeColor[],
@@ -131,6 +132,48 @@ export const Accent: Story = {
   ),
 };
 
+export const Red: Story = {
+  parameters: {
+    a11y: {
+      test: 'error',
+      config: { rules: [{ id: 'color-contrast', enabled: true }] },
+    },
+  },
+  render: () => (
+    <Text render={<div />} style={{ display: 'flex', gap: 16 }}>
+      {(['light', 'dark'] as const).map((colorScheme) => (
+        <ThemeProvider
+          key={colorScheme}
+          colorScheme={colorScheme}
+          applyToRoot={false}
+        >
+          <Text
+            render={<div />}
+            style={{
+              alignItems: 'center',
+              backgroundColor: themeCssVariables.background.primary,
+              display: 'flex',
+              gap: 8,
+              padding: 16,
+            }}
+          >
+            {(['xs', 'sm', 'md'] as const).map((size) => (
+              <Badge
+                key={size}
+                color="red"
+                size={size}
+                aria-label={`${colorScheme} red ${size}`}
+              >
+                99+
+              </Badge>
+            ))}
+          </Text>
+        </ThemeProvider>
+      ))}
+    </Text>
+  ),
+};
+
 export const VisualRegression: CatalogStory<Story, typeof Badge> = {
   tags: ['!autodocs'],
   args: { children: 3 },
@@ -148,6 +191,7 @@ export const VisualRegression: CatalogStory<Story, typeof Badge> = {
             'tertiary',
             'inherit',
             'primary',
+            'red',
             'secondary',
             'accent',
           ] satisfies BadgeColor[],
@@ -164,7 +208,7 @@ export const VisualRegression: CatalogStory<Story, typeof Badge> = {
   decorators: [CatalogDecorator],
   play: async ({ canvasElement }) => {
     const badges = within(canvasElement).getAllByText('3');
-    await expect(badges).toHaveLength(30);
+    await expect(badges).toHaveLength(36);
 
     for (const badge of badges) {
       await expect(badge).toBeVisible();

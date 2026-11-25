@@ -5,7 +5,7 @@ import { isRecordFilterOperandExpectingValue } from './isRecordFilterOperandExpe
 
 export const isRecordFilterValueValid = (recordFilter: {
   operand: ViewFilterOperand;
-  value: string;
+  value: string | undefined;
 }): boolean => {
   if (!isRecordFilterOperandExpectingValue(recordFilter.operand)) {
     return true;

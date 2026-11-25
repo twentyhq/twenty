@@ -3,6 +3,7 @@ import { type ContextStoreViewType } from '@/context-store/types/ContextStoreVie
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
+import { RecordFieldColumnsProvider } from '@/object-record/record-column-scope/components/RecordFieldColumnsProvider';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record-index/hooks/useRecordIndexFieldMetadataDerivedStates';
@@ -24,7 +25,10 @@ import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewCompon
 import { isNonEmptyString } from '@sniptt/guards';
 import { type PropsWithChildren, useCallback, useMemo } from 'react';
 import { AppPath } from 'twenty-shared/types';
-import { getAppPath } from 'twenty-shared/utils';
+import {
+  canAccessThroughAllRecordsOrRlsPermission,
+  getAppPath,
+} from 'twenty-shared/utils';
 
 type RecordTableWidgetProviderProps = PropsWithChildren<{
   objectNameSingular: string;
@@ -131,7 +135,12 @@ export const RecordTableWidgetProvider = ({
     ],
   );
 
-  if (!objectPermissions.canReadObjectRecords) {
+  if (
+    !canAccessThroughAllRecordsOrRlsPermission({
+      objectRecordsPermissions: objectPermissions,
+      operationType: 'read',
+    })
+  ) {
     return null;
   }
 
@@ -177,7 +186,9 @@ export const RecordTableWidgetProvider = ({
                 widgetId={widgetId}
                 objectMetadataItem={objectMetadataItem}
               />
-              {children}
+              <RecordFieldColumnsProvider>
+                {children}
+              </RecordFieldColumnsProvider>
             </RecordComponentInstanceContextsWrapper>
           </ViewComponentInstanceContext.Provider>
         </RecordIndexContextProvider>

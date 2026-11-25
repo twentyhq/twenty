@@ -4,7 +4,7 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { recordPageLayoutByObjectMetadataIdFamilySelector } from '@/page-layout/states/selectors/recordPageLayoutByObjectMetadataIdFamilySelector';
 import { type TargetRecordIdentifier } from '@/ui/layout/contexts/TargetRecordIdentifier';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const usePageLayoutIdForRecord = ({
@@ -12,7 +12,7 @@ export const usePageLayoutIdForRecord = ({
   targetObjectNameSingular,
 }: TargetRecordIdentifier) => {
   const isDashboard =
-    targetObjectNameSingular === CoreObjectNameSingular.Dashboard;
+    targetObjectNameSingular === StandardObjectNameSingular.Dashboard;
 
   const { record } = useFindOneRecord<ObjectRecord & { pageLayoutId?: string }>(
     {

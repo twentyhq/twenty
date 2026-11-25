@@ -2,6 +2,7 @@ import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 
 import { TEAMS_PERSONAL_CONVERSATION_TYPE } from 'src/features/chat/logic-functions/constants/teams-personal-conversation-type';
 import { type TeamsActivitiesDispatchPayload } from 'src/features/chat/logic-functions/types/teams-activities-dispatch-payload.type';
+import { type TeamsAssistantEmptyRequest } from 'src/features/chat/logic-functions/types/teams-assistant-empty-request.type';
 import { type TeamsAssistantRequestDraft } from 'src/features/chat/logic-functions/types/teams-assistant-request-draft.type';
 import { collectTeamsBotMentionTexts } from 'src/features/chat/logic-functions/utils/collect-teams-bot-mention-texts';
 import { normalizeTeamsRequestText } from 'src/features/chat/logic-functions/utils/normalize-teams-request-text';
@@ -10,7 +11,11 @@ const BOT_ACCOUNT_ID_PREFIX = '28:';
 
 type ParsedTeamsAssistantRequest =
   | { request: TeamsAssistantRequestDraft }
-  | { request: null; skipReason: string };
+  | {
+      request: null;
+      skipReason: string;
+      emptyRequest?: TeamsAssistantEmptyRequest;
+    };
 
 export const parseTeamsAssistantRequest = ({
   activity,
@@ -56,7 +61,15 @@ export const parseTeamsAssistantRequest = ({
   const requestText = normalizeTeamsRequestText(activity);
 
   if (!isNonEmptyString(requestText)) {
-    return { request: null, skipReason: 'Empty request text' };
+    return {
+      request: null,
+      skipReason: 'Empty request text',
+      emptyRequest: {
+        teamsActivityId: activity.id,
+        teamsConversationId: conversationId,
+        teamsServiceUrl: serviceUrl,
+      },
+    };
   }
 
   return {

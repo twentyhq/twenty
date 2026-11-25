@@ -10,16 +10,22 @@ export class WorkspaceSchemaColumnManagerService {
     schemaName,
     tableName,
     columnDefinitions,
+    shouldSkipExistingColumns = false,
   }: {
     queryRunner: QueryRunner;
     schemaName: string;
     tableName: string;
     columnDefinitions: WorkspaceSchemaColumnDefinition[];
+    shouldSkipExistingColumns?: boolean;
   }): Promise<void> {
-    if (columnDefinitions.length === 0) return;
+    if (columnDefinitions.length === 0) {
+      return;
+    }
 
+    const ifNotExistsClause = shouldSkipExistingColumns ? 'IF NOT EXISTS ' : '';
     const addColumnClauses = columnDefinitions.map(
-      (column) => `ADD COLUMN ${buildSqlColumnDefinition(column)}`,
+      (column) =>
+        `ADD COLUMN ${ifNotExistsClause}${buildSqlColumnDefinition(column)}`,
     );
     const sql = `ALTER TABLE ${escapeIdentifier(schemaName)}.${escapeIdentifier(tableName)} ${addColumnClauses.join(', ')}`;
 
@@ -39,7 +45,9 @@ export class WorkspaceSchemaColumnManagerService {
     columnNames: string[];
     cascade?: boolean;
   }): Promise<void> {
-    if (columnNames.length === 0) return;
+    if (columnNames.length === 0) {
+      return;
+    }
 
     const cascadeClause = cascade ? ' CASCADE' : '';
     const dropClauses = columnNames.map(

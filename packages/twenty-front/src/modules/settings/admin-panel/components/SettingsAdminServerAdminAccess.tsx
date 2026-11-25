@@ -2,15 +2,12 @@ import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
-import { TwoFactorAuthenticationVerificationCodeDash } from '@/settings/two-factor-authentication/components/TwoFactorAuthenticationVerificationCodeDash';
-import { TwoFactorAuthenticationVerificationCodeSlot } from '@/settings/two-factor-authentication/components/TwoFactorAuthenticationVerificationCodeSlot';
+import { TwoFactorAuthenticationOtpInput } from '@/settings/two-factor-authentication/components/TwoFactorAuthenticationOtpInput';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { OTPInput } from 'input-otp';
 import { useState } from 'react';
 import { useToast } from 'twenty-ui/components/feedback';
 import { LightIconButton } from 'twenty-ui/components/input';
@@ -22,6 +19,7 @@ import {
   GetServerAdminsDocument,
   UpdateServerAdminAccessDocument,
 } from '~/generated-admin/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 type ServerAdminAccessUpdate = {
   canAccessFullAdminPanel?: boolean;
@@ -62,11 +60,6 @@ const StyledConfirmationContent = styled.div`
   gap: ${themeCssVariables.spacing[4]};
 `;
 
-const StyledOTPContainer = styled.div`
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-`;
-
 export const SettingsAdminServerAdminAccess = ({
   userId,
   userLabel,
@@ -74,6 +67,7 @@ export const SettingsAdminServerAdminAccess = ({
   userId: string;
   userLabel: string;
 }) => {
+  const { t } = useLingui();
   const dropdownId = `server-admin-access-${userId}`;
   const apolloAdminClient = useApolloAdminClient();
   const { openDialog } = useDialog();
@@ -233,35 +227,7 @@ export const SettingsAdminServerAdminAccess = ({
                 : t`This will grant ${pendingChange?.description ?? ''} to ${userLabel}.`}
             </div>
             <div>{t`Enter your two-factor authentication code to confirm.`}</div>
-            <OTPInput
-              maxLength={6}
-              value={otp}
-              onChange={setOtp}
-              autoFocus
-              render={({ slots }) => (
-                <StyledOTPContainer>
-                  {slots.slice(0, 3).map((slot, index) => (
-                    <TwoFactorAuthenticationVerificationCodeSlot
-                      key={index}
-                      char={slot.char}
-                      placeholderChar={slot.placeholderChar}
-                      isActive={slot.isActive}
-                      hasFakeCaret={slot.hasFakeCaret}
-                    />
-                  ))}
-                  <TwoFactorAuthenticationVerificationCodeDash />
-                  {slots.slice(3).map((slot, index) => (
-                    <TwoFactorAuthenticationVerificationCodeSlot
-                      key={index + 3}
-                      char={slot.char}
-                      placeholderChar={slot.placeholderChar}
-                      isActive={slot.isActive}
-                      hasFakeCaret={slot.hasFakeCaret}
-                    />
-                  ))}
-                </StyledOTPContainer>
-              )}
-            />
+            <TwoFactorAuthenticationOtpInput value={otp} onChange={setOtp} />
           </StyledConfirmationContent>
         }
       />

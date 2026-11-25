@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
+import { turnViewPresetFilterIntoRecordGqlOperationFilter } from 'twenty-shared/ai';
 import {
   CompositeFieldSubFieldName,
   type ObjectRecord,
   PartialFieldMetadataItemOption,
   RecordFilterGroupLogicalOperator,
-  type RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
 import {
   assertIsDefinedOrThrow,
@@ -21,7 +21,7 @@ import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
-import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import { GroupByDefinition } from 'src/engine/api/common/common-query-runners/types/group-by-definition.type';
 import { GroupByField } from 'src/engine/api/common/common-query-runners/types/group-by-field.type';
 import { computeMaxFieldCountPerRecord } from 'src/engine/api/common/common-query-runners/utils/compute-max-field-count-per-record.util';
@@ -29,6 +29,7 @@ import { getGroupByDefinitions } from 'src/engine/api/common/common-query-runner
 import { getObjectAlias } from 'src/engine/api/common/common-query-runners/utils/get-object-alias-for-group-by.util';
 import { isGroupByRelationField } from 'src/engine/api/common/common-query-runners/utils/is-group-by-relation-field.util';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
+import { type CommonQueryRunResult } from 'src/engine/api/common/types/common-query-result.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import { CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
 import {
@@ -38,28 +39,32 @@ import {
   GroupByQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
-import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
-import { formatResultWithGroupByDimensionValues } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util';
-import { GroupByWithRecordsService } from 'src/engine/api/graphql/graphql-query-runner/group-by/services/group-by-with-records.service';
+import { CommonQueryParser } from 'src/engine/api/common/common-query-parsers/common-query.parser';
+import { formatResultWithGroupByDimensionValues } from 'src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util';
+import { GroupByWithRecordsService } from 'src/engine/api/common/common-query-runners/group-by/services/group-by-with-records.service';
 import {
   RECORDS_PER_GROUP_LIMIT,
   RELATIONS_PER_RECORD_LIMIT,
-} from 'src/engine/api/graphql/graphql-query-runner/group-by/services/group-by-with-records.constants';
-import { getGroupLimit } from 'src/engine/api/graphql/graphql-query-runner/group-by/utils/get-group-limit.util';
-import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
-import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
-import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+} from 'src/engine/api/common/common-query-runners/group-by/services/group-by-with-records.constants';
+import { getGroupLimit } from 'src/engine/api/common/common-query-runners/group-by/utils/get-group-limit.util';
+import { ProcessAggregateHelper } from 'src/engine/api/common/utils/process-aggregate.helper';
+import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-flat-fields-for-flat-object-metadata.util';
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { type FlatFieldMetadataOptionMaps } from 'src/engine/metadata-modules/flat-field-metadata-option/types/flat-field-metadata-option-maps.type';
+import { resolveFlatFieldMetadataOptions } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-flat-field-metadata-options.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { ViewFilterGroupService } from 'src/engine/metadata-modules/view-filter-group/services/view-filter-group.service';
 import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
+import { isViewVisibleToCaller } from 'src/engine/metadata-modules/view/utils/is-view-visible-to-caller.util';
 import { formatColumnNameForRelationField } from 'src/engine/twenty-orm/utils/format-column-name-for-relation-field.util';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { computeRecordGqlOperationFilterFromFlatMaps } from 'src/engine/utils/compute-record-gql-operation-filter-from-flat-maps.util';
+import { type CommonQueryResultProcessingArgs } from 'src/engine/api/common/types/common-query-result-processing-args.type';
 
 @Injectable()
 export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerService<
@@ -81,20 +86,22 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
   async run(
     args: CommonExtendedInput<GroupByQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
-  ): Promise<CommonGroupByOutputItem[]> {
+  ): Promise<CommonQueryRunResult<CommonGroupByOutputItem[]>> {
     const {
       commonQueryParser,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps,
       authContext,
+      permissionsPrincipals,
     } = queryRunnerContext;
 
     const objectAlias = getObjectAlias(flatObjectMetadata);
 
     const readRepository = this.getReadRepository(queryRunnerContext);
 
-    let queryBuilder = readRepository.createQueryBuilder(objectAlias);
+    const queryBuilder = readRepository.createQueryBuilder(objectAlias);
 
     const groupByFields =
       this.groupByArgProcessor.validateAndTransformGroupByFieldsOrThrow({
@@ -110,7 +117,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       objectAlias,
     });
 
-    let appliedFilters = args.filter ?? ({} as ObjectRecordFilter);
+    const appliedFilters = args.filter ?? ({} as ObjectRecordFilter);
 
     await this.addFiltersToQueryBuilder({
       args,
@@ -119,14 +126,19 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps,
       workspaceId: authContext.workspace.id,
+      currentWorkspaceMemberId: isUserAuthContext(authContext)
+        ? authContext.workspaceMemberId
+        : undefined,
       commonQueryParser,
+      permissionsPrincipals,
     });
 
     const queryBuilderWithFiltersAndWithoutGroupBy = queryBuilder.clone();
 
     ProcessAggregateHelper.addSelectedAggregatedFieldsQueriesToQueryBuilder({
-      selectedAggregatedFields: args.selectedFieldsResult.aggregate,
+      selectedAggregatedFields: args.selectedFieldsResult.aggregates,
       queryBuilder,
       objectMetadataNameSingular: objectAlias,
     });
@@ -146,11 +158,11 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       }
     });
 
-    commonQueryParser.applyGroupByOrderToBuilder(
+    commonQueryParser.applyGroupByOrderToBuilder({
       queryBuilder,
-      args.orderBy ?? [],
+      orderBy: args.orderBy ?? [],
       groupByFields,
-    );
+    });
 
     const shouldIncludeRecords = args.includeRecords ?? false;
 
@@ -170,12 +182,15 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       });
     }
 
-    return this.resolveWithoutRecords({
-      queryBuilder,
-      groupByDefinitions,
-      selectedFieldsResult: args.selectedFieldsResult,
-      groupLimit: args.limit,
-    });
+    return {
+      result: await this.resolveWithoutRecords({
+        queryBuilder,
+        groupByDefinitions,
+        selectedFieldsResult: args.selectedFieldsResult,
+        groupLimit: args.limit,
+      }),
+      relationAggregatedValues: {},
+    };
   }
 
   protected getResultRecords(
@@ -184,13 +199,12 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     return results.flatMap((group) => group.records ?? []);
   }
 
-  async processQueryResult(
-    queryResult: CommonGroupByOutputItem[],
-    _flatObjectMetadata: FlatObjectMetadata,
-    _flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
-    _flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
-    _authContext: WorkspaceAuthContext,
-  ): Promise<CommonGroupByOutputItem[]> {
+  async processQueryResult({
+    queryResult,
+  }: Pick<
+    CommonQueryResultProcessingArgs<CommonGroupByOutputItem[]>,
+    'queryResult'
+  >): Promise<CommonGroupByOutputItem[]> {
     return queryResult;
   }
 
@@ -199,29 +213,33 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     flatObjectMetadata,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
-    restrictedFields,
+    flatFieldMetadataOptionMaps,
+    unreadableFieldMetadataIds,
     appliedFilters,
     workspaceId,
+    currentWorkspaceMemberId,
   }: {
     args: GroupByQueryArgs;
     flatObjectMetadata: FlatObjectMetadata;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
-    restrictedFields: RestrictedFieldsPermissions;
+    flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
+    unreadableFieldMetadataIds: Set<string>;
     appliedFilters: ObjectRecordFilter;
     workspaceId: string;
+    currentWorkspaceMemberId: string | undefined;
   }): Promise<ObjectRecordFilter> {
     assertIsDefinedOrThrow(args.viewId);
 
-    const viewFilters = await this.viewFilterService.findByViewId(
+    const viewFilters = await this.viewFilterService.findByViewId({
       workspaceId,
-      args.viewId,
-    );
+      viewId: args.viewId,
+    });
 
-    const viewFilterGroups = await this.viewFilterGroupService.findByViewId(
+    const viewFilterGroups = await this.viewFilterGroupService.findByViewId({
       workspaceId,
-      args.viewId,
-    );
+      viewId: args.viewId,
+    });
 
     const recordFilters = viewFilters.map((viewFilter) => {
       const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
@@ -263,38 +281,45 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       flatObjectMetadata,
       flatFieldMetadataMaps,
     )
-      .filter((field) => restrictedFields[field.id]?.canRead !== false)
+      .filter((field) => !unreadableFieldMetadataIds.has(field.id))
       .map((field) => ({
         id: field.id,
         name: field.name,
         type: field.type,
         label: field.label,
-        options: field.options as PartialFieldMetadataItemOption[],
+        options: resolveFlatFieldMetadataOptions({
+          flatFieldMetadata: field,
+          flatFieldMetadataOptionMaps,
+        }) as PartialFieldMetadataItemOption[],
       }));
 
+    const view = await this.viewService.findById(args.viewId, workspaceId);
+    const visibleView =
+      isDefined(view) && isViewVisibleToCaller({ view }) ? view : null;
+
     const filtersFromView = this.filterArgProcessor.process({
-      filter: computeRecordGqlOperationFilterFromFlatMaps({
-        recordFilters,
-        recordFilterGroups: recordFilterGroups,
-        flatFieldMetadataMaps,
-        flatObjectMetadataMaps,
-        filterValueDependencies: {
-          timeZone: 'UTC', // TODO: see if we use workspace member timezone here
-        },
-      }),
+      filter: combineFilters([
+        computeRecordGqlOperationFilterFromFlatMaps({
+          recordFilters,
+          recordFilterGroups: recordFilterGroups,
+          flatFieldMetadataMaps,
+          flatObjectMetadataMaps,
+          filterValueDependencies: {
+            currentWorkspaceMemberId,
+            timeZone: 'UTC', // TODO: see if we use workspace member timezone here
+          },
+        }),
+        turnViewPresetFilterIntoRecordGqlOperationFilter({
+          presetFilter: visibleView?.presetFilter,
+          currentWorkspaceMemberId,
+        }),
+      ]),
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
     });
 
-    const viewFromFilter = viewFilters[0]?.view;
-    let viewAnyFieldFilterValue = viewFromFilter?.anyFieldFilterValue;
-
-    if (!isDefined(viewFromFilter)) {
-      const view = await this.viewService.findById(args.viewId, workspaceId);
-
-      viewAnyFieldFilterValue = view?.anyFieldFilterValue ?? null;
-    }
+    const viewAnyFieldFilterValue = visibleView?.anyFieldFilterValue ?? null;
 
     const { recordGqlOperationFilter: anyFieldFilter } =
       turnAnyFieldFilterIntoRecordGqlFilter({
@@ -318,8 +343,11 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     flatObjectMetadata,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
+    flatFieldMetadataOptionMaps,
     workspaceId,
+    currentWorkspaceMemberId,
     commonQueryParser,
+    permissionsPrincipals,
   }: {
     args: GroupByQueryArgs;
     appliedFilters: ObjectRecordFilter;
@@ -327,8 +355,11 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     flatObjectMetadata: FlatObjectMetadata;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+    flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
     workspaceId: string;
-    commonQueryParser: GraphqlQueryParser;
+    currentWorkspaceMemberId: string | undefined;
+    commonQueryParser: CommonQueryParser;
+    permissionsPrincipals: CommonExtendedQueryRunnerContext['permissionsPrincipals'];
   }): Promise<void> {
     const objectAlias = getObjectAlias(flatObjectMetadata);
 
@@ -338,21 +369,28 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
         flatObjectMetadata,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
-        restrictedFields:
-          queryBuilder.objectRecordsPermissions[flatObjectMetadata.id]
-            ?.restrictedFields ?? {},
+        flatFieldMetadataOptionMaps,
+        unreadableFieldMetadataIds:
+          await this.recordFieldPermissionsReadService.findUnreadableFields({
+            principals: permissionsPrincipals,
+            objectMetadataId: flatObjectMetadata.id,
+          }),
         appliedFilters,
         workspaceId,
+        currentWorkspaceMemberId,
       });
     }
 
-    commonQueryParser.applyFilterToBuilder(
+    commonQueryParser.applyFilterToBuilder({
       queryBuilder,
-      objectAlias,
-      appliedFilters,
-    );
+      objectNameSingular: objectAlias,
+      recordFilter: appliedFilters,
+    });
 
-    commonQueryParser.applyDeletedAtToBuilder(queryBuilder, appliedFilters);
+    commonQueryParser.applyDeletedAtToBuilder({
+      queryBuilder,
+      recordFilter: appliedFilters,
+    });
   }
 
   private async resolveWithoutRecords({
@@ -375,7 +413,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     return formatResultWithGroupByDimensionValues({
       groupsResult: result,
       groupByDefinitions,
-      aggregateFieldNames: Object.keys(selectedFieldsResult.aggregate),
+      aggregateFieldNames: Object.keys(selectedFieldsResult.aggregates),
     });
   }
 
@@ -476,7 +514,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     const groupByQueryComplexity = 1;
     const simpleFieldsComplexity = 1;
     const selectedFieldsComplexity =
-      simpleFieldsComplexity + (selectedFieldsResult.relationFieldsCount ?? 0);
+      simpleFieldsComplexity + selectedFieldsResult.relationFieldsCount;
 
     return (args.includeRecords ?? false)
       ? groupByQueryComplexity +
@@ -495,15 +533,12 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       flatFieldMetadataMaps,
     } = queryRunnerContext;
 
-    const aggregateCount = Object.keys(selectedFieldsResult.aggregate).filter(
-      (aggregateName) =>
-        !isDefined(selectedFieldsResult.relations[aggregateName]),
-    ).length;
+    const aggregateCount = Object.keys(selectedFieldsResult.aggregates).length;
 
     const recordFieldCount = args.includeRecords
       ? RECORDS_PER_GROUP_LIMIT *
         computeMaxFieldCountPerRecord({
-          selectedFieldsResult,
+          selection: selectedFieldsResult,
           flatObjectMetadata,
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,

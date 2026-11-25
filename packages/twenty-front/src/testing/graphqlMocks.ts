@@ -16,6 +16,7 @@ import { mockedPublicWorkspaceDataBySubdomain } from '~/testing/mock-data/public
 import { mockedUserData } from '~/testing/mock-data/users';
 
 import { GET_PUBLIC_WORKSPACE_DATA_BY_DOMAIN } from '@/auth/graphql/queries/getPublicWorkspaceDataByDomain';
+import { BILLING_PARTNER_CODE } from '@/settings/billing/graphql/queries/billingPartnerCode';
 import { BILLING_PORTAL_SESSION } from '@/settings/billing/graphql/queries/billingPortalSession';
 import { GET_RESOURCE_CREDIT_USAGE } from '@/settings/billing/graphql/queries/getResourceCreditUsage';
 import { LIST_PLANS } from '@/settings/billing/graphql/queries/listPlans';
@@ -562,6 +563,17 @@ export const graphqlMocks = {
               unitPriceCents: 1,
             },
           ],
+        },
+      });
+    }),
+    graphql.query(getOperationName(BILLING_PARTNER_CODE) ?? '', () => {
+      return HttpResponse.json({
+        data: {
+          billingPartnerCode: {
+            __typename: 'BillingPartnerCode',
+            partnerCode: null,
+            isEditable: true,
+          },
         },
       });
     }),

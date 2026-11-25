@@ -1,29 +1,26 @@
-import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
-import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
 import { DATE_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/DateFilterTypes';
 import { DATE_PICKER_DROPDOWN_CONTENT_WIDTH } from '@/object-record/object-filter-dropdown/constants/DatePickerDropdownContentWidth';
 import { useApplyObjectFilterDropdownOperand } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownOperand';
-import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
-import { relationTargetFieldMetadataIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/relationTargetFieldMetadataIdUsedInDropdownComponentState';
+import { filterValueFieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/filterValueFieldMetadataItemUsedInDropdownComponentSelector';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
 import { getOperandLabel } from '@/object-record/object-filter-dropdown/utils/getOperandLabel';
 import { useTimeZoneAbbreviationForNowInUserTimeZone } from '@/object-record/record-filter/hooks/useTimeZoneAbbreviationForNowInUserTimeZone';
-import { type RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
+import { type RecordFilterOperand } from 'twenty-shared/types';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { DropdownMenuInnerSelect } from '@/ui/layout/dropdown/components/DropdownMenuInnerSelect';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { t } from '@lingui/core/macro';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 import { type SelectOption } from 'twenty-ui/primitives/input';
+import { useLingui } from '@lingui/react/macro';
 
 export const ObjectFilterDropdownInnerSelectOperandDropdown = () => {
+  const { t } = useLingui();
   const objectFilterDropdownComponentInstanceId =
     useAvailableComponentInstanceIdOrThrow(
       ObjectFilterDropdownComponentInstanceContext,
@@ -33,36 +30,13 @@ export const ObjectFilterDropdownInnerSelectOperandDropdown = () => {
     selectedOperandInDropdownComponentState,
   );
 
-  const fieldMetadataItemUsedInDropdown = useAtomComponentSelectorValue(
-    fieldMetadataItemUsedInDropdownComponentSelector,
+  const effectiveFieldMetadataItem = useAtomComponentSelectorValue(
+    filterValueFieldMetadataItemUsedInDropdownComponentSelector,
   );
 
   const subFieldNameUsedInDropdown = useAtomComponentStateValue(
     subFieldNameUsedInDropdownComponentState,
   );
-
-  const relationTargetFieldMetadataIdUsedInDropdown =
-    useAtomComponentStateValue(
-      relationTargetFieldMetadataIdUsedInDropdownComponentState,
-    );
-
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
-
-  // The target field may have been deleted since the filter was saved.
-  const relationTargetFieldMetadataItem = isDefined(
-    relationTargetFieldMetadataIdUsedInDropdown,
-  )
-    ? getFieldMetadataItemById({
-        fieldMetadataId: relationTargetFieldMetadataIdUsedInDropdown,
-        objectMetadataItems,
-      }).fieldMetadataItem
-    : null;
-
-  const effectiveFieldMetadataItem = isDefined(
-    relationTargetFieldMetadataIdUsedInDropdown,
-  )
-    ? relationTargetFieldMetadataItem
-    : fieldMetadataItemUsedInDropdown;
 
   const operandsForFilterType = isDefined(effectiveFieldMetadataItem)
     ? getRecordFilterOperands({

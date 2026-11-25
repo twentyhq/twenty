@@ -3,38 +3,43 @@ import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { type ApplicationAuthorizationEntity } from 'src/engine/core-modules/application/application-authorization/application-authorization.entity';
 import { ApplicationAuthorizationDTO } from 'src/engine/core-modules/application/application-authorization/dtos/application-authorization.dto';
+import { toApplicationAuthorizationDTO } from 'src/engine/core-modules/application/application-authorization/utils/to-application-authorization-dto.util';
 import { ApplicationAuthorizationService } from 'src/engine/core-modules/application/application-authorization/services/application-authorization.service';
+import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @UsePipes(ResolverValidationPipe)
 @UseFilters(AuthGraphqlApiExceptionFilter)
 @UseGuards(
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
+  AccessPolicyGuard({
+    authPrincipals: {
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: false,
+      application: false,
     },
-    apiKey: false,
-    oauthClient: false,
-    application: false,
+    requiredPermissionFlags: [],
   }),
-  NoPermissionGuard,
 )
 @MetadataResolver()
 export class ApplicationAuthorizationResolver {
   constructor(
     private readonly applicationAuthorizationService: ApplicationAuthorizationService,
+    private readonly twentyConfigService: TwentyConfigService,
+    private readonly domainServerConfigService: DomainServerConfigService,
   ) {}
 
   @Query(() => [ApplicationAuthorizationDTO])
@@ -48,7 +53,11 @@ export class ApplicationAuthorizationResolver {
       );
 
     return authorizations.map((authorization) =>
-      this.toApplicationAuthorizationDTO(authorization),
+      toApplicationAuthorizationDTO({
+        authorization,
+        serverUrl: this.twentyConfigService.get('SERVER_URL'),
+        frontBaseUrl: this.domainServerConfigService.getBaseUrl().toString(),
+      }),
     );
   }
 
@@ -66,22 +75,5 @@ export class ApplicationAuthorizationResolver {
         workspaceId: workspace.id,
       },
     );
-  }
-
-  private toApplicationAuthorizationDTO(
-    authorization: ApplicationAuthorizationEntity,
-  ): ApplicationAuthorizationDTO {
-    return {
-      id: authorization.id,
-      applicationId: authorization.applicationId,
-      workspaceId: authorization.workspaceId,
-      applicationName: authorization.application.name,
-      applicationUniversalIdentifier:
-        authorization.application.universalIdentifier,
-      scopes: authorization.scopes,
-      lastAuthorizedAt: authorization.lastAuthorizedAt,
-      lastUsedAt: authorization.lastUsedAt,
-      createdAt: authorization.createdAt,
-    };
   }
 }

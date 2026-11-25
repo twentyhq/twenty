@@ -18,13 +18,27 @@ const buildPhase = (
     ...phase,
   }) as Stripe.SubscriptionSchedule.Phase;
 
+const buildPhaseItem = (
+  item: Pick<Stripe.SubscriptionSchedule.Phase.Item, 'price'> &
+    Partial<Stripe.SubscriptionSchedule.Phase.Item>,
+): Stripe.SubscriptionSchedule.Phase.Item => ({
+  billing_thresholds: null,
+  discounts: [],
+  metadata: null,
+  plan: 'plan_id',
+  ...item,
+});
+
 describe('toPhaseUpdateParams', () => {
   it('normalizes a price object reference to its id', () => {
     const phase = toPhaseUpdateParams(
       buildPhase({
         items: [
-          { price: { id: 'price_base' }, quantity: 3 },
-        ] as unknown as Stripe.SubscriptionSchedule.Phase['items'],
+          buildPhaseItem({
+            price: { id: 'price_base', object: 'price', deleted: true },
+            quantity: 3,
+          }),
+        ],
       }),
     );
 
@@ -35,8 +49,8 @@ describe('toPhaseUpdateParams', () => {
     const phase = toPhaseUpdateParams(
       buildPhase({
         items: [
-          { price: 'price_metered', quantity: null },
-        ] as unknown as Stripe.SubscriptionSchedule.Phase['items'],
+          buildPhaseItem({ price: 'price_metered', quantity: undefined }),
+        ],
       }),
     );
 
@@ -69,5 +83,37 @@ describe('toPhaseUpdateParams', () => {
     const phase = toPhaseUpdateParams(buildPhase({ end_date: null }));
 
     expect(phase.end_date).toBeUndefined();
+  });
+
+  describe('trial end', () => {
+    beforeEach(() => {
+      jest.useFakeTimers().setSystemTime(new Date('2026-11-16T00:00:00Z'));
+    });
+
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    it('keeps a trial end that is still ahead', () => {
+      const trialEnd = Date.parse('2026-12-16T00:00:00Z') / 1000;
+
+      const phase = toPhaseUpdateParams(buildPhase({ trial_end: trialEnd }));
+
+      expect(phase.trial_end).toBe(trialEnd);
+    });
+
+    it('omits a trial end that has passed', () => {
+      const phase = toPhaseUpdateParams(
+        buildPhase({ trial_end: Date.parse('2026-11-01T00:00:00Z') / 1000 }),
+      );
+
+      expect('trial_end' in phase).toBe(false);
+    });
+
+    it('omits the trial end when the phase has no trial', () => {
+      const phase = toPhaseUpdateParams(buildPhase({ trial_end: null }));
+
+      expect('trial_end' in phase).toBe(false);
+    });
   });
 });

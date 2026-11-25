@@ -60,8 +60,9 @@ const buildRelationConnectFieldRecord = (
     Record<FieldMetadataType, Record<string, ((value: any) => any) | undefined>>
   >,
 ) => {
-  if (fieldMetadataItem.relation?.type !== RelationType.MANY_TO_ONE)
+  if (fieldMetadataItem.relation?.type !== RelationType.MANY_TO_ONE) {
     return undefined;
+  }
 
   const relationConnectFields = spreadsheetImportFields.filter(
     (field) =>
@@ -70,12 +71,16 @@ const buildRelationConnectFieldRecord = (
       isNonEmptyString(importedStructuredRow[field.key]),
   );
 
-  if (relationConnectFields.length === 0) return undefined;
+  if (relationConnectFields.length === 0) {
+    return undefined;
+  }
 
   const relationConnectFieldValue = relationConnectFields.reduce(
     (acc, field) => {
       const uniqueFieldMetadataItem = field.uniqueFieldMetadataItem;
-      if (!isDefined(uniqueFieldMetadataItem)) return acc;
+      if (!isDefined(uniqueFieldMetadataItem)) {
+        return acc;
+      }
 
       if (
         isCompositeFieldType(uniqueFieldMetadataItem.type) &&

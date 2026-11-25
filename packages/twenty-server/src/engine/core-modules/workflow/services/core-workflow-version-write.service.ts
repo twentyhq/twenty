@@ -21,7 +21,7 @@ import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
+import { CoreWorkflowTriggerService } from 'src/engine/core-modules/workflow/services/core-workflow-trigger.service';
 import { ensureWorkflowStepsTipTapSchemaVersion } from 'src/engine/core-modules/workflow/utils/ensure-workflow-steps-tiptap-schema-version.util';
 import { getCoreWorkflowVersionEditLockKey } from 'src/engine/core-modules/workflow/utils/get-core-workflow-version-edit-lock-key.util';
 import {
@@ -59,7 +59,7 @@ export class CoreWorkflowVersionWriteService {
     private readonly coreDataSource: DataSource,
     @InjectWorkspaceScopedRepository(WorkflowVersionEntity)
     private readonly coreWorkflowVersionRepository: WorkspaceScopedRepository<WorkflowVersionEntity>,
-    private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
+    private readonly coreWorkflowTriggerService: CoreWorkflowTriggerService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly applicationService: ApplicationService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
@@ -108,45 +108,15 @@ export class CoreWorkflowVersionWriteService {
 
   async getValidatedDraftCoreWorkflowVersion({
     workspaceId,
-    userWorkspaceId,
     coreWorkflowVersionId,
   }: {
     workspaceId: string;
-    userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
   }): Promise<ValidatedDraftCoreWorkflowVersion> {
-    await this.coreWorkflowAccessService.assertCoreWorkflowVersionsAreAccessibleOrThrow(
-      {
-        workspaceId,
-        userWorkspaceId,
-        coreWorkflowVersionIds: [coreWorkflowVersionId],
-      },
-    );
-
-    const coreWorkflowVersion =
-      await this.coreWorkflowVersionRepository.findOne(workspaceId, {
-        where: { id: coreWorkflowVersionId },
-      });
-
-    if (!isDefined(coreWorkflowVersion)) {
-      throw new WorkflowQueryValidationException(
-        `Core workflow version '${coreWorkflowVersionId}' not found`,
-        WorkflowQueryValidationExceptionCode.FORBIDDEN,
-        {
-          userFriendlyMessage: msg`Workflow version not found`,
-        },
+    const { coreWorkflowVersion } =
+      await this.coreWorkflowAccessService.findEditableCoreWorkflowVersionOrThrow(
+        { workspaceId, coreWorkflowVersionId },
       );
-    }
-
-    if (isDefined(coreWorkflowVersion.coreWorkflowId)) {
-      await this.coreWorkflowAccessService.assertCoreWorkflowsAreEditableOrThrow(
-        {
-          workspaceId,
-          userWorkspaceId,
-          coreWorkflowIds: [coreWorkflowVersion.coreWorkflowId],
-        },
-      );
-    }
 
     if (coreWorkflowVersion.status !== CoreWorkflowVersionStatus.DRAFT) {
       throw new WorkflowQueryValidationException(
@@ -259,12 +229,17 @@ export class CoreWorkflowVersionWriteService {
             `UPDATE core."workflow" SET "updatedAt" = now() WHERE "workspaceId" = $1 AND "id" = $2`,
             [workspaceId, flatWorkflowVersion.coreWorkflowId],
           );
+
+          await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
+            workspaceId,
+            flatMapsKeys: ['flatWorkflowMaps'],
+          });
         }
       },
     );
 
     try {
-      await this.workflowVersionCoreSyncService.invalidateAutomatedTriggerMaps(
+      await this.coreWorkflowTriggerService.invalidateAutomatedTriggerMaps(
         workspaceId,
       );
     } catch (error) {
@@ -298,13 +273,13 @@ export class CoreWorkflowVersionWriteService {
 
   async createDraftCoreWorkflowVersion({
     workspaceId,
-    coreWorkflowId,
+    coreWorkflowUniversalIdentifier,
     workspaceWorkflowId,
     trigger,
     steps: callerSteps,
   }: {
     workspaceId: string;
-    coreWorkflowId: string;
+    coreWorkflowUniversalIdentifier: string;
     workspaceWorkflowId: string | null;
     trigger: WorkflowTrigger | null;
     steps: WorkflowAction[] | null;
@@ -347,12 +322,11 @@ export class CoreWorkflowVersionWriteService {
               id: coreWorkflowVersionId,
               universalIdentifier: uuidv4(),
               workflowId: workspaceWorkflowId,
-              coreWorkflowId,
+              coreWorkflowUniversalIdentifier,
               triggers: isDefined(trigger) ? [trigger] : null,
               steps: steps ?? null,
               status: CoreWorkflowVersionStatus.DRAFT,
               isSystemSideEffect: false,
-              workspaceWorkflowVersionId: null,
               applicationUniversalIdentifier:
                 workspaceCustomFlatApplication.universalIdentifier,
               createdAt,
@@ -365,7 +339,7 @@ export class CoreWorkflowVersionWriteService {
       },
     });
 
-    await this.workflowVersionCoreSyncService.invalidateAutomatedTriggerMaps(
+    await this.coreWorkflowTriggerService.invalidateAutomatedTriggerMaps(
       workspaceId,
     );
 

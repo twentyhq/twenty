@@ -4,15 +4,17 @@ import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { type Manifest } from 'twenty-shared/application';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { v4 as uuidv4 } from 'uuid';
 
 const TEST_APP_ID = uuidv4();
 const TEST_ROLE_ID = uuidv4();
 const TEST_AGENT_ID = uuidv4();
 const TEST_SECOND_AGENT_ID = uuidv4();
+const TEST_TRIGGER_ID = uuidv4();
 
 const AGENT_GQL_FIELDS =
-  'id name label description prompt icon applicationId modelId modelConfiguration isSystem';
+  'id name label description prompt icon applicationId modelId modelConfiguration isSystem triggers';
 
 const buildManifest = (overrides?: Partial<Pick<Manifest, 'agents'>>) =>
   buildBaseManifest({ appId: TEST_APP_ID, roleId: TEST_ROLE_ID, overrides });
@@ -261,4 +263,76 @@ describe('Manifest update - agents', () => {
       agentsAfterSecondSync.find((agent) => agent.name === 'support-bot'),
     ).toBeUndefined();
   }, 60000);
+
+  describe('database event triggers', () => {
+    const OPPORTUNITY = STANDARD_OBJECTS.opportunity;
+
+    const buildManifestWithTrigger = (condition: string) =>
+      buildManifest({
+        agents: [
+          {
+            universalIdentifier: TEST_AGENT_ID,
+            name: 'sales-assistant',
+            label: 'Sales Assistant',
+            prompt: 'You are a sales assistant.',
+            triggers: [
+              {
+                universalIdentifier: TEST_TRIGGER_ID,
+                type: 'EVENT',
+                settings: {
+                  on: 'recordEvent',
+                  objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+                  action: 'updated',
+                  watchedFieldUniversalIdentifiers: [
+                    OPPORTUNITY.fields.stage.universalIdentifier,
+                    OPPORTUNITY.fields.company.universalIdentifier,
+                  ],
+                  condition,
+                },
+              },
+            ],
+          },
+        ],
+      });
+
+    it('should store an object trigger as the event it listens to', async () => {
+      await syncApplication({
+        manifest: buildManifestWithTrigger(
+          "stage == 'CUSTOMER' and previous.stage != 'CUSTOMER'",
+        ),
+        expectToFail: false,
+      });
+
+      const [agent] = await findAppAgents();
+
+      expect(agent.triggers).toEqual([
+        {
+          id: TEST_TRIGGER_ID,
+          type: 'DATABASE_EVENT',
+          isActive: true,
+          instructions: null,
+          settings: {
+            eventName: 'opportunity.updated',
+            updatedFields: ['stage', 'companyId'],
+            condition: "stage == 'CUSTOMER' and previous.stage != 'CUSTOMER'",
+            conditionBindings: {
+              stage: OPPORTUNITY.fields.stage.universalIdentifier,
+              'previous.stage': OPPORTUNITY.fields.stage.universalIdentifier,
+            },
+          },
+        },
+      ]);
+    }, 60000);
+
+    it('should fail when the condition reads a field the object does not have', async () => {
+      const { errors } = await syncApplication({
+        manifest: buildManifestWithTrigger('unknownField > 0'),
+        expectToFail: true,
+      });
+
+      expect(errors?.[0]?.message).toContain(
+        'condition "unknownField > 0" is invalid',
+      );
+    }, 60000);
+  });
 });

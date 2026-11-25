@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { msg, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
-import { isDefined } from 'twenty-shared/utils';
+import { isCommandMenuCoreObjectName, isDefined } from 'twenty-shared/utils';
 
 import { CommandMenuItemExceptionCode } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.exception';
 import { isObjectMetadataCommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/utils/is-object-metadata-command-menu-item-payload.util';
@@ -14,6 +14,7 @@ import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/wo
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { type UniversalFlatCommandMenuItem } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-command-menu-item.type';
 
 @Injectable()
 export class FlatCommandMenuItemValidatorService {
@@ -81,6 +82,14 @@ export class FlatCommandMenuItemValidatorService {
       navigationTargetObjectMetadataUniversalIdentifier:
         flatCommandMenuItem.navigationTargetObjectMetadataUniversalIdentifier,
       flatObjectMetadataMaps,
+      validationResult,
+    });
+
+    this.validateAvailabilityTarget({
+      availabilityObjectMetadataUniversalIdentifier:
+        flatCommandMenuItem.availabilityObjectMetadataUniversalIdentifier,
+      availabilityCoreObjectName:
+        flatCommandMenuItem.availabilityCoreObjectName,
       validationResult,
     });
 
@@ -194,7 +203,55 @@ export class FlatCommandMenuItemValidatorService {
       validationResult,
     });
 
+    this.validateAvailabilityTarget({
+      availabilityObjectMetadataUniversalIdentifier:
+        flatEntityUpdate.availabilityObjectMetadataUniversalIdentifier !==
+        undefined
+          ? flatEntityUpdate.availabilityObjectMetadataUniversalIdentifier
+          : fromFlatCommandMenuItem.availabilityObjectMetadataUniversalIdentifier,
+      availabilityCoreObjectName:
+        flatEntityUpdate.availabilityCoreObjectName !== undefined
+          ? flatEntityUpdate.availabilityCoreObjectName
+          : fromFlatCommandMenuItem.availabilityCoreObjectName,
+      validationResult,
+    });
+
     return validationResult;
+  }
+
+  private validateAvailabilityTarget({
+    availabilityObjectMetadataUniversalIdentifier,
+    availabilityCoreObjectName,
+    validationResult,
+  }: Pick<
+    UniversalFlatCommandMenuItem,
+    | 'availabilityObjectMetadataUniversalIdentifier'
+    | 'availabilityCoreObjectName'
+  > & {
+    validationResult: FailedFlatEntityValidation<
+      'commandMenuItem',
+      'create' | 'update'
+    >;
+  }) {
+    if (!isDefined(availabilityCoreObjectName)) {
+      return;
+    }
+
+    if (!isCommandMenuCoreObjectName(availabilityCoreObjectName)) {
+      validationResult.errors.push({
+        code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
+        message: t`Unknown availabilityCoreObjectName ${availabilityCoreObjectName}`,
+        userFriendlyMessage: msg`Unknown core object for this command menu item`,
+      });
+    }
+
+    if (isDefined(availabilityObjectMetadataUniversalIdentifier)) {
+      validationResult.errors.push({
+        code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
+        message: t`A command menu item cannot target both an object and a core object`,
+        userFriendlyMessage: msg`A command menu item cannot target both an object and a core object`,
+      });
+    }
   }
 
   private validateNavigationTarget({

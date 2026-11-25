@@ -1,15 +1,12 @@
-import { useGetAvailablePackages } from '@/logic-functions/hooks/useGetAvailablePackages';
-import { useGetLogicFunctionSourceCode } from '@/logic-functions/hooks/useGetLogicFunctionSourceCode';
-import { useGetOneLogicFunction } from '@/logic-functions/hooks/useGetOneLogicFunction';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { type WorkflowCodeAction } from '@/workflow/types/Workflow';
 
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowEditActionCodeFields } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCodeFields';
+import { WorkflowCodeStepInputSchemaEffect } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowCodeStepInputSchemaEffect';
+import { codeStepInputSchemaFamilyState } from '@/workflow/workflow-steps/workflow-actions/code-action/states/codeStepInputSchemaFamilyState';
 import { getWrongExportedFunctionMarkers } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getWrongExportedFunctionMarkers';
 import { styled } from '@linaria/react';
-import { type Monaco } from '@monaco-editor/react';
-import { type editor } from 'monaco-editor';
-import { AutoTypings } from 'monaco-editor-auto-typings';
 import { CodeEditor } from 'twenty-ui/components/code-editor';
 
 const StyledCodeEditorContainer = styled.div`
@@ -24,53 +21,27 @@ type WorkflowReadonlyActionCodeProps = {
 export const WorkflowReadonlyActionCode = ({
   action,
 }: WorkflowReadonlyActionCodeProps) => {
-  const logicFunctionId = action.settings.input.logicFunctionId;
+  const code = action.settings.input.code;
 
-  const { availablePackages } = useGetAvailablePackages({
-    id: logicFunctionId,
-  });
-
-  const { logicFunction } = useGetOneLogicFunction({
-    id: logicFunctionId,
-  });
-
-  const { sourceHandlerCode, loading } = useGetLogicFunctionSourceCode({
-    logicFunctionId,
-  });
-
-  const handleEditorDidMount = async (
-    editor: editor.IStandaloneCodeEditor,
-    monaco: Monaco,
-  ) => {
-    await AutoTypings.create(editor, {
-      monaco,
-      preloadPackages: true,
-      onlySpecifiedPackages: true,
-      versions: availablePackages,
-      debounceDuration: 0,
-    });
-  };
-
-  if (loading) {
-    return null;
-  }
+  const codeStepInputSchema = useAtomFamilyStateValue(
+    codeStepInputSchemaFamilyState,
+    action.id,
+  );
 
   return (
     <>
+      <WorkflowCodeStepInputSchemaEffect stepId={action.id} sourceCode={code} />
       <WorkflowStepBody>
         <WorkflowEditActionCodeFields
           functionInput={action.settings.input.logicFunctionInput}
-          inputSchema={
-            logicFunction?.workflowActionTriggerSettings?.inputSchema
-          }
+          inputSchema={codeStepInputSchema}
           readonly
         />
         <StyledCodeEditorContainer>
           <CodeEditor
             height={343}
-            value={sourceHandlerCode ?? undefined}
+            value={code}
             language="typescript"
-            onMount={handleEditorDidMount}
             setMarkers={getWrongExportedFunctionMarkers}
             options={{
               readOnly: true,

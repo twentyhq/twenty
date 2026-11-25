@@ -4,7 +4,7 @@ import { getTimelineCalendarEventLabel } from '@/activities/calendar/utils/getTi
 import { LinkActivitiesDropdown } from '@/activities/components/LinkActivitiesDropdown';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactElement } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { IconCalendarEvent } from 'twenty-ui/icon';
 import {
   type SearchTimelineCalendarEventsQuery,
@@ -28,7 +28,7 @@ export const LinkCalendarEventsDropdown = ({
       Pick<TimelineCalendarEvent, 'id' | 'title' | 'visibility' | 'startsAt'>,
       SearchTimelineCalendarEventsQuery
     >
-      activityObjectNameSingular={CoreObjectNameSingular.CalendarEvent}
+      activityObjectNameSingular={StandardObjectNameSingular.CalendarEvent}
       dropdownIdPrefix={dropdownIdPrefix}
       ariaLabel={t`Link events`}
       trigger={trigger}
@@ -39,7 +39,7 @@ export const LinkCalendarEventsDropdown = ({
         otherActivities:
           data.searchTimelineCalendarEvents.otherTimelineCalendarEvents,
       })}
-      timelineQuery={getTimelineCalendarEventsFromObjectRecord}
+      timelineQueries={[getTimelineCalendarEventsFromObjectRecord]}
       getOption={(calendarEvent) => ({
         label: getTimelineCalendarEventLabel(calendarEvent),
         description: formatToHumanReadableDate(calendarEvent.startsAt),

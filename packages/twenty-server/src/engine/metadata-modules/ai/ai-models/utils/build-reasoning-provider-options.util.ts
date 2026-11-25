@@ -6,10 +6,12 @@ import {
   AI_SDK_AZURE,
   AI_SDK_BEDROCK,
   AI_SDK_GOOGLE,
+  AI_SDK_GROQ,
   AI_SDK_MISTRAL,
   AI_SDK_OPENAI,
+  AI_SDK_OPENAI_COMPATIBLE,
   AI_SDK_XAI,
-} from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
+} from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.constant';
 import { type RegisteredAiModel } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { isAdaptiveThinkingClaudeModel } from 'src/engine/metadata-modules/ai/ai-models/utils/is-adaptive-thinking-claude-model.util';
 
@@ -95,10 +97,16 @@ export const buildReasoningProviderOptions = (
           },
         },
       };
+    case AI_SDK_GROQ:
+      return isDefined(effort) ? { groq: { reasoningEffort: effort } } : {};
     case AI_SDK_MISTRAL:
       return isDefined(effort) ? { mistral: { reasoningEffort: effort } } : {};
     case AI_SDK_XAI:
       return isDefined(effort) ? { xai: { reasoningEffort: effort } } : {};
+    case AI_SDK_OPENAI_COMPATIBLE:
+      return isDefined(effort)
+        ? { openaiCompatible: { reasoningEffort: effort } }
+        : {};
     default:
       return {};
   }

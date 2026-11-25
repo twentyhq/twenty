@@ -6,7 +6,7 @@ import { isSlackUserLinkConsentState } from 'src/logic-functions/utils/is-slack-
 import { isSlackUserLinkSource } from 'src/logic-functions/utils/is-slack-user-link-source';
 
 export const findSlackUserLink = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'query'>,
   { slackTeamId, slackUserId }: { slackTeamId: string; slackUserId: string },
 ): Promise<SlackUserLink | undefined> => {
   const queryResult = await client.query({

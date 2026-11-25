@@ -1,7 +1,9 @@
-import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { Test } from '@nestjs/testing';
+
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { BackfillStandardApplicationDefaultRoleCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-workspace-command-1792741864752-backfill-standard-application-default-role.command';
-import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 
 const WORKSPACE_ID = '20202020-0000-4000-8000-000000000001';
@@ -13,7 +15,7 @@ describe('BackfillStandardApplicationDefaultRoleCommand', () => {
   let hasAdminRole: boolean;
   let command: BackfillStandardApplicationDefaultRoleCommand;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     standardApplicationDefaultRoleId = null;
     hasAdminRole = true;
 
@@ -30,7 +32,7 @@ describe('BackfillStandardApplicationDefaultRoleCommand', () => {
             : {},
         },
       })),
-    } as unknown as WorkspaceCacheService;
+    };
 
     const applicationService = {
       findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest.fn(
@@ -46,13 +48,17 @@ describe('BackfillStandardApplicationDefaultRoleCommand', () => {
           standardApplicationDefaultRoleId = defaultRoleId;
         },
       ),
-    } as unknown as ApplicationService;
+    };
 
-    command = new BackfillStandardApplicationDefaultRoleCommand(
-      {} as WorkspaceIteratorService,
-      workspaceCacheService,
-      applicationService,
-    );
+    const module = await Test.createTestingModule({
+      providers: [
+        BackfillStandardApplicationDefaultRoleCommand,
+        { provide: WorkspaceIteratorService, useValue: {} },
+        { provide: WorkspaceCacheService, useValue: workspaceCacheService },
+        { provide: ApplicationService, useValue: applicationService },
+      ],
+    }).compile();
+    command = module.get(BackfillStandardApplicationDefaultRoleCommand);
 
     jest.spyOn(command['logger'], 'log').mockImplementation();
     jest.spyOn(command['logger'], 'warn').mockImplementation();

@@ -1,7 +1,10 @@
 import { type WatchQueryFetchPolicy } from '@apollo/client';
 import { useQuery } from '@apollo/client/react';
 import { useEffect } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  canAccessThroughAllRecordsOrRlsPermission,
+  isDefined,
+} from 'twenty-shared/utils';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -50,11 +53,12 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     objectNameSingular,
   });
   const apolloCoreClient = useApolloCoreClient();
-  const { findManyRecordsQuery } = useFindManyRecordsQuery({
-    objectNameSingular,
-    recordGqlFields,
-    cursorDirection: cursorFilter?.cursorDirection,
-  });
+  const { findManyRecordsQuery, relationsWithArgumentsVariables } =
+    useFindManyRecordsQuery({
+      objectNameSingular,
+      recordGqlFields,
+      cursorDirection: cursorFilter?.cursorDirection,
+    });
 
   const { handleFindManyRecordsError } = useHandleFindManyRecordsError({
     objectMetadataItem,
@@ -88,7 +92,10 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     objectMetadataItem.id,
   );
 
-  const hasReadPermission = objectPermissions.canReadObjectRecords;
+  const hasReadPermission = canAccessThroughAllRecordsOrRlsPermission({
+    objectRecordsPermissions: objectPermissions,
+    operationType: 'read',
+  });
 
   const { data, loading, error, fetchMore, refetch } =
     useQuery<RecordGqlOperationFindManyResult>(findManyRecordsQuery, {
@@ -98,6 +105,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
         orderBy,
         lastCursor: cursorFilter?.cursor ?? undefined,
         limit,
+        ...relationsWithArgumentsVariables,
       },
       fetchPolicy: fetchPolicy,
       client: apolloCoreClient,

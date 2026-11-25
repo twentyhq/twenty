@@ -122,7 +122,7 @@ export class MemberEventSubscriptionService {
             recordIds,
           ] of recordIdsByObjectNameSingular) {
             const readableRecords = await this.workspaceOrmManager
-              .getRepositoryWithContextPermissions(objectNameSingular)
+              .getRepository(objectNameSingular)
               .find({
                 where: { id: In([...recordIds]) },
                 select: { id: true },

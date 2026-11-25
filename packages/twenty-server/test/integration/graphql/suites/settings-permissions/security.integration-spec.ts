@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { gql } from 'graphql-tag';
 import request from 'supertest';
 import { MAX_ALLOWED_IFRAME_ORIGINS } from 'twenty-shared/constants';
@@ -84,7 +85,7 @@ describe('Security permissions', () => {
           updateWorkspace(data: {
             displayName: "${originalWorkspaceState.displayName}",
             subdomain: "${originalWorkspaceState.subdomain}",
-            logo: "${originalWorkspaceState.logo}",
+            logo: ${isNonEmptyString(originalWorkspaceState.logo) ? `"${originalWorkspaceState.logo}"` : 'null'},
             isGoogleAuthEnabled: ${originalWorkspaceState.isGoogleAuthEnabled},
             isMicrosoftAuthEnabled: ${originalWorkspaceState.isMicrosoftAuthEnabled},
             isPasswordAuthEnabled: ${originalWorkspaceState.isPasswordAuthEnabled}
@@ -96,17 +97,20 @@ describe('Security permissions', () => {
       `;
 
     await makeMetadataApiRequest({ query: restoreQuery });
-    for (const origin of await readOrigins())
+    for (const origin of await readOrigins()) {
       await editOrigin('remove', origin);
-    for (const origin of originalWorkspaceState.allowedEmbeddingOrigins ?? [])
+    }
+    for (const origin of originalWorkspaceState.allowedEmbeddingOrigins ?? []) {
       await editOrigin('add', origin);
+    }
   });
 
   describe('security permissions', () => {
     describe('iframe embedding', () => {
       beforeEach(async () => {
-        for (const origin of await readOrigins())
+        for (const origin of await readOrigins()) {
           await editOrigin('remove', origin);
+        }
       });
 
       it('normalizes origins, avoids duplicates and refreshes the cached workspace after revocation', async () => {
@@ -152,8 +156,9 @@ describe('Security permissions', () => {
         const responses = await Promise.all(
           origins.map((origin) => editOrigin('add', origin)),
         );
-        for (const response of responses)
+        for (const response of responses) {
           expect(response.body.errors).toBeUndefined();
+        }
         expect((await readOrigins()).sort()).toEqual(origins.sort());
       });
 

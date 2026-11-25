@@ -22,33 +22,32 @@ export const CalendarEventParticipantsAvatarGroup = ({
     participants.map((participant) => {
       if (isTimelineCalendarEventParticipant(participant)) {
         return participant;
-      } else {
-        return {
-          personId: participant.person?.id ?? null,
-          workspaceMemberId: participant.workspaceMember?.id ?? null,
-          firstName:
-            participant.person?.name?.firstName ||
-            participant.workspaceMember?.name.firstName ||
-            '',
-          lastName:
-            participant.person?.name?.lastName ||
-            participant.workspaceMember?.name.lastName ||
-            '',
-          displayName:
-            participant.person?.name?.firstName ||
-            participant.person?.name?.lastName ||
-            participant.workspaceMember?.name.firstName ||
-            participant.workspaceMember?.name.lastName ||
-            participant.displayName ||
-            participant.handle ||
-            '',
-          avatarUrl:
-            participant.person?.avatarUrl ||
-            participant.workspaceMember?.avatarUrl ||
-            '',
-          handle: participant.handle,
-        };
       }
+      return {
+        personId: participant.person?.id ?? null,
+        workspaceMemberId: participant.workspaceMember?.id ?? null,
+        firstName:
+          participant.person?.name?.firstName ||
+          participant.workspaceMember?.name.firstName ||
+          '',
+        lastName:
+          participant.person?.name?.lastName ||
+          participant.workspaceMember?.name.lastName ||
+          '',
+        displayName:
+          participant.person?.name?.firstName ||
+          participant.person?.name?.lastName ||
+          participant.workspaceMember?.name.firstName ||
+          participant.workspaceMember?.name.lastName ||
+          participant.displayName ||
+          participant.handle ||
+          '',
+        avatarUrl:
+          participant.person?.avatarUrl ||
+          participant.workspaceMember?.avatarUrl ||
+          '',
+        handle: participant.handle,
+      };
     });
 
   return (

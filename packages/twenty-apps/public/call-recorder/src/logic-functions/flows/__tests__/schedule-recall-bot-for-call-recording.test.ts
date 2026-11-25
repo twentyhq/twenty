@@ -1,4 +1,3 @@
-import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { CHECK_CREDITS_BEFORE_RECALL_BOT_JOIN_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
@@ -97,7 +96,7 @@ const scheduleBot = ({
   client: FakeCoreApiClient;
   meetingStartsAt: string;
 }) =>
-  scheduleRecallBotForCallRecording(client as unknown as CoreApiClient, {
+  scheduleRecallBotForCallRecording(client, {
     callRecording: { id: 'call-recording-1' },
     calendarEvent: {
       id: 'calendar-event-1',
@@ -107,6 +106,9 @@ const scheduleBot = ({
       endsAt: '2026-01-01T14:00:00.000Z',
       iCalUid: 'calendar-event-uid',
       conferenceLinkUrl: 'https://meet.example.com/customer-sync',
+      calendarChannelIds: [],
+      participants: [],
+      hasUnlistedParticipants: false,
       callRecorderPreference: 'ON',
     },
   });
@@ -125,7 +127,7 @@ describe('scheduleRecallBotForCallRecording', () => {
     vi.stubGlobal('fetch', fetchMock);
     vi.stubEnv('RECALL_API_KEY', 'recall-api-key');
     vi.stubEnv('RECALL_REGION', 'us-west-2');
-    vi.stubEnv('CALL_RECORDER_USE_WORKSPACE_LOGO', 'false');
+    vi.stubEnv('CALL_RECORDER_STYLE', 'NONE');
     vi.stubEnv(
       'TWENTY_APP_ACCESS_TOKEN',
       buildAccessToken({ workspaceId: WORKSPACE_ID }),
@@ -146,7 +148,7 @@ describe('scheduleRecallBotForCallRecording', () => {
     vi.restoreAllMocks();
   });
 
-  it('enqueues the credit check ten minutes before the join for a meeting that is far enough away', async () => {
+  it('enqueues the credit check fifteen minutes before the join for a meeting that is far enough away', async () => {
     const client = new FakeCoreApiClient();
 
     const scheduleResult = await scheduleBot({
@@ -162,12 +164,15 @@ describe('scheduleRecallBotForCallRecording', () => {
         CHECK_CREDITS_BEFORE_RECALL_BOT_JOIN_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
       jobs: [
         {
-          jobId: `credit-check.call-recording-1.recall-bot-1.${new Date('2026-01-01T12:59:00.000Z').getTime()}`,
-          payload: { callRecordingId: 'call-recording-1' },
+          jobId: `credit-check.call-recording-1.recall-bot-1.${new Date('2026-01-01T12:59:00.000Z').getTime()}.${new Date('2026-01-01T12:44:00.000Z').getTime()}`,
+          payload: {
+            callRecordingId: 'call-recording-1',
+            bookedJoinAt: '2026-01-01T12:59:00.000Z',
+          },
         },
       ],
       retryLimit: ENQUEUED_JOB_RETRY_LIMIT,
-      delayMs: 49 * 60_000,
+      delayMs: 44 * 60_000,
     });
   });
 

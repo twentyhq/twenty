@@ -5,7 +5,7 @@ import { getOperationName } from '~/utils/getOperationName';
 import { CalendarEventsCard } from '@/activities/calendar/components/CalendarEventsCard';
 import { getTimelineCalendarEventsFromObjectRecord } from '@/activities/calendar/graphql/queries/getTimelineCalendarEventsFromObjectRecord';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
@@ -27,7 +27,7 @@ const meta: Meta<typeof CalendarEventsCard> = {
         value={{
           targetRecordIdentifier: {
             id: '1',
-            targetObjectNameSingular: CoreObjectNameSingular.Company,
+            targetObjectNameSingular: StandardObjectNameSingular.Company,
           },
           layoutType: PageLayoutType.RECORD_PAGE,
         }}

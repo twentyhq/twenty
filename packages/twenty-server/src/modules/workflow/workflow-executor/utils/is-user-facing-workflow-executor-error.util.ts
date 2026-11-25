@@ -28,6 +28,7 @@ const USER_FACING_AI_EXCEPTION_CODES = [
   AiExceptionCode.EVALUATION_MODEL_NOT_FOUND,
   AiExceptionCode.EVALUATION_QUESTION_UNSUPPORTED,
   AiExceptionCode.INVALID_EVALUATION_REQUEST,
+  AiExceptionCode.MODEL_NOT_ALLOWED_BY_DATA_POLICY,
 ];
 
 export const isUserFacingWorkflowExecutorError = (error: unknown): boolean => {
@@ -44,7 +45,11 @@ export const isUserFacingWorkflowExecutorError = (error: unknown): boolean => {
   }
 
   if (error instanceof LogicFunctionException) {
-    return error.code === LogicFunctionExceptionCode.LOGIC_FUNCTION_FORBIDDEN;
+    return (
+      error.code === LogicFunctionExceptionCode.LOGIC_FUNCTION_FORBIDDEN ||
+      error.code ===
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_WORKSPACE_SUSPENDED
+    );
   }
 
   return false;

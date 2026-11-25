@@ -1,10 +1,10 @@
 import { formatQueueJobProgressLabel } from '@/queue-job/utils/formatQueueJobProgressLabel';
-import { t } from '@lingui/core/macro';
 import { Link } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconDownload, IconSettings } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
+import { useLingui } from '@lingui/react/macro';
 
 type SettingsApplicationActionButtonProps = {
   installedApplicationId?: string;
@@ -21,6 +21,7 @@ export const SettingsApplicationActionButton = ({
   isInstalling,
   installProgress,
 }: SettingsApplicationActionButtonProps) => {
+  const { t } = useLingui();
   if (isDefined(installedApplicationId) && !isInstalling) {
     return (
       <Button

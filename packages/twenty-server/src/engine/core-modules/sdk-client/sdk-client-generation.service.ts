@@ -1,35 +1,31 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { createHash } from 'crypto';
-import * as fs from 'fs/promises';
-import { printSchema } from 'graphql';
-import path, { join } from 'path';
-
-import { replaceCoreClient } from 'twenty-client-sdk/generate';
+import { buildSchema, printSchema } from 'graphql';
 import { FileFolder } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import { WorkspaceSchemaFactory } from 'src/engine/api/graphql/workspace-schema.factory';
+import { WorkspaceGraphqlSchemaSDLService } from 'src/engine/api/graphql/workspace-graphql-schema-sdl/workspace-graphql-schema-sdl.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
-import { createZipFile } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/create-zip-file';
-import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
-import { type SdkModuleName } from 'src/engine/core-modules/sdk-client/constants/allowed-sdk-modules';
-import { SDK_CLIENT_PACKAGE_DIRNAME } from 'src/engine/core-modules/sdk-client/constants/sdk-client-package-dirname';
+import { SDK_CLIENT_ARCHIVE_NAME } from 'src/engine/core-modules/sdk-client/constants/sdk-client-archive-name';
+import { SDK_CLIENT_ARCHIVE_SIZE_BUCKET_BOUNDARIES_BYTES } from 'src/engine/core-modules/sdk-client/constants/sdk-client-archive-size-bucket-boundaries';
 import {
   SdkClientException,
   SdkClientExceptionCode,
 } from 'src/engine/core-modules/sdk-client/exceptions/sdk-client.exception';
+import { SdkClientArchiveBuilderFactory } from 'src/engine/core-modules/sdk-client/sdk-client-archive-builder.factory';
+import { computeSdkClientCoreChecksumFromArchive } from 'src/engine/core-modules/sdk-client/utils/compute-sdk-client-core-checksum-from-archive.util';
 import {
   GENERATE_SDK_CLIENT_JOB_NAME,
   type GenerateSdkClientJobData,
@@ -38,7 +34,6 @@ import { type SdkClientGenerationTrigger } from 'src/engine/core-modules/sdk-cli
 import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
-const SDK_CLIENT_ARCHIVE_NAME = 'twenty-client-sdk.zip';
 const SDK_CLIENT_GENERATION_RETRY_LIMIT = 3;
 
 @Injectable()
@@ -49,11 +44,12 @@ export class SdkClientGenerationService {
     private readonly fileStorageService: FileStorageService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    private readonly workspaceSchemaFactory: WorkspaceSchemaFactory,
+    private readonly workspaceGraphqlSchemaSDLService: WorkspaceGraphqlSchemaSDLService,
     private readonly applicationService: ApplicationService,
     @InjectMessageQueue(MessageQueue.workspaceQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly metricsService: MetricsService,
+    private readonly sdkClientArchiveBuilderFactory: SdkClientArchiveBuilderFactory,
   ) {}
 
   async enqueueSdkClientGenerationForWorkspace(
@@ -119,12 +115,14 @@ export class SdkClientGenerationService {
     const generationStart = performance.now();
 
     try {
-      const workspaceEntity = await this.workspaceRepository.findOneByOrFail({
-        id: workspaceId,
+      // Uninstall hooks of a soft-deleted workspace still need its SDK client
+      const workspaceEntity = await this.workspaceRepository.findOneOrFail({
+        where: { id: workspaceId },
+        withDeleted: true,
       });
 
-      const graphqlSchema =
-        await this.workspaceSchemaFactory.createGraphQLSchema(
+      const schemaSDLResult =
+        await this.workspaceGraphqlSchemaSDLService.getOrComputeSchemaSDL(
           fromWorkspaceEntityToFlat(workspaceEntity),
           applicationId,
         );
@@ -133,7 +131,9 @@ export class SdkClientGenerationService {
         workspaceId,
         applicationId,
         applicationUniversalIdentifier,
-        schema: printSchema(graphqlSchema),
+        schema: isDefined(schemaSDLResult)
+          ? printSchema(buildSchema(schemaSDLResult.sdl))
+          : '',
       });
 
       const generationDurationMs = performance.now() - generationStart;
@@ -149,9 +149,16 @@ export class SdkClientGenerationService {
         unit: 'ms',
         attributes: { trigger },
       });
+      this.metricsService.recordHistogram({
+        key: MetricsKeys.SdkClientGenerationArchiveSizeBytes,
+        value: archiveBuffer.length,
+        unit: 'By',
+        attributes: { trigger },
+        bucketBoundaries: SDK_CLIENT_ARCHIVE_SIZE_BUCKET_BOUNDARIES_BYTES,
+      });
 
       this.logger.log(
-        `Generated SDK client for application ${applicationUniversalIdentifier} (trigger: ${trigger})`,
+        `Generated SDK client for application ${applicationUniversalIdentifier} in workspace ${workspaceId} (trigger: ${trigger}, ${archiveBuffer.length} bytes)`,
       );
 
       return archiveBuffer;
@@ -159,7 +166,13 @@ export class SdkClientGenerationService {
       this.metricsService.incrementCounterBy({
         key: MetricsKeys.SdkClientGenerationFailed,
         amount: 1,
-        attributes: { trigger },
+        attributes: {
+          trigger,
+          failureCode:
+            error instanceof SdkClientException
+              ? (error.failureCode ?? error.code)
+              : 'UNKNOWN',
+        },
       });
 
       throw error;
@@ -177,40 +190,13 @@ export class SdkClientGenerationService {
     applicationUniversalIdentifier: string;
     schema: string;
   }): Promise<Buffer> {
-    const temporaryDirManager = new TemporaryDirManager();
-
     try {
-      const { sourceTemporaryDir } = await temporaryDirManager.init();
+      const archiveBuffer = await this.sdkClientArchiveBuilderFactory
+        .getCurrentDriver()
+        .buildArchive({ schema });
 
-      const tempPackageRoot = join(sourceTemporaryDir, 'twenty-client-sdk');
-
-      await fs.cp(SDK_CLIENT_PACKAGE_DIRNAME, tempPackageRoot, {
-        recursive: true,
-        filter: (source) => {
-          const relativePath = path.relative(
-            SDK_CLIENT_PACKAGE_DIRNAME,
-            source,
-          );
-
-          return (
-            !relativePath.includes('node_modules') &&
-            !relativePath.startsWith('src')
-          );
-        },
-      });
-
-      await replaceCoreClient({ packageRoot: tempPackageRoot, schema });
-
-      const sdkClientCoreChecksum = await this.computeSdkModuleChecksum(
-        tempPackageRoot,
-        'core',
-      );
-
-      const archivePath = join(sourceTemporaryDir, SDK_CLIENT_ARCHIVE_NAME);
-
-      await createZipFile(tempPackageRoot, archivePath);
-
-      const archiveBuffer = await fs.readFile(archivePath);
+      const sdkClientCoreChecksum =
+        await computeSdkClientCoreChecksumFromArchive(archiveBuffer);
 
       await this.fileStorageService.writeFile({
         workspaceId,
@@ -233,9 +219,11 @@ export class SdkClientGenerationService {
       throw new SdkClientException(
         `Failed to generate SDK client for application "${applicationUniversalIdentifier}" in workspace "${workspaceId}": ${error instanceof Error ? error.message : String(error)}`,
         SdkClientExceptionCode.GENERATION_FAILED,
+        {
+          failureCode:
+            error instanceof SdkClientException ? error.failureCode : undefined,
+        },
       );
-    } finally {
-      await temporaryDirManager.clean();
     }
   }
 
@@ -270,18 +258,5 @@ export class SdkClientGenerationService {
 
       throw error;
     }
-  }
-
-  // sha-256 (not md5) so the renderer can verify cached bundles against the URL
-  // checksum with WebCrypto, which has no md5 support
-  private async computeSdkModuleChecksum(
-    tempPackageRoot: string,
-    moduleName: SdkModuleName,
-  ): Promise<string> {
-    const moduleBuffer = await fs.readFile(
-      join(tempPackageRoot, 'dist', `${moduleName}.mjs`),
-    );
-
-    return createHash('sha256').update(moduleBuffer).digest('hex');
   }
 }

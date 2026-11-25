@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { CronModule } from 'src/engine/core-modules/cron/cron.module';
+import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { RecordShareModule } from 'src/engine/permissions/record-share/record-share.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -15,15 +16,18 @@ import { AgentTriggerThrottlerService } from 'src/engine/metadata-modules/ai/ai-
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
+import { DatabaseEventTriggerConditionModule } from 'src/engine/workspace-event-emitter/database-event-trigger-condition.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([AgentEntity, WorkspaceEntity]),
     AiAgentExecutionModule,
     CronModule,
+    PermissionsModule,
     RecordShareModule,
     ThrottlerModule,
     WorkspaceCacheModule,
+    DatabaseEventTriggerConditionModule,
   ],
   providers: [
     provideWorkspaceScopedRepository(AgentEntity),

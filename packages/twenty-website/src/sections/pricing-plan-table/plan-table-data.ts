@@ -437,18 +437,6 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
       type: 'row',
     },
     {
-      featureLabel: msg`Onboarding Packs`,
-      selfHostTiers: {
-        organization: { kind: 'yes', label: msg`Yes` },
-        pro: { kind: 'dash' },
-      },
-      tiers: {
-        organization: { kind: 'yes', label: msg`Yes` },
-        pro: { kind: 'yes', label: msg`Yes` },
-      },
-      type: 'row',
-    },
-    {
       featureLabel: msg`Implementation partners`,
       tiers: {
         organization: { kind: 'yes', label: msg`Yes` },

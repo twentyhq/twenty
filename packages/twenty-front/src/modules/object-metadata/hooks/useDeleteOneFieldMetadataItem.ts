@@ -11,11 +11,12 @@ import { AggregateOperations } from '@/object-record/record-table/constants/Aggr
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
-import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
 import { useToast } from 'twenty-ui/components/feedback';
+import { useLingui } from '@lingui/react/macro';
 
 export const useDeleteOneFieldMetadataItem = () => {
+  const { t } = useLingui();
   const [deleteOneFieldMetadataItemMutation] = useMutation(
     DeleteOneFieldMetadataItemDocument,
   );

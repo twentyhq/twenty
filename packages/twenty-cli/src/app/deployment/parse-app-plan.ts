@@ -17,6 +17,8 @@ const isAction = (value: unknown): value is AppPlanAction =>
       isNonEmptyString(value.universalIdentifier)
     : isNonEmptyString(value.universalIdentifier)) &&
   (isUndefined(value.flatEntity) || isPlainObject(value.flatEntity)) &&
+  (isUndefined(value.cascadedFromUniversalIdentifier) ||
+    isNonEmptyString(value.cascadedFromUniversalIdentifier)) &&
   (isUndefined(value.diff) ||
     (isPlainObject(value.diff) &&
       Object.values(value.diff).every(isPlainObject)));

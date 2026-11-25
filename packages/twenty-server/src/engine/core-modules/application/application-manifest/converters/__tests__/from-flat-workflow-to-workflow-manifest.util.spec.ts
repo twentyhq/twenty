@@ -14,6 +14,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import {
   type BaseOutputSchemaV2,
+  WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES,
   WorkflowActionType,
 } from 'twenty-shared/workflow';
 
@@ -126,8 +127,17 @@ const STEP_FILTERS = {
 
 const RECORD = { objectUniversalIdentifier: OBJECT_ID };
 
+const CODE_STEP_SOURCE = `export const main = async (params: { name: string }) => {
+  return { greeting: \`Hello \${params.name}\` };
+};
+`;
+
 const STEP_INPUTS = {
   LOGIC_FUNCTION: { greeting: 'Hello', nested: { count: 2 } },
+  CODE: {
+    code: CODE_STEP_SOURCE,
+    logicFunctionInput: { name: '{{trigger.properties.after.name}}' },
+  },
   CREATE_RECORD: { ...RECORD, objectRecord: { name: 'Ticket' } },
   UPDATE_RECORD: {
     ...RECORD,
@@ -301,6 +311,7 @@ const syncWorkflow = (manifest: WorkflowManifest) => {
     ...workflow,
     workspaceId: 'workspace-id',
     applicationId: 'application-id',
+    navigationMenuItemIds: [],
   };
   // Stored versions come back from jsonb, which drops undefined values and reorders keys.
   const flatWorkflowVersion: FlatWorkflowVersion = JSON.parse(
@@ -524,7 +535,6 @@ describe('fromFlatWorkflowToWorkflowManifest', () => {
               buildStep({
                 type: 'HTTP_REQUEST',
                 overrides: {
-                  position: { x: 0, y: 180 },
                   expectedOutputSchema: { ok: true },
                   errorHandlingOptions: {
                     retryOnFailure: { value: 0 },
@@ -638,14 +648,30 @@ describe('fromFlatWorkflowToWorkflowManifest', () => {
   });
 
   describe('unsupported workflows', () => {
-    it('reports a CODE step', () => {
-      const synced = syncWorkflow(buildWorkflow({}));
+    it.each([
+      {
+        stepState: 'only a logic function',
+        input: { logicFunctionId: 'logic-function-id', logicFunctionInput: {} },
+      },
+      {
+        stepState: 'a logic function next to empty source',
+        input: {
+          code: '',
+          logicFunctionId: 'logic-function-id',
+          logicFunctionInput: {},
+        },
+      },
+    ])('reports a CODE step holding $stepState', ({ input }) => {
+      const synced = syncWorkflow(
+        buildWorkflow({ steps: [buildStep({ type: 'CODE' })] }),
+      );
       const [step] = synced.flatWorkflowVersion.steps ?? [];
 
-      Object.assign(step, { type: WorkflowActionType.CODE });
+      Object.assign(step.settings, { input });
 
       expect(exportWorkflow(synced)).toEqual({
-        reason: 'CODE steps are not supported in application workflows',
+        reason:
+          'code step not yet migrated to inline source; edit it once or run the 2.56 upgrade',
       });
     });
 
@@ -665,6 +691,49 @@ describe('fromFlatWorkflowToWorkflowManifest', () => {
 
       expect(exportWorkflow(synced)).toEqual({
         reason: 'workflow filtering on a field of a related record',
+      });
+    });
+
+    it.each([
+      { humanInputInstructions: 'Ask when the company is unclear' },
+      { conversation: { scope: 'RUN' } },
+    ])('reports a step without an agent that stores %o', (agentOnlyInput) => {
+      const synced = syncWorkflow(
+        buildWorkflow({
+          steps: [
+            buildStep({
+              type: 'AI_AGENT',
+              overrides: {
+                input: {
+                  instructions: 'Qualify the lead.',
+                  prompt: 'Summarize {{trigger.text}}',
+                },
+              },
+            }),
+          ],
+        }),
+      );
+      const [step] = synced.flatWorkflowVersion.steps ?? [];
+
+      Object.assign(step.settings.input, agentOnlyInput);
+
+      expect(exportWorkflow(synced)).toEqual({
+        reason:
+          WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES.GENERATE_STEP_HAS_CONVERSATION_CONFIG,
+      });
+    });
+
+    it('reports a step on an agent that still stores its own config', () => {
+      const synced = syncWorkflow(
+        buildWorkflow({ steps: [buildStep({ type: 'AI_AGENT' })] }),
+      );
+      const [step] = synced.flatWorkflowVersion.steps ?? [];
+
+      Object.assign(step.settings.input, { instructions: 'Qualify the lead.' });
+
+      expect(exportWorkflow(synced)).toEqual({
+        reason:
+          WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES.AGENT_STEP_HAS_INLINE_CONFIG,
       });
     });
 
@@ -737,6 +806,55 @@ describe('fromFlatWorkflowToWorkflowManifest', () => {
         },
         reason:
           'workflow step on a logic function that is not a workflow action of this application',
+      },
+      {
+        description: 'an agent scope naming an object that is not exported',
+        step: buildStep({
+          type: 'AI_AGENT',
+          overrides: {
+            input: {
+              prompt: 'Summarize {{trigger.text}}',
+              scope: {
+                objectPermissions: [
+                  {
+                    objectUniversalIdentifier: OBJECT_ID,
+                    canReadObjectRecords: true,
+                  },
+                ],
+              },
+            },
+          },
+        }),
+        exportReferences: {
+          ...references,
+          objectByUniversalIdentifier: new Map(),
+        },
+        reason: 'workflow referencing an object that is not exported',
+      },
+      {
+        description: 'an agent scope naming a field that is not exported',
+        step: buildStep({
+          type: 'AI_AGENT',
+          overrides: {
+            input: {
+              prompt: 'Summarize {{trigger.text}}',
+              scope: {
+                fieldPermissions: [
+                  {
+                    objectUniversalIdentifier: OBJECT_ID,
+                    fieldUniversalIdentifier: STATUS_FIELD_ID,
+                    canReadFieldValue: false,
+                  },
+                ],
+              },
+            },
+          },
+        }),
+        exportReferences: {
+          ...references,
+          fieldByUniversalIdentifier: new Map(),
+        },
+        reason: 'workflow referencing a field that is not exported',
       },
       {
         description: 'an agent the application does not export',
@@ -892,7 +1010,6 @@ describe('fromFlatWorkflowToWorkflowManifest on versions built in the workflow b
   ): StoredWorkflowNode => ({
     name: 'Record is created',
     type: 'DATABASE_EVENT',
-    position: { x: 0, y: 0 },
     settings: { eventName: 'ticket.created', outputSchema: {} },
     nextStepIds: [STEP_ID],
     ...overrides,
@@ -905,7 +1022,6 @@ describe('fromFlatWorkflowToWorkflowManifest on versions built in the workflow b
     name: 'Create Record',
     type: 'CREATE_RECORD',
     valid: false,
-    position: { x: 0, y: 180 },
     nextStepIds: [],
     settings: {
       outputSchema: {},
@@ -1005,7 +1121,7 @@ describe('fromFlatWorkflowToWorkflowManifest on versions built in the workflow b
     },
   );
 
-  it('exports a moved trigger position, and a missing one as null', () => {
+  it('exports a moved trigger position, and omits a missing one', () => {
     expect(
       exportBuilderVersion({
         triggers: [recordCreatedTrigger({ position: { x: 120, y: 26 } })],
@@ -1014,10 +1130,10 @@ describe('fromFlatWorkflowToWorkflowManifest on versions built in the workflow b
     ).toEqual({ x: 120, y: 26 });
     expect(
       exportBuilderVersion({
-        triggers: [recordCreatedTrigger({ position: undefined })],
+        triggers: [recordCreatedTrigger()],
         steps: [createRecordStep()],
-      }).trigger.position,
-    ).toBeNull();
+      }).trigger,
+    ).not.toHaveProperty('position');
   });
 
   it('exports the output schema the builder wrote for a POST webhook', () => {
@@ -1107,6 +1223,66 @@ describe('fromFlatWorkflowToWorkflowManifest on versions built in the workflow b
     });
   });
 
+  it('exports an agent step that carries its own config, with no agent to reference', () => {
+    const input = {
+      instructions: 'Qualify the lead from its last email.',
+      modelId: 'auto-select-workspace-default-model',
+      modelConfiguration: { webSearch: { enabled: true } },
+      scope: {
+        canReadAllObjectRecords: true,
+        objectPermissions: [
+          {
+            objectUniversalIdentifier: OBJECT_ID,
+            canUpdateObjectRecords: true,
+          },
+        ],
+        permissionFlagUniversalIdentifiers: ['send-email-tool'],
+      },
+      prompt: '{{trigger.properties.after.summary}}',
+    };
+    const [step] = exportBuilderVersion({
+      triggers: [recordCreatedTrigger()],
+      steps: [
+        createRecordStep({
+          name: 'Qualify the lead',
+          type: 'AI_AGENT',
+          settings: {
+            outputSchema: {},
+            errorHandlingOptions: BUILDER_ERROR_HANDLING_OPTIONS,
+            input,
+          },
+        }),
+      ],
+    }).steps;
+
+    expect(step).toMatchObject({ type: 'AI_AGENT', input });
+    expect(step.input).not.toHaveProperty('agentUniversalIdentifier');
+  });
+
+  it('exports a step without an agent with the blank human input instructions the builder stores', () => {
+    const input = {
+      instructions: 'Qualify the lead from its last email.',
+      prompt: '{{trigger.properties.after.summary}}',
+      humanInputInstructions: '',
+    };
+    const [step] = exportBuilderVersion({
+      triggers: [recordCreatedTrigger()],
+      steps: [
+        createRecordStep({
+          name: 'Qualify the lead',
+          type: 'AI_AGENT',
+          settings: {
+            outputSchema: {},
+            errorHandlingOptions: BUILDER_ERROR_HANDLING_OPTIONS,
+            input,
+          },
+        }),
+      ],
+    }).steps;
+
+    expect(step).toMatchObject({ type: 'AI_AGENT', input });
+  });
+
   it('exports an email step written without files', () => {
     const input = {
       connectedAccountId: '{{trigger.properties.after.accountId}}',
@@ -1166,13 +1342,77 @@ describe('fromFlatWorkflowToWorkflowManifest on versions built in the workflow b
     expect(step).toMatchObject({ type: 'SEND_CHAT_MESSAGE', input });
   });
 
-  it('exports a step without a position as null', () => {
+  it('exports a code step with its source and the output schema of its last test', () => {
+    const input = {
+      code: CODE_STEP_SOURCE,
+      logicFunctionInput: { name: '{{trigger.properties.after.name}}' },
+    };
+    const testedOutputSchema = {
+      greeting: {
+        isLeaf: true,
+        type: 'string',
+        label: 'greeting',
+        value: 'Hello Jane',
+      },
+    };
     const [step] = exportBuilderVersion({
       triggers: [recordCreatedTrigger()],
-      steps: [createRecordStep({ position: undefined })],
+      steps: [
+        createRecordStep({
+          name: 'Code - Serverless Function',
+          type: 'CODE',
+          settings: {
+            outputSchema: testedOutputSchema,
+            expectedOutputSchema: {},
+            errorHandlingOptions: BUILDER_ERROR_HANDLING_OPTIONS,
+            input,
+          },
+        }),
+      ],
     }).steps;
 
-    expect(step.position).toBeNull();
+    expect(step).toEqual({
+      universalIdentifier: STEP_ID,
+      name: 'Code - Serverless Function',
+      type: 'CODE',
+      nextStepIds: [],
+      input,
+      outputSchema: testedOutputSchema,
+      expectedOutputSchema: {},
+    });
+  });
+
+  it('exports a code step backfilled with its source while it still holds its logic function', () => {
+    const input = {
+      code: CODE_STEP_SOURCE,
+      logicFunctionInput: { name: '{{trigger.properties.after.name}}' },
+    };
+    const [step] = exportBuilderVersion({
+      triggers: [recordCreatedTrigger()],
+      steps: [
+        createRecordStep({
+          name: 'Code - Serverless Function',
+          type: 'CODE',
+          settings: {
+            outputSchema: {},
+            errorHandlingOptions: BUILDER_ERROR_HANDLING_OPTIONS,
+            input: { ...input, logicFunctionId: 'logic-function-id' },
+          },
+        }),
+      ],
+    }).steps;
+
+    expect(step).toMatchObject({ type: 'CODE', input });
+    expect(step.input).not.toHaveProperty('logicFunctionId');
+  });
+
+  it('omits the position of a step without one', () => {
+    const [step] = exportBuilderVersion({
+      triggers: [recordCreatedTrigger()],
+      steps: [createRecordStep()],
+    }).steps;
+
+    expect(step).not.toHaveProperty('position');
   });
 
   it.each([
@@ -1184,10 +1424,7 @@ describe('fromFlatWorkflowToWorkflowManifest on versions built in the workflow b
     },
     {
       description: 'Apollo typenames',
-      overrides: {
-        __typename: 'WorkflowAction',
-        position: { x: 0, y: 180, __typename: 'WorkflowStepPosition' },
-      },
+      overrides: { __typename: 'WorkflowAction' },
     },
     {
       description: 'a retry count stored as a boolean',

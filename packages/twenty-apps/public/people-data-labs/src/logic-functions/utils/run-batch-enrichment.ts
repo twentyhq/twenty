@@ -9,6 +9,7 @@ import { chunk } from 'src/logic-functions/utils/chunk';
 import { enrichChunk } from 'src/logic-functions/utils/enrich-chunk';
 import { extractRecordIds } from 'src/logic-functions/utils/extract-record-ids';
 import { resolveMinLikelihoods } from 'src/logic-functions/utils/resolve-min-likelihoods';
+import { resolveRequiredFields } from 'src/logic-functions/utils/resolve-required-fields';
 import { type BatchEnrichmentAdapter } from 'src/types/batch-enrichment-adapter';
 import { type BulkEnrichInput } from 'src/types/bulk-enrich-input';
 import { type BulkEnrichResult } from 'src/types/bulk-enrich-result';
@@ -33,6 +34,11 @@ export const runBatchEnrichment = async <TNode, TData, TParams>({
     weakIdentifierMinLikelihoodEnvVarName:
       adapter.weakIdentifierMinLikelihoodEnvVarName,
   });
+  const required = resolveRequiredFields({
+    requiredFields: input.requiredFields,
+    envVarName: adapter.requiredFieldsEnvVarName,
+    options: adapter.requiredFieldOptions,
+  });
   const recordIds = Array.from(new Set(extractRecordIds(input.records)));
   const resultById = new Map<string, EnrichResult>();
   const companyIdByMatchKeyCache: CompanyIdByMatchKeyCache = new Map();
@@ -44,6 +50,7 @@ export const runBatchEnrichment = async <TNode, TData, TParams>({
       recordIds: recordIdsChunk,
       input,
       minLikelihoods,
+      required,
       adapter,
       resultById,
       companyIdByMatchKeyCache,

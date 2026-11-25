@@ -2,11 +2,22 @@ import { ManagedIframe } from '@/media-access/components/ManagedIframe';
 import { MediaAccessIndicator } from '@/media-access/components/MediaAccessIndicator';
 import { mediaAccessSessionsState } from '@/media-access/states/mediaAccessSessionsState';
 import { type MediaAccessSession } from '@/media-access/types/MediaAccessSession';
+import { type MediaAccessOwner } from '@/media-access/types/MediaAccessOwner';
 import { getMediaAccessOwnerId } from '@/media-access/utils/getMediaAccessOwnerId';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { createStore, Provider } from 'jotai';
-import { type CSSProperties, useState } from 'react';
-import { expect, fn, screen, userEvent, waitFor, within } from 'storybook/test';
+import { type CSSProperties, StrictMode, useState } from 'react';
+import {
+  expect,
+  fn,
+  mocked,
+  screen,
+  spyOn,
+  userEvent,
+  waitFor,
+  within,
+} from 'storybook/test';
+import { type IframeMediaPermission } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
 import { ComponentDecorator } from 'twenty-ui/testing';
@@ -15,6 +26,11 @@ const meta: Meta<typeof ManagedIframe> = {
   title: 'Modules/MediaAccess/ManagedIframe',
   component: ManagedIframe,
   decorators: [ComponentDecorator],
+  beforeEach: () => {
+    const confirm = spyOn(window, 'confirm').mockReturnValue(true);
+
+    return () => confirm.mockRestore();
+  },
 };
 
 export default meta;
@@ -40,13 +56,20 @@ const ManagedIframePreview = ({
   hasNativeCapture = false,
   iframeStyle,
   iframeClassName,
+  initialPermission = MICROPHONE_PERMISSION,
+  ownerType = 'workspace-widget',
+  iframeContainerStyle,
 }: {
   hasNativeCapture?: boolean;
   iframeStyle?: CSSProperties;
   iframeClassName?: string;
+  initialPermission?: IframeMediaPermission;
+  ownerType?: MediaAccessOwner['type'];
+  iframeContainerStyle?: CSSProperties;
 }) => {
   const [isHidden, setIsHidden] = useState(false);
   const [isGranted, setIsGranted] = useState(true);
+  const [permission, setPermission] = useState(initialPermission);
   const [store] = useState(() => {
     const previewStore = createStore();
     previewStore.set(
@@ -65,12 +88,22 @@ const ManagedIframePreview = ({
         {isHidden ? 'Show phone' : 'Hide phone'}
       </Button>
       <Button onClick={() => setIsGranted(!isGranted)}>
-        {isGranted ? 'Revoke microphone' : 'Grant microphone'}
+        {isGranted ? 'Revoke media access' : 'Grant media access'}
       </Button>
-      <div style={{ width: 500, height: 250 }}>
+      <Button
+        onClick={() =>
+          setPermission((currentPermission) => ({
+            ...currentPermission,
+            camera: !currentPermission.camera,
+          }))
+        }
+      >
+        {permission.camera ? 'Revoke camera' : 'Grant camera'}
+      </Button>
+      <div style={{ width: 500, height: 250, ...iframeContainerStyle }}>
         <ManagedIframe
-          owner={{ type: 'workspace-widget', id: 'phone', name: 'Aircall' }}
-          iframeMediaPermissions={isGranted ? [MICROPHONE_PERMISSION] : []}
+          owner={{ type: ownerType, id: 'phone', name: 'Aircall' }}
+          iframeMediaPermissions={isGranted ? [permission] : []}
           requestedMediaCapabilities={['microphone', 'camera']}
           src="https://example.com"
           title="Aircall phone"
@@ -146,6 +179,60 @@ export const EnableAndDisable: StoryObj<typeof ManagedIframe> = {
   },
 };
 
+export const ConfirmsOutsideAppControlledContent: StoryObj<
+  typeof ManagedIframe
+> = {
+  render: () => (
+    <StrictMode>
+      <style>{`.front-component-host-ui, [role="dialog"] { opacity: 0 !important; position: fixed !important; inset: 0 !important; z-index: 2147483647 !important; }`}</style>
+      <ManagedIframePreview
+        ownerType="application"
+        iframeContainerStyle={{ opacity: 0 }}
+      />
+    </StrictMode>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const documentBody = within(canvasElement.ownerDocument.body);
+    const initialFrame = canvas.getByTitle('Aircall phone');
+    const confirm = mocked(window.confirm)
+      .mockReturnValueOnce(false)
+      .mockReturnValueOnce(true);
+
+    try {
+      const enableButton = await canvas.findByRole('button', {
+        name: 'Enable microphone',
+      });
+
+      await expect(enableButton).not.toBeVisible();
+      await userEvent.click(enableButton);
+      await expect(confirm).toHaveBeenCalledTimes(1);
+      await expect(confirm).toHaveBeenLastCalledWith(
+        'Enable media access for Aircall?\nEnable microphone\nhttps://example.com',
+      );
+      await expect(documentBody.queryByRole('dialog')).not.toBeInTheDocument();
+      await expect(canvas.getByTitle('Aircall phone')).toBe(initialFrame);
+      await expect(initialFrame).toHaveAttribute(
+        'allow',
+        "microphone 'none'; camera 'none'; encrypted-media",
+      );
+
+      await userEvent.click(enableButton);
+      await expect(confirm).toHaveBeenCalledTimes(2);
+      await expect(confirm).toHaveBeenLastCalledWith(
+        'Enable media access for Aircall?\nEnable microphone\nhttps://example.com',
+      );
+      await expect(canvas.getByTitle('Aircall phone')).not.toBe(initialFrame);
+      await expect(canvas.getByTitle('Aircall phone')).toHaveAttribute(
+        'allow',
+        "microphone https://example.com; camera 'none'; encrypted-media",
+      );
+    } finally {
+      confirm.mockReset().mockReturnValue(true);
+    }
+  },
+};
+
 export const RevokedPermission: StoryObj<typeof ManagedIframe> = {
   render: () => <ManagedIframePreview />,
   play: async ({ canvasElement }) => {
@@ -155,7 +242,7 @@ export const RevokedPermission: StoryObj<typeof ManagedIframe> = {
     );
     const enabledFrame = canvas.getByTitle('Aircall phone');
     await userEvent.click(
-      canvas.getByRole('button', { name: 'Revoke microphone' }),
+      canvas.getByRole('button', { name: 'Revoke media access' }),
     );
 
     await waitFor(() => expect(enabledFrame).not.toBeInTheDocument());
@@ -166,7 +253,7 @@ export const RevokedPermission: StoryObj<typeof ManagedIframe> = {
       canvas.queryByRole('button', { name: 'Enable microphone' }),
     ).not.toBeInTheDocument();
     await userEvent.click(
-      canvas.getByRole('button', { name: 'Grant microphone' }),
+      canvas.getByRole('button', { name: 'Grant media access' }),
     );
     await expect(
       await canvas.findByRole('button', { name: 'Enable microphone' }),
@@ -178,6 +265,143 @@ export const RevokedPermission: StoryObj<typeof ManagedIframe> = {
       'allow',
       "microphone 'none'; camera 'none'; encrypted-media",
     );
+  },
+};
+
+export const RevokedPermissionDuringConfirmation: StoryObj<
+  typeof ManagedIframe
+> = {
+  render: () => (
+    <StrictMode>
+      <ManagedIframePreview ownerType="application" />
+    </StrictMode>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const initialFrame = canvas.getByTitle('Aircall phone');
+    const revokeMediaAccess = canvas.getByRole('button', {
+      name: 'Revoke media access',
+    });
+    const confirm = mocked(window.confirm)
+      .mockImplementationOnce(() => {
+        revokeMediaAccess.click();
+
+        return true;
+      })
+      .mockReturnValue(true);
+
+    try {
+      await userEvent.click(
+        await canvas.findByRole('button', { name: 'Enable microphone' }),
+      );
+
+      await expect(confirm).toHaveBeenCalledTimes(1);
+      await expect(canvas.getByTitle('Aircall phone')).toBe(initialFrame);
+      await expect(initialFrame).toHaveAttribute(
+        'allow',
+        "microphone 'none'; camera 'none'; encrypted-media",
+      );
+      await expect(
+        canvas.queryByRole('button', { name: 'Enable microphone' }),
+      ).not.toBeInTheDocument();
+      await userEvent.click(
+        canvas.getByRole('button', { name: 'Grant media access' }),
+      );
+      await expect(initialFrame).toHaveAttribute(
+        'allow',
+        "microphone 'none'; camera 'none'; encrypted-media",
+      );
+      await userEvent.click(
+        await canvas.findByRole('button', { name: 'Enable microphone' }),
+      );
+      await expect(confirm).toHaveBeenCalledTimes(2);
+      await expect(canvas.getByTitle('Aircall phone')).not.toBe(initialFrame);
+      await expect(canvas.getByTitle('Aircall phone')).toHaveAttribute(
+        'allow',
+        "microphone https://example.com; camera 'none'; encrypted-media",
+      );
+    } finally {
+      confirm.mockReset().mockReturnValue(true);
+    }
+  },
+};
+
+export const CameraPermission: StoryObj<typeof ManagedIframe> = {
+  render: () => (
+    <ManagedIframePreview
+      initialPermission={{
+        ...MICROPHONE_PERMISSION,
+        microphone: false,
+        camera: true,
+      }}
+    />
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const initialFrame = canvas.getByTitle('Aircall phone');
+
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'Enable camera' }),
+    );
+
+    const enabledFrame = canvas.getByTitle('Aircall phone');
+
+    await expect(enabledFrame).not.toBe(initialFrame);
+    await expect(enabledFrame).toHaveAttribute(
+      'allow',
+      "microphone 'none'; camera https://example.com; encrypted-media",
+    );
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Media access enabled' }),
+    );
+    await expect(
+      await screen.findByText('Camera access enabled'),
+    ).toBeVisible();
+  },
+};
+
+export const ExpandedPermission: StoryObj<typeof ManagedIframe> = {
+  render: () => <ManagedIframePreview />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'Enable microphone' }),
+    );
+
+    const microphoneFrame = canvas.getByTitle('Aircall phone');
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Grant camera' }));
+    await expect(
+      await canvas.findByRole('button', {
+        name: 'Enable microphone and camera',
+      }),
+    ).toBeVisible();
+    await expect(canvas.getByTitle('Aircall phone')).toBe(microphoneFrame);
+    await expect(microphoneFrame).toHaveAttribute(
+      'allow',
+      "microphone https://example.com; camera 'none'; encrypted-media",
+    );
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Enable microphone and camera' }),
+    );
+
+    const combinedFrame = canvas.getByTitle('Aircall phone');
+
+    await expect(combinedFrame).not.toBe(microphoneFrame);
+    await expect(combinedFrame).toHaveAttribute(
+      'allow',
+      'microphone https://example.com; camera https://example.com; encrypted-media',
+    );
+    await expect(
+      canvas.queryByRole('button', { name: 'Enable microphone and camera' }),
+    ).not.toBeInTheDocument();
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Media access enabled' }),
+    );
+    await expect(
+      await screen.findByText('Microphone and camera access enabled'),
+    ).toBeVisible();
   },
 };
 

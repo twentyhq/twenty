@@ -14,7 +14,7 @@ type WorkspaceMemberEmailLookup = {
 };
 
 export const findWorkspaceMemberIdsByEmails = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'query'>,
   { emails }: { emails: string[] },
 ): Promise<WorkspaceMemberEmailLookup> => {
   const lookedUpEmails = [

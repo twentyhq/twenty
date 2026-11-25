@@ -81,7 +81,6 @@ describe('downloadSlackFile', () => {
     );
   });
 
-
   it('should name the missing scope as the reason for the sign-in page', async () => {
     mockFetchResponse({
       headers: new Headers({ 'content-type': 'text/html; charset=utf-8' }),
@@ -110,7 +109,10 @@ describe('downloadSlackFile', () => {
   });
 
   it('should name a transport failure as a download failure', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('socket hang up')));
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockRejectedValue(new Error('socket hang up')),
+    );
 
     const result = await downloadPngFile();
 
@@ -163,7 +165,7 @@ describe('downloadSlackFile', () => {
         'content-type': 'image/png',
         'content-length': String(11 * 1024 * 1024),
       }),
-      body: { cancel } as unknown as ReadableStream<Uint8Array<ArrayBuffer>>,
+      body: new ReadableStream<Uint8Array<ArrayBuffer>>({ cancel }),
     });
 
     const result = await downloadPngFile();

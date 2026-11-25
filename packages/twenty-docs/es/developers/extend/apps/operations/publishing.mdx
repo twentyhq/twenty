@@ -42,6 +42,16 @@ twenty app build
 
 Esto verifica los tipos y empaqueta la aplicación en una instantánea temporal de la CLI. Usa `--json` para inspeccionar el manifiesto y los metadatos del artefacto. `twenty app publish` crea el paquete en sí; no se requiere una compilación de tarball independiente.
 
+Las compilaciones conservan los archivos de entrada del frontend y de las funciones lógicas, sus asistentes y tipos locales importados, la configuración local de TypeScript y el CSS y los recursos anidados. Las rutas y los bytes originales se conservan en un inventario de fuentes. Las dependencias en `node_modules`, los archivos no relacionados y las importaciones fuera del directorio de la aplicación (incluidos los destinos de enlaces simbólicos) se excluyen del inventario. Estas exclusiones no impiden que se compilen las aplicaciones existentes. Si usas `package.json#files`, incluye estas fuentes conservadas o la publicación informará de los archivos que faltan. Los paquetes instalados más antiguos deben recompilarse y publicarse para obtener este inventario. `twenty app pull` restaura los componentes de frontend y sus dependencias locales inventariadas en servidores compatibles con la exportación de dependencias de origen. La extracción del código fuente de las funciones lógicas aún no es compatible.
+
+### Compatibilidad del inventario de código fuente
+
+La carga del inventario completo de código fuente requiere Twenty server **2.59.0 o posterior**. Actualice el servidor antes de usar `twenty app apply` o `twenty app dev` con CSS, JavaScript, imágenes o fuentes importados. Los servidores más antiguos solo aceptan `.ts`, `.tsx` y `.json` en la carpeta de código fuente y rechazan los tipos de archivo adicionales. Las compilaciones locales siguen funcionando sin un servidor; esta CLI no omite automáticamente los archivos fuente para servidores más antiguos.
+
+### Conflictos de rutas de código fuente y paquetes
+
+Si una compilación informa `Application source \<path> collides with a built application file`, un archivo original sobrescribiría la salida generada. Por ejemplo, `src/run.ts` genera `src/run.mjs`, por lo que otra entrada no puede importar un archivo fuente existente en `src/run.mjs`. Cambie el nombre del archivo importado (por ejemplo, a `src/run-helper.mjs`) y actualice sus importaciones; luego, vuelva a compilar. La CLI se detiene antes de copiar el archivo conflictivo.
+
 ## Despliegue en un servidor (tarball)
 
 Para aplicaciones que no quieres que estén disponibles públicamente — herramientas propietarias, integraciones solo para empresas o compilaciones experimentales — puedes desplegar un tarball directamente en un servidor de Twenty.
@@ -61,10 +71,10 @@ twenty auth login --url https://your-twenty-server.com --name production
 Compila y sube tu aplicación al servidor en un solo paso:
 
 ```bash filename="Terminal"
-twenty app publish --private
-# To deploy to a specific remote:
-# twenty app publish --private --remote production
+twenty app publish --private --remote production
 ```
+
+El uso explícito de `--remote production` selecciona la conexión guardada anteriormente, aunque otro remoto sea el predeterminado. Guardar un remoto con nombre no cambia un valor predeterminado existente.
 
 ### Compartir una aplicación desplegada
 
@@ -83,7 +93,7 @@ Al actualizar una aplicación tarball ya desplegada, el servidor requiere que la
 Para publicar una actualización:
 
 1. Incrementa el campo `version` en tu `package.json` (p. ej., `1.2.3` → `1.2.4`, `1.3.0` o `2.0.0`)
-2. Ejecuta `twenty app publish --private` (o `twenty app publish --private --remote production`)
+2. Ejecuta `twenty app publish --private --remote production`
 3. Los espacios de trabajo que tienen la aplicación instalada y la actualización automática habilitada (en la pestaña General de la aplicación) se actualizan automáticamente en segundo plano; los demás verán la actualización disponible en su configuración
 
 <Note>
@@ -388,11 +398,13 @@ Ve a la página **Configuración > Aplicaciones** en Twenty, donde se pueden exp
 
 {/* TODO: add screenshot of the UI when the app is registered */}
 
-También puedes instalar aplicaciones desde la línea de comandos:
+Desde el directorio de la aplicación, instala su versión publicada en el espacio de trabajo de destino:
 
 ```bash filename="Terminal"
-twenty app install
+twenty app install --remote production
 ```
+
+Usa el nombre del remoto para el espacio de trabajo donde quieres instalar la aplicación. Para instalar sin un proyecto local, pasa `--universal-identifier \<id>`.
 
 <Note>
 El servidor aplica el versionado semver al instalar, reflejando las reglas del despliegue:
@@ -400,7 +412,7 @@ El servidor aplica el versionado semver al instalar, reflejando las reglas del d
 * Instalar la misma versión que ya está instalada en tu espacio de trabajo se rechaza con un error `APP_ALREADY_INSTALLED`.
 * Instalar una versión inferior a la que está instalada actualmente se rechaza con un error `CANNOT_DOWNGRADE_APPLICATION`.
 
-Para instalar una versión más reciente, primero despliégala o publícala y luego vuelve a ejecutar `twenty app install`.
+Para instalar una versión más reciente, primero despliégala o publícala y luego vuelve a ejecutar `twenty app install --remote production`.
 
 </Note>
 

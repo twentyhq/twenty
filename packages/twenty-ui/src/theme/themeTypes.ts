@@ -141,6 +141,7 @@ export type ThemeType = {
     invertedPrimary: string;
     invertedSecondary: string;
     danger: string;
+    dangerSolid: string;
     transparent: {
       primary: string;
       secondary: string;

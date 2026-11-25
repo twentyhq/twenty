@@ -3,12 +3,12 @@ import { useTurnIntoBlockOptions } from '@/advanced-text-editor/hooks/useTurnInt
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { t } from '@lingui/core/macro';
 import { type Editor } from '@tiptap/react';
 import { useId } from 'react';
 import { LightButton } from 'twenty-ui/components/input';
 import { IconTextSize } from 'twenty-ui/icon';
 import { useTheme } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 type TurnIntoBlockDropdownProps = {
   editor: Editor;
@@ -17,6 +17,7 @@ type TurnIntoBlockDropdownProps = {
 export const TurnIntoBlockDropdown = ({
   editor,
 }: TurnIntoBlockDropdownProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const instanceId = useId();
   const dropdownId = `turn-into-block-dropdown-${instanceId}`;

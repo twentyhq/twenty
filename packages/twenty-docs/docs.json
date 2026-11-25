@@ -88,7 +88,8 @@
                     "pages": [
                       "user-guide/data-model/capabilities/objects",
                       "user-guide/data-model/capabilities/fields",
-                      "user-guide/data-model/capabilities/relation-fields"
+                      "user-guide/data-model/capabilities/relation-fields",
+                      "user-guide/data-model/capabilities/validation-rules"
                     ]
                   },
                   {
@@ -256,7 +257,8 @@
                   {
                     "group": "How-Tos",
                     "pages": [
-                      "user-guide/ai/how-tos/ai-faq"
+                      "user-guide/ai/how-tos/ai-faq",
+                      "user-guide/ai/how-tos/inbox-notifications"
                     ]
                   }
                 ]
@@ -448,7 +450,8 @@
                       "developers/extend/apps/data/extending-objects",
                       "developers/extend/apps/data/system-fields",
                       "developers/extend/apps/data/relations",
-                      "developers/extend/apps/data/timeline-activity-types"
+                      "developers/extend/apps/data/timeline-activity-types",
+                      "developers/extend/apps/data/validation-rules"
                     ]
                   },
                   {
@@ -630,6 +633,7 @@
                       {
                         "group": "Data display",
                         "pages": [
+                          "ui/components/data-display/assistant-avatar",
                           "ui/components/data-display/avatar-group",
                           "ui/components/data-display/command-block",
                           "ui/components/data-display/details-row",
@@ -1200,7 +1204,8 @@
                     "pages": [
                       "ar/user-guide/data-model/capabilities/objects",
                       "ar/user-guide/data-model/capabilities/fields",
-                      "ar/user-guide/data-model/capabilities/relation-fields"
+                      "ar/user-guide/data-model/capabilities/relation-fields",
+                      "ar/user-guide/data-model/capabilities/validation-rules"
                     ]
                   },
                   {
@@ -1368,7 +1373,8 @@
                   {
                     "group": "الإرشادات",
                     "pages": [
-                      "ar/user-guide/ai/how-tos/ai-faq"
+                      "ar/user-guide/ai/how-tos/ai-faq",
+                      "ar/user-guide/ai/how-tos/inbox-notifications"
                     ]
                   }
                 ]
@@ -1560,7 +1566,8 @@
                       "ar/developers/extend/apps/data/extending-objects",
                       "ar/developers/extend/apps/data/system-fields",
                       "ar/developers/extend/apps/data/relations",
-                      "ar/developers/extend/apps/data/timeline-activity-types"
+                      "ar/developers/extend/apps/data/timeline-activity-types",
+                      "ar/developers/extend/apps/data/validation-rules"
                     ]
                   },
                   {
@@ -1741,6 +1748,7 @@
                       {
                         "group": "عرض البيانات",
                         "pages": [
+                          "ar/ui/components/data-display/assistant-avatar",
                           "ar/ui/components/data-display/avatar-group",
                           "ar/ui/components/data-display/command-block",
                           "ar/ui/components/data-display/details-row",
@@ -2763,7 +2771,8 @@
                     "pages": [
                       "es/user-guide/data-model/capabilities/objects",
                       "es/user-guide/data-model/capabilities/fields",
-                      "es/user-guide/data-model/capabilities/relation-fields"
+                      "es/user-guide/data-model/capabilities/relation-fields",
+                      "es/user-guide/data-model/capabilities/validation-rules"
                     ]
                   },
                   {
@@ -3123,7 +3132,8 @@
                       "es/developers/extend/apps/data/extending-objects",
                       "es/developers/extend/apps/data/system-fields",
                       "es/developers/extend/apps/data/relations",
-                      "es/developers/extend/apps/data/timeline-activity-types"
+                      "es/developers/extend/apps/data/timeline-activity-types",
+                      "es/developers/extend/apps/data/validation-rules"
                     ]
                   },
                   {
@@ -3304,6 +3314,7 @@
                       {
                         "group": "Visualización de datos",
                         "pages": [
+                          "es/ui/components/data-display/assistant-avatar",
                           "es/ui/components/data-display/avatar-group",
                           "es/ui/components/data-display/command-block",
                           "es/ui/components/data-display/details-row",
@@ -3422,7 +3433,8 @@
                     "pages": [
                       "it/user-guide/data-model/capabilities/objects",
                       "it/user-guide/data-model/capabilities/fields",
-                      "it/user-guide/data-model/capabilities/relation-fields"
+                      "it/user-guide/data-model/capabilities/relation-fields",
+                      "it/user-guide/data-model/capabilities/validation-rules"
                     ]
                   },
                   {
@@ -3590,7 +3602,8 @@
                   {
                     "group": "Guide pratiche",
                     "pages": [
-                      "it/user-guide/ai/how-tos/ai-faq"
+                      "it/user-guide/ai/how-tos/ai-faq",
+                      "it/user-guide/ai/how-tos/inbox-notifications"
                     ]
                   }
                 ]
@@ -3782,7 +3795,8 @@
                       "it/developers/extend/apps/data/extending-objects",
                       "it/developers/extend/apps/data/system-fields",
                       "it/developers/extend/apps/data/relations",
-                      "it/developers/extend/apps/data/timeline-activity-types"
+                      "it/developers/extend/apps/data/timeline-activity-types",
+                      "it/developers/extend/apps/data/validation-rules"
                     ]
                   },
                   {
@@ -3963,6 +3977,7 @@
                       {
                         "group": "Visualizzazione dati",
                         "pages": [
+                          "it/ui/components/data-display/assistant-avatar",
                           "it/ui/components/data-display/avatar-group",
                           "it/ui/components/data-display/command-block",
                           "it/ui/components/data-display/details-row",
@@ -5437,7 +5452,8 @@
                     "pages": [
                       "ro/user-guide/data-model/capabilities/objects",
                       "ro/user-guide/data-model/capabilities/fields",
-                      "ro/user-guide/data-model/capabilities/relation-fields"
+                      "ro/user-guide/data-model/capabilities/relation-fields",
+                      "ro/user-guide/data-model/capabilities/validation-rules"
                     ]
                   },
                   {
@@ -5605,7 +5621,8 @@
                   {
                     "group": "How-Tos",
                     "pages": [
-                      "ro/user-guide/ai/how-tos/ai-faq"
+                      "ro/user-guide/ai/how-tos/ai-faq",
+                      "ro/user-guide/ai/how-tos/inbox-notifications"
                     ]
                   }
                 ]
@@ -5797,7 +5814,8 @@
                       "ro/developers/extend/apps/data/extending-objects",
                       "ro/developers/extend/apps/data/system-fields",
                       "ro/developers/extend/apps/data/relations",
-                      "ro/developers/extend/apps/data/timeline-activity-types"
+                      "ro/developers/extend/apps/data/timeline-activity-types",
+                      "ro/developers/extend/apps/data/validation-rules"
                     ]
                   },
                   {
@@ -5978,6 +5996,7 @@
                       {
                         "group": "Afișarea datelor",
                         "pages": [
+                          "ro/ui/components/data-display/assistant-avatar",
                           "ro/ui/components/data-display/avatar-group",
                           "ro/ui/components/data-display/command-block",
                           "ro/ui/components/data-display/details-row",

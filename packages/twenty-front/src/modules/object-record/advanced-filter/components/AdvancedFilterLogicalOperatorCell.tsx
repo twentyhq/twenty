@@ -2,9 +2,9 @@ import { AdvancedFilterLogicalOperatorDropdown } from '@/object-record/advanced-
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { capitalize } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledText = styled.div`
   align-items: center;
@@ -30,6 +30,7 @@ export const AdvancedFilterLogicalOperatorCell = ({
   index,
   recordFilterGroup,
 }: AdvancedFilterLogicalOperatorCellProps) => {
+  const { t } = useLingui();
   return (
     <StyledContainer>
       {index === 0 ? (

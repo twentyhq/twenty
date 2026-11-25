@@ -1,6 +1,6 @@
 import { OBJECT_PERMISSION_ACTIONS } from '@/application/objectPermissionActionType';
 import { type RoleManifestGrant } from '@/application/roleManifestGrantType';
-import { type RoleManifest } from '@/application/roleManifestType';
+import { type LegacyCompliantRoleManifest } from '@/application/roleManifestType';
 import {
   getEffectiveObjectPermissionsFromRoleManifest,
   ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION,
@@ -29,8 +29,8 @@ const getRoleLevelGrantsNotCoveredBy = ({
   role,
   superset,
 }: {
-  role: RoleManifest;
-  superset: RoleManifest;
+  role: LegacyCompliantRoleManifest;
+  superset: LegacyCompliantRoleManifest;
 }): RoleManifestGrant[] => [
   ...OBJECT_PERMISSION_ACTIONS.filter((action) => {
     const roleLevelFlag = ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION[action];
@@ -53,8 +53,8 @@ const getPermissionFlagGrantsNotCoveredBy = ({
   superset,
   toolPermissionFlagUniversalIdentifiers,
 }: {
-  role: RoleManifest;
-  superset: RoleManifest;
+  role: LegacyCompliantRoleManifest;
+  superset: LegacyCompliantRoleManifest;
   toolPermissionFlagUniversalIdentifiers: string[];
 }): RoleManifestGrant[] => {
   const toolFlagUniversalIdentifiers = new Set([
@@ -88,8 +88,8 @@ const getObjectGrantsNotCoveredBy = ({
   role,
   superset,
 }: {
-  role: RoleManifest;
-  superset: RoleManifest;
+  role: LegacyCompliantRoleManifest;
+  superset: LegacyCompliantRoleManifest;
 }): RoleManifestGrant[] => {
   const objectUniversalIdentifiers = new Set([
     ...[
@@ -155,8 +155,8 @@ const getFieldGrantsNotCoveredBy = ({
   role,
   superset,
 }: {
-  role: RoleManifest;
-  superset: RoleManifest;
+  role: LegacyCompliantRoleManifest;
+  superset: LegacyCompliantRoleManifest;
 }): RoleManifestGrant[] =>
   (superset.fieldPermissions ?? []).flatMap(
     (supersetFieldPermission): RoleManifestGrant[] => {
@@ -212,8 +212,8 @@ export const getRoleManifestGrantsNotCoveredBy = ({
   superset,
   toolPermissionFlagUniversalIdentifiers,
 }: {
-  role: RoleManifest;
-  superset: RoleManifest;
+  role: LegacyCompliantRoleManifest;
+  superset: LegacyCompliantRoleManifest;
   toolPermissionFlagUniversalIdentifiers: string[];
 }): RoleManifestGrant[] => [
   ...getRoleLevelGrantsNotCoveredBy({ role, superset }),

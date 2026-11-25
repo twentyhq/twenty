@@ -1,10 +1,10 @@
 import { SettingsAdminWorkerQueueMetricsSection } from '@/settings/admin-panel/health-status/components/SettingsAdminWorkerQueueMetricsSection';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { AdminPanelHealthServiceStatus } from '~/generated-admin/graphql';
 import { SettingsAdminIndicatorHealthContext } from '@/settings/admin-panel/health-status/contexts/SettingsAdminIndicatorHealthContext';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledErrorMessage = styled.div`
   color: ${themeCssVariables.color.red};
@@ -12,6 +12,7 @@ const StyledErrorMessage = styled.div`
 `;
 
 export const SettingsAdminWorkerHealthStatus = () => {
+  const { t } = useLingui();
   const { indicatorHealth } = useContext(SettingsAdminIndicatorHealthContext);
 
   const isWorkerDown =

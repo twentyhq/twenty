@@ -17,6 +17,7 @@ import { HttpRequestWorkflowAction } from 'src/modules/workflow/workflow-executo
 import { IfElseWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/if-else/if-else.workflow-action';
 import { CreateCalendarEventWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/create-calendar-event/create-calendar-event.workflow-action';
 import { IteratorWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/iterator.workflow-action';
+import { McpToolWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/mcp-tool.workflow-action';
 import { LogicFunctionWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/logic-function/logic-function.workflow-action';
 import { DraftEmailWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/draft-email.workflow-action';
 import { SendEmailWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/send-email.workflow-action';
@@ -35,6 +36,7 @@ export class WorkflowActionFactory {
   constructor(
     private readonly codeWorkflowAction: CodeWorkflowAction,
     private readonly logicFunctionWorkflowAction: LogicFunctionWorkflowAction,
+    private readonly mcpToolWorkflowAction: McpToolWorkflowAction,
     private readonly createRecordWorkflowAction: CreateRecordWorkflowAction,
     private readonly upsertRecordWorkflowAction: UpsertRecordWorkflowAction,
     private readonly updateRecordWorkflowAction: UpdateRecordWorkflowAction,
@@ -63,6 +65,8 @@ export class WorkflowActionFactory {
         return this.codeWorkflowAction;
       case WorkflowActionType.LOGIC_FUNCTION:
         return this.logicFunctionWorkflowAction;
+      case WorkflowActionType.MCP_TOOL:
+        return this.mcpToolWorkflowAction;
       case WorkflowActionType.SEND_EMAIL:
         return this.sendEmailWorkflowAction;
       case WorkflowActionType.DRAFT_EMAIL:

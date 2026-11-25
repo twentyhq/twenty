@@ -13,6 +13,22 @@ import { messages as enMessages } from '~/locales/generated/en';
 i18n.load({ [SOURCE_LOCALE]: enMessages });
 i18n.activate(SOURCE_LOCALE);
 
+// Most tests mount components without I18nProvider; fall back to the global i18n above.
+jest.mock('@lingui/react', () => {
+  const actual = jest.requireActual('@lingui/react');
+  const { useContext } = jest.requireActual('react');
+  const { i18n: globalI18n } = jest.requireActual('@lingui/core');
+  const fallbackContext = {
+    i18n: globalI18n,
+    _: globalI18n.t.bind(globalI18n),
+  };
+
+  return {
+    ...actual,
+    useLingui: () => useContext(actual.LinguiContext) ?? fallbackContext,
+  };
+});
+
 // jsdom lacks TextEncoder/TextDecoder, which @ai-sdk/provider-utils builds at import.
 if (globalThis.TextDecoder === undefined) {
   Object.assign(globalThis, { TextDecoder, TextEncoder });

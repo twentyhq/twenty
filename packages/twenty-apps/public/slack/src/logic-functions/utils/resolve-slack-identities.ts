@@ -20,7 +20,10 @@ const fetchMissingIdentities = async ({
   slackUserIds,
   knownIdentityBySlackUserId,
 }: {
-  slackClient: WebClient;
+  slackClient: {
+    auth: Pick<WebClient['auth'], 'test'>;
+    users: Pick<WebClient['users'], 'info'>;
+  };
   slackUserIds: string[];
   knownIdentityBySlackUserId: ReadonlyMap<string, SlackUserIdentity>;
 }): Promise<Map<string, SlackUserIdentity>> => {
@@ -145,7 +148,12 @@ export const resolveSlackIdentities = async ({
   slackUserIds: string[];
   knownIdentities?: SlackUserIdentity[];
   client: CoreApiClient;
-  slackClient: WebClient | undefined;
+  slackClient:
+    | {
+        auth: Pick<WebClient['auth'], 'test'>;
+        users: Pick<WebClient['users'], 'info'>;
+      }
+    | undefined;
   slackConnectionId: string | undefined;
 }): Promise<Map<string, SlackIdentityResolution>> => {
   const resolutionBySlackUserId = new Map<string, SlackIdentityResolution>();

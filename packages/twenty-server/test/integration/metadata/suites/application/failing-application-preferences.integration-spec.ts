@@ -2,7 +2,7 @@ import { randomUUID } from 'crypto';
 
 import IORedis from 'ioredis';
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
-import { expectPermissionDenied } from 'test/integration/metadata/suites/application/utils/expect-permission-denied.util';
+import { expectPermissionDenied } from 'test/integration/permissions/utils/expect-permission-denied.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { myApplicationPreferences } from 'test/integration/metadata/suites/application/utils/my-application-preferences.util';
 import { runMyApplicationHealthCheckQueryFactory } from 'test/integration/metadata/suites/application/utils/run-my-application-health-check-query-factory.util';

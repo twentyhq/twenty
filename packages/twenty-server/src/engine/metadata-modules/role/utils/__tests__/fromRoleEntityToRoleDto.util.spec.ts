@@ -38,8 +38,7 @@ describe('fromRoleEntityToRoleDto', () => {
   it('returns undefined permission flags when role permission flags are not loaded', () => {
     const roleDto = fromRoleEntityToRoleDto(
       buildRoleEntity({
-        rolePermissionFlags:
-          undefined as unknown as RoleEntity['rolePermissionFlags'],
+        rolePermissionFlags: undefined,
       }),
     );
 

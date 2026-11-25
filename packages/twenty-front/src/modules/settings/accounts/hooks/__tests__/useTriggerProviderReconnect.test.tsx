@@ -36,7 +36,7 @@ describe('useTriggerProviderReconnect', () => {
       });
 
       expect(mockNavigate).toHaveBeenCalledWith(
-        SettingsPath.NewImapSmtpCaldavConnection,
+        SettingsPath.AppPreferencesNewImapSmtpCaldavConnection,
       );
       expect(mockTriggerApisOAuth).not.toHaveBeenCalled();
     });
@@ -54,7 +54,7 @@ describe('useTriggerProviderReconnect', () => {
       });
 
       expect(mockNavigate).toHaveBeenCalledWith(
-        SettingsPath.EditImapSmtpCaldavConnection,
+        SettingsPath.AppPreferencesEditImapSmtpCaldavConnection,
         {
           connectedAccountId: accountId,
         },
@@ -80,7 +80,7 @@ describe('useTriggerProviderReconnect', () => {
       });
 
       expect(mockNavigate).toHaveBeenCalledWith(
-        SettingsPath.EditImapSmtpCaldavConnection,
+        SettingsPath.AppPreferencesEditImapSmtpCaldavConnection,
         {
           connectedAccountId: accountId,
         },
@@ -102,7 +102,7 @@ describe('useTriggerProviderReconnect', () => {
       expect(mockTriggerApisOAuth).toHaveBeenCalledWith(
         ConnectedAccountProvider.GOOGLE,
         {
-          redirectLocation: '/settings/accounts',
+          redirectLocation: '/settings/app-preferences',
         },
       );
       expect(mockNavigate).not.toHaveBeenCalled();
@@ -120,7 +120,7 @@ describe('useTriggerProviderReconnect', () => {
       expect(mockTriggerApisOAuth).toHaveBeenCalledWith(
         ConnectedAccountProvider.MICROSOFT,
         {
-          redirectLocation: '/settings/accounts',
+          redirectLocation: '/settings/app-preferences',
         },
       );
       expect(mockNavigate).not.toHaveBeenCalled();
@@ -188,7 +188,7 @@ describe('useTriggerProviderReconnect', () => {
       expect(mockTriggerApisOAuth).toHaveBeenCalledWith(
         ConnectedAccountProvider.GOOGLE,
         {
-          redirectLocation: '/settings/accounts',
+          redirectLocation: '/settings/app-preferences',
         },
       );
       expect(mockNavigate).not.toHaveBeenCalled();
@@ -214,7 +214,7 @@ describe('useTriggerProviderReconnect', () => {
         ConnectedAccountProvider.GOOGLE,
         {
           ...options,
-          redirectLocation: '/settings/accounts',
+          redirectLocation: '/settings/app-preferences',
         },
       );
       expect(mockNavigate).not.toHaveBeenCalled();
@@ -239,7 +239,7 @@ describe('useTriggerProviderReconnect', () => {
       expect(mockTriggerApisOAuth).toHaveBeenCalledWith(
         ConnectedAccountProvider.GOOGLE,
         {
-          redirectLocation: '/settings/accounts',
+          redirectLocation: '/settings/app-preferences',
         },
       );
     });

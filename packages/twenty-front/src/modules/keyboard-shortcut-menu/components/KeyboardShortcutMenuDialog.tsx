@@ -1,10 +1,10 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { type ReactNode } from 'react';
 import { IconButton } from 'twenty-ui/components/input';
 import { IconX } from 'twenty-ui/icon';
 import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledOverlay = styled.div`
   inset: 0;
@@ -38,41 +38,44 @@ export const KeyboardMenuDialog = ({
   open,
   onClose,
   children,
-}: KeyboardMenuDialogProps) => (
-  <Dialog.Root
-    open={open}
-    onOpenChange={(isOpen) => {
-      if (!isOpen) {
-        onClose();
-      }
-    }}
-  >
-    <Dialog.Portal>
-      <StyledOverlay>
-        <Dialog.Backdrop />
-        <Dialog.Viewport>
-          <Dialog.Popup size="md">
-            <Dialog.Header render={<StyledHeading />}>
-              <Dialog.Title render={<StyledTitle />}>
-                {t`Keyboard shortcuts`}
-              </Dialog.Title>
-              <Dialog.Close
-                render={
-                  <IconButton
-                    aria-label={t`Close keyboard shortcuts`}
-                    variant="ghost"
-                  >
-                    <IconX />
-                  </IconButton>
-                }
-              />
-            </Dialog.Header>
-            <Dialog.Body>
-              <StyledGroups>{children}</StyledGroups>
-            </Dialog.Body>
-          </Dialog.Popup>
-        </Dialog.Viewport>
-      </StyledOverlay>
-    </Dialog.Portal>
-  </Dialog.Root>
-);
+}: KeyboardMenuDialogProps) => {
+  const { t } = useLingui();
+  return (
+    <Dialog.Root
+      open={open}
+      onOpenChange={(isOpen) => {
+        if (!isOpen) {
+          onClose();
+        }
+      }}
+    >
+      <Dialog.Portal>
+        <StyledOverlay>
+          <Dialog.Backdrop />
+          <Dialog.Viewport>
+            <Dialog.Popup size="md">
+              <Dialog.Header render={<StyledHeading />}>
+                <Dialog.Title render={<StyledTitle />}>
+                  {t`Keyboard shortcuts`}
+                </Dialog.Title>
+                <Dialog.Close
+                  render={
+                    <IconButton
+                      aria-label={t`Close keyboard shortcuts`}
+                      variant="ghost"
+                    >
+                      <IconX />
+                    </IconButton>
+                  }
+                />
+              </Dialog.Header>
+              <Dialog.Body>
+                <StyledGroups>{children}</StyledGroups>
+              </Dialog.Body>
+            </Dialog.Popup>
+          </Dialog.Viewport>
+        </StyledOverlay>
+      </Dialog.Portal>
+    </Dialog.Root>
+  );
+};

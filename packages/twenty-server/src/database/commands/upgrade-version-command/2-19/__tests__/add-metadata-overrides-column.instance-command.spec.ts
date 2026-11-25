@@ -1,4 +1,4 @@
-import { type QueryRunner } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 import { AddMetadataOverridesColumnFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-instance-command-fast-1782986475000-add-metadata-overrides-column';
 
@@ -12,7 +12,11 @@ describe('AddMetadataOverridesColumnFastInstanceCommand', () => {
   describe('up', () => {
     it('adds the overrides column to both tables without mutating data or dropping standardOverrides', async () => {
       const query = jest.fn().mockResolvedValue(undefined);
-      const queryRunner = { query } as unknown as QueryRunner;
+      const queryRunner = new DataSource({
+        type: 'postgres',
+      }).createQueryRunner();
+
+      queryRunner.query = query;
 
       await command.up(queryRunner);
 
@@ -34,7 +38,11 @@ describe('AddMetadataOverridesColumnFastInstanceCommand', () => {
   describe('down', () => {
     it('copies overrides back into standardOverrides before dropping the column', async () => {
       const query = jest.fn().mockResolvedValue(undefined);
-      const queryRunner = { query } as unknown as QueryRunner;
+      const queryRunner = new DataSource({
+        type: 'postgres',
+      }).createQueryRunner();
+
+      queryRunner.query = query;
 
       await command.down(queryRunner);
 

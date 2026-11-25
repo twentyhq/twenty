@@ -1,8 +1,9 @@
-import { FieldDisplay } from '@/object-record/record-field/ui/components/FieldDisplay';
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableCellDisplayMode } from '@/object-record/record-table/record-table-cell/components/RecordTableCellDisplayMode';
+import { RecordTableCellFieldDisplay } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldDisplay';
+import { useRecordTableCellOutlinePortal } from '@/object-record/record-table/record-table-cell/hooks/useRecordTableCellOutlinePortal';
 
 import { isRecordTableRowActiveByRecordIdComponentFamilySelector } from '@/object-record/record-table/states/selectors/isRecordTableRowActiveByRecordIdComponentFamilySelector';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
@@ -15,6 +16,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledRecordTableCellFocusPortalContent = styled.div<{
   isRecordTableRowActive: boolean;
+  isTopEdgeCoveredByHeader: boolean;
 }>`
   align-items: center;
   background: ${themeCssVariables.background.transparent.secondary};
@@ -23,13 +25,16 @@ const StyledRecordTableCellFocusPortalContent = styled.div<{
       ? themeCssVariables.accent.quaternary
       : themeCssVariables.background.primary};
   border-radius: ${themeCssVariables.border.radius.sm};
+  box-shadow: ${({ isTopEdgeCoveredByHeader }) =>
+    isTopEdgeCoveredByHeader
+      ? `inset 0 1px 0 0 ${themeCssVariables.color.blue8}`
+      : 'none'};
   box-sizing: border-box;
   display: flex;
 
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
 
   outline: 1px solid ${themeCssVariables.color.blue8};
-  outline-offset: -1px;
 
   user-select: none;
 `;
@@ -51,6 +56,10 @@ export const RecordTableCellFocusedPortalContent = () => {
     recordTableHoverPositionComponentState,
   );
 
+  const { isTopEdgeCoveredByHeader } = useRecordTableCellOutlinePortal(
+    recordTableFocusPosition,
+  );
+
   const arePositionsDifferent =
     recordTableHoverPosition?.row !== recordTableFocusPosition?.row ||
     recordTableHoverPosition?.column !== recordTableFocusPosition?.column;
@@ -64,10 +73,11 @@ export const RecordTableCellFocusedPortalContent = () => {
   return (
     <StyledRecordTableCellFocusPortalContent
       isRecordTableRowActive={isRecordTableRowActive}
+      isTopEdgeCoveredByHeader={isTopEdgeCoveredByHeader}
       onMouseMove={handleContainerMouseMove}
     >
       <RecordTableCellDisplayMode>
-        <FieldDisplay />
+        <RecordTableCellFieldDisplay />
       </RecordTableCellDisplayMode>
     </StyledRecordTableCellFocusPortalContent>
   );

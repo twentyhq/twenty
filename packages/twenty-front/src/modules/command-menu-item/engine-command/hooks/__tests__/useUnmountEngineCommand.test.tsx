@@ -19,6 +19,7 @@ const buildHeadlessContextApi = (
   engineComponentKey: EngineComponentKey.CREATE_NEW_RECORD,
   contextStoreInstanceId: 'ctx-1',
   objectMetadataItem: null,
+  coreObjectName: null,
   currentViewId: null,
   recordIndexId: null,
   targetedRecordsRule: { mode: 'selection', selectedRecordIds: [] },

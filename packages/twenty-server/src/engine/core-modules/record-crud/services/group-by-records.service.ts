@@ -7,6 +7,7 @@ import {
   type OrderByWithGroupBy,
 } from 'twenty-shared/types';
 
+import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { GroupByArgProcessorService } from 'src/engine/api/common/common-args-processors/group-by-arg-processor/group-by-arg-processor.service';
 import { CommonGroupByQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-group-by-query-runner.service';
 import { CommonQueryRunnerException } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
@@ -42,7 +43,6 @@ export class GroupByRecordsService {
       orderBy = 'DESC',
       filter,
       authContext,
-      rolePermissionConfig,
     } = params;
 
     try {
@@ -50,19 +50,17 @@ export class GroupByRecordsService {
         queryRunnerContext,
         flatObjectMetadata,
         flatFieldMetadataMaps,
-        objectsPermissions,
+        unreadableFieldMetadataIds,
       } = await this.commonApiContextBuilder.build({
         authContext,
         objectName,
-        rolePermissionConfig,
       });
 
       const availableAggregations =
         this.groupByArgProcessor.getAvailableAggregations({
           flatObjectMetadata,
           flatFieldMetadataMaps,
-          restrictedFields:
-            objectsPermissions[flatObjectMetadata.id]?.restrictedFields,
+          unreadableFieldMetadataIds,
         });
 
       let aggregateFieldKey: string;
@@ -85,9 +83,10 @@ export class GroupByRecordsService {
         throw error;
       }
 
-      const selectedFields = {
-        [aggregateFieldKey]: true,
-        groupByDimensionValues: true,
+      const selectedFields: CommonSelectedFields = {
+        fields: {},
+        aggregates: [aggregateFieldKey],
+        relations: {},
       };
 
       const mappedOrderBy: OrderByWithGroupBy = [

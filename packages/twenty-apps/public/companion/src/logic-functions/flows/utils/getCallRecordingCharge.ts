@@ -6,7 +6,7 @@ import { normalizeRecallTimestamp } from 'src/logic-functions/recall-api/utils/n
 import { getString } from 'src/logic-functions/utils/getString';
 
 export const getCallRecordingCharge = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'query'>,
   { callRecordingId }: { callRecordingId: string },
 ) => {
   const result = await client.query({

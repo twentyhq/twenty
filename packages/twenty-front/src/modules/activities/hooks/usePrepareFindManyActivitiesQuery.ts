@@ -4,7 +4,7 @@ import { type Task } from '@/activities/types/Task';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { type CoreObjectNameSingular } from 'twenty-shared/types';
+import { type StandardObjectNameSingular } from 'twenty-shared/types';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { useUpsertFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useUpsertFindManyRecordsQueryInCache';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
@@ -23,7 +23,7 @@ import { useMemo } from 'react';
 export const usePrepareFindManyActivitiesQuery = ({
   activityObjectNameSingular,
 }: {
-  activityObjectNameSingular: CoreObjectNameSingular;
+  activityObjectNameSingular: StandardObjectNameSingular;
 }) => {
   const { objectMetadataItem: objectMetadataItemActivity } =
     useObjectMetadataItem({

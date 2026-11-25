@@ -1,3 +1,4 @@
+import { getSystemSideEffectRoleTargetUniversalIdentifier } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -32,6 +33,13 @@ export const fromCreateRoleTargetInputToFlatRoleTargetToCreate = ({
   const { roleId, targetId, targetMetadataForeignKey, universalIdentifier } =
     createRoleTargetInput;
 
+  // A role cached before the upgrade that adds this column has no value for it, and the role target column is NOT NULL.
+  const isSystemSideEffect =
+    findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityMaps: flatRoleMaps,
+      flatEntityId: roleId,
+    }).isSystemSideEffect === true;
+
   const { roleUniversalIdentifier } = resolveEntityRelationUniversalIdentifiers(
     {
       metadataName: 'roleTarget',
@@ -61,6 +69,7 @@ export const fromCreateRoleTargetInputToFlatRoleTargetToCreate = ({
     roleId,
     roleUniversalIdentifier,
     userWorkspaceId: null,
+    isSystemSideEffect,
     agentId: null,
     agentUniversalIdentifier,
     apiKeyId: null,
@@ -70,18 +79,28 @@ export const fromCreateRoleTargetInputToFlatRoleTargetToCreate = ({
     targetApplicationUniversalIdentifier: null,
     createdAt: now.toISOString(),
     updatedAt: now.toISOString(),
-    universalIdentifier: universalIdentifier ?? v4(),
+    universalIdentifier:
+      universalIdentifier ??
+      (isSystemSideEffect
+        ? getSystemSideEffectRoleTargetUniversalIdentifier({
+            applicationUniversalIdentifier: flatApplication.universalIdentifier,
+            roleUniversalIdentifier,
+            targetId,
+          })
+        : v4()),
     workspaceId,
     applicationId: flatApplication.id,
     applicationUniversalIdentifier: flatApplication.universalIdentifier,
     [targetMetadataForeignKey]: targetId,
   };
 
-  const flatRoleTargetToDelete = findFlatRoleTargetFromForeignKey({
-    flatRoleTargetMaps,
-    targetMetadataForeignKey,
-    targetId,
-  });
+  const flatRoleTargetToDelete = isSystemSideEffect
+    ? undefined
+    : findFlatRoleTargetFromForeignKey({
+        flatRoleTargetMaps,
+        targetMetadataForeignKey,
+        targetId,
+      });
 
   return {
     flatRoleTargetToCreate: flatRoleTargetToCreate,

@@ -1,4 +1,6 @@
+import { isString } from '@sniptt/guards';
 import gql from 'graphql-tag';
+import { findMyParticipant } from 'test/integration/graphql/suites/chat-thread-participant/utils/chat-thread-participant-test.util';
 import { answerToolCall } from 'test/integration/graphql/suites/workflow/utils/answer-tool-call.util';
 import {
   createCoreWorkflow,
@@ -10,7 +12,9 @@ import { waitForWorkflowRunStepStatus } from 'test/integration/graphql/suites/wo
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-chat-thread.util';
+import { formatRecordReference } from 'twenty-shared/ai';
 import { FeatureFlagKey } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
@@ -19,6 +23,7 @@ import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/
 import { type WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { type AgentCallerConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-caller-conversation.service';
 import { type ToolCallAnswerRecorderService } from 'src/engine/metadata-modules/ai/ai-tool-call-answer/services/tool-call-answer-recorder.service';
+import { type WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
 import { type WorkflowRunInboxSenderWorkspaceService } from 'src/modules/workflow/workflow-executor/services/workflow-run-inbox-sender.workspace-service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -29,6 +34,13 @@ const SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 const setAiChatInboxEnabled = (value: boolean) =>
   updateFeatureFlag({
     featureFlag: FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+    value,
+    expectToFail: false,
+  });
+
+const setRecordSharingEnabled = (value: boolean) =>
+  updateFeatureFlag({
+    featureFlag: FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
     value,
     expectToFail: false,
   });
@@ -91,6 +103,55 @@ describe('Send chat message workflow step', () => {
       ]);
     } finally {
       if (threadId !== undefined) {
+        await destroyAgentChatThread({ threadId });
+      }
+    }
+  }, 120000);
+
+  it('mentions a member its text names through a variable', async () => {
+    await setAiChatInboxEnabled(true);
+    await setRecordSharingEnabled(true);
+
+    let threadId: string | undefined;
+
+    try {
+      const { status, stepStatus, stepResult, stepError } =
+        await runWorkflowActionStep({
+          name: 'Ask for a review',
+          stepType: 'SEND_CHAT_MESSAGE',
+          input: {
+            workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+            title: `Review requested ${uuidv4()}`,
+            text: '{{trigger.comment}}',
+          },
+          payload: {
+            comment: `${formatRecordReference({
+              objectNameSingular: 'workspaceMember',
+              recordId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+              displayName: 'Jony',
+            })}, can you review the deck?`,
+          },
+        });
+
+      const stepThreadId = stepResult?.threadId;
+
+      threadId = isString(stepThreadId) ? stepThreadId : undefined;
+
+      expect({ status, stepStatus, stepError }).toEqual({
+        status: 'COMPLETED',
+        stepStatus: 'SUCCESS',
+        stepError: undefined,
+      });
+      expect(
+        await findMyParticipant(threadId!, APPLE_JONY_MEMBER_ACCESS_TOKEN),
+      ).toMatchObject({
+        lastMentionedAt: expect.any(String),
+        mentionsResolvedAt: null,
+      });
+    } finally {
+      await setRecordSharingEnabled(false);
+
+      if (isDefined(threadId)) {
         await destroyAgentChatThread({ threadId });
       }
     }
@@ -267,6 +328,13 @@ describe('Send chat message workflow step', () => {
               workflowRunId,
               workspaceId: SEED_APPLE_WORKSPACE_ID,
             });
+          const permissions =
+            await getAppProviderByClassName<WorkflowExecutionContextService>(
+              'WorkflowExecutionContextService',
+            ).getExecutionContext({
+              workflowRunId,
+              workspaceId: SEED_APPLE_WORKSPACE_ID,
+            });
 
           postAgain = () =>
             getAppProviderByClassName<AgentCallerConversationService>(
@@ -284,10 +352,7 @@ describe('Send chat message workflow step', () => {
               fallbackThreadKey: `${workflowRunId}:${workflowRunId}:${stepId}`,
               awaitedToolCall: {
                 ...toolCall,
-                caller: {
-                  type: 'WORKFLOW_STEP',
-                  ref: { workflowRunId, stepId },
-                },
+                permissions,
                 // the message was already written, so the call is not built again
                 waitOnAnswer: async () => {},
               },

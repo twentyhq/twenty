@@ -1,6 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isValidCronTriggerSpreadMs } from 'twenty-shared/logic-function';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
@@ -14,11 +15,14 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueException } from 'src/engine/core-modules/message-queue/message-queue.exception';
 import { ApplicationJobEnqueueThrottlerService } from 'src/engine/core-modules/message-queue/services/application-job-enqueue-throttler.service';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-queue-retry-backoff.constant';
+import { buildApplicationJobMemoryLimitLogEntry } from 'src/engine/core-modules/logic-function/logic-function-trigger/utils/build-application-job-memory-limit-log-entry.util';
+import { computeCronTriggerSpreadOffsetMs } from 'src/engine/core-modules/logic-function/logic-function-trigger/utils/compute-cron-trigger-spread-offset-ms.util';
 import { buildApplicationJobThrottledLogEntry } from 'src/engine/core-modules/logic-function/logic-function-trigger/utils/build-application-job-throttled-log-entry.util';
 import {
   LogicFunctionTriggerJob,
@@ -87,7 +91,13 @@ export class CronTriggerCronJob {
             await this.cronTriggerDeduplicationService.shouldDispatch(
               `logic-function-cron:${activeWorkspace.id}:${logicFunction.id}`,
               cronSettings.pattern,
-              now,
+              this.getCronDate({
+                now,
+                workspaceId: activeWorkspace.id,
+                logicFunctionUniversalIdentifier:
+                  logicFunction.universalIdentifier,
+                spreadMs: cronSettings.spreadMs,
+              }),
             );
 
           if (!shouldDispatch) {
@@ -128,26 +138,40 @@ export class CronTriggerCronJob {
             continue;
           }
 
-          await this.messageQueueService.add<LogicFunctionTriggerJobData>(
-            LogicFunctionTriggerJob.name,
-            {
-              logicFunctionId: logicFunction.id,
-              workspaceId: activeWorkspace.id,
-              ...(isDefined(application)
-                ? {
-                    applicationUniversalIdentifier:
-                      application.universalIdentifier,
-                  }
-                : {}),
-              payload: {},
-            },
-            {
-              retryLimit: 10,
-              backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
-              workspaceId: activeWorkspace.id,
-              applicationUniversalIdentifier: application.universalIdentifier,
-            },
-          );
+          try {
+            await this.messageQueueService.add<LogicFunctionTriggerJobData>(
+              LogicFunctionTriggerJob.name,
+              {
+                logicFunctionId: logicFunction.id,
+                workspaceId: activeWorkspace.id,
+                ...(isDefined(application)
+                  ? {
+                      applicationUniversalIdentifier:
+                        application.universalIdentifier,
+                    }
+                  : {}),
+                payload: {},
+              },
+              {
+                retryLimit: logicFunction.retryLimit ?? 10,
+                backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
+                workspaceId: activeWorkspace.id,
+                applicationUniversalIdentifier: application.universalIdentifier,
+              },
+            );
+          } catch (error) {
+            if (!(error instanceof MessageQueueException)) {
+              throw error;
+            }
+
+            this.applicationRepeatedEventRecorderService.record({
+              entry: buildApplicationJobMemoryLimitLogEntry({
+                workspaceId: activeWorkspace.id,
+                application,
+                exception: error,
+              }),
+            });
+          }
         }
       } catch (error) {
         this.logger.error(
@@ -158,5 +182,30 @@ export class CronTriggerCronJob {
         });
       }
     }
+  }
+
+  private getCronDate({
+    now,
+    workspaceId,
+    logicFunctionUniversalIdentifier,
+    spreadMs,
+  }: {
+    now: Date;
+    workspaceId: string;
+    logicFunctionUniversalIdentifier: string;
+    spreadMs: number | undefined;
+  }): Date {
+    if (!isValidCronTriggerSpreadMs(spreadMs)) {
+      return now;
+    }
+
+    return new Date(
+      now.getTime() -
+        computeCronTriggerSpreadOffsetMs({
+          workspaceId,
+          logicFunctionUniversalIdentifier,
+          spreadMs,
+        }),
+    );
   }
 }

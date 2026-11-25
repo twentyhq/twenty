@@ -3,17 +3,17 @@ import { RecordPageSidePanelPinnedCommandMenuItems } from '@/command-menu-item/c
 import { RecordPageSidePanelWidgetCommandMenuItems } from '@/command-menu-item/components/RecordPageSidePanelWidgetCommandMenuItems';
 import { InformationBannerDeletedRecord } from '@/information-banner/components/deleted-record/InformationBannerDeletedRecord';
 import { RecordShowContainerContextStoreTargetedRecordsEffect } from '@/object-record/record-show/components/RecordShowContainerContextStoreTargetedRecordsEffect';
+import { useDisplaySidePanelFooter } from '@/object-record/record-show/hooks/useDisplaySidePanelFooter';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { PageLayoutRenderer } from '@/page-layout/components/PageLayoutRenderer';
 import { usePageLayoutIdForRecord } from '@/page-layout/hooks/usePageLayoutIdForRecord';
 import { PageLayoutIdContext } from '@/page-layout/states/currentPageLayoutIdState';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { type TargetRecordIdentifier } from '@/ui/layout/contexts/TargetRecordIdentifier';
-import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { styled } from '@linaria/react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { PageLayoutType } from '~/generated-metadata/graphql';
@@ -47,7 +47,9 @@ export const PageLayoutRecordPageRenderer = ({
   targetRecordIdentifier: TargetRecordIdentifier;
   isRecordIdentifierBarHidden?: boolean;
 }) => {
-  const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
+  const displaySidePanelFooter = useDisplaySidePanelFooter(
+    targetRecordIdentifier,
+  );
   const recordDeletedAt = useAtomFamilySelectorValue(
     recordStoreFamilySelector,
     {
@@ -87,7 +89,7 @@ export const PageLayoutRecordPageRenderer = ({
               },
               layoutType:
                 targetRecordIdentifier.targetObjectNameSingular ===
-                CoreObjectNameSingular.Dashboard
+                StandardObjectNameSingular.Dashboard
                   ? PageLayoutType.DASHBOARD
                   : PageLayoutType.RECORD_PAGE,
               isRecordIdentifierBarHidden,
@@ -99,7 +101,7 @@ export const PageLayoutRecordPageRenderer = ({
           </LayoutRenderingProvider>
         </StyledContentContainer>
 
-        {isInSidePanel && (
+        {displaySidePanelFooter && (
           <SidePanelFooter
             actions={[
               <RecordPageSidePanelCommandMenu key="options" />,

@@ -3,12 +3,12 @@ import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUr
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { getWorkspaceAvatarColorSeed } from '@/workspace/utils/getWorkspaceAvatarColorSeed';
-import { t } from '@lingui/core/macro';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { type AvailableWorkspace } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
+import { useLingui } from '@lingui/react/macro';
 
 export const AvailableWorkspaceItem = ({
   availableWorkspace,
@@ -17,6 +17,7 @@ export const AvailableWorkspaceItem = ({
   availableWorkspace: AvailableWorkspace;
   isSelected: boolean;
 }) => {
+  const { t } = useLingui();
   const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
 
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
@@ -25,22 +26,22 @@ export const AvailableWorkspaceItem = ({
     getAvailableWorkspacePathAndSearchParams(availableWorkspace);
 
   const handleChange = async () => {
-    await redirectToWorkspaceDomain(
-      getWorkspaceUrl(availableWorkspace.workspaceUrls),
+    await redirectToWorkspaceDomain({
+      baseUrl: getWorkspaceUrl(availableWorkspace.workspaceUrls),
       pathname,
       searchParams,
-    );
+    });
   };
 
   return (
     <Dropdown.OptionItem
       render={
         <a
-          href={buildWorkspaceUrl(
-            getWorkspaceUrl(availableWorkspace.workspaceUrls),
+          href={buildWorkspaceUrl({
+            endpoint: getWorkspaceUrl(availableWorkspace.workspaceUrls),
             pathname,
             searchParams,
-          )}
+          })}
         />
       }
       onClick={(event) => {

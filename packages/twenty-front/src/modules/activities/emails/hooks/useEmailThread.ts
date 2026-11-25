@@ -9,20 +9,25 @@ import { type EmailThreadMessageWithSender } from '@/activities/emails/types/Ema
 import { type MessageChannelMessageAssociation } from '@/activities/emails/types/MessageChannelMessageAssociation';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
+import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChannels';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
+import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import {
-  CoreObjectNameSingular,
+  StandardObjectNameSingular,
   MessageParticipantRole,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useEmailThread = (threadId: string | null) => {
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
+  const { channels: viewerMessageChannels } = useMyMessageChannels();
   const [lastMessageId, setLastMessageId] = useState<string | null>(null);
   const [isMessagesFetchComplete, setIsMessagesFetchComplete] = useState(false);
 
   const { record: thread, loading: threadRecordLoading } =
     useFindOneRecord<EmailThread>({
-      objectNameSingular: CoreObjectNameSingular.MessageThread,
+      objectNameSingular: StandardObjectNameSingular.MessageThread,
       objectRecordId: threadId ?? '',
       recordGqlFields: {
         id: true,
@@ -45,6 +50,8 @@ export const useEmailThread = (threadId: string | null) => {
     loading: messagesLoading,
     fetchMoreRecords,
     hasNextPage,
+    refetch: refetchMessages,
+    queryIdentifier: messagesQueryIdentifier,
   } = useFindManyRecords<EmailThreadMessage>({
     limit: FETCH_ALL_MESSAGES_OPERATION_SIGNATURE.variables.limit,
     filter: FETCH_ALL_MESSAGES_OPERATION_SIGNATURE.variables.filter,
@@ -54,6 +61,11 @@ export const useEmailThread = (threadId: string | null) => {
     recordGqlFields: FETCH_ALL_MESSAGES_OPERATION_SIGNATURE.fields,
     skip: !threadId,
   });
+
+  const isFetchingMoreRecords = useAtomFamilyStateValue(
+    isFetchingMoreRecordsFamilyState,
+    messagesQueryIdentifier,
+  );
 
   const fetchMoreMessages = useCallback(() => {
     if (!messagesLoading && hasNextPage) {
@@ -90,7 +102,7 @@ export const useEmailThread = (threadId: string | null) => {
           eq: MessageParticipantRole.FROM,
         },
       },
-      objectNameSingular: CoreObjectNameSingular.MessageParticipant,
+      objectNameSingular: StandardObjectNameSingular.MessageParticipant,
       recordGqlFields: {
         id: true,
         role: true,
@@ -112,7 +124,8 @@ export const useEmailThread = (threadId: string | null) => {
         eq: lastMessageId ?? '',
       },
     },
-    objectNameSingular: CoreObjectNameSingular.MessageChannelMessageAssociation,
+    objectNameSingular:
+      StandardObjectNameSingular.MessageChannelMessageAssociation,
     recordGqlFields: {
       id: true,
       messageId: true,
@@ -123,7 +136,47 @@ export const useEmailThread = (threadId: string | null) => {
     skip: !lastMessageId || !isMessagesFetchComplete,
   });
 
-  const lastMessageAssociation = messageChannelMessageAssociations[0];
+  const viewerMessageChannelIds = new Set(
+    viewerMessageChannels.map(({ id }) => id),
+  );
+
+  const isLastMessageInThread = messages.some(({ id }) => id === lastMessageId);
+
+  const lastMessageAssociations = isLastMessageInThread
+    ? messageChannelMessageAssociations.filter(
+        ({ messageId }) => messageId === lastMessageId,
+      )
+    : [];
+
+  const resolvedLastMessageAssociation =
+    lastMessageAssociations.find(({ messageChannelId }) =>
+      viewerMessageChannelIds.has(messageChannelId),
+    ) ?? lastMessageAssociations[0];
+
+  // Otherwise the chat composer unmounts while a new message's association loads
+  const [previousLastMessageAssociation, setPreviousLastMessageAssociation] =
+    useState<{
+      threadId: string | null;
+      association: MessageChannelMessageAssociation;
+    } | null>(null);
+
+  if (
+    isDefined(resolvedLastMessageAssociation) &&
+    (previousLastMessageAssociation?.association.id !==
+      resolvedLastMessageAssociation.id ||
+      previousLastMessageAssociation.threadId !== threadId)
+  ) {
+    setPreviousLastMessageAssociation({
+      threadId,
+      association: resolvedLastMessageAssociation,
+    });
+  }
+
+  const lastMessageAssociation =
+    resolvedLastMessageAssociation ??
+    (previousLastMessageAssociation?.threadId === threadId
+      ? previousLastMessageAssociation.association
+      : undefined);
   const messageThreadExternalId =
     lastMessageAssociation?.messageThreadExternalId ?? null;
   const lastMessageExternalId =
@@ -134,6 +187,7 @@ export const useEmailThread = (threadId: string | null) => {
     connectedAccountId,
     connectedAccountHandle,
     connectedAccountProvider,
+    messageChannelHandle,
     loading: replyConnectedAccountLoading,
   } = useReplyConnectedAccount(lastMessageChannelId);
 
@@ -160,9 +214,13 @@ export const useEmailThread = (threadId: string | null) => {
     connectedAccountId,
     connectedAccountHandle,
     connectedAccountProvider,
+    messageChannelHandle,
     threadLoading: threadRecordLoading || messagesLoading,
+    isFetchingMoreMessages: isFetchingMoreRecords,
     messageChannelLoading,
     lastMessageExternalId,
+    lastMessageChannelId,
     fetchMoreMessages,
+    refetchMessages,
   };
 };

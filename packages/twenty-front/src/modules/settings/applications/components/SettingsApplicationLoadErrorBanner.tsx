@@ -1,6 +1,6 @@
-import { t } from '@lingui/core/macro';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { IconAlertTriangle } from 'twenty-ui/icon';
+import { useLingui } from '@lingui/react/macro';
 
 type SettingsApplicationLoadErrorBannerProps = {
   message?: string;
@@ -11,6 +11,7 @@ export const SettingsApplicationLoadErrorBanner = ({
   message,
   onRetry,
 }: SettingsApplicationLoadErrorBannerProps) => {
+  const { t } = useLingui();
   return (
     <InlineBanner
       status="error"

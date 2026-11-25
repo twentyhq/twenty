@@ -1,7 +1,5 @@
 import { Command } from 'nest-commander';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -13,7 +11,6 @@ import {
 } from 'src/database/commands/upgrade-version-command/2-38/utils/build-gate-workflow-version-navigation-command-menu-item-update.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
-import { buildNavigationConditionalAvailabilityExpression } from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-object-navigation-universal-flat-command-menu-item.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -55,12 +52,7 @@ export class GateWorkflowVersionNavigationByCoreIndexFlagCommand extends Provisi
     const commandMenuItemToUpdate =
       buildGateWorkflowVersionNavigationCommandMenuItemUpdate({
         existingCommandMenuItem,
-        conditionalAvailabilityExpression:
-          buildNavigationConditionalAvailabilityExpression({
-            universalIdentifier:
-              STANDARD_OBJECTS.workflowVersion.universalIdentifier,
-            nameSingular: CoreObjectNameSingular.WorkflowVersion,
-          }),
+        conditionalAvailabilityExpression: 'false',
         now: new Date().toISOString(),
       });
 

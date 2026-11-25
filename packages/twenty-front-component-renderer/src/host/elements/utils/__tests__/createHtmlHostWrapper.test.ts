@@ -427,7 +427,7 @@ describe('createHtmlHostWrapper client events', () => {
   });
 
   it('should not pass the remote dom instance ref to the dom element', () => {
-    const instanceRef = { current: null as unknown };
+    const instanceRef: { current: unknown } = { current: null };
 
     act(() => {
       root.render(

@@ -1,9 +1,12 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { isUndefined } from '@sniptt/guards';
+import { isString, isUndefined } from '@sniptt/guards';
 
 import GraphQLJSON from 'graphql-type-json';
 import { type AiModelTier } from 'twenty-shared/ai';
-import { EVENT_LOG_RETENTION } from 'twenty-shared/constants';
+import {
+  EVENT_LOG_RETENTION,
+  WORKSPACE_DISPLAY_NAME_MAX_LENGTH,
+} from 'twenty-shared/constants';
 
 import {
   IsArray,
@@ -16,12 +19,17 @@ import {
   IsUUID,
   Matches,
   Max,
+  MaxLength,
   Min,
   ValidateIf,
+  ValidateNested,
 } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { AiDataPolicyInput } from 'src/engine/core-modules/workspace/dtos/ai-data-policy.input';
 import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-chat-assistant-mode.enum';
+import { AiChatAssistantProfileInput } from 'src/engine/core-modules/workspace/dtos/ai-chat-assistant-profile.input';
 import { WorkspaceDiscoverability } from 'src/engine/core-modules/workspace/types/workspace-discoverability.type';
 import { AiModelTier as AiModelTierEnum } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-tier.enum';
 
@@ -43,6 +51,8 @@ export class UpdateWorkspaceInput {
   @Field({ nullable: true })
   @IsString()
   @IsOptional()
+  @Transform(({ value }) => (isString(value) ? value.trim() : value))
+  @MaxLength(WORKSPACE_DISPLAY_NAME_MAX_LENGTH)
   displayName?: string;
 
   @Field({ nullable: true })
@@ -174,10 +184,27 @@ export class UpdateWorkspaceInput {
   )
   aiChatInboxAssistantMode?: AiChatAssistantMode;
 
+  @Field(() => AiChatAssistantProfileInput, { nullable: true })
+  @IsObject()
+  @ValidateIf(
+    ({ aiChatAssistantProfile }: UpdateWorkspaceInput) =>
+      !isUndefined(aiChatAssistantProfile),
+  )
+  aiChatAssistantProfile?: AiChatAssistantProfileInput;
+
   @Field({ nullable: true })
   @IsString()
   @IsOptional()
   aiAdditionalInstructions?: string;
+
+  @Field(() => AiDataPolicyInput, { nullable: true })
+  @IsObject()
+  @ValidateNested()
+  @Type(() => AiDataPolicyInput)
+  @ValidateIf(
+    ({ aiDataPolicy }: UpdateWorkspaceInput) => !isUndefined(aiDataPolicy),
+  )
+  aiDataPolicy?: AiDataPolicyInput;
 
   @Field(() => [String], { nullable: true })
   @IsArray()
@@ -185,8 +212,14 @@ export class UpdateWorkspaceInput {
   @IsOptional()
   editableProfileFields?: string[];
 
+  // TODO(@neo773): remove once frontends cached before isInternalImportEnabled are gone
   @Field({ nullable: true })
   @IsBoolean()
   @IsOptional()
   isInternalMessagesImportEnabled?: boolean;
+
+  @Field({ nullable: true })
+  @IsBoolean()
+  @IsOptional()
+  isInternalImportEnabled?: boolean;
 }

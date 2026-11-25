@@ -1,3 +1,6 @@
+import { type NativePageKey } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -6,6 +9,7 @@ import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
 export const createStandardNavigationMenuItemFolderFlatMetadata = ({
+  parent,
   universalIdentifier,
   name,
   icon,
@@ -16,8 +20,9 @@ export const createStandardNavigationMenuItemFolderFlatMetadata = ({
   twentyStandardApplicationId,
   now,
 }: {
+  parent?: Pick<FlatNavigationMenuItem, 'id' | 'universalIdentifier'>;
   universalIdentifier: string;
-  name: string;
+  name: string | null;
   icon?: string | null;
   color: string | null;
   position: number;
@@ -39,17 +44,25 @@ export const createStandardNavigationMenuItemFolderFlatMetadata = ({
   targetObjectMetadataUniversalIdentifier: null,
   viewId: null,
   viewUniversalIdentifier: null,
-  folderId: null,
-  folderUniversalIdentifier: null,
+  parentId: parent?.id ?? null,
+  parentUniversalIdentifier: parent?.universalIdentifier ?? null,
   pageLayoutId: null,
   pageLayoutUniversalIdentifier: null,
   agentChatChannelId: null,
   agentChatChannelUniversalIdentifier: null,
+  workflowId: null,
+  workflowUniversalIdentifier: null,
+  agentId: null,
+  agentUniversalIdentifier: null,
   name,
   link: null,
+  nativePageKey: null,
+  builtInSectionKey: null,
   icon: icon ?? null,
   color,
   position,
+  isActive: true,
+  overrides: null,
   createdAt: now,
   updatedAt: now,
 });
@@ -57,6 +70,7 @@ export const createStandardNavigationMenuItemFolderFlatMetadata = ({
 export const createStandardNavigationMenuItemFolderItemFlatMetadata = ({
   universalIdentifier,
   viewUniversalIdentifier,
+  nativePageKey,
   folderId,
   folderUniversalIdentifier,
   position,
@@ -67,7 +81,8 @@ export const createStandardNavigationMenuItemFolderItemFlatMetadata = ({
   now,
 }: {
   universalIdentifier: string;
-  viewUniversalIdentifier: string;
+  viewUniversalIdentifier?: string;
+  nativePageKey?: NativePageKey;
   folderId: string;
   folderUniversalIdentifier: string;
   position: number;
@@ -79,12 +94,14 @@ export const createStandardNavigationMenuItemFolderItemFlatMetadata = ({
   };
   now: string;
 }): FlatNavigationMenuItem => {
-  const flatView = findFlatEntityByUniversalIdentifier({
-    flatEntityMaps: flatViewMaps,
-    universalIdentifier: viewUniversalIdentifier,
-  });
+  const flatView = isDefined(viewUniversalIdentifier)
+    ? findFlatEntityByUniversalIdentifier({
+        flatEntityMaps: flatViewMaps,
+        universalIdentifier: viewUniversalIdentifier,
+      })
+    : undefined;
 
-  if (!flatView) {
+  if (!isDefined(nativePageKey) && !isDefined(flatView)) {
     throw new Error(
       `View not found for universal identifier ${viewUniversalIdentifier}`,
     );
@@ -92,7 +109,9 @@ export const createStandardNavigationMenuItemFolderItemFlatMetadata = ({
 
   return {
     id: navigationMenuItemId,
-    type: NavigationMenuItemType.OBJECT,
+    type: isDefined(nativePageKey)
+      ? NavigationMenuItemType.NATIVE_PAGE
+      : NavigationMenuItemType.OBJECT,
     universalIdentifier,
     applicationId: twentyStandardApplicationId,
     applicationUniversalIdentifier:
@@ -100,22 +119,30 @@ export const createStandardNavigationMenuItemFolderItemFlatMetadata = ({
     workspaceId,
     userWorkspaceId: null,
     targetRecordId: null,
-    targetObjectMetadataId: flatView.objectMetadataId,
+    targetObjectMetadataId: flatView?.objectMetadataId ?? null,
     targetObjectMetadataUniversalIdentifier:
-      flatView.objectMetadataUniversalIdentifier,
+      flatView?.objectMetadataUniversalIdentifier ?? null,
     viewId: null,
     viewUniversalIdentifier: null,
-    folderId,
-    folderUniversalIdentifier,
+    parentId: folderId,
+    parentUniversalIdentifier: folderUniversalIdentifier,
     pageLayoutId: null,
     pageLayoutUniversalIdentifier: null,
     agentChatChannelId: null,
     agentChatChannelUniversalIdentifier: null,
+    workflowId: null,
+    workflowUniversalIdentifier: null,
+    agentId: null,
+    agentUniversalIdentifier: null,
     name: null,
     link: null,
+    nativePageKey: nativePageKey ?? null,
+    builtInSectionKey: null,
     icon: null,
-    color: 'gray',
+    color: isDefined(nativePageKey) ? null : 'gray',
     position,
+    isActive: true,
+    overrides: null,
     createdAt: now,
     updatedAt: now,
   };

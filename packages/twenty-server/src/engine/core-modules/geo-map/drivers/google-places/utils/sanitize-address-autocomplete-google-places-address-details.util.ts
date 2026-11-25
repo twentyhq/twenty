@@ -16,7 +16,9 @@ export const sanitizeAddressAutocompleteGooglePlacesAddressDetails = ({
   addressComponents: AddressAutocompleteGooglePlacesAddressComponent[];
   location?: GeoMapLocationFields;
 }): GeoMapAddressFields => {
-  if (!isNonEmptyArray(addressComponents)) return {};
+  if (!isNonEmptyArray(addressComponents)) {
+    return {};
+  }
 
   const address: GeoMapAddressFields = {};
 

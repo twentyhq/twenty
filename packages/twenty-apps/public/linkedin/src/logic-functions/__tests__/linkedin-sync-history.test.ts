@@ -97,6 +97,61 @@ describe('linkedinSyncHistoryHandler', () => {
     expect(mocks.enqueueJobs).toHaveBeenCalledTimes(1);
   });
 
+  it('limits the run to the past conversations the member chose', async () => {
+    mocks.kvStore.set('linkedin-settings:connection-id', {
+      historyConversationLimit: 50,
+    });
+
+    await syncHistory();
+
+    expect(mocks.kvStore.get(HISTORY_KEY)).toEqual(
+      expect.objectContaining({ status: 'IMPORTING', conversationLimit: 50 }),
+    );
+  });
+
+  it('imports no past conversation when the member chose none', async () => {
+    mocks.kvStore.set('linkedin-settings:connection-id', {
+      historyConversationLimit: 0,
+    });
+    setHistoryImport('COMPLETED');
+
+    await syncHistory();
+
+    expect(mocks.enqueueJobs).not.toHaveBeenCalled();
+    expect(mocks.kvStore.get(HISTORY_KEY)).toEqual(
+      expect.objectContaining({ runId: 'run-1', status: 'COMPLETED' }),
+    );
+  });
+
+  it('imports the selected conversations, whatever the number of past conversations', async () => {
+    mocks.kvStore.set('linkedin-settings:connection-id', {
+      importPolicy: 'SELECTED',
+      selectedChats: [{ id: 'chat-1', name: 'chat-1' }],
+      historyConversationLimit: 0,
+    });
+
+    await syncHistory();
+
+    expect(mocks.enqueueJobs).toHaveBeenCalledOnce();
+    expect(mocks.kvStore.get(HISTORY_KEY)).toEqual(
+      expect.objectContaining({
+        status: 'IMPORTING',
+        importPolicy: 'SELECTED',
+      }),
+    );
+  });
+
+  it('imports nothing while no conversation is selected', async () => {
+    mocks.kvStore.set('linkedin-settings:connection-id', {
+      importPolicy: 'SELECTED',
+      selectedChats: [],
+    });
+
+    await syncHistory();
+
+    expect(mocks.enqueueJobs).not.toHaveBeenCalled();
+  });
+
   it('leaves a running import alone', async () => {
     setHistoryImport('IMPORTING');
 

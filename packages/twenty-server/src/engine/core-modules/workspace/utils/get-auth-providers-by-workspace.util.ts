@@ -7,17 +7,21 @@ import {
 import { type AuthProvidersDTO } from 'src/engine/core-modules/workspace/dtos/public-workspace-data.dto';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
+type AuthProviderIdentityProvider = Pick<
+  WorkspaceSsoIdentityProviderEntity,
+  'id' | 'name' | 'type' | 'status' | 'issuer'
+>;
+
 export const getAuthProvidersByWorkspace = ({
   workspace,
   systemEnabledProviders,
 }: {
   workspace: Pick<
     WorkspaceEntity,
-    | 'isGoogleAuthEnabled'
-    | 'isPasswordAuthEnabled'
-    | 'isMicrosoftAuthEnabled'
-    | 'workspaceSsoIdentityProviders'
-  >;
+    'isGoogleAuthEnabled' | 'isPasswordAuthEnabled' | 'isMicrosoftAuthEnabled'
+  > & {
+    workspaceSsoIdentityProviders: AuthProviderIdentityProvider[];
+  };
   systemEnabledProviders: AuthProvidersDTO;
 }) => {
   return {
@@ -28,7 +32,7 @@ export const getAuthProvidersByWorkspace = ({
     microsoft:
       workspace.isMicrosoftAuthEnabled && systemEnabledProviders.microsoft,
     sso: workspace.workspaceSsoIdentityProviders
-      .map((identityProvider: WorkspaceSsoIdentityProviderEntity) =>
+      .map((identityProvider) =>
         identityProvider.status === SsoIdentityProviderStatus.Active
           ? {
               id: identityProvider.id,

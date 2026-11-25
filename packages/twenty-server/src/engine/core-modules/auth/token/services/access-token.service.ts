@@ -13,6 +13,7 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { ServerAdminIdentityAssertionService } from 'src/engine/core-modules/auth/identity-assertion/services/server-admin-identity-assertion.service';
 import { type AuthToken } from 'src/engine/core-modules/auth/dto/auth-token.dto';
 import { JwtAuthStrategy } from 'src/engine/core-modules/auth/strategies/jwt.auth.strategy';
 import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth-context.type';
@@ -49,6 +50,7 @@ export class AccessTokenService {
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly userSessionService: UserSessionService,
     private readonly userSessionCookieService: UserSessionCookieService,
+    private readonly serverAdminIdentityAssertionService: ServerAdminIdentityAssertionService,
   ) {}
 
   private async resolveTokenSubject(
@@ -83,9 +85,8 @@ export class AccessTokenService {
       workspaceMemberId =
         await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
           const workspaceMemberRepository =
-            this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+            this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>(
               'workspaceMember',
-              { shouldBypassPermissionChecks: true },
             );
 
           const workspaceMember = await workspaceMemberRepository.findOne({
@@ -193,6 +194,18 @@ export class AccessTokenService {
   }
 
   async validateTokenByRequest(request: Request): Promise<RawAuthContext> {
+    const authContext = await this.resolveAuthContextFromRequest(request);
+
+    await this.serverAdminIdentityAssertionService.assertRequestAllowedInServerAdminWorkspaceOrThrow(
+      { request, authContext },
+    );
+
+    return authContext;
+  }
+
+  private async resolveAuthContextFromRequest(
+    request: Request,
+  ): Promise<RawAuthContext> {
     const token = this.jwtWrapperService.extractJwtFromRequest()(request);
 
     if (token) {

@@ -6,7 +6,7 @@ import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetA
 import { getCallRecordingWidgetFilter } from '@/page-layout/widgets/call-recording/utils/getCallRecordingWidgetFilter';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import { useCallback, useMemo } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useSubscribeToCallRecordingWidgetUpdates = ({
@@ -23,7 +23,7 @@ export const useSubscribeToCallRecordingWidgetUpdates = ({
 
   const { objectMetadataItem: callRecordingObjectMetadataItem } =
     useObjectMetadataItem({
-      objectNameSingular: CoreObjectNameSingular.CallRecording,
+      objectNameSingular: StandardObjectNameSingular.CallRecording,
     });
 
   const shouldSkipSubscription =
@@ -36,7 +36,7 @@ export const useSubscribeToCallRecordingWidgetUpdates = ({
 
   const operationSignature = useMemo(
     () => ({
-      objectNameSingular: CoreObjectNameSingular.CallRecording,
+      objectNameSingular: StandardObjectNameSingular.CallRecording,
       variables: { filter: callRecordingFilter },
     }),
     [callRecordingFilter],

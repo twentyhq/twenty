@@ -24,10 +24,11 @@ import {
   TEAMS_ASSISTANT_REQUESTS_ON_WORKSPACE_MEMBER_FIELD_UNIVERSAL_IDENTIFIER,
 } from 'src/features/chat/constants/universal-identifiers';
 import { TEAMS_ASSISTANT_REQUEST_STATUS } from 'src/features/chat/logic-functions/constants/teams-assistant-request-status';
+import { TEAMS_ASSISTANT_REQUEST_OBJECT_NAME_SINGULAR } from 'src/features/chat/constants/teams-assistant-request-object-name-singular';
 
 export default defineObject({
   universalIdentifier: TEAMS_ASSISTANT_REQUEST_OBJECT_UNIVERSAL_IDENTIFIER,
-  nameSingular: 'teamsAssistantRequest',
+  nameSingular: TEAMS_ASSISTANT_REQUEST_OBJECT_NAME_SINGULAR,
   namePlural: 'teamsAssistantRequests',
   labelSingular: 'Teams Assistant Request',
   labelPlural: 'Teams Assistant Requests',
@@ -42,7 +43,8 @@ export default defineObject({
         TEAMS_ASSISTANT_REQUEST_NAME_FIELD_UNIVERSAL_IDENTIFIER,
       type: FieldType.TEXT,
       label: 'Name',
-      description: 'Short preview of the request',
+      description:
+        'Short preview of the request, set once the sender is matched to a workspace member',
       icon: 'IconAbc',
       name: 'name',
     },
@@ -136,7 +138,8 @@ export default defineObject({
         TEAMS_ASSISTANT_REQUEST_TEXT_FIELD_UNIVERSAL_IDENTIFIER,
       type: FieldType.RICH_TEXT,
       label: 'Request',
-      description: 'Message text with the bot mention stripped',
+      description:
+        'Message text with the bot mention stripped, saved once the sender is matched to a workspace member',
       icon: 'IconMessage',
       name: 'requestText',
     },

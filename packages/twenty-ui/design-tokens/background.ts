@@ -17,6 +17,7 @@ export const BACKGROUND_TOKENS = {
   invertedPrimary: GRAY_SCALE_TOKENS.gray12,
   invertedSecondary: GRAY_SCALE_TOKENS.gray11,
   danger: COLOR_TOKENS.red3,
+  dangerSolid: token(COLOR_TOKENS.red11.light),
   transparent: {
     primary: token({
       light: 'color(display-p3 1 1 1 / 0.5)',

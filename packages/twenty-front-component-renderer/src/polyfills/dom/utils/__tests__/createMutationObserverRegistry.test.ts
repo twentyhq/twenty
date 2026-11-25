@@ -3,8 +3,13 @@ import { type WorkerMutationRecord } from '@/polyfills/dom/types/WorkerMutationR
 import { createMutationObserverRegistry } from '@/polyfills/dom/utils/createMutationObserverRegistry';
 import { createMutationRecord } from '@/polyfills/dom/utils/createMutationRecord';
 
-const createFakeNode = (parentNode: Node | null = null) =>
-  ({ parentNode }) as unknown as Node;
+const createNode = (parentNode: Node | null = null) => {
+  const node = document.createElement('div');
+
+  parentNode?.appendChild(node);
+
+  return node;
+};
 
 const createFakeSink = () => {
   const records: WorkerMutationRecord[] = [];
@@ -25,8 +30,8 @@ describe('createMutationObserverRegistry', () => {
     const registry = createMutationObserverRegistry();
     const { sink, scheduleDelivery } = createFakeSink();
 
-    const formerParent = createFakeNode();
-    const detachedNode = createFakeNode();
+    const formerParent = createNode();
+    const detachedNode = createNode();
 
     registry.registerObservation({
       target: formerParent,
@@ -45,8 +50,8 @@ describe('createMutationObserverRegistry', () => {
     const registry = createMutationObserverRegistry();
     const { sink, scheduleDelivery } = createFakeSink();
 
-    const formerParent = createFakeNode();
-    const detachedNode = createFakeNode();
+    const formerParent = createNode();
+    const detachedNode = createNode();
 
     registry.registerObservation({
       target: formerParent,
@@ -65,9 +70,9 @@ describe('createMutationObserverRegistry', () => {
     const registry = createMutationObserverRegistry();
     const { sink, records } = createFakeSink();
 
-    const root = createFakeNode();
-    const formerParent = createFakeNode(root);
-    const detachedNode = createFakeNode();
+    const root = createNode();
+    const formerParent = createNode(root);
+    const detachedNode = createNode();
 
     registry.registerObservation({
       target: root,
@@ -94,7 +99,7 @@ describe('createMutationObserverRegistry', () => {
       record: createMutationRecord({
         type: 'childList',
         target: detachedNode,
-        addedNodes: [createFakeNode()],
+        addedNodes: [createNode()],
       }),
       oldValue: null,
     });
@@ -110,8 +115,8 @@ describe('createMutationObserverRegistry', () => {
     const firstSink = createFakeSink();
     const secondSink = createFakeSink();
 
-    const target = createFakeNode();
-    const addedNode = createFakeNode();
+    const target = createNode();
+    const addedNode = createNode();
 
     registry.registerObservation({
       target,
@@ -144,7 +149,7 @@ describe('createMutationObserverRegistry', () => {
     const registry = createMutationObserverRegistry();
     const { sink, records } = createFakeSink();
 
-    const target = createFakeNode();
+    const target = createNode();
 
     registry.registerObservation({
       target,
@@ -157,7 +162,7 @@ describe('createMutationObserverRegistry', () => {
       record: createMutationRecord({
         type: 'childList',
         target,
-        addedNodes: [createFakeNode()],
+        addedNodes: [createNode()],
       }),
       oldValue: null,
     });
@@ -169,7 +174,7 @@ describe('createMutationObserverRegistry', () => {
     const registry = createMutationObserverRegistry();
     const { sink } = createFakeSink();
 
-    const target = createFakeNode();
+    const target = createNode();
 
     expect(registry.hasObservations()).toBe(false);
 

@@ -11,9 +11,9 @@ export const findParentSteps = ({
   steps,
 }: {
   step: WorkflowAction;
-  steps: WorkflowAction[];
+  steps: (WorkflowAction | undefined)[];
 }): WorkflowAction[] => {
-  return steps.filter((candidateParent) => {
+  return steps.filter((candidateParent): candidateParent is WorkflowAction => {
     if (!isDefined(candidateParent)) {
       return false;
     }

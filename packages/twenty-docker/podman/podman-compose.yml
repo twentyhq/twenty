@@ -21,6 +21,7 @@ services:
   server:
     container_name: twenty-server
     image: twentycrm/twenty:latest
+    stop_grace_period: 120s
     environment:
       NODE_PORT: "3000"
       SERVER_URL: ${SERVER_URL}

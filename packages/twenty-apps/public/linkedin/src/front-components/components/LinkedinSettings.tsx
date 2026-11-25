@@ -24,6 +24,7 @@ import { LinkedinReadStatusSection } from 'src/front-components/components/Linke
 import { LinkedinVisibilitySection } from 'src/front-components/components/LinkedinVisibilitySection';
 import { OnMountEffect } from 'src/front-components/components/OnMountEffect';
 import { TimeoutEffect } from 'src/front-components/components/TimeoutEffect';
+import { createSettingsSaveQueue } from 'src/front-components/utils/create-settings-save-queue.util';
 import { getNextLinkedinSyncProgress } from 'src/front-components/utils/get-next-linkedin-sync-progress.util';
 import { notifyLinkedinHistoryImportEnd } from 'src/front-components/utils/notify-linkedin-history-import-end.util';
 import { postLinkedinSettingsRouteOrThrow } from 'src/front-components/utils/post-linkedin-settings-route-or-throw.util';
@@ -68,7 +69,9 @@ export const LinkedinSettings = () => {
     progress: number;
   } | null>(null);
   const lastHistoryImportRef = useRef<LinkedinHistoryImportState | null>(null);
-  const settingsSaveQueueRef = useRef<Promise<void>>(Promise.resolve());
+  const [settingsSaveQueue] = useState(() =>
+    createSettingsSaveQueue<LinkedinSettingsView>(),
+  );
 
   const showView = (view: LinkedinSettingsView) => {
     const historyImport = view.isConnected ? view.historyImport : null;
@@ -86,11 +89,13 @@ export const LinkedinSettings = () => {
 
   const loadSettings = async () => {
     try {
-      showView(
-        await postLinkedinSettingsRouteOrThrow({
-          routePath: LINKEDIN_SETTINGS_ROUTE_PATHS.get,
-        }),
-      );
+      const view = await postLinkedinSettingsRouteOrThrow({
+        routePath: LINKEDIN_SETTINGS_ROUTE_PATHS.get,
+      });
+
+      if (!settingsSaveQueue.hasPendingSave()) {
+        showView(view);
+      }
     } catch {
       setState((current) =>
         current.step === 'ready' ? current : { step: 'unavailable' },
@@ -115,32 +120,32 @@ export const LinkedinSettings = () => {
         : current,
     );
 
-    const save = async () => {
-      try {
-        showView(
-          await postLinkedinSettingsRouteOrThrow({
-            routePath: LINKEDIN_SETTINGS_ROUTE_PATHS.update,
-            body: update,
-          }),
-        );
-      } catch {
+    await settingsSaveQueue.enqueue({
+      save: () =>
+        postLinkedinSettingsRouteOrThrow({
+          routePath: LINKEDIN_SETTINGS_ROUTE_PATHS.update,
+          body: update,
+        }),
+      onSaved: showView,
+      onFailed: async (hasPendingSave) => {
         enqueueSnackbar({
           message: t('Could not save LinkedIn settings. Try again.'),
           variant: 'error',
         });
-        await loadSettings();
-      }
-    };
 
-    settingsSaveQueueRef.current = settingsSaveQueueRef.current.then(save);
-
-    await settingsSaveQueueRef.current;
+        if (!hasPendingSave) {
+          await loadSettings();
+        }
+      },
+    });
   };
 
   const handleSync = async () => {
     setIsSyncStarting(true);
 
     try {
+      await settingsSaveQueue.whenIdle();
+
       showView(
         await postLinkedinSettingsRouteOrThrow({
           routePath: LINKEDIN_SETTINGS_ROUTE_PATHS.syncHistory,
@@ -226,7 +231,9 @@ export const LinkedinSettings = () => {
             />
             <LinkedinImportSection
               importPolicy={view.settings.importPolicy}
+              selectedChats={view.settings.selectedChats}
               areGroupChatsImported={view.settings.areGroupChatsImported}
+              historyConversationLimit={view.settings.historyConversationLimit}
               historyImport={view.historyImport}
               syncProgress={
                 syncProgress?.runId === view.historyImport?.runId
@@ -238,8 +245,14 @@ export const LinkedinSettings = () => {
               onChange={(importPolicy) =>
                 handleSettingsChange({ importPolicy })
               }
+              onSelectedChatsChange={(selectedChats) =>
+                handleSettingsChange({ selectedChats })
+              }
               onGroupChatsImportChange={(areGroupChatsImported) =>
                 handleSettingsChange({ areGroupChatsImported })
+              }
+              onHistoryConversationLimitChange={(historyConversationLimit) =>
+                handleSettingsChange({ historyConversationLimit })
               }
               onSync={handleSync}
               onCancelSync={handleCancelSync}
@@ -260,7 +273,12 @@ export const LinkedinSettings = () => {
                 handleSettingsChange({ isNameMatchingEnabled })
               }
             />
-            <LinkedinReadStatusSection />
+            <LinkedinReadStatusSection
+              areChatsMarkedAsRead={view.settings.areChatsMarkedAsRead}
+              onChange={(areChatsMarkedAsRead) =>
+                handleSettingsChange({ areChatsMarkedAsRead })
+              }
+            />
           </>
         )}
       </StyledContainer>

@@ -3,12 +3,15 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/junction/isUsableJunctionConfig';
 import { resolveJunctionConfig } from '@/object-record/record-field/ui/utils/junction/resolveJunctionConfig';
-import { type ObjectPermissions } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  canAccessThroughAllRecordsOrRlsPermission,
+  isDefined,
+} from 'twenty-shared/utils';
+import { type ObjectRecordsPermissions } from 'twenty-shared/types';
 
 type ObjectPermissionsByObjectMetadataId = Record<
   string,
-  ObjectPermissions & { objectMetadataId: string }
+  ObjectRecordsPermissions
 >;
 
 type CategorizeRelationFieldsArgs = {
@@ -29,18 +32,24 @@ const canReadRelationTarget = (
 ): boolean => {
   const canReadRelation =
     isDefined(fieldMetadataItem.relation?.targetObjectMetadata.id) &&
-    getObjectPermissionsForObject(
-      objectPermissionsByObjectMetadataId,
-      fieldMetadataItem.relation?.targetObjectMetadata.id,
-    ).canReadObjectRecords;
+    canAccessThroughAllRecordsOrRlsPermission({
+      objectRecordsPermissions: getObjectPermissionsForObject(
+        objectPermissionsByObjectMetadataId,
+        fieldMetadataItem.relation?.targetObjectMetadata.id,
+      ),
+      operationType: 'read',
+    });
 
   const canReadMorphRelation = fieldMetadataItem?.morphRelations?.every(
     (morphRelation) =>
       isDefined(morphRelation.targetObjectMetadata.id) &&
-      getObjectPermissionsForObject(
-        objectPermissionsByObjectMetadataId,
-        morphRelation.targetObjectMetadata.id,
-      ).canReadObjectRecords,
+      canAccessThroughAllRecordsOrRlsPermission({
+        objectRecordsPermissions: getObjectPermissionsForObject(
+          objectPermissionsByObjectMetadataId,
+          morphRelation.targetObjectMetadata.id,
+        ),
+        operationType: 'read',
+      }),
   );
 
   return canReadRelation || (canReadMorphRelation ?? false);

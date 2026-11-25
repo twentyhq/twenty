@@ -1,14 +1,12 @@
 import { ToolCategory } from 'twenty-shared/ai';
-import {
-  FIELD_TYPE_DEFAULT_ICONS,
-  PermissionFlagType,
-} from 'twenty-shared/constants';
+import { FIELD_TYPE_DEFAULT_ICONS } from 'twenty-shared/constants';
 
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { normalizeIconName } from 'src/engine/core-modules/tool-provider/utils/normalize-icon-name.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { FIELD_METADATA_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/field-metadata/constants/field-metadata-write-access-policy.constant';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { createFieldMetadataInputSchema } from 'src/engine/metadata-modules/field-metadata/tools/schemas/create-field-metadata-input.schema';
 import { normalizeRelationCreationPayloadIcon } from 'src/engine/metadata-modules/field-metadata/tools/utils/normalize-relation-creation-payload-icon.util';
@@ -16,7 +14,7 @@ import { normalizeRelationCreationPayloadIcon } from 'src/engine/metadata-module
 @DefineTool({
   name: 'create_field_metadata',
   category: ToolCategory.METADATA,
-  requiredPermissionFlags: [PermissionFlagType.DATA_MODEL],
+  accessPolicy: FIELD_METADATA_WRITE_ACCESS_POLICY,
   icon: 'IconSettings',
   description: 'Create a new field on an object.',
 })

@@ -1,8 +1,9 @@
 import { SettingsAccountsListEmptyStateCard } from '@/settings/accounts/components/SettingsAccountsListEmptyStateCard';
-import { t } from '@lingui/core/macro';
 import { Section } from 'twenty-ui/components/layout';
+import { useLingui } from '@lingui/react/macro';
 
 export const SettingsNewAccountSection = () => {
+  const { t } = useLingui();
   return (
     <Section.Root>
       <Section.Header

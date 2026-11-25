@@ -3,7 +3,7 @@ import { NotesCardContent } from '@/activities/notes/components/NotesCardContent
 import { useNotes } from '@/activities/notes/hooks/useNotes';
 import { WidgetHeaderCountEffect } from '@/page-layout/widgets/components/WidgetHeaderCountEffect';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 export const NotesCard = () => {
   const targetRecord = useTargetRecord();
@@ -19,7 +19,7 @@ export const NotesCard = () => {
   const { canCreateActivity, createActivity } =
     useCreateActivityForTargetRecord({
       targetRecord,
-      activityObjectNameSingular: CoreObjectNameSingular.Note,
+      activityObjectNameSingular: StandardObjectNameSingular.Note,
     });
 
   return (

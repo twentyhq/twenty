@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconUserPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
@@ -41,7 +41,7 @@ export const SidePanelAddToMessageListPage = () => {
   const { closeSidePanelMenu } = useSidePanelMenu();
 
   const { createOneRecord: createOneMessageList } = useCreateOneRecord({
-    objectNameSingular: CoreObjectNameSingular.MessageList,
+    objectNameSingular: StandardObjectNameSingular.MessageList,
   });
 
   const { addPeopleToMessageList, isAdding } = useAddPeopleToMessageList({
@@ -64,7 +64,7 @@ export const SidePanelAddToMessageListPage = () => {
         <FormSingleRecordPicker
           label={t`List`}
           defaultValue={messageListId}
-          objectNameSingulars={[CoreObjectNameSingular.MessageList]}
+          objectNameSingulars={[StandardObjectNameSingular.MessageList]}
           onChange={setMessageListId}
           onClear={() => setMessageListId(null)}
           onCreate={handleCreateMessageList}

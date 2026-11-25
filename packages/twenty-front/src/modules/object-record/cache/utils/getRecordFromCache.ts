@@ -4,8 +4,8 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { generateRecordCacheFragment } from '@/object-record/cache/utils/generateRecordCacheFragment';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import {
+  type ObjectRecordsPermissions,
   type RecordGqlFields,
-  type ObjectPermissions,
 } from 'twenty-shared/types';
 import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromObject';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -20,10 +20,7 @@ export type GetRecordFromCacheArgs = {
     'fields' | 'nameSingular' | 'id' | 'readableFields'
   >;
   recordGqlFields?: RecordGqlFields;
-  objectPermissionsByObjectMetadataId: Record<
-    string,
-    ObjectPermissions & { objectMetadataId: string }
-  >;
+  objectPermissionsByObjectMetadataId: Record<string, ObjectRecordsPermissions>;
 };
 export const getRecordFromCache = <T extends ObjectRecord = ObjectRecord>({
   objectMetadataItem,

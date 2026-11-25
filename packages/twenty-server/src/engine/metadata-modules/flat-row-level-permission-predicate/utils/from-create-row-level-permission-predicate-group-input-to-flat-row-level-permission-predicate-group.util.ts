@@ -1,31 +1,32 @@
-import { v4 } from 'uuid';
-
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
-import { type RowLevelPermissionPredicateGroupInput } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/inputs/upsert-row-level-permission-predicates.input';
+import { type FlattenedRowLevelPermissionPredicateGroupInput } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flattened-row-level-permission-rule-inputs.type';
 import { type FlatRowLevelPermissionPredicateGroup } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group.type';
 
 export const fromCreateRowLevelPermissionPredicateGroupInputToFlatRowLevelPermissionPredicateGroup =
   ({
     input,
     roleId,
+    objectMetadataId,
     workspaceId,
+    rowLevelPermissionRuleUniversalIdentifier,
     roleUniversalIdentifier,
     flatApplication,
     flatObjectMetadataMaps,
     flatRowLevelPermissionPredicateGroupMaps,
   }: {
-    input: RowLevelPermissionPredicateGroupInput;
+    input: FlattenedRowLevelPermissionPredicateGroupInput;
     roleId: string;
+    objectMetadataId: string;
     workspaceId: string;
+    rowLevelPermissionRuleUniversalIdentifier: string;
     roleUniversalIdentifier: string;
     flatApplication: FlatApplication;
   } & Pick<AllFlatEntityMaps, 'flatObjectMetadataMaps'> & {
       flatRowLevelPermissionPredicateGroupMaps: FlatEntityMaps<FlatRowLevelPermissionPredicateGroup>;
     }): FlatRowLevelPermissionPredicateGroup => {
-    const groupId = input.id ?? v4();
     const createdAt = new Date().toISOString();
 
     const {
@@ -34,7 +35,7 @@ export const fromCreateRowLevelPermissionPredicateGroupInputToFlatRowLevelPermis
     } = resolveEntityRelationUniversalIdentifiers({
       metadataName: 'rowLevelPermissionPredicateGroup',
       foreignKeyValues: {
-        objectMetadataId: input.objectMetadataId,
+        objectMetadataId,
         parentRowLevelPermissionPredicateGroupId:
           input.parentRowLevelPermissionPredicateGroupId,
       },
@@ -45,18 +46,25 @@ export const fromCreateRowLevelPermissionPredicateGroupInputToFlatRowLevelPermis
     });
 
     return {
-      id: groupId,
+      id: input.id,
       workspaceId,
       roleId,
       roleUniversalIdentifier,
-      objectMetadataId: input.objectMetadataId,
+      objectMetadataId,
       objectMetadataUniversalIdentifier,
       logicalOperator: input.logicalOperator,
       parentRowLevelPermissionPredicateGroupId:
-        input.parentRowLevelPermissionPredicateGroupId ?? null,
+        input.parentRowLevelPermissionPredicateGroupId,
       parentRowLevelPermissionPredicateGroupUniversalIdentifier,
+      rowLevelPermissionRuleId: input.rowLevelPermissionRuleId,
+      rowLevelPermissionRuleUniversalIdentifier,
       positionInRowLevelPermissionPredicateGroup:
-        input.positionInRowLevelPermissionPredicateGroup ?? null,
+        input.positionInRowLevelPermissionPredicateGroup,
+      canReadRecords: false,
+      canCreateRecords: false,
+      canUpdateRecords: false,
+      canSoftDeleteRecords: false,
+      canDestroyRecords: false,
       childRowLevelPermissionPredicateGroupIds: [],
       childRowLevelPermissionPredicateGroupUniversalIdentifiers: [],
       rowLevelPermissionPredicateIds: [],
@@ -64,7 +72,7 @@ export const fromCreateRowLevelPermissionPredicateGroupInputToFlatRowLevelPermis
       createdAt,
       updatedAt: createdAt,
       deletedAt: null,
-      universalIdentifier: groupId,
+      universalIdentifier: input.id,
       applicationId: flatApplication.id,
       applicationUniversalIdentifier: flatApplication.universalIdentifier,
     };

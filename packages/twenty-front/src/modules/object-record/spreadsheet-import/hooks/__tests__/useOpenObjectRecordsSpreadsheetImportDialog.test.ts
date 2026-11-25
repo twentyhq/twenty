@@ -2,7 +2,7 @@ import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 import gql from 'graphql-tag';
 
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spreadsheetImportDialogState';
 import { useOpenObjectRecordsSpreadsheetImportDialog } from '@/object-record/spreadsheet-import/hooks/useOpenObjectRecordsSpreadsheetImportDialog';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -80,7 +80,7 @@ describe('useOpenObjectRecordsSpreadsheetImportDialog', () => {
       () => {
         const { openObjectRecordsSpreadsheetImportDialog } =
           useOpenObjectRecordsSpreadsheetImportDialog(
-            CoreObjectNameSingular.Company,
+            StandardObjectNameSingular.Company,
           );
         return {
           openObjectRecordsSpreadsheetImportDialog,
@@ -116,7 +116,7 @@ describe('useOpenObjectRecordsSpreadsheetImportDialog', () => {
       () => {
         const { openObjectRecordsSpreadsheetImportDialog } =
           useOpenObjectRecordsSpreadsheetImportDialog(
-            CoreObjectNameSingular.Company,
+            StandardObjectNameSingular.Company,
           );
         return {
           openObjectRecordsSpreadsheetImportDialog,

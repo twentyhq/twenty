@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { ChannelVisibilityModule } from 'src/engine/permissions/channel-visibility/channel-visibility.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
+import { OAuthClientRegistrationModule } from 'src/engine/core-modules/application/application-oauth/oauth-client-registration/oauth-client-registration.module';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { ConnectionProviderCustomController } from 'src/engine/core-modules/application/connection-provider/connection-provider-custom.controller';
@@ -77,6 +79,7 @@ import { AuthService } from './services/auth.service';
 
 @Module({
   imports: [
+    ChannelVisibilityModule,
     JwtModule,
     WorkspaceDomainsModule,
     TokenModule,
@@ -113,6 +116,7 @@ import { AuthService } from './services/auth.service';
     SubdomainManagerModule,
     DomainServerConfigModule,
     ApplicationRegistrationModule,
+    OAuthClientRegistrationModule,
     ApplicationModule,
     ConnectionProviderModule,
     ApplicationConnectionsModule,

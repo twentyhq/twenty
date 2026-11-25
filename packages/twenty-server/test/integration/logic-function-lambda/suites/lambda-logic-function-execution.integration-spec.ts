@@ -18,8 +18,11 @@ import { getCoreRepository } from 'test/integration/utils/get-core-repository.ut
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { isDefined } from 'twenty-shared/utils';
 
+import { NON_PERSISTED_EXECUTOR_NAME_PREFIXES } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/non-persisted-executor-name-prefixes';
 import { LAMBDA_PREBUILT_BUNDLE_CHECKSUM_TAG } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
+import { getLambdaExecutorFunctionName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-executor-function-name.util';
 import { type LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
+import { getWorkflowCodeStepLogicFunctionId } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/get-workflow-code-step-logic-function-id.util';
 import { type SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import {
@@ -27,7 +30,12 @@ import {
   LogicFunctionExecutionMode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { type LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
+import { type CodeStepRunnerService } from 'src/modules/workflow/workflow-executor/workflow-actions/code/services/code-step-runner.service';
+import {
+  SEED_APPLE_WORKSPACE_ID,
+  SEED_YCOMBINATOR_WORKSPACE_ID,
+} from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const LAMBDA_TEST_TIMEOUT_MS = 300_000;
 
@@ -50,6 +58,11 @@ const SLOW_SOURCE = `export const main = async (): Promise<object> => {
   await new Promise((resolve) => setTimeout(resolve, 30_000));
   return { finished: true };
 };`;
+
+const GREETING_CODE_STEP_SOURCE = `export const main = async (params: { name: string }): Promise<object> => ({
+  greeting: \`Hi \${params.name}\`,
+  literal: '{{trigger.name}}',
+});`;
 
 const buildVersionedSource = (version: number) =>
   `export const main = async (): Promise<object> => ({ version: ${version} });`;
@@ -116,6 +129,23 @@ describe('Logic functions on the Lambda driver (integration)', () => {
       applicationUniversalIdentifier: customFlatApplication.universalIdentifier,
     });
   };
+
+  const runCodeStep = async ({
+    code,
+    payload = {},
+  }: {
+    code: string;
+    payload?: object;
+  }) =>
+    getAppProviderByClassName<CodeStepRunnerService>(
+      'CodeStepRunnerService',
+    ).run({
+      flatApplication: await getWorkspaceCustomFlatApplication(
+        SEED_APPLE_WORKSPACE_ID,
+      ),
+      code,
+      payload,
+    });
 
   beforeAll(async () => {
     flociLambdaDriver = await switchToFlociLambdaDriver();
@@ -385,6 +415,196 @@ describe('Logic functions on the Lambda driver (integration)', () => {
           FunctionName: logicFunctionId,
         }),
       ).rejects.toThrow(ResourceNotFoundException);
+    },
+    LAMBDA_TEST_TIMEOUT_MS,
+  );
+
+  it(
+    'runs inline code steps on the shared code step Lambda, switching between their builds',
+    async () => {
+      expect(
+        await runCodeStep({
+          code: GREETING_CODE_STEP_SOURCE,
+          payload: { name: 'Acme' },
+        }),
+      ).toMatchObject({
+        status: LogicFunctionExecutionStatus.SUCCESS,
+        data: { greeting: 'Hi Acme', literal: '{{trigger.name}}' },
+      });
+      expect(
+        await runCodeStep({ code: buildVersionedSource(2) }),
+      ).toMatchObject({
+        status: LogicFunctionExecutionStatus.SUCCESS,
+        data: { version: 2 },
+      });
+      expect(
+        await runCodeStep({
+          code: GREETING_CODE_STEP_SOURCE,
+          payload: { name: 'Bob' },
+        }),
+      ).toMatchObject({
+        status: LogicFunctionExecutionStatus.SUCCESS,
+        data: { greeting: 'Hi Bob' },
+      });
+    },
+    LAMBDA_TEST_TIMEOUT_MS,
+  );
+
+  it(
+    'keeps the code step Lambda apart from a logic function created with its id',
+    async () => {
+      const { lambdaClient } = flociLambdaDriver;
+      const codeStepExecutorId = getWorkflowCodeStepLogicFunctionId({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        applicationUniversalIdentifier: (
+          await getWorkspaceCustomFlatApplication(SEED_APPLE_WORKSPACE_ID)
+        ).universalIdentifier,
+      });
+      const codeStepFunctionName = getLambdaExecutorFunctionName({
+        id: codeStepExecutorId,
+        executorNamePrefix:
+          NON_PERSISTED_EXECUTOR_NAME_PREFIXES.WORKFLOW_CODE_STEP,
+      });
+
+      try {
+        expect(
+          await runCodeStep({ code: buildVersionedSource(1) }),
+        ).toMatchObject({ data: { version: 1 } });
+
+        const codeStepLambda = await lambdaClient.getFunction({
+          FunctionName: codeStepFunctionName,
+        });
+
+        await createOneLogicFunction({
+          input: { id: codeStepExecutorId, name: `Claim ${randomUUID()}` },
+          expectToFail: false,
+        });
+        await updateLogicFunctionSource({
+          input: {
+            id: codeStepExecutorId,
+            update: { sourceHandlerCode: buildVersionedSource(2) },
+          },
+          expectToFail: false,
+        });
+
+        expect((await runLogicFunction(codeStepExecutorId)).data).toEqual({
+          version: 2,
+        });
+
+        await deleteLogicFunction({
+          input: { id: codeStepExecutorId },
+          expectToFail: false,
+        });
+        await waitForAllJobsToFinish();
+
+        expect(
+          (
+            await lambdaClient.getFunction({
+              FunctionName: codeStepFunctionName,
+            })
+          ).Configuration?.LastModified,
+        ).toBe(codeStepLambda.Configuration?.LastModified);
+        expect(
+          await runCodeStep({ code: buildVersionedSource(1) }),
+        ).toMatchObject({ data: { version: 1 } });
+      } finally {
+        await getCoreRepository<LogicFunctionEntity>(LogicFunctionEntity)
+          .delete({ id: codeStepExecutorId })
+          .catch(() => undefined);
+      }
+    },
+    LAMBDA_TEST_TIMEOUT_MS,
+  );
+
+  it(
+    'keeps the code step Lambda when another workspace creates and deletes a logic function with its id',
+    async () => {
+      const { lambdaClient } = flociLambdaDriver;
+      const logicFunctionFromSourceService =
+        getAppProviderByClassName<LogicFunctionFromSourceService>(
+          'LogicFunctionFromSourceService',
+        );
+      const codeStepExecutorId = getWorkflowCodeStepLogicFunctionId({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        applicationUniversalIdentifier: (
+          await getWorkspaceCustomFlatApplication(SEED_APPLE_WORKSPACE_ID)
+        ).universalIdentifier,
+      });
+      const codeStepFunctionName = getLambdaExecutorFunctionName({
+        id: codeStepExecutorId,
+        executorNamePrefix:
+          NON_PERSISTED_EXECUTOR_NAME_PREFIXES.WORKFLOW_CODE_STEP,
+      });
+
+      try {
+        expect(
+          await runCodeStep({ code: buildVersionedSource(1) }),
+        ).toMatchObject({ data: { version: 1 } });
+
+        const codeStepLambda = await lambdaClient.getFunction({
+          FunctionName: codeStepFunctionName,
+        });
+
+        await logicFunctionFromSourceService.createOneFromSource({
+          input: { id: codeStepExecutorId, name: `Claim ${randomUUID()}` },
+          workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
+        });
+        await logicFunctionFromSourceService.deleteOneWithSource({
+          id: codeStepExecutorId,
+          workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
+        });
+        await waitForAllJobsToFinish();
+
+        expect(
+          (
+            await lambdaClient.getFunction({
+              FunctionName: codeStepFunctionName,
+            })
+          ).Configuration?.LastModified,
+        ).toBe(codeStepLambda.Configuration?.LastModified);
+        expect(
+          await runCodeStep({ code: buildVersionedSource(1) }),
+        ).toMatchObject({ data: { version: 1 } });
+      } finally {
+        await getCoreRepository<LogicFunctionEntity>(LogicFunctionEntity)
+          .delete({ id: codeStepExecutorId })
+          .catch(() => undefined);
+      }
+    },
+    LAMBDA_TEST_TIMEOUT_MS,
+  );
+
+  it(
+    'runs an inline code step with the dependency and SDK layers mounted',
+    async () => {
+      const result = await runCodeStep({ code: LAYER_PROBE_SOURCE });
+
+      expect(result).toMatchObject({
+        status: LogicFunctionExecutionStatus.SUCCESS,
+        data: {
+          greeting: DEPENDENCY_LAYER_FIXTURE.greeting,
+          sdkClientCoreChecksum: await getCurrentSdkClientCoreChecksum(),
+        },
+      });
+    },
+    LAMBDA_TEST_TIMEOUT_MS,
+  );
+
+  it(
+    'reports an inline code step that throws or does not compile',
+    async () => {
+      expect(await runCodeStep({ code: THROWING_SOURCE })).toMatchObject({
+        status: LogicFunctionExecutionStatus.ERROR,
+        error: {
+          errorMessage: expect.stringContaining('Lambda handler failure'),
+        },
+      });
+      expect(
+        await runCodeStep({ code: 'export const main = (' }),
+      ).toMatchObject({
+        status: LogicFunctionExecutionStatus.ERROR,
+        error: { errorType: 'BuildError' },
+      });
     },
     LAMBDA_TEST_TIMEOUT_MS,
   );

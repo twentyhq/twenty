@@ -1,24 +1,28 @@
-import { type DataSource } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 import { isEmptyUnprovisionedAgentHistoryWorkspace } from 'src/database/commands/upgrade-version-command/2-43/utils/is-empty-unprovisioned-agent-history-workspace.util';
 import { AgentHistoryUpgradeStorageService } from 'src/database/commands/agent-history/agent-history-upgrade-storage.service';
 
 describe('isEmptyUnprovisionedAgentHistoryWorkspace', () => {
   const workspaceId = '20202020-1111-4111-8111-111111111111';
-  const runner = {
-    hasSchema: jest.fn(),
-    connect: jest.fn(),
-    release: jest.fn(),
-    query: jest.fn(),
-  };
-  const dataSource = {
-    createQueryRunner: () => runner,
-  } as unknown as DataSource;
-  const agentHistoryStorageService = new AgentHistoryUpgradeStorageService(dataSource);
+  const hasSchema = jest.fn();
+  const query = jest.fn();
+  const dataSource = new DataSource({ type: 'postgres' });
+  const runner = dataSource.createQueryRunner();
+
+  runner.hasSchema = hasSchema;
+  runner.connect = jest.fn();
+  runner.release = jest.fn();
+  runner.query = query;
+  dataSource.createQueryRunner = () => runner;
+
+  const agentHistoryStorageService = new AgentHistoryUpgradeStorageService(
+    dataSource,
+  );
 
   beforeEach(() => {
     jest.clearAllMocks();
-    runner.query.mockReset();
+    query.mockReset();
   });
 
   it.each([
@@ -63,8 +67,8 @@ describe('isEmptyUnprovisionedAgentHistoryWorkspace', () => {
       empty: false,
     },
   ])('recognizes only empty unprovisioned workspaces: %j', async (scenario) => {
-    runner.hasSchema.mockResolvedValue(scenario.hasSchema);
-    runner.query
+    hasSchema.mockResolvedValue(scenario.hasSchema);
+    query
       .mockResolvedValueOnce([
         {
           workspaceId,

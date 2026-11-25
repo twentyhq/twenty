@@ -5,7 +5,7 @@ import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient
 import { type DocumentNode } from '@apollo/client';
 import { useQuery } from '@apollo/client/react';
 import { type ReactNode, useState } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { useDebounce } from 'use-debounce';
@@ -36,7 +36,7 @@ export type LinkActivitiesDropdownContentProps<
   getSearchResults: (
     data: TSearchData,
   ) => LinkActivitiesSearchResults<TActivity>;
-  timelineQuery: DocumentNode;
+  timelineQueries: DocumentNode[];
   getOption: (activity: TActivity) => LinkActivitiesOption;
   labels: LinkActivitiesLabels;
 };
@@ -49,7 +49,7 @@ export const LinkActivitiesDropdownContent = <
   activityLinkConfig,
   searchQuery,
   getSearchResults,
-  timelineQuery,
+  timelineQueries,
   getOption,
   labels,
 }: LinkActivitiesDropdownContentProps<TActivity, TSearchData> & {
@@ -66,7 +66,7 @@ export const LinkActivitiesDropdownContent = <
   const { data, loading } = useQuery<TSearchData>(searchQuery, {
     client: apolloCoreClient,
     variables: {
-      objectNameSingular: CoreObjectNameSingular.Company,
+      objectNameSingular: StandardObjectNameSingular.Company,
       recordId: relatedCompany.id,
       searchInput: debouncedSearch,
     },
@@ -85,7 +85,7 @@ export const LinkActivitiesDropdownContent = <
     targetRecord,
     activityLinkConfig,
     activityIds: [...recordActivities, ...otherActivities].map(({ id }) => id),
-    timelineQuery,
+    timelineQueries,
   });
 
   const areActivitiesStale = loading || debouncedSearch !== trimmedSearch;

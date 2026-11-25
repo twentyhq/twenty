@@ -41,8 +41,11 @@ If you started it previously, bring it down using:
 
 ## Compatibility
 
-These files should be compatible with podman 4.3+.
+These files require Podman 4.3+ and podman-compose 1.0.6 or newer.
 
-I have tested this on Debian GNU/Linux 12 (bookworm) and with the podman that is distributed with the official Debian stable mirrors (podman v4.3.1+ds1-8+deb12u1, podman-compose v1.0.3-3).
+Older podman-compose versions, including Debian 12's 1.0.3 package, ignore
+`stop_grace_period` and can kill the server before its HTTP drain and recorder
+flush finish. Upgrade podman-compose before using this deployment; keep the
+server's configured 120-second stop grace.
 
 

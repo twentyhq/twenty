@@ -5,11 +5,11 @@ import { type Note } from '@/activities/types/Note';
 import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledNotesContainer = styled.div`
   display: flex;
@@ -32,6 +32,7 @@ export const NotesCardContent = ({
   onCreateNote,
   onLastRowVisible,
 }: NotesCardContentProps) => {
+  const { t } = useLingui();
   const isNotesEmpty = notes.length === 0;
 
   if (loading && isNotesEmpty) {

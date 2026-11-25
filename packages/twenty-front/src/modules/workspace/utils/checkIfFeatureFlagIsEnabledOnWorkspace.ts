@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const checkIfFeatureFlagIsEnabledOnWorkspace = (
   featureKey: FeatureFlagKey | null | undefined,
-  workspace: CurrentWorkspace | null | undefined,
+  workspace: Pick<CurrentWorkspace, 'featureFlags'> | null | undefined,
 ) => {
   if (
     !isDefined(featureKey) ||

@@ -22,9 +22,14 @@ Other rules:
 - Prefer idempotent behavior for jobs and repeated invocations.
 - Read secrets through the application-config helper, not raw `process.env`.
 - An application variable declared with `scope: 'USER'` is in `process.env` with the value of the member who triggered the run, or its default until they set their own; a run nobody triggered (cron, install hooks) gets no user variables. That member is not always the one the run is about: a database event runs as whoever edited the record. For example, with a user `SLACK_TOKEN`, a function on opportunity update posts with the editor's token, not the opportunity owner's. When the run is about someone else or every member, read the values with `myUserApplicationVariables` through `new MetadataApiClient({ runAs: 'application' })`.
-- Twenty injects `TWENTY_API_URL`, `TWENTY_APP_ACCESS_TOKEN`, `TWENTY_APP_APPLICATION_ACCESS_TOKEN`, `TWENTY_API_KEY`, `TWENTY_FUNCTIONS_URL`, `TWENTY_SERVER_ROUTES_URL` and `APPLICATION_ID` into every run. Never declare an application or server variable with one of these names, or any other name starting with `TWENTY_`: the manifest is rejected on sync and publish.
+- Twenty injects `TWENTY_API_URL`, `TWENTY_INTERNAL_API_URL` (only when the operator sets `SERVER_INTERNAL_URL`), `TWENTY_APP_ACCESS_TOKEN`, `TWENTY_APP_APPLICATION_ACCESS_TOKEN`, `TWENTY_API_KEY`, `TWENTY_FUNCTIONS_URL`, `TWENTY_SERVER_ROUTES_URL` and `APPLICATION_ID` into every run. Never declare an application or server variable with one of these names, or any other name starting with `TWENTY_`: the manifest is rejected on sync and publish.
+- Call Twenty through the generated clients or `RestApiClient`, which pick the right URL. With raw `fetch`, use `process.env.TWENTY_INTERNAL_API_URL || process.env.TWENTY_API_URL` for requests. Build URLs handed to browsers or other services, such as webhook URLs, from `TWENTY_API_URL` or `getServerRouteUrl`, never from `RestApiClient.resolveUrl`, which can return the internal URL in a logic function.
 - To register a server route with a webhook provider, build its URL with `getServerRouteUrl(logicFunctionUniversalIdentifier)` from `twenty-sdk/utils`. It returns `/webhooks/server/<applicationRegistrationId>/<logicFunctionUniversalIdentifier>` on the server's URL, and only works inside a logic function of an application. Do not build the URL by hand.
+- To tell a company email address from a personal one, call `isWorkEmail(address)` from `twenty-sdk/email`; it uses the same list of free and disposable providers as Twenty itself. Lowercase the address first, the domain is compared as written. Import it only in the functions that need it: the list weighs about 240 KB and is bundled into each function that imports the entry. Do not keep your own list of providers.
 - Do not hide customer-impacting side effects behind UI-only actions.
+- When a queued run must not end silently (a user is waiting on its result), add `onJobFailure` next to `handler` in `defineLogicFunction`. Twenty calls it, as its own queued job, once a queued run fails and will not be retried (thrown error, timeout, `RetryableLogicFunctionError` after `maxRetries`, platform error on the last attempt, or a worker crashing twice), with a `LogicFunctionJobFailure` from `twenty-sdk/logic-function`: `{ payload, error: { type, message }, job: { id, attemptsMade } }`. Record the failure or tell the user there; do not redo the work, which may have partly run. It does not run for runs outside the queue (tool calls, workflow steps, server route resolvers) or when `onJobFailure` itself fails. Set `retryLimit` (0-10) on the function to give every queued run of it the same retry budget; `enqueueJobs({ retryLimit })` overrides it per call.
+- A cron trigger fires at the same minute in every workspace that installed the app. For a sweep, set `cronTriggerSettings.spreadMs` (integer, 2 minutes to 24 hours): each workspace then runs at its own stable offset in `[0, spreadMs)`, whole minutes. It shifts the cron's phase, not its frequency, and does not cap how many workspaces run in the same minute. Prefer it over a random `delayMs` in the cron handler.
+- To pace a fan-out against a rate limit, pass `limiter: { max, durationMs }` to `enqueueJobs` (`durationMs / max` between 100 ms and 1 hour). Runs are spaced evenly, and calls for the same function with the same values share one schedule, with no horizon. Do not combine it with `delayMs`, even `0`: the call is rejected with `INVALID_INPUT`. Each job returned by `enqueueJobs` and `getJobs` carries `scheduledAt`, when it first became eligible to run (epoch ms). It never changes after insertion and is not a start-time guarantee.
 
 Soft cap: a `*.logic-function.ts` or `*.post-install.ts` file over 200 lines is a refactor signal.
 
@@ -80,6 +85,79 @@ When adding AI behavior:
 - Avoid exposing raw IDs, timestamps, or nested API output to end users when a readable answer is possible.
 - A `defineAgent` `roleUniversalIdentifier` must reference a role the app defines, and the application role (`defineApplicationRole` or `defaultRoleUniversalIdentifier`) must cover every permission that agent role grants. The build and `twenty app apply` fail otherwise, listing the excess grants.
 
+### Following An Agent Conversation
+
+`runAgent` (from `twenty-sdk/logic-function`) returns `{ threadId, runId, status, result, error, success }`; `runId` is the turn the call opens, which its messages carry as `turnId`. An app follows a conversation it holds with its agent through the chat's own API, named by the agent and the `thread` key it passes to `runAgent`:
+
+```ts
+import { listConversationMessages, streamConversation } from 'twenty-sdk/logic-function';
+
+const conversation = { agentUniversalIdentifier, threadKey: 'deal-42' };
+let maxCatchupSeq: number | undefined;
+
+// subscribe before reading the history, so nothing streamed in between is lost
+for await (const event of streamConversation({ ...conversation, signal })) {
+  if (event.type === 'keepalive' && maxCatchupSeq === undefined) {
+    const { messages, streamCatchup } = await listConversationMessages(conversation);
+    showMessages(messages);
+    for (const chunk of streamCatchup.chunks) showChunk(chunk);
+    maxCatchupSeq = streamCatchup.maxSeq;
+  }
+  if (event.type === 'stream-chunk' && (event.seq ?? 0) > (maxCatchupSeq ?? 0)) showChunk(event.chunk);
+}
+```
+
+- Events are the chat's `AgentChatSubscriptionEvent`s: `stream-chunk` (an AI SDK `UIMessageChunk` with a `seq`), notifications such as `message-persisted`, `queue-updated` and `stream-error`, and a periodic `keepalive`. Pipe chunks into `readUIMessageStream()` from `ai` to build messages as the chat does.
+- Messages come as AI SDK `UIMessage`s, as the chat builds them, with the run in `metadata.turnId`. `streamCatchup` holds the chunks of a reply still streaming: show them, then skip live chunks whose `seq` is at most `streamCatchup.maxSeq`.
+- The first event once connected is a `keepalive`: read the history then. The stream stays open until `signal` aborts or the loop breaks, and throws if the connection drops; stream again to resume. It can start before the first run reaches the conversation.
+- Both need an application token and reach only the app's own conversations. Turns a member opened elsewhere, such as in the chat, show only their text, in the history, live and in the agent's next run, where their other chunks arrive as empty `message-metadata` chunks so `seq` stays gapless. Turns the app ran as a member stay whole when the app reads on its own. Requires `"engines": { "twenty": ">=2.56.0" }`.
+
+## Roles And Record Permissions
+
+- Declare what a role can do on records in `recordsPermissions` of `defineRole` / `defineApplicationRole`:
+  - `canReadAllRecords`, `canCreateAllRecords`, `canUpdateAllRecords`, `canSoftDeleteAllRecords`, `canDestroyAllRecords` at its top level apply to every object. Create follows update when unset.
+  - `objects` lists what differs for one object (`objectUniversalIdentifier`): the same five grants for all its records, `unreadableFields` and `uneditableFields` (field universal identifiers), and `rowLevelRecordsPermissions`.
+  - A row-level rule grants `canReadRecords`, `canCreateRecords`, `canUpdateRecords`, `canSoftDeleteRecords`, `canDestroyRecords` on the records matched by the `predicates` and `predicateGroups` nested in it. Give every rule, predicate and group a stable `universalIdentifier`.
+- An all-records grant wins over a rule. When the role grants an operation for every object, set the object's `can…AllRecords` to `false` for the operations its rules restrict; `defineRole` warns about a shadowed rule.
+- A rule with `unreadableFields` or `uneditableFields` needs at least one predicate group.
+- `canReadAllObjectRecords` and its siblings, `objectPermissions`, `fieldPermissions`, `rowLevelPermissionPredicates` and `rowLevelPermissionPredicateGroups` on a role are deprecated. They still build, with a warning, and the server converts them on sync. Do not mix them with `recordsPermissions` on one role.
+- Servers older than 2.59 ignore `recordsPermissions`: declare `"engines": { "twenty": ">=2.59.0" }` when the app must not install on them.
+
+## AI Generate
+
+`ai.generate` calls a model with no agent and no conversation. Import it from `twenty-sdk/logic-function`.
+
+```ts
+import { ai } from 'twenty-sdk/logic-function';
+
+const { success, text, error } = await ai.generate({
+  input: 'Is Acme a good fit for us?', // or RunAgentMessage[] ({ role, content })
+  instructions: 'Qualify leads for Twenty in one sentence.',
+});
+```
+
+For JSON, pass a `responseFormat`: the schema goes on the model request itself, so the answer takes one request (plus tool steps when a `scope` grants tools), and comes back in `object`:
+
+```ts
+const { object } = await ai.generate({
+  input: 'Is Acme a good fit for us?',
+  responseFormat: {
+    type: 'json',
+    schema: {
+      type: 'object',
+      properties: { fit: { type: 'boolean' }, reason: { type: 'string' } },
+    },
+  },
+});
+```
+
+- Without a `scope` the model gets no data tools. A `scope` (`AiRunScope`, e.g. `objectPermissions`) grants tools on those objects, and can only narrow what the caller may already reach. A scope keeps `canReadAllObjectRecords`, `objectPermissions` and `fieldPermissions`; it does not take a role's `recordsPermissions`.
+- The call runs as the caller (the member a user-scoped token belongs to, else the app, else the API key) and never exceeds the app's role. From a logic function it follows the default clients: the person who triggered the run, within the app's role, or the app when nobody did. The app needs a default role with the AI permission flag.
+- `modelId` is optional; the workspace default model is used when unset.
+- It returns `{ success, text, object, error, runId, usage }`: `text` for a text response, `object` for a JSON one (the other is `null`), `error` when `success` is false, `runId` for the recorded run and `usage` as `{ inputTokens, outputTokens }`, which counts the steps that finished before a failure too. A run that fails comes back as `success: false` rather than a throw (a call that cannot start a run, such as invalid input, still throws), so check `success`.
+- To stream the reply, pass `onChunk` (and optionally `signal`): the SDK subscribes to the run first, waits until the subscription is live, then starts it, hands each AI SDK `UIMessageChunk` to `onChunk`, and resolves with the same result once the last chunk is delivered. If the stream's end never arrives, it stops reading after 5 s without a new chunk once the result is in, then still delivers every chunk already received; once the stream is live, a failure of it only stops the chunks, and the call still resolves with the billed result. The call rejects when the subscription fails before it goes live, so the run never starts, or when `onChunk` throws. Aborting `signal` rejects the call and closes the stream; the run itself goes on.
+- An app follows only its own runs, so `onChunk` needs an app token. Requires `"engines": { "twenty": ">=2.56.0" }`.
+
 ## Inbox Messages
 
 `sendInboxMessage` posts a message from the app in the chats of one or more workspace members. Import it from `twenty-sdk/logic-function` in a logic function and from `twenty-sdk/front-component` in a front component; the inbox helpers are the same in both.
@@ -92,9 +170,11 @@ When adding AI behavior:
 - A conversation its owner deleted is gone for every member and is not recreated.
 - The app's default role needs `SystemPermissionFlag.AI`, and every member needs the AI permission.
 - The message is always from the app. The call runs like the default clients: as the member who triggered the run or looks at the page, who then needs the AI permission too, or as the app when nobody triggered the run. In a front component an expired token is refreshed once before the call is retried.
-- Write mentions with `await inboxMention({ workspaceMemberId })` and record chips with `await inboxReferenceRecord({ objectNameSingular, recordId })`, never by hand. Both read the label the chip shows (the member's full name or email, the record's label identifier), so the caller needs read access to the member or record. A mention only renders: list every recipient in `workspaceMemberIds`.
+- Write mentions with `await inboxMention({ workspaceMemberId })` and record chips with `await inboxReferenceRecord({ objectNameSingular, recordId })`, never by hand. Both read the label the chip shows (the member's full name or email, the record's label identifier), so the caller needs read access to the member or record.
+- A member mentioned in `text` is notified (the conversation lands in their inbox, unread, with a mention to resolve) without being listed in `workspaceMemberIds`; the owner can be mentioned too. A mentioned member who cannot have the conversation is skipped, and the message is still written. Mentions notify once, when the message is first written: a retry with the same keys notifies no one. Mentions in code or with escaped brackets never notify.
 - `INBOX_ASSISTANT_MENTION` is the composer's mention of the assistant.
 - `await attachRecordToInboxThread({ threadId, objectNameSingular, recordId })` links a conversation to a person, company, opportunity or custom object record, and `detachRecordFromInboxThread` with the same input removes the link. Both are idempotent and run with the same access as `sendInboxMessage`: a member must be able to edit the conversation, and the app can act on one it wrote in or one its default role was granted (`THREAD_NOT_FOUND` otherwise). The record must be readable with that access (`RECORD_NOT_FOUND` otherwise).
+- `await archiveInboxThread({ threadId, workspaceMemberIds })` archives a conversation the app wrote for those members, as if each archived it from their inbox, for work done elsewhere (an email sent from Gmail). App tokens only; every member must be able to read the conversation, or it fails with `THREAD_NOT_FOUND` and archives it for nobody. A new message brings it back. Without `workspaceMemberIds` it marks the conversation done in its channel instead, leaving members' inboxes alone (`CHAT_THREAD_NOT_IN_CHANNEL` if it is in none).
 
 ## Realtime Events
 
@@ -116,17 +196,23 @@ For third-party connections:
 - Keep secrets out of source and public assets.
 - Document required OAuth or API setup in the app README or listing.
 - Verify failure states for expired or missing credentials.
-- When the provider can say which account a token belongs to (team, organization, user), declare `identifyAccountLogicFunction` so a reconnect that authorizes a different account is refused instead of overwriting the connection. Write the handler as one request to the provider's "who am I" endpoint, return the id as a string, and return `{ externalAccountId: null }` when there is no stable id.
+- When the provider can say which account a token belongs to (team, organization, user), declare `identifyAccountLogicFunctionUniversalIdentifier` so a reconnect that authorizes a different account is refused instead of overwriting the connection. Write the handler as one request to the provider's "who am I" endpoint, return the id as a string, and return `{ externalAccountId: null }` when there is no stable id.
 - Set `scope` on `defineConnectionProvider`: `'WORKSPACE'` (default) when the app uses one connection shared with the workspace, `'USER'` when each member connects their own account. One scope per provider; declare two providers when the app needs both. A provider's scope cannot change in a later version: declare a new provider with a new `universalIdentifier` instead, which deletes the old provider's connections on upgrade, and deletes existing `'USER'` connected accounts left on a `'WORKSPACE'` provider. Members add, reconnect and remove `USER` connections from the app's page under Settings > User > Apps preferences, but that page is not enabled in every workspace yet, so do not rely on a `USER` provider for a feature every workspace needs now. Requires `"engines": { "twenty": ">=2.49.0" }`.
-- For services that connect accounts through their own hosted flow instead of OAuth (Unipile, Plaid, Merge), declare `type: 'custom'` with `custom.authorizeLogicFunction` (return `{ authorizationUrl }` built with the given `callbackUrl`) and `custom.callbackLogicFunction` (receives each `GET` return and `POST` notification to that URL with its query, headers, body and `rawBody`; verify a signed notification over `rawBody`, confirm the account with the service, then return `{ externalAccountId, handle?, accessToken? }`, or `null` when the request carries no account). Both run within 10 seconds. Connections carry `providerType`: an `'oauth'` connection always has an `accessToken`, a `'custom'` one has `null` unless the callback returned one, so call the service with the app's own key and `externalAccountId`. Release upstream state in `onDisconnectLogicFunction`; Twenty does not refresh or revoke custom connections. The `type` cannot change after the first sync; declare a new provider with a new `universalIdentifier` instead. Requires `"engines": { "twenty": ">=2.52.0" }`.
+- For services that connect accounts through their own hosted flow instead of OAuth (Unipile, Plaid, Merge), declare `type: 'custom'` with `custom.authorizeLogicFunctionUniversalIdentifier` (return `{ authorizationUrl }` built with the given `callbackUrl`) and `custom.callbackLogicFunctionUniversalIdentifier` (receives each `GET` return and `POST` notification to that URL with its query, headers, body and `rawBody`; verify a signed notification over `rawBody`, confirm the account with the service, then return `{ externalAccountId, handle?, accessToken? }`, or `null` when the request carries no account). Both run within 10 seconds. Connections carry `providerType`: an `'oauth'` connection always has an `accessToken`, a `'custom'` one has `null` unless the callback returned one, so call the service with the app's own key and `externalAccountId`. Release upstream state in `onDisconnectLogicFunctionUniversalIdentifier`; Twenty does not refresh or revoke custom connections. The `type` cannot change after the first sync; declare a new provider with a new `universalIdentifier` instead. Requires `"engines": { "twenty": ">=2.52.0" }`.
+- For a service that authenticates with a key the user copies from its settings (Front, Intercom, personal access keys), declare `type: 'api-key'` with no config block. Add connection and Reconnect open a settings page where the member pastes the key; Twenty stores it encrypted and connections report `providerType: 'api-key'` with the key as `accessToken`. Declare an `identifyAccountLogicFunctionUniversalIdentifier`: it runs with the pasted key as `accessToken` before anything is saved, so one call to the service's "who am I" endpoint checks the key and names the connection, and a throw rejects the key. Twenty never refreshes or revokes it; call `reportConnectionAuthFailure` when the service rejects it. Requires `"engines": { "twenty": ">=2.59.0" }`.
+- For a service that publishes its OAuth settings, such as a remote MCP server, declare `type: 'oauth-discovery'` with `oauthDiscovery: { resourceUrl }` (an HTTP or HTTPS URL). Twenty discovers the authorization server from the resource and identifies itself with its client metadata document or registers a client dynamically, so there is no client id, secret or `serverVariables`. Its connections report `providerType: 'oauth'` and refresh like any OAuth connection. Requires `"engines": { "twenty": ">=2.59.0" }`.
 
 ## Messaging Providers
 
-To let members reply to an app's message channels, declare `defineMessagingProvider` with a kebab-case `name`, a `displayName`, the `connectionProvider` it sends through, and a `sendMessageLogicFunction`:
+To let members reply to an app's message channels, declare `defineMessagingProvider` with a kebab-case `name`, a `displayName`, the `connectionProviderUniversalIdentifier` it sends through, and a `sendMessageLogicFunctionUniversalIdentifier`:
 
 - Bind each channel to it with `messagingProvider: { universalIdentifier }` on `createMessageChannel` or `updateMessageChannel` (`null` unbinds). The provider must use the channel account's connection provider. A channel without one, or whose provider or function is gone, only ingests.
-- The send function receives `{ messagingProviderName, connectedAccountId, messageChannelId, threadExternalId, text, idempotencyKey, recipients }` (type `SendAppMessagePayload`; `recipients` are the latest message's participants), must deliver the reply and return `{ externalId, sentAt? }`. Twenty then records it in the thread, and a later ingestion of the same `externalId` is a no-op. Throw on failure so nothing is recorded. A `sendAppChannelMessage` retry with the same `idempotencyKey` records the delivered reply without calling the function again; forward the key to the provider when it supports idempotent sends.
+- The send function receives `{ messagingProviderName, connectedAccountId, messageChannelId, threadExternalId, text, idempotencyKey, recipients, conversationStyle, email? }` (type `SendAppMessagePayload`; `recipients` are the latest message's participants, or the picked `To` addresses when `conversationStyle` is `'email'`, where `email` carries `subject`, `html`, `cc`, `bcc` and `inReplyToExternalId`), must deliver the reply and return `{ externalId, sentAt? }`. Twenty then records it in the thread, and a later ingestion of the same `externalId` is a no-op. Throw on failure so nothing is recorded. A `sendAppChannelMessage` retry with the same `idempotencyKey` records the delivered reply without calling the function again; forward the key to the provider when it supports idempotent sends. The `email` block and `conversationStyle` on the payload require `"engines": { "twenty": ">=2.58.0" }`.
+- `sendAppChannelMessage` also takes `attachments` (at most 20, each `{ id, name }` of an uploaded email attachment file), and the reply's `text` may then be empty. The send payload carries them as `attachments` (type `SendAppMessageAttachment[]`, empty for text-only replies): each has `filename`, `contentType`, `size` and a signed `downloadUrl` to fetch the bytes from. Throw when the provider cannot deliver a file. Requires `"engines": { "twenty": ">=2.59.0" }`.
+- Optionally declare a `markThreadAsReadLogicFunctionUniversalIdentifier`. When the owner of a bound channel opens one of its threads in Twenty, it receives `{ messagingProviderName, connectedAccountId, messageChannelId, threadExternalId }` (type `MarkAppThreadAsReadPayload`) so the app can mark the conversation as read upstream. Calls for the same thread are throttled for 30 seconds; Twenty keeps no read state itself. Requires `"engines": { "twenty": ">=2.59.0" }`.
 - Declare one messaging provider per kind of messaging (LinkedIn, WhatsApp) even when they share a connection provider. Its connection provider cannot change after the first sync; declare a new one with a new `universalIdentifier` instead. Requires `"engines": { "twenty": ">=2.52.0" }`.
+- Set `conversationStyle` on a messaging provider to choose its layout: `'chat'` (bubbles grouped by sender, like a messaging app) or `'email'` (email thread layout). Without it, app channels keep the chat layout. Requires `"engines": { "twenty": ">=2.58.0" }`.
+- To store a message's files (images, videos, voice notes), upload each one with `uploadMessageAttachment({ filename, content })` from `twenty-sdk/logic-function`, which needs the `UPLOAD_FILE` permission flag on the app's role, and pass the returned `{ fileId, label }` in the message's `attachments` on `ingestMessages` (at most 20). Files are stored only while the message has none, and each ingested message reports `hasAttachments`: ingest the text first, then upload only for messages that come back without attachments, since an uploaded file no message holds is kept. The file name's extension decides how the conversation shows it. Requires `"engines": { "twenty": ">=2.56.0" }`.
 
 ## MCP Servers
 
@@ -134,8 +220,8 @@ Beta: MCP servers are not live yet. Workspaces cannot use their tools until the 
 
 To let the workspace's AI call a remote MCP server (Streamable HTTP) without syncing its data into Twenty, declare `defineMcpServer` with a snake_case `name` (lowercase letters, digits and underscores, starting with a letter, at most 32 characters; it prefixes the server's tool names), a `label` and an HTTP(S) `url`:
 
-- To authenticate, set `connectionProvider: { universalIdentifier }` to a connection provider of the same app; calls send that connection's access token as a Bearer token. Omit it for a public server.
-- The `url` cannot change in a later version while a connection provider is linked; declare a new server with a new `universalIdentifier` instead.
+- To authenticate, set `connectionProviderUniversalIdentifier` to a connection provider of the same app; calls send that connection's access token as a Bearer token. Omit it for a public server. For a server that supports OAuth discovery, point it at an `oauth-discovery` provider with the server's URL as `resourceUrl`.
+- The `url` cannot change in a later version while the same connection provider stays linked; change it together with a different `connectionProviderUniversalIdentifier`, or declare a new server with a new `universalIdentifier`.
 - Workspaces can deactivate a server and a later app version keeps that choice. Requires `"engines": { "twenty": ">=2.53.0" }`.
 
 ## Post-Install Hooks

@@ -1,14 +1,18 @@
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { isDefined } from 'twenty-shared/utils';
 
-export type EventGroup = {
+export type EventGroup<TEvent = TimelineActivity> = {
   month: number;
   year: number;
-  items: TimelineActivity[];
+  items: TEvent[];
 };
 
-export const groupEventsByMonth = (events: TimelineActivity[]) => {
-  const activityGroups: EventGroup[] = [];
+export const groupEventsByMonth = <
+  TEvent extends Pick<TimelineActivity, 'happensAt'>,
+>(
+  events: TEvent[],
+) => {
+  const activityGroups: EventGroup<TEvent>[] = [];
 
   for (const event of events) {
     const date = new Date(event.happensAt);

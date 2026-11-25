@@ -1,108 +1,48 @@
-import {
-  Injectable,
-  Logger,
-  OnApplicationShutdown,
-  OnModuleInit,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
-import { Pool, type PoolConfig, types } from 'pg';
 import { DataSource } from 'typeorm';
-import { isDefined } from 'twenty-shared/utils';
 
-import {
-  DatabasePoolMetricsService,
-  DatabasePoolName,
-} from 'src/database/typeorm/database-pool-metrics.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceRecordStockService } from 'src/engine/core-modules/usage-limit/services/workspace-record-stock.service';
+import { RecordAccessGroupWriteService } from 'src/engine/permissions/record-access-group-write.service';
+import { RecordFieldPermissionsReadService } from 'src/engine/permissions/record-field-permissions-read.service';
+import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
+import { toTwentyOrmException } from 'src/engine/twenty-orm/utils/to-twenty-orm-exception.util';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace-data-source';
-import {
-  TwentyOrmException,
-  TwentyOrmExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+import { WorkspaceQueryExecutorService } from 'src/engine/workspace-query-executor/services/workspace-query-executor.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
-// Workspace DATE fields are date-only: keep Postgres's raw 'YYYY-MM-DD' instead of a JS Date, like the v1 datasource
-const DATE_ONLY_POOL_TYPES: PoolConfig['types'] = {
-  getTypeParser: ((oid: number, format?: unknown) =>
-    oid === types.builtins.DATE
-      ? (value: string) => value
-      : types.getTypeParser(
-          oid,
-          format as never,
-        )) as typeof types.getTypeParser,
-};
-
 @Injectable()
-export class WorkspaceDataSourceService
-  implements OnModuleInit, OnApplicationShutdown
-{
-  private readonly logger = new Logger(WorkspaceDataSourceService.name);
-  private primaryPool: Pool | null = null;
-  private replicaPool: Pool | null = null;
-
+export class WorkspaceDataSourceService {
   constructor(
-    private readonly twentyConfigService: TwentyConfigService,
+    private readonly workspaceQueryExecutorService: WorkspaceQueryExecutorService,
+    private readonly recordPermissionsReadService: RecordPermissionsReadService,
+    private readonly recordFieldPermissionsReadService: RecordFieldPermissionsReadService,
+    private readonly recordAccessGroupWriteService: RecordAccessGroupWriteService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
-    private readonly databasePoolMetricsService: DatabasePoolMetricsService,
     private readonly workspaceRecordStockService: WorkspaceRecordStockService,
   ) {}
 
-  onModuleInit(): void {
-    this.primaryPool = this.createPool({
-      connectionString: this.twentyConfigService.get('PG_DATABASE_URL'),
-      queryTimeoutMs: this.twentyConfigService.get(
-        'PG_DATABASE_PRIMARY_TIMEOUT_MS',
-      ),
-    });
-
-    this.databasePoolMetricsService.registerPool({
-      poolName: DatabasePoolName.WorkspacePrimary,
-      pool: this.primaryPool,
-    });
-
-    const replicaUrl = this.twentyConfigService.get('PG_DATABASE_REPLICA_URL');
-
-    if (isDefined(replicaUrl)) {
-      this.replicaPool = this.createPool({
-        connectionString: replicaUrl,
-        queryTimeoutMs: this.twentyConfigService.get(
-          'PG_DATABASE_REPLICA_TIMEOUT_MS',
-        ),
-      });
-
-      this.databasePoolMetricsService.registerPool({
-        poolName: DatabasePoolName.WorkspaceReplica,
-        pool: this.replicaPool,
-      });
-    }
-  }
-
   getDataSource({ useReplica }: { useReplica: boolean }): WorkspaceDataSource {
-    const pool = useReplica
-      ? (this.replicaPool ?? this.primaryPool)
-      : this.primaryPool;
-
-    if (!isDefined(pool)) {
-      throw new TwentyOrmException(
-        'WorkspaceDataSourceService has not been initialized. Make sure the module has been initialized.',
-        TwentyOrmExceptionCode.UNSUPPORTED_OPERATION,
-      );
-    }
-
     const workspaceContext = getWorkspaceContext();
 
     return new WorkspaceDataSource({
-      pool,
+      pool: this.getPoolOrThrow({ useReplica }),
       internalContext: this.buildInternalContext(workspaceContext),
       authContext: workspaceContext.authContext,
-      objectPermissionsByRoleId: workspaceContext.permissionsPerRoleId,
     });
+  }
+
+  private getPoolOrThrow({ useReplica }: { useReplica: boolean }) {
+    try {
+      return this.workspaceQueryExecutorService.getPoolOrThrow({ useReplica });
+    } catch (error) {
+      throw toTwentyOrmException(error);
+    }
   }
 
   private buildInternalContext(
@@ -113,66 +53,19 @@ export class WorkspaceDataSourceService
       flatObjectMetadataMaps: workspaceContext.flatObjectMetadataMaps,
       flatFieldMetadataMaps: workspaceContext.flatFieldMetadataMaps,
       flatIndexMaps: workspaceContext.flatIndexMaps,
-      flatRowLevelPermissionPredicateMaps:
-        workspaceContext.flatRowLevelPermissionPredicateMaps,
-      flatRowLevelPermissionPredicateGroupMaps:
-        workspaceContext.flatRowLevelPermissionPredicateGroupMaps,
-      flatWorkspaceMemberMaps: workspaceContext.flatWorkspaceMemberMaps,
       flatValidationRuleMaps: workspaceContext.flatValidationRuleMaps,
       objectIdByNameSingular: workspaceContext.objectIdByNameSingular,
       featureFlagsMap: workspaceContext.featureFlagsMap,
       billingEntitlements: workspaceContext.billingEntitlements,
-      userWorkspaceRoleMap: workspaceContext.userWorkspaceRoleMap,
-      apiKeyRoleMap: workspaceContext.apiKeyRoleMap,
-      flatRoleTargetByAgentIdMaps: workspaceContext.flatRoleTargetByAgentIdMaps,
-      flatApplicationMaps: workspaceContext.flatApplicationMaps,
+      permissionsPrincipals: workspaceContext.permissionsPrincipals,
+      recordReadRestrictions: workspaceContext.recordReadRestrictions,
       eventEmitterService: this.workspaceEventEmitter,
       recordStock: this.workspaceRecordStockService,
+      recordPermissions: this.recordPermissionsReadService,
+      recordFieldPermissions: this.recordFieldPermissionsReadService,
+      recordAccessGroupWrite: this.recordAccessGroupWriteService,
+      recordAccessGroupQueue: this.recordAccessGroupWriteService,
       coreDataSource: this.coreDataSource,
     };
-  }
-
-  private createPool({
-    connectionString,
-    queryTimeoutMs,
-  }: {
-    connectionString: string;
-    queryTimeoutMs: number;
-  }): Pool {
-    const pool = new Pool({
-      connectionString,
-      types: DATE_ONLY_POOL_TYPES,
-      max: this.twentyConfigService.get('PG_POOL_MAX_CONNECTIONS'),
-      idleTimeoutMillis: this.twentyConfigService.get(
-        'PG_POOL_IDLE_TIMEOUT_MS',
-      ),
-      allowExitOnIdle: this.twentyConfigService.get(
-        'PG_POOL_ALLOW_EXIT_ON_IDLE',
-      ),
-      query_timeout: queryTimeoutMs,
-      ssl: this.twentyConfigService.get('PG_SSL_ALLOW_SELF_SIGNED')
-        ? { rejectUnauthorized: false }
-        : undefined,
-    });
-
-    pool.on('error', (error) => {
-      this.logger.error(`Idle client error: ${error.message}`, error.stack);
-    });
-
-    return pool;
-  }
-
-  async onApplicationShutdown(): Promise<void> {
-    this.databasePoolMetricsService.unregisterPool(
-      DatabasePoolName.WorkspacePrimary,
-    );
-    this.databasePoolMetricsService.unregisterPool(
-      DatabasePoolName.WorkspaceReplica,
-    );
-
-    await this.primaryPool?.end();
-    await this.replicaPool?.end();
-    this.primaryPool = null;
-    this.replicaPool = null;
   }
 }

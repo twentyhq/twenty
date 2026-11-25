@@ -1,7 +1,8 @@
-import { type ObjectsPermissions } from 'twenty-shared/types';
 import { type PermissionFlagType } from 'twenty-shared/constants';
+
+import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 export type UserWorkspacePermissions = {
   permissionFlags: Record<PermissionFlagType, boolean>;
-  objectsPermissions: ObjectsPermissions;
+  recordsPermissions: RoleRecordsPermissions;
 };

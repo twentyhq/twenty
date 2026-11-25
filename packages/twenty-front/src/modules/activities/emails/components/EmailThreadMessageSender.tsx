@@ -1,18 +1,18 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-
 import { ParticipantChip } from '@/activities/components/ParticipantChip';
 import { type EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { IconPaperclip } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
 import {
   beautifyPastDateRelativeToNow,
   formatToHumanReadableDate,
 } from '~/utils/date-utils';
 import { isDefined } from 'twenty-shared/utils';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledEmailThreadMessageSender = styled.div`
   display: flex;
@@ -25,6 +25,14 @@ const StyledUnknownSender = styled.span`
   padding: ${themeCssVariables.spacing[1]};
 `;
 
+const StyledThreadMessageMeta = styled.div`
+  align-items: center;
+  color: ${themeCssVariables.font.color.tertiary};
+  display: flex;
+  gap: ${themeCssVariables.spacing[1]};
+  height: ${themeCssVariables.spacing[5]};
+`;
+
 const StyledThreadMessageSentAt = styled.div`
   align-items: flex-end;
   color: ${themeCssVariables.font.color.tertiary};
@@ -35,12 +43,16 @@ const StyledThreadMessageSentAt = styled.div`
 type EmailThreadMessageSenderProps = {
   sender?: EmailThreadMessageParticipant;
   sentAt: string | null;
+  hasAttachments?: boolean;
 };
 
 export const EmailThreadMessageSender = ({
   sender,
   sentAt,
+  hasAttachments = false,
 }: EmailThreadMessageSenderProps) => {
+  const { t } = useLingui();
+  const theme = useTheme();
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
   let sentAtContent = null;
 
@@ -67,7 +79,16 @@ export const EmailThreadMessageSender = ({
       ) : (
         <StyledUnknownSender>{t`Unknown sender`}</StyledUnknownSender>
       )}
-      {sentAtContent}
+      <StyledThreadMessageMeta>
+        {hasAttachments && (
+          <IconPaperclip
+            size={theme.icon.size.sm}
+            stroke={theme.icon.stroke.sm}
+            aria-label={t`Has attachments`}
+          />
+        )}
+        {sentAtContent}
+      </StyledThreadMessageMeta>
     </StyledEmailThreadMessageSender>
   );
 };

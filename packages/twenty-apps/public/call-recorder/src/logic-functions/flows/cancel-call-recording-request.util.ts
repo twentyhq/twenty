@@ -11,7 +11,7 @@ export const cancelCallRecordingRequest = async ({
   client,
   callRecording,
 }: {
-  client: CoreApiClient;
+  client: Pick<CoreApiClient, 'query' | 'mutation'>;
   callRecording: CallRecordingRecord;
 }): Promise<void> => {
   await updateCallRecording(client, {

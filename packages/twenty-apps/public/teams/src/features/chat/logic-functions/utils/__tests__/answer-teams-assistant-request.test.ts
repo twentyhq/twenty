@@ -1,7 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { TEAMS_ASSISTANT_DEADLINE_FAILURE_TEXT } from 'src/features/chat/logic-functions/constants/teams-assistant-deadline-failure-text';
 import { TEAMS_ASSISTANT_FAILURE_TEXT } from 'src/features/chat/logic-functions/constants/teams-assistant-failure-text';
+import { TeamsAssistantDeadlineError } from 'src/features/chat/logic-functions/types/teams-assistant-deadline-error';
 import { TEAMS_ASSISTANT_REQUEST_STATUS } from 'src/features/chat/logic-functions/constants/teams-assistant-request-status';
+import { TEAMS_ASSISTANT_UNMATCHED_REQUEST_NAME } from 'src/features/chat/logic-functions/constants/teams-assistant-unmatched-request-name';
 import { TEAMS_ASSISTANT_UNMATCHED_SENDER_TEXT } from 'src/features/chat/logic-functions/constants/teams-assistant-unmatched-sender-text';
 import { answerTeamsAssistantRequest } from 'src/features/chat/logic-functions/utils/answer-teams-assistant-request';
 
@@ -42,6 +45,13 @@ vi.mock(
 vi.mock(
   'src/features/chat/logic-functions/data/update-teams-assistant-request',
   () => ({ updateTeamsAssistantRequest: updateMock }),
+);
+
+vi.mock(
+  'src/features/chat/logic-functions/utils/fetch-workspace-base-url',
+  () => ({
+    fetchWorkspaceBaseUrl: vi.fn().mockResolvedValue('https://acme.twenty.com'),
+  }),
 );
 
 vi.mock(
@@ -111,6 +121,7 @@ describe('answerTeamsAssistantRequest', () => {
       expect.objectContaining({
         requestText: REQUEST.requestText,
         workspaceMemberId: 'workspace-member-1',
+        workspaceBaseUrl: 'https://acme.twenty.com',
       }),
     );
     expect(finishedTexts()).toEqual(['Acme has 3 open deals.']);
@@ -121,6 +132,18 @@ describe('answerTeamsAssistantRequest', () => {
         responseText: 'Acme has 3 open deals.',
       }),
     );
+  });
+
+  it('should save the request text only once the sender is matched', async () => {
+    await answer();
+
+    expect(updateMock).toHaveBeenCalledWith({
+      client: expect.anything(),
+      id: REQUEST.id,
+      workspaceMemberId: 'workspace-member-1',
+      requestText: REQUEST.requestText,
+      name: REQUEST.requestText,
+    });
   });
 
   it('should pass the earlier turns of the sender in this conversation to the agent', async () => {
@@ -179,6 +202,21 @@ describe('answerTeamsAssistantRequest', () => {
     await expect(answer()).resolves.toMatchObject({ status: 'declined' });
     expect(runAgentMock).not.toHaveBeenCalled();
     expect(finishedTexts()).toEqual([TEAMS_ASSISTANT_UNMATCHED_SENDER_TEXT]);
+    expect(updateMock).not.toHaveBeenCalledWith(
+      expect.objectContaining({ requestText: expect.anything() }),
+    );
+    expect(updateMock).toHaveBeenCalledWith(
+      expect.objectContaining({ name: TEAMS_ASSISTANT_UNMATCHED_REQUEST_NAME }),
+    );
+  });
+
+  it('should tell the member when the agent ran out of time', async () => {
+    runAgentMock.mockRejectedValue(
+      new TeamsAssistantDeadlineError('Agent did not answer in time'),
+    );
+
+    await expect(answer()).resolves.toMatchObject({ status: 'failed' });
+    expect(finishedTexts()).toEqual([TEAMS_ASSISTANT_DEADLINE_FAILURE_TEXT]);
   });
 
   it('should reply with a generic message and record the error when the agent fails', async () => {

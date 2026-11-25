@@ -3,7 +3,7 @@ import { formatNumber } from '@/localization/utils/formatNumber';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 type GettingStartedMailboxDoneDescriptionProps =
@@ -14,12 +14,12 @@ export const GettingStartedMailboxDoneDescription = ({
 }: GettingStartedMailboxDoneDescriptionProps) => {
   const { t } = useLingui();
   const { totalCount: peopleCount } = useFindManyRecords({
-    objectNameSingular: CoreObjectNameSingular.Person,
+    objectNameSingular: StandardObjectNameSingular.Person,
     limit: 1,
     recordGqlFields: { id: true },
   });
   const { totalCount: companyCount } = useFindManyRecords({
-    objectNameSingular: CoreObjectNameSingular.Company,
+    objectNameSingular: StandardObjectNameSingular.Company,
     limit: 1,
     recordGqlFields: { id: true },
   });

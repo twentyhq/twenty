@@ -1,4 +1,4 @@
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { orderWorkflowRunState } from '@/object-record/record-field/ui/meta-types/utils/orderWorkflowRunState';
 import { useContext } from 'react';
@@ -18,7 +18,7 @@ export const usePrecomputedJsonDraftValue = ({
 
   if (
     fieldDefinition.metadata.objectMetadataNameSingular ===
-      CoreObjectNameSingular.WorkflowRun &&
+      StandardObjectNameSingular.WorkflowRun &&
     fieldDefinition.metadata.fieldName === 'state' &&
     isDefined(draftValue)
   ) {

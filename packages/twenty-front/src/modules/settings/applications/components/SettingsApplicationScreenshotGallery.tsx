@@ -1,10 +1,10 @@
 import { SettingsApplicationScreenshotLightbox } from '@/settings/applications/components/SettingsApplicationScreenshotLightbox';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 type SettingsApplicationScreenshotGalleryProps = {
   screenshots: string[];
@@ -86,6 +86,7 @@ export const SettingsApplicationScreenshotGallery = ({
   screenshots: allScreenshots,
   displayName,
 }: SettingsApplicationScreenshotGalleryProps) => {
+  const { t } = useLingui();
   const [selectedScreenshot, setSelectedScreenshot] = useState<
     string | undefined
   >(undefined);

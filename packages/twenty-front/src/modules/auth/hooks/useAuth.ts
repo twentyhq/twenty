@@ -27,6 +27,7 @@ import { useMarkSessionActive } from '@/auth/hooks/useMarkSessionActive';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
 import { isPendingServerSignOutState } from '@/auth/states/isPendingServerSignOutState';
+import { affiliatePartnerNameState } from '@/auth/states/affiliatePartnerNameState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -59,6 +60,8 @@ import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { isChooseWorkspaceActionRequested } from '@/auth/utils/isChooseWorkspaceActionRequested';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
+import { closeWebPushNotificationsAndUnsubscribe } from '@/web-push/utils/closeWebPushNotificationsAndUnsubscribe';
+import { updateAppBadge } from '@/web-push/utils/updateAppBadge';
 import { i18n } from '@lingui/core';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
@@ -66,6 +69,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
+import { logError } from '~/utils/logError';
 import { useStore } from 'jotai';
 
 export const useAuth = () => {
@@ -166,16 +170,18 @@ export const useAuth = () => {
         const targetWorkspace =
           getFirstAvailableWorkspaces(availableWorkspaces);
 
-        return await redirectToWorkspaceDomain(
-          getWorkspaceUrl(targetWorkspace.workspaceUrls),
-          targetWorkspace.loginToken ? AppPath.Verify : AppPath.SignInUp,
-          {
+        return await redirectToWorkspaceDomain({
+          baseUrl: getWorkspaceUrl(targetWorkspace.workspaceUrls),
+          pathname: targetWorkspace.loginToken
+            ? AppPath.Verify
+            : AppPath.SignInUp,
+          searchParams: {
             ...(targetWorkspace.loginToken && {
               loginToken: targetWorkspace.loginToken,
             }),
             email,
           },
-        );
+        });
       }
 
       setSignInUpStep(SignInUpStep.WorkspaceSelection);
@@ -401,6 +407,8 @@ export const useAuth = () => {
           password,
           captchaToken,
           locale: i18n.locale ?? SOURCE_LOCALE,
+          affiliatePartnerName: store.get(affiliatePartnerNameState.atom)
+            ?.partner,
         },
       });
 
@@ -432,6 +440,7 @@ export const useAuth = () => {
       setSearchParams,
       markSessionActive,
       signUp,
+      store,
       loadCurrentUser,
       setSignInUpStep,
       navigateAfterMultiWorkspaceSignInUp,
@@ -458,6 +467,9 @@ export const useAuth = () => {
       await signOutMutation();
       store.set(isPendingServerSignOutState.atom, false);
     } catch {}
+
+    await closeWebPushNotificationsAndUnsubscribe().catch(logError);
+    await updateAppBadge(0).catch(logError);
 
     broadcastSignOutToOtherTabs();
     clearSession();
@@ -509,20 +521,22 @@ export const useAuth = () => {
       }
 
       if (isMultiWorkspaceEnabled) {
-        return await redirectToWorkspaceDomain(
-          getWorkspaceUrl(
+        return await redirectToWorkspaceDomain({
+          baseUrl: getWorkspaceUrl(
             signUpInWorkspaceResult.data.signUpInWorkspace.workspace
               .workspaceUrls,
           ),
-          isEmailVerificationRequired ? AppPath.SignInUp : AppPath.Verify,
-          {
+          pathname: isEmailVerificationRequired
+            ? AppPath.SignInUp
+            : AppPath.Verify,
+          searchParams: {
             ...(!isEmailVerificationRequired && {
               loginToken:
                 signUpInWorkspaceResult.data.signUpInWorkspace.loginToken.token,
             }),
             email,
           },
-        );
+        });
       }
 
       await handleGetAuthTokensFromLoginToken(
@@ -667,13 +681,15 @@ export const useAuth = () => {
           );
         }
 
-        if (isDefined(redemption.provisioningUri)) {
-          return { provisioningUri: redemption.provisioningUri };
+        if (!isDefined(redemption.provisioningUri)) {
+          await handleLoadWorkspaceAfterAuthentication();
         }
 
-        await handleLoadWorkspaceAfterAuthentication();
-
-        return { provisioningUri: null };
+        return {
+          provisioningUri: redemption.provisioningUri ?? null,
+          isTwoFactorAuthenticationReset:
+            redemption.isTwoFactorAuthenticationReset,
+        };
       },
       [
         getAuthTokensFromTwoFactorAuthenticationRecoveryCode,

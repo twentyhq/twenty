@@ -41,7 +41,7 @@ const getParentUniversalIdentifier = ({
   );
 
 // Sorts universal identifiers so that parents come before children
-// for entities with self-referential FKs (e.g. navigationMenuItem.folder,
+// for entities with self-referential FKs (e.g. navigationMenuItem.parent,
 // viewFilterGroup.parentViewFilterGroup). Returns original order unchanged
 // for entities without self-referential FKs.
 export const topologicallySortUniversalFlatEntitiesForSelfReferentialFks = <

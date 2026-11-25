@@ -4,14 +4,16 @@ import { getCompositeSubFieldLabelWithFieldLabel } from '@/object-record/spreads
 import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
 import { SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs';
 import {
+  formatRecordExportHeader,
   formatValueForCSV,
   sanitizeValueForCSVExport,
 } from 'twenty-shared/utils';
-import { t } from '@lingui/core/macro';
 import { saveAs } from 'file-saver';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { useLingui } from '@lingui/react/macro';
 
 export const useDownloadFakeRecords = () => {
+  const { t } = useLingui();
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
   const availableFieldMetadataItems =
@@ -139,8 +141,12 @@ export const useDownloadFakeRecords = () => {
 
   const downloadSample = () => {
     const { headerRow, bodyRows } = buildTableWithFakeRecords();
-    const csvContent = formatToCsvContent([headerRow, ...bodyRows]);
-    const blob = new Blob(csvContent, { type: 'text/csv' });
+    const header = formatRecordExportHeader(
+      headerRow.map((label) => ({ label })),
+    );
+    const blob = new Blob([header, ...formatToCsvContent(bodyRows)], {
+      type: 'text/csv',
+    });
     saveAs(blob, `${objectMetadataItem.labelPlural.toLowerCase()}-sample.csv`);
   };
 

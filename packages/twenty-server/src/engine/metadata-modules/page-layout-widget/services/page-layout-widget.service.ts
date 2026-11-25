@@ -1,8 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
+import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { type ApplicationCallerOperation } from 'src/engine/core-modules/application/types/application-caller-operation.type';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { transformRichTextValue } from 'src/engine/core-modules/record-transformer/utils/transform-rich-text.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -28,6 +31,7 @@ import {
 } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 import { fromFlatPageLayoutWidgetToPageLayoutWidgetDto } from 'src/engine/metadata-modules/page-layout-widget/utils/from-flat-page-layout-widget-to-page-layout-widget-dto.util';
+import { getVerticalListWidgetInsertionPositions } from 'src/engine/metadata-modules/page-layout-widget/utils/get-vertical-list-widget-insertion-positions.util';
 import { validateChartConfigurationFieldReferencesOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-chart-configuration-field-references.util';
 import { validateFieldConfigurationNestedRelationOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util';
 import { validateRichTextWidgetBodyOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-rich-text-widget-body-or-throw.util';
@@ -49,6 +53,27 @@ export class PageLayoutWidgetService {
     private readonly applicationService: ApplicationService,
     private readonly dashboardSyncService: DashboardSyncService,
   ) {}
+
+  async findWidgetApplication({
+    applicationId,
+    workspaceId,
+    workspaceCustomApplicationId,
+    callingApplication,
+  }: {
+    applicationId: string;
+    workspaceId: string;
+    workspaceCustomApplicationId: string;
+    callingApplication: ApplicationCallerOperation['callingApplication'];
+  }): Promise<
+    Pick<FlatApplication, 'name' | 'grantedIframeMediaPermissions'> | undefined
+  > {
+    return this.applicationService.findReadableInstalledFlatApplication({
+      applicationId,
+      workspaceId,
+      workspaceCustomApplicationId,
+      callingApplication,
+    });
+  }
 
   private async getFlatPageLayoutWidgetMaps(
     workspaceId: string,
@@ -132,11 +157,19 @@ export class PageLayoutWidgetService {
     widgetTitle?: string | null;
     workspaceId: string;
   }): Promise<void> {
-    const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
+    const {
+      flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps,
+      flatObjectMetadataMaps,
+    } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
+          flatMapsKeys: [
+            'flatFieldMetadataMaps',
+            'flatFieldMetadataOptionMaps',
+            'flatObjectMetadataMaps',
+          ],
         },
       );
 
@@ -145,6 +178,7 @@ export class PageLayoutWidgetService {
       widgetObjectMetadataId: objectMetadataId,
       widgetTitle,
       flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps,
       flatObjectMetadataMaps,
     });
 
@@ -237,6 +271,7 @@ export class PageLayoutWidgetService {
 
     const {
       flatPageLayoutTabMaps,
+      flatPageLayoutWidgetMaps,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatFrontComponentMaps,
@@ -248,6 +283,7 @@ export class PageLayoutWidgetService {
           workspaceId,
           flatMapsKeys: [
             'flatPageLayoutTabMaps',
+            'flatPageLayoutWidgetMaps',
             'flatObjectMetadataMaps',
             'flatFieldMetadataMaps',
             'flatFrontComponentMaps',
@@ -279,11 +315,75 @@ export class PageLayoutWidgetService {
       });
     }
 
+    const widgetsToUpdate: FlatPageLayoutWidget[] = [];
+
+    if (
+      flatPageLayoutWidgetToCreate.position?.layoutMode ===
+      PageLayoutTabLayoutMode.VERTICAL_LIST
+    ) {
+      const parentTab = findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: createInput.pageLayoutTabId,
+        flatEntityMaps: flatPageLayoutTabMaps,
+      });
+      const siblings = parentTab.widgetUniversalIdentifiers
+        .map(
+          (universalIdentifier) =>
+            flatPageLayoutWidgetMaps.byUniversalIdentifier[universalIdentifier],
+        )
+        .filter(isDefined)
+        .filter((widget) => !isDefined(widget.deletedAt))
+        .map(fromFlatPageLayoutWidgetToPageLayoutWidgetDto);
+      const positions = getVerticalListWidgetInsertionPositions({
+        widgets: siblings,
+        widgetToCreate: {
+          id: flatPageLayoutWidgetToCreate.id,
+          type: flatPageLayoutWidgetToCreate.type,
+          position: flatPageLayoutWidgetToCreate.position,
+        },
+      });
+
+      for (const { id, position } of positions) {
+        if (id === flatPageLayoutWidgetToCreate.id) {
+          flatPageLayoutWidgetToCreate.position = position;
+          continue;
+        }
+
+        const previousPosition = siblings.find(
+          (widget) => widget.id === id,
+        )?.position;
+
+        if (
+          previousPosition?.layoutMode ===
+            PageLayoutTabLayoutMode.VERTICAL_LIST &&
+          previousPosition.index === position.index
+        ) {
+          continue;
+        }
+
+        widgetsToUpdate.push(
+          fromUpdatePageLayoutWidgetInputToFlatPageLayoutWidgetToUpdateOrThrow({
+            updatePageLayoutWidgetInput: { id, update: { position } },
+            flatPageLayoutWidgetMaps,
+            flatPageLayoutTabMaps,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+            flatFrontComponentMaps,
+            flatViewFieldGroupMaps,
+            flatViewMaps,
+            callerApplicationUniversalIdentifier:
+              workspaceCustomFlatApplication.universalIdentifier,
+            workspaceCustomApplicationUniversalIdentifier:
+              workspaceCustomFlatApplication.universalIdentifier,
+          }),
+        );
+      }
+    }
+
     await this.validateAndRunWidgetMigration({
       workspaceId,
       operations: {
         flatEntityToCreate: [flatPageLayoutWidgetToCreate],
-        flatEntityToUpdate: [],
+        flatEntityToUpdate: widgetsToUpdate,
         flatEntityToDelete: [],
       },
       errorMessage:

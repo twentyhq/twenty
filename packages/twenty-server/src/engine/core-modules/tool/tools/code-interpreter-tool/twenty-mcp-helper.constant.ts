@@ -188,7 +188,7 @@ class TwentyMCP:
     def _raw_mcp_call(self, name: str, arguments: dict = None):
         """Low-level: issue a tools/call against the MCP surface verbatim."""
         response = requests.post(
-            f"{self.url}/mcp",
+            f"{self.url}/mcp?mode=meta",
             headers={"Authorization": f"Bearer {self.token}"},
             json={
                 "jsonrpc": "2.0",

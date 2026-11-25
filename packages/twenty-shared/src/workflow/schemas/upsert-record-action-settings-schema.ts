@@ -4,7 +4,7 @@ import { objectRecordSchema } from './object-record-schema';
 
 export const workflowUpsertRecordActionSettingsSchema =
   baseWorkflowActionSettingsSchema.extend({
-    input: z.object({
+    input: z.strictObject({
       objectName: z.string(),
       objectRecord: objectRecordSchema,
     }),

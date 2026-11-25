@@ -7,6 +7,7 @@ import { isListValue } from '~/utils/validation/isListValue';
 import { isNumericRange } from '~/utils/validation/isNumericRange';
 import { isStepValue } from '~/utils/validation/isStepValue';
 import { type CronDescriptionOptions } from '~/utils/cron-to-human/types/CronDescriptionOptions';
+import { expandCronListValues } from '~/utils/cron-to-human/utils/expandCronListValues';
 
 const getDayName = (
   dayNum: number,
@@ -122,7 +123,7 @@ export const getDayOfWeekDescription = (
   }
 
   if (isListValue(dayOfWeek)) {
-    const values = dayOfWeek.split(',').map((v) => v.trim());
+    const values = expandCronListValues(dayOfWeek);
     const dayNames = values.map((day) => {
       const dayNum = parseInt(day, 10);
       return !isNaN(dayNum)
@@ -130,25 +131,27 @@ export const getDayOfWeekDescription = (
         : day;
     });
 
-    if (dayNames.length === 1) {
-      const dayName = dayNames[0];
-      return t`only on ${dayName}`;
+    const lastDay = dayNames.at(-1) ?? '';
+    const remainingDays = dayNames.slice(0, -1).join(', ');
+
+    if (options.isCombinedWithDayOfMonth === true) {
+      return t`on ${remainingDays} and ${lastDay}`;
     }
-    if (dayNames.length === 2) {
-      const firstDay = dayNames[0];
-      const secondDay = dayNames[1];
-      return t`only on ${firstDay} and ${secondDay}`;
-    }
-    const lastDay = dayNames.pop();
-    const remainingDays = dayNames.join(', ');
-    return t`only on ${remainingDays} and ${lastDay ?? ''}`;
+
+    return t`only on ${remainingDays} and ${lastDay}`;
   }
 
   const dayNum = parseInt(dayOfWeek, 10);
-  if (!isNaN(dayNum)) {
-    const dayName = getDayName(dayNum, dayOfWeekStartIndexZero, localeCatalog);
-    return t`only on ${dayName}`;
+
+  if (isNaN(dayNum)) {
+    return dayOfWeek;
   }
 
-  return dayOfWeek;
+  const dayName = getDayName(dayNum, dayOfWeekStartIndexZero, localeCatalog);
+
+  if (options.isCombinedWithDayOfMonth === true) {
+    return t`on ${dayName}`;
+  }
+
+  return t`only on ${dayName}`;
 };

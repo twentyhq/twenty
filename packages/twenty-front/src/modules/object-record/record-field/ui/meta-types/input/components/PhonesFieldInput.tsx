@@ -24,7 +24,6 @@ import {
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { phonesFieldValueSchema } from '@/object-record/record-field/ui/validation-schemas/phonesFieldValueSchema';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { t } from '@lingui/core/macro';
 import { useContext, useRef } from 'react';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -32,8 +31,10 @@ import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { toSpliced } from '~/utils/array/toSpliced';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
+import { useLingui } from '@lingui/react/macro';
 
 export const PhonesFieldInput = () => {
+  const { t } = useLingui();
   const { fieldDefinition, setDraftValue, draftValue } = usePhonesField();
 
   const { onEscape, onClickOutside, onEnter, onSubmit } = useContext(

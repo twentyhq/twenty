@@ -6,7 +6,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { fromArrayToValuesByKeyRecord, isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
-import { type DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { type DatabaseEventAction } from 'src/engine/workspace-event-emitter/enums/database-event-action';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -20,6 +20,7 @@ import {
   type TimelineActivityTypeResolver,
 } from 'src/modules/timeline/utils/resolve-timeline-activity-type.util';
 import { TimelineActivityTargetQueryService } from 'src/modules/timeline/services/timeline-activity-target-query.service';
+import { type LinkedTimelineActivityDeletion } from 'src/modules/timeline/types/linked-timeline-activity-deletion.type';
 import { type ResolvedTimelineActivityTarget } from 'src/modules/timeline/types/resolved-timeline-activity-target.type';
 import { type TimelineActivityPayload } from 'src/modules/timeline/types/timeline-activity-payload.type';
 import { type TimelineActivityRuleAction } from 'src/modules/timeline/types/timeline-activity-rule-action.type';
@@ -202,6 +203,14 @@ export class TimelineActivityService {
         payloads: payloadsByObjectSingularName[objectSingularName],
       });
     }
+  }
+
+  async deleteLinkedTimelineActivities(
+    linkedTimelineActivityDeletion: LinkedTimelineActivityDeletion,
+  ) {
+    await this.timelineActivityRepository.deleteLinkedTimelineActivities(
+      linkedTimelineActivityDeletion,
+    );
   }
 
   private ruleMatchesEvent({
@@ -493,12 +502,10 @@ export class TimelineActivityService {
       return events;
     }
 
-    const workspaceMemberRepository = this.workspaceOrmManager.getRepository(
-      WorkspaceMemberWorkspaceEntity,
-      {
-        shouldBypassPermissionChecks: true,
-      },
-    );
+    const workspaceMemberRepository =
+      this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+        WorkspaceMemberWorkspaceEntity,
+      );
 
     const workspaceMembers = await workspaceMemberRepository.findBy({
       userId: In(userIds),

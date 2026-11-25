@@ -6,13 +6,13 @@ import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWid
 import { type ChartConfiguration } from '@/side-panel/pages/page-layout/types/ChartConfiguration';
 import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { ChartSettingsDropdownSection } from '@/side-panel/pages/page-layout/components/chart-settings/ChartSettingsDropdownSection';
-import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { capitalize, isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { MAIN_COLOR_NAMES, type ThemeColor } from 'twenty-ui/theme';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
+import { useLingui } from '@lingui/react/macro';
 
 type ColorOption = {
   id: string;
@@ -21,6 +21,7 @@ type ColorOption = {
 };
 
 export const ChartColorSelectionDropdownContent = () => {
+  const { t } = useLingui();
   const [searchQuery, setSearchQuery] = useState('');
   const { pageLayoutId } = usePageLayoutSidePanelTarget();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);

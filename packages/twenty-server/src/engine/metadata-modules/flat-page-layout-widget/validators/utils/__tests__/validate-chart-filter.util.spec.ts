@@ -4,6 +4,7 @@ import {
   ViewFilterOperand,
 } from 'twenty-shared/types';
 
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { validateChartFilter } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util';
 import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 
@@ -23,41 +24,44 @@ const UNKNOWN_FIELD_UNIVERSAL_IDENTIFIER =
 const flatFieldMetadata = (
   universalIdentifier: string,
   type: FieldMetadataType,
-) => ({
-  universalIdentifier,
-  type,
-  label: 'Some field',
-  isActive: true,
-});
+) =>
+  getFlatFieldMetadataMock({
+    universalIdentifier,
+    objectMetadataId: 'object-metadata-id',
+    type,
+    label: 'Some field',
+    isActive: true,
+  });
 
-const flatFieldMetadataMaps = {
-  byUniversalIdentifier: {
-    [DATE_FIELD_UNIVERSAL_IDENTIFIER]: flatFieldMetadata(
-      DATE_FIELD_UNIVERSAL_IDENTIFIER,
-      FieldMetadataType.DATE,
-    ),
-    [SELECT_FIELD_UNIVERSAL_IDENTIFIER]: flatFieldMetadata(
-      SELECT_FIELD_UNIVERSAL_IDENTIFIER,
-      FieldMetadataType.SELECT,
-    ),
-    [RELATION_FIELD_UNIVERSAL_IDENTIFIER]: flatFieldMetadata(
-      RELATION_FIELD_UNIVERSAL_IDENTIFIER,
-      FieldMetadataType.RELATION,
-    ),
-    [MORPH_RELATION_FIELD_UNIVERSAL_IDENTIFIER]: flatFieldMetadata(
-      MORPH_RELATION_FIELD_UNIVERSAL_IDENTIFIER,
-      FieldMetadataType.MORPH_RELATION,
-    ),
-    [RICH_TEXT_FIELD_UNIVERSAL_IDENTIFIER]: flatFieldMetadata(
-      RICH_TEXT_FIELD_UNIVERSAL_IDENTIFIER,
-      FieldMetadataType.RICH_TEXT,
-    ),
-    [TEXT_FIELD_UNIVERSAL_IDENTIFIER]: flatFieldMetadata(
-      TEXT_FIELD_UNIVERSAL_IDENTIFIER,
-      FieldMetadataType.TEXT,
-    ),
-  },
-} as unknown as MetadataUniversalFlatEntityMaps<'fieldMetadata'>;
+const flatFieldMetadataMaps: MetadataUniversalFlatEntityMaps<'fieldMetadata'> =
+  {
+    byUniversalIdentifier: {
+      [DATE_FIELD_UNIVERSAL_IDENTIFIER]: flatFieldMetadata(
+        DATE_FIELD_UNIVERSAL_IDENTIFIER,
+        FieldMetadataType.DATE,
+      ),
+      [SELECT_FIELD_UNIVERSAL_IDENTIFIER]: flatFieldMetadata(
+        SELECT_FIELD_UNIVERSAL_IDENTIFIER,
+        FieldMetadataType.SELECT,
+      ),
+      [RELATION_FIELD_UNIVERSAL_IDENTIFIER]: flatFieldMetadata(
+        RELATION_FIELD_UNIVERSAL_IDENTIFIER,
+        FieldMetadataType.RELATION,
+      ),
+      [MORPH_RELATION_FIELD_UNIVERSAL_IDENTIFIER]: flatFieldMetadata(
+        MORPH_RELATION_FIELD_UNIVERSAL_IDENTIFIER,
+        FieldMetadataType.MORPH_RELATION,
+      ),
+      [RICH_TEXT_FIELD_UNIVERSAL_IDENTIFIER]: flatFieldMetadata(
+        RICH_TEXT_FIELD_UNIVERSAL_IDENTIFIER,
+        FieldMetadataType.RICH_TEXT,
+      ),
+      [TEXT_FIELD_UNIVERSAL_IDENTIFIER]: flatFieldMetadata(
+        TEXT_FIELD_UNIVERSAL_IDENTIFIER,
+        FieldMetadataType.TEXT,
+      ),
+    },
+  };
 
 const validateFilter = (recordFilters: UniversalChartFilter['recordFilters']) =>
   validateChartFilter({

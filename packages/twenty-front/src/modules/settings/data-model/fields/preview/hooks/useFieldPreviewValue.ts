@@ -1,4 +1,4 @@
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useRelationFieldPreviewValue } from '@/settings/data-model/fields/preview/hooks/useRelationFieldPreviewValue';
 import { getAddressFieldPreviewValue } from '@/settings/data-model/fields/preview/utils/getAddressFieldPreviewValue';
@@ -26,7 +26,7 @@ export const useFieldPreviewValue = ({
 }: UseFieldPreviewParams) => {
   const relationFieldPreviewValue = useRelationFieldPreviewValue({
     relationObjectNameSingular:
-      relationObjectNameSingular ?? CoreObjectNameSingular.Company,
+      relationObjectNameSingular ?? StandardObjectNameSingular.Company,
     skip:
       skip ||
       (fieldMetadataItem.type !== FieldMetadataType.RELATION &&
@@ -34,7 +34,9 @@ export const useFieldPreviewValue = ({
       !isDefined(relationObjectNameSingular),
   });
 
-  if (skip === true) return null;
+  if (skip === true) {
+    return null;
+  }
 
   switch (fieldMetadataItem.type) {
     case FieldMetadataType.CURRENCY:

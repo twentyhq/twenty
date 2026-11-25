@@ -2,9 +2,9 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { RecordGroupChip } from '@/object-record/record-group/components/RecordGroupChip';
 import { type RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { IconChevronDown } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledSectionToggle = styled.button`
   align-items: center;
@@ -47,6 +47,7 @@ export const RecordGroupSectionHeader = ({
   onToggle,
   chevronWidth,
 }: RecordGroupSectionHeaderProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
 
   return (

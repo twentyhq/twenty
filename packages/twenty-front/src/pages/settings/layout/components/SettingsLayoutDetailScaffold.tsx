@@ -7,12 +7,12 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { type ReactNode } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 export type DetailRow = { key: string; label: string; value: ReactNode };
 
@@ -46,6 +46,7 @@ export const SettingsLayoutDetailScaffold = ({
   isLoading: boolean;
   children?: ReactNode;
 }) => {
+  const { t } = useLingui();
   const trimmedDescription = description?.trim();
 
   const applicationContentHref = getSettingsPath(

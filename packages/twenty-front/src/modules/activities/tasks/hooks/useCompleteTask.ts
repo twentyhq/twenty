@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
 import { type Task } from '@/activities/types/Task';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 
 export const useCompleteTask = (task: Task) => {
@@ -11,7 +11,7 @@ export const useCompleteTask = (task: Task) => {
     async (value: boolean) => {
       const status = value ? 'DONE' : 'TODO';
       await updateOneRecord({
-        objectNameSingular: CoreObjectNameSingular.Task,
+        objectNameSingular: StandardObjectNameSingular.Task,
         idToUpdate: task.id,
         updateOneRecordInput: {
           status,

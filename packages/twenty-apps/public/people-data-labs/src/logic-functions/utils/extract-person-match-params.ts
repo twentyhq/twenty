@@ -9,9 +9,11 @@ import { pruneUndefined } from 'src/utils/prune-undefined';
 export const extractPersonMatchParams = ({
   node,
   minLikelihoods,
+  required,
 }: {
   node: PersonNode;
   minLikelihoods: MinLikelihoods;
+  required?: string;
 }): PdlPersonEnrichParams | undefined => {
   const existingPdlId = toText(node.pdlId);
   if (isDefined(existingPdlId)) {
@@ -50,5 +52,6 @@ export const extractPersonMatchParams = ({
     minLikelihood: hasStrongIdentifier
       ? minLikelihoods.strongIdentifierMinLikelihood
       : minLikelihoods.weakIdentifierMinLikelihood,
+    required,
   };
 };

@@ -1,8 +1,9 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { Fragment } from 'react';
 
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { LightCopyIconButton } from '@/ui/input/components/LightCopyIconButton';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import ModelContextProtocolLogo from '@/settings/mcp/assets/model-context-protocol-logo.svg?react';
 import { SettingsMcpSetupCard } from '@/settings/mcp/components/SettingsMcpSetupCard';
 import { buildMcpSetupCategories } from '@/settings/mcp/utils/buildMcpSetupCategories';
@@ -15,6 +16,7 @@ import { Section } from 'twenty-ui/components/layout';
 import { CodeEditor, CodeEditorHeader } from 'twenty-ui/components/code-editor';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledMcpEditorHeaderTitle = styled.div`
   align-items: center;
@@ -46,11 +48,14 @@ const StyledCardsGrid = styled.div`
 `;
 
 export const SettingsMcpSetup = () => {
+  const { t } = useLingui();
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const mcpServerUrl = buildMcpServerUrl(REACT_APP_SERVER_BASE_URL);
   const mcpConfig = buildMcpConfig(mcpServerUrl);
   const categories = buildMcpSetupCategories({
     isHttpsInstallLinkEnabled: isHttpsUrl(mcpServerUrl),
     mcpServerUrl,
+    workspaceName: currentWorkspace?.displayName,
   });
 
   return (

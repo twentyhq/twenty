@@ -1,5 +1,4 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -11,7 +10,7 @@ import { Card, Tooltip } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
-import { AI_INSTRUCTIONS_EDITOR_PROFILE } from '@/ai/constants/AiInstructionsEditorProfile';
+import { AI_INSTRUCTIONS_EDITOR_PROFILE } from '@/settings/ai/constants/AiInstructionsEditorProfile';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsEditableTitle } from '@/settings/components/SettingsEditableTitle';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
@@ -26,10 +25,11 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsSkillDangerZone } from '~/pages/settings/ai/components/SettingsSkillDangerZone';
 import { useSettingsSkillSave } from '~/pages/settings/ai/hooks/useSettingsSkillSave';
 import { type SettingsSkillFormValues } from '~/pages/settings/ai/types/SettingsSkillFormValues';
-import { getSettingsAiBreadcrumbLinks } from '~/pages/settings/ai/utils/getSettingsAiBreadcrumbLinks';
+import { getSettingsAiBreadcrumbLinks } from '@/settings/ai/utils/getSettingsAiBreadcrumbLinks';
 import { getSettingsSkillInitialFormValues } from '~/pages/settings/ai/utils/getSettingsSkillInitialFormValues';
 import { computeMetadataNameFromLabel } from '@/object-metadata/utils/computeMetadataNameFromLabel';
 import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledFormContainer = styled.div`
   display: flex;
@@ -58,6 +58,7 @@ type SettingsSkillFormContentProps = {
 export const SettingsSkillFormContent = ({
   skill,
 }: SettingsSkillFormContentProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const { getIcon } = useIcons();
   const navigate = useNavigateSettings();
@@ -149,7 +150,7 @@ export const SettingsSkillFormContent = ({
           />
         ) : undefined
       }
-      links={getSettingsAiBreadcrumbLinks(breadcrumbText)}
+      links={getSettingsAiBreadcrumbLinks({ currentPageLabel: breadcrumbText })}
     >
       <SettingsPageContainer>
         <Section.Root>

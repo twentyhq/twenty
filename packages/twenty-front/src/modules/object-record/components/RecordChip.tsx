@@ -8,7 +8,7 @@ import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIco
 import { LinkChip } from '@/ui/navigation/link/components/LinkChip/LinkChip';
 import { type TriggerEventType } from '@/ui/navigation/types/TriggerEventType';
 import { type MouseEvent } from 'react';
-import { CoreObjectNameSingular, OpenRecordIn } from 'twenty-shared/types';
+import { StandardObjectNameSingular, OpenRecordIn } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Chip, type ChipSize } from 'twenty-ui/primitives/data-display';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
@@ -68,7 +68,7 @@ export const RecordChip = ({
 
   if (
     forceDisableClick ||
-    objectNameSingular === CoreObjectNameSingular.WorkspaceMember
+    objectNameSingular === StandardObjectNameSingular.WorkspaceMember
   ) {
     return (
       <Chip

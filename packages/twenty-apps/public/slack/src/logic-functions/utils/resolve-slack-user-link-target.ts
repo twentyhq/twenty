@@ -23,7 +23,7 @@ export const resolveSlackUserLinkTarget = async ({
   requestedName,
   installedSlackTeamId,
 }: {
-  slackClient: WebClient;
+  slackClient: { users: Pick<WebClient['users'], 'info' | 'lookupByEmail'> };
   requestedSlackUserId: string | undefined;
   email: string | undefined;
   requestedSlackTeamId: string | undefined;

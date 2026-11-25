@@ -10,6 +10,7 @@ import {
 } from 'src/engine/twenty-orm/query-builder/utils/apply-find-options.util';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
+import { NO_RECORD_READ_RESTRICTIONS } from 'src/engine/permissions/constants/no-record-read-restrictions.constant';
 
 const SCHEMA_NAME = 'workspace_test';
 
@@ -40,7 +41,7 @@ const buildQueryBuilder = () =>
   new WorkspaceSelectQueryBuilder('person', {
     tableShape: personTableShape,
     executor: { execute: async () => [] },
-    objectRecordsPermissions: {},
+    recordReadRestrictions: NO_RECORD_READ_RESTRICTIONS,
     tableShapeByObjectMetadataId: () => personTableShape,
     onBeforeExecute: () => undefined,
     formatResult: (records) => records as never,
@@ -201,7 +202,7 @@ const buildThreadQueryBuilder = () =>
   new WorkspaceSelectQueryBuilder('thread', {
     tableShape: threadShape,
     executor: { execute: async () => [] },
-    objectRecordsPermissions: {},
+    recordReadRestrictions: NO_RECORD_READ_RESTRICTIONS,
     tableShapeByObjectMetadataId: () => messageShape,
     onBeforeExecute: () => undefined,
     formatResult: (records) => records as never,
@@ -218,7 +219,7 @@ describe('applyFindOptionsToQueryBuilder relation order', () => {
 
     expect(sql).toContain(
       `LEFT JOIN (SELECT DISTINCT ON ("threadId") * ` +
-        `FROM "${SCHEMA_NAME}"."message" ` +
+        `FROM "${SCHEMA_NAME}"."message" AS "source" ` +
         `WHERE "deletedAt" IS NULL ` +
         `ORDER BY "threadId", "receivedAt" DESC, "id") AS "messages" ` +
         'ON ("messages"."threadId" = "thread"."id")',

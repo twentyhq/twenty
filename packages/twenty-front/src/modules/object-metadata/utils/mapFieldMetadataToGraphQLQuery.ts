@@ -4,13 +4,14 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import {
-  type RecordGqlFields,
   FieldMetadataType,
-  type ObjectPermissions,
+  type ObjectRecordsPermissions,
+  type RecordGqlFields,
   RelationType,
 } from 'twenty-shared/types';
 import { isNonCompositeField } from '@/object-record/object-filter-dropdown/utils/isNonCompositeField';
 import {
+  canAccessThroughAllRecordsOrRlsPermission,
   computeMorphRelationGqlFieldName,
   computeRelationGqlFieldJoinColumnName,
   isDefined,
@@ -25,11 +26,9 @@ type MapFieldMetadataToGraphQLQueryArgs = {
     'name' | 'type' | 'relation' | 'morphRelations' | 'settings'
   >;
   relationRecordGqlFields?: RecordGqlFields;
+  relationConnectionGqlFieldNames?: string[];
   computeReferences?: boolean;
-  objectPermissionsByObjectMetadataId: Record<
-    string,
-    ObjectPermissions & { objectMetadataId: string }
-  >;
+  objectPermissionsByObjectMetadataId: Record<string, ObjectRecordsPermissions>;
 };
 // TODO: change ObjectMetadataItems mock before refactoring with relation computed field
 export const mapFieldMetadataToGraphQLQuery = ({
@@ -37,6 +36,7 @@ export const mapFieldMetadataToGraphQLQuery = ({
   gqlField,
   fieldMetadata,
   relationRecordGqlFields,
+  relationConnectionGqlFieldNames = [],
   computeReferences = false,
   objectPermissionsByObjectMetadataId,
 }: MapFieldMetadataToGraphQLQueryArgs): string => {
@@ -91,7 +91,12 @@ export const mapFieldMetadataToGraphQLQuery = ({
           morphRelation.targetObjectMetadata.id,
         );
 
-        if (!objectPermission.canReadObjectRecords) {
+        if (
+          !canAccessThroughAllRecordsOrRlsPermission({
+            objectRecordsPermissions: objectPermission,
+            operationType: 'read',
+          })
+        ) {
           continue;
         }
       }
@@ -172,7 +177,12 @@ ${mapObjectMetadataToGraphQLQuery({
         fieldMetadata.relation?.targetObjectMetadata.id,
       );
 
-      if (!objectPermission.canReadObjectRecords) {
+      if (
+        !canAccessThroughAllRecordsOrRlsPermission({
+          objectRecordsPermissions: objectPermission,
+          operationType: 'read',
+        })
+      ) {
         return '';
       }
     }
@@ -226,14 +236,23 @@ ${mapObjectMetadataToGraphQLQuery({
         fieldMetadata.relation?.targetObjectMetadata.id,
       );
 
-      if (!objectPermission.canReadObjectRecords) {
+      if (
+        !canAccessThroughAllRecordsOrRlsPermission({
+          objectRecordsPermissions: objectPermission,
+          operationType: 'read',
+        })
+      ) {
         return '';
       }
     }
 
+    const connectionFieldsSelection = relationConnectionGqlFieldNames
+      .map((connectionGqlFieldName) => `${connectionGqlFieldName}\n  `)
+      .join('');
+
     return doNotTranslate(`${gqlField}
 {
-  edges {
+  ${connectionFieldsSelection}edges {
     node ${mapObjectMetadataToGraphQLQuery({
       objectMetadataItems,
       objectMetadataItem: relationMetadataItem,

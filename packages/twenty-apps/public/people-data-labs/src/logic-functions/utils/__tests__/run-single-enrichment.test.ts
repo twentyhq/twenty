@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { PDL_COMPANY_MIN_LIKELIHOOD_ENV_VAR_NAME } from 'src/constants/pdl-company-min-likelihood-env-var-name';
+import { PDL_COMPANY_REQUIRED_FIELDS_ENV_VAR_NAME } from 'src/constants/pdl-company-required-fields-env-var-name';
 import { PDL_COMPANY_WEAK_IDENTIFIER_MIN_LIKELIHOOD_ENV_VAR_NAME } from 'src/constants/pdl-company-weak-identifier-min-likelihood-env-var-name';
 import { UPDATE_FIELDS_OPTIONS } from 'src/constants/update-fields-options';
 import { COMPANY_NODE_MOCK } from 'src/logic-functions/__mocks__/company-node.mock';
@@ -19,9 +20,10 @@ describe('runSingleEnrichment', () => {
     vi.clearAllMocks();
   });
 
-  it('uses both workflow overrides for a single name-based match', async () => {
+  it('uses the workflow overrides for a single name-based match', async () => {
     vi.stubEnv(PDL_COMPANY_MIN_LIKELIHOOD_ENV_VAR_NAME, '8');
     vi.stubEnv(PDL_COMPANY_WEAK_IDENTIFIER_MIN_LIKELIHOOD_ENV_VAR_NAME, '10');
+    vi.stubEnv(PDL_COMPANY_REQUIRED_FIELDS_ENV_VAR_NAME, '["employee_count"]');
     vi.mocked(enrichCompany).mockResolvedValue([
       { outcome: 'not_found', httpStatus: 404 },
     ]);
@@ -43,12 +45,13 @@ describe('runSingleEnrichment', () => {
         updateFields: UPDATE_FIELDS_OPTIONS.no,
         minLikelihood: 3,
         weakIdentifierMinLikelihood: 4,
+        requiredFields: ['industry', 'location'],
       },
       adapter: companySingleEnrichmentAdapter,
     });
 
     expect(enrichCompany).toHaveBeenCalledExactlyOnceWith([
-      { name: 'Acme', minLikelihood: 4 },
+      { name: 'Acme', minLikelihood: 4, required: 'industry AND location' },
     ]);
     expect(result).toMatchObject({ recordId: 'c1', status: 'NOT_FOUND' });
   });

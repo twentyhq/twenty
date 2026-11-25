@@ -1,11 +1,12 @@
+import { Test } from '@nestjs/testing';
 import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 
-import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { AddCalendarEventCallRecordingTabCommand } from 'src/database/commands/upgrade-version-command/2-31/2-31-workspace-command-1786437483000-add-calendar-event-call-recording-tab.command';
-import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
-import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 jest.mock(
   'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant',
@@ -73,7 +74,7 @@ describe('AddCalendarEventCallRecordingTabCommand', () => {
   let getOrRecomputeMock: jest.Mock;
   let validateBuildAndRunWorkspaceMigrationMock: jest.Mock;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     jest.clearAllMocks();
 
     getOrRecomputeMock = jest.fn();
@@ -97,23 +98,36 @@ describe('AddCalendarEventCallRecordingTabCommand', () => {
       },
     });
 
-    command = new AddCalendarEventCallRecordingTabCommand(
-      {} as WorkspaceIteratorService,
-      {
-        findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
-          .fn()
-          .mockResolvedValue({
-            twentyStandardFlatApplication: STANDARD_APPLICATION,
-          }),
-      } as unknown as ApplicationService,
-      {
-        getOrRecompute: getOrRecomputeMock,
-      } as unknown as WorkspaceCacheService,
-      {
-        validateBuildAndRunLegacyWorkspaceMigration:
-          validateBuildAndRunWorkspaceMigrationMock,
-      } as unknown as WorkspaceMigrationValidateBuildAndRunService,
-    );
+    const module = await Test.createTestingModule({
+      providers: [
+        AddCalendarEventCallRecordingTabCommand,
+        { provide: WorkspaceIteratorService, useValue: {} },
+        {
+          provide: ApplicationService,
+          useValue: {
+            findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
+              .fn()
+              .mockResolvedValue({
+                twentyStandardFlatApplication: STANDARD_APPLICATION,
+              }),
+          },
+        },
+        {
+          provide: WorkspaceCacheService,
+          useValue: {
+            getOrRecompute: getOrRecomputeMock,
+          },
+        },
+        {
+          provide: WorkspaceMigrationValidateBuildAndRunService,
+          useValue: {
+            validateBuildAndRunLegacyWorkspaceMigration:
+              validateBuildAndRunWorkspaceMigrationMock,
+          },
+        },
+      ],
+    }).compile();
+    command = module.get(AddCalendarEventCallRecordingTabCommand);
   });
 
   const runOnWorkspace = (dryRun = false) =>

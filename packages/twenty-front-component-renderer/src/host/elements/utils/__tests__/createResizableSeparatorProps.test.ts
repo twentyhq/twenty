@@ -1,5 +1,3 @@
-import { type PointerEvent } from 'react';
-
 import { createResizableSeparatorProps } from '../createResizableSeparatorProps';
 
 type SeparatorHandlers = Record<
@@ -31,14 +29,13 @@ const createSeparatorElement = () => {
 const createPointerEvent = (
   currentTarget: HTMLElement,
   { pointerId = 1, button = 0 }: { pointerId?: number; button?: number } = {},
-) =>
-  ({
-    button,
-    defaultPrevented: false,
-    pointerId,
-    currentTarget,
-    preventDefault: jest.fn(),
-  }) as unknown as PointerEvent<HTMLElement>;
+) => ({
+  button,
+  defaultPrevented: false,
+  pointerId,
+  currentTarget,
+  preventDefault: jest.fn(),
+});
 
 const createSeparatorHandlers = (remoteProps: Record<string, unknown> = {}) => {
   const remotePointerCancel = jest.fn();

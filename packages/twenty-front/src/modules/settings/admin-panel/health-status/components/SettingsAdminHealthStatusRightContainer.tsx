@@ -1,12 +1,13 @@
-import { t } from '@lingui/core/macro';
 import { Status } from 'twenty-ui/primitives/data-display';
 import { AdminPanelHealthServiceStatus } from '~/generated-admin/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 export const SettingsAdminHealthStatusRightContainer = ({
   status,
 }: {
   status: AdminPanelHealthServiceStatus;
 }) => {
+  const { t } = useLingui();
   return (
     <>
       {status === AdminPanelHealthServiceStatus.OPERATIONAL && (

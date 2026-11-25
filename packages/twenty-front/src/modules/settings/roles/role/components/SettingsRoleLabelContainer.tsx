@@ -2,7 +2,7 @@ import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDr
 import { SettingsEditableTitle } from '@/settings/components/SettingsEditableTitle';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
-import { t } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react/macro';
 
 type SettingsRoleLabelContainerProps = {
   roleId: string;
@@ -11,6 +11,7 @@ type SettingsRoleLabelContainerProps = {
 export const SettingsRoleLabelContainer = ({
   roleId,
 }: SettingsRoleLabelContainerProps) => {
+  const { t } = useLingui();
   const settingsDraftRole = useAtomFamilyStateValue(
     settingsDraftRoleFamilyState,
     roleId,

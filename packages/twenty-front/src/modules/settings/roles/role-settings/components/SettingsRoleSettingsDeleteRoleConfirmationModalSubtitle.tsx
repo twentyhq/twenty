@@ -1,6 +1,7 @@
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { plural, t } from '@lingui/core/macro';
+import { plural } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react/macro';
 
 type SettingsRoleSettingsDeleteRoleConfirmationModalSubtitleProps = {
   roleId: string;
@@ -9,6 +10,7 @@ type SettingsRoleSettingsDeleteRoleConfirmationModalSubtitleProps = {
 export const SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle = ({
   roleId,
 }: SettingsRoleSettingsDeleteRoleConfirmationModalSubtitleProps) => {
+  const { t } = useLingui();
   const settingsDraftRole = useAtomFamilyStateValue(
     settingsDraftRoleFamilyState,
     roleId,

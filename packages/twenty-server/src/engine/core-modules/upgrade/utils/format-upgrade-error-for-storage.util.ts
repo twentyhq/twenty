@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 import { QueryFailedError } from 'typeorm';
 
@@ -38,9 +39,7 @@ const buildNestedErrorParts = ({
     return [];
   }
 
-  const nestedParts = buildErrorParts(error).filter((part): part is string =>
-    Boolean(part),
-  );
+  const nestedParts = buildErrorParts(error).filter(isNonEmptyString);
 
   return [`${label}:`, ...nestedParts.map(indent)];
 };

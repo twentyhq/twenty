@@ -5,6 +5,7 @@ import {
   compositeTypeDefinitions,
   FieldMetadataType,
 } from 'twenty-shared/types';
+import { VALIDATION_RULE_PREVIOUS_VARIABLE_NAME } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -92,12 +93,14 @@ const buildScalarEditorFields = ({
   return [field, ...subfields];
 };
 
-export const buildValidationRuleEditorFields = ({
+const buildCurrentValueEditorFields = ({
   objectMetadataItem,
   objectMetadataItems,
+  readableRelationTypes,
 }: {
   objectMetadataItem: ValidationRuleEditorObject;
   objectMetadataItems: ValidationRuleEditorObject[];
+  readableRelationTypes: RelationType[];
 }): ValidationRuleEditorField[] =>
   objectMetadataItem.fields
     .filter((fieldMetadataItem) => fieldMetadataItem.isActive)
@@ -116,7 +119,8 @@ export const buildValidationRuleEditorFields = ({
 
       if (
         fieldMetadataItem.type !== FieldMetadataType.RELATION ||
-        relation?.type !== RelationType.MANY_TO_ONE
+        !isDefined(relation) ||
+        !readableRelationTypes.includes(relation.type)
       ) {
         return [];
       }
@@ -165,3 +169,39 @@ export const buildValidationRuleEditorFields = ({
 
       return [relationField, ...targetFields];
     });
+
+const buildPreviousValueEditorField = (
+  field: ValidationRuleEditorField,
+): ValidationRuleEditorField => {
+  const previousLabel = t`Previous`;
+
+  return {
+    ...field,
+    path: `${VALIDATION_RULE_PREVIOUS_VARIABLE_NAME}.${field.path}`,
+    parentLabel: isDefined(field.parentLabel)
+      ? `${previousLabel} › ${field.parentLabel}`
+      : previousLabel,
+  };
+};
+
+export const buildValidationRuleEditorFields = ({
+  objectMetadataItem,
+  objectMetadataItems,
+  readableRelationTypes = [RelationType.MANY_TO_ONE],
+}: {
+  objectMetadataItem: ValidationRuleEditorObject;
+  objectMetadataItems: ValidationRuleEditorObject[];
+  readableRelationTypes?: RelationType[];
+}): ValidationRuleEditorField[] => {
+  const currentValueFields = buildCurrentValueEditorFields({
+    objectMetadataItem,
+    objectMetadataItems,
+    readableRelationTypes,
+  });
+
+  const previousValueFields = currentValueFields
+    .filter((field) => !field.readsRelatedRecord)
+    .map(buildPreviousValueEditorField);
+
+  return [...currentValueFields, ...previousValueFields];
+};

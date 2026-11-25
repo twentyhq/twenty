@@ -371,7 +371,108 @@ describe('getToolDisplayMessage', () => {
     });
   });
 
-  describe('attach_conversation_to_record', () => {
+  describe('attach_conversation_to_records', () => {
+    const companyMetadata = {
+      nameSingular: 'company',
+      namePlural: 'companies',
+      labelSingular: 'Company',
+      labelPlural: 'Companies',
+    };
+    const displayContext = makeDisplayContext({
+      objectMetadataItems: [personMetadata, companyMetadata],
+    });
+    const companyRecord = (recordId: string) => ({
+      objectNameSingular: 'company',
+      recordId,
+    });
+
+    it('should name the object when a single record is attached', () => {
+      expect(
+        getToolDisplayMessage({
+          input: { records: [companyRecord('1')] },
+          toolName: 'attach_conversation_to_records',
+          isFinished: true,
+          displayContext,
+        }),
+      ).toBe('Attached this conversation to the company');
+    });
+
+    it('should count records of one object in a single line', () => {
+      const input = {
+        records: [companyRecord('1'), companyRecord('2'), companyRecord('3')],
+      };
+
+      expect(
+        getToolDisplayMessage({
+          input,
+          toolName: 'attach_conversation_to_records',
+          isFinished: false,
+          displayContext,
+        }),
+      ).toBe('Attaching this conversation to 3 companies');
+      expect(
+        getToolDisplayMessage({
+          input,
+          toolName: 'attach_conversation_to_records',
+          isFinished: true,
+          displayContext,
+        }),
+      ).toBe('Attached this conversation to 3 companies');
+    });
+
+    it('should count records of several objects as records', () => {
+      expect(
+        getToolDisplayMessage({
+          input: {
+            records: [
+              companyRecord('1'),
+              { objectNameSingular: 'person', recordId: '2' },
+            ],
+          },
+          toolName: 'attach_conversation_to_records',
+          isFinished: true,
+          displayContext,
+        }),
+      ).toBe('Attached this conversation to 2 records');
+    });
+
+    it('should only count the records that were attached', () => {
+      expect(
+        getToolDisplayMessage({
+          input: { records: [companyRecord('1'), companyRecord('2')] },
+          toolName: 'attach_conversation_to_records',
+          isFinished: true,
+          displayContext,
+          output: {
+            success: true,
+            message: 'Attached this conversation to 1 of 2 records',
+            result: {
+              attached: [companyRecord('2')],
+              failed: [{ ...companyRecord('1'), error: 'Record not found' }],
+            },
+          },
+        }),
+      ).toBe('Attached this conversation to the company');
+    });
+
+    it('should say the attachment failed when nothing was attached', () => {
+      expect(
+        getToolDisplayMessage({
+          input: { records: [companyRecord('1'), companyRecord('2')] },
+          toolName: 'attach_conversation_to_records',
+          isFinished: true,
+          displayContext,
+          output: {
+            success: false,
+            message: 'Failed to attach this conversation to records',
+            error: 'Record not found',
+          },
+        }),
+      ).toBe('Could not attach this conversation to 2 companies');
+    });
+  });
+
+  describe('attach_conversation_to_record (single-record calls made before the list)', () => {
     it('should name the object the conversation is attached to', () => {
       const displayContext = makeDisplayContext({
         objectMetadataItems: [personMetadata],

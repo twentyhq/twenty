@@ -23,19 +23,14 @@ import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/wo
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AiFrontComponentService } from 'src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @Controller(`${ApiPath.Rest}/ai-front-components`)
 @UseFilters(ApplicationRestApiExceptionFilter)
-export class AiFrontComponentController {
-  constructor(private readonly components: AiFrontComponentService) {}
-
-  @Get('drafts/:draftId')
-  @Header('Cache-Control', 'no-store')
-  @UseGuards(
-    AuthPrincipalGuard({
+@UseGuards(
+  AccessPolicyGuard({
+    authPrincipals: {
       userSession: {
         standard: true,
         impersonated: true,
@@ -45,9 +40,15 @@ export class AiFrontComponentController {
       apiKey: false,
       oauthClient: false,
       application: false,
-    }),
-    NoPermissionGuard,
-  )
+    },
+    requiredPermissionFlags: [],
+  }),
+)
+export class AiFrontComponentController {
+  constructor(private readonly components: AiFrontComponentService) {}
+
+  @Get('drafts/:draftId')
+  @Header('Cache-Control', 'no-store')
   getPreview(
     @Param('draftId', ParseUUIDPipe) draftId: string,
     @AuthUserWorkspaceId() userWorkspaceId: string,
@@ -60,20 +61,6 @@ export class AiFrontComponentController {
   }
 
   @Post('drafts/:draftId/preview-error')
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: false,
-        workspaceAgnostic: false,
-      },
-      apiKey: false,
-      oauthClient: false,
-      application: false,
-    }),
-    NoPermissionGuard,
-  )
   reportPreviewError(
     @Param('draftId', ParseUUIDPipe) draftId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

@@ -17,6 +17,10 @@ runs:
         echo "node_modules" >> $GITHUB_OUTPUT
         echo "packages/*/node_modules" >> $GITHUB_OUTPUT
         echo 'EOF' >> $GITHUB_OUTPUT
+    # Nx 23 defaults its cache to ~/.nx, outside the .nx paths restore-cache and save-cache persist.
+    - name: Keep Nx cache in the workspace
+      shell: bash
+      run: echo "NX_CACHE_DIRECTORY=${GITHUB_WORKSPACE}/.nx/cache" >> "${GITHUB_ENV}"
     - name: Setup Node.js and get yarn cache
       uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
       with:

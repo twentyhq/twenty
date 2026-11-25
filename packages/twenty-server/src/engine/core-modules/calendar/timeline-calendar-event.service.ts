@@ -65,9 +65,8 @@ export class TimelineCalendarEventService {
       // System auth context resolves no role, so participant relations would be denied; channel-level redaction below gates access.
       // TODO: run under the caller's role once unreadable person degrades to redaction https://github.com/twentyhq/core-team-issues/issues/2777
       const calendarEventRepository =
-        this.workspaceOrmManager.getRepository<CalendarEventWorkspaceEntity>(
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<CalendarEventWorkspaceEntity>(
           'calendarEvent',
-          { shouldBypassPermissionChecks: true },
         );
 
       const where = isDefined(targetFilter)
@@ -277,9 +276,8 @@ export class TimelineCalendarEventService {
     }
 
     const calendarEventRepository =
-      this.workspaceOrmManager.getRepository<CalendarEventWorkspaceEntity>(
+      this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<CalendarEventWorkspaceEntity>(
         'calendarEvent',
-        { shouldBypassPermissionChecks: true },
       );
 
     const queryBuilder = calendarEventRepository
@@ -402,9 +400,8 @@ export class TimelineCalendarEventService {
     }
 
     const calendarEventRepository =
-      this.workspaceOrmManager.getRepository<CalendarEventWorkspaceEntity>(
+      this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<CalendarEventWorkspaceEntity>(
         'calendarEvent',
-        { shouldBypassPermissionChecks: true },
       );
 
     const [events] = await calendarEventRepository.findAndCount({
@@ -421,9 +418,8 @@ export class TimelineCalendarEventService {
     });
 
     const callRecordingRepository =
-      this.workspaceOrmManager.getRepository<CallRecordingWorkspaceEntity>(
+      this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<CallRecordingWorkspaceEntity>(
         'callRecording',
-        { shouldBypassPermissionChecks: true },
       );
 
     const callRecordings = await callRecordingRepository.find({

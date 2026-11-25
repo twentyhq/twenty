@@ -25,7 +25,7 @@ type CallRecordingNode = {
 };
 
 export const findCallRecordingsByFilter = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'query'>,
   filter: Record<string, unknown>,
   shouldStartPageRequest: () => boolean = () => true,
 ): Promise<CallRecordingRecord[]> => {

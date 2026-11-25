@@ -1,3 +1,3 @@
-import type { RoleManifest } from 'twenty-shared/application';
+import type { LegacyCompliantRoleManifest } from 'twenty-shared/application';
 
-export type RoleConfig = RoleManifest;
+export type RoleConfig = LegacyCompliantRoleManifest;

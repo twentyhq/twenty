@@ -32,7 +32,7 @@ const setManageAppsPermission = (canManageApps: boolean) => {
   jotaiStore.set(currentUserWorkspaceState.atom, {
     permissionFlags: canManageApps ? [PermissionFlagType.APPLICATIONS] : [],
     twoFactorAuthenticationMethodSummary: null,
-    objectsPermissions: [],
+    objectRecordsPermissions: [],
   } as never);
 };
 

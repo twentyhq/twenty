@@ -1,19 +1,7 @@
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
 import { getManualTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getManualTriggerDefaultSettings';
 
-const mockObjectMetadataItems: EnrichedObjectMetadataItem[] = [
-  {
-    id: 'company-id',
-    nameSingular: 'company',
-    namePlural: 'companies',
-    labelSingular: 'Company',
-    labelPlural: 'Companies',
-    icon: 'IconBuilding',
-    fields: [],
-    createdAt: new Date(),
-  } as unknown as EnrichedObjectMetadataItem,
-];
+const mockObjectMetadataItems = [{ nameSingular: 'company' }];
 
 describe('getManualTriggerDefaultSettings', () => {
   describe('GLOBAL availability', () => {
@@ -76,17 +64,9 @@ describe('getManualTriggerDefaultSettings', () => {
     });
 
     it('should use the first object metadata item', () => {
-      const multipleObjects: EnrichedObjectMetadataItem[] = [
+      const multipleObjects = [
         ...mockObjectMetadataItems,
-        {
-          id: 'person-id',
-          nameSingular: 'person',
-          namePlural: 'people',
-          labelSingular: 'Person',
-          labelPlural: 'People',
-          icon: 'IconUser',
-          fields: [],
-        } as unknown as EnrichedObjectMetadataItem,
+        { nameSingular: 'person' },
       ];
 
       const result = getManualTriggerDefaultSettings({

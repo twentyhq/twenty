@@ -192,6 +192,7 @@ describe('environment proxies', () => {
 
     expect(
       await putUploadFile({
+        target: { apiUrl: 'https://twenty.example.com' },
         uploadUrl: 'http://uploads.example/file?signature=secret',
         contentType: 'text/plain',
         bytes: new TextEncoder().encode('file contents'),

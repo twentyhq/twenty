@@ -86,7 +86,7 @@ export const generateColumns = (
     resizable: false,
     sortable: false,
     frozen: true,
-    renderCell: (props: any) => {
+    renderCell: (props) => {
       // oxlint-disable-next-line  react-hooks/rules-of-hooks
       const { isRowSelected, onRowSelectionChange } = useRowSelection();
 
@@ -135,7 +135,7 @@ export const generateColumns = (
       ),
       editable: column.fieldType.type !== 'checkbox',
       // Todo: remove usage of react-data-grid
-      renderEditCell: ({ row, onRowChange, onClose }: any) => {
+      renderEditCell: ({ row, onRowChange, onClose }) => {
         const columnKey = column.key as keyof (ImportedStructuredRow &
           ImportedStructuredRowMetadata);
         let component;
@@ -166,7 +166,7 @@ export const generateColumns = (
         return <StyledInputContainer>{component}</StyledInputContainer>;
       },
       // Todo: remove usage of react-data-grid
-      renderCell: ({ row, onRowChange }: { row: any; onRowChange: any }) => {
+      renderCell: ({ row, onRowChange }) => {
         const columnKey = column.key as keyof (ImportedStructuredRow &
           ImportedStructuredRowMetadata);
         let component;
@@ -186,7 +186,7 @@ export const generateColumns = (
                   onCheckedChange={() => {
                     onRowChange({
                       ...row,
-                      [columnKey]: !row[columnKey],
+                      [columnKey]: Boolean(row[columnKey]) === false,
                     });
                   }}
                 />

@@ -17,13 +17,14 @@ import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/h
 import { useStore } from 'jotai';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { t } from '@lingui/core/macro';
 import { useCallback, useContext } from 'react';
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
+import { useLingui } from '@lingui/react/macro';
 
 export const RecordTableNoRecordGroupAddNew = () => {
+  const { t } = useLingui();
   const { objectMetadataItem, recordTableId } = useRecordTableContextOrThrow();
 
   const recordTableWidgetContext = useContext(RecordTableWidgetContext);

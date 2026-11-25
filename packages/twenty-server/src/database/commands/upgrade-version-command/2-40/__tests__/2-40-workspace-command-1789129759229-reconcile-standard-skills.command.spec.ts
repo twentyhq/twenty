@@ -1,11 +1,12 @@
+import { Test } from '@nestjs/testing';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { ReconcileStandardSkillsCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1789129759229-reconcile-standard-skills.command';
-import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
-import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 const WORKSPACE_ID = '20202020-0000-0000-0000-000000000001';
 const STANDARD_APPLICATION_ID = '20202020-0000-0000-0000-0000000000a1';
@@ -40,40 +41,59 @@ const buildExistingSkill = ({
   isActive,
 });
 
-const setup = ({
+const setup = async ({
   existingSkills,
 }: {
-  existingSkills: ReturnType<typeof buildExistingSkill>[];
+  existingSkills: Pick<
+    ReturnType<typeof buildExistingSkill>,
+    'universalIdentifier'
+  >[];
 }) => {
   const validateBuildAndRunLegacyWorkspaceMigration = jest
     .fn()
     .mockResolvedValue({ status: 'success' });
 
-  const command = new ReconcileStandardSkillsCommand(
-    {} as WorkspaceIteratorService,
-    {
-      findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
-        .fn()
-        .mockResolvedValue({
-          twentyStandardFlatApplication: {
-            id: STANDARD_APPLICATION_ID,
-            universalIdentifier: 'twenty-standard-universal-identifier',
-          },
-        }),
-    } as unknown as ApplicationService,
-    {
-      validateBuildAndRunLegacyWorkspaceMigration,
-    } as unknown as WorkspaceMigrationValidateBuildAndRunService,
-    {
-      getOrRecompute: jest.fn().mockResolvedValue({
-        flatSkillMaps: {
-          byUniversalIdentifier: Object.fromEntries(
-            existingSkills.map((skill) => [skill.universalIdentifier, skill]),
-          ),
+  const module = await Test.createTestingModule({
+    providers: [
+      ReconcileStandardSkillsCommand,
+      { provide: WorkspaceIteratorService, useValue: {} },
+      {
+        provide: ApplicationService,
+        useValue: {
+          findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
+            .fn()
+            .mockResolvedValue({
+              twentyStandardFlatApplication: {
+                id: STANDARD_APPLICATION_ID,
+                universalIdentifier: 'twenty-standard-universal-identifier',
+              },
+            }),
         },
-      }),
-    } as unknown as WorkspaceCacheService,
-  );
+      },
+      {
+        provide: WorkspaceMigrationValidateBuildAndRunService,
+        useValue: {
+          validateBuildAndRunLegacyWorkspaceMigration,
+        },
+      },
+      {
+        provide: WorkspaceCacheService,
+        useValue: {
+          getOrRecompute: jest.fn().mockResolvedValue({
+            flatSkillMaps: {
+              byUniversalIdentifier: Object.fromEntries(
+                existingSkills.map((skill) => [
+                  skill.universalIdentifier,
+                  skill,
+                ]),
+              ),
+            },
+          }),
+        },
+      },
+    ],
+  }).compile();
+  const command = module.get(ReconcileStandardSkillsCommand);
 
   return { command, validateBuildAndRunLegacyWorkspaceMigration };
 };
@@ -81,7 +101,7 @@ const setup = ({
 const runAndGetSkillOperation = async (
   existingSkills: ReturnType<typeof buildExistingSkill>[],
 ) => {
-  const { command, validateBuildAndRunLegacyWorkspaceMigration } = setup({
+  const { command, validateBuildAndRunLegacyWorkspaceMigration } = await setup({
     existingSkills,
   });
 
@@ -173,9 +193,7 @@ describe('ReconcileStandardSkillsCommand', () => {
 
     expect(updatedSkill?.isSystem).toBe(true);
     expect(updatedSkill?.isActive).toBe(false);
-    expect(updatedSkill?.id).toBe(
-      `id-${VIEW_BUILDING_UNIVERSAL_IDENTIFIER}`,
-    );
+    expect(updatedSkill?.id).toBe(`id-${VIEW_BUILDING_UNIVERSAL_IDENTIFIER}`);
   });
 
   it('queues no migration when the workspace already matches the catalog', async () => {
@@ -184,12 +202,10 @@ describe('ReconcileStandardSkillsCommand', () => {
       applicationId: STANDARD_APPLICATION_ID,
     }));
 
-    const { command, validateBuildAndRunLegacyWorkspaceMigration } = setup({
-      existingSkills:
-        alreadyMatchingSkills as unknown as ReturnType<
-          typeof buildExistingSkill
-        >[],
-    });
+    const { command, validateBuildAndRunLegacyWorkspaceMigration } =
+      await setup({
+        existingSkills: alreadyMatchingSkills,
+      });
 
     await command.runOnWorkspace({
       workspaceId: WORKSPACE_ID,
@@ -243,9 +259,10 @@ describe('ReconcileStandardSkillsCommand', () => {
   });
 
   it('skips the migration entirely in dry run', async () => {
-    const { command, validateBuildAndRunLegacyWorkspaceMigration } = setup({
-      existingSkills: [],
-    });
+    const { command, validateBuildAndRunLegacyWorkspaceMigration } =
+      await setup({
+        existingSkills: [],
+      });
 
     await command.runOnWorkspace({
       workspaceId: WORKSPACE_ID,

@@ -6,6 +6,7 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { useUpdateOneFieldMetadataItem } from '@/object-metadata/hooks/useUpdateOneFieldMetadataItem';
+import { getFieldMetadataItemInputKey } from '@/object-metadata/utils/getFieldMetadataItemInputKey';
 import { formatFieldMetadataItemInput } from '@/object-metadata/utils/formatFieldMetadataItemInput';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
@@ -16,6 +17,7 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/FieldNameMaximumLength';
 import { SettingsDataModelFieldDescriptionForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldDescriptionForm';
 import { SettingsDataModelFieldIconLabelForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm';
+import { SettingsDataModelFieldFormulaSection } from '@/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection';
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
 import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
 import { type SettingsDataModelFieldEditFormValues } from '@/settings/data-model/types/SettingsDataModelFieldEditFormValues';
@@ -37,7 +39,14 @@ import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined, isEmptyObject } from 'twenty-shared/utils';
+import {
+  getFieldMetadataFormulaCurrencyCodeExpression,
+  getFieldMetadataFormulaExpression,
+  getSettingsPath,
+  isDefined,
+  isEmptyObject,
+  isMorphRelationHead,
+} from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
 import { IconArchive, IconArchiveOff, IconTrash } from 'twenty-ui/icon';
@@ -157,6 +166,14 @@ export const SettingsObjectFieldEdit = () => {
       isLabelSyncedWithName: fieldMetadataItem?.isLabelSyncedWithName ?? true,
       settings,
       defaultValue,
+      formula:
+        getFieldMetadataFormulaExpression({
+          settings: fieldMetadataItem?.settings,
+        }) ?? '',
+      formulaCurrencyCode:
+        getFieldMetadataFormulaCurrencyCodeExpression({
+          settings: fieldMetadataItem?.settings,
+        }) ?? '',
     },
   });
 
@@ -190,6 +207,12 @@ export const SettingsObjectFieldEdit = () => {
 
   const isCustomField = getIsMetadataItemCustom(fieldMetadataItem);
 
+  // Mirrors the server guard: system-managed fields only accept activation changes
+  const isFieldPropertiesReadonly =
+    readonly ||
+    (fieldMetadataItem.isSystemSideEffect === true &&
+      !isMorphRelationHead(fieldMetadataItem));
+
   const fieldLabel = fieldMetadataItem.label;
   const objectLabel = objectMetadataItem.labelPlural;
 
@@ -212,7 +235,7 @@ export const SettingsObjectFieldEdit = () => {
   const handleSave = async (
     formValues: SettingsDataModelFieldEditFormValues,
   ) => {
-    if (readonly) {
+    if (isFieldPropertiesReadonly) {
       return;
     }
 
@@ -245,10 +268,16 @@ export const SettingsObjectFieldEdit = () => {
     const otherDirtyFields = omit(dirtyFields, 'relation');
 
     if (Object.keys(otherDirtyFields).length > 0) {
+      const dirtyInputKeys = Object.keys(otherDirtyFields).map(
+        getFieldMetadataItemInputKey,
+      );
       const formattedInput = Object.fromEntries(
-        Object.entries(formatFieldMetadataItemInput(formValues)).filter(
-          ([key]) => Object.keys(otherDirtyFields).includes(key),
-        ),
+        Object.entries(
+          formatFieldMetadataItemInput({
+            ...formValues,
+            existingSettings: fieldMetadataItem.settings,
+          }),
+        ).filter(([key]) => dirtyInputKeys.includes(key)),
       );
 
       const updateResult = await updateOneFieldMetadataItem({
@@ -381,7 +410,7 @@ export const SettingsObjectFieldEdit = () => {
           actionButton={
             <SaveAndCancelButtons
               isLoading={isSubmitting}
-              isSaveDisabled={!canSave || readonly}
+              isSaveDisabled={!canSave || isFieldPropertiesReadonly}
               isCancelDisabled={isSubmitting || readonly}
               onCancel={handleCancel}
               onSave={formConfig.handleSubmit(handleSave)}
@@ -398,7 +427,7 @@ export const SettingsObjectFieldEdit = () => {
                 fieldMetadataItem={fieldMetadataItem}
                 maxLength={FIELD_NAME_MAXIMUM_LENGTH}
                 isCreationMode={false}
-                readonly={readonly}
+                readonly={isFieldPropertiesReadonly}
               />
             </Section.Root>
             {!isReverseJunctionRelation && (
@@ -418,9 +447,16 @@ export const SettingsObjectFieldEdit = () => {
                   fieldType={fieldMetadataItem.type}
                   existingFieldMetadataId={fieldMetadataItem.id}
                   objectNameSingular={objectMetadataItem.nameSingular}
-                  disabled={readonly}
+                  disabled={isFieldPropertiesReadonly}
                 />
               </Section.Root>
+            )}
+            {isCustomField && !isFieldPropertiesReadonly && (
+              <SettingsDataModelFieldFormulaSection
+                objectMetadataItem={objectMetadataItem}
+                fieldType={fieldMetadataItem.type}
+                existingFieldMetadataId={fieldMetadataItem.id}
+              />
             )}
             <Section.Root>
               <Section.Header
@@ -429,7 +465,7 @@ export const SettingsObjectFieldEdit = () => {
               />
               <SettingsDataModelFieldDescriptionForm
                 fieldMetadataItem={fieldMetadataItem}
-                disabled={readonly}
+                disabled={isFieldPropertiesReadonly}
               />
             </Section.Root>
 

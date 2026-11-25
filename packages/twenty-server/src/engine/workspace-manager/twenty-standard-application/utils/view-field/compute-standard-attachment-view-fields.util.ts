@@ -105,18 +105,6 @@ export const computeStandardAttachmentViewFields = (
         size: 150,
       },
     }),
-    allAttachmentsTargetWorkflow: createStandardViewFieldFlatMetadata({
-      ...args,
-      objectName: 'attachment',
-      context: {
-        viewName: 'allAttachments',
-        viewFieldName: 'targetWorkflow',
-        fieldName: 'targetWorkflow',
-        position: 8,
-        isVisible: true,
-        size: 150,
-      },
-    }),
     allAttachmentsCreatedBy: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'attachment',

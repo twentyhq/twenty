@@ -1,6 +1,6 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { type NextFunction, type Request, type Response } from 'express';
+import { type NextFunction, type Request } from 'express';
 import { SESSION_COOKIE_OPT_IN_HEADER_NAME } from 'twenty-shared/constants';
 
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
@@ -32,13 +32,13 @@ describe('CookieSessionCsrfMiddleware', () => {
       },
     }) as unknown as Request;
 
-  const buildResponse = (): Response => {
+  const buildResponse = () => {
     const response = {
       status: jest.fn(),
       json: jest.fn(),
-    } as unknown as Response;
+    };
 
-    (response.status as jest.Mock).mockReturnValue(response);
+    response.status.mockReturnValue(response);
 
     return response;
   };

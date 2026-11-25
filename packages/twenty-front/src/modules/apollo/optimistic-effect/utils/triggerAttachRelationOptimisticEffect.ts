@@ -1,5 +1,6 @@
 import { type ApolloCache, type StoreObject } from '@apollo/client';
 
+import { isCachedRelationCopyWithArguments } from '@/apollo/optimistic-effect/utils/isCachedRelationCopyWithArguments';
 import { triggerUpdateRootQueriesOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRootQueriesOptimisticEffect';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
@@ -10,7 +11,10 @@ import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNo
 import { isObjectRecordConnectionWithRefs } from '@/object-record/cache/utils/isObjectRecordConnectionWithRefs';
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { type ObjectPermissions, RelationType } from 'twenty-shared/types';
+import {
+  type ObjectRecordsPermissions,
+  RelationType,
+} from 'twenty-shared/types';
 import {
   capitalize,
   getConnectionTypename,
@@ -36,10 +40,7 @@ export const triggerAttachRelationOptimisticEffect = ({
   fieldNameOnTargetRecord: string;
   targetRecordId: string;
   objectMetadataItems: EnrichedObjectMetadataItem[];
-  objectPermissionsByObjectMetadataId: Record<
-    string,
-    ObjectPermissions & { objectMetadataId: string }
-  >;
+  objectPermissionsByObjectMetadataId: Record<string, ObjectRecordsPermissions>;
   upsertRecordsInStore: (props: { partialRecords: ObjectRecord[] }) => void;
 }) => {
   const sourceRecordId = sourceRecord.id;
@@ -53,10 +54,27 @@ export const triggerAttachRelationOptimisticEffect = ({
     __typename: targetRecordTypeName,
   });
 
+  // Without an id, cache.modify would fall back to the root query and change its lists
+  if (!isDefined(targetRecordCacheId)) {
+    return;
+  }
+
   cache.modify<StoreObject>({
     id: targetRecordCacheId,
     fields: {
-      [fieldNameOnTargetRecord]: (targetRecordFieldValue, { toReference }) => {
+      [fieldNameOnTargetRecord]: (
+        targetRecordFieldValue,
+        { toReference, storeFieldName, DELETE },
+      ) => {
+        if (
+          isCachedRelationCopyWithArguments({
+            storeFieldName,
+            relationFieldName: fieldNameOnTargetRecord,
+          })
+        ) {
+          return DELETE;
+        }
+
         const fieldValueIsObjectRecordConnectionWithRefs =
           isObjectRecordConnectionWithRefs(
             sourceObjectNameSingular,
@@ -110,9 +128,8 @@ export const triggerAttachRelationOptimisticEffect = ({
             ...targetRecordFieldValue,
             edges: nextEdges,
           };
-        } else {
-          return sourceRecordReference;
         }
+        return sourceRecordReference;
       },
     },
   });

@@ -9,7 +9,7 @@ export const uploadFileToAgentChat = async ({
   bytes,
   timeoutMs,
 }: {
-  metadataClient: InstanceType<typeof MetadataApiClient>;
+  metadataClient: Pick<InstanceType<typeof MetadataApiClient>, 'mutation'>;
   fileName: string;
   bytes: Uint8Array<ArrayBuffer>;
   timeoutMs: number;

@@ -1,17 +1,21 @@
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { computeRecordExportPermissionsHash } from 'src/engine/core-modules/record-export/utils/compute-record-export-permissions-hash.util';
 
-const application: Pick<FlatApplication, 'id' | 'defaultRoleId' | 'deletedAt'> =
-  {
-    id: 'application-id',
-    defaultRoleId: 'role-id',
-    deletedAt: null,
-  };
+const application: Pick<
+  FlatApplication,
+  'id' | 'requestedRoleId' | 'deletedAt'
+> = {
+  id: 'application-id',
+  requestedRoleId: 'role-id',
+  deletedAt: null,
+};
 const permissionsHash = 'workspace-permissions';
+const grantRoleId = 'grant-role-id';
 
 const originalHash = computeRecordExportPermissionsHash({
   permissionsHash,
   application,
+  grantRoleId,
 });
 
 describe('computeRecordExportPermissionsHash', () => {
@@ -22,6 +26,7 @@ describe('computeRecordExportPermissionsHash', () => {
       computeRecordExportPermissionsHash({
         permissionsHash,
         application: updatedApplication,
+        grantRoleId,
       }),
     ).toBe(originalHash);
   });
@@ -31,6 +36,7 @@ describe('computeRecordExportPermissionsHash', () => {
       computeRecordExportPermissionsHash({
         permissionsHash: 'changed-workspace-permissions',
         application,
+        grantRoleId,
       }),
     ).not.toBe(originalHash);
   });
@@ -39,27 +45,37 @@ describe('computeRecordExportPermissionsHash', () => {
     {
       name: 'identity changes',
       application: { ...application, id: 'other-id' },
+      grantRoleId,
     },
     {
       name: 'default role changes',
-      application: { ...application, defaultRoleId: 'other-role-id' },
+      application: { ...application, requestedRoleId: 'other-role-id' },
+      grantRoleId,
     },
     {
       name: 'default role is removed',
-      application: { ...application, defaultRoleId: null },
+      application: { ...application, requestedRoleId: null },
+      grantRoleId,
     },
     {
       name: 'is deleted',
       application: { ...application, deletedAt: new Date('2026-10-14') },
+      grantRoleId,
     },
-    { name: 'is missing', application: undefined },
+    {
+      name: 'grant role changes',
+      application,
+      grantRoleId: 'other-grant-role-id',
+    },
+    { name: 'grant role is removed', application, grantRoleId: undefined },
   ])(
     'changes when the application $name',
-    ({ application: updatedApplication }) => {
+    ({ application: updatedApplication, grantRoleId: updatedGrantRoleId }) => {
       expect(
         computeRecordExportPermissionsHash({
           permissionsHash,
           application: updatedApplication,
+          grantRoleId: updatedGrantRoleId,
         }),
       ).not.toBe(originalHash);
     },

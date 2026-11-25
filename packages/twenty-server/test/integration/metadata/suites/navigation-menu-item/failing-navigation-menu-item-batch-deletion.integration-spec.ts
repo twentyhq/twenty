@@ -78,7 +78,6 @@ describe('NavigationMenuItem batch deletion should fail', () => {
         expectToFail: false,
         input: { id: createdNavigationMenuItemId },
       });
-      createdNavigationMenuItemId = undefined as unknown as string;
     }
   });
 

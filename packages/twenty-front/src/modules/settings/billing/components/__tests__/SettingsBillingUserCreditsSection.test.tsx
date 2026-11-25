@@ -41,7 +41,7 @@ const renderSection = ({
   store.set(currentUserWorkspaceState.atom, {
     permissionFlags: hasBillingPermission ? [PermissionFlagType.BILLING] : [],
     twoFactorAuthenticationMethodSummary: [],
-    objectsPermissions: [],
+    objectRecordsPermissions: [],
     isImpersonating: false,
   });
 

@@ -4,6 +4,8 @@ import { SettingsConnectedAccountIcon } from '@/settings/accounts/components/Set
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
+import { type ReactNode } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledNameCell = styled.div`
@@ -24,32 +26,39 @@ const StyledTableRowContainer = styled.div`
 
 type SettingsConnectedAccountsTableRowProps = {
   account: ConnectedAccount;
+  action?: ReactNode;
 };
 
 export const SettingsConnectedAccountsTableRow = ({
   account,
+  action,
 }: SettingsConnectedAccountsTableRowProps) => {
   const theme = useTheme();
   const IconComponent = SettingsConnectedAccountIcon({ account });
 
-  return (
-    <StyledTableRowContainer>
-      <TableRow key={account.id} gridTemplateColumns="minmax(0, 1fr) auto">
-        <TableCell>
-          <StyledNameCell>
-            <IconComponent
-              size={theme.icon.size.md}
-              stroke={theme.icon.stroke.sm}
-            />
-            {account.handle}
-          </StyledNameCell>
-        </TableCell>
-        <TableCell align="right">
-          <SettingsAccountsConnectedAccountsRowRightContainer
-            account={account}
+  const row = (
+    <TableRow key={account.id} gridTemplateColumns="minmax(0, 1fr) auto">
+      <TableCell>
+        <StyledNameCell>
+          <IconComponent
+            size={theme.icon.size.md}
+            stroke={theme.icon.stroke.sm}
           />
-        </TableCell>
-      </TableRow>
-    </StyledTableRowContainer>
+          {account.handle}
+        </StyledNameCell>
+      </TableCell>
+      <TableCell align="right">
+        <SettingsAccountsConnectedAccountsRowRightContainer
+          account={account}
+          action={action}
+        />
+      </TableCell>
+    </TableRow>
+  );
+
+  return isDefined(action) ? (
+    row
+  ) : (
+    <StyledTableRowContainer>{row}</StyledTableRowContainer>
   );
 };

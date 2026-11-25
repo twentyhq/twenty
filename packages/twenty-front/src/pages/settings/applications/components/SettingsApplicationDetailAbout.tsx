@@ -1,15 +1,16 @@
-import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
+import { LazyMarkdownRenderer } from '@/ai-chat/message-content/components/LazyMarkdownRenderer';
 import {
   type DeveloperLinks,
   SettingsApplicationAboutSidebar,
 } from '@/settings/applications/components/SettingsApplicationAboutSidebar';
 import { SettingsApplicationScreenshotGallery } from '@/settings/applications/components/SettingsApplicationScreenshotGallery';
+import { type ApplicationContentLink } from '@/settings/applications/types/ApplicationContentLink';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { getApplicationDescriptionSummary } from '@/settings/applications/utils/getApplicationDescriptionSummary';
+import { useLingui } from '@lingui/react/macro';
 
 type SettingsApplicationDetailAboutProps = {
   applicationId?: string | null;
@@ -18,13 +19,14 @@ type SettingsApplicationDetailAboutProps = {
   description?: string;
   aboutDescription?: string;
   pricingDescription?: string;
-  billsCredits?: boolean;
+  isPaid?: boolean;
   screenshots?: string[];
   author?: string;
   version?: string;
   installCount?: number;
   category?: string;
   developerLinks?: DeveloperLinks;
+  contentLink?: ApplicationContentLink;
   onShare?: () => void;
 };
 
@@ -133,15 +135,17 @@ export const SettingsApplicationDetailAbout = ({
   description,
   aboutDescription,
   pricingDescription,
-  billsCredits,
+  isPaid,
   screenshots,
   author,
   version,
   installCount,
   category,
   developerLinks,
+  contentLink,
   onShare,
 }: SettingsApplicationDetailAboutProps) => {
+  const { t } = useLingui();
   const hasScreenshots = isDefined(screenshots) && screenshots.length > 0;
 
   const descriptionSummary = getApplicationDescriptionSummary(description);
@@ -180,8 +184,9 @@ export const SettingsApplicationDetailAbout = ({
           installCount={installCount}
           category={category}
           pricingDescription={pricingDescription}
-          billsCredits={billsCredits}
+          isPaid={isPaid}
           developerLinks={developerLinks}
+          contentLink={contentLink}
         />
       </StyledSidebarColumn>
 

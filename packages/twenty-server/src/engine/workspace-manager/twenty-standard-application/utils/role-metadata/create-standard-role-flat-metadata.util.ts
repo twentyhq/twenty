@@ -16,6 +16,7 @@ export type CreateStandardRoleContext = {
   canAccessAllTools: boolean;
   canAccessAllAgentChatChannels: boolean;
   canReadAllObjectRecords: boolean;
+  canCreateAllObjectRecords: boolean;
   canUpdateAllObjectRecords: boolean;
   canSoftDeleteAllObjectRecords: boolean;
   canDestroyAllObjectRecords: boolean;
@@ -39,6 +40,7 @@ export const createStandardRoleFlatMetadata = ({
     canAccessAllTools,
     canAccessAllAgentChatChannels,
     canReadAllObjectRecords,
+    canCreateAllObjectRecords,
     canUpdateAllObjectRecords,
     canSoftDeleteAllObjectRecords,
     canDestroyAllObjectRecords,
@@ -59,10 +61,12 @@ export const createStandardRoleFlatMetadata = ({
     description,
     icon,
     isEditable,
+    isSystemSideEffect: false,
     canUpdateAllSettings,
     canAccessAllTools,
     canAccessAllAgentChatChannels,
     canReadAllObjectRecords,
+    canCreateAllObjectRecords,
     canUpdateAllObjectRecords,
     canSoftDeleteAllObjectRecords,
     canDestroyAllObjectRecords,
@@ -80,7 +84,9 @@ export const createStandardRoleFlatMetadata = ({
     rolePermissionFlagUniversalIdentifiers: [],
     objectPermissionUniversalIdentifiers: [],
     fieldPermissionIds: [],
+    rowLevelPermissionRuleIds: [],
     fieldPermissionUniversalIdentifiers: [],
+    rowLevelPermissionRuleUniversalIdentifiers: [],
     objectPermissionIds: [],
     roleTargetIds: [],
     roleTargetUniversalIdentifiers: [],

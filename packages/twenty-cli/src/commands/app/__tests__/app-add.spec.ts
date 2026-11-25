@@ -100,6 +100,13 @@ describe('app add', () => {
       path: 'src/front-components/invoice-panel.tsx',
       define: 'defineFrontComponent',
     },
+    {
+      entity: 'validation-rule',
+      name: 'invoice-has-amount',
+      options: ['--object', 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa'],
+      path: 'src/validation-rules/invoice-has-amount.ts',
+      define: 'defineValidationRule',
+    },
   ])(
     'creates a standalone $entity definition with app-relative JSON paths',
     async ({ entity, name, options, path, define }) => {
@@ -116,6 +123,12 @@ describe('app add', () => {
       const content = await readFile(join(appPath, path), 'utf8');
 
       expect(content).toContain(`export default ${define}({`);
+
+      if (entity === 'validation-rule') {
+        expect(content).toContain(
+          "objectUniversalIdentifier: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa'",
+        );
+      }
       expect(content).toMatch(
         /universalIdentifier: '[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}'/,
       );

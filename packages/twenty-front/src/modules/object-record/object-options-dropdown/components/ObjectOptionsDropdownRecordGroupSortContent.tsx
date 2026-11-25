@@ -17,7 +17,6 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { t } from '@lingui/core/macro';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -26,8 +25,10 @@ import {
   IconSortAZ,
   IconSortZA,
 } from 'twenty-ui/icon';
+import { useLingui } from '@lingui/react/macro';
 
 export const ObjectOptionsDropdownRecordGroupSortContent = () => {
+  const { t } = useLingui();
   const { currentContentId, onContentChange, dropdownId } =
     useObjectOptionsDropdown();
 

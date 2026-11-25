@@ -12,7 +12,7 @@ describe('collectUploadedFileReferences', () => {
   });
 
   it('should collect file parts from user messages across the thread', () => {
-    const messages = [
+    const messages: ExtendedUIMessage[] = [
       {
         id: '1',
         role: 'user',
@@ -31,7 +31,7 @@ describe('collectUploadedFileReferences', () => {
         role: 'user',
         parts: [buildFilePart('file-2', 'data.csv')],
       },
-    ] as unknown as ExtendedUIMessage[];
+    ];
 
     expect(collectUploadedFileReferences(messages)).toEqual([
       { filename: 'contract.pdf', fileId: 'file-1' },
@@ -40,13 +40,13 @@ describe('collectUploadedFileReferences', () => {
   });
 
   it('should deduplicate by fileId and default missing filenames', () => {
-    const messages = [
+    const messages: ExtendedUIMessage[] = [
       {
         id: '1',
         role: 'user',
         parts: [buildFilePart('file-1'), buildFilePart('file-1')],
       },
-    ] as unknown as ExtendedUIMessage[];
+    ];
 
     expect(collectUploadedFileReferences(messages)).toEqual([
       { filename: 'uploaded_file', fileId: 'file-1' },
@@ -54,13 +54,13 @@ describe('collectUploadedFileReferences', () => {
   });
 
   it('should ignore file parts on assistant messages', () => {
-    const messages = [
+    const messages: ExtendedUIMessage[] = [
       {
         id: '1',
         role: 'assistant',
         parts: [buildFilePart('file-1', 'generated.pdf')],
       },
-    ] as unknown as ExtendedUIMessage[];
+    ];
 
     expect(collectUploadedFileReferences(messages)).toEqual([]);
   });

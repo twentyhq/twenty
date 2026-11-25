@@ -3,10 +3,13 @@ import { getCoreAgentInitialFormValues } from '@/object-core/agents/utils/getCor
 const agent = {
   __typename: 'Agent' as const,
   id: 'agent-id',
+  universalIdentifier: 'agent-universal-identifier',
   name: 'salesAssistant',
   label: 'Sales assistant',
   description: 'Qualifies leads',
   icon: 'IconRobot',
+  avatarColor: 'pink',
+  avatarShape: 'pill',
   prompt: 'You qualify leads.',
   modelId: 'anthropic/claude-sonnet-5',
   responseFormat: { type: 'json', schema: {} },
@@ -35,19 +38,11 @@ describe('getCoreAgentInitialFormValues', () => {
       label: 'Sales assistant',
       description: 'Qualifies leads',
       icon: 'IconRobot',
+      avatarColor: 'pink',
+      avatarShape: 'pill',
       modelId: 'anthropic/claude-sonnet-5',
-      role: 'role-id',
       prompt: 'You qualify leads.',
       modelConfiguration: { webSearch: { enabled: true } },
-      triggers: [
-        {
-          id: '6f1b5a3e-3c3f-4f4a-9a43-0a7f5d6c2b11',
-          type: 'CRON',
-          isActive: true,
-          instructions: 'Send the weekly digest',
-          settings: { pattern: '0 9 * * 1' },
-        },
-      ],
     });
   });
 

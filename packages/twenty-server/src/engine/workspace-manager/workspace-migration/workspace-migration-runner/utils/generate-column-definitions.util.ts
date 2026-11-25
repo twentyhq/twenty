@@ -20,6 +20,7 @@ import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-fiel
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceSchemaColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-column-definition.type';
+import { buildServerOnlyCompositeColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/build-server-only-composite-column-definitions.util';
 import { computePostgresEnumName } from 'src/engine/workspace-manager/workspace-migration/utils/compute-postgres-enum-name.util';
 import { serializeDefaultValue } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/utils/serialize-default-value.util';
 import {
@@ -88,8 +89,8 @@ export const generateCompositeColumnDefinition = ({
       columnType === 'enum'
         ? `"${schemaName}"."${computePostgresEnumName({ tableName, columnName })}"`
         : columnType,
-    isNullable:
-      parentFlatFieldMetadata.isNullable || !compositeProperty.isRequired,
+    // Required sub-fields are defaulted on read; rows are written without them.
+    isNullable: true,
     default: serializedDefaultValue,
     isArray: isArrayFlag,
     isPrimary: false,
@@ -198,14 +199,20 @@ export const generateColumnDefinitions = ({
   if (isCompositeFlatFieldMetadata(flatFieldMetadata)) {
     const compositeType = getCompositeTypeOrThrow(flatFieldMetadata.type);
 
-    return compositeType.properties.map((property) =>
-      generateCompositeColumnDefinition({
-        compositeProperty: property,
-        parentFlatFieldMetadata: flatFieldMetadata,
-        flatObjectMetadata,
-        workspaceId,
+    return [
+      ...compositeType.properties.map((property) =>
+        generateCompositeColumnDefinition({
+          compositeProperty: property,
+          parentFlatFieldMetadata: flatFieldMetadata,
+          flatObjectMetadata,
+          workspaceId,
+        }),
+      ),
+      ...buildServerOnlyCompositeColumnDefinitions({
+        fieldType: flatFieldMetadata.type,
+        fieldName: flatFieldMetadata.name,
       }),
-    );
+    ];
   }
 
   if (

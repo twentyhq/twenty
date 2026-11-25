@@ -182,6 +182,7 @@ export const enrichChunk = async <TNode, TData, TParams>({
   recordIds,
   input,
   minLikelihoods,
+  required,
   adapter,
   resultById,
   companyIdByMatchKeyCache,
@@ -190,6 +191,7 @@ export const enrichChunk = async <TNode, TData, TParams>({
   recordIds: string[];
   input: BulkEnrichInput;
   minLikelihoods: MinLikelihoods;
+  required?: string;
   adapter: BatchEnrichmentAdapter<TNode, TData, TParams>;
   resultById: Map<string, EnrichResult>;
   companyIdByMatchKeyCache: CompanyIdByMatchKeyCache;
@@ -235,6 +237,7 @@ export const enrichChunk = async <TNode, TData, TParams>({
     const matchParams = adapter.extractParams({
       node: recordNode,
       minLikelihoods,
+      required,
     });
     if (!isDefined(matchParams)) {
       resultById.set(

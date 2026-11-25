@@ -35,7 +35,6 @@ import { getAdminWorkspaceLabel } from '@/settings/admin-panel/utils/getAdminWor
 import { getWorkspaceAvatarColorSeed } from '@/workspace/utils/getWorkspaceAvatarColorSeed';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
@@ -64,6 +63,7 @@ import {
   type WorkspaceLookupAdminPanelQuery,
 } from '~/generated-admin/graphql';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledFeatureFlagName = styled(OverflowingTextWithTooltip)`
   min-width: 0;
@@ -80,6 +80,7 @@ const WORKSPACE_DETAIL_TAB_IDS = {
 };
 
 export const SettingsAdminWorkspaceDetail = () => {
+  const { t } = useLingui();
   const { workspaceId } = useParams<{ workspaceId: string }>();
   const apolloAdminClient = useApolloAdminClient();
 
@@ -143,7 +144,9 @@ export const SettingsAdminWorkspaceDetail = () => {
     featureFlag: FeatureFlagKey,
     value: boolean,
   ) => {
-    if (!workspaceId) return;
+    if (!workspaceId) {
+      return;
+    }
 
     const previousValue = workspace?.featureFlags?.find(
       (flag) => flag.key === featureFlag,
@@ -371,7 +374,9 @@ export const SettingsAdminWorkspaceDetail = () => {
                       {workspace.users?.map((user) => {
                         const userId = user.id;
 
-                        if (!isDefined(userId)) return null;
+                        if (!isDefined(userId)) {
+                          return null;
+                        }
 
                         return (
                           <TableRow

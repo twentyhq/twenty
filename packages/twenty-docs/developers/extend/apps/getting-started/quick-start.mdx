@@ -8,7 +8,7 @@ import { CardTitle } from "/snippets/card-title.mdx"
 
 ## Before you start
 
-Use Node.js 24.5+ or 26.5+ and Yarn 4 (via Corepack: `corepack enable`; on Node 26, install it first with `npm install -g corepack`). Install the CLI globally; your app keeps its own SDK dependencies.
+Use Node.js 24 (24.5+) or 26 (26.5.1+) and Yarn 4 (via Corepack: `corepack enable`; on Node 26, install it first with `npm install -g corepack`). Install the CLI globally; your app keeps its own SDK dependencies.
 
 <Note>
 Building Twenty apps is officially supported on Unix systems (macOS and Linux) only. On Windows, work inside WSL 2.
@@ -30,8 +30,11 @@ yarn install
 Use an existing workspace, or start a [local server](/developers/extend/apps/getting-started/local-server), then sign in:
 
 ```bash
-twenty auth login --url https://your-workspace.twenty.com --name dev
+twenty auth login --url https://your-workspace.twenty.com --name dev --use
+twenty auth status --remote dev
 ```
+
+`--name dev` saves the connection as `dev`; `--use` makes it the default for the commands below. To target it explicitly, append `--remote dev`. Environment variables can override the default, see [workspace selection](/developers/extend/apps/operations/cli#connecting-to-a-workspace).
 
 ## Sync your changes
 

@@ -9,11 +9,12 @@ import {
   type ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { GraphqlQueryRunnerException } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
+import { CommonQueryRunnerException } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 
 describe('computeCursorArgFilter', () => {
   const workspaceId = 'workspace-id';
@@ -31,14 +32,13 @@ describe('computeCursorArgFilter', () => {
       objectMetadataId,
       isNullable: true,
       isLabelSyncedWithName: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: '2024-01-01T00:00:00.000Z',
+      updatedAt: '2024-01-01T00:00:00.000Z',
       universalIdentifier: overrides.id,
       viewFieldIds: [],
       viewFilterIds: [],
       kanbanAggregateOperationViewIds: [],
       calendarViewIds: [],
-      applicationId: null,
       label: overrides.name,
       ...overrides,
     }) as FlatFieldMetadata;
@@ -144,7 +144,7 @@ describe('computeCursorArgFilter', () => {
     companyContactNameField,
   ]);
 
-  const flatObjectMetadata: FlatObjectMetadata = {
+  const flatObjectMetadata: FlatObjectMetadata = getFlatObjectMetadataMock({
     id: objectMetadataId,
     workspaceId,
     nameSingular: 'person',
@@ -158,8 +158,8 @@ describe('computeCursorArgFilter', () => {
     isAuditLogged: false,
     isSearchable: false,
     icon: 'Icon123',
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    createdAt: '2024-01-01T00:00:00.000Z',
+    updatedAt: '2024-01-01T00:00:00.000Z',
     universalIdentifier: objectMetadataId,
     fieldIds: [
       'name-id',
@@ -171,17 +171,16 @@ describe('computeCursorArgFilter', () => {
     ],
     indexMetadataIds: [],
     viewIds: [],
-    applicationId: null,
-  } as unknown as FlatObjectMetadata;
+  });
 
-  const companyObjectMetadata = {
+  const companyObjectMetadata = getFlatObjectMetadataMock({
     id: 'company-object-id',
     universalIdentifier: 'company-object-id',
     workspaceId,
     nameSingular: 'company',
     namePlural: 'companies',
     fieldIds: ['company-name-id', 'company-contactname-id'],
-  } as unknown as FlatObjectMetadata;
+  });
 
   const flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> = {
     byUniversalIdentifier: {
@@ -471,7 +470,7 @@ describe('computeCursorArgFilter', () => {
           flatFieldMetadataMaps,
           isForwardPagination: true,
         }),
-      ).toThrow(GraphqlQueryRunnerException);
+      ).toThrow(CommonQueryRunnerException);
     });
 
     it('should throw error for missing orderBy entry', () => {
@@ -487,7 +486,7 @@ describe('computeCursorArgFilter', () => {
           flatFieldMetadataMaps,
           isForwardPagination: true,
         }),
-      ).toThrow(GraphqlQueryRunnerException);
+      ).toThrow(CommonQueryRunnerException);
     });
   });
 
@@ -760,19 +759,19 @@ describe('computeCursorArgFilter', () => {
   });
 
   describe('relation orderBy on a composite target field', () => {
-    const relationCompositeOrderBy = [
+    const relationCompositeOrderBy: ObjectRecordOrderBy = [
       {
         company: { contactName: { firstName: OrderByDirection.AscNullsLast } },
       },
       { company: { contactName: { lastName: OrderByDirection.AscNullsLast } } },
       { id: OrderByDirection.AscNullsFirst },
-    ] as unknown as ObjectRecordOrderBy;
+    ];
 
     it('should continue across both composite properties of the joined record', () => {
-      const cursor = {
+      const cursor: ObjectRecordCursor = {
         company: { contactName: { firstName: 'Ada', lastName: 'Lovelace' } },
         id: 'uuid-1',
-      } as unknown as ObjectRecordCursor;
+      };
 
       const result = computeCursorArgFilter({
         cursor,
@@ -823,10 +822,10 @@ describe('computeCursorArgFilter', () => {
     });
 
     it('should reject a cursor missing one composite property of the relation', () => {
-      const cursor = {
+      const cursor: ObjectRecordCursor = {
         company: { contactName: { firstName: 'Ada' } },
         id: 'uuid-1',
-      } as unknown as ObjectRecordCursor;
+      };
 
       expect(() =>
         computeCursorArgFilter({

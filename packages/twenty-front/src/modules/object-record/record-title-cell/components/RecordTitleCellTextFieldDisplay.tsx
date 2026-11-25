@@ -5,11 +5,11 @@ import { type RecordTitleCellContainerType } from '@/object-record/record-title-
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledDiv = styled.div`
   align-items: center;
@@ -38,6 +38,7 @@ export const RecordTitleCellSingleTextDisplayMode = ({
 }: {
   containerType: RecordTitleCellContainerType;
 }) => {
+  const { t } = useLingui();
   const { recordId, fieldDefinition } = useContext(FieldContext);
 
   const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);

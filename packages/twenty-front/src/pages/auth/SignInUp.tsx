@@ -94,10 +94,16 @@ export const SignInUp = () => {
   };
 
   const isGlobalScope = isDefaultDomain && isMultiWorkspaceEnabled;
+  const hasPersonalInviteToken = searchParams.has('inviteToken');
 
   const title = useMemo(() => {
     if (isDefined(workspaceInviteHash)) {
       const workspaceName = workspaceFromInviteHash?.displayName ?? '';
+      return t`Join ${workspaceName} team`;
+    }
+
+    if (hasPersonalInviteToken) {
+      const workspaceName = workspacePublicData?.displayName ?? '';
       return t`Join ${workspaceName} team`;
     }
 
@@ -118,7 +124,7 @@ export const SignInUp = () => {
     }
 
     if (signInUpStep === SignInUpStep.TwoFactorAuthenticationRecovery) {
-      return t`Use a recovery code`;
+      return t`Use a backup or recovery code`;
     }
 
     if (isGlobalScope) {
@@ -134,6 +140,7 @@ export const SignInUp = () => {
     return t`Welcome, ${workspaceName}.`;
   }, [
     workspaceInviteHash,
+    hasPersonalInviteToken,
     signInUpStep,
     workspacePublicData?.displayName,
     isGlobalScope,

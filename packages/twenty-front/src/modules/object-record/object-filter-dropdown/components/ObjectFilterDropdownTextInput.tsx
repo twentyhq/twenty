@@ -2,11 +2,12 @@ import { type ChangeEvent, useCallback, useState } from 'react';
 
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
 import { useObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useObjectFilterDropdownFilterValue';
-import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
+import { filterValueFieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/filterValueFieldMetadataItemUsedInDropdownComponentSelector';
 import { DropdownMenuInput } from '@/ui/layout/dropdown/components/DropdownMenuInput';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { isDefined } from 'twenty-shared/utils';
 
 type ObjectFilterDropdownTextInputProps = {
   filterDropdownId: string;
@@ -15,8 +16,8 @@ type ObjectFilterDropdownTextInputProps = {
 export const ObjectFilterDropdownTextInput = ({
   filterDropdownId,
 }: ObjectFilterDropdownTextInputProps) => {
-  const fieldMetadataItemUsedInDropdown = useAtomComponentSelectorValue(
-    fieldMetadataItemUsedInDropdownComponentSelector,
+  const filterValueFieldMetadataItem = useAtomComponentSelectorValue(
+    filterValueFieldMetadataItemUsedInDropdownComponentSelector,
   );
 
   const { objectFilterDropdownFilterValue } =
@@ -31,7 +32,7 @@ export const ObjectFilterDropdownTextInput = ({
 
   const handleInputRef = useCallback(
     (node: HTMLInputElement | null) => {
-      if (Boolean(node) && !hasFocused) {
+      if (isDefined(node) && !hasFocused) {
         node?.focus();
         node?.select();
         setHasFocused(true);
@@ -54,7 +55,7 @@ export const ObjectFilterDropdownTextInput = ({
         value={objectFilterDropdownFilterValue ?? ''}
         autoFocus
         type="text"
-        placeholder={fieldMetadataItemUsedInDropdown?.label}
+        placeholder={filterValueFieldMetadataItem?.label}
         onChange={handleInputChange}
         onEnter={() => {
           closeDropdown(filterDropdownId);

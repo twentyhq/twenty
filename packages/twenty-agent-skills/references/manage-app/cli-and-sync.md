@@ -66,6 +66,18 @@ twenty remote list
 twenty remote use <name>
 ```
 
+If the server sits behind an authenticating proxy (Cloudflare Access, Google IAP, Pomerium, oauth2-proxy), commands fail with `PROXY_AUTH_REQUIRED`. Ask the user how the proxy authenticates. Never invent or echo credentials. Then save its headers on the remote:
+
+```bash
+# Short-lived per-user token: a command that prints "Name: value" lines, rerun when the proxy rejects it.
+twenty auth login --url <url> --proxy-header-command 'echo "cf-access-token: $(cloudflared access token -app=<url>)"'
+
+# Fixed service-token headers, repeatable.
+twenty auth login --url <url> --proxy-header "CF-Access-Client-Id: <id>" --proxy-header "CF-Access-Client-Secret: <secret>"
+```
+
+In CI, set `TWENTY_PROXY_HEADERS` (one `Name: value` per line) or `TWENTY_PROXY_HEADER_COMMAND` instead. Proxy headers are only sent to the remote's API URL and cannot replace `Authorization`.
+
 When the user says "prod", "production", or "workspace de prod", identify the target remote before syncing or deploying. If it is missing, add it with `--as production` or the user-provided name.
 
 ## Development Sync
@@ -112,6 +124,7 @@ For remote or authentication issues:
 - Re-run `twenty auth login --url http://localhost:2020` for local app-dev servers.
 - Re-run `twenty auth login --url <url> --name <name>` for remote servers.
 - Avoid overwriting a production remote until the target URL is confirmed.
+- `PROXY_AUTH_REQUIRED` means a proxy in front of the server sent the request to its sign-in page; configure proxy headers as described under remotes. `PROXY_HEADERS_FAILED` means the proxy header command failed; have the user run it to sign in to the proxy again.
 
 For sync issues:
 

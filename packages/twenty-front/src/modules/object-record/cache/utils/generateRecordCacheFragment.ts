@@ -3,7 +3,7 @@ import { type DocumentNode, parse } from 'graphql';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import {
-  type ObjectPermissions,
+  type ObjectRecordsPermissions,
   type RecordGqlFields,
 } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
@@ -17,10 +17,7 @@ type GenerateRecordCacheFragmentArgs = {
   >;
   recordGqlFields?: RecordGqlFields;
   computeReferences?: boolean;
-  objectPermissionsByObjectMetadataId: Record<
-    string,
-    ObjectPermissions & { objectMetadataId: string }
-  >;
+  objectPermissionsByObjectMetadataId: Record<string, ObjectRecordsPermissions>;
 };
 
 // Same source, same document: Apollo memoizes document transforms by identity

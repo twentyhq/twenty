@@ -1,11 +1,12 @@
+import { Test } from '@nestjs/testing';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
-import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { CreateMessageListViewCommand } from 'src/database/commands/upgrade-version-command/2-20/2-20-workspace-command-1783525261001-create-message-list-view.command';
-import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 jest.mock(
   'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant',
@@ -47,7 +48,7 @@ describe('CreateMessageListViewCommand', () => {
   let getOrRecomputeMock: jest.Mock;
   let validateBuildAndRunWorkspaceMigrationMock: jest.Mock;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     jest.clearAllMocks();
 
     findApplicationMock = jest.fn().mockResolvedValue({
@@ -70,20 +71,33 @@ describe('CreateMessageListViewCommand', () => {
       },
     });
 
-    command = new CreateMessageListViewCommand(
-      {} as WorkspaceIteratorService,
-      {
-        findWorkspaceTwentyStandardAndCustomApplicationOrThrow:
-          findApplicationMock,
-      } as unknown as ApplicationService,
-      {
-        getOrRecompute: getOrRecomputeMock,
-      } as unknown as WorkspaceCacheService,
-      {
-        validateBuildAndRunWorkspaceMigration:
-          validateBuildAndRunWorkspaceMigrationMock,
-      } as unknown as WorkspaceMigrationValidateBuildAndRunService,
-    );
+    const module = await Test.createTestingModule({
+      providers: [
+        CreateMessageListViewCommand,
+        { provide: WorkspaceIteratorService, useValue: {} },
+        {
+          provide: ApplicationService,
+          useValue: {
+            findWorkspaceTwentyStandardAndCustomApplicationOrThrow:
+              findApplicationMock,
+          },
+        },
+        {
+          provide: WorkspaceCacheService,
+          useValue: {
+            getOrRecompute: getOrRecomputeMock,
+          },
+        },
+        {
+          provide: WorkspaceMigrationValidateBuildAndRunService,
+          useValue: {
+            validateBuildAndRunWorkspaceMigration:
+              validateBuildAndRunWorkspaceMigrationMock,
+          },
+        },
+      ],
+    }).compile();
+    command = module.get(CreateMessageListViewCommand);
   });
 
   const runOnWorkspace = (dryRun = false) =>

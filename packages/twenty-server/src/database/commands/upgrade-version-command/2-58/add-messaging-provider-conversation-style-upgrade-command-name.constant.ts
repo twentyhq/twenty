@@ -1,0 +1,2 @@
+export const ADD_MESSAGING_PROVIDER_CONVERSATION_STYLE_UPGRADE_COMMAND_NAME =
+  '2.58.0_AddMessagingProviderConversationStyleFastInstanceCommand_1794225486244';

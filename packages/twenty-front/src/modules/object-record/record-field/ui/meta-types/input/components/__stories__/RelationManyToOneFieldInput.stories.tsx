@@ -23,7 +23,10 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { CoreObjectNameSingular, FieldMetadataType } from 'twenty-shared/types';
+import {
+  StandardObjectNameSingular,
+  FieldMetadataType,
+} from 'twenty-shared/types';
 
 import { RelationManyToOneFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/RelationManyToOneFieldInput';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
@@ -97,7 +100,7 @@ const RelationManyToOneFieldInputWithContext = ({
               fieldName: 'company',
               relationObjectMetadataNamePlural: 'companies',
               relationObjectMetadataNameSingular:
-                CoreObjectNameSingular.Company,
+                StandardObjectNameSingular.Company,
               relationObjectMetadataId: companyMetadata.id,
               objectMetadataNameSingular: 'person',
               relationFieldMetadataId: peopleFieldOnCompany.id,

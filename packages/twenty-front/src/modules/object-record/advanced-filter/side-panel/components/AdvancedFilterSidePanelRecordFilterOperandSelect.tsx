@@ -5,10 +5,10 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
+import { useLingui } from '@lingui/react/macro';
 
 type AdvancedFilterSidePanelRecordFilterOperandSelectProps = {
   recordFilterId: string;
@@ -17,6 +17,7 @@ type AdvancedFilterSidePanelRecordFilterOperandSelectProps = {
 export const AdvancedFilterSidePanelRecordFilterOperandSelect = ({
   recordFilterId,
 }: AdvancedFilterSidePanelRecordFilterOperandSelectProps) => {
+  const { t } = useLingui();
   const { readonly, isWorkflowFindRecords } = useContext(AdvancedFilterContext);
   const currentRecordFilters = useAtomComponentStateValue(
     currentRecordFiltersComponentState,

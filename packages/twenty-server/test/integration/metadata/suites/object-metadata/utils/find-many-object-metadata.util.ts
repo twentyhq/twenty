@@ -11,20 +11,23 @@ import { type BaseGraphQLError } from 'src/engine/core-modules/graphql/utils/gra
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 
-export const findManyObjectMetadata = async ({
+export const findManyObjectMetadata = async <
+  TObject = ObjectMetadataDTO & { fieldsList?: FieldMetadataDTO[] },
+>({
   input,
   gqlFields,
   expectToFail,
+  token,
 }: PerformMetadataQueryParams<FindManyObjectMetadataFactoryInput>): Promise<{
   errors: BaseGraphQLError[];
-  objects: (ObjectMetadataDTO & { fieldsList?: FieldMetadataDTO[] })[];
+  objects: TObject[];
 }> => {
   const graphqlOperation = findManyObjectMetadataQueryFactory({
     input,
     gqlFields,
   });
 
-  const response = await makeMetadataApiRequest(graphqlOperation);
+  const response = await makeMetadataApiRequest(graphqlOperation, token);
 
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({

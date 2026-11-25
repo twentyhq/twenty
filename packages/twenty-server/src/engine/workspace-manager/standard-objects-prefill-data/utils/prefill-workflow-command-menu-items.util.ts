@@ -74,6 +74,7 @@ export const prefillWorkflowCommandMenuItems = async ({
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
     conditionalAvailabilityExpression: null,
     conditionalPinnedExpression: null,
+    availabilityCoreObjectName: null,
     availabilityObjectMetadataId: null,
     availabilityObjectMetadataUniversalIdentifier: null,
     navigationTargetObjectMetadataId: null,

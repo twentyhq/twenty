@@ -1,0 +1,89 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`View Sort read should fail when the view of the view sort is deleted 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "View sort (id: <id>) not found",
+  "name": "NotFoundError",
+}
+`;
+
+exports[`View Sort read should fail when the view of the view sort is deleted 2`] = `
+{
+  "code": "VIEW_SORT_NOT_FOUND",
+  "error": "Error",
+  "messages": [
+    "View sort (id: <id>) not found",
+  ],
+  "statusCode": 404,
+}
+`;
+
+exports[`View Sort read should fail when the view of the view sort is unlisted and belongs to another user 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "View sort (id: <id>) not found",
+  "name": "NotFoundError",
+}
+`;
+
+exports[`View Sort read should fail when the view of the view sort is unlisted and belongs to another user 2`] = `
+{
+  "code": "VIEW_SORT_NOT_FOUND",
+  "error": "Error",
+  "messages": [
+    "View sort (id: <id>) not found",
+  ],
+  "statusCode": 404,
+}
+`;
+
+exports[`View Sort read should fail when the view sort does not exist 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "View sort (id: <id>) not found",
+  "name": "NotFoundError",
+}
+`;
+
+exports[`View Sort read should fail when the view sort does not exist 2`] = `
+{
+  "code": "VIEW_SORT_NOT_FOUND",
+  "error": "Error",
+  "messages": [
+    "View sort (id: <id>) not found",
+  ],
+  "statusCode": 404,
+}
+`;
+
+exports[`View Sort read should fail when the view sort is deleted 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "View sort (id: <id>) not found",
+  "name": "NotFoundError",
+}
+`;
+
+exports[`View Sort read should fail when the view sort is deleted 2`] = `
+{
+  "code": "VIEW_SORT_NOT_FOUND",
+  "error": "Error",
+  "messages": [
+    "View sort (id: <id>) not found",
+  ],
+  "statusCode": 404,
+}
+`;

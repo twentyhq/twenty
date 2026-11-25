@@ -7,7 +7,6 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
@@ -15,6 +14,7 @@ import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconChevronRight } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { GetServerAdminsDocument } from '~/generated-admin/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 const SERVER_ADMINS_GRID_TEMPLATE_COLUMNS = '1fr 2fr 1fr 36px';
 
@@ -24,6 +24,7 @@ const StyledEmptyState = styled.div`
 `;
 
 export const SettingsAdminServerAdmins = () => {
+  const { t } = useLingui();
   const theme = useTheme();
   const apolloAdminClient = useApolloAdminClient();
 

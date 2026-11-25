@@ -5,14 +5,17 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsAccountsBlocklistInput } from '@/settings/accounts/components/SettingsAccountsBlocklistInput';
 import { SettingsAccountsBlocklistTable } from '@/settings/accounts/components/SettingsAccountsBlocklistTable';
 import { useLingui } from '@lingui/react/macro';
-import { BlocklistScope, CoreObjectNameSingular } from 'twenty-shared/types';
+import {
+  BlocklistScope,
+  StandardObjectNameSingular,
+} from 'twenty-shared/types';
 import { Section } from 'twenty-ui/components/layout';
 
 export const SettingsWorkspaceBlocklistSection = () => {
   const { t } = useLingui();
 
   const { records: workspaceBlocklist } = useFindManyRecords<BlocklistItem>({
-    objectNameSingular: CoreObjectNameSingular.Blocklist,
+    objectNameSingular: StandardObjectNameSingular.Blocklist,
     filter: {
       scope: { eq: BlocklistScope.WORKSPACE },
     },
@@ -20,11 +23,11 @@ export const SettingsWorkspaceBlocklistSection = () => {
 
   const { createManyRecords: createBlocklistItems } =
     useCreateManyRecords<BlocklistItem>({
-      objectNameSingular: CoreObjectNameSingular.Blocklist,
+      objectNameSingular: StandardObjectNameSingular.Blocklist,
     });
 
   const { deleteOneRecord: deleteBlocklistItem } = useDeleteOneRecord({
-    objectNameSingular: CoreObjectNameSingular.Blocklist,
+    objectNameSingular: StandardObjectNameSingular.Blocklist,
   });
 
   const handleBlockedEmailRemove = (id: string) => {

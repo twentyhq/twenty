@@ -1,6 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { GraphWidgetTestWrapper } from '@/page-layout/widgets/graph/__tests__/GraphWidgetTestWrapper';
 import { GraphWidgetPieChart } from '@/page-layout/widgets/graph/graph-widget-pie-chart/components/GraphWidgetPieChart';
 import { CatalogDecorator, ComponentDecorator } from 'twenty-ui/testing';
@@ -14,7 +14,7 @@ import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMet
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow(
-  CoreObjectNameSingular.Company,
+  StandardObjectNameSingular.Company,
 );
 const idField = getMockFieldMetadataItemOrThrow({
   objectMetadataItem: companyObjectMetadataItem,

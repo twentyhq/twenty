@@ -1,15 +1,16 @@
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { Test } from '@nestjs/testing';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
-import { type Repository } from 'typeorm';
 
-import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { BackfillActivityTargetsJunctionTargetCommand } from 'src/database/commands/upgrade-version-command/2-33/2-33-workspace-command-1787123540000-backfill-activity-targets-junction-target.command';
 import { invalidateFieldMetadataCache } from 'src/database/commands/upgrade-version-command/utils/invalidate-field-metadata-cache.util';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { type WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
 
 jest.mock(
   'src/database/commands/upgrade-version-command/utils/invalidate-field-metadata-cache.util',
@@ -20,14 +21,10 @@ const invalidateFieldMetadataCacheMock = jest.mocked(
 );
 
 const WORKSPACE_ID = '20202020-0000-0000-0000-000000000001';
-const NOTE_TARGET_OBJECT_METADATA_ID =
-  '20202020-0000-0000-0000-000000000002';
-const TASK_TARGET_OBJECT_METADATA_ID =
-  '20202020-0000-0000-0000-000000000003';
-const NOTE_TARGETS_FIELD_METADATA_ID =
-  '20202020-0000-0000-0000-000000000004';
-const TASK_TARGETS_FIELD_METADATA_ID =
-  '20202020-0000-0000-0000-000000000005';
+const NOTE_TARGET_OBJECT_METADATA_ID = '20202020-0000-0000-0000-000000000002';
+const TASK_TARGET_OBJECT_METADATA_ID = '20202020-0000-0000-0000-000000000003';
+const NOTE_TARGETS_FIELD_METADATA_ID = '20202020-0000-0000-0000-000000000004';
+const TASK_TARGETS_FIELD_METADATA_ID = '20202020-0000-0000-0000-000000000005';
 const LEGACY_NOTE_TARGET_PERSON_FIELD_METADATA_ID =
   '20202020-0000-0000-0000-000000000006';
 const LEGACY_TASK_TARGET_PERSON_FIELD_METADATA_ID =
@@ -105,7 +102,7 @@ describe('BackfillActivityTargetsJunctionTargetCommand', () => {
   let findOneMock: jest.Mock;
   let updateMock: jest.Mock;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     jest.clearAllMocks();
 
     findOneMock = jest
@@ -135,23 +132,33 @@ describe('BackfillActivityTargetsJunctionTargetCommand', () => {
             }),
         ),
       },
-    } as unknown as Repository<FieldMetadataEntity>;
+    };
 
-    command = new BackfillActivityTargetsJunctionTargetCommand(
-      {} as WorkspaceIteratorService,
-      {
-        getOrRecompute: jest.fn().mockResolvedValue({
-          flatFieldMetadataMaps: buildFlatFieldMetadataMaps([
-            NOTE_TARGETS_FLAT_FIELD_METADATA,
-            TASK_TARGETS_FLAT_FIELD_METADATA,
-            LEGACY_NOTE_TARGET_PERSON_FLAT_FIELD_METADATA,
-            LEGACY_TASK_TARGET_PERSON_FLAT_FIELD_METADATA,
-          ]),
-        }),
-      } as unknown as WorkspaceCacheService,
-      {} as WorkspaceMigrationRunnerService,
-      fieldMetadataRepository,
-    );
+    const module = await Test.createTestingModule({
+      providers: [
+        BackfillActivityTargetsJunctionTargetCommand,
+        { provide: WorkspaceIteratorService, useValue: {} },
+        {
+          provide: WorkspaceCacheService,
+          useValue: {
+            getOrRecompute: jest.fn().mockResolvedValue({
+              flatFieldMetadataMaps: buildFlatFieldMetadataMaps([
+                NOTE_TARGETS_FLAT_FIELD_METADATA,
+                TASK_TARGETS_FLAT_FIELD_METADATA,
+                LEGACY_NOTE_TARGET_PERSON_FLAT_FIELD_METADATA,
+                LEGACY_TASK_TARGET_PERSON_FLAT_FIELD_METADATA,
+              ]),
+            }),
+          },
+        },
+        { provide: WorkspaceMigrationRunnerService, useValue: {} },
+        {
+          provide: getRepositoryToken(FieldMetadataEntity),
+          useValue: fieldMetadataRepository,
+        },
+      ],
+    }).compile();
+    command = module.get(BackfillActivityTargetsJunctionTargetCommand);
   });
 
   it('backfills legacy note and task target person relation identifiers', async () => {

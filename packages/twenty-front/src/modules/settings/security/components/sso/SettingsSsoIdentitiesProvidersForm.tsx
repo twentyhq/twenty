@@ -6,14 +6,15 @@ import { SettingsSsoOidcForm } from '@/settings/security/components/sso/Settings
 import { SettingsSsoSamlForm } from '@/settings/security/components/sso/SettingsSsoSamlForm';
 import { type SettingSecurityNewSsoIdentityFormValues } from '@/settings/security/types/SsoIdentityProvider';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { t } from '@lingui/core/macro';
 import { type ReactElement, useMemo } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { Section } from 'twenty-ui/components/layout';
 import { type IconComponent, IconKey } from 'twenty-ui/icon';
 import { IdentityProviderType } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 export const SettingsSsoIdentitiesProvidersForm = () => {
+  const { t } = useLingui();
   const { control, watch } =
     useFormContext<SettingSecurityNewSsoIdentityFormValues>();
 

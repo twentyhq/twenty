@@ -10,7 +10,7 @@ import { updateCallRecording } from 'src/logic-functions/data/utils/updateCallRe
 import { enqueueCallRecordingArtifactsImport } from 'src/logic-functions/data/utils/enqueueCallRecordingArtifactsImport';
 
 export const recoverDesktopRecordings = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'query' | 'mutation'>,
   now: Date,
 ): Promise<{ recovered: number }> => {
   const config = getRecallApiConfig();

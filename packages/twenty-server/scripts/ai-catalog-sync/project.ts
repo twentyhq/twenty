@@ -5,10 +5,8 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 
 import { type CatalogSpec } from './types/catalog-spec.type';
-import {
-  type CanonicalCatalog,
-  projectCatalog,
-} from './utils/project-catalog.util';
+import { type CanonicalCatalog } from './types/canonical-catalog.type';
+import { projectCatalog } from './utils/project-catalog.util';
 
 const DEFAULT_CATALOG_PATH = resolve(
   __dirname,

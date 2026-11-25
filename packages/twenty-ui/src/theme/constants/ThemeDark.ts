@@ -108,6 +108,7 @@ export const THEME_DARK: typeof THEME_LIGHT = {
     invertedPrimary: 'color(display-p3 0.922 0.922 0.922)',
     invertedSecondary: 'color(display-p3 0.702 0.702 0.702)',
     danger: 'color(display-p3 0.211 0.081 0.099)',
+    dangerSolid: 'color(display-p3 0.744 0.234 0.222)',
     transparent: {
       primary: 'color(display-p3 0 0 0 / 0.5)',
       secondary: 'color(display-p3 0 0 0 / 0.4)',

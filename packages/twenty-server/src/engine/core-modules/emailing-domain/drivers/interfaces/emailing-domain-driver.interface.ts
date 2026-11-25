@@ -16,6 +16,9 @@ export type EmailingDomainVerificationResult = {
 };
 
 export interface EmailingDomainDriverInterface {
+  assertDomainIsAvailableOrThrow(
+    input: EmailingDomainResourceInput,
+  ): Promise<void>;
   provisionWorkspace(workspaceId: string): Promise<void>;
   deprovisionWorkspace(workspaceId: string): Promise<void>;
   verifyDomain(
@@ -25,6 +28,7 @@ export interface EmailingDomainDriverInterface {
     input: EmailingDomainResourceInput,
   ): Promise<EmailingDomainVerificationResult>;
   registerDomain(input: EmailingDomainResourceInput): Promise<void>;
+  retryVerification(input: EmailingDomainResourceInput): Promise<void>;
   cleanupDomain(input: EmailingDomainResourceInput): Promise<void>;
   sendEmail(
     input: EmailingDomainSendEmailRequest,

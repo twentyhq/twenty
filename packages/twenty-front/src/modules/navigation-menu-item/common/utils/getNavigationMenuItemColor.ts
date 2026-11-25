@@ -34,6 +34,12 @@ export const getNavigationMenuItemColor = (
       : DEFAULT_NAVIGATION_MENU_ITEM_COLOR_PAGE_LAYOUT;
   }
 
+  if (navigationMenuItem.type === NavigationMenuItemType.NATIVE_PAGE) {
+    return isNonEmptyString(navigationMenuItem.color)
+      ? (navigationMenuItem.color as ThemeColor)
+      : DEFAULT_THEME_COLOR_FALLBACK;
+  }
+
   if (
     navigationMenuItem.type === NavigationMenuItemType.OBJECT ||
     navigationMenuItem.type === NavigationMenuItemType.VIEW

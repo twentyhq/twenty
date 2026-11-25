@@ -21,9 +21,24 @@ export class RowLevelPermissionPredicateGroupDTO {
   @Field(() => Number, { nullable: true })
   positionInRowLevelPermissionPredicateGroup?: number | null;
 
+  @Field(() => Boolean)
+  canReadRecords: boolean;
+
+  @Field(() => Boolean)
+  canUpdateRecords: boolean;
+
+  @Field(() => Boolean)
+  canSoftDeleteRecords: boolean;
+
+  @Field(() => Boolean)
+  canDestroyRecords: boolean;
+
   @Field(() => String)
   roleId: string;
 
   @Field(() => String)
   objectMetadataId: string;
+
+  @Field(() => String, { nullable: true })
+  rowLevelPermissionRuleId?: string | null;
 }

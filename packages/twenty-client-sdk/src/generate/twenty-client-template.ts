@@ -226,7 +226,7 @@ export class TwentyGeneratedClient {
     filename,
     fieldMetadataUniversalIdentifier,
   }: {
-    fileBuffer: Buffer;
+    fileBuffer: Uint8Array;
     filename: string;
     fieldMetadataUniversalIdentifier: string;
   }): Promise<FilesFieldUploadedFile> {
@@ -263,7 +263,7 @@ export class TwentyGeneratedClient {
     fileBuffer,
     uploadTarget,
   }: {
-    fileBuffer: Buffer;
+    fileBuffer: Uint8Array;
     uploadTarget: FilesFieldUploadTarget;
   }): Promise<void> {
     const fetchImplementation = this.getFetchImplementationOrThrow();

@@ -10,7 +10,7 @@ import {
   RecordShareException,
   RecordShareExceptionCode,
 } from 'src/engine/permissions/record-share/record-share.exception';
-import { RecordSharingService } from 'src/engine/permissions/record-share/services/record-sharing.service';
+import { RecordSharingWriteService } from 'src/engine/permissions/record-share/services/record-sharing-write.service';
 import { ShareRecordToolInputZodSchema } from 'src/engine/core-modules/tool/tools/share-record-tool/share-record-tool.schema';
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
@@ -31,7 +31,7 @@ export class ShareRecordTool implements Tool {
   constructor(
     private readonly featureFlagService: FeatureFlagService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly recordSharingService: RecordSharingService,
+    private readonly recordSharingWriteService: RecordSharingWriteService,
   ) {}
 
   isEnabled(workspaceId: string): Promise<boolean> {
@@ -100,7 +100,7 @@ export class ShareRecordTool implements Tool {
     }
 
     try {
-      await this.recordSharingService.setShare({
+      await this.recordSharingWriteService.setShare({
         objectMetadataId,
         recordId,
         principal: {

@@ -4,6 +4,10 @@ import { getConnection, kv } from 'twenty-sdk/logic-function';
 import { isDefined } from 'src/utils/is-defined';
 
 import { FATHOM_INITIAL_BACKFILL_DAYS } from 'src/constants/fathom.constant';
+import {
+  FATHOM_USER_WEBHOOK_TRIGGERS,
+  FATHOM_WORKSPACE_WEBHOOK_TRIGGERS,
+} from 'src/constants/fathom-webhook-triggers.constant';
 import { FATHOM_REGISTER_CONNECTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { type FathomConnectionHookPayload } from 'src/logic-functions/types/fathom-connection-hook-payload.type';
 import { type FathomWebhookRegistration } from 'src/logic-functions/types/fathom-webhook-registration.type';
@@ -95,11 +99,10 @@ export const fathomRegisterConnectionHandler = async (
         apiUrl,
         connectedAccountId: payload.connectedAccountId,
       }),
-      triggeredFor: [
-        'my_recordings',
-        'my_shared_with_team_recordings',
-        'shared_team_recordings',
-      ],
+      triggeredFor:
+        connection.scope === 'USER'
+          ? FATHOM_USER_WEBHOOK_TRIGGERS
+          : FATHOM_WORKSPACE_WEBHOOK_TRIGGERS,
       includeTranscript: true,
       includeSummary: true,
       includeActionItems: true,

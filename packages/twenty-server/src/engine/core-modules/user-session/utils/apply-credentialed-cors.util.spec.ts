@@ -1,8 +1,5 @@
 import { Logger } from '@nestjs/common';
 
-import { type Request } from 'express';
-
-import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { warnOnceOnDisallowedBrowserPreflight } from 'src/engine/core-modules/user-session/utils/apply-credentialed-cors.util';
 
 describe('warnOnceOnDisallowedBrowserPreflight', () => {
@@ -16,8 +13,8 @@ describe('warnOnceOnDisallowedBrowserPreflight', () => {
   let mockConfig: Record<string, unknown> = { ...defaultConfig };
 
   const twentyConfigService = {
-    get: jest.fn((key: string) => mockConfig[key]),
-  } as unknown as TwentyConfigService;
+    get: jest.fn().mockImplementation((key: string) => mockConfig[key]),
+  };
 
   const buildPreflightRequest = ({
     origin,
@@ -29,16 +26,15 @@ describe('warnOnceOnDisallowedBrowserPreflight', () => {
     host?: string;
     method?: string;
     requestedMethod?: string;
-  }): Request =>
-    ({
-      method,
-      protocol: 'https',
-      headers: {
-        origin,
-        'access-control-request-method': requestedMethod,
-      },
-      get: jest.fn().mockReturnValue(host),
-    }) as unknown as Request;
+  }) => ({
+    method,
+    protocol: 'https',
+    headers: {
+      origin,
+      'access-control-request-method': requestedMethod,
+    },
+    get: jest.fn().mockReturnValue(host),
+  });
 
   let warnSpy: jest.SpyInstance;
   let warnedOrigins: Set<string>;

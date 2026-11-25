@@ -18,6 +18,8 @@ const appAgent: FlatAgent = {
   name: 'researcher',
   label: 'Researcher',
   icon: 'IconRobot',
+  avatarColor: null,
+  avatarShape: null,
   description: 'Finds things',
   prompt: 'Research the company',
   modelId: 'auto',
@@ -26,7 +28,11 @@ const appAgent: FlatAgent = {
   triggers: [],
   isSystem: true,
   isActive: true,
+  isPrivate: false,
+  createdByUserWorkspaceId: null,
   overrides: null,
+  navigationMenuItemIds: [],
+  navigationMenuItemUniversalIdentifiers: [],
   createdAt: '2026-10-01T00:00:00.000Z',
   updatedAt: '2026-10-01T00:00:00.000Z',
   deletedAt: null,
@@ -65,6 +71,7 @@ const updateAsWorkspace = (
       WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
     workspaceCustomApplicationUniversalIdentifier:
       WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+    userWorkspaceId: undefined,
   });
 
 describe('fromUpdateAgentInputToFlatAgentToUpdate', () => {
@@ -129,6 +136,7 @@ describe('fromUpdateAgentInputToFlatAgentToUpdate', () => {
         WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
       workspaceCustomApplicationUniversalIdentifier:
         WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+      userWorkspaceId: undefined,
     });
 
     expect(flatAgentToUpdate.overrides).toBeNull();
@@ -140,7 +148,7 @@ describe('fromUpdateAgentInputToFlatAgentToUpdate', () => {
     const { flatAgentToUpdate } = updateAsWorkspace({
       id: appAgent.id,
       label: 'Market researcher',
-      isActive: null as unknown as boolean,
+      isActive: null,
     });
 
     expect(flatAgentToUpdate.isActive).toBe(true);

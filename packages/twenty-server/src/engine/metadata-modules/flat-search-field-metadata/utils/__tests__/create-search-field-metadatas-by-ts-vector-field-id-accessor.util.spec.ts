@@ -5,14 +5,23 @@ import { createSearchFieldMetadatasByTsVectorFieldIdAccessor } from 'src/engine/
 const buildFlatSearchFieldMetadata = (
   universalIdentifier: string,
   tsVectorFieldMetadataId: string,
-): FlatSearchFieldMetadata =>
-  ({
-    id: universalIdentifier,
-    universalIdentifier,
-    tsVectorFieldMetadataId,
-    fieldMetadataId: `field-${universalIdentifier}`,
-    position: 0,
-  }) as unknown as FlatSearchFieldMetadata;
+): FlatSearchFieldMetadata => ({
+  id: universalIdentifier,
+  universalIdentifier,
+  tsVectorFieldMetadataId,
+  tsVectorFieldMetadataUniversalIdentifier: tsVectorFieldMetadataId,
+  fieldMetadataId: `field-${universalIdentifier}`,
+  fieldMetadataUniversalIdentifier: `field-${universalIdentifier}`,
+  position: 0,
+  objectMetadataId: 'object-metadata-id',
+  objectMetadataUniversalIdentifier: 'object-metadata-universal-identifier',
+  isSystemSideEffect: false,
+  workspaceId: 'workspace-id',
+  applicationId: 'application-id',
+  applicationUniversalIdentifier: 'application-universal-identifier',
+  createdAt: '2026-01-01T00:00:00.000Z',
+  updatedAt: '2026-01-01T00:00:00.000Z',
+});
 
 const buildMaps = (
   flatSearchFieldMetadatas: FlatSearchFieldMetadata[],

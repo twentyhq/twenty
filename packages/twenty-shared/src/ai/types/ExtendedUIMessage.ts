@@ -20,6 +20,10 @@ type Metadata = {
   startedAt?: string;
   finishedAt?: string;
   senderWorkspaceMemberId?: string | null;
+  senderApplicationId?: string | null;
+  agentId?: string | null;
+  isBuiltInAssistant?: boolean;
+  turnId?: string | null;
   usage?: AiChatUsageMetadata;
   model?: AiChatModelMetadata;
 };

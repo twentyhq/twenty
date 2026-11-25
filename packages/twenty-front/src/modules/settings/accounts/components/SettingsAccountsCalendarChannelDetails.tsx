@@ -1,15 +1,16 @@
 import { type CalendarChannel } from '@/accounts/types/CalendarChannel';
 import { UPDATE_CALENDAR_CHANNEL } from '@/settings/accounts/graphql/mutations/updateCalendarChannel';
 import { useMutation } from '@apollo/client/react';
+import { SettingsAccountsChannelSyncSection } from '@/settings/accounts/components/SettingsAccountsChannelSyncSection';
 import { SettingsAccountsEventVisibilitySettingsCard } from '@/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { Section } from 'twenty-ui/components/layout';
 import { IconEyeOff, IconUserPlus } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type CalendarChannelVisibility } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledDetailsContainer = styled.div`
   display: flex;
@@ -31,6 +32,7 @@ type SettingsAccountsCalendarChannelDetailsProps = {
 export const SettingsAccountsCalendarChannelDetails = ({
   calendarChannel,
 }: SettingsAccountsCalendarChannelDetailsProps) => {
+  const { t } = useLingui();
   const [updateMetadataChannel] = useMutation(UPDATE_CALENDAR_CHANNEL);
 
   const updateChannel = (update: Record<string, unknown>) => {
@@ -51,8 +53,19 @@ export const SettingsAccountsCalendarChannelDetails = ({
     updateChannel({ excludePrivateEvents: value });
   };
 
+  const handleIsSyncEnabledToggle = (value: boolean) => {
+    updateChannel({ isSyncEnabled: value });
+  };
+
   return (
     <StyledDetailsContainer>
+      <SettingsAccountsChannelSyncSection
+        sectionDescription={t`Pause or resume importing events from this account`}
+        switchTitle={t`Sync calendar`}
+        switchDescription={t`Import new events from this account`}
+        isSyncEnabled={calendarChannel.isSyncEnabled}
+        onIsSyncEnabledChange={handleIsSyncEnabledToggle}
+      />
       <Section.Root>
         <Section.Header
           title={t`Event visibility`}

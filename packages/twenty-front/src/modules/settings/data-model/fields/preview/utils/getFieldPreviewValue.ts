@@ -17,7 +17,9 @@ export const getFieldPreviewValue = ({
   fieldSettings,
   defaultValue,
 }: getFieldPreviewValueArgs) => {
-  if (!isFieldTypeSupportedInSettings(fieldType)) return null;
+  if (!isFieldTypeSupportedInSettings(fieldType)) {
+    return null;
+  }
 
   if (
     !isFieldValueEmpty({

@@ -3,12 +3,12 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { ChartGroupByFieldSelectionTargetObjectFieldsView } from '@/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionTargetObjectFieldsView';
 import { ChartSettingsDropdownSection } from '@/side-panel/pages/page-layout/components/chart-settings/ChartSettingsDropdownSection';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { useIcons } from 'twenty-ui/icon/provider';
 import { RelationType } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 type ChartGroupByFieldSelectionMorphRelationFieldViewProps = {
   pageId: string;
@@ -19,6 +19,7 @@ export const ChartGroupByFieldSelectionMorphRelationFieldView = ({
   pageId,
   morphField,
 }: ChartGroupByFieldSelectionMorphRelationFieldViewProps) => {
+  const { t } = useLingui();
   const { getIcon } = useIcons();
   const { objectMetadataItems } = useObjectMetadataItems();
   const availableTargets = useMemo(

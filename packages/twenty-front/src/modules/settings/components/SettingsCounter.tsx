@@ -3,7 +3,6 @@ import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isInteger, isNonEmptyString } from '@sniptt/guards';
 import { useId, useRef } from 'react';
 import { Key } from 'ts-key-enum';
@@ -13,6 +12,7 @@ import {
   type NumberStepperProps,
 } from 'twenty-ui/components/input';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const SETTINGS_COUNTER_CARET_NAVIGATION_KEYS: string[] = [Key.Home, Key.End];
 
@@ -49,6 +49,7 @@ export const SettingsCounter = ({
   'aria-labelledby': ariaLabelledBy,
   'aria-describedby': ariaDescribedBy,
 }: SettingsCounterProps) => {
+  const { t } = useLingui();
   const instanceId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();

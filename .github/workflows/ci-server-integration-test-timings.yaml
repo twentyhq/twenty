@@ -16,6 +16,11 @@ jobs:
     uses: ./.github/workflows/ci-server-integration-test.yaml
     with:
       record-timings: true
+    secrets:
+      OKTA_SSO_TEST_CLIENT_SECRET: ${{ secrets.OKTA_SSO_TEST_CLIENT_SECRET }}
+      OKTA_SSO_TEST_PASSWORD: ${{ secrets.OKTA_SSO_TEST_PASSWORD }}
+      OKTA_SSO_TEST_NON_MEMBER_PASSWORD: ${{ secrets.OKTA_SSO_TEST_NON_MEMBER_PASSWORD }}
+      OKTA_SSO_TEST_NEWCOMER_PASSWORD: ${{ secrets.OKTA_SSO_TEST_NEWCOMER_PASSWORD }}
 
   save-integration-test-timings:
     needs: server-integration-test
@@ -32,12 +37,10 @@ jobs:
           merge-multiple: true
           path: shard-timings
       - name: Download previous timings
-        if: needs.server-integration-test.outputs.timings-run-id != ''
+        if: needs.server-integration-test.outputs.has-previous-timings == 'true'
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
-          name: integration-test-timings
-          run-id: ${{ needs.server-integration-test.outputs.timings-run-id }}
-          github-token: ${{ github.token }}
+          name: previous-integration-test-timings
           path: previous-timings
       - name: Merge shard timings into previous timings
         run: |

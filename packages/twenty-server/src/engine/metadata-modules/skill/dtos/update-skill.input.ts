@@ -44,6 +44,6 @@ export class UpdateSkillInput {
 
   @IsBoolean()
   @IsOptional()
-  @Field({ nullable: true })
-  isActive?: boolean;
+  @Field(() => Boolean, { nullable: true })
+  isActive?: boolean | null;
 }

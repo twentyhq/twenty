@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 import { emailFieldSchema } from '@/partner-application/email-field-schema';
-import { httpUrlFieldSchema } from '@/partner-application/http-url-field-schema';
+import { lenientHttpUrlFieldSchema } from '@/partner-application/lenient-http-url-field-schema';
 
 import { AFFILIATE_PARTNER_TYPE_OPTIONS } from './data/affiliate-partner-type-options';
 
@@ -15,11 +15,10 @@ export const affiliateApplicationRequestSchema = z.strictObject({
   partnerType: z.enum(partnerTypeValues, {
     error: 'Partner type is required.',
   }),
-  mainChannel: httpUrlFieldSchema.optional(),
+  mainChannel: lenientHttpUrlFieldSchema,
   audienceSize: z.string().trim().max(200).optional(),
   country: z.string().trim().max(100).optional(),
   promotionPlan: z.string().trim().max(2000).optional(),
-  isIntegrationPartner: z.boolean().optional(),
   acceptsTerms: z.literal(true, {
     error: 'The program terms must be accepted.',
   }),

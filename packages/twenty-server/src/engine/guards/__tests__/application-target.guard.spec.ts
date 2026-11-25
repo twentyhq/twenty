@@ -1,7 +1,9 @@
 import { type ExecutionContext } from '@nestjs/common';
 import { GUARDS_METADATA } from '@nestjs/common/constants';
 import { Reflector } from '@nestjs/core';
-import { GqlExecutionContext } from '@nestjs/graphql';
+import { Test } from '@nestjs/testing';
+
+import { buildExecutionContextMock } from 'test/utils/build-execution-context-mock.util';
 
 import { APPLICATION_TARGET_METADATA_KEY } from 'src/engine/core-modules/application/constants/application-target-metadata-key.constant';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
@@ -10,13 +12,13 @@ import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-tar
 import { ApplicationTargetArgs } from 'src/engine/decorators/auth/application-target-args.decorator';
 import { ApplicationTargetParam } from 'src/engine/decorators/auth/application-target-param.decorator';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
-import { type WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { type ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
 import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
-import { type ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
+import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import {
   ApplicationException,
   ApplicationExceptionCode,
@@ -133,17 +135,12 @@ describe('ApplicationTargetGuard', () => {
     args: Record<string, unknown>;
     application?: FlatApplication;
   }): ExecutionContext => {
-    jest.spyOn(GqlExecutionContext, 'create').mockReturnValue({
-      getArgs: () => args,
-      getContext: () => ({
-        req: { application, workspace: { id: WORKSPACE_ID } },
-      }),
-    } as unknown as GqlExecutionContext);
-
-    return {
-      getType: () => 'graphql',
-      getHandler: () => handler,
-    } as unknown as ExecutionContext;
+    return buildExecutionContextMock({
+      type: 'graphql',
+      handler,
+      graphqlArguments: args,
+      request: { application, workspace: { id: WORKSPACE_ID } },
+    });
   };
 
   const buildHttpContext = ({
@@ -155,17 +152,10 @@ describe('ApplicationTargetGuard', () => {
     params: Record<string, string>;
     application?: FlatApplication;
   }): ExecutionContext =>
-    ({
-      getType: () => 'http',
-      getHandler: () => handler,
-      switchToHttp: () => ({
-        getRequest: () => ({
-          application,
-          params,
-          workspace: { id: WORKSPACE_ID },
-        }),
-      }),
-    }) as unknown as ExecutionContext;
+    buildExecutionContextMock({
+      handler,
+      request: { application, params, workspace: { id: WORKSPACE_ID } },
+    });
 
   const expectForbidden = async (context: ExecutionContext) => {
     await expect(guard.canActivate(context)).rejects.toMatchObject({
@@ -173,19 +163,27 @@ describe('ApplicationTargetGuard', () => {
     });
   };
 
-  beforeEach(() => {
+  beforeEach(async () => {
     jest.restoreAllMocks();
 
-    guard = new ApplicationTargetGuard(
-      new Reflector(),
-      {} as ApplicationLookupService,
-      {} as ApplicationRegistrationLookupService,
-      {
-        getOrRecomputeManyOrAllFlatEntityMaps: jest.fn().mockResolvedValue({
-          flatLogicFunctionMaps: buildFlatLogicFunctionMaps(),
-        }),
-      } as unknown as WorkspaceManyOrAllFlatEntityMapsCacheService,
-    );
+    const module = await Test.createTestingModule({
+      providers: [
+        ApplicationTargetGuard,
+        Reflector,
+        { provide: ApplicationLookupService, useValue: {} },
+        { provide: ApplicationRegistrationLookupService, useValue: {} },
+        {
+          provide: WorkspaceManyOrAllFlatEntityMapsCacheService,
+          useValue: {
+            getOrRecomputeManyOrAllFlatEntityMaps: jest.fn().mockResolvedValue({
+              flatLogicFunctionMaps: buildFlatLogicFunctionMaps(),
+            }),
+          },
+        },
+      ],
+    }).compile();
+
+    guard = module.get(ApplicationTargetGuard);
   });
 
   it('should record the target without attaching any guard', () => {
@@ -558,18 +556,14 @@ describe('ApplicationTargetGuard registration ownership', () => {
     handler: (...args: never[]) => unknown;
     args: Record<string, unknown>;
     workspace?: { id: string } | null;
-    application?: FlatApplication;
-  }): ExecutionContext => {
-    jest.spyOn(GqlExecutionContext, 'create').mockReturnValue({
-      getArgs: () => args,
-      getContext: () => ({ req: { workspace, application } }),
-    } as unknown as GqlExecutionContext);
-
-    return {
-      getType: () => 'graphql',
-      getHandler: () => handler,
-    } as unknown as ExecutionContext;
-  };
+    application?: Partial<FlatApplication>;
+  }): ExecutionContext =>
+    buildExecutionContextMock({
+      type: 'graphql',
+      handler,
+      graphqlArguments: args,
+      request: { workspace, application },
+    });
 
   const expectNoOwnershipCheck = () => {
     expect(
@@ -580,7 +574,7 @@ describe('ApplicationTargetGuard registration ownership', () => {
     ).not.toHaveBeenCalled();
   };
 
-  beforeEach(() => {
+  beforeEach(async () => {
     jest.restoreAllMocks();
     jest.clearAllMocks();
 
@@ -589,16 +583,30 @@ describe('ApplicationTargetGuard registration ownership', () => {
     );
     applicationLookupService.findById.mockResolvedValue(LINKED_APPLICATION);
 
-    guard = new ApplicationTargetGuard(
-      new Reflector(),
-      applicationLookupService as unknown as ApplicationLookupService,
-      applicationRegistrationLookupService as unknown as ApplicationRegistrationLookupService,
-      {
-        getOrRecomputeManyOrAllFlatEntityMaps: jest.fn().mockResolvedValue({
-          flatLogicFunctionMaps: buildOwnedFlatLogicFunctionMaps(),
-        }),
-      } as unknown as WorkspaceManyOrAllFlatEntityMapsCacheService,
-    );
+    const module = await Test.createTestingModule({
+      providers: [
+        ApplicationTargetGuard,
+        Reflector,
+        {
+          provide: ApplicationLookupService,
+          useValue: applicationLookupService,
+        },
+        {
+          provide: ApplicationRegistrationLookupService,
+          useValue: applicationRegistrationLookupService,
+        },
+        {
+          provide: WorkspaceManyOrAllFlatEntityMapsCacheService,
+          useValue: {
+            getOrRecomputeManyOrAllFlatEntityMaps: jest.fn().mockResolvedValue({
+              flatLogicFunctionMaps: buildOwnedFlatLogicFunctionMaps(),
+            }),
+          },
+        },
+      ],
+    }).compile();
+
+    guard = module.get(ApplicationTargetGuard);
   });
 
   it('should skip the check when the handler does not require ownership', async () => {
@@ -674,7 +682,7 @@ describe('ApplicationTargetGuard registration ownership', () => {
     const callingApplication = {
       ...LINKED_APPLICATION,
       sourceType: ApplicationRegistrationSourceType.NPM,
-    } as unknown as FlatApplication;
+    };
 
     await expect(
       guard.canActivate(

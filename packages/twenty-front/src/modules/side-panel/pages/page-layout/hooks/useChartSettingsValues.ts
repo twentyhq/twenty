@@ -12,11 +12,12 @@ import { getFieldLabelWithSubField } from '@/side-panel/pages/page-layout/utils/
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
-import { plural, t } from '@lingui/core/macro';
+import { plural } from '@lingui/core/macro';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type CompositeFieldSubFieldName } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { type GraphOrderBy } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 export const useChartSettingsValues = ({
   objectMetadataId,
@@ -25,6 +26,7 @@ export const useChartSettingsValues = ({
   objectMetadataId: string;
   configuration?: ChartConfiguration;
 }) => {
+  const { t } = useLingui();
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
   const objectMetadataItem = objectMetadataItems.find(

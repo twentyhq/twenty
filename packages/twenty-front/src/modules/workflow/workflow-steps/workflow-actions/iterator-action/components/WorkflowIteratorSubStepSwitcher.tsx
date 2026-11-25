@@ -7,11 +7,12 @@ import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrTh
 import { getIsDescendantOfIterator } from '@/workflow/workflow-steps/utils/getIsDescendantOfIterator';
 import { getWorkflowRunAllStepInfoHistory } from '@/workflow/workflow-steps/utils/getWorkflowRunAllStepInfoHistory';
 import { styled } from '@linaria/react';
-import { plural, t } from '@lingui/core/macro';
+import { plural } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, IconChevronRight } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/components/input';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -31,6 +32,7 @@ export const WorkflowIteratorSubStepSwitcher = ({
 }: {
   stepId: string;
 }) => {
+  const { t } = useLingui();
   const flow = useFlowOrThrow();
   const workflowRunId = useWorkflowRunIdOrThrow();
   const workflowRun = useWorkflowRun({ workflowRunId });

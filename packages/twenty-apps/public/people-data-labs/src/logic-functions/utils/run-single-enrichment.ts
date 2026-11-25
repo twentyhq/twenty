@@ -32,6 +32,7 @@ export const runSingleEnrichment = async <TNode, TData, TParams>({
     input: {
       records: recordId,
       updateFields: input.updateFields,
+      requiredFields: input.requiredFields,
       minLikelihood: input.minLikelihood,
       weakIdentifierMinLikelihood: input.weakIdentifierMinLikelihood,
     },

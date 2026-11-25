@@ -8,14 +8,15 @@ import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useC
 import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { LightButton } from 'twenty-ui/components/input';
 import { IconPlus } from 'twenty-ui/icon';
 import { logError } from '~/utils/logError';
+import { useLingui } from '@lingui/react/macro';
 
 export const RecordListAddNew = () => {
+  const { t } = useLingui();
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
   const { enqueueToast } = useToast();
 

@@ -5,6 +5,9 @@ describe('normalizeHostSanitizedPropName', () => {
     expect(normalizeHostSanitizedPropName('SANDBOX')).toBe('sandbox');
     expect(normalizeHostSanitizedPropName('Sandbox')).toBe('sandbox');
     expect(normalizeHostSanitizedPropName('STYLE')).toBe('style');
+    expect(normalizeHostSanitizedPropName('ALLOW')).toBe('allow');
+    expect(normalizeHostSanitizedPropName('SRC')).toBe('src');
+    expect(normalizeHostSanitizedPropName('SRCDOC')).toBe('srcDoc');
   });
 
   it('should keep a host-sanitized prop name already in canonical casing', () => {

@@ -6,12 +6,11 @@ import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout
 import { WidgetType } from 'twenty-shared/types';
 import { findActiveFlatFieldMetadataById } from 'src/engine/metadata-modules/page-layout-widget/utils/find-active-flat-field-metadata-by-id.util';
 import { isChartReferencingFieldInConfiguration } from 'src/engine/metadata-modules/page-layout-widget/utils/is-chart-referencing-field-in-configuration.util';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
-  type DashboardToolContextWithPermissions,
-  type DashboardToolDependencies,
-} from 'src/modules/dashboard/tools/types/dashboard-tool-dependencies.type';
-import { buildResolvedGroupBy } from 'src/modules/dashboard/tools/utils/build-resolved-group-by.util';
+  type PageLayoutToolContextWithPermissions,
+  type PageLayoutToolDependencies,
+} from 'src/engine/metadata-modules/page-layout/tools/types/page-layout-tool-dependencies.type';
+import { buildResolvedGroupBy } from 'src/engine/metadata-modules/page-layout/tools/utils/build-resolved-group-by.util';
 import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 
 const getDashboardSchema = z.object({
@@ -19,18 +18,28 @@ const getDashboardSchema = z.object({
 });
 
 export const createGetDashboardTool = (
-  deps: Pick<
-    DashboardToolDependencies,
-    'pageLayoutService' | 'workspaceOrmManager' | 'flatEntityMapsCacheService'
-  >,
-  context: DashboardToolContextWithPermissions,
+  deps: {
+    pageLayoutService: Pick<
+      PageLayoutToolDependencies['pageLayoutService'],
+      'findByIdOrThrow'
+    >;
+    workspaceOrmManager: Pick<
+      PageLayoutToolDependencies['workspaceOrmManager'],
+      'executeInWorkspaceContext' | 'getRepository'
+    >;
+    flatEntityMapsCacheService: Pick<
+      PageLayoutToolDependencies['flatEntityMapsCacheService'],
+      'getOrRecomputeManyOrAllFlatEntityMaps'
+    >;
+  },
+  context: PageLayoutToolContextWithPermissions,
 ) => ({
   name: 'get_dashboard' as const,
+  isReadOnly: true,
   description: `Get a dashboard with its full layout structure including tabs and widgets.`,
   inputSchema: getDashboardSchema,
   execute: async (parameters: { dashboardId: string }) => {
     try {
-      const authContext = buildSystemAuthContext(context.workspaceId);
       const { flatFieldMetadataMaps } =
         await deps.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
           {
@@ -77,13 +86,10 @@ export const createGetDashboardTool = (
 
       const dashboard =
         await deps.workspaceOrmManager.executeInWorkspaceContext(async () => {
-          const repo = deps.workspaceOrmManager.getRepository(
-            'dashboard',
-            context.rolePermissionConfig,
-          );
+          const repo = deps.workspaceOrmManager.getRepository('dashboard');
 
           return repo.findOne({ where: { id: parameters.dashboardId } });
-        }, authContext);
+        }, context.authContext);
 
       if (!isDefined(dashboard)) {
         return {
@@ -111,6 +117,8 @@ export const createGetDashboardTool = (
           id: tab.id,
           title: tab.title,
           position: tab.position,
+          layoutMode: tab.layoutMode,
+          isActive: tab.isActive,
           widgets:
             tab.widgets?.map((w) => {
               if (

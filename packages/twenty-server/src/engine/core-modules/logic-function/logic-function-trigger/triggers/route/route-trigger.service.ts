@@ -241,6 +241,8 @@ export class RouteTriggerService {
           return RouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND;
         case LogicFunctionExceptionCode.LOGIC_FUNCTION_DISABLED:
           return RouteTriggerExceptionCode.FORBIDDEN_EXCEPTION;
+        case LogicFunctionExceptionCode.LOGIC_FUNCTION_WORKSPACE_SUSPENDED:
+          return RouteTriggerExceptionCode.WORKSPACE_SUSPENDED;
         case LogicFunctionExceptionCode.LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED:
           return RouteTriggerExceptionCode.LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED;
       }
@@ -304,7 +306,7 @@ export class RouteTriggerService {
         );
       }
 
-      // Routes authenticate the caller themselves, behind no AuthPrincipalGuard
+      // Routes authenticate the caller themselves, behind no AccessPolicyGuard
       if (isDefined(routeAuthenticationContext.agentId)) {
         throw new RouteTriggerException(
           'This token is only accepted by MCP',

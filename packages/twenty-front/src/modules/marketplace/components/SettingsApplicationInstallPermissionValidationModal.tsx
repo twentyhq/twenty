@@ -2,8 +2,12 @@ import { Dialog, Tooltip } from 'twenty-ui/primitives/surfaces';
 import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { AppConnectionHeader } from '@/applications/components/AppConnectionHeader';
 import { AuthorizeActionButtons } from '@/applications/components/AuthorizeActionButtons';
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
+import { getCurrencyPrefix } from '@/localization/utils/getCurrencyPrefix';
+import { type ApplicationBillingPrice } from '~/generated-metadata/graphql';
 import { buildApplicationBillingSummary } from '@/marketplace/utils/buildApplicationBillingSummary';
 import { buildApplicationCapabilitySummary } from '@/marketplace/utils/buildApplicationCapabilitySummary';
+import { buildApplicationIframeMediaPermissionSummary } from '@/marketplace/utils/buildApplicationIframeMediaPermissionSummary';
 import {
   buildPermissionSummaryFromRoleManifest,
   type PermissionSummaryItem,
@@ -12,14 +16,16 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
-import { type RoleManifest } from 'twenty-shared/application';
+import { type LegacyCompliantRoleManifest } from 'twenty-shared/application';
+import { type IframeMediaPermission } from 'twenty-shared/types';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { LightButton } from 'twenty-ui/components/input';
 import { IconAlertTriangle, IconChevronLeft } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 type MarketplaceAppObject = {
   universalIdentifier: string;
@@ -29,10 +35,12 @@ type SettingsApplicationInstallPermissionValidationModalProps = {
   modalInstanceId: string;
   appDisplayName: string;
   appLogoUrl?: string;
-  defaultRole?: RoleManifest;
+  defaultRole?: LegacyCompliantRoleManifest;
   appObjects?: MarketplaceAppObject[];
   requestedCapabilities?: string[];
+  requestedIframeMediaPermissions?: readonly IframeMediaPermission[];
   billsCredits?: boolean;
+  billingPrices?: ApplicationBillingPrice[];
   isListed?: boolean;
   onAuthorize: () => void;
   isInstalling?: boolean;
@@ -120,6 +128,27 @@ const StyledPermissionLabel = styled.span`
   }
 `;
 
+const StyledEmphasis = styled.span`
+  color: ${themeCssVariables.font.color.primary};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+`;
+
+const renderPermissionLabel = ({ label, emphasis }: PermissionSummaryItem) => {
+  if (!isNonEmptyString(emphasis) || !label.includes(emphasis)) {
+    return label;
+  }
+
+  const [before, ...after] = label.split(emphasis);
+
+  return (
+    <span>
+      {before}
+      <StyledEmphasis>{emphasis}</StyledEmphasis>
+      {after.join(emphasis)}
+    </span>
+  );
+};
+
 const StyledObjectListTitle = styled.div`
   margin-bottom: ${themeCssVariables.spacing[1]};
 `;
@@ -137,11 +166,15 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
   defaultRole,
   appObjects,
   requestedCapabilities = [],
+  requestedIframeMediaPermissions = [],
   billsCredits = false,
+  billingPrices,
   isListed = false,
   onAuthorize,
   isInstalling,
 }: SettingsApplicationInstallPermissionValidationModalProps) => {
+  const { t } = useLingui();
+  const { formatNumber } = useNumberFormat();
   const { closeDialog } = useDialog();
 
   const { objectMetadataItems } = useObjectMetadataItems();
@@ -176,16 +209,32 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
       : [];
 
     return [
+      ...buildApplicationBillingSummary({
+        billsCredits,
+        billingPrices: billingPrices ?? [],
+        formatAmount: ({ amountCents, currency }) =>
+          `${getCurrencyPrefix(currency)}${formatNumber(amountCents / 100, {
+            decimals: 2,
+            minimumDecimals: 2,
+          })}`,
+      }),
       ...rolePermissionItems,
       ...buildApplicationCapabilitySummary(requestedCapabilities),
-      ...buildApplicationBillingSummary(billsCredits),
+      ...buildApplicationIframeMediaPermissionSummary(
+        requestedIframeMediaPermissions,
+      ),
     ];
+    // The summary builders translate through the global i18n
   }, [
+    t,
     requestedCapabilities,
+    requestedIframeMediaPermissions,
     defaultRole,
     objectLabelsByUniversalIdentifier,
     appObjectUniversalIdentifiers,
     billsCredits,
+    billingPrices,
+    formatNumber,
   ]);
 
   const handleAuthorize = () => {
@@ -268,11 +317,11 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
                           positionMethod="fixed"
                         >
                           <StyledPermissionLabel tabIndex={0}>
-                            {item.label}
+                            {renderPermissionLabel(item)}
                           </StyledPermissionLabel>
                         </Tooltip>
                       ) : (
-                        item.label
+                        renderPermissionLabel(item)
                       )}
                     </StyledPermissionRow>
                   ))}

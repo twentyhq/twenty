@@ -1,4 +1,4 @@
-import { type ClientRequest, type IncomingMessage } from 'node:http';
+import { type IncomingMessage } from 'node:http';
 import { PassThrough, Readable } from 'node:stream';
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -89,7 +89,7 @@ const buildUploadRequest = ({
 
   return {
     uploadedBytes,
-    uploadRequest: uploadRequest as unknown as ClientRequest,
+    uploadRequest,
   };
 };
 

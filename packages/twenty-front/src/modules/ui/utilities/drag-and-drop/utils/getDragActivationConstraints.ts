@@ -9,7 +9,9 @@ const TOUCH_ACTIVATION_TOLERANCE_IN_PX = 5;
 // a card still would start a drag and swallow the click that opens the record.
 const POINTER_ACTIVATION_DISTANCE_IN_PX = 8;
 
-export const getDragActivationConstraints = (event: PointerEvent) =>
+export const getDragActivationConstraints = (
+  event: Pick<PointerEvent, 'pointerType'>,
+) =>
   event.pointerType === 'touch'
     ? [
         new PointerActivationConstraints.Delay({

@@ -3,7 +3,6 @@ import { type QueueJobOptions } from 'src/engine/core-modules/message-queue/driv
 import { type PendingWakeUpEntity } from 'src/engine/core-modules/pending-wake-up/entities/pending-wake-up.entity';
 import { type PendingWakeUpOutcome } from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-outcome.type';
 import { type PendingWakeUpOwnerState } from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-owner-state.type';
-import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 
 export type PendingWakeUpOwnerHandler<TOwner = unknown> = {
   buildResumeJobOptions?(
@@ -14,13 +13,11 @@ export type PendingWakeUpOwnerHandler<TOwner = unknown> = {
     wakeUp: PendingWakeUpEntity,
   ): Promise<PendingWakeUpOwnerState<TOwner>>;
 
+  // null when the owner may read no record, so no event wakes it up
   getReadPermissions(input: {
     wakeUp: PendingWakeUpEntity;
     owner: TOwner;
-  }): Promise<{
-    authContext: WorkspaceAuthContext;
-    rolePermissionConfig: RolePermissionConfig;
-  }>;
+  }): Promise<{ authContext: WorkspaceAuthContext } | null>;
 
   // the handler claims the wake-up once it takes the outcome, so the outcome is taken once
   resolve(input: {

@@ -13,7 +13,6 @@ import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/Workflo
 import { type UpdateRecordFormData } from '@/workflow/workflow-steps/workflow-actions/types/UpdateRecordFormData';
 import { shouldDisplayFormField } from '@/workflow/workflow-steps/workflow-actions/utils/shouldDisplayFormField';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
-import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
@@ -23,6 +22,7 @@ import { type SelectOption } from 'twenty-ui/primitives/input';
 import { type JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 import { RelationType } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 type WorkflowEditActionUpdateRecordProps = {
   action: WorkflowUpdateRecordAction;
@@ -40,6 +40,7 @@ export const WorkflowEditActionUpdateRecord = ({
   action,
   actionOptions,
 }: WorkflowEditActionUpdateRecordProps) => {
+  const { t } = useLingui();
   const { getSelectIconPropsFromObjectMetadataItem } =
     useObjectMetadataSelectHelpers();
   const { activeNonSystemObjectMetadataItems } =

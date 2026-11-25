@@ -1,12 +1,10 @@
-import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { getTabLayoutMode } from '@/page-layout/utils/getTabLayoutMode';
 import {
   PageLayoutTabLayoutMode,
   PageLayoutType,
 } from '~/generated-metadata/graphql';
 
-const buildTab = (layoutMode: PageLayoutTabLayoutMode) =>
-  ({ layoutMode }) as unknown as PageLayoutTab;
+const buildTab = (layoutMode: PageLayoutTabLayoutMode) => ({ layoutMode });
 
 describe('getTabLayoutMode', () => {
   describe('page types that respect tab.layoutMode', () => {

@@ -89,9 +89,15 @@ export const calendarDayRecordIdsComponentFamilySelector =
             const positionA = recordA?.position;
             const positionB = recordB?.position;
 
-            if (!isDefined(positionA) && !isDefined(positionB)) return 0;
-            if (!isDefined(positionA)) return -1;
-            if (!isDefined(positionB)) return 1;
+            if (!isDefined(positionA) && !isDefined(positionB)) {
+              return 0;
+            }
+            if (!isDefined(positionA)) {
+              return -1;
+            }
+            if (!isDefined(positionB)) {
+              return 1;
+            }
 
             return positionA - positionB;
           });

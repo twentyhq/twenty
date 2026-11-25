@@ -32,9 +32,7 @@ export class CampaignEngagementRecordingService {
     const delivery = await this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
         this.workspaceOrmManager
-          .getRepository(CampaignDeliveryWorkspaceEntity, {
-            shouldBypassPermissionChecks: true,
-          })
+          .getRepositoryWithoutPermissionChecks(CampaignDeliveryWorkspaceEntity)
           .findOneBy({ id: observation.deliveryId }),
       buildSystemAuthContext(observation.workspaceId),
     );

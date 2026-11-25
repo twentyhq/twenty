@@ -4,7 +4,7 @@ import {
 } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
 
 export const isMethodWithBody = (
-  method: string | null,
+  method: string | null | undefined,
 ): method is HttpMethodWithBody => {
   if (!method) {
     return false;

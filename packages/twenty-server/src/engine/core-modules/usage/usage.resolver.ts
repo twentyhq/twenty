@@ -24,24 +24,15 @@ import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @MetadataResolver()
 @UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
 @UsePipes(ResolverValidationPipe)
-export class UsageResolver {
-  constructor(
-    private readonly usageAnalyticsService: UsageAnalyticsService,
-    @InjectRepository(UserWorkspaceEntity)
-    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
-    private readonly workspaceCacheService: WorkspaceCacheService,
-  ) {}
-
-  @Query(() => UsageAnalyticsDTO)
-  @UseGuards(
-    AuthPrincipalGuard({
+@UseGuards(
+  AccessPolicyGuard({
+    authPrincipals: {
       userSession: {
         standard: true,
         impersonated: true,
@@ -51,9 +42,19 @@ export class UsageResolver {
       apiKey: true,
       oauthClient: true,
       application: true,
-    }),
-    SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
-  )
+    },
+    requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
+  }),
+)
+export class UsageResolver {
+  constructor(
+    private readonly usageAnalyticsService: UsageAnalyticsService,
+    @InjectRepository(UserWorkspaceEntity)
+    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
+    private readonly workspaceCacheService: WorkspaceCacheService,
+  ) {}
+
+  @Query(() => UsageAnalyticsDTO)
   async getUsageAnalytics(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('input', { nullable: true }) input?: UsageAnalyticsInput,

@@ -21,9 +21,7 @@ installImageObjectUrlPolyfill({
 const createImageWithObjectUrl = () => {
   const blob = new Blob(['image'], { type: 'image/png' });
   const url = ImageUrl.createObjectURL(blob);
-  const image = document.createElement(
-    'html-img',
-  ) as unknown as HTMLImageElement;
+  const image: HTMLImageElement = document.createElement('html-img');
   image.src = url;
   return { blob, url, image };
 };
@@ -52,9 +50,7 @@ describe('installImageObjectUrlPolyfill', () => {
   it('does not bridge a revoked URL assigned afterwards', () => {
     const { url } = createImageWithObjectUrl();
     ImageUrl.revokeObjectURL(url);
-    const image = document.createElement(
-      'html-img',
-    ) as unknown as HTMLImageElement;
+    const image: HTMLImageElement = document.createElement('html-img');
     image.src = url;
     expect(readImageObjectUrlBlob(image)).toBeUndefined();
   });

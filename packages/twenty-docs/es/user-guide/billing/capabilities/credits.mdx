@@ -1,13 +1,13 @@
 ---
 title: Créditos
-description: Un saldo sencillo que impulsa tus flujos de trabajo, agentes de IA y chat de IA, y que define cuánto vale un crédito, hasta dónde llega y cómo administrarlo.
+description: "El saldo compartido que impulsa tus flujos de trabajo, agentes de IA y chat de IA, además del uso personal de IA de cada miembro: cuánto vale un crédito, hasta dónde llega y cómo administrarlo."
 ---
 
 import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## ¿Qué son los créditos?
 
-Los créditos son un saldo único que impulsa todo lo que ejecutamos en tu nombre y que tiene un costo real: **automatizaciones de flujos de trabajo**, **agentes de IA** y el **chat de IA**. En lugar de lidiar con cuotas separadas para "ejecuciones de automatización" y "tokens de IA", tienes un único saldo sencillo que debes vigilar.
+Los créditos del espacio de trabajo son un saldo único, compartido por todo el espacio de trabajo, que impulsa todo lo que ejecutamos en tu nombre y que tiene un costo real: **automatizaciones de flujos de trabajo**, **agentes de IA** y el **chat de IA**. En lugar de lidiar con cuotas separadas para "ejecuciones de automatización" y "tokens de IA", tienes un único saldo sencillo que debes vigilar. En los planes Pro y Organization, el chat de IA usa primero el [uso personal de IA](#personal-ai-usage) de cada miembro.
 
 **1 crédito = $1 de uso.** Un crédito es simplemente un dólar de trabajo, por lo que tu saldo es fácil de entender — no hay unidades abstractas que convertir.
 
@@ -51,21 +51,39 @@ El costo varía según el modelo: un modelo ligero es drásticamente más barato
 
 ## Qué incluye
 
-Cada suscripción incluye créditos, y la cantidad depende de tu **ciclo de facturación**, no de tu plan:
+Cada suscripción incluye **créditos del espacio de trabajo**, compartidos por todo el espacio de trabajo. La cantidad depende de tu plan y del número de usuarios:
 
-| Ciclo de facturación | Créditos incluidos | Uso equivalente      |
-| -------------------- | ------------------ | -------------------- |
-| Mensual              | 5 / mes            | ~$5 de uso cada mes  |
-| Anual                | 50 / año           | ~$50 de uso cada año |
+| Plan         | Créditos incluidos                          | Uso equivalente                      |
+| ------------ | ------------------------------------------- | ------------------------------------ |
+| Pro          | 1 por usuario al mes                        | ~$1 de uso por usuario cada mes      |
+| Organización | 4 por usuario al mes                        | ~$4 de uso por usuario cada mes      |
+| Planes Early | 5 al mes, o 50 al año con facturación anual | ~$5 de uso cada mes, o ~$50 cada año |
 
-Estos créditos están diseñados para cubrir cómodamente la automatización diaria. Cinco créditos cubren decenas de miles de pasos de automatización estándar o cientos de mensajes de IA rápidos, aunque un puñado de grandes, las tareas de agentes de múltiples pasos pueden usarlas más rápido. Puedes recargar en cualquier momento (ver más abajo).
+Con la facturación anual, la asignación cubre todo el año: 12 créditos por usuario en Pro y 48 en Organization.
+
+Estos créditos están diseñados para cubrir cómodamente la automatización diaria. Un crédito cubre unos 10.000 pasos estándar de flujos de trabajo o cientos de mensajes rápidos de IA, aunque unas pocas tareas grandes de agente con varios pasos pueden agotarlos más rápido. Puedes añadir un paquete de créditos en cualquier momento (ver más abajo).
+
+## Uso personal de IA
+
+En los planes Pro y Organization, cada miembro también recibe su propia asignación semanal de IA. El chat de IA y la búsqueda web la usan antes que los créditos del espacio de trabajo:
+
+| Plan         | Uso personal de IA                            |
+| ------------ | --------------------------------------------- |
+| Pro          | Unas 100 tareas de IA por miembro a la semana |
+| Organización | Unas 500 tareas de IA por miembro a la semana |
+
+Una tarea de IA es una solicitud de chat con el modelo predeterminado; los modelos más inteligentes usan más. La asignación se renueva todos los lunes a las 00:00 UTC. Los agentes de IA en los flujos de trabajo siempre se ejecutan con créditos del espacio de trabajo.
+
+Cuando un miembro se queda sin créditos, sus chats continúan usando créditos del espacio de trabajo hasta que se renueva la asignación. Para pausar sus chats en su lugar, un miembro con el permiso de configuración de **Facturación** puede desactivar **Usar créditos del espacio de trabajo después de que un miembro alcance su límite** en **Configuración → Facturación**. Los planes Early no tienen uso personal de IA, por lo que el chat de IA se ejecuta con créditos del espacio de trabajo.
 
 ## Acumulación de créditos
 
-Los créditos no utilizados se acumulan automáticamente para el siguiente período de facturación.
+Los créditos incluidos en los planes Pro y Organization se gastan primero y se renuevan en cada período de facturación. No se acumulan.
 
-* **Cap**: Rollover se limita a la asignación completa de un período, por lo que nunca te llevarás más de lo que proporciona tu ciclo de facturación por período.
-* **Visibilidad**: Cuando tengas créditos acumulados, aparecerán como una línea independiente de **Créditos acumulados** en **Configuración → Facturación**, junto con tu saldo de **Total disponible**.
+Los créditos no utilizados de un paquete de créditos, y los créditos incluidos de los planes Early, se acumulan automáticamente para el siguiente período de facturación.
+
+* **Límite**: La acumulación está limitada a la asignación de un período, por lo que estos créditos nunca suman más del doble de lo que proporciona un período.
+* **Visibilidad**: La sección **Créditos** en **Configuración → Facturación** muestra qué créditos provienen de tu plan y cuáles de tu paquete de créditos, y cuánto se puede acumular.
 
 ## Monitoreo de uso
 
@@ -79,11 +97,11 @@ Revisar esto con regularidad facilita detectar pronto un flujo de trabajo muy pe
 
 ## ¿Necesitas más créditos?
 
-Si te quedas sin créditos —o quieres un colchón antes de una gran campaña de automatización— puedes comprar paquetes de créditos adicionales en cualquier momento:
+Si te quedas sin créditos o quieres un colchón antes de una gran campaña de automatización, puedes añadir un paquete de créditos en cualquier momento. Los paquetes cuestan $1 por crédito, desde $20 al mes, y se renuevan con tu suscripción:
 
 1. Ir a **Configuración → Facturación**
-2. Haz clic en el botón **Incrementar**
-3. Seleccione la cantidad que necesita y acepte los cambios
+2. En la sección **Créditos**, haz clic en **Administrar** o en uno de los accesos directos **Aumentar a $…**
+3. Elige un paquete de créditos y confirma
 
 Los créditos adquiridos se agregan de inmediato a tu saldo disponible.
 

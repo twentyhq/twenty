@@ -1,6 +1,7 @@
 import { getFieldUniversalIdentifier } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { validateSearchableFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-searchable-flat-field-metadata.util';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
 import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
@@ -34,20 +35,20 @@ const flatObjectMetadata = {
 
 const buildFlatFieldMetadataMaps = (
   tsVectorFieldUniversalIdentifier?: string,
-): MetadataUniversalFlatEntityMaps<'fieldMetadata'> =>
-  ({
-    byUniversalIdentifier:
-      tsVectorFieldUniversalIdentifier === undefined
-        ? {}
-        : {
-            [tsVectorFieldUniversalIdentifier]: {
-              universalIdentifier: tsVectorFieldUniversalIdentifier,
-              objectMetadataUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
-              name: SEARCH_VECTOR_FIELD.name,
-              type: FieldMetadataType.TS_VECTOR,
-            },
-          },
-  }) as unknown as MetadataUniversalFlatEntityMaps<'fieldMetadata'>;
+): MetadataUniversalFlatEntityMaps<'fieldMetadata'> => ({
+  byUniversalIdentifier:
+    tsVectorFieldUniversalIdentifier === undefined
+      ? {}
+      : {
+          [tsVectorFieldUniversalIdentifier]: getFlatFieldMetadataMock({
+            universalIdentifier: tsVectorFieldUniversalIdentifier,
+            objectMetadataId: 'object-metadata-id',
+            objectMetadataUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+            name: SEARCH_VECTOR_FIELD.name,
+            type: FieldMetadataType.TS_VECTOR,
+          }),
+        },
+});
 
 describe('validateSearchableFlatFieldMetadata', () => {
   it('should accept a search vector still pending creation in the same batch', () => {

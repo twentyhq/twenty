@@ -21,33 +21,34 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { EmailComposerService } from 'src/engine/core-modules/tool/tools/email-tool/email-composer.service';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { SendEmailOutputDTO } from 'src/modules/messaging/message-outbound-manager/dtos/send-email-output.dto';
 import { SendEmailInput } from 'src/modules/messaging/message-outbound-manager/dtos/send-email.input';
 import { SendEmailService } from 'src/modules/messaging/message-outbound-manager/services/send-email.service';
 import { SentMessageRecordLinkService } from 'src/modules/messaging/message-outbound-manager/services/sent-message-record-link.service';
 import { CustomException } from 'src/utils/custom-exception';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, parseJson } from 'twenty-shared/utils';
 import { isNonEmptyString } from '@sniptt/guards';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @MetadataResolver()
 @UsePipes(ResolverValidationPipe)
 @UseFilters(AuthGraphqlApiExceptionFilter)
 @UseGuards(
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
+  AccessPolicyGuard({
+    authPrincipals: {
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: true,
     },
-    apiKey: true,
-    oauthClient: true,
-    application: true,
+    requiredPermissionFlags: [PermissionFlagType.SEND_EMAIL_TOOL],
   }),
-  SettingsPermissionGuard(PermissionFlagType.SEND_EMAIL_TOOL),
 )
 export class SendEmailResolver {
   private readonly logger = new Logger(SendEmailResolver.name);
@@ -83,7 +84,7 @@ export class SendEmailResolver {
             bcc: input.bcc ?? '',
           },
           subject: input.subject,
-          body: input.body,
+          body: parseJson<unknown>(input.body),
           connectedAccountId: input.connectedAccountId,
           fromHandle: input.fromHandle,
           files: input.files ?? [],
@@ -116,11 +117,11 @@ export class SendEmailResolver {
 
       try {
         const persistedSentMessage = data.shouldPersistMessage
-          ? await this.sendEmailService.persistSentMessage(
+          ? await this.sendEmailService.persistSentMessage({
               sendResult,
               data,
-              workspace.id,
-            )
+              workspaceId: workspace.id,
+            })
           : undefined;
 
         if (isDefined(input.draftMessageId)) {

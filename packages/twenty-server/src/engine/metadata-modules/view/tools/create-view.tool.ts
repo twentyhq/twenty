@@ -1,11 +1,9 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { ToolCategory } from 'twenty-shared/ai';
-import { PermissionFlagType } from 'twenty-shared/constants';
 import {
   AggregateOperations,
   ViewCalendarLayout,
   ViewType,
-  ViewVisibility,
 } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { z } from 'zod';
@@ -15,8 +13,10 @@ import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
+import { VIEW_WRITE_BY_VISIBILITY_ACCESS_POLICY } from 'src/engine/metadata-modules/view/constants/view-write-by-visibility-access-policy.constant';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { CREATABLE_VIEW_TYPES } from 'src/engine/metadata-modules/view/tools/constants/creatable-view-types.constant';
+import { ViewAccessService } from 'src/engine/permissions/metadata-permissions/services/view-access.service';
 import { ViewToolIdentifierService } from 'src/engine/metadata-modules/view/tools/services/view-tool-identifier.service';
 import {
   ViewException,
@@ -42,12 +42,12 @@ const createViewInputSchema = z.object({
     .describe(
       'View type. Use the *_WIDGET variants (TABLE_WIDGET, KANBAN_WIDGET, LIST_WIDGET, CALENDAR_WIDGET) for views backing a dashboard widget so they stay out of record index view pickers.',
     ),
-  visibility: z
-    .enum([ViewVisibility.WORKSPACE, ViewVisibility.UNLISTED])
+  isPrivate: z
+    .boolean()
     .optional()
-    .default(ViewVisibility.WORKSPACE)
+    .default(false)
     .describe(
-      'View visibility. ALWAYS prefer WORKSPACE (the default) — it is the right choice for shared views and for any view backing a dashboard widget, so the view is visible to everyone. Only use UNLISTED for a private, personal view explicitly requested by a single user, AND only when a user identity is available. An UNLISTED view created without an owner becomes invisible to everyone (e.g. its dashboard widget renders blank), so never use UNLISTED for widget-backing views.',
+      'Whether the view is private to its creator. ALWAYS prefer false (the default): shared views and any view backing a dashboard widget must be visible to everyone. Only set true for a personal view a single user explicitly asked for, AND only when a user identity is available. A private view created without a creator is invisible to everyone (e.g. its dashboard widget renders blank), so never make widget-backing views private.',
     ),
   mainGroupByFieldName: z
     .string()
@@ -98,7 +98,7 @@ const createViewInputSchema = z.object({
 @DefineTool({
   name: 'create_view',
   category: ToolCategory.VIEW,
-  requiredPermissionFlags: [PermissionFlagType.VIEWS],
+  accessPolicy: VIEW_WRITE_BY_VISIBILITY_ACCESS_POLICY,
   description:
     'Create a new view for an object. Views define how records are displayed. For KANBAN views, mainGroupByFieldName is required and must be a SELECT field (e.g., "stage", "status"). For CALENDAR views, calendarFieldName and calendarLayout are required.',
 })
@@ -109,14 +109,20 @@ export class CreateViewTool extends BaseTool<typeof createViewInputSchema> {
     private readonly viewService: ViewService,
     private readonly viewFieldService: ViewFieldService,
     private readonly viewToolIdentifierService: ViewToolIdentifierService,
+    private readonly viewAccessService: ViewAccessService,
   ) {
     super();
   }
 
   async execute({
     input,
-    context: { workspaceId, userWorkspaceId },
+    context: { workspaceId, userWorkspaceId, authContext },
   }: ToolExecuteArgs<typeof createViewInputSchema>): Promise<ToolOutput> {
+    await this.viewAccessService.canUserCreateView({
+      isPrivate: input.isPrivate,
+      accessContext: { workspaceId, userWorkspaceId, authContext },
+    });
+
     const objectMetadataId =
       await this.viewToolIdentifierService.resolveObjectMetadataIdOrThrow({
         workspaceId,
@@ -215,7 +221,7 @@ export class CreateViewTool extends BaseTool<typeof createViewInputSchema> {
         objectMetadataId,
         icon: input.icon,
         type: input.type,
-        visibility: input.visibility,
+        isPrivate: input.isPrivate,
         mainGroupByFieldMetadataId,
         kanbanAggregateOperation: input.kanbanAggregateOperation,
         kanbanAggregateOperationFieldMetadataId,
@@ -224,7 +230,7 @@ export class CreateViewTool extends BaseTool<typeof createViewInputSchema> {
         calendarEndFieldMetadataId,
       },
       workspaceId,
-      createdByUserWorkspaceId: userWorkspaceId,
+      authContext,
     });
 
     if (isNonEmptyArray(fieldMetadataIds)) {
@@ -251,7 +257,7 @@ export class CreateViewTool extends BaseTool<typeof createViewInputSchema> {
         objectNameSingular: input.objectNameSingular,
         type: view.type,
         icon: view.icon,
-        visibility: view.visibility,
+        isPrivate: view.isPrivate,
       },
     };
   }

@@ -115,7 +115,7 @@ jobs:
     needs: extract_translations
     if: needs.extract_translations.outputs.pushed == 'true'
     permissions: {}
-    uses: ./.github/workflows/i18n-open-pull-request.yaml
+    uses: ./.github/workflows/open-pull-request.yaml
     with:
       branch: i18n
       title: 'i18n - translations'

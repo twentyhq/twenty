@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import { ChartSettingsDropdownSection } from '@/side-panel/pages/page-layout/components/chart-settings/ChartSettingsDropdownSection';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -7,6 +6,7 @@ import { useRecordTableWidgetLayoutPickerOptions } from '@/page-layout/widgets/r
 import { type RecordTableWidgetLayoutViewType } from '@/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType';
 import { isSelectableLayout } from '@/page-layout/widgets/record-table/utils/getRecordTableWidgetLayoutPickerOptions';
 import { RecordTableWidgetLayoutMenuItems } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableWidgetLayoutMenuItems';
+import { useLingui } from '@lingui/react/macro';
 
 type RecordTableLayoutDropdownContentProps = {
   pageLayoutId: string;
@@ -21,6 +21,7 @@ export const RecordTableLayoutDropdownContent = ({
   objectMetadataId,
   currentLayoutViewType,
 }: RecordTableLayoutDropdownContentProps) => {
+  const { t } = useLingui();
   const { objectMetadataItems } = useObjectMetadataItems();
   const objectMetadataItem = objectMetadataItems.find(
     (objectMetadataItemToFind) =>

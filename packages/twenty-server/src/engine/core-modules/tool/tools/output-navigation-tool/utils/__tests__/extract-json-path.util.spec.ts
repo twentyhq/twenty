@@ -109,6 +109,59 @@ describe('extractJsonPath', () => {
     ).toEqual([{ code: 'BOOM' }]);
   });
 
+  it('skips wildcard children that do not match the rest of the path', () => {
+    expect(
+      extractJsonPath({
+        data: {
+          people: [
+            { name: 'Ada', email: 'ada@example.com' },
+            { name: 'Bob' },
+            { name: 'Cy', email: 'cy@example.com' },
+          ],
+        },
+        path: '$.people[*].email',
+        maxItems: 20,
+        maxDepth: 5,
+      }),
+    ).toEqual(['ada@example.com', 'cy@example.com']);
+
+    expect(
+      extractJsonPath({
+        data: {
+          failedStepLogs: {
+            s1: { status: 'SKIPPED' },
+            s2: { details: { code: 'BOOM' } },
+          },
+        },
+        path: '$.failedStepLogs[*].details.code',
+        maxItems: 20,
+        maxDepth: 5,
+      }),
+    ).toEqual(['BOOM']);
+  });
+
+  it('returns an empty array for a wildcard over an empty array', () => {
+    expect(
+      extractJsonPath({
+        data: { people: [] },
+        path: '$.people[*].email',
+        maxItems: 20,
+        maxDepth: 5,
+      }),
+    ).toEqual([]);
+  });
+
+  it('throws when no wildcard child matches the rest of the path', () => {
+    expect(() =>
+      extractJsonPath({
+        data,
+        path: '$.steps[*].nope',
+        maxItems: 20,
+        maxDepth: 5,
+      }),
+    ).toThrow('Key "nope" not found');
+  });
+
   it('throws on missing key', () => {
     expect(() =>
       extractJsonPath({ data, path: '$.nope', maxItems: 20, maxDepth: 5 }),
@@ -124,7 +177,7 @@ describe('extractJsonPath', () => {
 
 describe('boundValue', () => {
   it('truncates arrays beyond maxItems with a marker', () => {
-    const result = boundValue([1, 2, 3, 4, 5], 2, 5) as unknown[];
+    const result = boundValue([1, 2, 3, 4, 5], 2, 5);
 
     expect(result).toEqual([1, 2, '... (3 more items)']);
   });

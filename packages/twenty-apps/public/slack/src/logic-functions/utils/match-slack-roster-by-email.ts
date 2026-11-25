@@ -17,7 +17,7 @@ const runSlackRosterMatch = async ({
   slackClient,
   slackTeamId,
 }: {
-  slackClient: WebClient;
+  slackClient: { users: Pick<WebClient['users'], 'list'> };
   slackTeamId: string;
 }): Promise<SlackRosterMatchSummary> => {
   const client = new CoreApiClient({ runAs: 'application' });
@@ -71,7 +71,7 @@ export const matchSlackRosterByEmail = async ({
   slackClient,
   slackTeamId,
 }: {
-  slackClient: WebClient;
+  slackClient: { users: Pick<WebClient['users'], 'list'> };
   slackTeamId: string;
 }): Promise<SlackRosterMatchSummary> => {
   try {

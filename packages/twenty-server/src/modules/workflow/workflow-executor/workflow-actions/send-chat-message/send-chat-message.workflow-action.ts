@@ -10,11 +10,11 @@ import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
+import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
 import { WorkflowRunInboxSenderWorkspaceService } from 'src/modules/workflow/workflow-executor/services/workflow-run-inbox-sender.workspace-service';
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input.type';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import { buildStepExecutionKey } from 'src/modules/workflow/workflow-executor/utils/build-step-execution-key.util';
-import { buildWorkflowStepCaller } from 'src/modules/workflow/workflow-executor/utils/build-workflow-step-caller.util';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { resolveConversationThreadKey } from 'src/modules/workflow/workflow-executor/utils/resolve-conversation-thread-key.util';
 import { isWorkflowSendChatMessageAction } from 'src/modules/workflow/workflow-executor/workflow-actions/send-chat-message/guards/is-workflow-send-chat-message-action.guard';
@@ -27,6 +27,7 @@ export class SendChatMessageWorkflowAction implements WorkflowAction {
     private readonly agentCallerConversationService: AgentCallerConversationService,
     private readonly workflowRunInboxSenderService: WorkflowRunInboxSenderWorkspaceService,
     private readonly workflowStepWaitWorkspaceService: WorkflowStepWaitWorkspaceService,
+    private readonly workflowExecutionContextService: WorkflowExecutionContextService,
   ) {}
 
   async execute({
@@ -96,10 +97,10 @@ export class SendChatMessageWorkflowAction implements WorkflowAction {
       awaitedToolCall: isDefined(toolCall)
         ? {
             ...toolCall,
-            caller: buildWorkflowStepCaller({
-              workflowRunId: runInfo.workflowRunId,
-              stepId: currentStepId,
-            }),
+            permissions:
+              await this.workflowExecutionContextService.getExecutionContext(
+                runInfo,
+              ),
             waitOnAnswer: (postedCall) =>
               this.workflowStepWaitWorkspaceService.arm({
                 workspaceId: runInfo.workspaceId,

@@ -49,7 +49,7 @@ describe('deepMerge', () => {
   });
 
   describe('null and undefined handling', () => {
-    type NullableValue = { value: string | null };
+    type NullableValue = { value: string | null | undefined };
 
     const nullTestCases: EachTestingContext<
       DeepMergeTestCase<NullableValue>
@@ -66,7 +66,7 @@ describe('deepMerge', () => {
         title: 'should ignore undefined values from target',
         context: {
           source: { value: 'hello' },
-          target: { value: undefined as unknown as null },
+          target: { value: undefined },
           expected: { value: 'hello' },
         },
       },

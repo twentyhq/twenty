@@ -1,11 +1,23 @@
+import { isString } from '@sniptt/guards';
 import isEqual from 'lodash.isequal';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import {
   type StoredWorkflowNode,
   type StoredWorkflowVersionDefinition,
 } from 'src/engine/core-modules/application/application-manifest/types/stored-workflow-version-definition.type';
 import { normalizeStoredWorkflowErrorHandlingOptions } from 'src/engine/core-modules/application/application-manifest/utils/normalize-stored-workflow-error-handling-options.util';
+
+// A run reads a code step's logic function only when the step has no inline code
+const normalizeCodeStepInput = (input: unknown): unknown => {
+  if (!isPlainObject(input) || !isString(input.code)) {
+    return input;
+  }
+
+  const { logicFunctionId: _logicFunctionId, ...inlineInput } = input;
+
+  return inlineInput;
+};
 
 // Only state no run reads is normalized, so a manifest edit is never compared away
 const normalizeSettings = ({
@@ -14,6 +26,7 @@ const normalizeSettings = ({
 }: Pick<StoredWorkflowNode, 'type'> &
   Required<Pick<StoredWorkflowNode, 'settings'>>) => ({
   ...rest,
+  ...(type === 'CODE' ? { input: normalizeCodeStepInput(rest.input) } : {}),
   ...(type === 'MANUAL' ? {} : { objectType }),
   ...(isDefined(errorHandlingOptions)
     ? {

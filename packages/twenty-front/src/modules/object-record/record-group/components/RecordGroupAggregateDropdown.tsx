@@ -6,8 +6,8 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DROPDOWN_OFFSET_Y } from '@/ui/layout/dropdown/constants/DropdownOffsetY';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { type Nullable } from 'twenty-shared/types';
+import { useLingui } from '@lingui/react/macro';
 
 type RecordGroupAggregateDropdownProps = {
   aggregateValue?: Nullable<string | number>;
@@ -26,6 +26,7 @@ export const RecordGroupAggregateDropdown = ({
   aggregateLabel,
   dropdownId,
 }: RecordGroupAggregateDropdownProps) => {
+  const { t } = useLingui();
   return (
     <RecordGroupAggregateDropdownComponentInstanceContext.Provider
       value={{ instanceId: dropdownId }}

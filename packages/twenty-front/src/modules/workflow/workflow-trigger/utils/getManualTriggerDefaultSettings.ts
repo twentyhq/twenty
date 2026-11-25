@@ -10,7 +10,10 @@ export const getManualTriggerDefaultSettings = ({
   isPinned,
 }: {
   availabilityType: 'GLOBAL' | 'SINGLE_RECORD' | 'BULK_RECORDS';
-  activeNonSystemObjectMetadataItems: EnrichedObjectMetadataItem[];
+  activeNonSystemObjectMetadataItems: Pick<
+    EnrichedObjectMetadataItem,
+    'nameSingular'
+  >[];
   icon?: string;
   isPinned?: boolean;
 }): WorkflowManualTriggerSettings => {

@@ -82,13 +82,8 @@ describe('setColumn', () => {
     });
   });
 
-  it('should return an empty column if field type is not recognized', () => {
-    const field = {
-      ...defaultField,
-      fieldType: { type: 'unknown' },
-    } as unknown as SpreadsheetImportField;
-
-    const result = setColumn(oldColumn, field);
+  it('should return an empty column if no field is given', () => {
+    const result = setColumn(oldColumn);
 
     expect(result).toEqual({
       index: 0,

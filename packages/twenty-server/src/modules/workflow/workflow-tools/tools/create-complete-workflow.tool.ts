@@ -1,5 +1,7 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  isWorkflowAiAgentGenerateStep,
   WORKFLOW_ACTION_FEATURE_FLAGS,
   workflowActionSchema,
   WorkflowActionType,
@@ -7,6 +9,7 @@ import {
 } from 'twenty-shared/workflow';
 import { z } from 'zod';
 
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type CreatedCoreWorkflow } from 'src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service';
 import {
   WorkflowVersionStepException,
@@ -19,6 +22,7 @@ import {
   type WorkflowToolContext,
   type WorkflowToolDependencies,
 } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
+import { type WorkflowTool } from 'src/modules/workflow/workflow-tools/types/workflow-tool.type';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 const createCompleteWorkflowSchema = z.object({
@@ -51,10 +55,20 @@ const createCompleteWorkflowSchema = z.object({
     .describe('Whether to activate the workflow immediately (default: false)'),
 });
 
-type CreateCompleteWorkflowToolDeps = Pick<
-  WorkflowToolDependencies,
-  'coreWorkflowMutationService' | 'coreWorkflowLifecycleService'
->;
+type CreateCompleteWorkflowToolDeps = {
+  coreWorkflowMutationService: Pick<
+    WorkflowToolDependencies['coreWorkflowMutationService'],
+    'createWorkflowWithContent'
+  >;
+  coreWorkflowLifecycleService: Pick<
+    WorkflowToolDependencies['coreWorkflowLifecycleService'],
+    'activateCoreWorkflowVersion'
+  >;
+  workflowAiAgentStepAgentService: Pick<
+    WorkflowToolDependencies['workflowAiAgentStepAgentService'],
+    'findAgentRunnableByNewStepOrThrow'
+  >;
+};
 
 type CreateCompleteWorkflowFailure = {
   success: false;
@@ -65,9 +79,10 @@ type CreateCompleteWorkflowFailure = {
 export const createCreateCompleteWorkflowTool = (
   deps: CreateCompleteWorkflowToolDeps,
   context: WorkflowToolContext,
-) => ({
-  name: 'create_complete_workflow' as const,
-  description: `Create a complete workflow with trigger, steps, and connections in a single operation.
+) =>
+  ({
+    name: 'create_complete_workflow' as const,
+    description: `Create a complete workflow with trigger, steps, and connections in a single operation.
 
 CRITICAL SCHEMA REQUIREMENTS:
 - Trigger type MUST be one of: DATABASE_EVENT, MANUAL, CRON, WEBHOOK
@@ -75,6 +90,7 @@ CRITICAL SCHEMA REQUIREMENTS:
 - Each step MUST include: id (must be a valid UUID), name, type, valid, settings
 - CREATE_RECORD actions MUST have objectName and objectRecord in settings.input
 - objectRecord must contain actual field values, not just field names
+- Only UPDATE_RECORD takes settings.input.fieldsToUpdate: the fields to write, each with its value in objectRecord. CREATE_RECORD and UPSERT_RECORD write every field in objectRecord and refuse fieldsToUpdate
 - RICH_TEXT fields (e.g. a note/task "body") MUST be an object, not a string: { "markdown": "your text, may contain {{variables}}" }. A bare string is rejected.
 - Use "trigger" as the id for the trigger step in edges
 - Step positions are computed automatically; do not provide coordinates
@@ -89,9 +105,8 @@ Common mistakes to avoid:
 - Using "RECORD_CREATED" instead of "DATABASE_EVENT"
 - Missing the "name" and "valid" fields in steps
 - Missing the "objectRecord" field in CREATE_RECORD actions
-- Using "fieldsToUpdate" instead of "objectRecord" in CREATE_RECORD actions
-- Including CODE steps in this tool — this tool does NOT create the underlying logic function needed by CODE steps. Instead, create the workflow without CODE steps first, then add CODE steps individually using create_workflow_version_step (which properly creates the logic function), then call update_logic_function_source to define the code.
-- Including AI_AGENT steps in this tool — this tool does NOT create the underlying agent needed by AI_AGENT steps. Instead, create the workflow without AI_AGENT steps first, then add AI_AGENT steps individually using create_workflow_version_step (which properly creates the agent), then call update_workflow_agent to configure the agent.
+- Omitting settings.input.code on CODE steps: write the TypeScript source there (exporting \`main\` as an async arrow function, \`export const main = async (params: { ... }) => { ... }\`, whose params receive settings.input.logicFunctionInput); do not set settings.input.logicFunctionId.
+- Setting an AI_AGENT step's agentId without being asked to run that agent: a step without agentId carries its own settings.input.instructions (system prompt), prompt (the message sent on each run), modelId, responseFormat and scope (the objects it may read or change, same shape as a role manifest's permissions, with object universal identifiers; no data access when unset). A step with agentId runs that existing agent: the agent supplies the instructions, model and permissions, and its response format unless the step sets settings.input.responseFormat.
 
 IMPORTANT: The tool schema provides comprehensive field descriptions, examples, and validation rules. Always refer to the schema for:
 - Field requirements and data types
@@ -105,85 +120,72 @@ This is the most efficient way for AI to create workflows as it handles all the 
 Returns the core workflow ID and core workflow version ID, which every other workflow tool expects.
 
 Call validate_workflow once when the workflow is complete, before activating.`,
-  inputSchema: createCompleteWorkflowSchema,
-  execute: async (parameters: {
-    name: string;
-    description?: string;
-    trigger: WorkflowTrigger;
-    steps: WorkflowAction[];
-    edges?: Array<{
-      source: string;
-      target: string;
-      sourceConnectionOptions?: z.infer<
-        typeof workflowStepConnectionOptionsSchema
-      >;
-    }>;
-    activate?: boolean;
-  }) => {
-    const creation = await createWorkflowOrBuildFailure({
-      deps,
-      workspaceId: context.workspaceId,
-      userWorkspaceId: context.userWorkspaceId,
-      name: parameters.name,
-      trigger: parameters.trigger,
-      steps: parameters.steps,
-      edges: parameters.edges ?? [],
-    });
+    inputSchema: createCompleteWorkflowSchema,
+    execute: async (parameters: {
+      name: string;
+      description?: string;
+      trigger: WorkflowTrigger;
+      steps: WorkflowAction[];
+      edges?: Array<{
+        source: string;
+        target: string;
+        sourceConnectionOptions?: z.infer<
+          typeof workflowStepConnectionOptionsSchema
+        >;
+      }>;
+      activate?: boolean;
+    }) => {
+      const creation = await createWorkflowOrBuildFailure({
+        deps,
+        workspaceId: context.workspaceId,
+        authContext: context.authContext,
+        name: parameters.name,
+        trigger: parameters.trigger,
+        steps: parameters.steps,
+        edges: parameters.edges ?? [],
+      });
 
-    if ('failure' in creation) {
-      return creation.failure;
-    }
-
-    const { coreWorkflow, coreWorkflowVersionId } = creation.createdWorkflow;
-
-    const result = {
-      coreWorkflowId: coreWorkflow.id,
-      coreWorkflowVersionId,
-      name: parameters.name,
-      stepIds: parameters.steps.map((step) => step.id),
-    };
-
-    const recordReferences = isDefined(coreWorkflow.workspaceWorkflowId)
-      ? [
-          {
-            objectNameSingular: 'workflow',
-            recordId: coreWorkflow.workspaceWorkflowId,
-            displayName: parameters.name,
-          },
-        ]
-      : [];
-
-    if (parameters.activate) {
-      try {
-        await deps.coreWorkflowLifecycleService.activateCoreWorkflowVersion({
-          workspaceId: context.workspaceId,
-          userWorkspaceId: context.userWorkspaceId,
-          coreWorkflowVersionId,
-        });
-      } catch (error) {
-        return {
-          success: false,
-          message: `Workflow "${parameters.name}" was created as a draft but could not be activated: ${error.message}. Do not create it again: fix the draft (coreWorkflowVersionId ${coreWorkflowVersionId}), call validate_workflow, then activate_workflow_version.`,
-          error: error.message,
-          result,
-          recordReferences,
-        };
+      if ('failure' in creation) {
+        return creation.failure;
       }
-    }
 
-    return {
-      success: true,
-      message: `Workflow "${parameters.name}" created successfully with ${parameters.steps.length} steps`,
-      result,
-      recordReferences,
-    };
-  },
-});
+      const { coreWorkflow, coreWorkflowVersionId } = creation.createdWorkflow;
+
+      const result = {
+        coreWorkflowId: coreWorkflow.id,
+        coreWorkflowVersionId,
+        name: parameters.name,
+        stepIds: parameters.steps.map((step) => step.id),
+      };
+
+      if (parameters.activate) {
+        try {
+          await deps.coreWorkflowLifecycleService.activateCoreWorkflowVersion({
+            workspaceId: context.workspaceId,
+            coreWorkflowVersionId,
+          });
+        } catch (error) {
+          return {
+            success: false,
+            message: `Workflow "${parameters.name}" was created as a draft but could not be activated: ${error.message}. Do not create it again: fix the draft (coreWorkflowVersionId ${coreWorkflowVersionId}), call validate_workflow, then activate_workflow_version.`,
+            error: error.message,
+            result,
+          };
+        }
+      }
+
+      return {
+        success: true,
+        message: `Workflow "${parameters.name}" created successfully with ${parameters.steps.length} steps`,
+        result,
+      };
+    },
+  }) satisfies WorkflowTool;
 
 const createWorkflowOrBuildFailure = async ({
   deps,
   workspaceId,
-  userWorkspaceId,
+  authContext,
   name,
   trigger,
   steps,
@@ -191,7 +193,7 @@ const createWorkflowOrBuildFailure = async ({
 }: {
   deps: CreateCompleteWorkflowToolDeps;
   workspaceId: string;
-  userWorkspaceId: string | undefined;
+  authContext: WorkspaceAuthContext;
   name: string;
   trigger: WorkflowTrigger;
   steps: WorkflowAction[];
@@ -202,12 +204,17 @@ const createWorkflowOrBuildFailure = async ({
 > => {
   try {
     assertStepTypesAreSupported(steps);
+    await assertAiAgentStepsRunReusableAgentsOrThrow({
+      deps,
+      workspaceId,
+      steps,
+    });
 
     return {
       createdWorkflow:
         await deps.coreWorkflowMutationService.createWorkflowWithContent({
           workspaceId,
-          userWorkspaceId,
+          authContext,
           name,
           trigger,
           steps,
@@ -226,16 +233,15 @@ const createWorkflowOrBuildFailure = async ({
 };
 
 const assertStepTypesAreSupported = (steps: WorkflowAction[]): void => {
-  if (steps.some((step) => step.type === WorkflowActionType.CODE)) {
+  if (
+    steps.some(
+      (step) =>
+        step.type === WorkflowActionType.CODE &&
+        !isNonEmptyString(step.settings.input.code),
+    )
+  ) {
     throw new WorkflowVersionStepException(
-      'CODE steps cannot be created via create_complete_workflow because it does not create the underlying logic function. Use create_workflow_version_step instead.',
-      WorkflowVersionStepExceptionCode.INVALID_REQUEST,
-    );
-  }
-
-  if (steps.some((step) => step.type === WorkflowActionType.AI_AGENT)) {
-    throw new WorkflowVersionStepException(
-      'AI_AGENT steps cannot be created via create_complete_workflow because it does not create the underlying agent. Use create_workflow_version_step instead, then call update_workflow_agent to configure the agent.',
+      'CODE steps created via create_complete_workflow must carry their TypeScript source in settings.input.code.',
       WorkflowVersionStepExceptionCode.INVALID_REQUEST,
     );
   }
@@ -250,4 +256,33 @@ const assertStepTypesAreSupported = (steps: WorkflowAction[]): void => {
       WorkflowVersionStepExceptionCode.INVALID_REQUEST,
     );
   }
+};
+
+const assertAiAgentStepsRunReusableAgentsOrThrow = async ({
+  deps,
+  workspaceId,
+  steps,
+}: {
+  deps: Pick<CreateCompleteWorkflowToolDeps, 'workflowAiAgentStepAgentService'>;
+  workspaceId: string;
+  steps: WorkflowAction[];
+}): Promise<void> => {
+  const agentIds = new Set(
+    steps.flatMap((step) =>
+      step.type === WorkflowActionType.AI_AGENT &&
+      !isWorkflowAiAgentGenerateStep(step.settings.input) &&
+      isDefined(step.settings.input.agentId)
+        ? [step.settings.input.agentId]
+        : [],
+    ),
+  );
+
+  await Promise.all(
+    [...agentIds].map((agentId) =>
+      deps.workflowAiAgentStepAgentService.findAgentRunnableByNewStepOrThrow({
+        agentId,
+        workspaceId,
+      }),
+    ),
+  );
 };

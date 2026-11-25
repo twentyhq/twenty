@@ -59,60 +59,59 @@ export const transformAggregateRawValueIntoAggregateDisplayValue = ({
     )
   ) {
     return `${formatNumber(Number(aggregateRawValue) * 100, { format: numberFormat })}%`;
-  } else {
-    switch (aggregateFieldMetadataItem.type) {
-      case FieldMetadataType.CURRENCY: {
-        const amount = Number(aggregateRawValue) / 1_000_000;
-        return chartNumberFormat === ChartNumberFormat.FULL
-          ? formatNumber(amount, { decimals: 2, format: numberFormat })
-          : formatToShortNumber(amount);
+  }
+  switch (aggregateFieldMetadataItem.type) {
+    case FieldMetadataType.CURRENCY: {
+      const amount = Number(aggregateRawValue) / 1_000_000;
+      return chartNumberFormat === ChartNumberFormat.FULL
+        ? formatNumber(amount, { decimals: 2, format: numberFormat })
+        : formatToShortNumber(amount);
+    }
+
+    case FieldMetadataType.NUMBER: {
+      const castedValue = Number(aggregateRawValue);
+      const { decimals, type } = aggregateFieldMetadataItem.settings ?? {};
+      if (type === 'percentage') {
+        return `${formatNumber(castedValue * 100, { decimals, format: numberFormat })}%`;
       }
+      return chartNumberFormat === ChartNumberFormat.SHORT
+        ? formatToShortNumber(castedValue)
+        : formatNumber(castedValue, { decimals, format: numberFormat });
+    }
 
-      case FieldMetadataType.NUMBER: {
-        const castedValue = Number(aggregateRawValue);
-        const { decimals, type } = aggregateFieldMetadataItem.settings ?? {};
-        if (type === 'percentage') {
-          return `${formatNumber(castedValue * 100, { decimals, format: numberFormat })}%`;
-        }
-        return chartNumberFormat === ChartNumberFormat.SHORT
-          ? formatToShortNumber(castedValue)
-          : formatNumber(castedValue, { decimals, format: numberFormat });
-      }
+    case FieldMetadataType.RATING:
+      return formatNumber(Number(aggregateRawValue), {
+        decimals: 1,
+        format: numberFormat,
+      });
 
-      case FieldMetadataType.RATING:
-        return formatNumber(Number(aggregateRawValue), {
-          decimals: 1,
-          format: numberFormat,
-        });
+    case FieldMetadataType.DATE_TIME: {
+      const dateFieldSettings = aggregateFieldMetadataItem.settings;
 
-      case FieldMetadataType.DATE_TIME: {
-        const dateFieldSettings = aggregateFieldMetadataItem.settings;
+      const dateISOStringRawValue = aggregateRawValue as string;
 
-        const dateISOStringRawValue = aggregateRawValue as string;
+      return formatDateTimeString({
+        value: dateISOStringRawValue,
+        timeZone,
+        dateFormat,
+        timeFormat,
+        dateFieldSettings,
+        localeCatalog,
+      });
+    }
 
-        return formatDateTimeString({
-          value: dateISOStringRawValue,
-          timeZone,
-          dateFormat,
-          timeFormat,
-          dateFieldSettings,
-          localeCatalog,
-        });
-      }
+    case FieldMetadataType.DATE: {
+      const dateFieldSettings = aggregateFieldMetadataItem.settings;
 
-      case FieldMetadataType.DATE: {
-        const dateFieldSettings = aggregateFieldMetadataItem.settings;
+      const plainDateStringRawValue = aggregateRawValue as string;
 
-        const plainDateStringRawValue = aggregateRawValue as string;
-
-        return formatDateString({
-          value: plainDateStringRawValue,
-          timeZone,
-          dateFormat,
-          dateFieldSettings,
-          localeCatalog,
-        });
-      }
+      return formatDateString({
+        value: plainDateStringRawValue,
+        timeZone,
+        dateFormat,
+        dateFieldSettings,
+        localeCatalog,
+      });
     }
   }
 

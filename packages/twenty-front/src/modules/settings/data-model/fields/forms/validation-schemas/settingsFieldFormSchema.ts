@@ -1,5 +1,6 @@
 import { settingsDataModelFieldDescriptionFormSchema } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldDescriptionForm';
 import { settingsDataModelFieldIconLabelFormSchema } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm';
+import { settingsDataModelFieldFormulaFormSchema } from '@/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaForm';
 import { settingsDataModelFieldSettingsFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsDataModelFieldSettingsFormSchema';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
@@ -23,23 +24,30 @@ export const settingsFieldFormSchema = (
     )
     .extend(settingsDataModelFieldDescriptionFormSchema().shape)
     .extend(settingsDataModelFieldTypeFormSchema.shape)
+    .extend(settingsDataModelFieldFormulaFormSchema.shape)
     .and(settingsDataModelFieldSettingsFormSchema)
     .refine((data) => {
       const formData = data as {
         type?: FieldMetadataType;
         morphRelationObjectMetadataIds?: string[];
       };
-      if (formData.type !== FieldMetadataType.MORPH_RELATION) return true;
-      if (!isDefined(sourceObjectMetadataId)) return true;
+      if (formData.type !== FieldMetadataType.MORPH_RELATION) {
+        return true;
+      }
+      if (!isDefined(sourceObjectMetadataId)) {
+        return true;
+      }
       if (
         !isDefined(formData.morphRelationObjectMetadataIds) ||
         formData.morphRelationObjectMetadataIds.length <= 1
-      )
+      ) {
         return true;
+      }
       if (
         formData.morphRelationObjectMetadataIds.includes(sourceObjectMetadataId)
-      )
+      ) {
         return false;
+      }
       return true;
     });
 

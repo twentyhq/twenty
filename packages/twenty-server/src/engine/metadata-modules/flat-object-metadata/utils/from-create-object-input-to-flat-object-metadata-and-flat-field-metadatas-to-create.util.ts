@@ -84,6 +84,7 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       fieldUniversalIdentifiers: [],
       objectPermissionUniversalIdentifiers: [],
       fieldPermissionUniversalIdentifiers: [],
+      rowLevelPermissionRuleUniversalIdentifiers: [],
       viewUniversalIdentifiers: [],
       indexMetadataUniversalIdentifiers: [],
       searchFieldMetadataUniversalIdentifiers: [],
@@ -94,16 +95,14 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       imageIdentifierFieldMetadataUniversalIdentifier: null,
     };
 
-    const nameFlatFieldMetadata =
-      createObjectInput.skipNameField === true
-        ? null
-        : buildNameFlatFieldMetadataForCustomObject({
-            flatObjectMetadata: {
-              applicationUniversalIdentifier:
-                flatApplication.universalIdentifier,
-              universalIdentifier,
-            },
-          });
+    const nameFlatFieldMetadata = createObjectInput.skipNameField
+      ? null
+      : buildNameFlatFieldMetadataForCustomObject({
+          flatObjectMetadata: {
+            applicationUniversalIdentifier: flatApplication.universalIdentifier,
+            universalIdentifier,
+          },
+        });
 
     const flatFieldMetadataToCreateOnObject: UniversalFlatFieldMetadata[] =
       isDefined(nameFlatFieldMetadata) ? [nameFlatFieldMetadata] : [];

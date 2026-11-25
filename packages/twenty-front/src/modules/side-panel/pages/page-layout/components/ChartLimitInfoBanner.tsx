@@ -1,7 +1,7 @@
 import { SidePanelInformationBanner } from '@/side-panel/components/SidePanelInformationBanner/SidePanelInformationBanner';
 import { getChartLimitMessage } from '@/side-panel/pages/page-layout/utils/getChartLimitMessage';
-import { t } from '@lingui/core/macro';
 import { type WidgetConfigurationType } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 type ChartLimitInfoBannerProps = {
   widgetConfigurationType: WidgetConfigurationType;
@@ -16,6 +16,7 @@ export const ChartLimitInfoBanner = ({
   isPrimaryAxisDate,
   primaryAxisDateGranularity,
 }: ChartLimitInfoBannerProps) => {
+  const { t } = useLingui();
   return (
     <SidePanelInformationBanner
       message={getChartLimitMessage({

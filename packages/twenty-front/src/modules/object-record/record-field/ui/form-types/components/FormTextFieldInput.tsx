@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
@@ -10,6 +9,7 @@ import { parseEditorContent } from '@/workflow/workflow-variables/utils/parseEdi
 import { useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
+import { useLingui } from '@lingui/react/macro';
 
 type FormTextFieldInputProps = {
   label?: string;
@@ -40,6 +40,7 @@ export const FormTextFieldInput = ({
   ariaLabel,
   enableTemplateVariableFallback,
 }: FormTextFieldInputProps) => {
+  const { t } = useLingui();
   const instanceId = useId();
   const labelId = `${instanceId}-label`;
 

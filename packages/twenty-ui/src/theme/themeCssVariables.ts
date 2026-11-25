@@ -142,6 +142,7 @@ export const themeCssVariables = {
     invertedPrimary: 'var(--t-background-inverted-primary)',
     invertedSecondary: 'var(--t-background-inverted-secondary)',
     danger: 'var(--t-background-danger)',
+    dangerSolid: 'var(--t-background-danger-solid)',
     transparent: {
       primary: 'var(--t-background-transparent-primary)',
       secondary: 'var(--t-background-transparent-secondary)',

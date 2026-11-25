@@ -11,8 +11,8 @@ export class WorkflowStepPositionUpdateInput {
   id: string;
 
   @Field(() => WorkflowStepPositionInput, {
-    description: 'Position of the step or trigger',
-    nullable: false,
+    description: 'Position of the step or trigger, null to remove it',
+    nullable: true,
   })
-  position: WorkflowStepPositionInput;
+  position: WorkflowStepPositionInput | null;
 }

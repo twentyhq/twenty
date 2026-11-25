@@ -36,5 +36,8 @@ export default defineRole({
       canUpdateFieldValue: true,
     },
   ],
-  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.APPLICATIONS],
+  permissionFlagUniversalIdentifiers: [
+    SystemPermissionFlag.APPLICATIONS,
+    SystemPermissionFlag.AI,
+  ],
 });

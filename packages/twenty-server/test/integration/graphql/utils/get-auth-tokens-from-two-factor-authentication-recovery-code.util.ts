@@ -38,6 +38,7 @@ export const getAuthTokensFromTwoFactorAuthenticationRecoveryCode = async ({
           }
         }
         provisioningUri
+        isTwoFactorAuthenticationReset
       }
     }
   `;

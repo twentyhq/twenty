@@ -1,7 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { v4 } from 'uuid';
 
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
 import {
   query,
@@ -74,7 +74,7 @@ describe('useCreateManyRecords', () => {
     const { result } = renderHook(
       () =>
         useCreateManyRecords({
-          objectNameSingular: CoreObjectNameSingular.Person,
+          objectNameSingular: StandardObjectNameSingular.Person,
         }),
       {
         wrapper: Wrapper,
@@ -96,7 +96,7 @@ describe('useCreateManyRecords', () => {
     const { result } = renderHook(
       () =>
         useCreateManyRecords({
-          objectNameSingular: CoreObjectNameSingular.Person,
+          objectNameSingular: StandardObjectNameSingular.Person,
         }),
       {
         wrapper: Wrapper,

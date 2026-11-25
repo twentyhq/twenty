@@ -11,8 +11,8 @@ export const setFrontComponentStorageItem = ({
   key,
   serializedValue,
 }: FrontComponentStorageScope & {
-  key: string;
-  serializedValue: string;
+  key: unknown;
+  serializedValue: unknown;
 }): void => {
   if (!isString(key) || !isString(serializedValue)) {
     throw new CustomError(

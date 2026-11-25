@@ -1,5 +1,4 @@
 import { beforeEach, expect, it, vi } from 'vitest';
-import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { handleRecallWebhook } from 'src/logic-functions/flows/utils/handleRecallWebhook';
 
 const { enqueue, ownedUpload } = vi.hoisted(() => ({
@@ -15,7 +14,7 @@ vi.mock(
 );
 const query = vi.fn();
 const mutation = vi.fn();
-const client = { query, mutation } as unknown as CoreApiClient;
+const client = { query, mutation };
 const session = {
   source: 'desktop',
   media: 'audio',

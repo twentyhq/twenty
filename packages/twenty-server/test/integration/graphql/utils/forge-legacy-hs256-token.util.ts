@@ -17,7 +17,7 @@ const generateLegacyHs256Secret = (
     .update(`${HS256_APP_SECRET}${appSecretBody}${type}`)
     .digest('hex');
 
-export const forgeLegacyHs256Token = <TPayload extends Record<string, unknown>>(
+export const forgeLegacyHs256Token = <TPayload extends object>(
   payload: TPayload & { type: JwtTokenTypeEnum },
   appSecretBody: string,
   options: jwt.SignOptions = { expiresIn: '5m' },

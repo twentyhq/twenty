@@ -39,6 +39,10 @@ export class ResendDriver implements EmailingDomainDriverInterface {
     private readonly unsubscribeContentService: UnsubscribeContentService,
   ) {}
 
+  async assertDomainIsAvailableOrThrow(
+    _input: EmailingDomainResourceInput,
+  ): Promise<void> {}
+
   // Resend domains are account-level; workspace attribution travels on each send as a tag.
   async provisionWorkspace(workspaceId: string): Promise<void> {
     this.logger.log(
@@ -54,6 +58,12 @@ export class ResendDriver implements EmailingDomainDriverInterface {
 
   async registerDomain(_input: EmailingDomainResourceInput): Promise<void> {
     // the return-path subdomain is configured by Resend at domain creation
+  }
+
+  async retryVerification(input: EmailingDomainResourceInput): Promise<void> {
+    this.logger.log(
+      `Resend re-verifies ${input.domain} on every verifyDomain call, nothing to retry`,
+    );
   }
 
   async verifyDomain(

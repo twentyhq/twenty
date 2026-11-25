@@ -6,17 +6,24 @@ import { openBrowser } from '@/oauth/open-browser';
 import { requestOAuthTokens } from '@/oauth/request-oauth-tokens';
 import { startCallbackServer } from '@/oauth/start-callback-server';
 import { type Output } from '@/output/types/output.type';
+import { type ProxyHeaders } from '@/proxy-headers/types/proxy-headers.type';
 
 export const signInWithBrowser = async ({
   apiUrl,
+  proxyHeaders,
   output,
   signal,
 }: {
   apiUrl: string;
+  proxyHeaders?: ProxyHeaders;
   output: Output;
   signal: AbortSignal;
 }) => {
-  const oauthServer = await discoverOAuthServer({ apiUrl, signal });
+  const oauthServer = await discoverOAuthServer({
+    apiUrl,
+    proxyHeaders,
+    signal,
+  });
   const { codeVerifier, codeChallenge } = createPkcePair();
   const state = randomBytes(16).toString('base64url');
   const callbackServer = await startCallbackServer({
@@ -55,6 +62,7 @@ export const signInWithBrowser = async ({
     const code = await callbackServer.waitForCode();
     const tokens = await requestOAuthTokens({
       apiUrl,
+      proxyHeaders,
       tokenEndpoint: oauthServer.tokenEndpoint,
       parameters: {
         grant_type: 'authorization_code',

@@ -1,7 +1,6 @@
-import { t } from '@lingui/core/macro';
-import { assertUnreachable } from 'twenty-shared/utils';
 import { Status } from 'twenty-ui/primitives/data-display';
 
+import { getCoreAgentRunStatusLabelAndColor } from '@/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor';
 import { AgentTurnStatus } from '~/generated-metadata/graphql';
 
 type CoreAgentRunStatusProps = {
@@ -9,22 +8,11 @@ type CoreAgentRunStatusProps = {
 };
 
 export const CoreAgentRunStatus = ({ status }: CoreAgentRunStatusProps) => {
-  switch (status) {
-    case AgentTurnStatus.RUNNING:
-      return (
-        <Status color="blue" loading>
-          {t`Running`}
-        </Status>
-      );
-    case AgentTurnStatus.WAITING_FOR_INPUT:
-      return <Status color="orange">{t`Waiting`}</Status>;
-    case AgentTurnStatus.COMPLETED:
-      return <Status color="green">{t`Done`}</Status>;
-    case AgentTurnStatus.CANCELLED:
-      return <Status color="gray">{t`Cancelled`}</Status>;
-    case AgentTurnStatus.FAILED:
-      return <Status color="red">{t`Failed`}</Status>;
-    default:
-      return assertUnreachable(status);
-  }
+  const { label, color } = getCoreAgentRunStatusLabelAndColor(status);
+
+  return (
+    <Status color={color} loading={status === AgentTurnStatus.RUNNING}>
+      {label}
+    </Status>
+  );
 };

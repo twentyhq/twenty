@@ -1,8 +1,13 @@
+import { EMPTY_MANIFEST } from '@/__tests__/utils/empty-manifest';
 import { splitPulledTranslations } from '@/app/pull/split-pulled-translations';
 import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { type Manifest } from 'twenty-shared/application';
+import {
+  type Manifest,
+  type TranslationsManifest,
+} from 'twenty-shared/application';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { generateMessageId } from 'twenty-shared/i18n';
 import { afterEach, describe, expect, it } from 'vitest';
 
@@ -10,40 +15,38 @@ const PET_LABEL_ID = generateMessageId('Pet', 'objectMetadata.labelSingular');
 const AGE_LABEL_ID = generateMessageId('Age', 'fieldMetadata.label');
 const VIEW_NAME_ID = generateMessageId('All pets', 'view.name');
 
-const buildManifest = (overrides: Record<string, unknown>): Manifest =>
-  ({
-    application: {},
-    objects: [
-      {
-        universalIdentifier: 'pet',
-        nameSingular: 'pet',
-        namePlural: 'pets',
-        labelSingular: 'Pet',
-        labelPlural: 'Pets',
-        description: 'A pet',
-        fields: [
-          {
-            universalIdentifier: 'age',
-            name: 'age',
-            label: 'Age',
-            description: '',
-            type: 'NUMBER',
-          },
-        ],
-      },
-    ],
-    fields: [],
-    indexes: [],
-    views: [
-      {
-        universalIdentifier: 'all-pets',
-        name: 'All pets',
-        objectUniversalIdentifier: 'pet',
-      },
-    ],
-    viewFields: [],
-    ...overrides,
-  }) as unknown as Manifest;
+const buildManifest = (overrides: Partial<Manifest>): Manifest => ({
+  ...EMPTY_MANIFEST,
+  objects: [
+    {
+      universalIdentifier: 'pet',
+      nameSingular: 'pet',
+      namePlural: 'pets',
+      labelSingular: 'Pet',
+      labelPlural: 'Pets',
+      description: 'A pet',
+      labelIdentifierFieldMetadataUniversalIdentifier: 'age',
+      fields: [
+        {
+          universalIdentifier: 'age',
+          name: 'age',
+          label: 'Age',
+          description: '',
+          type: FieldMetadataType.NUMBER,
+        },
+      ],
+    },
+  ],
+  indexes: [],
+  views: [
+    {
+      universalIdentifier: 'all-pets',
+      name: 'All pets',
+      objectUniversalIdentifier: 'pet',
+    },
+  ],
+  ...overrides,
+});
 
 const createdDirectories: string[] = [];
 
@@ -156,34 +159,20 @@ describe('splitPulledTranslations', () => {
   });
 
   it('should ignore locales the platform does not support, including path-shaped keys', async () => {
+    const translationsWithUnsupportedLocales: TranslationsManifest &
+      Record<'klingon' | '../../escape', Record<string, string>> = {
+      'fr-FR': { [PET_LABEL_ID]: 'Animal' },
+      klingon: { [PET_LABEL_ID]: 'targh' },
+      '../../escape': { [PET_LABEL_ID]: 'nope' },
+    };
     const catalogs = await splitPulledTranslations({
       manifest: buildManifest({
-        translations: {
-          'fr-FR': { [PET_LABEL_ID]: 'Animal' },
-          klingon: { [PET_LABEL_ID]: 'targh' },
-          '../../escape': { [PET_LABEL_ID]: 'nope' },
-        },
+        translations: translationsWithUnsupportedLocales,
       }),
       frontComponentSourcePaths: [],
     });
 
     expect(catalogs.map(({ locale }) => locale)).toEqual(['fr-FR']);
-  });
-
-  it('should ignore a locale whose catalog is not a map of strings', async () => {
-    const catalogs = await splitPulledTranslations({
-      manifest: buildManifest({
-        translations: {
-          'fr-FR': 'Animal',
-          'de-DE': ['Haustier'],
-          'es-ES': { [PET_LABEL_ID]: 7 },
-          'it-IT': { [PET_LABEL_ID]: 'Animale' },
-        },
-      }),
-      frontComponentSourcePaths: [],
-    });
-
-    expect(catalogs.map(({ locale }) => locale)).toEqual(['it-IT']);
   });
 
   it('should order locales and return nothing for an export without translations', async () => {

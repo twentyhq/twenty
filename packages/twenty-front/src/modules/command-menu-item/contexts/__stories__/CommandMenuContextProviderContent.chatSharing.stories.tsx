@@ -4,7 +4,7 @@ import { expect, within } from 'storybook/test';
 import {
   type CommandMenuContextApi,
   ContextStorePageType,
-  CoreObjectNameSingular,
+  StandardObjectNameSingular,
 } from 'twenty-shared/types';
 import { Badge } from 'twenty-ui/primitives/data-display';
 
@@ -34,7 +34,8 @@ const CHAT_SHARING_CONTEXT_API: CommandMenuContextApi = {
   numberOfSelectedRecords: 1,
   selectedRecords: [{ id: 'chat' }],
   objectMetadataItem: {
-    nameSingular: CoreObjectNameSingular.AgentChatThread,
+    id: 'agent-chat-thread-object',
+    nameSingular: StandardObjectNameSingular.AgentChatThread,
   },
   featureFlags: { IS_AI_CHAT_INBOX_ENABLED: true },
 };
@@ -103,7 +104,10 @@ export const CompanyHeader: Story = {
   args: {
     commandMenuContextApi: {
       ...CHAT_SHARING_CONTEXT_API,
-      objectMetadataItem: { nameSingular: CoreObjectNameSingular.Company },
+      objectMetadataItem: {
+        id: 'company-object',
+        nameSingular: StandardObjectNameSingular.Company,
+      },
     },
   },
   play: expectUnpinnedShare,

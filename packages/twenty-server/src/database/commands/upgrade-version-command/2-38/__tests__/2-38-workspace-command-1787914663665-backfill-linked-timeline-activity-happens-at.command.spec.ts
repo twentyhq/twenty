@@ -1,32 +1,32 @@
+import { Test } from '@nestjs/testing';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
-import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { BackfillLinkedTimelineActivityHappensAtCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1787914663665-backfill-linked-timeline-activity-happens-at.command';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const WORKSPACE_ID = '20202020-0000-0000-0000-000000000001';
 
-const buildWorkspaceCacheService = () =>
-  ({
-    getOrRecompute: jest.fn().mockResolvedValue({
-      flatTimelineActivityTypeMaps: {
-        byUniversalIdentifier: {
-          'message-linked-type-uid': {
-            id: 'message-linked-type-id',
-            action: 'linked',
-            objectUniversalIdentifier:
-              STANDARD_OBJECTS.message.universalIdentifier,
-          },
-          'calendar-event-linked-type-uid': {
-            id: 'calendar-event-linked-type-id',
-            action: 'linked',
-            objectUniversalIdentifier:
-              STANDARD_OBJECTS.calendarEvent.universalIdentifier,
-          },
+const buildWorkspaceCacheService = () => ({
+  getOrRecompute: jest.fn().mockResolvedValue({
+    flatTimelineActivityTypeMaps: {
+      byUniversalIdentifier: {
+        'message-linked-type-uid': {
+          id: 'message-linked-type-id',
+          action: 'linked',
+          objectUniversalIdentifier:
+            STANDARD_OBJECTS.message.universalIdentifier,
+        },
+        'calendar-event-linked-type-uid': {
+          id: 'calendar-event-linked-type-id',
+          action: 'linked',
+          objectUniversalIdentifier:
+            STANDARD_OBJECTS.calendarEvent.universalIdentifier,
         },
       },
-    }),
-  }) as unknown as WorkspaceCacheService;
+    },
+  }),
+});
 
 const PROVISIONED_TABLES = [
   {
@@ -38,10 +38,17 @@ const PROVISIONED_TABLES = [
 
 describe('BackfillLinkedTimelineActivityHappensAtCommand', () => {
   it('skips workspaces without a data source', async () => {
-    const command = new BackfillLinkedTimelineActivityHappensAtCommand(
-      {} as WorkspaceIteratorService,
-      buildWorkspaceCacheService(),
-    );
+    const module = await Test.createTestingModule({
+      providers: [
+        BackfillLinkedTimelineActivityHappensAtCommand,
+        { provide: WorkspaceIteratorService, useValue: {} },
+        {
+          provide: WorkspaceCacheService,
+          useValue: buildWorkspaceCacheService(),
+        },
+      ],
+    }).compile();
+    const command = module.get(BackfillLinkedTimelineActivityHappensAtCommand);
 
     jest.spyOn(command['logger'], 'warn').mockImplementation();
 
@@ -67,10 +74,17 @@ describe('BackfillLinkedTimelineActivityHappensAtCommand', () => {
         calendarEvent: null,
       },
     ]);
-    const command = new BackfillLinkedTimelineActivityHappensAtCommand(
-      {} as WorkspaceIteratorService,
-      buildWorkspaceCacheService(),
-    );
+    const module = await Test.createTestingModule({
+      providers: [
+        BackfillLinkedTimelineActivityHappensAtCommand,
+        { provide: WorkspaceIteratorService, useValue: {} },
+        {
+          provide: WorkspaceCacheService,
+          useValue: buildWorkspaceCacheService(),
+        },
+      ],
+    }).compile();
+    const command = module.get(BackfillLinkedTimelineActivityHappensAtCommand);
 
     jest.spyOn(command['logger'], 'warn').mockImplementation();
 
@@ -94,10 +108,17 @@ describe('BackfillLinkedTimelineActivityHappensAtCommand', () => {
       .mockResolvedValueOnce(PROVISIONED_TABLES)
       .mockResolvedValueOnce([{ count: 12 }])
       .mockResolvedValueOnce([{ count: 3 }]);
-    const command = new BackfillLinkedTimelineActivityHappensAtCommand(
-      {} as WorkspaceIteratorService,
-      buildWorkspaceCacheService(),
-    );
+    const module = await Test.createTestingModule({
+      providers: [
+        BackfillLinkedTimelineActivityHappensAtCommand,
+        { provide: WorkspaceIteratorService, useValue: {} },
+        {
+          provide: WorkspaceCacheService,
+          useValue: buildWorkspaceCacheService(),
+        },
+      ],
+    }).compile();
+    const command = module.get(BackfillLinkedTimelineActivityHappensAtCommand);
 
     jest.spyOn(command['logger'], 'log').mockImplementation();
 
@@ -125,10 +146,17 @@ describe('BackfillLinkedTimelineActivityHappensAtCommand', () => {
       .mockResolvedValueOnce([[], 5_000])
       .mockResolvedValueOnce([[], 42])
       .mockResolvedValueOnce([[], 0]);
-    const command = new BackfillLinkedTimelineActivityHappensAtCommand(
-      {} as WorkspaceIteratorService,
-      buildWorkspaceCacheService(),
-    );
+    const module = await Test.createTestingModule({
+      providers: [
+        BackfillLinkedTimelineActivityHappensAtCommand,
+        { provide: WorkspaceIteratorService, useValue: {} },
+        {
+          provide: WorkspaceCacheService,
+          useValue: buildWorkspaceCacheService(),
+        },
+      ],
+    }).compile();
+    const command = module.get(BackfillLinkedTimelineActivityHappensAtCommand);
 
     jest.spyOn(command['logger'], 'log').mockImplementation();
 

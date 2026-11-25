@@ -1,5 +1,5 @@
 import { PERMISSION_FLAG_SUMMARY_CONFIGS } from '@/marketplace/constants/PermissionFlagSummaryConfigs';
-import { PERMISSION_FLAG_TYPE_BY_UNIVERSAL_IDENTIFIER } from '@/marketplace/constants/PermissionFlagTypeByUniversalIdentifier';
+import { PERMISSION_FLAG_TYPE_BY_UNIVERSAL_IDENTIFIER } from 'twenty-shared/constants';
 import { type PermissionSummaryItem } from '@/marketplace/types/PermissionSummaryItem';
 import { isDefined } from 'twenty-shared/utils';
 

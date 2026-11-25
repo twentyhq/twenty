@@ -1,7 +1,7 @@
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { createPath, useNavigate } from 'react-router-dom';
-import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
+import { AppPath, StandardObjectNameSingular } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 
 import { getSidePanelCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getSidePanelCommandMenuDropdownIdFromCommandMenuId';
@@ -47,8 +47,8 @@ export const useNavigateToRecordPageFromSidePanel = () => {
         currentRoutedLocation?.pathname === recordPath;
 
       const fallbackTabId =
-        objectNameSingular === CoreObjectNameSingular.Note ||
-        objectNameSingular === CoreObjectNameSingular.Task
+        objectNameSingular === StandardObjectNameSingular.Note ||
+        objectNameSingular === StandardObjectNameSingular.Task
           ? 'richText'
           : 'timeline';
       const destinationPath =

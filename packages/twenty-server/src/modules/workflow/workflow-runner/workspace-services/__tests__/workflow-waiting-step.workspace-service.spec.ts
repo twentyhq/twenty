@@ -63,9 +63,6 @@ const buildService = ({
   const workflowExecutionContextService = {
     getExecutionContext: jest.fn().mockResolvedValue({
       authContext: { type: 'system' },
-      rolePermissionConfig: {
-        intersectionOf: { userWorkspaceRoleId: 'role-id' },
-      },
     }),
   };
   const findRecordsService = {
@@ -151,6 +148,7 @@ describe('WorkflowWaitingStepWorkspaceService as a wake-up owner', () => {
         doNotCheckDuplicatesBasedOnPrefix: true,
         workspaceId: WORKSPACE_ID,
         applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+        groupKey: 'workflow',
       },
     );
   });

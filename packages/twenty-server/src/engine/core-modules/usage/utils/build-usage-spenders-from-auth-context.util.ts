@@ -20,8 +20,7 @@ export const buildUsageSpendersFromAuthContext = (
   if (isUserAuthContext(authContext)) {
     return {
       userWorkspaceId: authContext.userWorkspaceId,
-      applicationId:
-        authContext.application?.id ?? authContext.viaApplication?.id,
+      applicationId: authContext.application?.id,
     };
   }
 

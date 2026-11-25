@@ -1,9 +1,10 @@
 import { StrictMode } from 'react';
 import { Outlet } from 'react-router-dom';
 
-import { AgentChatProvider } from '@/ai/components/AgentChatProvider';
+import { AiChatProvider } from '@/ai-chat/instance/components/AiChatProvider';
 import { TrackPageViewEffect } from '@/analytics/components/TrackPageViewEffect';
 import { SharedAppProviders } from '@/app/components/SharedAppProviders';
+import { InboxEffects } from '@/inbox/components/InboxEffects';
 import { WorkspaceAppPageTitle } from '@/app/components/WorkspaceAppPageTitle';
 import { GotoHotkeysEffectsProvider } from '@/app/effect-components/GotoHotkeysEffectsProvider';
 import { InitializeQueryParamStateEffect } from '@/app/effect-components/InitializeQueryParamStateEffect';
@@ -27,7 +28,7 @@ import { WORKFLOW_RUN_CORE_RECORD_REFERENCE_FIELDS } from '@/object-core/workflo
 import { ApolloCoreProvider } from '@/object-metadata/components/ApolloCoreProvider';
 import { CoreRecordReferenceFieldsContext } from '@/object-record/record-field/ui/contexts/CoreRecordReferenceFieldsContext';
 import { RecordCreationFormProvider } from '@/object-record/record-form/components/RecordCreationFormProvider';
-import { WelcomeOverlay } from '@/onboarding/components/WelcomeOverlay/WelcomeOverlay';
+import { RecordUpdateFormProvider } from '@/object-record/record-form/components/RecordUpdateFormProvider';
 import { CompanyEnrichmentOnboardingEffect } from '@/onboarding/effect-components/CompanyEnrichmentOnboardingEffect';
 import { ApolloAdminProvider } from '@/settings/admin-panel/apollo/components/ApolloAdminProvider';
 import { EndTrialAfterPaymentMethodGater } from '@/settings/billing/components/EndTrialAfterPaymentMethodGater';
@@ -39,7 +40,7 @@ import { AppToaster } from '@/ui/feedback/toast/components/AppToaster';
 import { GlobalFilePreviewModal } from '@/ui/field/display/components/GlobalFilePreviewModal';
 import { UserThemeProviderEffect } from '@/workspace-member/effect-components/UserThemeProviderEffect';
 import { UserUiScaleProviderEffect } from '@/workspace-member/effect-components/UserUiScaleProviderEffect';
-import { PageFavicon } from '@/app/components/PageFavicon';
+import { WorkspaceAppPageFavicon } from '@/app/components/WorkspaceAppPageFavicon';
 import { UserContextProvider } from '@/users/components/UserContextProvider';
 import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProviderEffect';
 
@@ -65,7 +66,8 @@ export const WorkspaceAppProviders = () => {
                   >
                     <AppToaster />
                     <ErrorMessageEffect />
-                    <AgentChatProvider>
+                    <AiChatProvider>
+                      <InboxEffects />
                       <DialogComponentInstanceContext.Provider
                         value={{ instanceId: 'dialog-manager' }}
                       >
@@ -75,28 +77,29 @@ export const WorkspaceAppProviders = () => {
                             <EndTrialAfterPaymentMethodGater />
                             <GotoHotkeysEffectsProvider />
                             <WorkspaceAppPageTitle />
-                            <PageFavicon />
+                            <WorkspaceAppPageFavicon />
                             <CoreRecordReferenceFieldsContext.Provider
                               value={WORKFLOW_RUN_CORE_RECORD_REFERENCE_FIELDS}
                             >
                               <RecordCreationFormProvider>
-                                <Outlet />
-                                <GlobalFilePreviewModal />
-                                <CommandMenuConfirmationModalManager />
-                                <CommandRunner />
+                                <RecordUpdateFormProvider>
+                                  <Outlet />
+                                  <GlobalFilePreviewModal />
+                                  <CommandMenuConfirmationModalManager />
+                                  <CommandRunner />
+                                </RecordUpdateFormProvider>
                               </RecordCreationFormProvider>
                             </CoreRecordReferenceFieldsContext.Provider>
                           </StrictMode>
                         </DialogManager>
                       </DialogComponentInstanceContext.Provider>
-                    </AgentChatProvider>
+                    </AiChatProvider>
                   </ContextStoreComponentInstanceContext.Provider>
                   <SupportChatEffect />
                   <InitializeQueryParamStateEffect />
                   <TrackPageViewEffect />
                   <RequestFreshCaptchaTokenEffect />
                   <PageChangeEffect />
-                  <WelcomeOverlay />
                   <CompanyEnrichmentOnboardingEffect />
                   <SignOutOnOtherTabSignOutEffect />
                 </SSEProvider>

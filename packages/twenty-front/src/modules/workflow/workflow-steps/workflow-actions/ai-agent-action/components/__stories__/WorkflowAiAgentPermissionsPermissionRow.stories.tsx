@@ -39,7 +39,7 @@ export const ActionOwnership: Story = {
         }}
         isEnabled
         readonly={false}
-        showDeleteButton
+        shouldShowDeleteButton
         onAdd={args.onAdd}
         onDelete={args.onDelete}
       />
@@ -69,7 +69,7 @@ export const ActionOwnership: Story = {
 };
 
 export const Readonly: Story = {
-  args: { readonly: true, showDeleteButton: false },
+  args: { readonly: true, shouldShowDeleteButton: false },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     await expect(await canvas.findByText('Read records')).toBeVisible();

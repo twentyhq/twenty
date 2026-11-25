@@ -14,7 +14,7 @@ describe('sumByProperty', () => {
   it('should skip non-numeric values', () => {
     const items = [
       { id: '1', amount: 10 },
-      { id: '2', amount: 'not-a-number' as unknown as number },
+      { id: '2', amount: 'not-a-number' },
       { id: '3', amount: 30 },
     ];
 

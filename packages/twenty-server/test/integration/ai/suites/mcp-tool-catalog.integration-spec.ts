@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { gql } from 'graphql-tag';
 import request from 'supertest';
 import { generateApiKeyToken } from 'test/integration/graphql/utils/generate-api-key-token.util';
@@ -9,7 +10,13 @@ import { ToolCategory } from 'twenty-shared/ai';
 
 const baseUrl = `http://localhost:${APP_PORT}`;
 
-const postMcp = (body: object, bearer: string, path = '/mcp') =>
+const META_MODE_PATH = '/mcp?mode=meta';
+
+const GENERIC_MODE_PATH = '/mcp';
+
+const DIRECT_MODE_PATH = '/mcp?mode=direct';
+
+const postMcp = (body: object, bearer: string, path = META_MODE_PATH) =>
   request(baseUrl)
     .post(path)
     .set('Authorization', `Bearer ${bearer}`)
@@ -21,7 +28,7 @@ const callMcpTool = async (
   bearer: string,
   toolName: string,
   toolArguments: object,
-  path = '/mcp',
+  path = META_MODE_PATH,
 ) => {
   const response = await postMcp(
     {
@@ -83,8 +90,10 @@ const listMcpTools = async (
 ): Promise<
   {
     name: string;
+    title?: string;
     inputSchema: { type?: string };
     annotations?: {
+      title?: string;
       readOnlyHint: boolean;
       openWorldHint: boolean;
       destructiveHint: boolean;
@@ -109,8 +118,6 @@ const META_MODE_TOOL_NAMES = [
   'load_skills',
   'search_help_center',
 ];
-
-const DIRECT_MODE_PATH = '/mcp?mode=direct';
 
 const createApiKeyToken = async (roleId: string): Promise<string> => {
   const createResponse = await makeMetadataApiRequest({
@@ -299,6 +306,219 @@ describe('MCP tool catalog (integration)', () => {
     });
   });
 
+  describe('generic mode (default)', () => {
+    it('should list record tools and every workspace-independent tool, without per-object tools or meta-tools', async () => {
+      const toolNames = (
+        await listMcpTools(adminApiKeyToken, GENERIC_MODE_PATH)
+      ).map((tool) => tool.name);
+
+      expect(toolNames).toEqual(
+        expect.arrayContaining([
+          'find_records',
+          'group_records',
+          'create_records',
+          'update_record',
+          'update_records',
+          'upsert_records',
+          'delete_records',
+          'merge_records',
+          'get_field_metadata',
+          'list_object_metadata_names',
+          'list_workflows',
+          'create_complete_workflow',
+          'create_complete_dashboard',
+          'get_views',
+          'list_webhooks',
+        ]),
+      );
+
+      for (const unlistedToolName of [
+        'find_many_companies',
+        'create_one_person',
+        'http_request',
+        'get_tool_catalog',
+        'learn_tools',
+        'execute_tool',
+      ]) {
+        expect(toolNames).not.toContain(unlistedToolName);
+      }
+    });
+
+    it('should flag the tools that overwrite or delete as destructive', async () => {
+      const destructiveHintByToolName = Object.fromEntries(
+        (await listMcpTools(adminApiKeyToken, GENERIC_MODE_PATH)).map(
+          (tool) => [tool.name, tool.annotations?.destructiveHint],
+        ),
+      );
+
+      expect(destructiveHintByToolName).toMatchObject({
+        create_records: false,
+        update_record: true,
+        update_records: true,
+        upsert_records: true,
+        delete_records: true,
+        merge_records: true,
+        create_object_metadata: false,
+        update_object_metadata: true,
+        delete_object_metadata: true,
+        create_complete_workflow: false,
+        delete_workflow: true,
+        create_draft_from_workflow_version: true,
+        save_campaign: true,
+        send_email: false,
+        get_views: false,
+      });
+    });
+
+    it('should mark the tools that change nothing as read-only', async () => {
+      const readOnlyHintByToolName = Object.fromEntries(
+        (await listMcpTools(adminApiKeyToken, GENERIC_MODE_PATH)).map(
+          (tool) => [tool.name, tool.annotations?.readOnlyHint],
+        ),
+      );
+
+      expect(readOnlyHintByToolName).toMatchObject({
+        find_records: true,
+        create_records: false,
+        get_object_metadata: true,
+        get_field_metadata: true,
+        get_views: true,
+        list_workflows: true,
+        search_help_center: true,
+        create_object_metadata: false,
+        update_object_metadata: false,
+        run_workflow_version: false,
+      });
+    });
+
+    it('should give every tool a title', async () => {
+      const tools = await listMcpTools(adminApiKeyToken, GENERIC_MODE_PATH);
+
+      expect(tools.filter((tool) => !isNonEmptyString(tool.title))).toEqual([]);
+      expect(
+        tools.filter((tool) => tool.annotations?.title !== tool.title),
+      ).toEqual([]);
+      expect(
+        Object.fromEntries(tools.map((tool) => [tool.name, tool.title])),
+      ).toMatchObject({
+        find_records: 'Find Records',
+        get_object_metadata: 'Get Object Metadata',
+        search_help_center: 'Search Help Center',
+      });
+    });
+
+    it('should list the same record tools to a restricted API key', async () => {
+      const toolNames = (
+        await listMcpTools(restrictedApiKeyToken, GENERIC_MODE_PATH)
+      ).map((tool) => tool.name);
+
+      expect(toolNames).toEqual(
+        expect.arrayContaining(['find_records', 'create_records']),
+      );
+    });
+
+    it('should find records of an object named in singular or plural', async () => {
+      for (const objectName of ['company', 'companies']) {
+        const result = await callMcpTool(
+          adminApiKeyToken,
+          'find_records',
+          { objectName, select: ['id'], limit: 1 },
+          GENERIC_MODE_PATH,
+        );
+
+        expect(result.isError).toBe(false);
+      }
+    });
+
+    it('should apply the filter passed to find_records', async () => {
+      const result = await callMcpTool(
+        adminApiKeyToken,
+        'find_records',
+        {
+          objectName: 'company',
+          select: ['id'],
+          filter: { name: { eq: 'definitely-not-an-existing-company' } },
+        },
+        GENERIC_MODE_PATH,
+      );
+
+      expect(result.isError).toBe(false);
+      expect(Number(JSON.parse(result.content[0].text).result.count)).toBe(0);
+    });
+
+    it('should refuse a write the role does not allow', async () => {
+      const result = await callMcpTool(
+        restrictedApiKeyToken,
+        'create_records',
+        { objectName: 'company', records: [{ name: 'Not allowed' }] },
+        GENERIC_MODE_PATH,
+      );
+
+      expect(result.isError).toBe(true);
+      expect(JSON.parse(result.content[0].text).message).toBe(
+        'Operation "create_many" is not available on "company"',
+      );
+    });
+
+    it('should suggest object names for an unknown object', async () => {
+      const result = await callMcpTool(
+        adminApiKeyToken,
+        'find_records',
+        { objectName: 'compnies', select: ['id'] },
+        GENERIC_MODE_PATH,
+      );
+
+      expect(result.isError).toBe(true);
+      expect(JSON.parse(result.content[0].text).error).toContain(
+        'Did you mean: companies',
+      );
+    });
+
+    it('should keep running per-object names that a client listed earlier', async () => {
+      const result = await callMcpTool(
+        adminApiKeyToken,
+        'find_many_companies',
+        { limit: 1, select: ['id'] },
+        GENERIC_MODE_PATH,
+      );
+
+      expect(result.isError).toBe(false);
+    });
+
+    it('should keep execute_tool callable for clients that listed it earlier', async () => {
+      const result = await callMcpTool(
+        adminApiKeyToken,
+        'execute_tool',
+        { toolName: 'list_workflows', arguments: {} },
+        GENERIC_MODE_PATH,
+      );
+
+      expect(isDispatchFailure(result)).toBe(false);
+    });
+
+    it('should not name workspace objects in the instructions', async () => {
+      const response = await postMcp(
+        {
+          jsonrpc: '2.0',
+          method: 'initialize',
+          id: '1',
+          params: {
+            protocolVersion: '2025-06-18',
+            capabilities: {},
+            clientInfo: { name: 'integration-test', version: '1.0.0' },
+          },
+        },
+        adminApiKeyToken,
+        GENERIC_MODE_PATH,
+      ).expect(200);
+
+      expect(response.body.result.instructions).toContain('find_records');
+      expect(response.body.result.instructions).not.toContain(
+        'Available objects:',
+      );
+    });
+  });
+
   describe('direct mode', () => {
     it('should list registry tools directly, without the meta-tools or MCP-excluded tools', async () => {
       const toolNames = (
@@ -356,7 +576,7 @@ describe('MCP tool catalog (integration)', () => {
       expect(isDispatchFailure(result)).toBe(true);
     });
 
-    it('should mark database read tools read-only and keep execute hints on writes', async () => {
+    it('should mark database read tools read-only, creates non-destructive and other writes destructive', async () => {
       const annotationsByToolName = Object.fromEntries(
         (await listMcpTools(adminApiKeyToken, DIRECT_MODE_PATH)).map((tool) => [
           tool.name,
@@ -364,22 +584,27 @@ describe('MCP tool catalog (integration)', () => {
         ]),
       );
 
-      expect(annotationsByToolName.find_many_people).toEqual({
+      expect(annotationsByToolName.find_many_people).toMatchObject({
         readOnlyHint: true,
         openWorldHint: false,
         destructiveHint: false,
       });
-      expect(annotationsByToolName.create_one_person).toEqual({
+      expect(annotationsByToolName.create_one_person).toMatchObject({
         readOnlyHint: false,
         openWorldHint: true,
         destructiveHint: false,
       });
+      expect(annotationsByToolName.update_one_person).toMatchObject({
+        readOnlyHint: false,
+        openWorldHint: true,
+        destructiveHint: true,
+      });
     });
 
-    it('should keep plain /mcp on the meta-tools', async () => {
-      const toolNames = (await listMcpTools(adminApiKeyToken, '/mcp')).map(
-        (tool) => tool.name,
-      );
+    it('should keep ?mode=meta on the meta-tools', async () => {
+      const toolNames = (
+        await listMcpTools(adminApiKeyToken, META_MODE_PATH)
+      ).map((tool) => tool.name);
 
       expect([...toolNames].sort()).toEqual(META_MODE_TOOL_NAMES);
 

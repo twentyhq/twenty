@@ -18,7 +18,6 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { type RelationFilterValue } from '@/views/view-filter-value/types/RelationFilterValue';
-import { t } from '@lingui/core/macro';
 import {
   arrayOfUuidOrVariableSchema,
   isDefined,
@@ -28,6 +27,7 @@ import { doNotTranslate } from 'twenty-shared/i18n';
 import { IconUserCircle } from 'twenty-ui/icon';
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useLingui } from '@lingui/react/macro';
 
 export const EMPTY_FILTER_VALUE: string = JSON.stringify({
   isCurrentWorkspaceMemberSelected: false,
@@ -54,6 +54,7 @@ const ObjectFilterDropdownRecordSelectContent = ({
   recordFilterId,
   dropdownId,
 }: ObjectFilterDropdownRecordSelectContentProps) => {
+  const { t } = useLingui();
   const fieldMetadataItemUsedInFilterDropdown = useAtomComponentSelectorValue(
     fieldMetadataItemUsedInDropdownComponentSelector,
   );

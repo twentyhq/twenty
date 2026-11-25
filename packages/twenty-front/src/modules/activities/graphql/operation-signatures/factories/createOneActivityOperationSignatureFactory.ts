@@ -1,11 +1,11 @@
 import {
-  CoreObjectNameSingular,
+  StandardObjectNameSingular,
   type RecordGqlFields,
 } from 'twenty-shared/types';
 import { type RecordGqlOperationSignatureFactory } from '@/object-record/graphql/types/RecordGqlOperationSignatureFactory';
 
 type CreateOneActivityOperationSignatureFactory = {
-  objectNameSingular: CoreObjectNameSingular;
+  objectNameSingular: StandardObjectNameSingular;
 };
 
 const NOTE_RECORD_GQL_FIELDS: RecordGqlFields = {
@@ -39,14 +39,14 @@ const TASK_RECORD_GQL_FIELDS: RecordGqlFields = {
 export const createOneActivityOperationSignatureFactory: RecordGqlOperationSignatureFactory<
   CreateOneActivityOperationSignatureFactory
 > = ({ objectNameSingular }: CreateOneActivityOperationSignatureFactory) =>
-  objectNameSingular === CoreObjectNameSingular.Note
+  objectNameSingular === StandardObjectNameSingular.Note
     ? {
-        objectNameSingular: CoreObjectNameSingular.Note,
+        objectNameSingular: StandardObjectNameSingular.Note,
         variables: {},
         fields: NOTE_RECORD_GQL_FIELDS,
       }
     : {
-        objectNameSingular: CoreObjectNameSingular.Task,
+        objectNameSingular: StandardObjectNameSingular.Task,
         variables: {},
         fields: TASK_RECORD_GQL_FIELDS,
       };

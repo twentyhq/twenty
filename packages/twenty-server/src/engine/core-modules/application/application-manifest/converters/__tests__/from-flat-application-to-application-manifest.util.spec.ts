@@ -14,6 +14,7 @@ const buildFlatApplication = (
   logo: null,
   billing: {},
   grantedCapabilities: [],
+  grantedIframeMediaPermissions: [],
   packageJsonChecksum: 'package-json-checksum',
   yarnLockChecksum: 'yarn-lock-checksum',
   ...overrides,
@@ -59,6 +60,23 @@ describe('fromFlatApplicationToApplicationManifest', () => {
         defaultRoleUniversalIdentifier: ROLE_UID,
       }),
     ).toMatchObject({ requestedCapabilities: ['microphone', 'camera'] });
+  });
+
+  it('should emit granted iframe media permissions', () => {
+    const iframeMediaPermissions = [
+      { origin: 'https://phone.example.com', microphone: true, camera: false },
+    ];
+
+    expect(
+      fromFlatApplicationToApplicationManifest({
+        flatApplication: buildFlatApplication({
+          grantedIframeMediaPermissions: iframeMediaPermissions,
+        }),
+        defaultRoleUniversalIdentifier: ROLE_UID,
+      }),
+    ).toMatchObject({
+      requestedIframeMediaPermissions: iframeMediaPermissions,
+    });
   });
 
   it('should default a missing description to an empty string', () => {

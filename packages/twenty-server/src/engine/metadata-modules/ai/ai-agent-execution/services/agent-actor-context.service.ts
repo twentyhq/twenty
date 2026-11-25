@@ -26,7 +26,7 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/permissions/permissions.exception';
-import { UserRoleService } from 'src/engine/permissions/role-assignment/user-role.service';
+import { RolePermissionsService } from 'src/engine/permissions/role-permissions.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 
@@ -39,8 +39,8 @@ export type UserContext = {
 };
 
 export type AgentActorContext = {
-  actorContext: ActorMetadata;
-  roleId: string;
+  actorMetadata: ActorMetadata;
+  roleIds: string[];
   userId: string;
   userWorkspaceId: string;
   userContext: UserContext;
@@ -51,7 +51,7 @@ export type AgentActorContext = {
 export class AgentActorContextService {
   constructor(
     private readonly userWorkspaceService: UserWorkspaceService,
-    private readonly userRoleService: UserRoleService,
+    private readonly rolePermissionsService: RolePermissionsService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly applicationLookupService: ApplicationLookupService,
     private readonly aiAgentRoleService: AiAgentRoleService,
@@ -116,9 +116,9 @@ export class AgentActorContextService {
     const workspaceMember =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
         const workspaceMemberRepository =
-          this.workspaceOrmManager.getRepository('workspaceMember', {
-            shouldBypassPermissionChecks: true,
-          });
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+            'workspaceMember',
+          );
 
         return workspaceMemberRepository.findOne({
           where: {
@@ -134,12 +134,13 @@ export class AgentActorContextService {
       );
     }
 
-    const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
-      userWorkspaceId,
-      workspaceId,
-    });
+    const roleIds =
+      await this.rolePermissionsService.findUserWorkspaceRoleIdsOrThrow({
+        userWorkspaceId,
+        workspaceId,
+      });
 
-    const actorContext = buildCreatedByFromFullNameMetadata({
+    const actorMetadata = buildCreatedByFromFullNameMetadata({
       fullNameMetadata: workspaceMember.name,
       workspaceMemberId: workspaceMember.id,
       source: FieldActorSource.AGENT,
@@ -154,8 +155,8 @@ export class AgentActorContextService {
     };
 
     return {
-      actorContext,
-      roleId,
+      actorMetadata,
+      roleIds,
       userId: userWorkspace.userId,
       userWorkspaceId,
       userContext,
@@ -165,11 +166,9 @@ export class AgentActorContextService {
   async buildRunAsWorkspaceMemberContext({
     workspaceMemberId,
     workspaceId,
-    viaApplication,
   }: {
     workspaceMemberId: string;
     workspaceId: string;
-    viaApplication?: FlatApplication;
   }): Promise<RunAsWorkspaceMemberContext> {
     const workspaceMember = await this.userWorkspaceService.getWorkspaceMember({
       workspaceMemberId,
@@ -197,14 +196,14 @@ export class AgentActorContextService {
       );
     }
 
-    const roleId = await this.resolveRoleIdOrThrow({
+    const roleIds = await this.resolveRoleIdsOrThrow({
       userWorkspaceId: userWorkspace.id,
       workspaceId,
       workspaceMemberId,
     });
 
     return {
-      actorContext: buildCreatedByFromFullNameMetadata({
+      actorMetadata: buildCreatedByFromFullNameMetadata({
         fullNameMetadata: workspaceMember.name,
         workspaceMemberId: workspaceMember.id,
         source: FieldActorSource.AGENT,
@@ -215,13 +214,13 @@ export class AgentActorContextService {
         user: fromUserEntityToFlat(userWorkspace.user),
         workspaceMemberId: workspaceMember.id,
         workspaceMember,
-        viaApplication,
+        userSessionVariant: 'standard',
       }),
-      roleId,
+      roleIds,
     };
   }
 
-  private async resolveRoleIdOrThrow({
+  private async resolveRoleIdsOrThrow({
     userWorkspaceId,
     workspaceId,
     workspaceMemberId,
@@ -229,9 +228,9 @@ export class AgentActorContextService {
     userWorkspaceId: string;
     workspaceId: string;
     workspaceMemberId: string;
-  }): Promise<string> {
+  }): Promise<string[]> {
     try {
-      return await this.userRoleService.getRoleIdForUserWorkspace({
+      return await this.rolePermissionsService.findUserWorkspaceRoleIdsOrThrow({
         userWorkspaceId,
         workspaceId,
       });

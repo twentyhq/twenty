@@ -40,7 +40,9 @@ export const validateLinksFieldOrThrow = ({
 }): LinksFieldGraphQLInput | null => {
   const preValidatedValue = validateRawJsonFieldOrThrow(value, fieldName);
 
-  if (isNull(preValidatedValue)) return null;
+  if (isNull(preValidatedValue)) {
+    return null;
+  }
 
   const isDomainField = linksVariant === 'domain';
 

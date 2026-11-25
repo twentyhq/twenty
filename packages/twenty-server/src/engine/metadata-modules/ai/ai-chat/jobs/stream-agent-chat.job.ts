@@ -1,4 +1,5 @@
-import { Logger, Scope } from '@nestjs/common';
+import { AgentChatTurnCancellationReason } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-turn-cancellation-reason.enum';
+import { Inject, Logger, Scope } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
@@ -20,6 +21,7 @@ import { type StreamAgentChatJobData } from 'src/engine/metadata-modules/ai/ai-c
 import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { AgentChatReplyExecutionPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-reply-execution-policy.service';
 import { AgentTurnStreamService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-turn-stream.service';
 import { ChatExecutionService } from 'src/engine/metadata-modules/ai/ai-chat/services/chat-execution.service';
 import { type AgentChatTurnOutcome } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-turn-outcome.type';
@@ -29,9 +31,11 @@ import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/uti
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
+import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { WorkspaceAiDataPolicyService } from 'src/engine/metadata-modules/ai/ai-models/services/workspace-ai-data-policy.service';
 import { getChatModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/get-chat-model-id.util';
 import {
   AiException,
@@ -44,6 +48,9 @@ export class StreamAgentChatJob {
 
   // keeps the catch in handle() from counting a turn the stream already classified
   private hasRecordedTurnOutcome = false;
+
+  @Inject(AgentChatReplyExecutionPolicyService)
+  private readonly replyExecutionPolicyService: AgentChatReplyExecutionPolicyService;
 
   constructor(
     @InjectAgentHistoryRepository('agentChatThread')
@@ -58,6 +65,7 @@ export class StreamAgentChatJob {
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly actorService: AgentChatActorService,
     private readonly turnRecorderService: AgentTurnRecorderService,
+    private readonly workspaceAiDataPolicyService: WorkspaceAiDataPolicyService,
   ) {}
 
   @Process(STREAM_AGENT_CHAT_JOB_NAME)
@@ -89,7 +97,7 @@ export class StreamAgentChatJob {
       where: { id: data.workspaceId },
     });
 
-    const turnModelId = this.resolveTurnModelId(data.modelId, workspace);
+    const turnModelId = await this.resolveTurnModelId(data.modelId, workspace);
 
     this.metricsService.incrementCounterBy({
       key: MetricsKeys.AiChatTurnStarted,
@@ -156,19 +164,41 @@ export class StreamAgentChatJob {
     }
 
     const turnId = data.existingTurnId;
-    const { sender, authorization } = await this.actorService.authorizeJob({
-      workspaceId: data.workspaceId,
-      threadId: data.threadId,
-      messageId: data.messageId,
-      turnId,
-      userWorkspaceId: data.userWorkspaceId,
-    });
+    const { sender, authorizedConversation, message } =
+      await this.actorService.authorizeJob({
+        workspaceId: data.workspaceId,
+        threadId: data.threadId,
+        messageId: data.messageId,
+        turnId,
+        userWorkspaceId: data.userWorkspaceId,
+      });
+
+    const isExecutionAllowed =
+      await this.replyExecutionPolicyService.shouldExecute({
+        threadId: data.threadId,
+        workspaceId: data.workspaceId,
+        userWorkspaceId: sender.userWorkspaceId,
+        messageId: message?.id,
+      });
+
+    if (!isExecutionAllowed) {
+      await this.cancelTurnForWorkspacePolicy({
+        claim,
+        turnId,
+        turnModelId,
+      });
+
+      return;
+    }
 
     const isRunning = await this.turnRecorderService.markRunning({
       workspaceId: data.workspaceId,
       turnId,
       modelId: turnModelId,
-      createdBy: buildActorMetadataFromAuthContext(authorization.authContext),
+      createdBy: buildActorMetadataFromAuthContext(
+        authorizedConversation.authContext,
+      ),
+      isBuiltInAssistant: true,
       streamClaim: claim,
     });
 
@@ -189,16 +219,18 @@ export class StreamAgentChatJob {
           .catch(() => null);
 
     const { finish } = await this.turnStreamService.streamTurn({
+      workspaceId: data.workspaceId,
       claim,
       turnId,
+      agentId: null,
+      isBuiltInAssistant: true,
       abortSignal,
       startTurn: async (writer) => {
         const turn = await this.chatExecutionService.streamChat({
           workspace,
           userWorkspaceId: data.userWorkspaceId,
           sender,
-          authorization,
-          threadId: data.threadId,
+          authorizedConversation,
           streamId: data.streamId,
           turnId,
           messages: data.messages,
@@ -231,7 +263,7 @@ export class StreamAgentChatJob {
                 event: {
                   type: 'user-credits-exhausted',
                   workspaceMemberId:
-                    authorization.authContext.workspaceMemberId,
+                    authorizedConversation.authContext.workspaceMemberId,
                   isFallingBackToWorkspaceCredits,
                   renewsAt: renewsAt.toISOString(),
                 },
@@ -273,18 +305,72 @@ export class StreamAgentChatJob {
       if (isDefined(finish.threadBefore)) {
         await this.agentChatService.notifyThreadUsageUpdated({
           threadBefore: finish.threadBefore,
-          workspaceMemberId: authorization.authContext.workspaceMemberId,
+          workspaceMemberId:
+            authorizedConversation.authContext.workspaceMemberId,
           workspaceId: data.workspaceId,
         });
       }
     }
   }
 
+  private async cancelTurnForWorkspacePolicy({
+    claim,
+    turnId,
+    turnModelId,
+  }: {
+    claim: AgentChatStreamClaim;
+    turnId: string;
+    turnModelId: string;
+  }): Promise<void> {
+    const { threadId, workspaceId } = claim;
+    const isCancelled = await this.turnRecorderService.finish({
+      workspaceId,
+      turnId,
+      status: AgentTurnStatus.CANCELLED,
+      streamClaim: claim,
+    });
+
+    if (!isCancelled) {
+      return;
+    }
+
+    this.recordTurnOutcome(
+      {
+        kind: 'cancelled',
+        reason: AgentChatTurnCancellationReason.WORKSPACE_POLICY,
+      },
+      turnModelId,
+    );
+
+    await this.eventPublisherService
+      .publish({
+        threadId,
+        workspaceId,
+        event: { type: 'stream-ended' },
+      })
+      .catch((error: unknown) =>
+        this.logger.warn(
+          `Could not publish workspace-policy stream-ended event for workspace ${workspaceId}, stream ${claim.streamId}: ${formatErrorWithCause(error)}`,
+        ),
+      );
+    await this.eventPublisherService
+      .publish({
+        threadId,
+        workspaceId,
+        event: { type: 'queue-updated' },
+      })
+      .catch((error: unknown) =>
+        this.logger.warn(
+          `Could not publish workspace-policy queue-updated event for workspace ${workspaceId}, stream ${claim.streamId}: ${formatErrorWithCause(error)}`,
+        ),
+      );
+  }
+
   // resolve auto-select ids here so turn-start and outcome metrics carry the same model label
-  private resolveTurnModelId(
+  private async resolveTurnModelId(
     requestedModelId: string | undefined,
     workspace: WorkspaceEntity | null,
-  ): string {
+  ): Promise<string> {
     const modelId = isDefined(workspace)
       ? getChatModelId({ requestedModelId, workspace })
       : requestedModelId;
@@ -294,9 +380,19 @@ export class StreamAgentChatJob {
     }
 
     try {
+      const workspaceSettings = isDefined(workspace)
+        ? {
+            ...workspace,
+            effectiveAiDataPolicy:
+              await this.workspaceAiDataPolicyService.getEffectiveAiDataPolicy(
+                workspace,
+              ),
+          }
+        : undefined;
+
       return this.aiModelRegistryService.getEffectiveModelConfig(
         modelId,
-        workspace ?? undefined,
+        workspaceSettings,
       ).modelId;
     } catch {
       return modelId;

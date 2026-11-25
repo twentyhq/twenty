@@ -3,8 +3,8 @@ import { CalendarWidget } from '@/page-layout/widgets/calendar/components/Calend
 import { CallRecordingWidget } from '@/page-layout/widgets/call-recording/components/CallRecordingWidget';
 import { ChatWidget } from '@/page-layout/widgets/chat/components/ChatWidget';
 import { ChatThreadsWidget } from '@/page-layout/widgets/chat-threads/components/ChatThreadsWidget';
-import { EmailThreadWidget } from '@/page-layout/widgets/email-thread/components/EmailThreadWidget';
-import { EmailWidget } from '@/page-layout/widgets/emails/components/EmailWidget';
+import { MessageThreadWidget } from '@/page-layout/widgets/email-thread/components/MessageThreadWidget';
+import { MessagesWidget } from '@/page-layout/widgets/messages/components/MessagesWidget';
 import { FieldRichTextWidgetRenderer } from '@/page-layout/widgets/field-rich-text/components/FieldRichTextWidgetRenderer';
 import { FieldWidget } from '@/page-layout/widgets/field/components/FieldWidget';
 import { FieldsWidget } from '@/page-layout/widgets/fields/components/FieldsWidget';
@@ -20,7 +20,6 @@ import { TimelineWidget } from '@/page-layout/widgets/timeline/components/Timeli
 import { WorkflowRunWidget } from '@/page-layout/widgets/workflow/components/WorkflowRunWidget';
 import { WorkflowVersionWidget } from '@/page-layout/widgets/workflow/components/WorkflowVersionWidget';
 import { RecordTableWidgetRenderer } from '@/page-layout/widgets/record-table/components/RecordTableWidgetRenderer';
-import { WorkflowWidget } from '@/page-layout/widgets/workflow/components/WorkflowWidget';
 import { WidgetType } from '~/generated-metadata/graphql';
 
 type WidgetContentRendererProps = {
@@ -65,13 +64,10 @@ export const WidgetContentRenderer = ({
       return <FileWidget widget={widget} />;
 
     case WidgetType.EMAILS:
-      return <EmailWidget widget={widget} />;
+      return <MessagesWidget widget={widget} />;
 
     case WidgetType.CALENDAR:
       return <CalendarWidget widget={widget} />;
-
-    case WidgetType.WORKFLOW:
-      return <WorkflowWidget />;
 
     case WidgetType.WORKFLOW_VERSION:
       return <WorkflowVersionWidget />;
@@ -89,7 +85,7 @@ export const WidgetContentRenderer = ({
       return <RecordTableWidgetRenderer widget={widget} />;
 
     case WidgetType.EMAIL_THREAD:
-      return <EmailThreadWidget widget={widget} />;
+      return <MessageThreadWidget widget={widget} />;
 
     case WidgetType.MESSAGE_CAMPAIGN_BODY:
       return <MessageCampaignBodyWidget />;

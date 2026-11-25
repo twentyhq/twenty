@@ -16,12 +16,13 @@ import { splitViewWithRelated } from '@/metadata-store/utils/splitViewWithRelate
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
-import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
+import { useLingui } from '@lingui/react/macro';
 
 export const useCreateOneObjectMetadataItem = () => {
+  const { t } = useLingui();
   const [createOneObjectMetadataItemMutation] = useMutation(
     CreateOneObjectMetadataItemDocument,
   );

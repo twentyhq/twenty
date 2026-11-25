@@ -2,10 +2,10 @@ import { getChipLabel } from '@/ui/field/display/utils/getChipLabel';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
 import { LinkChip } from '@/ui/navigation/link/components/LinkChip/LinkChip';
-import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Chip } from 'twenty-ui/primitives/data-display';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
+import { useLingui } from '@lingui/react/macro';
 
 type MentionRecordChipProps = {
   recordId: string;
@@ -20,6 +20,7 @@ export const MentionRecordChip = ({
   label,
   imageUrl,
 }: MentionRecordChipProps) => {
+  const { t } = useLingui();
   if (!isNonEmptyString(objectNameSingular)) {
     return <Chip variant="plain" aria-disabled>{t`Unknown object`}</Chip>;
   }

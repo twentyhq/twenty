@@ -1,5 +1,6 @@
 import { defineLogicFunction, STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
 
+import { PDL_PERSON_REQUIRED_FIELD_VALUES } from 'src/constants/pdl-person-required-field-values';
 import { UPDATE_FIELDS_OPTION_VALUES } from 'src/constants/update-fields-option-values';
 import { PDL_LOGIC_FUNCTION_CONSTANTS } from 'src/constants/universal-identifiers';
 import { enrichPersonCore } from 'src/logic-functions/handlers/enrich-person';
@@ -31,6 +32,14 @@ export default defineLogicFunction({
             type: 'string',
             label: 'Update fields',
             enum: [...UPDATE_FIELDS_OPTION_VALUES],
+          },
+          requiredFields: {
+            type: 'array',
+            label: 'Required fields for a match',
+            items: {
+              type: 'string',
+              enum: [...PDL_PERSON_REQUIRED_FIELD_VALUES],
+            },
           },
           minLikelihood: {
             type: 'number',

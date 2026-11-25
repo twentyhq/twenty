@@ -17,7 +17,8 @@ export class MessagingMessageFolderAssociationService {
     associations: MessageChannelMessageAssociationFolderAssociation[],
     workspaceId: string,
     transactionScope: WorkspaceTransactionScope,
-  ): Promise<void> {
+    associationIdsToReplaceLinks: string[],
+  ): Promise<string[]> {
     const associationIds = [
       ...new Set(
         associations
@@ -27,17 +28,16 @@ export class MessagingMessageFolderAssociationService {
     ];
 
     if (associationIds.length === 0) {
-      return;
+      return [];
     }
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.workspaceOrmManager.executeInWorkspaceContext(
+    return this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const repository =
-          transactionScope.getRepository<MessageChannelMessageAssociationMessageFolderWorkspaceEntity>(
+          transactionScope.getRepositoryWithoutPermissionChecks<MessageChannelMessageAssociationMessageFolderWorkspaceEntity>(
             'messageChannelMessageAssociationMessageFolder',
-            { shouldBypassPermissionChecks: true },
           );
 
         const existingRecords = await repository.find({
@@ -54,6 +54,39 @@ export class MessagingMessageFolderAssociationService {
         if (recordsToInsert.length > 0) {
           await repository.insert(recordsToInsert);
         }
+
+        const staleRecords = existingRecords.filter(
+          ({ messageChannelMessageAssociationId, messageFolderId }) =>
+            associationIdsToReplaceLinks.includes(
+              messageChannelMessageAssociationId,
+            ) &&
+            !associations.some(
+              (association) =>
+                association.messageChannelMessageAssociationId ===
+                  messageChannelMessageAssociationId &&
+                association.messageFolderIds.includes(messageFolderId),
+            ),
+        );
+
+        if (staleRecords.length === 0) {
+          return [];
+        }
+
+        await transactionScope
+          .getRepositoryWithoutPermissionChecks<MessageChannelMessageAssociationMessageFolderWorkspaceEntity>(
+            'messageChannelMessageAssociationMessageFolder',
+            { shouldSkipEventEmission: true },
+          )
+          .delete({ id: In(staleRecords.map(({ id }) => id)) });
+
+        return [
+          ...new Set(
+            staleRecords.map(
+              ({ messageChannelMessageAssociationId }) =>
+                messageChannelMessageAssociationId,
+            ),
+          ),
+        ];
       },
       authContext,
       { lite: true },

@@ -20,4 +20,8 @@ export type ToolIndexEntry = {
   frontComponentId?: string;
   // Tools without one are reviewed as raw arguments when proposed for approval.
   approval?: ToolApproval;
+  // Overwrites or deletes data, so MCP clients see destructiveHint
+  isDestructive?: boolean;
+  // Changes nothing, so MCP clients see readOnlyHint and can skip confirmation
+  isReadOnly?: boolean;
 };

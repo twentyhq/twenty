@@ -8,7 +8,10 @@ import { SettingsAccountsBlocklistInput } from '@/settings/accounts/components/S
 import { SettingsAccountsBlocklistTable } from '@/settings/accounts/components/SettingsAccountsBlocklistTable';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
-import { BlocklistScope, CoreObjectNameSingular } from 'twenty-shared/types';
+import {
+  BlocklistScope,
+  StandardObjectNameSingular,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 
@@ -20,11 +23,11 @@ export const SettingsAccountsBlocklistSection = () => {
 
   const currentWorkspaceMemberId = currentWorkspaceMember?.id ?? '';
 
-  const isInternalMessagesImportEnabled =
-    currentWorkspace?.isInternalMessagesImportEnabled ?? false;
+  const isInternalImportEnabled =
+    currentWorkspace?.isInternalImportEnabled ?? false;
 
   const { records: blocklist } = useFindManyRecords<BlocklistItem>({
-    objectNameSingular: CoreObjectNameSingular.Blocklist,
+    objectNameSingular: StandardObjectNameSingular.Blocklist,
     filter: {
       workspaceMemberId: {
         in: [currentWorkspaceMemberId],
@@ -35,11 +38,11 @@ export const SettingsAccountsBlocklistSection = () => {
 
   const { createManyRecords: createBlocklistItems } =
     useCreateManyRecords<BlocklistItem>({
-      objectNameSingular: CoreObjectNameSingular.Blocklist,
+      objectNameSingular: StandardObjectNameSingular.Blocklist,
     });
 
   const { deleteOneRecord: deleteBlocklistItem } = useDeleteOneRecord({
-    objectNameSingular: CoreObjectNameSingular.Blocklist,
+    objectNameSingular: StandardObjectNameSingular.Blocklist,
   });
 
   const handleBlockedEmailRemove = (id: string) => {
@@ -47,7 +50,9 @@ export const SettingsAccountsBlocklistSection = () => {
   };
 
   const updateBlockedEmailList = (handles: string[]) => {
-    if (!isDefined(currentWorkspaceMember)) return;
+    if (!isDefined(currentWorkspaceMember)) {
+      return;
+    }
     createBlocklistItems({
       recordsToCreate: [...new Set(handles)].map((handle) => {
         return {
@@ -64,7 +69,7 @@ export const SettingsAccountsBlocklistSection = () => {
       <Section.Header
         title={t`Blocklist`}
         description={
-          isInternalMessagesImportEnabled
+          isInternalImportEnabled
             ? t`Exclude the following people and domains from my email sync.`
             : t`Exclude the following people and domains from my email sync. Internal conversations will not be imported`
         }

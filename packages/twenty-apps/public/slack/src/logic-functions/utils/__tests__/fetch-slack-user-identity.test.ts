@@ -1,4 +1,3 @@
-import { type WebClient } from '@slack/web-api';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { fetchSlackUserIdentity } from 'src/logic-functions/utils/fetch-slack-user-identity';
@@ -10,7 +9,7 @@ const usersInfoMock = vi.fn();
 
 const client = {
   users: { info: usersInfoMock },
-} as unknown as WebClient;
+};
 
 const buildSlackUser = (overrides: Record<string, unknown> = {}) => ({
   id: SLACK_USER_ID,

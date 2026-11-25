@@ -1,6 +1,5 @@
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
@@ -8,8 +7,10 @@ import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMet
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult';
 import { useToast } from 'twenty-ui/components/feedback';
 import { DeleteOneIndexMetadataItemDocument } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 export const useDeleteOneIndexMetadataItem = () => {
+  const { t } = useLingui();
   const [deleteOneIndexMetadataItemMutation] = useMutation(
     DeleteOneIndexMetadataItemDocument,
   );

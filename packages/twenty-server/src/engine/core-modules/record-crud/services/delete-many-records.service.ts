@@ -23,7 +23,7 @@ export class DeleteManyRecordsService {
   ) {}
 
   async execute(params: DeleteManyRecordsParams): Promise<ToolOutput> {
-    const { objectName, filter, authContext, rolePermissionConfig } = params;
+    const { objectName, filter, authContext } = params;
 
     if (!isDefined(filter) || isRecordFilterEmpty(filter)) {
       return {
@@ -39,7 +39,6 @@ export class DeleteManyRecordsService {
         await this.commonApiContextBuilder.build({
           authContext,
           objectName,
-          rolePermissionConfig,
         });
 
       if (

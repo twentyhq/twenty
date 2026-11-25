@@ -9,15 +9,16 @@ import { isFieldEmails } from '@/object-record/record-field/ui/types/guards/isFi
 import { isFieldLinks } from '@/object-record/record-field/ui/types/guards/isFieldLinks';
 import { isFieldPhones } from '@/object-record/record-field/ui/types/guards/isFieldPhones';
 import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
-import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { FieldMetadataSettingsOnClickAction } from 'twenty-shared/types';
 import { ensureAbsoluteUrl, isDefined } from 'twenty-shared/utils';
 import { IconArrowUpRight, IconCopy, IconMail } from 'twenty-ui/icon';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
+import { useLingui } from '@lingui/react/macro';
 
 export const useGetSecondaryFieldButton = () => {
+  const { t } = useLingui();
   const { fieldDefinition, recordId } = useContext(FieldContext);
   const { copyToClipboard } = useCopyToClipboard();
 

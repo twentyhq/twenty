@@ -3,10 +3,8 @@ import shippedCatalog from 'src/engine/metadata-modules/ai/ai-models/ai-provider
 import selfHostSpec from 'src/engine/metadata-modules/ai/ai-models/ai-self-host-spec.json';
 
 import { type CatalogSpec } from '../types/catalog-spec.type';
-import {
-  type CanonicalCatalog,
-  projectCatalog,
-} from '../utils/project-catalog.util';
+import { type CanonicalCatalog } from '../types/canonical-catalog.type';
+import { projectCatalog } from '../utils/project-catalog.util';
 
 // The shipped catalog is generated, so a hand edit is the drift this pipeline exists to remove
 describe('the shipped catalog', () => {

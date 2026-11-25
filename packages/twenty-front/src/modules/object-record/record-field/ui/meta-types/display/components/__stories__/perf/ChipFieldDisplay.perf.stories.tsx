@@ -1,7 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNamePlural } from '@/object-metadata/types/StandardObjectNamePlural';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { ChipFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/ChipFieldDisplay';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record-index/hooks/useRecordIndexFieldMetadataDerivedStates';
@@ -23,7 +23,7 @@ const meta: Meta = {
 
       const companyObjectMetadataItem =
         getTestEnrichedObjectMetadataItemsMock().find(
-          (item) => item.nameSingular === CoreObjectNameSingular.Company,
+          (item) => item.nameSingular === StandardObjectNameSingular.Company,
         )!;
 
       const {
@@ -47,8 +47,8 @@ const meta: Meta = {
               objectPermissionsByObjectMetadataId: {},
               indexIdentifierUrl: () => '',
               onIndexRecordsLoaded: () => {},
-              objectNamePlural: CoreObjectNamePlural.Company,
-              objectNameSingular: CoreObjectNameSingular.Company,
+              objectNamePlural: StandardObjectNamePlural.Company,
+              objectNameSingular: StandardObjectNameSingular.Company,
               objectMetadataItem: companyObjectMetadataItem,
               recordIndexId: instanceId,
               viewBarInstanceId: instanceId,

@@ -44,32 +44,33 @@ const compute = ({
       fieldPermission: { byRoleId: new Map() },
       rowLevelPermissionPredicate: { byRoleId: new Map() },
       rowLevelPermissionPredicateGroup: { byRoleId: new Map() },
+      rowLevelPermissionRule: { byRoleId: new Map() },
       fieldMetadata: [],
     },
-  } as never).role.thread;
+  } as never).role.objects.thread;
 };
 
 describe('Conversation role permissions', () => {
   it('grants AI tool access through canAccessAllTools', () => {
     expect(compute({ canAccessAllTools: true })).toMatchObject({
-      canReadObjectRecords: true,
-      canUpdateObjectRecords: true,
+      canReadAllRecords: true,
+      canUpdateAllRecords: true,
     });
   });
 
   it('grants AI tool access through its explicit permission flag', () => {
     expect(compute({ hasAiFlag: true })).toMatchObject({
-      canReadObjectRecords: true,
-      canUpdateObjectRecords: true,
+      canReadAllRecords: true,
+      canUpdateAllRecords: true,
     });
   });
 
   it('does not infer AI access from settings administration', () => {
     expect(compute({ canUpdateAllSettings: true })).toMatchObject({
-      canReadObjectRecords: false,
-      canUpdateObjectRecords: false,
-      canDestroyObjectRecords: false,
-      canSoftDeleteObjectRecords: false,
+      canReadAllRecords: false,
+      canUpdateAllRecords: false,
+      canDestroyAllRecords: false,
+      canSoftDeleteAllRecords: false,
     });
   });
 
@@ -77,8 +78,8 @@ describe('Conversation role permissions', () => {
     expect(
       compute({ canAccessAllTools: true, canUpdateObjectRecords: false }),
     ).toMatchObject({
-      canReadObjectRecords: true,
-      canUpdateObjectRecords: false,
+      canReadAllRecords: true,
+      canUpdateAllRecords: false,
     });
   });
 });

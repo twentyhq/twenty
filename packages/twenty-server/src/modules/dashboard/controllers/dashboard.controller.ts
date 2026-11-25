@@ -6,26 +6,17 @@ import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/wo
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { PermissionsRestApiExceptionFilter } from 'src/engine/permissions/utils/permissions-rest-api-exception.filter';
 import { DuplicatedDashboardDTO } from 'src/modules/dashboard/dtos/duplicated-dashboard.dto';
 import { DashboardRestApiExceptionFilter } from 'src/modules/dashboard/filters/dashboard-rest-api-exception.filter';
 import { DashboardDuplicationService } from 'src/modules/dashboard/services/dashboard-duplication.service';
+import { DASHBOARD_DUPLICATE_ACCESS_POLICY } from 'src/modules/dashboard/constants/dashboard-duplicate-access-policy.constant';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @Controller(`${ApiPath.Rest}/dashboards`)
 @UseGuards(
   JwtAuthGuard,
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
-    },
-    apiKey: true,
-    oauthClient: true,
-    application: true,
-  }),
+  AccessPolicyGuard(DASHBOARD_DUPLICATE_ACCESS_POLICY),
   CustomPermissionGuard,
 )
 @UseFilters(

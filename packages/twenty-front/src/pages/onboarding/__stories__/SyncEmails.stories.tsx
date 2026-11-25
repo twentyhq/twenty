@@ -213,7 +213,7 @@ export const PermissionsLoading: Story = {
   beforeEach: () => {
     jotaiStore.set(currentUserWorkspaceState.atom, {
       permissionFlags: [],
-      objectsPermissions: [],
+      objectRecordsPermissions: [],
       twoFactorAuthenticationMethodSummary: [],
       isImpersonating: false,
     });

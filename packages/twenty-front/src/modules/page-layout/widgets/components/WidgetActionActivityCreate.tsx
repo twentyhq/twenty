@@ -1,12 +1,12 @@
 import { useCreateActivityRelatedRecordAction } from '@/activities/hooks/useCreateActivityRelatedRecordAction';
 import { WidgetActionRelatedRecord } from '@/page-layout/widgets/components/WidgetActionRelatedRecord';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
-import { type CoreObjectNameSingular } from 'twenty-shared/types';
+import { type StandardObjectNameSingular } from 'twenty-shared/types';
 
 type WidgetActionActivityCreateProps = {
   activityObjectNameSingular:
-    | CoreObjectNameSingular.Note
-    | CoreObjectNameSingular.Task;
+    | StandardObjectNameSingular.Note
+    | StandardObjectNameSingular.Task;
 };
 
 export const WidgetActionActivityCreate = ({

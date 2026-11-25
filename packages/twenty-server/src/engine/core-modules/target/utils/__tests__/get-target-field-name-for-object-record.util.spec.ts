@@ -1,12 +1,12 @@
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 import { getTargetFieldNameForObjectRecord } from 'src/engine/core-modules/target/utils/get-target-field-name-for-object-record.util';
 
 describe('getTargetFieldNameForObjectRecord', () => {
   it.each([
-    [CoreObjectNameSingular.Person, 'targetPersonId'],
-    [CoreObjectNameSingular.Company, 'targetCompanyId'],
-    [CoreObjectNameSingular.Opportunity, 'targetOpportunityId'],
+    [StandardObjectNameSingular.Person, 'targetPersonId'],
+    [StandardObjectNameSingular.Company, 'targetCompanyId'],
+    [StandardObjectNameSingular.Opportunity, 'targetOpportunityId'],
   ])('maps %s to %s', (objectNameSingular, targetFieldName) => {
     expect(getTargetFieldNameForObjectRecord(objectNameSingular)).toBe(
       targetFieldName,

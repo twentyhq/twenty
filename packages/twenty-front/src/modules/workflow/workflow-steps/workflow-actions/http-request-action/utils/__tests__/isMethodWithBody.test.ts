@@ -7,7 +7,7 @@ describe('isMethodWithBody', () => {
   });
 
   it('should return false for undefined input', () => {
-    expect(isMethodWithBody(undefined as unknown as string)).toBe(false);
+    expect(isMethodWithBody(undefined)).toBe(false);
   });
 
   it('should return false for non-body methods', () => {

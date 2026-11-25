@@ -31,8 +31,7 @@ export const computeRecordPageViewFieldForExistingObject = ({
 
   if (
     !isDefined(recordPageFlatView) ||
-    recordPageFlatView.isSystemSideEffect !== true ||
-    isDefined(recordPageFlatView.deletedAt)
+    !recordPageFlatView.isSystemSideEffect
   ) {
     return undefined;
   }
@@ -78,13 +77,12 @@ export const computeRecordPageViewFieldForExistingObject = ({
           ],
       )
       .filter(isDefined)
-      .filter(
-        (group) =>
-          resolveEffectiveFlatEntityProperty({
-            metadataName: 'viewFieldGroup',
-            flatEntity: group,
-            property: 'isActive',
-          }) && !isDefined(group.deletedAt),
+      .filter((group) =>
+        resolveEffectiveFlatEntityProperty({
+          metadataName: 'viewFieldGroup',
+          flatEntity: group,
+          property: 'isActive',
+        }),
       );
 
   const lastFlatViewFieldGroup =
@@ -111,7 +109,6 @@ export const computeRecordPageViewFieldForExistingObject = ({
             universalFlatEntity: flatViewField,
             property: 'isActive',
           }) &&
-          !isDefined(flatViewField.deletedAt) &&
           flatViewField.viewFieldGroupUniversalIdentifier ===
             targetSystemViewFieldGroupUniversalIdentifier,
       )
@@ -145,8 +142,12 @@ export const computeRecordPageViewFieldForExistingObject = ({
     size: DEFAULT_VIEW_FIELD_SIZE,
     position,
     aggregateOperation: null,
+    relationTargetFieldMetadataUniversalIdentifier: null,
+    universalRelationScope: null,
+    label: null,
     isActive: true,
     isSystemSideEffect: true,
+    isCanonical: true,
     universalOverrides: null,
     createdAt,
     updatedAt: createdAt,

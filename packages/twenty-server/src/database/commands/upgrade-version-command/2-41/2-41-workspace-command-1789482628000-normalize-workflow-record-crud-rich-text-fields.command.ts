@@ -1,14 +1,15 @@
 import { Command } from 'nest-commander';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { LegacyWorkflowVersionCoreUpsertService } from 'src/database/commands/upgrade-version-command/2-20/services/legacy-workflow-version-core-upsert.service';
+import { LEGACY_WORKFLOW_VERSION_CORE_WORKFLOW_VERSION_ID_FIELD_UNIVERSAL_IDENTIFIER } from 'src/database/commands/upgrade-version-command/2-22/constants/legacy-workflow-version-universal-identifiers.constant';
 import { normalizeRecordCrudRichTextFieldsInSteps } from 'src/database/commands/upgrade-version-command/2-41/utils/normalize-record-crud-rich-text-fields.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
@@ -17,7 +18,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+import { type LegacyWorkflowVersionWorkspaceEntity } from 'src/database/commands/upgrade-version-command/2-20/types/legacy-workflow-version-workspace-entity.type';
 
 @RegisteredWorkspaceCommand('2.41.0', 1789482628000)
 @Command({
@@ -30,7 +31,7 @@ export class NormalizeWorkflowRecordCrudRichTextFieldsCommand extends Provisione
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
+    private readonly legacyWorkflowVersionCoreUpsertService: LegacyWorkflowVersionCoreUpsertService,
   ) {
     super(workspaceIteratorService);
   }
@@ -60,7 +61,7 @@ export class NormalizeWorkflowRecordCrudRichTextFieldsCommand extends Provisione
       findFlatEntityByUniversalIdentifier<FlatObjectMetadata>({
         flatEntityMaps: flatObjectMetadataMaps,
         universalIdentifier:
-          STANDARD_OBJECTS.workflowVersion.universalIdentifier,
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowVersion,
       });
 
     if (!isDefined(workflowVersionObject)) {
@@ -78,14 +79,12 @@ export class NormalizeWorkflowRecordCrudRichTextFieldsCommand extends Provisione
     }
 
     const workflowVersionRepository =
-      await this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-        'workflowVersion',
-        { shouldBypassPermissionChecks: true },
-      );
+      await this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<LegacyWorkflowVersionWorkspaceEntity>(
+        'workflowVersion');
 
     const allVersions = await workflowVersionRepository.find();
 
-    const versionsToSyncToCore: WorkflowVersionWorkspaceEntity[] = [];
+    const versionsToSyncToCore: LegacyWorkflowVersionWorkspaceEntity[] = [];
     let rewrittenCount = 0;
 
     for (const version of allVersions) {
@@ -121,8 +120,7 @@ export class NormalizeWorkflowRecordCrudRichTextFieldsCommand extends Provisione
 
     const hasCoreWorkflowVersionIdField = isDefined(
       flatFieldMetadataMaps.byUniversalIdentifier[
-        STANDARD_OBJECTS.workflowVersion.fields.coreWorkflowVersionId
-          .universalIdentifier
+        LEGACY_WORKFLOW_VERSION_CORE_WORKFLOW_VERSION_ID_FIELD_UNIVERSAL_IDENTIFIER
       ],
     );
 
@@ -135,10 +133,10 @@ export class NormalizeWorkflowRecordCrudRichTextFieldsCommand extends Provisione
     }
 
     if (!isDryRun) {
-      await this.workflowVersionCoreSyncService.upsertToCore(
+      await this.legacyWorkflowVersionCoreUpsertService.upsert({
         workspaceId,
-        versionsToSyncToCore,
-      );
+        workflowVersions: versionsToSyncToCore,
+      });
     }
 
     this.logger.log(

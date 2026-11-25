@@ -42,13 +42,13 @@ describe('Record form widget visibility', () => {
   const findFormFieldWidget = async (
     targetFieldMetadataId: string,
   ): Promise<FormFieldWidget | undefined> => {
-    const { data } = await findPageLayoutWidgets({
+    const { data } = await findPageLayoutWidgets<FormFieldWidget>({
       expectToFail: false,
       input: { pageLayoutTabId: recordFormTabId },
       gqlFields: FORM_FIELD_WIDGET_GQL_FIELDS,
     });
 
-    return (data.getPageLayoutWidgets as unknown as FormFieldWidget[]).find(
+    return data.getPageLayoutWidgets.find(
       (widget) =>
         widget.configuration?.fieldMetadataId === targetFieldMetadataId,
     );
@@ -69,13 +69,13 @@ describe('Record form widget visibility', () => {
   };
 
   const setWidgetIsActive = async (widgetId: string, isActive: boolean) => {
-    const { data } = await updateOnePageLayoutWidget({
+    const { data } = await updateOnePageLayoutWidget<FormFieldWidget>({
       expectToFail: false,
       input: { id: widgetId, isActive },
       gqlFields: FORM_FIELD_WIDGET_GQL_FIELDS,
     });
 
-    return data.updatePageLayoutWidget as unknown as FormFieldWidget;
+    return data.updatePageLayoutWidget;
   };
 
   const hideFormFieldWidget = async () => {
@@ -234,7 +234,7 @@ describe('Record form widget visibility', () => {
 
     const widget = await findFormFieldWidgetOrThrow(fieldMetadataId);
 
-    const { errors } = await updateOnePageLayoutWidget({
+    const { errors } = await updateOnePageLayoutWidget<FormFieldWidget>({
       expectToFail: true,
       input: { id: widget.id, isActive: true },
       gqlFields: FORM_FIELD_WIDGET_GQL_FIELDS,

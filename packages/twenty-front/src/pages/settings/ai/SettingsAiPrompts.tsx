@@ -2,12 +2,11 @@ import { styled } from '@linaria/react';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
-import { AI_INSTRUCTIONS_EDITOR_PROFILE } from '@/ai/constants/AiInstructionsEditorProfile';
+import { AI_INSTRUCTIONS_EDITOR_PROFILE } from '@/settings/ai/constants/AiInstructionsEditorProfile';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useQuery } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import {
   getSettingsPath,
@@ -18,6 +17,7 @@ import { Section } from 'twenty-ui/components/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { GetAiSystemPromptPreviewDocument } from '~/generated-metadata/graphql';
 import { formatNumber } from '@/localization/utils/formatNumber';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledSectionHeader = styled(Section.Header)`
   margin-block-end: 0;
@@ -37,6 +37,7 @@ const StyledTitleContainer = styled.div`
 `;
 
 export const SettingsAiPrompts = () => {
+  const { t } = useLingui();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
   const { data: previewData, loading: previewLoading } = useQuery(

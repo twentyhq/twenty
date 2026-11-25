@@ -16,24 +16,10 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 
-@UseGuards(
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
-    },
-    apiKey: true,
-    oauthClient: true,
-    application: true,
-  }),
-  SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
-)
 @MetadataResolver(() => ApplicationVariableEntityDTO)
 @UseFilters(
   ApplicationVariableEntityExceptionFilter,
@@ -46,11 +32,28 @@ export class ApplicationVariableEntityResolver {
   ) {}
 
   @ResolveField(() => String)
+  @UseGuards(NoPermissionGuard)
   value(@Parent() applicationVariable: ApplicationVariableEntity): string {
     return this.applicationVariableService.getDisplayValue(applicationVariable);
   }
 
   @Mutation(() => Boolean)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: true,
+        oauthClient: true,
+        application: true,
+      },
+      requiredPermissionFlags: [PermissionFlagType.APPLICATIONS],
+    }),
+  )
   async updateOneApplicationVariable(
     @Args() { key, value, applicationId }: UpdateApplicationVariableEntityInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

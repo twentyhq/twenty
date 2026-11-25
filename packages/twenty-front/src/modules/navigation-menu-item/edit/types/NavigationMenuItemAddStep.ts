@@ -3,4 +3,6 @@ export type NavigationMenuItemAddStep =
   | 'object'
   | 'view'
   | 'record'
-  | 'page';
+  | 'page'
+  | 'nativePage'
+  | 'automation';

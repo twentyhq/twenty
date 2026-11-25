@@ -7,7 +7,6 @@ import { UsageSectionSkeleton } from '@/settings/usage/components/UsageSectionSk
 import { AI_OPERATION_TYPES } from '@/settings/usage/constants/AiOperationTypes';
 import { useUsageAnalyticsData } from '@/settings/usage/hooks/useUsageAnalyticsData';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { t } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
@@ -15,6 +14,7 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 
 export const SettingsAiUsageUserDetail = () => {
+  const { t } = useLingui();
   const { t: tLingui } = useLingui();
   const { userWorkspaceId } = useParams<{ userWorkspaceId: string }>();
 

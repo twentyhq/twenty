@@ -19,11 +19,13 @@ import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/dr
 import { PUBLIC_FEATURE_FLAGS } from 'src/engine/core-modules/feature-flag/constants/public-feature-flag.const';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
+import { deriveWebPushVapidKeyPair } from 'src/engine/core-modules/web-push/utils/derive-web-push-vapid-key-pair.util';
 import { AI_MODEL_TIERS, parseAiModelVariantId } from 'twenty-shared/ai';
 import { ENTERPRISE_INSTANCE_TYPE } from 'twenty-shared/constants';
-import { MODEL_FAMILY_LABELS } from 'src/engine/metadata-modules/ai/ai-models/constants/model-family-labels.const';
+import { MODEL_FAMILY_LABELS } from 'src/engine/metadata-modules/ai/ai-models/constants/model-family-labels.constant';
 import { getAvailableEfforts } from 'src/engine/metadata-modules/ai/ai-models/utils/get-available-efforts.util';
 import { getNativeModelCapabilities } from 'src/engine/metadata-modules/ai/ai-models/utils/get-native-model-capabilities.util';
+import { AI_DATA_POLICIES } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-data-policies.constant';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type AiModelBenchmark } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-benchmark.type';
 import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
@@ -120,6 +122,7 @@ export class ClientConfigService {
           maxOutputTokens: modelConfig?.maxOutputTokens,
           isDeprecated: modelConfig?.isDeprecated,
           dataResidency: modelConfig?.dataResidency,
+          zeroDataRetention: modelConfig?.zeroDataRetention,
           intelligenceIndex: benchmark?.intelligenceIndex,
           outputTokensPerSecond: benchmark?.outputTokensPerSecond,
           costPerTask: benchmark?.costPerTask,
@@ -156,11 +159,29 @@ export class ClientConfigService {
           isDeprecated: modelConfig.isDeprecated,
         }));
 
-    const aiModelTiers = AI_MODEL_TIERS.flatMap((tier) => {
-      const model = this.aiModelRegistryService.findDefaultModelForTier(tier);
+    const aiModelTiers = AI_DATA_POLICIES.flatMap((aiDataPolicy) =>
+      AI_MODEL_TIERS.flatMap((tier) => {
+        const model = this.aiModelRegistryService.findDefaultModelForTier({
+          tier,
+          aiDataPolicy,
+        });
 
-      return isDefined(model) ? [{ tier, modelId: model.modelId }] : [];
-    });
+        if (!isDefined(model)) {
+          return [];
+        }
+
+        return [
+          {
+            tier,
+            modelId: model.modelId,
+            requiredDataResidencyRegion:
+              aiDataPolicy.requiredDataResidencyRegion,
+            isZeroDataRetentionRequired:
+              aiDataPolicy.isZeroDataRetentionRequired,
+          },
+        ];
+      }),
+    );
 
     const clientConfig: ClientConfig = {
       appVersion: this.twentyConfigService.get('APP_VERSION'),
@@ -313,6 +334,9 @@ export class ClientConfigService {
       enterpriseInstanceType:
         this.twentyConfigService.get('ENTERPRISE_INSTANCE_TYPE') ??
         ENTERPRISE_INSTANCE_TYPE.PRODUCTION,
+      webPushVapidPublicKey: deriveWebPushVapidKeyPair({
+        twentyConfigService: this.twentyConfigService,
+      }).publicKey,
     };
 
     const maintenanceMode =

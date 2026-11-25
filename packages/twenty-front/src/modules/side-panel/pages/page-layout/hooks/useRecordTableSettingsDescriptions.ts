@@ -1,87 +1,75 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
-import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useViewById } from '@/views/hooks/useViewById';
-import { t } from '@lingui/core/macro';
+import { isCurrentRecordViewFilter } from '@/page-layout/widgets/record-table/utils/isCurrentRecordViewFilter';
+import { type View } from '@/views/types/View';
 import { isDefined } from 'twenty-shared/utils';
+import { useLingui } from '@lingui/react/macro';
 
 const PLACEHOLDER_INSTANCE_ID =
   'record-table-settings-descriptions-placeholder';
 
 type UseRecordTableSettingsDescriptionsParams = {
-  objectMetadataId: string | null | undefined;
-  viewId: string | null;
+  // The dashboard names its source object before the widget has a view
+  sourceObjectMetadataId?: string | null;
+  view: View | undefined;
 };
 
 export const useRecordTableSettingsDescriptions = ({
-  objectMetadataId,
-  viewId,
+  sourceObjectMetadataId,
+  view,
 }: UseRecordTableSettingsDescriptionsParams) => {
+  const { t } = useLingui();
   const { objectMetadataItems } = useObjectMetadataItems();
-  const { view } = useViewById(viewId);
 
-  const sourceObjectMetadataItem = objectMetadataItems.find(
-    (item) => item.id === objectMetadataId,
+  const objectMetadataItem = objectMetadataItems.find(
+    (item) => item.id === (view?.objectMetadataId ?? sourceObjectMetadataId),
   );
 
   const recordIndexId =
-    isDefined(viewId) && isDefined(sourceObjectMetadataItem)
+    isDefined(view) && isDefined(objectMetadataItem)
       ? getRecordIndexIdFromObjectNamePluralAndViewId(
-          sourceObjectMetadataItem.namePlural,
-          viewId,
+          objectMetadataItem.namePlural,
+          view.id,
         )
       : PLACEHOLDER_INSTANCE_ID;
-
-  const currentRecordFilters = useAtomComponentStateValue(
-    currentRecordFiltersComponentState,
-    recordIndexId,
-  );
-
-  const currentRecordSorts = useAtomComponentStateValue(
-    currentRecordSortsComponentState,
-    recordIndexId,
-  );
 
   const visibleRecordFields = useAtomComponentSelectorValue(
     visibleRecordFieldsComponentSelector,
     recordIndexId,
   );
 
-  const hasViewId = isDefined(viewId);
-
-  const activeVisibleFieldLabels: Array<string | undefined> = hasViewId
+  const activeVisibleFieldLabels: Array<string | undefined> = isDefined(view)
     ? visibleRecordFields.map(
         (field) =>
-          sourceObjectMetadataItem?.fields.find(
+          objectMetadataItem?.fields.find(
             (metaField) => metaField.id === field.fieldMetadataItemId,
           )?.label,
       )
     : [];
 
-  const activeFilterLabels: Array<string | undefined> =
-    currentRecordFilters.length > 0
-      ? currentRecordFilters.map((filter) => filter.label)
-      : (view?.viewFilters ?? []).map(
-          (filter) =>
-            sourceObjectMetadataItem?.fields.find(
-              (field) => field.id === filter.fieldMetadataId,
-            )?.label,
-        );
+  const activeFilterLabels: Array<string | undefined> = (
+    view?.viewFilters ?? []
+  )
+    .filter((filter) => !isCurrentRecordViewFilter(filter))
+    .map(
+      (filter) =>
+        objectMetadataItem?.fields.find(
+          (field) => field.id === filter.fieldMetadataId,
+        )?.label,
+    );
 
   const activeSortLabels: Array<string | undefined> = (
-    currentRecordSorts.length > 0 ? currentRecordSorts : (view?.viewSorts ?? [])
+    view?.viewSorts ?? []
   ).map(
     (sort) =>
-      sourceObjectMetadataItem?.fields.find(
+      objectMetadataItem?.fields.find(
         (field) => field.id === sort.fieldMetadataId,
       )?.label,
   );
 
-  const sourceDescription = sourceObjectMetadataItem?.labelPlural;
+  const sourceDescription = objectMetadataItem?.labelPlural;
 
   const fieldsDescription =
     activeVisibleFieldLabels.length === 1

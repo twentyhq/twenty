@@ -64,10 +64,12 @@ const buildFlatNavigationMenuItem = ({
   workspaceId: WORKSPACE_ID,
   applicationId: APP_ID,
   viewId: null,
-  folderId: null,
+  parentId: null,
   targetObjectMetadataId: null,
   pageLayoutId: null,
   agentChatChannelId: null,
+  workflowId: null,
+  agentId: null,
   ...flatNavigationMenuItemProperties,
 });
 
@@ -232,6 +234,35 @@ describe('reconstructNavigationMenuItemsManifest', () => {
     });
   });
 
+  it('should exclude items pinned to a workflow or an agent', () => {
+    const { navigationMenuItems, coverage } = reconstruct([
+      buildFlatNavigationMenuItem({
+        universalIdentifier: 'workflow-item',
+        type: NavigationMenuItemType.WORKFLOW,
+        workflowId: 'workflow-id',
+      }),
+      buildFlatNavigationMenuItem({
+        universalIdentifier: 'agent-item',
+        type: NavigationMenuItemType.AGENT,
+        agentId: 'agent-id',
+      }),
+    ]);
+
+    expect(navigationMenuItems).toEqual([]);
+    expect(
+      ['workflow-item', 'agent-item'].map((universalIdentifier) =>
+        statusOf(coverage, universalIdentifier),
+      ),
+    ).toEqual(
+      ['workflow-item', 'agent-item'].map((universalIdentifier) => ({
+        metadataName: 'navigationMenuItem',
+        universalIdentifier,
+        status: ApplicationExportCoverageStatus.EXCLUDED,
+        reason: 'navigation item pinned to a workflow or an agent',
+      })),
+    );
+  });
+
   it('should refuse an item whose target cannot be resolved', () => {
     const { navigationMenuItems, coverage } = reconstruct([
       buildFlatNavigationMenuItem({
@@ -329,7 +360,7 @@ describe('reconstructNavigationMenuItemsManifest', () => {
       buildFlatNavigationMenuItem({
         universalIdentifier: 'folded-item',
         targetObjectMetadataUniversalIdentifier: PET_UID,
-        folderUniversalIdentifier: FOLDER_UID,
+        parentUniversalIdentifier: FOLDER_UID,
       }),
     ]);
 
@@ -343,12 +374,12 @@ describe('reconstructNavigationMenuItemsManifest', () => {
       buildFlatNavigationMenuItem({
         universalIdentifier: 'foreign-folder-item',
         targetObjectMetadataUniversalIdentifier: PET_UID,
-        folderUniversalIdentifier: FOREIGN_FOLDER_UID,
+        parentUniversalIdentifier: FOREIGN_FOLDER_UID,
       }),
       buildFlatNavigationMenuItem({
         universalIdentifier: 'missing-folder-item',
         targetObjectMetadataUniversalIdentifier: PET_UID,
-        folderUniversalIdentifier: MISSING_UID,
+        parentUniversalIdentifier: MISSING_UID,
       }),
     ]);
 
@@ -372,12 +403,12 @@ describe('reconstructNavigationMenuItemsManifest', () => {
         universalIdentifier: NESTED_FOLDER_UID,
         type: NavigationMenuItemType.FOLDER,
         name: 'Soft toys',
-        folderUniversalIdentifier: FOLDER_UID,
+        parentUniversalIdentifier: FOLDER_UID,
       }),
       buildFlatNavigationMenuItem({
         universalIdentifier: 'nested-item',
         targetObjectMetadataUniversalIdentifier: PET_UID,
-        folderUniversalIdentifier: NESTED_FOLDER_UID,
+        parentUniversalIdentifier: NESTED_FOLDER_UID,
       }),
     ]);
 

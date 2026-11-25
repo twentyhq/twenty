@@ -16,9 +16,9 @@ import {
 } from '@/workflow/workflow-steps/filters/types/FilterSettings';
 import { isStepFilterGroupChildAStepFilterGroup } from '@/workflow/workflow-steps/filters/utils/isStepFilterGroupChildAStepFilterGroup';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledContainer = styled.div`
   align-items: start;
@@ -52,6 +52,7 @@ const WorkflowStepFilterBuilderConditions = ({
 }: {
   readonly?: boolean;
 }) => {
+  const { t } = useLingui();
   const rootStepFilterGroup = useAtomComponentSelectorValue(
     rootLevelStepFilterGroupComponentSelector,
   );

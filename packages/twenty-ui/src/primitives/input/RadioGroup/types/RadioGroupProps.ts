@@ -3,4 +3,6 @@ import { type RadioGroup as RadioGroupPrimitive } from '@base-ui/react/radio-gro
 export type RadioGroupProps<TValue = string> =
   RadioGroupPrimitive.Props<TValue> & {
     orientation?: 'horizontal' | 'vertical';
+    layout?: 'list' | 'grid';
+    minColumnWidth?: number;
   };

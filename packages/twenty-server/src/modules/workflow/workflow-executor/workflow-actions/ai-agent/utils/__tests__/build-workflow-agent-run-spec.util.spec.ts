@@ -1,3 +1,4 @@
+import { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from 'twenty-shared/ai';
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
 import { buildWorkflowAgentRunSpec } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/utils/build-workflow-agent-run-spec.util';
@@ -30,6 +31,7 @@ describe('buildWorkflowAgentRunSpec', () => {
         prompt: 'Draft the quote',
         humanInputInstructions: '  ',
       }),
+      applicationId: 'application-id',
     });
 
     expect(spec).toMatchObject({
@@ -49,6 +51,7 @@ describe('buildWorkflowAgentRunSpec', () => {
         agentId: 'agent-id',
         humanInputInstructions: ' Ask before choosing a plan. ',
       }),
+      applicationId: 'application-id',
     });
 
     expect(spec.agentId).toBe('agent-id');
@@ -69,6 +72,7 @@ describe('buildWorkflowAgentRunSpec', () => {
 
     const spec = buildWorkflowAgentRunSpec({
       step: buildStep({ agentId: 'agent-id', responseFormat }),
+      applicationId: 'application-id',
     });
 
     expect(spec.responseFormat).toEqual(responseFormat);
@@ -77,8 +81,48 @@ describe('buildWorkflowAgentRunSpec', () => {
   it("leaves the agent's output format to apply when the step gives none", () => {
     const spec = buildWorkflowAgentRunSpec({
       step: buildStep({ agentId: 'agent-id' }),
+      applicationId: 'application-id',
     });
 
     expect(spec).not.toHaveProperty('responseFormat');
+  });
+
+  it("carries the step's own config when it runs no agent", () => {
+    const scope = {
+      objectPermissions: [
+        { objectUniversalIdentifier: 'person', canReadObjectRecords: true },
+      ],
+    };
+
+    const spec = buildWorkflowAgentRunSpec({
+      step: buildStep({
+        instructions: 'Qualify the lead.',
+        modelConfiguration: { webSearch: { enabled: true } },
+        scope,
+        prompt: 'Qualify {{trigger.name}}',
+      }),
+      applicationId: 'application-id',
+    });
+
+    expect(spec).toMatchObject({
+      agentId: null,
+      inlineConfig: {
+        instructions: 'Qualify the lead.',
+        modelId: AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
+        modelConfiguration: { webSearch: { enabled: true } },
+        scope,
+        applicationId: 'application-id',
+        promptCacheKey: 'workflow-step:step-id',
+      },
+    });
+  });
+
+  it('gives a step without an agent or scope no data tools', () => {
+    const spec = buildWorkflowAgentRunSpec({
+      step: buildStep({ instructions: 'Summarize.' }),
+      applicationId: 'application-id',
+    });
+
+    expect(spec.inlineConfig?.scope).toBeNull();
   });
 });

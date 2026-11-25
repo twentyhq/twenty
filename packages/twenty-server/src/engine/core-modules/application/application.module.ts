@@ -1,12 +1,17 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { ApplicationContentService } from 'src/engine/core-modules/application/application-content/application-content.service';
+import { ApplicationTranslationModule } from 'src/engine/core-modules/application/application-translation/application-translation.module';
+import { DomainServerConfigModule } from 'src/engine/core-modules/domain/domain-server-config/domain-server-config.module';
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationGaugeService } from 'src/engine/core-modules/application/application-gauge.service';
 import { ApplicationStopModule } from 'src/engine/core-modules/application/application-stop/application-stop.module';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationResolver } from 'src/engine/core-modules/application/application.resolver';
 import { ApplicationLookupModule } from 'src/engine/core-modules/application/application-lookup/application-lookup.module';
+import { ApplicationGrantRoleLookupModule } from 'src/engine/core-modules/application/application-grant-role-lookup/application-grant-role-lookup.module';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceFlatApplicationMapCacheService } from 'src/engine/core-modules/application/workspace-flat-application-map-cache.service';
 import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
@@ -37,8 +42,12 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
       SettingsMenuItemEntity,
       ObjectMetadataEntity,
       ApplicationVariableEntity,
+      FileEntity,
     ]),
+    ApplicationTranslationModule,
     ApplicationLookupModule,
+    DomainServerConfigModule,
+    ApplicationGrantRoleLookupModule,
     ApplicationStopModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     WorkspaceCacheModule,
@@ -48,6 +57,7 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
   providers: [
     ApplicationResolver,
     ApplicationService,
+    ApplicationContentService,
     ApplicationGaugeService,
     WorkspaceFlatApplicationMapCacheService,
     provideWorkspaceScopedRepository(AgentEntity),
@@ -58,6 +68,7 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
     provideWorkspaceScopedRepository(LogicFunctionEntity),
     provideWorkspaceScopedRepository(ObjectMetadataEntity),
     provideWorkspaceScopedRepository(ApplicationEntity),
+    provideWorkspaceScopedRepository(FileEntity),
   ],
 })
 export class ApplicationModule {}

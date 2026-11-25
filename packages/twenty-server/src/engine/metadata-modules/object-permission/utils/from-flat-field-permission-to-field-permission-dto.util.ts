@@ -8,6 +8,8 @@ export const fromFlatFieldPermissionToFieldPermissionDto = (
   objectMetadataId: flatFieldPermission.objectMetadataId,
   fieldMetadataId: flatFieldPermission.fieldMetadataId,
   roleId: flatFieldPermission.roleId,
+  rowLevelPermissionPredicateGroupId:
+    flatFieldPermission.rowLevelPermissionPredicateGroupId,
   canReadFieldValue: flatFieldPermission.canReadFieldValue ?? null,
   canUpdateFieldValue: flatFieldPermission.canUpdateFieldValue ?? null,
 });

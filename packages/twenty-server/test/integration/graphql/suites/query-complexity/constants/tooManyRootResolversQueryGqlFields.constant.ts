@@ -114,21 +114,7 @@ export const TOO_MANY_ROOT_RESOLVERS_QUERY_GQL_FIELDS = gql`
         }
       }
     }
-    workflowVersions {
-      edges {
-        node {
-          id
-        }
-      }
-    }
-    workflowAutomatedTriggers {
-      edges {
-        node {
-          id
-        }
-      }
-    }
-    workflows {
+    pets {
       edges {
         node {
           id

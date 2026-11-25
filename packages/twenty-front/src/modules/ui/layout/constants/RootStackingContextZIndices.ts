@@ -9,7 +9,6 @@ export enum RootStackingContextZIndices {
   RootModal = 40,
   DropdownPortalAboveModal = 50,
   Dialog = 9999,
-  WelcomeOverlay = 10000,
   Toaster = 10002,
   NotFound = 10001,
 }

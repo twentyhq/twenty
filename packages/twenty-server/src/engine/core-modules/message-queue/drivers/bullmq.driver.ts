@@ -1,3 +1,5 @@
+import { createHash } from 'node:crypto';
+
 import {
   Logger,
   type OnModuleDestroy,
@@ -13,19 +15,23 @@ import {
   MetricsTime,
   Queue,
   type QueueOptions,
+  UnrecoverableError,
   Worker,
 } from 'bullmq';
 import { type JobState as BullMQJobState } from 'bullmq/dist/esm/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import {
   type QueueCronJobOptions,
   type QueueJobOptions,
   type QueueJobRecipient,
+  type QueueJobScope,
   type QueueJobSettings,
 } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import {
+  type BulkAddResult,
   type InFlightQueueJob,
   type MessageQueueDriver,
   type QueueJobDetails,
@@ -39,17 +45,40 @@ import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-
 
 import { DEFAULT_JOB_PRIORITY } from 'src/engine/core-modules/message-queue/constants/default-job-priority.constant';
 import { QUEUE_JOB_CHANGED_EVENT } from 'src/engine/core-modules/message-queue/constants/queue-job-changed-event.constant';
+import { QUEUE_JOB_FAILED_EVENT } from 'src/engine/core-modules/message-queue/constants/queue-job-failed-event.constant';
 import { QUEUE_RETENTION } from 'src/engine/core-modules/message-queue/constants/queue-retention.constants';
 import { FairQueueScheduler } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-queue-scheduler';
+import {
+  getChargedGroupKeys,
+  type JobMemoryReconciliation,
+  JobMemoryLimiter,
+} from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-limiter';
+import { JobSizeLimiter } from 'src/engine/core-modules/message-queue/drivers/memory/job-size-limiter';
+import { JOBS_EXIST_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/memory/jobs-exist-script.constant';
+import { JOBS_PERSISTED_OPTIONS_SCRIPT } from 'src/engine/core-modules/message-queue/constants/jobs-persisted-options-script.constant';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MESSAGE_QUEUE_WORKER_CONFIG } from 'src/engine/core-modules/message-queue/message-queue-worker-config.constant';
+import {
+  MessageQueueException,
+  MessageQueueExceptionCode,
+} from 'src/engine/core-modules/message-queue/message-queue.exception';
 import { type QueueJobChangedEvent } from 'src/engine/core-modules/message-queue/types/queue-job-changed-event.type';
+import { type QueueJobFailedEvent } from 'src/engine/core-modules/message-queue/types/queue-job-failed-event.type';
 import { getJobKey } from 'src/engine/core-modules/message-queue/utils/get-job-key.util';
 import { buildQueueJobIdWithSuffix } from 'src/engine/core-modules/message-queue/utils/build-queue-job-id-with-suffix.util';
+import { buildQueueJobGroupKeys } from 'src/engine/core-modules/message-queue/utils/build-queue-job-group-keys.util';
+import { computeJobSizeBytes } from 'src/engine/core-modules/message-queue/utils/compute-job-size-bytes.util';
+import { runRedisScript } from 'src/engine/core-modules/message-queue/utils/run-redis-script.util';
 import { buildJobLogContext } from 'src/engine/core-modules/message-queue/utils/build-job-log-context.util';
 import { computeJobQueueWaitMs } from 'src/engine/core-modules/message-queue/utils/compute-job-queue-wait-ms.util';
+import { getQueueJobScheduledAt } from 'src/engine/core-modules/message-queue/utils/get-queue-job-scheduled-at.util';
 import { isQueueJobIdAlreadyWaiting } from 'src/engine/core-modules/message-queue/utils/is-queue-job-id-already-waiting.util';
 import { JOB_LATENCY_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/job-latency-ms-bucket-boundaries.constant';
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import {
+  buildGroupKeyMemoryObservations,
+  type GroupKeyMemoryObservation,
+} from 'src/engine/core-modules/message-queue/utils/build-group-key-memory-observations.util';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { applyWorkspaceSentryContextFromJobData } from 'src/engine/core-modules/sentry/utils/apply-workspace-sentry-context-from-job-data.util';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -59,7 +88,12 @@ export type BullMQDriverOptions = QueueOptions;
 type BullMQJobsOptions = JobsOptions & {
   broadcastTo?: QueueJobRecipient;
   fairBase?: number;
+  memoryGroupKeys?: string[];
+  memorySizeBytes?: number;
+  scheduledAt?: number;
 };
+
+type PreparedJob = { options: BullMQJobsOptions; sizeBytes: number };
 
 export class BullMQDriver
   implements MessageQueueDriver, OnModuleDestroy, OnModuleInit
@@ -78,6 +112,9 @@ export class BullMQDriver
   > = {};
   private workersDrain: Promise<void> | undefined;
   private readonly fairQueueScheduler: FairQueueScheduler;
+  private readonly jobSizeLimiter: JobSizeLimiter;
+  private readonly jobMemoryLimiter: JobMemoryLimiter;
+  private reportedMemoryGroupKeys = new Set<string>();
 
   constructor(
     private options: BullMQDriverOptions,
@@ -86,6 +123,19 @@ export class BullMQDriver
     private eventEmitter: EventEmitter2,
   ) {
     this.fairQueueScheduler = new FairQueueScheduler({
+      getClient: (queueName) => this.queueMap[queueName].client,
+      getJobKey: ({ queueName, jobId }) =>
+        this.queueMap[queueName].toKey(jobId),
+      keyPrefix: options.prefix ?? 'bull',
+      metricsService,
+      getGroupLimiter: (queueName) =>
+        MESSAGE_QUEUE_WORKER_CONFIG[queueName].workerOptions.groupLimiter,
+    });
+    this.jobSizeLimiter = new JobSizeLimiter(
+      metricsService,
+      twentyConfigService,
+    );
+    this.jobMemoryLimiter = new JobMemoryLimiter({
       getClient: (queueName) => this.queueMap[queueName].client,
       getJobKey: ({ queueName, jobId }) =>
         this.queueMap[queueName].toKey(jobId),
@@ -119,6 +169,73 @@ export class BullMQDriver
       },
       callback: () => this.collectJobCountsByQueue(['delayed']),
     });
+
+    this.metricsService.createMultiObservableGauge({
+      metricName: 'twenty_queue_memory_used_ratio',
+      options: {
+        description:
+          'Redis memory used over the capacity given to job queues (maxmemory minus the reserve)',
+      },
+      callback: () => this.collectQueueMemoryUsedRatio(),
+    });
+
+    this.metricsService.createMultiObservableGauge({
+      metricName: 'twenty_queue_memory_group_used_bytes',
+      options: {
+        description:
+          'Redis memory charged to the job-queue group keys (workspaces, applications) using the most',
+        unit: 'By',
+      },
+      callback: () => this.collectTopGroupKeyMemoryUsages(),
+    });
+  }
+
+  // charges of every queue share one Redis, so any registered queue's client can reconcile them all
+  async reconcileJobMemory(): Promise<JobMemoryReconciliation> {
+    const [queueName] = Object.keys(this.queueMap) as MessageQueue[];
+
+    if (!isDefined(queueName)) {
+      return { releasedCount: 0, releasedBytes: 0 };
+    }
+
+    return this.jobMemoryLimiter.reconcile(queueName);
+  }
+
+  private async collectQueueMemoryUsedRatio(): Promise<
+    Array<{ value: number; attributes: Record<string, string> }>
+  > {
+    const [queueName] = Object.keys(this.queueMap) as MessageQueue[];
+
+    if (!isDefined(queueName)) {
+      return [];
+    }
+
+    const usedRatio = await this.jobMemoryLimiter.getUsedRatio(queueName);
+
+    return isDefined(usedRatio) ? [{ value: usedRatio, attributes: {} }] : [];
+  }
+
+  private async collectTopGroupKeyMemoryUsages(): Promise<
+    GroupKeyMemoryObservation[]
+  > {
+    const [queueName] = Object.keys(this.queueMap) as MessageQueue[];
+
+    if (!isDefined(queueName)) {
+      return [];
+    }
+
+    const usages =
+      await this.jobMemoryLimiter.getTopGroupKeyMemoryUsages(queueName);
+    const observations = buildGroupKeyMemoryObservations({
+      usages,
+      previouslyReportedGroupKeys: this.reportedMemoryGroupKeys,
+    });
+
+    this.reportedMemoryGroupKeys = new Set(
+      usages.map(({ groupKey }) => groupKey),
+    );
+
+    return observations;
   }
 
   private async collectJobCountsByQueue(
@@ -268,11 +385,11 @@ export class BullMQDriver
       ...(isDefined(options?.maxStalledCount)
         ? { maxStalledCount: options.maxStalledCount }
         : {}),
-      ...(isDefined(options?.rateLimit)
+      ...(isDefined(options?.globalLimiter)
         ? {
             limiter: {
-              max: options.rateLimit.max,
-              duration: options.rateLimit.durationMs,
+              max: options.globalLimiter.max,
+              duration: options.globalLimiter.durationMs,
             },
           }
         : {}),
@@ -325,10 +442,20 @@ export class BullMQDriver
               id: job.id ?? '',
               name: job.name,
               retryLimit: Math.max(0, (job.opts.attempts ?? 1) - 1),
+              attemptsMade: job.attemptsMade,
               updateData: (data) => job.updateData(data),
               updateProgress: (progress) => job.updateProgress(progress),
               abortSignal,
             });
+          } catch (error) {
+            if (
+              error instanceof MessageQueueException &&
+              error.code === MessageQueueExceptionCode.JOB_TOO_LARGE
+            ) {
+              throw new UnrecoverableError(error.message);
+            }
+
+            throw error;
           } finally {
             this.metricsService.recordHistogram({
               key: MetricsKeys.JobDurationMs,
@@ -360,6 +487,31 @@ export class BullMQDriver
     this.workerMap[queueName].on('failed', (job) =>
       this.emitJobChange({ queueName, job, state: 'failed' }),
     );
+
+    this.workerMap[queueName].on('completed', (job) => {
+      void this.clearOversizedCompletedJobData(job);
+      this.releaseFinishedJobMemory({ queueName, job });
+    });
+    this.workerMap[queueName].on('failed', (job, error) => {
+      if (!isDefined(job?.finishedOn)) {
+        return;
+      }
+
+      this.releaseFinishedJobMemory({ queueName, job });
+      this.eventEmitter.emit(QUEUE_JOB_FAILED_EVENT, {
+        queueName,
+        job: {
+          id: job.id ?? '',
+          name: job.name,
+          data: job.data,
+          attemptsMade: job.attemptsMade,
+        },
+        error: {
+          name: error.name,
+          message: error.message,
+        },
+      } satisfies QueueJobFailedEvent);
+    });
 
     this.workerMap[queueName].on('completed', (job) => {
       void this.metricsService.incrementCounterForEvent({
@@ -527,7 +679,13 @@ export class BullMQDriver
     }
 
     if (options.id && !options.doNotCheckDuplicatesBasedOnPrefix) {
-      const waitingJobIds = await this.getWaitingJobIds(queueName);
+      const waitingJobIds = await this.getWaitingJobIds({
+        queueName,
+        includeDelayed: this.isPacedJob({
+          queueName,
+          groupKey: options.groupKey,
+        }),
+      });
 
       if (
         isQueueJobIdAlreadyWaiting({ waitingJobIds, jobIdOrPrefix: options.id })
@@ -537,44 +695,405 @@ export class BullMQDriver
     }
 
     const queueOptions = this.buildJobsOptions(options);
+    const {
+      preparedJobs: [preparedJob],
+    } = await this.prepareJobs({
+      queueName,
+      jobName,
+      jobs: [{ index: 0, data, options: queueOptions, scope: options }],
+      additionalGroupKeys: options.fairnessGroupKeys,
+    });
+
     const [jobOptions] = await this.fairQueueScheduler.computeJobOptions({
       queueName,
       scopes: [options],
-      additionalGroupKeys: options.groupKeys,
+      limiterGroupKeys: [options.groupKey],
+      additionalGroupKeys: options.fairnessGroupKeys,
       delay: options.delay,
       staticPriority: queueOptions.priority,
+      limiter: options.limiter,
     });
 
-    const job = await this.queueMap[queueName].add(jobName, data, {
-      ...queueOptions,
-      ...jobOptions,
+    const [job] = await this.addPreparedJobs({
+      queueName,
+      preparedJobs: [preparedJob],
+      addJobs: async () => [
+        await this.queueMap[queueName].add(
+          jobName,
+          data,
+          this.withScheduledAt({ ...preparedJob.options, ...jobOptions }),
+        ),
+      ],
     });
 
     return job.id;
   }
 
-  private async getWaitingJobIds(queueName: MessageQueue): Promise<string[]> {
+  private async prepareJobs({
+    queueName,
+    jobName,
+    jobs,
+    additionalGroupKeys,
+  }: {
+    queueName: MessageQueue;
+    jobName: string;
+    jobs: {
+      index: number;
+      data: unknown;
+      options: BullMQJobsOptions;
+      scope: QueueJobScope;
+    }[];
+    additionalGroupKeys?: string[];
+  }): Promise<{
+    preparedJobs: PreparedJob[];
+    availableBytes: number | null;
+    existingJobIds: Set<string>;
+  }> {
+    const sizedJobs = jobs.map(({ index, data, options, scope }) => ({
+      index,
+      groupKeys: buildQueueJobGroupKeys({ scope, additionalGroupKeys }),
+      sizeBytes: computeJobSizeBytes({ data, options }),
+      options: { ...options, jobId: options.jobId ?? v4() },
+    }));
+
+    this.jobSizeLimiter.checkJobSizesOrThrow({
+      queueName,
+      jobName,
+      jobs: sizedJobs.map(({ index, groupKeys, sizeBytes }) => ({
+        index,
+        groupKey: groupKeys[0],
+        sizeBytes,
+      })),
+    });
+
+    const existingJobIds = await this.findExistingJobIds({
+      queueName,
+      jobIds: jobs.flatMap(({ options }) =>
+        isDefined(options.jobId) ? [options.jobId] : [],
+      ),
+    });
+    const chargeableJobs = sizedJobs.filter(
+      ({ options }) =>
+        isDefined(options.jobId) && !existingJobIds.has(options.jobId),
+    );
+
+    const { isCharged, availableBytes } = await this.jobMemoryLimiter.admit({
+      queueName,
+      jobName,
+      jobs: chargeableJobs.flatMap(({ options, sizeBytes, groupKeys }) =>
+        isDefined(options.jobId)
+          ? [{ jobId: options.jobId, sizeBytes, groupKeys }]
+          : [],
+      ),
+    });
+
+    const preparedJobs = sizedJobs.map((sizedJob) => {
+      const { options, sizeBytes, groupKeys } = sizedJob;
+      const memoryGroupKeys = getChargedGroupKeys(groupKeys);
+
+      const isJobCharged =
+        isCharged &&
+        chargeableJobs.includes(sizedJob) &&
+        isNonEmptyArray(memoryGroupKeys);
+
+      if (!isJobCharged) {
+        return { sizeBytes, options };
+      }
+
+      return {
+        sizeBytes,
+        options: { ...options, memoryGroupKeys, memorySizeBytes: sizeBytes },
+      };
+    });
+
+    return { preparedJobs, availableBytes, existingJobIds };
+  }
+
+  private withScheduledAt(
+    options: BullMQJobsOptions,
+  ): BullMQJobsOptions & { scheduledAt: number } {
+    const timestamp = options.timestamp ?? Date.now();
+
+    return {
+      ...options,
+      timestamp,
+      scheduledAt: timestamp + (options.delay ?? 0),
+    };
+  }
+
+  private async findPersistedScheduledAts({
+    queueName,
+    jobIds,
+  }: {
+    queueName: MessageQueue;
+    jobIds: string[];
+  }): Promise<Map<string, number>> {
+    if (jobIds.length === 0) {
+      return new Map();
+    }
+
+    const queue = this.queueMap[queueName];
+    const values = String(
+      await runRedisScript({
+        client: await queue.client,
+        script: JOBS_PERSISTED_OPTIONS_SCRIPT,
+        keys: jobIds.map((jobId) => queue.toKey(jobId)),
+        args: [],
+      }),
+    ).split('\n');
+
+    return new Map(
+      jobIds.flatMap((jobId, index) => {
+        const [rawOptions, rawTimestamp] = values.slice(
+          index * 2,
+          index * 2 + 2,
+        );
+
+        if (!isNonEmptyString(rawOptions) || !isNonEmptyString(rawTimestamp)) {
+          return [];
+        }
+
+        return [
+          [
+            jobId,
+            getQueueJobScheduledAt({
+              timestamp: Number(rawTimestamp),
+              options: JSON.parse(rawOptions),
+            }),
+          ],
+        ];
+      }),
+    );
+  }
+
+  private async findExistingJobIds({
+    queueName,
+    jobIds,
+  }: {
+    queueName: MessageQueue;
+    jobIds: string[];
+  }): Promise<Set<string>> {
+    if (jobIds.length === 0) {
+      return new Set();
+    }
+
+    const queue = this.queueMap[queueName];
+
+    try {
+      const existenceFlags = String(
+        await runRedisScript({
+          client: await queue.client,
+          script: JOBS_EXIST_SCRIPT,
+          keys: jobIds.map((jobId) => queue.toKey(jobId)),
+          args: [],
+        }),
+      )
+        .split(' ')
+        .map(Number);
+
+      return new Set(jobIds.filter((_, index) => existenceFlags[index] === 1));
+    } catch (error) {
+      this.logger.warn(
+        `Failed to check existing jobs on queue ${queueName}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+
+      return new Set();
+    }
+  }
+
+  private async addPreparedJobs({
+    queueName,
+    preparedJobs,
+    addJobs,
+  }: {
+    queueName: MessageQueue;
+    preparedJobs: PreparedJob[];
+    addJobs: () => Promise<Job[]>;
+  }): Promise<Job[]> {
+    const addedJobs = await addJobs().catch(async (error: unknown) => {
+      await Promise.all(
+        preparedJobs.map((preparedJob) =>
+          this.releaseJobMemoryIfNotAdded({ queueName, preparedJob }),
+        ),
+      );
+
+      throw error;
+    });
+
+    await Promise.all(
+      addedJobs.map((addedJob, index) => {
+        const { jobId, memoryGroupKeys } = preparedJobs[index].options;
+
+        if (
+          !isDefined(jobId) ||
+          !isNonEmptyArray(memoryGroupKeys) ||
+          addedJob.id === jobId
+        ) {
+          return;
+        }
+
+        return this.jobMemoryLimiter.release({
+          queueName,
+          jobId,
+          groupKeys: memoryGroupKeys,
+        });
+      }),
+    );
+
+    return addedJobs;
+  }
+
+  private async releaseJobMemoryIfNotAdded({
+    queueName,
+    preparedJob,
+  }: {
+    queueName: MessageQueue;
+    preparedJob: PreparedJob;
+  }): Promise<void> {
+    const { jobId, memoryGroupKeys } = preparedJob.options;
+
+    if (!isDefined(jobId) || !isNonEmptyArray(memoryGroupKeys)) {
+      return;
+    }
+
+    try {
+      if (isDefined(await this.queueMap[queueName].getJob(jobId))) {
+        return;
+      }
+    } catch (error) {
+      this.logger.warn(
+        `Kept the job memory charge of job ${jobId} on queue ${queueName}: its enqueue outcome is unknown (${error instanceof Error ? error.message : String(error)})`,
+      );
+
+      return;
+    }
+
+    await this.jobMemoryLimiter.release({
+      queueName,
+      jobId,
+      groupKeys: memoryGroupKeys,
+    });
+  }
+
+  private async clearOversizedCompletedJobData(job: Job): Promise<void> {
+    const { memorySizeBytes: chargedSizeBytes }: BullMQJobsOptions = job.opts;
+    // A charged job was already sized at enqueue, so its payload is not serialized again here
+    const memorySizeBytes =
+      chargedSizeBytes ??
+      computeJobSizeBytes({ data: job.data, options: job.opts });
+
+    if (
+      memorySizeBytes <=
+      this.twentyConfigService.get('JOB_QUEUE_MAX_JOB_SIZE_BYTES')
+    ) {
+      return;
+    }
+
+    try {
+      await job.updateData({
+        memorySizeBytes,
+        hash: createHash('sha256')
+          .update(JSON.stringify(job.data) ?? '')
+          .digest('hex'),
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Failed to clear completed job ${job.id}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+  }
+
+  private releaseFinishedJobMemory({
+    queueName,
+    job,
+  }: {
+    queueName: MessageQueue;
+    job: Job | undefined;
+  }): void {
+    const memoryGroupKeys = (job?.opts as BullMQJobsOptions | undefined)
+      ?.memoryGroupKeys;
+
+    if (!isDefined(job?.id) || !isNonEmptyArray(memoryGroupKeys)) {
+      return;
+    }
+
+    void this.jobMemoryLimiter.release({
+      queueName,
+      jobId: job.id,
+      groupKeys: memoryGroupKeys,
+    });
+  }
+
+  // A paced job waits in the delayed set, so only paced jobs dedupe against it.
+  private isPacedJob({
+    queueName,
+    groupKey,
+  }: {
+    queueName: MessageQueue;
+    groupKey: string | undefined;
+  }): boolean {
+    return (
+      isDefined(groupKey) && this.fairQueueScheduler.hasGroupLimiter(queueName)
+    );
+  }
+
+  private async getWaitingJobIds({
+    queueName,
+    includeDelayed,
+  }: {
+    queueName: MessageQueue;
+    includeDelayed: boolean;
+  }): Promise<string[]> {
     return this.queueMap[queueName].getRanges(
-      ['waiting', 'paused', 'prioritized'],
+      includeDelayed
+        ? ['waiting', 'paused', 'prioritized', 'delayed']
+        : ['waiting', 'paused', 'prioritized'],
       0,
       -1,
     );
   }
 
-  private async filterOutAlreadyWaitingJobs<T extends MessageQueueJobData>(
-    queueName: MessageQueue,
-    jobs: QueueJobToAdd<T>[],
-  ): Promise<QueueJobToAdd<T>[]> {
+  private async filterOutAlreadyWaitingJobs<
+    TJob extends QueueJobToAdd<MessageQueueJobData>,
+  >({
+    queueName,
+    jobs,
+    defaultGroupKey,
+  }: {
+    queueName: MessageQueue;
+    jobs: TJob[];
+    defaultGroupKey: string | undefined;
+  }): Promise<TJob[]> {
     if (!jobs.some((job) => isDefined(job.jobId))) {
       return jobs;
     }
 
-    const waitingJobIds = await this.getWaitingJobIds(queueName);
+    const isPacedJobById = (job: TJob) =>
+      isDefined(job.jobId) &&
+      this.isPacedJob({
+        queueName,
+        groupKey: job.groupKey ?? defaultGroupKey,
+      });
+    const waitingJobIds = await this.getWaitingJobIds({
+      queueName,
+      includeDelayed: false,
+    });
+    const waitingOrDelayedJobIds = jobs.some(isPacedJobById)
+      ? [
+          ...waitingJobIds,
+          ...(await this.queueMap[queueName].getRanges(['delayed'], 0, -1)),
+        ]
+      : waitingJobIds;
 
     return jobs.filter(
-      ({ jobId }) =>
-        !isDefined(jobId) ||
-        !isQueueJobIdAlreadyWaiting({ waitingJobIds, jobIdOrPrefix: jobId }),
+      (job) =>
+        !isDefined(job.jobId) ||
+        !isQueueJobIdAlreadyWaiting({
+          waitingJobIds: isPacedJobById(job)
+            ? waitingOrDelayedJobIds
+            : waitingJobIds,
+          jobIdOrPrefix: job.jobId,
+        }),
     );
   }
 
@@ -583,45 +1102,145 @@ export class BullMQDriver
     jobName: string,
     jobs: QueueJobToAdd<T>[],
     options?: QueueJobSettings,
-  ): Promise<string[]> {
+  ): Promise<BulkAddResult> {
     if (!this.queueMap[queueName]) {
       throw new Error(
         `Queue ${queueName} is not registered, make sure you have added it as a queue provider`,
       );
     }
 
+    const indexedJobs = jobs.map((job, inputIndex) => ({ ...job, inputIndex }));
     const jobsToAdd = options?.doNotCheckDuplicatesBasedOnPrefix
-      ? jobs
-      : await this.filterOutAlreadyWaitingJobs(queueName, jobs);
+      ? indexedJobs
+      : await this.filterOutAlreadyWaitingJobs({
+          queueName,
+          jobs: indexedJobs,
+          defaultGroupKey: options?.groupKey,
+        });
 
     if (jobsToAdd.length === 0) {
-      return [];
+      return { jobs: [], availableBytes: null };
     }
 
     const queueOptions = this.buildJobsOptions(options);
-    const jobOptions = await this.fairQueueScheduler.computeJobOptions({
-      queueName,
-      scopes: jobsToAdd,
-      additionalGroupKeys: options?.groupKeys,
-      delay: options?.delay,
-      staticPriority: queueOptions.priority,
-    });
+    const { preparedJobs, availableBytes, existingJobIds } =
+      await this.prepareJobs({
+        queueName,
+        jobName,
+        jobs: jobsToAdd.map((job, index) => ({
+          index: job.inputIndex,
+          data: job.data,
+          options: {
+            ...queueOptions,
+            jobId:
+              job.jobId ??
+              (isDefined(queueOptions.jobId)
+                ? `${queueOptions.jobId}-${index}`
+                : undefined),
+          },
+          scope: job,
+        })),
+        additionalGroupKeys: options?.fairnessGroupKeys,
+      });
 
-    const addedJobs = await this.queueMap[queueName].addBulk(
-      jobsToAdd.map(({ data, jobId }, index) => ({
-        name: jobName,
-        data,
-        opts: {
-          ...queueOptions,
-          ...jobOptions[index],
-          jobId:
-            jobId ??
-            (queueOptions.jobId ? `${queueOptions.jobId}-${index}` : undefined),
-        },
-      })),
+    const newJobs = jobsToAdd.filter(
+      (job) => !isDefined(job.jobId) || !existingJobIds.has(job.jobId),
+    );
+    const newJobsOptions =
+      newJobs.length === 0
+        ? []
+        : await this.fairQueueScheduler.computeJobOptions({
+            queueName,
+            scopes: newJobs,
+            limiterGroupKeys: newJobs.map(
+              (job) => job.groupKey ?? options?.groupKey,
+            ),
+            additionalGroupKeys: options?.fairnessGroupKeys,
+            delay: options?.delay,
+            staticPriority: queueOptions.priority,
+            limiter: options?.limiter,
+          });
+    const fairJobOptionsByJob = new Map(
+      newJobs.map((job, index) => [job, newJobsOptions[index]]),
+    );
+    const jobsOptions = jobsToAdd.map((job, index) =>
+      this.withScheduledAt({
+        ...preparedJobs[index].options,
+        ...fairJobOptionsByJob.get(job),
+      }),
     );
 
-    return addedJobs.map((job) => job.id).filter(isDefined);
+    const addedJobs = await this.addPreparedJobs({
+      queueName,
+      preparedJobs,
+      addJobs: () =>
+        this.queueMap[queueName].addBulk(
+          jobsToAdd.map(({ data }, index) => ({
+            name: jobName,
+            data,
+            opts: jobsOptions[index],
+          })),
+        ),
+    });
+
+    const persistedScheduledAts = await this.findPersistedScheduledAts({
+      queueName,
+      jobIds: jobsToAdd.flatMap((job) =>
+        isDefined(job.jobId) && job.isJobIdGenerated !== true
+          ? [job.jobId]
+          : [],
+      ),
+    });
+
+    return {
+      jobs: addedJobs.flatMap((addedJob, index) =>
+        isDefined(addedJob.id)
+          ? [
+              {
+                jobId: addedJob.id,
+                sizeBytes: preparedJobs[index].sizeBytes,
+                scheduledAt:
+                  persistedScheduledAts.get(addedJob.id) ??
+                  jobsOptions[index].scheduledAt,
+              },
+            ]
+          : [],
+      ),
+      availableBytes,
+    };
+  }
+
+  async removeJob(queueName: MessageQueue, jobId: string): Promise<boolean> {
+    const job = await this.queueMap[queueName].getJob(jobId);
+
+    if (!isDefined(job)) {
+      return false;
+    }
+
+    const { memoryGroupKeys, memorySizeBytes }: BullMQJobsOptions = job.opts;
+    const chargedJob = isNonEmptyArray(memoryGroupKeys)
+      ? { queueName, jobId, groupKeys: memoryGroupKeys }
+      : undefined;
+
+    // Released while the job exists, so a re-enqueue of its id is deduplicated, not admitted on this charge
+    if (isDefined(chargedJob)) {
+      await this.jobMemoryLimiter.release(chargedJob);
+    }
+
+    try {
+      await job.remove();
+    } catch (error) {
+      if (isDefined(chargedJob) && isDefined(memorySizeBytes)) {
+        await this.jobMemoryLimiter.restore({
+          ...chargedJob,
+          sizeBytes: memorySizeBytes,
+        });
+      }
+
+      throw error;
+    }
+
+    return true;
   }
 
   async getJobs<T extends MessageQueueJobData>(
@@ -674,6 +1293,8 @@ export class BullMQDriver
       return undefined;
     }
 
+    const jobOptions: BullMQJobsOptions = job.opts;
+
     return {
       id: job.id,
       data: job.data,
@@ -682,6 +1303,10 @@ export class BullMQDriver
       failedReason: job.failedReason,
       progress: job.progress,
       timestamp: job.timestamp,
+      scheduledAt: getQueueJobScheduledAt({
+        timestamp: job.timestamp,
+        options: jobOptions,
+      }),
       processedOn: job.processedOn,
       finishedOn: job.finishedOn,
       broadcastTo: this.getBroadcastTo(job),

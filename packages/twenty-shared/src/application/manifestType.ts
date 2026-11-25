@@ -1,3 +1,4 @@
+import { type SourceFileManifest } from './sourceFileManifestType';
 import { type WorkflowManifest } from './workflowManifestType';
 import { type AppLocale } from '@/translations';
 
@@ -24,10 +25,11 @@ import {
 } from './pageLayoutManifestType';
 import { type PermissionFlagManifest } from './permissionFlagManifestType';
 import { type RelatedRecordPathManifest } from './relatedRecordPathManifestType';
-import { type RoleManifest } from './roleManifestType';
+import { type LegacyCompliantRoleManifest } from './roleManifestType';
 import { type SettingsMenuItemManifest } from './settingsMenuItemManifestType';
 import { type SkillManifest } from './skillManifestType';
 import { type TimelineActivityTypeManifest } from './timelineActivityTypeManifestType';
+import { type ValidationRuleManifest } from './validationRuleManifestType';
 import {
   type StandaloneViewFieldManifest,
   type ViewManifest,
@@ -46,7 +48,7 @@ export type Manifest = {
   logicFunctions: LogicFunctionManifest[];
   frontComponents: FrontComponentManifest[];
   permissionFlags: PermissionFlagManifest[];
-  roles: RoleManifest[];
+  roles: LegacyCompliantRoleManifest[];
   skills: SkillManifest[];
   agents: AgentManifest[];
   events?: EventManifest[];
@@ -54,6 +56,7 @@ export type Manifest = {
   messagingProviders?: MessagingProviderManifest[];
   mcpServers?: McpServerManifest[];
   publicAssets: AssetManifest[];
+  sourceFiles?: SourceFileManifest[];
   views: ViewManifest[];
   viewFields: StandaloneViewFieldManifest[];
   navigationMenuItems: NavigationMenuItemManifest[];
@@ -63,6 +66,7 @@ export type Manifest = {
   commandMenuItems: CommandMenuItemManifest[];
   timelineActivityTypes: TimelineActivityTypeManifest[];
   settingsMenuItems: SettingsMenuItemManifest[];
+  validationRules?: ValidationRuleManifest[];
   relatedRecordPaths?: RelatedRecordPathManifest[];
   translations?: TranslationsManifest;
 };

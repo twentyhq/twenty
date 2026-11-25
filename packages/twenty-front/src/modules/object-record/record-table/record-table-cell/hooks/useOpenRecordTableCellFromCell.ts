@@ -2,6 +2,7 @@ import { useContext } from 'react';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
+import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { useGetRecordTableCellPosition } from '@/object-record/record-table/record-table-cell/hooks/useGetRecordTableCellPosition';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -11,6 +12,8 @@ export const useOpenRecordTableCellFromCell = () => {
     fieldDefinition,
     isRecordFieldReadOnly: isReadOnly,
   } = useContext(FieldContext);
+
+  const { recordField } = useContext(RecordTableCellContext);
 
   const { onOpenTableCell } = useRecordTableBodyContextOrThrow();
 
@@ -26,6 +29,7 @@ export const useOpenRecordTableCellFromCell = () => {
     onOpenTableCell({
       cellPosition,
       recordId,
+      recordFieldId: recordField.id,
       fieldDefinition,
       isReadOnly,
       initialValue,

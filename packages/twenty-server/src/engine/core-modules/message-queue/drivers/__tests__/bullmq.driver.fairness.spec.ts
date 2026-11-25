@@ -23,19 +23,8 @@ describe('BullMQDriver fairness scenarios', () => {
       await harness.enqueue({ label: 'B1', workspaceId: 'B' });
     };
 
-    it('flag off: B waits behind the whole burst of A', async () => {
-      const harness = await createFairnessHarness({ isFairnessEnabled: false });
-
-      await enqueue(harness);
-
-      expect(await harness.processAll()).toEqual([
-        ...buildLabels({ prefix: 'A', count: 10 }),
-        'B1',
-      ]);
-    });
-
-    it('flag on: B runs right after the first job of A', async () => {
-      const harness = await createFairnessHarness({ isFairnessEnabled: true });
+    it('B runs right after the first job of A', async () => {
+      const harness = await createFairnessHarness();
 
       await enqueue(harness);
 
@@ -59,19 +48,8 @@ describe('BullMQDriver fairness scenarios', () => {
       });
     };
 
-    it('flag off: the bulk of B waits behind the bulk of A', async () => {
-      const harness = await createFairnessHarness({ isFairnessEnabled: false });
-
-      await enqueue(harness);
-
-      expect(await harness.processAll()).toEqual([
-        ...buildLabels({ prefix: 'A', count: 4 }),
-        ...buildLabels({ prefix: 'B', count: 4 }),
-      ]);
-    });
-
-    it('flag on: the two bulks alternate, each one keeping its internal order', async () => {
-      const harness = await createFairnessHarness({ isFairnessEnabled: true });
+    it('the two bulks alternate, each one keeping its internal order', async () => {
+      const harness = await createFairnessHarness();
 
       await enqueue(harness);
 
@@ -106,20 +84,8 @@ describe('BullMQDriver fairness scenarios', () => {
       });
     };
 
-    it('flag off: the static priorities decide, the route dispatch first and the app job last', async () => {
-      const harness = await createFairnessHarness({ isFairnessEnabled: false });
-
-      await enqueue(harness);
-
-      expect(await harness.processAll()).toEqual([
-        'R_B',
-        ...buildLabels({ prefix: 'A', count: 5 }),
-        'E_B',
-      ]);
-    });
-
-    it('flag on: the route dispatch still goes first and charges B, whose app job then takes a fair slot instead of the last one', async () => {
-      const harness = await createFairnessHarness({ isFairnessEnabled: true });
+    it('the route dispatch goes first and charges B, whose app job then takes a fair slot instead of the last one', async () => {
+      const harness = await createFairnessHarness();
 
       await enqueue(harness);
 
@@ -174,24 +140,8 @@ describe('BullMQDriver fairness scenarios', () => {
       });
     };
 
-    it('flag off: W4 waits behind the whole herd', async () => {
-      const harness = await createFairnessHarness({ isFairnessEnabled: false });
-
-      await enqueue(harness);
-
-      expect(await harness.processAll()).toEqual([
-        'W1a',
-        'W1b',
-        'W2a',
-        'W2b',
-        'W3a',
-        'W3b',
-        'W4',
-      ]);
-    });
-
-    it('flag on: the application key makes the herd share one clock, W4 runs second', async () => {
-      const harness = await createFairnessHarness({ isFairnessEnabled: true });
+    it('the application key makes the herd share one clock, W4 runs second', async () => {
+      const harness = await createFairnessHarness();
 
       await enqueue(harness);
 
@@ -226,26 +176,8 @@ describe('BullMQDriver fairness scenarios', () => {
       await harness.enqueue({ label: 'A7', workspaceId: 'A' });
     };
 
-    it('flag off: A7 runs last, behind the rest of C and the whole burst of B', async () => {
-      const harness = await createFairnessHarness({ isFairnessEnabled: false });
-
-      await enqueueFirstPhase(harness);
-
-      expect(await harness.processNext(12)).toEqual(
-        buildLabels({ prefix: 'C', count: 12 }),
-      );
-
-      await enqueueSecondPhase(harness);
-
-      expect(await harness.processAll()).toEqual([
-        ...buildLabels({ prefix: 'A', count: 6 }),
-        ...buildLabels({ prefix: 'B', count: 5 }),
-        'A7',
-      ]);
-    });
-
-    it('flag on: the processed burst of A is forgotten, A7 interleaves with the burst of B', async () => {
-      const harness = await createFairnessHarness({ isFairnessEnabled: true });
+    it('the processed burst of A is forgotten, A7 interleaves with the burst of B', async () => {
+      const harness = await createFairnessHarness();
 
       await enqueueFirstPhase(harness);
 
@@ -305,21 +237,8 @@ describe('BullMQDriver fairness scenarios', () => {
       });
     };
 
-    it('flag off: B first, then A, in arrival order', async () => {
-      const harness = await createFairnessHarness({ isFairnessEnabled: false });
-
-      await drainFirstBurst(harness);
-      await enqueueSecondPhase(harness);
-
-      expect(await harness.processAll()).toEqual([
-        ...buildLabels({ prefix: 'B', count: 4 }),
-        'A6',
-        'A7',
-      ]);
-    });
-
-    it('flag on: the virtual time caught up with A while its burst ran, A interleaves with B from the third slot', async () => {
-      const harness = await createFairnessHarness({ isFairnessEnabled: true });
+    it('the virtual time caught up with A while its burst ran, A interleaves with B from the third slot', async () => {
+      const harness = await createFairnessHarness();
 
       await drainFirstBurst(harness);
       await enqueueSecondPhase(harness);
@@ -353,19 +272,8 @@ describe('BullMQDriver fairness scenarios', () => {
       });
     };
 
-    it('flag off: the weight is ignored, Q waits behind P', async () => {
-      const harness = await createFairnessHarness({ isFairnessEnabled: false });
-
-      await enqueue(harness);
-
-      expect(await harness.processAll()).toEqual([
-        ...buildLabels({ prefix: 'P', count: 4 }),
-        ...buildLabels({ prefix: 'Q', count: 4 }),
-      ]);
-    });
-
-    it('flag on: P gets two slots for each slot of Q, the unweighted workspace key does not dilute the weight', async () => {
-      const harness = await createFairnessHarness({ isFairnessEnabled: true });
+    it('P gets two slots for each slot of Q, the unweighted workspace key does not dilute the weight', async () => {
+      const harness = await createFairnessHarness();
 
       await enqueue(harness);
 
@@ -405,19 +313,8 @@ describe('BullMQDriver fairness scenarios', () => {
       });
     };
 
-    it('flag off: FIFO', async () => {
-      const harness = await createFairnessHarness({ isFairnessEnabled: false });
-
-      await enqueue(harness);
-
-      expect(await harness.processAll()).toEqual([
-        ...buildLabels({ prefix: 'P', count: 5 }),
-        'Q1',
-      ]);
-    });
-
-    it('flag on: the bulk is spaced like single jobs of the same weight, P keeps its order and its two slots per slot of Q', async () => {
-      const harness = await createFairnessHarness({ isFairnessEnabled: true });
+    it('the bulk is spaced like single jobs of the same weight, P keeps its order and its two slots per slot of Q', async () => {
+      const harness = await createFairnessHarness();
 
       await enqueue(harness);
 
@@ -456,16 +353,8 @@ describe('BullMQDriver fairness scenarios', () => {
       });
     };
 
-    it('flag off: W waits behind the whole backlog of H', async () => {
-      const harness = await createFairnessHarness({ isFairnessEnabled: false });
-
-      await enqueue(harness);
-
-      expect(await harness.processAll()).toEqual([...herdLabels, 'W_H', 'W_Q']);
-    });
-
-    it('flag on: the job of H takes its turn in the backlog of H, the job of Q runs right away because W is only charged for its own jobs', async () => {
-      const harness = await createFairnessHarness({ isFairnessEnabled: true });
+    it('the job of H takes its turn in the backlog of H, the job of Q runs right away because W is only charged for its own jobs', async () => {
+      const harness = await createFairnessHarness();
 
       await enqueue(harness);
 
@@ -507,21 +396,8 @@ describe('BullMQDriver fairness scenarios', () => {
       });
     };
 
-    it('flag off: FIFO', async () => {
-      const harness = await createFairnessHarness({ isFairnessEnabled: false });
-
-      await enqueue(harness);
-
-      expect(await harness.processAll()).toEqual([
-        ...buildLabels({ prefix: 'P', count: 6 }),
-        ...buildLabels({ prefix: 'B', count: 4 }),
-        'Q1',
-        'P7',
-      ]);
-    });
-
-    it('flag on: the bulk fills the half-slots it allocated on P, W is charged those half-slots only, so its job of Q (ticket 2, like P6) overtakes its bulk and the next job of P follows the bulk', async () => {
-      const harness = await createFairnessHarness({ isFairnessEnabled: true });
+    it('the bulk fills the half-slots it allocated on P, W is charged those half-slots only, so its job of Q (ticket 2, like P6) overtakes its bulk and the next job of P follows the bulk', async () => {
+      const harness = await createFairnessHarness();
 
       await enqueue(harness);
 
@@ -548,23 +424,8 @@ describe('BullMQDriver fairness scenarios', () => {
     };
     const expectedOrder = [...buildLabels({ prefix: 'A', count: 3 }), 'B1'];
 
-    it('flag off: Redis is never called and the order is FIFO', async () => {
-      const harness = await createFairnessHarness({ isFairnessEnabled: false });
-      const runCommand = harness.breakRedis();
-
-      await enqueue(harness);
-
-      expect(await harness.processAll()).toEqual(expectedOrder);
-      expect(runCommand).not.toHaveBeenCalled();
-      expect(
-        harness.metricsService.incrementCounterForEvent,
-      ).not.toHaveBeenCalledWith(
-        expect.objectContaining({ key: MetricsKeys.JobFairTagFallback }),
-      );
-    });
-
-    it('flag on: every job falls back to FIFO and the fallback is counted', async () => {
-      const harness = await createFairnessHarness({ isFairnessEnabled: true });
+    it('every job falls back to FIFO and the fallback is counted', async () => {
+      const harness = await createFairnessHarness();
 
       harness.breakRedis();
       await enqueue(harness);
@@ -586,19 +447,8 @@ describe('BullMQDriver fairness scenarios', () => {
       await harness.enqueue({ label: 'W1', workspaceId: 'W' });
     };
 
-    it('flag off: the workspace job waits behind the system jobs', async () => {
-      const harness = await createFairnessHarness({ isFairnessEnabled: false });
-
-      await enqueue(harness);
-
-      expect(await harness.processAll()).toEqual([
-        ...buildLabels({ prefix: 'S', count: 3 }),
-        'W1',
-      ]);
-    });
-
-    it('flag on: the system jobs form one group, the workspace job runs second', async () => {
-      const harness = await createFairnessHarness({ isFairnessEnabled: true });
+    it('the system jobs form one group, the workspace job runs second', async () => {
+      const harness = await createFairnessHarness();
 
       await enqueue(harness);
 
@@ -619,16 +469,8 @@ describe('BullMQDriver fairness scenarios', () => {
       harness.advanceTime({ milliseconds: 1000 });
     };
 
-    it('flag off: the delayed job waits its second, then joins the end of the FIFO backlog', async () => {
-      const harness = await createFairnessHarness({ isFairnessEnabled: false });
-
-      await enqueueAndProcessThree(harness);
-
-      expect(await harness.processAll()).toEqual(['C4', 'C5', 'D1']);
-    });
-
-    it('flag on: the delayed job keeps the static priority and no clock is charged, so when due it sorts among the tickets at the default priority until it gets ticketed at its due time', async () => {
-      const harness = await createFairnessHarness({ isFairnessEnabled: true });
+    it('the delayed job keeps the static priority and no clock is charged, so when due it sorts among the tickets at the default priority until it gets ticketed at its due time', async () => {
+      const harness = await createFairnessHarness();
 
       await enqueueAndProcessThree(harness);
 
@@ -659,26 +501,8 @@ describe('BullMQDriver fairness scenarios', () => {
       });
     };
 
-    it('flag off: the route dispatch jumps ahead of its own backlog, the app job waits for every default job', async () => {
-      const harness = await createFairnessHarness({ isFairnessEnabled: false });
-
-      await enqueueBacklog(harness);
-
-      expect(await harness.processNext(2)).toEqual(['A1', 'A2']);
-
-      await enqueueRouteDispatch(harness);
-
-      expect(await harness.processAll()).toEqual([
-        'R_A',
-        'A3',
-        'A4',
-        'A5',
-        'E_B',
-      ]);
-    });
-
-    it('flag on: the app job takes a fair slot, the route dispatch still jumps ahead of everything', async () => {
-      const harness = await createFairnessHarness({ isFairnessEnabled: true });
+    it('the app job takes a fair slot, the route dispatch jumps ahead of everything', async () => {
+      const harness = await createFairnessHarness();
 
       await enqueueBacklog(harness);
 

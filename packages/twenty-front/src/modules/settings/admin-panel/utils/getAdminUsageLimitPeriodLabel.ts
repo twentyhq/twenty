@@ -6,7 +6,7 @@ import { USAGE_LIMIT_PERIOD_UNIT_LABELS } from '@/settings/billing/constants/Usa
 import { getUsageLimitLabel } from '@/settings/billing/utils/getUsageLimitLabel';
 
 export const getAdminUsageLimitPeriodLabel = (
-  row: AdminUsageLimitRow,
+  row: Pick<AdminUsageLimitRow, 'periodCount' | 'periodUnit'>,
 ): string => {
   const periodUnitLabel = getUsageLimitLabel(
     USAGE_LIMIT_PERIOD_UNIT_LABELS,

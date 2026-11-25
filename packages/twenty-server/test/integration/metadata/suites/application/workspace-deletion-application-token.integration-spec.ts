@@ -8,6 +8,7 @@ import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-
 import { signUpInNewWorkspace } from 'test/integration/graphql/utils/sign-up-in-new-workspace.util';
 import { signUp } from 'test/integration/graphql/utils/sign-up.util';
 import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { isDefined } from 'twenty-shared/utils';
@@ -28,6 +29,18 @@ const IS_APPLICATION_STOPPED = gql`
     isApplicationStopped(
       applicationUniversalIdentifier: $applicationUniversalIdentifier
     )
+  }
+`;
+
+const FIND_ONE_COMPANY = gql`
+  query FindOneCompany {
+    companies(first: 1) {
+      edges {
+        node {
+          id
+        }
+      }
+    }
   }
 `;
 
@@ -238,6 +251,19 @@ describe('Workspace deletion application token', () => {
     expect(currentDeletionTokenResponse.body.data.isApplicationStopped).toBe(
       false,
     );
+  }, 120000);
+
+  it('reads records with a token scoped to the current deletion request', async () => {
+    const { deletionToken } =
+      await softDeleteWorkspaceAndGenerateDeletionToken();
+
+    const response = await makeGraphqlApiRequest(
+      { query: FIND_ONE_COMPANY },
+      deletionToken.token,
+    );
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.companies.edges).toBeDefined();
   }, 120000);
 
   it('rejects a deletion token after the deletion request changes', async () => {

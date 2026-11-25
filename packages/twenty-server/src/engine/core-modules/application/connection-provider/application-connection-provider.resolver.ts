@@ -11,23 +11,10 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 
-@UseGuards(
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
-    },
-    apiKey: true,
-    oauthClient: true,
-    application: true,
-  }),
-)
 @MetadataResolver(() => ApplicationConnectionProviderDTO)
 @UseFilters(ApplicationExceptionFilter)
 export class ApplicationConnectionProviderResolver {
@@ -37,7 +24,23 @@ export class ApplicationConnectionProviderResolver {
   ) {}
 
   @Query(() => [ApplicationConnectionProviderDTO])
-  @UseGuards(NoPermissionGuard, ApplicationTargetGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: true,
+        oauthClient: true,
+        application: true,
+      },
+      requiredPermissionFlags: [],
+    }),
+    ApplicationTargetGuard,
+  )
   async applicationConnectionProviders(
     @ApplicationTargetArg(
       'applicationId',
@@ -54,6 +57,7 @@ export class ApplicationConnectionProviderResolver {
   }
 
   @ResolveField(() => String, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   logoUrl(
     @Parent()
     connectionProvider: Pick<

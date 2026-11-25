@@ -4,11 +4,7 @@ import {
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import {
-  ViewOpenRecordIn,
-  ViewType,
-  ViewVisibility,
-} from 'twenty-shared/types';
+import { ViewOpenRecordIn, ViewType } from 'twenty-shared/types';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -24,12 +20,14 @@ export const fromCreateViewInputToFlatViewToCreate = ({
   createdByUserWorkspaceId,
   flatApplication,
   flatFieldMetadataMaps,
+  flatFieldMetadataOptionMaps,
   flatObjectMetadataMaps,
 }: {
   createViewInput: CreateViewInput;
   createdByUserWorkspaceId?: string;
   flatApplication: FlatApplication;
   flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
+  flatFieldMetadataOptionMaps: AllFlatEntityMaps['flatFieldMetadataOptionMaps'];
   flatObjectMetadataMaps: AllFlatEntityMaps['flatObjectMetadataMaps'];
 }): {
   flatViewToCreate: UniversalFlatView & { id: string };
@@ -76,12 +74,15 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     updatedAt: createdAt,
     deletedAt: null,
     anyFieldFilterValue: createViewInput.anyFieldFilterValue ?? null,
+    presetFilter: createViewInput.presetFilter ?? null,
     calendarFieldMetadataUniversalIdentifier,
     calendarEndFieldMetadataUniversalIdentifier,
     calendarLayout: createViewInput.calendarLayout ?? null,
     icon: createViewInput.icon,
     isCompact: createViewInput.isCompact ?? false,
     shouldHideEmptyGroups: createViewInput.shouldHideEmptyGroups ?? false,
+    shouldDisplayGroupsAsTabs:
+      createViewInput.shouldDisplayGroupsAsTabs ?? false,
     kanbanColumnWidth: createViewInput.kanbanColumnWidth ?? null,
     groupLoadLimit:
       createViewInput.groupLoadLimit ?? DEFAULT_VIEW_GROUP_LOAD_LIMIT,
@@ -93,7 +94,7 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     position: createViewInput.position ?? 0,
     type: createViewInput.type ?? ViewType.TABLE,
     universalIdentifier: createViewInput.universalIdentifier ?? v4(),
-    visibility: createViewInput.visibility ?? ViewVisibility.WORKSPACE,
+    isPrivate: createViewInput.isPrivate ?? false,
     createdByUserWorkspaceId: createdByUserWorkspaceId ?? null,
     isActive: true,
     isSystemSideEffect: false,
@@ -115,6 +116,7 @@ export const fromCreateViewInputToFlatViewToCreate = ({
       flatViewToCreateUniversalIdentifier: flatViewToCreate.universalIdentifier,
       mainGroupByFieldMetadataId,
       flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps,
     });
   }
 

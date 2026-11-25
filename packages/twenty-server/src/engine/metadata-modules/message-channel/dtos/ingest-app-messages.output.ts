@@ -13,6 +13,9 @@ export class IngestedAppMessageDTO {
 
   @Field(() => UUIDScalarType)
   messageThreadId: string;
+
+  @Field()
+  hasAttachments: boolean;
 }
 
 @ObjectType('IngestAppMessagesOutput')

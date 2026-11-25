@@ -4,17 +4,17 @@ import {
   StyledSettingsCardTitle,
 } from '@/settings/components/SettingsOptions/SettingsCardContentBase';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Link } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui/primitives/data-display';
+import { Avatar, Tag } from 'twenty-ui/primitives/data-display';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type MarketplaceApp } from '~/generated-metadata/graphql';
 import { getApplicationDescriptionSummary } from '@/settings/applications/utils/getApplicationDescriptionSummary';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
+import { useLingui } from '@lingui/react/macro';
 
 type SettingsAvailableApplicationCardProps = {
   application: MarketplaceApp;
@@ -26,6 +26,7 @@ const StyledApplicationCardContent = styled(StyledSettingsCardContent)`
 `;
 
 const StyledTextColumn = styled.div`
+  flex: 1;
   min-width: 0;
 `;
 
@@ -62,6 +63,7 @@ const StyledDescription = styled.div`
 export const SettingsAvailableApplicationCard = ({
   application,
 }: SettingsAvailableApplicationCardProps) => {
+  const { t } = useLingui();
   const descriptionSummary = getApplicationDescriptionSummary(
     application.description,
   );
@@ -93,6 +95,7 @@ export const SettingsAvailableApplicationCard = ({
             <StyledAuthor>{t`by ${author}`}</StyledAuthor>
           )}
         </StyledTextColumn>
+        {application.hasMcpServers && <Tag color="gray">{t`MCP`}</Tag>}
       </StyledApplicationCardContent>
     </Card.Root>
   );

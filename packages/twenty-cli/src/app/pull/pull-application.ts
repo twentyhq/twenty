@@ -1,3 +1,7 @@
+import { planApplicationSourceWrites } from '@/app/pull/plan-application-source-writes';
+import { planPublicAssetWrites } from '@/app/pull/plan-public-asset-writes';
+import { FileFolder } from 'twenty-shared/types';
+import { planSourceDefinitionWrites } from '@/app/pull/plan-source-definition-writes';
 import { join } from 'node:path';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -5,6 +9,7 @@ import { getToolingErrorContext } from '@/app/get-tooling-error-context';
 import { assertPullPaths } from '@/app/pull/assert-pull-paths';
 import { collectIdentifiers } from '@/app/pull/collect-identifiers';
 import { getOverwrittenLocalChanges } from '@/app/pull/get-overwritten-local-changes';
+import { findLocalCodeStepFiles } from '@/app/pull/find-local-code-step-files';
 import { prepareAppPull } from '@/app/pull/prepare-app-pull';
 import { preparePullEntities } from '@/app/pull/prepare-pull-entities';
 import { preserveNestedPullEntities } from '@/app/pull/preserve-nested-pull-entities';
@@ -66,12 +71,18 @@ export const pullApplication = async (
     const workspaceUniversalIdentifiers = new Set(
       applicationExport.coverage.map((entry) => entry.universalIdentifier),
     );
+    const localCodeStepFilesByWorkflowPath = await findLocalCodeStepFiles({
+      appPath,
+      scannedFiles,
+      baseEntities,
+    });
     const plan = planPullWrites({
       entities,
       baseEntities,
       scannedFiles,
       workspaceUniversalIdentifiers,
       unreconciledUniversalIdentifiers: unreconciledBaseIdentifiers,
+      localCodeStepFilesByWorkflowPath,
     });
     const protectedIdentifiers = new Set<string>();
 
@@ -95,25 +106,80 @@ export const pullApplication = async (
       baseEntities,
       protectedIdentifiers,
       writes: plan.writes,
-      deletions: plan.deletions.filter(
-        (deletion) =>
-          !protectedIdentifiers.has(deletion.universalIdentifier.toLowerCase()),
-      ),
+      deletions: [
+        ...plan.deletions.filter(
+          (deletion) =>
+            !protectedIdentifiers.has(
+              deletion.universalIdentifier.toLowerCase(),
+            ),
+        ),
+        ...plan.codeStepFileDeletions,
+      ],
       scannedFiles,
     });
     const dependencyPlan = await planDependencyWrites({
       appPath,
-      files: applicationExport.files,
+      files: applicationExport.files.filter(
+        (file) => file.folder === FileFolder.Dependencies,
+      ),
       sourceFingerprints: base.sourceFingerprints,
       dependencyFingerprints: base.dependencyFingerprints,
+    });
+    const publicAssetPlan = await planPublicAssetWrites({
+      appPath,
+      files: applicationExport.files.filter(
+        ({ folder }) => folder === FileFolder.PublicAsset,
+      ),
+      sourceFingerprints: base.sourceFingerprints,
+      publicAssetFingerprints: base.publicAssetFingerprints,
+    });
+    const sourceDefinitionPlan = await planSourceDefinitionWrites({
+      appPath,
+      manifest,
+      baseManifest,
+      files: applicationExport.files,
+      scannedFiles,
+      protectedIdentifiers,
+      remoteSourceFingerprints: base.remoteSourceFingerprints,
+      sourceFingerprints: base.sourceFingerprints,
+      reservedPaths: new Set(
+        [
+          ...safePlan.writes,
+          ...translationPlan.writes,
+          ...dependencyPlan.writes,
+          ...publicAssetPlan.writes,
+        ].map((write) => write.relativePath.toLowerCase()),
+      ),
+    });
+    const applicationSourcePlan = await planApplicationSourceWrites({
+      appPath,
+      manifest,
+      files: applicationExport.files,
+      remoteSourceFingerprints: base.remoteSourceFingerprints,
+      sourceFingerprints: base.sourceFingerprints,
+      reservedPaths: new Set(
+        [
+          ...safePlan.writes,
+          ...translationPlan.writes,
+          ...dependencyPlan.writes,
+          ...publicAssetPlan.writes,
+          ...sourceDefinitionPlan.writes,
+          ...sourceDefinitionPlan.deletions,
+          ...safePlan.deletions,
+        ].map((write) => write.relativePath.toLowerCase()),
+      ),
     });
     const writes = [
       ...safePlan.writes,
       ...translationPlan.writes,
       ...dependencyPlan.writes,
+      ...publicAssetPlan.writes,
+      ...sourceDefinitionPlan.writes,
+      ...applicationSourcePlan.writes,
     ];
     const deletions = [
       ...safePlan.deletions,
+      ...sourceDefinitionPlan.deletions,
       ...translationPlan.deletions.filter(
         (deletion) =>
           isDefined(baseManifest?.translations) &&
@@ -133,6 +199,14 @@ export const pullApplication = async (
         protectedIdentifiers,
       }),
       unreconciledUniversalIdentifiers: [...unreconciledUniversalIdentifiers],
+      remoteSourceFingerprints: {
+        ...sourceDefinitionPlan.fingerprints,
+        ...applicationSourcePlan.fingerprints,
+      },
+      publicAssetFingerprints: {
+        ...base.publicAssetFingerprints,
+        ...publicAssetPlan.fingerprints,
+      },
       dependencyFingerprints: {
         ...base.dependencyFingerprints,
         ...dependencyPlan.fingerprints,
@@ -141,6 +215,9 @@ export const pullApplication = async (
         sourceFingerprints: {
           ...base.sourceFingerprints,
           ...dependencyPlan.unchangedSourceFingerprints,
+          ...publicAssetPlan.unchangedSourceFingerprints,
+          ...sourceDefinitionPlan.unchangedSourceFingerprints,
+          ...applicationSourcePlan.unchangedSourceFingerprints,
         },
         writes,
         deletions,
@@ -163,6 +240,7 @@ export const pullApplication = async (
       deletions,
       frontComponentSourcePaths,
       baseEntities,
+      localCodeStepFilesByWorkflowPath,
       sourceFingerprints: base.sourceFingerprints,
     });
     const entityLabelByUniversalIdentifier =
@@ -190,7 +268,12 @@ export const pullApplication = async (
         ),
         deletions,
         overwrittenLocalChanges,
-        unchangedCount: plan.unchanged.length + dependencyPlan.unchangedCount,
+        unchangedCount:
+          plan.unchanged.length +
+          dependencyPlan.unchangedCount +
+          publicAssetPlan.unchangedCount +
+          sourceDefinitionPlan.unchangedCount +
+          applicationSourcePlan.unchangedCount,
         localOnlyRelativePaths: plan.localOnlyRelativePaths,
         unreadableRelativePaths: scannedFiles
           .filter((file) => !file.isReadable)

@@ -2,13 +2,15 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
+import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isSystemSearchVectorField } from '@/object-record/utils/isSystemSearchVectorField';
-import { removeTypenamesFromCompositeFieldValue } from '@/object-record/utils/removeTypenamesFromCompositeFieldValue';
+import { removeTypenames } from '~/utils/removeTypenames';
 import {
   computeMorphRelationGqlFieldName,
   computeRelationGqlFieldJoinColumnName,
   isDefined,
+  isFormulaFieldMetadata,
 } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
@@ -39,7 +41,9 @@ export const sanitizeRecordInput = ({
           );
         const potentialMorphRelationJoinColumnNameFieldMetadataItem =
           objectMetadataItem.fields.find((field) => {
-            if (!isFieldMorphRelation(field)) return false;
+            if (!isFieldMorphRelation(field)) {
+              return false;
+            }
             return field.morphRelations?.some((morphRelation) => {
               const computedFieldName = computeMorphRelationGqlFieldName({
                 fieldName: field.name,
@@ -70,6 +74,13 @@ export const sanitizeRecordInput = ({
 
         if (
           isDefined(fieldMetadataItem) &&
+          isFormulaFieldMetadata(fieldMetadataItem)
+        ) {
+          return undefined;
+        }
+
+        if (
+          isDefined(fieldMetadataItem) &&
           isManyToOneRelationField(fieldMetadataItem) &&
           !isDefined(recordInput[fieldMetadataItem.name]?.connect?.where) &&
           !isDefined(recordInput[fieldMetadataItem.name]?.create)
@@ -90,10 +101,12 @@ export const sanitizeRecordInput = ({
           fieldMetadataItem.type === FieldMetadataType.FILES &&
           Array.isArray(fieldValue)
         ) {
-          const cleanedFiles = fieldValue.map((file: any) => ({
-            fileId: file.fileId,
-            label: file.label,
-          }));
+          const cleanedFiles = fieldValue.map(
+            (file: Pick<FieldFilesValue, 'fileId' | 'label'>) => ({
+              fileId: file.fileId,
+              label: file.label,
+            }),
+          );
           return [fieldName, cleanedFiles];
         }
 
@@ -101,10 +114,7 @@ export const sanitizeRecordInput = ({
           isDefined(fieldMetadataItem) &&
           isCompositeFieldType(fieldMetadataItem.type)
         ) {
-          return [
-            fieldName,
-            removeTypenamesFromCompositeFieldValue(fieldValue),
-          ];
+          return [fieldName, removeTypenames(fieldValue)];
         }
 
         // TODO: validate fieldValue against the field type, including composite structures

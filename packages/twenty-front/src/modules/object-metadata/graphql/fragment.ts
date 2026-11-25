@@ -27,6 +27,7 @@ export const OBJECT_METADATA_FRAGMENT = gql`
     isSearchable
     openRecordIn
     duplicateCriteria
+    disabledObjectPermissionActions
     searchFieldMetadataList {
       id
       fieldMetadataId
@@ -65,6 +66,7 @@ export const OBJECT_METADATA_FRAGMENT = gql`
       isActive
       isSystem
       isUIEditable
+      isSystemSideEffect
       isNullable
       isUnique
       isSearchable

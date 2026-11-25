@@ -27,6 +27,7 @@ import { EmailVerificationService } from 'src/engine/core-modules/email-verifica
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
+import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
 import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
 import { SsoService } from 'src/engine/core-modules/sso/services/sso.service';
@@ -38,7 +39,8 @@ import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/use
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { AccessPolicyService } from 'src/engine/guards/access-policy/access-policy.service';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 
 import { AuthResolver } from './auth.resolver';
 
@@ -141,6 +143,10 @@ describe('AuthResolver', () => {
           useValue: {},
         },
         {
+          provide: FileUrlService,
+          useValue: {},
+        },
+        {
           provide: UserSessionService,
           useValue: {
             issueSessionForTokenPair: jest.fn(),
@@ -227,9 +233,10 @@ describe('AuthResolver', () => {
           useValue: {},
         },
         {
-          provide: PermissionsService,
+          provide: SettingPermissionsService,
           useValue: {},
         },
+        AccessPolicyService,
         {
           provide: FeatureFlagService,
           useValue: {},

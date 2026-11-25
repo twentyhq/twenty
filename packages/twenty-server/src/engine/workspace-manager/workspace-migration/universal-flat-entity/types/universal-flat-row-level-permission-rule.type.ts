@@ -1,0 +1,7 @@
+import { type RowLevelPermissionRuleEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-rule.entity';
+import { type UniversalFlatEntityFrom } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-from.type';
+
+export type UniversalFlatRowLevelPermissionRule = UniversalFlatEntityFrom<
+  RowLevelPermissionRuleEntity,
+  'rowLevelPermissionRule'
+>;

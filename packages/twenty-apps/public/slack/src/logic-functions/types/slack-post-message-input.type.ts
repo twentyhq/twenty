@@ -4,6 +4,6 @@ import { type SlackUnfurlOptions } from 'src/logic-functions/types/slack-unfurl-
 export type SlackPostMessageInput = {
   slackChannelId: string;
   messageText: string;
-  parentMessageTimestamp?: string;
+  parentMessageTimestamp?: unknown;
 } & SlackMessageBody &
   SlackUnfurlOptions;

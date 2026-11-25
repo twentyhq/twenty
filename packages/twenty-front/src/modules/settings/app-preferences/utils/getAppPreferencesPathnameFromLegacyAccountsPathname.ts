@@ -1,6 +1,6 @@
 import { APP_PREFERENCES_PATH_BY_LEGACY_ACCOUNTS_PATH } from '@/settings/app-preferences/constants/AppPreferencesPathByLegacyAccountsPath';
 import { generatePath, matchPath } from 'react-router-dom';
-import { SettingsPath } from 'twenty-shared/types';
+import { AppPath, SettingsPath } from 'twenty-shared/types';
 import {
   getSettingsPath,
   isDefined,
@@ -14,7 +14,7 @@ export const getAppPreferencesPathnameFromLegacyAccountsPathname = (
     APP_PREFERENCES_PATH_BY_LEGACY_ACCOUNTS_PATH,
   )) {
     const legacyAccountsPathMatch = matchPath(
-      getSettingsPath(legacyAccountsPath),
+      `/${AppPath.Settings}/${legacyAccountsPath}`,
       legacyAccountsPathname,
     );
 

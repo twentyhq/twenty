@@ -1,7 +1,11 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { FilesFieldModule } from 'src/engine/core-modules/file/files-field/files-field.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { WorkspaceInternalImportService } from 'src/engine/core-modules/workspace/services/workspace-internal-import.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -30,6 +34,7 @@ import { MessagingMessageListFetchJob } from 'src/modules/messaging/message-impo
 import { MessagingMessagesImportJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-messages-import.job';
 import { MessagingOngoingStaleJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-ongoing-stale.job';
 import { MessagingRelaunchFailedMessageChannelJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-relaunch-failed-message-channel.job';
+import { MessagingRemoteAttachmentModule } from 'src/modules/messaging/message-import-manager/messaging-remote-attachment.module';
 import { MessagingCursorService } from 'src/modules/messaging/message-import-manager/services/messaging-cursor.service';
 import { MessagingDeleteFolderMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-delete-folder-messages.service';
 import { MessagingDeleteGroupEmailMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-delete-group-email-messages.service';
@@ -37,6 +42,7 @@ import { MessagingImportFolderMessagesService } from 'src/modules/messaging/mess
 import { MessagingGetMessageListService } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
 import { MessagingGetMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-get-messages.service';
 import { MessageImportExceptionHandlerService } from 'src/modules/messaging/message-import-manager/services/messaging-import-exception-handler.service';
+import { MessagingMessageAttachmentService } from 'src/modules/messaging/message-import-manager/services/messaging-message-attachment.service';
 import { MessagingMessageFolderAssociationService } from 'src/modules/messaging/message-import-manager/services/messaging-message-folder-association.service';
 import { MessagingMessageListFetchService } from 'src/modules/messaging/message-import-manager/services/messaging-message-list-fetch.service';
 import { MessagingMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-message.service';
@@ -45,15 +51,20 @@ import { MessagingProcessFolderActionsService } from 'src/modules/messaging/mess
 import { MessagingProcessGroupEmailActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-group-email-actions.service';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { MessageParticipantManagerModule } from 'src/modules/messaging/message-participant-manager/message-participant-manager.module';
 import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/messaging-monitoring.module';
 import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
 @Module({
   imports: [
+    WorkspaceCacheModule,
+    FeatureFlagModule,
+    FilesFieldModule,
     MessagingGmailDriverModule,
     MessagingMicrosoftDriverModule,
     MessagingIMAPDriverModule,
     MessagingInboundEmailDriverModule,
+    MessagingRemoteAttachmentModule,
     MessagingCommonModule,
     TypeOrmModule.forFeature([
       WorkspaceEntity,
@@ -61,6 +72,7 @@ import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklis
       MessageFolderEntity,
       UserWorkspaceEntity,
       ConnectedAccountEntity,
+      FileEntity,
     ]),
     EmailAliasManagerModule,
     MessageParticipantManagerModule,
@@ -70,6 +82,7 @@ import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklis
   ],
   providers: [
     BlocklistRepository,
+    WorkspaceInternalImportService,
     provideWorkspaceScopedRepository(MessageChannelEntity),
     MessagingMessageListFetchCronCommand,
     MessagingMessagesImportCronCommand,
@@ -88,6 +101,7 @@ import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklis
     MessagingInboundEmailImportJob,
     MessagingMessageService,
     MessagingMessageFolderAssociationService,
+    MessagingMessageAttachmentService,
     MessagingMessageListFetchService,
     MessagingMessagesImportService,
     MessagingSaveMessagesAndEnqueueContactCreationService,
@@ -102,6 +116,7 @@ import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklis
     MessagingDeleteGroupEmailMessagesService,
     InboundEmailImportService,
     provideWorkspaceScopedRepository(MessageFolderEntity),
+    provideWorkspaceScopedRepository(FileEntity),
   ],
   exports: [
     MessagingMessageListFetchCronCommand,

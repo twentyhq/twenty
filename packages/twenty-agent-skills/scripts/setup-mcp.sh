@@ -29,6 +29,13 @@ normalize_url() {
   local raw="$1"
   raw="${raw#"${raw%%[![:space:]]*}"}"
   raw="${raw%"${raw##*[![:space:]]}"}"
+
+  local query=""
+  if [[ "$raw" == *\?* ]]; then
+    query="?${raw#*\?}"
+    raw="${raw%%\?*}"
+  fi
+
   raw="${raw%/}"
 
   if [[ "$raw" != http://* && "$raw" != https://* ]]; then
@@ -43,7 +50,7 @@ normalize_url() {
     raw="${raw%/}/mcp"
   fi
 
-  echo "$raw"
+  echo "$raw$query"
 }
 
 derive_name() {

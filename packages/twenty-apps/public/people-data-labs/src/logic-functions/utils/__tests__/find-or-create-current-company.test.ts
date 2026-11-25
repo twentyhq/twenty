@@ -1,4 +1,3 @@
-import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { describe, expect, it, vi } from 'vitest';
 
 import { findOrCreateCurrentCompany } from 'src/logic-functions/utils/find-or-create-current-company';
@@ -22,7 +21,7 @@ describe('findOrCreateCurrentCompany', () => {
   it('returns undefined and issues no calls when PDL gives no identifiers', async () => {
     const query = vi.fn();
     const mutation = vi.fn();
-    const client = { query, mutation } as unknown as CoreApiClient;
+    const client = { query, mutation };
 
     const result = await findOrCreateCurrentCompany({
       client,
@@ -37,10 +36,12 @@ describe('findOrCreateCurrentCompany', () => {
 
   it('links an existing company matched by pdlId alone', async () => {
     const query = vi.fn(() =>
-      Promise.resolve({ companies: { edges: [{ node: { id: 'co-existing' } }] } }),
+      Promise.resolve({
+        companies: { edges: [{ node: { id: 'co-existing' } }] },
+      }),
     );
     const mutation = vi.fn();
-    const client = { query, mutation } as unknown as CoreApiClient;
+    const client = { query, mutation };
 
     const result = await findOrCreateCurrentCompany({
       client,
@@ -55,7 +56,7 @@ describe('findOrCreateCurrentCompany', () => {
   it('attempts a pdlId match but does not create without a name or website', async () => {
     const query = vi.fn(() => Promise.resolve({ companies: { edges: [] } }));
     const mutation = vi.fn();
-    const client = { query, mutation } as unknown as CoreApiClient;
+    const client = { query, mutation };
 
     const result = await findOrCreateCurrentCompany({
       client,
@@ -70,10 +71,12 @@ describe('findOrCreateCurrentCompany', () => {
 
   it('returns an existing company id without creating one', async () => {
     const query = vi.fn(() =>
-      Promise.resolve({ companies: { edges: [{ node: { id: 'co-existing' } }] } }),
+      Promise.resolve({
+        companies: { edges: [{ node: { id: 'co-existing' } }] },
+      }),
     );
     const mutation = vi.fn();
-    const client = { query, mutation } as unknown as CoreApiClient;
+    const client = { query, mutation };
 
     const result = await findOrCreateCurrentCompany({
       client,
@@ -95,7 +98,7 @@ describe('findOrCreateCurrentCompany', () => {
 
       return Promise.resolve({ createCompany: { id: 'co-new' } });
     });
-    const client = { query, mutation } as unknown as CoreApiClient;
+    const client = { query, mutation };
 
     const result = await findOrCreateCurrentCompany({
       client,
@@ -114,7 +117,7 @@ describe('findOrCreateCurrentCompany', () => {
   it('throws when the create mutation returns no company id', async () => {
     const query = vi.fn(() => Promise.resolve({ companies: { edges: [] } }));
     const mutation = vi.fn(() => Promise.resolve({ createCompany: null }));
-    const client = { query, mutation } as unknown as CoreApiClient;
+    const client = { query, mutation };
 
     await expect(
       findOrCreateCurrentCompany({
@@ -143,7 +146,7 @@ describe('findOrCreateCurrentCompany', () => {
         new Error('duplicate key value violates unique constraint'),
       );
     });
-    const client = { query, mutation } as unknown as CoreApiClient;
+    const client = { query, mutation };
 
     const result = await findOrCreateCurrentCompany({
       client,
@@ -160,7 +163,7 @@ describe('findOrCreateCurrentCompany', () => {
   it('rethrows a non-unique-violation create error', async () => {
     const query = vi.fn(() => Promise.resolve({ companies: { edges: [] } }));
     const mutation = vi.fn(() => Promise.reject(new Error('network down')));
-    const client = { query, mutation } as unknown as CoreApiClient;
+    const client = { query, mutation };
 
     await expect(
       findOrCreateCurrentCompany({
@@ -175,10 +178,12 @@ describe('findOrCreateCurrentCompany', () => {
 
   it('reuses a cached company id for an identical company without re-querying', async () => {
     const query = vi.fn(() =>
-      Promise.resolve({ companies: { edges: [{ node: { id: 'co-existing' } }] } }),
+      Promise.resolve({
+        companies: { edges: [{ node: { id: 'co-existing' } }] },
+      }),
     );
     const mutation = vi.fn();
-    const client = { query, mutation } as unknown as CoreApiClient;
+    const client = { query, mutation };
     const companyIdByMatchKeyCache = newCache();
     const personData = {
       job_company_name: 'Acme',

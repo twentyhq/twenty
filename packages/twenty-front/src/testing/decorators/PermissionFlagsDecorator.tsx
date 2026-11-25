@@ -16,7 +16,7 @@ export const PermissionFlagsDecorator: Decorator = (Story, { parameters }) => {
       permissionFlags: permissionFlags ?? [],
       twoFactorAuthenticationMethodSummary: [],
       isImpersonating: false,
-      objectsPermissions: [],
+      objectRecordsPermissions: [],
     });
   }, [setCurrentUserWorkspace, permissionFlags]);
 

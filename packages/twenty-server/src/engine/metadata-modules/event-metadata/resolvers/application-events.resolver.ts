@@ -13,8 +13,7 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 import { CreateAppVisitorEventTokenInput } from 'src/engine/metadata-modules/event-metadata/dtos/create-app-visitor-event-token.input';
 import { CreateAppVisitorEventTokenOutput } from 'src/engine/metadata-modules/event-metadata/dtos/create-app-visitor-event-token.output';
 import { EmitAppEventInput } from 'src/engine/metadata-modules/event-metadata/dtos/emit-app-event.input';
@@ -24,13 +23,15 @@ import { ApplicationEventEmitterService } from 'src/engine/metadata-modules/even
 import { VisitorEventTokenService } from 'src/engine/metadata-modules/event-metadata/services/visitor-event-token.service';
 
 @UseGuards(
-  AuthPrincipalGuard({
-    userSession: false,
-    apiKey: false,
-    oauthClient: false,
-    application: true,
+  AccessPolicyGuard({
+    authPrincipals: {
+      userSession: false,
+      apiKey: false,
+      oauthClient: false,
+      application: true,
+    },
+    requiredPermissionFlags: [],
   }),
-  NoPermissionGuard,
 )
 @UseInterceptors(EventMetadataGraphqlApiExceptionInterceptor)
 @UsePipes(ResolverValidationPipe)

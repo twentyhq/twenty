@@ -1,8 +1,5 @@
 import { msg } from '@lingui/core/macro';
-import {
-  type PageLayoutWidgetVerticalListPosition,
-  PageLayoutWidgetVerticalListHeightBehavior,
-} from 'twenty-shared/types';
+import { PageLayoutWidgetVerticalListHeightBehavior } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -13,7 +10,7 @@ import {
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 
 export const validatePageLayoutWidgetVerticalListPosition = (
-  position: PageLayoutWidgetVerticalListPosition,
+  position: { index: number; heightBehavior?: string },
   widgetTitle: string,
 ): FlatEntityValidationError[] => {
   const errors: FlatEntityValidationError[] = [];
@@ -46,7 +43,7 @@ export const validatePageLayoutWidgetVerticalListPosition = (
 
   if (
     isDefined(position.heightBehavior) &&
-    !Object.values(PageLayoutWidgetVerticalListHeightBehavior).includes(
+    !Object.values<string>(PageLayoutWidgetVerticalListHeightBehavior).includes(
       position.heightBehavior,
     )
   ) {

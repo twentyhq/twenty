@@ -1,3 +1,4 @@
+import { RecordShareModule } from 'src/engine/permissions/record-share/record-share.module';
 import { Module } from '@nestjs/common';
 
 import { CoreCommonApiModule } from 'src/engine/api/common/core-common-api.module';
@@ -24,7 +25,6 @@ import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
-import { UserRoleModule } from 'src/engine/permissions/role-assignment/user-role.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
@@ -52,13 +52,13 @@ const restApiCoreResolvers = [
     WorkspaceCacheStorageModule,
     AuthModule,
     ApiKeyModule,
-    UserRoleModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     ActorModule,
     FeatureFlagModule,
     CoreCommonApiModule,
     WorkspaceDomainsModule,
     WorkspaceCacheModule,
+    RecordShareModule,
   ],
   controllers: [RestApiCoreController],
   providers: [RestApiCoreService, ...restApiCoreResolvers],

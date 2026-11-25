@@ -1,6 +1,9 @@
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
-import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import {
+  FieldContext,
+  type RecordUpdateHookParams,
+} from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useGetRecordTableRowIndex } from '@/object-record/record-table/record-table-row/hooks/useGetRecordTableRowIndex';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
@@ -10,7 +13,10 @@ import { RecordTableUpdateContext } from '@/object-record/record-table/contexts/
 import { isRecordTableCellsNonEditableComponentState } from '@/object-record/record-table/states/isRecordTableCellsNonEditableComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useContext, type ReactNode } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  canAccessThroughAllRecordsOrRlsPermission,
+  isDefined,
+} from 'twenty-shared/utils';
 
 type RecordTableCellFieldContextLabelIdentifierProps = {
   children: ReactNode;
@@ -42,7 +48,10 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
     objectMetadataItem.id,
   );
 
-  const hasObjectReadPermissions = objectPermissions.canReadObjectRecords;
+  const hasObjectReadPermissions = canAccessThroughAllRecordsOrRlsPermission({
+    objectRecordsPermissions: objectPermissions,
+    operationType: 'read',
+  });
 
   const updateRecord = useContext(RecordTableUpdateContext);
 
@@ -68,7 +77,16 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
       value={{
         recordId,
         fieldDefinition,
-        useUpdateRecord: updateRecord ? () => [updateRecord, {}] : undefined,
+        useUpdateRecord: isDefined(updateRecord)
+          ? () => [
+              (params: RecordUpdateHookParams) =>
+                updateRecord({
+                  ...params,
+                  objectNameSingular: objectMetadataItem.nameSingular,
+                }),
+              {},
+            ]
+          : undefined,
         isLabelIdentifier: true,
         displayedMaxRows: 1,
         isRecordFieldReadOnly:

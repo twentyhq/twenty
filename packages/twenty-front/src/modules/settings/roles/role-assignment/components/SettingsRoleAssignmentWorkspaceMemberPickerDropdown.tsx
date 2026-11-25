@@ -1,5 +1,5 @@
 import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { useObjectRecordSearchRecords } from '@/object-record/hooks/useObjectRecordSearchRecords';
 import { type SearchRecord } from '~/generated/graphql';
 import { SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent';
@@ -24,7 +24,7 @@ export const SettingsRoleAssignmentWorkspaceMemberPickerDropdown = ({
     searchRecords: workspaceMembers,
     error,
   } = useObjectRecordSearchRecords({
-    objectNameSingulars: [CoreObjectNameSingular.WorkspaceMember],
+    objectNameSingulars: [StandardObjectNameSingular.WorkspaceMember],
     searchInput: searchFilter,
   });
 

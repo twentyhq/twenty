@@ -19,6 +19,14 @@
   overflow: hidden;
   width: auto;
 
+  &[data-border-style='dashed'] {
+    border-style: dashed;
+  }
+
+  &[data-selected] {
+    border-color: var(--t-color-blue);
+  }
+
   &[data-full-width] {
     width: 100%;
   }

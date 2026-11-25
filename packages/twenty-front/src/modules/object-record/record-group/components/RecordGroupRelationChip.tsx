@@ -2,9 +2,9 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/primitives/data-display';
+import { useLingui } from '@lingui/react/macro';
 
 type RecordGroupRelationChipProps = {
   fieldMetadataItem: FieldMetadataItem;
@@ -15,6 +15,7 @@ export const RecordGroupRelationChip = ({
   fieldMetadataItem,
   recordId,
 }: RecordGroupRelationChipProps) => {
+  const { t } = useLingui();
   const targetObjectNameSingular =
     fieldMetadataItem.relation?.targetObjectMetadata.nameSingular;
 

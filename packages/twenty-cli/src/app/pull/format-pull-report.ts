@@ -1,3 +1,4 @@
+import { CODE_STEP_FILE_SUFFIX } from '@/app/constants/code-step-file-suffix.constant';
 import { type AppExportCoverageEntry } from '@/app/types/app-export.type';
 import { type SkippedPullEntity } from '@/app/pull/build-pull-entities';
 import { type PullDeletion } from '@/app/pull/plan-pull-writes';
@@ -113,6 +114,15 @@ export const formatPullReport = ({
 
   if (unchangedCount > 0) {
     lines.push(`  unchanged    ${unchangedCount} file(s)`);
+  }
+
+  if (
+    writes.some((write) => write.relativePath.endsWith(CODE_STEP_FILE_SUFFIX))
+  ) {
+    lines.push(
+      '',
+      'Workflow Code-step files contain workspace-authored code, read as text during pull and build.',
+    );
   }
 
   if (skipped.length > 0) {

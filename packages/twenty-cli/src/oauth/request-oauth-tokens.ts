@@ -3,21 +3,28 @@ import { isPlainObject } from 'twenty-shared/utils';
 
 import { type OAuthTokens } from '@/oauth/types/oauth-tokens.type';
 import { CliError } from '@/output/cli-error';
+import { type ProxyHeaders } from '@/proxy-headers/types/proxy-headers.type';
 import { createBoundedFetch } from '@/transport/create-target-fetch';
 import { parseResponseBody } from '@/transport/parse-response-body';
 
 export const requestOAuthTokens = async ({
   apiUrl,
+  proxyHeaders,
   tokenEndpoint,
   parameters,
   signal,
 }: {
   apiUrl: string;
+  proxyHeaders?: ProxyHeaders;
   tokenEndpoint: string;
   parameters: Record<string, string>;
   signal: AbortSignal;
 }): Promise<OAuthTokens> => {
-  const response = await createBoundedFetch({ apiUrl, signal })(tokenEndpoint, {
+  const response = await createBoundedFetch({
+    apiUrl,
+    proxyHeaders,
+    signal,
+  })(tokenEndpoint, {
     method: 'POST',
     headers: {
       Accept: 'application/json',

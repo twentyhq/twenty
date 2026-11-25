@@ -55,7 +55,9 @@ describe('MessageQueueExplorer progress context', () => {
 
     try {
       await module.init();
-      const [id] = await queue.bulkAdd('progress-job', [
+      const {
+        jobs: [{ jobId: id }],
+      } = await queue.bulkAdd('progress-job', [
         { data: { total: 10 }, isSystemJob: true },
       ]);
 

@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { type DpaDocument } from '@/settings/legal/types/Dpa';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledDocument = styled.div`
   background: ${themeCssVariables.background.primary};
@@ -59,27 +59,30 @@ type DpaDocumentPreviewProps = {
   document: DpaDocument;
 };
 
-export const DpaDocumentPreview = ({ document }: DpaDocumentPreviewProps) => (
-  // tabIndex makes the scrollable region focusable so keyboard-only users can
-  // scroll the agreement with the arrow keys.
-  <StyledDocument tabIndex={0} role="region" aria-label={document.title}>
-    <StyledTitle>{document.title}</StyledTitle>
-    <StyledLastUpdated>{t`Last Updated: ${document.lastUpdatedLabel}`}</StyledLastUpdated>
-    {document.blocks.map((block, index) => {
-      if (block.kind === 'heading') {
-        return <StyledHeading key={index}>{block.text}</StyledHeading>;
-      }
+export const DpaDocumentPreview = ({ document }: DpaDocumentPreviewProps) => {
+  const { t } = useLingui();
+  return (
+    // tabIndex makes the scrollable region focusable so keyboard-only users can
+    // scroll the agreement with the arrow keys.
+    <StyledDocument tabIndex={0} role="region" aria-label={document.title}>
+      <StyledTitle>{document.title}</StyledTitle>
+      <StyledLastUpdated>{t`Last Updated: ${document.lastUpdatedLabel}`}</StyledLastUpdated>
+      {document.blocks.map((block, index) => {
+        if (block.kind === 'heading') {
+          return <StyledHeading key={index}>{block.text}</StyledHeading>;
+        }
 
-      if (block.kind === 'signatureField') {
-        return (
-          <StyledSignatureField key={index}>
-            <StyledSignatureLabel>{block.label}</StyledSignatureLabel>
-            <StyledSignatureValue>{block.value}</StyledSignatureValue>
-          </StyledSignatureField>
-        );
-      }
+        if (block.kind === 'signatureField') {
+          return (
+            <StyledSignatureField key={index}>
+              <StyledSignatureLabel>{block.label}</StyledSignatureLabel>
+              <StyledSignatureValue>{block.value}</StyledSignatureValue>
+            </StyledSignatureField>
+          );
+        }
 
-      return <StyledParagraph key={index}>{block.text}</StyledParagraph>;
-    })}
-  </StyledDocument>
-);
+        return <StyledParagraph key={index}>{block.text}</StyledParagraph>;
+      })}
+    </StyledDocument>
+  );
+};

@@ -18,8 +18,12 @@ export const validateFlatPermissionFlagUpdate = ({
     flatPermissionFlagMaps: optimisticFlatPermissionFlagMaps,
   },
   buildOptions,
-}: FlatEntityUpdateValidationArgs<
-  typeof ALL_METADATA_NAME.permissionFlag
+}: Pick<
+  FlatEntityUpdateValidationArgs<typeof ALL_METADATA_NAME.permissionFlag>,
+  | 'buildOptions'
+  | 'flatEntityUpdate'
+  | 'optimisticFlatEntityMapsAndRelatedFlatEntityMaps'
+  | 'universalIdentifier'
 >): FailedFlatEntityValidation<'permissionFlag', 'update'> => {
   const validationResult = getEmptyFlatEntityValidationError({
     flatEntityMinimalInformation: {

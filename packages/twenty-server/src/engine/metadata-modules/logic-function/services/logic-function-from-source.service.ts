@@ -23,6 +23,7 @@ import { LogicFunctionFromSourceHelperService } from 'src/engine/metadata-module
 import { buildUniversalFlatLogicFunctionToCreate } from 'src/engine/metadata-modules/logic-function/utils/build-universal-flat-logic-function-to-create.util';
 import { fromCreateLogicFunctionFromSourceInputToUniversalFlatLogicFunctionToCreate } from 'src/engine/metadata-modules/logic-function/utils/from-create-logic-function-from-source-input-to-universal-flat-logic-function-to-create.util';
 import { fromFlatLogicFunctionToLogicFunctionDto } from 'src/engine/metadata-modules/logic-function/utils/from-flat-logic-function-to-logic-function-dto.util';
+import { fromLogicFunctionExecuteResultToDTO } from 'src/engine/metadata-modules/logic-function/utils/from-logic-function-execute-result-to-dto.util';
 import { fromUpdateLogicFunctionFromSourceInputToFlatLogicFunctionToUpdate } from 'src/engine/metadata-modules/logic-function/utils/from-update-logic-function-from-source-input-to-flat-logic-function-to-update.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -389,21 +390,7 @@ export class LogicFunctionFromSourceService {
       executionMode: LogicFunctionExecutionMode.LIVE,
     });
 
-    return {
-      data: result.data as LogicFunctionExecutionResultDTO['data'],
-      logs: result.logs,
-      duration: result.duration,
-      status: result.status,
-      error: result.error
-        ? {
-            errorType: result.error.errorType,
-            errorMessage: result.error.errorMessage,
-            stackTrace: Array.isArray(result.error.stackTrace)
-              ? result.error.stackTrace.join('\n')
-              : result.error.stackTrace,
-          }
-        : undefined,
-    };
+    return fromLogicFunctionExecuteResultToDTO(result);
   }
 
   async getSourceCode({

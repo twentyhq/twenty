@@ -4,7 +4,7 @@ import { HttpResponse, graphql } from 'msw';
 import { TimelineCard } from '@/activities/timeline-activities/components/TimelineCard';
 import { TimelineActivityContext } from '@/activities/timeline-activities/contexts/TimelineActivityContext';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
@@ -26,7 +26,7 @@ const meta: Meta<typeof TimelineCard> = {
           value={{
             targetRecordIdentifier: {
               id: '1',
-              targetObjectNameSingular: CoreObjectNameSingular.Company,
+              targetObjectNameSingular: StandardObjectNameSingular.Company,
             },
             layoutType: PageLayoutType.RECORD_PAGE,
           }}

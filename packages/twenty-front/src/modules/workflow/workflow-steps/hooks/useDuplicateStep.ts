@@ -22,7 +22,7 @@ export const useDuplicateStep = () => {
     useGetUpdatableWorkflowVersionOrThrow();
 
   const duplicateStep = async ({ stepId }: { stepId: string }) => {
-    if (isLoading === true) {
+    if (isLoading) {
       return;
     }
 

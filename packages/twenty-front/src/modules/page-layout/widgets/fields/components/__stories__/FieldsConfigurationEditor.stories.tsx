@@ -10,7 +10,7 @@ import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { type ReactNode, StrictMode, useRef } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
@@ -24,7 +24,7 @@ const WIDGET_ID = 'story-fields-widget';
 const closeSidePanel = fn();
 
 const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow(
-  CoreObjectNameSingular.Company,
+  StandardObjectNameSingular.Company,
 );
 
 const GROUPS: FieldsWidgetGroup[] = [

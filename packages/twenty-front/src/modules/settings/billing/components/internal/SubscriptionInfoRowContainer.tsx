@@ -1,8 +1,8 @@
 import { type IconComponent } from 'twenty-ui/icon';
 import React from 'react';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 type SubscriptionInfoRowContainerProps = {
   Icon: IconComponent;
@@ -38,7 +38,10 @@ const StyledHeaderText = styled.div`
 `;
 
 export const SubscriptionInfoHeaderRow = ({ show }: { show: boolean }) => {
-  if (!show) return null;
+  const { t } = useLingui();
+  if (!show) {
+    return null;
+  }
   return (
     <StyledContainer>
       <div />

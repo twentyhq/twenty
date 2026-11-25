@@ -1,14 +1,20 @@
+import { type ActorMetadata } from 'twenty-shared/types';
+
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { type OutboundRequestSource } from 'src/engine/core-modules/secure-http-client/outbound-request-source.type';
 import { type CodeExecutionStreamEmitter } from 'src/engine/core-modules/tool-provider/interfaces/code-execution-stream-emitter.type';
-import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 
 export type ToolExecutionContext = {
   workspaceId: string;
+  actorMetadata?: ActorMetadata;
   userId?: string;
   userWorkspaceId?: string;
+  workspaceMemberId?: string;
   agentId?: string;
   threadId?: string;
-  rolePermissionConfig?: RolePermissionConfig;
+  workflowRunId?: string;
+  workflowStepId?: string;
+  outboundRequestSource?: OutboundRequestSource;
   authContext?: WorkspaceAuthContext;
   onCodeExecutionUpdate?: CodeExecutionStreamEmitter;
 };

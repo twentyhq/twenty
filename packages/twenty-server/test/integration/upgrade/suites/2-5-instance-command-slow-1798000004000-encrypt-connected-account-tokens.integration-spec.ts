@@ -1,12 +1,11 @@
-import { isNonEmptyString } from '@sniptt/guards';
 import { config } from 'dotenv';
+import { buildSecretEncryptionServiceFromEnv } from 'test/integration/upgrade/utils/build-secret-encryption-service.util';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
-import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
-import { type EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';
+import { type SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 
 import { EncryptConnectedAccountTokensSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-slow-1798000004000-encrypt-connected-account-tokens';
@@ -19,22 +18,6 @@ config({
 });
 
 const TEST_ROW_HANDLE_PREFIX = 'encrypt-slow-cmd-test-';
-
-const buildSecretEncryptionService = (): SecretEncryptionService => {
-  const appSecret = process.env.APP_SECRET;
-
-  if (!isNonEmptyString(appSecret)) {
-    throw new Error(
-      'APP_SECRET must be set in the integration test environment to run this suite.',
-    );
-  }
-
-  const driver = {
-    get: (key: string) => (key === 'APP_SECRET' ? appSecret : undefined),
-  } as unknown as EnvironmentConfigDriver;
-
-  return new SecretEncryptionService(driver);
-};
 
 const seedRow = async ({
   dataSource,
@@ -122,7 +105,7 @@ describe('2-5 slow instance command 1798000004000 - EncryptConnectedAccountToken
     });
     await dataSource.initialize();
 
-    secretEncryptionService = buildSecretEncryptionService();
+    secretEncryptionService = buildSecretEncryptionServiceFromEnv();
     connectedAccountTokenEncryptionService =
       new ConnectedAccountTokenEncryptionService(secretEncryptionService);
     command = new EncryptConnectedAccountTokensSlowInstanceCommand(

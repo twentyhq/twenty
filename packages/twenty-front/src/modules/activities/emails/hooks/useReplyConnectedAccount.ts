@@ -25,8 +25,11 @@ export const useReplyConnectedAccount = (messageChannelId: string | null) => {
     ) ?? null;
 
   return {
+    messageChannel: threadMessageChannel,
+    connectedAccount: replyConnectedAccount,
     connectedAccountId: replyConnectedAccount?.id ?? null,
     connectedAccountHandle: replyConnectedAccount?.handle ?? null,
+    messageChannelHandle: threadMessageChannel?.handle ?? null,
     connectedAccountProvider:
       (replyConnectedAccount?.provider as ConnectedAccountProvider) ?? null,
     loading: connectedAccountsLoading || messageChannelsLoading,

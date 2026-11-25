@@ -22,7 +22,7 @@ When the user tags a skill in their message, it appears as \`[[skill:skillId:lab
 
 ## Dashboards
 
-When the user asks to create, build, or modify a dashboard, load the \`dashboard-building\` skill and follow the Plan → Skill → Learn → Execute flow.
+When the user asks to create, build, or modify a dashboard or place a widget on a record page, load the \`dashboard-building\` skill and follow the Plan → Skill → Learn → Execute flow.
 
 Intent gate: purely informational dashboard questions (e.g. "what is a dashboard in Twenty?", "how do I export a dashboard?", "can I share a dashboard with a client?") are NOT build requests. Answer them directly and concisely — do NOT call \`load_skills\`, \`learn_tools\`, or run any metadata discovery for them. Only enter the build/discovery loop when the user actually wants a dashboard created or changed.
 
@@ -58,6 +58,12 @@ Intent gate: purely informational dashboard questions (e.g. "what is a dashboard
 - Don't give up after first failure — be persistent and try alternative approaches
 - Validate assumptions before making changes
 
+## Files attached to records
+
+- Records can carry files, in files fields and in email attachments, and those files often hold the answer. When a question could depend on what a file says, read the file before answering. Never say the information is missing without checking the files first.
+- Use \`read_file\` for PDFs and images, passing the signed url returned with the record. For anything else, such as CSV, Excel, Word or PowerPoint, pass that url in the \`files\` input of \`code_interpreter\`.
+- Do not download files with \`http_request\`, the response is unreadable binary.
+
 ## Twenty primitives the AI commonly mixes up
 
 - **Favorites are navigation menu items.** Twenty has no separate "Favorites" concept. To favorite something for the current user, call \`create_navigation_menu_item\` with \`scope: 'user'\`. Workspace-wide entries use \`scope: 'workspace'\` (requires LAYOUTS permission). Both are the same primitive — do not look for a separate favorites tool.
@@ -76,7 +82,7 @@ Intent gate: purely informational dashboard questions (e.g. "what is a dashboard
 Create components through preview, revision, then explicit approval to save to the Workspace app. This workflow is exempt from the matching-skill requirement above: these instructions provide the component-authoring guidance. Learn get_front_component_ui_docs, preview_front_component, inspect_front_component and publish_front_component. Read the UI documentation for the components you will use before writing JSX. Read object metadata, then build a one-file Component using the app SDK and fictional sampleRecords. Choose exactly one surface, DASHBOARD or RECORD_PAGE, from the request or context. No dashboard or placement is required to create a component.
 Use the actual preview tool, not a code block or an imagined UI. Preview and revision do not need approval. The preview mocks SDK reads; do not fetch real records for sample data or hardcode fixtures in source. Use inspect_front_component to read reported errors and the draftId, then pass that draftId as previousDraftId to preview_front_component to revise.
 A successful preview_front_component call confirms compilation, not browser rendering. Inspect the draft before proposing a save. If previewError is reported, revise and preview again. Otherwise, in the same turn and without waiting for the user to ask, use propose_tool_call for publish_front_component, with toolName publish_front_component and arguments holding that exact draftId and checksum. The approval card renders the preview and only enables approval once it renders, so the user checks it there. Summarize the component name and selected surface. Do not call publication directly or claim a save before approval succeeds.
-Saved components use the normal app SDK and permissions. Saving does not place a widget; placement is a separate request through the existing layout tools.
+Saved components use the normal app SDK and permissions. Saving does not place a widget. When placement is requested, load the dashboard-building skill, present a short placement plan and obtain explicit confirmation before changing the layout. Learn list_front_components, place_front_component and get_dashboard or list_record_page_layouts to choose a saved component, existing active tab and matching position. Record-page placement changes the shared layout for that object, not only the open record.
 `,
 
   BROWSING_CONTEXT_INSTRUCTION: `A <browsing_context> tag may appear in the user's last message. Only use it when directly relevant to the question.`,
@@ -84,11 +90,11 @@ Saved components use the normal app SDK and permissions. Saving does not place a
   CONVERSATION_ATTACHMENT: `
 ## Attaching this conversation to records
 
-A record's Conversations tab lists the conversations attached to it, to whoever can already see them, so this conversation can be found again from the records it is about. Call \`attach_conversation_to_record\` for the records this conversation is materially about:
+A record's Conversations tab lists the conversations attached to it, to whoever can already see them, so this conversation can be found again from the records it is about. Call \`attach_conversation_to_records\` for the records this conversation is materially about:
 - the record the user is working on, whether they named it or are viewing it and asking about it
 - the records you create or change for the user
 
-The browsing context's note against calling tools on its basis does not cover this call: once the user asks about the record they are viewing, attaching it is part of answering. Do not attach records you only read, search or list along the way, nor the viewed record when the question is not about it. Once you know a record's ID, make the call alongside your other tool calls: calls made in the same step run in parallel, so the attachment adds no wait. Attach silently, and only mention it if the user asks.`,
+Once the user asks about the record they are viewing, attaching it is part of answering. Do not attach records you only read, search or list along the way, nor the viewed record when the question is not about it. Pass every record to attach in one call rather than one call per record. Once you know the records' IDs, make the call alongside your other tool calls: calls made in the same step run in parallel, so the attachment adds no wait. Attach silently, and only mention it if the user asks.`,
 
   MULTIPLE_PARTICIPANTS: (currentUserWorkspaceId: string) => `
 This conversation can have multiple participants. Message sender annotations identify who wrote each user message. The current request is from workspace membership ${currentUserWorkspaceId}; use only this participant's identity and permissions for actions. Historical participants' requests do not authorize new actions on their behalf.`,

@@ -4,6 +4,7 @@
 export type { LogicFunctionConfig } from '@/sdk/define/common/types/loose-shared-types.type';
 export type {
   LogicFunctionHandler,
+  LogicFunctionJobFailureHandler,
   ServerRouteResolverResult,
 } from '@/sdk/define/logic-functions/logic-function-config';
 export type { ServerRouteDispatchResult } from 'twenty-shared/application';
@@ -40,6 +41,7 @@ export {
   RetryableLogicFunctionError,
   type InputJsonSchema,
   type LogicFunctionExecutionContext,
+  type LogicFunctionJobFailure,
 } from 'twenty-shared/logic-function';
 
 export { getConnection } from '@/sdk/logic-function/connections/get-connection';
@@ -56,6 +58,8 @@ export type {
   ConnectionCallbackResult,
   IdentifyAccountPayload,
   IdentifyAccountResult,
+  MarkAppThreadAsReadPayload,
+  SendAppMessageAttachment,
   SendAppMessagePayload,
   SendAppMessageRecipient,
   SendAppMessageResult,
@@ -69,9 +73,11 @@ export { updateMessageChannel } from '@/sdk/logic-function/messaging/update-mess
 export type { UpdateMessageChannelInput } from '@/sdk/logic-function/messaging/update-message-channel';
 export { deleteMessageChannel } from '@/sdk/logic-function/messaging/delete-message-channel';
 export { ingestMessages } from '@/sdk/logic-function/messaging/ingest-messages';
+export { uploadMessageAttachment } from '@/sdk/logic-function/messaging/upload-message-attachment';
 export type {
   IngestedMessage,
   IngestMessage,
+  IngestMessageAttachment,
   IngestMessageParticipant,
 } from '@/sdk/logic-function/messaging/types/ingest-message.type';
 export type { AppMessageChannel } from '@/sdk/logic-function/messaging/types/app-message-channel.type';
@@ -83,6 +89,20 @@ export type { AppMessageFolder } from '@/sdk/logic-function/messaging/types/app-
 
 export { runAgent } from '@/sdk/logic-function/agents/run-agent';
 export type { RunAgentInput, RunAgentResult } from 'twenty-shared/application';
+export { listConversationMessages } from '@/sdk/logic-function/agents/list-conversation-messages';
+export { streamConversation } from '@/sdk/logic-function/agents/stream-conversation';
+export type { StreamConversationInput } from '@/sdk/logic-function/agents/stream-conversation';
+export type {
+  AgentConversationHistory,
+  AgentConversationInput,
+  AgentConversationMessage,
+} from '@/sdk/logic-function/agents/types/agent-conversation.type';
+export type { AgentChatSubscriptionEvent } from 'twenty-shared/ai';
+export { isAgentChatTurnEndEvent } from 'twenty-shared/ai';
+
+export { ai, type GenerateInput } from '@/sdk/logic-function/ai/ai';
+export type { GenerateResult } from 'twenty-shared/application';
+export type { AiRunScope } from 'twenty-shared/ai';
 
 export { emitEvent } from '@/sdk/logic-function/events/emit-event';
 export type {
@@ -102,9 +122,11 @@ export { inboxReferenceRecord } from '@/sdk/inbox/mentions/inbox-reference-recor
 export { INBOX_ASSISTANT_MENTION } from '@/sdk/inbox/mentions/inbox-assistant-mention';
 export { attachRecordToInboxThread } from '@/sdk/inbox/attach-record-to-inbox-thread';
 export { detachRecordFromInboxThread } from '@/sdk/inbox/detach-record-from-inbox-thread';
+export { archiveInboxThread } from '@/sdk/inbox/archive-inbox-thread';
 export type { SendInboxMessageInput } from '@/sdk/define/common/types/loose-shared-types.type';
 export type { SendInboxMessageResult } from 'twenty-shared/application';
 export type { InboxThreadRecordInput } from 'twenty-shared/application';
+export type { ArchiveInboxThreadInput } from 'twenty-shared/application';
 
 export { enqueueJob } from '@/sdk/logic-function/jobs/enqueue-job';
 export { enqueueJobs } from '@/sdk/logic-function/jobs/enqueue-jobs';

@@ -12,8 +12,8 @@ import {
   DEFAULT_ARRAY_FIELD_NULL_EQUIVALENT_VALUE,
   DEFAULT_COMPOSITE_FIELDS_NULL_EQUIVALENT_VALUE,
   DEFAULT_TEXT_FIELD_NULL_EQUIVALENT_VALUE,
-} from 'src/engine/api/common/common-args-processors/data-arg-processor/constants/null-equivalent-values.constant';
-import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
+} from 'src/engine/record-filter/constants/null-equivalent-values.constant';
+import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-flat-fields-for-flat-object-metadata.util';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -106,7 +106,7 @@ function formatResultRecursively<T>(
 
   const { fieldIdByName, fieldIdByJoinColumnName } = objectCache.fieldMaps;
 
-  const newData: object = {};
+  const newData: Record<string, unknown> = {};
 
   for (const [key, value] of Object.entries(data)) {
     const compositePropertyArgs =
@@ -148,7 +148,6 @@ function formatResultRecursively<T>(
         );
       }
 
-      // @ts-expect-error legacy noImplicitAny
       newData[key] = formatResultRecursively(
         value,
         targetObjectMetadata,
@@ -160,24 +159,26 @@ function formatResultRecursively<T>(
     if (isDefined(compositePropertyArgs)) {
       const { parentField, ...compositeProperty } = compositePropertyArgs;
 
-      // @ts-expect-error legacy noImplicitAny
-      if (!newData[parentField]) {
-        // @ts-expect-error legacy noImplicitAny
-        newData[parentField] = {};
-      }
+      const existingParentValue = newData[parentField];
+      const parentValue = isPlainObject(existingParentValue)
+        ? existingParentValue
+        : {};
 
-      // @ts-expect-error legacy noImplicitAny
-      newData[parentField][compositeProperty.name] = isNull(value)
-        ? transformCompositeFieldNullValue(
-            value,
-            compositeProperty.name,
-            fieldMetadata,
-          )
-        : formatCompositeFieldValue(
-            value,
-            compositeProperty.name,
-            fieldMetadata,
-          );
+      newData[parentField] = parentValue;
+
+      Object.assign(parentValue, {
+        [compositeProperty.name]: isNull(value)
+          ? transformCompositeFieldNullValue(
+              value,
+              compositeProperty.name,
+              fieldMetadata,
+            )
+          : formatCompositeFieldValue(
+              value,
+              compositeProperty.name,
+              fieldMetadata,
+            ),
+      });
       continue;
     }
 
@@ -186,7 +187,6 @@ function formatResultRecursively<T>(
       fieldMetadata.type,
     );
 
-    // @ts-expect-error legacy noImplicitAny
     newData[key] = formattedFieldValue;
   }
 
@@ -196,7 +196,6 @@ function formatResultRecursively<T>(
   );
 
   for (const dateTimeField of objectCache.dateTimeFieldMetadataItems) {
-    // @ts-expect-error legacy noImplicitAny
     const rawUpdatedDateTime = newData[dateTimeField.name] as
       | string
       | Date
@@ -213,7 +212,6 @@ function formatResultRecursively<T>(
       rawUpdatedDateTime instanceof Date ||
       isPlainObject(rawUpdatedDateTime)
     ) {
-      // @ts-expect-error legacy noImplicitAny
       newData[dateTimeField.name] = isString(rawUpdatedDateTime)
         ? new Date(rawUpdatedDateTime)
         : rawUpdatedDateTime;
@@ -307,7 +305,9 @@ function getCompositeFieldMetadataMapFromCollection(
     compositeFieldMetadataCollection.flatMap((fieldMetadata) => {
       const compositeType = compositeTypeDefinitions.get(fieldMetadata.type);
 
-      if (!compositeType) return [];
+      if (!compositeType) {
+        return [];
+      }
 
       return compositeType.properties.map((compositeProperty) => [
         computeCompositeColumnName(fieldMetadata.name, compositeProperty),
@@ -358,7 +358,9 @@ function transformCompositeFieldNullValue(
   compositePropertyName: string,
   fieldMetadata: OrmFlatFieldMetadata,
 ) {
-  if (!isNull(value)) return value;
+  if (!isNull(value)) {
+    return value;
+  }
 
   return (
     DEFAULT_COMPOSITE_FIELDS_NULL_EQUIVALENT_VALUE[fieldMetadata.type]?.[
@@ -388,19 +390,40 @@ function handleEmptyCompositeFields(
     // oxlint-disable-next-line typescript/no-explicit-any
     const typedFieldValue = fieldValue as Record<string, any>;
 
-    const allRequiredPropertiesAreNull = requiredPropertyNames.every(
-      (propertyName) =>
-        !isDefined(typedFieldValue[propertyName]) ||
-        isNull(typedFieldValue[propertyName]),
+    // A subfield missing from the row was not selected, not stored empty.
+    const selectedRequiredPropertyNames = requiredPropertyNames.filter(
+      (propertyName) => propertyName in typedFieldValue,
     );
 
-    if (allRequiredPropertiesAreNull && requiredPropertyNames.length > 0) {
-      if (fieldMetadata.isNullable) {
+    const allSelectedRequiredPropertiesAreNull =
+      selectedRequiredPropertyNames.every(
+        (propertyName) => !isDefined(typedFieldValue[propertyName]),
+      );
+
+    if (selectedRequiredPropertyNames.length === 0) {
+      continue;
+    }
+
+    if (fieldMetadata.isNullable) {
+      if (allSelectedRequiredPropertiesAreNull) {
         data[fieldMetadata.name] = null;
-      } else {
-        data[fieldMetadata.name] = getDefaultCompositeFieldValue(
-          fieldMetadata.type,
-        );
+      }
+      continue;
+    }
+
+    const defaultFieldValue = getDefaultCompositeFieldValue(fieldMetadata.type);
+
+    if (allSelectedRequiredPropertiesAreNull) {
+      data[fieldMetadata.name] = defaultFieldValue;
+      continue;
+    }
+
+    for (const propertyName of selectedRequiredPropertyNames) {
+      if (
+        !isDefined(typedFieldValue[propertyName]) &&
+        isDefined(defaultFieldValue)
+      ) {
+        typedFieldValue[propertyName] = defaultFieldValue[propertyName];
       }
     }
   }

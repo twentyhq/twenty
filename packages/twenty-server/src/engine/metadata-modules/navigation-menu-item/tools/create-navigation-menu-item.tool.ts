@@ -1,11 +1,19 @@
 import { ToolCategory } from 'twenty-shared/ai';
-import { NavigationMenuItemType } from 'twenty-shared/types';
+import {
+  BUILT_IN_SECTION_KEYS,
+  FeatureFlagKey,
+  NavigationMenuItemType,
+  NATIVE_PAGE_KEYS,
+} from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { NAVIGATION_MENU_ITEM_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/navigation-menu-item/constants/navigation-menu-item-write-access-policy.constant';
 import { type CreateNavigationMenuItemInput } from 'src/engine/metadata-modules/navigation-menu-item/dtos/create-navigation-menu-item.input';
 import { NavigationMenuItemService } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.service';
 import { navigationMenuItemScopeSchema } from 'src/engine/metadata-modules/navigation-menu-item/tools/schemas/navigation-menu-item-scope.schema';
@@ -20,10 +28,12 @@ const commonOptionalFields = {
     .number()
     .optional()
     .describe('Position among siblings; defaults to the end.'),
-  folderId: z
+  parentId: z
     .uuid()
     .optional()
-    .describe('Parent folder id, if the item should live inside a folder.'),
+    .describe(
+      'Parent id: a folder, a section or a tab the item should live inside. A tab takes no parent, a section only a tab, and a folder a tab or a section.',
+    ),
 };
 
 const requiredNameField = z
@@ -42,6 +52,28 @@ const derivedNameField = z
   );
 
 const createNavigationMenuItemInputSchema = z.discriminatedUnion('type', [
+  z.object({
+    type: z.literal(NavigationMenuItemType.TAB),
+    scope: navigationMenuItemScopeSchema,
+    name: requiredNameField,
+    ...commonOptionalFields,
+  }),
+  z.object({
+    type: z.literal(NavigationMenuItemType.SECTION),
+    scope: navigationMenuItemScopeSchema,
+    builtInSectionKey: z
+      .enum(BUILT_IN_SECTION_KEYS)
+      .optional()
+      .describe(
+        'Adds a built-in section instead of a custom one: favorites (personal favorites), aiChatInbox (Inbox), aiChatFavorites (Favorite chats), aiChatChannels (Channels), aiChatRecents (Recent chats) or aiAgents (Agents).',
+      ),
+    name: requiredNameField
+      .optional()
+      .describe(
+        'Label shown in the sidebar. Required for a custom section; omit it for a built-in section to keep its default label.',
+      ),
+    ...commonOptionalFields,
+  }),
   z.object({
     type: z.literal(NavigationMenuItemType.FOLDER),
     scope: navigationMenuItemScopeSchema,
@@ -90,6 +122,15 @@ const createNavigationMenuItemInputSchema = z.discriminatedUnion('type', [
     name: requiredNameField,
     ...commonOptionalFields,
   }),
+  z.object({
+    type: z.literal(NavigationMenuItemType.NATIVE_PAGE),
+    scope: navigationMenuItemScopeSchema,
+    nativePageKey: z
+      .enum(NATIVE_PAGE_KEYS)
+      .describe('Built-in page to pin: workflows or agents'),
+    name: derivedNameField,
+    ...commonOptionalFields,
+  }),
 ]);
 
 type CreateNavigationMenuItemParams = z.infer<
@@ -108,12 +149,19 @@ const toServiceInput = (
     icon: params.icon,
     color: params.color,
     position: params.position,
-    folderId: params.folderId,
+    parentId: params.parentId,
   };
 
   switch (params.type) {
+    case NavigationMenuItemType.TAB:
     case NavigationMenuItemType.FOLDER:
       return { ...base, name: params.name };
+    case NavigationMenuItemType.SECTION:
+      return {
+        ...base,
+        name: params.name,
+        builtInSectionKey: params.builtInSectionKey,
+      };
     case NavigationMenuItemType.LINK:
       return { ...base, name: params.name, link: params.link };
     case NavigationMenuItemType.OBJECT:
@@ -137,22 +185,31 @@ const toServiceInput = (
         name: params.name,
         pageLayoutId: params.pageLayoutId,
       };
+    case NavigationMenuItemType.NATIVE_PAGE:
+      return {
+        ...base,
+        name: params.name,
+        nativePageKey: params.nativePageKey,
+      };
   }
 };
 
 @DefineTool({
   name: 'create_navigation_menu_item',
   category: ToolCategory.NAVIGATION_MENU_ITEM,
-  requiredPermissionFlags: [],
+  accessPolicy: NAVIGATION_MENU_ITEM_WRITE_ACCESS_POLICY,
   description: `Create a navigation menu item. With scope='user' it becomes a personal favorite for the current user; with scope='workspace' it is shared with everyone (requires LAYOUTS permission).
 
 Type chooses the variant:
+- TAB: a sidebar tab next to Home, holding sections and items (name required, workspace scope, no parent). Only available when the customizable sidebar is enabled for the workspace.
+- SECTION: a titled group inside a tab or on Home (workspace scope). Only available when the customizable sidebar is enabled. Pass a name for a custom section, or a builtInSectionKey to add a built-in section such as Channels or Recent chats.
 - FOLDER: a group to nest other items into (name required).
 - LINK: an external URL pinned in the sidebar (name + link required).
 - OBJECT: pins an object's standard view (label auto-derived from the object's plural name; only pass 'name' if the user wants a custom label).
 - VIEW: pins a saved view (label auto-derived from the view's name; only pass 'name' for a custom label).
 - RECORD: pins a single record (label auto-derived from the record's identifier; only pass 'name' for a custom label).
 - PAGE_LAYOUT: pins a standalone page layout (name required — no auto-derivation). The referenced page layout must be of type STANDALONE_PAGE; dashboards and record/index page layouts are not reachable this way.
+- NATIVE_PAGE: pins a built-in page, Workflows or Agents (label auto-derived; only pass 'name' for a custom label).
 
 Note: creating a new custom object via create_object_metadata already auto-creates an OBJECT navigation menu item — do not double-create.`,
 })
@@ -163,17 +220,72 @@ export class CreateNavigationMenuItemTool extends BaseTool<
 
   constructor(
     private readonly navigationMenuItemService: NavigationMenuItemService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {
     super();
   }
 
   async execute({
     input,
-    context: { workspaceId, userWorkspaceId, application, agentId },
+    context: { workspaceId, userWorkspaceId },
   }: ToolExecuteArgs<
     typeof createNavigationMenuItemInputSchema
   >): Promise<ToolOutput> {
     try {
+      if (
+        input.type === NavigationMenuItemType.TAB ||
+        input.type === NavigationMenuItemType.SECTION
+      ) {
+        const isCustomizableSidebarEnabled =
+          await this.featureFlagService.isFeatureEnabled(
+            FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
+            workspaceId,
+          );
+
+        if (!isCustomizableSidebarEnabled) {
+          return {
+            success: false,
+            message:
+              'Tabs and sections need the customizable sidebar to be enabled for this workspace.',
+            error: 'customizable_sidebar_disabled',
+          };
+        }
+
+        if (input.scope !== 'workspace') {
+          return {
+            success: false,
+            message:
+              "Tabs and sections are shared with the workspace: use scope='workspace'.",
+            error: 'tab_or_section_requires_workspace_scope',
+          };
+        }
+      }
+
+      if (
+        input.type === NavigationMenuItemType.SECTION &&
+        isDefined(input.builtInSectionKey)
+      ) {
+        const containerId = input.parentId ?? null;
+        const workspaceSections = await this.navigationMenuItemService.findAll({
+          workspaceId,
+          scope: 'workspace',
+          type: NavigationMenuItemType.SECTION,
+        });
+        const isAlreadyInContainer = workspaceSections.some(
+          (section) =>
+            section.builtInSectionKey === input.builtInSectionKey &&
+            (section.parentId ?? null) === containerId,
+        );
+
+        if (isAlreadyInContainer) {
+          return {
+            success: false,
+            message: `The ${input.builtInSectionKey} built-in section is already in this container (possibly hidden).`,
+            error: 'built_in_section_already_in_container',
+          };
+        }
+      }
+
       if (input.scope === 'user' && !userWorkspaceId) {
         return {
           success: false,
@@ -187,8 +299,6 @@ export class CreateNavigationMenuItemTool extends BaseTool<
         input: toServiceInput(input, userWorkspaceId),
         workspaceId,
         authUserWorkspaceId: userWorkspaceId,
-        authApplicationId: application?.id,
-        authAgentId: agentId,
       });
 
       return {
@@ -198,8 +308,9 @@ export class CreateNavigationMenuItemTool extends BaseTool<
           id: created.id,
           type: created.type,
           name: created.name,
+          builtInSectionKey: created.builtInSectionKey,
           scope: created.userWorkspaceId ? 'user' : 'workspace',
-          folderId: created.folderId,
+          parentId: created.parentId,
           position: created.position,
         },
       };

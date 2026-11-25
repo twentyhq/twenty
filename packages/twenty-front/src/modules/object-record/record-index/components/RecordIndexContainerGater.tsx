@@ -5,6 +5,7 @@ import { CommandMenuComponentInstanceContext } from '@/command-menu/states/conte
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { RecordIndexViewBar } from '@/object-record/record-index/components/RecordIndexViewBar';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
+import { RecordFieldColumnsProvider } from '@/object-record/record-column-scope/components/RecordFieldColumnsProvider';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { lastShowPageRecordIdState } from '@/object-record/record-field/ui/states/lastShowPageRecordId';
 import { RecordIndexContainer } from '@/object-record/record-index/components/RecordIndexContainer';
@@ -23,6 +24,7 @@ import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewCompon
 import { styled } from '@linaria/react';
 import { memo, useCallback } from 'react';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { canAccessThroughAllRecordsOrRlsPermission } from 'twenty-shared/utils';
 
 const StyledIndexContainer = styled.div`
   display: flex;
@@ -54,7 +56,10 @@ export const RecordIndexContainerGater = memo(() => {
     objectMetadataItem.id,
   );
 
-  const hasObjectReadPermissions = objectPermissions.canReadObjectRecords;
+  const hasObjectReadPermissions = canAccessThroughAllRecordsOrRlsPermission({
+    objectRecordsPermissions: objectPermissions,
+    operationType: 'read',
+  });
 
   const {
     fieldDefinitionByFieldMetadataItemId,
@@ -102,19 +107,23 @@ export const RecordIndexContainerGater = memo(() => {
         <RecordComponentInstanceContextsWrapper
           componentInstanceId={recordIndexId}
         >
-          <CommandMenuComponentInstanceContext.Provider
-            value={{
-              instanceId: getCommandMenuIdFromRecordIndexId(recordIndexId),
-            }}
-          >
-            <PageTitle title={objectMetadataItem.labelPlural} />
-            <PageCardLayout
-              header={<RecordIndexPageHeader />}
-              secondaryBar={hasObjectReadPermissions && <RecordIndexViewBar />}
+          <RecordFieldColumnsProvider>
+            <CommandMenuComponentInstanceContext.Provider
+              value={{
+                instanceId: getCommandMenuIdFromRecordIndexId(recordIndexId),
+              }}
             >
-              {indexContent}
-            </PageCardLayout>
-          </CommandMenuComponentInstanceContext.Provider>
+              <PageTitle title={objectMetadataItem.labelPlural} />
+              <PageCardLayout
+                header={<RecordIndexPageHeader />}
+                secondaryBar={
+                  hasObjectReadPermissions && <RecordIndexViewBar />
+                }
+              >
+                {indexContent}
+              </PageCardLayout>
+            </CommandMenuComponentInstanceContext.Provider>
+          </RecordFieldColumnsProvider>
         </RecordComponentInstanceContextsWrapper>
         <RecordIndexLoadBaseOnContextStoreEffect />
         <RecordIndexViewFieldsSSESyncEffect />

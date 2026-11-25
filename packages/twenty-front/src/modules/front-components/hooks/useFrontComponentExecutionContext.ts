@@ -28,7 +28,7 @@ import {
 } from 'twenty-shared/types';
 
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
-import { useOpenAskAiPageWithPreprompt } from '@/ai/hooks/useOpenAskAiPageWithPreprompt';
+import { useOpenAskAiPageWithPreprompt } from '@/ai-chat/composer/hooks/useOpenAskAiPageWithPreprompt';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useCommandMenuConfirmationModal } from '@/command-menu-item/confirmation-modal/hooks/useCommandMenuConfirmationModal';
 import { useUnmountCommand } from '@/command-menu-item/engine-command/hooks/useUnmountEngineCommand';
@@ -38,6 +38,7 @@ import { contextStoreRecordShowParentViewComponentState } from '@/context-store/
 import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
 import { useFrontComponentApplicationTokenPair } from '@/front-components/hooks/useFrontComponentApplicationTokenPair';
 import { getMediaFileExtension } from '@/front-components/media-session/utils/getMediaFileExtension';
+import { isNonEmptyBlob } from '@/front-components/utils/isNonEmptyBlob';
 import { setRecordPageActiveTabId } from '@/page-layout/utils/setRecordPageActiveTabId';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { useOpenComposeEmailInSidePanel } from '@/side-panel/hooks/useOpenComposeEmailInSidePanel';
@@ -53,7 +54,12 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useStore } from 'jotai';
-import { CustomError, getAppPath, isDefined } from 'twenty-shared/utils';
+import {
+  CustomError,
+  getAppPath,
+  isDefined,
+  isPlainObject,
+} from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { useToast } from 'twenty-ui/components/feedback';
 import { useIcons } from 'twenty-ui/icon/provider';
@@ -131,6 +137,7 @@ export const useFrontComponentExecutionContext = ({
   objectNameSingular,
   timelineActivityId,
   toolCall,
+  onToolCallArgumentsChange,
   colorScheme,
 }: {
   frontComponentId: string;
@@ -141,6 +148,7 @@ export const useFrontComponentExecutionContext = ({
   objectNameSingular?: string;
   timelineActivityId?: string;
   toolCall?: FrontComponentToolCall;
+  onToolCallArgumentsChange?: (toolArguments: Record<string, unknown>) => void;
   colorScheme: 'light' | 'dark';
 }): {
   executionContext: FrontComponentExecutionContext;
@@ -502,6 +510,19 @@ export const useFrontComponentExecutionContext = ({
       setCommandMenuItemProgress(Math.max(0, Math.min(100, progress)));
     };
 
+  const setToolCallArguments: FrontComponentHostCommunicationApi['setToolCallArguments'] =
+    async (toolArguments) => {
+      if (
+        toolCall?.status !== 'approval-requested' ||
+        !isDefined(onToolCallArgumentsChange) ||
+        !isPlainObject(toolArguments)
+      ) {
+        return;
+      }
+
+      onToolCallArgumentsChange(toolArguments);
+    };
+
   const copyToClipboard: FrontComponentHostCommunicationApi['copyToClipboard'] =
     async (text) => {
       if (!isNonEmptyString(text)) {
@@ -529,8 +550,7 @@ export const useFrontComponentExecutionContext = ({
     async (file, params) => {
       // Sandboxed input; fieldMetadataId is mandatory since a file uploaded outside a FILES field could never be attached and would leak.
       if (
-        !(file instanceof Blob) ||
-        file.size === 0 ||
+        !isNonEmptyBlob(file) ||
         !isDefined(params) ||
         !isNonEmptyString(params.fieldMetadataId)
       ) {
@@ -640,6 +660,7 @@ export const useFrontComponentExecutionContext = ({
       closeSidePanel,
       updateProgress,
       copyToClipboard,
+      setToolCallArguments,
       uploadFile: hostUploadFile,
       storageSet,
       storageDelete,

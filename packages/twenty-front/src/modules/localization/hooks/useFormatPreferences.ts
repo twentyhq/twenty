@@ -167,7 +167,9 @@ export const useFormatPreferences = () => {
 
   const initializeFormatPreferences = useCallback(
     (workspaceMember: typeof currentWorkspaceMember) => {
-      if (!workspaceMember) return;
+      if (!workspaceMember) {
+        return;
+      }
 
       const preferences =
         getFormatPreferencesFromWorkspaceMember(workspaceMember);

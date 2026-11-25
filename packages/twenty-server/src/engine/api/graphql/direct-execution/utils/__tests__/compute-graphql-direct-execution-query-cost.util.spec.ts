@@ -129,6 +129,38 @@ describe('computeGraphQLDirectExecutionQueryCost', () => {
     });
   });
 
+  it('uses the maximum page size when the requested limit is not a number', () => {
+    const document = parse(`
+      query FindPeople {
+        people(first: "abc") {
+          edges {
+            node {
+              id
+            }
+          }
+        }
+      }
+    `);
+    const [field] = graphQLExtractTopLevelFields(document, 'FindPeople');
+
+    const result = computeGraphQLDirectExecutionQueryCost({
+      rootFields: [
+        {
+          field,
+          method: RESOLVER_METHOD_NAMES.FIND_MANY,
+          args: { first: 'abc' },
+        },
+      ],
+      fragmentMap: graphQLBuildFragmentMap(document),
+    });
+
+    expect(result).toEqual({
+      estimatedResultFieldCount: 200,
+      requestedRowCount: 200,
+      selectedLeafFieldCount: 1,
+    });
+  });
+
   it('computes each shared fragment once', () => {
     const fragmentCount = 60;
     const fragmentDefinitions = Array.from(

@@ -1,5 +1,3 @@
-import { type ApplicationManifest } from 'twenty-shared/application';
-
 import { buildRegistrationManifestUpdateFields } from 'src/engine/core-modules/application/application-registration/utils/build-registration-manifest-update-fields.util';
 
 describe('buildRegistrationManifestUpdateFields', () => {
@@ -8,7 +6,7 @@ describe('buildRegistrationManifestUpdateFields', () => {
       manifestApplication: {
         universalIdentifier: 'my-app',
         galleryImages: ['images/kept.png', 'images/new.png'],
-      } as unknown as ApplicationManifest,
+      },
       existingGalleryImages: [
         { path: 'images/kept.png', fileId: 'file-kept' },
         { path: 'images/removed.png', fileId: 'file-removed' },

@@ -13,7 +13,6 @@ import { getBodyTypeFromHeaders } from '@/workflow/workflow-steps/workflow-actio
 import { parseHttpJsonBodyWithoutVariablesOrThrow } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/parseHttpJsonBodyWithoutVariablesOrThrow';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isString } from '@sniptt/guards';
 import { useState } from 'react';
 import { isDefined, parseJson } from 'twenty-shared/utils';
@@ -25,6 +24,7 @@ import { IconFileText, IconKey } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type JsonValue } from 'type-fest';
 import { KeyValuePairInput } from './KeyValuePairInput';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -59,6 +59,7 @@ export const BodyInput = ({
   readonly,
   headers,
 }: BodyInputProps) => {
+  const { t } = useLingui();
   const defaultValueParsed = isString(defaultValue)
     ? (parseJson<JsonValue>(defaultValue) ?? {})
     : defaultValue;

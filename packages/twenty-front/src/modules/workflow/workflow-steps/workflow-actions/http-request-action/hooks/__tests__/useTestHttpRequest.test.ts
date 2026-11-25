@@ -1,14 +1,15 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { type HttpRequestFormData } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
-import { useMutation } from '@apollo/client/react';
 import { act, renderHook } from '@testing-library/react';
 import React from 'react';
 import { resolveInput } from 'twenty-shared/utils';
 import { useTestHttpRequest } from '@/workflow/workflow-steps/workflow-actions/http-request-action/hooks/useTestHttpRequest';
 
+const mockUseMutation = jest.fn();
+
 jest.mock('@apollo/client/react', () => ({
   ...jest.requireActual('@apollo/client/react'),
-  useMutation: jest.fn(),
+  useMutation: () => mockUseMutation(),
 }));
 
 jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
@@ -87,7 +88,7 @@ describe('useTestHttpRequest', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (useApolloCoreClient as jest.Mock).mockReturnValue(mockApolloClient);
-    (useMutation as unknown as jest.Mock).mockReturnValue([mockMutate]);
+    mockUseMutation.mockReturnValue([mockMutate]);
   });
 
   it('should initialize with correct default values', () => {

@@ -37,7 +37,9 @@ export class WorkspaceMigrationRunnerActionHandlerRegistryService implements OnM
     providers.forEach((wrapper) => {
       const { instance, metatype } = wrapper;
 
-      if (!instance || !metatype) return;
+      if (!instance || !metatype) {
+        return;
+      }
 
       const actionHandlerKey: WorkspaceMigrationActionHandlerKey | undefined =
         Reflect.getMetadata(

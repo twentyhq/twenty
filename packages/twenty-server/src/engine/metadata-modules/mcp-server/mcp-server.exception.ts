@@ -13,6 +13,8 @@ export enum McpServerExceptionCode {
   CONNECTION_PROVIDER_NOT_FOUND = 'CONNECTION_PROVIDER_NOT_FOUND',
   CONNECTION_PROVIDER_NOT_IN_APPLICATION = 'CONNECTION_PROVIDER_NOT_IN_APPLICATION',
   MCP_SERVER_URL_CHANGE_WHILE_CONNECTED = 'MCP_SERVER_URL_CHANGE_WHILE_CONNECTED',
+  MCP_SERVER_TOOL_LIST_TOO_LARGE = 'MCP_SERVER_TOOL_LIST_TOO_LARGE',
+  MCP_SERVER_NOT_CONNECTED = 'MCP_SERVER_NOT_CONNECTED',
 }
 
 const getMcpServerExceptionUserFriendlyMessage = (
@@ -35,6 +37,10 @@ const getMcpServerExceptionUserFriendlyMessage = (
       return msg`The connection provider must belong to the same application as the MCP server.`;
     case McpServerExceptionCode.MCP_SERVER_URL_CHANGE_WHILE_CONNECTED:
       return msg`Disconnect the MCP server before changing its URL.`;
+    case McpServerExceptionCode.MCP_SERVER_TOOL_LIST_TOO_LARGE:
+      return msg`The MCP server exposes too many tools to be synced.`;
+    case McpServerExceptionCode.MCP_SERVER_NOT_CONNECTED:
+      return msg`Connect an account for this MCP server first.`;
     default:
       assertUnreachable(code);
   }

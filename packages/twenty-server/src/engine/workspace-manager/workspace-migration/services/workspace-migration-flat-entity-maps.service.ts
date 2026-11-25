@@ -15,6 +15,7 @@ import { MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-en
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { getMetadataRelatedMetadataNamesForValidation } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names-for-validation.util';
 import { getSubAllFlatEntityMapsByApplicationIdsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-all-flat-entity-maps-by-application-ids-or-throw.util';
+import { restrictFieldMetadataOptionsToSliceOptionRowsThroughMutation } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/restrict-field-metadata-options-to-slice-option-rows-through-mutation.util';
 import { MetadataSideEffectEngineService } from 'src/engine/metadata-modules/metadata-side-effect/services/metadata-side-effect-engine.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
@@ -204,6 +205,10 @@ export class WorkspaceMigrationFlatEntityMapsService {
         metadataNames: allMetadataNameCacheToCompute,
         fromAllFlatEntityMaps: allRelatedFlatEntityMaps,
       });
+
+    restrictFieldMetadataOptionsToSliceOptionRowsThroughMutation({
+      allFlatEntityMapsToMutate: dependencyAllFlatEntityMaps,
+    });
 
     const additionalCacheDataMaps =
       WORKSPACE_MIGRATION_ADDITIONAL_CACHE_DATA_MAPS_KEY.reduce<WorkspaceMigrationBuilderAdditionalCacheDataMaps>(

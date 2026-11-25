@@ -12,6 +12,7 @@ import { ActionToolProvider } from 'src/engine/core-modules/tool-provider/provid
 import { DashboardToolProvider } from 'src/engine/core-modules/tool-provider/providers/dashboard-tool.provider';
 import { DatabaseToolProvider } from 'src/engine/core-modules/tool-provider/providers/database-tool.provider';
 import { LogicFunctionToolProvider } from 'src/engine/core-modules/tool-provider/providers/logic-function-tool.provider';
+import { McpToolProvider } from 'src/engine/core-modules/tool-provider/providers/mcp-tool.provider';
 import { WorkflowToolProvider } from 'src/engine/core-modules/tool-provider/providers/workflow-tool.provider';
 import { DefinedToolRegistryService } from 'src/engine/core-modules/tool-provider/services/defined-tool-registry.service';
 import { RecordFilesResolverService } from 'src/engine/core-modules/tool-provider/services/record-files-resolver.service';
@@ -19,14 +20,15 @@ import { ToolExecutorService } from 'src/engine/core-modules/tool-provider/servi
 import { ToolModule } from 'src/engine/core-modules/tool/tool.module';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { AgentToolsModule } from 'src/engine/metadata-modules/ai/ai-agent/tools/agent-tools.module';
+import { AgentChatToolsModule } from 'src/engine/metadata-modules/ai/ai-chat/tools/agent-chat-tools.module';
 import { ApplicationTranslationCatalogModule } from 'src/engine/metadata-modules/application-translation-catalog/application-translation-catalog.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
+import { McpServerClientModule } from 'src/engine/metadata-modules/mcp-server/mcp-server-client.module';
 import { NavigationMenuItemToolsModule } from 'src/engine/metadata-modules/navigation-menu-item/tools/navigation-menu-item-tools.module';
 import { MetadataToolsModule } from 'src/engine/metadata-modules/object-metadata/tools/metadata-tools.module';
 import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { RecordShareModule } from 'src/engine/permissions/record-share/record-share.module';
 import { RoleToolsModule } from 'src/engine/metadata-modules/role/tools/role-tools.module';
-import { UserRoleModule } from 'src/engine/permissions/role-assignment/user-role.module';
 import { ViewToolsModule } from 'src/engine/metadata-modules/view/tools/view-tools.module';
 import { WebhookToolsModule } from 'src/engine/metadata-modules/webhook/tools/webhook-tools.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
@@ -36,8 +38,7 @@ import { EmailingModule } from 'src/modules/emailing/emailing.module';
 import { ToolIndexResolver } from './resolvers/tool-index.resolver';
 import { ToolRegistryService } from './services/tool-registry.service';
 
-// Workflow and Dashboard tools modules reach AiAgentExecutionModule, which imports this module,
-// so their @Global() modules provide tokens consumed via @Optional() @Inject instead of being imported.
+// Global tokens avoid circular imports through AiAgentExecutionModule.
 
 @Module({
   imports: [
@@ -52,11 +53,12 @@ import { ToolRegistryService } from './services/tool-registry.service';
     ViewToolsModule,
     WorkspaceCacheModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
+    McpServerClientModule,
     NavigationMenuItemToolsModule,
     WebhookToolsModule,
     RoleToolsModule,
     AgentToolsModule,
-    UserRoleModule,
+    AgentChatToolsModule,
     MetadataToolsModule,
     EmailingModule,
     TypeOrmModule.forFeature([UserEntity, FileEntity]),
@@ -72,6 +74,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
     FrontComponentToolProvider,
     DatabaseToolProvider,
     LogicFunctionToolProvider,
+    McpToolProvider,
     WorkflowToolProvider,
     {
       provide: TOOL_PROVIDERS,
@@ -82,6 +85,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
         workflowProvider: WorkflowToolProvider,
         dashboardProvider: DashboardToolProvider,
         frontComponentProvider: FrontComponentToolProvider,
+        mcpProvider: McpToolProvider,
       ) => [
         actionProvider,
         databaseProvider,
@@ -89,6 +93,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
         workflowProvider,
         dashboardProvider,
         frontComponentProvider,
+        mcpProvider,
       ],
       inject: [
         ActionToolProvider,
@@ -97,6 +102,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
         WorkflowToolProvider,
         DashboardToolProvider,
         FrontComponentToolProvider,
+        McpToolProvider,
       ],
     },
     ToolRegistryService,

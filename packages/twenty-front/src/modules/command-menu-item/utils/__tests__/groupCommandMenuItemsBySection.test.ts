@@ -1,4 +1,3 @@
-import { type CommandMenuItemDefinition } from '@/command-menu-item/types/CommandMenuItemDefinition';
 import { groupCommandMenuItemsBySection } from '@/command-menu-item/utils/groupCommandMenuItemsBySection';
 import {
   CommandMenuItemAvailabilityType,
@@ -9,12 +8,11 @@ const buildCommandMenuItem = (
   id: string,
   engineComponentKey: EngineComponentKey,
   availabilityType: CommandMenuItemAvailabilityType,
-) =>
-  ({
-    id,
-    engineComponentKey,
-    availabilityType,
-  }) as unknown as CommandMenuItemDefinition;
+) => ({
+  id,
+  engineComponentKey,
+  availabilityType,
+});
 
 describe('groupCommandMenuItemsBySection', () => {
   it('groups every section, empty ones included', () => {
@@ -22,11 +20,12 @@ describe('groupCommandMenuItemsBySection', () => {
       'SELECTION',
       'CURRENT_VIEW',
       'THIS_OBJECT',
-      'ASK_AND_FIND',
-      'CREATE_RECORD',
       'WORKSPACE',
       'GO_TO',
+      'CREATE_RECORD',
       'DEVELOPER',
+      'ASK_AI',
+      'SEARCH',
       'FALLBACK',
     ]);
   });
@@ -61,8 +60,8 @@ describe('groupCommandMenuItemsBySection', () => {
     expect(
       commandMenuItemsBySection.CURRENT_VIEW.map((item) => item.id),
     ).toEqual(['export-view']);
-    expect(
-      commandMenuItemsBySection.ASK_AND_FIND.map((item) => item.id),
-    ).toEqual(['search']);
+    expect(commandMenuItemsBySection.SEARCH.map((item) => item.id)).toEqual([
+      'search',
+    ]);
   });
 });

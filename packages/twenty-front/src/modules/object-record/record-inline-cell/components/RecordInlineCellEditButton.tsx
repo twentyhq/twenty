@@ -1,8 +1,8 @@
 import { AnimatedContainer } from '@/ui/layout/animation/components/internal/AnimatedContainer/AnimatedContainer';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { IconButton } from 'twenty-ui/components/input';
 import { type IconComponent } from 'twenty-ui/icon';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledInlineCellButtonContainer = styled.div`
   align-items: center;
@@ -18,6 +18,7 @@ export const RecordInlineCellButton = ({
   onClick?: () => void;
   ariaLabel?: string;
 }) => {
+  const { t } = useLingui();
   return (
     <AnimatedContainer>
       <StyledInlineCellButtonContainer>

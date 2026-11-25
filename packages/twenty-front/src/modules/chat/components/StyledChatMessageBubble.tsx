@@ -1,0 +1,106 @@
+import { styled } from '@linaria/react';
+
+import { StyledChatMessageRow } from '@/chat/components/StyledChatMessageRow';
+import { themeCssVariables } from 'twenty-ui/theme';
+
+type ChatMessageBubbleProps = {
+  isUser?: boolean;
+  isOtherMember?: boolean;
+};
+
+const getBubbleBackground = ({
+  isUser,
+  isOtherMember,
+  ownBackground,
+}: ChatMessageBubbleProps & { ownBackground: string }) => {
+  if (isOtherMember) {
+    return themeCssVariables.background.secondary;
+  }
+
+  if (isUser) {
+    return ownBackground;
+  }
+
+  return 'transparent';
+};
+
+export const StyledChatMessageBubble = styled.div<ChatMessageBubbleProps>`
+  background: ${({ isUser, isOtherMember }) =>
+    getBubbleBackground({
+      isUser,
+      isOtherMember,
+      ownBackground: themeCssVariables.background.tertiary,
+    })};
+  border-radius: ${({ isUser }) =>
+    isUser ? themeCssVariables.border.radius.lgRound : '0'};
+  box-shadow: ${({ isOtherMember }) =>
+    isOtherMember
+      ? `inset 0 0 0 1px ${themeCssVariables.border.color.medium}`
+      : 'none'};
+  color: ${({ isUser }) =>
+    isUser
+      ? themeCssVariables.font.color.secondary
+      : themeCssVariables.font.color.primary};
+  corner-shape: round;
+  font-weight: ${({ isUser }) => (isUser ? 500 : 400)};
+  line-height: ${themeCssVariables.spacing[6]};
+  max-width: 100%;
+  overflow-wrap: break-word;
+  padding: ${({ isUser }) =>
+    isUser
+      ? `${themeCssVariables.spacing[0.5]} ${themeCssVariables.spacing[3]}`
+      : '0'};
+  transition: background calc(${themeCssVariables.animation.duration.fast} * 1s)
+    ease-in-out;
+  white-space: normal;
+  width: ${({ isUser }) => (isUser ? 'fit-content' : '100%')};
+  /* Pre-wrap on the container turns newlines between blocks into spacing; only code pre-wraps. */
+  word-wrap: break-word;
+
+  code {
+    background: ${themeCssVariables.background.tertiary};
+    border-radius: ${themeCssVariables.border.radius.sm};
+    line-height: 1.4;
+    max-width: 100%;
+    overflow: auto;
+    padding: 1px 3px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+
+  pre {
+    background: ${themeCssVariables.background.tertiary};
+    border-radius: ${themeCssVariables.border.radius.sm};
+    max-width: 100%;
+    overflow-x: auto;
+    padding: ${themeCssVariables.spacing[2]};
+
+    code {
+      background: none;
+      border-radius: 0;
+      padding: 0;
+    }
+  }
+
+  p {
+    line-height: inherit;
+    margin-block: ${({ isUser }) =>
+      isUser ? '0' : themeCssVariables.spacing[1]};
+  }
+
+  blockquote {
+    border-left: 3px solid ${themeCssVariables.border.color.medium};
+    color: ${themeCssVariables.font.color.secondary};
+    margin: ${themeCssVariables.spacing[2]} 0;
+    padding-left: ${themeCssVariables.spacing[2]};
+  }
+
+  ${StyledChatMessageRow}[data-hover-card]:hover & {
+    background: ${({ isUser, isOtherMember }) =>
+      getBubbleBackground({
+        isUser,
+        isOtherMember,
+        ownBackground: themeCssVariables.background.quaternary,
+      })};
+  }
+`;

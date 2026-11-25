@@ -11,6 +11,8 @@ import { ApplicationPackageModule } from 'src/engine/core-modules/application/ap
 import { MarketplaceModule } from 'src/engine/core-modules/application/application-marketplace/marketplace.module';
 import { ApplicationInstallResolver } from 'src/engine/core-modules/application/application-install/application-install.resolver';
 import { ApplicationCapabilityResolver } from 'src/engine/core-modules/application/application-install/application-capability.resolver';
+import { ApplicationIframeMediaPermissionResolver } from 'src/engine/core-modules/application/application-install/application-iframe-media-permission.resolver';
+import { ApplicationIframeMediaPermissionService } from 'src/engine/core-modules/application/application-install/application-iframe-media-permission.service';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { InstallApplicationCommand } from 'src/engine/core-modules/application/application-install/commands/install-application.command';
 import { ApplicationLifecycleJobService } from 'src/engine/core-modules/application/application-install/services/application-lifecycle-job.service';
@@ -24,11 +26,13 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.module';
 import { ApplicationRegistrationVersionModule } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.module';
+import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 
 @Module({
   imports: [
     ApplicationRegistrationLookupModule,
     ApplicationRegistrationVersionModule,
+    BillingModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     TypeOrmModule.forFeature([
       ApplicationEntity,
@@ -48,6 +52,8 @@ import { ApplicationRegistrationVersionModule } from 'src/engine/core-modules/ap
   ],
   providers: [
     ApplicationCapabilityResolver,
+    ApplicationIframeMediaPermissionResolver,
+    ApplicationIframeMediaPermissionService,
     ApplicationInstallResolver,
     ApplicationInstallService,
     ApplicationLifecycleJobService,

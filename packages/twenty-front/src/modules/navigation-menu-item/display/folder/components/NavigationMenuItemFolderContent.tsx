@@ -1,11 +1,10 @@
-import { t } from '@lingui/core/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { IconHeartOff } from 'twenty-ui/icon';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
-import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/common/constants/NavigationMenuItemDroppableIds';
 import { useDeleteManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useDeleteManyNavigationMenuItems';
+import { getNavigationMenuItemListDroppableId } from '@/navigation-menu-item/common/utils/getNavigationMenuItemListDroppableId';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
 import { NavigationMenuItemSortableItem } from '@/navigation-menu-item/display/dnd/components/NavigationMenuItemSortableItem';
 import { getNavigationMenuItemObjectNameSingular } from '@/navigation-menu-item/display/object/utils/getNavigationMenuItemObjectNameSingular';
@@ -18,6 +17,7 @@ import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMeta
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
+import { useLingui } from '@lingui/react/macro';
 
 type NavigationMenuItemFolderContentProps = {
   folderId: string;
@@ -30,6 +30,7 @@ export const NavigationMenuItemFolderContent = ({
   folderId,
   navigationMenuItems,
 }: NavigationMenuItemFolderContentProps) => {
+  const { t } = useLingui();
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const views = useAtomStateValue(viewsSelector);
   const lastVisitedViewPerObjectMetadataItem = useAtomStateValue(
@@ -37,7 +38,10 @@ export const NavigationMenuItemFolderContent = ({
   );
   const { deleteManyNavigationMenuItems } = useDeleteManyNavigationMenuItems();
 
-  const folderDroppableId = `${NavigationMenuItemDroppableIds.FAVORITE_FOLDER_PREFIX}${folderId}`;
+  const folderDroppableId = getNavigationMenuItemListDroppableId({
+    parentId: folderId,
+    navigationMenuItemSection: 'favorite',
+  });
 
   return (
     <>
@@ -68,11 +72,17 @@ export const NavigationMenuItemFolderContent = ({
             group={folderDroppableId}
           >
             <NavigationDrawerItem
-              secondaryLabel={getObjectNavigationMenuItemSecondaryLabel({
-                isView: navigationMenuItem.type === NavigationMenuItemType.VIEW,
-                objectMetadataItems,
-                navigationMenuItemObjectNameSingular: objectNameSingular ?? '',
-              })}
+              secondaryLabel={
+                navigationMenuItem.type === NavigationMenuItemType.NATIVE_PAGE
+                  ? undefined
+                  : getObjectNavigationMenuItemSecondaryLabel({
+                      isView:
+                        navigationMenuItem.type === NavigationMenuItemType.VIEW,
+                      objectMetadataItems,
+                      navigationMenuItemObjectNameSingular:
+                        objectNameSingular ?? '',
+                    })
+              }
               label={label}
               Icon={() => (
                 <NavigationMenuItemIcon

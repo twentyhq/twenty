@@ -1,5 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
 
+import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
+import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 import {
   query,
   responseData,
@@ -37,6 +39,15 @@ const mocks = [
 ];
 
 jest.mock('@/object-record/hooks/useRefetchAggregateQueries');
+jest.mock('@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent');
+jest.mock('@/object-record/cache/utils/getRecordFromCache', () => ({
+  getRecordFromCache: jest.fn(() => null),
+}));
+jest.mock('@/object-record/cache/utils/updateRecordFromCache');
+jest.mock(
+  '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect',
+);
+
 const mockRefetchAggregateQueries = jest.fn();
 (useRefetchAggregateQueries as jest.Mock).mockReturnValue({
   refetchAggregateQueries: mockRefetchAggregateQueries,
@@ -70,5 +81,48 @@ describe('useUpdateOneRecord', () => {
 
     expect(mocks[0].result).toHaveBeenCalled();
     expect(mockRefetchAggregateQueries).toHaveBeenCalledTimes(1);
+  });
+
+  it('announces the restored values when the server rejects the update', async () => {
+    const cachedName = { firstName: 'Jane', lastName: 'Smith' };
+
+    jest.mocked(getRecordFromCache).mockReturnValueOnce({
+      id: idToUpdate,
+      __typename: 'Person',
+      name: cachedName,
+    });
+
+    const { result } = renderHook(() => useUpdateOneRecord(), {
+      wrapper: getJestMetadataAndApolloMocksWrapper({
+        apolloMocks: [
+          { request: { query, variables }, error: new Error('Rejected') },
+        ],
+      }),
+    });
+
+    await act(async () => {
+      await expect(
+        result.current.updateOneRecord({
+          objectNameSingular: 'person',
+          idToUpdate,
+          updateOneRecordInput: updateInput,
+        }),
+      ).rejects.toThrow('Rejected');
+    });
+
+    expect(dispatchObjectRecordOperationBrowserEvent).toHaveBeenCalledTimes(1);
+    expect(dispatchObjectRecordOperationBrowserEvent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        operation: {
+          type: 'update-one',
+          result: {
+            updateInput: {
+              recordId: idToUpdate,
+              updatedFields: [{ name: cachedName }],
+            },
+          },
+        },
+      }),
+    );
   });
 });

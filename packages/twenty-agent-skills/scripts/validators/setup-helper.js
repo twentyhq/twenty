@@ -7,6 +7,8 @@ const URL_NORMALIZATION_CASES = [
   ['myworkspace.localhost:3001', 'http://myworkspace.localhost:3001/mcp'],
   ['crm.example.com', 'https://crm.example.com/mcp'],
   ['https://crm.example.com/mcp', 'https://crm.example.com/mcp'],
+  ['https://crm.example.com/mcp?mode=meta', 'https://crm.example.com/mcp?mode=meta'],
+  ['crm.example.com/?mode=meta', 'https://crm.example.com/mcp?mode=meta'],
 ];
 
 const assertSetupHelper = (fail) => {

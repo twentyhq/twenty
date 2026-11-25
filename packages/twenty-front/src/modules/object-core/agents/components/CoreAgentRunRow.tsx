@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -8,18 +7,18 @@ import { CoreAgentRunSource } from '@/object-core/agents/components/CoreAgentRun
 import { CoreAgentRunStatus } from '@/object-core/agents/components/CoreAgentRunStatus';
 import { CORE_AGENT_RUNS_GRID_TEMPLATE_COLUMNS } from '@/object-core/agents/constants/CoreAgentRunsGridTemplateColumns';
 import { type CoreAgentRun } from '@/object-core/agents/types/CoreAgentRun';
-import { handleCoreAgentRunToggleKeyDown } from '@/object-core/agents/utils/handleCoreAgentRunToggleKeyDown';
+import { handleCoreObjectTableRowKeyDown } from '@/object-core/utils/handleCoreObjectTableRowKeyDown';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { formatDuration } from '~/utils/format/formatDuration';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 import { formatNumber } from '@/localization/utils/formatNumber';
+import { useLingui } from '@lingui/react/macro';
 
 type CoreAgentRunRowProps = {
   run: CoreAgentRun;
   isExpanded: boolean;
-  onToggle: () => void;
-  isNested?: boolean;
+  onClick: () => void;
 };
 
 const getRunTokens = (run: CoreAgentRun): number | null =>
@@ -35,28 +34,25 @@ const getRunDurationMs = (run: CoreAgentRun): number | null =>
 export const CoreAgentRunRow = ({
   run,
   isExpanded,
-  onToggle,
-  isNested = false,
+  onClick,
 }: CoreAgentRunRowProps) => {
+  const { t } = useLingui();
   const tokens = getRunTokens(run);
   const durationMs = getRunDurationMs(run);
+  const canOpenConversation = isDefined(run.threadId) && run.canReadThread;
 
   return (
     <>
       <TableRow
         gridTemplateColumns={CORE_AGENT_RUNS_GRID_TEMPLATE_COLUMNS}
         isExpanded={isExpanded}
-        onClick={onToggle}
-        onKeyDown={handleCoreAgentRunToggleKeyDown(onToggle)}
+        onClick={onClick}
+        onKeyDown={handleCoreObjectTableRowKeyDown(onClick)}
         role="button"
         tabIndex={0}
-        ariaExpanded={isExpanded}
+        ariaExpanded={canOpenConversation ? undefined : isExpanded}
       >
-        <TableCell
-          padding={
-            isNested ? `0 0 0 ${themeCssVariables.spacing[4]}` : undefined
-          }
-        >
+        <TableCell>
           <CoreAgentRunStatus status={run.status} />
         </TableCell>
         <TableCell color={themeCssVariables.font.color.tertiary}>

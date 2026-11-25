@@ -53,21 +53,13 @@ describe('SkillSuggestion', () => {
   });
 
   it('should add the suggestion ProseMirror plugin', () => {
-    const hasSuggestionPlugin = editor.state.plugins.some(
-      (plugin) =>
-        (plugin as unknown as { key: string }).key === 'skill-suggestion$',
-    );
-
-    expect(hasSuggestionPlugin).toBe(true);
+    expect(SKILL_SUGGESTION_PLUGIN_KEY.get(editor.state)).toBeDefined();
   });
 
   it('should expose the search function through storage', () => {
-    const storage = editor.extensionStorage as unknown as Record<
-      string,
-      { searchSkills: jest.Mock }
-    >;
-
-    expect(storage['skill-suggestion'].searchSkills).toBe(mockSearchSkills);
+    expect(editor.extensionStorage['skill-suggestion'].searchSkills).toBe(
+      mockSearchSkills,
+    );
   });
 
   const isSuggestionActive = () =>

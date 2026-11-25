@@ -18,7 +18,9 @@ it('reads native workspace fields and precision from workspace storage', async (
     executeInWorkspaceContext: jest
       .fn()
       .mockImplementation(async (work: () => Promise<unknown>) => work()),
-    getRepository: jest.fn().mockReturnValue({ find, count }),
+    getRepositoryWithoutPermissionChecks: jest
+      .fn()
+      .mockReturnValue({ find, count }),
   };
   const repository = new AgentHistoryRepository<AgentChatThreadWorkspaceEntity>(
     'agentChatThread',

@@ -1,5 +1,5 @@
 import { buildWorkflowShowPageRecordFromCoreWorkflow } from '@/object-core/workflows/utils/buildWorkflowShowPageRecordFromCoreWorkflow';
-import { CoreWorkflowStatus, WorkflowVisibility } from '~/generated/graphql';
+import { CoreWorkflowStatus } from '~/generated/graphql';
 
 describe('buildWorkflowShowPageRecordFromCoreWorkflow', () => {
   const coreWorkflow = {
@@ -9,7 +9,7 @@ describe('buildWorkflowShowPageRecordFromCoreWorkflow', () => {
     statuses: [CoreWorkflowStatus.ACTIVE],
     lastPublishedCoreWorkflowVersionId: 'published-version-id',
     workspaceWorkflowId: 'workspace-workflow-id',
-    visibility: WorkflowVisibility.WORKSPACE,
+    isPrivate: false,
     applicationId: null,
     canChangeVisibility: true,
     createdAt: '2026-09-01T00:00:00.000Z',
@@ -25,7 +25,7 @@ describe('buildWorkflowShowPageRecordFromCoreWorkflow', () => {
       name: 'My workflow',
       statuses: [CoreWorkflowStatus.ACTIVE],
       lastPublishedVersionId: 'published-version-id',
-      visibility: WorkflowVisibility.WORKSPACE,
+      isPrivate: false,
       canChangeVisibility: true,
       createdAt: '2026-09-01T00:00:00.000Z',
       updatedAt: '2026-09-14T00:00:00.000Z',

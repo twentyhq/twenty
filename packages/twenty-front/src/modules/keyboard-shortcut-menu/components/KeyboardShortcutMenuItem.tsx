@@ -1,10 +1,10 @@
 import { type Shortcut as ShortcutMenuEntry } from '@/keyboard-shortcut-menu/types/Shortcut';
 import { useShortcutAccessibleKeyLabels } from '@/ui/navigation/hooks/useShortcutAccessibleKeyLabels';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { Fragment } from 'react';
 import { Shortcut } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledItem = styled.div`
   align-items: center;
@@ -18,7 +18,9 @@ const StyledItem = styled.div`
 
 const StyledShortcuts = styled.span`
   align-items: center;
+  color: ${themeCssVariables.font.color.light};
   display: inline-flex;
+  font-size: ${themeCssVariables.font.size.sm};
   gap: ${themeCssVariables.spacing[1]};
 `;
 
@@ -27,6 +29,7 @@ type KeyboardMenuItemProps = {
 };
 
 export const KeyboardMenuItem = ({ shortcut }: KeyboardMenuItemProps) => {
+  const { t } = useLingui();
   const accessibleKeyLabels = useShortcutAccessibleKeyLabels();
 
   return (

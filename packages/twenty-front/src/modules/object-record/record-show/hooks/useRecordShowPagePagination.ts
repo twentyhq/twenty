@@ -202,7 +202,9 @@ export const useRecordShowPagePagination = (
   };
 
   const navigateToPreviousRecord = () => {
-    if (loading) return;
+    if (loading) {
+      return;
+    }
 
     if (isDefined(recordBefore)) {
       return navigateToRecord(recordBefore.id);
@@ -214,7 +216,9 @@ export const useRecordShowPagePagination = (
   };
 
   const navigateToNextRecord = () => {
-    if (loading) return;
+    if (loading) {
+      return;
+    }
 
     if (isDefined(recordAfter)) {
       return navigateToRecord(recordAfter.id);

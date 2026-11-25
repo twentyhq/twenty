@@ -58,7 +58,9 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
   const isValidAuthProvider = (
     key: string,
   ): key is Exclude<keyof typeof currentWorkspace, '__typename'> => {
-    if (!currentWorkspace) return false;
+    if (!currentWorkspace) {
+      return false;
+    }
     return Reflect.has(currentWorkspace, key);
   };
 

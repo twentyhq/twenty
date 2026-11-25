@@ -4,7 +4,7 @@ import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePat
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { useQuery } from '@apollo/client/react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useMatches } from 'react-router-dom';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getAppPath, getSettingsPath } from 'twenty-shared/utils';
@@ -88,13 +88,20 @@ const setupMockUseQuery = (result?: { data?: unknown; loading?: boolean }) => {
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useLocation: jest.fn(),
+  useMatches: jest.fn(),
 }));
 
-const setupMockUseLocation = (
-  loc: AppPath,
-  objectNamePlural?: string,
-  pageLayoutId?: string,
-) => {
+const setupMockUseLocation = ({
+  loc,
+  objectNamePlural,
+  pageLayoutId,
+  isMatchedByDedicatedRoute = false,
+}: {
+  loc: AppPath;
+  objectNamePlural?: string;
+  pageLayoutId?: string;
+  isMatchedByDedicatedRoute?: boolean;
+}) => {
   const pathname =
     loc === AppPath.RecordIndexPage
       ? getAppPath(AppPath.RecordIndexPage, {
@@ -105,6 +112,20 @@ const setupMockUseLocation = (
         : loc === AppPath.PageLayoutPage
           ? '/page-layout'
           : loc;
+
+  jest.mocked(useMatches).mockReturnValue([
+    {
+      id: 'route',
+      pathname,
+      params:
+        loc === AppPath.RecordIndexPage && !isMatchedByDedicatedRoute
+          ? { objectNamePlural: objectNamePlural ?? 'default-object' }
+          : {},
+      data: undefined,
+      loaderData: undefined,
+      handle: undefined,
+    },
+  ]);
 
   jest.mocked(useLocation).mockReturnValueOnce({
     pathname,
@@ -145,6 +166,7 @@ const testCases: {
   res: string | undefined;
   isOnAWorkspace?: boolean;
   objectNamePluralFromParams?: string;
+  isMatchedByDedicatedRoute?: boolean;
   objectNamePluralFromMetadata?: string;
   verifyEmailRedirectPath?: string;
   returnToPath?: string;
@@ -366,6 +388,7 @@ const testCases: {
   { loc: AppPath.RecordIndexPage, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: undefined, objectNamePluralFromParams: 'existing-object', objectNamePluralFromMetadata: 'existing-object' },
   { loc: AppPath.RecordIndexPage, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: AppPath.NotFound, objectNamePluralFromParams: 'non-existing-object', objectNamePluralFromMetadata: 'existing-object' },
   { loc: AppPath.RecordIndexPage, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: undefined, objectNamePluralFromParams: 'non-existing-object', objectNamePluralFromMetadata: 'existing-object', isMinimalMetadataReady: false },
+  { loc: AppPath.RecordIndexPage, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: undefined, objectNamePluralFromParams: 'workflows', isMatchedByDedicatedRoute: true, objectNamePluralFromMetadata: 'existing-object' },
 
   { loc: AppPath.RecordShowPage, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: AppPath.PlanRequired },
   { loc: AppPath.RecordShowPage, isLogged: true, isWorkspaceSuspended: true, onboardingStatus: OnboardingStatus.COMPLETED, res: getSettingsPath(SettingsPath.Billing) },
@@ -377,6 +400,15 @@ const testCases: {
   { loc: AppPath.RecordShowPage, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.BOOK_CALL, res: AppPath.BookCall },
   { loc: AppPath.RecordShowPage, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: undefined },
 
+  { loc: AppPath.WorkflowIndexPage, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: AppPath.PlanRequired },
+  { loc: AppPath.WorkflowIndexPage, isLogged: true, isWorkspaceSuspended: true, onboardingStatus: OnboardingStatus.COMPLETED, res: getSettingsPath(SettingsPath.Billing) },
+  { loc: AppPath.WorkflowIndexPage, isLogged: false, isWorkspaceSuspended: false, onboardingStatus: undefined, res: AppPath.SignInUp },
+  { loc: AppPath.WorkflowIndexPage, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.WORKSPACE_ACTIVATION, res: AppPath.WorkspaceActivation },
+  { loc: AppPath.WorkflowIndexPage, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PROFILE_CREATION, res: AppPath.CreateProfile },
+  { loc: AppPath.WorkflowIndexPage, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.SYNC_EMAIL, res: AppPath.SyncEmails },
+  { loc: AppPath.WorkflowIndexPage, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.INVITE_TEAM, res: AppPath.InviteTeam },
+  { loc: AppPath.WorkflowIndexPage, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.BOOK_CALL, res: AppPath.BookCall },
+  { loc: AppPath.WorkflowIndexPage, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: undefined },
   { loc: AppPath.WorkflowCoreShowPage, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: AppPath.PlanRequired },
   { loc: AppPath.WorkflowCoreShowPage, isLogged: true, isWorkspaceSuspended: true, onboardingStatus: OnboardingStatus.COMPLETED, res: getSettingsPath(SettingsPath.Billing) },
   { loc: AppPath.WorkflowCoreShowPage, isLogged: false, isWorkspaceSuspended: false, onboardingStatus: undefined, res: AppPath.SignInUp },
@@ -499,6 +531,7 @@ describe('usePageChangeEffectNavigateLocation', () => {
       isLogged,
       isOnAWorkspace,
       objectNamePluralFromParams,
+      isMatchedByDedicatedRoute,
       objectNamePluralFromMetadata,
       verifyEmailRedirectPath,
       returnToPath,
@@ -517,7 +550,12 @@ describe('usePageChangeEffectNavigateLocation', () => {
       setupMockIsLogged(isLogged);
       setupMockIsOnAWorkspace(isOnAWorkspace ?? true);
       setupMockUseQuery(useQueryResult);
-      setupMockUseLocation(loc, objectNamePluralFromParams, pageLayoutId);
+      setupMockUseLocation({
+        loc,
+        objectNamePlural: objectNamePluralFromParams,
+        pageLayoutId,
+        isMatchedByDedicatedRoute,
+      });
       setupMockState(
         objectNamePluralFromMetadata ??
           (loc === AppPath.RecordIndexPage ? 'default-object' : undefined),
@@ -542,6 +580,7 @@ describe('usePageChangeEffectNavigateLocation', () => {
               .length) +
           ['nonExistingObjectInParam', 'existingObjectInParam:false'].length +
           ['nonExistingObjectInParam:metadataNotReady'].length +
+          ['dedicatedObjectsRoute'].length +
           ['caseWithRedirectionToVerifyEmailRedirectPath', 'caseWithout']
             .length +
           [
@@ -577,7 +616,7 @@ describe('usePageChangeEffectNavigateLocation — authenticated with no current 
       setupMockIsLogged(true);
       setupMockIsOnAWorkspace(true);
       setupMockUseQuery();
-      setupMockUseLocation(loc);
+      setupMockUseLocation({ loc });
       setupMockState(undefined, undefined, undefined, null);
 
       expect(usePageChangeEffectNavigateLocation()).toEqual(AppPath.SignInUp);
@@ -601,7 +640,7 @@ describe('usePageChangeEffectNavigateLocation — suspended workspace settings p
     setupMockIsLogged(true);
     setupMockIsOnAWorkspace(true);
     setupMockUseQuery();
-    setupMockUseLocation(loc as AppPath);
+    setupMockUseLocation({ loc: loc as AppPath });
     setupMockState();
 
     expect(usePageChangeEffectNavigateLocation()).toEqual(res);

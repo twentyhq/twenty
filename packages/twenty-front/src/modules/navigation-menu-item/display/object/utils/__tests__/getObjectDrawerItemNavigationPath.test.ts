@@ -5,6 +5,7 @@ import {
   ViewKey,
   ViewType,
 } from '~/generated-metadata/graphql';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const OBJECT_METADATA_ID = 'object-metadata-id';
 
@@ -13,9 +14,9 @@ const objectMetadataItem = {
   namePlural: 'companies',
 };
 
-const objectMetadataItems = [objectMetadataItem] as unknown as Parameters<
-  typeof getObjectDrawerItemNavigationPath
->[0]['objectMetadataItems'];
+const objectMetadataItems = [
+  { ...getMockObjectMetadataItemOrThrow('company'), ...objectMetadataItem },
+];
 
 const makeView = (id: string, key: ViewKey | null, position: number) => ({
   id,

@@ -1,5 +1,4 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/primitives/data-display';
@@ -7,6 +6,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { CoreAgentModelCell } from '@/object-core/agents/components/CoreAgentModelCell';
 import { type CoreAgentRun } from '@/object-core/agents/types/CoreAgentRun';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledDetails = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
@@ -41,41 +41,44 @@ type CoreAgentRunDetailsProps = {
   run: CoreAgentRun;
 };
 
-export const CoreAgentRunDetails = ({ run }: CoreAgentRunDetailsProps) => (
-  <StyledDetails>
-    {isNonEmptyString(run.errorMessage) && (
-      <>
-        <StyledLabel>{t`Error`}</StyledLabel>
-        <StyledError>{run.errorMessage}</StyledError>
-      </>
-    )}
-    <StyledLabel>{t`Input`}</StyledLabel>
-    <StyledText>{run.input ?? t`No input`}</StyledText>
-    <StyledLabel>{t`Reply`}</StyledLabel>
-    <StyledText>{run.reply ?? t`No reply`}</StyledText>
-    {isNonEmptyArray(run.toolNames) && (
-      <>
-        <StyledLabel>{t`Tools`}</StyledLabel>
-        <StyledTags>
-          {run.toolNames.map((toolName) => (
-            <Tag key={toolName} color="gray">
-              {toolName}
-            </Tag>
-          ))}
-        </StyledTags>
-      </>
-    )}
-    {isDefined(run.modelId) && (
-      <>
-        <StyledLabel>{t`Model`}</StyledLabel>
-        <CoreAgentModelCell modelId={run.modelId} />
-      </>
-    )}
-    {isNonEmptyString(run.threadTitle) && (
-      <>
-        <StyledLabel>{t`Conversation`}</StyledLabel>
-        <StyledText>{run.threadTitle}</StyledText>
-      </>
-    )}
-  </StyledDetails>
-);
+export const CoreAgentRunDetails = ({ run }: CoreAgentRunDetailsProps) => {
+  const { t } = useLingui();
+  return (
+    <StyledDetails>
+      {isNonEmptyString(run.errorMessage) && (
+        <>
+          <StyledLabel>{t`Error`}</StyledLabel>
+          <StyledError>{run.errorMessage}</StyledError>
+        </>
+      )}
+      <StyledLabel>{t`Input`}</StyledLabel>
+      <StyledText>{run.input ?? t`No input`}</StyledText>
+      <StyledLabel>{t`Reply`}</StyledLabel>
+      <StyledText>{run.reply ?? t`No reply`}</StyledText>
+      {isNonEmptyArray(run.toolNames) && (
+        <>
+          <StyledLabel>{t`Tools`}</StyledLabel>
+          <StyledTags>
+            {run.toolNames.map((toolName) => (
+              <Tag key={toolName} color="gray">
+                {toolName}
+              </Tag>
+            ))}
+          </StyledTags>
+        </>
+      )}
+      {isDefined(run.modelId) && (
+        <>
+          <StyledLabel>{t`Model`}</StyledLabel>
+          <CoreAgentModelCell modelId={run.modelId} />
+        </>
+      )}
+      {isNonEmptyString(run.threadTitle) && (
+        <>
+          <StyledLabel>{t`Conversation`}</StyledLabel>
+          <StyledText>{run.threadTitle}</StyledText>
+        </>
+      )}
+    </StyledDetails>
+  );
+};

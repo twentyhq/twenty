@@ -5,9 +5,9 @@ import { type FieldNumberMetadata } from '@/object-record/record-field/ui/types/
 import { computeDraftValueFromFieldValue } from '@/object-record/record-field/ui/utils/computeDraftValueFromFieldValue';
 import { RecordFormTextInput } from '@/object-record/record-form/components/RecordFormTextInput';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { doNotTranslate } from 'twenty-shared/i18n';
+import { useLingui } from '@lingui/react/macro';
 
 type RecordFormPercentageFieldInputProps = {
   field: Pick<
@@ -25,6 +25,7 @@ export const RecordFormPercentageFieldInput = ({
   onChange,
   readonly,
 }: RecordFormPercentageFieldInputProps) => {
+  const { t } = useLingui();
   const setRecordFieldInputIsFieldInError = useSetAtomComponentState(
     recordFieldInputIsFieldInErrorComponentState,
   );

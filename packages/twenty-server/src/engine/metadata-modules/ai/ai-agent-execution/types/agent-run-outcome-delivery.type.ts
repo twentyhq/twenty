@@ -6,7 +6,7 @@ import { type AgentRunCallerOutcome } from 'src/engine/metadata-modules/ai/ai-ag
 export type AgentRunOutcomeDelivery = {
   workspaceId: string;
   caller: AgentRunCaller;
-  threadId: string;
+  threadId: string | null;
   outcome: AgentRunCallerOutcome;
   summary: AgentRunSummary | null;
   attempt?: number;

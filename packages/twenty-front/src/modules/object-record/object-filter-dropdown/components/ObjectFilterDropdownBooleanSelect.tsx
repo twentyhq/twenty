@@ -1,5 +1,4 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
@@ -13,6 +12,7 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { IconCheck } from 'twenty-ui/icon';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledBooleanSelectContainer = styled.div<{ selected?: boolean }>`
   align-items: center;
@@ -34,6 +34,7 @@ const StyledIconCheckContainer = styled.div`
 `;
 
 export const ObjectFilterDropdownBooleanSelect = () => {
+  const { t } = useLingui();
   const objectFilterDropdownComponentInstanceId =
     useAvailableComponentInstanceIdOrThrow(
       ObjectFilterDropdownComponentInstanceContext,

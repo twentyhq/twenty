@@ -12,7 +12,7 @@ export type ScheduledCallRecordingFields = {
 };
 
 export const createCallRecording = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'mutation'>,
   {
     id,
     data,

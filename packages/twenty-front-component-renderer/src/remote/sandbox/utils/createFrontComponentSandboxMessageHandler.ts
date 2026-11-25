@@ -7,8 +7,10 @@ import { parseFrontComponentSandboxMessage } from '@/remote/sandbox/utils/parseF
 
 const UNKNOWN_WORKER_ERROR_MESSAGE = 'Unknown front component worker error';
 
+type SandboxMessageEvent = { source: unknown; data: unknown };
+
 type FrontComponentSandboxMessageHandlerConfig = {
-  sandboxIframe: HTMLIFrameElement;
+  sandboxIframe: { contentWindow: Pick<Window, 'postMessage'> | null };
   workerMessagePort: MessagePort;
   onSandboxError: (error: Error) => void;
 };
@@ -18,11 +20,11 @@ export const createFrontComponentSandboxMessageHandler = ({
   workerMessagePort,
   onSandboxError,
 }: FrontComponentSandboxMessageHandlerConfig): ((
-  event: MessageEvent,
+  event: SandboxMessageEvent,
 ) => void) => {
   let hasTransferredWorkerPort = false;
 
-  return (event: MessageEvent) => {
+  return (event: SandboxMessageEvent) => {
     if (event.source !== sandboxIframe.contentWindow) {
       return;
     }

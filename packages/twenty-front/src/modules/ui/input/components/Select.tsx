@@ -1,3 +1,5 @@
+import { SelectOptionDescriptionTooltip } from '@/ui/input/components/SelectOptionDescriptionTooltip';
+import { SelectOptionDescriptionTooltipProvider } from '@/ui/input/components/SelectOptionDescriptionTooltipProvider';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { type SelectProps } from '@/ui/input/types/SelectProps';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
@@ -5,7 +7,6 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { hasFullFormFieldBorder } from '@/ui/input/utils/hasFullFormFieldBorder';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { useMemo, useRef, useState } from 'react';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { Tag } from 'twenty-ui/primitives/data-display';
@@ -19,6 +20,7 @@ import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { normalizeSearchText } from 'twenty-ui/utilities';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledContainer = styled.div<{ fullWidth?: boolean }>`
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
@@ -67,6 +69,7 @@ export const Select = <TValue extends SelectValue>({
   variant = 'default',
   renderAsTag = false,
 }: SelectProps<TValue>) => {
+  const { t } = useLingui();
   const dropdownContentRef = useRef<HTMLDivElement>(null);
 
   const [searchInputValue, setSearchInputValue] = useState('');
@@ -279,43 +282,49 @@ export const Select = <TValue extends SelectValue>({
                 <Dropdown.Separator />
               )}
               {isNonEmptyArray(filteredOptions) && (
-                <Dropdown.Section scrollable>
-                  {filteredOptions.map((option) => {
-                    const tagColor = renderAsTag ? option.color : undefined;
-                    const isColoredTag = isDefined(tagColor);
+                <SelectOptionDescriptionTooltipProvider>
+                  <Dropdown.Section scrollable>
+                    {filteredOptions.map((option) => {
+                      const tagColor = renderAsTag ? option.color : undefined;
+                      const isColoredTag = isDefined(tagColor);
 
-                    return (
-                      <Dropdown.OptionItem
-                        key={`${option.value}-${option.label}`}
-                        value={getSelectOptionIdentifier(option.value)}
-                        disabled={option.disabled}
-                        indicator={
-                          isColoredTag || needIconCheck ? 'check' : 'none'
-                        }
-                        description={
-                          isColoredTag ? undefined : option.contextualText
-                        }
-                        startIcon={
-                          isColoredTag ? undefined : (
-                            <>
-                              <SelectOptionIcon
-                                Icon={option.Icon}
-                                color={option.iconThemeColor}
-                              />
-                              {option.LeftComponent}
-                            </>
-                          )
-                        }
-                      >
-                        {isColoredTag ? (
-                          <Tag color={tagColor}>{option.label}</Tag>
-                        ) : (
-                          option.label
-                        )}
-                      </Dropdown.OptionItem>
-                    );
-                  })}
-                </Dropdown.Section>
+                      return (
+                        <SelectOptionDescriptionTooltip
+                          key={`${option.value}-${option.label}`}
+                          description={option.description}
+                        >
+                          <Dropdown.OptionItem
+                            value={getSelectOptionIdentifier(option.value)}
+                            disabled={option.disabled}
+                            indicator={
+                              isColoredTag || needIconCheck ? 'check' : 'none'
+                            }
+                            description={
+                              isColoredTag ? undefined : option.contextualText
+                            }
+                            startIcon={
+                              isColoredTag ? undefined : (
+                                <>
+                                  <SelectOptionIcon
+                                    Icon={option.Icon}
+                                    color={option.iconThemeColor}
+                                  />
+                                  {option.LeftComponent}
+                                </>
+                              )
+                            }
+                          >
+                            {isColoredTag ? (
+                              <Tag color={tagColor}>{option.label}</Tag>
+                            ) : (
+                              option.label
+                            )}
+                          </Dropdown.OptionItem>
+                        </SelectOptionDescriptionTooltip>
+                      );
+                    })}
+                  </Dropdown.Section>
+                </SelectOptionDescriptionTooltipProvider>
               )}
             </Dropdown.SelectionGroup>
             {isDefined(callToActionButton) &&

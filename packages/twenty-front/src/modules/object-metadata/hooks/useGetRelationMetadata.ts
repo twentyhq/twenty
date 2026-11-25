@@ -15,11 +15,15 @@ export const useGetRelationMetadata = () => {
     }: {
       fieldMetadataItem: Pick<FieldMetadataItem, 'type' | 'relation'>;
     }) => {
-      if (fieldMetadataItem.type !== FieldMetadataType.RELATION) return null;
+      if (fieldMetadataItem.type !== FieldMetadataType.RELATION) {
+        return null;
+      }
 
       const relation = fieldMetadataItem.relation;
 
-      if (!relation) return null;
+      if (!relation) {
+        return null;
+      }
 
       const relationObjectMetadataItem = store.get(
         objectMetadataItemFamilySelector.selectorFamily({
@@ -28,13 +32,17 @@ export const useGetRelationMetadata = () => {
         }),
       );
 
-      if (!relationObjectMetadataItem) return null;
+      if (!relationObjectMetadataItem) {
+        return null;
+      }
 
       const relationFieldMetadataItem = relationObjectMetadataItem.fields.find(
         (field) => field.id === relation.targetFieldMetadata.id,
       );
 
-      if (!relationFieldMetadataItem) return null;
+      if (!relationFieldMetadataItem) {
+        return null;
+      }
 
       return {
         relationFieldMetadataItem,

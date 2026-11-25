@@ -22,8 +22,8 @@ import { ListAppConnectionsDto } from 'src/engine/core-modules/application/conne
 import { ApplicationConnectionsListService } from 'src/engine/core-modules/application/connection-provider/connections/services/application-connections-list.service';
 import { ConnectionProviderRestApiExceptionFilter } from 'src/engine/core-modules/application/connection-provider/filters/connection-provider-rest-api-exception.filter';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
+import { APPLICATION_CONNECTION_ACCESS_POLICY } from 'src/engine/core-modules/application/connection-provider/connections/constants/application-connection-access-policy.constant';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 /** @deprecated Superseded by the `appConnections` / `appConnection` GraphQL
  * queries on the metadata schema (ApplicationConnectionsResolver). The SDK
@@ -32,13 +32,7 @@ import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 @Controller(`${ApiPath.Apps}/connections`)
 @UseGuards(
   JwtAuthGuard,
-  AuthPrincipalGuard({
-    userSession: false,
-    apiKey: false,
-    oauthClient: false,
-    application: true,
-  }),
-  NoPermissionGuard,
+  AccessPolicyGuard(APPLICATION_CONNECTION_ACCESS_POLICY),
 )
 @UseFilters(ConnectionProviderRestApiExceptionFilter)
 @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))

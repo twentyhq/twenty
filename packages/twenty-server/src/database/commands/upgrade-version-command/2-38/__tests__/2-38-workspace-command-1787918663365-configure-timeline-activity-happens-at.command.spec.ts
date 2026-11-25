@@ -1,35 +1,44 @@
+import { Test } from '@nestjs/testing';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
-import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { ConfigureTimelineActivityHappensAtCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1787918663365-configure-timeline-activity-happens-at.command';
-import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const WORKSPACE_ID = '00000000-0000-4000-8000-000000000001';
 const STANDARD_APPLICATION_ID = '00000000-0000-4000-8000-000000000002';
 
-const buildCommand = ({
+const buildCommand = async ({
   invalidateAndRecompute,
 }: {
   invalidateAndRecompute: ReturnType<typeof jest.fn>;
-}) =>
-  new ConfigureTimelineActivityHappensAtCommand(
-    {} as WorkspaceIteratorService,
-    {
-      findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
-        .fn()
-        .mockResolvedValue({
-          twentyStandardFlatApplication: { id: STANDARD_APPLICATION_ID },
-        }),
-    } as unknown as ApplicationService,
-    { invalidateAndRecompute } as unknown as WorkspaceCacheService,
-  );
+}) => {
+  const module = await Test.createTestingModule({
+    providers: [
+      ConfigureTimelineActivityHappensAtCommand,
+      { provide: WorkspaceIteratorService, useValue: {} },
+      {
+        provide: ApplicationService,
+        useValue: {
+          findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
+            .fn()
+            .mockResolvedValue({
+              twentyStandardFlatApplication: { id: STANDARD_APPLICATION_ID },
+            }),
+        },
+      },
+      { provide: WorkspaceCacheService, useValue: { invalidateAndRecompute } },
+    ],
+  }).compile();
+  return module.get(ConfigureTimelineActivityHappensAtCommand);
+};
 
 describe('ConfigureTimelineActivityHappensAtCommand', () => {
   it('points the standard linked types at their semantic timestamp fields', async () => {
     const query = jest.fn().mockResolvedValueOnce([[], 2]);
     const invalidateAndRecompute = jest.fn().mockResolvedValue(undefined);
-    const command = buildCommand({ invalidateAndRecompute });
+    const command = await buildCommand({ invalidateAndRecompute });
 
     await command.runOnWorkspace({
       workspaceId: WORKSPACE_ID,
@@ -62,7 +71,7 @@ describe('ConfigureTimelineActivityHappensAtCommand', () => {
   it('does not block the fleet when optional standard metadata is missing', async () => {
     const query = jest.fn().mockResolvedValueOnce([[], 1]);
     const invalidateAndRecompute = jest.fn().mockResolvedValue(undefined);
-    const command = buildCommand({ invalidateAndRecompute });
+    const command = await buildCommand({ invalidateAndRecompute });
 
     jest.spyOn(command['logger'], 'warn').mockImplementation();
 
@@ -81,7 +90,7 @@ describe('ConfigureTimelineActivityHappensAtCommand', () => {
   it('only logs on a dry run', async () => {
     const query = jest.fn();
     const invalidateAndRecompute = jest.fn();
-    const command = buildCommand({ invalidateAndRecompute });
+    const command = await buildCommand({ invalidateAndRecompute });
 
     jest.spyOn(command['logger'], 'log').mockImplementation();
 

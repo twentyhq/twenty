@@ -4,6 +4,7 @@ import { FIND_MANY_FRONT_COMPONENTS } from '@/front-components/graphql/queries/f
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useInsertCreatedWidgetAtContext } from '@/page-layout/hooks/useInsertCreatedWidgetAtContext';
 import { useCreateRecordPageNoteWidget } from '@/page-layout/hooks/useCreateRecordPageNoteWidget';
+import { useCreateRecordPageRelatedRecordsWidget } from '@/page-layout/hooks/useCreateRecordPageRelatedRecordsWidget';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { widgetCreationTargetTabIdComponentState } from '@/page-layout/states/widgetCreationTargetTabIdComponentState';
@@ -16,24 +17,27 @@ import { isVerticalListPosition } from '@/page-layout/utils/isVerticalListPositi
 import { removeWidgetFromTab } from '@/page-layout/utils/removeWidgetFromTab';
 import { useFieldWidgetEligibleFields } from '@/page-layout/widgets/field/hooks/useFieldWidgetEligibleFields';
 import { getFieldWidgetDefaultDisplayMode } from '@/page-layout/widgets/field/utils/getFieldWidgetDisplayModeConfig';
+import { type RecordTableWidgetLayoutViewType } from '@/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { getFrontComponentWidgetTypeSelectItemId } from '@/side-panel/pages/page-layout/utils/getFrontComponentWidgetTypeSelectItemId';
-import { isFrontComponentAvailableInWidgetPicker } from '@/side-panel/pages/page-layout/utils/isFrontComponentAvailableInWidgetPicker';
 import { resolveWidgetTypeSelectTargetTabId } from '@/side-panel/pages/page-layout/utils/resolveWidgetTypeSelectTargetTabId';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useQuery } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isFrontComponentAvailableInWidgetPicker,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 import {
   IconApps,
   IconListDetails,
@@ -48,8 +52,10 @@ import {
   WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
+  const { t } = useLingui();
   const {
     pageLayoutId,
     targetRecordIdentifier: { targetObjectNameSingular },
@@ -58,6 +64,11 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
   const { closeSidePanelMenu } = useSidePanelMenu();
   const { createRecordPageNoteWidget } =
     useCreateRecordPageNoteWidget(pageLayoutId);
+  const { createRecordPageRelatedRecordsWidget, relatedRecordsLayoutOptions } =
+    useCreateRecordPageRelatedRecordsWidget({
+      objectNameSingular: targetObjectNameSingular,
+      pageLayoutId,
+    });
 
   const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
 
@@ -294,6 +305,37 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
     insertCreatedWidgetAtContext({ newWidgetId: newWidget.id });
   };
 
+  const selectableRelatedRecordsLayoutOptions =
+    relatedRecordsLayoutOptions.filter(({ isDisabled }) => !isDisabled);
+
+  const handleCreateRelatedRecordsWidget = (
+    layoutViewType: RecordTableWidgetLayoutViewType,
+  ) => {
+    // Checked before removing the widget being replaced, so an unavailable layout never drops it.
+    const isLayoutAvailable = selectableRelatedRecordsLayoutOptions.some(
+      ({ viewType }) => viewType === layoutViewType,
+    );
+
+    if (!isLayoutAvailable) {
+      return;
+    }
+
+    const replacePositionIndex = getExistingWidgetPositionIndex();
+    removeExistingWidgetIfReplacing();
+
+    const newWidget = createRecordPageRelatedRecordsWidget({
+      tabId,
+      positionIndex: replacePositionIndex,
+      layoutViewType,
+    });
+
+    if (!isDefined(newWidget)) {
+      return;
+    }
+
+    insertCreatedWidgetAtContext({ newWidgetId: newWidget.id });
+  };
+
   const handleCreateFrontComponentWidget = useCallback(
     (frontComponent: FrontComponent) => {
       const replacePositionIndex = getExistingWidgetPositionIndex();
@@ -357,16 +399,18 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
     'fields',
     'field',
     'note',
+    ...selectableRelatedRecordsLayoutOptions.map(({ viewType }) => viewType),
     ...frontComponentsWithSelectItemId.map(({ selectItemId }) => selectItemId),
   ];
 
   return (
     <SidePanelList selectableItemIds={selectableItemIds}>
-      <SidePanelGroup heading={t`Standard widgets`}>
+      <SidePanelGroup heading={t`This record`}>
         <SelectableListItem itemId="fields" onEnter={handleCreateFieldsWidget}>
           <CommandMenuItem
             Icon={IconListDetails}
             label={t`Fields group`}
+            description={t`Group multiple fields from this record`}
             id="fields"
             onClick={handleCreateFieldsWidget}
           />
@@ -375,6 +419,7 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
           <CommandMenuItem
             Icon={IconListSearch}
             label={t`Field`}
+            description={t`Single field with smart formats`}
             id="field"
             onClick={handleCreateFieldWidget}
           />
@@ -389,6 +434,40 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
           />
         </SelectableListItem>
       </SidePanelGroup>
+
+      {isNonEmptyArray(relatedRecordsLayoutOptions) && (
+        <SidePanelGroup heading={t`Related records`}>
+          {relatedRecordsLayoutOptions.map(
+            ({
+              viewType,
+              Icon,
+              label,
+              description,
+              isDisabled,
+              unavailableReason,
+            }) => (
+              <SelectableListItem
+                key={viewType}
+                itemId={viewType}
+                onEnter={() => handleCreateRelatedRecordsWidget(viewType)}
+              >
+                <CommandMenuItem
+                  Icon={Icon}
+                  label={t(label)}
+                  description={
+                    isDefined(unavailableReason)
+                      ? t(unavailableReason)
+                      : t(description)
+                  }
+                  id={viewType}
+                  disabled={isDisabled}
+                  onClick={() => handleCreateRelatedRecordsWidget(viewType)}
+                />
+              </SelectableListItem>
+            ),
+          )}
+        </SidePanelGroup>
+      )}
 
       {frontComponentsWithSelectItemId.length > 0 && (
         <SidePanelGroup heading={t`Front Components`}>

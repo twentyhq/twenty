@@ -63,6 +63,7 @@ const buildViewFilter = ({
 const recomputeForViewFilter = (viewFilter: FlatViewFilter) =>
   recomputeViewFiltersOnFlatFieldMetadataOptionsUpdate({
     fromFlatFieldMetadata,
+    fromOptions: fromFlatFieldMetadata.options,
     toOptions,
     flatViewFilterMaps: addFlatEntityToFlatEntityMapsOrThrow({
       flatEntity: viewFilter,

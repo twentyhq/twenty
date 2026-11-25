@@ -13,18 +13,19 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @UseGuards(
-  AuthPrincipalGuard({
-    userSession: false,
-    apiKey: false,
-    oauthClient: false,
-    application: true,
+  AccessPolicyGuard({
+    authPrincipals: {
+      userSession: false,
+      apiKey: false,
+      oauthClient: false,
+      application: true,
+    },
+    requiredPermissionFlags: [],
   }),
-  NoPermissionGuard,
 )
 @UseFilters(ApplicationExceptionFilter, AuthGraphqlApiExceptionFilter)
 @MetadataResolver()

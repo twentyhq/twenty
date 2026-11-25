@@ -3,12 +3,12 @@ import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useRecordTableWidgetLayoutCallbacks } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetLayoutCallbacks';
 import { isFieldMetadataItemAvailableAsWidgetGroupByField } from '@/page-layout/widgets/record-table/utils/isFieldMetadataItemAvailableAsWidgetGroupByField';
-import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon/provider';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
+import { useLingui } from '@lingui/react/macro';
 
 const NO_GROUP_BY_ITEM_ID = 'no-group-by';
 
@@ -27,6 +27,7 @@ export const RecordTableGroupByDropdownContent = ({
   currentMainGroupByFieldMetadataId,
   isClearable = true,
 }: RecordTableGroupByDropdownContentProps) => {
+  const { t } = useLingui();
   const [searchQuery, setSearchQuery] = useState('');
   const { getIcon } = useIcons();
 

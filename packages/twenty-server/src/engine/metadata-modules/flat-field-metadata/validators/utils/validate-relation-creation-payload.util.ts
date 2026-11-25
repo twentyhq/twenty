@@ -49,9 +49,8 @@ export const validateRelationCreationPayload = async ({
           },
         ],
       };
-    } else {
-      throw error;
     }
+    throw error;
   }
 
   const targetFlatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({

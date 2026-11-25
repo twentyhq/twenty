@@ -5,6 +5,7 @@ export type RecordInput = string | { id?: string | null };
 export type BulkEnrichInput = {
   records: RecordInput | RecordInput[];
   updateFields?: UpdateFieldsOption;
+  requiredFields?: string[];
   minLikelihood?: number;
   weakIdentifierMinLikelihood?: number;
 };

@@ -1,4 +1,5 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
+import { convertFlatVariablesToNestedContext } from '@/workflow/workflow-steps/utils/convertFlatVariablesToNestedContext';
 import {
   type HttpRequestBody,
   type HttpRequestFormData,
@@ -8,7 +9,6 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { httpRequestTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/http-request-action/states/httpRequestTestDataFamilyState';
 import { useMutation } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { isObject, isString } from '@sniptt/guards';
 import { useState } from 'react';
 import { isDefined, parseJson, resolveInput } from 'twenty-shared/utils';
@@ -17,31 +17,10 @@ import {
   type TestHttpRequestMutation,
   type TestHttpRequestMutationVariables,
 } from '~/generated/graphql';
-
-const convertFlatVariablesToNestedContext = (flatVariables: {
-  [variablePath: string]: any;
-}): Record<string, unknown> => {
-  const result: Record<string, unknown> = {};
-
-  for (const [key, value] of Object.entries(flatVariables)) {
-    const parts = key.split('.');
-    let current = result;
-
-    for (let i = 0; i < parts.length - 1; i++) {
-      const part = parts[i];
-      if (!(part in current)) {
-        current[part] = {};
-      }
-      current = current[part] as Record<string, unknown>;
-    }
-
-    current[parts[parts.length - 1]] = value;
-  }
-
-  return result;
-};
+import { useLingui } from '@lingui/react/macro';
 
 export const useTestHttpRequest = (actionId: string) => {
+  const { t } = useLingui();
   const apolloCoreClient = useApolloCoreClient();
   const [isTesting, setIsTesting] = useState(false);
   const httpRequestTestData = useAtomFamilyStateValue(
@@ -105,7 +84,7 @@ export const useTestHttpRequest = (actionId: string) => {
         throw new Error(t`No response from server`);
       }
 
-      if (response.success === true) {
+      if (response.success) {
         const resultData = isString(response.result)
           ? response.result
           : JSON.stringify(response.result, null, 2);

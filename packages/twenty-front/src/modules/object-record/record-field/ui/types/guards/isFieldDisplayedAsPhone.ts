@@ -1,4 +1,4 @@
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
@@ -12,6 +12,7 @@ import {
 export const isFieldDisplayedAsPhone = (
   field: Pick<FieldDefinition<FieldMetadata>, 'type' | 'metadata'>,
 ): field is FieldDefinition<FieldTextMetadata> =>
-  field.metadata.objectMetadataNameSingular === CoreObjectNameSingular.Person &&
+  field.metadata.objectMetadataNameSingular ===
+    StandardObjectNameSingular.Person &&
   field.type === FieldMetadataType.TEXT &&
   field.metadata.fieldName === 'phone';

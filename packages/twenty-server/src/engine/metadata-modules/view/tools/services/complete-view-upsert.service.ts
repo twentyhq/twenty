@@ -5,10 +5,11 @@ import {
   AggregateOperations,
   ViewCalendarLayout,
   ViewType,
-  ViewVisibility,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { getUserWorkspaceIdFromAuthContext } from 'src/engine/core-modules/auth/utils/get-user-workspace-id-from-auth-context.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -60,13 +61,13 @@ export class CompleteViewUpsertService {
 
   async upsertCompleteView({
     workspaceId,
-    userWorkspaceId,
+    authContext,
     existingViewId,
     objectMetadataId,
     name,
     icon,
     type,
-    visibility,
+    isPrivate,
     mainGroupByFieldMetadataId,
     kanbanAggregateOperation,
     kanbanAggregateOperationFieldMetadataId,
@@ -78,13 +79,13 @@ export class CompleteViewUpsertService {
     sorts,
   }: {
     workspaceId: string;
-    userWorkspaceId?: string;
+    authContext: WorkspaceAuthContext | undefined;
     existingViewId?: string;
     objectMetadataId?: string;
     name?: string;
     icon?: string;
     type?: ViewType;
-    visibility?: ViewVisibility;
+    isPrivate?: boolean;
     mainGroupByFieldMetadataId?: string;
     kanbanAggregateOperation?: AggregateOperations;
     kanbanAggregateOperationFieldMetadataId?: string;
@@ -95,6 +96,8 @@ export class CompleteViewUpsertService {
     filters?: CompleteViewFilterSpec[];
     sorts?: CompleteViewSortSpec[];
   }): Promise<ViewDTO> {
+    const userWorkspaceId = getUserWorkspaceIdFromAuthContext(authContext);
+
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         {
@@ -107,6 +110,7 @@ export class CompleteViewUpsertService {
 
     const {
       flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps,
       flatObjectMetadataMaps,
       flatViewMaps,
       flatViewGroupMaps,
@@ -121,6 +125,7 @@ export class CompleteViewUpsertService {
           workspaceId,
           flatMapsKeys: [
             'flatFieldMetadataMaps',
+            'flatFieldMetadataOptionMaps',
             'flatObjectMetadataMaps',
             'flatViewMaps',
             'flatViewGroupMaps',
@@ -146,13 +151,14 @@ export class CompleteViewUpsertService {
           flatViewMaps,
           flatViewGroupMaps,
           flatFieldMetadataMaps,
+          flatFieldMetadataOptionMaps,
         })
       : this.buildCreateViewRootOperationsOrThrow({
           objectMetadataId,
           name,
           icon,
           type,
-          visibility,
+          isPrivate,
           mainGroupByFieldMetadataId,
           kanbanAggregateOperation,
           kanbanAggregateOperationFieldMetadataId,
@@ -162,6 +168,7 @@ export class CompleteViewUpsertService {
           userWorkspaceId,
           flatApplication: workspaceCustomFlatApplication,
           flatFieldMetadataMaps,
+          flatFieldMetadataOptionMaps,
           flatObjectMetadataMaps,
         });
 
@@ -218,6 +225,7 @@ export class CompleteViewUpsertService {
           allFlatEntityOperationByMetadataName,
           workspaceId,
           isSystemBuild: false,
+          authContext,
           applicationUniversalIdentifier,
         },
       );
@@ -249,7 +257,7 @@ export class CompleteViewUpsertService {
     name,
     icon,
     type,
-    visibility,
+    isPrivate,
     mainGroupByFieldMetadataId,
     kanbanAggregateOperation,
     kanbanAggregateOperationFieldMetadataId,
@@ -259,13 +267,14 @@ export class CompleteViewUpsertService {
     userWorkspaceId,
     flatApplication,
     flatFieldMetadataMaps,
+    flatFieldMetadataOptionMaps,
     flatObjectMetadataMaps,
   }: {
     objectMetadataId?: string;
     name?: string;
     icon?: string;
     type?: ViewType;
-    visibility?: ViewVisibility;
+    isPrivate?: boolean;
     mainGroupByFieldMetadataId?: string;
     kanbanAggregateOperation?: AggregateOperations;
     kanbanAggregateOperationFieldMetadataId?: string;
@@ -275,6 +284,7 @@ export class CompleteViewUpsertService {
     userWorkspaceId?: string;
     flatApplication: FlatApplication;
     flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
+    flatFieldMetadataOptionMaps: AllFlatEntityMaps['flatFieldMetadataOptionMaps'];
     flatObjectMetadataMaps: AllFlatEntityMaps['flatObjectMetadataMaps'];
   }): ViewUpsertRootOperations {
     if (!isDefined(objectMetadataId)) {
@@ -291,7 +301,7 @@ export class CompleteViewUpsertService {
           objectMetadataId,
           icon: icon ?? 'IconList',
           type: type ?? ViewType.TABLE,
-          visibility: visibility ?? ViewVisibility.WORKSPACE,
+          isPrivate: isPrivate ?? false,
           mainGroupByFieldMetadataId,
           kanbanAggregateOperation,
           kanbanAggregateOperationFieldMetadataId,
@@ -302,6 +312,7 @@ export class CompleteViewUpsertService {
         createdByUserWorkspaceId: userWorkspaceId,
         flatApplication,
         flatFieldMetadataMaps,
+        flatFieldMetadataOptionMaps,
         flatObjectMetadataMaps,
       });
 
@@ -335,6 +346,7 @@ export class CompleteViewUpsertService {
     flatViewMaps,
     flatViewGroupMaps,
     flatFieldMetadataMaps,
+    flatFieldMetadataOptionMaps,
   }: {
     existingViewId: string;
     name?: string;
@@ -345,6 +357,7 @@ export class CompleteViewUpsertService {
     flatViewMaps: AllFlatEntityMaps['flatViewMaps'];
     flatViewGroupMaps: AllFlatEntityMaps['flatViewGroupMaps'];
     flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
+    flatFieldMetadataOptionMaps: AllFlatEntityMaps['flatFieldMetadataOptionMaps'];
   }): ViewUpsertRootOperations {
     if (
       !isDefined(name) &&
@@ -365,6 +378,7 @@ export class CompleteViewUpsertService {
         flatViewMaps,
         flatViewGroupMaps,
         flatFieldMetadataMaps,
+        flatFieldMetadataOptionMaps,
         userWorkspaceId,
         callerApplicationUniversalIdentifier: applicationUniversalIdentifier,
         workspaceCustomApplicationUniversalIdentifier:

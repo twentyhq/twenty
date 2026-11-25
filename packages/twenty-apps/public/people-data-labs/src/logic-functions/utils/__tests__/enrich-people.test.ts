@@ -16,7 +16,11 @@ describe('enrichPeople', () => {
 
   it('posts every record to the person bulk endpoint with only the provided params', async () => {
     await enrichPeople([
-      { email: 'jane@acme.com', minLikelihood: 6 },
+      {
+        email: 'jane@acme.com',
+        minLikelihood: 6,
+        required: 'work_email AND job_title',
+      },
       { pdlId: 'abc' },
     ]);
 
@@ -24,7 +28,11 @@ describe('enrichPeople', () => {
     expect(postPdlBulkEnrichMock).toHaveBeenCalledWith({
       path: '/person/bulk',
       requests: [
-        { email: 'jane@acme.com', min_likelihood: 6 },
+        {
+          email: 'jane@acme.com',
+          min_likelihood: 6,
+          required: 'work_email AND job_title',
+        },
         { pdl_id: 'abc' },
       ],
     });

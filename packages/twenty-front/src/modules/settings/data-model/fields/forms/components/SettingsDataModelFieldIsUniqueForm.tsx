@@ -5,10 +5,10 @@ import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMeta
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { canBeUnique } from '@/settings/data-model/fields/forms/utils/canBeUnique';
-import { t } from '@lingui/core/macro';
 import { type FieldMetadataType } from 'twenty-shared/types';
 import { IconKey } from 'twenty-ui/icon';
 import { Switch } from 'twenty-ui/primitives/input';
+import { useLingui } from '@lingui/react/macro';
 
 type SettingsDataModelFieldIsUniqueFormValues = {
   isUnique: boolean;
@@ -27,6 +27,7 @@ export const SettingsDataModelFieldIsUniqueForm = ({
   objectNameSingular,
   disabled = false,
 }: SettingsDataModelFieldIsUniqueFormProps) => {
+  const { t } = useLingui();
   const { control } =
     useFormContext<SettingsDataModelFieldIsUniqueFormValues>();
 

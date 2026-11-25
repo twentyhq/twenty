@@ -21,6 +21,8 @@ export const FILTER_OPERANDS_MAP = {
   TEXT: [
     ViewFilterOperand.CONTAINS,
     ViewFilterOperand.DOES_NOT_CONTAIN,
+    ViewFilterOperand.IS,
+    ViewFilterOperand.IS_NOT,
     ...emptyOperands,
   ],
   EMAILS: [

@@ -10,7 +10,7 @@ describe('serializeResponseToHostFetchResult', () => {
         'x-schema-version': '42',
       }),
       text: async () => 'response-body',
-    } as unknown as Response;
+    };
 
     await expect(serializeResponseToHostFetchResult(response)).resolves.toEqual(
       {
@@ -31,7 +31,7 @@ describe('serializeResponseToHostFetchResult', () => {
       statusText: 'OK',
       headers: new Headers({ 'content-length': String(200 * 1024 * 1024) }),
       text: async () => '',
-    } as unknown as Response;
+    };
 
     await expect(
       serializeResponseToHostFetchResult(response),

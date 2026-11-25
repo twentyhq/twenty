@@ -1,3 +1,4 @@
+export { AffiliateProgramTermsDocument } from './AffiliateProgramTermsDocument';
 export { LegalDocument } from './LegalDocument';
 export { PrivacyPolicyDocument } from './PrivacyPolicyDocument';
 export { SupportDocument } from './SupportDocument';

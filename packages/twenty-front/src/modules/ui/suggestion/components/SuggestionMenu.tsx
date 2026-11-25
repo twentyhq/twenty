@@ -6,7 +6,6 @@ import {
   useFloating,
 } from '@floating-ui/react';
 import { motion } from 'framer-motion';
-import { t } from '@lingui/core/macro';
 import {
   forwardRef,
   useId,
@@ -29,6 +28,7 @@ import { getSuggestionMenuItemAnchorId } from '@/ui/suggestion/utils/getSuggesti
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { useIsMobile } from 'twenty-ui/utilities';
+import { useLingui } from '@lingui/react/macro';
 
 type SuggestionMenuInnerProps<TItem> = SuggestionMenuProps<TItem>;
 
@@ -37,6 +37,7 @@ const SuggestionMenuInner = <TItem,>(
   props: SuggestionMenuInnerProps<TItem>,
   parentRef: React.ForwardedRef<unknown>,
 ) => {
+  const { t } = useLingui();
   const {
     items,
     onSelect,

@@ -8,12 +8,12 @@ import { RecordTableActionRow } from '@/object-record/record-table/record-table-
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { t } from '@lingui/core/macro';
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { useToast } from 'twenty-ui/components/feedback';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconPlus } from 'twenty-ui/icon';
 import { logError } from '~/utils/logError';
+import { useLingui } from '@lingui/react/macro';
 
 type RecordTableWidgetJunctionAddNewRowProps = {
   dropdownId: string;
@@ -26,6 +26,7 @@ export const RecordTableWidgetJunctionAddNewRow = ({
   junctionCreateThrough,
   targetRecordsFilter = junctionCreateThrough.targetRecordsFilter,
 }: RecordTableWidgetJunctionAddNewRowProps) => {
+  const { t } = useLingui();
   const { enqueueToast } = useToast();
 
   const { objectMetadataItem: junctionObjectMetadataItem } =

@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -9,8 +8,10 @@ import { useMutation } from '@apollo/client/react';
 import { useToast } from 'twenty-ui/components/feedback';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 import { isDefined } from 'twenty-shared/utils';
+import { useLingui } from '@lingui/react/macro';
 
 export const WorkspaceLogoUploader = () => {
+  const { t } = useLingui();
   const { enqueueToast } = useToast();
   const { uploadWorkspaceLogo } = useUploadWorkspaceLogo();
   const [updateWorkspace] = useMutation(UpdateWorkspaceDocument);

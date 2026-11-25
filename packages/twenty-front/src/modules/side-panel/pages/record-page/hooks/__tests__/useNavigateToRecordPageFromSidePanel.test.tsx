@@ -3,7 +3,7 @@ import { act, type ReactNode } from 'react';
 import { type Store } from 'jotai/vanilla/store';
 import {
   AppPath,
-  CoreObjectNameSingular,
+  StandardObjectNameSingular,
   SidePanelPages,
 } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
@@ -125,7 +125,7 @@ describe('useNavigateToRecordPageFromSidePanel', () => {
     const recordPath = `${getAppPath(
       AppPath.RecordShowPage,
       {
-        objectNameSingular: CoreObjectNameSingular.Company,
+        objectNameSingular: StandardObjectNameSingular.Company,
         objectRecordId: RECORD_ID,
       },
       { viewId: 'company-view' },
@@ -136,7 +136,7 @@ describe('useNavigateToRecordPageFromSidePanel', () => {
 
     act(() => {
       result.current.navigateToRecordPage({
-        objectNameSingular: CoreObjectNameSingular.Company,
+        objectNameSingular: StandardObjectNameSingular.Company,
         recordId: RECORD_ID,
       });
     });
@@ -155,21 +155,21 @@ describe('useNavigateToRecordPageFromSidePanel', () => {
 
     act(() => {
       result.current.navigateToRecordPage({
-        objectNameSingular: CoreObjectNameSingular.Company,
+        objectNameSingular: StandardObjectNameSingular.Company,
         recordId: RECORD_ID,
       });
     });
 
     expect(navigateMock).toHaveBeenCalledWith(
       `${getAppPath(AppPath.RecordShowPage, {
-        objectNameSingular: CoreObjectNameSingular.Company,
+        objectNameSingular: StandardObjectNameSingular.Company,
         objectRecordId: RECORD_ID,
       })}#timeline`,
       { surface: 'main' },
     );
   });
 
-  it.each([CoreObjectNameSingular.Note, CoreObjectNameSingular.Task])(
+  it.each([StandardObjectNameSingular.Note, StandardObjectNameSingular.Task])(
     'should open the rich text tab for %s when the side panel is on its home tab',
     (objectNameSingular) => {
       const { result } = renderNavigateToRecordPage({});
@@ -194,13 +194,13 @@ describe('useNavigateToRecordPageFromSidePanel', () => {
   it('should clear the parent view when it belongs to another object', () => {
     const { result, getStore } = renderNavigateToRecordPage({
       parentView: {
-        parentViewObjectNameSingular: CoreObjectNameSingular.Person,
+        parentViewObjectNameSingular: StandardObjectNameSingular.Person,
       },
     });
 
     act(() => {
       result.current.navigateToRecordPage({
-        objectNameSingular: CoreObjectNameSingular.Company,
+        objectNameSingular: StandardObjectNameSingular.Company,
         recordId: RECORD_ID,
       });
     });
@@ -216,7 +216,7 @@ describe('useNavigateToRecordPageFromSidePanel', () => {
 
   it('should keep the parent view when it belongs to the same object', () => {
     const parentView = {
-      parentViewObjectNameSingular: CoreObjectNameSingular.Company,
+      parentViewObjectNameSingular: StandardObjectNameSingular.Company,
     };
 
     const { result, getStore } = renderNavigateToRecordPage({
@@ -225,7 +225,7 @@ describe('useNavigateToRecordPageFromSidePanel', () => {
 
     act(() => {
       result.current.navigateToRecordPage({
-        objectNameSingular: CoreObjectNameSingular.Company,
+        objectNameSingular: StandardObjectNameSingular.Company,
         recordId: RECORD_ID,
       });
     });
@@ -248,7 +248,7 @@ describe('useNavigateToRecordPageFromSidePanel', () => {
 
     act(() => {
       result.current.navigateToRecordPage({
-        objectNameSingular: CoreObjectNameSingular.Company,
+        objectNameSingular: StandardObjectNameSingular.Company,
         recordId: RECORD_ID,
       });
     });

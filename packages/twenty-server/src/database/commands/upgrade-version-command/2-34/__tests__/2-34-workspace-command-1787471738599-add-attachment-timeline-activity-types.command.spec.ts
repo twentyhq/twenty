@@ -1,10 +1,11 @@
+import { Test } from '@nestjs/testing';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
-import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { AddAttachmentTimelineActivityTypesCommand } from 'src/database/commands/upgrade-version-command/2-34/2-34-workspace-command-1787471738599-add-attachment-timeline-activity-types.command';
-import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 const WORKSPACE_ID = '00000000-0000-4000-8000-000000000001';
 const STANDARD_APPLICATION_ID = '00000000-0000-4000-8000-000000000002';
@@ -16,7 +17,7 @@ const LINKED_TYPE_UNIVERSAL_IDENTIFIER = '20202020-0d1a-4f0e-8a55-1c0a2f0a2c11';
 const UNLINKED_TYPE_UNIVERSAL_IDENTIFIER =
   '20202020-0d1a-4f0e-8a55-1c0a2f0a2c12';
 
-const buildCommand = ({
+const buildCommand = async ({
   flatTimelineActivityTypes = {},
   attachmentTargetFields = {
     [ATTACHMENT_TARGET_RELATION_FIELD_UNIVERSAL_IDENTIFIER]: {
@@ -42,36 +43,49 @@ const buildCommand = ({
   const findStandardApplication = jest.fn().mockResolvedValue({
     twentyStandardFlatApplication: { id: STANDARD_APPLICATION_ID },
   });
-  const command = new AddAttachmentTimelineActivityTypesCommand(
-    {} as WorkspaceIteratorService,
-    {
-      findWorkspaceTwentyStandardAndCustomApplicationOrThrow:
-        findStandardApplication,
-    } as unknown as ApplicationService,
-    {
-      getOrRecompute: jest.fn().mockResolvedValue({
-        flatFieldMetadataMaps: {
-          byUniversalIdentifier: attachmentTargetFields,
+  const module = await Test.createTestingModule({
+    providers: [
+      AddAttachmentTimelineActivityTypesCommand,
+      { provide: WorkspaceIteratorService, useValue: {} },
+      {
+        provide: ApplicationService,
+        useValue: {
+          findWorkspaceTwentyStandardAndCustomApplicationOrThrow:
+            findStandardApplication,
         },
-        flatObjectMetadataMaps: {
-          byUniversalIdentifier: hasTimelineActivity
-            ? {
-                [STANDARD_OBJECTS.timelineActivity.universalIdentifier]: {},
-                [STANDARD_OBJECTS.attachment.universalIdentifier]: {
-                  id: ATTACHMENT_OBJECT_ID,
-                },
-              }
-            : {},
+      },
+      {
+        provide: WorkspaceCacheService,
+        useValue: {
+          getOrRecompute: jest.fn().mockResolvedValue({
+            flatFieldMetadataMaps: {
+              byUniversalIdentifier: attachmentTargetFields,
+            },
+            flatObjectMetadataMaps: {
+              byUniversalIdentifier: hasTimelineActivity
+                ? {
+                    [STANDARD_OBJECTS.timelineActivity.universalIdentifier]: {},
+                    [STANDARD_OBJECTS.attachment.universalIdentifier]: {
+                      id: ATTACHMENT_OBJECT_ID,
+                    },
+                  }
+                : {},
+            },
+            flatTimelineActivityTypeMaps: {
+              byUniversalIdentifier: flatTimelineActivityTypes,
+            },
+          }),
         },
-        flatTimelineActivityTypeMaps: {
-          byUniversalIdentifier: flatTimelineActivityTypes,
+      },
+      {
+        provide: WorkspaceMigrationValidateBuildAndRunService,
+        useValue: {
+          validateBuildAndRunWorkspaceMigration,
         },
-      }),
-    } as unknown as WorkspaceCacheService,
-    {
-      validateBuildAndRunWorkspaceMigration,
-    } as unknown as WorkspaceMigrationValidateBuildAndRunService,
-  );
+      },
+    ],
+  }).compile();
+  const command = module.get(AddAttachmentTimelineActivityTypesCommand);
 
   return {
     command,
@@ -90,7 +104,8 @@ const runCommand = (command: AddAttachmentTimelineActivityTypesCommand) =>
 
 describe('AddAttachmentTimelineActivityTypesCommand', () => {
   it('creates both frozen attachment activity definitions', async () => {
-    const { command, validateBuildAndRunWorkspaceMigration } = buildCommand({});
+    const { command, validateBuildAndRunWorkspaceMigration } =
+      await buildCommand({});
 
     await runCommand(command);
 
@@ -117,11 +132,12 @@ describe('AddAttachmentTimelineActivityTypesCommand', () => {
   });
 
   it('only creates a missing definition when an upgrade resumes', async () => {
-    const { command, validateBuildAndRunWorkspaceMigration } = buildCommand({
-      flatTimelineActivityTypes: {
-        [LINKED_TYPE_UNIVERSAL_IDENTIFIER]: {},
-      },
-    });
+    const { command, validateBuildAndRunWorkspaceMigration } =
+      await buildCommand({
+        flatTimelineActivityTypes: {
+          [LINKED_TYPE_UNIVERSAL_IDENTIFIER]: {},
+        },
+      });
 
     await runCommand(command);
 
@@ -139,17 +155,18 @@ describe('AddAttachmentTimelineActivityTypesCommand', () => {
   it('uses another member when the preferred attachment morph field is missing', async () => {
     const alternativeFieldUniversalIdentifier =
       '00000000-0000-4000-8000-000000000005';
-    const { command, validateBuildAndRunWorkspaceMigration } = buildCommand({
-      attachmentTargetFields: {
-        [alternativeFieldUniversalIdentifier]: {
-          id: '00000000-0000-4000-8000-000000000006',
-          objectMetadataId: ATTACHMENT_OBJECT_ID,
-          type: 'MORPH_RELATION',
-          morphId: ATTACHMENT_TARGET_MORPH_ID,
-          universalIdentifier: alternativeFieldUniversalIdentifier,
+    const { command, validateBuildAndRunWorkspaceMigration } =
+      await buildCommand({
+        attachmentTargetFields: {
+          [alternativeFieldUniversalIdentifier]: {
+            id: '00000000-0000-4000-8000-000000000006',
+            objectMetadataId: ATTACHMENT_OBJECT_ID,
+            type: 'MORPH_RELATION',
+            morphId: ATTACHMENT_TARGET_MORPH_ID,
+            universalIdentifier: alternativeFieldUniversalIdentifier,
+          },
         },
-      },
-    });
+      });
 
     await runCommand(command);
 
@@ -175,7 +192,7 @@ describe('AddAttachmentTimelineActivityTypesCommand', () => {
       command,
       findStandardApplication,
       validateBuildAndRunWorkspaceMigration,
-    } = buildCommand({
+    } = await buildCommand({
       attachmentTargetFields: {
         '00000000-0000-4000-8000-000000000007': {
           id: '00000000-0000-4000-8000-000000000007',
@@ -198,7 +215,7 @@ describe('AddAttachmentTimelineActivityTypesCommand', () => {
       command,
       findStandardApplication,
       validateBuildAndRunWorkspaceMigration,
-    } = buildCommand({
+    } = await buildCommand({
       flatTimelineActivityTypes: {
         [LINKED_TYPE_UNIVERSAL_IDENTIFIER]: {},
         [UNLINKED_TYPE_UNIVERSAL_IDENTIFIER]: {},
@@ -216,7 +233,7 @@ describe('AddAttachmentTimelineActivityTypesCommand', () => {
       command,
       findStandardApplication,
       validateBuildAndRunWorkspaceMigration,
-    } = buildCommand({ hasTimelineActivity: false });
+    } = await buildCommand({ hasTimelineActivity: false });
 
     await runCommand(command);
 
@@ -225,7 +242,9 @@ describe('AddAttachmentTimelineActivityTypesCommand', () => {
   });
 
   it('fails the upgrade when metadata creation fails', async () => {
-    const { command } = buildCommand({ migrationResult: { status: 'fail' } });
+    const { command } = await buildCommand({
+      migrationResult: { status: 'fail' },
+    });
 
     await expect(runCommand(command)).rejects.toThrow(
       'Failed to add attachment timeline activity types',

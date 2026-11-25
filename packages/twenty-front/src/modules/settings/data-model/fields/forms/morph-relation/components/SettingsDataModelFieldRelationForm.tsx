@@ -178,7 +178,7 @@ export const SettingsDataModelFieldRelationForm = ({
           defaultValue={defaultIconOnDestination}
           render={({ field: { onChange, value } }) => (
             <IconPicker
-              disabled={disableFieldEdition}
+              disabled={disabled || disableFieldEdition}
               dropdownId="field-destination-icon-picker"
               selectedIconKey={value ?? undefined}
               onChange={({ iconKey }) => onChange(iconKey)}
@@ -193,7 +193,7 @@ export const SettingsDataModelFieldRelationForm = ({
           render={({ field: { onChange, value } }) => (
             <SettingsTextInput
               instanceId="relation-field-label"
-              disabled={disableFieldEdition}
+              disabled={disabled || disableFieldEdition}
               placeholder={t`Field name`}
               value={value}
               onChange={onChange}

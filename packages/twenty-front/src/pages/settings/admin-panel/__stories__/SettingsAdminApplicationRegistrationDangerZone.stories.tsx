@@ -63,7 +63,7 @@ const meta: Meta<typeof SettingsAdminApplicationRegistrationDangerZone> = {
     finishTransferRequest = undefined;
     jotaiStore.set(currentUserWorkspaceState.atom, {
       permissionFlags: [PermissionFlagType.APPLICATIONS],
-      objectsPermissions: [],
+      objectRecordsPermissions: [],
       twoFactorAuthenticationMethodSummary: [],
       isImpersonating: false,
     });

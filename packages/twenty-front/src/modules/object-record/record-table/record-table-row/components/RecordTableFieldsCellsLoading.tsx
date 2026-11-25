@@ -38,7 +38,7 @@ export const RecordTableFieldsCellsLoading = ({
 
         return (
           <RecordTableCellLoading
-            key={visibleRecordFields[columnIndex].fieldMetadataItemId}
+            key={visibleRecordFields[columnIndex].id}
             recordFieldIndex={columnIndex}
             isSelected={isSelected}
           />

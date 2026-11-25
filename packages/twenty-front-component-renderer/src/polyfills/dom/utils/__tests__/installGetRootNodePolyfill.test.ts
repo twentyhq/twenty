@@ -2,12 +2,11 @@ import { Window } from '@remote-dom/polyfill';
 
 import { installGetRootNodePolyfill } from '../installGetRootNodePolyfill';
 
-const createPolyfillDocument = (): Document => {
+const createPolyfillDocument = () => {
   const polyfillWindow = new Window();
 
   installGetRootNodePolyfill(polyfillWindow.Node.prototype);
-
-  return polyfillWindow.document as unknown as Document;
+  return polyfillWindow.document;
 };
 
 describe('installGetRootNodePolyfill', () => {

@@ -11,6 +11,7 @@ type WorkflowCodeFieldsLeafKind =
   | 'array'
   | 'boolean'
   | 'enum'
+  | 'enum-array'
   | 'number'
   | 'record'
   | 'record-array'
@@ -39,6 +40,12 @@ export const getWorkflowCodeFieldsLeafKind = (
   }
 
   if (property.type === 'array' || property.type === FieldMetadataType.ARRAY) {
+    const itemKind = getWorkflowCodeFieldsLeafKind(property.items);
+
+    if (itemKind === 'enum') {
+      return 'enum-array';
+    }
+
     return 'array';
   }
 

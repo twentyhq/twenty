@@ -1,6 +1,4 @@
 import { type CombinedGraphQLErrors } from '@apollo/client/errors';
-import { t } from '@lingui/core/macro';
-
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { classifyMetadataError } from '@/metadata-error-handler/utils/classifyMetadataError';
 import {
@@ -9,8 +7,10 @@ import {
 } from 'twenty-shared/metadata';
 import { CrudOperationType } from 'twenty-shared/types';
 import { useToast } from 'twenty-ui/components/feedback';
+import { useLingui } from '@lingui/react/macro';
 
 export const useMetadataErrorHandler = () => {
+  const { t } = useLingui();
   const { enqueueToast } = useToast();
 
   const TRANSLATED_OPERATION_TYPE = {
@@ -44,6 +44,7 @@ export const useMetadataErrorHandler = () => {
     pageLayoutWidget: t`page layout widget`,
     rowLevelPermissionPredicate: t`row level permission predicate`,
     rowLevelPermissionPredicateGroup: t`row level permission predicate group`,
+    rowLevelPermissionRule: t`row level permission rule`,
     viewFilterGroup: t`view filter group`,
     commandMenuItem: t`command menu item`,
     frontComponent: t`front component`,
@@ -58,6 +59,7 @@ export const useMetadataErrorHandler = () => {
     searchFieldMetadata: t`search field metadata`,
     timelineActivityType: t`timeline activity type`,
     settingsMenuItem: t`settings menu item`,
+    fieldMetadataOption: t`field option`,
     relatedRecordPath: t`related record path`,
     validationRule: t`validation rule`,
     workflow: t`workflow`,

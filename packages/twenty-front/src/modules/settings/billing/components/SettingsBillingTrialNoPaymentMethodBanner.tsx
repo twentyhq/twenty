@@ -5,7 +5,6 @@ import { BILLING_PLAN_LABELS } from '@/settings/billing/constants/BillingPlanLab
 import { getSubscriptionPlanKey } from '@/settings/billing/utils/getSubscriptionPlanKey';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useQuery } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
@@ -14,6 +13,7 @@ import {
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 import { formatDate } from '~/utils/date-utils';
+import { useLingui } from '@lingui/react/macro';
 
 type SettingsBillingTrialNoPaymentMethodBannerProps = {
   currentBillingSubscription: NonNullable<
@@ -24,6 +24,7 @@ type SettingsBillingTrialNoPaymentMethodBannerProps = {
 export const SettingsBillingTrialNoPaymentMethodBanner = ({
   currentBillingSubscription,
 }: SettingsBillingTrialNoPaymentMethodBannerProps) => {
+  const { t } = useLingui();
   const { redirect } = useRedirect();
 
   const hasPermissionToManageBilling = useHasPermissionFlag(

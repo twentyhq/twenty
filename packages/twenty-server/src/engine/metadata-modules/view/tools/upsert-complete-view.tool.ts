@@ -1,11 +1,9 @@
 import { ToolCategory } from 'twenty-shared/ai';
-import { PermissionFlagType } from 'twenty-shared/constants';
 import {
   AggregateOperations,
   ViewCalendarLayout,
   ViewFilterOperand,
   ViewSortDirection,
-  ViewVisibility,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
@@ -14,9 +12,10 @@ import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/def
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { VIEW_WRITE_BY_VISIBILITY_ACCESS_POLICY } from 'src/engine/metadata-modules/view/constants/view-write-by-visibility-access-policy.constant';
 import { CREATABLE_VIEW_TYPES } from 'src/engine/metadata-modules/view/tools/constants/creatable-view-types.constant';
 import { CompleteViewUpsertService } from 'src/engine/metadata-modules/view/tools/services/complete-view-upsert.service';
-import { ViewToolAccessService } from 'src/engine/metadata-modules/view/tools/services/view-tool-access.service';
+import { ViewAccessService } from 'src/engine/permissions/metadata-permissions/services/view-access.service';
 import { ViewToolIdentifierService } from 'src/engine/metadata-modules/view/tools/services/view-tool-identifier.service';
 
 const fieldReferenceShape = {
@@ -103,11 +102,11 @@ const upsertCompleteViewInputSchema = z.object({
     .describe(
       'View type. Defaults to TABLE on create. Use the *_WIDGET variants for views backing a dashboard widget so they stay out of record index view pickers.',
     ),
-  visibility: z
-    .enum([ViewVisibility.WORKSPACE, ViewVisibility.UNLISTED])
+  isPrivate: z
+    .boolean()
     .optional()
     .describe(
-      'View visibility. Defaults to WORKSPACE on create, which is almost always the best fit — it makes the view visible to everyone and is REQUIRED for any view backing a dashboard widget. Only set UNLISTED for a private, personal view a specific user explicitly asked for, AND only when a user identity is available. An UNLISTED view created without an owner is invisible to everyone (its dashboard widget renders blank), so never use UNLISTED for widget-backing views.',
+      'Whether the view is private to its creator. Defaults to false on create, which is almost always the best fit: the view is visible to everyone, as REQUIRED for any view backing a dashboard widget. Only set true for a personal view a specific user explicitly asked for, AND only when a user identity is available. A private view created without a creator is invisible to everyone (its dashboard widget renders blank), so never make widget-backing views private.',
     ),
   mainGroupByFieldName: z
     .string()
@@ -165,8 +164,9 @@ const upsertCompleteViewInputSchema = z.object({
 
 @DefineTool({
   name: 'upsert_complete_view',
+  isDestructive: true,
   category: ToolCategory.VIEW,
-  requiredPermissionFlags: [PermissionFlagType.VIEWS],
+  accessPolicy: VIEW_WRITE_BY_VISIBILITY_ACCESS_POLICY,
   description: `Create or update a complete view — the view plus its fields (columns), filters, and sorts — in a single call.
 
 IDENTITY: Omit "id" to CREATE a new view (requires objectNameSingular). Provide "id" to UPDATE an existing view.
@@ -188,7 +188,7 @@ export class UpsertCompleteViewTool extends BaseTool<
 
   constructor(
     private readonly completeViewUpsertService: CompleteViewUpsertService,
-    private readonly viewToolAccessService: ViewToolAccessService,
+    private readonly viewAccessService: ViewAccessService,
     private readonly viewToolIdentifierService: ViewToolIdentifierService,
   ) {
     super();
@@ -196,18 +196,23 @@ export class UpsertCompleteViewTool extends BaseTool<
 
   async execute({
     input,
-    context: { workspaceId, userWorkspaceId },
+    context: { workspaceId, userWorkspaceId, authContext },
   }: ToolExecuteArgs<
     typeof upsertCompleteViewInputSchema
   >): Promise<ToolOutput> {
     const existingView = isDefined(input.id)
-      ? await this.viewToolAccessService.findViewEditableByUserOrThrow({
+      ? await this.viewAccessService.findModifiableViewOrThrow({
           viewId: input.id,
-          workspaceId,
-          userWorkspaceId,
-          operation: 'update',
+          accessContext: { workspaceId, userWorkspaceId, authContext },
         })
       : undefined;
+
+    if (!isDefined(existingView)) {
+      await this.viewAccessService.canUserCreateView({
+        isPrivate: input.isPrivate ?? false,
+        accessContext: { workspaceId, userWorkspaceId, authContext },
+      });
+    }
 
     const {
       existingViewId,
@@ -268,13 +273,13 @@ export class UpsertCompleteViewTool extends BaseTool<
 
     const view = await this.completeViewUpsertService.upsertCompleteView({
       workspaceId,
-      userWorkspaceId,
+      authContext,
       existingViewId,
       objectMetadataId,
       name: input.name,
       icon: input.icon,
       type: input.type,
-      visibility: input.visibility,
+      isPrivate: input.isPrivate,
       mainGroupByFieldMetadataId,
       kanbanAggregateOperation: input.kanbanAggregateOperation,
       kanbanAggregateOperationFieldMetadataId,
@@ -295,7 +300,7 @@ export class UpsertCompleteViewTool extends BaseTool<
         objectMetadataId,
         type: view.type,
         icon: view.icon,
-        visibility: view.visibility,
+        isPrivate: view.isPrivate,
         fieldCount: view.viewFields?.length ?? 0,
         filterCount: view.viewFilters?.length ?? 0,
         sortCount: view.viewSorts?.length ?? 0,

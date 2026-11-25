@@ -1,6 +1,8 @@
 import { type ToolCatalogOptions } from 'src/engine/core-modules/tool-provider/types/tool-catalog-options.type';
+import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 
 export type ToolRetrievalOptions = ToolCatalogOptions & {
+  isToolOffered?: (tool: ToolIndexEntry) => boolean;
   // Apply output compaction (strip nulls/empty values) to dispatch results
   // before returning. Chat enables this to reduce token usage in the
   // conversation context; MCP and workflow agents leave raw output intact.

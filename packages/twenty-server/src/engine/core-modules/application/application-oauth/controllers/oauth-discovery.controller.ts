@@ -3,6 +3,7 @@ import { Controller, Get, Req, UseGuards } from '@nestjs/common';
 import { type Request } from 'express';
 import { ApiPath } from 'twenty-shared/types';
 
+import { OAUTH_PROTECTED_RESOURCE_PATHS } from 'src/engine/core-modules/application/application-oauth/constants/oauth-protected-resource-paths.constant';
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
@@ -11,6 +12,7 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { cleanServerUrl } from 'src/utils/clean-server-url';
 import { getRequestBaseUrl } from 'src/utils/get-request-base-url.util';
+import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-cli-application-registration.constant';
 
 @Controller(ApiPath.WellKnown)
 export class OAuthDiscoveryController {
@@ -35,7 +37,9 @@ export class OAuthDiscoveryController {
         : `${authorizeBase}/authorize?iss=${encodeURIComponent(issuer)}`;
 
     const cliRegistration =
-      await this.applicationRegistrationService.findOrCreateCliRegistration();
+      await this.applicationRegistrationService.findOrCreateBuiltInRegistrationOrThrow(
+        TWENTY_CLI_APPLICATION_REGISTRATION,
+      );
 
     return {
       issuer,
@@ -53,6 +57,7 @@ export class OAuthDiscoveryController {
         'refresh_token',
       ],
       code_challenge_methods_supported: ['S256'],
+      client_id_metadata_document_supported: true,
       token_endpoint_auth_methods_supported: ['client_secret_post', 'none'],
       revocation_endpoint_auth_methods_supported: ['client_secret_post'],
       introspection_endpoint_auth_methods_supported: ['client_secret_post'],
@@ -68,7 +73,10 @@ export class OAuthDiscoveryController {
   getProtectedResourceMetadataRoot(@Req() request: Request) {
     const base = getRequestBaseUrl(request);
 
-    return this.buildProtectedResourceMetadata(base, base);
+    return this.buildProtectedResourceMetadata(
+      base,
+      `${base}${OAUTH_PROTECTED_RESOURCE_PATHS.ROOT}`,
+    );
   }
 
   @Get('oauth-protected-resource/mcp')
@@ -76,7 +84,10 @@ export class OAuthDiscoveryController {
   getProtectedResourceMetadataMcp(@Req() request: Request) {
     const base = getRequestBaseUrl(request);
 
-    return this.buildProtectedResourceMetadata(base, `${base}/mcp`);
+    return this.buildProtectedResourceMetadata(
+      base,
+      `${base}${OAUTH_PROTECTED_RESOURCE_PATHS.MCP}`,
+    );
   }
 
   private buildProtectedResourceMetadata(base: string, resource: string) {

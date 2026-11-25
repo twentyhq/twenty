@@ -1,16 +1,14 @@
-import { type ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { createExecuteToolTool } from 'src/engine/core-modules/tool-provider/tools/execute-tool.tool';
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
 
 describe('createExecuteToolTool', () => {
   const context = {} as ToolContext;
 
-  const buildRegistry = () =>
-    ({
-      resolveAndExecute: jest
-        .fn()
-        .mockResolvedValue({ success: true, result: {} }),
-    }) as unknown as ToolRegistryService;
+  const buildRegistry = () => ({
+    resolveAndExecute: jest
+      .fn()
+      .mockResolvedValue({ success: true, result: {} }),
+  });
 
   it('executes tools the predicate allows', async () => {
     const toolRegistry = buildRegistry();

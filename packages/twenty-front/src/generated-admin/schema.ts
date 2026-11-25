@@ -145,6 +145,7 @@ export type AdminPanelUsageLimit = {
   __typename?: 'AdminPanelUsageLimit';
   burstValue?: Maybe<Scalars['BigInt']['output']>;
   createdAt: Scalars['DateTime']['output'];
+  endsAt?: Maybe<Scalars['DateTime']['output']>;
   id: Scalars['UUID']['output'];
   limitKind: Scalars['String']['output'];
   limitValue: Scalars['BigInt']['output'];
@@ -162,7 +163,7 @@ export type AdminPanelUsageLimitDefault = {
   __typename?: 'AdminPanelUsageLimitDefault';
   isOverridable: Scalars['Boolean']['output'];
   limitKind: Scalars['String']['output'];
-  limitValue: Scalars['BigInt']['output'];
+  limitValue?: Maybe<Scalars['BigInt']['output']>;
   operationType: UsageOperationType;
   overriddenByUsageLimitId?: Maybe<Scalars['UUID']['output']>;
   periodCount: Scalars['Int']['output'];
@@ -186,6 +187,28 @@ export type AdminPanelWorkspaceBilling = {
   stripeCustomerId?: Maybe<Scalars['String']['output']>;
   subscription?: Maybe<AdminPanelWorkspaceSubscription>;
   usage?: Maybe<AdminPanelWorkspaceUsage>;
+};
+
+export type AdminPanelWorkspaceBillingArrangement = {
+  __typename?: 'AdminPanelWorkspaceBillingArrangement';
+  comment?: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['DateTime']['output'];
+  creditAllowance?: Maybe<Scalars['Float']['output']>;
+  creditGrantId?: Maybe<Scalars['UUID']['output']>;
+  endDate?: Maybe<Scalars['DateTime']['output']>;
+  grantedBy?: Maybe<UserInfo>;
+  id: Scalars['UUID']['output'];
+  isManageable: Scalars['Boolean']['output'];
+  label: BillingArrangementLabel;
+  revokedBy?: Maybe<UserInfo>;
+  seatCapMode?: Maybe<BillingArrangementSeatCapMode>;
+  seats?: Maybe<Scalars['Int']['output']>;
+  startsAt: Scalars['DateTime']['output'];
+  status: BillingArrangementStatus;
+  stripeCreditNoteId?: Maybe<Scalars['String']['output']>;
+  stripeDiscountId?: Maybe<Scalars['String']['output']>;
+  type: BillingArrangementType;
+  usageLimit?: Maybe<UsageLimit>;
 };
 
 export type AdminPanelWorkspaceCreditGrant = {
@@ -390,6 +413,7 @@ export type ApplicationRegistrationInstalledWorkspaces = {
 };
 
 export enum ApplicationRegistrationSourceType {
+  BUNDLED = 'BUNDLED',
   LOCAL = 'LOCAL',
   NPM = 'NPM',
   OAUTH_ONLY = 'OAUTH_ONLY',
@@ -422,6 +446,39 @@ export type ApplicationRegistrationVariable = {
   updatedAt: Scalars['DateTime']['output'];
   value?: Maybe<Scalars['String']['output']>;
 };
+
+/** Why a billing arrangement was granted, used for reporting */
+export enum BillingArrangementLabel {
+  APP_OWNER_WORKSPACE = 'APP_OWNER_WORKSPACE',
+  COMPENSATION = 'COMPENSATION',
+  OTHER = 'OTHER'
+}
+
+/** Whether members above committed seats are billed or blocked */
+export enum BillingArrangementSeatCapMode {
+  HARD = 'HARD',
+  SOFT = 'SOFT'
+}
+
+/** Whether a billing arrangement applies now, later, no longer, or only once */
+export enum BillingArrangementStatus {
+  ACTIVE = 'ACTIVE',
+  ENDED = 'ENDED',
+  ONE_TIME = 'ONE_TIME',
+  SCHEDULED = 'SCHEDULED'
+}
+
+/** The kind of commercial exception a billing arrangement grants */
+export enum BillingArrangementType {
+  COMMITTED_SEATS = 'COMMITTED_SEATS',
+  CREDIT_GRANT = 'CREDIT_GRANT',
+  DISCOUNT = 'DISCOUNT',
+  FREE_SEATS = 'FREE_SEATS',
+  LIMIT_OVERRIDE = 'LIMIT_OVERRIDE',
+  REFUND = 'REFUND',
+  TRIAL_EXTENSION = 'TRIAL_EXTENSION',
+  WORKSPACE_CREDIT_ALLOWANCE = 'WORKSPACE_CREDIT_ALLOWANCE'
+}
 
 /** The origin of a batch of credits granted to a workspace */
 export enum BillingCreditGrantType {
@@ -537,19 +594,29 @@ export type FeatureFlag = {
 };
 
 export enum FeatureFlagKey {
+  IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED = 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED',
   IS_AI_CHAT_COMPONENT_BUILDER_ENABLED = 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED',
   IS_AI_CHAT_INBOX_ENABLED = 'IS_AI_CHAT_INBOX_ENABLED',
-  IS_APP_PREFERENCES_ENABLED = 'IS_APP_PREFERENCES_ENABLED',
-  IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED = 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED',
+  IS_AI_DATA_POLICY_ENABLED = 'IS_AI_DATA_POLICY_ENABLED',
+  IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED = 'IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED',
+  IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED = 'IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED',
+  IS_CHANNEL_VISIBILITY_ENFORCED_ON_API_KEYS = 'IS_CHANNEL_VISIBILITY_ENFORCED_ON_API_KEYS',
+  IS_CHANNEL_VISIBILITY_RLS_ENABLED = 'IS_CHANNEL_VISIBILITY_RLS_ENABLED',
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED = 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED',
+  IS_CUSTOMIZABLE_SIDEBAR_ENABLED = 'IS_CUSTOMIZABLE_SIDEBAR_ENABLED',
+  IS_FORMULA_FIELD_ENABLED = 'IS_FORMULA_FIELD_ENABLED',
   IS_GETTING_STARTED_ENABLED = 'IS_GETTING_STARTED_ENABLED',
+  IS_INBOX_OBJECT_NAMING_ENABLED = 'IS_INBOX_OBJECT_NAMING_ENABLED',
+  IS_INTERNAL_IMPORT_COLUMN_ENABLED = 'IS_INTERNAL_IMPORT_COLUMN_ENABLED',
+  IS_LOOKUP_COLUMNS_ENABLED = 'IS_LOOKUP_COLUMNS_ENABLED',
   IS_MCP_SERVERS_ENABLED = 'IS_MCP_SERVERS_ENABLED',
-  IS_PRIVATE_RECORD_ENABLED = 'IS_PRIVATE_RECORD_ENABLED',
-  IS_RECORD_CREATION_FORM_ENABLED = 'IS_RECORD_CREATION_FORM_ENABLED',
+  IS_PRIVATE_RECORDS_ENABLED = 'IS_PRIVATE_RECORDS_ENABLED',
+  IS_RECORD_GROUP_TABS_ENABLED = 'IS_RECORD_GROUP_TABS_ENABLED',
   IS_RECORD_LEVEL_SHARING_ENABLED = 'IS_RECORD_LEVEL_SHARING_ENABLED',
   IS_RELATED_RECORD_PATHS_ENABLED = 'IS_RELATED_RECORD_PATHS_ENABLED',
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT = 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT',
-  IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED = 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED'
+  IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED = 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED',
+  IS_WIDGET_CONDITIONAL_AVAILABILITY_ENABLED = 'IS_WIDGET_CONDITIONAL_AVAILABILITY_ENABLED'
 }
 
 export type FindApplicationRegistrationInstalledWorkspacesInput = {
@@ -660,11 +727,13 @@ export type Mutation = {
   addModelToProvider: Scalars['Boolean']['output'];
   clearMaintenanceMode: Scalars['Boolean']['output'];
   createDatabaseConfigVariable: Scalars['Boolean']['output'];
+  createWorkspaceBillingArrangement: AdminPanelWorkspaceBillingArrangement;
   createWorkspaceDataExport: WorkspaceDataExport;
   createWorkspaceUsageLimit: AdminPanelUsageLimit;
   deleteDatabaseConfigVariable: Scalars['Boolean']['output'];
   deleteJobs: DeleteJobsResponse;
   deleteWorkspaceUsageLimit: Scalars['Boolean']['output'];
+  endWorkspaceBillingArrangement: AdminPanelWorkspaceBillingArrangement;
   generateTwoFactorAuthenticationRecoveryCodeAsServerAdmin: TwoFactorAuthenticationRecoveryCode;
   grantWorkspaceCredits: AdminPanelWorkspaceCreditGrant;
   refreshUpgradeStatus: InstanceAndAllWorkspacesUpgradeStatus;
@@ -683,7 +752,6 @@ export type Mutation = {
   updateDatabaseConfigVariable: Scalars['Boolean']['output'];
   updateServerAdminAccess: ServerAdmin;
   updateWorkspaceFeatureFlag: Scalars['Boolean']['output'];
-  updateWorkspaceUsageLimit: AdminPanelUsageLimit;
 };
 
 
@@ -705,12 +773,27 @@ export type MutationCreateDatabaseConfigVariableArgs = {
 };
 
 
+export type MutationCreateWorkspaceBillingArrangementArgs = {
+  comment?: InputMaybe<Scalars['String']['input']>;
+  creditAllowance?: InputMaybe<Scalars['Float']['input']>;
+  endsAt?: InputMaybe<Scalars['DateTime']['input']>;
+  label: BillingArrangementLabel;
+  seatCapMode?: InputMaybe<BillingArrangementSeatCapMode>;
+  seats?: InputMaybe<Scalars['Int']['input']>;
+  type: BillingArrangementType;
+  workspaceId: Scalars['UUID']['input'];
+};
+
+
 export type MutationCreateWorkspaceDataExportArgs = {
   workspaceId: Scalars['UUID']['input'];
 };
 
 
 export type MutationCreateWorkspaceUsageLimitArgs = {
+  comment?: InputMaybe<Scalars['String']['input']>;
+  endsAt?: InputMaybe<Scalars['DateTime']['input']>;
+  label?: InputMaybe<BillingArrangementLabel>;
   payload: CreateUsageLimitInput;
   workspaceId: Scalars['UUID']['input'];
 };
@@ -729,6 +812,12 @@ export type MutationDeleteJobsArgs = {
 
 export type MutationDeleteWorkspaceUsageLimitArgs = {
   usageLimitId: Scalars['UUID']['input'];
+  workspaceId: Scalars['UUID']['input'];
+};
+
+
+export type MutationEndWorkspaceBillingArrangementArgs = {
+  billingArrangementId: Scalars['UUID']['input'];
   workspaceId: Scalars['UUID']['input'];
 };
 
@@ -833,12 +922,6 @@ export type MutationUpdateWorkspaceFeatureFlagArgs = {
   workspaceId: Scalars['UUID']['input'];
 };
 
-
-export type MutationUpdateWorkspaceUsageLimitArgs = {
-  payload: UpdateUsageLimitInput;
-  workspaceId: Scalars['UUID']['input'];
-};
-
 export type PaginatedApplicationRegistrations = {
   __typename?: 'PaginatedApplicationRegistrations';
   hasMore: Scalars['Boolean']['output'];
@@ -879,6 +962,7 @@ export type Query = {
   userLookupAdminPanel: UserLookup;
   versionInfo: VersionInfo;
   workspaceBillingAdminPanel?: Maybe<AdminPanelWorkspaceBilling>;
+  workspaceBillingArrangements: Array<AdminPanelWorkspaceBillingArrangement>;
   workspaceDataExports: Array<WorkspaceDataExport>;
   workspaceLookupAdminPanel: UserLookup;
   workspaceUsageLimits: AdminPanelWorkspaceUsageLimits;
@@ -998,6 +1082,11 @@ export type QueryUserLookupAdminPanelArgs = {
 
 
 export type QueryWorkspaceBillingAdminPanelArgs = {
+  workspaceId: Scalars['UUID']['input'];
+};
+
+
+export type QueryWorkspaceBillingArrangementsArgs = {
   workspaceId: Scalars['UUID']['input'];
 };
 
@@ -1156,11 +1245,6 @@ export type UpdateApplicationRegistrationVariablePayload = {
   value?: InputMaybe<Scalars['String']['input']>;
 };
 
-export type UpdateUsageLimitInput = {
-  id: Scalars['UUID']['input'];
-  payload: CreateUsageLimitInput;
-};
-
 export enum UpgradeHealth {
   BEHIND = 'BEHIND',
   FAILED = 'FAILED',
@@ -1174,6 +1258,23 @@ export type UsageBreakdownItem = {
   label?: Maybe<Scalars['String']['output']>;
   userCreditsUsed: Scalars['Float']['output'];
   workspaceCreditsUsed: Scalars['Float']['output'];
+};
+
+export type UsageLimit = {
+  __typename?: 'UsageLimit';
+  burstValue?: Maybe<Scalars['BigInt']['output']>;
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['UUID']['output'];
+  limitKind: Scalars['String']['output'];
+  limitValue: Scalars['BigInt']['output'];
+  operationType: UsageOperationType;
+  periodCount: Scalars['Int']['output'];
+  periodUnit: Scalars['String']['output'];
+  resourceType: UsageResourceType;
+  spenderId?: Maybe<Scalars['String']['output']>;
+  spenderType: Scalars['String']['output'];
+  unit: UsageUnit;
+  updatedAt: Scalars['DateTime']['output'];
 };
 
 export enum UsageOperationType {

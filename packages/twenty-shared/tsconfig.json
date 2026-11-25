@@ -21,6 +21,5 @@
     "**/__mocks__/**/*",
     "jest.config.mjs",
     "vite.config.*.ts"
-  ],
-  "exclude": ["src/individual-entry.ts"]
+  ]
 }

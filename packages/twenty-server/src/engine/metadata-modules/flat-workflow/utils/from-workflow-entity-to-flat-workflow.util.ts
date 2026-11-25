@@ -22,5 +22,12 @@ export const fromWorkflowEntityToFlatWorkflow = (
   return {
     ...workflowScalarEntity,
     ...relationUniversalIdentifiers,
+    navigationMenuItemIds: workflowEntity.navigationMenuItems.map(
+      ({ id }) => id,
+    ),
+    navigationMenuItemUniversalIdentifiers:
+      workflowEntity.navigationMenuItems.map(
+        ({ universalIdentifier }) => universalIdentifier,
+      ),
   };
 };

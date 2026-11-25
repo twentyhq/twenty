@@ -4,7 +4,6 @@ import { type TrackedJobStatus } from '@/queue-job/types/TrackedJobStatus';
 import { isTerminalJobState } from '@/queue-job/utils/isTerminalJobState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLazyQuery, useMutation, useQuery } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -16,6 +15,7 @@ import {
   JobState,
   TriggerInstallApplicationDocument,
 } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 type UseInstallMarketplaceAppArgs = {
   universalIdentifier?: string;
@@ -28,6 +28,7 @@ export const useInstallMarketplaceApp = ({
   universalIdentifier,
   onCompleted,
 }: UseInstallMarketplaceAppArgs = {}) => {
+  const { t } = useLingui();
   const { enqueueToast } = useToast();
   const [triggerInstallApplication, { loading: isTriggeringInstall }] =
     useMutation(TriggerInstallApplicationDocument);
@@ -120,7 +121,13 @@ export const useInstallMarketplaceApp = ({
       });
       onCompleted?.(installedApplication);
     },
-    [enqueueToast, findInstalledApplication, onCompleted, setCurrentWorkspace],
+    [
+      enqueueToast,
+      findInstalledApplication,
+      onCompleted,
+      setCurrentWorkspace,
+      t,
+    ],
   );
 
   const fetchInstallJobStatus = useCallback(
@@ -140,9 +147,9 @@ export const useInstallMarketplaceApp = ({
     fetchJobStatus: fetchInstallJobStatus,
   });
 
-  const install = async (): Promise<void> => {
+  const install = async (): Promise<boolean> => {
     if (!isDefined(universalIdentifier)) {
-      return;
+      return false;
     }
 
     try {
@@ -152,9 +159,13 @@ export const useInstallMarketplaceApp = ({
 
       const jobId = data?.triggerInstallApplication.jobId;
 
-      if (isDefined(jobId)) {
-        trackJob({ jobId, context: universalIdentifier });
+      if (!isDefined(jobId)) {
+        return false;
       }
+
+      trackJob({ jobId, context: universalIdentifier });
+
+      return true;
     } catch (error) {
       const graphqlMessage = error instanceof Error ? error.message : undefined;
 
@@ -162,6 +173,8 @@ export const useInstallMarketplaceApp = ({
         status: 'error',
         children: graphqlMessage ?? t`Failed to install the application.`,
       });
+
+      return false;
     }
   };
 

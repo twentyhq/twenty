@@ -133,7 +133,7 @@ Notas:
 
 ## Comprobar antes de gastar
 
-Un espacio de trabajo puede quedarse sin créditos. Cuando eso sucede, tu función se rechaza antes de que se inicie tu código, y el propio trabajo de la plataforma también se detiene: `runAgent` devuelve un error en lugar de ejecutarse, y los demás puntos de entrada de IA se rechazan directamente. `sendInboxMessage` no ejecuta ningún modelo ni añade ningún cargo de IA propio, aunque la función que lo llama se rechaza como cualquier otra; la respuesta de un miembro se cobra como cualquier turno de chat. Los hooks de desinstalación y desconexión son la excepción y siempre se ejecutan, por lo que una aplicación aún puede eliminarse correctamente. Una ejecución que logra pasar aún puede fallar más tarde, en una llamada de la plataforma que no escribió, si el espacio de trabajo se queda sin créditos durante la ejecución.
+Un espacio de trabajo puede quedarse sin créditos. Cuando eso sucede, tu función se rechaza antes de que se inicie tu código, y el propio trabajo de la plataforma también se detiene: `runAgent` devuelve un error en lugar de ejecutarse, y los demás puntos de entrada de IA se rechazan directamente. `sendInboxMessage` no ejecuta ningún modelo ni añade ningún cargo de IA propio, aunque la función que lo llama se rechaza como cualquier otra; la respuesta de un miembro se cobra como cualquier turno de chat. Los hooks de desinstalación y desconexión son la excepción y siempre se ejecutan, por lo que una aplicación aún puede eliminarse correctamente. Una ejecución que se lleva a cabo puede todavía fallar tarde, en una llamada de plataforma que no escribía, si el espacio de trabajo se queda a medio plazo; `ai. enerate` luego resuelve con `éxito: falso` y la razón en `error`.
 
 Pregunta primero:
 

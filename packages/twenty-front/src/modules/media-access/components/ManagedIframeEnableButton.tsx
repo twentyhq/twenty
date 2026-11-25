@@ -1,6 +1,7 @@
 import { MANAGED_IFRAME_ENABLE_BUTTON_INSET_PX } from '@/media-access/constants/ManagedIframeEnableButtonInsetPx';
 import { autoUpdate, hide, offset, useFloating } from '@floating-ui/react';
 import { styled } from '@linaria/react';
+import { FRONT_COMPONENT_HOST_UI_CLASS_NAME } from 'twenty-front-component-renderer';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -42,6 +43,7 @@ export const ManagedIframeEnableButton = ({
   return (
     <StyledControls
       ref={refs.setFloating}
+      className={FRONT_COMPONENT_HOST_UI_CLASS_NAME}
       style={{ ...floatingStyles, visibility: isHidden ? 'hidden' : 'visible' }}
     >
       <Button size="sm" variant="outline" onClick={onClick}>

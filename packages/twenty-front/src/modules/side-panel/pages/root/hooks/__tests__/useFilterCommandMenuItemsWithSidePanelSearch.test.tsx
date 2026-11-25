@@ -1,4 +1,5 @@
 import { renderHook } from '@testing-library/react';
+import { EMPTY_COMMAND_MENU_CONTEXT_API } from '@/command-menu-item/constants/EmptyCommandMenuContextApi';
 import { useFilterCommandMenuItemsWithSidePanelSearch } from '@/side-panel/pages/root/hooks/useFilterCommandMenuItemsWithSidePanelSearch';
 import {
   CommandMenuItemAvailabilityType,
@@ -7,13 +8,10 @@ import {
 } from '~/generated-metadata/graphql';
 import { type CommandMenuContextApi } from 'twenty-shared/types';
 
-const MOCK_CONTEXT_API = {
+const MOCK_CONTEXT_API: CommandMenuContextApi = {
+  ...EMPTY_COMMAND_MENU_CONTEXT_API,
   objectMetadataItem: { id: '', nameSingular: '', namePlural: '' },
-  numberOfSelectedRecords: 0,
-  selectedRecords: [],
-  isInSidePanel: false,
-  pageType: 'INDEX_PAGE',
-} as unknown as CommandMenuContextApi;
+};
 
 const buildMockItem = (
   overrides: Partial<CommandMenuItemFieldsFragment>,
@@ -39,6 +37,7 @@ const buildMockItem = (
   conditionalAvailabilityExpression: null,
   availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
   availabilityObjectMetadataId: null,
+  availabilityCoreObjectName: null,
   payload: null,
   isActive: true,
   ...overrides,

@@ -33,10 +33,10 @@ export function AffiliateProgramFaq() {
       />
       <SectionStack>
         <SectionIntro>
-          <Eyebrow>{i18n._(msg`FAQ`)}</Eyebrow>
+          <Eyebrow>{i18n._(msg`Questions`)}</Eyebrow>
           <HeadingMeasure>
             <Heading as="h2" size="lg" weight="light">
-              {i18n._(msg`Earning with *Twenty*`)}
+              {i18n._(msg`Becoming *a Twenty creator*`)}
             </Heading>
           </HeadingMeasure>
         </SectionIntro>

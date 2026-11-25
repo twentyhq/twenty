@@ -18,7 +18,7 @@ export const syncCallRecording = async ({
   callRecording,
   requestedAt,
 }: {
-  client: CoreApiClient;
+  client: Pick<CoreApiClient, 'query' | 'mutation'>;
   callRecording: SyncableCallRecording;
   requestedAt: string;
 }): Promise<SyncCallRecordingResult> => {

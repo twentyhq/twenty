@@ -176,7 +176,7 @@ You can also run type checking on your app without running tests:
 twenty app typecheck
 ```
 
-This runs `tsc --noEmit` against your app's `tsconfig.json` and reports any type errors. Scaffolded apps also ship a `yarn typecheck` script that covers test files too (`tsconfig.spec.json`).
+This checks your app's `tsconfig.json` with its installed TypeScript compiler, without emitting files, and reports any type errors. Scaffolded apps also ship a `yarn typecheck` script that covers test files too (`tsconfig.spec.json`).
 
 ## CI with GitHub Actions
 

@@ -17,6 +17,10 @@
   CSS background color of the outer card. Child sections have their own backgrounds.
 </ParamField>
 
+<ParamField body="Root.borderStyle" type="&quot;dashed&quot; | &quot;solid&quot;" default="solid">
+  Use a solid or dashed outer border.
+</ParamField>
+
 <ParamField body="Root.children" type="ReactNode">
   Card sections or other content.
 </ParamField>
@@ -27,6 +31,10 @@
 
 <ParamField body="Root.fullWidth" type="boolean">
   Sets the card width to 100% of its container.
+</ParamField>
+
+<ParamField body="Root.isSelected" type="boolean" default="false">
+  Highlights the outer border. Supply the matching accessible selection state on the interactive owner.
 </ParamField>
 
 <ParamField body="Root.ref" type="Ref&lt;HTMLDivElement&gt;">

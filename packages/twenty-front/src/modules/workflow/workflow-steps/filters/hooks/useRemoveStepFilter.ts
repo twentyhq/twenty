@@ -28,13 +28,17 @@ export const useRemoveStepFilter = () => {
         (filterGroup) => !isDefined(filterGroup.parentStepFilterGroupId),
       );
 
-      if (!isDefined(rootStepFilterGroup)) return;
+      if (!isDefined(rootStepFilterGroup)) {
+        return;
+      }
 
       const stepFilterToRemove = stepFilters.find(
         (filter) => filter.id === stepFilterId,
       );
 
-      if (!isDefined(stepFilterToRemove)) return;
+      if (!isDefined(stepFilterToRemove)) {
+        return;
+      }
 
       const updatedStepFilters = stepFilters.filter(
         (filter) => filter.id !== stepFilterId,

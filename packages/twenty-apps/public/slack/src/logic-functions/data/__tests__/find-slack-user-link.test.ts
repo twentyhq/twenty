@@ -1,4 +1,3 @@
-import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { findSlackUserLink } from 'src/logic-functions/data/find-slack-user-link';
@@ -8,7 +7,7 @@ const SLACK_USER_ID = 'U0123456789';
 
 const queryMock = vi.fn();
 
-const client = { query: queryMock } as unknown as CoreApiClient;
+const client = { query: queryMock };
 
 const buildQueryResult = (node: Record<string, unknown> | undefined) => ({
   slackUserLinks: { edges: node === undefined ? [] : [{ node }] },

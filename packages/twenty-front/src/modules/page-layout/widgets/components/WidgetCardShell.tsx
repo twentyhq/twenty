@@ -11,7 +11,7 @@ import { getWidgetCardContentPadding } from '@/page-layout/widgets/utils/getWidg
 import { isViewportFillingWidget } from '@/page-layout/widgets/utils/isViewportFillingWidget';
 import { WidgetCard } from '@/page-layout/widgets/widget-card/components/WidgetCard';
 import { WidgetCardContent } from '@/page-layout/widgets/widget-card/components/WidgetCardContent';
-import { WidgetCardHeader } from '@/page-layout/widgets/widget-card/components/WidgetCardHeader';
+import { PageLayoutWidgetCardHeader } from '@/page-layout/widgets/widget-card/components/PageLayoutWidgetCardHeader';
 import { styled } from '@linaria/react';
 import { type MouseEvent } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -98,7 +98,7 @@ export const WidgetCardShell = ({
         className="widget"
       >
         {showHeader && (
-          <WidgetCardHeader
+          <PageLayoutWidgetCardHeader
             className="widget-card-header"
             widgetId={widget.id}
             variant={variant}

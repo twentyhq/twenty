@@ -1,17 +1,17 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FeatureFlagKey, FieldMetadataType } from 'twenty-shared/types';
+import { DataSource } from 'typeorm';
 
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type CompiledStatement } from 'src/engine/twenty-orm/sql/utils/compile-named-parameters.util';
+import { type CompiledStatement } from 'src/engine/workspace-query-executor/utils/compile-named-parameters.util';
+import { NO_RECORD_READ_RESTRICTIONS } from 'src/engine/permissions/constants/no-record-read-restrictions.constant';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
-
-type WorkspaceRepositoryOptions = ConstructorParameters<
-  typeof WorkspaceRepository
->[0];
 
 const OBJECT_METADATA_ID = 'delivery-object-id';
 
@@ -78,82 +78,108 @@ const tableShape: WorkspaceTableShape = {
   hasDeletedAtColumn: true,
 };
 
-const EMPTY_FLAT_ENTITY_MAPS = {
-  byUniversalIdentifier: {},
-  universalIdentifierById: {},
-  universalIdentifiersByApplicationId: {},
-};
+const DISABLED_FEATURE_FLAGS_MAP = Object.values(FeatureFlagKey).reduce<
+  Record<string, boolean>
+>((featureFlagsMap, featureFlagKey) => {
+  featureFlagsMap[featureFlagKey] = false;
+
+  return featureFlagsMap;
+}, {});
 const API_KEY_ID = 'api-key-id';
 const ROLE_ID = 'role-id';
+
+const getStatementKind = (statement: CompiledStatement) =>
+  statement.text.split(' ')[0];
 
 const buildRepository = ({
   shouldBypassPermissionChecks = true,
   shouldSkipEventEmission,
+  statementResultsByKind = {},
+  computedColumnShapes,
 }: {
   shouldBypassPermissionChecks?: boolean;
   shouldSkipEventEmission: boolean;
+  statementResultsByKind?: Record<string, Record<string, unknown>[][]>;
+  computedColumnShapes?: WorkspaceTableShape['computedColumnShapes'];
 }) => {
   const executedStatements: CompiledStatement[] = [];
+  const emitDatabaseBatchEvent = jest.fn();
 
   const repository = new WorkspaceRepository({
-    tableShape,
+    tableShape: { ...tableShape, computedColumnShapes },
     flatObjectMetadata,
     internalContext: {
       workspaceId: 'workspace-id',
-      featureFlagsMap: {},
+      featureFlagsMap: DISABLED_FEATURE_FLAGS_MAP,
+      billingEntitlements: {},
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
+      flatIndexMaps: createEmptyFlatEntityMaps(),
+      permissionsPrincipals: undefined,
+      recordPermissions: {
+        isReadDisabled: jest.fn().mockResolvedValue(false),
+        assertCanRunOperationOrThrow: jest.fn(),
+        buildReadRecordsAccessSQLCondition: jest.fn().mockResolvedValue(true),
+        buildWriteRecordsAccessSQLCondition: jest.fn().mockResolvedValue(true),
+        assertCreatedRecordsMatchRowLevelPermissionsOrThrow: jest.fn(),
+        assertUpdatesKeepRecordAccessOrThrow: jest.fn(),
+      },
+      recordFieldPermissions: {
+        buildUnreadableFieldsSQLConditions: jest.fn().mockResolvedValue([]),
+      },
+      recordAccessGroupWrite: {
+        isWriteTransactionRequired: jest.fn().mockResolvedValue(false),
+        isRecordsBeforeWriteRequired: jest.fn().mockResolvedValue(false),
+        findRelatedRecordsBeforeDelete: jest.fn().mockResolvedValue([]),
+        recomputeAfterWrite: jest.fn().mockResolvedValue([]),
+      },
+      recordAccessGroupQueue: { queueRecompute: jest.fn() },
+      recordStock: {
+        assertRecordStockAvailable: jest.fn(),
+        acquireRecordStock: jest.fn(),
+        releaseRecordStock: jest.fn(),
+      },
       objectIdByNameSingular: { delivery: OBJECT_METADATA_ID },
-      eventEmitterService: { emitDatabaseBatchEvent: jest.fn() },
-      coreDataSource: { getRepository: () => ({}) },
-      userWorkspaceRoleMap: {},
-      apiKeyRoleMap: { [API_KEY_ID]: ROLE_ID },
-      roleIdsWithAllRecordsAccess: [ROLE_ID],
-      flatRowLevelPermissionPredicateMaps: EMPTY_FLAT_ENTITY_MAPS,
-      flatRowLevelPermissionPredicateGroupMaps: EMPTY_FLAT_ENTITY_MAPS,
+      eventEmitterService: { emitDatabaseBatchEvent },
+      coreDataSource: new DataSource({ type: 'postgres' }),
+      recordReadRestrictions: NO_RECORD_READ_RESTRICTIONS,
     },
     authContext: {
       type: 'apiKey',
       apiKey: { id: API_KEY_ID },
       workspace: { id: 'workspace-id' },
-    },
+    } as WorkspaceAuthContext,
     executor: {
       execute: async (statement: CompiledStatement) => {
         executedStatements.push(statement);
 
-        return [];
+        return (
+          statementResultsByKind[getStatementKind(statement)]?.shift() ?? []
+        );
       },
     },
-    objectRecordsPermissions: {
-      [OBJECT_METADATA_ID]: {
-        canReadObjectRecords: true,
-        canUpdateObjectRecords: true,
-        canSoftDeleteObjectRecords: true,
-        canDestroyObjectRecords: true,
-        restrictedFields: {},
+    permissionsPrincipals: {
+      workspaceId: 'workspace-id',
+      mainPrincipal: {
+        type: 'apiKey',
+        apiKeyId: 'api-key-id',
+        roleIds: [ROLE_ID],
       },
+      applicationPrincipal: { type: 'customApplication' },
     },
-    rolesPermissions: {
-      [ROLE_ID]: {
-        [OBJECT_METADATA_ID]: {
-          canReadObjectRecords: true,
-          canUpdateObjectRecords: true,
-          canSoftDeleteObjectRecords: true,
-          canDestroyObjectRecords: true,
-          restrictedFields: {},
-        },
-      },
-    },
-    rolePermissionConfig: { intersectionOf: { apiKeyRoleId: ROLE_ID } },
     shouldBypassPermissionChecks,
     shouldSkipEventEmission,
     tableShapeByObjectMetadataId: () => tableShape,
-  } as unknown as WorkspaceRepositoryOptions);
+    flatObjectMetadataByObjectMetadataId: () => flatObjectMetadata,
+    getRepositoryForObjectMetadataId: jest.fn(),
+    isTransactional: false,
+    runInNewTransaction: jest.fn(),
+  });
 
   const getExecutedStatementKinds = () =>
-    executedStatements.map((statement) => statement.text.split(' ')[0]);
+    executedStatements.map(getStatementKind);
 
-  return { repository, getExecutedStatementKinds };
+  return { repository, getExecutedStatementKinds, emitDatabaseBatchEvent };
 };
 
 describe('WorkspaceRepository mutations', () => {
@@ -211,6 +237,126 @@ describe('WorkspaceRepository mutations', () => {
         'UPDATE',
         'SELECT',
       ]);
+    });
+
+    it('should emit no event when a filtered update writes no rows', async () => {
+      const { repository, emitDatabaseBatchEvent } = buildRepository({
+        shouldSkipEventEmission: false,
+        statementResultsByKind: {
+          SELECT: [
+            [{ delivery_id: 'delivery-id', delivery_state: 'PENDING' }],
+            [],
+          ],
+          UPDATE: [[]],
+        },
+      });
+
+      const result = await repository.update(
+        { state: 'PENDING' },
+        { state: 'SENT' },
+      );
+
+      expect(result.affected).toBe(0);
+      expect(emitDatabaseBatchEvent).not.toHaveBeenCalled();
+    });
+
+    it('should recover an event only for the row returned by a filtered update', async () => {
+      const { repository, emitDatabaseBatchEvent } = buildRepository({
+        shouldSkipEventEmission: false,
+        statementResultsByKind: {
+          SELECT: [
+            [
+              { delivery_id: 'written-id', delivery_state: 'PENDING' },
+              { delivery_id: 'skipped-id', delivery_state: 'PENDING' },
+            ],
+            [],
+          ],
+          UPDATE: [[{ delivery_id: 'written-id' }]],
+        },
+      });
+
+      await repository.update({ state: 'PENDING' }, { state: 'SENT' });
+
+      expect(emitDatabaseBatchEvent).toHaveBeenCalledWith(
+        expect.objectContaining({
+          events: [
+            expect.objectContaining({
+              recordId: 'written-id',
+              properties: expect.objectContaining({
+                before: expect.objectContaining({ state: 'PENDING' }),
+                after: expect.objectContaining({ state: 'SENT' }),
+              }),
+            }),
+          ],
+        }),
+      );
+    });
+
+    it('should emit a destroy event only for the row returned by a filtered delete', async () => {
+      const { repository, emitDatabaseBatchEvent } = buildRepository({
+        shouldSkipEventEmission: false,
+        statementResultsByKind: {
+          SELECT: [
+            [
+              { delivery_id: 'written-id', delivery_state: 'PENDING' },
+              { delivery_id: 'skipped-id', delivery_state: 'PENDING' },
+            ],
+          ],
+          DELETE: [[{ delivery_id: 'written-id' }]],
+        },
+      });
+
+      await repository.delete({ state: 'PENDING' });
+
+      expect(emitDatabaseBatchEvent).toHaveBeenCalledWith(
+        expect.objectContaining({
+          events: [expect.objectContaining({ recordId: 'written-id' })],
+        }),
+      );
+    });
+
+    it('should leave computed fields out of event records', async () => {
+      const { repository, emitDatabaseBatchEvent } = buildRepository({
+        shouldSkipEventEmission: false,
+        computedColumnShapes: [
+          { columnName: 'state', sqlType: 'text', dependencies: [] },
+        ],
+        statementResultsByKind: {
+          SELECT: [[{ delivery_id: 'written-id', delivery_state: 'STALE' }]],
+          DELETE: [[{ delivery_id: 'written-id' }]],
+        },
+      });
+
+      await repository.delete({ id: 'written-id' });
+
+      const [[{ events }]] = emitDatabaseBatchEvent.mock.calls;
+
+      expect(events[0].properties.before).toEqual(
+        expect.not.objectContaining({ state: expect.anything() }),
+      );
+      expect(events[0].properties.before).toHaveProperty('id', 'written-id');
+    });
+
+    it('should emit no event when a soft delete writes no rows', async () => {
+      const { repository, emitDatabaseBatchEvent } = buildRepository({
+        shouldSkipEventEmission: false,
+        statementResultsByKind: {
+          SELECT: [
+            [{ delivery_id: 'delivery-id', delivery_deletedAt: null }],
+            [
+              {
+                delivery_id: 'delivery-id',
+                delivery_deletedAt: '2026-11-20T00:00:00.000Z',
+              },
+            ],
+          ],
+          UPDATE: [[]],
+        },
+      });
+
+      await repository.softDelete({ id: 'delivery-id' });
+
+      expect(emitDatabaseBatchEvent).not.toHaveBeenCalled();
     });
 
     it('should read the before-image before a delete', async () => {

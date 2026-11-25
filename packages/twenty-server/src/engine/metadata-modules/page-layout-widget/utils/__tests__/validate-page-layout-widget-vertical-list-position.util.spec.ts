@@ -31,7 +31,7 @@ describe('validatePageLayoutWidgetVerticalListPosition', () => {
       {
         ...validPosition,
         heightBehavior: 'FULL_PAGE',
-      } as unknown as PageLayoutWidgetVerticalListPosition,
+      },
       'Widget',
     );
 

@@ -1,13 +1,13 @@
 ---
 title: Crediti
-description: Un saldo semplice che alimenta i tuoi workflow, gli agenti AI e la chat AI — quanto vale un credito, fin dove può arrivare e come gestirlo.
+description: "Il saldo condiviso che alimenta i tuoi workflow, gli agenti AI e la chat AI, oltre all'utilizzo personale dell'AI di ciascun membro: quanto vale un credito, fino a dove arriva e come gestirlo."
 ---
 
 import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Cosa sono i crediti?
 
-I crediti sono un unico saldo che alimenta tutto ciò che eseguiamo per tuo conto e che ha un costo reale: **automazioni dei workflow**, **agenti AI** e la **chat AI**. Invece di destreggiarti tra quote separate per "automation runs" e "AI tokens", hai un unico saldo semplice da tenere d’occhio.
+I crediti del workspace sono un unico saldo, condiviso dall'intero workspace, che alimenta tutto ciò che eseguiamo per tuo conto e che ha un costo reale: **automazioni dei workflow**, **agenti AI** e la **chat AI**. Invece di destreggiarti tra quote separate per "automation runs" e "AI tokens", hai un unico saldo semplice da tenere d’occhio. Nei piani Pro e Organization, la chat AI utilizza prima l'[utilizzo personale dell'AI](#personal-ai-usage) di ciascun membro.
 
 **1 credito = $1 di utilizzo.** Un credito è semplicemente un dollaro di lavoro, quindi il tuo saldo è facile da capire — nessuna unità astratta da convertire.
 
@@ -51,21 +51,39 @@ Il costo varia in base al modello: un modello leggero è drasticamente più econ
 
 ## Cosa è incluso
 
-Ogni abbonamento include crediti e l'importo dipende dal tuo **ciclo di fatturazione**, non dal tuo piano:
+Ogni abbonamento include **crediti del workspace**, condivisi dall'intero workspace. L'importo dipende dal tuo piano e dal numero di utenti:
 
-| Ciclo di fatturazione | Crediti inclusi | Uso Equivalente            |
-| --------------------- | --------------- | -------------------------- |
-| Mensile               | 5/mese          | ~$5 di utilizzo ogni mese  |
-| Annuale               | 50/anno         | ~$50 di utilizzo ogni anno |
+| Piano          | Crediti inclusi                                  | Uso Equivalente                            |
+| -------------- | ------------------------------------------------ | ------------------------------------------ |
+| Pro            | 1 per utente al mese                             | ~$1 di utilizzo per utente ogni mese       |
+| Organizzazione | 4 per utente al mese                             | ~$4 di utilizzo per utente ogni mese       |
+| Piani Early    | 5 al mese o 50 all'anno con fatturazione annuale | ~$5 di utilizzo ogni mese o ~$50 ogni anno |
 
-Questi crediti sono pensati per coprire comodamente le automazioni quotidiane. Cinque crediti coprono decine di migliaia di passaggi di automazione standard o centinaia di messaggi rapidi di AI — anche se una manciata di grandi, le attività di agente multi-step possono utilizzarle più velocemente. Puoi effettuare una ricarica in qualsiasi momento (vedi sotto).
+Con la fatturazione annuale, l'assegnazione copre l'intero anno: 12 crediti per utente su Pro e 48 su Organization.
+
+Questi crediti sono pensati per coprire comodamente le automazioni quotidiane. Un credito copre circa 10.000 passaggi standard dei workflow o centinaia di messaggi AI rapidi, anche se alcune attività di agenti di grandi dimensioni e con più passaggi possono esaurirli più velocemente. Puoi aggiungere un pacchetto di crediti in qualsiasi momento (vedi sotto).
+
+## Utilizzo personale dell'AI
+
+Nei piani Pro e Organization, ogni membro riceve anche un'assegnazione settimanale di AI personale. La chat AI e la ricerca web la utilizzano prima dei crediti del workspace:
+
+| Piano          | Utilizzo personale dell'AI                   |
+| -------------- | -------------------------------------------- |
+| Pro            | Circa 100 attività AI per membro a settimana |
+| Organizzazione | Circa 500 attività AI per membro a settimana |
+
+Un'attività AI è una richiesta di chat con il modello predefinito; i modelli più intelligenti ne utilizzano di più. L'assegnazione si rinnova ogni lunedì alle 00:00 UTC. Gli agenti AI nei workflow vengono sempre eseguiti usando i crediti del workspace.
+
+Quando un membro esaurisce la propria assegnazione, le sue chat continuano a usare i crediti del workspace fino al rinnovo dell'assegnazione. Per mettere invece in pausa le sue chat, un membro con l'autorizzazione alle impostazioni **Fatturazione** può disattivare **Usa i crediti del workspace dopo che un membro raggiunge il proprio limite** in **Impostazioni → Fatturazione**. I piani Early non prevedono un utilizzo personale dell'AI, quindi la chat AI usa i crediti del workspace.
 
 ## Riporto dei crediti
 
-I crediti non utilizzati vengono riportati automaticamente al periodo di fatturazione successivo.
+I crediti inclusi nei piani Pro e Organization vengono utilizzati per primi e si rinnovano a ogni periodo di fatturazione. Non vengono riportati.
 
-* **Cap**: Il rollover è limitato alla piena allocazione di un periodo, quindi non potrai mai trasportare più di quanto il tuo ciclo di fatturazione fornisca per periodo.
-* **Visibilità**: Quando sono disponibili crediti riportati, compaiono come una voce separata **Crediti riportati** in **Impostazioni → Fatturazione**, accanto al saldo **Totale disponibile**.
+I crediti non utilizzati di un pacchetto di crediti e i crediti inclusi nei piani Early vengono riportati automaticamente al periodo di fatturazione successivo.
+
+* **Limite**: il riporto è limitato all'assegnazione di un periodo, quindi questi crediti non si accumulano mai fino a superare il doppio di quanto fornisce un periodo.
+* La sezione **Crediti** in **Impostazioni → Fatturazione** mostra quali crediti provengono dal tuo piano e quali dal tuo pacchetto di crediti, oltre a quanti possono essere riportati.
 
 ## Monitoraggio dell'utilizzo
 
@@ -79,11 +97,11 @@ Rivedere questo regolarmente rende facile individuare in anticipo un workflow pe
 
 ## Hai bisogno di più crediti?
 
-Se esaurisci i crediti — o vuoi un margine prima di una grande iniziativa di automazione — puoi acquistare pacchetti di crediti aggiuntivi in qualsiasi momento:
+Se esaurisci i crediti o vuoi un margine prima di una grande iniziativa di automazione, puoi aggiungere un pacchetto di crediti in qualsiasi momento. I pacchetti costano $1 per credito, a partire da $20 al mese, e si rinnovano con il tuo abbonamento:
 
 1. Vai a **Impostazioni → Fatturazione**
-2. Clicca sul pulsante **Increase**
-3. Seleziona l'importo necessario e accetta le modifiche
+2. Nella sezione **Crediti**, fai clic su **Gestisci** oppure su una delle scorciatoie **Aumenta a $…**
+3. Scegli un pacchetto di crediti e conferma
 
 I crediti acquistati vengono aggiunti immediatamente al tuo saldo disponibile.
 

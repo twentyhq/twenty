@@ -14,8 +14,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
@@ -24,13 +23,9 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
   ApplicationExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
 )
-export class ApplicationMonitoringResolver {
-  constructor(
-    private readonly applicationMonitoringService: ApplicationMonitoringService,
-  ) {}
-
-  @UseGuards(
-    AuthPrincipalGuard({
+@UseGuards(
+  AccessPolicyGuard({
+    authPrincipals: {
       userSession: {
         standard: true,
         impersonated: true,
@@ -40,10 +35,16 @@ export class ApplicationMonitoringResolver {
       apiKey: false,
       oauthClient: false,
       application: false,
-    }),
-    SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
-    ApplicationTargetGuard,
-  )
+    },
+    requiredPermissionFlags: [PermissionFlagType.API_KEYS_AND_WEBHOOKS],
+  }),
+)
+export class ApplicationMonitoringResolver {
+  constructor(
+    private readonly applicationMonitoringService: ApplicationMonitoringService,
+  ) {}
+
+  @UseGuards(ApplicationTargetGuard)
   @Query(() => ApplicationMonitoringDTO)
   async findApplicationRegistrationMonitoring(
     @ApplicationTargetArg('id', {

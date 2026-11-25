@@ -1,4 +1,4 @@
-import { WorkflowCoreModule } from 'src/engine/core-modules/workflow/workflow-core.module';
+import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/workflow-version-core.module';
 import { Module } from '@nestjs/common';
 
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
@@ -20,6 +20,7 @@ import { HttpRequestActionModule } from 'src/modules/workflow/workflow-executor/
 import { IfElseActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/if-else/if-else-action.module';
 import { IteratorActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/iterator-action.module';
 import { LogicFunctionActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/logic-function/logic-function-action.module';
+import { McpToolActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/mcp-tool-action.module';
 import { MailSenderActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/mail-sender-action.module';
 import { SendChatMessageActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/send-chat-message/send-chat-message-action.module';
 import { WaitForEventActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/wait-for-event/wait-for-event-action.module';
@@ -30,10 +31,11 @@ import { WorkflowStepWaitModule } from 'src/modules/workflow/workflow-wait/workf
 
 @Module({
   imports: [
-    WorkflowCoreModule,
+    WorkflowVersionCoreModule,
     WorkflowRunModule,
     CodeActionModule,
     LogicFunctionActionModule,
+    McpToolActionModule,
     DelayActionModule,
     WaitForEventActionModule,
     RecordCRUDActionModule,

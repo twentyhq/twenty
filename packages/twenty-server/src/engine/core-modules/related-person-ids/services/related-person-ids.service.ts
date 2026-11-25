@@ -83,9 +83,8 @@ export class RelatedPersonIdsService {
       }
 
       const repository =
-        this.workspaceOrmManager.getRepository<RelationWalkRecord>(
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<RelationWalkRecord>(
           hop.queryObjectNameSingular,
-          { shouldBypassPermissionChecks: true },
         );
 
       if (hop.direction === RelationType.MANY_TO_ONE) {

@@ -88,6 +88,31 @@ describe('isSameWorkflowVersionDefinition', () => {
     ).toBe(true);
   });
 
+  it('ignores the logic function of a code step that holds inline code', () => {
+    const codeStep = (input: Record<string, unknown>) => ({
+      type: 'CODE',
+      settings: { outputSchema: {}, input },
+    });
+    const code = 'export const main = async () => ({});';
+
+    expect(
+      isSameWorkflowVersionDefinition({
+        left: buildDefinition({ step: codeStep({ code }) }),
+        right: buildDefinition({
+          step: codeStep({ code, logicFunctionId: 'logic-function-id' }),
+        }),
+      }),
+    ).toBe(true);
+    expect(
+      isSameWorkflowVersionDefinition({
+        left: buildDefinition({ step: codeStep({}) }),
+        right: buildDefinition({
+          step: codeStep({ logicFunctionId: 'logic-function-id' }),
+        }),
+      }),
+    ).toBe(false);
+  });
+
   it('treats a null position as a missing one', () => {
     expect(
       isSameWorkflowVersionDefinition({

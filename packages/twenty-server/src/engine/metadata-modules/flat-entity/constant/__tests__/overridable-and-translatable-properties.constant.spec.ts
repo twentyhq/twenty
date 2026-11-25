@@ -18,6 +18,8 @@ describe('registry-derived override property maps', () => {
       [
         'label',
         'icon',
+        'avatarColor',
+        'avatarShape',
         'description',
         'prompt',
         'modelId',
@@ -25,11 +27,16 @@ describe('registry-derived override property maps', () => {
         'modelConfiguration',
         'isActive',
       ],
+      ['createdByUserWorkspaceId', 'isPrivate'],
     ],
-    ['skill', ['label', 'icon', 'description', 'content', 'isActive']],
+    [
+      'skill',
+      ['label', 'icon', 'description', 'content', 'isActive'],
+      undefined,
+    ],
   ] as const)(
     'lets the workspace override the editable properties of an application %s',
-    (metadataName, overridableProperties) => {
+    (metadataName, overridableProperties, workspaceOwnedProperties) => {
       expect(ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME[metadataName]).toEqual(
         overridableProperties,
       );
@@ -41,9 +48,9 @@ describe('registry-derived override property maps', () => {
         toStringify: true,
         universalProperty: undefined,
       });
-      expect(
-        WORKSPACE_OWNED_PROPERTIES_BY_METADATA_NAME[metadataName],
-      ).toBeUndefined();
+      expect(WORKSPACE_OWNED_PROPERTIES_BY_METADATA_NAME[metadataName]).toEqual(
+        workspaceOwnedProperties,
+      );
     },
   );
 });
