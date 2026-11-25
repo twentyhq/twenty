@@ -1,0 +1,307 @@
+import { COMMAND_MENU_ASK_AI_FALLBACK_ITEM_ID } from '@/command-menu-item/constants/CommandMenuAskAiFallbackItemId';
+import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
+import { CommandMenuItemRenderer } from '@/command-menu-item/display/components/CommandMenuItemRenderer';
+import { CommandMenuItemSectionGroup } from '@/command-menu-item/display/components/CommandMenuItemSectionGroup';
+import { LegacyCommandMenuAskAiFallbackItem } from '@/command-menu-item/display/components/LegacyCommandMenuAskAiFallbackItem';
+import { useCommandMenuAppActions } from '@/command-menu-item/display/hooks/useCommandMenuAppActions';
+import { useCommandMenuItemCurrentViewSectionContext } from '@/command-menu-item/display/hooks/useCommandMenuItemCurrentViewSectionContext';
+import { useCommandMenuItemObjectSectionContext } from '@/command-menu-item/display/hooks/useCommandMenuItemObjectSectionContext';
+import { useCommandMenuItemWorkspaceSectionContext } from '@/command-menu-item/display/hooks/useCommandMenuItemWorkspaceSectionContext';
+import { useCommandMenuItemSelectionSectionContext } from '@/command-menu-item/display/hooks/useCommandMenuItemSelectionSectionContext';
+import { type CommandMenuItemSection } from '@/command-menu-item/types/CommandMenuItemSection';
+import { groupCommandMenuItems } from '@/command-menu-item/utils/groupCommandMenuItems';
+import { groupCommandMenuItemsBySection } from '@/command-menu-item/utils/groupCommandMenuItemsBySection';
+import { resolveCommandMenuItemSection } from '@/command-menu-item/utils/resolveCommandMenuItemSection';
+import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
+import { CoreObjectsCommands } from '@/object-core/commands/components/CoreObjectsCommands';
+import { useCoreObjectsCommands } from '@/object-core/commands/hooks/useCoreObjectsCommands';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { SidePanelList } from '@/side-panel/components/SidePanelList';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { useFilterCommandMenuItemsWithSidePanelSearch } from '@/side-panel/pages/root/hooks/useFilterCommandMenuItemsWithSidePanelSearch';
+import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
+import { useContext, useMemo } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+import {
+  IconApps,
+  IconArrowUpRight,
+  IconBox,
+  IconCheckbox,
+  IconCommand,
+  IconLifebuoy,
+  IconPlus,
+  IconSearch,
+  IconTable,
+  type IconComponent,
+} from 'twenty-ui/icon';
+import {
+  CommandMenuItemAvailabilityType,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
+
+type LegacyCommandMenuItemSection =
+  | Exclude<CommandMenuItemSection, 'ASK_AI' | 'SEARCH'>
+  | 'ASK_AND_FIND';
+
+const LEGACY_COMMAND_MENU_ITEM_SECTIONS_IN_DISPLAY_ORDER = [
+  'SELECTION',
+  'CURRENT_VIEW',
+  'THIS_OBJECT',
+  'ASK_AND_FIND',
+  'CREATE_RECORD',
+  'WORKSPACE',
+  'GO_TO',
+  'DEVELOPER',
+] as const satisfies readonly LegacyCommandMenuItemSection[];
+
+const SECTION_ICONS: Record<LegacyCommandMenuItemSection, IconComponent> = {
+  SELECTION: IconCheckbox,
+  CURRENT_VIEW: IconTable,
+  THIS_OBJECT: IconBox,
+  ASK_AND_FIND: IconSearch,
+  CREATE_RECORD: IconPlus,
+  WORKSPACE: IconApps,
+  GO_TO: IconArrowUpRight,
+  DEVELOPER: IconCommand,
+  FALLBACK: IconLifebuoy,
+};
+
+export const LegacySidePanelCommandMenuItemDisplayPage = () => {
+  const { t } = useLingui();
+  const { appActions } = useCommandMenuAppActions();
+  const { closeSidePanelMenu } = useSidePanelMenu();
+
+  const sidePanelSearch = useAtomStateValue(sidePanelSearchState);
+  const { commandMenuItems, commandMenuContextApi } =
+    useContext(CommandMenuContext);
+
+  const {
+    coreObjectCommandIds,
+    coreObjectSectionContext,
+    coreSelectionCommandIds,
+    coreSelectionSectionContext,
+  } = useCoreObjectsCommands();
+
+  const selectionSectionContext = useCommandMenuItemSelectionSectionContext();
+  const currentViewSectionContext =
+    useCommandMenuItemCurrentViewSectionContext();
+  const metadataObjectSectionContext = useCommandMenuItemObjectSectionContext();
+  const objectSectionContext =
+    coreObjectSectionContext ?? metadataObjectSectionContext;
+  const workspaceSectionContext = useCommandMenuItemWorkspaceSectionContext();
+  const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
+
+  const { filterCommandMenuItemsWithSidePanelSearch } =
+    useFilterCommandMenuItemsWithSidePanelSearch({
+      sidePanelSearch,
+      commandMenuContextApi,
+    });
+
+  const pinnedFirstCommandMenuItems = useMemo(() => {
+    const { pinned, other } = groupCommandMenuItems(commandMenuItems);
+
+    return [...pinned, ...other];
+  }, [commandMenuItems]);
+
+  const nonFallbackCommandMenuItems = useMemo(
+    () =>
+      pinnedFirstCommandMenuItems.filter(
+        (item) =>
+          item.availabilityType !== CommandMenuItemAvailabilityType.FALLBACK,
+      ),
+    [pinnedFirstCommandMenuItems],
+  );
+
+  const fallbackCommandMenuItems = useMemo(
+    () =>
+      pinnedFirstCommandMenuItems.filter(
+        (item) =>
+          item.availabilityType === CommandMenuItemAvailabilityType.FALLBACK,
+      ),
+    [pinnedFirstCommandMenuItems],
+  );
+
+  const trimmedSidePanelSearch = sidePanelSearch.trim();
+
+  const isSearchActive = isNonEmptyString(trimmedSidePanelSearch);
+
+  const matchingItems = filterCommandMenuItemsWithSidePanelSearch(
+    nonFallbackCommandMenuItems,
+  );
+
+  const commandMenuItemsBySection =
+    groupCommandMenuItemsBySection(matchingItems);
+
+  const getSectionCommandMenuItems = (
+    section: (typeof LEGACY_COMMAND_MENU_ITEM_SECTIONS_IN_DISPLAY_ORDER)[number],
+  ) =>
+    section === 'ASK_AND_FIND'
+      ? matchingItems.filter((item) => {
+          const itemSection = resolveCommandMenuItemSection(item);
+
+          return itemSection === 'ASK_AI' || itemSection === 'SEARCH';
+        })
+      : commandMenuItemsBySection[section];
+
+  const getSectionHeading = (section: LegacyCommandMenuItemSection) => {
+    switch (section) {
+      case 'SELECTION':
+        return t`Selection`;
+      case 'CURRENT_VIEW':
+        return t`View`;
+      case 'THIS_OBJECT':
+        return isDefined(objectSectionContext) ? t`Object` : t`This object`;
+      case 'ASK_AND_FIND':
+        return t`Ask & find`;
+      case 'CREATE_RECORD':
+        return t`Create record`;
+      case 'WORKSPACE':
+        return t`Workspace`;
+      case 'GO_TO':
+        return t`Go to`;
+      case 'DEVELOPER':
+        return t`Developer`;
+      case 'FALLBACK':
+        return t`Fallback`;
+    }
+  };
+
+  const getSectionContext = (section: LegacyCommandMenuItemSection) => {
+    switch (section) {
+      case 'SELECTION':
+        return coreSelectionSectionContext ?? selectionSectionContext;
+      case 'CURRENT_VIEW':
+        return currentViewSectionContext;
+      case 'THIS_OBJECT':
+        return objectSectionContext;
+      case 'WORKSPACE':
+        return workspaceSectionContext;
+      default:
+        return undefined;
+    }
+  };
+
+  const getSectionAppActions = (section: LegacyCommandMenuItemSection) =>
+    appActions.filter((item) => item.section === section);
+
+  const getSectionExtraItemIds = (section: LegacyCommandMenuItemSection) => {
+    if (section === 'THIS_OBJECT') {
+      return [
+        ...coreObjectCommandIds,
+        ...getSectionAppActions(section).map((item) => item.id),
+      ];
+    }
+
+    if (section === 'SELECTION') {
+      return coreSelectionCommandIds;
+    }
+
+    return getSectionAppActions(section).map((item) => item.id);
+  };
+
+  const hasNoMatchingItems =
+    !matchingItems.length &&
+    appActions.length === 0 &&
+    coreObjectCommandIds.length === 0 &&
+    coreSelectionCommandIds.length === 0;
+
+  const shouldDisplayAskAiFallbackItem = isSearchActive && hasAiPermission;
+
+  const shouldDisplayFallbackItems =
+    hasNoMatchingItems &&
+    (fallbackCommandMenuItems.length > 0 || shouldDisplayAskAiFallbackItem);
+
+  const shouldDisplayNoResults =
+    isSearchActive && hasNoMatchingItems && !shouldDisplayFallbackItems;
+
+  const selectableItemIds = [
+    ...LEGACY_COMMAND_MENU_ITEM_SECTIONS_IN_DISPLAY_ORDER.flatMap((section) => [
+      ...getSectionCommandMenuItems(section).map((item) => item.id),
+      ...getSectionExtraItemIds(section),
+    ]),
+    ...(shouldDisplayFallbackItems && shouldDisplayAskAiFallbackItem
+      ? [COMMAND_MENU_ASK_AI_FALLBACK_ITEM_ID]
+      : []),
+    ...(shouldDisplayFallbackItems
+      ? fallbackCommandMenuItems.map((item) => item.id)
+      : []),
+  ];
+
+  return (
+    <SidePanelList
+      selectableItemIds={selectableItemIds}
+      noResults={shouldDisplayNoResults}
+    >
+      {LEGACY_COMMAND_MENU_ITEM_SECTIONS_IN_DISPLAY_ORDER.map((section) => {
+        const sectionCommandMenuItems = getSectionCommandMenuItems(section);
+
+        if (
+          sectionCommandMenuItems.length === 0 &&
+          getSectionExtraItemIds(section).length === 0
+        ) {
+          return null;
+        }
+
+        return (
+          <CommandMenuItemSectionGroup
+            heading={getSectionHeading(section)}
+            Icon={SECTION_ICONS[section]}
+            context={getSectionContext(section)}
+            key={section}
+          >
+            {sectionCommandMenuItems.map((item) => (
+              <CommandMenuItemRenderer item={item} key={item.id} />
+            ))}
+            {(section === 'THIS_OBJECT' || section === 'SELECTION') && (
+              <CoreObjectsCommands section={section} />
+            )}
+            {getSectionAppActions(section).map((item) => {
+              const handleClick = () => {
+                item.onClick();
+                closeSidePanelMenu();
+              };
+
+              return (
+                <SelectableListItem
+                  key={item.id}
+                  itemId={item.id}
+                  onEnter={handleClick}
+                >
+                  <CommandMenuItem
+                    id={item.id}
+                    label={item.label}
+                    Icon={item.Icon}
+                    onClick={handleClick}
+                  />
+                </SelectableListItem>
+              );
+            })}
+          </CommandMenuItemSectionGroup>
+        );
+      })}
+      {shouldDisplayFallbackItems && (
+        <CommandMenuItemSectionGroup
+          heading={
+            isSearchActive
+              ? t`Use ‘${trimmedSidePanelSearch}’ with...`
+              : getSectionHeading('FALLBACK')
+          }
+          Icon={IconLifebuoy}
+        >
+          {shouldDisplayAskAiFallbackItem && (
+            <LegacyCommandMenuAskAiFallbackItem
+              prompt={trimmedSidePanelSearch}
+            />
+          )}
+          {fallbackCommandMenuItems.map((item) => (
+            <CommandMenuItemRenderer item={item} key={item.id} />
+          ))}
+        </CommandMenuItemSectionGroup>
+      )}
+    </SidePanelList>
+  );
+};

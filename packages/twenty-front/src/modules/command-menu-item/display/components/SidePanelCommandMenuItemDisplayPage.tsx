@@ -116,13 +116,17 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
 
   const {
     searchResultItems,
-    loading: isSearchingRecords,
+    loading: isLoadingSearchRecords,
+    isWaitingForDebouncedSearch,
     error: searchRecordsError,
   } = useSidePanelSearchRecords({
     shouldSkipEmptySearch: true,
     shouldIgnoreObjectFilter: true,
     limit: COMMAND_MENU_INLINE_SEARCH_RECORDS_LIMIT + 1,
   });
+
+  const isSearchingRecords =
+    isLoadingSearchRecords || isWaitingForDebouncedSearch;
 
   const { filterCommandMenuItemsWithSidePanelSearch } =
     useFilterCommandMenuItemsWithSidePanelSearch({

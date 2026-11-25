@@ -24,12 +24,14 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRef } from 'react';
 import { Key } from 'ts-key-enum';
 import { SidePanelPages } from 'twenty-shared/types';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { Input } from 'twenty-ui/primitives/input';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledInputContainer = styled.div<{ isMobile: boolean }>`
   align-items: center;
@@ -110,13 +112,19 @@ export const SidePanelTopBar = ({
   const setHasUserSelectedSidePanelListItem = useSetAtomState(
     hasUserSelectedSidePanelListItemState,
   );
+  const isCustomizableSidebarEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
+  );
   const inputRef = useRef<HTMLInputElement>(null);
 
   const { t } = useLingui();
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSidePanelSearch(event.target.value);
-    setHasUserSelectedSidePanelListItem(false);
+
+    if (isCustomizableSidebarEnabled) {
+      setHasUserSelectedSidePanelListItem(false);
+    }
   };
 
   const isMobile = useIsMobile();

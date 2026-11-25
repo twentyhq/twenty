@@ -1,4 +1,4 @@
-import { SidePanelCommandMenuItemDisplayPage } from '@/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage';
+import { SidePanelCommandMenuItemDisplayPageSwitch } from '@/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPageSwitch';
 import { SidePanelCommandMenuItemEditPage } from '@/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage';
 import { SidePanelCoreAgentDataAccessPage } from '@/object-core/agents/components/SidePanelCoreAgentDataAccessPage';
 import { SidePanelCoreAgentFiltersPage } from '@/object-core/agents/components/SidePanelCoreAgentFiltersPage';
@@ -59,7 +59,10 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<
   ActiveSidePanelPage,
   React.ReactNode
 >([
-  [SidePanelPages.CommandMenuDisplay, <SidePanelCommandMenuItemDisplayPage />],
+  [
+    SidePanelPages.CommandMenuDisplay,
+    <SidePanelCommandMenuItemDisplayPageSwitch />,
+  ],
   [SidePanelPages.MergeRecords, <SidePanelMergeRecordPage />],
   [SidePanelPages.MergeWithRecord, <SidePanelMergeWithRecordPage />],
   [SidePanelPages.UpdateRecords, <SidePanelUpdateMultipleRecords />],

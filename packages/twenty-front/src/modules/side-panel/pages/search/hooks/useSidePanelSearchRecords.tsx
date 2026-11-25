@@ -72,7 +72,8 @@ export const useSidePanelSearchRecords = ({
 
   return {
     error,
-    loading: loading || isWaitingForDebouncedSearch,
+    loading,
+    isWaitingForDebouncedSearch,
     noResults: !searchResultItems.length,
     searchResultItems,
   };
