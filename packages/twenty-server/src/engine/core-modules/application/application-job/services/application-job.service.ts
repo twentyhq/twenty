@@ -91,7 +91,7 @@ export class ApplicationJobService {
 
     const jobItems = this.getJobItems(input);
 
-    this.validateLimiter(input);
+    this.validateLimiterOrThrow(input);
 
     const { flatLogicFunctionMaps, flatApplicationMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -220,7 +220,7 @@ export class ApplicationJobService {
     });
   }
 
-  private validateLimiter({
+  private validateLimiterOrThrow({
     limiter,
     delayMs,
   }: Pick<EnqueueJobsInputDTO, 'limiter' | 'delayMs'>): void {

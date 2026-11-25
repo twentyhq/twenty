@@ -821,8 +821,7 @@ export class BullMQDriver
     };
   }
 
-  // Re-adding an id that exists is a no-op in BullMQ, even one another producer just added,
-  // so only the stored schedule can be reported and a failed read must fail the enqueue
+  // BullMQ keeps an id that exists, so only the stored schedule can be reported; a failed read fails the call
   private async findPersistedScheduledAts({
     queueName,
     jobIds,
