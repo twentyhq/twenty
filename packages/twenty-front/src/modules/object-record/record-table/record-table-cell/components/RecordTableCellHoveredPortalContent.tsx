@@ -9,6 +9,7 @@ import { RecordTableCellEditButton } from '@/object-record/record-table/record-t
 import { RecordTableCellEditMode } from '@/object-record/record-table/record-table-cell/components/RecordTableCellEditMode';
 import { RecordTableCellFieldInput } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldInput';
 import { useRecordTableCellOutlinePortal } from '@/object-record/record-table/record-table-cell/hooks/useRecordTableCellOutlinePortal';
+import { getRecordTableCellHoveredOutlineColor } from '@/object-record/record-table/record-table-cell/utils/getRecordTableCellHoveredOutlineColor';
 
 import { isRecordTableRowActiveByRecordIdComponentFamilySelector } from '@/object-record/record-table/states/selectors/isRecordTableRowActiveByRecordIdComponentFamilySelector';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
@@ -78,11 +79,10 @@ export const RecordTableCellHoveredPortalContent = () => {
     recordTableHoverPosition,
   );
 
-  const outlineColor = isRecordTableRowActive
-    ? 'transparent'
-    : showInteractiveStyle
-      ? themeCssVariables.font.color.extraLight
-      : themeCssVariables.border.color.medium;
+  const outlineColor = getRecordTableCellHoveredOutlineColor({
+    isRecordTableRowActive,
+    showInteractiveStyle,
+  });
 
   return (
     <StyledRecordTableCellHoveredPortalContent
