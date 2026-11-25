@@ -17,7 +17,7 @@ import { PartnersGlobe } from './PartnersGlobe';
 // hero ends where the visual does.
 const GlobeBanner = styled.div`
   --partners-globe-size: clamp(560px, 100vw, 1100px);
-  height: calc(var(--partners-globe-size) * 0.36);
+  height: ${HERO_COMPOSITION.visualBannerHeight};
   margin-bottom: calc(-1 * ${spacing(RHYTHM.hero.bottom.base)});
   margin-inline: calc(-1 * ${spacing(GUTTER.base)});
   margin-top: ${HERO_COMPOSITION.ctaToVisualGapPx}px;
