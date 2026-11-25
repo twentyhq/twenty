@@ -491,7 +491,10 @@ describe('Rich text field <> files sync', () => {
     await updateRecordBody({ id: otherRecordId, fileIds: [fileId] });
 
     expect(await findFileIdsOwnedByRecord(otherRecordId)).toEqual([fileId]);
-    expect((await findFileRow(fileId))?.deletedAt).toBeNull();
+    expect(await findFileRow(fileId)).toEqual({
+      deletedAt: null,
+      settings: { isTemporaryFile: false, toDelete: false },
+    });
   });
 
   it('should not return the owned files through the REST API', async () => {
