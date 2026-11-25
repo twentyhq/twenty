@@ -1,6 +1,7 @@
 import { isNonEmptyString, isNumber } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { kv } from 'twenty-sdk/logic-function';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { doesWorkspaceMemberExist } from 'src/logic-functions/data/does-workspace-member-exist';
 import { type TelegramPendingLinkToken } from 'src/logic-functions/types/telegram-pending-link-token.type';
@@ -24,14 +25,18 @@ export const completeTelegramUserLink = async ({
   workspaceId: string;
 }): Promise<'LINKED' | 'LINK_EXPIRED' | 'LINK_CONFLICT'> => {
   const tokenHash = hashTelegramLinkToken(token);
-  const pendingToken = await kv.get<TelegramPendingLinkToken>(
-    buildTelegramLinkTokenKvKey(tokenHash),
-  );
-  const workspaceMemberId = pendingToken?.workspaceMemberId;
+  const tokenKey = buildTelegramLinkTokenKvKey(tokenHash);
+  const pendingToken = await kv.get<TelegramPendingLinkToken>(tokenKey);
+
+  if (!isDefined(pendingToken)) {
+    return 'LINK_EXPIRED';
+  }
+
+  const { workspaceMemberId } = pendingToken;
 
   if (
     !isNonEmptyString(workspaceMemberId) ||
-    !isNumber(pendingToken?.expiresAtMs) ||
+    !isNumber(pendingToken.expiresAtMs) ||
     pendingToken.expiresAtMs < Date.now() ||
     !(await doesWorkspaceMemberExist({ client, workspaceMemberId }))
   ) {
@@ -40,15 +45,32 @@ export const completeTelegramUserLink = async ({
     return 'LINK_EXPIRED';
   }
 
-  if (
-    !(await claimTelegramUser({ telegramUserId: `${user.id}`, workspaceId }))
-  ) {
-    return 'LINK_CONFLICT';
+  const isTokenConsumedByThisRun = await kv.delete(tokenKey);
+
+  if (!isTokenConsumedByThisRun) {
+    return 'LINK_EXPIRED';
   }
 
-  await persistTelegramUserLink({ client, user, workspaceMemberId });
+  try {
+    const isClaimed = await claimTelegramUser({
+      telegramUserId: `${user.id}`,
+      workspaceId,
+    });
 
-  await deleteTelegramLinkToken(tokenHash);
+    if (!isClaimed) {
+      await kv.set(tokenKey, pendingToken);
+
+      return 'LINK_CONFLICT';
+    }
+
+    await persistTelegramUserLink({ client, user, workspaceMemberId });
+  } catch (error) {
+    await kv.set(tokenKey, pendingToken);
+
+    throw error;
+  }
+
+  await kv.delete(tokenKey, { scope: 'SERVER' });
   await kv.delete(buildTelegramPendingLinkTokenKvKey(workspaceMemberId));
 
   return 'LINKED';

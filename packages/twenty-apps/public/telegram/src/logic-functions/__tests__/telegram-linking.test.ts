@@ -18,6 +18,7 @@ import { telegramStartUserLinkHandler } from 'src/logic-functions/telegram-start
 import { telegramUpdateHandler } from 'src/logic-functions/telegram-update-handler';
 import { telegramUpdatesResolverHandler } from 'src/logic-functions/telegram-updates-resolver';
 import { type TelegramUpdate } from 'src/logic-functions/types/telegram-update.type';
+import { type TelegramUser } from 'src/logic-functions/types/telegram-user.type';
 import { type TelegramUpdatesDispatchPayload } from 'src/logic-functions/types/telegram-updates-dispatch-payload.type';
 
 const { kvHolder, clientHolder } = vi.hoisted(() => {
@@ -47,12 +48,15 @@ const SERVER_ROUTES_URL = 'https://twenty.example/webhooks/server/registration';
 const TELEGRAM_USER = { id: 42, first_name: 'Ada', last_name: 'Lovelace' };
 const NOW = new Date('2026-11-24T10:00:00.000Z');
 
-const buildMessageUpdate = (text: string): TelegramUpdate => ({
+const buildMessageUpdate = (
+  text: string,
+  user: TelegramUser = TELEGRAM_USER,
+): TelegramUpdate => ({
   update_id: 1,
   message: {
     message_id: 1,
-    chat: { id: 42, type: 'private' },
-    from: TELEGRAM_USER,
+    chat: { id: user.id, type: 'private' },
+    from: user,
     text,
   },
 });
@@ -222,6 +226,26 @@ describe('connecting a Telegram account', () => {
       ),
     );
     expect(coreFake.state.links).toHaveLength(1);
+  });
+
+  it('links only one account when two redeem the same link at once', async () => {
+    const { token } = await startLink();
+    const otherUser = { id: 43, first_name: 'Grace' };
+
+    const deliveries = await Promise.all([
+      deliver(buildMessageUpdate(`/start ${token}`)),
+      deliver(buildMessageUpdate(`/start ${token}`, otherUser)),
+    ]);
+
+    expect(
+      deliveries.map((delivery) => delivery.handled?.outcome).sort(),
+    ).toEqual(['LINKED', 'LINK_EXPIRED']);
+    expect(coreFake.state.links).toHaveLength(1);
+    expect(
+      [...kvFake.serverClaims.keys()].filter((key) =>
+        key.startsWith('telegram-user:'),
+      ),
+    ).toEqual([`telegram-user:${coreFake.state.links[0].telegramUserId}`]);
   });
 
   it('refuses a link after it expired', async () => {
