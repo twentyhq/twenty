@@ -3,6 +3,8 @@ import { I18nProvider } from '@lingui/react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
+import { TOUCH_DEVICE_MEDIA_QUERY } from 'twenty-ui/utilities';
+
 import { ChatThreadComposer } from '@/activities/emails/components/ChatThreadComposer';
 
 const mockSendAppChannelMessage = jest.fn();
@@ -294,5 +296,34 @@ describe('ChatThreadComposer', () => {
         'activities/chatThreadComposerDraftFamilyState__thread-2',
       ),
     ).toBe(JSON.stringify('Before reconnecting'));
+  });
+
+  it('inserts a new line instead of sending on Enter on a touch device', async () => {
+    const originalMatchMedia = window.matchMedia;
+
+    window.matchMedia = (query: string) =>
+      ({
+        matches: query === TOUCH_DEVICE_MEDIA_QUERY,
+        addEventListener: () => undefined,
+        removeEventListener: () => undefined,
+      }) as unknown as MediaQueryList;
+
+    render(
+      <I18nProvider i18n={i18n}>
+        <ChatThreadComposer
+          channelName="LinkedIn"
+          recipientName="Ada"
+          isDisconnected={false}
+          onSendMessage={mockSendAppChannelMessage}
+        />
+      </I18nProvider>,
+    );
+
+    await userEvent.type(screen.getByRole('textbox'), 'Hello{Enter}Ada');
+
+    expect(screen.getByRole('textbox')).toHaveValue('Hello\nAda');
+    expect(mockSendAppChannelMessage).not.toHaveBeenCalled();
+
+    window.matchMedia = originalMatchMedia;
   });
 });
