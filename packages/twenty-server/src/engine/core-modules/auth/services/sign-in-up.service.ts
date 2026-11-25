@@ -230,6 +230,16 @@ export class SignInUpService {
       );
     }
 
+    if (
+      params.userData.type === 'existingUser' &&
+      (await this.userWorkspaceService.checkUserWorkspaceExists(
+        params.userData.existingUser.id,
+        invitationValidation.workspace.id,
+      ))
+    ) {
+      return params.userData.existingUser;
+    }
+
     // Claimed before joining so concurrent sign-ins cannot redeem one invitation twice
     const isInvitationClaimed =
       await this.workspaceInvitationService.claimWorkspaceInvitation({

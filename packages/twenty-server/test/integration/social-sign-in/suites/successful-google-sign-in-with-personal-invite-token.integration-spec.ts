@@ -20,6 +20,7 @@ import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-t
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const ONE_HOUR_IN_MS = 60 * 60 * 1000;
+const APPLE_MEMBER_EMAIL = 'tim@apple.dev';
 
 describe('Google sign-in with a personal invite token should succeed', () => {
   const httpMock = setupHttpMock(...googleTokenHandlers());
@@ -108,5 +109,32 @@ describe('Google sign-in with a personal invite token should succeed', () => {
       accountEmail: invitedEmail,
       withInviteToken: false,
     });
+  });
+
+  it('when a member of the workspace signs in with the invite token of someone else', async () => {
+    httpMock.use(...googleIdentityHandlers(APPLE_MEMBER_EMAIL));
+
+    const memberAccessToken = await exchangeLoginToken(
+      await signInWithSocialProvider({
+        path: '/auth/google',
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        inviteToken,
+      }),
+    );
+
+    assertIsDefinedOrThrow(memberAccessToken);
+
+    const { data } = await getCurrentUser({
+      accessToken: memberAccessToken,
+      expectToFail: false,
+    });
+
+    expect(data.currentUser).toMatchObject({
+      email: APPLE_MEMBER_EMAIL,
+      currentWorkspace: { id: SEED_APPLE_WORKSPACE_ID },
+    });
+    expect(
+      await findWorkspaceInvitationsByEmail({ email: invitedEmail }),
+    ).toHaveLength(1);
   });
 });
