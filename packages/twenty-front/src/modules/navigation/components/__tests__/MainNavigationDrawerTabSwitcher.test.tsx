@@ -327,7 +327,7 @@ describe('MainNavigationDrawerTabSwitcher', () => {
 
     await userEvent.pointer({
       keys: '[MouseRight]',
-      target: screen.getByRole('button', { name: 'Sales' }),
+      target: screen.getByLabelText('Sales'),
     });
 
     expect(mockSwitchToNavigationMenuTab).not.toHaveBeenCalled();

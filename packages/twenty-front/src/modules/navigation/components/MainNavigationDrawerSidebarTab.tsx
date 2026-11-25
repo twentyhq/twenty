@@ -66,11 +66,7 @@ export const MainNavigationDrawerSidebarTab = ({
 
   const handleContextMenu = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-
-    if (!isActive) {
-      switchToNavigationMenuTab(tab.id);
-    }
-
+    handleClick();
     openDropdown({ dropdownComponentInstanceIdFromProps: dropdownId });
   };
 
