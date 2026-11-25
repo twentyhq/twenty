@@ -1,6 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect, useState } from 'react';
 import { RestApiClient } from 'twenty-client-sdk/rest';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { type TelegramUserLinkRecord } from 'src/front-components/types/telegram-user-link-record.type';
 import { fetchCurrentWorkspaceMemberId } from 'src/front-components/utils/fetch-current-workspace-member-id';
@@ -40,7 +41,13 @@ const fetchTelegramUserLinks = async (): Promise<TelegramUserLinkRecord[]> => {
       },
     );
 
-    for (const record of response.data?.telegramUserLinks ?? []) {
+    const pageRecords = response.data?.telegramUserLinks;
+
+    if (!isDefined(pageRecords)) {
+      throw new Error('The Telegram user links response has no records');
+    }
+
+    for (const record of pageRecords) {
       if (!isNonEmptyString(record.id)) {
         continue;
       }

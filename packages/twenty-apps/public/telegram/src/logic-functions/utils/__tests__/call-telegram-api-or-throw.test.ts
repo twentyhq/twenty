@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { TelegramApiError } from 'src/logic-functions/types/telegram-api-error';
-import { callTelegramApi } from 'src/logic-functions/utils/call-telegram-api';
+import { callTelegramApiOrThrow } from 'src/logic-functions/utils/call-telegram-api-or-throw';
 
 const BOT_TOKEN = '123:secret-token';
 
@@ -17,13 +17,13 @@ const stubFetch = (response: { status: number; body: unknown }) => {
 };
 
 const call = () =>
-  callTelegramApi({
+  callTelegramApiOrThrow({
     botToken: BOT_TOKEN,
     method: 'sendMessage',
     params: { chat_id: 1, text: 'hi' },
   });
 
-describe('callTelegramApi', () => {
+describe('callTelegramApiOrThrow', () => {
   afterEach(() => {
     vi.unstubAllGlobals();
   });

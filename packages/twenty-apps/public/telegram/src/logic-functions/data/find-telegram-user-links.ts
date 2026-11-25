@@ -57,7 +57,7 @@ export const findTelegramUserLinks = async ({
     }
 
     after =
-      connection?.pageInfo?.hasNextPage === true &&
+      connection?.pageInfo?.hasNextPage &&
       isNonEmptyString(connection.pageInfo.endCursor)
         ? connection.pageInfo.endCursor
         : undefined;

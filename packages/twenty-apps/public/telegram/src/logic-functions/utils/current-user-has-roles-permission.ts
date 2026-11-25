@@ -13,7 +13,9 @@ export const currentUserHasRolesPermission = async (): Promise<boolean> => {
     return (currentUser.currentUserWorkspace?.permissionFlags ?? []).includes(
       MetadataSchema.enumPermissionFlagType.ROLES,
     );
-  } catch {
+  } catch (error) {
+    console.warn('[telegram] could not read the roles permission', error);
+
     return false;
   }
 };

@@ -72,8 +72,7 @@ export const telegramUpdateHandler = async (
     filter: { telegramUserId },
   });
 
-  // The link goes away with its workspace member, which leaves the routing
-  // claim behind: drop it so the account can be connected again.
+  // A link deleted with its workspace member leaves the routing claim behind.
   if (!links.some((link) => isDefined(link.workspaceMemberId))) {
     await disconnectTelegramUser({ client, telegramUserId });
     await reply(TELEGRAM_NOT_CONNECTED_TEXT);

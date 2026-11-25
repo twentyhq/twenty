@@ -5,6 +5,7 @@ import { kv } from 'twenty-sdk/logic-function';
 import { doesWorkspaceMemberExist } from 'src/logic-functions/data/does-workspace-member-exist';
 import { type TelegramPendingLinkToken } from 'src/logic-functions/types/telegram-pending-link-token.type';
 import { type TelegramUser } from 'src/logic-functions/types/telegram-user.type';
+import { buildTelegramPendingLinkTokenKvKey } from 'src/logic-functions/utils/build-telegram-pending-link-token-kv-key';
 import { buildTelegramLinkTokenKvKey } from 'src/logic-functions/utils/build-telegram-link-token-kv-key';
 import { claimTelegramUser } from 'src/logic-functions/utils/claim-telegram-user';
 import { deleteTelegramLinkToken } from 'src/logic-functions/utils/delete-telegram-link-token';
@@ -39,8 +40,7 @@ export const completeTelegramUserLink = async ({
     return 'LINK_EXPIRED';
   }
 
-  // The token is kept on a conflict so the same link works once the user has
-  // sent /disconnect to the workspace holding the account.
+  // Kept on a conflict so the same link works once the user has sent /disconnect.
   if (
     !(await claimTelegramUser({ telegramUserId: `${user.id}`, workspaceId }))
   ) {
@@ -49,9 +49,9 @@ export const completeTelegramUserLink = async ({
 
   await persistTelegramUserLink({ client, user, workspaceMemberId });
 
-  // Deleted last so a retried run finds the token and links again, instead of
-  // telling a user who is now linked that the link expired.
+  // Deleted last so a retried run links again instead of reporting an expired link.
   await deleteTelegramLinkToken(tokenHash);
+  await kv.delete(buildTelegramPendingLinkTokenKvKey(workspaceMemberId));
 
   return 'LINKED';
 };

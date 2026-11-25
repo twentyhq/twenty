@@ -13,7 +13,7 @@ type TelegramApiResponseBody<TResult> = {
   parameters?: { retry_after?: number };
 };
 
-export const callTelegramApi = async <TResult>({
+export const callTelegramApiOrThrow = async <TResult>({
   botToken,
   method,
   params,
@@ -22,8 +22,7 @@ export const callTelegramApi = async <TResult>({
   method: string;
   params?: Record<string, unknown>;
 }): Promise<TResult> => {
-  // The bot token is part of the URL, so a network error is rethrown without
-  // its cause to keep the URL out of logs.
+  // The URL holds the bot token, so a network error is rethrown without its cause.
   const response = await fetch(
     `${TELEGRAM_API_BASE_URL}/bot${botToken}/${method}`,
     {
@@ -39,10 +38,11 @@ export const callTelegramApi = async <TResult>({
     });
   });
 
-  const body = (await response.json().catch(() => undefined)) as
-    TelegramApiResponseBody<TResult> | undefined;
+  const body: TelegramApiResponseBody<TResult> | undefined = await response
+    .json()
+    .catch(() => undefined);
 
-  if (body?.ok !== true || !isDefined(body.result)) {
+  if (!body?.ok || !isDefined(body.result)) {
     throw new TelegramApiError({
       method,
       errorCode: body?.error_code ?? response.status,

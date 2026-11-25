@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-sdk/utils';
+
 type LinkRecord = {
   id: string;
   name?: string;
@@ -10,7 +12,7 @@ type EqualityFilter = Record<string, { eq: string }>;
 
 type FakeQuery = {
   telegramUserLinks?: { __args: { filter: EqualityFilter } };
-  workspaceMembers?: { __args: { filter: EqualityFilter } };
+  workspaceMembers?: { __args: { filter?: EqualityFilter } };
 };
 
 type FakeMutation = {
@@ -39,13 +41,13 @@ export const createCoreClientFake = ({
     state,
     client: {
       query: async (query: FakeQuery) => {
-        if (query.workspaceMembers) {
-          const { id } = query.workspaceMembers.__args.filter;
+        if (isDefined(query.workspaceMembers)) {
+          const id = query.workspaceMembers.__args.filter?.id;
 
           return {
             workspaceMembers: toConnection(
               workspaceMemberIds
-                .filter((memberId) => memberId === id.eq)
+                .filter((memberId) => !isDefined(id) || memberId === id.eq)
                 .map((memberId) => ({ id: memberId })),
             ),
           };
@@ -66,7 +68,7 @@ export const createCoreClientFake = ({
         };
       },
       mutation: async (mutation: FakeMutation) => {
-        if (mutation.createTelegramUserLink) {
+        if (isDefined(mutation.createTelegramUserLink)) {
           const { data } = mutation.createTelegramUserLink.__args;
 
           if (
@@ -81,7 +83,7 @@ export const createCoreClientFake = ({
           state.links.push({ id: `link-${state.createdCount}`, ...data });
         }
 
-        if (mutation.updateTelegramUserLink) {
+        if (isDefined(mutation.updateTelegramUserLink)) {
           const { id, data } = mutation.updateTelegramUserLink.__args;
 
           state.links = state.links.map((link) =>
@@ -89,7 +91,7 @@ export const createCoreClientFake = ({
           );
         }
 
-        if (mutation.destroyTelegramUserLink) {
+        if (isDefined(mutation.destroyTelegramUserLink)) {
           const { id } = mutation.destroyTelegramUserLink.__args;
 
           state.links = state.links.filter((link) => link.id !== id);

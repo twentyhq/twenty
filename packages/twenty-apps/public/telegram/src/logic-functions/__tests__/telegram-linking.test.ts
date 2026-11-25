@@ -20,10 +20,12 @@ import { telegramUpdatesResolverHandler } from 'src/logic-functions/telegram-upd
 import { type TelegramUpdate } from 'src/logic-functions/types/telegram-update.type';
 import { type TelegramUpdatesDispatchPayload } from 'src/logic-functions/types/telegram-updates-dispatch-payload.type';
 
-const { kvHolder, clientHolder } = vi.hoisted(() => ({
-  kvHolder: { kv: {} as Record<string, unknown> },
-  clientHolder: { client: {} as Record<string, unknown> },
-}));
+const { kvHolder, clientHolder } = vi.hoisted(() => {
+  const kvHolder: { kv: Record<string, unknown> } = { kv: {} };
+  const clientHolder: { client: Record<string, unknown> } = { client: {} };
+
+  return { kvHolder, clientHolder };
+});
 
 vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
   ...(await importOriginal<Record<string, unknown>>()),
@@ -72,8 +74,6 @@ describe('connecting a Telegram account', () => {
       body: update,
     });
 
-  // Sends an update through the resolver, then runs the handler in the
-  // workspace the resolver routed it to, as the server does.
   const deliver = async (update: TelegramUpdate) => {
     const resolved = await resolve(update);
 
@@ -91,14 +91,14 @@ describe('connecting a Telegram account', () => {
     };
   };
 
-  const startLink = async (
+  const startLink = async ({
     workspaceId = 'workspace-1',
     workspaceMemberId = 'member-1',
-  ) => {
+  }: { workspaceId?: string; workspaceMemberId?: string } = {}) => {
     kvFake.actAsWorkspace(workspaceId);
 
     const result = await telegramStartUserLinkHandler(
-      {} as Parameters<typeof telegramStartUserLinkHandler>[0],
+      {},
       { workspaceMemberId },
     );
 
@@ -235,7 +235,7 @@ describe('connecting a Telegram account', () => {
   });
 
   it('refuses a link whose member left the workspace', async () => {
-    const { token } = await startLink('workspace-1', 'member-gone');
+    const { token } = await startLink({ workspaceMemberId: 'member-gone' });
 
     const { handled } = await deliver(buildMessageUpdate(`/start ${token}`));
 
@@ -260,7 +260,7 @@ describe('connecting a Telegram account', () => {
   it('moves the account to another member of the same workspace', async () => {
     await deliver(buildMessageUpdate(`/start ${(await startLink()).token}`));
 
-    const { token } = await startLink('workspace-1', 'member-2');
+    const { token } = await startLink({ workspaceMemberId: 'member-2' });
     const { handled } = await deliver(buildMessageUpdate(`/start ${token}`));
 
     expect(handled).toEqual({ outcome: 'LINKED' });
@@ -275,7 +275,10 @@ describe('connecting a Telegram account', () => {
     const otherWorkspaceCore = createCoreClientFake({
       workspaceMemberIds: ['member-9'],
     });
-    const { token } = await startLink('workspace-2', 'member-9');
+    const { token } = await startLink({
+      workspaceId: 'workspace-2',
+      workspaceMemberId: 'member-9',
+    });
 
     clientHolder.client = otherWorkspaceCore.client;
 
@@ -378,10 +381,7 @@ describe('connecting a Telegram account', () => {
 
   it('does not start a connection when nobody is signed in', async () => {
     await expect(
-      telegramStartUserLinkHandler(
-        {} as Parameters<typeof telegramStartUserLinkHandler>[0],
-        { workspaceMemberId: null },
-      ),
+      telegramStartUserLinkHandler({}, { workspaceMemberId: null }),
     ).resolves.toMatchObject({ success: false, message: 'Not allowed' });
     expect(telegramCalls).toEqual([]);
   });
@@ -400,10 +400,7 @@ describe('connecting a Telegram account', () => {
     );
 
     await expect(
-      telegramStartUserLinkHandler(
-        {} as Parameters<typeof telegramStartUserLinkHandler>[0],
-        { workspaceMemberId: 'member-1' },
-      ),
+      telegramStartUserLinkHandler({}, { workspaceMemberId: 'member-1' }),
     ).resolves.toEqual({
       success: false,
       message: 'Could not start the Telegram connection',

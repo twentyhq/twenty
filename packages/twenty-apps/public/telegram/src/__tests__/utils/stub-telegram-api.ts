@@ -2,7 +2,6 @@ import { vi } from 'vitest';
 
 type TelegramApiCall = { method: string; params: Record<string, unknown> };
 
-// Records every Bot API call and answers each method with the given result.
 export const stubTelegramApi = (
   results: Record<string, unknown> = {},
 ): TelegramApiCall[] => {

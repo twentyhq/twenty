@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { RestApiClient } from 'twenty-client-sdk/rest';
 
 import { TELEGRAM_USER_LINKS_START_ROUTE_PATH } from 'src/logic-functions/constants/telegram-user-links-route-path';
+import { toErrorMessage } from 'src/logic-functions/utils/to-error-message';
 import { type TelegramStartUserLinkResult } from 'src/logic-functions/types/telegram-start-user-link-result.type';
 
 type StartState =
@@ -22,12 +23,13 @@ export const useStartTelegramUserLink = () => {
       >(`/s${TELEGRAM_USER_LINKS_START_ROUTE_PATH}`, {});
 
       setStartState(
-        result?.success === true
+        result?.success
           ? { status: 'READY', url: result.url }
           : { status: 'FAILED', message: result?.message ?? '' },
       );
-    } catch {
-      setStartState({ status: 'FAILED', message: '' });
+    } catch (error) {
+      console.error('[telegram] could not start the connection', error);
+      setStartState({ status: 'FAILED', message: toErrorMessage(error) });
     }
   };
 

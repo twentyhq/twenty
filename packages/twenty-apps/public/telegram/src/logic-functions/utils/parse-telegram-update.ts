@@ -12,7 +12,7 @@ const START_WITH_TOKEN_PATTERN = /^\/start(?:@\w+)?\s+([A-Za-z0-9_-]{1,64})$/;
 const COMMAND_PATTERN = /^(\/\w+)(?:@\w+)?(?:\s|$)/;
 
 const isHumanSender = (user: TelegramUser | undefined): user is TelegramUser =>
-  isDefined(user) && isNumber(user.id) && user.is_bot !== true;
+  isDefined(user) && isNumber(user.id) && !user.is_bot;
 
 export const parseTelegramUpdate = (
   update: TelegramUpdate | null | undefined,

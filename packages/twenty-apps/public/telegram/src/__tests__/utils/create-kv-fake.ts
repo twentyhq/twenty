@@ -1,5 +1,4 @@
-// Mirrors the server: a SERVER key stores the workspace that claimed it and
-// cannot be taken or deleted by another workspace.
+// Mirrors the server: a SERVER key belongs to the workspace that claimed it.
 export const createKvFake = () => {
   const serverClaims = new Map<string, string>();
   const workspaceValues = new Map<string, unknown>();

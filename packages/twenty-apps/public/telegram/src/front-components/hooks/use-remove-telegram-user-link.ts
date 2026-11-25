@@ -18,7 +18,9 @@ export const useRemoveTelegramUserLink = () => {
       >(`/s${TELEGRAM_USER_LINKS_REMOVE_ROUTE_PATH}`, { id });
 
       return result?.success ?? false;
-    } catch {
+    } catch (error) {
+      console.error('[telegram] could not disconnect the account', error);
+
       return false;
     } finally {
       setRemovingLinkId(undefined);

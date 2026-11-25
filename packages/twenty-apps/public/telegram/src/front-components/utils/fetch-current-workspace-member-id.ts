@@ -4,15 +4,11 @@ import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 export const fetchCurrentWorkspaceMemberId = async (): Promise<
   string | undefined
 > => {
-  try {
-    const { currentUser } = await new MetadataApiClient().query({
-      currentUser: { workspaceMember: { id: true } },
-    });
+  const { currentUser } = await new MetadataApiClient().query({
+    currentUser: { workspaceMember: { id: true } },
+  });
 
-    return isNonEmptyString(currentUser.workspaceMember?.id)
-      ? currentUser.workspaceMember.id
-      : undefined;
-  } catch {
-    return undefined;
-  }
+  return isNonEmptyString(currentUser.workspaceMember?.id)
+    ? currentUser.workspaceMember.id
+    : undefined;
 };

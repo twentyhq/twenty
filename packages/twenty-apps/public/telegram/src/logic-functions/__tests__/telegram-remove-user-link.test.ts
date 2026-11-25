@@ -5,11 +5,12 @@ import { createKvFake } from 'src/__tests__/utils/create-kv-fake';
 import { telegramRemoveUserLinkHandler } from 'src/logic-functions/telegram-remove-user-link';
 import { telegramUninstallHandler } from 'src/logic-functions/telegram-uninstall';
 
-const { kvHolder, clientHolder, hasRolesPermissionMock } = vi.hoisted(() => ({
-  kvHolder: { kv: {} as Record<string, unknown> },
-  clientHolder: { client: {} as Record<string, unknown> },
-  hasRolesPermissionMock: vi.fn(),
-}));
+const { kvHolder, clientHolder, hasRolesPermissionMock } = vi.hoisted(() => {
+  const kvHolder: { kv: Record<string, unknown> } = { kv: {} };
+  const clientHolder: { client: Record<string, unknown> } = { client: {} };
+
+  return { kvHolder, clientHolder, hasRolesPermissionMock: vi.fn() };
+});
 
 vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
   ...(await importOriginal<Record<string, unknown>>()),
@@ -37,12 +38,20 @@ describe('disconnecting Telegram accounts from Twenty', () => {
   let kvFake: ReturnType<typeof createKvFake>;
   let coreFake: ReturnType<typeof createCoreClientFake>;
 
-  const remove = (id: unknown, workspaceMemberId: string | null) =>
-    telegramRemoveUserLinkHandler({ body: { id } }, { workspaceMemberId });
+  const remove = ({
+    id,
+    workspaceMemberId,
+  }: {
+    id?: string;
+    workspaceMemberId: string | null;
+  }) => telegramRemoveUserLinkHandler({ body: { id } }, { workspaceMemberId });
 
   beforeEach(async () => {
     kvFake = createKvFake();
-    coreFake = createCoreClientFake({ links: LINKS });
+    coreFake = createCoreClientFake({
+      links: LINKS,
+      workspaceMemberIds: ['member-1', 'member-2'],
+    });
     kvHolder.kv = kvFake.kv;
     clientHolder.client = coreFake.client;
     hasRolesPermissionMock.mockResolvedValue(false);
@@ -56,7 +65,7 @@ describe('disconnecting Telegram accounts from Twenty', () => {
   });
 
   it('disconnects the accounts of the calling member and frees them', async () => {
-    await expect(remove(undefined, 'member-1')).resolves.toEqual({
+    await expect(remove({ workspaceMemberId: 'member-1' })).resolves.toEqual({
       success: true,
       message: 'Disconnected the Telegram account.',
     });
@@ -65,14 +74,18 @@ describe('disconnecting Telegram accounts from Twenty', () => {
   });
 
   it('lets a member disconnect their own account by id', async () => {
-    await expect(remove('link-1', 'member-1')).resolves.toMatchObject({
+    await expect(
+      remove({ id: 'link-1', workspaceMemberId: 'member-1' }),
+    ).resolves.toMatchObject({
       success: true,
     });
     expect(coreFake.state.links).toEqual([LINKS[1]]);
   });
 
   it('refuses to disconnect the account of another member', async () => {
-    await expect(remove('link-2', 'member-1')).resolves.toMatchObject({
+    await expect(
+      remove({ id: 'link-2', workspaceMemberId: 'member-1' }),
+    ).resolves.toMatchObject({
       success: false,
       message: 'Not allowed',
     });
@@ -83,7 +96,9 @@ describe('disconnecting Telegram accounts from Twenty', () => {
   it('lets a member with the roles permission disconnect anyone', async () => {
     hasRolesPermissionMock.mockResolvedValue(true);
 
-    await expect(remove('link-2', 'member-1')).resolves.toMatchObject({
+    await expect(
+      remove({ id: 'link-2', workspaceMemberId: 'member-1' }),
+    ).resolves.toMatchObject({
       success: true,
     });
     expect(coreFake.state.links).toEqual([LINKS[0]]);
@@ -91,14 +106,14 @@ describe('disconnecting Telegram accounts from Twenty', () => {
   });
 
   it('succeeds when the member has no connected account', async () => {
-    await expect(remove(undefined, 'member-3')).resolves.toEqual({
+    await expect(remove({ workspaceMemberId: 'member-3' })).resolves.toEqual({
       success: true,
       message: 'No Telegram account was connected.',
     });
   });
 
   it('requires an id when no member is calling', async () => {
-    await expect(remove(undefined, null)).resolves.toMatchObject({
+    await expect(remove({ workspaceMemberId: null })).resolves.toMatchObject({
       success: false,
       message: 'Missing required fields',
     });
@@ -107,7 +122,26 @@ describe('disconnecting Telegram accounts from Twenty', () => {
   it('frees every connected account when the app is uninstalled', async () => {
     await expect(telegramUninstallHandler()).resolves.toEqual({
       releasedClaimCount: 2,
+      deletedPendingLinkTokenCount: 0,
     });
     expect(kvFake.serverClaims.size).toBe(0);
+  });
+
+  it('frees connection links still pending when the app is uninstalled', async () => {
+    await kvFake.kv.set('telegram-link-token:hash-1', null, {
+      scope: 'SERVER',
+    });
+    await kvFake.kv.set('telegram-link-token:hash-1', {
+      workspaceMemberId: 'member-2',
+      expiresAtMs: 0,
+    });
+    await kvFake.kv.set('telegram-pending-link-token:member-2', 'hash-1');
+
+    await expect(telegramUninstallHandler()).resolves.toEqual({
+      releasedClaimCount: 2,
+      deletedPendingLinkTokenCount: 1,
+    });
+    expect(kvFake.serverClaims.size).toBe(0);
+    expect(kvFake.workspaceValues.size).toBe(0);
   });
 });
