@@ -35,6 +35,7 @@ import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { useLingui } from '@lingui/react/macro';
+import { NavigationMenuTabFirstItemOpenEffect } from '@/navigation-menu-item/display/effect-components/NavigationMenuTabFirstItemOpenEffect';
 
 export type NavigationDrawerItemForObjectMetadataItemProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
@@ -177,36 +178,41 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
     isLayoutCustomizationModeEnabled && !canReadSomeRecords;
 
   return (
-    <NavigationDrawerItem
-      label={label}
-      secondaryLabel={secondaryLabel}
-      to={
-        isLayoutCustomizationModeEnabled || isDragging
-          ? undefined
-          : shouldNavigate
-            ? navigationPath
-            : undefined
-      }
-      onClick={handleClick}
-      Icon={Icon}
-      active={isActive}
-      isSelectedInEditMode={isSelectedInEditMode}
-      isDragging={isDragging}
-      triggerEvent={isLayoutCustomizationModeEnabled ? 'CLICK' : undefined}
-      alwaysShowRightOptions={showInaccessibleLock}
-      rightOptions={
-        showInaccessibleLock ? (
-          <Fragment>
-            <IconLock
-              size={theme.icon.size.sm}
-              stroke={theme.icon.stroke.sm}
-              color={themeCssVariables.font.color.tertiary}
-            />
-          </Fragment>
-        ) : (
-          rightOptions
-        )
-      }
-    />
+    <>
+      {isDefined(handleClick) && (
+        <NavigationMenuTabFirstItemOpenEffect onOpen={handleClick} />
+      )}
+      <NavigationDrawerItem
+        label={label}
+        secondaryLabel={secondaryLabel}
+        to={
+          isLayoutCustomizationModeEnabled || isDragging
+            ? undefined
+            : shouldNavigate
+              ? navigationPath
+              : undefined
+        }
+        onClick={handleClick}
+        Icon={Icon}
+        active={isActive}
+        isSelectedInEditMode={isSelectedInEditMode}
+        isDragging={isDragging}
+        triggerEvent={isLayoutCustomizationModeEnabled ? 'CLICK' : undefined}
+        alwaysShowRightOptions={showInaccessibleLock}
+        rightOptions={
+          showInaccessibleLock ? (
+            <Fragment>
+              <IconLock
+                size={theme.icon.size.sm}
+                stroke={theme.icon.stroke.sm}
+                color={themeCssVariables.font.color.tertiary}
+              />
+            </Fragment>
+          ) : (
+            rightOptions
+          )
+        }
+      />
+    </>
   );
 };
