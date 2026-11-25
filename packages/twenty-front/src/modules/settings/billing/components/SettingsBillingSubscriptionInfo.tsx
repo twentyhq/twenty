@@ -471,6 +471,9 @@ export const SettingsBillingSubscriptionInfo = ({
       <SettingsBillingSubscriptionInfoCard
         applicationsSubtotalDetails={applicationsSubtotalDetails}
         applicationsSubtotalValue={applicationsSubtotalValue}
+        billingEmail={currentWorkspace.billingCustomer?.stripeCustomerEmail}
+        onBillingEmailClick={onManageBilling}
+        isBillingEmailActionDisabled={isManageBillingDisabled}
         canDisplaySwitchToMonthlyAction={canDisplaySwitchToMonthlyAction}
         canDisplaySwitchToYearlyAction={canDisplaySwitchToYearlyAction}
         creditsSubtotalDetails={creditsSubtotalDetails}
