@@ -2,13 +2,13 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { type ProposedToolCall } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
-import { IconCheck, IconX } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/primitives/input';
 import { type JsonValue } from 'type-fest';
 
 import { AiChatToolFrontComponent } from '@/ai-chat/tool-calls/components/AiChatToolFrontComponent';
 import { AiChatToolCallApprovalArgumentsEditor } from '@/ai-chat/tool-calls/components/AiChatToolCallApprovalArgumentsEditor';
 import { AiChatToolCallApprovalCardLayout } from '@/ai-chat/tool-calls/components/AiChatToolCallApprovalCardLayout';
+import { AiChatToolCallApprovalConfirmActions } from '@/ai-chat/tool-calls/components/AiChatToolCallApprovalConfirmActions';
+import { AiChatToolCallApprovalDecisionActions } from '@/ai-chat/tool-calls/components/AiChatToolCallApprovalDecisionActions';
 import { AiChatToolCallApprovalRecord } from '@/ai-chat/tool-calls/components/AiChatToolCallApprovalRecord';
 import { AiChatToolCallApprovalRecordFields } from '@/ai-chat/tool-calls/components/AiChatToolCallApprovalRecordFields';
 import { useAnswerToolCallApproval } from '@/ai-chat/tool-calls/hooks/useAnswerToolCallApproval';
@@ -17,6 +17,11 @@ import { useFrontComponentIdByToolName } from '@/ai-chat/tool-calls/hooks/useFro
 type AiChatToolCallApprovalArgumentsCardProps = {
   toolCallId: string;
   proposal: ProposedToolCall;
+};
+
+type AlternativeConfirmation = {
+  toolName: string;
+  argumentsBeforeConfirmation: Record<string, unknown> | null;
 };
 
 export const AiChatToolCallApprovalArgumentsCard = ({
@@ -32,9 +37,8 @@ export const AiChatToolCallApprovalArgumentsCard = ({
     unknown
   > | null>(proposal.arguments);
 
-  const [confirmingToolName, setConfirmingToolName] = useState<string | null>(
-    null,
-  );
+  const [confirmation, setConfirmation] =
+    useState<AlternativeConfirmation | null>(null);
 
   const {
     template,
@@ -45,13 +49,10 @@ export const AiChatToolCallApprovalArgumentsCard = ({
   } = proposal;
 
   const frontComponentIdByToolName = useFrontComponentIdByToolName();
-  const reviewedToolName = confirmingToolName ?? proposal.toolName;
+  const reviewedToolName = confirmation?.toolName ?? proposal.toolName;
   const toolFrontComponentId =
     frontComponentIdByToolName.get(reviewedToolName) ??
     frontComponentIdByToolName.get(proposal.toolName);
-  const confirmLabel = isDefined(confirmingToolName)
-    ? labels?.alternatives?.[confirmingToolName]?.confirmLabel
-    : undefined;
   const pendingToolName =
     pendingResponse?.decision === 'approve'
       ? (pendingResponse.toolName ?? proposal.toolName)
@@ -70,7 +71,10 @@ export const AiChatToolCallApprovalArgumentsCard = ({
 
   const handleAlternativeClick = (alternativeToolName: string) => {
     if (isDefined(labels?.alternatives?.[alternativeToolName]?.confirmLabel)) {
-      setConfirmingToolName(alternativeToolName);
+      setConfirmation({
+        toolName: alternativeToolName,
+        argumentsBeforeConfirmation: toolArguments,
+      });
 
       return;
     }
@@ -78,8 +82,14 @@ export const AiChatToolCallApprovalArgumentsCard = ({
     approveWith(alternativeToolName);
   };
 
+  const handleBackClick = () => {
+    setToolArguments(confirmation?.argumentsBeforeConfirmation ?? null);
+    setConfirmation(null);
+  };
+
   const argumentsEditor = (
     <AiChatToolCallApprovalArgumentsEditor
+      key={reviewedToolName}
       defaultArguments={toolArguments ?? proposal.arguments}
       readonly={isAnswering}
       onChange={setToolArguments}
@@ -103,71 +113,30 @@ export const AiChatToolCallApprovalArgumentsCard = ({
       summary={proposal.summary}
       approval={approval}
       actions={
-        isDefined(confirmingToolName) ? (
-          <>
-            <Button
-              size="sm"
-              variant="ghost"
-              disabled={isAnswering}
-              onClick={() => setConfirmingToolName(null)}
-            >
-              {t`Back`}
-            </Button>
-            <Button
-              size="sm"
-              variant="solid"
-              color="accent"
-              startIcon={<IconCheck />}
-              disabled={isAnswering || !isDefined(toolArguments)}
-              loading={pendingToolName === confirmingToolName}
-              onClick={() => approveWith(confirmingToolName)}
-            >
-              {confirmLabel ?? t`Approve`}
-            </Button>
-          </>
+        isDefined(confirmation) ? (
+          <AiChatToolCallApprovalConfirmActions
+            confirmLabel={
+              labels?.alternatives?.[confirmation.toolName]?.confirmLabel
+            }
+            isAnswering={isAnswering}
+            isConfirmDisabled={!isDefined(toolArguments)}
+            isConfirming={pendingToolName === confirmation.toolName}
+            onBack={handleBackClick}
+            onConfirm={() => approveWith(confirmation.toolName)}
+          />
         ) : (
-          <>
-            <Button
-              size="sm"
-              variant="ghost"
-              startIcon={<IconX />}
-              disabled={isAnswering}
-              loading={pendingResponse?.decision === 'reject'}
-              onClick={reject}
-            >
-              {labels?.reject ?? t`Reject`}
-            </Button>
-            {alternativeToolNames.map((alternativeToolName) => {
-              const alternativeLabel =
-                labels?.alternatives?.[alternativeToolName];
-
-              return (
-                <Button
-                  key={alternativeToolName}
-                  size="sm"
-                  variant="outline"
-                  disabled={isAnswering || !isDefined(toolArguments)}
-                  loading={pendingToolName === alternativeToolName}
-                  onClick={() => handleAlternativeClick(alternativeToolName)}
-                >
-                  {isDefined(alternativeLabel?.confirmLabel)
-                    ? `${alternativeLabel.label}…`
-                    : (alternativeLabel?.label ?? alternativeToolName)}
-                </Button>
-              );
-            })}
-            <Button
-              size="sm"
-              variant="solid"
-              color="accent"
-              startIcon={<IconCheck />}
-              disabled={isAnswering || !isDefined(toolArguments)}
-              loading={pendingToolName === proposal.toolName}
-              onClick={() => approveWith(proposal.toolName)}
-            >
-              {labels?.approve ?? t`Approve`}
-            </Button>
-          </>
+          <AiChatToolCallApprovalDecisionActions
+            proposedToolName={proposal.toolName}
+            alternativeToolNames={alternativeToolNames}
+            labels={labels}
+            pendingToolName={pendingToolName}
+            isRejecting={pendingResponse?.decision === 'reject'}
+            isAnswering={isAnswering}
+            isApproveDisabled={!isDefined(toolArguments)}
+            onReject={reject}
+            onApprove={approveWith}
+            onAlternativeClick={handleAlternativeClick}
+          />
         )
       }
     >

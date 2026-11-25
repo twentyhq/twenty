@@ -301,6 +301,26 @@ describe('AiChatToolCallApprovalCard', () => {
         screen.getByRole('button', { name: 'Accept meeting' }),
       ).toBeInTheDocument();
     });
+
+    it('drops what the alternative collected when going back', async () => {
+      const user = userEvent.setup();
+
+      renderCard({ proposal: BOOKING_PROPOSAL });
+
+      await user.click(screen.getByRole('button', { name: 'Decline…' }));
+      await user.click(screen.getByRole('button', { name: 'Decline instead' }));
+      await user.click(screen.getByRole('button', { name: 'Back' }));
+      await user.click(screen.getByRole('button', { name: 'Accept meeting' }));
+
+      expect(answerAiChatToolCall).toHaveBeenCalledWith(
+        expect.objectContaining({
+          response: {
+            decision: 'approve',
+            arguments: { bookingId: 'booking-1' },
+          },
+        }),
+      );
+    });
   });
 
   it('shows what the call does and which tool it runs', () => {
