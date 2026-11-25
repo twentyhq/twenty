@@ -6,7 +6,9 @@ import { Callout, Section } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { TimeoutEffect } from 'src/front-components/components/TimeoutEffect';
 import { useStartTelegramUserLink } from 'src/front-components/hooks/use-start-telegram-user-link';
+import { TELEGRAM_LINK_TOKEN_TTL_MS } from 'src/logic-functions/constants/telegram-link-token-ttl-ms';
 
 const StyledActions = styled.div`
   align-items: flex-start;
@@ -41,6 +43,7 @@ const StyledCommand = styled.code`
 `;
 
 const QR_CODE_SIZE_PX = 144;
+// Not a theme token: scanners need a light quiet zone, in the dark theme too
 const QR_CODE_BACKGROUND_COLOR = '#FFFFFF';
 
 const StyledQrCode = styled.div`
@@ -53,7 +56,8 @@ const StyledQrCode = styled.div`
 
 export const TelegramConnectSection = () => {
   const { t } = useTranslate();
-  const { startState, startTelegramUserLink } = useStartTelegramUserLink();
+  const { startState, startTelegramUserLink, expireTelegramUserLink } =
+    useStartTelegramUserLink();
 
   return (
     <Section.Root>
@@ -77,6 +81,10 @@ export const TelegramConnectSection = () => {
         )}
         {startState.status === 'READY' ? (
           <>
+            <TimeoutEffect
+              delayMilliseconds={TELEGRAM_LINK_TOKEN_TTL_MS}
+              onTimeout={expireTelegramUserLink}
+            />
             <StyledLink
               href={startState.url}
               target="_blank"
