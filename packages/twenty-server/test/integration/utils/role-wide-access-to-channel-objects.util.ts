@@ -21,7 +21,6 @@ export const ROLE_WIDE_ACCESS_REVOKED_OBJECT_UNIVERSAL_IDENTIFIERS = [
 const getWorkspaceCacheService = () =>
   getAppProviderByClassName<WorkspaceCacheService>('WorkspaceCacheService');
 
-// Gives the seeded user roles back the role wide access the revoke takes away, as a workspace can choose to
 export const grantRoleWideAccessToChannelObjects = async () => {
   const {
     flatRoleMaps,

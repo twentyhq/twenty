@@ -34,7 +34,6 @@ describe('Calendar channel visibility (integration)', () => {
   let channel: Awaited<ReturnType<typeof connectMessagingAccount>>;
   let calendarEventIds: string[];
 
-  // An unreadable title cannot be filtered on, so members look the event up by id
   const calendarEventQuery = () =>
     findManyOperationFactory({
       objectMetadataSingularName: 'calendarEvent',

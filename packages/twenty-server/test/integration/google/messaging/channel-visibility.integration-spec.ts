@@ -33,7 +33,6 @@ describe('Message channel visibility (integration)', () => {
   let channel: Awaited<ReturnType<typeof connectMessagingAccount>>;
   let messageIds: string[];
 
-  // An unreadable subject cannot be filtered on, so members look the message up by id
   const messageQuery = () =>
     findManyOperationFactory({
       objectMetadataSingularName: 'message',
