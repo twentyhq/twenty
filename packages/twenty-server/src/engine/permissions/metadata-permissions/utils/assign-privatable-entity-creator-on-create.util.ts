@@ -21,7 +21,7 @@ export const assignPrivatableEntityCreatorOnCreate = <
     !isPrivatableMetadataName(metadataName) ||
     !isDefined(authContext) ||
     isSystemAuthContext(authContext) ||
-    universalFlatEntity.isSystemSideEffect === true
+    universalFlatEntity.isSystemSideEffect
   ) {
     return universalFlatEntity;
   }
