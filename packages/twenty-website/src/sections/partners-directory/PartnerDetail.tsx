@@ -453,8 +453,8 @@ export function PartnerDetail({
                 (isDefined(minimum) && minimum !== '$0')) && (
                 <SideGroup>
                   {isDefined(hourly) && (
-                    <Fact label={i18n._(msg`Hourly`)}>
-                      <Body size="sm">{i18n._(msg`${hourly}/hr`)}</Body>
+                    <Fact label={i18n._(msg`Hourly rate`)}>
+                      <Body size="sm">{hourly}</Body>
                     </Fact>
                   )}
                   {isDefined(minimum) && minimum !== '$0' && (

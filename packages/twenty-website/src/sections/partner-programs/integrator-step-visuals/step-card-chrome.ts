@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 
-import { color, fontFamily } from '@/tokens';
+import { color, FONT_WEIGHT, fontFamily } from '@/tokens';
 import { cssVariableStyle } from '@/ui/css-variable-style';
 
 // One light card centred in the stepper's frame. With data-scrub, every
@@ -69,7 +69,7 @@ const PanelHeader = styled.div`
   display: flex;
   font-family: ${fontFamily('sans')};
   font-size: 18px;
-  font-weight: 500;
+  font-weight: ${FONT_WEIGHT.medium};
   gap: 10px;
   padding: 10px 8px 8px;
 `;

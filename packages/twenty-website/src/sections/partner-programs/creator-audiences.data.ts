@@ -8,7 +8,7 @@ type CreatorAudience = {
 };
 
 // Same audiences and strings as sections/affiliate-program.
-// 3D slots awaiting Thomas's illustrations: one model per audience.
+// One 3D model per audience.
 export const CREATOR_AUDIENCES: readonly CreatorAudience[] = [
   {
     title: msg`Content creators`,

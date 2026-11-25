@@ -31,7 +31,7 @@ export function IntegratorEarnings() {
         </SectionIntro>
         <IntegratorLedger
           footnote={i18n._(
-            msg`Commission on Organization and Enterprise plans`,
+            msg`Commission on Organization and Enterprise plans.`,
           )}
         />
       </SectionStack>

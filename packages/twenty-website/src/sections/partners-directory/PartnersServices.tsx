@@ -68,7 +68,7 @@ const SERVICES: readonly PartnerServiceKind[] = [
     model: 'spaceship',
   },
   {
-    title: msg`Customization & apps`,
+    title: msg`Customization and apps`,
     body: msg`Custom objects, workflows and apps built on the platform.`,
     model: 'single-screen',
   },
@@ -78,7 +78,7 @@ const SERVICES: readonly PartnerServiceKind[] = [
     model: 'lock',
   },
   {
-    title: msg`Training & RevOps`,
+    title: msg`Training and RevOps`,
     body: msg`Onboard your team and design your sales process.`,
     model: 'target',
   },

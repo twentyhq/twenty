@@ -39,7 +39,8 @@ export const worldRegionOfCell = (
   if (longitude < 63 && latitude >= 15 && latitude < 42) {
     return 'MENA';
   }
-  if (longitude < 55 && latitude < 15) {
+  // Out to 60°E so Mauritius, Réunion and the Seychelles stay with Africa.
+  if (longitude < 60 && latitude < 15) {
     return 'AFRICA';
   }
   return 'APAC';

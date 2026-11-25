@@ -181,7 +181,7 @@ const FIELDS = [
     Icon: IconBuilding,
     tint: color('green'),
     label: msg`Company`,
-    value: msg`Northwind Studio`,
+    value: msg`Brightline Studio`,
   },
   {
     Icon: IconUsers,
@@ -231,7 +231,7 @@ export function ApplyStepVisual({
         <SubmitRow>
           <IconSend size={20} stroke={1.5} />
           <SubmitLabels>
-            <SubmitLabel>{i18n._(msg`Submit`)}</SubmitLabel>
+            <SubmitLabel>{i18n._(msg`Submit application`)}</SubmitLabel>
             <SentCheck>
               <IconCheck size={20} stroke={2} />
             </SentCheck>

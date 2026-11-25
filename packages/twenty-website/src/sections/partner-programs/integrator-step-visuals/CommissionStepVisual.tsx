@@ -6,7 +6,14 @@ import { styled } from '@linaria/react';
 import { IconBuilding, IconChartBar } from '@tabler/icons-react';
 
 import { useAnimatedNumber } from '@/platform/motion';
-import { color, DURATION, EASING, fontFamily, REDUCED_MOTION } from '@/tokens';
+import {
+  color,
+  DURATION,
+  EASING,
+  FONT_WEIGHT,
+  fontFamily,
+  REDUCED_MOTION,
+} from '@/tokens';
 import { cssVariableStyle } from '@/ui/css-variable-style';
 
 import { STEP_CARD_CHROME } from './step-card-chrome';
@@ -77,7 +84,7 @@ const Figure = styled.span`
   font-family: ${fontFamily('sans')};
   font-size: 40px;
   font-variant-numeric: tabular-nums;
-  font-weight: 500;
+  font-weight: ${FONT_WEIGHT.medium};
   line-height: 1;
 `;
 
