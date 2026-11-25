@@ -183,15 +183,9 @@ export class BillingTrialExtensionService {
             !isSendInvoiceSubscription(subscription);
           const hasPaymentMethod =
             isPaymentMethodRequired &&
-            (await this.stripeCustomerService.hasPaymentMethod(
+            (await this.stripeCustomerService.ensureDefaultPaymentMethod(
               subscription.stripeCustomerId,
             ));
-
-          if (hasPaymentMethod) {
-            await this.stripeCustomerService.ensureDefaultPaymentMethod(
-              subscription.stripeCustomerId,
-            );
-          }
 
           await this.moveStripeTrialEnd({
             stripeSubscriptionId: subscription.stripeSubscriptionId,
