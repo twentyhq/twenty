@@ -11,6 +11,7 @@ import { ALL_METADATA_ENTITY_BY_METADATA_NAME } from 'src/engine/metadata-module
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { resolveEffectiveFlatEntity } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity.util';
 import { PRIVATABLE_METADATA_NAMES } from 'src/engine/permissions/metadata-permissions/constants/privatable-metadata-names.constant';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
@@ -78,10 +79,13 @@ export class PrivateMetadataSuccessorTransferService {
         metadataName,
         privateEntityIds,
       } of privateEntityIdsByMetadataName) {
-        await transactionManager.update(
-          ALL_METADATA_ENTITY_BY_METADATA_NAME[metadataName],
+        await new WorkspaceScopedRepository(
+          transactionManager.getRepository(
+            ALL_METADATA_ENTITY_BY_METADATA_NAME[metadataName],
+          ),
+        ).update(
+          workspaceId,
           {
-            workspaceId,
             id: In(privateEntityIds),
             createdByUserWorkspaceId: removedUserWorkspace.id,
           },
