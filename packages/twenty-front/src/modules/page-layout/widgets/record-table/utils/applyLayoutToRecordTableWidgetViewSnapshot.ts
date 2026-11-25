@@ -16,10 +16,11 @@ export const applyLayoutToRecordTableWidgetViewSnapshot = ({
   defaultGroupByFieldMetadataItem: FieldMetadataItem | null;
   defaultCalendarFieldMetadataItem?: FieldMetadataItem | null;
 }): RecordTableWidgetViewSnapshot => {
+  const isViewBecomingCompactByDefault =
+    isViewCompactByDefault(targetViewType) &&
+    !isViewCompactByDefault(widgetViewSnapshot.view.type);
   const isCompact =
-    targetViewType === widgetViewSnapshot.view.type
-      ? widgetViewSnapshot.view.isCompact
-      : isViewCompactByDefault(targetViewType);
+    isViewBecomingCompactByDefault || widgetViewSnapshot.view.isCompact;
 
   if (targetViewType === ViewType.KANBAN_WIDGET) {
     const hasGroupBy = isDefined(

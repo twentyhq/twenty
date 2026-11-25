@@ -70,4 +70,20 @@ describe('applyLayoutToRecordTableWidgetViewSnapshot', () => {
       },
     });
   });
+
+  it('should keep Compact view when a list becomes another layout', () => {
+    const listSnapshot = applyLayoutToRecordTableWidgetViewSnapshot({
+      widgetViewSnapshot,
+      targetViewType: ViewType.LIST_WIDGET,
+      defaultGroupByFieldMetadataItem: null,
+    });
+
+    expect(
+      applyLayoutToRecordTableWidgetViewSnapshot({
+        widgetViewSnapshot: listSnapshot,
+        targetViewType: ViewType.TABLE_WIDGET,
+        defaultGroupByFieldMetadataItem: null,
+      }).view,
+    ).toMatchObject({ type: ViewType.TABLE_WIDGET, isCompact: true });
+  });
 });
