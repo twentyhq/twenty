@@ -102,7 +102,7 @@ export default defineLogicFunction({
   universalIdentifier: TELEGRAM_START_USER_LINK_UNIVERSAL_IDENTIFIER,
   name: 'telegram-start-user-link',
   description:
-    'Starts connecting the Telegram account of the calling workspace member: registers the bot webhook, then returns a one-time link that opens the bot in Telegram. Opening it and pressing Start completes the connection. The link expires after 10 minutes and replaces any earlier link of that member.',
+    'Starts connecting the Telegram account of the calling workspace member: registers the bot webhook, then returns a one-time link that opens the bot in Telegram, along with the bot username and the equivalent /start command. Opening the link and pressing Start, or sending that command to the bot, completes the connection. The link expires after 10 minutes and replaces any earlier link of that member.',
   timeoutSeconds: 30,
   httpRouteTriggerSettings: {
     path: TELEGRAM_USER_LINKS_START_ROUTE_PATH,

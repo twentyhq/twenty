@@ -6,6 +6,8 @@ import { Callout, Section } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { TELEGRAM_LINK_QR_CODE_BACKGROUND_COLOR } from 'src/front-components/constants/telegram-link-qr-code-background-color';
+import { TELEGRAM_LINK_QR_CODE_SIZE_PX } from 'src/front-components/constants/telegram-link-qr-code-size-px';
 import { useStartTelegramUserLink } from 'src/front-components/hooks/use-start-telegram-user-link';
 
 const StyledActions = styled.div`
@@ -32,6 +34,7 @@ const StyledCommand = styled.code`
   background: ${() => themeCssVariables.background.tertiary};
   border-radius: ${() => themeCssVariables.border.radius.sm};
   color: ${() => themeCssVariables.font.color.primary};
+  font-family: ${() => themeCssVariables.code.font.family}, monospace;
   font-size: ${() => themeCssVariables.font.size.sm};
   max-width: 100%;
   overflow-wrap: anywhere;
@@ -40,11 +43,8 @@ const StyledCommand = styled.code`
   user-select: all;
 `;
 
-const QR_CODE_SIZE_PX = 144;
-const QR_CODE_BACKGROUND_COLOR = '#FFFFFF';
-
 const StyledQrCode = styled.div`
-  background: ${QR_CODE_BACKGROUND_COLOR};
+  background: ${TELEGRAM_LINK_QR_CODE_BACKGROUND_COLOR};
   border: 1px solid ${() => themeCssVariables.border.color.medium};
   border-radius: ${() => themeCssVariables.border.radius.md};
   display: flex;
@@ -97,8 +97,8 @@ export const TelegramConnectSection = () => {
             <StyledQrCode>
               <QRCode
                 value={startState.url}
-                size={QR_CODE_SIZE_PX}
-                bgColor={QR_CODE_BACKGROUND_COLOR}
+                size={TELEGRAM_LINK_QR_CODE_SIZE_PX}
+                bgColor={TELEGRAM_LINK_QR_CODE_BACKGROUND_COLOR}
                 title={t('QR code that opens the Telegram bot')}
               />
             </StyledQrCode>

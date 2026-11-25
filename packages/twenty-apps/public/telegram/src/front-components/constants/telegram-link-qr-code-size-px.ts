@@ -1,0 +1,1 @@
+export const TELEGRAM_LINK_QR_CODE_SIZE_PX = 144;
