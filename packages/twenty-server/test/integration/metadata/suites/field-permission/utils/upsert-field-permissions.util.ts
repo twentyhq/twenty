@@ -7,6 +7,7 @@ import { type CommonResponseBody } from 'test/integration/metadata/types/common-
 import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
+import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 
 import { type FieldPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/field-permission.dto';
 
@@ -38,6 +39,8 @@ export const upsertFieldPermissions = async ({
       errorMessage: 'Field permissions upsert has failed but should not',
     });
   }
+
+  await waitForAllJobsToFinish();
 
   return { data: response.body.data, errors: response.body.errors };
 };
