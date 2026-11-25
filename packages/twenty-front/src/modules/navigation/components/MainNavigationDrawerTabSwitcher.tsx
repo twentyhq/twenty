@@ -48,8 +48,8 @@ const StyledSwitcher = styled.div<{
     isExpanded
       ? themeCssVariables.spacing['0.5']
       : themeCssVariables.betweenSiblingsGap};
-  height: ${({ isExpanded }) =>
-    isExpanded ? themeCssVariables.spacing[10] : 'auto'};
+  height: ${({ isExpanded, isPinnedToBottom }) =>
+    isExpanded && !isPinnedToBottom ? themeCssVariables.spacing[10] : 'auto'};
   min-width: 0;
 `;
 

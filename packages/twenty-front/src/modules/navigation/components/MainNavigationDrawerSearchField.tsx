@@ -9,7 +9,23 @@ import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 
+const StyledSection = styled.div<{ isExpanded: boolean }>`
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  border-top: 1px solid ${themeCssVariables.border.color.light};
+  margin-left: calc(-1 * ${themeCssVariables.spacing[2]});
+  margin-right: ${({ isExpanded }) =>
+    isExpanded ? `calc(-1 * ${themeCssVariables.spacing[2]})` : '0'};
+  padding: ${({ isExpanded }) =>
+    `${themeCssVariables.spacing['1.5']} ${isExpanded ? themeCssVariables.spacing[2] : '0'} ${themeCssVariables.spacing['1.5']} ${themeCssVariables.spacing[2]}`};
+`;
+
 const StyledSearchButton = styled.button`
+  && {
+    block-size: ${themeCssVariables.spacing[7]};
+    gap: ${themeCssVariables.spacing['1.5']};
+    padding-inline-end: ${themeCssVariables.spacing['1.5']};
+  }
+
   cursor: pointer;
   font-family: inherit;
   font-size: ${themeCssVariables.font.size.md};
@@ -31,24 +47,26 @@ export const MainNavigationDrawerSearchField = () => {
   const isExpanded = useIsNavigationDrawerContentExpanded();
   const { openSidePanelMenu } = useSidePanelMenu();
 
-  if (!isExpanded) {
-    return (
-      <NavigationDrawerItem
-        label={t`Search`}
-        Icon={IconSearch}
-        onClick={openSidePanelMenu}
-        triggerEvent="CLICK"
-      />
-    );
-  }
-
   return (
-    <InputGroup
-      render={<StyledSearchButton type="button" onClick={openSidePanelMenu} />}
-      startElement={<IconSearch size={theme.icon.size.md} aria-hidden />}
-      endElement={<Shortcut shortcut={['Mod', 'K']} />}
-    >
-      <StyledPlaceholder>{t`Search or ask...`}</StyledPlaceholder>
-    </InputGroup>
+    <StyledSection isExpanded={isExpanded}>
+      {isExpanded ? (
+        <InputGroup
+          render={
+            <StyledSearchButton type="button" onClick={openSidePanelMenu} />
+          }
+          startElement={<IconSearch size={theme.icon.size.md} aria-hidden />}
+          endElement={<Shortcut shortcut={['Mod', 'K']} />}
+        >
+          <StyledPlaceholder>{t`Search or ask...`}</StyledPlaceholder>
+        </InputGroup>
+      ) : (
+        <NavigationDrawerItem
+          label={t`Search`}
+          Icon={IconSearch}
+          onClick={openSidePanelMenu}
+          triggerEvent="CLICK"
+        />
+      )}
+    </StyledSection>
   );
 };

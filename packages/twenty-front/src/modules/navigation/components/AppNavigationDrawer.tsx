@@ -18,10 +18,15 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledBottomTabs = styled.div`
+  align-items: center;
   border-top: 1px solid ${themeCssVariables.border.color.light};
+  box-sizing: border-box;
+  display: flex;
   flex-shrink: 0;
+  margin-bottom: calc(-1 * ${themeCssVariables.spacing[4]});
   margin-left: calc(-1 * ${themeCssVariables.spacing[2]});
-  padding: 0 ${themeCssVariables.spacing[2]};
+  min-height: ${themeCssVariables.spacing[12]};
+  padding: ${themeCssVariables.spacing[2]};
 `;
 
 export type AppNavigationDrawerProps = {
