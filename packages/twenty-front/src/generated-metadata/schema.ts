@@ -1297,6 +1297,8 @@ export enum BillingProductKey {
 
 export type BillingProductMetadata = {
   __typename?: 'BillingProductMetadata';
+  applicationName?: Maybe<Scalars['String']['output']>;
+  applicationPricePer?: Maybe<Scalars['String']['output']>;
   isLegacy?: Maybe<Scalars['String']['output']>;
   planKey?: Maybe<BillingPlanKey>;
   productKey: BillingProductKey;

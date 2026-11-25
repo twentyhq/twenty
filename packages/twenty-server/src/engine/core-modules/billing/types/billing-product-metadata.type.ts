@@ -17,6 +17,12 @@ export class BillingProductMetadata {
   @Field(() => String, { nullable: true })
   isLegacy?: string;
 
+  @Field(() => String, { nullable: true })
+  applicationName?: string;
+
+  @Field(() => String, { nullable: true })
+  applicationPricePer?: string;
+
   workspaceCreditsPerSeat?: string;
 
   [key: string]: string | undefined;

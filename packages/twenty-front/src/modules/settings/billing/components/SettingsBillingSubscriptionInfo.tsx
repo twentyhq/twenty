@@ -156,7 +156,7 @@ export const SettingsBillingSubscriptionInfo = ({
     perSeatAmountCents,
     seatsSubtotalCents,
     creditsSubtotalCents,
-    applicationSubscriptionItems,
+    applicationsCount,
     applicationsSubtotalCents,
     totalCents,
   } = useBillingSubscriptionCost();
@@ -272,7 +272,6 @@ export const SettingsBillingSubscriptionInfo = ({
       ? t`(${currentCreditsByPeriodDisplay} credits/month)`
       : t`(${currentCreditsByPeriodDisplay} credits/year)`
     : undefined;
-  const applicationsCount = applicationSubscriptionItems.length;
   const applicationsSubtotalDisplay = formatBillingPeriodCentsToMonthlyDisplay(
     applicationsSubtotalCents,
   );

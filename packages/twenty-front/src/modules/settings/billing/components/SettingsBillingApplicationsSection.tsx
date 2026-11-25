@@ -53,7 +53,8 @@ export const SettingsBillingApplicationsSection = () => {
   const theme = useTheme();
   const { formatNumber } = useNumberFormat();
   const { isYearlyPlan } = useCurrentBillingFlags();
-  const { applicationSubscriptionItems } = useBillingSubscriptionCost();
+  const { applicationSubscriptionItems, applicationsCount } =
+    useBillingSubscriptionCost();
 
   if (applicationSubscriptionItems.length === 0) {
     return null;
@@ -64,7 +65,22 @@ export const SettingsBillingApplicationsSection = () => {
       decimals: 2,
     })}`;
 
-  const applicationsCount = applicationSubscriptionItems.length;
+  const formatQuantity = (
+    quantity: number,
+    applicationPricePer: string | null | undefined,
+  ) => {
+    switch (applicationPricePer) {
+      case 'WORKSPACE_MEMBER':
+        return quantity === 1 ? t`${quantity} member` : t`${quantity} members`;
+      case 'CONNECTED_ACCOUNT':
+        return quantity === 1
+          ? t`${quantity} account`
+          : t`${quantity} accounts`;
+      default:
+        return `${quantity}`;
+    }
+  };
+
   const applicationsCountLabel =
     applicationsCount === 1
       ? t`${applicationsCount} paid app`
@@ -93,6 +109,8 @@ export const SettingsBillingApplicationsSection = () => {
           {applicationSubscriptionItems.map((applicationSubscriptionItem) => {
             const quantity = applicationSubscriptionItem.quantity ?? 0;
             const unitAmountCents = applicationSubscriptionItem.unitAmount ?? 0;
+            const { name, metadata } =
+              applicationSubscriptionItem.billingProduct;
 
             return (
               <StyledApplicationRow key={applicationSubscriptionItem.id}>
@@ -102,12 +120,12 @@ export const SettingsBillingApplicationsSection = () => {
                     color={themeCssVariables.font.color.tertiary}
                   />
                   <OverflowingTextWithTooltip
-                    text={applicationSubscriptionItem.billingProduct.name}
+                    text={metadata.applicationName ?? name}
                   />
                 </StyledApplicationName>
                 <StyledApplicationAmount>
                   <StyledSecondaryText>
-                    {`${quantity} × ${formatMonthlyAmount(unitAmountCents)} · `}
+                    {`${formatQuantity(quantity, metadata.applicationPricePer)} × ${formatMonthlyAmount(unitAmountCents)} · `}
                   </StyledSecondaryText>
                   {formatMonthlyAmount(quantity * unitAmountCents)}
                 </StyledApplicationAmount>

@@ -36,6 +36,14 @@ export const useBillingSubscriptionCost = () => {
         BillingProductKey.APPLICATION,
     ) ?? [];
 
+  const applicationsCount = new Set(
+    applicationSubscriptionItems.map(
+      (applicationSubscriptionItem) =>
+        applicationSubscriptionItem.billingProduct.metadata.applicationName ??
+        applicationSubscriptionItem.billingProduct.name,
+    ),
+  ).size;
+
   const applicationsSubtotalCents = applicationSubscriptionItems.reduce(
     (subtotalCents, applicationSubscriptionItem) =>
       subtotalCents +
@@ -60,6 +68,7 @@ export const useBillingSubscriptionCost = () => {
     seatsSubtotalCents,
     creditsSubtotalCents,
     applicationSubscriptionItems,
+    applicationsCount,
     applicationsSubtotalCents,
     totalCents,
     getTotalCentsWithCreditsAmountCents,
