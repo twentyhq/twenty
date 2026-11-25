@@ -1,16 +1,12 @@
 import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
-import { LightButton } from 'twenty-ui/components/input';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { StyledAiChatAskCard } from '@/ai-chat/tool-calls/components/StyledAiChatAskCard';
 import { TextWithChatReferences } from '@/ai-chat/message-content/components/TextWithChatReferences';
-import { AiChatToolCallApprovalFeedbackInput } from '@/ai-chat/tool-calls/components/AiChatToolCallApprovalFeedbackInput';
 import { useAiChatAskCardFieldFocus } from '@/ai-chat/tool-calls/hooks/useAiChatAskCardFieldFocus';
-import { type useAnswerToolCallApproval } from '@/ai-chat/tool-calls/hooks/useAnswerToolCallApproval';
 
 const StyledHeader = styled.div`
   display: flex;
@@ -54,18 +50,14 @@ const StyledActions = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: ${themeCssVariables.spacing[2]};
+  justify-content: flex-end;
   padding: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledActionsSpacer = styled.div`
-  flex: 1;
 `;
 
 type AiChatToolCallApprovalCardLayoutProps = {
   title: string;
   Icon?: IconComponent;
   summary?: string;
-  approval: ReturnType<typeof useAnswerToolCallApproval>;
   actions: ReactNode;
   children: ReactNode;
 };
@@ -74,15 +66,11 @@ export const AiChatToolCallApprovalCardLayout = ({
   title,
   Icon,
   summary,
-  approval,
   actions,
   children,
 }: AiChatToolCallApprovalCardLayoutProps) => {
-  const { t } = useLingui();
   const theme = useTheme();
   const { handleFieldFocus, handleFieldBlur } = useAiChatAskCardFieldFocus();
-  const { isAnswering, isFeedbackShown, showFeedback, feedback, setFeedback } =
-    approval;
 
   return (
     <StyledAiChatAskCard>
@@ -99,23 +87,8 @@ export const AiChatToolCallApprovalCardLayout = ({
       </StyledHeader>
       <StyledBody onFocus={handleFieldFocus} onBlur={handleFieldBlur}>
         {children}
-        {isFeedbackShown && (
-          <AiChatToolCallApprovalFeedbackInput
-            value={feedback}
-            disabled={isAnswering}
-            onChange={setFeedback}
-          />
-        )}
       </StyledBody>
-      <StyledActions>
-        {!isFeedbackShown && (
-          <LightButton disabled={isAnswering} onClick={showFeedback}>
-            {t`Add feedback`}
-          </LightButton>
-        )}
-        <StyledActionsSpacer />
-        {actions}
-      </StyledActions>
+      <StyledActions>{actions}</StyledActions>
     </StyledAiChatAskCard>
   );
 };

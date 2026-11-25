@@ -79,11 +79,6 @@ export const ComponentPreview: Story = {
     ).not.toBeInTheDocument();
     await expect(canvas.getByRole('button', { name: 'Approve' })).toBeEnabled();
     await expect(canvas.getByRole('button', { name: 'Reject' })).toBeVisible();
-    await userEvent.click(canvas.getByRole('button', { name: 'Add feedback' }));
-    await userEvent.type(
-      canvas.getByRole('textbox', { name: 'Feedback' }),
-      'Make it smaller',
-    );
     await expect(
       canvas.getByRole('button', { name: 'Count: 1' }),
     ).toBeVisible();
@@ -240,11 +235,6 @@ export const PendingRequests: Story = {
         name: 'Component preview with sample data',
       }),
     ).toHaveLength(1);
-    await userEvent.click(canvas.getByRole('button', { name: 'Add feedback' }));
-    await userEvent.type(
-      canvas.getByRole('textbox', { name: 'Feedback' }),
-      'Keep this feedback',
-    );
     await userEvent.click(canvas.getByRole('button', { name: 'Next request' }));
     await canvas.findByText('Record page widget');
     await expect(requestedDraftIds).toEqual(['current', 'record-page']);
@@ -254,9 +244,6 @@ export const PendingRequests: Story = {
     );
     await waitFor(() =>
       expect(requestedDraftIds).toEqual(['current', 'record-page', 'current']),
-    );
-    await expect(canvas.getByRole('textbox', { name: 'Feedback' })).toHaveValue(
-      'Keep this feedback',
     );
     await canvas.findByRole('button', { name: 'Count: 0' }, { timeout: 30000 });
   },

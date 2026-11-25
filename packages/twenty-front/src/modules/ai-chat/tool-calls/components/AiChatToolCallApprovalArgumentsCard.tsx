@@ -61,7 +61,6 @@ export const AiChatToolCallApprovalArgumentsCard = ({
     <AiChatToolCallApprovalCardLayout
       title={proposal.toolLabel}
       summary={proposal.summary}
-      approval={approval}
       actions={
         <>
           <Button

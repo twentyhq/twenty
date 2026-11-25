@@ -100,7 +100,7 @@ describe('AiChatPendingAskGate', () => {
     expect(screen.queryByRole('textbox', { name: 'Message' })).toBeNull();
   });
 
-  it('shows an email waiting for approval in place of the composer', () => {
+  it('keeps the composer usable under an email waiting for approval', () => {
     useAiChatPendingToolCalls.mockReturnValue([EMAIL_APPROVAL]);
 
     renderGate();
@@ -108,7 +108,7 @@ describe('AiChatPendingAskGate', () => {
     expect(
       screen.getByRole('group', { name: 'Tool call approval' }),
     ).toHaveTextContent('Your renewal');
-    expect(screen.queryByRole('textbox', { name: 'Message' })).toBeNull();
+    expect(screen.getByRole('textbox', { name: 'Message' })).toBeVisible();
   });
 
   it('shows a form to fill in place of the composer', () => {

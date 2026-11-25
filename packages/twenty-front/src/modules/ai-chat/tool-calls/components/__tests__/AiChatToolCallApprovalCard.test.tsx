@@ -273,56 +273,28 @@ describe('AiChatToolCallApprovalCard', () => {
     );
   });
 
-  it('approves the call with the feedback the person wrote', async () => {
-    const user = userEvent.setup();
-    answerAiChatToolCall.mockReturnValue(new Promise(() => {}));
-
-    renderCard();
-
-    await user.click(screen.getByRole('button', { name: 'Add feedback' }));
-    await user.type(
-      screen.getByRole('textbox', { name: 'Feedback' }),
-      'Use the staging URL next time',
-    );
-    await user.click(screen.getByRole('button', { name: 'Approve' }));
-
-    expect(answerAiChatToolCall).toHaveBeenCalledWith(
-      expect.objectContaining({
-        response: {
-          decision: 'approve',
-          arguments: PROPOSAL.arguments,
-          feedback: 'Use the staging URL next time',
-        },
-      }),
-    );
-  });
-
-  it('rejects the call with the feedback the person wrote', async () => {
+  it('rejects the call without asking for feedback', async () => {
     const user = userEvent.setup();
     answerAiChatToolCall.mockResolvedValue(true);
 
     renderCard();
 
-    await user.click(screen.getByRole('button', { name: 'Add feedback' }));
-    await user.type(
-      screen.getByRole('textbox', { name: 'Feedback' }),
-      'Wait for the signed quote',
-    );
+    expect(
+      screen.queryByRole('button', { name: 'Add feedback' }),
+    ).not.toBeInTheDocument();
+
     await user.click(screen.getByRole('button', { name: 'Reject' }));
 
     expect(answerAiChatToolCall).toHaveBeenCalledWith({
       toolCallId: 'call-1',
-      response: { decision: 'reject', feedback: 'Wait for the signed quote' },
+      response: { decision: 'reject' },
       optimisticToolOutput: {
         success: true,
-        result: {
-          status: 'rejected',
-          proposal: PROPOSAL,
-          feedback: 'Wait for the signed quote',
-        },
+        result: { status: 'rejected', proposal: PROPOSAL },
       },
     });
   });
+
   it.each(['frontComponent', 'generic'] as const)(
     'shows a %s publication preview and approves its unchanged revision',
     async (template) => {

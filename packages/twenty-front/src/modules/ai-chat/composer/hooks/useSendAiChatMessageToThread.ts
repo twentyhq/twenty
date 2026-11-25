@@ -25,6 +25,7 @@ import { aiChatThreadReplyStatusFamilyState } from '@/ai-chat/states/reply/aiCha
 import { aiChatThreadIsFetchingMessagesFamilyState } from '@/ai-chat/states/server/aiChatThreadIsFetchingMessagesFamilyState';
 import { useAttachAiChatThreadToRecord } from '@/ai-chat/threads/hooks/useAttachAiChatThreadToRecord';
 import { useRefreshAiChatThreadPermissions } from '@/ai-chat/threads/hooks/useRefreshAiChatThreadPermissions';
+import { cancelPendingAiChatToolCallApprovals } from '@/ai-chat/tool-calls/utils/cancelPendingAiChatToolCallApprovals';
 import { isAiChatCreditsExhaustedError } from '@/ai-chat/usage/utils/isAiChatCreditsExhaustedError';
 import { endAiChatReplyStatus } from '@/ai-chat/utils/endAiChatReplyStatus';
 import { getAiChatModelIdForRequest } from '@/ai-chat/utils/getAiChatModelIdForRequest';
@@ -121,7 +122,7 @@ export const useSendAiChatMessageToThread = () => {
           : null,
       );
       store.set(messagesAtom, (messages) => [
-        ...messages,
+        ...cancelPendingAiChatToolCallApprovals(messages),
         createOptimisticAiChatUserMessage({
           messageId,
           text: contentToSend,
@@ -253,6 +254,7 @@ export const useSendAiChatMessageToThread = () => {
         }
 
         removeOptimisticUserMessage();
+        refetchAiChatThreadMessages(threadId);
         store.set(errorAtom, toAiChatError(error));
 
         if (isAiChatCreditsExhaustedError(error)) {
