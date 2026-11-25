@@ -11,6 +11,7 @@ import { v4 } from 'uuid';
 
 import { fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-records-permissions.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { CHANNEL_RECORD_RULE_UNIVERSAL_IDENTIFIER_SEEDS } from 'src/engine/permissions/channel-visibility/constants/channel-record-rule-universal-identifier-seeds.constant';
 import { CHANNEL_CHILD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'src/engine/permissions/channel-visibility/constants/channel-child-object-universal-identifiers.constant';
 import { getChannelRecordRuleUniversalIdentifier } from 'src/engine/permissions/channel-visibility/utils/get-channel-record-rule-universal-identifier.util';
 import { ChannelVisibilityRuleSyncSchedulerService } from 'src/engine/permissions/channel-visibility/services/channel-visibility-rule-sync-scheduler.service';
@@ -67,6 +68,32 @@ export class ChannelVisibilityRoleWideAccessRevokeService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly channelVisibilityRuleSyncSchedulerService: ChannelVisibilityRuleSyncSchedulerService,
   ) {}
+
+  async findChannelRecordPredicateGroupIds(
+    workspaceId: string,
+  ): Promise<string[]> {
+    const { flatRoleMaps, flatRowLevelPermissionPredicateGroupMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatRoleMaps',
+        'flatRowLevelPermissionPredicateGroupMaps',
+      ]);
+
+    return Object.values(flatRoleMaps.byUniversalIdentifier)
+      .filter(isDefined)
+      .flatMap(({ universalIdentifier: roleUniversalIdentifier }) =>
+        CHANNEL_RECORD_RULE_UNIVERSAL_IDENTIFIER_SEEDS.map(
+          (ruleUniversalIdentifierSeed) =>
+            flatRowLevelPermissionPredicateGroupMaps.byUniversalIdentifier[
+              getChannelRecordRuleUniversalIdentifier({
+                ruleUniversalIdentifierSeed,
+                roleUniversalIdentifier,
+                kind: 'group',
+              })
+            ]?.id,
+        ),
+      )
+      .filter(isDefined);
+  }
 
   async revokeRoleWideAccess({
     workspaceId,

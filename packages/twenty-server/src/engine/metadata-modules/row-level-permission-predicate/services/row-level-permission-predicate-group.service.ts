@@ -14,8 +14,6 @@ import { RowLevelPermissionPredicateGroupDTO } from 'src/engine/metadata-modules
 import { RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { CHANNEL_RECORD_RULE_UNIVERSAL_IDENTIFIER_SEEDS } from 'src/engine/permissions/channel-visibility/constants/channel-record-rule-universal-identifier-seeds.constant';
-import { getChannelRecordRuleUniversalIdentifier } from 'src/engine/permissions/channel-visibility/utils/get-channel-record-rule-universal-identifier.util';
 import { isWorkspaceMemberIndividualRole } from 'src/engine/permissions/workspace-member-individual-role/utils/is-workspace-member-individual-role.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -61,48 +59,32 @@ export class RowLevelPermissionPredicateGroupService {
       .map(fromFlatRowLevelPermissionPredicateGroupToDto);
   }
 
-  public async deleteRowLevelPermissionPredicateGroupsOutsideIndividualRoles(
-    workspaceId: string,
-  ) {
-    const { flatRoleMaps, flatRowLevelPermissionPredicateGroupMaps } =
+  public async deleteRowLevelPermissionPredicateGroupsOutsideIndividualRoles({
+    workspaceId,
+    keptPredicateGroupIds,
+  }: {
+    workspaceId: string;
+    keptPredicateGroupIds: string[];
+  }) {
+    const { flatRoleMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: [
-            'flatRoleMaps',
-            'flatRowLevelPermissionPredicateGroupMaps',
-          ],
+          flatMapsKeys: ['flatRoleMaps'],
         },
       );
-    const flatRoles = Object.values(flatRoleMaps.byUniversalIdentifier).filter(
-      isDefined,
-    );
 
-    // Channel visibility does not depend on the RLS entitlement: individual roles, and the channel record rules of user roles
-    const individualRoleIds = flatRoles
+    const individualRoleIds = Object.values(flatRoleMaps.byUniversalIdentifier)
+      .filter(isDefined)
       .filter(isWorkspaceMemberIndividualRole)
       .map(({ id }) => id);
-    const channelRecordPredicateGroupIds = flatRoles
-      .flatMap(({ universalIdentifier: roleUniversalIdentifier }) =>
-        CHANNEL_RECORD_RULE_UNIVERSAL_IDENTIFIER_SEEDS.map(
-          (ruleUniversalIdentifierSeed) =>
-            flatRowLevelPermissionPredicateGroupMaps.byUniversalIdentifier[
-              getChannelRecordRuleUniversalIdentifier({
-                ruleUniversalIdentifierSeed,
-                roleUniversalIdentifier,
-                kind: 'group',
-              })
-            ]?.id,
-        ),
-      )
-      .filter(isDefined);
 
     const criteria: FindOptionsWhere<RowLevelPermissionPredicateGroupEntity> = {
       ...(individualRoleIds.length > 0 && {
         roleId: Not(In(individualRoleIds)),
       }),
-      ...(channelRecordPredicateGroupIds.length > 0 && {
-        id: Not(In(channelRecordPredicateGroupIds)),
+      ...(keptPredicateGroupIds.length > 0 && {
+        id: Not(In(keptPredicateGroupIds)),
       }),
     };
 
