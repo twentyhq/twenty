@@ -25,6 +25,9 @@ import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migrati
 
 type RecordFile = { recordId: string; fileId: string };
 
+const computeFieldFilePathPrefix = (fieldUniversalIdentifier: string) =>
+  `${FileFolder.FilesField}/${fieldUniversalIdentifier}/`;
+
 type RichTextFieldFileSyncContext = Pick<
   WorkspaceInternalContext,
   'workspaceId' | 'flatObjectMetadataMaps' | 'flatFieldMetadataMaps'
@@ -131,18 +134,7 @@ export class RichTextFieldFileSync {
         })),
     );
 
-    await this.claimUploadedFiles({
-      claims: documentWrites.flatMap(
-        ({ recordId, fieldName, fieldUniversalIdentifier, addedFileIds }) =>
-          addedFileIds.map((fileId) => ({
-            recordId,
-            fileId,
-            fieldName,
-            pathPrefix: `${FileFolder.FilesField}/${fieldUniversalIdentifier}/`,
-          })),
-      ),
-      recordTable,
-    });
+    await this.takeOwnershipOfFiles({ documentWrites, recordTable });
 
     if (isInsert) {
       return;
@@ -234,67 +226,137 @@ export class RichTextFieldFileSync {
     });
   }
 
-  private async claimUploadedFiles({
-    claims,
+  // Claims this field's new uploads, and adopts a released file whose owning record was destroyed, such as the duplicate a merge removes.
+  private async takeOwnershipOfFiles({
+    documentWrites,
     recordTable,
   }: {
-    claims: (RecordFile & { fieldName: string; pathPrefix: string })[];
+    documentWrites: (RichTextFieldWrittenDocument & { recordId: string })[];
     recordTable: RichTextFieldRecordTable;
   }): Promise<void> {
-    // The path prefix limits a claim to uploads made for this field, so a file of another record stays a plain reference.
-    const unassignedClaimedFileIds = new Set(
+    const claimedFileIds = new Set(
       await claimTemporaryFiles({
         executeRawQuery: recordTable.executeRawQuery,
         workspaceId: this.internalContext.workspaceId,
-        claims,
+        claims: documentWrites.flatMap(
+          ({ fieldUniversalIdentifier, addedFileIds }) =>
+            addedFileIds.map((fileId) => ({
+              fileId,
+              pathPrefix: computeFieldFilePathPrefix(fieldUniversalIdentifier),
+            })),
+        ),
         isClaimableByRecordRequired: true,
       }),
     );
-    const claimedFileIdsByRecordIdByFieldName = new Map<
-      string,
-      Map<string, string[]>
-    >();
 
-    for (const { recordId, fileId, fieldName } of claims) {
-      if (!unassignedClaimedFileIds.delete(fileId)) {
+    const fieldNames = [
+      ...new Set(documentWrites.map(({ fieldName }) => fieldName)),
+    ];
+
+    for (const fieldName of fieldNames) {
+      const fieldDocumentWrites = documentWrites.filter(
+        (documentWrite) => documentWrite.fieldName === fieldName,
+      );
+      const adoptedFileIds = new Set(
+        await this.adoptFilesOfDestroyedRecords({
+          fileIds: [
+            ...new Set(
+              fieldDocumentWrites.flatMap(({ referencedFileIds }) =>
+                referencedFileIds.filter(
+                  (fileId) => !claimedFileIds.has(fileId),
+                ),
+              ),
+            ),
+          ],
+          fieldName,
+          fieldUniversalIdentifier:
+            fieldDocumentWrites[0].fieldUniversalIdentifier,
+          recordTable,
+        }),
+      );
+
+      const ownedFileIdsByRecordId = new Map<string, string[]>();
+
+      for (const { recordId, referencedFileIds } of fieldDocumentWrites) {
+        for (const fileId of referencedFileIds) {
+          const isNewlyOwned =
+            claimedFileIds.delete(fileId) || adoptedFileIds.delete(fileId);
+
+          if (!isNewlyOwned) {
+            continue;
+          }
+
+          ownedFileIdsByRecordId.set(recordId, [
+            ...(ownedFileIdsByRecordId.get(recordId) ?? []),
+            fileId,
+          ]);
+        }
+      }
+
+      if (ownedFileIdsByRecordId.size === 0) {
         continue;
       }
 
-      const claimedFileIdsByRecordId =
-        claimedFileIdsByRecordIdByFieldName.get(fieldName) ??
-        new Map<string, string[]>();
-
-      claimedFileIdsByRecordId.set(recordId, [
-        ...(claimedFileIdsByRecordId.get(recordId) ?? []),
-        fileId,
-      ]);
-      claimedFileIdsByRecordIdByFieldName.set(
-        fieldName,
-        claimedFileIdsByRecordId,
-      );
-    }
-
-    for (const [
-      fieldName,
-      claimedFileIdsByRecordId,
-    ] of claimedFileIdsByRecordIdByFieldName) {
       const fileIdsColumn = escapeIdentifier(
         computeRichTextFileIdsColumnName(fieldName),
       );
 
       await recordTable.executeRawQuery(
         `UPDATE ${recordTable.tableExpression} AS "record"
-         SET ${fileIdsColumn} = COALESCE("record".${fileIdsColumn}, '[]'::jsonb) || "claimed"."fileIds"::jsonb
-         FROM unnest($1::uuid[], $2::text[]) AS "claimed"("recordId", "fileIds")
-         WHERE "record"."id" = "claimed"."recordId"`,
+         SET ${fileIdsColumn} = COALESCE("record".${fileIdsColumn}, '[]'::jsonb) || "owned"."fileIds"::jsonb
+         FROM unnest($1::uuid[], $2::text[]) AS "owned"("recordId", "fileIds")
+         WHERE "record"."id" = "owned"."recordId"`,
         [
-          [...claimedFileIdsByRecordId.keys()],
-          [...claimedFileIdsByRecordId.values()].map((fileIds) =>
+          [...ownedFileIdsByRecordId.keys()],
+          [...ownedFileIdsByRecordId.values()].map((fileIds) =>
             JSON.stringify(fileIds),
           ),
         ],
       );
     }
+  }
+
+  // A released file stays with its owner; only once no row of the table lists it can another record take it over.
+  private async adoptFilesOfDestroyedRecords({
+    fileIds,
+    fieldName,
+    fieldUniversalIdentifier,
+    recordTable,
+  }: {
+    fileIds: string[];
+    fieldName: string;
+    fieldUniversalIdentifier: string;
+    recordTable: RichTextFieldRecordTable;
+  }): Promise<string[]> {
+    if (fileIds.length === 0) {
+      return [];
+    }
+
+    const fileIdsColumn = escapeIdentifier(
+      computeRichTextFileIdsColumnName(fieldName),
+    );
+
+    const adoptedFiles = await recordTable.executeRawQuery(
+      `UPDATE "core"."file" AS "file"
+       SET "deletedAt" = NULL, "updatedAt" = now()
+       WHERE "file"."id" = ANY($1::uuid[])
+         AND "file"."workspaceId" = $2
+         AND "file"."deletedAt" IS NOT NULL
+         AND "file"."settings"->>'isTemporaryFile' = 'false'
+         AND starts_with("file"."path", $3)
+         AND NOT EXISTS (
+           SELECT 1 FROM ${recordTable.tableExpression} AS "owner"
+           WHERE "owner".${fileIdsColumn} @> to_jsonb("file"."id"::text)
+         )
+       RETURNING "file"."id"`,
+      [
+        fileIds,
+        this.internalContext.workspaceId,
+        computeFieldFilePathPrefix(fieldUniversalIdentifier),
+      ],
+    );
+
+    return adoptedFiles.map(({ id }) => String(id));
   }
 
   // The locked stored document decides, so a save that finishes late cannot undo a newer one.

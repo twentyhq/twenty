@@ -5,6 +5,7 @@ import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { mergeManyOperationFactory } from 'test/integration/graphql/utils/merge-many-operation-factory.util';
 import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { FieldMetadataType } from 'twenty-shared/types';
@@ -113,6 +114,26 @@ describe('Rich text field <> files sync', () => {
     expect(response.body.errors).toBeUndefined();
 
     return response.body.data.createRichTextFileSyncTestObject.id;
+  };
+
+  const createRecordWithoutBody = async (): Promise<string> => {
+    const response = await makeGraphqlApiRequest({
+      query: createRecordMutation,
+      variables: { data: { name: 'Meeting' } },
+    });
+
+    expect(response.body.errors).toBeUndefined();
+
+    return response.body.data.createRichTextFileSyncTestObject.id;
+  };
+
+  const destroyRecord = async (id: string) => {
+    const response = await makeGraphqlApiRequest({
+      query: destroyRecordMutation,
+      variables: { id },
+    });
+
+    expect(response.body.errors).toBeUndefined();
   };
 
   const updateRecordBody = async ({
@@ -436,6 +457,40 @@ describe('Rich text field <> files sync', () => {
       isInsert: false,
     });
 
+    expect((await findFileRow(fileId))?.deletedAt).toBeNull();
+  });
+
+  it('should keep the images of a merged duplicate on the record that takes its body', async () => {
+    const fileId = await uploadFile(richTextFieldMetadataId);
+    const duplicateRecordId = await createRecord([fileId]);
+    const priorityRecordId = await createRecordWithoutBody();
+
+    const response = await makeGraphqlApiRequest(
+      mergeManyOperationFactory({
+        objectMetadataPluralName: 'richTextFileSyncTestObjects',
+        gqlFields: 'id',
+        ids: [priorityRecordId, duplicateRecordId],
+        conflictPriorityIndex: 0,
+      }),
+    );
+
+    expect(response.body.errors).toBeUndefined();
+    expect(await findFileIdsOwnedByRecord(priorityRecordId)).toEqual([fileId]);
+    expect((await findFileRow(fileId))?.deletedAt).toBeNull();
+  });
+
+  it('should let a record take over a file once the record that owned it is destroyed', async () => {
+    const fileId = await uploadFile(richTextFieldMetadataId);
+    const destroyedRecordId = await createRecord([fileId]);
+    const otherRecordId = await createRecord([]);
+
+    await destroyRecord(destroyedRecordId);
+
+    expect((await findFileRow(fileId))?.deletedAt).not.toBeNull();
+
+    await updateRecordBody({ id: otherRecordId, fileIds: [fileId] });
+
+    expect(await findFileIdsOwnedByRecord(otherRecordId)).toEqual([fileId]);
     expect((await findFileRow(fileId))?.deletedAt).toBeNull();
   });
 
