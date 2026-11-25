@@ -47,7 +47,10 @@ export type LogicFunctionInstallPrebuiltBundleParams = {
 };
 
 export type LogicFunctionWarmUpParams = {
-  flatLogicFunction: ExecutableFlatLogicFunction;
+  flatLogicFunction: Pick<
+    ExecutableFlatLogicFunction,
+    'id' | 'executorNamePrefix'
+  >;
   env?: Record<string, string>;
 };
 

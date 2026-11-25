@@ -17,7 +17,6 @@ import {
   LogicFunctionException,
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
-import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 
 jest.mock(
   'src/engine/metadata-modules/ai/ai-front-component/utils/get-front-component-builder-name.util',
@@ -266,7 +265,7 @@ describe('LambdaDriver', () => {
     state = 'Active';
 
     await driver.warmUp({
-      flatLogicFunction: { id: 'logic-function-id' } as FlatLogicFunction,
+      flatLogicFunction: { id: 'logic-function-id' },
       env: { MY_VARIABLE: 'value' },
     });
 
