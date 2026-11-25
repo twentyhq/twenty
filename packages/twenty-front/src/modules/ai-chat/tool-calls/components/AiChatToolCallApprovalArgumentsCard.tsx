@@ -32,32 +32,11 @@ export const AiChatToolCallApprovalArgumentsCard = ({
     unknown
   > | null>(proposal.arguments);
 
-  const {
-    template,
-    objectNameSingular,
-    recordId,
-    labels,
-    alternativeToolNames = [],
-  } = proposal;
+  const { template, objectNameSingular, recordId, labels } = proposal;
 
   const toolFrontComponentId = useFrontComponentIdByToolName().get(
     proposal.toolName,
   );
-  const pendingToolName =
-    pendingResponse?.decision === 'approve'
-      ? (pendingResponse.toolName ?? proposal.toolName)
-      : null;
-
-  const approveWith = (toolName: string) => {
-    if (!isDefined(toolArguments)) {
-      return;
-    }
-
-    approve({
-      ...(toolName !== proposal.toolName && { toolName }),
-      arguments: toolArguments,
-    });
-  };
 
   const argumentsEditor = (
     <AiChatToolCallApprovalArgumentsEditor
@@ -95,27 +74,18 @@ export const AiChatToolCallApprovalArgumentsCard = ({
           >
             {labels?.reject ?? t`Reject`}
           </Button>
-          {alternativeToolNames.map((alternativeToolName) => (
-            <Button
-              key={alternativeToolName}
-              size="sm"
-              variant="outline"
-              disabled={isAnswering || !isDefined(toolArguments)}
-              loading={pendingToolName === alternativeToolName}
-              onClick={() => approveWith(alternativeToolName)}
-            >
-              {labels?.alternatives?.[alternativeToolName] ??
-                alternativeToolName}
-            </Button>
-          ))}
           <Button
             size="sm"
             variant="solid"
             color="accent"
             startIcon={<IconCheck />}
             disabled={isAnswering || !isDefined(toolArguments)}
-            loading={pendingToolName === proposal.toolName}
-            onClick={() => approveWith(proposal.toolName)}
+            loading={pendingResponse?.decision === 'approve'}
+            onClick={() => {
+              if (isDefined(toolArguments)) {
+                approve({ arguments: toolArguments });
+              }
+            }}
           >
             {labels?.approve ?? t`Approve`}
           </Button>

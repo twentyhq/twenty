@@ -67,18 +67,14 @@ const findTool = async (toolName: string) =>
       approval: { template: 'email', alternativeToolNames: ['draft_email'] },
     } satisfies ToolIndexEntry,
     {
-      name: 'app_tool_accept_cal_booking',
-      label: 'accept-cal-booking',
+      name: 'app_tool_respond_to_cal_booking',
+      label: 'respond-to-cal-booking',
       description: '',
       category: ToolCategory.LOGIC_FUNCTION,
-      executionRef: { kind: 'logic_function', logicFunctionId: 'lf-accept' },
+      executionRef: { kind: 'logic_function', logicFunctionId: 'lf-respond' },
       approval: {
         template: 'generic',
-        alternativeToolNames: ['app_tool_decline_cal_booking'],
-        labels: {
-          approve: 'Accept meeting',
-          alternatives: { app_tool_decline_cal_booking: 'Decline' },
-        },
+        labels: { approve: 'Send response', reject: 'Not now' },
       },
     } satisfies ToolIndexEntry,
     {
@@ -266,11 +262,11 @@ describe('resolveProposedToolCall', () => {
     });
   });
 
-  it("brings the tool's approval wording and alternatives to the card", async () => {
+  it("brings the tool's approval wording to the card", async () => {
     expect(
       await resolveProposedToolCall({
         input: {
-          toolName: 'app_tool_accept_cal_booking',
+          toolName: 'app_tool_respond_to_cal_booking',
           arguments: { bookingId: 'booking-1' },
           summary: 'Meeting request from Maya',
         },
@@ -279,16 +275,12 @@ describe('resolveProposedToolCall', () => {
       }),
     ).toEqual({
       proposal: {
-        toolName: 'app_tool_accept_cal_booking',
-        toolLabel: 'accept-cal-booking',
+        toolName: 'app_tool_respond_to_cal_booking',
+        toolLabel: 'respond-to-cal-booking',
         summary: 'Meeting request from Maya',
         arguments: { bookingId: 'booking-1' },
         template: 'generic',
-        alternativeToolNames: ['app_tool_decline_cal_booking'],
-        labels: {
-          approve: 'Accept meeting',
-          alternatives: { app_tool_decline_cal_booking: 'Decline' },
-        },
+        labels: { approve: 'Send response', reject: 'Not now' },
       },
     });
   });

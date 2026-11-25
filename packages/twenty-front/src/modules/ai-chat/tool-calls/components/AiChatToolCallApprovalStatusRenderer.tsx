@@ -11,7 +11,6 @@ import { IconMail, IconTool } from 'twenty-ui/icon';
 import { AiChatAskStatusRow } from '@/ai-chat/tool-calls/components/AiChatAskStatusRow';
 import { StyledAiChatAskStatusDetail } from '@/ai-chat/tool-calls/components/StyledAiChatAskStatusDetail';
 import { useIsAiChatToolCallAskedInComposer } from '@/ai-chat/tool-calls/hooks/useIsAiChatToolCallAskedInComposer';
-import { getProposeToolCallChosenLabel } from '@/ai-chat/tool-calls/utils/getProposeToolCallChosenLabel';
 import { TextWithChatReferences } from '@/ai-chat/message-content/components/TextWithChatReferences';
 
 export const AiChatToolCallApprovalStatusRenderer = ({
@@ -49,11 +48,9 @@ export const AiChatToolCallApprovalStatusRenderer = ({
     conflict: t`Not run: the record changed since it was proposed`,
     skipped: t`Skipped`,
   };
-  const chosenLabel = getProposeToolCallChosenLabel(result);
-  const statusMessage = isNonEmptyString(chosenLabel)
-    ? t`Chose ${chosenLabel}`
+  const message = hasFailedToPropose
+    ? t`Could not be proposed`
     : messageByStatus[status];
-  const message = hasFailedToPropose ? t`Could not be proposed` : statusMessage;
 
   const summary = result?.proposal.summary;
   const detailByStatus: Record<ProposeToolCallToolStatus, string | undefined> =

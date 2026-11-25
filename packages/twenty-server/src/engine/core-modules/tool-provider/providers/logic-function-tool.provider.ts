@@ -98,22 +98,9 @@ export class LogicFunctionToolProvider implements ToolProvider {
 
     for (const logicFunction of logicFunctionsWithSchema) {
       const toolName = buildLogicFunctionToolName(logicFunction.name);
-      const approval = buildLogicFunctionToolApproval({
-        approvalSettings: logicFunction.toolTriggerSettings?.approval,
-        findAlternativeToolName: (logicFunctionUniversalIdentifier) => {
-          const alternative = logicFunctionsWithSchema.find(
-            (candidate) =>
-              candidate.universalIdentifier ===
-                logicFunctionUniversalIdentifier &&
-              candidate.applicationId === logicFunction.applicationId &&
-              candidate.id !== logicFunction.id,
-          );
-
-          return isDefined(alternative)
-            ? buildLogicFunctionToolName(alternative.name)
-            : undefined;
-        },
-      });
+      const approval = buildLogicFunctionToolApproval(
+        logicFunction.toolTriggerSettings?.approval,
+      );
 
       const base: ToolIndexEntry = {
         name: toolName,

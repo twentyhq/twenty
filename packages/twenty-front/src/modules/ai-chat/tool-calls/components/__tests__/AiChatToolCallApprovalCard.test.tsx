@@ -173,44 +173,51 @@ describe('AiChatToolCallApprovalCard', () => {
 
   describe('a tool that words its own approval', () => {
     const BOOKING_PROPOSAL: ProposedToolCall = {
-      toolName: 'app_tool_accept_cal_booking',
-      toolLabel: 'accept-cal-booking',
+      toolName: 'app_tool_respond_to_cal_booking',
+      toolLabel: 'respond-to-cal-booking',
       summary: 'Meeting request from Maya',
       arguments: { bookingId: 'booking-1' },
       template: 'generic',
-      alternativeToolNames: [
-        'app_tool_decline_cal_booking',
-        'app_tool_snooze_cal_booking',
-      ],
-      labels: {
-        approve: 'Accept meeting',
-        reject: 'Not now',
-        alternatives: {
-          app_tool_decline_cal_booking: 'Decline',
-          app_tool_snooze_cal_booking: 'Remind me tomorrow',
-        },
-      },
+      labels: { approve: 'Send response', reject: 'Not now' },
     };
 
     beforeEach(() => {
       answerAiChatToolCall.mockReturnValue(new Promise(() => {}));
       mockFrontComponentIdByToolName.mockReturnValue(
-        new Map([['app_tool_accept_cal_booking', 'front-component-1']]),
+        new Map([['app_tool_respond_to_cal_booking', 'front-component-1']]),
       );
     });
 
-    it('runs the proposed tool from its own approve label', async () => {
+    it('runs the tool from its own approve label', async () => {
       const user = userEvent.setup();
 
       renderCard({ proposal: BOOKING_PROPOSAL });
 
-      await user.click(screen.getByRole('button', { name: 'Accept meeting' }));
+      await user.click(screen.getByRole('button', { name: 'Send response' }));
 
       expect(answerAiChatToolCall).toHaveBeenCalledWith(
         expect.objectContaining({
           response: {
             decision: 'approve',
             arguments: { bookingId: 'booking-1' },
+          },
+        }),
+      );
+    });
+
+    it('runs the tool with the decision its component set', async () => {
+      const user = userEvent.setup();
+
+      renderCard({ proposal: BOOKING_PROPOSAL });
+
+      await user.click(screen.getByRole('button', { name: 'Decline instead' }));
+      await user.click(screen.getByRole('button', { name: 'Send response' }));
+
+      expect(answerAiChatToolCall).toHaveBeenCalledWith(
+        expect.objectContaining({
+          response: {
+            decision: 'approve',
+            arguments: { bookingId: 'booking-1', decision: 'DECLINE' },
           },
         }),
       );
@@ -225,45 +232,6 @@ describe('AiChatToolCallApprovalCard', () => {
 
       expect(answerAiChatToolCall).toHaveBeenCalledWith(
         expect.objectContaining({ response: { decision: 'reject' } }),
-      );
-    });
-
-    it('runs an alternative with the arguments its component set', async () => {
-      const user = userEvent.setup();
-
-      renderCard({ proposal: BOOKING_PROPOSAL });
-
-      await user.click(screen.getByRole('button', { name: 'Decline instead' }));
-      await user.click(screen.getByRole('button', { name: 'Decline' }));
-
-      expect(answerAiChatToolCall).toHaveBeenCalledWith(
-        expect.objectContaining({
-          response: {
-            decision: 'approve',
-            toolName: 'app_tool_decline_cal_booking',
-            arguments: { bookingId: 'booking-1', decision: 'DECLINE' },
-          },
-        }),
-      );
-    });
-
-    it('runs each alternative from its own button', async () => {
-      const user = userEvent.setup();
-
-      renderCard({ proposal: BOOKING_PROPOSAL });
-
-      await user.click(
-        screen.getByRole('button', { name: 'Remind me tomorrow' }),
-      );
-
-      expect(answerAiChatToolCall).toHaveBeenCalledWith(
-        expect.objectContaining({
-          response: {
-            decision: 'approve',
-            toolName: 'app_tool_snooze_cal_booking',
-            arguments: { bookingId: 'booking-1' },
-          },
-        }),
       );
     });
   });

@@ -827,7 +827,7 @@ Both `input` and `output` are typed `Record<string, unknown>`, so narrow each fi
 
 ##### Wording the approval card
 
-A proposed call is reviewed with **Approve** and **Reject** by default. When the decision is a business choice rather than "run this or not", give the card your own wording with `toolTriggerSettings.approval`, and offer other tools of your app the person can run instead:
+A proposed call is reviewed with **Approve** and **Reject** by default. Give the buttons your own wording with `toolTriggerSettings.approval`:
 
 ```ts
 export default defineLogicFunction({
@@ -835,20 +835,14 @@ export default defineLogicFunction({
   toolTriggerSettings: {
     frontComponentUniversalIdentifier: BOOKING_CARD_UNIVERSAL_IDENTIFIER,
     approval: {
-      approveLabel: 'Accept meeting',
+      approveLabel: 'Send response',
       rejectLabel: 'Not now',
-      alternatives: [
-        {
-          logicFunctionUniversalIdentifier: DECLINE_BOOKING_UNIVERSAL_IDENTIFIER,
-          label: 'Decline',
-        },
-      ],
     },
   },
 });
 ```
 
-Each alternative becomes a button that runs that tool with the same arguments. An alternative must be another tool of the same app, or the build fails, and one the person cannot run is left out. Anything the tool's front component sets with `setToolCallArguments`, such as a decline reason, goes to whichever button the person clicks. **Reject**, renamed or not, never runs anything.
+The labels only rename the buttons: approve still runs this tool, and reject never runs anything. When the person has a business choice to make, such as accepting or declining a meeting, let the front component collect it with `setToolCallArguments` and keep one tool that handles every answer. Pick an approve label that fits every answer, like **Send response** rather than **Accept**, and a reject label that does not sound like an action, like **Not now** rather than **Decline**.
 
 <Note>
   If the identifier matches no front component in the app, the chat falls back

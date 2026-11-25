@@ -74,37 +74,4 @@ describe('AiChatToolCallApprovalStatusRenderer', () => {
     expect(screen.getByText('Approved')).toBeInTheDocument();
     expect(screen.getByText('Follow up')).toBeInTheDocument();
   });
-
-  it("names the action the person chose with the tool's own wording", () => {
-    renderStatus({
-      state: 'output-available',
-      input: {
-        toolName: 'app_tool_accept_cal_booking',
-        arguments: {},
-        summary: 'Meeting request from Maya',
-      },
-      output: {
-        success: true,
-        result: {
-          status: 'approved',
-          proposal: {
-            toolName: 'app_tool_decline_cal_booking',
-            toolLabel: 'accept-cal-booking',
-            summary: 'Meeting request from Maya',
-            arguments: {},
-            template: 'generic',
-            labels: {
-              approve: 'Accept meeting',
-              alternatives: {
-                app_tool_decline_cal_booking: 'Decline',
-              },
-            },
-          },
-        },
-      },
-    });
-
-    expect(screen.getByText('Chose Decline')).toBeInTheDocument();
-    expect(screen.getByText('Meeting request from Maya')).toBeInTheDocument();
-  });
 });

@@ -28,7 +28,6 @@ import { getPageLayoutDeprecationWarnings } from '@/app/manifest/utils/get-page-
 import { getUnresolvedLabelIdentifierWarnings } from '@/app/manifest/utils/get-unresolved-label-identifier-warnings';
 import { validateSettingsMenuItemSlugs } from '@/app/manifest/utils/validate-settings-menu-item-slugs';
 import { validateTimelineActivityTypes } from '@/app/manifest/utils/validate-timeline-activity-types';
-import { validateToolApprovalAlternatives } from '@/app/manifest/utils/validate-tool-approval-alternatives';
 import { validateValidationRules } from '@/app/manifest/utils/validate-validation-rules';
 
 const VALID_RELATION_TYPES: string[] = [
@@ -351,7 +350,6 @@ export const manifestValidate = (manifest: Manifest) => {
 
   errors.push(...validateValidationRules(manifest));
   errors.push(...validateSettingsMenuItemSlugs(manifest));
-  errors.push(...validateToolApprovalAlternatives(manifest));
 
   return { errors, warnings, isValid: errors.length === 0 };
 };

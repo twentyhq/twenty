@@ -2,7 +2,6 @@ import { isNonEmptyString } from '@sniptt/guards';
 import isEqual from 'lodash.isequal';
 import {
   buildFallbackProposedToolCall,
-  getApprovedToolCallLabel,
   PROPOSED_TOOL_CALL_TEMPLATES,
   isFrontComponentProposedToolCall,
   type ProposeToolCallToolInput,
@@ -62,7 +61,6 @@ const proposedToolCallSchema: z.ZodType<ProposedToolCall> = z.object({
     .object({
       approve: z.string().optional(),
       reject: z.string().optional(),
-      alternatives: z.record(z.string(), z.string()).optional(),
     })
     .optional(),
   objectNameSingular: z.string().optional(),
@@ -174,15 +172,13 @@ const buildApprovalAnswerText = ({
   approvedToolName: string;
   feedback: string | undefined;
 }): string => {
-  const approvedLabel = getApprovedToolCallLabel({
-    labels: proposal.labels,
-    toolName: approvedToolName,
-  });
-  const approval = isNonEmptyString(approvedLabel)
-    ? `${approvedLabel}: "${proposal.summary}"`
-    : approvedToolName === proposal.toolName
-      ? `Approve "${proposal.summary}"`
-      : `Approve "${proposal.summary}", running ${approvedToolName} instead`;
+  const approveLabel = proposal.labels?.approve;
+  const approval =
+    approvedToolName !== proposal.toolName
+      ? `Approve "${proposal.summary}", running ${approvedToolName} instead`
+      : isNonEmptyString(approveLabel)
+        ? `${approveLabel}: "${proposal.summary}"`
+        : `Approve "${proposal.summary}"`;
 
   return isNonEmptyString(feedback)
     ? `${approval}: ${feedback}`
