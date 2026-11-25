@@ -23,7 +23,7 @@ import {
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useContext, useMemo } from 'react';
 import { isString } from '@sniptt/guards';
-import { evaluateConditionalAvailabilityExpression } from 'twenty-shared/conditional-availability';
+import { evaluateConditionalEvaluationExpression } from 'twenty-shared/conditional-evaluation';
 import {
   ContextStorePageType,
   StandardObjectNameSingular,
@@ -142,7 +142,7 @@ export const CommandMenuContextProviderContent = ({
       .filter(doesCommandMenuItemMatchSelectionState(hasSelectedRecords))
       .filter(doesCommandMenuItemMatchPageLayoutId(effectivePageLayoutId))
       .filter((item) =>
-        evaluateConditionalAvailabilityExpression(
+        evaluateConditionalEvaluationExpression(
           item.conditionalAvailabilityExpression,
           commandMenuContextApiForAvailability,
         ),

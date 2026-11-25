@@ -297,7 +297,7 @@ msgstr "فیلدی با این نام از قبل وجود دارد."
 #. js-lingui-id: lDO6A7
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-formula.util.ts
 msgid "A formula cannot read its own value, directly or through other formulas"
-msgstr ""
+msgstr "یک فرمول نمی‌تواند مقدار خودش را، چه مستقیماً و چه از طریق فرمول‌های دیگر، بخواند"
 
 #. js-lingui-id: 01ujS8
 #: src/engine/api/common/common-args-processors/data-arg-processor/data-arg-processor.service.ts
@@ -3215,11 +3215,6 @@ msgctxt "fieldMetadata.description"
 msgid "Chats tied to the opportunity"
 msgstr "گفت‌وگوهای مرتبط با فرصت"
 
-#. js-lingui-id: YNDJWu
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
-msgid "Checking whether a one-to-many relation is empty requires relation hops in row level permission predicates"
-msgstr "بررسی خالی بودن یک رابطهٔ یک‌به‌چند، به پیمایش‌های رابطه در گزاره‌های مجوز سطح ردیف نیاز دارد"
-
 #. js-lingui-id: ZgijCO
 #: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
 msgid "Choose an active tab and a widget position matching its layout mode."
@@ -4249,12 +4244,12 @@ msgstr "الگوی Cron \"{pattern}\" نامعتبر است"
 #. js-lingui-id: sJbCNC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-cron-trigger-spread.util.ts
 msgid "Cron trigger spread must be between 2 minutes and 24 hours."
-msgstr ""
+msgstr "بازه زمانی راه‌انداز Cron باید بین ۲ دقیقه و ۲۴ ساعت باشد."
 
 #. js-lingui-id: GbygrC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-cron-trigger-spread.util.ts
 msgid "Cron trigger spreadMs must be an integer between {CRON_TRIGGER_MIN_SPREAD_MS} and {CRON_TRIGGER_MAX_SPREAD_MS}"
-msgstr ""
+msgstr "بازه زمانی راه‌انداز Cron با spreadMs باید یک عدد صحیح بین {CRON_TRIGGER_MIN_SPREAD_MS} و {CRON_TRIGGER_MAX_SPREAD_MS} باشد"
 
 #. js-lingui-id: ViG9dm
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
@@ -10460,7 +10455,7 @@ msgstr "فقط برنامه ای که مالک این عامل است می تو�
 #. js-lingui-id: xCGjjr
 #: src/engine/permissions/metadata-permissions/utils/get-privatable-entity-privacy-validation-errors.util.ts
 msgid "Only the person who created this can change who sees it"
-msgstr ""
+msgstr "فقط شخصی که این را ایجاد کرده است می‌تواند تغییر دهد چه کسی آن را می‌بیند"
 
 #. js-lingui-id: MPDvEo
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
@@ -11431,16 +11426,6 @@ msgstr "مقدار گزاره وجود ندارد"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Predicate value is not valid for this operand"
 msgstr "مقدار گزاره برای این عملوند معتبر نیست"
-
-#. js-lingui-id: nSv3rP
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
-msgid "Predicates reaching a field through a relation are not enabled for this workspace"
-msgstr "گزاره‌هایی که از طریق یک رابطه به فیلدی می‌رسند برای این فضای کاری فعال نیستند"
-
-#. js-lingui-id: v5akl/
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
-msgid "Predicates reading the current member through a relation are not enabled for this workspace"
-msgstr "گزاره‌های خواندن عضو فعلی از طریق یک رابطه برای این فضای کاری فعال نیستند"
 
 #. js-lingui-id: /h13bI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -12765,12 +12750,6 @@ msgstr "مجوزهای رکورد در سطح ردیف که فیلدها را پ
 msgctxt "fieldMetadata.label"
 msgid "Rule"
 msgstr "قانون"
-
-#. js-lingui-id: zhLAHJ
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
-msgid "Rules through a relation are not enabled for this workspace"
-msgstr "قوانین از طریق یک رابطه برای این فضای کاری فعال نیستند"
 
 #. js-lingui-id: F1qT/F
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -15783,7 +15762,6 @@ msgid "This operand is not supported for this field"
 msgstr "این عملگر برای این فیلد پشتیبانی نمی‌شود"
 
 #. js-lingui-id: sf5yLA
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This operand is not supported for this relation"

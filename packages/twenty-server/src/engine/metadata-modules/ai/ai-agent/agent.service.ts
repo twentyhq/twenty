@@ -104,8 +104,6 @@ export class AgentService {
     workspaceId: string;
     authContext: WorkspaceAuthContext | undefined;
   }): Promise<FlatAgentWithRoleId> {
-    const userWorkspaceId = getUserWorkspaceIdFromAuthContext(authContext);
-
     const {
       flatApplicationMaps,
       flatRoleMaps,
@@ -146,7 +144,7 @@ export class AgentService {
         },
         isSystem,
         workspaceId,
-        userWorkspaceId,
+        userWorkspaceId: getUserWorkspaceIdFromAuthContext(authContext),
         flatApplication: resolvedFlatApplication,
         flatRoleMaps,
       });
@@ -208,8 +206,6 @@ export class AgentService {
     workspaceId: string;
     authContext: WorkspaceAuthContext | undefined;
   }): Promise<FlatAgentWithRoleId> {
-    const userWorkspaceId = getUserWorkspaceIdFromAuthContext(authContext);
-
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         {
@@ -255,7 +251,6 @@ export class AgentService {
         workspaceCustomFlatApplication.universalIdentifier,
       workspaceCustomApplicationUniversalIdentifier:
         workspaceCustomFlatApplication.universalIdentifier,
-      userWorkspaceId,
     });
 
     const validateAndBuildResult =

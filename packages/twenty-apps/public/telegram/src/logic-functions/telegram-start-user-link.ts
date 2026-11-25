@@ -85,6 +85,8 @@ export const telegramStartUserLinkHandler = async (
     return {
       success: true,
       url: `https://t.me/${bot.username}?start=${token}`,
+      botUsername: bot.username,
+      startCommand: `/start ${token}`,
       expiresAt: new Date(expiresAtMs).toISOString(),
     };
   } catch (error) {
