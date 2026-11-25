@@ -17,7 +17,7 @@ export const NavigationMenuTabFirstItemOpenEffect = (
   const navigate = useNavigate();
   const navigationMenuTabId = useContext(NavigationMenuTabIdContext);
 
-  useEffect(() => {
+  const openTabFirstItem = () => {
     if (
       !isDefined(navigationMenuTabId) ||
       store.get(navigationMenuTabIdToOpenFirstItemState.atom) !==
@@ -33,6 +33,10 @@ export const NavigationMenuTabFirstItemOpenEffect = (
     } else {
       props.onOpen();
     }
+  };
+
+  useEffect(() => {
+    openTabFirstItem();
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
