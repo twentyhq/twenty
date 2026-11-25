@@ -1,14 +1,14 @@
 import { z } from 'zod';
 
-import { CONDITIONAL_AVAILABILITY_IDENTIFIER_PATTERN } from '@/conditional-availability/constants/ConditionalAvailabilityIdentifierPattern';
-import { CONDITIONAL_AVAILABILITY_VARIABLE_PATH_PATTERN } from '@/conditional-availability/constants/ConditionalAvailabilityVariablePathPattern';
-import { type ConditionalAvailabilityNode } from '@/conditional-availability/types/ConditionalAvailabilityNode';
-import { conditionalAvailabilityComparisonOperatorSchema } from '@/conditional-availability/utils/conditionalAvailabilityComparisonOperatorSchema';
-import { conditionalAvailabilityLogicalOperatorSchema } from '@/conditional-availability/utils/conditionalAvailabilityLogicalOperatorSchema';
+import { CONDITIONAL_EVALUATION_IDENTIFIER_PATTERN } from '@/conditional-evaluation/validate/constants/ConditionalEvaluationIdentifierPattern';
+import { CONDITIONAL_EVALUATION_VARIABLE_PATH_PATTERN } from '@/conditional-evaluation/validate/constants/ConditionalEvaluationVariablePathPattern';
+import { type ConditionalEvaluationNode } from '@/conditional-evaluation/common/types/ConditionalEvaluationNode';
+import { conditionalEvaluationComparisonOperatorSchema } from '@/conditional-evaluation/common/utils/conditionalEvaluationComparisonOperatorSchema';
+import { conditionalEvaluationLogicalOperatorSchema } from '@/conditional-evaluation/common/utils/conditionalEvaluationLogicalOperatorSchema';
 import { FORBIDDEN_PROPERTY_NAMES } from '@/constants/ForbiddenPropertyNames';
 
-export const conditionalAvailabilityNodeSchema: z.ZodType<ConditionalAvailabilityNode> =
-  z.toZod<ConditionalAvailabilityNode>()(
+export const conditionalEvaluationNodeSchema: z.ZodType<ConditionalEvaluationNode> =
+  z.toZod<ConditionalEvaluationNode>()(
     z.discriminatedUnion('type', [
       z.strictObject({
         type: z.literal('LITERAL'),
@@ -18,7 +18,7 @@ export const conditionalAvailabilityNodeSchema: z.ZodType<ConditionalAvailabilit
         type: z.literal('VARIABLE'),
         path: z
           .string()
-          .regex(CONDITIONAL_AVAILABILITY_VARIABLE_PATH_PATTERN)
+          .regex(CONDITIONAL_EVALUATION_VARIABLE_PATH_PATTERN)
           .refine(
             (path) =>
               !path
@@ -29,34 +29,34 @@ export const conditionalAvailabilityNodeSchema: z.ZodType<ConditionalAvailabilit
       }),
       z.strictObject({
         type: z.literal('COMPARISON'),
-        operator: conditionalAvailabilityComparisonOperatorSchema,
+        operator: conditionalEvaluationComparisonOperatorSchema,
         get left() {
-          return conditionalAvailabilityNodeSchema;
+          return conditionalEvaluationNodeSchema;
         },
         get right() {
-          return conditionalAvailabilityNodeSchema;
+          return conditionalEvaluationNodeSchema;
         },
       }),
       z.strictObject({
         type: z.literal('GROUP'),
-        logicalOperator: conditionalAvailabilityLogicalOperatorSchema,
+        logicalOperator: conditionalEvaluationLogicalOperatorSchema,
         get children() {
-          return z.array(conditionalAvailabilityNodeSchema).min(1);
+          return z.array(conditionalEvaluationNodeSchema).min(1);
         },
       }),
       z.strictObject({
         type: z.literal('NOT'),
         get child() {
-          return conditionalAvailabilityNodeSchema;
+          return conditionalEvaluationNodeSchema;
         },
       }),
       z.strictObject({
         type: z.literal('FUNCTION_CALL'),
         functionName: z
           .string()
-          .regex(CONDITIONAL_AVAILABILITY_IDENTIFIER_PATTERN),
+          .regex(CONDITIONAL_EVALUATION_IDENTIFIER_PATTERN),
         get arguments() {
-          return z.array(conditionalAvailabilityNodeSchema);
+          return z.array(conditionalEvaluationNodeSchema);
         },
       }),
     ]),

@@ -2,12 +2,12 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type Expression } from 'expr-eval-fork';
 
-import { CONDITIONAL_AVAILABILITY_EXPRESSION_MAX_LENGTH } from '@/conditional-availability/constants/ConditionalAvailabilityExpressionMaxLength';
-import { type ConditionalAvailabilityMetadataName } from '@/conditional-availability/types/ConditionalAvailabilityMetadataName';
-import { type ConditionalAvailabilityParseResult } from '@/conditional-availability/types/ConditionalAvailabilityParseResult';
-import { conditionalAvailabilityStrictParser } from '@/conditional-availability/utils/conditionalAvailabilityStrictParser';
-import { toConditionalAvailabilityNode } from '@/conditional-availability/utils/toConditionalAvailabilityNode';
-import { validateConditionalAvailabilityNode } from '@/conditional-availability/utils/validateConditionalAvailabilityNode';
+import { type ConditionalAvailabilityMetadataName } from '@/conditional-evaluation/common/types/ConditionalAvailabilityMetadataName';
+import { CONDITIONAL_EVALUATION_EXPRESSION_MAX_LENGTH } from '@/conditional-evaluation/expression-to-nodes/constants/ConditionalEvaluationExpressionMaxLength';
+import { type ConditionalEvaluationParseResult } from '@/conditional-evaluation/expression-to-nodes/types/ConditionalEvaluationParseResult';
+import { conditionalEvaluationStrictParser } from '@/conditional-evaluation/expression-to-nodes/utils/conditionalEvaluationStrictParser';
+import { toConditionalEvaluationNode } from '@/conditional-evaluation/expression-to-nodes/utils/toConditionalEvaluationNode';
+import { validateConditionalEvaluationNode } from '@/conditional-evaluation/validate/utils/validateConditionalEvaluationNode';
 import { getExpressionSyntaxError } from '@/utils/expression/getExpressionSyntaxError';
 
 const safeParseExpression = ({
@@ -17,31 +17,31 @@ const safeParseExpression = ({
 }): { parsedExpression: Expression } | { error: unknown } => {
   try {
     return {
-      parsedExpression: conditionalAvailabilityStrictParser.parse(expression),
+      parsedExpression: conditionalEvaluationStrictParser.parse(expression),
     };
   } catch (error) {
     return { error };
   }
 };
 
-export const parseConditionalAvailabilityExpression = ({
+export const parseConditionalEvaluationExpression = ({
   expression,
   metadataName,
 }: {
   expression: string | null | undefined;
   metadataName: ConditionalAvailabilityMetadataName;
-}): ConditionalAvailabilityParseResult => {
+}): ConditionalEvaluationParseResult => {
   if (!isNonEmptyString(expression) || expression.trim() === '') {
     return { isValid: true, node: null };
   }
 
-  if (expression.length > CONDITIONAL_AVAILABILITY_EXPRESSION_MAX_LENGTH) {
+  if (expression.length > CONDITIONAL_EVALUATION_EXPRESSION_MAX_LENGTH) {
     return {
       isValid: false,
       errorCode: 'EXPRESSION_TOO_LONG',
-      errorMessage: `Expression is longer than ${CONDITIONAL_AVAILABILITY_EXPRESSION_MAX_LENGTH} characters`,
+      errorMessage: `Expression is longer than ${CONDITIONAL_EVALUATION_EXPRESSION_MAX_LENGTH} characters`,
       errorParams: {
-        maxLength: CONDITIONAL_AVAILABILITY_EXPRESSION_MAX_LENGTH,
+        maxLength: CONDITIONAL_EVALUATION_EXPRESSION_MAX_LENGTH,
       },
     };
   }
@@ -55,7 +55,7 @@ export const parseConditionalAvailabilityExpression = ({
     };
   }
 
-  const nodeResult = toConditionalAvailabilityNode({
+  const nodeResult = toConditionalEvaluationNode({
     instructions: parseResult.parsedExpression.tokens,
   });
 
@@ -68,7 +68,7 @@ export const parseConditionalAvailabilityExpression = ({
     };
   }
 
-  return validateConditionalAvailabilityNode({
+  return validateConditionalEvaluationNode({
     node: nodeResult.node,
     metadataName,
   });

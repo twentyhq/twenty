@@ -1,11 +1,11 @@
-import { CONDITIONAL_AVAILABILITY_FUNCTIONS } from '@/conditional-availability/constants/ConditionalAvailabilityFunctions';
-import { CONDITIONAL_AVAILABILITY_MAX_NODE_COUNT } from '@/conditional-availability/constants/ConditionalAvailabilityMaxNodeCount';
-import { CONDITIONAL_AVAILABILITY_VARIABLES } from '@/conditional-availability/constants/ConditionalAvailabilityVariables';
-import { type ConditionalAvailabilityMetadataName } from '@/conditional-availability/types/ConditionalAvailabilityMetadataName';
-import { type ConditionalAvailabilityNode } from '@/conditional-availability/types/ConditionalAvailabilityNode';
-import { type ConditionalAvailabilityValidationResult } from '@/conditional-availability/types/ConditionalAvailabilityValidationResult';
-import { conditionalAvailabilityNodeSchema } from '@/conditional-availability/utils/conditionalAvailabilityNodeSchema';
-import { listConditionalAvailabilityNodes } from '@/conditional-availability/utils/listConditionalAvailabilityNodes';
+import { CONDITIONAL_EVALUATION_FUNCTIONS } from '@/conditional-evaluation/common/constants/ConditionalEvaluationFunctions';
+import { CONDITIONAL_EVALUATION_MAX_NODE_COUNT } from '@/conditional-evaluation/validate/constants/ConditionalEvaluationMaxNodeCount';
+import { CONDITIONAL_EVALUATION_VARIABLES } from '@/conditional-evaluation/common/constants/ConditionalEvaluationVariables';
+import { type ConditionalAvailabilityMetadataName } from '@/conditional-evaluation/common/types/ConditionalAvailabilityMetadataName';
+import { type ConditionalEvaluationNode } from '@/conditional-evaluation/common/types/ConditionalEvaluationNode';
+import { type ConditionalEvaluationValidationResult } from '@/conditional-evaluation/validate/types/ConditionalEvaluationValidationResult';
+import { conditionalEvaluationNodeSchema } from '@/conditional-evaluation/validate/utils/conditionalEvaluationNodeSchema';
+import { listConditionalEvaluationNodes } from '@/conditional-evaluation/validate/utils/listConditionalEvaluationNodes';
 import { isDefined } from '@/utils/validation/isDefined';
 
 const INVALID_NODE_AT_ROOT = {
@@ -19,7 +19,7 @@ const getUnknownName = ({
   node,
   metadataName,
 }: {
-  node: ConditionalAvailabilityNode;
+  node: ConditionalEvaluationNode;
   metadataName: ConditionalAvailabilityMetadataName;
 }): string | undefined => {
   switch (node.type) {
@@ -31,7 +31,7 @@ const getUnknownName = ({
       }
 
       return Object.prototype.hasOwnProperty.call(
-        CONDITIONAL_AVAILABILITY_VARIABLES[metadataName],
+        CONDITIONAL_EVALUATION_VARIABLES[metadataName],
         variableName,
       )
         ? undefined
@@ -39,7 +39,7 @@ const getUnknownName = ({
     }
     case 'FUNCTION_CALL':
       return Object.prototype.hasOwnProperty.call(
-        CONDITIONAL_AVAILABILITY_FUNCTIONS,
+        CONDITIONAL_EVALUATION_FUNCTIONS,
         node.functionName,
       )
         ? undefined
@@ -54,19 +54,19 @@ const getUnknownName = ({
 
 const safeParseNodeSchema = (node: unknown) => {
   try {
-    return conditionalAvailabilityNodeSchema.safeParse(node);
+    return conditionalEvaluationNodeSchema.safeParse(node);
   } catch {
     return undefined;
   }
 };
 
-export const validateConditionalAvailabilityNode = ({
+export const validateConditionalEvaluationNode = ({
   node,
   metadataName,
 }: {
   node: unknown;
   metadataName: ConditionalAvailabilityMetadataName;
-}): ConditionalAvailabilityValidationResult => {
+}): ConditionalEvaluationValidationResult => {
   if (!isDefined(node)) {
     return { isValid: true, node: null };
   }
@@ -94,14 +94,14 @@ export const validateConditionalAvailabilityNode = ({
     };
   }
 
-  const nodes = listConditionalAvailabilityNodes({ node: schemaResult.data });
+  const nodes = listConditionalEvaluationNodes({ node: schemaResult.data });
 
-  if (nodes.length > CONDITIONAL_AVAILABILITY_MAX_NODE_COUNT) {
+  if (nodes.length > CONDITIONAL_EVALUATION_MAX_NODE_COUNT) {
     return {
       isValid: false,
       errorCode: 'RULE_TOO_LARGE',
-      errorMessage: `The rule has more than ${CONDITIONAL_AVAILABILITY_MAX_NODE_COUNT} parts`,
-      errorParams: { maxNodeCount: CONDITIONAL_AVAILABILITY_MAX_NODE_COUNT },
+      errorMessage: `The rule has more than ${CONDITIONAL_EVALUATION_MAX_NODE_COUNT} parts`,
+      errorParams: { maxNodeCount: CONDITIONAL_EVALUATION_MAX_NODE_COUNT },
     };
   }
 

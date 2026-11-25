@@ -2,25 +2,25 @@
 import { isBoolean, isNumber, isString } from '@sniptt/guards';
 import { type Instruction } from 'expr-eval-fork';
 
-import { CONDITIONAL_AVAILABILITY_SYMBOL_BY_COMPARISON_OPERATOR } from '@/conditional-availability/constants/ConditionalAvailabilitySymbolByComparisonOperator';
-import { type ConditionalAvailabilityComparisonOperator } from '@/conditional-availability/types/ConditionalAvailabilityComparisonOperator';
-import { type ConditionalAvailabilityLogicalOperator } from '@/conditional-availability/types/ConditionalAvailabilityLogicalOperator';
-import { type ConditionalAvailabilityNode } from '@/conditional-availability/types/ConditionalAvailabilityNode';
+import { CONDITIONAL_EVALUATION_SYMBOL_BY_COMPARISON_OPERATOR } from '@/conditional-evaluation/common/constants/ConditionalEvaluationSymbolByComparisonOperator';
+import { type ConditionalEvaluationComparisonOperator } from '@/conditional-evaluation/common/types/ConditionalEvaluationComparisonOperator';
+import { type ConditionalEvaluationLogicalOperator } from '@/conditional-evaluation/common/types/ConditionalEvaluationLogicalOperator';
+import { type ConditionalEvaluationNode } from '@/conditional-evaluation/common/types/ConditionalEvaluationNode';
 import { typedObjectEntries } from '@/utils/typed-object-entries';
 import { isDefined } from '@/utils/validation/isDefined';
 
 const COMPARISON_OPERATOR_BY_SYMBOL = new Map<
   string,
-  ConditionalAvailabilityComparisonOperator
+  ConditionalEvaluationComparisonOperator
 >(
-  typedObjectEntries(
-    CONDITIONAL_AVAILABILITY_SYMBOL_BY_COMPARISON_OPERATOR,
-  ).map(([comparisonOperator, symbol]) => [symbol, comparisonOperator]),
+  typedObjectEntries(CONDITIONAL_EVALUATION_SYMBOL_BY_COMPARISON_OPERATOR).map(
+    ([comparisonOperator, symbol]) => [symbol, comparisonOperator],
+  ),
 );
 
 const toLogicalOperator = (
   symbol: string,
-): ConditionalAvailabilityLogicalOperator | null => {
+): ConditionalEvaluationLogicalOperator | null => {
   switch (symbol) {
     case 'and':
       return 'AND';
@@ -35,9 +35,9 @@ const toGroupChildren = ({
   operand,
   logicalOperator,
 }: {
-  operand: ConditionalAvailabilityNode;
-  logicalOperator: ConditionalAvailabilityLogicalOperator;
-}): ConditionalAvailabilityNode[] =>
+  operand: ConditionalEvaluationNode;
+  logicalOperator: ConditionalEvaluationLogicalOperator;
+}): ConditionalEvaluationNode[] =>
   operand.type === 'GROUP' && operand.logicalOperator === logicalOperator
     ? operand.children
     : [operand];
@@ -48,9 +48,9 @@ const toBinaryNode = ({
   right,
 }: {
   symbol: string;
-  left: ConditionalAvailabilityNode;
-  right: ConditionalAvailabilityNode;
-}): ConditionalAvailabilityNode | null => {
+  left: ConditionalEvaluationNode;
+  right: ConditionalEvaluationNode;
+}): ConditionalEvaluationNode | null => {
   const comparisonOperator = COMPARISON_OPERATOR_BY_SYMBOL.get(symbol);
 
   if (isDefined(comparisonOperator)) {
@@ -78,8 +78,8 @@ const toUnaryNode = ({
   operand,
 }: {
   symbol: string;
-  operand: ConditionalAvailabilityNode;
-}): ConditionalAvailabilityNode | null => {
+  operand: ConditionalEvaluationNode;
+}): ConditionalEvaluationNode | null => {
   if (symbol === 'not') {
     return { type: 'NOT', child: operand };
   }
@@ -96,8 +96,8 @@ const popAndBuildNode = ({
   stack,
 }: {
   instruction: Instruction;
-  stack: ConditionalAvailabilityNode[];
-}): ConditionalAvailabilityNode | null => {
+  stack: ConditionalEvaluationNode[];
+}): ConditionalEvaluationNode | null => {
   const { type, value } = instruction;
 
   switch (type) {
@@ -174,12 +174,12 @@ const flattenNestedInstructions = (
       : [instruction],
   );
 
-export const toConditionalAvailabilityNode = ({
+export const toConditionalEvaluationNode = ({
   instructions,
 }: {
   instructions: Instruction[];
-}): { node: ConditionalAvailabilityNode } | { unexpectedToken: string } => {
-  const stack: ConditionalAvailabilityNode[] = [];
+}): { node: ConditionalEvaluationNode } | { unexpectedToken: string } => {
+  const stack: ConditionalEvaluationNode[] = [];
 
   for (const instruction of flattenNestedInstructions(instructions)) {
     const node = popAndBuildNode({ instruction, stack });

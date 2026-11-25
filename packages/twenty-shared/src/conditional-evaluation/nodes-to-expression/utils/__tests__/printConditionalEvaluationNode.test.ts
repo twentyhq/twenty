@@ -1,5 +1,5 @@
-import { parseConditionalAvailabilityExpression } from '@/conditional-availability/utils/parseConditionalAvailabilityExpression';
-import { printConditionalAvailabilityNode } from '@/conditional-availability/utils/printConditionalAvailabilityNode';
+import { parseConditionalEvaluationExpression } from '@/conditional-evaluation/expression-to-nodes/utils/parseConditionalEvaluationExpression';
+import { printConditionalEvaluationNode } from '@/conditional-evaluation/nodes-to-expression/utils/printConditionalEvaluationNode';
 import { isDefined } from '@/utils/validation/isDefined';
 
 const CANONICAL_EXPRESSIONS = [
@@ -22,7 +22,7 @@ const CANONICAL_EXPRESSIONS = [
 ];
 
 const parseWidgetRuleOrThrow = (expression: string) => {
-  const result = parseConditionalAvailabilityExpression({
+  const result = parseConditionalEvaluationExpression({
     expression,
     metadataName: 'pageLayoutWidget',
   });
@@ -34,12 +34,12 @@ const parseWidgetRuleOrThrow = (expression: string) => {
   return result.node;
 };
 
-describe('printConditionalAvailabilityNode', () => {
+describe('printConditionalEvaluationNode', () => {
   it.each(CANONICAL_EXPRESSIONS)(
     'should print %p exactly as it was written',
     (expression) => {
       expect(
-        printConditionalAvailabilityNode({
+        printConditionalEvaluationNode({
           node: parseWidgetRuleOrThrow(expression),
         }),
       ).toBe(expression);
@@ -62,7 +62,7 @@ describe('printConditionalAvailabilityNode', () => {
     ],
   ])('should print %p in the canonical form %p', (expression, canonical) => {
     expect(
-      printConditionalAvailabilityNode({
+      printConditionalEvaluationNode({
         node: parseWidgetRuleOrThrow(expression),
       }),
     ).toBe(canonical);
@@ -88,7 +88,7 @@ describe('printConditionalAvailabilityNode', () => {
       };
 
       expect(
-        parseWidgetRuleOrThrow(printConditionalAvailabilityNode({ node })),
+        parseWidgetRuleOrThrow(printConditionalEvaluationNode({ node })),
       ).toEqual(node);
     },
   );

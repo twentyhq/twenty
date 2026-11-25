@@ -1,15 +1,15 @@
 import { isFunction, isObject, isString } from '@sniptt/guards';
 
-import { CONDITIONAL_AVAILABILITY_FUNCTIONS } from '@/conditional-availability/constants/ConditionalAvailabilityFunctions';
-import { type ConditionalAvailabilityComparisonOperator } from '@/conditional-availability/types/ConditionalAvailabilityComparisonOperator';
-import { type ConditionalAvailabilityNode } from '@/conditional-availability/types/ConditionalAvailabilityNode';
+import { CONDITIONAL_EVALUATION_FUNCTIONS } from '@/conditional-evaluation/common/constants/ConditionalEvaluationFunctions';
+import { type ConditionalEvaluationComparisonOperator } from '@/conditional-evaluation/common/types/ConditionalEvaluationComparisonOperator';
+import { type ConditionalEvaluationNode } from '@/conditional-evaluation/common/types/ConditionalEvaluationNode';
 import { FORBIDDEN_PROPERTY_NAMES } from '@/constants/ForbiddenPropertyNames';
 import { isDefined } from '@/utils/validation/isDefined';
 
 type EvaluationContext = Record<string, unknown>;
 
-const CONDITIONAL_AVAILABILITY_FUNCTION_BY_NAME = new Map(
-  Object.entries(CONDITIONAL_AVAILABILITY_FUNCTIONS),
+const CONDITIONAL_EVALUATION_FUNCTION_BY_NAME = new Map(
+  Object.entries(CONDITIONAL_EVALUATION_FUNCTIONS),
 );
 
 const isForbiddenPathSegment = (segment: string) =>
@@ -59,7 +59,7 @@ const compareValues = ({
   left,
   right,
 }: {
-  operator: ConditionalAvailabilityComparisonOperator;
+  operator: ConditionalEvaluationComparisonOperator;
   left: unknown;
   right: unknown;
 }): boolean => {
@@ -94,10 +94,10 @@ const computeNodeValue = ({
   node,
   context,
 }: {
-  node: ConditionalAvailabilityNode;
+  node: ConditionalEvaluationNode;
   context: EvaluationContext;
 }): unknown => {
-  const computeChildValue = (childNode: ConditionalAvailabilityNode) =>
+  const computeChildValue = (childNode: ConditionalEvaluationNode) =>
     computeNodeValue({ node: childNode, context });
 
   switch (node.type) {
@@ -112,7 +112,7 @@ const computeNodeValue = ({
         right: computeChildValue(node.right),
       });
     case 'GROUP': {
-      const isChildTruthy = (childNode: ConditionalAvailabilityNode) =>
+      const isChildTruthy = (childNode: ConditionalEvaluationNode) =>
         Boolean(computeChildValue(childNode));
 
       if (node.logicalOperator === 'AND') {
@@ -124,15 +124,15 @@ const computeNodeValue = ({
     case 'NOT':
       return !computeChildValue(node.child);
     case 'FUNCTION_CALL': {
-      const conditionalAvailabilityFunction =
-        CONDITIONAL_AVAILABILITY_FUNCTION_BY_NAME.get(node.functionName);
+      const conditionalEvaluationFunction =
+        CONDITIONAL_EVALUATION_FUNCTION_BY_NAME.get(node.functionName);
 
-      if (!isDefined(conditionalAvailabilityFunction)) {
+      if (!isDefined(conditionalEvaluationFunction)) {
         throw new Error(`Unknown function "${node.functionName}"`);
       }
 
       return Reflect.apply(
-        conditionalAvailabilityFunction,
+        conditionalEvaluationFunction,
         undefined,
         node.arguments.map(computeChildValue),
       );
@@ -140,11 +140,11 @@ const computeNodeValue = ({
   }
 };
 
-export const evaluateConditionalAvailabilityNode = ({
+export const evaluateConditionalEvaluationNode = ({
   node,
   context,
 }: {
-  node: ConditionalAvailabilityNode | null | undefined;
+  node: ConditionalEvaluationNode | null | undefined;
   context: EvaluationContext;
 }): boolean => {
   if (!isDefined(node)) {

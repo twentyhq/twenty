@@ -1,6 +1,6 @@
-import { evaluateConditionalAvailabilityExpression } from '@/conditional-availability/utils/evaluateConditionalAvailabilityExpression';
-import { evaluateConditionalAvailabilityNode } from '@/conditional-availability/utils/evaluateConditionalAvailabilityNode';
-import { parseConditionalAvailabilityExpression } from '@/conditional-availability/utils/parseConditionalAvailabilityExpression';
+import { evaluateConditionalEvaluationExpression } from '@/conditional-evaluation/evaluate/utils/evaluateConditionalEvaluationExpression';
+import { evaluateConditionalEvaluationNode } from '@/conditional-evaluation/evaluate/utils/evaluateConditionalEvaluationNode';
+import { parseConditionalEvaluationExpression } from '@/conditional-evaluation/expression-to-nodes/utils/parseConditionalEvaluationExpression';
 
 const EXPRESSIONS = [
   'true',
@@ -54,7 +54,7 @@ const CONTEXTS: Record<string, unknown>[] = [
 ];
 
 const parseWidgetRuleOrThrow = (expression: string) => {
-  const result = parseConditionalAvailabilityExpression({
+  const result = parseConditionalEvaluationExpression({
     expression,
     metadataName: 'pageLayoutWidget',
   });
@@ -66,16 +66,16 @@ const parseWidgetRuleOrThrow = (expression: string) => {
   return result.node;
 };
 
-describe('evaluateConditionalAvailabilityNode', () => {
+describe('evaluateConditionalEvaluationNode', () => {
   it('should show the item when there is no rule', () => {
-    expect(
-      evaluateConditionalAvailabilityNode({ node: null, context: {} }),
-    ).toBe(true);
+    expect(evaluateConditionalEvaluationNode({ node: null, context: {} })).toBe(
+      true,
+    );
   });
 
   it('should hide the item when a variable is missing', () => {
     expect(
-      evaluateConditionalAvailabilityNode({
+      evaluateConditionalEvaluationNode({
         node: { type: 'VARIABLE', path: 'featureFlags.IS_ON' },
         context: {},
       }),
@@ -84,7 +84,7 @@ describe('evaluateConditionalAvailabilityNode', () => {
 
   it('should show the item only when the result is exactly true', () => {
     expect(
-      evaluateConditionalAvailabilityNode({
+      evaluateConditionalEvaluationNode({
         node: { type: 'VARIABLE', path: 'device' },
         context: { device: 'DESKTOP' },
       }),
@@ -93,7 +93,7 @@ describe('evaluateConditionalAvailabilityNode', () => {
 
   it('should not read a value through a prototype', () => {
     expect(
-      evaluateConditionalAvailabilityNode({
+      evaluateConditionalEvaluationNode({
         node: {
           type: 'COMPARISON',
           operator: 'NOT_EQUAL',
@@ -107,7 +107,7 @@ describe('evaluateConditionalAvailabilityNode', () => {
 
   it('should hide the item when a function is unknown', () => {
     expect(
-      evaluateConditionalAvailabilityNode({
+      evaluateConditionalEvaluationNode({
         node: {
           type: 'FUNCTION_CALL',
           functionName: 'toString',
@@ -124,10 +124,10 @@ describe('evaluateConditionalAvailabilityNode', () => {
       const node = parseWidgetRuleOrThrow(expression);
 
       const treeResults = CONTEXTS.map((context) =>
-        evaluateConditionalAvailabilityNode({ node, context }),
+        evaluateConditionalEvaluationNode({ node, context }),
       );
       const textResults = CONTEXTS.map((context) =>
-        evaluateConditionalAvailabilityExpression(expression, context),
+        evaluateConditionalEvaluationExpression(expression, context),
       );
 
       expect(treeResults).toEqual(textResults);

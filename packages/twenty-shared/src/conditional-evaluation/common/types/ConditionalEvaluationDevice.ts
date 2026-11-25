@@ -1,4 +1,4 @@
-import { type CONDITIONAL_AVAILABILITY_DEVICES } from '@/conditional-availability/constants/ConditionalAvailabilityDevices';
+import { type CONDITIONAL_EVALUATION_DEVICES } from '@/conditional-evaluation/common/constants/ConditionalEvaluationDevices';
 
-export type ConditionalAvailabilityDevice =
-  (typeof CONDITIONAL_AVAILABILITY_DEVICES)[number];
+export type ConditionalEvaluationDevice =
+  (typeof CONDITIONAL_EVALUATION_DEVICES)[number];

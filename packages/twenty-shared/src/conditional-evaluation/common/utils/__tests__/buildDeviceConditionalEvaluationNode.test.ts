@@ -1,14 +1,14 @@
-import { buildDeviceConditionalAvailability } from '@/conditional-availability/utils/buildDeviceConditionalAvailability';
-import { evaluateConditionalAvailabilityNode } from '@/conditional-availability/utils/evaluateConditionalAvailabilityNode';
-import { validateConditionalAvailabilityNode } from '@/conditional-availability/utils/validateConditionalAvailabilityNode';
+import { buildDeviceConditionalEvaluationNode } from '@/conditional-evaluation/common/utils/buildDeviceConditionalEvaluationNode';
+import { evaluateConditionalEvaluationNode } from '@/conditional-evaluation/evaluate/utils/evaluateConditionalEvaluationNode';
+import { validateConditionalEvaluationNode } from '@/conditional-evaluation/validate/utils/validateConditionalEvaluationNode';
 
-describe('buildDeviceConditionalAvailability', () => {
+describe('buildDeviceConditionalEvaluationNode', () => {
   it.each(['MOBILE', 'DESKTOP'] as const)(
     'should build a rule a page layout widget accepts for %s',
     (device) => {
       expect(
-        validateConditionalAvailabilityNode({
-          node: buildDeviceConditionalAvailability(device),
+        validateConditionalEvaluationNode({
+          node: buildDeviceConditionalEvaluationNode(device),
           metadataName: 'pageLayoutWidget',
         }),
       ).toMatchObject({ isValid: true });
@@ -24,8 +24,8 @@ describe('buildDeviceConditionalAvailability', () => {
     'should build a %s rule that gives %s on %s',
     (ruleDevice, currentDevice, isVisible) => {
       expect(
-        evaluateConditionalAvailabilityNode({
-          node: buildDeviceConditionalAvailability(ruleDevice),
+        evaluateConditionalEvaluationNode({
+          node: buildDeviceConditionalEvaluationNode(ruleDevice),
           context: { device: currentDevice },
         }),
       ).toBe(isVisible);

@@ -1,5 +1,5 @@
-import { CONDITIONAL_AVAILABILITY_MAX_NODE_COUNT } from '@/conditional-availability/constants/ConditionalAvailabilityMaxNodeCount';
-import { validateConditionalAvailabilityNode } from '@/conditional-availability/utils/validateConditionalAvailabilityNode';
+import { CONDITIONAL_EVALUATION_MAX_NODE_COUNT } from '@/conditional-evaluation/validate/constants/ConditionalEvaluationMaxNodeCount';
+import { validateConditionalEvaluationNode } from '@/conditional-evaluation/validate/utils/validateConditionalEvaluationNode';
 
 const DEVICE_IS_MOBILE = {
   type: 'COMPARISON',
@@ -8,10 +8,10 @@ const DEVICE_IS_MOBILE = {
   right: { type: 'LITERAL', value: 'MOBILE' },
 };
 
-describe('validateConditionalAvailabilityNode', () => {
+describe('validateConditionalEvaluationNode', () => {
   it.each([null, undefined])('should accept no rule (%p)', (node) => {
     expect(
-      validateConditionalAvailabilityNode({
+      validateConditionalEvaluationNode({
         node,
         metadataName: 'pageLayoutWidget',
       }),
@@ -20,7 +20,7 @@ describe('validateConditionalAvailabilityNode', () => {
 
   it('should accept a valid tree and hand it back', () => {
     expect(
-      validateConditionalAvailabilityNode({
+      validateConditionalEvaluationNode({
         node: DEVICE_IS_MOBILE,
         metadataName: 'pageLayoutWidget',
       }),
@@ -34,7 +34,7 @@ describe('validateConditionalAvailabilityNode', () => {
     };
 
     expect(
-      validateConditionalAvailabilityNode({
+      validateConditionalEvaluationNode({
         node,
         metadataName: 'pageLayoutWidget',
       }),
@@ -90,7 +90,7 @@ describe('validateConditionalAvailabilityNode', () => {
     ['a value that is a list', { type: 'LITERAL', value: ['MOBILE'] }, 'value'],
   ])('should refuse %s', (_description, node, path) => {
     expect(
-      validateConditionalAvailabilityNode({
+      validateConditionalEvaluationNode({
         node,
         metadataName: 'pageLayoutWidget',
       }),
@@ -114,7 +114,7 @@ describe('validateConditionalAvailabilityNode', () => {
     ],
   ])('should refuse %s', (_description, node, name) => {
     expect(
-      validateConditionalAvailabilityNode({
+      validateConditionalEvaluationNode({
         node,
         metadataName: 'pageLayoutWidget',
       }),
@@ -127,12 +127,12 @@ describe('validateConditionalAvailabilityNode', () => {
 
   it('should refuse a tree with too many nodes', () => {
     expect(
-      validateConditionalAvailabilityNode({
+      validateConditionalEvaluationNode({
         node: {
           type: 'GROUP',
           logicalOperator: 'OR',
           children: Array.from(
-            { length: CONDITIONAL_AVAILABILITY_MAX_NODE_COUNT },
+            { length: CONDITIONAL_EVALUATION_MAX_NODE_COUNT },
             () => ({ type: 'VARIABLE', path: 'device' }),
           ),
         },

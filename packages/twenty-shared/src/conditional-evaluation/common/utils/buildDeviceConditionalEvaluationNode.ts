@@ -1,9 +1,9 @@
-import { type ConditionalAvailabilityDevice } from '@/conditional-availability/types/ConditionalAvailabilityDevice';
-import { type ConditionalAvailabilityNode } from '@/conditional-availability/types/ConditionalAvailabilityNode';
+import { type ConditionalEvaluationDevice } from '@/conditional-evaluation/common/types/ConditionalEvaluationDevice';
+import { type ConditionalEvaluationNode } from '@/conditional-evaluation/common/types/ConditionalEvaluationNode';
 
-export const buildDeviceConditionalAvailability = (
-  device: ConditionalAvailabilityDevice,
-): ConditionalAvailabilityNode => ({
+export const buildDeviceConditionalEvaluationNode = (
+  device: ConditionalEvaluationDevice,
+): ConditionalEvaluationNode => ({
   type: 'COMPARISON',
   operator: 'EQUAL',
   left: { type: 'VARIABLE', path: 'device' },

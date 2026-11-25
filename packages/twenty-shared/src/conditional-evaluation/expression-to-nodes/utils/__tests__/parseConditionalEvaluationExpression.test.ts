@@ -1,8 +1,8 @@
-import { CONDITIONAL_AVAILABILITY_EXPRESSION_MAX_LENGTH } from '@/conditional-availability/constants/ConditionalAvailabilityExpressionMaxLength';
-import { parseConditionalAvailabilityExpression } from '@/conditional-availability/utils/parseConditionalAvailabilityExpression';
+import { CONDITIONAL_EVALUATION_EXPRESSION_MAX_LENGTH } from '@/conditional-evaluation/expression-to-nodes/constants/ConditionalEvaluationExpressionMaxLength';
+import { parseConditionalEvaluationExpression } from '@/conditional-evaluation/expression-to-nodes/utils/parseConditionalEvaluationExpression';
 
 const parseWidgetRule = (expression: string | null | undefined) =>
-  parseConditionalAvailabilityExpression({
+  parseConditionalEvaluationExpression({
     expression,
     metadataName: 'pageLayoutWidget',
   });
@@ -14,7 +14,7 @@ const DEVICE_IS_MOBILE = {
   right: { type: 'LITERAL', value: 'MOBILE' },
 } as const;
 
-describe('parseConditionalAvailabilityExpression', () => {
+describe('parseConditionalEvaluationExpression', () => {
   it.each([null, undefined, '', '   '])(
     'should read an empty rule (%p) as no rule',
     (expression) => {
@@ -168,7 +168,7 @@ describe('parseConditionalAvailabilityExpression', () => {
   it('should refuse a rule over the length limit', () => {
     expect(
       parseWidgetRule(
-        `device == "${'M'.repeat(CONDITIONAL_AVAILABILITY_EXPRESSION_MAX_LENGTH)}"`,
+        `device == "${'M'.repeat(CONDITIONAL_EVALUATION_EXPRESSION_MAX_LENGTH)}"`,
       ),
     ).toMatchObject({ isValid: false, errorCode: 'EXPRESSION_TOO_LONG' });
   });

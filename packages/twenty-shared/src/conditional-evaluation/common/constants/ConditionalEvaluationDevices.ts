@@ -1,1 +1,1 @@
-export const CONDITIONAL_AVAILABILITY_DEVICES = ['MOBILE', 'DESKTOP'] as const;
+export const CONDITIONAL_EVALUATION_DEVICES = ['MOBILE', 'DESKTOP'] as const;

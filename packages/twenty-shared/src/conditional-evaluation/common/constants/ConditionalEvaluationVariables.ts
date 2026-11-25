@@ -1,4 +1,4 @@
-export const CONDITIONAL_AVAILABILITY_VARIABLES = {
+export const CONDITIONAL_EVALUATION_VARIABLES = {
   pageLayoutWidget: {
     device: true,
     selectedRecords: true,

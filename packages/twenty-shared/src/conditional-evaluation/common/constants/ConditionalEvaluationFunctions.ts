@@ -1,9 +1,9 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { createArrayPropertyCheck } from '@/conditional-availability/utils/createArrayPropertyCheck';
+import { createArrayPropertyCheck } from '@/conditional-evaluation/common/utils/createArrayPropertyCheck';
 import { isDefined } from '@/utils/validation/isDefined';
 
-export const CONDITIONAL_AVAILABILITY_FUNCTIONS = {
+export const CONDITIONAL_EVALUATION_FUNCTIONS = {
   isDefined: (value: unknown) => isDefined(value),
   isNonEmptyString: (value: unknown) => isNonEmptyString(value),
   includes: (array: unknown, value: unknown) =>

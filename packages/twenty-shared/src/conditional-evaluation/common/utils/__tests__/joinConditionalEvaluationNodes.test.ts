@@ -1,14 +1,14 @@
-import { type ConditionalAvailabilityNode } from '@/conditional-availability/types/ConditionalAvailabilityNode';
-import { buildDeviceConditionalAvailability } from '@/conditional-availability/utils/buildDeviceConditionalAvailability';
-import { joinConditionalAvailabilityNodes } from '@/conditional-availability/utils/joinConditionalAvailabilityNodes';
+import { type ConditionalEvaluationNode } from '@/conditional-evaluation/common/types/ConditionalEvaluationNode';
+import { buildDeviceConditionalEvaluationNode } from '@/conditional-evaluation/common/utils/buildDeviceConditionalEvaluationNode';
+import { joinConditionalEvaluationNodes } from '@/conditional-evaluation/common/utils/joinConditionalEvaluationNodes';
 
-const DEVICE_IS_MOBILE = buildDeviceConditionalAvailability('MOBILE');
-const DEVICE_IS_DESKTOP = buildDeviceConditionalAvailability('DESKTOP');
+const DEVICE_IS_MOBILE = buildDeviceConditionalEvaluationNode('MOBILE');
+const DEVICE_IS_DESKTOP = buildDeviceConditionalEvaluationNode('DESKTOP');
 
-describe('joinConditionalAvailabilityNodes', () => {
+describe('joinConditionalEvaluationNodes', () => {
   it('should return the node itself when there is only one', () => {
     expect(
-      joinConditionalAvailabilityNodes({
+      joinConditionalEvaluationNodes({
         nodes: [DEVICE_IS_MOBILE],
         logicalOperator: 'AND',
       }),
@@ -17,7 +17,7 @@ describe('joinConditionalAvailabilityNodes', () => {
 
   it('should group several nodes under the logical operator', () => {
     expect(
-      joinConditionalAvailabilityNodes({
+      joinConditionalEvaluationNodes({
         nodes: [DEVICE_IS_MOBILE, DEVICE_IS_DESKTOP],
         logicalOperator: 'OR',
       }),
@@ -29,14 +29,14 @@ describe('joinConditionalAvailabilityNodes', () => {
   });
 
   it('should lift the children of a group that uses the same logical operator', () => {
-    const groupOfSameOperator: ConditionalAvailabilityNode = {
+    const groupOfSameOperator: ConditionalEvaluationNode = {
       type: 'GROUP',
       logicalOperator: 'AND',
       children: [DEVICE_IS_MOBILE, DEVICE_IS_DESKTOP],
     };
 
     expect(
-      joinConditionalAvailabilityNodes({
+      joinConditionalEvaluationNodes({
         nodes: [groupOfSameOperator, DEVICE_IS_MOBILE],
         logicalOperator: 'AND',
       }),
@@ -48,14 +48,14 @@ describe('joinConditionalAvailabilityNodes', () => {
   });
 
   it('should keep a group that uses the other logical operator', () => {
-    const groupOfOtherOperator: ConditionalAvailabilityNode = {
+    const groupOfOtherOperator: ConditionalEvaluationNode = {
       type: 'GROUP',
       logicalOperator: 'OR',
       children: [DEVICE_IS_MOBILE, DEVICE_IS_DESKTOP],
     };
 
     expect(
-      joinConditionalAvailabilityNodes({
+      joinConditionalEvaluationNodes({
         nodes: [groupOfOtherOperator, DEVICE_IS_MOBILE],
         logicalOperator: 'AND',
       }),

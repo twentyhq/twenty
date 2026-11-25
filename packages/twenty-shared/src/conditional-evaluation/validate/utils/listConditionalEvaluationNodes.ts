@@ -1,8 +1,8 @@
-import { type ConditionalAvailabilityNode } from '@/conditional-availability/types/ConditionalAvailabilityNode';
+import { type ConditionalEvaluationNode } from '@/conditional-evaluation/common/types/ConditionalEvaluationNode';
 
 const getChildNodes = (
-  node: ConditionalAvailabilityNode,
-): ConditionalAvailabilityNode[] => {
+  node: ConditionalEvaluationNode,
+): ConditionalEvaluationNode[] => {
   switch (node.type) {
     case 'LITERAL':
     case 'VARIABLE':
@@ -18,13 +18,13 @@ const getChildNodes = (
   }
 };
 
-export const listConditionalAvailabilityNodes = ({
+export const listConditionalEvaluationNodes = ({
   node,
 }: {
-  node: ConditionalAvailabilityNode;
-}): ConditionalAvailabilityNode[] => [
+  node: ConditionalEvaluationNode;
+}): ConditionalEvaluationNode[] => [
   node,
   ...getChildNodes(node).flatMap((childNode) =>
-    listConditionalAvailabilityNodes({ node: childNode }),
+    listConditionalEvaluationNodes({ node: childNode }),
   ),
 ];

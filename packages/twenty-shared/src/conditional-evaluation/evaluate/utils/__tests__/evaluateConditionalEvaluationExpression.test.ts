@@ -1,5 +1,5 @@
 import { ContextStorePageType, type CommandMenuContextApi } from '@/types';
-import { evaluateConditionalAvailabilityExpression } from '../evaluateConditionalAvailabilityExpression';
+import { evaluateConditionalEvaluationExpression } from '../evaluateConditionalEvaluationExpression';
 
 const buildContext = (
   overrides: Partial<CommandMenuContextApi> = {},
@@ -38,19 +38,19 @@ const buildContext = (
   ...overrides,
 });
 
-describe('evaluateConditionalAvailabilityExpression', () => {
+describe('evaluateConditionalEvaluationExpression', () => {
   describe('coreObjectName', () => {
     it('should expose the current core object to expressions', () => {
       const expression = 'coreObjectName == "workflow"';
 
       expect(
-        evaluateConditionalAvailabilityExpression(
+        evaluateConditionalEvaluationExpression(
           expression,
           buildContext({ coreObjectName: 'workflow' }),
         ),
       ).toBe(true);
       expect(
-        evaluateConditionalAvailabilityExpression(expression, buildContext()),
+        evaluateConditionalEvaluationExpression(expression, buildContext()),
       ).toBe(false);
     });
   });
@@ -61,7 +61,7 @@ describe('evaluateConditionalAvailabilityExpression', () => {
 
     it('should match the view on screen', () => {
       expect(
-        evaluateConditionalAvailabilityExpression(
+        evaluateConditionalEvaluationExpression(
           expression,
           buildContext({
             currentView: {
@@ -75,7 +75,7 @@ describe('evaluateConditionalAvailabilityExpression', () => {
 
     it('should not match another view or no view', () => {
       expect(
-        evaluateConditionalAvailabilityExpression(
+        evaluateConditionalEvaluationExpression(
           expression,
           buildContext({
             currentView: { id: 'view-id', universalIdentifier: null },
@@ -83,7 +83,7 @@ describe('evaluateConditionalAvailabilityExpression', () => {
         ),
       ).toBe(false);
       expect(
-        evaluateConditionalAvailabilityExpression(expression, buildContext()),
+        evaluateConditionalEvaluationExpression(expression, buildContext()),
       ).toBe(false);
     });
   });
@@ -103,9 +103,9 @@ describe('evaluateConditionalAvailabilityExpression', () => {
         hasAnySoftDeleteFilterOnView: false,
       });
 
-      expect(
-        evaluateConditionalAvailabilityExpression(expression, context),
-      ).toBe(true);
+      expect(evaluateConditionalEvaluationExpression(expression, context)).toBe(
+        true,
+      );
     });
 
     it('should deny when all selected are already favorites', () => {
@@ -122,9 +122,9 @@ describe('evaluateConditionalAvailabilityExpression', () => {
         hasAnySoftDeleteFilterOnView: false,
       });
 
-      expect(
-        evaluateConditionalAvailabilityExpression(expression, context),
-      ).toBe(false);
+      expect(evaluateConditionalEvaluationExpression(expression, context)).toBe(
+        false,
+      );
     });
 
     it('should evaluate arrayLength(favoriteRecordIds) == numberOfSelectedRecords when all selected are favorites', () => {
@@ -141,9 +141,9 @@ describe('evaluateConditionalAvailabilityExpression', () => {
         hasAnySoftDeleteFilterOnView: false,
       });
 
-      expect(
-        evaluateConditionalAvailabilityExpression(expression, context),
-      ).toBe(true);
+      expect(evaluateConditionalEvaluationExpression(expression, context)).toBe(
+        true,
+      );
     });
 
     it('should reject favoriteRecordIds.length (expr-eval-fork parses "length" as unary op)', () => {
@@ -153,9 +153,9 @@ describe('evaluateConditionalAvailabilityExpression', () => {
         numberOfSelectedRecords: 2,
       });
 
-      expect(
-        evaluateConditionalAvailabilityExpression(expression, context),
-      ).toBe(false);
+      expect(evaluateConditionalEvaluationExpression(expression, context)).toBe(
+        false,
+      );
     });
   });
 
@@ -170,9 +170,9 @@ describe('evaluateConditionalAvailabilityExpression', () => {
         ],
       });
 
-      expect(
-        evaluateConditionalAvailabilityExpression(expression, context),
-      ).toBe(true);
+      expect(evaluateConditionalEvaluationExpression(expression, context)).toBe(
+        true,
+      );
     });
 
     it('should return false when no record includes the value in the array prop', () => {
@@ -185,9 +185,9 @@ describe('evaluateConditionalAvailabilityExpression', () => {
         ],
       });
 
-      expect(
-        evaluateConditionalAvailabilityExpression(expression, context),
-      ).toBe(false);
+      expect(evaluateConditionalEvaluationExpression(expression, context)).toBe(
+        false,
+      );
     });
   });
 
@@ -202,9 +202,9 @@ describe('evaluateConditionalAvailabilityExpression', () => {
         ],
       });
 
-      expect(
-        evaluateConditionalAvailabilityExpression(expression, context),
-      ).toBe(true);
+      expect(evaluateConditionalEvaluationExpression(expression, context)).toBe(
+        true,
+      );
     });
 
     it('should return false when any record includes the value in the array prop', () => {
@@ -217,9 +217,9 @@ describe('evaluateConditionalAvailabilityExpression', () => {
         ],
       });
 
-      expect(
-        evaluateConditionalAvailabilityExpression(expression, context),
-      ).toBe(false);
+      expect(evaluateConditionalEvaluationExpression(expression, context)).toBe(
+        false,
+      );
     });
 
     it('should return false when all records include the value in the array prop', () => {
@@ -232,9 +232,9 @@ describe('evaluateConditionalAvailabilityExpression', () => {
         ],
       });
 
-      expect(
-        evaluateConditionalAvailabilityExpression(expression, context),
-      ).toBe(false);
+      expect(evaluateConditionalEvaluationExpression(expression, context)).toBe(
+        false,
+      );
     });
   });
 
@@ -243,7 +243,7 @@ describe('evaluateConditionalAvailabilityExpression', () => {
       const context = buildContext({ selectedRecords: [] });
 
       expect(
-        evaluateConditionalAvailabilityExpression(
+        evaluateConditionalEvaluationExpression(
           'every(selectedRecords, "active")',
           context,
         ),
@@ -254,7 +254,7 @@ describe('evaluateConditionalAvailabilityExpression', () => {
       const context = buildContext({ selectedRecords: [] });
 
       expect(
-        evaluateConditionalAvailabilityExpression(
+        evaluateConditionalEvaluationExpression(
           'everyDefined(selectedRecords, "name")',
           context,
         ),
@@ -265,7 +265,7 @@ describe('evaluateConditionalAvailabilityExpression', () => {
       const context = buildContext({ selectedRecords: [] });
 
       expect(
-        evaluateConditionalAvailabilityExpression(
+        evaluateConditionalEvaluationExpression(
           'none(selectedRecords, "deletedAt")',
           context,
         ),
@@ -276,7 +276,7 @@ describe('evaluateConditionalAvailabilityExpression', () => {
       const context = buildContext({ selectedRecords: [] });
 
       expect(
-        evaluateConditionalAvailabilityExpression(
+        evaluateConditionalEvaluationExpression(
           'noneDefined(selectedRecords, "deletedAt")',
           context,
         ),
@@ -287,7 +287,7 @@ describe('evaluateConditionalAvailabilityExpression', () => {
       const context = buildContext({ selectedRecords: [] });
 
       expect(
-        evaluateConditionalAvailabilityExpression(
+        evaluateConditionalEvaluationExpression(
           'everyEquals(selectedRecords, "status", "DRAFT")',
           context,
         ),
@@ -298,7 +298,7 @@ describe('evaluateConditionalAvailabilityExpression', () => {
       const context = buildContext({ selectedRecords: [] });
 
       expect(
-        evaluateConditionalAvailabilityExpression(
+        evaluateConditionalEvaluationExpression(
           'noneEquals(selectedRecords, "status", "ACTIVE")',
           context,
         ),
@@ -309,7 +309,7 @@ describe('evaluateConditionalAvailabilityExpression', () => {
       const context = buildContext({ selectedRecords: [] });
 
       expect(
-        evaluateConditionalAvailabilityExpression(
+        evaluateConditionalEvaluationExpression(
           'includesEvery(selectedRecords, "statuses", "ACTIVE")',
           context,
         ),
@@ -320,7 +320,7 @@ describe('evaluateConditionalAvailabilityExpression', () => {
       const context = buildContext({ selectedRecords: [] });
 
       expect(
-        evaluateConditionalAvailabilityExpression(
+        evaluateConditionalEvaluationExpression(
           'includesNone(selectedRecords, "statuses", "ACTIVE")',
           context,
         ),
@@ -331,7 +331,7 @@ describe('evaluateConditionalAvailabilityExpression', () => {
       const context = buildContext({ selectedRecords: [] });
 
       expect(
-        evaluateConditionalAvailabilityExpression(
+        evaluateConditionalEvaluationExpression(
           'some(selectedRecords, "active")',
           context,
         ),
@@ -342,7 +342,7 @@ describe('evaluateConditionalAvailabilityExpression', () => {
       const context = buildContext({ selectedRecords: [] });
 
       expect(
-        evaluateConditionalAvailabilityExpression(
+        evaluateConditionalEvaluationExpression(
           'someDefined(selectedRecords, "name")',
           context,
         ),
@@ -353,7 +353,7 @@ describe('evaluateConditionalAvailabilityExpression', () => {
       const context = buildContext({ selectedRecords: [] });
 
       expect(
-        evaluateConditionalAvailabilityExpression(
+        evaluateConditionalEvaluationExpression(
           'includesSome(selectedRecords, "statuses", "ACTIVE")',
           context,
         ),
@@ -369,7 +369,7 @@ describe('evaluateConditionalAvailabilityExpression', () => {
       });
 
       expect(
-        evaluateConditionalAvailabilityExpression(
+        evaluateConditionalEvaluationExpression(
           'isSelectAll or noneDefined(selectedRecords, "deletedAt")',
           context,
         ),
@@ -383,7 +383,7 @@ describe('evaluateConditionalAvailabilityExpression', () => {
       });
 
       expect(
-        evaluateConditionalAvailabilityExpression(
+        evaluateConditionalEvaluationExpression(
           'isSelectAll or everyDefined(selectedRecords, "deletedAt")',
           context,
         ),
@@ -413,9 +413,9 @@ describe('evaluateConditionalAvailabilityExpression', () => {
         },
       });
 
-      expect(
-        evaluateConditionalAvailabilityExpression(expression, context),
-      ).toBe(true);
+      expect(evaluateConditionalEvaluationExpression(expression, context)).toBe(
+        true,
+      );
     });
 
     it('should still respect noneDefined when isSelectAll is false and records are present', () => {
@@ -430,7 +430,7 @@ describe('evaluateConditionalAvailabilityExpression', () => {
       });
 
       expect(
-        evaluateConditionalAvailabilityExpression(
+        evaluateConditionalEvaluationExpression(
           expression,
           contextWithDeletedRecord,
         ),
@@ -459,7 +459,7 @@ describe('evaluateConditionalAvailabilityExpression', () => {
       });
 
       expect(
-        evaluateConditionalAvailabilityExpression(
+        evaluateConditionalEvaluationExpression(
           activateWorkflowExpression,
           context,
         ),
@@ -483,7 +483,7 @@ describe('evaluateConditionalAvailabilityExpression', () => {
       });
 
       expect(
-        evaluateConditionalAvailabilityExpression(
+        evaluateConditionalEvaluationExpression(
           activateWorkflowExpression,
           context,
         ),
@@ -507,7 +507,7 @@ describe('evaluateConditionalAvailabilityExpression', () => {
       });
 
       expect(
-        evaluateConditionalAvailabilityExpression(
+        evaluateConditionalEvaluationExpression(
           activateWorkflowExpression,
           context,
         ),
@@ -520,7 +520,7 @@ describe('evaluateConditionalAvailabilityExpression', () => {
       const context = buildContext({ permissionFlags: {} });
 
       expect(
-        evaluateConditionalAvailabilityExpression(
+        evaluateConditionalEvaluationExpression(
           'permissionFlags.EXPORT_CSV',
           context,
         ),
@@ -533,7 +533,7 @@ describe('evaluateConditionalAvailabilityExpression', () => {
       });
 
       expect(
-        evaluateConditionalAvailabilityExpression(
+        evaluateConditionalEvaluationExpression(
           'permissionFlags.EXPORT_CSV',
           context,
         ),
@@ -547,7 +547,7 @@ describe('evaluateConditionalAvailabilityExpression', () => {
       });
 
       expect(
-        evaluateConditionalAvailabilityExpression(
+        evaluateConditionalEvaluationExpression(
           'not hasAnySoftDeleteFilterOnView and permissionFlags.IMPORT_CSV',
           context,
         ),
@@ -561,7 +561,7 @@ describe('evaluateConditionalAvailabilityExpression', () => {
       });
 
       expect(
-        evaluateConditionalAvailabilityExpression(
+        evaluateConditionalEvaluationExpression(
           'not hasAnySoftDeleteFilterOnView and permissionFlags.IMPORT_CSV',
           context,
         ),
@@ -577,7 +577,7 @@ describe('evaluateConditionalAvailabilityExpression', () => {
       });
 
       expect(
-        evaluateConditionalAvailabilityExpression(
+        evaluateConditionalEvaluationExpression(
           'pageType == "INDEX_PAGE" and not hasAnySoftDeleteFilterOnView',
           context,
         ),
@@ -591,7 +591,7 @@ describe('evaluateConditionalAvailabilityExpression', () => {
       });
 
       expect(
-        evaluateConditionalAvailabilityExpression(
+        evaluateConditionalEvaluationExpression(
           'pageType == "INDEX_PAGE" and not hasAnySoftDeleteFilterOnView',
           context,
         ),
@@ -606,7 +606,7 @@ describe('evaluateConditionalAvailabilityExpression', () => {
       });
 
       expect(
-        evaluateConditionalAvailabilityExpression(
+        evaluateConditionalEvaluationExpression(
           'pageType == "INDEX_PAGE" and not hasAnySoftDeleteFilterOnView and permissionFlags.IMPORT_CSV',
           context,
         ),
@@ -620,7 +620,7 @@ describe('evaluateConditionalAvailabilityExpression', () => {
       });
 
       expect(
-        evaluateConditionalAvailabilityExpression(
+        evaluateConditionalEvaluationExpression(
           'pageType == "INDEX_PAGE" and permissionFlags.EXPORT_CSV',
           context,
         ),
@@ -634,7 +634,7 @@ describe('evaluateConditionalAvailabilityExpression', () => {
       });
 
       expect(
-        evaluateConditionalAvailabilityExpression(
+        evaluateConditionalEvaluationExpression(
           'pageType == "INDEX_PAGE" and not hasAnySoftDeleteFilterOnView',
           context,
         ),
@@ -648,7 +648,7 @@ describe('evaluateConditionalAvailabilityExpression', () => {
       });
 
       expect(
-        evaluateConditionalAvailabilityExpression(
+        evaluateConditionalEvaluationExpression(
           'pageType == "INDEX_PAGE" and hasAnySoftDeleteFilterOnView',
           context,
         ),
@@ -669,7 +669,7 @@ describe('evaluateConditionalAvailabilityExpression', () => {
       });
 
       expect(
-        evaluateConditionalAvailabilityExpression(
+        evaluateConditionalEvaluationExpression(
           DELETE_RECORDS_EXPRESSION,
           context,
         ),
@@ -683,7 +683,7 @@ describe('evaluateConditionalAvailabilityExpression', () => {
       });
 
       expect(
-        evaluateConditionalAvailabilityExpression(
+        evaluateConditionalEvaluationExpression(
           DELETE_RECORDS_EXPRESSION,
           context,
         ),
@@ -698,7 +698,7 @@ describe('evaluateConditionalAvailabilityExpression', () => {
       });
 
       expect(
-        evaluateConditionalAvailabilityExpression(
+        evaluateConditionalEvaluationExpression(
           DELETE_RECORDS_EXPRESSION,
           context,
         ),

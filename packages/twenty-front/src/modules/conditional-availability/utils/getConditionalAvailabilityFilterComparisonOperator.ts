@@ -1,15 +1,12 @@
 import { type ConditionalAvailabilityFilterOperator } from '@/conditional-availability/types/ConditionalAvailabilityFilterOperator';
-import { type ConditionalAvailabilityComparisonOperator } from 'twenty-shared/conditional-availability';
+import { type ConditionalEvaluationComparisonOperator } from 'twenty-shared/conditional-evaluation';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 export const getConditionalAvailabilityFilterComparisonOperator = ({
   operator,
 }: {
   operator: ConditionalAvailabilityFilterOperator;
-}): Extract<
-  ConditionalAvailabilityComparisonOperator,
-  'EQUAL' | 'NOT_EQUAL'
-> => {
+}): Extract<ConditionalEvaluationComparisonOperator, 'EQUAL' | 'NOT_EQUAL'> => {
   switch (operator) {
     case 'is':
     case 'isAnyOf':

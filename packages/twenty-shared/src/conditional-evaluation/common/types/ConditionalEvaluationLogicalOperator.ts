@@ -1,7 +1,7 @@
 import { type z } from 'zod';
 
-import { type conditionalAvailabilityLogicalOperatorSchema } from '@/conditional-availability/utils/conditionalAvailabilityLogicalOperatorSchema';
+import { type conditionalEvaluationLogicalOperatorSchema } from '@/conditional-evaluation/common/utils/conditionalEvaluationLogicalOperatorSchema';
 
-export type ConditionalAvailabilityLogicalOperator = z.infer<
-  typeof conditionalAvailabilityLogicalOperatorSchema
+export type ConditionalEvaluationLogicalOperator = z.infer<
+  typeof conditionalEvaluationLogicalOperatorSchema
 >;

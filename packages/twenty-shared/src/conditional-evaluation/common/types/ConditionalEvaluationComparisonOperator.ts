@@ -1,7 +1,7 @@
 import { type z } from 'zod';
 
-import { type conditionalAvailabilityComparisonOperatorSchema } from '@/conditional-availability/utils/conditionalAvailabilityComparisonOperatorSchema';
+import { type conditionalEvaluationComparisonOperatorSchema } from '@/conditional-evaluation/common/utils/conditionalEvaluationComparisonOperatorSchema';
 
-export type ConditionalAvailabilityComparisonOperator = z.infer<
-  typeof conditionalAvailabilityComparisonOperatorSchema
+export type ConditionalEvaluationComparisonOperator = z.infer<
+  typeof conditionalEvaluationComparisonOperatorSchema
 >;

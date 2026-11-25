@@ -1,7 +1,7 @@
-import { type ConditionalAvailabilityNode } from '@/conditional-availability/types/ConditionalAvailabilityNode';
+import { type ConditionalEvaluationNode } from '@/conditional-evaluation/common/types/ConditionalEvaluationNode';
 
-export type ConditionalAvailabilityValidationResult =
-  | { isValid: true; node: ConditionalAvailabilityNode | null }
+export type ConditionalEvaluationValidationResult =
+  | { isValid: true; node: ConditionalEvaluationNode | null }
   | {
       isValid: false;
       errorCode: 'INVALID_NODE';

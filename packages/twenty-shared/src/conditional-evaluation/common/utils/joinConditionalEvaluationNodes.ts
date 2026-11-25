@@ -1,14 +1,14 @@
-import { type ConditionalAvailabilityLogicalOperator } from '@/conditional-availability/types/ConditionalAvailabilityLogicalOperator';
-import { type ConditionalAvailabilityNode } from '@/conditional-availability/types/ConditionalAvailabilityNode';
+import { type ConditionalEvaluationLogicalOperator } from '@/conditional-evaluation/common/types/ConditionalEvaluationLogicalOperator';
+import { type ConditionalEvaluationNode } from '@/conditional-evaluation/common/types/ConditionalEvaluationNode';
 import { isDefined } from '@/utils/validation/isDefined';
 
-export const joinConditionalAvailabilityNodes = ({
+export const joinConditionalEvaluationNodes = ({
   nodes,
   logicalOperator,
 }: {
-  nodes: ConditionalAvailabilityNode[];
-  logicalOperator: ConditionalAvailabilityLogicalOperator;
-}): ConditionalAvailabilityNode => {
+  nodes: ConditionalEvaluationNode[];
+  logicalOperator: ConditionalEvaluationLogicalOperator;
+}): ConditionalEvaluationNode => {
   const [onlyNode] = nodes;
 
   if (nodes.length === 1 && isDefined(onlyNode)) {

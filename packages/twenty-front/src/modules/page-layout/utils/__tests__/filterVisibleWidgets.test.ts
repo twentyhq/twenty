@@ -1,7 +1,7 @@
 import { EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT } from '@/conditional-availability/constants/EmptyConditionalAvailabilityCurrentUserContext';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { filterVisibleWidgets } from '@/page-layout/utils/filterVisibleWidgets';
-import { buildDeviceConditionalAvailability } from 'twenty-shared/conditional-availability';
+import { buildDeviceConditionalEvaluationNode } from 'twenty-shared/conditional-evaluation';
 import {
   FeatureFlagKey,
   PageLayoutTabLayoutMode,
@@ -161,7 +161,8 @@ describe('filterVisibleWidgets', () => {
         createMockWidget('widget-1'),
         {
           ...createMockWidget('widget-2'),
-          conditionalAvailability: buildDeviceConditionalAvailability('MOBILE'),
+          conditionalAvailability:
+            buildDeviceConditionalEvaluationNode('MOBILE'),
         },
       ];
 
@@ -244,7 +245,7 @@ describe('filterVisibleWidgets', () => {
           value: 'sales-role-universal-identifier',
         },
       };
-      const deviceIsDesktop = buildDeviceConditionalAvailability('DESKTOP');
+      const deviceIsDesktop = buildDeviceConditionalEvaluationNode('DESKTOP');
 
       const result = filterVisibleWidgets({
         widgets: [
