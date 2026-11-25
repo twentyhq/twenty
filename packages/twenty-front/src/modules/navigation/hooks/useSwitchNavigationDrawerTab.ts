@@ -9,7 +9,9 @@ import { useSwitchToNewAiChatInInboxChannel } from '@/inbox/hooks/useSwitchToNew
 import { getExpandedAiChatReturnLocation } from '@/ai-chat/utils/getExpandedAiChatReturnLocation';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { currentNavigationMenuTabIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuTabIdState';
+import { lastVisitedUrlByNavigationMenuTabKeyState } from '@/navigation-menu-item/common/states/lastVisitedUrlByNavigationMenuTabKeyState';
 import { navigationMenuTabIdToOpenFirstItemState } from '@/navigation-menu-item/common/states/navigationMenuTabIdToOpenFirstItemState';
+import { getNavigationMenuTabFolderKey } from '@/navigation-menu-item/common/utils/getNavigationMenuTabFolderKey';
 import { useActiveNavigationDrawerTab } from '@/navigation/hooks/useActiveNavigationDrawerTab';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
@@ -102,33 +104,51 @@ export const useSwitchNavigationDrawerTab = () => {
     }
   };
 
-  const openDefaultHomePage = () => {
+  const openNavigationMenuPage = (path: string) => {
     setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
 
     if (isSettingsDrawer) {
       leaveSettingsDrawer();
     }
 
-    navigate(defaultHomePagePath, { replace: isSettingsDrawer });
+    navigate(path, { replace: isSettingsDrawer });
+  };
+
+  const rememberCurrentPageForTab = (tabId: string | null) => {
+    const currentUrl = isSettingsDrawer
+      ? navigationMemorizedUrl
+      : `${location.pathname}${location.search}`;
+
+    store.set(lastVisitedUrlByNavigationMenuTabKeyState.atom, (urls) => ({
+      ...urls,
+      [getNavigationMenuTabFolderKey(tabId)]: currentUrl,
+    }));
   };
 
   const switchToNavigationMenuTab = (tabId: string | null) => {
-    const shouldOpenFirstItem =
+    const previousTabId = store.get(currentNavigationMenuTabIdState.atom);
+    const shouldOpenTabPage =
       isCustomizableSidebarEnabled &&
       !store.get(isLayoutCustomizationModeEnabledState.atom) &&
-      tabId !== store.get(currentNavigationMenuTabIdState.atom);
+      tabId !== previousTabId;
 
     setCurrentNavigationMenuTabId(tabId);
+    store.set(navigationMenuTabIdToOpenFirstItemState.atom, null);
 
-    if (shouldOpenFirstItem && !isDefined(tabId)) {
-      openDefaultHomePage();
-      return;
+    if (shouldOpenTabPage) {
+      rememberCurrentPageForTab(previousTabId);
+
+      const lastVisitedUrl = store.get(
+        lastVisitedUrlByNavigationMenuTabKeyState.atom,
+      )[getNavigationMenuTabFolderKey(tabId)];
+
+      if (isDefined(lastVisitedUrl) || !isDefined(tabId)) {
+        openNavigationMenuPage(lastVisitedUrl ?? defaultHomePagePath);
+        return;
+      }
+
+      store.set(navigationMenuTabIdToOpenFirstItemState.atom, tabId);
     }
-
-    store.set(
-      navigationMenuTabIdToOpenFirstItemState.atom,
-      shouldOpenFirstItem ? tabId : null,
-    );
 
     if (activeNavigationDrawerTab !== NAVIGATION_DRAWER_TABS.NAVIGATION_MENU) {
       switchToNavigationMenu();
