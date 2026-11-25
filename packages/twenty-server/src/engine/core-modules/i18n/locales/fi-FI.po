@@ -10381,11 +10381,6 @@ msgstr "Vain ajastettu tai lähetettävä kampanja voidaan peruuttaa."
 msgid "Only a server administrator can manage recovery codes for this member."
 msgstr "Vain palvelinylläpitäjä voi hallita tämän jäsenen palautuskoodeja."
 
-#. js-lingui-id: NcQgJA
-#: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
-msgid "Only a workspace member can change who sees a workflow"
-msgstr "Vain työtilan jäsen voi muuttaa sitä, kuka näkee työnkulun"
-
 #. js-lingui-id: yT1QOm
 #: src/engine/metadata-modules/ai/ai-agent/utils/from-create-agent-input-to-flat-agent.util.ts
 msgid "Only a workspace member can create a private agent."
@@ -10463,8 +10458,14 @@ msgstr "Vain tämän agentin omistava sovellus voi muuttaa sen laukaisimia"
 msgid "Only the member who owns an agent can change who sees it."
 msgstr "Vain agentin omistava jäsen voi muuttaa sitä, kuka näkee sen."
 
+#. js-lingui-id: K7GKdZ
+#: src/engine/metadata-modules/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util.ts
+msgid "Only the person who created this view can change who sees it"
+msgstr ""
+
 #. js-lingui-id: MPDvEo
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
+#: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
 msgid "Only the person who created this workflow can change who sees it"
 msgstr "Vain tämän työnkulun luonut henkilö voi muuttaa sitä, kuka näkee sen"
 

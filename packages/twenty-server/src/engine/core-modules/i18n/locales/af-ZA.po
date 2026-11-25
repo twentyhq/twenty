@@ -10381,11 +10381,6 @@ msgstr "Slegs 'n geskeduleerde of gestuurde veldtog kan gekanselleer word."
 msgid "Only a server administrator can manage recovery codes for this member."
 msgstr "Slegs ’n bedieneradministrateur kan herstelkodes vir hierdie lid bestuur."
 
-#. js-lingui-id: NcQgJA
-#: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
-msgid "Only a workspace member can change who sees a workflow"
-msgstr "Slegs ’n werkspasielid kan verander wie ’n workflow sien"
-
 #. js-lingui-id: yT1QOm
 #: src/engine/metadata-modules/ai/ai-agent/utils/from-create-agent-input-to-flat-agent.util.ts
 msgid "Only a workspace member can create a private agent."
@@ -10463,8 +10458,14 @@ msgstr "Slegs die toepassing wat hierdie agent besit, kan sy snellers verander"
 msgid "Only the member who owns an agent can change who sees it."
 msgstr "Slegs die lid wat ’n agent besit, kan verander wie dit sien."
 
+#. js-lingui-id: K7GKdZ
+#: src/engine/metadata-modules/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util.ts
+msgid "Only the person who created this view can change who sees it"
+msgstr ""
+
 #. js-lingui-id: MPDvEo
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
+#: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
 msgid "Only the person who created this workflow can change who sees it"
 msgstr "Slegs die persoon wat hierdie werkvloei geskep het, kan verander wie dit sien"
 

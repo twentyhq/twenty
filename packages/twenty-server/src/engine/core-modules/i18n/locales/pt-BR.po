@@ -10381,11 +10381,6 @@ msgstr "Somente uma campanha agendada ou em envio pode ser cancelada."
 msgid "Only a server administrator can manage recovery codes for this member."
 msgstr "Somente um administrador do servidor pode gerenciar códigos de recuperação para este membro."
 
-#. js-lingui-id: NcQgJA
-#: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
-msgid "Only a workspace member can change who sees a workflow"
-msgstr "Somente um membro do espaço de trabalho pode alterar quem vê um workflow"
-
 #. js-lingui-id: yT1QOm
 #: src/engine/metadata-modules/ai/ai-agent/utils/from-create-agent-input-to-flat-agent.util.ts
 msgid "Only a workspace member can create a private agent."
@@ -10463,8 +10458,14 @@ msgstr "Somente o aplicativo proprietário deste agente pode alterar seus gatilh
 msgid "Only the member who owns an agent can change who sees it."
 msgstr "Somente o membro proprietário de um agente pode alterar quem pode vê-lo."
 
+#. js-lingui-id: K7GKdZ
+#: src/engine/metadata-modules/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util.ts
+msgid "Only the person who created this view can change who sees it"
+msgstr ""
+
 #. js-lingui-id: MPDvEo
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
+#: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
 msgid "Only the person who created this workflow can change who sees it"
 msgstr "Somente a pessoa que criou este fluxo de trabalho pode alterar quem o vê"
 
