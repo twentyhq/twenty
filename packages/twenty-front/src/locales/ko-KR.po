@@ -20250,7 +20250,6 @@ msgid "New Agent"
 msgstr "새로운 에이전트"
 
 #. js-lingui-id: JLx7YM
-#: src/modules/navigation/components/MainNavigationDrawerFixedRows.tsx
 #: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
 msgid "New AI chat"
 msgstr "새 AI 채팅"

@@ -20250,7 +20250,6 @@ msgid "New Agent"
 msgstr "Yangi agent"
 
 #. js-lingui-id: JLx7YM
-#: src/modules/navigation/components/MainNavigationDrawerFixedRows.tsx
 #: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
 msgid "New AI chat"
 msgstr "Yangi AI chat"
