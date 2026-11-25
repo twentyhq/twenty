@@ -2596,6 +2596,12 @@ export default {
         },
         "BillingProductKey": {},
         "BillingProductMetadata": {
+            "applicationName": [
+                4
+            ],
+            "applicationPricePer": [
+                4
+            ],
             "isLegacy": [
                 4
             ],

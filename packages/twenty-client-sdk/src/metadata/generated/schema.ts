@@ -1058,6 +1058,8 @@ export interface BillingProduct {
 export type BillingProductKey = 'APPLICATION' | 'BASE_PRODUCT' | 'RESOURCE_CREDIT'
 
 export interface BillingProductMetadata {
+    applicationName?: Scalars['String']
+    applicationPricePer?: Scalars['String']
     isLegacy?: Scalars['String']
     planKey?: BillingPlanKey
     productKey: BillingProductKey
@@ -5757,6 +5759,8 @@ export interface BillingProductGenqlSelection{
 }
 
 export interface BillingProductMetadataGenqlSelection{
+    applicationName?: boolean | number
+    applicationPricePer?: boolean | number
     isLegacy?: boolean | number
     planKey?: boolean | number
     productKey?: boolean | number

@@ -1210,6 +1210,8 @@ enum BillingProductKey {
 }
 
 type BillingProductMetadata {
+  applicationName: String
+  applicationPricePer: String
   isLegacy: String
   planKey: BillingPlanKey
   productKey: BillingProductKey!
