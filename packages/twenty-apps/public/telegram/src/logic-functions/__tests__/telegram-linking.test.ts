@@ -21,8 +21,10 @@ import { type TelegramUpdate } from 'src/logic-functions/types/telegram-update.t
 import { type TelegramUpdatesDispatchPayload } from 'src/logic-functions/types/telegram-updates-dispatch-payload.type';
 
 const { kvHolder, clientHolder } = vi.hoisted(() => {
-  const kvHolder: { kv: Record<string, unknown> } = { kv: {} };
-  const clientHolder: { client: Record<string, unknown> } = { client: {} };
+  const kvHolder: { kv?: ReturnType<typeof createKvFake>['kv'] } = {};
+  const clientHolder: {
+    client?: ReturnType<typeof createCoreClientFake>['client'];
+  } = {};
 
   return { kvHolder, clientHolder };
 });

@@ -2,7 +2,9 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { type TelegramUser } from 'src/logic-functions/types/telegram-user.type';
 
-export const formatTelegramUserName = (user: TelegramUser): string => {
+export const formatTelegramUserName = (
+  user: Pick<TelegramUser, 'id' | 'first_name' | 'last_name' | 'username'>,
+): string => {
   const fullName = [user.first_name, user.last_name]
     .filter(isNonEmptyString)
     .join(' ');

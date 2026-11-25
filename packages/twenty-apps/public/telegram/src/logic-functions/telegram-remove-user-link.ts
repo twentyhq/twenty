@@ -42,11 +42,11 @@ export const telegramRemoveUserLinkHandler = async (
       return { success: true, message: 'No Telegram account was connected.' };
     }
 
-    const removesOnlyOwnLinks =
+    const isRemovingOnlyOwnLinks =
       isNonEmptyString(workspaceMemberId) &&
       links.every((link) => link.workspaceMemberId === workspaceMemberId);
 
-    if (!removesOnlyOwnLinks && !(await currentUserHasRolesPermission())) {
+    if (!isRemovingOnlyOwnLinks && !(await currentUserHasRolesPermission())) {
       return {
         success: false,
         message: 'Not allowed',

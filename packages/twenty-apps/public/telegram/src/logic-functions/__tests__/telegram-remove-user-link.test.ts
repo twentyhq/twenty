@@ -6,8 +6,10 @@ import { telegramRemoveUserLinkHandler } from 'src/logic-functions/telegram-remo
 import { telegramUninstallHandler } from 'src/logic-functions/telegram-uninstall';
 
 const { kvHolder, clientHolder, hasRolesPermissionMock } = vi.hoisted(() => {
-  const kvHolder: { kv: Record<string, unknown> } = { kv: {} };
-  const clientHolder: { client: Record<string, unknown> } = { client: {} };
+  const kvHolder: { kv?: ReturnType<typeof createKvFake>['kv'] } = {};
+  const clientHolder: {
+    client?: ReturnType<typeof createCoreClientFake>['client'];
+  } = {};
 
   return { kvHolder, clientHolder, hasRolesPermissionMock: vi.fn() };
 });
