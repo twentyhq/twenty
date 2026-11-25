@@ -1,9 +1,6 @@
 import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
-import { CommandMenuItemSectionGroup } from '@/command-menu-item/display/components/CommandMenuItemSectionGroup';
-import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
-import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
-import { SidePanelSearchRecordItem } from '@/side-panel/pages/search/components/SidePanelSearchRecordItem';
+import { SidePanelSearchRecordObjectSection } from '@/side-panel/pages/search/components/SidePanelSearchRecordObjectSection';
 import { SidePanelSearchRecordPreviewCard } from '@/side-panel/pages/search/components/SidePanelSearchRecordPreviewCard';
 import { SIDE_PANEL_SEARCH_RECORD_PREVIEW_WIDTH } from '@/side-panel/pages/search/constants/SidePanelSearchRecordPreviewWidth';
 import { useSidePanelSearchRecordPreviewItem } from '@/side-panel/pages/search/hooks/useSidePanelSearchRecordPreviewItem';
@@ -13,8 +10,8 @@ import { css } from '@linaria/core';
 import groupBy from 'lodash.groupby';
 import { useMemo, useRef } from 'react';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
-import { capitalize, isDefined } from 'twenty-shared/utils';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 // The card brings its own surface, so the tooltip only contributes the shadow.
 const previewTooltipClass = css`
@@ -25,8 +22,6 @@ const previewTooltipClass = css`
 `;
 
 export const SidePanelSearchRecordsPage = () => {
-  const theme = useTheme();
-  const { readableObjectMetadataItems } = useReadableObjectMetadataItems();
   const { searchResultItems, loading, noResults, error } =
     useSidePanelSearchRecords();
   const isMobile = useIsMobile();
@@ -64,41 +59,15 @@ export const SidePanelSearchRecordsPage = () => {
         noResults={noResults}
       >
         {searchResultItemsByObjectNameSingular.map(
-          ([objectNameSingular, objectSearchResultItems]) => {
-            const objectMetadataItem = readableObjectMetadataItems.find(
-              (item) => item.nameSingular === objectNameSingular,
-            );
-
-            return (
-              <CommandMenuItemSectionGroup
-                key={objectNameSingular}
-                heading={capitalize(
-                  objectMetadataItem?.labelPlural ?? objectNameSingular,
-                )}
-                context={{
-                  icon: (
-                    <ObjectMetadataIcon
-                      objectMetadataItem={objectMetadataItem}
-                      size={theme.icon.size.md}
-                    />
-                  ),
-                }}
-              >
-                {objectSearchResultItems.map((item) => (
-                  <SidePanelSearchRecordItem
-                    key={item.id}
-                    item={item}
-                    shouldDisplayObjectLabel={false}
-                    anchorRef={
-                      previewedItem?.id === item.id
-                        ? previewAnchorRef
-                        : undefined
-                    }
-                  />
-                ))}
-              </CommandMenuItemSectionGroup>
-            );
-          },
+          ([objectNameSingular, objectSearchResultItems]) => (
+            <SidePanelSearchRecordObjectSection
+              key={objectNameSingular}
+              objectNameSingular={objectNameSingular}
+              searchResultItems={objectSearchResultItems}
+              previewedItemId={previewedItem?.id}
+              previewAnchorRef={previewAnchorRef}
+            />
+          ),
         )}
       </SidePanelList>
 
