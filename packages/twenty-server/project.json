@@ -159,14 +159,15 @@
     "lint": {
       "executor": "nx:run-commands",
       "cache": true,
-      "dependsOn": ["twenty-oxlint-rules:build"],
+      "dependsOn": ["^build", "twenty-oxlint-rules:build"],
       "inputs": [
         "{projectRoot}/src/**/*.{ts,tsx}",
         "{projectRoot}/test/**/*.{ts,tsx}",
         "{projectRoot}/tsconfig*.json",
         "{workspaceRoot}/tsconfig.base.json",
         "{projectRoot}/.oxlintrc.json",
-        "{workspaceRoot}/packages/twenty-oxlint-rules/dist/oxlint-plugin.mjs"
+        "{workspaceRoot}/packages/twenty-oxlint-rules/dist/oxlint-plugin.mjs",
+        "^production"
       ],
       "options": {
         "cwd": "{projectRoot}",
@@ -181,7 +182,7 @@
     },
     "lint:diff-with-main": {
       "executor": "nx:run-commands",
-      "dependsOn": ["twenty-oxlint-rules:build"],
+      "dependsOn": ["^build", "twenty-oxlint-rules:build"],
       "options": {
         "cwd": "{projectRoot}",
         "command": "FILES=$(git diff --name-only --relative --diff-filter=d main...HEAD -- src/ test/ | grep -E '\\.(ts|tsx)$'); [ -z \"$FILES\" ] && echo 'No changed files.' || (npx oxlint --type-aware -c .oxlintrc.json $FILES && (npx oxfmt --check $FILES || (echo 'ERROR: oxfmt formatting check failed! Fix with: npx nx lint:diff-with-main twenty-server --configuration=fix' && false)))"

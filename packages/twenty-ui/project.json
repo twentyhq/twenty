@@ -124,11 +124,7 @@
     },
     "set-local-version": {},
     "lint": {
-      "dependsOn": [
-        "^build",
-        "twenty-oxlint-rules:build",
-        "lint:unlocalized-strings"
-      ]
+      "dependsOn": ["twenty-oxlint-rules:build", "lint:unlocalized-strings"]
     },
     "lint:unlocalized-strings": {
       "executor": "nx:run-commands",
