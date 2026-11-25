@@ -8,6 +8,7 @@ import {
   IsBoolean,
   IsNotEmpty,
   IsOptional,
+  IsString,
   IsUUID,
   ValidateNested,
 } from 'class-validator';
@@ -51,6 +52,22 @@ export class RowLevelPermissionRulePredicateInput {
 
   @Field(() => String, { nullable: true })
   workspaceMemberSubFieldName?: string | null;
+
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  workspaceMemberRelationFieldMetadataId?: string | null;
+
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  workspaceMemberRelationFilterFieldMetadataId?: string | null;
+
+  @IsArray()
+  @IsOptional()
+  @IsString({ each: true })
+  @Field(() => [String], { nullable: true })
+  workspaceMemberRelationFilterValues?: string[] | null;
 
   @Field(() => Number, { nullable: true })
   position?: number | null;

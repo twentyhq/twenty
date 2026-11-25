@@ -1,17 +1,14 @@
 import { type MarkdownBlockSplitCache } from '@/ai-chat/message-content/types/MarkdownBlockSplitCache';
 import { Lexer } from 'marked';
 
-// Appended text can reopen the last block or merge a list across a blank line, so the last two re-tokenize.
 const UNSTABLE_TRAILING_BLOCK_COUNT = 2;
 
-// marked.lexer normalizes line endings but blockTokens doesn't, which would misalign raw offsets.
-const normalizeLineEndings = (text: string): string =>
+const normalizeLineEndingsLikeMarkedLexer = (text: string): string =>
   text.replace(/\r\n|\r/g, '\n');
 
 const splitIntoBlocks = (text: string): string[] =>
   new Lexer().blockTokens(text, []).map((token) => token.raw);
 
-// A streamed message only grows: settled blocks are reused, and any non-append change fully re-splits.
 export const getMarkdownBlocksIncrementally = ({
   text,
   cache,
@@ -19,7 +16,7 @@ export const getMarkdownBlocksIncrementally = ({
   text: string;
   cache: MarkdownBlockSplitCache;
 }): { blocks: string[]; cache: MarkdownBlockSplitCache } => {
-  const normalizedText = normalizeLineEndings(text);
+  const normalizedText = normalizeLineEndingsLikeMarkedLexer(text);
 
   if (normalizedText === cache.text) {
     return { blocks: cache.blocks, cache };
@@ -39,7 +36,6 @@ export const getMarkdownBlocksIncrementally = ({
     0,
     Math.max(0, blocks.length - UNSTABLE_TRAILING_BLOCK_COUNT),
   );
-  // The stable set shrinks when the tail collapses into fewer than two blocks.
   const nextStablePrefix =
     nextStableBlocks.length >= stableBlocks.length
       ? stablePrefix + nextStableBlocks.slice(stableBlocks.length).join('')

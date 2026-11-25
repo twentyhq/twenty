@@ -15,7 +15,6 @@ jest.mock('@/ai-chat/tool-calls/hooks/useAnswerAiChatToolCall', () => ({
   useAnswerAiChatToolCall: () => ({ answerAiChatToolCall }),
 }));
 
-// the table needs workspace metadata, so a stub stands in for it
 jest.mock('@/ai-chat/tool-calls/components/AiChatRecordApprovalReview', () => ({
   AiChatRecordApprovalReview: ({
     onSelectedToolCallIdsChange,

@@ -12,12 +12,14 @@ import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decora
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import { TabPresenceService } from 'src/engine/core-modules/tab-presence/services/tab-presence.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { type WebPushSubscriptionEntity } from 'src/engine/core-modules/web-push/web-push-subscription.entity';
 import { WebPushService } from 'src/engine/core-modules/web-push/services/web-push.service';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { type SendAgentChatWebPushNotificationsJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/send-agent-chat-web-push-notifications-job.types';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
+import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { type AgentChatThreadParticipantRow } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-participant-row.type';
 import { buildAgentChatWebPushNotification } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util';
 import { getAgentChatWebPushNotificationReason } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-web-push-notification-reason.util';
@@ -45,9 +47,11 @@ export class AgentChatWebPushNotificationService {
     private readonly cacheStorageService: CacheStorageService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly i18nService: I18nService,
+    private readonly participantService: AgentChatThreadParticipantService,
     private readonly sharingService: AgentChatSharingService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly webPushService: WebPushService,
+    private readonly tabPresenceService: TabPresenceService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
@@ -99,7 +103,7 @@ export class AgentChatWebPushNotificationService {
       ),
     ];
     const focusedWorkspaceMemberIds =
-      await this.webPushService.findWorkspaceMemberIdsWithFocusedTab({
+      await this.tabPresenceService.findWorkspaceMemberIdsWithFocusedTab({
         workspaceId,
         workspaceMemberIds: candidateWorkspaceMemberIds,
       });
@@ -239,6 +243,11 @@ export class AgentChatWebPushNotificationService {
       return;
     }
 
+    const { unreadOpenThreadCount } =
+      await this.participantService.findOpenThreadsSummary({
+        workspaceId,
+        workspaceMemberId: recipient.id,
+      });
     const isOutsideRenotifyCooldown =
       await this.cacheStorageService.setIfAbsent(
         `agent-chat-renotify-cooldown:${workspaceId}:${thread.id}:${recipient.id}`,
@@ -260,6 +269,7 @@ export class AgentChatWebPushNotificationService {
           assistantDisplayName,
         }),
         renotify: isRenotifyForced || isOutsideRenotifyCooldown,
+        badgeCount: unreadOpenThreadCount,
       },
     });
   }

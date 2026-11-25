@@ -9,7 +9,7 @@ import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEvent
 export const RecordBoardSSESubscribeEffect = () => {
   const { recordBoardId } = useContext(RecordBoardContext);
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
-  const { combinedFilters, orderBy } =
+  const { combinedFiltersWithoutViewPresetFilter, orderBy } =
     useRecordIndexGroupCommonQueryVariables();
   const { triggerRecordBoardInitialQuery } =
     useTriggerRecordBoardInitialQuery();
@@ -25,7 +25,7 @@ export const RecordBoardSSESubscribeEffect = () => {
     operationSignature: {
       objectNameSingular: objectMetadataItem.nameSingular,
       variables: {
-        filter: combinedFilters,
+        filter: combinedFiltersWithoutViewPresetFilter,
         orderBy,
       },
     },

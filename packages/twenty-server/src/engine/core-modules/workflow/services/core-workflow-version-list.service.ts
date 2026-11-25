@@ -1,162 +1,90 @@
 import { Injectable } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { DataSource } from 'typeorm';
 
 import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
-import {
-  WorkflowVersionEntity,
-  WorkflowVersionStatus as CoreWorkflowVersionStatus,
-} from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
-import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { type CoreWorkflowVersionDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-version.dto';
 import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
 import { type CoreWorkflowReadCaller } from 'src/engine/core-modules/workflow/types/core-workflow-read-caller.type';
 import { buildCoreWorkflowVersionLabel } from 'src/engine/core-modules/workflow/utils/build-core-workflow-version-label.util';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { buildCoreWorkflowVersionSummaries } from 'src/engine/core-modules/workflow/utils/build-core-workflow-version-summaries.util';
+import { isFlatWorkflowVisibleToCaller } from 'src/engine/core-modules/workflow/utils/is-flat-workflow-visible-to-caller.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findFlatEntityByUuidPropertyInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-uuid-property-in-flat-entity-maps.util';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
 export class CoreWorkflowVersionListService {
   constructor(
-    @InjectWorkspaceScopedRepository(WorkflowVersionEntity)
-    private readonly coreWorkflowVersionRepository: WorkspaceScopedRepository<WorkflowVersionEntity>,
-    @InjectWorkspaceScopedRepository(WorkflowEntity)
-    private readonly coreWorkflowRepository: WorkspaceScopedRepository<WorkflowEntity>,
-    @InjectDataSource()
-    private readonly coreDataSource: DataSource,
+    private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly coreWorkflowAccessService: CoreWorkflowAccessService,
   ) {}
 
   async findManyByWorkspaceWorkflowId({
     workspaceId,
-    userWorkspaceId,
     callerApplication,
     workspaceCustomApplicationId,
     workspaceWorkflowId,
   }: CoreWorkflowReadCaller & {
     workspaceId: string;
-    userWorkspaceId: string | undefined;
     workspaceWorkflowId: string;
   }): Promise<CoreWorkflowVersionDTO[]> {
-    const parentCoreWorkflow = await this.coreWorkflowRepository.findOne(
-      workspaceId,
-      {
-        where: { workspaceWorkflowId },
-        select: { id: true, applicationId: true },
-      },
-    );
+    const { flatWorkflowMaps, coreWorkflowVersionsByCoreWorkflowId } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatWorkflowMaps',
+        'coreWorkflowVersionsByCoreWorkflowId',
+      ]);
+
+    const parentFlatWorkflow = findFlatEntityByUuidPropertyInFlatEntityMaps({
+      flatEntityMaps: flatWorkflowMaps,
+      propertyName: 'workspaceWorkflowId',
+      uuid: workspaceWorkflowId,
+    });
 
     if (
-      !isDefined(parentCoreWorkflow) ||
-      !canCallerReachApplication({
-        callingApplication: callerApplication,
-        applicationId: parentCoreWorkflow.applicationId,
-        operation: 'read',
+      !isDefined(parentFlatWorkflow) ||
+      !isFlatWorkflowVisibleToCaller({
+        flatWorkflow: parentFlatWorkflow,
+        callerApplication,
         workspaceCustomApplicationId,
       })
     ) {
       return [];
     }
 
-    if (
-      !(await this.coreWorkflowAccessService.isCoreWorkflowAccessible({
-        workspaceId,
-        userWorkspaceId,
-        coreWorkflowId: parentCoreWorkflow.id,
-      }))
-    ) {
-      return [];
-    }
-
-    const coreWorkflowVersions = await this.coreWorkflowVersionRepository.find(
-      workspaceId,
-      {
-        where: { coreWorkflowId: parentCoreWorkflow.id },
-        order: { createdAt: 'ASC', id: 'ASC' },
-        select: {
-          id: true,
-          coreWorkflowId: true,
-          status: true,
-          createdAt: true,
-          updatedAt: true,
-          workspaceWorkflowVersionId: true,
-        },
-      },
-    );
-
-    return coreWorkflowVersions
-      .map((coreWorkflowVersion, index) => ({
-        id: coreWorkflowVersion.id,
-        coreWorkflowId: coreWorkflowVersion.coreWorkflowId,
-        label: buildCoreWorkflowVersionLabel(index + 1),
-        status: coreWorkflowVersion.status,
-        workspaceWorkflowVersionId:
-          coreWorkflowVersion.workspaceWorkflowVersionId,
-        workspaceWorkflowId,
-        trigger: null,
-        steps: null,
-        createdAt: coreWorkflowVersion.createdAt.toISOString(),
-        updatedAt: coreWorkflowVersion.updatedAt.toISOString(),
-      }))
-      .reverse();
-  }
-
-  async findOneByWorkspaceWorkflowVersionId({
-    workspaceId,
-    userWorkspaceId,
-    callerApplication,
-    workspaceCustomApplicationId,
-    workspaceWorkflowVersionId,
-  }: CoreWorkflowReadCaller & {
-    workspaceId: string;
-    userWorkspaceId: string | undefined;
-    workspaceWorkflowVersionId: string;
-  }): Promise<CoreWorkflowVersionDTO | null> {
-    const coreWorkflowVersion =
-      await this.coreWorkflowVersionRepository.findOne(workspaceId, {
-        where: { workspaceWorkflowVersionId },
-        select: { id: true },
-      });
-
-    if (!isDefined(coreWorkflowVersion)) {
-      return null;
-    }
-
-    return this.findOneByCoreWorkflowVersionId({
-      workspaceId,
-      userWorkspaceId,
-      callerApplication,
-      workspaceCustomApplicationId,
-      coreWorkflowVersionId: coreWorkflowVersion.id,
+    return buildCoreWorkflowVersionSummaries({
+      flatWorkflowVersionsInCreationOrder:
+        coreWorkflowVersionsByCoreWorkflowId[parentFlatWorkflow.id]
+          ?.flatWorkflowVersionsInCreationOrder ?? [],
+      workspaceWorkflowId: parentFlatWorkflow.workspaceWorkflowId,
     });
   }
 
   async findManyByCoreWorkflowId({
     workspaceId,
-    userWorkspaceId,
     callerApplication,
     workspaceCustomApplicationId,
     coreWorkflowId,
   }: CoreWorkflowReadCaller & {
     workspaceId: string;
-    userWorkspaceId: string | undefined;
     coreWorkflowId: string;
   }): Promise<CoreWorkflowVersionDTO[]> {
-    const coreWorkflow = await this.coreWorkflowRepository.findOne(
-      workspaceId,
-      {
-        where: { id: coreWorkflowId },
-        select: { id: true, workspaceWorkflowId: true, applicationId: true },
-      },
-    );
+    const { flatWorkflowMaps, coreWorkflowVersionsByCoreWorkflowId } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatWorkflowMaps',
+        'coreWorkflowVersionsByCoreWorkflowId',
+      ]);
+
+    const flatWorkflow = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: coreWorkflowId,
+      flatEntityMaps: flatWorkflowMaps,
+    });
 
     if (
-      !isDefined(coreWorkflow) ||
+      !isDefined(flatWorkflow) ||
       !canCallerReachApplication({
         callingApplication: callerApplication,
-        applicationId: coreWorkflow.applicationId,
+        applicationId: flatWorkflow.applicationId,
         operation: 'read',
         workspaceCustomApplicationId,
       })
@@ -165,85 +93,56 @@ export class CoreWorkflowVersionListService {
     }
 
     await this.coreWorkflowAccessService.assertCoreWorkflowsAreAccessibleOrThrow(
-      { workspaceId, userWorkspaceId, coreWorkflowIds: [coreWorkflowId] },
+      { workspaceId, coreWorkflowIds: [flatWorkflow.id] },
     );
 
-    const coreWorkflowVersions = await this.coreWorkflowVersionRepository.find(
-      workspaceId,
-      {
-        where: { coreWorkflowId },
-        order: { createdAt: 'ASC', id: 'ASC' },
-        select: {
-          id: true,
-          coreWorkflowId: true,
-          status: true,
-          createdAt: true,
-          updatedAt: true,
-          workspaceWorkflowVersionId: true,
-        },
-      },
-    );
-
-    return coreWorkflowVersions
-      .map((coreWorkflowVersion, index) => ({
-        id: coreWorkflowVersion.id,
-        coreWorkflowId: coreWorkflowVersion.coreWorkflowId,
-        label: buildCoreWorkflowVersionLabel(index + 1),
-        status: coreWorkflowVersion.status,
-        workspaceWorkflowVersionId:
-          coreWorkflowVersion.workspaceWorkflowVersionId,
-        workspaceWorkflowId: coreWorkflow.workspaceWorkflowId,
-        trigger: null,
-        steps: null,
-        createdAt: coreWorkflowVersion.createdAt.toISOString(),
-        updatedAt: coreWorkflowVersion.updatedAt.toISOString(),
-      }))
-      .reverse();
-  }
-
-  async findDraftCoreWorkflowVersions({
-    workspaceId,
-  }: {
-    workspaceId: string;
-  }): Promise<Pick<WorkflowVersionEntity, 'id' | 'steps'>[]> {
-    return this.coreWorkflowVersionRepository.find(workspaceId, {
-      where: { status: CoreWorkflowVersionStatus.DRAFT },
-      select: { id: true, steps: true },
+    return buildCoreWorkflowVersionSummaries({
+      flatWorkflowVersionsInCreationOrder:
+        coreWorkflowVersionsByCoreWorkflowId[flatWorkflow.id]
+          ?.flatWorkflowVersionsInCreationOrder ?? [],
+      workspaceWorkflowId: flatWorkflow.workspaceWorkflowId,
     });
   }
 
   async findOneByCoreWorkflowVersionId({
     workspaceId,
-    userWorkspaceId,
     callerApplication,
     workspaceCustomApplicationId,
     coreWorkflowVersionId,
   }: CoreWorkflowReadCaller & {
     workspaceId: string;
-    userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
   }): Promise<CoreWorkflowVersionDTO | null> {
-    const coreWorkflowVersion =
-      await this.coreWorkflowVersionRepository.findOne(workspaceId, {
-        where: { id: coreWorkflowVersionId },
-      });
+    const {
+      flatWorkflowMaps,
+      flatWorkflowVersionMaps,
+      coreWorkflowVersionsByCoreWorkflowId,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatWorkflowMaps',
+      'flatWorkflowVersionMaps',
+      'coreWorkflowVersionsByCoreWorkflowId',
+    ]);
 
-    if (!isDefined(coreWorkflowVersion?.coreWorkflowId)) {
+    const flatWorkflowVersion = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: coreWorkflowVersionId,
+      flatEntityMaps: flatWorkflowVersionMaps,
+    });
+
+    const coreWorkflowId = flatWorkflowVersion?.coreWorkflowId;
+
+    if (!isDefined(flatWorkflowVersion) || !isDefined(coreWorkflowId)) {
       return null;
     }
 
-    const coreWorkflow = await this.coreWorkflowRepository.findOne(
-      workspaceId,
-      {
-        where: { id: coreWorkflowVersion.coreWorkflowId },
-        select: { id: true, workspaceWorkflowId: true, applicationId: true },
-      },
-    );
+    const flatWorkflow = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: coreWorkflowId,
+      flatEntityMaps: flatWorkflowMaps,
+    });
 
     if (
       !canCallerReachApplication({
         callingApplication: callerApplication,
-        applicationId: coreWorkflow?.applicationId,
+        applicationId: flatWorkflow?.applicationId,
         operation: 'read',
         workspaceCustomApplicationId,
       })
@@ -252,54 +151,28 @@ export class CoreWorkflowVersionListService {
     }
 
     await this.coreWorkflowAccessService.assertCoreWorkflowsAreAccessibleOrThrow(
-      {
-        workspaceId,
-        userWorkspaceId,
-        coreWorkflowIds: [coreWorkflowVersion.coreWorkflowId],
-      },
+      { workspaceId, coreWorkflowIds: [coreWorkflowId] },
     );
 
-    const versionRank = await this.computeCoreWorkflowVersionRank({
-      workspaceId,
-      coreWorkflowId: coreWorkflowVersion.coreWorkflowId,
-      coreWorkflowVersionId: coreWorkflowVersion.id,
-    });
+    const flatWorkflowVersionsInCreationOrder =
+      coreWorkflowVersionsByCoreWorkflowId[coreWorkflowId]
+        ?.flatWorkflowVersionsInCreationOrder ?? [];
+
+    const versionRank =
+      flatWorkflowVersionsInCreationOrder.findIndex(
+        ({ id }) => id === flatWorkflowVersion.id,
+      ) + 1;
 
     return {
-      id: coreWorkflowVersion.id,
-      coreWorkflowId: coreWorkflowVersion.coreWorkflowId,
+      id: flatWorkflowVersion.id,
+      coreWorkflowId,
       label: buildCoreWorkflowVersionLabel(versionRank),
-      status: coreWorkflowVersion.status,
-      workspaceWorkflowVersionId:
-        coreWorkflowVersion.workspaceWorkflowVersionId,
-      workspaceWorkflowId: coreWorkflow?.workspaceWorkflowId ?? null,
-      trigger: coreWorkflowVersion.triggers?.[0] ?? null,
-      steps: coreWorkflowVersion.steps ?? null,
-      createdAt: coreWorkflowVersion.createdAt.toISOString(),
-      updatedAt: coreWorkflowVersion.updatedAt.toISOString(),
+      status: flatWorkflowVersion.status,
+      workspaceWorkflowId: flatWorkflow?.workspaceWorkflowId ?? null,
+      trigger: flatWorkflowVersion.triggers?.[0] ?? null,
+      steps: flatWorkflowVersion.steps ?? null,
+      createdAt: flatWorkflowVersion.createdAt,
+      updatedAt: flatWorkflowVersion.updatedAt,
     };
-  }
-
-  private async computeCoreWorkflowVersionRank({
-    workspaceId,
-    coreWorkflowId,
-    coreWorkflowVersionId,
-  }: {
-    workspaceId: string;
-    coreWorkflowId: string;
-    coreWorkflowVersionId: string;
-  }): Promise<number> {
-    const [{ rank }]: [{ rank: number }] = await this.coreDataSource.query(
-      `SELECT count(*)::int AS "rank"
-       FROM core."workflowVersion" sibling
-       JOIN core."workflowVersion" target
-         ON target."id" = $2 AND target."workspaceId" = $1
-       WHERE sibling."coreWorkflowId" = $3
-         AND sibling."workspaceId" = $1
-         AND (sibling."createdAt", sibling."id") <= (target."createdAt", target."id")`,
-      [workspaceId, coreWorkflowVersionId, coreWorkflowId],
-    );
-
-    return rank;
   }
 }

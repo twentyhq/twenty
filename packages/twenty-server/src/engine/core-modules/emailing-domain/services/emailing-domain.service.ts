@@ -78,6 +78,11 @@ export class EmailingDomainService {
     const emailingDomainDriver =
       this.emailingDomainDriverFactory.getCurrentDriver();
 
+    await emailingDomainDriver.assertDomainIsAvailableOrThrow({
+      domain,
+      workspaceId,
+    });
+
     await emailingDomainDriver.provisionWorkspace(workspaceId);
 
     const verificationResult = await emailingDomainDriver.verifyDomain({

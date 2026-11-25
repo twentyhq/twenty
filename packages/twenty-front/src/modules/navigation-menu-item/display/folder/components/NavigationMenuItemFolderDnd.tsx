@@ -351,6 +351,7 @@ export const NavigationMenuItemFolderDnd = ({
               <Fragment key={navigationMenuItem.id}>
                 <NavigationItemDropTarget
                   parentId={folderId}
+                  isInFolder
                   index={index}
                   sectionId={sectionId}
                   compact={isCompact}
@@ -407,6 +408,7 @@ export const NavigationMenuItemFolderDnd = ({
             >
               <NavigationItemDropTarget
                 parentId={folderId}
+                isInFolder
                 index={navigationMenuItems.length}
                 sectionId={sectionId}
                 compact={isCompact}
@@ -427,7 +429,7 @@ export const NavigationMenuItemFolderDnd = ({
                       position={navigationMenuItems.length}
                     >
                       <NavigationDrawerSubItem
-                        label={t`Add menu item`}
+                        label={t`Add item`}
                         Icon={IconPlus}
                         triggerEvent="CLICK"
                         variant="tertiary"

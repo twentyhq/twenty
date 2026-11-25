@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { ViewVisibility, WorkflowVisibility } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -22,7 +21,6 @@ import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-ev
 
 type BroadcastEventRecord = {
   userWorkspaceId?: string | null;
-  visibility?: WorkflowVisibility | ViewVisibility | null;
   isPrivate?: boolean | null;
   createdByUserWorkspaceId?: string | null;
   coreWorkflowId?: string | null;
@@ -43,10 +41,10 @@ const getBroadcastEventRecord = (event: MetadataEventBatch['events'][number]) =>
 const getWorkflowRecipientUserWorkspaceIds = (
   workflow: Pick<
     BroadcastEventRecord,
-    'visibility' | 'createdByUserWorkspaceId'
+    'isPrivate' | 'createdByUserWorkspaceId'
   >,
 ): string[] | undefined => {
-  if (workflow.visibility !== WorkflowVisibility.PRIVATE) {
+  if (!workflow.isPrivate) {
     return undefined;
   }
 
@@ -70,24 +68,23 @@ const getAgentRecipientUserWorkspaceIds = (
 const getViewRecipientUserWorkspaceIds = (
   view: Pick<
     BroadcastEventRecord,
-    | 'visibility'
+    | 'isPrivate'
     | 'createdByUserWorkspaceId'
     | 'overrides'
     | 'applicationUniversalIdentifier'
   >,
 ): string[] | undefined => {
-  const visibility = resolveEffectiveFlatEntityProperty({
+  const isPrivate = resolveEffectiveFlatEntityProperty({
     metadataName: 'view',
     flatEntity: view,
-    property: 'visibility',
+    property: 'isPrivate',
   });
 
-  if (visibility === ViewVisibility.WORKSPACE) {
+  if (isPrivate === false) {
     return undefined;
   }
 
-  return visibility === ViewVisibility.UNLISTED &&
-    isNonEmptyString(view.createdByUserWorkspaceId)
+  return isPrivate === true && isNonEmptyString(view.createdByUserWorkspaceId)
     ? [view.createdByUserWorkspaceId]
     : [];
 };

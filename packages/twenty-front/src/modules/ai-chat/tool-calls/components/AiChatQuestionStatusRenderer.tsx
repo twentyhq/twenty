@@ -78,7 +78,6 @@ export const AiChatQuestionStatusRenderer = ({
 
     const pendingQuestion = entries[0].question.question;
 
-    // the shimmer clips text to a transparent fill, which would hide chip labels
     return (
       <AiChatAskStatusRow
         Icon={IconHelpCircle}

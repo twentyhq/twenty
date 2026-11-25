@@ -10,7 +10,6 @@ import { type WorkflowAutomatedTriggerMaps } from 'src/engine/core-modules/workf
 import { computeAutomatedTriggerFromWorkflowVersion } from 'src/engine/core-modules/workflow/utils/compute-automated-trigger-from-workflow-version.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { UpgradeAwareRepositoryState } from 'src/engine/twenty-orm/upgrade-aware/upgrade-aware-repository-state';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
@@ -28,15 +27,6 @@ export class WorkspaceWorkflowAutomatedTriggerMapCacheService extends WorkspaceC
   async computeForCache({
     workspaceId,
   }: WorkspaceCacheProviderContext): Promise<WorkflowAutomatedTriggerMaps> {
-    const hiddenColumns =
-      UpgradeAwareRepositoryState.getInstance().getHiddenColumnPropertyNames(
-        WorkflowVersionEntity,
-      );
-
-    if (hiddenColumns.has('workspaceWorkflowVersionId')) {
-      return { byWorkflowId: {} };
-    }
-
     const activeWorkflowVersions = await this.workflowVersionRepository.find(
       workspaceId,
       { where: { status: WorkflowVersionStatus.ACTIVE } },
@@ -46,14 +36,11 @@ export class WorkspaceWorkflowAutomatedTriggerMapCacheService extends WorkspaceC
 
     for (const workflowVersion of activeWorkflowVersions) {
       if (!isDefined(workflowVersion.coreWorkflowId)) {
-        throw new Error(
-          `Active core workflow version ${workflowVersion.id} has no core workflow id in workspace ${workspaceId}`,
-        );
+        continue;
       }
 
       const automatedTrigger = computeAutomatedTriggerFromWorkflowVersion({
         workflowVersion,
-        workspaceWorkflowVersionId: workflowVersion.workspaceWorkflowVersionId,
       });
 
       if (isDefined(automatedTrigger)) {

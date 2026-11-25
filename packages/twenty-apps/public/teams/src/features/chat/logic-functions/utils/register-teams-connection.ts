@@ -44,20 +44,20 @@ const matchTeamsDirectoryOnConnect = async ({
   }
 };
 
+// Claimed whatever the Enable chat setting: nothing runs when it changes, so a claim tied to it would go stale.
 export const registerTeamsConnection = async ({
   connectedAccountId,
   workspaceId,
+  shouldMatchDirectory = true,
 }: {
   connectedAccountId: string;
   workspaceId: string;
+  shouldMatchDirectory?: boolean;
 }): Promise<{
   claimedTenantId: string | null;
   conflictingTenantId?: string;
 }> => {
-  const isChatEnabled = isTeamsChatEnabled();
-  const connection = isChatEnabled
-    ? await getConnection(connectedAccountId)
-    : undefined;
+  const connection = await getConnection(connectedAccountId);
 
   if (connection?.scope !== 'WORKSPACE') {
     await releaseTeamsConnectionTenant({ connectedAccountId });
@@ -92,7 +92,9 @@ export const registerTeamsConnection = async ({
 
   await deleteTeamsTenantClaimConflict({ connectedAccountId });
 
-  await matchTeamsDirectoryOnConnect({ connection, accessToken, tenantId });
+  if (shouldMatchDirectory && isTeamsChatEnabled()) {
+    await matchTeamsDirectoryOnConnect({ connection, accessToken, tenantId });
+  }
 
   return { claimedTenantId: tenantId };
 };

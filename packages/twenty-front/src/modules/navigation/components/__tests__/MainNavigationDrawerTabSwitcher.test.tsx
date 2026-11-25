@@ -19,6 +19,7 @@ import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerT
 import { NavigationMenuItemType } from 'twenty-shared/types';
 
 import { type NamedNavigationMenuItem } from '@/navigation-menu-item/common/types/NamedNavigationMenuItem';
+import { type InboxChatAttention } from '@/inbox/types/InboxChatAttention';
 import {
   GetAgentChatOpenThreadsSummaryDocument,
   PermissionFlagType,
@@ -43,6 +44,25 @@ jest.mock(
 );
 
 let mockIsInboxEnabled = true;
+let mockChatAttention: {
+  chatAttention: InboxChatAttention | null;
+  unreadOpenThreadCount: number;
+  getTabChatAttention: (tabId: string | null) => InboxChatAttention | null;
+} | null = null;
+
+jest.mock(
+  '@/navigation-menu-item/display/hooks/useNavigationMenuChatAttention',
+  () => {
+    const actualModule = jest.requireActual(
+      '@/navigation-menu-item/display/hooks/useNavigationMenuChatAttention',
+    );
+
+    return {
+      useNavigationMenuChatAttention: () =>
+        mockChatAttention ?? actualModule.useNavigationMenuChatAttention(),
+    };
+  },
+);
 
 jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
   useIsFeatureEnabled: () => mockIsInboxEnabled,
@@ -88,9 +108,11 @@ const buildOpenThreadsSummaryMock = (hasUnreadOpenThread: boolean) => ({
 const renderTabSwitcher = ({
   isLayoutCustomizationModeEnabled = false,
   hasUnreadOpenThread = false,
+  isPinnedToBottom = false,
 }: {
   isLayoutCustomizationModeEnabled?: boolean;
   hasUnreadOpenThread?: boolean;
+  isPinnedToBottom?: boolean;
 } = {}) => {
   const store = createStore();
 
@@ -109,7 +131,9 @@ const renderTabSwitcher = ({
         <MockedProvider
           mocks={[buildOpenThreadsSummaryMock(hasUnreadOpenThread)]}
         >
-          <MainNavigationDrawerTabSwitcher />
+          <MainNavigationDrawerTabSwitcher
+            isPinnedToBottom={isPinnedToBottom}
+          />
         </MockedProvider>
       </JotaiProvider>
     </I18nProvider>,
@@ -125,6 +149,7 @@ describe('MainNavigationDrawerTabSwitcher', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockIsInboxEnabled = true;
+    mockChatAttention = null;
 
     jest.mocked(useNavigationDrawerTabs).mockReturnValue([
       {
@@ -277,6 +302,38 @@ describe('MainNavigationDrawerTabSwitcher', () => {
     expect(mockSwitchNavigationDrawerTab).not.toHaveBeenCalled();
   });
 
+  it('opens a sidebar tab and its menu on right-click in edit mode', async () => {
+    jest
+      .mocked(useWorkspaceNavigationMenuContainers)
+      .mockReturnValue([salesTab]);
+
+    renderTabSwitcher({ isLayoutCustomizationModeEnabled: true });
+
+    await userEvent.pointer({
+      keys: '[MouseRight]',
+      target: screen.getByLabelText('Sales'),
+    });
+
+    expect(mockSwitchToNavigationMenuTab).toHaveBeenCalledWith('sales-tab-id');
+    expect(await screen.findByText('Delete tab')).toBeInTheDocument();
+  });
+
+  it('does not open the sidebar tab menu on right-click outside edit mode', async () => {
+    jest
+      .mocked(useWorkspaceNavigationMenuContainers)
+      .mockReturnValue([salesTab]);
+
+    renderTabSwitcher();
+
+    await userEvent.pointer({
+      keys: '[MouseRight]',
+      target: screen.getByLabelText('Sales'),
+    });
+
+    expect(mockSwitchToNavigationMenuTab).not.toHaveBeenCalled();
+    expect(screen.queryByText('Delete tab')).not.toBeInTheDocument();
+  });
+
   it('marks the open sidebar tab as current instead of Home', () => {
     jest
       .mocked(useWorkspaceNavigationMenuContainers)
@@ -292,5 +349,54 @@ describe('MainNavigationDrawerTabSwitcher', () => {
     expect(screen.getByRole('button', { name: 'Home' })).not.toHaveAttribute(
       'aria-current',
     );
+  });
+
+  it('keeps the attention on the open sidebar tab', () => {
+    jest
+      .mocked(useWorkspaceNavigationMenuContainers)
+      .mockReturnValue([salesTab]);
+    jest.mocked(useActiveNavigationMenuTab).mockReturnValue(salesTab);
+    mockChatAttention = {
+      chatAttention: 'needs-input',
+      unreadOpenThreadCount: 0,
+      getTabChatAttention: () => 'needs-input',
+    };
+
+    renderTabSwitcher();
+
+    expect(
+      screen.getByRole('button', { name: 'Sales, needs your input' }),
+    ).toHaveAttribute('aria-current', 'true');
+  });
+
+  it.each([
+    [false, 'auto'],
+    [true, '0px'],
+  ] as const)(
+    'labels the active Home tab unless the row is pinned to the bottom (pinned=%s)',
+    (isPinnedToBottom, expectedLabelWidth) => {
+      renderTabSwitcher({ isPinnedToBottom });
+
+      const homeButton = screen.getByRole('button', { name: 'Home' });
+
+      expect(homeButton).toHaveAttribute('aria-current', 'true');
+      expect(screen.getByText('Home')).toHaveStyle({
+        width: expectedLabelWidth,
+      });
+    },
+  );
+
+  it('marks Home when a chat section sits at its top level', () => {
+    mockChatAttention = {
+      chatAttention: 'unread',
+      unreadOpenThreadCount: 0,
+      getTabChatAttention: (tabId) => (tabId === null ? 'unread' : null),
+    };
+
+    renderTabSwitcher();
+
+    expect(
+      screen.getByRole('button', { name: 'Home, unread' }),
+    ).toBeInTheDocument();
   });
 });

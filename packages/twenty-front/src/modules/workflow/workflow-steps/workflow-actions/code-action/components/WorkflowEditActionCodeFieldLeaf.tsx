@@ -193,7 +193,7 @@ export const WorkflowEditActionCodeFieldLeaf = ({
       readonly={readonly}
       onChange={onChange}
       VariablePicker={VariablePicker}
-      multiline={schemaProperty?.multiline === true}
+      multiline={schemaProperty?.multiline ?? false}
     />
   );
 };

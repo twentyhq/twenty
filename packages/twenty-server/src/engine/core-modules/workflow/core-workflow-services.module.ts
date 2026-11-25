@@ -8,7 +8,6 @@ import { RecordPositionModule } from 'src/engine/core-modules/record-position/re
 import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { CoreWorkflowAccessModule } from 'src/engine/core-modules/workflow/core-workflow-access.module';
-import { CoreWorkflowIdResolutionService } from 'src/engine/core-modules/workflow/services/core-workflow-id-resolution.service';
 import { CoreWorkflowLifecycleWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-lifecycle.workspace-service';
 import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/services/core-workflow-list.service';
 import { CoreWorkflowMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service';
@@ -24,6 +23,7 @@ import { CommandMenuItemModule } from 'src/engine/metadata-modules/command-menu-
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 import { WorkflowMetadataReadModule } from 'src/modules/workflow/common/workspace-services/workflow-metadata-read.module';
 import { WorkflowBuilderModule } from 'src/modules/workflow/workflow-builder/workflow-builder.module';
@@ -48,11 +48,11 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     WorkflowRunnerModule,
     WorkflowVersionCoreModule,
     WorkflowVersionValidationModule,
+    WorkspaceCacheModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     WorkspaceMigrationModule,
   ],
   providers: [
-    CoreWorkflowIdResolutionService,
     CoreWorkflowLifecycleWorkspaceService,
     CoreWorkflowListService,
     CoreWorkflowMutationWorkspaceService,

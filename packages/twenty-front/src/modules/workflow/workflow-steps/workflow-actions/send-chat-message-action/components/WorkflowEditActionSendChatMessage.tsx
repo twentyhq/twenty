@@ -39,14 +39,14 @@ export const WorkflowEditActionSendChatMessage = ({
   actionOptions,
 }: WorkflowEditActionSendChatMessageProps) => {
   const { t } = useLingui();
-  const { toolIndex } = useGetToolIndex();
+  const { toolIndex } = useGetToolIndex({ isRefreshedOnMount: true });
   const [formData, setFormData] = useState<SendChatMessageFormData>(
     action.settings.input,
   );
 
   const saveAction = useDebouncedCallback(
     (nextFormData: SendChatMessageFormData) => {
-      if (actionOptions.readonly === true) {
+      if (actionOptions.readonly) {
         return;
       }
 

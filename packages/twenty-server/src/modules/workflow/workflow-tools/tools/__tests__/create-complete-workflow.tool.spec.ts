@@ -282,7 +282,6 @@ describe('createCreateCompleteWorkflowTool', () => {
       coreWorkflowLifecycleService.activateCoreWorkflowVersion,
     ).toHaveBeenCalledWith({
       workspaceId: 'workspace-id',
-      userWorkspaceId: 'user-workspace-id',
       coreWorkflowVersionId: CORE_WORKFLOW_VERSION_ID,
     });
     expect(result.success).toBe(true);

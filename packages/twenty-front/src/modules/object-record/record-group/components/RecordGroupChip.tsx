@@ -5,8 +5,11 @@ import {
   type RecordGroupDefinition,
   RecordGroupDefinitionType,
 } from '@/object-record/record-group/types/RecordGroupDefinition';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/primitives/data-display';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 
 type RecordGroupChipProps = {
   recordGroupDefinition: RecordGroupDefinition;
@@ -36,7 +39,7 @@ export const RecordGroupChip = ({
     );
   }
 
-  return (
+  const tag = (
     <Tag
       variant={isValueGroup ? 'soft' : 'outline'}
       borderStyle="dashed"
@@ -45,5 +48,20 @@ export const RecordGroupChip = ({
     >
       {recordGroupDefinition.title}
     </Tag>
+  );
+
+  if (!isNonEmptyString(recordGroupDefinition.description)) {
+    return tag;
+  }
+
+  return (
+    <Tooltip
+      content={recordGroupDefinition.description}
+      side="bottom"
+      delay={TooltipDelay.mediumDelay}
+      positionMethod="fixed"
+    >
+      {tag}
+    </Tooltip>
   );
 };

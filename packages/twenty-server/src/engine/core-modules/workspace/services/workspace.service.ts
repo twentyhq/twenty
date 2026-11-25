@@ -1323,7 +1323,7 @@ export class WorkspaceService {
     );
   }
 
-  async handleRemoveWorkspaceMember(
+  private async handleRemoveWorkspaceMember(
     workspaceId: string,
     userId: string,
     softDelete = false,
@@ -1529,6 +1529,11 @@ export class WorkspaceService {
     } finally {
       await queryRunner.release();
     }
+
+    await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
+      workspaceId,
+      flatMapsKeys: ['flatWorkflowMaps', 'flatWorkflowVersionMaps'],
+    });
 
     try {
       await prefillWorkflowCommandMenuItems({

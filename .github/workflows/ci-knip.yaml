@@ -4,15 +4,13 @@ permissions:
   contents: read
 
 on:
-  push:
-    branches:
-      - main
+  workflow_call:
 
   pull_request:
   merge_group:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ci-knip-${{ github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
@@ -43,11 +41,39 @@ jobs:
         uses: ./.github/actions/yarn-install
       - name: Run knip
         run: npx nx run-many -t knip --parallel=1
+  dependencies-changed-files-check:
+    if: github.event_name != 'merge_group'
+    uses: ./.github/workflows/changed-files.yaml
+    with:
+      files: |
+        knip.json
+        package.json
+        yarn.lock
+        packages/**
+        !packages/twenty-apps/**
+        !packages/twenty-docs/**
+        !packages/twenty-front-component-renderer/**
+  knip-dependencies:
+    needs: dependencies-changed-files-check
+    if: needs.dependencies-changed-files-check.outputs.any_changed == 'true'
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch custom Github Actions
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - name: Install dependencies
+        uses: ./.github/actions/yarn-install
+      - name: Build twenty-shared
+        run: npx nx build twenty-shared
+      - name: Run knip on every workspace's dependencies
+        env:
+          CI: false
+        run: npx knip --include dependencies,devDependencies --treat-config-hints-as-errors
   ci-knip-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
-    runs-on: ubuntu-latest
-    needs: [changed-files-check, knip]
+    runs-on: ubuntu-latest-2-cores
+    needs: [changed-files-check, knip, dependencies-changed-files-check, knip-dependencies]
     steps:
       - name: Fail job if any needs failed
         if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')

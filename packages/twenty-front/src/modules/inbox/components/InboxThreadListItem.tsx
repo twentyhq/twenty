@@ -1,10 +1,11 @@
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { styled } from '@linaria/react';
 import { type MouseEvent, useId } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 import { InboxThreadActionsDropdown } from '@/inbox/components/InboxThreadActionsDropdown';
 import { AiChatThreadActivityTime } from '@/ai-chat/threads/components/AiChatThreadActivityTime';
@@ -17,7 +18,7 @@ import { useAiChatThreadSubtitleContent } from '@/ai-chat/threads/hooks/useAiCha
 import { useAiChatThreadDisplayLabel } from '@/ai-chat/threads/hooks/useAiChatThreadDisplayLabel';
 import { useAiChatThreadRename } from '@/ai-chat/threads/hooks/useAiChatThreadRename';
 import { useInboxThreadTriage } from '@/inbox/hooks/useInboxThreadTriage';
-import { aiChatThreadReplyStatusFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyStatusFamilyState';
+import { aiChatThreadIsStreamingFamilySelector } from '@/ai-chat/states/selectors/aiChatThreadIsStreamingFamilySelector';
 import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 import { type AiChatThreadRowVariant } from '@/ai-chat/threads/types/AiChatThreadRowVariant';
 import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
@@ -85,15 +86,17 @@ export const InboxThreadListItem = ({
   const { status: triageStatus } = useInboxThreadTriage({
     threadId: thread.id,
   });
-  const aiChatThreadReplyStatus = useAtomFamilyStateValue(
-    aiChatThreadReplyStatusFamilyState,
+  const aiChatThreadIsStreaming = useAtomFamilySelectorValue(
+    aiChatThreadIsStreamingFamilySelector,
     { threadId: thread.id },
   );
-  const isAiChatStreaming = aiChatThreadReplyStatus === 'streaming';
   const { hasContent: hasSubtitleContent } =
     useAiChatThreadSubtitleContent(thread);
+  const isMobile = useIsMobile();
   const isCompact = variant === 'compact';
+  const shouldShowTriageActions = !isCompact && !isMobile;
   const shouldShowMore =
+    !shouldShowTriageActions ||
     isDefined(onDetach) ||
     isDefined(thread.deletedAt) ||
     !isDefined(triageStatus) ||
@@ -108,7 +111,7 @@ export const InboxThreadListItem = ({
       isChecked={isChecked}
       isEditing={isRenaming}
       isActionMenuOpen={isDropdownOpen}
-      isStreaming={isAiChatStreaming}
+      isStreaming={aiChatThreadIsStreaming}
       onClick={(event) => onClick(thread, event)}
       onCheckboxClick={
         isDefined(onCheckboxClick)
@@ -176,7 +179,7 @@ export const InboxThreadListItem = ({
           instanceId={actionsInstanceId}
           onRenameRequested={startRename}
           onDetach={onDetach}
-          shouldShowTriageActions={!isCompact}
+          shouldShowTriageActions={shouldShowTriageActions}
           shouldShowMore={shouldShowMore}
         />
       }

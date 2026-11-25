@@ -8,6 +8,7 @@ import { SettingsWizardStepBar } from '@/settings/components/layout/SettingsWiza
 import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/FieldNameMaximumLength';
 import { SettingsObjectNewFieldHeaderIcon } from '@/settings/data-model/fields/components/SettingsObjectNewFieldHeaderIcon';
 import { SettingsDataModelFieldIconLabelForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm';
+import { SettingsDataModelFieldFormulaSection } from '@/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection';
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
 import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
@@ -258,6 +259,10 @@ export const SettingsObjectNewFieldConfigure = () => {
               objectNameSingular={activeObjectMetadataItem.nameSingular}
             />
           </Section.Root>
+          <SettingsDataModelFieldFormulaSection
+            objectMetadataItem={activeObjectMetadataItem}
+            fieldType={fieldType}
+          />
         </SettingsPageContainer>
       </SettingsPageLayout>
     </FormProvider>

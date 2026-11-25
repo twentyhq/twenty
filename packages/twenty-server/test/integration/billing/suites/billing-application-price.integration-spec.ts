@@ -1,5 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
+import Stripe from 'stripe';
+
 import {
   getSeededBillingWorkspaceId,
   setupResourceCreditSubscription,
@@ -8,19 +10,18 @@ import {
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { type ApplicationBillingPrice } from 'twenty-shared/application';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type BillingSeatService } from 'src/engine/core-modules/billing/services/billing-seat.service';
 import { type BillingSubscriptionUpdateService } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
 import { type BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import { type StripePriceService } from 'src/engine/core-modules/billing/stripe/services/stripe-price.service';
+import { type StripeProductService } from 'src/engine/core-modules/billing/stripe/services/stripe-product.service';
 import { type StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { type StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { type SubscriptionWithSchedule } from 'src/engine/core-modules/billing/types/billing-subscription-with-schedule.type';
 import { buildApplicationStripeProductId } from 'src/engine/core-modules/billing/utils/build-application-stripe-product-id.util';
-import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 type StripeItem = { id: string; price: { id: string }; quantity: number };
 
@@ -184,13 +185,6 @@ describe('Application price billing (integration)', () => {
       ],
     );
 
-    await getAppProviderByClassName<FeatureFlagService>(
-      'FeatureFlagService',
-    ).enableFeatureFlags(
-      [FeatureFlagKey.IS_APPLICATION_PRICE_BILLING_ENABLED],
-      workspaceId,
-    );
-
     const billingSeatService =
       getAppProviderByClassName<BillingSeatService>('BillingSeatService');
 
@@ -292,13 +286,6 @@ describe('Application price billing (integration)', () => {
       `DELETE FROM core."billingProduct" WHERE "stripeProductId" = ANY($1)`,
       [[BASE_PRODUCT_ID, applicationStripeProductId]],
     );
-    await query(
-      `DELETE FROM core."featureFlag" WHERE "workspaceId" = $1 AND key = $2`,
-      [workspaceId, FeatureFlagKey.IS_APPLICATION_PRICE_BILLING_ENABLED],
-    );
-    await getAppProviderByClassName<WorkspaceCacheService>(
-      'WorkspaceCacheService',
-    ).invalidateAndRecompute(workspaceId, ['featureFlagsMap']);
   }, 120000);
 
   it('bills the price per member when the install completes and leaves seats untouched', async () => {
@@ -348,18 +335,134 @@ describe('Application price billing (integration)', () => {
     );
   }, 120000);
 
-  it('fails instead of removing a subscribed application item whose catalog entry is incomplete', async () => {
+  it('adds a newly installed application through an application sync rather than a seat update', async () => {
+    await getAppProviderByClassName<BillingSubscriptionUpdateService>(
+      'BillingSubscriptionUpdateService',
+    ).syncSeats({ workspaceId });
+
+    expect(updateSubscriptionSpy).toHaveBeenNthCalledWith(
+      1,
+      TEST_STRIPE_SUBSCRIPTION_ID,
+      expect.objectContaining({
+        items: expect.not.arrayContaining([
+          expect.objectContaining({ price: applicationMonthPriceId }),
+        ]),
+      }),
+    );
+
+    await waitForAllJobsToFinish();
+
+    expect(updateSubscriptionSpy).toHaveBeenLastCalledWith(
+      TEST_STRIPE_SUBSCRIPTION_ID,
+      expect.objectContaining({
+        payment_behavior: 'error_if_incomplete',
+        items: expect.arrayContaining([
+          { price: applicationMonthPriceId, quantity: workspaceMemberCount },
+        ]),
+      }),
+    );
+  }, 120000);
+
+  it('leaves the subscription unchanged when the application charge is declined', async () => {
+    updateSubscriptionSpy.mockRejectedValueOnce(
+      new Stripe.errors.StripeCardError({
+        type: 'card_error',
+        message: 'Your card was declined.',
+      }),
+    );
+
+    const result =
+      await getAppProviderByClassName<BillingSubscriptionUpdateService>(
+        'BillingSubscriptionUpdateService',
+      ).chargeApplications({ workspaceId });
+
+    expect(result).toEqual({ isPaymentDeclined: true });
+    expect(findStripeItem(applicationMonthPriceId)).toBeUndefined();
+  }, 120000);
+
+  it('repairs the catalog entry of a subscribed application item instead of removing it', async () => {
     await notifyInstallationChanged();
     await query(`DELETE FROM core."billingPrice" WHERE "stripePriceId" = $1`, [
       `${applicationMonthPriceId}_year`,
     ]);
 
-    await expect(
-      getAppProviderByClassName<BillingSubscriptionUpdateService>(
-        'BillingSubscriptionUpdateService',
-      ).syncApplications({ workspaceId }),
-    ).rejects.toThrow('catalog entry is incomplete');
+    const stripeProductService =
+      getAppProviderByClassName<StripeProductService>('StripeProductService');
+    const stripePriceService =
+      getAppProviderByClassName<StripePriceService>('StripePriceService');
 
+    const buildStripePrice = ({
+      id,
+      interval,
+      unitAmount,
+    }: {
+      id: string;
+      interval: 'month' | 'year';
+      unitAmount: number;
+    }) =>
+      ({
+        id,
+        active: true,
+        product: applicationStripeProductId,
+        currency: 'usd',
+        nickname: null,
+        tax_behavior: 'unspecified',
+        type: 'recurring',
+        billing_scheme: 'per_unit',
+        unit_amount_decimal: null,
+        unit_amount: unitAmount,
+        transform_quantity: null,
+        recurring: { interval, usage_type: 'licensed' },
+        metadata: {},
+      }) as unknown as Stripe.Price;
+
+    const createPriceSpy = jest
+      .spyOn(stripePriceService, 'createPrice')
+      .mockImplementation(async () =>
+        buildStripePrice({
+          id: `${applicationMonthPriceId}_year`,
+          interval: 'year',
+          unitAmount: PER_MEMBER_PRICE.amountCents * 12,
+        }),
+      );
+
+    spies.push(
+      createPriceSpy,
+      jest.spyOn(stripeProductService, 'getOrCreateProduct').mockImplementation(
+        async () =>
+          ({
+            id: applicationStripeProductId,
+            name: 'Test Application - Per member',
+            active: true,
+            description: '',
+            images: [],
+            marketing_features: [],
+            default_price: null,
+            unit_label: null,
+            url: null,
+            tax_code: null,
+            metadata: {
+              productKey: 'APPLICATION',
+              priceUsageBased: 'LICENSED',
+            },
+          }) as unknown as Stripe.Product,
+      ),
+      jest
+        .spyOn(stripePriceService, 'getPricesByProductId')
+        .mockImplementation(async () => [
+          buildStripePrice({
+            id: applicationMonthPriceId,
+            interval: 'month',
+            unitAmount: PER_MEMBER_PRICE.amountCents,
+          }),
+        ]),
+    );
+
+    await getAppProviderByClassName<BillingSubscriptionUpdateService>(
+      'BillingSubscriptionUpdateService',
+    ).syncApplications({ workspaceId });
+
+    expect(createPriceSpy).toHaveBeenCalledTimes(1);
     expect(updateSubscriptionSpy).toHaveBeenCalledTimes(1);
     expect(findStripeItem(applicationMonthPriceId)?.quantity).toBe(
       workspaceMemberCount,

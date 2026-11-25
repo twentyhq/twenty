@@ -176,7 +176,7 @@ const renderTipTapNodeToMarkdown = (node: TipTapNode): string => {
           escapeMarkdownText(node.text ?? ''),
         );
     case TIPTAP_NODE_TYPES.HARD_BREAK:
-      return '\n';
+      return '  \n';
     case TIPTAP_NODE_TYPES.VARIABLE_TAG:
       return typeof node.attrs?.variable === 'string'
         ? node.attrs.variable

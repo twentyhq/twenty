@@ -1,10 +1,14 @@
-import { aiChatComposerUploadingFilesFamilyState } from '@/ai-chat/states/composer/aiChatComposerUploadingFilesFamilyState';
-import { aiChatComposerAttachmentsFamilyState } from '@/ai-chat/states/composer/aiChatComposerAttachmentsFamilyState';
+import { aiChatComposerUploadingFilesFamilyState } from '@/ai-chat/composer/states/aiChatComposerUploadingFilesFamilyState';
+import { aiChatComposerAttachmentsFamilyState } from '@/ai-chat/composer/states/aiChatComposerAttachmentsFamilyState';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
 import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
+import { formatFileSize } from '@/file/utils/formatFileSize';
 import { useLingui } from '@lingui/react/macro';
 import { useStore } from 'jotai';
-import { AgentChatThreadConversationType } from 'twenty-shared/ai';
+import {
+  AgentChatThreadConversationType,
+  CODE_INTERPRETER_MAX_INPUT_FILE_SIZE_BYTES,
+} from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
@@ -12,12 +16,12 @@ import { type AiChatFileUIPart } from '@/ai-chat/types/AiChatFileUIPart';
 import { FileFolder } from '~/generated-metadata/graphql';
 
 export const useAiChatFileUpload = () => {
-  const { uploadFile: directUploadFile } = useDirectFileUpload();
+  const { uploadFile } = useDirectFileUpload();
   const { t } = useLingui();
   const { enqueueToast } = useToast();
   const store = useStore();
 
-  const sendFile = async ({
+  const uploadComposerFile = async ({
     file,
     threadId,
   }: {
@@ -36,7 +40,7 @@ export const useAiChatFileUpload = () => {
     });
 
     try {
-      const uploadedFile = await directUploadFile(file, {
+      const uploadedFile = await uploadFile(file, {
         fileFolder: FileFolder.AgentChat,
         signal: abortController.signal,
       });
@@ -89,13 +93,37 @@ export const useAiChatFileUpload = () => {
       return [];
     }
 
+    const acceptedFiles = files.filter((file) => {
+      if (file.size <= CODE_INTERPRETER_MAX_INPUT_FILE_SIZE_BYTES) {
+        return true;
+      }
+
+      const fileName = file.name;
+      const maxUploadSize = formatFileSize(
+        CODE_INTERPRETER_MAX_INPUT_FILE_SIZE_BYTES,
+      );
+
+      enqueueToast({
+        status: 'error',
+        children: t`Couldn't attach "${fileName}". Files must be ${maxUploadSize} or smaller.`,
+      });
+
+      return false;
+    });
+
+    if (!isNonEmptyArray(acceptedFiles)) {
+      return [];
+    }
+
     store.set(
       aiChatComposerUploadingFilesFamilyState.atomFamily({ threadId }),
-      (previousUploadingFiles) => [...previousUploadingFiles, ...files],
+      (previousUploadingFiles) => [...previousUploadingFiles, ...acceptedFiles],
     );
 
     const successfulUploads = (
-      await Promise.all(files.map((file) => sendFile({ file, threadId })))
+      await Promise.all(
+        acceptedFiles.map((file) => uploadComposerFile({ file, threadId })),
+      )
     ).filter(isDefined);
 
     if (isNonEmptyArray(successfulUploads)) {

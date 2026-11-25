@@ -1,16 +1,14 @@
 import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { type FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { ViewFilterExceptionCode } from 'src/engine/metadata-modules/view-filter/exceptions/view-filter.exception';
-import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
-import { getInvalidViewFilterSelectOptionError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-view-filter-select-option-error.util';
-import { getInvalidViewFilterValueError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-view-filter-value-error.util';
+import { getInvalidViewFilterValueAndSelectOptionErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-view-filter-value-and-select-option-errors.util';
 import { getIncompatibleViewFilterOperandError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-incompatible-view-filter-operand-error.util';
 
 export const validateFlatViewFilterUpdate = ({
@@ -99,42 +97,24 @@ export const validateFlatViewFilterUpdate = ({
       'subFieldName' in flatEntityUpdate ||
       'relationTargetFieldMetadataUniversalIdentifier' in flatEntityUpdate
     ) {
-      const invalidValueError = getInvalidViewFilterValueError({
-        operand: updatedFlatViewFilter.operand,
-        fieldType: referencedFieldMetadata.type,
-        subFieldName: updatedFlatViewFilter.subFieldName,
-        relationTargetFieldType,
-        value: updatedFlatViewFilter.value,
-      });
-
-      if (isDefined(invalidValueError)) {
-        validationResult.errors.push(invalidValueError);
-      }
-    }
-
-    if (
-      ('value' in flatEntityUpdate ||
+      const isSelectOptionAffected =
+        'value' in flatEntityUpdate ||
         'fieldMetadataUniversalIdentifier' in flatEntityUpdate ||
-        'operand' in flatEntityUpdate) &&
-      (isFieldMetadataEntityOfType(
-        referencedFieldMetadata,
-        FieldMetadataType.SELECT,
-      ) ||
-        isFieldMetadataEntityOfType(
-          referencedFieldMetadata,
-          FieldMetadataType.MULTI_SELECT,
-        ))
-    ) {
-      const invalidSelectOptionError = getInvalidViewFilterSelectOptionError({
-        referencedFieldMetadata,
-        flatFieldMetadataOptionMaps,
-        operand: updatedFlatViewFilter.operand,
-        value: updatedFlatViewFilter.value,
-      });
+        'operand' in flatEntityUpdate;
 
-      if (isDefined(invalidSelectOptionError)) {
-        validationResult.errors.push(invalidSelectOptionError);
-      }
+      validationResult.errors.push(
+        ...getInvalidViewFilterValueAndSelectOptionErrors({
+          operand: updatedFlatViewFilter.operand,
+          value: updatedFlatViewFilter.value,
+          fieldType: referencedFieldMetadata.type,
+          subFieldName: updatedFlatViewFilter.subFieldName,
+          relationTargetFieldType,
+          selectOptionFlatFieldMetadata: isSelectOptionAffected
+            ? referencedFieldMetadata
+            : undefined,
+          flatFieldMetadataOptionMaps,
+        }),
+      );
     }
   }
 

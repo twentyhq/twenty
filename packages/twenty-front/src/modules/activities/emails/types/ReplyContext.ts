@@ -7,6 +7,7 @@ type ReplyContextLoading = {
 export type ReplyContextReady = {
   loading: false;
   to: string;
+  replyAll: { to: string; cc: string } | null;
   subject: string;
   inReplyTo: string;
   connectedAccountId: string;

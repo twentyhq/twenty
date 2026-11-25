@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { CHAT_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/chat/constants/chat-enabled-application-variable-key';
+import { buildTeamsConnectedAccountTenantKvKey } from 'src/features/chat/logic-functions/utils/build-teams-connected-account-tenant-kv-key';
 import { buildTeamsTenantClaimConflictKvKey } from 'src/features/chat/logic-functions/utils/build-teams-tenant-claim-conflict-kv-key';
 import { buildTeamsTenantKvKey } from 'src/features/chat/logic-functions/utils/build-teams-tenant-kv-key';
 import { TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/transcripts/constants/transcripts-enabled-application-variable-key';
@@ -10,12 +11,10 @@ const {
   listTeamsConnectionsMock,
   kvGetMock,
   fetchCurrentWorkspaceIdOrThrowMock,
-  releaseFlags,
 } = vi.hoisted(() => ({
   listTeamsConnectionsMock: vi.fn(),
   kvGetMock: vi.fn(),
   fetchCurrentWorkspaceIdOrThrowMock: vi.fn(),
-  releaseFlags: { IS_CHAT_ASSISTANT_RELEASED: false },
 }));
 
 vi.mock(
@@ -27,10 +26,6 @@ vi.mock(
 
 vi.mock('twenty-sdk/logic-function', () => ({
   kv: { get: kvGetMock },
-}));
-
-vi.mock('src/constants/release-flags', () => ({
-  RELEASE_FLAGS: releaseFlags,
 }));
 
 vi.mock(
@@ -51,14 +46,12 @@ const WORKSPACE_CONNECTION = {
 };
 
 const enableChat = () => {
-  releaseFlags.IS_CHAT_ASSISTANT_RELEASED = true;
   vi.stubEnv(CHAT_ENABLED_APPLICATION_VARIABLE_KEY, 'true');
 };
 
 describe('teamsHealthCheckHandler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    releaseFlags.IS_CHAT_ASSISTANT_RELEASED = false;
     vi.stubEnv(TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY, 'true');
     listTeamsConnectionsMock.mockResolvedValue([]);
     kvGetMock.mockResolvedValue(null);
@@ -128,16 +121,45 @@ describe('teamsHealthCheckHandler', () => {
     expect(listTeamsConnectionsMock).toHaveBeenCalledExactlyOnceWith();
   });
 
-  it('should report nothing for chat once a workspace connection works', async () => {
+  it('should report nothing for chat once a workspace connection holds its tenant', async () => {
+    enableChat();
+    listTeamsConnectionsMock.mockResolvedValue([
+      PERSONAL_CONNECTION,
+      WORKSPACE_CONNECTION,
+    ]);
+    kvGetMock.mockImplementation(async (key: string) =>
+      key === buildTeamsConnectedAccountTenantKvKey(WORKSPACE_CONNECTION.id)
+        ? 'tenant-id'
+        : null,
+    );
+
+    await expect(teamsHealthCheckHandler()).resolves.toEqual({ status: 'OK' });
+
+    expect(listTeamsConnectionsMock).toHaveBeenCalledExactlyOnceWith();
+  });
+
+  it('should warn that chat is not active when a working workspace connection never claimed its tenant', async () => {
     enableChat();
     listTeamsConnectionsMock.mockResolvedValue([
       PERSONAL_CONNECTION,
       WORKSPACE_CONNECTION,
     ]);
 
-    await expect(teamsHealthCheckHandler()).resolves.toEqual({ status: 'OK' });
+    await expect(teamsHealthCheckHandler()).resolves.toEqual({
+      status: 'WARNING',
+      title: 'Microsoft Teams chat is not active',
+      description: expect.stringContaining(
+        'Remove the workspace connection and add it again',
+      ),
+      action: { label: 'Open connections', location: '#general/connections' },
+    });
 
-    expect(listTeamsConnectionsMock).toHaveBeenCalledExactlyOnceWith();
+    expect(kvGetMock).toHaveBeenCalledWith(
+      buildTeamsConnectedAccountTenantKvKey(WORKSPACE_CONNECTION.id),
+    );
+    expect(kvGetMock).not.toHaveBeenCalledWith(
+      buildTeamsConnectedAccountTenantKvKey(PERSONAL_CONNECTION.id),
+    );
   });
 
   const recordLostClaim = (claimingWorkspaceId: string | null) => {
@@ -184,14 +206,15 @@ describe('teamsHealthCheckHandler', () => {
     ['this workspace holds the tenant again', 'this-workspace-id'],
     ['nobody holds the tenant any more', null],
   ])(
-    'should report nothing for a recorded conflict once %s',
+    'should warn that chat is not active for a stale conflict once %s',
     async (_, claimingWorkspaceId) => {
       enableChat();
       listTeamsConnectionsMock.mockResolvedValue([WORKSPACE_CONNECTION]);
       recordLostClaim(claimingWorkspaceId);
 
-      await expect(teamsHealthCheckHandler()).resolves.toEqual({
-        status: 'OK',
+      await expect(teamsHealthCheckHandler()).resolves.toMatchObject({
+        status: 'WARNING',
+        title: 'Microsoft Teams chat is not active',
       });
     },
   );

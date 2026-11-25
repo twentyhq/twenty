@@ -88,7 +88,6 @@ type Fixture = {
   coreWorkflowId: string;
   coreWorkflowVersionId: string;
   workflowId: string | null;
-  workflowVersionId: string | null;
   trigger: object;
   steps: WorkflowAction[];
 };
@@ -112,7 +111,6 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     let coreWorkflowId: string = randomUUID();
     let coreWorkflowVersionId: string = randomUUID();
     let workflowId: string | null = null;
-    let workflowVersionId: string | null = null;
     const trigger = {
       name: 'B-Async trigger',
       type: triggerType,
@@ -157,12 +155,8 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       coreWorkflowId = coreWorkflow.coreWorkflowId;
       coreWorkflowVersionId = coreWorkflow.coreWorkflowVersionId;
 
-      const legacyIds = await linkCoreWorkflowToLegacyWorkspaceIds({
-        coreWorkflowId,
-      });
-
-      workflowId = legacyIds.workspaceWorkflowId;
-      workflowVersionId = legacyIds.workspaceWorkflowVersionIds[0];
+      ({ workspaceWorkflowId: workflowId } =
+        await linkCoreWorkflowToLegacyWorkspaceIds({ coreWorkflowId }));
       await global.testDataSource.query(
         `UPDATE core."workflowVersion" SET triggers = $2, steps = $3, status = 'ACTIVE' WHERE id = $1`,
         [
@@ -174,14 +168,13 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     }
 
     await global.testDataSource.query(
-      `UPDATE core.workflow SET "lastPublishedCoreWorkflowVersionId" = $2, "lastPublishedVersionId" = $3 WHERE id = $1`,
-      [coreWorkflowId, coreWorkflowVersionId, workflowVersionId],
+      `UPDATE core.workflow SET "lastPublishedCoreWorkflowVersionId" = $2 WHERE id = $1`,
+      [coreWorkflowId, coreWorkflowVersionId],
     );
     const fixture = {
       coreWorkflowId,
       coreWorkflowVersionId,
       workflowId,
-      workflowVersionId,
       trigger,
       steps,
     };
@@ -359,50 +352,42 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     },
   );
 
-  it.each(['unversioned', 'workspace-version', 'core-version'] as const)(
-    'accepts the %s legacy queue envelope',
-    async (envelope) => {
-      const fixture = await createFixture();
+  it('dispatches a queued core version envelope', async () => {
+    const fixture = await createFixture();
 
-      const queue = global.app.get<MessageQueueService>(
-        getQueueToken(MessageQueue.workflowQueue),
+    const queue = global.app.get<MessageQueueService>(
+      getQueueToken(MessageQueue.workflowQueue),
+    );
+
+    await queue.add(
+      'WorkflowTriggerJob',
+      {
+        workspaceId,
+        workflowId: fixture.workflowId ?? fixture.coreWorkflowId,
+        coreWorkflowVersionId: fixture.coreWorkflowVersionId,
+        payload: { marker: 'core-version' },
+      },
+      {
+        workspaceId,
+        isWorkspaceJob: true,
+      },
+    );
+    for (let attempt = 0; attempt < 100; attempt++) {
+      const [run] = await global.testDataSource.query(
+        `SELECT id FROM "${schema}"."workflowRun" WHERE "coreWorkflowId" = $1`,
+        [fixture.coreWorkflowId],
       );
+      if (isDefined(run)) {
+        const completedRun = await waitForRun(run.id, 'COMPLETED');
 
-      await queue.add(
-        'WorkflowTriggerJob',
-        {
-          workspaceId,
-          workflowId: fixture.workflowId ?? fixture.coreWorkflowId,
-          payload: { marker: envelope },
-          ...(envelope === 'workspace-version'
-            ? { workspaceWorkflowVersionId: fixture.workflowVersionId }
-            : {}),
-          ...(envelope === 'core-version'
-            ? { coreWorkflowVersionId: fixture.coreWorkflowVersionId }
-            : {}),
-        },
-        {
-          workspaceId,
-          isWorkspaceJob: true,
-        },
-      );
-      for (let attempt = 0; attempt < 100; attempt++) {
-        const [run] = await global.testDataSource.query(
-          `SELECT id FROM "${schema}"."workflowRun" WHERE "coreWorkflowId" = $1`,
-          [fixture.coreWorkflowId],
-        );
-        if (run) {
-          const completedRun = await waitForRun(run.id, 'COMPLETED');
-
-          expect(completedRun.createdByName).toBe('B-Async execution');
-          expect(completedRun.createdBySource).toBe('WORKFLOW');
-          return;
-        }
-        await new Promise((resolve) => setTimeout(resolve, 100));
+        expect(completedRun.createdByName).toBe('B-Async execution');
+        expect(completedRun.createdBySource).toBe('WORKFLOW');
+        return;
       }
-      throw new Error('Legacy queue envelope did not dispatch');
-    },
-  );
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+    throw new Error('Queued core version envelope did not dispatch');
+  });
 
   it('rejects a queued version belonging to another workflow or tenant', async () => {
     const first = await createFixture();
@@ -2425,7 +2410,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         workspace,
       );
       const coreVersions = await global.testDataSource.query(
-        `SELECT cv.id, cv."workspaceWorkflowVersionId", cv."workflowId", cw."workspaceWorkflowId", cw."lastPublishedCoreWorkflowVersionId"
+        `SELECT cv.id, cv."workflowId", cw."workspaceWorkflowId", cw."lastPublishedCoreWorkflowVersionId"
          FROM core."workflowVersion" cv
          JOIN core.workflow cw ON cw.id = cv."coreWorkflowId" AND cw."workspaceId" = $1
          WHERE cv."workspaceId" = $1`,
@@ -2434,7 +2419,6 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       expect(coreVersions).toHaveLength(2);
       for (const coreVersion of coreVersions) {
         expect(coreVersion).toMatchObject({
-          workspaceWorkflowVersionId: null,
           workflowId: null,
           workspaceWorkflowId: null,
           lastPublishedCoreWorkflowVersionId: coreVersion.id,

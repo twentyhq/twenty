@@ -8,6 +8,7 @@ import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/w
 import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
 import { BillingArrangementModule } from 'src/engine/core-modules/billing/billing-arrangement.module';
 import { BillingGaugeService } from 'src/engine/core-modules/billing/billing-gauge.service';
+import { DomainServerConfigModule } from 'src/engine/core-modules/domain/domain-server-config/domain-server-config.module';
 import { BillingSubscriptionItemResolver } from 'src/engine/core-modules/billing/billing-subscription-item.resolver';
 import { BillingResolver } from 'src/engine/core-modules/billing/billing.resolver';
 import { BillingSyncCustomerDataCommand } from 'src/engine/core-modules/billing/commands/billing-sync-customer-data.command';
@@ -22,6 +23,7 @@ import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/e
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { BillingApplicationSyncService } from 'src/engine/core-modules/billing/services/billing-application-sync.service';
 import { BillingApplicationListener } from 'src/engine/core-modules/billing/listeners/billing-application.listener';
 import { BillingWorkspaceMemberListener } from 'src/engine/core-modules/billing/listeners/billing-workspace-member.listener';
 import { BillingApplicationProductService } from 'src/engine/core-modules/billing/services/billing-application-product.service';
@@ -29,6 +31,7 @@ import { BillingCreditAllowanceService } from 'src/engine/core-modules/billing/s
 import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
 import { BillingCreditRolloverService } from 'src/engine/core-modules/billing/services/billing-credit-rollover.service';
 import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
+import { BillingTrialExtensionService } from 'src/engine/core-modules/billing/services/billing-trial-extension.service';
 import { BillingWorkspaceCreditAllowanceService } from 'src/engine/core-modules/billing/services/billing-workspace-credit-allowance.service';
 import { BillingCreditOneTimeTopUpService } from 'src/engine/core-modules/billing/services/billing-credit-one-time-top-up.service';
 import { BillingSeatService } from 'src/engine/core-modules/billing/services/billing-seat.service';
@@ -63,6 +66,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     CacheLockModule,
     ClickHouseModule,
     CoreEntityCacheModule,
+    DomainServerConfigModule,
     StripeModule,
     PermissionsModule,
     WorkspaceCacheModule,
@@ -113,7 +117,9 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     BillingGaugeService,
     WorkspaceCurrentBillingSubscriptionCacheService,
     BillingWorkspaceCreditAllowanceService,
+    BillingTrialExtensionService,
     BillingApplicationProductService,
+    BillingApplicationSyncService,
     BillingApplicationListener,
     provideWorkspaceScopedRepository(ApplicationEntity),
     provideWorkspaceScopedRepository(BillingArrangementEntity),
@@ -135,7 +141,9 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     BillingSeatService,
     ResourceCreditService,
     BillingWorkspaceCreditAllowanceService,
+    BillingTrialExtensionService,
     BillingApplicationProductService,
+    BillingApplicationSyncService,
   ],
 })
 export class BillingModule {}

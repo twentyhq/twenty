@@ -1,7 +1,14 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { type ChangeEvent, type KeyboardEvent, useRef, useState } from 'react';
+import {
+  type ChangeEvent,
+  type ClipboardEvent,
+  type KeyboardEvent,
+  useId,
+  useRef,
+  useState,
+} from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 import { MAX_APP_MESSAGE_ATTACHMENTS_PER_MESSAGE } from 'twenty-shared/application';
 import { isNonEmptyArray } from 'twenty-shared/utils';
@@ -9,6 +16,7 @@ import { useToast } from 'twenty-ui/components/feedback';
 import { IconButton, LightIconButton } from 'twenty-ui/components/input';
 import { IconArrowUp, IconPlus } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useIsTouchDevice } from 'twenty-ui/utilities';
 import { v4 } from 'uuid';
 
 import { ChatThreadPendingMessage } from '@/activities/emails/components/ChatThreadPendingMessage';
@@ -17,6 +25,10 @@ import { chatThreadComposerDraftFamilyState } from '@/activities/emails/states/c
 import { type PendingChatMessage } from '@/activities/emails/types/PendingChatMessage';
 import { ChatFilePreview } from '@/chat/components/ChatFilePreview';
 import { StyledChatComposerBox } from '@/chat/components/StyledChatComposerBox';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
+import { useRemoveFocusItemFromFocusStackOnUnmount } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackOnUnmount';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
 
 const StyledContainer = styled.div`
@@ -96,7 +108,17 @@ export const ChatThreadComposer = ({
 }: ChatThreadComposerProps) => {
   const { t } = useLingui();
   const { enqueueToast } = useToast();
+  const isTouchDevice = useIsTouchDevice();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const textareaFocusId = `chat-thread-composer-${useId()}`;
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+  const { removeFocusItemFromFocusStackById } =
+    useRemoveFocusItemFromFocusStackById();
+
+  useRemoveFocusItemFromFocusStackOnUnmount({
+    focusId: textareaFocusId,
+    isEnabled: true,
+  });
   const [draft, setDraft] = useComposerDraft({
     draftFamilyState: chatThreadComposerDraftFamilyState,
     draftKey,
@@ -189,14 +211,30 @@ export const ChatThreadComposer = ({
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (event.key === 'Enter' && !event.shiftKey) {
+    if (event.key === 'Enter' && !event.shiftKey && !isTouchDevice) {
       event.preventDefault();
       handleSubmit();
     }
   };
 
-  const handleFileInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const selectedFiles = Array.from(event.target.files ?? []);
+  const handleTextareaFocus = () => {
+    pushFocusItemToFocusStack({
+      focusId: textareaFocusId,
+      component: {
+        type: FocusComponentType.TEXT_AREA,
+        instanceId: textareaFocusId,
+      },
+      globalHotkeysConfig: {
+        enableGlobalHotkeysConflictingWithKeyboard: false,
+      },
+    });
+  };
+
+  const handleTextareaBlur = () => {
+    removeFocusItemFromFocusStackById({ focusId: textareaFocusId });
+  };
+
+  const addFiles = (selectedFiles: File[]) => {
     const acceptedFiles = selectedFiles.slice(
       0,
       Math.max(MAX_APP_MESSAGE_ATTACHMENTS_PER_MESSAGE - files.length, 0),
@@ -212,7 +250,27 @@ export const ChatThreadComposer = ({
     }
 
     setFiles((currentFiles) => [...currentFiles, ...acceptedFiles]);
+  };
+
+  const handleFileInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    addFiles(Array.from(event.target.files ?? []));
     event.target.value = '';
+  };
+
+  const handlePaste = (event: ClipboardEvent<HTMLTextAreaElement>) => {
+    const pastedFiles = Array.from(event.clipboardData.files);
+
+    // Rich text copies (Word, Excel, web pages) also carry an image rendition: paste them as text
+    if (
+      !canAttachFiles ||
+      !isNonEmptyArray(pastedFiles) ||
+      event.clipboardData.types.includes('text/html')
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+    addFiles(pastedFiles);
   };
 
   const getPlaceholder = () => {
@@ -250,6 +308,9 @@ export const ChatThreadComposer = ({
           disabled={isDisconnected}
           onChange={(event) => setDraft(event.target.value)}
           onKeyDown={handleKeyDown}
+          onPaste={handlePaste}
+          onFocus={handleTextareaFocus}
+          onBlur={handleTextareaBlur}
         />
         {isNonEmptyArray(files) && (
           <StyledFiles>

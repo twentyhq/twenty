@@ -45,6 +45,7 @@ type RoleDefinitionForRecordsPermissions = Pick<
     | 'objectMetadataId'
     | 'fieldMetadataId'
     | 'rowLevelPermissionRuleId'
+    | 'sourceFieldMetadataId'
     | 'canReadFieldValue'
     | 'canUpdateFieldValue'
   >[];
@@ -155,10 +156,12 @@ const buildUnreadableAndUneditableFields = ({
   objectMetadata,
   fieldPermissions,
   resolveMorphRelationPermissionFieldIds,
+  isLabelIdentifierAlwaysReadable,
 }: {
   objectMetadata: Pick<ObjectMetadataEntity, 'labelIdentifierFieldMetadataId'>;
   fieldPermissions: RoleDefinitionForRecordsPermissions['fieldPermissions'];
   resolveMorphRelationPermissionFieldIds: (fieldMetadataId: string) => string[];
+  isLabelIdentifierAlwaysReadable: boolean;
 }): { unreadableFields: string[]; uneditableFields: string[] } => {
   const unreadableFields = new Set<string>();
   const uneditableFields = new Set<string>();
@@ -166,8 +169,11 @@ const buildUnreadableAndUneditableFields = ({
   for (const fieldPermission of fieldPermissions) {
     const isUnreadable =
       fieldPermission.canReadFieldValue === false &&
-      fieldPermission.fieldMetadataId !==
-        objectMetadata.labelIdentifierFieldMetadataId;
+      !(
+        isLabelIdentifierAlwaysReadable &&
+        fieldPermission.fieldMetadataId ===
+          objectMetadata.labelIdentifierFieldMetadataId
+      );
 
     for (const restrictedFieldId of resolveMorphRelationPermissionFieldIds(
       fieldPermission.fieldMetadataId,
@@ -188,7 +194,24 @@ const buildUnreadableAndUneditableFields = ({
   };
 };
 
-const NO_FIELDS = { unreadableFields: [], uneditableFields: [] };
+const NO_FIELDS = {
+  unreadableFields: [],
+  uneditableFields: [],
+  unreadableNestedFields: [],
+};
+
+const buildUnreadableNestedFields = (
+  fieldPermissions: RoleDefinitionForRecordsPermissions['fieldPermissions'],
+): Pick<ObjectRecordsPermissions, 'unreadableNestedFields'> => {
+  const unreadableNestedFields = fieldPermissions.flatMap(
+    ({ fieldMetadataId, sourceFieldMetadataId }) =>
+      isDefined(sourceFieldMetadataId)
+        ? [{ fieldMetadataId, sourceFieldMetadataId }]
+        : [],
+  );
+
+  return { unreadableNestedFields };
+};
 
 const buildObjectRecordsPermissions = ({
   objectRecordsAccess,
@@ -196,7 +219,10 @@ const buildObjectRecordsPermissions = ({
   rowLevelRecordsPermissions,
 }: {
   objectRecordsAccess: ObjectRecordsAccess;
-  objectFields: { unreadableFields: string[]; uneditableFields: string[] };
+  objectFields: Pick<
+    ObjectRecordsPermissions,
+    'unreadableFields' | 'uneditableFields' | 'unreadableNestedFields'
+  >;
   rowLevelRecordsPermissions: RowLevelRecordsPermissions[];
 }): ObjectRecordsPermissions => ({
   canCreateAllRecords: objectRecordsAccess.canCreate,
@@ -276,21 +302,28 @@ export const computeRoleRecordsPermissions = ({
                   rowLevelPermissionRuleId === rule.id,
               ),
               resolveMorphRelationPermissionFieldIds,
+              isLabelIdentifierAlwaysReadable: false,
             })),
       }));
+
+    const objectFieldPermissions = fieldPermissions.filter(
+      (fieldPermission) =>
+        fieldPermission.objectMetadataId === objectMetadataId &&
+        !isDefined(fieldPermission.rowLevelPermissionRuleId),
+    );
 
     objects[objectMetadataId] = buildObjectRecordsPermissions({
       objectFields: isWorkflowObject
         ? NO_FIELDS
-        : buildUnreadableAndUneditableFields({
-            objectMetadata,
-            fieldPermissions: fieldPermissions.filter(
-              (fieldPermission) =>
-                fieldPermission.objectMetadataId === objectMetadataId &&
-                !isDefined(fieldPermission.rowLevelPermissionRuleId),
-            ),
-            resolveMorphRelationPermissionFieldIds,
-          }),
+        : {
+            ...buildUnreadableAndUneditableFields({
+              objectMetadata,
+              fieldPermissions: objectFieldPermissions,
+              resolveMorphRelationPermissionFieldIds,
+              isLabelIdentifierAlwaysReadable: true,
+            }),
+            ...buildUnreadableNestedFields(objectFieldPermissions),
+          },
       objectRecordsAccess: {
         canCreate: objectRecordsAccess.canCreate && hasAiAccess,
         canRead: objectRecordsAccess.canRead && hasAiAccess,

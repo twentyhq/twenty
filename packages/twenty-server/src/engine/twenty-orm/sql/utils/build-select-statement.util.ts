@@ -90,10 +90,16 @@ export type OrderByClause = {
   nulls?: 'NULLS FIRST' | 'NULLS LAST';
 };
 
-export type UnreadableColumnConditions = Record<
-  string,
-  Record<string, string[]>
->;
+type SQLConditionsByAliasAndName = Record<string, Record<string, string[]>>;
+
+export type UnreadableColumnConditions = SQLConditionsByAliasAndName;
+
+export type UnreadableRelationConditions = SQLConditionsByAliasAndName;
+
+export type UnreadableColumnPlaceholders = Partial<Record<string, string[]>>;
+
+export const UNREADABLE_COLUMN_PLACEHOLDER_PARAMETER_NAME =
+  'unreadableColumnPlaceholder';
 
 export type SelectStatementState = {
   alias: string;
@@ -103,6 +109,8 @@ export type SelectStatementState = {
   extraSelectClauses: SelectClause[];
   columnSelections: ColumnSelection[];
   unreadableColumnConditions: UnreadableColumnConditions;
+  unreadableColumnPlaceholders?: UnreadableColumnPlaceholders;
+  unreadableRelationConditions: UnreadableRelationConditions;
   joinClauses: JoinClause[];
   whereClauses: WhereClause[];
   rowAccessConditions: string[];
@@ -115,7 +123,29 @@ export type SelectStatementState = {
   limitValue?: number;
   offsetValue?: number;
   isLockedForUpdate?: boolean;
+  tableSourceByObjectMetadataId?: TableSourceByObjectMetadataId;
 };
+
+export type TableSourceByObjectMetadataId = Partial<Record<string, string>>;
+
+export const quoteTable = ({
+  schemaName,
+  tableName,
+}: Pick<WorkspaceTableShape, 'schemaName' | 'tableName'>): string =>
+  `${escapeIdentifier(schemaName)}.${escapeIdentifier(tableName)}`;
+
+const renderTableSource = ({
+  tableShape,
+  tableSourceByObjectMetadataId,
+}: {
+  tableShape: Pick<
+    WorkspaceTableShape,
+    'objectMetadataId' | 'schemaName' | 'tableName'
+  >;
+  tableSourceByObjectMetadataId?: TableSourceByObjectMetadataId;
+}): string =>
+  tableSourceByObjectMetadataId?.[tableShape.objectMetadataId] ??
+  quoteTable(tableShape);
 
 export const quoteColumn = (alias: string, columnName: string): string =>
   `${escapeIdentifier(alias)}.${escapeIdentifier(columnName)}`;
@@ -129,7 +159,9 @@ const renderProjectedColumn = ({
 }: {
   state: Pick<
     SelectStatementState,
-    'unreadableColumnConditions' | 'groupByExpressions'
+    | 'unreadableColumnConditions'
+    | 'unreadableColumnPlaceholders'
+    | 'groupByExpressions'
   >;
   alias: string;
   columnName: string;
@@ -146,7 +178,15 @@ const renderProjectedColumn = ({
     return `(${renderUnreadableColumn({ quotedColumn, unreadableConditions })})`;
   }
 
-  return renderUnreadableColumn({ quotedColumn, unreadableConditions });
+  return renderUnreadableColumn({
+    quotedColumn,
+    unreadableConditions,
+    placeholder: state.unreadableColumnPlaceholders?.[alias]?.includes(
+      columnName,
+    )
+      ? `:${UNREADABLE_COLUMN_PLACEHOLDER_PARAMETER_NAME}`
+      : undefined,
+  });
 };
 
 export const normaliseColumnExpression = (
@@ -438,18 +478,57 @@ const renderUserWhereExpression = ({
     })
     .join(' ');
 
+const findUnreadableRelationConditions = ({
+  unreadableRelationConditions,
+  parentAlias,
+  relationFieldName,
+}: {
+  unreadableRelationConditions: UnreadableRelationConditions;
+  parentAlias: string;
+  relationFieldName: string;
+}): string[] =>
+  unreadableRelationConditions[parentAlias]?.[relationFieldName] ?? [];
+
+const findUnreadableRelationFilterConditions = ({
+  condition,
+  aliases,
+  existsFilterClauses,
+  unreadableRelationConditions,
+}: {
+  condition: string;
+  aliases: string[];
+  existsFilterClauses: ExistsFilterClause[];
+  unreadableRelationConditions: UnreadableRelationConditions;
+}): string[] =>
+  existsFilterClauses
+    .filter(
+      ({ token, parentAlias }) =>
+        aliases.includes(parentAlias) && condition.includes(token),
+    )
+    .flatMap(({ parentAlias, relationFieldName }) =>
+      findUnreadableRelationConditions({
+        unreadableRelationConditions,
+        parentAlias,
+        relationFieldName,
+      }),
+    );
+
 const renderReadableWhereCondition = ({
   condition,
   shouldReadUnreadableColumnsAsNull,
   aliases,
   unreadableColumnReplacements,
   unreadableColumnConditions,
+  existsFilterClauses,
+  unreadableRelationConditions,
 }: {
   condition: string;
   shouldReadUnreadableColumnsAsNull: boolean;
   aliases: string[];
   unreadableColumnReplacements: UnreadableColumnReplacements | undefined;
   unreadableColumnConditions: UnreadableColumnConditions;
+  existsFilterClauses: ExistsFilterClause[];
+  unreadableRelationConditions: UnreadableRelationConditions;
 }): string => {
   const quotedCondition = quoteQualifiedAliasReferences(condition, aliases);
   const conditionWithReplacements = replaceUnreadableColumnReferences({
@@ -463,11 +542,19 @@ const renderReadableWhereCondition = ({
 
   return renderUnreadableAwareCondition({
     condition: conditionWithReplacements,
-    unreadableConditions: findUnreadableColumnConditions({
-      expressions: [quotedCondition],
-      unreadableColumnConditions,
-      aliases,
-    }),
+    unreadableConditions: [
+      ...findUnreadableColumnConditions({
+        expressions: [quotedCondition],
+        unreadableColumnConditions,
+        aliases,
+      }),
+      ...findUnreadableRelationFilterConditions({
+        condition,
+        aliases,
+        existsFilterClauses,
+        unreadableRelationConditions,
+      }),
+    ],
   });
 };
 
@@ -502,26 +589,41 @@ export const renderWhereExpressionWithRowAccess = ({
 
 const renderExistsFilter = ({
   existsFilterClause,
+  existsFilterClauses,
   includeDeleted,
   unreadableColumnConditions,
   unreadableColumnReplacements,
+  unreadableRelationConditions,
+  tableSourceByObjectMetadataId,
 }: {
   existsFilterClause: Pick<
     ExistsFilterClause,
     | 'alias'
+    | 'parentAlias'
+    | 'relationFieldName'
     | 'targetTableShape'
     | 'correlationCondition'
     | 'additionalOnConditions'
     | 'conditionClauses'
   >;
+  existsFilterClauses: ExistsFilterClause[];
   includeDeleted: boolean;
   unreadableColumnConditions: UnreadableColumnConditions;
   unreadableColumnReplacements: UnreadableColumnReplacements | undefined;
+  unreadableRelationConditions: UnreadableRelationConditions;
+  tableSourceByObjectMetadataId?: TableSourceByObjectMetadataId;
 }): string => {
   const conditions = [
     existsFilterClause.correlationCondition,
     ...existsFilterClause.additionalOnConditions,
-  ];
+    renderReadableCondition(
+      findUnreadableRelationConditions({
+        unreadableRelationConditions,
+        parentAlias: existsFilterClause.parentAlias,
+        relationFieldName: existsFilterClause.relationFieldName,
+      }),
+    ),
+  ].filter(isDefined);
 
   const conditionExpression = renderUserWhereExpression({
     whereClauses: existsFilterClause.conditionClauses,
@@ -532,6 +634,8 @@ const renderExistsFilter = ({
         aliases: [existsFilterClause.alias],
         unreadableColumnReplacements,
         unreadableColumnConditions,
+        existsFilterClauses,
+        unreadableRelationConditions,
       }),
   });
 
@@ -552,9 +656,10 @@ const renderExistsFilter = ({
     );
   }
 
-  const tableExpression = `${escapeIdentifier(
-    existsFilterClause.targetTableShape.schemaName,
-  )}.${escapeIdentifier(existsFilterClause.targetTableShape.tableName)}`;
+  const tableExpression = renderTableSource({
+    tableShape: existsFilterClause.targetTableShape,
+    tableSourceByObjectMetadataId,
+  });
 
   return `EXISTS (SELECT 1 FROM ${tableExpression} AS ${escapeIdentifier(
     existsFilterClause.alias,
@@ -566,11 +671,15 @@ export const substituteExistsFilterTokens = ({
   existsFilterClauses,
   includeDeleted,
   unreadableColumnConditions = {},
+  unreadableRelationConditions = {},
+  tableSourceByObjectMetadataId,
 }: {
   expression: string;
   existsFilterClauses: ExistsFilterClause[];
   includeDeleted: boolean;
   unreadableColumnConditions?: UnreadableColumnConditions;
+  unreadableRelationConditions?: UnreadableRelationConditions;
+  tableSourceByObjectMetadataId?: TableSourceByObjectMetadataId;
 }): string => {
   const unreadableColumnReplacements = buildUnreadableColumnReplacements(
     unreadableColumnConditions,
@@ -581,9 +690,12 @@ export const substituteExistsFilterTokens = ({
       substituted.split(existsFilterClause.token).join(
         renderExistsFilter({
           existsFilterClause,
+          existsFilterClauses,
           includeDeleted,
           unreadableColumnConditions,
           unreadableColumnReplacements,
+          unreadableRelationConditions,
+          tableSourceByObjectMetadataId,
         }),
       ),
     expression,
@@ -614,6 +726,8 @@ export const buildWhereExpression = (
           aliases,
           unreadableColumnReplacements,
           unreadableColumnConditions: state.unreadableColumnConditions,
+          existsFilterClauses: state.existsFilterClauses,
+          unreadableRelationConditions: state.unreadableRelationConditions,
         }),
       rowAccessConditions: [
         ...state.rowAccessConditions,
@@ -637,6 +751,8 @@ export const buildWhereExpression = (
         existsFilterClauses: state.existsFilterClauses,
         includeDeleted: state.includeDeleted,
         unreadableColumnConditions: state.unreadableColumnConditions,
+        unreadableRelationConditions: state.unreadableRelationConditions,
+        tableSourceByObjectMetadataId: state.tableSourceByObjectMetadataId,
       })
     : renderedWhereExpression;
 
@@ -659,9 +775,7 @@ export const buildWhereExpression = (
 };
 
 export const buildFromClause = (state: SelectStatementState): string =>
-  `FROM ${escapeIdentifier(state.tableShape.schemaName)}.${escapeIdentifier(
-    state.tableShape.tableName,
-  )} AS ${escapeIdentifier(state.alias)}`;
+  `FROM ${renderTableSource(state)} AS ${escapeIdentifier(state.alias)}`;
 
 const buildToManyDedupedJoinSource = ({
   tableExpression,
@@ -690,7 +804,7 @@ const buildToManyDedupedJoinSource = ({
     escapeIdentifier('id'),
   ];
 
-  return `(SELECT DISTINCT ON (${foreignKey}) * FROM ${tableExpression}${whereClause} ORDER BY ${orderExpressions.join(', ')})`;
+  return `(SELECT DISTINCT ON (${foreignKey}) * FROM ${tableExpression} AS "source"${whereClause} ORDER BY ${orderExpressions.join(', ')})`;
 };
 
 export const buildJoinClause = (state: SelectStatementState): string =>
@@ -717,7 +831,17 @@ export const buildJoinClause = (state: SelectStatementState): string =>
           ? joinClause.toManyForeignKeyColumnName
           : undefined;
 
-      const onConditions = [condition, ...joinClause.additionalOnConditions];
+      const onConditions = [
+        condition,
+        ...joinClause.additionalOnConditions,
+        renderReadableCondition(
+          findUnreadableRelationConditions({
+            unreadableRelationConditions: state.unreadableRelationConditions,
+            parentAlias: joinClause.parentAlias,
+            relationFieldName: joinClause.relationFieldName,
+          }),
+        ),
+      ].filter(isDefined);
 
       if (
         softDeletePredicateApplies &&
@@ -728,9 +852,10 @@ export const buildJoinClause = (state: SelectStatementState): string =>
         );
       }
 
-      const tableExpression = `${escapeIdentifier(
-        joinClause.targetTableShape.schemaName,
-      )}.${escapeIdentifier(joinClause.targetTableShape.tableName)}`;
+      const tableExpression = renderTableSource({
+        tableShape: joinClause.targetTableShape,
+        tableSourceByObjectMetadataId: state.tableSourceByObjectMetadataId,
+      });
 
       const joinSource = isDefined(toManyForeignKeyColumnName)
         ? buildToManyDedupedJoinSource({

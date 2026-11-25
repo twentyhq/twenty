@@ -38,7 +38,7 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
   },
   [FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED]: {
     label: msg`Customizable sidebar`,
-    description: msg`Show sidebar tabs and sections.`,
+    description: msg`Organize the sidebar in tabs and sections, including built-in sections for favorites, chats and agents, and customize it in place.`,
   },
   [FeatureFlagKey.IS_AI_CHAT_COMPONENT_BUILDER_ENABLED]: {
     label: msg`AI chat component builder`,
@@ -68,6 +68,15 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Record rules through relations`,
     description: msg`Let record-level permission rules compare a field of a related record.`,
   },
+  [FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED]: {
+    label: msg`Channel visibility through rules`,
+    description: msg`In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops and related record paths.`,
+  },
+  // TODO(@charlesBochet): remove the API key channel visibility exemption after 2026-11-30
+  [FeatureFlagKey.IS_CHANNEL_VISIBILITY_ENFORCED_ON_API_KEYS]: {
+    label: msg`Channel visibility on API keys`,
+    description: msg`Remove the message and calendar access of API keys on roles assignable to users. While off, those API keys read them as a member who doesn't own the channel would.`,
+  },
   [FeatureFlagKey.IS_GETTING_STARTED_ENABLED]: {
     label: msg`Getting started`,
     description: msg`Show the Getting started page and sidebar card, and open it on landing during the trial.`,
@@ -79,10 +88,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
   [FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED]: {
     label: msg`Private records`,
     description: msg`Apply private records on objects that aren't private by default. Always on for workspaces that have set record sharing. Turning this off makes records set as private on those objects visible again.`,
-  },
-  [FeatureFlagKey.IS_PERMISSION_TABLES_ENABLED]: {
-    label: msg`Permission tables`,
-    description: msg`Create record share and access group storage as tables owned by the permission engine instead of objects. Only applies when a workspace is created.`,
   },
   [FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED]: {
     label: msg`Access groups`,
@@ -96,12 +101,20 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Group tabs`,
     description: msg`Let grouped table and list views show their groups as tabs, one group at a time. Enable after the instance upgrade completes.`,
   },
-  [FeatureFlagKey.IS_APPLICATION_PRICE_BILLING_ENABLED]: {
-    label: msg`Application price billing`,
-    description: msg`Bill the prices declared by installed apps on the workspace subscription. The price is not shown before install yet.`,
+  [FeatureFlagKey.IS_FORMULA_FIELD_ENABLED]: {
+    label: msg`Formula fields`,
+    description: msg`Let text, number, boolean and date fields compute their value from an expression over the record and its related records.`,
   },
   [FeatureFlagKey.IS_LOOKUP_COLUMNS_ENABLED]: {
     label: msg`Lookup columns`,
     description: msg`Add table columns that show a field of a related record, such as a person's company industry. Enable after the instance upgrade completes.`,
+  },
+  [FeatureFlagKey.IS_WIDGET_CONDITIONAL_AVAILABILITY_ENABLED]: {
+    label: msg`Widget visibility rule tree`,
+    description: msg`Read the visibility rule of page layout widgets from its tree form only. Enabled after the workspace upgrade copies the stored rules.`,
+  },
+  [FeatureFlagKey.IS_INBOX_OBJECT_NAMING_ENABLED]: {
+    label: msg`Inbox object names`,
+    description: msg`Use the inbox names for the chat thread and message objects. Turned on by the workspace upgrade that renames them, so don't toggle it by hand.`,
   },
 };

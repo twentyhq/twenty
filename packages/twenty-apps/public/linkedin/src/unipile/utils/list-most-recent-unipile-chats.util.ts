@@ -67,5 +67,8 @@ export const listMostRecentUnipileChats = async ({
     );
   }
 
-  return sortUnipileChatsByLastMessage(chats).slice(0, limit);
+  // Keyed by id: a conversation listed by two inboxes would otherwise show twice
+  const chatById = new Map(chats.map((chat) => [chat.id, chat]));
+
+  return sortUnipileChatsByLastMessage([...chatById.values()]).slice(0, limit);
 };
