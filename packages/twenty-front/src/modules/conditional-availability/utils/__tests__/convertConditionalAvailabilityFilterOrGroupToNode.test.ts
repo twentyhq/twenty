@@ -1,27 +1,25 @@
 import { type ConditionalAvailabilityFilter } from '@/conditional-availability/types/ConditionalAvailabilityFilter';
 import { type ConditionalAvailabilityFilterGroup } from '@/conditional-availability/types/ConditionalAvailabilityFilterGroup';
-import { removeConditionalAvailabilityFiltersOrGroups } from '@/conditional-availability/utils/removeConditionalAvailabilityFiltersOrGroups';
+import { convertConditionalAvailabilityFilterOrGroupToNode } from '@/conditional-availability/utils/convertConditionalAvailabilityFilterOrGroupToNode';
+import { createEmptyConditionalAvailabilityFilter } from '@/conditional-availability/utils/createEmptyConditionalAvailabilityFilter';
 import { updateConditionalAvailabilityFilter } from '@/conditional-availability/utils/updateConditionalAvailabilityFilter';
 import { updateConditionalAvailabilityFilterGroup } from '@/conditional-availability/utils/updateConditionalAvailabilityFilterGroup';
-import { validateConditionalAvailabilityFilterGroup } from '@/conditional-availability/utils/validateConditionalAvailabilityFilterGroup';
 import { buildDeviceConditionalAvailability } from 'twenty-shared/conditional-availability';
 
 const ADMIN_ROLE_UNIVERSAL_IDENTIFIER = '20202020-0000-4000-8000-000000000001';
+const SALES_ROLE_UNIVERSAL_IDENTIFIER = '20202020-0000-4000-8000-000000000002';
 
 const ROLE_FILTER: ConditionalAvailabilityFilter = {
   type: 'filter',
   id: 'role-filter',
   variable: 'currentRole',
-  operator: 'isAnyOf',
+  operator: 'EQUAL',
   values: [ADMIN_ROLE_UNIVERSAL_IDENTIFIER],
 };
 
 const DEVICE_FILTER_WITHOUT_VALUE: ConditionalAvailabilityFilter = {
-  type: 'filter',
+  ...createEmptyConditionalAvailabilityFilter({ variable: 'device' }),
   id: 'device-filter',
-  variable: 'device',
-  operator: 'is',
-  values: [],
 };
 
 const ROLE_NODE = {
@@ -46,49 +44,24 @@ const FILTER_GROUP: ConditionalAvailabilityFilterGroup = {
   ],
 };
 
-const validateFilterGroup = (filterGroup: ConditionalAvailabilityFilterGroup) =>
-  validateConditionalAvailabilityFilterGroup({
-    filterGroup,
-    metadataName: 'pageLayoutWidget',
+const convertToNode = (filterGroup: ConditionalAvailabilityFilterGroup) =>
+  convertConditionalAvailabilityFilterOrGroupToNode({
+    filterOrGroup: filterGroup,
   });
 
-describe('validateConditionalAvailabilityFilterGroup', () => {
-  it('should return no node when no filter has a value', () => {
-    expect(validateFilterGroup({ ...FILTER_GROUP, children: [] })).toEqual({
-      isValid: true,
-      node: null,
-    });
-
+describe('convertConditionalAvailabilityFilterOrGroupToNode', () => {
+  it('should write no node when no filter has a value', () => {
+    expect(convertToNode({ ...FILTER_GROUP, children: [] })).toBeNull();
     expect(
-      validateFilterGroup({
+      convertToNode({
         ...FILTER_GROUP,
         children: [DEVICE_FILTER_WITHOUT_VALUE],
       }),
-    ).toEqual({ isValid: true, node: null });
-  });
-
-  it('should refuse a filter holding the same value twice', () => {
-    expect(
-      validateFilterGroup({
-        ...FILTER_GROUP,
-        children: [
-          {
-            ...ROLE_FILTER,
-            values: [
-              ADMIN_ROLE_UNIVERSAL_IDENTIFIER,
-              ADMIN_ROLE_UNIVERSAL_IDENTIFIER,
-            ],
-          },
-        ],
-      }),
-    ).toEqual({ isValid: false, reason: 'invalidFilters' });
+    ).toBeNull();
   });
 
   it('should skip a filter without value, and write it once it has one', () => {
-    expect(validateFilterGroup(FILTER_GROUP)).toEqual({
-      isValid: true,
-      node: ROLE_NODE,
-    });
+    expect(convertToNode(FILTER_GROUP)).toEqual(ROLE_NODE);
 
     const filterGroupWithMobileDevice = updateConditionalAvailabilityFilter({
       filterGroup: FILTER_GROUP,
@@ -96,29 +69,34 @@ describe('validateConditionalAvailabilityFilterGroup', () => {
       update: (filter) => ({ ...filter, values: ['MOBILE'] }),
     });
 
-    expect(validateFilterGroup(filterGroupWithMobileDevice)).toEqual({
-      isValid: true,
-      node: {
-        type: 'GROUP',
-        logicalOperator: 'AND',
-        children: [ROLE_NODE, buildDeviceConditionalAvailability('MOBILE')],
-      },
+    expect(convertToNode(filterGroupWithMobileDevice)).toEqual({
+      type: 'GROUP',
+      logicalOperator: 'AND',
+      children: [ROLE_NODE, buildDeviceConditionalAvailability('MOBILE')],
     });
   });
 
-  it('should drop a group with its last filter', () => {
-    const filterGroupWithoutDeviceFilter =
-      removeConditionalAvailabilityFiltersOrGroups({
-        filterGroup: FILTER_GROUP,
-        shouldRemove: (filterOrGroup) =>
-          filterOrGroup.id === DEVICE_FILTER_WITHOUT_VALUE.id,
-      });
+  it('should join several values with "or" when equal and with "and" when not equal', () => {
+    const roleValues = [
+      ADMIN_ROLE_UNIVERSAL_IDENTIFIER,
+      SALES_ROLE_UNIVERSAL_IDENTIFIER,
+    ];
 
-    expect(filterGroupWithoutDeviceFilter.children).toEqual([ROLE_FILTER]);
-    expect(validateFilterGroup(filterGroupWithoutDeviceFilter)).toEqual({
-      isValid: true,
-      node: ROLE_NODE,
-    });
+    expect(
+      convertToNode({
+        ...FILTER_GROUP,
+        children: [{ ...ROLE_FILTER, values: roleValues }],
+      }),
+    ).toMatchObject({ type: 'GROUP', logicalOperator: 'OR' });
+
+    expect(
+      convertToNode({
+        ...FILTER_GROUP,
+        children: [
+          { ...ROLE_FILTER, operator: 'NOT_EQUAL', values: roleValues },
+        ],
+      }),
+    ).toMatchObject({ type: 'GROUP', logicalOperator: 'AND' });
   });
 
   it('should join the filters of the root with "or" once its operator is changed', () => {
@@ -135,13 +113,10 @@ describe('validateConditionalAvailabilityFilterGroup', () => {
       update: (filterGroup) => ({ ...filterGroup, logicalOperator: 'OR' }),
     });
 
-    expect(validateFilterGroup(filterGroupJoinedWithOr)).toEqual({
-      isValid: true,
-      node: {
-        type: 'GROUP',
-        logicalOperator: 'OR',
-        children: [ROLE_NODE, buildDeviceConditionalAvailability('DESKTOP')],
-      },
+    expect(convertToNode(filterGroupJoinedWithOr)).toEqual({
+      type: 'GROUP',
+      logicalOperator: 'OR',
+      children: [ROLE_NODE, buildDeviceConditionalAvailability('DESKTOP')],
     });
   });
 });

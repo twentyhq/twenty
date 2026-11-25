@@ -1,26 +1,21 @@
-import { type ConditionalAvailabilityFilter } from '@/conditional-availability/types/ConditionalAvailabilityFilter';
 import { type ConditionalAvailabilityFilterGroup } from '@/conditional-availability/types/ConditionalAvailabilityFilterGroup';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
-export const removeConditionalAvailabilityFiltersOrGroups = ({
+export const removeConditionalAvailabilityFilterOrGroup = ({
   filterGroup,
-  shouldRemove,
+  filterOrGroupId,
 }: {
   filterGroup: ConditionalAvailabilityFilterGroup;
-  shouldRemove: (
-    filterOrGroup:
-      | ConditionalAvailabilityFilter
-      | ConditionalAvailabilityFilterGroup,
-  ) => boolean;
+  filterOrGroupId: string;
 }): ConditionalAvailabilityFilterGroup => ({
   ...filterGroup,
   children: filterGroup.children
-    .filter((child) => !shouldRemove(child))
+    .filter((child) => child.id !== filterOrGroupId)
     .map((child) =>
       child.type === 'filterGroup'
-        ? removeConditionalAvailabilityFiltersOrGroups({
+        ? removeConditionalAvailabilityFilterOrGroup({
             filterGroup: child,
-            shouldRemove,
+            filterOrGroupId,
           })
         : child,
     )

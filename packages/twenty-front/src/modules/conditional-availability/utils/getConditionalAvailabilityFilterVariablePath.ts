@@ -1,5 +1,4 @@
 import { type ConditionalAvailabilityFilterVariable } from '@/conditional-availability/types/ConditionalAvailabilityFilterVariable';
-import { doNotTranslate } from 'twenty-shared/i18n';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 export const getConditionalAvailabilityFilterVariablePath = ({
@@ -9,11 +8,11 @@ export const getConditionalAvailabilityFilterVariablePath = ({
 }): string => {
   switch (variable) {
     case 'currentRole':
-      return doNotTranslate('currentRole.universalIdentifier');
+      return 'currentRole.universalIdentifier';
     case 'currentWorkspaceMember':
-      return doNotTranslate('currentWorkspaceMember.id');
+      return 'currentWorkspaceMember.id';
     case 'device':
-      return doNotTranslate('device');
+      return 'device';
     default:
       return assertUnreachable(variable);
   }

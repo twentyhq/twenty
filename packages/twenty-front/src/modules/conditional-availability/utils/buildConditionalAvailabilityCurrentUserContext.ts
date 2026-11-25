@@ -1,6 +1,5 @@
 import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
 import { type ConditionalAvailabilityCurrentUserContext } from '@/conditional-availability/types/ConditionalAvailabilityCurrentUserContext';
-import { isNonEmptyString } from '@sniptt/guards';
 
 export const buildConditionalAvailabilityCurrentUserContext = ({
   featureFlags,
@@ -10,19 +9,12 @@ export const buildConditionalAvailabilityCurrentUserContext = ({
   featureFlags: Record<string, boolean>;
   permissionFlags: Record<string, boolean>;
   currentWorkspaceMember: Pick<CurrentWorkspaceMember, 'id' | 'roles'> | null;
-}): ConditionalAvailabilityCurrentUserContext => {
-  const assignedRoleUniversalIdentifier =
-    currentWorkspaceMember?.roles?.at(0)?.universalIdentifier;
-  const currentWorkspaceMemberId = currentWorkspaceMember?.id;
-
-  return {
-    featureFlags,
-    permissionFlags,
-    currentRole: isNonEmptyString(assignedRoleUniversalIdentifier)
-      ? { universalIdentifier: assignedRoleUniversalIdentifier }
-      : null,
-    currentWorkspaceMember: isNonEmptyString(currentWorkspaceMemberId)
-      ? { id: currentWorkspaceMemberId }
-      : null,
-  };
-};
+}): ConditionalAvailabilityCurrentUserContext => ({
+  featureFlags,
+  permissionFlags,
+  currentRole: {
+    universalIdentifier:
+      currentWorkspaceMember?.roles?.at(0)?.universalIdentifier ?? null,
+  },
+  currentWorkspaceMember: { id: currentWorkspaceMember?.id ?? null },
+});

@@ -42,14 +42,8 @@ const workspaceMemberIsNot = (workspaceMemberId: string) =>
 
 const DEVICE_IS_MOBILE = buildDeviceConditionalAvailability('MOBILE');
 
-const convertToFilterGroup = (node: ConditionalAvailabilityNode) =>
-  convertConditionalAvailabilityNodeToFilterGroup({
-    node,
-    metadataName: 'pageLayoutWidget',
-  });
-
 const getFilterGroupOrThrow = (node: ConditionalAvailabilityNode) => {
-  const filterGroup = convertToFilterGroup(node);
+  const filterGroup = convertConditionalAvailabilityNodeToFilterGroup({ node });
 
   assertIsDefinedOrThrow(filterGroup);
 
@@ -86,7 +80,7 @@ describe('convertConditionalAvailabilityNodeToFilterGroup', () => {
         {
           type: 'filter',
           variable: 'currentRole',
-          operator: 'isAnyOf',
+          operator: 'EQUAL',
           values: [
             ADMIN_ROLE_UNIVERSAL_IDENTIFIER,
             SALES_ROLE_UNIVERSAL_IDENTIFIER,
@@ -95,25 +89,14 @@ describe('convertConditionalAvailabilityNodeToFilterGroup', () => {
         {
           type: 'filter',
           variable: 'device',
-          operator: 'is',
+          operator: 'EQUAL',
           values: ['MOBILE'],
         },
       ],
     });
   });
 
-  it('should read one workspace member as "is not" and several as "is none of"', () => {
-    expect(
-      getFilterGroupOrThrow(workspaceMemberIsNot(WORKSPACE_MEMBER_ID)).children,
-    ).toMatchObject([
-      {
-        type: 'filter',
-        variable: 'currentWorkspaceMember',
-        operator: 'isNot',
-        values: [WORKSPACE_MEMBER_ID],
-      },
-    ]);
-
+  it('should read excluded workspace members as one filter', () => {
     expect(
       getFilterGroupOrThrow({
         type: 'GROUP',
@@ -127,7 +110,7 @@ describe('convertConditionalAvailabilityNodeToFilterGroup', () => {
       {
         type: 'filter',
         variable: 'currentWorkspaceMember',
-        operator: 'isNoneOf',
+        operator: 'NOT_EQUAL',
         values: [WORKSPACE_MEMBER_ID, OTHER_WORKSPACE_MEMBER_ID],
       },
     ]);
@@ -167,23 +150,36 @@ describe('convertConditionalAvailabilityNodeToFilterGroup', () => {
     ]);
   });
 
-  it('should keep two devices joined by "or" as two filters', () => {
+  it('should keep two roles joined by "and" as two filters', () => {
+    const filterGroup = getFilterGroupOrThrow({
+      type: 'GROUP',
+      logicalOperator: 'AND',
+      children: [
+        roleIs(ADMIN_ROLE_UNIVERSAL_IDENTIFIER),
+        roleIs(SALES_ROLE_UNIVERSAL_IDENTIFIER),
+      ],
+    });
+
+    expect(filterGroup.children).toMatchObject([
+      { variable: 'currentRole', values: [ADMIN_ROLE_UNIVERSAL_IDENTIFIER] },
+      { variable: 'currentRole', values: [SALES_ROLE_UNIVERSAL_IDENTIFIER] },
+    ]);
+  });
+
+  it('should keep the same value twice as two filters', () => {
     const filterGroup = getFilterGroupOrThrow({
       type: 'GROUP',
       logicalOperator: 'OR',
       children: [
-        DEVICE_IS_MOBILE,
-        buildDeviceConditionalAvailability('DESKTOP'),
+        roleIs(ADMIN_ROLE_UNIVERSAL_IDENTIFIER),
+        roleIs(ADMIN_ROLE_UNIVERSAL_IDENTIFIER),
       ],
     });
 
-    expect(filterGroup).toMatchObject({
-      logicalOperator: 'OR',
-      children: [
-        { type: 'filter', variable: 'device', values: ['MOBILE'] },
-        { type: 'filter', variable: 'device', values: ['DESKTOP'] },
-      ],
-    });
+    expect(filterGroup.children).toMatchObject([
+      { variable: 'currentRole', values: [ADMIN_ROLE_UNIVERSAL_IDENTIFIER] },
+      { variable: 'currentRole', values: [ADMIN_ROLE_UNIVERSAL_IDENTIFIER] },
+    ]);
   });
 
   it.each<{ title: string; node: ConditionalAvailabilityNode }>([
@@ -217,30 +213,11 @@ describe('convertConditionalAvailabilityNodeToFilterGroup', () => {
       node: { type: 'NOT', child: DEVICE_IS_MOBILE },
     },
     {
-      title: 'the same role twice',
-      node: {
-        type: 'GROUP',
-        logicalOperator: 'OR',
-        children: [
-          roleIs(ADMIN_ROLE_UNIVERSAL_IDENTIFIER),
-          roleIs(ADMIN_ROLE_UNIVERSAL_IDENTIFIER),
-        ],
-      },
-    },
-    {
       title: 'a device that is not a device',
       node: comparison({
         operator: 'EQUAL',
         variablePath: 'device',
         value: 'TABLET',
-      }),
-    },
-    {
-      title: 'a device excluded',
-      node: comparison({
-        operator: 'NOT_EQUAL',
-        variablePath: 'device',
-        value: 'MOBILE',
       }),
     },
     {
@@ -261,6 +238,8 @@ describe('convertConditionalAvailabilityNodeToFilterGroup', () => {
       }),
     },
   ])('should not read $title as filters', ({ node }) => {
-    expect(convertToFilterGroup(node)).toBeNull();
+    expect(
+      convertConditionalAvailabilityNodeToFilterGroup({ node }),
+    ).toBeNull();
   });
 });

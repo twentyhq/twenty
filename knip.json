@@ -73,11 +73,7 @@
         "codegen-admin.cjs",
         "codegen-metadata.cjs"
       ],
-      "ignore": [
-        "src/locales/generated/**",
-        ".eloqnt/config.ts",
-        "src/modules/conditional-availability/utils/**"
-      ],
+      "ignore": ["src/locales/generated/**", ".eloqnt/config.ts"],
       "ignoreDependencies": [
         "@babel/preset-typescript",
         "@storybook/addon-coverage",

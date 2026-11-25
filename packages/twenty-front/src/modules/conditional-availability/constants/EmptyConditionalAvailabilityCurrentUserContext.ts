@@ -4,6 +4,6 @@ export const EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT: ConditionalAva
   {
     featureFlags: {},
     permissionFlags: {},
-    currentRole: null,
-    currentWorkspaceMember: null,
+    currentRole: { universalIdentifier: null },
+    currentWorkspaceMember: { id: null },
   };

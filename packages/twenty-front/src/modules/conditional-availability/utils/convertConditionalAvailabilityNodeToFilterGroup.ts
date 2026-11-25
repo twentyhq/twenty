@@ -1,21 +1,15 @@
 import { type ConditionalAvailabilityFilterGroup } from '@/conditional-availability/types/ConditionalAvailabilityFilterGroup';
+import { convertConditionalAvailabilityFilterOrGroupToNode } from '@/conditional-availability/utils/convertConditionalAvailabilityFilterOrGroupToNode';
 import { convertConditionalAvailabilityNodeToFilterOrGroup } from '@/conditional-availability/utils/convertConditionalAvailabilityNodeToFilterOrGroup';
-import { validateConditionalAvailabilityFilterGroup } from '@/conditional-availability/utils/validateConditionalAvailabilityFilterGroup';
-import {
-  type ConditionalAvailabilityMetadataName,
-  type ConditionalAvailabilityNode,
-} from 'twenty-shared/conditional-availability';
-import { doNotTranslate } from 'twenty-shared/i18n';
+import { type ConditionalAvailabilityNode } from 'twenty-shared/conditional-availability';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const convertConditionalAvailabilityNodeToFilterGroup = ({
   node,
-  metadataName,
 }: {
   node: ConditionalAvailabilityNode;
-  metadataName: ConditionalAvailabilityMetadataName;
 }): ConditionalAvailabilityFilterGroup | null => {
   const filterOrGroup = convertConditionalAvailabilityNodeToFilterOrGroup({
     node,
@@ -28,7 +22,7 @@ export const convertConditionalAvailabilityNodeToFilterGroup = ({
   const filterGroupAroundSingleFilter: ConditionalAvailabilityFilterGroup = {
     type: 'filterGroup',
     id: v4(),
-    logicalOperator: doNotTranslate('AND'),
+    logicalOperator: 'AND',
     children: [filterOrGroup],
   };
   const filterGroup =
@@ -36,22 +30,20 @@ export const convertConditionalAvailabilityNodeToFilterGroup = ({
       ? filterOrGroup
       : filterGroupAroundSingleFilter;
 
-  const hasGroupInsideGroup = filterGroup.children.some(
+  const hasFilterGroupInsideFilterGroup = filterGroup.children.some(
     (child) =>
       child.type === 'filterGroup' &&
-      child.children.some((groupChild) => groupChild.type === 'filterGroup'),
+      child.children.some((grandchild) => grandchild.type === 'filterGroup'),
   );
 
-  const filterGroupValidation = validateConditionalAvailabilityFilterGroup({
-    filterGroup,
-    metadataName,
-  });
+  const isStoredNodeWrittenBackUnchanged = isDeeplyEqual(
+    convertConditionalAvailabilityFilterOrGroupToNode({
+      filterOrGroup: filterGroup,
+    }),
+    node,
+  );
 
-  const isStoredNodeWrittenBackUnchanged =
-    filterGroupValidation.isValid &&
-    isDeeplyEqual(filterGroupValidation.node, node);
-
-  return !hasGroupInsideGroup && isStoredNodeWrittenBackUnchanged
+  return !hasFilterGroupInsideFilterGroup && isStoredNodeWrittenBackUnchanged
     ? filterGroup
     : null;
 };

@@ -1,8 +1,7 @@
 import { CONDITIONAL_AVAILABILITY_FILTER_VARIABLES } from '@/conditional-availability/constants/ConditionalAvailabilityFilterVariables';
 import { type ConditionalAvailabilityFilter } from '@/conditional-availability/types/ConditionalAvailabilityFilter';
-import { getConditionalAvailabilityFilterComparisonOperator } from '@/conditional-availability/utils/getConditionalAvailabilityFilterComparisonOperator';
-import { getConditionalAvailabilityFilterVariableOperators } from '@/conditional-availability/utils/getConditionalAvailabilityFilterVariableOperators';
 import { getConditionalAvailabilityFilterVariablePath } from '@/conditional-availability/utils/getConditionalAvailabilityFilterVariablePath';
+import { isConditionalAvailabilityFilterValueValid } from '@/conditional-availability/utils/isConditionalAvailabilityFilterValueValid';
 import { isString } from '@sniptt/guards';
 import { type ConditionalAvailabilityNode } from 'twenty-shared/conditional-availability';
 import { isDefined } from 'twenty-shared/utils';
@@ -17,45 +16,35 @@ export const convertConditionalAvailabilityComparisonNodeToFilter = ({
     return null;
   }
 
-  const { operator: comparisonOperator, left: variable, right: text } = node;
+  const { operator, left: variableNode, right: literalNode } = node;
 
   if (
-    variable.type !== 'VARIABLE' ||
-    text.type !== 'LITERAL' ||
-    !isString(text.value)
+    variableNode.type !== 'VARIABLE' ||
+    literalNode.type !== 'LITERAL' ||
+    !isString(literalNode.value)
   ) {
     return null;
   }
 
-  const filterVariable = CONDITIONAL_AVAILABILITY_FILTER_VARIABLES.find(
+  if (operator !== 'EQUAL' && operator !== 'NOT_EQUAL') {
+    return null;
+  }
+
+  const { value } = literalNode;
+
+  const variable = CONDITIONAL_AVAILABILITY_FILTER_VARIABLES.find(
     (candidateVariable) =>
       getConditionalAvailabilityFilterVariablePath({
         variable: candidateVariable,
-      }) === variable.path,
+      }) === variableNode.path,
   );
 
-  if (!isDefined(filterVariable)) {
+  if (
+    !isDefined(variable) ||
+    !isConditionalAvailabilityFilterValueValid({ variable, value })
+  ) {
     return null;
   }
 
-  const operator = getConditionalAvailabilityFilterVariableOperators({
-    variable: filterVariable,
-  }).find(
-    (candidateOperator) =>
-      getConditionalAvailabilityFilterComparisonOperator({
-        operator: candidateOperator,
-      }) === comparisonOperator,
-  );
-
-  if (!isDefined(operator)) {
-    return null;
-  }
-
-  return {
-    type: 'filter',
-    id: v4(),
-    variable: filterVariable,
-    operator,
-    values: [text.value],
-  };
+  return { type: 'filter', id: v4(), variable, operator, values: [value] };
 };

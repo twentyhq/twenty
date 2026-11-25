@@ -1,12 +1,11 @@
 import { type ConditionalAvailabilityFilter } from '@/conditional-availability/types/ConditionalAvailabilityFilter';
 import { type ConditionalAvailabilityFilterGroup } from '@/conditional-availability/types/ConditionalAvailabilityFilterGroup';
-import { getConditionalAvailabilityFilterComparisonOperator } from '@/conditional-availability/utils/getConditionalAvailabilityFilterComparisonOperator';
 import { getConditionalAvailabilityFilterVariablePath } from '@/conditional-availability/utils/getConditionalAvailabilityFilterVariablePath';
-import { getConditionalAvailabilityValueListLogicalOperator } from '@/conditional-availability/utils/getConditionalAvailabilityValueListLogicalOperator';
 import {
   type ConditionalAvailabilityNode,
   joinConditionalAvailabilityNodes,
 } from 'twenty-shared/conditional-availability';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 export const convertConditionalAvailabilityFilterOrGroupToNode = ({
   filterOrGroup,
@@ -14,36 +13,41 @@ export const convertConditionalAvailabilityFilterOrGroupToNode = ({
   filterOrGroup:
     | ConditionalAvailabilityFilter
     | ConditionalAvailabilityFilterGroup;
-}): ConditionalAvailabilityNode => {
+}): ConditionalAvailabilityNode | null => {
   if (filterOrGroup.type === 'filterGroup') {
-    return joinConditionalAvailabilityNodes({
-      nodes: filterOrGroup.children.map((child) =>
+    const childNodes = filterOrGroup.children
+      .map((child) =>
         convertConditionalAvailabilityFilterOrGroupToNode({
           filterOrGroup: child,
         }),
-      ),
-      logicalOperator: filterOrGroup.logicalOperator,
-    });
+      )
+      .filter(isDefined);
+
+    return isNonEmptyArray(childNodes)
+      ? joinConditionalAvailabilityNodes({
+          nodes: childNodes,
+          logicalOperator: filterOrGroup.logicalOperator,
+        })
+      : null;
   }
 
-  const comparisonOperator = getConditionalAvailabilityFilterComparisonOperator(
-    {
-      operator: filterOrGroup.operator,
-    },
-  );
+  const { variable, operator, values } = filterOrGroup;
+
+  if (!isNonEmptyArray(values)) {
+    return null;
+  }
+
   const variablePath = getConditionalAvailabilityFilterVariablePath({
-    variable: filterOrGroup.variable,
+    variable,
   });
 
   return joinConditionalAvailabilityNodes({
-    nodes: filterOrGroup.values.map((value) => ({
+    nodes: values.map((value) => ({
       type: 'COMPARISON',
-      operator: comparisonOperator,
+      operator,
       left: { type: 'VARIABLE', path: variablePath },
       right: { type: 'LITERAL', value },
     })),
-    logicalOperator: getConditionalAvailabilityValueListLogicalOperator({
-      comparisonOperator,
-    }),
+    logicalOperator: operator === 'EQUAL' ? 'OR' : 'AND',
   });
 };

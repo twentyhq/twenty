@@ -230,5 +230,60 @@ describe('filterVisibleWidgets', () => {
 
       expect(result.map((widget) => widget.id)).toEqual(['widget-for-sales']);
     });
+
+    it('should evaluate a rule on the role while the role is not loaded', () => {
+      const roleIsSales = {
+        type: 'COMPARISON' as const,
+        operator: 'EQUAL' as const,
+        left: {
+          type: 'VARIABLE' as const,
+          path: 'currentRole.universalIdentifier',
+        },
+        right: {
+          type: 'LITERAL' as const,
+          value: 'sales-role-universal-identifier',
+        },
+      };
+      const deviceIsDesktop = buildDeviceConditionalAvailability('DESKTOP');
+
+      const result = filterVisibleWidgets({
+        widgets: [
+          {
+            ...createMockWidget('widget-for-sales'),
+            conditionalAvailability: roleIsSales,
+          },
+          {
+            ...createMockWidget('widget-for-everyone-but-sales'),
+            conditionalAvailability: {
+              ...roleIsSales,
+              operator: 'NOT_EQUAL' as const,
+            },
+          },
+          {
+            ...createMockWidget('widget-for-sales-or-desktop'),
+            conditionalAvailability: {
+              type: 'GROUP' as const,
+              logicalOperator: 'OR' as const,
+              children: [roleIsSales, deviceIsDesktop],
+            },
+          },
+          {
+            ...createMockWidget('widget-for-desktop-or-sales'),
+            conditionalAvailability: {
+              type: 'GROUP' as const,
+              logicalOperator: 'OR' as const,
+              children: [deviceIsDesktop, roleIsSales],
+            },
+          },
+        ],
+        context,
+      });
+
+      expect(result.map((widget) => widget.id)).toEqual([
+        'widget-for-everyone-but-sales',
+        'widget-for-sales-or-desktop',
+        'widget-for-desktop-or-sales',
+      ]);
+    });
   });
 });
