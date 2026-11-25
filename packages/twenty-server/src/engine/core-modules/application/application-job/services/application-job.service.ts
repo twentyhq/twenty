@@ -18,6 +18,7 @@ import { MAX_JOBS_PER_STATUS_READ } from 'src/engine/core-modules/application/ap
 import { type EnqueueJobInputDTO } from 'src/engine/core-modules/application/application-job/dtos/enqueue-job.input';
 import { type EnqueueJobsInputDTO } from 'src/engine/core-modules/application/application-job/dtos/enqueue-jobs.input';
 import { type JobStatusDTO } from 'src/engine/core-modules/message-queue/dtos/job-status.dto';
+import { isValidMessageQueueLimiter } from 'src/engine/core-modules/message-queue/utils/is-valid-message-queue-limiter.util';
 import { buildQueueJobId } from 'src/engine/core-modules/application/application-job/utils/build-queue-job-id.util';
 import {
   ApplicationException,
@@ -219,7 +220,10 @@ export class ApplicationJobService {
     });
   }
 
-  private validateLimiter({ limiter, delayMs }: EnqueueJobsInputDTO): void {
+  private validateLimiter({
+    limiter,
+    delayMs,
+  }: Pick<EnqueueJobsInputDTO, 'limiter' | 'delayMs'>): void {
     if (!isDefined(limiter)) {
       return;
     }
@@ -234,9 +238,8 @@ export class ApplicationJobService {
     const intervalMs = limiter.durationMs / limiter.max;
 
     if (
-      !Number.isInteger(limiter.max) ||
+      !isValidMessageQueueLimiter(limiter) ||
       !Number.isInteger(limiter.durationMs) ||
-      limiter.max < 1 ||
       intervalMs < ENQUEUE_JOB_LIMITER_MIN_INTERVAL_MS ||
       intervalMs > ENQUEUE_JOB_LIMITER_MAX_INTERVAL_MS
     ) {

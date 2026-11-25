@@ -87,24 +87,17 @@ export class CronTriggerCronJob {
             continue;
           }
 
-          // Evaluating the cron at a shifted clock moves its phase, never its frequency
-          const cronDate = isValidCronTriggerSpreadMs(cronSettings.spreadMs)
-            ? new Date(
-                now.getTime() -
-                  computeCronTriggerSpreadOffsetMs({
-                    workspaceId: activeWorkspace.id,
-                    logicFunctionUniversalIdentifier:
-                      logicFunction.universalIdentifier,
-                    spreadMs: cronSettings.spreadMs,
-                  }),
-              )
-            : now;
-
           const shouldDispatch =
             await this.cronTriggerDeduplicationService.shouldDispatch(
               `logic-function-cron:${activeWorkspace.id}:${logicFunction.id}`,
               cronSettings.pattern,
-              cronDate,
+              this.getCronDate({
+                now,
+                workspaceId: activeWorkspace.id,
+                logicFunctionUniversalIdentifier:
+                  logicFunction.universalIdentifier,
+                spreadMs: cronSettings.spreadMs,
+              }),
             );
 
           if (!shouldDispatch) {
@@ -189,5 +182,31 @@ export class CronTriggerCronJob {
         });
       }
     }
+  }
+
+  // Evaluating the cron at a shifted clock moves its phase, never its frequency
+  private getCronDate({
+    now,
+    workspaceId,
+    logicFunctionUniversalIdentifier,
+    spreadMs,
+  }: {
+    now: Date;
+    workspaceId: string;
+    logicFunctionUniversalIdentifier: string;
+    spreadMs: number | undefined;
+  }): Date {
+    if (!isValidCronTriggerSpreadMs(spreadMs)) {
+      return now;
+    }
+
+    return new Date(
+      now.getTime() -
+        computeCronTriggerSpreadOffsetMs({
+          workspaceId,
+          logicFunctionUniversalIdentifier,
+          spreadMs,
+        }),
+    );
   }
 }

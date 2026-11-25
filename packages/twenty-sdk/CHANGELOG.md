@@ -12,7 +12,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 - **`limiter` on `enqueueJobs`.** `limiter: { max, durationMs }` spaces the runs of a call `durationMs / max` apart, sharing one schedule with every call for the same function and values in the workspace. It cannot be combined with `delayMs`. Requires Twenty 2.64.
 
-- **`scheduledAt` on the jobs returned by `enqueueJobs` and `getJobs`.** When the job first became eligible to run, in epoch milliseconds. It never changes after the job is accepted. Requires Twenty 2.64.
+- **`scheduledAt` on the jobs returned by `enqueueJobs` and `getJobs`.** When the job first became eligible to run, in epoch milliseconds. It never changes after the job is accepted. Both calls now always request it, so from this SDK version `enqueueJobs` and `getJobs` require Twenty 2.64.
 
 - **`onJobFailure` on `defineLogicFunction`.** Declare it next to `handler` and Twenty calls it, as its own queued job, when a queued run of the function fails and will not be retried: an uncaught error, a timeout, `RetryableLogicFunctionError` past `maxRetries`, a platform error once the job has no attempts left, or a worker process crashing twice while running it. It receives a `LogicFunctionJobFailure` with the original `payload`, the `error` (`type`, `message`) and the `job` (`id`, `attemptsMade`). It does not run for executions outside the job queue, or when `onJobFailure` itself fails. Requires Twenty 2.63.
 
