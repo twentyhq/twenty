@@ -69,6 +69,7 @@ describe('requestUnipile', () => {
     const promise = requestUnipile('list inbox chats', () =>
       Promise.reject({
         status: 400,
+        type: 'api/invalid_parameters',
         title: 'Invalid querystring',
         detail: 'limit must be <= 50',
       }),
@@ -78,7 +79,10 @@ describe('requestUnipile', () => {
       'Unipile list inbox chats failed (400): Invalid querystring: limit must be <= 50',
     );
     await expect(promise).rejects.toBeInstanceOf(UnipileRequestError);
-    await expect(promise).rejects.toMatchObject({ status: 400 });
+    await expect(promise).rejects.toMatchObject({
+      status: 400,
+      type: 'api/invalid_parameters',
+    });
   });
 
   it('rethrows network errors unchanged', async () => {

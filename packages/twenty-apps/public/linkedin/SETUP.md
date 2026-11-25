@@ -34,7 +34,7 @@ LinkedIn accounts are connected through [Unipile](https://www.unipile.com) (API 
 
 | Step | Logic function | What it does |
 | --- | --- | --- |
-| Connect | `linkedin-authorize`, `linkedin-callback` | Sends the member to Unipile's hosted sign-in, then confirms the account it returns |
+| Connect | `linkedin-authorize`, `linkedin-connect-page`, `linkedin-connect-submit`, `linkedin-callback` | Sends the member to a sign-in page the app serves at `/linkedin/connect`, signs them in through Unipile's auth intent API one verification step at a time (code, approval in the LinkedIn app), then confirms the account it returns. A step the page cannot show, such as a CAPTCHA, hands the sign-in over to Unipile's hosted page |
 | On connect | `linkedin-on-connect` | Creates a private message channel matched on the Person **LinkedIn** field and bound to the `linkedin-messaging` provider, and routes the Unipile account's webhooks to this workspace |
 | Webhook | `linkedin-webhook-resolver` | Checks the `unipile-signature` header and dispatches the event to the workspace that connected the account |
 | New message | `linkedin-handle-webhook-event` | Ingests the message into the member's channel; flags the connection when LinkedIn signs the account out |
@@ -60,6 +60,7 @@ twenty app dev --create
 
 ## Troubleshooting
 
+- **The LinkedIn sign-in page answers `This sign-in link has expired`**: the link is signed with `UNIPILE_API_KEY` and lasts an hour. Start the connection again from Twenty.
 - **The webhook answers `No workspace claims this account`**: the account's connection hook did not finish. Disconnect and reconnect LinkedIn.
 - **Messages land on no Person**: the Person's **LinkedIn** field must hold the participant's public profile URL (`linkedin.com/in/<name>`).
 - **Every reconnection adds an account in Unipile**: remove the stale ones from the Unipile dashboard; each is billed.

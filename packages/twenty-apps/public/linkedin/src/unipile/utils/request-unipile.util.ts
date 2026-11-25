@@ -13,11 +13,13 @@ const UNIPILE_RATE_LIMIT_MAX_WAIT_SECONDS = 120;
 
 export class UnipileRequestError extends Error {
   readonly status: number | undefined;
+  readonly type: string | undefined;
 
-  constructor(message: string, status: number | undefined) {
+  constructor(message: string, status: number | undefined, type?: string) {
     super(message);
     this.name = 'UnipileRequestError';
     this.status = status;
+    this.type = type;
   }
 }
 
@@ -25,16 +27,18 @@ const toUnipileRequestError = (
   requestName: string,
   error: object,
 ): UnipileRequestError => {
-  const { status, title, detail } = error as {
+  const { status, title, detail, type } = error as {
     status?: unknown;
     title?: unknown;
     detail?: unknown;
+    type?: unknown;
   };
   const reason = [title, detail].filter(isString).join(': ');
 
   return new UnipileRequestError(
     `Unipile ${requestName} failed${isNumber(status) ? ` (${status})` : ''}: ${reason || JSON.stringify(error)}`,
     isNumber(status) ? status : undefined,
+    isString(type) ? type : undefined,
   );
 };
 
