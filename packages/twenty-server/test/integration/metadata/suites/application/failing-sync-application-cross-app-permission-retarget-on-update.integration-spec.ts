@@ -56,12 +56,19 @@ describe('Sync application should fail when retargeting existing permissions to 
 
     const retargetManifest = buildBaseManifest({
       appId: TEST_APP_ID,
-      roleId: STANDARD_ROLE.admin.universalIdentifier,
+      roleId: TEST_ROLE_ID,
       overrides: {
         roles: [
           {
+            universalIdentifier: TEST_ROLE_ID,
+            label: 'App Default Role',
+            description: 'Default role for the test app',
+          },
+          {
             universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
             label: 'Admin',
+            canBeAssignedToUsers: false,
+            canBeAssignedToApiKeys: false,
             description: 'Attempts to retarget permission flag to admin role',
             permissionFlagUniversalIdentifiers: [
               SystemPermissionFlag.WORKSPACE,
@@ -107,12 +114,19 @@ describe('Sync application should fail when retargeting existing permissions to 
 
     const retargetManifest = buildBaseManifest({
       appId: TEST_APP_ID,
-      roleId: STANDARD_ROLE.admin.universalIdentifier,
+      roleId: TEST_ROLE_ID,
       overrides: {
         roles: [
           {
+            universalIdentifier: TEST_ROLE_ID,
+            label: 'App Default Role',
+            description: 'Default role for the test app',
+          },
+          {
             universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
             label: 'Admin',
+            canBeAssignedToUsers: false,
+            canBeAssignedToApiKeys: false,
             description: 'Attempts to retarget object permission to admin role',
             objectPermissions: [
               {

@@ -8,6 +8,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 
 const TEST_APP_ID = 'a1b2c3d4-0001-4000-a000-000000000001';
+const TEST_ROLE_ID = 'a1b2c3d4-0002-4000-a000-000000000002';
 const DUPLICATED_UNIVERSAL_IDENTIFIER = 'a1b2c3d4-0003-4000-a000-000000000003';
 
 describe('Sync application should fail on universalIdentifier conflicts', () => {
@@ -29,12 +30,19 @@ describe('Sync application should fail on universalIdentifier conflicts', () => 
   it('should fail when two entities in the same manifest share the same universalIdentifier', async () => {
     const manifest = buildBaseManifest({
       appId: TEST_APP_ID,
-      roleId: DUPLICATED_UNIVERSAL_IDENTIFIER,
+      roleId: TEST_ROLE_ID,
       overrides: {
         roles: [
           {
+            universalIdentifier: TEST_ROLE_ID,
+            label: 'First Role',
+            description: 'First role',
+          },
+          {
             universalIdentifier: DUPLICATED_UNIVERSAL_IDENTIFIER,
             label: 'Second Role',
+            canBeAssignedToUsers: false,
+            canBeAssignedToApiKeys: false,
             description: 'Second role',
             objectPermissions: [
               {
@@ -63,12 +71,19 @@ describe('Sync application should fail on universalIdentifier conflicts', () => 
   it('should fail when an entity uses a universalIdentifier from the twenty-standard app', async () => {
     const manifest = buildBaseManifest({
       appId: TEST_APP_ID,
-      roleId: STANDARD_ROLE.admin.universalIdentifier,
+      roleId: TEST_ROLE_ID,
       overrides: {
         roles: [
           {
+            universalIdentifier: TEST_ROLE_ID,
+            label: 'App Default Role',
+            description: 'Default role for the test app',
+          },
+          {
             universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
             label: 'Stolen Admin Role',
+            canBeAssignedToUsers: false,
+            canBeAssignedToApiKeys: false,
             description:
               'Attempts to create a role with the standard admin universalIdentifier',
           },

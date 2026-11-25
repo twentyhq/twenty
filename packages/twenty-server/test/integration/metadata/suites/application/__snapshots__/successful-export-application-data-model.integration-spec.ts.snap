@@ -1085,7 +1085,7 @@ exports[`Application export - data model exports the whole application as a stab
       "canAccessAllTools": false,
       "canBeAssignedToAgents": true,
       "canBeAssignedToApiKeys": false,
-      "canBeAssignedToUsers": true,
+      "canBeAssignedToUsers": false,
       "canUpdateAllSettings": false,
       "description": "A test role",
       "label": "Test Role",

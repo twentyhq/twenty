@@ -8,6 +8,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 const buildManifestWithCrossEntityIdentifierConflict = (
   universalIdentifier: string,
+  roleUniversalIdentifier: string,
   duplicatedUniversalIdentifier: string,
 ) =>
   JSON.stringify({
@@ -17,15 +18,22 @@ const buildManifestWithCrossEntityIdentifierConflict = (
       description:
         'A test app whose manifest reuses a universalIdentifier across entity types',
       icon: 'IconTestPipe',
-      defaultRoleUniversalIdentifier: duplicatedUniversalIdentifier,
+      defaultRoleUniversalIdentifier: roleUniversalIdentifier,
       applicationVariables: {},
       packageJsonChecksum: null,
       yarnLockChecksum: null,
     },
     roles: [
       {
+        universalIdentifier: roleUniversalIdentifier,
+        label: 'First Role',
+        description: 'First role',
+      },
+      {
         universalIdentifier: duplicatedUniversalIdentifier,
         label: 'Second Role',
+        canBeAssignedToUsers: false,
+        canBeAssignedToApiKeys: false,
         description: 'Second role',
         objectPermissions: [
           {
@@ -73,9 +81,11 @@ describe('Install application should return structured validation errors', () =>
 
   it('should return METADATA_VALIDATION_FAILED with structured errors when installing an app whose manifest has validation errors', async () => {
     const universalIdentifier = crypto.randomUUID();
+    const roleUniversalIdentifier = crypto.randomUUID();
     const duplicatedUniversalIdentifier = crypto.randomUUID();
     const manifest = buildManifestWithCrossEntityIdentifierConflict(
       universalIdentifier,
+      roleUniversalIdentifier,
       duplicatedUniversalIdentifier,
     );
 

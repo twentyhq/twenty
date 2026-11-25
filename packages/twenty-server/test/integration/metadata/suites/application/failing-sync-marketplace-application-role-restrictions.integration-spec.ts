@@ -162,29 +162,24 @@ const countRows = async (table: string, universalIdentifier: string) => {
   return count;
 };
 
-// Application and role identifiers are random per run
-const expectRoleRestrictionErrorSnapshot = ({
-  errors,
-  appId,
-  roleIds,
-}: {
-  errors: BaseGraphQLError[] | undefined;
-  appId: string;
-  roleIds: string[];
-}) => {
-  jestExpectToBeDefined(errors);
-  expectOneNotInternalServerErrorSnapshot({
-    errors,
-    normalizeMessage: (message) =>
-      roleIds.reduce(
-        (normalizedMessage, roleId) =>
-          normalizedMessage.split(roleId).join('<ROLE_ID>'),
-        message.split(appId).join('<APP_ID>'),
-      ),
-  });
+const findRoleAssignability = async (universalIdentifier: string) => {
+  const [role] = await globalThis.testDataSource.query(
+    `SELECT "canBeAssignedToUsers", "canBeAssignedToApiKeys", "canBeAssignedToAgents"
+     FROM core."role" WHERE "universalIdentifier" = $1 AND "workspaceId" = $2`,
+    [universalIdentifier, SEED_APPLE_WORKSPACE_ID],
+  );
+
+  return role;
 };
 
-describe('Marketplace application roles cannot declare row-level rules or field permissions', () => {
+const expectRoleRestrictionErrorSnapshot = (
+  errors: BaseGraphQLError[] | undefined,
+) => {
+  jestExpectToBeDefined(errors);
+  expectOneNotInternalServerErrorSnapshot({ errors });
+};
+
+describe('Marketplace application roles', () => {
   describe('on dev sync of a LOCAL application', () => {
     let appId: string;
 
@@ -223,17 +218,13 @@ describe('Marketplace application roles cannot declare row-level rules or field 
             expectToFail: true,
           });
 
-          expectRoleRestrictionErrorSnapshot({
-            errors,
-            appId,
-            roleIds: [roleId],
-          });
+          expectRoleRestrictionErrorSnapshot(errors);
           expect(await countRows('role', roleId)).toBe(0);
         },
       );
     });
 
-    it('refuses a standalone role and writes nothing', async () => {
+    it('refuses a standalone role assignable to members and writes nothing', async () => {
       const requestedRoleId = uuidv4();
       const standaloneRoleId = uuidv4();
 
@@ -251,12 +242,73 @@ describe('Marketplace application roles cannot declare row-level rules or field 
         expectToFail: true,
       });
 
-      expectRoleRestrictionErrorSnapshot({
-        errors,
-        appId,
-        roleIds: [standaloneRoleId],
-      });
+      expectRoleRestrictionErrorSnapshot(errors);
       expect(await countRows('role', standaloneRoleId)).toBe(0);
+    });
+
+    it('accepts a standalone role assignable to agents only', async () => {
+      const requestedRoleId = uuidv4();
+      const agentOnlyRoleId = uuidv4();
+
+      await syncApplication({
+        manifest: buildBaseManifest({
+          appId,
+          roleId: requestedRoleId,
+          overrides: {
+            roles: [
+              { universalIdentifier: requestedRoleId, label: 'Requested' },
+              {
+                universalIdentifier: agentOnlyRoleId,
+                label: 'Agent only role',
+                canBeAssignedToUsers: false,
+                canBeAssignedToApiKeys: false,
+              },
+            ],
+          },
+        }),
+        expectToFail: false,
+      });
+
+      expect(await findRoleAssignability(agentOnlyRoleId)).toMatchObject({
+        canBeAssignedToUsers: false,
+        canBeAssignedToApiKeys: false,
+      });
+    });
+
+    it('makes the requested role agent-only and keeps an agent on it', async () => {
+      const requestedRoleId = uuidv4();
+
+      await syncApplication({
+        manifest: buildBaseManifest({
+          appId,
+          roleId: requestedRoleId,
+          overrides: {
+            roles: [
+              {
+                universalIdentifier: requestedRoleId,
+                label: 'Requested',
+                canBeAssignedToAgents: true,
+              },
+            ],
+            agents: [
+              {
+                universalIdentifier: uuidv4(),
+                name: 'requested-role-agent',
+                label: 'Requested role agent',
+                prompt: 'You are a test agent.',
+                roleUniversalIdentifier: requestedRoleId,
+              },
+            ],
+          },
+        }),
+        expectToFail: false,
+      });
+
+      expect(await findRoleAssignability(requestedRoleId)).toEqual({
+        canBeAssignedToUsers: false,
+        canBeAssignedToApiKeys: false,
+        canBeAssignedToAgents: true,
+      });
     });
 
     it('refuses them on a dry run too', async () => {
@@ -272,7 +324,7 @@ describe('Marketplace application roles cannot declare row-level rules or field 
         expectToFail: true,
       });
 
-      expectRoleRestrictionErrorSnapshot({ errors, appId, roleIds: [roleId] });
+      expectRoleRestrictionErrorSnapshot(errors);
     });
   });
 
@@ -290,7 +342,7 @@ describe('Marketplace application roles cannot declare row-level rules or field 
     });
 
     it.each(RESTRICTIONS_BY_FORMAT)(
-      'refuses $title before installing anything',
+      'refuses $title and installs no role',
       async ({ restrictions }) => {
         const roleId = uuidv4();
         const tarball = await createAppTarball({
@@ -315,12 +367,7 @@ describe('Marketplace application roles cannot declare row-level rules or field 
           expectToFail: true,
         });
 
-        expectRoleRestrictionErrorSnapshot({
-          errors,
-          appId,
-          roleIds: [roleId],
-        });
-        expect(await countRows('application', appId)).toBe(0);
+        expectRoleRestrictionErrorSnapshot(errors);
         expect(await countRows('role', roleId)).toBe(0);
       },
     );
