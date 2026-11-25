@@ -9,11 +9,12 @@ import { AiChatChannelIcon } from '@/ai-chat/threads/components/AiChatChannelIco
 import { aiChatAccessibleChannelsSelector } from '@/ai-chat/threads/states/selectors/aiChatAccessibleChannelsSelector';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
 import { useMoveInboxThreadToChannel } from '@/inbox/hooks/useMoveInboxThreadToChannel';
+import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { SidePanelMoveAiChatToChannelItem } from '@/side-panel/pages/move-ai-chat-to-channel/components/SidePanelMoveAiChatToChannelItem';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { aiChatThreadIdComponentState } from '@/side-panel/states/aiChatThreadIdComponentState';
-import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
+import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -56,6 +57,8 @@ export const SidePanelMoveAiChatToChannelPage = () => {
   const isNoChannelShown =
     isDefined(thread.workspaceMemberId) && normalizedSearch === '';
 
+  const hasOptions = isNoChannelShown || channels.length > 0;
+
   const handleMove = (channelId: string | null) => {
     void closeSidePanelMenu();
 
@@ -78,43 +81,49 @@ export const SidePanelMoveAiChatToChannelPage = () => {
           ...(isNoChannelShown ? [NO_CHANNEL_ITEM_ID] : []),
           ...channels.map(({ id }) => id),
         ]}
-        noResults={!isNoChannelShown && channels.length === 0}
+        noResults={!hasOptions}
         noResultsText={t`No channels match your search`}
       >
-        {isNoChannelShown && (
-          <SelectableListItem
-            itemId={NO_CHANNEL_ITEM_ID}
-            onEnter={() => handleMove(null)}
-          >
-            <SidePanelMoveAiChatToChannelItem
-              id={NO_CHANNEL_ITEM_ID}
-              icon={<SelectOptionIcon Icon={IconInbox} />}
-              label={t`No channel`}
-              isCurrent={!isDefined(currentChannelId)}
-              onSelect={() => handleMove(null)}
-            />
-          </SelectableListItem>
-        )}
-        {channels.map((channel) => (
-          <SelectableListItem
-            key={channel.id}
-            itemId={channel.id}
-            onEnter={() => handleMove(channel.id)}
-          >
-            <SidePanelMoveAiChatToChannelItem
-              id={channel.id}
-              icon={
-                <AiChatChannelIcon
-                  channel={channel}
-                  size={theme.icon.size.md}
+        {hasOptions && (
+          <SidePanelGroup heading={t`Channels`}>
+            {isNoChannelShown && (
+              <SelectableListItem
+                itemId={NO_CHANNEL_ITEM_ID}
+                onEnter={() => handleMove(null)}
+              >
+                <SidePanelMoveAiChatToChannelItem
+                  id={NO_CHANNEL_ITEM_ID}
+                  icon={
+                    <ColoredIcon Icon={IconInbox} size={theme.icon.size.md} />
+                  }
+                  label={t`No channel`}
+                  isCurrent={!isDefined(currentChannelId)}
+                  onSelect={() => handleMove(null)}
                 />
-              }
-              label={channel.name}
-              isCurrent={channel.id === currentChannelId}
-              onSelect={() => handleMove(channel.id)}
-            />
-          </SelectableListItem>
-        ))}
+              </SelectableListItem>
+            )}
+            {channels.map((channel) => (
+              <SelectableListItem
+                key={channel.id}
+                itemId={channel.id}
+                onEnter={() => handleMove(channel.id)}
+              >
+                <SidePanelMoveAiChatToChannelItem
+                  id={channel.id}
+                  icon={
+                    <AiChatChannelIcon
+                      channel={channel}
+                      size={theme.icon.size.md}
+                    />
+                  }
+                  label={channel.name}
+                  isCurrent={channel.id === currentChannelId}
+                  onSelect={() => handleMove(channel.id)}
+                />
+              </SelectableListItem>
+            ))}
+          </SidePanelGroup>
+        )}
       </SidePanelList>
     </>
   );

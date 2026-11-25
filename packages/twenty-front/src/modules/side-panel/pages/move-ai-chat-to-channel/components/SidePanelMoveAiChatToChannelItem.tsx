@@ -2,6 +2,7 @@ import { type ReactNode } from 'react';
 import { ListItemButton } from 'twenty-ui/components/navigation';
 
 import { useSidePanelListItemFocus } from '@/side-panel/hooks/useSidePanelListItemFocus';
+import { ListItemIconContainer } from '@/ui/navigation/list-item/components/ListItemIconContainer';
 
 type SidePanelMoveAiChatToChannelItemProps = {
   id: string;
@@ -27,7 +28,7 @@ export const SidePanelMoveAiChatToChannelItem = ({
       indicator="check"
       selected={isCurrent}
       focused={isSelectedItemId}
-      startIcon={icon}
+      startIcon={<ListItemIconContainer>{icon}</ListItemIconContainer>}
       role="option"
       aria-selected={isCurrent}
       onClick={onSelect}
