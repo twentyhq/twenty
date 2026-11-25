@@ -1077,6 +1077,42 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     engineComponentKey: EngineComponentKey.MANAGE_AI_CHAT_PARTICIPANTS,
     hotKeys: null,
   },
+  moveAiChatToChannel: {
+    universalIdentifier: 'c92cf036-d777-4446-ad20-5092df86a21a',
+    label: i18nLabel(
+      msg({ message: `Move to channel`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconFolderSymlink',
+    isPinned: false,
+    position: 80.6,
+    shortLabel: null,
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'numberOfSelectedRecords == 1 and permissionFlags.AI and featureFlags.IS_AI_CHAT_INBOX_ENABLED and noneDefined(selectedRecords, "deletedAt") and noneEquals(selectedRecords, "conversationType", "DIRECT_MESSAGE") and noneEquals(selectedRecords, "recordPermissions.canUpdate", false)',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.MOVE_AI_CHAT_TO_CHANNEL,
+    hotKeys: null,
+  },
+  linkAiChatToRecords: {
+    universalIdentifier: 'bed45565-a86a-44f6-a3bc-536de5e79107',
+    label: i18nLabel(
+      msg({ message: `Link to record`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconLink',
+    isPinned: false,
+    position: 80.7,
+    shortLabel: null,
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'numberOfSelectedRecords == 1 and permissionFlags.AI and featureFlags.IS_AI_CHAT_INBOX_ENABLED and noneDefined(selectedRecords, "deletedAt") and noneEquals(selectedRecords, "conversationType", "DIRECT_MESSAGE") and noneEquals(selectedRecords, "recordPermissions.canUpdate", false)',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.LINK_AI_CHAT_TO_RECORDS,
+    hotKeys: null,
+  },
   // Chats have their own Share item; it is a system object, so this one never shows there
   shareAnyRecord: {
     universalIdentifier: '1e703e2c-9f3a-4a23-8448-107b01be509c',

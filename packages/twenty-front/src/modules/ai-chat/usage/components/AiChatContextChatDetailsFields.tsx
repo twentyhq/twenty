@@ -70,7 +70,7 @@ export const AiChatContextChatDetailsFields = ({
   const { isAvailable: areRecordTargetsAvailable, targetRecords } =
     useAiChatThreadRecordTargets({
       threadId: thread.id,
-      recordPickerInstanceId: `ai-chat-context-card-${thread.id}`,
+      instanceId: `ai-chat-context-card-${thread.id}`,
     });
   const { openRecordTarget } = useAiChatTargetNavigation();
 
