@@ -165,6 +165,7 @@ const EditableAiChatEditorSection = () => {
   const composer = (
     <StyledInputBox isMobile={isMobile}>
       <AiChatComposerQuote />
+      {!isDirectMessage && <AiChatComposerAttachmentPreviews />}
       <StyledEditorWrapper isMobile={isMobile}>
         <EditorContent editor={editor} />
       </StyledEditorWrapper>
@@ -218,7 +219,6 @@ const EditableAiChatEditorSection = () => {
         hasPageContentInset={hasPageContentInset}
       >
         {isComposerCentered && <AiChatEmptyState isCentered />}
-        {!isDirectMessage && <AiChatComposerAttachmentPreviews />}
         {hasNoEnabledModels && !isDirectMessage && (
           <AiChatInlineBanner>{t`No AI provider is configured on this instance.`}</AiChatInlineBanner>
         )}

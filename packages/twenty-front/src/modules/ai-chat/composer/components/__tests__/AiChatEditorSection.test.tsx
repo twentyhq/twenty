@@ -1,6 +1,7 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { Document } from '@tiptap/extension-document';
 import { Paragraph } from '@tiptap/extension-paragraph';
 import { Text } from '@tiptap/extension-text';
@@ -9,6 +10,8 @@ import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
 import { AiChatEditorSection } from '@/ai-chat/composer/components/AiChatEditorSection';
+import { aiChatComposerAttachmentsFamilyState } from '@/ai-chat/composer/states/aiChatComposerAttachmentsFamilyState';
+import { type AiChatFileUIPart } from '@/ai-chat/types/AiChatFileUIPart';
 import { AiChatTestInstance } from '@/ai-chat/testing/AiChatTestInstance';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
@@ -31,11 +34,26 @@ jest.mock('@/ai-chat/tool-calls/components/AiChatPendingAskGate', () => ({
 
 const objectMetadataItems = getTestEnrichedObjectMetadataItemsMock();
 
-const renderEditorSection = (threadId: string) => {
+const PETS_CSV_ATTACHMENT: AiChatFileUIPart = {
+  type: 'file',
+  mediaType: 'text/csv',
+  filename: 'Pets.csv',
+  url: 'https://example.com/pets.csv',
+  fileId: 'pets-file-id',
+};
+
+const renderEditorSection = (
+  threadId: string,
+  attachments: AiChatFileUIPart[] = [],
+) => {
   const MetadataAndApolloWrapper = getJestMetadataAndApolloMocksWrapper({
     objectMetadataItems,
     onInitializeJotaiStore: (store) => {
       store.set(newAiChatThreadIdState.atom, NEW_CHAT_THREAD_ID);
+      store.set(
+        aiChatComposerAttachmentsFamilyState.atomFamily({ threadId }),
+        attachments,
+      );
     },
   });
 
@@ -68,6 +86,25 @@ describe('AiChatEditorSection', () => {
     renderEditorSection(NEW_CHAT_THREAD_ID);
 
     expect(screen.getByRole('button', { name: /send/i })).toBeInTheDocument();
+  });
+
+  it('shows attachments above the message editor and removes them', async () => {
+    renderEditorSection(NEW_CHAT_THREAD_ID, [PETS_CSV_ATTACHMENT]);
+
+    const attachment = screen.getByRole('button', { name: 'Pets.csv' });
+
+    expect(
+      attachment.compareDocumentPosition(editor.view.dom) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Remove Pets.csv' }),
+    );
+
+    expect(
+      screen.queryByRole('button', { name: 'Pets.csv' }),
+    ).not.toBeInTheDocument();
   });
 
   it('waits for the permissions of an existing chat', () => {
