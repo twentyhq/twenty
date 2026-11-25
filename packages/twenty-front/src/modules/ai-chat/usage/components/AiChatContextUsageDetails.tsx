@@ -1,6 +1,5 @@
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
 import { formatAiChatTokens } from '@/ai-chat/usage/utils/formatAiChatTokens';
-import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { MetricRow } from 'twenty-ui/components/data-display';
@@ -11,26 +10,12 @@ import {
   IconCoins,
   IconHistory,
 } from 'twenty-ui/icon';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+import { useTheme } from 'twenty-ui/theme';
 
+import { AiChatContextCardSection } from '@/ai-chat/usage/components/AiChatContextCardSection';
 import { aiChatThreadUsageFamilySelector } from '@/ai-chat/usage/states/selectors/aiChatThreadUsageFamilySelector';
 import { formatNumber } from '@/localization/utils/formatNumber';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-
-const StyledSection = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledSectionTitle = styled.span`
-  align-items: center;
-  color: ${themeCssVariables.font.color.secondary};
-  display: flex;
-  font-size: ${themeCssVariables.font.size.xs};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  height: 20px;
-`;
 
 export const AiChatContextUsageDetails = () => {
   const { t } = useLingui();
@@ -53,8 +38,7 @@ export const AiChatContextUsageDetails = () => {
       {isDefined(lastMessage) && (
         <>
           <Separator />
-          <StyledSection>
-            <StyledSectionTitle>{t`Last message`}</StyledSectionTitle>
+          <AiChatContextCardSection title={t`Last message`}>
             <MetricRow
               startIcon={<IconArrowUp size={theme.icon.size.sm} />}
               value={formatAiChatTokens(lastMessage.inputTokens)}
@@ -82,12 +66,11 @@ export const AiChatContextUsageDetails = () => {
             >
               {t`Credits`}
             </MetricRow>
-          </StyledSection>
+          </AiChatContextCardSection>
         </>
       )}
       <Separator />
-      <StyledSection>
-        <StyledSectionTitle>{t`Conversation`}</StyledSectionTitle>
+      <AiChatContextCardSection title={t`Conversation`}>
         <MetricRow
           startIcon={<IconArrowUp size={theme.icon.size.sm} />}
           value={formatAiChatTokens(aiChatThreadUsage.inputTokens)}
@@ -115,7 +98,7 @@ export const AiChatContextUsageDetails = () => {
         >
           {t`Credits`}
         </MetricRow>
-      </StyledSection>
+      </AiChatContextCardSection>
     </>
   );
 };

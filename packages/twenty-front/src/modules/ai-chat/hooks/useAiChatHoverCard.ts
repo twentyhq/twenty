@@ -19,18 +19,24 @@ type UseAiChatHoverCardParams = {
   placement: Placement;
   role: 'tooltip' | 'dialog';
   onOpen?: () => void;
+  shouldStayOpen?: boolean;
 };
 
 export const useAiChatHoverCard = ({
   placement,
   role,
   onOpen,
+  shouldStayOpen,
 }: UseAiChatHoverCardParams) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const { refs, floatingStyles, context } = useFloating({
     open: isOpen,
     onOpenChange: (open) => {
+      if (!open && shouldStayOpen === true) {
+        return;
+      }
+
       setIsOpen(open);
 
       if (open) {
@@ -52,6 +58,7 @@ export const useAiChatHoverCard = ({
 
   return {
     isOpen,
+    close: () => setIsOpen(false),
     context,
     refs,
     floatingStyles,
