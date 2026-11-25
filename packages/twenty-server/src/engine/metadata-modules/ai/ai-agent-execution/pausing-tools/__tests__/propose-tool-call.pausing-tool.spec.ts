@@ -1,4 +1,5 @@
 import { PUBLISH_FRONT_COMPONENT_TOOL_NAME } from 'twenty-shared/ai';
+import { isDefined } from 'twenty-shared/utils';
 
 import { PROPOSE_TOOL_CALL_PAUSING_TOOL } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/propose-tool-call.pausing-tool';
 
@@ -30,7 +31,7 @@ const parseCall = (pendingToolOutput: unknown = PENDING_OUTPUT) => {
     pendingToolOutput,
   );
 
-  if (call === null) {
+  if (!isDefined(call)) {
     throw new Error('Expected the call to parse');
   }
 
@@ -311,7 +312,7 @@ describe('PROPOSE_TOOL_CALL_PAUSING_TOOL', () => {
         },
       });
 
-      if (call === null) {
+      if (!isDefined(call)) {
         throw new Error('Expected the call to parse');
       }
 
@@ -399,7 +400,7 @@ describe('PROPOSE_TOOL_CALL_PAUSING_TOOL', () => {
         },
       });
 
-      if (call === null) {
+      if (!isDefined(call)) {
         throw new Error('Expected the call to parse');
       }
 

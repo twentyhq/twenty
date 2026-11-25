@@ -70,7 +70,7 @@ const findTool = async (toolName: string) =>
       name: 'app_tool_accept_cal_booking',
       label: 'accept-cal-booking',
       description: '',
-      category: 'LOGIC_FUNCTION' as ToolIndexEntry['category'],
+      category: ToolCategory.LOGIC_FUNCTION,
       executionRef: { kind: 'logic_function', logicFunctionId: 'lf-accept' },
       approval: {
         template: 'generic',

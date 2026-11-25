@@ -2,7 +2,6 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type DynamicToolUIPart, type ToolUIPart } from 'ai';
 import {
-  getApprovedToolCallLabel,
   type ProposeToolCallToolResult,
   type ProposeToolCallToolStatus,
 } from 'twenty-shared/ai';
@@ -12,6 +11,7 @@ import { IconMail, IconTool } from 'twenty-ui/icon';
 import { AiChatAskStatusRow } from '@/ai-chat/tool-calls/components/AiChatAskStatusRow';
 import { StyledAiChatAskStatusDetail } from '@/ai-chat/tool-calls/components/StyledAiChatAskStatusDetail';
 import { useIsAiChatToolCallAskedInComposer } from '@/ai-chat/tool-calls/hooks/useIsAiChatToolCallAskedInComposer';
+import { getProposeToolCallChosenLabel } from '@/ai-chat/tool-calls/utils/getProposeToolCallChosenLabel';
 import { TextWithChatReferences } from '@/ai-chat/message-content/components/TextWithChatReferences';
 
 export const AiChatToolCallApprovalStatusRenderer = ({
@@ -49,20 +49,11 @@ export const AiChatToolCallApprovalStatusRenderer = ({
     conflict: t`Not run: the record changed since it was proposed`,
     skipped: t`Skipped`,
   };
-  const chosenLabel =
-    status === 'approved' && isDefined(result)
-      ? getApprovedToolCallLabel({
-          labels: result.proposal.labels,
-          toolName: result.proposal.toolName,
-        })
-      : status === 'rejected'
-        ? result?.proposal.labels?.reject
-        : undefined;
-  const message = hasFailedToPropose
-    ? t`Could not be proposed`
-    : isNonEmptyString(chosenLabel)
-      ? t`Chose ${chosenLabel}`
-      : messageByStatus[status];
+  const chosenLabel = getProposeToolCallChosenLabel(result);
+  const statusMessage = isNonEmptyString(chosenLabel)
+    ? t`Chose ${chosenLabel}`
+    : messageByStatus[status];
+  const message = hasFailedToPropose ? t`Could not be proposed` : statusMessage;
 
   const summary = result?.proposal.summary;
   const detailByStatus: Record<ProposeToolCallToolStatus, string | undefined> =

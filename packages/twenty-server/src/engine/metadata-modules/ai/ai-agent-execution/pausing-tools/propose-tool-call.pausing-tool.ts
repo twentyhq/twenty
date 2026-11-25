@@ -173,11 +173,15 @@ const buildApprovedArguments = (
   return toolArguments;
 };
 
-const buildApprovalAnswerText = (
-  proposal: ProposedToolCall,
-  approvedToolName: string,
-  feedback: string | undefined,
-): string => {
+const buildApprovalAnswerText = ({
+  proposal,
+  approvedToolName,
+  feedback,
+}: {
+  proposal: ProposedToolCall;
+  approvedToolName: string;
+  feedback: string | undefined;
+}): string => {
   const approvedLabel = getApprovedToolCallLabel({
     labels: proposal.labels,
     toolName: approvedToolName,
@@ -193,10 +197,13 @@ const buildApprovalAnswerText = (
     : `${approval}.`;
 };
 
-const buildRejectionAnswerText = (
-  proposal: ProposedToolCall,
-  feedback: string | undefined,
-): string => {
+const buildRejectionAnswerText = ({
+  proposal,
+  feedback,
+}: {
+  proposal: ProposedToolCall;
+  feedback: string | undefined;
+}): string => {
   const rejectLabel = proposal.labels?.reject;
   const rejection = isNonEmptyString(rejectLabel)
     ? `${rejectLabel}: "${proposal.summary}"`
@@ -234,18 +241,18 @@ export const PROPOSE_TOOL_CALL_PAUSING_TOOL = definePausingTool<
             ...(hasFeedback ? { feedback } : {}),
           } satisfies ProposeToolCallToolResult,
         },
-        answerText: buildRejectionAnswerText(proposal, feedback),
+        answerText: buildRejectionAnswerText({ proposal, feedback }),
       };
     }
 
     const approvedToolName = isReadable
       ? (output.toolName ?? proposal.toolName)
       : proposal.toolName;
-    const answerText = buildApprovalAnswerText(
+    const answerText = buildApprovalAnswerText({
       proposal,
       approvedToolName,
       feedback,
-    );
+    });
 
     // feedback given with an approval steers what the agent does next, so it travels with every outcome
     const buildApprovalCompletion = ({
