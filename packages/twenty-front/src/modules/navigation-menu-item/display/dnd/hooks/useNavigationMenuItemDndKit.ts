@@ -118,15 +118,19 @@ export const useNavigationMenuItemDndKit = (
       droppableId,
     });
 
-  const buildDropResult = (
+  const buildDropResult = ({
+    source,
+    target,
+    resolved,
+  }: {
     source:
       | DragOverPayload['operation']['source']
-      | DragEndPayload['operation']['source'],
+      | DragEndPayload['operation']['source'];
     target:
       | DragOverPayload['operation']['target']
-      | DragEndPayload['operation']['target'],
-    resolved: SortableTargetDestination | null,
-  ): NavigationMenuItemDropResult | null => {
+      | DragEndPayload['operation']['target'];
+    resolved: SortableTargetDestination | null;
+  }): NavigationMenuItemDropResult | null => {
     const draggableId = String(source?.id);
 
     if (
@@ -208,7 +212,7 @@ export const useNavigationMenuItemDndKit = (
       target !== null && isSortable(target)
         ? resolved.dropTargetId
         : resolved.effectiveDropTargetId;
-    const dropResult = buildDropResult(source, target, resolved);
+    const dropResult = buildDropResult({ source, target, resolved });
     const isDropAllowed =
       isDefined(dropResult) &&
       isDropResultAccepted(dropResult) &&
@@ -229,11 +233,11 @@ export const useNavigationMenuItemDndKit = (
     setActiveDropTargetId(null);
     setForbiddenDropTargetId(null);
 
-    const dropResult = buildDropResult(
+    const dropResult = buildDropResult({
       source,
       target,
-      resolveDropTarget(target, getNavItemById, sectionType),
-    );
+      resolved: resolveDropTarget(target, getNavItemById, sectionType),
+    });
 
     if (!isDefined(dropResult) || !isDropResultAccepted(dropResult)) {
       return;
