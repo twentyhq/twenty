@@ -31,6 +31,7 @@
     "twenty-sdk": "^2.60.0",
     "twenty-ui": "^2.60.0",
     "typescript": "^5.9.3",
+    "vite": "^7.0.0",
     "vite-tsconfig-paths": "^4.2.1",
     "vitest": "^5.0.5"
   }
