@@ -52,12 +52,6 @@ const findInboxThreadViews = async (objectMetadataId: string) => {
   return data.getViews;
 };
 
-const INBOX_CHANNEL_PRESET_FILTERS: (ViewPresetFilter | null)[] = [
-  ViewPresetFilter.INBOX_CHANNEL_OPEN,
-  ViewPresetFilter.INBOX_CHANNEL_SNOOZED,
-  ViewPresetFilter.INBOX_CHANNEL_DONE,
-];
-
 const findInboxChannelViews = async ({
   objectMetadataId,
   channelId,
@@ -81,6 +75,11 @@ const EXPECTED_INBOX_CHANNEL_VIEWS = [
     name: 'Open',
     type: ViewType.INBOX,
     presetFilter: ViewPresetFilter.INBOX_CHANNEL_OPEN,
+  },
+  {
+    name: 'Mentions',
+    type: ViewType.INBOX,
+    presetFilter: ViewPresetFilter.INBOX_MENTIONS,
   },
   {
     name: 'Snoozed',
@@ -115,12 +114,19 @@ describe('Inbox thread views', () => {
       objectMetadataId: inboxThreadObjectMetadataId,
       fieldName: 'assignee',
     });
+    const channelFieldMetadataId = await findFieldMetadataIdByName({
+      objectMetadataId: inboxThreadObjectMetadataId,
+      fieldName: 'channelId',
+    });
 
     expect(
       inboxThreadViews
         .filter(
-          ({ presetFilter }) =>
-            !INBOX_CHANNEL_PRESET_FILTERS.includes(presetFilter),
+          ({ viewFilters }) =>
+            !viewFilters.some(
+              ({ fieldMetadataId }) =>
+                fieldMetadataId === channelFieldMetadataId,
+            ),
         )
         .sort((viewA, viewB) => viewA.position - viewB.position)
         .map(({ name, type, presetFilter, viewFilters }) => ({

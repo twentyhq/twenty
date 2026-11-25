@@ -7,6 +7,11 @@ export const AGENT_CHAT_CHANNEL_VIEW_DEFINITIONS = [
     presetFilter: ViewPresetFilter.INBOX_CHANNEL_OPEN,
   },
   {
+    name: 'Mentions',
+    icon: 'IconAt',
+    presetFilter: ViewPresetFilter.INBOX_MENTIONS,
+  },
+  {
     name: 'Snoozed',
     icon: 'IconZzz',
     presetFilter: ViewPresetFilter.INBOX_CHANNEL_SNOOZED,

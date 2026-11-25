@@ -42,6 +42,10 @@ describe('buildMissingAgentChatChannelViewsToCreate', () => {
       })),
     ).toEqual([
       {
+        presetFilter: ViewPresetFilter.INBOX_MENTIONS,
+        channelFilterValue: JSON.stringify([CHANNEL_WITH_OPEN_VIEW_ID]),
+      },
+      {
         presetFilter: ViewPresetFilter.INBOX_CHANNEL_SNOOZED,
         channelFilterValue: JSON.stringify([CHANNEL_WITH_OPEN_VIEW_ID]),
       },
@@ -51,6 +55,10 @@ describe('buildMissingAgentChatChannelViewsToCreate', () => {
       },
       {
         presetFilter: ViewPresetFilter.INBOX_CHANNEL_OPEN,
+        channelFilterValue: JSON.stringify([CHANNEL_WITHOUT_VIEW_ID]),
+      },
+      {
+        presetFilter: ViewPresetFilter.INBOX_MENTIONS,
         channelFilterValue: JSON.stringify([CHANNEL_WITHOUT_VIEW_ID]),
       },
       {

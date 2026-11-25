@@ -24,7 +24,7 @@ const buildChannelViewFilter = ({
 });
 
 describe('findAgentChatChannelFlatViews', () => {
-  it('should only find the views that carry a channel preset and a top-level filter on that single channel', () => {
+  it('should only find the views that carry a channel view preset and a top-level filter on that single channel', () => {
     const channelViews = findAgentChatChannelFlatViews({
       channelId: CHANNEL_ID,
       flatViewMaps: {
@@ -32,6 +32,10 @@ describe('findAgentChatChannelFlatViews', () => {
           channelOpenView: {
             name: 'Channel open view',
             presetFilter: ViewPresetFilter.INBOX_CHANNEL_OPEN,
+          },
+          channelMentionsView: {
+            name: 'Channel mentions view',
+            presetFilter: ViewPresetFilter.INBOX_MENTIONS,
           },
           personalViewFilteredOnTheChannel: {
             name: 'Personal view filtered on the channel',
@@ -59,6 +63,10 @@ describe('findAgentChatChannelFlatViews', () => {
         byUniversalIdentifier: {
           channelOpenViewFilter: buildChannelViewFilter({
             viewUniversalIdentifier: 'channelOpenView',
+            channelIds: [CHANNEL_ID],
+          }),
+          channelMentionsViewFilter: buildChannelViewFilter({
+            viewUniversalIdentifier: 'channelMentionsView',
             channelIds: [CHANNEL_ID],
           }),
           personalViewFilter: buildChannelViewFilter({
@@ -90,6 +98,10 @@ describe('findAgentChatChannelFlatViews', () => {
       {
         name: 'Channel open view',
         presetFilter: ViewPresetFilter.INBOX_CHANNEL_OPEN,
+      },
+      {
+        name: 'Channel mentions view',
+        presetFilter: ViewPresetFilter.INBOX_MENTIONS,
       },
     ]);
   });
