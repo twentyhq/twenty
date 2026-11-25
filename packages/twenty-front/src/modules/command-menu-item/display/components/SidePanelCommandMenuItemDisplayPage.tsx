@@ -1,4 +1,5 @@
 import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
+import { COLLAPSIBLE_COMMAND_MENU_ITEM_SECTIONS } from '@/command-menu-item/constants/CollapsibleCommandMenuItemSections';
 import { COMMAND_MENU_ASK_AI_FALLBACK_ITEM_ID } from '@/command-menu-item/constants/CommandMenuAskAiFallbackItemId';
 import { COMMAND_MENU_INLINE_SEARCH_RECORDS_LIMIT } from '@/command-menu-item/constants/CommandMenuInlineSearchRecordsLimit';
 import { COMMAND_MENU_ITEM_SECTIONS_IN_DISPLAY_ORDER } from '@/command-menu-item/constants/CommandMenuItemSectionsInDisplayOrder';
@@ -9,24 +10,15 @@ import { CommandMenuAskAiFallbackItem } from '@/command-menu-item/display/compon
 import { CommandMenuItemRenderer } from '@/command-menu-item/display/components/CommandMenuItemRenderer';
 import { CommandMenuItemSectionGroup } from '@/command-menu-item/display/components/CommandMenuItemSectionGroup';
 import { useCommandMenuAppActions } from '@/command-menu-item/display/hooks/useCommandMenuAppActions';
-import { useCommandMenuCollapsibleSectionHotkeys } from '@/command-menu-item/display/hooks/useCommandMenuCollapsibleSectionHotkeys';
 import { useCommandMenuItemCurrentViewSectionContext } from '@/command-menu-item/display/hooks/useCommandMenuItemCurrentViewSectionContext';
 import { useCommandMenuItemObjectSectionContext } from '@/command-menu-item/display/hooks/useCommandMenuItemObjectSectionContext';
 import { useCommandMenuItemSelectionSectionContext } from '@/command-menu-item/display/hooks/useCommandMenuItemSelectionSectionContext';
 import { useCommandMenuItemWorkspaceSectionContext } from '@/command-menu-item/display/hooks/useCommandMenuItemWorkspaceSectionContext';
 import { interpolateCommandMenuItemFields } from '@/command-menu-item/display/utils/interpolateCommandMenuItemFields';
-import { type CommandMenuCollapsibleSectionNavigation } from '@/command-menu-item/types/CommandMenuCollapsibleSectionNavigation';
 import { type CommandMenuItemSection } from '@/command-menu-item/types/CommandMenuItemSection';
-import { type CommandMenuItemSectionsToggleState } from '@/command-menu-item/types/CommandMenuItemSectionsToggleState';
-import { doesSearchReadAsQuestion } from '@/command-menu-item/utils/doesSearchReadAsQuestion';
-import { getCommandMenuDefaultSelectedItemId } from '@/command-menu-item/utils/getCommandMenuDefaultSelectedItemId';
-import { getCommandMenuItemSectionHeaderItemId } from '@/command-menu-item/utils/getCommandMenuItemSectionHeaderItemId';
 import { getCommandMenuItemSectionPreview } from '@/command-menu-item/utils/getCommandMenuItemSectionPreview';
 import { groupCommandMenuItems } from '@/command-menu-item/utils/groupCommandMenuItems';
 import { groupCommandMenuItemsBySection } from '@/command-menu-item/utils/groupCommandMenuItemsBySection';
-import { isCollapsibleCommandMenuItemSection } from '@/command-menu-item/utils/isCollapsibleCommandMenuItemSection';
-import { isCommandMenuItemSectionOpen } from '@/command-menu-item/utils/isCommandMenuItemSectionOpen';
-import { toggleCommandMenuItemSection } from '@/command-menu-item/utils/toggleCommandMenuItemSection';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectsCommands } from '@/object-core/commands/components/CoreObjectsCommands';
@@ -43,7 +35,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useCallback, useContext, useMemo, useState } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -81,10 +73,23 @@ const SECTION_ICONS: Record<DisplayedCommandMenuItemSection, IconComponent> = {
   SEARCH: IconSearch,
 };
 
-const INITIAL_SECTIONS_TOGGLE_STATE: CommandMenuItemSectionsToggleState = {
-  openSectionsWhileIdle: [],
-  closedSectionsWhileSearching: { search: '', sections: [] },
+type SectionsToggleState = {
+  search: string;
+  isOpenBySection: Partial<Record<CommandMenuItemSection, boolean>>;
 };
+
+const INITIAL_SECTIONS_TOGGLE_STATE: SectionsToggleState = {
+  search: '',
+  isOpenBySection: {},
+};
+
+const COLLAPSIBLE_SECTIONS: readonly CommandMenuItemSection[] =
+  COLLAPSIBLE_COMMAND_MENU_ITEM_SECTIONS;
+
+const MINIMUM_QUESTION_WORD_COUNT = 4;
+
+const getSectionHeaderItemId = (section: CommandMenuItemSection) =>
+  `command-menu-section-header-${section}`;
 
 export const SidePanelCommandMenuItemDisplayPage = () => {
   const { t } = useLingui();
@@ -125,7 +130,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     isWaitingForDebouncedSearch,
     error: searchRecordsError,
   } = useSidePanelSearchRecords({
-    skip: !isInlineRecordSearchEnabled,
+    shouldSkip: !isInlineRecordSearchEnabled,
     shouldSkipEmptySearch: true,
     shouldIgnoreObjectFilter: true,
     limit: COMMAND_MENU_INLINE_SEARCH_RECORDS_LIMIT + 1,
@@ -193,32 +198,36 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     !isSearchingRecords &&
     searchResultItems.length === 0;
 
-  const isSectionOpen = (section: CommandMenuItemSection) =>
-    isCommandMenuItemSectionOpen({
-      section,
-      search: sidePanelSearch,
-      toggleState: sectionsToggleState,
-    });
+  const isSectionOpen = (section: CommandMenuItemSection) => {
+    if (!COLLAPSIBLE_SECTIONS.includes(section)) {
+      return true;
+    }
 
-  const setSectionOpen = useCallback(
-    ({
-      section,
-      isOpen,
-    }: {
-      section: CommandMenuItemSection;
-      isOpen: boolean;
-    }) => {
-      setSectionsToggleState((toggleState) =>
-        toggleCommandMenuItemSection({
-          section,
-          isOpen,
-          search: sidePanelSearch,
-          toggleState,
-        }),
-      );
-    },
-    [sidePanelSearch],
-  );
+    const isOpenForSearch =
+      sectionsToggleState.search === trimmedSidePanelSearch
+        ? sectionsToggleState.isOpenBySection[section]
+        : undefined;
+
+    return isOpenForSearch ?? isSearchActive;
+  };
+
+  const setSectionOpen = ({
+    section,
+    isOpen,
+  }: {
+    section: CommandMenuItemSection;
+    isOpen: boolean;
+  }) => {
+    setSectionsToggleState((toggleState) => ({
+      search: trimmedSidePanelSearch,
+      isOpenBySection: {
+        ...(toggleState.search === trimmedSidePanelSearch
+          ? toggleState.isOpenBySection
+          : {}),
+        [section]: isOpen,
+      },
+    }));
+  };
 
   const getSectionHeading = (section: DisplayedCommandMenuItemSection) => {
     switch (section) {
@@ -329,34 +338,15 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
   const displayedSections =
     COMMAND_MENU_ITEM_SECTIONS_IN_DISPLAY_ORDER.filter(isSectionDisplayed);
 
-  const collapsibleSections: CommandMenuCollapsibleSectionNavigation[] =
-    displayedSections
-      .filter(isCollapsibleCommandMenuItemSection)
-      .map((section) => {
-        const isOpen = isSectionOpen(section);
-
-        return {
-          section,
-          headerItemId: getCommandMenuItemSectionHeaderItemId(section),
-          isOpen,
-          itemIds: isOpen ? getSectionRowItemIds(section) : [],
-        };
-      });
-
-  useCommandMenuCollapsibleSectionHotkeys({
-    collapsibleSections,
-    setSectionOpen,
-  });
-
   const getSelectableSectionItemIds = (
     section: DisplayedCommandMenuItemSection,
   ) => {
-    if (!isCollapsibleCommandMenuItemSection(section)) {
+    if (!COLLAPSIBLE_SECTIONS.includes(section)) {
       return getSectionRowItemIds(section);
     }
 
     return [
-      getCommandMenuItemSectionHeaderItemId(section),
+      getSectionHeaderItemId(section),
       ...(isSectionOpen(section) ? getSectionRowItemIds(section) : []),
     ];
   };
@@ -371,17 +361,35 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
       isSectionOpen(section) ? getSectionRowItemIds(section) : [],
     )[0];
 
-  const defaultSelectedItemId = getCommandMenuDefaultSelectedItemId({
-    isSearchActive,
-    firstCommandItemId,
-    firstRecordItemId: isSearchingRecords
-      ? undefined
-      : inlineSearchResultItems[0]?.id,
-    askAiItemId: shouldDisplayAskAiPrompt
-      ? COMMAND_MENU_ASK_AI_FALLBACK_ITEM_ID
-      : undefined,
-    doesSearchReadAsQuestion: doesSearchReadAsQuestion(trimmedSidePanelSearch),
-  });
+  const firstRecordItemId = isSearchingRecords
+    ? undefined
+    : inlineSearchResultItems[0]?.id;
+
+  const doesSearchReadAsQuestion =
+    trimmedSidePanelSearch.endsWith('?') ||
+    trimmedSidePanelSearch.split(/\s+/).length >= MINIMUM_QUESTION_WORD_COUNT;
+
+  const getDefaultSelectedItemId = () => {
+    if (!isSearchActive) {
+      return undefined;
+    }
+
+    if (isDefined(firstCommandItemId)) {
+      return firstCommandItemId;
+    }
+
+    if (isDefined(firstRecordItemId)) {
+      return firstRecordItemId;
+    }
+
+    if (shouldDisplayAskAiPrompt && doesSearchReadAsQuestion) {
+      return COMMAND_MENU_ASK_AI_FALLBACK_ITEM_ID;
+    }
+
+    return null;
+  };
+
+  const defaultSelectedItemId = getDefaultSelectedItemId();
 
   const getSectionPreview = (section: DisplayedCommandMenuItemSection) =>
     getCommandMenuItemSectionPreview({
@@ -506,10 +514,9 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
               Icon={SECTION_ICONS[section]}
               context={getSectionContext(section)}
               collapsible={
-                isCollapsibleCommandMenuItemSection(section)
+                COLLAPSIBLE_SECTIONS.includes(section)
                   ? {
-                      headerItemId:
-                        getCommandMenuItemSectionHeaderItemId(section),
+                      headerItemId: getSectionHeaderItemId(section),
                       isOpen: isSectionOpen(section),
                       preview: getSectionPreview(section),
                       onToggle: () =>

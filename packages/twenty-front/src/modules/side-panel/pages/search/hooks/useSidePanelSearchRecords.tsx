@@ -11,14 +11,14 @@ import { useDebounce } from 'use-debounce';
 import { isNonEmptyString } from '@sniptt/guards';
 
 type UseSidePanelSearchRecordsParams = {
-  skip?: boolean;
+  shouldSkip?: boolean;
   shouldSkipEmptySearch?: boolean;
   shouldIgnoreObjectFilter?: boolean;
   limit?: number;
 };
 
 export const useSidePanelSearchRecords = ({
-  skip = false,
+  shouldSkip = false,
   shouldSkipEmptySearch = false,
   shouldIgnoreObjectFilter = false,
   limit,
@@ -48,7 +48,7 @@ export const useSidePanelSearchRecords = ({
     objectNameSingulars: includedObjectNameSingulars,
     searchInput: deferredSidePanelSearch,
     limit,
-    skip: skip || hasNoSearchableObject || isSkippedEmptySearch,
+    skip: shouldSkip || hasNoSearchableObject || isSkippedEmptySearch,
   });
 
   const isWaitingForDebouncedSearch =
