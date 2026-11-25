@@ -23,7 +23,9 @@ type TelegramUserLinksResponse = {
   pageInfo?: { hasNextPage?: boolean; endCursor?: string | null };
 };
 
-const fetchTelegramUserLinks = async (): Promise<TelegramUserLinkRecord[]> => {
+const fetchTelegramUserLinksOrThrow = async (): Promise<
+  TelegramUserLinkRecord[]
+> => {
   const records: TelegramUserLinkRecord[] = [];
   let startingAfter: string | undefined;
 
@@ -89,7 +91,7 @@ export const useTelegramUserLinks = () => {
     let isCancelled = false;
 
     Promise.all([
-      fetchTelegramUserLinks(),
+      fetchTelegramUserLinksOrThrow(),
       currentUserHasRolesPermission(),
       fetchCurrentWorkspaceMemberId(),
     ])

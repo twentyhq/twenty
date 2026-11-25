@@ -59,10 +59,8 @@ export const createCoreClientFake = ({
 
         return {
           telegramUserLinks: toConnection(
-            state.links.filter((link) =>
-              filter.every(
-                ([field, { eq }]) => link[field as keyof LinkRecord] === eq,
-              ),
+            state.links.filter((link: Record<string, unknown>) =>
+              filter.every(([field, { eq }]) => link[field] === eq),
             ),
           ),
         };
