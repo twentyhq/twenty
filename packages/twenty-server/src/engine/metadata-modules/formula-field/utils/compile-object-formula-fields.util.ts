@@ -11,30 +11,12 @@ import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/metadata-modules
 import { buildFormulaFieldDescriptorsFromFlatEntityMaps } from 'src/engine/metadata-modules/formula-field/utils/build-formula-field-descriptors-from-flat-entity-maps.util';
 import { buildFormulaSqlAggregationSourceResolver } from 'src/engine/metadata-modules/formula-field/utils/build-formula-sql-aggregation-source-resolver.util';
 import { buildFormulaSqlReferenceResolverFromDescriptors } from 'src/engine/metadata-modules/formula-field/utils/build-formula-sql-reference-resolver-from-descriptors.util';
-import {
-  type CompiledFormulaFieldColumn,
-  compileFormulaFieldColumns,
-} from 'src/engine/metadata-modules/formula-field/utils/compile-formula-field-columns.util';
+import { type CompiledFormulaField } from 'src/engine/metadata-modules/formula-field/types/compiled-formula-field.type';
+import { type CompiledObjectFormulaFields } from 'src/engine/metadata-modules/formula-field/types/compiled-object-formula-fields.type';
+import { compileFormulaFieldColumns } from 'src/engine/metadata-modules/formula-field/utils/compile-formula-field-columns.util';
 import { createFormulaLookupAliasAllocator } from 'src/engine/metadata-modules/formula-field/utils/create-formula-lookup-alias-allocator.util';
 import { COMPUTED_COLUMN_RECORD_ALIAS } from 'src/engine/twenty-orm/table-shape/constants/computed-column-record-alias.constant';
-import {
-  type WorkspaceComputedColumnShape,
-  type WorkspaceComputedLookupShape,
-} from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
-
-export type CompiledFormulaField = {
-  flatFieldMetadata: OrmFlatFieldMetadata;
-  isStored: boolean;
-  columns: CompiledFormulaFieldColumn[];
-  // Every field read, under the alias it is read through: the record, a lookup or an aggregate
-  dependencies: WorkspaceComputedColumnShape['dependencies'];
-};
-
-export type CompiledObjectFormulaFields = {
-  formulaFields: CompiledFormulaField[];
-  lookupShapes: WorkspaceComputedLookupShape[];
-};
 
 type CompileObjectFormulaFieldsArgs = {
   flatObjectMetadata: FlatObjectMetadata;
