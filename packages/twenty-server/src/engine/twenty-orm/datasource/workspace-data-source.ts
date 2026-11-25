@@ -325,7 +325,6 @@ export class WorkspaceDataSource {
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         schemaName: storedTableShape.schemaName,
-        tableName: storedTableShape.tableName,
       }),
     };
 
