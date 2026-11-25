@@ -54,7 +54,10 @@ const validateFormulaExpressionInputSchema = z.object({
   name: 'validate_formula_expression',
   isReadOnly: true,
   category: ToolCategory.METADATA,
-  accessPolicy: FIELD_METADATA_WRITE_ACCESS_POLICY,
+  accessPolicy: {
+    ...FIELD_METADATA_WRITE_ACCESS_POLICY,
+    requiredFeatureFlags: [FeatureFlagKey.IS_FORMULA_FIELD_ENABLED],
+  },
   icon: 'IconSettings',
   description:
     'Check a formula field expression against an object without saving anything, with the same checks as create_field_metadata. An invalid expression is rejected with the reason. A valid one returns its evaluation: QUERY_TIME is computed on every read, STORED (any formula that aggregates related records) is computed in the background and reads null until its backfill reaches each record.',

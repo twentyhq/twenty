@@ -57,5 +57,5 @@ export const fieldMetadataSettingsInputSchema = z
   .meta({ type: ['object', 'null'] })
   .optional()
   .describe(
-    'Field settings. On update they replace the existing settings, except formula, which is kept unless sent.',
+    'Field settings. On update they replace the existing settings: send formula again to keep it.',
   );

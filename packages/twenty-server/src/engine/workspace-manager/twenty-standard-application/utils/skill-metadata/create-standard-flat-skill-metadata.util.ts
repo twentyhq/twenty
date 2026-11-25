@@ -702,7 +702,7 @@ The expression is the amount in micros, and \`settings.formula.currencyCodeExpre
 
 ### Updating
 
-To change a formula, send \`settings.formula\` with the new expression. An update whose settings leave \`formula\` out keeps the existing formula.
+Settings are replaced whole on update: to change any other setting of a formula field, send \`settings.formula\` again with its expression, or the formula is removed. To change the formula, send the new expression.
 
 ## Best Practices
 
