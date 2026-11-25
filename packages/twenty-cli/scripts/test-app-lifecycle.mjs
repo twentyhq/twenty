@@ -64,7 +64,7 @@ await test(
       if (!allowFailure) assert.equal(result.ok, true, output.stdout);
       return result;
     };
-    const uninstall = async (appPath, { allowFailure = false } = {}) => {
+    const uninstall = async ({ appPath, allowFailure = false }) => {
       const deadline = Date.now() + DEFERRED_OPERATIONS_TIMEOUT_MS;
 
       for (;;) {
@@ -82,8 +82,9 @@ await test(
           continue;
         }
 
-        if (!allowFailure)
+        if (!allowFailure) {
           assert.equal(result.ok, true, JSON.stringify(result));
+        }
 
         return result;
       }
@@ -93,7 +94,7 @@ await test(
         const failures = [];
         for (const appPath of installedApps) {
           try {
-            const result = await uninstall(appPath, { allowFailure: true });
+            const result = await uninstall({ appPath, allowFailure: true });
             assert.ok(
               result.ok || result.error.code === 'APP_NOT_INSTALLED',
               JSON.stringify(result),
@@ -285,7 +286,7 @@ await test(
         const applied = await cli(appPath, ['apply', '--create', '--yes']);
         const identifier = applied.data.application.universalIdentifier;
         await assertInstalled(identifier, true);
-        await uninstall(appPath);
+        await uninstall({ appPath });
         installedApps.delete(appPath);
         await assertInstalled(identifier, false);
         installedApps.add(appPath);
