@@ -287,7 +287,6 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
 
   const hasMatchingCommand = COMMAND_MENU_ITEM_SECTIONS_IN_DISPLAY_ORDER.some(
     (section) =>
-      section !== 'ASK_AI' &&
       section !== 'SEARCH' &&
       (commandMenuItemsBySection[section].length > 0 ||
         getSectionExtraItemIds(section).length > 0),
@@ -356,10 +355,8 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
   );
 
   const firstCommandItemId = displayedSections
-    .filter((section) => section !== 'ASK_AI' && section !== 'SEARCH')
-    .flatMap((section) =>
-      isSectionOpen(section) ? getSectionRowItemIds(section) : [],
-    )[0];
+    .filter((section) => section !== 'SEARCH' && isSectionOpen(section))
+    .flatMap(getSectionCommandItemIds)[0];
 
   const firstRecordItemId = isSearchingRecords
     ? undefined
