@@ -6,9 +6,9 @@ import { updateOneOperation } from 'test/integration/graphql/utils/update-one-op
 import { groupByOperationFactory } from 'test/integration/graphql/utils/group-by-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
-import { upsertFieldPermissions } from 'test/integration/metadata/suites/field-permission/utils/upsert-field-permissions.util';
+import { upsertFieldPermissions as upsertFieldPermissionsWithoutWaitingForJobs } from 'test/integration/metadata/suites/field-permission/utils/upsert-field-permissions.util';
 import { revokeObjectRecordsPermissions } from 'test/integration/metadata/suites/object-permission/utils/revoke-object-records-permissions.util';
-import { upsertRowLevelPermissionRules } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-rules.util';
+import { upsertRowLevelPermissionRules as upsertRowLevelPermissionRulesWithoutWaitingForJobs } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-rules.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
@@ -20,6 +20,7 @@ import { removeRecordShareOperationFactory } from 'test/integration/permissions/
 import { setRecordShareOperationFactory } from 'test/integration/permissions/utils/set-record-share-operation-factory.util';
 import { findFieldMetadataIdByName } from 'test/integration/utils/find-field-metadata-id-by-name.util';
 import { findObjectMetadataIdByName } from 'test/integration/utils/find-object-metadata-id-by-name.util';
+import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import {
   FeatureFlagKey,
   RecordShareAccessLevel,
@@ -29,6 +30,28 @@ import {
 import { v4 } from 'uuid';
 
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
+
+const upsertFieldPermissions = async (
+  ...args: Parameters<typeof upsertFieldPermissionsWithoutWaitingForJobs>
+) => {
+  const result = await upsertFieldPermissionsWithoutWaitingForJobs(...args);
+
+  await waitForAllJobsToFinish();
+
+  return result;
+};
+
+const upsertRowLevelPermissionRules = async (
+  ...args: Parameters<typeof upsertRowLevelPermissionRulesWithoutWaitingForJobs>
+) => {
+  const result = await upsertRowLevelPermissionRulesWithoutWaitingForJobs(
+    ...args,
+  );
+
+  await waitForAllJobsToFinish();
+
+  return result;
+};
 
 describe('field permissions on an RLS rule (integration)', () => {
   let objectMetadataId: string;

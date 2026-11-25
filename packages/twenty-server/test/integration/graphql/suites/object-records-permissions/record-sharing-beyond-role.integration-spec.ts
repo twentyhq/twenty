@@ -23,11 +23,12 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { upsertObjectPermissions } from 'test/integration/metadata/suites/object-permission/utils/upsert-object-permissions.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
-import { upsertRowLevelPermissionRules } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-rules.util';
+import { upsertRowLevelPermissionRules as upsertRowLevelPermissionRulesWithoutWaitingForJobs } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-rules.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { resolveWorkspaceMemberAuthContext } from 'test/integration/utils/resolve-workspace-member-auth-context.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 
 import { type RecordSharePrincipalInput } from 'src/engine/permissions/record-share/dtos/record-sharing.dto';
 import { type PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
@@ -54,6 +55,18 @@ const SET_PRIVATE = parse(
 const READ_SHARING = parse(
   `query RecordSharing($target: RecordTargetInput!) { recordSharing(target: $target) { canManageSharing permissions { canRead canUpdate canDelete } shares { principalId } } }`,
 );
+
+const upsertRowLevelPermissionRules = async (
+  ...args: Parameters<typeof upsertRowLevelPermissionRulesWithoutWaitingForJobs>
+) => {
+  const result = await upsertRowLevelPermissionRulesWithoutWaitingForJobs(
+    ...args,
+  );
+
+  await waitForAllJobsToFinish();
+
+  return result;
+};
 
 describe('Records shared beyond the role that can access their object', () => {
   let objectMetadataId: string;
