@@ -8,6 +8,7 @@ import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { AiChatChannelIcon } from '@/ai-chat/threads/components/AiChatChannelIcon';
 import { aiChatAccessibleChannelsSelector } from '@/ai-chat/threads/states/selectors/aiChatAccessibleChannelsSelector';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useMoveInboxThreadToChannel } from '@/inbox/hooks/useMoveInboxThreadToChannel';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
@@ -41,6 +42,7 @@ export const SidePanelMoveAiChatToChannelPage = () => {
   const aiChatAccessibleChannels = useAtomStateValue(
     aiChatAccessibleChannelsSelector,
   );
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const { moveInboxThreadToChannel } = useMoveInboxThreadToChannel();
   const { closeSidePanelMenu } = useSidePanelMenu();
   const [search, setSearch] = useState('');
@@ -55,7 +57,9 @@ export const SidePanelMoveAiChatToChannelPage = () => {
     name.toLowerCase().includes(normalizedSearch),
   );
   const isNoChannelShown =
-    isDefined(thread.workspaceMemberId) && normalizedSearch === '';
+    isDefined(thread.workspaceMemberId) &&
+    thread.workspaceMemberId === currentWorkspaceMember?.id &&
+    normalizedSearch === '';
 
   const hasOptions = isNoChannelShown || channels.length > 0;
 
