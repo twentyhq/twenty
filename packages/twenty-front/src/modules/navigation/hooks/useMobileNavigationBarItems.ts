@@ -143,7 +143,7 @@ export const useMobileNavigationBarItems = (): {
 
   const homeChatAttention = getTabChatAttention(null);
   const isOnInboxPage = isInboxPath(pathname);
-  const inboxAttention =
+  const inboxAttention: InboxChatAttention | null =
     unreadOpenThreadCount > 0 && !isOnInboxPage ? 'unread' : null;
 
   const openInbox = () => {
