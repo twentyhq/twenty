@@ -4,6 +4,8 @@ import { createOneAgent } from 'test/integration/metadata/suites/agent/utils/cre
 import { deleteOneAgent } from 'test/integration/metadata/suites/agent/utils/delete-one-agent.util';
 import { findAgents } from 'test/integration/metadata/suites/agent/utils/find-agents.util';
 
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+
 const CORE_WORKFLOWS_QUERY = `
   query CoreWorkflows($filter: CoreWorkflowFilterInput) {
     coreWorkflows(first: 200, filter: $filter) {
@@ -62,6 +64,24 @@ const listCoreWorkflows = async (filter?: typeof NON_SYSTEM_FILTER) => {
   return edges.map((edge) => edge.node);
 };
 
+const setCoreWorkflowIsSystem = async ({
+  coreWorkflowId,
+  isSystem,
+}: {
+  coreWorkflowId: string;
+  isSystem: boolean;
+}) => {
+  await global.testDataSource.query(
+    `UPDATE core."workflow" SET "isSystem" = $2 WHERE id = $1`,
+    [coreWorkflowId, isSystem],
+  );
+
+  await global.workflowTestServices.workspaceCache.invalidateAndRecompute(
+    SEED_APPLE_WORKSPACE_ID,
+    ['flatWorkflowMaps'],
+  );
+};
+
 describe('system agents and workflows (e2e)', () => {
   let coreWorkflowId: string;
   let coreWorkflowVersionId: string;
@@ -105,10 +125,7 @@ describe('system agents and workflows (e2e)', () => {
   });
 
   afterAll(async () => {
-    await global.testDataSource.query(
-      `UPDATE core."workflow" SET "isSystem" = false WHERE id = $1`,
-      [coreWorkflowId],
-    );
+    await setCoreWorkflowIsSystem({ coreWorkflowId, isSystem: false });
 
     await workflowGraphqlRequest(
       `
@@ -180,10 +197,7 @@ describe('system agents and workflows (e2e)', () => {
   });
 
   it('leaves system workflows out of the list when filtered on IS_SYSTEM', async () => {
-    await global.testDataSource.query(
-      `UPDATE core."workflow" SET "isSystem" = true WHERE id = $1`,
-      [coreWorkflowId],
-    );
+    await setCoreWorkflowIsSystem({ coreWorkflowId, isSystem: true });
 
     const withoutSystem = await listCoreWorkflows(NON_SYSTEM_FILTER);
     const withSystem = await listCoreWorkflows();
