@@ -10093,11 +10093,6 @@ msgstr "Defina el nombre y la descripción de su objeto"
 msgid "Define the name and instructions for this skill"
 msgstr "Defina el nombre y las instrucciones de esta habilidad"
 
-#. js-lingui-id: zDccHY
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Define the relations along which a record's permissions extend to related records."
-msgstr "Defina las relaciones a través de las cuales los permisos de un registro se extienden a los registros relacionados."
-
 #. js-lingui-id: Ntu10D
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Define user roles and access levels"
@@ -18067,11 +18062,6 @@ msgstr "Permitir que los miembros conecten sus propias cuentas"
 msgid "Let people restrict and share individual records."
 msgstr "Permite que las personas restrinjan y compartan registros individuales."
 
-#. js-lingui-id: b3MaZQ
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Let record-level permission rules compare a field of a related record."
-msgstr "Permitir que las reglas de permisos a nivel de registro comparen un campo de un registro relacionado."
-
 #. js-lingui-id: oKfDGp
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let text, number, boolean and date fields compute their value from an expression over the record and its related records."
@@ -25045,11 +25035,6 @@ msgstr "Página de registro"
 msgid "Record page widget"
 msgstr "Widget de página de registro"
 
-#. js-lingui-id: fHTWNa
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Record rules through relations"
-msgstr "Reglas de registros mediante relaciones"
-
 #. js-lingui-id: pVTJSR
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
 msgid "Record selection"
@@ -25285,11 +25270,6 @@ msgstr "Rechazado"
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "related record path"
 msgstr "ruta de registro relacionado"
-
-#. js-lingui-id: l3qF/i
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Related record paths"
-msgstr "Rutas de registros relacionados"
 
 #. js-lingui-id: uGfOFe
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx

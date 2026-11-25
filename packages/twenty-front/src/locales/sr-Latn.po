@@ -10093,11 +10093,6 @@ msgstr "Definišite ime i opis vašeg objekta"
 msgid "Define the name and instructions for this skill"
 msgstr "Definišite ime i uputstva za ovu veštinu"
 
-#. js-lingui-id: zDccHY
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Define the relations along which a record's permissions extend to related records."
-msgstr "Definišite relacije duž kojih se dozvole zapisa proširuju na povezane zapise."
-
 #. js-lingui-id: Ntu10D
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Define user roles and access levels"
@@ -18067,11 +18062,6 @@ msgstr "Dozvolite članovima da povežu svoje naloge"
 msgid "Let people restrict and share individual records."
 msgstr "Omogućite ljudima da ograničavaju i dele pojedinačne zapise."
 
-#. js-lingui-id: b3MaZQ
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Let record-level permission rules compare a field of a related record."
-msgstr "Omogućite pravilima dozvola na nivou zapisa da upoređuju polje povezanog zapisa."
-
 #. js-lingui-id: oKfDGp
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let text, number, boolean and date fields compute their value from an expression over the record and its related records."
@@ -25045,11 +25035,6 @@ msgstr "Stranica zapisa"
 msgid "Record page widget"
 msgstr "Vidžet stranice zapisa"
 
-#. js-lingui-id: fHTWNa
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Record rules through relations"
-msgstr "Pravila zapisa putem relacija"
-
 #. js-lingui-id: pVTJSR
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
 msgid "Record selection"
@@ -25285,11 +25270,6 @@ msgstr "Odbijeno"
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "related record path"
 msgstr "putanja povezanog zapisa"
-
-#. js-lingui-id: l3qF/i
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Related record paths"
-msgstr "Putanje povezanih zapisa"
 
 #. js-lingui-id: uGfOFe
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx

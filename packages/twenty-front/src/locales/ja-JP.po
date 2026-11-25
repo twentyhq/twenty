@@ -10093,11 +10093,6 @@ msgstr "オブジェクトの名前と説明を定義"
 msgid "Define the name and instructions for this skill"
 msgstr "このスキルの名前と指示を定義します"
 
-#. js-lingui-id: zDccHY
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Define the relations along which a record's permissions extend to related records."
-msgstr "レコードの権限を関連レコードに拡張する関係を定義します。"
-
 #. js-lingui-id: Ntu10D
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Define user roles and access levels"
@@ -18067,11 +18062,6 @@ msgstr "メンバーが自分のアカウントを接続できるようにする
 msgid "Let people restrict and share individual records."
 msgstr "個々のレコードを制限および共有できるようにします。"
 
-#. js-lingui-id: b3MaZQ
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Let record-level permission rules compare a field of a related record."
-msgstr "レコードレベルの権限ルールで、関連レコードのフィールドを比較できるようにする。"
-
 #. js-lingui-id: oKfDGp
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let text, number, boolean and date fields compute their value from an expression over the record and its related records."
@@ -25045,11 +25035,6 @@ msgstr "レコードページ"
 msgid "Record page widget"
 msgstr "レコードページウィジェット"
 
-#. js-lingui-id: fHTWNa
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Record rules through relations"
-msgstr "リレーションを介したレコードルール"
-
 #. js-lingui-id: pVTJSR
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
 msgid "Record selection"
@@ -25285,11 +25270,6 @@ msgstr "拒否されました"
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "related record path"
 msgstr "関連レコードパス"
-
-#. js-lingui-id: l3qF/i
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Related record paths"
-msgstr "関連レコードのパス"
 
 #. js-lingui-id: uGfOFe
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx

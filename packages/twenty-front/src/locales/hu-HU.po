@@ -10093,11 +10093,6 @@ msgstr "Határozza meg objektuma nevét és leírását"
 msgid "Define the name and instructions for this skill"
 msgstr "Határozza meg ennek a készségnek a nevét és utasításait"
 
-#. js-lingui-id: zDccHY
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Define the relations along which a record's permissions extend to related records."
-msgstr "Adja meg azokat a kapcsolatokat, amelyek mentén egy rekord jogosultságai kiterjednek a kapcsolódó rekordokra."
-
 #. js-lingui-id: Ntu10D
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Define user roles and access levels"
@@ -18067,11 +18062,6 @@ msgstr "Engedélyezze a tagoknak saját fiókjaik csatlakoztatását"
 msgid "Let people restrict and share individual records."
 msgstr "Engedélyezze az embereknek az egyes rekordok korlátozását és megosztását."
 
-#. js-lingui-id: b3MaZQ
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Let record-level permission rules compare a field of a related record."
-msgstr "Rekordszintű jogosultsági szabályokkal kapcsolódó rekord mezőjének összehasonlításának engedélyezése."
-
 #. js-lingui-id: oKfDGp
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let text, number, boolean and date fields compute their value from an expression over the record and its related records."
@@ -25045,11 +25035,6 @@ msgstr "Rekordoldal"
 msgid "Record page widget"
 msgstr "Rekordoldal-widget"
 
-#. js-lingui-id: fHTWNa
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Record rules through relations"
-msgstr "Rekordszabályok kapcsolatokon keresztül"
-
 #. js-lingui-id: pVTJSR
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
 msgid "Record selection"
@@ -25285,11 +25270,6 @@ msgstr "Elutasítva"
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "related record path"
 msgstr "kapcsolódó rekord útvonala"
-
-#. js-lingui-id: l3qF/i
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Related record paths"
-msgstr "Kapcsolódó rekordok útvonalai"
 
 #. js-lingui-id: uGfOFe
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx

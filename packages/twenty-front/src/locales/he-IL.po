@@ -10093,11 +10093,6 @@ msgstr "הגדר את השם והתיאור של העצם שלך"
 msgid "Define the name and instructions for this skill"
 msgstr "הגדר את השם וההוראות עבור המיומנות הזו"
 
-#. js-lingui-id: zDccHY
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Define the relations along which a record's permissions extend to related records."
-msgstr "הגדר את הקשרים שלאורכם ההרשאות של רשומה מורחבות לרשומות קשורות."
-
 #. js-lingui-id: Ntu10D
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Define user roles and access levels"
@@ -18067,11 +18062,6 @@ msgstr "אפשרו לחברים לחבר את החשבונות שלהם"
 msgid "Let people restrict and share individual records."
 msgstr "אפשרו לאנשים להגביל ולשתף רשומות בודדות."
 
-#. js-lingui-id: b3MaZQ
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Let record-level permission rules compare a field of a related record."
-msgstr "אפשר לכללי הרשאות ברמת רשומה להשוות שדה של רשומה קשורה."
-
 #. js-lingui-id: oKfDGp
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let text, number, boolean and date fields compute their value from an expression over the record and its related records."
@@ -25045,11 +25035,6 @@ msgstr "דף רשומה"
 msgid "Record page widget"
 msgstr "וידג'ט דף רשומה"
 
-#. js-lingui-id: fHTWNa
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Record rules through relations"
-msgstr "כללי רשומות באמצעות קשרים"
-
 #. js-lingui-id: pVTJSR
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
 msgid "Record selection"
@@ -25285,11 +25270,6 @@ msgstr "נדחה"
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "related record path"
 msgstr "נתיב רשומה קשורה"
-
-#. js-lingui-id: l3qF/i
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Related record paths"
-msgstr "נתיבי רשומות קשורות"
 
 #. js-lingui-id: uGfOFe
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
