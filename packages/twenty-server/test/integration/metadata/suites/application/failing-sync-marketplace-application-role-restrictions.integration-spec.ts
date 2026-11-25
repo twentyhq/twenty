@@ -1,3 +1,4 @@
+import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { findManyApplications } from 'test/integration/graphql/utils/find-many-applications.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
@@ -15,6 +16,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { RowLevelPermissionPredicateOperand } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
+import { type BaseGraphQLError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { WORKSPACE_CUSTOM_APPLICATION_NAME } from 'src/engine/core-modules/application/constants/workspace-custom-application.constant';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
@@ -31,7 +33,6 @@ type RoleRestrictions = Omit<
 const RESTRICTIONS_BY_FORMAT: {
   title: string;
   restrictions: RoleRestrictions;
-  declared: RegExp;
 }[] = [
   {
     title: 'legacy row-level predicates',
@@ -52,7 +53,6 @@ const RESTRICTIONS_BY_FORMAT: {
         },
       ],
     },
-    declared: /declares row-level rules/,
   },
   {
     title: 'legacy field permissions',
@@ -65,7 +65,6 @@ const RESTRICTIONS_BY_FORMAT: {
         },
       ],
     },
-    declared: /declares field permissions/,
   },
   {
     title: 'row-level rules in recordsPermissions',
@@ -93,7 +92,6 @@ const RESTRICTIONS_BY_FORMAT: {
         ],
       },
     },
-    declared: /declares row-level rules/,
   },
   {
     title: 'field permissions in recordsPermissions',
@@ -108,7 +106,6 @@ const RESTRICTIONS_BY_FORMAT: {
         ],
       },
     },
-    declared: /declares field permissions/,
   },
 ];
 
@@ -165,6 +162,28 @@ const countRows = async (table: string, universalIdentifier: string) => {
   return count;
 };
 
+// Application and role identifiers are random per run
+const expectRoleRestrictionErrorSnapshot = ({
+  errors,
+  appId,
+  roleIds,
+}: {
+  errors: BaseGraphQLError[] | undefined;
+  appId: string;
+  roleIds: string[];
+}) => {
+  jestExpectToBeDefined(errors);
+  expectOneNotInternalServerErrorSnapshot({
+    errors,
+    normalizeMessage: (message) =>
+      roleIds.reduce(
+        (normalizedMessage, roleId) =>
+          normalizedMessage.replaceAll(roleId, '<ROLE_ID>'),
+        message.replaceAll(appId, '<APP_ID>'),
+      ),
+  });
+};
+
 describe('Marketplace application roles cannot declare row-level rules or field permissions', () => {
   describe('on dev sync of a LOCAL application', () => {
     let appId: string;
@@ -185,34 +204,34 @@ describe('Marketplace application roles cannot declare row-level rules or field 
       });
     });
 
-    describe.each(RESTRICTIONS_BY_FORMAT)(
-      'with $title',
-      ({ restrictions, declared }) => {
-        it.each([
-          { roleKind: 'application', isAgentRole: false },
-          { roleKind: 'agent', isAgentRole: true },
-        ])(
-          'refuses them on the $roleKind role and writes nothing',
-          async ({ roleKind, isAgentRole }) => {
-            const roleId = uuidv4();
+    describe.each(RESTRICTIONS_BY_FORMAT)('with $title', ({ restrictions }) => {
+      it.each([
+        { roleKind: 'application', isAgentRole: false },
+        { roleKind: 'agent', isAgentRole: true },
+      ])(
+        'refuses them on the $roleKind role and writes nothing',
+        async ({ isAgentRole }) => {
+          const roleId = uuidv4();
 
-            const { errors } = await syncApplication({
-              manifest: buildRestrictedManifest({
-                appId,
-                roleId,
-                restrictions,
-                isAgentRole,
-              }),
-              expectToFail: true,
-            });
+          const { errors } = await syncApplication({
+            manifest: buildRestrictedManifest({
+              appId,
+              roleId,
+              restrictions,
+              isAgentRole,
+            }),
+            expectToFail: true,
+          });
 
-            expect(errors?.[0]?.message).toMatch(declared);
-            expect(errors?.[0]?.message).toContain(`the ${roleKind} role`);
-            expect(await countRows('role', roleId)).toBe(0);
-          },
-        );
-      },
-    );
+          expectRoleRestrictionErrorSnapshot({
+            errors,
+            appId,
+            roleIds: [roleId],
+          });
+          expect(await countRows('role', roleId)).toBe(0);
+        },
+      );
+    });
 
     it('refuses a standalone role and writes nothing', async () => {
       const requestedRoleId = uuidv4();
@@ -232,24 +251,28 @@ describe('Marketplace application roles cannot declare row-level rules or field 
         expectToFail: true,
       });
 
-      expect(errors?.[0]?.message).toMatch(
-        /is neither the application role nor an agent role/,
-      );
+      expectRoleRestrictionErrorSnapshot({
+        errors,
+        appId,
+        roleIds: [standaloneRoleId],
+      });
       expect(await countRows('role', standaloneRoleId)).toBe(0);
     });
 
     it('refuses them on a dry run too', async () => {
+      const roleId = uuidv4();
+
       const { errors } = await syncApplication({
         manifest: buildRestrictedManifest({
           appId,
-          roleId: uuidv4(),
+          roleId,
           restrictions: RESTRICTIONS_BY_FORMAT[1].restrictions,
         }),
         dryRun: true,
         expectToFail: true,
       });
 
-      expect(errors?.[0]?.message).toMatch(/declares field permissions/);
+      expectRoleRestrictionErrorSnapshot({ errors, appId, roleIds: [roleId] });
     });
   });
 
@@ -268,7 +291,7 @@ describe('Marketplace application roles cannot declare row-level rules or field 
 
     it.each(RESTRICTIONS_BY_FORMAT)(
       'refuses $title before installing anything',
-      async ({ restrictions, declared }) => {
+      async ({ restrictions }) => {
         const roleId = uuidv4();
         const tarball = await createAppTarball({
           'manifest.json': JSON.stringify(
@@ -292,7 +315,11 @@ describe('Marketplace application roles cannot declare row-level rules or field 
           expectToFail: true,
         });
 
-        expect(JSON.stringify(errors)).toMatch(declared);
+        expectRoleRestrictionErrorSnapshot({
+          errors,
+          appId,
+          roleIds: [roleId],
+        });
         expect(await countRows('application', appId)).toBe(0);
         expect(await countRows('role', roleId)).toBe(0);
       },

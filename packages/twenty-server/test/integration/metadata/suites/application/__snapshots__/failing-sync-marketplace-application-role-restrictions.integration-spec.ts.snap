@@ -1,0 +1,169 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Marketplace application roles cannot declare row-level rules or field permissions on dev sync of a LOCAL application refuses a standalone role and writes nothing 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_INPUT",
+    "userFriendlyMessage": "Invalid input provided.",
+  },
+  "message": "Application "Test Application" (<APP_ID>) declares roles marketplace applications cannot declare: Role "Member role" (<ROLE_ID>) is neither the application role nor an agent role. Marketplace applications can only declare their application role and their agents' roles.",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Marketplace application roles cannot declare row-level rules or field permissions on dev sync of a LOCAL application refuses them on a dry run too 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_INPUT",
+    "userFriendlyMessage": "Invalid input provided.",
+  },
+  "message": "Application "Test Application" (<APP_ID>) declares roles marketplace applications cannot declare: Role "Restricted" (<ROLE_ID>), the application role, declares field permissions on objects 20202020-b374-4779-a561-80086cb2e17f. Marketplace applications cannot declare field permissions: the workspace configures them.",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Marketplace application roles cannot declare row-level rules or field permissions on dev sync of a LOCAL application with field permissions in recordsPermissions refuses them on the agent role and writes nothing 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_INPUT",
+    "userFriendlyMessage": "Invalid input provided.",
+  },
+  "message": "Application "Test Application" (<APP_ID>) declares roles marketplace applications cannot declare: Role "Restricted" (<ROLE_ID>), the agent role, declares field permissions on objects 20202020-b374-4779-a561-80086cb2e17f. Marketplace applications cannot declare field permissions: the workspace configures them.",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Marketplace application roles cannot declare row-level rules or field permissions on dev sync of a LOCAL application with field permissions in recordsPermissions refuses them on the application role and writes nothing 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_INPUT",
+    "userFriendlyMessage": "Invalid input provided.",
+  },
+  "message": "Application "Test Application" (<APP_ID>) declares roles marketplace applications cannot declare: Role "Restricted" (<ROLE_ID>), the application role, declares field permissions on objects 20202020-b374-4779-a561-80086cb2e17f. Marketplace applications cannot declare field permissions: the workspace configures them.",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Marketplace application roles cannot declare row-level rules or field permissions on dev sync of a LOCAL application with legacy field permissions refuses them on the agent role and writes nothing 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_INPUT",
+    "userFriendlyMessage": "Invalid input provided.",
+  },
+  "message": "Application "Test Application" (<APP_ID>) declares roles marketplace applications cannot declare: Role "Restricted" (<ROLE_ID>), the agent role, declares field permissions on objects 20202020-b374-4779-a561-80086cb2e17f. Marketplace applications cannot declare field permissions: the workspace configures them.",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Marketplace application roles cannot declare row-level rules or field permissions on dev sync of a LOCAL application with legacy field permissions refuses them on the application role and writes nothing 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_INPUT",
+    "userFriendlyMessage": "Invalid input provided.",
+  },
+  "message": "Application "Test Application" (<APP_ID>) declares roles marketplace applications cannot declare: Role "Restricted" (<ROLE_ID>), the application role, declares field permissions on objects 20202020-b374-4779-a561-80086cb2e17f. Marketplace applications cannot declare field permissions: the workspace configures them.",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Marketplace application roles cannot declare row-level rules or field permissions on dev sync of a LOCAL application with legacy row-level predicates refuses them on the agent role and writes nothing 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_INPUT",
+    "userFriendlyMessage": "Invalid input provided.",
+  },
+  "message": "Application "Test Application" (<APP_ID>) declares roles marketplace applications cannot declare: Role "Restricted" (<ROLE_ID>), the agent role, declares row-level rules on objects 20202020-b374-4779-a561-80086cb2e17f. Marketplace applications cannot declare row-level rules: the workspace configures them.",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Marketplace application roles cannot declare row-level rules or field permissions on dev sync of a LOCAL application with legacy row-level predicates refuses them on the application role and writes nothing 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_INPUT",
+    "userFriendlyMessage": "Invalid input provided.",
+  },
+  "message": "Application "Test Application" (<APP_ID>) declares roles marketplace applications cannot declare: Role "Restricted" (<ROLE_ID>), the application role, declares row-level rules on objects 20202020-b374-4779-a561-80086cb2e17f. Marketplace applications cannot declare row-level rules: the workspace configures them.",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Marketplace application roles cannot declare row-level rules or field permissions on dev sync of a LOCAL application with row-level rules in recordsPermissions refuses them on the agent role and writes nothing 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_INPUT",
+    "userFriendlyMessage": "Invalid input provided.",
+  },
+  "message": "Application "Test Application" (<APP_ID>) declares roles marketplace applications cannot declare: Role "Restricted" (<ROLE_ID>), the agent role, declares row-level rules on objects 20202020-b374-4779-a561-80086cb2e17f. Marketplace applications cannot declare row-level rules: the workspace configures them.",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Marketplace application roles cannot declare row-level rules or field permissions on dev sync of a LOCAL application with row-level rules in recordsPermissions refuses them on the application role and writes nothing 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_INPUT",
+    "userFriendlyMessage": "Invalid input provided.",
+  },
+  "message": "Application "Test Application" (<APP_ID>) declares roles marketplace applications cannot declare: Role "Restricted" (<ROLE_ID>), the application role, declares row-level rules on objects 20202020-b374-4779-a561-80086cb2e17f. Marketplace applications cannot declare row-level rules: the workspace configures them.",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Marketplace application roles cannot declare row-level rules or field permissions on install of a tarball application refuses field permissions in recordsPermissions before installing anything 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_INPUT",
+    "userFriendlyMessage": "Invalid input provided.",
+  },
+  "message": "Application "Test Application" (<APP_ID>) declares roles marketplace applications cannot declare: Role "Restricted" (<ROLE_ID>), the application role, declares field permissions on objects 20202020-b374-4779-a561-80086cb2e17f. Marketplace applications cannot declare field permissions: the workspace configures them.",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Marketplace application roles cannot declare row-level rules or field permissions on install of a tarball application refuses legacy field permissions before installing anything 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_INPUT",
+    "userFriendlyMessage": "Invalid input provided.",
+  },
+  "message": "Application "Test Application" (<APP_ID>) declares roles marketplace applications cannot declare: Role "Restricted" (<ROLE_ID>), the application role, declares field permissions on objects 20202020-b374-4779-a561-80086cb2e17f. Marketplace applications cannot declare field permissions: the workspace configures them.",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Marketplace application roles cannot declare row-level rules or field permissions on install of a tarball application refuses legacy row-level predicates before installing anything 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_INPUT",
+    "userFriendlyMessage": "Invalid input provided.",
+  },
+  "message": "Application "Test Application" (<APP_ID>) declares roles marketplace applications cannot declare: Role "Restricted" (<ROLE_ID>), the application role, declares row-level rules on objects 20202020-b374-4779-a561-80086cb2e17f. Marketplace applications cannot declare row-level rules: the workspace configures them.",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Marketplace application roles cannot declare row-level rules or field permissions on install of a tarball application refuses row-level rules in recordsPermissions before installing anything 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_INPUT",
+    "userFriendlyMessage": "Invalid input provided.",
+  },
+  "message": "Application "Test Application" (<APP_ID>) declares roles marketplace applications cannot declare: Role "Restricted" (<ROLE_ID>), the application role, declares row-level rules on objects 20202020-b374-4779-a561-80086cb2e17f. Marketplace applications cannot declare row-level rules: the workspace configures them.",
+  "name": "UserInputError",
+}
+`;
