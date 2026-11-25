@@ -1,8 +1,8 @@
 import { NavigationMenuItemType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
+import { hasFavoriteNavigationMenuItems } from '@/navigation-menu-item/common/utils/hasFavoriteNavigationMenuItems';
 import { getNavigationMenuContainersInDisplayOrder } from '@/navigation-menu-item/common/utils/getNavigationMenuContainersInDisplayOrder';
 import { useIsNavigationMenuItemReadable } from '@/navigation-menu-item/display/hooks/useIsNavigationMenuItemReadable';
 import { useNavigationMenuBuiltInSectionAvailability } from '@/navigation-menu-item/display/hooks/useNavigationMenuBuiltInSectionAvailability';
@@ -57,8 +57,8 @@ export const useWorkspaceNavigationMenuContainers = ({
   const displayableItemIds = new Set(
     workspaceNavigationMenuItemsSorted.map((item) => item.id),
   );
-  const hasFavorites = navigationMenuItemsSorted.some(
-    (item) => !isDefined(item.parentId),
+  const hasFavorites = hasFavoriteNavigationMenuItems(
+    navigationMenuItemsSorted,
   );
 
   const isItemDisplayed = (item: NavigationMenuItem) =>

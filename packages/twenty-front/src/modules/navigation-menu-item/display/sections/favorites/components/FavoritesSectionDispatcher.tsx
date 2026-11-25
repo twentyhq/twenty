@@ -1,5 +1,6 @@
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { NavigationSections } from '@/navigation-menu-item/common/constants/NavigationSections';
+import { hasFavoriteNavigationMenuItems } from '@/navigation-menu-item/common/utils/hasFavoriteNavigationMenuItems';
 import { NavigationMenuItemDndKitProvider } from '@/navigation-menu-item/display/dnd/providers/NavigationMenuItemDndKitProvider';
 import { useSortedNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useSortedNavigationMenuItems';
 import { FavoritesSection } from '@/navigation-menu-item/display/sections/favorites/components/FavoritesSection';
@@ -11,7 +12,9 @@ export const FavoritesSectionDispatcher = () => {
   );
   const { navigationMenuItemsSorted } = useSortedNavigationMenuItems();
 
-  const hasFavorites = navigationMenuItemsSorted.some((item) => !item.parentId);
+  const hasFavorites = hasFavoriteNavigationMenuItems(
+    navigationMenuItemsSorted,
+  );
 
   if (!hasFavorites || isLayoutCustomizationModeEnabled) {
     return null;

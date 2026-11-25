@@ -5,7 +5,7 @@ import { isNavigationMenuItemBuiltInSection } from '@/navigation-menu-item/commo
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
-type HasNavigationMenuContainerVisibleContentArgs = {
+type HasNavigationMenuContainerVisibleContentArguments = {
   containerId: string;
   navigationMenuItems: NavigationMenuItem[];
   isItemReadable: (item: NavigationMenuItem) => boolean;
@@ -19,7 +19,7 @@ export const hasNavigationMenuContainerVisibleContent = ({
   navigationMenuItems,
   isItemReadable,
   isBuiltInSectionAvailable,
-}: HasNavigationMenuContainerVisibleContentArgs): boolean => {
+}: HasNavigationMenuContainerVisibleContentArguments): boolean => {
   const childrenByParentId = new Map<string, NavigationMenuItem[]>();
 
   for (const item of navigationMenuItems) {
