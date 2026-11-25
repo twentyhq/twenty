@@ -1,5 +1,4 @@
 import { Command } from 'nest-commander';
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -76,36 +75,27 @@ export class BackfillListViewIsCompactCommand extends ProvisionedWorkspaceComman
     );
 
     for (const writerApplicationUniversalIdentifier of writerApplicationUniversalIdentifiers) {
-      const workspaceMigrationArgs = {
-        isSystemBuild: true,
-        workspaceId,
-        applicationUniversalIdentifier: writerApplicationUniversalIdentifier,
-        allFlatEntityOperationByMetadataName: {
-          view: {
-            flatEntityToCreate: [],
-            flatEntityToDelete: [],
-            flatEntityToUpdate: compactListFlatViewUpdates
-              .filter(
-                (compactListFlatViewUpdate) =>
-                  compactListFlatViewUpdate.writerApplicationUniversalIdentifier ===
-                  writerApplicationUniversalIdentifier,
-              )
-              .map(({ flatView }) => flatView),
+      const result =
+        await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+          {
+            isSystemBuild: true,
+            workspaceId,
+            applicationUniversalIdentifier: writerApplicationUniversalIdentifier,
+            allFlatEntityOperationByMetadataName: {
+              view: {
+                flatEntityToCreate: [],
+                flatEntityToDelete: [],
+                flatEntityToUpdate: compactListFlatViewUpdates
+                  .filter(
+                    (compactListFlatViewUpdate) =>
+                      compactListFlatViewUpdate.writerApplicationUniversalIdentifier ===
+                      writerApplicationUniversalIdentifier,
+                  )
+                  .map(({ flatView }) => flatView),
+              },
+            },
           },
-        },
-      };
-
-      const isTwentyStandardApplicationWriter =
-        writerApplicationUniversalIdentifier ===
-        TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER;
-
-      const result = isTwentyStandardApplicationWriter
-        ? await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
-            workspaceMigrationArgs,
-          )
-        : await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
-            workspaceMigrationArgs,
-          );
+        );
 
       if (result.status === 'fail') {
         throw new WorkspaceMigrationBuilderException(result);
