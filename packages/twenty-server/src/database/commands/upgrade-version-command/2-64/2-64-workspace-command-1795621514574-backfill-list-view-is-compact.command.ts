@@ -108,10 +108,7 @@ export class BackfillListViewIsCompactCommand extends ProvisionedWorkspaceComman
           );
 
       if (result.status === 'fail') {
-        throw new WorkspaceMigrationBuilderException(
-          result,
-          `Failed to set list views to compact for workspace ${workspaceId}`,
-        );
+        throw new WorkspaceMigrationBuilderException(result);
       }
     }
   }
