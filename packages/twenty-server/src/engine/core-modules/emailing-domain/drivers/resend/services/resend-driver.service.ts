@@ -39,6 +39,10 @@ export class ResendDriver implements EmailingDomainDriverInterface {
     private readonly unsubscribeContentService: UnsubscribeContentService,
   ) {}
 
+  async assertDomainIsAvailableOrThrow(
+    _input: EmailingDomainResourceInput,
+  ): Promise<void> {}
+
   // Resend domains are account-level; workspace attribution travels on each send as a tag.
   async provisionWorkspace(workspaceId: string): Promise<void> {
     this.logger.log(

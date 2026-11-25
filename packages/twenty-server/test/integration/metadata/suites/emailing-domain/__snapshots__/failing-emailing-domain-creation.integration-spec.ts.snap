@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Emailing domain creation should fail when the SES identity carries no tenant tag 1`] = `
+{
+  "extensions": {
+    "code": "CONFLICT",
+    "subCode": "EMAILING_DOMAIN_ALREADY_REGISTERED",
+    "userFriendlyMessage": "Registered by another workspace.",
+  },
+  "message": "SES identity untagged-identity.example.com was not created for tenant twenty-workspace-20202020-1c25-4d02-bf25-6aeccf7ea419",
+  "name": "ConflictError",
+}
+`;
+
+exports[`Emailing domain creation should fail when the SES identity was created for another workspace 1`] = `
+{
+  "extensions": {
+    "code": "CONFLICT",
+    "subCode": "EMAILING_DOMAIN_ALREADY_REGISTERED",
+    "userFriendlyMessage": "Registered by another workspace.",
+  },
+  "message": "SES identity other-workspace-identity.example.com was not created for tenant twenty-workspace-20202020-1c25-4d02-bf25-6aeccf7ea419",
+  "name": "ConflictError",
+}
+`;
