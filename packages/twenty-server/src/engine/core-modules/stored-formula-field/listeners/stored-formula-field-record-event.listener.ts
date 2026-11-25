@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { type ObjectRecordBaseEvent } from 'twenty-shared/database-events';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
+import { StoredFormulaFieldComputationService } from 'src/engine/core-modules/stored-formula-field/services/stored-formula-field-computation.service';
 import { StoredFormulaFieldDirtyRecordService } from 'src/engine/core-modules/stored-formula-field/services/stored-formula-field-dirty-record.service';
 import { type StoredFormulaWatchPlans } from 'src/engine/core-modules/stored-formula-field/types/stored-formula-watch-plans.type';
 import { findStaleStoredFormulaRecordIdsByObjectMetadataId } from 'src/engine/core-modules/stored-formula-field/utils/find-stale-stored-formula-record-ids-by-object-metadata-id.util';
@@ -23,21 +24,33 @@ type MarkDirtyParameters<TWatchPlanName extends keyof StoredFormulaWatchPlans> =
     isRecordUpdate: boolean;
   };
 
+type DirtyRecordKind = 'own' | 'related' | 'lookingUp';
+
 @Injectable()
 export class StoredFormulaFieldRecordEventListener {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly storedFormulaFieldDirtyRecordService: StoredFormulaFieldDirtyRecordService,
+    private readonly storedFormulaFieldComputationService: StoredFormulaFieldComputationService,
   ) {}
 
-  // A new or restored record has stored formulas that were never computed, or went stale while it was deleted
+  // A new record has stored formulas that were never computed, and no record looks it up yet
   @OnDatabaseBatchEvent('*', DatabaseEventAction.CREATED)
-  @OnDatabaseBatchEvent('*', DatabaseEventAction.RESTORED)
-  async handleRecordsAdded(batch: RecordEventBatch): Promise<void> {
+  async handleRecordsCreated(batch: RecordEventBatch): Promise<void> {
     await this.markRecordsDirty({
       batch,
       isRecordUpdate: false,
-      shouldIncludeOwnRecords: true,
+      dirtyRecordKinds: ['own', 'related'],
+    });
+  }
+
+  // A restored record's stored formulas went stale while it was deleted
+  @OnDatabaseBatchEvent('*', DatabaseEventAction.RESTORED)
+  async handleRecordsRestored(batch: RecordEventBatch): Promise<void> {
+    await this.markRecordsDirty({
+      batch,
+      isRecordUpdate: false,
+      dirtyRecordKinds: ['own', 'related', 'lookingUp'],
     });
   }
 
@@ -47,7 +60,7 @@ export class StoredFormulaFieldRecordEventListener {
     await this.markRecordsDirty({
       batch,
       isRecordUpdate: false,
-      shouldIncludeOwnRecords: false,
+      dirtyRecordKinds: ['related', 'lookingUp'],
     });
   }
 
@@ -56,18 +69,18 @@ export class StoredFormulaFieldRecordEventListener {
     await this.markRecordsDirty({
       batch,
       isRecordUpdate: true,
-      shouldIncludeOwnRecords: true,
+      dirtyRecordKinds: ['own', 'related', 'lookingUp'],
     });
   }
 
   private async markRecordsDirty({
     batch,
     isRecordUpdate,
-    shouldIncludeOwnRecords,
+    dirtyRecordKinds,
   }: {
     batch: RecordEventBatch;
     isRecordUpdate: boolean;
-    shouldIncludeOwnRecords: boolean;
+    dirtyRecordKinds: DirtyRecordKind[];
   }): Promise<void> {
     const watchPlans = getStoredFormulaWatchPlans(
       await this.workspaceCacheService.getOrRecompute(batch.workspaceId, [
@@ -78,11 +91,56 @@ export class StoredFormulaFieldRecordEventListener {
     const markDirtyParameters = { ...batch, watchPlans, isRecordUpdate };
 
     await Promise.all([
-      shouldIncludeOwnRecords
+      dirtyRecordKinds.includes('own')
         ? this.markOwnRecordsDirty(markDirtyParameters)
         : undefined,
-      this.markRelatedRecordsDirty(markDirtyParameters),
+      dirtyRecordKinds.includes('related')
+        ? this.markRelatedRecordsDirty(markDirtyParameters)
+        : undefined,
+      dirtyRecordKinds.includes('lookingUp')
+        ? this.markLookingUpRecordsDirty(markDirtyParameters)
+        : undefined,
     ]);
+  }
+
+  private async markLookingUpRecordsDirty({
+    workspaceId,
+    objectMetadata,
+    events,
+    watchPlans: { lookedUpRecordWatchPlansByObjectMetadataId },
+    isRecordUpdate,
+  }: MarkDirtyParameters<'lookedUpRecordWatchPlansByObjectMetadataId'>): Promise<void> {
+    const watchPlans =
+      lookedUpRecordWatchPlansByObjectMetadataId[objectMetadata.id] ?? [];
+
+    await Promise.all(
+      watchPlans.map(
+        async ({ objectMetadataId, joinColumnName, watchedFieldNames }) => {
+          const lookedUpRecordIds = events
+            .filter(
+              ({ properties: { updatedFields } }) =>
+                !isRecordUpdate ||
+                (updatedFields ?? []).some((fieldName) =>
+                  watchedFieldNames.has(fieldName),
+                ),
+            )
+            .map(({ recordId }) => recordId);
+
+          if (!isNonEmptyArray(lookedUpRecordIds)) {
+            return;
+          }
+
+          await this.storedFormulaFieldComputationService.markRecordsDirtyByJoinColumnValues(
+            {
+              workspaceId,
+              objectMetadataId,
+              joinColumnName,
+              joinColumnValues: lookedUpRecordIds,
+            },
+          );
+        },
+      ),
+    );
   }
 
   private async markOwnRecordsDirty({
