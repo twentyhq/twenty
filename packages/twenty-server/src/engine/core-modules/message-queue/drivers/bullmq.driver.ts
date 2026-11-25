@@ -1143,24 +1143,30 @@ export class BullMQDriver
         additionalGroupKeys: options?.fairnessGroupKeys,
       });
 
-    // BullMQ ignores a re-added job id, so it must not take a pacing slot.
-    const jobOptions = await this.fairQueueScheduler.computeJobOptions({
-      queueName,
-      scopes: jobsToAdd,
-      limiterGroupKeys: jobsToAdd.map((job) =>
-        isDefined(job.jobId) && existingJobIds.has(job.jobId)
-          ? undefined
-          : (job.groupKey ?? options?.groupKey),
-      ),
-      additionalGroupKeys: options?.fairnessGroupKeys,
-      delay: options?.delay,
-      staticPriority: queueOptions.priority,
-      limiter: options?.limiter,
-    });
-    const jobsOptions = jobsToAdd.map((_, index) =>
+    const newJobs = jobsToAdd.filter(
+      (job) => !isDefined(job.jobId) || !existingJobIds.has(job.jobId),
+    );
+    const newJobsOptions =
+      newJobs.length === 0
+        ? []
+        : await this.fairQueueScheduler.computeJobOptions({
+            queueName,
+            scopes: newJobs,
+            limiterGroupKeys: newJobs.map(
+              (job) => job.groupKey ?? options?.groupKey,
+            ),
+            additionalGroupKeys: options?.fairnessGroupKeys,
+            delay: options?.delay,
+            staticPriority: queueOptions.priority,
+            limiter: options?.limiter,
+          });
+    const fairJobOptionsByJob = new Map(
+      newJobs.map((job, index) => [job, newJobsOptions[index]]),
+    );
+    const jobsOptions = jobsToAdd.map((job, index) =>
       this.withScheduledAt({
         ...preparedJobs[index].options,
-        ...jobOptions[index],
+        ...fairJobOptionsByJob.get(job),
       }),
     );
 
@@ -1180,7 +1186,9 @@ export class BullMQDriver
     const persistedScheduledAts = await this.findPersistedScheduledAts({
       queueName,
       jobIds: jobsToAdd.flatMap((job) =>
-        isDefined(job.jobId) ? [job.jobId] : [],
+        isDefined(job.jobId) && job.isJobIdGenerated !== true
+          ? [job.jobId]
+          : [],
       ),
     });
 

@@ -3,6 +3,7 @@ import {
   createFairnessHarness,
   silenceDriverLogs,
 } from 'src/engine/core-modules/message-queue/drivers/__tests__/fairness-harness.test-util';
+import { buildApplicationGroupKey } from 'src/engine/core-modules/message-queue/utils/build-application-group-key.util';
 import { JOBS_PERSISTED_OPTIONS_SCRIPT } from 'src/engine/core-modules/message-queue/constants/jobs-persisted-options-script.constant';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 
@@ -273,6 +274,47 @@ describe('BullMQDriver per-call limiter and scheduledAt', () => {
         delay: 5_000,
       }),
     ).rejects.toThrow('Redis read failed');
+  });
+
+  it('reports the computed date of server-generated ids when their schedule cannot be read back', async () => {
+    const harness = await createFairnessHarness();
+
+    harness.failScript({ script: JOBS_PERSISTED_OPTIONS_SCRIPT });
+
+    const result = await harness.enqueueBulk({
+      labels: ['G1'],
+      jobIds: ['generated-job-1'],
+      isJobIdGenerated: true,
+      ...SCOPE,
+      delay: 5_000,
+    });
+
+    expect(scheduledAtsOf(result)).toEqual([5_000]);
+  });
+
+  it('does not charge fair tickets for an id that is still queued', async () => {
+    const harness = await createFairnessHarness();
+    const applicationGroupKey = buildApplicationGroupKey(
+      SCOPE.applicationUniversalIdentifier,
+    );
+
+    await harness.enqueueBulk({ labels: ['W1'], jobIds: ['job-1'], ...SCOPE });
+
+    const clockAfterFirstEnqueue = await harness.readClock({
+      groupKey: applicationGroupKey,
+    });
+
+    for (const label of buildLabels({ prefix: 'R', count: 10 })) {
+      await harness.enqueueBulk({
+        labels: [label],
+        jobIds: ['job-1'],
+        ...SCOPE,
+      });
+    }
+
+    expect(await harness.readClock({ groupKey: applicationGroupKey })).toBe(
+      clockAfterFirstEnqueue,
+    );
   });
 
   it('schedules a delayed job at its insertion time plus the delay', async () => {

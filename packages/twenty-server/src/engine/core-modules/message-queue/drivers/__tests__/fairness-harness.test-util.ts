@@ -488,10 +488,12 @@ export const createFairnessHarness = async ({
       groupKey,
       delay,
       jobIds,
+      isJobIdGenerated,
       limiter,
     }: {
       labels: string[];
       jobIds?: string[];
+      isJobIdGenerated?: boolean;
       workspaceId: string;
       applicationUniversalIdentifier?: string;
       groupKey?: string;
@@ -504,6 +506,7 @@ export const createFairnessHarness = async ({
         labels.map((label, index) => ({
           data: { label, workspaceId },
           jobId: jobIds?.[index],
+          isJobIdGenerated,
           groupKey,
           ...buildScenarioJobScope({
             workspaceId,

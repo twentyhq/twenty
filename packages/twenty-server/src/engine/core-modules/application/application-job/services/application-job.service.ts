@@ -141,6 +141,7 @@ export class ApplicationJobService {
             ...(isDefined(userWorkspaceId) ? { userWorkspaceId } : {}),
           },
           jobId: buildQueueJobId({ workspaceId, jobId: jobIds[index] }),
+          isJobIdGenerated: !isDefined(jobItem.jobId),
           workspaceId,
           applicationUniversalIdentifier: application.universalIdentifier,
         })),
