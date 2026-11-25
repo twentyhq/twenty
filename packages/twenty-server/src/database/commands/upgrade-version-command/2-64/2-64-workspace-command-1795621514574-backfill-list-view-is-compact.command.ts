@@ -1,10 +1,11 @@
 import { Command } from 'nest-commander';
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { buildCompactListFlatViewsToUpdate } from 'src/database/commands/upgrade-version-command/2-64/utils/build-compact-list-flat-views-to-update.util';
+import { buildCompactListFlatViewUpdates } from 'src/database/commands/upgrade-version-command/2-64/utils/build-compact-list-flat-view-updates.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -42,7 +43,7 @@ export class BackfillListViewIsCompactCommand extends ProvisionedWorkspaceComman
         'flatFieldMetadataMaps',
       ]);
 
-    const flatViewsToUpdate = buildCompactListFlatViewsToUpdate({
+    const compactListFlatViewUpdates = buildCompactListFlatViewUpdates({
       flatViews: Object.values(flatViewMaps.byUniversalIdentifier).filter(
         isDefined,
       ),
@@ -53,42 +54,65 @@ export class BackfillListViewIsCompactCommand extends ProvisionedWorkspaceComman
       now: new Date().toISOString(),
     });
 
-    if (flatViewsToUpdate.length === 0) {
+    if (compactListFlatViewUpdates.length === 0) {
       return;
     }
 
     const isDryRun = options.dryRun ?? false;
 
     this.logger.log(
-      `${isDryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: ${flatViewsToUpdate.length} list view(s) to set to compact`,
+      `${isDryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: ${compactListFlatViewUpdates.length} list view(s) to set to compact`,
     );
 
     if (isDryRun) {
       return;
     }
 
-    const result =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
-        {
-          isSystemBuild: true,
-          workspaceId,
-          applicationUniversalIdentifier:
-            workspaceCustomFlatApplication.universalIdentifier,
-          allFlatEntityOperationByMetadataName: {
-            view: {
-              flatEntityToCreate: [],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: flatViewsToUpdate,
-            },
+    const writerApplicationUniversalIdentifiers = new Set(
+      compactListFlatViewUpdates.map(
+        ({ writerApplicationUniversalIdentifier }) =>
+          writerApplicationUniversalIdentifier,
+      ),
+    );
+
+    for (const writerApplicationUniversalIdentifier of writerApplicationUniversalIdentifiers) {
+      const workspaceMigrationArgs = {
+        isSystemBuild: true,
+        workspaceId,
+        applicationUniversalIdentifier: writerApplicationUniversalIdentifier,
+        allFlatEntityOperationByMetadataName: {
+          view: {
+            flatEntityToCreate: [],
+            flatEntityToDelete: [],
+            flatEntityToUpdate: compactListFlatViewUpdates
+              .filter(
+                (compactListFlatViewUpdate) =>
+                  compactListFlatViewUpdate.writerApplicationUniversalIdentifier ===
+                  writerApplicationUniversalIdentifier,
+              )
+              .map(({ flatView }) => flatView),
           },
         },
-      );
+      };
 
-    if (result.status === 'fail') {
-      throw new WorkspaceMigrationBuilderException(
-        result,
-        `Failed to set list views to compact for workspace ${workspaceId}`,
-      );
+      const isTwentyStandardApplicationWriter =
+        writerApplicationUniversalIdentifier ===
+        TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER;
+
+      const result = isTwentyStandardApplicationWriter
+        ? await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
+            workspaceMigrationArgs,
+          )
+        : await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+            workspaceMigrationArgs,
+          );
+
+      if (result.status === 'fail') {
+        throw new WorkspaceMigrationBuilderException(
+          result,
+          `Failed to set list views to compact for workspace ${workspaceId}`,
+        );
+      }
     }
   }
 }

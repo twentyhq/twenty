@@ -18,7 +18,15 @@ type CompactableFlatView = Pick<
   | 'updatedAt'
 >;
 
-export const buildCompactListFlatViewsToUpdate = <
+type CompactListFlatViewUpdate<TFlatView extends CompactableFlatView> = {
+  flatView: TFlatView;
+  writerApplicationUniversalIdentifier: string;
+};
+
+const isListLayout = (viewType: ViewType): boolean =>
+  getViewLayoutFromViewType(viewType) === ViewType.LIST;
+
+export const buildCompactListFlatViewUpdates = <
   TFlatView extends CompactableFlatView,
 >({
   flatViews,
@@ -30,7 +38,7 @@ export const buildCompactListFlatViewsToUpdate = <
   fieldMetadataUniversalIdentifierById: Partial<Record<string, string>>;
   workspaceCustomApplicationUniversalIdentifier: string;
   now: string;
-}): TFlatView[] =>
+}): CompactListFlatViewUpdate<TFlatView>[] =>
   flatViews.flatMap((flatView) => {
     const effectiveFlatView = resolveEffectiveFlatEntity({
       metadataName: 'view',
@@ -39,11 +47,20 @@ export const buildCompactListFlatViewsToUpdate = <
     });
 
     const isNonCompactList =
-      getViewLayoutFromViewType(effectiveFlatView.type) === ViewType.LIST &&
-      !effectiveFlatView.isCompact;
+      isListLayout(effectiveFlatView.type) && !effectiveFlatView.isCompact;
 
     if (!isNonCompactList) {
       return [];
+    }
+
+    if (isListLayout(flatView.type)) {
+      return [
+        {
+          flatView: { ...flatView, isCompact: true, updatedAt: now },
+          writerApplicationUniversalIdentifier:
+            flatView.applicationUniversalIdentifier,
+        },
+      ];
     }
 
     const { overrides, updatedEditableProperties } =
@@ -66,17 +83,21 @@ export const buildCompactListFlatViewsToUpdate = <
 
     return [
       {
-        ...flatView,
-        ...updatedEditableProperties,
-        overrides,
-        universalOverrides: isDefined(overrides)
-          ? fromViewOverridesToUniversalOverrides({
-              overrides,
-              fieldMetadataUniversalIdentifierById,
-              shouldThrowOnMissingIdentifier: false,
-            })
-          : null,
-        updatedAt: now,
+        flatView: {
+          ...flatView,
+          ...updatedEditableProperties,
+          overrides,
+          universalOverrides: isDefined(overrides)
+            ? fromViewOverridesToUniversalOverrides({
+                overrides,
+                fieldMetadataUniversalIdentifierById,
+                shouldThrowOnMissingIdentifier: false,
+              })
+            : null,
+          updatedAt: now,
+        },
+        writerApplicationUniversalIdentifier:
+          workspaceCustomApplicationUniversalIdentifier,
       },
     ];
   });

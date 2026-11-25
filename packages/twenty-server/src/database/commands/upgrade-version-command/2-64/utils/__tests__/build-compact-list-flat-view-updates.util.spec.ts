@@ -1,13 +1,13 @@
 import { ViewType } from 'twenty-shared/types';
 
-import { buildCompactListFlatViewsToUpdate } from 'src/database/commands/upgrade-version-command/2-64/utils/build-compact-list-flat-views-to-update.util';
+import { buildCompactListFlatViewUpdates } from 'src/database/commands/upgrade-version-command/2-64/utils/build-compact-list-flat-view-updates.util';
 
 const WORKSPACE_CUSTOM_APPLICATION = 'workspace-custom-application';
 const STANDARD_APPLICATION = 'standard-application';
 const NOW = '2026-11-25T00:00:00.000Z';
 
 type FlatViewFixture = Parameters<
-  typeof buildCompactListFlatViewsToUpdate
+  typeof buildCompactListFlatViewUpdates
 >[0]['flatViews'][number] & { universalIdentifier: string };
 
 const buildFlatView = (
@@ -24,64 +24,58 @@ const buildFlatView = (
 });
 
 const build = (flatViews: FlatViewFixture[]) =>
-  buildCompactListFlatViewsToUpdate({
+  buildCompactListFlatViewUpdates({
     flatViews,
     fieldMetadataUniversalIdentifierById: {},
     workspaceCustomApplicationUniversalIdentifier: WORKSPACE_CUSTOM_APPLICATION,
     now: NOW,
   });
 
-describe('buildCompactListFlatViewsToUpdate', () => {
-  it('should set the column on list views the workspace owns', () => {
-    expect(
-      build([
-        buildFlatView({ universalIdentifier: 'list', type: ViewType.LIST }),
-        buildFlatView({
-          universalIdentifier: 'list-widget',
-          type: ViewType.LIST_WIDGET,
-        }),
-      ]),
-    ).toEqual([
-      buildFlatView({
-        universalIdentifier: 'list',
-        type: ViewType.LIST,
-        isCompact: true,
-        updatedAt: NOW,
-      }),
+describe('buildCompactListFlatViewUpdates', () => {
+  it('should set the column of a view that is a list by its own type, written by its owner', () => {
+    const listViews = [
+      buildFlatView({ universalIdentifier: 'list', type: ViewType.LIST }),
       buildFlatView({
         universalIdentifier: 'list-widget',
         type: ViewType.LIST_WIDGET,
-        isCompact: true,
-        updatedAt: NOW,
       }),
-    ]);
+      buildFlatView({
+        universalIdentifier: 'standard-list',
+        type: ViewType.LIST,
+        applicationUniversalIdentifier: STANDARD_APPLICATION,
+      }),
+    ];
+
+    expect(build(listViews)).toEqual(
+      listViews.map((listView) => ({
+        flatView: { ...listView, isCompact: true, updatedAt: NOW },
+        writerApplicationUniversalIdentifier:
+          listView.applicationUniversalIdentifier,
+      })),
+    );
   });
 
-  it('should override Compact view on a standard view the workspace turned into a list', () => {
+  it('should override Compact view, as the workspace, on a standard view the workspace turned into a list', () => {
+    const standardTableShownAsList = buildFlatView({
+      universalIdentifier: 'standard-table-shown-as-list',
+      type: ViewType.TABLE,
+      applicationUniversalIdentifier: STANDARD_APPLICATION,
+      overrides: { [WORKSPACE_CUSTOM_APPLICATION]: { type: ViewType.LIST } },
+    });
     const workspaceOverrides = {
       [WORKSPACE_CUSTOM_APPLICATION]: { type: ViewType.LIST, isCompact: true },
     };
 
-    expect(
-      build([
-        buildFlatView({
-          universalIdentifier: 'standard-table-shown-as-list',
-          type: ViewType.TABLE,
-          applicationUniversalIdentifier: STANDARD_APPLICATION,
-          overrides: {
-            [WORKSPACE_CUSTOM_APPLICATION]: { type: ViewType.LIST },
-          },
-        }),
-      ]),
-    ).toEqual([
-      buildFlatView({
-        universalIdentifier: 'standard-table-shown-as-list',
-        type: ViewType.TABLE,
-        applicationUniversalIdentifier: STANDARD_APPLICATION,
-        overrides: workspaceOverrides,
-        universalOverrides: workspaceOverrides,
-        updatedAt: NOW,
-      }),
+    expect(build([standardTableShownAsList])).toEqual([
+      {
+        flatView: {
+          ...standardTableShownAsList,
+          overrides: workspaceOverrides,
+          universalOverrides: workspaceOverrides,
+          updatedAt: NOW,
+        },
+        writerApplicationUniversalIdentifier: WORKSPACE_CUSTOM_APPLICATION,
+      },
     ]);
   });
 
