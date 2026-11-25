@@ -94,7 +94,6 @@ export const InboxThreadListItem = ({
     useAiChatThreadSubtitleContent(thread);
   const isMobile = useIsMobile();
   const isCompact = variant === 'compact';
-  // Triage buttons crowd out the title on phones; the More menu offers the same actions.
   const shouldShowTriageActions = !isCompact && !isMobile;
   const shouldShowMore =
     !shouldShowTriageActions ||
