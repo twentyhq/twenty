@@ -49,21 +49,39 @@ export const grantRoleWideAccessToChannelObjects = async () => {
       ),
     )
     .filter(isDefined);
-  const ruleIds = userRoles
-    .flatMap(({ universalIdentifier }) =>
+  const channelRecordRuleUniversalIdentifiers = (
+    kind: 'rule' | 'group' | 'predicate',
+  ) =>
+    userRoles.flatMap(({ universalIdentifier }) =>
       CHANNEL_RECORD_RULE_UNIVERSAL_IDENTIFIER_SEEDS.map(
         (ruleUniversalIdentifierSeed) =>
-          flatRowLevelPermissionRuleMaps.byUniversalIdentifier[
-            getChannelRecordRuleUniversalIdentifier({
-              ruleUniversalIdentifierSeed,
-              roleUniversalIdentifier: universalIdentifier,
-              kind: 'rule',
-            })
-          ]?.id,
+          getChannelRecordRuleUniversalIdentifier({
+            ruleUniversalIdentifierSeed,
+            roleUniversalIdentifier: universalIdentifier,
+            kind,
+          }),
       ),
+    );
+  const ruleIds = channelRecordRuleUniversalIdentifiers('rule')
+    .map(
+      (universalIdentifier) =>
+        flatRowLevelPermissionRuleMaps.byUniversalIdentifier[
+          universalIdentifier
+        ]?.id,
     )
     .filter(isDefined);
 
+  await global.testDataSource.query(
+    `DELETE FROM core."rowLevelPermissionPredicate" WHERE "workspaceId" = $1 AND "universalIdentifier" = ANY($2)`,
+    [
+      SEED_APPLE_WORKSPACE_ID,
+      channelRecordRuleUniversalIdentifiers('predicate'),
+    ],
+  );
+  await global.testDataSource.query(
+    `DELETE FROM core."rowLevelPermissionPredicateGroup" WHERE "workspaceId" = $1 AND "universalIdentifier" = ANY($2)`,
+    [SEED_APPLE_WORKSPACE_ID, channelRecordRuleUniversalIdentifiers('group')],
+  );
   await global.testDataSource.query(
     `DELETE FROM core."rowLevelPermissionRule" WHERE id = ANY($1)`,
     [ruleIds],

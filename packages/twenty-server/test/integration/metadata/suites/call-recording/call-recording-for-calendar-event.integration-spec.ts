@@ -118,6 +118,12 @@ describe('callRecordingIdForCalendarEvent (integration)', () => {
 
     jestExpectToBeDefined(callRecordingObjectMetadataId);
 
+    const calendarEventObjectMetadataId = objects.find(
+      (objectMetadata) => objectMetadata.nameSingular === 'calendarEvent',
+    )?.id;
+
+    jestExpectToBeDefined(calendarEventObjectMetadataId);
+
     const { data: restrictedRoleData } = await createOneRole({
       expectToFail: false,
       input: {
@@ -146,6 +152,13 @@ describe('callRecordingIdForCalendarEvent (integration)', () => {
         objectPermissions: [
           {
             objectMetadataId: callRecordingObjectMetadataId,
+            canReadObjectRecords: false,
+            canUpdateObjectRecords: false,
+            canSoftDeleteObjectRecords: false,
+            canDestroyObjectRecords: false,
+          },
+          {
+            objectMetadataId: calendarEventObjectMetadataId,
             canReadObjectRecords: false,
             canUpdateObjectRecords: false,
             canSoftDeleteObjectRecords: false,

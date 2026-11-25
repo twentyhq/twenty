@@ -186,6 +186,7 @@ describe('channel visibility through row level rules (integration)', () => {
   });
 
   afterAll(async () => {
+    await grantRoleWideAccessToChannelObjects();
     for (const attachmentId of [companyAttachmentId, messageAttachmentId]) {
       await destroyRecord({
         objectMetadataSingularName: 'attachment',
@@ -210,6 +211,7 @@ describe('channel visibility through row level rules (integration)', () => {
     await setJonyChannelVisibility('SHARE_EVERYTHING');
 
     await waitForAllJobsToFinish();
+    await revokeRoleWideAccessToChannelObjects();
   });
 
   it('reads every field of a channel that shares everything', async () => {
