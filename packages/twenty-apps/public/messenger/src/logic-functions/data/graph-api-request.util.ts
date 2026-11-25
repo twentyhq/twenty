@@ -35,12 +35,17 @@ export const graphApiRequest = async <TResponse>({
 
     return response.data;
   } catch (error) {
-    const graphError = axios.isAxiosError<GraphApiErrorResponse>(error)
-      ? error.response?.data?.error
-      : undefined;
-
-    if (!isDefined(graphError)) {
+    if (!axios.isAxiosError<GraphApiErrorResponse>(error)) {
       throw error;
+    }
+
+    const graphError = error.response?.data?.error;
+
+    // an AxiosError carries the request headers, so rethrowing it would leak the access token into logs
+    if (!isDefined(graphError)) {
+      throw new Error(
+        `Messenger API request failed on ${method} /${path}: ${error.response?.status ?? error.code ?? error.message}`,
+      );
     }
 
     throw new GraphApiError(
