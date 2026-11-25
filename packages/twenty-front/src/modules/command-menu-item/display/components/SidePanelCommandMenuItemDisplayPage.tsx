@@ -279,11 +279,19 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
         )
       : [];
 
+  const getSectionCommandItemIds = (section: CommandMenuItemSection) => [
+    ...commandMenuItemsBySection[section].map((item) => item.id),
+    ...getSectionExtraItemIds(section),
+  ];
+
   const getSectionRowItemIds = (
     section: DisplayedCommandMenuItemSection,
   ): string[] => {
     if (section === 'ASK_AI' && shouldDisplayAskAiPrompt) {
-      return [COMMAND_MENU_ASK_AI_FALLBACK_ITEM_ID];
+      return [
+        COMMAND_MENU_ASK_AI_FALLBACK_ITEM_ID,
+        ...getSectionCommandItemIds(section),
+      ];
     }
 
     if (section === 'SEARCH' && isSearchActive) {
@@ -296,10 +304,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
       ];
     }
 
-    return [
-      ...commandMenuItemsBySection[section].map((item) => item.id),
-      ...getSectionExtraItemIds(section),
-    ];
+    return getSectionCommandItemIds(section);
   };
 
   const isSectionDisplayed = (section: DisplayedCommandMenuItemSection) =>
@@ -416,15 +421,50 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     </>
   );
 
+  const renderSectionCommandRows = (section: CommandMenuItemSection) => (
+    <>
+      {commandMenuItemsBySection[section].map((item) => (
+        <CommandMenuItemRenderer item={item} key={item.id} />
+      ))}
+      {(section === 'THIS_OBJECT' || section === 'SELECTION') && (
+        <CoreObjectsCommands section={section} />
+      )}
+      {getSectionAppActions(section).map((item) => {
+        const handleClick = () => {
+          item.onClick();
+          closeSidePanelMenu();
+        };
+
+        return (
+          <SelectableListItem
+            key={item.id}
+            itemId={item.id}
+            onEnter={handleClick}
+          >
+            <CommandMenuItem
+              id={item.id}
+              label={item.label}
+              Icon={item.Icon}
+              onClick={handleClick}
+            />
+          </SelectableListItem>
+        );
+      })}
+    </>
+  );
+
   const renderSectionRows = (section: DisplayedCommandMenuItemSection) => {
     if (section === 'ASK_AI' && shouldDisplayAskAiPrompt) {
       return (
-        <CommandMenuAskAiFallbackItem
-          prompt={trimmedSidePanelSearch}
-          isDefaultSelection={
-            defaultSelectedItemId === COMMAND_MENU_ASK_AI_FALLBACK_ITEM_ID
-          }
-        />
+        <>
+          <CommandMenuAskAiFallbackItem
+            prompt={trimmedSidePanelSearch}
+            isDefaultSelection={
+              defaultSelectedItemId === COMMAND_MENU_ASK_AI_FALLBACK_ITEM_ID
+            }
+          />
+          {renderSectionCommandRows(section)}
+        </>
       );
     }
 
@@ -432,37 +472,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
       return renderSearchRows();
     }
 
-    return (
-      <>
-        {commandMenuItemsBySection[section].map((item) => (
-          <CommandMenuItemRenderer item={item} key={item.id} />
-        ))}
-        {(section === 'THIS_OBJECT' || section === 'SELECTION') && (
-          <CoreObjectsCommands section={section} />
-        )}
-        {getSectionAppActions(section).map((item) => {
-          const handleClick = () => {
-            item.onClick();
-            closeSidePanelMenu();
-          };
-
-          return (
-            <SelectableListItem
-              key={item.id}
-              itemId={item.id}
-              onEnter={handleClick}
-            >
-              <CommandMenuItem
-                id={item.id}
-                label={item.label}
-                Icon={item.Icon}
-                onClick={handleClick}
-              />
-            </SelectableListItem>
-          );
-        })}
-      </>
-    );
+    return renderSectionCommandRows(section);
   };
 
   return (

@@ -113,6 +113,13 @@ const NAVIGATION_ITEM = createCommandMenuItem({
   label: 'Go to People',
 });
 
+const NEW_AI_CHAT_ITEM = createCommandMenuItem({
+  id: 'story-new-ai-chat',
+  label: 'New chat',
+  icon: 'IconMessageCirclePlus',
+  engineComponentKey: EngineComponentKey.NEW_AI_CHAT,
+});
+
 const SELECTION_ITEM = createCommandMenuItem({
   id: 'story-update-records',
   label: 'Update records',
@@ -409,6 +416,22 @@ export const SearchWithoutMatchingItemsOffersAskAi: Story = {
     expect(await canvas.findByText('“mike”')).toBeVisible();
     expect(canvas.getAllByText('Ask AI')).toHaveLength(2);
     expect(canvas.getByText('Search records')).toBeVisible();
+  },
+};
+
+export const SearchKeepsMatchingAiCommands: Story = {
+  decorators: [
+    createDecorator({
+      commandMenuItems: [OTHER_ITEM, NEW_AI_CHAT_ITEM],
+      sidePanelSearch: 'new chat',
+      permissionFlags: [PermissionFlagType.AI],
+    }),
+  ],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('“new chat”')).toBeVisible();
+    expect(canvas.getByText('New chat')).toBeVisible();
   },
 };
 

@@ -24,36 +24,25 @@ describe('getCommandMenuDefaultSelectedItemId', () => {
     ).toBe('command');
   });
 
-  it('picks Ask AI over records when the search reads as a question', () => {
+  it('picks the first record over Ask AI when no command matches', () => {
     expect(
       getCommandMenuDefaultSelectedItemId({
         isSearchActive: true,
         firstRecordItemId: 'record',
+        askAiItemId: 'ask-ai',
+        doesSearchReadAsQuestion: true,
+      }),
+    ).toBe('record');
+  });
+
+  it('picks Ask AI when nothing matches and the search reads as a question', () => {
+    expect(
+      getCommandMenuDefaultSelectedItemId({
+        isSearchActive: true,
         askAiItemId: 'ask-ai',
         doesSearchReadAsQuestion: true,
       }),
     ).toBe('ask-ai');
-  });
-
-  it('falls back to the first record when no command matches and the search is not a question', () => {
-    expect(
-      getCommandMenuDefaultSelectedItemId({
-        isSearchActive: true,
-        firstRecordItemId: 'record',
-        askAiItemId: 'ask-ai',
-        doesSearchReadAsQuestion: false,
-      }),
-    ).toBe('record');
-  });
-
-  it('keeps records first when Ask AI is not offered', () => {
-    expect(
-      getCommandMenuDefaultSelectedItemId({
-        isSearchActive: true,
-        firstRecordItemId: 'record',
-        doesSearchReadAsQuestion: true,
-      }),
-    ).toBe('record');
   });
 
   it('selects nothing when nothing matches and the search is not a question', () => {
