@@ -853,23 +853,23 @@ describe('app message channels API (e2e)', () => {
       const [{ messageId, messageThreadId }] =
         response.body.data.ingestAppMessages.messages;
 
-      const createdByRows = await globalThis.testDataSource.query(
-        `SELECT "createdBySource", "createdByContext" FROM "${WORKSPACE_SCHEMA}"."message" WHERE id = $1
-         UNION ALL
-         SELECT "createdBySource", "createdByContext" FROM "${WORKSPACE_SCHEMA}"."messageThread" WHERE id = $2`,
-        [messageId, messageThreadId],
-      );
+      const createdByApplication = {
+        createdBySource: FieldActorSource.APPLICATION,
+        createdByContext: { applicationId: owningApplicationDbId },
+      };
 
-      expect(createdByRows).toEqual([
-        {
-          createdBySource: FieldActorSource.APPLICATION,
-          createdByContext: { applicationId: owningApplicationDbId },
-        },
-        {
-          createdBySource: FieldActorSource.APPLICATION,
-          createdByContext: { applicationId: owningApplicationDbId },
-        },
-      ]);
+      expect(
+        await globalThis.testDataSource.query(
+          `SELECT "createdBySource", "createdByContext" FROM "${WORKSPACE_SCHEMA}"."message" WHERE id = $1`,
+          [messageId],
+        ),
+      ).toEqual([createdByApplication]);
+      expect(
+        await globalThis.testDataSource.query(
+          `SELECT "createdBySource", "createdByContext" FROM "${WORKSPACE_SCHEMA}"."messageThread" WHERE id = $1`,
+          [messageThreadId],
+        ),
+      ).toEqual([createdByApplication]);
     });
 
     it('exposes the app channel on the timeline threads of the matched person', async () => {
