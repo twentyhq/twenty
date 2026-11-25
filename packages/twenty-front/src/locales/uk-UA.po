@@ -136,6 +136,11 @@ msgstr "\"{path}\" зчитує зв’язок, але попередні зн�
 msgid "\"{subfieldName}\" is not a subfield of \"{fieldName}\""
 msgstr "\"{subfieldName}\" не є підполем \"{fieldName}\""
 
+#. js-lingui-id: caVje7
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "({applicationsCount} {applicationCountLabel})"
+msgstr ""
+
 #. js-lingui-id: J3dohc
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "({currentCreditsByPeriodDisplay} credits/month)"
@@ -667,6 +672,16 @@ msgstr "{applicationName} більше не може отримати досту
 msgid "{applicationName}: {settingsMenuItemTitle}"
 msgstr "{applicationName}: {settingsMenuItemTitle}"
 
+#. js-lingui-id: 041Z1f
+#: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
+msgid "{applicationsCount} paid app"
+msgstr ""
+
+#. js-lingui-id: tkQrFL
+#: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
+msgid "{applicationsCount} paid apps"
+msgstr ""
+
 #. js-lingui-id: ST9xGf
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
 #: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
@@ -1140,6 +1155,26 @@ msgstr "Заповнено {prefilledCount} з {fieldCount} полів"
 #: src/modules/settings/applications/components/SettingsApplicationConnectionProviderSection.tsx
 msgid "{providerDisplayName} OAuth is not yet set up by your server administrator. They need to fill in the OAuth client ID and secret on the application registration before you can add a connection."
 msgstr "{providerDisplayName} OAuth ще не налаштовано вашим адміністратором сервера. Вашому адміністратору потрібно вказати ідентифікатор клієнта OAuth і секрет клієнта у реєстраційних даних застосунку, перш ніж ви зможете додати з'єднання."
+
+#. js-lingui-id: VLLE21
+#: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
+msgid "{quantity} account"
+msgstr ""
+
+#. js-lingui-id: XYE5Zk
+#: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
+msgid "{quantity} accounts"
+msgstr ""
+
+#. js-lingui-id: 6sLwwC
+#: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
+msgid "{quantity} member"
+msgstr ""
+
+#. js-lingui-id: k/jGvO
+#: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
+msgid "{quantity} members"
+msgstr ""
 
 #. js-lingui-id: 2V2T+0
 #. placeholder {0}: formatNumber(queuedCount)
@@ -4153,6 +4188,11 @@ msgstr "Значення API"
 msgid "Apostrophe and dot"
 msgstr "Апостроф і крапка"
 
+#. js-lingui-id: sRXyRZ
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "app"
+msgstr ""
+
 #. js-lingui-id: LMUw1U
 #: src/modules/log-console/constants/LogConsoleApplicationLogAppColumn.tsx
 #: src/modules/log-console/constants/LogConsoleApplicationLogFilterFields.tsx
@@ -4254,11 +4294,6 @@ msgstr "Застосунок успішно встановлено."
 #: src/modules/settings/event-logs/components/EventLogTableSelector.tsx
 msgid "Application Logs"
 msgstr "Журнали застосунку"
-
-#. js-lingui-id: UiH6l9
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Application price billing"
-msgstr "Виставлення рахунків за цінами застосунків"
 
 #. js-lingui-id: Ko+Gd2
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
@@ -4373,10 +4408,17 @@ msgstr "Схвалено, але не вдалося виконати"
 msgid "Approved Domains"
 msgstr "Затверджені домени"
 
+#. js-lingui-id: at3eOk
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "apps"
+msgstr ""
+
 #. js-lingui-id: VDvaN2
 #: src/modules/settings/admin-panel/hooks/useSettingsAdminTabs.ts
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
 #: src/modules/settings/applications/components/SettingsApplicationContentPageLayout.tsx
+#: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
+#: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 #: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -5325,11 +5367,6 @@ msgstr "між {startOrdinal} та {endOrdinal} числами місяця"
 msgid "Bill credits to your workspace"
 msgstr "Виставляти рахунок за кредити вашому робочому простору"
 
-#. js-lingui-id: jKtUV8
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Bill the prices declared by installed apps on the workspace subscription. The price is not shown before install yet."
-msgstr "Виставляти рахунки за цінами, заявленими встановленими застосунками в підписці робочого простору. Ціна поки не відображається до встановлення."
-
 #. js-lingui-id: WVxikw
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "Bill your workspace {amount} / month"
@@ -5369,6 +5406,11 @@ msgstr "Розрахунки"
 #: src/utils/title-utils.ts
 msgid "Billing - Settings"
 msgstr "Виставлення рахунків - Налаштування"
+
+#. js-lingui-id: arWQGP
+#: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
+msgid "Billing email"
+msgstr ""
 
 #. js-lingui-id: dSjFxR
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -6257,6 +6299,11 @@ msgstr "Змінити виконавця"
 #: src/modules/object-core/agents/components/CoreAgentAvatarPicker.tsx
 msgid "Change avatar"
 msgstr "Змінити аватар"
+
+#. js-lingui-id: Y1obaF
+#: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
+msgid "Change billing email"
+msgstr ""
 
 #. js-lingui-id: feCRNv
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -16444,6 +16491,7 @@ msgstr "Параметри неактивної навички"
 
 #. js-lingui-id: Gp4Yi6
 #: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
+#: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
 #: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
 #: src/modules/views/types/ViewType.ts
 msgid "Inbox"
@@ -20259,7 +20307,6 @@ msgid "New Agent"
 msgstr "Новий агент"
 
 #. js-lingui-id: JLx7YM
-#: src/modules/navigation/components/MainNavigationDrawerFixedRows.tsx
 #: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
 msgid "New AI chat"
 msgstr "Новий AI-чат"
@@ -23288,6 +23335,11 @@ msgstr "Сторінки"
 msgid "Paid app"
 msgstr "Платний застосунок"
 
+#. js-lingui-id: CQnFBr
+#: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
+msgid "Paid apps installed in this workspace. Prices are added to your invoice"
+msgstr ""
+
 #. js-lingui-id: ijBN4V
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "paragraph"
@@ -23509,6 +23561,11 @@ msgstr "На"
 #: src/modules/settings/billing/constants/SettingsBillingPersonalAiUsageComparisonRow.ts
 msgid "per member"
 msgstr "за учасника"
+
+#. js-lingui-id: JxgXH1
+#: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
+msgid "Per month"
+msgstr ""
 
 #. js-lingui-id: qMTN0w
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
@@ -25694,6 +25751,11 @@ msgstr "Посилання для встановлення Replit вимагаю
 msgid "Reply"
 msgstr "Відповісти"
 
+#. js-lingui-id: 5ykMJ1
+#: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
+msgid "Reply all"
+msgstr "Відповісти всім"
+
 #. js-lingui-id: VKsaTi
 #: src/modules/ai-chat/composer/components/AiChatComposerQuotePreview.tsx
 msgid "Replying to"
@@ -26669,7 +26731,7 @@ msgstr "SDK"
 #. js-lingui-id: A1taO8
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
-#: src/modules/navigation/components/MainNavigationDrawerFixedRows.tsx
+#: src/modules/navigation/components/MainNavigationDrawerSearchField.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
 #: src/modules/navigation/components/NavigationDrawerHeader.tsx
@@ -26998,6 +27060,11 @@ msgstr "Пошук операцій"
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
 msgid "Search options"
 msgstr "Параметри пошуку"
+
+#. js-lingui-id: WDcoYK
+#: src/modules/navigation/components/MainNavigationDrawerSearchField.tsx
+msgid "Search or ask..."
+msgstr ""
 
 #. js-lingui-id: IMeaSJ
 #: src/modules/ai-chat/composer/components/AiChatAddMenuRecordsPage.tsx
@@ -29660,6 +29727,11 @@ msgstr "Підсумуйте зміни в Acme за цей тиждень"
 #: src/modules/object-record/record-column-lookup/utils/getRecordFieldColumnHeader.ts
 msgid "Summary"
 msgstr "Підсумок"
+
+#. js-lingui-id: 4W6uNO
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnForm.tsx
+msgid "Summary columns can't be sorted or filtered."
+msgstr "Стовпці підсумків не можна сортувати або фільтрувати."
 
 #. js-lingui-id: gKAccC
 #: src/modules/page-layout/widgets/call-recording-summary/components/WidgetActionCallRecordingSummary.tsx

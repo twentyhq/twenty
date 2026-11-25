@@ -3180,6 +3180,12 @@ msgctxt "fieldMetadata.label"
 msgid "Chats"
 msgstr "채팅"
 
+#. js-lingui-id: bK/UPN
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant.ts
+msgctxt "navigationMenuItem.name"
+msgid "Chats"
+msgstr "채팅"
+
 #. js-lingui-id: 68T2AN
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
@@ -10375,11 +10381,6 @@ msgstr "예약되었거나 전송 중인 캠페인만 취소할 수 있습니다
 msgid "Only a server administrator can manage recovery codes for this member."
 msgstr "서버 관리자만 이 구성원의 복구 코드를 관리할 수 있습니다."
 
-#. js-lingui-id: NcQgJA
-#: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
-msgid "Only a workspace member can change who sees a workflow"
-msgstr "워크스페이스 멤버만 워크플로를 볼 수 있는 사용자를 변경할 수 있습니다"
-
 #. js-lingui-id: yT1QOm
 #: src/engine/metadata-modules/ai/ai-agent/utils/from-create-agent-input-to-flat-agent.util.ts
 msgid "Only a workspace member can create a private agent."
@@ -10457,8 +10458,14 @@ msgstr "이 에이전트를 소유한 애플리케이션만 트리거를 변경�
 msgid "Only the member who owns an agent can change who sees it."
 msgstr "에이전트를 소유한 멤버만 해당 에이전트를 볼 수 있는 사용자를 변경할 수 있습니다."
 
+#. js-lingui-id: K7GKdZ
+#: src/engine/metadata-modules/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util.ts
+msgid "Only the person who created this view can change who sees it"
+msgstr "이 보기를 만든 사람만 볼 수 있는 사람을 변경할 수 있습니다"
+
 #. js-lingui-id: MPDvEo
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
+#: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
 msgid "Only the person who created this workflow can change who sees it"
 msgstr "이 워크플로우를 만든 사용자만 표시 대상을 변경할 수 있습니다"
 

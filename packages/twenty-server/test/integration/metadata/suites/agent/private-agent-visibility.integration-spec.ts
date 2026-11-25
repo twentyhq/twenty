@@ -105,7 +105,9 @@ describe('private agent visibility (integration)', () => {
       token: API_KEY_ACCESS_TOKEN,
     });
 
-    expect(errors?.[0]?.extensions?.code).toBe(ErrorCode.FORBIDDEN);
+    expect(errors?.[0]?.extensions?.code).toBe(
+      ErrorCode.METADATA_VALIDATION_FAILED,
+    );
   });
 
   describe('an ownerless shared agent', () => {
@@ -138,7 +140,9 @@ describe('private agent visibility (integration)', () => {
         token: API_KEY_ACCESS_TOKEN,
       });
 
-      expect(errors?.[0]?.extensions?.code).toBe(ErrorCode.FORBIDDEN);
+      expect(errors?.[0]?.extensions?.code).toBe(
+        ErrorCode.METADATA_VALIDATION_FAILED,
+      );
     });
 
     it('becomes owned by the member who makes it private', async () => {

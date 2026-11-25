@@ -9,6 +9,7 @@ import {
 } from 'twenty-shared/workflow';
 import { z } from 'zod';
 
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type CreatedCoreWorkflow } from 'src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service';
 import {
   WorkflowVersionStepException,
@@ -137,7 +138,7 @@ Call validate_workflow once when the workflow is complete, before activating.`,
       const creation = await createWorkflowOrBuildFailure({
         deps,
         workspaceId: context.workspaceId,
-        userWorkspaceId: context.userWorkspaceId,
+        authContext: context.authContext,
         name: parameters.name,
         trigger: parameters.trigger,
         steps: parameters.steps,
@@ -161,7 +162,6 @@ Call validate_workflow once when the workflow is complete, before activating.`,
         try {
           await deps.coreWorkflowLifecycleService.activateCoreWorkflowVersion({
             workspaceId: context.workspaceId,
-            userWorkspaceId: context.userWorkspaceId,
             coreWorkflowVersionId,
           });
         } catch (error) {
@@ -185,7 +185,7 @@ Call validate_workflow once when the workflow is complete, before activating.`,
 const createWorkflowOrBuildFailure = async ({
   deps,
   workspaceId,
-  userWorkspaceId,
+  authContext,
   name,
   trigger,
   steps,
@@ -193,7 +193,7 @@ const createWorkflowOrBuildFailure = async ({
 }: {
   deps: CreateCompleteWorkflowToolDeps;
   workspaceId: string;
-  userWorkspaceId: string | undefined;
+  authContext: WorkspaceAuthContext;
   name: string;
   trigger: WorkflowTrigger;
   steps: WorkflowAction[];
@@ -214,7 +214,7 @@ const createWorkflowOrBuildFailure = async ({
       createdWorkflow:
         await deps.coreWorkflowMutationService.createWorkflowWithContent({
           workspaceId,
-          userWorkspaceId,
+          authContext,
           name,
           trigger,
           steps,

@@ -136,6 +136,11 @@ msgstr "\"{path}\"은 관계를 읽지만 이전 값은 이 레코드 자체 필
 msgid "\"{subfieldName}\" is not a subfield of \"{fieldName}\""
 msgstr "\"{subfieldName}\"은 \"{fieldName}\"의 하위 필드가 아님"
 
+#. js-lingui-id: caVje7
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "({applicationsCount} {applicationCountLabel})"
+msgstr ""
+
 #. js-lingui-id: J3dohc
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "({currentCreditsByPeriodDisplay} credits/month)"
@@ -667,6 +672,16 @@ msgstr "{applicationName}은(는) 더 이상 귀하의 계정에 액세스할 �
 msgid "{applicationName}: {settingsMenuItemTitle}"
 msgstr "{applicationName}: {settingsMenuItemTitle}"
 
+#. js-lingui-id: 041Z1f
+#: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
+msgid "{applicationsCount} paid app"
+msgstr ""
+
+#. js-lingui-id: tkQrFL
+#: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
+msgid "{applicationsCount} paid apps"
+msgstr ""
+
 #. js-lingui-id: ST9xGf
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
 #: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
@@ -1140,6 +1155,26 @@ msgstr "{fieldCount}개 필드 중 {prefilledCount}개가 미리 채워짐"
 #: src/modules/settings/applications/components/SettingsApplicationConnectionProviderSection.tsx
 msgid "{providerDisplayName} OAuth is not yet set up by your server administrator. They need to fill in the OAuth client ID and secret on the application registration before you can add a connection."
 msgstr "{providerDisplayName} OAuth는 아직 서버 관리자가 설정하지 않았습니다. 연결을 추가하려면 애플리케이션 등록에서 OAuth 클라이언트 ID와 시크릿을 입력해야 합니다."
+
+#. js-lingui-id: VLLE21
+#: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
+msgid "{quantity} account"
+msgstr ""
+
+#. js-lingui-id: XYE5Zk
+#: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
+msgid "{quantity} accounts"
+msgstr ""
+
+#. js-lingui-id: 6sLwwC
+#: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
+msgid "{quantity} member"
+msgstr ""
+
+#. js-lingui-id: k/jGvO
+#: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
+msgid "{quantity} members"
+msgstr ""
 
 #. js-lingui-id: 2V2T+0
 #. placeholder {0}: formatNumber(queuedCount)
@@ -4153,6 +4188,11 @@ msgstr "API 값"
 msgid "Apostrophe and dot"
 msgstr "아포스트로피와 마침표"
 
+#. js-lingui-id: sRXyRZ
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "app"
+msgstr ""
+
 #. js-lingui-id: LMUw1U
 #: src/modules/log-console/constants/LogConsoleApplicationLogAppColumn.tsx
 #: src/modules/log-console/constants/LogConsoleApplicationLogFilterFields.tsx
@@ -4254,11 +4294,6 @@ msgstr "응용 프로그램이 성공적으로 설치되었습니다."
 #: src/modules/settings/event-logs/components/EventLogTableSelector.tsx
 msgid "Application Logs"
 msgstr "응용 프로그램 로그"
-
-#. js-lingui-id: UiH6l9
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Application price billing"
-msgstr "애플리케이션 가격 청구"
 
 #. js-lingui-id: Ko+Gd2
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
@@ -4373,10 +4408,17 @@ msgstr "승인되었지만 실패함"
 msgid "Approved Domains"
 msgstr "승인된 도메인"
 
+#. js-lingui-id: at3eOk
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "apps"
+msgstr ""
+
 #. js-lingui-id: VDvaN2
 #: src/modules/settings/admin-panel/hooks/useSettingsAdminTabs.ts
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
 #: src/modules/settings/applications/components/SettingsApplicationContentPageLayout.tsx
+#: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
+#: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 #: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -5325,11 +5367,6 @@ msgstr "매달의 {startOrdinal}일에서 {endOrdinal}일까지"
 msgid "Bill credits to your workspace"
 msgstr "크레딧을 워크스페이스에 청구"
 
-#. js-lingui-id: jKtUV8
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Bill the prices declared by installed apps on the workspace subscription. The price is not shown before install yet."
-msgstr "설치된 앱에서 선언한 가격을 워크스페이스 구독에 청구합니다. 가격은 아직 설치 전에 표시되지 않습니다."
-
 #. js-lingui-id: WVxikw
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "Bill your workspace {amount} / month"
@@ -5369,6 +5406,11 @@ msgstr "청구"
 #: src/utils/title-utils.ts
 msgid "Billing - Settings"
 msgstr "청구 - 설정"
+
+#. js-lingui-id: arWQGP
+#: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
+msgid "Billing email"
+msgstr ""
 
 #. js-lingui-id: dSjFxR
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -6257,6 +6299,11 @@ msgstr "담당자 변경"
 #: src/modules/object-core/agents/components/CoreAgentAvatarPicker.tsx
 msgid "Change avatar"
 msgstr "아바타 변경"
+
+#. js-lingui-id: Y1obaF
+#: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
+msgid "Change billing email"
+msgstr ""
 
 #. js-lingui-id: feCRNv
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -16444,6 +16491,7 @@ msgstr "비활성 스킬 옵션"
 
 #. js-lingui-id: Gp4Yi6
 #: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
+#: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
 #: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
 #: src/modules/views/types/ViewType.ts
 msgid "Inbox"
@@ -20259,7 +20307,6 @@ msgid "New Agent"
 msgstr "새로운 에이전트"
 
 #. js-lingui-id: JLx7YM
-#: src/modules/navigation/components/MainNavigationDrawerFixedRows.tsx
 #: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
 msgid "New AI chat"
 msgstr "새 AI 채팅"
@@ -23288,6 +23335,11 @@ msgstr "페이지"
 msgid "Paid app"
 msgstr "유료 앱"
 
+#. js-lingui-id: CQnFBr
+#: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
+msgid "Paid apps installed in this workspace. Prices are added to your invoice"
+msgstr ""
+
 #. js-lingui-id: ijBN4V
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "paragraph"
@@ -23509,6 +23561,11 @@ msgstr "당"
 #: src/modules/settings/billing/constants/SettingsBillingPersonalAiUsageComparisonRow.ts
 msgid "per member"
 msgstr "구성원당"
+
+#. js-lingui-id: JxgXH1
+#: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
+msgid "Per month"
+msgstr ""
 
 #. js-lingui-id: qMTN0w
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
@@ -25694,6 +25751,11 @@ msgstr "Replit 설치 링크에는 HTTPS MCP URL이 필요합니다."
 msgid "Reply"
 msgstr "답장"
 
+#. js-lingui-id: 5ykMJ1
+#: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
+msgid "Reply all"
+msgstr "모두에게 답장"
+
 #. js-lingui-id: VKsaTi
 #: src/modules/ai-chat/composer/components/AiChatComposerQuotePreview.tsx
 msgid "Replying to"
@@ -26669,7 +26731,7 @@ msgstr "SDK"
 #. js-lingui-id: A1taO8
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
-#: src/modules/navigation/components/MainNavigationDrawerFixedRows.tsx
+#: src/modules/navigation/components/MainNavigationDrawerSearchField.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
 #: src/modules/navigation/components/NavigationDrawerHeader.tsx
@@ -26998,6 +27060,11 @@ msgstr "작업 검색"
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
 msgid "Search options"
 msgstr "검색 옵션"
+
+#. js-lingui-id: WDcoYK
+#: src/modules/navigation/components/MainNavigationDrawerSearchField.tsx
+msgid "Search or ask..."
+msgstr ""
 
 #. js-lingui-id: IMeaSJ
 #: src/modules/ai-chat/composer/components/AiChatAddMenuRecordsPage.tsx
@@ -29660,6 +29727,11 @@ msgstr "이번 주 Acme에서 변경된 내용 요약"
 #: src/modules/object-record/record-column-lookup/utils/getRecordFieldColumnHeader.ts
 msgid "Summary"
 msgstr "요약"
+
+#. js-lingui-id: 4W6uNO
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnForm.tsx
+msgid "Summary columns can't be sorted or filtered."
+msgstr "요약 열은 정렬하거나 필터링할 수 없습니다."
 
 #. js-lingui-id: gKAccC
 #: src/modules/page-layout/widgets/call-recording-summary/components/WidgetActionCallRecordingSummary.tsx

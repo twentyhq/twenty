@@ -6,6 +6,7 @@ import { type NamedNavigationMenuItem } from '@/navigation-menu-item/common/type
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
 import { useMobileNavigationBarItems } from '@/navigation/hooks/useMobileNavigationBarItems';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { act, renderHook } from '@testing-library/react';
@@ -16,9 +17,12 @@ import { NavigationMenuItemType } from 'twenty-shared/types';
 
 jest.mock('@/ai-chat/composer/hooks/useSwitchToNewAiChat');
 jest.mock('@/settings/roles/hooks/useHasPermissionFlag');
+jest.mock('@/workspace/hooks/useIsFeatureEnabled');
 jest.mock(
   '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers',
 );
+
+let mockUnreadOpenThreadCount = 0;
 
 jest.mock(
   '@/navigation-menu-item/display/hooks/useNavigationMenuChatAttention',
@@ -26,6 +30,7 @@ jest.mock(
     useNavigationMenuChatAttention: () => ({
       getTabChatAttention: (tabId: string | null) =>
         tabId === 'sales-tab' ? 'needs-input' : null,
+      unreadOpenThreadCount: mockUnreadOpenThreadCount,
     }),
   }),
 );
@@ -97,7 +102,9 @@ describe('useMobileNavigationBarItems', () => {
     jest.clearAllMocks();
     localStorage.clear();
 
+    mockUnreadOpenThreadCount = 0;
     jest.mocked(useHasPermissionFlag).mockReturnValue(true);
+    jest.mocked(useIsFeatureEnabled).mockReturnValue(false);
     jest.mocked(useWorkspaceNavigationMenuContainers).mockReturnValue([]);
     jest.mocked(useSwitchToNewAiChat).mockReturnValue({
       switchToNewAiChat: mockSwitchToNewChat,
@@ -139,6 +146,52 @@ describe('useMobileNavigationBarItems', () => {
 
     expect(result.current.location.pathname).toBe('/home');
     expect(result.current.activeItemName).toBe('tab-sales-tab');
+  });
+
+  it('swaps the new chat for the inbox when the inbox is enabled', () => {
+    jest.mocked(useIsFeatureEnabled).mockReturnValue(true);
+
+    const { result } = renderMobileNavigationBarItems('/objects/people');
+
+    expect(result.current.items.map(({ name }) => name)).toEqual([
+      'home',
+      'inbox',
+      'search',
+    ]);
+
+    act(() => tapItem(result, 'inbox'));
+
+    expect(result.current.location.pathname).toBe('/inbox');
+    expect(result.current.activeItemName).toBe('inbox');
+  });
+
+  it('keeps the inbox active while a thread is open', () => {
+    jest.mocked(useIsFeatureEnabled).mockReturnValue(true);
+
+    const { result } = renderMobileNavigationBarItems(
+      '/inbox/7d2f4a6e-3c1b-4e8a-9f0d-2b5c6a7e8f91',
+    );
+
+    expect(result.current.activeItemName).toBe('inbox');
+  });
+
+  it('marks the inbox unread outside the inbox only', () => {
+    jest.mocked(useIsFeatureEnabled).mockReturnValue(true);
+    mockUnreadOpenThreadCount = 2;
+
+    const getInboxItem = (pathname: string) =>
+      renderMobileNavigationBarItems(pathname).result.current.items.find(
+        ({ name }) => name === 'inbox',
+      );
+
+    expect(getInboxItem('/objects/people')).toMatchObject({
+      label: 'Inbox, unread',
+      attention: 'unread',
+    });
+    expect(getInboxItem('/inbox')).toMatchObject({
+      label: 'Inbox',
+      attention: null,
+    });
   });
 
   it('drops the new chat when the workspace has no AI permission', () => {

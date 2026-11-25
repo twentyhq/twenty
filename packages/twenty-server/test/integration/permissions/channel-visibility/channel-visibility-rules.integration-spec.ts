@@ -2,8 +2,10 @@ import { createOneOperationFactory } from 'test/integration/graphql/utils/create
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { findWorkspaceCustomApplicationId } from 'test/integration/metadata/suites/application-default-role/utils/find-application-default-role.util';
 import { findCurrentUserObjectRecordsPermissions } from 'test/integration/permissions/channel-visibility/utils/find-current-user-object-records-permissions.util';
 import { findObjectMetadataIdByName } from 'test/integration/utils/find-object-metadata-id-by-name.util';
+import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
 import { updateMessageChannelVisibility } from 'test/integration/permissions/channel-visibility/utils/update-message-channel-visibility.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { syncChannelVisibilityRules } from 'test/integration/permissions/channel-visibility/utils/sync-channel-visibility-rules.util';
@@ -623,6 +625,59 @@ describe('channel visibility through row level rules (integration)', () => {
       });
       await waitForAllJobsToFinish();
     }
+  });
+
+  it('lets an application read each channel it does not own as a member who does not own it', async () => {
+    const { applicationAccessToken } =
+      await generateAppleAdminApplicationTokenPair({
+        applicationId: await findWorkspaceCustomApplicationId(),
+      });
+
+    const findJonyMessagesAsApplication = async () => {
+      const response = await makeGraphqlApiRequest(
+        findManyOperationFactory({
+          objectMetadataSingularName: 'message',
+          objectMetadataPluralName: 'messages',
+          gqlFields: 'id subject text',
+          filter: {
+            messageChannelMessageAssociations: {
+              messageChannelId: { eq: MESSAGE_CHANNEL_DATA_SEED_IDS.JONY },
+            },
+          },
+        }),
+        applicationAccessToken.token,
+      );
+
+      return (response.body.data?.messages?.edges ?? []).map(
+        ({ node }: { node: { subject: string; text: string } }) => node,
+      );
+    };
+
+    await setJonyChannelVisibility('SHARE_EVERYTHING');
+
+    const sharedMessages = await findJonyMessagesAsApplication();
+
+    expect(sharedMessages.length).toBeGreaterThan(0);
+    expect(
+      sharedMessages.some(
+        ({ subject, text }: { subject: string; text: string }) =>
+          subject === FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED ||
+          text === FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
+      ),
+    ).toBe(false);
+
+    await setJonyChannelVisibility('METADATA');
+
+    const metadataMessages = await findJonyMessagesAsApplication();
+
+    expect(metadataMessages.length).toBeGreaterThan(0);
+    expect(
+      metadataMessages.every(
+        ({ subject, text }: { subject: string; text: string }) =>
+          subject === FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED &&
+          text === FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
+      ),
+    ).toBe(true);
   });
 
   it('cannot read the title of an event of a metadata calendar of another member', async () => {

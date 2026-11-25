@@ -3180,6 +3180,12 @@ msgctxt "fieldMetadata.label"
 msgid "Chats"
 msgstr "Ćaskanja"
 
+#. js-lingui-id: bK/UPN
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant.ts
+msgctxt "navigationMenuItem.name"
+msgid "Chats"
+msgstr "Ćaskanja"
+
 #. js-lingui-id: 68T2AN
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
@@ -10375,11 +10381,6 @@ msgstr "Samo zakazana kampanja ili kampanja koja se šalje može biti otkazana."
 msgid "Only a server administrator can manage recovery codes for this member."
 msgstr "Samo administrator servera može upravljati kodovima za oporavak ovog člana."
 
-#. js-lingui-id: NcQgJA
-#: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
-msgid "Only a workspace member can change who sees a workflow"
-msgstr "Samo član radnog prostora može da promeni ko vidi tok rada"
-
 #. js-lingui-id: yT1QOm
 #: src/engine/metadata-modules/ai/ai-agent/utils/from-create-agent-input-to-flat-agent.util.ts
 msgid "Only a workspace member can create a private agent."
@@ -10457,8 +10458,14 @@ msgstr "Samo aplikacija koja poseduje ovog agenta može promeniti njegove okida�
 msgid "Only the member who owns an agent can change who sees it."
 msgstr "Samo član koji poseduje agenta može da promeni ko ga vidi."
 
+#. js-lingui-id: K7GKdZ
+#: src/engine/metadata-modules/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util.ts
+msgid "Only the person who created this view can change who sees it"
+msgstr "Samo osoba koja je kreirala ovaj prikaz može da promeni ko ga vidi"
+
 #. js-lingui-id: MPDvEo
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
+#: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
 msgid "Only the person who created this workflow can change who sees it"
 msgstr "Samo osoba koja je kreirala ovaj radni tok može da promeni ko ga vidi"
 

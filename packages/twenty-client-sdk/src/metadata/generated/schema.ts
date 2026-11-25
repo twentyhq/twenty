@@ -974,6 +974,7 @@ export interface Billing {
 export interface BillingCustomer {
     hasPaymentMethod?: Scalars['Boolean']
     id: Scalars['UUID']
+    stripeCustomerEmail?: Scalars['String']
     userCreditsFallback: UserCreditsFallback
     __typename: 'BillingCustomer'
 }
@@ -1101,6 +1102,9 @@ export interface BillingSubscription {
 export type BillingSubscriptionCollectionMethod = 'CHARGE_AUTOMATICALLY' | 'SEND_INVOICE'
 
 export interface BillingSubscriptionItem {
+    applicationLogoUrl?: Scalars['String']
+    applicationName?: Scalars['String']
+    applicationPricePer?: ApplicationBillingPriceUnit
     billingProduct: BillingProduct
     creditAmount?: Scalars['Float']
     hasReachedCurrentPeriodCap: Scalars['Boolean']
@@ -1677,7 +1681,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_ACCESS_GROUPS_ENABLED' | 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED' | 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' | 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_AI_DATA_POLICY_ENABLED' | 'IS_APPLICATION_PRICE_BILLING_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED' | 'IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED' | 'IS_CHANNEL_VISIBILITY_ENFORCED_ON_API_KEYS' | 'IS_CHANNEL_VISIBILITY_RLS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_CREATE_RECORDS_PERMISSION_ENABLED' | 'IS_CUSTOMIZABLE_SIDEBAR_ENABLED' | 'IS_FORMULA_FIELD_ENABLED' | 'IS_GETTING_STARTED_ENABLED' | 'IS_INBOX_OBJECT_NAMING_ENABLED' | 'IS_INTERNAL_IMPORT_COLUMN_ENABLED' | 'IS_LOOKUP_COLUMNS_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_PRIVATE_RECORDS_ENABLED' | 'IS_RECORD_GROUP_TABS_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED' | 'IS_WIDGET_CONDITIONAL_AVAILABILITY_ENABLED'
+export type FeatureFlagKey = 'IS_ACCESS_GROUPS_ENABLED' | 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED' | 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' | 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_AI_DATA_POLICY_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED' | 'IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED' | 'IS_CHANNEL_VISIBILITY_ENFORCED_ON_API_KEYS' | 'IS_CHANNEL_VISIBILITY_RLS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_CREATE_RECORDS_PERMISSION_ENABLED' | 'IS_CUSTOMIZABLE_SIDEBAR_ENABLED' | 'IS_FORMULA_FIELD_ENABLED' | 'IS_GETTING_STARTED_ENABLED' | 'IS_INBOX_OBJECT_NAMING_ENABLED' | 'IS_INTERNAL_IMPORT_COLUMN_ENABLED' | 'IS_LOOKUP_COLUMNS_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_PRIVATE_RECORDS_ENABLED' | 'IS_RECORD_GROUP_TABS_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED' | 'IS_WIDGET_CONDITIONAL_AVAILABILITY_ENABLED'
 
 export interface Field {
     applicationId: Scalars['UUID']
@@ -5674,6 +5678,7 @@ export interface BillingGenqlSelection{
 export interface BillingCustomerGenqlSelection{
     hasPaymentMethod?: boolean | number
     id?: boolean | number
+    stripeCustomerEmail?: boolean | number
     userCreditsFallback?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -5802,6 +5807,9 @@ export interface BillingSubscriptionGenqlSelection{
 }
 
 export interface BillingSubscriptionItemGenqlSelection{
+    applicationLogoUrl?: boolean | number
+    applicationName?: boolean | number
+    applicationPricePer?: boolean | number
     billingProduct?: BillingProductGenqlSelection
     creditAmount?: boolean | number
     hasReachedCurrentPeriodCap?: boolean | number
@@ -13516,7 +13524,6 @@ export const enumFeatureFlagKey = {
    IS_AI_CHAT_COMPONENT_BUILDER_ENABLED: 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' as const,
    IS_AI_CHAT_INBOX_ENABLED: 'IS_AI_CHAT_INBOX_ENABLED' as const,
    IS_AI_DATA_POLICY_ENABLED: 'IS_AI_DATA_POLICY_ENABLED' as const,
-   IS_APPLICATION_PRICE_BILLING_ENABLED: 'IS_APPLICATION_PRICE_BILLING_ENABLED' as const,
    IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED: 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' as const,
    IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED: 'IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED' as const,
    IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED: 'IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED' as const,

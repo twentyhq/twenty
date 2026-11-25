@@ -277,7 +277,7 @@ export class UpsertCompleteViewTool extends BaseTool<
 
     const view = await this.completeViewUpsertService.upsertCompleteView({
       workspaceId,
-      userWorkspaceId,
+      authContext,
       existingViewId,
       objectMetadataId,
       name: input.name,

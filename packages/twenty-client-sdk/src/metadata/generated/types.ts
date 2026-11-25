@@ -2449,6 +2449,9 @@ export default {
             "id": [
                 572
             ],
+            "stripeCustomerEmail": [
+                4
+            ],
             "userCreditsFallback": [
                 678
             ],
@@ -2692,6 +2695,15 @@ export default {
         },
         "BillingSubscriptionCollectionMethod": {},
         "BillingSubscriptionItem": {
+            "applicationLogoUrl": [
+                4
+            ],
+            "applicationName": [
+                4
+            ],
+            "applicationPricePer": [
+                65
+            ],
             "billingProduct": [
                 132
             ],

@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardCard } from '@/object-record/record-board/record-board-card/components/RecordBoardCard';
+import { draggedRecordIdsComponentState } from '@/object-record/record-drag/states/draggedRecordIdsComponentState';
 import { RecordDragMultiDragCounterChip } from '@/object-record/record-drag/components/RecordDragMultiDragCounterChip';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
@@ -14,6 +15,7 @@ import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record
 import { type DragDropItemData } from '@/ui/utilities/drag-and-drop/types/DragDropItemData';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { ViewType } from '@/views/types/ViewType';
 
@@ -54,6 +56,10 @@ export const RecordBoardCardDragOverlayContent = ({
     objectMetadataId: objectMetadataItem.id,
   });
 
+  const draggedRecordIds = useAtomComponentStateValue(
+    draggedRecordIdsComponentState,
+  );
+
   if (!isDefined(source) || !isDefined(recordGroupDefinition)) {
     return null;
   }
@@ -74,6 +80,7 @@ export const RecordBoardCardDragOverlayContent = ({
           rowIndex,
           columnIndex,
           isDragOverlay: true,
+          isMultiDragOverlay: draggedRecordIds.length > 1,
         }}
       >
         <RecordBoardCard />

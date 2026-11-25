@@ -10,7 +10,6 @@ import {
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { type ApplicationBillingPrice } from 'twenty-shared/application';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -23,8 +22,6 @@ import { type StripeSubscriptionScheduleService } from 'src/engine/core-modules/
 import { type StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { type SubscriptionWithSchedule } from 'src/engine/core-modules/billing/types/billing-subscription-with-schedule.type';
 import { buildApplicationStripeProductId } from 'src/engine/core-modules/billing/utils/build-application-stripe-product-id.util';
-import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 type StripeItem = { id: string; price: { id: string }; quantity: number };
 
@@ -188,13 +185,6 @@ describe('Application price billing (integration)', () => {
       ],
     );
 
-    await getAppProviderByClassName<FeatureFlagService>(
-      'FeatureFlagService',
-    ).enableFeatureFlags(
-      [FeatureFlagKey.IS_APPLICATION_PRICE_BILLING_ENABLED],
-      workspaceId,
-    );
-
     const billingSeatService =
       getAppProviderByClassName<BillingSeatService>('BillingSeatService');
 
@@ -296,13 +286,6 @@ describe('Application price billing (integration)', () => {
       `DELETE FROM core."billingProduct" WHERE "stripeProductId" = ANY($1)`,
       [[BASE_PRODUCT_ID, applicationStripeProductId]],
     );
-    await query(
-      `DELETE FROM core."featureFlag" WHERE "workspaceId" = $1 AND key = $2`,
-      [workspaceId, FeatureFlagKey.IS_APPLICATION_PRICE_BILLING_ENABLED],
-    );
-    await getAppProviderByClassName<WorkspaceCacheService>(
-      'WorkspaceCacheService',
-    ).invalidateAndRecompute(workspaceId, ['featureFlagsMap']);
   }, 120000);
 
   it('bills the price per member when the install completes and leaves seats untouched', async () => {

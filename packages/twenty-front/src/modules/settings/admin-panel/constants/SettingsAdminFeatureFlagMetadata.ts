@@ -97,10 +97,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Group tabs`,
     description: msg`Let grouped table and list views show their groups as tabs, one group at a time. Enable after the instance upgrade completes.`,
   },
-  [FeatureFlagKey.IS_APPLICATION_PRICE_BILLING_ENABLED]: {
-    label: msg`Application price billing`,
-    description: msg`Bill the prices declared by installed apps on the workspace subscription. The price is not shown before install yet.`,
-  },
   [FeatureFlagKey.IS_FORMULA_FIELD_ENABLED]: {
     label: msg`Formula fields`,
     description: msg`Let text, number, boolean and date fields compute their value from an expression over the record and its related records.`,

@@ -1,7 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { Temporal } from 'temporal-polyfill';
 import {
-  escapeForIlike,
   getNextPeriodStart,
   getPeriodStart,
   isDefined,
@@ -19,28 +18,26 @@ import {
   CoreWorkflowFilterOperand,
   type CoreWorkflowFilterRuleInput,
 } from 'src/engine/core-modules/workflow/dtos/core-workflow-filter.input';
-import {
-  buildCoreWorkflowHasAnyOfStatusesPredicate,
-  CORE_WORKFLOW_HAS_ANY_STATUS_PREDICATE,
-} from 'src/engine/core-modules/workflow/utils/build-core-workflow-status-predicate.util';
 
-const NAME_COLUMN = 'c.name';
-const UPDATED_AT_COLUMN = 'c."updatedAt"';
-const IS_SYSTEM_COLUMN = 'c."isSystem"';
 const CORE_WORKFLOW_STATUS_VALUES: WorkflowStatus[] =
   Object.values(WorkflowStatus);
 
-type BindParameter = (value: unknown) => string;
-
-type RulePredicateBuilder = (context: {
-  rule: CoreWorkflowFilterRuleInput;
-  bindParameter: BindParameter;
-}) => string;
-
-export type CoreWorkflowFilterPredicate = {
-  predicate?: string;
-  parameters: unknown[];
+export type CoreWorkflowFilterCandidate = {
+  name: string | null;
+  updatedAt: string;
+  isSystem: boolean;
+  statuses: WorkflowStatus[];
 };
+
+export type CoreWorkflowFilterPredicate = (
+  candidate: CoreWorkflowFilterCandidate,
+) => boolean;
+
+type CoreWorkflowUpdatedAtRange = { start: number; end: number };
+
+type RulePredicateBuilder = (
+  rule: CoreWorkflowFilterRuleInput,
+) => CoreWorkflowFilterPredicate;
 
 const requireExactTextValue = (rule: CoreWorkflowFilterRuleInput): string => {
   if (!isNonEmptyString(rule.value) || rule.value.trim() === '') {
@@ -153,9 +150,9 @@ const parseDateValue = (rule: CoreWorkflowFilterRuleInput): Date => {
 
 const computeDayBounds = (
   zonedDateTime: Temporal.ZonedDateTime,
-): { dayStart: string; nextDayStart: string } => ({
-  dayStart: getPeriodStart(zonedDateTime, 'DAY').toInstant().toString(),
-  nextDayStart: getNextPeriodStart(zonedDateTime, 'DAY').toInstant().toString(),
+): CoreWorkflowUpdatedAtRange => ({
+  start: getPeriodStart(zonedDateTime, 'DAY').toInstant().epochMilliseconds,
+  end: getNextPeriodStart(zonedDateTime, 'DAY').toInstant().epochMilliseconds,
 });
 
 const toRuleZonedDateTime = ({
@@ -171,7 +168,7 @@ const toRuleZonedDateTime = ({
 
 const parseRelativeDateRange = (
   rule: CoreWorkflowFilterRuleInput,
-): { start: string; end: string } => {
+): CoreWorkflowUpdatedAtRange => {
   const relativeDateFilter = safeParseRelativeDateFilterJsonStringified(
     requireTextValue(rule),
   );
@@ -200,72 +197,74 @@ const parseRelativeDateRange = (
   );
 
   return {
-    start: resolvedFilter.start.toInstant().toString(),
-    end: resolvedFilter.end.toInstant().toString(),
+    start: resolvedFilter.start.toInstant().epochMilliseconds,
+    end: resolvedFilter.end.toInstant().epochMilliseconds,
   };
 };
 
-const buildUpdatedAtRangePredicate = ({
-  bindParameter,
-  start,
-  end,
-}: {
-  bindParameter: BindParameter;
-  start: string;
-  end: string;
-}): string =>
-  `(${UPDATED_AT_COLUMN} >= ${bindParameter(start)}::timestamptz AND ${UPDATED_AT_COLUMN} < ${bindParameter(end)}::timestamptz)`;
+const getUpdatedAtTime = ({
+  updatedAt,
+}: Pick<CoreWorkflowFilterCandidate, 'updatedAt'>): number =>
+  Date.parse(updatedAt);
 
-const buildNameIlikePredicate = ({
-  bindParameter,
-  pattern,
+const buildUpdatedAtRangePredicate =
+  ({ start, end }: CoreWorkflowUpdatedAtRange): CoreWorkflowFilterPredicate =>
+  (candidate) => {
+    const updatedAtTime = getUpdatedAtTime(candidate);
+
+    return updatedAtTime >= start && updatedAtTime < end;
+  };
+
+const buildNameContainsPredicate = ({
+  rule,
   negated,
 }: {
-  bindParameter: BindParameter;
-  pattern: string;
+  rule: CoreWorkflowFilterRuleInput;
   negated: boolean;
-}): string => {
-  const comparison = `${NAME_COLUMN} ${negated ? 'NOT ILIKE' : 'ILIKE'} ${bindParameter(pattern)} ESCAPE '\\'`;
+}): CoreWorkflowFilterPredicate => {
+  const searchedText = requireTextValue(rule).toLowerCase();
 
-  return negated ? `(${NAME_COLUMN} IS NULL OR ${comparison})` : comparison;
+  return ({ name }) => {
+    if (!isDefined(name)) {
+      return negated;
+    }
+
+    return name.toLowerCase().includes(searchedText) !== negated;
+  };
 };
 
-const buildUpdatedAtComparisonPredicate = ({
-  bindParameter,
-  rule,
-  sqlOperator,
-}: {
-  bindParameter: BindParameter;
-  rule: CoreWorkflowFilterRuleInput;
-  sqlOperator: '<' | '>=';
-}): string =>
-  `${UPDATED_AT_COLUMN} ${sqlOperator} ${bindParameter(parseDateValue(rule).toISOString())}::timestamptz`;
+const isNameEmpty = ({
+  name,
+}: Pick<CoreWorkflowFilterCandidate, 'name'>): boolean =>
+  !isDefined(name) || name === '';
+
+const buildHasAnyOfStatusesPredicate =
+  (selectedStatuses: WorkflowStatus[]): CoreWorkflowFilterPredicate =>
+  ({ statuses }) =>
+    statuses.some((status) => selectedStatuses.includes(status));
 
 const PREDICATE_BUILDER_BY_OPERAND_BY_FIELD_KEY: Record<
   CoreWorkflowFilterFieldKey,
   Record<CoreWorkflowFilterOperand, RulePredicateBuilder | null>
 > = {
   [CoreWorkflowFilterFieldKey.NAME]: {
-    [CoreWorkflowFilterOperand.CONTAINS]: ({ rule, bindParameter }) =>
-      buildNameIlikePredicate({
-        bindParameter,
-        pattern: `%${escapeForIlike(requireTextValue(rule))}%`,
-        negated: false,
-      }),
-    [CoreWorkflowFilterOperand.DOES_NOT_CONTAIN]: ({ rule, bindParameter }) =>
-      buildNameIlikePredicate({
-        bindParameter,
-        pattern: `%${escapeForIlike(requireTextValue(rule))}%`,
-        negated: true,
-      }),
-    [CoreWorkflowFilterOperand.IS]: ({ rule, bindParameter }) =>
-      `${NAME_COLUMN} = ${bindParameter(requireExactTextValue(rule))}`,
-    [CoreWorkflowFilterOperand.IS_NOT]: ({ rule, bindParameter }) =>
-      `(${NAME_COLUMN} IS NULL OR ${NAME_COLUMN} <> ${bindParameter(requireExactTextValue(rule))})`,
-    [CoreWorkflowFilterOperand.IS_EMPTY]: () =>
-      `(${NAME_COLUMN} IS NULL OR ${NAME_COLUMN} = '')`,
-    [CoreWorkflowFilterOperand.IS_NOT_EMPTY]: () =>
-      `(${NAME_COLUMN} IS NOT NULL AND ${NAME_COLUMN} <> '')`,
+    [CoreWorkflowFilterOperand.CONTAINS]: (rule) =>
+      buildNameContainsPredicate({ rule, negated: false }),
+    [CoreWorkflowFilterOperand.DOES_NOT_CONTAIN]: (rule) =>
+      buildNameContainsPredicate({ rule, negated: true }),
+    [CoreWorkflowFilterOperand.IS]: (rule) => {
+      const expectedName = requireExactTextValue(rule);
+
+      return ({ name }) => name === expectedName;
+    },
+    [CoreWorkflowFilterOperand.IS_NOT]: (rule) => {
+      const excludedName = requireExactTextValue(rule);
+
+      return ({ name }) => name !== excludedName;
+    },
+    [CoreWorkflowFilterOperand.IS_EMPTY]: () => isNameEmpty,
+    [CoreWorkflowFilterOperand.IS_NOT_EMPTY]: () => (candidate) =>
+      !isNameEmpty(candidate),
     [CoreWorkflowFilterOperand.IS_BEFORE]: null,
     [CoreWorkflowFilterOperand.IS_AFTER]: null,
     [CoreWorkflowFilterOperand.IS_IN_PAST]: null,
@@ -274,14 +273,23 @@ const PREDICATE_BUILDER_BY_OPERAND_BY_FIELD_KEY: Record<
     [CoreWorkflowFilterOperand.IS_RELATIVE]: null,
   },
   [CoreWorkflowFilterFieldKey.STATUSES]: {
-    [CoreWorkflowFilterOperand.CONTAINS]: ({ rule }) =>
-      buildCoreWorkflowHasAnyOfStatusesPredicate(parseStatusesValue(rule)),
-    [CoreWorkflowFilterOperand.DOES_NOT_CONTAIN]: ({ rule }) =>
-      `(NOT ${buildCoreWorkflowHasAnyOfStatusesPredicate(parseStatusesValue(rule))})`,
-    [CoreWorkflowFilterOperand.IS_EMPTY]: () =>
-      `(NOT ${CORE_WORKFLOW_HAS_ANY_STATUS_PREDICATE})`,
-    [CoreWorkflowFilterOperand.IS_NOT_EMPTY]: () =>
-      CORE_WORKFLOW_HAS_ANY_STATUS_PREDICATE,
+    [CoreWorkflowFilterOperand.CONTAINS]: (rule) =>
+      buildHasAnyOfStatusesPredicate(parseStatusesValue(rule)),
+    [CoreWorkflowFilterOperand.DOES_NOT_CONTAIN]: (rule) => {
+      const hasAnyOfStatuses = buildHasAnyOfStatusesPredicate(
+        parseStatusesValue(rule),
+      );
+
+      return (candidate) => !hasAnyOfStatuses(candidate);
+    },
+    [CoreWorkflowFilterOperand.IS_EMPTY]:
+      () =>
+      ({ statuses }) =>
+        statuses.length === 0,
+    [CoreWorkflowFilterOperand.IS_NOT_EMPTY]:
+      () =>
+      ({ statuses }) =>
+        statuses.length > 0,
     [CoreWorkflowFilterOperand.IS]: null,
     [CoreWorkflowFilterOperand.IS_NOT]: null,
     [CoreWorkflowFilterOperand.IS_BEFORE]: null,
@@ -292,59 +300,50 @@ const PREDICATE_BUILDER_BY_OPERAND_BY_FIELD_KEY: Record<
     [CoreWorkflowFilterOperand.IS_RELATIVE]: null,
   },
   [CoreWorkflowFilterFieldKey.UPDATED_AT]: {
-    [CoreWorkflowFilterOperand.IS]: ({ rule, bindParameter }) => {
-      const { dayStart, nextDayStart } = computeDayBounds(
-        toRuleZonedDateTime({ date: parseDateValue(rule), rule }),
-      );
+    [CoreWorkflowFilterOperand.IS]: (rule) =>
+      buildUpdatedAtRangePredicate(
+        computeDayBounds(
+          toRuleZonedDateTime({ date: parseDateValue(rule), rule }),
+        ),
+      ),
+    [CoreWorkflowFilterOperand.IS_BEFORE]: (rule) => {
+      const referenceTime = parseDateValue(rule).getTime();
 
-      return buildUpdatedAtRangePredicate({
-        bindParameter,
-        start: dayStart,
-        end: nextDayStart,
-      });
+      return (candidate) => getUpdatedAtTime(candidate) < referenceTime;
     },
-    [CoreWorkflowFilterOperand.IS_BEFORE]: ({ rule, bindParameter }) =>
-      buildUpdatedAtComparisonPredicate({
-        bindParameter,
-        rule,
-        sqlOperator: '<',
-      }),
-    [CoreWorkflowFilterOperand.IS_AFTER]: ({ rule, bindParameter }) =>
-      buildUpdatedAtComparisonPredicate({
-        bindParameter,
-        rule,
-        sqlOperator: '>=',
-      }),
-    [CoreWorkflowFilterOperand.IS_IN_PAST]: () =>
-      `${UPDATED_AT_COLUMN} < now()`,
-    [CoreWorkflowFilterOperand.IS_IN_FUTURE]: () =>
-      `${UPDATED_AT_COLUMN} > now()`,
-    [CoreWorkflowFilterOperand.IS_TODAY]: ({ rule, bindParameter }) => {
-      const { dayStart, nextDayStart } = computeDayBounds(
-        Temporal.Now.zonedDateTimeISO(rule.timezone ?? 'UTC'),
-      );
+    [CoreWorkflowFilterOperand.IS_AFTER]: (rule) => {
+      const referenceTime = parseDateValue(rule).getTime();
 
-      return buildUpdatedAtRangePredicate({
-        bindParameter,
-        start: dayStart,
-        end: nextDayStart,
-      });
+      return (candidate) => getUpdatedAtTime(candidate) >= referenceTime;
     },
-    [CoreWorkflowFilterOperand.IS_RELATIVE]: ({ rule, bindParameter }) => {
-      const { start, end } = parseRelativeDateRange(rule);
+    [CoreWorkflowFilterOperand.IS_IN_PAST]: () => {
+      const now = Date.now();
 
-      return buildUpdatedAtRangePredicate({ bindParameter, start, end });
+      return (candidate) => getUpdatedAtTime(candidate) < now;
     },
-    [CoreWorkflowFilterOperand.IS_EMPTY]: () => `${UPDATED_AT_COLUMN} IS NULL`,
-    [CoreWorkflowFilterOperand.IS_NOT_EMPTY]: () =>
-      `${UPDATED_AT_COLUMN} IS NOT NULL`,
+    [CoreWorkflowFilterOperand.IS_IN_FUTURE]: () => {
+      const now = Date.now();
+
+      return (candidate) => getUpdatedAtTime(candidate) > now;
+    },
+    [CoreWorkflowFilterOperand.IS_TODAY]: (rule) =>
+      buildUpdatedAtRangePredicate(
+        computeDayBounds(Temporal.Now.zonedDateTimeISO(rule.timezone ?? 'UTC')),
+      ),
+    [CoreWorkflowFilterOperand.IS_RELATIVE]: (rule) =>
+      buildUpdatedAtRangePredicate(parseRelativeDateRange(rule)),
+    [CoreWorkflowFilterOperand.IS_EMPTY]: () => () => false,
+    [CoreWorkflowFilterOperand.IS_NOT_EMPTY]: () => () => true,
     [CoreWorkflowFilterOperand.CONTAINS]: null,
     [CoreWorkflowFilterOperand.DOES_NOT_CONTAIN]: null,
     [CoreWorkflowFilterOperand.IS_NOT]: null,
   },
   [CoreWorkflowFilterFieldKey.IS_SYSTEM]: {
-    [CoreWorkflowFilterOperand.IS]: ({ rule, bindParameter }) =>
-      `${IS_SYSTEM_COLUMN} = ${bindParameter(parseBooleanValue(rule))}::boolean`,
+    [CoreWorkflowFilterOperand.IS]: (rule) => {
+      const expectedIsSystem = parseBooleanValue(rule);
+
+      return ({ isSystem }) => isSystem === expectedIsSystem;
+    },
     [CoreWorkflowFilterOperand.CONTAINS]: null,
     [CoreWorkflowFilterOperand.DOES_NOT_CONTAIN]: null,
     [CoreWorkflowFilterOperand.IS_NOT]: null,
@@ -359,21 +358,9 @@ const PREDICATE_BUILDER_BY_OPERAND_BY_FIELD_KEY: Record<
   },
 };
 
-const SEPARATOR_BY_LOGICAL_OPERATOR: Record<
-  CoreWorkflowFilterLogicalOperator,
-  string
-> = {
-  [CoreWorkflowFilterLogicalOperator.AND]: ' AND ',
-  [CoreWorkflowFilterLogicalOperator.OR]: ' OR ',
-};
-
-const buildRulePredicate = ({
-  rule,
-  bindParameter,
-}: {
-  rule: CoreWorkflowFilterRuleInput;
-  bindParameter: BindParameter;
-}): string => {
+const buildRulePredicate = (
+  rule: CoreWorkflowFilterRuleInput,
+): CoreWorkflowFilterPredicate => {
   const buildPredicate =
     PREDICATE_BUILDER_BY_OPERAND_BY_FIELD_KEY[rule.fieldKey][rule.operand];
 
@@ -383,33 +370,21 @@ const buildRulePredicate = ({
     );
   }
 
-  return buildPredicate({ rule, bindParameter });
+  return buildPredicate(rule);
 };
 
-export const buildCoreWorkflowFilterPredicate = ({
-  filter,
-  firstParameterIndex,
-}: {
-  filter?: CoreWorkflowFilterInput | null;
-  firstParameterIndex: number;
-}): CoreWorkflowFilterPredicate => {
+export const buildCoreWorkflowFilterPredicate = (
+  filter: CoreWorkflowFilterInput | null | undefined,
+): CoreWorkflowFilterPredicate => {
   if (!isDefined(filter) || !isNonEmptyArray(filter.rules)) {
-    return { parameters: [] };
+    return () => true;
   }
 
-  const parameters: unknown[] = [];
-  const bindParameter: BindParameter = (value) => {
-    parameters.push(value);
+  const rulePredicates = filter.rules.map(buildRulePredicate);
 
-    return `$${firstParameterIndex + parameters.length - 1}`;
-  };
-
-  const rulePredicates = filter.rules.map((rule) =>
-    buildRulePredicate({ rule, bindParameter }),
-  );
-
-  return {
-    predicate: `(${rulePredicates.join(SEPARATOR_BY_LOGICAL_OPERATOR[filter.logicalOperator])})`,
-    parameters,
-  };
+  return filter.logicalOperator === CoreWorkflowFilterLogicalOperator.OR
+    ? (candidate) =>
+        rulePredicates.some((rulePredicate) => rulePredicate(candidate))
+    : (candidate) =>
+        rulePredicates.every((rulePredicate) => rulePredicate(candidate));
 };

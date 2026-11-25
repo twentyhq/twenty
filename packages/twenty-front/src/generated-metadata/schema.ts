@@ -1197,6 +1197,7 @@ export type BillingCustomer = {
   __typename?: 'BillingCustomer';
   hasPaymentMethod?: Maybe<Scalars['Boolean']['output']>;
   id: Scalars['UUID']['output'];
+  stripeCustomerEmail?: Maybe<Scalars['String']['output']>;
   userCreditsFallback: UserCreditsFallback;
 };
 
@@ -1343,6 +1344,9 @@ export enum BillingSubscriptionCollectionMethod {
 
 export type BillingSubscriptionItem = {
   __typename?: 'BillingSubscriptionItem';
+  applicationLogoUrl?: Maybe<Scalars['String']['output']>;
+  applicationName?: Maybe<Scalars['String']['output']>;
+  applicationPricePer?: Maybe<ApplicationBillingPriceUnit>;
   billingProduct: BillingProduct;
   creditAmount?: Maybe<Scalars['Float']['output']>;
   hasReachedCurrentPeriodCap: Scalars['Boolean']['output'];
@@ -2687,7 +2691,6 @@ export enum FeatureFlagKey {
   IS_AI_CHAT_COMPONENT_BUILDER_ENABLED = 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED',
   IS_AI_CHAT_INBOX_ENABLED = 'IS_AI_CHAT_INBOX_ENABLED',
   IS_AI_DATA_POLICY_ENABLED = 'IS_AI_DATA_POLICY_ENABLED',
-  IS_APPLICATION_PRICE_BILLING_ENABLED = 'IS_APPLICATION_PRICE_BILLING_ENABLED',
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED = 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED',
   IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED = 'IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED',
   IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED = 'IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED',

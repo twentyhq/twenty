@@ -1,6 +1,5 @@
 import { isDefined } from 'twenty-sdk/utils';
 
-import { RELEASE_FLAGS } from 'src/constants/release-flags';
 import { TEAMS_ASSISTANT_CHAT_OFF_TEXT } from 'src/features/chat/logic-functions/constants/teams-assistant-chat-off-text';
 import { TEAMS_ASSISTANT_HELP_TEXT } from 'src/features/chat/logic-functions/constants/teams-assistant-help-text';
 import { TEAMS_ASSISTANT_NOTICE_TTL_MS } from 'src/features/chat/logic-functions/constants/teams-assistant-notice-ttl-ms';
@@ -20,10 +19,6 @@ const CHAT_DISABLED_SKIP_REASON = 'Chat is disabled';
 export const enqueueTeamsAssistantRequest = async (
   payload: TeamsActivitiesDispatchPayload,
 ): Promise<TeamsActivitiesEnqueueResult> => {
-  if (!RELEASE_FLAGS.IS_CHAT_ASSISTANT_RELEASED) {
-    return { ok: true, skipped: CHAT_DISABLED_SKIP_REASON };
-  }
-
   if (!isTeamsChatEnabled()) {
     await sendTeamsAssistantNotice({
       payload,
