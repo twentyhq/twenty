@@ -95,10 +95,14 @@ export const useRecordIndexGroupCommonQueryVariables = () => {
   const currentViewPresetFilterAsRecordGqlOperationFilter =
     useCurrentViewPresetFilterAsRecordGqlOperationFilter();
 
-  const combinedFilters = combineFilters([
+  const combinedFiltersWithoutViewPresetFilter = combineFilters([
     anyFieldFilter,
     requestFilters,
     recordGroupOptionsFilter,
+  ]);
+
+  const combinedFilters = combineFilters([
+    combinedFiltersWithoutViewPresetFilter,
     currentViewPresetFilterAsRecordGqlOperationFilter,
   ]);
 
@@ -106,6 +110,7 @@ export const useRecordIndexGroupCommonQueryVariables = () => {
 
   return {
     combinedFilters,
+    combinedFiltersWithoutViewPresetFilter,
     recordGqlFields,
     orderBy,
     recordGroupsLimit,

@@ -61,7 +61,10 @@ export const useRecordCalendarQueryDateRangeFilter = (
   );
 
   if (!isDefined(calendarFieldMetadataItem)) {
-    return { dateRangeFilter: {} };
+    return {
+      dateRangeFilter: {},
+      dateRangeFilterWithoutViewPresetFilter: {},
+    };
   }
 
   const nextDay = lastDay.add({ days: 1 });
@@ -93,13 +96,18 @@ export const useRecordCalendarQueryDateRangeFilter = (
       filterValue: anyFieldFilterValue,
     });
 
+  const dateRangeFilterWithoutViewPresetFilter = combineFilters([
+    dateRangeFilterAfter,
+    dateRangeFilterBefore,
+    viewFilter,
+    anyFieldFilter,
+  ]);
+
   return {
     dateRangeFilter: combineFilters([
-      dateRangeFilterAfter,
-      dateRangeFilterBefore,
-      viewFilter,
-      anyFieldFilter,
+      dateRangeFilterWithoutViewPresetFilter,
       currentViewPresetFilterAsRecordGqlOperationFilter,
     ]),
+    dateRangeFilterWithoutViewPresetFilter,
   };
 };
