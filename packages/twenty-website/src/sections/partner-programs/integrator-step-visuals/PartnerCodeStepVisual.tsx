@@ -3,7 +3,7 @@
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
-import { IconKey } from '@tabler/icons-react';
+import { IconCheck, IconKey } from '@tabler/icons-react';
 
 import { color, DURATION, EASING, fontFamily, REDUCED_MOTION } from '@/tokens';
 
@@ -93,12 +93,15 @@ const CodeText = styled.span`
   }
 `;
 
-// Both labels share one cell; Copy crossfades to Copied.
+// Both share one cell; Copy gives way to a check once the code is copied.
 const CopyAction = styled.span`
   --d: ${COPY_DELAY_MS}ms;
   display: grid;
 
+  justify-items: end;
+
   & > span {
+    align-self: center;
     grid-area: 1 / 1;
     text-align: right;
   }
@@ -118,12 +121,15 @@ const CopyLabel = styled(RowLabel)`
 
   ${REDUCED_MOTION} {
     animation: none !important;
+    opacity: 0;
   }
 `;
 
-const CopiedLabel = styled(RowLabel)`
+const CopiedCheck = styled.span`
   color: ${color('green')};
+  display: inline-flex;
   opacity: 0;
+  transform: scale(0.85);
 
   [data-active] & {
     animation: codeShow ${DURATION.xs} ${EASING.gentle} both;
@@ -133,11 +139,15 @@ const CopiedLabel = styled(RowLabel)`
   @keyframes codeShow {
     to {
       opacity: 1;
+      transform: none;
     }
   }
 
+  /* Reduced motion shows the panel done: the check, not Copy. */
   ${REDUCED_MOTION} {
     animation: none !important;
+    opacity: 1;
+    transform: none;
   }
 `;
 
@@ -170,7 +180,9 @@ export function PartnerCodeStepVisual({
           </Field>
           <CopyAction>
             <CopyLabel>{i18n._(msg`Copy`)}</CopyLabel>
-            <CopiedLabel>{i18n._(msg`Copied`)}</CopiedLabel>
+            <CopiedCheck>
+              <IconCheck size={20} stroke={2} />
+            </CopiedCheck>
           </CopyAction>
         </CodeRow>
       </Panel>

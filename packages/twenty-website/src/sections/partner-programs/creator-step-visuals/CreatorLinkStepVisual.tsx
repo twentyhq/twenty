@@ -3,7 +3,7 @@
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
-import { IconClock, IconLink, IconShare } from '@tabler/icons-react';
+import { IconCheck, IconClock, IconLink, IconShare } from '@tabler/icons-react';
 
 import { color, DURATION, EASING, fontFamily, REDUCED_MOTION } from '@/tokens';
 
@@ -68,12 +68,14 @@ const LinkText = styled.span`
   }
 `;
 
-// Both labels share one cell; Copy crossfades to Copied.
+// Both share one cell; Copy gives way to a check once the link is copied.
 const CopyAction = styled.span`
   --d: ${COPY_DELAY_MS}ms;
   display: grid;
+  justify-items: end;
 
   & > span {
+    align-self: center;
     grid-area: 1 / 1;
     text-align: right;
   }
@@ -93,12 +95,15 @@ const CopyLabel = styled(RowLabel)`
 
   ${REDUCED_MOTION} {
     animation: none !important;
+    opacity: 0;
   }
 `;
 
-const CopiedLabel = styled(RowLabel)`
+const CopiedCheck = styled.span`
   color: ${color('green')};
+  display: inline-flex;
   opacity: 0;
+  transform: scale(0.85);
 
   [data-active] & {
     animation: creatorLinkShow ${DURATION.xs} ${EASING.gentle} both;
@@ -108,11 +113,14 @@ const CopiedLabel = styled(RowLabel)`
   @keyframes creatorLinkShow {
     to {
       opacity: 1;
+      transform: none;
     }
   }
 
   ${REDUCED_MOTION} {
     animation: none !important;
+    opacity: 1;
+    transform: none;
   }
 `;
 
@@ -165,7 +173,9 @@ export function CreatorLinkStepVisual({
           <LinkText>{CREATOR_LINK}</LinkText>
           <CopyAction>
             <CopyLabel>{i18n._(msg`Copy`)}</CopyLabel>
-            <CopiedLabel>{i18n._(msg`Copied`)}</CopiedLabel>
+            <CopiedCheck>
+              <IconCheck size={20} stroke={2} />
+            </CopiedCheck>
           </CopyAction>
         </TrailingRow>
         <WindowRow>

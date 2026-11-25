@@ -5,6 +5,7 @@ import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import {
   IconBrandYoutube,
+  IconCheck,
   IconForms,
   IconSend,
   IconSpeakerphone,
@@ -96,7 +97,8 @@ const Typed = styled.span`
   }
 `;
 
-// The send row: blue, then green once sent; both labels share one cell.
+// The send row: blue, then green once sent, Submit giving way to a check;
+// both share one cell.
 const SubmitRow = styled(Row)`
   background: ${color('blue')};
   color: ${color('white')};
@@ -116,10 +118,12 @@ const SubmitRow = styled(Row)`
 
   ${REDUCED_MOTION} {
     animation: none !important;
+    background: ${green};
   }
 `;
 
 const SubmitLabels = styled.span`
+  align-items: center;
   display: grid;
 
   & > span {
@@ -142,11 +146,14 @@ const SubmitLabel = styled(RowLabel)`
 
   ${REDUCED_MOTION} {
     animation: none !important;
+    opacity: 0;
   }
 `;
 
-const SentLabel = styled(RowLabel)`
+const SentCheck = styled.span`
+  display: inline-flex;
   opacity: 0;
+  transform: scale(0.85);
 
   [data-active] & {
     animation: creatorApplyFadeIn ${DURATION.xs} ${EASING.gentle} both;
@@ -156,11 +163,14 @@ const SentLabel = styled(RowLabel)`
   @keyframes creatorApplyFadeIn {
     to {
       opacity: 1;
+      transform: none;
     }
   }
 
   ${REDUCED_MOTION} {
     animation: none !important;
+    opacity: 1;
+    transform: none;
   }
 `;
 
@@ -222,7 +232,9 @@ export function CreatorApplyStepVisual({
           <IconSend size={20} stroke={1.5} />
           <SubmitLabels>
             <SubmitLabel>{i18n._(msg`Submit application`)}</SubmitLabel>
-            <SentLabel>{i18n._(msg`Sent`)}</SentLabel>
+            <SentCheck>
+              <IconCheck size={20} stroke={2} />
+            </SentCheck>
           </SubmitLabels>
         </SubmitRow>
       </Panel>
