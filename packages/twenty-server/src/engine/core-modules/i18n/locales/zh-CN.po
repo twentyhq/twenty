@@ -390,6 +390,18 @@ msgstr "导航项不能同时包含路径和导航目标对象"
 msgid "A nested relation widget must use the table layout."
 msgstr "嵌套关系小部件必须使用表格布局。"
 
+#. js-lingui-id: +qTJHH
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
+msgid "A nested unreadable field cannot be tied to a row level permission rule"
+msgstr "嵌套的不可读字段不能关联到行级权限规则"
+
+#. js-lingui-id: +cMY8o
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
+msgid "A nested unreadable field cannot use itself as its source"
+msgstr "嵌套的不可读字段不能将自身用作其来源"
+
 #. js-lingui-id: ChJFls
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "A network error occurred while accessing calendar."
@@ -485,6 +497,11 @@ msgstr "已存在具有此值的记录。"
 msgctxt "objectMetadata.description"
 msgid "A recording of a meeting"
 msgstr "会议录音"
+
+#. js-lingui-id: l+tyko
+#: src/modules/calendar/calendar-event-creation-manager/utils/normalize-calendar-event-recurrence.util.ts
+msgid "A recurrence ends either on recurrence.endDate or after recurrence.endOccurrenceCount, not both"
+msgstr "重复规则在 recurrence.endDate 或 recurrence.endOccurrenceCount 后结束，不能同时使用两者"
 
 #. js-lingui-id: TmGFqW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
@@ -765,12 +782,12 @@ msgstr "工作区成员"
 #. js-lingui-id: EAIj51
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "A workspace member relation filter needs a field and at least one value"
-msgstr ""
+msgstr "工作区成员关系筛选器需要一个字段和至少一个值"
 
 #. js-lingui-id: mZ5k8L
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "A workspace member relation filter needs a workspace member relation"
-msgstr ""
+msgstr "工作区成员关系筛选器需要一个工作区成员关系"
 
 #. js-lingui-id: /WlOrK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -3167,7 +3184,7 @@ msgstr "请选择一位人员或一个角色进行共享。"
 #. js-lingui-id: 8+4T+u
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Choose the field and the values to keep on the related records"
-msgstr ""
+msgstr "选择要在相关记录中保留的字段和值"
 
 #. js-lingui-id: IkeRn2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -3182,7 +3199,7 @@ msgstr "选择发出此时间线活动类型的对象"
 #. js-lingui-id: fr9dvq
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Choose the relation of the workspace member to filter"
-msgstr ""
+msgstr "选择要筛选的工作区成员关系"
 
 #. js-lingui-id: PDwfT5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -5716,7 +5733,7 @@ msgstr "字段 \"{workspaceMemberRelationFieldName}\" 不是 workspaceMember 对
 #. js-lingui-id: yfFA+h
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{workspaceMemberRelationFilterFieldName}\" is not a select, text or boolean field of the related records"
-msgstr ""
+msgstr "字段 \"{workspaceMemberRelationFilterFieldName}\" 不是相关记录的选择、文本或布尔字段"
 
 #. js-lingui-id: CKPTLC
 #. placeholder {0}: query.objectName
@@ -6170,7 +6187,7 @@ msgstr "此字段类型不支持筛选运算符"
 #. js-lingui-id: twPawb
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Filter the related records on one of their select, text or boolean fields"
-msgstr ""
+msgstr "按相关记录的某个选择、文本或布尔字段筛选"
 
 #. js-lingui-id: dzteua
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-view-filter-select-option-error.util.ts
@@ -10529,12 +10546,12 @@ msgstr "选项“{optionLabel}”随字段提供，无法删除。请改为停�
 #. js-lingui-id: xTWr3W
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-description.util.ts
 msgid "Option \"{optionLabel}\" description exceeds {OPTION_DESCRIPTION_MAX_CHAR_LENGTH} characters"
-msgstr ""
+msgstr "选项 \"{optionLabel}\" 的描述超过 {OPTION_DESCRIPTION_MAX_CHAR_LENGTH} 个字符"
 
 #. js-lingui-id: cCRBHe
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-description.util.ts
 msgid "Option \"{optionLabel}\" has an invalid description"
-msgstr ""
+msgstr "选项 \"{optionLabel}\" 的描述无效"
 
 #. js-lingui-id: znHKeT
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-color.util.ts
@@ -11774,6 +11791,16 @@ msgstr "不能按关联记录的关系对记录排序"
 msgctxt "fieldMetadata.description"
 msgid "Records this thread is attached to"
 msgstr "此线程附加到的记录"
+
+#. js-lingui-id: Q/3t6e
+#: src/modules/calendar/calendar-event-creation-manager/utils/normalize-calendar-event-recurrence.util.ts
+msgid "recurrence.endDate must be a YYYY-MM-DD date on or after the event's start date ({firstOccurrenceDate})"
+msgstr "recurrence.endDate 必须是 YYYY-MM-DD 格式的日期，且不得早于事件的开始日期 ({firstOccurrenceDate})"
+
+#. js-lingui-id: wM8dZb
+#: src/modules/calendar/calendar-event-creation-manager/utils/normalize-calendar-event-recurrence.util.ts
+msgid "recurrence.interval and recurrence.endOccurrenceCount must be positive whole numbers"
+msgstr "recurrence.interval 和 recurrence.endOccurrenceCount 必须是正整数"
 
 #. js-lingui-id: TPccfi
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -13435,6 +13462,16 @@ msgstr "源文档标题"
 msgctxt "fieldMetadata.label"
 msgid "Source Document Title"
 msgstr "源文档标题"
+
+#. js-lingui-id: gAdogO
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
+msgid "Source field metadata not found"
+msgstr "未找到来源字段元数据"
+
+#. js-lingui-id: 8Fgyo1
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
+msgid "Source field not found"
+msgstr "未找到来源字段"
 
 #. js-lingui-id: o0N9e6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
@@ -15906,6 +15943,11 @@ msgstr "此版本不高于当前已部署的版本。请在 package.json 中提�
 msgid "This version of the application is already installed in this workspace."
 msgstr "该应用程序的此版本已在此工作区中安装。"
 
+#. js-lingui-id: lJw5/K
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-type-object.util.ts
+msgid "This view type is not available on this object"
+msgstr "此对象上不提供此视图类型"
+
 #. js-lingui-id: 2s7ieZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-validator.service.ts
 msgid "This workflow already exists"
@@ -17539,6 +17581,11 @@ msgstr "未找到要销毁的视图"
 msgid "View to update not found"
 msgstr "未找到要更新的视图"
 
+#. js-lingui-id: OZdSbV
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-type-object.util.ts
+msgid "View type is not available on the view object"
+msgstr "视图对象上不提供此视图类型"
+
 #. js-lingui-id: RvdHYC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
 msgid "View with same universal identifier already exists"
@@ -18015,8 +18062,8 @@ msgstr "与运行相关的工作流。"
 
 #. js-lingui-id: dNmZ33
 #: src/engine/core-modules/workflow/services/core-workflow-access.service.ts
-#: src/engine/core-modules/workflow/services/core-workflow-id-resolution.service.ts
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
+#: src/engine/core-modules/workflow/utils/build-core-workflow-not-found-exception.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-validator.service.ts
@@ -18172,9 +18219,8 @@ msgstr "对于此项类型，不得设置工作流版本"
 
 #. js-lingui-id: zuZGUs
 #: src/engine/core-modules/workflow/resolvers/workflow-builder.resolver.ts
-#: src/engine/core-modules/workflow/services/core-workflow-id-resolution.service.ts
+#: src/engine/core-modules/workflow/services/core-workflow-access.service.ts
 #: src/engine/core-modules/workflow/services/core-workflow-lifecycle.workspace-service.ts
-#: src/engine/core-modules/workflow/services/core-workflow-version-write.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-version-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-version-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-version-validator.service.ts
@@ -18384,7 +18430,7 @@ msgstr "未找到工作区成员关系字段元数据"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Workspace member relation filter field metadata not found"
-msgstr ""
+msgstr "未找到工作区成员关系筛选字段元数据"
 
 #. js-lingui-id: 62xYnj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts

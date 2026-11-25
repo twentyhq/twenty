@@ -336,6 +336,12 @@ msgstr "{0, plural, one {кредит/период} few {кредита/пери
 msgid "{0, plural, one {Earn {formattedInviteTeamCreditsRewardPerUser} free credit per teammate who joins} other {Earn {formattedInviteTeamCreditsRewardPerUser} free credits per teammate who joins}}"
 msgstr "{0, plural, one {Зарадите {formattedInviteTeamCreditsRewardPerUser} бесплатни кредит по колеги из тима који се придружи} few {Зарадите {formattedInviteTeamCreditsRewardPerUser} бесплатна кредита по колеги из тима који се придружи} other {Зарадите {formattedInviteTeamCreditsRewardPerUser} бесплатних кредита по колеги из тима који се придружи}}"
 
+#. js-lingui-id: ywXd/t
+#. placeholder {0}: end.occurrenceCount
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
+msgid "{0, plural, one {occurrence} other {occurrences}}"
+msgstr "{0, plural, one {појављивање} few {појављивања} other {појављивања}}"
+
 #. js-lingui-id: AkeiJW
 #. placeholder {0}: item.quantity
 #: src/modules/settings/admin-panel/utils/formatSubscriptionItemValue.ts
@@ -564,12 +570,6 @@ msgstr "{0} без имејл адресе"
 msgid "{0} workspace members"
 msgstr "{0} чланова радног простора"
 
-#. js-lingui-id: elMxkj
-#. placeholder {0}: tab.name
-#: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
-msgid "{0}, {unreadOpenThreadCount} unread"
-msgstr "{0}, {unreadOpenThreadCount} непрочитано"
-
 #. js-lingui-id: stF+5U
 #. placeholder {0}: fieldMetadataItem.label
 #. placeholder {0}: relationFieldMetadataItem.label
@@ -583,12 +583,6 @@ msgstr "{0}, {unreadOpenThreadCount} непрочитано"
 #: src/modules/spreadsheet-import/components/MatchColumnSelectSubFieldSelectDropdownContent.tsx
 msgid "{0}, back to fields"
 msgstr "{0}, назад на поља"
-
-#. js-lingui-id: VxMSt6
-#. placeholder {0}: tab.name
-#: src/modules/navigation/components/MainNavigationDrawerSidebarTab.tsx
-msgid "{0}, unread"
-msgstr "{0}, непрочитано"
 
 #. js-lingui-id: kofqAN
 #. placeholder {0}: selectedResolvedTier.label
@@ -934,6 +928,26 @@ msgstr "{importContactsCallRecordingHours, plural, one {{formattedImportContacts
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "{installCount, plural, one {{0} install} other {{1} installs}}"
 msgstr "{installCount, plural, one {{0} инсталација} few {{1} инсталације} other {{1} инсталација}}"
+
+#. js-lingui-id: UON5Ro
+#: src/modules/activities/calendar/utils/getCalendarEventRecurrenceIntervalUnitLabel.ts
+msgid "{interval, plural, one {day} other {days}}"
+msgstr "{interval, plural, one {дан} few {дана} other {дана}}"
+
+#. js-lingui-id: UGYVsx
+#: src/modules/activities/calendar/utils/getCalendarEventRecurrenceIntervalUnitLabel.ts
+msgid "{interval, plural, one {month} other {months}}"
+msgstr "{interval, plural, one {месец} few {месеца} other {месеци}}"
+
+#. js-lingui-id: RxZ6VS
+#: src/modules/activities/calendar/utils/getCalendarEventRecurrenceIntervalUnitLabel.ts
+msgid "{interval, plural, one {week} other {weeks}}"
+msgstr "{interval, plural, one {недеља} few {недеље} other {недеља}}"
+
+#. js-lingui-id: qB4ocR
+#: src/modules/activities/calendar/utils/getCalendarEventRecurrenceIntervalUnitLabel.ts
+msgid "{interval, plural, one {year} other {years}}"
+msgstr "{interval, plural, one {година} few {године} other {година}}"
 
 #. js-lingui-id: Z4Vsx1
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
@@ -1303,6 +1317,16 @@ msgstr "{stepNumber}. Календар"
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowEditActionSendChatMessage.tsx
 msgid "{storedToolName} (not available to you)"
 msgstr "{storedToolName} (није вам доступно)"
+
+#. js-lingui-id: VfeUjs
+#: src/modules/navigation-menu-item/display/hooks/useGetNavigationMenuTabAttentionLabel.ts
+msgid "{tabName}, needs your input"
+msgstr "{tabName}, потребан је ваш унос"
+
+#. js-lingui-id: REc4fO
+#: src/modules/navigation-menu-item/display/hooks/useGetNavigationMenuTabAttentionLabel.ts
+msgid "{tabName}, unread"
+msgstr "{tabName}, непрочитано"
 
 #. js-lingui-id: RIjnws
 #: src/modules/settings/mcp-servers/utils/getMcpServerStatus.ts
@@ -2133,7 +2157,7 @@ msgstr "Додајте картицу у наставку да бисте ажу
 #. js-lingui-id: vzJ7AQ
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionDescriptionInput.tsx
 msgid "Add a description"
-msgstr ""
+msgstr "Додајте опис"
 
 #. js-lingui-id: uXkGAw
 #: src/modules/advanced-text-editor/extensions/variable-tag/TemplateVariableWithFallbackChip.tsx
@@ -2373,7 +2397,7 @@ msgstr "Додај прилагођеног провајдера"
 #. js-lingui-id: PGPGsL
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Add description"
-msgstr ""
+msgstr "Додај опис"
 
 #. js-lingui-id: 094J9M
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -2475,6 +2499,16 @@ msgstr "Додај ставку"
 msgid "Add Item"
 msgstr "Додај ставку"
 
+#. js-lingui-id: 1e37Dl
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
+msgid "Add item after"
+msgstr "Додај ставку након"
+
+#. js-lingui-id: w7mkyz
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
+msgid "Add item before"
+msgstr "Додај ставку пре"
+
 #. js-lingui-id: VzGJRl
 #: src/modules/advanced-text-editor/components/EditLinkDropdown.tsx
 #: src/modules/advanced-text-editor/components/EditLinkDropdown.tsx
@@ -2485,16 +2519,6 @@ msgstr "Додај везу"
 #: src/modules/settings/mcp-servers/components/SettingsMcpServersSection.tsx
 msgid "Add MCP server"
 msgstr "Додајте MCP сервер"
-
-#. js-lingui-id: JbORSt
-#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
-msgid "Add menu item after"
-msgstr "Додај ставку менија након"
-
-#. js-lingui-id: DKlI/M
-#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
-msgid "Add menu item before"
-msgstr "Додај ставку менија пре"
 
 #. js-lingui-id: q5ruxx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -3001,6 +3025,11 @@ msgstr ""
 #: src/modules/localization/hooks/useLocaleOptions.ts
 msgid "Afrikaans"
 msgstr "Африканс"
+
+#. js-lingui-id: NawEr2
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
+msgid "After"
+msgstr "После"
 
 #. js-lingui-id: WlItll
 #: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
@@ -3758,6 +3787,11 @@ msgstr "Азбучно"
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem.tsx
 msgid "Already in sidebar"
 msgstr "Већ на бочној траци"
+
+#. js-lingui-id: CaKZeT
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem.tsx
+msgid "Already in this section"
+msgstr "Већ је у овом одељку"
 
 #. js-lingui-id: u/DP73
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -5259,6 +5293,21 @@ msgstr "Наплати кредите вашем радном простору"
 msgid "Bill the prices declared by installed apps on the workspace subscription. The price is not shown before install yet."
 msgstr "Наплатите цене које су инсталиране апликације навеле у претплати на радни простор. Цена се још не приказује пре инсталације."
 
+#. js-lingui-id: WVxikw
+#: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
+msgid "Bill your workspace {amount} / month"
+msgstr "Наплатите свом радном простору {amount} / месечно"
+
+#. js-lingui-id: 9nZzfz
+#: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
+msgid "Bill your workspace {amount} / month per account"
+msgstr "Наплатите свом радном простору {amount} / месечно по налогу"
+
+#. js-lingui-id: iOQoBV
+#: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
+msgid "Bill your workspace {amount} / month per member"
+msgstr "Наплатите свом радном простору {amount} / месечно по члану"
+
 #. js-lingui-id: aIkeAd
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
 msgid "Billed monthly"
@@ -5314,11 +5363,6 @@ msgstr "Грешка сесије портала за наплату. Покуш
 #: src/modules/settings/billing/hooks/useBillingSubscriptionChangeWording.ts
 msgid "Billing stays {upcomingIntervalAdjective}. To switch to {selectedIntervalAdjective} billing, confirm this change first, then switch the billing interval as a second step."
 msgstr "Наплата остаје {upcomingIntervalAdjective}. Да бисте прешли на {selectedIntervalAdjective} наплату, прво потврдите ову промену, а затим у другом кораку промените интервал наплате."
-
-#. js-lingui-id: 75WIQJ
-#: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
-msgid "Bills credits"
-msgstr "Наплаћује кредите"
 
 #. js-lingui-id: 8kIU+G
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -6401,6 +6445,11 @@ msgstr "Провери недавна покретања овог тока ра�
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerifyButton.tsx
 msgid "Check verification"
 msgstr "Провера верификације"
+
+#. js-lingui-id: fbu0qc
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Check when the event stops repeating"
+msgstr "Изаберите када догађај престаје да се понавља"
 
 #. js-lingui-id: AwAGI4
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -8144,6 +8193,7 @@ msgid "Copy to clipboard"
 msgstr "Копирај у клипборд"
 
 #. js-lingui-id: RTxUjI
+#: src/modules/chat/components/ChatMessageCopyAction.tsx
 #: src/modules/ui/input/components/LightCopyIconButton.tsx
 msgid "Copy to Clipboard"
 msgstr "Копирај у клипборд"
@@ -9436,6 +9486,7 @@ msgid "Customize record page"
 msgstr "Прилагодите страницу записа"
 
 #. js-lingui-id: hxjpaE
+#: src/modules/navigation/components/MainNavigationDrawerContextMenu.tsx
 #: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
 #: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
 msgid "Customize sidebar"
@@ -9472,6 +9523,7 @@ msgid "Czech"
 msgstr "Чешки"
 
 #. js-lingui-id: U0sC6H
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 #: src/modules/settings/billing/constants/UsageLimitPeriodNameLabels.ts
 msgid "Daily"
 msgstr "Дневно"
@@ -10458,6 +10510,11 @@ msgstr "опадајуће"
 msgid "Descending"
 msgstr "Опадајуће"
 
+#. js-lingui-id: 8Y0+ya
+#: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
+msgid "Describe a {objectLabel} and what changed on it"
+msgstr ""
+
 #. js-lingui-id: 3QTkmB
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentGenerateStepPromptTab.tsx
 msgid "Describe the role of the AI and how it should do the task..."
@@ -10872,6 +10929,11 @@ msgstr "Не увози"
 msgid "Do you want to unsubscribe?"
 msgstr "Желите ли да се одјавите?"
 
+#. js-lingui-id: oc+pOk
+#: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
+msgid "Do your scheduled task now"
+msgstr ""
+
 #. js-lingui-id: TbjyhA
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -10896,6 +10958,11 @@ msgstr "Документ"
 #: src/pages/settings/developers/SettingsDevelopers.tsx
 msgid "Documentation"
 msgstr "Дoкумeнтација"
+
+#. js-lingui-id: 7xJ6D1
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
+msgid "Does not repeat"
+msgstr "Не понавља се"
 
 #. js-lingui-id: U9q4zF
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -11359,7 +11426,7 @@ msgstr "Измените структуру података и поља"
 #. js-lingui-id: O32mmL
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Edit description"
-msgstr ""
+msgstr "Измени опис"
 
 #. js-lingui-id: ZwR0Vd
 #: src/modules/side-panel/pages/email-block-settings/components/EmailBoxSidesInput.tsx
@@ -12017,6 +12084,7 @@ msgstr "Ендпоинт УРЛ"
 #. js-lingui-id: x/6eQ0
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
@@ -12694,6 +12762,11 @@ msgstr "Видљивост догађаја"
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringIssuesTable.tsx
 msgid "Events"
 msgstr "Догађаји"
+
+#. js-lingui-id: CRsuq4
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
+msgid "Every"
+msgstr "Сваког"
 
 #. js-lingui-id: lbS/kF
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
@@ -13708,6 +13781,11 @@ msgstr "Није успела синхронизација алата"
 msgid "Failed to synchronize the marketplace catalog."
 msgstr "Није успела синхронизација каталога продавнице апликација."
 
+#. js-lingui-id: UUsjVV
+#: src/modules/object-core/agents/hooks/useTestCoreAgent.ts
+msgid "Failed to test agent"
+msgstr "Тестирање агента није успело"
+
 #. js-lingui-id: LVcnN8
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 msgid "Failed to transfer ownership. Check that the subdomain is correct."
@@ -14402,6 +14480,11 @@ msgstr "Прве 2 линије"
 #: src/modules/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions.ts
 msgid "First 5 lines"
 msgstr "Првих 5 линија"
+
+#. js-lingui-id: idQLQP
+#: src/modules/activities/calendar/components/CalendarEventRecurrenceDaysOfWeekInput.tsx
+msgid "First event"
+msgstr "Први догађај"
 
 #. js-lingui-id: V1EGGU
 #: src/modules/activities/emails/hooks/useCampaignEmailEditorVariables.ts
@@ -16269,8 +16352,14 @@ msgstr "Опције неактивне вештине"
 
 #. js-lingui-id: Gp4Yi6
 #: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
+#: src/modules/views/types/ViewType.ts
 msgid "Inbox"
 msgstr "Пријемно сандуче"
+
+#. js-lingui-id: UXZcgx
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Inbox object names"
+msgstr "Називи објеката пријемног сандучета"
 
 #. js-lingui-id: j8Bj7e
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
@@ -17801,6 +17890,11 @@ msgstr "Нека сваки члан одлучи за себе"
 msgid "Let grouped table and list views show their groups as tabs, one group at a time. Enable after the instance upgrade completes."
 msgstr "Омогућите груписаним приказима табеле и листе да приказују своје групе као картице, једну по једну. Омогућите након што се заврши надоградња инстанце."
 
+#. js-lingui-id: livXRh
+#: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
+msgid "Let members connect their own accounts"
+msgstr "Дозволите члановима да повежу сопствене налоге"
+
 #. js-lingui-id: 3OsDiZ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let people restrict and share individual records."
@@ -19143,6 +19237,7 @@ msgstr "Спајање..."
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/log-console/constants/LogConsoleApplicationLogColumns.tsx
+#: src/modules/object-core/agents/components/CoreAgentTestForm.tsx
 #: src/modules/settings/event-logs/utils/getColumnsForEventLogTable.tsx
 #: src/modules/validation-rules/components/SettingsValidationRuleForm.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowEditActionSendChatMessage.tsx
@@ -19153,6 +19248,11 @@ msgstr "Порука"
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 msgid "Message {recipientName}"
 msgstr "Порука за {recipientName}"
+
+#. js-lingui-id: +nYs0G
+#: src/modules/chat/components/ChatMessageFloatingActions.tsx
+msgid "Message actions"
+msgstr "Радње са поруком"
 
 #. js-lingui-id: 6H0up8
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -19504,6 +19604,11 @@ msgstr "месечно"
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
 msgid "Monthly"
 msgstr "Месечно"
+
+#. js-lingui-id: WHc/gS
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
+msgid "Monthly on day {startDayOfMonth}"
+msgstr "Месечно, {startDayOfMonth}. дана"
 
 #. js-lingui-id: 6jefe3
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts
@@ -19977,6 +20082,7 @@ msgid "Network error"
 msgstr "Грешка мреже"
 
 #. js-lingui-id: qqeAJM
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 #: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
@@ -20010,6 +20116,7 @@ msgstr "Никада, ни Twenty ни добављачи"
 
 #. js-lingui-id: isRobC
 #: src/modules/ai-chat/messages/components/AiChatMessage.tsx
+#: src/modules/chat/components/ChatMessageDaySeparator.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnNewRecordButton.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerNewForm.tsx
@@ -21852,6 +21959,11 @@ msgstr "Број дана за чување евиденција ({minEventLogRe
 msgid "Number of decimals"
 msgstr "Број децимала"
 
+#. js-lingui-id: Dh3U6L
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
+msgid "Number of occurrences"
+msgstr "Број понављања"
+
 #. js-lingui-id: n49P/Y
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 msgid "Number of records to skip. Combine with Limit to page through results."
@@ -22055,6 +22167,11 @@ msgstr ""
 msgid "Omit zero values"
 msgstr "Изостави нулте вредности"
 
+#. js-lingui-id: Z5HWHd
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
+msgid "On"
+msgstr "Укључено"
+
 #. js-lingui-id: 7kr775
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "on {dayName}"
@@ -22069,6 +22186,11 @@ msgstr "на {remainingDays} и {lastDay}"
 #: src/modules/workflow/constants/WorkflowStepDefaultNames.ts
 msgid "On a schedule"
 msgstr "Према распореду"
+
+#. js-lingui-id: RuEWFx
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
+msgid "On date"
+msgstr "На датум"
 
 #. js-lingui-id: gzokj+
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
@@ -22300,14 +22422,19 @@ msgid "Only you will be able to see your emails and events"
 msgstr "Само ћете ви моћи да видите своје имејлове и догађаје"
 
 #. js-lingui-id: 1TNIig
-#: src/modules/inbox/components/AiChatThreadStatusField.tsx
-#: src/modules/inbox/constants/InboxChannelNavigationItems.ts
-#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 #: src/modules/log-console/components/LogConsole.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
+msgid "Open"
+msgstr "Отвори"
+
+#. js-lingui-id: zzFeSa
+#: src/modules/inbox/components/AiChatThreadStatusField.tsx
+#: src/modules/inbox/constants/InboxChannelNavigationItems.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
+msgctxt "Inbox thread status"
 msgid "Open"
 msgstr "Отвори"
 
@@ -22726,6 +22853,11 @@ msgstr "Лиценца организације"
 msgid "Organization license activated successfully"
 msgstr "Лиценца организације је успешно активирана"
 
+#. js-lingui-id: 50DOI7
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Organize the sidebar in tabs and sections, including built-in sections for favorites, chats and agents, and customize it in place."
+msgstr "Организујте бочну траку у картице и одељке, укључујући уграђене одељке за омиљене ставке, ћаскања и агенте, и прилагодите је на лицу места."
+
 #. js-lingui-id: G5RhpL
 #: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Organizer"
@@ -23045,6 +23177,11 @@ msgstr "Прегледи страница"
 #: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
 msgid "Pages"
 msgstr "Странице"
+
+#. js-lingui-id: wl6crM
+#: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
+msgid "Paid app"
+msgstr "Апликација која се плаћа"
 
 #. js-lingui-id: ijBN4V
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -24410,7 +24547,7 @@ msgstr "Прочитајте системске промптове да бист
 #. js-lingui-id: SIPs3V
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Read the visibility rule of page layout widgets from its tree form only. Enabled after the workspace upgrade copies the stored rules."
-msgstr ""
+msgstr "Учитавај правило видљивости виџета распореда странице само из његовог облика стабла. Омогућено након што надоградња радног простора копира сачувана правила."
 
 #. js-lingui-id: afMuDE
 #: src/modules/applications/constants/OAuthScopeLabels.ts
@@ -25407,6 +25544,22 @@ msgstr "Поново распореди поље"
 msgid "Reorder options"
 msgstr "Промени редослед опција"
 
+#. js-lingui-id: BwWIp2
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
+msgid "Repeat"
+msgstr "Понављај"
+
+#. js-lingui-id: X9KmrM
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
+msgid "Repeat interval"
+msgstr "Интервал понављања"
+
+#. js-lingui-id: KR6sNP
+#: src/modules/activities/calendar/components/CalendarEventRecurrenceDaysOfWeekInput.tsx
+#: src/modules/activities/calendar/components/CalendarEventRecurrenceDaysOfWeekInput.tsx
+msgid "Repeat on"
+msgstr "Понављај у"
+
 #. js-lingui-id: q8Id6J
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 msgid "Replace widget"
@@ -26086,6 +26239,11 @@ msgstr "Покрените код за анализу фајлова и пода
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 msgid "Run Function"
 msgstr "Изврши функцију"
+
+#. js-lingui-id: gdJPPW
+#: src/modules/object-core/agents/components/CoreAgentTestForm.tsx
+msgid "Run test"
+msgstr "Покрени тест"
 
 #. js-lingui-id: scFhaW
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
@@ -28154,11 +28312,6 @@ msgstr "Прикажи на"
 msgid "Show only rows with errors"
 msgstr "Прикажи само редове са грешкама"
 
-#. js-lingui-id: KefbEP
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Show sidebar tabs and sections."
-msgstr "Прикажите картице и одељке бочне траке."
-
 #. js-lingui-id: 9u2I/P
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Show the Getting started page and sidebar card, and open it on landing during the trial."
@@ -28211,6 +28364,11 @@ msgstr "Странични панел"
 #: src/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenuOpenContent.tsx
 msgid "Side Panel"
 msgstr "Странични панел"
+
+#. js-lingui-id: QWUT9V
+#: src/modules/navigation/components/MainNavigationDrawerContextMenu.tsx
+msgid "Sidebar actions"
+msgstr "Радње бочне траке"
 
 #. js-lingui-id: 9k9PMD
 #: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
@@ -29386,6 +29544,11 @@ msgstr "Сажми овај запис и његову недавну актив
 msgid "Summarize this view"
 msgstr "Сажми овај приказ"
 
+#. js-lingui-id: mLm1b0
+#: src/modules/object-core/agents/components/CoreAgentTestForm.tsx
+msgid "Summarize what changed on Acme this week"
+msgstr "Сажми шта се променило у Acme ове недеље"
+
 #. js-lingui-id: gKAccC
 #: src/modules/page-layout/widgets/call-recording-summary/components/WidgetActionCallRecordingSummary.tsx
 msgid "Summary copied to clipboard"
@@ -29822,6 +29985,7 @@ msgid "Terms of Service"
 msgstr "Услови коришћења сервиса"
 
 #. js-lingui-id: NnH3pK
+#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionCodeEditorTab.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
@@ -29834,6 +29998,19 @@ msgstr "Услови коришћења сервиса"
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 msgid "Test"
 msgstr "Тест"
+
+#. js-lingui-id: jra4Ko
+#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
+#: src/modules/object-core/agents/hooks/useOpenCoreAgentTestSidePanel.ts
+msgid "Test agent"
+msgstr "Тестирај агента"
+
+#. js-lingui-id: AriIhI
+#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
+#: src/modules/object-core/commands/hooks/useCoreAgentPageCommands.ts
+#: src/modules/object-core/commands/hooks/useCoreAgentsSelectionCommands.ts
+msgid "Test Agent"
+msgstr "Тестирај агента"
 
 #. js-lingui-id: 1QHjf8
 #. placeholder {0}: params.toAddress
@@ -29905,6 +30082,7 @@ msgid "Text Colors"
 msgstr "Боје текста"
 
 #. js-lingui-id: lyaiTc
+#: src/modules/chat/components/ChatMessageCopyAction.tsx
 #: src/modules/ui/input/components/LightCopyIconButton.tsx
 msgid "Text copied to clipboard"
 msgstr "Текст копиран у клипборд"
@@ -30048,6 +30226,11 @@ msgstr ""
 #: src/pages/settings/profile/SettingsProfile.tsx
 msgid "The email associated to your account"
 msgstr "Имејл повезан са вашим налогом"
+
+#. js-lingui-id: pJahAY
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "The end date can't be before the first event."
+msgstr "Датум завршетка не може бити пре првог догађаја."
 
 #. js-lingui-id: WGfnFh
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -30515,6 +30698,16 @@ msgstr "Овај агент потиче из апликације, па се њ
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
 msgid "This agent comes from an app, so its tools can't be changed here."
 msgstr "Овај агент потиче из апликације, па се његови алати овде не могу променити."
+
+#. js-lingui-id: h1DyDq
+#: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
+msgid "This agent normally runs {details}, without a message. Ask it to do its scheduled task now."
+msgstr ""
+
+#. js-lingui-id: qC+xo7
+#: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
+msgid "This agent normally starts on “{label}” for {details}, with that record. Describe one to see how it handles it."
+msgstr ""
 
 #. js-lingui-id: PGt3yj
 #: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
@@ -31178,6 +31371,7 @@ msgid "To"
 msgstr ""
 
 #. js-lingui-id: ecUA8p
+#: src/modules/chat/utils/getChatMessageDayLabel.ts
 #: src/modules/inbox/utils/groupInboxThreadsByDate.ts
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 #: src/modules/log-console/components/LogConsoleTimeRangeDropdown.tsx
@@ -31753,10 +31947,10 @@ msgstr "Претворите картицу AI у пријемно сандуч�
 msgid "Turns"
 msgstr "Потези"
 
-#. js-lingui-id: ZKeDcZ
+#. js-lingui-id: m4IiWF
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
-msgid "Turns appear here once a workflow or an app uses this agent"
-msgstr "Потези се појављују овде када ток рада или апликација користи овог агента"
+msgid "Turns appear here once you test this agent, or a workflow or an app uses it"
+msgstr "Покретања се појављују овде када тестирате овог агента или када га користи ток посла или апликација"
 
 #. js-lingui-id: 2JBBhG
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
@@ -33060,6 +33254,11 @@ msgstr "Користите само слова, бројеве, доње црт�
 msgid "Use our API or add your first {objectLabel} manually"
 msgstr "Користите наш API или ручно додајте први {objectLabel}"
 
+#. js-lingui-id: TTyUsT
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Use the inbox names for the chat thread and message objects. Turned on by the workspace upgrade that renames them, so don't toggle it by hand."
+msgstr "Користите називе пријемног сандучета за објекте нити ћаскања и поруке. Укључује се надоградњом радног простора која их преименује, зато га немојте ручно пребацивати."
+
 #. js-lingui-id: z1f4Op
 #: src/modules/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems.ts
 msgid "Use the whole item"
@@ -34006,6 +34205,7 @@ msgid "Week"
 msgstr "Недеља"
 
 #. js-lingui-id: 4XSc4l
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 #: src/modules/settings/billing/constants/UsageLimitPeriodNameLabels.ts
 msgid "Weekly"
 msgstr "Недељно"
@@ -34255,7 +34455,7 @@ msgstr "Подешавања виџета"
 #. js-lingui-id: 0LuHF2
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Widget visibility rule tree"
-msgstr ""
+msgstr "Стабло правила видљивости виџета"
 
 #. js-lingui-id: tL6W2K
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -34808,6 +35008,11 @@ msgstr "Година"
 msgid "Yearly"
 msgstr "Годишње"
 
+#. js-lingui-id: 1+9d+F
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
+msgid "Yearly on {startMonthAndDay}"
+msgstr "Годишње, {startMonthAndDay}"
+
 #. js-lingui-id: +BGee5
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts
 msgid "years"
@@ -34854,6 +35059,7 @@ msgid "Yes, I saw it"
 msgstr "Да, видео/видела сам га"
 
 #. js-lingui-id: y/0uwd
+#: src/modules/chat/utils/getChatMessageDayLabel.ts
 #: src/modules/inbox/utils/groupInboxThreadsByDate.ts
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 #: src/modules/log-console/components/LogConsoleTimeRangeDropdown.tsx

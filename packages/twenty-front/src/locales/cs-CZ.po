@@ -336,6 +336,12 @@ msgstr "{0, plural, one {kredit/období} few {kredity/období} many {kreditů/ob
 msgid "{0, plural, one {Earn {formattedInviteTeamCreditsRewardPerUser} free credit per teammate who joins} other {Earn {formattedInviteTeamCreditsRewardPerUser} free credits per teammate who joins}}"
 msgstr "{0, plural, one {Získejte {formattedInviteTeamCreditsRewardPerUser} kredit zdarma za každého kolegu, který se připojí} few {Získejte {formattedInviteTeamCreditsRewardPerUser} kredity zdarma za každého kolegu, který se připojí} many {Získejte {formattedInviteTeamCreditsRewardPerUser} kreditů zdarma za každého kolegu, který se připojí} other {Získejte {formattedInviteTeamCreditsRewardPerUser} kreditů zdarma za každého kolegu, který se připojí}}"
 
+#. js-lingui-id: ywXd/t
+#. placeholder {0}: end.occurrenceCount
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
+msgid "{0, plural, one {occurrence} other {occurrences}}"
+msgstr "{0, plural, one {výskyt} few {výskyty} many {výskytů} other {výskytů}}"
+
 #. js-lingui-id: AkeiJW
 #. placeholder {0}: item.quantity
 #: src/modules/settings/admin-panel/utils/formatSubscriptionItemValue.ts
@@ -564,12 +570,6 @@ msgstr "{0} bez e-mailové adresy"
 msgid "{0} workspace members"
 msgstr "{0} členů pracovního prostoru"
 
-#. js-lingui-id: elMxkj
-#. placeholder {0}: tab.name
-#: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
-msgid "{0}, {unreadOpenThreadCount} unread"
-msgstr "{0}, {unreadOpenThreadCount} nepřečtených"
-
 #. js-lingui-id: stF+5U
 #. placeholder {0}: fieldMetadataItem.label
 #. placeholder {0}: relationFieldMetadataItem.label
@@ -583,12 +583,6 @@ msgstr "{0}, {unreadOpenThreadCount} nepřečtených"
 #: src/modules/spreadsheet-import/components/MatchColumnSelectSubFieldSelectDropdownContent.tsx
 msgid "{0}, back to fields"
 msgstr "{0}, zpět na pole"
-
-#. js-lingui-id: VxMSt6
-#. placeholder {0}: tab.name
-#: src/modules/navigation/components/MainNavigationDrawerSidebarTab.tsx
-msgid "{0}, unread"
-msgstr "{0}, nepřečtené"
 
 #. js-lingui-id: kofqAN
 #. placeholder {0}: selectedResolvedTier.label
@@ -934,6 +928,26 @@ msgstr "{importContactsCallRecordingHours, plural, one {{formattedImportContacts
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "{installCount, plural, one {{0} install} other {{1} installs}}"
 msgstr "{installCount, plural, one {{0} instalace} few {{0} instalace} many {{1} instalace} other {{1} instalací}}"
+
+#. js-lingui-id: UON5Ro
+#: src/modules/activities/calendar/utils/getCalendarEventRecurrenceIntervalUnitLabel.ts
+msgid "{interval, plural, one {day} other {days}}"
+msgstr "{interval, plural, one {den} few {dny} many {dní} other {dní}}"
+
+#. js-lingui-id: UGYVsx
+#: src/modules/activities/calendar/utils/getCalendarEventRecurrenceIntervalUnitLabel.ts
+msgid "{interval, plural, one {month} other {months}}"
+msgstr "{interval, plural, one {měsíc} few {měsíce} many {měsíců} other {měsíců}}"
+
+#. js-lingui-id: RxZ6VS
+#: src/modules/activities/calendar/utils/getCalendarEventRecurrenceIntervalUnitLabel.ts
+msgid "{interval, plural, one {week} other {weeks}}"
+msgstr "{interval, plural, one {týden} few {týdny} many {týdnů} other {týdnů}}"
+
+#. js-lingui-id: qB4ocR
+#: src/modules/activities/calendar/utils/getCalendarEventRecurrenceIntervalUnitLabel.ts
+msgid "{interval, plural, one {year} other {years}}"
+msgstr "{interval, plural, one {rok} few {roky} many {let} other {let}}"
 
 #. js-lingui-id: Z4Vsx1
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
@@ -1303,6 +1317,16 @@ msgstr "{stepNumber}. Kalendář"
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowEditActionSendChatMessage.tsx
 msgid "{storedToolName} (not available to you)"
 msgstr "{storedToolName} (není vám k dispozici)"
+
+#. js-lingui-id: VfeUjs
+#: src/modules/navigation-menu-item/display/hooks/useGetNavigationMenuTabAttentionLabel.ts
+msgid "{tabName}, needs your input"
+msgstr "{tabName} vyžaduje vaši pozornost"
+
+#. js-lingui-id: REc4fO
+#: src/modules/navigation-menu-item/display/hooks/useGetNavigationMenuTabAttentionLabel.ts
+msgid "{tabName}, unread"
+msgstr "{tabName}, nepřečteno"
 
 #. js-lingui-id: RIjnws
 #: src/modules/settings/mcp-servers/utils/getMcpServerStatus.ts
@@ -2133,7 +2157,7 @@ msgstr "Níže přidejte kartu, abyste aktualizovali své fakturační údaje a 
 #. js-lingui-id: vzJ7AQ
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionDescriptionInput.tsx
 msgid "Add a description"
-msgstr ""
+msgstr "Přidat popis"
 
 #. js-lingui-id: uXkGAw
 #: src/modules/advanced-text-editor/extensions/variable-tag/TemplateVariableWithFallbackChip.tsx
@@ -2373,7 +2397,7 @@ msgstr "Přidat vlastního poskytovatele"
 #. js-lingui-id: PGPGsL
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Add description"
-msgstr ""
+msgstr "Přidat popis"
 
 #. js-lingui-id: 094J9M
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -2475,6 +2499,16 @@ msgstr "Přidat položku"
 msgid "Add Item"
 msgstr "Přidat položku"
 
+#. js-lingui-id: 1e37Dl
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
+msgid "Add item after"
+msgstr "Přidat položku za"
+
+#. js-lingui-id: w7mkyz
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
+msgid "Add item before"
+msgstr "Přidat položku před"
+
 #. js-lingui-id: VzGJRl
 #: src/modules/advanced-text-editor/components/EditLinkDropdown.tsx
 #: src/modules/advanced-text-editor/components/EditLinkDropdown.tsx
@@ -2485,16 +2519,6 @@ msgstr "Přidat odkaz"
 #: src/modules/settings/mcp-servers/components/SettingsMcpServersSection.tsx
 msgid "Add MCP server"
 msgstr "Přidat MCP server"
-
-#. js-lingui-id: JbORSt
-#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
-msgid "Add menu item after"
-msgstr "Přidat navigační položku za"
-
-#. js-lingui-id: DKlI/M
-#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
-msgid "Add menu item before"
-msgstr "Přidat navigační položku před"
 
 #. js-lingui-id: q5ruxx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -3001,6 +3025,11 @@ msgstr "Pokročilé možnosti"
 #: src/modules/localization/hooks/useLocaleOptions.ts
 msgid "Afrikaans"
 msgstr "Afrikánština"
+
+#. js-lingui-id: NawEr2
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
+msgid "After"
+msgstr "Po"
 
 #. js-lingui-id: WlItll
 #: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
@@ -3758,6 +3787,11 @@ msgstr "Abecedně"
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem.tsx
 msgid "Already in sidebar"
 msgstr "Již v postranním panelu"
+
+#. js-lingui-id: CaKZeT
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem.tsx
+msgid "Already in this section"
+msgstr "Již v této části"
 
 #. js-lingui-id: u/DP73
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -5259,6 +5293,21 @@ msgstr "Účtovat kredity vašemu pracovnímu prostoru"
 msgid "Bill the prices declared by installed apps on the workspace subscription. The price is not shown before install yet."
 msgstr "Účtujte ceny stanovené nainstalovanými aplikacemi v rámci předplatného pracovního prostoru. Cena se před instalací zatím nezobrazuje."
 
+#. js-lingui-id: WVxikw
+#: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
+msgid "Bill your workspace {amount} / month"
+msgstr "Fakturujte svému pracovnímu prostoru {amount} / měsíc"
+
+#. js-lingui-id: 9nZzfz
+#: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
+msgid "Bill your workspace {amount} / month per account"
+msgstr "Fakturujte svému pracovnímu prostoru {amount} / měsíc za účet"
+
+#. js-lingui-id: iOQoBV
+#: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
+msgid "Bill your workspace {amount} / month per member"
+msgstr "Fakturujte svému pracovnímu prostoru {amount} / měsíc za člena"
+
 #. js-lingui-id: aIkeAd
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
 msgid "Billed monthly"
@@ -5314,11 +5363,6 @@ msgstr "Chyba relace fakturačního portálu. Prosím zkuste to znovu nebo konta
 #: src/modules/settings/billing/hooks/useBillingSubscriptionChangeWording.ts
 msgid "Billing stays {upcomingIntervalAdjective}. To switch to {selectedIntervalAdjective} billing, confirm this change first, then switch the billing interval as a second step."
 msgstr "Fakturace zůstane {upcomingIntervalAdjective}. Chcete-li přejít na fakturaci {selectedIntervalAdjective}, nejprve potvrďte tuto změnu a poté ve druhém kroku změňte interval fakturace."
-
-#. js-lingui-id: 75WIQJ
-#: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
-msgid "Bills credits"
-msgstr "Účtuje kredity"
 
 #. js-lingui-id: 8kIU+G
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -6401,6 +6445,11 @@ msgstr "Zkontrolujte nedávná spuštění tohoto pracovního postupu a sdělte 
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerifyButton.tsx
 msgid "Check verification"
 msgstr "Ověření kontroly"
+
+#. js-lingui-id: fbu0qc
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Check when the event stops repeating"
+msgstr "Zkontrolujte, kdy se událost přestane opakovat"
 
 #. js-lingui-id: AwAGI4
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -8144,6 +8193,7 @@ msgid "Copy to clipboard"
 msgstr "Zkopírovat do schránky"
 
 #. js-lingui-id: RTxUjI
+#: src/modules/chat/components/ChatMessageCopyAction.tsx
 #: src/modules/ui/input/components/LightCopyIconButton.tsx
 msgid "Copy to Clipboard"
 msgstr "Zkopírovat do schránky"
@@ -9436,6 +9486,7 @@ msgid "Customize record page"
 msgstr "Přizpůsobit stránku záznamu"
 
 #. js-lingui-id: hxjpaE
+#: src/modules/navigation/components/MainNavigationDrawerContextMenu.tsx
 #: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
 #: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
 msgid "Customize sidebar"
@@ -9472,6 +9523,7 @@ msgid "Czech"
 msgstr "Čeština"
 
 #. js-lingui-id: U0sC6H
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 #: src/modules/settings/billing/constants/UsageLimitPeriodNameLabels.ts
 msgid "Daily"
 msgstr "Denně"
@@ -10458,6 +10510,11 @@ msgstr "sestupně"
 msgid "Descending"
 msgstr "Sestupně"
 
+#. js-lingui-id: 8Y0+ya
+#: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
+msgid "Describe a {objectLabel} and what changed on it"
+msgstr ""
+
 #. js-lingui-id: 3QTkmB
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentGenerateStepPromptTab.tsx
 msgid "Describe the role of the AI and how it should do the task..."
@@ -10872,6 +10929,11 @@ msgstr "Neimportovat"
 msgid "Do you want to unsubscribe?"
 msgstr "Chcete se odhlásit z odběru?"
 
+#. js-lingui-id: oc+pOk
+#: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
+msgid "Do your scheduled task now"
+msgstr ""
+
 #. js-lingui-id: TbjyhA
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -10896,6 +10958,11 @@ msgstr "Dokument"
 #: src/pages/settings/developers/SettingsDevelopers.tsx
 msgid "Documentation"
 msgstr "Dokumentace"
+
+#. js-lingui-id: 7xJ6D1
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
+msgid "Does not repeat"
+msgstr "Neopakovat"
 
 #. js-lingui-id: U9q4zF
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -11359,7 +11426,7 @@ msgstr "Upravit strukturu dat a pole"
 #. js-lingui-id: O32mmL
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Edit description"
-msgstr ""
+msgstr "Upravit popis"
 
 #. js-lingui-id: ZwR0Vd
 #: src/modules/side-panel/pages/email-block-settings/components/EmailBoxSidesInput.tsx
@@ -12017,6 +12084,7 @@ msgstr "URL koncového bodu"
 #. js-lingui-id: x/6eQ0
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
@@ -12694,6 +12762,11 @@ msgstr "Viditelnost událostí"
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringIssuesTable.tsx
 msgid "Events"
 msgstr "Události"
+
+#. js-lingui-id: CRsuq4
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
+msgid "Every"
+msgstr "Každý"
 
 #. js-lingui-id: lbS/kF
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
@@ -13708,6 +13781,11 @@ msgstr "Nepodařilo se synchronizovat nástroje"
 msgid "Failed to synchronize the marketplace catalog."
 msgstr "Nepodařilo se synchronizovat katalog marketplace."
 
+#. js-lingui-id: UUsjVV
+#: src/modules/object-core/agents/hooks/useTestCoreAgent.ts
+msgid "Failed to test agent"
+msgstr "Testování agenta se nezdařilo"
+
 #. js-lingui-id: LVcnN8
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 msgid "Failed to transfer ownership. Check that the subdomain is correct."
@@ -14402,6 +14480,11 @@ msgstr "První 2 řádky"
 #: src/modules/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions.ts
 msgid "First 5 lines"
 msgstr "Prvních 5 řádků"
+
+#. js-lingui-id: idQLQP
+#: src/modules/activities/calendar/components/CalendarEventRecurrenceDaysOfWeekInput.tsx
+msgid "First event"
+msgstr "První událost"
 
 #. js-lingui-id: V1EGGU
 #: src/modules/activities/emails/hooks/useCampaignEmailEditorVariables.ts
@@ -16269,8 +16352,14 @@ msgstr "Možnosti neaktivní dovednosti"
 
 #. js-lingui-id: Gp4Yi6
 #: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
+#: src/modules/views/types/ViewType.ts
 msgid "Inbox"
 msgstr "Schránka"
+
+#. js-lingui-id: UXZcgx
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Inbox object names"
+msgstr "Názvy objektů doručené pošty"
 
 #. js-lingui-id: j8Bj7e
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
@@ -17801,6 +17890,11 @@ msgstr "Nechte každého člena, aby se rozhodl sám"
 msgid "Let grouped table and list views show their groups as tabs, one group at a time. Enable after the instance upgrade completes."
 msgstr "Umožněte, aby seskupená zobrazení tabulek a seznamů zobrazovala své skupiny jako karty, vždy jednu skupinu. Povolte po dokončení aktualizace instance."
 
+#. js-lingui-id: livXRh
+#: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
+msgid "Let members connect their own accounts"
+msgstr "Umožněte členům připojit vlastní účty"
+
 #. js-lingui-id: 3OsDiZ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let people restrict and share individual records."
@@ -19143,6 +19237,7 @@ msgstr "Slučování..."
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/log-console/constants/LogConsoleApplicationLogColumns.tsx
+#: src/modules/object-core/agents/components/CoreAgentTestForm.tsx
 #: src/modules/settings/event-logs/utils/getColumnsForEventLogTable.tsx
 #: src/modules/validation-rules/components/SettingsValidationRuleForm.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowEditActionSendChatMessage.tsx
@@ -19153,6 +19248,11 @@ msgstr "Zpráva"
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 msgid "Message {recipientName}"
 msgstr "Zpráva pro {recipientName}"
+
+#. js-lingui-id: +nYs0G
+#: src/modules/chat/components/ChatMessageFloatingActions.tsx
+msgid "Message actions"
+msgstr "Akce zpráv"
 
 #. js-lingui-id: 6H0up8
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -19504,6 +19604,11 @@ msgstr "měsíční"
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
 msgid "Monthly"
 msgstr "Měsíční"
+
+#. js-lingui-id: WHc/gS
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
+msgid "Monthly on day {startDayOfMonth}"
+msgstr "Měsíčně v den {startDayOfMonth}"
 
 #. js-lingui-id: 6jefe3
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts
@@ -19977,6 +20082,7 @@ msgid "Network error"
 msgstr "Chyba sítě"
 
 #. js-lingui-id: qqeAJM
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 #: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
@@ -20010,6 +20116,7 @@ msgstr "Nikdy, ani společností Twenty, ani poskytovateli"
 
 #. js-lingui-id: isRobC
 #: src/modules/ai-chat/messages/components/AiChatMessage.tsx
+#: src/modules/chat/components/ChatMessageDaySeparator.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnNewRecordButton.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerNewForm.tsx
@@ -21852,6 +21959,11 @@ msgstr "Počet dní uchovávání protokolů ({minEventLogRetentionInDays}-{maxE
 msgid "Number of decimals"
 msgstr "Počet desetinných míst"
 
+#. js-lingui-id: Dh3U6L
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
+msgid "Number of occurrences"
+msgstr "Počet opakování"
+
 #. js-lingui-id: n49P/Y
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 msgid "Number of records to skip. Combine with Limit to page through results."
@@ -22055,6 +22167,11 @@ msgstr ""
 msgid "Omit zero values"
 msgstr "Vynechat nulové hodnoty"
 
+#. js-lingui-id: Z5HWHd
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
+msgid "On"
+msgstr "Dne"
+
 #. js-lingui-id: 7kr775
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "on {dayName}"
@@ -22069,6 +22186,11 @@ msgstr "v {remainingDays} a {lastDay}"
 #: src/modules/workflow/constants/WorkflowStepDefaultNames.ts
 msgid "On a schedule"
 msgstr "Podle plánu"
+
+#. js-lingui-id: RuEWFx
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
+msgid "On date"
+msgstr "K datu"
 
 #. js-lingui-id: gzokj+
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
@@ -22300,14 +22422,19 @@ msgid "Only you will be able to see your emails and events"
 msgstr "Vaše e-maily a události budete moci vidět pouze vy"
 
 #. js-lingui-id: 1TNIig
-#: src/modules/inbox/components/AiChatThreadStatusField.tsx
-#: src/modules/inbox/constants/InboxChannelNavigationItems.ts
-#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 #: src/modules/log-console/components/LogConsole.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
+msgid "Open"
+msgstr "Otevřít"
+
+#. js-lingui-id: zzFeSa
+#: src/modules/inbox/components/AiChatThreadStatusField.tsx
+#: src/modules/inbox/constants/InboxChannelNavigationItems.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
+msgctxt "Inbox thread status"
 msgid "Open"
 msgstr "Otevřít"
 
@@ -22726,6 +22853,11 @@ msgstr "Licence Organizace"
 msgid "Organization license activated successfully"
 msgstr "Licence Organizace byla úspěšně aktivována"
 
+#. js-lingui-id: 50DOI7
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Organize the sidebar in tabs and sections, including built-in sections for favorites, chats and agents, and customize it in place."
+msgstr "Uspořádejte postranní panel do karet a sekcí, včetně integrovaných sekcí pro oblíbené položky, chaty a agenty, a přizpůsobte ho přímo na místě."
+
 #. js-lingui-id: G5RhpL
 #: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Organizer"
@@ -23045,6 +23177,11 @@ msgstr "Zobrazení stránek"
 #: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
 msgid "Pages"
 msgstr "Stránky"
+
+#. js-lingui-id: wl6crM
+#: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
+msgid "Paid app"
+msgstr "Placená aplikace"
 
 #. js-lingui-id: ijBN4V
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -24410,7 +24547,7 @@ msgstr "Přečtěte si systémové pokyny, abyste pochopili, jak AI funguje (~{0
 #. js-lingui-id: SIPs3V
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Read the visibility rule of page layout widgets from its tree form only. Enabled after the workspace upgrade copies the stored rules."
-msgstr ""
+msgstr "Pravidlo viditelnosti widgetů rozložení stránky načítejte pouze z jeho stromové formy. Povoleno poté, co aktualizace pracovního prostoru zkopíruje uložená pravidla."
 
 #. js-lingui-id: afMuDE
 #: src/modules/applications/constants/OAuthScopeLabels.ts
@@ -25407,6 +25544,22 @@ msgstr "Přesunout pole"
 msgid "Reorder options"
 msgstr "Změnit pořadí možností"
 
+#. js-lingui-id: BwWIp2
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
+msgid "Repeat"
+msgstr "Opakovat"
+
+#. js-lingui-id: X9KmrM
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
+msgid "Repeat interval"
+msgstr "Interval opakování"
+
+#. js-lingui-id: KR6sNP
+#: src/modules/activities/calendar/components/CalendarEventRecurrenceDaysOfWeekInput.tsx
+#: src/modules/activities/calendar/components/CalendarEventRecurrenceDaysOfWeekInput.tsx
+msgid "Repeat on"
+msgstr "Opakovat ve dnech"
+
 #. js-lingui-id: q8Id6J
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 msgid "Replace widget"
@@ -26086,6 +26239,11 @@ msgstr "Spouštět kód pro analýzu souborů a dat"
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 msgid "Run Function"
 msgstr "Spustit funkci"
+
+#. js-lingui-id: gdJPPW
+#: src/modules/object-core/agents/components/CoreAgentTestForm.tsx
+msgid "Run test"
+msgstr "Spustit test"
 
 #. js-lingui-id: scFhaW
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
@@ -28154,11 +28312,6 @@ msgstr "Zobrazit v"
 msgid "Show only rows with errors"
 msgstr "Zobrazit pouze řádky s chybami"
 
-#. js-lingui-id: KefbEP
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Show sidebar tabs and sections."
-msgstr "Zobrazit karty a sekce postranního panelu."
-
 #. js-lingui-id: 9u2I/P
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Show the Getting started page and sidebar card, and open it on landing during the trial."
@@ -28211,6 +28364,11 @@ msgstr "Postranní panel"
 #: src/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenuOpenContent.tsx
 msgid "Side Panel"
 msgstr "Postranní panel"
+
+#. js-lingui-id: QWUT9V
+#: src/modules/navigation/components/MainNavigationDrawerContextMenu.tsx
+msgid "Sidebar actions"
+msgstr "Akce postranního panelu"
 
 #. js-lingui-id: 9k9PMD
 #: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
@@ -29386,6 +29544,11 @@ msgstr "Shrňte tento záznam a jeho nedávnou aktivitu."
 msgid "Summarize this view"
 msgstr "Shrnout toto zobrazení"
 
+#. js-lingui-id: mLm1b0
+#: src/modules/object-core/agents/components/CoreAgentTestForm.tsx
+msgid "Summarize what changed on Acme this week"
+msgstr "Shrňte, co se tento týden změnilo v Acme"
+
 #. js-lingui-id: gKAccC
 #: src/modules/page-layout/widgets/call-recording-summary/components/WidgetActionCallRecordingSummary.tsx
 msgid "Summary copied to clipboard"
@@ -29822,6 +29985,7 @@ msgid "Terms of Service"
 msgstr "Podmínky služby"
 
 #. js-lingui-id: NnH3pK
+#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionCodeEditorTab.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
@@ -29834,6 +29998,19 @@ msgstr "Podmínky služby"
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 msgid "Test"
 msgstr "Testovat"
+
+#. js-lingui-id: jra4Ko
+#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
+#: src/modules/object-core/agents/hooks/useOpenCoreAgentTestSidePanel.ts
+msgid "Test agent"
+msgstr "Otestovat agenta"
+
+#. js-lingui-id: AriIhI
+#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
+#: src/modules/object-core/commands/hooks/useCoreAgentPageCommands.ts
+#: src/modules/object-core/commands/hooks/useCoreAgentsSelectionCommands.ts
+msgid "Test Agent"
+msgstr "Testovat agenta"
 
 #. js-lingui-id: 1QHjf8
 #. placeholder {0}: params.toAddress
@@ -29905,6 +30082,7 @@ msgid "Text Colors"
 msgstr "Barvy textu"
 
 #. js-lingui-id: lyaiTc
+#: src/modules/chat/components/ChatMessageCopyAction.tsx
 #: src/modules/ui/input/components/LightCopyIconButton.tsx
 msgid "Text copied to clipboard"
 msgstr "Text zkopírován do schránky"
@@ -30048,6 +30226,11 @@ msgstr ""
 #: src/pages/settings/profile/SettingsProfile.tsx
 msgid "The email associated to your account"
 msgstr "Email spojený s vaším účtem"
+
+#. js-lingui-id: pJahAY
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "The end date can't be before the first event."
+msgstr "Datum ukončení nemůže být před první událostí."
 
 #. js-lingui-id: WGfnFh
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -30515,6 +30698,16 @@ msgstr "Tento agent pochází z aplikace, takže jeho přístup zde nelze změni
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
 msgid "This agent comes from an app, so its tools can't be changed here."
 msgstr "Tento agent pochází z aplikace, takže jeho nástroje zde nelze změnit."
+
+#. js-lingui-id: h1DyDq
+#: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
+msgid "This agent normally runs {details}, without a message. Ask it to do its scheduled task now."
+msgstr ""
+
+#. js-lingui-id: qC+xo7
+#: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
+msgid "This agent normally starts on “{label}” for {details}, with that record. Describe one to see how it handles it."
+msgstr ""
 
 #. js-lingui-id: PGt3yj
 #: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
@@ -31178,6 +31371,7 @@ msgid "To"
 msgstr "Komu"
 
 #. js-lingui-id: ecUA8p
+#: src/modules/chat/utils/getChatMessageDayLabel.ts
 #: src/modules/inbox/utils/groupInboxThreadsByDate.ts
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 #: src/modules/log-console/components/LogConsoleTimeRangeDropdown.tsx
@@ -31753,10 +31947,10 @@ msgstr "Proměňte kartu AI na doručenou poštu pro třídění, přiřazován�
 msgid "Turns"
 msgstr "Tahy"
 
-#. js-lingui-id: ZKeDcZ
+#. js-lingui-id: m4IiWF
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
-msgid "Turns appear here once a workflow or an app uses this agent"
-msgstr "Tahy se zde zobrazí, jakmile tento agent použije pracovní postup nebo aplikace"
+msgid "Turns appear here once you test this agent, or a workflow or an app uses it"
+msgstr "Interakce se zde zobrazí, jakmile tohoto agenta otestujete nebo jej použije pracovní postup či aplikace"
 
 #. js-lingui-id: 2JBBhG
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
@@ -33060,6 +33254,11 @@ msgstr "Používejte pouze písmena, číslice, podtržítka, tečky nebo pomlč
 msgid "Use our API or add your first {objectLabel} manually"
 msgstr "Použijte naše API nebo ručně přidejte první {objectLabel}"
 
+#. js-lingui-id: TTyUsT
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Use the inbox names for the chat thread and message objects. Turned on by the workspace upgrade that renames them, so don't toggle it by hand."
+msgstr "Pro objekty vlákna chatu a zprávy použijte názvy doručené pošty. Tato možnost se zapne aktualizací pracovního prostoru, která je přejmenuje, takže ji nezapínejte ručně."
+
 #. js-lingui-id: z1f4Op
 #: src/modules/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems.ts
 msgid "Use the whole item"
@@ -34006,6 +34205,7 @@ msgid "Week"
 msgstr "Týden"
 
 #. js-lingui-id: 4XSc4l
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 #: src/modules/settings/billing/constants/UsageLimitPeriodNameLabels.ts
 msgid "Weekly"
 msgstr "Týdně"
@@ -34255,7 +34455,7 @@ msgstr "Nastavení widgetu"
 #. js-lingui-id: 0LuHF2
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Widget visibility rule tree"
-msgstr ""
+msgstr "Strom pravidel viditelnosti widgetu"
 
 #. js-lingui-id: tL6W2K
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -34808,6 +35008,11 @@ msgstr "Rok"
 msgid "Yearly"
 msgstr "Roční"
 
+#. js-lingui-id: 1+9d+F
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
+msgid "Yearly on {startMonthAndDay}"
+msgstr "Ročně {startMonthAndDay}"
+
 #. js-lingui-id: +BGee5
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts
 msgid "years"
@@ -34854,6 +35059,7 @@ msgid "Yes, I saw it"
 msgstr "Ano, viděl(a) jsem to"
 
 #. js-lingui-id: y/0uwd
+#: src/modules/chat/utils/getChatMessageDayLabel.ts
 #: src/modules/inbox/utils/groupInboxThreadsByDate.ts
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 #: src/modules/log-console/components/LogConsoleTimeRangeDropdown.tsx

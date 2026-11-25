@@ -29,7 +29,7 @@ describe('toGoogleEventInput', () => {
     expect(event.conferenceData).toBeUndefined();
   });
 
-  it('maps an all-day event with date-only boundaries and no time zone', () => {
+  it('maps an all-day event with date-only boundaries', () => {
     const event = toGoogleEventInput({
       ...baseInput,
       isFullDay: true,
@@ -37,8 +37,31 @@ describe('toGoogleEventInput', () => {
       endsAt: '2026-07-02T00:00:00Z',
     });
 
-    expect(event.start).toEqual({ date: '2026-07-01' });
-    expect(event.end).toEqual({ date: '2026-07-02' });
+    expect(event.start).toEqual({
+      date: '2026-07-01',
+      timeZone: 'America/New_York',
+    });
+    expect(event.end).toEqual({
+      date: '2026-07-02',
+      timeZone: 'America/New_York',
+    });
+  });
+
+  it('adds the recurrence rule of a repeating event', () => {
+    const event = toGoogleEventInput({
+      ...baseInput,
+      recurrence: {
+        frequency: 'WEEKLY',
+        interval: 2,
+        daysOfWeek: ['WEDNESDAY', 'FRIDAY'],
+        firstOccurrenceDate: '2026-07-01',
+        endOccurrenceCount: 6,
+      },
+    });
+
+    expect(event.recurrence).toEqual([
+      'RRULE:FREQ=WEEKLY;INTERVAL=2;BYDAY=WE,FR;COUNT=6',
+    ]);
   });
 
   it('maps attendees when present', () => {

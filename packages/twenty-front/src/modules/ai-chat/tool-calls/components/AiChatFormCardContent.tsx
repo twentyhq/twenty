@@ -57,6 +57,7 @@ const StyledPrefillFeedback = styled.span`
 type AiChatFormCardContentProps = {
   fields: RequestFormField[];
   defaultValues?: Record<string, unknown>;
+  values?: Record<string, unknown>;
   title?: string;
   isSubmitting?: boolean;
   isSubmitDisabled?: boolean;
@@ -69,6 +70,7 @@ type AiChatFormCardContentProps = {
 export const AiChatFormCardContent = ({
   fields,
   defaultValues,
+  values,
   title,
   isSubmitting = false,
   isSubmitDisabled = false,
@@ -88,6 +90,7 @@ export const AiChatFormCardContent = ({
     return !isFieldValueEmpty({ fieldDefinition: { type }, fieldValue: value });
   }).length;
   const fieldCount = fields.length;
+  const fieldValues = { ...defaultValues, ...values };
 
   return (
     <StyledAiChatAskCard isPadded>
@@ -97,14 +100,10 @@ export const AiChatFormCardContent = ({
       </StyledHeader>
       <StyledFields>
         <WorkflowFormFields
-          fields={
-            isDefined(defaultValues)
-              ? fields.map((field) => ({
-                  ...field,
-                  value: defaultValues[field.name],
-                }))
-              : fields
-          }
+          fields={fields.map((field) => ({
+            ...field,
+            value: fieldValues[field.name],
+          }))}
           readonly={isSubmitting}
           onChange={(fieldName, value) => onFieldChange({ fieldName, value })}
           onError={onError}

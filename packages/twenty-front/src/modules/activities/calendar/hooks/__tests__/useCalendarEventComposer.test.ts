@@ -3,6 +3,10 @@ import { Temporal } from 'temporal-polyfill';
 
 import { useCalendarEventComposer } from '@/activities/calendar/hooks/useCalendarEventComposer';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import {
+  CalendarEventRecurrenceFrequency,
+  CalendarEventRecurrenceWeekday,
+} from '~/generated-metadata/graphql';
 
 const mockCreateCalendarEvent = jest.fn();
 const mockCreateCalendarEventTargets = jest.fn();
@@ -322,5 +326,87 @@ describe('useCalendarEventComposer', () => {
       Temporal.PlainDate.from(startsAt).add({ days: 1 }).toString(),
     );
     expect(result.current.hasValidDateRange).toBe(true);
+  });
+
+  describe('recurrence', () => {
+    const renderComposer = () =>
+      renderHook(() =>
+        useCalendarEventComposer({
+          initialValues: {
+            connectedAccountId: 'account-id',
+            contextRecord: {
+              objectNameSingular: 'person',
+              recordId: 'person-id',
+            },
+            defaultAttendees: '',
+            timeZone: 'Europe/Paris',
+          },
+          onCreated: jest.fn(),
+        }),
+      );
+
+    it('submits a weekly series ending after a number of occurrences', async () => {
+      mockCreateCalendarEvent.mockResolvedValue({ success: true });
+
+      const { result } = renderComposer();
+
+      act(() => {
+        result.current.setTitle('Weekly sync');
+        result.current.handleRecurrenceFrequencyChange(
+          CalendarEventRecurrenceFrequency.WEEKLY,
+        );
+      });
+
+      act(() => {
+        result.current.updateRecurrence({
+          daysOfWeek: [CalendarEventRecurrenceWeekday.THURSDAY],
+        });
+        result.current.handleRecurrenceEndTypeChange('AFTER_OCCURRENCE_COUNT');
+      });
+
+      await act(async () => {
+        await result.current.handleCreate();
+      });
+
+      expect(mockCreateCalendarEvent).toHaveBeenCalledWith(
+        expect.objectContaining({
+          recurrence: {
+            frequency: CalendarEventRecurrenceFrequency.WEEKLY,
+            interval: 1,
+            daysOfWeek: [CalendarEventRecurrenceWeekday.THURSDAY],
+            endOccurrenceCount: 10,
+          },
+        }),
+      );
+    });
+
+    it('prefills the end date ten occurrences out and blocks an end before the start', () => {
+      const { result } = renderComposer();
+
+      act(() => {
+        result.current.setTitle('Monthly review');
+        result.current.handleStartsAtChange('2026-10-20T07:00:00Z');
+        result.current.handleRecurrenceFrequencyChange(
+          CalendarEventRecurrenceFrequency.MONTHLY,
+        );
+      });
+
+      act(() => {
+        result.current.handleRecurrenceEndTypeChange('ON_DATE');
+      });
+
+      expect(result.current.recurrence?.end).toEqual({
+        type: 'ON_DATE',
+        endDate: '2027-07-20',
+      });
+
+      act(() => {
+        result.current.updateRecurrence({
+          end: { type: 'ON_DATE', endDate: '2026-10-19' },
+        });
+      });
+
+      expect(result.current.canCreate).toBe(false);
+    });
   });
 });

@@ -42,6 +42,7 @@ type Agent {
   responseFormat: JSON
   roleId: UUID
   triggers: [JSON!]!
+  universalIdentifier: UUID!
   updatedAt: DateTime!
 }
 
@@ -590,6 +591,33 @@ type ApplicationAuthorization {
   scopes: [String!]
   userId: UUID!
   workspaceId: UUID!
+}
+
+type ApplicationBillingPrice {
+  amountCents: Int!
+  billingPeriod: ApplicationBillingPricePeriod!
+  currency: ApplicationBillingPriceCurrency!
+  label: String!
+  per: ApplicationBillingPriceUnit
+  type: ApplicationBillingPriceType!
+  universalIdentifier: String!
+}
+
+enum ApplicationBillingPriceCurrency {
+  USD
+}
+
+enum ApplicationBillingPricePeriod {
+  MONTHLY
+}
+
+enum ApplicationBillingPriceType {
+  RECURRING
+}
+
+enum ApplicationBillingPriceUnit {
+  CONNECTED_ACCOUNT
+  WORKSPACE_MEMBER
 }
 
 type ApplicationCapabilityGrant {
@@ -1316,6 +1344,31 @@ type CalendarConfiguration {
   configurationType: WidgetConfigurationType!
 }
 
+enum CalendarEventRecurrenceFrequency {
+  DAILY
+  MONTHLY
+  WEEKLY
+  YEARLY
+}
+
+input CalendarEventRecurrenceInput {
+  daysOfWeek: [CalendarEventRecurrenceWeekday!]
+  endDate: String
+  endOccurrenceCount: Int
+  frequency: CalendarEventRecurrenceFrequency!
+  interval: Int
+}
+
+enum CalendarEventRecurrenceWeekday {
+  FRIDAY
+  MONDAY
+  SATURDAY
+  SUNDAY
+  THURSDAY
+  TUESDAY
+  WEDNESDAY
+}
+
 type CallRecordingSummaryConfiguration {
   configurationType: WidgetConfigurationType!
 }
@@ -1669,6 +1722,7 @@ input CreateCalendarEventInput {
   endsAt: String!
   isFullDay: Boolean
   location: String
+  recurrence: CalendarEventRecurrenceInput
   sendInvitations: Boolean
   startsAt: String!
   timeZone: String
@@ -2514,6 +2568,7 @@ enum FeatureFlagKey {
   IS_CREATE_RECORDS_PERMISSION_ENABLED
   IS_CUSTOMIZABLE_SIDEBAR_ENABLED
   IS_GETTING_STARTED_ENABLED
+  IS_INBOX_OBJECT_NAMING_ENABLED
   IS_INTERNAL_IMPORT_COLUMN_ENABLED
   IS_LOOKUP_COLUMNS_ENABLED
   IS_MCP_SERVERS_ENABLED
@@ -3222,6 +3277,7 @@ type MarketplaceApp {
 type MarketplaceAppDetail {
   aboutDescription: String
   author: String
+  billingPrices: [ApplicationBillingPrice!]!
   billsCredits: Boolean!
   category: String
   connectUrl: String
@@ -6687,6 +6743,7 @@ enum ViewType {
   CALENDAR
   CALENDAR_WIDGET
   FIELDS_WIDGET
+  INBOX
   KANBAN
   KANBAN_WIDGET
   LIST

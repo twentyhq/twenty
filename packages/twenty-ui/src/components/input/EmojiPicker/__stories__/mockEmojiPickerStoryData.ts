@@ -6,9 +6,11 @@ import { EMOJI_PICKER_STORY_EMOJIBASE_URL } from './emojiPickerStoryEmojibaseUrl
 export const mockEmojiPickerStoryData = ({
   emojibaseUrl = EMOJI_PICKER_STORY_EMOJIBASE_URL,
   emojis = EMOJI_PICKER_STORY_DATA.emojis,
+  messages = EMOJI_PICKER_STORY_DATA.messages,
 }: {
   emojibaseUrl?: string;
   emojis?: typeof EMOJI_PICKER_STORY_DATA.emojis;
+  messages?: typeof EMOJI_PICKER_STORY_DATA.messages;
 } = {}) => {
   const dataPath = `${emojibaseUrl}/en/data.json`;
   const messagesPath = `${emojibaseUrl}/en/messages.json`;
@@ -29,10 +31,7 @@ export const mockEmojiPickerStoryData = ({
         return originalFetch(...parameters);
       }
 
-      const responseBody =
-        requestUrl.pathname === dataPath
-          ? emojis
-          : EMOJI_PICKER_STORY_DATA.messages;
+      const responseBody = requestUrl.pathname === dataPath ? emojis : messages;
 
       return Promise.resolve(
         Response.json(responseBody, {

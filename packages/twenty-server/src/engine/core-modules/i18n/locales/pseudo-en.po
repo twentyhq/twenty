@@ -385,6 +385,18 @@ msgstr ""
 msgid "A nested relation widget must use the table layout."
 msgstr ""
 
+#. js-lingui-id: +qTJHH
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
+msgid "A nested unreadable field cannot be tied to a row level permission rule"
+msgstr ""
+
+#. js-lingui-id: +cMY8o
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
+msgid "A nested unreadable field cannot use itself as its source"
+msgstr ""
+
 #. js-lingui-id: ChJFls
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "A network error occurred while accessing calendar."
@@ -479,6 +491,11 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "A recording of a meeting"
+msgstr ""
+
+#. js-lingui-id: l+tyko
+#: src/modules/calendar/calendar-event-creation-manager/utils/normalize-calendar-event-recurrence.util.ts
+msgid "A recurrence ends either on recurrence.endDate or after recurrence.endOccurrenceCount, not both"
 msgstr ""
 
 #. js-lingui-id: TmGFqW
@@ -11770,6 +11787,16 @@ msgctxt "fieldMetadata.description"
 msgid "Records this thread is attached to"
 msgstr ""
 
+#. js-lingui-id: Q/3t6e
+#: src/modules/calendar/calendar-event-creation-manager/utils/normalize-calendar-event-recurrence.util.ts
+msgid "recurrence.endDate must be a YYYY-MM-DD date on or after the event's start date ({firstOccurrenceDate})"
+msgstr ""
+
+#. js-lingui-id: wM8dZb
+#: src/modules/calendar/calendar-event-creation-manager/utils/normalize-calendar-event-recurrence.util.ts
+msgid "recurrence.interval and recurrence.endOccurrenceCount must be positive whole numbers"
+msgstr ""
+
 #. js-lingui-id: TPccfi
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -13429,6 +13456,16 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Source Document Title"
+msgstr ""
+
+#. js-lingui-id: gAdogO
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
+msgid "Source field metadata not found"
+msgstr ""
+
+#. js-lingui-id: 8Fgyo1
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
+msgid "Source field not found"
 msgstr ""
 
 #. js-lingui-id: o0N9e6
@@ -15901,6 +15938,11 @@ msgstr ""
 msgid "This version of the application is already installed in this workspace."
 msgstr ""
 
+#. js-lingui-id: lJw5/K
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-type-object.util.ts
+msgid "This view type is not available on this object"
+msgstr ""
+
 #. js-lingui-id: 2s7ieZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-validator.service.ts
 msgid "This workflow already exists"
@@ -17534,6 +17576,11 @@ msgstr ""
 msgid "View to update not found"
 msgstr ""
 
+#. js-lingui-id: OZdSbV
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-type-object.util.ts
+msgid "View type is not available on the view object"
+msgstr ""
+
 #. js-lingui-id: RvdHYC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
 msgid "View with same universal identifier already exists"
@@ -18010,8 +18057,8 @@ msgstr ""
 
 #. js-lingui-id: dNmZ33
 #: src/engine/core-modules/workflow/services/core-workflow-access.service.ts
-#: src/engine/core-modules/workflow/services/core-workflow-id-resolution.service.ts
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
+#: src/engine/core-modules/workflow/utils/build-core-workflow-not-found-exception.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-validator.service.ts
@@ -18167,9 +18214,8 @@ msgstr ""
 
 #. js-lingui-id: zuZGUs
 #: src/engine/core-modules/workflow/resolvers/workflow-builder.resolver.ts
-#: src/engine/core-modules/workflow/services/core-workflow-id-resolution.service.ts
+#: src/engine/core-modules/workflow/services/core-workflow-access.service.ts
 #: src/engine/core-modules/workflow/services/core-workflow-lifecycle.workspace-service.ts
-#: src/engine/core-modules/workflow/services/core-workflow-version-write.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-version-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-version-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-version-validator.service.ts
