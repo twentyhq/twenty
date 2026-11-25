@@ -57,7 +57,7 @@ export class BackfillBillingCustomerStripeCustomerEmailCommand extends Provision
 
     if (!isNonEmptyString(email)) {
       this.logger.log(
-        `Stripe customer ${billingCustomer.stripeCustomerId} of workspace ${workspaceId} has no email, skipping`,
+        `No Stripe customer email for workspace ${workspaceId}, skipping`,
       );
 
       return;
@@ -91,12 +91,10 @@ export class BackfillBillingCustomerStripeCustomerEmailCommand extends Provision
 
       return email;
     } catch (error) {
-      if (
-        error instanceof Stripe.errors.StripeInvalidRequestError &&
-        error.code === 'resource_missing'
-      ) {
+      // A failed workspace aborts the whole upgrade, and the customer webhooks fill the email later anyway
+      if (error instanceof Stripe.errors.StripeError) {
         this.logger.warn(
-          `Stripe customer ${stripeCustomerId} does not exist, skipping`,
+          `Could not retrieve Stripe customer ${stripeCustomerId} (${error.type}: ${error.message})`,
         );
 
         return null;
