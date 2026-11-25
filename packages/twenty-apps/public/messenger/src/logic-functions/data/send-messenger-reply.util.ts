@@ -11,6 +11,7 @@ import { GraphApiError } from 'src/logic-functions/data/graph-api.error';
 import { graphApiRequest } from 'src/logic-functions/data/graph-api-request.util';
 import { sendMessengerAttachment } from 'src/logic-functions/data/send-messenger-attachment.util';
 import { rememberSentAttachmentMessages } from 'src/logic-functions/data/sent-attachment-message.util';
+import { sendReplyPartsOnce } from 'src/logic-functions/data/send-reply-parts-once.util';
 
 // the human agent tag is meant for people answering by hand, so only replies from the thread view may use it
 export const sendMessengerReply = async ({
@@ -19,6 +20,7 @@ export const sendMessengerReply = async ({
   threadExternalId,
   text,
   attachments,
+  idempotencyKey,
   isHumanAgentTagAllowed,
 }: Pick<
   SendAppMessagePayload,
@@ -27,7 +29,10 @@ export const sendMessengerReply = async ({
   | 'threadExternalId'
   | 'text'
   | 'attachments'
-> & { isHumanAgentTagAllowed: boolean }): Promise<{ externalId: string }> => {
+> & {
+  idempotencyKey?: string;
+  isHumanAgentTagAllowed: boolean;
+}): Promise<{ externalId: string }> => {
   const messageChannel = await findMessageChannelOrThrow({
     connectedAccountId,
     messageChannelId,
@@ -63,39 +68,39 @@ export const sendMessengerReply = async ({
     pageId,
   });
 
-  const send = async () => {
-    const messageIds: string[] = [];
+  const sendText = async () => {
+    const { message_id } = await graphApiRequest<{ message_id: string }>({
+      accessToken: pageAccessToken,
+      method: 'POST',
+      path: `${pageId}/messages`,
+      data: {
+        recipient: { id: threadExternalId },
+        ...replyMessagingType,
+        message: { text },
+      },
+    });
 
-    if (isNonEmptyString(text.trim())) {
-      const { message_id } = await graphApiRequest<{ message_id: string }>({
-        accessToken: pageAccessToken,
-        method: 'POST',
-        path: `${pageId}/messages`,
-        data: {
-          recipient: { id: threadExternalId },
-          ...replyMessagingType,
-          message: { text },
-        },
-      });
-
-      messageIds.push(message_id);
-    }
-
-    for (const [index, attachment] of attachments.entries()) {
-      messageIds.push(
-        await sendMessengerAttachment({
-          pageAccessToken,
-          pageId,
-          recipientId: threadExternalId,
-          attachment,
-          attachmentType: attachmentTypes[index] ?? 'file',
-          replyMessagingType,
-        }),
-      );
-    }
-
-    return messageIds;
+    return message_id;
   };
+
+  const send = () =>
+    sendReplyPartsOnce({
+      idempotencyKey,
+      sendParts: [
+        ...(isNonEmptyString(text.trim()) ? [sendText] : []),
+        ...attachments.map(
+          (attachment, index) => () =>
+            sendMessengerAttachment({
+              pageAccessToken,
+              pageId,
+              recipientId: threadExternalId,
+              attachment,
+              attachmentType: attachmentTypes[index] ?? 'file',
+              replyMessagingType,
+            }),
+        ),
+      ],
+    });
 
   let messageIds: string[];
 

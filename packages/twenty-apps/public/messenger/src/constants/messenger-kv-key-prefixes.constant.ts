@@ -6,4 +6,5 @@ export const MESSENGER_KV_KEY_PREFIXES = {
   backfillRunIdByPageId: 'messenger-backfill-run:',
   adOpportunityByPersonAndAd: 'messenger-ad-opportunity:',
   sentAttachmentMessageByMid: 'messenger-sent-attachment:',
+  sentReplyPartIdsByIdempotencyKey: 'messenger-reply-parts:',
 } as const;
