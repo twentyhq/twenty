@@ -2,6 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import isEqual from 'lodash.isequal';
 import {
   buildFallbackProposedToolCall,
+  getApprovedToolCallLabel,
   PROPOSED_TOOL_CALL_TEMPLATES,
   isFrontComponentProposedToolCall,
   type ProposeToolCallToolInput,
@@ -57,6 +58,21 @@ const proposedToolCallSchema: z.ZodType<ProposedToolCall> = z.object({
   arguments: z.record(z.string(), z.unknown()),
   template: z.enum(PROPOSED_TOOL_CALL_TEMPLATES),
   alternativeToolNames: z.array(z.string()).optional(),
+  labels: z
+    .object({
+      approve: z.string().optional(),
+      reject: z.string().optional(),
+      alternatives: z
+        .record(
+          z.string(),
+          z.object({
+            label: z.string(),
+            confirmLabel: z.string().optional(),
+          }),
+        )
+        .optional(),
+    })
+    .optional(),
   objectNameSingular: z.string().optional(),
   recordId: z.string().optional(),
   currentValues: z.record(z.string(), z.unknown()).optional(),
@@ -162,14 +178,33 @@ const buildApprovalAnswerText = (
   approvedToolName: string,
   feedback: string | undefined,
 ): string => {
-  const approval =
-    approvedToolName === proposal.toolName
+  const approvedLabel = getApprovedToolCallLabel({
+    labels: proposal.labels,
+    toolName: approvedToolName,
+  });
+  const approval = isNonEmptyString(approvedLabel)
+    ? `${approvedLabel}: "${proposal.summary}"`
+    : approvedToolName === proposal.toolName
       ? `Approve "${proposal.summary}"`
       : `Approve "${proposal.summary}", running ${approvedToolName} instead`;
 
   return isNonEmptyString(feedback)
     ? `${approval}: ${feedback}`
     : `${approval}.`;
+};
+
+const buildRejectionAnswerText = (
+  proposal: ProposedToolCall,
+  feedback: string | undefined,
+): string => {
+  const rejectLabel = proposal.labels?.reject;
+  const rejection = isNonEmptyString(rejectLabel)
+    ? `${rejectLabel}: "${proposal.summary}"`
+    : `Reject "${proposal.summary}"`;
+
+  return isNonEmptyString(feedback)
+    ? `${rejection}: ${feedback}`
+    : `${rejection}.`;
 };
 
 export const PROPOSE_TOOL_CALL_PAUSING_TOOL = definePausingTool<
@@ -199,9 +234,7 @@ export const PROPOSE_TOOL_CALL_PAUSING_TOOL = definePausingTool<
             ...(hasFeedback ? { feedback } : {}),
           } satisfies ProposeToolCallToolResult,
         },
-        answerText: hasFeedback
-          ? `Reject "${proposal.summary}": ${feedback}`
-          : `Reject "${proposal.summary}".`,
+        answerText: buildRejectionAnswerText(proposal, feedback),
       };
     }
 

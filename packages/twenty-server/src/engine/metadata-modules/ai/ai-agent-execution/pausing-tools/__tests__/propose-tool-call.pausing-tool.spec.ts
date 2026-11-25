@@ -280,6 +280,99 @@ describe('PROPOSE_TOOL_CALL_PAUSING_TOOL', () => {
     });
   });
 
+  describe('an application tool with its own approval wording', () => {
+    const BOOKING_INPUT = {
+      toolName: 'app_tool_accept_cal_booking',
+      arguments: { bookingId: RECORD_ID },
+      summary: 'Meeting request from Maya',
+    };
+
+    const parseBookingCall = () => {
+      const call = PROPOSE_TOOL_CALL_PAUSING_TOOL.parseCall(BOOKING_INPUT, {
+        success: true,
+        result: {
+          status: 'pending',
+          proposal: {
+            ...BOOKING_INPUT,
+            toolLabel: 'accept-cal-booking',
+            template: 'generic',
+            alternativeToolNames: ['app_tool_decline_cal_booking'],
+            labels: {
+              approve: 'Accept meeting',
+              reject: 'Not now',
+              alternatives: {
+                app_tool_decline_cal_booking: {
+                  label: 'Decline',
+                  confirmLabel: 'Send decline',
+                },
+              },
+            },
+          },
+        },
+      });
+
+      if (call === null) {
+        throw new Error('Expected the call to parse');
+      }
+
+      return call;
+    };
+
+    it('runs the alternative the person chose and words the answer with its label', async () => {
+      const executeTool = jest
+        .fn()
+        .mockResolvedValue({ success: true, message: 'Declined' });
+
+      const completion = await parseBookingCall().complete({
+        output: {
+          decision: 'approve',
+          toolName: 'app_tool_decline_cal_booking',
+          arguments: { bookingId: RECORD_ID, reason: 'Not a fit yet' },
+        },
+        context: { executeTool },
+      });
+
+      expect(executeTool).toHaveBeenCalledWith({
+        toolName: 'app_tool_decline_cal_booking',
+        args: { bookingId: RECORD_ID, reason: 'Not a fit yet' },
+      });
+      expect(completion.toolResult).toMatchObject({
+        result: {
+          status: 'approved',
+          proposal: {
+            toolName: 'app_tool_decline_cal_booking',
+            labels: { approve: 'Accept meeting' },
+          },
+        },
+      });
+      expect(completion.answerText).toBe(
+        'Decline: "Meeting request from Maya".',
+      );
+    });
+
+    it('words an approval and a rejection with the labels the tool gives', async () => {
+      const executeTool = jest
+        .fn()
+        .mockResolvedValue({ success: true, message: 'Accepted' });
+
+      const approval = await parseBookingCall().complete({
+        output: { decision: 'approve' },
+        context: { executeTool },
+      });
+      const rejection = await parseBookingCall().complete({
+        output: { decision: 'reject' },
+        context: { executeTool },
+      });
+
+      expect(approval.answerText).toBe(
+        'Accept meeting: "Meeting request from Maya".',
+      );
+      expect(rejection.answerText).toBe(
+        'Not now: "Meeting request from Maya".',
+      );
+    });
+  });
+
   describe('an email', () => {
     const EMAIL_INPUT = {
       toolName: 'send_email',

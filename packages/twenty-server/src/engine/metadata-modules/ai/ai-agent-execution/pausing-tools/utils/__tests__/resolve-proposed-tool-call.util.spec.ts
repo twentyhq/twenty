@@ -67,6 +67,23 @@ const findTool = async (toolName: string) =>
       approval: { template: 'email', alternativeToolNames: ['draft_email'] },
     } satisfies ToolIndexEntry,
     {
+      name: 'app_tool_accept_cal_booking',
+      label: 'accept-cal-booking',
+      description: '',
+      category: 'LOGIC_FUNCTION' as ToolIndexEntry['category'],
+      executionRef: { kind: 'logic_function', logicFunctionId: 'lf-accept' },
+      approval: {
+        template: 'generic',
+        alternativeToolNames: ['app_tool_decline_cal_booking'],
+        labels: {
+          approve: 'Accept meeting',
+          alternatives: {
+            app_tool_decline_cal_booking: { label: 'Decline' },
+          },
+        },
+      },
+    } satisfies ToolIndexEntry,
+    {
       name: 'http_request',
       label: 'HTTP request',
       description: '',
@@ -247,6 +264,35 @@ describe('resolveProposedToolCall', () => {
         arguments: toolArguments,
         template: 'email',
         alternativeToolNames: ['draft_email'],
+      },
+    });
+  });
+
+  it("brings the tool's approval wording and alternatives to the card", async () => {
+    expect(
+      await resolveProposedToolCall({
+        input: {
+          toolName: 'app_tool_accept_cal_booking',
+          arguments: { bookingId: 'booking-1' },
+          summary: 'Meeting request from Maya',
+        },
+        findTool,
+        executeTool: jest.fn(),
+      }),
+    ).toEqual({
+      proposal: {
+        toolName: 'app_tool_accept_cal_booking',
+        toolLabel: 'accept-cal-booking',
+        summary: 'Meeting request from Maya',
+        arguments: { bookingId: 'booking-1' },
+        template: 'generic',
+        alternativeToolNames: ['app_tool_decline_cal_booking'],
+        labels: {
+          approve: 'Accept meeting',
+          alternatives: {
+            app_tool_decline_cal_booking: { label: 'Decline' },
+          },
+        },
       },
     });
   });

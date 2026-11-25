@@ -2,6 +2,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type DynamicToolUIPart, type ToolUIPart } from 'ai';
 import {
+  getApprovedToolCallLabel,
   type ProposeToolCallToolResult,
   type ProposeToolCallToolStatus,
 } from 'twenty-shared/ai';
@@ -48,9 +49,20 @@ export const AiChatToolCallApprovalStatusRenderer = ({
     conflict: t`Not run: the record changed since it was proposed`,
     skipped: t`Skipped`,
   };
+  const chosenLabel =
+    status === 'approved' && isDefined(result)
+      ? getApprovedToolCallLabel({
+          labels: result.proposal.labels,
+          toolName: result.proposal.toolName,
+        })
+      : status === 'rejected'
+        ? result?.proposal.labels?.reject
+        : undefined;
   const message = hasFailedToPropose
     ? t`Could not be proposed`
-    : messageByStatus[status];
+    : isNonEmptyString(chosenLabel)
+      ? t`Chose ${chosenLabel}`
+      : messageByStatus[status];
 
   const summary = result?.proposal.summary;
   const detailByStatus: Record<ProposeToolCallToolStatus, string | undefined> =
