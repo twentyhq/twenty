@@ -2440,9 +2440,15 @@ type EnqueueJobResult {
 input EnqueueJobsInput {
   delayMs: Int
   jobs: [EnqueueJobItemInput!]
+  limiter: EnqueueJobsLimiterInput
   logicFunctionUniversalIdentifier: String!
   payloads: [JSON!] @deprecated(reason: "Use jobs instead.")
   retryLimit: Int
+}
+
+input EnqueueJobsLimiterInput {
+  durationMs: Int!
+  max: Int!
 }
 
 type EnqueueJobsResult {
@@ -2456,6 +2462,7 @@ type EnqueueJobsResult {
 
 type EnqueuedJob {
   jobId: String!
+  scheduledAt: Float!
   sizeBytes: Int!
 }
 
@@ -3105,6 +3112,7 @@ type JobStatus {
   finishedAt: Float
   jobId: String!
   progress: Int
+  scheduledAt: Float!
   startedAt: Float
   state: JobState!
 }
