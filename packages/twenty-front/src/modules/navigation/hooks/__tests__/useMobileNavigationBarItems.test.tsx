@@ -148,7 +148,7 @@ describe('useMobileNavigationBarItems', () => {
     expect(result.current.activeItemName).toBe('tab-sales-tab');
   });
 
-  it('offers the inbox after home when the inbox is enabled', () => {
+  it('swaps the new chat for the inbox when the inbox is enabled', () => {
     jest.mocked(useIsFeatureEnabled).mockReturnValue(true);
 
     const { result } = renderMobileNavigationBarItems('/objects/people');
@@ -157,7 +157,6 @@ describe('useMobileNavigationBarItems', () => {
       'home',
       'inbox',
       'search',
-      'newAiChat',
     ]);
 
     act(() => tapItem(result, 'inbox'));

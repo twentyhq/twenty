@@ -231,7 +231,7 @@ export const useMobileNavigationBarItems = (): {
           openRecordsSearchPage();
         },
       },
-      ...(hasAiPermission
+      ...(hasAiPermission && !isAiChatInboxEnabled
         ? [
             {
               name: 'newAiChat' as const,
