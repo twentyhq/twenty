@@ -10461,7 +10461,7 @@ msgstr "Seul le membre propriétaire d’un agent peut modifier qui peut le voir
 #. js-lingui-id: K7GKdZ
 #: src/engine/metadata-modules/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util.ts
 msgid "Only the person who created this view can change who sees it"
-msgstr ""
+msgstr "Seule la personne qui a créé cette vue peut modifier les personnes qui la voient"
 
 #. js-lingui-id: MPDvEo
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts

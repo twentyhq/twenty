@@ -10461,7 +10461,7 @@ msgstr "只有擁有代理人的成員可以變更誰能查看它。"
 #. js-lingui-id: K7GKdZ
 #: src/engine/metadata-modules/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util.ts
 msgid "Only the person who created this view can change who sees it"
-msgstr ""
+msgstr "只有建立此檢視的人可以變更誰能查看它"
 
 #. js-lingui-id: MPDvEo
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts

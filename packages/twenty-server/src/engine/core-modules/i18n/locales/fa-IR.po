@@ -10461,7 +10461,7 @@ msgstr "فقط عضوی که مالک یک عامل است می‌تواند م�
 #. js-lingui-id: K7GKdZ
 #: src/engine/metadata-modules/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util.ts
 msgid "Only the person who created this view can change who sees it"
-msgstr ""
+msgstr "فقط شخصی که این نما را ایجاد کرده است می‌تواند تعیین کند چه کسانی آن را ببینند"
 
 #. js-lingui-id: MPDvEo
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts

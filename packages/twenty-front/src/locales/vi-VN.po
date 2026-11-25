@@ -29659,7 +29659,7 @@ msgstr "Tóm tắt"
 #. js-lingui-id: 4W6uNO
 #: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnForm.tsx
 msgid "Summary columns can't be sorted or filtered."
-msgstr ""
+msgstr "Không thể sắp xếp hoặc lọc các cột tóm tắt."
 
 #. js-lingui-id: gKAccC
 #: src/modules/page-layout/widgets/call-recording-summary/components/WidgetActionCallRecordingSummary.tsx

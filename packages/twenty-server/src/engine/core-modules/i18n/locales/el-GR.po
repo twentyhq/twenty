@@ -10461,7 +10461,7 @@ msgstr "Μόνο το μέλος που είναι κάτοχος ενός πρ�
 #. js-lingui-id: K7GKdZ
 #: src/engine/metadata-modules/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util.ts
 msgid "Only the person who created this view can change who sees it"
-msgstr ""
+msgstr "Μόνο το άτομο που δημιούργησε αυτήν την προβολή μπορεί να αλλάξει ποιος τη βλέπει"
 
 #. js-lingui-id: MPDvEo
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts

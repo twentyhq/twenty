@@ -10461,7 +10461,7 @@ msgstr "لا يمكن إلا للعضو الذي يملك وكيلاً تغيي�
 #. js-lingui-id: K7GKdZ
 #: src/engine/metadata-modules/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util.ts
 msgid "Only the person who created this view can change who sees it"
-msgstr ""
+msgstr "يمكن للشخص الذي أنشأ هذا العرض فقط تغيير من يمكنه رؤيته"
 
 #. js-lingui-id: MPDvEo
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts

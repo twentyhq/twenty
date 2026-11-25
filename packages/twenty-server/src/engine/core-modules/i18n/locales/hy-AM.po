@@ -10461,7 +10461,7 @@ msgstr "Միայն այն անդամը, որին պատկանում է գործ�
 #. js-lingui-id: K7GKdZ
 #: src/engine/metadata-modules/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util.ts
 msgid "Only the person who created this view can change who sees it"
-msgstr ""
+msgstr "Միայն այս տեսքը ստեղծած անձը կարող է փոխել, թե ով է այն տեսնում"
 
 #. js-lingui-id: MPDvEo
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts

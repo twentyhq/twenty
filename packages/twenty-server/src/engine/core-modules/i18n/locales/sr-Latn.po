@@ -10461,7 +10461,7 @@ msgstr "Samo član koji poseduje agenta može da promeni ko ga vidi."
 #. js-lingui-id: K7GKdZ
 #: src/engine/metadata-modules/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util.ts
 msgid "Only the person who created this view can change who sees it"
-msgstr ""
+msgstr "Samo osoba koja je kreirala ovaj prikaz može da promeni ko ga vidi"
 
 #. js-lingui-id: MPDvEo
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts

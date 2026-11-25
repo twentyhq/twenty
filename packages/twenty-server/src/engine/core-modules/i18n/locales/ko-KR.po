@@ -10461,7 +10461,7 @@ msgstr "에이전트를 소유한 멤버만 해당 에이전트를 볼 수 있�
 #. js-lingui-id: K7GKdZ
 #: src/engine/metadata-modules/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util.ts
 msgid "Only the person who created this view can change who sees it"
-msgstr ""
+msgstr "이 보기를 만든 사람만 볼 수 있는 사람을 변경할 수 있습니다"
 
 #. js-lingui-id: MPDvEo
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts

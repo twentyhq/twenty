@@ -10461,7 +10461,7 @@ msgstr "Csak az ügynök tulajdonosa módosíthatja, hogy ki láthatja azt."
 #. js-lingui-id: K7GKdZ
 #: src/engine/metadata-modules/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util.ts
 msgid "Only the person who created this view can change who sees it"
-msgstr ""
+msgstr "Csak a nézetet létrehozó személy módosíthatja, hogy kik láthatják"
 
 #. js-lingui-id: MPDvEo
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts

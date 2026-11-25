@@ -29659,7 +29659,7 @@ msgstr "요약"
 #. js-lingui-id: 4W6uNO
 #: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnForm.tsx
 msgid "Summary columns can't be sorted or filtered."
-msgstr ""
+msgstr "요약 열은 정렬하거나 필터링할 수 없습니다."
 
 #. js-lingui-id: gKAccC
 #: src/modules/page-layout/widgets/call-recording-summary/components/WidgetActionCallRecordingSummary.tsx
