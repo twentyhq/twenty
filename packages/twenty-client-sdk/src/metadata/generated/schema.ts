@@ -1101,6 +1101,9 @@ export interface BillingSubscription {
 export type BillingSubscriptionCollectionMethod = 'CHARGE_AUTOMATICALLY' | 'SEND_INVOICE'
 
 export interface BillingSubscriptionItem {
+    applicationLogoUrl?: Scalars['String']
+    applicationName?: Scalars['String']
+    applicationPricePer?: ApplicationBillingPriceUnit
     billingProduct: BillingProduct
     creditAmount?: Scalars['Float']
     hasReachedCurrentPeriodCap: Scalars['Boolean']
@@ -5802,6 +5805,9 @@ export interface BillingSubscriptionGenqlSelection{
 }
 
 export interface BillingSubscriptionItemGenqlSelection{
+    applicationLogoUrl?: boolean | number
+    applicationName?: boolean | number
+    applicationPricePer?: boolean | number
     billingProduct?: BillingProductGenqlSelection
     creditAmount?: boolean | number
     hasReachedCurrentPeriodCap?: boolean | number

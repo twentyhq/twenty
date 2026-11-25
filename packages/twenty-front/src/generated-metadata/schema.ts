@@ -1343,6 +1343,9 @@ export enum BillingSubscriptionCollectionMethod {
 
 export type BillingSubscriptionItem = {
   __typename?: 'BillingSubscriptionItem';
+  applicationLogoUrl?: Maybe<Scalars['String']['output']>;
+  applicationName?: Maybe<Scalars['String']['output']>;
+  applicationPricePer?: Maybe<ApplicationBillingPriceUnit>;
   billingProduct: BillingProduct;
   creditAmount?: Maybe<Scalars['Float']['output']>;
   hasReachedCurrentPeriodCap: Scalars['Boolean']['output'];
