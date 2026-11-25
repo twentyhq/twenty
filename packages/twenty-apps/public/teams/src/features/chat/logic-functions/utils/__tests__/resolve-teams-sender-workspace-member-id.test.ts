@@ -79,7 +79,6 @@ describe('resolveTeamsSenderWorkspaceMemberId', () => {
   it('should fall back to the email match when the activity has no linked object id', async () => {
     getTeamsConversationMemberMock.mockResolvedValue({
       id: '29:user-id',
-      aadObjectId: 'aad-object-id',
       name: 'Jane Doe',
       tenantId: CLAIMED_TENANT_ID,
       email: 'jane@acme.com',
@@ -97,31 +96,21 @@ describe('resolveTeamsSenderWorkspaceMemberId', () => {
     });
   });
 
-  it('should save a link with the roster object id when the activity omits it', async () => {
+  it('should match on email without saving a link when the activity has no object id', async () => {
     getTeamsConversationMemberMock.mockResolvedValue({
       id: '29:user-id',
-      aadObjectId: 'roster-object-id',
-      name: 'Jane Doe',
       tenantId: CLAIMED_TENANT_ID,
       email: 'jane@acme.com',
     });
 
     expect(await resolve()).toBe('workspace-member-id');
     expect(findTeamsUserLinkWorkspaceMemberIdMock).not.toHaveBeenCalled();
-    expect(createTeamsUserLinkMock).toHaveBeenCalledWith({
-      client: CLIENT,
-      name: 'Jane Doe',
-      teamsTenantId: CLAIMED_TENANT_ID,
-      teamsUserAadObjectId: 'roster-object-id',
-      workspaceMemberId: 'workspace-member-id',
-      source: 'AUTO',
-    });
+    expect(createTeamsUserLinkMock).not.toHaveBeenCalled();
   });
 
   it('should still answer when saving the link fails', async () => {
     getTeamsConversationMemberMock.mockResolvedValue({
       id: '29:user-id',
-      aadObjectId: 'aad-object-id',
       tenantId: CLAIMED_TENANT_ID,
       email: 'jane@acme.com',
     });
