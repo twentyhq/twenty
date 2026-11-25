@@ -21,6 +21,7 @@ import { useLingui } from '@lingui/react/macro';
 import { type ComponentProps, type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  IconApps,
   IconCalendarDue,
   IconClockPlay,
   IconCoins,
@@ -140,6 +141,8 @@ const StyledScheduledChangeGrid = styled.div<{ columns: number }>`
 `;
 
 type SettingsBillingSubscriptionInfoCardProps = {
+  applicationsSubtotalDetails: string;
+  applicationsSubtotalValue?: string;
   canDisplaySwitchToMonthlyAction: boolean;
   canDisplaySwitchToYearlyAction: boolean;
   creditsSubtotalDetails?: string;
@@ -171,6 +174,8 @@ type SettingsBillingSubscriptionInfoCardProps = {
 };
 
 export const SettingsBillingSubscriptionInfoCard = ({
+  applicationsSubtotalDetails,
+  applicationsSubtotalValue,
   canDisplaySwitchToMonthlyAction,
   canDisplaySwitchToYearlyAction,
   creditsSubtotalDetails,
@@ -281,6 +286,14 @@ export const SettingsBillingSubscriptionInfoCard = ({
               </StyledSecondaryText>
             )}
           </BillingFieldRow>
+          {isDefined(applicationsSubtotalValue) && (
+            <BillingFieldRow label={t`Apps`} Icon={IconApps}>
+              {applicationsSubtotalValue}
+              <StyledSecondaryText>
+                {applicationsSubtotalDetails}
+              </StyledSecondaryText>
+            </BillingFieldRow>
+          )}
           <BillingFieldRow label={t`Total`} Icon={IconSum}>
             {totalValue}
             {isDefined(totalIntervalSubtitle) && (

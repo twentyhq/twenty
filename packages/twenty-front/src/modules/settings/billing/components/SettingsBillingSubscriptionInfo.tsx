@@ -156,6 +156,8 @@ export const SettingsBillingSubscriptionInfo = ({
     perSeatAmountCents,
     seatsSubtotalCents,
     creditsSubtotalCents,
+    applicationSubscriptionItems,
+    applicationsSubtotalCents,
     totalCents,
   } = useBillingSubscriptionCost();
 
@@ -270,6 +272,14 @@ export const SettingsBillingSubscriptionInfo = ({
       ? t`(${currentCreditsByPeriodDisplay} credits/month)`
       : t`(${currentCreditsByPeriodDisplay} credits/year)`
     : undefined;
+  const applicationsCount = applicationSubscriptionItems.length;
+  const applicationsSubtotalDisplay = formatBillingPeriodCentsToMonthlyDisplay(
+    applicationsSubtotalCents,
+  );
+  const applicationsSubtotalValue =
+    applicationsCount > 0 ? `$${applicationsSubtotalDisplay}` : undefined;
+  const applicationCountLabel = applicationsCount === 1 ? t`app` : t`apps`;
+  const applicationsSubtotalDetails = t`(${applicationsCount} ${applicationCountLabel})`;
   const totalValue = isDefined(totalDisplay) ? `$${totalDisplay}` : '-';
   const totalIntervalSubtitle = isDefined(totalDisplay)
     ? currentInterval === SubscriptionInterval.Month
@@ -460,6 +470,8 @@ export const SettingsBillingSubscriptionInfo = ({
         description={subscriptionDescription}
       />
       <SettingsBillingSubscriptionInfoCard
+        applicationsSubtotalDetails={applicationsSubtotalDetails}
+        applicationsSubtotalValue={applicationsSubtotalValue}
         canDisplaySwitchToMonthlyAction={canDisplaySwitchToMonthlyAction}
         canDisplaySwitchToYearlyAction={canDisplaySwitchToYearlyAction}
         creditsSubtotalDetails={creditsSubtotalDetails}

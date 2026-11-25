@@ -3,6 +3,7 @@ import { useCurrentResourceCredit } from '@/settings/billing/hooks/useCurrentRes
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { findBaseProductSubscriptionItem } from '@/settings/billing/utils/findBaseProductSubscriptionItem';
+import { BillingProductKey } from '~/generated-metadata/graphql';
 
 export const useBillingSubscriptionCost = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
@@ -28,14 +29,29 @@ export const useBillingSubscriptionCost = () => {
   const creditsSubtotalCents =
     currentResourceCreditSubscriptionItem?.unitAmount;
 
+  const applicationSubscriptionItems =
+    subscription?.billingSubscriptionItems?.filter(
+      (billingSubscriptionItem) =>
+        billingSubscriptionItem.billingProduct.metadata.productKey ===
+        BillingProductKey.APPLICATION,
+    ) ?? [];
+
+  const applicationsSubtotalCents = applicationSubscriptionItems.reduce(
+    (subtotalCents, applicationSubscriptionItem) =>
+      subtotalCents +
+      (applicationSubscriptionItem.quantity ?? 0) *
+        (applicationSubscriptionItem.unitAmount ?? 0),
+    0,
+  );
+
   const totalCents =
     isDefined(seatsSubtotalCents) && isDefined(creditsSubtotalCents)
-      ? seatsSubtotalCents + creditsSubtotalCents
+      ? seatsSubtotalCents + creditsSubtotalCents + applicationsSubtotalCents
       : undefined;
 
   const getTotalCentsWithCreditsAmountCents = (creditsAmountCents: number) =>
     isDefined(seatsSubtotalCents)
-      ? seatsSubtotalCents + creditsAmountCents
+      ? seatsSubtotalCents + creditsAmountCents + applicationsSubtotalCents
       : undefined;
 
   return {
@@ -43,6 +59,8 @@ export const useBillingSubscriptionCost = () => {
     perSeatAmountCents,
     seatsSubtotalCents,
     creditsSubtotalCents,
+    applicationSubscriptionItems,
+    applicationsSubtotalCents,
     totalCents,
     getTotalCentsWithCreditsAmountCents,
   };

@@ -1,6 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { SettingsBillingApplicationsSection } from '@/settings/billing/components/SettingsBillingApplicationsSection';
 import { SettingsBillingCreditsSection } from '@/settings/billing/components/SettingsBillingCreditsSection';
 import { SettingsBillingSubscriptionInfo } from '@/settings/billing/components/SettingsBillingSubscriptionInfo';
 import { SettingsBillingTrialNoPaymentMethodBanner } from '@/settings/billing/components/SettingsBillingTrialNoPaymentMethodBanner';
@@ -89,6 +90,9 @@ export const SettingsBillingContent = () => {
             isUpdatePaymentDisabled={isPaymentMethodFlowDisabled}
           />
         )}
+      {hasNotCanceledCurrentSubscription && (
+        <SettingsBillingApplicationsSection />
+      )}
       {hasNotCanceledCurrentSubscription && (
         <SettingsBillingUserCreditsSection />
       )}
