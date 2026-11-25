@@ -5,6 +5,7 @@ import {
   type ChangeEvent,
   type ClipboardEvent,
   type KeyboardEvent,
+  useId,
   useRef,
   useState,
 } from 'react';
@@ -23,6 +24,10 @@ import { chatThreadComposerDraftFamilyState } from '@/activities/emails/states/c
 import { type PendingChatMessage } from '@/activities/emails/types/PendingChatMessage';
 import { ChatFilePreview } from '@/chat/components/ChatFilePreview';
 import { StyledChatComposerBox } from '@/chat/components/StyledChatComposerBox';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
+import { useRemoveFocusItemFromFocusStackOnUnmount } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackOnUnmount';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
 
 const StyledContainer = styled.div`
@@ -103,6 +108,15 @@ export const ChatThreadComposer = ({
   const { t } = useLingui();
   const { enqueueToast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const textareaFocusId = `chat-thread-composer-${useId()}`;
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+  const { removeFocusItemFromFocusStackById } =
+    useRemoveFocusItemFromFocusStackById();
+
+  useRemoveFocusItemFromFocusStackOnUnmount({
+    focusId: textareaFocusId,
+    isEnabled: true,
+  });
   const [draft, setDraft] = useComposerDraft({
     draftFamilyState: chatThreadComposerDraftFamilyState,
     draftKey,
@@ -201,6 +215,23 @@ export const ChatThreadComposer = ({
     }
   };
 
+  const handleTextareaFocus = () => {
+    pushFocusItemToFocusStack({
+      focusId: textareaFocusId,
+      component: {
+        type: FocusComponentType.TEXT_AREA,
+        instanceId: textareaFocusId,
+      },
+      globalHotkeysConfig: {
+        enableGlobalHotkeysConflictingWithKeyboard: false,
+      },
+    });
+  };
+
+  const handleTextareaBlur = () => {
+    removeFocusItemFromFocusStackById({ focusId: textareaFocusId });
+  };
+
   const addFiles = (selectedFiles: File[]) => {
     const acceptedFiles = selectedFiles.slice(
       0,
@@ -276,6 +307,8 @@ export const ChatThreadComposer = ({
           onChange={(event) => setDraft(event.target.value)}
           onKeyDown={handleKeyDown}
           onPaste={handlePaste}
+          onFocus={handleTextareaFocus}
+          onBlur={handleTextareaBlur}
         />
         {isNonEmptyArray(files) && (
           <StyledFiles>
