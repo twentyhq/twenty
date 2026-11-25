@@ -5,7 +5,6 @@ import { type WhatsappSelectedChat } from 'src/types/whatsapp-selected-chat.type
 export type WhatsappSettings = {
   importPolicy: WhatsappImportPolicy;
   selectedChats: WhatsappSelectedChat[];
-  areGroupChatsImported: boolean;
   contactAutoCreationPolicy: WhatsappContactAutoCreationPolicy;
   areChatsMarkedAsRead: boolean;
 };

@@ -100,7 +100,11 @@ describe('whatsappHandleWebhookEventHandler', () => {
     mocks.listMessageChannels.mockResolvedValue([
       { id: 'channel-id', handle: CHANNEL_HANDLE },
     ]);
-    mocks.kvGet.mockResolvedValue(null);
+    mocks.kvGet.mockImplementation(async (key: string) =>
+      key === 'whatsapp-settings:connection-id'
+        ? { importPolicy: 'ALL' }
+        : null,
+    );
     mocks.ingestMessages.mockResolvedValue([]);
     mocks.query.mockResolvedValue({ people: { edges: [] } });
     mocks.getUnipileChat.mockResolvedValue({

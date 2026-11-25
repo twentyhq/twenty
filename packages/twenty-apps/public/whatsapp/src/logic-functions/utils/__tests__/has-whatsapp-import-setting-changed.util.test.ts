@@ -13,7 +13,6 @@ const hasChanged = (update: Partial<WhatsappSettings>) =>
 describe('hasWhatsappImportSettingChanged', () => {
   it.each<Partial<WhatsappSettings>>([
     { importPolicy: 'ALL' },
-    { areGroupChatsImported: false },
     { contactAutoCreationPolicy: 'NONE' },
     { selectedChats: [{ id: 'chat-1', name: 'Ada' }] },
   ])('sees %o change what gets imported', (update) => {

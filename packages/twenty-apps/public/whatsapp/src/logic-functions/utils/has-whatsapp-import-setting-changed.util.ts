@@ -2,10 +2,7 @@ import { type WhatsappSettings } from 'src/types/whatsapp-settings.type';
 
 type WhatsappImportSettings = Pick<
   WhatsappSettings,
-  | 'importPolicy'
-  | 'selectedChats'
-  | 'areGroupChatsImported'
-  | 'contactAutoCreationPolicy'
+  'importPolicy' | 'selectedChats' | 'contactAutoCreationPolicy'
 >;
 
 const getSelectedChatIds = ({
@@ -24,6 +21,5 @@ export const hasWhatsappImportSettingChanged = ({
   next: WhatsappImportSettings;
 }): boolean =>
   previous.importPolicy !== next.importPolicy ||
-  previous.areGroupChatsImported !== next.areGroupChatsImported ||
   previous.contactAutoCreationPolicy !== next.contactAutoCreationPolicy ||
   getSelectedChatIds(previous) !== getSelectedChatIds(next);

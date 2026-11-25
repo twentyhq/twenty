@@ -83,10 +83,6 @@ export const parseWhatsappSettingsUpdate = (
     update.contactAutoCreationPolicy = body.contactAutoCreationPolicy;
   }
 
-  if (isBoolean(body?.areGroupChatsImported)) {
-    update.areGroupChatsImported = body.areGroupChatsImported;
-  }
-
   if (isBoolean(body?.areChatsMarkedAsRead)) {
     update.areChatsMarkedAsRead = body.areChatsMarkedAsRead;
   }

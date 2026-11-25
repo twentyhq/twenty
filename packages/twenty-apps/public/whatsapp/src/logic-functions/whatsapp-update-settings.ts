@@ -53,7 +53,12 @@ export const whatsappUpdateSettingsHandler = async (
     }
   }
 
-  if (hasWhatsappImportSettingChanged({ previous: previousSettings, next: settings })) {
+  if (
+    hasWhatsappImportSettingChanged({
+      previous: previousSettings,
+      next: settings,
+    })
+  ) {
     await restartWhatsappHistoryImport({
       connectedAccountId: connection.id,
       settings,
