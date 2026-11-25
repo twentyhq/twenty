@@ -2,7 +2,8 @@ import { useApolloClient } from '@apollo/client/react';
 import { useStore } from 'jotai';
 import { useNavigate } from 'react-router-dom';
 import { AGENT_CHAT_THREAD_PRESET_FILTER } from 'twenty-shared/ai';
-import { isDefined } from 'twenty-shared/utils';
+import { AppPath } from 'twenty-shared/types';
+import { getAppPath, isDefined } from 'twenty-shared/utils';
 
 import { useAiChatThreadClick } from '@/ai-chat/threads/hooks/useAiChatThreadClick';
 import { aiChatAccessibleChannelsSelector } from '@/ai-chat/threads/states/selectors/aiChatAccessibleChannelsSelector';
@@ -122,9 +123,12 @@ export const useOpenNavigationMenuTabFirstEntry = () => {
             ?.findManyAgents ?? [],
         );
 
-        return isDefined(firstAgent)
-          ? { type: 'link', link: getCoreAgentLink(firstAgent.id) }
-          : null;
+        return {
+          type: 'link',
+          link: isDefined(firstAgent)
+            ? getCoreAgentLink(firstAgent.id)
+            : getAppPath(AppPath.AgentIndexPage),
+        };
       }
       default:
         return null;

@@ -19,11 +19,15 @@ const buildItem = (
   ...properties,
 });
 
-const buildPageLayoutItem = (
-  id: string,
-  position: number,
-  parentId: string | null = TAB_ID,
-) =>
+const buildPageLayoutItem = ({
+  id,
+  position,
+  parentId = TAB_ID,
+}: {
+  id: string;
+  position: number;
+  parentId?: string | null;
+}) =>
   buildItem({
     id,
     type: NavigationMenuItemType.PAGE_LAYOUT,
@@ -82,8 +86,12 @@ describe('getNavigationMenuTabFirstEntry', () => {
       getFirstEntry({
         workspaceItems: [
           section,
-          buildPageLayoutItem('section-item', 0, section.id),
-          buildPageLayoutItem('loose-item', 0),
+          buildPageLayoutItem({
+            id: 'section-item',
+            position: 0,
+            parentId: section.id,
+          }),
+          buildPageLayoutItem({ id: 'loose-item', position: 0 }),
         ],
       }),
     ).toEqual({ type: 'link', link: getPageLayoutLink('loose-item') });
@@ -100,10 +108,18 @@ describe('getNavigationMenuTabFirstEntry', () => {
     expect(
       getFirstEntry({
         workspaceItems: [
-          buildPageLayoutItem('loose-item', 1),
+          buildPageLayoutItem({ id: 'loose-item', position: 1 }),
           section,
-          buildPageLayoutItem('second-section-item', 1, section.id),
-          buildPageLayoutItem('first-section-item', 0, section.id),
+          buildPageLayoutItem({
+            id: 'second-section-item',
+            position: 1,
+            parentId: section.id,
+          }),
+          buildPageLayoutItem({
+            id: 'first-section-item',
+            position: 0,
+            parentId: section.id,
+          }),
         ],
       }),
     ).toEqual({ type: 'link', link: getPageLayoutLink('first-section-item') });
@@ -125,7 +141,7 @@ describe('getNavigationMenuTabFirstEntry', () => {
             position: 1,
             nativePageKey: 'workflows',
           }),
-          buildPageLayoutItem('readable-item', 2),
+          buildPageLayoutItem({ id: 'readable-item', position: 2 }),
         ],
         permissionFlagMap: { [PermissionFlagType.WORKFLOWS]: false },
       }),
@@ -162,9 +178,13 @@ describe('getNavigationMenuTabFirstEntry', () => {
     expect(
       getFirstEntry({
         workspaceItems: [
-          buildPageLayoutItem('loose-item', 1),
+          buildPageLayoutItem({ id: 'loose-item', position: 1 }),
           folder,
-          buildPageLayoutItem('folder-child', 0, folder.id),
+          buildPageLayoutItem({
+            id: 'folder-child',
+            position: 0,
+            parentId: folder.id,
+          }),
         ],
       }),
     ).toEqual({ type: 'link', link: getPageLayoutLink('folder-child') });
@@ -191,7 +211,7 @@ describe('getNavigationMenuTabFirstEntry', () => {
             position: 1,
             builtInSectionKey: 'aiChatChannels',
           }),
-          buildPageLayoutItem('loose-item', 2),
+          buildPageLayoutItem({ id: 'loose-item', position: 2 }),
         ],
         getBuiltInSectionEntry: (builtInSectionKey) =>
           builtInSectionKey === 'aiChatChannels' ? channelEntry : null,
@@ -209,7 +229,7 @@ describe('getNavigationMenuTabFirstEntry', () => {
             position: 0,
             builtInSectionKey: 'favorites',
           }),
-          buildPageLayoutItem('loose-item', 1),
+          buildPageLayoutItem({ id: 'loose-item', position: 1 }),
         ],
         favoriteItems: [
           buildItem({
@@ -219,7 +239,7 @@ describe('getNavigationMenuTabFirstEntry', () => {
             parentId: null,
             link: 'https://example.com',
           }),
-          buildPageLayoutItem('favorite', 1, null),
+          buildPageLayoutItem({ id: 'favorite', position: 1, parentId: null }),
         ],
       }),
     ).toEqual({ type: 'link', link: getPageLayoutLink('favorite') });
@@ -229,7 +249,11 @@ describe('getNavigationMenuTabFirstEntry', () => {
     expect(
       getFirstEntry({
         workspaceItems: [
-          buildPageLayoutItem('other-tab-item', 0, 'other-tab-id'),
+          buildPageLayoutItem({
+            id: 'other-tab-item',
+            position: 0,
+            parentId: 'other-tab-id',
+          }),
           buildItem({
             id: 'external-link',
             type: NavigationMenuItemType.LINK,
