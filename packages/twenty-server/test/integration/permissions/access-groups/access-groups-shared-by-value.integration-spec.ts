@@ -1,5 +1,4 @@
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { addPermissionTestWorkspaceMember } from 'test/integration/permissions/utils/add-permission-test-workspace-member.util';
 import { createPermissionTestVisibilityTierRole } from 'test/integration/permissions/utils/create-permission-test-visibility-tier-role.util';
 import { describePermissionTestWorkspace } from 'test/integration/permissions/utils/describe-permission-test-workspace.util';
@@ -7,7 +6,6 @@ import { type PermissionTestRecordName } from 'test/integration/permissions/util
 import { upsertPermissionTestVisibilityTierRule } from 'test/integration/permissions/utils/upsert-permission-test-visibility-tier-rule.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { resolveWorkspaceMemberAuthContext } from 'test/integration/utils/resolve-workspace-member-auth-context.util';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
 import { type AccessGroupSyncService } from 'src/engine/permissions/internal/access-group/services/access-group-sync.service';
@@ -113,12 +111,6 @@ describePermissionTestWorkspace({
         inviteHash: workspace.inviteHash,
         roleId: memberRoleId,
         adminAccessToken: workspace.adminAccessToken,
-      });
-      await updateFeatureFlag({
-        featureFlag: FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED,
-        value: true,
-        workspaceId: workspace.workspaceId,
-        expectToFail: false,
       });
       await syncAccessGroups();
       await recomputeRecords();
