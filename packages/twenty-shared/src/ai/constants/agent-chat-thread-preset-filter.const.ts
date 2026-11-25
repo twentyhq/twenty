@@ -1,3 +1,4 @@
+// TODO(@bosiraphael): remove once the inbox list reads saved views; views with a ViewPresetFilter replace these tabs (twentyhq/core-team-issues#3209)
 export const AGENT_CHAT_THREAD_PRESET_FILTER = {
   OPEN: 'active',
   NEEDS_INPUT: 'needsInput',
