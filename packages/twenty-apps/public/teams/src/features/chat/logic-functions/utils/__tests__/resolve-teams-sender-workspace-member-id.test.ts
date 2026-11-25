@@ -41,12 +41,13 @@ vi.mock(
 const CLIENT = { query: vi.fn(), mutation: vi.fn() };
 const CLAIMED_TENANT_ID = 'claimed-tenant-id';
 
-const resolve = () =>
+const resolve = (teamsUserAadObjectId?: string) =>
   resolveTeamsSenderWorkspaceMemberId({
     client: CLIENT,
     serviceUrl: 'https://smba.trafficmanager.net/amer/',
     conversationId: 'a:personal-conversation',
     teamsUserId: '29:user-id',
+    teamsUserAadObjectId,
     teamsTenantId: CLAIMED_TENANT_ID,
     accessToken: 'connector-access-token',
   });
@@ -59,39 +60,33 @@ describe('resolveTeamsSenderWorkspaceMemberId', () => {
     createTeamsUserLinkMock.mockResolvedValue(undefined);
   });
 
-  it('should use the linked workspace member before matching on email', async () => {
-    getTeamsConversationMemberMock.mockResolvedValue({
-      id: '29:user-id',
-      objectId: 'aad-object-id',
-      tenantId: CLAIMED_TENANT_ID,
-      email: 'jane@acme.com',
-    });
+  it('should resolve a manual link from the activity object id without reading the roster or the email', async () => {
     findTeamsUserLinkWorkspaceMemberIdMock.mockResolvedValue(
       'linked-workspace-member-id',
     );
 
-    expect(await resolve()).toBe('linked-workspace-member-id');
-    expect(findTeamsUserLinkWorkspaceMemberIdMock).toHaveBeenCalledTimes(1);
+    expect(await resolve('aad-object-id')).toBe('linked-workspace-member-id');
     expect(findTeamsUserLinkWorkspaceMemberIdMock).toHaveBeenCalledWith({
       client: CLIENT,
       teamsTenantId: CLAIMED_TENANT_ID,
       teamsUserAadObjectId: 'aad-object-id',
     });
+    expect(getTeamsConversationMemberMock).not.toHaveBeenCalled();
     expect(findWorkspaceMemberIdByEmailMock).not.toHaveBeenCalled();
     expect(createTeamsUserLinkMock).not.toHaveBeenCalled();
   });
 
-  it('should save a link when the sender is matched on email', async () => {
+  it('should fall back to the email match when the activity has no linked object id', async () => {
     getTeamsConversationMemberMock.mockResolvedValue({
       id: '29:user-id',
-      objectId: 'aad-object-id',
+      aadObjectId: 'aad-object-id',
       name: 'Jane Doe',
       tenantId: CLAIMED_TENANT_ID,
       email: 'jane@acme.com',
     });
 
-    expect(await resolve()).toBe('workspace-member-id');
-    expect(createTeamsUserLinkMock).toHaveBeenCalledTimes(1);
+    expect(await resolve('aad-object-id')).toBe('workspace-member-id');
+    expect(findTeamsUserLinkWorkspaceMemberIdMock).toHaveBeenCalledTimes(1);
     expect(createTeamsUserLinkMock).toHaveBeenCalledWith({
       client: CLIENT,
       name: 'Jane Doe',
@@ -102,10 +97,31 @@ describe('resolveTeamsSenderWorkspaceMemberId', () => {
     });
   });
 
+  it('should save a link with the roster object id when the activity omits it', async () => {
+    getTeamsConversationMemberMock.mockResolvedValue({
+      id: '29:user-id',
+      aadObjectId: 'roster-object-id',
+      name: 'Jane Doe',
+      tenantId: CLAIMED_TENANT_ID,
+      email: 'jane@acme.com',
+    });
+
+    expect(await resolve()).toBe('workspace-member-id');
+    expect(findTeamsUserLinkWorkspaceMemberIdMock).not.toHaveBeenCalled();
+    expect(createTeamsUserLinkMock).toHaveBeenCalledWith({
+      client: CLIENT,
+      name: 'Jane Doe',
+      teamsTenantId: CLAIMED_TENANT_ID,
+      teamsUserAadObjectId: 'roster-object-id',
+      workspaceMemberId: 'workspace-member-id',
+      source: 'AUTO',
+    });
+  });
+
   it('should still answer when saving the link fails', async () => {
     getTeamsConversationMemberMock.mockResolvedValue({
       id: '29:user-id',
-      objectId: 'aad-object-id',
+      aadObjectId: 'aad-object-id',
       tenantId: CLAIMED_TENANT_ID,
       email: 'jane@acme.com',
     });
@@ -114,7 +130,7 @@ describe('resolveTeamsSenderWorkspaceMemberId', () => {
       .spyOn(console, 'warn')
       .mockImplementation(() => undefined);
 
-    expect(await resolve()).toBe('workspace-member-id');
+    expect(await resolve('aad-object-id')).toBe('workspace-member-id');
     expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
 
     consoleWarnSpy.mockRestore();

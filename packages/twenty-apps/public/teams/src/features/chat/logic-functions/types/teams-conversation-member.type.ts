@@ -2,7 +2,7 @@
 // email and userPrincipalName from this payload or has to go through Graph.
 export type TeamsConversationMember = {
   id: string;
-  objectId?: string;
+  aadObjectId?: string;
   givenName?: string;
   surname?: string;
   name?: string;

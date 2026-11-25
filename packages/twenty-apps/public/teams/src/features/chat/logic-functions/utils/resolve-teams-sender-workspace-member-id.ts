@@ -22,6 +22,7 @@ export const resolveTeamsSenderWorkspaceMemberId = async ({
   serviceUrl,
   conversationId,
   teamsUserId,
+  teamsUserAadObjectId,
   teamsTenantId,
   accessToken,
 }: {
@@ -29,22 +30,13 @@ export const resolveTeamsSenderWorkspaceMemberId = async ({
   serviceUrl: string;
   conversationId: string;
   teamsUserId: string;
+  teamsUserAadObjectId: string | undefined;
   teamsTenantId: string;
   accessToken: string;
 }): Promise<string | undefined> => {
-  const member = await getTeamsConversationMember({
-    serviceUrl,
-    conversationId,
-    memberId: teamsUserId,
-    accessToken,
-  });
-
-  if (!isMemberOfClaimedTenant({ member, teamsTenantId })) {
-    return undefined;
-  }
-
-  const teamsUserAadObjectId = member.objectId;
-
+  // The sender's Entra object id and tenant arrive on the authenticated
+  // activity, so honor a manual link without a roster round-trip: the link key
+  // already scopes it to this tenant, and the roster payload omits the object id.
   if (isNonEmptyString(teamsUserAadObjectId)) {
     const linkedWorkspaceMemberId = await findTeamsUserLinkWorkspaceMemberId({
       client,
@@ -55,6 +47,17 @@ export const resolveTeamsSenderWorkspaceMemberId = async ({
     if (isDefined(linkedWorkspaceMemberId)) {
       return linkedWorkspaceMemberId;
     }
+  }
+
+  const member = await getTeamsConversationMember({
+    serviceUrl,
+    conversationId,
+    memberId: teamsUserId,
+    accessToken,
+  });
+
+  if (!isMemberOfClaimedTenant({ member, teamsTenantId })) {
+    return undefined;
   }
 
   const email = [member.email, member.userPrincipalName].find(isNonEmptyString);
@@ -68,17 +71,21 @@ export const resolveTeamsSenderWorkspaceMemberId = async ({
     email,
   });
 
-  if (isDefined(workspaceMemberId) && isNonEmptyString(teamsUserAadObjectId)) {
+  const aadObjectId = [teamsUserAadObjectId, member.aadObjectId].find(
+    isNonEmptyString,
+  );
+
+  if (isDefined(workspaceMemberId) && isNonEmptyString(aadObjectId)) {
     await createTeamsUserLink({
       client,
       name: member.name,
       teamsTenantId,
-      teamsUserAadObjectId,
+      teamsUserAadObjectId: aadObjectId,
       workspaceMemberId,
       source: TEAMS_USER_LINK_SOURCE.AUTO,
     }).catch((error: unknown) =>
       console.warn(
-        `[teams] could not save the user link for ${teamsUserAadObjectId}`,
+        `[teams] could not save the user link for ${aadObjectId}`,
         error,
       ),
     );
