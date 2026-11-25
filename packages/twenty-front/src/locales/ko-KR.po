@@ -652,6 +652,11 @@ msgstr "{fieldCount}의 {allowedFieldCount}"
 msgid "{allowedFieldCount} of {fieldCount} fields"
 msgstr "필드 {fieldCount}개 중 {allowedFieldCount}개"
 
+#. js-lingui-id: QbSIWf
+#: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
+msgid "{amount} / month"
+msgstr ""
+
 #. js-lingui-id: WhHyQh
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
 msgid "{apiKeyCount, plural, one {{apiKeyCount} API key} other {{apiKeyCount} API keys}}"
@@ -5398,20 +5403,20 @@ msgstr "매달의 {startOrdinal}일에서 {endOrdinal}일까지"
 msgid "Bill credits to your workspace"
 msgstr "크레딧을 워크스페이스에 청구"
 
-#. js-lingui-id: WVxikw
+#. js-lingui-id: XJj77g
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
-msgid "Bill your workspace {amount} / month"
-msgstr "워크스페이스 청구 {amount} / 월"
+msgid "Bill your workspace {price}"
+msgstr ""
 
-#. js-lingui-id: 9nZzfz
+#. js-lingui-id: mZbez3
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
-msgid "Bill your workspace {amount} / month per account"
-msgstr "계정당 워크스페이스 청구 {amount} / 월"
+msgid "Bill your workspace {price} per account"
+msgstr ""
 
-#. js-lingui-id: iOQoBV
+#. js-lingui-id: oy0GSN
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
-msgid "Bill your workspace {amount} / month per member"
-msgstr "멤버당 워크스페이스 청구 {amount} / 월"
+msgid "Bill your workspace {price} per member"
+msgstr ""
 
 #. js-lingui-id: aIkeAd
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
@@ -28298,11 +28303,6 @@ msgstr "모양, 색상, 얼굴"
 msgid "Share"
 msgstr "공유"
 
-#. js-lingui-id: nmXzns
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Share calendar events across channels"
-msgstr "채널 간에 캘린더 이벤트 공유"
-
 #. js-lingui-id: S1jlER
 #: src/modules/settings/privacy/components/SettingsPrivacySharingWithTwenty.tsx
 msgid "Share session replays and AI conversations to help us improve Twenty"
@@ -29427,11 +29427,6 @@ msgstr "중지 중"
 #: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
 msgid "Storage"
 msgstr "저장소"
-
-#. js-lingui-id: vrUVo4
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Store a meeting synced by several calendars of the same provider once, instead of once per calendar."
-msgstr "동일한 제공업체의 여러 캘린더에서 동기화된 회의를 캘린더별로 저장하지 않고 한 번만 저장합니다."
 
 #. js-lingui-id: juzGVI
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
