@@ -1,0 +1,26 @@
+import { type ExpressionNode } from '@/types/ExpressionNode';
+
+export const getExpressionNodeChildren = (
+  node: ExpressionNode,
+): ExpressionNode[] => {
+  switch (node.type) {
+    case 'LITERAL':
+    case 'VARIABLE':
+      return [];
+    case 'COMPARISON':
+    case 'ARITHMETIC':
+      return [node.left, node.right];
+    case 'GROUP':
+      return node.children;
+    case 'NOT':
+      return [node.child];
+    case 'UNARY':
+      return [node.operand];
+    case 'FUNCTION_CALL':
+      return node.arguments;
+    case 'LIST':
+      return node.items;
+    case 'IN':
+      return [node.value, node.list];
+  }
+};

@@ -1,7 +1,7 @@
 import { type ExpressionNode } from '@/types/ExpressionNode';
 import { type ValidationRuleErrorCode } from '@/types/ValidationRuleErrorCode';
 import { type ValidationRuleErrorParams } from '@/types/ValidationRuleErrorParams';
-import { getExpressionNodeChildren } from '@/utils/expression/getExpressionNodeChildren';
+import { getExpressionNodeChildren } from '@/utils/expression/internal/getExpressionNodeChildren';
 import { getFormulaAggregateCall } from '@/utils/formula/getFormulaAggregateCall';
 import { isDefined } from '@/utils/validation/isDefined';
 
@@ -44,7 +44,7 @@ const collectReads = ({
   toManyRelationNameByPath: ReadonlyMap<string, string>;
   shouldAllowAggregates: boolean;
 }): ExpressionReads => {
-  if (node.kind === 'path') {
+  if (node.type === 'VARIABLE') {
     const toManyRelationName = toManyRelationNameByPath.get(node.path);
 
     return {
@@ -63,7 +63,7 @@ const collectReads = ({
     }),
   );
   const aggregateCall =
-    node.kind === 'call'
+    node.type === 'FUNCTION_CALL'
       ? getFormulaAggregateCall({
           callNode: node,
           getToManyRelationName: (path) => toManyRelationNameByPath.get(path),

@@ -4,7 +4,7 @@ import { VALIDATION_RULE_EXPRESSION_MAX_LENGTH } from '@/constants/ValidationRul
 import { type ValidationRuleBindings } from '@/types/ValidationRuleBindings';
 import { type ValidationRuleCompilationResult } from '@/types/ValidationRuleCompilationResult';
 import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
-import { buildExpressionTree } from '@/utils/expression/buildExpressionTree';
+import { buildExpressionTree } from '@/utils/expression/internal/buildExpressionTree';
 import { findExpressionAggregationError } from '@/utils/expression/findExpressionAggregationError';
 import { getExpressionArgumentCountError } from '@/utils/expression/getExpressionArgumentCountError';
 import { getExpressionSyntaxError } from '@/utils/expression/getExpressionSyntaxError';

@@ -1,4 +1,9 @@
 import { isBoolean, isString } from '@sniptt/guards';
+import { CONDITIONAL_AVAILABILITY_SYMBOL_BY_COMPARISON_OPERATOR } from 'twenty-shared/conditional-availability';
+import {
+  EXPRESSION_SYMBOL_BY_ARITHMETIC_OPERATOR,
+  EXPRESSION_SYMBOL_BY_UNARY_OPERATOR,
+} from 'twenty-shared/constants';
 import { type ExpressionNode } from 'twenty-shared/types';
 import {
   assertUnreachable,
@@ -60,7 +65,7 @@ const compileAggregateOrThrow = ({
   callNode,
   context,
 }: {
-  callNode: Extract<ExpressionNode, { kind: 'call' }>;
+  callNode: Extract<ExpressionNode, { type: 'FUNCTION_CALL' }>;
   context: FormulaSqlCompilationContext;
 }): FormulaSqlValue | undefined => {
   const { resolveAggregationSource } = context;
@@ -119,10 +124,25 @@ const compileNodeSqlOrThrow = ({
   const compileChild = (child: ExpressionNode) =>
     compileNodeOrThrow({ node: child, context });
 
-  switch (node.kind) {
-    case 'literal':
+  const compileBinaryOperator = ({
+    operator,
+    left,
+    right,
+  }: {
+    operator: string;
+    left: ExpressionNode;
+    right: ExpressionNode;
+  }) =>
+    compileFormulaSqlBinaryOperatorOrThrow({
+      operator,
+      left: compileChild(left),
+      right: compileChild(right),
+    });
+
+  switch (node.type) {
+    case 'LITERAL':
       return compileLiteralOrThrow(node.value);
-    case 'path': {
+    case 'VARIABLE': {
       if (node.path === NOW_PATH) {
         return { sql: 'NOW()', type: 'dateTime' };
       }
@@ -137,32 +157,64 @@ const compileNodeSqlOrThrow = ({
 
       return value;
     }
-    case 'list':
+    case 'LIST':
       throw new FormulaSqlCompilationException({
         message: 'A list can only be written after "in"',
       });
-    case 'unary':
+    case 'NOT':
       return compileFormulaSqlUnaryOperatorOrThrow({
-        operator: node.operator,
+        operator: 'not',
+        operand: compileChild(node.child),
+      });
+    case 'UNARY':
+      return compileFormulaSqlUnaryOperatorOrThrow({
+        operator: EXPRESSION_SYMBOL_BY_UNARY_OPERATOR[node.operator],
         operand: compileChild(node.operand),
       });
-    case 'binary': {
-      const left = compileChild(node.left);
+    case 'COMPARISON':
+      return compileBinaryOperator({
+        operator:
+          CONDITIONAL_AVAILABILITY_SYMBOL_BY_COMPARISON_OPERATOR[node.operator],
+        left: node.left,
+        right: node.right,
+      });
+    case 'ARITHMETIC':
+      return compileBinaryOperator({
+        operator: EXPRESSION_SYMBOL_BY_ARITHMETIC_OPERATOR[node.operator],
+        left: node.left,
+        right: node.right,
+      });
+    case 'GROUP': {
+      const operator = node.logicalOperator.toLowerCase();
+      const [firstChild, ...otherChildren] = node.children.map(compileChild);
 
-      if (node.operator === 'in' && node.right.kind === 'list') {
-        return compileFormulaSqlMembershipOrThrow({
-          value: left,
-          candidates: node.right.items.map(compileChild),
+      if (!isDefined(firstChild)) {
+        throw new FormulaSqlCompilationException({
+          message: 'Formula is incomplete',
         });
       }
 
-      return compileFormulaSqlBinaryOperatorOrThrow({
-        operator: node.operator,
-        left,
-        right: compileChild(node.right),
+      return otherChildren.reduce(
+        (left, right) =>
+          compileFormulaSqlBinaryOperatorOrThrow({ operator, left, right }),
+        firstChild,
+      );
+    }
+    case 'IN': {
+      if (node.list.type === 'LIST') {
+        return compileFormulaSqlMembershipOrThrow({
+          value: compileChild(node.value),
+          candidates: node.list.items.map(compileChild),
+        });
+      }
+
+      return compileBinaryOperator({
+        operator: 'in',
+        left: node.value,
+        right: node.list,
       });
     }
-    case 'call':
+    case 'FUNCTION_CALL':
       return (
         compileAggregateOrThrow({ callNode: node, context }) ??
         compileFormulaSqlFunctionOrThrow({

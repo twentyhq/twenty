@@ -1,5 +1,5 @@
 import { type ExpressionTreeResult } from '@/types/ExpressionTreeResult';
-import { buildExpressionTree } from '@/utils/expression/buildExpressionTree';
+import { buildExpressionTree } from '@/utils/expression/internal/buildExpressionTree';
 import { getExpressionSyntaxError } from '@/utils/expression/getExpressionSyntaxError';
 import { parseValidationRuleExpression } from '@/utils/validation-rule/parseValidationRuleExpression';
 

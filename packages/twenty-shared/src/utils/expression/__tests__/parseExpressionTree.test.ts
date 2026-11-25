@@ -1,7 +1,7 @@
 import { parseExpressionTree } from '@/utils/expression/parseExpressionTree';
 
 describe('parseExpressionTree', () => {
-  it('should build calls over member paths and nested operators', () => {
+  it('should build a call over member paths with a nested condition', () => {
     expect(
       parseExpressionTree(
         'sum(deals.amount, deals.isWon and not deals.isArchived)',
@@ -9,37 +9,42 @@ describe('parseExpressionTree', () => {
     ).toEqual({
       isValid: true,
       tree: {
-        kind: 'call',
+        type: 'FUNCTION_CALL',
         functionName: 'sum',
         arguments: [
-          { kind: 'path', path: 'deals.amount' },
+          { type: 'VARIABLE', path: 'deals.amount' },
           {
-            kind: 'binary',
-            operator: 'and',
-            left: { kind: 'path', path: 'deals.isWon' },
-            right: {
-              kind: 'unary',
-              operator: 'not',
-              operand: { kind: 'path', path: 'deals.isArchived' },
-            },
+            type: 'GROUP',
+            logicalOperator: 'AND',
+            children: [
+              { type: 'VARIABLE', path: 'deals.isWon' },
+              {
+                type: 'NOT',
+                child: { type: 'VARIABLE', path: 'deals.isArchived' },
+              },
+            ],
           },
         ],
       },
     });
   });
 
-  it('should keep the operand order of a binary operator', () => {
-    expect(parseExpressionTree('stage in ["WON", "LOST"]')).toEqual({
+  it('should keep the operand order of arithmetic and membership', () => {
+    expect(parseExpressionTree('price - discount in [1, 2]')).toEqual({
       isValid: true,
       tree: {
-        kind: 'binary',
-        operator: 'in',
-        left: { kind: 'path', path: 'stage' },
-        right: {
-          kind: 'list',
+        type: 'IN',
+        value: {
+          type: 'ARITHMETIC',
+          operator: 'SUBTRACT',
+          left: { type: 'VARIABLE', path: 'price' },
+          right: { type: 'VARIABLE', path: 'discount' },
+        },
+        list: {
+          type: 'LIST',
           items: [
-            { kind: 'literal', value: 'WON' },
-            { kind: 'literal', value: 'LOST' },
+            { type: 'LITERAL', value: 1 },
+            { type: 'LITERAL', value: 2 },
           ],
         },
       },

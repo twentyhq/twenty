@@ -1,0 +1,219 @@
+import { isBoolean, isNumber, isString } from '@sniptt/guards';
+import { type Instruction } from 'expr-eval-fork';
+
+import { CONDITIONAL_AVAILABILITY_SYMBOL_BY_COMPARISON_OPERATOR } from '@/conditional-availability/constants/ConditionalAvailabilitySymbolByComparisonOperator';
+import { type ConditionalAvailabilityLogicalOperator } from '@/conditional-availability/types/ConditionalAvailabilityLogicalOperator';
+import { EXPRESSION_SYMBOL_BY_ARITHMETIC_OPERATOR } from '@/constants/ExpressionSymbolByArithmeticOperator';
+import { EXPRESSION_SYMBOL_BY_UNARY_OPERATOR } from '@/constants/ExpressionSymbolByUnaryOperator';
+import { type ExpressionNode } from '@/types/ExpressionNode';
+import { typedObjectEntries } from '@/utils/typed-object-entries';
+import { isDefined } from '@/utils/validation/isDefined';
+
+const invertSymbols = <TOperator extends string>(
+  symbolByOperator: Record<TOperator, string>,
+): Map<string, TOperator> =>
+  new Map(
+    typedObjectEntries(symbolByOperator).map(([operator, symbol]) => [
+      symbol,
+      operator,
+    ]),
+  );
+
+const COMPARISON_OPERATOR_BY_SYMBOL = invertSymbols(
+  CONDITIONAL_AVAILABILITY_SYMBOL_BY_COMPARISON_OPERATOR,
+);
+const ARITHMETIC_OPERATOR_BY_SYMBOL = invertSymbols(
+  EXPRESSION_SYMBOL_BY_ARITHMETIC_OPERATOR,
+);
+const UNARY_OPERATOR_BY_SYMBOL = invertSymbols(
+  EXPRESSION_SYMBOL_BY_UNARY_OPERATOR,
+);
+const LOGICAL_OPERATOR_BY_SYMBOL = new Map<
+  string,
+  ConditionalAvailabilityLogicalOperator
+>([
+  ['and', 'AND'],
+  ['or', 'OR'],
+]);
+
+const toGroupChildren = ({
+  operand,
+  logicalOperator,
+}: {
+  operand: ExpressionNode;
+  logicalOperator: ConditionalAvailabilityLogicalOperator;
+}): ExpressionNode[] =>
+  operand.type === 'GROUP' && operand.logicalOperator === logicalOperator
+    ? operand.children
+    : [operand];
+
+const toBinaryNode = ({
+  symbol,
+  left,
+  right,
+}: {
+  symbol: string;
+  left: ExpressionNode;
+  right: ExpressionNode;
+}): ExpressionNode | null => {
+  const comparisonOperator = COMPARISON_OPERATOR_BY_SYMBOL.get(symbol);
+
+  if (isDefined(comparisonOperator)) {
+    return { type: 'COMPARISON', operator: comparisonOperator, left, right };
+  }
+
+  const logicalOperator = LOGICAL_OPERATOR_BY_SYMBOL.get(symbol);
+
+  if (isDefined(logicalOperator)) {
+    return {
+      type: 'GROUP',
+      logicalOperator,
+      children: [
+        ...toGroupChildren({ operand: left, logicalOperator }),
+        ...toGroupChildren({ operand: right, logicalOperator }),
+      ],
+    };
+  }
+
+  const arithmeticOperator = ARITHMETIC_OPERATOR_BY_SYMBOL.get(symbol);
+
+  if (isDefined(arithmeticOperator)) {
+    return { type: 'ARITHMETIC', operator: arithmeticOperator, left, right };
+  }
+
+  return symbol === 'in' ? { type: 'IN', value: left, list: right } : null;
+};
+
+const toUnaryNode = ({
+  symbol,
+  operand,
+}: {
+  symbol: string;
+  operand: ExpressionNode;
+}): ExpressionNode | null => {
+  if (symbol === 'not') {
+    return { type: 'NOT', child: operand };
+  }
+
+  if (symbol === '-' && operand.type === 'LITERAL' && isNumber(operand.value)) {
+    return { type: 'LITERAL', value: -operand.value };
+  }
+
+  const unaryOperator = UNARY_OPERATOR_BY_SYMBOL.get(symbol);
+
+  return isDefined(unaryOperator)
+    ? { type: 'UNARY', operator: unaryOperator, operand }
+    : null;
+};
+
+const popAndBuildNode = ({
+  instruction,
+  stack,
+}: {
+  instruction: Instruction;
+  stack: ExpressionNode[];
+}): ExpressionNode | null => {
+  const { type, value } = instruction;
+
+  switch (type) {
+    case 'INUMBER':
+      return isString(value) || isNumber(value) || isBoolean(value)
+        ? { type: 'LITERAL', value }
+        : null;
+    case 'IVAR':
+      return isString(value) ? { type: 'VARIABLE', path: value } : null;
+    case 'IMEMBER': {
+      const variable = stack.pop();
+
+      return variable?.type === 'VARIABLE' && isString(value)
+        ? { type: 'VARIABLE', path: `${variable.path}.${value}` }
+        : null;
+    }
+    case 'IOP1': {
+      const operand = stack.pop();
+
+      return isDefined(operand) && isString(value)
+        ? toUnaryNode({ symbol: value, operand })
+        : null;
+    }
+    case 'IOP2': {
+      const right = stack.pop();
+      const left = stack.pop();
+
+      return isDefined(left) && isDefined(right) && isString(value)
+        ? toBinaryNode({ symbol: value, left, right })
+        : null;
+    }
+    case 'IARRAY':
+      return isNumber(value) && stack.length >= value
+        ? { type: 'LIST', items: stack.splice(stack.length - value, value) }
+        : null;
+    case 'IFUNCALL': {
+      if (!isNumber(value) || stack.length <= value) {
+        return null;
+      }
+
+      const argumentNodes = stack.splice(stack.length - value, value);
+      const callee = stack.pop();
+
+      if (callee?.type !== 'VARIABLE' || callee.path.includes('.')) {
+        return null;
+      }
+
+      return {
+        type: 'FUNCTION_CALL',
+        functionName: callee.path,
+        arguments: argumentNodes,
+      };
+    }
+    default:
+      return null;
+  }
+};
+
+const toUnexpectedToken = ({ type, value }: Instruction): string => {
+  switch (type) {
+    case 'IMEMBER':
+      return `.${String(value)}`;
+    case 'IFUNCALL':
+      return '(';
+    case 'IENDSTATEMENT':
+      return ';';
+    default:
+      return String(value);
+  }
+};
+
+// The operands of "and" and "or" come nested, as the parser evaluates them lazily
+const flattenNestedInstructions = (
+  instructions: Instruction[],
+): Instruction[] =>
+  instructions.flatMap((instruction) =>
+    instruction.type === 'IEXPR' && Array.isArray(instruction.value)
+      ? flattenNestedInstructions(instruction.value)
+      : [instruction],
+  );
+
+export const buildExpressionNode = ({
+  instructions,
+}: {
+  instructions: Instruction[];
+}): { node: ExpressionNode } | { unexpectedToken: string } => {
+  const stack: ExpressionNode[] = [];
+
+  for (const instruction of flattenNestedInstructions(instructions)) {
+    const node = popAndBuildNode({ instruction, stack });
+
+    if (!isDefined(node)) {
+      return { unexpectedToken: toUnexpectedToken(instruction) };
+    }
+
+    stack.push(node);
+  }
+
+  const [rootNode] = stack;
+
+  return stack.length === 1 && isDefined(rootNode)
+    ? { node: rootNode }
+    : { unexpectedToken: '' };
+};

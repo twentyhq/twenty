@@ -1,7 +1,7 @@
 import { VALIDATION_RULE_FUNCTIONS } from '@/constants/ValidationRuleFunctions';
 import { type ExpressionNode } from '@/types/ExpressionNode';
 import { type ValidationRuleErrorParams } from '@/types/ValidationRuleErrorParams';
-import { getExpressionNodeChildren } from '@/utils/expression/getExpressionNodeChildren';
+import { getExpressionNodeChildren } from '@/utils/expression/internal/getExpressionNodeChildren';
 import { isValidationRuleFunctionName } from '@/utils/validation-rule/isValidationRuleFunctionName';
 import { isDefined } from '@/utils/validation/isDefined';
 
@@ -47,7 +47,6 @@ const getFunctionCallArgumentCountError = ({
   };
 };
 
-// Children first, so the innermost wrong call is reported, as the parser reads it
 export const getExpressionArgumentCountError = (
   node: ExpressionNode,
 ): ArgumentCountError | undefined => {
@@ -59,7 +58,7 @@ export const getExpressionArgumentCountError = (
     }
   }
 
-  return node.kind === 'call'
+  return node.type === 'FUNCTION_CALL'
     ? getFunctionCallArgumentCountError({
         functionName: node.functionName,
         argumentCount: node.arguments.length,

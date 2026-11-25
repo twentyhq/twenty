@@ -8,7 +8,10 @@ export const getFormulaAggregateCall = ({
   callNode: { functionName, arguments: functionArguments },
   getToManyRelationName,
 }: {
-  callNode: Extract<ExpressionNode, { kind: 'call' }>;
+  callNode: Pick<
+    Extract<ExpressionNode, { type: 'FUNCTION_CALL' }>,
+    'functionName' | 'arguments'
+  >;
   getToManyRelationName: (path: string) => string | undefined;
 }): FormulaAggregateCall | undefined => {
   if (!isFormulaAggregateFunctionName(functionName)) {
@@ -17,7 +20,7 @@ export const getFormulaAggregateCall = ({
 
   const [relationArgument] = functionArguments;
   const relationPath =
-    relationArgument?.kind === 'path' ? relationArgument.path : undefined;
+    relationArgument?.type === 'VARIABLE' ? relationArgument.path : undefined;
   const relationName = isDefined(relationPath)
     ? getToManyRelationName(relationPath)
     : undefined;
