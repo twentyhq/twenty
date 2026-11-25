@@ -1,4 +1,4 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 
 import { MessageFolderImportPolicy } from 'twenty-shared/types';
 import { type MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
@@ -7,10 +7,13 @@ import { MESSAGING_GMAIL_EXCLUDED_SYSTEM_LABELS } from 'src/modules/messaging/me
 import { MESSAGING_GMAIL_FOLDERS_WITH_CATEGORY_EXCLUSIONS } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-folders-with-category-exclusions.constant';
 import { computeGmailDefaultNotSyncedLabelsSearchFilter } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-gmail-default-not-synced-labels-search-filter';
 
-export const computeGmailFullSyncListQueries = (
-  messageFolders: Pick<MessageFolderEntity, 'externalId' | 'isSynced'>[],
-  messageFolderImportPolicy: MessageFolderImportPolicy,
-): { labelIds?: string[]; searchFilter: string }[] => {
+export const computeGmailFullSyncListQueries = ({
+  messageFolders,
+  messageFolderImportPolicy,
+}: {
+  messageFolders: Pick<MessageFolderEntity, 'externalId' | 'isSynced'>[];
+  messageFolderImportPolicy: MessageFolderImportPolicy;
+}): { labelIds?: string[]; searchFilter: string }[] => {
   const allExclusions = MESSAGING_GMAIL_DEFAULT_EXCLUDED_LABELS.map(
     computeGmailDefaultNotSyncedLabelsSearchFilter,
   ).join(' ');
@@ -20,7 +23,7 @@ export const computeGmailFullSyncListQueries = (
   ).join(' ');
 
   const allFoldersSynced =
-    messageFolders.length > 0 &&
+    isNonEmptyArray(messageFolders) &&
     messageFolders.every((folder) => folder.isSynced);
 
   if (

@@ -59,10 +59,10 @@ export class GmailGetMessageListService {
       );
     }
 
-    const listQueries = computeGmailFullSyncListQueries(
+    const listQueries = computeGmailFullSyncListQueries({
       messageFolders,
-      messageChannel.messageFolderImportPolicy,
-    );
+      messageFolderImportPolicy: messageChannel.messageFolderImportPolicy,
+    });
 
     const messageExternalIds = new Set<string>();
 

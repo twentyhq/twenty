@@ -4,23 +4,23 @@ import { computeGmailFullSyncListQueries } from 'src/modules/messaging/message-i
 describe('computeGmailFullSyncListQueries', () => {
   describe('SELECTED_FOLDERS policy', () => {
     it('returns no query when no folders are synced', () => {
-      const result = computeGmailFullSyncListQueries(
-        [{ externalId: 'INBOX', isSynced: false }],
-        MessageFolderImportPolicy.SELECTED_FOLDERS,
-      );
+      const result = computeGmailFullSyncListQueries({
+        messageFolders: [{ externalId: 'INBOX', isSynced: false }],
+        messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
+      });
 
       expect(result).toEqual([]);
     });
 
     it('lists each selected label by its id, whatever its name', () => {
-      const result = computeGmailFullSyncListQueries(
-        [
+      const result = computeGmailFullSyncListQueries({
+        messageFolders: [
           { externalId: 'Label_1', isSynced: true },
           { externalId: 'Label_2', isSynced: true },
           { externalId: 'INBOX', isSynced: false },
         ],
-        MessageFolderImportPolicy.SELECTED_FOLDERS,
-      );
+        messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
+      });
 
       expect(result.map((query) => query.labelIds)).toEqual([
         ['Label_1'],
@@ -36,13 +36,13 @@ describe('computeGmailFullSyncListQueries', () => {
     });
 
     it('excludes categories when only INBOX is selected', () => {
-      const result = computeGmailFullSyncListQueries(
-        [
+      const result = computeGmailFullSyncListQueries({
+        messageFolders: [
           { externalId: 'INBOX', isSynced: true },
           { externalId: 'Label_1', isSynced: false },
         ],
-        MessageFolderImportPolicy.SELECTED_FOLDERS,
-      );
+        messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
+      });
 
       expect(result).toHaveLength(1);
       expect(result[0].labelIds).toEqual(['INBOX']);
@@ -52,14 +52,14 @@ describe('computeGmailFullSyncListQueries', () => {
     });
 
     it('keeps categories when a custom label is selected next to INBOX', () => {
-      const result = computeGmailFullSyncListQueries(
-        [
+      const result = computeGmailFullSyncListQueries({
+        messageFolders: [
           { externalId: 'INBOX', isSynced: true },
           { externalId: 'Label_1', isSynced: true },
           { externalId: 'SENT', isSynced: false },
         ],
-        MessageFolderImportPolicy.SELECTED_FOLDERS,
-      );
+        messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
+      });
 
       expect(result.map((query) => query.labelIds)).toEqual([
         ['INBOX'],
@@ -73,13 +73,13 @@ describe('computeGmailFullSyncListQueries', () => {
     });
 
     it('lists the whole mailbox once when every folder is synced', () => {
-      const result = computeGmailFullSyncListQueries(
-        [
+      const result = computeGmailFullSyncListQueries({
+        messageFolders: [
           { externalId: 'INBOX', isSynced: true },
           { externalId: 'Label_1', isSynced: true },
         ],
-        MessageFolderImportPolicy.SELECTED_FOLDERS,
-      );
+        messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
+      });
 
       expect(result).toHaveLength(1);
       expect(result[0].labelIds).toBeUndefined();
@@ -88,27 +88,27 @@ describe('computeGmailFullSyncListQueries', () => {
     });
 
     it('skips synced folders without an external id', () => {
-      const result = computeGmailFullSyncListQueries(
-        [
+      const result = computeGmailFullSyncListQueries({
+        messageFolders: [
           { externalId: null, isSynced: true },
           { externalId: 'Label_1', isSynced: true },
           { externalId: 'INBOX', isSynced: false },
         ],
-        MessageFolderImportPolicy.SELECTED_FOLDERS,
-      );
+        messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
+      });
 
       expect(result.map((query) => query.labelIds)).toEqual([['Label_1']]);
     });
 
     it('keeps categories when a synced folder has no external id, like the name-based query did', () => {
-      const result = computeGmailFullSyncListQueries(
-        [
+      const result = computeGmailFullSyncListQueries({
+        messageFolders: [
           { externalId: null, isSynced: true },
           { externalId: 'INBOX', isSynced: true },
           { externalId: 'SENT', isSynced: false },
         ],
-        MessageFolderImportPolicy.SELECTED_FOLDERS,
-      );
+        messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
+      });
 
       expect(result).toHaveLength(1);
       expect(result[0].labelIds).toEqual(['INBOX']);
@@ -116,40 +116,40 @@ describe('computeGmailFullSyncListQueries', () => {
     });
 
     it('lists only the child label when a nested child is selected without its parent', () => {
-      const result = computeGmailFullSyncListQueries(
-        [
+      const result = computeGmailFullSyncListQueries({
+        messageFolders: [
           { externalId: 'Label_parent', isSynced: false },
           { externalId: 'Label_child', isSynced: true },
           { externalId: 'Label_grandchild', isSynced: false },
         ],
-        MessageFolderImportPolicy.SELECTED_FOLDERS,
-      );
+        messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
+      });
 
       expect(result.map((query) => query.labelIds)).toEqual([['Label_child']]);
     });
 
     it('lists only the parent label when a parent is selected without its children', () => {
-      const result = computeGmailFullSyncListQueries(
-        [
+      const result = computeGmailFullSyncListQueries({
+        messageFolders: [
           { externalId: 'Label_parent', isSynced: true },
           { externalId: 'Label_child', isSynced: false },
           { externalId: 'Label_grandchild', isSynced: false },
         ],
-        MessageFolderImportPolicy.SELECTED_FOLDERS,
-      );
+        messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
+      });
 
       expect(result.map((query) => query.labelIds)).toEqual([['Label_parent']]);
     });
 
     it('lists skipped levels separately when a parent and grandchild are selected', () => {
-      const result = computeGmailFullSyncListQueries(
-        [
+      const result = computeGmailFullSyncListQueries({
+        messageFolders: [
           { externalId: 'Label_parent', isSynced: true },
           { externalId: 'Label_child', isSynced: false },
           { externalId: 'Label_grandchild', isSynced: true },
         ],
-        MessageFolderImportPolicy.SELECTED_FOLDERS,
-      );
+        messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
+      });
 
       expect(result.map((query) => query.labelIds)).toEqual([
         ['Label_parent'],
@@ -159,13 +159,13 @@ describe('computeGmailFullSyncListQueries', () => {
 
     it('treats STARRED, UNREAD and DRAFT as custom labels that keep categories', () => {
       for (const systemLabelId of ['STARRED', 'UNREAD', 'DRAFT']) {
-        const result = computeGmailFullSyncListQueries(
-          [
+        const result = computeGmailFullSyncListQueries({
+          messageFolders: [
             { externalId: systemLabelId, isSynced: true },
             { externalId: 'INBOX', isSynced: false },
           ],
-          MessageFolderImportPolicy.SELECTED_FOLDERS,
-        );
+          messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
+        });
 
         expect(result).toHaveLength(1);
         expect(result[0].labelIds).toEqual([systemLabelId]);
@@ -175,14 +175,14 @@ describe('computeGmailFullSyncListQueries', () => {
     });
 
     it('excludes categories when only SENT and IMPORTANT are selected', () => {
-      const result = computeGmailFullSyncListQueries(
-        [
+      const result = computeGmailFullSyncListQueries({
+        messageFolders: [
           { externalId: 'SENT', isSynced: true },
           { externalId: 'IMPORTANT', isSynced: true },
           { externalId: 'INBOX', isSynced: false },
         ],
-        MessageFolderImportPolicy.SELECTED_FOLDERS,
-      );
+        messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
+      });
 
       expect(result.map((query) => query.labelIds)).toEqual([
         ['SENT'],
@@ -197,10 +197,10 @@ describe('computeGmailFullSyncListQueries', () => {
 
   describe('ALL_FOLDERS policy', () => {
     it('lists the whole mailbox once with every default exclusion', () => {
-      const result = computeGmailFullSyncListQueries(
-        [{ externalId: 'INBOX', isSynced: false }],
-        MessageFolderImportPolicy.ALL_FOLDERS,
-      );
+      const result = computeGmailFullSyncListQueries({
+        messageFolders: [{ externalId: 'INBOX', isSynced: false }],
+        messageFolderImportPolicy: MessageFolderImportPolicy.ALL_FOLDERS,
+      });
 
       expect(result).toHaveLength(1);
       expect(result[0].labelIds).toBeUndefined();
