@@ -20,10 +20,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Record sharing`,
     description: msg`Let people restrict and share individual records.`,
   },
-  [FeatureFlagKey.IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED]: {
-    label: msg`Share calendar events across channels`,
-    description: msg`Store a meeting synced by several calendars of the same provider once, instead of once per calendar.`,
-  },
   [FeatureFlagKey.IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED]: {
     label: msg`Skip internal meetings`,
     description: msg`Skip calendar events with no participant outside the workspace domain, unless internal import is turned on.`,
