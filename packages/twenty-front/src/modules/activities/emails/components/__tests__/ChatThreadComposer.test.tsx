@@ -302,28 +302,33 @@ describe('ChatThreadComposer', () => {
     const originalMatchMedia = window.matchMedia;
 
     window.matchMedia = (query: string) =>
-      ({
+      Object.assign(new EventTarget(), {
         matches: query === TOUCH_DEVICE_MEDIA_QUERY,
-        addEventListener: () => undefined,
-        removeEventListener: () => undefined,
-      }) as unknown as MediaQueryList;
+        media: query,
+        onchange: null,
+        addListener: jest.fn(),
+        removeListener: jest.fn(),
+      });
 
-    render(
-      <I18nProvider i18n={i18n}>
-        <ChatThreadComposer
-          channelName="LinkedIn"
-          recipientName="Ada"
-          isDisconnected={false}
-          onSendMessage={mockSendAppChannelMessage}
-        />
-      </I18nProvider>,
-    );
+    try {
+      render(
+        <I18nProvider i18n={i18n}>
+          <ChatThreadComposer
+            channelName="LinkedIn"
+            recipientName="Ada"
+            isDisconnected={false}
+            onSendMessage={mockSendAppChannelMessage}
+            onMessageSent={jest.fn()}
+          />
+        </I18nProvider>,
+      );
 
-    await userEvent.type(screen.getByRole('textbox'), 'Hello{Enter}Ada');
+      await userEvent.type(screen.getByRole('textbox'), 'Hello{Enter}Ada');
 
-    expect(screen.getByRole('textbox')).toHaveValue('Hello\nAda');
-    expect(mockSendAppChannelMessage).not.toHaveBeenCalled();
-
-    window.matchMedia = originalMatchMedia;
+      expect(screen.getByRole('textbox')).toHaveValue('Hello\nAda');
+      expect(mockSendAppChannelMessage).not.toHaveBeenCalled();
+    } finally {
+      window.matchMedia = originalMatchMedia;
+    }
   });
 });
