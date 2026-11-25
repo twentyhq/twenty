@@ -1,11 +1,14 @@
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { useReturnFromExpandedAiChat } from '@/ai-chat/hooks/useReturnFromExpandedAiChat';
 import { useSwitchToNewAiChatInInboxChannel } from '@/inbox/hooks/useSwitchToNewAiChatInInboxChannel';
 import { getExpandedAiChatReturnLocation } from '@/ai-chat/utils/getExpandedAiChatReturnLocation';
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { currentNavigationMenuTabIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuTabIdState';
+import { useOpenNavigationMenuTabFirstEntry } from '@/navigation-menu-item/display/hooks/useOpenNavigationMenuTabFirstEntry';
 import { useActiveNavigationDrawerTab } from '@/navigation/hooks/useActiveNavigationDrawerTab';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
@@ -21,7 +24,10 @@ import {
 } from '@/ui/navigation/states/navigationDrawerTabs';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { isAiModePath } from '~/utils/isAiModePath';
 
@@ -49,9 +55,16 @@ export const useSwitchNavigationDrawerTab = () => {
   const setNavigationDrawerActiveTab = useSetAtomState(
     navigationDrawerActiveTabState,
   );
-  const setCurrentNavigationMenuTabId = useSetAtomState(
-    currentNavigationMenuTabIdState,
+  const [currentNavigationMenuTabId, setCurrentNavigationMenuTabId] =
+    useAtomState(currentNavigationMenuTabIdState);
+  const isCustomizableSidebarEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
   );
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
+  );
+  const { openNavigationMenuTabFirstEntry } =
+    useOpenNavigationMenuTabFirstEntry();
 
   const { defaultHomePagePath } = useDefaultHomePagePath();
   const { switchToNewAiChat } = useSwitchToNewAiChatInInboxChannel({
@@ -65,14 +78,18 @@ export const useSwitchNavigationDrawerTab = () => {
     }),
   });
 
+  const leaveSettingsDrawer = () => {
+    setCurrentMobileNavigationDrawer('main');
+    if (isMobile) {
+      setIsNavigationDrawerExpanded(navigationDrawerExpandedMemorized);
+    }
+  };
+
   const switchToNavigationMenu = () => {
     setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
 
     if (isSettingsDrawer) {
-      setCurrentMobileNavigationDrawer('main');
-      if (isMobile) {
-        setIsNavigationDrawerExpanded(navigationDrawerExpandedMemorized);
-      }
+      leaveSettingsDrawer();
       navigate(
         getNavigationDrawerHomeDestination({
           memorizedUrl: navigationMemorizedUrl,
@@ -88,6 +105,37 @@ export const useSwitchNavigationDrawerTab = () => {
     }
   };
 
+  const openNavigationMenuTabFirstItem = (tabId: string | null) => {
+    if (isDefined(tabId)) {
+      return openNavigationMenuTabFirstEntry(tabId);
+    }
+
+    navigate(defaultHomePagePath);
+
+    return true;
+  };
+
+  const switchToNavigationMenuTab = (tabId: string | null) => {
+    const shouldOpenFirstItem =
+      isCustomizableSidebarEnabled &&
+      !isLayoutCustomizationModeEnabled &&
+      tabId !== currentNavigationMenuTabId;
+
+    setCurrentNavigationMenuTabId(tabId);
+
+    if (shouldOpenFirstItem && openNavigationMenuTabFirstItem(tabId)) {
+      setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
+      if (isSettingsDrawer) {
+        leaveSettingsDrawer();
+      }
+      return;
+    }
+
+    if (activeNavigationDrawerTab !== NAVIGATION_DRAWER_TABS.NAVIGATION_MENU) {
+      switchToNavigationMenu();
+    }
+  };
+
   const switchToAiChat = () => {
     setCurrentMobileNavigationDrawer('main');
     setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY);
@@ -98,13 +146,7 @@ export const useSwitchNavigationDrawerTab = () => {
   const switchNavigationDrawerTab = (mode: NavigationDrawerActiveTab) => {
     switch (mode) {
       case NAVIGATION_DRAWER_TABS.NAVIGATION_MENU:
-        setCurrentNavigationMenuTabId(null);
-        if (
-          activeNavigationDrawerTab === NAVIGATION_DRAWER_TABS.NAVIGATION_MENU
-        ) {
-          return;
-        }
-        switchToNavigationMenu();
+        switchToNavigationMenuTab(null);
         break;
       case NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY:
         if (isAiModePage) {
@@ -119,14 +161,6 @@ export const useSwitchNavigationDrawerTab = () => {
         }
         navigateSettings(SettingsPath.ProfilePage);
         break;
-    }
-  };
-
-  const switchToNavigationMenuTab = (tabId: string) => {
-    setCurrentNavigationMenuTabId(tabId);
-
-    if (activeNavigationDrawerTab !== NAVIGATION_DRAWER_TABS.NAVIGATION_MENU) {
-      switchToNavigationMenu();
     }
   };
 
