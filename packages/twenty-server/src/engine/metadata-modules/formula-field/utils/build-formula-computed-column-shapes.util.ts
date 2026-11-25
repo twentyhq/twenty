@@ -7,7 +7,7 @@ import {
   type WorkspaceComputedLookupShape,
 } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 
-export const buildFormulaComputedColumnShapes = (args: {
+export const buildFormulaComputedColumnShapes = (compilationInput: {
   flatObjectMetadata: FlatObjectMetadata;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
@@ -16,7 +16,8 @@ export const buildFormulaComputedColumnShapes = (args: {
   computedColumnShapes: WorkspaceComputedColumnShape[];
   computedLookupShapes: WorkspaceComputedLookupShape[];
 } => {
-  const { formulaFields, lookupShapes } = getCompiledObjectFormulaFields(args);
+  const { formulaFields, lookupShapes } =
+    getCompiledObjectFormulaFields(compilationInput);
   const computedColumnShapes = formulaFields
     .filter(({ isStored }) => !isStored)
     .flatMap(({ columns, dependencies }) =>
@@ -27,9 +28,16 @@ export const buildFormulaComputedColumnShapes = (args: {
         dependencies,
       })),
     );
+  const readAliases = new Set(
+    computedColumnShapes.flatMap(({ dependencies }) =>
+      dependencies.map(({ alias }) => alias),
+    ),
+  );
 
   return {
     computedColumnShapes,
-    computedLookupShapes: computedColumnShapes.length > 0 ? lookupShapes : [],
+    computedLookupShapes: lookupShapes.filter(({ alias }) =>
+      readAliases.has(alias),
+    ),
   };
 };
