@@ -3215,11 +3215,6 @@ msgctxt "fieldMetadata.description"
 msgid "Chats tied to the opportunity"
 msgstr "Συνομιλίες που συνδέονται με την ευκαιρία"
 
-#. js-lingui-id: YNDJWu
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
-msgid "Checking whether a one-to-many relation is empty requires relation hops in row level permission predicates"
-msgstr "Ο έλεγχος αν μια σχέση ένα-προς-πολλά είναι κενή απαιτεί μεταβάσεις σχέσεων σε κατηγορήματα δικαιωμάτων σε επίπεδο γραμμής"
-
 #. js-lingui-id: ZgijCO
 #: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
 msgid "Choose an active tab and a widget position matching its layout mode."
@@ -11432,16 +11427,6 @@ msgstr "Λείπει μια τιμή από το κατηγόρημα"
 msgid "Predicate value is not valid for this operand"
 msgstr "Η τιμή του κατηγορήματος δεν είναι έγκυρη για αυτόν τον τελεστή"
 
-#. js-lingui-id: nSv3rP
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
-msgid "Predicates reaching a field through a relation are not enabled for this workspace"
-msgstr "Τα κατηγορήματα που φτάνουν σε ένα πεδίο μέσω μιας σχέσης δεν είναι ενεργοποιημένα για αυτόν τον χώρο εργασίας"
-
-#. js-lingui-id: v5akl/
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
-msgid "Predicates reading the current member through a relation are not enabled for this workspace"
-msgstr "Τα κατηγορήματα που διαβάζουν το τρέχον μέλος μέσω μιας σχέσης δεν είναι ενεργοποιημένα για αυτόν τον χώρο εργασίας"
-
 #. js-lingui-id: /h13bI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -12765,12 +12750,6 @@ msgstr "Τα δικαιώματα εγγραφών σε επίπεδο γραμ�
 msgctxt "fieldMetadata.label"
 msgid "Rule"
 msgstr "Κανόνας"
-
-#. js-lingui-id: zhLAHJ
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
-msgid "Rules through a relation are not enabled for this workspace"
-msgstr "Οι κανόνες μέσω μιας σχέσης δεν είναι ενεργοποιημένοι για αυτόν τον χώρο εργασίας"
 
 #. js-lingui-id: F1qT/F
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -15783,7 +15762,6 @@ msgid "This operand is not supported for this field"
 msgstr "Αυτός ο τελεστής δεν υποστηρίζεται για αυτό το πεδίο"
 
 #. js-lingui-id: sf5yLA
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This operand is not supported for this relation"

@@ -10093,11 +10093,6 @@ msgstr "개체의 이름과 설명을 정의하세요"
 msgid "Define the name and instructions for this skill"
 msgstr "이 스킬의 이름과 지침을 정의하세요"
 
-#. js-lingui-id: zDccHY
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Define the relations along which a record's permissions extend to related records."
-msgstr "레코드의 권한이 관련 레코드까지 확장되는 관계를 정의합니다."
-
 #. js-lingui-id: Ntu10D
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Define user roles and access levels"
@@ -18067,11 +18062,6 @@ msgstr "구성원이 자신의 계정을 연결하도록 허용"
 msgid "Let people restrict and share individual records."
 msgstr "사용자가 개별 레코드를 제한하고 공유할 수 있도록 합니다."
 
-#. js-lingui-id: b3MaZQ
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Let record-level permission rules compare a field of a related record."
-msgstr "레코드 수준 권한 규칙이 관련 레코드의 필드를 비교하도록 허용합니다."
-
 #. js-lingui-id: oKfDGp
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let text, number, boolean and date fields compute their value from an expression over the record and its related records."
@@ -25045,11 +25035,6 @@ msgstr "레코드 페이지"
 msgid "Record page widget"
 msgstr "레코드 페이지 위젯"
 
-#. js-lingui-id: fHTWNa
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Record rules through relations"
-msgstr "관계를 통한 레코드 규칙"
-
 #. js-lingui-id: pVTJSR
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
 msgid "Record selection"
@@ -25284,11 +25269,6 @@ msgstr "거부됨"
 #. js-lingui-id: bFZR4R
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "related record path"
-msgstr "관련 레코드 경로"
-
-#. js-lingui-id: l3qF/i
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Related record paths"
 msgstr "관련 레코드 경로"
 
 #. js-lingui-id: uGfOFe

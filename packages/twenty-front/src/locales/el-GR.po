@@ -10093,11 +10093,6 @@ msgstr "Ορίστε το όνομα και την περιγραφή του α�
 msgid "Define the name and instructions for this skill"
 msgstr "Ορίστε το όνομα και τις οδηγίες για αυτή τη δεξιότητα"
 
-#. js-lingui-id: zDccHY
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Define the relations along which a record's permissions extend to related records."
-msgstr "Ορίστε τις σχέσεις μέσω των οποίων τα δικαιώματα μιας εγγραφής επεκτείνονται σε σχετικές εγγραφές."
-
 #. js-lingui-id: Ntu10D
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Define user roles and access levels"
@@ -18067,11 +18062,6 @@ msgstr "Να επιτρέπεται στα μέλη να συνδέουν του
 msgid "Let people restrict and share individual records."
 msgstr "Επιτρέψτε στους χρήστες να περιορίζουν και να κοινοποιούν μεμονωμένες εγγραφές."
 
-#. js-lingui-id: b3MaZQ
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Let record-level permission rules compare a field of a related record."
-msgstr "Να επιτρέπεται στους κανόνες δικαιωμάτων σε επίπεδο εγγραφής να συγκρίνουν ένα πεδίο μιας σχετικής εγγραφής."
-
 #. js-lingui-id: oKfDGp
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let text, number, boolean and date fields compute their value from an expression over the record and its related records."
@@ -25045,11 +25035,6 @@ msgstr "Σελίδα εγγραφής"
 msgid "Record page widget"
 msgstr "Γραφικό στοιχείο σελίδας εγγραφής"
 
-#. js-lingui-id: fHTWNa
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Record rules through relations"
-msgstr "Κανόνες εγγραφών μέσω συσχετίσεων"
-
 #. js-lingui-id: pVTJSR
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
 msgid "Record selection"
@@ -25285,11 +25270,6 @@ msgstr "Απορρίφθηκε"
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "related record path"
 msgstr "διαδρομή σχετικής εγγραφής"
-
-#. js-lingui-id: l3qF/i
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Related record paths"
-msgstr "Διαδρομές σχετικών εγγραφών"
 
 #. js-lingui-id: uGfOFe
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
