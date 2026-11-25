@@ -17,6 +17,7 @@ import { LATEST_RELEASE } from '@/platform/releases';
 import { SITE_URLS } from '@/platform/site-urls';
 
 import { type MenuNavItem } from '../types/menu-nav-item';
+import { INDUSTRY_MENU_ITEMS } from './industry-menu-items';
 import { type MenuSocialLink } from '../types/menu-social-link';
 
 const PREVIEW_DRAWING_SCALE = 1.15;
@@ -148,7 +149,7 @@ export const MENU: {
         },
       ],
     },
-    { href: '/customers', label: msg`Customers` },
+    { label: msg`Industries`, children: INDUSTRY_MENU_ITEMS },
     { href: '/pricing', label: msg`Pricing` },
   ],
   socialLinks: [

@@ -10,6 +10,7 @@ import {
   semanticColor,
   spacing,
 } from '@/tokens';
+import { LocalizedLink } from '@/platform/i18n/LocalizedLink';
 import { Body } from '@/ui';
 
 // The Problem section's dashed point list, laid out as a grid so every
@@ -60,9 +61,17 @@ const PointTitle = styled.h3`
   line-height: 1.35;
 `;
 
+const PointTitleLink = styled(LocalizedLink)`
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+`;
+
 export type IndustryPointGridItem = {
   body: string;
   detail?: ReactNode;
+  href?: string;
   key: string;
   kicker?: string;
   title: string;
@@ -82,7 +91,13 @@ export function IndustryPointGrid({
       {items.map((item) => (
         <Point key={item.key}>
           {isDefined(item.kicker) && <Kicker>{item.kicker}</Kicker>}
-          <PointTitle>{item.title}</PointTitle>
+          <PointTitle>
+            {isDefined(item.href) ? (
+              <PointTitleLink href={item.href}>{item.title}</PointTitleLink>
+            ) : (
+              item.title
+            )}
+          </PointTitle>
           <Body muted size="sm">
             {item.body}
           </Body>

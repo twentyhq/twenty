@@ -50,8 +50,11 @@ export const resolveIndustryPage = (
     pains: definition.pains ?? inherited.pains,
     dataModel: {
       ...inherited.dataModel,
+      notes: definition.modelNotes ?? inherited.dataModel.notes,
       objects: mergeObjects(
-        inherited.dataModel.objects,
+        inherited.dataModel.objects.filter(
+          (object) => !definition.omittedObjectIds?.includes(object.id),
+        ),
         definition.addedObjects,
       ),
     },
@@ -59,7 +62,12 @@ export const resolveIndustryPage = (
     customScreen: definition.customScreen ?? inherited.customScreen,
     agents: definition.agents ?? inherited.agents,
     access: definition.access ?? inherited.access,
-    questions: mergeQuestions(definition.questions, inherited.questions),
+    switching: definition.switching ?? inherited.switching,
+    discovery: definition.discovery ?? inherited.discovery,
+    questions:
+      definition.categoryQuestions === 'omit'
+        ? [...definition.questions]
+        : mergeQuestions(definition.questions, inherited.questions),
     proof: definition.proof ?? inherited.proof,
     parent: { slug: parent.slug, name: parent.name },
   };

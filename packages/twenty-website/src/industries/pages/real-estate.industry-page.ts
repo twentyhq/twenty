@@ -1,4 +1,5 @@
 import { msg } from '@lingui/core/macro';
+import { IconHome } from '@tabler/icons-react';
 
 import { type RowDef } from '@/app-preview/types';
 
@@ -27,6 +28,7 @@ export const REAL_ESTATE_INDUSTRY_PAGE: IndustryCategoryPage = {
   slug: 'real-estate',
   status: 'draft',
   name: msg`Real estate`,
+  menu: { description: msg`Listings, viewings and offers`, icon: IconHome },
   meta: {
     title: msg`Twenty for real estate — a CRM built around listings and offers`,
     description: msg`Model properties, listings, buyer searches, viewings and offers in an open source CRM. See an example agency workspace built on Twenty.`,

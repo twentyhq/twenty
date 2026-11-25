@@ -2,6 +2,8 @@ import { msg } from '@lingui/core/macro';
 
 import { CASE_STUDY_CATALOG } from '@/case-studies/case-study-catalog';
 
+import { getRelatedIndustryPages } from './get-related-industry-pages';
+import { INDUSTRY_COPY_LIMITS } from './industry-copy-limits';
 import { INDUSTRY_PAGES } from './industry-pages';
 import { INDUSTRY_PAGES_BY_SLUG } from './industry-pages-by-slug';
 import { REAL_ESTATE_INDUSTRY_PAGE } from './pages/real-estate.industry-page';
@@ -11,6 +13,33 @@ import { validateIndustryPage } from './validate-industry-page';
 const CASE_STUDY_SLUGS = new Set(CASE_STUDY_CATALOG.map((entry) => entry.slug));
 
 describe('industry pages', () => {
+  it('gives every category exactly its quota of sub-categories', () => {
+    for (const page of INDUSTRY_PAGES) {
+      if (page.kind !== 'category') {
+        continue;
+      }
+      const subCategoryCount = INDUSTRY_PAGES.filter(
+        (candidate) =>
+          candidate.kind === 'subCategory' &&
+          candidate.parentSlug === page.slug,
+      ).length;
+      expect([page.slug, subCategoryCount]).toEqual([
+        page.slug,
+        INDUSTRY_COPY_LIMITS.subCategoriesPerCategory,
+      ]);
+    }
+  });
+
+  it('links a sub-category to its category and siblings, not itself', () => {
+    const subCategory = INDUSTRY_PAGES_BY_SLUG.get('commercial-real-estate')!;
+    const related = getRelatedIndustryPages(subCategory, INDUSTRY_PAGES).map(
+      (page) => page.slug,
+    );
+    expect(related).toContain('real-estate');
+    expect(related).not.toContain('commercial-real-estate');
+    expect(related.length).toBe(INDUSTRY_COPY_LIMITS.subCategoriesPerCategory);
+  });
+
   it('has unique slugs', () => {
     const slugs = INDUSTRY_PAGES.map((page) => page.slug);
     expect(new Set(slugs).size).toBe(slugs.length);
@@ -78,14 +107,21 @@ describe('validateIndustryPage', () => {
     ).toEqual(['switching.note: unresolved [placeholder] on a live page']);
   });
 
+  it('refuses customer names on a page that does not feature that story', () => {
+    const page = { ...basePage, proof: { kind: 'none' as const } };
+    expect(validateIndustryPage(page, CASE_STUDY_SLUGS)).toContain(
+      'questions[1].answer: names "Homeseller" but the page\'s proof is not that story',
+    );
+  });
+
   it('refuses proof that points at a missing story', () => {
     const page = {
       ...basePage,
       proof: { kind: 'caseStudy' as const, caseStudySlug: 'unknown' },
     };
-    expect(validateIndustryPage(page, CASE_STUDY_SLUGS)).toEqual([
+    expect(validateIndustryPage(page, CASE_STUDY_SLUGS)).toContain(
       'proof: unknown case study "unknown"',
-    ]);
+    );
   });
 
   it('refuses agents that change nothing', () => {

@@ -1,4 +1,5 @@
 import { msg } from '@lingui/core/macro';
+import { IconShieldCheck } from '@tabler/icons-react';
 
 import { type RowDef } from '@/app-preview/types';
 
@@ -27,6 +28,10 @@ export const PUBLIC_SECTOR_DEFENSE_INDUSTRY_PAGE: IndustryCategoryPage = {
   slug: 'public-sector-defense',
   status: 'draft',
   name: msg`Public sector and defense`,
+  menu: {
+    description: msg`Tenders and licences, self-hosted`,
+    icon: IconShieldCheck,
+  },
   meta: {
     title: msg`Twenty for the public sector and defense — a CRM you control`,
     description: msg`Track programmes, tenders, approvals and partners in an open source CRM you can host on your own servers. See an example workspace built on Twenty.`,

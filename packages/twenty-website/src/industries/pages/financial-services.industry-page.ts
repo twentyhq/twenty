@@ -1,4 +1,5 @@
 import { msg } from '@lingui/core/macro';
+import { IconBuildingBank } from '@tabler/icons-react';
 
 import { type RowDef } from '@/app-preview/types';
 
@@ -27,6 +28,10 @@ export const FINANCIAL_SERVICES_INDUSTRY_PAGE: IndustryCategoryPage = {
   slug: 'financial-services',
   status: 'draft',
   name: msg`Financial services`,
+  menu: {
+    description: msg`Households, mandates and deals`,
+    icon: IconBuildingBank,
+  },
   meta: {
     title: msg`Twenty for financial services — a CRM built around households and mandates`,
     description: msg`Model households, accounts, mandates and reviews in an open source CRM, with roles and audit logs. See an example advisory firm workspace built on Twenty.`,

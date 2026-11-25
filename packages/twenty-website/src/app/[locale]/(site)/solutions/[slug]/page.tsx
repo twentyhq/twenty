@@ -2,6 +2,7 @@ import { type Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 import {
+  getRelatedIndustryPages,
   INDUSTRY_PAGES,
   INDUSTRY_PAGES_BY_SLUG,
   resolveIndustryPage,
@@ -79,7 +80,10 @@ export default async function IndustryRoutePage({
       <JsonLd data={buildBreadcrumbListJsonLd(breadcrumbs, locale)} />
       <Menu communityStats={communityStats} scheme="dark" />
       <main>
-        <IndustryPage page={page} />
+        <IndustryPage
+          page={page}
+          relatedPages={getRelatedIndustryPages(definition, INDUSTRY_PAGES)}
+        />
       </main>
     </>
   );

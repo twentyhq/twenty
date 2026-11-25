@@ -107,6 +107,16 @@ export const AGRIBUSINESS_INDUSTRY_PAGE: IndustrySubCategoryPage = {
       ],
     },
   },
+  pains: [
+    MANUFACTURING_DISTRIBUTION_INDUSTRY_PAGE.pains[0],
+    MANUFACTURING_DISTRIBUTION_INDUSTRY_PAGE.pains[1],
+    {
+      complaint: msg`Field teams hear about the harvest once it has started.`,
+      answer: msg`A weekly workflow finds sites with harvest in 30 days and gives the site owner a check-in task.`,
+      answeredBy: 'workflows',
+    },
+    MANUFACTURING_DISTRIBUTION_INDUSTRY_PAGE.pains[3],
+  ],
   addedObjects: [
     {
       id: 'site',
@@ -145,6 +155,15 @@ export const AGRIBUSINESS_INDUSTRY_PAGE: IndustrySubCategoryPage = {
       ],
       previewIcon: 'folder',
       previewTone: 'gray',
+    },
+  ],
+  omittedObjectIds: ['salesAgreement'],
+  modelNotes: [
+    MANUFACTURING_DISTRIBUTION_INDUSTRY_PAGE.dataModel.notes[0],
+    MANUFACTURING_DISTRIBUTION_INDUSTRY_PAGE.dataModel.notes[1],
+    {
+      title: msg`Contracts carry the season`,
+      body: msg`Volume and season sit on each grower contract, linked to its product line.`,
     },
   ],
   workflows: [
@@ -217,6 +236,61 @@ export const AGRIBUSINESS_INDUSTRY_PAGE: IndustrySubCategoryPage = {
         'Serra Verde buys two product lines today. Irrigation is in proposal.',
     },
   },
+  agents: {
+    heading: MANUFACTURING_DISTRIBUTION_INDUSTRY_PAGE.agents.heading,
+    items: [
+      {
+        name: msg`Account reviewer`,
+        job: msg`Summarizes a grower's contracts, sites, assets and open service issues before a season review.`,
+        reads: ['company', 'contract', 'site', 'asset', 'serviceVisit'],
+        writes: ['note'],
+        limit: msg`Writes notes only and cannot change a contract.`,
+      },
+    ],
+  },
+  access: {
+    heading: MANUFACTURING_DISTRIBUTION_INDUSTRY_PAGE.access.heading,
+    roles: MANUFACTURING_DISTRIBUTION_INDUSTRY_PAGE.access.roles,
+    rules: [
+      MANUFACTURING_DISTRIBUTION_INDUSTRY_PAGE.access.rules[0],
+      MANUFACTURING_DISTRIBUTION_INDUSTRY_PAGE.access.rules[1],
+      {
+        objectId: 'contract',
+        accessByRoleId: {
+          sales: msg`See and edit all`,
+          dealer: msg`Own territory, prices hidden`,
+          management: msg`See and edit all`,
+        },
+      },
+      {
+        objectId: 'productLine',
+        accessByRoleId: {
+          sales: msg`See all`,
+          dealer: msg`See names only`,
+          management: msg`See and edit all`,
+        },
+      },
+    ],
+  },
+  switching: {
+    salesforceProduct: 'Manufacturing Cloud',
+    mappings: [
+      { salesforceObject: 'Account', objectId: 'company' },
+      { salesforceObject: 'Sales Agreement', objectId: 'contract' },
+      { salesforceObject: 'Asset', objectId: 'asset' },
+    ],
+    note: msg`Export with the Salesforce data loader, then import by CSV or through the API.`,
+  },
+  discovery: [
+    MANUFACTURING_DISTRIBUTION_INDUSTRY_PAGE.discovery[0],
+    MANUFACTURING_DISTRIBUTION_INDUSTRY_PAGE.discovery[1],
+    MANUFACTURING_DISTRIBUTION_INDUSTRY_PAGE.discovery[2],
+    {
+      question: msg`Are your grower contracts seasonal or multi-year?`,
+      shapes: msg`Sets the contract fields and when the season check-in runs.`,
+    },
+    MANUFACTURING_DISTRIBUTION_INDUSTRY_PAGE.discovery[4],
+  ],
   questions: [
     {
       question: msg`We work with multinationals and smallholders.`,

@@ -19,4 +19,5 @@ export const INDUSTRY_SECTION_EYEBROWS: Record<
   proof: msg`In production.`,
   questions: msg`Common questions.`,
   discovery: msg`On the first call.`,
+  related: msg`Explore the industry.`,
 };

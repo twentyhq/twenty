@@ -1,4 +1,5 @@
 import { msg } from '@lingui/core/macro';
+import { IconStethoscope } from '@tabler/icons-react';
 
 import { type RowDef } from '@/app-preview/types';
 
@@ -27,6 +28,10 @@ export const HEALTHCARE_LIFE_SCIENCES_INDUSTRY_PAGE: IndustryCategoryPage = {
   slug: 'healthcare-life-sciences',
   status: 'draft',
   name: msg`Healthcare and life sciences`,
+  menu: {
+    description: msg`Facilities, contracts and committees`,
+    icon: IconStethoscope,
+  },
   meta: {
     title: msg`Twenty for healthcare and life sciences sales — a CRM built around facilities and buying committees`,
     description: msg`Model facilities, buying committees, contracts and visits in an open source CRM you can host yourself. See an example workspace for a team selling to hospitals.`,

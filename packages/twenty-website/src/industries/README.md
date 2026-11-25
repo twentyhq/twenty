@@ -16,9 +16,11 @@ content, never layout.
 
 A sub-category page inherits its category. It states its hero, product
 preview, added objects and three workflows, and may replace the custom
-screen, agents, access rules or proof. To reuse a category workflow, reference it from the
+screen, agents, access rules, Salesforce mapping, discovery questions or proof. To reuse a category workflow, reference it from the
 category's data file; nothing is inherited silently. Its questions come
-first, then the category's, up to six.
+first, then the category's, up to six, unless it sets `categoryQuestions:
+'omit'`. It can drop category objects it does not use with
+`omittedObjectIds` and replace the modelling notes with `modelNotes`.
 
 ## The product window
 

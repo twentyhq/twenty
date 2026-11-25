@@ -163,6 +163,33 @@ export const EDTECH_INDUSTRY_PAGE: IndustrySubCategoryPage = {
       previewIcon: 'users',
       previewTone: 'pink',
     },
+    {
+      id: 'student',
+      label: msg`Students`,
+      purpose: msg`A learner using your product, in one cohort at one institution.`,
+      fields: [
+        { label: msg`Last active` },
+        { label: msg`Cohort`, relatesTo: 'cohort' },
+        { label: msg`Contact`, relatesTo: 'person' },
+      ],
+      previewIcon: 'user',
+      previewTone: 'blue',
+    },
+  ],
+  omittedObjectIds: ['application', 'intake', 'enrolment', 'visa', 'document'],
+  modelNotes: [
+    {
+      title: msg`Institutions are companies`,
+      body: msg`Universities and schools sit in Companies, with every licence and rollout linked to them.`,
+    },
+    {
+      title: msg`A licence is what they bought`,
+      body: msg`Seats and renewal date live on the licence, so renewals run from the contract, not from memory.`,
+    },
+    {
+      title: msg`Usage rolls up from cohorts`,
+      body: msg`Students sit in cohorts, so each licence shows how many seats are really in use.`,
+    },
   ],
   workflows: [
     {
@@ -185,7 +212,22 @@ export const EDTECH_INDUSTRY_PAGE: IndustrySubCategoryPage = {
         { kind: 'action', label: msg`Email the session link` },
       ],
     },
-    EDUCATION_INDUSTRY_PAGE.workflows.items[0],
+    {
+      title: msg`Rollout kickoff`,
+      outcome: msg`Every signed licence starts with a rollout plan and a launch date.`,
+      steps: [
+        { kind: 'trigger', label: msg`Licence status changes to Signed` },
+        { kind: 'action', label: msg`Create a rollout for each campus` },
+        {
+          kind: 'action',
+          label: msg`Create onboarding tasks for customer success`,
+        },
+        {
+          kind: 'action',
+          label: msg`Email the institution's contact the launch plan`,
+        },
+      ],
+    },
   ],
   customScreen: {
     title: msg`Rollout tracker`,
@@ -230,6 +272,85 @@ export const EDTECH_INDUSTRY_PAGE: IndustrySubCategoryPage = {
         'Engineering is the cohort to visit before the January renewal.',
     },
   },
+  agents: {
+    heading: msg`Agents that read the usage. *Account managers renew*`,
+    items: [
+      {
+        name: msg`Renewal briefer`,
+        job: msg`Before a renewal, summarizes usage across a licence's cohorts and drafts a brief for the account manager.`,
+        reads: ['licence', 'rollout', 'cohort', 'company'],
+        writes: ['note'],
+        limit: msg`Writes notes only. Cannot change seats or renewal dates.`,
+      },
+    ],
+  },
+  access: {
+    heading: msg`Account managers own renewals. *Customer success runs rollouts*`,
+    roles: [
+      { id: 'accountManager', label: msg`Account manager` },
+      { id: 'customerSuccess', label: msg`Customer success` },
+      { id: 'leadership', label: msg`Leadership` },
+    ],
+    rules: [
+      {
+        objectId: 'licence',
+        accessByRoleId: {
+          accountManager: msg`Own institutions`,
+          customerSuccess: msg`See all, read-only`,
+          leadership: msg`See and edit all`,
+        },
+      },
+      {
+        objectId: 'rollout',
+        accessByRoleId: {
+          accountManager: msg`See own institutions`,
+          customerSuccess: msg`See and edit all`,
+          leadership: msg`See all`,
+        },
+      },
+      {
+        objectId: 'student',
+        accessByRoleId: {
+          accountManager: msg`No access`,
+          customerSuccess: msg`Assigned rollouts only`,
+          leadership: msg`See all, read-only`,
+        },
+      },
+    ],
+  },
+  switching: {
+    salesforceProduct: 'Sales Cloud',
+    mappings: [
+      { salesforceObject: 'Account', objectId: 'company' },
+      { salesforceObject: 'Contact', objectId: 'person' },
+      { salesforceObject: 'Opportunity', objectId: 'licence' },
+      { salesforceObject: 'Implementation (custom)', objectId: 'rollout' },
+    ],
+    note: msg`Export with the Salesforce data loader, then import by CSV or through the API.`,
+  },
+  discovery: [
+    {
+      question: msg`Who signs the contract, and who uses the product?`,
+      shapes: msg`Decides how institutions, licences, cohorts and students relate.`,
+    },
+    {
+      question: msg`How many institutions renew each quarter?`,
+      shapes: msg`Sets the renewal views and how far ahead the workflow runs.`,
+    },
+    {
+      question: msg`Where does usage data live today?`,
+      shapes: msg`Decides how active student counts reach Twenty: API, webhook or import.`,
+    },
+    {
+      question: msg`Does your product read from or write to the CRM?`,
+      shapes: msg`Sets which objects your app calls through the API.`,
+    },
+    {
+      question: msg`Who looks after an institution once it has signed?`,
+      shapes: msg`Sets the account manager and customer success roles.`,
+    },
+  ],
+  categoryQuestions: 'omit',
   questions: [
     {
       question: msg`Can we build our product on Twenty?`,
@@ -239,6 +360,11 @@ export const EDTECH_INDUSTRY_PAGE: IndustrySubCategoryPage = {
       question: msg`How does our app talk to Twenty?`,
       answer: msg`Every object has a REST and GraphQL API, and webhooks tell your app when a record changes.`,
     },
+    {
+      question: msg`Do students log in to the CRM?`,
+      answer: msg`No. Your product calls the API to read and update their records.`,
+    },
+    EDUCATION_INDUSTRY_PAGE.questions[0],
   ],
   proof: { kind: 'caseStudy', caseStudySlug: 'w3villa' },
 };

@@ -1,4 +1,5 @@
 import { msg } from '@lingui/core/macro';
+import { IconBuildingFactory2 } from '@tabler/icons-react';
 
 import { type RowDef } from '@/app-preview/types';
 
@@ -27,6 +28,10 @@ export const MANUFACTURING_DISTRIBUTION_INDUSTRY_PAGE: IndustryCategoryPage = {
   slug: 'manufacturing-distribution',
   status: 'draft',
   name: msg`Manufacturing and distribution`,
+  menu: {
+    description: msg`Dealers, agreements and assets`,
+    icon: IconBuildingFactory2,
+  },
   meta: {
     title: msg`Twenty for manufacturing and distribution — a CRM built around dealers and installed equipment`,
     description: msg`Model dealers, sales agreements, installed assets and service visits in an open source CRM. See an example equipment maker's workspace built on Twenty.`,

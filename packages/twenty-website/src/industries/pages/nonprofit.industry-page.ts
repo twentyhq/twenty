@@ -1,4 +1,5 @@
 import { msg } from '@lingui/core/macro';
+import { IconHeartHandshake } from '@tabler/icons-react';
 
 import { type RowDef } from '@/app-preview/types';
 
@@ -29,6 +30,10 @@ export const NONPROFIT_INDUSTRY_PAGE: IndustryCategoryPage = {
   slug: 'nonprofit',
   status: 'draft',
   name: msg`Nonprofit`,
+  menu: {
+    description: msg`Grants, gifts and programs`,
+    icon: IconHeartHandshake,
+  },
   meta: {
     title: msg`Twenty for nonprofits — a CRM that ties every gift to its program`,
     description: msg`Model funders, grants, programs, gifts and reports in an open source CRM. See an example nonprofit workspace built on Twenty.`,

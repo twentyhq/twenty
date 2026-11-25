@@ -1,4 +1,5 @@
 import { msg } from '@lingui/core/macro';
+import { IconSchool } from '@tabler/icons-react';
 
 import { type RowDef } from '@/app-preview/types';
 
@@ -32,6 +33,10 @@ export const EDUCATION_INDUSTRY_PAGE: IndustryCategoryPage = {
   slug: 'education',
   status: 'draft',
   name: msg`Education`,
+  menu: {
+    description: msg`Students, applications and intakes`,
+    icon: IconSchool,
+  },
   meta: {
     title: msg`Twenty for education — a CRM built around students and intakes`,
     description: msg`Model students, applications, intakes, visas and documents in an open source CRM. See an example education agency workspace built on Twenty.`,
@@ -393,11 +398,11 @@ export const EDUCATION_INDUSTRY_PAGE: IndustryCategoryPage = {
     },
     {
       question: msg`We have no developers.`,
-      answer: msg`Objects, views and workflows are built without code. AC&T Education Migration worked with Flycoder, a development partner, for its setup.`,
+      answer: msg`Objects, views and workflows are built without code. For a larger setup, a Twenty partner can do the work.`,
     },
     {
       question: msg`What does switching cost?`,
-      answer: msg`AC&T Education Migration cut its CRM costs by more than 90% after moving to self-hosted Twenty.`,
+      answer: msg`Twenty is priced per seat, and the open source edition can be self-hosted. Import your records by CSV or through the API.`,
     },
   ],
   discovery: [

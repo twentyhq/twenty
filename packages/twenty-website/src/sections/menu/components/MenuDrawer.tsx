@@ -212,7 +212,9 @@ export function MenuDrawer({
 }: MenuDrawerProps) {
   const { i18n } = useLingui();
   const locale = useLocale();
-  const [isGroupExpanded, setIsGroupExpanded] = useState(false);
+  const [expandedGroupLabel, setExpandedGroupLabel] = useState<string | null>(
+    null,
+  );
 
   return (
     <Drawer.Portal>
@@ -234,14 +236,20 @@ export function MenuDrawer({
               ) : (
                 <div>
                   <DrawerGroupToggle
-                    data-expanded={isGroupExpanded ? '' : undefined}
-                    onClick={() => setIsGroupExpanded((previous) => !previous)}
+                    data-expanded={
+                      expandedGroupLabel === item.label.id ? '' : undefined
+                    }
+                    onClick={() =>
+                      setExpandedGroupLabel((previous) =>
+                        previous === item.label.id ? null : item.label.id,
+                      )
+                    }
                     type="button"
                   >
                     {i18n._(item.label)}
                     <IconChevronDown size={20} stroke={1.6} />
                   </DrawerGroupToggle>
-                  {isGroupExpanded && (
+                  {expandedGroupLabel === item.label.id && (
                     <DrawerGroupChildren>
                       {item.children.map((child) =>
                         child.external === true ? (

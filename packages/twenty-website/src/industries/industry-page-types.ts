@@ -1,5 +1,7 @@
 import { type MessageDescriptor } from '@lingui/core';
 
+import { type IconComponent } from '@/icons';
+
 import {
   type ColumnDef,
   type RecordField,
@@ -25,7 +27,8 @@ export type IndustrySectionId =
   | 'switching'
   | 'proof'
   | 'questions'
-  | 'discovery';
+  | 'discovery'
+  | 'related';
 
 export type IndustryStandardObjectId = 'person' | 'company' | 'task' | 'note';
 
@@ -179,11 +182,18 @@ export type IndustryMeta = {
   description: MessageDescriptor;
 };
 
+// How the category appears in the site menu's Industries dropdown.
+export type IndustryMenuEntry = {
+  description: MessageDescriptor;
+  icon: IconComponent;
+};
+
 export type IndustryCategoryPage = {
   kind: 'category';
   slug: string;
   status: IndustryPageStatus;
   name: MessageDescriptor;
+  menu: IndustryMenuEntry;
   meta: IndustryMeta;
   hero: IndustryHero;
   preview: IndustryPreview;
@@ -227,11 +237,19 @@ export type IndustrySubCategoryPage = {
   preview: IndustryPreview;
   pains?: Four<IndustryPain>;
   addedObjects: readonly IndustryObject[];
+  // Category objects this sub-industry does not use.
+  omittedObjectIds?: readonly string[];
+  modelNotes?: Three<IndustryPoint>;
   workflows: Three<IndustryWorkflow>;
   customScreen?: IndustryCustomScreen;
   agents?: IndustryCategoryPage['agents'];
   access?: IndustryCategoryPage['access'];
+  switching?: IndustrySwitching;
+  discovery?: IndustryCategoryPage['discovery'];
   questions: readonly IndustryQuestion[];
+  // 'omit' when the category's answers don't hold here, e.g. they quote a
+  // customer this page does not feature.
+  categoryQuestions?: 'append' | 'omit';
   proof?: IndustryProof;
 };
 
@@ -241,4 +259,12 @@ export type IndustryPageDefinition =
 
 export type ResolvedIndustryPage = Omit<IndustryCategoryPage, 'kind'> & {
   parent?: { slug: string; name: MessageDescriptor };
+};
+
+// Pages linked from a page's own "related" section: a category lists its
+// sub-categories; a sub-category lists its category and siblings.
+export type IndustryRelatedPage = {
+  slug: string;
+  name: MessageDescriptor;
+  summary: MessageDescriptor;
 };

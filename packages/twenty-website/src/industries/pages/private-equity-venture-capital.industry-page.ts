@@ -3,6 +3,7 @@ import { msg } from '@lingui/core/macro';
 import { type RowDef } from '@/app-preview/types';
 
 import { type IndustrySubCategoryPage } from '../industry-page-types';
+import { FINANCIAL_SERVICES_INDUSTRY_PAGE } from './financial-services.industry-page';
 
 const dealRow = (
   id: string,
@@ -102,6 +103,28 @@ export const PRIVATE_EQUITY_VENTURE_CAPITAL_INDUSTRY_PAGE: IndustrySubCategoryPa
         ],
       },
     },
+    pains: [
+      {
+        complaint: msg`Deal flow lives in a spreadsheet and a partner's inbox.`,
+        answer: msg`Email and calendar sync attaches every founder conversation to the deal and the company.`,
+        answeredBy: 'dataModel',
+      },
+      {
+        complaint: msg`Every diligence starts from a different checklist.`,
+        answer: msg`Moving a deal to diligence creates the same checklist tasks and tells the fund's partner.`,
+        answeredBy: 'workflows',
+      },
+      {
+        complaint: msg`LP letters take a week every quarter.`,
+        answer: msg`An agent drafts each fund's update from portfolio notes, and a partner edits it.`,
+        answeredBy: 'agents',
+      },
+      {
+        complaint: msg`Every associate can see every LP's commitment.`,
+        answer: msg`Roles and row-level permissions keep LP records with partners and investor relations.`,
+        answeredBy: 'access',
+      },
+    ],
     addedObjects: [
       {
         id: 'deal',
@@ -151,6 +174,27 @@ export const PRIVATE_EQUITY_VENTURE_CAPITAL_INDUSTRY_PAGE: IndustrySubCategoryPa
         ],
         previewIcon: 'users',
         previewTone: 'teal',
+      },
+    ],
+    omittedObjectIds: [
+      'household',
+      'account',
+      'mandate',
+      'review',
+      'referralSource',
+    ],
+    modelNotes: [
+      {
+        title: msg`A deal is not the company`,
+        body: msg`The company stays on file after a pass, so a later round opens with its full history.`,
+      },
+      {
+        title: msg`Funds tie it together`,
+        body: msg`Deals and portfolio companies point to a fund, and each limited partner to the funds they back.`,
+      },
+      {
+        title: msg`The stake has its own record`,
+        body: msg`Ownership and valuation sit on the portfolio company, apart from the deal that bought it.`,
       },
     ],
     workflows: [
@@ -234,6 +278,86 @@ export const PRIVATE_EQUITY_VENTURE_CAPITAL_INDUSTRY_PAGE: IndustrySubCategoryPa
         footnote: 'Two customer references are still to be called.',
       },
     },
+    agents: {
+      heading: msg`Agents that draft the letter. *Partners sign it*`,
+      items: [
+        {
+          name: msg`LP update writer`,
+          job: msg`Reads each fund's portfolio companies and their notes, then drafts the quarterly LP update.`,
+          reads: ['fund', 'portfolioCompany', 'limitedPartner', 'note'],
+          writes: ['note'],
+          limit: msg`Drafts only. A partner reviews and sends every letter.`,
+        },
+      ],
+    },
+    access: {
+      heading: msg`Deal teams see the pipeline. *LP commitments stay with IR*`,
+      roles: [
+        { id: 'associate', label: msg`Associate` },
+        { id: 'investorRelations', label: msg`Investor relations` },
+        { id: 'partner', label: msg`Partner` },
+      ],
+      rules: [
+        {
+          objectId: 'deal',
+          accessByRoleId: {
+            associate: msg`Own deals, edit`,
+            investorRelations: msg`See all, read-only`,
+            partner: msg`See and edit all`,
+          },
+        },
+        {
+          objectId: 'portfolioCompany',
+          accessByRoleId: {
+            associate: msg`See all`,
+            investorRelations: msg`See all, read-only`,
+            partner: msg`See and edit all`,
+          },
+        },
+        {
+          objectId: 'limitedPartner',
+          accessByRoleId: {
+            associate: msg`No access`,
+            investorRelations: msg`See and edit all`,
+            partner: msg`See all`,
+          },
+        },
+      ],
+    },
+    switching: {
+      salesforceProduct: 'Sales Cloud',
+      mappings: [
+        { salesforceObject: 'Account', objectId: 'company' },
+        { salesforceObject: 'Contact', objectId: 'person' },
+        { salesforceObject: 'Opportunity', objectId: 'deal' },
+        { salesforceObject: 'Fund (custom)', objectId: 'fund' },
+        { salesforceObject: 'Investor (custom)', objectId: 'limitedPartner' },
+      ],
+      note: msg`Export with the Salesforce data loader, then import by CSV or through the API.`,
+    },
+    discovery: [
+      {
+        question: msg`Where does deal flow live today?`,
+        shapes: msg`Decides the import: a spreadsheet, an inbox or another CRM.`,
+      },
+      {
+        question: msg`How many deals enter the pipeline each month?`,
+        shapes: msg`Sets the deal stages and the views each team works from.`,
+      },
+      {
+        question: msg`How many funds are you running, and which are still deploying?`,
+        shapes: msg`Decides the fund records and how deals are allocated.`,
+      },
+      {
+        question: msg`What do portfolio companies report each quarter?`,
+        shapes: msg`Sets the metrics form and the fields it fills.`,
+      },
+      {
+        question: msg`Who may see LP commitments?`,
+        shapes: msg`Sets the investor relations role and its access.`,
+      },
+    ],
+    categoryQuestions: 'omit',
     questions: [
       {
         question: msg`We track deal flow in a spreadsheet.`,
@@ -243,5 +367,11 @@ export const PRIVATE_EQUITY_VENTURE_CAPITAL_INDUSTRY_PAGE: IndustrySubCategoryPa
         question: msg`Can LPs see their own reports?`,
         answer: msg`LP updates go out by email from Twenty. [Confirm whether an LP portal is in scope.]`,
       },
+      {
+        question: msg`Our partners live in Outlook.`,
+        answer: msg`They can stay there. Email and calendar sync brings founder meetings onto the deal and the company.`,
+      },
+      FINANCIAL_SERVICES_INDUSTRY_PAGE.questions[0],
+      FINANCIAL_SERVICES_INDUSTRY_PAGE.questions[3],
     ],
   };

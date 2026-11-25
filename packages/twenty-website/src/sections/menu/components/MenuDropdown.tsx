@@ -176,6 +176,35 @@ const PreviewText = styled.div`
   }
 `;
 
+const PreviewLinkList = styled.ul`
+  border-top: 1px solid ${semanticColor.line};
+  display: grid;
+  list-style: none;
+  padding-top: ${spacing(2)};
+`;
+
+const PreviewLink = styled(NavigationMenu.Link)`
+  border-radius: ${radius(2)};
+  color: ${semanticColor.ink};
+  display: block;
+  font-family: ${fontFamily('mono')};
+  font-size: ${fontSize(3)};
+  font-weight: ${FONT_WEIGHT.medium};
+  padding: ${spacing(2.5)} ${spacing(2)};
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: background 0.18s ${EASING.standard};
+
+  &:hover {
+    background: ${color('black-5')};
+  }
+
+  &:focus-visible {
+    outline: 1px solid ${color('blue')};
+    outline-offset: -1px;
+  }
+`;
+
 export type MenuDropdownProps = {
   items: readonly MenuNavChild[];
 };
@@ -183,7 +212,19 @@ export type MenuDropdownProps = {
 export function MenuDropdown({ items }: MenuDropdownProps) {
   const { i18n } = useLingui();
   const pathname = useUnlocalizedPathname();
-  const [activeHref, setActiveHref] = useState(items[0]?.href ?? '');
+  const isPathWithin = (href: string) =>
+    pathname === href || pathname.startsWith(`${href}/`);
+  // Open on the section the visitor is in, including its sub-pages.
+  const currentItem = items.find(
+    (item) =>
+      item.external !== true &&
+      (isPathWithin(item.href) ||
+        (item.preview.kind === 'links' &&
+          item.preview.links.some((link) => link.href === pathname))),
+  );
+  const [activeHref, setActiveHref] = useState(
+    (currentItem ?? items[0])?.href ?? '',
+  );
   const activeItem =
     items.find((item) => item.href === activeHref) ?? items[0] ?? null;
 
@@ -192,9 +233,7 @@ export function MenuDropdown({ items }: MenuDropdownProps) {
       <DropdownList>
         {items.map((child) => {
           const IconComponent = child.icon;
-          const isCurrentPage =
-            child.external !== true &&
-            (pathname === child.href || pathname.startsWith(`${child.href}/`));
+          const isCurrentPage = child === currentItem;
           return (
             <li
               key={child.href}
@@ -230,29 +269,52 @@ export function MenuDropdown({ items }: MenuDropdownProps) {
       </DropdownList>
       {activeItem && (
         <PreviewPanel>
-          <PreviewFrame>
-            <NextImage
-              alt={i18n._(activeItem.preview.imageAlt)}
-              fill
-              sizes="720px"
-              src={activeItem.preview.image}
-              style={{
-                objectFit: 'cover',
-                objectPosition: activeItem.preview.imagePosition ?? 'top left',
-                transform:
-                  activeItem.preview.imageScale === undefined
-                    ? undefined
-                    : `scale(${activeItem.preview.imageScale})`,
-                transformOrigin: 'center',
-              }}
-            />
-          </PreviewFrame>
-          <PreviewText>
-            <PreviewTitle>{i18n._(activeItem.preview.title)}</PreviewTitle>
-            <PreviewDescription>
-              {i18n._(activeItem.preview.description)}
-            </PreviewDescription>
-          </PreviewText>
+          {activeItem.preview.kind === 'links' ? (
+            <>
+              <PreviewText>
+                <PreviewTitle>{i18n._(activeItem.preview.title)}</PreviewTitle>
+                <PreviewDescription>
+                  {i18n._(activeItem.preview.description)}
+                </PreviewDescription>
+              </PreviewText>
+              <PreviewLinkList>
+                {activeItem.preview.links.map((link) => (
+                  <li key={link.href}>
+                    <PreviewLink render={<LocalizedLink href={link.href} />}>
+                      {i18n._(link.label)}
+                    </PreviewLink>
+                  </li>
+                ))}
+              </PreviewLinkList>
+            </>
+          ) : (
+            <>
+              <PreviewFrame>
+                <NextImage
+                  alt={i18n._(activeItem.preview.imageAlt)}
+                  fill
+                  sizes="720px"
+                  src={activeItem.preview.image}
+                  style={{
+                    objectFit: 'cover',
+                    objectPosition:
+                      activeItem.preview.imagePosition ?? 'top left',
+                    transform:
+                      activeItem.preview.imageScale === undefined
+                        ? undefined
+                        : `scale(${activeItem.preview.imageScale})`,
+                    transformOrigin: 'center',
+                  }}
+                />
+              </PreviewFrame>
+              <PreviewText>
+                <PreviewTitle>{i18n._(activeItem.preview.title)}</PreviewTitle>
+                <PreviewDescription>
+                  {i18n._(activeItem.preview.description)}
+                </PreviewDescription>
+              </PreviewText>
+            </>
+          )}
         </PreviewPanel>
       )}
     </DropdownLayout>

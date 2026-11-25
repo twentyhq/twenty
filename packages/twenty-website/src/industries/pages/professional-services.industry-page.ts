@@ -1,4 +1,5 @@
 import { msg } from '@lingui/core/macro';
+import { IconBriefcase } from '@tabler/icons-react';
 
 import { type RowDef } from '@/app-preview/types';
 
@@ -27,6 +28,10 @@ export const PROFESSIONAL_SERVICES_INDUSTRY_PAGE: IndustryCategoryPage = {
   slug: 'professional-services',
   status: 'draft',
   name: msg`Professional services`,
+  menu: {
+    description: msg`From proposal to staffed project`,
+    icon: IconBriefcase,
+  },
   meta: {
     title: msg`Twenty for professional services — from proposal to staffed engagement`,
     description: msg`Model proposals, engagements, consultants and staffing in an open source CRM. See an example firm workspace built on Twenty.`,
@@ -363,11 +368,11 @@ export const PROFESSIONAL_SERVICES_INDUSTRY_PAGE: IndustryCategoryPage = {
   questions: [
     {
       question: msg`We need time tracking and invoicing.`,
-      answer: msg`Keep your billing tool. Twenty holds client and engagement data and calls it over the API, as Elevate Consulting does.`,
+      answer: msg`Keep your billing tool. Twenty holds client and engagement data and calls it over the API when work is won.`,
     },
     {
       question: msg`Our partners won't use a CRM.`,
-      answer: msg`At Elevate Consulting, business development adopted Twenty because their data was already there when they logged in.`,
+      answer: msg`Email and calendar sync fill each client's timeline, so partners find their relationships already there when they log in.`,
     },
     {
       question: msg`Can rates stay private?`,

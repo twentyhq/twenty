@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { INDUSTRY_BANNED_PHRASES } from './industry-banned-phrases';
 import { INDUSTRY_COPY_LIMITS } from './industry-copy-limits';
+import { INDUSTRY_CUSTOMER_MENTIONS } from './industry-customer-mentions';
 import { type ResolvedIndustryPage } from './industry-page-types';
 import { INDUSTRY_STANDARD_OBJECT_LABELS } from './industry-standard-object-labels';
 
@@ -48,8 +49,23 @@ const countWords = (sentence: string): number =>
 const validateCopy = (page: ResolvedIndustryPage): string[] => {
   const problems: string[] = [];
 
+  const featuredSlug =
+    page.proof.kind === 'caseStudy' ? page.proof.caseStudySlug : undefined;
+
   for (const { path, text } of collectCopy(page, '')) {
     const lowered = text.toLowerCase();
+    for (const [slug, names] of Object.entries(INDUSTRY_CUSTOMER_MENTIONS)) {
+      if (slug === featuredSlug) {
+        continue;
+      }
+      for (const name of names) {
+        if (text.includes(name)) {
+          problems.push(
+            `${path}: names "${name}" but the page's proof is not that story`,
+          );
+        }
+      }
+    }
     for (const phrase of INDUSTRY_BANNED_PHRASES) {
       if (lowered.includes(phrase)) {
         problems.push(`${path}: uses "${phrase}"`);
@@ -83,6 +99,12 @@ const validateCopy = (page: ResolvedIndustryPage): string[] => {
     readText(page.hero.body).length > INDUSTRY_COPY_LIMITS.heroBodyCharacters
   ) {
     problems.push('hero.body: too long');
+  }
+  if (
+    readText(page.menu.description).length >
+    INDUSTRY_COPY_LIMITS.menuDescriptionCharacters
+  ) {
+    problems.push('menu.description: too long');
   }
 
   return problems;
