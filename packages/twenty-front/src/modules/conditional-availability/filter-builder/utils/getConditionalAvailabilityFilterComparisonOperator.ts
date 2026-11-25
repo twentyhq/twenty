@@ -1,4 +1,4 @@
-import { type ConditionalAvailabilityFilterOperator } from '@/conditional-availability/types/ConditionalAvailabilityFilterOperator';
+import { type ConditionalAvailabilityFilterOperator } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilterOperator';
 import { type ConditionalEvaluationComparisonOperator } from 'twenty-shared/conditional-evaluation';
 import { assertUnreachable } from 'twenty-shared/utils';
 

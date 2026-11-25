@@ -1,10 +1,10 @@
-import { type ConditionalAvailabilityFilter } from '@/conditional-availability/types/ConditionalAvailabilityFilter';
-import { type ConditionalAvailabilityFilterGroup } from '@/conditional-availability/types/ConditionalAvailabilityFilterGroup';
-import { convertConditionalAvailabilityFilterOrGroupToNode } from '@/conditional-availability/utils/convertConditionalAvailabilityFilterOrGroupToNode';
-import { createEmptyConditionalAvailabilityFilter } from '@/conditional-availability/utils/createEmptyConditionalAvailabilityFilter';
-import { updateConditionalAvailabilityFilter } from '@/conditional-availability/utils/updateConditionalAvailabilityFilter';
-import { updateConditionalAvailabilityFilterGroup } from '@/conditional-availability/utils/updateConditionalAvailabilityFilterGroup';
-import { updateConditionalAvailabilityFilterOperator } from '@/conditional-availability/utils/updateConditionalAvailabilityFilterOperator';
+import { type ConditionalAvailabilityFilter } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilter';
+import { type ConditionalAvailabilityFilterGroup } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilterGroup';
+import { convertConditionalAvailabilityFilterOrGroupToNode } from '@/conditional-availability/filter-builder/filters-to-nodes/utils/convertConditionalAvailabilityFilterOrGroupToNode';
+import { createEmptyConditionalAvailabilityFilter } from '@/conditional-availability/filter-builder/utils/createEmptyConditionalAvailabilityFilter';
+import { updateConditionalAvailabilityFilter } from '@/conditional-availability/filter-builder/utils/updateConditionalAvailabilityFilter';
+import { updateConditionalAvailabilityFilterGroup } from '@/conditional-availability/filter-builder/utils/updateConditionalAvailabilityFilterGroup';
+import { updateConditionalAvailabilityFilterOperator } from '@/conditional-availability/filter-builder/utils/updateConditionalAvailabilityFilterOperator';
 import { buildDeviceConditionalEvaluationNode } from 'twenty-shared/conditional-evaluation';
 
 const ADMIN_ROLE_UNIVERSAL_IDENTIFIER = '20202020-0000-4000-8000-000000000001';

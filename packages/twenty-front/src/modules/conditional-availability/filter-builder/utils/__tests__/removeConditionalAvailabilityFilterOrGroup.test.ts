@@ -1,6 +1,6 @@
-import { type ConditionalAvailabilityFilter } from '@/conditional-availability/types/ConditionalAvailabilityFilter';
-import { type ConditionalAvailabilityFilterGroup } from '@/conditional-availability/types/ConditionalAvailabilityFilterGroup';
-import { removeConditionalAvailabilityFilterOrGroup } from '@/conditional-availability/utils/removeConditionalAvailabilityFilterOrGroup';
+import { type ConditionalAvailabilityFilter } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilter';
+import { type ConditionalAvailabilityFilterGroup } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilterGroup';
+import { removeConditionalAvailabilityFilterOrGroup } from '@/conditional-availability/filter-builder/utils/removeConditionalAvailabilityFilterOrGroup';
 
 const ROLE_FILTER: ConditionalAvailabilityFilter = {
   type: 'filter',

@@ -1,4 +1,4 @@
-import { type ConditionalAvailabilityFilterVariable } from '@/conditional-availability/types/ConditionalAvailabilityFilterVariable';
+import { type ConditionalAvailabilityFilterVariable } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilterVariable';
 import { isNonEmptyString } from '@sniptt/guards';
 import { CONDITIONAL_EVALUATION_DEVICES } from 'twenty-shared/conditional-evaluation';
 import { assertUnreachable } from 'twenty-shared/utils';

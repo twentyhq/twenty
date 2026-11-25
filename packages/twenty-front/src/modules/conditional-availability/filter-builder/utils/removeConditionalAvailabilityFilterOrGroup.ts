@@ -1,4 +1,4 @@
-import { type ConditionalAvailabilityFilterGroup } from '@/conditional-availability/types/ConditionalAvailabilityFilterGroup';
+import { type ConditionalAvailabilityFilterGroup } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilterGroup';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
 export const removeConditionalAvailabilityFilterOrGroup = ({
