@@ -4255,11 +4255,6 @@ msgstr "برنامه با موفقیت نصب شد."
 msgid "Application Logs"
 msgstr "گزارش‌های برنامه"
 
-#. js-lingui-id: UiH6l9
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Application price billing"
-msgstr "صورتحساب‌گیری قیمت برنامه"
-
 #. js-lingui-id: Ko+Gd2
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
@@ -5324,11 +5319,6 @@ msgstr "بین {startOrdinal} و {endOrdinal} ماه"
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "Bill credits to your workspace"
 msgstr "اعتبارها را به فضای کاری شما صورتحساب می‌کند"
-
-#. js-lingui-id: jKtUV8
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Bill the prices declared by installed apps on the workspace subscription. The price is not shown before install yet."
-msgstr "قیمت‌های اعلام‌شده توسط برنامه‌های نصب‌شده را در اشتراک فضای کاری صورتحساب کنید. قیمت هنوز پیش از نصب نمایش داده نمی‌شود."
 
 #. js-lingui-id: WVxikw
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts

@@ -4255,11 +4255,6 @@ msgstr "Η εφαρμογή εγκαταστάθηκε με επιτυχία."
 msgid "Application Logs"
 msgstr "Αρχεία καταγραφής εφαρμογής"
 
-#. js-lingui-id: UiH6l9
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Application price billing"
-msgstr "Χρέωση τιμών εφαρμογών"
-
 #. js-lingui-id: Ko+Gd2
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
@@ -5324,11 +5319,6 @@ msgstr "μεταξύ του {startOrdinal} και {endOrdinal} του μήνα"
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "Bill credits to your workspace"
 msgstr "Χρεώστε πιστώσεις στον χώρο εργασίας σας"
-
-#. js-lingui-id: jKtUV8
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Bill the prices declared by installed apps on the workspace subscription. The price is not shown before install yet."
-msgstr "Χρεώστε τις τιμές που δηλώνονται από εγκατεστημένες εφαρμογές στη συνδρομή του χώρου εργασίας. Η τιμή δεν εμφανίζεται ακόμη πριν από την εγκατάσταση."
 
 #. js-lingui-id: WVxikw
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts

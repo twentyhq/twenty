@@ -4255,11 +4255,6 @@ msgstr "היישום הותקן בהצלחה."
 msgid "Application Logs"
 msgstr "יומני היישום"
 
-#. js-lingui-id: UiH6l9
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Application price billing"
-msgstr "חיוב מחירי יישומים"
-
 #. js-lingui-id: Ko+Gd2
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
@@ -5324,11 +5319,6 @@ msgstr "בין ה-{startOrdinal} ובין ה-{endOrdinal} של החודש"
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "Bill credits to your workspace"
 msgstr "חייב קרדיטים למרחב העבודה שלך"
-
-#. js-lingui-id: jKtUV8
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Bill the prices declared by installed apps on the workspace subscription. The price is not shown before install yet."
-msgstr "חייב את המחירים שהוצהרו על ידי יישומים מותקנים במינוי סביבת העבודה. המחיר עדיין אינו מוצג לפני ההתקנה."
 
 #. js-lingui-id: WVxikw
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts

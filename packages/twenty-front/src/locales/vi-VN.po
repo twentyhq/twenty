@@ -4255,11 +4255,6 @@ msgstr "Đã cài đặt ứng dụng thành công."
 msgid "Application Logs"
 msgstr "Nhật ký ứng dụng"
 
-#. js-lingui-id: UiH6l9
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Application price billing"
-msgstr "Thanh toán giá ứng dụng"
-
 #. js-lingui-id: Ko+Gd2
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
@@ -5324,11 +5319,6 @@ msgstr "giữa {startOrdinal} và {endOrdinal} của tháng"
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "Bill credits to your workspace"
 msgstr "Tính phí tín dụng vào không gian làm việc của bạn"
-
-#. js-lingui-id: jKtUV8
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Bill the prices declared by installed apps on the workspace subscription. The price is not shown before install yet."
-msgstr "Tính phí các mức giá do ứng dụng đã cài đặt khai báo vào gói đăng ký không gian làm việc. Giá chưa được hiển thị trước khi cài đặt."
 
 #. js-lingui-id: WVxikw
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts

@@ -4255,11 +4255,6 @@ msgstr "Uygulama başarıyla yüklendi."
 msgid "Application Logs"
 msgstr "Uygulama Günlükleri"
 
-#. js-lingui-id: UiH6l9
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Application price billing"
-msgstr "Uygulama fiyatı faturalandırması"
-
 #. js-lingui-id: Ko+Gd2
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
@@ -5324,11 +5319,6 @@ msgstr "ayın {startOrdinal} ve {endOrdinal} arasında"
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "Bill credits to your workspace"
 msgstr "Kredileri çalışma alanınıza faturalandır"
-
-#. js-lingui-id: jKtUV8
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Bill the prices declared by installed apps on the workspace subscription. The price is not shown before install yet."
-msgstr "Yüklü uygulamalar tarafından beyan edilen fiyatları çalışma alanı aboneliğine faturalandırın. Fiyat henüz yüklemeden önce gösterilmez."
 
 #. js-lingui-id: WVxikw
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts

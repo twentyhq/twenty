@@ -4255,11 +4255,6 @@ msgstr "Aplikacja została pomyślnie zainstalowana."
 msgid "Application Logs"
 msgstr "Dzienniki aplikacji"
 
-#. js-lingui-id: UiH6l9
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Application price billing"
-msgstr "Rozliczanie cen aplikacji"
-
 #. js-lingui-id: Ko+Gd2
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
@@ -5324,11 +5319,6 @@ msgstr "pomiędzy {startOrdinal} a {endOrdinal} miesiąca"
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "Bill credits to your workspace"
 msgstr "Obciąż kredytami swoją przestrzeń roboczą"
-
-#. js-lingui-id: jKtUV8
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Bill the prices declared by installed apps on the workspace subscription. The price is not shown before install yet."
-msgstr "Naliczaj opłaty za ceny określone przez zainstalowane aplikacje w subskrypcji obszaru roboczego. Cena nie jest jeszcze wyświetlana przed instalacją."
 
 #. js-lingui-id: WVxikw
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts

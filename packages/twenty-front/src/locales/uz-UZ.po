@@ -4255,11 +4255,6 @@ msgstr "Ilova muvaffaqiyatli o‘rnatildi."
 msgid "Application Logs"
 msgstr "Ilova jurnallari"
 
-#. js-lingui-id: UiH6l9
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Application price billing"
-msgstr "Ilova narxlarini hisob-kitob qilish"
-
 #. js-lingui-id: Ko+Gd2
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
@@ -5324,11 +5319,6 @@ msgstr "oyning {startOrdinal} dan {endOrdinal} gacha bo‘lgan kunlari orasida"
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "Bill credits to your workspace"
 msgstr "Kreditlarni ish maydoningizga hisoblang"
-
-#. js-lingui-id: jKtUV8
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Bill the prices declared by installed apps on the workspace subscription. The price is not shown before install yet."
-msgstr "O‘rnatilgan ilovalar tomonidan e’lon qilingan narxlarni ish maydoni obunasi uchun hisob-kitob qiling. Narx hali o‘rnatishdan oldin ko‘rsatilmaydi."
 
 #. js-lingui-id: WVxikw
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts

@@ -4255,11 +4255,6 @@ msgstr "تم تثبيت التطبيق بنجاح."
 msgid "Application Logs"
 msgstr "سجلات التطبيق"
 
-#. js-lingui-id: UiH6l9
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Application price billing"
-msgstr "فوترة أسعار التطبيق"
-
 #. js-lingui-id: Ko+Gd2
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
@@ -5324,11 +5319,6 @@ msgstr "بين {startOrdinal} و {endOrdinal} من الشهر"
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "Bill credits to your workspace"
 msgstr "احتسب الأرصدة على مساحة العمل الخاصة بك"
-
-#. js-lingui-id: jKtUV8
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Bill the prices declared by installed apps on the workspace subscription. The price is not shown before install yet."
-msgstr "افرض رسوم الأسعار التي تعلنها التطبيقات المثبتة على اشتراك مساحة العمل. لا يظهر السعر قبل التثبيت بعد."
 
 #. js-lingui-id: WVxikw
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
