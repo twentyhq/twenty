@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
+import QRCode from 'react-qr-code';
 import { useTranslate } from 'twenty-sdk/front-component';
 import { Callout, Section } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
@@ -37,6 +38,17 @@ const StyledCommand = styled.code`
   padding: ${() => themeCssVariables.spacing[1]}
     ${() => themeCssVariables.spacing[2]};
   user-select: all;
+`;
+
+const QR_CODE_SIZE_PX = 144;
+const QR_CODE_BACKGROUND_COLOR = '#FFFFFF';
+
+const StyledQrCode = styled.div`
+  background: ${QR_CODE_BACKGROUND_COLOR};
+  border: 1px solid ${() => themeCssVariables.border.color.medium};
+  border-radius: ${() => themeCssVariables.border.radius.md};
+  display: flex;
+  padding: ${() => themeCssVariables.spacing[3]};
 `;
 
 export const TelegramConnectSection = () => {
@@ -79,11 +91,21 @@ export const TelegramConnectSection = () => {
             </StyledHint>
             <StyledHint>
               {t(
-                'Telegram does not open? Send this message to @{botUsername}:',
-                {
-                  botUsername: startState.botUsername,
-                },
+                'No Telegram on this computer? Scan this code with your phone:',
               )}
+            </StyledHint>
+            <StyledQrCode>
+              <QRCode
+                value={startState.url}
+                size={QR_CODE_SIZE_PX}
+                bgColor={QR_CODE_BACKGROUND_COLOR}
+                title={t('QR code that opens the Telegram bot')}
+              />
+            </StyledQrCode>
+            <StyledHint>
+              {t('Or send this message to @{botUsername}:', {
+                botUsername: startState.botUsername,
+              })}
             </StyledHint>
             <StyledCommand>{startState.startCommand}</StyledCommand>
           </>

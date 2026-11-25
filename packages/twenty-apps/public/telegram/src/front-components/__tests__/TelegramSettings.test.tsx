@@ -93,9 +93,10 @@ describe('TelegramSettings', () => {
       }),
     ).toHaveProperty('href', 'https://t.me/TwentyBot?start=token');
     expect(
-      screen.getByText(
-        'Telegram does not open? Send this message to @TwentyBot:',
-      ),
+      screen.getByTitle('QR code that opens the Telegram bot'),
+    ).toBeTruthy();
+    expect(
+      screen.getByText('Or send this message to @TwentyBot:'),
     ).toBeTruthy();
     expect(screen.getByText('/start token')).toBeTruthy();
     expect(restPostMock.mock.calls).toEqual([
