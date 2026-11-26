@@ -54,7 +54,8 @@ type MessageAccumulator = {
     | 'messageThreadExternalId'
     | 'direction'
   > &
-    MessageChannelMessageAssociationSource;
+    MessageChannelMessageAssociationSource &
+    Partial<Pick<MessageChannelMessageAssociationWorkspaceEntity, 'createdBy'>>;
 };
 @Injectable()
 export class MessagingMessageService {
@@ -75,7 +76,7 @@ export class MessagingMessageService {
     transactionScope: WorkspaceTransactionScope;
     workspaceId: string;
     associationSource: MessageChannelMessageAssociationSource;
-    // stamped on the messages and threads this call creates, never on existing ones
+    // stamped on the records this call creates, never on existing ones
     createdBy?: ActorMetadata;
   }): Promise<{
     createdMessages: Partial<MessageWorkspaceEntity>[];
@@ -257,6 +258,7 @@ export class MessagingMessageService {
               messageThreadExternalId: message.messageThreadExternalId,
               direction: message.direction,
               ...associationSource,
+              ...(isDefined(createdBy) ? { createdBy } : {}),
             };
 
             associationToCreateByMessageId.set(

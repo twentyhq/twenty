@@ -143,6 +143,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
               folderLinkUpdate === 'replace'
                 ? refetchedMessageChannelMessageAssociationIds
                 : [],
+              createdBy,
             ),
           );
 
@@ -229,6 +230,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
               {
                 shouldMatchOnDisplayName:
                   messageChannel.type !== MessageChannelType.APP,
+                createdBy,
               },
             );
 
@@ -245,6 +247,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
             }),
             workspaceId,
             transactionScope,
+            createdBy,
           });
 
           await this.messageAttachmentService.saveMessageRemoteAttachments({
