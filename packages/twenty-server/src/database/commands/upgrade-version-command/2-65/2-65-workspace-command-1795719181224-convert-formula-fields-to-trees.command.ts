@@ -12,7 +12,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.65.0', 1795711387584)
+@RegisteredWorkspaceCommand('2.65.0', 1795719181224)
 @Command({
   name: 'upgrade:2-65:convert-formula-fields-to-trees',
   description:
