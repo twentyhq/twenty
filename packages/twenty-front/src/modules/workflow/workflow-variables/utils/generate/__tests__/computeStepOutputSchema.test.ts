@@ -60,7 +60,6 @@ describe('computeStepOutputSchema', () => {
         'threadId',
         'outcome',
         'toolName',
-        'feedback',
         'error',
         'arguments',
         'output',

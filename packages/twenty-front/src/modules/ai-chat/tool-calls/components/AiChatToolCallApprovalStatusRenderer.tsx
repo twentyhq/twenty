@@ -58,7 +58,7 @@ export const AiChatToolCallApprovalStatusRenderer = ({
       pending: summary,
       running: summary,
       approved: summary,
-      rejected: result?.feedback,
+      rejected: result?.feedback ?? summary,
       failed: result?.error,
       conflict: summary,
       skipped: summary,
