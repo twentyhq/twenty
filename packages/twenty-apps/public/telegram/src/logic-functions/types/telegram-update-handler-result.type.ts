@@ -6,5 +6,9 @@ export type TelegramUpdateHandlerResult = {
     | 'LINK_CONFLICT'
     | 'DISCONNECTED'
     | 'NOT_CONNECTED'
-    | 'CONNECTED';
+    | 'CONNECTED'
+    | 'TEXT_ONLY'
+    | 'ANSWERED'
+    | 'STILL_RUNNING'
+    | 'FAILED';
 };
