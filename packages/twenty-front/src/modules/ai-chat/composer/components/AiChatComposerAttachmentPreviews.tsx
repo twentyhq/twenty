@@ -3,15 +3,7 @@ import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThr
 import { aiChatComposerUploadingFilesFamilyState } from '@/ai-chat/composer/states/aiChatComposerUploadingFilesFamilyState';
 import { aiChatComposerAttachmentsFamilyState } from '@/ai-chat/composer/states/aiChatComposerAttachmentsFamilyState';
 import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
-import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme';
-
-const StyledPreviewsContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: ${themeCssVariables.spacing[1]};
-  width: 100%;
-`;
+import { ChatComposerAttachments } from '@/chat/components/ChatComposerAttachments';
 
 export const AiChatComposerAttachmentPreviews = () => {
   const { threadId } = useAiChatInstanceOrThrow();
@@ -26,16 +18,12 @@ export const AiChatComposerAttachmentPreviews = () => {
     );
   };
 
-  const hasFiles =
+  const hasAttachments =
     aiChatComposerUploadingFiles.length > 0 ||
     aiChatComposerAttachments.length > 0;
 
-  if (!hasFiles) {
-    return null;
-  }
-
   return (
-    <StyledPreviewsContainer>
+    <ChatComposerAttachments hasAttachments={hasAttachments}>
       {aiChatComposerUploadingFiles.map((file, index) => (
         <ChatFilePreview
           file={file}
@@ -58,6 +46,6 @@ export const AiChatComposerAttachmentPreviews = () => {
           isUploading={false}
         />
       ))}
-    </StyledPreviewsContainer>
+    </ChatComposerAttachments>
   );
 };
