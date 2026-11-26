@@ -62,8 +62,6 @@ const reconstruct = ({
       name: 'Rule',
       description: null,
       icon: null,
-      expression: null,
-      bindings: {},
       tree,
       message,
       isActive: true,

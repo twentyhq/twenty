@@ -33,8 +33,6 @@ const buildRule = (
   errorFieldMetadataUniversalIdentifier: null,
   description: null,
   icon: null,
-  expression: null,
-  bindings: {},
   message: 'Message',
   isActive: true,
   createdAt: NOW,

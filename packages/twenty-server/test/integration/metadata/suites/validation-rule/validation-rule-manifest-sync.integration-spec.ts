@@ -101,7 +101,7 @@ const findValidationRuleRow = async (
   validationRuleId: string = VALIDATION_RULE_ID,
 ) => {
   const rows = await globalThis.testDataSource.query(
-    `SELECT vr.name, vr.expression, vr.bindings, vr.tree, vr.message, vr."isActive",
+    `SELECT vr.name, vr.tree, vr.message, vr."isActive",
        errorField."universalIdentifier" AS "errorFieldUniversalIdentifier",
        app."universalIdentifier" AS "applicationUniversalIdentifier"
      FROM core."validationRule" vr
@@ -157,8 +157,6 @@ describe('Validation rules declared in an application manifest', () => {
     expect(errors).toBeUndefined();
     expect(await findValidationRuleRow()).toEqual({
       name: 'Ticket has a reference',
-      expression: null,
-      bindings: {},
       tree: READ_REFERENCE_FIELD_TREE,
       message: 'A ticket needs a reference',
       isActive: true,

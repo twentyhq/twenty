@@ -35,8 +35,6 @@ export const fromValidationRuleManifestToUniversalFlatValidationRule = ({
   name: validationRuleManifest.name.trim(),
   description: validationRuleManifest.description ?? null,
   icon: validationRuleManifest.icon ?? null,
-  expression: null,
-  bindings: {},
   tree,
   message: validationRuleManifest.message.trim(),
   isActive,

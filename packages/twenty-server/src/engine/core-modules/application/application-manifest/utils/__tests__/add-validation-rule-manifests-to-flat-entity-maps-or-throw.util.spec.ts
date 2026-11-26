@@ -75,8 +75,6 @@ const buildExistingRule = (
   name: 'Rule',
   description: null,
   icon: null,
-  expression: null,
-  bindings: {},
   tree: TRUE_TREE,
   message: 'Message',
   isActive: true,
@@ -164,8 +162,6 @@ describe('addValidationRuleManifestsToFlatEntityMapsOrThrow', () => {
       name: 'Large companies need a reference',
       description: null,
       icon: null,
-      expression: null,
-      bindings: {},
       tree: {
         type: 'GROUP',
         logicalOperator: 'OR',

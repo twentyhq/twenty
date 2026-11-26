@@ -46,8 +46,6 @@ export const fromUpdateValidationRuleInputToFlatValidationRuleToUpdate = ({
 
   return {
     ...mergedFlatValidationRule,
-    expression: null,
-    bindings: {},
     errorFieldMetadataUniversalIdentifier,
     updatedAt: new Date().toISOString(),
   };

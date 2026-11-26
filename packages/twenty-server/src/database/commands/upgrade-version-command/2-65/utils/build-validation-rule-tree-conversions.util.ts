@@ -1,5 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { expressionNodeSchema } from 'twenty-shared/expression';
+import { type ValidationRuleBindings } from 'twenty-shared/types';
 import {
   isDefined,
   parseExpressionNode,
@@ -13,12 +14,19 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { type FlatValidationRule } from 'src/engine/metadata-modules/flat-validation-rule/types/flat-validation-rule.type';
 import { buildValidationRuleFieldDescriptors } from 'src/engine/metadata-modules/validation-rule/utils/build-validation-rule-field-descriptors.util';
 
+export type LegacyValidationRuleText = {
+  expression: string;
+  bindings: ValidationRuleBindings;
+};
+
 export const buildValidationRuleTreeConversions = ({
   flatValidationRules,
+  legacyValidationRuleTextById,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
 }: {
   flatValidationRules: FlatValidationRule[];
+  legacyValidationRuleTextById: Map<string, LegacyValidationRuleText>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
 }): {
@@ -29,27 +37,25 @@ export const buildValidationRuleTreeConversions = ({
   const unparsableValidationRuleIds: string[] = [];
 
   for (const flatValidationRule of flatValidationRules) {
-    const { expression, bindings, objectMetadataId } = flatValidationRule;
+    const legacyValidationRuleText = legacyValidationRuleTextById.get(
+      flatValidationRule.id,
+    );
 
     if (
-      !isDefined(expression) ||
+      !isDefined(legacyValidationRuleText) ||
       expressionNodeSchema.safeParse(flatValidationRule.tree).success
     ) {
       continue;
     }
 
+    const { expression, bindings } = legacyValidationRuleText;
+
     if (!isNonEmptyString(expression.trim())) {
-      flatValidationRulesToUpdate.push({
-        ...flatValidationRule,
-        expression: null,
-        bindings: {},
-        tree: null,
-      });
       continue;
     }
 
     const fields = buildValidationRuleFieldDescriptors({
-      objectMetadataId,
+      objectMetadataId: flatValidationRule.objectMetadataId,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       shouldIncludeInactiveFields: true,
@@ -76,8 +82,6 @@ export const buildValidationRuleTreeConversions = ({
 
     flatValidationRulesToUpdate.push({
       ...flatValidationRule,
-      expression: null,
-      bindings: {},
       tree: resolveExpressionFieldReferences({ node: parsing.node, fields }),
     });
   }
