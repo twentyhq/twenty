@@ -1,219 +1,235 @@
 'use client';
 
-import { msg } from '@lingui/core/macro';
-import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
-import {
-  IconApi,
-  IconChartBar,
-  IconDatabase,
-  IconMail,
-  IconShieldLock,
-  IconSitemap,
-  IconTransfer,
-  type Icon,
-} from '@tabler/icons-react';
-import { useEffect, useRef } from 'react';
-import * as THREE from 'three';
-import { Line2 } from 'three/examples/jsm/lines/Line2.js';
-import { LineGeometry } from 'three/examples/jsm/lines/LineGeometry.js';
-import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
+import { useEffect, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useMenuStyleWriter } from '@/platform/menu-style';
-
 import {
-  createHalftoneDotStage,
-  createHalftoneToneMaterial,
-} from '@/platform/visuals/halftone-dots/create-halftone-dot-stage';
+  HalftoneModel,
+  type HalftoneModelProps,
+} from '@/platform/visuals/rigs/HalftoneModel';
 import {
-  SceneOverlay,
-  TagDetail,
-  TagName,
-} from '@/platform/visuals/halftone-dots/halftone-dot-scene-parts';
-import {
-  color,
+  DURATION,
+  EASING,
+  HERO_COMPOSITION,
   MENU_HEIGHT_PX,
   paletteColorNumber,
+  REDUCED_MOTION,
   semanticColor,
 } from '@/tokens';
+import { cssVariableStyle } from '@/ui/css-variable-style';
 
-// The integrators hero: a blueprint of an integrator's work. A grid of
-// tiles, each with a figure drawn in fine lines and filled with the home's
-// halftone; the pieces of work a client pays for sit on the grid's crossings
-// and run along the lines to the money at the centre, the integrator's 20%,
-// which climbs and grows with each one (a seat at $39, so $7.80 a month).
-const TILE = 2.7;
-// The network sits where the other heroes' banner does (its height, the
-// same scale); the grid carries on above it, behind the copy.
-const BANNER_UNITS = { wide: 8, narrow: 7.6 };
-const bannerPx = (width: number) => Math.min(Math.max(0.36 * width, 202), 396);
-const FOV = 28;
+// The integrators hero: an integrator's tools, so the page reads as theirs at
+// first sight, and the money they bring. A terminal, very large, between
+// code braces and a keyboard key, over a small mountain of coins that
+// builds itself;
+// each a 3D model in the site's halftone (as the partners services draw
+// theirs).
+const TOOL_SETTINGS = {
+  previewDistance: 4.5,
+  lighting: {
+    intensity: 1.5,
+    fillIntensity: 0.48,
+    ambientIntensity: 0.3,
+    angleDegrees: 53,
+    height: 2,
+  },
+  material: {
+    surface: 'solid',
+    color: 0xd4d0c8,
+    roughness: 0.42,
+    metalness: 0.15,
+  },
+  halftone: {
+    variant: 'band',
+    scale: 14,
+    power: 0.4,
+    width: 0.5,
+    dashColor: paletteColorNumber('blue'),
+    hoverDashColor: paletteColorNumber('blue'),
+  },
+  // they float and drift a little, never enough to lose the shape
+  animation: {
+    autoRotateEnabled: false,
+    floatEnabled: true,
+    floatSpeed: 0.8,
+    floatAmplitude: 0.05,
+    driftAmount: 10,
+    followDragEnabled: false,
+    springReturnEnabled: true,
+    springDamping: 0.6,
+    springStrength: 0.06,
+  },
+} satisfies HalftoneModelProps['settings'];
 
-// In tiles from the centre; the outer ones only show on wide screens.
-const WORK: readonly {
-  name: string;
-  icon: Icon;
-  at: readonly [number, number];
-}[] = [
-  { name: 'data-model', icon: IconDatabase, at: [-2, 1] },
-  { name: 'permissions', icon: IconShieldLock, at: [2, -1] },
-  { name: 'migration', icon: IconTransfer, at: [-2, -1] },
-  { name: 'workflows', icon: IconSitemap, at: [2, 1] },
-  { name: 'dashboards', icon: IconChartBar, at: [-5, 1] },
-  { name: 'api', icon: IconApi, at: [5, -1] },
-  { name: 'emails', icon: IconMail, at: [5, 1] },
-];
-const SHARE_PER_SEAT_USD = 39 * 0.2;
-// The Earnings step's example: 75 seats make $585 a month, then it starts over.
-const SEATS_PER_ROUND = 75;
+// The row, left to right: code braces, the terminal, a keyboard key (the
+// site's own code keycap). Each model's share of the banner's height, the way
+// it turns (the sides face in towards the terminal), how far it sits up from
+// the banner's middle, and how far it tucks in on its neighbours, in banner
+// heights.
+const ITEMS = [
+  {
+    model: 'braces',
+    size: 0.46,
+    turn: 0.32,
+    lean: 0,
+    lift: 0.32,
+    tuck: -0.02,
+    geometry: undefined,
+  },
+  {
+    model: 'terminal',
+    size: 0.8,
+    turn: 0,
+    lean: 0,
+    lift: 0.36,
+    tuck: 0,
+    geometry: undefined,
+  },
+  {
+    model: 'code-keycap',
+    size: 0.56,
+    turn: -0.32,
+    // seen from above, so its top and the </> on it show
+    lean: 0.65,
+    lift: 0.32,
+    tuck: -0.02,
+    geometry: undefined,
+  },
+] as const;
 
-const USD = new Intl.NumberFormat('en-US', {
-  currency: 'USD',
-  maximumFractionDigits: 0,
-  style: 'currency',
-});
+// The money it brings: a small mountain of coins (coin.glb, as on the
+// creators hero), poured rather than stacked, each coin leaning and turned
+// its own way. It builds itself once the hero shows: the coins fall in one
+// after the other, from the bottom of the heap to its top.
+const HEAP = { count: 64, radius: 2.4, height: 15 };
+// a fixed scatter, so the server and the browser draw the same heap
+const scatter = (seed: number): number => {
+  const value = Math.sin(seed * 12.9898) * 43758.5453;
+  return value - Math.floor(value);
+};
+const BASE_PLACEMENTS = Array.from({ length: HEAP.count }, (_, index) => {
+  // more coins near the base, as a heap has
+  const level = 1 - Math.sqrt(scatter(index * 5 + 1));
+  const reach = HEAP.radius * (1 - level) * Math.sqrt(scatter(index * 5 + 2));
+  const angle = scatter(index * 5 + 3) * Math.PI * 2;
+  // the slope tips them: some lie flatter, some steeper
+  const lean = 0.3 + 0.7 * scatter(index * 5 + 4);
+  return {
+    x: Math.cos(angle) * reach,
+    y: level * HEAP.height,
+    z: Math.sin(angle) * reach * 0.55,
+    tiltX: (scatter(index * 7 + 5) - 0.5) * 1.2 * lean,
+    tiltZ: (scatter(index * 11 + 6) - 0.5) * 1.2 * lean,
+    turn: scatter(index * 13 + 7) * Math.PI * 2,
+  };
+}).toSorted((a, b) => a.y - b.y);
+// How long the heap takes to build, from the first coin to the last.
+const BASE_BUILD_MS = 2400;
+// It starts once the coin model has had time to load, so the fall is seen.
+const BASE_START_MS = 1200;
+const BASE_COIN_SIZE = { scaleTarget: 0.9 };
+const BASE_SETTINGS = {
+  ...TOOL_SETTINGS,
+  previewDistance: 9,
+  halftone: { ...TOOL_SETTINGS.halftone, scale: 9 },
+  animation: {
+    ...TOOL_SETTINGS.animation,
+    floatEnabled: false,
+  },
+} satisfies HalftoneModelProps['settings'];
 
-const PACKET_SPEED = 2.4; // units per second
-const PACKET_EVERY_MS = 4200;
-const ARRIVAL_MS = 600;
-// On load the blueprint draws itself from the centre out, as Stripe's does:
-// each line is traced and each fill's dots come up once the wave reaches it,
-// then the work starts flowing.
-const INTRO = { msPerUnit: 60, drawMs: 400, flowAfterMs: 1000 };
-const SEGMENT_UNITS = 0.3;
-// The data running through a route: a short bright stretch of the line,
-// its head full blue, its tail fading into the route's own tint.
-const PULSE = { length: 1.6, points: 16, width: 2.6 };
-// Decelerating, close to the site's default cubic-bezier(0.16, 1, 0.3, 1).
-const ease = (t: number) => 1 - Math.pow(1 - Math.min(Math.max(t, 0), 1), 4);
-// Along a route: leaves gently and settles into the money (smootherstep).
-const glide = (t: number) => t * t * t * (t * (t * 6 - 15) + 10);
-
-// The figure drawn in a tile, picked from its place so the pattern is stable.
-type Figure = 'circle' | 'square' | 'diamond' | 'arcs' | 'diagonals' | 'none';
-const FIGURES: readonly Figure[] = [
-  'circle',
-  'none',
-  'square',
-  'arcs',
-  'diamond',
-  'none',
-  'diagonals',
-  'circle',
-  'none',
-  'square',
-];
-const figureAt = (column: number, row: number): Figure =>
-  FIGURES[Math.abs((column * 7 + row * 3 + column * row) % FIGURES.length)];
-
-const circlePoints = (
-  cx: number,
-  cy: number,
-  r: number,
-  from = 0,
-  to = Math.PI * 2,
-  steps = 64,
-) =>
-  Array.from({ length: steps + 1 }, (_, index) => {
-    const angle = from + ((to - from) * index) / steps;
-    return [cx + r * Math.cos(angle), cy + r * Math.sin(angle)] as const;
-  });
-
-const LogoNode = styled.div`
-  background-color: ${color('white')};
-  border: 1px solid color-mix(in srgb, ${semanticColor.ink} 12%, transparent);
-  border-radius: 50%;
-  display: none;
-  height: 44px;
-  left: 0;
-  opacity: var(--o, 1);
-  position: absolute;
-  top: 0;
-  transform: translate(var(--x), var(--y)) translate(-50%, -50%)
-    scale(var(--s, 1));
-  width: 44px;
-
-  svg {
-    color: ${semanticColor.ink};
-    left: 50%;
-    position: absolute;
-    top: 50%;
-    transform: translate(-50%, -50%);
-  }
-
-  &[data-hub] {
-    background-color: ${color('blue')};
-    border-color: ${color('blue')};
-    height: 80px;
-    width: 80px;
-  }
-`;
-
-// The month's total, written in the money itself, with its period under it.
-const HubAmount = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  left: 50%;
-  position: absolute;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  white-space: nowrap;
-`;
-
-const HubValue = styled(TagName)`
-  color: ${color('white')};
-`;
-
-const HubPeriod = styled(TagDetail)`
-  color: color-mix(in srgb, ${color('white')} 72%, transparent);
-`;
-
-// The hero's backdrop: the pattern fills it, light under the menu and behind
-// the copy, fading out at the sides.
+// The hero's backdrop: the banner's room under the copy.
 const Backdrop = styled.div`
   inset: 0;
-  mask-composite: intersect;
-  mask-image:
-    radial-gradient(
-      ellipse 42% 34% at 50% 26%,
-      color-mix(in srgb, ${color('black')} 14%, transparent) 45%,
-      black 100%
-    ),
-    linear-gradient(to right, transparent, black 12%, black 88%, transparent),
-    linear-gradient(
-      to bottom,
-      color-mix(in srgb, ${color('black')} 25%, transparent) ${MENU_HEIGHT_PX}px,
-      black ${MENU_HEIGHT_PX * 2.5}px
-    );
+  pointer-events: none;
   position: absolute;
+`;
 
-  canvas {
-    display: block;
-    height: 100%;
-    inset: 0;
-    position: absolute;
-    width: 100%;
+const Row = styled.div`
+  align-items: center;
+  bottom: 0;
+  display: flex;
+  height: ${HERO_COMPOSITION.visualBannerHeight};
+  justify-content: center;
+  left: 0;
+  position: absolute;
+  right: 0;
+`;
+
+// The heap's frame: under the terminal, at the hero's foot.
+const Base = styled.div`
+  bottom: calc(${HERO_COMPOSITION.visualBannerHeight} * -0.16);
+  height: calc(${HERO_COMPOSITION.visualBannerHeight} * 0.62);
+  left: 50%;
+  position: absolute;
+  transform: translateX(-50%);
+  width: calc(${HERO_COMPOSITION.visualBannerHeight} * 1.3);
+`;
+
+// A model's square frame, sized against the banner (--size), moved up from
+// its middle (--lift) and tucked in on its neighbours (--tuck).
+const Tool = styled.div`
+  /* each tool fades in on its own beat, so the models loading at different
+     moments never pop in */
+  animation: integratorToolIn ${DURATION.lg} ${EASING.gentle} both;
+  animation-delay: calc(var(--order) * ${DURATION.xs} + ${DURATION.md});
+  aspect-ratio: 1;
+  flex-shrink: 0;
+  height: calc(var(--size) * 100%);
+  margin-inline: calc(var(--tuck) * ${HERO_COMPOSITION.visualBannerHeight});
+  transform: translateY(calc(var(--lift) * -100%));
+
+  @keyframes integratorToolIn {
+    from {
+      opacity: 0;
+    }
+  }
+
+  ${REDUCED_MOTION} {
+    animation: none;
   }
 `;
 
 export function IntegratorNetworkScene() {
-  const { i18n } = useLingui();
   const frameRef = useRef<HTMLDivElement>(null);
-  const totalValueRef = useRef<HTMLSpanElement>(null);
-  const toolRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const hubRef = useRef<HTMLDivElement>(null);
   const setMenuBackground = useMenuStyleWriter()?.setBackground;
+  // the heap's coins shown so far: it builds once the hero is on screen
+  const [coinsShown, setCoinsShown] = useState(0);
 
-  // The pattern runs up under the menu: the menu lets it show at the top of
-  // the page and takes its surface back over the first scroll.
+  useEffect(() => {
+    const total = BASE_PLACEMENTS.length;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setCoinsShown(total);
+      return;
+    }
+    const start = performance.now() + BASE_START_MS;
+    const timer = window.setInterval(() => {
+      const share = Math.min(
+        Math.max((performance.now() - start) / BASE_BUILD_MS, 0),
+        1,
+      );
+      setCoinsShown(Math.round(total * share));
+      if (share >= 1) window.clearInterval(timer);
+    }, 80);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  // The hero runs up under the menu: the menu lets it show at the top of
+  // the page and takes the hero's own surface over the first scroll. The
+  // menu's background is set from the page root, where the surface token is
+  // the default one, so the hero's colour is read from the hero itself.
   useEffect(() => {
     if (!isDefined(setMenuBackground)) return;
+    const hero = frameRef.current?.closest('section');
+    const surface = isDefined(hero)
+      ? getComputedStyle(hero).backgroundColor
+      : semanticColor.surface;
     const update = () => {
       const opaque = Math.min(Math.max(window.scrollY / MENU_HEIGHT_PX, 0), 1);
       setMenuBackground(
-        `color-mix(in srgb, ${semanticColor.surface} ${Math.round(opaque * 100)}%, transparent)`,
+        `color-mix(in srgb, ${surface} ${Math.round(opaque * 100)}%, transparent)`,
       );
     };
     update();
@@ -224,458 +240,40 @@ export function IntegratorNetworkScene() {
     };
   }, [setMenuBackground]);
 
-  useEffect(() => {
-    const frame = frameRef.current;
-    if (!isDefined(frame)) return;
-    const stage = createHalftoneDotStage(frame, { fov: FOV });
-    if (!isDefined(stage)) return;
-    const reducedMotion = window.matchMedia(
-      '(prefers-reduced-motion: reduce)',
-    ).matches;
-    const BLUE = paletteColorNumber('blue');
-    const halfFov = Math.tan((FOV / 2) * (Math.PI / 180));
-
-    const lines: LineMaterial[] = [];
-    // what the load animation brings in, each at the time the wave from the
-    // centre reaches it
-    const reveals: { delay: number; show: (progress: number) => void }[] = [];
-    const delayAt = (x: number, y: number) =>
-      Math.hypot(x, y) * INTRO.msPerUnit;
-    const addLine = (
-      corners: readonly (readonly [number, number])[],
-      opacity: number,
-      width = 1,
-    ) => {
-      // cut into short segments so a line can be traced a piece at a time
-      const points = corners.flatMap(([x, y], index) => {
-        if (index === 0) return [[x, y] as const];
-        const [fromX, fromY] = corners[index - 1];
-        const steps = Math.max(
-          1,
-          Math.ceil(Math.hypot(x - fromX, y - fromY) / SEGMENT_UNITS),
-        );
-        return Array.from({ length: steps }, (_, step) => {
-          const t = (step + 1) / steps;
-          return [fromX + (x - fromX) * t, fromY + (y - fromY) * t] as const;
-        });
-      });
-      const geometry = new LineGeometry();
-      geometry.setPositions(points.flatMap(([x, y]) => [x, y, 0]));
-      const segments = points.length - 1;
-      const nearest = points.reduce(
-        (closest, [x, y]) => Math.min(closest, delayAt(x, y)),
-        Infinity,
-      );
-      if (!reducedMotion) {
-        geometry.instanceCount = 0;
-        reveals.push({
-          delay: nearest,
-          show: (progress) => {
-            geometry.instanceCount = Math.ceil(segments * progress);
-          },
-        });
-      }
-      const material = new LineMaterial({
-        color: BLUE,
-        linewidth: width,
-        opacity,
-        resolution: stage.lineResolution,
-        transparent: true,
-      });
-      lines.push(material);
-      const line = new Line2(geometry, material);
-      stage.crisp.add(line);
-      return line;
-    };
-    const fill = (
-      geometry: THREE.BufferGeometry,
-      x: number,
-      y: number,
-      tone = 0.62,
-    ) => {
-      const material = createHalftoneToneMaterial(tone, 0);
-      const mesh = new THREE.Mesh(geometry, material);
-      mesh.position.set(x, y, -0.01);
-      stage.tone.add(mesh);
-      if (!reducedMotion) {
-        // from the field's invisible tone up to its own
-        material.uniforms.uBase.value = 0.4;
-        reveals.push({
-          delay: delayAt(x, y) + INTRO.drawMs / 2,
-          show: (progress) => {
-            material.uniforms.uBase.value = 0.4 + (tone - 0.4) * progress;
-          },
-        });
-      }
-      return mesh;
-    };
-
-    // A field of dots too faint to show at rest: the cursor's lift brings
-    // them up around it, so the whole grid answers the pointer.
-    const field = new THREE.Mesh(
-      new THREE.PlaneGeometry(TILE * 40, TILE * 20),
-      createHalftoneToneMaterial(0.4, 0),
-    );
-    field.position.set(0, TILE * 2, -0.02);
-    stage.tone.add(field);
-
-    // The backdrop lets clicks through to the copy, so the hero itself
-    // hands the pointer to the stage.
-    const hero = frame.closest('section') ?? frame.parentElement;
-    const forward = (event: PointerEvent) =>
-      frame.dispatchEvent(
-        new PointerEvent(event.type, {
-          clientX: event.clientX,
-          clientY: event.clientY,
-        }),
-      );
-    hero?.addEventListener('pointermove', forward);
-    hero?.addEventListener('pointerleave', forward);
-
-    // the grid, wide enough for any banner; the camera shows what fits
-    const COLUMNS = 8;
-    const ROWS_BELOW = 2;
-    const ROWS_ABOVE = 6;
-    for (let column = -COLUMNS; column <= COLUMNS; column += 1) {
-      addLine(
-        [
-          [column * TILE, -(ROWS_BELOW + 0.5) * TILE],
-          [column * TILE, (ROWS_ABOVE + 0.5) * TILE],
-        ],
-        0.16,
-      );
-    }
-    for (let row = -ROWS_BELOW; row <= ROWS_ABOVE; row += 1) {
-      addLine(
-        [
-          [-(COLUMNS + 0.5) * TILE, row * TILE],
-          [(COLUMNS + 0.5) * TILE, row * TILE],
-        ],
-        0.16,
-      );
-    }
-
-    for (let column = -COLUMNS; column < COLUMNS; column += 1) {
-      for (let row = -ROWS_BELOW - 1; row < ROWS_ABOVE; row += 1) {
-        const left = column * TILE;
-        const bottom = row * TILE;
-        const cx = left + TILE / 2;
-        const cy = bottom + TILE / 2;
-        const aroundIntegrator =
-          column >= -1 && column <= 0 && row >= -1 && row <= 0;
-        const figure = aroundIntegrator ? 'none' : figureAt(column, row);
-        const filled = (column + row) % 2 === 0;
-        if (figure === 'circle') {
-          const r = TILE * 0.36;
-          addLine(circlePoints(cx, cy, r), 0.34);
-          if (filled) fill(new THREE.CircleGeometry(r, 48), cx, cy);
-        } else if (figure === 'square') {
-          const half = TILE * 0.24;
-          addLine(
-            [
-              [cx - half, cy - half],
-              [cx + half, cy - half],
-              [cx + half, cy + half],
-              [cx - half, cy + half],
-              [cx - half, cy - half],
-            ],
-            0.34,
-          );
-          addLine(
-            [
-              [cx, cy + half],
-              [cx, bottom + TILE],
-            ],
-            0.24,
-          );
-          if (filled) fill(new THREE.PlaneGeometry(half * 2, half * 2), cx, cy);
-        } else if (figure === 'diamond') {
-          const half = TILE * 0.26;
-          const points = [
-            [cx, cy - half],
-            [cx + half, cy],
-            [cx, cy + half],
-            [cx - half, cy],
-            [cx, cy - half],
-          ] as const;
-          addLine(points, 0.34);
-          if (filled) {
-            const shape = new THREE.Shape();
-            points.forEach(([x, y], index) =>
-              index === 0
-                ? shape.moveTo(x - cx, y - cy)
-                : shape.lineTo(x - cx, y - cy),
-            );
-            fill(new THREE.ShapeGeometry(shape), cx, cy);
-          }
-        } else if (figure === 'arcs') {
-          [0.35, 0.6, 0.85].forEach((share) =>
-            addLine(
-              circlePoints(left, bottom, TILE * share, 0, Math.PI / 2, 24),
-              0.28,
-            ),
-          );
-        } else if (figure === 'diagonals') {
-          [0.2, 0.4, 0.6].forEach((share) =>
-            addLine(
-              [
-                [left + TILE * share, bottom],
-                [left + TILE, bottom + TILE * (1 - share)],
-              ],
-              0.26,
-            ),
-          );
-        }
-      }
-    }
-
-    // the money's ring of halftone, and the routes into it: along their
-    // row to the centre column, then down or up to the centre
-    const hubRadius = TILE * 0.62;
-    const hubRing = [
-      fill(new THREE.RingGeometry(hubRadius * 0.55, hubRadius, 64), 0, 0),
-      addLine(circlePoints(0, 0, hubRadius), 0.5),
-    ];
-
-    const routes = WORK.map((tool) => {
-      const x = tool.at[0] * TILE;
-      const y = tool.at[1] * TILE;
-      const corner: [number, number] = [0, y];
-      const points: [number, number][] = [[x, y], corner, [0, 0]];
-      addLine(points, 0.6, 1.4);
-      const segments = points.slice(1).map((point, index) => {
-        const start = new THREE.Vector2(...points[index]);
-        const end = new THREE.Vector2(...point);
-        return { start, end, length: start.distanceTo(end) };
-      });
-      const length = segments.reduce(
-        (total, segment) => total + segment.length,
-        0,
-      );
-      return { segments, length };
-    });
-    const pointOn = (route: (typeof routes)[number], distance: number) => {
-      let left = distance;
-      for (const segment of route.segments) {
-        if (left <= segment.length) {
-          return segment.start.clone().lerp(segment.end, left / segment.length);
-        }
-        left -= segment.length;
-      }
-      return new THREE.Vector2(0, 0);
-    };
-
-    // one pulse of data per route, its segments rewritten each frame
-    const tint = new THREE.Color(BLUE).lerp(new THREE.Color(0xffffff), 0.45);
-    const head = new THREE.Color(BLUE);
-    const dataPulses = routes.map(() => {
-      const geometry = new LineGeometry();
-      geometry.setPositions(new Float32Array(PULSE.points * 3));
-      geometry.setColors(
-        Array.from({ length: PULSE.points }, (_, index) => {
-          const share = index / (PULSE.points - 1);
-          const shade = tint.clone().lerp(head, share * share);
-          return [shade.r, shade.g, shade.b];
-        }).flat(),
-      );
-      const material = new LineMaterial({
-        color: 0xffffff,
-        linewidth: PULSE.width,
-        resolution: stage.lineResolution,
-        vertexColors: true,
-      });
-      lines.push(material);
-      const line = new Line2(geometry, material);
-      line.frustumCulled = false;
-      line.visible = false;
-      line.position.z = 0.01;
-      stage.crisp.add(line);
-      const buffer = geometry.getAttribute(
-        'instanceStart',
-      ) as THREE.InterleavedBufferAttribute;
-      return { line, segments: buffer.data };
-    });
-    const sample = new THREE.Vector2();
-    // lays the pulse's points from its tail to its head along the route
-    const drawPulse = (
-      dataPulse: (typeof dataPulses)[number],
-      route: (typeof routes)[number],
-      headAt: number,
-    ) => {
-      const array = dataPulse.segments.array as Float32Array;
-      const tailAt = headAt - PULSE.length;
-      let previousX = 0;
-      let previousY = 0;
-      for (let index = 0; index < PULSE.points; index += 1) {
-        const at = tailAt + (PULSE.length * index) / (PULSE.points - 1);
-        sample.copy(pointOn(route, Math.min(Math.max(at, 0), route.length)));
-        if (index > 0) {
-          const offset = (index - 1) * 6;
-          array[offset] = previousX;
-          array[offset + 1] = previousY;
-          array[offset + 2] = 0;
-          array[offset + 3] = sample.x;
-          array[offset + 4] = sample.y;
-          array[offset + 5] = 0;
-        }
-        previousX = sample.x;
-        previousY = sample.y;
-      }
-      dataPulse.segments.needsUpdate = true;
-    };
-
-    const pulseMaterial = new THREE.MeshBasicMaterial({
-      color: BLUE,
-      opacity: 0,
-      transparent: true,
-    });
-    const pulse = new THREE.Mesh(
-      new THREE.RingGeometry(hubRadius - 0.02, hubRadius + 0.02, 96),
-      pulseMaterial,
-    );
-    stage.crisp.add(pulse);
-
-    const anchor = new THREE.Vector3();
-    let startedAt = -1;
-    let shownTotal = 0;
-    let animationFrame = 0;
-
-    const render = (now: number) => {
-      animationFrame = requestAnimationFrame(render);
-      if (!stage.isVisible()) return;
-      if (startedAt < 0) startedAt = now;
-      const sinceLoad = now - startedAt;
-      const elapsed = reducedMotion
-        ? 0
-        : Math.max(sinceLoad - INTRO.flowAfterMs, 0);
-      if (reveals.length > 0) {
-        for (let index = reveals.length - 1; index >= 0; index -= 1) {
-          const reveal = reveals[index];
-          const progress = ease((sinceLoad - reveal.delay) / INTRO.drawMs);
-          reveal.show(progress);
-          if (progress >= 1) reveals.splice(index, 1);
-        }
-      }
-      const arrive = (x: number, y: number) =>
-        reducedMotion ? 1 : ease((sinceLoad - delayAt(x, y)) / INTRO.drawMs);
-
-      // a flat drawing seen straight on; the money sits mid-banner, at
-      // the bottom of the hero, and the grid fills the rest of its height
-      const width = Math.max(frame.clientWidth, 1);
-      const units = width < 768 ? BANNER_UNITS.narrow : BANNER_UNITS.wide;
-      const pxPerUnit = bannerPx(width) / units;
-      const viewHeight = Math.max(frame.clientHeight, 1) / pxPerUnit;
-      const lookY = viewHeight / 2 - units / 2;
-      stage.camera.position.set(0, lookY, viewHeight / 2 / halfFov);
-      stage.camera.lookAt(0, lookY, 0);
-
-      // each piece of work reaches the centre in turn; the ring answers
-      let lastArrival = Infinity;
-      let seats = 0;
-      routes.forEach((route, index) => {
-        const dataPulse = dataPulses[index];
-        if (reducedMotion) return;
-        // the head runs on past the end until the tail is in the money too
-        const runLength = route.length + PULSE.length;
-        const travelMs = (runLength / PACKET_SPEED) * 1000;
-        const arriveMs = (route.length / PACKET_SPEED) * 1000;
-        const offset = (index * PACKET_EVERY_MS) / routes.length;
-        if (elapsed >= offset + arriveMs) {
-          seats +=
-            Math.floor((elapsed - offset - arriveMs) / PACKET_EVERY_MS) + 1;
-        }
-        const local = (elapsed - offset) % PACKET_EVERY_MS;
-        if (elapsed >= offset + arriveMs && local >= arriveMs) {
-          lastArrival = Math.min(lastArrival, local - arriveMs);
-        }
-        if (elapsed < offset || local > travelMs) {
-          dataPulse.line.visible = false;
-          return;
-        }
-        // eased: it sets off gently and settles as it reaches the money
-        dataPulse.line.visible = true;
-        drawPulse(dataPulse, route, runLength * glide(local / travelMs));
-      });
-      const pulseAge = lastArrival / ARRIVAL_MS;
-      const arriving = pulseAge >= 0 && pulseAge < 1;
-
-      const roundSeats = reducedMotion
-        ? SEATS_PER_ROUND
-        : seats % (SEATS_PER_ROUND + 1);
-      const total = roundSeats * SHARE_PER_SEAT_USD;
-      // eased both ways, so the new month's reset shrinks the money gently
-      shownTotal += (total - shownTotal) * (total < shownTotal ? 0.035 : 0.1);
-      if (isDefined(totalValueRef.current)) {
-        totalValueRef.current.textContent = USD.format(Math.round(shownTotal));
-      }
-
-      // the money grows steadily with the month's total; an arrival only
-      // sends a faint ring outward, the money itself never jumps
-      const growth =
-        1 +
-        ((width < 768 ? 0.25 : 0.5) * shownTotal) /
-          (SEATS_PER_ROUND * SHARE_PER_SEAT_USD);
-      hubRing.forEach((part) => part.scale.setScalar(growth));
-      if (arriving) {
-        pulse.scale.setScalar(growth * (1 + 0.22 * ease(pulseAge)));
-        pulseMaterial.opacity = 0.35 * (1 - ease(pulseAge));
-      } else {
-        pulseMaterial.opacity = 0;
-      }
-
-      WORK.forEach((tool, index) => {
-        const element = toolRefs.current[index];
-        if (!isDefined(element)) return;
-        const x = tool.at[0] * TILE;
-        const y = tool.at[1] * TILE;
-        const shown = arrive(x, y);
-        anchor.set(x, y, 0);
-        stage.place(element, anchor, shown, 0.85 + 0.15 * shown);
-      });
-      if (isDefined(hubRef.current)) {
-        anchor.set(0, 0, 0);
-        const shown = arrive(0, 0);
-        stage.place(
-          hubRef.current,
-          anchor,
-          shown,
-          growth * (0.85 + 0.15 * shown),
-        );
-      }
-
-      stage.render();
-    };
-    animationFrame = requestAnimationFrame(render);
-
-    return () => {
-      cancelAnimationFrame(animationFrame);
-      hero?.removeEventListener('pointermove', forward);
-      hero?.removeEventListener('pointerleave', forward);
-      lines.forEach((material) => material.dispose());
-      stage.dispose();
-    };
-  }, []);
-
   return (
     <Backdrop aria-hidden ref={frameRef}>
-      <SceneOverlay>
-        {WORK.map((piece, index) => (
-          <LogoNode
-            key={piece.name}
-            ref={(element) => {
-              toolRefs.current[index] = element;
-            }}
+      <Row>
+        {ITEMS.map((item, index) => (
+          <Tool
+            key={item.model}
+            style={cssVariableStyle({
+              '--lift': item.lift,
+              '--order': index,
+              '--size': item.size,
+              '--tuck': item.tuck,
+            })}
           >
-            <piece.icon size={20} stroke={1.6} />
-          </LogoNode>
+            <HalftoneModel
+              geometryOptions={item.geometry}
+              initialPose={{ rotationX: item.lean, rotationY: item.turn }}
+              modelUrl={`/models/${item.model}.glb`}
+              settings={TOOL_SETTINGS}
+            />
+          </Tool>
         ))}
-        <LogoNode data-hub="" ref={hubRef}>
-          <HubAmount>
-            <HubValue ref={totalValueRef}>{USD.format(0)}</HubValue>
-            <HubPeriod>{i18n._(msg`/ month`)}</HubPeriod>
-          </HubAmount>
-        </LogoNode>
-      </SceneOverlay>
+      </Row>
+      <Base>
+        <HalftoneModel
+          geometryOptions={BASE_COIN_SIZE}
+          modelUrl="/models/coin.glb"
+          settings={BASE_SETTINGS}
+          stack={{
+            placements: BASE_PLACEMENTS,
+            tilt: 0.3,
+            visible: coinsShown,
+          }}
+        />
+      </Base>
     </Backdrop>
   );
 }
