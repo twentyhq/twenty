@@ -1,4 +1,4 @@
-type RequestInLayoutCustomizationModeArgs = {
+type RequestInLayoutCustomizationModeInput = {
   enterLayoutCustomizationMode: () => boolean;
   request: () => void;
 };
@@ -6,7 +6,7 @@ type RequestInLayoutCustomizationModeArgs = {
 export const requestInLayoutCustomizationMode = ({
   enterLayoutCustomizationMode,
   request,
-}: RequestInLayoutCustomizationModeArgs) => {
+}: RequestInLayoutCustomizationModeInput) => {
   if (enterLayoutCustomizationMode()) {
     request();
   }
