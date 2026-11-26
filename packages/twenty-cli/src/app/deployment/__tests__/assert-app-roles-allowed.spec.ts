@@ -55,6 +55,21 @@ describe('assertMarketplaceAppRolesOrThrow', () => {
     ).toThrow(/Role "Member" \(member-role\) is neither the application role/);
   });
 
+  it('accepts a standalone role only agents can hold', () => {
+    expect(() =>
+      assertMarketplaceAppRolesOrThrow({
+        build: buildWithRoles([
+          REQUESTED_ROLE,
+          {
+            ...STANDALONE_ROLE,
+            canBeAssignedToUsers: false,
+            canBeAssignedToApiKeys: false,
+          },
+        ]),
+      }),
+    ).not.toThrow();
+  });
+
   it('refuses field permissions on the application role', () => {
     expect(() =>
       assertMarketplaceAppRolesOrThrow({

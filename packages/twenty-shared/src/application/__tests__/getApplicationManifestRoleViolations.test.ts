@@ -100,7 +100,7 @@ describe('getApplicationManifestRoleViolations', () => {
     ).toEqual([]);
   });
 
-  it('should report a standalone role without inspecting its permissions', () => {
+  it('should report a standalone role assignable to members, and its permissions', () => {
     expect(
       getViolations({
         roles: [
@@ -122,8 +122,40 @@ describe('getApplicationManifestRoleViolations', () => {
         roleUniversalIdentifier: 'member-role',
         roleLabel: 'member-role',
       },
+      {
+        kind: 'fieldPermissions',
+        roleUniversalIdentifier: 'member-role',
+        roleLabel: 'member-role',
+        roleKinds: [],
+        objectUniversalIdentifiers: ['company'],
+      },
     ]);
   });
+
+  it('should accept a standalone role only agents can hold', () => {
+    expect(
+      getViolations({
+        roles: [
+          role(REQUESTED_ROLE),
+          role('agent-only-role', {
+            canBeAssignedToUsers: false,
+            canBeAssignedToApiKeys: false,
+          }),
+        ],
+      }),
+    ).toEqual([]);
+  });
+
+  it.each([{ canBeAssignedToUsers: false }, { canBeAssignedToApiKeys: false }])(
+    'should report a standalone role that still defaults one flag to true %o',
+    (flags) => {
+      expect(
+        getViolations({
+          roles: [role(REQUESTED_ROLE), role('member-role', flags)],
+        }).map(({ kind }) => kind),
+      ).toEqual(['standaloneRole']);
+    },
+  );
 
   it('should treat a role an agent uses as an agent role', () => {
     expect(
@@ -273,6 +305,23 @@ describe('getApplicationManifestRoleViolations', () => {
         objectUniversalIdentifiers: ['company'],
       },
     ]);
+  });
+  it('should report a legacy field permission that only carries its identifier', () => {
+    expect(
+      getViolations({
+        roles: [
+          role(REQUESTED_ROLE, {
+            fieldPermissions: [
+              {
+                universalIdentifier: 'field-permission',
+                objectUniversalIdentifier: 'company',
+                fieldUniversalIdentifier: 'secret',
+              },
+            ],
+          }),
+        ],
+      }).map(({ kind }) => kind),
+    ).toEqual(['fieldPermissions']);
   });
 });
 
