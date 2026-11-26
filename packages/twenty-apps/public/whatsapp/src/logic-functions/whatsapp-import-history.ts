@@ -112,6 +112,7 @@ export const whatsappImportHistoryHandler = async (
     WHATSAPP_IMPORT_HISTORY_TIMEOUT_SECONDS * 1000 -
     WHATSAPP_ATTACHMENT_DEADLINE_MARGIN_MILLISECONDS;
   const jobId = getWhatsappImportHistoryJobId(payload);
+  const logPrefix = `[whatsapp] history run ${runId} chunk ${chunkIndex}`;
   let importedConversationCount = startProgress.currentChunkImportedCount ?? 0;
   let processedChatCount = startProgress.currentChunkProcessedCount;
   let chatCursor = startProgress.currentChatCursor;
@@ -221,6 +222,9 @@ export const whatsappImportHistoryHandler = async (
           });
 
     if (!isDefined(fetchedChat)) {
+      console.log(
+        `${logPrefix}: conversation ${listedChat.id} skipped, it no longer exists`,
+      );
       await finishChat();
 
       return;
@@ -233,6 +237,7 @@ export const whatsappImportHistoryHandler = async (
 
     const counterparts = getWhatsappChatCounterparts(chat);
     const seenCursors = new Set<string>();
+    let skippedReason: WhatsappIngestResult['skippedReason'];
 
     do {
       if (
@@ -247,6 +252,11 @@ export const whatsappImportHistoryHandler = async (
         chatId: chat.id,
         cursor: chatCursor,
       });
+
+      console.log(
+        `${logPrefix}: start importing ${page.items.length} messages from conversation ${chat.id}`,
+      );
+
       const ingestResult = await ingestWhatsappMessages({
         unipileAccountId,
         attachmentDeadlineAtMs,
@@ -257,6 +267,11 @@ export const whatsappImportHistoryHandler = async (
         messages: page.items,
       });
 
+      console.log(
+        `${logPrefix}: ${ingestResult.ingestedMessageCount} messages imported from conversation ${chat.id}`,
+      );
+
+      skippedReason = ingestResult.skippedReason;
       totals.messageCount += ingestResult.ingestedMessageCount;
       totals.matchedPersonCount += ingestResult.matchedPersonCount;
       totals.createdPersonCount += ingestResult.createdPersonCount;
@@ -284,6 +299,9 @@ export const whatsappImportHistoryHandler = async (
       }
     } while (isDefined(chatCursor));
 
+    console.log(
+      `${logPrefix}: conversation ${chat.id} ${isChatImported ? 'imported' : `skipped (${skippedReason ?? 'NO_MESSAGES'})`}`,
+    );
     await finishChat();
   };
 
