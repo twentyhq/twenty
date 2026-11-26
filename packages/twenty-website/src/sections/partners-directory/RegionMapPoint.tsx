@@ -92,11 +92,13 @@ export function RegionMapPoint({ partner }: RegionMapPointProps) {
           : undefined
       }
     >
+      {/* unoptimized, as the site's other halftone stills: re-encoding
+          blurs the dots */}
       <NextImage
         alt=""
         fill
-        sizes="(max-width: 768px) 200vw, 840px"
         src={`/images/partners/regions/${region.toLowerCase()}-card.webp`}
+        unoptimized
       />
       {isDefined(place) && (
         <Point className={placePointClassName} data-featured="" />
