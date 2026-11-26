@@ -38,7 +38,6 @@ export const compileFormulaFieldColumns = ({
   resolveAggregationSource,
 }: {
   flatFieldMetadata: Pick<OrmFlatFieldMetadata, 'name' | 'type' | 'settings'>;
-  // The fields the formula can read, which name the fields its trees reference
   fields: ValidationRuleFieldDescriptor[];
   schemaName: string;
   tableName: string;

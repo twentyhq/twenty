@@ -6,7 +6,6 @@ import { getFieldMetadataFormulaExpression } from '@/utils/formula/getFieldMetad
 import { getFieldMetadataFormulaTree } from '@/utils/formula/getFieldMetadataFormulaTree';
 import { isDefined } from '@/utils/validation/isDefined';
 
-// The formula as text, with the current field names, from its trees or from the text a client sent
 export const printFieldMetadataFormula = ({
   settings,
   fields,

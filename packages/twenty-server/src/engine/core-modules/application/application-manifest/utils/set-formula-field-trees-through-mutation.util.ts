@@ -9,7 +9,6 @@ import { setFormulaFieldTrees } from 'src/engine/metadata-modules/formula-field/
 import { type UniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-maps.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
-// A manifest declares the formula as text, so its trees are built against the fields present after the sync
 export const setFormulaFieldTreesThroughMutation = ({
   existingFlatFieldMetadataMaps,
   universalFlatFieldMetadataMapsToMutate,

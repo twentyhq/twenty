@@ -108,7 +108,6 @@ export const fromFlatFieldMetadataToFieldManifest = ({
 }: {
   flatFieldMetadata: UniversalFlatFieldMetadata;
   flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMapsForOptions;
-  // The fields a formula of this field's object can read, which name the fields its trees reference
   formulaFields?: ValidationRuleFieldDescriptor[];
 }): FieldManifest => {
   // Reapplying an export writes the app's base rows, so workspace overrides stay out of it.

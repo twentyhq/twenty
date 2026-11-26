@@ -17,12 +17,14 @@ const readsBackTheSame = ({
   expression: string | undefined;
   fields: ValidationRuleFieldDescriptor[];
 }): boolean => {
-  const parsing = isDefined(expression)
-    ? parseExpressionNode(expression)
-    : undefined;
+  if (!isDefined(expression)) {
+    return false;
+  }
+
+  const parsing = parseExpressionNode(expression);
 
   return (
-    parsing?.isValid === true &&
+    parsing.isValid &&
     isEqual(
       resolveExpressionFieldReferences({ node: parsing.node, fields }),
       tree,
@@ -30,7 +32,6 @@ const readsBackTheSame = ({
   );
 };
 
-// A tree sent by a client is only accepted when printing and reading it back gives the same tree
 export const isCanonicalFormulaTree = ({
   settings,
   fields,

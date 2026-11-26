@@ -23,7 +23,7 @@ import { isFieldMetadataFormulaUnchanged } from 'src/engine/metadata-modules/for
 import { keepStoredFormulaEvaluation } from 'src/engine/metadata-modules/formula-field/utils/keep-stored-formula-evaluation.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
-// A formula is written as text and stored as trees reading fields by identifier; text that does not compile is left for the validator to report
+// Text that does not compile is left as it is, for the validator to report
 export const setFormulaFieldTrees = <
   TUniversalFlatFieldMetadata extends FormulaSourceUniversalFlatFieldMetadata &
     Pick<UniversalFlatFieldMetadata, 'universalSettings'>,

@@ -2,7 +2,6 @@ import { getFieldMetadataFormulaExpression } from '@/utils/formula/getFieldMetad
 import { getFieldMetadataFormulaTree } from '@/utils/formula/getFieldMetadataFormulaTree';
 import { isDefined } from '@/utils/validation/isDefined';
 
-// A formula is stored as a tree, and written as text that the server turns into one
 export const isFormulaFieldMetadata = ({
   settings,
 }: {
