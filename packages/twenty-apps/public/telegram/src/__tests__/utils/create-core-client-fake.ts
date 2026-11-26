@@ -8,7 +8,42 @@ type LinkRecord = {
   workspaceMemberId?: string | null;
 };
 
+type RequestRecord = {
+  id: string;
+  status: string;
+  updatedAt: string;
+  name?: string;
+  telegramChatId?: string;
+  telegramMessageId?: string;
+  telegramUserId?: string;
+  workspaceMemberId?: string;
+  requestText?: { markdown: string | null };
+  responseText?: { markdown: string | null };
+  errorMessage?: string;
+};
+
 type EqualityFilter = Record<string, { eq: string }>;
+
+type RequestFilter = {
+  telegramChatId?: { eq: string };
+  telegramMessageId?: { eq: string };
+  workspaceMemberId?: { eq: string };
+  status?: { in: string[] };
+};
+
+type RequestClaimFilter = {
+  and: [
+    { id: { eq: string } },
+    {
+      or: [
+        { status: { eq: string } },
+        { status: { eq: string }; updatedAt: { lt: string } },
+      ];
+    },
+  ];
+};
+
+type RequestStatusFilter = { id: { eq: string }; status: { eq: string } };
 
 const LINK_FILTER_FIELDS: (keyof LinkRecord)[] = [
   'id',
@@ -17,6 +52,9 @@ const LINK_FILTER_FIELDS: (keyof LinkRecord)[] = [
 ];
 
 type FakeQuery = {
+  telegramAssistantRequests?: {
+    __args: { filter: RequestFilter; first: number };
+  };
   telegramUserLinks?: { __args: { filter: EqualityFilter } };
   workspaceMembers?: { __args: { filter?: EqualityFilter } };
 };
@@ -27,6 +65,18 @@ type FakeMutation = {
     __args: { id: string; data: Omit<LinkRecord, 'id'> };
   };
   destroyTelegramUserLink?: { __args: { id: string } };
+  createTelegramAssistantRequest?: {
+    __args: { data: Omit<RequestRecord, 'id' | 'status' | 'updatedAt'> };
+  };
+  updateTelegramAssistantRequests?: {
+    __args: {
+      data: { status: string };
+      filter: RequestClaimFilter | RequestStatusFilter;
+    };
+  };
+  updateTelegramAssistantRequest?: {
+    __args: { id: string; data: Partial<RequestRecord> };
+  };
 };
 
 const toConnection = <TNode>(nodes: TNode[]) => ({
@@ -41,7 +91,8 @@ export const createCoreClientFake = ({
   links?: LinkRecord[];
   workspaceMemberIds?: string[];
 } = {}) => {
-  const state = { links: [...links], createdCount: 0 };
+  const requests: RequestRecord[] = [];
+  const state = { links: [...links], createdCount: 0, requests };
 
   return {
     state,
@@ -55,6 +106,31 @@ export const createCoreClientFake = ({
               workspaceMemberIds
                 .filter((memberId) => !isDefined(id) || memberId === id.eq)
                 .map((memberId) => ({ id: memberId })),
+            ),
+          };
+        }
+
+        if (isDefined(query.telegramAssistantRequests)) {
+          const { filter, first } = query.telegramAssistantRequests.__args;
+
+          return {
+            telegramAssistantRequests: toConnection(
+              state.requests
+                .filter(
+                  (request) =>
+                    (!isDefined(filter.telegramChatId) ||
+                      request.telegramChatId === filter.telegramChatId.eq) &&
+                    (!isDefined(filter.telegramMessageId) ||
+                      request.telegramMessageId ===
+                        filter.telegramMessageId.eq) &&
+                    (!isDefined(filter.workspaceMemberId) ||
+                      request.workspaceMemberId ===
+                        filter.workspaceMemberId.eq) &&
+                    (!isDefined(filter.status) ||
+                      filter.status.in.includes(request.status)),
+                )
+                .reverse()
+                .slice(0, first),
             ),
           };
         }
@@ -100,6 +176,75 @@ export const createCoreClientFake = ({
           const { id } = mutation.destroyTelegramUserLink.__args;
 
           state.links = state.links.filter((link) => link.id !== id);
+        }
+
+        if (isDefined(mutation.createTelegramAssistantRequest)) {
+          const { data } = mutation.createTelegramAssistantRequest.__args;
+
+          if (
+            state.requests.some(
+              (request) =>
+                request.telegramChatId === data.telegramChatId &&
+                request.telegramMessageId === data.telegramMessageId,
+            )
+          ) {
+            throw new Error('duplicate key value violates unique constraint');
+          }
+
+          const id = `request-${state.requests.length + 1}`;
+
+          state.requests.push({
+            id,
+            status: 'PENDING',
+            updatedAt: new Date().toISOString(),
+            ...data,
+          });
+
+          return { createTelegramAssistantRequest: { id } };
+        }
+
+        if (isDefined(mutation.updateTelegramAssistantRequests)) {
+          const { data, filter } =
+            mutation.updateTelegramAssistantRequests.__args;
+          const claimed = state.requests.filter((request) => {
+            if (!('and' in filter)) {
+              return (
+                request.id === filter.id.eq &&
+                request.status === filter.status.eq
+              );
+            }
+
+            const [{ id }, { or }] = filter.and;
+
+            return (
+              request.id === id.eq &&
+              (request.status === 'PENDING' ||
+                (request.status === 'PROCESSING' &&
+                  request.updatedAt < or[1].updatedAt.lt))
+            );
+          });
+
+          for (const request of claimed) {
+            request.status = data.status;
+            request.updatedAt = new Date().toISOString();
+          }
+
+          return {
+            updateTelegramAssistantRequests: claimed.map(({ id }) => ({ id })),
+          };
+        }
+
+        if (isDefined(mutation.updateTelegramAssistantRequest)) {
+          const { id, data } = mutation.updateTelegramAssistantRequest.__args;
+          const request = state.requests.find(
+            (candidate) => candidate.id === id,
+          );
+
+          if (isDefined(request)) {
+            Object.assign(request, data, {
+              updatedAt: new Date().toISOString(),
+            });
+          }
         }
 
         return {};

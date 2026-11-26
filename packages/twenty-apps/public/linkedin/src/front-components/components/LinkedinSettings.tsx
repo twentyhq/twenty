@@ -3,8 +3,16 @@ import 'twenty-ui/theme-dark.css';
 import 'twenty-ui/theme-light.css';
 
 import styled from '@emotion/styled';
-import { useRef, useState } from 'react';
-import { enqueueSnackbar, t, useColorScheme } from 'twenty-sdk/front-component';
+import { Fragment, useRef, useState } from 'react';
+import {
+  AppPath,
+  enqueueSnackbar,
+  navigate,
+  t,
+  useColorScheme,
+  useLocation,
+} from 'twenty-sdk/front-component';
+import { isDefined } from 'twenty-sdk/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
 import {
@@ -17,6 +25,7 @@ import {
 import { LINKEDIN_SETTINGS_ROUTE_PATHS } from 'src/constants/linkedin-settings-route-paths.constant';
 import { LinkedinAccountBanners } from 'src/front-components/components/LinkedinAccountBanners';
 import { LinkedinAccountField } from 'src/front-components/components/LinkedinAccountField';
+import { LinkedinConnectionSelect } from 'src/front-components/components/LinkedinConnectionSelect';
 import { LinkedinContactAutoCreationSection } from 'src/front-components/components/LinkedinContactAutoCreationSection';
 import { LinkedinImportSection } from 'src/front-components/components/LinkedinImportSection';
 import { LinkedinPeopleMatchingSection } from 'src/front-components/components/LinkedinPeopleMatchingSection';
@@ -58,6 +67,7 @@ type LinkedinSettingsState =
 
 export const LinkedinSettings = () => {
   const colorScheme = useColorScheme();
+  const location = useLocation();
   const [state, setState] = useState<LinkedinSettingsState>({
     step: 'loading',
   });
@@ -69,11 +79,16 @@ export const LinkedinSettings = () => {
     progress: number;
   } | null>(null);
   const lastHistoryImportRef = useRef<LinkedinHistoryImportState | null>(null);
+  const displayedConnectionIdRef = useRef<string | undefined>(undefined);
   const [settingsSaveQueue] = useState(() =>
     createSettingsSaveQueue<LinkedinSettingsView>(),
   );
 
   const showView = (view: LinkedinSettingsView) => {
+    displayedConnectionIdRef.current = view.isConnected
+      ? view.connection.id
+      : undefined;
+
     const historyImport = view.isConnected ? view.historyImport : null;
 
     notifyLinkedinHistoryImportEnd({
@@ -87,13 +102,28 @@ export const LinkedinSettings = () => {
     setState({ step: 'ready', view });
   };
 
+  const showViewIfDisplayed = (view: LinkedinSettingsView) => {
+    if (
+      !view.isConnected ||
+      view.connection.id === displayedConnectionIdRef.current
+    ) {
+      showView(view);
+    }
+  };
+
   const loadSettings = async () => {
+    const requestedConnectionId = displayedConnectionIdRef.current;
+
     try {
       const view = await postLinkedinSettingsRouteOrThrow({
         routePath: LINKEDIN_SETTINGS_ROUTE_PATHS.get,
+        body: { connectedAccountId: requestedConnectionId },
       });
 
-      if (!settingsSaveQueue.hasPendingSave()) {
+      if (
+        !settingsSaveQueue.hasPendingSave() &&
+        requestedConnectionId === displayedConnectionIdRef.current
+      ) {
         showView(view);
       }
     } catch {
@@ -120,13 +150,15 @@ export const LinkedinSettings = () => {
         : current,
     );
 
+    const connectedAccountId = displayedConnectionIdRef.current;
+
     await settingsSaveQueue.enqueue({
       save: () =>
         postLinkedinSettingsRouteOrThrow({
           routePath: LINKEDIN_SETTINGS_ROUTE_PATHS.update,
-          body: update,
+          body: { ...update, connectedAccountId },
         }),
-      onSaved: showView,
+      onSaved: showViewIfDisplayed,
       onFailed: async (hasPendingSave) => {
         enqueueSnackbar({
           message: t('Could not save LinkedIn settings. Try again.'),
@@ -143,12 +175,15 @@ export const LinkedinSettings = () => {
   const handleRetryImport = async () => {
     setIsImportRetrying(true);
 
+    const connectedAccountId = displayedConnectionIdRef.current;
+
     try {
       await settingsSaveQueue.whenIdle();
 
-      showView(
+      showViewIfDisplayed(
         await postLinkedinSettingsRouteOrThrow({
           routePath: LINKEDIN_SETTINGS_ROUTE_PATHS.syncHistory,
+          body: { connectedAccountId },
         }),
       );
     } catch {
@@ -160,6 +195,22 @@ export const LinkedinSettings = () => {
       setIsImportRetrying(false);
     }
   };
+
+  const handleConnectionChange = async (connectionId: string) => {
+    displayedConnectionIdRef.current = connectionId;
+    lastHistoryImportRef.current = null;
+    setImportProgress(null);
+    setState({ step: 'loading' });
+
+    await settingsSaveQueue.whenIdle();
+    await loadSettings();
+  };
+
+  // The SDK only navigates to app paths, so the settings tab hash rides in the catch-all splat.
+  const handleGoToGeneralTab = (pathname: string) =>
+    navigate(AppPath.SettingsCatchAll, {
+      '*': `${pathname.replace(/^\/settings\//, '')}#general`,
+    });
 
   const view = state.step === 'ready' ? state.view : undefined;
   const isImportingHistory =
@@ -195,16 +246,36 @@ export const LinkedinSettings = () => {
         )}
         {view?.isConnected === false && (
           <Section.Root>
-            <Section.Header
-              title={t('Account')}
-              description={t(
-                'Connect your LinkedIn account to choose what gets synced.',
+            <Section.Header title={t('Account')} />
+            <InlineBanner
+              status="info"
+              fullWidth
+              embedded
+              action={
+                isDefined(location) && (
+                  <InlineBanner.Action
+                    onClick={() => handleGoToGeneralTab(location.pathname)}
+                  >
+                    {t('Go to General')}
+                  </InlineBanner.Action>
+                )
+              }
+            >
+              {t(
+                'Connect your LinkedIn account in the General tab to choose what gets synced.',
               )}
-            />
+            </InlineBanner>
           </Section.Root>
         )}
         {view?.isConnected === true && (
-          <>
+          <Fragment key={view.connection.id}>
+            {view.connections.length > 1 && (
+              <LinkedinConnectionSelect
+                connections={view.connections}
+                selectedConnectionId={view.connection.id}
+                onChange={handleConnectionChange}
+              />
+            )}
             <LinkedinAccountBanners
               isAuthFailed={view.connection.isAuthFailed}
               historyImport={view.historyImport}
@@ -222,6 +293,7 @@ export const LinkedinSettings = () => {
               }
             />
             <LinkedinImportSection
+              connectedAccountId={view.connection.id}
               importPolicy={view.settings.importPolicy}
               selectedChats={view.settings.selectedChats}
               onChange={(importPolicy) =>
@@ -253,7 +325,7 @@ export const LinkedinSettings = () => {
                 handleSettingsChange({ areChatsMarkedAsRead })
               }
             />
-          </>
+          </Fragment>
         )}
       </StyledContainer>
     </ThemeProvider>

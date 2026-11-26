@@ -1,5 +1,5 @@
 import { isNonEmptyArray } from '@sniptt/guards';
-import { CoreApiClient } from 'twenty-client-sdk/core';
+import { type CoreApiClient } from 'twenty-client-sdk/core';
 import {
   defineLogicFunction,
   type ObjectRecordBaseEvent,
@@ -19,9 +19,9 @@ import { fetchCalendarEventsByIds } from 'src/logic-functions/data/fetch-calenda
 import { fetchMemberRecordingPreferenceByUserWorkspaceId } from 'src/logic-functions/data/fetch-member-recording-preference-by-user-workspace-id.util';
 import { fetchCalendarChannelOwnerByCalendarChannelId } from 'src/logic-functions/data/fetch-calendar-channel-owner-by-calendar-channel-id.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
+import { createCoreApiClientRunningAsApplication } from 'src/logic-functions/utils/create-core-api-client-running-as-application.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 import { reconcileCallRecorderForCalendarEventIds } from 'src/logic-functions/flows/reconcile-call-recorder.util';
-import { fetchWithRateLimitRetry } from 'src/logic-functions/utils/fetch-with-rate-limit-retry.util';
 
 const CALENDAR_EVENT_OBJECT_NAME = 'calendarEvent';
 
@@ -58,7 +58,7 @@ const handler = async (
     return { skipped: true, reason: 'no relevant calendar event change' };
   }
 
-  const client = new CoreApiClient({ fetch: fetchWithRateLimitRetry });
+  const client = createCoreApiClientRunningAsApplication();
   const calendarEventIds = await resolveCalendarEventIdsToReconcile({
     client,
     changedCalendarEventIds: reconciliationPayload.calendarEventIds,

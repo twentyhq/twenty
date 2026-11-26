@@ -813,6 +813,7 @@ exports[`Application export - data model exports the whole application as a stab
   "fields": [
     {
       "defaultValue": null,
+      "formula": null,
       "isAuditLogged": true,
       "isLabelSyncedWithName": false,
       "isNullable": true,
@@ -876,6 +877,7 @@ exports[`Application export - data model exports the whole application as a stab
       "fields": [
         {
           "defaultValue": null,
+          "formula": null,
           "isAuditLogged": true,
           "isLabelSyncedWithName": true,
           "isNullable": true,

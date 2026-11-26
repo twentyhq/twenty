@@ -99,6 +99,24 @@ A workspace can relabel, recolor, describe, reorder and deactivate the options a
 
 An option can carry its own `id`. When set, it must be a lowercase UUID (version 4 or later) used by one option only: a sync fails if two fields share an option `id`.
 
+### Formula Fields
+
+A `formula` makes a field computed: records cannot write it. Set it on the field next to `universalSettings`, never inside it. It applies to `TEXT`, `NUMBER`, `BOOLEAN`, `DATE`, `DATE_TIME`, `SELECT`, `RATING` and `CURRENCY` fields:
+
+```ts
+{
+  type: FieldType.NUMBER,
+  name: 'total',
+  label: 'Total',
+  formula: { expression: 'price * quantity' },
+}
+```
+
+- `expression` reads the record's fields by name, composite parts with a dot (`amount.amountMicros`), many-to-one related fields (`company.name`) and aggregates over a one-to-many relation (`count(tasks)`, `sum(deals.amount.amountMicros, deals.stage == 'WON')`).
+- A `CURRENCY` formula computes micros and also needs `currencyCodeExpression`, such as `"USD"` or `amount.currencyCode`.
+- A formula field cannot be unique, searchable or the label identifier.
+- Formula fields need the `IS_FORMULA_FIELD_ENABLED` feature flag; without it the sync fails with `Formula fields are not enabled for this workspace`.
+
 ### Relations
 
 A relation is two `FieldType.RELATION` fields that point at each other through `relationTargetFieldMetadataUniversalIdentifier`, one on each object. The `MANY_TO_ONE` side must set `universalSettings.joinColumnName` (the convention is `<fieldName>Id`); the build rejects a `MANY_TO_ONE` relation without one. `twenty app add field` emits it, but the reverse `ONE_TO_MANY` field still has to be written by hand, including on a standard object such as Company:
