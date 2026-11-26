@@ -113,37 +113,53 @@ describe('IMAP/SMTP outbound messaging (integration)', () => {
       isDraft: boolean;
       messageThreadId: string | null;
       text: string | null;
-    }>('message', 'messages', 'id isDraft messageThreadId text', {
-      subject: { eq: subject },
-    });
+      createdBy: { workspaceMemberId: string | null };
+    }>(
+      'message',
+      'messages',
+      'id isDraft messageThreadId text createdBy { workspaceMemberId }',
+      { subject: { eq: subject } },
+    );
+
+    // the System default leaves workspaceMemberId null
+    const createdBy = { workspaceMemberId: expect.any(String) };
 
     expect(message).toMatchObject({
       isDraft: false,
       messageThreadId: expect.any(String),
       text: 'SMTP reply body',
+      createdBy,
     });
+    expect(
+      await findRecordNodesByFilter(
+        'messageThread',
+        'messageThreads',
+        'createdBy { workspaceMemberId }',
+        { id: { eq: message.messageThreadId } },
+      ),
+    ).toEqual([{ createdBy }]);
     expect(
       await findRecordNodesByFilter<{
         messageChannelId: string;
       }>(
         'messageChannelMessageAssociation',
         'messageChannelMessageAssociations',
-        'messageChannelId',
+        'messageChannelId createdBy { workspaceMemberId }',
         { messageId: { eq: message.id } },
       ),
-    ).toEqual([expect.objectContaining({ messageChannelId })]);
+    ).toEqual([expect.objectContaining({ messageChannelId, createdBy })]);
     expect(
       await findRecordNodesByFilter<{ handle: string; role: string }>(
         'messageParticipant',
         'messageParticipants',
-        'handle role',
+        'handle role createdBy { workspaceMemberId }',
         { messageId: { eq: message.id } },
       ),
     ).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ handle: HANDLE, role: 'TO' }),
-        expect.objectContaining({ handle: HANDLE, role: 'CC' }),
-        expect.objectContaining({ handle: HANDLE, role: 'BCC' }),
+        expect.objectContaining({ handle: HANDLE, role: 'TO', createdBy }),
+        expect.objectContaining({ handle: HANDLE, role: 'CC', createdBy }),
+        expect.objectContaining({ handle: HANDLE, role: 'BCC', createdBy }),
       ]),
     );
   }, 300000);

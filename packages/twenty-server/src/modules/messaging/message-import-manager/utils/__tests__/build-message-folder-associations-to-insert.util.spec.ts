@@ -1,3 +1,5 @@
+import { FieldActorSource } from 'twenty-shared/types';
+
 import { buildMessageFolderAssociationsToInsert } from 'src/modules/messaging/message-import-manager/utils/build-message-folder-associations-to-insert.util';
 
 describe('buildMessageFolderAssociationsToInsert', () => {
@@ -20,6 +22,34 @@ describe('buildMessageFolderAssociationsToInsert', () => {
       {
         messageChannelMessageAssociationId: 'association-1',
         messageFolderId: 'folder-archive',
+      },
+    ]);
+  });
+
+  it('should carry the creator of an association onto its records', () => {
+    const createdBy = {
+      source: FieldActorSource.APPLICATION,
+      name: 'LinkedIn',
+      workspaceMemberId: null,
+      context: { applicationId: 'application-1' },
+    };
+
+    expect(
+      buildMessageFolderAssociationsToInsert({
+        associations: [
+          {
+            messageChannelMessageAssociationId: 'association-1',
+            messageFolderIds: ['folder-inbox'],
+            createdBy,
+          },
+        ],
+        existingRecords: [],
+      }),
+    ).toEqual([
+      {
+        messageChannelMessageAssociationId: 'association-1',
+        messageFolderId: 'folder-inbox',
+        createdBy,
       },
     ]);
   });

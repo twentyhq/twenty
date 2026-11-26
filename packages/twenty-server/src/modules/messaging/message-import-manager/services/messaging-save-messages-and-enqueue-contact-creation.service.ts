@@ -131,6 +131,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
                 {
                   messageChannelMessageAssociationId: associationId,
                   messageFolderIds,
+                  createdBy: message.createdBy ?? createdBy,
                 },
               ];
             });
@@ -143,7 +144,6 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
               folderLinkUpdate === 'replace'
                 ? refetchedMessageChannelMessageAssociationIds
                 : [],
-              createdBy,
             ),
           );
 
@@ -217,6 +217,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
                     ...participant,
                     messageId,
                     shouldCreateContact,
+                    createdBy: message.createdBy ?? createdBy,
                   };
                 })
               : [];
@@ -230,7 +231,6 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
               {
                 shouldMatchOnDisplayName:
                   messageChannel.type !== MessageChannelType.APP,
-                createdBy,
               },
             );
 
@@ -242,12 +242,17 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
 
               return isDefined(messageId) &&
                 isNonEmptyArray(message.attachmentFiles)
-                ? [{ messageId, attachmentFiles: message.attachmentFiles }]
+                ? [
+                    {
+                      messageId,
+                      attachmentFiles: message.attachmentFiles,
+                      createdBy: message.createdBy ?? createdBy,
+                    },
+                  ]
                 : [];
             }),
             workspaceId,
             transactionScope,
-            createdBy,
           });
 
           await this.messageAttachmentService.saveMessageRemoteAttachments({

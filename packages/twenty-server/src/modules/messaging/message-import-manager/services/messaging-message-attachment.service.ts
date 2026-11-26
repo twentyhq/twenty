@@ -40,15 +40,14 @@ export class MessagingMessageAttachmentService {
     messageAttachmentFiles,
     workspaceId,
     transactionScope,
-    createdBy,
   }: {
     messageAttachmentFiles: {
       messageId: string;
       attachmentFiles: MessageAttachmentFile[];
+      createdBy?: ActorMetadata;
     }[];
     workspaceId: string;
     transactionScope: WorkspaceTransactionScope;
-    createdBy?: ActorMetadata;
   }): Promise<void> {
     if (messageAttachmentFiles.length === 0) {
       return;
@@ -65,7 +64,7 @@ export class MessagingMessageAttachmentService {
     });
 
     const attachmentsToCreate = messageAttachmentFiles.flatMap(
-      ({ messageId, attachmentFiles }) =>
+      ({ messageId, attachmentFiles, createdBy }) =>
         messageIdsWithAttachments.has(messageId)
           ? []
           : attachmentFiles.map(({ fileId, label }) => ({
