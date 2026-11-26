@@ -14,6 +14,7 @@ import { createStore, Provider } from 'jotai';
 import { type ReactNode } from 'react';
 import { MemoryRouter, useLocation, useNavigate } from 'react-router-dom';
 import { NavigationMenuItemType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 jest.mock('@/ai-chat/composer/hooks/useSwitchToNewAiChat');
@@ -98,7 +99,7 @@ const enableFeatureFlags = (enabledFeatureFlags: FeatureFlagKey[]) =>
     .mocked(useIsFeatureEnabled)
     .mockImplementation(
       (featureFlag) =>
-        featureFlag !== null && enabledFeatureFlags.includes(featureFlag),
+        isDefined(featureFlag) && enabledFeatureFlags.includes(featureFlag),
     );
 
 const tapItem = (
