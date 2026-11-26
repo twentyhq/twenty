@@ -20,6 +20,8 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 
 const { message, messageThread, calendarEvent } = STANDARD_OBJECTS;
 
+const SYSTEM_FIELD_NAMES_LEFT_EDITABLE = ['id', 'updatedAt', 'updatedBy'];
+
 @Injectable()
 export class ChannelVisibilityRuleSyncService {
   constructor(
@@ -102,6 +104,8 @@ export class ChannelVisibilityRuleSyncService {
                   message.fields.attachments.universalIdentifier,
                 ],
               },
+              canUpdateRecords: false,
+              uneditableFieldUniversalIdentifiers: [],
             }),
             buildChannelVisibilityObjectRecordsPermissions({
               holder,
@@ -120,6 +124,15 @@ export class ChannelVisibilityRuleSyncService {
                   calendarEvent.fields.callRecordings.universalIdentifier,
                 ],
               },
+              canUpdateRecords: true,
+              uneditableFieldUniversalIdentifiers: Object.entries(
+                calendarEvent.fields,
+              )
+                .filter(
+                  ([fieldName]) =>
+                    !SYSTEM_FIELD_NAMES_LEFT_EDITABLE.includes(fieldName),
+                )
+                .map(([, { universalIdentifier }]) => universalIdentifier),
             }),
             ...[
               ...CHANNEL_CHILD_OBJECT_UNIVERSAL_IDENTIFIERS,
