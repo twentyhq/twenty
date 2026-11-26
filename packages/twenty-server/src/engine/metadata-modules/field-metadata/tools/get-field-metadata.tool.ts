@@ -105,7 +105,6 @@ export class GetFieldMetadataTool extends BaseTool<
         'flatObjectMetadataMaps',
         'flatFieldMetadataMapsOrm',
       ]);
-    // Formulas are stored as trees of field identifiers, so they are shown as text with the current field names
     const printFormula = (field: (typeof rawResults)[number]) => {
       const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
         flatEntityId: field.objectMetadataId,

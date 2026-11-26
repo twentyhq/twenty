@@ -32,7 +32,7 @@ const buildTextFormulaField = ({
     objectMetadataUniversalIdentifier:
       FORMULA_GADGET_FLAT_OBJECT_METADATA_MOCK.universalIdentifier,
     formula,
-  } as Parameters<typeof getFlatFieldMetadataMock>[0]);
+  });
 };
 
 const convert = (

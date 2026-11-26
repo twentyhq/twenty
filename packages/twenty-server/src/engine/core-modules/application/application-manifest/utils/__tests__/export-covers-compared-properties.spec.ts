@@ -514,6 +514,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
     metadataName: 'fieldMetadata',
     emittedProperties: Object.keys(
       fromFlatFieldMetadataToFieldManifest({
+        formulaFields: [],
         flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
         flatFieldMetadata: getFlatFieldMetadataMock({
           universalIdentifier: FIELD_UID,

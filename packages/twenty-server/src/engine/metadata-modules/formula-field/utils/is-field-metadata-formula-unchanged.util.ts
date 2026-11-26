@@ -6,7 +6,15 @@ import {
   getFieldMetadataFormulaTree,
 } from 'twenty-shared/utils';
 
-type ComparedFormula = Partial<FieldMetadataFormula> | null | undefined;
+type ComparedFormula =
+  | Partial<
+      Pick<
+        FieldMetadataFormula,
+        'tree' | 'currencyCodeTree' | 'expression' | 'currencyCodeExpression'
+      >
+    >
+  | null
+  | undefined;
 
 const readFormula = (formula: ComparedFormula) => ({
   tree: getFieldMetadataFormulaTree({ formula }),
