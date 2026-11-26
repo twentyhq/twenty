@@ -42,10 +42,13 @@ const PETS_CSV_ATTACHMENT: AiChatFileUIPart = {
   fileId: 'pets-file-id',
 };
 
-const renderEditorSection = (
-  threadId: string,
-  attachments: AiChatFileUIPart[] = [],
-) => {
+const renderEditorSection = ({
+  threadId,
+  attachments = [],
+}: {
+  threadId: string;
+  attachments?: AiChatFileUIPart[];
+}) => {
   const MetadataAndApolloWrapper = getJestMetadataAndApolloMocksWrapper({
     objectMetadataItems,
     onInitializeJotaiStore: (store) => {
@@ -83,13 +86,16 @@ describe('AiChatEditorSection', () => {
   });
 
   it('shows the composer on a new chat, which has no thread to load permissions for', () => {
-    renderEditorSection(NEW_CHAT_THREAD_ID);
+    renderEditorSection({ threadId: NEW_CHAT_THREAD_ID });
 
     expect(screen.getByRole('button', { name: /send/i })).toBeInTheDocument();
   });
 
   it('shows attachments above the message editor and removes them', async () => {
-    renderEditorSection(NEW_CHAT_THREAD_ID, [PETS_CSV_ATTACHMENT]);
+    renderEditorSection({
+      threadId: NEW_CHAT_THREAD_ID,
+      attachments: [PETS_CSV_ATTACHMENT],
+    });
 
     const attachment = screen.getByRole('button', { name: 'Pets.csv' });
 
@@ -108,7 +114,7 @@ describe('AiChatEditorSection', () => {
   });
 
   it('waits for the permissions of an existing chat', () => {
-    renderEditorSection('20202020-7c1e-4a0f-9d2b-3f4e5a6b7c8e');
+    renderEditorSection({ threadId: '20202020-7c1e-4a0f-9d2b-3f4e5a6b7c8e' });
 
     expect(screen.getByRole('status')).toHaveTextContent(
       'Loading conversation…',

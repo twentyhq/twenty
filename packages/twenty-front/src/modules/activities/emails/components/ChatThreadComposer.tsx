@@ -294,7 +294,7 @@ export const ChatThreadComposer = ({
         </StyledPendingMessages>
       )}
       <StyledChatComposerBox>
-        <ChatComposerAttachments>
+        <ChatComposerAttachments hasAttachments={isNonEmptyArray(files)}>
           {files.map((file, index) => (
             <ChatFilePreview
               key={`${index}-${file.name}`}

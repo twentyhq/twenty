@@ -18,8 +18,12 @@ export const AiChatComposerAttachmentPreviews = () => {
     );
   };
 
+  const hasAttachments =
+    aiChatComposerUploadingFiles.length > 0 ||
+    aiChatComposerAttachments.length > 0;
+
   return (
-    <ChatComposerAttachments>
+    <ChatComposerAttachments hasAttachments={hasAttachments}>
       {aiChatComposerUploadingFiles.map((file, index) => (
         <ChatFilePreview
           file={file}
