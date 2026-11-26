@@ -9,6 +9,6 @@ export type AiChatPendingToolCall =
       | {
           kind: 'toolCallApproval';
           proposal: ProposedToolCall;
-          isAwaitedByCaller: boolean;
+          isPostedByWorkflow: boolean;
         }
     ));

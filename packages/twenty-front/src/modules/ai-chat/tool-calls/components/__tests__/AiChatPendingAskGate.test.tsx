@@ -71,7 +71,7 @@ const EMAIL_APPROVAL = {
     arguments: {},
     template: 'email',
   },
-  isAwaitedByCaller: false,
+  isPostedByWorkflow: false,
 };
 
 const renderGate = () =>
@@ -114,7 +114,7 @@ describe('AiChatPendingAskGate', () => {
 
   it('shows an approval a workflow waits on in place of the composer', () => {
     useAiChatPendingToolCalls.mockReturnValue([
-      { ...EMAIL_APPROVAL, isAwaitedByCaller: true },
+      { ...EMAIL_APPROVAL, isPostedByWorkflow: true },
     ]);
 
     renderGate();

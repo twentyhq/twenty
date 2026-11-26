@@ -323,7 +323,7 @@ export class AgentCallerConversationService {
       input,
       output: {
         ...pendingOutput,
-        result: { ...result, isAwaitedByCaller: true },
+        result: { ...result, isPostedByWorkflow: true },
       },
     };
   }

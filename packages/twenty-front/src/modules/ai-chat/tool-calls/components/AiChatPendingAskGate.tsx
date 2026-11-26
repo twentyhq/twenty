@@ -35,7 +35,7 @@ export const AiChatPendingAskGate = ({
   const isComposerShown = pendingToolCalls.every(
     (pendingToolCall) =>
       pendingToolCall.kind === 'toolCallApproval' &&
-      !pendingToolCall.isAwaitedByCaller,
+      !pendingToolCall.isPostedByWorkflow,
   );
   const requests = (
     <AiChatPendingToolCallRequests pendingToolCalls={pendingToolCalls} />
