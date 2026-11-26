@@ -5,6 +5,7 @@ import { type TeamsActivitiesDispatchPayload } from 'src/features/chat/logic-fun
 import { type TeamsAssistantEmptyRequest } from 'src/features/chat/logic-functions/types/teams-assistant-empty-request.type';
 import { type TeamsAssistantRequestDraft } from 'src/features/chat/logic-functions/types/teams-assistant-request-draft.type';
 import { collectTeamsBotMentionTexts } from 'src/features/chat/logic-functions/utils/collect-teams-bot-mention-texts';
+import { getTeamsConversationType } from 'src/features/chat/logic-functions/utils/get-teams-conversation-type';
 import { normalizeTeamsRequestText } from 'src/features/chat/logic-functions/utils/normalize-teams-request-text';
 
 const BOT_ACCOUNT_ID_PREFIX = '28:';
@@ -48,8 +49,7 @@ export const parseTeamsAssistantRequest = ({
     return { request: null, skipReason: 'Activity is missing required fields' };
   }
 
-  const conversationType =
-    activity.conversation?.conversationType ?? TEAMS_PERSONAL_CONVERSATION_TYPE;
+  const conversationType = getTeamsConversationType(activity);
 
   if (
     conversationType !== TEAMS_PERSONAL_CONVERSATION_TYPE &&
@@ -67,6 +67,7 @@ export const parseTeamsAssistantRequest = ({
       emptyRequest: {
         teamsActivityId: activity.id,
         teamsConversationId: conversationId,
+        teamsConversationType: conversationType,
         teamsServiceUrl: serviceUrl,
       },
     };
