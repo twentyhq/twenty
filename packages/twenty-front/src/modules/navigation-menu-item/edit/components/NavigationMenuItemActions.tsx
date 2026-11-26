@@ -25,13 +25,19 @@ import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/ty
 import { type NavigationMenuItemMoveDestination } from '@/navigation-menu-item/common/types/NavigationMenuItemMoveDestination';
 import { type NavigationMenuItemAddTarget } from '@/navigation-menu-item/edit/types/NavigationMenuItemAddTarget';
 import { getNavigationMenuItemContainerId } from '@/navigation-menu-item/common/utils/getNavigationMenuItemContainerId';
-import { getNavigationMenuItemMoveDestinations } from '@/navigation-menu-item/common/utils/getNavigationMenuItemMoveDestinations';
+import { getNavigationMenuItemMoveDestinationGroups } from '@/navigation-menu-item/common/utils/getNavigationMenuItemMoveDestinationGroups';
 import { useGetNavigationMenuTabLabel } from '@/navigation-menu-item/display/hooks/useGetNavigationMenuTabLabel';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
 import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
 import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+
+type NavigationMenuItemMoveOptionGroup = {
+  id: string;
+  label?: string;
+  options: NavigationMenuItemOption[];
+};
 
 type NavigationMenuItemActionsProps = {
   item: NavigationMenuItem;
@@ -99,7 +105,6 @@ export const NavigationMenuItemActions = ({
   ): NavigationMenuItemOption => {
     const moveOption = {
       id: destination.containerId ?? 'home',
-      contextualText: getTabName(destination.tabId),
       isDisabled: (item.parentId ?? null) === destination.containerId,
       onClick: () => run(() => moveToFolder(item.id, destination.containerId)),
     };
@@ -121,13 +126,16 @@ export const NavigationMenuItemActions = ({
         };
     }
   };
-  const getCrossTabMoveOptions = (): NavigationMenuItemOption[] =>
-    getNavigationMenuItemMoveDestinations({
+  const getCrossTabMoveOptionGroups = (): NavigationMenuItemMoveOptionGroup[] =>
+    getNavigationMenuItemMoveDestinationGroups({
       items: workspaceNavigationMenuItems,
       tabIds: tabs.map((tab) => tab.id),
-    })
-      .filter((destination) => !isFolder || destination.kind !== 'folder')
-      .map(toMoveOption);
+      canMoveIntoFolder: !isFolder,
+    }).map((group) => ({
+      id: group.tabId ?? 'home',
+      label: getTabName(group.tabId),
+      options: group.destinations.map(toMoveOption),
+    }));
   const getContainerMoveOptions = (): NavigationMenuItemOption[] => [
     {
       id: 'root',
@@ -148,9 +156,11 @@ export const NavigationMenuItemActions = ({
         onClick: () => run(() => moveToFolder(item.id, folder.id)),
       })),
   ];
-  const folders = isMovingAcrossTabs
-    ? getCrossTabMoveOptions()
-    : getContainerMoveOptions();
+  const moveOptionGroups: NavigationMenuItemMoveOptionGroup[] =
+    isMovingAcrossTabs
+      ? getCrossTabMoveOptionGroups()
+      : [{ id: 'container', options: getContainerMoveOptions() }];
+  const moveOptions = moveOptionGroups.flatMap((group) => group.options);
   const actions: NavigationMenuItemOption[] = [
     {
       id: 'up',
@@ -172,7 +182,7 @@ export const NavigationMenuItemActions = ({
       Icon: IconFolderSymlink,
       isDisabled:
         (isFolder && !isMovingAcrossTabs) ||
-        folders.every((option) => option.isDisabled),
+        moveOptions.every((option) => option.isDisabled),
       hasSubMenu: true,
       onClick: () => goToPage('folders'),
     },
@@ -217,8 +227,15 @@ export const NavigationMenuItemActions = ({
       <Dropdown.Page id="folders">
         <Dropdown.Back>{moveToLabel}</Dropdown.Back>
         <Dropdown.Section scrollable>
-          {folders.map((option) => (
-            <NavigationMenuItemSelectableItem key={option.id} item={option} />
+          {moveOptionGroups.map((group) => (
+            <Dropdown.Section key={group.id} label={group.label}>
+              {group.options.map((option) => (
+                <NavigationMenuItemSelectableItem
+                  key={option.id}
+                  item={option}
+                />
+              ))}
+            </Dropdown.Section>
           ))}
         </Dropdown.Section>
       </Dropdown.Page>

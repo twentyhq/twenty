@@ -137,7 +137,7 @@ export const useMobileNavigationBarItems = (): {
     setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
     setCurrentNavigationMenuTabId(tabId);
 
-    if (isReopeningCurrentTab) {
+    if (isReopeningCurrentTab || !isCustomizableSidebarEnabled) {
       store.set(
         currentNavigationMenuItemFolderIdFamilyState.atomFamily(
           getNavigationMenuTabFolderKey(tabId),
