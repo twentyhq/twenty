@@ -4,5 +4,4 @@ export const EXPRESSION_SYMBOL_BY_ARITHMETIC_OPERATOR = {
   MULTIPLY: '*',
   DIVIDE: '/',
   REMAINDER: '%',
-  CONCATENATE: '||',
 } as const;

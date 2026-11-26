@@ -1,17 +1,17 @@
 import { type Instruction } from 'expr-eval-fork';
 
-import { type ExpressionTreeResult } from '@/types/ExpressionTreeResult';
-import { buildExpressionNode } from '@/utils/expression/internal/buildExpressionNode';
+import { type ExpressionNodeParseResult } from '@/expression/types/ExpressionNodeParseResult';
+import { buildExpressionNode } from '@/expression/utils/internal/buildExpressionNode';
 
 const BRACKET_ACCESS_TOKEN = '[';
 
-export const buildExpressionTree = (
+export const toExpressionNodeParseResult = (
   instructions: Instruction[],
-): ExpressionTreeResult => {
+): ExpressionNodeParseResult => {
   const result = buildExpressionNode({ instructions });
 
   if ('node' in result) {
-    return { isValid: true, tree: result.node };
+    return { isValid: true, node: result.node };
   }
 
   const { unexpectedToken } = result;

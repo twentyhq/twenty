@@ -1,7 +1,7 @@
-import { type ExpressionNode } from '@/types/ExpressionNode';
+import { type ExpressionNode } from '@/expression/types/ExpressionNode';
 import { type ValidationRuleErrorCode } from '@/types/ValidationRuleErrorCode';
 import { type ValidationRuleErrorParams } from '@/types/ValidationRuleErrorParams';
-import { getExpressionNodeChildren } from '@/utils/expression/internal/getExpressionNodeChildren';
+import { getExpressionNodeChildren } from '@/expression/utils/internal/getExpressionNodeChildren';
 import { getFormulaAggregateCall } from '@/utils/formula/getFormulaAggregateCall';
 import { isDefined } from '@/utils/validation/isDefined';
 
@@ -121,17 +121,17 @@ const collectReads = ({
 
 // Finds a read of a one-to-many relation outside an aggregate over it, or a misused aggregate
 export const findExpressionAggregationError = ({
-  tree,
+  node,
   toManyRelationNameByPath,
   shouldAllowAggregates,
 }: {
-  tree: ExpressionNode;
+  node: ExpressionNode;
   toManyRelationNameByPath: ReadonlyMap<string, string>;
   shouldAllowAggregates: boolean;
 }): ExpressionAggregationError | null => {
   try {
     const [toManyRelationName] = collectReads({
-      node: tree,
+      node,
       toManyRelationNameByPath,
       shouldAllowAggregates,
     }).toManyRelationNames;

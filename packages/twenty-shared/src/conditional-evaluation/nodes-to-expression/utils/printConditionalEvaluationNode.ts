@@ -1,5 +1,5 @@
 import { type ConditionalEvaluationNode } from '@/conditional-evaluation/common/types/ConditionalEvaluationNode';
-import { printExpressionNode } from '@/utils/expression/printExpressionNode';
+import { printExpressionNode } from '@/expression/utils/printExpressionNode';
 
 export const printConditionalEvaluationNode = ({
   node,

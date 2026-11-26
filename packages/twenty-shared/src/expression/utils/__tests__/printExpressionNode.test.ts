@@ -1,14 +1,14 @@
-import { parseExpressionTree } from '@/utils/expression/parseExpressionTree';
-import { printExpressionNode } from '@/utils/expression/printExpressionNode';
+import { parseExpressionNode } from '@/utils/expression/parseExpressionNode';
+import { printExpressionNode } from '@/expression/utils/printExpressionNode';
 
 const parseOrThrow = (expression: string) => {
-  const result = parseExpressionTree(expression);
+  const result = parseExpressionNode(expression);
 
   if (!result.isValid) {
     throw new Error(`"${expression}" did not parse: ${result.errorMessage}`);
   }
 
-  return result.tree;
+  return result.node;
 };
 
 const CANONICAL_EXPRESSIONS = [
@@ -22,8 +22,8 @@ const CANONICAL_EXPRESSIONS = [
   '-price * 2',
   'price * -1',
   '-(price + tax)',
-  'length name + 1',
-  'abs (price - cost)',
+  'length(name) + 1',
+  'abs(price - cost)',
   'not isDefined(closedAt)',
   'not (stage == "WON")',
   'not (price > 1 and quantity > 1)',
@@ -53,6 +53,8 @@ describe('printExpressionNode', () => {
     ['(price + tax) || " EUR"', 'price + tax || " EUR"'],
     ['price   *quantity', 'price * quantity'],
     ["stage == 'WON'", 'stage == "WON"'],
+    ['length name + 1', 'length(name) + 1'],
+    ['abs (price - cost)', 'abs(price - cost)'],
   ])('should print %p in the canonical form %p', (expression, canonical) => {
     expect(printExpressionNode({ node: parseOrThrow(expression) })).toBe(
       canonical,
@@ -66,9 +68,11 @@ describe('printExpressionNode', () => {
     'x || (y || z)',
     '-(-a)',
     'a - -1',
+    'length (a || b) * 2',
+    'abs -a',
   ])('should read back the same tree after printing %p', (expression) => {
-    const tree = parseOrThrow(expression);
+    const node = parseOrThrow(expression);
 
-    expect(parseOrThrow(printExpressionNode({ node: tree }))).toEqual(tree);
+    expect(parseOrThrow(printExpressionNode({ node }))).toEqual(node);
   });
 });
