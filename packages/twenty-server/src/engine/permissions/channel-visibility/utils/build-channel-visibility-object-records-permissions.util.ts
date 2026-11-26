@@ -47,7 +47,6 @@ export const buildChannelVisibilityObjectRecordsPermissions = ({
 
   return {
     objectUniversalIdentifier,
-    uneditableFields: uneditableFieldUniversalIdentifiers,
     rowLevelRecordsPermissions: Object.values(MessageChannelVisibility).flatMap(
       (visibility) => {
         const channelIds = channels
@@ -76,6 +75,7 @@ export const buildChannelVisibilityObjectRecordsPermissions = ({
             unreadableFields:
               unreadableFieldUniversalIdentifiersByVisibility[visibility] ?? [],
             canUpdateRecords,
+            uneditableFields: uneditableFieldUniversalIdentifiers,
             predicateGroups: [
               {
                 universalIdentifier: buildUniversalIdentifier('group'),

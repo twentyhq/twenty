@@ -90,7 +90,7 @@ describe('buildChannelVisibilityObjectRecordsPermissions', () => {
   });
 
   it('should let visible records be updated outside the uneditable fields', () => {
-    const { uneditableFields, rowLevelRecordsPermissions } =
+    const { rowLevelRecordsPermissions } =
       buildChannelVisibilityObjectRecordsPermissions({
         holder: { type: 'userWorkspace', userWorkspaceId: 'alice' },
         channels,
@@ -102,11 +102,15 @@ describe('buildChannelVisibilityObjectRecordsPermissions', () => {
         uneditableFieldUniversalIdentifiers: ['title'],
       });
 
-    expect(uneditableFields).toEqual(['title']);
     expect(
       rowLevelRecordsPermissions?.map(
-        ({ canUpdateRecords }) => canUpdateRecords,
+        ({ canUpdateRecords, uneditableFields }) => ({
+          canUpdateRecords,
+          uneditableFields,
+        }),
       ),
-    ).toEqual([true, true, true]);
+    ).toEqual(
+      Array(3).fill({ canUpdateRecords: true, uneditableFields: ['title'] }),
+    );
   });
 });
