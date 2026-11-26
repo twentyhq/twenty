@@ -5,10 +5,13 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 
 const { fields } = STANDARD_OBJECTS.calendarEvent;
 
-const buildField = (
-  universalIdentifier: string,
-  disabledFieldPermissionActions: FlatFieldMetadata['disabledFieldPermissionActions'],
-): Pick<
+const buildField = ({
+  universalIdentifier,
+  disabledFieldPermissionActions,
+}: Pick<
+  FlatFieldMetadata,
+  'universalIdentifier' | 'disabledFieldPermissionActions'
+>): Pick<
   FlatFieldMetadata,
   'universalIdentifier' | 'disabledFieldPermissionActions' | 'updatedAt'
 > => ({
@@ -22,18 +25,19 @@ describe('buildSyncedCalendarEventFieldLockUpdates', () => {
     const updates = buildSyncedCalendarEventFieldLockUpdates({
       flatFieldMetadataMaps: {
         byUniversalIdentifier: {
-          [fields.title.universalIdentifier]: buildField(
-            fields.title.universalIdentifier,
-            null,
-          ),
-          [fields.location.universalIdentifier]: buildField(
-            fields.location.universalIdentifier,
-            ['canUpdateFieldValue'],
-          ),
-          [fields.calendarEventTargets.universalIdentifier]: buildField(
-            fields.calendarEventTargets.universalIdentifier,
-            null,
-          ),
+          [fields.title.universalIdentifier]: buildField({
+            universalIdentifier: fields.title.universalIdentifier,
+            disabledFieldPermissionActions: null,
+          }),
+          [fields.location.universalIdentifier]: buildField({
+            universalIdentifier: fields.location.universalIdentifier,
+            disabledFieldPermissionActions: ['canUpdateFieldValue'],
+          }),
+          [fields.calendarEventTargets.universalIdentifier]: buildField({
+            universalIdentifier:
+              fields.calendarEventTargets.universalIdentifier,
+            disabledFieldPermissionActions: null,
+          }),
         },
       },
       now: '2026-11-26T00:00:00.000Z',
