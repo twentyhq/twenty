@@ -3,12 +3,10 @@ import { upsertRowLevelPermissionRules } from 'test/integration/metadata/suites/
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { findAccessGroupPropagationProgress } from 'test/integration/metadata/suites/role/utils/find-access-group-propagation-progress.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { findRoleAccessGroupCompactIds } from 'test/integration/permissions/utils/find-role-access-group-compact-ids.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import {
-  FeatureFlagKey,
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
@@ -16,6 +14,7 @@ import { setTimeout as sleep } from 'node:timers/promises';
 import { v4 } from 'uuid';
 
 import { type AccessGroupReadService } from 'src/engine/permissions/internal/access-group/services/access-group-read.service';
+import { type AccessGroupSyncSchedulerService } from 'src/engine/permissions/internal/access-group/services/access-group-sync-scheduler.service';
 import { type AccessGroupSyncService } from 'src/engine/permissions/internal/access-group/services/access-group-sync.service';
 import { type RecordAccessGroupComputationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-computation.service';
 import { type AccessGroupPropagationProgressDTO } from 'src/engine/permissions/dtos/access-group-propagation-progress.dto';
@@ -261,10 +260,11 @@ describe('access group propagation progress (integration)', () => {
       `INSERT INTO ${PERSON_TABLE} ("id", "jobTitle") VALUES ($1, 'Paris office')`,
       [personId],
     );
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED,
-      value: true,
-      expectToFail: false,
+    await getAppProviderByClassName<AccessGroupSyncSchedulerService>(
+      'AccessGroupSyncSchedulerService',
+    ).scheduleSync({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      isRelatedRecordPathChanged: true,
     });
     await waitForAllJobsToFinish();
     await global.testDataSource.query(`ANALYZE ${PERSON_TABLE}`);
@@ -272,11 +272,6 @@ describe('access group propagation progress (integration)', () => {
 
   afterAll(async () => {
     jest.restoreAllMocks();
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED,
-      value: false,
-      expectToFail: false,
-    });
     await deleteOneRole({ expectToFail: false, input: { idToDelete: roleId } });
     await waitForAllJobsToFinish();
     await global.testDataSource.query(

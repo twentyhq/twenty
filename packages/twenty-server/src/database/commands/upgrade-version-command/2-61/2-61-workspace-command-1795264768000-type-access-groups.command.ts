@@ -60,7 +60,7 @@ export class TypeAccessGroupsCommand extends ProvisionedWorkspaceCommandRunner {
       }
     });
 
-    await this.accessGroupSyncSchedulerService.scheduleSyncIfEnabled({ workspaceId });
+    await this.accessGroupSyncSchedulerService.scheduleSync({ workspaceId });
 
     this.logger.log(`Typed the accessGroup table of workspace ${workspaceId}`);
   }

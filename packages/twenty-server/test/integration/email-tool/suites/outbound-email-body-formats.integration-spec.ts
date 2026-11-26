@@ -37,6 +37,10 @@ import {
   type GreenmailServer,
   startGreenmailContainer,
 } from 'test/integration/utils/start-greenmail-container.util';
+import {
+  grantRoleWideAccessToChannelObjects,
+  revokeRoleWideAccessToChannelObjects,
+} from 'test/integration/utils/role-wide-access-to-channel-objects.util';
 
 const PASSWORD = 'greenmail-password';
 const HANDLE = `email-body-formats-${randomUUID()}@acme.test`;
@@ -162,6 +166,7 @@ describe('Outbound email body formats (integration)', () => {
   };
 
   beforeAll(async () => {
+    await grantRoleWideAccessToChannelObjects();
     await updateConfigVariable({
       input: { key: 'OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS', value: ['*'] },
     });
@@ -218,6 +223,7 @@ describe('Outbound email body formats (integration)', () => {
     }
 
     await greenmail?.stop().catch(() => undefined);
+    await revokeRoleWideAccessToChannelObjects();
   });
 
   describe('workflow email body stored as a document', () => {

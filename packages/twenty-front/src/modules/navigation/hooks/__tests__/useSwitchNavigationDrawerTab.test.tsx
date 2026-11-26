@@ -1,9 +1,9 @@
 import { MemoryRouterAppNavigatorProvider } from '~/testing/components/MemoryRouterAppNavigatorProvider';
 import { useReturnFromExpandedAiChat } from '@/ai-chat/hooks/useReturnFromExpandedAiChat';
+import { isAiChatHandoffSkipped } from '@/ai-chat/utils/isAiChatHandoffSkipped';
 import { useSwitchToNewAiChat } from '@/ai-chat/composer/hooks/useSwitchToNewAiChat';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { currentNavigationMenuTabIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuTabIdState';
-import { lastVisitedUrlByNavigationMenuTabKeyState } from '@/navigation-menu-item/common/states/lastVisitedUrlByNavigationMenuTabKeyState';
 import { navigationMenuTabIdToOpenFirstItemState } from '@/navigation-menu-item/common/states/navigationMenuTabIdToOpenFirstItemState';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { useSwitchNavigationDrawerTab } from '@/navigation/hooks/useSwitchNavigationDrawerTab';
@@ -129,24 +129,50 @@ describe('useSwitchNavigationDrawerTab', () => {
     );
   });
 
-  it('returns to the page last visited on a tab and remembers the one left', () => {
+  it('opens the first item again when returning to a tab', () => {
     const { result, store } = renderSwitchNavigationDrawerMode({
       pathname: '/objects/people',
     });
-    act(() =>
-      store.set(lastVisitedUrlByNavigationMenuTabKeyState.atom, {
-        'chats-tab-id': AI_CHAT_PATH,
-      }),
-    );
+    act(() => result.current.switchToNavigationMenuTab('chats-tab-id'));
+    act(() => result.current.switchToNavigationMenuTab(null));
 
     act(() => result.current.switchToNavigationMenuTab('chats-tab-id'));
 
-    expect(result.current.location.pathname).toBe(AI_CHAT_PATH);
-    expect(store.get(navigationMenuTabIdToOpenFirstItemState.atom)).toBeNull();
-    expect(store.get(lastVisitedUrlByNavigationMenuTabKeyState.atom)).toEqual({
-      'chats-tab-id': AI_CHAT_PATH,
-      home: '/objects/people',
+    expect(store.get(navigationMenuTabIdToOpenFirstItemState.atom)).toBe(
+      'chats-tab-id',
+    );
+    expect(result.current.location.pathname).toBe(DEFAULT_HOME_PAGE_PATH);
+  });
+
+  it('opens the first item of a tab selected while customizing once it is left and reopened', () => {
+    const { result, store } = renderSwitchNavigationDrawerMode({
+      pathname: '/objects/people',
+      isLayoutCustomizationModeEnabled: true,
     });
+    act(() => result.current.switchToNavigationMenuTab('chats-tab-id'));
+    act(() => store.set(isLayoutCustomizationModeEnabledState.atom, false));
+
+    act(() => result.current.switchToNavigationMenuTab(null));
+
+    expect(result.current.location.pathname).toBe(DEFAULT_HOME_PAGE_PATH);
+
+    act(() => result.current.switchToNavigationMenuTab('chats-tab-id'));
+
+    expect(store.get(navigationMenuTabIdToOpenFirstItemState.atom)).toBe(
+      'chats-tab-id',
+    );
+  });
+
+  it('does not hand the chat it leaves off to the side panel when switching back to Home', () => {
+    const { result } = renderSwitchNavigationDrawerMode({
+      pathname: '/inbox/20202020-0687-4c41-b707-ed1bfca972a7',
+      currentNavigationMenuTabId: 'chats-tab-id',
+    });
+
+    act(() => result.current.switchToNavigationMenuTab(null));
+
+    expect(result.current.location.pathname).toBe(DEFAULT_HOME_PAGE_PATH);
+    expect(isAiChatHandoffSkipped(result.current.location.state)).toBe(true);
   });
 
   it('opens the default home page when switching back to Home', () => {

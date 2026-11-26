@@ -20,10 +20,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Record sharing`,
     description: msg`Let people restrict and share individual records.`,
   },
-  [FeatureFlagKey.IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED]: {
-    label: msg`Share calendar events across channels`,
-    description: msg`Store a meeting synced by several calendars of the same provider once, instead of once per calendar.`,
-  },
   [FeatureFlagKey.IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED]: {
     label: msg`Skip internal meetings`,
     description: msg`Skip calendar events with no participant outside the workspace domain, unless internal import is turned on.`,
@@ -56,22 +52,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`MCP servers`,
     description: msg`Register external MCP servers in Developers settings and expose their tools to AI chat.`,
   },
-  [FeatureFlagKey.IS_CREATE_RECORDS_PERMISSION_ENABLED]: {
-    label: msg`Create records permission`,
-    description: msg`Check the create permission on its own when creating records, rather than the update permission.`,
-  },
-  [FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED]: {
-    label: msg`Related record paths`,
-    description: msg`Define the relations along which a record's permissions extend to related records.`,
-  },
-  [FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED]: {
-    label: msg`Record rules through relations`,
-    description: msg`Let record-level permission rules compare a field of a related record.`,
-  },
-  [FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED]: {
-    label: msg`Channel visibility through rules`,
-    description: msg`In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops and related record paths.`,
-  },
   // TODO(@charlesBochet): remove the API key channel visibility exemption after 2026-11-30
   [FeatureFlagKey.IS_CHANNEL_VISIBILITY_ENFORCED_ON_API_KEYS]: {
     label: msg`Channel visibility on API keys`,
@@ -81,17 +61,9 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Getting started`,
     description: msg`Show the Getting started page and sidebar card, and open it on landing during the trial.`,
   },
-  [FeatureFlagKey.IS_MESSAGE_ATTACHMENT_ENABLED]: {
-    label: msg`Message attachments`,
-    description: msg`Store and show files attached to messages. Enabled after the workspace upgrade completes.`,
-  },
   [FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED]: {
     label: msg`Private records`,
     description: msg`Apply private records on objects that aren't private by default. Always on for workspaces that have set record sharing. Turning this off makes records set as private on those objects visible again.`,
-  },
-  [FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED]: {
-    label: msg`Access groups`,
-    description: msg`Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes.`,
   },
   [FeatureFlagKey.IS_AI_DATA_POLICY_ENABLED]: {
     label: msg`AI data policy and Privacy tab`,

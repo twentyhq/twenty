@@ -609,6 +609,7 @@
       "IconRowInsertBottom": "icon/components/TablerIcons",
       "IconRowInsertTop": "icon/components/TablerIcons",
       "IconSearch": "icon/components/TablerIcons",
+      "IconSearchOff": "icon/components/TablerIcons",
       "IconSend": "icon/components/TablerIcons",
       "IconServer": "icon/components/TablerIcons",
       "IconServer2": "icon/components/TablerIcons",

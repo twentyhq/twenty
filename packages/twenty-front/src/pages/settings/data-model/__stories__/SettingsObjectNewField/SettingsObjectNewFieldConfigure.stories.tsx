@@ -44,6 +44,7 @@ const meta: Meta<PageDecoratorArgs> = {
                 description: variables.input.field.description ?? null,
                 icon: variables.input.field.icon ?? null,
                 isUnique: variables.input.field.isUnique ?? null,
+                isUIEditable: fieldMetadataItem.isUIEditable ?? null,
                 settings: variables.input.field.settings ?? null,
                 formula: variables.input.field.formula ?? null,
                 defaultValue: variables.input.field.defaultValue ?? null,

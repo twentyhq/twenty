@@ -8,12 +8,10 @@ import { useSendAppChannelMessage } from '@/activities/emails/hooks/useSendAppCh
 import { useSendEmail } from '@/activities/emails/hooks/useSendEmail';
 import { emailComposerDraftFamilyState } from '@/activities/emails/states/emailComposerDraftFamilyState';
 import { type AppReplyTarget } from '@/activities/emails/types/AppReplyTarget';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { v4 } from 'uuid';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
 import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailRecipient';
 import { type EmailRecipientsByFieldId } from '@/activities/emails/recipients/types/EmailRecipientsByFieldId';
@@ -78,7 +76,7 @@ export const useEmailComposerState = ({
     recipientsByFieldId,
     subject,
     body,
-    files: attachedFiles,
+    files,
     pickedSender,
     pendingAppSend,
   } = storedDraft ?? initialDraft;
@@ -129,15 +127,6 @@ export const useEmailComposerState = ({
   const isSendingThroughAppSender =
     isDefined(appReplyTarget) &&
     appReplyTarget.connectedAccountId === connectedAccountId;
-
-  const isMessageAttachmentEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_MESSAGE_ATTACHMENT_ENABLED,
-  );
-
-  const canAttachFiles =
-    !isSendingThroughAppSender || isMessageAttachmentEnabled;
-
-  const files = canAttachFiles ? attachedFiles : [];
 
   const { sendEmail, loading: isSendingEmail } = useSendEmail();
   const { sendAppChannelMessage } = useSendAppChannelMessage();
@@ -275,7 +264,6 @@ export const useEmailComposerState = ({
     setBody,
     files,
     setFiles,
-    canAttachFiles,
     discardDraft: () => setStoredDraft(null),
     handleSend,
     loading,

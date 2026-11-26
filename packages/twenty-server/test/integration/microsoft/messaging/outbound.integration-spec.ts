@@ -13,6 +13,10 @@ import { getCoreRepository } from 'test/integration/utils/get-core-repository.ut
 import { runMessageChannelSync } from 'test/integration/utils/run-message-channel-sync.util';
 import { sendEmail } from 'test/integration/utils/send-email.util';
 import { serializeEmailBody } from 'test/integration/utils/serialize-email-body.util';
+import {
+  grantRoleWideAccessToChannelObjects,
+  revokeRoleWideAccessToChannelObjects,
+} from 'test/integration/utils/role-wide-access-to-channel-objects.util';
 
 const HANDLE = 'microsoft-outbound@apple.dev';
 const ALIAS = 'microsoft-outbound-alias@apple.dev';
@@ -52,6 +56,7 @@ describe('Microsoft outbound messaging and calendar creation (integration)', () 
   let channel: Awaited<ReturnType<typeof connectMessagingAccount>>;
 
   beforeAll(async () => {
+    await grantRoleWideAccessToChannelObjects();
     channel = await connectMessagingAccount({
       provider: ConnectedAccountProvider.MICROSOFT,
       handle: HANDLE,
@@ -68,6 +73,7 @@ describe('Microsoft outbound messaging and calendar creation (integration)', () 
 
   afterAll(async () => {
     await channel?.cleanup().catch(() => undefined);
+    await revokeRoleWideAccessToChannelObjects();
   });
 
   it('sends a reply through Graph with To, CC, and BCC recipients', async () => {

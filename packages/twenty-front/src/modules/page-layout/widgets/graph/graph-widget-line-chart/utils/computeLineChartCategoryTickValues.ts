@@ -31,7 +31,7 @@ export const computeLineChartCategoryTickValues = ({
 
   return computeChartCategoryTickValues({
     availableSize: availableWidth,
-    minimumSizePerTick: LINE_CHART_CONSTANTS.MINIMUM_WIDTH_PER_TICK_ROTATED,
+    minimumSizePerTick: LINE_CHART_CONSTANTS.MINIMUM_WIDTH_PER_TICK,
     values,
     widthPerTick,
   });

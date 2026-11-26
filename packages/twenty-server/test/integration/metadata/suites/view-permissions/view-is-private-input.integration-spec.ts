@@ -125,6 +125,43 @@ describe('view isPrivate input (integration)', () => {
     });
   });
 
+  it('should refuse to make a view with no creator private, and keep it without one', async () => {
+    const view = await createView({});
+
+    await globalThis.testDataSource.query(
+      `UPDATE core."view" SET "createdByUserWorkspaceId" = NULL WHERE id = $1`,
+      [view.id],
+    );
+
+    await getAppProviderByClassName<WorkspaceCacheService>(
+      'WorkspaceCacheService',
+    ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, ['flatViewMaps']);
+
+    const { errors } = await updateOneView({
+      viewId: view.id,
+      input: { id: view.id, isPrivate: true },
+      gqlFields: PRIVACY_GQL_FIELDS,
+      expectToFail: true,
+    });
+
+    expect(errors?.[0]?.extensions?.errors?.view?.[0]?.errors?.[0]?.code).toBe(
+      'PRIVATABLE_ENTITY_PRIVACY_CHANGE_NOT_ALLOWED',
+    );
+
+    const { errors: renameErrors } = await updateOneView({
+      viewId: view.id,
+      input: { id: view.id, name: 'Renamed view with no creator' },
+      gqlFields: PRIVACY_GQL_FIELDS,
+      expectToFail: false,
+    });
+
+    expect(renameErrors).toBeUndefined();
+    expect(await readViewPrivacy(view.id)).toEqual({
+      isPrivate: false,
+      createdByUserWorkspaceId: null,
+    });
+  });
+
   it('should let the creator make their shared view private', async () => {
     const view = await createView({});
     const { createdByUserWorkspaceId } = await readViewPrivacy(view.id);

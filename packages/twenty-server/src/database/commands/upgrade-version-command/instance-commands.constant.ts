@@ -343,7 +343,8 @@ import { AddUserWorkspaceDefaultAvatarFileIdSlowInstanceCommand } from 'src/data
 import { DropLegacyWorkflowVersionIdColumnsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-instance-command-fast-1795538016002-drop-legacy-workflow-version-id-columns';
 import { AddStripeCustomerEmailToBillingCustomerFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-instance-command-fast-1795601185766-add-stripe-customer-email-to-billing-customer';
 import { RelaxViewVisibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-instance-command-fast-1795618787744-relax-view-visibility';
-import { MoveFieldMetadataFormulaToItsOwnColumnFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-instance-command-fast-1795697149043-move-field-metadata-formula-to-its-own-column';
+import { RenameAgentChatChannelTablesToInboxChannelFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-instance-command-fast-1795688525750-rename-agent-chat-channel-tables-to-inbox-channel';
+import { MoveFieldMetadataFormulaToItsOwnColumnFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-instance-command-fast-1795698960047-move-field-metadata-formula-to-its-own-column';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -689,5 +690,6 @@ export const INSTANCE_COMMANDS = [
   DropLegacyWorkflowVersionIdColumnsFastInstanceCommand,
   AddStripeCustomerEmailToBillingCustomerFastInstanceCommand,
   RelaxViewVisibilityFastInstanceCommand,
+  RenameAgentChatChannelTablesToInboxChannelFastInstanceCommand,
   MoveFieldMetadataFormulaToItsOwnColumnFastInstanceCommand,
 ];

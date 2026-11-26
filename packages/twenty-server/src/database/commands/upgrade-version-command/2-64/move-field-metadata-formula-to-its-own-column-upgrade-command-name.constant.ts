@@ -1,2 +1,2 @@
 export const MOVE_FIELD_METADATA_FORMULA_TO_ITS_OWN_COLUMN_UPGRADE_COMMAND_NAME =
-  '2.64.0_MoveFieldMetadataFormulaToItsOwnColumnFastInstanceCommand_1795697149043';
+  '2.64.0_MoveFieldMetadataFormulaToItsOwnColumnFastInstanceCommand_1795698960047';

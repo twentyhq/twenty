@@ -158,21 +158,23 @@ describe('getPrivatableEntityPrivacyValidationErrors', () => {
       ).toEqual([]);
     });
 
-    it('lets a member claim an entity with no creator', () => {
+    it('refuses making an entity with no creator private', () => {
       expect(
-        getPrivatableEntityPrivacyValidationErrors({
-          metadataName: 'workflow',
-          fromUniversalFlatEntity: buildWorkflow({
-            isPrivate: false,
-            createdByUserWorkspaceId: null,
+        isRefused(
+          getPrivatableEntityPrivacyValidationErrors({
+            metadataName: 'workflow',
+            fromUniversalFlatEntity: buildWorkflow({
+              isPrivate: false,
+              createdByUserWorkspaceId: null,
+            }),
+            toUniversalFlatEntity: buildWorkflow({
+              isPrivate: true,
+              createdByUserWorkspaceId: null,
+            }),
+            authContext: buildMemberAuthContext(OTHER_USER_WORKSPACE_ID),
           }),
-          toUniversalFlatEntity: buildWorkflow({
-            isPrivate: true,
-            createdByUserWorkspaceId: OTHER_USER_WORKSPACE_ID,
-          }),
-          authContext: buildMemberAuthContext(OTHER_USER_WORKSPACE_ID),
-        }),
-      ).toEqual([]);
+        ),
+      ).toBe(true);
     });
 
     it('refuses another member taking over the entity', () => {

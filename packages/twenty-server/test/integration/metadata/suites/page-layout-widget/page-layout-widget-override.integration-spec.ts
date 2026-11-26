@@ -4,7 +4,7 @@ import { findPageLayoutTabs } from 'test/integration/metadata/suites/page-layout
 import { findPageLayoutWidgets } from 'test/integration/metadata/suites/page-layout-widget/utils/find-page-layout-widgets.util';
 import { updateOnePageLayoutWidget } from 'test/integration/metadata/suites/page-layout-widget/utils/update-one-page-layout-widget.util';
 import { findPageLayouts } from 'test/integration/metadata/suites/page-layout/utils/find-page-layouts.util';
-import { buildDeviceConditionalAvailability } from 'twenty-shared/conditional-availability';
+import { buildDeviceConditionalEvaluationNode } from 'twenty-shared/conditional-evaluation';
 import { PageLayoutTabLayoutMode, PageLayoutType } from 'twenty-shared/types';
 
 const WIDGET_OVERRIDE_GQL_FIELDS = `
@@ -258,7 +258,7 @@ describe('Page layout widget override behavior', () => {
   it('should override the visibility tree independently from title', async () => {
     const overriddenTitle = `Tree Override ${Date.now()}`;
     const overriddenConditionalAvailability =
-      buildDeviceConditionalAvailability('MOBILE');
+      buildDeviceConditionalEvaluationNode('MOBILE');
 
     await updateOnePageLayoutWidget({
       expectToFail: false,

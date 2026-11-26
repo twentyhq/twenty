@@ -18,6 +18,8 @@ import { connectMessagingAccount } from 'test/integration/utils/connect-messagin
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { runCalendarChannelEventsImport } from 'test/integration/utils/run-calendar-channel-events-import.util';
 import { runCalendarChannelListFetch } from 'test/integration/utils/run-calendar-channel-list-fetch.util';
+import { syncChannelVisibilityRules } from 'test/integration/permissions/channel-visibility/utils/sync-channel-visibility-rules.util';
+import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 
 const HANDLE = 'google-calendar-visibility@apple.dev';
 const ATTENDEE_HANDLE = 'google-calendar-visibility-attendee@example.com';
@@ -30,13 +32,14 @@ describe('Calendar channel visibility (integration)', () => {
   const gmail = setupGoogleMock({ handle: HANDLE });
 
   let channel: Awaited<ReturnType<typeof connectMessagingAccount>>;
+  let calendarEventIds: string[];
 
   const calendarEventQuery = () =>
     findManyOperationFactory({
       objectMetadataSingularName: 'calendarEvent',
       objectMetadataPluralName: 'calendarEvents',
-      gqlFields: 'title description',
-      filter: { title: { eq: eventTitle } },
+      gqlFields: 'id title description',
+      filter: { id: { in: calendarEventIds } },
     });
 
   const readEventAs = async (
@@ -80,6 +83,7 @@ describe('Calendar channel visibility (integration)', () => {
     await getCoreRepository<CalendarChannelEntity>(
       CalendarChannelEntity,
     ).update({ id: channel.calendarChannelId }, { visibility });
+    await syncChannelVisibilityRules();
   };
 
   beforeAll(async () => {
@@ -98,6 +102,22 @@ describe('Calendar channel visibility (integration)', () => {
 
     await runCalendarChannelListFetch(channel.calendarChannelId);
     await runCalendarChannelEventsImport(channel.calendarChannelId);
+
+    const ownerResponse = await makeGraphqlApiRequest(
+      findManyOperationFactory({
+        objectMetadataSingularName: 'calendarEvent',
+        objectMetadataPluralName: 'calendarEvents',
+        gqlFields: 'id',
+        filter: { title: { eq: eventTitle } },
+      }),
+    );
+
+    calendarEventIds = ownerResponse.body.data.calendarEvents.edges.map(
+      (edge: { node: { id: string } }) => edge.node.id,
+    );
+
+    await syncChannelVisibilityRules();
+    await waitForAllJobsToFinish();
   }, 120000);
 
   afterAll(async () => {

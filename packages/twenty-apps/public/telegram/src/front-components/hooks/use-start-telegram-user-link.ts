@@ -8,7 +8,13 @@ import { type TelegramStartUserLinkResult } from 'src/logic-functions/types/tele
 type StartState =
   | { status: 'IDLE' }
   | { status: 'STARTING' }
-  | { status: 'READY'; url: string }
+  | {
+      status: 'READY';
+      url: string;
+      botUsername: string;
+      startCommand: string;
+    }
+  | { status: 'EXPIRED' }
   | { status: 'FAILED'; message: string };
 
 export const useStartTelegramUserLink = () => {
@@ -22,16 +28,27 @@ export const useStartTelegramUserLink = () => {
         TelegramStartUserLinkResult | undefined
       >(`/s${TELEGRAM_USER_LINKS_START_ROUTE_PATH}`, {});
 
-      setStartState(
-        result?.success
-          ? { status: 'READY', url: result.url }
-          : { status: 'FAILED', message: result?.message ?? '' },
-      );
+      if (!result?.success) {
+        setStartState({ status: 'FAILED', message: result?.message ?? '' });
+
+        return;
+      }
+
+      setStartState({
+        status: 'READY',
+        url: result.url,
+        botUsername: result.botUsername,
+        startCommand: result.startCommand,
+      });
     } catch (error) {
       console.error('[telegram] could not start the connection', error);
       setStartState({ status: 'FAILED', message: toErrorMessage(error) });
     }
   };
 
-  return { startState, startTelegramUserLink };
+  const expireTelegramUserLink = (): void => {
+    setStartState({ status: 'EXPIRED' });
+  };
+
+  return { startState, startTelegramUserLink, expireTelegramUserLink };
 };

@@ -42,7 +42,9 @@ export const useFilterCommandMenuItemsWithSidePanelSearch = ({
   commandMenuContextApi,
 }: UseFilterCommandMenuItemsWithSidePanelSearchProps) => {
   const filterCommandMenuItemsWithSidePanelSearch = useCallback(
-    (commandMenuItems: CommandMenuItemFieldsFragment[]) => {
+    <TCommandMenuItem extends CommandMenuItemFieldsFragment>(
+      commandMenuItems: TCommandMenuItem[],
+    ) => {
       return commandMenuItems.filter((commandMenuItem) =>
         sidePanelSearch.length > 0
           ? checkInShortcuts(commandMenuItem, sidePanelSearch) ||

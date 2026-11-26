@@ -9,9 +9,7 @@ import { useSwitchToNewAiChatInInboxChannel } from '@/inbox/hooks/useSwitchToNew
 import { getExpandedAiChatReturnLocation } from '@/ai-chat/utils/getExpandedAiChatReturnLocation';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { currentNavigationMenuTabIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuTabIdState';
-import { lastVisitedUrlByNavigationMenuTabKeyState } from '@/navigation-menu-item/common/states/lastVisitedUrlByNavigationMenuTabKeyState';
 import { navigationMenuTabIdToOpenFirstItemState } from '@/navigation-menu-item/common/states/navigationMenuTabIdToOpenFirstItemState';
-import { getNavigationMenuTabFolderKey } from '@/navigation-menu-item/common/utils/getNavigationMenuTabFolderKey';
 import { useActiveNavigationDrawerTab } from '@/navigation/hooks/useActiveNavigationDrawerTab';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
@@ -111,18 +109,10 @@ export const useSwitchNavigationDrawerTab = () => {
       leaveSettingsDrawer();
     }
 
-    navigate(path, { replace: isSettingsDrawer });
-  };
-
-  const rememberCurrentPageForTab = (tabId: string | null) => {
-    const currentUrl = isSettingsDrawer
-      ? navigationMemorizedUrl
-      : `${location.pathname}${location.search}`;
-
-    store.set(lastVisitedUrlByNavigationMenuTabKeyState.atom, (urls) => ({
-      ...urls,
-      [getNavigationMenuTabFolderKey(tabId)]: currentUrl,
-    }));
+    navigate(path, {
+      replace: isSettingsDrawer,
+      state: { isAiChatHandoffSkipped: true },
+    });
   };
 
   const switchToNavigationMenuTab = (tabId: string | null) => {
@@ -136,14 +126,8 @@ export const useSwitchNavigationDrawerTab = () => {
     store.set(navigationMenuTabIdToOpenFirstItemState.atom, null);
 
     if (shouldOpenTabPage) {
-      rememberCurrentPageForTab(previousTabId);
-
-      const lastVisitedUrl = store.get(
-        lastVisitedUrlByNavigationMenuTabKeyState.atom,
-      )[getNavigationMenuTabFolderKey(tabId)];
-
-      if (isDefined(lastVisitedUrl) || !isDefined(tabId)) {
-        openNavigationMenuPage(lastVisitedUrl ?? defaultHomePagePath);
+      if (!isDefined(tabId)) {
+        openNavigationMenuPage(defaultHomePagePath);
         return;
       }
 

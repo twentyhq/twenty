@@ -15,7 +15,6 @@ import { RecordAccessGroupPropagationService } from 'src/engine/permissions/inte
 import { RecordAccessGroupComputationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-computation.service';
 import { AccessGroupSyncService } from 'src/engine/permissions/internal/access-group/services/access-group-sync.service';
 import { RlsWorkspaceMemberRelationValueMapsCacheService } from 'src/engine/permissions/internal/rls/services/rls-workspace-member-relation-value-maps-cache.service';
-import { RelatedRecordPathReadModule } from 'src/engine/permissions/internal/related-record-path/related-record-path-read.module';
 import { RecordPermissionRepositoryModule } from 'src/engine/permissions/internal/record-permission-repository/record-permission-repository.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/workspace-migration-runner.module';
@@ -25,7 +24,6 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
     CacheLockModule,
     MetricsModule,
     RecordPermissionRepositoryModule,
-    RelatedRecordPathReadModule,
     WorkspaceCacheModule,
     WorkspaceIteratorModule,
     WorkspaceMigrationRunnerModule,

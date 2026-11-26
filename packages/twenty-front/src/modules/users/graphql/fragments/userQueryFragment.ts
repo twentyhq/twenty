@@ -28,6 +28,10 @@ export const USER_QUERY_FRAGMENT = gql`
     isWorkspaceCreator
     workspaceMember {
       ...WorkspaceMemberQueryFragment
+      roles {
+        id
+        universalIdentifier
+      }
     }
     workspaceMembers {
       ...PartialWorkspaceMemberQueryFragment

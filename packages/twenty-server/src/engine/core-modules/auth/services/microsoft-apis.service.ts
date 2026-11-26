@@ -255,7 +255,7 @@ export class MicrosoftAPIsService {
         },
       );
 
-      await this.channelVisibilityRuleSyncSchedulerService.scheduleSyncIfEnabled(
+      await this.channelVisibilityRuleSyncSchedulerService.scheduleSync(
         workspaceId,
       );
 

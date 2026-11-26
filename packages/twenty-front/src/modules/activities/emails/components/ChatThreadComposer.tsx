@@ -92,7 +92,6 @@ type ChatThreadComposerProps = {
   isSendDisabled?: boolean;
   onSendMessage: (pendingMessage: PendingChatMessage) => Promise<unknown>;
   onMessageSent: () => Promise<unknown>;
-  canAttachFiles?: boolean;
   draftKey?: string;
 };
 
@@ -103,7 +102,6 @@ export const ChatThreadComposer = ({
   isSendDisabled = false,
   onSendMessage,
   onMessageSent,
-  canAttachFiles = false,
   draftKey,
 }: ChatThreadComposerProps) => {
   const { t } = useLingui();
@@ -262,7 +260,6 @@ export const ChatThreadComposer = ({
 
     // Rich text copies (Word, Excel, web pages) also carry an image rendition: paste them as text
     if (
-      !canAttachFiles ||
       !isNonEmptyArray(pastedFiles) ||
       event.clipboardData.types.includes('text/html')
     ) {
@@ -329,24 +326,20 @@ export const ChatThreadComposer = ({
         )}
         <StyledActions>
           <StyledLeftActions>
-            {canAttachFiles && (
-              <>
-                <StyledFileInput
-                  ref={fileInputRef}
-                  type="file"
-                  multiple
-                  onChange={handleFileInputChange}
-                />
-                <LightIconButton
-                  aria-label={t`Attach files`}
-                  disabled={isDisconnected}
-                  emphasis="subtle"
-                  onClick={() => fileInputRef.current?.click()}
-                >
-                  <IconPlus />
-                </LightIconButton>
-              </>
-            )}
+            <StyledFileInput
+              ref={fileInputRef}
+              type="file"
+              multiple
+              onChange={handleFileInputChange}
+            />
+            <LightIconButton
+              aria-label={t`Attach files`}
+              disabled={isDisconnected}
+              emphasis="subtle"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <IconPlus />
+            </LightIconButton>
           </StyledLeftActions>
           <IconButton
             variant="solid"
