@@ -18,12 +18,14 @@ export const getAiChatPageSidePanelContinuation = ({
   isMobile,
   newAiChatThreadId,
   isNewAiChatThreadReplySending,
+  isNextHandoffSkipped,
 }: {
   previousPathname: string;
   location: Pick<Location, 'pathname' | 'state'>;
   isMobile: boolean;
   newAiChatThreadId: string;
   isNewAiChatThreadReplySending: boolean;
+  isNextHandoffSkipped: boolean;
 }): AiChatPageSidePanelContinuation => {
   const threadId = getAiChatPageThreadId({
     pathname: previousPathname,
@@ -35,7 +37,8 @@ export const getAiChatPageSidePanelContinuation = ({
     isMobile ||
     isAiChatPath(location.pathname) ||
     isInboxPath(location.pathname) ||
-    isAiChatHandoffSkipped(location.state)
+    isAiChatHandoffSkipped(location.state) ||
+    isNextHandoffSkipped
   ) {
     return { type: 'none' };
   }

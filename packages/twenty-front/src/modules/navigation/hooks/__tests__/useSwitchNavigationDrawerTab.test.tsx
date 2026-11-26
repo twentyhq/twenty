@@ -1,5 +1,6 @@
 import { MemoryRouterAppNavigatorProvider } from '~/testing/components/MemoryRouterAppNavigatorProvider';
 import { useReturnFromExpandedAiChat } from '@/ai-chat/hooks/useReturnFromExpandedAiChat';
+import { isNextAiChatHandoffSkippedState } from '@/ai-chat/states/isNextAiChatHandoffSkippedState';
 import { useSwitchToNewAiChat } from '@/ai-chat/composer/hooks/useSwitchToNewAiChat';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { currentNavigationMenuTabIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuTabIdState';
@@ -161,6 +162,29 @@ describe('useSwitchNavigationDrawerTab', () => {
       'chats-tab-id',
     );
   });
+
+  it.each([
+    { pathname: AI_CHAT_PATH, isNextAiChatHandoffSkipped: true },
+    {
+      pathname: '/inbox/20202020-0687-4c41-b707-ed1bfca972a7',
+      isNextAiChatHandoffSkipped: true,
+    },
+    { pathname: '/objects/people', isNextAiChatHandoffSkipped: false },
+  ])(
+    'skips the chat handoff to the side panel ($isNextAiChatHandoffSkipped) when switching tabs from $pathname',
+    ({ pathname, isNextAiChatHandoffSkipped }) => {
+      const { result, store } = renderSwitchNavigationDrawerMode({
+        pathname,
+        currentNavigationMenuTabId: 'chats-tab-id',
+      });
+
+      act(() => result.current.switchToNavigationMenuTab(null));
+
+      expect(store.get(isNextAiChatHandoffSkippedState.atom)).toBe(
+        isNextAiChatHandoffSkipped,
+      );
+    },
+  );
 
   it('opens the default home page when switching back to Home', () => {
     const { result } = renderSwitchNavigationDrawerMode({
