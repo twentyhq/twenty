@@ -1,10 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import {
-  RESERVED_SYSTEM_FIELD_TYPE_BY_NAME,
-  STANDARD_OBJECTS,
-} from 'twenty-shared/metadata';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { MessageChannelVisibility } from 'twenty-shared/types';
 import { Repository } from 'typeorm';
 
@@ -22,6 +19,8 @@ import { WorkspaceMemberIndividualRoleService } from 'src/engine/permissions/wor
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const { message, messageThread, calendarEvent } = STANDARD_OBJECTS;
+
+const SYSTEM_FIELD_NAMES_LEFT_EDITABLE = ['id', 'updatedAt', 'updatedBy'];
 
 @Injectable()
 export class ChannelVisibilityRuleSyncService {
@@ -105,6 +104,8 @@ export class ChannelVisibilityRuleSyncService {
                   message.fields.attachments.universalIdentifier,
                 ],
               },
+              canUpdateRecords: false,
+              uneditableFieldUniversalIdentifiers: [],
             }),
             buildChannelVisibilityObjectRecordsPermissions({
               holder,
@@ -123,12 +124,13 @@ export class ChannelVisibilityRuleSyncService {
                   calendarEvent.fields.callRecordings.universalIdentifier,
                 ],
               },
+              canUpdateRecords: true,
               uneditableFieldUniversalIdentifiers: Object.entries(
                 calendarEvent.fields,
               )
                 .filter(
                   ([fieldName]) =>
-                    !(fieldName in RESERVED_SYSTEM_FIELD_TYPE_BY_NAME),
+                    !SYSTEM_FIELD_NAMES_LEFT_EDITABLE.includes(fieldName),
                 )
                 .map(([, { universalIdentifier }]) => universalIdentifier),
             }),

@@ -46,6 +46,8 @@ const findReadableChannelIds = (holder: WorkspaceMemberIndividualRoleHolder) =>
       unreadableFieldUniversalIdentifiersByVisibility: {
         [MessageChannelVisibility.METADATA]: ['subject'],
       },
+      canUpdateRecords: false,
+      uneditableFieldUniversalIdentifiers: [],
     }).rowLevelRecordsPermissions ?? []
   ).map(({ unreadableFields, predicateGroups }) => ({
     unreadableFields,
@@ -96,6 +98,7 @@ describe('buildChannelVisibilityObjectRecordsPermissions', () => {
         associationRelationFieldUniversalIdentifier: 'associations',
         channelIdFieldUniversalIdentifier: 'channelId',
         unreadableFieldUniversalIdentifiersByVisibility: {},
+        canUpdateRecords: true,
         uneditableFieldUniversalIdentifiers: ['title'],
       });
 
