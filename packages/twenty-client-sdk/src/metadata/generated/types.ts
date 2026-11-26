@@ -9024,6 +9024,15 @@ export default {
                     ]
                 }
             ],
+            "renewToken": [
+                107,
+                {
+                    "appToken": [
+                        4,
+                        "String!"
+                    ]
+                }
+            ],
             "reopenAgentChatThreadInChannel": [
                 1,
                 {

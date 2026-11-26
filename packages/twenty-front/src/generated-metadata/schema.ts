@@ -3962,6 +3962,8 @@ export type Mutation = {
   removeRecordShare: RecordSharingDto;
   removeRoleFromAgent: Scalars['Boolean']['output'];
   renewApplicationToken: ApplicationTokenPair;
+  /** @deprecated Refresh tokens are no longer issued; this is removed once the last one expires. */
+  renewToken: AuthTokens;
   reopenAgentChatThreadInChannel: Scalars['Boolean']['output'];
   reportAppConnectionAuthFailure: Scalars['Boolean']['output'];
   resendEmailVerificationToken: ResendEmailVerificationToken;
@@ -4959,6 +4961,11 @@ export type MutationRemoveRoleFromAgentArgs = {
 
 export type MutationRenewApplicationTokenArgs = {
   applicationRefreshToken: Scalars['String']['input'];
+};
+
+
+export type MutationRenewTokenArgs = {
+  appToken: Scalars['String']['input'];
 };
 
 

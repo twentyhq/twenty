@@ -2652,6 +2652,8 @@ export interface Mutation {
     removeRecordShare: RecordSharingDTO
     removeRoleFromAgent: Scalars['Boolean']
     renewApplicationToken: ApplicationTokenPair
+    /** @deprecated Refresh tokens are no longer issued; this is removed once the last one expires. */
+    renewToken: AuthTokens
     reopenAgentChatThreadInChannel: Scalars['Boolean']
     reportAppConnectionAuthFailure: Scalars['Boolean']
     resendEmailVerificationToken: ResendEmailVerificationToken
@@ -7614,6 +7616,8 @@ export interface MutationGenqlSelection{
     removeRecordShare?: (RecordSharingDTOGenqlSelection & { __args: {principal: RecordSharePrincipalInput, target: RecordTargetInput} })
     removeRoleFromAgent?: { __args: {agentId: Scalars['UUID']} }
     renewApplicationToken?: (ApplicationTokenPairGenqlSelection & { __args: {applicationRefreshToken: Scalars['String']} })
+    /** @deprecated Refresh tokens are no longer issued; this is removed once the last one expires. */
+    renewToken?: (AuthTokensGenqlSelection & { __args: {appToken: Scalars['String']} })
     reopenAgentChatThreadInChannel?: { __args: {threadId: Scalars['UUID']} }
     reportAppConnectionAuthFailure?: { __args: {input: ReportAppConnectionAuthFailureInput} }
     resendEmailVerificationToken?: (ResendEmailVerificationTokenGenqlSelection & { __args: {affiliatePartnerName?: (Scalars['String'] | null), email: Scalars['String'], origin: Scalars['String']} })
