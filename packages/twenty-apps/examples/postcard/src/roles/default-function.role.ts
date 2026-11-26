@@ -1,5 +1,8 @@
 import { SystemPermissionFlag, defineRole } from 'twenty-sdk/define';
-import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
+import {
+  CONTENT_FIELD_UNIVERSAL_IDENTIFIER,
+  POST_CARD_UNIVERSAL_IDENTIFIER,
+} from '../objects/post-card.object';
 
 export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
   'b648f87b-1d26-4961-b974-0908fd991061';
@@ -23,6 +26,14 @@ export default defineRole({
       canUpdateObjectRecords: true,
       canSoftDeleteObjectRecords: false,
       canDestroyObjectRecords: false,
+    },
+  ],
+  fieldPermissions: [
+    {
+      objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier: CONTENT_FIELD_UNIVERSAL_IDENTIFIER,
+      canReadFieldValue: true,
+      canUpdateFieldValue: true,
     },
   ],
   permissionFlagUniversalIdentifiers: [

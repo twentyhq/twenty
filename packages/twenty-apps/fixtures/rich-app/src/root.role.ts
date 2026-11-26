@@ -12,6 +12,6 @@ export default defineRole({
   },
   canUpdateAllSettings: false,
   canBeAssignedToAgents: false,
-  canBeAssignedToUsers: false,
+  canBeAssignedToUsers: true,
   canBeAssignedToApiKeys: false,
 });
