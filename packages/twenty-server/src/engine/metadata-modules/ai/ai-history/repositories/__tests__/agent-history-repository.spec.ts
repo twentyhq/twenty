@@ -58,7 +58,7 @@ it('reads the object under the name resolved for the workspace', async () => {
   const repository = new AgentHistoryRepository<AgentChatThreadWorkspaceEntity>(
     'agentChatThread',
     { run: jest.fn(), getContext: jest.fn().mockResolvedValue({}) },
-    orm as never,
+    orm,
     { resolve: jest.fn().mockResolvedValue(INBOX_OBJECT_NAMES) },
   );
 
