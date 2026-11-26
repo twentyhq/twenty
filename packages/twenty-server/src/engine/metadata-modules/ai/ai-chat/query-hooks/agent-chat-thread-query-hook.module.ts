@@ -14,6 +14,7 @@ import { InboxThreadDeleteOnePostQueryHook } from 'src/engine/metadata-modules/a
 @Module({
   imports: [AgentChatThreadLifecycleModule, AgentChatThreadModule],
   providers: [
+    // TODO(@bosiraphael): remove the four AgentChatThread hooks with IS_INBOX_OBJECT_NAMING_ENABLED
     AgentChatThreadCreateOnePostQueryHook,
     AgentChatThreadCreateManyPostQueryHook,
     AgentChatThreadDeleteOnePostQueryHook,

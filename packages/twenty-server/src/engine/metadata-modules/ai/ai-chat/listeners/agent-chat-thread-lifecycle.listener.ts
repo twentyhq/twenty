@@ -17,6 +17,7 @@ export class AgentChatThreadLifecycleListener {
     private readonly threadLifecycleService: AgentChatThreadLifecycleService,
   ) {}
 
+  // TODO(@bosiraphael): remove the agentChatThread decorator with IS_INBOX_OBJECT_NAMING_ENABLED
   @OnDatabaseBatchEvent('agentChatThread', DatabaseEventAction.DESTROYED)
   @OnDatabaseBatchEvent('inboxThread', DatabaseEventAction.DESTROYED)
   async handleDestroyedThreads(

@@ -23,6 +23,7 @@ export class AgentChatWebPushNotificationListener {
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
+  // TODO(@bosiraphael): remove the agentChatThread decorator with IS_INBOX_OBJECT_NAMING_ENABLED
   @OnDatabaseBatchEvent('agentChatThread', DatabaseEventAction.UPDATED)
   @OnDatabaseBatchEvent('inboxThread', DatabaseEventAction.UPDATED)
   async handleUpdatedThreads(

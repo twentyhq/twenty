@@ -1,6 +1,7 @@
 export const STANDARD_OBJECT_ICONS = {
   activityTarget: 'IconCheckbox',
   activity: 'IconCheckbox',
+  // TODO(@bosiraphael): remove the next three keys with IS_INBOX_OBJECT_NAMING_ENABLED
   agentChatThreadTarget: 'IconMessage',
   agentChatThreadParticipant: 'IconMessage',
   agentMessageReaction: 'IconMoodSmile',
