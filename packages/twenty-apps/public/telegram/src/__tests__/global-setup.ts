@@ -4,7 +4,7 @@ import { runTwenty } from './run-twenty';
 
 const DEFERRED_OPERATIONS_PATTERN = /deferred schema operation/i;
 const UNINSTALL_RETRY_DELAY_MS = 5000;
-const UNINSTALL_MAX_ATTEMPTS = 15;
+const UNINSTALL_MAX_ATTEMPTS = 40;
 
 function validateEnvironmentOrThrow(): { apiUrl: string; apiKey: string } {
   const apiUrl = process.env.TWENTY_API_URL;

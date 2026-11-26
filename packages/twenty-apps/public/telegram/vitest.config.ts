@@ -10,7 +10,7 @@ export default defineConfig({
   test: {
     testTimeout: 120_000,
     hookTimeout: 120_000,
-    teardownTimeout: 180_000,
+    teardownTimeout: 420_000,
     fileParallelism: false,
     include: ['src/**/*.integration-test.ts'],
     globalSetup: ['src/__tests__/global-setup.ts'],
