@@ -90,19 +90,24 @@ const renderComputedColumn = ({
   };
 };
 
-// A value read through a record or a field the caller cannot read is NULL
+// A value read through a record or a field the caller cannot read is NULL.
+// Only referenced columns are computed, so one formula cannot break reads that do not ask for it.
 export const buildComputedTableSource = ({
   tableShape,
   getTableShape,
   recordReadRestrictions,
   permissions,
+  isComputedColumnReferenced,
 }: {
   tableShape: WorkspaceTableShape;
   getTableShape: (objectMetadataId: string) => WorkspaceTableShape;
   recordReadRestrictions: RecordReadRestrictions;
   permissions: ComputedTableSourcePermissions | undefined;
+  isComputedColumnReferenced: (columnName: string) => boolean;
 }): string | undefined => {
-  const computedColumnShapes = tableShape.computedColumnShapes ?? [];
+  const computedColumnShapes = (tableShape.computedColumnShapes ?? []).filter(
+    ({ columnName }) => isComputedColumnReferenced(columnName),
+  );
 
   if (computedColumnShapes.length === 0) {
     return undefined;
@@ -135,7 +140,7 @@ export const buildComputedTableSource = ({
     }),
   );
   const computedColumnNames = new Set(
-    computedColumnShapes.map(({ columnName }) => columnName),
+    (tableShape.computedColumnShapes ?? []).map(({ columnName }) => columnName),
   );
   const storedColumnNames = tableShape.columnNames.filter(
     (columnName) => !computedColumnNames.has(columnName),

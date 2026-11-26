@@ -98,6 +98,7 @@ const build = ({
     getTableShape: () => SUPPLIER_TABLE_SHAPE,
     recordReadRestrictions,
     permissions,
+    isComputedColumnReferenced: () => true,
   });
 };
 
@@ -120,6 +121,7 @@ describe('buildComputedTableSource', () => {
           unreadableObjectMetadataIds: new Set(),
         },
         permissions: undefined,
+        isComputedColumnReferenced: () => true,
       }),
     ).toBeUndefined();
   });
@@ -128,6 +130,33 @@ describe('buildComputedTableSource', () => {
     expect(build()).toBe(
       `(SELECT ${STORED_COLUMNS}, ${TOTAL}, ${SUPPLIER_LABEL} ${FROM} ${LOOKUP_JOIN})`,
     );
+  });
+
+  it('should compute only the referenced columns, and join only the lookups they read', () => {
+    expect(
+      buildComputedTableSource({
+        tableShape: GADGET_TABLE_SHAPE,
+        getTableShape: () => SUPPLIER_TABLE_SHAPE,
+        recordReadRestrictions: {
+          unreadableFieldMetadataIds: new Set(),
+          unreadableObjectMetadataIds: new Set(),
+        },
+        permissions: undefined,
+        isComputedColumnReferenced: (columnName) => columnName === 'total',
+      }),
+    ).toBe(`(SELECT ${STORED_COLUMNS}, ${TOTAL} ${FROM})`);
+    expect(
+      buildComputedTableSource({
+        tableShape: GADGET_TABLE_SHAPE,
+        getTableShape: () => SUPPLIER_TABLE_SHAPE,
+        recordReadRestrictions: {
+          unreadableFieldMetadataIds: new Set(),
+          unreadableObjectMetadataIds: new Set(),
+        },
+        permissions: undefined,
+        isComputedColumnReferenced: () => false,
+      }),
+    ).toBeUndefined();
   });
 
   it('should select the access group ids column of a table that has one', () => {
@@ -140,6 +169,7 @@ describe('buildComputedTableSource', () => {
           unreadableObjectMetadataIds: new Set(),
         },
         permissions: undefined,
+        isComputedColumnReferenced: () => true,
       }),
     ).toBe(
       `(SELECT ${STORED_COLUMNS}, "record"."_accessGroupIds", ${TOTAL}, ${SUPPLIER_LABEL} ${FROM} ${LOOKUP_JOIN})`,

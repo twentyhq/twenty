@@ -665,10 +665,17 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
   }
 
   // A row lock cannot reach through the outer join a lookup needs, so a locked read sees stored columns
-  private buildTableSourceByObjectMetadataId(): TableSourceByObjectMetadataId {
+  private buildTableSourceByObjectMetadataId(options?: {
+    allowPlainToManyJoins?: boolean;
+  }): TableSourceByObjectMetadataId {
     if (this.shouldReadStoredColumnsOnly || this.isLockedForUpdate) {
       return {};
     }
+
+    // Rendered without computed sources: a computed column is needed only if the statement names it
+    const statementSql = buildSelectStatement(
+      this.toSelectStatementState({ ...options, withTableSources: false }),
+    );
 
     return Object.fromEntries(
       this.getStatementTableShapes().flatMap((tableShape) => {
@@ -680,6 +687,8 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
             this.computedTableSourcePermissionsByObjectMetadataId.get(
               tableShape.objectMetadataId,
             ),
+          isComputedColumnReferenced: (columnName) =>
+            statementSql.includes(escapeIdentifier(columnName)),
         });
 
         return isDefined(tableSource)
@@ -1449,6 +1458,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
 
   private toSelectStatementState(options?: {
     allowPlainToManyJoins?: boolean;
+    withTableSources?: boolean;
   }): SelectStatementState {
     return {
       alias: this.alias,
@@ -1472,7 +1482,10 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       limitValue: this.limitValue,
       offsetValue: this.offsetValue,
       isLockedForUpdate: this.isLockedForUpdate,
-      tableSourceByObjectMetadataId: this.buildTableSourceByObjectMetadataId(),
+      tableSourceByObjectMetadataId:
+        (options?.withTableSources ?? true)
+          ? this.buildTableSourceByObjectMetadataId(options)
+          : {},
     };
   }
 }

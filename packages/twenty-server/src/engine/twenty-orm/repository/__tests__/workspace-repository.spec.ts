@@ -394,3 +394,39 @@ describe('WorkspaceRepository mutations', () => {
     });
   });
 });
+
+describe('WorkspaceRepository reads', () => {
+  it('should compute a formula column only when the query reads it', () => {
+    const { repository } = buildRepository({
+      shouldSkipEventEmission: true,
+      computedColumnShapes: [
+        {
+          columnName: 'state',
+          sqlType: 'text',
+          expression: 'upper("record"."id"::text)',
+          dependencies: [],
+        },
+      ],
+    });
+
+    expect(
+      repository
+        .createQueryBuilder('delivery')
+        .select(['id'])
+        .getQuery(),
+    ).not.toContain('upper(');
+    expect(
+      repository
+        .createQueryBuilder('delivery')
+        .select(['id', 'state'])
+        .getQuery(),
+    ).toContain('upper(');
+    expect(
+      repository
+        .createQueryBuilder('delivery')
+        .select(['id'])
+        .where('"delivery"."state" = :state', { state: 'A' })
+        .getQuery(),
+    ).toContain('upper(');
+  });
+});
