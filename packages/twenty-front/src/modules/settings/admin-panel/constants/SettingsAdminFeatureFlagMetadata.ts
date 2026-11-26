@@ -20,10 +20,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Record sharing`,
     description: msg`Let people restrict and share individual records.`,
   },
-  [FeatureFlagKey.IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED]: {
-    label: msg`Skip internal meetings`,
-    description: msg`Skip calendar events with no participant outside the workspace domain, unless internal import is turned on.`,
-  },
   [FeatureFlagKey.IS_INTERNAL_IMPORT_COLUMN_ENABLED]: {
     label: msg`Internal import setting column`,
     description: msg`Read the internal import setting from its new workspace column. Turned on by the 2.59 upgrade.`,

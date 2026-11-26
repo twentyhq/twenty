@@ -12,7 +12,6 @@ const buildGadgetShapes = () =>
     flatObjectMetadataMaps: FORMULA_FLAT_OBJECT_METADATA_MAPS_MOCK,
     flatFieldMetadataMaps: FORMULA_FLAT_FIELD_METADATA_MAPS_MOCK,
     schemaName: 'workspace',
-    tableName: 'gadget',
   });
 
 describe('buildFormulaComputedColumnShapes', () => {
@@ -89,7 +88,6 @@ describe('buildFormulaComputedColumnShapes', () => {
         flatObjectMetadataMaps: FORMULA_FLAT_OBJECT_METADATA_MAPS_MOCK,
         flatFieldMetadataMaps: FORMULA_FLAT_FIELD_METADATA_MAPS_MOCK,
         schemaName: 'workspace',
-        tableName: 'supplier',
       });
 
     expect(computedLookupShapes).toEqual([]);
