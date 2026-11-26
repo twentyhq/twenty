@@ -14,6 +14,7 @@ import { TELEGRAM_LINK_CONFLICT_TEXT } from 'src/logic-functions/constants/teleg
 import { TELEGRAM_LINK_EXPIRED_TEXT } from 'src/logic-functions/constants/telegram-link-expired-text';
 import { TELEGRAM_LINK_TOKEN_TTL_MS } from 'src/logic-functions/constants/telegram-link-token-ttl-ms';
 import { TELEGRAM_NOT_CONNECTED_TEXT } from 'src/logic-functions/constants/telegram-not-connected-text';
+import { telegramPostInstallHandler } from 'src/logic-functions/telegram-post-install';
 import { telegramStartUserLinkHandler } from 'src/logic-functions/telegram-start-user-link';
 import { telegramUpdateHandler } from 'src/logic-functions/telegram-update-handler';
 import { telegramUpdatesResolverHandler } from 'src/logic-functions/telegram-updates-resolver';
@@ -159,9 +160,23 @@ describe('connecting a Telegram account', () => {
       params: {
         url: `${SERVER_ROUTES_URL}/${TELEGRAM_UPDATES_RESOLVER_UNIVERSAL_IDENTIFIER}`,
         secret_token: WEBHOOK_SECRET,
-        allowed_updates: ['message', 'my_chat_member'],
+        allowed_updates: ['message', 'my_chat_member', 'callback_query'],
       },
     });
+  });
+
+  it('registers the webhook again when the app is installed or upgraded', async () => {
+    await telegramPostInstallHandler();
+
+    expect(telegramCalls.map((call) => call.method)).toEqual(['setWebhook']);
+  });
+
+  it('leaves the webhook alone on install while the bot is not configured', async () => {
+    vi.stubEnv('TELEGRAM_BOT_TOKEN', '');
+
+    await telegramPostInstallHandler();
+
+    expect(telegramCalls).toEqual([]);
   });
 
   it('never stores the token itself', async () => {

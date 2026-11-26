@@ -77,19 +77,25 @@ export const sendTelegramAnswer = async ({
   chatId,
   richText,
   plainText,
+  replyMarkup,
   deadlineAtMs,
 }: {
   botToken: string;
   chatId: number;
   richText: string;
   plainText: string;
+  replyMarkup: object;
   deadlineAtMs: number;
 }): Promise<void> => {
   try {
     await callOnceMoreWhenRateLimited({
       botToken,
       method: 'sendRichMessage',
-      params: { chat_id: chatId, rich_message: { markdown: richText } },
+      params: {
+        chat_id: chatId,
+        rich_message: { markdown: richText },
+        reply_markup: replyMarkup,
+      },
       deadlineAtMs,
     });
   } catch (error) {
@@ -105,7 +111,7 @@ export const sendTelegramAnswer = async ({
     await callOnceMoreWhenRateLimited({
       botToken,
       method: 'sendMessage',
-      params: { chat_id: chatId, text: plainText },
+      params: { chat_id: chatId, text: plainText, reply_markup: replyMarkup },
       deadlineAtMs,
     });
   }

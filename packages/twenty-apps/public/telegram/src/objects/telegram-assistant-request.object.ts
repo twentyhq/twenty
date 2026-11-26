@@ -10,6 +10,7 @@ import { TELEGRAM_ASSISTANT_REQUEST_OBJECT_NAME_SINGULAR } from 'src/constants/t
 import {
   TELEGRAM_ASSISTANT_REQUEST_CHAT_ID_FIELD_UNIVERSAL_IDENTIFIER,
   TELEGRAM_ASSISTANT_REQUEST_ERROR_FIELD_UNIVERSAL_IDENTIFIER,
+  TELEGRAM_ASSISTANT_REQUEST_FEEDBACK_FIELD_UNIVERSAL_IDENTIFIER,
   TELEGRAM_ASSISTANT_REQUEST_MESSAGE_ID_FIELD_UNIVERSAL_IDENTIFIER,
   TELEGRAM_ASSISTANT_REQUEST_NAME_FIELD_UNIVERSAL_IDENTIFIER,
   TELEGRAM_ASSISTANT_REQUEST_OBJECT_UNIVERSAL_IDENTIFIER,
@@ -20,6 +21,7 @@ import {
   TELEGRAM_ASSISTANT_REQUEST_WORKSPACE_MEMBER_FIELD_UNIVERSAL_IDENTIFIER,
   TELEGRAM_ASSISTANT_REQUESTS_ON_WORKSPACE_MEMBER_FIELD_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
+import { TELEGRAM_ASSISTANT_FEEDBACK } from 'src/logic-functions/constants/telegram-assistant-feedback';
 import { TELEGRAM_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/telegram-assistant-request-status';
 
 export default defineObject({
@@ -155,6 +157,32 @@ export default defineObject({
         },
       ],
       name: 'status',
+    },
+    {
+      universalIdentifier:
+        TELEGRAM_ASSISTANT_REQUEST_FEEDBACK_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.SELECT,
+      label: 'Feedback',
+      description: 'Thumbs up or down the member gave the answer in Telegram',
+      icon: 'IconThumbUp',
+      isNullable: true,
+      options: [
+        {
+          id: 'd2822e05-11e3-4e11-b908-135357b9f7ab',
+          value: TELEGRAM_ASSISTANT_FEEDBACK.POSITIVE,
+          label: 'Positive',
+          position: 0,
+          color: 'green',
+        },
+        {
+          id: '2f0d3065-db23-45da-95a6-22a18ddd95cd',
+          value: TELEGRAM_ASSISTANT_FEEDBACK.NEGATIVE,
+          label: 'Negative',
+          position: 1,
+          color: 'red',
+        },
+      ],
+      name: 'feedback',
     },
     {
       universalIdentifier:

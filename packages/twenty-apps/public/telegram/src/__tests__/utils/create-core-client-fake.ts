@@ -20,6 +20,7 @@ type RequestRecord = {
   requestText?: { markdown: string | null };
   responseText?: { markdown: string | null };
   errorMessage?: string;
+  feedback?: string;
 };
 
 type EqualityFilter = Record<string, { eq: string }>;
@@ -43,7 +44,9 @@ type RequestClaimFilter = {
   ];
 };
 
-type RequestStatusFilter = { id: { eq: string }; status: { eq: string } };
+type RequestFieldsFilter = Partial<
+  Record<'id' | 'status' | 'telegramUserId', { eq: string }>
+>;
 
 const LINK_FILTER_FIELDS: (keyof LinkRecord)[] = [
   'id',
@@ -70,8 +73,8 @@ type FakeMutation = {
   };
   updateTelegramAssistantRequests?: {
     __args: {
-      data: { status: string };
-      filter: RequestClaimFilter | RequestStatusFilter;
+      data: Partial<RequestRecord>;
+      filter: RequestClaimFilter | RequestFieldsFilter;
     };
   };
   updateTelegramAssistantRequest?: {
@@ -208,9 +211,9 @@ export const createCoreClientFake = ({
             mutation.updateTelegramAssistantRequests.__args;
           const claimed = state.requests.filter((request) => {
             if (!('and' in filter)) {
-              return (
-                request.id === filter.id.eq &&
-                request.status === filter.status.eq
+              return Object.entries(filter).every(
+                ([field, condition]) =>
+                  request[field as keyof RequestFieldsFilter] === condition.eq,
               );
             }
 
@@ -225,8 +228,9 @@ export const createCoreClientFake = ({
           });
 
           for (const request of claimed) {
-            request.status = data.status;
-            request.updatedAt = new Date().toISOString();
+            Object.assign(request, data, {
+              updatedAt: new Date().toISOString(),
+            });
           }
 
           return {
