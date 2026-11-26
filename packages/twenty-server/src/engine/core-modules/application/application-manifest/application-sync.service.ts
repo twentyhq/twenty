@@ -45,6 +45,7 @@ import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration.type';
 import { type ApplicationManifestSyncResult } from 'src/engine/core-modules/application/application-manifest/types/application-manifest-sync-result.type';
+import { ChannelVisibilityRoleWideAccessRevokeService } from 'src/engine/permissions/channel-visibility/services/channel-visibility-role-wide-access-revoke.service';
 
 @Injectable()
 export class ApplicationSyncService {
@@ -63,6 +64,7 @@ export class ApplicationSyncService {
     private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
     private readonly applicationUninstallService: ApplicationUninstallService,
     private readonly applicationGrantRoleService: ApplicationGrantRoleService,
+    private readonly channelVisibilityRoleWideAccessRevokeService: ChannelVisibilityRoleWideAccessRevokeService,
   ) {}
 
   public async synchronizeFromManifest({
@@ -127,6 +129,17 @@ export class ApplicationSyncService {
     }
 
     if (!dryRun) {
+      // Rows revoking role wide access are owned by the role's application, so the sync above
+      // deletes them when the manifest does not declare them: restore them for its user roles
+      await this.channelVisibilityRoleWideAccessRevokeService.revokeRoleWideAccess(
+        {
+          workspaceId,
+          applicationUniversalIdentifier:
+            ownerFlatApplication.universalIdentifier,
+          shouldKeepExistingObjectPermissions: true,
+        },
+      );
+
       try {
         await this.applicationSourceService.store({ workspaceId, manifest });
       } catch (error) {

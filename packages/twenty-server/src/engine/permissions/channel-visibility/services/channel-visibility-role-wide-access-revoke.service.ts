@@ -95,12 +95,19 @@ export class ChannelVisibilityRoleWideAccessRevokeService {
       .filter(isDefined);
   }
 
+  // With applicationUniversalIdentifier, only that application's user roles are covered.
+  // shouldKeepExistingObjectPermissions leaves a role's own channel settings untouched, so an
+  // application that grants its role access to messages keeps it.
   async revokeRoleWideAccess({
     workspaceId,
     isDryRun = false,
+    applicationUniversalIdentifier: scopeApplicationUniversalIdentifier,
+    shouldKeepExistingObjectPermissions = false,
   }: {
     workspaceId: string;
     isDryRun?: boolean;
+    applicationUniversalIdentifier?: string;
+    shouldKeepExistingObjectPermissions?: boolean;
   }): Promise<void> {
     const {
       flatRoleMaps,
@@ -116,7 +123,13 @@ export class ChannelVisibilityRoleWideAccessRevokeService {
 
     const userRoles = Object.values(flatRoleMaps.byUniversalIdentifier)
       .filter(isDefined)
-      .filter(({ canBeAssignedToUsers }) => canBeAssignedToUsers);
+      .filter(({ canBeAssignedToUsers }) => canBeAssignedToUsers)
+      .filter(
+        ({ applicationUniversalIdentifier }) =>
+          !isDefined(scopeApplicationUniversalIdentifier) ||
+          applicationUniversalIdentifier ===
+            scopeApplicationUniversalIdentifier,
+      );
     const channelObjectUniversalIdentifiers =
       CHANNEL_OBJECT_UNIVERSAL_IDENTIFIERS.filter((objectUniversalIdentifier) =>
         isDefined(
@@ -202,7 +215,7 @@ export class ChannelVisibilityRoleWideAccessRevokeService {
           existingObjectPermission.canSoftDeleteObjectRecords === false &&
           existingObjectPermission.canDestroyObjectRecords === false;
 
-        if (!isAlreadyRevoked) {
+        if (!isAlreadyRevoked && !shouldKeepExistingObjectPermissions) {
           operations.flatEntityToUpdate.push({
             universalIdentifier: existingObjectPermission.universalIdentifier,
             applicationUniversalIdentifier:
