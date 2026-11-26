@@ -59,7 +59,7 @@ describe('startTeamsAssistantStream', () => {
 
     await writer.update('Digging through your CRM…');
     await writer.update('Still on it…');
-    await writer.finish('Acme has 3 open deals.');
+    await writer.finish({ text: 'Acme has 3 open deals.' });
 
     expect(requestConnectorMock).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -112,7 +112,7 @@ describe('startTeamsAssistantStream', () => {
     });
     const answerMarkers = buildTeamsAssistantAnswerMarkers();
 
-    await writer.finish('Acme has 3 open deals.', answerMarkers);
+    await writer.finish({ text: 'Acme has 3 open deals.', answerMarkers });
 
     expect(streamedActivities()).toEqual([
       {
@@ -134,9 +134,9 @@ describe('startTeamsAssistantStream', () => {
       text: 'Thinking…',
     });
 
-    await expect(writer.finish('Acme has 3 open deals.')).resolves.toBe(
-      'stream-1',
-    );
+    await expect(
+      writer.finish({ text: 'Acme has 3 open deals.' }),
+    ).resolves.toBe('stream-1');
   });
 
   it('should return the activity id of the final message when Teams sends one', async () => {
@@ -146,9 +146,9 @@ describe('startTeamsAssistantStream', () => {
     });
     requestConnectorMock.mockResolvedValue('{"id":"final-activity-1"}');
 
-    await expect(writer.finish('Acme has 3 open deals.')).resolves.toBe(
-      'final-activity-1',
-    );
+    await expect(
+      writer.finish({ text: 'Acme has 3 open deals.' }),
+    ).resolves.toBe('final-activity-1');
   });
 
   it('should stop update retries once the final message is sent', async () => {
@@ -163,7 +163,7 @@ describe('startTeamsAssistantStream', () => {
 
     expect(retryAbortSignal.aborted).toBe(false);
 
-    await writer.finish('Acme has 3 open deals.');
+    await writer.finish({ text: 'Acme has 3 open deals.' });
 
     expect(retryAbortSignal.aborted).toBe(true);
     expect(

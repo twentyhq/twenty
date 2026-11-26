@@ -2,8 +2,8 @@ import { type TeamsAssistantAnswerMarkers } from 'src/features/chat/logic-functi
 
 export type TeamsAssistantStatusWriter = {
   update: (text: string) => Promise<void>;
-  finish: (
-    text: string,
-    answerMarkers?: TeamsAssistantAnswerMarkers,
-  ) => Promise<string>;
+  finish: (message: {
+    text: string;
+    answerMarkers?: TeamsAssistantAnswerMarkers;
+  }) => Promise<string>;
 };

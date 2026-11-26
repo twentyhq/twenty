@@ -59,7 +59,7 @@ export const startTeamsAssistantPlaceholder = async ({
   const activityId = await postPlaceholder(conversation);
 
   return {
-    finish: async (text, answerMarkers) => {
+    finish: async ({ text, answerMarkers }) => {
       const sendMessage = async () => {
         const { id } = await sendTeamsMessage({
           ...conversation,

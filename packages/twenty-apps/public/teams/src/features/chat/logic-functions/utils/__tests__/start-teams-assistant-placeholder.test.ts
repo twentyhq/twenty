@@ -77,7 +77,7 @@ describe('startTeamsAssistantPlaceholder', () => {
   it('should post a placeholder in the thread and replace it with the answer', async () => {
     const status = await startPlaceholder();
 
-    await status.finish(ANSWER);
+    await status.finish({ text: ANSWER });
 
     expect(sendActivityMock).toHaveBeenCalledExactlyOnceWith(
       sentMessage(TEAMS_ASSISTANT_INITIAL_STATUS),
@@ -94,7 +94,7 @@ describe('startTeamsAssistantPlaceholder', () => {
 
     const status = await startPlaceholder();
 
-    await status.finish(ANSWER);
+    await status.finish({ text: ANSWER });
 
     expect(sendActivityMock).toHaveBeenLastCalledWith(sentMessage(ANSWER));
     expect(sendActivityMock).toHaveBeenCalledTimes(2);
@@ -107,7 +107,7 @@ describe('startTeamsAssistantPlaceholder', () => {
 
     const status = await startPlaceholder();
 
-    await status.finish(ANSWER);
+    await status.finish({ text: ANSWER });
 
     expect(sendActivityMock).toHaveBeenLastCalledWith(sentMessage(ANSWER));
     expect(deleteActivityMock).toHaveBeenCalledExactlyOnceWith(PLACEHOLDER);
@@ -119,7 +119,9 @@ describe('startTeamsAssistantPlaceholder', () => {
 
     const status = await startPlaceholder();
 
-    await expect(status.finish(ANSWER)).resolves.toBe('placeholder-1');
+    await expect(status.finish({ text: ANSWER })).resolves.toBe(
+      'placeholder-1',
+    );
     expect(sendActivityMock).toHaveBeenLastCalledWith(sentMessage(ANSWER));
   });
 
@@ -127,7 +129,7 @@ describe('startTeamsAssistantPlaceholder', () => {
     const status = await startPlaceholder();
     const answerMarkers = buildTeamsAssistantAnswerMarkers();
 
-    await expect(status.finish(ANSWER, answerMarkers)).resolves.toBe(
+    await expect(status.finish({ text: ANSWER, answerMarkers })).resolves.toBe(
       'placeholder-1',
     );
 
@@ -146,7 +148,7 @@ describe('startTeamsAssistantPlaceholder', () => {
     const status = await startPlaceholder();
     const answerMarkers = buildTeamsAssistantAnswerMarkers();
 
-    await expect(status.finish(ANSWER, answerMarkers)).resolves.toBe(
+    await expect(status.finish({ text: ANSWER, answerMarkers })).resolves.toBe(
       'answer-1',
     );
 
@@ -163,10 +165,10 @@ describe('startTeamsAssistantPlaceholder', () => {
     updateActivityMock.mockRejectedValueOnce(new Error('413'));
     sendActivityMock.mockRejectedValueOnce(new Error('413'));
 
-    await expect(status.finish(ANSWER)).rejects.toThrow('413');
+    await expect(status.finish({ text: ANSWER })).rejects.toThrow('413');
     expect(deleteActivityMock).not.toHaveBeenCalled();
 
-    await status.finish(FAILURE);
+    await status.finish({ text: FAILURE });
 
     expect(updateActivityMock).toHaveBeenLastCalledWith({
       ...PLACEHOLDER,

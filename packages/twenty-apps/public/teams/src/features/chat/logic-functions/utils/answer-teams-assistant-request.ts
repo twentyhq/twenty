@@ -73,7 +73,7 @@ export const answerTeamsAssistantRequest = async ({
     });
 
     if (!isDefined(workspaceMemberId)) {
-      await status.finish(TEAMS_ASSISTANT_UNMATCHED_SENDER_TEXT);
+      await status.finish({ text: TEAMS_ASSISTANT_UNMATCHED_SENDER_TEXT });
       await updateTeamsAssistantRequest({
         client,
         id: request.id,
@@ -117,14 +117,14 @@ export const answerTeamsAssistantRequest = async ({
       deadlineAtMs: agentDeadlineAtMs,
     });
 
-    const teamsAnswerActivityId = await status.finish(
-      buildTeamsAssistantAnswerText({
+    const teamsAnswerActivityId = await status.finish({
+      text: buildTeamsAssistantAnswerText({
         responseText,
         requestId: request.id,
         workspaceBaseUrl,
       }),
-      buildTeamsAssistantAnswerMarkers(),
-    );
+      answerMarkers: buildTeamsAssistantAnswerMarkers(),
+    });
     await updateTeamsAssistantRequest({
       client,
       id: request.id,
@@ -138,7 +138,7 @@ export const answerTeamsAssistantRequest = async ({
     const errorMessage = toErrorMessage(error);
 
     await status
-      .finish(getTeamsAssistantFailureText(error))
+      .finish({ text: getTeamsAssistantFailureText(error) })
       .catch(() => undefined);
     await updateTeamsAssistantRequest({
       client,

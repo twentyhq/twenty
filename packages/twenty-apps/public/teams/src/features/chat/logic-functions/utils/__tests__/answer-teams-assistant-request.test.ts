@@ -95,7 +95,7 @@ const answer = () =>
     agentDeadlineAtMs: Date.now() + 60_000,
   });
 
-const finishedTexts = () => finishMock.mock.calls.map(([text]) => text);
+const finishedTexts = () => finishMock.mock.calls.map(([{ text }]) => text);
 
 describe('answerTeamsAssistantRequest', () => {
   beforeEach(() => {
@@ -125,10 +125,10 @@ describe('answerTeamsAssistantRequest', () => {
         workspaceBaseUrl: 'https://acme.twenty.com',
       }),
     );
-    expect(finishMock).toHaveBeenCalledExactlyOnceWith(
-      'Acme has 3 open deals.',
-      buildTeamsAssistantAnswerMarkers(),
-    );
+    expect(finishMock).toHaveBeenCalledExactlyOnceWith({
+      text: 'Acme has 3 open deals.',
+      answerMarkers: buildTeamsAssistantAnswerMarkers(),
+    });
     expect(updateMock).toHaveBeenLastCalledWith(
       expect.objectContaining({
         id: REQUEST.id,
@@ -207,7 +207,7 @@ describe('answerTeamsAssistantRequest', () => {
     await expect(answer()).resolves.toMatchObject({ status: 'declined' });
     expect(runAgentMock).not.toHaveBeenCalled();
     expect(finishMock.mock.calls).toEqual([
-      [TEAMS_ASSISTANT_UNMATCHED_SENDER_TEXT],
+      [{ text: TEAMS_ASSISTANT_UNMATCHED_SENDER_TEXT }],
     ]);
     expect(updateMock).not.toHaveBeenCalledWith(
       expect.objectContaining({ requestText: expect.anything() }),
@@ -224,7 +224,7 @@ describe('answerTeamsAssistantRequest', () => {
 
     await expect(answer()).resolves.toMatchObject({ status: 'failed' });
     expect(finishMock.mock.calls).toEqual([
-      [TEAMS_ASSISTANT_DEADLINE_FAILURE_TEXT],
+      [{ text: TEAMS_ASSISTANT_DEADLINE_FAILURE_TEXT }],
     ]);
   });
 
@@ -235,7 +235,9 @@ describe('answerTeamsAssistantRequest', () => {
       status: 'failed',
       reason: 'Agent run failed',
     });
-    expect(finishMock.mock.calls).toEqual([[TEAMS_ASSISTANT_FAILURE_TEXT]]);
+    expect(finishMock.mock.calls).toEqual([
+      [{ text: TEAMS_ASSISTANT_FAILURE_TEXT }],
+    ]);
     expect(updateMock).toHaveBeenLastCalledWith(
       expect.objectContaining({
         status: TEAMS_ASSISTANT_REQUEST_STATUS.FAILED,

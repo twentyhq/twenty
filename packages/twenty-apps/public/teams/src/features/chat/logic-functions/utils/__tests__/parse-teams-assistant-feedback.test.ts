@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { parseTeamsAssistantFeedback } from 'src/features/chat/logic-functions/utils/parse-teams-assistant-feedback';
 
@@ -20,10 +20,25 @@ describe('parseTeamsAssistantFeedback', () => {
     ).toEqual({ feedbackRating: 'NEGATIVE', feedbackText: 'Wrong' });
   });
 
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('should keep the rating and warn when the comment is not JSON', () => {
+    const warnSpy = vi
+      .spyOn(console, 'warn')
+      .mockImplementation(() => undefined);
+
+    expect(parse({ reaction: 'like', feedback: 'Nice!' })).toEqual({
+      feedbackRating: 'POSITIVE',
+      feedbackText: '',
+    });
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+  });
+
   it.each([
     ['is missing', undefined],
     ['is empty', '{"feedbackText":""}'],
-    ['is not JSON', 'Nice!'],
     ['holds no text', '{"feedbackText":42}'],
     ['is null', 'null'],
   ])('should keep the rating when the comment %s', (_, feedback) => {
