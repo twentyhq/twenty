@@ -1,7 +1,6 @@
 import { Field, HideField, InputType, Int } from '@nestjs/graphql';
 
 import {
-  IsArray,
   IsBoolean,
   IsEnum,
   IsInt,
@@ -138,10 +137,9 @@ export class CreateViewInput {
   calendarEndFieldMetadataId?: string;
 
   @IsOptional()
-  @IsArray()
-  @IsUUID(undefined, { each: true })
-  @Field(() => [UUIDScalarType], { nullable: true })
-  listPinnedFieldUniversalIdentifiers?: string[];
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  listPinnedFieldMetadataId?: string;
 
   @IsOptional()
   @IsUUID()

@@ -1,5 +1,5 @@
 import { type FromTo } from 'twenty-shared/types';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -123,15 +123,12 @@ export const handleFieldMetadataDeactivationSideEffects = ({
     fromFlatFieldMetadata.kanbanAggregateOperationViewIds,
   );
   const calendarEndViewIds = new Set(fromFlatFieldMetadata.calendarEndViewIds);
-  const viewIdsPinningField = new Set(
+  const listPinnedFieldViewIds = new Set(
     Object.values(flatViewMaps.byUniversalIdentifier)
       .filter(
         (flatView): flatView is FlatView =>
           isDefined(flatView) &&
-          isNonEmptyArray(flatView.listPinnedFieldUniversalIdentifiers) &&
-          flatView.listPinnedFieldUniversalIdentifiers.includes(
-            fromFlatFieldMetadata.universalIdentifier,
-          ),
+          flatView.listPinnedFieldMetadataId === fromFlatFieldMetadata.id,
       )
       .map((flatView) => flatView.id),
   );
@@ -139,7 +136,7 @@ export const handleFieldMetadataDeactivationSideEffects = ({
     ...new Set([
       ...kanbanAggregateOperationViewIds,
       ...calendarEndViewIds,
-      ...viewIdsPinningField,
+      ...listPinnedFieldViewIds,
     ]),
   ].filter((viewId) => !viewIdsToDelete.includes(viewId));
   const flatViewsToUpdate = findManyFlatEntityByIdInFlatEntityMapsOrThrow({
@@ -149,7 +146,7 @@ export const handleFieldMetadataDeactivationSideEffects = ({
     const shouldClearKanbanAggregateOperation =
       kanbanAggregateOperationViewIds.has(flatView.id);
     const shouldClearCalendarEndField = calendarEndViewIds.has(flatView.id);
-    const shouldUnpinField = viewIdsPinningField.has(flatView.id);
+    const shouldClearListPinnedField = listPinnedFieldViewIds.has(flatView.id);
 
     return {
       ...flatView,
@@ -162,13 +159,9 @@ export const handleFieldMetadataDeactivationSideEffects = ({
         calendarEndFieldMetadataId: null,
         calendarEndFieldMetadataUniversalIdentifier: null,
       }),
-      ...(shouldUnpinField && {
-        listPinnedFieldUniversalIdentifiers:
-          flatView.listPinnedFieldUniversalIdentifiers.filter(
-            (pinnedFieldUniversalIdentifier) =>
-              pinnedFieldUniversalIdentifier !==
-              fromFlatFieldMetadata.universalIdentifier,
-          ),
+      ...(shouldClearListPinnedField && {
+        listPinnedFieldMetadataId: null,
+        listPinnedFieldMetadataUniversalIdentifier: null,
       }),
     };
   });

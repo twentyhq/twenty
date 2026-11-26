@@ -64,7 +64,7 @@ type Assertions = [
       | 'calendarLayout'
       | 'calendarFieldMetadataUniversalIdentifier'
       | 'calendarEndFieldMetadataUniversalIdentifier'
-      | 'listPinnedFieldUniversalIdentifiers'
+      | 'listPinnedFieldMetadataUniversalIdentifier'
       | 'mainGroupByFieldMetadataUniversalIdentifier'
       | 'shouldHideEmptyGroups'
       | 'shouldDisplayGroupsAsTabs'

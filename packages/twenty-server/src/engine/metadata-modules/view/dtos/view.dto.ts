@@ -102,8 +102,8 @@ export class ViewDTO {
   @Field(() => UUIDScalarType, { nullable: true })
   calendarEndFieldMetadataId?: string | null;
 
-  @Field(() => [UUIDScalarType], { nullable: true })
-  listPinnedFieldUniversalIdentifiers?: string[] | null;
+  @Field(() => UUIDScalarType, { nullable: true })
+  listPinnedFieldMetadataId?: string | null;
 
   @Field(() => UUIDScalarType, { nullable: false })
   workspaceId: string;
