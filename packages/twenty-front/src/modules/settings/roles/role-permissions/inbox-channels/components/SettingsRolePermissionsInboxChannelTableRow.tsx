@@ -12,7 +12,7 @@ const StyledName = styled.span`
 `;
 
 type SettingsRolePermissionsInboxChannelTableRowProps = {
-  channel: Pick<AgentChatChannel, 'name' | 'icon' | 'color'>;
+  channel: Pick<AgentChatChannel, 'id' | 'name' | 'icon' | 'color'>;
   isChecked: boolean;
   isEditable: boolean;
   onToggle: () => void;

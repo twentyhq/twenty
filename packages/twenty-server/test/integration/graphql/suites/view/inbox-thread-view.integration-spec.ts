@@ -1,3 +1,10 @@
+import {
+  CREATE_CHANNEL,
+  DELETE_CHANNEL,
+  listChannels,
+} from 'test/integration/graphql/suites/chat-channel/utils/chat-channel-test.util';
+import { assertGraphQLSuccessfulResponse } from 'test/integration/graphql/utils/graphql-test-assertions.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
 import { destroyOneView } from 'test/integration/metadata/suites/view/utils/destroy-one-view.util';
 import { findViews } from 'test/integration/metadata/suites/view/utils/find-views.util';
@@ -45,6 +52,47 @@ const findInboxThreadViews = async (objectMetadataId: string) => {
   return data.getViews;
 };
 
+const findInboxChannelViews = async ({
+  objectMetadataId,
+  channelId,
+}: {
+  objectMetadataId: string;
+  channelId: string;
+}) =>
+  (await findInboxThreadViews(objectMetadataId))
+    .filter(({ viewFilters }) =>
+      viewFilters.some(
+        ({ operand, value }) =>
+          operand === ViewFilterOperand.IS &&
+          value === JSON.stringify([channelId]),
+      ),
+    )
+    .sort((viewA, viewB) => viewA.position - viewB.position)
+    .map(({ name, type, presetFilter }) => ({ name, type, presetFilter }));
+
+const EXPECTED_INBOX_CHANNEL_VIEWS = [
+  {
+    name: 'Open',
+    type: ViewType.INBOX,
+    presetFilter: ViewPresetFilter.INBOX_CHANNEL_OPEN,
+  },
+  {
+    name: 'Mentions',
+    type: ViewType.INBOX,
+    presetFilter: ViewPresetFilter.INBOX_MENTIONS,
+  },
+  {
+    name: 'Snoozed',
+    type: ViewType.INBOX,
+    presetFilter: ViewPresetFilter.INBOX_CHANNEL_SNOOZED,
+  },
+  {
+    name: 'Done',
+    type: ViewType.INBOX,
+    presetFilter: ViewPresetFilter.INBOX_CHANNEL_DONE,
+  },
+];
+
 describe('Inbox thread views', () => {
   let inboxThreadObjectMetadataId: string;
 
@@ -66,9 +114,20 @@ describe('Inbox thread views', () => {
       objectMetadataId: inboxThreadObjectMetadataId,
       fieldName: 'assignee',
     });
+    const channelFieldMetadataId = await findFieldMetadataIdByName({
+      objectMetadataId: inboxThreadObjectMetadataId,
+      fieldName: 'channelId',
+    });
 
     expect(
       inboxThreadViews
+        .filter(
+          ({ viewFilters }) =>
+            !viewFilters.some(
+              ({ fieldMetadataId }) =>
+                fieldMetadataId === channelFieldMetadataId,
+            ),
+        )
         .sort((viewA, viewB) => viewA.position - viewB.position)
         .map(({ name, type, presetFilter, viewFilters }) => ({
           name,
@@ -164,5 +223,49 @@ describe('Inbox thread views', () => {
         (view) => view.id === createdViewId,
       ),
     ).toBe(false);
+  });
+
+  it('should give an inbox channel its views and remove them with the channel', async () => {
+    const generalChannel = (await listChannels()).find(
+      ({ isCustom }) => !isCustom,
+    );
+
+    expect(
+      await findInboxChannelViews({
+        objectMetadataId: inboxThreadObjectMetadataId,
+        channelId: generalChannel?.id ?? '',
+      }),
+    ).toEqual(EXPECTED_INBOX_CHANNEL_VIEWS);
+
+    const createChannelResponse = await makeMetadataApiRequest({
+      query: CREATE_CHANNEL,
+      variables: { input: { name: 'Inbox channel views', roleIds: [] } },
+    });
+
+    assertGraphQLSuccessfulResponse(createChannelResponse);
+
+    const channelId: string =
+      createChannelResponse.body.data.createAgentChatChannel.id;
+
+    expect(
+      await findInboxChannelViews({
+        objectMetadataId: inboxThreadObjectMetadataId,
+        channelId,
+      }),
+    ).toEqual(EXPECTED_INBOX_CHANNEL_VIEWS);
+
+    assertGraphQLSuccessfulResponse(
+      await makeMetadataApiRequest({
+        query: DELETE_CHANNEL,
+        variables: { channelId, destinationChannelId: null },
+      }),
+    );
+
+    expect(
+      await findInboxChannelViews({
+        objectMetadataId: inboxThreadObjectMetadataId,
+        channelId,
+      }),
+    ).toEqual([]);
   });
 });
