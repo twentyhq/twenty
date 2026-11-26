@@ -39,11 +39,21 @@ const listInstanceCommandFiles = () =>
     .map((path) => join(UPGRADE_COMMANDS_DIRECTORY, path));
 
 const loadCoreEntities = (): CoreEntity[] => {
-  const entityGlobs = Array.isArray(typeORMCoreModuleOptions.entities)
-    ? typeORMCoreModuleOptions.entities.filter(isString)
-    : [];
+  const { entities } = typeORMCoreModuleOptions;
 
-  for (const entityFile of globSync(entityGlobs, { cwd: SERVER_ROOT })) {
+  if (!Array.isArray(entities)) {
+    throw new Error('Expected the core datasource entities to be a list');
+  }
+
+  const entityFiles = globSync(entities.filter(isString), {
+    cwd: SERVER_ROOT,
+  });
+
+  if (entityFiles.length === 0) {
+    throw new Error('No core entity file matched the datasource globs');
+  }
+
+  for (const entityFile of entityFiles) {
     require(join(SERVER_ROOT, entityFile));
   }
 
