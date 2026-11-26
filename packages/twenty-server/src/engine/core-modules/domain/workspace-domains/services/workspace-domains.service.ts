@@ -122,6 +122,7 @@ export class WorkspaceDomainsService {
     workspace: WorkspaceEntity | undefined;
     publicDomain: PublicDomainEntity | null;
     isPublicDomain: boolean;
+    isApplicationPublicDomain: boolean;
   }> {
     const { subdomain, customDomain, isUnderPublicDomainUrl } =
       this.domainServerConfigService.getSubdomainAndCustomDomainFromUrl(origin);
@@ -136,6 +137,7 @@ export class WorkspaceDomainsService {
         workspace: await this.getDefaultWorkspace(),
         publicDomain: publicDomain ?? null,
         isPublicDomain: isUnderPublicDomainUrl || isDefined(publicDomain),
+        isApplicationPublicDomain: isDefined(publicDomain),
       };
     }
 
@@ -150,6 +152,7 @@ export class WorkspaceDomainsService {
           workspace: registeredPublicDomain.workspace ?? undefined,
           publicDomain: registeredPublicDomain,
           isPublicDomain: true,
+          isApplicationPublicDomain: true,
         };
       }
 
@@ -164,6 +167,7 @@ export class WorkspaceDomainsService {
         workspace: workspaceFromSubdomain,
         publicDomain: null,
         isPublicDomain: true,
+        isApplicationPublicDomain: false,
       };
     }
 
@@ -172,6 +176,7 @@ export class WorkspaceDomainsService {
         workspace: undefined,
         publicDomain: null,
         isPublicDomain: false,
+        isApplicationPublicDomain: false,
       };
     }
 
@@ -191,6 +196,7 @@ export class WorkspaceDomainsService {
         workspace: workspaceFromCustomDomainOrSubdomain,
         publicDomain: null,
         isPublicDomain: false,
+        isApplicationPublicDomain: false,
       };
     }
 
@@ -200,6 +206,7 @@ export class WorkspaceDomainsService {
       workspace: publicDomain?.workspace ?? undefined,
       publicDomain: publicDomain ?? null,
       isPublicDomain: isDefined(publicDomain),
+      isApplicationPublicDomain: isDefined(publicDomain),
     };
   }
 

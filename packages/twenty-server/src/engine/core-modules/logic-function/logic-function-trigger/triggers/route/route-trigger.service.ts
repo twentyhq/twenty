@@ -45,6 +45,7 @@ type RouteTriggerRequestContext = {
   workspace: RouteTriggerWorkspace;
   applicationId: string | null;
   isPublicDomain: boolean;
+  isApplicationPublicDomain: boolean;
   authenticationContext: RawAuthContext | undefined;
 };
 
@@ -95,6 +96,7 @@ export class RouteTriggerService {
       workspace: workspaceFromHost,
       publicDomain,
       isPublicDomain,
+      isApplicationPublicDomain,
     } = await this.workspaceDomainsService.resolveWorkspaceAndPublicDomain(
       host,
     );
@@ -126,6 +128,7 @@ export class RouteTriggerService {
       workspace,
       applicationId: publicDomain?.applicationId ?? null,
       isPublicDomain,
+      isApplicationPublicDomain,
       authenticationContext,
     };
   }
@@ -262,8 +265,13 @@ export class RouteTriggerService {
     isPublicDomain: boolean;
     isApplicationPublicDomain: boolean;
   }> {
-    const { workspace, applicationId, isPublicDomain, authenticationContext } =
-      await this.resolveRouteTriggerRequestContextOrFail(request);
+    const {
+      workspace,
+      applicationId,
+      isPublicDomain,
+      isApplicationPublicDomain,
+      authenticationContext,
+    } = await this.resolveRouteTriggerRequestContextOrFail(request);
 
     const logicFunctionsWithHttpRouteTrigger =
       await this.logicFunctionRepository.find(workspace.id, {
@@ -372,8 +380,7 @@ export class RouteTriggerService {
     return {
       response: outcome.response,
       isPublicDomain,
-      // Only a validated public domain row binds the host to one application.
-      isApplicationPublicDomain: isDefined(applicationId),
+      isApplicationPublicDomain,
     };
   }
 }
