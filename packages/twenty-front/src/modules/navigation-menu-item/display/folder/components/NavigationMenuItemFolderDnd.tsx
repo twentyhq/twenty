@@ -1,5 +1,6 @@
 import { navigationMenuItemInsertionPreviewState } from '@/navigation-menu-item/common/states/navigationMenuItemInsertionPreviewState';
 import { NavigationMenuItemFolderChevron } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderChevron';
+import { NavigationMenuItemFolderChevronButton } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderChevronButton';
 import { NavigationMenuItemEditable } from '@/navigation-menu-item/edit/components/NavigationMenuItemEditable';
 import { NavigationMenuItemEntrance } from '@/navigation-menu-item/edit/components/NavigationMenuItemEntrance';
 import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
@@ -69,22 +70,6 @@ const StyledFolderContainer = styled.div<{
 
   &[data-forbidden-drop-target='true'] {
     background-color: ${themeCssVariables.background.transparent.danger};
-  }
-`;
-
-const StyledChevronButton = styled.button`
-  align-items: center;
-  background: none;
-  border: none;
-  border-radius: ${themeCssVariables.border.radius.sm};
-  color: inherit;
-  cursor: pointer;
-  display: inline-flex;
-  flex-shrink: 0;
-  padding: 0;
-
-  &:focus-visible {
-    outline: 2px solid ${themeCssVariables.color.blue};
   }
 `;
 
@@ -245,17 +230,13 @@ export const NavigationMenuItemFolderDnd = ({
       aria-expanded={shouldUseEditModeClick ? undefined : isOpen}
       trailingIcon={
         shouldUseEditModeClick ? (
-          <StyledChevronButton
-            type="button"
-            aria-label={isOpen ? t`Collapse folder` : t`Expand folder`}
-            aria-expanded={isOpen}
+          <NavigationMenuItemFolderChevronButton
+            isOpen={isOpen}
             onClick={(event) => {
               event.stopPropagation();
               handleToggle();
             }}
-          >
-            <NavigationMenuItemFolderChevron isOpen={isOpen} />
-          </StyledChevronButton>
+          />
         ) : (
           <NavigationMenuItemFolderChevron isOpen={isOpen} />
         )
