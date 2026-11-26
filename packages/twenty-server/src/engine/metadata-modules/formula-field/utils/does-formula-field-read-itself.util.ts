@@ -1,3 +1,4 @@
+import { type FieldMetadataFormula } from 'twenty-shared/types';
 import {
   getFieldMetadataFormulaBindings,
   isDefined,
@@ -9,8 +10,10 @@ export const doesFormulaFieldReadItself = ({
   findFormula,
 }: {
   universalIdentifier: string;
-  formula: unknown;
-  findFormula: (fieldUniversalIdentifier: string) => unknown;
+  formula: Partial<FieldMetadataFormula> | null;
+  findFormula: (
+    fieldUniversalIdentifier: string,
+  ) => Partial<FieldMetadataFormula> | null | undefined;
 }): boolean => {
   const visitedUniversalIdentifiers = new Set<string>();
   const universalIdentifiersToVisit = Object.values(

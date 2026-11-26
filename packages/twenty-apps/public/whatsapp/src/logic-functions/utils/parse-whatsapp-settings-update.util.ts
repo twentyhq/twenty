@@ -7,7 +7,6 @@ import {
 } from '@sniptt/guards';
 import { isDefined } from 'twenty-sdk/utils';
 
-import { WHATSAPP_HISTORY_CONVERSATION_LIMITS } from 'src/constants/whatsapp-history-conversation-limits.constant';
 import { WHATSAPP_SELECTED_CHAT_NAME_MAX_LENGTH } from 'src/constants/whatsapp-selected-chat-name-max-length.constant';
 import { WHATSAPP_SELECTED_CHATS_MAX_COUNT } from 'src/constants/whatsapp-selected-chats-max-count.constant';
 import { type WhatsappContactAutoCreationPolicy } from 'src/types/whatsapp-contact-auto-creation-policy.type';
@@ -82,19 +81,6 @@ export const parseWhatsappSettingsUpdate = (
     isOneOf(CONTACT_AUTO_CREATION_POLICIES, body?.contactAutoCreationPolicy)
   ) {
     update.contactAutoCreationPolicy = body.contactAutoCreationPolicy;
-  }
-
-  if (isBoolean(body?.areGroupChatsImported)) {
-    update.areGroupChatsImported = body.areGroupChatsImported;
-  }
-
-  if (
-    isOneOf(
-      WHATSAPP_HISTORY_CONVERSATION_LIMITS,
-      body?.historyConversationLimit,
-    )
-  ) {
-    update.historyConversationLimit = body.historyConversationLimit;
   }
 
   if (isBoolean(body?.areChatsMarkedAsRead)) {
