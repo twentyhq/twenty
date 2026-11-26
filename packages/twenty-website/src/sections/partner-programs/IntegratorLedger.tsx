@@ -106,7 +106,7 @@ const PILE_STACKS = Array.from(
       }),
   )
   // centre first, so each layer spreads out from the middle
-  .sort((a, b) => Math.hypot(a.x, a.z) - Math.hypot(b.x, b.z));
+  .toSorted((a, b) => Math.hypot(a.x, a.z) - Math.hypot(b.x, b.z));
 
 // Copies in the order they show: a layer across every stack, then the next
 // one up, so the mound rises as a whole.

@@ -218,7 +218,7 @@ export function CreatorReferralScene() {
       <Row>
         {ITEMS.map((item, index) => (
           <Channel
-            key={`${item.model}-${index}`}
+            key={item.model}
             style={cssVariableStyle({
               '--lift': item.lift,
               '--order': index,

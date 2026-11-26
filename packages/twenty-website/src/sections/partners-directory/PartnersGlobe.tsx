@@ -332,14 +332,14 @@ export function PartnersGlobe({
     camera.position.set(0, 0, CAMERA_DISTANCE);
 
     const toneScene = new THREE.Scene();
-    const tilt = new THREE.Group();
+    const tiltGroup = new THREE.Group();
     // a profile tips its partner's latitude to the front
-    tilt.rotation.x = isDefined(facing)
+    tiltGroup.rotation.x = isDefined(facing)
       ? facing[1] * DEGREES
       : GLOBE_VIEW.pose.rotationX;
     const globe = new THREE.Group();
-    tilt.add(globe);
-    toneScene.add(tilt);
+    tiltGroup.add(globe);
+    toneScene.add(tiltGroup);
 
     const landTexture = new THREE.TextureLoader().load(LAND_MASK_URL);
     landTexture.flipY = false;
@@ -487,7 +487,7 @@ export function PartnersGlobe({
         if (!reducedMotion) spin += velocity;
       }
       globe.rotation.y = spin;
-      tilt.updateMatrixWorld(true);
+      tiltGroup.updateMatrixWorld(true);
       const hoverUniform = halftoneMaterial.uniforms.hover;
       hoverUniform.value +=
         (hoverTarget - hoverUniform.value) *
