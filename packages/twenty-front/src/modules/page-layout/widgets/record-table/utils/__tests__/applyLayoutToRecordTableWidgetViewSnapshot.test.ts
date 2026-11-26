@@ -86,4 +86,22 @@ describe('applyLayoutToRecordTableWidgetViewSnapshot', () => {
       }).view,
     ).toMatchObject({ type: ViewType.TABLE_WIDGET, isCompact: false });
   });
+
+  it('should keep Compact view between layouts that are not lists', () => {
+    expect(
+      applyLayoutToRecordTableWidgetViewSnapshot({
+        widgetViewSnapshot: {
+          ...widgetViewSnapshot,
+          view: {
+            ...widgetViewSnapshot.view,
+            type: ViewType.KANBAN_WIDGET,
+            isCompact: true,
+          },
+        },
+        targetViewType: ViewType.CALENDAR_WIDGET,
+        defaultGroupByFieldMetadataItem: null,
+        defaultCalendarFieldMetadataItem,
+      }).view,
+    ).toMatchObject({ type: ViewType.CALENDAR_WIDGET, isCompact: true });
+  });
 });
