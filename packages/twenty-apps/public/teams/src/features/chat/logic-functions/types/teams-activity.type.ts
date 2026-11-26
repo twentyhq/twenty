@@ -5,6 +5,7 @@ import { type TeamsSuggestedActions } from 'src/features/chat/logic-functions/ty
 export type TeamsActivity = {
   type: 'message' | 'typing';
   text?: string;
+  textFormat?: 'extendedmarkdown';
   attachments?: TeamsActivityAttachment[];
   entities?: TeamsActivityEntity[];
   suggestedActions?: TeamsSuggestedActions;
