@@ -8,7 +8,10 @@ import {
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME } from 'src/engine/workspace-manager/twenty-standard-application/constants/search-fields-by-standard-object-name.constant';
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
+import {
+  type FieldPermissionAction,
+  TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+} from 'twenty-shared/application';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isAuditLoggableFieldType } from 'src/engine/metadata-modules/field-metadata/utils/is-audit-loggable-field-type.util';
@@ -34,6 +37,7 @@ export type CreateStandardFieldArgs<
     isNullable?: boolean;
     isUnique?: boolean;
     isUIEditable?: boolean;
+    disabledFieldPermissionActions?: FieldPermissionAction[];
     defaultValue?: FieldMetadataDefaultValue<T>;
     settings?: FieldMetadataSettings<T>;
     options?:
@@ -64,6 +68,7 @@ export const createStandardFieldFlatMetadata = <
     isNullable = true,
     isUnique = false,
     isUIEditable = true,
+    disabledFieldPermissionActions,
     defaultValue,
     settings,
     options: fieldOptions = null,
@@ -103,7 +108,9 @@ export const createStandardFieldFlatMetadata = <
     isAuditLogged: isAuditLoggableFieldType(type),
     isUIEditable,
     disabledFieldPermissionActions:
-      partialSystemFlatFieldMetadata?.disabledFieldPermissionActions ?? null,
+      disabledFieldPermissionActions ??
+      partialSystemFlatFieldMetadata?.disabledFieldPermissionActions ??
+      null,
     isLabelSyncedWithName: false,
     overrides: null,
     defaultValue: defaultValue ?? null,

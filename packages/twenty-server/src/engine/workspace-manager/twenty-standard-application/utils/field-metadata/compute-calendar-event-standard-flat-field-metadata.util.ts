@@ -7,6 +7,7 @@ import {
   RelationType,
 } from 'twenty-shared/types';
 
+import { PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-disabled-field-permission-actions.constant';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import {
@@ -247,6 +248,8 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
       icon: 'IconH1',
       isNullable: true,
       isUIEditable: false,
+      disabledFieldPermissionActions:
+        PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -268,6 +271,8 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
       icon: 'IconCalendarCancel',
       isNullable: false,
       isUIEditable: false,
+      disabledFieldPermissionActions:
+        PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
       defaultValue: false,
     },
     standardObjectMetadataRelatedEntityIds,
@@ -290,6 +295,8 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
       icon: 'IconHours24',
       isNullable: false,
       isUIEditable: false,
+      disabledFieldPermissionActions:
+        PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
       defaultValue: false,
     },
     standardObjectMetadataRelatedEntityIds,
@@ -312,6 +319,8 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
       icon: 'IconCalendarClock',
       isNullable: true,
       isUIEditable: false,
+      disabledFieldPermissionActions:
+        PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -333,6 +342,8 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
       icon: 'IconCalendarClock',
       isNullable: true,
       isUIEditable: false,
+      disabledFieldPermissionActions:
+        PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -357,6 +368,8 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
       icon: 'IconCalendarPlus',
       isNullable: true,
       isUIEditable: false,
+      disabledFieldPermissionActions:
+        PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -381,6 +394,8 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
       icon: 'IconCalendarCog',
       isNullable: true,
       isUIEditable: false,
+      disabledFieldPermissionActions:
+        PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -402,6 +417,8 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
       icon: 'IconFileDescription',
       isNullable: true,
       isUIEditable: false,
+      disabledFieldPermissionActions:
+        PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
       settings: { displayedMaxRows: 99 },
     },
     standardObjectMetadataRelatedEntityIds,
@@ -424,6 +441,8 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
       icon: 'IconMapPin',
       isNullable: true,
       isUIEditable: false,
+      disabledFieldPermissionActions:
+        PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -445,6 +464,8 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
       icon: 'IconKey',
       isNullable: true,
       isUIEditable: false,
+      disabledFieldPermissionActions:
+        PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -469,6 +490,8 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
       icon: 'IconScreenShare',
       isNullable: true,
       isUIEditable: false,
+      disabledFieldPermissionActions:
+        PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -490,6 +513,8 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
       icon: 'IconLink',
       isNullable: true,
       isUIEditable: false,
+      disabledFieldPermissionActions:
+        PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
