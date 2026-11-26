@@ -19,13 +19,10 @@ import { AiChatUsageLimitReachedBanner } from '@/ai-chat/usage/components/AiChat
 import { AiChatUserCreditsExhaustedBanner } from '@/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner';
 import { AiChatStandaloneError } from '@/ai-chat/composer/components/AiChatStandaloneError';
 import { AiChatComposerAttachmentPreviews } from '@/ai-chat/composer/components/AiChatComposerAttachmentPreviews';
-import { AiChatAddMenu } from '@/ai-chat/composer/components/AiChatAddMenu';
-import { AiChatAttachFileButton } from '@/ai-chat/composer/components/AiChatAttachFileButton';
-import { AiChatDictationButton } from '@/ai-chat/dictation/components/AiChatDictationButton';
+import { AiChatComposerLeftActions } from '@/ai-chat/composer/components/AiChatComposerLeftActions';
 import { AiChatDictationEffect } from '@/ai-chat/dictation/components/AiChatDictationEffect';
 import { AiChatDictationHint } from '@/ai-chat/dictation/components/AiChatDictationHint';
 import { AiChatComposerActionsRow } from '@/ai-chat/components/AiChatComposerActionsRow';
-import { AiChatContextUsageButton } from '@/ai-chat/usage/components/AiChatContextUsageButton';
 import { AiChatSendMessageButton } from '@/ai-chat/composer/components/AiChatSendMessageButton';
 import { useSendAiChatComposerMessage } from '@/ai-chat/composer/hooks/useSendAiChatComposerMessage';
 import { useAiChatEditor } from '@/ai-chat/composer/hooks/useAiChatEditor';
@@ -174,15 +171,10 @@ const EditableAiChatEditorSection = () => {
       )}
       <AiChatComposerActionsRow
         leftActions={
-          isDirectMessage ? (
-            <AiChatAttachFileButton editor={editor} />
-          ) : (
-            <>
-              <AiChatAddMenu editor={editor} />
-              <AiChatDictationButton />
-              <AiChatContextUsageButton />
-            </>
-          )
+          <AiChatComposerLeftActions
+            editor={editor}
+            isDirectMessage={isDirectMessage}
+          />
         }
         modelTierDropdownId="ai-chat-model-tier-dropdown"
         isModelPickerHidden={isDirectMessage}
