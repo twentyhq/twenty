@@ -51,7 +51,9 @@ const HALFTONE_FRAGMENT = /* glsl */ `
       r = mix(r, min(r, 0.3), mixed);
       offset.x -= clamp(offset.x, -halfLength, halfLength);
       float d = length(offset);
-      float aa = 1.0 / cell;
+      // one device pixel of smoothing, in cell units: a CSS pixel blurs the
+      // dots on a dense screen
+      float aa = 0.5 * logicalResolution.x / max(effectResolution.x, 1.0) / cell;
       alpha = (1.0 - smoothstep(r - aa, r + aa, d)) * on;
     }
     gl_FragColor = vec4(dotColor * alpha, alpha);
