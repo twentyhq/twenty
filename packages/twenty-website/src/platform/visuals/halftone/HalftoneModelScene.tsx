@@ -1,7 +1,7 @@
 'use client';
 
 import { styled } from '@linaria/react';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useAsyncResource } from '../engine/use-async-resource';
 import { useVisualRuntime } from '../engine/use-visual-runtime';
@@ -9,6 +9,10 @@ import {
   loadGlbGeometry,
   type LoadGlbGeometryOptions,
 } from '../three-runtime/load-glb-geometry';
+import {
+  type HalftoneModelStack,
+  stackGeometry,
+} from '../three-runtime/stack-geometry';
 import { createBandSession } from './create-band-session';
 import { createHalftoneSession } from './create-halftone-session';
 import { type HalftoneInitialPose } from './halftone-interaction-state';
@@ -27,6 +31,9 @@ export type HalftoneModelSceneProps = {
   settings: HalftoneSceneSettingsOverrides;
   initialPose?: HalftoneInitialPose & { timeElapsed?: number };
   geometryOptions?: LoadGlbGeometryOptions;
+  // Draws several copies of the model in the one canvas; changing `visible`
+  // shows more or fewer without rebuilding the scene.
+  stack?: HalftoneModelStack;
   onFirstFrame?: () => void;
 };
 
@@ -35,6 +42,7 @@ export function HalftoneModelScene({
   settings,
   initialPose,
   geometryOptions,
+  stack,
   onFirstFrame,
 }: HalftoneModelSceneProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -46,7 +54,35 @@ export function HalftoneModelScene({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [modelUrl],
   );
-  const geometry = useAsyncResource(loader);
+  const loadedGeometry = useAsyncResource(loader);
+  const stacked = useMemo(
+    () =>
+      loadedGeometry !== null && stack !== undefined
+        ? stackGeometry(loadedGeometry, stack)
+        : null,
+    // the stack's layout is a config record, stable per mount; only its
+    // visible count changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [loadedGeometry],
+  );
+  const geometry = stacked?.geometry ?? loadedGeometry;
+  const visibleCopies = stack?.visible;
+
+  // The stack's copies start moving once the canvas shows them.
+  const [hasFrame, setHasFrame] = useState(false);
+  const handleFirstFrame = useCallback(() => {
+    setHasFrame(true);
+    onFirstFrame?.();
+  }, [onFirstFrame]);
+
+  useEffect(() => {
+    if (stacked === null || visibleCopies === undefined || !hasFrame) {
+      return;
+    }
+    stacked.setVisible(visibleCopies, !reducedMotion);
+  }, [stacked, visibleCopies, hasFrame, reducedMotion]);
+
+  useEffect(() => () => stacked?.dispose(), [stacked]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -65,7 +101,7 @@ export function HalftoneModelScene({
             geometry,
             settings: resolved,
             initialPose,
-            onFirstFrame,
+            onFirstFrame: handleFirstFrame,
             reducedMotion,
           })
         : createBandSession({
@@ -73,7 +109,7 @@ export function HalftoneModelScene({
             geometry,
             settings: resolved,
             initialPose,
-            onFirstFrame,
+            onFirstFrame: handleFirstFrame,
             reducedMotion,
           }),
     ).then((createdSession) => {
@@ -91,7 +127,7 @@ export function HalftoneModelScene({
     // settings/initialPose are config records owned by the section; their
     // identity is stable for the life of the mount.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [geometry, onFirstFrame, reducedMotion]);
+  }, [geometry, handleFirstFrame, reducedMotion]);
 
   return <SceneContainer ref={containerRef} />;
 }

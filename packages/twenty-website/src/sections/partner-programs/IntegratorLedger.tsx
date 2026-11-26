@@ -3,15 +3,18 @@
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
-import { type ChangeEvent, useEffect, useState } from 'react';
+import { type ChangeEvent, type ReactNode, useEffect, useState } from 'react';
 
 import { useAnimatedNumber } from '@/platform/motion';
+import { HalftoneModel } from '@/platform/visuals/rigs/HalftoneModel';
 import {
   color,
   DURATION,
+  mediaUp,
   EASING,
   FONT_WEIGHT,
   fontFamily,
+  paletteColorNumber,
   radius,
   REDUCED_MOTION,
   semanticColor,
@@ -20,10 +23,111 @@ import {
 } from '@/tokens';
 import { cssVariableStyle } from '@/ui/css-variable-style';
 
-import { IntegratorCoinPile } from './IntegratorCoinPile';
 import { INTEGRATOR_LEDGER } from './integrator-ledger-config';
+import { INTEGRATOR_LEVEL_MODELS } from './integrator-level-models';
 
 const READOUT_ENTRANCE_DELAY_MS = 900;
+// The home's money model, drawn with the level cards' recipe so the page
+// keeps one halftone: blue bands on white, lit per object. The pile holds
+// in one pose; its dashes swell under the pointer.
+const MONEY_MODEL_SETTINGS = {
+  ...INTEGRATOR_LEVEL_MODELS[0].settings,
+  previewDistance: 11,
+  // a harder light, so each coin's top and rim part from its neighbours
+  lighting: {
+    intensity: 2.4,
+    fillIntensity: 0.1,
+    ambientIntensity: 0.05,
+    angleDegrees: 132,
+    height: 3.4,
+  },
+  // the Creators audience models' grain: coarse, crisp dashes
+  halftone: {
+    variant: 'band' as const,
+    scale: 6,
+    power: 0.16,
+    width: 0.62,
+    dashColor: paletteColorNumber('blue'),
+    hoverDashColor: paletteColorNumber('blue'),
+  },
+  animation: {
+    ...INTEGRATOR_LEVEL_MODELS[0].settings.animation,
+    autoRotateEnabled: false,
+    autoWobble: 0,
+    followDragEnabled: false,
+    hoverHalftoneEnabled: true,
+    hoverHalftoneRadius: 0.22,
+    hoverHalftonePowerShift: 0.5,
+    hoverHalftoneWidthShift: 0.4,
+  },
+};
+
+// One coin's size in the scene, small enough for the full pile to fit.
+const PILE_COIN_SIZE = { scaleTarget: 0.75 };
+
+// The pile: a mound of stacks on a honeycomb, tallest in the middle and
+// running down to single coins at the rim, all coins facing the same way.
+const PILE_RINGS = 2;
+const PILE_PEAK = 5;
+const PILE_PITCH = 1.2;
+
+// A fixed scatter, so the server and the browser draw the same pile.
+const scatter = (seed: number): number => {
+  const value = Math.sin(seed * 12.9898) * 43758.5453;
+  return value - Math.floor(value);
+};
+
+const PILE_STACKS = Array.from(
+  { length: 2 * PILE_RINGS + 1 },
+  (_, rowIndex) => rowIndex - PILE_RINGS,
+)
+  .flatMap((row) =>
+    Array.from(
+      { length: 2 * PILE_RINGS + 1 },
+      (_, column) => column - PILE_RINGS,
+    )
+      .filter((column) => Math.abs(row + column) <= PILE_RINGS)
+      .map((column, index) => {
+        const x = (column + row / 2) * PILE_PITCH;
+        const z = row * PILE_PITCH * 0.866;
+        const reach = Math.hypot(x, z) / (PILE_RINGS * PILE_PITCH);
+        const seed = (row + 7) * 31 + index;
+
+        return {
+          height: Math.max(
+            1,
+            Math.round(
+              PILE_PEAK * Math.sqrt(1 - reach ** 2) + scatter(seed) * 0.9,
+            ),
+          ),
+          x: x + (scatter(seed + 1) - 0.5) * 0.2,
+          z: z + (scatter(seed + 2) - 0.5) * 0.2,
+        };
+      }),
+  )
+  // centre first, so each layer spreads out from the middle
+  .sort((a, b) => Math.hypot(a.x, a.z) - Math.hypot(b.x, b.z));
+
+// Copies in the order they show: a layer across every stack, then the next
+// one up, so the mound rises as a whole.
+const PILE_PLACEMENTS = Array.from(
+  { length: Math.max(...PILE_STACKS.map((stack) => stack.height)) },
+  (_, level) =>
+    PILE_STACKS.filter((stack) => level < stack.height).map((stack) => ({
+      x: stack.x,
+      // a coin's box runs a little taller than the coin: close the gap
+      y: level * 0.88,
+      z: stack.z,
+    })),
+).flat();
+
+// How much of the pile shows: eased so a small book still shows a few.
+const pileFill = (seats: number): number => {
+  const { minSeats, maxSeats } = INTEGRATOR_LEDGER;
+  const seatProgress = (seats - minSeats) / (maxSeats - minSeats);
+
+  return 0.1 + 0.9 * seatProgress ** 0.6;
+};
 const SCALE_MARKS = [5, 100, 200, 300] as const;
 
 // No frame: the calculator is the section's content, not a widget in it.
@@ -35,13 +139,16 @@ const Panel = styled.div`
     margin-top: ${spacing(6)};
   }
 
-  /* Wide: the seats and what they earn on the left, the coins on the
-     right. */
+  /* Wide: the intro, the seats and the footnote on the left;
+     the coins and what they come to on the right, from the heading down. */
   @container (min-width: 880px) {
-    align-items: stretch;
+    column-gap: ${spacing(16)};
     display: grid;
-    gap: ${spacing(16)};
+    grid-template-areas:
+      'intro simulator'
+      'note simulator';
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    grid-template-rows: auto 1fr;
 
     & > * + * {
       margin-top: 0;
@@ -114,14 +221,39 @@ const ReadoutValue = styled.output`
   font-weight: ${FONT_WEIGHT.light};
 `;
 
-// The seats, what they earn, then the footnote at the column's foot.
-const FiguresColumn = styled.div`
+// The section's intro, then the seats that drive the coins.
+const IntroArea = styled.div`
+  grid-area: intro;
+
+  & > * + * {
+    margin-top: ${spacing(12)};
+  }
+`;
+
+// The coins, and what they come to right under them.
+const SimulatorColumn = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${spacing(10)};
+  gap: ${spacing(4)};
+  grid-area: simulator;
+`;
 
-  & > :last-child {
-    margin-top: auto;
+const ModelFrame = styled.div`
+  height: 270px;
+  width: 100%;
+
+  ${mediaUp('md')} {
+    height: 460px;
+  }
+`;
+
+// Right under the seats it qualifies.
+const NoteArea = styled.div`
+  align-self: start;
+  grid-area: note;
+
+  @container (min-width: 880px) {
+    margin-top: ${spacing(10)};
   }
 `;
 
@@ -149,12 +281,12 @@ const ThumbValue = styled.output`
 
 // Where the scale's marks fall, as shares of the track.
 const Scale = styled.div`
-  ${typeRampDeclarations('bodyXs')}
-  color: ${semanticColor.inkSubtle};
+  ${typeRampDeclarations('bodySm')}
+  color: ${semanticColor.inkMuted};
   font-family: ${fontFamily('sans')};
   font-variant-numeric: tabular-nums;
-  height: ${spacing(5)};
-  margin-top: ${spacing(2)};
+  height: ${spacing(6)};
+  margin-top: ${spacing(3)};
   position: relative;
 
   & > span {
@@ -202,7 +334,10 @@ const ReadoutHint = styled.p`
   font-family: ${fontFamily('sans')};
 `;
 
+// Centred under the coins it counts.
 const Readout = styled.div`
+  text-align: center;
+
   & > * + * {
     margin-top: ${spacing(2)};
   }
@@ -252,26 +387,20 @@ const Slider = styled.input`
   }
 `;
 
+// The same voice as the sum under the figure.
 const Footnote = styled.p`
-  ${typeRampDeclarations('bodyXs')}
-  color: ${semanticColor.inkSubtle};
+  ${typeRampDeclarations('bodySm')}
+  color: ${semanticColor.inkMuted};
   font-family: ${fontFamily('sans')};
 `;
 
-// How high the coins pile: eased so a small book still shows a few.
-const pileFill = (seats: number): number => {
-  const { minSeats, maxSeats } = INTEGRATOR_LEDGER;
-  const seatProgress = (seats - minSeats) / (maxSeats - minSeats);
-
-  return 0.12 + 0.88 * seatProgress ** 0.6;
-};
-
 type IntegratorLedgerProps = {
   footnote: string;
+  intro: ReactNode;
 };
 
 // Seats in, twelve months of commission out.
-export function IntegratorLedger({ footnote }: IntegratorLedgerProps) {
+export function IntegratorLedger({ footnote, intro }: IntegratorLedgerProps) {
   const { i18n } = useLingui();
   const [seats, setSeats] = useState(INTEGRATOR_LEDGER.defaultSeats);
   const [hasEntered, setHasEntered] = useState(false);
@@ -308,7 +437,8 @@ export function IntegratorLedger({ footnote }: IntegratorLedgerProps) {
   return (
     <Stack>
       <Panel>
-        <FiguresColumn style={cssVariableStyle({ '--row': 0 })}>
+        <IntroArea style={cssVariableStyle({ '--row': 0 })}>
+          {intro}
           <SliderBlock>
             <SliderHeader htmlFor="integrator-ledger-seats">
               {i18n._(msg`Seats you bring`)}
@@ -339,6 +469,20 @@ export function IntegratorLedger({ footnote }: IntegratorLedgerProps) {
               </Scale>
             </SliderTrack>
           </SliderBlock>
+        </IntroArea>
+        <SimulatorColumn style={cssVariableStyle({ '--row': 1 })}>
+          <ModelFrame>
+            <HalftoneModel
+              geometryOptions={PILE_COIN_SIZE}
+              modelUrl="/models/money.glb"
+              settings={MONEY_MODEL_SETTINGS}
+              stack={{
+                placements: PILE_PLACEMENTS,
+                tilt: 0.5,
+                visible: Math.round(pileFill(seats) * PILE_PLACEMENTS.length),
+              }}
+            />
+          </ModelFrame>
           <Readout>
             <ReadoutLabel>{i18n._(msg`Your commission`)}</ReadoutLabel>
             <ReadoutValue aria-live="polite" htmlFor="integrator-ledger-seats">
@@ -350,16 +494,15 @@ export function IntegratorLedger({ footnote }: IntegratorLedgerProps) {
               )}
             </ReadoutHint>
           </Readout>
+        </SimulatorColumn>
+        <NoteArea style={cssVariableStyle({ '--row': 2 })}>
           <Footnote>
             {i18n._(
               msg`Estimate on the Organization plan at $${seatPricePerMonth} per seat per month, billed yearly.`,
             )}{' '}
             {footnote}
           </Footnote>
-        </FiguresColumn>
-        <div style={cssVariableStyle({ '--row': 1 })}>
-          <IntegratorCoinPile fill={pileFill(seats)} />
-        </div>
+        </NoteArea>
       </Panel>
     </Stack>
   );

@@ -410,6 +410,8 @@ export async function createBandSession({
   const handlePointerMove = (event: PointerEvent) => {
     updatePointerPosition(event);
     interaction.pointerInside = true;
+    hoverSpot.x = interaction.mouseX;
+    hoverSpot.y = interaction.mouseY;
     if (!interaction.dragging) {
       return;
     }
@@ -422,6 +424,10 @@ export async function createBandSession({
     interaction.pointerX = event.clientX;
     interaction.pointerY = event.clientY;
   };
+
+  // The hover swell (hoverHalftoneEnabled): the dashes thicken around the
+  // pointer, fading in and out; the spot stays where the pointer left.
+  const hoverSpot = { x: 0.5, y: 0.5, strength: 0 };
 
   const handlePointerLeave = () => {
     interaction.pointerInside = false;
@@ -444,6 +450,22 @@ export async function createBandSession({
     const elapsedTime = (initialPose?.timeElapsed ?? 0) + elapsedSeconds;
 
     halftoneMaterial.uniforms.time.value = elapsedTime;
+    if (animation.hoverHalftoneEnabled) {
+      hoverSpot.strength +=
+        ((interaction.pointerInside ? 1 : 0) - hoverSpot.strength) *
+        (1 - Math.exp(-deltaSeconds * 8));
+      halftoneMaterial.uniforms.interactionUv.value.set(
+        hoverSpot.x,
+        1 - hoverSpot.y,
+      );
+      halftoneMaterial.uniforms.hoverHalftoneActive.value = hoverSpot.strength;
+      halftoneMaterial.uniforms.hoverHalftoneRadius.value =
+        animation.hoverHalftoneRadius;
+      halftoneMaterial.uniforms.hoverHalftonePowerShift.value =
+        animation.hoverHalftonePowerShift;
+      halftoneMaterial.uniforms.hoverHalftoneWidthShift.value =
+        animation.hoverHalftoneWidthShift;
+    }
     halftoneMaterial.uniforms.waveAmount.value = animation.waveEnabled
       ? animation.waveAmount
       : 0;

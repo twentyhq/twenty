@@ -8,6 +8,7 @@ import { type HalftoneInitialPose } from '../halftone/halftone-interaction-state
 import { type HalftoneSceneSettingsOverrides } from '../halftone/halftone-settings';
 import { type HalftoneModelSceneProps } from '../halftone/HalftoneModelScene';
 import { type LoadGlbGeometryOptions } from '../three-runtime/load-glb-geometry';
+import { type HalftoneModelStack } from '../three-runtime/stack-geometry';
 import { VisualMount } from '../engine/VisualMount';
 
 // The ONLY import() of the heavy model pipeline: three stays out of the
@@ -51,6 +52,8 @@ export type HalftoneModelProps = {
   settings: HalftoneSceneSettingsOverrides;
   initialPose?: HalftoneInitialPose & { timeElapsed?: number };
   geometryOptions?: LoadGlbGeometryOptions;
+  // Several copies of the model in the one canvas (a pile of coins).
+  stack?: HalftoneModelStack;
   poster?: ReactNode;
   priority?: boolean;
   loading?: 'lazy' | 'eager';
@@ -64,12 +67,19 @@ export function HalftoneModel({
   settings,
   initialPose,
   geometryOptions,
+  stack,
   poster = null,
   priority = false,
   loading = 'lazy',
   reducedMotionMode = 'designed',
 }: HalftoneModelProps) {
-  const sceneProps = { geometryOptions, initialPose, modelUrl, settings };
+  const sceneProps = {
+    geometryOptions,
+    initialPose,
+    modelUrl,
+    settings,
+    stack,
+  };
 
   return (
     <VisualMount
