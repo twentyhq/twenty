@@ -23,6 +23,7 @@ type RuleRelatedFlatEntityMaps = UniversalFlatEntityValidationArgs<
   typeof ALL_METADATA_NAME.rowLevelPermissionRule
 >['optimisticFlatEntityMapsAndRelatedFlatEntityMaps'];
 
+import { getMarketplaceApplicationRoleRestrictionErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-restriction-errors.util';
 @Injectable()
 export class FlatRowLevelPermissionRuleValidatorService {
   validateFlatRowLevelPermissionRuleCreation({
@@ -39,6 +40,10 @@ export class FlatRowLevelPermissionRuleValidatorService {
       metadataName: 'rowLevelPermissionRule',
       type: 'create',
     });
+
+    validationResult.errors.push(
+      ...getMarketplaceApplicationRoleRestrictionErrors({ buildOptions }),
+    );
 
     const existingRule = findFlatEntityByUniversalIdentifier({
       universalIdentifier: flatRuleToValidate.universalIdentifier,
@@ -109,6 +114,10 @@ export class FlatRowLevelPermissionRuleValidatorService {
       metadataName: 'rowLevelPermissionRule',
       type: 'update',
     });
+
+    validationResult.errors.push(
+      ...getMarketplaceApplicationRoleRestrictionErrors({ buildOptions }),
+    );
 
     const existingRule = findFlatEntityByUniversalIdentifier({
       universalIdentifier,

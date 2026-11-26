@@ -14,6 +14,7 @@ import { useCommandMenuItemCurrentViewSectionContext } from '@/command-menu-item
 import { useCommandMenuItemObjectSectionContext } from '@/command-menu-item/display/hooks/useCommandMenuItemObjectSectionContext';
 import { useCommandMenuItemSelectionSectionContext } from '@/command-menu-item/display/hooks/useCommandMenuItemSelectionSectionContext';
 import { useCommandMenuItemWorkspaceSectionContext } from '@/command-menu-item/display/hooks/useCommandMenuItemWorkspaceSectionContext';
+import { getCommandMenuInlineSearchRecordRows } from '@/command-menu-item/display/utils/getCommandMenuInlineSearchRecordRows';
 import { interpolateCommandMenuItemFields } from '@/command-menu-item/display/utils/interpolateCommandMenuItemFields';
 import { type CommandMenuItemSection } from '@/command-menu-item/types/CommandMenuItemSection';
 import { getCommandMenuItemSectionPreview } from '@/command-menu-item/utils/getCommandMenuItemSectionPreview';
@@ -191,18 +192,16 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
   const commandMenuItemsBySection =
     groupCommandMenuItemsBySection(matchingItems);
 
-  const inlineSearchResultItems = isInlineRecordSearchActive
-    ? searchResultItems.slice(0, COMMAND_MENU_INLINE_SEARCH_RECORDS_LIMIT)
-    : [];
-
-  const hasMoreSearchResultItems =
-    isInlineRecordSearchActive &&
-    searchResultItems.length > COMMAND_MENU_INLINE_SEARCH_RECORDS_LIMIT;
-
-  const shouldDisplayNoRecordsFound =
-    isInlineRecordSearchActive &&
-    !isSearchingRecords &&
-    searchResultItems.length === 0;
+  const {
+    inlineSearchResultItems,
+    hasMoreSearchResultItems,
+    shouldDisplayNoRecordsFound,
+    isRecordSearchFallbackRedundant,
+  } = getCommandMenuInlineSearchRecordRows({
+    searchResultItems,
+    isInlineRecordSearchActive,
+    isSearchingRecords,
+  });
 
   const isSectionOpen = (section: CommandMenuItemSection) => {
     if (!COLLAPSIBLE_SECTIONS.includes(section)) {
@@ -296,9 +295,6 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
       commandMenuItemsBySection[section].length > 0 ||
       getSectionExtraItemIds(section).length > 0,
   );
-
-  const isRecordSearchFallbackRedundant =
-    hasMoreSearchResultItems || shouldDisplayNoRecordsFound;
 
   const displayedFallbackCommandMenuItems =
     isSearchActive && !hasMatchingCommand

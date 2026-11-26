@@ -65,7 +65,6 @@ export const LegacyAiChatNavigationDrawerContent = () => {
       <StyledThreadList>
         <StyledSectionsContainer>
           <NavigationDrawerInboxFavoritesSection
-            channels={[]}
             threads={inboxFavoriteThreads}
             currentThreadId={aiChatPageThreadId}
             onThreadClick={handleThreadClick}

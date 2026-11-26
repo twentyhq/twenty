@@ -216,6 +216,20 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
       calendarEndFieldMetadataUniversalIdentifier;
   }
 
+  if (updatedEditableProperties.listPinnedFieldMetadataId !== undefined) {
+    const { listPinnedFieldMetadataUniversalIdentifier } =
+      resolveEntityRelationUniversalIdentifiers({
+        metadataName: 'view',
+        foreignKeyValues: {
+          listPinnedFieldMetadataId: mergedRecord.listPinnedFieldMetadataId,
+        },
+        flatEntityMaps: { flatFieldMetadataMaps },
+      });
+
+    flatViewToUpdate.listPinnedFieldMetadataUniversalIdentifier =
+      listPinnedFieldMetadataUniversalIdentifier;
+  }
+
   if (updatedEditableProperties.mainGroupByFieldMetadataId !== undefined) {
     const { mainGroupByFieldMetadataUniversalIdentifier } =
       resolveEntityRelationUniversalIdentifiers({

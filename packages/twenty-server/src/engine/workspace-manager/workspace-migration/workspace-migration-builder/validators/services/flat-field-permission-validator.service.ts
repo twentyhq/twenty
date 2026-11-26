@@ -12,6 +12,8 @@ import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/wor
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 import { validateFieldPermissionUnreadableNestedSource } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util';
 import { validateFieldPermissionGrantsNoDisabledAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-grants-no-disabled-action.util';
+import { getMarketplaceApplicationRoleRestrictionErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-restriction-errors.util';
+import { isFieldPermissionRestrictionAdded } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/is-field-permission-restriction-added.util';
 import { getRoleNotEditableErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-not-editable-errors.util';
 import { validateRoleBelongsToCallerApplication } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util';
 import { isSameRowLevelPermissionPredicateGroup } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/is-same-row-level-permission-predicate-group.util';
@@ -43,6 +45,10 @@ export class FlatFieldPermissionValidatorService {
       metadataName: 'fieldPermission',
       type: 'create',
     });
+
+    validationResult.errors.push(
+      ...getMarketplaceApplicationRoleRestrictionErrors({ buildOptions }),
+    );
 
     const existingByUniversalId = findFlatEntityByUniversalIdentifier({
       universalIdentifier: flatFieldPermissionToValidate.universalIdentifier,
@@ -193,6 +199,17 @@ export class FlatFieldPermissionValidatorService {
       });
 
       return validationResult;
+    }
+
+    if (
+      isFieldPermissionRestrictionAdded({
+        existingFlatFieldPermission,
+        flatEntityUpdate,
+      })
+    ) {
+      validationResult.errors.push(
+        ...getMarketplaceApplicationRoleRestrictionErrors({ buildOptions }),
+      );
     }
 
     const updatedFlatFieldPermission = {
