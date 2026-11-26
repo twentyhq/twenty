@@ -16075,11 +16075,6 @@ msgstr "Ez a felhasználó már tagja a munkaterületnek."
 msgid "This user is not a member of the workspace."
 msgstr "Ez a felhasználó nem tagja a munkaterületnek."
 
-#. js-lingui-id: BFSoo/
-#: src/engine/metadata-modules/validation-rule/validation-rule.service.ts
-msgid "This validation rule is being upgraded. Try again in a few minutes."
-msgstr "Ez az ellenőrzési szabály frissítés alatt áll. Próbálja újra néhány perc múlva."
-
 #. js-lingui-id: LtsBYU
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
 msgid "This variable can only be set via environment."

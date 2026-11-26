@@ -16075,11 +16075,6 @@ msgstr "Người dùng này đã là thành viên của không gian làm việc.
 msgid "This user is not a member of the workspace."
 msgstr "Người dùng này không phải là thành viên của không gian làm việc."
 
-#. js-lingui-id: BFSoo/
-#: src/engine/metadata-modules/validation-rule/validation-rule.service.ts
-msgid "This validation rule is being upgraded. Try again in a few minutes."
-msgstr "Quy tắc xác thực này đang được nâng cấp. Hãy thử lại sau vài phút."
-
 #. js-lingui-id: LtsBYU
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
 msgid "This variable can only be set via environment."

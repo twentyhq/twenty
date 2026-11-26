@@ -16075,11 +16075,6 @@ msgstr "Этот пользователь уже является участни
 msgid "This user is not a member of the workspace."
 msgstr "Этот пользователь не является участником рабочего пространства."
 
-#. js-lingui-id: BFSoo/
-#: src/engine/metadata-modules/validation-rule/validation-rule.service.ts
-msgid "This validation rule is being upgraded. Try again in a few minutes."
-msgstr "Это правило проверки обновляется. Повторите попытку через несколько минут."
-
 #. js-lingui-id: LtsBYU
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
 msgid "This variable can only be set via environment."

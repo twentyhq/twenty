@@ -16075,11 +16075,6 @@ msgstr "Αυτός ο χρήστης είναι ήδη μέλος του χώρ�
 msgid "This user is not a member of the workspace."
 msgstr "Αυτός ο χρήστης δεν αποτελεί μέρος του χώρου εργασίας."
 
-#. js-lingui-id: BFSoo/
-#: src/engine/metadata-modules/validation-rule/validation-rule.service.ts
-msgid "This validation rule is being upgraded. Try again in a few minutes."
-msgstr "Αυτός ο κανόνας επικύρωσης αναβαθμίζεται. Δοκιμάστε ξανά σε λίγα λεπτά."
-
 #. js-lingui-id: LtsBYU
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
 msgid "This variable can only be set via environment."

@@ -16075,11 +16075,6 @@ msgstr "Tämä käyttäjä on jo työtilan jäsen."
 msgid "This user is not a member of the workspace."
 msgstr "Tämä käyttäjä ei ole työtilan jäsen."
 
-#. js-lingui-id: BFSoo/
-#: src/engine/metadata-modules/validation-rule/validation-rule.service.ts
-msgid "This validation rule is being upgraded. Try again in a few minutes."
-msgstr "Tätä validointisääntöä päivitetään. Yritä uudelleen muutaman minuutin kuluttua."
-
 #. js-lingui-id: LtsBYU
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
 msgid "This variable can only be set via environment."
