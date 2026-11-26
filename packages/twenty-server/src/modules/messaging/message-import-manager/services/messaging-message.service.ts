@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import chunk from 'lodash.chunk';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
+import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 import { v4 } from 'uuid';
@@ -42,7 +43,8 @@ type MessageAccumulator = {
   > &
     Partial<Pick<MessageWorkspaceEntity, 'createdBy'>>;
   sentDraftToRefresh?: MessageToRefresh;
-  threadToCreate?: Pick<MessageThreadWorkspaceEntity, 'id' | 'subject'>;
+  threadToCreate?: Pick<MessageThreadWorkspaceEntity, 'id' | 'subject'> &
+    Partial<Pick<MessageThreadWorkspaceEntity, 'createdBy'>>;
   messageChannelMessageAssociationToCreate?: Pick<
     MessageChannelMessageAssociationWorkspaceEntity,
     | 'id'
@@ -52,7 +54,8 @@ type MessageAccumulator = {
     | 'messageThreadExternalId'
     | 'direction'
   > &
-    MessageChannelMessageAssociationSource;
+    MessageChannelMessageAssociationSource &
+    Partial<Pick<MessageChannelMessageAssociationWorkspaceEntity, 'createdBy'>>;
 };
 @Injectable()
 export class MessagingMessageService {
@@ -66,12 +69,15 @@ export class MessagingMessageService {
     transactionScope,
     workspaceId,
     associationSource,
+    createdBy,
   }: {
     messages: MessageWithParticipants[];
     messageChannelId: string;
     transactionScope: WorkspaceTransactionScope;
     workspaceId: string;
     associationSource: MessageChannelMessageAssociationSource;
+    // stamped on the records this call creates, never on existing ones
+    createdBy?: ActorMetadata;
   }): Promise<{
     createdMessages: Partial<MessageWorkspaceEntity>[];
     refetchedMessageChannelMessageAssociationIds: string[];
@@ -158,6 +164,7 @@ export class MessagingMessageService {
         await this.enrichMessageAccumulatorWithMessageThreadToCreate(
           messages,
           messageAccumulatorMap,
+          createdBy,
         );
 
         const associationToCreateByMessageId = new Map<
@@ -193,6 +200,8 @@ export class MessagingMessageService {
           if (!isDefined(messageAccumulator.existingMessageInDB)) {
             newOrExistingMessageId = v4();
 
+            const messageCreatedBy = message.createdBy ?? createdBy;
+
             const messageToCreate = {
               id: newOrExistingMessageId,
               headerMessageId: message.headerMessageId,
@@ -201,8 +210,8 @@ export class MessagingMessageService {
               text: message.text,
               messageThreadId,
               isDraft: message.isDraft,
-              ...(isDefined(message.createdBy)
-                ? { createdBy: message.createdBy }
+              ...(isDefined(messageCreatedBy)
+                ? { createdBy: messageCreatedBy }
                 : {}),
             };
 
@@ -249,6 +258,7 @@ export class MessagingMessageService {
               messageThreadExternalId: message.messageThreadExternalId,
               direction: message.direction,
               ...associationSource,
+              ...(isDefined(createdBy) ? { createdBy } : {}),
             };
 
             associationToCreateByMessageId.set(
@@ -582,6 +592,7 @@ export class MessagingMessageService {
   private async enrichMessageAccumulatorWithMessageThreadToCreate(
     messages: MessageWithParticipants[],
     messageAccumulatorMap: Map<string, MessageAccumulator>,
+    createdBy?: ActorMetadata,
   ) {
     for (const [index, message] of messages.entries()) {
       const messageAccumulator = messageAccumulatorMap.get(message.externalId);
@@ -631,6 +642,7 @@ export class MessagingMessageService {
         messageAccumulator.threadToCreate = {
           id: newOrExistingMessageThreadId,
           subject: message.subject,
+          ...(isDefined(createdBy) ? { createdBy } : {}),
         };
       }
 

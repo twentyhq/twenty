@@ -334,6 +334,16 @@ describe('MainNavigationDrawerTabSwitcher', () => {
     expect(screen.queryByText('Delete tab')).not.toBeInTheDocument();
   });
 
+  it('labels an unnamed sidebar tab "Tab"', () => {
+    jest
+      .mocked(useWorkspaceNavigationMenuContainers)
+      .mockReturnValue([{ ...salesTab, name: '' }]);
+
+    renderTabSwitcher();
+
+    expect(screen.getByRole('button', { name: 'Tab' })).toBeInTheDocument();
+  });
+
   it('marks the open sidebar tab as current instead of Home', () => {
     jest
       .mocked(useWorkspaceNavigationMenuContainers)
@@ -351,23 +361,32 @@ describe('MainNavigationDrawerTabSwitcher', () => {
     );
   });
 
-  it('keeps the attention on the open sidebar tab', () => {
-    jest
-      .mocked(useWorkspaceNavigationMenuContainers)
-      .mockReturnValue([salesTab]);
-    jest.mocked(useActiveNavigationMenuTab).mockReturnValue(salesTab);
-    mockChatAttention = {
-      chatAttention: 'needs-input',
-      unreadOpenThreadCount: 0,
-      getTabChatAttention: () => 'needs-input',
-    };
+  it.each([
+    [true, 'Sales'],
+    [false, 'Sales, needs your input'],
+  ] as const)(
+    'drops the attention from the open sidebar tab only while the drawer is expanded (expanded=%s)',
+    (isExpanded, expectedName) => {
+      jest
+        .mocked(useIsNavigationDrawerContentExpanded)
+        .mockReturnValue(isExpanded);
+      jest
+        .mocked(useWorkspaceNavigationMenuContainers)
+        .mockReturnValue([salesTab]);
+      jest.mocked(useActiveNavigationMenuTab).mockReturnValue(salesTab);
+      mockChatAttention = {
+        chatAttention: 'needs-input',
+        unreadOpenThreadCount: 0,
+        getTabChatAttention: () => 'needs-input',
+      };
 
-    renderTabSwitcher();
+      renderTabSwitcher();
 
-    expect(
-      screen.getByRole('button', { name: 'Sales, needs your input' }),
-    ).toHaveAttribute('aria-current', 'true');
-  });
+      expect(
+        screen.getByRole('button', { name: expectedName }),
+      ).toHaveAttribute('aria-current', 'true');
+    },
+  );
 
   it.each([
     [false, 'auto'],
@@ -387,6 +406,10 @@ describe('MainNavigationDrawerTabSwitcher', () => {
   );
 
   it('marks Home when a chat section sits at its top level', () => {
+    jest
+      .mocked(useWorkspaceNavigationMenuContainers)
+      .mockReturnValue([salesTab]);
+    jest.mocked(useActiveNavigationMenuTab).mockReturnValue(salesTab);
     mockChatAttention = {
       chatAttention: 'unread',
       unreadOpenThreadCount: 0,
@@ -399,4 +422,27 @@ describe('MainNavigationDrawerTabSwitcher', () => {
       screen.getByRole('button', { name: 'Home, unread' }),
     ).toBeInTheDocument();
   });
+
+  it.each([
+    [true, 'Home'],
+    [false, 'Home, unread'],
+  ] as const)(
+    'drops the attention from open Home only while the drawer is expanded (expanded=%s)',
+    (isExpanded, expectedName) => {
+      jest
+        .mocked(useIsNavigationDrawerContentExpanded)
+        .mockReturnValue(isExpanded);
+      mockChatAttention = {
+        chatAttention: 'unread',
+        unreadOpenThreadCount: 0,
+        getTabChatAttention: (tabId) => (tabId === null ? 'unread' : null),
+      };
+
+      renderTabSwitcher();
+
+      expect(
+        screen.getByRole('button', { name: expectedName }),
+      ).toBeInTheDocument();
+    },
+  );
 });

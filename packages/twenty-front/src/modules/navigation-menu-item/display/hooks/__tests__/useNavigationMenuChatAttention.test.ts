@@ -4,14 +4,21 @@ import { NavigationMenuItemType } from 'twenty-shared/types';
 import { useInboxOpenThreadsSummary } from '@/inbox/hooks/useInboxOpenThreadsSummary';
 import { useNavigationMenuChatAttention } from '@/navigation-menu-item/display/hooks/useNavigationMenuChatAttention';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
-import { type NavigationMenuItem } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  type NavigationMenuItem,
+} from '~/generated-metadata/graphql';
 
 let mockIsAiChatInboxEnabled = true;
+let mockIsCustomizableSidebarEnabled = true;
 
 jest.mock('@/inbox/hooks/useInboxOpenThreadsSummary');
 jest.mock('@/navigation-menu-item/display/hooks/useNavigationMenuItemsData');
 jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
-  useIsFeatureEnabled: () => mockIsAiChatInboxEnabled,
+  useIsFeatureEnabled: (featureFlagKey: FeatureFlagKey) =>
+    featureFlagKey === FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED
+      ? mockIsCustomizableSidebarEnabled
+      : mockIsAiChatInboxEnabled,
 }));
 
 const buildSection = ({
@@ -54,6 +61,7 @@ const mockSummary = (
 describe('useNavigationMenuChatAttention', () => {
   beforeEach(() => {
     mockIsAiChatInboxEnabled = true;
+    mockIsCustomizableSidebarEnabled = true;
     jest.mocked(useNavigationMenuItemsData).mockReturnValue({
       navigationMenuItems: [],
       workspaceNavigationMenuItems: [
@@ -147,5 +155,15 @@ describe('useNavigationMenuChatAttention', () => {
     const { result } = renderHook(() => useNavigationMenuChatAttention());
 
     expect(result.current.chatAttention).toBeNull();
+  });
+
+  it('flags no tab while the customizable sidebar is off', () => {
+    mockIsCustomizableSidebarEnabled = false;
+    mockSummary({ needsInputThreadCount: 1 });
+
+    const { result } = renderHook(() => useNavigationMenuChatAttention());
+
+    expect(result.current.chatAttention).toBe('needs-input');
+    expect(result.current.getTabChatAttention(null)).toBeNull();
   });
 });

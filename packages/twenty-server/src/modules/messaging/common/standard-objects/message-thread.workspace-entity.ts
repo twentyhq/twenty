@@ -1,3 +1,5 @@
+import { type ActorMetadata } from 'twenty-shared/types';
+
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
@@ -5,6 +7,7 @@ import { type MessageThreadTargetWorkspaceEntity } from 'src/modules/messaging/c
 
 export class MessageThreadWorkspaceEntity extends BaseWorkspaceEntity {
   subject: string | null;
+  createdBy: ActorMetadata;
   messages: EntityRelation<MessageWorkspaceEntity[]>;
   messageThreadTargets: EntityRelation<MessageThreadTargetWorkspaceEntity[]>;
 }

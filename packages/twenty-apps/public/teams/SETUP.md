@@ -97,6 +97,10 @@ have not been tested. GCC High and DoD tenants are not supported.
    allowed. For users of other Microsoft organizations to install the bot,
    the bot's Entra app registration must support **Accounts in any
    organizational directory**; the Azure Bot stays **Single Tenant**.
+   The manifest also declares the bot's prompt starters. Teams only reads them
+   from an uploaded package, so after pulling a manifest change, rebuild the
+   package and upload it again as an update; its `version` is bumped with each
+   change so Teams accepts it over the installed one.
 
 3. Add a **workspace-shared** Microsoft connection and turn on **Enable chat**,
    in either order. The connection claims its Microsoft tenant for this
@@ -119,7 +123,8 @@ workspace has turned **Enable chat** off. The bot answers direct messages, and
 channel or group messages that mention it. It posts a short welcome when it is
 installed, once per conversation, and answers `help`, `hi`, `hello` or a bare
 mention with the same text, without running the assistant or needing a linked
-account. It answers as the
+account. In a personal chat that text comes with its example questions as
+suggested actions. It answers as the
 workspace member whose email matches the sender's Microsoft account, links that
 account under **Linked Teams accounts**, and replies with a short notice when no
 member matches. Members who can manage roles can remove a link there, link a

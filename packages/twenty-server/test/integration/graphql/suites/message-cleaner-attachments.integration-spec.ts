@@ -4,6 +4,10 @@ import { uploadFileWithDirectUpload } from 'test/integration/graphql/utils/uploa
 import { ONE_BY_ONE_TRANSPARENT_PNG } from 'test/integration/metadata/suites/file/utils/seed-workspace-logo.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
+import {
+  grantRoleWideAccessToChannelObjects,
+  revokeRoleWideAccessToChannelObjects,
+} from 'test/integration/utils/role-wide-access-to-channel-objects.util';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { v4 } from 'uuid';
 
@@ -36,6 +40,7 @@ describe('message cleaner attachment files (e2e)', () => {
   };
 
   beforeAll(async () => {
+    await grantRoleWideAccessToChannelObjects();
     const [attachmentFileField] = await globalThis.testDataSource.query(
       `SELECT id FROM core."fieldMetadata"
          WHERE "workspaceId" = $1 AND "universalIdentifier" = $2`,
@@ -93,6 +98,7 @@ describe('message cleaner attachment files (e2e)', () => {
       `DELETE FROM core."file" WHERE id = $1`,
       [fileId],
     );
+    await revokeRoleWideAccessToChannelObjects();
   });
 
   it('should delete the files of the attachments of the messages it removes', async () => {

@@ -125,7 +125,6 @@ export type FromUpdateAgentInputToFlatAgentToUpdateArgs = {
   flatRoleTargetByAgentIdMaps: FlatRoleTargetByAgentIdMaps;
   callerApplicationUniversalIdentifier: string;
   workspaceCustomApplicationUniversalIdentifier: string;
-  userWorkspaceId: string | undefined;
 } & Pick<AllFlatEntityMaps, 'flatRoleMaps'>;
 
 export const fromUpdateAgentInputToFlatAgentToUpdate = ({
@@ -135,7 +134,6 @@ export const fromUpdateAgentInputToFlatAgentToUpdate = ({
   flatRoleMaps,
   callerApplicationUniversalIdentifier,
   workspaceCustomApplicationUniversalIdentifier,
-  userWorkspaceId,
 }: FromUpdateAgentInputToFlatAgentToUpdateArgs): {
   flatAgentToUpdate: FlatAgent;
 } & FlatRoleTargetToUpdateCreateDelete => {
@@ -217,13 +215,7 @@ export const fromUpdateAgentInputToFlatAgentToUpdate = ({
       update: updatedEditableProperties,
     }),
     overrides,
-    ...(isDefined(isPrivate) && isPrivate !== existingFlatAgent.isPrivate
-      ? {
-          isPrivate,
-          createdByUserWorkspaceId:
-            userWorkspaceId ?? existingFlatAgent.createdByUserWorkspaceId,
-        }
-      : {}),
+    ...(isDefined(isPrivate) ? { isPrivate } : {}),
   };
 
   const {

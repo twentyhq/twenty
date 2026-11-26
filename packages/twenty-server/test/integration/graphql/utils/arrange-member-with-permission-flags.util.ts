@@ -1,9 +1,9 @@
 import { createRoleWithPermissionFlags } from 'test/integration/metadata/suites/role/utils/create-role-with-permission-flags.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
+import { findUserWorkspaceRoleTargets } from 'test/integration/utils/find-user-workspace-role-targets.util';
 import { type PermissionFlagType } from 'twenty-shared/constants';
 
-import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
@@ -14,11 +14,9 @@ export const arrangeMemberWithPermissionFlags = async ({
 }: {
   permissionFlagKeys: PermissionFlagType[];
 }): Promise<{ token: string; cleanup: () => Promise<void> }> => {
-  const [{ roleId: previousRoleId }] = await globalThis.testDataSource.query(
-    `SELECT "roleId" FROM core."roleTarget"
-     WHERE "userWorkspaceId" = $1 AND "workspaceId" = $2`,
-    [USER_WORKSPACE_DATA_SEED_IDS.JONY, SEED_APPLE_WORKSPACE_ID],
-  );
+  const [{ roleId: previousRoleId }] = await findUserWorkspaceRoleTargets({
+    userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
+  });
 
   const roleId = await createRoleWithPermissionFlags({ permissionFlagKeys });
 

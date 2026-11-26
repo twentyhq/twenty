@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
@@ -39,6 +40,7 @@ export class MessagingMessageAttachmentService {
     messageAttachmentFiles,
     workspaceId,
     transactionScope,
+    createdBy,
   }: {
     messageAttachmentFiles: {
       messageId: string;
@@ -46,6 +48,7 @@ export class MessagingMessageAttachmentService {
     }[];
     workspaceId: string;
     transactionScope: WorkspaceTransactionScope;
+    createdBy?: ActorMetadata;
   }): Promise<void> {
     if (messageAttachmentFiles.length === 0) {
       return;
@@ -69,6 +72,7 @@ export class MessagingMessageAttachmentService {
               name: label,
               file: [{ fileId, label }],
               targetMessageId: messageId,
+              ...(isDefined(createdBy) ? { createdBy } : {}),
             })),
     );
 

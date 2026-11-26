@@ -1276,7 +1276,6 @@ exports[`Application export - data model exports the whole application as a stab
       ],
       "type": "TABLE",
       "universalIdentifier": "<OPEN_TICKETS_VIEW>",
-      "visibility": "WORKSPACE",
     },
   ],
   "workflows": [],

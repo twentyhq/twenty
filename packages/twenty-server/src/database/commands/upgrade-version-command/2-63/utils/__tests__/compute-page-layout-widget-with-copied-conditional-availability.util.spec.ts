@@ -1,5 +1,5 @@
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
-import { buildDeviceConditionalAvailability } from 'twenty-shared/conditional-availability';
+import { buildDeviceConditionalEvaluationNode } from 'twenty-shared/conditional-evaluation';
 import { isDefined } from 'twenty-shared/utils';
 
 import { computePageLayoutWidgetWithCopiedConditionalAvailability } from 'src/database/commands/upgrade-version-command/2-63/utils/compute-page-layout-widget-with-copied-conditional-availability.util';
@@ -87,7 +87,7 @@ describe('computePageLayoutWidgetWithCopiedConditionalAvailability', () => {
     );
 
     expect(pageLayoutWidget).toMatchObject({
-      conditionalAvailability: buildDeviceConditionalAvailability('MOBILE'),
+      conditionalAvailability: buildDeviceConditionalEvaluationNode('MOBILE'),
       conditionalAvailabilityExpression: MOBILE_TEXT_RULE,
       conditionalDisplay: null,
       overrides: null,
@@ -101,7 +101,7 @@ describe('computePageLayoutWidgetWithCopiedConditionalAvailability', () => {
     );
 
     expect(pageLayoutWidget).toMatchObject({
-      conditionalAvailability: buildDeviceConditionalAvailability('MOBILE'),
+      conditionalAvailability: buildDeviceConditionalEvaluationNode('MOBILE'),
       conditionalAvailabilityExpression: null,
       conditionalDisplay: MOBILE_JSON_LOGIC_RULE,
     });
@@ -116,7 +116,7 @@ describe('computePageLayoutWidgetWithCopiedConditionalAvailability', () => {
     );
 
     expect(pageLayoutWidget.conditionalAvailability).toEqual(
-      buildDeviceConditionalAvailability('DESKTOP'),
+      buildDeviceConditionalEvaluationNode('DESKTOP'),
     );
   });
 
@@ -132,7 +132,7 @@ describe('computePageLayoutWidgetWithCopiedConditionalAvailability', () => {
       compute(
         buildPageLayoutWidget({
           conditionalAvailability:
-            buildDeviceConditionalAvailability('DESKTOP'),
+            buildDeviceConditionalEvaluationNode('DESKTOP'),
           conditionalAvailabilityExpression: MOBILE_TEXT_RULE,
         }),
       ).pageLayoutWidgetToUpdate,
@@ -167,11 +167,11 @@ describe('computePageLayoutWidgetWithCopiedConditionalAvailability', () => {
     );
 
     expect(pageLayoutWidget).toMatchObject({
-      conditionalAvailability: buildDeviceConditionalAvailability('MOBILE'),
+      conditionalAvailability: buildDeviceConditionalEvaluationNode('MOBILE'),
       conditionalAvailabilityExpression: MOBILE_TEXT_RULE,
     });
     expect(getEffectiveRule(pageLayoutWidget)).toEqual({
-      conditionalAvailability: buildDeviceConditionalAvailability('DESKTOP'),
+      conditionalAvailability: buildDeviceConditionalEvaluationNode('DESKTOP'),
       conditionalAvailabilityExpression: DESKTOP_TEXT_RULE,
       conditionalDisplay: null,
     });
@@ -190,7 +190,7 @@ describe('computePageLayoutWidgetWithCopiedConditionalAvailability', () => {
     );
 
     expect(pageLayoutWidget.conditionalAvailability).toEqual(
-      buildDeviceConditionalAvailability('MOBILE'),
+      buildDeviceConditionalEvaluationNode('MOBILE'),
     );
     expect(getEffectiveRule(pageLayoutWidget)).toEqual({
       conditionalAvailability: null,
@@ -202,7 +202,8 @@ describe('computePageLayoutWidgetWithCopiedConditionalAvailability', () => {
   it('should not touch an override that already stores a tree', () => {
     const storedOverrides = {
       [WORKSPACE_CUSTOM_APPLICATION]: {
-        conditionalAvailability: buildDeviceConditionalAvailability('DESKTOP'),
+        conditionalAvailability:
+          buildDeviceConditionalEvaluationNode('DESKTOP'),
         conditionalAvailabilityExpression: null,
         conditionalDisplay: null,
       },

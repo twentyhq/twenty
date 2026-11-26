@@ -1,4 +1,4 @@
-import { evaluateConditionalAvailabilityExpression } from 'twenty-shared/conditional-availability';
+import { evaluateConditionalEvaluationExpression } from 'twenty-shared/conditional-evaluation';
 
 import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
 
@@ -13,7 +13,7 @@ type InboxScope = 'INBOX' | 'SNOOZED' | 'ARCHIVED';
 
 const getAvailableInboxCommands = (...scopes: InboxScope[]) =>
   INBOX_COMMAND_MENU_ITEM_NAMES.filter((name) =>
-    evaluateConditionalAvailabilityExpression(
+    evaluateConditionalEvaluationExpression(
       STANDARD_COMMAND_MENU_ITEMS[name].conditionalAvailabilityExpression,
       {
         numberOfSelectedRecords: scopes.length,
@@ -37,7 +37,7 @@ const getAvailableSubscriptionCommands = (
   ...subscriptions: (boolean | 'assignedToMe')[]
 ) =>
   SUBSCRIPTION_COMMAND_MENU_ITEM_NAMES.filter((name) =>
-    evaluateConditionalAvailabilityExpression(
+    evaluateConditionalEvaluationExpression(
       STANDARD_COMMAND_MENU_ITEMS[name].conditionalAvailabilityExpression,
       {
         numberOfSelectedRecords: subscriptions.length,
@@ -69,7 +69,7 @@ describe('AI chat inbox command menu items', () => {
         'assignAiChat',
       ] as const
     ).filter((name) =>
-      evaluateConditionalAvailabilityExpression(
+      evaluateConditionalEvaluationExpression(
         STANDARD_COMMAND_MENU_ITEMS[name].conditionalAvailabilityExpression,
         {
           numberOfSelectedRecords: 1,

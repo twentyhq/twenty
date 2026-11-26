@@ -1,0 +1,2 @@
+export const RENAME_AGENT_CHAT_CHANNEL_TABLES_TO_INBOX_CHANNEL_UPGRADE_COMMAND_NAME =
+  '2.64.0_RenameAgentChatChannelTablesToInboxChannelFastInstanceCommand_1795688525750';

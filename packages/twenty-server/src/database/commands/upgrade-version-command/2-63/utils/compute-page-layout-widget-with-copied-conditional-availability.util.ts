@@ -1,4 +1,4 @@
-import { type ConditionalAvailabilityNode } from 'twenty-shared/conditional-availability';
+import { type ConditionalEvaluationNode } from 'twenty-shared/conditional-evaluation';
 import { fastDeepEqual, isDefined } from 'twenty-shared/utils';
 
 import { fromLegacyPageLayoutWidgetRuleToConditionalAvailability } from 'src/database/commands/upgrade-version-command/2-63/utils/from-legacy-page-layout-widget-rule-to-conditional-availability.util';
@@ -112,7 +112,7 @@ export const computePageLayoutWidgetWithCopiedConditionalAvailability = <
 
   // A null tree is written too: an override that cleared the rule must keep the widget visible once its own rule has a tree
   const { overrides } = dispatchUpdateToAuthoredOverride<
-    { conditionalAvailability: ConditionalAvailabilityNode | null },
+    { conditionalAvailability: ConditionalEvaluationNode | null },
     PageLayoutWidgetOverrides
   >({
     metadataName: 'pageLayoutWidget',
