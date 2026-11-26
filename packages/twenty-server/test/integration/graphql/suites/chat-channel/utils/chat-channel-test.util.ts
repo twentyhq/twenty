@@ -296,7 +296,7 @@ export const waitForBlockedChannelGrantLock = (channelId: string) =>
 export const isChannelInCore = async (channelId: string): Promise<boolean> =>
   isNonEmptyArray(
     await global.testDataSource.query(
-      `SELECT id FROM core."agentChatChannel" WHERE id = $1`,
+      `SELECT id FROM core."inboxChannel" WHERE id = $1`,
       [channelId],
     ),
   );
@@ -319,7 +319,7 @@ const countThreadsInDeletedChannels = async (
     `SELECT count(*)::int AS count FROM ${SCHEMA}."agentChatThread" thread
      WHERE thread."channelId" = ANY($1::uuid[])
        AND NOT EXISTS (
-         SELECT 1 FROM core."agentChatChannel" channel
+         SELECT 1 FROM core."inboxChannel" channel
          WHERE channel.id = thread."channelId"
        )`,
     [channelIds],

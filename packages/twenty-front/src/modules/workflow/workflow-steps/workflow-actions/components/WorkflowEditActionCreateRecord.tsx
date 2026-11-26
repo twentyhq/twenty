@@ -87,7 +87,7 @@ export const WorkflowEditActionCreateRecord = ({
     ...action.settings.input.objectRecord,
   });
 
-  const isFormDisabled = actionOptions.readonly === true;
+  const isFormDisabled = actionOptions.readonly ?? false;
 
   const objectNameSingular = formData.objectName;
 
@@ -167,7 +167,7 @@ export const WorkflowEditActionCreateRecord = ({
 
   const saveAction = useDebouncedCallback(
     async (formData: CreateRecordFormData) => {
-      if (actionOptions.readonly === true) {
+      if (actionOptions.readonly) {
         return;
       }
 

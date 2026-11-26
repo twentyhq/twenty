@@ -1,5 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { type NavigationMenuItemType } from 'twenty-shared/types';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 
 import { isNavigationMenuItemBuiltInSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemBuiltInSection';
 import { type NamedNavigationMenuItem } from '@/navigation-menu-item/common/types/NamedNavigationMenuItem';
@@ -19,7 +19,8 @@ export const getNavigationMenuContainersInDisplayOrder = ({
       (item) =>
         (item.parentId ?? null) === containerId &&
         item.type === type &&
-        (isNonEmptyString(item.name) ||
+        (type === NavigationMenuItemType.TAB ||
+          isNonEmptyString(item.name) ||
           isNavigationMenuItemBuiltInSection(item)),
     )
     .map((item) => ({ ...item, name: item.name ?? '' }))

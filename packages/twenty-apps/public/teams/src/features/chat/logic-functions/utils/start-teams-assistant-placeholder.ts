@@ -2,6 +2,7 @@ import { isDefined } from 'twenty-sdk/utils';
 
 import { TEAMS_ASSISTANT_INITIAL_STATUS } from 'src/features/chat/logic-functions/constants/teams-assistant-status-steps';
 import { type TeamsAssistantStatusWriter } from 'src/features/chat/logic-functions/types/teams-assistant-status-writer.type';
+import { buildTeamsMessageActivity } from 'src/features/chat/logic-functions/utils/build-teams-message-activity';
 import { deleteTeamsActivity } from 'src/features/chat/logic-functions/utils/delete-teams-activity';
 import { getTeamsConnectorAccessTokenOrThrow } from 'src/features/chat/logic-functions/utils/get-teams-connector-access-token-or-throw';
 import { sendTeamsActivity } from 'src/features/chat/logic-functions/utils/send-teams-activity';
@@ -22,7 +23,9 @@ export const startTeamsAssistantPlaceholder = async ({
         serviceUrl,
         conversationId,
         accessToken,
-        activity: { type: 'message', text: TEAMS_ASSISTANT_INITIAL_STATUS },
+        activity: buildTeamsMessageActivity({
+          text: TEAMS_ASSISTANT_INITIAL_STATUS,
+        }),
       }),
     )
     .then(({ id }) => id)
@@ -49,7 +52,7 @@ export const startTeamsAssistantPlaceholder = async ({
           conversationId,
           activityId,
           accessToken: await getTeamsConnectorAccessTokenOrThrow(),
-          activity: { type: 'message', text },
+          activity: buildTeamsMessageActivity({ text }),
         });
         placeholderActivityId = undefined;
 

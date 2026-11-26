@@ -42,6 +42,8 @@ export const PREBUILT_INSTALL_LOCK_TTL_MS = 180_000;
 export const PREBUILT_INSTALL_LOCK_RETRY_MS = 1_000;
 export const PREBUILT_INSTALL_LOCK_MAX_RETRIES = 180;
 
+export const WARM_UP_INVOKE_TIMEOUT_MS = 60_000;
+
 export const YARN_INSTALL_HANDLER_PATH = resolve(
   __dirname,
   join(

@@ -43,6 +43,12 @@ const PLACEHOLDER = {
   accessToken: 'token',
 };
 
+const message = (text: string) => ({
+  type: 'message',
+  textFormat: 'extendedmarkdown',
+  text,
+});
+
 const ANSWER = 'Acme has 3 open deals.';
 
 describe('startTeamsAssistantPlaceholder', () => {
@@ -73,14 +79,14 @@ describe('startTeamsAssistantPlaceholder', () => {
     expect(sendActivityMock).toHaveBeenCalledExactlyOnceWith({
       ...CONVERSATION,
       accessToken: 'token',
-      activity: { type: 'message', text: TEAMS_ASSISTANT_INITIAL_STATUS },
+      activity: message(TEAMS_ASSISTANT_INITIAL_STATUS),
     });
 
     await status.finish(ANSWER);
 
     expect(updateActivityMock).toHaveBeenCalledExactlyOnceWith({
       ...PLACEHOLDER,
-      activity: { type: 'message', text: ANSWER },
+      activity: message(ANSWER),
     });
     expect(sendMessageMock).not.toHaveBeenCalled();
     expect(deleteActivityMock).not.toHaveBeenCalled();
@@ -132,7 +138,7 @@ describe('startTeamsAssistantPlaceholder', () => {
 
     expect(updateActivityMock).toHaveBeenLastCalledWith({
       ...PLACEHOLDER,
-      activity: { type: 'message', text: 'Something went wrong.' },
+      activity: message('Something went wrong.'),
     });
     expect(sendMessageMock).toHaveBeenCalledTimes(1);
   });

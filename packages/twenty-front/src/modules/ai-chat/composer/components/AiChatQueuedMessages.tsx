@@ -1,3 +1,4 @@
+import { useAiChatAssistantProfile } from '@/ai-chat/hooks/useAiChatAssistantProfile';
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
@@ -9,35 +10,21 @@ import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { getAiChatSenderLabel } from '@/ai-chat/utils/getAiChatSenderLabel';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { AiChatQueuedMessageList } from '@/ai-chat/composer/components/AiChatQueuedMessageList';
-import { StyledAiChatContentContainer } from '@/ai-chat/components/StyledAiChatContentContainer';
-import { AI_CHAT_PAGE_CONTENT_INLINE_PADDING } from '@/ai-chat/constants/AiChatPageContentInlinePadding';
-import { useHasAiChatPageContentInset } from '@/ai-chat/hooks/useHasAiChatPageContentInset';
 import { useDeleteAiChatQueuedMessage } from '@/ai-chat/composer/hooks/useDeleteAiChatQueuedMessage';
 import { useIsCurrentAiChatThreadReadOnly } from '@/ai-chat/threads/hooks/useIsCurrentAiChatThreadReadOnly';
 import { aiChatThreadFetchedMessagesFamilyState } from '@/ai-chat/states/server/aiChatThreadFetchedMessagesFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { styled } from '@linaria/react';
+import { getAgentChatPreviewPlainText } from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme';
-
-const StyledQueueContainer = styled(StyledAiChatContentContainer)<{
-  hasPageContentInset: boolean;
-}>`
-  padding: 0
-    ${({ hasPageContentInset }) =>
-      hasPageContentInset
-        ? AI_CHAT_PAGE_CONTENT_INLINE_PADDING
-        : themeCssVariables.spacing[4]};
-`;
 
 export const AiChatQueuedMessages = () => {
   const isReadOnly = useIsCurrentAiChatThreadReadOnly();
-  const hasPageContentInset = useHasAiChatPageContentInset();
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
   const { threadId } = useAiChatInstanceOrThrow();
+  const { displayName: assistantDisplayName } = useAiChatAssistantProfile();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
@@ -73,7 +60,10 @@ export const AiChatQueuedMessages = () => {
     });
     const queuedMessage = {
       id: message.id,
-      text: getAiChatMessageText(message),
+      text: getAgentChatPreviewPlainText({
+        markdown: getAiChatMessageText(message),
+        assistantDisplayName,
+      }),
       isRemovable: isAiChatQueuedMessageRemovable({
         message,
         currentWorkspaceMemberId: currentWorkspaceMember?.id,
@@ -104,11 +94,9 @@ export const AiChatQueuedMessages = () => {
   });
 
   return (
-    <StyledQueueContainer hasPageContentInset={hasPageContentInset}>
-      <AiChatQueuedMessageList
-        messages={messages}
-        onRemove={isReadOnly ? undefined : deleteQueuedMessage}
-      />
-    </StyledQueueContainer>
+    <AiChatQueuedMessageList
+      messages={messages}
+      onRemove={isReadOnly ? undefined : deleteQueuedMessage}
+    />
   );
 };
