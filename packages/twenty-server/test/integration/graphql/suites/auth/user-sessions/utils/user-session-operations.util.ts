@@ -90,7 +90,7 @@ export const signOutQueryFactory = () => {
   };
 };
 
-// The shape front bundles from before refresh tokens were removed still send.
+// The shape front bundles from before twentyhq/twenty#31657 still send.
 export const legacySignOutWithRefreshTokenQueryFactory = (
   refreshToken: string,
 ) => {

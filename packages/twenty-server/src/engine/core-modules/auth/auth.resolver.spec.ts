@@ -47,6 +47,7 @@ import { AuthService } from './services/auth.service';
 import { ResetPasswordService } from './services/reset-password.service';
 import { EmailVerificationTokenService } from './token/services/email-verification-token.service';
 import { LoginTokenService } from './token/services/login-token.service';
+import { RenewTokenService } from './token/services/renew-token.service';
 import { TransientTokenService } from './token/services/transient-token.service';
 
 describe('AuthResolver', () => {
@@ -157,6 +158,10 @@ describe('AuthResolver', () => {
             findFirstWorkspaceByUserId: jest.fn(),
             setLoginTokenToAvailableWorkspacesWhenAuthProviderMatch: jest.fn(),
           },
+        },
+        {
+          provide: RenewTokenService,
+          useValue: {},
         },
         {
           provide: SignInUpService,

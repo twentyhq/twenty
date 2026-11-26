@@ -18,6 +18,7 @@ import { type AuthProviderEnum } from 'src/engine/core-modules/workspace/types/w
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 export enum AppTokenType {
+  RefreshToken = 'REFRESH_TOKEN',
   CodeChallenge = 'CODE_CHALLENGE',
   AuthorizationCode = 'AUTHORIZATION_CODE',
   PasswordResetToken = 'PASSWORD_RESET_TOKEN',

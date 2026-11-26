@@ -32,6 +32,7 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { ApiKeyTokenInput } from 'src/engine/core-modules/auth/dto/api-key-token.input';
+import { AppTokenInput } from 'src/engine/core-modules/auth/dto/app-token.input';
 import { AuthorizeAppDTO } from 'src/engine/core-modules/auth/dto/authorize-app.dto';
 import { AuthorizeAppInput } from 'src/engine/core-modules/auth/dto/authorize-app.input';
 import { AvailableWorkspacesAndAccessTokensDTO } from 'src/engine/core-modules/auth/dto/available-workspaces-and-access-tokens.dto';
@@ -56,6 +57,7 @@ import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/
 import { EmailVerificationTokenService } from 'src/engine/core-modules/auth/token/services/email-verification-token.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { assertLoginTokenIsNotForImpersonation } from 'src/engine/core-modules/auth/utils/assert-login-token-is-not-for-impersonation.util';
+import { RenewTokenService } from 'src/engine/core-modules/auth/token/services/renew-token.service';
 import { SsoExchangeTokenService } from 'src/engine/core-modules/auth/token/services/sso-exchange-token.service';
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
@@ -197,6 +199,7 @@ export class AuthResolver {
     private readonly twoFactorAuthenticationService: TwoFactorAuthenticationService,
     private readonly twoFactorAuthenticationRecoveryService: TwoFactorAuthenticationRecoveryService,
     private authService: AuthService,
+    private renewTokenService: RenewTokenService,
     private userService: UserService,
     private apiKeyService: ApiKeyService,
     private accessTokenService: AccessTokenService,
@@ -1163,6 +1166,20 @@ export class AuthResolver {
     });
   }
 
+  @Mutation(() => AuthTokens, {
+    deprecationReason:
+      'Refresh tokens are no longer issued; this is removed once the last one expires.',
+  })
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
+  @AllowSuspendedWorkspace()
+  async renewToken(@Args() args: AppTokenInput): Promise<AuthTokens> {
+    return {
+      tokens: await this.renewTokenService.generateTokensFromRefreshToken(
+        args.appToken,
+      ),
+    };
+  }
+
   @Mutation(() => Boolean)
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   @AllowSuspendedWorkspace()
@@ -1171,9 +1188,10 @@ export class AuthResolver {
     @Args('refreshToken', {
       type: () => String,
       nullable: true,
-      deprecationReason: 'Ignored: refresh tokens are no longer issued.',
+      deprecationReason:
+        'Refresh tokens are no longer issued; this is removed once the last one expires.',
     })
-    _refreshToken: string | undefined,
+    refreshToken: string | undefined,
   ): Promise<boolean> {
     try {
       await this.userSessionService.signOut({
@@ -1181,6 +1199,7 @@ export class AuthResolver {
           this.userSessionCookieService.extractSessionTokenFromRequest(
             context.req,
           ),
+        refreshToken,
       });
     } finally {
       // Public, and SameSite=Lax keeps the cookie off cross-site POSTs: clearing unconditionally lets any site sign visitors out

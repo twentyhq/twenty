@@ -396,6 +396,16 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
         workspaceId: WORKSPACE_ID,
         userWorkspaceId: TARGET_USER_WORKSPACE_ID,
       });
+      expect(transactionalRepositories.appToken.update).toHaveBeenNthCalledWith(
+        2,
+        {
+          userId: TARGET_USER_ID,
+          workspaceId: WORKSPACE_ID,
+          type: AppTokenType.RefreshToken,
+          revokedAt: IsNull(),
+        },
+        { revokedAt: expect.any(Date) },
+      );
       expect(transactionalRepositories.method.insert).not.toHaveBeenCalled();
       expect(userSessionService.revokeAllSessionsForUser).toHaveBeenCalledWith({
         userId: TARGET_USER_ID,

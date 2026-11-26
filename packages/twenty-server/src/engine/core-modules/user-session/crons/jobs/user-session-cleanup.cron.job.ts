@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
+import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -23,6 +24,8 @@ export class UserSessionCleanupCronJob {
   constructor(
     @InjectRepository(UserSessionEntity)
     private readonly userSessionRepository: Repository<UserSessionEntity>,
+    @InjectRepository(AppTokenEntity)
+    private readonly appTokenRepository: Repository<AppTokenEntity>,
   ) {}
 
   @Process(UserSessionCleanupCronJob.name)
@@ -49,8 +52,27 @@ export class UserSessionCleanupCronJob {
         .then((result) => result.affected ?? 0),
     );
 
-    if (deletedSessionCount > 0) {
-      this.logger.log(`Deleted ${deletedSessionCount} ended sessions`);
+    const deletedRefreshTokenCount = await this.deleteInBatches(() =>
+      this.appTokenRepository
+        .createQueryBuilder()
+        .delete()
+        .where(
+          `"id" IN (
+            SELECT "id" FROM "core"."appToken"
+            WHERE "type" = 'REFRESH_TOKEN'
+              AND ("expiresAt" < :threshold OR "revokedAt" < :threshold)
+            LIMIT :batchSize
+          )`,
+          { threshold, batchSize: DELETE_BATCH_SIZE },
+        )
+        .execute()
+        .then((result) => result.affected ?? 0),
+    );
+
+    if (deletedSessionCount > 0 || deletedRefreshTokenCount > 0) {
+      this.logger.log(
+        `Deleted ${deletedSessionCount} ended sessions and ${deletedRefreshTokenCount} stale refresh tokens`,
+      );
     }
   }
 

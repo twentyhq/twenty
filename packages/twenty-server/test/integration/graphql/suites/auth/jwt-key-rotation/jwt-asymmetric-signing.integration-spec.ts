@@ -9,6 +9,8 @@ import { findManyApplications } from 'test/integration/graphql/utils/find-many-a
 import { generateApiKeyToken } from 'test/integration/graphql/utils/generate-api-key-token.util';
 import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-auth-tokens-from-login-token.util';
 import { getCurrentUser } from 'test/integration/graphql/utils/get-current-user.util';
+import { renewToken } from 'test/integration/graphql/utils/renew-token.util';
+import { seedLegacyRefreshToken } from 'test/integration/graphql/utils/seed-legacy-refresh-token.util';
 import { signUp } from 'test/integration/graphql/utils/sign-up.util';
 import { signUpInNewWorkspace } from 'test/integration/graphql/utils/sign-up-in-new-workspace.util';
 import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
@@ -203,6 +205,24 @@ describe('JWT Asymmetric Signing - new ES256 + kid implementation (integration)'
     expect(data?.currentUser).toBeFalsy();
 
     expectOneNotInternalServerErrorSnapshot({ errors });
+  });
+
+  it('round-trips a new ES256 REFRESH token through renewToken', async () => {
+    const { refreshToken } = await seedLegacyRefreshToken({
+      userId: sharedAccessPayload.userId,
+      workspaceId: sharedAccessPayload.workspaceId,
+    });
+
+    const response = await renewToken(refreshToken);
+
+    expect(response.body.errors).toBeUndefined();
+    expect(
+      isNonEmptyString(
+        response.body.data?.renewToken.tokens.accessOrWorkspaceAgnosticToken
+          .token,
+      ),
+    ).toBe(true);
+    expect(response.body.data?.renewToken.tokens.refreshToken).toBeNull();
   });
 });
 

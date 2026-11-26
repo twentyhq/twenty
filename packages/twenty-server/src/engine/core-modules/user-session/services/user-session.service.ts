@@ -9,12 +9,17 @@ import { isDefined } from 'twenty-shared/utils';
 import { IsNull, MoreThan, Repository } from 'typeorm';
 
 import {
+  AppTokenEntity,
+  AppTokenType,
+} from 'src/engine/core-modules/app-token/app-token.entity';
+import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { type AuthTokenPair } from 'src/engine/core-modules/auth/dto/auth-token-pair.dto';
 import { type AccessTokenJwtPayload } from 'src/engine/core-modules/auth/types/access-token-jwt-payload.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
+import { type RefreshTokenJwtPayload } from 'src/engine/core-modules/auth/types/refresh-token-jwt-payload.type';
 import { type WorkspaceAgnosticTokenJwtPayload } from 'src/engine/core-modules/auth/types/workspace-agnostic-token-jwt-payload.type';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
@@ -61,6 +66,8 @@ export class UserSessionService {
   constructor(
     @InjectRepository(UserSessionEntity)
     private readonly userSessionRepository: Repository<UserSessionEntity>,
+    @InjectRepository(AppTokenEntity)
+    private readonly appTokenRepository: Repository<AppTokenEntity>,
     @InjectCacheStorage(CacheStorageNamespace.EngineAuthSession)
     private readonly cacheStorageService: CacheStorageService,
     private readonly twentyConfigService: TwentyConfigService,
@@ -498,13 +505,59 @@ export class UserSessionService {
     return revokedSessions.length;
   }
 
-  async signOut({ sessionToken }: { sessionToken?: string }): Promise<void> {
-    if (isNonEmptyString(sessionToken)) {
-      await this.revokeSessionByToken(
-        sessionToken,
-        UserSessionRevokedReason.UserSignOut,
-      );
+  async signOut({
+    sessionToken,
+    refreshToken,
+  }: {
+    sessionToken?: string;
+    refreshToken?: string;
+  }): Promise<void> {
+    try {
+      if (isNonEmptyString(sessionToken)) {
+        await this.revokeSessionByToken(
+          sessionToken,
+          UserSessionRevokedReason.UserSignOut,
+        );
+      }
+    } finally {
+      if (isNonEmptyString(refreshToken)) {
+        await this.revokePresentedRefreshToken(refreshToken);
+      }
     }
+  }
+
+  private async revokePresentedRefreshToken(
+    refreshToken: string,
+  ): Promise<void> {
+    let payload: RefreshTokenJwtPayload | undefined;
+
+    try {
+      await this.jwtWrapperService.verifyJwtToken(refreshToken);
+
+      payload = this.jwtWrapperService.decode<RefreshTokenJwtPayload>(
+        refreshToken,
+        { json: true },
+      );
+    } catch {
+      return;
+    }
+
+    if (
+      payload?.type !== JwtTokenTypeEnum.REFRESH ||
+      !isNonEmptyString(payload.jti)
+    ) {
+      return;
+    }
+
+    // Outside the catch: a storage failure leaves a usable refresh token behind, so it must surface.
+    await this.appTokenRepository.update(
+      {
+        id: payload.jti,
+        type: AppTokenType.RefreshToken,
+        revokedAt: IsNull(),
+      },
+      { revokedAt: new Date() },
+    );
   }
 
   private async revokeSessionEntity(

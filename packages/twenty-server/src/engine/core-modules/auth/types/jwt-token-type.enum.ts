@@ -1,5 +1,6 @@
 export enum JwtTokenTypeEnum {
   ACCESS = 'ACCESS',
+  REFRESH = 'REFRESH',
   WORKSPACE_AGNOSTIC = 'WORKSPACE_AGNOSTIC',
   LOGIN = 'LOGIN',
   FILE = 'FILE',

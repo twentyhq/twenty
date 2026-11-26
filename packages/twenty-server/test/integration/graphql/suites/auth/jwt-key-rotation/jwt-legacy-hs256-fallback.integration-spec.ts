@@ -9,6 +9,8 @@ import { forgeLegacyHs256Token } from 'test/integration/graphql/utils/forge-lega
 import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-auth-tokens-from-login-token.util';
 import { getCurrentUser } from 'test/integration/graphql/utils/get-current-user.util';
 import { renewApplicationToken } from 'test/integration/metadata/suites/application/utils/renew-application-token.util';
+import { renewToken } from 'test/integration/graphql/utils/renew-token.util';
+import { seedLegacyRefreshToken } from 'test/integration/graphql/utils/seed-legacy-refresh-token.util';
 import { signUp } from 'test/integration/graphql/utils/sign-up.util';
 import { signUpInNewWorkspace } from 'test/integration/graphql/utils/sign-up-in-new-workspace.util';
 
@@ -182,6 +184,41 @@ describe('JWT Legacy HS256 no-kid fallback (integration)', () => {
     expect(isNonEmptyString(data?.signUpInNewWorkspace.workspace.id)).toBe(
       true,
     );
+  });
+
+  it('verifies a hand-crafted no-kid HS256 REFRESH token via the legacy fallback (round-trip through renewToken)', async () => {
+    const { appTokenId } = await seedLegacyRefreshToken({
+      userId: sharedAccessPayload.userId,
+      workspaceId: sharedAccessPayload.workspaceId,
+    });
+
+    const forgedToken = forgeLegacyHs256Token(
+      {
+        sub: sharedAccessPayload.sub,
+        type: JwtTokenTypeEnum.REFRESH,
+        userId: sharedAccessPayload.userId,
+        workspaceId: sharedAccessPayload.workspaceId,
+        authProvider: sharedAccessPayload.authProvider,
+        targetedTokenType: JwtTokenTypeEnum.ACCESS,
+      },
+      sharedAccessPayload.workspaceId,
+      { expiresIn: '5m', jwtid: appTokenId },
+    );
+
+    const decoded = decodeJwtCompleteOrThrow(forgedToken);
+
+    expect(decoded.header.alg).toBe('HS256');
+    expect(decoded.header.kid).toBeUndefined();
+
+    const response = await renewToken(forgedToken);
+
+    expect(response.body.errors).toBeUndefined();
+    expect(
+      isNonEmptyString(
+        response.body.data?.renewToken.tokens.accessOrWorkspaceAgnosticToken
+          .token,
+      ),
+    ).toBe(true);
   });
 });
 

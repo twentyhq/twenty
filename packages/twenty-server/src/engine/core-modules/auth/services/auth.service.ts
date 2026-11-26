@@ -11,7 +11,7 @@ import { PasswordUpdateNotifyEmail, renderEmail } from 'twenty-emails';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { AppPath, ConnectedAccountProvider } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 
 import {
   AppTokenEntity,
@@ -782,6 +782,17 @@ export class AuthService {
     await this.userRepository.update(userId, {
       passwordHash: newPasswordHash,
     });
+
+    await this.appTokenRepository.update(
+      {
+        userId,
+        type: AppTokenType.RefreshToken,
+        revokedAt: IsNull(),
+      },
+      {
+        revokedAt: new Date(),
+      },
+    );
 
     await this.userSessionService.revokeAllSessionsForUser({
       userId,

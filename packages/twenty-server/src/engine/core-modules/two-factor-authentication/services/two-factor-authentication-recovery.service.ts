@@ -419,6 +419,16 @@ export class TwoFactorAuthenticationRecoveryService {
       entityManager,
     });
 
+    await appTokenRepository.update(
+      {
+        userId,
+        workspaceId: workspace.id,
+        type: AppTokenType.RefreshToken,
+        revokedAt: IsNull(),
+      },
+      { revokedAt: new Date() },
+    );
+
     if (!workspace.isTwoFactorAuthenticationEnforced) {
       return {
         provisioningUri: null,

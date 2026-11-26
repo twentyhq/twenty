@@ -224,6 +224,7 @@ exports[`endpoint permission declarations should match the auth principals, perm
   "AuthResolver.getAuthorizationUrlForSSO {"acceptedAuthPrincipals":null,"applicationTarget":null,"requiredFeatureFlags":[],"requiredPermissionFlags":[]}",
   "AuthResolver.getLoginTokenFromCredentials {"acceptedAuthPrincipals":null,"applicationTarget":null,"requiredFeatureFlags":[],"requiredPermissionFlags":[]}",
   "AuthResolver.getWorkspaceCreationDefaults {"acceptedAuthPrincipals":{"apiKey":false,"application":{"withAgent":false,"withUser":true,"withoutUser":false},"oauthClient":{"withUser":true,"withoutUser":false},"userSession":{"playground":false,"serverImpersonated":false,"standard":true,"workspaceAgnostic":true,"workspaceImpersonated":false}},"applicationTarget":null,"requiredFeatureFlags":[],"requiredPermissionFlags":[]}",
+  "AuthResolver.renewToken {"acceptedAuthPrincipals":null,"applicationTarget":null,"requiredFeatureFlags":[],"requiredPermissionFlags":[]}",
   "AuthResolver.signIn {"acceptedAuthPrincipals":null,"applicationTarget":null,"requiredFeatureFlags":[],"requiredPermissionFlags":[]}",
   "AuthResolver.signOut {"acceptedAuthPrincipals":null,"applicationTarget":null,"requiredFeatureFlags":[],"requiredPermissionFlags":[]}",
   "AuthResolver.signUp {"acceptedAuthPrincipals":null,"applicationTarget":null,"requiredFeatureFlags":[],"requiredPermissionFlags":[]}",

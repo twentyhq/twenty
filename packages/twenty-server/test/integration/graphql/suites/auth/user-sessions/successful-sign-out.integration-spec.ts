@@ -1,3 +1,4 @@
+import { seedLegacyRefreshToken } from 'test/integration/graphql/utils/seed-legacy-refresh-token.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 
 import {
@@ -12,9 +13,12 @@ import {
   signOutQueryFactory,
 } from 'test/integration/graphql/suites/auth/user-sessions/utils/user-session-operations.util';
 
+import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { UserSessionEntity } from 'src/engine/core-modules/user-session/user-session.entity';
 import { UserSessionRevokedReason } from 'src/engine/core-modules/user-session/types/user-session-revoked-reason.type';
 import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils/hash-user-session-token.util';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 
 import {
   ALLOWED_ORIGIN,
@@ -68,7 +72,7 @@ describe('successful sign-out (integration)', () => {
     expect(hasClearingCookie(reuseResponse)).toBe(true);
   });
 
-  it('should still accept the ignored refreshToken argument sent by stale front bundles', async () => {
+  it('should revoke the refresh token that stale front bundles still send', async () => {
     const signInResponse = await signInWithCookieCapture({
       originHeader: ALLOWED_ORIGIN,
     });
@@ -78,8 +82,13 @@ describe('successful sign-out (integration)', () => {
       throw new Error('Expected a session cookie from sign-in');
     }
 
+    const { refreshToken, appTokenId } = await seedLegacyRefreshToken({
+      userId: USER_DATA_SEED_IDS.TIM,
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+    });
+
     const signOutResponse = await postMetadataOperationWithHeaders(
-      legacySignOutWithRefreshTokenQueryFactory('stale-refresh-token'),
+      legacySignOutWithRefreshTokenQueryFactory(refreshToken),
       {
         originHeader: ALLOWED_ORIGIN,
         cookieHeader: sessionCookie.cookieHeader,
@@ -89,6 +98,12 @@ describe('successful sign-out (integration)', () => {
     expect(signOutResponse.body.errors).toBeUndefined();
     expect(signOutResponse.body.data.signOut).toBe(true);
     expect(hasClearingCookie(signOutResponse)).toBe(true);
+
+    const refreshTokenRow = await getCoreRepository<AppTokenEntity>(
+      AppTokenEntity,
+    ).findOneByOrFail({ id: appTokenId });
+
+    expect(refreshTokenRow.revokedAt).not.toBeNull();
   });
 
   it('should not clear anything on a cookie-less sign-out, so a cross-site POST cannot log a visitor out', async () => {
