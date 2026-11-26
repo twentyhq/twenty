@@ -139,7 +139,7 @@ const Panel = styled.div`
     margin-top: ${spacing(6)};
   }
 
-  /* Wide: the intro, the seats and the footnote on the left;
+  /* Wide: the intro on the left, the seats and the footnote at its foot;
      the coins and what they come to on the right, from the heading down. */
   @container (min-width: 880px) {
     column-gap: ${spacing(16)};
@@ -221,20 +221,17 @@ const ReadoutValue = styled.output`
   font-weight: ${FONT_WEIGHT.light};
 `;
 
-// The section's intro, then the seats that drive the coins.
 const IntroArea = styled.div`
   grid-area: intro;
-
-  & > * + * {
-    margin-top: ${spacing(12)};
-  }
 `;
 
-// The coins, and what they come to right under them.
+// The coins, and what they come to right under them, centred in the
+// section's height.
 const SimulatorColumn = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${spacing(4)};
+  justify-content: center;
   grid-area: simulator;
 `;
 
@@ -247,13 +244,18 @@ const ModelFrame = styled.div`
   }
 `;
 
-// Right under the seats it qualifies.
+// The seats, at the foot of the column level with the commission, and the
+// footnote that qualifies them.
 const NoteArea = styled.div`
-  align-self: start;
+  align-self: end;
   grid-area: note;
 
+  & > * + * {
+    margin-top: ${spacing(8)};
+  }
+
   @container (min-width: 880px) {
-    margin-top: ${spacing(10)};
+    margin-top: ${spacing(16)};
   }
 `;
 
@@ -310,11 +312,10 @@ const SliderBlock = styled.div`
   }
 `;
 
-// The Field label recipe, on a <label> so it targets the slider.
-// The column's labels, at body size so they hold their own next to the
-// figures.
+// The page's sub-block title (the level cards' heading: sans, xs, medium),
+// on a <label> so it targets the slider; the commission's label matches.
 const SliderHeader = styled.label`
-  ${typeRampDeclarations('bodyMd')}
+  ${typeRampDeclarations('headingXs')}
   color: ${semanticColor.ink};
   display: block;
   font-family: ${fontFamily('sans')};
@@ -322,7 +323,7 @@ const SliderHeader = styled.label`
 `;
 
 const ReadoutLabel = styled.p`
-  ${typeRampDeclarations('bodyMd')}
+  ${typeRampDeclarations('headingXs')}
   color: ${semanticColor.ink};
   font-family: ${fontFamily('sans')};
   font-weight: ${FONT_WEIGHT.medium};
@@ -437,8 +438,33 @@ export function IntegratorLedger({ footnote, intro }: IntegratorLedgerProps) {
   return (
     <Stack>
       <Panel>
-        <IntroArea style={cssVariableStyle({ '--row': 0 })}>
-          {intro}
+        <IntroArea style={cssVariableStyle({ '--row': 0 })}>{intro}</IntroArea>
+        <SimulatorColumn style={cssVariableStyle({ '--row': 1 })}>
+          <ModelFrame>
+            <HalftoneModel
+              geometryOptions={PILE_COIN_SIZE}
+              modelUrl="/models/money.glb"
+              settings={MONEY_MODEL_SETTINGS}
+              stack={{
+                placements: PILE_PLACEMENTS,
+                tilt: 0.5,
+                visible: Math.round(pileFill(seats) * PILE_PLACEMENTS.length),
+              }}
+            />
+          </ModelFrame>
+          <Readout>
+            <ReadoutLabel>{i18n._(msg`Your commission`)}</ReadoutLabel>
+            <ReadoutValue aria-live="polite" htmlFor="integrator-ledger-seats">
+              {currency.format(shownCommission)}
+            </ReadoutValue>
+            <ReadoutHint>
+              {i18n._(
+                msg`${seats} seats × $${seatPricePerMonth} a month × ${Math.round(commissionRate * 100)}% × ${months} months`,
+              )}
+            </ReadoutHint>
+          </Readout>
+        </SimulatorColumn>
+        <NoteArea style={cssVariableStyle({ '--row': 2 })}>
           <SliderBlock>
             <SliderHeader htmlFor="integrator-ledger-seats">
               {i18n._(msg`Seats you bring`)}
@@ -469,33 +495,6 @@ export function IntegratorLedger({ footnote, intro }: IntegratorLedgerProps) {
               </Scale>
             </SliderTrack>
           </SliderBlock>
-        </IntroArea>
-        <SimulatorColumn style={cssVariableStyle({ '--row': 1 })}>
-          <ModelFrame>
-            <HalftoneModel
-              geometryOptions={PILE_COIN_SIZE}
-              modelUrl="/models/money.glb"
-              settings={MONEY_MODEL_SETTINGS}
-              stack={{
-                placements: PILE_PLACEMENTS,
-                tilt: 0.5,
-                visible: Math.round(pileFill(seats) * PILE_PLACEMENTS.length),
-              }}
-            />
-          </ModelFrame>
-          <Readout>
-            <ReadoutLabel>{i18n._(msg`Your commission`)}</ReadoutLabel>
-            <ReadoutValue aria-live="polite" htmlFor="integrator-ledger-seats">
-              {currency.format(shownCommission)}
-            </ReadoutValue>
-            <ReadoutHint>
-              {i18n._(
-                msg`${seats} seats × $${seatPricePerMonth} a month × ${Math.round(commissionRate * 100)}% × ${months} months`,
-              )}
-            </ReadoutHint>
-          </Readout>
-        </SimulatorColumn>
-        <NoteArea style={cssVariableStyle({ '--row': 2 })}>
           <Footnote>
             {i18n._(
               msg`Estimate on the Organization plan at $${seatPricePerMonth} per seat per month, billed yearly.`,
