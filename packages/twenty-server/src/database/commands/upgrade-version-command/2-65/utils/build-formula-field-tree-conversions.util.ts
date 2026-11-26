@@ -47,8 +47,14 @@ export const buildFormulaFieldTreeConversions = ({
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
 }: {
-  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  flatObjectMetadataMaps: Pick<
+    FlatEntityMaps<FlatObjectMetadata>,
+    'byUniversalIdentifier'
+  >;
+  flatFieldMetadataMaps: Pick<
+    FlatEntityMaps<FlatFieldMetadata>,
+    'byUniversalIdentifier'
+  >;
 }): {
   flatFieldMetadatasToUpdate: FlatFieldMetadata[];
   textFormulaFieldNames: string[];

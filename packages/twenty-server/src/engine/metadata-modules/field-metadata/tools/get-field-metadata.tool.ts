@@ -13,7 +13,7 @@ import { compactMetadataOutput } from 'src/engine/core-modules/tool-provider/uti
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { FIELD_METADATA_READ_ACCESS_POLICY } from 'src/engine/metadata-modules/field-metadata/constants/field-metadata-read-access-policy.constant';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { buildFormulaFieldDescriptorsFromFlatEntityMaps } from 'src/engine/metadata-modules/formula-field/utils/build-formula-field-descriptors-from-flat-entity-maps.util';
 import { printFormulaFieldText } from 'src/engine/metadata-modules/formula-field/utils/print-formula-field-text.util';
 import { MetadataToolIdentifierService } from 'src/engine/metadata-modules/object-metadata/tools/services/metadata-tool-identifier.service';
@@ -106,15 +106,14 @@ export class GetFieldMetadataTool extends BaseTool<
         'flatFieldMetadataMapsOrm',
       ]);
     const printFormula = (field: (typeof rawResults)[number]) => {
-      const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+      if (!isDefined(field.formula)) {
+        return null;
+      }
+
+      const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
         flatEntityId: field.objectMetadataId,
         flatEntityMaps: flatObjectMetadataMaps,
       });
-
-      if (!isDefined(field.formula) || !isDefined(flatObjectMetadata)) {
-        return field.formula;
-      }
-
       const formulaText = printFormulaFieldText({
         formula: field.formula,
         fields: buildFormulaFieldDescriptorsFromFlatEntityMaps({
@@ -124,14 +123,16 @@ export class GetFieldMetadataTool extends BaseTool<
         }).filter(({ name }) => name !== field.name),
       });
 
-      return isDefined(formulaText)
-        ? {
-            ...formulaText,
-            evaluation: getFieldMetadataFormulaEvaluation({
-              formula: field.formula,
-            }),
-          }
-        : field.formula;
+      if (!isDefined(formulaText)) {
+        return null;
+      }
+
+      return {
+        ...formulaText,
+        evaluation: getFieldMetadataFormulaEvaluation({
+          formula: field.formula,
+        }),
+      };
     };
 
     const compactedFields = rawResults
