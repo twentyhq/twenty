@@ -31,7 +31,7 @@ const parseExpression = (
   }
 };
 
-// TODO: evaluate the tree, and drop this text evaluation, once validation rules and trigger conditions are stored as trees
+// TODO(@FelixMalfait): evaluate the tree, and drop this text evaluation, once validation rules and trigger conditions are stored as trees
 export const createExpressionEvaluator = ({
   expression,
   fields,
