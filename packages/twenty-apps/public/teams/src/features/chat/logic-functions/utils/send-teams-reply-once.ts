@@ -1,6 +1,7 @@
 import { kv } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
+import { buildTeamsMessageActivity } from 'src/features/chat/logic-functions/utils/build-teams-message-activity';
 import { getTeamsConnectorAccessTokenOrThrow } from 'src/features/chat/logic-functions/utils/get-teams-connector-access-token-or-throw';
 import { sendTeamsActivity } from 'src/features/chat/logic-functions/utils/send-teams-activity';
 
@@ -30,7 +31,7 @@ export const sendTeamsReplyOnce = async ({
       serviceUrl,
       conversationId,
       accessToken: await getTeamsConnectorAccessTokenOrThrow(),
-      activity: { type: 'message', text },
+      activity: buildTeamsMessageActivity({ text }),
     });
   } catch (error) {
     await kv

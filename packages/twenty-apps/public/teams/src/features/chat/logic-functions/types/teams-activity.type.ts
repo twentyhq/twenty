@@ -4,6 +4,7 @@ import { type TeamsActivityEntity } from 'src/features/chat/logic-functions/type
 export type TeamsActivity = {
   type: 'message' | 'typing';
   text?: string;
+  textFormat?: 'extendedmarkdown';
   attachments?: TeamsActivityAttachment[];
   entities?: TeamsActivityEntity[];
 };

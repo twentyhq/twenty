@@ -51,7 +51,11 @@ describe('replyWithTeamsAssistantHelp', () => {
       serviceUrl: EMPTY_REQUEST.teamsServiceUrl,
       conversationId: EMPTY_REQUEST.teamsConversationId,
       accessToken: 'token',
-      activity: { type: 'message', text: TEAMS_ASSISTANT_HELP_TEXT },
+      activity: {
+        type: 'message',
+        textFormat: 'extendedmarkdown',
+        text: TEAMS_ASSISTANT_HELP_TEXT,
+      },
     });
   });
 
