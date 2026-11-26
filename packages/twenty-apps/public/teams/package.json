@@ -5,7 +5,7 @@
   "author": "Twenty",
   "license": "MIT",
   "engines": {
-    "twenty": ">=2.53.0",
+    "twenty": ">=2.63.0",
     "node": "^26.5.1",
     "npm": "please-use-yarn",
     "yarn": ">=4.0.2"
@@ -48,8 +48,8 @@
     "oxlint": "^0.16.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "twenty-client-sdk": "^2.53.0",
-    "twenty-sdk": "^2.53.0",
+    "twenty-client-sdk": "^2.63.0",
+    "twenty-sdk": "^2.63.0",
     "twenty-ui": "^2.45.0",
     "typescript": "^5.9.3",
     "vite-tsconfig-paths": "^4.2.1",
