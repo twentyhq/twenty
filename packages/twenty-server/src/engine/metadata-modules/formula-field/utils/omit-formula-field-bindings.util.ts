@@ -1,33 +1,25 @@
+import { type FieldMetadataFormula } from 'twenty-shared/types';
 import {
   getFieldMetadataFormulaCurrencyCodeExpression,
   getFieldMetadataFormulaExpression,
   isDefined,
 } from 'twenty-shared/utils';
 
-import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
-
-export const omitFormulaFieldBindings = <
-  TUniversalSettings extends UniversalFlatFieldMetadata['universalSettings'],
->(
-  universalSettings: TUniversalSettings,
-): TUniversalSettings => {
-  const expression = getFieldMetadataFormulaExpression({
-    settings: universalSettings,
-  });
+export const omitFormulaFieldBindings = (
+  formula: FieldMetadataFormula | null,
+): FieldMetadataFormula | null => {
+  const expression = getFieldMetadataFormulaExpression({ formula });
 
   if (!isDefined(expression)) {
-    return universalSettings;
+    return null;
   }
 
   const currencyCodeExpression = getFieldMetadataFormulaCurrencyCodeExpression({
-    settings: universalSettings,
+    formula,
   });
 
   return {
-    ...universalSettings,
-    formula: {
-      expression,
-      ...(isDefined(currencyCodeExpression) ? { currencyCodeExpression } : {}),
-    },
+    expression,
+    ...(isDefined(currencyCodeExpression) ? { currencyCodeExpression } : {}),
   };
 };

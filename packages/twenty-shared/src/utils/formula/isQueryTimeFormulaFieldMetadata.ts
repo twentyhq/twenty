@@ -1,7 +1,7 @@
 import { getFieldMetadataFormulaEvaluation } from '@/utils/formula/getFieldMetadataFormulaEvaluation';
 
 export const isQueryTimeFormulaFieldMetadata = ({
-  settings,
+  formula,
 }: {
-  settings?: unknown;
-}): boolean => getFieldMetadataFormulaEvaluation({ settings }) === 'QUERY_TIME';
+  formula?: unknown;
+}): boolean => getFieldMetadataFormulaEvaluation({ formula }) === 'QUERY_TIME';

@@ -142,9 +142,8 @@ export const fromFlatFieldMetadataToFieldManifest = ({
     ...(isMorphOrRelationFieldMetadataType(flatFieldMetadata.type)
       ? buildRelationProperties(flatFieldMetadata)
       : {
-          universalSettings: omitFormulaFieldBindings(
-            flatFieldMetadata.universalSettings,
-          ),
+          universalSettings: flatFieldMetadata.universalSettings,
+          formula: omitFormulaFieldBindings(flatFieldMetadata.formula),
         }),
   };
 

@@ -152,14 +152,12 @@ describe('Stored formula fields reading a to-one lookup', () => {
         type: FieldMetadataType.NUMBER,
         objectMetadataId: supplierObjectMetadataId,
         isLabelSyncedWithName: false,
-        settings: { formula: { expression: 'count(gadgets) * region.rate' } },
+        formula: { expression: 'count(gadgets) * region.rate' },
       },
-      gqlFields: 'id settings',
+      gqlFields: 'id formula',
     });
 
-    expect(
-      getFieldMetadataFormulaEvaluation({ settings: createOneField.settings }),
-    ).toBe('STORED');
+    expect(getFieldMetadataFormulaEvaluation(createOneField)).toBe('STORED');
   });
 
   afterAll(async () => {

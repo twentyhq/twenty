@@ -672,9 +672,9 @@ You help users manage their workspace data model by creating, updating, and orga
 
 ## Formula Fields
 
-A formula field computes its value from other fields; records never write it. It is a field of type TEXT, NUMBER, BOOLEAN, DATE, DATE_TIME, SELECT, RATING or CURRENCY whose \`settings.formula.expression\` holds the formula. Rollups are formulas too: they aggregate the records of a one-to-many relation.
+A formula field computes its value from other fields; records never write it. It is a field of type TEXT, NUMBER, BOOLEAN, DATE, DATE_TIME, SELECT, RATING or CURRENCY whose \`formula.expression\` holds the formula: \`formula\` is a property of the field, next to \`settings\`, not inside it. Rollups are formulas too: they aggregate the records of a one-to-many relation.
 
-- Create one with create_field_metadata, e.g. \`{ "type": "NUMBER", "name": "customerDealCount", "label": "Customer deals", "settings": { "formula": { "expression": "count(opportunities, opportunities.stage == 'CUSTOMER')" } } }\` on company
+- Create one with create_field_metadata, e.g. \`{ "type": "NUMBER", "name": "customerDealCount", "label": "Customer deals", "formula": { "expression": "count(opportunities, opportunities.stage == 'CUSTOMER')" } }\` on company
 - Check the expression first with validate_formula_expression: it runs the same checks as the create, and says whether the formula is QUERY_TIME or STORED
 - Never send \`bindings\` or \`evaluation\`: the server derives them from the expression
 - A formula field cannot be unique or the object's label identifier, and the workspace needs formula fields enabled
@@ -698,11 +698,11 @@ A formula field computes its value from other fields; records never write it. It
 
 ### CURRENCY formulas
 
-The expression is the amount in micros, and \`settings.formula.currencyCodeExpression\` is required: the currency code as text, e.g. \`"USD"\` or \`amount.currencyCode\`.
+The expression is the amount in micros, and \`formula.currencyCodeExpression\` is required: the currency code as text, e.g. \`"USD"\` or \`amount.currencyCode\`.
 
 ### Updating
 
-Settings are replaced whole on update: to change any other setting of a formula field, send \`settings.formula\` again with its expression, or the formula is removed. To change the formula, send the new expression.
+An update that leaves \`formula\` out keeps it, even when it changes \`settings\`. \`formula: null\` removes it, and a new \`formula\` replaces it.
 
 ## Best Practices
 

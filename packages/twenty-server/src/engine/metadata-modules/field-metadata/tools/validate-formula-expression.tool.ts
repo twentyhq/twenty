@@ -20,7 +20,7 @@ import {
 import {
   FORMULA_CURRENCY_CODE_EXPRESSION_DESCRIPTION,
   FORMULA_EXPRESSION_DESCRIPTION,
-} from 'src/engine/metadata-modules/field-metadata/tools/constants/formula-settings-description.constant';
+} from 'src/engine/metadata-modules/field-metadata/tools/constants/formula-description.constant';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { validateFlatFieldMetadataFormula } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-formula.util';
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-flat-fields-for-flat-object-metadata.util';
@@ -118,13 +118,12 @@ export class ValidateFormulaExpressionTool extends BaseTool<
         type,
         universalIdentifier:
           existingFlatFieldMetadata?.universalIdentifier ?? v4(),
-        universalSettings: {
-          formula: {
-            expression,
-            ...(isDefined(currencyCodeExpression)
-              ? { currencyCodeExpression }
-              : {}),
-          },
+        universalSettings: null,
+        formula: {
+          expression,
+          ...(isDefined(currencyCodeExpression)
+            ? { currencyCodeExpression }
+            : {}),
         },
         objectMetadataUniversalIdentifier:
           flatObjectMetadata.universalIdentifier,
@@ -140,7 +139,7 @@ export class ValidateFormulaExpressionTool extends BaseTool<
         isUnique: false,
         isSearchable: false,
       },
-      existingUniversalSettings: existingFlatFieldMetadata?.universalSettings,
+      existingFormula: existingFlatFieldMetadata?.formula,
       universalFlatObjectMetadataMaps: flatObjectMetadataMaps,
       universalFlatFieldMetadataMaps: flatFieldMetadataMaps,
       isFormulaFieldEnabled:
@@ -154,9 +153,9 @@ export class ValidateFormulaExpressionTool extends BaseTool<
       );
     }
 
-    const evaluation = getFieldMetadataFormulaEvaluation({
-      settings: candidateFlatFieldMetadata.universalSettings,
-    });
+    const evaluation = getFieldMetadataFormulaEvaluation(
+      candidateFlatFieldMetadata,
+    );
 
     return {
       success: true,

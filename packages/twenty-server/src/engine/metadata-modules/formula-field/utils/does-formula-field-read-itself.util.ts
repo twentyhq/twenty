@@ -5,16 +5,16 @@ import {
 
 export const doesFormulaFieldReadItself = ({
   universalIdentifier,
-  universalSettings,
-  findUniversalSettings,
+  formula,
+  findFormula,
 }: {
   universalIdentifier: string;
-  universalSettings: unknown;
-  findUniversalSettings: (fieldUniversalIdentifier: string) => unknown;
+  formula: unknown;
+  findFormula: (fieldUniversalIdentifier: string) => unknown;
 }): boolean => {
   const visitedUniversalIdentifiers = new Set<string>();
   const universalIdentifiersToVisit = Object.values(
-    getFieldMetadataFormulaBindings({ settings: universalSettings }) ?? {},
+    getFieldMetadataFormulaBindings({ formula }) ?? {},
   );
 
   while (universalIdentifiersToVisit.length > 0) {
@@ -35,7 +35,7 @@ export const doesFormulaFieldReadItself = ({
     universalIdentifiersToVisit.push(
       ...Object.values(
         getFieldMetadataFormulaBindings({
-          settings: findUniversalSettings(readUniversalIdentifier),
+          formula: findFormula(readUniversalIdentifier),
         }) ?? {},
       ),
     );

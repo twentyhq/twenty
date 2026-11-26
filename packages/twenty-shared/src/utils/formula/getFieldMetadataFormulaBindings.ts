@@ -4,23 +4,17 @@ import { type ValidationRuleBindings } from '@/types/ValidationRuleBindings';
 import { isPlainObject } from '@/utils/typeguard/isPlainObject';
 
 export const getFieldMetadataFormulaBindings = ({
-  settings,
+  formula,
 }: {
-  settings?: unknown;
+  formula?: unknown;
 }): ValidationRuleBindings | undefined => {
-  if (!isPlainObject(settings) || !isPlainObject(settings.formula)) {
-    return undefined;
-  }
-
-  const bindings = settings.formula.bindings;
-
-  if (!isPlainObject(bindings)) {
+  if (!isPlainObject(formula) || !isPlainObject(formula.bindings)) {
     return undefined;
   }
 
   return Object.fromEntries(
-    Object.entries(bindings).filter((binding): binding is [string, string] =>
-      isString(binding[1]),
+    Object.entries(formula.bindings).filter(
+      (binding): binding is [string, string] => isString(binding[1]),
     ),
   );
 };

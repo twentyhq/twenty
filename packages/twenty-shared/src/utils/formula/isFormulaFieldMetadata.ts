@@ -2,7 +2,7 @@ import { getFieldMetadataFormulaExpression } from '@/utils/formula/getFieldMetad
 import { isDefined } from '@/utils/validation/isDefined';
 
 export const isFormulaFieldMetadata = ({
-  settings,
+  formula,
 }: {
-  settings?: unknown;
-}): boolean => isDefined(getFieldMetadataFormulaExpression({ settings }));
+  formula?: unknown;
+}): boolean => isDefined(getFieldMetadataFormulaExpression({ formula }));

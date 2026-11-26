@@ -80,14 +80,14 @@ export const buildStoredFormulaWatchPlans = ({
         })
       : undefined;
 
-  for (const { objectMetadataId, settings } of Object.values(
+  for (const { objectMetadataId, formula } of Object.values(
     flatFieldMetadataMaps.byUniversalIdentifier,
   ).filter(isDefined)) {
-    if (getFieldMetadataFormulaEvaluation({ settings }) !== 'STORED') {
+    if (getFieldMetadataFormulaEvaluation({ formula }) !== 'STORED') {
       continue;
     }
 
-    const bindings = getFieldMetadataFormulaBindings({ settings }) ?? {};
+    const bindings = getFieldMetadataFormulaBindings({ formula }) ?? {};
     const watchedOwnFieldNames = (watchedOwnFieldNamesByObjectMetadataId[
       objectMetadataId
     ] ??= new Set());
