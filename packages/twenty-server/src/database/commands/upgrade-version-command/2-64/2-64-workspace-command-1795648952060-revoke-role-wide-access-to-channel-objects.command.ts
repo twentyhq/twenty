@@ -1,4 +1,6 @@
 import { Command } from 'nest-commander';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
@@ -6,6 +8,7 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { ChannelVisibilityRoleWideAccessRevokeService } from 'src/engine/permissions/channel-visibility/services/channel-visibility-role-wide-access-revoke.service';
 import { ChannelVisibilityRuleSyncService } from 'src/engine/permissions/channel-visibility/services/channel-visibility-rule-sync.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @RegisteredWorkspaceCommand('2.64.0', 1795648952060)
 @Command({
@@ -18,6 +21,7 @@ export class RevokeRoleWideAccessToChannelObjectsUpgradeCommand extends Provisio
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly channelVisibilityRuleSyncService: ChannelVisibilityRuleSyncService,
     private readonly channelVisibilityRoleWideAccessRevokeService: ChannelVisibilityRoleWideAccessRevokeService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {
     super(workspaceIteratorService);
   }
@@ -27,8 +31,17 @@ export class RevokeRoleWideAccessToChannelObjectsUpgradeCommand extends Provisio
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
     const isDryRun = options.dryRun ?? false;
+    const { flatObjectMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+      ]);
+    const hasWorkspaceMembers = isDefined(
+      flatObjectMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.workspaceMember.universalIdentifier
+      ],
+    );
 
-    if (!isDryRun) {
+    if (!isDryRun && hasWorkspaceMembers) {
       await this.channelVisibilityRuleSyncService.syncWorkspace(workspaceId);
     }
 
