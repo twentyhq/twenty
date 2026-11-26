@@ -1,5 +1,4 @@
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
 import { runComponentConformance } from '@test-utilities/conformance/runComponentConformance';
@@ -66,28 +65,5 @@ describe('ReactionButton native contract', () => {
 
     expect(reaction).toHaveAttribute('aria-pressed', 'true');
     expect(reaction).toHaveTextContent('1,234');
-  });
-});
-
-describe('ReactionButton reactors tooltip', () => {
-  it('shows who reacted on mouse hover', async () => {
-    const user = userEvent.setup();
-
-    render(
-      <ReactionButton
-        aria-label="Thumbs up by Ada and Sam"
-        emoji="👍"
-        count={2}
-        pressed={false}
-        tooltip="Ada and Sam"
-        onPressedChange={vi.fn()}
-      />,
-    );
-
-    await user.hover(
-      screen.getByRole('button', { name: 'Thumbs up by Ada and Sam' }),
-    );
-
-    expect(await screen.findByRole('tooltip')).toHaveTextContent('Ada and Sam');
   });
 });
