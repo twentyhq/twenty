@@ -348,6 +348,7 @@ import { AddFieldMetadataFormulaColumnFastInstanceCommand } from 'src/database/c
 import { MoveFieldMetadataFormulaOutOfSettingsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-slow-1795701107918-move-field-metadata-formula-out-of-settings';
 import { DropViewVisibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-fast-1795709923763-drop-view-visibility';
 import { AddListPinnedFieldMetadataIdToViewFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-fast-1795713501522-add-list-pinned-field-metadata-id-to-view';
+import { RelaxViewDeletedAtSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-slow-1795715543417-relax-view-deleted-at';
 import { AddLogicFunctionIsWarmFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-fast-1795715676865-add-logic-function-is-warm';
 
 export const INSTANCE_COMMANDS = [
@@ -699,5 +700,6 @@ export const INSTANCE_COMMANDS = [
   MoveFieldMetadataFormulaOutOfSettingsSlowInstanceCommand,
   DropViewVisibilityFastInstanceCommand,
   AddListPinnedFieldMetadataIdToViewFastInstanceCommand,
+  RelaxViewDeletedAtSlowInstanceCommand,
   AddLogicFunctionIsWarmFastInstanceCommand,
 ];
