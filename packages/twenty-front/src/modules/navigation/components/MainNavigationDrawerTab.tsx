@@ -15,6 +15,7 @@ import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 const StyledMode = styled.button<{
   isActive: boolean;
   isExpanded: boolean;
+  isLabelHidden: boolean;
   isLabelShown: boolean;
   isSelectedInEditMode: boolean;
 }>`
@@ -40,7 +41,10 @@ const StyledMode = styled.button<{
   font-weight: ${themeCssVariables.font.weight.medium};
   gap: ${({ isLabelShown }) =>
     isLabelShown ? themeCssVariables.spacing[1] : '0'};
-  height: ${NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE}px;
+  height: ${({ isExpanded, isLabelHidden }) =>
+    isExpanded && !isLabelHidden
+      ? themeCssVariables.spacing[7]
+      : `${NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE}px`};
   justify-content: ${({ isExpanded }) =>
     isExpanded ? 'flex-start' : 'center'};
   min-width: 0;
@@ -49,8 +53,10 @@ const StyledMode = styled.button<{
       ? `1px solid ${themeCssVariables.color.blue}`
       : 'none'};
   outline-offset: -1px;
-  padding: ${({ isExpanded }) =>
-    isExpanded ? `0 ${themeCssVariables.spacing[2]}` : '0'};
+  padding: ${({ isExpanded, isLabelHidden }) =>
+    isExpanded
+      ? `0 ${isLabelHidden ? themeCssVariables.spacing[2] : themeCssVariables.spacing['1.5']}`
+      : '0'};
   transition:
     background calc(${themeCssVariables.animation.duration.fast} * 1s) ease,
     color calc(${themeCssVariables.animation.duration.fast} * 1s) ease,
@@ -148,6 +154,7 @@ export const MainNavigationDrawerTab = ({
         type="button"
         isActive={isActive}
         isExpanded={isExpanded}
+        isLabelHidden={isLabelHidden}
         isLabelShown={isLabelShown}
         isSelectedInEditMode={isSelectedInEditMode}
         aria-label={ariaLabel ?? label}
