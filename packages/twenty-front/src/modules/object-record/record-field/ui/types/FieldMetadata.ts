@@ -314,6 +314,7 @@ export type FieldRichTextValue = {
   tiptap?: string | null;
   markdown?: string | null;
   blocknote?: string | null;
+  files?: FieldFilesValue[] | null;
 };
 
 const FieldActorSourceSchema = z.union([
