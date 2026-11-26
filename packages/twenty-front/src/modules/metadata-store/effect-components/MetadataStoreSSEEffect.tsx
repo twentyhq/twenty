@@ -1,10 +1,16 @@
 import { useListenToMetadataOperationBrowserEvent } from '@/browser-event/hooks/useListenToMetadataOperationBrowserEvent';
+import { useResyncMetadataStore } from '@/metadata-store/hooks/useResyncMetadataStore';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
-import { type MetadataEntityKey } from '@/metadata-store/states/metadataStoreState';
+import {
+  metadataStoreState,
+  type MetadataEntityKey,
+} from '@/metadata-store/states/metadataStoreState';
 import { type FlatPageLayoutWidget } from '@/metadata-store/types/FlatPageLayoutWidget';
 import { type MetadataEntityTypeMap } from '@/metadata-store/types/MetadataEntityTypeMap';
 import { addTypenamesToFlatPageLayoutWidget } from '@/metadata-store/utils/addTypenamesToFlatPageLayoutWidget';
+import { getDraftOrCurrentMetadataItems } from '@/metadata-store/utils/getDraftOrCurrentMetadataItems';
 import { mapAllMetadataNameToEntityKey } from '@/metadata-store/utils/mapAllMetadataNameToEntityKey';
+import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 
 type AnyMetadataEntity = MetadataEntityTypeMap[MetadataEntityKey];
@@ -20,8 +26,10 @@ const toMetadataStoreItem = (
     : (record as unknown as AnyMetadataEntity);
 
 export const MetadataStoreSSEEffect = () => {
+  const store = useStore();
   const { addToDraft, removeFromDraft, applyChanges } =
     useUpdateMetadataStoreDraft();
+  const { resyncMetadataStore } = useResyncMetadataStore();
 
   useListenToMetadataOperationBrowserEvent({
     onMetadataOperationBrowserEvent: (eventDetail) => {
@@ -32,6 +40,7 @@ export const MetadataStoreSSEEffect = () => {
       }
 
       const collectionHash = eventDetail.updatedCollectionHash;
+      let hasGainedAccessToView = false;
 
       switch (eventDetail.operation.type) {
         case 'create': {
@@ -48,6 +57,15 @@ export const MetadataStoreSSEEffect = () => {
           break;
         }
         case 'update': {
+          const updatedRecordId = eventDetail.operation.updatedRecord.id;
+
+          hasGainedAccessToView =
+            entityKey === 'views' &&
+            !getDraftOrCurrentMetadataItems({
+              store,
+              metadataEntityKey: 'views',
+            }).some((view) => view.id === updatedRecordId);
+
           addToDraft({
             key: entityKey,
             items: [
@@ -71,6 +89,14 @@ export const MetadataStoreSSEEffect = () => {
       }
 
       applyChanges();
+
+      if (hasGainedAccessToView) {
+        store.set(metadataStoreState.atomFamily('views'), (prev) => ({
+          ...prev,
+          currentCollectionHash: undefined,
+        }));
+        resyncMetadataStore();
+      }
     },
   });
 
