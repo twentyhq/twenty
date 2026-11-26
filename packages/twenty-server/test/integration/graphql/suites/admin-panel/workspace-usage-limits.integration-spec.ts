@@ -5,11 +5,14 @@ import { getCoreRepository } from 'test/integration/utils/get-core-repository.ut
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 import { gql } from 'graphql-tag';
+import { createClient } from 'redis';
 import { type Repository } from 'typeorm';
 
 import { type CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { BillingArrangementEntity } from 'src/engine/core-modules/billing/entities/billing-arrangement.entity';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { UsageLimitExceptionCode } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
+import { type UsageLimitSpeedService } from 'src/engine/core-modules/usage-limit/services/usage-limit-speed.service';
 import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -17,6 +20,7 @@ import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-res
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 
 const WORKSPACE_USAGE_LIMITS = gql`
   query WorkspaceUsageLimits($workspaceId: UUID!) {
@@ -91,6 +95,21 @@ const USER_CREDIT_QUOTA_PAYLOAD = {
   periodUnit: 'week',
   unit: UsageUnit.USER_CREDIT,
   limitValue: 3_000_000,
+  burstValue: null,
+};
+
+const CAMPAIGN_TEST_SEND_OVERRIDE_LIMIT = 5;
+
+const CAMPAIGN_TEST_SEND_SPEED_PAYLOAD = {
+  resourceType: UsageResourceType.EMAIL,
+  operationType: UsageOperationType.MESSAGE_CAMPAIGN_TEST_SEND,
+  spenderType: 'workspace',
+  spenderId: null,
+  limitKind: 'speed',
+  periodCount: 86_400,
+  periodUnit: 'second',
+  unit: UsageUnit.INVOCATION,
+  limitValue: CAMPAIGN_TEST_SEND_OVERRIDE_LIMIT,
   burstValue: null,
 };
 
@@ -192,6 +211,90 @@ describe('Workspace usage limits from the admin panel', () => {
     ).toEqual(
       expect.objectContaining({ overriddenByUsageLimitId: usageLimitId }),
     );
+  });
+
+  describe('campaign test sends', () => {
+    let redis: Awaited<ReturnType<typeof createClient>>;
+
+    const resetTestSendCounters = async () => {
+      const keys = await redis.keys(
+        `*{${SEED_APPLE_WORKSPACE_ID}}:speed:${UsageResourceType.EMAIL}:${UsageOperationType.MESSAGE_CAMPAIGN_TEST_SEND}:*`,
+      );
+
+      if (keys.length > 0) {
+        await redis.del(keys);
+      }
+    };
+
+    const consumeTestSend = () =>
+      getAppProviderByClassName<UsageLimitSpeedService>(
+        'UsageLimitSpeedService',
+      ).consumeOrThrow({
+        resourceType: UsageResourceType.EMAIL,
+        operationType: UsageOperationType.MESSAGE_CAMPAIGN_TEST_SEND,
+        authContext: buildSystemAuthContext(SEED_APPLE_WORKSPACE_ID),
+      });
+
+    beforeAll(async () => {
+      redis = await createClient({ url: process.env.REDIS_URL }).connect();
+    });
+
+    afterAll(async () => {
+      await redis.quit();
+    });
+
+    beforeEach(resetTestSendCounters);
+    afterEach(resetTestSendCounters);
+
+    it('lists the daily test send limit as an overridable default', async () => {
+      const workspaceUsageLimits = await findWorkspaceUsageLimits();
+
+      expect(workspaceUsageLimits.defaults).toContainEqual(
+        expect.objectContaining({
+          resourceType: UsageResourceType.EMAIL,
+          operationType: UsageOperationType.MESSAGE_CAMPAIGN_TEST_SEND,
+          spenderType: 'workspace',
+          limitKind: 'speed',
+          unit: UsageUnit.INVOCATION,
+          limitValue: readConfig(
+            'MESSAGE_CAMPAIGN_TEST_SEND_RATE_LIMITING_LIMIT',
+          ),
+          isOverridable: true,
+          overriddenByUsageLimitId: null,
+        }),
+      );
+    });
+
+    it('enforces the override an operator sets instead of the default', async () => {
+      const response = await makeAdminPanelApiRequest({
+        query: CREATE_WORKSPACE_USAGE_LIMIT,
+        variables: {
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          payload: CAMPAIGN_TEST_SEND_SPEED_PAYLOAD,
+        },
+      });
+
+      const usageLimitId = response.body.data?.createWorkspaceUsageLimit?.id;
+
+      jestExpectToBeDefined(usageLimitId);
+
+      const workspaceUsageLimits = await findWorkspaceUsageLimits();
+
+      expect(workspaceUsageLimits.defaults).toContainEqual(
+        expect.objectContaining({
+          operationType: UsageOperationType.MESSAGE_CAMPAIGN_TEST_SEND,
+          overriddenByUsageLimitId: usageLimitId,
+        }),
+      );
+
+      for (let send = 0; send < CAMPAIGN_TEST_SEND_OVERRIDE_LIMIT; send++) {
+        await consumeTestSend();
+      }
+
+      await expect(consumeTestSend()).rejects.toMatchObject({
+        code: UsageLimitExceptionCode.RATE_LIMITED,
+      });
+    });
   });
 
   (isBillingEnabled ? it.skip : it)(
