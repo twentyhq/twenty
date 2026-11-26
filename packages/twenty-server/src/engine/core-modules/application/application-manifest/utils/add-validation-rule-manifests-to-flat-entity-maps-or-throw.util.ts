@@ -2,19 +2,25 @@
 
 import { type ValidationRuleManifest } from 'twenty-shared/application';
 import {
+  type ExpressionNode,
+  printExpressionNode,
+} from 'twenty-shared/expression';
+import {
   FieldMetadataType,
   RelationType,
-  type ValidationRuleBindings,
-  type ValidationRuleErrorParams,
   type ValidationRuleFieldDescriptor,
 } from 'twenty-shared/types';
 import {
+  buildExpressionFieldPrinter,
   compileValidationRuleExpression,
+  getValidationRuleTree,
   isDefined,
-  tokenizeValidationRuleExpression,
+  parseExpressionNode,
+  resolveExpressionFieldReferences,
 } from 'twenty-shared/utils';
 
 import { fromValidationRuleManifestToUniversalFlatValidationRule } from 'src/engine/core-modules/application/application-manifest/converters/from-validation-rule-manifest-to-universal-flat-validation-rule.util';
+import { isSavedValidationRuleTreeRenamedFromManifest } from 'src/engine/core-modules/application/application-manifest/utils/is-saved-validation-rule-tree-renamed-from-manifest.util';
 import {
   ApplicationException,
   ApplicationExceptionCode,
@@ -25,6 +31,7 @@ import { isSystemSideEffectFlatEntity } from 'src/engine/metadata-modules/flat-e
 import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { buildReservedSystemFlatFieldMetadatasForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-reserved-system-flat-field-metadatas-for-custom-object.util';
 import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
+import { listValidationRuleReadFieldUniversalIdentifiers } from 'src/engine/metadata-modules/validation-rule/utils/list-validation-rule-read-field-universal-identifiers.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatValidationRule } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-validation-rule.type';
 import { addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/add-universal-flat-entity-to-universal-flat-entity-maps-through-mutation-or-throw.util';
@@ -183,103 +190,6 @@ const buildFieldDescriptors = ({
     };
   });
 
-type UnavailableField = {
-  name: string;
-  state: 'deactivated' | 'deleted' | 'removedFromApplication';
-};
-
-// Only a field the application removed itself fails the sync: the developer can't fix the others
-const findUnavailableField = ({
-  validationRuleManifest,
-  existingFlatValidationRule,
-  errorCode,
-  errorParams,
-  ownerFlatApplication,
-  fieldsAfterSyncByObjectUniversalIdentifier,
-  existingAllFlatEntityMaps,
-}: {
-  validationRuleManifest: Pick<
-    ValidationRuleManifest,
-    'objectUniversalIdentifier' | 'expression'
-  >;
-  existingFlatValidationRule:
-    | Pick<UniversalFlatValidationRule, 'expression' | 'bindings'>
-    | undefined;
-  errorCode: string | undefined;
-  errorParams: ValidationRuleErrorParams | undefined;
-  ownerFlatApplication: Pick<FlatApplication, 'id'>;
-  fieldsAfterSyncByObjectUniversalIdentifier: Map<
-    string,
-    UniversalFlatFieldMetadata[]
-  >;
-  existingAllFlatEntityMaps: ValidationRuleFlatEntityMaps;
-}): UnavailableField | undefined => {
-  const name = errorParams?.fieldName;
-
-  if (
-    !isDefined(name) ||
-    (errorCode !== 'UNKNOWN_FIELD' &&
-      errorCode !== 'UNKNOWN_RELATION_TARGET_FIELD')
-  ) {
-    return undefined;
-  }
-
-  const { relationFieldName } = errorParams ?? {};
-  const objectUniversalIdentifier = isDefined(relationFieldName)
-    ? (
-        fieldsAfterSyncByObjectUniversalIdentifier.get(
-          validationRuleManifest.objectUniversalIdentifier,
-        ) ?? []
-      ).find((field) => field.name === relationFieldName)
-        ?.relationTargetObjectMetadataUniversalIdentifier
-    : validationRuleManifest.objectUniversalIdentifier;
-
-  const fieldAfterSync = isDefined(objectUniversalIdentifier)
-    ? fieldsAfterSyncByObjectUniversalIdentifier
-        .get(objectUniversalIdentifier)
-        ?.find((field) => field.name === name)
-    : undefined;
-
-  if (
-    isDefined(fieldAfterSync) &&
-    !isFieldActiveAfterSync({
-      field: fieldAfterSync,
-      existingAllFlatEntityMaps,
-    })
-  ) {
-    return { name, state: 'deactivated' };
-  }
-
-  if (
-    !isDefined(existingFlatValidationRule) ||
-    existingFlatValidationRule.expression !== validationRuleManifest.expression
-  ) {
-    return undefined;
-  }
-
-  const boundFieldUniversalIdentifier =
-    existingFlatValidationRule.bindings[
-      isDefined(relationFieldName) ? `${relationFieldName}.${name}` : name
-    ];
-
-  if (!isDefined(boundFieldUniversalIdentifier)) {
-    return undefined;
-  }
-
-  const boundField =
-    existingAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
-      boundFieldUniversalIdentifier
-    ];
-
-  return {
-    name,
-    state:
-      boundField?.applicationId === ownerFlatApplication.id
-        ? 'removedFromApplication'
-        : 'deleted',
-  };
-};
-
 // The field-deletion side effect already detached this link, so the manifest must not restore it
 const isErrorFieldDetachedByWorkspace = ({
   validationRuleManifest: { errorFieldUniversalIdentifier },
@@ -325,96 +235,25 @@ const buildFieldRemovedFromApplicationException = ({
     ApplicationExceptionCode.INVALID_INPUT,
   );
 
-const toComparableTokens = (expression: string) =>
-  tokenizeValidationRuleExpression(expression).filter(
-    (token) => token.type !== 'whitespace',
-  );
+const buildTree = (
+  expression: string,
+  fields: ValidationRuleFieldDescriptor[],
+): ExpressionNode | null => {
+  const parsing = parseExpressionNode(expression);
 
-// The field-rename side effect rewrote the saved rule, so the manifest still holds the old names.
-// Only fields outside the app can be renamed that way: the app names its own fields in the manifest.
-const isSavedExpressionRenamedFromManifest = ({
-  manifestExpression,
-  existingFlatValidationRule,
-  ownerFlatApplication,
-  existingAllFlatEntityMaps,
-}: {
-  manifestExpression: string;
-  existingFlatValidationRule: Pick<
-    UniversalFlatValidationRule,
-    'expression' | 'bindings'
-  >;
-  ownerFlatApplication: Pick<FlatApplication, 'id'>;
-  existingAllFlatEntityMaps: ValidationRuleFlatEntityMaps;
-}): boolean => {
-  const isBoundToFieldOutsideApplication = (path: string): boolean => {
-    const boundFieldUniversalIdentifier =
-      existingFlatValidationRule.bindings[path];
-    const boundField = isDefined(boundFieldUniversalIdentifier)
-      ? existingAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
-          boundFieldUniversalIdentifier
-        ]
-      : undefined;
-
-    return (
-      isDefined(boundField) &&
-      boundField.applicationId !== ownerFlatApplication.id
-    );
-  };
-
-  const isRenamedPath = ({
-    manifestPath,
-    savedPath,
-  }: {
-    manifestPath: string;
-    savedPath: string;
-  }): boolean => {
-    const manifestSegments = manifestPath.split('.');
-    const savedSegments = savedPath.split('.');
-
-    return (
-      manifestSegments.length === savedSegments.length &&
-      savedSegments.every(
-        (savedSegment, index) =>
-          savedSegment === manifestSegments[index] ||
-          isBoundToFieldOutsideApplication(
-            savedSegments.slice(0, index + 1).join('.'),
-          ),
-      )
-    );
-  };
-
-  const manifestTokens = toComparableTokens(manifestExpression);
-  const savedTokens = toComparableTokens(existingFlatValidationRule.expression);
-
-  return (
-    manifestTokens.length === savedTokens.length &&
-    manifestTokens.every((manifestToken, index) => {
-      const savedToken = savedTokens[index];
-
-      if (savedToken?.type !== manifestToken.type) {
-        return false;
-      }
-
-      return (
-        savedToken.text === manifestToken.text ||
-        (savedToken.type === 'path' &&
-          isRenamedPath({
-            manifestPath: manifestToken.text,
-            savedPath: savedToken.text,
-          }))
-      );
-    })
-  );
+  return parsing.isValid
+    ? resolveExpressionFieldReferences({ node: parsing.node, fields })
+    : null;
 };
 
-// Checks every bound field, so the result doesn't depend on which field the compiler reports first
-const findBoundFieldRemovedFromApplication = ({
-  existingFlatValidationRule,
+// Only a field the application removed itself fails the sync: the developer can't fix the others
+const findReadFieldRemovedFromApplication = ({
+  savedTree,
   ownerFlatApplication,
   fieldsAfterSyncByObjectUniversalIdentifier,
   existingAllFlatEntityMaps,
 }: {
-  existingFlatValidationRule: Pick<UniversalFlatValidationRule, 'bindings'>;
+  savedTree: ExpressionNode;
   ownerFlatApplication: Pick<FlatApplication, 'id'>;
   fieldsAfterSyncByObjectUniversalIdentifier: Map<
     string,
@@ -428,100 +267,97 @@ const findBoundFieldRemovedFromApplication = ({
       .map((field) => field.universalIdentifier),
   );
 
-  return Object.entries(existingFlatValidationRule.bindings).find(
-    ([, boundFieldUniversalIdentifier]) =>
-      existingAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
-        boundFieldUniversalIdentifier
-      ]?.applicationId === ownerFlatApplication.id &&
-      !fieldUniversalIdentifiersAfterSync.has(boundFieldUniversalIdentifier),
-  )?.[0];
+  return listValidationRuleReadFieldUniversalIdentifiers({ tree: savedTree })
+    .map(
+      (fieldUniversalIdentifier) =>
+        existingAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
+          fieldUniversalIdentifier
+        ],
+    )
+    .find(
+      (existingField) =>
+        existingField?.applicationId === ownerFlatApplication.id &&
+        !fieldUniversalIdentifiersAfterSync.has(
+          existingField.universalIdentifier,
+        ),
+    )?.name;
 };
 
-const resolveCompilationOutcome = ({
+const resolveValidationRuleTree = ({
   validationRuleManifest,
   existingFlatValidationRule,
   activeFieldsByObjectUniversalIdentifier,
-  ...fieldLookups
-}: Pick<
-  Parameters<typeof findUnavailableField>[0],
-  | 'ownerFlatApplication'
-  | 'fieldsAfterSyncByObjectUniversalIdentifier'
-  | 'existingAllFlatEntityMaps'
-> & {
+  fieldsAfterSyncByObjectUniversalIdentifier,
+  ownerFlatApplication,
+  existingAllFlatEntityMaps,
+}: {
   validationRuleManifest: Pick<
     ValidationRuleManifest,
     'name' | 'objectUniversalIdentifier' | 'expression'
   >;
   existingFlatValidationRule:
-    | Pick<UniversalFlatValidationRule, 'expression' | 'bindings' | 'isActive'>
+    | Pick<UniversalFlatValidationRule, 'tree' | 'isActive'>
     | undefined;
   activeFieldsByObjectUniversalIdentifier: Map<
     string,
     UniversalFlatFieldMetadata[]
   >;
-}): {
-  expression: string;
-  bindings: ValidationRuleBindings;
-  isActive: boolean;
-} => {
-  const compile = (
-    expression: string,
-    fieldsByObjectUniversalIdentifier: Map<
-      string,
-      UniversalFlatFieldMetadata[]
-    >,
-  ) =>
-    compileValidationRuleExpression({
-      expression,
-      fields: buildFieldDescriptors({
-        objectUniversalIdentifier:
-          validationRuleManifest.objectUniversalIdentifier,
-        activeFieldsByObjectUniversalIdentifier:
-          fieldsByObjectUniversalIdentifier,
-      }),
+  fieldsAfterSyncByObjectUniversalIdentifier: Map<
+    string,
+    UniversalFlatFieldMetadata[]
+  >;
+  ownerFlatApplication: Pick<FlatApplication, 'id'>;
+  existingAllFlatEntityMaps: ValidationRuleFlatEntityMaps;
+}): { tree: ExpressionNode | null; isActive: boolean } => {
+  const { expression, objectUniversalIdentifier } = validationRuleManifest;
+  const activeFields = buildFieldDescriptors({
+    objectUniversalIdentifier,
+    activeFieldsByObjectUniversalIdentifier,
+  });
+
+  if (
+    compileValidationRuleExpression({ expression, fields: activeFields })
+      .isValid
+  ) {
+    return {
+      tree: buildTree(expression, activeFields),
+      isActive: existingFlatValidationRule?.isActive ?? true,
+    };
+  }
+
+  const savedTree = getValidationRuleTree({
+    tree: existingFlatValidationRule?.tree,
+  });
+
+  if (
+    isDefined(existingFlatValidationRule) &&
+    isDefined(savedTree) &&
+    isSavedValidationRuleTreeRenamedFromManifest({
+      manifestExpression: expression,
+      savedTree,
+      ownerFlatApplication,
+      existingAllFlatEntityMaps,
+    })
+  ) {
+    const savedExpression = printExpressionNode({
+      node: savedTree,
+      printField: buildExpressionFieldPrinter({ fields: activeFields }),
     });
 
-  const manifestCompilationResult = compile(
-    validationRuleManifest.expression,
-    activeFieldsByObjectUniversalIdentifier,
-  );
+    if (
+      compileValidationRuleExpression({
+        expression: savedExpression,
+        fields: activeFields,
+      }).isValid
+    ) {
+      return { tree: savedTree, isActive: existingFlatValidationRule.isActive };
+    }
 
-  if (manifestCompilationResult.isValid) {
-    return {
-      expression: validationRuleManifest.expression,
-      bindings: manifestCompilationResult.bindings,
-      isActive: existingFlatValidationRule?.isActive ?? true,
-    };
-  }
-
-  const expression =
-    isDefined(existingFlatValidationRule) &&
-    isSavedExpressionRenamedFromManifest({
-      manifestExpression: validationRuleManifest.expression,
-      existingFlatValidationRule,
-      ownerFlatApplication: fieldLookups.ownerFlatApplication,
-      existingAllFlatEntityMaps: fieldLookups.existingAllFlatEntityMaps,
-    })
-      ? existingFlatValidationRule.expression
-      : validationRuleManifest.expression;
-
-  const compilationResult =
-    expression === validationRuleManifest.expression
-      ? manifestCompilationResult
-      : compile(expression, activeFieldsByObjectUniversalIdentifier);
-
-  if (compilationResult.isValid) {
-    return {
-      expression,
-      bindings: compilationResult.bindings,
-      isActive: existingFlatValidationRule?.isActive ?? true,
-    };
-  }
-
-  if (existingFlatValidationRule?.expression === expression) {
-    const removedFieldName = findBoundFieldRemovedFromApplication({
-      existingFlatValidationRule,
-      ...fieldLookups,
+    const removedFieldName = findReadFieldRemovedFromApplication({
+      savedTree,
+      ownerFlatApplication,
+      fieldsAfterSyncByObjectUniversalIdentifier,
+      existingAllFlatEntityMaps,
     });
 
     if (isDefined(removedFieldName)) {
@@ -530,48 +366,28 @@ const resolveCompilationOutcome = ({
         fieldName: removedFieldName,
       });
     }
+
+    return { tree: savedTree, isActive: false };
   }
 
-  const compilationWithInactiveFieldsResult = compile(
+  const fieldsAfterSync = buildFieldDescriptors({
+    objectUniversalIdentifier,
+    activeFieldsByObjectUniversalIdentifier:
+      fieldsAfterSyncByObjectUniversalIdentifier,
+  });
+  const compilationWithInactiveFields = compileValidationRuleExpression({
     expression,
-    fieldLookups.fieldsAfterSyncByObjectUniversalIdentifier,
-  );
-
-  if (compilationWithInactiveFieldsResult.isValid) {
-    return {
-      expression,
-      bindings: compilationWithInactiveFieldsResult.bindings,
-      isActive: false,
-    };
-  }
-
-  const unavailableField = findUnavailableField({
-    validationRuleManifest: { ...validationRuleManifest, expression },
-    existingFlatValidationRule,
-    errorCode: compilationWithInactiveFieldsResult.errorCode,
-    errorParams: compilationWithInactiveFieldsResult.errorParams,
-    ...fieldLookups,
+    fields: fieldsAfterSync,
   });
 
-  if (!isDefined(unavailableField)) {
+  if (!compilationWithInactiveFields.isValid) {
     throw new ApplicationException(
-      `Validation rule "${validationRuleManifest.name}" has an invalid expression: ${compilationWithInactiveFieldsResult.errorMessage}`,
+      `Validation rule "${validationRuleManifest.name}" has an invalid expression: ${compilationWithInactiveFields.errorMessage}`,
       ApplicationExceptionCode.INVALID_INPUT,
     );
   }
 
-  if (unavailableField.state === 'removedFromApplication') {
-    throw buildFieldRemovedFromApplicationException({
-      validationRuleName: validationRuleManifest.name,
-      fieldName: unavailableField.name,
-    });
-  }
-
-  return {
-    expression,
-    bindings: existingFlatValidationRule?.bindings ?? {},
-    isActive: false,
-  };
+  return { tree: buildTree(expression, fieldsAfterSync), isActive: false };
 };
 
 export const addValidationRuleManifestsToFlatEntityMapsOrThrow = ({
@@ -634,7 +450,7 @@ export const addValidationRuleManifestsToFlatEntityMapsOrThrow = ({
         validationRuleManifest.universalIdentifier
       ];
 
-    const { expression, bindings, isActive } = resolveCompilationOutcome({
+    const { tree, isActive } = resolveValidationRuleTree({
       validationRuleManifest,
       existingFlatValidationRule,
       activeFieldsByObjectUniversalIdentifier,
@@ -655,12 +471,11 @@ export const addValidationRuleManifestsToFlatEntityMapsOrThrow = ({
         fromValidationRuleManifestToUniversalFlatValidationRule({
           validationRuleManifest: {
             ...validationRuleManifest,
-            expression,
             ...(isErrorFieldDetached
               ? { errorFieldUniversalIdentifier: undefined }
               : {}),
           },
-          bindings,
+          tree,
           isActive,
           applicationUniversalIdentifier:
             ownerFlatApplication.universalIdentifier,

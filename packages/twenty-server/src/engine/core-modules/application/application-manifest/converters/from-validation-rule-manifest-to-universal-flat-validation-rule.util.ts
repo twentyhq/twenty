@@ -1,19 +1,18 @@
 /* @license Enterprise */
 
 import { type ValidationRuleManifest } from 'twenty-shared/application';
-import { type ValidationRuleBindings } from 'twenty-shared/types';
 
 import { type UniversalFlatValidationRule } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-validation-rule.type';
 
 export const fromValidationRuleManifestToUniversalFlatValidationRule = ({
   validationRuleManifest,
-  bindings,
+  tree,
   isActive,
   applicationUniversalIdentifier,
   now,
 }: {
-  validationRuleManifest: ValidationRuleManifest;
-  bindings: ValidationRuleBindings;
+  validationRuleManifest: Omit<ValidationRuleManifest, 'expression'>;
+  tree: UniversalFlatValidationRule['tree'];
   isActive: boolean;
   applicationUniversalIdentifier: string;
   now: string;
@@ -27,8 +26,9 @@ export const fromValidationRuleManifestToUniversalFlatValidationRule = ({
   name: validationRuleManifest.name.trim(),
   description: validationRuleManifest.description ?? null,
   icon: validationRuleManifest.icon ?? null,
-  expression: validationRuleManifest.expression,
-  bindings,
+  expression: null,
+  bindings: {},
+  tree,
   message: validationRuleManifest.message.trim(),
   isActive,
   createdAt: now,
