@@ -5,6 +5,7 @@ import { currentNavigationMenuTabIdState } from '@/navigation-menu-item/common/s
 import { type InboxChatAttention } from '@/inbox/types/InboxChatAttention';
 import { getNavigationMenuTabFolderKey } from '@/navigation-menu-item/common/utils/getNavigationMenuTabFolderKey';
 import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
+import { useHasAiChatSectionInSidebar } from '@/navigation-menu-item/display/hooks/useHasAiChatSectionInSidebar';
 import { useGetNavigationMenuTabAttentionLabel } from '@/navigation-menu-item/display/hooks/useGetNavigationMenuTabAttentionLabel';
 import { useNavigationMenuChatAttention } from '@/navigation-menu-item/display/hooks/useNavigationMenuChatAttention';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
@@ -40,6 +41,7 @@ import {
   FeatureFlagKey,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
+import { isNavigationDrawerTabShown } from '@/navigation/utils/isNavigationDrawerTabShown';
 import { isInboxPath } from '~/utils/isInboxPath';
 
 type MobileNavigationBarItemName =
@@ -76,6 +78,10 @@ export const useMobileNavigationBarItems = (): {
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
+  const isCustomizableSidebarEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
+  );
+  const hasAiChatSectionInSidebar = useHasAiChatSectionInSidebar();
   const { getIcon } = useIcons();
   const navigationMenuTabs = useWorkspaceNavigationMenuContainers({
     type: NavigationMenuItemType.TAB,
@@ -129,7 +135,7 @@ export const useMobileNavigationBarItems = (): {
     setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
     setCurrentNavigationMenuTabId(tabId);
 
-    if (isReopeningCurrentTab) {
+    if (isReopeningCurrentTab || !isCustomizableSidebarEnabled) {
       store.set(
         currentNavigationMenuItemFolderIdFamilyState.atomFamily(
           getNavigationMenuTabFolderKey(tabId),
@@ -181,7 +187,13 @@ export const useMobileNavigationBarItems = (): {
         onClick: () => openHomePageOnTab(null),
         attention: homeChatAttention,
       },
-      ...(hasAiPermission && isAiChatInboxEnabled
+      ...(isAiChatInboxEnabled &&
+      isNavigationDrawerTabShown({
+        tab: NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
+        hasAiPermission,
+        hasAiChatSectionInSidebar,
+        isCustomizableSidebarEnabled,
+      })
         ? [
             {
               name: 'inbox' as const,

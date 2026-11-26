@@ -23,7 +23,7 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { buildDeviceConditionalAvailability } from 'twenty-shared/conditional-availability';
+import { buildDeviceConditionalEvaluationNode } from 'twenty-shared/conditional-evaluation';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -275,7 +275,7 @@ export const SingleWidgetVisibility: Story = {
           instanceId: PAGE_LAYOUT_ID,
         }),
       ).tabs[0].widgets[0].conditionalAvailability,
-    ).toEqual(buildDeviceConditionalAvailability('MOBILE'));
+    ).toEqual(buildDeviceConditionalEvaluationNode('MOBILE'));
     await userEvent.click(trigger);
     expect(await body.findByRole('option', { name: 'Mobile' })).toHaveAttribute(
       'aria-selected',

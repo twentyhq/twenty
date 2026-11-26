@@ -9,6 +9,7 @@ import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channe
 import { RevokeRoleWideAccessToChannelObjectsCommand } from 'src/engine/permissions/channel-visibility/commands/revoke-role-wide-access-to-channel-objects.command';
 import { SyncChannelVisibilityRulesJob } from 'src/engine/permissions/channel-visibility/jobs/sync-channel-visibility-rules.job';
 import { ChannelVisibilityRuleSyncListener } from 'src/engine/permissions/channel-visibility/listeners/channel-visibility-rule-sync.listener';
+import { ChannelVisibilityRoleWideAccessRevokeService } from 'src/engine/permissions/channel-visibility/services/channel-visibility-role-wide-access-revoke.service';
 import { ChannelVisibilityRuleSyncService } from 'src/engine/permissions/channel-visibility/services/channel-visibility-rule-sync.service';
 import { ChannelVisibilityRuleSyncSchedulerService } from 'src/engine/permissions/channel-visibility/services/channel-visibility-rule-sync-scheduler.service';
 import { WorkspaceMemberIndividualRoleModule } from 'src/engine/permissions/workspace-member-individual-role/workspace-member-individual-role.module';
@@ -30,9 +31,11 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     ChannelVisibilityRuleSyncService,
     ChannelVisibilityRuleSyncListener,
     SyncChannelVisibilityRulesJob,
+    ChannelVisibilityRoleWideAccessRevokeService,
     RevokeRoleWideAccessToChannelObjectsCommand,
   ],
   exports: [
+    ChannelVisibilityRoleWideAccessRevokeService,
     ChannelVisibilityRuleSyncService,
     ChannelVisibilityRuleSyncSchedulerService,
   ],

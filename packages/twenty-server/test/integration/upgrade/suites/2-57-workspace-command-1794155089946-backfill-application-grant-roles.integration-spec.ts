@@ -10,6 +10,10 @@ import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import {
+  grantRoleWideAccessToChannelObjects,
+  revokeRoleWideAccessToChannelObjects,
+} from 'test/integration/utils/role-wide-access-to-channel-objects.util';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -48,6 +52,7 @@ describe('2-57 workspace command - backfill application grants (integration)', (
     );
 
   beforeAll(async () => {
+    await grantRoleWideAccessToChannelObjects();
     command = getAppProviderByClassName<BackfillApplicationGrantRolesCommand>(
       'BackfillApplicationGrantRolesCommand',
     );
@@ -126,6 +131,7 @@ describe('2-57 workspace command - backfill application grants (integration)', (
       applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
     });
     jest.useFakeTimers();
+    await revokeRoleWideAccessToChannelObjects();
   });
 
   it('writes nothing on a dry run', async () => {

@@ -7,7 +7,6 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { createRelationBetweenObjects } from 'test/integration/metadata/suites/object-metadata/utils/create-relation-between-objects.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { upsertRowLevelPermissionRules } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-rules.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { describePermissionTestWorkspace } from 'test/integration/permissions/utils/describe-permission-test-workspace.util';
 import {
   type PermissionTestExpectedAnswers,
@@ -17,7 +16,6 @@ import {
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import {
-  FeatureFlagKey,
   FieldMetadataType,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
@@ -167,18 +165,6 @@ describePermissionTestWorkspace({
     beforeAll(async () => {
       const workspace = findWorkspace();
       const token = workspace.adminAccessToken;
-
-      for (const featureFlag of [
-        FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED,
-        FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED,
-      ]) {
-        await updateFeatureFlag({
-          featureFlag,
-          value: true,
-          workspaceId: workspace.workspaceId,
-          expectToFail: false,
-        });
-      }
 
       const { objects } = await findManyObjectMetadata<{
         id: string;
