@@ -336,7 +336,15 @@ export const AiChatMessage = ({
               quote={messageQuote}
             />
           )}
-          {isUser ? (
+          {isToolsOnlyTurn && (
+            <AiChatToolsOnlyTurn
+              message={aiChatMessage}
+              hasTrailingSpace={hasFinishedStreamingInView}
+            >
+              {messageContent}
+            </AiChatToolsOnlyTurn>
+          )}
+          {!isToolsOnlyTurn && isUser && (
             <AiChatUserMessageText
               messageId={messageId}
               isOtherMember={isOtherMemberMessage}
@@ -344,14 +352,8 @@ export const AiChatMessage = ({
             >
               {messageContent}
             </AiChatUserMessageText>
-          ) : isToolsOnlyTurn ? (
-            <AiChatToolsOnlyTurn
-              message={aiChatMessage}
-              hasTrailingSpace={hasFinishedStreamingInView}
-            >
-              {messageContent}
-            </AiChatToolsOnlyTurn>
-          ) : (
+          )}
+          {!isToolsOnlyTurn && !isUser && (
             <StyledChatMessageBubble>{messageContent}</StyledChatMessageBubble>
           )}
           {isNonEmptyArray(attachments) && (

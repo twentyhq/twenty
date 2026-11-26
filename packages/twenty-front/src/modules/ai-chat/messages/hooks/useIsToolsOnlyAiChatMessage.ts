@@ -1,10 +1,7 @@
-import {
-  type ExtendedUIMessage,
-  isToolsOnlyAgentChatMessageParts,
-} from 'twenty-shared/ai';
+import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AGENT_MESSAGE_ROLE } from '@/ai-chat/messages/constants/AgentMessageRole';
+import { isToolsOnlyAiChatMessage } from '@/ai-chat/messages/utils/isToolsOnlyAiChatMessage';
 import { useIsStandaloneToolPart } from '@/ai-chat/tool-calls/hooks/useIsStandaloneToolPart';
 
 export const useIsToolsOnlyAiChatMessage = (
@@ -14,8 +11,7 @@ export const useIsToolsOnlyAiChatMessage = (
 
   return (
     isDefined(message) &&
-    message.role === AGENT_MESSAGE_ROLE.ASSISTANT &&
-    isToolsOnlyAgentChatMessageParts(message.parts) &&
+    isToolsOnlyAiChatMessage(message) &&
     !message.parts.some(isStandaloneToolPart)
   );
 };

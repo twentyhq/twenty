@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+import { getNextAiChatStreamingSnapshot } from '@/ai-chat/messages/utils/getNextAiChatStreamingSnapshot';
+
 export const useHasAiChatMessageFinishedStreamingInView = ({
   messageId,
   isStreaming,
@@ -17,15 +19,9 @@ export const useHasAiChatMessageFinishedStreamingInView = ({
     snapshot.messageId !== messageId ||
     snapshot.isStreaming !== isStreaming
   ) {
-    const isSameMessage = snapshot.messageId === messageId;
-
-    setSnapshot({
-      messageId,
-      isStreaming,
-      hasFinishedInView:
-        isSameMessage &&
-        (snapshot.hasFinishedInView || (snapshot.isStreaming && !isStreaming)),
-    });
+    setSnapshot(
+      getNextAiChatStreamingSnapshot(snapshot, { messageId, isStreaming }),
+    );
   }
 
   return snapshot.messageId === messageId && snapshot.hasFinishedInView;

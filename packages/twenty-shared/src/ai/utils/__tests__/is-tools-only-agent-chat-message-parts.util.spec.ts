@@ -2,18 +2,43 @@
 import { type ExtendedUIMessagePart } from '@/ai/types/ExtendedUIMessagePart';
 import { isToolsOnlyAgentChatMessageParts } from '@/ai/utils/is-tools-only-agent-chat-message-parts.util';
 
-const toolPart = (
-  toolName: string,
-  state: 'input-available' | 'output-available' | 'output-error',
-) =>
-  ({
-    type: `tool-${toolName}`,
-    toolCallId: `${toolName}-call`,
-    state,
-    input: {},
-    ...(state === 'output-available' ? { output: { success: true } } : {}),
-    ...(state === 'output-error' ? { errorText: 'Failed' } : {}),
-  }) as ExtendedUIMessagePart;
+const createCompanyPart: ExtendedUIMessagePart = {
+  type: 'tool-create_company',
+  toolCallId: 'create-company-call',
+  state: 'output-available',
+  input: {},
+  output: { success: true },
+};
+
+const failedReactionPart: ExtendedUIMessagePart = {
+  type: 'tool-react_to_message',
+  toolCallId: 'react-call',
+  state: 'output-error',
+  input: {},
+  errorText: 'Failed',
+};
+
+const runningCreateCompanyPart: ExtendedUIMessagePart = {
+  type: 'tool-create_company',
+  toolCallId: 'create-company-call',
+  state: 'input-available',
+  input: {},
+};
+
+const pendingQuestionPart: ExtendedUIMessagePart = {
+  type: 'tool-ask_question',
+  toolCallId: 'ask-question-call',
+  state: 'input-available',
+  input: {},
+};
+
+const noReplyPart: ExtendedUIMessagePart = {
+  type: 'tool-no_reply',
+  toolCallId: 'no-reply-call',
+  state: 'output-available',
+  input: {},
+  output: { success: true },
+};
 
 describe('isToolsOnlyAgentChatMessageParts', () => {
   it('accepts a turn that thought and ran tools without writing', () => {
@@ -21,44 +46,38 @@ describe('isToolsOnlyAgentChatMessageParts', () => {
       isToolsOnlyAgentChatMessageParts([
         { type: 'step-start' },
         { type: 'reasoning', text: 'Creating the company' },
-        toolPart('create_company', 'output-available'),
-        toolPart('react_to_message', 'output-error'),
+        createCompanyPart,
+        failedReactionPart,
         { type: 'text', text: '  ' },
-      ] as ExtendedUIMessagePart[]),
+      ]),
     ).toBe(true);
   });
 
   it('rejects a turn that wrote a reply', () => {
     expect(
       isToolsOnlyAgentChatMessageParts([
-        toolPart('create_company', 'output-available'),
+        createCompanyPart,
         { type: 'text', text: 'Done.' },
-      ] as ExtendedUIMessagePart[]),
+      ]),
     ).toBe(false);
   });
 
   it('rejects a turn whose tools have not finished', () => {
-    expect(
-      isToolsOnlyAgentChatMessageParts([
-        toolPart('create_company', 'input-available'),
-      ]),
-    ).toBe(false);
+    expect(isToolsOnlyAgentChatMessageParts([runningCreateCompanyPart])).toBe(
+      false,
+    );
   });
 
   it('rejects a turn that asks the member something', () => {
     expect(
       isToolsOnlyAgentChatMessageParts([
-        toolPart('create_company', 'output-available'),
-        toolPart('ask_question', 'input-available'),
+        createCompanyPart,
+        pendingQuestionPart,
       ]),
     ).toBe(false);
   });
 
   it('leaves no_reply turns to the silent check', () => {
-    expect(
-      isToolsOnlyAgentChatMessageParts([
-        toolPart('no_reply', 'output-available'),
-      ]),
-    ).toBe(false);
+    expect(isToolsOnlyAgentChatMessageParts([noReplyPart])).toBe(false);
   });
 });
