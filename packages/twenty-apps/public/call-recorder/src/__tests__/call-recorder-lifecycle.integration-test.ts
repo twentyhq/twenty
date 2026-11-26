@@ -68,6 +68,16 @@ const RECALL_BASE_URL = 'https://us-west-2.recall.ai/api/v1';
 const RESTRICTED_TITLE_PLACEHOLDER =
   'FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED';
 
+const readWorkspaceApiKey = (): string => {
+  const workspaceApiKey = process.env[WORKSPACE_API_KEY_ENV];
+
+  if (!isDefined(workspaceApiKey)) {
+    throw new Error(`${WORKSPACE_API_KEY_ENV} must be set`);
+  }
+
+  return workspaceApiKey;
+};
+
 // The app's generated client only covers the objects the app uses, but test
 // fixture discovery needs fields that are not part of the app schema; this
 // hits the GraphQL APIs directly.
@@ -80,7 +90,7 @@ const twentyGraphql = async <TData>({
   endpointPath: '/graphql' | '/metadata';
   query: string;
   variables?: Record<string, unknown>;
-  accessToken: string | undefined;
+  accessToken: string;
 }): Promise<TData> => {
   const response = await fetch(`${process.env.TWENTY_API_URL}${endpointPath}`, {
     method: 'POST',
@@ -123,7 +133,7 @@ const fetchApplicationAccessToken = async (): Promise<string> => {
       }
     }`,
     variables: { universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER },
-    accessToken: process.env[WORKSPACE_API_KEY_ENV],
+    accessToken: readWorkspaceApiKey(),
   });
 
   if (isNull(applicationRegistration)) {
@@ -142,7 +152,7 @@ const fetchApplicationAccessToken = async (): Promise<string> => {
       }
     }`,
     variables: { id: applicationRegistration.id },
-    accessToken: process.env[WORKSPACE_API_KEY_ENV],
+    accessToken: readWorkspaceApiKey(),
   });
   const response = await fetch(`${process.env.TWENTY_API_URL}/oauth/token`, {
     method: 'POST',
@@ -958,7 +968,6 @@ describe('call recorder app lifecycle (integration)', () => {
     workspaceId = readWorkspaceIdFromApiKey();
     applicationAccessToken = await fetchApplicationAccessToken();
     await waitForCalendarChannelsAccess(applicationAccessToken);
-    // A user can no longer write calendar events or their call recordings; the application can.
     client = new CoreApiClient({
       headers: { Authorization: `Bearer ${applicationAccessToken}` },
     });
@@ -991,7 +1000,7 @@ describe('call recorder app lifecycle (integration)', () => {
     vi.stubEnv('RECALL_API_KEY', 'recall-api-key');
     vi.stubEnv('RECALL_REGION', 'us-west-2');
     vi.stubEnv('CALL_RECORDER_STYLE', 'NONE');
-    // Background runs have no user behind them, so both tokens are the application's.
+    // A user can no longer write calendar events or their recordings, and background runs have no user.
     vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', applicationAccessToken);
     vi.stubEnv('TWENTY_APP_APPLICATION_ACCESS_TOKEN', applicationAccessToken);
   });
@@ -4595,6 +4604,7 @@ describe('call recorder app lifecycle (integration)', () => {
       ).toBe('CANCELED');
 
       vi.unstubAllEnvs();
+      vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', applicationAccessToken);
       vi.stubEnv('TWENTY_APP_APPLICATION_ACCESS_TOKEN', applicationAccessToken);
 
       await client.mutation({
