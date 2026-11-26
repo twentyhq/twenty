@@ -131,6 +131,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
                 {
                   messageChannelMessageAssociationId: associationId,
                   messageFolderIds,
+                  createdBy: message.createdBy ?? createdBy,
                 },
               ];
             });
@@ -216,6 +217,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
                     ...participant,
                     messageId,
                     shouldCreateContact,
+                    createdBy: message.createdBy ?? createdBy,
                   };
                 })
               : [];
@@ -240,7 +242,13 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
 
               return isDefined(messageId) &&
                 isNonEmptyArray(message.attachmentFiles)
-                ? [{ messageId, attachmentFiles: message.attachmentFiles }]
+                ? [
+                    {
+                      messageId,
+                      attachmentFiles: message.attachmentFiles,
+                      createdBy: message.createdBy ?? createdBy,
+                    },
+                  ]
                 : [];
             }),
             workspaceId,

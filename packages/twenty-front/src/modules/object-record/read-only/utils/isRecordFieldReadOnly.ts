@@ -7,6 +7,8 @@ import { type FieldDefinition } from '@/object-record/record-field/ui/types/Fiel
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import {
   canAccessThroughAllRecordsOrRlsPermission,
+  canAccessThroughAllRecordsPermission,
+  canRlsRuleAccessOperation,
   isDefined,
 } from 'twenty-shared/utils';
 
@@ -43,6 +45,22 @@ export const isRecordFieldReadOnly = ({
       objectPermissions,
       fieldMetadataId: fieldMetadataItem.id,
     }).canUpdateField
+  ) {
+    return true;
+  }
+
+  if (
+    !canAccessThroughAllRecordsPermission({
+      objectRecordsPermissions: objectPermissions,
+      operationType: 'update',
+    }) &&
+    (objectPermissions.rowLevelRecordsPermissions ?? [])
+      .filter((rule) =>
+        canRlsRuleAccessOperation({ rule, operationType: 'update' }),
+      )
+      .every((rule) =>
+        (rule.uneditableFields ?? []).includes(fieldMetadataItem.id),
+      )
   ) {
     return true;
   }
