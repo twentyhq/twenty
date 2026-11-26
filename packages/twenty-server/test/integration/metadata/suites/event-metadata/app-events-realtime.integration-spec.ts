@@ -1,4 +1,6 @@
 import { gql } from 'graphql-tag';
+import { createOneOperation } from 'test/integration/graphql/utils/create-one-operation.util';
+import { destroyOneOperation } from 'test/integration/graphql/utils/destroy-one-operation.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
@@ -13,7 +15,6 @@ import {
 import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 import { v4 as uuidv4 } from 'uuid';
 
-import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const TEST_APP_ID = uuidv4();
@@ -257,14 +258,19 @@ describe('app events realtime (e2e)', () => {
       })
     ).applicationAccessToken.token;
 
-    const [company] = await globalThis.testDataSource.query(
-      `SELECT id FROM ${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}.company WHERE "deletedAt" IS NULL LIMIT 1`,
-    );
+    const { data } = await createOneOperation({
+      objectMetadataSingularName: 'company',
+      input: { name: 'App events realtime test company' },
+    });
 
-    companyId = company.id;
+    companyId = data.createOneResponse.id;
   }, 60000);
 
   afterAll(async () => {
+    await destroyOneOperation({
+      objectMetadataSingularName: 'company',
+      recordId: companyId,
+    });
     await cleanupApplicationAndAppRegistration({
       applicationUniversalIdentifier: TEST_APP_ID,
     });
