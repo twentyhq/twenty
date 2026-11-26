@@ -1,4 +1,4 @@
-import { RECORD_LIST_ROW_DATE_MAX_WIDTH } from '@/object-record/record-list/constants/RecordListRowDateMaxWidth';
+import { RECORD_LIST_ROW_FIELD_MAX_WIDTH } from '@/object-record/record-list/constants/RecordListRowFieldMaxWidth';
 import { RECORD_LIST_ROW_OVERFLOW_CHIP_SLOT_WIDTH } from '@/object-record/record-list/constants/RecordListRowOverflowChipSlotWidth';
 import { computeRecordListDisplayedFields } from '@/object-record/record-list/utils/computeRecordListDisplayedFields';
 
@@ -27,16 +27,16 @@ describe('computeRecordListDisplayedFields', () => {
     });
   });
 
-  it('reserves room for the date before fitting fields', () => {
+  it('reserves room for the pinned field before fitting fields', () => {
     expect(
       computeRecordListDisplayedFields({
         rowWidth: 524,
         populatedFieldCount: 3,
-        hasDate: true,
+        hasPinnedField: true,
       }),
     ).toEqual({
       displayedFieldCount: 1,
-      displayedFieldMaxWidth: 140,
+      displayedFieldMaxWidth: 104,
     });
   });
 
@@ -82,17 +82,17 @@ describe('computeRecordListDisplayedFields', () => {
   const computeRowContentWidth = ({
     rowWidth,
     populatedFieldCount,
-    hasDate,
+    hasPinnedField,
   }: {
     rowWidth: number;
     populatedFieldCount: number;
-    hasDate: boolean;
+    hasPinnedField: boolean;
   }) => {
     const { displayedFieldCount, displayedFieldMaxWidth } =
       computeRecordListDisplayedFields({
         rowWidth,
         populatedFieldCount,
-        hasDate,
+        hasPinnedField,
       });
 
     const hiddenFieldCount = populatedFieldCount - displayedFieldCount;
@@ -103,8 +103,8 @@ describe('computeRecordListDisplayedFields', () => {
         ? RECORD_LIST_ROW_OVERFLOW_CHIP_SLOT_WIDTH +
           (displayedFieldCount > 0 ? FIELD_GAP_WIDTH : 0)
         : 0;
-    const dateWidth = hasDate
-      ? RECORD_LIST_ROW_DATE_MAX_WIDTH +
+    const pinnedFieldWidth = hasPinnedField
+      ? RECORD_LIST_ROW_FIELD_MAX_WIDTH +
         (populatedFieldCount > 0 ? FIELD_GAP_WIDTH : 0)
       : 0;
 
@@ -113,7 +113,7 @@ describe('computeRecordListDisplayedFields', () => {
       displayedFieldCount * displayedFieldMaxWidth +
       displayedFieldsGapWidth +
       overflowChipWidth +
-      dateWidth
+      pinnedFieldWidth
     );
   };
 
@@ -125,22 +125,22 @@ describe('computeRecordListDisplayedFields', () => {
           computeRowContentWidth({
             rowWidth,
             populatedFieldCount,
-            hasDate: false,
+            hasPinnedField: false,
           }),
         ).toBeLessThanOrEqual(rowWidth);
       }
     },
   );
 
-  it.each([372, 424, 463, 464, 523, 524, 900, 1200])(
-    'never promises a %ipx row with a date more width than it has',
+  it.each([408, 424, 499, 500, 523, 524, 900, 1200])(
+    'never promises a %ipx row with a pinned field more width than it has',
     (rowWidth) => {
       for (const populatedFieldCount of [0, 1, 2, 3, 7, 20]) {
         expect(
           computeRowContentWidth({
             rowWidth,
             populatedFieldCount,
-            hasDate: true,
+            hasPinnedField: true,
           }),
         ).toBeLessThanOrEqual(rowWidth);
       }

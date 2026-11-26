@@ -2,7 +2,7 @@ import { ListItemButton } from 'twenty-ui/components/navigation';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { useSetViewTypeFromLayoutOptionsMenu } from '@/object-record/object-options-dropdown/hooks/useSetViewTypeFromLayoutOptionsMenu';
 import { recordIndexCalendarLayoutComponentState } from '@/object-record/record-index/states/recordIndexCalendarLayoutComponentState';
-import { recordIndexListDateFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexListDateFieldMetadataIdComponentState';
+import { recordIndexListPinnedFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexListPinnedFieldMetadataIdComponentState';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
@@ -34,10 +34,10 @@ import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import {
   IconBaselineDensitySmall,
   IconCalendar,
-  IconCalendarEvent,
   IconCalendarWeek,
   IconChevronLeft,
   IconLayoutList,
+  IconPin,
   IconTable,
 } from 'twenty-ui/icon';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
@@ -72,12 +72,12 @@ export const ObjectOptionsDropdownLayoutContent = () => {
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
-  const recordIndexListDateFieldMetadataId = useAtomComponentStateValue(
-    recordIndexListDateFieldMetadataIdComponentState,
+  const recordIndexListPinnedFieldMetadataId = useAtomComponentStateValue(
+    recordIndexListPinnedFieldMetadataIdComponentState,
   );
 
-  const listDateFieldMetadataItem = objectMetadataItem.fields.find(
-    (field) => field.id === recordIndexListDateFieldMetadataId,
+  const listPinnedFieldMetadataItem = objectMetadataItem.fields.find(
+    (field) => field.id === recordIndexListPinnedFieldMetadataId,
   );
 
   const calendarFieldMetadata = currentView?.calendarFieldMetadataId
@@ -135,7 +135,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
     ...(currentView?.type === ViewType.CALENDAR
       ? ['CalendarView', 'CalendarDateField']
       : []),
-    ...(isListView ? ['ListDateField'] : []),
+    ...(isListView ? ['ListPinnedField'] : []),
     ...(hasViewTypeSettings && !isListView
       ? // Selectable list ids must match their stable item ids.
         [doNotTranslate('Compact view')]
@@ -338,17 +338,19 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                 )}
                 {isListView && (
                   <SelectableListItem
-                    itemId="ListDateField"
-                    onEnter={() => onContentChange('listDateField')}
+                    itemId="ListPinnedField"
+                    onEnter={() => onContentChange('listPinnedField')}
                   >
                     <ListItemButton
-                      focused={selectedItemId === 'ListDateField'}
-                      onClick={() => onContentChange('listDateField')}
-                      startIcon={<IconCalendarEvent />}
-                      description={listDateFieldMetadataItem?.label ?? t`None`}
+                      focused={selectedItemId === 'ListPinnedField'}
+                      onClick={() => onContentChange('listPinnedField')}
+                      startIcon={<IconPin />}
+                      description={
+                        listPinnedFieldMetadataItem?.label ?? t`None`
+                      }
                       descriptionPlacement="end"
                       hasSubmenu
-                    >{t`Date`}</ListItemButton>
+                    >{t`Pinned field`}</ListItemButton>
                   </SelectableListItem>
                 )}
                 {!isListView && (

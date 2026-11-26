@@ -1,4 +1,3 @@
-import { RECORD_LIST_ROW_DATE_MAX_WIDTH } from '@/object-record/record-list/constants/RecordListRowDateMaxWidth';
 import { RECORD_LIST_ROW_FIELD_MAX_WIDTH } from '@/object-record/record-list/constants/RecordListRowFieldMaxWidth';
 import { RECORD_LIST_ROW_FIELD_MIN_WIDTH } from '@/object-record/record-list/constants/RecordListRowFieldMinWidth';
 import { RECORD_LIST_ROW_LABEL_IDENTIFIER_WIDTH } from '@/object-record/record-list/constants/RecordListRowLabelIdentifierWidth';
@@ -12,14 +11,14 @@ const ROW_ITEM_GAP_WIDTH = 12;
 export const computeRecordListDisplayedFields = ({
   rowWidth,
   populatedFieldCount,
-  hasDate = false,
+  hasPinnedField = false,
 }: {
   rowWidth: number;
   populatedFieldCount: number;
-  hasDate?: boolean;
+  hasPinnedField?: boolean;
 }): RecordListDisplayedFields => {
-  const widthReservedForDate = hasDate
-    ? RECORD_LIST_ROW_DATE_MAX_WIDTH + ROW_ITEM_GAP_WIDTH
+  const widthReservedForPinnedField = hasPinnedField
+    ? RECORD_LIST_ROW_FIELD_MAX_WIDTH + ROW_ITEM_GAP_WIDTH
     : 0;
 
   const widthAvailableWithoutOverflowChip =
@@ -27,7 +26,7 @@ export const computeRecordListDisplayedFields = ({
     ROW_HORIZONTAL_PADDING_WIDTH -
     RECORD_LIST_ROW_LABEL_IDENTIFIER_WIDTH -
     ROW_ITEM_GAP_WIDTH -
-    widthReservedForDate;
+    widthReservedForPinnedField;
 
   const widthNeededToDisplayAllFields =
     populatedFieldCount * RECORD_LIST_ROW_FIELD_MIN_WIDTH +

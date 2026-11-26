@@ -24,7 +24,7 @@ import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/s
 import { recordIndexGroupAggregateFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupAggregateFieldMetadataItemComponentState';
 import { recordIndexGroupAggregateOperationComponentState } from '@/object-record/record-index/states/recordIndexGroupAggregateOperationComponentState';
 import { recordIndexGroupLoadLimitComponentState } from '@/object-record/record-index/states/recordIndexGroupLoadLimitComponentState';
-import { recordIndexListDateFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexListDateFieldMetadataIdComponentState';
+import { recordIndexListPinnedFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexListPinnedFieldMetadataIdComponentState';
 import { recordIndexKanbanColumnWidthComponentState } from '@/object-record/record-index/states/recordIndexKanbanColumnWidthComponentState';
 import { recordIndexShouldDisplayGroupsAsTabsComponentState } from '@/object-record/record-index/states/recordIndexShouldDisplayGroupsAsTabsComponentState';
 import { recordIndexShouldHideEmptyRecordGroupsComponentState } from '@/object-record/record-index/states/recordIndexShouldHideEmptyRecordGroupsComponentState';
@@ -365,10 +365,10 @@ export const useLoadRecordIndexStates = () => {
           }
 
           batchSet(
-            recordIndexListDateFieldMetadataIdComponentState.atomFamily({
+            recordIndexListPinnedFieldMetadataIdComponentState.atomFamily({
               instanceId: recordIndexId,
             }),
-            view.listDateFieldMetadataId ?? null,
+            view.listPinnedFieldMetadataId ?? null,
           );
 
           batchSet(

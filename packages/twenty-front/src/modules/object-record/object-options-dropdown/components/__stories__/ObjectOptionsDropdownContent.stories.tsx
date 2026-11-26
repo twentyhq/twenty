@@ -297,7 +297,7 @@ export const RecordGroupLoadLimitSelectionAction: Story = {
   },
 };
 
-export const ListDateFieldSelectionAction: Story = {
+export const ListPinnedFieldSelectionAction: Story = {
   decorators: [
     createCurrentViewDecorator(SAVABLE_LIST_VIEW),
     createContentDecorator('layout'),
@@ -316,29 +316,31 @@ export const ListDateFieldSelectionAction: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await userEvent.click(await canvas.findByText('Date'));
+    await userEvent.click(await canvas.findByText('Pinned field'));
 
     expect(await canvas.findByRole('option', { name: 'None' })).toHaveAttribute(
       'aria-selected',
       'true',
     );
 
-    await userEvent.click(
-      canvas.getByRole('option', { name: 'Creation date' }),
-    );
-
-    expect(await canvas.findByText('Date')).toBeInTheDocument();
-    expect(canvas.getByText('Creation date')).toBeInTheDocument();
-
-    await userEvent.click(canvas.getByText('Date'));
+    await userEvent.click(canvas.getByRole('option', { name: 'Employees' }));
 
     expect(
-      await canvas.findByRole('option', { name: 'Creation date' }),
+      await canvas.findByRole('option', { name: 'List' }),
+    ).toBeInTheDocument();
+    expect(canvas.getByText('Employees')).toBeInTheDocument();
+
+    await userEvent.click(canvas.getByText('Pinned field'));
+
+    expect(
+      await canvas.findByRole('option', { name: 'Employees' }),
     ).toHaveAttribute('aria-selected', 'true');
 
     await userEvent.click(canvas.getByRole('option', { name: 'None' }));
 
-    expect(await canvas.findByText('Date')).toBeInTheDocument();
+    expect(
+      await canvas.findByRole('option', { name: 'List' }),
+    ).toBeInTheDocument();
     expect(canvas.getByText('None')).toBeInTheDocument();
   },
 };

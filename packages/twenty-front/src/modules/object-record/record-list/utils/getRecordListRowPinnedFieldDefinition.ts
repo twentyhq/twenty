@@ -7,7 +7,7 @@ import { isFieldDateTime } from '@/object-record/record-field/ui/types/guards/is
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { isDefined } from 'twenty-shared/utils';
 
-export const getRecordListRowDateFieldDefinition = (
+export const getRecordListRowPinnedFieldDefinition = (
   fieldDefinition: ColumnDefinition<FieldMetadata> | undefined,
 ): ColumnDefinition<FieldMetadata> | undefined => {
   if (!isDefined(fieldDefinition)) {
@@ -15,7 +15,7 @@ export const getRecordListRowDateFieldDefinition = (
   }
 
   if (!isFieldDate(fieldDefinition) && !isFieldDateTime(fieldDefinition)) {
-    return undefined;
+    return fieldDefinition;
   }
 
   return {

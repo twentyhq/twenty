@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fireEvent, userEvent, waitFor, within } from 'storybook/test';
 
-import { recordIndexListDateFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexListDateFieldMetadataIdComponentState';
+import { recordIndexListPinnedFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexListPinnedFieldMetadataIdComponentState';
 import { RecordList } from '@/object-record/record-list/components/RecordList';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -103,7 +103,7 @@ const StyledWideListContainer = styled.div`
   width: 720px;
 `;
 
-export const DateField: Story = {
+export const PinnedField: Story = {
   decorators: [
     (Story) => (
       <StyledWideListContainer>
@@ -132,7 +132,7 @@ export const DateField: Story = {
       )!;
 
     jotaiStore.set(
-      recordIndexListDateFieldMetadataIdComponentState.atomFamily({
+      recordIndexListPinnedFieldMetadataIdComponentState.atomFamily({
         instanceId: getRecordIndexIdFromObjectNamePluralAndViewId(
           companyObjectMetadataItem.namePlural,
           mockedViews.find((view) => view.name === 'All Companies')!.id,

@@ -14,11 +14,11 @@ describe('convertUpdateViewInputToGql', () => {
     expect(convertUpdateViewInputToGql({})).toEqual({ id: undefined });
   });
 
-  it('includes a null list date field so it can be cleared', () => {
+  it('includes a null list pinned field so it can be cleared', () => {
     expect(
-      convertUpdateViewInputToGql({ listDateFieldMetadataId: null }),
+      convertUpdateViewInputToGql({ listPinnedFieldMetadataId: null }),
     ).toEqual({
-      listDateFieldMetadataId: null,
+      listPinnedFieldMetadataId: null,
       id: undefined,
     });
   });
