@@ -8,7 +8,7 @@ import { Repository } from 'typeorm';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { buildMissingStandardCommandMenuItemsToCreate } from 'src/database/commands/upgrade-version-command/2-39/utils/build-missing-standard-command-menu-items-to-create.util';
+import { buildMissingStandardCommandMenuItemsToCreate } from 'src/database/commands/upgrade-version-command/utils/build-missing-standard-command-menu-items-to-create.util';
 import { applyObjectNavigationCommandMenuItemRepairs } from 'src/database/commands/upgrade-version-command/2-61/utils/apply-object-navigation-command-menu-item-repairs.util';
 import { buildObjectNavigationCommandMenuItemRepairs } from 'src/database/commands/upgrade-version-command/2-61/utils/build-object-navigation-command-menu-item-repairs.util';
 import { buildStandardCommandMenuItemAvailabilityUpdates } from 'src/database/commands/upgrade-version-command/2-61/utils/build-standard-command-menu-item-availability-updates.util';

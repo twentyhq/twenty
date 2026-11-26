@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useDebounce } from 'use-debounce';
 
+import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
 import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
 import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/object-record/constants/DefaultSearchRequestLimit';
 import { useObjectRecordSearchRecords } from '@/object-record/hooks/useObjectRecordSearchRecords';
@@ -42,13 +43,14 @@ export const SidePanelLinkAiChatToRecordsResults = ({
   const [debouncedSearch] = useDebounce(search.trim(), 300);
   const [linkedRecordIdsAtOpen] = useState(linkedRecordIds);
   const hasLinkedRecords = linkedRecordIdsAtOpen.length > 0;
+  const hasSearchableObjects = searchableObjectNameSingulars.length > 0;
 
   const linkedSearch = useObjectRecordSearchRecords({
     objectNameSingulars: searchableObjectNameSingulars,
     searchInput: debouncedSearch,
     filter: { id: { in: linkedRecordIdsAtOpen } },
     limit: DEFAULT_SEARCH_REQUEST_LIMIT,
-    skip: !hasLinkedRecords,
+    skip: !hasSearchableObjects || !hasLinkedRecords,
   });
   const otherSearch = useObjectRecordSearchRecords({
     objectNameSingulars: searchableObjectNameSingulars,
@@ -57,9 +59,13 @@ export const SidePanelLinkAiChatToRecordsResults = ({
       ? { not: { id: { in: linkedRecordIdsAtOpen } } }
       : {},
     limit: DEFAULT_SEARCH_REQUEST_LIMIT,
+    skip: !hasSearchableObjects,
   });
-  const linkedRecords = hasLinkedRecords ? linkedSearch.searchRecords : [];
-  const otherRecords = otherSearch.searchRecords;
+  const linkedRecords =
+    hasSearchableObjects && hasLinkedRecords ? linkedSearch.searchRecords : [];
+  const otherRecords = hasSearchableObjects ? otherSearch.searchRecords : [];
+  const isLoading =
+    hasSearchableObjects && (linkedSearch.loading || otherSearch.loading);
 
   const renderItem = (searchRecord: SearchRecord) => {
     const isLinked = linkedRecordIds.includes(searchRecord.recordId);
@@ -105,15 +111,27 @@ export const SidePanelLinkAiChatToRecordsResults = ({
         selectableItemIds={[...linkedRecords, ...otherRecords].map(
           ({ recordId }) => recordId,
         )}
-        loading={linkedSearch.loading || otherSearch.loading}
+        loading={isLoading}
         noResults={linkedRecords.length === 0 && otherRecords.length === 0}
       >
         <SidePanelGroup heading={t`Linked`}>
           {linkedRecords.map(renderItem)}
         </SidePanelGroup>
+        {linkedRecords.length > 0 && linkedSearch.hasNextPage && (
+          <CustomResolverFetchMoreLoader
+            loading={linkedSearch.loading}
+            onLastRowVisible={linkedSearch.fetchMoreRecords}
+          />
+        )}
         <SidePanelGroup heading={t`Records`}>
           {otherRecords.map(renderItem)}
         </SidePanelGroup>
+        {otherRecords.length > 0 && otherSearch.hasNextPage && (
+          <CustomResolverFetchMoreLoader
+            loading={otherSearch.loading}
+            onLastRowVisible={otherSearch.fetchMoreRecords}
+          />
+        )}
       </SidePanelList>
     </>
   );

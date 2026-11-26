@@ -25,6 +25,7 @@ import { AiChatDictationEffect } from '@/ai-chat/dictation/components/AiChatDict
 import { AiChatDictationHint } from '@/ai-chat/dictation/components/AiChatDictationHint';
 import { AiChatComposerActionsRow } from '@/ai-chat/components/AiChatComposerActionsRow';
 import { AiChatContextUsageButton } from '@/ai-chat/usage/components/AiChatContextUsageButton';
+import { AiChatComposerActionsRowContext } from '@/ai-chat/contexts/AiChatComposerActionsRowContext';
 import { AiChatSendMessageButton } from '@/ai-chat/composer/components/AiChatSendMessageButton';
 import { useSendAiChatComposerMessage } from '@/ai-chat/composer/hooks/useSendAiChatComposerMessage';
 import { useAiChatEditor } from '@/ai-chat/composer/hooks/useAiChatEditor';
@@ -67,6 +68,12 @@ const StyledInputArea = styled(StyledAiChatContentContainer)<{
     hasPageContentInset && !isCentered
       ? AI_CHAT_PAGE_CONTENT_INLINE_PADDING
       : themeCssVariables.spacing[4]};
+`;
+
+const StyledViewOnlyRow = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledInputBox = styled(StyledChatComposerBox)<{ isMobile: boolean }>`
@@ -244,19 +251,34 @@ export const AiChatEditorSection = () => {
   const isMobile = useIsMobile();
   const access = useCurrentAiChatThreadAccess();
   const hasPageContentInset = useHasAiChatPageContentInset();
+  const { threadId } = useAiChatInstanceOrThrow();
+  const isDirectMessage = useAtomFamilySelectorValue(
+    aiChatThreadIsDirectMessageFamilySelector,
+    threadId,
+  );
+  const [viewOnlyInputArea, setViewOnlyInputArea] =
+    useState<HTMLDivElement | null>(null);
   if (access !== 'writer') {
     return (
       <StyledInputArea
+        ref={setViewOnlyInputArea}
         isMobile={isMobile}
         hasPageContentInset={hasPageContentInset}
       >
-        <div role="status">
-          {access === 'loading'
-            ? t`Loading conversation…`
-            : access === 'unavailable'
-              ? t`This conversation is no longer available.`
-              : t`View only — You can read this conversation.`}
-        </div>
+        <StyledViewOnlyRow>
+          {access === 'viewer' && !isDirectMessage && (
+            <AiChatComposerActionsRowContext.Provider value={viewOnlyInputArea}>
+              <AiChatContextUsageButton />
+            </AiChatComposerActionsRowContext.Provider>
+          )}
+          <div role="status">
+            {access === 'loading'
+              ? t`Loading conversation…`
+              : access === 'unavailable'
+                ? t`This conversation is no longer available.`
+                : t`View only — You can read this conversation.`}
+          </div>
+        </StyledViewOnlyRow>
         <AiChatStandaloneError />
       </StyledInputArea>
     );

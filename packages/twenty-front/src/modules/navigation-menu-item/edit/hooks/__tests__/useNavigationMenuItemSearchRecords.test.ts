@@ -17,9 +17,13 @@ jest.mock('@/object-record/hooks/useObjectRecordSearchRecords', () => ({
 describe('navigation record search empty state', () => {
   beforeEach(() => {
     jest.useFakeTimers();
-    jest
-      .mocked(useObjectRecordSearchRecords)
-      .mockReturnValue({ loading: false, searchRecords: [], error: undefined });
+    jest.mocked(useObjectRecordSearchRecords).mockReturnValue({
+      loading: false,
+      searchRecords: [],
+      error: undefined,
+      hasNextPage: false,
+      fetchMoreRecords: jest.fn(),
+    });
   });
   afterEach(() => jest.useRealTimers());
 
@@ -66,6 +70,8 @@ describe('navigation record search duplicates', () => {
         },
       ],
       error: undefined,
+      hasNextPage: false,
+      fetchMoreRecords: jest.fn(),
     });
     const existingItem: NavigationMenuItem = {
       id: 'navigation-ivan',
