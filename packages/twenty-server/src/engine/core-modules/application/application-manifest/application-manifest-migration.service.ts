@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { type Manifest } from 'twenty-shared/application';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
 import { ComputeApplicationManifestAllUniversalFlatEntityMapsService } from 'src/engine/core-modules/application/application-manifest/services/compute-application-manifest-all-universal-flat-entity-maps.service';
 import { buildApplicationWorkflowCronTriggerCacheEntries } from 'src/engine/core-modules/application/application-manifest/utils/build-application-workflow-cron-trigger-cache-entries.util';
@@ -12,6 +14,7 @@ import { preallocateWorkflowReferenceIds } from 'src/engine/core-modules/applica
 import { buildAllFlatEntityOperationRecordByMetadataNameFromFromTo } from 'src/engine/core-modules/application/application-manifest/utils/build-all-flat-entity-operation-record-by-metadata-name-from-from-to.util';
 import { buildFromToAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/build-from-to-all-universal-flat-entity-maps.util';
 import { isMarketplaceApplication } from 'src/engine/core-modules/application/application-manifest/utils/is-marketplace-application.util';
+import { assertWorkspaceDefaultRoleStaysAssignableToUsers } from 'src/engine/core-modules/application/application-manifest/utils/assert-workspace-default-role-stays-assignable-to-users.util';
 import { restrictMarketplaceApplicationRoleAssignabilityThroughMutation } from 'src/engine/core-modules/application/application-manifest/utils/restrict-marketplace-application-role-assignability-through-mutation.util';
 import { getApplicationSubAllFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/get-application-sub-all-flat-entity-maps.util';
 import { assertConnectionProviderLogicFunctionsAreOwn } from 'src/engine/core-modules/application/application-manifest/utils/assert-connection-provider-logic-functions-are-own.util';
@@ -23,6 +26,7 @@ import {
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { CoreWorkflowTriggerService } from 'src/engine/core-modules/workflow/services/core-workflow-trigger.service';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
@@ -45,6 +49,8 @@ export class ApplicationManifestMigrationService {
     private readonly logger: LoggerService,
     private readonly coreWorkflowTriggerService: CoreWorkflowTriggerService,
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
   async syncPreInstallLogicFunctionFromManifest({
@@ -252,6 +258,17 @@ export class ApplicationManifestMigrationService {
       restrictMarketplaceApplicationRoleAssignabilityThroughMutation({
         manifest,
         toAllUniversalFlatEntityMapsToMutate: toAllUniversalFlatEntityMaps,
+      });
+
+      const workspace = await this.workspaceRepository.findOne({
+        select: { defaultRoleId: true },
+        where: { id: workspaceId },
+      });
+
+      assertWorkspaceDefaultRoleStaysAssignableToUsers({
+        workspaceDefaultRoleId: workspace?.defaultRoleId ?? null,
+        existingFlatRoleMaps: existingAllFlatEntityMaps.flatRoleMaps,
+        toUniversalFlatRoleMaps: toAllUniversalFlatEntityMaps.flatRoleMaps,
       });
     }
 
