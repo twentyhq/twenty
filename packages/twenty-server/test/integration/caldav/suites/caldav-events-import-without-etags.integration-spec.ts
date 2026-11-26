@@ -159,6 +159,7 @@ describe('CalDAV calendar events import without entity tags (integration)', () =
         endsAt: '2026-08-13T10:00:00Z',
         isFullDay: false,
         timeZone: 'UTC',
+        attendees: 'attendee@example.com',
         sendInvitations: false,
         addConferencing: false,
       },
