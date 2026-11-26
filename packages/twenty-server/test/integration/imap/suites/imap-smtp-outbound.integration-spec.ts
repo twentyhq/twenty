@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
 import { EmailConnectionSecurity } from 'src/engine/core-modules/imap-smtp-caldav-connection/enums/email-connection-security.enum';
+import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { deleteConnectedAccount } from 'test/integration/metadata/suites/connected-account/utils/delete-connected-account.util';
 import { saveImapSmtpCaldavAccount } from 'test/integration/metadata/suites/connected-account/utils/save-imap-smtp-caldav-account.util';
@@ -121,8 +122,9 @@ describe('IMAP/SMTP outbound messaging (integration)', () => {
       { subject: { eq: subject } },
     );
 
-    // the System default leaves workspaceMemberId null
-    const createdBy = { workspaceMemberId: expect.any(String) };
+    const createdBy = {
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+    };
 
     expect(message).toMatchObject({
       isDraft: false,

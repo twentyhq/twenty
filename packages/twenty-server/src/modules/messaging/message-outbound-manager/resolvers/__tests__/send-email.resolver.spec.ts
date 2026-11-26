@@ -1,5 +1,4 @@
 import { type MessageDescriptor } from '@lingui/core';
-import { FieldActorSource } from 'twenty-shared/types';
 import { EMAIL_DOCUMENT_SCHEMA_VERSION, isDefined } from 'twenty-shared/utils';
 
 import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
@@ -105,11 +104,10 @@ describe('SendEmailResolver errors', () => {
   });
 });
 
-const WORKSPACE_MEMBER_ID = '77777777-7777-4777-8777-777777777777';
 const AUTH_CONTEXT = {
   type: 'user',
   workspace: { id: WORKSPACE_ID },
-  workspaceMemberId: WORKSPACE_MEMBER_ID,
+  workspaceMemberId: 'workspace-member-id',
   workspaceMember: { name: { firstName: 'Ada', lastName: 'Lovelace' } },
 };
 
@@ -134,14 +132,6 @@ describe('SendEmailResolver target record linking', () => {
     persistedMessageThreadId?: string;
   }) => {
     const linkSentMessageThreadToRecord = jest.fn();
-    const persistSentMessage = jest.fn().mockResolvedValue(
-      isDefined(persistedMessageThreadId)
-        ? {
-            messageId: 'message-id',
-            messageThreadId: persistedMessageThreadId,
-          }
-        : undefined,
-    );
 
     const resolver = new SendEmailResolver(
       { verifyUsableByCaller: jest.fn() } as never,
@@ -154,30 +144,21 @@ describe('SendEmailResolver target record linking', () => {
       { deleteFiles: jest.fn() } as never,
       {
         sendComposedEmail: jest.fn().mockResolvedValue({}),
-        persistSentMessage,
+        persistSentMessage: jest.fn().mockResolvedValue(
+          isDefined(persistedMessageThreadId)
+            ? {
+                messageId: 'message-id',
+                messageThreadId: persistedMessageThreadId,
+              }
+            : undefined,
+        ),
       } as never,
       { linkSentMessageThreadToRecord } as never,
       {} as never,
     );
 
-    return { resolver, linkSentMessageThreadToRecord, persistSentMessage };
+    return { resolver, linkSentMessageThreadToRecord };
   };
-
-  it('records the sender as the creator of the persisted message', async () => {
-    const { resolver, persistSentMessage } = buildResolver({});
-
-    await resolver.sendEmail(baseInput, workspace, USER_WORKSPACE_ID, context);
-
-    expect(persistSentMessage).toHaveBeenCalledWith(
-      expect.objectContaining({
-        createdBy: expect.objectContaining({
-          source: FieldActorSource.MANUAL,
-          name: 'Ada Lovelace',
-          workspaceMemberId: WORKSPACE_MEMBER_ID,
-        }),
-      }),
-    );
-  });
 
   it('links the sent thread to the record the email was sent from', async () => {
     const { resolver, linkSentMessageThreadToRecord } = buildResolver({
