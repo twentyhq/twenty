@@ -133,7 +133,9 @@ const HALFTONE_FRAGMENT = /* glsl */ `
     float alpha = 0.0;
     if (level > 0.0001) {
       vec2 f = fract(frag / cell) - 0.5;
-      float aa = 1.0 / cell;
+      // one device pixel of smoothing, in cell units: a CSS pixel blurs the
+      // dots on a dense screen
+      float aa = 0.5 * logicalResolution.x / max(effectResolution.x, 1.0) / cell;
       float roundness = 0.08 + 0.3 * level;
       // the power leaves the lit land around 0.3-0.5: that range stretches into dashes
       float stretch = 0.5 * dotScale * smoothstep(0.22, 0.5, level);
