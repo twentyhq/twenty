@@ -2,21 +2,17 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type MouseEvent, type ReactNode, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Dropdown } from 'twenty-ui/components/navigation';
-import { IconPaint } from 'twenty-ui/icon';
 
 import { type PositionType } from '@/command-menu-item/types/PositionType';
 import { createVirtualElementFromPosition } from '@/command-menu-item/utils/createVirtualElementFromPosition';
-import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/useEnterLayoutCustomizationMode';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
-import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
+import { NavigationMenuCustomizeSidebarMenuContent } from '@/navigation-menu-item/edit/components/NavigationMenuCustomizeSidebarMenuContent';
 import { MAIN_NAVIGATION_DRAWER_CONTEXT_MENU_DROPDOWN_ID } from '@/navigation/constants/MainNavigationDrawerContextMenuDropdownId';
 import { useCanCustomizeSidebar } from '@/navigation/hooks/useCanCustomizeSidebar';
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -39,8 +35,6 @@ export const MainNavigationDrawerContextMenu = ({
   );
   const [position, setPosition] = useState<PositionType>({ x: null, y: null });
   const { openDropdown } = useOpenDropdown();
-  const { closeDropdown } = useCloseDropdown();
-  const { enterLayoutCustomizationMode } = useEnterLayoutCustomizationMode();
 
   const canOpenContextMenu =
     canCustomizeSidebar &&
@@ -66,11 +60,6 @@ export const MainNavigationDrawerContextMenu = ({
     });
   };
 
-  const handleCustomizeSidebarClick = () => {
-    closeDropdown(MAIN_NAVIGATION_DRAWER_CONTEXT_MENU_DROPDOWN_ID);
-    enterLayoutCustomizationMode();
-  };
-
   return (
     <StyledContextMenuArea onContextMenu={handleContextMenu}>
       {children}
@@ -86,16 +75,7 @@ export const MainNavigationDrawerContextMenu = ({
             width={GenericDropdownContentWidth.Large}
             aria-label={t`Sidebar actions`}
           >
-            <Dropdown.Section>
-              <NavigationMenuItemSelectableItem
-                item={{
-                  id: 'customize-sidebar',
-                  label: t`Customize sidebar`,
-                  Icon: IconPaint,
-                  onClick: handleCustomizeSidebarClick,
-                }}
-              />
-            </Dropdown.Section>
+            <NavigationMenuCustomizeSidebarMenuContent />
           </DropdownContent>
         </DropdownRoot>
       )}

@@ -6,7 +6,7 @@ import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/us
 import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 
-export const NavigationMenuTabCustomizeMenuContent = () => {
+export const NavigationMenuCustomizeSidebarMenuContent = () => {
   const { t } = useLingui();
   const { closeDropdown } = useCloseDropdown();
   const { enterLayoutCustomizationMode } = useEnterLayoutCustomizationMode();

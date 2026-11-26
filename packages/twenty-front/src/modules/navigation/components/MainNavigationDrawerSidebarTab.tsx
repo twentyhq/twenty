@@ -11,7 +11,7 @@ import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-i
 import { type NamedNavigationMenuItem } from '@/navigation-menu-item/common/types/NamedNavigationMenuItem';
 import { type InboxChatAttention } from '@/inbox/types/InboxChatAttention';
 import { useGetNavigationMenuTabAttentionLabel } from '@/navigation-menu-item/display/hooks/useGetNavigationMenuTabAttentionLabel';
-import { NavigationMenuTabCustomizeMenuContent } from '@/navigation-menu-item/edit/components/NavigationMenuTabCustomizeMenuContent';
+import { NavigationMenuCustomizeSidebarMenuContent } from '@/navigation-menu-item/edit/components/NavigationMenuCustomizeSidebarMenuContent';
 import { NavigationMenuTabMenuContent } from '@/navigation-menu-item/edit/components/NavigationMenuTabMenuContent';
 import { NavigationMenuItemDropdownOpenEffect } from '@/navigation-menu-item/edit/effect-components/NavigationMenuItemDropdownOpenEffect';
 import { MainNavigationDrawerTab } from '@/navigation/components/MainNavigationDrawerTab';
@@ -163,7 +163,7 @@ export const MainNavigationDrawerSidebarTab = ({
             {isLayoutCustomizationModeEnabled ? (
               <NavigationMenuTabMenuContent tab={tab} />
             ) : (
-              <NavigationMenuTabCustomizeMenuContent />
+              <NavigationMenuCustomizeSidebarMenuContent />
             )}
           </DropdownContent>
         </DropdownRoot>
