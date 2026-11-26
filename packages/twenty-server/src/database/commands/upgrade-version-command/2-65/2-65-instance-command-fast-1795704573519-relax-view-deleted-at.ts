@@ -6,26 +6,20 @@ import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 @RegisteredInstanceCommand('2.65.0', 1795704573519)
 export class RelaxViewDeletedAtFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      `DELETE FROM "core"."viewField" "softDeleted"
-        USING "core"."viewField" "other"
-        WHERE "softDeleted"."deletedAt" IS NOT NULL
-          AND "softDeleted"."isCanonical" = true
-          AND "other"."isCanonical" = true
-          AND "other"."viewId" = "softDeleted"."viewId"
-          AND "other"."fieldMetadataId" = "softDeleted"."fieldMetadataId"
-          AND "other"."id" <> "softDeleted"."id"
-          AND ("other"."deletedAt" IS NULL OR "other"."id" < "softDeleted"."id")`,
-    );
-    await queryRunner.query(
-      `DELETE FROM "core"."viewSort" "softDeleted"
-        USING "core"."viewSort" "other"
-        WHERE "softDeleted"."deletedAt" IS NOT NULL
-          AND "other"."viewId" = "softDeleted"."viewId"
-          AND "other"."fieldMetadataId" = "softDeleted"."fieldMetadataId"
-          AND "other"."id" <> "softDeleted"."id"
-          AND ("other"."deletedAt" IS NULL OR "other"."id" < "softDeleted"."id")`,
-    );
+    for (const tableName of [
+      'view',
+      'viewFilterGroup',
+      'viewFilter',
+      'viewSort',
+      'viewGroup',
+      'viewFieldGroup',
+      'viewField',
+    ]) {
+      await queryRunner.query(
+        `DELETE FROM "core"."${tableName}" WHERE "deletedAt" IS NOT NULL`,
+      );
+    }
+
     await queryRunner.query(
       'DROP INDEX IF EXISTS "core"."IDX_VIEW_FIELD_FIELD_METADATA_ID_VIEW_ID_UNIQUE"',
     );

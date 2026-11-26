@@ -47,37 +47,118 @@ describe('2-65 instance command 1795704573519 - relax view deletedAt (integratio
     expect(viewSortIndex).not.toContain('WHERE');
   });
 
-  it('removes soft-deleted view fields that would collide with the rebuilt index', async () => {
-    const [liveViewField]: { id: string }[] = await queryRunner.query(
-      `SELECT "id" FROM "core"."viewField"
-        WHERE "deletedAt" IS NULL AND "isCanonical" = true
-        LIMIT 1`,
+  const findLiveViewField = async (): Promise<{
+    id: string;
+    viewId: string;
+  }> => {
+    const [liveViewField]: { id: string; viewId: string }[] =
+      await queryRunner.query(
+        `SELECT "id", "viewId" FROM "core"."viewField"
+          WHERE "deletedAt" IS NULL AND "isCanonical" = true
+          LIMIT 1`,
+      );
+
+    return liveViewField;
+  };
+
+  const copyRow = async ({
+    tableName,
+    sourceId,
+    overrides,
+  }: {
+    tableName: 'view' | 'viewField';
+    sourceId: string;
+    overrides: Record<string, string | null>;
+  }): Promise<void> => {
+    await queryRunner.query(
+      `INSERT INTO "core"."${tableName}"
+        SELECT (jsonb_populate_record(
+          NULL::"core"."${tableName}",
+          to_jsonb("source") || $1::jsonb
+        )).*
+        FROM "core"."${tableName}" "source"
+        WHERE "source"."id" = $2`,
+      [JSON.stringify(overrides), sourceId],
     );
+  };
+
+  const findExistingIds = async ({
+    tableName,
+    ids,
+  }: {
+    tableName: 'view' | 'viewField';
+    ids: string[];
+  }): Promise<string[]> => {
+    const rows: { id: string }[] = await queryRunner.query(
+      `SELECT "id" FROM "core"."${tableName}" WHERE "id" = ANY($1)`,
+      [ids],
+    );
+
+    return rows.map(({ id }) => id);
+  };
+
+  it('hard-deletes soft-deleted view fields and keeps live ones', async () => {
+    const liveViewField = await findLiveViewField();
     const softDeletedViewFieldId = randomUUID();
 
-    await queryRunner.query(
-      `INSERT INTO "core"."viewField"
-        SELECT (jsonb_populate_record(
-          NULL::"core"."viewField",
-          to_jsonb("viewField") || jsonb_build_object(
-            'id', $1::uuid,
-            'universalIdentifier', $1::uuid,
-            'deletedAt', now()
-          )
-        )).*
-        FROM "core"."viewField" "viewField"
-        WHERE "viewField"."id" = $2`,
-      [softDeletedViewFieldId, liveViewField.id],
-    );
+    await copyRow({
+      tableName: 'viewField',
+      sourceId: liveViewField.id,
+      overrides: {
+        id: softDeletedViewFieldId,
+        universalIdentifier: softDeletedViewFieldId,
+        deletedAt: new Date().toISOString(),
+      },
+    });
 
     await relaxDeletedAtCommand.up(queryRunner);
 
-    const remainingViewFields: { id: string }[] = await queryRunner.query(
-      `SELECT "id" FROM "core"."viewField" WHERE "id" = ANY($1)`,
-      [[liveViewField.id, softDeletedViewFieldId]],
-    );
+    expect(
+      await findExistingIds({
+        tableName: 'viewField',
+        ids: [liveViewField.id, softDeletedViewFieldId],
+      }),
+    ).toEqual([liveViewField.id]);
+  });
 
-    expect(remainingViewFields).toEqual([{ id: liveViewField.id }]);
+  it('hard-deletes soft-deleted views with all their children', async () => {
+    const liveViewField = await findLiveViewField();
+    const softDeletedViewId = randomUUID();
+    const childViewFieldId = randomUUID();
+
+    await copyRow({
+      tableName: 'view',
+      sourceId: liveViewField.viewId,
+      overrides: {
+        id: softDeletedViewId,
+        universalIdentifier: softDeletedViewId,
+        deletedAt: new Date().toISOString(),
+      },
+    });
+    await copyRow({
+      tableName: 'viewField',
+      sourceId: liveViewField.id,
+      overrides: {
+        id: childViewFieldId,
+        universalIdentifier: childViewFieldId,
+        viewId: softDeletedViewId,
+      },
+    });
+
+    await relaxDeletedAtCommand.up(queryRunner);
+
+    expect(
+      await findExistingIds({
+        tableName: 'view',
+        ids: [liveViewField.viewId, softDeletedViewId],
+      }),
+    ).toEqual([liveViewField.viewId]);
+    expect(
+      await findExistingIds({
+        tableName: 'viewField',
+        ids: [childViewFieldId],
+      }),
+    ).toEqual([]);
   });
 
   it('restores the deletedAt condition on down', async () => {
