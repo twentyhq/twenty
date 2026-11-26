@@ -52,18 +52,20 @@ export const addAgentTriggerConditionTreesOrThrow = ({
     )
     .map(({ settings }) => settings);
 
-  return triggers.map((trigger) =>
-    trigger.type === 'DATABASE_EVENT'
-      ? {
-          ...trigger,
-          settings: computeDatabaseEventTriggerSettingsOrThrow({
-            settings: trigger.settings,
-            storedSettings,
-            flatObjectMetadataMaps,
-            flatFieldMetadataMaps,
-            throwInvalidCondition,
-          }),
-        }
-      : trigger,
-  );
+  return triggers.map((trigger) => {
+    if (trigger.type !== 'DATABASE_EVENT') {
+      return trigger;
+    }
+
+    return {
+      ...trigger,
+      settings: computeDatabaseEventTriggerSettingsOrThrow({
+        settings: trigger.settings,
+        storedSettings,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        throwInvalidCondition,
+      }),
+    };
+  });
 };

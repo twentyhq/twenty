@@ -8,7 +8,7 @@ export const resolveAgentTriggerManifestsOrThrow = ({
   agentManifest,
   lookup,
 }: {
-  agentManifest: AgentManifest;
+  agentManifest: Pick<AgentManifest, 'name' | 'triggers'>;
   lookup: DatabaseEventTriggerManifestLookup;
 }): AgentManifest['triggers'] =>
   agentManifest.triggers?.map((trigger) =>

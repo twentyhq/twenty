@@ -66,7 +66,6 @@ const convertSettings = ({
 const hasTextCondition = (settings: DatabaseEventTriggerSettings) =>
   isNonEmptyString(settings.condition) && !isDefined(settings.conditionTree);
 
-// Bindings lead the text back to the current field names
 export const buildDatabaseEventTriggerConditionTreeConversions = ({
   flatAgents,
   flatLogicFunctions,
@@ -86,8 +85,6 @@ export const buildDatabaseEventTriggerConditionTreeConversions = ({
   const textConditionOwnerIds: string[] = [];
 
   for (const flatAgent of flatAgents) {
-    let hasConvertedTrigger = false;
-
     const triggers = flatAgent.triggers.map((trigger) => {
       if (trigger.type !== 'DATABASE_EVENT') {
         return trigger;
@@ -95,14 +92,11 @@ export const buildDatabaseEventTriggerConditionTreeConversions = ({
 
       const settings = convertSettings({ settings: trigger.settings, ...maps });
 
-      if (!isDefined(settings)) {
-        return trigger;
-      }
-
-      hasConvertedTrigger = true;
-
-      return { ...trigger, settings };
+      return isDefined(settings) ? { ...trigger, settings } : trigger;
     });
+    const hasConvertedTrigger = triggers.some(
+      (trigger, index) => trigger !== flatAgent.triggers[index],
+    );
 
     if (
       triggers.some(

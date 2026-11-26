@@ -48,17 +48,20 @@ const buildMaps = () => {
   return { flatObjectMetadataMaps, flatFieldMetadataMaps };
 };
 
-// The shape conditions had before trees: text naming fields as they were when saved, and bindings
-const buildLegacySettings = (
-  condition: string,
-  conditionBindings: Record<string, string> = {},
-): DatabaseEventTriggerSettings =>
-  ({
-    eventName: 'company.updated',
-    batchMode: true,
-    condition,
-    conditionBindings,
-  }) as DatabaseEventTriggerSettings;
+const buildLegacySettings = ({
+  condition,
+  conditionBindings = {},
+}: {
+  condition: string;
+  conditionBindings?: Record<string, string>;
+}): DatabaseEventTriggerSettings & {
+  conditionBindings: Record<string, string>;
+} => ({
+  eventName: 'company.updated',
+  batchMode: true,
+  condition,
+  conditionBindings,
+});
 
 const buildFlatAgent = (settings: DatabaseEventTriggerSettings): FlatAgent => ({
   ...fromAgentManifestToUniversalFlatAgent({
@@ -136,10 +139,10 @@ const RENAMED_CONDITION_TREE = {
 
 describe('buildDatabaseEventTriggerConditionTreeConversions', () => {
   it('should store agent and logic function conditions as trees reading the bound fields by identifier', () => {
-    const settings = buildLegacySettings(
-      'employees > 10 and previous.stage != "WON"',
-      { employees: 'employees', 'previous.stage': 'stage' },
-    );
+    const settings = buildLegacySettings({
+      condition: 'employees > 10 and previous.stage != "WON"',
+      conditionBindings: { employees: 'employees', 'previous.stage': 'stage' },
+    });
 
     const {
       flatAgentsToUpdate,
@@ -174,7 +177,7 @@ describe('buildDatabaseEventTriggerConditionTreeConversions', () => {
   });
 
   it('should keep the text of a condition that does not compile', () => {
-    const settings = buildLegacySettings('unknownField > 0');
+    const settings = buildLegacySettings({ condition: 'unknownField > 0' });
 
     expect(
       convert({

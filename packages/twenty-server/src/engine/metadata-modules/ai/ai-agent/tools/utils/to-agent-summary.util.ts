@@ -1,6 +1,20 @@
 import { type AgentDTO } from 'src/engine/metadata-modules/ai/ai-agent/dtos/agent.dto';
 
-export const toAgentSummary = (agent: AgentDTO) => ({
+export const toAgentSummary = (
+  agent: Pick<
+    AgentDTO,
+    | 'id'
+    | 'name'
+    | 'label'
+    | 'description'
+    | 'icon'
+    | 'prompt'
+    | 'modelId'
+    | 'roleId'
+    | 'triggers'
+    | 'applicationId'
+  >,
+) => ({
   id: agent.id,
   name: agent.name,
   label: agent.label,
