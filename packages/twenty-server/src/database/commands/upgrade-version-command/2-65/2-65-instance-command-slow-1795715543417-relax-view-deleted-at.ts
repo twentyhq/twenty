@@ -3,7 +3,7 @@ import { type DataSource, type QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { type SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 
-@RegisteredInstanceCommand('2.65.0', 1795709973618, { type: 'slow' })
+@RegisteredInstanceCommand('2.65.0', 1795715543417, { type: 'slow' })
 export class RelaxViewDeletedAtSlowInstanceCommand
   implements SlowInstanceCommand
 {
