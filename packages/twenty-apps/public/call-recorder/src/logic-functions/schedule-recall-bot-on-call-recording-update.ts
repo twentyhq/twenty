@@ -1,5 +1,4 @@
 import { isUndefined } from '@sniptt/guards';
-import { CoreApiClient } from 'twenty-client-sdk/core';
 import {
   defineLogicFunction,
   type DatabaseEventPayload,
@@ -15,6 +14,7 @@ import {
   type ResumePendingCallRecordingResult,
 } from 'src/logic-functions/flows/resume-pending-call-recording.util';
 import { buildRetryableStepFailure } from 'src/logic-functions/utils/build-step-failure.util';
+import { createCoreApiClientRunningAsApplication } from 'src/logic-functions/utils/create-core-api-client-running-as-application.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 
 const CALL_RECORDING_OBJECT_NAME = 'callRecording';
@@ -86,7 +86,7 @@ export const scheduleRecallBotOnCallRecordingUpdateHandler = async (
   }
 
   const result = await resumePendingCallRecording({
-    client: new CoreApiClient(),
+    client: createCoreApiClientRunningAsApplication(),
     callRecordingId: event.recordId,
     now: new Date(),
   });
