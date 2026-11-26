@@ -31,7 +31,6 @@ type CommandMenuItemRendererProps = {
   item: CommandMenuItemDefinition;
   isPrimaryAction?: boolean;
   shouldHideLabel?: boolean;
-  shouldShowHotKey?: boolean;
 };
 
 type CommandMenuItemButtonRendererProps = CommandMenuItemRendererProps;
@@ -40,7 +39,6 @@ const CommandMenuItemButtonRenderer = ({
   item,
   isPrimaryAction = false,
   shouldHideLabel = false,
-  shouldShowHotKey = false,
 }: CommandMenuItemButtonRendererProps) => {
   const { isInPreviewMode } = useContext(CommandMenuContext);
   const {
@@ -68,7 +66,6 @@ const CommandMenuItemButtonRenderer = ({
       <StyledPreviewWrapper>
         <CommandMenuButton
           command={command}
-          hotKey={shouldShowHotKey ? buttonHotKey : undefined}
           isPrimaryAction={isPrimaryAction}
           shouldHideLabel={shouldHideLabel}
         />
@@ -87,7 +84,6 @@ const CommandMenuItemButtonRenderer = ({
       )}
       <CommandMenuButton
         command={command}
-        hotKey={shouldShowHotKey ? buttonHotKey : undefined}
         onClick={disabled ? undefined : handleClick}
         disabled={disabled}
         progress={progress}
@@ -171,7 +167,6 @@ export const CommandMenuItemRenderer = ({
   item,
   isPrimaryAction,
   shouldHideLabel,
-  shouldShowHotKey,
 }: CommandMenuItemRendererProps) => {
   const { displayType } = useContext(CommandMenuContext);
 
@@ -181,7 +176,6 @@ export const CommandMenuItemRenderer = ({
         item={item}
         isPrimaryAction={isPrimaryAction}
         shouldHideLabel={shouldHideLabel}
-        shouldShowHotKey={shouldShowHotKey}
       />
     );
   }

@@ -19,7 +19,6 @@ export type CommandMenuButtonProps = {
     Icon: IconComponent;
     isPrimaryCTA?: boolean;
   };
-  hotKey?: string;
   onClick?: (event?: MouseEvent<HTMLElement>) => void;
   to?: string;
   disabled?: boolean;
@@ -31,7 +30,6 @@ export type CommandMenuButtonProps = {
 
 export const CommandMenuButton = ({
   command,
-  hotKey,
   onClick,
   to,
   disabled = false,
@@ -76,7 +74,6 @@ export const CommandMenuButton = ({
             aria-label={command.label}
             variant={buttonAccent === 'blue' ? 'solid' : 'outline'}
             color={buttonAccent === 'blue' ? 'accent' : 'neutral'}
-            shortcut={isDefined(hotKey) ? [hotKey] : undefined}
           >
             {resolvedShortLabel}
           </NavigationButton>
