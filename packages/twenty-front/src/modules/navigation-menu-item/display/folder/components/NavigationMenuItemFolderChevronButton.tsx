@@ -1,23 +1,20 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import type React from 'react';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { IconChevronRight } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { NavigationMenuItemFolderChevron } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderChevron';
+const StyledChevronIcon = styled(IconChevronRight)`
+  transition: transform
+    calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
 
-const StyledButton = styled.button`
-  align-items: center;
-  background: none;
-  border: none;
-  border-radius: ${themeCssVariables.border.radius.sm};
-  color: inherit;
-  cursor: pointer;
-  display: inline-flex;
-  flex-shrink: 0;
-  padding: 0;
+  &[data-open] {
+    transform: rotate(90deg);
+  }
 
-  &:focus-visible {
-    outline: 2px solid ${themeCssVariables.color.blue};
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
   }
 `;
 
@@ -33,13 +30,14 @@ export const NavigationMenuItemFolderChevronButton = ({
   const { t } = useLingui();
 
   return (
-    <StyledButton
-      type="button"
+    <LightIconButton
+      size="xs"
+      emphasis="subtle"
       aria-label={isOpen ? t`Collapse folder` : t`Expand folder`}
-      aria-expanded={isOpen}
       onClick={onClick}
+      aria-expanded={isOpen}
     >
-      <NavigationMenuItemFolderChevron isOpen={isOpen} />
-    </StyledButton>
+      <StyledChevronIcon data-open={isOpen || undefined} />
+    </LightIconButton>
   );
 };
