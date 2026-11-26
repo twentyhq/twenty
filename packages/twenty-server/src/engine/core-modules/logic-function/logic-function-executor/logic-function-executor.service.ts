@@ -835,6 +835,7 @@ export class LogicFunctionExecutorService {
         isBillingExempt: isBillingExemptApplication(
           flatApplication.universalIdentifier,
         ),
+        isWarm: flatLogicFunction.isWarm,
         resourceId: flatLogicFunction.id,
         spenders,
       }),

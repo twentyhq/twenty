@@ -1,14 +1,17 @@
 import {
   LOGIC_FUNCTION_DURATION_CREDITS_MICRO_PER_MS,
   LOGIC_FUNCTION_INVOCATION_CREDITS_MICRO,
+  WARM_LOGIC_FUNCTION_CREDITS_MULTIPLIER,
 } from 'src/engine/core-modules/logic-function/logic-function-executor/constants/logic-function-billing.constant';
 
 export const computeLogicFunctionExecutionCreditsMicro = ({
   durationMs,
   isBillingExempt,
+  isWarm = false,
 }: {
   durationMs: number;
   isBillingExempt: boolean;
+  isWarm?: boolean;
 }): {
   invocationCreditsMicro: number;
   durationCreditsMicro: number;
@@ -23,11 +26,15 @@ export const computeLogicFunctionExecutionCreditsMicro = ({
   }
 
   const billedDurationMs = Math.max(Math.floor(durationMs), 0);
+  const multiplier = isWarm ? WARM_LOGIC_FUNCTION_CREDITS_MULTIPLIER : 1;
 
   return {
-    invocationCreditsMicro: LOGIC_FUNCTION_INVOCATION_CREDITS_MICRO,
+    invocationCreditsMicro:
+      LOGIC_FUNCTION_INVOCATION_CREDITS_MICRO * multiplier,
     durationCreditsMicro: Math.floor(
-      billedDurationMs * LOGIC_FUNCTION_DURATION_CREDITS_MICRO_PER_MS,
+      billedDurationMs *
+        LOGIC_FUNCTION_DURATION_CREDITS_MICRO_PER_MS *
+        multiplier,
     ),
     billedDurationMs,
   };

@@ -12,6 +12,8 @@ export type LogicFunctionManifest = SyncableEntityOptions & {
   timeoutSeconds?: number;
   retryLimit?: number;
   jobFailureHandlerName?: string;
+  // Kept warm to avoid cold starts; executions are billed at a higher rate.
+  isWarm?: boolean;
   cronTriggerSettings?: CronTriggerSettings;
   eventTriggerSettings?: EventTriggerManifestSettings;
   /** @deprecated Use `eventTriggerSettings` instead. */

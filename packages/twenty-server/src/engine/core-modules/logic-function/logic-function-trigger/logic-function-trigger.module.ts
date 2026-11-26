@@ -11,6 +11,8 @@ import { LogicFunctionFailedJobListener } from 'src/engine/core-modules/logic-fu
 import { LogicFunctionJobRunnerService } from 'src/engine/core-modules/logic-function/logic-function-trigger/logic-function-job-runner.service';
 import { CronTriggerCronCommand } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/cron/cron-trigger.cron.command';
 import { CronTriggerCronJob } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/cron/cron-trigger.cron.job';
+import { KeepWarmLogicFunctionsCronCommand } from 'src/engine/core-modules/logic-function/logic-function-warm-up/crons/keep-warm-logic-functions.cron.command';
+import { KeepWarmLogicFunctionsCronJob } from 'src/engine/core-modules/logic-function/logic-function-warm-up/crons/keep-warm-logic-functions.cron.job';
 import { CallDatabaseEventTriggerJobsJob } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/call-database-event-trigger-jobs.job';
 import { LogicFunctionTriggerService } from 'src/engine/core-modules/logic-function/logic-function-trigger/logic-function-trigger.service';
 import { RouteTriggerService } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/route-trigger.service';
@@ -42,12 +44,15 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     LogicFunctionFailedJobListener,
     CronTriggerCronJob,
     CronTriggerCronCommand,
+    KeepWarmLogicFunctionsCronJob,
+    KeepWarmLogicFunctionsCronCommand,
     CallDatabaseEventTriggerJobsJob,
     LogicFunctionTriggerService,
     RouteTriggerService,
   ],
   exports: [
     CronTriggerCronCommand,
+    KeepWarmLogicFunctionsCronCommand,
     LogicFunctionTriggerService,
     RouteTriggerService,
   ],

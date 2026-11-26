@@ -483,4 +483,25 @@ describe('defineLogicFunction', () => {
       'Logic function retryLimit must be an integer between 0 and 10',
     );
   });
+
+  it('should accept isWarm', () => {
+    const config = {
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      handler: mockHandler,
+      isWarm: true,
+    };
+
+    expect(defineLogicFunction(config).success).toBe(true);
+  });
+
+  it('should reject an isWarm that is not a boolean', () => {
+    const result = defineLogicFunction({
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      handler: mockHandler,
+      // @ts-expect-error only a boolean is accepted
+      isWarm: 'yes',
+    });
+
+    expect(result.errors).toContain('Logic function isWarm must be a boolean');
+  });
 });

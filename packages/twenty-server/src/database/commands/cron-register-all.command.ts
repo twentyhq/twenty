@@ -18,6 +18,7 @@ import { WorkspaceDataExportCleanupCronCommand } from 'src/engine/core-modules/w
 import { RotateSigningKeysCronCommand } from 'src/engine/core-modules/jwt/crons/commands/rotate-signing-keys.cron.command';
 import { CronTriggerCronCommand } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/cron/cron-trigger.cron.command';
 import { PendingWakeUpSweepCronCommand } from 'src/engine/core-modules/pending-wake-up/crons/commands/pending-wake-up-sweep.cron.command';
+import { KeepWarmLogicFunctionsCronCommand } from 'src/engine/core-modules/logic-function/logic-function-warm-up/crons/keep-warm-logic-functions.cron.command';
 import { AgentCronTriggerCronCommand } from 'src/engine/metadata-modules/ai/ai-agent-trigger/crons/agent-cron-trigger.cron.command';
 import { CheckPublicDomainsValidRecordsCronCommand } from 'src/engine/core-modules/public-domain/crons/commands/check-public-domains-valid-records.cron.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -79,6 +80,7 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly checkPublicDomainsValidRecordsCronCommand: CheckPublicDomainsValidRecordsCronCommand,
     private readonly checkEmailingDomainVerificationCronCommand: CheckEmailingDomainVerificationCronCommand,
     private readonly cronTriggerCronCommand: CronTriggerCronCommand,
+    private readonly keepWarmLogicFunctionsCronCommand: KeepWarmLogicFunctionsCronCommand,
     private readonly agentCronTriggerCronCommand: AgentCronTriggerCronCommand,
     private readonly cleanSuspendedWorkspacesCronCommand: CleanSuspendedWorkspacesCronCommand,
     private readonly cleanOnboardingWorkspacesCronCommand: CleanOnboardingWorkspacesCronCommand,
@@ -194,6 +196,10 @@ export class CronRegisterAllCommand extends CommandRunner {
       {
         name: 'CronTrigger',
         command: this.cronTriggerCronCommand,
+      },
+      {
+        name: 'KeepWarmLogicFunctions',
+        command: this.keepWarmLogicFunctionsCronCommand,
       },
       {
         name: 'AgentCronTrigger',

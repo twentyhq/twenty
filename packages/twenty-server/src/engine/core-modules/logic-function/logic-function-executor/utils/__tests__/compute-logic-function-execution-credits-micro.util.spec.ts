@@ -87,4 +87,32 @@ describe('computeLogicFunctionExecutionCreditsMicro', () => {
       billedDurationMs: 0,
     });
   });
+
+  it('multiplies invocation and duration credits for warm functions', () => {
+    expect(
+      computeLogicFunctionExecutionCreditsMicro({
+        durationMs: 1_000,
+        isBillingExempt: false,
+        isWarm: true,
+      }),
+    ).toEqual({
+      invocationCreditsMicro: 200,
+      durationCreditsMicro: 200,
+      billedDurationMs: 1_000,
+    });
+  });
+
+  it('keeps warm functions of billing-exempt applications free', () => {
+    expect(
+      computeLogicFunctionExecutionCreditsMicro({
+        durationMs: 1_000,
+        isBillingExempt: true,
+        isWarm: true,
+      }),
+    ).toEqual({
+      invocationCreditsMicro: 0,
+      durationCreditsMicro: 0,
+      billedDurationMs: 0,
+    });
+  });
 });

@@ -40,6 +40,7 @@ export const buildWorkflowCodeStepFlatLogicFunction = ({
     timeoutSeconds: DEFAULT_LOGIC_FUNCTION_TIMEOUT_SECONDS,
     jobFailureHandlerName: null,
     retryLimit: null,
+    isWarm: false,
     checksum: null,
     isBuildUpToDate: true,
     executionMode: LogicFunctionExecutionMode.LIVE,

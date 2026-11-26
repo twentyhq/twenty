@@ -22,6 +22,7 @@ export const fromFlatLogicFunctionToLogicFunctionManifest = (
     ...(isDefined(logicFunction.jobFailureHandlerName)
       ? { jobFailureHandlerName: logicFunction.jobFailureHandlerName }
       : {}),
+    ...(logicFunction.isWarm ? { isWarm: true } : {}),
     sourceHandlerPath: logicFunction.sourceHandlerPath,
     builtHandlerPath: logicFunction.builtHandlerPath,
     builtHandlerChecksum: logicFunction.checksum,
