@@ -20,7 +20,13 @@ const TASK_ID = getMockObjectMetadataItemOrThrow('task').id;
 const EMPLOYMENT_HISTORY_ID =
   getMockObjectMetadataItemOrThrow('employmentHistory').id;
 
-const getFieldId = (objectNameSingular: string, fieldName: string) => {
+const getFieldId = ({
+  objectNameSingular,
+  fieldName,
+}: {
+  objectNameSingular: string;
+  fieldName: string;
+}) => {
   const field = getMockObjectMetadataItemOrThrow(
     objectNameSingular,
   ).fields.find(({ name }) => name === fieldName);
@@ -160,7 +166,10 @@ describe('isPageLayoutWidgetReadable', () => {
         type: WidgetType.FIELD,
         pageObjectMetadataId: COMPANY_ID,
         configuration: buildFieldConfiguration({
-          fieldMetadataId: getFieldId('company', 'opportunities'),
+          fieldMetadataId: getFieldId({
+            objectNameSingular: 'company',
+            fieldName: 'opportunities',
+          }),
         }),
         unreadableObjectMetadataIds: [OPPORTUNITY_ID],
       }),
@@ -186,7 +195,10 @@ describe('isPageLayoutWidgetReadable', () => {
         type: WidgetType.FIELD,
         pageObjectMetadataId: COMPANY_ID,
         configuration: buildFieldConfiguration({
-          fieldMetadataId: getFieldId('company', 'name'),
+          fieldMetadataId: getFieldId({
+            objectNameSingular: 'company',
+            fieldName: 'name',
+          }),
         }),
         unreadableObjectMetadataIds: [OPPORTUNITY_ID],
       }),
@@ -199,11 +211,14 @@ describe('isPageLayoutWidgetReadable', () => {
         type: WidgetType.FIELD,
         pageObjectMetadataId: COMPANY_ID,
         configuration: buildFieldConfiguration({
-          fieldMetadataId: getFieldId('company', 'people'),
-          nestedRelationFieldMetadataId: getFieldId(
-            'person',
-            'pointOfContactForOpportunities',
-          ),
+          fieldMetadataId: getFieldId({
+            objectNameSingular: 'company',
+            fieldName: 'people',
+          }),
+          nestedRelationFieldMetadataId: getFieldId({
+            objectNameSingular: 'person',
+            fieldName: 'pointOfContactForOpportunities',
+          }),
         }),
         unreadableObjectMetadataIds: [OPPORTUNITY_ID],
       }),
@@ -216,7 +231,10 @@ describe('isPageLayoutWidgetReadable', () => {
         type: WidgetType.FIELD,
         pageObjectMetadataId: PERSON_ID,
         configuration: buildFieldConfiguration({
-          fieldMetadataId: getFieldId('person', 'previousCompanies'),
+          fieldMetadataId: getFieldId({
+            objectNameSingular: 'person',
+            fieldName: 'previousCompanies',
+          }),
           viewId: COMPANY_VIEW_ID,
         }),
         unreadableObjectMetadataIds: [COMPANY_ID],
@@ -230,7 +248,10 @@ describe('isPageLayoutWidgetReadable', () => {
         type: WidgetType.FIELD,
         pageObjectMetadataId: PERSON_ID,
         configuration: buildFieldConfiguration({
-          fieldMetadataId: getFieldId('person', 'previousCompanies'),
+          fieldMetadataId: getFieldId({
+            objectNameSingular: 'person',
+            fieldName: 'previousCompanies',
+          }),
           viewId: JUNCTION_VIEW_ID,
         }),
         unreadableObjectMetadataIds: [COMPANY_ID],
