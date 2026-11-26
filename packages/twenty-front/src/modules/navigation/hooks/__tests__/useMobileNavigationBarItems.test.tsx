@@ -151,6 +151,20 @@ describe('useMobileNavigationBarItems', () => {
     expect(result.current.activeItemName).toBe('tab-sales-tab');
   });
 
+  it('drops the attention from the sidebar tab that is open', () => {
+    jest
+      .mocked(useWorkspaceNavigationMenuContainers)
+      .mockReturnValue([SALES_TAB]);
+
+    const { result } = renderMobileNavigationBarItems('/objects/people');
+
+    act(() => tapItem(result, 'tab-sales-tab'));
+
+    expect(
+      result.current.items.find(({ name }) => name === 'tab-sales-tab'),
+    ).toMatchObject({ label: 'Sales', attention: null });
+  });
+
   it('swaps the new chat for the inbox when the inbox is enabled', () => {
     jest.mocked(useIsFeatureEnabled).mockReturnValue(true);
 

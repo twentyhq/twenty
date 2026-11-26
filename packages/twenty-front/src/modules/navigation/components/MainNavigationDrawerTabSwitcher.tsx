@@ -136,7 +136,8 @@ export const MainNavigationDrawerTabSwitcher = ({
           isPinnedToBottom &&
           drawerTab === NAVIGATION_DRAWER_TABS.NAVIGATION_MENU;
         const homeChatAttention =
-          drawerTab === NAVIGATION_DRAWER_TABS.NAVIGATION_MENU
+          drawerTab === NAVIGATION_DRAWER_TABS.NAVIGATION_MENU &&
+          !(isActive && isExpanded)
             ? getTabChatAttention(null)
             : null;
 
@@ -196,17 +197,25 @@ export const MainNavigationDrawerTabSwitcher = ({
           <MainNavigationDrawerTabDropTarget key={drawerTab} tabId={null}>
             {drawerTabButton}
           </MainNavigationDrawerTabDropTarget>,
-          ...navigationMenuTabs.map((tab) => (
-            <MainNavigationDrawerTabDropTarget key={tab.id} tabId={tab.id}>
-              <MainNavigationDrawerSidebarTab
-                tab={tab}
-                isActive={activeNavigationMenuTab?.id === tab.id}
-                isExpanded={isExpanded}
-                shouldShowTooltip={shouldShowTooltips}
-                attention={getTabChatAttention(tab.id)}
-              />
-            </MainNavigationDrawerTabDropTarget>
-          )),
+          ...navigationMenuTabs.map((tab) => {
+            const isTabActive = activeNavigationMenuTab?.id === tab.id;
+
+            return (
+              <MainNavigationDrawerTabDropTarget key={tab.id} tabId={tab.id}>
+                <MainNavigationDrawerSidebarTab
+                  tab={tab}
+                  isActive={isTabActive}
+                  isExpanded={isExpanded}
+                  shouldShowTooltip={shouldShowTooltips}
+                  attention={
+                    isTabActive && isExpanded
+                      ? null
+                      : getTabChatAttention(tab.id)
+                  }
+                />
+              </MainNavigationDrawerTabDropTarget>
+            );
+          }),
           ...(isLayoutCustomizationModeEnabled &&
           tabCountIncludingHome < NAVIGATION_MENU_TAB_MAX_COUNT
             ? [
