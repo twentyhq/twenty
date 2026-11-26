@@ -1,10 +1,13 @@
 import { filterFieldPermissionsOfPredicateGroups } from '@/settings/roles/role/utils/filterFieldPermissionsOfPredicateGroups';
 import { type FieldPermission } from '~/generated-metadata/graphql';
 
-const buildFieldPermission = (
-  id: string,
-  rowLevelPermissionPredicateGroupId?: string | null,
-): FieldPermission => ({
+const buildFieldPermission = ({
+  id,
+  rowLevelPermissionPredicateGroupId,
+}: {
+  id: string;
+  rowLevelPermissionPredicateGroupId?: string | null;
+}): FieldPermission => ({
   id,
   roleId: 'role-id',
   objectMetadataId: 'object-id',
@@ -15,15 +18,24 @@ const buildFieldPermission = (
 
 describe('filterFieldPermissionsOfPredicateGroups', () => {
   it('should keep only field permissions of existing predicate groups', () => {
-    const kept = buildFieldPermission('kept', 'group-1');
+    const kept = buildFieldPermission({
+      id: 'kept',
+      rowLevelPermissionPredicateGroupId: 'group-1',
+    });
 
     expect(
       filterFieldPermissionsOfPredicateGroups({
         fieldPermissions: [
           kept,
-          buildFieldPermission('removed-group', 'group-2'),
-          buildFieldPermission('object-level', null),
-          buildFieldPermission('no-group'),
+          buildFieldPermission({
+            id: 'removed-group',
+            rowLevelPermissionPredicateGroupId: 'group-2',
+          }),
+          buildFieldPermission({
+            id: 'object-level',
+            rowLevelPermissionPredicateGroupId: null,
+          }),
+          buildFieldPermission({ id: 'no-group' }),
         ],
         predicateGroups: [{ id: 'group-1' }],
       }),
