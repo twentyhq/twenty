@@ -1,10 +1,7 @@
 import { useListenToMetadataOperationBrowserEvent } from '@/browser-event/hooks/useListenToMetadataOperationBrowserEvent';
-import { useResyncMetadataStore } from '@/metadata-store/hooks/useResyncMetadataStore';
+import { useInvalidateMetadataStore } from '@/metadata-store/hooks/useInvalidateMetadataStore';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
-import {
-  metadataStoreState,
-  type MetadataEntityKey,
-} from '@/metadata-store/states/metadataStoreState';
+import { type MetadataEntityKey } from '@/metadata-store/states/metadataStoreState';
 import { type FlatPageLayoutWidget } from '@/metadata-store/types/FlatPageLayoutWidget';
 import { type MetadataEntityTypeMap } from '@/metadata-store/types/MetadataEntityTypeMap';
 import { addTypenamesToFlatPageLayoutWidget } from '@/metadata-store/utils/addTypenamesToFlatPageLayoutWidget';
@@ -29,7 +26,7 @@ export const MetadataStoreSSEEffect = () => {
   const store = useStore();
   const { addToDraft, removeFromDraft, applyChanges } =
     useUpdateMetadataStoreDraft();
-  const { resyncMetadataStore } = useResyncMetadataStore();
+  const { invalidateMetadataStore } = useInvalidateMetadataStore();
 
   useListenToMetadataOperationBrowserEvent({
     onMetadataOperationBrowserEvent: (eventDetail) => {
@@ -91,11 +88,7 @@ export const MetadataStoreSSEEffect = () => {
       applyChanges();
 
       if (hasGainedAccessToView) {
-        store.set(metadataStoreState.atomFamily('views'), (prev) => ({
-          ...prev,
-          currentCollectionHash: undefined,
-        }));
-        resyncMetadataStore();
+        invalidateMetadataStore(['views']);
       }
     },
   });
