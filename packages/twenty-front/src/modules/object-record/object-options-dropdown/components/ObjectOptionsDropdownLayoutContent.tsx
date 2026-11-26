@@ -336,7 +336,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                     >{t`Group`}</ListItemButton>
                   </SelectableListItem>
                 )}
-                {isListView ? (
+                {isListView && (
                   <SelectableListItem
                     itemId="ListDateField"
                     onEnter={() => onContentChange('listDateField')}
@@ -350,7 +350,8 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                       hasSubmenu
                     >{t`Date`}</ListItemButton>
                   </SelectableListItem>
-                ) : (
+                )}
+                {!isListView && (
                   <SelectableListItem
                     itemId="Compact view"
                     onEnter={() => {
