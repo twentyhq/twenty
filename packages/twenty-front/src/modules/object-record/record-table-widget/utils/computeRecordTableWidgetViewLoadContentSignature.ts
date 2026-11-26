@@ -43,7 +43,8 @@ export const computeRecordTableWidgetViewLoadContentSignature = (
       calendarLayout: view.calendarLayout,
       calendarFieldMetadataId: view.calendarFieldMetadataId,
       calendarEndFieldMetadataId: view.calendarEndFieldMetadataId,
-      listPinnedFieldMetadataId: view.listPinnedFieldMetadataId,
+      listPinnedFieldUniversalIdentifiers:
+        view.listPinnedFieldUniversalIdentifiers,
     },
     groups: [...(view.viewGroups ?? [])]
       .sort((groupA, groupB) => groupA.position - groupB.position)

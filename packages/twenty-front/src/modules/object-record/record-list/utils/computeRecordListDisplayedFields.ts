@@ -11,22 +11,21 @@ const ROW_ITEM_GAP_WIDTH = 12;
 export const computeRecordListDisplayedFields = ({
   rowWidth,
   populatedFieldCount,
-  hasPinnedField = false,
+  pinnedFieldCount = 0,
 }: {
   rowWidth: number;
   populatedFieldCount: number;
-  hasPinnedField?: boolean;
+  pinnedFieldCount?: number;
 }): RecordListDisplayedFields => {
-  const widthReservedForPinnedField = hasPinnedField
-    ? RECORD_LIST_ROW_FIELD_MAX_WIDTH + ROW_ITEM_GAP_WIDTH
-    : 0;
+  const widthReservedForPinnedFields =
+    pinnedFieldCount * (RECORD_LIST_ROW_FIELD_MAX_WIDTH + ROW_ITEM_GAP_WIDTH);
 
   const widthAvailableWithoutOverflowChip =
     rowWidth -
     ROW_HORIZONTAL_PADDING_WIDTH -
     RECORD_LIST_ROW_LABEL_IDENTIFIER_WIDTH -
     ROW_ITEM_GAP_WIDTH -
-    widthReservedForPinnedField;
+    widthReservedForPinnedFields;
 
   const widthNeededToDisplayAllFields =
     populatedFieldCount * RECORD_LIST_ROW_FIELD_MIN_WIDTH +
