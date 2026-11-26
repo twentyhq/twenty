@@ -276,8 +276,14 @@ export class ViewEntity
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 
-  @Column({ nullable: true, type: 'timestamptz' })
-  deletedAt: Date | null;
+  @Column({
+    nullable: true,
+    type: 'timestamptz',
+    select: false,
+    insert: false,
+    update: false,
+  })
+  deletedAt: WasRemovedInUpgrade<Date> | null;
 
   @Column({ nullable: true, type: 'text', default: null })
   anyFieldFilterValue: string | null;

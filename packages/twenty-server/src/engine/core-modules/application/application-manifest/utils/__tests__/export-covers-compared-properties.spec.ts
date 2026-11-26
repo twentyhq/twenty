@@ -263,13 +263,7 @@ const PAGE_LAYOUT_KIND_GAPS = {
     'page layouts, tabs and widgets are never soft-deleted; the column is scheduled for removal',
 };
 
-const VIEW_KIND_GAPS = {
-  deletedAt:
-    'views and their children are never soft-deleted; the column is scheduled for removal',
-};
-
 const NESTED_VIEW_CHILD_GAPS = {
-  ...VIEW_KIND_GAPS,
   viewUniversalIdentifier:
     'a nested child is written under its view; the standalone view field converter emits it',
 };
@@ -576,7 +570,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
     ),
     renamedProperties: {},
     workspaceLocalProperties: ['isActive', 'universalOverrides', 'isPrivate'],
-    knownGaps: VIEW_KIND_GAPS,
+    knownGaps: {},
   },
   {
     metadataName: 'viewField',
@@ -590,7 +584,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
     ),
     renamedProperties: { universalRelationScope: 'relationScope' },
     workspaceLocalProperties: ['isActive', 'universalOverrides'],
-    knownGaps: VIEW_KIND_GAPS,
+    knownGaps: {},
   },
   {
     metadataName: 'viewFilter',
