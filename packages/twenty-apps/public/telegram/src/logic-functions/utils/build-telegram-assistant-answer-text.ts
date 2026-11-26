@@ -4,6 +4,7 @@ import { TELEGRAM_ASSISTANT_REQUEST_OBJECT_NAME_SINGULAR } from 'src/constants/t
 
 const CODE_FENCE = '```';
 const CLOSING_FENCE = `\n${CODE_FENCE}`;
+const SHORTENED_NOTICE = 'Shortened to fit Telegram.';
 
 const hasOpenCodeFence = (text: string): boolean =>
   text.split(CODE_FENCE).length % 2 === 0;
@@ -16,12 +17,12 @@ const buildTruncationNotice = ({
   isPlainText: boolean;
 }): string => {
   if (!isNonEmptyString(requestUrl)) {
-    return '\n\nShortened to fit Telegram. The full answer is on this request in Twenty.';
+    return `\n\n${SHORTENED_NOTICE} The full answer is on this request in Twenty.`;
   }
 
   return isPlainText
-    ? `\n\nShortened to fit Telegram. Read the full answer in Twenty: ${requestUrl}`
-    : `\n\n_Shortened to fit Telegram. [Read the full answer in Twenty](${requestUrl})_`;
+    ? `\n\n${SHORTENED_NOTICE} Read the full answer in Twenty: ${requestUrl}`
+    : `\n\n_${SHORTENED_NOTICE} [Read the full answer in Twenty](${requestUrl})_`;
 };
 
 export const buildTelegramAssistantAnswerText = ({
