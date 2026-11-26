@@ -56,7 +56,6 @@ export const classifyAgentChatTurnOutcome = ({
     return { kind: 'completed', outcome: 'answered' };
   }
 
-  // the model may end its turn without writing, e.g. after acting or on a message that needs no answer
   if (isEndedByModel && !isDefined(stopReason)) {
     return { kind: 'completed', outcome: 'silent' };
   }
