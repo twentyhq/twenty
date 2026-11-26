@@ -131,10 +131,11 @@ type ThinkingStepRowLayoutProps = {
   label: string;
   isActive: boolean;
   detail?: ReactNode;
-  details?: ReactNode;
-  action?: ReactNode;
   isError?: boolean;
-};
+} & (
+  | { details?: ReactNode; action?: never }
+  | { details?: never; action?: ReactNode }
+);
 
 export const ThinkingStepRowLayout = ({
   icon,

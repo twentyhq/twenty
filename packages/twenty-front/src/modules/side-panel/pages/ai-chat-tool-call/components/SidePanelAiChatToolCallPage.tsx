@@ -10,6 +10,7 @@ import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type JsonValue } from 'type-fest';
 
+import { getToolPartError } from '@/ai-chat/thinking-steps/utils/getToolPartError';
 import { getToolRecordOutput } from '@/ai-chat/thinking-steps/utils/getToolRecordOutput';
 import { unwrapToolPartInput } from '@/ai/utils/tool-display/unwrapToolPartInput';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
@@ -50,7 +51,7 @@ export const SidePanelAiChatToolCallPage = () => {
   }
 
   const { toolName, toolInput } = unwrapToolPartInput(aiChatToolCallPart);
-  const hasError = aiChatToolCallPart.state === 'output-error';
+  const { hasError, errorText } = getToolPartError(aiChatToolCallPart);
   const { recordReferences } = getToolRecordOutput(aiChatToolCallPart);
   const visibleRecordReferences = areAllRecordsShown
     ? recordReferences
@@ -71,11 +72,8 @@ export const SidePanelAiChatToolCallPage = () => {
       )}
     >
       <StyledContent>
-        {hasError && isNonEmptyString(aiChatToolCallPart.errorText) && (
-          <DetailMessageCard
-            title={t`Error`}
-            message={aiChatToolCallPart.errorText}
-          />
+        {hasError && isNonEmptyString(errorText) && (
+          <DetailMessageCard title={t`Error`} message={errorText} />
         )}
         {isNonEmptyArray(recordReferences) && (
           <SidePanelAiChatToolCallRecords

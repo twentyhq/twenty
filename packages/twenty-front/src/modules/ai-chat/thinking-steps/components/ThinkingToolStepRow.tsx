@@ -9,6 +9,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { ThinkingStepRowLayout } from '@/ai-chat/thinking-steps/components/ThinkingStepRowLayout';
 import { ThinkingToolStepRecordsDetail } from '@/ai-chat/thinking-steps/components/ThinkingToolStepRecordsDetail';
 import { getThinkingStepLabel } from '@/ai-chat/thinking-steps/utils/getThinkingStepLabel';
+import { getToolPartError } from '@/ai-chat/thinking-steps/utils/getToolPartError';
 import { getToolRecordOutput } from '@/ai-chat/thinking-steps/utils/getToolRecordOutput';
 import { useToolDisplayContext } from '@/ai/hooks/useToolDisplayContext';
 import { getToolIcon } from '@/ai/utils/getToolIcon';
@@ -35,10 +36,11 @@ export const ThinkingToolStepRow = ({
     isActive,
     displayContext,
   });
-  const hasError = part.state === 'output-error';
-  const isFinished = part.state === 'output-available' || hasError;
+  const { hasError, errorText } = getToolPartError(part);
+  const isFinished =
+    part.state === 'output-available' || part.state === 'output-error';
   const { recordReferences } = getToolRecordOutput(part);
-  const [errorFirstLine] = (part.errorText ?? '').split('\n');
+  const [errorFirstLine] = (errorText ?? '').split('\n');
   const errorDetail =
     hasError && isNonEmptyString(errorFirstLine) ? errorFirstLine : undefined;
   const recordsDetail = isNonEmptyArray(recordReferences) ? (
