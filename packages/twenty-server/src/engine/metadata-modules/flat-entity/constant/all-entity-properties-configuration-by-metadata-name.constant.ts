@@ -33,14 +33,16 @@ type UnusedMetadataColumnName<TMetadataName extends AllMetadataName> =
 type MetadataEntityPropertyConfiguration<
   TMetadataName extends AllMetadataName,
 > = {
-  [K in keyof Omit<
-    ScalarFlatEntity<MetadataEntity<TMetadataName>>,
-    | 'id'
-    | 'workspaceId'
-    | 'applicationId'
-    | 'universalIdentifier'
-    | UnusedMetadataColumnName<TMetadataName>
-  >]: {
+  [
+    K in keyof Omit<
+      ScalarFlatEntity<MetadataEntity<TMetadataName>>,
+      | 'id'
+      | 'workspaceId'
+      | 'applicationId'
+      | 'universalIdentifier'
+      | UnusedMetadataColumnName<TMetadataName>
+    >
+  ]: {
     universalProperty: K extends AllJsonbPropertiesWithSerializedPropertiesForMetadataName<TMetadataName> &
       string
       ? `universal${Capitalize<K>}`
