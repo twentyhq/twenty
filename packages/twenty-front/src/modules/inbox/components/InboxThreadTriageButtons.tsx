@@ -1,6 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
+import { IconButton } from 'twenty-ui/components/input';
 import { IconArrowBackUp, IconBell, IconCheck, IconZzz } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/primitives/input';
 
 type InboxThreadTriageButtonsProps = {
   status: 'open' | 'snoozed' | 'done';
@@ -21,35 +21,41 @@ export const InboxThreadTriageButtons = ({
 
   if (status === 'done') {
     return (
-      <Button
+      <IconButton
         size="sm"
-        startIcon={<IconArrowBackUp />}
+        tooltip={t`Reopen`}
+        aria-label={t`Reopen`}
         disabled={isPending}
         onClick={onReopen}
       >
-        {t`Reopen`}
-      </Button>
+        <IconArrowBackUp />
+      </IconButton>
     );
   }
 
+  const snoozeLabel = status === 'snoozed' ? t`Change` : t`Snooze`;
+  const doneLabel = status === 'snoozed' ? t`Wake now` : t`Done`;
+
   return (
     <>
-      <Button
+      <IconButton
         size="sm"
-        startIcon={<IconZzz />}
+        tooltip={snoozeLabel}
+        aria-label={snoozeLabel}
         disabled={isPending}
         onClick={onSnooze}
       >
-        {status === 'snoozed' ? t`Change` : t`Snooze`}
-      </Button>
-      <Button
+        <IconZzz />
+      </IconButton>
+      <IconButton
         size="sm"
-        startIcon={status === 'snoozed' ? <IconBell /> : <IconCheck />}
+        tooltip={doneLabel}
+        aria-label={doneLabel}
         disabled={isPending}
         onClick={status === 'snoozed' ? onReopen : onDone}
       >
-        {status === 'snoozed' ? t`Wake now` : t`Done`}
-      </Button>
+        {status === 'snoozed' ? <IconBell /> : <IconCheck />}
+      </IconButton>
     </>
   );
 };
