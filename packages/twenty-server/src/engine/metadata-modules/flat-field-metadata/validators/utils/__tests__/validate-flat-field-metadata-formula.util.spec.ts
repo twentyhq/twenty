@@ -25,7 +25,7 @@ const validate = ({
       name: 'margin',
       type: FieldMetadataType.NUMBER,
       universalIdentifier: 'gadget-margin-uid',
-      universalSettings: { formula: { expression: 'price * 0.2' } },
+      formula: { expression: 'price * 0.2' },
       objectMetadataUniversalIdentifier: 'gadget-object-uid',
       isUnique: false,
       isSearchable: false,
@@ -44,22 +44,18 @@ describe('validateFlatFieldMetadataFormula', () => {
       validate({
         flatFieldMetadataToValidate: {
           type: FieldMetadataType.TEXT,
-          universalSettings: { formula: { expression: 'supplier.name' } },
+          formula: { expression: 'supplier.name' },
         },
       }),
     ).toEqual([]);
   });
 
-  it.each([
-    { universalSettings: null },
-    { universalSettings: { decimals: 2 } },
-    { universalSettings: { decimals: 2, formula: null } },
-  ])(
-    'should not validate a field without formula: $universalSettings',
-    ({ universalSettings }) => {
+  it.each([{ formula: null }, { formula: undefined }])(
+    'should not validate a field without formula: $formula',
+    ({ formula }) => {
       expect(
         validate({
-          flatFieldMetadataToValidate: { universalSettings, isUnique: true },
+          flatFieldMetadataToValidate: { formula, isUnique: true },
           isFormulaFieldEnabled: false,
         }),
       ).toEqual([]);
@@ -78,7 +74,7 @@ describe('validateFlatFieldMetadataFormula', () => {
     expect(
       validate({
         flatFieldMetadataToValidate: {},
-        existingUniversalSettings: { formula: { expression: 'price * 0.1' } },
+        existingFormula: { expression: 'price * 0.1' },
         isFormulaFieldEnabled: false,
       }),
     ).toEqual([
@@ -90,7 +86,7 @@ describe('validateFlatFieldMetadataFormula', () => {
     expect(
       validate({
         flatFieldMetadataToValidate: {},
-        existingUniversalSettings: { formula: { expression: 'price * 0.2' } },
+        existingFormula: { expression: 'price * 0.2' },
         isFormulaFieldEnabled: false,
       }),
     ).toEqual([]);
@@ -100,7 +96,7 @@ describe('validateFlatFieldMetadataFormula', () => {
     expect(
       validate({
         flatFieldMetadataToValidate: {
-          universalSettings: { formula: { expression: 'supplier.name' } },
+          formula: { expression: 'supplier.name' },
         },
       }),
     ).toEqual([
@@ -112,7 +108,7 @@ describe('validateFlatFieldMetadataFormula', () => {
       validate({
         flatFieldMetadataToValidate: {
           type: FieldMetadataType.BOOLEAN,
-          universalSettings: { formula: { expression: 'price > "cheap"' } },
+          formula: { expression: 'price > "cheap"' },
         },
       }),
     ).toEqual([
@@ -133,13 +129,11 @@ describe('validateFlatFieldMetadataFormula', () => {
       validate({
         flatFieldMetadataToValidate: {
           type: FieldMetadataType.CURRENCY,
-          universalSettings: {
-            formula: {
-              expression: 'price * 1000000',
-              ...(isDefined(currencyCodeExpression)
-                ? { currencyCodeExpression }
-                : {}),
-            },
+          formula: {
+            expression: 'price * 1000000',
+            ...(isDefined(currencyCodeExpression)
+              ? { currencyCodeExpression }
+              : {}),
           },
         },
       });
@@ -162,15 +156,14 @@ describe('validateFlatFieldMetadataFormula', () => {
       validate({
         flatFieldMetadataToValidate: {
           type: FieldMetadataType.CURRENCY,
-          universalSettings: {
-            formula: {
-              expression: 'price',
-              currencyCodeExpression: '"EUR"',
-            },
+          formula: {
+            expression: 'price',
+            currencyCodeExpression: '"EUR"',
           },
         },
-        existingUniversalSettings: {
-          formula: { expression: 'price', currencyCodeExpression: '"USD"' },
+        existingFormula: {
+          expression: 'price',
+          currencyCodeExpression: '"USD"',
         },
         isFormulaFieldEnabled: false,
       }),
@@ -183,7 +176,7 @@ describe('validateFlatFieldMetadataFormula', () => {
     expect(
       validate({
         flatFieldMetadataToValidate: {
-          universalSettings: { formula: { expression: '' } },
+          formula: { expression: '' },
         },
       }),
     ).toEqual([{ message: 'Formula must have a non-empty expression' }]);
@@ -226,7 +219,7 @@ describe('validateFlatFieldMetadataFormula', () => {
     expect(
       validate({
         flatFieldMetadataToValidate: {
-          universalSettings: { formula: { expression } },
+          formula: { expression },
         },
       }),
     ).toEqual([{ message }]);
@@ -244,7 +237,7 @@ describe('validateFlatFieldMetadataFormula', () => {
     expect(
       validate({
         flatFieldMetadataToValidate: {
-          universalSettings: { formula: { expression: 'price - cost' } },
+          formula: { expression: 'price - cost' },
         },
         pendingUniversalFlatFieldMetadataMaps: {
           byUniversalIdentifier: { cost: pendingUniversalFlatFieldMetadata },

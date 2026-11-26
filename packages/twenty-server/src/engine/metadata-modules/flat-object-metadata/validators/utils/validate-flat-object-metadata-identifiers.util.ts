@@ -54,11 +54,7 @@ export const validateFlatObjectMetadataIdentifiers = ({
           'labelIdentifierFieldMetadataUniversalIdentifier validation failed: field type not compatible',
         userFriendlyMessage: msg`Field cannot be used as label identifier due to its type: should be of type UUID, text or full name`,
       });
-    } else if (
-      isFormulaFieldMetadata({
-        settings: universalFlatFieldMetadata.universalSettings,
-      })
-    ) {
+    } else if (isFormulaFieldMetadata(universalFlatFieldMetadata)) {
       errors.push({
         code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
         message:

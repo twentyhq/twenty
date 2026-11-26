@@ -369,10 +369,10 @@ export class FieldMetadataService {
       (universalFlatFieldMetadata) =>
         setFormulaFieldBindings({
           universalFlatFieldMetadata,
-          existingUniversalSettings:
+          existingFormula:
             existingFlatFieldMetadataMaps.byUniversalIdentifier[
               universalFlatFieldMetadata.universalIdentifier
-            ]?.universalSettings,
+            ]?.formula,
           universalFlatObjectMetadataMaps: existingFlatObjectMetadataMaps,
           universalFlatFieldMetadataMaps: existingFlatFieldMetadataMaps,
         }),

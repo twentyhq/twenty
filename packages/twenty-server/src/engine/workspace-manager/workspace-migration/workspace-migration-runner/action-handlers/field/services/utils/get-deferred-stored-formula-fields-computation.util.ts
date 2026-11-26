@@ -8,7 +8,7 @@ export const getDeferredStoredFormulaFieldsComputation = ({
 }: {
   flatFieldMetadata: Pick<
     FlatFieldMetadata,
-    'id' | 'objectMetadataId' | 'settings'
+    'id' | 'objectMetadataId' | 'formula'
   >;
 }):
   | {
@@ -16,9 +16,7 @@ export const getDeferredStoredFormulaFieldsComputation = ({
       payload: DeferredWorkspaceOperationPayload<'compute_storedFormulaFields'>;
     }
   | undefined =>
-  getFieldMetadataFormulaEvaluation({
-    settings: flatFieldMetadata.settings,
-  }) === 'STORED'
+  getFieldMetadataFormulaEvaluation(flatFieldMetadata) === 'STORED'
     ? {
         name: 'compute_storedFormulaFields' as const,
         payload: {

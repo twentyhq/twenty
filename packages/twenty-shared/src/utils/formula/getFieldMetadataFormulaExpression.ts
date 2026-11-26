@@ -1,19 +1,10 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { isPlainObject } from '@/utils/typeguard/isPlainObject';
+import { type FieldMetadataFormula } from '@/types/FieldMetadataFormula';
 
 export const getFieldMetadataFormulaExpression = ({
-  settings,
+  formula,
 }: {
-  settings?: unknown;
-}): string | undefined => {
-  if (!isPlainObject(settings)) {
-    return undefined;
-  }
-
-  const formula = settings.formula;
-
-  return isPlainObject(formula) && isNonEmptyString(formula.expression)
-    ? formula.expression
-    : undefined;
-};
+  formula?: Partial<Pick<FieldMetadataFormula, 'expression'>> | null;
+}): string | undefined =>
+  isNonEmptyString(formula?.expression) ? formula.expression : undefined;

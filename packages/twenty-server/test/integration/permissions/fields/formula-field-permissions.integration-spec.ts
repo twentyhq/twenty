@@ -169,7 +169,7 @@ describe('formula fields should not reveal values the reader cannot read (integr
           type: FieldMetadataType.TEXT,
           objectMetadataId: personObjectMetadataId,
           isLabelSyncedWithName: false,
-          settings: { formula: { expression } },
+          formula: { expression },
         },
         gqlFields: 'id',
       });

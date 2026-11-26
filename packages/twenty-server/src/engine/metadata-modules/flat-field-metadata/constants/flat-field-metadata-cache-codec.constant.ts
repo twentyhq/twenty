@@ -9,6 +9,7 @@ export const FLAT_FIELD_METADATA_SHORT_CODE_BY_KEY = {
   defaultValue: '$7',
   description: '$8',
   fieldPermissionIds: '$9',
+  formula: '$X',
   fieldMetadataOptionIds: '$P',
   fieldMetadataOptionUniversalIdentifiers: '$Q',
   rowLevelPermissionPredicateIds: '$R',
