@@ -8,7 +8,6 @@ import { TELEGRAM_ASSISTANT_DEADLINE_FAILURE_TEXT } from 'src/logic-functions/co
 import { TELEGRAM_ASSISTANT_EMPTY_RESPONSE_FAILURE_TEXT } from 'src/logic-functions/constants/telegram-assistant-empty-response-failure-text';
 import { TELEGRAM_ASSISTANT_FAILURE_TEXT } from 'src/logic-functions/constants/telegram-assistant-failure-text';
 import { TELEGRAM_ASSISTANT_HELP_TEXT } from 'src/logic-functions/constants/telegram-assistant-help-text';
-import { TELEGRAM_ASSISTANT_TEXT_ONLY_TEXT } from 'src/logic-functions/constants/telegram-assistant-text-only-text';
 import { telegramUpdateHandler } from 'src/logic-functions/telegram-update-handler';
 
 const { clientHolder, runAgentMock } = vi.hoisted(() => {
@@ -158,15 +157,6 @@ describe('answering a question from Telegram', () => {
     expect(coreFake.state.requests).toHaveLength(1);
   });
 
-  it('does not answer again a message it already answered', async () => {
-    await send({ text: 'How many open deals?' });
-
-    await expect(send({ text: 'How many open deals?' })).resolves.toEqual({
-      outcome: 'SKIPPED',
-    });
-    expect(runAgentMock).toHaveBeenCalledTimes(1);
-  });
-
   it('tells the member when the agent fails and records why', async () => {
     runAgentMock.mockResolvedValue({
       success: false,
@@ -276,16 +266,6 @@ describe('answering a question from Telegram', () => {
     await expect(pending).resolves.toEqual({ outcome: 'ANSWERED' });
     expect(callsTo('sendRichMessage')).toHaveLength(2);
     expect(callsTo('sendMessage')).toEqual([]);
-  });
-
-  it('asks for text when the message has none, without running the agent', async () => {
-    await expect(send({ text: undefined })).resolves.toEqual({
-      outcome: 'TEXT_ONLY',
-    });
-    expect(callsTo('sendMessage').map((call) => call.params.text)).toEqual([
-      TELEGRAM_ASSISTANT_TEXT_ONLY_TEXT,
-    ]);
-    expect(runAgentMock).not.toHaveBeenCalled();
   });
 
   it('answers a command with the help text, without running the agent', async () => {

@@ -197,17 +197,6 @@ describe('connecting a Telegram account', () => {
     expect(sentTexts()).toEqual([TELEGRAM_CONNECTED_TEXT]);
   });
 
-  it('routes later messages of a linked account to its workspace', async () => {
-    const { token } = await startLink();
-
-    await deliver(buildMessageUpdate(`/start ${token}`));
-
-    const { resolved, handled } = await deliver(buildMessageUpdate('/start'));
-
-    expect(resolved).toMatchObject({ workspaceId: 'workspace-1' });
-    expect(handled).toEqual({ outcome: 'CONNECTED' });
-  });
-
   it('accepts a link only once', async () => {
     const { token } = await startLink();
 

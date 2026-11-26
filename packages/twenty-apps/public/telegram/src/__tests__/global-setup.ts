@@ -2,7 +2,6 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { runTwenty } from './run-twenty';
 
-// Installing builds the app's indexes in the background, and the server refuses to uninstall until they are done.
 const DEFERRED_OPERATIONS_PATTERN = /deferred schema operation/i;
 const UNINSTALL_RETRY_DELAY_MS = 5000;
 const UNINSTALL_MAX_ATTEMPTS = 15;
