@@ -169,8 +169,12 @@ export const ToolWithOneRecord: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await userEvent.click(canvas.getByRole('button', { name: '1 step' }));
-    expect(await canvas.findByText('Microsoft')).toBeVisible();
+    await userEvent.click(
+      await canvas.findByRole('button', { name: '1 step' }),
+    );
+    await waitFor(() => {
+      expect(canvas.getByText('Microsoft')).toBeVisible();
+    });
   },
 };
 
@@ -194,8 +198,12 @@ export const ToolWithSeveralRecords: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await userEvent.click(canvas.getByRole('button', { name: '1 step' }));
-    expect(await canvas.findByText('3 records')).toBeVisible();
+    await userEvent.click(
+      await canvas.findByRole('button', { name: '1 step' }),
+    );
+    await waitFor(() => {
+      expect(canvas.getByText('3 records')).toBeVisible();
+    });
     expect(canvas.queryByText('Microsoft')).toBeNull();
   },
 };
