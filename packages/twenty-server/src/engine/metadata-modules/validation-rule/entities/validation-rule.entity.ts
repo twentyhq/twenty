@@ -64,7 +64,7 @@ export class ValidationRuleEntity
   @Column({ nullable: true, type: 'varchar' })
   icon: string | null;
 
-  // No runtime reads or writes them, the 2-65 conversion reads them with SQL, dropped in 2.66
+  // No runtime reads or writes them; add @WasRemovedInUpgrade(DROP_VALIDATION_RULE_EXPRESSION_AND_BINDINGS_UPGRADE_COMMAND_NAME) when 2.66 is current
   @Column({
     nullable: true,
     type: 'text',
