@@ -48,7 +48,7 @@ const dispatchViewUpdate = (viewId: string) =>
   });
 
 describe('MetadataStoreSSEEffect', () => {
-  it('should refetch views when an update brings a view the store does not have', () => {
+  it('should invalidate a key when an update brings a record the store does not have', () => {
     const store = renderEffectWithStore();
 
     dispatchViewUpdate(RESHARED_VIEW_ID);
@@ -62,7 +62,7 @@ describe('MetadataStoreSSEEffect', () => {
     expect(store.get(metadataLoadedVersionState.atom)).toBe(1);
   });
 
-  it('should only upsert a view the store already has', () => {
+  it('should only upsert a record the store already has', () => {
     const store = renderEffectWithStore();
 
     dispatchViewUpdate(KNOWN_VIEW_ID);
@@ -70,6 +70,23 @@ describe('MetadataStoreSSEEffect', () => {
     const viewsEntry = store.get(metadataStoreState.atomFamily('views'));
 
     expect(viewsEntry.currentCollectionHash).toBe('views-hash-2');
+    expect(store.get(metadataLoadedVersionState.atom)).toBe(0);
+  });
+
+  it('should not invalidate a key that has not been loaded yet', () => {
+    const store = renderEffectWithStore();
+
+    act(() => {
+      dispatchMetadataOperationBrowserEvent({
+        metadataName: 'viewField',
+        operation: {
+          type: 'update',
+          updatedRecord: { id: 'view-field-id', viewId: KNOWN_VIEW_ID },
+        },
+        updatedCollectionHash: 'view-fields-hash',
+      });
+    });
+
     expect(store.get(metadataLoadedVersionState.atom)).toBe(0);
   });
 });

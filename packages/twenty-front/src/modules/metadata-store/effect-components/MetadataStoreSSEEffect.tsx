@@ -1,7 +1,10 @@
 import { useListenToMetadataOperationBrowserEvent } from '@/browser-event/hooks/useListenToMetadataOperationBrowserEvent';
 import { useInvalidateMetadataStore } from '@/metadata-store/hooks/useInvalidateMetadataStore';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
-import { type MetadataEntityKey } from '@/metadata-store/states/metadataStoreState';
+import {
+  metadataStoreState,
+  type MetadataEntityKey,
+} from '@/metadata-store/states/metadataStoreState';
 import { type FlatPageLayoutWidget } from '@/metadata-store/types/FlatPageLayoutWidget';
 import { type MetadataEntityTypeMap } from '@/metadata-store/types/MetadataEntityTypeMap';
 import { addTypenamesToFlatPageLayoutWidget } from '@/metadata-store/utils/addTypenamesToFlatPageLayoutWidget';
@@ -37,7 +40,7 @@ export const MetadataStoreSSEEffect = () => {
       }
 
       const collectionHash = eventDetail.updatedCollectionHash;
-      let hasGainedAccessToView = false;
+      let isUpdateOfUnknownRecord = false;
 
       switch (eventDetail.operation.type) {
         case 'create': {
@@ -56,12 +59,13 @@ export const MetadataStoreSSEEffect = () => {
         case 'update': {
           const updatedRecordId = eventDetail.operation.updatedRecord.id;
 
-          hasGainedAccessToView =
-            entityKey === 'views' &&
+          isUpdateOfUnknownRecord =
+            store.get(metadataStoreState.atomFamily(entityKey)).status !==
+              'empty' &&
             !getDraftOrCurrentMetadataItems({
               store,
-              metadataEntityKey: 'views',
-            }).some((view) => view.id === updatedRecordId);
+              metadataEntityKey: entityKey,
+            }).some((item) => item.id === updatedRecordId);
 
           addToDraft({
             key: entityKey,
@@ -87,8 +91,8 @@ export const MetadataStoreSSEEffect = () => {
 
       applyChanges();
 
-      if (hasGainedAccessToView) {
-        invalidateMetadataStore(['views']);
+      if (isUpdateOfUnknownRecord) {
+        invalidateMetadataStore([entityKey]);
       }
     },
   });
