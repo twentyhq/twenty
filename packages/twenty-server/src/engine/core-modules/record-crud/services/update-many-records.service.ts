@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { isObjectSyncedFromConnectedAccounts } from 'twenty-shared/workflow';
+import { canObjectBeManagedByAutomation } from 'twenty-shared/workflow';
 
 import { CommonUpdateManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-update-many-query-runner.service';
 import { isRecordFilterEmpty } from 'src/engine/api/common/common-query-runners/utils/is-record-filter-empty.util';
@@ -11,7 +11,6 @@ import {
 } from 'src/engine/core-modules/record-crud/exceptions/record-crud.exception';
 import { CommonApiContextBuilderService } from 'src/engine/core-modules/record-crud/services/common-api-context-builder.service';
 import { type UpdateManyRecordsParams } from 'src/engine/core-modules/record-crud/types/update-many-records-params.type';
-import { canFieldsBeUpdatedByAutomation } from 'src/engine/core-modules/record-crud/utils/can-fields-be-updated-by-automation.util';
 import { getRecordDisplayName } from 'src/engine/core-modules/record-crud/utils/get-record-display-name.util';
 import { removeUndefinedFromRecord } from 'src/engine/core-modules/record-crud/utils/remove-undefined-from-record.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
@@ -48,13 +47,9 @@ export class UpdateManyRecordsService {
         objectName,
       });
 
-      const cleanedData = removeUndefinedFromRecord(data);
-
       if (
-        !canFieldsBeUpdatedByAutomation({
-          flatObjectMetadata,
-          flatFieldMetadataMaps,
-          fieldNames: Object.keys(cleanedData),
+        !canObjectBeManagedByAutomation({
+          nameSingular: flatObjectMetadata.nameSingular,
         })
       ) {
         throw new RecordCrudException(
@@ -62,6 +57,8 @@ export class UpdateManyRecordsService {
           RecordCrudExceptionCode.INVALID_REQUEST,
         );
       }
+
+      const cleanedData = removeUndefinedFromRecord(data);
 
       const { results: updatedRecords } =
         await this.commonUpdateManyRunner.execute(
@@ -72,18 +69,6 @@ export class UpdateManyRecordsService {
       this.logger.log(
         `Updated ${updatedRecords.length} records in ${objectName}`,
       );
-
-      if (
-        isObjectSyncedFromConnectedAccounts({
-          nameSingular: flatObjectMetadata.nameSingular,
-        })
-      ) {
-        return {
-          success: true,
-          message: `Updated ${updatedRecords.length} records in ${objectName}`,
-          result: updatedRecords.map((record) => ({ id: record.id })),
-        };
-      }
 
       return {
         success: true,

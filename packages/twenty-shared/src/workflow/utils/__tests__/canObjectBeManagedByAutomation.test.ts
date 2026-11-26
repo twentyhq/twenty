@@ -25,6 +25,15 @@ describe('canObjectBeManagedByAutomation', () => {
     ).toBe(true);
   });
 
+  it('should leave synced message and calendar objects to permissions', () => {
+    expect(canObjectBeManagedByAutomation({ nameSingular: 'message' })).toBe(
+      true,
+    );
+    expect(
+      canObjectBeManagedByAutomation({ nameSingular: 'calendarEvent' }),
+    ).toBe(true);
+  });
+
   it.each([
     'workflow',
     'workflowVersion',
@@ -33,13 +42,6 @@ describe('canObjectBeManagedByAutomation', () => {
     'workspaceMember',
     'dashboard',
     'agentChatThread',
-    'message',
-    'messageThread',
-    'messageChannelMessageAssociation',
-    'messageParticipant',
-    'calendarEvent',
-    'calendarEventParticipant',
-    'calendarChannelEventAssociation',
   ])('should return false for %s', (nameSingular) => {
     expect(canObjectBeManagedByAutomation({ nameSingular })).toBe(false);
   });

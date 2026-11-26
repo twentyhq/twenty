@@ -13,6 +13,7 @@ import {
   type CreateStandardFieldArgs,
   createStandardFieldFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
+import { PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-disabled-field-permission-actions.constant';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
 export const buildCalendarEventParticipantStandardFlatFieldMetadatas = ({
   now,
@@ -235,221 +236,255 @@ export const buildCalendarEventParticipantStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  handle: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'handle',
-      type: FieldMetadataType.TEXT,
-      label: i18nLabel(
-        msg({ message: `Handle`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({ message: `Handle`, context: 'fieldMetadata.description' }),
-      ),
-      icon: 'IconMail',
-      isNullable: true,
-      isUIEditable: false,
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  displayName: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'displayName',
-      type: FieldMetadataType.TEXT,
-      label: i18nLabel(
-        msg({ message: `Display Name`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({ message: `Display Name`, context: 'fieldMetadata.description' }),
-      ),
-      icon: 'IconUser',
-      isNullable: true,
-      isUIEditable: false,
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  isOrganizer: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'isOrganizer',
-      type: FieldMetadataType.BOOLEAN,
-      label: i18nLabel(
-        msg({ message: `Is Organizer`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({ message: `Is Organizer`, context: 'fieldMetadata.description' }),
-      ),
-      icon: 'IconUser',
-      isNullable: false,
-      isUIEditable: false,
-      defaultValue: false,
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  responseStatus: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'responseStatus',
-      type: FieldMetadataType.SELECT,
-      label: i18nLabel(
-        msg({ message: `Response Status`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({
-          message: `Response Status`,
-          context: 'fieldMetadata.description',
-        }),
-      ),
-      icon: 'IconUser',
-      isNullable: false,
-      isUIEditable: false,
-      defaultValue: "'NEEDS_ACTION'",
-      options: [
-        {
-          id: '20202020-71eb-4724-9947-8aca3bb51140',
-          value: 'NEEDS_ACTION',
-          label: i18nLabel(
-            msg({ message: `Needs Action`, context: 'fieldMetadata.label' }),
-          ),
-          position: 0,
-          color: 'orange',
-        },
-        {
-          id: '20202020-7a3c-45e8-8bbb-f909a4b821a4',
-          value: 'DECLINED',
-          label: i18nLabel(
-            msg({ message: `Declined`, context: 'fieldMetadata.label' }),
-          ),
-          position: 1,
-          color: 'red',
-        },
-        {
-          id: '20202020-aec0-4845-8ca5-a3c17f635329',
-          value: 'TENTATIVE',
-          label: i18nLabel(
-            msg({ message: `Tentative`, context: 'fieldMetadata.label' }),
-          ),
-          position: 2,
-          color: 'yellow',
-        },
-        {
-          id: '20202020-ffbe-4c58-a05b-b00f7fa86c74',
-          value: 'ACCEPTED',
-          label: i18nLabel(
-            msg({ message: `Accepted`, context: 'fieldMetadata.label' }),
-          ),
-          position: 3,
-          color: 'green',
-        },
-      ],
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  calendarEvent: createStandardRelationFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      type: FieldMetadataType.RELATION,
-      morphId: null,
-      fieldName: 'calendarEvent',
-      label: i18nLabel(
-        msg({ message: `Event ID`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({ message: `Event ID`, context: 'fieldMetadata.description' }),
-      ),
-      icon: 'IconCalendar',
-      isNullable: false,
-      isUIEditable: false,
-      targetObjectName: 'calendarEvent',
-      targetFieldName: 'calendarEventParticipants',
-      settings: {
-        relationType: RelationType.MANY_TO_ONE,
-        onDelete: RelationOnDeleteAction.CASCADE,
-        joinColumnName: 'calendarEventId',
+  handle: {
+    ...createStandardFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        fieldName: 'handle',
+        type: FieldMetadataType.TEXT,
+        label: i18nLabel(
+          msg({ message: `Handle`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({ message: `Handle`, context: 'fieldMetadata.description' }),
+        ),
+        icon: 'IconMail',
+        isNullable: true,
+        isUIEditable: false,
       },
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  person: createStandardRelationFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      type: FieldMetadataType.RELATION,
-      morphId: null,
-      fieldName: 'person',
-      label: i18nLabel(
-        msg({ message: `Person`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({ message: `Person`, context: 'fieldMetadata.description' }),
-      ),
-      icon: 'IconUser',
-      isNullable: true,
-      isUIEditable: false,
-      targetObjectName: 'person',
-      targetFieldName: 'calendarEventParticipants',
-      settings: {
-        relationType: RelationType.MANY_TO_ONE,
-        onDelete: RelationOnDeleteAction.SET_NULL,
-        joinColumnName: 'personId',
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
+  },
+  displayName: {
+    ...createStandardFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        fieldName: 'displayName',
+        type: FieldMetadataType.TEXT,
+        label: i18nLabel(
+          msg({ message: `Display Name`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Display Name`,
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconUser',
+        isNullable: true,
+        isUIEditable: false,
       },
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  workspaceMember: createStandardRelationFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      type: FieldMetadataType.RELATION,
-      morphId: null,
-      fieldName: 'workspaceMember',
-      label: i18nLabel(
-        msg({ message: `Workspace Member`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({
-          message: `Workspace Member`,
-          context: 'fieldMetadata.description',
-        }),
-      ),
-      icon: 'IconUser',
-      isNullable: true,
-      isUIEditable: false,
-      targetObjectName: 'workspaceMember',
-      targetFieldName: 'calendarEventParticipants',
-      settings: {
-        relationType: RelationType.MANY_TO_ONE,
-        onDelete: RelationOnDeleteAction.SET_NULL,
-        joinColumnName: 'workspaceMemberId',
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
+  },
+  isOrganizer: {
+    ...createStandardFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        fieldName: 'isOrganizer',
+        type: FieldMetadataType.BOOLEAN,
+        label: i18nLabel(
+          msg({ message: `Is Organizer`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Is Organizer`,
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconUser',
+        isNullable: false,
+        isUIEditable: false,
+        defaultValue: false,
       },
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
+  },
+  responseStatus: {
+    ...createStandardFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        fieldName: 'responseStatus',
+        type: FieldMetadataType.SELECT,
+        label: i18nLabel(
+          msg({ message: `Response Status`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Response Status`,
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconUser',
+        isNullable: false,
+        isUIEditable: false,
+        defaultValue: "'NEEDS_ACTION'",
+        options: [
+          {
+            id: '20202020-71eb-4724-9947-8aca3bb51140',
+            value: 'NEEDS_ACTION',
+            label: i18nLabel(
+              msg({ message: `Needs Action`, context: 'fieldMetadata.label' }),
+            ),
+            position: 0,
+            color: 'orange',
+          },
+          {
+            id: '20202020-7a3c-45e8-8bbb-f909a4b821a4',
+            value: 'DECLINED',
+            label: i18nLabel(
+              msg({ message: `Declined`, context: 'fieldMetadata.label' }),
+            ),
+            position: 1,
+            color: 'red',
+          },
+          {
+            id: '20202020-aec0-4845-8ca5-a3c17f635329',
+            value: 'TENTATIVE',
+            label: i18nLabel(
+              msg({ message: `Tentative`, context: 'fieldMetadata.label' }),
+            ),
+            position: 2,
+            color: 'yellow',
+          },
+          {
+            id: '20202020-ffbe-4c58-a05b-b00f7fa86c74',
+            value: 'ACCEPTED',
+            label: i18nLabel(
+              msg({ message: `Accepted`, context: 'fieldMetadata.label' }),
+            ),
+            position: 3,
+            color: 'green',
+          },
+        ],
+      },
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
+  },
+  calendarEvent: {
+    ...createStandardRelationFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        type: FieldMetadataType.RELATION,
+        morphId: null,
+        fieldName: 'calendarEvent',
+        label: i18nLabel(
+          msg({ message: `Event ID`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({ message: `Event ID`, context: 'fieldMetadata.description' }),
+        ),
+        icon: 'IconCalendar',
+        isNullable: false,
+        isUIEditable: false,
+        targetObjectName: 'calendarEvent',
+        targetFieldName: 'calendarEventParticipants',
+        settings: {
+          relationType: RelationType.MANY_TO_ONE,
+          onDelete: RelationOnDeleteAction.CASCADE,
+          joinColumnName: 'calendarEventId',
+        },
+      },
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
+  },
+  person: {
+    ...createStandardRelationFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        type: FieldMetadataType.RELATION,
+        morphId: null,
+        fieldName: 'person',
+        label: i18nLabel(
+          msg({ message: `Person`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({ message: `Person`, context: 'fieldMetadata.description' }),
+        ),
+        icon: 'IconUser',
+        isNullable: true,
+        isUIEditable: false,
+        targetObjectName: 'person',
+        targetFieldName: 'calendarEventParticipants',
+        settings: {
+          relationType: RelationType.MANY_TO_ONE,
+          onDelete: RelationOnDeleteAction.SET_NULL,
+          joinColumnName: 'personId',
+        },
+      },
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
+  },
+  workspaceMember: {
+    ...createStandardRelationFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        type: FieldMetadataType.RELATION,
+        morphId: null,
+        fieldName: 'workspaceMember',
+        label: i18nLabel(
+          msg({ message: `Workspace Member`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Workspace Member`,
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconUser',
+        isNullable: true,
+        isUIEditable: false,
+        targetObjectName: 'workspaceMember',
+        targetFieldName: 'calendarEventParticipants',
+        settings: {
+          relationType: RelationType.MANY_TO_ONE,
+          onDelete: RelationOnDeleteAction.SET_NULL,
+          joinColumnName: 'workspaceMemberId',
+        },
+      },
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
+  },
 });

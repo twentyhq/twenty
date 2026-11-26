@@ -11,7 +11,6 @@ export { CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX } from './constants/CaptureAllVari
 export { CODE_STEP_SOURCE_MAX_LENGTH } from './constants/CodeStepSourceMaxLength';
 export { CONTENT_TYPE_VALUES_HTTP_REQUEST } from './constants/ContentTypeValuesHttpRequest';
 export { OBJECTS_BLOCKED_FROM_AUTOMATION } from './constants/ObjectsBlockedFromAutomation';
-export { OBJECTS_SYNCED_FROM_CONNECTED_ACCOUNTS } from './constants/ObjectsSyncedFromConnectedAccounts';
 export { STEP_RETRY_DELAYS_MS } from './constants/StepRetryDelaysMs';
 export { TRIGGER_STEP_ID } from './constants/TriggerStepId';
 export { WORKFLOW_ACTION_FEATURE_FLAGS } from './constants/WorkflowActionFeatureFlags';
@@ -177,7 +176,6 @@ export { getWorkflowAiAgentStepConfigIssues } from './utils/getWorkflowAiAgentSt
 export { getWorkflowRunContext } from './utils/getWorkflowRunContext';
 export { hasWorkflowAiAgentConfig } from './utils/hasWorkflowAiAgentConfig';
 export { isAgentRunnableAsWorkflowStep } from './utils/isAgentRunnableAsWorkflowStep';
-export { isObjectSyncedFromConnectedAccounts } from './utils/isObjectSyncedFromConnectedAccounts';
 export { isStandaloneVariableString } from './utils/isStandaloneVariableString';
 export { isWorkflowAiAgentGenerateStep } from './utils/isWorkflowAiAgentGenerateStep';
 export { parseBooleanFromStringValue } from './utils/parseBooleanFromStringValue';

@@ -14,6 +14,7 @@ import {
   type CreateStandardFieldArgs,
   createStandardFieldFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
+import { PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-disabled-field-permission-actions.constant';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
 export const buildMessageParticipantStandardFlatFieldMetadatas = ({
   now,
@@ -236,237 +237,268 @@ export const buildMessageParticipantStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  role: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'role',
-      type: FieldMetadataType.SELECT,
-      label: i18nLabel(
-        msg({ message: `Role`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({ message: `Role`, context: 'fieldMetadata.description' }),
-      ),
-      icon: 'IconAt',
-      isNullable: false,
-      isUIEditable: false,
-      defaultValue: `'${MessageParticipantRole.FROM}'`,
-      options: [
-        {
-          id: '20202020-761b-4f02-bc28-795f9a67be48',
-          value: MessageParticipantRole.FROM,
-          label: i18nLabel(
-            msg({ message: `From`, context: 'fieldMetadata.label' }),
-          ),
-          position: 0,
-          color: 'green',
-        },
-        {
-          id: '20202020-86bc-4cf1-a887-c992c1a0f97f',
-          value: MessageParticipantRole.TO,
-          label: i18nLabel(
-            msg({ message: `To`, context: 'fieldMetadata.label' }),
-          ),
-          position: 1,
-          color: 'blue',
-        },
-        {
-          id: '20202020-fc2b-431f-805c-650ab60c4f88',
-          value: MessageParticipantRole.CC,
-          label: i18nLabel(
-            msg({ message: `Cc`, context: 'fieldMetadata.label' }),
-          ),
-          position: 2,
-          color: 'orange',
-        },
-        {
-          id: '20202020-fc9c-436e-842a-7e3a9b92766f',
-          value: MessageParticipantRole.BCC,
-          label: i18nLabel(
-            msg({ message: `Bcc`, context: 'fieldMetadata.label' }),
-          ),
-          position: 3,
-          color: 'red',
-        },
-        {
-          id: '20202020-3b1a-4e2c-9d7f-8a6b5c4d3e2f',
-          value: MessageParticipantRole.REPLY_TO,
-          label: i18nLabel(
-            msg({ message: `Reply To`, context: 'fieldMetadata.label' }),
-          ),
-          position: 4,
-          color: 'purple',
-        },
-      ],
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  handle: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'handle',
-      type: FieldMetadataType.TEXT,
-      label: i18nLabel(
-        msg({ message: `Handle`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({ message: `Handle`, context: 'fieldMetadata.description' }),
-      ),
-      icon: 'IconAt',
-      isNullable: true,
-      isUIEditable: false,
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  displayName: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'displayName',
-      type: FieldMetadataType.TEXT,
-      label: i18nLabel(
-        msg({ message: `Display Name`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({ message: `Display Name`, context: 'fieldMetadata.description' }),
-      ),
-      icon: 'IconUser',
-      isNullable: true,
-      isUIEditable: false,
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  message: createStandardRelationFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      type: FieldMetadataType.RELATION,
-      morphId: null,
-      fieldName: 'message',
-      label: i18nLabel(
-        msg({ message: `Message`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({ message: `Message`, context: 'fieldMetadata.description' }),
-      ),
-      icon: 'IconMessage',
-      isNullable: false,
-      isUIEditable: false,
-      targetObjectName: 'message',
-      targetFieldName: 'messageParticipants',
-      settings: {
-        relationType: RelationType.MANY_TO_ONE,
-        onDelete: RelationOnDeleteAction.CASCADE,
-        joinColumnName: 'messageId',
+  role: {
+    ...createStandardFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        fieldName: 'role',
+        type: FieldMetadataType.SELECT,
+        label: i18nLabel(
+          msg({ message: `Role`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({ message: `Role`, context: 'fieldMetadata.description' }),
+        ),
+        icon: 'IconAt',
+        isNullable: false,
+        isUIEditable: false,
+        defaultValue: `'${MessageParticipantRole.FROM}'`,
+        options: [
+          {
+            id: '20202020-761b-4f02-bc28-795f9a67be48',
+            value: MessageParticipantRole.FROM,
+            label: i18nLabel(
+              msg({ message: `From`, context: 'fieldMetadata.label' }),
+            ),
+            position: 0,
+            color: 'green',
+          },
+          {
+            id: '20202020-86bc-4cf1-a887-c992c1a0f97f',
+            value: MessageParticipantRole.TO,
+            label: i18nLabel(
+              msg({ message: `To`, context: 'fieldMetadata.label' }),
+            ),
+            position: 1,
+            color: 'blue',
+          },
+          {
+            id: '20202020-fc2b-431f-805c-650ab60c4f88',
+            value: MessageParticipantRole.CC,
+            label: i18nLabel(
+              msg({ message: `Cc`, context: 'fieldMetadata.label' }),
+            ),
+            position: 2,
+            color: 'orange',
+          },
+          {
+            id: '20202020-fc9c-436e-842a-7e3a9b92766f',
+            value: MessageParticipantRole.BCC,
+            label: i18nLabel(
+              msg({ message: `Bcc`, context: 'fieldMetadata.label' }),
+            ),
+            position: 3,
+            color: 'red',
+          },
+          {
+            id: '20202020-3b1a-4e2c-9d7f-8a6b5c4d3e2f',
+            value: MessageParticipantRole.REPLY_TO,
+            label: i18nLabel(
+              msg({ message: `Reply To`, context: 'fieldMetadata.label' }),
+            ),
+            position: 4,
+            color: 'purple',
+          },
+        ],
       },
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  person: createStandardRelationFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      type: FieldMetadataType.RELATION,
-      morphId: null,
-      fieldName: 'person',
-      label: i18nLabel(
-        msg({ message: `Person`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({ message: `Person`, context: 'fieldMetadata.description' }),
-      ),
-      icon: 'IconUser',
-      isNullable: true,
-      isUIEditable: false,
-      targetObjectName: 'person',
-      targetFieldName: 'messageParticipants',
-      settings: {
-        relationType: RelationType.MANY_TO_ONE,
-        onDelete: RelationOnDeleteAction.SET_NULL,
-        joinColumnName: 'personId',
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
+  },
+  handle: {
+    ...createStandardFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        fieldName: 'handle',
+        type: FieldMetadataType.TEXT,
+        label: i18nLabel(
+          msg({ message: `Handle`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({ message: `Handle`, context: 'fieldMetadata.description' }),
+        ),
+        icon: 'IconAt',
+        isNullable: true,
+        isUIEditable: false,
       },
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  workspaceMember: createStandardRelationFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      type: FieldMetadataType.RELATION,
-      morphId: null,
-      fieldName: 'workspaceMember',
-      label: i18nLabel(
-        msg({ message: `Workspace Member`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({
-          message: `Workspace member`,
-          context: 'fieldMetadata.description',
-        }),
-      ),
-      icon: 'IconUsers',
-      isNullable: true,
-      isUIEditable: false,
-      targetObjectName: 'workspaceMember',
-      targetFieldName: 'messageParticipants',
-      settings: {
-        relationType: RelationType.MANY_TO_ONE,
-        onDelete: RelationOnDeleteAction.SET_NULL,
-        joinColumnName: 'workspaceMemberId',
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
+  },
+  displayName: {
+    ...createStandardFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        fieldName: 'displayName',
+        type: FieldMetadataType.TEXT,
+        label: i18nLabel(
+          msg({ message: `Display Name`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Display Name`,
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconUser',
+        isNullable: true,
+        isUIEditable: false,
       },
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  messageCampaign: createStandardRelationFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      type: FieldMetadataType.RELATION,
-      morphId: null,
-      fieldName: 'messageCampaign',
-      label: i18nLabel(
-        msg({ message: `Campaign`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({
-          message: `The campaign this participant was a recipient of`,
-          context: 'fieldMetadata.description',
-        }),
-      ),
-      icon: 'IconSend',
-      isNullable: true,
-      isUIEditable: false,
-      targetObjectName: 'messageCampaign',
-      targetFieldName: 'recipients',
-      settings: {
-        relationType: RelationType.MANY_TO_ONE,
-        onDelete: RelationOnDeleteAction.SET_NULL,
-        joinColumnName: 'messageCampaignId',
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
+  },
+  message: {
+    ...createStandardRelationFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        type: FieldMetadataType.RELATION,
+        morphId: null,
+        fieldName: 'message',
+        label: i18nLabel(
+          msg({ message: `Message`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({ message: `Message`, context: 'fieldMetadata.description' }),
+        ),
+        icon: 'IconMessage',
+        isNullable: false,
+        isUIEditable: false,
+        targetObjectName: 'message',
+        targetFieldName: 'messageParticipants',
+        settings: {
+          relationType: RelationType.MANY_TO_ONE,
+          onDelete: RelationOnDeleteAction.CASCADE,
+          joinColumnName: 'messageId',
+        },
       },
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
+  },
+  person: {
+    ...createStandardRelationFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        type: FieldMetadataType.RELATION,
+        morphId: null,
+        fieldName: 'person',
+        label: i18nLabel(
+          msg({ message: `Person`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({ message: `Person`, context: 'fieldMetadata.description' }),
+        ),
+        icon: 'IconUser',
+        isNullable: true,
+        isUIEditable: false,
+        targetObjectName: 'person',
+        targetFieldName: 'messageParticipants',
+        settings: {
+          relationType: RelationType.MANY_TO_ONE,
+          onDelete: RelationOnDeleteAction.SET_NULL,
+          joinColumnName: 'personId',
+        },
+      },
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
+  },
+  workspaceMember: {
+    ...createStandardRelationFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        type: FieldMetadataType.RELATION,
+        morphId: null,
+        fieldName: 'workspaceMember',
+        label: i18nLabel(
+          msg({ message: `Workspace Member`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Workspace member`,
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconUsers',
+        isNullable: true,
+        isUIEditable: false,
+        targetObjectName: 'workspaceMember',
+        targetFieldName: 'messageParticipants',
+        settings: {
+          relationType: RelationType.MANY_TO_ONE,
+          onDelete: RelationOnDeleteAction.SET_NULL,
+          joinColumnName: 'workspaceMemberId',
+        },
+      },
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
+  },
+  messageCampaign: {
+    ...createStandardRelationFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        type: FieldMetadataType.RELATION,
+        morphId: null,
+        fieldName: 'messageCampaign',
+        label: i18nLabel(
+          msg({ message: `Campaign`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `The campaign this participant was a recipient of`,
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconSend',
+        isNullable: true,
+        isUIEditable: false,
+        targetObjectName: 'messageCampaign',
+        targetFieldName: 'recipients',
+        settings: {
+          relationType: RelationType.MANY_TO_ONE,
+          onDelete: RelationOnDeleteAction.SET_NULL,
+          joinColumnName: 'messageCampaignId',
+        },
+      },
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
+  },
 });

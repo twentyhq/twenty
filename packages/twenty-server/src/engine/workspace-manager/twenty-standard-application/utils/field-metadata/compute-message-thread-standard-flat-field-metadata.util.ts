@@ -13,6 +13,7 @@ import {
   type CreateStandardFieldArgs,
   createStandardFieldFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
+import { PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-disabled-field-permission-actions.constant';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
 export const buildMessageThreadStandardFlatFieldMetadatas = ({
   now,
@@ -232,27 +233,31 @@ export const buildMessageThreadStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  subject: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'subject',
-      type: FieldMetadataType.TEXT,
-      label: i18nLabel(
-        msg({ message: `Subject`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({ message: `Subject`, context: 'fieldMetadata.description' }),
-      ),
-      icon: 'IconMessage',
-      isNullable: true,
-      isUIEditable: false,
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
+  subject: {
+    ...createStandardFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        fieldName: 'subject',
+        type: FieldMetadataType.TEXT,
+        label: i18nLabel(
+          msg({ message: `Subject`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({ message: `Subject`, context: 'fieldMetadata.description' }),
+        ),
+        icon: 'IconMessage',
+        isNullable: true,
+        isUIEditable: false,
+      },
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
+  },
   messages: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,

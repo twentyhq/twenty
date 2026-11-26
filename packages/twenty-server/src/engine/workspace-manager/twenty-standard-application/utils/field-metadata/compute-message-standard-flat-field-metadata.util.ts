@@ -15,6 +15,7 @@ import {
   type CreateStandardFieldArgs,
   createStandardFieldFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
+import { PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-disabled-field-permission-actions.constant';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
 export const buildMessageStandardFlatFieldMetadatas = ({
   now,
@@ -234,130 +235,150 @@ export const buildMessageStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  headerMessageId: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'headerMessageId',
-      type: FieldMetadataType.TEXT,
-      label: i18nLabel(
-        msg({ message: `Header message ID`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({
-          message: `Message id from the message header`,
-          context: 'fieldMetadata.description',
-        }),
-      ),
-      icon: 'IconHash',
-      isNullable: true,
-      isUIEditable: false,
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  subject: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'subject',
-      type: FieldMetadataType.TEXT,
-      label: i18nLabel(
-        msg({ message: `Subject`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({ message: `Subject`, context: 'fieldMetadata.description' }),
-      ),
-      icon: 'IconMessage',
-      isNullable: true,
-      isUIEditable: false,
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  text: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'text',
-      type: FieldMetadataType.TEXT,
-      label: i18nLabel(
-        msg({ message: `Text`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({ message: `Text`, context: 'fieldMetadata.description' }),
-      ),
-      icon: 'IconMessage',
-      isNullable: true,
-      isUIEditable: false,
-      // An email body is prose, so it needs multi-line display like calendarEvent.description
-      settings: { displayedMaxRows: 99 },
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  receivedAt: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'receivedAt',
-      type: FieldMetadataType.DATE_TIME,
-      label: i18nLabel(
-        msg({ message: `Received At`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({
-          message: `The date the message was received`,
-          context: 'fieldMetadata.description',
-        }),
-      ),
-      icon: 'IconCalendar',
-      isNullable: true,
-      isUIEditable: false,
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  messageThread: createStandardRelationFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      type: FieldMetadataType.RELATION,
-      morphId: null,
-      fieldName: 'messageThread',
-      label: i18nLabel(
-        msg({ message: `Message Thread ID`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({
-          message: `Message Thread ID`,
-          context: 'fieldMetadata.description',
-        }),
-      ),
-      icon: 'IconHash',
-      isNullable: true,
-      isUIEditable: false,
-      targetObjectName: 'messageThread',
-      targetFieldName: 'messages',
-      settings: {
-        relationType: RelationType.MANY_TO_ONE,
-        onDelete: RelationOnDeleteAction.CASCADE,
-        joinColumnName: 'messageThreadId',
+  headerMessageId: {
+    ...createStandardFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        fieldName: 'headerMessageId',
+        type: FieldMetadataType.TEXT,
+        label: i18nLabel(
+          msg({ message: `Header message ID`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Message id from the message header`,
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconHash',
+        isNullable: true,
+        isUIEditable: false,
       },
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
+  },
+  subject: {
+    ...createStandardFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        fieldName: 'subject',
+        type: FieldMetadataType.TEXT,
+        label: i18nLabel(
+          msg({ message: `Subject`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({ message: `Subject`, context: 'fieldMetadata.description' }),
+        ),
+        icon: 'IconMessage',
+        isNullable: true,
+        isUIEditable: false,
+      },
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
+  },
+  text: {
+    ...createStandardFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        fieldName: 'text',
+        type: FieldMetadataType.TEXT,
+        label: i18nLabel(
+          msg({ message: `Text`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({ message: `Text`, context: 'fieldMetadata.description' }),
+        ),
+        icon: 'IconMessage',
+        isNullable: true,
+        isUIEditable: false,
+        // An email body is prose, so it needs multi-line display like calendarEvent.description
+        settings: { displayedMaxRows: 99 },
+      },
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
+  },
+  receivedAt: {
+    ...createStandardFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        fieldName: 'receivedAt',
+        type: FieldMetadataType.DATE_TIME,
+        label: i18nLabel(
+          msg({ message: `Received At`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `The date the message was received`,
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconCalendar',
+        isNullable: true,
+        isUIEditable: false,
+      },
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
+  },
+  messageThread: {
+    ...createStandardRelationFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        type: FieldMetadataType.RELATION,
+        morphId: null,
+        fieldName: 'messageThread',
+        label: i18nLabel(
+          msg({ message: `Message Thread ID`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Message Thread ID`,
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconHash',
+        isNullable: true,
+        isUIEditable: false,
+        targetObjectName: 'messageThread',
+        targetFieldName: 'messages',
+        settings: {
+          relationType: RelationType.MANY_TO_ONE,
+          onDelete: RelationOnDeleteAction.CASCADE,
+          joinColumnName: 'messageThreadId',
+        },
+      },
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
+  },
   messageParticipants: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,
@@ -426,63 +447,71 @@ export const buildMessageStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  messageCampaign: createStandardRelationFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      type: FieldMetadataType.RELATION,
-      morphId: null,
-      fieldName: 'messageCampaign',
-      label: i18nLabel(
-        msg({ message: `Campaign`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({
-          message: `The campaign this message was sent as part of`,
-          context: 'fieldMetadata.description',
-        }),
-      ),
-      icon: 'IconSend',
-      isNullable: true,
-      isUIEditable: false,
-      targetObjectName: 'messageCampaign',
-      targetFieldName: 'messages',
-      settings: {
-        relationType: RelationType.MANY_TO_ONE,
-        onDelete: RelationOnDeleteAction.SET_NULL,
-        joinColumnName: 'messageCampaignId',
+  messageCampaign: {
+    ...createStandardRelationFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        type: FieldMetadataType.RELATION,
+        morphId: null,
+        fieldName: 'messageCampaign',
+        label: i18nLabel(
+          msg({ message: `Campaign`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `The campaign this message was sent as part of`,
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconSend',
+        isNullable: true,
+        isUIEditable: false,
+        targetObjectName: 'messageCampaign',
+        targetFieldName: 'messages',
+        settings: {
+          relationType: RelationType.MANY_TO_ONE,
+          onDelete: RelationOnDeleteAction.SET_NULL,
+          joinColumnName: 'messageCampaignId',
+        },
       },
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  isDraft: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'isDraft',
-      type: FieldMetadataType.BOOLEAN,
-      label: i18nLabel(
-        msg({ message: `Is draft`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({
-          message: `Whether this message is an unsent draft synced from the provider`,
-          context: 'fieldMetadata.description',
-        }),
-      ),
-      icon: 'IconPencil',
-      isNullable: false,
-      isUIEditable: false,
-      defaultValue: false,
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
+  },
+  isDraft: {
+    ...createStandardFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        fieldName: 'isDraft',
+        type: FieldMetadataType.BOOLEAN,
+        label: i18nLabel(
+          msg({ message: `Is draft`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Whether this message is an unsent draft synced from the provider`,
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconPencil',
+        isNullable: false,
+        isUIEditable: false,
+        defaultValue: false,
+      },
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
+  },
   attachments: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,
