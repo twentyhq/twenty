@@ -15,7 +15,6 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
-import { resolveViewIsPrivateFromInput } from 'src/engine/metadata-modules/view/utils/resolve-view-is-private-from-input.util';
 
 const getViewManifestGroupLoadLimitOrThrow = (
   viewManifest: ViewManifest,
@@ -59,10 +58,7 @@ export const fromViewManifestToUniversalFlatView = ({
     icon: viewManifest.icon ?? 'IconList',
     position: viewManifest.position ?? 0,
     isCompact: viewManifest.isCompact ?? isViewCompactByDefault(viewType),
-    isPrivate:
-      resolveViewIsPrivateFromInput({
-        visibility: viewManifest.visibility,
-      }) ?? false,
+    isPrivate: false,
     openRecordIn: viewManifest.openRecordIn ?? ViewOpenRecordIn.SIDE_PANEL,
     key: null,
     kanbanAggregateOperation: viewManifest.kanbanAggregateOperation ?? null,

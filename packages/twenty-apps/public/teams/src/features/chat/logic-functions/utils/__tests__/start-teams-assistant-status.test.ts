@@ -189,5 +189,14 @@ describe('startTeamsAssistantStatus', () => {
 
     expect(startStreamMock).not.toHaveBeenCalled();
     expect(sentMessageTexts()).toEqual(['Acme has 3 open deals.']);
+    expect(sendActivityMock).toHaveBeenCalledExactlyOnceWith({
+      ...CONVERSATION,
+      accessToken: 'token',
+      activity: {
+        type: 'message',
+        textFormat: 'extendedmarkdown',
+        text: 'Acme has 3 open deals.',
+      },
+    });
   });
 });
