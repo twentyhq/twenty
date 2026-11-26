@@ -338,7 +338,7 @@ export const AiChatMessage = ({
           {isToolsOnlyTurn && (
             <AiChatToolsOnlyTurn
               message={aiChatMessage}
-              hasTrailingSpace={hasFinishedStreamingInView}
+              hasTrailingSpace={hasFinishedStreamingInView && hasHeader}
             >
               {messageContent}
             </AiChatToolsOnlyTurn>
