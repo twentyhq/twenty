@@ -75,11 +75,12 @@ const twentyGraphql = async <TData>(
   endpointPath: '/graphql' | '/metadata',
   query: string,
   variables: Record<string, unknown> = {},
+  accessToken = process.env[WORKSPACE_API_KEY_ENV],
 ): Promise<TData> => {
   const response = await fetch(`${process.env.TWENTY_API_URL}${endpointPath}`, {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${process.env[WORKSPACE_API_KEY_ENV]}`,
+      Authorization: `Bearer ${accessToken}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ query, variables }),
@@ -192,9 +193,10 @@ type CalendarEventFixturesPage = {
   };
 };
 
-const discoverVisibleCalendarEventFixtures = async (): Promise<
-  CalendarEventFixture[]
-> => {
+// Handlers reconcile as the application, so a fixture must be fully visible to it.
+const discoverVisibleCalendarEventFixtures = async (
+  applicationAccessToken: string,
+): Promise<CalendarEventFixture[]> => {
   const fixtures: CalendarEventFixture[] = [];
   let after: string | null = null;
 
@@ -224,6 +226,7 @@ const discoverVisibleCalendarEventFixtures = async (): Promise<
         }
       }`,
       { after },
+      applicationAccessToken,
     );
     const connection = eventsData.calendarEvents;
 
@@ -947,10 +950,11 @@ describe('call recorder app lifecycle (integration)', () => {
   beforeAll(async () => {
     client = new CoreApiClient();
     workspaceId = readWorkspaceIdFromApiKey();
-    availableCalendarEventFixtures =
-      await discoverVisibleCalendarEventFixtures();
     applicationAccessToken = await fetchApplicationAccessToken();
     await waitForCalendarChannelsAccess(applicationAccessToken);
+    availableCalendarEventFixtures = await discoverVisibleCalendarEventFixtures(
+      applicationAccessToken,
+    );
   });
 
   beforeEach(() => {
