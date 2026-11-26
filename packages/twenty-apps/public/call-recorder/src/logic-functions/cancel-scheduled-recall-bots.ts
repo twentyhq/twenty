@@ -11,7 +11,7 @@ import { type PlanScheduledRecallBotCancellationsResult } from 'src/logic-functi
 import { planScheduledRecallBotCancellations } from 'src/logic-functions/flows/plan-scheduled-recall-bot-cancellations.util';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { buildRetryableStepFailure } from 'src/logic-functions/utils/build-step-failure.util';
-import { createApplicationCoreApiClient } from 'src/logic-functions/utils/create-application-core-api-client.util';
+import { createCoreApiClientRunningAsApplication } from 'src/logic-functions/utils/create-core-api-client-running-as-application.util';
 import { getString } from 'src/logic-functions/utils/get-string.util';
 
 export const cancelScheduledRecallBotsHandler = async (
@@ -19,7 +19,7 @@ export const cancelScheduledRecallBotsHandler = async (
 ): Promise<
   CancelScheduledRecallBotsResult | PlanScheduledRecallBotCancellationsResult
 > => {
-  const client = createApplicationCoreApiClient();
+  const client = createCoreApiClientRunningAsApplication();
   const scheduledRecallBotCancellations =
     asRecord(payload)?.scheduledRecallBotCancellations;
 

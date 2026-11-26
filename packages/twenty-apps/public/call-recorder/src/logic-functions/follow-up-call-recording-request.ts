@@ -9,7 +9,7 @@ import {
 } from 'src/logic-functions/flows/follow-up-call-recording-request.util';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { buildRetryableStepFailure } from 'src/logic-functions/utils/build-step-failure.util';
-import { createApplicationCoreApiClient } from 'src/logic-functions/utils/create-application-core-api-client.util';
+import { createCoreApiClientRunningAsApplication } from 'src/logic-functions/utils/create-core-api-client-running-as-application.util';
 import { getString } from 'src/logic-functions/utils/get-string.util';
 
 export const followUpCallRecordingRequestHandler = async (
@@ -32,7 +32,7 @@ export const followUpCallRecordingRequestHandler = async (
     const result = await followUpCallRecordingRequest({
       // The follow-up runs long after the run that armed it, so it must not
       // borrow that run's user.
-      client: createApplicationCoreApiClient(),
+      client: createCoreApiClientRunningAsApplication(),
       callRecordingId,
       attempt,
       now,

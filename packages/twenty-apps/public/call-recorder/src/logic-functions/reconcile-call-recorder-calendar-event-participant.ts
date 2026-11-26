@@ -12,7 +12,7 @@ import { type UpcomingCalendarEventsReconciliationResult } from 'src/logic-funct
 import { getCalendarEventIdsFromDatabaseEvents } from 'src/logic-functions/domain/get-calendar-event-ids-from-database-events.util';
 import { fetchMemberRecordingPreferenceByUserWorkspaceId } from 'src/logic-functions/data/fetch-member-recording-preference-by-user-workspace-id.util';
 import { reconcileCallRecorderForUpcomingCalendarEventIds } from 'src/logic-functions/flows/reconcile-call-recorder-for-upcoming-calendar-event-ids.util';
-import { createApplicationCoreApiClient } from 'src/logic-functions/utils/create-application-core-api-client.util';
+import { createCoreApiClientRunningAsApplication } from 'src/logic-functions/utils/create-core-api-client-running-as-application.util';
 
 export const reconcileCallRecorderCalendarEventParticipantHandler = async (
   batch: Pick<
@@ -43,7 +43,7 @@ export const reconcileCallRecorderCalendarEventParticipantHandler = async (
   }
 
   return reconcileCallRecorderForUpcomingCalendarEventIds({
-    client: createApplicationCoreApiClient(),
+    client: createCoreApiClientRunningAsApplication(),
     calendarEventIds,
   });
 };

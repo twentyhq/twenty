@@ -8,7 +8,7 @@ import { enqueueLogicFunctionJobs } from 'src/logic-functions/data/enqueue-logic
 import { fetchUpcomingCalendarEvents } from 'src/logic-functions/data/fetch-upcoming-calendar-events.util';
 import { groupUpcomingCalendarEventIdsIntoBatches } from 'src/logic-functions/domain/group-upcoming-calendar-event-ids-into-batches.util';
 import { buildRetryableStepFailure } from 'src/logic-functions/utils/build-step-failure.util';
-import { createApplicationCoreApiClient } from 'src/logic-functions/utils/create-application-core-api-client.util';
+import { createCoreApiClientRunningAsApplication } from 'src/logic-functions/utils/create-core-api-client-running-as-application.util';
 
 type SweepUpcomingCalendarEventsResult =
   | { outcome: 'nothing-to-reconcile' }
@@ -21,7 +21,7 @@ type SweepUpcomingCalendarEventsResult =
 export const sweepUpcomingCalendarEventsHandler =
   async (): Promise<SweepUpcomingCalendarEventsResult> => {
     try {
-      const client = createApplicationCoreApiClient();
+      const client = createCoreApiClientRunningAsApplication();
 
       const calendarEventIdBatches = groupUpcomingCalendarEventIdsIntoBatches(
         await fetchUpcomingCalendarEvents({ client, now: new Date() }),

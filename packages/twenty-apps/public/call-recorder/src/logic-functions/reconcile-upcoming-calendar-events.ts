@@ -6,7 +6,7 @@ import { reconcileCallRecorderForCalendarEventIds } from 'src/logic-functions/fl
 import { type CallRecorderReconciliationActionCounts } from 'src/logic-functions/types/call-recorder-reconciliation-action-counts.type';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { buildRetryableStepFailure } from 'src/logic-functions/utils/build-step-failure.util';
-import { createApplicationCoreApiClient } from 'src/logic-functions/utils/create-application-core-api-client.util';
+import { createCoreApiClientRunningAsApplication } from 'src/logic-functions/utils/create-core-api-client-running-as-application.util';
 import { toIdList } from 'src/logic-functions/utils/to-id-list.util';
 
 type ReconcileUpcomingCalendarEventsResult =
@@ -29,7 +29,7 @@ export const reconcileUpcomingCalendarEventsHandler = async (
   try {
     const reconciliationResults =
       await reconcileCallRecorderForCalendarEventIds({
-        client: createApplicationCoreApiClient(),
+        client: createCoreApiClientRunningAsApplication(),
         calendarEventIds,
       });
 

@@ -13,7 +13,7 @@ import { findCallRecordingsByFilter } from 'src/logic-functions/data/find-call-r
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { NON_TERMINAL_CALL_RECORDING_STATUSES } from 'src/logic-functions/constants/non-terminal-call-recording-statuses';
-import { createApplicationCoreApiClient } from 'src/logic-functions/utils/create-application-core-api-client.util';
+import { createCoreApiClientRunningAsApplication } from 'src/logic-functions/utils/create-core-api-client-running-as-application.util';
 import { isCalendarBotSchedulingEnabled } from 'src/logic-functions/utils/is-calendar-bot-scheduling-enabled.util';
 
 export type SyncCalendarBotSchedulingResult =
@@ -35,7 +35,7 @@ export const syncCalendarBotSchedulingHandler =
       return { outcome: 'sweep-enqueued' };
     }
 
-    const client = createApplicationCoreApiClient();
+    const client = createCoreApiClientRunningAsApplication();
     // Include unfinished cancellations so a retry after an enqueue failure does not lose them.
     const callRecordings = await findCallRecordingsByFilter(client, {
       or: [
