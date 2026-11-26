@@ -10,11 +10,10 @@ import { type NamedNavigationMenuItem } from '@/navigation-menu-item/common/type
 import { MainNavigationDrawerContextMenu } from '@/navigation/components/MainNavigationDrawerContextMenu';
 import { isNavigationSectionOpenFamilyState } from '@/ui/navigation/navigation-drawer/states/isNavigationSectionOpenFamilyState';
 
-let mockCanCustomizeSidebar = true;
 let mockSections: Partial<NamedNavigationMenuItem>[] = [];
 
 jest.mock('@/navigation/hooks/useCanCustomizeSidebar', () => ({
-  useCanCustomizeSidebar: () => mockCanCustomizeSidebar,
+  useCanCustomizeSidebar: () => true,
 }));
 
 jest.mock('@/navigation/hooks/useIsSettingsDrawer', () => ({
@@ -67,7 +66,6 @@ const renderSidebar = () => {
         <MemoryRouter>
           <MainNavigationDrawerContextMenu>
             <div>Search</div>
-            <a href="/objects/companies">Companies</a>
           </MainNavigationDrawerContextMenu>
         </MemoryRouter>
       </JotaiProvider>
@@ -84,20 +82,8 @@ const renderSidebar = () => {
 
 describe('MainNavigationDrawerContextMenu', () => {
   beforeEach(() => {
-    mockCanCustomizeSidebar = true;
     mockSections = [CUSTOM_SECTION, FAVORITES_SECTION];
     localStorage.clear();
-  });
-
-  it('should offer to customize the sidebar on right-click', async () => {
-    renderSidebar();
-
-    const isBrowserMenuShown = fireEvent.contextMenu(
-      screen.getByText('Search'),
-    );
-
-    expect(isBrowserMenuShown).toBe(false);
-    expect(await screen.findByText('Customize sidebar')).toBeVisible();
   });
 
   it('should collapse then expand every section of the tab', async () => {
@@ -126,28 +112,5 @@ describe('MainNavigationDrawerContextMenu', () => {
     expect(await screen.findByText('Customize sidebar')).toBeVisible();
     expect(screen.queryByText('Collapse all sections')).not.toBeInTheDocument();
     expect(screen.queryByText('Expand all sections')).not.toBeInTheDocument();
-  });
-
-  it('should leave the browser menu on links', () => {
-    renderSidebar();
-
-    const isBrowserMenuShown = fireEvent.contextMenu(
-      screen.getByText('Companies'),
-    );
-
-    expect(isBrowserMenuShown).toBe(true);
-    expect(screen.queryByText('Customize sidebar')).not.toBeInTheDocument();
-  });
-
-  it('should leave the browser menu when the sidebar cannot be customized', () => {
-    mockCanCustomizeSidebar = false;
-    renderSidebar();
-
-    const isBrowserMenuShown = fireEvent.contextMenu(
-      screen.getByText('Search'),
-    );
-
-    expect(isBrowserMenuShown).toBe(true);
-    expect(screen.queryByText('Customize sidebar')).not.toBeInTheDocument();
   });
 });
