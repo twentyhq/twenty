@@ -14,6 +14,7 @@ export const classifyAgentChatTurnOutcome = ({
   isAborted,
   isAwaitingUserAnswer,
   isSilent,
+  isEndedByModel = false,
   stopReason,
   isTextReplyRequired = true,
 }: {
@@ -21,6 +22,7 @@ export const classifyAgentChatTurnOutcome = ({
   isAborted: boolean;
   isAwaitingUserAnswer: boolean;
   isSilent: boolean;
+  isEndedByModel?: boolean;
   stopReason: StepDebitResult['stopReason'];
   isTextReplyRequired?: boolean;
 }): AgentChatTurnOutcome => {
@@ -52,6 +54,11 @@ export const classifyAgentChatTurnOutcome = ({
   // a background run's outcome is its result, so it may end on tool calls without a written reply
   if (!isTextReplyRequired) {
     return { kind: 'completed', outcome: 'answered' };
+  }
+
+  // the model may end its turn without writing, e.g. after acting or on a message that needs no answer
+  if (isEndedByModel && !isDefined(stopReason)) {
+    return { kind: 'completed', outcome: 'silent' };
   }
 
   return {

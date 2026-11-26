@@ -79,10 +79,12 @@ const streamPartsWithoutClaim = ({
   service,
   parts = REPLY_PARTS,
   streamChannelId,
+  isBackgroundRun = true,
 }: {
   service: AgentTurnStreamService;
   parts?: Record<string, unknown>[];
   streamChannelId?: string;
+  isBackgroundRun?: boolean;
 }) =>
   service.streamTurn({
     workspaceId: 'workspace-id',
@@ -106,7 +108,7 @@ const streamPartsWithoutClaim = ({
       },
     }),
     completeTurn: async () => ({ modelId: 'model-id', stopReason: null }),
-    isBackgroundRun: true,
+    isBackgroundRun,
   });
 
 const expectFailureRecordedOnce = (finish: jest.Mock) => {
@@ -284,6 +286,50 @@ describe('AgentTurnStreamService streamTurn usage', () => {
       outputTokens: 8,
       conversationSize: 120,
     });
+  });
+});
+
+describe('AgentTurnStreamService streamTurn of a chat turn without text', () => {
+  it('completes the turn when the model ended it without writing', async () => {
+    const finish = jest.fn().mockResolvedValue(true);
+    const service = await buildService({ finish });
+
+    await streamPartsWithoutClaim({
+      service,
+      isBackgroundRun: false,
+      parts: [
+        { type: 'start' },
+        { type: 'finish', finishReason: 'stop', totalUsage: {} },
+      ],
+    });
+
+    expect(finish).toHaveBeenCalledWith(
+      expect.objectContaining({
+        status: AgentTurnStatus.COMPLETED,
+        error: null,
+      }),
+    );
+  });
+
+  it('fails the turn when the model was cut off before writing', async () => {
+    const finish = jest.fn().mockResolvedValue(true);
+    const service = await buildService({ finish });
+
+    await streamPartsWithoutClaim({
+      service,
+      isBackgroundRun: false,
+      parts: [
+        { type: 'start' },
+        { type: 'finish', finishReason: 'length', totalUsage: {} },
+      ],
+    });
+
+    expect(finish).toHaveBeenCalledWith(
+      expect.objectContaining({
+        status: AgentTurnStatus.FAILED,
+        error: expect.objectContaining({ code: 'NO_TEXT' }),
+      }),
+    );
   });
 });
 

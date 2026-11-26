@@ -75,6 +75,27 @@ describe('classifyAgentChatTurnOutcome', () => {
     ).toEqual({ kind: 'failed', failurePhase: 'no_text' });
   });
 
+  it('counts a turn the model ended without text as silent rather than failed', () => {
+    expect(
+      classifyAgentChatTurnOutcome({
+        ...baseTurn,
+        hasText: false,
+        isEndedByModel: true,
+      }),
+    ).toEqual({ kind: 'completed', outcome: 'silent' });
+  });
+
+  it('keeps running out of credits a failure when the model ended the turn', () => {
+    expect(
+      classifyAgentChatTurnOutcome({
+        ...baseTurn,
+        hasText: false,
+        isEndedByModel: true,
+        stopReason: 'workspaceAllowance',
+      }),
+    ).toEqual({ kind: 'failed', failurePhase: 'credits_exhausted' });
+  });
+
   it('separates running out of credits from an empty reply', () => {
     expect(
       classifyAgentChatTurnOutcome({

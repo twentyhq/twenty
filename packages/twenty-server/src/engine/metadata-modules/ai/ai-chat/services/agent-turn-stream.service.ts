@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import {
   createUIMessageStream,
+  type FinishReason,
   readUIMessageStream,
   type TextStreamPart,
   type ToolSet,
@@ -81,6 +82,7 @@ export type AgentTurnStreamResult = {
   replyParts: ExtendedUIMessagePart[];
   isAborted: boolean;
   streamError: unknown;
+  finishReason: FinishReason | undefined;
   usage: AgentTurnStreamUsage;
   modelConfig: AiModelConfig | null;
 };
@@ -418,6 +420,7 @@ export class AgentTurnStreamService {
       replyParts: [],
       isAborted: false,
       streamError: undefined,
+      finishReason: undefined,
       usage,
       modelConfig: null,
     };
@@ -457,11 +460,12 @@ export class AgentTurnStreamService {
                 agentId,
                 isBuiltInAssistant,
               }),
-            onEnd: async ({ responseMessage, isAborted }) => {
+            onEnd: async ({ responseMessage, isAborted, finishReason }) => {
               try {
                 result.streamError ??= source.getStreamError?.();
                 result.replyParts = responseMessage.parts;
                 result.isAborted = isAborted;
+                result.finishReason = finishReason;
                 isFinalizing = true;
                 await source.pendingWrites;
               } finally {
@@ -602,6 +606,8 @@ export class AgentTurnStreamService {
       isAborted: result.isAborted,
       isAwaitingUserAnswer: awaitingParts.length > 0 || isWaiting,
       isSilent,
+      isEndedByModel:
+        result.finishReason === 'stop' && !isDefined(result.streamError),
       stopReason,
       isTextReplyRequired: !isBackgroundRun,
     });
