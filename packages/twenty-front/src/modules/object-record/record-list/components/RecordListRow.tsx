@@ -131,14 +131,12 @@ export const RecordListRow = ({ recordId, rowRef }: RecordListRowProps) => {
       : undefined,
   );
 
-  const listDateFieldDefinitionDisplayedAtRowEnd =
+  const isListDateDisplayedAtRowEnd =
     isDefined(listDateFieldDefinition) &&
     !isFieldValueEmpty({
       fieldDefinition: listDateFieldDefinition,
       fieldValue: recordStore[listDateFieldDefinition.metadata.fieldName],
-    })
-      ? listDateFieldDefinition
-      : undefined;
+    });
 
   const fieldMetadataItemIdDisplayedAsRowTitle =
     labelIdentifierFieldMetadataItem?.id;
@@ -188,7 +186,7 @@ export const RecordListRow = ({ recordId, rowRef }: RecordListRowProps) => {
   const displayedFieldsLayout = computeRecordListDisplayedFields({
     rowWidth: recordListRowWidth,
     populatedFieldCount: nonEmptyRecordFields.length,
-    hasDate: isDefined(listDateFieldDefinitionDisplayedAtRowEnd),
+    hasDate: isListDateDisplayedAtRowEnd,
   });
 
   const displayedRecordFields = nonEmptyRecordFields.slice(
@@ -297,13 +295,11 @@ export const RecordListRow = ({ recordId, rowRef }: RecordListRowProps) => {
               )}
             </StyledOverflowChipContainer>
           )}
-          {isDefined(listDateFieldDefinitionDisplayedAtRowEnd) && (
+          {isListDateDisplayedAtRowEnd && (
             <RecordListRowField
               recordId={recordId}
-              fieldMetadataItemId={
-                listDateFieldDefinitionDisplayedAtRowEnd.fieldMetadataId
-              }
-              fieldDefinition={listDateFieldDefinitionDisplayedAtRowEnd}
+              fieldMetadataItemId={listDateFieldDefinition.fieldMetadataId}
+              fieldDefinition={listDateFieldDefinition}
               maxWidth={RECORD_LIST_ROW_DATE_MAX_WIDTH}
             />
           )}
