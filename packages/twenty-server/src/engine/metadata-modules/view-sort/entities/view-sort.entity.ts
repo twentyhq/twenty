@@ -10,6 +10,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { type WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 import { ADD_VIEW_SORT_RELATION_TARGET_FIELD_METADATA_ID_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-61/add-view-sort-relation-target-field-metadata-id-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -31,7 +32,6 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   ['fieldMetadataId', 'viewId'],
   {
     unique: true,
-    where: '"deletedAt" IS NULL',
   },
 )
 export class ViewSortEntity extends SyncableEntity {
@@ -86,8 +86,14 @@ export class ViewSortEntity extends SyncableEntity {
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 
-  @Column({ nullable: true, type: 'timestamptz' })
-  deletedAt?: Date | null;
+  @Column({
+    nullable: true,
+    type: 'timestamptz',
+    select: false,
+    insert: false,
+    update: false,
+  })
+  deletedAt?: WasRemovedInUpgrade<Date> | null;
 
   @ManyToOne(() => ViewEntity, (view) => view.viewSorts, {
     onDelete: 'CASCADE',
