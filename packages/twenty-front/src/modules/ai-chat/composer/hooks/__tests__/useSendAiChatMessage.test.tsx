@@ -866,13 +866,28 @@ describe('useSendAiChatMessage', () => {
       aiChatComposerAttachmentsFamilyState.atomFamily({ threadId: THREAD_ID });
 
     jotaiStore.set(newChatAttachmentsAtom, [BRIEF_ATTACHMENT]);
+    jotaiStore.set(
+      aiChatComposerAttachmentsFamilyState.atomFamily({
+        threadId: DIRECT_MESSAGE_THREAD_ID,
+      }),
+      [
+        {
+          ...BRIEF_ATTACHMENT,
+          fileId: 'staged-file-id',
+          filename: 'staged.pdf',
+        },
+      ],
+    );
 
     await send(result);
 
     expect(sentMessageVariables).toHaveBeenCalledWith(
       expect.objectContaining({
         threadId: DIRECT_MESSAGE_THREAD_ID,
-        fileAttachments: [{ id: 'file-id', filename: 'brief.pdf' }],
+        fileAttachments: [
+          { id: 'staged-file-id', filename: 'staged.pdf' },
+          { id: 'file-id', filename: 'brief.pdf' },
+        ],
       }),
     );
     expect(jotaiStore.get(newChatAttachmentsAtom)).toEqual([]);

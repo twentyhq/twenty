@@ -77,7 +77,10 @@ export const useOpenNewAiChatAsDirectMessage = () => {
           aiChatComposerAttachmentsFamilyState.atomFamily({
             threadId: directMessageThreadId,
           }),
-          newChatAttachments,
+          (directMessageAttachments) => [
+            ...directMessageAttachments,
+            ...newChatAttachments,
+          ],
         );
         store.set(newChatAttachmentsAtom, (attachments) =>
           attachments.filter(
