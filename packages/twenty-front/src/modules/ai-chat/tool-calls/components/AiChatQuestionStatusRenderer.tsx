@@ -86,13 +86,11 @@ export const AiChatQuestionStatusRenderer = ({
       : getChatReferencePlainText(entries[0]?.question.question ?? '');
 
   return (
-    <div data-hover-card-ignore>
-      <ThinkingStepRowLayout
-        icon={<IconHelpCircle size={14} />}
-        label={label}
-        isActive={false}
-        details={<AiChatQuestionAnsweredDetails entries={entries} />}
-      />
-    </div>
+    <ThinkingStepRowLayout
+      icon={<IconHelpCircle size={14} />}
+      label={label}
+      isActive={false}
+      details={<AiChatQuestionAnsweredDetails entries={entries} />}
+    />
   );
 };

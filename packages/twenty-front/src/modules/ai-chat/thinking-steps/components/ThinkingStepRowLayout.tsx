@@ -182,7 +182,9 @@ export const ThinkingStepRowLayout = ({
     <Collapsible.Root
       open={isExpanded}
       onOpenChange={setIsExpanded}
-      render={<StyledRowContainer data-thinking-step-row />}
+      render={
+        <StyledRowContainer data-thinking-step-row data-hover-card-ignore />
+      }
     >
       {isExpandable ? (
         <Collapsible.Trigger render={<StyledRow as="button" isExpandable />}>

@@ -42,16 +42,12 @@ export const AiChatFormStatusRenderer = ({
 
   if (status === 'answered') {
     return (
-      <div data-hover-card-ignore>
-        <ThinkingStepRowLayout
-          icon={<IconListDetails size={14} />}
-          label={t`Request form`}
-          isActive={false}
-          details={
-            <AiChatFormSubmittedDetails fields={fields} values={values} />
-          }
-        />
-      </div>
+      <ThinkingStepRowLayout
+        icon={<IconListDetails size={14} />}
+        label={t`Request form`}
+        isActive={false}
+        details={<AiChatFormSubmittedDetails fields={fields} values={values} />}
+      />
     );
   }
 

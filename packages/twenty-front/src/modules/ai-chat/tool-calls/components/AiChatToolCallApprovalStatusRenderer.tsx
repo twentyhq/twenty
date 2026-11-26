@@ -100,30 +100,28 @@ export const AiChatToolCallApprovalStatusRenderer = ({
     const ToolIcon = getToolIcon(result.proposal.toolName);
 
     return (
-      <div data-hover-card-ignore>
-        <ThinkingStepRowLayout
-          icon={
-            hasFailed ? (
-              <IconAlertTriangle
-                size={14}
-                color={themeCssVariables.font.color.danger}
-              />
-            ) : (
-              <ToolIcon size={14} />
-            )
-          }
-          label={getChatReferencePlainText(result.proposal.summary)}
-          detail={decidedDetailByStatus[status]}
-          isActive={false}
-          isError={hasFailed}
-          details={
-            <AiChatToolCallApprovalDecidedDetails
-              toolCallId={toolPart.toolCallId}
-              result={result}
+      <ThinkingStepRowLayout
+        icon={
+          hasFailed ? (
+            <IconAlertTriangle
+              size={14}
+              color={themeCssVariables.font.color.danger}
             />
-          }
-        />
-      </div>
+          ) : (
+            <ToolIcon size={14} />
+          )
+        }
+        label={getChatReferencePlainText(result.proposal.summary)}
+        detail={decidedDetailByStatus[status]}
+        isActive={false}
+        isError={hasFailed}
+        details={
+          <AiChatToolCallApprovalDecidedDetails
+            toolCallId={toolPart.toolCallId}
+            result={result}
+          />
+        }
+      />
     );
   }
 
