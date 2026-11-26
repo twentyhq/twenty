@@ -23,7 +23,6 @@ export const MultiWorkspaceDropdownButton = ({
   shouldHideLabel = false,
 }: MultiWorkspaceDropdownButtonProps) => {
   const isMobile = useIsMobile();
-  const labeledTriggerAlignOffset = isMobile ? -5 : 5;
 
   return (
     <DropdownRoot dropdownId={MULTI_WORKSPACE_DROPDOWN_ID} type="menu">
@@ -37,13 +36,11 @@ export const MultiWorkspaceDropdownButton = ({
       </Dropdown.Trigger>
       <DropdownContent
         side="bottom"
-        align={isMobile ? 'start' : 'end'}
+        align="start"
         sideOffset={shouldHideLabel ? 4 : -31}
-        alignOffset={shouldHideLabel ? 0 : labeledTriggerAlignOffset}
+        alignOffset={shouldHideLabel ? 0 : -5}
         collisionPadding={
-          isMobile
-            ? MULTI_WORKSPACE_DROPDOWN_MOBILE_BOUNDARY_PADDING
-            : undefined
+          isMobile ? MULTI_WORKSPACE_DROPDOWN_MOBILE_BOUNDARY_PADDING : 0
         }
       >
         <Dropdown.Page id="root">

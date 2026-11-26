@@ -12,30 +12,35 @@ import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 const StyledSection = styled.div<{ isExpanded: boolean }>`
-  border-bottom: 1px solid ${themeCssVariables.border.color.light};
-  border-top: 1px solid ${themeCssVariables.border.color.light};
   margin-left: calc(-1 * ${themeCssVariables.spacing[2]});
   margin-right: ${({ isExpanded }) =>
     isExpanded ? `calc(-1 * ${themeCssVariables.spacing[2]})` : '0'};
   padding: ${({ isExpanded }) =>
-    `${themeCssVariables.spacing['1.5']} ${isExpanded ? themeCssVariables.spacing[2] : '0'} ${themeCssVariables.spacing['1.5']} ${themeCssVariables.spacing[2]}`};
+    isExpanded
+      ? themeCssVariables.spacing['1.5']
+      : `${themeCssVariables.spacing['1.5']} 0 ${themeCssVariables.spacing['1.5']} ${themeCssVariables.spacing[2]}`};
 `;
 
 const StyledSearchButton = styled.button`
   && {
     block-size: ${themeCssVariables.spacing[7]};
-    gap: ${themeCssVariables.spacing['1.5']};
-    padding-inline-end: ${themeCssVariables.spacing['1.5']};
+    gap: ${themeCssVariables.spacing[2]};
+    padding-inline: ${themeCssVariables.spacing['1.5']} 7px;
   }
 
   cursor: pointer;
   font-family: inherit;
   font-size: ${themeCssVariables.font.size.md};
+
+  &:hover {
+    background-color: ${themeCssVariables.background.transparent.light};
+  }
 `;
 
 const StyledPlaceholder = styled.span`
-  color: ${themeCssVariables.font.color.light};
+  color: ${themeCssVariables.font.color.tertiary};
   flex: 1;
+  font-weight: ${themeCssVariables.font.weight.medium};
   min-width: 0;
   overflow: hidden;
   text-align: left;

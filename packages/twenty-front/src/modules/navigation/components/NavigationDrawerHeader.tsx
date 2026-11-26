@@ -9,6 +9,8 @@ import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation
 import { useOpenRecordsSearchPageInSidePanel } from '@/side-panel/hooks/useOpenRecordsSearchPageInSidePanel';
 import { MainNavigationDrawerEditButton } from '@/navigation/components/MainNavigationDrawerEditButton';
 import { MultiWorkspaceDropdownButton } from '@/navigation/components/MultiWorkspaceDropdown/MultiWorkspaceDropdownButton';
+import { NavigationDrawerCloseSettingsButton } from '@/navigation/components/NavigationDrawerCloseSettingsButton';
+import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapseButton';
 import { useLingui } from '@lingui/react/macro';
@@ -64,6 +66,7 @@ export const NavigationDrawerHeader = () => {
   const isCustomizableSidebarEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
   );
+  const isSettingsDrawer = useIsSettingsDrawer();
 
   const searchButton = !isMobile && !isCustomizableSidebarEnabled && (
     <LightIconButton
@@ -80,7 +83,11 @@ export const NavigationDrawerHeader = () => {
     <StyledContainer>
       <StyledHeaderRow>
         <StyledWorkspaceDropdownContainer>
-          <MultiWorkspaceDropdownButton />
+          {isCustomizableSidebarEnabled && isSettingsDrawer ? (
+            <NavigationDrawerCloseSettingsButton />
+          ) : (
+            <MultiWorkspaceDropdownButton />
+          )}
         </StyledWorkspaceDropdownContainer>
         {isExpanded && (
           <StyledRightActions>
