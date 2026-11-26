@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { type MouseEvent } from 'react';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon/provider';
@@ -9,6 +10,7 @@ import { NAVIGATION_MENU_TAB_ICON_DEFAULT } from '@/navigation-menu-item/common/
 import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
 import { type NamedNavigationMenuItem } from '@/navigation-menu-item/common/types/NamedNavigationMenuItem';
 import { type InboxChatAttention } from '@/inbox/types/InboxChatAttention';
+import { useGetNavigationMenuTabLabel } from '@/navigation-menu-item/display/hooks/useGetNavigationMenuTabLabel';
 import { useGetNavigationMenuTabAttentionLabel } from '@/navigation-menu-item/display/hooks/useGetNavigationMenuTabAttentionLabel';
 import { NavigationMenuTabMenuContent } from '@/navigation-menu-item/edit/components/NavigationMenuTabMenuContent';
 import { NavigationMenuItemDropdownOpenEffect } from '@/navigation-menu-item/edit/effect-components/NavigationMenuItemDropdownOpenEffect';
@@ -18,6 +20,7 @@ import { useSwitchNavigationDrawerTab } from '@/navigation/hooks/useSwitchNaviga
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -45,12 +48,15 @@ export const MainNavigationDrawerSidebarTab = ({
   const { getIcon } = useIcons();
   const getNavigationMenuTabAttentionLabel =
     useGetNavigationMenuTabAttentionLabel();
+  const getNavigationMenuTabLabel = useGetNavigationMenuTabLabel();
+  const tabLabel = getNavigationMenuTabLabel(tab);
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
   const [navigationMenuItemIdToRename, setNavigationMenuItemIdToRename] =
     useAtomState(navigationMenuItemIdToRenameState);
   const { switchToNavigationMenuTab } = useSwitchNavigationDrawerTab();
+  const { openDropdown } = useOpenDropdown();
   const dropdownId = `navigation-menu-tab-menu-${tab.id}`;
 
   const handleClick = () => {
@@ -61,18 +67,24 @@ export const MainNavigationDrawerSidebarTab = ({
     switchToNavigationMenuTab(tab.id);
   };
 
+  const handleContextMenu = (event: MouseEvent<HTMLSpanElement>) => {
+    event.preventDefault();
+    handleClick();
+    openDropdown({ dropdownComponentInstanceIdFromProps: dropdownId });
+  };
+
   const tabButton = (
     <MainNavigationDrawerTab
       Icon={getIcon(tab.icon ?? NAVIGATION_MENU_TAB_ICON_DEFAULT)}
-      label={tab.name}
+      label={tabLabel}
       isActive={isActive}
       isExpanded={isExpanded}
       isDisabled={false}
-      tooltip={tab.name}
+      tooltip={tabLabel}
       shouldShowTooltip={shouldShowTooltip}
       onClick={handleClick}
       ariaLabel={getNavigationMenuTabAttentionLabel({
-        tabName: tab.name,
+        tabName: tabLabel,
         attention,
       })}
       iconAccessory={
@@ -99,7 +111,7 @@ export const MainNavigationDrawerSidebarTab = ({
         />
       )}
       <Dropdown.Trigger
-        render={<StyledAnchor />}
+        render={<StyledAnchor onContextMenu={handleContextMenu} />}
         nativeButton={false}
         disabled={!isActive}
         tabIndex={-1}

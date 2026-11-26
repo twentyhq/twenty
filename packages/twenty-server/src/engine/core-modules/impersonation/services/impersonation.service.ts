@@ -192,7 +192,7 @@ export class ImpersonationService {
 
       if (
         payload.type !== JwtTokenTypeEnum.ACCESS ||
-        payload.isImpersonating === true ||
+        payload.isImpersonating ||
         payload.userWorkspaceId !== impersonatorUserWorkspaceId
       ) {
         return false;

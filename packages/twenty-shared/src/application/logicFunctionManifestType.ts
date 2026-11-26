@@ -29,6 +29,7 @@ export type LogicFunctionManifest = SyncableEntityOptions & {
 
 export type CronTriggerSettings = {
   pattern: string;
+  spreadMs?: number;
 };
 
 export type DatabaseEventTriggerSettings = {

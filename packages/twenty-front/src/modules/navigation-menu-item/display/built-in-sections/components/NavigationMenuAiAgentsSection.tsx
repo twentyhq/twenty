@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
-import { type ReactNode } from 'react';
+import { Fragment, type ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
@@ -20,6 +20,7 @@ import {
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 import { logError } from '~/utils/logError';
+import { NavigationMenuTabFirstItemOpenEffect } from '@/navigation-menu-item/display/effect-components/NavigationMenuTabFirstItemOpenEffect';
 
 const AI_AGENTS_NAVIGATION_SECTION_ID = 'AiAgents';
 
@@ -80,21 +81,23 @@ export const NavigationMenuAiAgentsSection = ({
         const agentLink = getCoreAgentLink(agent.id);
 
         return (
-          <NavigationDrawerItem
-            key={agent.id}
-            label={agent.label}
-            to={isLayoutCustomizationModeEnabled ? undefined : agentLink}
-            Icon={() => (
-              <CoreAgentIcon
-                agentId={agent.id}
-                avatarColor={agent.avatarColor}
-                avatarShape={agent.avatarShape}
-                size={16}
-              />
-            )}
-            active={pathname === agentLink}
-            triggerEvent="CLICK"
-          />
+          <Fragment key={agent.id}>
+            <NavigationMenuTabFirstItemOpenEffect to={agentLink} />
+            <NavigationDrawerItem
+              label={agent.label}
+              to={isLayoutCustomizationModeEnabled ? undefined : agentLink}
+              Icon={() => (
+                <CoreAgentIcon
+                  agentId={agent.id}
+                  avatarColor={agent.avatarColor}
+                  avatarShape={agent.avatarShape}
+                  size={16}
+                />
+              )}
+              active={pathname === agentLink}
+              triggerEvent="CLICK"
+            />
+          </Fragment>
         );
       })}
     </CollapsibleNavigationDrawerSection>

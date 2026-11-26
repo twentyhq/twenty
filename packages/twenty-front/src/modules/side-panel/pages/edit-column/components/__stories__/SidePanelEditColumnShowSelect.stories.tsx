@@ -92,6 +92,39 @@ export const FieldOperationsSubmenu: Story = {
   },
 };
 
+export const SingleEntryOpensOnItsOperations: Story = {
+  args: {
+    fieldMetadataItems: [],
+    summaryShowOptions: [
+      {
+        aggregateOperation: AggregateOperations.COUNT,
+        relationTargetFieldMetadataId: null,
+        label: 'Count of Opportunities',
+        operationLabel: 'Count',
+        value: 'count',
+      },
+    ],
+  },
+  play: async ({ canvasElement, args }) => {
+    const dialog = await openShowSelect(canvasElement);
+
+    await waitFor(() =>
+      expect(
+        within(dialog)
+          .getAllByRole('button')
+          .map((button) => button.textContent),
+      ).toEqual(['Opportunities', 'Count']),
+    );
+    expect(within(dialog).queryByLabelText('Search')).not.toBeInTheDocument();
+
+    await userEvent.click(
+      within(dialog).getByRole('button', { name: 'Count' }),
+    );
+
+    expect(args.onChange).toHaveBeenCalledWith('count');
+  },
+};
+
 export const SelectFieldWithoutOperations: Story = {
   play: async ({ canvasElement, args }) => {
     const dialog = await openShowSelect(canvasElement);

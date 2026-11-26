@@ -8,6 +8,7 @@ import { VALIDATION_RULE_KEYWORDS } from '@/validation-rules/constants/Validatio
 import { type ValidationRuleEditorField } from '@/validation-rules/types/ValidationRuleEditorField';
 import { type ValidationRuleHelperContext } from '@/validation-rules/types/ValidationRuleHelperContext';
 import { type ValidationRuleHelperItem } from '@/validation-rules/types/ValidationRuleHelperItem';
+import { type ValidationRuleSyntaxDefinition } from '@/validation-rules/types/ValidationRuleSyntaxDefinition';
 import { getValidationRuleFunctionDefinitions } from '@/validation-rules/utils/getValidationRuleFunctionDefinitions';
 
 const WORD_BEFORE_CURSOR_PATTERN =
@@ -23,9 +24,11 @@ const getLastPathSegment = (path: string) => path.split('.').at(-1) ?? path;
 const computeRootItems = ({
   query,
   fields,
+  functionDefinitions,
 }: {
   query: string;
   fields: ValidationRuleEditorField[];
+  functionDefinitions: ValidationRuleSyntaxDefinition[];
 }): ValidationRuleHelperItem[] => {
   const fieldItems: ValidationRuleHelperItem[] = fields
     .filter((field) => !field.path.includes('.'))
@@ -33,10 +36,9 @@ const computeRootItems = ({
     .filter((field) => matchesQuery([field.path, field.label], query))
     .map((field) => ({ kind: 'field', field }));
 
-  const functionItems: ValidationRuleHelperItem[] =
-    getValidationRuleFunctionDefinitions()
-      .filter((definition) => matchesQuery([definition.name], query))
-      .map((definition) => ({ kind: 'function', definition }));
+  const functionItems: ValidationRuleHelperItem[] = functionDefinitions
+    .filter((definition) => matchesQuery([definition.name], query))
+    .map((definition) => ({ kind: 'function', definition }));
 
   const keywordItems: ValidationRuleHelperItem[] =
     VALIDATION_RULE_KEYWORDS.filter((definition) =>
@@ -46,14 +48,34 @@ const computeRootItems = ({
   return [...fieldItems, ...functionItems, ...keywordItems];
 };
 
-export const computeValidationRuleHelperContext = ({
-  textBeforeCursor,
-  isCursorAfterField,
+const computeMemberItems = ({
+  parentPath,
   fields,
 }: {
-  textBeforeCursor: string;
-  isCursorAfterField: boolean;
+  parentPath: string;
   fields: ValidationRuleEditorField[];
+}): ValidationRuleHelperItem[] => {
+  const memberDepth = parentPath.split('.').length + 1;
+
+  return fields
+    .filter(
+      (field) =>
+        field.path.startsWith(`${parentPath}.`) &&
+        field.path.split('.').length === memberDepth,
+    )
+    .map((field) => ({ kind: 'field', field }));
+};
+
+export const computeValidationRuleHelperContext = ({
+  textBeforeCursor,
+  fieldPathBeforeCursor,
+  fields,
+  functionDefinitions = getValidationRuleFunctionDefinitions(),
+}: {
+  textBeforeCursor: string;
+  fieldPathBeforeCursor?: string;
+  fields: ValidationRuleEditorField[];
+  functionDefinitions?: ValidationRuleSyntaxDefinition[];
 }): ValidationRuleHelperContext => {
   const cursorOffset = textBeforeCursor.length;
   const lastToken = tokenizeValidationRuleExpression(textBeforeCursor).at(-1);
@@ -62,10 +84,28 @@ export const computeValidationRuleHelperContext = ({
     return { replaceFromOffset: cursorOffset, items: [] };
   }
 
-  if (isCursorAfterField) {
+  if (isDefined(fieldPathBeforeCursor)) {
+    const fieldBeforeCursor = fields.find(
+      (field) => field.path === fieldPathBeforeCursor,
+    );
+
+    // A second chip would merge into one unknown name, so a member replaces the chip it extends
+    if (fieldBeforeCursor?.hasMembers) {
+      return {
+        replaceFromOffset: cursorOffset - fieldPathBeforeCursor.length,
+        items: computeMemberItems({
+          parentPath: fieldPathBeforeCursor,
+          fields,
+        }),
+      };
+    }
+
     return {
       replaceFromOffset: cursorOffset,
-      items: computeRootItems({ query: '', fields }),
+      items: VALIDATION_RULE_KEYWORDS.map((definition) => ({
+        kind: 'keyword',
+        definition,
+      })),
     };
   }
 
@@ -75,7 +115,11 @@ export const computeValidationRuleHelperContext = ({
   if (!isDefined(parentPath)) {
     return {
       replaceFromOffset: cursorOffset - partialWord.length,
-      items: computeRootItems({ query: partialWord, fields }),
+      items: computeRootItems({
+        query: partialWord,
+        fields,
+        functionDefinitions,
+      }),
     };
   }
 
@@ -90,29 +134,19 @@ export const computeValidationRuleHelperContext = ({
     return { replaceFromOffset: cursorOffset, items: [] };
   }
 
-  const memberDepth = parentPath.split('.').length + 1;
-
   return {
     replaceFromOffset:
       cursorOffset - parentPath.length - 1 - partialWord.length,
-    items: fields
-      .filter(
-        (field) =>
-          field.path.startsWith(`${parentPath}.`) &&
-          field.path.split('.').length === memberDepth,
-      )
-      .filter(
-        (field) =>
-          !isPreviousValueContainer ||
-          !field.isSystem ||
-          partialWord.length > 0,
-      )
-      .filter((field) =>
-        matchesQuery(
-          [getLastPathSegment(field.path), field.label],
-          partialWord,
-        ),
-      )
-      .map((field) => ({ kind: 'field', field })),
+    items: computeMemberItems({ parentPath, fields }).filter(
+      (item) =>
+        item.kind !== 'field' ||
+        ((!isPreviousValueContainer ||
+          !item.field.isSystem ||
+          partialWord.length > 0) &&
+          matchesQuery(
+            [getLastPathSegment(item.field.path), item.field.label],
+            partialWord,
+          )),
+    ),
   };
 };

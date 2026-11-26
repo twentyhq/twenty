@@ -18,11 +18,7 @@ import { createOneView } from 'test/integration/metadata/suites/view/utils/creat
 import { createViewQueryFactory } from 'test/integration/metadata/suites/view/utils/create-view-query-factory.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
-import {
-  FieldMetadataType,
-  ViewType,
-  ViewVisibility,
-} from 'twenty-shared/types';
+import { FieldMetadataType, ViewType } from 'twenty-shared/types';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -133,7 +129,7 @@ const createViewAsApplication = ({
         objectMetadataId,
         icon: 'IconTable',
         type: ViewType.TABLE,
-        visibility: ViewVisibility.WORKSPACE,
+        isPrivate: false,
       },
     }),
     token,
@@ -214,7 +210,7 @@ describe('application principal view access (integration)', () => {
         objectMetadataId,
         icon: 'IconLayoutKanban',
         type: ViewType.TABLE,
-        visibility: ViewVisibility.WORKSPACE,
+        isPrivate: false,
         mainGroupByFieldMetadataId: createOneField.id,
       },
     });

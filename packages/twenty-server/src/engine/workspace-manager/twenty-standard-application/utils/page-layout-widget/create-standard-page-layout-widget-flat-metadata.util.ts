@@ -1,4 +1,4 @@
-import { parseConditionalAvailabilityExpression } from 'twenty-shared/conditional-availability';
+import { parseConditionalEvaluationExpression } from 'twenty-shared/conditional-evaluation';
 import {
   PageLayoutType,
   type PageLayoutWidgetConditionalDisplay,
@@ -94,7 +94,7 @@ export const createStandardPageLayoutWidgetFlatMetadata = ({
   const widgetIds = tabIds.widgets[widgetName];
 
   const conditionalAvailabilityParseResult =
-    parseConditionalAvailabilityExpression({
+    parseConditionalEvaluationExpression({
       expression: conditionalAvailabilityExpression,
       metadataName: 'pageLayoutWidget',
     });

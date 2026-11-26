@@ -6,12 +6,14 @@ import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 // Own module: the command menu and the workflow API both need it and already depend on each other.
 @Module({
   imports: [
     ApplicationModule,
     TypeOrmModule.forFeature([WorkflowEntity, WorkflowVersionEntity]),
+    WorkspaceCacheModule,
   ],
   providers: [
     CoreWorkflowAccessService,

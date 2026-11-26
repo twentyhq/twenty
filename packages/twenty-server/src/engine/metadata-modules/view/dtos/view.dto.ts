@@ -11,7 +11,6 @@ import {
   ViewOpenRecordIn,
   ViewPresetFilter,
   ViewType,
-  ViewVisibility,
   ViewKey,
 } from 'twenty-shared/types';
 
@@ -30,7 +29,6 @@ registerEnumType(ViewOpenRecordIn, { name: 'ViewOpenRecordIn' });
 registerEnumType(ViewType, { name: 'ViewType' });
 registerEnumType(ViewKey, { name: 'ViewKey' });
 registerEnumType(ViewCalendarLayout, { name: 'ViewCalendarLayout' });
-registerEnumType(ViewVisibility, { name: 'ViewVisibility' });
 registerEnumType(ViewPresetFilter, { name: 'ViewPresetFilter' });
 
 @ObjectType('View')
@@ -142,12 +140,6 @@ export class ViewDTO {
 
   @Field(() => Boolean, { nullable: false })
   isPrivate: boolean;
-
-  @Field(() => ViewVisibility, {
-    nullable: false,
-    deprecationReason: 'Use isPrivate instead',
-  })
-  visibility: ViewVisibility;
 
   @Field(() => UUIDScalarType, { nullable: true })
   createdByUserWorkspaceId?: string | null;

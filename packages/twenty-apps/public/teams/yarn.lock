@@ -939,8 +939,8 @@ __metadata:
     oxlint: "npm:^0.16.0"
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
-    twenty-client-sdk: "npm:^2.53.0"
-    twenty-sdk: "npm:^2.53.0"
+    twenty-client-sdk: "npm:^2.63.0"
+    twenty-sdk: "npm:^2.63.0"
     twenty-ui: "npm:^2.45.0"
     typescript: "npm:^5.9.3"
     vite-tsconfig-paths: "npm:^4.2.1"
@@ -3214,31 +3214,31 @@ __metadata:
   languageName: node
   linkType: hard
 
-"twenty-client-sdk@npm:2.53.0, twenty-client-sdk@npm:^2.53.0":
-  version: 2.53.0
-  resolution: "twenty-client-sdk@npm:2.53.0"
+"twenty-client-sdk@npm:2.63.0, twenty-client-sdk@npm:^2.63.0":
+  version: 2.63.0
+  resolution: "twenty-client-sdk@npm:2.63.0"
   dependencies:
     "@genql/runtime": "npm:^2.10.0"
     esbuild: "npm:^0.28.1"
     graphql: "npm:^16.8.1"
     lodash: "npm:^4.17.21"
     prettier: "npm:^3.8.3"
-  checksum: 10c0/b1e3b73a495a91d6b80c012ca4b54b9ec472efc012b86cb712def56fb16a9f427e654b2559ba01590c4178e44072504aafa753e3e1a895ff268c28ebed954012
+  checksum: 10c0/8cd0f6cffe8fe94bd54b7ef483f77ffed6ce2ae0d87daaf13e888e26a14e7cf3e40681043430e64438ee4c462edffc96140262da24666cf3e28092bb965e902a
   languageName: node
   linkType: hard
 
-"twenty-sdk@npm:^2.53.0":
-  version: 2.53.0
-  resolution: "twenty-sdk@npm:2.53.0"
+"twenty-sdk@npm:^2.63.0":
+  version: 2.63.0
+  resolution: "twenty-sdk@npm:2.63.0"
   dependencies:
     "@sniptt/guards": "npm:^0.2.0"
     esbuild: "npm:^0.28.1"
     preact: "npm:^11.0.0"
     react: "npm:^19.2.0"
     react-dom: "npm:^19.2.0"
-    twenty-client-sdk: "npm:2.53.0"
+    twenty-client-sdk: "npm:2.63.0"
     uuid: "npm:^13.0.2"
-  checksum: 10c0/85ccb19d370da9f45b4a460ae7f8dff384be7004dda366435697faa266cfa5fe01d43f6bedddebbc19008e111e340b7cb1945fe46679a0d0ab39eeb98ef51930
+  checksum: 10c0/486365cff36e2cb689cd7682fdbafd7176655bc1a450ed2e69da2f9f361533b1fe82627a221b4f630ad53ff14b36817dfd232e62621ecc801fd7fc364e0835e1
   languageName: node
   linkType: hard
 

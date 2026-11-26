@@ -2,6 +2,7 @@ import { type AiChatRestoreEditorContentEventDetail } from '@/ai-chat/composer/t
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
 import { useCallback, useEffect, useLayoutEffect } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { TOUCH_DEVICE_MEDIA_QUERY } from 'twenty-ui/utilities';
 
 import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
 import { deserializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/deserializeAdvancedTextEditorDocument';
@@ -79,6 +80,17 @@ export const useAiChatEditor = ({ onSend }: UseAiChatEditorParams) => {
           );
           if (isSuggestionMenuOpen) {
             return false;
+          }
+
+          if (window.matchMedia(TOUCH_DEVICE_MEDIA_QUERY).matches) {
+            view.dispatch(
+              view.state.tr
+                .replaceSelectionWith(
+                  view.state.schema.nodes.hardBreak.create(),
+                )
+                .scrollIntoView(),
+            );
+            return true;
           }
 
           event.preventDefault();

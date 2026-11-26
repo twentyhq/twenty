@@ -5,10 +5,11 @@ import {
   AggregateOperations,
   ViewCalendarLayout,
   ViewType,
-  ViewVisibility,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { getUserWorkspaceIdFromAuthContext } from 'src/engine/core-modules/auth/utils/get-user-workspace-id-from-auth-context.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -60,13 +61,13 @@ export class CompleteViewUpsertService {
 
   async upsertCompleteView({
     workspaceId,
-    userWorkspaceId,
+    authContext,
     existingViewId,
     objectMetadataId,
     name,
     icon,
     type,
-    visibility,
+    isPrivate,
     mainGroupByFieldMetadataId,
     kanbanAggregateOperation,
     kanbanAggregateOperationFieldMetadataId,
@@ -78,13 +79,13 @@ export class CompleteViewUpsertService {
     sorts,
   }: {
     workspaceId: string;
-    userWorkspaceId?: string;
+    authContext: WorkspaceAuthContext | undefined;
     existingViewId?: string;
     objectMetadataId?: string;
     name?: string;
     icon?: string;
     type?: ViewType;
-    visibility?: ViewVisibility;
+    isPrivate?: boolean;
     mainGroupByFieldMetadataId?: string;
     kanbanAggregateOperation?: AggregateOperations;
     kanbanAggregateOperationFieldMetadataId?: string;
@@ -143,7 +144,6 @@ export class CompleteViewUpsertService {
           name,
           icon,
           calendarEndFieldMetadataId,
-          userWorkspaceId,
           applicationUniversalIdentifier,
           flatViewMaps,
           flatViewGroupMaps,
@@ -155,14 +155,15 @@ export class CompleteViewUpsertService {
           name,
           icon,
           type,
-          visibility,
+          isPrivate,
           mainGroupByFieldMetadataId,
           kanbanAggregateOperation,
           kanbanAggregateOperationFieldMetadataId,
           calendarLayout,
           calendarFieldMetadataId,
           calendarEndFieldMetadataId,
-          userWorkspaceId,
+          createdByUserWorkspaceId:
+            getUserWorkspaceIdFromAuthContext(authContext),
           flatApplication: workspaceCustomFlatApplication,
           flatFieldMetadataMaps,
           flatFieldMetadataOptionMaps,
@@ -222,6 +223,7 @@ export class CompleteViewUpsertService {
           allFlatEntityOperationByMetadataName,
           workspaceId,
           isSystemBuild: false,
+          authContext,
           applicationUniversalIdentifier,
         },
       );
@@ -253,14 +255,14 @@ export class CompleteViewUpsertService {
     name,
     icon,
     type,
-    visibility,
+    isPrivate,
     mainGroupByFieldMetadataId,
     kanbanAggregateOperation,
     kanbanAggregateOperationFieldMetadataId,
     calendarLayout,
     calendarFieldMetadataId,
     calendarEndFieldMetadataId,
-    userWorkspaceId,
+    createdByUserWorkspaceId,
     flatApplication,
     flatFieldMetadataMaps,
     flatFieldMetadataOptionMaps,
@@ -270,14 +272,14 @@ export class CompleteViewUpsertService {
     name?: string;
     icon?: string;
     type?: ViewType;
-    visibility?: ViewVisibility;
+    isPrivate?: boolean;
     mainGroupByFieldMetadataId?: string;
     kanbanAggregateOperation?: AggregateOperations;
     kanbanAggregateOperationFieldMetadataId?: string;
     calendarLayout?: ViewCalendarLayout;
     calendarFieldMetadataId?: string;
     calendarEndFieldMetadataId?: string;
-    userWorkspaceId?: string;
+    createdByUserWorkspaceId?: string;
     flatApplication: FlatApplication;
     flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
     flatFieldMetadataOptionMaps: AllFlatEntityMaps['flatFieldMetadataOptionMaps'];
@@ -297,7 +299,7 @@ export class CompleteViewUpsertService {
           objectMetadataId,
           icon: icon ?? 'IconList',
           type: type ?? ViewType.TABLE,
-          visibility: visibility ?? ViewVisibility.WORKSPACE,
+          isPrivate: isPrivate ?? false,
           mainGroupByFieldMetadataId,
           kanbanAggregateOperation,
           kanbanAggregateOperationFieldMetadataId,
@@ -305,7 +307,7 @@ export class CompleteViewUpsertService {
           calendarFieldMetadataId,
           calendarEndFieldMetadataId,
         },
-        createdByUserWorkspaceId: userWorkspaceId,
+        createdByUserWorkspaceId,
         flatApplication,
         flatFieldMetadataMaps,
         flatFieldMetadataOptionMaps,
@@ -337,7 +339,6 @@ export class CompleteViewUpsertService {
     name,
     icon,
     calendarEndFieldMetadataId,
-    userWorkspaceId,
     applicationUniversalIdentifier,
     flatViewMaps,
     flatViewGroupMaps,
@@ -348,7 +349,6 @@ export class CompleteViewUpsertService {
     name?: string;
     icon?: string;
     calendarEndFieldMetadataId?: string;
-    userWorkspaceId?: string;
     applicationUniversalIdentifier: string;
     flatViewMaps: AllFlatEntityMaps['flatViewMaps'];
     flatViewGroupMaps: AllFlatEntityMaps['flatViewGroupMaps'];
@@ -375,7 +375,6 @@ export class CompleteViewUpsertService {
         flatViewGroupMaps,
         flatFieldMetadataMaps,
         flatFieldMetadataOptionMaps,
-        userWorkspaceId,
         callerApplicationUniversalIdentifier: applicationUniversalIdentifier,
         workspaceCustomApplicationUniversalIdentifier:
           applicationUniversalIdentifier,

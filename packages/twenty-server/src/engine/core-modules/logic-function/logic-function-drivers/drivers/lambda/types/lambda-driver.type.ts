@@ -18,6 +18,11 @@ export type LambdaDriverExecutorPayload = {
   handlerName: string;
 };
 
+export type LambdaDriverWarmUpPayload = {
+  isWarmUp: true;
+  env: Record<string, string>;
+};
+
 export type YarnInstallLambdaPayload = {
   action: 'createLayer';
   packageJson: string;

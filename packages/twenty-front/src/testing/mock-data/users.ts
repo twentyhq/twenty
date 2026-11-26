@@ -13,6 +13,7 @@ import {
   SubscriptionInterval,
   SubscriptionStatus,
   type User,
+  UserCreditsFallback,
   type Workspace,
   WorkspaceActivationStatus,
   WorkspaceDiscoverability,
@@ -103,6 +104,13 @@ export const mockCurrentWorkspace = {
   aiModelIdByTier: {},
   isInternalImportEnabled: false,
   isInternalMessagesImportEnabled: false,
+  billingCustomer: {
+    __typename: 'BillingCustomer',
+    id: '7efbc3f7-6e5e-4128-957e-8d86808cdf6c',
+    stripeCustomerEmail: 'billing@test.com',
+    hasPaymentMethod: null,
+    userCreditsFallback: UserCreditsFallback.WORKSPACE_CREDITS,
+  },
   currentBillingSubscription: {
     __typename: 'BillingSubscription',
     id: '7efbc3f7-6e5e-4128-957e-8d86808cdf6a',
