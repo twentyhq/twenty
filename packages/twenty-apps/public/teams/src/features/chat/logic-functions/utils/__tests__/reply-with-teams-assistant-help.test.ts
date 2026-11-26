@@ -53,7 +53,11 @@ describe('replyWithTeamsAssistantHelp', () => {
       serviceUrl: EMPTY_REQUEST.teamsServiceUrl,
       conversationId: EMPTY_REQUEST.teamsConversationId,
       accessToken: 'token',
-      activity: { type: 'message', text: TEAMS_ASSISTANT_HELP_TEXT },
+      activity: {
+        type: 'message',
+        textFormat: 'extendedmarkdown',
+        text: TEAMS_ASSISTANT_HELP_TEXT,
+      },
     });
   });
 
@@ -67,6 +71,7 @@ describe('replyWithTeamsAssistantHelp', () => {
     const { activity } = sendActivityMock.mock.calls[0][0];
 
     expect(activity.text).toBe(TEAMS_ASSISTANT_HELP_TEXT);
+    expect(activity.textFormat).toBe('extendedmarkdown');
     expect(activity.attachments).toBeUndefined();
     expect(activity.suggestedActions.actions).toEqual(
       TEAMS_ASSISTANT_SUGGESTED_PROMPTS.map((prompt) => ({

@@ -334,6 +334,16 @@ describe('MainNavigationDrawerTabSwitcher', () => {
     expect(screen.queryByText('Delete tab')).not.toBeInTheDocument();
   });
 
+  it('labels an unnamed sidebar tab "Tab"', () => {
+    jest
+      .mocked(useWorkspaceNavigationMenuContainers)
+      .mockReturnValue([{ ...salesTab, name: '' }]);
+
+    renderTabSwitcher();
+
+    expect(screen.getByRole('button', { name: 'Tab' })).toBeInTheDocument();
+  });
+
   it('marks the open sidebar tab as current instead of Home', () => {
     jest
       .mocked(useWorkspaceNavigationMenuContainers)

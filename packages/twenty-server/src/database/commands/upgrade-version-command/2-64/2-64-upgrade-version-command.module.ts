@@ -8,16 +8,22 @@ import { RenameWorkflowsNavigationFolderToAutomationsCommand } from 'src/databas
 import { AddWorkflowsAndAgentsGoToCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-workspace-command-1795538640852-add-workflows-and-agents-go-to-command-menu-items.command';
 import { AddDefaultLayoutNavigationMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-workspace-command-1795595757554-add-default-layout-navigation-menu-items.command';
 import { BackfillBillingCustomerStripeCustomerEmailCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-workspace-command-1795601305717-backfill-billing-customer-stripe-customer-email.command';
-import { AddAiChatChannelAndRecordLinkCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-workspace-command-1795640677144-add-ai-chat-channel-and-record-link-command-menu-items.command';
+import { AddInboxChannelViewsCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-workspace-command-1795619804236-add-inbox-channel-views.command';
+import { RevokeRoleWideAccessToChannelObjectsUpgradeCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-workspace-command-1795648952060-revoke-role-wide-access-to-channel-objects.command';
+import { AddAiChatChannelAndRecordLinkCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-workspace-command-1795689950740-add-ai-chat-channel-and-record-link-command-menu-items.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
+import { AgentChatChannelModule } from 'src/engine/metadata-modules/agent-chat-channel/agent-chat-channel.module';
+import { ChannelVisibilityModule } from 'src/engine/permissions/channel-visibility/channel-visibility.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/workspace-migration-runner.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
 @Module({
   imports: [
+    AgentChatChannelModule,
     ApplicationModule,
+    ChannelVisibilityModule,
     StripeModule,
     WorkspaceCacheModule,
     WorkspaceIteratorModule,
@@ -32,6 +38,8 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     AddWorkflowsAndAgentsGoToCommandMenuItemsCommand,
     AddDefaultLayoutNavigationMenuItemsCommand,
     BackfillBillingCustomerStripeCustomerEmailCommand,
+    AddInboxChannelViewsCommand,
+    RevokeRoleWideAccessToChannelObjectsUpgradeCommand,
     AddAiChatChannelAndRecordLinkCommandMenuItemsCommand,
   ],
 })

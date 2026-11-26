@@ -10,7 +10,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.64.0', 1795640677144)
+@RegisteredWorkspaceCommand('2.64.0', 1795689950740)
 @Command({
   name: 'upgrade:2-64:add-ai-chat-channel-and-record-link-command-menu-items',
   description:
