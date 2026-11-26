@@ -1,12 +1,14 @@
 import { type QueryRunner } from 'typeorm';
 
 import { RelaxViewVisibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-instance-command-fast-1795618787744-relax-view-visibility';
+import { DropViewVisibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-fast-1795703218960-drop-view-visibility';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 jest.useRealTimers();
 
 describe('2-64 instance command 1795618787744 - relax view visibility (integration)', () => {
   const relaxVisibilityCommand = new RelaxViewVisibilityFastInstanceCommand();
+  const dropVisibilityCommand = new DropViewVisibilityFastInstanceCommand();
   let queryRunner: QueryRunner;
 
   const findSeededViewIds = async (count: number): Promise<string[]> => {
@@ -59,6 +61,7 @@ describe('2-64 instance command 1795618787744 - relax view visibility (integrati
     queryRunner = globalThis.testDataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
+    await dropVisibilityCommand.down(queryRunner);
     await relaxVisibilityCommand.down(queryRunner);
   });
 
