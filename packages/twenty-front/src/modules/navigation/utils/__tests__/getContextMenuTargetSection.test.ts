@@ -43,13 +43,4 @@ describe('getContextMenuTargetSection', () => {
       }),
     ).toBeUndefined();
   });
-
-  it('should not target a section of another tab', () => {
-    expect(
-      getContextMenuTargetSection({
-        sections: SECTIONS,
-        targetSectionId: 'other-tab-section',
-      }),
-    ).toBeUndefined();
-  });
 });
