@@ -369,24 +369,24 @@ msgstr "Un correo electrónico de marketing solo se puede enviar a un destinatar
 #. js-lingui-id: TS5uum
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-restriction-errors.util.ts
 msgid "A marketplace application cannot declare row-level rules or field permissions"
-msgstr ""
+msgstr "Una aplicación del marketplace no puede declarar reglas a nivel de fila ni permisos de campo"
 
 #. js-lingui-id: bH9jpk
 #: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-restriction-errors.util.ts
 msgid "A marketplace application cannot declare row-level rules or field permissions."
-msgstr ""
+msgstr "Una aplicación del marketplace no puede declarar reglas a nivel de fila ni permisos de campo."
 
 #. js-lingui-id: +//ajp
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-assignability-errors.util.ts
 msgid "A marketplace application role can only be assigned to agents"
-msgstr ""
+msgstr "Un rol de aplicación del marketplace solo puede asignarse a agentes"
 
 #. js-lingui-id: BRZH6M
 #: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-assignability-errors.util.ts
 msgid "A marketplace application role can only be assigned to agents."
-msgstr ""
+msgstr "Un rol de aplicación del marketplace solo puede asignarse a agentes."
 
 #. js-lingui-id: Spm4/x
 #: src/engine/metadata-modules/message-channel/services/application-message-send.service.ts
@@ -8657,18 +8657,18 @@ msgstr "Lista de oportunidades donde esa persona es el punto de contacto"
 #. js-lingui-id: rbXxvc
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-list-pinned-field.util.ts
 msgid "List pinned field metadata not found"
-msgstr ""
+msgstr "Metadatos del campo fijado de la lista no encontrados"
 
 #. js-lingui-id: j3iJjW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-list-pinned-field.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-list-pinned-field.util.ts
 msgid "List pinned field must belong to the view object"
-msgstr ""
+msgstr "El campo fijado de la lista debe pertenecer al objeto de la vista"
 
 #. js-lingui-id: ucNAgC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-list-pinned-field.util.ts
 msgid "List pinned field not found"
-msgstr ""
+msgstr "Campo fijado de la lista no encontrado"
 
 #. js-lingui-id: Lgr7Gd
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-list-standard-flat-field-metadata.util.ts
@@ -9603,7 +9603,7 @@ msgstr "El nombre \"{name}\" no está disponible"
 #. js-lingui-id: 2tJW5E
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-composite-flat-field-metadata-column-names-availability.util.ts
 msgid "Name \"{name}\" is not available as \"{columnName}\" is already used by another field"
-msgstr ""
+msgstr "El nombre \"{name}\" no está disponible, ya que \"{columnName}\" ya lo utiliza otro campo"
 
 #. js-lingui-id: U8mbyw
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts

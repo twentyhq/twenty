@@ -369,24 +369,24 @@ msgstr "마케팅 이메일은 한 번에 한 명의 수신자에게만 보낼 �
 #. js-lingui-id: TS5uum
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-restriction-errors.util.ts
 msgid "A marketplace application cannot declare row-level rules or field permissions"
-msgstr ""
+msgstr "마켓플레이스 애플리케이션은 행 수준 규칙 또는 필드 권한을 선언할 수 없습니다"
 
 #. js-lingui-id: bH9jpk
 #: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-restriction-errors.util.ts
 msgid "A marketplace application cannot declare row-level rules or field permissions."
-msgstr ""
+msgstr "마켓플레이스 애플리케이션은 행 수준 규칙 또는 필드 권한을 선언할 수 없습니다."
 
 #. js-lingui-id: +//ajp
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-assignability-errors.util.ts
 msgid "A marketplace application role can only be assigned to agents"
-msgstr ""
+msgstr "마켓플레이스 애플리케이션 역할은 에이전트에게만 할당할 수 있습니다"
 
 #. js-lingui-id: BRZH6M
 #: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-assignability-errors.util.ts
 msgid "A marketplace application role can only be assigned to agents."
-msgstr ""
+msgstr "마켓플레이스 애플리케이션 역할은 에이전트에게만 할당할 수 있습니다."
 
 #. js-lingui-id: Spm4/x
 #: src/engine/metadata-modules/message-channel/services/application-message-send.service.ts
@@ -8657,18 +8657,18 @@ msgstr "해당 담당자가 연락 담당자인 기회 목록"
 #. js-lingui-id: rbXxvc
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-list-pinned-field.util.ts
 msgid "List pinned field metadata not found"
-msgstr ""
+msgstr "목록 고정 필드 메타데이터를 찾을 수 없습니다"
 
 #. js-lingui-id: j3iJjW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-list-pinned-field.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-list-pinned-field.util.ts
 msgid "List pinned field must belong to the view object"
-msgstr ""
+msgstr "목록 고정 필드는 뷰 객체에 속해야 합니다"
 
 #. js-lingui-id: ucNAgC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-list-pinned-field.util.ts
 msgid "List pinned field not found"
-msgstr ""
+msgstr "목록 고정 필드를 찾을 수 없음"
 
 #. js-lingui-id: Lgr7Gd
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-list-standard-flat-field-metadata.util.ts
@@ -9603,7 +9603,7 @@ msgstr "이름 \"{name}\"을 사용할 수 없습니다."
 #. js-lingui-id: 2tJW5E
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-composite-flat-field-metadata-column-names-availability.util.ts
 msgid "Name \"{name}\" is not available as \"{columnName}\" is already used by another field"
-msgstr ""
+msgstr "\"{columnName}\"이(가) 이미 다른 필드에서 사용되고 있으므로 이름 \"{name}\"은 사용할 수 없습니다"
 
 #. js-lingui-id: U8mbyw
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts

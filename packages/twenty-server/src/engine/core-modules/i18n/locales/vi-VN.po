@@ -369,24 +369,24 @@ msgstr "Mỗi lần chỉ có thể gửi email tiếp thị cho một người 
 #. js-lingui-id: TS5uum
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-restriction-errors.util.ts
 msgid "A marketplace application cannot declare row-level rules or field permissions"
-msgstr ""
+msgstr "Một ứng dụng trên marketplace không thể khai báo các quy tắc cấp hàng hoặc quyền đối với trường"
 
 #. js-lingui-id: bH9jpk
 #: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-restriction-errors.util.ts
 msgid "A marketplace application cannot declare row-level rules or field permissions."
-msgstr ""
+msgstr "Một ứng dụng trên marketplace không thể khai báo các quy tắc cấp hàng hoặc quyền đối với trường."
 
 #. js-lingui-id: +//ajp
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-assignability-errors.util.ts
 msgid "A marketplace application role can only be assigned to agents"
-msgstr ""
+msgstr "Một vai trò ứng dụng trên marketplace chỉ có thể được gán cho agent"
 
 #. js-lingui-id: BRZH6M
 #: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-assignability-errors.util.ts
 msgid "A marketplace application role can only be assigned to agents."
-msgstr ""
+msgstr "Một vai trò ứng dụng trên marketplace chỉ có thể được gán cho agent."
 
 #. js-lingui-id: Spm4/x
 #: src/engine/metadata-modules/message-channel/services/application-message-send.service.ts
@@ -8657,18 +8657,18 @@ msgstr "Danh sách cơ hội mà người đó là điểm liên lạc"
 #. js-lingui-id: rbXxvc
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-list-pinned-field.util.ts
 msgid "List pinned field metadata not found"
-msgstr ""
+msgstr "Không tìm thấy siêu dữ liệu trường được ghim trong danh sách"
 
 #. js-lingui-id: j3iJjW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-list-pinned-field.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-list-pinned-field.util.ts
 msgid "List pinned field must belong to the view object"
-msgstr ""
+msgstr "Trường được ghim trong danh sách phải thuộc về đối tượng chế độ xem"
 
 #. js-lingui-id: ucNAgC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-list-pinned-field.util.ts
 msgid "List pinned field not found"
-msgstr ""
+msgstr "Không tìm thấy trường được ghim trong danh sách"
 
 #. js-lingui-id: Lgr7Gd
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-list-standard-flat-field-metadata.util.ts
@@ -9603,7 +9603,7 @@ msgstr "Tên \"{name}\" không khả dụng"
 #. js-lingui-id: 2tJW5E
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-composite-flat-field-metadata-column-names-availability.util.ts
 msgid "Name \"{name}\" is not available as \"{columnName}\" is already used by another field"
-msgstr ""
+msgstr "Tên \"{name}\" không khả dụng vì \"{columnName}\" đã được một trường khác sử dụng"
 
 #. js-lingui-id: U8mbyw
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
