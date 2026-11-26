@@ -4,7 +4,6 @@ import { isDefined } from 'twenty-sdk/utils';
 import { TELEGRAM_ASSISTANT_FEEDBACK } from 'src/logic-functions/constants/telegram-assistant-feedback';
 import { TELEGRAM_DISCONNECT_COMMAND } from 'src/logic-functions/constants/telegram-disconnect-command';
 import { TELEGRAM_FEEDBACK_CALLBACK_PREFIX } from 'src/logic-functions/constants/telegram-feedback-callback-prefix';
-import { type TelegramAssistantFeedback } from 'src/logic-functions/types/telegram-assistant-feedback.type';
 import { type TelegramInboundEvent } from 'src/logic-functions/types/telegram-inbound-event.type';
 import { type TelegramUpdate } from 'src/logic-functions/types/telegram-update.type';
 import { type TelegramUser } from 'src/logic-functions/types/telegram-user.type';
@@ -35,10 +34,14 @@ export const parseTelegramUpdate = (
 
   const callbackQuery = update?.callback_query;
   const feedbackMatch = FEEDBACK_PATTERN.exec(callbackQuery?.data ?? '');
+  const feedback = Object.values(TELEGRAM_ASSISTANT_FEEDBACK).find(
+    (value) => value === feedbackMatch?.[1],
+  );
 
   if (
     isDefined(callbackQuery) &&
     isDefined(feedbackMatch) &&
+    isDefined(feedback) &&
     isHumanSender(callbackQuery.from)
   ) {
     return {
@@ -47,7 +50,7 @@ export const parseTelegramUpdate = (
       user: callbackQuery.from,
       callbackQueryId: callbackQuery.id,
       requestId: feedbackMatch[2],
-      feedback: feedbackMatch[1] as TelegramAssistantFeedback,
+      feedback,
     };
   }
 

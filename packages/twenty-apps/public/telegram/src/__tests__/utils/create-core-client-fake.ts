@@ -44,8 +44,10 @@ type RequestClaimFilter = {
   ];
 };
 
+const REQUEST_FILTER_FIELDS = ['id', 'status', 'telegramUserId'] as const;
+
 type RequestFieldsFilter = Partial<
-  Record<'id' | 'status' | 'telegramUserId', { eq: string }>
+  Record<(typeof REQUEST_FILTER_FIELDS)[number], { eq: string }>
 >;
 
 const LINK_FILTER_FIELDS: (keyof LinkRecord)[] = [
@@ -211,9 +213,10 @@ export const createCoreClientFake = ({
             mutation.updateTelegramAssistantRequests.__args;
           const claimed = state.requests.filter((request) => {
             if (!('and' in filter)) {
-              return Object.entries(filter).every(
-                ([field, condition]) =>
-                  request[field as keyof RequestFieldsFilter] === condition.eq,
+              return REQUEST_FILTER_FIELDS.every(
+                (field) =>
+                  !isDefined(filter[field]) ||
+                  request[field] === filter[field].eq,
               );
             }
 
