@@ -7,6 +7,7 @@ import { CommandListItemLoader } from '@/command-menu-item/display/components/Co
 import { CommandMenuDropdownActionItem } from '@/command-menu-item/display/components/CommandMenuDropdownActionItem';
 import { useCommandMenuItemDisplay } from '@/command-menu-item/display/hooks/useCommandMenuItemDisplay';
 import { getCommandMenuItemButtonHotKey } from '@/command-menu-item/display/utils/getCommandMenuItemButtonHotKey';
+import { isSettingsSubPageNavigationCommandMenuItem } from '@/command-menu-item/display/utils/isSettingsSubPageNavigationCommandMenuItem';
 import { ENGINE_COMPONENT_KEYS_WITH_SUB_MENU } from '@/command-menu-item/engine-command/constants/EngineComponentKeysWithSubMenu';
 import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
@@ -16,6 +17,8 @@ import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-lis
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
@@ -107,8 +110,20 @@ type CommandMenuItemSelectableRendererProps = Pick<
 const CommandMenuItemSelectableRenderer = ({
   item,
 }: CommandMenuItemSelectableRendererProps) => {
-  const { Icon, label, handleClick, disabled, progress, isLoading } =
-    useCommandMenuItemDisplay(item);
+  const { t } = useLingui();
+  const {
+    Icon,
+    label,
+    shortLabel,
+    handleClick,
+    disabled,
+    progress,
+    isLoading,
+  } = useCommandMenuItemDisplay(item);
+
+  const isSettingsSubPage =
+    isSettingsSubPageNavigationCommandMenuItem(item) &&
+    isNonEmptyString(shortLabel);
 
   const selectableListInstanceId = useAvailableComponentInstanceIdOrThrow(
     SelectableListComponentInstanceContext,
@@ -153,7 +168,8 @@ const CommandMenuItemSelectableRenderer = ({
       <CommandMenuItem
         id={item.id}
         Icon={Icon}
-        label={label}
+        label={isSettingsSubPage ? t`Go to ${shortLabel}` : label}
+        description={isSettingsSubPage ? t`Settings` : undefined}
         onClick={disabled ? undefined : handleClick}
         hotKeys={item.hotKeys}
         hasSubMenu={ENGINE_COMPONENT_KEYS_WITH_SUB_MENU.has(
