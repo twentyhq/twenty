@@ -2,11 +2,11 @@ import { randomUUID } from 'node:crypto';
 
 import { type QueryRunner } from 'typeorm';
 
-import { RelaxViewDeletedAtSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-slow-1795704573519-relax-view-deleted-at';
+import { RelaxViewDeletedAtSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-slow-1795709973618-relax-view-deleted-at';
 
 jest.useRealTimers();
 
-describe('2-65 instance command 1795704573519 - relax view deletedAt (integration)', () => {
+describe('2-65 instance command 1795709973618 - relax view deletedAt (integration)', () => {
   const relaxDeletedAtCommand = new RelaxViewDeletedAtSlowInstanceCommand();
 
   describe('runDataMigration', () => {

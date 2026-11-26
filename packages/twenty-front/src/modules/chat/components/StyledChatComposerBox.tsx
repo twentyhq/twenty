@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 
+import { CHAT_COMPOSER_BOX_GAP } from '@/chat/constants/ChatComposerBoxGap';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 export const StyledChatComposerBox = styled.div`
@@ -11,7 +12,7 @@ export const StyledChatComposerBox = styled.div`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
+  gap: ${CHAT_COMPOSER_BOX_GAP};
   padding: ${themeCssVariables.spacing[2]};
   width: 100%;
 

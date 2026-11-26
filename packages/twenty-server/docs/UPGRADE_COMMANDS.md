@@ -141,14 +141,14 @@ An upgrade command is frozen once released: self-hosters can jump several versio
 
 A command should also not reach into runtime services to do its work. Their behavior changes with every release; the command's must not.
 
-## Adding a server-only column to a composite field
+## Adding a sub-field to a composite type
 
-A server-only column sits next to a composite field's own columns and is read only by the server, like the `fileIds` of a rich text field. It is listed in `SERVER_ONLY_COMPOSITE_COLUMNS` and never declared on the composite type: every API surface derives from that type, so declaring it would expose it. It is named `<field>_<column>`; a field name is alphanumeric, so the underscore keeps it apart from the columns of every field, including fields that already exist.
+Every read of a composite field selects the columns of all the sub-fields its composite type declares. Code that declares a sub-field serves every workspace as soon as it deploys, while a workspace command adds the column one workspace at a time. Split the change across two releases:
 
-Code that reads the column serves every workspace as soon as it deploys, while a workspace command adds the column one workspace at a time. Split the change across two releases:
+1. **Release N: provision the column.** List the sub-field in `PROVISIONED_COMPOSITE_PROPERTIES`, so field creation, rename and deletion handle its column and no field can take its name, and add a workspace command that adds the column to existing fields. Nothing reads or writes it.
+2. **Release N+1: declare it.** Move the sub-field from `PROVISIONED_COMPOSITE_PROPERTIES` to its composite type. The code that reads or writes it must not ship in release N.
 
-1. **Release N: provision the column.** List it in `SERVER_ONLY_COMPOSITE_COLUMNS`, so field creation, rename and deletion handle it, and add a workspace command that adds it to existing fields. Nothing reads or writes it.
-2. **Release N+1: use it.** The code that reads or writes the column must not ship in release N.
+The column is named like any sub-field column, `<field><SubField>`. A field of the same object may already have that name: the workspace command of release N must fail on such a workspace rather than share the column.
 
 ## Execution Order
 

@@ -28712,20 +28712,10 @@ msgstr "건너뛰기"
 msgid "Skip anyway"
 msgstr "그래도 건너뛰기"
 
-#. js-lingui-id: 5jWe/6
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Skip calendar events with no participant outside the workspace domain, unless internal import is turned on."
-msgstr "내부 가져오기가 켜져 있지 않은 경우, 워크스페이스 도메인 외부에 참여자가 없는 캘린더 이벤트를 건너뜁니다."
-
 #. js-lingui-id: TyudBs
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Skip creating a Name field "
 msgstr "이름 필드 생성을 건너뛰기 "
-
-#. js-lingui-id: pmVASU
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Skip internal meetings"
-msgstr "내부 회의 건너뛰기"
 
 #. js-lingui-id: PlF+NA
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
@@ -31245,6 +31235,7 @@ msgstr "이 제공업체는 기본 제공됩니다. 해당 페이지에서 API �
 
 #. js-lingui-id: qfpz3J
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
+#: src/modules/views/utils/computeRelationFilterDisplayValue.ts
 msgid "This record"
 msgstr "이 레코드"
 

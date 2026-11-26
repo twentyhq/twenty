@@ -1,20 +1,18 @@
+import { type FieldMetadataFormula } from '@/types/FieldMetadataFormula';
 import { type FieldMetadataFormulaEvaluation } from '@/types/FieldMetadataFormulaEvaluation';
 import { getFieldMetadataFormulaExpression } from '@/utils/formula/getFieldMetadataFormulaExpression';
-import { isPlainObject } from '@/utils/typeguard/isPlainObject';
 import { isDefined } from '@/utils/validation/isDefined';
 
 export const getFieldMetadataFormulaEvaluation = ({
-  settings,
+  formula,
 }: {
-  settings?: unknown;
+  formula?: Partial<
+    Pick<FieldMetadataFormula, 'expression' | 'evaluation'>
+  > | null;
 }): FieldMetadataFormulaEvaluation | undefined => {
-  if (
-    !isPlainObject(settings) ||
-    !isPlainObject(settings.formula) ||
-    !isDefined(getFieldMetadataFormulaExpression({ settings }))
-  ) {
+  if (!isDefined(getFieldMetadataFormulaExpression({ formula }))) {
     return undefined;
   }
 
-  return settings.formula.evaluation === 'STORED' ? 'STORED' : 'QUERY_TIME';
+  return formula?.evaluation === 'STORED' ? 'STORED' : 'QUERY_TIME';
 };

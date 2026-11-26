@@ -41,9 +41,7 @@ describe('buildStoredFormulaWatchPlans', () => {
       id: 'gadget-stored-label',
       universalIdentifier: 'gadget-stored-label-uid',
       name: 'storedLabel',
-      settings: {
-        formula: { expression: 'supplier.name', evaluation: 'STORED' as const },
-      },
+      formula: { expression: 'supplier.name', evaluation: 'STORED' as const },
     };
 
     const {

@@ -344,7 +344,9 @@ import { DropLegacyWorkflowVersionIdColumnsFastInstanceCommand } from 'src/datab
 import { AddStripeCustomerEmailToBillingCustomerFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-instance-command-fast-1795601185766-add-stripe-customer-email-to-billing-customer';
 import { RelaxViewVisibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-instance-command-fast-1795618787744-relax-view-visibility';
 import { RenameAgentChatChannelTablesToInboxChannelFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-instance-command-fast-1795688525750-rename-agent-chat-channel-tables-to-inbox-channel';
-import { RelaxViewDeletedAtSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-slow-1795704573519-relax-view-deleted-at';
+import { AddFieldMetadataFormulaColumnFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-fast-1795701090644-add-field-metadata-formula-column';
+import { MoveFieldMetadataFormulaOutOfSettingsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-slow-1795701107918-move-field-metadata-formula-out-of-settings';
+import { RelaxViewDeletedAtSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-slow-1795709973618-relax-view-deleted-at';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -691,5 +693,7 @@ export const INSTANCE_COMMANDS = [
   AddStripeCustomerEmailToBillingCustomerFastInstanceCommand,
   RelaxViewVisibilityFastInstanceCommand,
   RenameAgentChatChannelTablesToInboxChannelFastInstanceCommand,
+  AddFieldMetadataFormulaColumnFastInstanceCommand,
+  MoveFieldMetadataFormulaOutOfSettingsSlowInstanceCommand,
   RelaxViewDeletedAtSlowInstanceCommand,
 ];
