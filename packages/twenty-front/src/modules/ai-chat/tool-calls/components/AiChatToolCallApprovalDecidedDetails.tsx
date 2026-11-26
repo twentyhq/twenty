@@ -69,11 +69,17 @@ const StyledNote = styled.div<{ isError: boolean }>`
   padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
 `;
 
-const FRONT_COMPONENT_STATUS_BY_APPROVAL_STATUS: Partial<
-  Record<ProposeToolCallToolStatus, FrontComponentToolCallStatus>
+const FRONT_COMPONENT_STATUS_BY_APPROVAL_STATUS: Record<
+  ProposeToolCallToolStatus,
+  FrontComponentToolCallStatus
 > = {
+  pending: 'approval-requested',
+  running: 'approval-responded',
   approved: 'output-available',
+  rejected: 'output-denied',
   failed: 'output-error',
+  conflict: 'output-denied',
+  skipped: 'output-denied',
 };
 
 type AiChatToolCallApprovalDecidedDetailsProps = {
@@ -160,9 +166,7 @@ export const AiChatToolCallApprovalDecidedDetails = ({
                 toolCall={{
                   toolCallId,
                   toolName: proposal.toolName,
-                  status:
-                    FRONT_COMPONENT_STATUS_BY_APPROVAL_STATUS[status] ??
-                    'output-denied',
+                  status: FRONT_COMPONENT_STATUS_BY_APPROVAL_STATUS[status],
                   input: proposal.arguments,
                   errorText: error,
                 }}
