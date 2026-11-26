@@ -106,7 +106,13 @@ const USER_SETTINGS_MENU_ITEM = buildSettingsMenuItem({
   scope: 'USER',
 });
 
-const findTabLink = async (canvasElement: HTMLElement, name: string) =>
+const findTabLink = async ({
+  canvasElement,
+  name,
+}: {
+  canvasElement: HTMLElement;
+  name: string;
+}) =>
   within(
     await within(canvasElement).findByLabelText(
       'Application details',
@@ -308,7 +314,9 @@ export const VariablesTabIgnoresUserScope: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await userEvent.click(await findTabLink(canvasElement, 'Variables'));
+    await userEvent.click(
+      await findTabLink({ canvasElement, name: 'Variables' }),
+    );
 
     expect(await canvas.findByText('Workspace URL')).toBeVisible();
     expect(
@@ -333,7 +341,9 @@ export const SettingsTabsIgnoreUserScope: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(await findTabLink(canvasElement, 'Recording rules')).toBeVisible();
+    expect(
+      await findTabLink({ canvasElement, name: 'Recording rules' }),
+    ).toBeVisible();
     expect(canvas.queryByText('My recordings')).not.toBeInTheDocument();
     expect(
       canvas.queryByRole('link', { name: 'Variables' }),
@@ -345,7 +355,9 @@ export const VariablesTabSavesWorkspaceVariable: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await userEvent.click(await findTabLink(canvasElement, 'Variables'));
+    await userEvent.click(
+      await findTabLink({ canvasElement, name: 'Variables' }),
+    );
 
     const saveButton = await canvas.findByRole('button', {
       name: 'Save settings',
@@ -403,7 +415,9 @@ export const WorkspaceHealthCheckRunsOnOpenAndAfterSave: Story = {
       [{ applicationId: APPLICATION_ID }],
     ]);
 
-    await userEvent.click(await findTabLink(canvasElement, 'Variables'));
+    await userEvent.click(
+      await findTabLink({ canvasElement, name: 'Variables' }),
+    );
 
     const saveButton = await canvas.findByRole('button', {
       name: 'Save settings',
@@ -422,7 +436,9 @@ export const WorkspaceHealthCheckRunsOnOpenAndAfterSave: Story = {
     );
     await waitFor(() => expect(saveButton).toBeDisabled());
 
-    await userEvent.click(await findTabLink(canvasElement, 'Overview'));
+    await userEvent.click(
+      await findTabLink({ canvasElement, name: 'Overview' }),
+    );
 
     expect(
       await canvas.findByText('Your recorder plan is almost used up'),
@@ -447,7 +463,9 @@ export const MemberHealthCheckReturnsNoWorkspaceBanner: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await userEvent.click(await findTabLink(canvasElement, 'Variables'));
+    await userEvent.click(
+      await findTabLink({ canvasElement, name: 'Variables' }),
+    );
     await waitFor(() =>
       expect(runApplicationHealthCheck).toHaveBeenCalledTimes(1),
     );
