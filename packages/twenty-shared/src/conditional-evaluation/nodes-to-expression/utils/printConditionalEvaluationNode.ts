@@ -1,7 +1,7 @@
 import { isString } from '@sniptt/guards';
 
-import { CONDITIONAL_EVALUATION_SYMBOL_BY_COMPARISON_OPERATOR } from '@/conditional-evaluation/common/constants/ConditionalEvaluationSymbolByComparisonOperator';
-import { type ConditionalEvaluationLogicalOperator } from '@/conditional-evaluation/common/types/ConditionalEvaluationLogicalOperator';
+import { EXPRESSION_SYMBOL_BY_COMPARISON_OPERATOR } from '@/expression/constants/ExpressionSymbolByComparisonOperator';
+import { type ExpressionLogicalOperator } from '@/expression/types/ExpressionLogicalOperator';
 import { type ConditionalEvaluationNode } from '@/conditional-evaluation/common/types/ConditionalEvaluationNode';
 
 const BACKSLASH_BEFORE_CLOSING_QUOTE_PATTERN = /\\\\"$/;
@@ -26,7 +26,7 @@ const printGroupChild = ({
   logicalOperator,
 }: {
   node: ConditionalEvaluationNode;
-  logicalOperator: ConditionalEvaluationLogicalOperator;
+  logicalOperator: ExpressionLogicalOperator;
 }): string => {
   if (
     node.type === 'GROUP' &&
@@ -54,7 +54,7 @@ export const printConditionalEvaluationNode = ({
     case 'COMPARISON':
       return [
         printOperand(node.left),
-        CONDITIONAL_EVALUATION_SYMBOL_BY_COMPARISON_OPERATOR[node.operator],
+        EXPRESSION_SYMBOL_BY_COMPARISON_OPERATOR[node.operator],
         printOperand(node.right),
       ].join(' ');
     case 'GROUP':

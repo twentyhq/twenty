@@ -195,6 +195,30 @@ Le modifiche a `isNullable` vengono applicate a ogni sincronizzazione, incluse q
 }
 ```
 
+## Campi formula
+
+Una `formula` rende un campo calcolato: il suo valore deriva da un'espressione su altri campi e i record non possono scriverlo. È una proprietà del campo, accanto a `universalSettings`, non al suo interno, e si applica ai campi `TEXT`, `NUMBER`, `BOOLEAN`, `DATE`, `DATE_TIME`, `SELECT`, `RATING` e `CURRENCY`.
+
+* `formula.expression` legge i campi del record per nome (`price * quantity`), le parti composite con un punto (`amount.amountMicros`), i campi di un record correlato molti-a-uno (`company.name`) e gli aggregati su una relazione uno-a-molti (`count(tasks)`, `sum(deals.amount.amountMicros, deals.stage == 'WON')`).
+* Una formula `CURRENCY` calcola l'importo in micro e necessita anche di `formula.currencyCodeExpression`, ad esempio `"USD"` o `amount.currencyCode`.
+* Un campo formula non può essere univoco, ricercabile né l'identificatore dell'etichetta dell'oggetto.
+
+```ts
+{
+  universalIdentifier: 'c2b8d1ef-5678-4a11-8bcd-111111111111',
+  name: 'total',
+  type: FieldType.NUMBER,
+  label: 'Total',
+  formula: { expression: 'price * quantity' },
+}
+```
+
+<Note>
+  I campi formula dipendono dal flag di funzionalità `IS_FORMULA_FIELD_ENABLED`. La sincronizzazione
+  di una formula con uno spazio di lavoro senza il flag non riesce e restituisce `Formula fields are not
+    enabled for this workspace`.
+</Note>
+
 ## Cosa c'è dopo
 
 * **Collega questo oggetto ad altri** — vedi [Relazioni](/it/developers/extend/apps/data/relations) per il pattern di relazione bidirezionale.

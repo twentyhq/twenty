@@ -7,13 +7,19 @@ import {
 } from 'src/features/chat/logic-functions/constants/teams-assistant-status-steps';
 import { startTeamsAssistantStatus } from 'src/features/chat/logic-functions/utils/start-teams-assistant-status';
 
-const { sendActivityMock, startStreamMock, updateMock, finishMock } =
-  vi.hoisted(() => ({
-    sendActivityMock: vi.fn(),
-    startStreamMock: vi.fn(),
-    updateMock: vi.fn(),
-    finishMock: vi.fn(),
-  }));
+const {
+  sendActivityMock,
+  startStreamMock,
+  startPlaceholderMock,
+  updateMock,
+  finishMock,
+} = vi.hoisted(() => ({
+  sendActivityMock: vi.fn(),
+  startStreamMock: vi.fn(),
+  startPlaceholderMock: vi.fn(),
+  updateMock: vi.fn(),
+  finishMock: vi.fn(),
+}));
 
 vi.mock(
   'src/features/chat/logic-functions/utils/get-teams-connector-access-token-or-throw',
@@ -29,6 +35,11 @@ vi.mock('src/features/chat/logic-functions/utils/send-teams-activity', () => ({
 vi.mock(
   'src/features/chat/logic-functions/utils/start-teams-assistant-stream',
   () => ({ startTeamsAssistantStream: startStreamMock }),
+);
+
+vi.mock(
+  'src/features/chat/logic-functions/utils/start-teams-assistant-placeholder',
+  () => ({ startTeamsAssistantPlaceholder: startPlaceholderMock }),
 );
 
 const CONVERSATION = {
@@ -178,7 +189,10 @@ describe('startTeamsAssistantStatus', () => {
     expect(sendActivityMock).not.toHaveBeenCalled();
   });
 
-  it('should only reply at the end outside personal chats', async () => {
+  it('should hand other conversations to the placeholder writer', async () => {
+    const placeholderFinishMock = vi.fn();
+    startPlaceholderMock.mockResolvedValue({ finish: placeholderFinishMock });
+
     const status = await startTeamsAssistantStatus({
       ...CONVERSATION,
       conversationType: 'groupChat',
@@ -188,15 +202,9 @@ describe('startTeamsAssistantStatus', () => {
     await status.finish('Acme has 3 open deals.');
 
     expect(startStreamMock).not.toHaveBeenCalled();
-    expect(sentMessageTexts()).toEqual(['Acme has 3 open deals.']);
-    expect(sendActivityMock).toHaveBeenCalledExactlyOnceWith({
-      ...CONVERSATION,
-      accessToken: 'token',
-      activity: {
-        type: 'message',
-        textFormat: 'extendedmarkdown',
-        text: 'Acme has 3 open deals.',
-      },
-    });
+    expect(startPlaceholderMock).toHaveBeenCalledExactlyOnceWith(CONVERSATION);
+    expect(placeholderFinishMock).toHaveBeenCalledExactlyOnceWith(
+      'Acme has 3 open deals.',
+    );
   });
 });

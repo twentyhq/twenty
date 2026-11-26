@@ -7,14 +7,16 @@ import {
 } from 'src/engine/metadata-modules/formula-field/__mocks__/formula-field-flat-entity-maps.mock';
 import { setFormulaFieldBindings } from 'src/engine/metadata-modules/formula-field/utils/set-formula-field-bindings.util';
 
+type SetFormulaFieldBindingsArgs = Parameters<
+  typeof setFormulaFieldBindings
+>[0];
+
 const setBindings = ({
-  universalSettings,
-  existingUniversalSettings,
+  formula,
+  existingFormula,
 }: {
-  universalSettings: Record<string, unknown> | null;
-  existingUniversalSettings?: Parameters<
-    typeof setFormulaFieldBindings
-  >[0]['existingUniversalSettings'];
+  formula: SetFormulaFieldBindingsArgs['existingFormula'];
+  existingFormula?: SetFormulaFieldBindingsArgs['existingFormula'];
 }) =>
   setFormulaFieldBindings({
     universalFlatFieldMetadata: getFlatFieldMetadataMock({
@@ -23,60 +25,51 @@ const setBindings = ({
       type: FieldMetadataType.NUMBER,
       objectMetadataId: 'gadget-object',
       objectMetadataUniversalIdentifier: 'gadget-object-uid',
-      universalSettings,
+      formula,
     }),
-    existingUniversalSettings,
+    existingFormula,
     universalFlatObjectMetadataMaps: FORMULA_FLAT_OBJECT_METADATA_MAPS_MOCK,
     universalFlatFieldMetadataMaps: FORMULA_FLAT_FIELD_METADATA_MAPS_MOCK,
-  }).universalSettings;
+  }).formula;
 
 describe('setFormulaFieldBindings', () => {
   it('should bind the fields a formula reads, replacing what was sent', () => {
     expect(
       setBindings({
-        universalSettings: {
-          decimals: 2,
-          formula: {
-            expression: 'price * supplier.revenue.amountMicros',
-            bindings: { price: 'forged-uid' },
-          },
+        formula: {
+          expression: 'price * supplier.revenue.amountMicros',
+          bindings: { price: 'forged-uid' },
         },
       }),
     ).toEqual({
-      decimals: 2,
-      formula: {
-        expression: 'price * supplier.revenue.amountMicros',
-        bindings: {
-          price: 'gadget-price-uid',
-          supplier: 'gadget-supplier-uid',
-          'supplier.revenue': 'supplier-revenue-uid',
-        },
+      expression: 'price * supplier.revenue.amountMicros',
+      bindings: {
+        price: 'gadget-price-uid',
+        supplier: 'gadget-supplier-uid',
+        'supplier.revenue': 'supplier-revenue-uid',
       },
     });
   });
 
   it('should bind nothing when the formula does not compile', () => {
-    expect(
-      setBindings({
-        universalSettings: { formula: { expression: 'missing * 2' } },
-      }),
-    ).toEqual({ formula: { expression: 'missing * 2', bindings: {} } });
+    expect(setBindings({ formula: { expression: 'missing * 2' } })).toEqual({
+      expression: 'missing * 2',
+      bindings: {},
+    });
   });
 
   it('should keep the stored bindings while the expression is unchanged', () => {
-    const existingUniversalSettings = {
-      formula: {
-        expression: 'missing * 2',
-        bindings: { missing: 'deleted-field-uid' },
-      },
+    const existingFormula = {
+      expression: 'missing * 2',
+      bindings: { missing: 'deleted-field-uid' },
     };
 
     expect(
       setBindings({
-        universalSettings: { formula: { expression: 'missing * 2' } },
-        existingUniversalSettings,
+        formula: { expression: 'missing * 2' },
+        existingFormula,
       }),
-    ).toEqual(existingUniversalSettings);
+    ).toEqual(existingFormula);
   });
 
   it('should store a formula that aggregates related records', () => {
@@ -88,31 +81,25 @@ describe('setFormulaFieldBindings', () => {
           type: FieldMetadataType.NUMBER,
           objectMetadataId: 'supplier-object',
           objectMetadataUniversalIdentifier: 'supplier-object-uid',
-          universalSettings: {
-            formula: {
-              expression: 'avg(gadgets.price)',
-              evaluation: 'QUERY_TIME',
-            },
+          formula: {
+            expression: 'avg(gadgets.price)',
+            evaluation: 'QUERY_TIME',
           },
         }),
         universalFlatObjectMetadataMaps: FORMULA_FLAT_OBJECT_METADATA_MAPS_MOCK,
         universalFlatFieldMetadataMaps: FORMULA_FLAT_FIELD_METADATA_MAPS_MOCK,
-      }).universalSettings,
+      }).formula,
     ).toEqual({
-      formula: {
-        expression: 'avg(gadgets.price)',
-        bindings: {
-          gadgets: 'supplier-gadgets-uid',
-          'gadgets.price': 'gadget-price-uid',
-        },
-        evaluation: 'STORED',
+      expression: 'avg(gadgets.price)',
+      bindings: {
+        gadgets: 'supplier-gadgets-uid',
+        'gadgets.price': 'gadget-price-uid',
       },
+      evaluation: 'STORED',
     });
   });
 
   it('should leave a field without formula untouched', () => {
-    expect(setBindings({ universalSettings: { decimals: 2 } })).toEqual({
-      decimals: 2,
-    });
+    expect(setBindings({ formula: null })).toBeNull();
   });
 });

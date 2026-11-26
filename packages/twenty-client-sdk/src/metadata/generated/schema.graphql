@@ -1779,6 +1779,7 @@ input CreateEmailingDomainInput {
 input CreateFieldInput {
   defaultValue: JSON
   description: String
+  formula: JSON
   icon: String
   isActive: Boolean
   isAuditLogged: Boolean
@@ -2590,6 +2591,7 @@ type Field {
   defaultValue: JSON
   description: String
   disabledFieldPermissionActions: [String!]
+  formula: JSON
   icon: String
   id: UUID!
   isActive: Boolean
@@ -5564,6 +5566,7 @@ input UpdateEmailGroupChannelInput {
 input UpdateFieldInput {
   defaultValue: JSON
   description: String
+  formula: JSON
   icon: String
   isActive: Boolean
   isAuditLogged: Boolean
