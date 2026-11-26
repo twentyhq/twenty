@@ -10,12 +10,13 @@ import { type EventManifest } from 'twenty-shared/application';
 import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 import { v4 as uuidv4 } from 'uuid';
 
-import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const TEST_APP_ID = uuidv4();
 const TEST_ROLE_ID = uuidv4();
 const MESSAGE_ADDED_EVENT_ID = uuidv4();
+// Emitting checks a record reference's format only, so no company has to exist
+const COMPANY_ID = uuidv4();
 
 const EMIT_APP_EVENT_MUTATION = gql`
   mutation EmitAppEvent($input: EmitAppEventInput!) {
@@ -69,7 +70,6 @@ const syncEvents = ({
 describe('app events (e2e)', () => {
   let applicationToken: string;
   let frontComponentToken: string;
-  let companyId: string;
 
   const emit = (input: {
     event: string;
@@ -105,12 +105,6 @@ describe('app events (e2e)', () => {
         applicationId: application.id,
       })
     ).applicationAccessToken.token;
-
-    const [company] = await globalThis.testDataSource.query(
-      `SELECT id FROM ${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}.company WHERE "deletedAt" IS NULL LIMIT 1`,
-    );
-
-    companyId = company.id;
   }, 60000);
 
   afterAll(async () => {
@@ -169,7 +163,7 @@ describe('app events (e2e)', () => {
   it('acknowledges an occurrence that matches the definition', async () => {
     const response = await emit({
       event: 'messageAdded',
-      properties: { companyId, text: 'Hello' },
+      properties: { companyId: COMPANY_ID, text: 'Hello' },
     });
 
     expect(response.body.data.emitAppEvent).toEqual({
@@ -183,7 +177,10 @@ describe('app events (e2e)', () => {
       {
         query: EMIT_APP_EVENT_MUTATION,
         variables: {
-          input: { event: 'messageAdded', properties: { companyId } },
+          input: {
+            event: 'messageAdded',
+            properties: { companyId: COMPANY_ID },
+          },
         },
       },
       frontComponentToken,
