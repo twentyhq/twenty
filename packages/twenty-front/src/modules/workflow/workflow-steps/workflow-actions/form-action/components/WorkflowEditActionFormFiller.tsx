@@ -62,7 +62,7 @@ export const WorkflowEditActionFormFiller = ({
   const canSubmit = !actionOptions.readonly && !isDefined(error);
 
   const onFieldUpdate = (fieldName: string, value: unknown) => {
-    if (actionOptions.readonly === true) {
+    if (actionOptions.readonly) {
       return;
     }
 
@@ -76,7 +76,7 @@ export const WorkflowEditActionFormFiller = ({
   };
 
   const saveAction = useDebouncedCallback(async (updatedFormData: FormData) => {
-    if (actionOptions.readonly === true) {
+    if (actionOptions.readonly) {
       return;
     }
 
