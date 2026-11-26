@@ -1,7 +1,7 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/teams/v1.25/MicrosoftTeams.schema.json",
-  "manifestVersion": "1.25",
-  "version": "1.0.0",
+  "$schema": "https://developer.microsoft.com/json-schemas/teams/v1.27/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.27",
+  "version": "1.1.0",
   "id": "<TEAMS_BOT_APP_ID>",
   "developer": {
     "name": "Twenty",
@@ -35,6 +35,36 @@
             {
               "title": "help",
               "description": "See what you can ask Twenty"
+            },
+            {
+              "title": "Review the pipeline",
+              "description": "How many open opportunities are in the pipeline?",
+              "type": "prompt",
+              "prompt": "How many open opportunities are in the pipeline?"
+            },
+            {
+              "title": "Check closing deals",
+              "description": "What deals are closing this month?",
+              "type": "prompt",
+              "prompt": "What deals are closing this month?"
+            },
+            {
+              "title": "Spot the biggest deals",
+              "description": "What are our five biggest open opportunities and who owns them?",
+              "type": "prompt",
+              "prompt": "What are our five biggest open opportunities and who owns them?"
+            },
+            {
+              "title": "See the newest companies",
+              "description": "Which companies were added recently, and who added them?",
+              "type": "prompt",
+              "prompt": "Which companies were added recently, and who added them?"
+            },
+            {
+              "title": "Create a task",
+              "description": "Create a task to follow up on my newest lead",
+              "type": "prompt",
+              "prompt": "Create a task to follow up on my newest lead"
             }
           ]
         }
