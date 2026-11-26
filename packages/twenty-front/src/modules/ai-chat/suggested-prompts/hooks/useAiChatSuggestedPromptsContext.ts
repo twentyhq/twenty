@@ -7,7 +7,7 @@ import { contextStoreCurrentCoreObjectNameComponentState } from '@/context-store
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentPageTypeComponentState } from '@/context-store/states/contextStoreCurrentPageTypeComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
-import { useInboxObjectNames } from '@/ai-chat/hooks/useInboxObjectNames';
+import { useInboxNamesByLegacyName } from '@/ai-chat/hooks/useInboxNamesByLegacyName';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
@@ -17,7 +17,7 @@ import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
 
 export const useAiChatSuggestedPromptsContext =
   (): AiChatSuggestedPromptsContext | null => {
-    const inboxObjectNames = useInboxObjectNames();
+    const inboxNamesByLegacyName = useInboxNamesByLegacyName();
     const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
     const sidePanelNavigationStack = useAtomStateValue(
       sidePanelNavigationStackState,
@@ -71,7 +71,7 @@ export const useAiChatSuggestedPromptsContext =
     if (
       !isDefined(objectMetadataItem) ||
       !isDefined(browsingContextType) ||
-      objectMetadataItem.nameSingular === inboxObjectNames.agentChatThread
+      objectMetadataItem.nameSingular === inboxNamesByLegacyName.agentChatThread
     ) {
       return null;
     }

@@ -8,7 +8,7 @@ import { mergeAiChatThreadParticipants } from '@/ai-chat/threads/utils/mergeAiCh
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { type ObjectRecordOperationBrowserEventDetail } from '@/browser-event/types/ObjectRecordOperationBrowserEventDetail';
-import { useInboxObjectNames } from '@/ai-chat/hooks/useInboxObjectNames';
+import { useInboxNamesByLegacyName } from '@/ai-chat/hooks/useInboxNamesByLegacyName';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
@@ -17,11 +17,11 @@ import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metad
 
 export const AiChatThreadParticipantsSyncEffect = () => {
   const store = useStore();
-  const inboxObjectNames = useInboxObjectNames();
+  const inboxNamesByLegacyName = useInboxNamesByLegacyName();
   const participantObjectMetadataItem = useAtomFamilySelectorValue(
     objectMetadataItemFamilySelector,
     {
-      objectName: inboxObjectNames.agentChatThreadParticipant,
+      objectName: inboxNamesByLegacyName.agentChatThreadParticipant,
       objectNameType: 'singular',
     },
   );
@@ -34,12 +34,15 @@ export const AiChatThreadParticipantsSyncEffect = () => {
 
   const ownParticipantOperationSignature = useMemo(
     () => ({
-      objectNameSingular: inboxObjectNames.agentChatThreadParticipant,
+      objectNameSingular: inboxNamesByLegacyName.agentChatThreadParticipant,
       variables: {
         filter: { workspaceMemberId: { eq: currentWorkspaceMemberId } },
       },
     }),
-    [currentWorkspaceMemberId, inboxObjectNames.agentChatThreadParticipant],
+    [
+      currentWorkspaceMemberId,
+      inboxNamesByLegacyName.agentChatThreadParticipant,
+    ],
   );
 
   useListenToEventsForQuery({

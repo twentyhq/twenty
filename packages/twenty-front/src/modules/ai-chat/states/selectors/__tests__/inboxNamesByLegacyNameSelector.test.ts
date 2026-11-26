@@ -2,9 +2,9 @@ import { createStore } from 'jotai';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { INBOX_OBJECT_NAMES } from '@/ai-chat/constants/InboxObjectNames';
-import { LEGACY_INBOX_OBJECT_NAMES } from '@/ai-chat/constants/LegacyInboxObjectNames';
-import { inboxObjectNamesSelector } from '@/ai-chat/states/selectors/inboxObjectNamesSelector';
+import { INBOX_NAMES_BY_LEGACY_NAME } from '@/ai-chat/constants/InboxNamesByLegacyName';
+import { LEGACY_INBOX_NAMES_BY_LEGACY_NAME } from '@/ai-chat/constants/LegacyInboxNamesByLegacyName';
+import { inboxNamesByLegacyNameSelector } from '@/ai-chat/states/selectors/inboxNamesByLegacyNameSelector';
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
 const buildStore = (isInboxObjectNamingEnabled: boolean) => {
@@ -23,7 +23,7 @@ const buildStore = (isInboxObjectNamingEnabled: boolean) => {
   return store;
 };
 
-describe('inboxObjectNamesSelector', () => {
+describe('inboxNamesByLegacyNameSelector', () => {
   afterEach(() => {
     localStorage.clear();
   });
@@ -31,14 +31,16 @@ describe('inboxObjectNamesSelector', () => {
   it('keeps the legacy names while the workspace flag is off', () => {
     const store = buildStore(false);
 
-    expect(store.get(inboxObjectNamesSelector.atom)).toBe(
-      LEGACY_INBOX_OBJECT_NAMES,
+    expect(store.get(inboxNamesByLegacyNameSelector.atom)).toBe(
+      LEGACY_INBOX_NAMES_BY_LEGACY_NAME,
     );
   });
 
   it('switches to the inbox names once the workspace flag is on', () => {
     const store = buildStore(true);
 
-    expect(store.get(inboxObjectNamesSelector.atom)).toBe(INBOX_OBJECT_NAMES);
+    expect(store.get(inboxNamesByLegacyNameSelector.atom)).toBe(
+      INBOX_NAMES_BY_LEGACY_NAME,
+    );
   });
 });

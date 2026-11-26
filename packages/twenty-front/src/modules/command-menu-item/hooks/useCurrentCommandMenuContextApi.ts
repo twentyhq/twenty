@@ -1,5 +1,5 @@
 import { aiChatThreadParticipantsState } from '@/ai-chat/threads/states/aiChatThreadParticipantsState';
-import { useInboxObjectNames } from '@/ai-chat/hooks/useInboxObjectNames';
+import { useInboxNamesByLegacyName } from '@/ai-chat/hooks/useInboxNamesByLegacyName';
 import { inboxSelectedChannelViewSelector } from '@/inbox/states/selectors/inboxSelectedChannelViewSelector';
 import { inboxThreadStatusByThreadIdFamilySelector } from '@/inbox/states/selectors/inboxThreadStatusByThreadIdFamilySelector';
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -110,9 +110,10 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
   const aiChatThreadParticipants = useAtomStateValue(
     aiChatThreadParticipantsState,
   );
-  const inboxObjectNames = useInboxObjectNames();
+  const inboxNamesByLegacyName = useInboxNamesByLegacyName();
   const inboxStatusThreadIds =
-    objectMetadataItem?.nameSingular === inboxObjectNames.agentChatThread &&
+    objectMetadataItem?.nameSingular ===
+      inboxNamesByLegacyName.agentChatThread &&
     aiChatThreadParticipants.isLoaded
       ? (recordIds ?? [])
       : [];

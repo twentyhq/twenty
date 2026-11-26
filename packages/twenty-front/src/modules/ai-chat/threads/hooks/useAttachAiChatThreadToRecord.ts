@@ -4,7 +4,7 @@ import { useToast } from 'twenty-ui/components/feedback';
 
 import { type AiChatConversationTarget } from '@/ai-chat/threads/types/AiChatConversationTarget';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
-import { useInboxObjectNames } from '@/ai-chat/hooks/useInboxObjectNames';
+import { useInboxNamesByLegacyName } from '@/ai-chat/hooks/useInboxNamesByLegacyName';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/RecordGqlOperationFindManyResult';
@@ -18,20 +18,20 @@ const EXISTING_LINK_GQL_FIELDS = { id: true } satisfies RecordGqlFields;
 
 export const useAttachAiChatThreadToRecord = () => {
   const { enqueueToast } = useToast();
-  const inboxObjectNames = useInboxObjectNames();
+  const inboxNamesByLegacyName = useInboxNamesByLegacyName();
   const apolloCoreClient = useApolloCoreClient();
   const { objectMetadataItems } = useObjectMetadataItems();
   const junctionConfig = useObjectMorphJunctionConfig({
-    objectNameSingular: inboxObjectNames.agentChatThread,
+    objectNameSingular: inboxNamesByLegacyName.agentChatThread,
   });
 
   const { findManyRecordsQuery: findExistingLinksQuery } =
     useFindManyRecordsQuery({
-      objectNameSingular: inboxObjectNames.agentChatThreadTarget,
+      objectNameSingular: inboxNamesByLegacyName.agentChatThreadTarget,
       recordGqlFields: EXISTING_LINK_GQL_FIELDS,
     });
   const { createManyRecords: createLinks } = useCreateManyRecords({
-    objectNameSingular: inboxObjectNames.agentChatThreadTarget,
+    objectNameSingular: inboxNamesByLegacyName.agentChatThreadTarget,
     shouldRefetchAggregateQueries: false,
   });
   const { refetchAggregateQueries } = useRefetchAggregateQueries();

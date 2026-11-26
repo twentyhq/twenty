@@ -5,18 +5,18 @@ import {
 } from 'twenty-shared/utils';
 
 import { useCanSyncInbox } from '@/inbox/hooks/useCanSyncInbox';
-import { useInboxObjectNames } from '@/ai-chat/hooks/useInboxObjectNames';
+import { useInboxNamesByLegacyName } from '@/ai-chat/hooks/useInboxNamesByLegacyName';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 
 export const useInboxThreadSyncStatus = () => {
   const canSyncInbox = useCanSyncInbox();
-  const inboxObjectNames = useInboxObjectNames();
+  const inboxNamesByLegacyName = useInboxNamesByLegacyName();
   const chatObjectMetadataItem = useAtomFamilySelectorValue(
     objectMetadataItemFamilySelector,
     {
-      objectName: inboxObjectNames.agentChatThread,
+      objectName: inboxNamesByLegacyName.agentChatThread,
       objectNameType: 'singular',
     },
   );

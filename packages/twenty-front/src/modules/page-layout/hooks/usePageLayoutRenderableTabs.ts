@@ -1,4 +1,4 @@
-import { useInboxObjectNames } from '@/ai-chat/hooks/useInboxObjectNames';
+import { useInboxNamesByLegacyName } from '@/ai-chat/hooks/useInboxNamesByLegacyName';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { WIDGET_TYPE_TO_RELATION_FIELD_NAME } from '@/page-layout/constants/WidgetTypeToRelationFieldName';
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
@@ -24,7 +24,7 @@ export const usePageLayoutRenderableTabs = () => {
   const { objectMetadataItems } = useObjectMetadataItems();
   const widgetVisibilityContext = useWidgetVisibilityContext();
   const isWidgetReadable = useIsPageLayoutWidgetReadable();
-  const inboxObjectNames = useInboxObjectNames();
+  const inboxNamesByLegacyName = useInboxNamesByLegacyName();
 
   const targetObjectMetadataItem = isDefined(targetRecordIdentifier)
     ? objectMetadataItems.find(
@@ -53,7 +53,7 @@ export const usePageLayoutRenderableTabs = () => {
         relationFieldNameByWidgetType: {
           ...WIDGET_TYPE_TO_RELATION_FIELD_NAME,
           [WidgetType.CHAT_THREADS]:
-            inboxObjectNames.relationFields.agentChatThreadTargets,
+            inboxNamesByLegacyName.relationFields.agentChatThreadTargets,
         },
       });
 

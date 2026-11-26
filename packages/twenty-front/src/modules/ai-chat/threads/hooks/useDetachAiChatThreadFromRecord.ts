@@ -1,14 +1,14 @@
 import { useToast } from 'twenty-ui/components/feedback';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
-import { useInboxObjectNames } from '@/ai-chat/hooks/useInboxObjectNames';
+import { useInboxNamesByLegacyName } from '@/ai-chat/hooks/useInboxNamesByLegacyName';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 
 export const useDetachAiChatThreadFromRecord = () => {
   const { enqueueToast } = useToast();
-  const inboxObjectNames = useInboxObjectNames();
+  const inboxNamesByLegacyName = useInboxNamesByLegacyName();
   const { deleteManyRecords: deleteLinks } = useDeleteManyRecords({
-    objectNameSingular: inboxObjectNames.agentChatThreadTarget,
+    objectNameSingular: inboxNamesByLegacyName.agentChatThreadTarget,
   });
 
   const detachChatThreadFromRecord = async (linkIds: string[]) => {

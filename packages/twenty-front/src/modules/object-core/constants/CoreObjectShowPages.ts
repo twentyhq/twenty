@@ -1,8 +1,10 @@
 import { lazy, type ComponentType, type LazyExoticComponent } from 'react';
+import {
+  INBOX_OBJECT_NAMES_BY_LEGACY_NAME,
+  LEGACY_INBOX_OBJECT_NAMES_BY_LEGACY_NAME,
+} from 'twenty-shared/ai';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
 
-import { INBOX_OBJECT_NAMES } from '@/ai-chat/constants/InboxObjectNames';
-import { LEGACY_INBOX_OBJECT_NAMES } from '@/ai-chat/constants/LegacyInboxObjectNames';
 import { type CoreObjectShowPageProps } from '@/object-core/types/CoreObjectShowPageProps';
 
 type CoreObjectShowPageComponent = LazyExoticComponent<
@@ -24,7 +26,7 @@ export const CORE_OBJECT_SHOW_PAGES: ReadonlyMap<
     ),
   ],
   [
-    LEGACY_INBOX_OBJECT_NAMES.agentChatThread,
+    LEGACY_INBOX_OBJECT_NAMES_BY_LEGACY_NAME.agentChatThread,
     lazy(() =>
       import('@/inbox/components/AiChatThreadRecordView').then((module) => ({
         default: module.AiChatThreadRecordView,
@@ -32,7 +34,7 @@ export const CORE_OBJECT_SHOW_PAGES: ReadonlyMap<
     ),
   ],
   [
-    INBOX_OBJECT_NAMES.agentChatThread,
+    INBOX_OBJECT_NAMES_BY_LEGACY_NAME.agentChatThread,
     lazy(() =>
       import('@/inbox/components/AiChatThreadRecordView').then((module) => ({
         default: module.AiChatThreadRecordView,

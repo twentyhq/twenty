@@ -1,6 +1,6 @@
 import { type ReactNode } from 'react';
 
-import { useInboxObjectNames } from '@/ai-chat/hooks/useInboxObjectNames';
+import { useInboxNamesByLegacyName } from '@/ai-chat/hooks/useInboxNamesByLegacyName';
 import { RecordShowPageContent } from '@/object-record/record-show/components/RecordShowPageContent';
 
 type AiChatThreadPageContentProps = {
@@ -18,12 +18,12 @@ export const AiChatThreadPageContent = ({
   headerTitlePrefix,
   headerTitleAccessory,
 }: AiChatThreadPageContentProps) => {
-  const inboxObjectNames = useInboxObjectNames();
+  const inboxNamesByLegacyName = useInboxNamesByLegacyName();
 
   return (
     <RecordShowPageContent
       parameters={{
-        objectNameSingular: inboxObjectNames.agentChatThread,
+        objectNameSingular: inboxNamesByLegacyName.agentChatThread,
         objectRecordId: threadId,
       }}
       headerActions={headerActions}

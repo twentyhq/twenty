@@ -1,7 +1,7 @@
 import { useWorkspaceRouteObjects } from '@/app/routing/components/WorkspaceRouteObjectsProvider';
 import { RouteContextStoreCoreObjectNameEffect } from '@/context-store/components/RouteContextStoreCoreObjectNameEffect';
 import { RouteContextStoreProviderEffect } from '@/context-store/components/RouteContextStoreProviderEffect';
-import { useInboxObjectNames } from '@/ai-chat/hooks/useInboxObjectNames';
+import { useInboxNamesByLegacyName } from '@/ai-chat/hooks/useInboxNamesByLegacyName';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
@@ -77,11 +77,11 @@ export const RouteContextStoreProvider = () => {
     isMatchingLocation(location, AppPath.AgentIndexPage) ||
     isMatchingLocation(location, AppPath.AgentShowPage);
   const isSettingsPage = useIsSettingsPage();
-  const inboxObjectNames = useInboxObjectNames();
+  const inboxNamesByLegacyName = useInboxNamesByLegacyName();
 
   const objectNamePlural = routeParams?.objectNamePlural;
   const objectNameSingular = isAiChatPage
-    ? inboxObjectNames.agentChatThread
+    ? inboxNamesByLegacyName.agentChatThread
     : routeParams?.objectNameSingular;
 
   const [searchParams] = useSearchParams();

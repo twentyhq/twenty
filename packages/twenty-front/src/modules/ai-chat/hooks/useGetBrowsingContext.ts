@@ -15,7 +15,7 @@ import { contextStoreCurrentPageTypeComponentState } from '@/context-store/state
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { inboxObjectNamesSelector } from '@/ai-chat/states/selectors/inboxObjectNamesSelector';
+import { inboxNamesByLegacyNameSelector } from '@/ai-chat/states/selectors/inboxNamesByLegacyNameSelector';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
@@ -71,7 +71,7 @@ export const useGetBrowsingContext = () => {
     if (
       !objectMetadataItem ||
       objectMetadataItem.nameSingular ===
-        store.get(inboxObjectNamesSelector.atom).agentChatThread
+        store.get(inboxNamesByLegacyNameSelector.atom).agentChatThread
     ) {
       return null;
     }

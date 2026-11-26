@@ -13,8 +13,8 @@ jest.mock('@/navigation/hooks/useLastVisitedView', () => ({
   }),
 }));
 
-jest.mock('@/ai-chat/hooks/useInboxObjectNames', () => ({
-  useInboxObjectNames: () => ({ agentChatThread: 'agentChatThread' }),
+jest.mock('@/ai-chat/hooks/useInboxNamesByLegacyName', () => ({
+  useInboxNamesByLegacyName: () => ({ agentChatThread: 'agentChatThread' }),
 }));
 
 jest.mock('@/object-metadata/states/objectMetadataItemsSelector', () => ({

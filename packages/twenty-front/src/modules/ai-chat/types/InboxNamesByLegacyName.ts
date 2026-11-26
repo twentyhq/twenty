@@ -1,10 +1,6 @@
-export type InboxObjectNames = {
-  agentChatThread: string;
-  agentChatThreadParticipant: string;
-  agentChatThreadTarget: string;
-  agentMessage: string;
-  agentMessagePart: string;
-  agentMessageReaction: string;
+import { type InboxObjectNamesByLegacyName } from 'twenty-shared/ai';
+
+export type InboxNamesByLegacyName = InboxObjectNamesByLegacyName & {
   relationFields: {
     targetAgentChatThread: string;
     agentChatThreadTargets: string;
