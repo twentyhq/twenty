@@ -1,0 +1,22 @@
+{/*
+ * Auto-generated file. DO NOT EDIT - changes will be overwritten.
+ * Generated from packages/twenty-website/src/tokens by design-system/scripts/docs/render.ts
+ */}
+
+Read from `origin/main` at [`63ba48a7cf`](https://github.com/twentyhq/twenty/commit/63ba48a7cf87f1790415ba8f27ff5fe8af0023d0), 2026-11-26. Usage counts cover the website's own code: `src/` outside `src/tokens/`, without the 183 files that reproduce the app (they import `twenty-ui/theme`, use `--font-product` or live in `app-preview/`).
+
+| | |
+| --- | --- |
+| Tokens | `packages/twenty-website/src/tokens`, 120 values |
+| Typefaces | Host Grotesk, Aleo, Azeret Mono, VT323 |
+| Background modes | per section, `scheme`: `light` · `muted` · `dark` |
+| Accent | <span style={{display:'inline-block',width:'16px',height:'16px',borderRadius:'4px',verticalAlign:'middle',background:'#4a38f5',boxShadow:'inset 0 0 0 1px rgba(128,128,128,0.45)'}} /> `#4a38f5` |
+| Shared components | 33 in `src/ui` |
+
+183 files of the website reproduce the app and follow its tokens: see [Website and app](/bridge).
+
+### What the linter enforces
+
+[`check-conventions.mjs`](https://github.com/twentyhq/twenty/blob/63ba48a7cf87f1790415ba8f27ff5fe8af0023d0/packages/twenty-website/scripts/check-conventions.mjs) rejects these literals outside `src/tokens/`: `hex color literal`, `rgb/rgba literal`, `cubic-bezier literal`.
+
+Not covered, found by the audit: `font-size-px`, `line-height`, `font-weight`, `z-index`, `radius-px`, `ms`, `shader-int`.

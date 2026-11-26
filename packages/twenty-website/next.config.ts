@@ -70,14 +70,15 @@ const nextConfig: LinariaConfig = {
       },
       // Design system embeds: the docs show live components in an iframe, as
       // they do for twenty-ui with Storybook. frame-ancestors overrides
-      // X-Frame-Options in browsers that support it; only the docs may frame.
+      // X-Frame-Options in browsers that support it. Only the docs may frame
+      // this path: docs.twenty.com, its Mintlify PR previews, a local preview.
       {
         source: '/design-system/embed/:path*',
         headers: [
           {
             key: 'Content-Security-Policy',
             value:
-              "frame-ancestors 'self' https://docs.twenty.com http://localhost:3333",
+              "frame-ancestors 'self' https://docs.twenty.com https://*.mintlify.site http://localhost:3333",
           },
         ],
       },

@@ -1,0 +1,21 @@
+{/* A live component from the website, framed the way StoryEmbed frames
+    Storybook for the UI Library. The site serves it under
+    /design-system/embed/ plus the component slug, the only path it lets be framed. */}
+
+export const SITE_ORIGIN = 'https://twenty.com';
+
+export const SiteEmbed = ({ slug, show, scheme = 'light', height = 200, title, children }) => (
+  <Tabs>
+    <Tab title="Preview">
+      <iframe
+        title={title}
+        src={`${SITE_ORIGIN}/design-system/embed/${slug}?scheme=${scheme}${show ? `&show=${show}` : ''}`}
+        width="100%"
+        height={height}
+        loading="lazy"
+        style={{ border: 0, borderRadius: 12 }}
+      />
+    </Tab>
+    <Tab title="Code">{children}</Tab>
+  </Tabs>
+);
