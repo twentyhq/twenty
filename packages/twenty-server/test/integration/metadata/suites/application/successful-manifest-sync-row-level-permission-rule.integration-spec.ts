@@ -1,6 +1,7 @@
-import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
-import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
-import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
+import {
+  createWorkspaceCustomApplicationSyncWorkspace,
+  type WorkspaceCustomApplicationSyncWorkspace,
+} from 'test/integration/metadata/suites/application/utils/create-workspace-custom-application-sync-workspace.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import {
   type Manifest,
@@ -10,78 +11,110 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { RowLevelPermissionPredicateOperand } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
-import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-
-const TEST_APP_ID = uuidv4();
-const TEST_ROLE_ID = uuidv4();
-const TEST_RULE_ID = uuidv4();
-const TEST_PREDICATE_ID = uuidv4();
-
 const COMPANY_OBJECT_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.company.universalIdentifier;
 
-const companyNamePredicate = {
-  universalIdentifier: TEST_PREDICATE_ID,
-  objectUniversalIdentifier: COMPANY_OBJECT_UNIVERSAL_IDENTIFIER,
+type RoleUniversalIdentifiers = {
+  role: string;
+  rule: string;
+  predicate: string;
+};
+
+const buildRoleUniversalIdentifiers = (): RoleUniversalIdentifiers => ({
+  role: uuidv4(),
+  rule: uuidv4(),
+  predicate: uuidv4(),
+});
+
+const companyNameRulePredicate = (predicateUniversalIdentifier: string) => ({
+  universalIdentifier: predicateUniversalIdentifier,
   fieldUniversalIdentifier:
     STANDARD_OBJECTS.company.fields.name.universalIdentifier,
   operand: RowLevelPermissionPredicateOperand.CONTAINS,
   value: 'Acme',
-};
+});
 
-const buildManifest = (
+// Only the workspace custom application may declare row-level permissions
+const buildManifest = ({
+  workspace,
+  roleUniversalIdentifier,
+  role,
+}: {
+  workspace: WorkspaceCustomApplicationSyncWorkspace;
+  roleUniversalIdentifier: string;
   role: Pick<
     LegacyCompliantRoleManifest,
     'objectPermissions' | 'recordsPermissions' | 'rowLevelPermissionPredicates'
-  >,
-): Manifest =>
-  buildBaseManifest({
-    appId: TEST_APP_ID,
-    roleId: TEST_ROLE_ID,
-    overrides: {
-      roles: [
+  >;
+}): Manifest => ({
+  ...workspace.manifest,
+  roles: [
+    ...workspace.manifest.roles,
+    {
+      universalIdentifier: roleUniversalIdentifier,
+      label: 'RLS Rule Test Role',
+      ...role,
+    },
+  ],
+});
+
+const buildManifestWithoutRule = ({
+  workspace,
+  universalIdentifiers,
+}: {
+  workspace: WorkspaceCustomApplicationSyncWorkspace;
+  universalIdentifiers: RoleUniversalIdentifiers;
+}) =>
+  buildManifest({
+    workspace,
+    roleUniversalIdentifier: universalIdentifiers.role,
+    role: {
+      objectPermissions: [
         {
-          universalIdentifier: TEST_ROLE_ID,
-          label: 'RLS Rule Test Role',
-          ...role,
+          objectUniversalIdentifier: COMPANY_OBJECT_UNIVERSAL_IDENTIFIER,
+          canReadObjectRecords: true,
+          canUpdateObjectRecords: true,
+        },
+      ],
+      rowLevelPermissionPredicates: [
+        {
+          ...companyNameRulePredicate(universalIdentifiers.predicate),
+          objectUniversalIdentifier: COMPANY_OBJECT_UNIVERSAL_IDENTIFIER,
         },
       ],
     },
   });
 
-const manifestWithoutRule = buildManifest({
-  objectPermissions: [
-    {
-      objectUniversalIdentifier: COMPANY_OBJECT_UNIVERSAL_IDENTIFIER,
-      canReadObjectRecords: true,
-      canUpdateObjectRecords: true,
-    },
-  ],
-  rowLevelPermissionPredicates: [companyNamePredicate],
-});
-
-const {
-  objectUniversalIdentifier: _objectUniversalIdentifier,
-  ...companyNameRulePredicate
-} = companyNamePredicate;
-
-const manifestWithRule = buildManifest({
-  recordsPermissions: {
-    objects: [
-      {
-        objectUniversalIdentifier: COMPANY_OBJECT_UNIVERSAL_IDENTIFIER,
-        canUpdateAllRecords: true,
-        rowLevelRecordsPermissions: [
+const buildManifestWithRule = ({
+  workspace,
+  universalIdentifiers,
+}: {
+  workspace: WorkspaceCustomApplicationSyncWorkspace;
+  universalIdentifiers: RoleUniversalIdentifiers;
+}) =>
+  buildManifest({
+    workspace,
+    roleUniversalIdentifier: universalIdentifiers.role,
+    role: {
+      recordsPermissions: {
+        objects: [
           {
-            universalIdentifier: TEST_RULE_ID,
-            canReadRecords: true,
-            predicates: [companyNameRulePredicate],
+            objectUniversalIdentifier: COMPANY_OBJECT_UNIVERSAL_IDENTIFIER,
+            canUpdateAllRecords: true,
+            rowLevelRecordsPermissions: [
+              {
+                universalIdentifier: universalIdentifiers.rule,
+                canReadRecords: true,
+                predicates: [
+                  companyNameRulePredicate(universalIdentifiers.predicate),
+                ],
+              },
+            ],
           },
         ],
       },
-    ],
-  },
-});
+    },
+  });
 
 type RuleRow = {
   universalIdentifier: string;
@@ -95,7 +128,13 @@ type RuleRow = {
   predicateId: string;
 };
 
-const findRuleRows = async (): Promise<RuleRow[]> =>
+const findRuleRows = async ({
+  workspaceId,
+  roleUniversalIdentifier,
+}: {
+  workspaceId: string;
+  roleUniversalIdentifier: string;
+}): Promise<RuleRow[]> =>
   globalThis.testDataSource.query(
     `SELECT rule."universalIdentifier", rule."canReadRecords", rule."canCreateRecords",
             rule."canUpdateRecords", rule."canSoftDeleteRecords", rule."canDestroyRecords",
@@ -109,36 +148,48 @@ const findRuleRows = async (): Promise<RuleRow[]> =>
        ON "objectPermission"."roleId" = rule."roleId"
       AND "objectPermission"."objectMetadataId" = rule."objectMetadataId"
      WHERE role."universalIdentifier" = $1 AND rule."workspaceId" = $2`,
-    [TEST_ROLE_ID, SEED_APPLE_WORKSPACE_ID],
+    [roleUniversalIdentifier, workspaceId],
   );
 
 describe('Manifest sync - row level permission rules declared on a role', () => {
-  beforeEach(async () => {
-    await setupApplicationForSync({
-      applicationUniversalIdentifier: TEST_APP_ID,
-      name: 'Test RLS Rule Application',
-      description: 'App for testing row level permission rule sync',
-      sourcePath: 'test-manifest-rls-rule',
-    });
-  }, 60000);
+  let workspace: WorkspaceCustomApplicationSyncWorkspace;
 
-  afterEach(async () => {
-    await cleanupApplicationAndAppRegistration({
-      applicationUniversalIdentifier: TEST_APP_ID,
+  const sync = async (manifest: Manifest) => {
+    const { errors } = await syncApplication({
+      manifest,
+      inferDeletionFromMissingEntities: true,
+      expectToFail: false,
+      token: workspace.accessToken,
     });
-  });
+
+    expect(errors).toBeUndefined();
+  };
+
+  const findRuleRowsOfRole = (universalIdentifiers: RoleUniversalIdentifiers) =>
+    findRuleRows({
+      workspaceId: workspace.workspaceId,
+      roleUniversalIdentifier: universalIdentifiers.role,
+    });
+
+  beforeAll(async () => {
+    workspace = await createWorkspaceCustomApplicationSyncWorkspace();
+  }, 120000);
+
+  afterAll(async () => {
+    await workspace.deleteWorkspace();
+  }, 120000);
 
   it('moves the object permission onto the derived rule of predicates declared outside a rule, and keeps it there on re-sync', async () => {
-    await syncApplication({
-      manifest: manifestWithoutRule,
-      expectToFail: false,
-    });
-    await syncApplication({
-      manifest: manifestWithoutRule,
-      expectToFail: false,
+    const universalIdentifiers = buildRoleUniversalIdentifiers();
+    const manifestWithoutRule = buildManifestWithoutRule({
+      workspace,
+      universalIdentifiers,
     });
 
-    expect(await findRuleRows()).toMatchObject([
+    await sync(manifestWithoutRule);
+    await sync(manifestWithoutRule);
+
+    expect(await findRuleRowsOfRole(universalIdentifiers)).toMatchObject([
       {
         canReadRecords: true,
         canCreateRecords: true,
@@ -152,11 +203,13 @@ describe('Manifest sync - row level permission rules declared on a role', () => 
   }, 60000);
 
   it('writes the all records grants of an object and its rule with nested predicates', async () => {
-    await syncApplication({ manifest: manifestWithRule, expectToFail: false });
+    const universalIdentifiers = buildRoleUniversalIdentifiers();
 
-    expect(await findRuleRows()).toMatchObject([
+    await sync(buildManifestWithRule({ workspace, universalIdentifiers }));
+
+    expect(await findRuleRowsOfRole(universalIdentifiers)).toMatchObject([
       {
-        universalIdentifier: TEST_RULE_ID,
+        universalIdentifier: universalIdentifiers.rule,
         canReadRecords: true,
         canUpdateRecords: false,
         canReadObjectRecords: null,
@@ -166,17 +219,20 @@ describe('Manifest sync - row level permission rules declared on a role', () => 
   }, 60000);
 
   it('keeps the predicate when a manifest moves it into a rule', async () => {
-    await syncApplication({
-      manifest: manifestWithoutRule,
-      expectToFail: false,
-    });
+    const universalIdentifiers = buildRoleUniversalIdentifiers();
 
-    const [{ predicateId }] = await findRuleRows();
+    await sync(buildManifestWithoutRule({ workspace, universalIdentifiers }));
 
-    await syncApplication({ manifest: manifestWithRule, expectToFail: false });
+    const [{ predicateId }] = await findRuleRowsOfRole(universalIdentifiers);
 
-    expect(await findRuleRows()).toMatchObject([
-      { universalIdentifier: TEST_RULE_ID, predicateId, canReadRecords: true },
+    await sync(buildManifestWithRule({ workspace, universalIdentifiers }));
+
+    expect(await findRuleRowsOfRole(universalIdentifiers)).toMatchObject([
+      {
+        universalIdentifier: universalIdentifiers.rule,
+        predicateId,
+        canReadRecords: true,
+      },
     ]);
   }, 60000);
 });

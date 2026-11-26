@@ -2183,6 +2183,7 @@ export type CreateViewInput = {
   kanbanAggregateOperationFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   kanbanColumnWidth?: InputMaybe<Scalars['Int']['input']>;
   key?: InputMaybe<ViewKey>;
+  listPinnedFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   mainGroupByFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   name: Scalars['String']['input'];
   objectMetadataId: Scalars['UUID']['input'];
@@ -8396,6 +8397,7 @@ export type UpdateViewInput = {
   kanbanAggregateOperation?: InputMaybe<AggregateOperations>;
   kanbanAggregateOperationFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   kanbanColumnWidth?: InputMaybe<Scalars['Int']['input']>;
+  listPinnedFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   mainGroupByFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   /** Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
@@ -8938,6 +8940,7 @@ export type View = {
   kanbanAggregateOperationFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
   kanbanColumnWidth?: Maybe<Scalars['Int']['output']>;
   key?: Maybe<ViewKey>;
+  listPinnedFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
   mainGroupByFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
   name: Scalars['String']['output'];
   objectMetadataId: Scalars['UUID']['output'];

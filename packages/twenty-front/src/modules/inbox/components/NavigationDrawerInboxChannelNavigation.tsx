@@ -22,7 +22,6 @@ type NavigationDrawerInboxChannelNavigationProps = {
   summary?: InboxChannelSummary;
   channelView: InboxChannelView | null;
   isActive: boolean;
-  isExpandable?: boolean;
   icon?: ReactElement;
   rightOptions?: ReactNode;
   isRightOptionsDropdownOpen?: boolean;
@@ -33,7 +32,6 @@ export const NavigationDrawerInboxChannelNavigation = ({
   summary,
   channelView,
   isActive,
-  isExpandable = true,
   icon,
   rightOptions,
   isRightOptionsDropdownOpen,
@@ -58,9 +56,8 @@ export const NavigationDrawerInboxChannelNavigation = ({
   }
 
   const isChannelAccessible = channel.isAccessible ?? false;
-  const isChannelExpandable = isChannelAccessible && isExpandable;
   const canShowChildren =
-    isChannelExpandable && isNavigationDrawerContentExpanded;
+    isChannelAccessible && isNavigationDrawerContentExpanded;
   const areChildrenVisible =
     canShowChildren && isActive && collapsedChannelViewKey !== channelViewKey;
   const selectedItem =
@@ -106,7 +103,7 @@ export const NavigationDrawerInboxChannelNavigation = ({
         aria-expanded={canShowChildren ? areChildrenVisible : undefined}
         aria-controls={areChildrenVisible ? childrenId : undefined}
         trailingIcon={
-          isChannelExpandable ? (
+          isChannelAccessible ? (
             <NavigationMenuItemFolderChevron isOpen={areChildrenVisible} />
           ) : undefined
         }

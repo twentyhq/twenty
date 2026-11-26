@@ -4,7 +4,6 @@ import { type ReactNode } from 'react';
 import { useAiChatPageThreadId } from '@/ai-chat/hooks/useAiChatPageThreadId';
 import { useAiChatThreadClick } from '@/ai-chat/threads/hooks/useAiChatThreadClick';
 import { NavigationDrawerInboxFavoritesSection } from '@/inbox/components/NavigationDrawerInboxFavoritesSection';
-import { inboxFavoriteChannelsSelector } from '@/inbox/states/selectors/inboxFavoriteChannelsSelector';
 import { inboxFavoriteThreadsSelector } from '@/inbox/states/selectors/inboxFavoriteThreadsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -28,14 +27,10 @@ export const NavigationMenuAiChatFavoritesSection = ({
       : { resetNavigationStack: true },
   );
   const inboxFavoriteThreads = useAtomStateValue(inboxFavoriteThreadsSelector);
-  const inboxFavoriteChannels = useAtomStateValue(
-    inboxFavoriteChannelsSelector,
-  );
 
   return (
     <NavigationDrawerInboxFavoritesSection
       label={t`Favorite chats`}
-      channels={inboxFavoriteChannels}
       threads={inboxFavoriteThreads}
       currentThreadId={currentThreadId}
       onThreadClick={handleThreadClick}
