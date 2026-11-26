@@ -106,6 +106,15 @@ const USER_SETTINGS_MENU_ITEM = buildSettingsMenuItem({
   scope: 'USER',
 });
 
+const findTabLink = async (canvasElement: HTMLElement, name: string) =>
+  within(
+    await within(canvasElement).findByLabelText(
+      'Application details',
+      undefined,
+      { timeout: 3000 },
+    ),
+  ).findByRole('link', { name }, { timeout: 3000 });
+
 const runApplicationHealthCheck = fn();
 
 const HEALTH_CHECK_LOGIC_FUNCTION_ID = '20202020-6a7b-4c3d-8e4f-000000000021';
@@ -299,9 +308,7 @@ export const VariablesTabIgnoresUserScope: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await userEvent.click(
-      await canvas.findByRole('link', { name: 'Variables' }, { timeout: 3000 }),
-    );
+    await userEvent.click(await findTabLink(canvasElement, 'Variables'));
 
     expect(await canvas.findByText('Workspace URL')).toBeVisible();
     expect(
@@ -326,13 +333,7 @@ export const SettingsTabsIgnoreUserScope: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(
-      await canvas.findByRole(
-        'link',
-        { name: 'Recording rules' },
-        { timeout: 3000 },
-      ),
-    ).toBeVisible();
+    expect(await findTabLink(canvasElement, 'Recording rules')).toBeVisible();
     expect(canvas.queryByText('My recordings')).not.toBeInTheDocument();
     expect(
       canvas.queryByRole('link', { name: 'Variables' }),
@@ -344,9 +345,7 @@ export const VariablesTabSavesWorkspaceVariable: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await userEvent.click(
-      await canvas.findByRole('link', { name: 'Variables' }, { timeout: 3000 }),
-    );
+    await userEvent.click(await findTabLink(canvasElement, 'Variables'));
 
     const saveButton = await canvas.findByRole('button', {
       name: 'Save settings',
@@ -404,7 +403,7 @@ export const WorkspaceHealthCheckRunsOnOpenAndAfterSave: Story = {
       [{ applicationId: APPLICATION_ID }],
     ]);
 
-    await userEvent.click(canvas.getByRole('link', { name: 'Variables' }));
+    await userEvent.click(await findTabLink(canvasElement, 'Variables'));
 
     const saveButton = await canvas.findByRole('button', {
       name: 'Save settings',
@@ -423,7 +422,7 @@ export const WorkspaceHealthCheckRunsOnOpenAndAfterSave: Story = {
     );
     await waitFor(() => expect(saveButton).toBeDisabled());
 
-    await userEvent.click(canvas.getByRole('link', { name: 'General' }));
+    await userEvent.click(await findTabLink(canvasElement, 'Overview'));
 
     expect(
       await canvas.findByText('Your recorder plan is almost used up'),
@@ -448,9 +447,7 @@ export const MemberHealthCheckReturnsNoWorkspaceBanner: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await userEvent.click(
-      await canvas.findByRole('link', { name: 'Variables' }, { timeout: 3000 }),
-    );
+    await userEvent.click(await findTabLink(canvasElement, 'Variables'));
     await waitFor(() =>
       expect(runApplicationHealthCheck).toHaveBeenCalledTimes(1),
     );
@@ -531,7 +528,7 @@ export const BuiltInAccountAppHidesSingleGeneralTab: Story = {
       ),
     ).toBeVisible();
     expect(
-      canvas.queryByRole('link', { name: 'General' }),
+      canvas.queryByRole('link', { name: 'Overview' }),
     ).not.toBeInTheDocument();
   },
 };
