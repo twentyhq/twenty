@@ -37,6 +37,18 @@ member a direct message comes from.
 
 A connection link works once and expires after 10 minutes.
 
+## Messaging members from workflows and AI
+
+The **Send Telegram Message** workflow action, also available to AI agents as
+a tool, sends a plain text direct message from the bot to a workspace member.
+
+- It takes the ID of the workspace member and the text, up to 4096 characters.
+- The member must have connected their Telegram account. Otherwise the action
+  returns `success: false` with an error saying so, and nothing is sent.
+- If the member blocked the bot, the action reports it and disconnects their
+  account, as blocking the bot does.
+- On success it returns the Telegram `messageId`.
+
 ## Heads up
 
 - **Direct messages only.** The bot ignores groups and channels.

@@ -18,6 +18,7 @@ describe('App installation', () => {
         'telegram-late-answer',
         'telegram-start-user-link',
         'telegram-remove-user-link',
+        'telegram-send-message',
         'telegram-uninstall',
       ]),
     );

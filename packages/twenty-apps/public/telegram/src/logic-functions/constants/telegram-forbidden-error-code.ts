@@ -1,0 +1,1 @@
+export const TELEGRAM_FORBIDDEN_ERROR_CODE = 403;
