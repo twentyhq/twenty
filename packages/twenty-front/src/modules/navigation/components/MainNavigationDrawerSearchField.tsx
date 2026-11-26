@@ -5,9 +5,11 @@ import { InputGroup } from 'twenty-ui/primitives/input';
 import { Shortcut } from 'twenty-ui/primitives/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 const StyledSection = styled.div<{ isExpanded: boolean }>`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
@@ -46,6 +48,7 @@ export const MainNavigationDrawerSearchField = () => {
   const theme = useTheme();
   const isExpanded = useIsNavigationDrawerContentExpanded();
   const { openSidePanelMenu } = useSidePanelMenu();
+  const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
 
   return (
     <StyledSection isExpanded={isExpanded}>
@@ -57,7 +60,9 @@ export const MainNavigationDrawerSearchField = () => {
           startElement={<IconSearch size={theme.icon.size.md} aria-hidden />}
           endElement={<Shortcut shortcut={['Mod', 'K']} />}
         >
-          <StyledPlaceholder>{t`Search or ask...`}</StyledPlaceholder>
+          <StyledPlaceholder>
+            {hasAiPermission ? t`Search or ask...` : t`Search...`}
+          </StyledPlaceholder>
         </InputGroup>
       ) : (
         <NavigationDrawerItem
