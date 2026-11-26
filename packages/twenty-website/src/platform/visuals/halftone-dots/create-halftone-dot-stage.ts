@@ -105,8 +105,11 @@ export function createHalftoneDotStage(
     fov,
     shape = 'dots',
     cellPx = HALFTONE.cellPx,
+    dotColor = paletteColorNumber('blue'),
   }: {
     fov: number;
+    // the dots' ink, blue unless a scene asks otherwise
+    dotColor?: number;
     // 'mixed' turns the stronger tones into dashes
     shape?: 'dots' | 'mixed';
     cellPx?: number;
@@ -142,7 +145,7 @@ export function createHalftoneDotStage(
       mixed: { value: shape === 'mixed' ? 1 : 0 },
       power: { value: HALFTONE.power },
       dotScale: { value: HALFTONE.dotScale },
-      dotColor: { value: new THREE.Color(paletteColorNumber('blue')) },
+      dotColor: { value: new THREE.Color(dotColor) },
       pointer: { value: new THREE.Vector2(-9999, -9999) },
       hover: { value: 0 },
       hoverRadius: { value: HOVER.radiusPx },
