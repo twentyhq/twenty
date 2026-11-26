@@ -1,5 +1,4 @@
 import { isArray, isUndefined } from '@sniptt/guards';
-import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 
 import { CANCEL_SCHEDULED_RECALL_BOTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
@@ -12,7 +11,7 @@ import { type PlanScheduledRecallBotCancellationsResult } from 'src/logic-functi
 import { planScheduledRecallBotCancellations } from 'src/logic-functions/flows/plan-scheduled-recall-bot-cancellations.util';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { buildRetryableStepFailure } from 'src/logic-functions/utils/build-step-failure.util';
-import { fetchWithRateLimitRetry } from 'src/logic-functions/utils/fetch-with-rate-limit-retry.util';
+import { createCoreApiClientRunningAsApplication } from 'src/logic-functions/utils/create-core-api-client-running-as-application.util';
 import { getString } from 'src/logic-functions/utils/get-string.util';
 
 export const cancelScheduledRecallBotsHandler = async (
@@ -20,10 +19,7 @@ export const cancelScheduledRecallBotsHandler = async (
 ): Promise<
   CancelScheduledRecallBotsResult | PlanScheduledRecallBotCancellationsResult
 > => {
-  const client = new CoreApiClient({
-    runAs: 'application',
-    fetch: fetchWithRateLimitRetry,
-  });
+  const client = createCoreApiClientRunningAsApplication();
   const scheduledRecallBotCancellations =
     asRecord(payload)?.scheduledRecallBotCancellations;
 

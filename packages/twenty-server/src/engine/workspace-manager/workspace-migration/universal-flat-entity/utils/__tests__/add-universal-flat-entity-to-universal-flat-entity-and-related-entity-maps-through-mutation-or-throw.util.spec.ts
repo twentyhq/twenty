@@ -94,6 +94,7 @@ describe('addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThrough
         options: null,
         morphId: null,
         universalSettings: null,
+        formula: null,
         description: 'default flat field metadata description',
         icon: 'icon',
         isActive: true,

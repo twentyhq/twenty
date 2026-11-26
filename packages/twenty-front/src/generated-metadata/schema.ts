@@ -1899,6 +1899,7 @@ export type CreateEmailingDomainInput = {
 export type CreateFieldInput = {
   defaultValue?: InputMaybe<Scalars['JSON']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
+  formula?: InputMaybe<Scalars['JSON']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
   isActive?: InputMaybe<Scalars['Boolean']['input']>;
   isAuditLogged?: InputMaybe<Scalars['Boolean']['input']>;
@@ -2720,6 +2721,7 @@ export type Field = {
   defaultValue?: Maybe<Scalars['JSON']['output']>;
   description?: Maybe<Scalars['String']['output']>;
   disabledFieldPermissionActions?: Maybe<Array<Scalars['String']['output']>>;
+  formula?: Maybe<Scalars['JSON']['output']>;
   icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['UUID']['output'];
   isActive?: Maybe<Scalars['Boolean']['output']>;
@@ -8013,6 +8015,7 @@ export type UpdateEmailGroupChannelInput = {
 export type UpdateFieldInput = {
   defaultValue?: InputMaybe<Scalars['JSON']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
+  formula?: InputMaybe<Scalars['JSON']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
   isActive?: InputMaybe<Scalars['Boolean']['input']>;
   isAuditLogged?: InputMaybe<Scalars['Boolean']['input']>;

@@ -47,58 +47,38 @@ describe('formatFieldMetadataItemInput', () => {
     expect(result).toEqual(expected);
   });
 
-  it('should store a formula in the field settings', () => {
+  it('should send a formula next to the settings', () => {
     expect(
       formatFieldMetadataItemInput({
         settings: { decimals: 2 },
         formula: ' price * quantity ',
-      }).settings,
-    ).toEqual({ decimals: 2, formula: { expression: 'price * quantity' } });
+      }),
+    ).toMatchObject({
+      settings: { decimals: 2 },
+      formula: { expression: 'price * quantity' },
+    });
   });
 
-  it('should store the currency code expression of a currency formula', () => {
+  it('should send the currency code expression of a currency formula', () => {
     expect(
       formatFieldMetadataItemInput({
         formula: 'amount.amountMicros * 2',
         formulaCurrencyCode: ' amount.currencyCode ',
-      }).settings,
+      }).formula,
     ).toEqual({
-      formula: {
-        expression: 'amount.amountMicros * 2',
-        currencyCodeExpression: 'amount.currencyCode',
-      },
+      expression: 'amount.amountMicros * 2',
+      currencyCodeExpression: 'amount.currencyCode',
     });
   });
 
-  it('should clear the formula of a formula field when it is emptied', () => {
-    expect(
-      formatFieldMetadataItemInput({
-        settings: { decimals: 2, formula: { expression: 'price * 2' } },
-        formula: ' ',
-      }).settings,
-    ).toEqual({ decimals: 2, formula: null });
+  it('should remove the formula when it is emptied', () => {
+    expect(formatFieldMetadataItemInput({ formula: ' ' }).formula).toBeNull();
   });
 
-  it('should clear a formula from the existing settings when the form leaves settings out', () => {
+  it('should leave the formula out when the form has none', () => {
     expect(
-      formatFieldMetadataItemInput({
-        formula: '',
-        existingSettings: { formula: { expression: 'price > 10' } },
-      }).settings,
-    ).toEqual({ formula: null });
-  });
-
-  it('should not add an empty formula to a field that has none', () => {
-    expect(
-      formatFieldMetadataItemInput({ settings: { decimals: 2 }, formula: '' })
-        .settings,
-    ).toEqual({ decimals: 2 });
-  });
-
-  it('should leave settings as they are when no formula is given', () => {
-    expect(
-      formatFieldMetadataItemInput({ settings: { decimals: 2 } }).settings,
-    ).toEqual({ decimals: 2 });
+      formatFieldMetadataItemInput({ settings: { decimals: 2 } }).formula,
+    ).toBeUndefined();
   });
 
   it('should handle input without options', () => {

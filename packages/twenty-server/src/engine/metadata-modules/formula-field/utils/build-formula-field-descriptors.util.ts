@@ -1,4 +1,5 @@
 import {
+  type FieldMetadataFormula,
   type FieldMetadataType,
   RelationType,
   type ValidationRuleFieldDescriptor,
@@ -12,6 +13,9 @@ type FormulaFieldDescriptorSource = {
   name: string;
   type: FieldMetadataType;
   universalIdentifier: string;
+  formula: Partial<
+    Pick<FieldMetadataFormula, 'expression' | 'evaluation'>
+  > | null;
 };
 
 type FormulaFieldDescriptorSourceReader<
@@ -44,9 +48,7 @@ export const buildFormulaFieldDescriptors = <
   flatFieldMetadatas: TFlatFieldMetadata[];
 } & FormulaFieldDescriptorSourceReader<TFlatFieldMetadata>): ValidationRuleFieldDescriptor[] => {
   const isStored = (flatFieldMetadata: TFlatFieldMetadata) =>
-    !isQueryTimeFormulaFieldMetadata({
-      settings: getSettings(flatFieldMetadata),
-    });
+    !isQueryTimeFormulaFieldMetadata(flatFieldMetadata);
 
   return flatFieldMetadatas.filter(isStored).map((flatFieldMetadata) => {
     const settings = getSettings(flatFieldMetadata);
