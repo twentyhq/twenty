@@ -5,12 +5,14 @@ import { isDefined } from 'twenty-shared/utils';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { getUserWorkspaceIdFromAuthContext } from 'src/engine/core-modules/auth/utils/get-user-workspace-id-from-auth-context.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { type AgentDTO } from 'src/engine/metadata-modules/ai/ai-agent/dtos/agent.dto';
 import { type CreateAgentInput } from 'src/engine/metadata-modules/ai/ai-agent/dtos/create-agent.input';
 import { type UpdateAgentInput } from 'src/engine/metadata-modules/ai/ai-agent/dtos/update-agent.input';
-import { addAgentTriggerConditionBindingsOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-trigger/utils/add-agent-trigger-condition-bindings-or-throw.util';
+import { addAgentTriggerConditionTreesOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-trigger/utils/add-agent-trigger-condition-trees-or-throw.util';
 import { fromCreateAgentInputToFlatAgent } from 'src/engine/metadata-modules/ai/ai-agent/utils/from-create-agent-input-to-flat-agent.util';
 import { fromUpdateAgentInputToFlatAgentToUpdate } from 'src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util';
 import { FlatAgentWithRoleId } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
+import { fromFlatAgentWithRoleIdToAgentDto } from 'src/engine/metadata-modules/flat-agent/utils/from-agent-entity-to-agent-dto.util';
 import { isPrivatableEntityVisibleToCaller } from 'src/engine/permissions/metadata-permissions/utils/is-privatable-entity-visible-to-caller.util';
 import { resolveEffectiveAgent } from 'src/engine/metadata-modules/flat-agent/utils/resolve-effective-agent.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -38,6 +40,43 @@ export class AgentService {
     private readonly applicationService: ApplicationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
+
+  async toAgentDtos({
+    flatAgentsWithRoleId,
+    workspaceId,
+  }: {
+    flatAgentsWithRoleId: FlatAgentWithRoleId[];
+    workspaceId: string;
+  }): Promise<AgentDTO[]> {
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+        'flatFieldMetadataMaps',
+      ]);
+
+    return flatAgentsWithRoleId.map((flatAgentWithRoleId) =>
+      fromFlatAgentWithRoleIdToAgentDto({
+        flatAgentWithRoleId,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      }),
+    );
+  }
+
+  async toAgentDto({
+    flatAgentWithRoleId,
+    workspaceId,
+  }: {
+    flatAgentWithRoleId: FlatAgentWithRoleId;
+    workspaceId: string;
+  }): Promise<AgentDTO> {
+    const [agentDto] = await this.toAgentDtos({
+      flatAgentsWithRoleId: [flatAgentWithRoleId],
+      workspaceId,
+    });
+
+    return agentDto;
+  }
 
   async findManyAgents({
     workspaceId,
@@ -116,7 +155,7 @@ export class AgentService {
       'flatFieldMetadataMaps',
     ]);
 
-    const triggers = addAgentTriggerConditionBindingsOrThrow({
+    const triggers = addAgentTriggerConditionTreesOrThrow({
       triggers: input.triggers,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -227,7 +266,7 @@ export class AgentService {
       'flatFieldMetadataMaps',
     ]);
 
-    const triggers = addAgentTriggerConditionBindingsOrThrow({
+    const triggers = addAgentTriggerConditionTreesOrThrow({
       triggers: input.triggers,
       storedTriggers: findFlatEntityByIdInFlatEntityMaps({
         flatEntityId: input.id,

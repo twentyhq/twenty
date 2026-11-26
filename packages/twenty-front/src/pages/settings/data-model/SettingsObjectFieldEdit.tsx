@@ -40,13 +40,13 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import {
-  getFieldMetadataFormulaCurrencyCodeExpression,
-  getFieldMetadataFormulaExpression,
   getSettingsPath,
   isDefined,
   isEmptyObject,
   isMorphRelationHead,
+  printFieldMetadataFormula,
 } from 'twenty-shared/utils';
+import { buildFormulaFieldEditorInputs } from '@/settings/data-model/fields/forms/formula/utils/buildFormulaFieldEditorInputs';
 import { useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
 import { IconArchive, IconArchiveOff, IconTrash } from 'twenty-ui/icon';
@@ -154,6 +154,17 @@ export const SettingsObjectFieldEdit = () => {
 
   const { settings, defaultValue } =
     getFieldMetadataItemInitialValues(fieldMetadataItem);
+  const { expression: formulaExpression, currencyCodeExpression } =
+    printFieldMetadataFormula({
+      formula: fieldMetadataItem?.formula,
+      fields: isDefined(objectMetadataItem)
+        ? buildFormulaFieldEditorInputs({
+            objectMetadataItem,
+            objectMetadataItems,
+            fieldMetadataId: fieldMetadataItem?.id,
+          }).fields
+        : [],
+    });
 
   const formConfig = useForm<SettingsDataModelFieldEditFormValues>({
     mode: 'onTouched',
@@ -166,14 +177,8 @@ export const SettingsObjectFieldEdit = () => {
       isLabelSyncedWithName: fieldMetadataItem?.isLabelSyncedWithName ?? true,
       settings,
       defaultValue,
-      formula:
-        getFieldMetadataFormulaExpression({
-          formula: fieldMetadataItem?.formula,
-        }) ?? '',
-      formulaCurrencyCode:
-        getFieldMetadataFormulaCurrencyCodeExpression({
-          formula: fieldMetadataItem?.formula,
-        }) ?? '',
+      formula: formulaExpression ?? '',
+      formulaCurrencyCode: currencyCodeExpression ?? '',
     },
   });
 

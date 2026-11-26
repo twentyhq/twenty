@@ -62,19 +62,54 @@ describe('filterEventsMatchingDatabaseEventTrigger', () => {
     expect(events).toEqual([wonEvent]);
   });
 
-  it('should follow a field renamed after the condition was written', async () => {
+  it('should evaluate the stored tree with the current field names, ignoring the text', async () => {
     const wonEvent = buildEvent({ after: { stage: 'WON' } }, 'won');
     const newEvent = buildEvent({ after: { stage: 'NEW' } }, 'new');
 
     const { events } = await filterEventsMatchingDatabaseEventTrigger({
       events: [wonEvent, newEvent],
       eventName: 'opportunity.created',
-      condition: 'status == "WON"',
-      conditionBindings: { status: 'opportunity-stage' },
+      condition: 'status == "NEW"',
+      conditionTree: {
+        type: 'COMPARISON',
+        operator: 'EQUAL',
+        left: { type: 'FIELD', fieldUniversalIdentifier: 'opportunity-stage' },
+        right: { type: 'LITERAL', value: 'WON' },
+      },
       fields: FIELDS,
     });
 
     expect(events).toEqual([wonEvent]);
+  });
+
+  it('should match nothing when the stored tree reads a field that is gone', async () => {
+    const { events, conditionErrorMessage } =
+      await filterEventsMatchingDatabaseEventTrigger({
+        events: [buildEvent({ after: { stage: 'WON' } })],
+        eventName: 'opportunity.created',
+        conditionTree: {
+          type: 'FUNCTION_CALL',
+          functionName: 'isDefined',
+          arguments: [{ type: 'FIELD', fieldUniversalIdentifier: 'deleted' }],
+        },
+        fields: FIELDS,
+      });
+
+    expect(events).toEqual([]);
+    expect(conditionErrorMessage).toMatch(/missingField_deleted/);
+  });
+
+  it('should match nothing when the stored tree is malformed', async () => {
+    const { events, conditionErrorMessage } =
+      await filterEventsMatchingDatabaseEventTrigger({
+        events: [buildEvent({ after: { stage: 'WON' } })],
+        eventName: 'opportunity.created',
+        conditionTree: { type: 'UNKNOWN' },
+        fields: FIELDS,
+      });
+
+    expect(events).toEqual([]);
+    expect(conditionErrorMessage).toBeDefined();
   });
 
   it('should read previous values on an update to match a transition', async () => {

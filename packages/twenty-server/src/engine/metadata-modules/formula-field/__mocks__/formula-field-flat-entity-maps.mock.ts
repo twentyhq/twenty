@@ -10,7 +10,7 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
-import { setFormulaFieldBindings } from 'src/engine/metadata-modules/formula-field/utils/set-formula-field-bindings.util';
+import { setFormulaFieldTrees } from 'src/engine/metadata-modules/formula-field/utils/set-formula-field-trees.util';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 
 const SUPPLIER_OBJECT_ID = 'supplier-object';
@@ -226,7 +226,7 @@ const UNIVERSAL_FLAT_FIELD_METADATA_MAPS_WITHOUT_BINDINGS = {
 };
 
 const FIELDS = FIELDS_WITHOUT_BINDINGS.map((field) =>
-  setFormulaFieldBindings({
+  setFormulaFieldTrees({
     universalFlatFieldMetadata: field,
     universalFlatObjectMetadataMaps: FORMULA_FLAT_OBJECT_METADATA_MAPS_MOCK,
     universalFlatFieldMetadataMaps:
