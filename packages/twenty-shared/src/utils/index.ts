@@ -99,8 +99,7 @@ export { findExpressionAggregationError } from './expression/findExpressionAggre
 export { getExpressionArgumentCountError } from './expression/getExpressionArgumentCountError';
 export { getExpressionSyntaxError } from './expression/getExpressionSyntaxError';
 export { listExpressionFieldNodes } from './expression/listExpressionFieldNodes';
-export { parseExpressionTree } from './expression/parseExpressionTree';
-export { printExpressionNode } from './expression/printExpressionNode';
+export { parseExpressionNode } from './expression/parseExpressionNode';
 export { reduceExpressionNumbers } from './expression/reduceExpressionNumbers';
 export { resolveExpressionFieldReferences } from './expression/resolveExpressionFieldReferences';
 export { roundExpressionNumber } from './expression/roundExpressionNumber';

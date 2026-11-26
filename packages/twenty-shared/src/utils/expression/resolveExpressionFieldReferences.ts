@@ -1,10 +1,9 @@
 import { VALIDATION_RULE_NOW_VARIABLE_NAME } from '@/constants/ValidationRuleNowVariableName';
 import { VALIDATION_RULE_PREVIOUS_VARIABLE_NAME } from '@/constants/ValidationRulePreviousVariableName';
-import { type ExpressionNode } from '@/types/ExpressionNode';
+import { type ExpressionFieldNode } from '@/expression/types/ExpressionFieldNode';
+import { type ExpressionNode } from '@/expression/types/ExpressionNode';
 import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
 import { isDefined } from '@/utils/validation/isDefined';
-
-type FieldNode = Extract<ExpressionNode, { type: 'FIELD' }>;
 
 const findField = (
   fields: ValidationRuleFieldDescriptor[] | undefined,
@@ -17,7 +16,7 @@ const toFieldNode = ({
 }: {
   path: string;
   fields: ValidationRuleFieldDescriptor[];
-}): FieldNode | undefined => {
+}): ExpressionFieldNode | undefined => {
   const [rootSegment, ...memberSegments] = path.split('.');
 
   if (rootSegment === VALIDATION_RULE_PREVIOUS_VARIABLE_NAME) {
@@ -82,6 +81,7 @@ export const resolveExpressionFieldReferences = ({
       return node;
     case 'COMPARISON':
     case 'ARITHMETIC':
+    case 'CONCATENATION':
       return { ...node, left: resolve(node.left), right: resolve(node.right) };
     case 'GROUP':
       return { ...node, children: node.children.map(resolve) };

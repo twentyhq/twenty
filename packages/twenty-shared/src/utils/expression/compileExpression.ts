@@ -4,7 +4,7 @@ import { VALIDATION_RULE_EXPRESSION_MAX_LENGTH } from '@/constants/ValidationRul
 import { type ValidationRuleBindings } from '@/types/ValidationRuleBindings';
 import { type ValidationRuleCompilationResult } from '@/types/ValidationRuleCompilationResult';
 import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
-import { buildExpressionTree } from '@/utils/expression/internal/buildExpressionTree';
+import { toExpressionNodeParseResult } from '@/expression/utils/internal/toExpressionNodeParseResult';
 import { findExpressionAggregationError } from '@/utils/expression/findExpressionAggregationError';
 import { getExpressionArgumentCountError } from '@/utils/expression/getExpressionArgumentCountError';
 import { getExpressionSyntaxError } from '@/utils/expression/getExpressionSyntaxError';
@@ -50,13 +50,13 @@ export const compileExpression = ({
     };
   }
 
-  const treeResult = buildExpressionTree(parsedExpression.tokens);
+  const parseResult = toExpressionNodeParseResult(parsedExpression.tokens);
 
-  if (!treeResult.isValid) {
-    return treeResult;
+  if (!parseResult.isValid) {
+    return parseResult;
   }
 
-  const { tree } = treeResult;
+  const { node } = parseResult;
 
   const meaningfulTokens = tokenizeValidationRuleExpression(expression).filter(
     (token) => token.type !== 'whitespace',
@@ -80,7 +80,7 @@ export const compileExpression = ({
     };
   }
 
-  const argumentCountError = getExpressionArgumentCountError(tree);
+  const argumentCountError = getExpressionArgumentCountError(node);
 
   if (isDefined(argumentCountError)) {
     return {
@@ -118,7 +118,7 @@ export const compileExpression = ({
   }
 
   const aggregationError = findExpressionAggregationError({
-    tree,
+    node,
     toManyRelationNameByPath,
     shouldAllowAggregates,
   });

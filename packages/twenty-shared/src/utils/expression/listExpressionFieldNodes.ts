@@ -1,9 +1,10 @@
-import { type ExpressionNode } from '@/types/ExpressionNode';
-import { getExpressionNodeChildren } from '@/utils/expression/internal/getExpressionNodeChildren';
+import { type ExpressionFieldNode } from '@/expression/types/ExpressionFieldNode';
+import { type ExpressionNode } from '@/expression/types/ExpressionNode';
+import { getExpressionNodeChildren } from '@/expression/utils/internal/getExpressionNodeChildren';
 
-type FieldNode = Extract<ExpressionNode, { type: 'FIELD' }>;
-
-export const listExpressionFieldNodes = (node: ExpressionNode): FieldNode[] =>
+export const listExpressionFieldNodes = (
+  node: ExpressionNode,
+): ExpressionFieldNode[] =>
   node.type === 'FIELD'
     ? [node]
     : getExpressionNodeChildren(node).flatMap(listExpressionFieldNodes);

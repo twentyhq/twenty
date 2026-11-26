@@ -2,8 +2,8 @@ import { FieldMetadataType } from '@/types/FieldMetadataType';
 import { RelationType } from '@/types/RelationType';
 import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
 import { buildExpressionFieldPrinter } from '@/utils/expression/buildExpressionFieldPrinter';
-import { parseExpressionTree } from '@/utils/expression/parseExpressionTree';
-import { printExpressionNode } from '@/utils/expression/printExpressionNode';
+import { parseExpressionNode } from '@/utils/expression/parseExpressionNode';
+import { printExpressionNode } from '@/expression/utils/printExpressionNode';
 import { resolveExpressionFieldReferences } from '@/utils/expression/resolveExpressionFieldReferences';
 
 const FIELDS: ValidationRuleFieldDescriptor[] = [
@@ -33,13 +33,13 @@ const FIELDS: ValidationRuleFieldDescriptor[] = [
 ];
 
 const resolve = (expression: string, fields = FIELDS) => {
-  const parsing = parseExpressionTree(expression);
+  const parsing = parseExpressionNode(expression);
 
   if (!parsing.isValid) {
     throw new Error(parsing.errorMessage);
   }
 
-  return resolveExpressionFieldReferences({ node: parsing.tree, fields });
+  return resolveExpressionFieldReferences({ node: parsing.node, fields });
 };
 
 const print = (expression: string, fields: ValidationRuleFieldDescriptor[]) =>

@@ -1,9 +1,7 @@
 import { VALIDATION_RULE_PREVIOUS_VARIABLE_NAME } from '@/constants/ValidationRulePreviousVariableName';
-import { type ExpressionNode } from '@/types/ExpressionNode';
+import { type ExpressionFieldNode } from '@/expression/types/ExpressionFieldNode';
 import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
 import { isDefined } from '@/utils/validation/isDefined';
-
-type FieldNode = Extract<ExpressionNode, { type: 'FIELD' }>;
 
 // A field that no longer exists prints as an identifier no field can take, so the expression reports it as unknown
 const toMissingFieldName = (universalIdentifier: string) =>
@@ -13,7 +11,7 @@ export const buildExpressionFieldPrinter = ({
   fields,
 }: {
   fields: ValidationRuleFieldDescriptor[];
-}): ((fieldNode: FieldNode) => string) => {
+}): ((fieldNode: ExpressionFieldNode) => string) => {
   const fieldByUniversalIdentifier = new Map(
     fields.map((field) => [field.universalIdentifier, field]),
   );

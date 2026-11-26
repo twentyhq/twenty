@@ -8,7 +8,7 @@ import {
   getFieldMetadataFormulaExpression,
   getFormulaEvaluationFromBindings,
   isDefined,
-  parseExpressionTree,
+  parseExpressionNode,
   resolveExpressionFieldReferences,
 } from 'twenty-shared/utils';
 
@@ -81,13 +81,13 @@ export const setFormulaFieldTrees = <
       expression: formulaExpression,
       fields,
     });
-    const parsing = parseExpressionTree(formulaExpression);
+    const parsing = parseExpressionNode(formulaExpression);
 
     return compilation.isValid && parsing.isValid
       ? {
           bindings: compilation.bindings,
           tree: resolveExpressionFieldReferences({
-            node: parsing.tree,
+            node: parsing.node,
             fields,
           }),
         }

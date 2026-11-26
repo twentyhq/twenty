@@ -1,16 +1,17 @@
 import { isBoolean, isString } from '@sniptt/guards';
-import { CONDITIONAL_EVALUATION_SYMBOL_BY_COMPARISON_OPERATOR } from 'twenty-shared/conditional-evaluation';
 import {
+  EXPRESSION_PREFIX_FUNCTION_NAMES,
   EXPRESSION_SYMBOL_BY_ARITHMETIC_OPERATOR,
+  EXPRESSION_SYMBOL_BY_COMPARISON_OPERATOR,
   EXPRESSION_SYMBOL_BY_UNARY_OPERATOR,
-} from 'twenty-shared/constants';
-import { type ExpressionNode } from 'twenty-shared/types';
+  type ExpressionNode,
+} from 'twenty-shared/expression';
 import {
   assertUnreachable,
   getExpressionArgumentCountError,
   getFormulaAggregateCall,
   isDefined,
-  parseExpressionTree,
+  parseExpressionNode,
 } from 'twenty-shared/utils';
 
 import { FORMULA_SQL_MAX_LENGTH } from 'src/engine/metadata-modules/formula-field/constants/formula-sql-max-length.constant';
@@ -178,8 +179,7 @@ const compileNodeSqlOrThrow = ({
       });
     case 'COMPARISON':
       return compileBinaryOperator({
-        operator:
-          CONDITIONAL_EVALUATION_SYMBOL_BY_COMPARISON_OPERATOR[node.operator],
+        operator: EXPRESSION_SYMBOL_BY_COMPARISON_OPERATOR[node.operator],
         left: node.left,
         right: node.right,
       });
@@ -219,7 +219,28 @@ const compileNodeSqlOrThrow = ({
         right: node.list,
       });
     }
-    case 'FUNCTION_CALL':
+    case 'CONCATENATION':
+      return compileBinaryOperator({
+        operator: '||',
+        left: node.left,
+        right: node.right,
+      });
+    case 'FUNCTION_CALL': {
+      const [operandNode] = node.arguments;
+
+      if (
+        EXPRESSION_PREFIX_FUNCTION_NAMES.some(
+          (prefixFunctionName) => prefixFunctionName === node.functionName,
+        ) &&
+        node.arguments.length === 1 &&
+        isDefined(operandNode)
+      ) {
+        return compileFormulaSqlUnaryOperatorOrThrow({
+          operator: node.functionName,
+          operand: compileChild(operandNode),
+        });
+      }
+
       return (
         compileAggregateOrThrow({ callNode: node, context }) ??
         compileFormulaSqlFunctionOrThrow({
@@ -227,6 +248,7 @@ const compileNodeSqlOrThrow = ({
           formulaSqlValues: node.arguments.map(compileChild),
         })
       );
+    }
     default:
       return assertUnreachable(node);
   }
@@ -259,15 +281,15 @@ export const compileFormulaExpressionToSqlOrThrow = ({
   resolveReference: FormulaSqlReferenceResolver;
   resolveAggregationSource?: FormulaSqlAggregationSourceResolver;
 }): FormulaSqlValue => {
-  const treeResult = parseExpressionTree(expression);
+  const parseResult = parseExpressionNode(expression);
 
-  if (!treeResult.isValid) {
+  if (!parseResult.isValid) {
     throw new FormulaSqlCompilationException({
-      message: treeResult.errorMessage,
+      message: parseResult.errorMessage,
     });
   }
 
-  const argumentCountError = getExpressionArgumentCountError(treeResult.tree);
+  const argumentCountError = getExpressionArgumentCountError(parseResult.node);
 
   if (isDefined(argumentCountError)) {
     throw new FormulaSqlCompilationException({
@@ -277,7 +299,7 @@ export const compileFormulaExpressionToSqlOrThrow = ({
 
   try {
     return compileNodeOrThrow({
-      node: treeResult.tree,
+      node: parseResult.node,
       context: { resolveReference, resolveAggregationSource },
     });
   } catch (error) {

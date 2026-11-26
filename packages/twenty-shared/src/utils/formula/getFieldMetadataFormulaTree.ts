@@ -1,11 +1,11 @@
 import { isString } from '@sniptt/guards';
 
-import { type ExpressionNode } from '@/types/ExpressionNode';
+import { type ExpressionNode } from '@/expression/types/ExpressionNode';
 import { isPlainObject } from '@/utils/typeguard/isPlainObject';
 
 const toExpressionNode = (value: unknown): ExpressionNode | undefined =>
   isPlainObject(value) && isString(value.type)
-    ? (value as ExpressionNode)
+    ? (value as unknown as ExpressionNode)
     : undefined;
 
 export const getFieldMetadataFormulaTree = ({

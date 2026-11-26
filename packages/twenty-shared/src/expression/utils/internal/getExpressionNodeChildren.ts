@@ -1,4 +1,4 @@
-import { type ExpressionNode } from '@/types/ExpressionNode';
+import { type ExpressionNode } from '@/expression/types/ExpressionNode';
 
 export const getExpressionNodeChildren = (
   node: ExpressionNode,
@@ -10,6 +10,7 @@ export const getExpressionNodeChildren = (
       return [];
     case 'COMPARISON':
     case 'ARITHMETIC':
+    case 'CONCATENATION':
       return [node.left, node.right];
     case 'GROUP':
       return node.children;

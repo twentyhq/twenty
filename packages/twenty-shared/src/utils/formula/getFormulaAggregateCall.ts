@@ -1,5 +1,5 @@
 import { FORMULA_AGGREGATE_MAXIMUM_ARGUMENT_COUNT } from '@/constants/FormulaAggregateMaximumArgumentCount';
-import { type ExpressionNode } from '@/types/ExpressionNode';
+import { type ExpressionNode } from '@/expression/types/ExpressionNode';
 import { type FormulaAggregateCall } from '@/types/FormulaAggregateCall';
 import { isFormulaAggregateFunctionName } from '@/utils/formula/isFormulaAggregateFunctionName';
 import { isDefined } from '@/utils/validation/isDefined';

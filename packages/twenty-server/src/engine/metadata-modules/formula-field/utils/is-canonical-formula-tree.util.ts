@@ -3,7 +3,7 @@ import { type ValidationRuleFieldDescriptor } from 'twenty-shared/types';
 import {
   getFieldMetadataFormulaTree,
   isDefined,
-  parseExpressionTree,
+  parseExpressionNode,
   printFieldMetadataFormula,
   resolveExpressionFieldReferences,
 } from 'twenty-shared/utils';
@@ -18,13 +18,13 @@ const readsBackTheSame = ({
   fields: ValidationRuleFieldDescriptor[];
 }): boolean => {
   const parsing = isDefined(expression)
-    ? parseExpressionTree(expression)
+    ? parseExpressionNode(expression)
     : undefined;
 
   return (
     parsing?.isValid === true &&
     isEqual(
-      resolveExpressionFieldReferences({ node: parsing.tree, fields }),
+      resolveExpressionFieldReferences({ node: parsing.node, fields }),
       tree,
     )
   );

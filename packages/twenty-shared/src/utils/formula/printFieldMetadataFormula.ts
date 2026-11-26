@@ -1,6 +1,6 @@
 import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
 import { buildExpressionFieldPrinter } from '@/utils/expression/buildExpressionFieldPrinter';
-import { printExpressionNode } from '@/utils/expression/printExpressionNode';
+import { printExpressionNode } from '@/expression/utils/printExpressionNode';
 import { getFieldMetadataFormulaCurrencyCodeExpression } from '@/utils/formula/getFieldMetadataFormulaCurrencyCodeExpression';
 import { getFieldMetadataFormulaExpression } from '@/utils/formula/getFieldMetadataFormulaExpression';
 import { getFieldMetadataFormulaTree } from '@/utils/formula/getFieldMetadataFormulaTree';
