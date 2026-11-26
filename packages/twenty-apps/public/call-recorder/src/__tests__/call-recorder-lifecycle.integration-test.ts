@@ -70,17 +70,17 @@ const RESTRICTED_TITLE_PLACEHOLDER =
 
 // The app's generated client only covers the objects the app uses, but test
 // fixture discovery needs fields that are not part of the app schema; this
-// hits the GraphQL APIs directly with the test API key.
+// hits the GraphQL APIs directly.
 const twentyGraphql = async <TData>({
   endpointPath,
   query,
   variables = {},
-  accessToken = process.env[WORKSPACE_API_KEY_ENV],
+  accessToken,
 }: {
   endpointPath: '/graphql' | '/metadata';
   query: string;
   variables?: Record<string, unknown>;
-  accessToken?: string;
+  accessToken: string | undefined;
 }): Promise<TData> => {
   const response = await fetch(`${process.env.TWENTY_API_URL}${endpointPath}`, {
     method: 'POST',
@@ -123,6 +123,7 @@ const fetchApplicationAccessToken = async (): Promise<string> => {
       }
     }`,
     variables: { universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER },
+    accessToken: process.env[WORKSPACE_API_KEY_ENV],
   });
 
   if (isNull(applicationRegistration)) {
@@ -141,6 +142,7 @@ const fetchApplicationAccessToken = async (): Promise<string> => {
       }
     }`,
     variables: { id: applicationRegistration.id },
+    accessToken: process.env[WORKSPACE_API_KEY_ENV],
   });
   const response = await fetch(`${process.env.TWENTY_API_URL}/oauth/token`, {
     method: 'POST',
