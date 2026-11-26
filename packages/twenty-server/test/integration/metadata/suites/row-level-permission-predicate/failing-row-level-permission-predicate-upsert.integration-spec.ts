@@ -4,14 +4,16 @@ import { createOneRole } from 'test/integration/metadata/suites/role/utils/creat
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { upsertRowLevelPermissionRules } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-rules.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
+import {
+  grantRoleWideAccessToChannelObjects,
+  revokeRoleWideAccessToChannelObjects,
+} from 'test/integration/utils/role-wide-access-to-channel-objects.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import {
   eachTestingContextFilter,
   type EachTestingContext,
 } from 'twenty-shared/testing';
 import {
-  FeatureFlagKey,
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
@@ -323,6 +325,7 @@ describe('Row Level Permission Predicate upsert should fail', () => {
   let workspaceMemberBlocklistFieldMetadataId: string;
 
   beforeAll(async () => {
+    await grantRoleWideAccessToChannelObjects();
     const { objects } = await findManyObjectMetadata({
       expectToFail: false,
       input: {
@@ -424,21 +427,9 @@ describe('Row Level Permission Predicate upsert should fail', () => {
     jestExpectToBeDefined(createdRoleId);
 
     adminRoleId = (await findOneRoleByLabel({ label: 'Admin' })).id;
-
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED,
-      value: true,
-      expectToFail: false,
-    });
   });
 
   afterAll(async () => {
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED,
-      value: false,
-      expectToFail: false,
-    });
-
     if (createdRoleId) {
       await deleteOneRole({
         expectToFail: false,
@@ -462,6 +453,7 @@ describe('Row Level Permission Predicate upsert should fail', () => {
 
     expect(adminRole.rowLevelPermissionPredicates).toEqual([]);
     expect(adminRole.rowLevelPermissionPredicateGroups).toEqual([]);
+    await revokeRoleWideAccessToChannelObjects();
   });
 
   it.each(
@@ -484,46 +476,5 @@ describe('Row Level Permission Predicate upsert should fail', () => {
     expectOneNotInternalServerErrorSnapshot({
       errors,
     });
-  });
-
-  it('when relation hops are not enabled for the workspace', async () => {
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED,
-      value: false,
-      expectToFail: false,
-    });
-
-    try {
-      const { errors } = await upsertRowLevelPermissionRules({
-        expectToFail: true,
-        input: {
-          roleId: createdRoleId,
-          objectMetadataId: personObjectMetadataId,
-          rules: [
-            {
-              predicates: [
-                {
-                  relationFieldMetadataId: personCompanyFieldMetadataId,
-                  fieldMetadataId: companyNameFieldMetadataId,
-                  operand: RowLevelPermissionPredicateOperand.CONTAINS,
-                  value: 'Apple',
-                },
-              ],
-            },
-          ],
-        },
-      });
-
-      expectOneNotInternalServerErrorSnapshot({
-        errors,
-      });
-    } finally {
-      await updateFeatureFlag({
-        featureFlag:
-          FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED,
-        value: true,
-        expectToFail: false,
-      });
-    }
   });
 });

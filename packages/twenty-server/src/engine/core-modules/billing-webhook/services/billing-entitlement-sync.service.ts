@@ -10,6 +10,7 @@ import { buildBillingEntitlementStateLockKey } from 'src/engine/core-modules/bil
 import { buildBillingEntitlementsFromLookupKeys } from 'src/engine/core-modules/billing/utils/build-billing-entitlements-from-lookup-keys.util';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { UsageLimitStockService } from 'src/engine/core-modules/usage-limit/services/usage-limit-stock.service';
+import { ChannelVisibilityRoleWideAccessRevokeService } from 'src/engine/permissions/channel-visibility/services/channel-visibility-role-wide-access-revoke.service';
 import { RowLevelPermissionPredicateGroupService } from 'src/engine/metadata-modules/row-level-permission-predicate/services/row-level-permission-predicate-group.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -30,6 +31,7 @@ export class BillingEntitlementSyncService {
     @InjectWorkspaceScopedRepository(BillingEntitlementEntity)
     private readonly billingEntitlementRepository: WorkspaceScopedRepository<BillingEntitlementEntity>,
     private readonly rowLevelPermissionPredicateGroupService: RowLevelPermissionPredicateGroupService,
+    private readonly channelVisibilityRoleWideAccessRevokeService: ChannelVisibilityRoleWideAccessRevokeService,
     private readonly usageLimitQuotaService: UsageLimitQuotaService,
     private readonly usageLimitStockService: UsageLimitStockService,
     private readonly cacheLockService: CacheLockService,
@@ -104,8 +106,14 @@ export class BillingEntitlementSyncService {
 
     // After the commit so a failure fails closed (rows stay filtered); checked every pass so a failed cleanup retries
     if (!isGranted(BillingEntitlementKey.RLS)) {
-      await this.rowLevelPermissionPredicateGroupService.deleteAllRowLevelPermissionPredicateGroups(
-        workspaceId,
+      await this.rowLevelPermissionPredicateGroupService.deleteRowLevelPermissionPredicateGroupsOutsideIndividualRoles(
+        {
+          workspaceId,
+          keptPredicateGroupIds:
+            await this.channelVisibilityRoleWideAccessRevokeService.findChannelRecordPredicateGroupIds(
+              workspaceId,
+            ),
+        },
       );
     }
 

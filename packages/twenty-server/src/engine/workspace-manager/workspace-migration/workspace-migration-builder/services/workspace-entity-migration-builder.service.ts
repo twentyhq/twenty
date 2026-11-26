@@ -22,6 +22,7 @@ import { MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-en
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
+import { assignPrivatableEntityCreatorOnCreate } from 'src/engine/permissions/metadata-permissions/utils/assign-privatable-entity-creator-on-create.util';
 import { getPrivatableEntityPrivacyValidationErrors } from 'src/engine/permissions/metadata-permissions/utils/get-privatable-entity-privacy-validation-errors.util';
 import { WorkspaceMigrationBuilderAdditionalCacheDataMaps } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-builder-additional-cache-data-maps.type';
 import { AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
@@ -250,11 +251,16 @@ export abstract class WorkspaceEntityMigrationBuilderService<
           flatEntityMaps: createdFlatEntityMaps,
         });
 
-      const universalFlatEntityToCreate =
-        resetUniversalFlatEntityForeignKeyAggregators({
+      const universalFlatEntityToCreate = assignPrivatableEntityCreatorOnCreate(
+        {
           metadataName: this.metadataName,
-          universalFlatEntity: rawUniversalflatEntityToCreate,
-        });
+          universalFlatEntity: resetUniversalFlatEntityForeignKeyAggregators({
+            metadataName: this.metadataName,
+            universalFlatEntity: rawUniversalflatEntityToCreate,
+          }),
+          authContext: buildOptions.authContext,
+        },
+      );
 
       const universalIdentifierToDelete =
         universalFlatEntityToCreate.universalIdentifier;

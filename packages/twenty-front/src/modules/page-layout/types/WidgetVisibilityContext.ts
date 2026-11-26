@@ -1,7 +1,8 @@
-import { type ConditionalAvailabilityDevice } from 'twenty-shared/conditional-availability';
+import { type ConditionalAvailabilityCurrentUserContext } from '@/conditional-availability/types/ConditionalAvailabilityCurrentUserContext';
+import { type ConditionalEvaluationDevice } from 'twenty-shared/conditional-evaluation';
 
-export type WidgetVisibilityContext = {
-  device: ConditionalAvailabilityDevice;
-  selectedRecords: Record<string, unknown>[];
-  featureFlags: Record<string, boolean>;
-};
+export type WidgetVisibilityContext =
+  ConditionalAvailabilityCurrentUserContext & {
+    device: ConditionalEvaluationDevice;
+    selectedRecords: Record<string, unknown>[];
+  };

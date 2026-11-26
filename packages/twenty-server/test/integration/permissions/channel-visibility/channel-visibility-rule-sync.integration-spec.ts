@@ -1,10 +1,8 @@
 import { syncChannelVisibilityRules } from 'test/integration/permissions/channel-visibility/utils/sync-channel-visibility-rules.util';
 import { updateMessageChannelVisibility } from 'test/integration/permissions/channel-visibility/utils/update-message-channel-visibility.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { findFieldMetadataIdByName } from 'test/integration/utils/find-field-metadata-id-by-name.util';
 import { findObjectMetadataIdByName } from 'test/integration/utils/find-object-metadata-id-by-name.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { MESSAGE_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/message-channel-seed-ids.constant';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -15,17 +13,6 @@ const setJonyChannelVisibility = (visibility: string) =>
     messageChannelId: MESSAGE_CHANNEL_DATA_SEED_IDS.JONY,
     visibility,
   });
-
-const setChannelVisibilityRlsEnabled = async (value: boolean) => {
-  for (const featureFlag of [
-    FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED,
-    FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED,
-    FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED,
-  ]) {
-    await updateFeatureFlag({ featureFlag, value, expectToFail: false });
-  }
-  await syncChannelVisibilityRules();
-};
 
 describe('channel visibility rule sync (integration)', () => {
   let messageObjectMetadataId: string;
@@ -66,12 +53,11 @@ describe('channel visibility rule sync (integration)', () => {
         }),
       ),
     );
-    await setChannelVisibilityRlsEnabled(true);
+    await syncChannelVisibilityRules();
   });
 
   afterAll(async () => {
     await setJonyChannelVisibility('SHARE_EVERYTHING');
-    await setChannelVisibilityRlsEnabled(false);
   });
 
   it('should list a channel sharing everything in a fully readable rule of every member', async () => {
@@ -124,15 +110,5 @@ describe('channel visibility rule sync (integration)', () => {
           fields.includes(textFieldMetadataId),
       ),
     ).toBe(true);
-  });
-
-  it('should remove every channel visibility rule once the flag is off', async () => {
-    await setChannelVisibilityRlsEnabled(false);
-
-    try {
-      expect(await findUnreadableFieldsOfRulesListingJonyChannel()).toEqual([]);
-    } finally {
-      await setChannelVisibilityRlsEnabled(true);
-    }
   });
 });

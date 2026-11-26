@@ -265,6 +265,7 @@ describe('useMobileNavigationBarItems', () => {
   });
 
   it('keeps each tab on the folder it had open', () => {
+    jest.mocked(useIsFeatureEnabled).mockReturnValue(true);
     jest
       .mocked(useWorkspaceNavigationMenuContainers)
       .mockReturnValue([SALES_TAB]);
@@ -289,6 +290,7 @@ describe('useMobileNavigationBarItems', () => {
   });
 
   it('keeps each open folder on its own tab when leaving the AI drawer', () => {
+    jest.mocked(useIsFeatureEnabled).mockReturnValue(true);
     jest
       .mocked(useWorkspaceNavigationMenuContainers)
       .mockReturnValue([SALES_TAB]);
@@ -315,5 +317,19 @@ describe('useMobileNavigationBarItems', () => {
 
     act(() => tapItem(result, 'tab-sales-tab'));
     expect(store.get(salesFolderIdAtom)).toBe('deals');
+  });
+
+  it('closes the open Home folder on every Home tap while the customizable sidebar is off', () => {
+    const { result, store } = renderMobileNavigationBarItems('/objects/people');
+    const homeFolderIdAtom =
+      currentNavigationMenuItemFolderIdFamilyState.atomFamily('home');
+
+    act(() => tapItem(result, 'home'));
+    act(() => store.set(homeFolderIdAtom, 'home-folder'));
+    act(() => result.current.navigate('/objects/people'));
+
+    act(() => tapItem(result, 'home'));
+
+    expect(store.get(homeFolderIdAtom)).toBeNull();
   });
 });

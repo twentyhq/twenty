@@ -110,7 +110,7 @@ Note: creating a new custom object via create_object_metadata already auto-creat
         {
           "properties": {
             "builtInSectionKey": {
-              "description": "Adds a built-in section instead of a custom one: favorites (personal favorites), aiChatInbox (Triage), aiChatFavorites (Favorite chats), aiChatChannels (Channels), aiChatRecents (Recent chats) or aiAgents (Agents).",
+              "description": "Adds a built-in section instead of a custom one: favorites (personal favorites), aiChatInbox (Inbox), aiChatFavorites (Favorite chats), aiChatChannels (Channels), aiChatRecents (Recent chats) or aiAgents (Agents).",
               "enum": [
                 "favorites",
                 "aiChatInbox",

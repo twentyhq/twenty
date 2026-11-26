@@ -1,10 +1,11 @@
+import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/CommonChartConstants';
 import { parseFontSizeToPx } from '@/page-layout/widgets/graph/utils/parseFontSizeToPx';
 import { useTheme } from 'twenty-ui/theme';
 
 export const useLineChartTheme = () => {
   const theme = useTheme();
 
-  const tickFontSize = 12;
+  const tickFontSize = COMMON_CHART_CONSTANTS.AXIS_FONT_SIZE;
   const legendFontSize = parseFontSizeToPx(theme.font.size.sm, tickFontSize);
 
   return {
@@ -37,7 +38,6 @@ export const useLineChartTheme = () => {
       line: {
         stroke: theme.border.color.light,
         strokeWidth: 1,
-        strokeDasharray: '4 4',
       },
     },
     crosshair: {

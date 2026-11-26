@@ -9,7 +9,7 @@ import {
   IsUUID,
 } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
-import { ConditionalAvailabilityNode } from 'twenty-shared/conditional-availability';
+import { ConditionalEvaluationNode } from 'twenty-shared/conditional-evaluation';
 import {
   PageLayoutWidgetConditionalDisplay,
   PageLayoutWidgetPosition,
@@ -65,7 +65,7 @@ export class UpdatePageLayoutWidgetInput {
   @Field(() => GraphQLJSON, { nullable: true })
   @IsObject()
   @IsOptional()
-  conditionalAvailability?: ConditionalAvailabilityNode | null;
+  conditionalAvailability?: ConditionalEvaluationNode | null;
 
   @Field(() => Boolean, { nullable: true })
   @IsBoolean()

@@ -1,8 +1,4 @@
-import {
-  FeatureFlagKey,
-  FieldMetadataType,
-  RelationType,
-} from 'twenty-shared/types';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
@@ -132,16 +128,12 @@ const companyAttachmentsPath = buildPath({
 const buildMetadataMaps = ({
   paths,
   objectNamesWithRlsRule = ['company', 'opportunity'],
-  isAccessGroupsEnabled = true,
 }: {
   paths: FlatRelatedRecordPath[];
   objectNamesWithRlsRule?: string[];
-  isAccessGroupsEnabled?: boolean;
 }): PermissionsMetadataMaps =>
   ({
-    featureFlagsMap: {
-      [FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED]: isAccessGroupsEnabled,
-    },
+    featureFlagsMap: {},
     rolesPermissions: {
       sales: {
         objects: Object.fromEntries(
@@ -286,16 +278,6 @@ describe('buildRelatedRecordPathJoinSQLCondition', () => {
         entryByObject: { opportunity: 'owned' },
       }),
     ).not.toBe(false);
-  });
-
-  it('ignores paths while access groups are disabled', () => {
-    expect(
-      buildAttachmentCondition({
-        paths: [companyAttachmentsPath],
-        isAccessGroupsEnabled: false,
-        entryByObject: { company: 'owned' },
-      }),
-    ).toBe(false);
   });
 
   it('denies records when the source object is not reachable', () => {

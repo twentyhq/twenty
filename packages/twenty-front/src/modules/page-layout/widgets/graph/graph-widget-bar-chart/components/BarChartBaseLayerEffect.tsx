@@ -47,7 +47,7 @@ export const BarChartBaseLayerEffect = ({
 }: BarChartBaseLayerEffectProps) => {
   const theme = useTheme();
 
-  const borderRadius = parseInt(theme.border.radius.sm);
+  const borderRadius = parseInt(theme.border.radius.xs);
   const gridColor = theme.border.color.light;
   const isVertical = layout === BarChartLayout.VERTICAL;
   const durationMs =
@@ -192,8 +192,6 @@ export const BarChartBaseLayerEffect = ({
           isVertical,
           gridColor,
           lineWidth: BAR_CHART_CONSTANTS.GRID_LINE_WIDTH,
-          dashLength: BAR_CHART_CONSTANTS.GRID_DASH_LENGTH,
-          dashGap: BAR_CHART_CONSTANTS.GRID_DASH_GAP,
         });
       }
 

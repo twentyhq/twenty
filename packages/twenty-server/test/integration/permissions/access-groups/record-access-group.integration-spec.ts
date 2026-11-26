@@ -1,7 +1,6 @@
 import { createOneOperation } from 'test/integration/graphql/utils/create-one-operation.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { revokeObjectRecordsPermissions } from 'test/integration/metadata/suites/object-permission/utils/revoke-object-records-permissions.util';
 import { upsertRowLevelPermissionRules } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-rules.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
@@ -9,7 +8,6 @@ import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delet
 import { findRoleAccessGroupCompactIds } from 'test/integration/permissions/utils/find-role-access-group-compact-ids.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import {
-  FeatureFlagKey,
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
@@ -266,11 +264,6 @@ describe('access group ids on records (integration)', () => {
         ],
       },
     });
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED,
-      value: true,
-      expectToFail: false,
-    });
 
     try {
       await syncAndRecompute();
@@ -338,11 +331,6 @@ describe('access group ids on records (integration)', () => {
         `DELETE FROM ${PERSON_TABLE} WHERE "id" = ANY($1)`,
         [[createdPersonId, systemCreatedPersonId].filter(isDefined)],
       );
-      await updateFeatureFlag({
-        featureFlag: FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED,
-        value: false,
-        expectToFail: false,
-      });
       await deleteOneRole({
         expectToFail: false,
         input: { idToDelete: roleId },

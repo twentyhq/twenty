@@ -185,7 +185,6 @@ export class ViewService {
         flatViewGroupMaps: existingFlatViewGroupMaps,
         flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
         flatFieldMetadataOptionMaps: existingFlatFieldMetadataOptionMaps,
-        userWorkspaceId: getUserWorkspaceIdFromAuthContext(authContext),
         callerApplicationUniversalIdentifier:
           workspaceCustomFlatApplication.universalIdentifier,
         workspaceCustomApplicationUniversalIdentifier:

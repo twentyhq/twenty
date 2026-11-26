@@ -479,13 +479,13 @@ export const getPageLayoutWidgetDataSeeds = (
         workspaceId,
         PAGE_LAYOUT_TAB_SEEDS.SALES_OVERVIEW,
       ),
-      title: 'Front Component',
+      title: 'Hello World',
       type: WidgetType.FRONT_COMPONENT,
       position: {
         layoutMode: PageLayoutTabLayoutMode.GRID,
-        row: 2,
+        row: 8,
         column: 7,
-        rowSpan: 2,
+        rowSpan: 6,
         columnSpan: 5,
       },
       configuration: {
