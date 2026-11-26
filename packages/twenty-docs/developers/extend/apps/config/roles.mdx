@@ -38,10 +38,6 @@ export default defineRole({
         canUpdateAllRecords: true,
         canSoftDeleteAllRecords: false,
         canDestroyAllRecords: false,
-        unreadableFields: [
-          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name
-            .universalIdentifier,
-        ],
       },
     ],
   },
@@ -57,6 +53,13 @@ export default defineRole({
 - `objects` lists what differs for one object: the same five grants for all its records,
   `unreadableFields` and `uneditableFields` (field universal identifiers; a field that cannot be
   read cannot be edited either), and its [row-level records permissions](#row-level-security).
+
+<Note>
+  Except for the workspace Custom application, an app's roles cannot declare `unreadableFields`,
+  `uneditableFields` or row-level records permissions: the workspace configures them. A role that
+  is neither the default function role nor an agent's role must also set `canBeAssignedToUsers`
+  and `canBeAssignedToApiKeys` to `false`. Publishing and syncing fail otherwise.
+</Note>
 
 <Note>
   `SystemPermissionFlag.USER_APPS` and `SystemPermissionFlag.WORKSPACE_APPS`
@@ -294,7 +297,7 @@ The application role is what a workspace reviews when it installs your app, so i
 ## Best practices
 
 - Start from the scaffolded role, then progressively restrict it — the default grants broad read access, which is rarely what you want in production.
-- List in `recordsPermissions.objects` only the objects your functions actually need, and use `unreadableFields` and `uneditableFields` to hide or lock the fields they do not.
+- List in `recordsPermissions.objects` only the objects your functions actually need.
 - `permissionFlagUniversalIdentifiers` control access to platform-level capabilities. Keep them minimal.
 - A permission flag your app declares with `definePermissionFlag()` carries a `permissionType`: `'tool'` (the default) for a capability an agent or a user can be granted, `'settings'` for a flag that unlocks a settings area.
 - See a working example: [`examples/hello-world/src/roles/default-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/hello-world/src/roles/default-role.ts).
