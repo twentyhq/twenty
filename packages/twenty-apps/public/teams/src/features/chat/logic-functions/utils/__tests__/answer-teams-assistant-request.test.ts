@@ -115,6 +115,7 @@ describe('answerTeamsAssistantRequest', () => {
       serviceUrl: REQUEST.teamsServiceUrl,
       conversationId: REQUEST.teamsConversationId,
       conversationType: REQUEST.teamsConversationType,
+      requestId: REQUEST.id,
     });
     expect(runAgentMock).toHaveBeenCalledTimes(1);
     expect(runAgentMock).toHaveBeenCalledWith(

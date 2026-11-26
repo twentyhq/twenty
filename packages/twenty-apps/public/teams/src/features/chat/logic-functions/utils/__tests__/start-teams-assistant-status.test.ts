@@ -47,7 +47,13 @@ const CONVERSATION = {
   conversationId: 'a:personal-conversation',
 };
 
-const PERSONAL = { ...CONVERSATION, conversationType: 'personal' };
+const REQUEST_ID = 'request-1';
+
+const PERSONAL = {
+  ...CONVERSATION,
+  conversationType: 'personal',
+  requestId: REQUEST_ID,
+};
 
 const sentMessageTexts = () =>
   sendActivityMock.mock.calls.map(([{ activity }]) => activity.text);
@@ -196,13 +202,17 @@ describe('startTeamsAssistantStatus', () => {
     const status = await startTeamsAssistantStatus({
       ...CONVERSATION,
       conversationType: 'groupChat',
+      requestId: REQUEST_ID,
     });
 
     await vi.runAllTimersAsync();
     await status.finish('Acme has 3 open deals.');
 
     expect(startStreamMock).not.toHaveBeenCalled();
-    expect(startPlaceholderMock).toHaveBeenCalledExactlyOnceWith(CONVERSATION);
+    expect(startPlaceholderMock).toHaveBeenCalledExactlyOnceWith({
+      ...CONVERSATION,
+      requestId: REQUEST_ID,
+    });
     expect(placeholderFinishMock).toHaveBeenCalledExactlyOnceWith(
       'Acme has 3 open deals.',
     );

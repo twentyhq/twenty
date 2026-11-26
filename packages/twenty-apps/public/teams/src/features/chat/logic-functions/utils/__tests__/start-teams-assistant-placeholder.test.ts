@@ -1,15 +1,28 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { TEAMS_ASSISTANT_INITIAL_STATUS } from 'src/features/chat/logic-functions/constants/teams-assistant-status-steps';
+import { buildTeamsAssistantPlaceholderKvKey } from 'src/features/chat/logic-functions/utils/build-teams-assistant-placeholder-kv-key';
 import { startTeamsAssistantPlaceholder } from 'src/features/chat/logic-functions/utils/start-teams-assistant-placeholder';
 
-const { sendActivityMock, updateActivityMock, deleteActivityMock } = vi.hoisted(
-  () => ({
-    sendActivityMock: vi.fn(),
-    updateActivityMock: vi.fn(),
-    deleteActivityMock: vi.fn(),
-  }),
-);
+const {
+  sendActivityMock,
+  updateActivityMock,
+  deleteActivityMock,
+  kvGetMock,
+  kvSetMock,
+  kvDeleteMock,
+} = vi.hoisted(() => ({
+  sendActivityMock: vi.fn(),
+  updateActivityMock: vi.fn(),
+  deleteActivityMock: vi.fn(),
+  kvGetMock: vi.fn(),
+  kvSetMock: vi.fn(),
+  kvDeleteMock: vi.fn(),
+}));
+
+vi.mock('twenty-sdk/logic-function', () => ({
+  kv: { get: kvGetMock, set: kvSetMock, delete: kvDeleteMock },
+}));
 
 vi.mock(
   'src/features/chat/logic-functions/utils/get-teams-connector-access-token-or-throw',
@@ -37,6 +50,11 @@ const CONVERSATION = {
   conversationId: '19:channel@thread.tacv2;messageid=1700000000000',
 };
 
+const REQUEST_ID = 'request-1';
+const PLACEHOLDER_KV_KEY = buildTeamsAssistantPlaceholderKvKey({
+  requestId: REQUEST_ID,
+});
+
 const PLACEHOLDER = {
   ...CONVERSATION,
   activityId: 'placeholder-1',
@@ -59,13 +77,17 @@ const sentMessage = (text: string) => ({
 });
 
 describe('startTeamsAssistantPlaceholder', () => {
-  const startPlaceholder = () => startTeamsAssistantPlaceholder(CONVERSATION);
+  const startPlaceholder = () =>
+    startTeamsAssistantPlaceholder({ ...CONVERSATION, requestId: REQUEST_ID });
 
   beforeEach(() => {
     vi.spyOn(console, 'warn').mockImplementation(() => undefined);
     sendActivityMock.mockResolvedValue({ id: 'placeholder-1' });
     updateActivityMock.mockResolvedValue({ id: 'placeholder-1' });
     deleteActivityMock.mockResolvedValue(undefined);
+    kvGetMock.mockResolvedValue(undefined);
+    kvSetMock.mockResolvedValue(undefined);
+    kvDeleteMock.mockResolvedValue(true);
   });
 
   afterEach(() => {
@@ -76,11 +98,18 @@ describe('startTeamsAssistantPlaceholder', () => {
   it('should post a placeholder in the thread and replace it with the answer', async () => {
     const status = await startPlaceholder();
 
+    expect(kvSetMock).toHaveBeenCalledExactlyOnceWith(
+      PLACEHOLDER_KV_KEY,
+      PLACEHOLDER.activityId,
+    );
+    expect(kvDeleteMock).not.toHaveBeenCalled();
+
     await status.finish(ANSWER);
 
     expect(sendActivityMock).toHaveBeenCalledExactlyOnceWith(
       sentMessage(TEAMS_ASSISTANT_INITIAL_STATUS),
     );
+    expect(kvDeleteMock).toHaveBeenCalledExactlyOnceWith(PLACEHOLDER_KV_KEY);
     expect(updateActivityMock).toHaveBeenCalledExactlyOnceWith({
       ...PLACEHOLDER,
       activity: message(ANSWER),
@@ -110,6 +139,7 @@ describe('startTeamsAssistantPlaceholder', () => {
 
     expect(sendActivityMock).toHaveBeenLastCalledWith(sentMessage(ANSWER));
     expect(deleteActivityMock).toHaveBeenCalledExactlyOnceWith(PLACEHOLDER);
+    expect(kvDeleteMock).toHaveBeenCalledExactlyOnceWith(PLACEHOLDER_KV_KEY);
   });
 
   it('should still deliver the answer when the placeholder cannot be deleted', async () => {
@@ -130,6 +160,7 @@ describe('startTeamsAssistantPlaceholder', () => {
 
     await expect(status.finish(ANSWER)).rejects.toThrow('413');
     expect(deleteActivityMock).not.toHaveBeenCalled();
+    expect(kvDeleteMock).not.toHaveBeenCalled();
 
     await status.finish(FAILURE);
 
@@ -139,5 +170,34 @@ describe('startTeamsAssistantPlaceholder', () => {
     });
     expect(sendActivityMock).toHaveBeenCalledTimes(2);
     expect(deleteActivityMock).not.toHaveBeenCalled();
+  });
+
+  it('should reuse the placeholder a previous run of the request posted', async () => {
+    kvGetMock.mockResolvedValue(PLACEHOLDER.activityId);
+
+    const status = await startPlaceholder();
+
+    await status.finish(ANSWER);
+
+    expect(kvGetMock).toHaveBeenCalledExactlyOnceWith(PLACEHOLDER_KV_KEY);
+    expect(sendActivityMock).not.toHaveBeenCalled();
+    expect(updateActivityMock).toHaveBeenCalledExactlyOnceWith({
+      ...PLACEHOLDER,
+      activity: message(ANSWER),
+    });
+  });
+
+  it('should still replace the placeholder when its id cannot be stored', async () => {
+    kvGetMock.mockRejectedValue(new Error('kv down'));
+    kvSetMock.mockRejectedValue(new Error('kv down'));
+    kvDeleteMock.mockRejectedValue(new Error('kv down'));
+
+    const status = await startPlaceholder();
+
+    await expect(status.finish(ANSWER)).resolves.toBeUndefined();
+    expect(updateActivityMock).toHaveBeenCalledExactlyOnceWith({
+      ...PLACEHOLDER,
+      activity: message(ANSWER),
+    });
   });
 });

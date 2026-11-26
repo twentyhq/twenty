@@ -4,11 +4,29 @@ import { TEAMS_ASSISTANT_FAILURE_TEXT } from 'src/features/chat/logic-functions/
 import { teamsActivitiesEnqueueJobFailureHandler } from 'src/features/chat/logic-functions/handlers/teams-activities-enqueue-job-failure-handler';
 import { type TeamsActivitiesDispatchPayload } from 'src/features/chat/logic-functions/types/teams-activities-dispatch-payload.type';
 
-const { findRequestMock, updateRequestMock, sendReplyOnceMock } = vi.hoisted(
+const {
+  findRequestMock,
+  updateRequestMock,
+  sendReplyOnceMock,
+  replacePlaceholderMock,
+  deletePlaceholderActivityIdMock,
+} = vi.hoisted(() => ({
+  findRequestMock: vi.fn(),
+  updateRequestMock: vi.fn(),
+  sendReplyOnceMock: vi.fn(),
+  replacePlaceholderMock: vi.fn(),
+  deletePlaceholderActivityIdMock: vi.fn(),
+}));
+
+vi.mock(
+  'src/features/chat/logic-functions/utils/replace-teams-assistant-placeholder',
+  () => ({ replaceTeamsAssistantPlaceholder: replacePlaceholderMock }),
+);
+
+vi.mock(
+  'src/features/chat/logic-functions/utils/delete-teams-assistant-placeholder-activity-id',
   () => ({
-    findRequestMock: vi.fn(),
-    updateRequestMock: vi.fn(),
-    sendReplyOnceMock: vi.fn(),
+    deleteTeamsAssistantPlaceholderActivityId: deletePlaceholderActivityIdMock,
   }),
 );
 
@@ -59,6 +77,7 @@ describe('teamsActivitiesEnqueueJobFailureHandler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     sendReplyOnceMock.mockResolvedValue(true);
+    replacePlaceholderMock.mockResolvedValue(false);
   });
 
   it('should reply with the failure text and fail an unfinished request', async () => {
@@ -87,6 +106,39 @@ describe('teamsActivitiesEnqueueJobFailureHandler', () => {
         errorMessage: 'TimeoutError: Task timed out after 240 seconds',
       }),
     );
+  });
+
+  it('should replace the placeholder of a killed run instead of posting a new message', async () => {
+    findRequestMock.mockResolvedValue({ id: REQUEST_ID, status: 'PROCESSING' });
+    replacePlaceholderMock.mockResolvedValue(true);
+
+    await teamsActivitiesEnqueueJobFailureHandler(TIMEOUT_FAILURE);
+
+    expect(replacePlaceholderMock).toHaveBeenCalledExactlyOnceWith({
+      serviceUrl: SERVICE_URL,
+      conversationId: CONVERSATION_ID,
+      requestId: REQUEST_ID,
+      text: TEAMS_ASSISTANT_FAILURE_TEXT,
+    });
+    expect(sendReplyOnceMock).not.toHaveBeenCalled();
+    expect(updateRequestMock).toHaveBeenCalledWith(
+      expect.objectContaining({ id: REQUEST_ID, status: 'FAILED' }),
+    );
+    expect(deletePlaceholderActivityIdMock).toHaveBeenCalledExactlyOnceWith({
+      requestId: REQUEST_ID,
+    });
+  });
+
+  it('should keep the placeholder id for a retry when the request cannot be failed', async () => {
+    findRequestMock.mockResolvedValue({ id: REQUEST_ID, status: 'PROCESSING' });
+    replacePlaceholderMock.mockResolvedValue(true);
+    updateRequestMock.mockRejectedValueOnce(new Error('503'));
+
+    await expect(
+      teamsActivitiesEnqueueJobFailureHandler(TIMEOUT_FAILURE),
+    ).rejects.toThrow('503');
+
+    expect(deletePlaceholderActivityIdMock).not.toHaveBeenCalled();
   });
 
   it('should still fail the request when a previous try already replied', async () => {

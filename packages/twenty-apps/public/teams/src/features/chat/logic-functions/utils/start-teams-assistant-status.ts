@@ -17,17 +17,23 @@ export const startTeamsAssistantStatus = async ({
   serviceUrl,
   conversationId,
   conversationType,
+  requestId,
 }: {
   serviceUrl: string;
   conversationId: string;
   conversationType: string;
+  requestId: string;
 }): Promise<Pick<TeamsAssistantStatusWriter, 'finish'>> => {
   const sendMessage = async (text: string) => {
     await sendTeamsMessage({ serviceUrl, conversationId, text });
   };
 
   if (conversationType !== TEAMS_PERSONAL_CONVERSATION_TYPE) {
-    return startTeamsAssistantPlaceholder({ serviceUrl, conversationId });
+    return startTeamsAssistantPlaceholder({
+      serviceUrl,
+      conversationId,
+      requestId,
+    });
   }
 
   const writer = await startTeamsAssistantStream({

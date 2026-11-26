@@ -58,6 +58,7 @@ export const answerTeamsAssistantRequest = async ({
     serviceUrl: teamsServiceUrl,
     conversationId: teamsConversationId,
     conversationType: teamsConversationType,
+    requestId: request.id,
   });
 
   try {

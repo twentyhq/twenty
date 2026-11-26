@@ -7,7 +7,9 @@ import { TEAMS_ASSISTANT_REQUEST_STATUS } from 'src/features/chat/logic-function
 import { findTeamsAssistantRequestByTeamsActivity } from 'src/features/chat/logic-functions/data/find-teams-assistant-request-by-teams-activity';
 import { updateTeamsAssistantRequest } from 'src/features/chat/logic-functions/data/update-teams-assistant-request';
 import { type TeamsActivitiesDispatchPayload } from 'src/features/chat/logic-functions/types/teams-activities-dispatch-payload.type';
+import { deleteTeamsAssistantPlaceholderActivityId } from 'src/features/chat/logic-functions/utils/delete-teams-assistant-placeholder-activity-id';
 import { parseTeamsAssistantRequest } from 'src/features/chat/logic-functions/utils/parse-teams-assistant-request';
+import { replaceTeamsAssistantPlaceholder } from 'src/features/chat/logic-functions/utils/replace-teams-assistant-placeholder';
 import { sendTeamsReplyOnce } from 'src/features/chat/logic-functions/utils/send-teams-reply-once';
 
 const TEAMS_JOB_FAILURE_REPLY_TTL_MS = 60 * 60 * 1000;
@@ -46,13 +48,22 @@ export const teamsActivitiesEnqueueJobFailureHandler = async ({
     return { skipped: true, reason: 'Request is already finished' };
   }
 
-  await sendTeamsReplyOnce({
-    kvKey: `teams-job-failure-reply:${request.id}`,
-    ttlMs: TEAMS_JOB_FAILURE_REPLY_TTL_MS,
+  const hasReplacedPlaceholder = await replaceTeamsAssistantPlaceholder({
     serviceUrl: teamsServiceUrl,
     conversationId: teamsConversationId,
+    requestId: request.id,
     text: TEAMS_ASSISTANT_FAILURE_TEXT,
   });
+
+  if (!hasReplacedPlaceholder) {
+    await sendTeamsReplyOnce({
+      kvKey: `teams-job-failure-reply:${request.id}`,
+      ttlMs: TEAMS_JOB_FAILURE_REPLY_TTL_MS,
+      serviceUrl: teamsServiceUrl,
+      conversationId: teamsConversationId,
+      text: TEAMS_ASSISTANT_FAILURE_TEXT,
+    });
+  }
 
   await updateTeamsAssistantRequest({
     client,
@@ -60,6 +71,8 @@ export const teamsActivitiesEnqueueJobFailureHandler = async ({
     status: TEAMS_ASSISTANT_REQUEST_STATUS.FAILED,
     errorMessage: `${error.type}: ${error.message}`,
   });
+  // Forgotten last, so a retried handler replaces the same message instead of posting a second failure text.
+  await deleteTeamsAssistantPlaceholderActivityId({ requestId: request.id });
 
   return { failed: true };
 };
