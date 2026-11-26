@@ -71,10 +71,15 @@ jest.mock('@/ai-chat/tool-calls/hooks/useFrontComponentIdByToolName', () => ({
   useFrontComponentIdByToolName: () => mockFrontComponentIdByToolName(),
 }));
 
+const mockIsToolIndexLoading = jest.fn(() => false);
+jest.mock('@/ai/hooks/useGetToolIndex', () => ({
+  useGetToolIndex: () => ({ loading: mockIsToolIndexLoading() }),
+}));
+
 type ToolFrontComponentLoad =
   | { status: 'loading' }
   | { status: 'unavailable' }
-  | { status: 'ready'; labels: { approve?: string; reject?: string } };
+  | { status: 'ready'; labels?: { approve?: string; reject?: string } };
 
 type ToolFrontComponentStubProps = {
   toolCall: { input?: Record<string, unknown> };
@@ -87,10 +92,7 @@ type ToolFrontComponentStubProps = {
   unavailableFallback: ReactNode;
 };
 
-const READY_WITHOUT_LABELS: ToolFrontComponentLoad = {
-  status: 'ready',
-  labels: {},
-};
+const READY_WITHOUT_LABELS: ToolFrontComponentLoad = { status: 'ready' };
 
 const mockToolFrontComponentLoad = jest.fn(
   (): ToolFrontComponentLoad => READY_WITHOUT_LABELS,
@@ -98,6 +100,7 @@ const mockToolFrontComponentLoad = jest.fn(
 
 jest.mock('@/ai-chat/tool-calls/components/AiChatToolFrontComponent', () => {
   const { useEffect } = jest.requireActual('react');
+  const { isDefined } = jest.requireActual('twenty-shared/utils');
 
   return {
     AiChatToolFrontComponent: ({
@@ -110,10 +113,15 @@ jest.mock('@/ai-chat/tool-calls/components/AiChatToolFrontComponent', () => {
       const load = mockToolFrontComponentLoad();
 
       useEffect(() => {
-        if (load.status === 'ready') {
-          onToolCallApprovalLabelsChange(load.labels);
-          onReady();
+        if (load.status !== 'ready') {
+          return;
         }
+
+        if (isDefined(load.labels)) {
+          onToolCallApprovalLabelsChange(load.labels);
+        }
+
+        onReady();
       }, [load, onReady, onToolCallApprovalLabelsChange]);
 
       if (load.status === 'unavailable') {
@@ -182,6 +190,7 @@ describe('AiChatToolCallApprovalCard', () => {
     mockToolFrontComponentLoad
       .mockReset()
       .mockReturnValue(READY_WITHOUT_LABELS);
+    mockIsToolIndexLoading.mockReset().mockReturnValue(false);
   });
 
   it("shows the tool's front component instead of the raw arguments and approves what it sets", async () => {
@@ -268,6 +277,24 @@ describe('AiChatToolCallApprovalCard', () => {
           },
         }),
       );
+    });
+
+    it('waits for the tool index before showing the buttons', () => {
+      mockIsToolIndexLoading.mockReturnValue(true);
+      mockFrontComponentIdByToolName.mockReturnValue(new Map());
+
+      renderCard({ proposal: BOOKING_PROPOSAL });
+
+      expect(
+        screen.queryByRole('button', { name: 'Approve' }),
+      ).not.toBeInTheDocument();
+    });
+
+    it('shows Approve and Reject when the front component sets no labels', () => {
+      renderCard({ proposal: BOOKING_PROPOSAL });
+
+      expect(screen.getByRole('button', { name: 'Approve' })).toBeVisible();
+      expect(screen.getByRole('button', { name: 'Reject' })).toBeVisible();
     });
 
     it('shows Approve and Reject when the front component cannot load', () => {

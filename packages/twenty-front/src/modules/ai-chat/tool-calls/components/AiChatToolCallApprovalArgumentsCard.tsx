@@ -15,6 +15,7 @@ import { AiChatToolCallApprovalRecord } from '@/ai-chat/tool-calls/components/Ai
 import { AiChatToolCallApprovalRecordFields } from '@/ai-chat/tool-calls/components/AiChatToolCallApprovalRecordFields';
 import { useAnswerToolCallApproval } from '@/ai-chat/tool-calls/hooks/useAnswerToolCallApproval';
 import { useFrontComponentIdByToolName } from '@/ai-chat/tool-calls/hooks/useFrontComponentIdByToolName';
+import { useGetToolIndex } from '@/ai/hooks/useGetToolIndex';
 
 type AiChatToolCallApprovalArgumentsCardProps = {
   toolCallId: string;
@@ -39,6 +40,7 @@ export const AiChatToolCallApprovalArgumentsCard = ({
   const toolFrontComponentId = useFrontComponentIdByToolName().get(
     proposal.toolName,
   );
+  const { loading: isToolIndexLoading } = useGetToolIndex();
 
   const [approvalLabels, setApprovalLabels] = useState<ToolCallApprovalLabels>(
     {},
@@ -52,8 +54,9 @@ export const AiChatToolCallApprovalArgumentsCard = ({
 
   const isWaitingForFrontComponent =
     template === 'generic' &&
-    isDefined(toolFrontComponentId) &&
-    !isFrontComponentReady;
+    (isDefined(toolFrontComponentId)
+      ? !isFrontComponentReady
+      : isToolIndexLoading);
 
   const argumentsEditor = (
     <AiChatToolCallApprovalArgumentsEditor

@@ -826,6 +826,7 @@ setToolCallArguments({ ...toolCall?.input, decision: 'DECLINE', reason });
 The component can also rename the buttons with `setToolCallApprovalLabels`, translated with `t` like the rest of its text. When the tool has a front component, the card waits for it before showing the buttons, then shows the labels it set, or **Reject** and **Approve** when it set none or could not load:
 
 ```tsx
+import { useEffect } from 'react';
 import { setToolCallApprovalLabels, useTranslate } from 'twenty-sdk/front-component';
 
 const { t } = useTranslate();
