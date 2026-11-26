@@ -1,4 +1,5 @@
 import { type ObjectRecordsPermissions } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type FieldConfiguration } from '@/page-layout/types/FieldConfiguration';
 import { isPageLayoutWidgetReadable } from '@/page-layout/utils/isPageLayoutWidgetReadable';
@@ -24,7 +25,7 @@ const getFieldId = (objectNameSingular: string, fieldName: string) => {
     objectNameSingular,
   ).fields.find(({ name }) => name === fieldName);
 
-  if (field === undefined) {
+  if (!isDefined(field)) {
     throw new Error(`Missing ${objectNameSingular}.${fieldName} mock field`);
   }
 
