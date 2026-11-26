@@ -84,11 +84,11 @@ export class WorkflowCoreSyncService {
 
     await this.cacheLockService.withLock(
       () =>
-        this.deleteFromCoreUnderLock(
+        this.deleteFromCoreUnderLock({
           workspaceId,
           coreWorkflowIds,
           shouldDeferActions,
-        ),
+        }),
       `core-workflow-deletion:${workspaceId}`,
       {
         ttl: CORE_WORKFLOW_DELETION_LOCK_TTL_MS,
@@ -100,11 +100,15 @@ export class WorkflowCoreSyncService {
     );
   }
 
-  private async deleteFromCoreUnderLock(
-    workspaceId: string,
-    coreWorkflowIds: string[],
-    shouldDeferActions?: boolean,
-  ): Promise<void> {
+  private async deleteFromCoreUnderLock({
+    workspaceId,
+    coreWorkflowIds,
+    shouldDeferActions,
+  }: {
+    workspaceId: string;
+    coreWorkflowIds: string[];
+    shouldDeferActions?: boolean;
+  }): Promise<void> {
     const persistedCoreWorkflowIds = (
       await this.coreWorkflowRepository.find(workspaceId, {
         where: { id: In(coreWorkflowIds) },
