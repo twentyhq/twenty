@@ -6,6 +6,7 @@ import { type ObjectRecordDestroyEvent } from 'twenty-shared/database-events';
 import { OnDatabaseBatchEvent } from 'src/engine/workspace-event-emitter/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/workspace-event-emitter/enums/database-event-action';
 import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-lifecycle.service';
+import { InboxObjectNamesResolverService } from 'src/engine/metadata-modules/ai/ai-history/services/inbox-object-names-resolver.service';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
@@ -15,6 +16,7 @@ import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/typ
 export class AgentChatThreadLifecycleListener {
   constructor(
     private readonly threadLifecycleService: AgentChatThreadLifecycleService,
+    private readonly inboxObjectNamesResolverService: InboxObjectNamesResolverService,
   ) {}
 
   // TODO(@bosiraphael): remove the agentChatThread decorator with IS_INBOX_OBJECT_NAMING_ENABLED
@@ -25,6 +27,15 @@ export class AgentChatThreadLifecycleListener {
       ObjectRecordDestroyEvent<AgentChatThreadWorkspaceEntity>
     >,
   ): Promise<void> {
+    if (
+      !(await this.inboxObjectNamesResolverService.isInboxThreadObjectName({
+        workspaceId: payload.workspaceId,
+        objectNameSingular: payload.objectMetadata.nameSingular,
+      }))
+    ) {
+      return;
+    }
+
     for (const event of payload.events) {
       const { id, activeStreamId } = event.properties.before;
 

@@ -16,4 +16,17 @@ export class InboxObjectNamesResolverService {
 
     return getInboxObjectNamesByLegacyName(featureFlagsMap);
   }
+
+  async isInboxThreadObjectName({
+    workspaceId,
+    objectNameSingular,
+  }: {
+    workspaceId: string;
+    objectNameSingular: string;
+  }): Promise<boolean> {
+    const { agentChatThread: inboxThreadObjectName } =
+      await this.resolve(workspaceId);
+
+    return objectNameSingular === inboxThreadObjectName;
+  }
 }

@@ -6,6 +6,7 @@ import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runne
 import { WorkspaceQueryHookType } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-lifecycle.service';
+import { InboxObjectNamesResolverService } from 'src/engine/metadata-modules/ai/ai-history/services/inbox-object-names-resolver.service';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 
 @Injectable()
@@ -16,13 +17,23 @@ import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules
 export class InboxThreadDeleteManyPostQueryHook implements WorkspacePostQueryHookInstance {
   constructor(
     private readonly threadLifecycleService: AgentChatThreadLifecycleService,
+    private readonly inboxObjectNamesResolverService: InboxObjectNamesResolverService,
   ) {}
 
   async execute(
     authContext: WorkspaceAuthContext,
-    _objectName: string,
+    objectName: string,
     payload: Pick<AgentChatThreadWorkspaceEntity, 'id'>[],
   ): Promise<void> {
+    if (
+      !(await this.inboxObjectNamesResolverService.isInboxThreadObjectName({
+        workspaceId: authContext.workspace.id,
+        objectNameSingular: objectName,
+      }))
+    ) {
+      return;
+    }
+
     await this.threadLifecycleService.stopDeletedThreads({
       workspaceId: authContext.workspace.id,
       threadIds: payload.map((thread) => thread.id),
