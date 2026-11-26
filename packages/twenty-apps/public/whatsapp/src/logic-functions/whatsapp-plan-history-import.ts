@@ -276,7 +276,7 @@ export default defineLogicFunction({
   universalIdentifier: WHATSAPP_PLAN_HISTORY_IMPORT_UNIVERSAL_IDENTIFIER,
   name: 'whatsapp-plan-history-import',
   description:
-    'Lists the past WhatsApp conversations of a connection to import, most recent first: the selected ones, or the most recent ones up to the limit of the run. Stores them page by page for the import jobs and starts the import chain.',
+    'Lists the past WhatsApp conversations of a connection to import, most recent first, and starts their import.',
   timeoutSeconds: WHATSAPP_IMPORT_HISTORY_TIMEOUT_SECONDS,
   handler: whatsappPlanHistoryImportHandler,
 });

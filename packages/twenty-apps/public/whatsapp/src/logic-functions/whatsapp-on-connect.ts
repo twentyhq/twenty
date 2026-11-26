@@ -63,7 +63,7 @@ export default defineLogicFunction({
   universalIdentifier: WHATSAPP_ON_CONNECT_UNIVERSAL_IDENTIFIER,
   name: 'whatsapp-on-connect',
   description:
-    'Creates the message channel of a new WhatsApp connection, matched on the phone numbers of People, routes its Unipile webhooks to this workspace and imports its most recent conversations; a reconnection imports them again.',
+    'Creates the message channel of a WhatsApp connection and imports its most recent conversations.',
   timeoutSeconds: 30,
   handler: whatsappOnConnectHandler,
 });

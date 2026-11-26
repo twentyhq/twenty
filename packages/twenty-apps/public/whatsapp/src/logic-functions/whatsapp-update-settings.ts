@@ -7,7 +7,7 @@ import {
 } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
-import { WHATSAPP_HISTORY_IMPORT_START_DELAY_MILLISECONDS } from 'src/constants/whatsapp-history-import-start-delay-milliseconds.constant';
+import { WHATSAPP_HISTORY_IMPORT_DEBOUNCE_MILLISECONDS } from 'src/constants/whatsapp-history-import-debounce-milliseconds.constant';
 import { WHATSAPP_SETTINGS_ROUTE_PATHS } from 'src/constants/whatsapp-settings-route-paths.constant';
 import { WHATSAPP_UPDATE_SETTINGS_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { buildWhatsappSettingsView } from 'src/logic-functions/utils/build-whatsapp-settings-view.util';
@@ -62,7 +62,7 @@ export const whatsappUpdateSettingsHandler = async (
     await restartWhatsappHistoryImport({
       connectedAccountId: connection.id,
       settings,
-      delayMs: WHATSAPP_HISTORY_IMPORT_START_DELAY_MILLISECONDS,
+      delayMs: WHATSAPP_HISTORY_IMPORT_DEBOUNCE_MILLISECONDS,
     });
   }
 
@@ -73,7 +73,7 @@ export default defineLogicFunction({
   universalIdentifier: WHATSAPP_UPDATE_SETTINGS_UNIVERSAL_IDENTIFIER,
   name: 'whatsapp-update-settings',
   description:
-    'Saves the WhatsApp sync settings of the requesting member connection, and imports its past conversations again when the settings that decide what is imported change.',
+    'Saves the WhatsApp sync settings of the requesting member connection.',
   timeoutSeconds: 15,
   handler: whatsappUpdateSettingsHandler,
   httpRouteTriggerSettings: {
