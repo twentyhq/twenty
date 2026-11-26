@@ -101,9 +101,11 @@ export class DeleteOrphanCoreWorkflowsCommand extends ProvisionedWorkspaceComman
       'flatWorkflowMaps',
     ]);
 
+    // the deferred operations table only reaches its current shape in 2.59
     await this.workflowCoreSyncService.deleteFromCore(
       workspaceId,
       orphanCoreWorkflowIds,
+      { shouldDeferActions: false },
     );
 
     this.logger.log(

@@ -38,11 +38,13 @@ export class WorkflowCoreSyncService {
     failureMessage,
     operations,
     applicationUniversalIdentifier,
+    shouldDeferActions,
   }: {
     workspaceId: string;
     failureMessage: string;
     operations: AllFlatEntityOperationByMetadataName;
     applicationUniversalIdentifier?: string;
+    shouldDeferActions?: boolean;
   }): Promise<void> {
     const universalIdentifier =
       applicationUniversalIdentifier ??
@@ -59,6 +61,7 @@ export class WorkflowCoreSyncService {
           workspaceId,
           isSystemBuild: false,
           applicationUniversalIdentifier: universalIdentifier,
+          shouldDeferActions,
         },
       );
 
@@ -73,13 +76,19 @@ export class WorkflowCoreSyncService {
   async deleteFromCore(
     workspaceId: string,
     coreWorkflowIds: string[],
+    { shouldDeferActions }: { shouldDeferActions?: boolean } = {},
   ): Promise<void> {
     if (coreWorkflowIds.length === 0) {
       return;
     }
 
     await this.cacheLockService.withLock(
-      () => this.deleteFromCoreUnderLock(workspaceId, coreWorkflowIds),
+      () =>
+        this.deleteFromCoreUnderLock(
+          workspaceId,
+          coreWorkflowIds,
+          shouldDeferActions,
+        ),
       `core-workflow-deletion:${workspaceId}`,
       {
         ttl: CORE_WORKFLOW_DELETION_LOCK_TTL_MS,
@@ -94,6 +103,7 @@ export class WorkflowCoreSyncService {
   private async deleteFromCoreUnderLock(
     workspaceId: string,
     coreWorkflowIds: string[],
+    shouldDeferActions?: boolean,
   ): Promise<void> {
     const persistedCoreWorkflowIds = (
       await this.coreWorkflowRepository.find(workspaceId, {
@@ -148,6 +158,7 @@ export class WorkflowCoreSyncService {
       workspaceId,
       failureMessage:
         'Multiple validation errors occurred while deleting workflows',
+      shouldDeferActions,
       operations: {
         workflow: {
           flatEntityToCreate: [],
