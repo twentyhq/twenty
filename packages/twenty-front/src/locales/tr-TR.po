@@ -16382,11 +16382,6 @@ msgstr "Bu hesaptan yeni e-postaları içe aktar"
 msgid "Import new events from this account"
 msgstr "Bu hesaptan yeni etkinlikleri içe aktar"
 
-#. js-lingui-id: 4Ljmum
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Import occurrences of recurring Google Calendar meetings up to 90 days ahead only, and import later occurrences as they come within 90 days."
-msgstr "Yinelenen Google Takvim toplantılarının yalnızca 90 gün sonrasına kadar olan tekrarlarını içe aktarın ve sonraki tekrarları 90 gün içine girdikçe içe aktarın."
-
 #. js-lingui-id: D5QSQM
 #: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx
 msgid "Import only selected folders/labels"
@@ -16396,11 +16391,6 @@ msgstr "Yalnızca seçilen klasörleri/etiketleri içe aktar"
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
 msgid "Import or add the MCP configuration from JetBrains settings."
 msgstr "JetBrains ayarlarından MCP yapılandırmasını içe aktarın veya ekleyin."
-
-#. js-lingui-id: 8zGGat
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Import recurring meetings 90 days ahead"
-msgstr "Yinelenen toplantıları 90 gün sonrasına kadar içe aktarın"
 
 #. js-lingui-id: LHHO6e
 #: src/modules/getting-started/constants/GettingStartedImportPrompt.ts

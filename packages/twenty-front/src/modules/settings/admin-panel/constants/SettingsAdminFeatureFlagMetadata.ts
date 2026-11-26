@@ -28,10 +28,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Internal import setting column`,
     description: msg`Read the internal import setting from its new workspace column. Turned on by the 2.59 upgrade.`,
   },
-  [FeatureFlagKey.IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED]: {
-    label: msg`Import recurring meetings 90 days ahead`,
-    description: msg`Import occurrences of recurring Google Calendar meetings up to 90 days ahead only, and import later occurrences as they come within 90 days.`,
-  },
   [FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED]: {
     label: msg`Customizable sidebar`,
     description: msg`Organize the sidebar in tabs and sections, including built-in sections for favorites, chats and agents, and customize it in place.`,
