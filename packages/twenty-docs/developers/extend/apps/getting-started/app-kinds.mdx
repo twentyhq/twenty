@@ -24,9 +24,11 @@ Every app is built with the same SDK and CLI, but Twenty treats two kinds of app
 | | Workspace Custom application | Marketplace app |
 | --- | --- | --- |
 | **Pruning on `plan`, `apply` and `dev`** | Entities missing from source are kept unless you pass `--prune`, since pull cannot export everything the app owns yet. | Entities missing from source are deleted unless you pass `--no-prune`. See [Syncing & recovery](/developers/extend/apps/operations/sync-and-recovery). |
-| **Workflows** | The workflow builder and your code are both authoritative: pull writes the active version and apply publishes a new one. See [Workflows](/developers/extend/apps/logic/workflows#workflows-of-the-workspace-custom-application). | Installed workflows are read-only in the workspace; users duplicate one to customize it. |
+| **Workflows** | The workflow builder and your code are both authoritative: pull writes the active version and apply publishes a new one. Their logic function steps can call the workflow actions of any installed app. See [Workflows](/developers/extend/apps/logic/workflows#workflows-of-the-workspace-custom-application). | Installed workflows are read-only in the workspace; users duplicate one to customize it. Their logic function steps can only call the app's own functions. |
 | **Roles and permissions** | May ship roles for workspace members and API keys, with field and row-level permissions. | Roles can only be held by the app itself and its agents, and cannot declare field or row-level permissions. See [Roles outside the workspace Custom application](/developers/extend/apps/config/roles#roles-outside-the-workspace-custom-application). |
 | **Publishing** | Not published: it belongs to one workspace and syncs with `twenty app apply`. | Published with `twenty app publish`, to npm or as a tarball. See [Publishing](/developers/extend/apps/operations/publishing). |
+
+Both kinds can reference fields other apps add, and neither can declare that it depends on those apps yet. See [References to other apps](/developers/extend/apps/operations/sync-and-recovery#references-to-other-apps).
 
 ## Which one to use
 

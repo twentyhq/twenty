@@ -184,6 +184,14 @@ The report at the end of a pull lists all of it, grouped by kind and reason. Eve
 
 **The base file.** Pull records what it pulled in `.twenty/cli/pull-base.json`, which is gitignored and per checkout. That file is what a later pull compares against to leave untouched the files whose entity did not change, and to delete the file of an entity that is gone from the workspace. A checkout without it simply writes everything and deletes nothing.
 
+## References to other apps
+
+An app's definitions can point at entities another installed app owns, such as a view field or a sort on a field the other app added to Person. The workspace Custom application often does, since users build views on any field in the UI. Twenty does not track these references as a dependency yet:
+
+- Export, and so `twenty app pull`, writes the reference with the other app's field identifier. Nothing in the application config names the other app.
+- Uninstalling the other app succeeds without warning and deletes the view fields and sorts that point at its fields, in every app including the workspace Custom application. The views themselves stay.
+- Syncing a source that still references a field of an app that is not installed fails with `METADATA_VALIDATION_FAILED` and `Field metadata not found` for each view field or sort, without naming the missing app. Install the other app first, or remove the references.
+
 ## Recovery ladder
 
 When local metadata looks wrong, escalate in this order and stop as soon as you're unblocked. Each step is more disruptive than the last.
