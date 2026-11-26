@@ -2,6 +2,9 @@ import { msg } from '@lingui/core/macro';
 
 import { CASE_STUDY_CATALOG } from '@/case-studies/case-study-catalog';
 
+import { setupI18n } from '@lingui/core';
+
+import { buildIndustryPreviewConfig } from './build-industry-preview-config';
 import { getRelatedIndustryPages } from './get-related-industry-pages';
 import { INDUSTRY_COPY_LIMITS } from './industry-copy-limits';
 import { INDUSTRY_PAGES } from './industry-pages';
@@ -50,6 +53,19 @@ describe('industry pages', () => {
     (_slug, definition) => {
       const page = resolveIndustryPage(definition, INDUSTRY_PAGES_BY_SLUG);
       expect(validateIndustryPage(page, CASE_STUDY_SLUGS)).toEqual([]);
+    },
+  );
+
+  it.each(INDUSTRY_PAGES.map((page) => [page.slug, page] as const))(
+    '%s opens its product window on a sidebar entry',
+    (_slug, definition) => {
+      const page = resolveIndustryPage(definition, INDUSTRY_PAGES_BY_SLUG);
+      const i18n = setupI18n({ locale: 'en', messages: { en: {} } });
+      const { sidebar } = buildIndustryPreviewConfig(page, i18n);
+      const itemIds = [...sidebar.favorites, ...sidebar.workspace].map(
+        (item) => item.id,
+      );
+      expect(itemIds).toContain(sidebar.initialActiveItemId);
     },
   );
 

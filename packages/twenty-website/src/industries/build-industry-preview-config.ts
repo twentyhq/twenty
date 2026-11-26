@@ -11,9 +11,12 @@ import {
 
 import {
   type IndustryObject,
+  type IndustryPreviewIconName,
+  type IndustryStandardObjectId,
   type IndustryWorkflow,
   type ResolvedIndustryPage,
 } from './industry-page-types';
+import { INDUSTRY_STANDARD_OBJECT_LABELS } from './industry-standard-object-labels';
 
 const FIELD_COLUMN_WIDTH = 160;
 const NAME_COLUMN_WIDTH = 200;
@@ -29,6 +32,21 @@ const STEP_ICON_NAMES = {
   action: 'code',
   agent: 'sparkles',
 } as const;
+
+const STANDARD_OBJECT_ICON_NAMES: Record<
+  IndustryStandardObjectId,
+  IndustryPreviewIconName
+> = {
+  person: 'user',
+  company: 'buildingSkyscraper',
+  task: 'checkbox',
+  note: 'notes',
+};
+
+const isStandardObjectId = (
+  objectId: string,
+): objectId is IndustryStandardObjectId =>
+  Object.hasOwn(INDUSTRY_STANDARD_OBJECT_LABELS, objectId);
 
 const toColumnId = (label: string): string =>
   label.toLowerCase().replace(/[^a-z0-9]+/g, '-');
@@ -126,6 +144,32 @@ export const buildIndustryPreviewConfig = (
     },
   );
 
+  // A page may open on a standard object it does not declare, which then
+  // needs its own sidebar entry to be selectable.
+  const standardTableItems: SidebarPageItemDef[] =
+    isStandardObjectId(preview.tableObjectId) &&
+    !objectItems.some((item) => item.id === preview.tableObjectId)
+      ? [
+          {
+            id: preview.tableObjectId,
+            label: i18n._(
+              INDUSTRY_STANDARD_OBJECT_LABELS[preview.tableObjectId],
+            ),
+            icon: {
+              kind: 'tabler',
+              name: STANDARD_OBJECT_ICON_NAMES[preview.tableObjectId],
+              tone: 'gray',
+            },
+            page: {
+              type: 'table',
+              header: { title: preview.viewName, count: preview.rows.length },
+              columns: preview.columns,
+              rows: preview.rows,
+            },
+          },
+        ]
+      : [];
+
   const placedOn = page.dataModel.objects.find(
     (object) => object.id === customScreen.placedOn,
   );
@@ -175,7 +219,7 @@ export const buildIndustryPreviewConfig = (
       favorites: [recordItem],
       initialActiveItemId: preview.tableObjectId,
       initialOpenFolderIds: [],
-      workspace: [...objectItems, workflowsFolder],
+      workspace: [...standardTableItems, ...objectItems, workflowsFolder],
     },
   };
 };
