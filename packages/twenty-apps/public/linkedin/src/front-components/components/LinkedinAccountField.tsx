@@ -1,12 +1,10 @@
 import styled from '@emotion/styled';
 import { useId } from 'react';
 import { t } from 'twenty-sdk/front-component';
-import { InlineBanner } from 'twenty-ui/components/feedback';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { getPublicAssetUrl, isDefined } from 'twenty-sdk/utils';
+import { getPublicAssetUrl } from 'twenty-sdk/utils';
 
 import { LinkedinHistoryImportStatus } from 'src/front-components/components/LinkedinHistoryImportStatus';
-import { getLinkedinHistoryImportErrorReason } from 'src/front-components/utils/get-linkedin-history-import-error-reason.util';
 import { type LinkedinHistoryImportState } from 'src/types/linkedin-history-import-state.type';
 
 const StyledContainer = styled.div`
@@ -59,30 +57,18 @@ const StyledStatus = styled.span`
   flex-shrink: 0;
 `;
 
-const StyledCaption = styled.p`
-  color: ${() => themeCssVariables.font.color.tertiary};
-  font-size: ${() => themeCssVariables.font.size.sm};
-  margin: 0;
-`;
-
 type LinkedinAccountFieldProps = {
   name: string;
   handle: string;
-  isAuthFailed: boolean;
   historyImport: LinkedinHistoryImportState | null;
   importProgress: number | undefined;
-  isImportRetrying: boolean;
-  onRetryImport: () => void;
 };
 
 export const LinkedinAccountField = ({
   name,
   handle,
-  isAuthFailed,
   historyImport,
   importProgress,
-  isImportRetrying,
-  onRetryImport,
 }: LinkedinAccountFieldProps) => {
   const labelId = useId();
 
@@ -101,46 +87,6 @@ export const LinkedinAccountField = ({
           />
         </StyledStatus>
       </StyledValue>
-      {isAuthFailed && (
-        <InlineBanner layout="compact" status="warning">
-          {t(
-            'LinkedIn signed you out. Reconnect your account to keep syncing.',
-          )}
-        </InlineBanner>
-      )}
-      {historyImport?.status === 'FAILED' && (
-        <InlineBanner
-          layout="compact"
-          status="error"
-          role="alert"
-          fullWidth
-          action={
-            <InlineBanner.Action
-              onClick={onRetryImport}
-              disabled={isImportRetrying}
-            >
-              {t('Retry')}
-            </InlineBanner.Action>
-          }
-        >
-          {t('The import stopped before finishing.')}{' '}
-          {getLinkedinHistoryImportErrorReason(historyImport.error)}
-        </InlineBanner>
-      )}
-      {historyImport?.status === 'IMPORTING' &&
-        isDefined(historyImport.resumeAt) && (
-          <StyledCaption aria-live="polite">
-            {t(
-              'LinkedIn limits how much can be imported each day. The import resumes {resumeAt}.',
-              {
-                resumeAt: new Date(historyImport.resumeAt).toLocaleString(
-                  undefined,
-                  { weekday: 'short', hour: 'numeric', minute: '2-digit' },
-                ),
-              },
-            )}
-          </StyledCaption>
-        )}
     </StyledContainer>
   );
 };

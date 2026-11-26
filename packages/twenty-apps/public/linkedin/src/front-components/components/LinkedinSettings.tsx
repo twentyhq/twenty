@@ -15,6 +15,7 @@ import {
 } from 'twenty-ui/theme';
 
 import { LINKEDIN_SETTINGS_ROUTE_PATHS } from 'src/constants/linkedin-settings-route-paths.constant';
+import { LinkedinAccountBanners } from 'src/front-components/components/LinkedinAccountBanners';
 import { LinkedinAccountField } from 'src/front-components/components/LinkedinAccountField';
 import { LinkedinContactAutoCreationSection } from 'src/front-components/components/LinkedinContactAutoCreationSection';
 import { LinkedinImportSection } from 'src/front-components/components/LinkedinImportSection';
@@ -204,18 +205,21 @@ export const LinkedinSettings = () => {
         )}
         {view?.isConnected === true && (
           <>
+            <LinkedinAccountBanners
+              isAuthFailed={view.connection.isAuthFailed}
+              historyImport={view.historyImport}
+              isImportRetrying={isImportRetrying}
+              onRetryImport={handleRetryImport}
+            />
             <LinkedinAccountField
               name={view.connection.name}
               handle={view.connection.handle}
-              isAuthFailed={view.connection.isAuthFailed}
               historyImport={view.historyImport}
               importProgress={
                 importProgress?.runId === view.historyImport?.runId
                   ? importProgress?.progress
                   : undefined
               }
-              isImportRetrying={isImportRetrying}
-              onRetryImport={handleRetryImport}
             />
             <LinkedinImportSection
               importPolicy={view.settings.importPolicy}
