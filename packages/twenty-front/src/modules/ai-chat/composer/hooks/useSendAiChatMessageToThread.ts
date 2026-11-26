@@ -122,7 +122,7 @@ export const useSendAiChatMessageToThread = () => {
           : null,
       );
       store.set(messagesAtom, (messages) => [
-        ...cancelPendingAiChatToolCallApprovals(messages),
+        ...messages,
         createOptimisticAiChatUserMessage({
           messageId,
           text: contentToSend,
@@ -185,6 +185,12 @@ export const useSendAiChatMessageToThread = () => {
         const isAssistantReplying =
           data?.sendChatMessage.queued ||
           isDefined(data?.sendChatMessage.streamId);
+
+        // a started stream proves the server closed the pending approvals, a queued message may
+        // wait behind an answer still running
+        if (isDefined(data?.sendChatMessage.streamId)) {
+          store.set(messagesAtom, cancelPendingAiChatToolCallApprovals);
+        }
 
         if (isAssistantReplying) {
           if (!isAiChatCreditsExhaustedError(store.get(errorAtom))) {
@@ -254,6 +260,7 @@ export const useSendAiChatMessageToThread = () => {
         }
 
         removeOptimisticUserMessage();
+        // the server may have closed pending approvals before the send failed
         refetchAiChatThreadMessages(threadId);
         store.set(errorAtom, toAiChatError(error));
 

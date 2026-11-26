@@ -1179,6 +1179,69 @@ describe('useSendAiChatMessage', () => {
     expect(sentMessageVariables).toHaveBeenCalledTimes(2);
   });
 
+  it.each([
+    {
+      name: 'cancels a pending approval once the message starts a reply',
+      outcome: 'replying' as const,
+      status: 'skipped',
+    },
+    {
+      name: 'keeps a pending approval when the message is not for the assistant',
+      outcome: 'sent' as const,
+      status: 'pending',
+    },
+  ])('$name', async ({ outcome, status }) => {
+    const result = renderAiChat({
+      persistedDrafts: {
+        [EXISTING_THREAD_ID]:
+          serializePlainTextAsAdvancedTextEditorDocument('Never mind'),
+      },
+      sendChatMessageOutcomes: [outcome],
+      currentThreadId: EXISTING_THREAD_ID,
+    });
+    const messagesAtom = aiChatThreadDisplayedMessagesFamilyState.atomFamily({
+      threadId: EXISTING_THREAD_ID,
+    });
+    const proposal = {
+      toolName: 'update_record',
+      toolLabel: 'Update Record',
+      summary: 'Rename SAS',
+      arguments: { name: 'SAS Group' },
+      template: 'generic' as const,
+    };
+
+    act(() => {
+      jotaiStore.set(messagesAtom, [
+        {
+          id: 'assistant-message',
+          role: 'assistant',
+          parts: [
+            {
+              type: 'tool-propose_tool_call',
+              toolCallId: 'approval-call',
+              state: 'output-available',
+              input: {
+                toolName: proposal.toolName,
+                arguments: proposal.arguments,
+                summary: proposal.summary,
+              },
+              output: {
+                success: true,
+                result: { status: 'pending', proposal },
+              },
+            },
+          ],
+        },
+      ]);
+    });
+
+    await send(result);
+
+    expect(jotaiStore.get(messagesAtom)[0].parts[0]).toMatchObject({
+      output: { result: { status, proposal } },
+    });
+  });
+
   it('files a new chat into the channel it was started in, then forgets that channel', async () => {
     const result = renderAiChat({
       persistedDrafts: {
