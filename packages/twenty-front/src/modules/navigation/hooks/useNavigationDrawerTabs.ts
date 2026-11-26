@@ -8,7 +8,6 @@ import {
   IconSettings,
 } from 'twenty-ui/icon';
 
-import { useHasAiChatSectionInSidebar } from '@/navigation-menu-item/display/hooks/useHasAiChatSectionInSidebar';
 import { NAVIGATION_DRAWER_MODE_ORDER } from '@/navigation/constants/NavigationDrawerModeOrder';
 import { isNavigationDrawerTabShown } from '@/navigation/utils/isNavigationDrawerTabShown';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
@@ -39,7 +38,6 @@ export const useNavigationDrawerTabs = (): NavigationDrawerTabOption[] => {
   const isCustomizableSidebarEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
   );
-  const hasAiChatSectionInSidebar = useHasAiChatSectionInSidebar();
   const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
     WorkspaceActivationStatus.SUSPENDED,
   );
@@ -70,7 +68,6 @@ export const useNavigationDrawerTabs = (): NavigationDrawerTabOption[] => {
     isNavigationDrawerTabShown({
       tab,
       hasAiPermission,
-      hasAiChatSectionInSidebar,
       isCustomizableSidebarEnabled,
     }),
   ).map((tab) => ({ ...navigationDrawerTabDisplays[tab], tab }));

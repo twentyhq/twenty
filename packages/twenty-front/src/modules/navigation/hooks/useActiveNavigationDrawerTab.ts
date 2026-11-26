@@ -1,7 +1,6 @@
 import { useLocation } from 'react-router-dom';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
-import { useHasAiChatSectionInSidebar } from '@/navigation-menu-item/display/hooks/useHasAiChatSectionInSidebar';
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
 import {
@@ -20,7 +19,6 @@ export const useActiveNavigationDrawerTab = (): NavigationDrawerActiveTab => {
   const navigationDrawerActiveTab = useAtomStateValue(
     navigationDrawerActiveTabState,
   );
-  const hasAiChatSectionInSidebar = useHasAiChatSectionInSidebar();
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
@@ -37,7 +35,7 @@ export const useActiveNavigationDrawerTab = (): NavigationDrawerActiveTab => {
   }
 
   if (
-    !hasAiChatSectionInSidebar &&
+    !isCustomizableSidebarEnabled &&
     (isAiModePath(pathname) ||
       navigationDrawerActiveTab === NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY)
   ) {
