@@ -5,7 +5,6 @@ import { type ExtendedUIMessagePart } from '../types/ExtendedUIMessagePart';
 import { isNoReplyToolPart } from './is-no-reply-tool-part.util';
 import { isPausingToolPart } from './is-pausing-tool-part.util';
 
-// record tools report a failure as an output with success: false, not as output-error
 const isSucceededToolPart = (part: ExtendedUIMessagePart): boolean =>
   isToolUIPart(part) &&
   part.state === 'output-available' &&
