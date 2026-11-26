@@ -13,7 +13,6 @@ import {
 } from '@tabler/icons-react';
 
 import { color, DURATION, EASING, REDUCED_MOTION } from '@/tokens';
-import { PRODUCT_STEPPER_SCENE } from '@/tokens/feature-scenes/product-stepper-scene';
 
 import { STEP_CARD_CHROME } from './step-card-chrome';
 
@@ -27,7 +26,6 @@ const {
   scrub,
   timelineDelay,
 } = STEP_CARD_CHROME;
-const green = PRODUCT_STEPPER_SCENE.workflow.green;
 
 // Each value types in after the previous one, then the form is sent. On
 // scroll the sequence follows the reader; when the stepper swipes it plays
@@ -96,29 +94,14 @@ const Typed = styled.span`
   }
 `;
 
-// The send row: blue, then green once sent; the send arrow gives way to a
-// check in the same place and the label fades out.
+// The send row stays blue once sent, as the site's buttons keep their
+// colour when done; the send arrow gives way to a check in the same place
+// and the label fades out.
 const SubmitRow = styled(Row)`
   background: ${color('blue')};
   color: ${color('white')};
 
   --d: ${SEND_DELAY_MS}ms;
-
-  [data-active] & {
-    animation: applySent ${DURATION.md} ${EASING.gentle} both;
-    animation-delay: ${timelineDelay};
-  }
-
-  @keyframes applySent {
-    to {
-      background: ${green};
-    }
-  }
-
-  ${REDUCED_MOTION} {
-    animation: none !important;
-    background: ${green};
-  }
 `;
 
 const SubmitLabels = styled.span`
