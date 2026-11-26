@@ -1,4 +1,4 @@
-import { Field, HideField, ObjectType } from '@nestjs/graphql';
+import { Field, HideField, Int, ObjectType } from '@nestjs/graphql';
 
 import {
   type BuiltInSectionKey,
@@ -64,6 +64,10 @@ export class NavigationMenuItemDTO {
   @IsOptional()
   @Field(() => String, { nullable: true })
   builtInSectionKey?: BuiltInSectionKey | null;
+
+  @IsOptional()
+  @Field(() => Int, { nullable: true })
+  visibleItemLimit?: number | null;
 
   @IsOptional()
   @Field(() => String, { nullable: true })

@@ -72,6 +72,7 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
     agentChatChannelUniversalIdentifier,
     nativePageKey,
     builtInSectionKey,
+    visibleItemLimit,
     workflowUniversalIdentifier,
     agentUniversalIdentifier,
   } = flatNavigationMenuItem;
@@ -90,6 +91,29 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
       buildInvalidInputError(
         t`A builtInSectionKey is only allowed on SECTION type`,
         msg`A builtInSectionKey is only allowed on SECTION type`,
+      ),
+    ];
+  }
+
+  if (isDefined(visibleItemLimit) && type !== NavigationMenuItemType.SECTION) {
+    return [
+      buildInvalidInputError(
+        t`A visibleItemLimit is only allowed on SECTION type`,
+        msg`A visibleItemLimit is only allowed on SECTION type`,
+      ),
+    ];
+  }
+
+  if (
+    isDefined(visibleItemLimit) &&
+    (!Number.isInteger(visibleItemLimit) ||
+      visibleItemLimit < 1 ||
+      visibleItemLimit > 100)
+  ) {
+    return [
+      buildInvalidInputError(
+        t`A visibleItemLimit must be an integer between 1 and 100`,
+        msg`A visibleItemLimit must be an integer between 1 and 100`,
       ),
     ];
   }

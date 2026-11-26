@@ -1,4 +1,4 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, InputType, Int } from '@nestjs/graphql';
 
 import {
   BUILT_IN_SECTION_KEYS,
@@ -9,10 +9,13 @@ import {
 import {
   IsEnum,
   IsIn,
+  IsInt,
   IsNumber,
   IsOptional,
   IsString,
   IsUUID,
+  Max,
+  Min,
 } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -68,6 +71,13 @@ export class CreateNavigationMenuItemInput {
   @IsIn(BUILT_IN_SECTION_KEYS)
   @Field(() => String, { nullable: true })
   builtInSectionKey?: BuiltInSectionKey | null;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Max(100)
+  @Field(() => Int, { nullable: true })
+  visibleItemLimit?: number | null;
 
   @IsOptional()
   @IsString()
