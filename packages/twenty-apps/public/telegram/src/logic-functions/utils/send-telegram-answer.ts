@@ -1,4 +1,5 @@
 import { isNumber } from '@sniptt/guards';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { TELEGRAM_SEND_RETRY_MAX_WAIT_SECONDS } from 'src/logic-functions/constants/telegram-send-retry-max-wait-seconds';
 import { TelegramApiError } from 'src/logic-functions/types/telegram-api-error';
@@ -30,7 +31,7 @@ const callOnceMoreWhenRateLimited = async (
   } catch (error) {
     const retryDelaySeconds = getRetryDelaySeconds(error);
 
-    if (!isNumber(retryDelaySeconds)) {
+    if (!isDefined(retryDelaySeconds)) {
       throw error;
     }
 
