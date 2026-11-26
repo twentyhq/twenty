@@ -344,8 +344,7 @@ export class TimelineActivitySeederService {
     if (entitiesWithTargetColumns.has(entityType)) {
       const targetIdKey = `${buildTimelineActivityRelatedMorphFieldMetadataName(entityType)}Id`;
 
-      // @ts-expect-error - This is okay for morph
-      timelineActivity[targetIdKey] = recordId;
+      return { ...timelineActivity, [targetIdKey]: recordId };
     }
 
     return timelineActivity;
@@ -641,19 +640,23 @@ export class TimelineActivitySeederService {
 
     const targetIdKey = `target${capitalize(targetInfo.targetType)}Id`;
 
-    // @ts-expect-error - This is okay for morph
-    linkedActivity[targetIdKey] = targetInfo.targetId;
+    const linkedActivityWithTarget: TimelineActivitySeedData = {
+      ...linkedActivity,
+      [targetIdKey]: targetInfo.targetId,
+    };
 
     const entitiesWithTargetColumns = new Set(['note', 'task']);
 
     if (entitiesWithTargetColumns.has(activityType)) {
       const targetActivityIdKey = `target${capitalize(activityType)}Id`;
 
-      // @ts-expect-error - This is okay for morph
-      linkedActivity[targetActivityIdKey] = recordSeed.id;
+      return {
+        ...linkedActivityWithTarget,
+        [targetActivityIdKey]: recordSeed.id,
+      };
     }
 
-    return linkedActivity;
+    return linkedActivityWithTarget;
   }
 
   private getLinkedRecordData(

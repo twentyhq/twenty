@@ -1,4 +1,3 @@
-import { isDefined } from 'class-validator';
 import { DEFAULT_VIEW_GROUP_LOAD_LIMIT } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
@@ -8,6 +7,7 @@ import {
   ViewOpenRecordIn,
   type ViewPresetFilter,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
@@ -65,10 +65,11 @@ export const createStandardViewFlatMetadata = <
   twentyStandardApplicationId,
   now,
 }: CreateStandardViewArgs<O>): FlatView => {
-  // @ts-expect-error ignore
-  const viewDefinition = STANDARD_OBJECTS[objectName].views[viewName] as {
-    universalIdentifier: string;
-  };
+  const standardObject: {
+    fields: Record<PropertyKey, { universalIdentifier: string }>;
+    views?: Record<PropertyKey, { universalIdentifier: string }>;
+  } = STANDARD_OBJECTS[objectName];
+  const viewDefinition = standardObject.views?.[viewName];
 
   if (!isDefined(viewDefinition)) {
     throw new Error(`Invalid configuration ${objectName} ${viewName.toString}`);
@@ -106,26 +107,20 @@ export const createStandardViewFlatMetadata = <
 
   const kanbanAggregateOperationFieldMetadataUniversalIdentifier =
     kanbanAggregateOperationFieldName
-      ? // @ts-expect-error ignore
-        STANDARD_OBJECTS[objectName].fields[kanbanAggregateOperationFieldName]
+      ? standardObject.fields[kanbanAggregateOperationFieldName]
           .universalIdentifier
       : null;
 
   const mainGroupByFieldMetadataUniversalIdentifier = mainGroupByFieldName
-    ? // @ts-expect-error ignore
-      STANDARD_OBJECTS[objectName].fields[mainGroupByFieldName]
-        .universalIdentifier
+    ? standardObject.fields[mainGroupByFieldName].universalIdentifier
     : null;
 
   const calendarFieldMetadataUniversalIdentifier = calendarFieldName
-    ? // @ts-expect-error ignore
-      STANDARD_OBJECTS[objectName].fields[calendarFieldName].universalIdentifier
+    ? standardObject.fields[calendarFieldName].universalIdentifier
     : null;
 
   const calendarEndFieldMetadataUniversalIdentifier = calendarEndFieldName
-    ? // @ts-expect-error ignore
-      STANDARD_OBJECTS[objectName].fields[calendarEndFieldName]
-        .universalIdentifier
+    ? standardObject.fields[calendarEndFieldName].universalIdentifier
     : null;
 
   return {
