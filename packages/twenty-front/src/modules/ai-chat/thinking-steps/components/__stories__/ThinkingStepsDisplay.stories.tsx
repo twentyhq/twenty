@@ -6,6 +6,7 @@ import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { ThinkingStepsDisplay } from '@/ai-chat/thinking-steps/components/ThinkingStepsDisplay';
+import { AiChatInstanceDecorator } from '~/testing/decorators/AiChatInstanceDecorator';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
@@ -15,7 +16,12 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 const meta: Meta<typeof ThinkingStepsDisplay> = {
   title: 'Modules/AI/ThinkingStepsDisplay',
   component: ThinkingStepsDisplay,
-  decorators: [ToastDecorator, MemoryRouterDecorator, ComponentDecorator],
+  decorators: [
+    AiChatInstanceDecorator,
+    ToastDecorator,
+    MemoryRouterDecorator,
+    ComponentDecorator,
+  ],
   parameters: {
     container: { width: 500 },
     msw: {
@@ -27,6 +33,8 @@ const meta: Meta<typeof ThinkingStepsDisplay> = {
     },
   },
   args: {
+    messageId: 'thinking-steps-story-message',
+    renderItemIndex: 0,
     isLastMessageStreaming: false,
     parts: [
       { type: 'reasoning', state: 'done', text: 'Reviewed the request.' },

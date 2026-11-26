@@ -242,6 +242,7 @@ export const AiChatMessage = ({
       );
   const messageContent = (
     <AiChatMessagePartsRenderer
+      messageId={messageId}
       isUserMessage={isUser}
       isLastMessageStreaming={isLastMessageStreaming}
       messageParts={messageParts}

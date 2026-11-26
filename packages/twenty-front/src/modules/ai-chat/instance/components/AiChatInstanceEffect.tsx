@@ -11,18 +11,14 @@ import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/displ
 import { aiChatUISessionStartTimeState } from '@/ai-chat/states/aiChatUISessionStartTimeState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { aiChatThreadIsMissingFamilyState } from '@/ai-chat/states/server/aiChatThreadIsMissingFamilyState';
-import { aiChatThreadViewOpenCountFamilyState } from '@/ai-chat/states/view/aiChatThreadViewOpenCountFamilyState';
 import {
   type AiChatThreadVisit,
   aiChatThreadViewVisitFamilyState,
 } from '@/ai-chat/states/view/aiChatThreadViewVisitFamilyState';
 import { useUpdateAiChatThreadInboxState } from '@/ai-chat/threads/hooks/useUpdateAiChatThreadInboxState';
-import { aiChatReopenedThreadActivityState } from '@/ai-chat/threads/states/aiChatReopenedThreadActivityState';
 import { aiChatThreadParticipantsState } from '@/ai-chat/threads/states/aiChatThreadParticipantsState';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
-import { isAiChatThreadSettledForMember } from '@/ai-chat/threads/utils/isAiChatThreadSettledForMember';
 import { useProcessWorkspaceSetupCompletion } from '@/ai-chat/workspace-setup/hooks/useProcessWorkspaceSetupCompletion';
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -72,64 +68,6 @@ export const AiChatInstanceEffect = () => {
     return () =>
       document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, [store]);
-
-  useEffect(() => {
-    if (!isDefined(persistedThreadId)) {
-      return;
-    }
-
-    const openViewCountAtom = aiChatThreadViewOpenCountFamilyState.atomFamily({
-      threadId: persistedThreadId,
-    });
-
-    store.set(openViewCountAtom, (count) => count + 1);
-
-    const leaveIfNoViewLeft = () => {
-      if (store.get(openViewCountAtom) !== 0) {
-        return;
-      }
-
-      store.set(
-        aiChatThreadViewVisitFamilyState.atomFamily({
-          threadId: persistedThreadId,
-        }),
-        null,
-      );
-
-      const thread = store.get(
-        aiChatThreadRecordFamilySelector.selectorFamily(persistedThreadId),
-      );
-      const workspaceMemberId = store.get(currentWorkspaceMemberState.atom)?.id;
-      const reopenedThreadActivity = store.get(
-        aiChatReopenedThreadActivityState.atom,
-      );
-
-      if (
-        isDefined(thread) &&
-        isDefined(workspaceMemberId) &&
-        thread.lastActivityAt !== reopenedThreadActivity[persistedThreadId] &&
-        isAiChatThreadSettledForMember({
-          thread,
-          participant: store.get(aiChatThreadParticipantsState.atom)
-            .rowsByThreadId[persistedThreadId],
-          workspaceMemberId,
-        })
-      ) {
-        void updateAiChatThreadInboxState({
-          threadIds: [persistedThreadId],
-          action: AgentChatInboxAction.ARCHIVE,
-        });
-      }
-    };
-
-    return () => {
-      store.set(openViewCountAtom, (count) => count - 1);
-
-      if (store.get(openViewCountAtom) === 0) {
-        queueMicrotask(leaveIfNoViewLeft);
-      }
-    };
-  }, [store, persistedThreadId, updateAiChatThreadInboxState]);
 
   useEffect(() => {
     if (

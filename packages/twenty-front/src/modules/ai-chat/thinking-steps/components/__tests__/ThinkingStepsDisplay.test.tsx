@@ -1,7 +1,9 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { createStore, Provider as JotaiProvider } from 'jotai';
 import { ThemeProvider } from 'twenty-ui/theme';
 
+import { AiChatInstanceContext } from '@/ai-chat/contexts/AiChatInstanceContext';
 import { ThinkingStepsDisplay } from '@/ai-chat/thinking-steps/components/ThinkingStepsDisplay';
 import { type ThinkingStepPart } from '@/ai-chat/thinking-steps/types/ThinkingStepPart';
 
@@ -62,27 +64,55 @@ const createToolPart = ({
     errorText,
   }) as ThinkingStepPart;
 
-const renderThinkingStepsDisplay = ({
-  isLastMessageStreaming,
-  parts,
-  isTrailingWhileStreaming = false,
-  workDurationMs,
-}: {
+const AI_CHAT_INSTANCE = {
+  instanceId: 'thinking-steps-test-instance',
+  threadId: 'thinking-steps-test-thread',
+  onThreadChange: () => {},
+};
+
+type ThinkingStepsDisplayTestProps = {
   parts: ThinkingStepPart[];
   isLastMessageStreaming: boolean;
   isTrailingWhileStreaming?: boolean;
   workDurationMs?: number | null;
-}) => {
-  return render(
+};
+
+const buildThinkingStepsDisplay = ({
+  store,
+  isLastMessageStreaming,
+  parts,
+  isTrailingWhileStreaming = false,
+  workDurationMs,
+}: ThinkingStepsDisplayTestProps & {
+  store: ReturnType<typeof createStore>;
+}) => (
+  <JotaiProvider store={store}>
     <ThemeProvider colorScheme="light">
-      <ThinkingStepsDisplay
-        parts={parts}
-        isLastMessageStreaming={isLastMessageStreaming}
-        isTrailingWhileStreaming={isTrailingWhileStreaming}
-        workDurationMs={workDurationMs}
-      />
-    </ThemeProvider>,
-  );
+      <AiChatInstanceContext.Provider value={AI_CHAT_INSTANCE}>
+        <ThinkingStepsDisplay
+          messageId="thinking-steps-test-message"
+          renderItemIndex={0}
+          parts={parts}
+          isLastMessageStreaming={isLastMessageStreaming}
+          isTrailingWhileStreaming={isTrailingWhileStreaming}
+          workDurationMs={workDurationMs}
+        />
+      </AiChatInstanceContext.Provider>
+    </ThemeProvider>
+  </JotaiProvider>
+);
+
+const renderThinkingStepsDisplay = (
+  props: ThinkingStepsDisplayTestProps,
+  store = createStore(),
+) => {
+  const renderResult = render(buildThinkingStepsDisplay({ store, ...props }));
+
+  return {
+    ...renderResult,
+    rerenderThinkingStepsDisplay: (nextProps: ThinkingStepsDisplayTestProps) =>
+      renderResult.rerender(buildThinkingStepsDisplay({ store, ...nextProps })),
+  };
 };
 
 describe('ThinkingStepsDisplay', () => {
@@ -158,22 +188,18 @@ describe('ThinkingStepsDisplay', () => {
         text: 'Completed reasoning content',
       }),
     ];
-    const { rerender } = renderThinkingStepsDisplay({
+    const { rerenderThinkingStepsDisplay } = renderThinkingStepsDisplay({
       isLastMessageStreaming: true,
       parts,
     });
 
     const line = screen.getByRole('button', { name: '2 steps' });
 
-    rerender(
-      <ThemeProvider colorScheme="light">
-        <ThinkingStepsDisplay
-          parts={parts}
-          isLastMessageStreaming={false}
-          workDurationMs={83_000}
-        />
-      </ThemeProvider>,
-    );
+    rerenderThinkingStepsDisplay({
+      parts,
+      isLastMessageStreaming: false,
+      workDurationMs: 83_000,
+    });
 
     expect(screen.getByRole('button', { name: 'Worked for 1m 23s' })).toBe(
       line,
@@ -268,6 +294,27 @@ describe('ThinkingStepsDisplay', () => {
     ).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Output' })).toBeNull();
     expect(screen.queryByRole('button', { name: 'Input' })).toBeNull();
+  });
+
+  it('should stay expanded when the message mounts again', async () => {
+    const store = createStore();
+    const props = {
+      isLastMessageStreaming: false,
+      parts: [createToolPart()],
+    };
+    const { unmount } = renderThinkingStepsDisplay(props, store);
+
+    await userEvent.click(screen.getByRole('button', { name: /1 step/i }));
+    unmount();
+    renderThinkingStepsDisplay(props, store);
+
+    expect(screen.getByRole('button', { name: /1 step/i })).toHaveAttribute(
+      'aria-expanded',
+      'true',
+    );
+    expect(
+      screen.getByRole('button', { name: 'Show details' }),
+    ).toBeInTheDocument();
   });
 
   it('should offer the details of a tool step loaded from history', async () => {

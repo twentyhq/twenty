@@ -6,6 +6,7 @@ import { LightIconButton } from 'twenty-ui/components/input';
 import { IconTerminal } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
 import { ThinkingStepRowLayout } from '@/ai-chat/thinking-steps/components/ThinkingStepRowLayout';
 import { ThinkingToolStepRecordsDetail } from '@/ai-chat/thinking-steps/components/ThinkingToolStepRecordsDetail';
 import { getThinkingStepLabel } from '@/ai-chat/thinking-steps/utils/getThinkingStepLabel';
@@ -26,6 +27,7 @@ export const ThinkingToolStepRow = ({
   part,
 }: ThinkingToolStepRowProps) => {
   const { t } = useLingui();
+  const { threadId } = useAiChatInstanceOrThrow();
   const { toolName } = unwrapToolPartInput(part);
   const displayContext = useToolDisplayContext();
   const { openAiChatToolCallInSidePanel } = useOpenAiChatToolCallInSidePanel();
@@ -68,7 +70,8 @@ export const ThinkingToolStepRow = ({
             tooltip={showDetailsLabel}
             onClick={() =>
               openAiChatToolCallInSidePanel({
-                part,
+                threadId,
+                toolCallId: part.toolCallId,
                 title: displayMessage,
                 Icon: ToolIcon,
               })

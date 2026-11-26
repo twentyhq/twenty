@@ -76,6 +76,7 @@ const renderAssistantRenderer = (
   return render(
     <ThemeProvider colorScheme="light">
       <AiChatMessagePartsRenderer
+        messageId="message-id"
         messageParts={messageParts}
         isLastMessageStreaming={isLastMessageStreaming}
         shouldHideThinkingSteps={shouldHideThinkingSteps}
@@ -462,6 +463,7 @@ describe('AiChatMessagePartsRenderer', () => {
     rerender(
       <ThemeProvider colorScheme="light">
         <AiChatMessagePartsRenderer
+          messageId="message-id"
           messageParts={partsWithFirstReasoning}
           isLastMessageStreaming
         />
