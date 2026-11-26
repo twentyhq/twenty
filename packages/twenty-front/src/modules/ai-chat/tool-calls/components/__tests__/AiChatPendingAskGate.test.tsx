@@ -71,6 +71,7 @@ const EMAIL_APPROVAL = {
     arguments: {},
     template: 'email',
   },
+  isAwaitedByCaller: false,
 };
 
 const renderGate = () =>
@@ -109,6 +110,19 @@ describe('AiChatPendingAskGate', () => {
       screen.getByRole('group', { name: 'Tool call approval' }),
     ).toHaveTextContent('Your renewal');
     expect(screen.getByRole('textbox', { name: 'Message' })).toBeVisible();
+  });
+
+  it('shows an approval a workflow waits on in place of the composer', () => {
+    useAiChatPendingToolCalls.mockReturnValue([
+      { ...EMAIL_APPROVAL, isAwaitedByCaller: true },
+    ]);
+
+    renderGate();
+
+    expect(
+      screen.getByRole('group', { name: 'Tool call approval' }),
+    ).toHaveTextContent('Your renewal');
+    expect(screen.queryByRole('textbox', { name: 'Message' })).toBeNull();
   });
 
   it('shows a form to fill in place of the composer', () => {

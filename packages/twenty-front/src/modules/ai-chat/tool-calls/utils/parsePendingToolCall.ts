@@ -29,7 +29,7 @@ export const parsePendingToolCall = (
   }
 
   const { toolCallId, input } = part;
-  const { proposal } = part.output.result;
+  const { proposal, isAwaitedByCaller } = part.output.result;
 
   switch (getToolName(part)) {
     case ASK_QUESTION_TOOL_NAME:
@@ -71,6 +71,7 @@ export const parsePendingToolCall = (
           toolCallId,
           kind: 'toolCallApproval',
           proposal: proposal as ProposedToolCall,
+          isAwaitedByCaller: isAwaitedByCaller === true,
         };
       }
 
@@ -85,6 +86,7 @@ export const parsePendingToolCall = (
               summary: input.summary,
               arguments: input.arguments,
             }),
+            isAwaitedByCaller: isAwaitedByCaller === true,
           }
         : null;
     }
