@@ -1,5 +1,17 @@
 import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
+import {
+  type Icon,
+  IconArrowLeft,
+  IconBrandGithub,
+  IconBrandLinkedin,
+  IconBrandX,
+  IconClock,
+  IconLanguage,
+  IconReceipt,
+  IconWorld,
+  IconWorldWww,
+} from '@tabler/icons-react';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -16,15 +28,17 @@ import { SERVED_GEO_LABELS } from '@/partners-marketplace/served-geo-labels';
 import { SPOKEN_LANGUAGE_LABELS } from '@/partners-marketplace/spoken-language-labels';
 import { titleCaseFallback } from '@/partners-marketplace/title-case-fallback';
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
+import { LocalizedLink } from '@/platform/i18n/LocalizedLink';
 import {
   color,
   DURATION,
   EASING,
   fontFamily,
+  fontSize,
   HERO_COMPOSITION,
   mediaUp,
-  type PaletteToken,
   MENU_HEIGHT_PX,
+  type PaletteToken,
   radius,
   REDUCED_MOTION,
   RHYTHM,
@@ -96,6 +110,25 @@ const BandMark = styled.div`
 
 // Under the band, the title sits a fixed step below the mark at every width:
 // the section's own top padding minus the mark's half that hangs into it.
+// Back to the list this page came from: the case studies' back link (an
+// arrow and a quiet label), shown at every width here.
+const BackLink = styled(LocalizedLink)`
+  align-items: center;
+  align-self: flex-start;
+  color: ${semanticColor.inkMuted};
+  display: inline-flex;
+  font-family: ${fontFamily('sans')};
+  font-size: ${fontSize(4)};
+  gap: ${spacing(1)};
+  margin-bottom: ${spacing(3)};
+  text-decoration: none;
+  transition: color ${DURATION.xxs} ${EASING.gentle};
+
+  &:hover {
+    color: ${semanticColor.ink};
+  }
+`;
+
 const Header = styled.div`
   margin-top: calc(
     ${MARK_SIZE_PX / 2}px + ${spacing(6)} - ${spacing(RHYTHM.section.top.base)}
@@ -195,36 +228,48 @@ const Side = styled.aside`
   }
 `;
 
-// Label above its value, as on the app page: the label is muted small text
-// so the value carries the weight.
-const FactStack = styled.div`
-  display: flex;
-  flex-direction: column;
+// A fact told by its icon, as the case studies' reading time: the icon
+// stands for the label, which stays for screen readers.
+const FactRow = styled.div`
+  column-gap: ${spacing(3)};
+  display: grid;
+  grid-template-columns: ${spacing(4)} minmax(0, 1fr);
 
-  & > * + * {
-    margin-top: ${spacing(1.5)};
+  /* centred on the text's first line (bodySm) */
+  & > svg {
+    color: ${semanticColor.inkMuted};
+    margin-top: ${spacing(1)};
   }
 `;
 
-const Fact = ({ children, label }: { children: ReactNode; label: string }) => (
-  <FactStack>
-    <Body as="span" muted size="xs">
-      {label}
-    </Body>
+const Fact = ({
+  children,
+  icon: FactIcon,
+  label,
+}: {
+  children: ReactNode;
+  icon: Icon;
+  label: string;
+}) => (
+  <FactRow aria-label={label} role="group">
+    <FactIcon aria-hidden size={16} stroke={1.5} />
     {children}
-  </FactStack>
+  </FactRow>
 );
+
+// Each link's own mark: the site, or the network it points to.
+const linkIcon = (href: string): Icon => {
+  const host = new URL(href).hostname;
+  if (host.endsWith('linkedin.com')) return IconBrandLinkedin;
+  if (host.endsWith('github.com')) return IconBrandGithub;
+  if (host === 'x.com' || host.endsWith('twitter.com')) return IconBrandX;
+  return IconWorldWww;
+};
 
 const SideGroup = styled.div`
   & > * + * {
-    margin-top: ${spacing(4)};
+    margin-top: ${spacing(3)};
   }
-`;
-
-const SideLinks = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${spacing(1.5)};
 `;
 
 // Quiet links, as on the app page: muted, with the brand's thin arrow.
@@ -373,6 +418,10 @@ export function PartnerDetail({
       <SectionShell connectsUp rhythm="section" scheme="light">
         <SectionStack>
           <Header>
+            <BackLink href="/partners">
+              <IconArrowLeft aria-hidden size={16} stroke={1.5} />
+              {i18n._(msg`All partners`)}
+            </BackLink>
             <Heading as="h1" size="md" weight="light" wrap="normal">
               {partner.name}
             </Heading>
@@ -439,12 +488,12 @@ export function PartnerDetail({
               <SideAction>{primary}</SideAction>
               <SideGroup>
                 {regions.length > 0 && (
-                  <Fact label={i18n._(msg`Regions served`)}>
+                  <Fact icon={IconWorld} label={i18n._(msg`Regions served`)}>
                     <Body size="sm">{regions}</Body>
                   </Fact>
                 )}
                 {languages.length > 0 && (
-                  <Fact label={i18n._(msg`Languages`)}>
+                  <Fact icon={IconLanguage} label={i18n._(msg`Languages`)}>
                     <Body size="sm">{languages}</Body>
                   </Fact>
                 )}
@@ -453,28 +502,37 @@ export function PartnerDetail({
                 (isDefined(minimum) && minimum !== '$0')) && (
                 <SideGroup>
                   {isDefined(hourly) && (
-                    <Fact label={i18n._(msg`Hourly rate`)}>
-                      <Body size="sm">{hourly}</Body>
+                    <Fact icon={IconClock} label={i18n._(msg`Hourly rate`)}>
+                      <Body size="sm">{i18n._(msg`${hourly} an hour`)}</Body>
                     </Fact>
                   )}
                   {isDefined(minimum) && minimum !== '$0' && (
-                    <Fact label={i18n._(msg`Project minimum`)}>
-                      <Body size="sm">{minimum}</Body>
+                    <Fact
+                      icon={IconReceipt}
+                      label={i18n._(msg`Project minimum`)}
+                    >
+                      <Body size="sm">
+                        {i18n._(msg`Projects from ${minimum}`)}
+                      </Body>
                     </Fact>
                   )}
                 </SideGroup>
               )}
               {links.length > 0 && (
-                <Fact label={i18n._(msg`Reach out`)}>
-                  <SideLinks>
-                    {links.map((link) => (
-                      <SideLink href={link.href} key={link.href}>
+                <SideGroup aria-label={i18n._(msg`Reach out`)} role="group">
+                  {links.map((link) => (
+                    <Fact
+                      icon={linkIcon(link.href)}
+                      key={link.href}
+                      label={link.label}
+                    >
+                      <SideLink href={link.href}>
                         {link.label}
                         <ArrowUpRight />
                       </SideLink>
-                    ))}
-                  </SideLinks>
-                </Fact>
+                    </Fact>
+                  ))}
+                </SideGroup>
               )}
             </Side>
           </Columns>
