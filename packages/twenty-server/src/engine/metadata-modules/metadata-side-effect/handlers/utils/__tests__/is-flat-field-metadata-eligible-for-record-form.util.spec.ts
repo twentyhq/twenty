@@ -11,6 +11,7 @@ const NUMBER_FLAT_FIELD_METADATA = {
   isUIEditable: true,
   isSystemSideEffect: false,
   universalSettings: { decimals: 2 },
+  formula: null,
   applicationUniversalIdentifier: 'application',
   overrides: null,
 };
@@ -26,10 +27,7 @@ describe('isFlatFieldMetadataEligibleForRecordForm', () => {
     expect(
       isFlatFieldMetadataEligibleForRecordForm({
         ...NUMBER_FLAT_FIELD_METADATA,
-        universalSettings: {
-          decimals: 2,
-          formula: { expression: 'price * quantity' },
-        },
+        formula: { expression: 'price * quantity' },
       }),
     ).toBe(false);
   });

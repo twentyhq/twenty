@@ -8,6 +8,8 @@ import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/
 import { useWorkspaceSidebarRootContainerId } from '@/navigation-menu-item/display/hooks/useWorkspaceSidebarRootContainerId';
 import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 import { useNavigationMenuItemEditSectionItems } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditSectionItems';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const useNavigationMenuItemMoveRemove = (
   section: NavigationMenuItemSection,
@@ -18,6 +20,9 @@ export const useNavigationMenuItemMoveRemove = (
   const items = useNavigationMenuItemEditSectionItems(section, containerId);
   const visibleItemIds = new Set(items.map((item) => item.id));
   const workspaceSidebarRootContainerId = useWorkspaceSidebarRootContainerId();
+  const isCustomizableSidebarEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
+  );
   const rootContainerId =
     section === 'workspace' ? workspaceSidebarRootContainerId : null;
 
@@ -34,7 +39,8 @@ export const useNavigationMenuItemMoveRemove = (
         (item) =>
           (item.parentId ?? rootContainerId) === parentId &&
           (visibleItemIds.has(item.id) ||
-            item.type === NavigationMenuItemType.SECTION),
+            (isCustomizableSidebarEnabled &&
+              item.type === NavigationMenuItemType.SECTION)),
       )
       .sort((a, b) => a.position - b.position);
   };

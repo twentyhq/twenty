@@ -27,9 +27,7 @@ export const setFormulaFieldBindingsThroughMutation = ({
     universalFlatFieldMetadataMapsToMutate.byUniversalIdentifier,
   )
     .filter(isDefined)
-    .filter(({ universalSettings }) =>
-      isFormulaFieldMetadata({ settings: universalSettings }),
-    );
+    .filter(isFormulaFieldMetadata);
 
   if (formulaUniversalFlatFieldMetadatas.length === 0) {
     return;
@@ -65,10 +63,10 @@ export const setFormulaFieldBindingsThroughMutation = ({
       universalFlatFieldMetadata.universalIdentifier
     ] = setFormulaFieldBindings({
       universalFlatFieldMetadata,
-      existingUniversalSettings:
+      existingFormula:
         existingFlatFieldMetadataMaps.byUniversalIdentifier[
           universalFlatFieldMetadata.universalIdentifier
-        ]?.universalSettings,
+        ]?.formula,
       universalFlatObjectMetadataMaps: {
         byUniversalIdentifier: objectByUniversalIdentifier,
       },

@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 import {
   fieldMetadataDefaultValueInputSchema,
+  fieldMetadataFormulaInputSchema,
   fieldMetadataOptionsInputSchema,
   fieldMetadataSettingsInputSchema,
 } from 'src/engine/metadata-modules/field-metadata/tools/schemas/field-metadata-configuration-input.schema';
@@ -21,6 +22,7 @@ export const updateFieldMetadataInputSchema = z.object({
   defaultValue: fieldMetadataDefaultValueInputSchema,
   options: fieldMetadataOptionsInputSchema,
   settings: fieldMetadataSettingsInputSchema,
+  formula: fieldMetadataFormulaInputSchema,
   isLabelSyncedWithName: z
     .boolean()
     .optional()

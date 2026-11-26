@@ -14,6 +14,7 @@ import { MetadataToolIdentifierService } from 'src/engine/metadata-modules/objec
 const FIELD_STRIP_WHEN_NULLISH = [
   'options',
   'settings',
+  'formula',
   'defaultValue',
   'description',
   'icon',

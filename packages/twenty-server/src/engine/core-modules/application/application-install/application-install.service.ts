@@ -67,8 +67,8 @@ import {
   WARM_UP_LOGIC_FUNCTION_JOB_NAME,
   WARM_UP_LOGIC_FUNCTION_JOB_OPTIONS,
   type WarmUpLogicFunctionJobData,
-} from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/jobs/warm-up-logic-function.job-constants';
-import { findLogicFunctionUniversalIdentifiersToWarmUp } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/utils/find-logic-function-universal-identifiers-to-warm-up.util';
+} from 'src/engine/core-modules/logic-function/logic-function-warm-up/jobs/warm-up-logic-function.job-constants';
+import { findLogicFunctionUniversalIdentifiersToWarmUp } from 'src/engine/core-modules/logic-function/logic-function-warm-up/utils/find-logic-function-universal-identifiers-to-warm-up.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { type MessageQueueJobProgressContext } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -747,7 +747,7 @@ export class ApplicationInstallService {
       );
     } catch (error) {
       this.logger.error(
-        `Failed to enqueue prebuilt warm-up for application ${applicationId} in workspace ${workspaceId}: ` +
+        `Failed to enqueue warm-up for application ${applicationId} in workspace ${workspaceId}: ` +
           `${error instanceof Error ? error.message : String(error)}`,
         error instanceof Error ? error.stack : undefined,
       );

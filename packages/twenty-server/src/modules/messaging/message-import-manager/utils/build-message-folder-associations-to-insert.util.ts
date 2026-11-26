@@ -1,8 +1,15 @@
+import { type ActorMetadata } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+
 import { type MessageChannelMessageAssociationFolderAssociation } from 'src/modules/messaging/message-import-manager/types/message-channel-message-association-folder-association.type';
 
 export type MessageFolderAssociationRecord = {
   messageChannelMessageAssociationId: string;
   messageFolderId: string;
+};
+
+type MessageFolderAssociationRecordToInsert = MessageFolderAssociationRecord & {
+  createdBy?: ActorMetadata;
 };
 
 const buildKey = ({
@@ -17,10 +24,10 @@ export const buildMessageFolderAssociationsToInsert = ({
 }: {
   associations: MessageChannelMessageAssociationFolderAssociation[];
   existingRecords: MessageFolderAssociationRecord[];
-}): MessageFolderAssociationRecord[] => {
+}): MessageFolderAssociationRecordToInsert[] => {
   const keysToSkip = new Set(existingRecords.map(buildKey));
 
-  const recordsToInsert: MessageFolderAssociationRecord[] = [];
+  const recordsToInsert: MessageFolderAssociationRecordToInsert[] = [];
 
   for (const association of associations) {
     for (const messageFolderId of association.messageFolderIds) {
@@ -36,7 +43,12 @@ export const buildMessageFolderAssociationsToInsert = ({
       }
 
       keysToSkip.add(key);
-      recordsToInsert.push(record);
+      recordsToInsert.push({
+        ...record,
+        ...(isDefined(association.createdBy)
+          ? { createdBy: association.createdBy }
+          : {}),
+      });
     }
   }
 

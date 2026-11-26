@@ -23,6 +23,7 @@ const OBJECT_AND_FIELD_TOOL_NAMES = [
   'create_many_field_metadata',
   'update_many_field_metadata',
   'create_many_relation_fields',
+  'validate_formula_expression',
 ];
 
 const VALIDATION_RULE_TOOL_NAMES = [
@@ -49,8 +50,17 @@ const PET_NAME_PLURAL = `${OBJECT_NAME_PREFIX}Pets`;
 const VISIT_NAME_SINGULAR = `${OBJECT_NAME_PREFIX}Visit`;
 const VISIT_NAME_PLURAL = `${OBJECT_NAME_PREFIX}Visits`;
 const PETS_ON_COMPANY_FIELD_NAME = 'mcpMetadataToolsPets';
+const PARCEL_NAME_SINGULAR = `${OBJECT_NAME_PREFIX}Parcel`;
+const PARCEL_NAME_PLURAL = `${OBJECT_NAME_PREFIX}Parcels`;
 
-type FieldSummary = { id: string; name: string; type: string; label?: string };
+type FieldSummary = {
+  id: string;
+  name: string;
+  type: string;
+  label?: string;
+  settings?: Record<string, unknown>;
+  formula?: Record<string, unknown>;
+};
 type ObjectSummary = {
   id: string;
   nameSingular: string;
@@ -555,6 +565,95 @@ describe('MCP metadata tools (integration)', () => {
       );
     },
   );
+
+  it.each([
+    { expression: 'count(people)', evaluation: 'STORED' },
+    {
+      expression:
+        "sum(opportunities.amount.amountMicros, opportunities.stage == 'CUSTOMER') / count(people)",
+      evaluation: 'STORED',
+    },
+    { expression: 'employees * 2', evaluation: 'QUERY_TIME' },
+  ])(
+    'should validate the formula $expression as $evaluation',
+    async ({ expression, evaluation }) => {
+      expect(
+        await runMetadataTool({
+          toolName: 'validate_formula_expression',
+          toolArguments: { objectName: 'company', type: 'NUMBER', expression },
+        }),
+      ).toEqual({ evaluation });
+    },
+  );
+
+  it.each([
+    'arrayLength(people)',
+    "dateDiff(max(opportunities.closeDate), now, 'DAY')",
+    'unknownField * 2',
+  ])('should refuse the formula %s', async (expression) => {
+    expect(
+      await runFailingMetadataTool({
+        toolName: 'validate_formula_expression',
+        toolArguments: { objectName: 'company', type: 'NUMBER', expression },
+      }),
+    ).toMatchObject({
+      success: false,
+      message: 'Failed to execute validate_formula_expression',
+      error: expect.stringContaining('Invalid formula'),
+    });
+  });
+
+  it('should create a formula field and keep its formula when its settings change', async () => {
+    const parcel = await runMetadataTool<ObjectSummary>({
+      toolName: 'create_object_metadata',
+      toolArguments: {
+        nameSingular: PARCEL_NAME_SINGULAR,
+        namePlural: PARCEL_NAME_PLURAL,
+        labelSingular: 'MCP metadata tools parcel',
+        labelPlural: 'MCP metadata tools parcels',
+      },
+    });
+
+    jestExpectToBeDefined(parcel);
+
+    await runMetadataTool({
+      toolName: 'create_field_metadata',
+      toolArguments: {
+        objectMetadataId: parcel.id,
+        type: 'NUMBER',
+        name: 'weight',
+        label: 'Weight',
+      },
+    });
+
+    const doubleWeightField = await runMetadataTool<FieldSummary>({
+      toolName: 'create_field_metadata',
+      toolArguments: {
+        objectMetadataId: parcel.id,
+        type: 'NUMBER',
+        name: 'doubleWeight',
+        label: 'Double weight',
+        formula: { expression: 'weight * 2' },
+      },
+    });
+
+    jestExpectToBeDefined(doubleWeightField);
+
+    await runMetadataTool({
+      toolName: 'update_field_metadata',
+      toolArguments: { id: doubleWeightField.id, settings: { decimals: 1 } },
+    });
+
+    expect(
+      await findFieldOrThrow({
+        objectName: PARCEL_NAME_SINGULAR,
+        fieldName: 'doubleWeight',
+      }),
+    ).toMatchObject({
+      settings: { decimals: 1 },
+      formula: { expression: 'weight * 2' },
+    });
+  });
 
   it('should refuse an expression on an unknown field', async () => {
     expect(

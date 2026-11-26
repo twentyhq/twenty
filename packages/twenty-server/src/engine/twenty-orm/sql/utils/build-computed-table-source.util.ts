@@ -1,6 +1,5 @@
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
-import { ACCESS_GROUP_IDS_COLUMN_NAME } from 'src/engine/permissions/internal/record-permission-repository/constants/access-group-column-names.constant';
 import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
 import { COMPUTED_COLUMN_RECORD_ALIAS } from 'src/engine/twenty-orm/table-shape/constants/computed-column-record-alias.constant';
 import {
@@ -137,17 +136,13 @@ export const buildComputedTableSource = ({
   const computedColumnNames = new Set(
     computedColumnShapes.map(({ columnName }) => columnName),
   );
-  const storedColumnNames = tableShape.columnNames.filter(
-    (columnName) => !computedColumnNames.has(columnName),
-  );
-
-  if (tableShape.hasAccessGroupIdsColumn === true) {
-    storedColumnNames.push(ACCESS_GROUP_IDS_COLUMN_NAME);
-  }
-
-  const storedColumns = storedColumnNames.map((columnName) =>
-    quoteColumn(COMPUTED_COLUMN_RECORD_ALIAS, columnName),
-  );
+  // The outer statement's permission predicates read these columns through the wrapper
+  const storedColumns = [
+    ...tableShape.columnNames.filter(
+      (columnName) => !computedColumnNames.has(columnName),
+    ),
+    ...(tableShape.permissionStorageColumnNames ?? []),
+  ].map((columnName) => quoteColumn(COMPUTED_COLUMN_RECORD_ALIAS, columnName));
   const joinedLookupAliases = new Set(
     computedColumns.flatMap(({ lookupAliases }) => lookupAliases),
   );

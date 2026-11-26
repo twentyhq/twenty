@@ -30,7 +30,6 @@ import { useSetIsLogConsoleEnabled } from '@/log-console/hooks/useSetIsLogConsol
 import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFullScreenState';
 import { logConsoleActiveSourceIdState } from '@/log-console/states/logConsoleActiveSourceIdState';
 import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
-import { logConsoleFiltersState } from '@/log-console/states/logConsoleFiltersState';
 import { logConsoleHeightState } from '@/log-console/states/logConsoleHeightState';
 import { logConsoleSelectedLogState } from '@/log-console/states/logConsoleSelectedLogState';
 import { type LogConsoleSource } from '@/log-console/types/LogConsoleSource';
@@ -49,7 +48,6 @@ import { getUiZoom } from '@/ui/theme/utils/getUiZoom';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { checkIfBillingEntitlementIsEnabledOnWorkspace } from '@/workspace/utils/checkIfBillingEntitlementIsEnabledOnWorkspace';
 import { BillingEntitlementKey } from '~/generated-metadata/graphql';
 
@@ -273,7 +271,6 @@ export const LogConsole = () => {
   const [logConsoleHeight, setLogConsoleHeight] = useAtomState(
     logConsoleHeightState,
   );
-  const setLogConsoleFilters = useSetAtomState(logConsoleFiltersState);
   const [logConsoleSelectedLog, setLogConsoleSelectedLog] = useAtomState(
     logConsoleSelectedLogState,
   );
@@ -487,17 +484,9 @@ export const LogConsole = () => {
 
   const changeSource = (sourceId: string) => {
     const selectedSource = sources.find((source) => source.id === sourceId);
-    const filterFields = selectedSource?.filterFields ?? [];
 
     closeSelectedLog();
     setLogConsoleActiveSourceId(selectedSource?.id ?? null);
-    setLogConsoleFilters((filters) =>
-      filters.filter((filter) =>
-        filterFields.some(
-          (filterField) => filterField.id === filter.filterFieldId,
-        ),
-      ),
-    );
   };
 
   const handlePanelTransitionEnd = (event: TransitionEvent<HTMLDivElement>) => {

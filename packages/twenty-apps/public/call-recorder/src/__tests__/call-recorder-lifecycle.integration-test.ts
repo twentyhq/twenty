@@ -68,18 +68,32 @@ const RECALL_BASE_URL = 'https://us-west-2.recall.ai/api/v1';
 const RESTRICTED_TITLE_PLACEHOLDER =
   'FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED';
 
-// The app's generated client only covers the objects the app uses, but test
-// fixture discovery needs fields that are not part of the app schema; this
-// hits the GraphQL APIs directly with the test API key.
-const twentyGraphql = async <TData>(
-  endpointPath: '/graphql' | '/metadata',
-  query: string,
-  variables: Record<string, unknown> = {},
-): Promise<TData> => {
+const readWorkspaceApiKey = (): string => {
+  const workspaceApiKey = process.env[WORKSPACE_API_KEY_ENV];
+
+  if (!isDefined(workspaceApiKey)) {
+    throw new Error(`${WORKSPACE_API_KEY_ENV} must be set`);
+  }
+
+  return workspaceApiKey;
+};
+
+// Fixture discovery needs fields outside the app's generated client.
+const twentyGraphql = async <TData>({
+  endpointPath,
+  query,
+  variables = {},
+  accessToken,
+}: {
+  endpointPath: '/graphql' | '/metadata';
+  query: string;
+  variables?: Record<string, unknown>;
+  accessToken: string;
+}): Promise<TData> => {
   const response = await fetch(`${process.env.TWENTY_API_URL}${endpointPath}`, {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${process.env[WORKSPACE_API_KEY_ENV]}`,
+      Authorization: `Bearer ${accessToken}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ query, variables }),
@@ -106,9 +120,9 @@ const fetchApplicationAccessToken = async (): Promise<string> => {
       id: string;
       oAuthClientId: string;
     } | null;
-  }>(
-    '/metadata',
-    `query FindApplicationRegistration($universalIdentifier: String!) {
+  }>({
+    endpointPath: '/metadata',
+    query: `query FindApplicationRegistration($universalIdentifier: String!) {
       findApplicationRegistrationByUniversalIdentifier(
         universalIdentifier: $universalIdentifier
       ) {
@@ -116,8 +130,9 @@ const fetchApplicationAccessToken = async (): Promise<string> => {
         oAuthClientId
       }
     }`,
-    { universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER },
-  );
+    variables: { universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER },
+    accessToken: readWorkspaceApiKey(),
+  });
 
   if (isNull(applicationRegistration)) {
     throw new Error('Call recorder is not registered');
@@ -127,15 +142,16 @@ const fetchApplicationAccessToken = async (): Promise<string> => {
     rotateApplicationRegistrationClientSecret: { clientSecret },
   } = await twentyGraphql<{
     rotateApplicationRegistrationClientSecret: { clientSecret: string };
-  }>(
-    '/metadata',
-    `mutation RotateApplicationRegistrationClientSecret($id: String!) {
+  }>({
+    endpointPath: '/metadata',
+    query: `mutation RotateApplicationRegistrationClientSecret($id: String!) {
       rotateApplicationRegistrationClientSecret(id: $id) {
         clientSecret
       }
     }`,
-    { id: applicationRegistration.id },
-  );
+    variables: { id: applicationRegistration.id },
+    accessToken: readWorkspaceApiKey(),
+  });
   const response = await fetch(`${process.env.TWENTY_API_URL}/oauth/token`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -192,16 +208,17 @@ type CalendarEventFixturesPage = {
   };
 };
 
-const discoverVisibleCalendarEventFixtures = async (): Promise<
-  CalendarEventFixture[]
-> => {
+// Handlers reconcile as the application, so a fixture must be fully visible to it.
+const discoverVisibleCalendarEventFixtures = async (
+  applicationAccessToken: string,
+): Promise<CalendarEventFixture[]> => {
   const fixtures: CalendarEventFixture[] = [];
   let after: string | null = null;
 
   do {
-    const eventsData: CalendarEventFixturesPage = await twentyGraphql(
-      '/graphql',
-      `query ($after: String) {
+    const eventsData: CalendarEventFixturesPage = await twentyGraphql({
+      endpointPath: '/graphql',
+      query: `query ($after: String) {
         calendarEvents(first: 200, after: $after) {
           edges {
             node {
@@ -223,8 +240,9 @@ const discoverVisibleCalendarEventFixtures = async (): Promise<
           pageInfo { hasNextPage endCursor }
         }
       }`,
-      { after },
-    );
+      variables: { after },
+      accessToken: applicationAccessToken,
+    });
     const connection = eventsData.calendarEvents;
 
     fixtures.push(
@@ -927,6 +945,7 @@ describe('call recorder app lifecycle (integration)', () => {
   // Built before the fetch interceptor is installed so the shared client's
   // Twenty API traffic always uses the real fetch.
   let client: CoreApiClient;
+  let workspaceApiKeyClient: CoreApiClient;
   let applicationAccessToken: string;
   let workspaceId: string;
   let availableCalendarEventFixtures: CalendarEventFixture[];
@@ -945,12 +964,18 @@ describe('call recorder app lifecycle (integration)', () => {
   };
 
   beforeAll(async () => {
-    client = new CoreApiClient();
     workspaceId = readWorkspaceIdFromApiKey();
-    availableCalendarEventFixtures =
-      await discoverVisibleCalendarEventFixtures();
     applicationAccessToken = await fetchApplicationAccessToken();
     await waitForCalendarChannelsAccess(applicationAccessToken);
+    client = new CoreApiClient({
+      headers: { Authorization: `Bearer ${applicationAccessToken}` },
+    });
+    workspaceApiKeyClient = new CoreApiClient({
+      headers: { Authorization: `Bearer ${readWorkspaceApiKey()}` },
+    });
+    availableCalendarEventFixtures = await discoverVisibleCalendarEventFixtures(
+      applicationAccessToken,
+    );
   });
 
   beforeEach(() => {
@@ -977,13 +1002,8 @@ describe('call recorder app lifecycle (integration)', () => {
     vi.stubEnv('RECALL_API_KEY', 'recall-api-key');
     vi.stubEnv('RECALL_REGION', 'us-west-2');
     vi.stubEnv('CALL_RECORDER_STYLE', 'NONE');
-    // Logic functions normally run with an app access token; the workspace
-    // API key is a token with the same workspaceId claim.
-    vi.stubEnv(
-      'TWENTY_APP_ACCESS_TOKEN',
-      process.env[WORKSPACE_API_KEY_ENV] ?? '',
-    );
-    // The calendar channels endpoint only answers the application itself.
+    // The workspace key can no longer write meetings or their recordings.
+    vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', applicationAccessToken);
     vi.stubEnv('TWENTY_APP_APPLICATION_ACCESS_TOKEN', applicationAccessToken);
   });
 
@@ -1019,15 +1039,38 @@ describe('call recorder app lifecycle (integration)', () => {
     }
   }, REAL_QUEUE_TIMEOUT_MS);
 
+  const warnCleanupFailure =
+    ({ step, callRecordingId }: { step: string; callRecordingId: string }) =>
+    (error: unknown) =>
+      console.warn(
+        `[test cleanup] ${step} failed for call recording ${callRecordingId}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+
+  // The workspace key can only destroy detached recordings; ending them first keeps a failed destroy inert.
   const destroyCallRecordings = async (
     callRecordingIds: string[],
   ): Promise<void> => {
     for (const callRecordingId of callRecordingIds) {
       await client
         .mutation({
+          updateCallRecording: {
+            __args: {
+              id: callRecordingId,
+              data: {
+                calendarEventId: null,
+                status: 'NOT_RECORDED',
+                recordingRequestStatus: 'CANCELED',
+              },
+            },
+            id: true,
+          },
+        })
+        .catch(warnCleanupFailure({ step: 'detach', callRecordingId }));
+      await workspaceApiKeyClient
+        .mutation({
           destroyCallRecording: { __args: { id: callRecordingId }, id: true },
         })
-        .catch(() => {});
+        .catch(warnCleanupFailure({ step: 'destroy', callRecordingId }));
     }
   };
 
@@ -1613,9 +1656,7 @@ describe('call recorder app lifecycle (integration)', () => {
           JSON.stringify(variables).includes('"id":{"in":')
         ) {
           recordingDeleted = true;
-          await client.mutation({
-            destroyCallRecording: { __args: { id: callRecordingId }, id: true },
-          });
+          await destroyCallRecordings([callRecordingId]);
         }
 
         return response;
@@ -4155,6 +4196,31 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(callRecording.externalBotId).toBeTruthy();
     });
 
+    it('schedules a bot when the user who sets On cannot create the recording', async () => {
+      const calendarEventId = await createCalendarEvent({
+        callRecorderPreference: 'ON',
+      });
+      // A run a user starts defaults to their token; the workspace key cannot create meeting recordings.
+      vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', readWorkspaceApiKey());
+
+      const result = await deliverCalendarEventUpdates({
+        calendarEventId,
+        updatedFields: ['callRecorderPreference'],
+        before: { callRecorderPreference: null },
+        after: { callRecorderPreference: 'ON' },
+      });
+
+      expect(result).toEqual(expect.objectContaining({ reconciled: true }));
+
+      const callRecording = (
+        await findCallRecordings({ calendarEventId: { in: [calendarEventId] } })
+      )[0];
+
+      expect(callRecording).toBeDefined();
+      expect(callRecording.recordingRequestStatus).toBe('REQUESTED');
+      expect(recall.bots.has(callRecording.externalBotId)).toBe(true);
+    });
+
     it('keeps an On set by hand on a meeting that already ended', async () => {
       const calendarEventId = await createCalendarEvent({
         startsAt: hoursAgo(3),
@@ -4586,6 +4652,7 @@ describe('call recorder app lifecycle (integration)', () => {
       ).toBe('CANCELED');
 
       vi.unstubAllEnvs();
+      vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', applicationAccessToken);
       vi.stubEnv('TWENTY_APP_APPLICATION_ACCESS_TOKEN', applicationAccessToken);
 
       await client.mutation({
