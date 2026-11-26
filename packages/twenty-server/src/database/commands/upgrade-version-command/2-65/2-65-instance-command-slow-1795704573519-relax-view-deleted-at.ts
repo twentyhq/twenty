@@ -1,11 +1,13 @@
-import { QueryRunner } from 'typeorm';
+import { type DataSource, type QueryRunner } from 'typeorm';
 
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
-import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
+import { type SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 
-@RegisteredInstanceCommand('2.65.0', 1795704573519)
-export class RelaxViewDeletedAtFastInstanceCommand implements FastInstanceCommand {
-  public async up(queryRunner: QueryRunner): Promise<void> {
+@RegisteredInstanceCommand('2.65.0', 1795704573519, { type: 'slow' })
+export class RelaxViewDeletedAtSlowInstanceCommand
+  implements SlowInstanceCommand
+{
+  async runDataMigration(dataSource: DataSource): Promise<void> {
     for (const tableName of [
       'view',
       'viewFilterGroup',
@@ -15,11 +17,13 @@ export class RelaxViewDeletedAtFastInstanceCommand implements FastInstanceComman
       'viewFieldGroup',
       'viewField',
     ]) {
-      await queryRunner.query(
+      await dataSource.query(
         `DELETE FROM "core"."${tableName}" WHERE "deletedAt" IS NOT NULL`,
       );
     }
+  }
 
+  public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       'DROP INDEX IF EXISTS "core"."IDX_VIEW_FIELD_FIELD_METADATA_ID_VIEW_ID_UNIQUE"',
     );
