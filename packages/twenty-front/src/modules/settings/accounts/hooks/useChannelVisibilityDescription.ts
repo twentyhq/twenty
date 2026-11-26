@@ -22,34 +22,40 @@ export const useChannelVisibilityDescription = (
     rolesReadingAllRecords?.isAdminRoleIncluded ?? false;
   const otherRoleCount = rolesReadingAllRecords?.otherRoleCount ?? 0;
 
+  if (isAdminRoleIncluded && otherRoleCount > 0 && isMessageChannel) {
+    return plural(otherRoleCount, {
+      one: `Define what will be visible to other users in your workspace. Admins and ${otherRoleCount} other role can read all your emails, whatever you choose here.`,
+      other: `Define what will be visible to other users in your workspace. Admins and ${otherRoleCount} other roles can read all your emails, whatever you choose here.`,
+    });
+  }
+
   if (isAdminRoleIncluded && otherRoleCount > 0) {
-    return isMessageChannel
-      ? plural(otherRoleCount, {
-          one: `Define what will be visible to other users in your workspace. Admins and ${otherRoleCount} other role can read all your emails, whatever you choose here.`,
-          other: `Define what will be visible to other users in your workspace. Admins and ${otherRoleCount} other roles can read all your emails, whatever you choose here.`,
-        })
-      : plural(otherRoleCount, {
-          one: `Define what will be visible to other users in your workspace. Admins and ${otherRoleCount} other role can see all your events, whatever you choose here.`,
-          other: `Define what will be visible to other users in your workspace. Admins and ${otherRoleCount} other roles can see all your events, whatever you choose here.`,
-        });
+    return plural(otherRoleCount, {
+      one: `Define what will be visible to other users in your workspace. Admins and ${otherRoleCount} other role can see all your events, whatever you choose here.`,
+      other: `Define what will be visible to other users in your workspace. Admins and ${otherRoleCount} other roles can see all your events, whatever you choose here.`,
+    });
+  }
+
+  if (isAdminRoleIncluded && isMessageChannel) {
+    return t`Define what will be visible to other users in your workspace. Admins can read all your emails, whatever you choose here.`;
   }
 
   if (isAdminRoleIncluded) {
-    return isMessageChannel
-      ? t`Define what will be visible to other users in your workspace. Admins can read all your emails, whatever you choose here.`
-      : t`Define what will be visible to other users in your workspace. Admins can see all your events, whatever you choose here.`;
+    return t`Define what will be visible to other users in your workspace. Admins can see all your events, whatever you choose here.`;
+  }
+
+  if (otherRoleCount > 0 && isMessageChannel) {
+    return plural(otherRoleCount, {
+      one: `Define what will be visible to other users in your workspace. ${otherRoleCount} role can read all your emails, whatever you choose here.`,
+      other: `Define what will be visible to other users in your workspace. ${otherRoleCount} roles can read all your emails, whatever you choose here.`,
+    });
   }
 
   if (otherRoleCount > 0) {
-    return isMessageChannel
-      ? plural(otherRoleCount, {
-          one: `Define what will be visible to other users in your workspace. ${otherRoleCount} role can read all your emails, whatever you choose here.`,
-          other: `Define what will be visible to other users in your workspace. ${otherRoleCount} roles can read all your emails, whatever you choose here.`,
-        })
-      : plural(otherRoleCount, {
-          one: `Define what will be visible to other users in your workspace. ${otherRoleCount} role can see all your events, whatever you choose here.`,
-          other: `Define what will be visible to other users in your workspace. ${otherRoleCount} roles can see all your events, whatever you choose here.`,
-        });
+    return plural(otherRoleCount, {
+      one: `Define what will be visible to other users in your workspace. ${otherRoleCount} role can see all your events, whatever you choose here.`,
+      other: `Define what will be visible to other users in your workspace. ${otherRoleCount} roles can see all your events, whatever you choose here.`,
+    });
   }
 
   return t`Define what will be visible to other users in your workspace`;
