@@ -103,4 +103,21 @@ describe('getCommandMenuInlineSearchRecordRows', () => {
       isRecordSearchFallbackRedundant: true,
     });
   });
+
+  it('keeps the record search fallback while searching when previous rows fit', () => {
+    const searchResultItems = buildSearchResultItems(2);
+
+    expect(
+      getCommandMenuInlineSearchRecordRows({
+        searchResultItems,
+        isInlineRecordSearchActive: true,
+        isSearchingRecords: true,
+      }),
+    ).toEqual({
+      inlineSearchResultItems: searchResultItems,
+      hasMoreSearchResultItems: false,
+      shouldDisplayNoRecordsFound: false,
+      isRecordSearchFallbackRedundant: false,
+    });
+  });
 });

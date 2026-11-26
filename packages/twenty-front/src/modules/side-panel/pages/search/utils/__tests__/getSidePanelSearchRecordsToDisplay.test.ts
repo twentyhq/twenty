@@ -7,10 +7,10 @@ describe('getSidePanelSearchRecordsToDisplay', () => {
         searchRecords: ['acme'],
         isLoading: false,
         isSearchSkipped: false,
-        canDisplayPreviousSearchRecords: false,
+        hasSearchSettledSinceLastSkip: false,
       }),
     ).toEqual({
-      canDisplayPreviousSearchRecords: true,
+      hasSearchSettledSinceLastSkip: true,
       searchRecordsToDisplay: ['acme'],
     });
   });
@@ -21,10 +21,10 @@ describe('getSidePanelSearchRecordsToDisplay', () => {
         searchRecords: ['acme'],
         isLoading: true,
         isSearchSkipped: false,
-        canDisplayPreviousSearchRecords: true,
+        hasSearchSettledSinceLastSkip: true,
       }),
     ).toEqual({
-      canDisplayPreviousSearchRecords: true,
+      hasSearchSettledSinceLastSkip: true,
       searchRecordsToDisplay: ['acme'],
     });
   });
@@ -35,10 +35,10 @@ describe('getSidePanelSearchRecordsToDisplay', () => {
         searchRecords: [],
         isLoading: false,
         isSearchSkipped: true,
-        canDisplayPreviousSearchRecords: true,
+        hasSearchSettledSinceLastSkip: true,
       }),
     ).toEqual({
-      canDisplayPreviousSearchRecords: false,
+      hasSearchSettledSinceLastSkip: false,
       searchRecordsToDisplay: [],
     });
   });
@@ -49,10 +49,10 @@ describe('getSidePanelSearchRecordsToDisplay', () => {
         searchRecords: ['acme'],
         isLoading: true,
         isSearchSkipped: false,
-        canDisplayPreviousSearchRecords: false,
+        hasSearchSettledSinceLastSkip: false,
       }),
     ).toEqual({
-      canDisplayPreviousSearchRecords: false,
+      hasSearchSettledSinceLastSkip: false,
       searchRecordsToDisplay: [],
     });
   });

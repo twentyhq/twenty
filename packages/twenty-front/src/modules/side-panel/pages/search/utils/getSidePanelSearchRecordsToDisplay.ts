@@ -2,19 +2,19 @@ export const getSidePanelSearchRecordsToDisplay = <TSearchRecord>({
   searchRecords,
   isLoading,
   isSearchSkipped,
-  canDisplayPreviousSearchRecords,
+  hasSearchSettledSinceLastSkip,
 }: {
   searchRecords: TSearchRecord[];
   isLoading: boolean;
   isSearchSkipped: boolean;
-  canDisplayPreviousSearchRecords: boolean;
+  hasSearchSettledSinceLastSkip: boolean;
 }) => {
-  const nextCanDisplayPreviousSearchRecords =
-    !isSearchSkipped && (!isLoading || canDisplayPreviousSearchRecords);
+  const nextHasSearchSettledSinceLastSkip =
+    !isSearchSkipped && (!isLoading || hasSearchSettledSinceLastSkip);
 
   return {
-    canDisplayPreviousSearchRecords: nextCanDisplayPreviousSearchRecords,
+    hasSearchSettledSinceLastSkip: nextHasSearchSettledSinceLastSkip,
     searchRecordsToDisplay:
-      isLoading && !nextCanDisplayPreviousSearchRecords ? [] : searchRecords,
+      isLoading && !nextHasSearchSettledSinceLastSkip ? [] : searchRecords,
   };
 };

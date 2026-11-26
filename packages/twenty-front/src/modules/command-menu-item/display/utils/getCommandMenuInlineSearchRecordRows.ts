@@ -19,9 +19,11 @@ export const getCommandMenuInlineSearchRecordRows = ({
     };
   }
 
-  const hasMoreSearchResultItems =
-    !isSearchingRecords &&
+  const hasMoreDisplayedSearchResultItems =
     searchResultItems.length > COMMAND_MENU_INLINE_SEARCH_RECORDS_LIMIT;
+
+  const hasMoreSearchResultItems =
+    !isSearchingRecords && hasMoreDisplayedSearchResultItems;
 
   const shouldDisplayNoRecordsFound =
     !isSearchingRecords && searchResultItems.length === 0;
@@ -34,8 +36,6 @@ export const getCommandMenuInlineSearchRecordRows = ({
     hasMoreSearchResultItems,
     shouldDisplayNoRecordsFound,
     isRecordSearchFallbackRedundant:
-      isSearchingRecords ||
-      hasMoreSearchResultItems ||
-      shouldDisplayNoRecordsFound,
+      hasMoreDisplayedSearchResultItems || shouldDisplayNoRecordsFound,
   };
 };

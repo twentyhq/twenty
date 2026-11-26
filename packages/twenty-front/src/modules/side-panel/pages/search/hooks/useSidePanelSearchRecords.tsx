@@ -59,21 +59,21 @@ export const useSidePanelSearchRecords = ({
     skip: isSearchSkipped,
   });
 
-  const [canDisplayPreviousSearchRecords, setCanDisplayPreviousSearchRecords] =
+  const [hasSearchSettledSinceLastSkip, setHasSearchSettledSinceLastSkip] =
     useState(false);
 
   const {
-    canDisplayPreviousSearchRecords: nextCanDisplayPreviousSearchRecords,
+    hasSearchSettledSinceLastSkip: nextHasSearchSettledSinceLastSkip,
     searchRecordsToDisplay,
   } = getSidePanelSearchRecordsToDisplay({
     searchRecords,
     isLoading: loading,
     isSearchSkipped,
-    canDisplayPreviousSearchRecords,
+    hasSearchSettledSinceLastSkip,
   });
 
-  if (nextCanDisplayPreviousSearchRecords !== canDisplayPreviousSearchRecords) {
-    setCanDisplayPreviousSearchRecords(nextCanDisplayPreviousSearchRecords);
+  if (nextHasSearchSettledSinceLastSkip !== hasSearchSettledSinceLastSkip) {
+    setHasSearchSettledSinceLastSkip(nextHasSearchSettledSinceLastSkip);
   }
 
   const isWaitingForDebouncedSearch =
