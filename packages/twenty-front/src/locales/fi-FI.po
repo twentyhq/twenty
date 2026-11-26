@@ -28712,20 +28712,10 @@ msgstr "Ohita"
 msgid "Skip anyway"
 msgstr "Ohita silti"
 
-#. js-lingui-id: 5jWe/6
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Skip calendar events with no participant outside the workspace domain, unless internal import is turned on."
-msgstr "Ohita kalenteritapahtumat, joissa ei ole työtilan verkkotunnuksen ulkopuolista osallistujaa, ellei sisäinen tuonti ole käytössä."
-
 #. js-lingui-id: TyudBs
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Skip creating a Name field "
 msgstr "Ohita Nimi-kentän luominen "
-
-#. js-lingui-id: pmVASU
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Skip internal meetings"
-msgstr "Ohita sisäiset kokoukset"
 
 #. js-lingui-id: PlF+NA
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
@@ -31245,6 +31235,7 @@ msgstr "Tämä palveluntarjoaja on sisäänrakennettu. Aseta sen API-avain sen s
 
 #. js-lingui-id: qfpz3J
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
+#: src/modules/views/utils/computeRelationFilterDisplayValue.ts
 msgid "This record"
 msgstr "Tämä tietue"
 

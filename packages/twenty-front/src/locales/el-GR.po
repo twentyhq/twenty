@@ -28712,20 +28712,10 @@ msgstr "Παράλειψη"
 msgid "Skip anyway"
 msgstr "Παράλειψη ούτως ή άλλως"
 
-#. js-lingui-id: 5jWe/6
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Skip calendar events with no participant outside the workspace domain, unless internal import is turned on."
-msgstr "Παράλειψη συμβάντων ημερολογίου χωρίς συμμετέχοντα εκτός του τομέα του χώρου εργασίας, εκτός αν είναι ενεργοποιημένη η εσωτερική εισαγωγή."
-
 #. js-lingui-id: TyudBs
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Skip creating a Name field "
 msgstr "Παράλειψη δημιουργίας πεδίου Ονόματος "
-
-#. js-lingui-id: pmVASU
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Skip internal meetings"
-msgstr "Παράλειψη εσωτερικών συναντήσεων"
 
 #. js-lingui-id: PlF+NA
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
@@ -31247,6 +31237,7 @@ msgstr "Αυτός ο πάροχος είναι ενσωματωμένος. Ορ
 
 #. js-lingui-id: qfpz3J
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
+#: src/modules/views/utils/computeRelationFilterDisplayValue.ts
 msgid "This record"
 msgstr "Αυτή η εγγραφή"
 
