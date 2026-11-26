@@ -42,7 +42,7 @@ export class AgentChatThreadTargetService {
   async attachThreadToRecord(args: ThreadRecordLinkArgs): Promise<void> {
     await this.writeLinkToReadableRecord({
       ...args,
-      writeLink: async (link, repository) => {
+      writeLink: async ({ link, repository }) => {
         // only standard legs have a unique index, so custom-object links are deduplicated by lookup
         if (await repository.existsBy(link)) {
           return;
@@ -56,7 +56,7 @@ export class AgentChatThreadTargetService {
   async detachThreadFromRecord(args: ThreadRecordLinkArgs): Promise<void> {
     await this.writeLinkToReadableRecord({
       ...args,
-      writeLink: (link, repository) => repository.softDelete(link),
+      writeLink: ({ link, repository }) => repository.softDelete(link),
     });
   }
 
@@ -68,10 +68,10 @@ export class AgentChatThreadTargetService {
     authContext,
     writeLink,
   }: ThreadRecordLinkArgs & {
-    writeLink: (
-      link: Record<string, string>,
-      repository: WorkspaceRepository<ObjectRecord>,
-    ) => Promise<unknown>;
+    writeLink: (args: {
+      link: Record<string, string>;
+      repository: WorkspaceRepository<ObjectRecord>;
+    }) => Promise<unknown>;
   }): Promise<void> {
     const joinColumnName = await this.resolveJoinColumnNameOrThrow({
       workspaceId,
@@ -87,10 +87,12 @@ export class AgentChatThreadTargetService {
         recordId,
       });
 
-      await writeLink(
-        { threadId, [joinColumnName]: recordId },
-        this.workspaceOrmManager.getRepository(threadTargetObjectName),
-      );
+      await writeLink({
+        link: { threadId, [joinColumnName]: recordId },
+        repository: this.workspaceOrmManager.getRepository(
+          threadTargetObjectName,
+        ),
+      });
     }, authContext);
   }
 

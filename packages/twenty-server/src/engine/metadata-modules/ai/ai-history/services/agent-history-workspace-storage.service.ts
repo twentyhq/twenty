@@ -1,5 +1,5 @@
 import { AgentHistoryStorageException } from 'src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource, type EntityManager } from 'typeorm';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -18,7 +18,11 @@ export type AgentHistoryStorageContext = {
 export class AgentHistoryWorkspaceStorageService {
   constructor(
     @InjectDataSource() private readonly dataSource: DataSource,
-    private readonly inboxObjectNamesResolverService: InboxObjectNamesResolverService,
+    @Inject(InboxObjectNamesResolverService)
+    private readonly inboxObjectNamesResolverService: Pick<
+      InboxObjectNamesResolverService,
+      'resolve'
+    >,
   ) {}
 
   async getContext(workspaceId: string): Promise<AgentHistoryStorageContext> {

@@ -25,7 +25,11 @@ export class AgentHistoryTransactionService {
       | 'makeConversationRecordsPrivateToPair'
       | 'deletePairSharesOfConversationRecords'
     >,
-    private readonly inboxObjectNamesResolverService: InboxObjectNamesResolverService,
+    @Inject(InboxObjectNamesResolverService)
+    private readonly inboxObjectNamesResolverService: Pick<
+      InboxObjectNamesResolverService,
+      'resolve'
+    >,
   ) {}
 
   async run<TResult>({
