@@ -8,6 +8,7 @@ import { IconComment, IconHome, IconSettings } from 'twenty-ui/icon';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
+import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
 import { MainNavigationDrawerTabSwitcher } from '@/navigation/components/MainNavigationDrawerTabSwitcher';
@@ -43,7 +44,23 @@ jest.mock(
   }),
 );
 
+jest.mock('@/navigation/hooks/useCanCustomizeSidebar', () => ({
+  useCanCustomizeSidebar: () => mockCanCustomizeSidebar,
+}));
+
+const mockEnterLayoutCustomizationMode = jest.fn();
+
+jest.mock(
+  '@/layout-customization/hooks/useEnterLayoutCustomizationMode',
+  () => ({
+    useEnterLayoutCustomizationMode: () => ({
+      enterLayoutCustomizationMode: mockEnterLayoutCustomizationMode,
+    }),
+  }),
+);
+
 let mockIsInboxEnabled = true;
+let mockCanCustomizeSidebar = true;
 let mockChatAttention: {
   chatAttention: InboxChatAttention | null;
   unreadOpenThreadCount: number;
@@ -149,6 +166,7 @@ describe('MainNavigationDrawerTabSwitcher', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockIsInboxEnabled = true;
+    mockCanCustomizeSidebar = true;
     mockChatAttention = null;
 
     jest.mocked(useNavigationDrawerTabs).mockReturnValue([
@@ -332,6 +350,76 @@ describe('MainNavigationDrawerTabSwitcher', () => {
 
     expect(mockSwitchToNavigationMenuTab).not.toHaveBeenCalled();
     expect(screen.queryByText('Delete tab')).not.toBeInTheDocument();
+  });
+
+  it('opens the customize menu when the active sidebar tab is clicked again', async () => {
+    jest
+      .mocked(useWorkspaceNavigationMenuContainers)
+      .mockReturnValue([salesTab]);
+    jest.mocked(useActiveNavigationMenuTab).mockReturnValue(salesTab);
+
+    renderTabSwitcher();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Sales' }));
+
+    await userEvent.click(await screen.findByText('Customize sidebar'));
+
+    expect(mockEnterLayoutCustomizationMode).toHaveBeenCalledTimes(1);
+    expect(mockSwitchToNavigationMenuTab).not.toHaveBeenCalled();
+  });
+
+  it('toggles the tab menu from the active sidebar tab button itself', async () => {
+    jest
+      .mocked(useWorkspaceNavigationMenuContainers)
+      .mockReturnValue([salesTab]);
+    jest.mocked(useActiveNavigationMenuTab).mockReturnValue(salesTab);
+
+    renderTabSwitcher();
+
+    const salesButton = screen.getByRole('button', { name: 'Sales' });
+
+    expect(salesButton).toHaveAttribute('aria-haspopup', 'menu');
+
+    await userEvent.click(salesButton);
+    expect(salesButton).toHaveAttribute('aria-expanded', 'true');
+
+    await userEvent.click(salesButton);
+    expect(salesButton).toHaveAttribute('aria-expanded', 'false');
+    expect(mockSwitchToNavigationMenuTab).not.toHaveBeenCalled();
+  });
+
+  it('reopens the active sidebar tab when the sidebar cannot be customized', async () => {
+    mockCanCustomizeSidebar = false;
+    jest
+      .mocked(useWorkspaceNavigationMenuContainers)
+      .mockReturnValue([salesTab]);
+    jest.mocked(useActiveNavigationMenuTab).mockReturnValue(salesTab);
+
+    renderTabSwitcher();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Sales' }));
+
+    expect(mockSwitchToNavigationMenuTab).toHaveBeenCalledWith('sales-tab-id');
+    expect(screen.queryByText('Customize sidebar')).not.toBeInTheDocument();
+  });
+
+  it('selects the active sidebar tab when its menu opens in edit mode', async () => {
+    jest
+      .mocked(useWorkspaceNavigationMenuContainers)
+      .mockReturnValue([salesTab]);
+    jest.mocked(useActiveNavigationMenuTab).mockReturnValue(salesTab);
+
+    const { store } = renderTabSwitcher({
+      isLayoutCustomizationModeEnabled: true,
+    });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Sales' }));
+
+    expect(await screen.findByText('Delete tab')).toBeInTheDocument();
+    expect(store.get(selectedNavigationMenuItemIdInEditModeState.atom)).toBe(
+      'sales-tab-id',
+    );
+    expect(mockSwitchToNavigationMenuTab).not.toHaveBeenCalled();
   });
 
   it('labels an unnamed sidebar tab "Tab"', () => {
