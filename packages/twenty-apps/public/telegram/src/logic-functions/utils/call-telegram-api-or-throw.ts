@@ -17,10 +17,12 @@ export const callTelegramApiOrThrow = async <TResult>({
   botToken,
   method,
   params,
+  timeoutMs = TELEGRAM_API_REQUEST_TIMEOUT_MS,
 }: {
   botToken: string;
   method: string;
   params?: Record<string, unknown>;
+  timeoutMs?: number;
 }): Promise<TResult> => {
   const response = await fetch(
     `${TELEGRAM_API_BASE_URL}/bot${botToken}/${method}`,
@@ -28,7 +30,7 @@ export const callTelegramApiOrThrow = async <TResult>({
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify(params ?? {}),
-      signal: AbortSignal.timeout(TELEGRAM_API_REQUEST_TIMEOUT_MS),
+      signal: AbortSignal.timeout(timeoutMs),
     },
   ).catch(() => {
     throw new TelegramApiError({

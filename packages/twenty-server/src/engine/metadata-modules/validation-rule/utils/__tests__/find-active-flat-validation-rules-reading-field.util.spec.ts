@@ -8,9 +8,19 @@ import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/
 
 const NOW = '2026-11-02T00:00:00.000Z';
 
+const READ_SCORE_TREE = { type: 'FIELD', fieldUniversalIdentifier: 'score' };
+const READ_EMPLOYEES_TREE = {
+  type: 'FIELD',
+  fieldUniversalIdentifier: 'employees',
+};
+const READ_COMPANY_EMPLOYEES_TREE = {
+  type: 'FIELD',
+  relationFieldUniversalIdentifier: 'company',
+  fieldUniversalIdentifier: 'employees',
+};
+
 const buildRule = (
-  rule: Pick<FlatValidationRule, 'name' | 'bindings'> &
-    Partial<FlatValidationRule>,
+  rule: Pick<FlatValidationRule, 'name' | 'tree'> & Partial<FlatValidationRule>,
 ): FlatValidationRule => ({
   id: `${rule.name}-id`,
   workspaceId: 'workspace-id',
@@ -23,7 +33,6 @@ const buildRule = (
   errorFieldMetadataUniversalIdentifier: null,
   description: null,
   icon: null,
-  expression: 'true',
   message: 'Message',
   isActive: true,
   createdAt: NOW,
@@ -59,10 +68,10 @@ describe('findActiveFlatValidationRulesReadingField', () => {
     expect(
       findRuleNames({
         rules: [
-          buildRule({ name: 'direct', bindings: { employees: 'employees' } }),
+          buildRule({ name: 'direct', tree: READ_EMPLOYEES_TREE }),
           buildRule({
             name: 'through relation',
-            bindings: { company: 'company', 'company.employees': 'employees' },
+            tree: READ_COMPANY_EMPLOYEES_TREE,
           }),
         ],
       }),
@@ -75,7 +84,7 @@ describe('findActiveFlatValidationRulesReadingField', () => {
         rules: [
           buildRule({
             name: 'through reverse side',
-            bindings: { company: 'company', 'company.employees': 'employees' },
+            tree: READ_COMPANY_EMPLOYEES_TREE,
           }),
         ],
         fieldUniversalIdentifiers: ['people', 'company'],
@@ -89,10 +98,14 @@ describe('findActiveFlatValidationRulesReadingField', () => {
         rules: [
           buildRule({
             name: 'inactive',
-            bindings: { employees: 'employees' },
+            tree: READ_EMPLOYEES_TREE,
             isActive: false,
           }),
-          buildRule({ name: 'other', bindings: { employees: 'score' } }),
+          buildRule({
+            name: 'other',
+            tree: READ_SCORE_TREE,
+          }),
+          buildRule({ name: 'draft', tree: null }),
         ],
       }),
     ).toEqual([]);

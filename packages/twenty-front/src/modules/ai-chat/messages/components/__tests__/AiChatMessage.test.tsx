@@ -504,8 +504,30 @@ describe('AiChatMessage', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Reply' }));
 
-    expect(screen.getAllByText('Ada')).toHaveLength(2);
+    expect(screen.getByText('Ada')).toBeInTheDocument();
     expect(screen.getByText('No text content')).toBeInTheDocument();
+  });
+
+  it('drops the author header of an assistant turn that only ran tools', () => {
+    renderMessage({
+      messageId: TOOL_ONLY_ASSISTANT_MESSAGE.id,
+      isAiChatInboxEnabled: true,
+    });
+
+    expect(screen.queryByText('Ada')).not.toBeInTheDocument();
+  });
+
+  it('keeps showing an error on an assistant turn that only ran tools', () => {
+    renderMessage({
+      messageId: TOOL_ONLY_ASSISTANT_MESSAGE.id,
+      isAiChatInboxEnabled: true,
+      error: new Error('The agent failed while running.'),
+    });
+
+    expect(screen.getByText('Ada')).toBeInTheDocument();
+    expect(
+      screen.getByText('The agent failed while running.'),
+    ).toBeInTheDocument();
   });
 
   it('opens the assistant message a reply quotes', async () => {

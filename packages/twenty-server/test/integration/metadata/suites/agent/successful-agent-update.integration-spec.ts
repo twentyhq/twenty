@@ -320,4 +320,55 @@ describe('Agent update should succeed', () => {
       triggers: [],
     });
   });
+
+  it('should store a trigger condition as a tree and return it as text', async () => {
+    const trigger = {
+      id: '2c7e9d41-5b8a-4f0e-9d3c-6a1b2c3d4e55',
+      type: 'DATABASE_EVENT' as const,
+      isActive: true,
+      instructions: null,
+      settings: {
+        eventName: 'company.updated',
+        condition: 'employees > 100 and previous.employees <= 100',
+      },
+    };
+
+    const { data: updateData } = await updateOneAgent({
+      expectToFail: false,
+      input: { id: testAgentId, triggers: [trigger] },
+    });
+
+    expect(updateData.updateOneAgent.triggers).toEqual([
+      {
+        ...trigger,
+        settings: {
+          eventName: 'company.updated',
+          condition: 'employees > 100 and previous.employees <= 100',
+        },
+      },
+    ]);
+
+    const [{ triggers: storedTriggers }] = await global.testDataSource.query(
+      `SELECT triggers FROM core."agent" WHERE id = $1`,
+      [testAgentId],
+    );
+
+    expect(storedTriggers[0].settings).not.toHaveProperty('condition');
+    expect(storedTriggers[0].settings.conditionTree).toMatchObject({
+      type: 'GROUP',
+      logicalOperator: 'AND',
+    });
+
+    const { data: resentData } = await updateOneAgent({
+      expectToFail: false,
+      input: {
+        id: testAgentId,
+        triggers: updateData.updateOneAgent.triggers,
+      },
+    });
+
+    expect(resentData.updateOneAgent.triggers).toEqual(
+      updateData.updateOneAgent.triggers,
+    );
+  });
 });

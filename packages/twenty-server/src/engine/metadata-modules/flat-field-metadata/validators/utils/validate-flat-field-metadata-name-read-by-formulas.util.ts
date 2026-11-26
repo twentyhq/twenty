@@ -1,8 +1,8 @@
 import { msg } from '@lingui/core/macro';
 import {
-  getFieldMetadataFormulaBindings,
   isDefined,
   isValidationRuleReservedName,
+  listFieldMetadataFormulaFieldNodes,
 } from 'twenty-shared/utils';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
@@ -28,10 +28,15 @@ export const validateFlatFieldMetadataNameReadByFormulas = ({
   )
     .filter(isDefined)
     .some(({ formula }) =>
-      Object.entries(getFieldMetadataFormulaBindings({ formula }) ?? {}).some(
-        ([path, boundUniversalIdentifier]) =>
-          boundUniversalIdentifier === universalIdentifier &&
-          isValidationRuleReservedName({ name, isMember: path.includes('.') }),
+      listFieldMetadataFormulaFieldNodes({ formula }).some(
+        ({ fieldUniversalIdentifier, relationFieldUniversalIdentifier }) =>
+          (relationFieldUniversalIdentifier === universalIdentifier &&
+            isValidationRuleReservedName({ name, isMember: false })) ||
+          (fieldUniversalIdentifier === universalIdentifier &&
+            isValidationRuleReservedName({
+              name,
+              isMember: isDefined(relationFieldUniversalIdentifier),
+            })),
       ),
     );
 

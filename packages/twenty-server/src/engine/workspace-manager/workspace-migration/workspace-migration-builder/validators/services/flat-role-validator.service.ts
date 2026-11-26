@@ -14,6 +14,7 @@ import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/wo
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { getMarketplaceApplicationRoleAssignabilityErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-assignability-errors.util';
 import { getRoleNotEditableErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-not-editable-errors.util';
 import { validateRoleBelongsToCallerApplication } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util';
 import { validateRoleLabelUniqueness } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-label-uniqueness.util';
@@ -61,6 +62,13 @@ export class FlatRoleValidatorService {
       ...validateRoleLabelUniqueness({
         label: flatEntityToValidate.label,
         existingFlatRoles: existingRoles,
+      }),
+    );
+
+    validationResult.errors.push(
+      ...getMarketplaceApplicationRoleAssignabilityErrors({
+        flatRole: flatEntityToValidate,
+        buildOptions,
       }),
     );
 
@@ -185,6 +193,14 @@ export class FlatRoleValidatorService {
       ...fromFlatRole,
       ...flatEntityUpdate,
     };
+
+    validationResult.errors.push(
+      ...getMarketplaceApplicationRoleAssignabilityErrors({
+        flatRole: toFlatRole,
+        fromFlatRole,
+        buildOptions,
+      }),
+    );
 
     validationResult.errors.push(
       ...validateRoleRequiredPropertiesAreDefined({

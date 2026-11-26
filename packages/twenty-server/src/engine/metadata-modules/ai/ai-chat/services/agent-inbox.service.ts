@@ -183,7 +183,7 @@ export class AgentInboxService {
         turnId,
         role: AgentMessageRole.ASSISTANT,
         agentId: null,
-        senderUserWorkspaceId: null,
+        senderWorkspaceMemberId: null,
         senderApplicationId: senderDetails.applicationId,
         isAwaitingAnswer: toolCallPart?.isAwaitingAnswer,
         parts,
@@ -494,7 +494,7 @@ export class AgentInboxService {
         turnId,
         role: AgentMessageRole.SYSTEM,
         agentId: null,
-        senderUserWorkspaceId: null,
+        senderWorkspaceMemberId: null,
         parts: [
           {
             type: 'text',

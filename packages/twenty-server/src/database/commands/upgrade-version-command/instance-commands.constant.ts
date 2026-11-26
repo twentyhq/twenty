@@ -346,8 +346,12 @@ import { RelaxViewVisibilityFastInstanceCommand } from 'src/database/commands/up
 import { RenameAgentChatChannelTablesToInboxChannelFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-instance-command-fast-1795688525750-rename-agent-chat-channel-tables-to-inbox-channel';
 import { AddFieldMetadataFormulaColumnFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-fast-1795701090644-add-field-metadata-formula-column';
 import { MoveFieldMetadataFormulaOutOfSettingsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-slow-1795701107918-move-field-metadata-formula-out-of-settings';
-import { AddNavigationMenuItemVisibleItemLimitFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-fast-1795709704648-add-navigation-menu-item-visible-item-limit';
-import { BackfillRecentChatsSectionVisibleItemLimitSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-slow-1795710079202-backfill-recent-chats-section-visible-item-limit';
+import { DropViewVisibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-fast-1795709923763-drop-view-visibility';
+import { AddListPinnedFieldMetadataIdToViewFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-fast-1795713501522-add-list-pinned-field-metadata-id-to-view';
+import { RelaxViewDeletedAtSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-slow-1795715543417-relax-view-deleted-at';
+import { AddValidationRuleTreeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-fast-1795719490855-add-validation-rule-tree';
+import { AddNavigationMenuItemVisibleItemLimitFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-fast-1795732312325-add-navigation-menu-item-visible-item-limit';
+import { BackfillRecentChatsSectionVisibleItemLimitSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-slow-1795732313325-backfill-recent-chats-section-visible-item-limit';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -696,6 +700,10 @@ export const INSTANCE_COMMANDS = [
   RenameAgentChatChannelTablesToInboxChannelFastInstanceCommand,
   AddFieldMetadataFormulaColumnFastInstanceCommand,
   MoveFieldMetadataFormulaOutOfSettingsSlowInstanceCommand,
+  DropViewVisibilityFastInstanceCommand,
+  AddListPinnedFieldMetadataIdToViewFastInstanceCommand,
+  RelaxViewDeletedAtSlowInstanceCommand,
+  AddValidationRuleTreeFastInstanceCommand,
   AddNavigationMenuItemVisibleItemLimitFastInstanceCommand,
   BackfillRecentChatsSectionVisibleItemLimitSlowInstanceCommand,
 ];

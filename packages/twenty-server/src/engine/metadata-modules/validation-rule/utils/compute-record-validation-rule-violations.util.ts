@@ -4,7 +4,10 @@ import {
   type ObjectRecord,
   type ValidationRuleFieldDescriptor,
 } from 'twenty-shared/types';
-import { createValidationRuleEvaluator } from 'twenty-shared/utils';
+import {
+  createValidationRuleEvaluator,
+  printValidationRuleExpression,
+} from 'twenty-shared/utils';
 
 import { type FlatValidationRule } from 'src/engine/metadata-modules/flat-validation-rule/types/flat-validation-rule.type';
 import { type RecordValidationRuleViolation } from 'src/engine/metadata-modules/validation-rule/types/record-validation-rule-violation.type';
@@ -26,7 +29,7 @@ export const computeRecordValidationRuleViolations = ({
   records: ObjectRecord[];
   validationRules: Pick<
     FlatValidationRule,
-    'id' | 'expression' | 'message' | 'errorFieldMetadataId'
+    'id' | 'tree' | 'message' | 'errorFieldMetadataId'
   >[];
   fields: ValidationRuleFieldDescriptor[];
   now: string;
@@ -40,7 +43,9 @@ export const computeRecordValidationRuleViolations = ({
   const ruleEvaluators = validationRules.map((validationRule) => ({
     validationRule,
     evaluate: createValidationRuleEvaluator({
-      expression: validationRule.expression,
+      expression:
+        printValidationRuleExpression({ tree: validationRule.tree, fields }) ??
+        '',
       fields,
     }),
   }));
