@@ -16382,11 +16382,6 @@ msgstr "استيراد رسائل البريد الإلكتروني الجديد
 msgid "Import new events from this account"
 msgstr "استيراد الأحداث الجديدة من هذا الحساب"
 
-#. js-lingui-id: 4Ljmum
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Import occurrences of recurring Google Calendar meetings up to 90 days ahead only, and import later occurrences as they come within 90 days."
-msgstr "استورد تكرارات اجتماعات Google Calendar المتكررة حتى 90 يوماً مقدماً فقط، واستورد التكرارات اللاحقة عندما تصبح ضمن 90 يوماً."
-
 #. js-lingui-id: D5QSQM
 #: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx
 msgid "Import only selected folders/labels"
@@ -16396,11 +16391,6 @@ msgstr "استيراد المجلدات/التسميات المحددة فقط"
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
 msgid "Import or add the MCP configuration from JetBrains settings."
 msgstr "استورد أو أضف تهيئة MCP من إعدادات JetBrains."
-
-#. js-lingui-id: 8zGGat
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Import recurring meetings 90 days ahead"
-msgstr "استورد الاجتماعات المتكررة حتى 90 يوماً مقدماً"
 
 #. js-lingui-id: LHHO6e
 #: src/modules/getting-started/constants/GettingStartedImportPrompt.ts
