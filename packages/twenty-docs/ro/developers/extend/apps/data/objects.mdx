@@ -194,6 +194,30 @@ Modificările aduse proprietății `isNullable` sunt aplicate la fiecare sincron
 }
 ```
 
+## Câmpuri de formulă
+
+O `formula` face ca un câmp să fie calculat: valoarea sa provine dintr-o expresie bazată pe alte câmpuri, iar înregistrările nu îi pot scrie valoarea. Este o proprietate a câmpului, alături de `universalSettings`, nu în interiorul acestuia, și se aplică câmpurilor `TEXT`, `NUMBER`, `BOOLEAN`, `DATE`, `DATE_TIME`, `SELECT`, `RATING` și `CURRENCY`.
+
+* `formula.expression` citește câmpurile înregistrării după nume (`price * quantity`), părțile compuse cu un punct (`amount.amountMicros`), câmpurile unei înregistrări relaționate de tip many-to-one (`company.name`) și agregările pentru o relație one-to-many (`count(tasks)`, `sum(deals.amount.amountMicros, deals.stage == 'WON')`).
+* O formulă `CURRENCY` calculează suma în micros și necesită, de asemenea, `formula.currencyCodeExpression`, cum ar fi `"USD"` sau `amount.currencyCode`.
+* Un câmp de formulă nu poate fi unic, căutabil sau identificatorul etichetei obiectului.
+
+```ts
+{
+  universalIdentifier: 'c2b8d1ef-5678-4a11-8bcd-111111111111',
+  name: 'total',
+  type: FieldType.NUMBER,
+  label: 'Total',
+  formula: { expression: 'price * quantity' },
+}
+```
+
+<Note>
+  Câmpurile de formulă sunt controlate de indicatorul de funcționalitate `IS_FORMULA_FIELD_ENABLED`. Sincronizarea
+  unei formule într-un spațiu de lucru fără indicator eșuează cu `Formula fields are not
+    enabled for this workspace`.
+</Note>
+
 ## Ce urmează
 
 * **Conectați acest obiect la altele** — consultați [Relații](/ro/developers/extend/apps/data/relations) pentru modelul de relație bidirecțională.
