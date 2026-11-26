@@ -9,7 +9,7 @@ import { Tooltip } from 'twenty-ui/primitives/surfaces';
 
 type SettingsRolePermissionsObjectOverrideNewRuleButtonProps = {
   roleId: string;
-  objectMetadataItem: EnrichedObjectMetadataItem;
+  objectMetadataItem: Pick<EnrichedObjectMetadataItem, 'id' | 'labelPlural'>;
   hasFullObjectAccess: boolean;
 };
 
