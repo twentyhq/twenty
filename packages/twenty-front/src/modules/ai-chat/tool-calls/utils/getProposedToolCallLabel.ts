@@ -1,7 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { type ProposedToolCall } from 'twenty-shared/ai';
 
-const DRAFT_EMAIL_TOOL_NAME = 'draft_email';
+import { EMAIL_TOOL_NAMES } from '@/ai-chat/tool-calls/constants/EmailToolNames';
 
 export const getProposedToolCallLabel = ({
   template,
@@ -12,5 +12,5 @@ export const getProposedToolCallLabel = ({
     return toolLabel;
   }
 
-  return toolName === DRAFT_EMAIL_TOOL_NAME ? t`Draft email` : t`Send email`;
+  return toolName === EMAIL_TOOL_NAMES.draft ? t`Draft email` : t`Send email`;
 };

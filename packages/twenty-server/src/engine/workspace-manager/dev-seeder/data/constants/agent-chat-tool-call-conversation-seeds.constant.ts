@@ -4,7 +4,7 @@ import { NOTE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data
 import { OPPORTUNITY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/opportunity-data-seeds.constant';
 import { PERSON_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/person-data-seeds.constant';
 import { TASK_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/task-data-seeds.constant';
-import { executeToolStep } from 'src/engine/workspace-manager/dev-seeder/data/utils/execute-tool-step.util';
+import { buildExecuteToolSeedStep } from 'src/engine/workspace-manager/dev-seeder/data/utils/build-execute-tool-seed-step.util';
 import { type SeededToolStep } from 'src/engine/workspace-manager/dev-seeder/data/utils/seeded-tool-step.type';
 
 type AgentChatToolCallConversationSeed = {
@@ -99,7 +99,7 @@ export const AGENT_CHAT_TOOL_CALL_CONVERSATION_SEEDS: AgentChatToolCallConversat
             ],
           },
         },
-        executeToolStep({
+        buildExecuteToolSeedStep({
           toolName: 'find_many_opportunities',
           toolArguments: {
             select: ['name', 'amount', 'stage'],
@@ -118,7 +118,7 @@ export const AGENT_CHAT_TOOL_CALL_CONVERSATION_SEEDS: AgentChatToolCallConversat
           },
           recordReferences: OPEN_DEALS,
         }),
-        executeToolStep({
+        buildExecuteToolSeedStep({
           toolName: 'group_by_opportunities',
           toolArguments: {
             groupBy: [{ stage: true }],
@@ -149,7 +149,7 @@ export const AGENT_CHAT_TOOL_CALL_CONVERSATION_SEEDS: AgentChatToolCallConversat
       prompt:
         'Google renews next month. Find our contacts there, add a task to call them and note where the deal stands.',
       steps: [
-        executeToolStep({
+        buildExecuteToolSeedStep({
           toolName: 'find_many_companies',
           toolArguments: { select: ['name'], name: { ilike: '%Google%' } },
           message: 'Found 1 company records',
@@ -162,7 +162,7 @@ export const AGENT_CHAT_TOOL_CALL_CONVERSATION_SEEDS: AgentChatToolCallConversat
           reasoning:
             'Start from the company so the contacts, the task and the note all attach to it.',
         }),
-        executeToolStep({
+        buildExecuteToolSeedStep({
           toolName: 'find_many_people',
           toolArguments: {
             select: ['name', 'jobTitle'],
@@ -179,7 +179,7 @@ export const AGENT_CHAT_TOOL_CALL_CONVERSATION_SEEDS: AgentChatToolCallConversat
           },
           recordReferences: GOOGLE_CONTACTS,
         }),
-        executeToolStep({
+        buildExecuteToolSeedStep({
           toolName: 'create_one_task',
           toolArguments: {
             title: 'Schedule follow-up call',
@@ -199,7 +199,7 @@ export const AGENT_CHAT_TOOL_CALL_CONVERSATION_SEEDS: AgentChatToolCallConversat
             },
           ],
         }),
-        executeToolStep({
+        buildExecuteToolSeedStep({
           toolName: 'update_one_opportunity',
           toolArguments: {
             id: OPPORTUNITY_DATA_SEED_IDS.ID_1,
@@ -219,7 +219,7 @@ export const AGENT_CHAT_TOOL_CALL_CONVERSATION_SEEDS: AgentChatToolCallConversat
             },
           ],
         }),
-        executeToolStep({
+        buildExecuteToolSeedStep({
           toolName: 'create_one_note',
           toolArguments: {
             title: 'Meeting Follow-up',
@@ -263,7 +263,7 @@ export const AGENT_CHAT_TOOL_CALL_CONVERSATION_SEEDS: AgentChatToolCallConversat
           },
           providerExecuted: true,
         },
-        executeToolStep({
+        buildExecuteToolSeedStep({
           toolName: 'http_request',
           toolArguments: {
             url: 'https://status.example.com/api/summary.json',
@@ -273,7 +273,7 @@ export const AGENT_CHAT_TOOL_CALL_CONVERSATION_SEEDS: AgentChatToolCallConversat
             'HTTP GET request to https://status.example.com/api/summary.json failed\nThe request timed out after 30000 ms.',
           reasoning: 'The status page exposes a JSON summary.',
         }),
-        executeToolStep({
+        buildExecuteToolSeedStep({
           toolName: 'http_request',
           toolArguments: {
             url: 'https://status.example.com/api/summary.json',
@@ -290,7 +290,7 @@ export const AGENT_CHAT_TOOL_CALL_CONVERSATION_SEEDS: AgentChatToolCallConversat
           },
           reasoning: 'The first request timed out, so it is worth one retry.',
         }),
-        executeToolStep({
+        buildExecuteToolSeedStep({
           toolName: 'search_help_center',
           toolArguments: { query: 'Microsoft calendar sync' },
           message: 'Found 2 help center articles',
@@ -310,7 +310,7 @@ export const AGENT_CHAT_TOOL_CALL_CONVERSATION_SEEDS: AgentChatToolCallConversat
       title: 'Send the kickoff recap to Meta',
       prompt: 'Send Meta a short recap of this morning’s kickoff.',
       steps: [
-        executeToolStep({
+        buildExecuteToolSeedStep({
           toolName: 'find_connected_accounts',
           toolArguments: {},
           message: 'Found 1 connected account',
@@ -320,14 +320,14 @@ export const AGENT_CHAT_TOOL_CALL_CONVERSATION_SEEDS: AgentChatToolCallConversat
             ],
           },
         }),
-        executeToolStep({
+        buildExecuteToolSeedStep({
           toolName: 'draft_email',
           toolArguments: META_RECAP_EMAIL,
           message: 'Draft saved',
           result: { subject: META_RECAP_EMAIL.subject },
           reasoning: 'A draft first, so the wording can be checked.',
         }),
-        executeToolStep({
+        buildExecuteToolSeedStep({
           toolName: 'send_email',
           toolArguments: META_RECAP_EMAIL,
           message: 'Email sent successfully',

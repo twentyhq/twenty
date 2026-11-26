@@ -14,9 +14,6 @@ const StyledReasoningText = styled.div`
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.regular};
   line-height: ${themeCssVariables.text.lineHeight.lg};
-  padding-left: calc(
-    ${themeCssVariables.icon.size.sm} * 1px + ${themeCssVariables.spacing[2]}
-  );
 
   ${StyledParagraph} {
     white-space: pre-line;

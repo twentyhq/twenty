@@ -126,6 +126,12 @@ const StyledRowAction = styled.div`
   }
 `;
 
+const StyledDetails = styled.div`
+  padding-left: calc(
+    ${themeCssVariables.icon.size.sm} * 1px + ${themeCssVariables.spacing[2]}
+  );
+`;
+
 type ThinkingStepRowLayoutProps = {
   icon: ReactNode;
   label: string;
@@ -194,7 +200,11 @@ export const ThinkingStepRowLayout = ({
         <StyledRow isExpandable={false}>{rowContent}</StyledRow>
       )}
 
-      {isExpandable && <Collapsible.Panel>{details}</Collapsible.Panel>}
+      {isExpandable && (
+        <Collapsible.Panel render={<StyledDetails />}>
+          {details}
+        </Collapsible.Panel>
+      )}
     </Collapsible.Root>
   );
 };

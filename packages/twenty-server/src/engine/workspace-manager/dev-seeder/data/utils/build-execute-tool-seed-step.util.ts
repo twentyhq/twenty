@@ -8,7 +8,7 @@ type SeededRecordReference = {
   displayName: string;
 };
 
-export const executeToolStep = ({
+export const buildExecuteToolSeedStep = ({
   toolName,
   toolArguments,
   message,

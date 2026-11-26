@@ -6,39 +6,12 @@ import {
   type AskQuestionItem,
   type AskQuestionResponse,
 } from 'twenty-shared/ai';
-import {
-  IconCheck,
-  type IconComponent,
-  IconSquareNumber1,
-  IconSquareNumber2,
-  IconSquareNumber3,
-  IconSquareNumber4,
-  IconSquareNumber5,
-  IconSquareNumber6,
-  IconSquareNumber7,
-  IconSquareNumber8,
-  IconSquareNumber9,
-} from 'twenty-ui/icon';
+import { IconCheck } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { TextWithChatReferences } from '@/ai-chat/message-content/components/TextWithChatReferences';
-import { AiChatAskDetails } from '@/ai-chat/tool-calls/components/AiChatAskDetails';
 import { StyledAiChatAskCard } from '@/ai-chat/tool-calls/components/StyledAiChatAskCard';
-
-const NUMBER_ICONS: IconComponent[] = [
-  IconSquareNumber1,
-  IconSquareNumber2,
-  IconSquareNumber3,
-  IconSquareNumber4,
-  IconSquareNumber5,
-  IconSquareNumber6,
-  IconSquareNumber7,
-  IconSquareNumber8,
-  IconSquareNumber9,
-];
-
-const getOptionNumberIcon = (optionIndex: number) =>
-  NUMBER_ICONS[Math.min(optionIndex, NUMBER_ICONS.length - 1)];
+import { getQuestionOptionNumberIcon } from '@/ai-chat/tool-calls/utils/getQuestionOptionNumberIcon';
 
 const StyledQuestionSection = styled.div`
   display: flex;
@@ -107,68 +80,65 @@ export const AiChatQuestionAnsweredDetails = ({
   const theme = useTheme();
 
   return (
-    <AiChatAskDetails>
-      <StyledAiChatAskCard>
-        {entries.map(({ question, answer }, entryIndex) => {
-          const selectedOptionIndices = answer?.selectedOptionIndices ?? [];
-          const freeText = answer?.freeText?.trim();
-          const OtherNumberIcon = getOptionNumberIcon(question.options.length);
+    <StyledAiChatAskCard>
+      {entries.map(({ question, answer }, entryIndex) => {
+        const selectedOptionIndices = answer?.selectedOptionIndices ?? [];
+        const freeText = answer?.freeText?.trim();
+        const OtherNumberIcon = getQuestionOptionNumberIcon(
+          question.options.length,
+        );
 
-          return (
-            <Fragment key={entryIndex}>
-              {entryIndex > 0 && <StyledDivider />}
-              <StyledQuestionSection>
-                <StyledQuestionText>
-                  <TextWithChatReferences text={question.question} />
-                </StyledQuestionText>
-                <StyledOptionsList>
-                  {question.options.map((option, optionIndex) => {
-                    const NumberIcon = getOptionNumberIcon(optionIndex);
-                    const isSelected =
-                      selectedOptionIndices.includes(optionIndex);
+        return (
+          <Fragment key={entryIndex}>
+            {entryIndex > 0 && <StyledDivider />}
+            <StyledQuestionSection>
+              <StyledQuestionText>
+                <TextWithChatReferences text={question.question} />
+              </StyledQuestionText>
+              <StyledOptionsList>
+                {question.options.map((option, optionIndex) => {
+                  const NumberIcon = getQuestionOptionNumberIcon(optionIndex);
+                  const isSelected =
+                    selectedOptionIndices.includes(optionIndex);
 
-                    return (
-                      <StyledOptionRow
-                        key={optionIndex}
-                        isSelected={isSelected}
-                      >
-                        <NumberIcon
-                          size={theme.icon.size.sm}
-                          color={themeCssVariables.font.color.tertiary}
-                        />
-                        <StyledOptionLabel isSelected={isSelected}>
-                          <TextWithChatReferences text={option.label} />
-                        </StyledOptionLabel>
-                        {isSelected && (
-                          <IconCheck
-                            size={theme.icon.size.sm}
-                            aria-label={t`Selected`}
-                          />
-                        )}
-                      </StyledOptionRow>
-                    );
-                  })}
-                  {isNonEmptyString(freeText) && (
-                    <StyledOptionRow isSelected>
-                      <OtherNumberIcon
+                  return (
+                    <StyledOptionRow key={optionIndex} isSelected={isSelected}>
+                      <NumberIcon
                         size={theme.icon.size.sm}
                         color={themeCssVariables.font.color.tertiary}
                       />
-                      <StyledOptionLabel isSelected>
-                        <TextWithChatReferences text={freeText} />
+                      <StyledOptionLabel isSelected={isSelected}>
+                        <TextWithChatReferences text={option.label} />
                       </StyledOptionLabel>
-                      <IconCheck
-                        size={theme.icon.size.sm}
-                        aria-label={t`Selected`}
-                      />
+                      {isSelected && (
+                        <IconCheck
+                          size={theme.icon.size.sm}
+                          aria-label={t`Selected`}
+                        />
+                      )}
                     </StyledOptionRow>
-                  )}
-                </StyledOptionsList>
-              </StyledQuestionSection>
-            </Fragment>
-          );
-        })}
-      </StyledAiChatAskCard>
-    </AiChatAskDetails>
+                  );
+                })}
+                {isNonEmptyString(freeText) && (
+                  <StyledOptionRow isSelected>
+                    <OtherNumberIcon
+                      size={theme.icon.size.sm}
+                      color={themeCssVariables.font.color.tertiary}
+                    />
+                    <StyledOptionLabel isSelected>
+                      <TextWithChatReferences text={freeText} />
+                    </StyledOptionLabel>
+                    <IconCheck
+                      size={theme.icon.size.sm}
+                      aria-label={t`Selected`}
+                    />
+                  </StyledOptionRow>
+                )}
+              </StyledOptionsList>
+            </StyledQuestionSection>
+          </Fragment>
+        );
+      })}
+    </StyledAiChatAskCard>
   );
 };

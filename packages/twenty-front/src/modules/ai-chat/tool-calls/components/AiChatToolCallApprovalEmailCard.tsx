@@ -16,14 +16,11 @@ import { Button } from 'twenty-ui/primitives/input';
 import { serializeEmailRecipients } from '@/activities/emails/recipients/utils/serializeEmailRecipients';
 import { AiChatApprovalEmailReview } from '@/ai-chat/tool-calls/components/AiChatApprovalEmailReview';
 import { AiChatToolCallApprovalCardLayout } from '@/ai-chat/tool-calls/components/AiChatToolCallApprovalCardLayout';
+import { EMAIL_TOOL_NAMES } from '@/ai-chat/tool-calls/constants/EmailToolNames';
 import { useAnswerToolCallApproval } from '@/ai-chat/tool-calls/hooks/useAnswerToolCallApproval';
 import { type AiChatApprovalReviewEmailDraft } from '@/ai-chat/tool-calls/types/AiChatApprovalReviewEmailDraft';
+import { getProposedToolCallLabel } from '@/ai-chat/tool-calls/utils/getProposedToolCallLabel';
 import { readEmailDraftFromToolArguments } from '@/ai-chat/tool-calls/utils/readEmailDraftFromToolArguments';
-
-const EMAIL_TOOL_NAMES = {
-  send: 'send_email',
-  draft: 'draft_email',
-} as const;
 
 type AiChatToolCallApprovalEmailCardProps = {
   toolCallId: string;
@@ -72,11 +69,7 @@ export const AiChatToolCallApprovalEmailCard = ({
 
   return (
     <AiChatToolCallApprovalCardLayout
-      title={
-        proposal.toolName === EMAIL_TOOL_NAMES.draft
-          ? t`Draft email`
-          : t`Send email`
-      }
+      title={getProposedToolCallLabel(proposal)}
       Icon={IconMail}
       approval={approval}
       actions={
