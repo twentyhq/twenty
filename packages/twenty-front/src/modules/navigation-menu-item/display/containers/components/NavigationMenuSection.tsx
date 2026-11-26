@@ -3,6 +3,7 @@ import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
 
 import { NAVIGATION_MENU_SECTION_VISIBLE_ITEM_LIMIT } from '@/navigation-menu-item/common/constants/NavigationMenuSectionVisibleItemLimit';
 import { isNavigationMenuSectionShowingAllItemsFamilyState } from '@/navigation-menu-item/common/states/isNavigationMenuSectionShowingAllItemsFamilyState';
+import { getNavigationMenuSectionNavigationSectionId } from '@/navigation-menu-item/common/utils/getNavigationMenuSectionNavigationSectionId';
 import { type NamedNavigationMenuItem } from '@/navigation-menu-item/common/types/NamedNavigationMenuItem';
 import { useNavigationMenuContainerItems } from '@/navigation-menu-item/display/hooks/useNavigationMenuContainerItems';
 import { NavigationMenuItemSection } from '@/navigation-menu-item/display/sections/components/NavigationMenuItemSection';
@@ -13,7 +14,7 @@ import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/us
 import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
 
 type NavigationMenuSectionProps = {
-  section: Pick<NamedNavigationMenuItem, 'id' | 'name'>;
+  section: Pick<NamedNavigationMenuItem, 'id' | 'name' | 'builtInSectionKey'>;
 };
 
 export const NavigationMenuSection = ({
@@ -25,7 +26,7 @@ export const NavigationMenuSection = ({
     section.id,
   );
   const { isNavigationSectionOpen, toggleNavigationSection } =
-    useNavigationSection(`navigation-menu-section-${section.id}`);
+    useNavigationSection(getNavigationMenuSectionNavigationSectionId(section));
   const { topLevelItems, folderChildrenById } = useNavigationMenuContainerItems(
     section.id,
   );

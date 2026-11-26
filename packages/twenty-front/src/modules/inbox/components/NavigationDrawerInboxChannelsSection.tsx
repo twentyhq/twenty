@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { IconHash, IconPlus } from 'twenty-ui/icon';
 
+import { INBOX_CHANNELS_NAVIGATION_SECTION_ID } from '@/inbox/constants/InboxChannelsNavigationSectionId';
 import { NavigationDrawerInboxChannelItem } from '@/inbox/components/NavigationDrawerInboxChannelItem';
 import { useCreateInboxChannel } from '@/inbox/hooks/useCreateInboxChannel';
 import { useOpenInboxChannel } from '@/inbox/hooks/useOpenInboxChannel';
@@ -17,8 +18,6 @@ import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/compone
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
-
-const INBOX_CHANNELS_NAVIGATION_SECTION_ID = 'AiChatChannels';
 
 type NavigationDrawerInboxChannelsSectionProps = {
   headerAction?: ReactNode;

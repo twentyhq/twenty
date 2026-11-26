@@ -2,6 +2,7 @@ import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
+import { INBOX_FAVORITES_NAVIGATION_SECTION_ID } from '@/inbox/constants/InboxFavoritesNavigationSectionId';
 import { NavigationDrawerInboxChannelItem } from '@/inbox/components/NavigationDrawerInboxChannelItem';
 import { NavigationDrawerInboxThreadItem } from '@/inbox/components/NavigationDrawerInboxThreadItem';
 import { inboxChannelSummariesState } from '@/inbox/states/inboxChannelSummariesState';
@@ -12,8 +13,6 @@ import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-d
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type AiChatChannel } from '@/ai-chat/threads/types/AiChatChannel';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
-
-const INBOX_FAVORITES_NAVIGATION_SECTION_ID = 'AiChatFavorites';
 
 type NavigationDrawerInboxFavoritesSectionProps = {
   label?: string;
