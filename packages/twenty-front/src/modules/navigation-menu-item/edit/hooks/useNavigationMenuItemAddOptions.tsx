@@ -28,6 +28,7 @@ import { getNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
 import { NATIVE_PAGE_NAVIGATION_MENU_ITEM_CONFIGS } from '@/navigation-menu-item/display/native-page/constants/NativePageNavigationMenuItemConfigs';
 import { hasNativePagePermission } from '@/navigation-menu-item/display/native-page/utils/hasNativePagePermission';
+import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
 import { type NewNavigationMenuItemInput } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 import { useNavigationMenuItemAutomationOptions } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemAutomationOptions';
@@ -47,6 +48,7 @@ import { ViewKey } from '@/views/types/ViewKey';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 type UseNavigationMenuItemAddOptionsParams = {
+  section: NavigationMenuItemSection;
   step: NavigationMenuItemAddStep;
   search: string;
   objectId: string | null;
@@ -59,6 +61,7 @@ type UseNavigationMenuItemAddOptionsParams = {
 };
 
 export const useNavigationMenuItemAddOptions = ({
+  section,
   step,
   search,
   objectId,
@@ -119,13 +122,16 @@ export const useNavigationMenuItemAddOptions = ({
         .map((view) => view.objectMetadataId),
     ),
   });
+  const isAddingToFavorites = section === 'favorite';
   const { hasAutomationAccess, automationItemGroups, automationLoading } =
     useNavigationMenuItemAutomationOptions({
       search,
-      skip: step !== 'automation' && !isSearchingAllItems,
+      skip:
+        isAddingToFavorites || (step !== 'automation' && !isSearchingAllItems),
       currentItems,
       addItem,
     });
+  const canAddAutomations = hasAutomationAccess && !isAddingToFavorites;
 
   const getItems = (
     targetStep: NavigationMenuItemAddStep = step,
@@ -155,7 +161,7 @@ export const useNavigationMenuItemAddOptions = ({
           onClick: () => navigateToStep('record'),
           hasSubMenu: true,
         },
-        ...(hasAutomationAccess
+        ...(canAddAutomations
           ? [
               {
                 id: 'automation',
