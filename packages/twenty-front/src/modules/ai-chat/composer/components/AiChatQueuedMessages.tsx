@@ -1,3 +1,4 @@
+import { useAiChatAssistantProfile } from '@/ai-chat/hooks/useAiChatAssistantProfile';
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
@@ -18,6 +19,7 @@ import { aiChatThreadFetchedMessagesFamilyState } from '@/ai-chat/states/server/
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
+import { getAgentChatPreviewPlainText } from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -38,6 +40,7 @@ export const AiChatQueuedMessages = () => {
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
   const { threadId } = useAiChatInstanceOrThrow();
+  const { displayName: assistantDisplayName } = useAiChatAssistantProfile();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
@@ -73,7 +76,10 @@ export const AiChatQueuedMessages = () => {
     });
     const queuedMessage = {
       id: message.id,
-      text: getAiChatMessageText(message),
+      text: getAgentChatPreviewPlainText({
+        markdown: getAiChatMessageText(message),
+        assistantDisplayName,
+      }),
       isRemovable: isAiChatQueuedMessageRemovable({
         message,
         currentWorkspaceMemberId: currentWorkspaceMember?.id,
