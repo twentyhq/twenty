@@ -5,6 +5,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { UpsertRecordsInStoreEffect } from '@/object-record/record-store/components/UpsertRecordsInStoreEffect';
+import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 
 const StyledRecordRow = styled.div`
@@ -32,9 +33,14 @@ export const AiChatToolCallApprovalRecord = ({
   label,
 }: AiChatToolCallApprovalRecordProps) => {
   const { t } = useLingui();
+  const { recordGqlFields } = useGenerateDepthRecordGqlFieldsFromObject({
+    objectNameSingular,
+    depth: 0,
+  });
   const { record, loading, error } = useFindOneRecord({
     objectNameSingular,
     objectRecordId: recordId,
+    recordGqlFields,
   });
 
   if (loading) {
