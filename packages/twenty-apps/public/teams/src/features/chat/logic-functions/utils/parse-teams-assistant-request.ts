@@ -67,6 +67,7 @@ export const parseTeamsAssistantRequest = ({
       emptyRequest: {
         teamsActivityId: activity.id,
         teamsConversationId: conversationId,
+        teamsConversationType: conversationType,
         teamsServiceUrl: serviceUrl,
       },
     };

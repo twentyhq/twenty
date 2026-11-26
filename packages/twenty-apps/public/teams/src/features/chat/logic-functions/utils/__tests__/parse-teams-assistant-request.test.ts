@@ -128,6 +128,7 @@ describe('parseTeamsAssistantRequest', () => {
       emptyRequest: {
         teamsActivityId: '1700000000000',
         teamsConversationId: 'a:personal-conversation',
+        teamsConversationType: 'personal',
         teamsServiceUrl: SERVICE_URL,
       },
     });

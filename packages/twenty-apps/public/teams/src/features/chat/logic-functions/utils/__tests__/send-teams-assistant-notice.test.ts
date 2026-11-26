@@ -54,6 +54,30 @@ describe('sendTeamsAssistantNotice', () => {
     });
   });
 
+  it('should pass suggested actions through to the reply', async () => {
+    const suggestedActions = {
+      actions: [
+        {
+          type: 'imBack' as const,
+          title: 'What deals are closing this month?',
+          value: 'What deals are closing this month?',
+        },
+      ],
+    };
+
+    await sendTeamsAssistantNotice({
+      payload: PAYLOAD,
+      kind: 'welcome',
+      text: 'Welcome',
+      ttlMs: 60_000,
+      suggestedActions,
+    });
+
+    expect(sendReplyOnceMock).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({ suggestedActions }),
+    );
+  });
+
   it('should post for a bot install, which carries no message', async () => {
     await expect(
       sendNotice({
