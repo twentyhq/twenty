@@ -4,7 +4,15 @@ import 'twenty-ui/theme-light.css';
 
 import styled from '@emotion/styled';
 import { useRef, useState } from 'react';
-import { enqueueSnackbar, t, useColorScheme } from 'twenty-sdk/front-component';
+import {
+  AppPath,
+  enqueueSnackbar,
+  navigate,
+  t,
+  useColorScheme,
+  useLocation,
+} from 'twenty-sdk/front-component';
+import { isDefined } from 'twenty-sdk/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
 import {
@@ -58,6 +66,7 @@ type LinkedinSettingsState =
 
 export const LinkedinSettings = () => {
   const colorScheme = useColorScheme();
+  const location = useLocation();
   const [state, setState] = useState<LinkedinSettingsState>({
     step: 'loading',
   });
@@ -161,6 +170,12 @@ export const LinkedinSettings = () => {
     }
   };
 
+  // The SDK only navigates to app paths, so the settings tab hash rides in the catch-all splat.
+  const handleGoToGeneralTab = (pathname: string) =>
+    navigate(AppPath.SettingsCatchAll, {
+      '*': `${pathname.replace(/^\/settings\//, '')}#general`,
+    });
+
   const view = state.step === 'ready' ? state.view : undefined;
   const isImportingHistory =
     view?.isConnected === true && view.historyImport?.status === 'IMPORTING';
@@ -195,12 +210,25 @@ export const LinkedinSettings = () => {
         )}
         {view?.isConnected === false && (
           <Section.Root>
-            <Section.Header
-              title={t('Account')}
-              description={t(
-                'Connect your LinkedIn account to choose what gets synced.',
+            <Section.Header title={t('Account')} />
+            <InlineBanner
+              status="info"
+              fullWidth
+              embedded
+              action={
+                isDefined(location) && (
+                  <InlineBanner.Action
+                    onClick={() => handleGoToGeneralTab(location.pathname)}
+                  >
+                    {t('Go to General')}
+                  </InlineBanner.Action>
+                )
+              }
+            >
+              {t(
+                'Connect your LinkedIn account in the General tab to choose what gets synced.',
               )}
-            />
+            </InlineBanner>
           </Section.Root>
         )}
         {view?.isConnected === true && (
