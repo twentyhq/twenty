@@ -2,6 +2,7 @@ import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { getDefaultStore } from 'jotai';
 import {
   type AskQuestionItem,
   type ProposedToolCall,
@@ -9,6 +10,7 @@ import {
 } from 'twenty-shared/ai';
 
 import { AiChatPendingAskGate } from '@/ai-chat/tool-calls/components/AiChatPendingAskGate';
+import { aiChatRecordApprovalAnsweringToolCallIdsFamilyState } from '@/ai-chat/tool-calls/states/aiChatRecordApprovalAnsweringToolCallIdsFamilyState';
 import { type AiChatPendingQuestion } from '@/ai-chat/tool-calls/types/AiChatPendingQuestion';
 
 const useAiChatPendingToolCalls = jest.fn();
@@ -43,6 +45,11 @@ jest.mock('@/ai-chat/tool-calls/components/AiChatFormCard', () => ({
     </div>
   ),
 }));
+jest.mock('@/ai-chat/tool-calls/components/AiChatRecordApprovalDeck', () => ({
+  AiChatRecordApprovalDeck: () => (
+    <div role="group" aria-label="Record approvals" />
+  ),
+}));
 jest.mock('@/ai-chat/tool-calls/components/AiChatToolCallApprovalCard', () => ({
   AiChatToolCallApprovalCard: ({
     proposal,
@@ -70,6 +77,20 @@ const EMAIL_APPROVAL = {
     summary: 'Your renewal',
     arguments: {},
     template: 'email',
+  },
+  isPostedByWorkflow: false,
+};
+
+const RECORD_APPROVAL = {
+  toolCallId: 'call-5',
+  kind: 'toolCallApproval',
+  proposal: {
+    toolName: 'create_person',
+    toolLabel: 'Create person',
+    summary: 'Ada Lovelace',
+    arguments: {},
+    template: 'recordCreate',
+    objectNameSingular: 'person',
   },
   isPostedByWorkflow: false,
 };
@@ -123,6 +144,31 @@ describe('AiChatPendingAskGate', () => {
       screen.getByRole('group', { name: 'Tool call approval' }),
     ).toHaveTextContent('Your renewal');
     expect(screen.queryByRole('textbox', { name: 'Message' })).toBeNull();
+  });
+
+  it.each([
+    {
+      name: 'shows a last record approval on its own card',
+      answeringToolCallIds: [],
+      groupName: 'Tool call approval',
+    },
+    {
+      name: 'keeps the deck while its last record approval is being answered',
+      answeringToolCallIds: ['call-5'],
+      groupName: 'Record approvals',
+    },
+  ])('$name', ({ answeringToolCallIds, groupName }) => {
+    useAiChatPendingToolCalls.mockReturnValue([RECORD_APPROVAL]);
+    getDefaultStore().set(
+      aiChatRecordApprovalAnsweringToolCallIdsFamilyState.atomFamily({
+        threadId: 'thread-1',
+      }),
+      answeringToolCallIds,
+    );
+
+    renderGate();
+
+    expect(screen.getByRole('group', { name: groupName })).toBeVisible();
   });
 
   it('shows a form to fill in place of the composer', () => {
