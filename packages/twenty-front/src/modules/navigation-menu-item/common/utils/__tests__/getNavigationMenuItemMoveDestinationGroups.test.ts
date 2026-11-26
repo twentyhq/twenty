@@ -68,7 +68,7 @@ const toContainerIdsByTab = (
   ]);
 
 describe('getNavigationMenuItemMoveDestinationGroups', () => {
-  it('should group folders and sections under Home then each tab, without a root level entry', () => {
+  it('should group the root level, folders and sections under Home then each tab', () => {
     expect(
       toContainerIdsByTab(
         getNavigationMenuItemMoveDestinationGroups({
@@ -78,9 +78,9 @@ describe('getNavigationMenuItemMoveDestinationGroups', () => {
         }),
       ),
     ).toEqual([
-      [null, ['home-folder', 'home-section']],
-      ['sales', ['deals', 'deals-folder', 'pipeline']],
-      ['support', ['support-folder']],
+      [null, [null, 'home-folder', 'home-section']],
+      ['sales', ['sales', 'deals', 'deals-folder', 'pipeline']],
+      ['support', ['support', 'support-folder']],
     ]);
   });
 
@@ -94,7 +94,7 @@ describe('getNavigationMenuItemMoveDestinationGroups', () => {
     ).toEqual([null, 'support', 'sales']);
   });
 
-  it('should drop folders and tabs left empty when the item cannot move into a folder', () => {
+  it('should keep only the root level and sections when the item cannot move into a folder', () => {
     expect(
       toContainerIdsByTab(
         getNavigationMenuItemMoveDestinationGroups({
@@ -104,8 +104,9 @@ describe('getNavigationMenuItemMoveDestinationGroups', () => {
         }),
       ),
     ).toEqual([
-      [null, ['home-section']],
-      ['sales', ['deals', 'pipeline']],
+      [null, [null, 'home-section']],
+      ['sales', ['sales', 'deals', 'pipeline']],
+      ['support', ['support']],
     ]);
   });
 });

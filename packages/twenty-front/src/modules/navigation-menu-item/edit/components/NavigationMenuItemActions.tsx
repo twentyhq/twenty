@@ -30,8 +30,13 @@ import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
 import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
 import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
-import { type NavigationMenuItemMoveOptionGroup } from '@/navigation-menu-item/edit/types/NavigationMenuItemMoveOptionGroup';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+
+type NavigationMenuItemMoveOptionGroup = {
+  id: string;
+  label?: string;
+  options: NavigationMenuItemOption[];
+};
 
 type NavigationMenuItemActionsProps = {
   item: NavigationMenuItem;
@@ -94,12 +99,14 @@ export const NavigationMenuItemActions = ({
     destination: NavigationMenuItemMoveDestination,
   ): NavigationMenuItemOption => {
     const moveOption = {
-      id: destination.containerId,
+      id: destination.containerId ?? 'home',
       isDisabled: (item.parentId ?? null) === destination.containerId,
       onClick: () => run(() => moveToFolder(item.id, destination.containerId)),
     };
 
     switch (destination.kind) {
+      case 'root':
+        return { ...moveOption, label: t`Root level`, Icon: IconHierarchy2 };
       case 'section':
         return {
           ...moveOption,

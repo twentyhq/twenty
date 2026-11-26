@@ -37,10 +37,11 @@ export const getNavigationMenuItemMoveDestinationGroups = ({
       }));
   };
 
-  return [null, ...tabIds]
-    .map((tabId) => ({
+  return [null, ...tabIds].map(
+    (tabId): NavigationMenuItemMoveDestinationGroup => ({
       tabId,
       destinations: [
+        { kind: 'root', containerId: tabId },
         ...getFolderDestinations(tabId),
         ...getNavigationMenuContainersInDisplayOrder({
           navigationMenuItems: items,
@@ -53,6 +54,6 @@ export const getNavigationMenuItemMoveDestinationGroups = ({
             ...getFolderDestinations(section.id),
           ]),
       ],
-    }))
-    .filter((group) => group.destinations.length > 0);
+    }),
+  );
 };
