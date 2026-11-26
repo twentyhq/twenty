@@ -5,7 +5,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { viewFromViewIdFamilySelector } from '@/views/states/selectors/viewFromViewIdFamilySelector';
 import { useEffect, useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 export const RecordIndexLoadBaseOnContextStoreEffect = () => {
   const { loadRecordIndexStates } = useLoadRecordIndexStates();
@@ -24,8 +24,10 @@ export const RecordIndexLoadBaseOnContextStoreEffect = () => {
     .sort()
     .join(',');
 
+  const hasViewFields = isNonEmptyArray(view?.viewFields);
+
   const currentViewLoadKey = isDefined(contextStoreCurrentViewId)
-    ? `${contextStoreCurrentViewId}-${viewGroupsSignature}`
+    ? `${contextStoreCurrentViewId}-${viewGroupsSignature}-${hasViewFields}`
     : undefined;
 
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
