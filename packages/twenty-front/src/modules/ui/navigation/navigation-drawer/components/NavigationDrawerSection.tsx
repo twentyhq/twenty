@@ -19,6 +19,10 @@ const StyledSectionInnerContainerMinusScrollPadding = styled.div<{
     isMobile || isCollapsed
       ? '100%'
       : `calc(100% - ${themeCssVariables.spacing[2]})`};
+
+  ${StyledSection} ${StyledSection} & {
+    width: 100%;
+  }
 `;
 
 export const NavigationDrawerSection = ({

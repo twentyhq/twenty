@@ -145,8 +145,7 @@ const NavigationMenuItemFolderReadOnlyContent = ({
             className="navigation-drawer-item"
             triggerEvent="CLICK"
             preventCollapseOnMobile={isMobile}
-            alwaysShowRightOptions
-            rightOptions={<NavigationMenuItemFolderChevron isOpen={isOpen} />}
+            trailingIcon={<NavigationMenuItemFolderChevron isOpen={isOpen} />}
           />
         </NavigationMenuItemEditable>
       }

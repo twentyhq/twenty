@@ -167,6 +167,12 @@ const StyledNavigationDrawerItemContainer = styled.div`
   width: 100%;
 `;
 
+const StyledTrailingIcon = styled.span`
+  display: inline-flex;
+  flex-shrink: 0;
+  margin-left: ${themeCssVariables.spacing[1]};
+`;
+
 const StyledSpacer = styled.span`
   flex-grow: 1;
 `;
@@ -444,6 +450,9 @@ export const NavigationDrawerItem = ({
                   }
                 />
               )}
+              {isDefined(trailingIcon) && isExpanded && (
+                <StyledTrailingIcon>{trailingIcon}</StyledTrailingIcon>
+              )}
             </StyledLabelParent>
 
             {showStyledSpacer && <StyledSpacer />}
@@ -517,12 +526,6 @@ export const NavigationDrawerItem = ({
                     {rightOptions}
                   </StyledRightOptionsVisbility>
                 </StyledRightOptionsContainer>
-              </NavigationDrawerAnimatedCollapseWrapper>
-            )}
-
-            {isDefined(trailingIcon) && (
-              <NavigationDrawerAnimatedCollapseWrapper>
-                {trailingIcon}
               </NavigationDrawerAnimatedCollapseWrapper>
             )}
           </StyledItemElementsContainer>

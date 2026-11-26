@@ -1,5 +1,4 @@
-import { useLingui } from '@lingui/react/macro';
-import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 
 import { NAVIGATION_MENU_SECTION_VISIBLE_ITEM_LIMIT } from '@/navigation-menu-item/common/constants/NavigationMenuSectionVisibleItemLimit';
 import { isNavigationMenuSectionShowingAllItemsFamilyState } from '@/navigation-menu-item/common/states/isNavigationMenuSectionShowingAllItemsFamilyState';
@@ -8,7 +7,7 @@ import { useNavigationMenuContainerItems } from '@/navigation-menu-item/display/
 import { NavigationMenuItemSection } from '@/navigation-menu-item/display/sections/components/NavigationMenuItemSection';
 import { StyledNavigationMenuItemSectionContentGapOffset } from '@/navigation-menu-item/display/sections/components/StyledNavigationMenuItemSectionContentGapOffset';
 import { WorkspaceSectionListReadOnly } from '@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionListReadOnly';
-import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
+import { NavigationMenuSectionSeeMore } from '@/navigation-menu-item/display/sections/components/NavigationMenuSectionSeeMore';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
 
@@ -19,7 +18,6 @@ type NavigationMenuSectionProps = {
 export const NavigationMenuSection = ({
   section,
 }: NavigationMenuSectionProps) => {
-  const { t } = useLingui();
   const [isShowingAllItems, setIsShowingAllItems] = useAtomFamilyState(
     isNavigationMenuSectionShowingAllItemsFamilyState,
     section.id,
@@ -37,10 +35,16 @@ export const NavigationMenuSection = ({
   const hasHiddenItems =
     topLevelItems.length > NAVIGATION_MENU_SECTION_VISIBLE_ITEM_LIMIT;
 
-  const displayedItems =
-    hasHiddenItems && !isShowingAllItems
-      ? topLevelItems.slice(0, NAVIGATION_MENU_SECTION_VISIBLE_ITEM_LIMIT)
-      : topLevelItems;
+  const visibleItems = topLevelItems.slice(
+    0,
+    NAVIGATION_MENU_SECTION_VISIBLE_ITEM_LIMIT,
+  );
+  const hiddenItems = topLevelItems.slice(
+    NAVIGATION_MENU_SECTION_VISIBLE_ITEM_LIMIT,
+  );
+  const folderCount = topLevelItems.filter(
+    (item) => item.type === NavigationMenuItemType.FOLDER,
+  ).length;
 
   return (
     <NavigationMenuItemSection
@@ -54,17 +58,21 @@ export const NavigationMenuSection = ({
       )}
     >
       <WorkspaceSectionListReadOnly
-        filteredItems={displayedItems}
+        filteredItems={visibleItems}
         folderChildrenById={folderChildrenById}
+        folderCount={folderCount}
       />
       {hasHiddenItems && (
-        <NavigationDrawerItem
-          label={isShowingAllItems ? t`See less` : t`See more`}
-          Icon={isShowingAllItems ? IconChevronUp : IconChevronDown}
-          variant="tertiary"
-          preventCollapseOnMobile
-          triggerEvent="CLICK"
-          onClick={() => setIsShowingAllItems(!isShowingAllItems)}
+        <NavigationMenuSectionSeeMore
+          isShowingAllItems={isShowingAllItems}
+          onToggle={() => setIsShowingAllItems(!isShowingAllItems)}
+          hiddenItems={
+            <WorkspaceSectionListReadOnly
+              filteredItems={hiddenItems}
+              folderChildrenById={folderChildrenById}
+              folderCount={folderCount}
+            />
+          }
         />
       )}
     </NavigationMenuItemSection>

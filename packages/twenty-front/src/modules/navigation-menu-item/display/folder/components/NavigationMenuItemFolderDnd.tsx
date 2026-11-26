@@ -1,6 +1,5 @@
 import { navigationMenuItemInsertionPreviewState } from '@/navigation-menu-item/common/states/navigationMenuItemInsertionPreviewState';
 import { NavigationMenuItemFolderChevron } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderChevron';
-import { NavigationMenuItemFolderChevronButton } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderChevronButton';
 import { NavigationMenuItemEditable } from '@/navigation-menu-item/edit/components/NavigationMenuItemEditable';
 import { NavigationMenuItemEntrance } from '@/navigation-menu-item/edit/components/NavigationMenuItemEntrance';
 import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
@@ -198,11 +197,11 @@ export const NavigationMenuItemFolderDnd = ({
   const handleHeaderClick = shouldUseEditModeClick
     ? (event?: React.MouseEvent) => {
         event?.stopPropagation();
-        if (isSelectedInEditMode) {
-          handleToggle();
-        } else {
-          editModeProps?.onEditModeClick?.();
+        editModeProps?.onEditModeClick?.();
+        if (isDefined(event) && event.detail > 1) {
+          return;
         }
+        handleToggle();
       }
     : handleToggle;
 
@@ -213,9 +212,7 @@ export const NavigationMenuItemFolderDnd = ({
       onEdit={favoritesEdit.startEditing}
       onDelete={favoritesEdit.handleFolderDelete}
     />
-  ) : (
-    <NavigationMenuItemFolderChevron isOpen={isOpen} />
-  );
+  ) : undefined;
 
   const header = (
     <NavigationDrawerItem
@@ -229,6 +226,7 @@ export const NavigationMenuItemFolderDnd = ({
         isWorkspace && isFolderEditHighlighted && !isExpanded
       }
       onClick={handleHeaderClick}
+      trailingIcon={<NavigationMenuItemFolderChevron isOpen={isOpen} />}
       rightOptions={shouldUseEditModeClick ? undefined : headerRightOptions}
       className="navigation-drawer-item"
       isRightOptionsDropdownOpen={
@@ -325,21 +323,7 @@ export const NavigationMenuItemFolderDnd = ({
       >
         <NavigationMenuItemFolderLayout
           header={
-            <NavigationMenuItemEditable
-              item={item}
-              rightOptions={
-                shouldUseEditModeClick &&
-                isExpanded && (
-                  <NavigationMenuItemFolderChevronButton
-                    isOpen={isOpen}
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      handleToggle();
-                    }}
-                  />
-                )
-              }
-            >
+            <NavigationMenuItemEditable item={item}>
               {wrappedHeader}
             </NavigationMenuItemEditable>
           }

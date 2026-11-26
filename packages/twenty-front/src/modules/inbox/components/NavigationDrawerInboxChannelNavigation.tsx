@@ -1,6 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { type ReactElement, type ReactNode, useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { Collapsible } from 'twenty-ui/primitives/layout';
 
 import { AiChatChannelIcon } from '@/ai-chat/threads/components/AiChatChannelIcon';
 import { INBOX_CHANNEL_NAVIGATION_ITEMS } from '@/inbox/constants/InboxChannelNavigationItems';
@@ -110,8 +111,8 @@ export const NavigationDrawerInboxChannelNavigation = ({
         rightOptions={rightOptions}
         isRightOptionsDropdownOpen={isRightOptionsDropdownOpen}
       />
-      {areChildrenVisible && (
-        <div id={childrenId}>
+      <Collapsible.Root open={areChildrenVisible}>
+        <Collapsible.Panel id={childrenId} dimension="height">
           {INBOX_CHANNEL_NAVIGATION_ITEMS.map(
             ({ channelStatus, label, Icon, countKey, unreadKey }, index) => {
               const count = summary?.[countKey];
@@ -144,8 +145,8 @@ export const NavigationDrawerInboxChannelNavigation = ({
               );
             },
           )}
-        </div>
-      )}
+        </Collapsible.Panel>
+      </Collapsible.Root>
     </NavigationDrawerItemGroup>
   );
 };
