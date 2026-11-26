@@ -100,7 +100,11 @@ describe('fromUpdateAgentInputToFlatAgentToUpdate', () => {
       },
     });
     expect(
-      fromFlatAgentWithRoleIdToAgentDto({ ...flatAgentToUpdate, roleId: null }),
+      fromFlatAgentWithRoleIdToAgentDto({
+        flatAgentWithRoleId: { ...flatAgentToUpdate, roleId: null },
+        flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
+        flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
+      }),
     ).toMatchObject({
       name: 'researcher',
       label: 'Market researcher',

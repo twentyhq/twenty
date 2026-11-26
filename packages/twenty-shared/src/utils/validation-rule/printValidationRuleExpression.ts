@@ -1,9 +1,9 @@
 import { printExpressionNode } from '@/expression/utils/printExpressionNode';
+import { parseStoredExpressionTree } from '@/expression/utils/parseStoredExpressionTree';
 import { type StoredExpressionTree } from '@/types/StoredExpressionTree';
 import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
 import { buildExpressionFieldPrinter } from '@/utils/expression/buildExpressionFieldPrinter';
 import { isDefined } from '@/utils/validation/isDefined';
-import { getValidationRuleTree } from '@/utils/validation-rule/getValidationRuleTree';
 
 export const printValidationRuleExpression = ({
   tree,
@@ -12,7 +12,7 @@ export const printValidationRuleExpression = ({
   tree?: StoredExpressionTree | null;
   fields: ValidationRuleFieldDescriptor[];
 }): string | undefined => {
-  const validationRuleTree = getValidationRuleTree({ tree });
+  const validationRuleTree = parseStoredExpressionTree({ tree });
 
   return isDefined(validationRuleTree)
     ? printExpressionNode({

@@ -3,6 +3,7 @@
 import { type ValidationRuleManifest } from 'twenty-shared/application';
 import {
   type ExpressionNode,
+  parseStoredExpressionTree,
   printExpressionNode,
 } from 'twenty-shared/expression';
 import {
@@ -13,7 +14,6 @@ import {
 import {
   buildExpressionFieldPrinter,
   compileValidationRuleExpression,
-  getValidationRuleTree,
   isDefined,
   parseExpressionNode,
   resolveExpressionFieldReferences,
@@ -328,7 +328,7 @@ const resolveValidationRuleTree = ({
     };
   }
 
-  const savedTree = getValidationRuleTree({
+  const savedTree = parseStoredExpressionTree({
     tree: existingFlatValidationRule?.tree,
   });
 

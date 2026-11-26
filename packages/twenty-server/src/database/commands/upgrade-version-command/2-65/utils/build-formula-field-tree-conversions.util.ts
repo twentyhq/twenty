@@ -6,11 +6,11 @@ import {
   getFieldMetadataFormulaTree,
   isDefined,
   parseExpressionNode,
-  renameValidationRuleExpressionToCurrentFieldNames,
   resolveExpressionFieldReferences,
 } from 'twenty-shared/utils';
 
 import { getLegacyFormulaFieldBindings } from 'src/database/commands/upgrade-version-command/2-65/utils/get-legacy-formula-field-bindings.util';
+import { renameLegacyExpressionToCurrentFieldNames } from 'src/database/commands/upgrade-version-command/2-65/utils/rename-legacy-expression-to-current-field-names.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -25,7 +25,7 @@ const buildTree = ({
   bindings: Record<string, string>;
   fields: ValidationRuleFieldDescriptor[];
 }) => {
-  const currentExpression = renameValidationRuleExpressionToCurrentFieldNames({
+  const currentExpression = renameLegacyExpressionToCurrentFieldNames({
     expression,
     bindings,
     fields,

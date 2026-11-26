@@ -4,7 +4,7 @@ import {
 } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { addAgentTriggerConditionBindingsOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-trigger/utils/add-agent-trigger-condition-bindings-or-throw.util';
+import { addAgentTriggerConditionTreesOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-trigger/utils/add-agent-trigger-condition-trees-or-throw.util';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
@@ -33,6 +33,13 @@ const flatObjectMetadataMaps = addFlatEntityToFlatEntityMapsOrThrow({
   flatEntityMaps: createEmptyFlatEntityMaps(),
 });
 
+const READ_STAGE_TREE = {
+  type: 'COMPARISON',
+  operator: 'EQUAL',
+  left: { type: 'FIELD', fieldUniversalIdentifier: 'opportunity-stage' },
+  right: { type: 'LITERAL', value: 'CUSTOMER' },
+} as const;
+
 const buildDatabaseEventTrigger = (
   settings: AgentDatabaseEventTrigger['settings'],
 ): AgentDatabaseEventTrigger => ({
@@ -43,30 +50,28 @@ const buildDatabaseEventTrigger = (
   settings,
 });
 
-const addConditionBindings = ({
+const addConditionTrees = ({
   triggers,
   storedTriggers,
 }: {
   triggers: AgentTrigger[];
   storedTriggers?: AgentTrigger[];
 }) =>
-  addAgentTriggerConditionBindingsOrThrow({
+  addAgentTriggerConditionTreesOrThrow({
     triggers,
     storedTriggers,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
   });
 
-describe('addAgentTriggerConditionBindingsOrThrow', () => {
-  it('stores the field each condition path reads', () => {
-    const condition = "stage == 'CUSTOMER' and previous.stage != 'CUSTOMER'";
-
+describe('addAgentTriggerConditionTreesOrThrow', () => {
+  it('stores a tree reading each field by identifier instead of the text', () => {
     expect(
-      addConditionBindings({
+      addConditionTrees({
         triggers: [
           buildDatabaseEventTrigger({
             eventName: 'opportunity.updated',
-            condition,
+            condition: "stage == 'CUSTOMER' and previous.stage != 'CUSTOMER'",
           }),
         ],
       }),
@@ -74,29 +79,57 @@ describe('addAgentTriggerConditionBindingsOrThrow', () => {
       expect.objectContaining({
         settings: {
           eventName: 'opportunity.updated',
-          condition,
-          conditionBindings: {
-            stage: 'opportunity-stage',
-            'previous.stage': 'opportunity-stage',
+          conditionTree: {
+            type: 'GROUP',
+            logicalOperator: 'AND',
+            children: [
+              READ_STAGE_TREE,
+              {
+                type: 'COMPARISON',
+                operator: 'NOT_EQUAL',
+                left: {
+                  type: 'FIELD',
+                  fieldUniversalIdentifier: 'opportunity-stage',
+                  isPreviousValue: true,
+                },
+                right: { type: 'LITERAL', value: 'CUSTOMER' },
+              },
+            ],
           },
         },
       }),
     ]);
   });
 
-  it('keeps the bindings of a stored condition sent back unchanged', () => {
+  it('never takes a tree from the client', () => {
+    expect(
+      addConditionTrees({
+        triggers: [
+          buildDatabaseEventTrigger({
+            eventName: 'opportunity.updated',
+            conditionTree: READ_STAGE_TREE,
+          }),
+        ],
+      }),
+    ).toEqual([
+      expect.objectContaining({
+        settings: { eventName: 'opportunity.updated' },
+      }),
+    ]);
+  });
+
+  it('keeps the stored tree of a condition sent back as printed', () => {
     const storedTrigger = buildDatabaseEventTrigger({
       eventName: 'opportunity.created',
-      condition: 'amount > 0',
-      conditionBindings: { amount: 'opportunity-amount' },
+      conditionTree: READ_STAGE_TREE,
     });
 
     expect(
-      addConditionBindings({
+      addConditionTrees({
         triggers: [
           buildDatabaseEventTrigger({
             eventName: 'opportunity.created',
-            condition: 'amount > 0',
+            condition: "stage == 'CUSTOMER'",
           }),
         ],
         storedTriggers: [storedTrigger],
@@ -106,7 +139,7 @@ describe('addAgentTriggerConditionBindingsOrThrow', () => {
 
   it('rejects a condition reading a field the object does not have', () => {
     expect(() =>
-      addConditionBindings({
+      addConditionTrees({
         triggers: [
           buildDatabaseEventTrigger({
             eventName: 'opportunity.created',
@@ -119,7 +152,7 @@ describe('addAgentTriggerConditionBindingsOrThrow', () => {
 
   it('rejects a condition on an unknown object', () => {
     expect(() =>
-      addConditionBindings({
+      addConditionTrees({
         triggers: [
           buildDatabaseEventTrigger({
             eventName: 'invoice.created',
@@ -127,7 +160,7 @@ describe('addAgentTriggerConditionBindingsOrThrow', () => {
           }),
         ],
       }),
-    ).toThrow(/Unknown object invoice/);
+    ).toThrow(/a condition needs a trigger on one known object/);
   });
 
   it('leaves triggers without a condition unchanged', () => {
@@ -142,26 +175,50 @@ describe('addAgentTriggerConditionBindingsOrThrow', () => {
       },
     ];
 
-    expect(addConditionBindings({ triggers })).toEqual(triggers);
+    expect(addConditionTrees({ triggers })).toEqual(triggers);
   });
 
   it('accepts a stored condition sent back unchanged, even if its field is gone', () => {
     const staleTrigger = buildDatabaseEventTrigger({
       eventName: 'opportunity.created',
+      conditionTree: {
+        type: 'COMPARISON',
+        operator: 'GREATER_THAN',
+        left: { type: 'FIELD', fieldUniversalIdentifier: 'opportunity-amount' },
+        right: { type: 'LITERAL', value: 0 },
+      },
+    });
+
+    expect(
+      addConditionTrees({
+        triggers: [
+          buildDatabaseEventTrigger({
+            eventName: 'opportunity.created',
+            condition: 'missingField_opportunity_amount > 0',
+          }),
+        ],
+        storedTriggers: [staleTrigger],
+      }),
+    ).toEqual([staleTrigger]);
+  });
+
+  it('keeps the text of a stored condition that has no tree, sent back unchanged', () => {
+    const textTrigger = buildDatabaseEventTrigger({
+      eventName: 'opportunity.created',
       condition: 'amount > 0',
     });
 
-    expect(() =>
-      addConditionBindings({
-        triggers: [staleTrigger],
-        storedTriggers: [staleTrigger],
+    expect(
+      addConditionTrees({
+        triggers: [textTrigger],
+        storedTriggers: [textTrigger],
       }),
-    ).not.toThrow();
+    ).toEqual([textTrigger]);
   });
 
   it('still checks a stored condition once it is edited', () => {
     expect(() =>
-      addConditionBindings({
+      addConditionTrees({
         triggers: [
           buildDatabaseEventTrigger({
             eventName: 'opportunity.created',

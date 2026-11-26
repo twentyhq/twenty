@@ -1,5 +1,5 @@
 import { type ExpressionNode } from '@/expression/types/ExpressionNode';
-import { expressionNodeSchema } from '@/expression/utils/expressionNodeSchema';
+import { parseStoredExpressionTree } from '@/expression/utils/parseStoredExpressionTree';
 import { type FieldMetadataFormula } from '@/types/FieldMetadataFormula';
 
 export const getFieldMetadataFormulaTree = ({
@@ -10,10 +10,7 @@ export const getFieldMetadataFormulaTree = ({
     Pick<FieldMetadataFormula, 'tree' | 'currencyCodeTree'>
   > | null;
   isCurrencyCode?: boolean;
-}): ExpressionNode | undefined => {
-  const parsing = expressionNodeSchema.safeParse(
-    isCurrencyCode ? formula?.currencyCodeTree : formula?.tree,
-  );
-
-  return parsing.success ? parsing.data : undefined;
-};
+}): ExpressionNode | undefined =>
+  parseStoredExpressionTree({
+    tree: isCurrencyCode ? formula?.currencyCodeTree : formula?.tree,
+  });
