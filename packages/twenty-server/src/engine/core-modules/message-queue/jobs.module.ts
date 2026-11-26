@@ -52,6 +52,7 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
 import { AiAgentTriggerModule } from 'src/engine/metadata-modules/ai/ai-agent-trigger/ai-agent-trigger.module';
 import { AiChatModule } from 'src/engine/metadata-modules/ai/ai-chat/ai-chat.module';
 import { LogicFunctionPrebuiltInstallModule } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-install/logic-function-prebuilt-install.module';
+import { KeepWarmWorkspaceLogicFunctionsJob } from 'src/engine/core-modules/logic-function/logic-function-warm-up/jobs/keep-warm-workspace-logic-functions.job';
 import { WarmUpLogicFunctionJob } from 'src/engine/core-modules/logic-function/logic-function-warm-up/jobs/warm-up-logic-function.job';
 import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/logic-function.module';
 import { NavigationMenuItemModule } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.module';
@@ -145,6 +146,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     TriggerUninstallApplicationJob,
     TriggerUpgradeApplicationJob,
     WarmUpLogicFunctionJob,
+    KeepWarmWorkspaceLogicFunctionsJob,
     RunDeferredWorkspaceOperationsJob,
     DeferredWorkspaceOperationRecoveryCronJob,
   ],

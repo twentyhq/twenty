@@ -46,6 +46,7 @@ import { LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-functi
 import { type ExecutableFlatLogicFunction } from 'src/engine/core-modules/logic-function/logic-function-drivers/types/executable-flat-logic-function.type';
 import { LogicFunctionExecutionThrottleService } from 'src/engine/core-modules/logic-function/logic-function-execution-throttle/logic-function-execution-throttle.service';
 import { buildLogicFunctionErrorLogLine } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-error-log-line.util';
+import { isLogicFunctionWarmEligible } from 'src/engine/core-modules/logic-function/logic-function-warm-up/utils/is-logic-function-warm-eligible.util';
 import { buildLogicFunctionExecutionUsage } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-execution-usage.util';
 import { buildLogicFunctionRunMetricEvent } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-run-metric-event.util';
 import { buildWorkflowCodeStepFlatLogicFunction } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-workflow-code-step-flat-logic-function.util';
@@ -835,7 +836,7 @@ export class LogicFunctionExecutorService {
         isBillingExempt: isBillingExemptApplication(
           flatApplication.universalIdentifier,
         ),
-        isWarm: flatLogicFunction.isWarm,
+        isWarm: isLogicFunctionWarmEligible(flatLogicFunction),
         resourceId: flatLogicFunction.id,
         spenders,
       }),
