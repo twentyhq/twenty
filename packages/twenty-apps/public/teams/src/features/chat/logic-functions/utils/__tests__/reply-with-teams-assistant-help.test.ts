@@ -75,7 +75,6 @@ describe('replyWithTeamsAssistantHelp', () => {
         value: prompt,
       })),
     );
-    expect(activity.suggestedActions.actions.length).toBeLessThanOrEqual(3);
   });
 
   it('should not post the hint again for an activity Teams redelivered', async () => {

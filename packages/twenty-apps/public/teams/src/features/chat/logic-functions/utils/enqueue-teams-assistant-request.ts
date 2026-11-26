@@ -4,11 +4,11 @@ import { TEAMS_ASSISTANT_CHAT_OFF_TEXT } from 'src/features/chat/logic-functions
 import { TEAMS_ASSISTANT_HELP_TEXT } from 'src/features/chat/logic-functions/constants/teams-assistant-help-text';
 import { TEAMS_ASSISTANT_NOTICE_TTL_MS } from 'src/features/chat/logic-functions/constants/teams-assistant-notice-ttl-ms';
 import { TEAMS_ASSISTANT_WELCOME_TTL_MS } from 'src/features/chat/logic-functions/constants/teams-assistant-welcome-ttl-ms';
-import { TEAMS_PERSONAL_CONVERSATION_TYPE } from 'src/features/chat/logic-functions/constants/teams-personal-conversation-type';
 import { type TeamsActivitiesDispatchPayload } from 'src/features/chat/logic-functions/types/teams-activities-dispatch-payload.type';
 import { type TeamsActivitiesEnqueueResult } from 'src/features/chat/logic-functions/types/teams-activities-enqueue-result.type';
 import { buildTeamsAssistantHelpSuggestedActions } from 'src/features/chat/logic-functions/utils/build-teams-assistant-help-suggested-actions';
 import { enqueueTeamsAssistantRequestRecord } from 'src/features/chat/logic-functions/utils/enqueue-teams-assistant-request-record';
+import { getTeamsConversationType } from 'src/features/chat/logic-functions/utils/get-teams-conversation-type';
 import { isTeamsChatEnabled } from 'src/features/chat/logic-functions/utils/is-teams-chat-enabled';
 import { isTeamsHelpRequest } from 'src/features/chat/logic-functions/utils/is-teams-help-request';
 import { isTeamsInstallActivity } from 'src/features/chat/logic-functions/utils/is-teams-install-activity';
@@ -39,8 +39,7 @@ export const enqueueTeamsAssistantRequest = async (
       text: TEAMS_ASSISTANT_HELP_TEXT,
       ttlMs: TEAMS_ASSISTANT_WELCOME_TTL_MS,
       suggestedActions: buildTeamsAssistantHelpSuggestedActions(
-        payload.activity.conversation?.conversationType ??
-          TEAMS_PERSONAL_CONVERSATION_TYPE,
+        getTeamsConversationType(payload.activity),
       ),
     });
 
