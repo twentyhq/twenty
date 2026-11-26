@@ -194,6 +194,7 @@ const VIEW_MANIFEST: ViewManifest = {
   calendarLayout: ViewCalendarLayout.WEEK,
   calendarFieldMetadataUniversalIdentifier: FIELD_UID,
   calendarEndFieldMetadataUniversalIdentifier: FIELD_UID,
+  listPinnedFieldMetadataUniversalIdentifier: FIELD_UID,
 };
 
 const VIEW_CHILD_CONVERSION_CONTEXT = {
