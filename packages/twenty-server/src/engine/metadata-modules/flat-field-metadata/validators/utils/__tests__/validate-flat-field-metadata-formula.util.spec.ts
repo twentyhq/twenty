@@ -96,6 +96,45 @@ describe('validateFlatFieldMetadataFormula', () => {
     ).toEqual([]);
   });
 
+  it('should let a formula through unchanged when the feature is not enabled, once converted to a tree', () => {
+    expect(
+      validate({
+        flatFieldMetadataToValidate: {
+          universalSettings: {
+            formula: {
+              tree: {
+                type: 'ARITHMETIC',
+                operator: 'MULTIPLY',
+                left: {
+                  type: 'FIELD',
+                  fieldUniversalIdentifier: 'gadget-price-uid',
+                },
+                right: { type: 'LITERAL', value: 0.2 },
+              },
+            },
+          },
+        },
+        existingUniversalSettings: { formula: { expression: 'price*0.2' } },
+        isFormulaFieldEnabled: false,
+      }),
+    ).toEqual([]);
+  });
+
+  it('should refuse a tree that is not an expression tree', () => {
+    expect(
+      validate({
+        flatFieldMetadataToValidate: {
+          universalSettings: { formula: { tree: { type: 'ARITHMETIC' } } },
+        },
+      }),
+    ).toEqual([
+      {
+        message:
+          'Invalid formula: its tree is not an expression tree, write the formula as text instead',
+      },
+    ]);
+  });
+
   it('should refuse a formula whose value does not fit the field type', () => {
     expect(
       validate({

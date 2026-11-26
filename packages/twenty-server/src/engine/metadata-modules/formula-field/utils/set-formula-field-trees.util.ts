@@ -8,7 +8,9 @@ import {
   getFieldMetadataFormulaExpression,
   getFormulaEvaluationFromBindings,
   isDefined,
+  isFormulaFieldMetadata,
   parseExpressionNode,
+  printFieldMetadataFormula,
   resolveExpressionFieldReferences,
 } from 'twenty-shared/utils';
 
@@ -45,25 +47,19 @@ export const setFormulaFieldTrees = <
 }): TUniversalFlatFieldMetadata => {
   const { universalSettings, universalIdentifier, name } =
     universalFlatFieldMetadata;
-  const expression = getFieldMetadataFormulaExpression({
-    settings: universalSettings,
-  });
   const universalFlatObjectMetadata =
     universalFlatObjectMetadataMaps.byUniversalIdentifier[
       universalFlatFieldMetadata.objectMetadataUniversalIdentifier
     ];
 
   if (
-    !isDefined(expression) ||
     !isDefined(universalSettings) ||
-    !isDefined(universalFlatObjectMetadata)
+    !isDefined(universalFlatObjectMetadata) ||
+    !isFormulaFieldMetadata({ settings: universalSettings })
   ) {
     return universalFlatFieldMetadata;
   }
 
-  const currencyCodeExpression = getFieldMetadataFormulaCurrencyCodeExpression({
-    settings: universalSettings,
-  });
   const fields = buildFormulaFieldDescriptorsFromUniversalFlatEntityMaps({
     universalFlatObjectMetadata,
     universalFlatObjectMetadataMaps,
@@ -75,6 +71,23 @@ export const setFormulaFieldTrees = <
           universalIdentifier,
       ),
   }).filter((formulaFieldDescriptor) => formulaFieldDescriptor.name !== name);
+  // A formula sent as a tree is written as its text, so both go through the same compilation
+  const { expression, currencyCodeExpression } = isDefined(
+    getFieldMetadataFormulaExpression({ settings: universalSettings }),
+  )
+    ? {
+        expression: getFieldMetadataFormulaExpression({
+          settings: universalSettings,
+        }),
+        currencyCodeExpression: getFieldMetadataFormulaCurrencyCodeExpression({
+          settings: universalSettings,
+        }),
+      }
+    : printFieldMetadataFormula({ settings: universalSettings, fields });
+
+  if (!isDefined(expression)) {
+    return universalFlatFieldMetadata;
+  }
 
   const compileToTree = (formulaExpression: string) => {
     const compilation = compileFormulaExpression({

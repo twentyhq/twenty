@@ -1,11 +1,8 @@
-import { isString } from '@sniptt/guards';
-
 import { type ExpressionNode } from '@/expression/types/ExpressionNode';
+import { expressionNodeSchema } from '@/expression/utils/expressionNodeSchema';
 import { isPlainObject } from '@/utils/typeguard/isPlainObject';
 
-const isExpressionNode = (value: unknown): value is ExpressionNode =>
-  isPlainObject(value) && isString(value.type);
-
+// A stored tree is only read once it has the shape of an expression tree, so a malformed one reads as missing
 export const getFieldMetadataFormulaTree = ({
   settings,
   isCurrencyCode = false,
@@ -17,9 +14,9 @@ export const getFieldMetadataFormulaTree = ({
     return undefined;
   }
 
-  const tree = isCurrencyCode
-    ? settings.formula.currencyCodeTree
-    : settings.formula.tree;
+  const parsing = expressionNodeSchema.safeParse(
+    isCurrencyCode ? settings.formula.currencyCodeTree : settings.formula.tree,
+  );
 
-  return isExpressionNode(tree) ? tree : undefined;
+  return parsing.success ? parsing.data : undefined;
 };

@@ -102,6 +102,35 @@ describe('setFormulaFieldTrees', () => {
     });
   });
 
+  it('should compile a formula sent as a tree like its text, so an aggregate is stored', () => {
+    const tree = {
+      type: 'FUNCTION_CALL',
+      functionName: 'avg',
+      arguments: [
+        {
+          type: 'FIELD',
+          relationFieldUniversalIdentifier: 'supplier-gadgets-uid',
+          fieldUniversalIdentifier: 'gadget-price-uid',
+        },
+      ],
+    };
+
+    expect(
+      setFormulaFieldTrees({
+        universalFlatFieldMetadata: getFlatFieldMetadataMock({
+          universalIdentifier: 'supplier-average-price-uid',
+          name: 'averagePrice',
+          type: FieldMetadataType.NUMBER,
+          objectMetadataId: 'supplier-object',
+          objectMetadataUniversalIdentifier: 'supplier-object-uid',
+          universalSettings: { formula: { tree } },
+        }),
+        universalFlatObjectMetadataMaps: FORMULA_FLAT_OBJECT_METADATA_MAPS_MOCK,
+        universalFlatFieldMetadataMaps: FORMULA_FLAT_FIELD_METADATA_MAPS_MOCK,
+      }).universalSettings,
+    ).toEqual({ formula: { tree, evaluation: 'STORED' } });
+  });
+
   it('should leave a field without formula untouched', () => {
     expect(setGadgetFormulaTrees({ decimals: 2 })).toEqual({ decimals: 2 });
   });
