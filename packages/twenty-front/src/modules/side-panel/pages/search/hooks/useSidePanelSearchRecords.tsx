@@ -1,5 +1,4 @@
 import { type SearchResultItem } from '@/side-panel/pages/search/types/SearchResultItem';
-import { type SearchResultItemGroup } from '@/side-panel/pages/search/types/SearchResultItemGroup';
 import { useObjectRecordSearchRecords } from '@/object-record/hooks/useObjectRecordSearchRecords';
 import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
 import { useSearchableObjectNameSingulars } from '@/side-panel/hooks/useSearchableObjectNameSingulars';
@@ -7,7 +6,6 @@ import { sidePanelSearchObjectFilterState } from '@/side-panel/states/sidePanelS
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import groupBy from 'lodash.groupby';
 import { useMemo } from 'react';
 import { useDebounce } from 'use-debounce';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -74,32 +72,11 @@ export const useSidePanelSearchRecords = ({
     }));
   }, [searchRecords, readableObjectMetadataItems]);
 
-  const searchResultItemGroups: SearchResultItemGroup[] = useMemo(
-    () =>
-      Object.entries(
-        groupBy(searchResultItems, (item) => item.objectNameSingular),
-      ).map(([objectNameSingular, objectSearchResultItems]) => {
-        const objectMetadataItem = readableObjectMetadataItems.find(
-          (item) => item.nameSingular === objectNameSingular,
-        );
-
-        return {
-          objectNameSingular,
-          objectLabelPlural:
-            objectMetadataItem?.labelPlural ?? objectNameSingular,
-          objectMetadataItem,
-          searchResultItems: objectSearchResultItems,
-        };
-      }),
-    [searchResultItems, readableObjectMetadataItems],
-  );
-
   return {
     error,
     loading,
     isWaitingForDebouncedSearch,
     noResults: !searchResultItems.length,
     searchResultItems,
-    searchResultItemGroups,
   };
 };

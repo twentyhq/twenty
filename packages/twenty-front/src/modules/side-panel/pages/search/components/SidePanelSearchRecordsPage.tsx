@@ -1,12 +1,15 @@
 import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
+import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { SidePanelSearchRecordObjectSection } from '@/side-panel/pages/search/components/SidePanelSearchRecordObjectSection';
 import { SidePanelSearchRecordPreviewCard } from '@/side-panel/pages/search/components/SidePanelSearchRecordPreviewCard';
 import { SIDE_PANEL_SEARCH_RECORD_PREVIEW_WIDTH } from '@/side-panel/pages/search/constants/SidePanelSearchRecordPreviewWidth';
 import { useSidePanelSearchRecordPreviewItem } from '@/side-panel/pages/search/hooks/useSidePanelSearchRecordPreviewItem';
 import { useSidePanelSearchRecords } from '@/side-panel/pages/search/hooks/useSidePanelSearchRecords';
+import { type SearchResultItemGroup } from '@/side-panel/pages/search/types/SearchResultItemGroup';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { css } from '@linaria/core';
+import groupBy from 'lodash.groupby';
 import { useMemo, useRef } from 'react';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { isDefined } from 'twenty-shared/utils';
@@ -21,14 +24,30 @@ const previewTooltipClass = css`
 `;
 
 export const SidePanelSearchRecordsPage = () => {
-  const {
-    searchResultItems,
-    searchResultItemGroups,
-    loading,
-    noResults,
-    error,
-  } = useSidePanelSearchRecords();
+  const { searchResultItems, loading, noResults, error } =
+    useSidePanelSearchRecords();
+  const { readableObjectMetadataItems } = useReadableObjectMetadataItems();
   const isMobile = useIsMobile();
+
+  const searchResultItemGroups: SearchResultItemGroup[] = useMemo(
+    () =>
+      Object.entries(
+        groupBy(searchResultItems, (item) => item.objectNameSingular),
+      ).map(([objectNameSingular, objectSearchResultItems]) => {
+        const objectMetadataItem = readableObjectMetadataItems.find(
+          (item) => item.nameSingular === objectNameSingular,
+        );
+
+        return {
+          objectNameSingular,
+          objectLabelPlural:
+            objectMetadataItem?.labelPlural ?? objectNameSingular,
+          objectMetadataItem,
+          searchResultItems: objectSearchResultItems,
+        };
+      }),
+    [searchResultItems, readableObjectMetadataItems],
+  );
 
   const selectableItemIds = useMemo(
     () =>
