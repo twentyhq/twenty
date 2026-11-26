@@ -1,9 +1,9 @@
 import { gql } from '@apollo/client';
 import { BILLING_PRICE_LICENSED_FRAGMENT } from '@/settings/billing/graphql/fragments/billingPriceLicensedFragment';
 
-export const LIST_PLANS = gql`
-  query listPlans {
-    listPlans {
+export const BILLING_PLANS = gql`
+  query BillingPlans {
+    billingPlans {
       planKey
       isSellable
       isCheckoutDefault
