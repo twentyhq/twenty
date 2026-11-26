@@ -8,6 +8,7 @@ import {
   type ApplicationManifestRoleSources,
   classifyApplicationManifestRoles,
 } from '@/application/utils/classifyApplicationManifestRoles';
+import { doNotTranslate } from '@/i18n/do-not-translate';
 import { normalizeLegacyCompliantRoleManifest } from '@/application/utils/normalizeLegacyCompliantRoleManifest';
 import { isNonEmptyArray } from '@/utils/array/isNonEmptyArray';
 
@@ -101,10 +102,14 @@ export const getApplicationManifestRoleViolations = ({
 export const formatApplicationManifestRoleViolation = (
   violation: ApplicationManifestRoleViolation,
 ): string => {
-  const role = `Role "${violation.roleLabel}" (${violation.roleUniversalIdentifier})`;
+  const role = doNotTranslate(
+    `Role "${violation.roleLabel}" (${violation.roleUniversalIdentifier})`,
+  );
 
   if (violation.kind === 'standaloneRole') {
-    return `${role} is neither the application role nor an agent role, and can be assigned to members or API keys. Set canBeAssignedToUsers and canBeAssignedToApiKeys to false so that only agents can hold it.`;
+    return doNotTranslate(
+      `${role} is neither the application role nor an agent role, and can be assigned to members or API keys. Set canBeAssignedToUsers and canBeAssignedToApiKeys to false so that only agents can hold it.`,
+    );
   }
 
   const declared =
@@ -118,5 +123,7 @@ export const formatApplicationManifestRoleViolation = (
         .join(' and ')
     : 'standalone';
 
-  return `${role}, the ${roleKinds} role, declares ${declared} on objects ${violation.objectUniversalIdentifiers.join(', ')}. Marketplace applications cannot declare ${declared}: the workspace configures them.`;
+  return doNotTranslate(
+    `${role}, the ${roleKinds} role, declares ${declared} on objects ${violation.objectUniversalIdentifiers.join(', ')}. Marketplace applications cannot declare ${declared}: the workspace configures them.`,
+  );
 };
