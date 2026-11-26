@@ -25,10 +25,12 @@ const computeRootItems = ({
   query,
   fields,
   functionDefinitions,
+  keywordDefinitions,
 }: {
   query: string;
   fields: ValidationRuleEditorField[];
   functionDefinitions: ValidationRuleSyntaxDefinition[];
+  keywordDefinitions: ValidationRuleSyntaxDefinition[];
 }): ValidationRuleHelperItem[] => {
   const fieldItems: ValidationRuleHelperItem[] = fields
     .filter((field) => !field.path.includes('.'))
@@ -40,10 +42,9 @@ const computeRootItems = ({
     .filter((definition) => matchesQuery([definition.name], query))
     .map((definition) => ({ kind: 'function', definition }));
 
-  const keywordItems: ValidationRuleHelperItem[] =
-    VALIDATION_RULE_KEYWORDS.filter((definition) =>
-      matchesQuery([definition.name], query),
-    ).map((definition) => ({ kind: 'keyword', definition }));
+  const keywordItems: ValidationRuleHelperItem[] = keywordDefinitions
+    .filter((definition) => matchesQuery([definition.name], query))
+    .map((definition) => ({ kind: 'keyword', definition }));
 
   return [...fieldItems, ...functionItems, ...keywordItems];
 };
@@ -71,11 +72,13 @@ export const computeValidationRuleHelperContext = ({
   fieldPathBeforeCursor,
   fields,
   functionDefinitions = getValidationRuleFunctionDefinitions(),
+  keywordDefinitions = VALIDATION_RULE_KEYWORDS,
 }: {
   textBeforeCursor: string;
   fieldPathBeforeCursor?: string;
   fields: ValidationRuleEditorField[];
   functionDefinitions?: ValidationRuleSyntaxDefinition[];
+  keywordDefinitions?: ValidationRuleSyntaxDefinition[];
 }): ValidationRuleHelperContext => {
   const cursorOffset = textBeforeCursor.length;
   const lastToken = tokenizeValidationRuleExpression(textBeforeCursor).at(-1);
@@ -102,7 +105,7 @@ export const computeValidationRuleHelperContext = ({
 
     return {
       replaceFromOffset: cursorOffset,
-      items: VALIDATION_RULE_KEYWORDS.map((definition) => ({
+      items: keywordDefinitions.map((definition) => ({
         kind: 'keyword',
         definition,
       })),
@@ -119,12 +122,16 @@ export const computeValidationRuleHelperContext = ({
         query: partialWord,
         fields,
         functionDefinitions,
+        keywordDefinitions,
       }),
     };
   }
 
   const isPreviousValueContainer =
-    parentPath === VALIDATION_RULE_PREVIOUS_VARIABLE_NAME;
+    parentPath === VALIDATION_RULE_PREVIOUS_VARIABLE_NAME &&
+    keywordDefinitions.some(
+      ({ name }) => name === VALIDATION_RULE_PREVIOUS_VARIABLE_NAME,
+    );
   const parentField = fields.find((field) => field.path === parentPath);
 
   if (

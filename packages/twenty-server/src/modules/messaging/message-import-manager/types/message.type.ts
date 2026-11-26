@@ -70,6 +70,7 @@ export type MessageParticipant = Omit<
   | 'messageId'
   | 'messageCampaign'
   | 'messageCampaignId'
+  | 'createdBy'
 > &
   ExplicitParticipantIdentity;
 

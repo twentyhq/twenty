@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
@@ -43,6 +44,7 @@ export class MessagingMessageAttachmentService {
     messageAttachmentFiles: {
       messageId: string;
       attachmentFiles: MessageAttachmentFile[];
+      createdBy?: ActorMetadata;
     }[];
     workspaceId: string;
     transactionScope: WorkspaceTransactionScope;
@@ -62,13 +64,14 @@ export class MessagingMessageAttachmentService {
     });
 
     const attachmentsToCreate = messageAttachmentFiles.flatMap(
-      ({ messageId, attachmentFiles }) =>
+      ({ messageId, attachmentFiles, createdBy }) =>
         messageIdsWithAttachments.has(messageId)
           ? []
           : attachmentFiles.map(({ fileId, label }) => ({
               name: label,
               file: [{ fileId, label }],
               targetMessageId: messageId,
+              ...(isDefined(createdBy) ? { createdBy } : {}),
             })),
     );
 

@@ -1,6 +1,7 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { Provider as JotaiProvider } from 'jotai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
@@ -100,6 +101,30 @@ describe('AiChatMessageReactions', () => {
     expect(
       screen.getByRole('button', { name: '🎉 by Tom Martin' }),
     ).toHaveAttribute('aria-pressed', 'false');
+  });
+
+  it('shows who used an emoji on hover', async () => {
+    const user = userEvent.setup();
+
+    jotaiStore.set(
+      aiChatMessageReactionsFamilyState.atomFamily({
+        messageId: MESSAGE_ID,
+      }),
+      [
+        {
+          emoji: '🎉',
+          workspaceMemberIds: [OTHER_MEMBER_ID],
+          agentIds: [],
+          hasAssistantReacted: false,
+        },
+      ],
+    );
+
+    renderReactions();
+
+    await user.hover(screen.getByRole('button', { name: '🎉 by Tom Martin' }));
+
+    expect(await screen.findByRole('tooltip')).toHaveTextContent('Tom Martin');
   });
 
   it('names the assistant among those who used an emoji', () => {

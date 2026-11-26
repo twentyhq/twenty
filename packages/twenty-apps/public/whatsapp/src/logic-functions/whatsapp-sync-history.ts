@@ -42,7 +42,7 @@ export default defineLogicFunction({
   universalIdentifier: WHATSAPP_SYNC_HISTORY_UNIVERSAL_IDENTIFIER,
   name: 'whatsapp-sync-history',
   description:
-    'Starts importing the past WhatsApp conversations of the requesting member connection: the ones they selected, or the most recent ones up to the number their settings allow.',
+    'Retries the WhatsApp history import of the requesting member connection.',
   timeoutSeconds: 15,
   handler: whatsappSyncHistoryHandler,
   httpRouteTriggerSettings: {

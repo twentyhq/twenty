@@ -114,6 +114,8 @@ type ValidationRuleExpressionEditorProps = {
   onChange: (expression: string) => void;
   compileExpression?: typeof compileValidationRuleExpression;
   functionDefinitions?: ValidationRuleSyntaxDefinition[];
+  keywordDefinitions?: ValidationRuleSyntaxDefinition[];
+  shouldShowValidationRuleGuidance?: boolean;
   hint?: string;
   ariaLabel?: string;
 };
@@ -125,6 +127,8 @@ export const ValidationRuleExpressionEditor = ({
   onChange,
   compileExpression = compileValidationRuleExpression,
   functionDefinitions,
+  keywordDefinitions,
+  shouldShowValidationRuleGuidance = true,
   hint,
   ariaLabel,
 }: ValidationRuleExpressionEditorProps) => {
@@ -136,6 +140,7 @@ export const ValidationRuleExpressionEditor = ({
         textBeforeCursor: '',
         fields: editorFields,
         functionDefinitions,
+        keywordDefinitions,
       }),
     );
   const [highlightedIndex, setHighlightedIndex] = useState(0);
@@ -161,6 +166,7 @@ export const ValidationRuleExpressionEditor = ({
         editor,
         fields: editorFields,
         functionDefinitions,
+        keywordDefinitions,
       }),
     );
     setHighlightedIndex(0);
@@ -233,6 +239,7 @@ export const ValidationRuleExpressionEditor = ({
         editor,
         fields: editorFields,
         functionDefinitions,
+        keywordDefinitions,
       }).replaceFromOffset,
       getFieldNodeAttributes,
     });
@@ -304,6 +311,7 @@ export const ValidationRuleExpressionEditor = ({
         highlightedIndex={highlightedIndex}
         isFocused={isHelperFocused}
         editorFields={editorFields}
+        shouldShowValidationRuleGuidance={shouldShowValidationRuleGuidance}
         onHighlight={setHighlightedIndex}
         onSelect={insertHelperItem}
       />
