@@ -6,7 +6,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 // Moving a record to another group writes the field, which a formula cannot take
 export const canGroupRecordsByFieldMetadataItem = (
   fieldMetadataItem: Pick<FieldMetadataItem, 'type' | 'relation'> &
-    Partial<Pick<FieldMetadataItem, 'settings'>>,
+    Partial<Pick<FieldMetadataItem, 'formula'>>,
 ): boolean =>
   !isFormulaFieldMetadata(fieldMetadataItem) &&
   (fieldMetadataItem.type === FieldMetadataType.SELECT ||

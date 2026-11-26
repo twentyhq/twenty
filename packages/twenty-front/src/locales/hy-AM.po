@@ -9616,7 +9616,7 @@ msgid "Customize record page"
 msgstr "Կարգավորել գրառման էջը"
 
 #. js-lingui-id: hxjpaE
-#: src/modules/navigation/components/MainNavigationDrawerContextMenu.tsx
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuCustomizeSidebarMenuContent.tsx
 #: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
 #: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
 msgid "Customize sidebar"
@@ -16382,11 +16382,6 @@ msgstr "Ներմուծել նոր նամակներ այս հաշվից"
 msgid "Import new events from this account"
 msgstr "Ներմուծել նոր իրադարձություններ այս հաշվից"
 
-#. js-lingui-id: 4Ljmum
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Import occurrences of recurring Google Calendar meetings up to 90 days ahead only, and import later occurrences as they come within 90 days."
-msgstr "Ներմուծեք պարբերական Google Calendar հանդիպումների կրկնությունները միայն 90 օր նախապես, իսկ ավելի ուշ կրկնությունները՝ երբ դրանք հայտնվեն 90-օրյա միջակայքում։"
-
 #. js-lingui-id: D5QSQM
 #: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx
 msgid "Import only selected folders/labels"
@@ -16396,11 +16391,6 @@ msgstr "Ներմուծել միայն ընտրված թղթապանակները/
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
 msgid "Import or add the MCP configuration from JetBrains settings."
 msgstr "Ներմուծեք կամ ավելացրեք MCP կազմաձևը JetBrains-ի կարգավորումներից։"
-
-#. js-lingui-id: 8zGGat
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Import recurring meetings 90 days ahead"
-msgstr "Ներմուծել պարբերական հանդիպումները 90 օր նախապես"
 
 #. js-lingui-id: LHHO6e
 #: src/modules/getting-started/constants/GettingStartedImportPrompt.ts
@@ -28722,20 +28712,10 @@ msgstr "Բաց թողնել"
 msgid "Skip anyway"
 msgstr "Ամեն դեպքում բաց թողնել"
 
-#. js-lingui-id: 5jWe/6
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Skip calendar events with no participant outside the workspace domain, unless internal import is turned on."
-msgstr "Բաց թողնել օրացույցի իրադարձությունները, որոնց մասնակիցներից ոչ ոք աշխատանքային տարածքի տիրույթից դուրս չէ, եթե ներքին ներմուծումը միացված չէ:"
-
 #. js-lingui-id: TyudBs
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Skip creating a Name field "
 msgstr "Բաց թողնել Name դաշտի ստեղծումը "
-
-#. js-lingui-id: pmVASU
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Skip internal meetings"
-msgstr "Բաց թողնել ներքին հանդիպումները"
 
 #. js-lingui-id: PlF+NA
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
@@ -31255,6 +31235,7 @@ msgstr "Այս մատակարարը ներկառուցված է։ Կարգավո
 
 #. js-lingui-id: qfpz3J
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
+#: src/modules/views/utils/computeRelationFilterDisplayValue.ts
 msgid "This record"
 msgstr "Այս գրառումը"
 

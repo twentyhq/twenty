@@ -3851,6 +3851,9 @@ export default {
             "description": [
                 4
             ],
+            "formula": [
+                350
+            ],
             "icon": [
                 4
             ],
@@ -5392,6 +5395,9 @@ export default {
             ],
             "disabledFieldPermissionActions": [
                 4
+            ],
+            "formula": [
+                350
             ],
             "icon": [
                 4
@@ -14820,6 +14826,9 @@ export default {
             ],
             "description": [
                 4
+            ],
+            "formula": [
+                350
             ],
             "icon": [
                 4

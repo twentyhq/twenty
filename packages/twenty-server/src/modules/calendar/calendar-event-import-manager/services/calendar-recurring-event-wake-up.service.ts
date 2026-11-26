@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import {
   CalendarChannelSyncStage,
   ConnectedAccountProvider,
-  FeatureFlagKey,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Any, Repository } from 'typeorm';
@@ -12,7 +11,6 @@ import { Any, Repository } from 'typeorm';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { type PendingWakeUpEntity } from 'src/engine/core-modules/pending-wake-up/entities/pending-wake-up.entity';
 import { PendingWakeUpOwnerHandlerRegistryService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up-owner-handler-registry.service';
 import { PendingWakeUpService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up.service';
@@ -34,7 +32,6 @@ export class CalendarRecurringEventWakeUpService
     private readonly pendingWakeUpService: PendingWakeUpService,
     @InjectRepository(CalendarChannelEntity)
     private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
-    private readonly featureFlagService: FeatureFlagService,
     private readonly googleCalendarGetEventsService: GoogleCalendarGetEventsService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     @InjectCacheStorage(CacheStorageNamespace.ModuleCalendar)
@@ -87,17 +84,10 @@ export class CalendarRecurringEventWakeUpService
       relations: ['connectedAccount'],
     });
 
-    const isRecurringEventHorizonEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED,
-        workspaceId,
-      );
-
     if (
       !isDefined(calendarChannel) ||
       calendarChannel.connectedAccount.provider !==
-        ConnectedAccountProvider.GOOGLE ||
-      !isRecurringEventHorizonEnabled
+        ConnectedAccountProvider.GOOGLE
     ) {
       await this.pendingWakeUpService.claim({
         workspaceId,

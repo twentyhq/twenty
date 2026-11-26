@@ -17,6 +17,7 @@ export const fromFlatFieldMetadataToFieldMetadataDto = (
     isSearchable,
     isAuditLogged,
     settings,
+    formula,
     id,
     universalIdentifier,
     label,
@@ -66,6 +67,7 @@ export const fromFlatFieldMetadataToFieldMetadataDto = (
     isSearchable: isSearchable ?? false,
     isAuditLogged,
     settings: settings ?? undefined,
+    formula: formula ?? null,
     morphId: morphId ?? undefined,
     applicationId: applicationId ?? undefined,
   };

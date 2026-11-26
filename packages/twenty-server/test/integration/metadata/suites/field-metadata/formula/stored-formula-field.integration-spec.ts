@@ -69,11 +69,9 @@ describe('Stored formula fields', () => {
         type,
         objectMetadataId,
         isLabelSyncedWithName: false,
-        ...(isNonEmptyString(expression)
-          ? { settings: { formula: { expression } } }
-          : {}),
+        ...(isNonEmptyString(expression) ? { formula: { expression } } : {}),
       },
-      gqlFields: 'id settings',
+      gqlFields: 'id formula',
     });
 
     return createOneField;
@@ -202,11 +200,7 @@ describe('Stored formula fields', () => {
       expression: 'count(gadgets)',
     });
 
-    expect(
-      getFieldMetadataFormulaEvaluation({
-        settings: gadgetCountField.settings,
-      }),
-    ).toBe('STORED');
+    expect(getFieldMetadataFormulaEvaluation(gadgetCountField)).toBe('STORED');
 
     await createField({
       objectMetadataId: supplierObjectMetadataId,
@@ -234,11 +228,9 @@ describe('Stored formula fields', () => {
       expression: 'stockValue / gadgetCount',
     });
 
-    expect(
-      getFieldMetadataFormulaEvaluation({
-        settings: averagePriceField.settings,
-      }),
-    ).toBe('QUERY_TIME');
+    expect(getFieldMetadataFormulaEvaluation(averagePriceField)).toBe(
+      'QUERY_TIME',
+    );
   });
 
   afterAll(async () => {
@@ -473,9 +465,7 @@ describe('Stored formula fields', () => {
       input: {
         idToUpdate: gadgetCountFieldMetadataId,
         updatePayload: {
-          settings: {
-            formula: { expression: 'count(gadgets, gadgets.quantity > 0)' },
-          },
+          formula: { expression: 'count(gadgets, gadgets.quantity > 0)' },
         },
       },
       gqlFields: 'id',
@@ -498,9 +488,7 @@ describe('Stored formula fields', () => {
       input: {
         idToUpdate: averagePriceFieldMetadataId,
         updatePayload: {
-          settings: {
-            formula: { expression: 'count(gadgets, gadgets.quantity > 0)' },
-          },
+          formula: { expression: 'count(gadgets, gadgets.quantity > 0)' },
         },
       },
       gqlFields: 'id',

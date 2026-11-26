@@ -1,18 +1,29 @@
+import { type FieldMetadataFormula } from 'twenty-shared/types';
 import {
   getFieldMetadataFormulaCurrencyCodeExpression,
   getFieldMetadataFormulaExpression,
 } from 'twenty-shared/utils';
 
 export const isFieldMetadataFormulaUnchanged = ({
-  settings,
-  existingSettings,
+  formula,
+  existingFormula,
 }: {
-  settings: unknown;
-  existingSettings: unknown;
+  formula:
+    | Partial<
+        Pick<FieldMetadataFormula, 'expression' | 'currencyCodeExpression'>
+      >
+    | null
+    | undefined;
+  existingFormula:
+    | Partial<
+        Pick<FieldMetadataFormula, 'expression' | 'currencyCodeExpression'>
+      >
+    | null
+    | undefined;
 }): boolean =>
-  getFieldMetadataFormulaExpression({ settings }) ===
-    getFieldMetadataFormulaExpression({ settings: existingSettings }) &&
-  getFieldMetadataFormulaCurrencyCodeExpression({ settings }) ===
+  getFieldMetadataFormulaExpression({ formula }) ===
+    getFieldMetadataFormulaExpression({ formula: existingFormula }) &&
+  getFieldMetadataFormulaCurrencyCodeExpression({ formula }) ===
     getFieldMetadataFormulaCurrencyCodeExpression({
-      settings: existingSettings,
+      formula: existingFormula,
     });

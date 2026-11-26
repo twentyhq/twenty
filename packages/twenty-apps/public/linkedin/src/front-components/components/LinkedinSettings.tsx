@@ -4,7 +4,15 @@ import 'twenty-ui/theme-light.css';
 
 import styled from '@emotion/styled';
 import { useRef, useState } from 'react';
-import { enqueueSnackbar, t, useColorScheme } from 'twenty-sdk/front-component';
+import {
+  AppPath,
+  enqueueSnackbar,
+  navigate,
+  t,
+  useColorScheme,
+  useLocation,
+} from 'twenty-sdk/front-component';
+import { isDefined } from 'twenty-sdk/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
 import {
@@ -15,6 +23,7 @@ import {
 } from 'twenty-ui/theme';
 
 import { LINKEDIN_SETTINGS_ROUTE_PATHS } from 'src/constants/linkedin-settings-route-paths.constant';
+import { LinkedinAccountBanners } from 'src/front-components/components/LinkedinAccountBanners';
 import { LinkedinAccountField } from 'src/front-components/components/LinkedinAccountField';
 import { LinkedinContactAutoCreationSection } from 'src/front-components/components/LinkedinContactAutoCreationSection';
 import { LinkedinImportSection } from 'src/front-components/components/LinkedinImportSection';
@@ -57,14 +66,14 @@ type LinkedinSettingsState =
 
 export const LinkedinSettings = () => {
   const colorScheme = useColorScheme();
+  const location = useLocation();
   const [state, setState] = useState<LinkedinSettingsState>({
     step: 'loading',
   });
   const [pollCount, setPollCount] = useState(0);
 
-  const [isSyncStarting, setIsSyncStarting] = useState(false);
-  const [isSyncCancelling, setIsSyncCancelling] = useState(false);
-  const [syncProgress, setSyncProgress] = useState<{
+  const [isImportRetrying, setIsImportRetrying] = useState(false);
+  const [importProgress, setImportProgress] = useState<{
     runId: string;
     progress: number;
   } | null>(null);
@@ -81,7 +90,7 @@ export const LinkedinSettings = () => {
       next: historyImport,
     });
     lastHistoryImportRef.current = historyImport;
-    setSyncProgress((current) =>
+    setImportProgress((current) =>
       getNextLinkedinSyncProgress({ current, historyImport }),
     );
     setState({ step: 'ready', view });
@@ -140,8 +149,8 @@ export const LinkedinSettings = () => {
     });
   };
 
-  const handleSync = async () => {
-    setIsSyncStarting(true);
+  const handleRetryImport = async () => {
+    setIsImportRetrying(true);
 
     try {
       await settingsSaveQueue.whenIdle();
@@ -153,32 +162,19 @@ export const LinkedinSettings = () => {
       );
     } catch {
       enqueueSnackbar({
-        message: t('Could not start the LinkedIn sync. Try again.'),
+        message: t('Could not retry the LinkedIn import. Try again.'),
         variant: 'error',
       });
     } finally {
-      setIsSyncStarting(false);
+      setIsImportRetrying(false);
     }
   };
 
-  const handleCancelSync = async () => {
-    setIsSyncCancelling(true);
-
-    try {
-      showView(
-        await postLinkedinSettingsRouteOrThrow({
-          routePath: LINKEDIN_SETTINGS_ROUTE_PATHS.cancelHistoryImport,
-        }),
-      );
-    } catch {
-      enqueueSnackbar({
-        message: t('Could not cancel the LinkedIn sync. Try again.'),
-        variant: 'error',
-      });
-    } finally {
-      setIsSyncCancelling(false);
-    }
-  };
+  // The SDK only navigates to app paths, so the settings tab hash rides in the catch-all splat.
+  const handleGoToGeneralTab = (pathname: string) =>
+    navigate(AppPath.SettingsCatchAll, {
+      '*': `${pathname.replace(/^\/settings\//, '')}#general`,
+    });
 
   const view = state.step === 'ready' ? state.view : undefined;
   const isImportingHistory =
@@ -214,48 +210,54 @@ export const LinkedinSettings = () => {
         )}
         {view?.isConnected === false && (
           <Section.Root>
-            <Section.Header
-              title={t('Account')}
-              description={t(
-                'Connect your LinkedIn account to choose what gets synced.',
+            <Section.Header title={t('Account')} />
+            <InlineBanner
+              status="info"
+              fullWidth
+              embedded
+              action={
+                isDefined(location) && (
+                  <InlineBanner.Action
+                    onClick={() => handleGoToGeneralTab(location.pathname)}
+                  >
+                    {t('Go to General')}
+                  </InlineBanner.Action>
+                )
+              }
+            >
+              {t(
+                'Connect your LinkedIn account in the General tab to choose what gets synced.',
               )}
-            />
+            </InlineBanner>
           </Section.Root>
         )}
         {view?.isConnected === true && (
           <>
+            <LinkedinAccountBanners
+              isAuthFailed={view.connection.isAuthFailed}
+              historyImport={view.historyImport}
+              isImportRetrying={isImportRetrying}
+              onRetryImport={handleRetryImport}
+            />
             <LinkedinAccountField
               name={view.connection.name}
               handle={view.connection.handle}
-              isAuthFailed={view.connection.isAuthFailed}
+              historyImport={view.historyImport}
+              importProgress={
+                importProgress?.runId === view.historyImport?.runId
+                  ? importProgress?.progress
+                  : undefined
+              }
             />
             <LinkedinImportSection
               importPolicy={view.settings.importPolicy}
               selectedChats={view.settings.selectedChats}
-              areGroupChatsImported={view.settings.areGroupChatsImported}
-              historyConversationLimit={view.settings.historyConversationLimit}
-              historyImport={view.historyImport}
-              syncProgress={
-                syncProgress?.runId === view.historyImport?.runId
-                  ? syncProgress?.progress
-                  : undefined
-              }
-              isSyncStarting={isSyncStarting}
-              isSyncCancelling={isSyncCancelling}
               onChange={(importPolicy) =>
                 handleSettingsChange({ importPolicy })
               }
               onSelectedChatsChange={(selectedChats) =>
                 handleSettingsChange({ selectedChats })
               }
-              onGroupChatsImportChange={(areGroupChatsImported) =>
-                handleSettingsChange({ areGroupChatsImported })
-              }
-              onHistoryConversationLimitChange={(historyConversationLimit) =>
-                handleSettingsChange({ historyConversationLimit })
-              }
-              onSync={handleSync}
-              onCancelSync={handleCancelSync}
             />
             <LinkedinVisibilitySection
               visibility={view.settings.visibility}

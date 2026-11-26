@@ -27,9 +27,9 @@ const computeRenamedExpressions = ({
         deletedUniversalFlatFieldMetadataByUniversalIdentifier: {},
         ...args,
       }),
-    ).map(([universalIdentifier, { universalSettings }]) => [
+    ).map(([universalIdentifier, { formula }]) => [
       universalIdentifier,
-      universalSettings,
+      { formula },
     ]),
   );
 
