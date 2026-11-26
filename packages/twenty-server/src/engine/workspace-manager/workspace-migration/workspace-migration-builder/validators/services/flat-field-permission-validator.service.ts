@@ -13,6 +13,7 @@ import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/
 import { validateFieldPermissionUnreadableNestedSource } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util';
 import { validateFieldPermissionGrantsNoDisabledAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-grants-no-disabled-action.util';
 import { getMarketplaceApplicationRoleRestrictionErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-restriction-errors.util';
+import { isFieldPermissionRestrictionAdded } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/is-field-permission-restriction-added.util';
 import { getRoleNotEditableErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-not-editable-errors.util';
 import { validateRoleBelongsToCallerApplication } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util';
 import { isSameRowLevelPermissionPredicateGroup } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/is-same-row-level-permission-predicate-group.util';
@@ -45,9 +46,15 @@ export class FlatFieldPermissionValidatorService {
       type: 'create',
     });
 
-    validationResult.errors.push(
-      ...getMarketplaceApplicationRoleRestrictionErrors({ buildOptions }),
-    );
+    // A field permission denying nothing grants nothing, so only a restriction is refused
+    if (
+      flatFieldPermissionToValidate.canReadFieldValue === false ||
+      flatFieldPermissionToValidate.canUpdateFieldValue === false
+    ) {
+      validationResult.errors.push(
+        ...getMarketplaceApplicationRoleRestrictionErrors({ buildOptions }),
+      );
+    }
 
     const existingByUniversalId = findFlatEntityByUniversalIdentifier({
       universalIdentifier: flatFieldPermissionToValidate.universalIdentifier,
@@ -200,16 +207,12 @@ export class FlatFieldPermissionValidatorService {
       return validationResult;
     }
 
-    // An installed restriction may still be lifted, so only adding one is refused
-    const isRestrictionAdded = (
-      ['canReadFieldValue', 'canUpdateFieldValue'] as const
-    ).some(
-      (grant) =>
-        flatEntityUpdate[grant] === false &&
-        existingFlatFieldPermission[grant] !== false,
-    );
-
-    if (isRestrictionAdded) {
+    if (
+      isFieldPermissionRestrictionAdded({
+        existingFlatFieldPermission,
+        flatEntityUpdate,
+      })
+    ) {
       validationResult.errors.push(
         ...getMarketplaceApplicationRoleRestrictionErrors({ buildOptions }),
       );

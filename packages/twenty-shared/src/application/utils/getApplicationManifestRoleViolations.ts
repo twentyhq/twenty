@@ -28,13 +28,10 @@ export type ApplicationManifestRoleViolation =
 const hasRowLevelRules = (object: ObjectRecordsPermissionsManifest) =>
   isNonEmptyArray(object.rowLevelRecordsPermissions);
 
-// A legacy field permission granting nothing still becomes a stored row through its identifier
 const hasFieldPermissions = (object: ObjectRecordsPermissionsManifest) =>
   [object, ...(object.rowLevelRecordsPermissions ?? [])].some(
-    ({ unreadableFields, uneditableFields, fieldPermissionIdentifiers }) =>
-      isNonEmptyArray(unreadableFields) ||
-      isNonEmptyArray(uneditableFields) ||
-      isNonEmptyArray(fieldPermissionIdentifiers),
+    ({ unreadableFields, uneditableFields }) =>
+      isNonEmptyArray(unreadableFields) || isNonEmptyArray(uneditableFields),
   );
 
 // Both flags default to true when omitted; the server makes requested and agent roles agent-only
