@@ -71,6 +71,18 @@ jest.mock('@/ai-chat/tool-calls/hooks/useFrontComponentIdByToolName', () => ({
   useFrontComponentIdByToolName: () => mockFrontComponentIdByToolName(),
 }));
 
+type ToolIndexEntryStub = {
+  name: string;
+  approval: {
+    labels: { approve: string | null; reject: string | null } | null;
+  } | null;
+};
+
+const mockToolIndex = jest.fn((): ToolIndexEntryStub[] => []);
+jest.mock('@/ai/hooks/useGetToolIndex', () => ({
+  useGetToolIndex: () => ({ toolIndex: mockToolIndex() }),
+}));
+
 type ToolFrontComponentStubProps = {
   toolCall: { input?: Record<string, unknown> };
   onToolCallArgumentsChange: (toolArguments: Record<string, unknown>) => void;
@@ -134,6 +146,7 @@ describe('AiChatToolCallApprovalCard', () => {
       .mockReturnValue({ preview: { isCurrent: true }, isRendered: true });
     mockIsFeatureEnabled.mockReset().mockReturnValue(true);
     mockFrontComponentIdByToolName.mockReset().mockReturnValue(new Map());
+    mockToolIndex.mockReset().mockReturnValue([]);
   });
 
   it("shows the tool's front component instead of the raw arguments and approves what it sets", async () => {
@@ -216,6 +229,27 @@ describe('AiChatToolCallApprovalCard', () => {
       expect(answerAiChatToolCall).toHaveBeenCalledWith(
         expect.objectContaining({ response: { decision: 'reject' } }),
       );
+    });
+
+    it("shows the labels in the viewer's language from the tool index", () => {
+      mockToolIndex.mockReturnValue([
+        {
+          name: 'app_tool_respond_to_cal_booking',
+          approval: {
+            labels: { approve: 'Envoyer la réponse', reject: null },
+          },
+        },
+      ]);
+
+      renderCard({ proposal: BOOKING_PROPOSAL });
+
+      expect(
+        screen.getByRole('button', { name: 'Envoyer la réponse' }),
+      ).toBeVisible();
+      expect(screen.getByRole('button', { name: 'Reject' })).toBeVisible();
+      expect(
+        screen.queryByRole('button', { name: 'Not now' }),
+      ).not.toBeInTheDocument();
     });
   });
 

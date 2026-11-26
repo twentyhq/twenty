@@ -17,6 +17,21 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { RequestLocale } from 'src/engine/decorators/locale/request-locale.decorator';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
+@ObjectType('ToolApprovalLabels')
+export class ToolApprovalLabelsDTO {
+  @Field({ nullable: true })
+  approve?: string;
+
+  @Field({ nullable: true })
+  reject?: string;
+}
+
+@ObjectType('ToolApproval')
+export class ToolApprovalDTO {
+  @Field(() => ToolApprovalLabelsDTO, { nullable: true })
+  labels?: ToolApprovalLabelsDTO;
+}
+
 @ObjectType('ToolIndexEntry')
 export class ToolIndexEntryDTO {
   @Field()
@@ -42,6 +57,9 @@ export class ToolIndexEntryDTO {
 
   @Field({ nullable: true })
   frontComponentId?: string;
+
+  @Field(() => ToolApprovalDTO, { nullable: true })
+  approval?: ToolApprovalDTO;
 
   @Field(() => graphqlTypeJson, { nullable: true })
   inputSchema?: object;

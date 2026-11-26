@@ -13,6 +13,7 @@ import { AiChatToolCallApprovalRecord } from '@/ai-chat/tool-calls/components/Ai
 import { AiChatToolCallApprovalRecordFields } from '@/ai-chat/tool-calls/components/AiChatToolCallApprovalRecordFields';
 import { useAnswerToolCallApproval } from '@/ai-chat/tool-calls/hooks/useAnswerToolCallApproval';
 import { useFrontComponentIdByToolName } from '@/ai-chat/tool-calls/hooks/useFrontComponentIdByToolName';
+import { useGetToolIndex } from '@/ai/hooks/useGetToolIndex';
 
 type AiChatToolCallApprovalArgumentsCardProps = {
   toolCallId: string;
@@ -32,11 +33,20 @@ export const AiChatToolCallApprovalArgumentsCard = ({
     unknown
   > | null>(proposal.arguments);
 
-  const { template, objectNameSingular, recordId, labels } = proposal;
+  const { template, objectNameSingular, recordId } = proposal;
 
   const toolFrontComponentId = useFrontComponentIdByToolName().get(
     proposal.toolName,
   );
+
+  const { toolIndex } = useGetToolIndex();
+  const toolIndexEntry = toolIndex.find(
+    (entry) => entry.name === proposal.toolName,
+  );
+  // The tool index is translated for the viewer; the stored labels are in the proposer's language
+  const labels = isDefined(toolIndexEntry)
+    ? toolIndexEntry.approval?.labels
+    : proposal.labels;
 
   const argumentsEditor = (
     <AiChatToolCallApprovalArgumentsEditor

@@ -7764,8 +7764,20 @@ export type TimelineConfiguration = {
   configurationType: WidgetConfigurationType;
 };
 
+export type ToolApproval = {
+  __typename?: 'ToolApproval';
+  labels?: Maybe<ToolApprovalLabels>;
+};
+
+export type ToolApprovalLabels = {
+  __typename?: 'ToolApprovalLabels';
+  approve?: Maybe<Scalars['String']['output']>;
+  reject?: Maybe<Scalars['String']['output']>;
+};
+
 export type ToolIndexEntry = {
   __typename?: 'ToolIndexEntry';
+  approval?: Maybe<ToolApproval>;
   category: Scalars['String']['output'];
   description: Scalars['String']['output'];
   frontComponentId?: Maybe<Scalars['String']['output']>;

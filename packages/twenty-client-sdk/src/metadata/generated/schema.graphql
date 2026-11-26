@@ -5326,7 +5326,17 @@ type TimelineConfiguration {
   configurationType: WidgetConfigurationType!
 }
 
+type ToolApproval {
+  labels: ToolApprovalLabels
+}
+
+type ToolApprovalLabels {
+  approve: String
+  reject: String
+}
+
 type ToolIndexEntry {
+  approval: ToolApproval
   category: String!
   description: String!
   frontComponentId: String

@@ -25,6 +25,7 @@ export {
   buildObjectMetadataLabelPlaceholderValues,
   hasObjectMetadataLabelPlaceholder,
 } from './metadata-label-placeholder';
+export { TOOL_TRIGGER_APPROVAL_LABEL_CONTEXTS } from './tool-trigger-approval-label-contexts';
 export type {
   TranslatableMetadataName,
   TranslatablePropertyName,

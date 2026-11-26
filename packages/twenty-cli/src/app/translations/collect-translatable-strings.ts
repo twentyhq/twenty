@@ -1,6 +1,7 @@
 import { type Manifest } from 'twenty-shared/application';
 import {
   getMetadataLabelContext,
+  TOOL_TRIGGER_APPROVAL_LABEL_CONTEXTS,
   TRANSLATABLE_PROPERTIES_BY_METADATA_NAME,
   type TranslatableMetadataName,
 } from 'twenty-shared/i18n';
@@ -32,6 +33,17 @@ export const collectTranslatableStrings = (
   // deduplicated per (context, message) rather than per message.
   const descriptorByKey = new Map<string, MessageDescriptor>();
 
+  const addString = (value: unknown, context: string) => {
+    if (typeof value !== 'string' || value.length === 0) {
+      return;
+    }
+
+    descriptorByKey.set(JSON.stringify([context, value]), {
+      message: value,
+      context,
+    });
+  };
+
   const addEntityStrings = (
     entity: unknown,
     metadataName: TranslatableMetadataName,
@@ -43,18 +55,10 @@ export const collectTranslatableStrings = (
     for (const property of TRANSLATABLE_PROPERTIES_BY_METADATA_NAME[
       metadataName
     ]) {
-      const value = (entity as Record<string, unknown>)[property];
-
-      if (typeof value !== 'string' || value.length === 0) {
-        continue;
-      }
-
-      const context = getMetadataLabelContext(metadataName, property);
-
-      descriptorByKey.set(JSON.stringify([context, value]), {
-        message: value,
-        context,
-      });
+      addString(
+        (entity as Record<string, unknown>)[property],
+        getMetadataLabelContext(metadataName, property),
+      );
     }
   };
 
@@ -94,6 +98,19 @@ export const collectTranslatableStrings = (
     for (const widget of pageLayoutTab.widgets ?? []) {
       addEntityStrings(widget, 'pageLayoutWidget');
     }
+  }
+
+  for (const logicFunction of manifest.logicFunctions ?? []) {
+    const approvalSettings = logicFunction.toolTriggerSettings?.approval;
+
+    addString(
+      approvalSettings?.approveLabel,
+      TOOL_TRIGGER_APPROVAL_LABEL_CONTEXTS.approveLabel,
+    );
+    addString(
+      approvalSettings?.rejectLabel,
+      TOOL_TRIGGER_APPROVAL_LABEL_CONTEXTS.rejectLabel,
+    );
   }
 
   return [...descriptorByKey.values()];

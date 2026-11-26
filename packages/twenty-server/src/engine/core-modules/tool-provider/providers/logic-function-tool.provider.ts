@@ -1,12 +1,15 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import {
   buildToolInputJsonSchema,
   DEFAULT_TOOL_INPUT_SCHEMA,
 } from 'twenty-shared/logic-function';
 
 import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import { translateStandardLabel } from 'src/engine/core-modules/i18n/utils/translate-standard-label.util';
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
@@ -15,6 +18,7 @@ import { ToolCategory } from 'twenty-shared/ai';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { buildLogicFunctionToolApproval } from 'src/engine/core-modules/tool-provider/utils/build-logic-function-tool-approval.util';
@@ -26,6 +30,8 @@ export class LogicFunctionToolProvider implements ToolProvider {
 
   constructor(
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
+    private readonly i18nService: I18nService,
   ) {}
 
   async isAvailable(_context: ToolProviderContext): Promise<boolean> {
@@ -94,13 +100,23 @@ export class LogicFunctionToolProvider implements ToolProvider {
         }),
     );
 
+    const translateApprovalLabel = await this.buildApprovalLabelTranslator({
+      context,
+      logicFunctions: logicFunctionsWithSchema,
+    });
+
     const descriptors: (ToolIndexEntry | ToolDescriptor)[] = [];
 
     for (const logicFunction of logicFunctionsWithSchema) {
       const toolName = buildLogicFunctionToolName(logicFunction.name);
-      const approval = buildLogicFunctionToolApproval(
-        logicFunction.toolTriggerSettings?.approval,
-      );
+      const approval = buildLogicFunctionToolApproval({
+        approvalSettings: logicFunction.toolTriggerSettings?.approval,
+        translateLabel: (label) =>
+          translateApprovalLabel({
+            ...label,
+            applicationId: logicFunction.applicationId,
+          }),
+      });
 
       const base: ToolIndexEntry = {
         name: toolName,
@@ -135,5 +151,55 @@ export class LogicFunctionToolProvider implements ToolProvider {
     }
 
     return descriptors;
+  }
+
+  // Apps never ship a source-locale catalog, so only other locales need a lookup.
+  private async buildApprovalLabelTranslator({
+    context,
+    logicFunctions,
+  }: {
+    context: ToolProviderContext;
+    logicFunctions: FlatLogicFunction[];
+  }): Promise<
+    (label: {
+      message: string;
+      context: string;
+      applicationId: string;
+    }) => string
+  > {
+    const { locale } = context;
+    const applicationIds = [
+      ...new Set(
+        logicFunctions
+          .filter((logicFunction) =>
+            isDefined(logicFunction.toolTriggerSettings?.approval),
+          )
+          .map((logicFunction) => logicFunction.applicationId),
+      ),
+    ];
+
+    if (
+      !isDefined(locale) ||
+      locale === SOURCE_LOCALE ||
+      !isNonEmptyArray(applicationIds)
+    ) {
+      return ({ message }) => message;
+    }
+
+    const { catalogByApplicationId } =
+      await this.applicationTranslationCatalogService.getCatalogs({
+        applicationIds,
+        locale,
+        workspaceId: context.workspaceId,
+      });
+    const i18nInstance = this.i18nService.getI18nInstance(locale);
+
+    return ({ message, context: messageContext, applicationId }) =>
+      translateStandardLabel({
+        sourceValue: message,
+        context: messageContext,
+        applicationCatalog: catalogByApplicationId.get(applicationId),
+        i18nInstance,
+      });
   }
 }

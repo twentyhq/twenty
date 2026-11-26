@@ -11,6 +11,12 @@ export const GET_TOOL_INDEX = gql`
       icon
       widgetName
       frontComponentId
+      approval {
+        labels {
+          approve
+          reject
+        }
+      }
     }
   }
 `;
