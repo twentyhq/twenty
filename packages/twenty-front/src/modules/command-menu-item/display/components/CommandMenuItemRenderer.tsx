@@ -7,8 +7,8 @@ import { CommandListItemLoader } from '@/command-menu-item/display/components/Co
 import { CommandMenuDropdownActionItem } from '@/command-menu-item/display/components/CommandMenuDropdownActionItem';
 import { useCommandMenuItemDisplay } from '@/command-menu-item/display/hooks/useCommandMenuItemDisplay';
 import { getCommandMenuItemButtonHotKey } from '@/command-menu-item/display/utils/getCommandMenuItemButtonHotKey';
-import { isSettingsSubPageNavigationCommandMenuItem } from '@/command-menu-item/display/utils/isSettingsSubPageNavigationCommandMenuItem';
 import { ENGINE_COMPONENT_KEYS_WITH_SUB_MENU } from '@/command-menu-item/engine-command/constants/EngineComponentKeysWithSubMenu';
+import { isPathCommandMenuItemPayload } from '@/command-menu-item/engine-command/utils/isPathCommandMenuItemPayload';
 import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -18,9 +18,14 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
-import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import { AppPath, SettingsPath } from 'twenty-shared/types';
+import {
+  assertUnreachable,
+  getSettingsPath,
+  isDefined,
+} from 'twenty-shared/utils';
+import { EngineComponentKey } from '~/generated-metadata/graphql';
 
 const StyledPreviewWrapper = styled.div`
   cursor: not-allowed;
@@ -29,6 +34,15 @@ const StyledPreviewWrapper = styled.div`
     pointer-events: none;
   }
 `;
+
+const isSettingsSubPageNavigationCommandMenuItem = (
+  item: CommandMenuItemDefinition,
+) =>
+  item.engineComponentKey === EngineComponentKey.NAVIGATION &&
+  isDefined(item.payload) &&
+  isPathCommandMenuItemPayload(item.payload) &&
+  item.payload.path.startsWith(`/${AppPath.Settings}/`) &&
+  item.payload.path !== getSettingsPath(SettingsPath.ProfilePage);
 
 type CommandMenuItemRendererProps = {
   item: CommandMenuItemDefinition;
@@ -111,19 +125,8 @@ const CommandMenuItemSelectableRenderer = ({
   item,
 }: CommandMenuItemSelectableRendererProps) => {
   const { t } = useLingui();
-  const {
-    Icon,
-    label,
-    shortLabel,
-    handleClick,
-    disabled,
-    progress,
-    isLoading,
-  } = useCommandMenuItemDisplay(item);
-
-  const isSettingsSubPage =
-    isSettingsSubPageNavigationCommandMenuItem(item) &&
-    isNonEmptyString(shortLabel);
+  const { Icon, label, handleClick, disabled, progress, isLoading } =
+    useCommandMenuItemDisplay(item);
 
   const selectableListInstanceId = useAvailableComponentInstanceIdOrThrow(
     SelectableListComponentInstanceContext,
@@ -168,8 +171,12 @@ const CommandMenuItemSelectableRenderer = ({
       <CommandMenuItem
         id={item.id}
         Icon={Icon}
-        label={isSettingsSubPage ? t`Go to ${shortLabel}` : label}
-        description={isSettingsSubPage ? t`Settings` : undefined}
+        label={label}
+        description={
+          isSettingsSubPageNavigationCommandMenuItem(item)
+            ? t`Settings`
+            : undefined
+        }
         onClick={disabled ? undefined : handleClick}
         hotKeys={item.hotKeys}
         hasSubMenu={ENGINE_COMPONENT_KEYS_WITH_SUB_MENU.has(
