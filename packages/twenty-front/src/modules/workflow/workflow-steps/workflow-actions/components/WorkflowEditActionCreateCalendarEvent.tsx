@@ -46,11 +46,10 @@ export const WorkflowEditActionCreateCalendarEvent = ({
   const { t } = useLingui();
   const { formData, handleFieldChange, saveAction } = useCalendarEventForm({
     action,
-    onActionUpdate:
-      actionOptions.readonly === true
-        ? undefined
-        : actionOptions.onActionUpdate,
-    readonly: actionOptions.readonly === true,
+    onActionUpdate: actionOptions.readonly
+      ? undefined
+      : actionOptions.onActionUpdate,
+    readonly: actionOptions.readonly ?? false,
   });
 
   const navigate = useNavigateSettings();

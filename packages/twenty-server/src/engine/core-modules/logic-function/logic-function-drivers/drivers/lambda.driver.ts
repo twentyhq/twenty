@@ -6,7 +6,10 @@ import {
 } from '@aws-sdk/client-lambda';
 import { Logger } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { NON_PERSISTED_EXECUTOR_NAME_PREFIXES } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/non-persisted-executor-name-prefixes';
+import { WARM_UP_INVOKE_TIMEOUT_MS } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
 import { LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
 import { LambdaExecutorManagerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-executor-manager.service';
 import { LambdaLayerManagerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-layer-manager.service';
@@ -14,6 +17,7 @@ import { LambdaToolFunctionsService } from 'src/engine/core-modules/logic-functi
 import {
   type LambdaDriverExecutorPayload,
   type LambdaDriverOptions,
+  type LambdaDriverWarmUpPayload,
   LambdaExecutionPhase,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
 import { HTTP_EGRESS_UNAVAILABLE_ERROR_CODE } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-http-egress-unavailable-response.util';
@@ -28,6 +32,7 @@ import {
   type LogicFunctionInstallPrebuiltBundleParams,
   type LogicFunctionTranspileParams,
   type LogicFunctionTranspileResult,
+  type LogicFunctionWarmUpParams,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import {
   type BrowserTranspileParams,
@@ -144,6 +149,33 @@ export class LambdaDriver implements LogicFunctionDriver {
     flatLogicFunction: ExecutableFlatLogicFunction,
   ): Promise<string | null> {
     return this.executorManager.getInstalledBundleChecksum(flatLogicFunction);
+  }
+
+  async warmUp({
+    flatLogicFunction,
+    env,
+  }: LogicFunctionWarmUpParams): Promise<void> {
+    // No handlerName: an executor deployed before warm-up support then throws instead of running the handler.
+    const warmUpPayload: LambdaDriverWarmUpPayload = {
+      isWarmUp: true,
+      env: env ?? {},
+    };
+
+    const lambdaClient = await this.awsClient.getLambdaClient();
+
+    const result = await lambdaClient.send(
+      new InvokeCommand({
+        FunctionName: getLambdaExecutorFunctionName(flatLogicFunction),
+        Payload: JSON.stringify(warmUpPayload),
+      }),
+      { abortSignal: AbortSignal.timeout(WARM_UP_INVOKE_TIMEOUT_MS) },
+    );
+
+    if (isDefined(result.FunctionError)) {
+      this.logger.warn(
+        `Warm-up of function '${flatLogicFunction.id}' failed while loading its bundle: ${result.Payload?.transformToString() ?? result.FunctionError}`,
+      );
+    }
   }
 
   async execute({

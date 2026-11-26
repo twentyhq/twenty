@@ -11,6 +11,7 @@ import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { type NamedNavigationMenuItem } from '@/navigation-menu-item/common/types/NamedNavigationMenuItem';
 import { type InboxChatAttention } from '@/inbox/types/InboxChatAttention';
+import { useGetNavigationMenuTabLabel } from '@/navigation-menu-item/display/hooks/useGetNavigationMenuTabLabel';
 import { useGetNavigationMenuTabAttentionLabel } from '@/navigation-menu-item/display/hooks/useGetNavigationMenuTabAttentionLabel';
 import { NavigationMenuCustomizeSidebarMenuContent } from '@/navigation-menu-item/edit/components/NavigationMenuCustomizeSidebarMenuContent';
 import { NavigationMenuTabMenuContent } from '@/navigation-menu-item/edit/components/NavigationMenuTabMenuContent';
@@ -50,6 +51,8 @@ export const MainNavigationDrawerSidebarTab = ({
   const { getIcon } = useIcons();
   const getNavigationMenuTabAttentionLabel =
     useGetNavigationMenuTabAttentionLabel();
+  const getNavigationMenuTabLabel = useGetNavigationMenuTabLabel();
+  const tabLabel = getNavigationMenuTabLabel(tab);
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
@@ -104,11 +107,11 @@ export const MainNavigationDrawerSidebarTab = ({
   const tabButton = (
     <MainNavigationDrawerTab
       Icon={getIcon(tab.icon ?? NAVIGATION_MENU_TAB_ICON_DEFAULT)}
-      label={tab.name}
+      label={tabLabel}
       isActive={isActive}
       isExpanded={isExpanded}
       isDisabled={false}
-      tooltip={tab.name}
+      tooltip={tabLabel}
       shouldShowTooltip={shouldShowTooltip}
       onClick={handleClick}
       isSelectedInEditMode={
@@ -117,7 +120,7 @@ export const MainNavigationDrawerSidebarTab = ({
         selectedNavigationMenuItemIdInEditMode === tab.id
       }
       ariaLabel={getNavigationMenuTabAttentionLabel({
-        tabName: tab.name,
+        tabName: tabLabel,
         attention,
       })}
       iconAccessory={

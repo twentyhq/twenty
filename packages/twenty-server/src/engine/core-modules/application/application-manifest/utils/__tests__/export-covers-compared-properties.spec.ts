@@ -37,7 +37,6 @@ import {
   ViewPresetFilter,
   ViewSortDirection,
   ViewType,
-  ViewVisibility,
   WidgetType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -183,7 +182,6 @@ const VIEW_MANIFEST: ViewManifest = {
   icon: 'IconLayoutKanban',
   position: 3,
   isCompact: true,
-  visibility: ViewVisibility.UNLISTED,
   openRecordIn: ViewOpenRecordIn.RECORD_PAGE,
   mainGroupByFieldMetadataUniversalIdentifier: FIELD_UID,
   shouldHideEmptyGroups: true,
@@ -575,8 +573,8 @@ const EXPORTED_KINDS: ExportedKind[] = [
         },
       }),
     ),
-    renamedProperties: { isPrivate: 'visibility' },
-    workspaceLocalProperties: ['isActive', 'universalOverrides'],
+    renamedProperties: {},
+    workspaceLocalProperties: ['isActive', 'universalOverrides', 'isPrivate'],
     knownGaps: VIEW_KIND_GAPS,
   },
   {
