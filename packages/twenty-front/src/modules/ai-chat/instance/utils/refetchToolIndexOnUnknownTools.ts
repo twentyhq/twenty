@@ -1,11 +1,7 @@
 import { type ApolloClient } from '@apollo/client';
-import { isNonEmptyString } from '@sniptt/guards';
-import { type DynamicToolUIPart, isToolUIPart, type ToolUIPart } from 'ai';
-import {
-  type ExtendedUIMessage,
-  PROPOSE_TOOL_CALL_TOOL_NAME,
-} from 'twenty-shared/ai';
-import { isDefined, isNonEmptyArray, isPlainObject } from 'twenty-shared/utils';
+import { isToolUIPart } from 'ai';
+import { type ExtendedUIMessage } from 'twenty-shared/ai';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { getEffectiveToolName } from '@/ai-chat/tool-calls/utils/getEffectiveToolName';
 import { invalidateToolIndex } from '@/ai/utils/invalidateToolIndex';
@@ -15,23 +11,6 @@ const requestedUnknownToolNamesByClient = new WeakMap<
   ApolloClient,
   Set<string>
 >();
-
-const getReferencedToolNames = (
-  toolPart: ToolUIPart | DynamicToolUIPart,
-): string[] => {
-  const toolName = getEffectiveToolName(toolPart);
-
-  if (
-    toolName === PROPOSE_TOOL_CALL_TOOL_NAME &&
-    toolPart.state !== 'input-streaming' &&
-    isPlainObject(toolPart.input) &&
-    isNonEmptyString(toolPart.input.toolName)
-  ) {
-    return [toolName, toolPart.input.toolName];
-  }
-
-  return [toolName];
-};
 
 export const refetchToolIndexOnUnknownTools = ({
   apolloClient,
@@ -62,7 +41,7 @@ export const refetchToolIndexOnUnknownTools = ({
       messages
         .flatMap(({ parts }) => parts)
         .filter(isToolUIPart)
-        .flatMap(getReferencedToolNames),
+        .map(getEffectiveToolName),
     ),
   ].filter(
     (toolName) =>

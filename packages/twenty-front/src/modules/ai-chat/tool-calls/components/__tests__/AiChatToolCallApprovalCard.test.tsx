@@ -73,9 +73,8 @@ jest.mock('@/ai-chat/tool-calls/hooks/useFrontComponentIdByToolName', () => ({
 
 type ToolIndexEntryStub = {
   name: string;
-  approval: {
-    labels: { approve: string | null; reject: string | null } | null;
-  } | null;
+  approveLabel: string | null;
+  rejectLabel: string | null;
 };
 
 const mockToolIndex = jest.fn((): ToolIndexEntryStub[] => []);
@@ -231,13 +230,12 @@ describe('AiChatToolCallApprovalCard', () => {
       );
     });
 
-    it("shows the labels in the viewer's language from the tool index", () => {
+    it('prefers the tool index labels, translated for the viewer, over the stored ones', () => {
       mockToolIndex.mockReturnValue([
         {
           name: 'app_tool_respond_to_cal_booking',
-          approval: {
-            labels: { approve: 'Envoyer la réponse', reject: null },
-          },
+          approveLabel: 'Envoyer la réponse',
+          rejectLabel: null,
         },
       ]);
 
@@ -245,22 +243,6 @@ describe('AiChatToolCallApprovalCard', () => {
 
       expect(
         screen.getByRole('button', { name: 'Envoyer la réponse' }),
-      ).toBeVisible();
-      expect(screen.getByRole('button', { name: 'Reject' })).toBeVisible();
-      expect(
-        screen.queryByRole('button', { name: 'Not now' }),
-      ).not.toBeInTheDocument();
-    });
-
-    it('keeps the stored labels when the cached tool index has none for the tool', () => {
-      mockToolIndex.mockReturnValue([
-        { name: 'app_tool_respond_to_cal_booking', approval: null },
-      ]);
-
-      renderCard({ proposal: BOOKING_PROPOSAL });
-
-      expect(
-        screen.getByRole('button', { name: 'Send response' }),
       ).toBeVisible();
       expect(screen.getByRole('button', { name: 'Not now' })).toBeVisible();
     });

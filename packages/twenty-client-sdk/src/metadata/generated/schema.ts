@@ -3899,19 +3899,8 @@ export interface TimelineConfiguration {
     __typename: 'TimelineConfiguration'
 }
 
-export interface ToolApproval {
-    labels?: ToolApprovalLabels
-    __typename: 'ToolApproval'
-}
-
-export interface ToolApprovalLabels {
-    approve?: Scalars['String']
-    reject?: Scalars['String']
-    __typename: 'ToolApprovalLabels'
-}
-
 export interface ToolIndexEntry {
-    approval?: ToolApproval
+    approveLabel?: Scalars['String']
     category: Scalars['String']
     description: Scalars['String']
     frontComponentId?: Scalars['String']
@@ -3920,6 +3909,7 @@ export interface ToolIndexEntry {
     label: Scalars['String']
     name: Scalars['String']
     objectName?: Scalars['String']
+    rejectLabel?: Scalars['String']
     widgetName?: Scalars['String']
     __typename: 'ToolIndexEntry'
 }
@@ -9003,21 +8993,8 @@ export interface TimelineConfigurationGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface ToolApprovalGenqlSelection{
-    labels?: ToolApprovalLabelsGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface ToolApprovalLabelsGenqlSelection{
-    approve?: boolean | number
-    reject?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface ToolIndexEntryGenqlSelection{
-    approval?: ToolApprovalGenqlSelection
+    approveLabel?: boolean | number
     category?: boolean | number
     description?: boolean | number
     frontComponentId?: boolean | number
@@ -9026,6 +9003,7 @@ export interface ToolIndexEntryGenqlSelection{
     label?: boolean | number
     name?: boolean | number
     objectName?: boolean | number
+    rejectLabel?: boolean | number
     widgetName?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -12584,22 +12562,6 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isTimelineConfiguration = (obj?: { __typename?: any } | null): obj is TimelineConfiguration => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isTimelineConfiguration"')
       return TimelineConfiguration_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const ToolApproval_possibleTypes: string[] = ['ToolApproval']
-    export const isToolApproval = (obj?: { __typename?: any } | null): obj is ToolApproval => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isToolApproval"')
-      return ToolApproval_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const ToolApprovalLabels_possibleTypes: string[] = ['ToolApprovalLabels']
-    export const isToolApprovalLabels = (obj?: { __typename?: any } | null): obj is ToolApprovalLabels => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isToolApprovalLabels"')
-      return ToolApprovalLabels_possibleTypes.includes(obj.__typename)
     }
     
 

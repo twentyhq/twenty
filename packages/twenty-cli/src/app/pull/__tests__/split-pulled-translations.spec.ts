@@ -8,10 +8,7 @@ import {
   type TranslationsManifest,
 } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
-import {
-  generateMessageId,
-  TOOL_TRIGGER_APPROVAL_LABEL_CONTEXTS,
-} from 'twenty-shared/i18n';
+import { generateMessageId } from 'twenty-shared/i18n';
 import { afterEach, describe, expect, it } from 'vitest';
 
 const PET_LABEL_ID = generateMessageId('Pet', 'objectMetadata.labelSingular');
@@ -94,56 +91,6 @@ describe('splitPulledTranslations', () => {
           'view.name': { 'All pets': 'Tous les animaux' },
         },
         compiled: { zzzzzz: 'orphan' },
-      },
-    ]);
-  });
-
-  it("should decode the labels of a tool's approval card", async () => {
-    const catalogs = await splitPulledTranslations({
-      manifest: buildManifest({
-        logicFunctions: [
-          {
-            universalIdentifier: 'respond-to-booking',
-            sourceHandlerPath: 'src/respond-to-booking.ts',
-            builtHandlerPath: 'src/respond-to-booking.mjs',
-            builtHandlerChecksum: '',
-            handlerName: 'default',
-            toolTriggerSettings: {
-              approval: {
-                approveLabel: 'Send response',
-                rejectLabel: 'Not now',
-              },
-            },
-          },
-        ],
-        translations: {
-          'fr-FR': {
-            [generateMessageId(
-              'Send response',
-              TOOL_TRIGGER_APPROVAL_LABEL_CONTEXTS.approveLabel,
-            )]: 'Envoyer la réponse',
-            [generateMessageId(
-              'Not now',
-              TOOL_TRIGGER_APPROVAL_LABEL_CONTEXTS.rejectLabel,
-            )]: 'Plus tard',
-          },
-        },
-      }),
-      frontComponentSourcePaths: [],
-    });
-
-    expect(catalogs).toEqual([
-      {
-        locale: 'fr-FR',
-        authored: {
-          'logicFunction.toolTriggerSettings.approval.approveLabel': {
-            'Send response': 'Envoyer la réponse',
-          },
-          'logicFunction.toolTriggerSettings.approval.rejectLabel': {
-            'Not now': 'Plus tard',
-          },
-        },
-        compiled: {},
       },
     ]);
   });

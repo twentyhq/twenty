@@ -18,21 +18,6 @@ describe('buildLogicFunctionToolApproval', () => {
     ).toBeUndefined();
   });
 
-  it('keeps the labels the tool gave', () => {
-    expect(
-      buildLogicFunctionToolApproval({
-        approvalSettings: {
-          approveLabel: 'Send response',
-          rejectLabel: 'Not now',
-        },
-        translateLabel: keepLabel,
-      }),
-    ).toEqual({
-      template: 'generic',
-      labels: { approve: 'Send response', reject: 'Not now' },
-    });
-  });
-
   it('keeps one label when the tool gives only one', () => {
     expect(
       buildLogicFunctionToolApproval({

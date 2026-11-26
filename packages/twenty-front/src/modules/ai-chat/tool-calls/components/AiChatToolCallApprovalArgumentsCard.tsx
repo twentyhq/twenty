@@ -39,10 +39,9 @@ export const AiChatToolCallApprovalArgumentsCard = ({
     proposal.toolName,
   );
 
-  const { toolIndex } = useGetToolIndex();
-  const labels =
-    toolIndex.find((entry) => entry.name === proposal.toolName)?.approval
-      ?.labels ?? proposal.labels;
+  const toolIndexEntry = useGetToolIndex().toolIndex.find(
+    (entry) => entry.name === proposal.toolName,
+  );
 
   const argumentsEditor = (
     <AiChatToolCallApprovalArgumentsEditor
@@ -78,7 +77,9 @@ export const AiChatToolCallApprovalArgumentsCard = ({
             loading={pendingResponse?.decision === 'reject'}
             onClick={reject}
           >
-            {labels?.reject ?? t`Reject`}
+            {toolIndexEntry?.rejectLabel ??
+              proposal.labels?.reject ??
+              t`Reject`}
           </Button>
           <Button
             size="sm"
@@ -93,7 +94,9 @@ export const AiChatToolCallApprovalArgumentsCard = ({
               }
             }}
           >
-            {labels?.approve ?? t`Approve`}
+            {toolIndexEntry?.approveLabel ??
+              proposal.labels?.approve ??
+              t`Approve`}
           </Button>
         </>
       }

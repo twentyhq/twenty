@@ -100,10 +100,21 @@ export class LogicFunctionToolProvider implements ToolProvider {
         }),
     );
 
-    const translateApprovalLabel = await this.buildApprovalLabelTranslator({
-      context,
-      logicFunctions: logicFunctionsWithSchema,
-    });
+    const locale = context.locale ?? SOURCE_LOCALE;
+    const labeledApplicationIds = logicFunctionsWithSchema
+      .filter((logicFunction) =>
+        isDefined(logicFunction.toolTriggerSettings?.approval),
+      )
+      .map((logicFunction) => logicFunction.applicationId);
+    const { catalogByApplicationId } =
+      locale === SOURCE_LOCALE || !isNonEmptyArray(labeledApplicationIds)
+        ? { catalogByApplicationId: undefined }
+        : await this.applicationTranslationCatalogService.getCatalogs({
+            applicationIds: labeledApplicationIds,
+            locale,
+            workspaceId: context.workspaceId,
+          });
+    const i18nInstance = this.i18nService.getI18nInstance(locale);
 
     const descriptors: (ToolIndexEntry | ToolDescriptor)[] = [];
 
@@ -112,9 +123,13 @@ export class LogicFunctionToolProvider implements ToolProvider {
       const approval = buildLogicFunctionToolApproval({
         approvalSettings: logicFunction.toolTriggerSettings?.approval,
         translateLabel: (label) =>
-          translateApprovalLabel({
-            ...label,
-            applicationId: logicFunction.applicationId,
+          translateStandardLabel({
+            sourceValue: label.message,
+            context: label.context,
+            applicationCatalog: catalogByApplicationId?.get(
+              logicFunction.applicationId,
+            ),
+            i18nInstance,
           }),
       });
 
@@ -151,54 +166,5 @@ export class LogicFunctionToolProvider implements ToolProvider {
     }
 
     return descriptors;
-  }
-
-  private async buildApprovalLabelTranslator({
-    context,
-    logicFunctions,
-  }: {
-    context: Pick<ToolProviderContext, 'locale' | 'workspaceId'>;
-    logicFunctions: FlatLogicFunction[];
-  }): Promise<
-    (label: {
-      message: string;
-      context: string;
-      applicationId: string;
-    }) => string
-  > {
-    const { locale } = context;
-    const applicationIds = [
-      ...new Set(
-        logicFunctions
-          .filter((logicFunction) =>
-            isDefined(logicFunction.toolTriggerSettings?.approval),
-          )
-          .map((logicFunction) => logicFunction.applicationId),
-      ),
-    ];
-
-    if (
-      !isDefined(locale) ||
-      locale === SOURCE_LOCALE ||
-      !isNonEmptyArray(applicationIds)
-    ) {
-      return ({ message }) => message;
-    }
-
-    const { catalogByApplicationId } =
-      await this.applicationTranslationCatalogService.getCatalogs({
-        applicationIds,
-        locale,
-        workspaceId: context.workspaceId,
-      });
-    const i18nInstance = this.i18nService.getI18nInstance(locale);
-
-    return ({ message, context: messageContext, applicationId }) =>
-      translateStandardLabel({
-        sourceValue: message,
-        context: messageContext,
-        applicationCatalog: catalogByApplicationId.get(applicationId),
-        i18nInstance,
-      });
   }
 }

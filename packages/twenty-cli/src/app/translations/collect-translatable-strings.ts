@@ -6,7 +6,6 @@ import {
   TRANSLATABLE_PROPERTIES_BY_METADATA_NAME,
   type TranslatableMetadataName,
 } from 'twenty-shared/i18n';
-import { isPlainObject } from 'twenty-shared/utils';
 
 import { type MessageDescriptor } from '@/app/translations/message';
 
@@ -35,37 +34,28 @@ export const collectTranslatableStrings = (
   // deduplicated per (context, message) rather than per message.
   const descriptorByKey = new Map<string, MessageDescriptor>();
 
-  const addString = ({
-    value,
-    context,
-  }: {
-    value: unknown;
-    context: string;
-  }) => {
-    if (!isNonEmptyString(value)) {
-      return;
-    }
-
-    descriptorByKey.set(JSON.stringify([context, value]), {
-      message: value,
-      context,
-    });
-  };
-
   const addEntityStrings = (
     entity: unknown,
     metadataName: TranslatableMetadataName,
   ) => {
-    if (!isPlainObject(entity)) {
+    if (entity === null || typeof entity !== 'object') {
       return;
     }
 
     for (const property of TRANSLATABLE_PROPERTIES_BY_METADATA_NAME[
       metadataName
     ]) {
-      addString({
-        value: entity[property],
-        context: getMetadataLabelContext(metadataName, property),
+      const value = (entity as Record<string, unknown>)[property];
+
+      if (typeof value !== 'string' || value.length === 0) {
+        continue;
+      }
+
+      const context = getMetadataLabelContext(metadataName, property);
+
+      descriptorByKey.set(JSON.stringify([context, value]), {
+        message: value,
+        context,
       });
     }
   };
@@ -109,16 +99,18 @@ export const collectTranslatableStrings = (
   }
 
   for (const logicFunction of manifest.logicFunctions ?? []) {
-    const approvalSettings = logicFunction.toolTriggerSettings?.approval;
+    for (const settingName of ['approveLabel', 'rejectLabel'] as const) {
+      const message =
+        logicFunction.toolTriggerSettings?.approval?.[settingName];
+      const context = TOOL_TRIGGER_APPROVAL_LABEL_CONTEXTS[settingName];
 
-    addString({
-      value: approvalSettings?.approveLabel,
-      context: TOOL_TRIGGER_APPROVAL_LABEL_CONTEXTS.approveLabel,
-    });
-    addString({
-      value: approvalSettings?.rejectLabel,
-      context: TOOL_TRIGGER_APPROVAL_LABEL_CONTEXTS.rejectLabel,
-    });
+      if (isNonEmptyString(message)) {
+        descriptorByKey.set(JSON.stringify([context, message]), {
+          message,
+          context,
+        });
+      }
+    }
   }
 
   return [...descriptorByKey.values()];
