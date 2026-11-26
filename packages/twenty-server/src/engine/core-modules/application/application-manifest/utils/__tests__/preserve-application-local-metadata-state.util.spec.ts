@@ -22,6 +22,23 @@ describe('preserveApplicationLocalMetadataState', () => {
     });
   });
 
+  it('keeps who sees the entity, which manifests do not declare', () => {
+    expect(
+      preserveApplicationLocalMetadataState({
+        existingEntity: {
+          name: 'Old view',
+          overrides: null,
+          isPrivate: true,
+        },
+        manifestEntity: {
+          name: 'New view',
+          overrides: null,
+          isPrivate: false,
+        },
+      }),
+    ).toEqual({ name: 'New view', overrides: null, isPrivate: true });
+  });
+
   it('does not add local-state properties to metadata that does not support them', () => {
     expect(
       preserveApplicationLocalMetadataState({
