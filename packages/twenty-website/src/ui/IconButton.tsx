@@ -40,10 +40,14 @@ const iconButtonClassName = css`
 `;
 
 export type IconButtonProps = {
+  /** The button's accessible name: an icon alone has none. */
   ariaLabel: string;
   children: ReactNode;
+  /** Blocks activation. */
   disabled?: boolean;
+  /** The square's side in pixels, through the `--icon-button-size` variable. */
   sizePx?: number;
+  /** Called on click. */
   onClick?: () => void;
 };
 

@@ -68,6 +68,19 @@ const nextConfig: LinariaConfig = {
         source: '/:path*',
         headers: SECURITY_HEADERS,
       },
+      // Design system embeds: the docs show live components in an iframe, as
+      // they do for twenty-ui with Storybook. frame-ancestors overrides
+      // X-Frame-Options in browsers that support it; only the docs may frame.
+      {
+        source: '/design-system/embed/:path*',
+        headers: [
+          {
+            key: 'Content-Security-Policy',
+            value:
+              "frame-ancestors 'self' https://docs.twenty.com http://localhost:3333",
+          },
+        ],
+      },
       {
         source: '/(images|illustrations|lottie)/:path*',
         headers: [

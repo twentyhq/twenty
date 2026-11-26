@@ -7,7 +7,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-// A literal value from a token file: strings, numbers, null, nested objects.
+// A literal value from a token file: strings, numbers, null, nested objects
+// and arrays.
 const literalValue = (ts, node) => {
   let current = node;
   while (
@@ -19,6 +20,8 @@ const literalValue = (ts, node) => {
   if (ts.isStringLiteralLike(current)) return current.text;
   if (ts.isNumericLiteral(current)) return Number(current.text);
   if (current.kind === ts.SyntaxKind.NullKeyword) return null;
+  if (ts.isArrayLiteralExpression(current))
+    return current.elements.map((element) => literalValue(ts, element));
   if (ts.isObjectLiteralExpression(current)) {
     const values = {};
     for (const property of current.properties)
@@ -78,6 +81,7 @@ export const readTokenScales = (reader) => {
   const zIndex = literalObject(reader, 'tokens/z-index.ts', 'Z_INDEX');
   const typeScale = literalObject(reader, 'tokens/type-scale.ts', 'TYPE_SCALE');
   const palette = literalObject(reader, 'tokens/palette.ts', 'PALETTE');
+  const alpha = literalObject(reader, 'tokens/alpha-scale.ts', 'ALPHA_SCALE');
   const rampFile = 'tokens/type-ramp-declarations.ts';
   const rootFontSizePx = literalValue(
     reader.ts,
@@ -95,6 +99,7 @@ export const readTokenScales = (reader) => {
     zIndex,
     typeScale,
     palette,
+    alpha,
     rootFontSizePx,
     runningLineHeight,
     headingSizes: rampsBySize(reader, 'ui/Heading.tsx'),

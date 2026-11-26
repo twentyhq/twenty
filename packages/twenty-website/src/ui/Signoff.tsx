@@ -51,10 +51,14 @@ const Actions = styled.div`
 `;
 
 export type SignoffProps = {
+  /** One muted line under the heading. */
   body: string;
   children: ReactNode;
+  /** Which side the guide crosshair behind the section sits on. */
   crosshairSide?: SignoffCrosshairSide;
+  /** The closing heading, set light at the `lg` heading size. */
   heading: string;
+  /** The section's scheme, passed to `SectionShell`. */
   scheme?: Scheme;
 };
 

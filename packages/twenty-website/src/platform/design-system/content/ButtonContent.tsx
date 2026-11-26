@@ -15,10 +15,12 @@ export const BUTTON_CONTENT: ComponentContent = {
     'Triggers an action or leads to a page. Its notched shape is drawn by ButtonShape, and its colors follow the scheme of the section it sits in.',
   renderWith: (axisProps) => <Button label={LABEL} {...axisProps} />,
   baseCode: { label: `"${LABEL}"` },
+  // button and submit render the same: the axis only changes the HTML type.
+  hiddenAxes: ['type'],
   examples: [
     {
       id: 'leading-icon',
-      title: 'leadingIcon',
+      title: 'With an icon',
       description: (
         <>
           Takes a mark from <Code>@/icons</Code>, placed before the label.
@@ -38,7 +40,7 @@ export const BUTTON_CONTENT: ComponentContent = {
     },
     {
       id: 'href',
-      title: 'href',
+      title: 'As a link',
       description: (
         <>
           With <Code>href</Code>, the button renders a link. An internal path

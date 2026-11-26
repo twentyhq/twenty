@@ -106,9 +106,13 @@ const OVERLAY_IMAGE_SIZES = doNotTranslate(
 );
 
 type EngagementBandProps = {
+  /** The band's heading, set light at the `sm` heading size. */
   heading: string;
+  /** One muted line under the heading. */
   body: string;
+  /** The band's actions slot, such as a `Button`. */
   actions: ReactNode;
+  /** The vertical spacing of the section around the band, passed to `SectionShell`. */
   rhythm?: ComponentProps<typeof SectionShell>['rhythm'];
 };
 

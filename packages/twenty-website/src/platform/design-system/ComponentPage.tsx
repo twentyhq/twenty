@@ -14,6 +14,7 @@ import {
 import { Body, Heading } from '@/ui';
 
 import { Breadcrumb } from './Breadcrumb';
+import { axisValues, combinations, type DocProp } from './component-axes';
 import { Code } from './Code';
 import COMPONENT_DOCS from './component-docs.json';
 import { type ComponentContent } from './component-content';
@@ -28,7 +29,6 @@ import { ProblemCount } from './ProblemCount';
 import { SOURCE_URL } from './source-url';
 import { type ComponentKind } from './KindBadge';
 import { MotionSection } from './MotionSection';
-import { CodeBlock, type LineMark } from './CodeBlock';
 import { CodeSection } from './CodeSection';
 import { PreviewPanel, type XrayPart } from './PreviewPanel';
 import { RelatedSection } from './RelatedSection';
@@ -36,7 +36,6 @@ import { ResponsiveSection } from './ResponsiveSection';
 import { Table } from './Table';
 import { TableScroll } from './TableScroll';
 
-type DocProp = (typeof COMPONENT_DOCS.components)[number]['props'][number];
 
 const MAX_COMBINATIONS = 12;
 
@@ -133,6 +132,25 @@ const Cell = styled.div`
   }
 `;
 
+// The Code tab of the preview: what to paste, not the component's source.
+const UsageCode = styled.pre`
+  border: 1px solid ${semanticColor.line};
+  border-radius: ${radius(2)};
+  color: ${semanticColor.ink};
+  font-family: ${fontFamily('mono')};
+  font-size: ${fontSize(3)};
+  overflow-x: auto;
+  padding: ${spacing(6)};
+`;
+
+// Splits the page: above for whoever uses the component, below for whoever
+// maintains it.
+const UnderTheHood = styled.div`
+  border-top: 1px solid ${semanticColor.line};
+  margin-top: ${spacing(16)};
+  padding-top: ${spacing(4)};
+`;
+
 const PracticeList = styled.ul`
   padding-left: ${spacing(5)};
 
@@ -141,29 +159,21 @@ const PracticeList = styled.ul`
   }
 `;
 
-const axisValues = (prop: DocProp): unknown[] =>
-  prop.values ?? (prop.type === 'boolean' ? [false, true] : []);
-
-const combinations = (props: DocProp[]): Record<string, unknown>[] =>
-  props.reduce<Record<string, unknown>[]>(
-    (rows, prop) =>
-      rows.flatMap((row) =>
-        axisValues(prop).map((value) =>
-          Object.fromEntries([...Object.entries(row), [prop.name, value]]),
-        ),
-      ),
-    [{}],
-  );
-
 const attribute = (name: string, value: unknown) =>
   value === true ? name : `${name}="${String(value)}"`;
+
+// "size" → "Sizes", "disabled" → "Disabled": a section per prop, named
+// like the other design systems name theirs.
+const axisTitle = (prop: DocProp) => {
+  const name = prop.name.charAt(0).toUpperCase() + prop.name.slice(1);
+  return prop.values ? `${name}s` : name;
+};
 
 export function ComponentPage({ slug }: { slug: string }) {
   const [scheme, setScheme] = useState<Scheme>('dark');
   const [copied, setCopied] = useState(false);
   const [flashPart, setFlashPart] = useState<string | null>(null);
   const [previewTab, setPreviewTab] = useState<'preview' | 'code'>('preview');
-  const [focusLine, setFocusLine] = useState<number | null>(null);
   const doc = COMPONENT_DOCS.components.find(
     (component) => toComponentSlug(component.name) === slug,
   );
@@ -200,17 +210,15 @@ export function ComponentPage({ slug }: { slug: string }) {
     axes.length > 0 || showsGrid || (content.examples ?? []).length > 0;
   const toc = [
     { id: 'preview', label: 'Preview' },
-    { id: 'code', label: 'Code' },
+    ...(showsGrid ? [{ id: 'combinations', label: 'Overview' }] : []),
     ...(hasExamples ? [{ id: 'examples', label: 'Examples' }] : []),
-    { id: 'props', label: 'API reference' },
-    { id: 'usage', label: 'Usage' },
-    { id: 'motion', label: 'Motion' },
-    { id: 'responsive', label: 'Responsive behavior' },
-    { id: 'accessibility', label: 'Accessibility' },
     ...(content.practices?.length
-      ? [{ id: 'best-practices', label: 'Best practices' }]
+      ? [{ id: 'best-practices', label: 'Usage guidelines' }]
       : []),
+    { id: 'accessibility', label: 'Accessibility' },
+    { id: 'props', label: 'API reference' },
     { id: 'related', label: 'Related' },
+    { id: 'under-the-hood', label: 'Under the hood' },
   ];
   const importLine = `import { ${doc.name} } from '@/ui';`;
   const copyImport = () => {
@@ -246,9 +254,6 @@ export function ComponentPage({ slug }: { slug: string }) {
     ? content.renderWith({})
     : (firstExample?.render() ?? null);
   const SEVERITY_RANK = { error: 0, warning: 1, info: 2 } as const;
-  const handDeclarations = doc.code.parts.flatMap((part) =>
-    part.declarations.filter((declaration) => declaration.kind === 'hand'),
-  );
   const xrayParts: XrayPart[] = doc.code.parts.flatMap((part) => {
     const hand = part.declarations.filter(
       (declaration) => declaration.kind === 'hand',
@@ -279,27 +284,11 @@ export function ComponentPage({ slug }: { slug: string }) {
           },
     ];
   });
-  const lineMarks: LineMark[] = handDeclarations.flatMap((declaration) =>
-    declaration.line
-      ? [
-          {
-            line: declaration.line,
-            severity:
-              (declaration.severity as LineMark['severity'] | null) ?? 'info',
-            note: declaration.rule
-              ? `${declaration.rule}${declaration.fix ? ` → ${declaration.fix}` : ''}`
-              : 'Written by hand, no token for it.',
-          },
-        ]
-      : [],
-  );
+  // The preview's Code tab now shows usage, so a cited line opens on GitHub.
   const openLine = (line: number) => {
-    setPreviewTab('code');
-    setFocusLine(line);
-    document
-      .getElementById('preview')
-      ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    window.open(`${SOURCE_URL}${doc.file}#L${line}`, '_blank', 'noopener');
   };
+  const usageCode = `${importLine}\n\n${content.renderWith ? toJsx({}) : (firstExample?.code ?? '')}`;
   const flash = (part: string) => {
     setPreviewTab('preview');
     setFlashPart(part);
@@ -331,22 +320,17 @@ export function ComponentPage({ slug }: { slug: string }) {
         </ImportChip>
         <Actions>
           <a href={`${SOURCE_URL}${doc.file}`}>Source ↗</a>
-          <a href="#code">
-            <ProblemCount problems={doc.problems} />
-            <span>· {handDeclarations.length} by hand</span>
-          </a>
         </Actions>
       </ActionRow>
 
       <PreviewPanel
         codeView={
-          <CodeBlock file={doc.file} focusLine={focusLine} marks={lineMarks} />
+          <UsageCode>
+            <code>{usageCode}</code>
+          </UsageCode>
         }
         tab={previewTab}
-        onTabChange={(tab) => {
-          setPreviewTab(tab);
-          setFocusLine(null);
-        }}
+        onTabChange={setPreviewTab}
         fixedScheme={Boolean(content.fixedScheme)}
         inspectHref={inspectHref}
         flashPart={flashPart}
@@ -357,59 +341,23 @@ export function ComponentPage({ slug }: { slug: string }) {
         {mainRender}
       </PreviewPanel>
 
-      <CodeSection
-        code={doc.code}
-        file={doc.file}
-        onFlash={flash}
-        onOpenLine={openLine}
-      />
-
       {hasExamples ? (
         <ExampleGroup id="examples">
           <Heading as="h2" family="sans" size="sm">
             Examples
           </Heading>
-          {axes.map((prop) => (
-            <Example
-              key={prop.name}
-              code={axisValues(prop)
-                .map((value) => toJsx({ [prop.name]: value }))
-                .join('\n')}
-              description={
-                <>
-                  <Code>{prop.type}</Code>
-                  {prop.default === null ? null : (
-                    <>
-                      {' '}
-                      · default <Code>{prop.default}</Code>
-                    </>
-                  )}
-                </>
-              }
-              id={prop.name}
-              scheme={shownScheme}
-              title={prop.name}
-            >
-              {axisValues(prop).map((value) => (
-                <Cell key={String(value)} data-layout={layout}>
-                  {content.renderWith?.({ [prop.name]: value })}
-                  <Code>{String(value)}</Code>
-                </Cell>
-              ))}
-            </Example>
-          ))}
-
           {showsGrid ? (
             <Example
               code={grid.map(toJsx).join('\n')}
               description={
                 <>
-                  Every value of {enumAxes.map((prop) => prop.name).join(', ')}.
+                  Every {enumAxes.map((prop) => prop.name).join(' and ')} side
+                  by side.
                 </>
               }
               id="combinations"
               scheme={shownScheme}
-              title="All combinations"
+              title="Overview"
             >
               {grid.map((row) => (
                 <Cell key={Object.values(row).join('-')} data-layout={layout}>
@@ -419,6 +367,32 @@ export function ComponentPage({ slug }: { slug: string }) {
               ))}
             </Example>
           ) : null}
+
+          {axes.map((prop) => (
+            <Example
+              key={prop.name}
+              code={axisValues(prop)
+                .map((value) => toJsx({ [prop.name]: value }))
+                .join('\n')}
+              description={
+                prop.default === null ? undefined : (
+                  <>
+                    Default: <Code>{prop.default}</Code>
+                  </>
+                )
+              }
+              id={prop.name}
+              scheme={shownScheme}
+              title={axisTitle(prop)}
+            >
+              {axisValues(prop).map((value) => (
+                <Cell key={String(value)} data-layout={layout}>
+                  {content.renderWith?.({ [prop.name]: value })}
+                  <Code>{String(value)}</Code>
+                </Cell>
+              ))}
+            </Example>
+          ))}
 
           {(content.examples ?? []).map((example) => (
             <Example
@@ -435,14 +409,27 @@ export function ComponentPage({ slug }: { slug: string }) {
         </ExampleGroup>
       ) : null}
 
+      {content.practices?.length ? (
+        <DocSectionRoot id="best-practices">
+          <Heading as="h2" family="sans" size="sm">
+            Usage guidelines
+          </Heading>
+          <PracticeList>
+            {content.practices.map((practice) => (
+              <li key={practice.id}>
+                <Body size="sm">{practice.text}</Body>
+              </li>
+            ))}
+          </PracticeList>
+        </DocSectionRoot>
+      ) : null}
+
+      <AccessibilitySection behavior={doc.behavior} />
+
       <DocSectionRoot id="props">
         <Heading as="h2" family="sans" size="sm">
           API reference
         </Heading>
-        <Body muted size="sm">
-          Read from the component&apos;s types by
-          scripts/generate-design-system-data.mjs.
-        </Body>
         {props.length === 0 ? (
           <Body size="sm">None.</Body>
         ) : (
@@ -479,46 +466,47 @@ export function ComponentPage({ slug }: { slug: string }) {
             </Table>
           </TableScroll>
         )}
+        <Body muted size="sm">
+          Read from the component&apos;s types by
+          scripts/generate-design-system-data.mjs.
+        </Body>
       </DocSectionRoot>
-
-      <DocSectionRoot id="usage">
-        <Heading as="h2" family="sans" size="sm">
-          Usage
-        </Heading>
-        <IdentityCard
-          descriptionSource={summarySource}
-          file={doc.file}
-          kind={doc.kind as ComponentKind}
-          name={doc.name}
-          usedBy={doc.usage.usedBy}
-          usedOutsideFiles={doc.usage.usedOutsideFiles}
-        />
-      </DocSectionRoot>
-      <MotionSection behavior={doc.behavior} />
-      <ResponsiveSection behavior={doc.behavior} />
-      <AccessibilitySection behavior={doc.behavior} />
-
-      {content.practices?.length ? (
-        <DocSectionRoot id="best-practices">
-          <Heading as="h2" family="sans" size="sm">
-            Best practices
-          </Heading>
-          <Body muted size="sm">
-            Rules stated or enforced by the code, with the lines they cite. The
-            generator fingerprints those lines and its check fails when they
-            change. Draft, to validate with the design owner.
-          </Body>
-          <PracticeList>
-            {content.practices.map((practice) => (
-              <li key={practice.id}>
-                <Body size="sm">{practice.text}</Body>
-              </li>
-            ))}
-          </PracticeList>
-        </DocSectionRoot>
-      ) : null}
 
       <RelatedSection behavior={doc.behavior} usedBy={doc.usage.usedBy} />
+
+      <UnderTheHood id="under-the-hood">
+        <DocSectionRoot>
+          <Heading as="h2" family="sans" size="sm">
+            Under the hood
+          </Heading>
+          <Body muted size="sm">
+            For whoever maintains {content.name}: where its values come from,
+            where it is used, how it moves and reflows.{' '}
+            <ProblemCount problems={doc.problems} />
+          </Body>
+        </DocSectionRoot>
+        <CodeSection
+          code={doc.code}
+          file={doc.file}
+          onFlash={flash}
+          onOpenLine={openLine}
+        />
+        <DocSectionRoot id="usage">
+          <Heading as="h2" family="sans" size="sm">
+            Where it is used
+          </Heading>
+          <IdentityCard
+            descriptionSource={summarySource}
+            file={doc.file}
+            kind={doc.kind as ComponentKind}
+            name={doc.name}
+            usedBy={doc.usage.usedBy}
+            usedOutsideFiles={doc.usage.usedOutsideFiles}
+          />
+        </DocSectionRoot>
+        <MotionSection behavior={doc.behavior} />
+        <ResponsiveSection behavior={doc.behavior} />
+      </UnderTheHood>
     </DocPage>
   );
 }

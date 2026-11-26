@@ -276,19 +276,24 @@ export const adviceFor = (declaration, finding, scales, repeats) => {
         effect: 'Z_INDEX is for layers across the page; this one is local.',
         options: [],
       };
+    // Line widths are a design choice: the site writes 1px in borders and
+    // outlines across most of its files, and neither it nor twenty-ui has a
+    // width token (their border tokens hold colors and radii only).
     case '1px rule':
       return {
-        verdict: 'keep',
-        action: 'Keep: a hairline, thinner than the smallest spacing step.',
-        effect: 'No token is expected for a 1px line.',
+        verdict: 'decide',
+        action:
+          'No line-width token on the site or in the app: propose one to the design owner, or keep.',
+        effect: elsewhere,
         options: [],
       };
     case 'Raw value, no exact token':
       if (/^(border|outline)/.test(property))
         return {
-          verdict: 'keep',
-          action: 'Keep: a line width, not a spacing.',
-          effect: 'The site has no line-width tokens.',
+          verdict: 'decide',
+          action:
+            'No line-width token on the site or in the app: propose one to the design owner, or keep.',
+          effect: elsewhere,
           options: [],
         };
       if (onHalfStep)
@@ -327,13 +332,30 @@ export const adviceFor = (declaration, finding, scales, repeats) => {
       effect: elsewhere,
       options: [],
     };
-  if (/opacity/.test(property) && Number(value) > 0 && Number(value) < 1)
+  // A fractional opacity is a wash: ALPHA_SCALE holds the same steps as
+  // colors (black-5, white-10…), so a matching step can carry it.
+  if (/opacity/.test(property) && Number(value) > 0 && Number(value) < 1) {
+    const percent = Math.round(Number(value) * 100);
+    const steps = Object.keys(scales.alpha?.stepHex ?? {})
+      .map(Number)
+      .sort((first, second) => first - second);
+    const colors = scales.alpha?.colors ?? [];
+    if (steps.includes(percent))
+      return {
+        verdict: 'fix',
+        action: `Use the alpha scale: ${colors.map((name) => `${name}-${percent}`).join(' or ')}, as the fill color instead of an opacity.`,
+        effect: `Same ${percent}% wash, now from ALPHA_SCALE. ${elsewhere}`,
+        options: [],
+      };
+    const below = steps.filter((step) => step < percent).at(-1);
+    const above = steps.find((step) => step > percent);
     return {
       verdict: 'decide',
-      action: 'No opacity token on the site: add an opacity scale, or keep.',
+      action: `No ${percent}% step in ALPHA_SCALE (nearest: ${[below, above].filter((step) => step !== undefined).join(' and ')}). An opacity on the whole element: add a step, or keep.`,
       effect: elsewhere,
       options: [],
     };
+  }
   if (/opacity/.test(property) && (value === '0' || value === '1'))
     return {
       verdict: 'keep',

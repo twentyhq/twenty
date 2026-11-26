@@ -48,12 +48,14 @@ const Popup = styled(Dialog.Popup)`
 `;
 
 export type ModalProps = {
-  // Names the dialog when its content has no Dialog.Title (the partner wizard);
-  // omit it when the content renders its own Dialog.Title (the Cal modal).
+  /** Names the dialog when its content has no Dialog.Title (the partner wizard); omit it when the content renders its own Dialog.Title (the Cal modal). */
   ariaLabel?: string;
   children: ReactNode;
+  /** Class on the panel. Sets its width through `--modal-panel-width`. */
   className?: string;
+  /** Called when the dialog asks to close (Escape, backdrop click). The parent owns `open`. */
   onClose: () => void;
+  /** Whether the dialog is shown. Controlled by the parent. */
   open: boolean;
 };
 

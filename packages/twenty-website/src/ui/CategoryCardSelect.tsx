@@ -111,10 +111,15 @@ export function CategoryCardSelect<TValue extends string>({
   options,
   values,
 }: {
+  /** Names the group of cards for screen readers (`role="group"`). */
   ariaLabel: string;
+  /** Paints the unselected cards red, so the missing choice shows. Unlike ChipMultiSelect, it does not set `aria-invalid`. */
   invalid?: boolean;
+  /** Called with a card's value when it is clicked. The parent adds or removes it from `values`. */
   onToggle: (value: TValue) => void;
+  /** The cards, in order: a `label`, a `description`, `examples` and a `value` each. */
   options: readonly CategoryOption<TValue>[];
+  /** The selected values. Each selected card is pressed (`aria-pressed`) and shows its indicator. */
   values: readonly TValue[];
 }) {
   return (

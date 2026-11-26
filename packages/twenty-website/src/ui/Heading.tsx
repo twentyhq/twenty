@@ -89,13 +89,20 @@ export type HeadingTracking = 'tight' | 'normal';
 export type HeadingWrap = 'balance' | 'normal';
 
 export type HeadingProps = {
+  /** The heading level, `h1` to `h6`. Independent of `size`: pick the level for the outline, the size for the look. */
   as?: HeadingLevel;
   children: string;
+  /** Extra class, merged after the component's own. */
   className?: string;
+  /** `serif` or `sans`. Accent spans (`*text*` in the string) switch to the other family. */
   family?: HeadingFamily;
+  /** The step on the heading type ramp, `headingXl` to `headingXs`. */
   size?: HeadingSize;
+  /** `tight` keeps the family's tightened letter-spacing. `normal` resets it, for a quote set at heading size. */
   tracking?: HeadingTracking;
+  /** A `FONT_WEIGHT` token. */
   weight?: FontWeightToken;
+  /** `balance` evens out the line lengths (`text-wrap: balance`), `normal` lets lines fill. */
   wrap?: HeadingWrap;
 };
 

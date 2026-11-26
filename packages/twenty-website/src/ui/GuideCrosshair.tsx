@@ -96,12 +96,13 @@ const CrosshairRoot = styled.div`
 `;
 
 export type GuideCrosshairProps = {
-  // Bounds the lines to the content max-width instead of the full section, so
-  // they stay within the content column rather than bleeding into the gutters.
+  /** Bounds the lines to the content max-width instead of the full section, so they stay within the content column rather than bleeding into the gutters. */
   contained?: boolean;
+  /** Horizontal position of the cross, as a CSS length (sets `--cross-x`). */
   crossX: string;
+  /** Vertical position of the cross, as a CSS length (sets `--cross-y`). */
   crossY: string;
-  // Scenes that draw their own full-height vertical guide disable these.
+  /** Scenes that draw their own full-height vertical guide disable these. */
   verticalLines?: boolean;
 };
 

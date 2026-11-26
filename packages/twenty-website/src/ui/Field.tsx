@@ -40,7 +40,9 @@ export function Field({
   label,
 }: {
   children: ReactNode;
+  /** Muted help text under the control. There is no inline error text: errors show as the control's red border. */
   hint?: string;
+  /** Visible label above the control. It is a plain span, not a `label` element: the control names itself with its own `ariaLabel`. */
   label?: string;
 }) {
   return (

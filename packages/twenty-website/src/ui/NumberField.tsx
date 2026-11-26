@@ -68,12 +68,19 @@ export function NumberField({
   prefix,
   value,
 }: {
+  /** The control's accessible name. */
   ariaLabel: string;
+  /** Paints the red border. Unlike TextField, it does not set `aria-invalid`. */
   invalid?: boolean;
+  /** The input's `name`, for the form it sits in. */
   name: string;
+  /** Called on every change with digits and a decimal point only: anything else is stripped. */
   onValueChange: (value: string) => void;
+  /** Shown while the field is empty. */
   placeholder?: string;
+  /** A muted adornment before the number, such as a currency symbol. Hidden from screen readers. */
   prefix?: string;
+  /** The current value, as a string. */
   value: string;
 }) {
   return (

@@ -97,6 +97,7 @@ const ShapeLayer = styled.div`
 export function NotchedCardShape({
   cardScheme = 'light',
 }: {
+  /** The scheme the card's shape is painted in, independent of the section around it: `light`, `muted` or `dark`. */
   cardScheme?: Scheme;
 }) {
   return (

@@ -60,10 +60,15 @@ export function ChipMultiSelect<TValue extends string>({
   options,
   values,
 }: {
+  /** Names the group of pills for screen readers (`role="group"`). */
   ariaLabel: string;
+  /** Sets `aria-invalid` on the group and paints the unselected pills red, so the missing choice shows. */
   invalid?: boolean;
+  /** Called with a pill's value when it is clicked. The parent adds or removes it from `values`. */
   onToggle: (value: TValue) => void;
+  /** The pills, in order: a `label` and a `value` each. */
   options: readonly ChipOption<TValue>[];
+  /** The selected values. Each selected pill is pressed (`aria-pressed`). */
   values: readonly TValue[];
 }) {
   return (

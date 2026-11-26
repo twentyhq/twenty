@@ -48,7 +48,9 @@ export function StepIndicator({
   activeStepIndex,
   stepCount,
 }: {
+  /** The current step, counted from 0. Steps before it show as completed. Exposed to screen readers as `aria-valuenow` (index + 1). */
   activeStepIndex: number;
+  /** How many steps the indicator draws: one dot each, joined by connectors. */
   stepCount: number;
 }) {
   const stepNumbers = Array.from(
