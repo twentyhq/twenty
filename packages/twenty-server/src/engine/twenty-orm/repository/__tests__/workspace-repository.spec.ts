@@ -410,10 +410,7 @@ describe('WorkspaceRepository reads', () => {
     });
 
     expect(
-      repository
-        .createQueryBuilder('delivery')
-        .select(['id'])
-        .getQuery(),
+      repository.createQueryBuilder('delivery').select(['id']).getQuery(),
     ).not.toContain('upper(');
     expect(
       repository
@@ -426,6 +423,13 @@ describe('WorkspaceRepository reads', () => {
         .createQueryBuilder('delivery')
         .select(['id'])
         .where('"delivery"."state" = :state', { state: 'A' })
+        .getQuery(),
+    ).toContain('upper(');
+    expect(
+      repository
+        .createQueryBuilder('delivery')
+        .select(['id'])
+        .where('LOWER(delivery.state) = :state', { state: 'a' })
         .getQuery(),
     ).toContain('upper(');
   });

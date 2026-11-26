@@ -672,13 +672,28 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       return {};
     }
 
-    // Rendered without computed sources: a computed column is needed only if the statement names it
+    const statementTableShapes = this.getStatementTableShapes();
+
+    if (
+      !statementTableShapes.some(({ computedColumnShapes }) =>
+        isNonEmptyArray(computedColumnShapes),
+      )
+    ) {
+      return {};
+    }
+
+    // Over-matching only computes an extra column; missing a reference would fail the read
     const statementSql = buildSelectStatement(
-      this.toSelectStatementState({ ...options, withTableSources: false }),
+      this.toSelectStatementState({
+        ...options,
+        shouldIncludeTableSources: false,
+      }),
     );
+    const isComputedColumnReferenced = (columnName: string) =>
+      new RegExp(`\\b${columnName}\\b`).test(statementSql);
 
     return Object.fromEntries(
-      this.getStatementTableShapes().flatMap((tableShape) => {
+      statementTableShapes.flatMap((tableShape) => {
         const tableSource = buildComputedTableSource({
           tableShape,
           getTableShape: this.context.tableShapeByObjectMetadataId,
@@ -687,8 +702,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
             this.computedTableSourcePermissionsByObjectMetadataId.get(
               tableShape.objectMetadataId,
             ),
-          isComputedColumnReferenced: (columnName) =>
-            statementSql.includes(escapeIdentifier(columnName)),
+          isComputedColumnReferenced,
         });
 
         return isDefined(tableSource)
@@ -1458,7 +1472,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
 
   private toSelectStatementState(options?: {
     allowPlainToManyJoins?: boolean;
-    withTableSources?: boolean;
+    shouldIncludeTableSources?: boolean;
   }): SelectStatementState {
     return {
       alias: this.alias,
@@ -1483,7 +1497,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       offsetValue: this.offsetValue,
       isLockedForUpdate: this.isLockedForUpdate,
       tableSourceByObjectMetadataId:
-        (options?.withTableSources ?? true)
+        (options?.shouldIncludeTableSources ?? true)
           ? this.buildTableSourceByObjectMetadataId(options)
           : {},
     };

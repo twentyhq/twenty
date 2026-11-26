@@ -90,8 +90,7 @@ const renderComputedColumn = ({
   };
 };
 
-// A value read through a record or a field the caller cannot read is NULL.
-// Only referenced columns are computed, so one formula cannot break reads that do not ask for it.
+// A value read through a record or a field the caller cannot read is NULL
 export const buildComputedTableSource = ({
   tableShape,
   getTableShape,
