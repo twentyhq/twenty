@@ -1,0 +1,2 @@
+export const ADD_EVENT_METADATA_CAPABILITIES_UPGRADE_COMMAND_NAME =
+  '2.66.0_AddEventMetadataCapabilitiesFastInstanceCommand_1795792461357';
