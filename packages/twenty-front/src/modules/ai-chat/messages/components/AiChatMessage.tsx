@@ -18,7 +18,7 @@ import { ChatMessageDaySeparator } from '@/chat/components/ChatMessageDaySeparat
 import { AiChatMessageAuthorHeader } from '@/ai-chat/messages/components/AiChatMessageAuthorHeader';
 import { AiChatToolsOnlyTurn } from '@/ai-chat/messages/components/AiChatToolsOnlyTurn';
 import { useHasAiChatMessageFinishedStreamingInView } from '@/ai-chat/messages/hooks/useHasAiChatMessageFinishedStreamingInView';
-import { useIsToolsOnlyAiChatMessage } from '@/ai-chat/messages/hooks/useIsToolsOnlyAiChatMessage';
+import { isToolsOnlyAiChatMessage } from '@/ai-chat/messages/utils/isToolsOnlyAiChatMessage';
 import { AiChatMessageReplyQuote } from '@/ai-chat/messages/components/AiChatMessageReplyQuote';
 import { AiChatMessagePartsRenderer } from '@/ai-chat/messages/components/AiChatMessagePartsRenderer';
 import { AiChatMessageReactions } from '@/ai-chat/messages/components/AiChatMessageReactions';
@@ -177,7 +177,6 @@ export const AiChatMessage = ({
     aiChatMessageReactionsFamilyState,
     { messageId },
   );
-  const isToolsOnlyMessage = useIsToolsOnlyAiChatMessage(aiChatMessage);
   const hasFinishedStreamingInView = useHasAiChatMessageFinishedStreamingInView(
     {
       messageId,
@@ -238,7 +237,7 @@ export const AiChatMessage = ({
     isAiChatInboxEnabled &&
     !isLastMessageStreaming &&
     !shouldShowError &&
-    isToolsOnlyMessage;
+    isToolsOnlyAiChatMessage(aiChatMessage);
 
   const attachments = aiChatMessage.parts
     .filter(isExtendedFileUIPart)

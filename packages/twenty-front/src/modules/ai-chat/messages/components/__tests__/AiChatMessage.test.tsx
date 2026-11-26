@@ -41,10 +41,6 @@ jest.mock('@/ai-chat/messages/components/AiChatMessagePartsRenderer', () => ({
   ),
 }));
 
-jest.mock('@/ai-chat/tool-calls/hooks/useFrontComponentIdByToolName', () => ({
-  useFrontComponentIdByToolName: () => new Map(),
-}));
-
 jest.mock('@/ai-chat/message-content/components/LazyMarkdownRenderer', () => ({
   LazyMarkdownRenderer: ({ text }: { text: string }) => <>{text}</>,
 }));

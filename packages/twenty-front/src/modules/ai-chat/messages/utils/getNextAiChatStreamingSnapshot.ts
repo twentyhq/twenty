@@ -1,12 +1,14 @@
 import { type AiChatStreamingSnapshot } from '@/ai-chat/messages/types/AiChatStreamingSnapshot';
 
-export const getNextAiChatStreamingSnapshot = (
-  snapshot: AiChatStreamingSnapshot,
-  {
-    messageId,
-    isStreaming,
-  }: Pick<AiChatStreamingSnapshot, 'messageId' | 'isStreaming'>,
-): AiChatStreamingSnapshot => {
+export const getNextAiChatStreamingSnapshot = ({
+  snapshot,
+  messageId,
+  isStreaming,
+}: {
+  snapshot: AiChatStreamingSnapshot;
+  messageId: string;
+  isStreaming: boolean;
+}): AiChatStreamingSnapshot => {
   const isSameMessage = snapshot.messageId === messageId;
 
   return {

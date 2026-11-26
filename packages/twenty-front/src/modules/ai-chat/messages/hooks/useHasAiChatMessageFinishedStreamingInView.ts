@@ -20,7 +20,7 @@ export const useHasAiChatMessageFinishedStreamingInView = ({
     snapshot.isStreaming !== isStreaming
   ) {
     setSnapshot(
-      getNextAiChatStreamingSnapshot(snapshot, { messageId, isStreaming }),
+      getNextAiChatStreamingSnapshot({ snapshot, messageId, isStreaming }),
     );
   }
 
