@@ -3,10 +3,8 @@ import { isString } from '@sniptt/guards';
 import { type ExpressionNode } from '@/expression/types/ExpressionNode';
 import { isPlainObject } from '@/utils/typeguard/isPlainObject';
 
-const toExpressionNode = (value: unknown): ExpressionNode | undefined =>
-  isPlainObject(value) && isString(value.type)
-    ? (value as unknown as ExpressionNode)
-    : undefined;
+const isExpressionNode = (value: unknown): value is ExpressionNode =>
+  isPlainObject(value) && isString(value.type);
 
 export const getFieldMetadataFormulaTree = ({
   settings,
@@ -19,7 +17,9 @@ export const getFieldMetadataFormulaTree = ({
     return undefined;
   }
 
-  return toExpressionNode(
-    isCurrencyCode ? settings.formula.currencyCodeTree : settings.formula.tree,
-  );
+  const tree = isCurrencyCode
+    ? settings.formula.currencyCodeTree
+    : settings.formula.tree;
+
+  return isExpressionNode(tree) ? tree : undefined;
 };

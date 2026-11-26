@@ -369,6 +369,10 @@ export class FieldMetadataService {
       (universalFlatFieldMetadata) =>
         setFormulaFieldTrees({
           universalFlatFieldMetadata,
+          existingUniversalSettings:
+            existingFlatFieldMetadataMaps.byUniversalIdentifier[
+              universalFlatFieldMetadata.universalIdentifier
+            ]?.universalSettings,
           universalFlatObjectMetadataMaps: existingFlatObjectMetadataMaps,
           universalFlatFieldMetadataMaps: existingFlatFieldMetadataMaps,
         }),

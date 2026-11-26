@@ -5,7 +5,9 @@ import {
 import {
   compileFormulaExpression,
   getFieldMetadataFormulaCurrencyCodeExpression,
+  getFieldMetadataFormulaEvaluation,
   getFieldMetadataFormulaExpression,
+  getFieldMetadataFormulaTree,
   getFormulaEvaluationFromBindings,
   isDefined,
   parseExpressionNode,
@@ -17,6 +19,7 @@ import {
   type FormulaSourceUniversalFlatFieldMetadata,
   type FormulaSourceUniversalFlatObjectMetadata,
 } from 'src/engine/metadata-modules/formula-field/utils/build-formula-field-descriptors-from-universal-flat-entity-maps.util';
+import { isFieldMetadataFormulaUnchanged } from 'src/engine/metadata-modules/formula-field/utils/is-field-metadata-formula-unchanged.util';
 import { keepStoredFormulaEvaluation } from 'src/engine/metadata-modules/formula-field/utils/keep-stored-formula-evaluation.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
@@ -26,11 +29,13 @@ export const setFormulaFieldTrees = <
     Pick<UniversalFlatFieldMetadata, 'universalSettings'>,
 >({
   universalFlatFieldMetadata,
+  existingUniversalSettings,
   universalFlatObjectMetadataMaps,
   universalFlatFieldMetadataMaps,
   pendingUniversalFlatFieldMetadatas = [],
 }: {
   universalFlatFieldMetadata: TUniversalFlatFieldMetadata;
+  existingUniversalSettings?: UniversalFlatFieldMetadata['universalSettings'];
   universalFlatObjectMetadataMaps: {
     byUniversalIdentifier: Partial<
       Record<string, FormulaSourceUniversalFlatObjectMetadata>
@@ -53,11 +58,47 @@ export const setFormulaFieldTrees = <
       universalFlatFieldMetadata.objectMetadataUniversalIdentifier
     ];
 
+  if (!isDefined(expression) || !isDefined(universalSettings)) {
+    return universalFlatFieldMetadata;
+  }
+
+  const storedTree = getFieldMetadataFormulaTree({
+    settings: existingUniversalSettings,
+  });
+
+  // TODO(@FelixMalfait): remove in 2.66, once 2-65 has stripped the text formulas kept from 2.64; until then that text is stale after a rename
   if (
-    !isDefined(expression) ||
-    !isDefined(universalSettings) ||
-    !isDefined(universalFlatObjectMetadata)
+    isDefined(storedTree) &&
+    isFieldMetadataFormulaUnchanged({
+      settings: universalSettings,
+      existingSettings: existingUniversalSettings,
+    })
   ) {
+    const storedCurrencyCodeTree = getFieldMetadataFormulaTree({
+      settings: existingUniversalSettings,
+      isCurrencyCode: true,
+    });
+
+    return {
+      ...universalFlatFieldMetadata,
+      universalSettings: {
+        ...universalSettings,
+        formula: {
+          tree: storedTree,
+          ...(isDefined(storedCurrencyCodeTree)
+            ? { currencyCodeTree: storedCurrencyCodeTree }
+            : {}),
+          ...keepStoredFormulaEvaluation(
+            getFieldMetadataFormulaEvaluation({
+              settings: existingUniversalSettings,
+            }),
+          ),
+        },
+      },
+    };
+  }
+
+  if (!isDefined(universalFlatObjectMetadata)) {
     return universalFlatFieldMetadata;
   }
 

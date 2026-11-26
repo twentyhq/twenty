@@ -5,7 +5,7 @@ import { isNonEmptyArray } from 'twenty-shared/utils';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { buildFormulaFieldTreeUpdates } from 'src/database/commands/upgrade-version-command/2-64/utils/build-formula-field-tree-updates.util';
+import { buildFormulaFieldTreeBackfill } from 'src/database/commands/upgrade-version-command/2-64/utils/build-formula-field-tree-backfill.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -14,11 +14,11 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 
 @RegisteredWorkspaceCommand('2.64.0', 1795692743312)
 @Command({
-  name: 'upgrade:2-64:store-formula-fields-as-trees',
+  name: 'upgrade:2-64:backfill-formula-field-trees',
   description:
-    'Store each formula field as a tree reading fields by identifier, instead of text and bindings',
+    'Store a tree reading fields by identifier next to the text of each formula field',
 })
-export class StoreFormulaFieldsAsTreesCommand extends ProvisionedWorkspaceCommandRunner {
+export class BackfillFormulaFieldTreesCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -37,15 +37,15 @@ export class StoreFormulaFieldsAsTreesCommand extends ProvisionedWorkspaceComman
         'flatFieldMetadataMaps',
       ]);
 
-    const { flatFieldMetadatasToUpdate, textFormulaFieldNames } =
-      buildFormulaFieldTreeUpdates({
+    const { flatFieldMetadatasToUpdate, unparsedFormulaFieldNames } =
+      buildFormulaFieldTreeBackfill({
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
       });
 
-    if (isNonEmptyArray(textFormulaFieldNames)) {
+    if (isNonEmptyArray(unparsedFormulaFieldNames)) {
       this.logger.warn(
-        `Workspace ${workspaceId}: formula field(s) ${textFormulaFieldNames.join(', ')} do not compile and stay as text`,
+        `Workspace ${workspaceId}: formula field(s) ${unparsedFormulaFieldNames.join(', ')} do not parse and get no tree`,
       );
     }
 

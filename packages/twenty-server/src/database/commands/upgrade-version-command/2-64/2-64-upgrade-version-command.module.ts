@@ -11,7 +11,7 @@ import { BackfillBillingCustomerStripeCustomerEmailCommand } from 'src/database/
 import { AddInboxChannelViewsCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-workspace-command-1795619804236-add-inbox-channel-views.command';
 import { RevokeRoleWideAccessToChannelObjectsUpgradeCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-workspace-command-1795648952060-revoke-role-wide-access-to-channel-objects.command';
 import { BackfillListViewIsCompactCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-workspace-command-1795688864238-backfill-list-view-is-compact.command';
-import { StoreFormulaFieldsAsTreesCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-workspace-command-1795692743312-store-formula-fields-as-trees.command';
+import { BackfillFormulaFieldTreesCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-workspace-command-1795692743312-backfill-formula-field-trees.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
 import { AgentChatChannelModule } from 'src/engine/metadata-modules/agent-chat-channel/agent-chat-channel.module';
@@ -42,7 +42,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     AddInboxChannelViewsCommand,
     RevokeRoleWideAccessToChannelObjectsUpgradeCommand,
     BackfillListViewIsCompactCommand,
-    StoreFormulaFieldsAsTreesCommand,
+    BackfillFormulaFieldTreesCommand,
   ],
 })
 export class V2_64_UpgradeVersionCommandModule {}
