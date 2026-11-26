@@ -29,12 +29,10 @@ export const usePageLayoutRenderableTabs = () => {
       )
     : undefined;
 
-  const tabsWithReadableWidgets = isPageLayoutInEditMode
-    ? currentPageLayout.tabs
-    : currentPageLayout.tabs.map((tab) => ({
-        ...tab,
-        widgets: tab.widgets.filter(isWidgetReadable),
-      }));
+  const tabsWithReadableWidgets = currentPageLayout.tabs.map((tab) => ({
+    ...tab,
+    widgets: tab.widgets.filter(isWidgetReadable),
+  }));
 
   const tabsWithVisibleWidgets = getTabsWithVisibleWidgets({
     tabs: tabsWithReadableWidgets,

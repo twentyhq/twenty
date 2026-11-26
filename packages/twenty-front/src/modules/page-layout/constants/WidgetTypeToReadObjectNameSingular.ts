@@ -8,7 +8,7 @@ export const WIDGET_TYPE_TO_READ_OBJECT_NAME_SINGULAR: Partial<
   [WidgetType.NOTES]: StandardObjectNameSingular.Note,
   [WidgetType.FILES]: StandardObjectNameSingular.Attachment,
   [WidgetType.TIMELINE]: StandardObjectNameSingular.TimelineActivity,
-  [WidgetType.EMAILS]: StandardObjectNameSingular.Message,
+  [WidgetType.EMAILS]: StandardObjectNameSingular.MessageThread,
   [WidgetType.CALENDAR]: StandardObjectNameSingular.CalendarEvent,
   [WidgetType.CALL_RECORDING_SUMMARY]: StandardObjectNameSingular.CallRecording,
   [WidgetType.CALL_RECORDING_TRANSCRIPT]:

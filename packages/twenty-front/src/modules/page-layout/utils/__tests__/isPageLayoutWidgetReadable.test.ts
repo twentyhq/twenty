@@ -1,17 +1,65 @@
 import { type ObjectRecordsPermissions } from 'twenty-shared/types';
 
+import { type FieldConfiguration } from '@/page-layout/types/FieldConfiguration';
 import { isPageLayoutWidgetReadable } from '@/page-layout/utils/isPageLayoutWidgetReadable';
-import { WidgetType } from '~/generated-metadata/graphql';
+import {
+  FieldDisplayMode,
+  RelationType,
+  WidgetConfigurationType,
+  WidgetType,
+} from '~/generated-metadata/graphql';
 
 const COMPANY_ID = 'company-id';
 const TASK_ID = 'task-id';
 const OPPORTUNITY_ID = 'opportunity-id';
 
+const OPPORTUNITIES_FIELD_ID = 'company-opportunities-field-id';
+const COMPANY_NAME_FIELD_ID = 'company-name-field-id';
+
 const OBJECT_METADATA_ITEMS = [
-  { id: COMPANY_ID, nameSingular: 'company' },
-  { id: TASK_ID, nameSingular: 'task' },
-  { id: OPPORTUNITY_ID, nameSingular: 'opportunity' },
+  {
+    id: COMPANY_ID,
+    nameSingular: 'company',
+    fields: [
+      { id: COMPANY_NAME_FIELD_ID, relation: null },
+      {
+        id: OPPORTUNITIES_FIELD_ID,
+        relation: {
+          type: RelationType.ONE_TO_MANY,
+          sourceFieldMetadata: {
+            id: OPPORTUNITIES_FIELD_ID,
+            name: 'opportunities',
+          },
+          targetFieldMetadata: {
+            id: 'opportunity-company-field-id',
+            name: 'company',
+          },
+          sourceObjectMetadata: {
+            id: COMPANY_ID,
+            nameSingular: 'company',
+            namePlural: 'companies',
+          },
+          targetObjectMetadata: {
+            id: OPPORTUNITY_ID,
+            nameSingular: 'opportunity',
+            namePlural: 'opportunities',
+          },
+        },
+      },
+    ],
+  },
+  { id: TASK_ID, nameSingular: 'task', fields: [] },
+  { id: OPPORTUNITY_ID, nameSingular: 'opportunity', fields: [] },
 ];
+
+const buildFieldConfiguration = (
+  fieldMetadataId: string,
+): FieldConfiguration => ({
+  __typename: 'FieldConfiguration',
+  configurationType: WidgetConfigurationType.FIELD,
+  fieldMetadataId,
+  fieldDisplayMode: FieldDisplayMode.FIELD,
+});
 
 const buildObjectPermissions = (
   canReadAllRecords: boolean,
@@ -28,14 +76,16 @@ const buildObjectPermissions = (
 const isReadable = ({
   type,
   objectMetadataId,
+  configuration = null,
   unreadableObjectMetadataIds,
 }: {
   type: WidgetType;
   objectMetadataId?: string | null;
+  configuration?: FieldConfiguration | null;
   unreadableObjectMetadataIds: string[];
 }) =>
   isPageLayoutWidgetReadable({
-    widget: { type, objectMetadataId },
+    widget: { type, objectMetadataId, configuration },
     objectMetadataItems: OBJECT_METADATA_ITEMS,
     objectPermissionsByObjectMetadataId: Object.fromEntries(
       OBJECT_METADATA_ITEMS.map(({ id }) => [
@@ -102,6 +152,28 @@ describe('isPageLayoutWidgetReadable', () => {
         type: WidgetType.CALENDAR,
         objectMetadataId: COMPANY_ID,
         unreadableObjectMetadataIds: [],
+      }),
+    ).toBe(true);
+  });
+
+  it('hides a related records field whose target object the viewer cannot read', () => {
+    expect(
+      isReadable({
+        type: WidgetType.FIELD,
+        objectMetadataId: COMPANY_ID,
+        configuration: buildFieldConfiguration(OPPORTUNITIES_FIELD_ID),
+        unreadableObjectMetadataIds: [OPPORTUNITY_ID],
+      }),
+    ).toBe(false);
+  });
+
+  it('keeps a non-relation field widget on a readable record', () => {
+    expect(
+      isReadable({
+        type: WidgetType.FIELD,
+        objectMetadataId: COMPANY_ID,
+        configuration: buildFieldConfiguration(COMPANY_NAME_FIELD_ID),
+        unreadableObjectMetadataIds: [OPPORTUNITY_ID],
       }),
     ).toBe(true);
   });
