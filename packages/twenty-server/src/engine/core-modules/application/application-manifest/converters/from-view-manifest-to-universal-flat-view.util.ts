@@ -91,5 +91,6 @@ export const fromViewManifestToUniversalFlatView = ({
     viewSortUniversalIdentifiers: [],
     createdAt: now,
     updatedAt: now,
+    deletedAt: null,
   };
 };

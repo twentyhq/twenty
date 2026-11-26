@@ -40,6 +40,7 @@ export const computeSystemViewFieldsToCreate = ({
     viewFieldGroupUniversalIdentifier: null,
     createdAt,
     updatedAt: createdAt,
+    deletedAt: null,
     // Keyed on the displayed field's application, per the engine convention.
     universalIdentifier: getSystemViewFieldUniversalIdentifier({
       fieldMetadataApplicationUniversalIdentifier:

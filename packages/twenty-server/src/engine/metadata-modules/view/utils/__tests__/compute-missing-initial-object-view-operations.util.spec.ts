@@ -52,6 +52,7 @@ type ViewFieldFixture = {
   universalOverrides: null;
   createdAt: string;
   updatedAt: string;
+  deletedAt: string | null;
   applicationUniversalIdentifier: string;
 };
 
@@ -102,6 +103,7 @@ const buildIndexViewFieldFixture = ({
   universalOverrides: null,
   createdAt: '2024-01-01T00:00:00.000Z',
   updatedAt: '2024-01-01T00:00:00.000Z',
+  deletedAt: null,
   applicationUniversalIdentifier: 'some-standard-application',
 });
 

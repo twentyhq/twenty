@@ -64,6 +64,7 @@ export const buildAgentChatChannelViewsToCreate = ({
       relationTargetFieldMetadataUniversalIdentifier: null,
       createdAt: view.createdAt,
       updatedAt: view.createdAt,
+      deletedAt: null,
     });
   }
 

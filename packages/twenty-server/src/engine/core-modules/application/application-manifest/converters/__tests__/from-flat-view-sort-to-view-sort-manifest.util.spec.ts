@@ -58,6 +58,7 @@ describe('fromFlatViewSortToViewSortManifest', () => {
       relationTargetFieldMetadataUniversalIdentifier: null,
       createdAt: NOW,
       updatedAt: NOW,
+      deletedAt: null,
     };
 
     expect(roundTripFlatViewSort(flatViewSort)).toBeUndefined();

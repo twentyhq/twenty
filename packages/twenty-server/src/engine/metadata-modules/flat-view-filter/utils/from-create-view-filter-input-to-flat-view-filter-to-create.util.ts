@@ -93,6 +93,7 @@ export const fromCreateViewFilterInputToFlatViewFilterToCreate = ({
     viewUniversalIdentifier,
     createdAt,
     updatedAt: createdAt,
+    deletedAt: null,
     universalIdentifier: createViewFilterInput.universalIdentifier ?? v4(),
     operand,
     value,

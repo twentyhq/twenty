@@ -26,5 +26,6 @@ export const fromViewFilterGroupManifestToUniversalFlatViewFilterGroup = ({
     viewFilterUniversalIdentifiers: [],
     createdAt: now,
     updatedAt: now,
+    deletedAt: null,
   };
 };

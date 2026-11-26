@@ -9,7 +9,12 @@ export const fromFlatViewFieldGroupToViewFieldGroupDto = (
     metadataName: 'viewFieldGroup',
     flatEntity: flatViewFieldGroup,
   });
-  const { createdAt, updatedAt, ...rest } = effectiveFlatViewFieldGroup;
+  const {
+    createdAt,
+    updatedAt,
+    deletedAt: _deletedAt,
+    ...rest
+  } = effectiveFlatViewFieldGroup;
 
   return {
     ...rest,

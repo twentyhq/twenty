@@ -151,5 +151,6 @@ export const computeRecordPageViewFieldForExistingObject = ({
     universalOverrides: null,
     createdAt,
     updatedAt: createdAt,
+    deletedAt: null,
   };
 };

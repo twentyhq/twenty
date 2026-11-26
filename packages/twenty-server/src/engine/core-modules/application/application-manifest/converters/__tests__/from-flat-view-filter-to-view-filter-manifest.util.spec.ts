@@ -75,6 +75,7 @@ describe('fromFlatViewFilterToViewFilterManifest', () => {
       positionInViewFilterGroup: 1.5,
       createdAt: NOW,
       updatedAt: NOW,
+      deletedAt: null,
     };
 
     expect(roundTripFlatViewFilter(flatViewFilter)).toBeUndefined();

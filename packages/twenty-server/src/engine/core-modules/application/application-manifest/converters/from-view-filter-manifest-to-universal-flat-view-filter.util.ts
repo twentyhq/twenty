@@ -30,5 +30,6 @@ export const fromViewFilterManifestToUniversalFlatViewFilter = ({
       viewFilterManifest.positionInViewFilterGroup ?? null,
     createdAt: now,
     updatedAt: now,
+    deletedAt: null,
   };
 };

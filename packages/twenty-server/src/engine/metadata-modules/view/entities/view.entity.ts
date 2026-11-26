@@ -263,7 +263,7 @@ export class ViewEntity
     upgradeCommandName: RELAX_VIEW_DELETED_AT_UPGRADE_COMMAND_NAME,
   })
   @Column({ nullable: true, type: 'timestamptz' })
-  deletedAt: WasRemovedInUpgrade<Date | null>;
+  deletedAt: Date | null;
 
   @Column({ nullable: true, type: 'text', default: null })
   anyFieldFilterValue: string | null;

@@ -25,5 +25,6 @@ export const fromViewSortManifestToUniversalFlatViewSort = ({
       viewSortManifest.relationTargetFieldMetadataUniversalIdentifier ?? null,
     createdAt: now,
     updatedAt: now,
+    deletedAt: null,
   };
 };

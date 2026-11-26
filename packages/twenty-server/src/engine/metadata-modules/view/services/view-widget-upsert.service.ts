@@ -605,6 +605,7 @@ export class ViewWidgetUpsertService {
         isCanonical: true,
         createdAt: now,
         updatedAt: now,
+        deletedAt: null,
       });
     }
 
@@ -696,6 +697,7 @@ export class ViewWidgetUpsertService {
           childViewFilterGroupUniversalIdentifiers: [],
           createdAt: now,
           updatedAt: now,
+          deletedAt: null,
         };
 
         filterGroupsToCreate.push(filterGroupToCreate);
@@ -876,6 +878,7 @@ export class ViewWidgetUpsertService {
           relationTargetFieldMetadataUniversalIdentifier,
           createdAt: now,
           updatedAt: now,
+          deletedAt: null,
         });
       } else {
         const {
@@ -1027,6 +1030,7 @@ export class ViewWidgetUpsertService {
           relationTargetFieldMetadataUniversalIdentifier: null,
           createdAt: now,
           updatedAt: now,
+          deletedAt: null,
         });
       } else {
         const hasChanged =

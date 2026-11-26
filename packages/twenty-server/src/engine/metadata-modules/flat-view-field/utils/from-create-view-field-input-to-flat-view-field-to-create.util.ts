@@ -78,6 +78,7 @@ export const fromCreateViewFieldInputToFlatViewFieldToCreate = ({
     viewUniversalIdentifier,
     createdAt,
     updatedAt: createdAt,
+    deletedAt: null,
     universalIdentifier: createViewFieldInput.universalIdentifier ?? v4(),
     isVisible: createViewFieldInput.isVisible ?? true,
     size: createViewFieldInput.size ?? DEFAULT_VIEW_FIELD_SIZE,

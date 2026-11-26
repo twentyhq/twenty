@@ -261,6 +261,7 @@ export class FieldIndexViewFieldOnCreateSideEffectHandlerService extends Metadat
       universalOverrides: null,
       createdAt,
       updatedAt: createdAt,
+      deletedAt: null,
     };
   }
 }

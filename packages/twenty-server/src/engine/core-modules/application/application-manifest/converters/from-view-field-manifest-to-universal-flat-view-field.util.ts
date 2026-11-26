@@ -36,5 +36,6 @@ export const fromViewFieldManifestToUniversalFlatViewField = ({
     universalOverrides: null,
     createdAt: now,
     updatedAt: now,
+    deletedAt: null,
   };
 };

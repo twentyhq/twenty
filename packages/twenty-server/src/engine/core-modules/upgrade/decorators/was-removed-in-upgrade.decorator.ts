@@ -8,11 +8,9 @@ export type WasRemovedInUpgradeOptions = {
 
 declare const wasRemovedInUpgradeBrand: unique symbol;
 
-export type WasRemovedInUpgrade<T> =
-  | (NonNullable<T> & {
-      readonly [wasRemovedInUpgradeBrand]?: true;
-    })
-  | Extract<T, null | undefined>;
+export type WasRemovedInUpgrade<T> = T & {
+  readonly [wasRemovedInUpgradeBrand]?: true;
+};
 
 export type UnwrapWasRemovedInUpgrade<T> = [T] extends [
   WasRemovedInUpgrade<infer TUnwrapped>,
@@ -20,16 +18,8 @@ export type UnwrapWasRemovedInUpgrade<T> = [T] extends [
   ? TUnwrapped
   : T;
 
-export type IsWasRemovedInUpgrade<TValue> = [NonNullable<TValue>] extends [
-  never,
-]
-  ? false
-  : typeof wasRemovedInUpgradeBrand extends keyof NonNullable<TValue>
-    ? true
-    : false;
-
 type WasRemovedInUpgradeKeys<TEntity> = {
-  [K in keyof TEntity]: IsWasRemovedInUpgrade<TEntity[K]> extends true
+  [K in keyof TEntity]: typeof wasRemovedInUpgradeBrand extends keyof TEntity[K]
     ? K
     : never;
 }[keyof TEntity];

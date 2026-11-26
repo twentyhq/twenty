@@ -561,6 +561,7 @@ export class FieldsWidgetUpsertService {
           isCanonical: true,
           createdAt: now,
           updatedAt: now,
+          deletedAt: null,
         });
       }
     }
@@ -829,6 +830,7 @@ export class FieldsWidgetUpsertService {
         isCanonical: true,
         createdAt: now,
         updatedAt: now,
+        deletedAt: null,
       });
     }
 
@@ -912,6 +914,7 @@ export class FieldsWidgetUpsertService {
       overrides: null,
       createdAt: now,
       updatedAt: now,
+      deletedAt: null,
       viewFieldIds: [],
       viewFieldUniversalIdentifiers: [],
     };

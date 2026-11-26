@@ -45,6 +45,7 @@ export const fromCreateViewFilterGroupInputToFlatViewFilterGroupToCreate = ({
     viewUniversalIdentifier,
     createdAt,
     updatedAt: createdAt,
+    deletedAt: null,
     universalIdentifier: viewFilterGroupId,
     logicalOperator:
       createViewFilterGroupInput.logicalOperator ??

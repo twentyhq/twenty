@@ -68,5 +68,6 @@ export const createStandardViewGroupFlatMetadata = <
     position,
     createdAt: now,
     updatedAt: now,
+    deletedAt: null,
   };
 };

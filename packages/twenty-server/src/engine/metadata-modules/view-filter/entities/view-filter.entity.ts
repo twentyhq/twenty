@@ -93,7 +93,7 @@ export class ViewFilterEntity
     upgradeCommandName: RELAX_VIEW_DELETED_AT_UPGRADE_COMMAND_NAME,
   })
   @Column({ nullable: true, type: 'timestamptz' })
-  deletedAt: WasRemovedInUpgrade<Date | null>;
+  deletedAt: Date | null;
 
   @ManyToOne(() => ViewEntity, (view) => view.viewFilters, {
     onDelete: 'CASCADE',

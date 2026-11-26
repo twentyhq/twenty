@@ -28,6 +28,7 @@ describe('fromViewSortManifestToUniversalFlatViewSort', () => {
     expect(result.direction).toBe(ViewSortDirection.ASC);
     expect(result.createdAt).toBe(now);
     expect(result.updatedAt).toBe(now);
+    expect(result.deletedAt).toBeNull();
     expect(result.subFieldName).toBeNull();
   });
 

@@ -136,5 +136,6 @@ export const createStandardViewFilterFlatMetadata = <
     positionInViewFilterGroup,
     createdAt: now,
     updatedAt: now,
+    deletedAt: null,
   };
 };

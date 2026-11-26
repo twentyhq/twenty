@@ -30,6 +30,7 @@ export const buildInitialViewFieldFlatEntity = ({
   viewFieldGroupUniversalIdentifier: null,
   createdAt,
   updatedAt: createdAt,
+  deletedAt: null,
   universalIdentifier: getViewFieldUniversalIdentifier({
     applicationUniversalIdentifier,
     viewUniversalIdentifier: initialViewUniversalIdentifier,
