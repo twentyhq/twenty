@@ -13,6 +13,7 @@ export const fetchMemberApplicationVariables = async (): Promise<
   const { myUserApplicationVariables } = await metadataClient.query({
     myUserApplicationVariables: {
       userWorkspaceId: true,
+      workspaceMemberId: true,
       variables: { key: true, value: true },
     },
   });
