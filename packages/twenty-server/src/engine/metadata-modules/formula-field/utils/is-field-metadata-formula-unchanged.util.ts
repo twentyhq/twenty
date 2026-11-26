@@ -1,3 +1,4 @@
+import { type FieldMetadataFormula } from 'twenty-shared/types';
 import {
   getFieldMetadataFormulaCurrencyCodeExpression,
   getFieldMetadataFormulaExpression,
@@ -7,8 +8,8 @@ export const isFieldMetadataFormulaUnchanged = ({
   formula,
   existingFormula,
 }: {
-  formula: unknown;
-  existingFormula: unknown;
+  formula: Partial<FieldMetadataFormula> | null | undefined;
+  existingFormula: Partial<FieldMetadataFormula> | null | undefined;
 }): boolean =>
   getFieldMetadataFormulaExpression({ formula }) ===
     getFieldMetadataFormulaExpression({ formula: existingFormula }) &&

@@ -20,7 +20,7 @@ describe('getFieldMetadataFormulaEvaluation', () => {
   it.each([
     { formula: null },
     { formula: {} },
-    { formula: { expression: '', evaluation: 'STORED' } },
+    { formula: { expression: '', evaluation: 'STORED' as const } },
   ])('should return undefined for $formula', ({ formula }) => {
     expect(getFieldMetadataFormulaEvaluation({ formula })).toBeUndefined();
   });

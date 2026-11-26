@@ -12,7 +12,6 @@ describe('getFieldMetadataFormulaExpression', () => {
   it.each([
     { formula: null },
     { formula: undefined },
-    { formula: 'not-an-object' },
     { formula: {} },
     { formula: { expression: '' } },
   ])('should return undefined for $formula', ({ formula }) => {

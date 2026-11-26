@@ -1,12 +1,10 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { isPlainObject } from '@/utils/typeguard/isPlainObject';
+import { type FieldMetadataFormula } from '@/types/FieldMetadataFormula';
 
 export const getFieldMetadataFormulaExpression = ({
   formula,
 }: {
-  formula?: unknown;
+  formula?: Partial<FieldMetadataFormula> | null;
 }): string | undefined =>
-  isPlainObject(formula) && isNonEmptyString(formula.expression)
-    ? formula.expression
-    : undefined;
+  isNonEmptyString(formula?.expression) ? formula.expression : undefined;

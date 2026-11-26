@@ -9,7 +9,7 @@ describe('getFieldMetadataFormulaBindings', () => {
     ).toEqual({ price: 'price-uid' });
   });
 
-  it.each([null, 'text', {}, { expression: 'price' }])(
+  it.each([null, {}, { expression: 'price' }])(
     'should return nothing for a formula without bindings: %j',
     (formula) => {
       expect(getFieldMetadataFormulaBindings({ formula })).toBeUndefined();

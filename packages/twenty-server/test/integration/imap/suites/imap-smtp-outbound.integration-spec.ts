@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
 import { EmailConnectionSecurity } from 'src/engine/core-modules/imap-smtp-caldav-connection/enums/email-connection-security.enum';
+import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { deleteConnectedAccount } from 'test/integration/metadata/suites/connected-account/utils/delete-connected-account.util';
 import { saveImapSmtpCaldavAccount } from 'test/integration/metadata/suites/connected-account/utils/save-imap-smtp-caldav-account.util';
@@ -113,37 +114,54 @@ describe('IMAP/SMTP outbound messaging (integration)', () => {
       isDraft: boolean;
       messageThreadId: string | null;
       text: string | null;
-    }>('message', 'messages', 'id isDraft messageThreadId text', {
-      subject: { eq: subject },
-    });
+      createdBy: { workspaceMemberId: string | null };
+    }>(
+      'message',
+      'messages',
+      'id isDraft messageThreadId text createdBy { workspaceMemberId }',
+      { subject: { eq: subject } },
+    );
+
+    const createdBy = {
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+    };
 
     expect(message).toMatchObject({
       isDraft: false,
       messageThreadId: expect.any(String),
       text: 'SMTP reply body',
+      createdBy,
     });
+    expect(
+      await findRecordNodesByFilter(
+        'messageThread',
+        'messageThreads',
+        'createdBy { workspaceMemberId }',
+        { id: { eq: message.messageThreadId } },
+      ),
+    ).toEqual([{ createdBy }]);
     expect(
       await findRecordNodesByFilter<{
         messageChannelId: string;
       }>(
         'messageChannelMessageAssociation',
         'messageChannelMessageAssociations',
-        'messageChannelId',
+        'messageChannelId createdBy { workspaceMemberId }',
         { messageId: { eq: message.id } },
       ),
-    ).toEqual([expect.objectContaining({ messageChannelId })]);
+    ).toEqual([expect.objectContaining({ messageChannelId, createdBy })]);
     expect(
       await findRecordNodesByFilter<{ handle: string; role: string }>(
         'messageParticipant',
         'messageParticipants',
-        'handle role',
+        'handle role createdBy { workspaceMemberId }',
         { messageId: { eq: message.id } },
       ),
     ).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ handle: HANDLE, role: 'TO' }),
-        expect.objectContaining({ handle: HANDLE, role: 'CC' }),
-        expect.objectContaining({ handle: HANDLE, role: 'BCC' }),
+        expect.objectContaining({ handle: HANDLE, role: 'TO', createdBy }),
+        expect.objectContaining({ handle: HANDLE, role: 'CC', createdBy }),
+        expect.objectContaining({ handle: HANDLE, role: 'BCC', createdBy }),
       ]),
     );
   }, 300000);

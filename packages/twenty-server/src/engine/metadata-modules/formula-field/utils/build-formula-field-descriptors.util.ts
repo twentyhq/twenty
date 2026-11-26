@@ -1,4 +1,5 @@
 import {
+  type FieldMetadataFormula,
   type FieldMetadataType,
   RelationType,
   type ValidationRuleFieldDescriptor,
@@ -12,7 +13,7 @@ type FormulaFieldDescriptorSource = {
   name: string;
   type: FieldMetadataType;
   universalIdentifier: string;
-  formula: unknown;
+  formula: Partial<FieldMetadataFormula> | null;
 };
 
 type FormulaFieldDescriptorSourceReader<
