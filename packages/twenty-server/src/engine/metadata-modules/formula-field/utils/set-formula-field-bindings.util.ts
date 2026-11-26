@@ -23,17 +23,16 @@ import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/wo
 
 // Bindings and evaluation are server-owned, and kept while the expression is unchanged so a broken formula still records what it read
 export const setFormulaFieldBindings = <
-  TUniversalFlatFieldMetadata extends FormulaSourceUniversalFlatFieldMetadata &
-    Pick<UniversalFlatFieldMetadata, 'universalSettings'>,
+  TUniversalFlatFieldMetadata extends FormulaSourceUniversalFlatFieldMetadata,
 >({
   universalFlatFieldMetadata,
-  existingUniversalSettings,
+  existingFormula,
   universalFlatObjectMetadataMaps,
   universalFlatFieldMetadataMaps,
   pendingUniversalFlatFieldMetadatas = [],
 }: {
   universalFlatFieldMetadata: TUniversalFlatFieldMetadata;
-  existingUniversalSettings?: UniversalFlatFieldMetadata['universalSettings'];
+  existingFormula?: UniversalFlatFieldMetadata['formula'];
   universalFlatObjectMetadataMaps: {
     byUniversalIdentifier: Partial<
       Record<string, FormulaSourceUniversalFlatObjectMetadata>
@@ -46,31 +45,28 @@ export const setFormulaFieldBindings = <
   };
   pendingUniversalFlatFieldMetadatas?: FormulaSourceUniversalFlatFieldMetadata[];
 }): TUniversalFlatFieldMetadata => {
-  const { universalSettings, universalIdentifier, name } =
-    universalFlatFieldMetadata;
-  const expression = getFieldMetadataFormulaExpression({
-    settings: universalSettings,
-  });
+  const { formula, universalIdentifier, name } = universalFlatFieldMetadata;
+  const expression = getFieldMetadataFormulaExpression({ formula });
   const universalFlatObjectMetadata =
     universalFlatObjectMetadataMaps.byUniversalIdentifier[
       universalFlatFieldMetadata.objectMetadataUniversalIdentifier
     ];
 
-  if (!isDefined(expression) || !isDefined(universalSettings)) {
+  if (!isDefined(expression)) {
     return universalFlatFieldMetadata;
   }
 
   const currencyCodeExpression = getFieldMetadataFormulaCurrencyCodeExpression({
-    settings: universalSettings,
+    formula,
   });
   const existingBindings = isFieldMetadataFormulaUnchanged({
-    settings: universalSettings,
-    existingSettings: existingUniversalSettings,
+    formula,
+    existingFormula,
   })
-    ? getFieldMetadataFormulaBindings({ settings: existingUniversalSettings })
+    ? getFieldMetadataFormulaBindings({ formula: existingFormula })
     : undefined;
 
-  const getDerivedSettings = (): Pick<
+  const getDerivedFormula = (): Pick<
     FieldMetadataFormula,
     'bindings' | 'evaluation'
   > => {
@@ -78,9 +74,7 @@ export const setFormulaFieldBindings = <
       return {
         bindings: existingBindings,
         ...keepStoredFormulaEvaluation(
-          getFieldMetadataFormulaEvaluation({
-            settings: existingUniversalSettings,
-          }),
+          getFieldMetadataFormulaEvaluation({ formula: existingFormula }),
         ),
       };
     }
@@ -127,15 +121,10 @@ export const setFormulaFieldBindings = <
 
   return {
     ...universalFlatFieldMetadata,
-    universalSettings: {
-      ...universalSettings,
-      formula: {
-        expression,
-        ...(isDefined(currencyCodeExpression)
-          ? { currencyCodeExpression }
-          : {}),
-        ...getDerivedSettings(),
-      },
+    formula: {
+      expression,
+      ...(isDefined(currencyCodeExpression) ? { currencyCodeExpression } : {}),
+      ...getDerivedFormula(),
     },
   };
 };

@@ -1,6 +1,7 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
+import { useIsPageLayoutWidgetReadable } from '@/page-layout/hooks/useIsPageLayoutWidgetReadable';
 import { useWidgetVisibilityContext } from '@/page-layout/hooks/useWidgetVisibilityContext';
 import { getIsFirstTabPinned } from '@/page-layout/utils/getIsFirstTabPinned';
 import { getTabsByDisplayMode } from '@/page-layout/utils/getTabsByDisplayMode';
@@ -19,6 +20,7 @@ export const usePageLayoutRenderableTabs = () => {
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
   const { objectMetadataItems } = useObjectMetadataItems();
   const widgetVisibilityContext = useWidgetVisibilityContext();
+  const isWidgetReadable = useIsPageLayoutWidgetReadable();
 
   const targetObjectMetadataItem = isDefined(targetRecordIdentifier)
     ? objectMetadataItems.find(
@@ -27,8 +29,13 @@ export const usePageLayoutRenderableTabs = () => {
       )
     : undefined;
 
+  const tabsWithReadableWidgets = currentPageLayout.tabs.map((tab) => ({
+    ...tab,
+    widgets: tab.widgets.filter(isWidgetReadable),
+  }));
+
   const tabsWithVisibleWidgets = getTabsWithVisibleWidgets({
-    tabs: currentPageLayout.tabs,
+    tabs: tabsWithReadableWidgets,
     isEditMode: isPageLayoutInEditMode,
     context: widgetVisibilityContext,
   });

@@ -3,6 +3,7 @@ import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { ReactionButton } from 'twenty-ui/components/input';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { useAiChatAssistantProfile } from '@/ai-chat/hooks/useAiChatAssistantProfile';
@@ -11,6 +12,7 @@ import { aiChatMessageReactionsFamilyState } from '@/ai-chat/states/server/aiCha
 import { getAiChatSenderLabel } from '@/ai-chat/utils/getAiChatSenderLabel';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -77,17 +79,21 @@ export const AiChatMessageReactions = ({
             (hasAssistantReacted ? 1 : 0);
 
           return (
-            <ReactionButton
+            <Tooltip
               key={emoji}
-              emoji={emoji}
-              count={reactionCount}
-              pressed={isSelected}
-              title={reactorNames}
-              aria-label={t`${emoji} by ${reactorNames}`}
-              onPressedChange={() =>
-                void toggleAiChatMessageReaction({ messageId, emoji })
-              }
-            />
+              content={reactorNames}
+              delay={TooltipDelay.shortDelay}
+            >
+              <ReactionButton
+                emoji={emoji}
+                count={reactionCount}
+                pressed={isSelected}
+                aria-label={t`${emoji} by ${reactorNames}`}
+                onPressedChange={() =>
+                  void toggleAiChatMessageReaction({ messageId, emoji })
+                }
+              />
+            </Tooltip>
           );
         },
       )}

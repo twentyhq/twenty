@@ -149,7 +149,6 @@ export const useMobileNavigationBarItems = (): {
     navigate(AppPath.Home, { replace: isSettingsDrawer });
   };
 
-  const homeChatAttention = getTabChatAttention(null);
   const isOnInboxPage = isInboxPath(pathname);
   const inboxAttention: InboxChatAttention | null =
     unreadOpenThreadCount > 0 && !isOnInboxPage ? 'unread' : null;
@@ -176,8 +175,12 @@ export const useMobileNavigationBarItems = (): {
       : 'home';
   };
 
+  const activeItemName = getActiveItemName();
+  const homeChatAttention =
+    activeItemName === 'home' ? null : getTabChatAttention(null);
+
   return {
-    activeItemName: getActiveItemName(),
+    activeItemName,
     items: [
       {
         name: 'home',
@@ -210,7 +213,10 @@ export const useMobileNavigationBarItems = (): {
           ]
         : []),
       ...navigationMenuTabs.map((tab, index): MobileNavigationBarItem => {
-        const attention = getTabChatAttention(tab.id);
+        const attention =
+          activeItemName === `tab-${tab.id}`
+            ? null
+            : getTabChatAttention(tab.id);
 
         return {
           name: `tab-${tab.id}`,

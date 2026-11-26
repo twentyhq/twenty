@@ -32,7 +32,6 @@ const NOT_IMPORTED_REASON_BY_SKIPPED_REASON: Record<
   string
 > = {
   NOT_SELECTED: 'Conversation is not selected',
-  GROUP_CHATS_OFF: 'Group chats are not imported',
   NO_MESSAGES: 'Message carries no content',
   NO_PHONE: 'WhatsApp hides the phone number of the people in this chat',
   NO_CONTACT: 'Nobody in this chat is in Twenty',
