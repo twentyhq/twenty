@@ -186,7 +186,6 @@ export const useSendAiChatMessageToThread = () => {
           data?.sendChatMessage.queued ||
           isDefined(data?.sendChatMessage.streamId);
 
-        // only a started stream proves the server closed the pending approvals
         if (isDefined(data?.sendChatMessage.streamId)) {
           store.set(messagesAtom, cancelPendingAiChatToolCallApprovals);
         }
@@ -259,7 +258,6 @@ export const useSendAiChatMessageToThread = () => {
         }
 
         removeOptimisticUserMessage();
-        // the server may have closed pending approvals before the send failed
         refetchAiChatThreadMessages(threadId);
         store.set(errorAtom, toAiChatError(error));
 

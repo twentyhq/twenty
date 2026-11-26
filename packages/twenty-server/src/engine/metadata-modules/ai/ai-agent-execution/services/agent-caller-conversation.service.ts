@@ -318,7 +318,6 @@ export class AgentCallerConversationService {
       resolution.proposal,
     );
 
-    // member messages are refused while a caller waits on the call, so the chat hides its composer
     return {
       toolName: PROPOSE_TOOL_CALL_TOOL_NAME,
       input,
