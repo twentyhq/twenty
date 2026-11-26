@@ -842,7 +842,7 @@ export default defineLogicFunction({
 });
 ```
 
-The labels only rename the buttons: approve still runs this tool, and reject never runs anything. They also word the person's answer in the conversation, such as `Not now "Meeting request from Maya".` When the person has a business choice to make, such as accepting or declining a meeting, let the front component collect it with `setToolCallArguments` and keep one tool that handles every answer. Pick an approve label that fits every answer, like **Send response** rather than **Accept**, and a reject label that does not sound like an action, like **Not now** rather than **Decline**.
+The labels only rename the buttons: approve still runs this tool, and reject never runs anything. When the person has a business choice to make, such as accepting or declining a meeting, let the front component collect it with `setToolCallArguments` and keep one tool that handles every answer. Pick an approve label that fits every answer, like **Send response** rather than **Accept**, and a reject label that does not sound like an action, like **Not now** rather than **Decline**.
 
 <Note>
   If the identifier matches no front component in the app, the chat falls back

@@ -1,5 +1,4 @@
 import { PUBLISH_FRONT_COMPONENT_TOOL_NAME } from 'twenty-shared/ai';
-import { isDefined } from 'twenty-shared/utils';
 
 import { PROPOSE_TOOL_CALL_PAUSING_TOOL } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/propose-tool-call.pausing-tool';
 
@@ -31,7 +30,7 @@ const parseCall = (pendingToolOutput: unknown = PENDING_OUTPUT) => {
     pendingToolOutput,
   );
 
-  if (!isDefined(call)) {
+  if (call === null) {
     throw new Error('Expected the call to parse');
   }
 
@@ -281,76 +280,6 @@ describe('PROPOSE_TOOL_CALL_PAUSING_TOOL', () => {
     });
   });
 
-  describe('an application tool with its own approval wording', () => {
-    const BOOKING_INPUT = {
-      toolName: 'app_tool_respond_to_cal_booking',
-      arguments: { bookingId: RECORD_ID },
-      summary: 'Meeting request from Maya',
-    };
-
-    const parseBookingCall = () => {
-      const call = PROPOSE_TOOL_CALL_PAUSING_TOOL.parseCall(BOOKING_INPUT, {
-        success: true,
-        result: {
-          status: 'pending',
-          proposal: {
-            ...BOOKING_INPUT,
-            toolLabel: 'respond-to-cal-booking',
-            template: 'generic',
-            labels: { approve: 'Send response', reject: 'Not now' },
-          },
-        },
-      });
-
-      if (!isDefined(call)) {
-        throw new Error('Expected the call to parse');
-      }
-
-      return call;
-    };
-
-    it('runs the tool with the decision the person made and words the answer with its label', async () => {
-      const executeTool = jest
-        .fn()
-        .mockResolvedValue({ success: true, message: 'Declined' });
-
-      const completion = await parseBookingCall().complete({
-        output: {
-          decision: 'approve',
-          arguments: {
-            bookingId: RECORD_ID,
-            decision: 'DECLINE',
-            reason: 'Not a fit yet',
-          },
-        },
-        context: { executeTool },
-      });
-
-      expect(executeTool).toHaveBeenCalledWith({
-        toolName: 'app_tool_respond_to_cal_booking',
-        args: {
-          bookingId: RECORD_ID,
-          decision: 'DECLINE',
-          reason: 'Not a fit yet',
-        },
-      });
-      expect(completion.answerText).toBe(
-        'Send response "Meeting request from Maya".',
-      );
-    });
-
-    it('words a rejection with the reject label', async () => {
-      const completion = await parseBookingCall().complete({
-        output: { decision: 'reject', feedback: 'Ask me next week' },
-        context: { executeTool: jest.fn() },
-      });
-
-      expect(completion.answerText).toBe(
-        'Not now "Meeting request from Maya": Ask me next week',
-      );
-    });
-  });
-
   describe('an email', () => {
     const EMAIL_INPUT = {
       toolName: 'send_email',
@@ -377,7 +306,7 @@ describe('PROPOSE_TOOL_CALL_PAUSING_TOOL', () => {
         },
       });
 
-      if (!isDefined(call)) {
+      if (call === null) {
         throw new Error('Expected the call to parse');
       }
 

@@ -57,12 +57,6 @@ const proposedToolCallSchema: z.ZodType<ProposedToolCall> = z.object({
   arguments: z.record(z.string(), z.unknown()),
   template: z.enum(PROPOSED_TOOL_CALL_TEMPLATES),
   alternativeToolNames: z.array(z.string()).optional(),
-  labels: z
-    .object({
-      approve: z.string().optional(),
-      reject: z.string().optional(),
-    })
-    .optional(),
   objectNameSingular: z.string().optional(),
   recordId: z.string().optional(),
   currentValues: z.record(z.string(), z.unknown()).optional(),
@@ -163,27 +157,19 @@ const buildApprovedArguments = (
   return toolArguments;
 };
 
-const buildAnswerText = ({
-  answer,
-  feedback,
-}: {
-  answer: string;
-  feedback: string | undefined;
-}): string =>
-  isNonEmptyString(feedback) ? `${answer}: ${feedback}` : `${answer}.`;
+const buildApprovalAnswerText = (
+  proposal: ProposedToolCall,
+  approvedToolName: string,
+  feedback: string | undefined,
+): string => {
+  const approval =
+    approvedToolName === proposal.toolName
+      ? `Approve "${proposal.summary}"`
+      : `Approve "${proposal.summary}", running ${approvedToolName} instead`;
 
-const buildApprovalAnswer = ({
-  proposal: { labels, summary, toolName },
-  approvedToolName,
-}: {
-  proposal: Pick<ProposedToolCall, 'labels' | 'summary' | 'toolName'>;
-  approvedToolName: string;
-}): string => {
-  if (approvedToolName !== toolName) {
-    return `Approve "${summary}", running ${approvedToolName} instead`;
-  }
-
-  return `${labels?.approve ?? 'Approve'} "${summary}"`;
+  return isNonEmptyString(feedback)
+    ? `${approval}: ${feedback}`
+    : `${approval}.`;
 };
 
 export const PROPOSE_TOOL_CALL_PAUSING_TOOL = definePausingTool<
@@ -213,20 +199,20 @@ export const PROPOSE_TOOL_CALL_PAUSING_TOOL = definePausingTool<
             ...(hasFeedback ? { feedback } : {}),
           } satisfies ProposeToolCallToolResult,
         },
-        answerText: buildAnswerText({
-          answer: `${proposal.labels?.reject ?? 'Reject'} "${proposal.summary}"`,
-          feedback,
-        }),
+        answerText: hasFeedback
+          ? `Reject "${proposal.summary}": ${feedback}`
+          : `Reject "${proposal.summary}".`,
       };
     }
 
     const approvedToolName = isReadable
       ? (output.toolName ?? proposal.toolName)
       : proposal.toolName;
-    const answerText = buildAnswerText({
-      answer: buildApprovalAnswer({ proposal, approvedToolName }),
+    const answerText = buildApprovalAnswerText(
+      proposal,
+      approvedToolName,
       feedback,
-    });
+    );
 
     // feedback given with an approval steers what the agent does next, so it travels with every outcome
     const buildApprovalCompletion = ({
