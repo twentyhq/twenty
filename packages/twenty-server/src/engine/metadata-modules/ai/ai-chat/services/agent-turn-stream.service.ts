@@ -12,6 +12,7 @@ import {
   type ExtendedUIMessage,
   type ExtendedUIMessagePart,
   isSilentAgentChatMessageParts,
+  isToolsOnlyAgentChatMessageParts,
 } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { v5 as uuidv5 } from 'uuid';
@@ -591,7 +592,7 @@ export class AgentTurnStreamService {
     const replyText =
       findLastMessageText(replyParts) ?? findAwaitingCallText(replyParts);
     const hasText = hasReplyText(replyParts);
-    const isSilent = isSilentAgentChatMessageParts(replyParts);
+    const hasSilentReplyParts = isSilentAgentChatMessageParts(replyParts);
     const awaitingParts = findAwaitingPausingToolParts(replyParts);
     // without an answerable call nothing can resume the turn, so fail rather than wait forever
     const isAwaitingAnswer =
@@ -601,10 +602,13 @@ export class AgentTurnStreamService {
       hasText,
       isAborted: result.isAborted,
       isAwaitingUserAnswer: awaitingParts.length > 0 || isWaiting,
-      isSilent,
+      isSilent: hasSilentReplyParts,
+      isToolsOnly: isToolsOnlyAgentChatMessageParts(replyParts),
       stopReason,
       isTextReplyRequired: !isBackgroundRun,
     });
+    const isSilentOutcome =
+      outcome.kind === 'completed' && outcome.outcome === 'silent';
 
     if (!isBackgroundRun && isDefined(claim)) {
       this.logTurnWithoutText({
@@ -613,7 +617,7 @@ export class AgentTurnStreamService {
         modelId,
         stopReason,
         hasText,
-        isSilent,
+        isSilent: isSilentOutcome,
         hasAwaitingCall: awaitingParts.length > 0,
       });
     }
@@ -672,7 +676,8 @@ export class AgentTurnStreamService {
       threadId: claim.threadId,
       streamId: claim.streamId,
       lastMessageText: replyText,
-      shouldRecordActivity: !isSilent && (!isBackgroundRun || isAwaitingAnswer),
+      shouldRecordActivity:
+        !isSilentOutcome && (!isBackgroundRun || isAwaitingAnswer),
       usage: {
         contextWindowTokens: result.modelConfig?.contextWindowTokens ?? null,
         conversationSize: result.usage.conversationSize,
@@ -683,7 +688,7 @@ export class AgentTurnStreamService {
     if (!totalsUpdate.affected) {
       // the reply is saved even though a newer stream owns the thread, and its activity is
       // best-effort so it never turns the saved reply into an error
-      if (!isSilent && !isBackgroundRun) {
+      if (!isSilentOutcome && !isBackgroundRun) {
         await this.threadService
           .recordThreadActivity({
             workspaceId,

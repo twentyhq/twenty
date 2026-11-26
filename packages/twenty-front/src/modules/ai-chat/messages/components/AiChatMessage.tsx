@@ -16,6 +16,9 @@ import { getFieldFilesValueFromFilePart } from '@/chat/utils/getFieldFilesValueF
 
 import { ChatMessageDaySeparator } from '@/chat/components/ChatMessageDaySeparator';
 import { AiChatMessageAuthorHeader } from '@/ai-chat/messages/components/AiChatMessageAuthorHeader';
+import { AiChatToolsOnlyTurn } from '@/ai-chat/messages/components/AiChatToolsOnlyTurn';
+import { useHasAiChatMessageFinishedStreamingInView } from '@/ai-chat/messages/hooks/useHasAiChatMessageFinishedStreamingInView';
+import { useIsToolsOnlyAiChatMessage } from '@/ai-chat/messages/hooks/useIsToolsOnlyAiChatMessage';
 import { AiChatMessageReplyQuote } from '@/ai-chat/messages/components/AiChatMessageReplyQuote';
 import { AiChatMessagePartsRenderer } from '@/ai-chat/messages/components/AiChatMessagePartsRenderer';
 import { AiChatMessageReactions } from '@/ai-chat/messages/components/AiChatMessageReactions';
@@ -174,6 +177,13 @@ export const AiChatMessage = ({
     aiChatMessageReactionsFamilyState,
     { messageId },
   );
+  const isToolsOnlyMessage = useIsToolsOnlyAiChatMessage(aiChatMessage);
+  const hasFinishedStreamingInView = useHasAiChatMessageFinishedStreamingInView(
+    {
+      messageId,
+      isStreaming: isLastMessageStreaming,
+    },
+  );
 
   if (
     !isDefined(aiChatMessage) ||
@@ -224,6 +234,11 @@ export const AiChatMessage = ({
     isGroupedWithNext && !hasVisibleTimeInBubble && !hasFooter;
   const shouldShowError =
     isDefined(error) && aiChatMessage.role === AGENT_MESSAGE_ROLE.ASSISTANT;
+  const isToolsOnlyTurn =
+    isAiChatInboxEnabled &&
+    !isLastMessageStreaming &&
+    !shouldShowError &&
+    isToolsOnlyMessage;
 
   const attachments = aiChatMessage.parts
     .filter(isExtendedFileUIPart)
@@ -298,7 +313,7 @@ export const AiChatMessage = ({
         tabIndex={hasFloatingActions && isTouchDevice ? -1 : undefined}
         data-agent-chat-message-id={messageId}
       >
-        {hasHeader && (
+        {hasHeader && !isToolsOnlyTurn && (
           <AiChatMessageAuthorHeader
             messageId={messageId}
             role={aiChatMessage.role}
@@ -329,6 +344,13 @@ export const AiChatMessage = ({
             >
               {messageContent}
             </AiChatUserMessageText>
+          ) : isToolsOnlyTurn ? (
+            <AiChatToolsOnlyTurn
+              message={aiChatMessage}
+              hasTrailingSpace={hasFinishedStreamingInView}
+            >
+              {messageContent}
+            </AiChatToolsOnlyTurn>
           ) : (
             <StyledChatMessageBubble>{messageContent}</StyledChatMessageBubble>
           )}

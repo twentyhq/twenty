@@ -15,10 +15,8 @@ import { ThinkingStepsDisplay } from '@/ai-chat/thinking-steps/components/Thinki
 import { isHiddenReasoningPart } from '@/ai-chat/thinking-steps/utils/isHiddenReasoningPart';
 import { useFrontComponentIdByToolName } from '@/ai-chat/tool-calls/hooks/useFrontComponentIdByToolName';
 import { getEffectiveToolName } from '@/ai-chat/tool-calls/utils/getEffectiveToolName';
-import { shouldToolPartRenderStandalone } from '@/ai-chat/tool-calls/utils/shouldToolPartRenderStandalone';
+import { useIsStandaloneToolPart } from '@/ai-chat/tool-calls/hooks/useIsStandaloneToolPart';
 import { isHiddenCompleteWorkspaceSetupToolPart } from '@/ai-chat/workspace-setup/utils/isHiddenCompleteWorkspaceSetupToolPart';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledMessagePartsContainer = styled.div`
   display: flex;
@@ -42,9 +40,7 @@ export const AiChatMessagePartsRenderer = ({
   workDurationMs?: number | null;
 }) => {
   const frontComponentIdByToolName = useFrontComponentIdByToolName();
-  const isFrontComponentPreviewEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_AI_CHAT_COMPONENT_BUILDER_ENABLED,
-  );
+  const isStandaloneToolPart = useIsStandaloneToolPart();
 
   const hasCodeExecutionData = messageParts.some(
     (part) => part.type === 'data-code-execution',
@@ -66,15 +62,7 @@ export const AiChatMessagePartsRenderer = ({
   );
   const groupedRenderItems = groupContiguousThinkingStepParts(
     filteredParts,
-    (part) =>
-      isToolUIPart(part) &&
-      shouldToolPartRenderStandalone({
-        toolPart: part,
-        frontComponentId: frontComponentIdByToolName.get(
-          getEffectiveToolName(part),
-        ),
-        isFrontComponentPreviewEnabled,
-      }),
+    isStandaloneToolPart,
   );
   const renderItemsWithoutThinkingSteps = groupedRenderItems.filter(
     (renderItem) => renderItem.type !== 'thinking-steps',
