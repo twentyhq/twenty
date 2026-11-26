@@ -6,13 +6,14 @@ import { isDefined } from 'twenty-shared/utils';
 import { type PositionType } from '@/command-menu-item/types/PositionType';
 import { createVirtualElementFromPosition } from '@/command-menu-item/utils/createVirtualElementFromPosition';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
-import { NavigationMenuCustomizeSidebarMenuContent } from '@/navigation-menu-item/edit/components/NavigationMenuCustomizeSidebarMenuContent';
+import { MainNavigationDrawerContextMenuContent } from '@/navigation/components/MainNavigationDrawerContextMenuContent';
 import { MAIN_NAVIGATION_DRAWER_CONTEXT_MENU_DROPDOWN_ID } from '@/navigation/constants/MainNavigationDrawerContextMenuDropdownId';
 import { useCanCustomizeSidebar } from '@/navigation/hooks/useCanCustomizeSidebar';
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -34,7 +35,9 @@ export const MainNavigationDrawerContextMenu = ({
     isLayoutCustomizationModeEnabledState,
   );
   const [position, setPosition] = useState<PositionType>({ x: null, y: null });
+  const [targetSectionId, setTargetSectionId] = useState<string | null>(null);
   const { openDropdown } = useOpenDropdown();
+  const { closeDropdown } = useCloseDropdown();
 
   const canOpenContextMenu =
     canCustomizeSidebar &&
@@ -54,6 +57,11 @@ export const MainNavigationDrawerContextMenu = ({
 
     event.preventDefault();
     setPosition({ x: event.clientX, y: event.clientY });
+    setTargetSectionId(
+      target
+        ?.closest('[data-navigation-menu-section-id]')
+        ?.getAttribute('data-navigation-menu-section-id') ?? null,
+    );
     openDropdown({
       dropdownComponentInstanceIdFromProps:
         MAIN_NAVIGATION_DRAWER_CONTEXT_MENU_DROPDOWN_ID,
@@ -75,7 +83,12 @@ export const MainNavigationDrawerContextMenu = ({
             width={GenericDropdownContentWidth.Large}
             aria-label={t`Sidebar actions`}
           >
-            <NavigationMenuCustomizeSidebarMenuContent />
+            <MainNavigationDrawerContextMenuContent
+              targetSectionId={targetSectionId}
+              onClose={() =>
+                closeDropdown(MAIN_NAVIGATION_DRAWER_CONTEXT_MENU_DROPDOWN_ID)
+              }
+            />
           </DropdownContent>
         </DropdownRoot>
       )}

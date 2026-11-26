@@ -38,6 +38,10 @@ const StyledIconPickerTrigger = styled.div`
   }
 `;
 
+const StyledIconPickerClickBoundary = styled.div`
+  display: flex;
+`;
+
 const StyledButton = styled.button`
   align-items: center;
   border-radius: ${themeCssVariables.border.radius.sm};
@@ -61,6 +65,10 @@ const StyledLabelButton = styled(StyledButton)`
   &:focus-visible {
     outline-offset: -2px;
   }
+`;
+const StyledFolderLabelButton = styled(StyledLabelButton)`
+  flex: 0 1 auto;
+  width: auto;
 `;
 const StyledNameInput = styled(TextInput)`
   font-weight: ${themeCssVariables.font.weight.medium};
@@ -121,33 +129,42 @@ export const NavigationMenuItemInlineEditor = ({
     );
   };
   const isFolder = item.type === NavigationMenuItemType.FOLDER;
+  const isWorkspaceFolder = isFolder && !isDefined(item.userWorkspaceId);
   const select = () => setSelectedNavigationMenuItemIdInEditMode(item.id);
   const finishRename = (value: string, clearSelection = true) => {
     void updateItem(item.id, { name: value.trim() || initialName });
     stopRenaming(clearSelection);
   };
+  const LabelButton = isFolder ? StyledFolderLabelButton : StyledLabelButton;
+  const startRenaming = () => {
+    setInitialName(item.name ?? '');
+    setName(item.name ?? '');
+    setIsRenaming(true);
+  };
   const icon = isFolder ? (
-    <IconPicker
-      dropdownId={`${dropdownId}-icon`}
-      selectedIconKey={item.icon ?? FOLDER_ICON_DEFAULT}
-      onOpen={select}
-      onClose={clearFavoriteSelection}
-      onChange={({ iconKey }) => void updateItem(item.id, { icon: iconKey })}
-      iconColorPicker={{
-        selectedColor: parseThemeColor(
-          item.color ?? DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER,
-        ),
-        onColorChange: (color) => void updateItem(item.id, { color }),
-      }}
-      clickableComponent={
-        <StyledIconPickerTrigger aria-label={t`Choose icon and color`}>
-          <ColoredIcon
-            Icon={getIcon(item.icon ?? FOLDER_ICON_DEFAULT)}
-            color={item.color ?? DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER}
-          />
-        </StyledIconPickerTrigger>
-      }
-    />
+    <StyledIconPickerClickBoundary onClick={(event) => event.stopPropagation()}>
+      <IconPicker
+        dropdownId={`${dropdownId}-icon`}
+        selectedIconKey={item.icon ?? FOLDER_ICON_DEFAULT}
+        onOpen={select}
+        onClose={clearFavoriteSelection}
+        onChange={({ iconKey }) => void updateItem(item.id, { icon: iconKey })}
+        iconColorPicker={{
+          selectedColor: parseThemeColor(
+            item.color ?? DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER,
+          ),
+          onColorChange: (color) => void updateItem(item.id, { color }),
+        }}
+        clickableComponent={
+          <StyledIconPickerTrigger aria-label={t`Choose icon and color`}>
+            <ColoredIcon
+              Icon={getIcon(item.icon ?? FOLDER_ICON_DEFAULT)}
+              color={item.color ?? DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER}
+            />
+          </StyledIconPickerTrigger>
+        }
+      />
+    </StyledIconPickerClickBoundary>
   ) : (
     <StyledButton type="button" aria-label={t`Edit link`} onClick={onEditLink}>
       <NavigationMenuItemIcon navigationMenuItem={item} />
@@ -179,27 +196,38 @@ export const NavigationMenuItemInlineEditor = ({
         }
       />
     ) : (
-      <StyledLabelButton
+      <LabelButton
         type="button"
         aria-pressed={isFolder ? isSelected : undefined}
         aria-description={
-          isFolder && isSelected ? t`Select again to rename` : undefined
+          isFolder && isSelected && !isWorkspaceFolder
+            ? t`Select again to rename`
+            : undefined
         }
         onClick={(event) => {
+          if (isWorkspaceFolder) {
+            return;
+          }
           event.stopPropagation();
           if (!isFolder) {
             onEditLink();
           } else if (isSelected) {
-            setInitialName(item.name ?? '');
-            setName(item.name ?? '');
-            setIsRenaming(true);
+            startRenaming();
           } else {
             select();
           }
         }}
+        onDoubleClick={
+          isWorkspaceFolder
+            ? () => {
+                select();
+                startRenaming();
+              }
+            : undefined
+        }
       >
         {isFolder ? item.name : getLinkNavigationMenuItemLabel(item)}
-      </StyledLabelButton>
+      </LabelButton>
     );
   return (
     <NavigationDrawerItemEditingContext.Provider
