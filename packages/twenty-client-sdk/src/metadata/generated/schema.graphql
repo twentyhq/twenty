@@ -984,7 +984,7 @@ type AuthToken {
 
 type AuthTokenPair {
   accessOrWorkspaceAgnosticToken: AuthToken!
-  refreshToken: AuthToken!
+  refreshToken: AuthToken @deprecated(reason: "Always null. Will be removed.")
 }
 
 type AuthTokens {
@@ -3774,7 +3774,6 @@ type Mutation {
   removeRecordShare(principal: RecordSharePrincipalInput!, target: RecordTargetInput!): RecordSharingDTO!
   removeRoleFromAgent(agentId: UUID!): Boolean!
   renewApplicationToken(applicationRefreshToken: String!): ApplicationTokenPair!
-  renewToken(appToken: String!): AuthTokens!
   reopenAgentChatThreadInChannel(threadId: UUID!): Boolean!
   reportAppConnectionAuthFailure(input: ReportAppConnectionAuthFailureInput!): Boolean!
   resendEmailVerificationToken(affiliatePartnerName: String, email: String!, origin: String!): ResendEmailVerificationToken!
@@ -3811,7 +3810,7 @@ type Mutation {
   setRecordShare(accessLevel: RecordShareAccessLevel!, principal: RecordSharePrincipalInput!, target: RecordTargetInput!): RecordSharingDTO!
   setResourceCreditSubscriptionPrice(priceId: String!): BillingUpdate!
   signIn(captchaToken: String, email: String!, locale: String, password: String!, verifyEmailRedirectPath: String): AvailableWorkspacesAndAccessTokens!
-  signOut(refreshToken: String): Boolean!
+  signOut(refreshToken: String @deprecated(reason: "Ignored: refresh tokens are no longer issued.")): Boolean!
   signUp(affiliatePartnerName: String, captchaToken: String, email: String!, locale: String, password: String!, verifyEmailRedirectPath: String): AvailableWorkspacesAndAccessTokens!
   signUpInNewWorkspace(input: SignUpInNewWorkspaceInput): SignUp!
   signUpInWorkspace(captchaToken: String, email: String!, locale: String, password: String!, verifyEmailRedirectPath: String, workspaceId: UUID, workspaceInviteHash: String, workspacePersonalInviteToken: String): SignUp!

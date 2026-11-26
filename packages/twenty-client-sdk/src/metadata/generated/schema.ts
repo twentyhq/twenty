@@ -851,7 +851,8 @@ export interface AuthToken {
 
 export interface AuthTokenPair {
     accessOrWorkspaceAgnosticToken: AuthToken
-    refreshToken: AuthToken
+    /** @deprecated Always null. Will be removed. */
+    refreshToken?: AuthToken
     __typename: 'AuthTokenPair'
 }
 
@@ -2651,7 +2652,6 @@ export interface Mutation {
     removeRecordShare: RecordSharingDTO
     removeRoleFromAgent: Scalars['Boolean']
     renewApplicationToken: ApplicationTokenPair
-    renewToken: AuthTokens
     reopenAgentChatThreadInChannel: Scalars['Boolean']
     reportAppConnectionAuthFailure: Scalars['Boolean']
     resendEmailVerificationToken: ResendEmailVerificationToken
@@ -5554,6 +5554,7 @@ export interface AuthTokenGenqlSelection{
 
 export interface AuthTokenPairGenqlSelection{
     accessOrWorkspaceAgnosticToken?: AuthTokenGenqlSelection
+    /** @deprecated Always null. Will be removed. */
     refreshToken?: AuthTokenGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -7613,7 +7614,6 @@ export interface MutationGenqlSelection{
     removeRecordShare?: (RecordSharingDTOGenqlSelection & { __args: {principal: RecordSharePrincipalInput, target: RecordTargetInput} })
     removeRoleFromAgent?: { __args: {agentId: Scalars['UUID']} }
     renewApplicationToken?: (ApplicationTokenPairGenqlSelection & { __args: {applicationRefreshToken: Scalars['String']} })
-    renewToken?: (AuthTokensGenqlSelection & { __args: {appToken: Scalars['String']} })
     reopenAgentChatThreadInChannel?: { __args: {threadId: Scalars['UUID']} }
     reportAppConnectionAuthFailure?: { __args: {input: ReportAppConnectionAuthFailureInput} }
     resendEmailVerificationToken?: (ResendEmailVerificationTokenGenqlSelection & { __args: {affiliatePartnerName?: (Scalars['String'] | null), email: Scalars['String'], origin: Scalars['String']} })

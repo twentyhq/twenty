@@ -1061,7 +1061,8 @@ export type AuthToken = {
 export type AuthTokenPair = {
   __typename?: 'AuthTokenPair';
   accessOrWorkspaceAgnosticToken: AuthToken;
-  refreshToken: AuthToken;
+  /** @deprecated Always null. Will be removed. */
+  refreshToken?: Maybe<AuthToken>;
 };
 
 export type AuthTokens = {
@@ -3961,7 +3962,6 @@ export type Mutation = {
   removeRecordShare: RecordSharingDto;
   removeRoleFromAgent: Scalars['Boolean']['output'];
   renewApplicationToken: ApplicationTokenPair;
-  renewToken: AuthTokens;
   reopenAgentChatThreadInChannel: Scalars['Boolean']['output'];
   reportAppConnectionAuthFailure: Scalars['Boolean']['output'];
   resendEmailVerificationToken: ResendEmailVerificationToken;
@@ -4962,11 +4962,6 @@ export type MutationRenewApplicationTokenArgs = {
 };
 
 
-export type MutationRenewTokenArgs = {
-  appToken: Scalars['String']['input'];
-};
-
-
 export type MutationReopenAgentChatThreadInChannelArgs = {
   threadId: Scalars['UUID']['input'];
 };
@@ -5158,11 +5153,6 @@ export type MutationSignInArgs = {
   locale?: InputMaybe<Scalars['String']['input']>;
   password: Scalars['String']['input'];
   verifyEmailRedirectPath?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-export type MutationSignOutArgs = {
-  refreshToken?: InputMaybe<Scalars['String']['input']>;
 };
 
 
