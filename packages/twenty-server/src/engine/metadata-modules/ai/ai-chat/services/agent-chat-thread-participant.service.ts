@@ -36,7 +36,6 @@ import {
   type AgentHistoryStorageContext,
   AgentHistoryWorkspaceStorageService,
 } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
-import { InboxObjectNamesResolverService } from 'src/engine/metadata-modules/ai/ai-history/services/inbox-object-names-resolver.service';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import {
   AiException,
@@ -191,7 +190,6 @@ export class AgentChatThreadParticipantService {
     private readonly delayedJobsQueueService: MessageQueueService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly storageService: AgentHistoryWorkspaceStorageService,
-    private readonly inboxObjectNamesResolverService: InboxObjectNamesResolverService,
   ) {}
 
   async updateInboxState({
@@ -550,9 +548,10 @@ export class AgentChatThreadParticipantService {
       workspaceMemberId,
     });
 
-    const { table } = await this.storageService.getContext(workspaceId);
-    const { agentChatThread: threadObjectName } =
-      await this.inboxObjectNamesResolverService.resolve(workspaceId);
+    const {
+      table,
+      inboxObjectNamesByLegacyName: { agentChatThread: threadObjectName },
+    } = await this.storageService.getContext(workspaceId);
 
     const [summary] = await this.workspaceOrmManager
       .executeInWorkspaceContext(async () => {

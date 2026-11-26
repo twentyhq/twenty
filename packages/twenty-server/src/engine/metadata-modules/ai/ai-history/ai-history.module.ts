@@ -20,19 +20,9 @@ const REPOSITORY_PROVIDERS = AGENT_HISTORY_OBJECT_NAMES.map((objectName) => ({
   useFactory: (
     storageService: AgentHistoryWorkspaceStorageService,
     workspaceOrmManager: WorkspaceOrmManager,
-    inboxObjectNamesResolverService: InboxObjectNamesResolverService,
   ) =>
-    new AgentHistoryRepository(
-      objectName,
-      storageService,
-      workspaceOrmManager,
-      inboxObjectNamesResolverService,
-    ),
-  inject: [
-    AgentHistoryWorkspaceStorageService,
-    WorkspaceOrmManager,
-    InboxObjectNamesResolverService,
-  ],
+    new AgentHistoryRepository(objectName, storageService, workspaceOrmManager),
+  inject: [AgentHistoryWorkspaceStorageService, WorkspaceOrmManager],
 }));
 
 @Module({

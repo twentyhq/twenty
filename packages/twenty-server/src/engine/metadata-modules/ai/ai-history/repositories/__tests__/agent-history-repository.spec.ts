@@ -15,7 +15,9 @@ it('reads native workspace fields and precision from workspace storage', async (
   };
   const storage = {
     run: jest.fn(),
-    getContext: jest.fn().mockReturnValue({}),
+    getContext: jest.fn().mockResolvedValue({
+      inboxObjectNamesByLegacyName: LEGACY_INBOX_OBJECT_NAMES_BY_LEGACY_NAME,
+    }),
   };
   const find = jest.fn().mockResolvedValue([record]);
   const count = jest.fn().mockResolvedValue(1);
@@ -31,11 +33,6 @@ it('reads native workspace fields and precision from workspace storage', async (
     'agentChatThread',
     storage,
     orm as never,
-    {
-      resolve: jest
-        .fn()
-        .mockResolvedValue(LEGACY_INBOX_OBJECT_NAMES_BY_LEGACY_NAME),
-    },
   );
   await expect(
     repository.find('workspace', {
@@ -64,9 +61,13 @@ it('reads the object under the name resolved for the workspace', async () => {
   };
   const repository = new AgentHistoryRepository<AgentChatThreadWorkspaceEntity>(
     'agentChatThread',
-    { run: jest.fn(), getContext: jest.fn().mockResolvedValue({}) },
+    {
+      run: jest.fn(),
+      getContext: jest.fn().mockResolvedValue({
+        inboxObjectNamesByLegacyName: INBOX_OBJECT_NAMES_BY_LEGACY_NAME,
+      }),
+    },
     orm,
-    { resolve: jest.fn().mockResolvedValue(INBOX_OBJECT_NAMES_BY_LEGACY_NAME) },
   );
 
   await repository.count('workspace');

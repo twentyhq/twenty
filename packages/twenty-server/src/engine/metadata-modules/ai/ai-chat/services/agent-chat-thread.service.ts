@@ -515,7 +515,10 @@ export class AgentChatThreadService {
     const writeAssignment = async ({
       manager,
       table,
-    }: AgentHistoryStorageContext): Promise<void> => {
+    }: Pick<
+      AgentHistoryStorageContext,
+      'manager' | 'table'
+    >): Promise<void> => {
       const assignedThreadIds = await manager.query<{ id: string }[]>(
         `WITH assigned_thread AS (
            UPDATE ${table('agentChatThread')}
