@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-sdk/utils';
 import { vi } from 'vitest';
 
 type TelegramApiCall = { method: string; params: Record<string, unknown> };
@@ -28,7 +29,7 @@ export const stubTelegramApi = ({
       return {
         status: failure?.error_code ?? 200,
         json: async () =>
-          failure
+          isDefined(failure)
             ? { ok: false, ...failure }
             : { ok: true, result: results[method] ?? true },
       };
