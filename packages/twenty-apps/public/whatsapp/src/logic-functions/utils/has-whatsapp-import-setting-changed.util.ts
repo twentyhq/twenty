@@ -7,7 +7,7 @@ type WhatsappImportSettings = Pick<
 
 const getSelectedChatIds = ({
   selectedChats,
-}: WhatsappImportSettings): string =>
+}: Pick<WhatsappSettings, 'selectedChats'>): string =>
   selectedChats
     .map(({ id }) => id)
     .sort()

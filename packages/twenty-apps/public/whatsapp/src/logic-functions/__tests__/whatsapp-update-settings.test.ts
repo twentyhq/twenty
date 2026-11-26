@@ -142,9 +142,11 @@ describe('whatsappUpdateSettingsHandler', () => {
           historyImport: expect.objectContaining({ status: 'IMPORTING' }),
         }),
       );
-      expect(
-        (mocks.kvStore.get(HISTORY_KEY) as { runId: string }).runId,
-      ).not.toBe('run-1');
+      expect(mocks.kvStore.get(HISTORY_KEY)).toEqual(
+        expect.objectContaining({
+          runId: expect.not.stringMatching(/^run-1$/),
+        }),
+      );
     },
   );
 

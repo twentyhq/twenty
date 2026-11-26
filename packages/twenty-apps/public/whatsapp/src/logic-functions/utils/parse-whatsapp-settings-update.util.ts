@@ -29,8 +29,8 @@ const CONTACT_AUTO_CREATION_POLICIES: WhatsappContactAutoCreationPolicy[] = [
 
 const VISIBILITIES: WhatsappVisibility[] = ['SHARE_EVERYTHING', 'METADATA'];
 
-const isOneOf = <TValue extends string>(
-  values: TValue[],
+const isOneOf = <TValue extends string | number>(
+  values: readonly TValue[],
   value: unknown,
 ): value is TValue => values.some((candidate) => candidate === value);
 
