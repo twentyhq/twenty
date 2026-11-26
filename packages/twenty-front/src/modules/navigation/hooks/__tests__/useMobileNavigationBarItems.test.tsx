@@ -151,6 +151,18 @@ describe('useMobileNavigationBarItems', () => {
     expect(result.current.activeItemName).toBe('tab-sales-tab');
   });
 
+  it('labels an unnamed sidebar tab "Tab"', () => {
+    jest
+      .mocked(useWorkspaceNavigationMenuContainers)
+      .mockReturnValue([{ ...SALES_TAB, id: 'unnamed-tab', name: '' }]);
+
+    const { result } = renderMobileNavigationBarItems('/objects/people');
+
+    expect(
+      result.current.items.find(({ name }) => name === 'tab-unnamed-tab'),
+    ).toMatchObject({ label: 'Tab' });
+  });
+
   it('swaps the new chat for the inbox when the inbox is enabled', () => {
     jest.mocked(useIsFeatureEnabled).mockReturnValue(true);
 

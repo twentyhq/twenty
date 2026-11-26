@@ -26,6 +26,7 @@ import { type NavigationMenuItemMoveDestination } from '@/navigation-menu-item/c
 import { type NavigationMenuItemAddTarget } from '@/navigation-menu-item/edit/types/NavigationMenuItemAddTarget';
 import { getNavigationMenuItemContainerId } from '@/navigation-menu-item/common/utils/getNavigationMenuItemContainerId';
 import { getNavigationMenuItemMoveDestinationGroups } from '@/navigation-menu-item/common/utils/getNavigationMenuItemMoveDestinationGroups';
+import { useGetNavigationMenuTabLabel } from '@/navigation-menu-item/display/hooks/useGetNavigationMenuTabLabel';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
 import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
@@ -51,6 +52,7 @@ export const NavigationMenuItemActions = ({
   onClose,
 }: NavigationMenuItemActionsProps) => {
   const { t } = useLingui();
+  const getNavigationMenuTabLabel = useGetNavigationMenuTabLabel();
   const { getIcon } = useIcons();
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
   const isCustomizableSidebarEnabled = useIsFeatureEnabled(
@@ -81,8 +83,11 @@ export const NavigationMenuItemActions = ({
     (!isDefined(item.parentId) || parentType === NavigationMenuItemType.TAB);
   const isMovingAcrossTabs =
     section === 'workspace' && isCustomizableSidebarEnabled;
-  const getTabName = (tabId: string | null) =>
-    tabs.find((tab) => tab.id === tabId)?.name ?? t`Home`;
+  const getTabName = (tabId: string | null) => {
+    const tab = tabs.find(({ id }) => id === tabId);
+
+    return isDefined(tab) ? getNavigationMenuTabLabel(tab) : t`Home`;
+  };
   const moveToLabel = isMovingAcrossTabs ? t`Move to` : t`Move to folder`;
   const index = siblings.findIndex((sibling) => sibling.id === item.id);
   const run = (action: () => Promise<void>) => {
