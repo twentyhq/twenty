@@ -1,14 +1,17 @@
-import { readdirSync, readFileSync } from 'fs';
+import { globSync, readdirSync, readFileSync } from 'fs';
 import { join } from 'path';
 
+import { isString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 import { getMetadataArgsStorage } from 'typeorm';
 
+import { typeORMCoreModuleOptions } from 'src/database/typeorm/core/core.datasource';
 import {
   getWasRenamedInUpgradeClassMetadata,
   getWasRenamedInUpgradePropertyMetadata,
 } from 'src/engine/core-modules/upgrade/decorators/was-renamed-in-upgrade.decorator';
 
-const SOURCE_ROOT = join(__dirname, '..', '..', '..', '..');
+const SERVER_ROOT = join(__dirname, '..', '..', '..', '..', '..');
 const UPGRADE_COMMANDS_DIRECTORY = join(__dirname, '..');
 
 const TABLE_RENAME_PATTERN =
@@ -28,50 +31,53 @@ const listFiles = (directory: string, suffix: string) =>
     .map((path) => join(directory, path));
 
 const loadCoreEntities = (): CoreEntity[] => {
-  for (const modulesDirectory of ['core-modules', 'metadata-modules']) {
-    for (const entityFile of listFiles(
-      join(SOURCE_ROOT, 'engine', modulesDirectory),
-      '.entity.ts',
-    )) {
-      require(entityFile);
-    }
+  const entityGlobs = Array.isArray(typeORMCoreModuleOptions.entities)
+    ? typeORMCoreModuleOptions.entities.filter(isString)
+    : [];
+
+  for (const entityFile of globSync(entityGlobs, { cwd: SERVER_ROOT })) {
+    require(join(SERVER_ROOT, entityFile));
   }
 
   const metadataArgsStorage = getMetadataArgsStorage();
 
-  return metadataArgsStorage.tables
-    .filter(
-      (table) =>
-        table.schema === 'core' &&
-        typeof table.target === 'function' &&
-        typeof table.name === 'string',
-    )
-    .map((table) => {
-      const entityClass = table.target as Function;
+  return metadataArgsStorage.tables.flatMap(
+    ({ target: entityClass, name: tableName, schema }) => {
+      if (
+        schema !== 'core' ||
+        typeof entityClass !== 'function' ||
+        !isString(tableName)
+      ) {
+        return [];
+      }
+
       const propertyRenameHistory =
         getWasRenamedInUpgradePropertyMetadata(entityClass);
 
-      return {
-        entityClass,
-        tableNames: [
-          table.name as string,
-          ...(getWasRenamedInUpgradeClassMetadata(entityClass) ?? []).map(
-            ({ previousName }) => previousName,
-          ),
-        ],
-        columns: metadataArgsStorage
-          .filterColumns(entityClass)
-          .map(({ propertyName, options }) => ({
-            propertyName,
-            columnNames: [
-              options.name ?? propertyName,
-              ...(propertyRenameHistory[propertyName] ?? []).map(
-                ({ previousName }) => previousName,
-              ),
-            ],
-          })),
-      };
-    });
+      return [
+        {
+          entityClass,
+          tableNames: [
+            tableName,
+            ...(getWasRenamedInUpgradeClassMetadata(entityClass) ?? []).map(
+              ({ previousName }) => previousName,
+            ),
+          ],
+          columns: metadataArgsStorage
+            .filterColumns(entityClass)
+            .map(({ propertyName, options }) => ({
+              propertyName,
+              columnNames: [
+                options.name ?? propertyName,
+                ...(propertyRenameHistory[propertyName] ?? []).map(
+                  ({ previousName }) => previousName,
+                ),
+              ],
+            })),
+        },
+      ];
+    },
+  );
 };
 
 const extractUpMethodSource = (source: string) => {
@@ -93,7 +99,7 @@ const extractStepName = (source: string) => {
   );
   const className = source.match(/export class (\w+)/);
 
-  if (registration === null || className === null) {
+  if (!isDefined(registration) || !isDefined(className)) {
     return undefined;
   }
 
