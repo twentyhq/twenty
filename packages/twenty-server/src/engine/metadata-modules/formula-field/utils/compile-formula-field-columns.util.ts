@@ -1,12 +1,12 @@
 import {
   compositeTypeDefinitions,
   type FieldMetadataType,
+  type ValidationRuleFieldDescriptor,
 } from 'twenty-shared/types';
 import {
-  getFieldMetadataFormulaCurrencyCodeExpression,
-  getFieldMetadataFormulaExpression,
   isDefined,
   isFormulaFieldMetadataType,
+  printFieldMetadataFormula,
 } from 'twenty-shared/utils';
 
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
@@ -31,18 +31,23 @@ const ENUM_COLUMN_TYPE = 'enum';
 
 export const compileFormulaFieldColumns = ({
   flatFieldMetadata: { name, type, formula },
+  fields,
   schemaName,
   tableName,
   resolveReference,
   resolveAggregationSource,
 }: {
   flatFieldMetadata: Pick<OrmFlatFieldMetadata, 'name' | 'type' | 'formula'>;
+  fields: ValidationRuleFieldDescriptor[];
   schemaName: string;
   tableName: string;
   resolveReference: FormulaSqlReferenceResolver;
   resolveAggregationSource?: FormulaSqlAggregationSourceResolver;
 }): CompiledFormulaFieldColumn[] | undefined => {
-  const expression = getFieldMetadataFormulaExpression({ formula });
+  const { expression, currencyCodeExpression } = printFieldMetadataFormula({
+    formula,
+    fields,
+  });
 
   if (!isFormulaFieldMetadataType(type) || !isDefined(expression)) {
     return undefined;
@@ -54,9 +59,7 @@ export const compileFormulaFieldColumns = ({
   const compilation = compileFormulaFieldToSql({
     fieldMetadataType: type,
     expression,
-    currencyCodeExpression: getFieldMetadataFormulaCurrencyCodeExpression({
-      formula,
-    }),
+    currencyCodeExpression,
     selectEnumSqlType: enumSqlType,
     resolveReference,
     resolveAggregationSource,

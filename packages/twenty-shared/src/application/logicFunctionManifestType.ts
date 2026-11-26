@@ -4,7 +4,7 @@ import { type ServerRouteTriggerSettings } from '@/application/serverRouteTrigge
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 import { type ToolTriggerSettings } from '@/application/toolTriggerSettingsType';
 import { type WorkflowActionTriggerSettings } from '@/application/workflowActionTriggerSettingsType';
-import { type HTTPMethod, type ValidationRuleBindings } from '@/types';
+import { type HTTPMethod, type StoredExpressionTree } from '@/types';
 
 export type LogicFunctionManifest = SyncableEntityOptions & {
   name?: string;
@@ -38,8 +38,9 @@ export type DatabaseEventTriggerSettings = {
   eventName: string;
   updatedFields?: string[];
   batchMode?: boolean;
+  // Text is what clients write and read; the server evaluates the tree when there is one
   condition?: string;
-  conditionBindings?: ValidationRuleBindings;
+  conditionTree?: StoredExpressionTree;
 };
 
 export type HttpRouteTriggerSettings = {

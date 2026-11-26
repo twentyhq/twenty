@@ -24,7 +24,7 @@ describe('Chat thread owner contexts with real storage', () => {
       id: randomUUID(),
       threadId,
       workspaceId: context.workspaceId,
-      userWorkspaceId: context.userWorkspaceId,
+      workspaceMemberId: context.workspaceMemberId,
       turnStatus: AgentTurnStatus.COMPLETED,
       uiMessage: {
         role: AgentMessageRole.SYSTEM,

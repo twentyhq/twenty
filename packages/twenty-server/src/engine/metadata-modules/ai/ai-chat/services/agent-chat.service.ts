@@ -40,7 +40,7 @@ type AddMessageArgs = {
   turnStatus?: AgentTurnStatus;
   id?: string;
   workspaceId: string;
-  userWorkspaceId?: string;
+  workspaceMemberId?: string;
 };
 
 @Injectable()
@@ -61,33 +61,33 @@ export class AgentChatService {
 
   private getMessageSenderValues({
     workspaceId,
-    userWorkspaceId,
+    workspaceMemberId,
   }: {
     workspaceId: string;
-    userWorkspaceId?: string;
+    workspaceMemberId?: string;
   }) {
     return {
-      senderUserWorkspaceId: userWorkspaceId ?? null,
+      senderWorkspaceMemberId: workspaceMemberId ?? null,
       senderApplicationId: resolveMessageSenderApplicationId({
         workspaceId,
-        userWorkspaceId,
+        workspaceMemberId,
       }),
     };
   }
 
   private getMessageSenderActor({
     workspaceId,
-    userWorkspaceId,
+    workspaceMemberId,
   }: {
     workspaceId: string;
-    userWorkspaceId?: string;
+    workspaceMemberId?: string;
   }): ActorMetadata | undefined {
     const context = workspaceAuthContextStorage.getStore();
 
     return isDefined(context) &&
       isUserAuthContext(context) &&
       context.workspace.id === workspaceId &&
-      context.userWorkspaceId === userWorkspaceId
+      context.workspaceMemberId === workspaceMemberId
       ? buildActorMetadataFromAuthContext(context)
       : undefined;
   }
@@ -99,7 +99,7 @@ export class AgentChatService {
     turnStatus = AgentTurnStatus.RUNNING,
     id,
     workspaceId,
-    userWorkspaceId,
+    workspaceMemberId,
     scope,
   }: AddMessageArgs & { scope?: AgentHistoryTransactionScope }) {
     const turnId = await this.conversationWriterService.insertTurn({
@@ -107,13 +107,13 @@ export class AgentChatService {
       threadId,
       agentId: null,
       status: turnStatus,
-      createdBy: this.getMessageSenderActor({ workspaceId, userWorkspaceId }),
+      createdBy: this.getMessageSenderActor({ workspaceId, workspaceMemberId }),
       scope,
     });
 
     const senderValues = this.getMessageSenderValues({
       workspaceId,
-      userWorkspaceId,
+      workspaceMemberId,
     });
     const processedAt = new Date();
 
