@@ -117,4 +117,88 @@ describe('RouteTrigger TWENTY_FUNCTIONS_URL (integration)', () => {
       });
     }
   }, 60000);
+  const setPrimaryPublicDomain = ({
+    applicationId,
+    domain,
+  }: {
+    applicationId: string;
+    domain: string;
+  }) =>
+    globalThis.testDataSource.query(
+      `UPDATE core."application"
+       SET "primaryPublicDomainId" =
+         (SELECT id FROM core."publicDomain" WHERE domain = $1)
+       WHERE id = $2`,
+      [domain, applicationId],
+    );
+
+  it('prefers the validated primary public domain of the application', async () => {
+    const olderPublicDomain = `older-${uuidv4()}.example.com`;
+    const primaryPublicDomain = `primary-${uuidv4()}.example.com`;
+    const { path, applicationId, applicationUniversalIdentifier } =
+      await setupEchoFunctionsUrlApplication();
+
+    try {
+      await insertPublicDomain({
+        domain: olderPublicDomain,
+        isValidated: true,
+        applicationId,
+        createdAt: new Date('2026-01-01T00:00:00.000Z'),
+      });
+      await insertPublicDomain({
+        domain: primaryPublicDomain,
+        isValidated: true,
+        applicationId,
+        createdAt: new Date('2026-02-01T00:00:00.000Z'),
+      });
+      await setPrimaryPublicDomain({
+        applicationId,
+        domain: primaryPublicDomain,
+      });
+
+      expect(await requestFunctionsUrl(path)).toBe(
+        `https://${primaryPublicDomain}`,
+      );
+    } finally {
+      await deletePublicDomains([olderPublicDomain, primaryPublicDomain]);
+      await cleanupApplicationAndAppRegistration({
+        applicationUniversalIdentifier,
+      });
+    }
+  }, 60000);
+
+  it('falls back to the oldest validated public domain when the primary one is not validated', async () => {
+    const olderPublicDomain = `older-${uuidv4()}.example.com`;
+    const primaryPublicDomain = `primary-${uuidv4()}.example.com`;
+    const { path, applicationId, applicationUniversalIdentifier } =
+      await setupEchoFunctionsUrlApplication();
+
+    try {
+      await insertPublicDomain({
+        domain: olderPublicDomain,
+        isValidated: true,
+        applicationId,
+        createdAt: new Date('2026-01-01T00:00:00.000Z'),
+      });
+      await insertPublicDomain({
+        domain: primaryPublicDomain,
+        isValidated: false,
+        applicationId,
+        createdAt: new Date('2026-02-01T00:00:00.000Z'),
+      });
+      await setPrimaryPublicDomain({
+        applicationId,
+        domain: primaryPublicDomain,
+      });
+
+      expect(await requestFunctionsUrl(path)).toBe(
+        `https://${olderPublicDomain}`,
+      );
+    } finally {
+      await deletePublicDomains([olderPublicDomain, primaryPublicDomain]);
+      await cleanupApplicationAndAppRegistration({
+        applicationUniversalIdentifier,
+      });
+    }
+  }, 60000);
 });

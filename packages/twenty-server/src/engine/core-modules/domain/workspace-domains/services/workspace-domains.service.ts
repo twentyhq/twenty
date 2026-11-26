@@ -209,15 +209,25 @@ export class WorkspaceDomainsService {
     workspace: Pick<WorkspaceEntity, 'id' | 'subdomain'>;
     applicationId: string;
   }): Promise<string | undefined> {
-    const oldestValidatedPublicDomain =
-      await this.publicDomainRepository.findOne({
-        where: { workspaceId: workspace.id, applicationId, isValidated: true },
-        order: { createdAt: 'ASC' },
-      });
+    const validatedPublicDomains = await this.publicDomainRepository.find({
+      where: { workspaceId: workspace.id, applicationId, isValidated: true },
+      select: {
+        id: true,
+        domain: true,
+        application: { id: true, primaryPublicDomainId: true },
+      },
+      relations: ['application'],
+      order: { createdAt: 'ASC' },
+    });
+
+    const functionsPublicDomain =
+      validatedPublicDomains.find(
+        ({ id, application }) => id === application.primaryPublicDomainId,
+      ) ?? validatedPublicDomains[0];
 
     return this.buildPublicFunctionBaseUrl({
       workspace,
-      primaryPublicDomain: oldestValidatedPublicDomain?.domain,
+      primaryPublicDomain: functionsPublicDomain?.domain,
     });
   }
 
