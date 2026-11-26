@@ -10,36 +10,27 @@ export const buildProvisionRichTextFilesColumnStatements = ({
   richTextFields: { tableName: string; fieldName: string }[];
   fileIdsColumns: { tableName: string; columnName: string }[];
 }): string[] => {
+  const columnClauses = [
+    ...richTextFields.map(({ tableName, fieldName }) => ({
+      tableName,
+      columnClause: `ADD COLUMN IF NOT EXISTS ${escapeIdentifier(`${fieldName}${RICH_TEXT_FILES_COLUMN_NAME_SUFFIX}`)} jsonb`,
+    })),
+    ...fileIdsColumns.map(({ tableName, columnName }) => ({
+      tableName,
+      columnClause: `DROP COLUMN IF EXISTS ${escapeIdentifier(columnName)}`,
+    })),
+  ];
   const columnClausesByTableName = new Map<string, string[]>();
 
-  const addColumnClause = ({
-    tableName,
-    columnClause,
-  }: {
-    tableName: string;
-    columnClause: string;
-  }) =>
+  for (const { tableName, columnClause } of columnClauses) {
     columnClausesByTableName.set(tableName, [
       ...(columnClausesByTableName.get(tableName) ?? []),
       columnClause,
     ]);
-
-  for (const { tableName, fieldName } of richTextFields) {
-    addColumnClause({
-      tableName,
-      columnClause: `ADD COLUMN IF NOT EXISTS ${escapeIdentifier(`${fieldName}${RICH_TEXT_FILES_COLUMN_NAME_SUFFIX}`)} jsonb`,
-    });
-  }
-
-  for (const { tableName, columnName } of fileIdsColumns) {
-    addColumnClause({
-      tableName,
-      columnClause: `DROP COLUMN IF EXISTS ${escapeIdentifier(columnName)}`,
-    });
   }
 
   return [...columnClausesByTableName].map(
-    ([tableName, columnClauses]) =>
-      `ALTER TABLE ${escapeIdentifier(schemaName)}.${escapeIdentifier(tableName)} ${columnClauses.join(', ')}`,
+    ([tableName, tableColumnClauses]) =>
+      `ALTER TABLE IF EXISTS ${escapeIdentifier(schemaName)}.${escapeIdentifier(tableName)} ${tableColumnClauses.join(', ')}`,
   );
 };

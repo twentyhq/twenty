@@ -1,6 +1,6 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { findRichTextFilesColumnNameConflicts } from 'src/database/commands/upgrade-version-command/2-65/utils/find-rich-text-files-column-name-conflicts.util';
+import { findFieldIdsNamedAfterRichTextFilesColumn } from 'src/database/commands/upgrade-version-command/2-65/utils/find-field-ids-named-after-rich-text-files-column.util';
 
 const RICH_TEXT_FIELD = {
   id: 'rich-text-field',
@@ -9,10 +9,10 @@ const RICH_TEXT_FIELD = {
   objectMetadataId: 'meeting',
 };
 
-describe('findRichTextFilesColumnNameConflicts', () => {
-  it('should report a field of the same object named after the files column', () => {
+describe('findFieldIdsNamedAfterRichTextFilesColumn', () => {
+  it('should return a field of the same object named after the files column', () => {
     expect(
-      findRichTextFilesColumnNameConflicts([
+      findFieldIdsNamedAfterRichTextFilesColumn([
         RICH_TEXT_FIELD,
         {
           id: 'files-field',
@@ -21,14 +21,12 @@ describe('findRichTextFilesColumnNameConflicts', () => {
           objectMetadataId: 'meeting',
         },
       ]),
-    ).toEqual([
-      { richTextFieldId: 'rich-text-field', conflictingFieldId: 'files-field' },
-    ]);
+    ).toEqual(['files-field']);
   });
 
   it('should ignore the same name on another object or next to a field that is not rich text', () => {
     expect(
-      findRichTextFilesColumnNameConflicts([
+      findFieldIdsNamedAfterRichTextFilesColumn([
         RICH_TEXT_FIELD,
         {
           id: 'other-object-field',

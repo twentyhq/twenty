@@ -17,9 +17,9 @@ describe('buildProvisionRichTextFilesColumnStatements', () => {
         ],
       }),
     ).toEqual([
-      'ALTER TABLE "workspace_abc"."note" ADD COLUMN IF NOT EXISTS "bodyV2Files" jsonb, DROP COLUMN IF EXISTS "bodyV2_fileIds"',
-      'ALTER TABLE "workspace_abc"."_meeting" ADD COLUMN IF NOT EXISTS "briefFiles" jsonb, ADD COLUMN IF NOT EXISTS "summaryFiles" jsonb, DROP COLUMN IF EXISTS "renamedField_fileIds"',
-      'ALTER TABLE "workspace_abc"."_deal" DROP COLUMN IF EXISTS "deletedField_fileIds"',
+      'ALTER TABLE IF EXISTS "workspace_abc"."note" ADD COLUMN IF NOT EXISTS "bodyV2Files" jsonb, DROP COLUMN IF EXISTS "bodyV2_fileIds"',
+      'ALTER TABLE IF EXISTS "workspace_abc"."_meeting" ADD COLUMN IF NOT EXISTS "briefFiles" jsonb, ADD COLUMN IF NOT EXISTS "summaryFiles" jsonb, DROP COLUMN IF EXISTS "renamedField_fileIds"',
+      'ALTER TABLE IF EXISTS "workspace_abc"."_deal" DROP COLUMN IF EXISTS "deletedField_fileIds"',
     ]);
   });
 

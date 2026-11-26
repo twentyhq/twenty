@@ -9,8 +9,9 @@ import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RICH_TEXT_FILE_IDS_COLUMN_NAME_SUFFIX } from 'src/database/commands/upgrade-version-command/2-65/constants/rich-text-file-ids-column-name-suffix.constant';
+import { RICH_TEXT_FILES_COLUMN_NAME_SUFFIX } from 'src/database/commands/upgrade-version-command/2-65/constants/rich-text-files-column-name-suffix.constant';
 import { buildProvisionRichTextFilesColumnStatements } from 'src/database/commands/upgrade-version-command/2-65/utils/build-provision-rich-text-files-column-statements.util';
-import { findRichTextFilesColumnNameConflicts } from 'src/database/commands/upgrade-version-command/2-65/utils/find-rich-text-files-column-name-conflicts.util';
+import { findFieldIdsNamedAfterRichTextFilesColumn } from 'src/database/commands/upgrade-version-command/2-65/utils/find-field-ids-named-after-rich-text-files-column.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import {
   FieldMetadataException,
@@ -58,11 +59,12 @@ export class ProvisionRichTextFilesColumnsCommand extends ProvisionedWorkspaceCo
       flatFieldMetadataMaps.byUniversalIdentifier,
     ).filter(isDefined);
 
-    const conflicts = findRichTextFilesColumnNameConflicts(flatFieldMetadatas);
+    const conflictingFieldIds =
+      findFieldIdsNamedAfterRichTextFilesColumn(flatFieldMetadatas);
 
-    if (conflicts.length > 0) {
+    if (conflictingFieldIds.length > 0) {
       throw new FieldMetadataException(
-        `Workspace ${workspaceId}: rename the field(s) ${conflicts.map(({ conflictingFieldId }) => conflictingFieldId).join(', ')}, whose name is the files column of a rich text field of the same object`,
+        `Workspace ${workspaceId}: rename the field(s) ${conflictingFieldIds.join(', ')}, whose name is the files column of a rich text field of the same object`,
         FieldMetadataExceptionCode.NOT_AVAILABLE,
       );
     }
@@ -101,21 +103,23 @@ export class ProvisionRichTextFilesColumnsCommand extends ProvisionedWorkspaceCo
       await queryRunner.connect();
       isQueryRunnerConnected = true;
 
-      const existingTableNames = await this.findTableNames({
-        queryRunner,
-        schemaName,
-      });
-      const richTextFieldsToProvision = richTextFields.filter(({ tableName }) =>
-        existingTableNames.has(tableName),
+      const columns = await this.findColumns({ queryRunner, schemaName });
+      const columnKeys = new Set(
+        columns.map(({ tableName, columnName }) => `${tableName}.${columnName}`),
+      );
+      const richTextFieldsToProvision = richTextFields.filter(
+        ({ tableName, fieldName }) =>
+          !columnKeys.has(
+            `${tableName}.${fieldName}${RICH_TEXT_FILES_COLUMN_NAME_SUFFIX}`,
+          ),
+      );
+      // A field name has no underscore, so only the columns the 2.63 command added end this way.
+      const fileIdsColumns = columns.filter(({ columnName }) =>
+        columnName.endsWith(RICH_TEXT_FILE_IDS_COLUMN_NAME_SUFFIX),
       );
 
-      const fileIdsColumns = await this.findFileIdsColumns({
-        queryRunner,
-        schemaName,
-      });
-
       this.logger.log(
-        `${options.dryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: adding the files column to ${richTextFieldsToProvision.length} rich text field(s) and dropping ${fileIdsColumns.length} fileIds column(s)`,
+        `${options.dryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: adding the files column to ${richTextFieldsToProvision.length} of ${richTextFields.length} rich text field(s) and dropping ${fileIdsColumns.length} fileIds column(s)`,
       );
 
       if (options.dryRun) {
@@ -145,23 +149,7 @@ export class ProvisionRichTextFilesColumnsCommand extends ProvisionedWorkspaceCo
     }
   }
 
-  private async findTableNames({
-    queryRunner,
-    schemaName,
-  }: {
-    queryRunner: QueryRunner;
-    schemaName: string;
-  }): Promise<Set<string>> {
-    const tables: { tableName: string }[] = await queryRunner.query(
-      `SELECT table_name AS "tableName" FROM information_schema.tables WHERE table_schema = $1`,
-      [schemaName],
-    );
-
-    return new Set(tables.map(({ tableName }) => tableName));
-  }
-
-  // A field name has no underscore, so only the columns the 2.63 command added end this way.
-  private async findFileIdsColumns({
+  private async findColumns({
     queryRunner,
     schemaName,
   }: {
@@ -171,8 +159,8 @@ export class ProvisionRichTextFilesColumnsCommand extends ProvisionedWorkspaceCo
     return queryRunner.query(
       `SELECT table_name AS "tableName", column_name AS "columnName"
        FROM information_schema.columns
-       WHERE table_schema = $1 AND right(column_name, length($2)) = $2`,
-      [schemaName, RICH_TEXT_FILE_IDS_COLUMN_NAME_SUFFIX],
+       WHERE table_schema = $1`,
+      [schemaName],
     );
   }
 }

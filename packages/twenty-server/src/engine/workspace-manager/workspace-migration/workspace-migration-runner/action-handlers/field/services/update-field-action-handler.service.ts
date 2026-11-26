@@ -18,6 +18,8 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
+import { PROVISIONED_COMPOSITE_PROPERTIES } from 'src/engine/metadata-modules/field-metadata/constants/provisioned-composite-properties.constant';
+import { getCompositePropertiesWithColumns } from 'src/engine/metadata-modules/field-metadata/utils/get-composite-properties-with-columns.util';
 import { getCompositeTypeOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/get-composite-type-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
@@ -28,6 +30,7 @@ import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-f
 import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { resolveSearchVectorAsExpressionForTsVectorField } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/resolve-search-vector-as-expression-for-ts-vector-field.util';
 import { isFieldMetadataOptionEntityAvailable } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/is-field-metadata-option-entity-available.util';
 import { FieldMetadataOptionEnumSchemaService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/field-metadata-option-enum-schema.service';
@@ -55,8 +58,10 @@ import {
   type WorkspaceMigrationActionRunnerContext,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { fieldMetadataTypeToColumnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/field-metadata-type-to-column-type.util';
-import { buildProvisionedCompositeColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/build-provisioned-composite-column-definitions.util';
-import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util';
+import {
+  generateColumnDefinitions,
+  generateCompositeColumnDefinition,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
 import {
   collectEnumOperationsForField,
@@ -77,6 +82,8 @@ type UpdateFieldPropertyHandlerArgs<
 type NameUpdateHandlerArgs<T extends FieldMetadataType = FieldMetadataType> =
   UpdateFieldPropertyHandlerArgs<T> & {
     toName: string;
+    flatObjectMetadata: FlatObjectMetadata;
+    workspaceId: string;
   };
 
 type DefaultValueUpdateHandlerArgs<
@@ -261,6 +268,8 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         flatFieldMetadata: optimisticFlatFieldMetadata,
         update,
         toName: update.name,
+        flatObjectMetadata,
+        workspaceId,
       });
       optimisticFlatFieldMetadata.name = update.name;
     }
@@ -477,13 +486,33 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     schemaName,
     tableName,
     toName,
+    flatObjectMetadata,
+    workspaceId,
   }: NameUpdateHandlerArgs) {
     const fromName = flatFieldMetadata.name;
 
     if (isCompositeFlatFieldMetadata(flatFieldMetadata)) {
-      const compositeType = getCompositeTypeOrThrow(flatFieldMetadata.type);
+      // A workspace its provisioning command has not reached lacks these columns, and renaming a missing column fails.
+      await this.workspaceSchemaManagerService.columnManager.addColumns({
+        queryRunner,
+        schemaName,
+        tableName,
+        columnDefinitions: (
+          PROVISIONED_COMPOSITE_PROPERTIES[flatFieldMetadata.type] ?? []
+        ).map((compositeProperty) =>
+          generateCompositeColumnDefinition({
+            compositeProperty,
+            parentFlatFieldMetadata: flatFieldMetadata,
+            flatObjectMetadata,
+            workspaceId,
+          }),
+        ),
+        shouldSkipExistingColumns: true,
+      });
 
-      for (const property of compositeType.properties) {
+      for (const property of getCompositePropertiesWithColumns(
+        flatFieldMetadata.type,
+      )) {
         if (isMorphOrRelationFieldMetadataType(property.type)) {
           throw new WorkspaceMigrationActionExecutionException({
             message:
@@ -509,20 +538,6 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
           newColumnName: toCompositeColumnName,
         });
       }
-
-      await this.addMissingProvisionedCompositeColumns({
-        flatFieldMetadata,
-        queryRunner,
-        schemaName,
-        tableName,
-      });
-      await this.renameProvisionedCompositeColumns({
-        flatFieldMetadata,
-        queryRunner,
-        schemaName,
-        tableName,
-        toName,
-      });
     } else if (isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)) {
       if (
         flatFieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE
@@ -564,66 +579,6 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       schemaName,
       workspaceSchemaManagerService: this.workspaceSchemaManagerService,
     });
-  }
-
-  // A workspace its provisioning command has not reached lacks these columns, and renaming a missing column fails.
-  private async addMissingProvisionedCompositeColumns({
-    flatFieldMetadata,
-    queryRunner,
-    schemaName,
-    tableName,
-  }: {
-    flatFieldMetadata: Pick<FlatFieldMetadata, 'type' | 'name'>;
-    queryRunner: QueryRunner;
-    schemaName: string;
-    tableName: string;
-  }) {
-    await this.workspaceSchemaManagerService.columnManager.addColumns({
-      queryRunner,
-      schemaName,
-      tableName,
-      columnDefinitions: buildProvisionedCompositeColumnDefinitions({
-        fieldType: flatFieldMetadata.type,
-        fieldName: flatFieldMetadata.name,
-      }),
-      shouldSkipExistingColumns: true,
-    });
-  }
-
-  private async renameProvisionedCompositeColumns({
-    flatFieldMetadata,
-    queryRunner,
-    schemaName,
-    tableName,
-    toName,
-  }: {
-    flatFieldMetadata: Pick<FlatFieldMetadata, 'type' | 'name'>;
-    queryRunner: QueryRunner;
-    schemaName: string;
-    tableName: string;
-    toName: string;
-  }) {
-    const fromColumnDefinitions = buildProvisionedCompositeColumnDefinitions({
-      fieldType: flatFieldMetadata.type,
-      fieldName: flatFieldMetadata.name,
-    });
-    const toColumnDefinitions = buildProvisionedCompositeColumnDefinitions({
-      fieldType: flatFieldMetadata.type,
-      fieldName: toName,
-    });
-
-    for (const [
-      index,
-      fromColumnDefinition,
-    ] of fromColumnDefinitions.entries()) {
-      await this.workspaceSchemaManagerService.columnManager.renameColumn({
-        queryRunner,
-        schemaName,
-        tableName,
-        oldColumnName: fromColumnDefinition.name,
-        newColumnName: toColumnDefinitions[index].name,
-      });
-    }
   }
 
   private async handleFieldDefaultValueUpdate({

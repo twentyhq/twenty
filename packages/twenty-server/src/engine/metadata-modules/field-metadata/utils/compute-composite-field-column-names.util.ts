@@ -1,10 +1,7 @@
-import {
-  compositeTypeDefinitions,
-  type FieldMetadataType,
-} from 'twenty-shared/types';
+import { type FieldMetadataType } from 'twenty-shared/types';
 
-import { PROVISIONED_COMPOSITE_PROPERTIES } from 'src/engine/metadata-modules/field-metadata/constants/provisioned-composite-properties.constant';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
+import { getCompositePropertiesWithColumns } from 'src/engine/metadata-modules/field-metadata/utils/get-composite-properties-with-columns.util';
 
 export const computeCompositeFieldColumnNames = ({
   name,
@@ -13,7 +10,6 @@ export const computeCompositeFieldColumnNames = ({
   name: string;
   type: FieldMetadataType;
 }): string[] =>
-  [
-    ...(compositeTypeDefinitions.get(type)?.properties ?? []),
-    ...(PROVISIONED_COMPOSITE_PROPERTIES[type] ?? []),
-  ].map((property) => computeCompositeColumnName(name, property));
+  getCompositePropertiesWithColumns(type).map((property) =>
+    computeCompositeColumnName(name, property),
+  );

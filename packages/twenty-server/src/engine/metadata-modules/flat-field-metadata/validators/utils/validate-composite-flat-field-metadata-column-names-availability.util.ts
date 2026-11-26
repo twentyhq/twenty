@@ -20,6 +20,12 @@ export const validateCompositeFlatFieldMetadataColumnNamesAvailability = ({
   universalFlatObjectMetadata: UniversalFlatObjectMetadata;
   universalFlatFieldMetadataMaps: UniversalFlatEntityMaps<UniversalFlatFieldMetadata>;
 }): FlatFieldMetadataValidationError[] => {
+  const columnNames = computeCompositeFieldColumnNames({ name, type });
+
+  if (columnNames.length === 0) {
+    return [];
+  }
+
   const {
     objectFieldNamesAndJoinColumnNames: { fieldNames, joinColumnNames },
   } = getObjectFieldNamesAndJoinColumnNames({
@@ -28,7 +34,7 @@ export const validateCompositeFlatFieldMetadataColumnNamesAvailability = ({
   });
   const takenColumnNames = new Set([...fieldNames, ...joinColumnNames]);
 
-  return computeCompositeFieldColumnNames({ name, type })
+  return columnNames
     .filter((columnName) => takenColumnNames.has(columnName))
     .map((columnName) => ({
       code: FieldMetadataExceptionCode.NOT_AVAILABLE,

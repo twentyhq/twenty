@@ -11,13 +11,6 @@ import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/wo
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-builder-options.type';
 
-const getReservedCompositeFieldNames = (
-  objectUniversalFlatFieldMetadatas: UniversalFlatFieldMetadata[],
-): string[] =>
-  objectUniversalFlatFieldMetadatas.flatMap(({ name, type }) =>
-    computeCompositeFieldColumnNames({ name, type }),
-  );
-
 export const validateFlatFieldMetadataNameAvailability = ({
   name,
   universalFlatFieldMetadataMaps,
@@ -36,9 +29,10 @@ export const validateFlatFieldMetadataNameAvailability = ({
       universalIdentifiers:
         universalFlatObjectMetadata.fieldUniversalIdentifiers,
     });
-  const reservedCompositeFieldsNames = getReservedCompositeFieldNames(
-    objectUniversalFlatFieldMetadatas,
-  );
+  const reservedCompositeFieldsNames =
+    objectUniversalFlatFieldMetadatas.flatMap(({ name, type }) =>
+      computeCompositeFieldColumnNames({ name, type }),
+    );
 
   if (
     !isCallerTwentyStandardApp(buildOptions) &&
