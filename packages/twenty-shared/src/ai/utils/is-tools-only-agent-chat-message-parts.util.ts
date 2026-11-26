@@ -2,7 +2,6 @@ import { isNonEmptyString, isObject } from '@sniptt/guards';
 import { isToolUIPart } from 'ai';
 
 import { type ExtendedUIMessagePart } from '../types/ExtendedUIMessagePart';
-import { isNoReplyToolPart } from './is-no-reply-tool-part.util';
 import { isPausingToolPart } from './is-pausing-tool-part.util';
 
 const isSucceededToolPart = (part: ExtendedUIMessagePart): boolean =>
@@ -14,15 +13,13 @@ const isSucceededToolPart = (part: ExtendedUIMessagePart): boolean =>
     part.output.success === false
   );
 
-const isWithoutVisibleReply = (part: ExtendedUIMessagePart): boolean =>
+const isQuietPart = (part: ExtendedUIMessagePart): boolean =>
   (isSucceededToolPart(part) && !isPausingToolPart(part)) ||
   part.type === 'step-start' ||
   part.type === 'reasoning' ||
   part.type === 'data-thread-title' ||
-  (part.type === 'text' && !isNonEmptyString(part.text.trim()));
+  (part.type === 'text' && !isNonEmptyString(part.text));
 
 export const isToolsOnlyAgentChatMessageParts = (
   parts: ExtendedUIMessagePart[],
-): boolean =>
-  parts.some((part) => isSucceededToolPart(part) && !isNoReplyToolPart(part)) &&
-  parts.every(isWithoutVisibleReply);
+): boolean => parts.some(isSucceededToolPart) && parts.every(isQuietPart);

@@ -40,14 +40,6 @@ const pendingQuestionPart: ExtendedUIMessagePart = {
   input: {},
 };
 
-const noReplyPart: ExtendedUIMessagePart = {
-  type: 'tool-no_reply',
-  toolCallId: 'no-reply-call',
-  state: 'output-available',
-  input: {},
-  output: { success: true },
-};
-
 describe('isToolsOnlyAgentChatMessageParts', () => {
   it('accepts a turn that thought and ran tools without writing', () => {
     expect(
@@ -55,7 +47,7 @@ describe('isToolsOnlyAgentChatMessageParts', () => {
         { type: 'step-start' },
         { type: 'reasoning', text: 'Creating the company' },
         createCompanyPart,
-        { type: 'text', text: '  ' },
+        { type: 'text', text: '' },
       ]),
     ).toBe(true);
   });
@@ -97,9 +89,5 @@ describe('isToolsOnlyAgentChatMessageParts', () => {
         pendingQuestionPart,
       ]),
     ).toBe(false);
-  });
-
-  it('leaves no_reply turns to the silent check', () => {
-    expect(isToolsOnlyAgentChatMessageParts([noReplyPart])).toBe(false);
   });
 });
