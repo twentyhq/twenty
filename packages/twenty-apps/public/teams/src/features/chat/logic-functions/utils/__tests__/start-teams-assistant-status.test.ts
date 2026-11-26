@@ -202,10 +202,7 @@ describe('startTeamsAssistantStatus', () => {
     await status.finish('Acme has 3 open deals.');
 
     expect(startStreamMock).not.toHaveBeenCalled();
-    expect(startPlaceholderMock).toHaveBeenCalledExactlyOnceWith({
-      ...CONVERSATION,
-      sendMessage: expect.any(Function),
-    });
+    expect(startPlaceholderMock).toHaveBeenCalledExactlyOnceWith(CONVERSATION);
     expect(placeholderFinishMock).toHaveBeenCalledExactlyOnceWith(
       'Acme has 3 open deals.',
     );

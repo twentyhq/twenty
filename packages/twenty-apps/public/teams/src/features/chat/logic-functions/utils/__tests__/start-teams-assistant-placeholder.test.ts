@@ -50,22 +50,22 @@ const message = (text: string) => ({
 });
 
 const ANSWER = 'Acme has 3 open deals.';
+const FAILURE = 'Something went wrong.';
+
+const sentMessage = (text: string) => ({
+  ...CONVERSATION,
+  accessToken: 'token',
+  activity: message(text),
+});
 
 describe('startTeamsAssistantPlaceholder', () => {
-  const sendMessageMock = vi.fn();
-
-  const startPlaceholder = () =>
-    startTeamsAssistantPlaceholder({
-      ...CONVERSATION,
-      sendMessage: sendMessageMock,
-    });
+  const startPlaceholder = () => startTeamsAssistantPlaceholder(CONVERSATION);
 
   beforeEach(() => {
     vi.spyOn(console, 'warn').mockImplementation(() => undefined);
     sendActivityMock.mockResolvedValue({ id: 'placeholder-1' });
     updateActivityMock.mockResolvedValue({ id: 'placeholder-1' });
     deleteActivityMock.mockResolvedValue(undefined);
-    sendMessageMock.mockResolvedValue(undefined);
   });
 
   afterEach(() => {
@@ -76,30 +76,27 @@ describe('startTeamsAssistantPlaceholder', () => {
   it('should post a placeholder in the thread and replace it with the answer', async () => {
     const status = await startPlaceholder();
 
-    expect(sendActivityMock).toHaveBeenCalledExactlyOnceWith({
-      ...CONVERSATION,
-      accessToken: 'token',
-      activity: message(TEAMS_ASSISTANT_INITIAL_STATUS),
-    });
-
     await status.finish(ANSWER);
 
+    expect(sendActivityMock).toHaveBeenCalledExactlyOnceWith(
+      sentMessage(TEAMS_ASSISTANT_INITIAL_STATUS),
+    );
     expect(updateActivityMock).toHaveBeenCalledExactlyOnceWith({
       ...PLACEHOLDER,
       activity: message(ANSWER),
     });
-    expect(sendMessageMock).not.toHaveBeenCalled();
     expect(deleteActivityMock).not.toHaveBeenCalled();
   });
 
   it('should only send the answer when the placeholder cannot be posted', async () => {
-    sendActivityMock.mockRejectedValue(new Error('429'));
+    sendActivityMock.mockRejectedValueOnce(new Error('429'));
 
     const status = await startPlaceholder();
 
     await status.finish(ANSWER);
 
-    expect(sendMessageMock).toHaveBeenCalledExactlyOnceWith(ANSWER);
+    expect(sendActivityMock).toHaveBeenLastCalledWith(sentMessage(ANSWER));
+    expect(sendActivityMock).toHaveBeenCalledTimes(2);
     expect(updateActivityMock).not.toHaveBeenCalled();
     expect(deleteActivityMock).not.toHaveBeenCalled();
   });
@@ -111,7 +108,7 @@ describe('startTeamsAssistantPlaceholder', () => {
 
     await status.finish(ANSWER);
 
-    expect(sendMessageMock).toHaveBeenCalledExactlyOnceWith(ANSWER);
+    expect(sendActivityMock).toHaveBeenLastCalledWith(sentMessage(ANSWER));
     expect(deleteActivityMock).toHaveBeenCalledExactlyOnceWith(PLACEHOLDER);
   });
 
@@ -122,36 +119,25 @@ describe('startTeamsAssistantPlaceholder', () => {
     const status = await startPlaceholder();
 
     await expect(status.finish(ANSWER)).resolves.toBeUndefined();
-    expect(sendMessageMock).toHaveBeenCalledExactlyOnceWith(ANSWER);
+    expect(sendActivityMock).toHaveBeenLastCalledWith(sentMessage(ANSWER));
   });
 
   it('should keep the placeholder for the failure text when the answer cannot be delivered', async () => {
-    updateActivityMock.mockRejectedValueOnce(new Error('413'));
-    sendMessageMock.mockRejectedValueOnce(new Error('413'));
-
     const status = await startPlaceholder();
+
+    updateActivityMock.mockRejectedValueOnce(new Error('413'));
+    sendActivityMock.mockRejectedValueOnce(new Error('413'));
 
     await expect(status.finish(ANSWER)).rejects.toThrow('413');
     expect(deleteActivityMock).not.toHaveBeenCalled();
 
-    await status.finish('Something went wrong.');
+    await status.finish(FAILURE);
 
     expect(updateActivityMock).toHaveBeenLastCalledWith({
       ...PLACEHOLDER,
-      activity: message('Something went wrong.'),
+      activity: message(FAILURE),
     });
-    expect(sendMessageMock).toHaveBeenCalledTimes(1);
-  });
-
-  it('should send later texts as new messages once the placeholder is replaced', async () => {
-    const status = await startPlaceholder();
-
-    await status.finish(ANSWER);
-    await status.finish('Something went wrong.');
-
-    expect(updateActivityMock).toHaveBeenCalledTimes(1);
-    expect(sendMessageMock).toHaveBeenCalledExactlyOnceWith(
-      'Something went wrong.',
-    );
+    expect(sendActivityMock).toHaveBeenCalledTimes(2);
+    expect(deleteActivityMock).not.toHaveBeenCalled();
   });
 });
