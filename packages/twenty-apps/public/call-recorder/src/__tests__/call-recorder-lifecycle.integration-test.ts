@@ -1039,7 +1039,13 @@ describe('call recorder app lifecycle (integration)', () => {
     }
   }, REAL_QUEUE_TIMEOUT_MS);
 
-  // Only the workspace key can destroy, and only recordings detached from their meeting.
+  const warnCleanupFailure =
+    (step: string, callRecordingId: string) => (error: unknown) =>
+      console.warn(
+        `[test cleanup] ${step} failed for call recording ${callRecordingId}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+
+  // The workspace key can only destroy detached recordings; ending them first keeps a failed destroy inert.
   const destroyCallRecordings = async (
     callRecordingIds: string[],
   ): Promise<void> => {
@@ -1047,16 +1053,23 @@ describe('call recorder app lifecycle (integration)', () => {
       await client
         .mutation({
           updateCallRecording: {
-            __args: { id: callRecordingId, data: { calendarEventId: null } },
+            __args: {
+              id: callRecordingId,
+              data: {
+                calendarEventId: null,
+                status: 'NOT_RECORDED',
+                recordingRequestStatus: 'CANCELED',
+              },
+            },
             id: true,
           },
         })
-        .catch(() => {});
+        .catch(warnCleanupFailure('detach', callRecordingId));
       await workspaceApiKeyClient
         .mutation({
           destroyCallRecording: { __args: { id: callRecordingId }, id: true },
         })
-        .catch(() => {});
+        .catch(warnCleanupFailure('destroy', callRecordingId));
     }
   };
 
