@@ -1,7 +1,9 @@
+import { Test } from '@nestjs/testing';
+
+import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { KeepWarmWorkspaceLogicFunctionsJob } from 'src/engine/core-modules/logic-function/logic-function-warm-up/jobs/keep-warm-workspace-logic-functions.job';
-import { type LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const WORKSPACE_ID = 'workspace-id';
 
@@ -37,33 +39,37 @@ describe('KeepWarmWorkspaceLogicFunctionsJob', () => {
       }),
     ];
 
-    const workspaceCacheService = {
-      getOrRecompute: jest.fn().mockResolvedValue({
-        flatLogicFunctionMaps: {
-          byUniversalIdentifier: Object.fromEntries(
-            flatLogicFunctions.map((flatLogicFunction) => [
-              flatLogicFunction.universalIdentifier,
-              flatLogicFunction,
-            ]),
-          ),
-        },
-        flatApplicationMaps: {
-          byId: {
-            'active-application': { id: 'active-application', deletedAt: null },
-            'deleted-application': {
-              id: 'deleted-application',
-              deletedAt: '2026-01-01T00:00:00.000Z',
-            },
+    const getOrRecompute = jest.fn().mockResolvedValue({
+      flatLogicFunctionMaps: {
+        byUniversalIdentifier: Object.fromEntries(
+          flatLogicFunctions.map((flatLogicFunction) => [
+            flatLogicFunction.universalIdentifier,
+            flatLogicFunction,
+          ]),
+        ),
+      },
+      flatApplicationMaps: {
+        byId: {
+          'active-application': { id: 'active-application', deletedAt: null },
+          'deleted-application': {
+            id: 'deleted-application',
+            deletedAt: '2026-01-01T00:00:00.000Z',
           },
         },
-      }),
-    } as unknown as WorkspaceCacheService;
+      },
+    });
 
     const warmUp = jest.fn().mockResolvedValue(undefined);
 
-    const job = new KeepWarmWorkspaceLogicFunctionsJob(workspaceCacheService, {
-      warmUp,
-    } as unknown as LogicFunctionExecutorService);
+    const testingModule = await Test.createTestingModule({
+      providers: [
+        KeepWarmWorkspaceLogicFunctionsJob,
+        { provide: WorkspaceCacheService, useValue: { getOrRecompute } },
+        { provide: LogicFunctionExecutorService, useValue: { warmUp } },
+      ],
+    }).compile();
+
+    const job = testingModule.get(KeepWarmWorkspaceLogicFunctionsJob);
 
     await job.handle({ workspaceId: WORKSPACE_ID });
 

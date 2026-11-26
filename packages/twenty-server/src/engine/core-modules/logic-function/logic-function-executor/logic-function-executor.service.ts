@@ -22,6 +22,7 @@ import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import {
+  LogicFunctionDriverType,
   type LogicFunctionExecuteResult,
   type LogicFunctionTranspileParams,
   type LogicFunctionTranspileResult,
@@ -836,7 +837,11 @@ export class LogicFunctionExecutorService {
         isBillingExempt: isBillingExemptApplication(
           flatApplication.universalIdentifier,
         ),
-        isWarm: isLogicFunctionWarmEligible(flatLogicFunction),
+        // Only the Lambda driver keeps executors warm; elsewhere the ping is a no-op.
+        isWarm:
+          this.twentyConfigService.get('LOGIC_FUNCTION_TYPE') ===
+            LogicFunctionDriverType.LAMBDA &&
+          isLogicFunctionWarmEligible(flatLogicFunction),
         resourceId: flatLogicFunction.id,
         spenders,
       }),

@@ -13,6 +13,8 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { LogicFunctionDriverType } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 // Well below Lambda's undocumented idle-container reclaim delay (observed 5-15 min, sometimes less).
@@ -25,6 +27,7 @@ export class KeepWarmLogicFunctionsCronJob {
     private readonly logicFunctionQueueService: MessageQueueService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   @Process(KeepWarmLogicFunctionsCronJob.name)
@@ -33,6 +36,13 @@ export class KeepWarmLogicFunctionsCronJob {
     KEEP_WARM_LOGIC_FUNCTIONS_CRON_PATTERN,
   )
   async handle(): Promise<void> {
+    if (
+      this.twentyConfigService.get('LOGIC_FUNCTION_TYPE') !==
+      LogicFunctionDriverType.LAMBDA
+    ) {
+      return;
+    }
+
     const workspacesWithWarmLogicFunctions = await this.workspaceRepository
       .createQueryBuilder('workspace')
       .select('workspace.id', 'id')
