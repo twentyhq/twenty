@@ -53,4 +53,16 @@ describe('getEventDefinitionErrors', () => {
       }),
     ).toHaveLength(1);
   });
+
+  it('should reject a capability that is not supported', () => {
+    expect(
+      getEventDefinitionErrors({
+        name: 'messageAdded',
+        properties: [],
+        capabilities: JSON.parse('{"triggers":true}'),
+      }),
+    ).toEqual([
+      'Event "messageAdded" declares capability "triggers", which is not supported',
+    ]);
+  });
 });

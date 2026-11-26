@@ -99,6 +99,7 @@ export { CONNECTION_PROVIDER_SCOPES } from './constants/ConnectionProviderScopes
 export { DEFAULT_CONNECTION_PROVIDER_SCOPE } from './constants/DefaultConnectionProviderScope';
 export { DEFAULT_SETTINGS_MENU_ITEM_POSITION } from './constants/DefaultSettingsMenuItemPosition';
 export { EMPTY_YARN_LOCK_CONTENT } from './constants/EmptyYarnLockContent';
+export { EVENT_CAPABILITY_NAMES } from './constants/EventCapabilityNames';
 export { EVENT_LIMITS } from './constants/EventLimits';
 export { EVENT_NAME_PATTERN } from './constants/EventNamePattern';
 export { EVENT_PROPERTY_TYPES } from './constants/EventPropertyTypes';

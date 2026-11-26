@@ -24,7 +24,7 @@ const validateEventMetadataDefinition = ({
 }: {
   flatEventMetadata: Pick<
     UniversalFlatEventMetadata,
-    'name' | 'label' | 'properties'
+    'name' | 'label' | 'properties' | 'capabilities'
   >;
   flatObjectMetadataMaps: MetadataUniversalFlatEntityMaps<'objectMetadata'>;
 }): FlatEntityValidationError[] => {
@@ -51,6 +51,7 @@ const validateEventMetadataDefinition = ({
   for (const definitionError of getEventDefinitionErrors({
     name: flatEventMetadata.name,
     properties: flatEventMetadata.properties,
+    capabilities: flatEventMetadata.capabilities,
   })) {
     errors.push({
       code: EventMetadataExceptionCode.INVALID_EVENT_METADATA_INPUT,

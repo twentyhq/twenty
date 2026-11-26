@@ -75,4 +75,24 @@ describe('getEventPropertyValuesErrors', () => {
       'Event "messageAdded" property "sentAt" must be a DATE_TIME value',
     ]);
   });
+
+  it('should treat a property named like an inherited member as absent when omitted', () => {
+    expect(
+      getEventPropertyValuesErrors({
+        eventName: 'messageAdded',
+        properties: [{ name: 'constructor', type: 'TEXT' }],
+        values: {},
+      }),
+    ).toEqual([]);
+  });
+
+  it('should require a property named like an inherited member', () => {
+    expect(
+      getEventPropertyValuesErrors({
+        eventName: 'messageAdded',
+        properties: [{ name: 'toString', type: 'RAW_JSON', isRequired: true }],
+        values: {},
+      }),
+    ).toEqual(['Event "messageAdded" property "toString" is required']);
+  });
 });

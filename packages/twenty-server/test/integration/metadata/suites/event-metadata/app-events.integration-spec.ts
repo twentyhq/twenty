@@ -142,6 +142,20 @@ describe('app events (e2e)', () => {
     });
   });
 
+  it('refuses a capability the server does not support', async () => {
+    await syncEvents({
+      events: [
+        JSON.parse(
+          JSON.stringify({
+            ...MESSAGE_ADDED_EVENT,
+            capabilities: { triggers: true },
+          }),
+        ),
+      ],
+      expectToFail: true,
+    });
+  });
+
   it('acknowledges an occurrence that matches the definition', async () => {
     const response = await emit({
       event: 'messageAdded',

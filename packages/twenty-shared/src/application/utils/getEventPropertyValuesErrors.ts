@@ -49,7 +49,10 @@ export const getEventPropertyValuesErrors = ({
   }
 
   for (const property of properties) {
-    const value = values[property.name];
+    // Inherited members such as constructor are not part of the payload
+    const value = Object.prototype.hasOwnProperty.call(values, property.name)
+      ? values[property.name]
+      : undefined;
 
     if (!isDefined(value)) {
       if (property.isRequired === true) {
