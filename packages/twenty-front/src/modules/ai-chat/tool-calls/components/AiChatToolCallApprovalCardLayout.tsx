@@ -1,11 +1,12 @@
 import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
+import { type ReactNode, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { StyledAiChatAskCard } from '@/ai-chat/tool-calls/components/StyledAiChatAskCard';
 import { TextWithChatReferences } from '@/ai-chat/message-content/components/TextWithChatReferences';
+import { AiChatIsToolCallDockedContext } from '@/ai-chat/tool-calls/contexts/AiChatIsToolCallDockedContext';
 import { useAiChatAskCardFieldFocus } from '@/ai-chat/tool-calls/hooks/useAiChatAskCardFieldFocus';
 
 const StyledHeader = styled.div`
@@ -75,9 +76,10 @@ export const AiChatToolCallApprovalCardLayout = ({
 }: AiChatToolCallApprovalCardLayoutProps) => {
   const theme = useTheme();
   const { handleFieldFocus, handleFieldBlur } = useAiChatAskCardFieldFocus();
+  const isDocked = useContext(AiChatIsToolCallDockedContext);
 
   return (
-    <StyledAiChatAskCard isPadded data-blocking-tool-card>
+    <StyledAiChatAskCard isPadded isDocked={isDocked}>
       <StyledHeader>
         <StyledTitleRow>
           {isDefined(Icon) && (

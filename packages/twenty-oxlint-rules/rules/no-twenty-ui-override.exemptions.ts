@@ -1,6 +1,11 @@
 export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   {
     filePath:
+      'packages/twenty-front/src/modules/ai-chat/tool-calls/components/AiChatApprovalReviewDeck.tsx',
+    reason: 'Card.Root docks onto the chat input with no bottom border',
+  },
+  {
+    filePath:
       'packages/twenty-front/src/modules/activities/calendar/components/CalendarDayCardContent.tsx',
     reason: 'Card.Content day row layout and the animation for ended days',
   },
