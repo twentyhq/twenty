@@ -1,6 +1,5 @@
 import { useLocation } from 'react-router-dom';
 
-import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
 import {
@@ -19,9 +18,6 @@ export const useActiveNavigationDrawerTab = (): NavigationDrawerActiveTab => {
   const navigationDrawerActiveTab = useAtomStateValue(
     navigationDrawerActiveTabState,
   );
-  const isLayoutCustomizationModeEnabled = useAtomStateValue(
-    isLayoutCustomizationModeEnabledState,
-  );
   const isCustomizableSidebarEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
   );
@@ -30,14 +26,13 @@ export const useActiveNavigationDrawerTab = (): NavigationDrawerActiveTab => {
     return NAVIGATION_DRAWER_TABS.SETTINGS;
   }
 
-  if (isCustomizableSidebarEnabled && isLayoutCustomizationModeEnabled) {
+  if (isCustomizableSidebarEnabled) {
     return NAVIGATION_DRAWER_TABS.NAVIGATION_MENU;
   }
 
   if (
-    !isCustomizableSidebarEnabled &&
-    (isAiModePath(pathname) ||
-      navigationDrawerActiveTab === NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY)
+    isAiModePath(pathname) ||
+    navigationDrawerActiveTab === NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY
   ) {
     return NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY;
   }
