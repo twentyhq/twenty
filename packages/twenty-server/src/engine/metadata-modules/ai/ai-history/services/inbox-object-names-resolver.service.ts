@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { type InboxObjectNamesByLegacyName } from 'twenty-shared/ai';
 
-import { type InboxObjectNamesByLegacyName } from 'src/engine/metadata-modules/ai/ai-history/types/inbox-object-names-by-legacy-name.type';
 import { getInboxObjectNamesByLegacyName } from 'src/engine/metadata-modules/ai/ai-history/utils/get-inbox-object-names-by-legacy-name.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 

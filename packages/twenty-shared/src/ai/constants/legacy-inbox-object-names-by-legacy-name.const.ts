@@ -1,4 +1,4 @@
-import { type InboxObjectNamesByLegacyName } from 'src/engine/metadata-modules/ai/ai-history/types/inbox-object-names-by-legacy-name.type';
+import { type InboxObjectNamesByLegacyName } from '@/ai/types/InboxObjectNamesByLegacyName';
 
 export const LEGACY_INBOX_OBJECT_NAMES_BY_LEGACY_NAME = {
   agentChatThread: 'agentChatThread',

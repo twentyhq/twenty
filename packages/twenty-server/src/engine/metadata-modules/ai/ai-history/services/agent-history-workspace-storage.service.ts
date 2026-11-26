@@ -3,10 +3,10 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource, type EntityManager } from 'typeorm';
 import { isNonEmptyString } from '@sniptt/guards';
+import { type LegacyInboxObjectName } from 'twenty-shared/ai';
 import { doNotTranslate } from 'twenty-shared/i18n';
 
 import { InboxObjectNamesResolverService } from 'src/engine/metadata-modules/ai/ai-history/services/inbox-object-names-resolver.service';
-import { type LegacyInboxObjectName } from 'src/engine/metadata-modules/ai/ai-history/types/legacy-inbox-object-name.type';
 import { getWorkspaceAgentHistoryTable } from 'src/engine/metadata-modules/ai/ai-history/utils/get-workspace-agent-history-table.util';
 
 export type AgentHistoryStorageContext = {

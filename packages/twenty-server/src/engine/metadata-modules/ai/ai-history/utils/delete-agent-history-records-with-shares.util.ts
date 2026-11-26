@@ -1,8 +1,8 @@
 import { In, type ObjectLiteral } from 'typeorm';
+import { type InboxObjectNamesByLegacyName } from 'twenty-shared/ai';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type AgentHistoryObjectName } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-object-name.type';
-import { type InboxObjectNamesByLegacyName } from 'src/engine/metadata-modules/ai/ai-history/types/inbox-object-names-by-legacy-name.type';
 import { getWorkspaceAgentHistoryTable } from 'src/engine/metadata-modules/ai/ai-history/utils/get-workspace-agent-history-table.util';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 
