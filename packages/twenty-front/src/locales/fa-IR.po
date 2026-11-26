@@ -28712,20 +28712,10 @@ msgstr "رد کردن"
 msgid "Skip anyway"
 msgstr "به‌هرحال رد کردن"
 
-#. js-lingui-id: 5jWe/6
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Skip calendar events with no participant outside the workspace domain, unless internal import is turned on."
-msgstr "رویدادهای تقویم را که هیچ شرکت‌کننده‌ای خارج از دامنه فضای کاری ندارند، نادیده بگیرید؛ مگر اینکه وارد کردن داخلی روشن باشد."
-
 #. js-lingui-id: TyudBs
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Skip creating a Name field "
 msgstr "از ایجاد فیلد نام صرف‌نظر کنید "
-
-#. js-lingui-id: pmVASU
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Skip internal meetings"
-msgstr "جلسه‌های داخلی را نادیده بگیرید"
 
 #. js-lingui-id: PlF+NA
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
