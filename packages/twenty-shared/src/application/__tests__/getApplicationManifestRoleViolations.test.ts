@@ -304,8 +304,7 @@ describe('getApplicationManifestRoleViolations', () => {
       },
     ]);
   });
-
-  it('should accept a legacy field permission that restricts nothing', () => {
+  it('should report a legacy field permission that only carries its identifier', () => {
     expect(
       getViolations({
         roles: [
@@ -320,7 +319,7 @@ describe('getApplicationManifestRoleViolations', () => {
           }),
         ],
       }).map(({ kind }) => kind),
-    ).toEqual([]);
+    ).toEqual(['fieldPermissions']);
   });
 });
 

@@ -46,15 +46,9 @@ export class FlatFieldPermissionValidatorService {
       type: 'create',
     });
 
-    // A field permission denying nothing grants nothing, so only a restriction is refused
-    if (
-      flatFieldPermissionToValidate.canReadFieldValue === false ||
-      flatFieldPermissionToValidate.canUpdateFieldValue === false
-    ) {
-      validationResult.errors.push(
-        ...getMarketplaceApplicationRoleRestrictionErrors({ buildOptions }),
-      );
-    }
+    validationResult.errors.push(
+      ...getMarketplaceApplicationRoleRestrictionErrors({ buildOptions }),
+    );
 
     const existingByUniversalId = findFlatEntityByUniversalIdentifier({
       universalIdentifier: flatFieldPermissionToValidate.universalIdentifier,
