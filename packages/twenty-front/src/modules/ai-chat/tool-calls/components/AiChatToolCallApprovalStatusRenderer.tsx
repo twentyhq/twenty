@@ -6,12 +6,36 @@ import {
   type ProposeToolCallToolStatus,
 } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
-import { IconMail, IconTool } from 'twenty-ui/icon';
+import { IconAlertTriangle, IconMail, IconTool } from 'twenty-ui/icon';
+import { themeCssVariables } from 'twenty-ui/theme';
 
+import { ThinkingStepRowLayout } from '@/ai-chat/thinking-steps/components/ThinkingStepRowLayout';
 import { AiChatAskStatusRow } from '@/ai-chat/tool-calls/components/AiChatAskStatusRow';
+import { AiChatToolCallApprovalDecidedDetails } from '@/ai-chat/tool-calls/components/AiChatToolCallApprovalDecidedDetails';
 import { StyledAiChatAskStatusDetail } from '@/ai-chat/tool-calls/components/StyledAiChatAskStatusDetail';
 import { useIsAiChatToolCallAskedInComposer } from '@/ai-chat/tool-calls/hooks/useIsAiChatToolCallAskedInComposer';
 import { TextWithChatReferences } from '@/ai-chat/message-content/components/TextWithChatReferences';
+import { getChatReferencePlainText } from '@/ai-chat/message-content/utils/getChatReferencePlainText';
+import { getToolIcon } from '@/ai/utils/getToolIcon';
+
+const DECIDED_APPROVAL_STATUSES = [
+  'approved',
+  'rejected',
+  'failed',
+  'conflict',
+] as const satisfies readonly ProposeToolCallToolStatus[];
+
+type DecidedApprovalStatus = (typeof DECIDED_APPROVAL_STATUSES)[number];
+
+const isDecidedApprovalStatus = (
+  status: ProposeToolCallToolStatus,
+): status is DecidedApprovalStatus =>
+  DECIDED_APPROVAL_STATUSES.some((decidedStatus) => decidedStatus === status);
+
+const FAILED_APPROVAL_STATUSES: ProposeToolCallToolStatus[] = [
+  'failed',
+  'conflict',
+];
 
 export const AiChatToolCallApprovalStatusRenderer = ({
   toolPart,
@@ -37,41 +61,70 @@ export const AiChatToolCallApprovalStatusRenderer = ({
   const proposeErrorText =
     toolPart.state === 'output-error' ? toolPart.errorText : output?.error;
 
-  const messageByStatus: Record<ProposeToolCallToolStatus, string> = {
+  const messageByStatus: Record<
+    Exclude<ProposeToolCallToolStatus, DecidedApprovalStatus>,
+    string
+  > = {
     pending: isDefined(result)
       ? t`Waiting for your approval`
       : t`Preparing an action to approve...`,
     running: t`Running...`,
-    approved: t`Approved`,
-    rejected: t`Rejected`,
-    failed: t`Approved but it failed`,
-    conflict: t`Not run: the record changed since it was proposed`,
     skipped: t`Skipped`,
   };
-  const message = hasFailedToPropose
+  const isStatusRowFailure =
+    hasFailedToPropose || isDecidedApprovalStatus(status);
+  const message = isStatusRowFailure
     ? t`Could not be proposed`
     : messageByStatus[status];
-
-  const summary = result?.proposal.summary;
-  const detailByStatus: Record<ProposeToolCallToolStatus, string | undefined> =
-    {
-      pending: summary,
-      running: summary,
-      approved: summary,
-      rejected: result?.feedback,
-      failed: result?.error,
-      conflict: summary,
-      skipped: summary,
-    };
-  const detail = hasFailedToPropose ? proposeErrorText : detailByStatus[status];
+  const detail = isStatusRowFailure
+    ? proposeErrorText
+    : result?.proposal.summary;
 
   if (isAskedInComposer) {
     return null;
   }
 
+  const StatusIcon =
+    result?.proposal.template === 'email' ? IconMail : IconTool;
+
+  if (
+    isDefined(result) &&
+    !hasFailedToPropose &&
+    isDecidedApprovalStatus(status)
+  ) {
+    const hasFailed = FAILED_APPROVAL_STATUSES.includes(status);
+    const ToolIcon = getToolIcon(result.proposal.toolName);
+
+    return (
+      <div data-hover-card-ignore>
+        <ThinkingStepRowLayout
+          icon={
+            hasFailed ? (
+              <IconAlertTriangle
+                size={14}
+                color={themeCssVariables.font.color.danger}
+              />
+            ) : (
+              <ToolIcon size={14} />
+            )
+          }
+          label={getChatReferencePlainText(result.proposal.summary)}
+          detail={status === 'rejected' ? t`Rejected` : undefined}
+          isActive={false}
+          details={
+            <AiChatToolCallApprovalDecidedDetails
+              toolCallId={toolPart.toolCallId}
+              result={result}
+            />
+          }
+        />
+      </div>
+    );
+  }
+
   return (
     <AiChatAskStatusRow
-      Icon={result?.proposal.template === 'email' ? IconMail : IconTool}
+      Icon={StatusIcon}
       message={message}
       isShimmering={
         ((isStreaming && status === 'pending') || status === 'running') &&

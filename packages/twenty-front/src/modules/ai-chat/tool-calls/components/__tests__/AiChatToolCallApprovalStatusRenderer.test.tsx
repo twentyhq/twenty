@@ -52,7 +52,7 @@ describe('AiChatToolCallApprovalStatusRenderer', () => {
     expect(screen.getByText('Registry unavailable')).toBeInTheDocument();
   });
 
-  it('reads an approved call from its result', () => {
+  it('names an approved call by its summary', () => {
     renderStatus({
       state: 'output-available',
       input: { toolName: 'send_email', arguments: {}, summary: 'Follow up' },
@@ -71,7 +71,7 @@ describe('AiChatToolCallApprovalStatusRenderer', () => {
       },
     });
 
-    expect(screen.getByText('Approved')).toBeInTheDocument();
     expect(screen.getByText('Follow up')).toBeInTheDocument();
+    expect(screen.queryByText('Approved')).not.toBeInTheDocument();
   });
 });

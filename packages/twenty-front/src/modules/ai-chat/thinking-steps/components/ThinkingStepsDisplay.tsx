@@ -164,7 +164,7 @@ export const ThinkingStepsDisplay = ({
     <Collapsible.Root
       open={isExpanded}
       onOpenChange={setIsExpanded}
-      render={<StyledContainer />}
+      render={<StyledContainer data-hover-card-ignore />}
     >
       <Collapsible.Trigger render={<StyledSummaryButton />}>
         {isWorking ? (
