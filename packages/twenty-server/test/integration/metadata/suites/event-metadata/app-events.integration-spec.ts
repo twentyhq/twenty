@@ -71,7 +71,10 @@ describe('app events (e2e)', () => {
   let frontComponentToken: string;
   let companyId: string;
 
-  const emit = (input: Record<string, unknown>) =>
+  const emit = (input: {
+    event: string;
+    properties?: Record<string, unknown>;
+  }) =>
     makeMetadataApiRequest(
       { query: EMIT_APP_EVENT_MUTATION, variables: { input } },
       applicationToken,

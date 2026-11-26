@@ -55,9 +55,10 @@ describe('emitEvent', () => {
     const [url, requestInit] = fetchSpy.mock.calls[0];
 
     expect(url).toBe('https://api.test/metadata');
-    expect(JSON.parse(requestInit?.body as string).variables).toEqual({
-      input,
-    });
+    const body = requestInit?.body;
+
+    expect(typeof body).toBe('string');
+    expect(JSON.parse(String(body)).variables).toEqual({ input });
   });
 
   it('throws with the server error messages', async () => {

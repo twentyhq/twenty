@@ -7,10 +7,13 @@ import {
 } from '@/application/eventManifestType';
 import { isDefined } from '@/utils/validation/isDefined';
 
-const isValueOfPropertyType = (
-  value: unknown,
-  type: EventPropertyType,
-): boolean => {
+const isValueOfPropertyType = ({
+  value,
+  type,
+}: {
+  value: unknown;
+  type: EventPropertyType;
+}): boolean => {
   switch (type) {
     case 'TEXT':
       return isString(value);
@@ -55,7 +58,7 @@ export const getEventPropertyValuesErrors = ({
       : undefined;
 
     if (!isDefined(value)) {
-      if (property.isRequired === true) {
+      if (property.isRequired) {
         errors.push(
           `Event "${eventName}" property "${property.name}" is required`,
         );
@@ -63,7 +66,7 @@ export const getEventPropertyValuesErrors = ({
       continue;
     }
 
-    if (!isValueOfPropertyType(value, property.type)) {
+    if (!isValueOfPropertyType({ value, type: property.type })) {
       errors.push(
         `Event "${eventName}" property "${property.name}" must be a ${property.type} value`,
       );
