@@ -2,6 +2,7 @@ import { type UsageLimitDefinitionsByResourceType } from 'src/engine/core-module
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
+import { MESSAGE_CAMPAIGN_TEST_SEND_WINDOW_SECONDS } from 'src/engine/core-modules/usage-limit/constants/message-campaign-test-send-window-seconds.constant';
 
 export const USAGE_LIMIT_DEFINITIONS = {
   [UsageResourceType.ALL]: {
@@ -249,8 +250,7 @@ export const USAGE_LIMIT_DEFINITIONS = {
           spenderId: '',
           unit: UsageUnit.INVOCATION,
           periodUnit: 'second',
-          windowMsConfigVariable:
-            'MESSAGE_CAMPAIGN_TEST_SEND_RATE_LIMITING_TTL_IN_MS',
+          windowSeconds: MESSAGE_CAMPAIGN_TEST_SEND_WINDOW_SECONDS,
           limitValueConfigVariable:
             'MESSAGE_CAMPAIGN_TEST_SEND_RATE_LIMITING_LIMIT',
           counterScope: 'perWorkspace',

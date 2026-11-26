@@ -5,9 +5,14 @@ import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usa
 import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { type UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 
+// A fixed window keeps the limit meaning "N per window"; operators then only change N
+type SpeedLimitWindow =
+  | { windowMsConfigVariable: NumericConfigVariableKey }
+  | { windowSeconds: number };
+
 export type SpeedLimitDefaultDefinition<
   TResourceType extends UsageResourceType = UsageResourceType,
-> = {
+> = SpeedLimitWindow & {
   resourceType: TResourceType;
   operationType: UsageOperationType;
   limitKind: 'speed';
@@ -15,7 +20,6 @@ export type SpeedLimitDefaultDefinition<
   spenderId: '';
   unit: UsageUnit;
   periodUnit: 'second';
-  windowMsConfigVariable: NumericConfigVariableKey;
   limitValueConfigVariable: NumericConfigVariableKey;
   counterScope: CounterScope;
   isOverridable: boolean;
