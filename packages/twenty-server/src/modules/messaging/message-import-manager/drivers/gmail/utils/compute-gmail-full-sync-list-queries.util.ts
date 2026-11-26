@@ -22,13 +22,13 @@ export const computeGmailFullSyncListQueries = ({
     computeGmailDefaultNotSyncedLabelsSearchFilter,
   ).join(' ');
 
-  const allFoldersSynced =
+  const areAllFoldersSynced =
     isNonEmptyArray(messageFolders) &&
     messageFolders.every((folder) => folder.isSynced);
 
   if (
     messageFolderImportPolicy === MessageFolderImportPolicy.ALL_FOLDERS ||
-    allFoldersSynced
+    areAllFoldersSynced
   ) {
     return [{ searchFilter: allExclusions }];
   }
