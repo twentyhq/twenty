@@ -125,6 +125,15 @@ export type SetToolCallArgumentsFunction = (
   toolArguments: Record<string, unknown>,
 ) => Promise<void>;
 
+export type ToolCallApprovalLabels = {
+  approve?: string;
+  reject?: string;
+};
+
+export type SetToolCallApprovalLabelsFunction = (
+  labels: ToolCallApprovalLabels,
+) => Promise<void>;
+
 export type UploadedFrontComponentFile = {
   fileId: string;
   path: string;
@@ -180,6 +189,7 @@ export type FrontComponentHostCommunicationApiStore = {
   updateProgress?: UpdateProgressFunction;
   copyToClipboard?: CopyToClipboardFunction;
   setToolCallArguments?: SetToolCallArgumentsFunction;
+  setToolCallApprovalLabels?: SetToolCallApprovalLabelsFunction;
   uploadFile?: UploadFileFunction;
   storageSet?: StorageSetFunction;
   storageDelete?: StorageDeleteFunction;

@@ -1,6 +1,9 @@
 import { styled } from '@linaria/react';
 import { type ReactNode, Suspense, lazy } from 'react';
-import { type FrontComponentToolCall } from 'twenty-sdk/front-component';
+import {
+  type FrontComponentToolCall,
+  type ToolCallApprovalLabels,
+} from 'twenty-sdk/front-component';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { FrontComponentSkeletonLoader } from '@/front-components/components/FrontComponentSkeletonLoader';
@@ -22,6 +25,8 @@ type AiChatToolFrontComponentProps = {
   frontComponentId: string;
   toolCall: FrontComponentToolCall;
   onToolCallArgumentsChange?: (toolArguments: Record<string, unknown>) => void;
+  onToolCallApprovalLabelsChange?: (labels: ToolCallApprovalLabels) => void;
+  onReady?: () => void;
   unavailableFallback: ReactNode;
   errorFallback?: ReactNode;
 };
@@ -30,6 +35,8 @@ export const AiChatToolFrontComponent = ({
   frontComponentId,
   toolCall,
   onToolCallArgumentsChange,
+  onToolCallApprovalLabelsChange,
+  onReady,
   unavailableFallback,
   errorFallback,
 }: AiChatToolFrontComponentProps) => (
@@ -39,6 +46,8 @@ export const AiChatToolFrontComponent = ({
         frontComponentId={frontComponentId}
         toolCall={toolCall}
         onToolCallArgumentsChange={onToolCallArgumentsChange}
+        onToolCallApprovalLabelsChange={onToolCallApprovalLabelsChange}
+        onReady={onReady}
         loadingFallback={<FrontComponentSkeletonLoader />}
         unavailableFallback={unavailableFallback}
         errorFallback={errorFallback}

@@ -3,7 +3,10 @@ import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objec
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
 import { resolveOpenRecordIn } from '@/object-record/record-index/utils/resolveOpenRecordIn';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { type FrontComponentToolCall } from 'twenty-sdk/front-component';
+import {
+  type FrontComponentToolCall,
+  type ToolCallApprovalLabels,
+} from 'twenty-sdk/front-component';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRef } from 'react';
@@ -138,6 +141,7 @@ export const useFrontComponentExecutionContext = ({
   timelineActivityId,
   toolCall,
   onToolCallArgumentsChange,
+  onToolCallApprovalLabelsChange,
   colorScheme,
 }: {
   frontComponentId: string;
@@ -149,6 +153,7 @@ export const useFrontComponentExecutionContext = ({
   timelineActivityId?: string;
   toolCall?: FrontComponentToolCall;
   onToolCallArgumentsChange?: (toolArguments: Record<string, unknown>) => void;
+  onToolCallApprovalLabelsChange?: (labels: ToolCallApprovalLabels) => void;
   colorScheme: 'light' | 'dark';
 }): {
   executionContext: FrontComponentExecutionContext;
@@ -523,6 +528,22 @@ export const useFrontComponentExecutionContext = ({
       onToolCallArgumentsChange(toolArguments);
     };
 
+  const setToolCallApprovalLabels: FrontComponentHostCommunicationApi['setToolCallApprovalLabels'] =
+    async (labels) => {
+      if (
+        toolCall?.status !== 'approval-requested' ||
+        !isDefined(onToolCallApprovalLabelsChange) ||
+        !isPlainObject(labels)
+      ) {
+        return;
+      }
+
+      onToolCallApprovalLabelsChange({
+        ...(isNonEmptyString(labels.approve) && { approve: labels.approve }),
+        ...(isNonEmptyString(labels.reject) && { reject: labels.reject }),
+      });
+    };
+
   const copyToClipboard: FrontComponentHostCommunicationApi['copyToClipboard'] =
     async (text) => {
       if (!isNonEmptyString(text)) {
@@ -661,6 +682,7 @@ export const useFrontComponentExecutionContext = ({
       updateProgress,
       copyToClipboard,
       setToolCallArguments,
+      setToolCallApprovalLabels,
       uploadFile: hostUploadFile,
       storageSet,
       storageDelete,

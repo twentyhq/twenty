@@ -15,7 +15,10 @@ import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { FrontComponentRenderer as SharedFrontComponentRenderer } from 'twenty-front-component-renderer';
-import { type FrontComponentToolCall } from 'twenty-sdk/front-component';
+import {
+  type FrontComponentToolCall,
+  type ToolCallApprovalLabels,
+} from 'twenty-sdk/front-component';
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
@@ -36,6 +39,8 @@ type FrontComponentRendererProps = {
   timelineActivityId?: string;
   toolCall?: FrontComponentToolCall;
   onToolCallArgumentsChange?: (toolArguments: Record<string, unknown>) => void;
+  onToolCallApprovalLabelsChange?: (labels: ToolCallApprovalLabels) => void;
+  onReady?: () => void;
   loadingFallback?: ReactNode;
   unavailableFallback?: ReactNode;
   errorFallback?: ReactNode;
@@ -55,6 +60,8 @@ type FrontComponentRendererContentProps = {
   timelineActivityId?: string;
   toolCall?: FrontComponentToolCall;
   onToolCallArgumentsChange?: (toolArguments: Record<string, unknown>) => void;
+  onToolCallApprovalLabelsChange?: (labels: ToolCallApprovalLabels) => void;
+  onReady?: () => void;
   loadingFallback?: ReactNode;
   unavailableFallback?: ReactNode;
   errorFallback?: ReactNode;
@@ -70,6 +77,8 @@ export const FrontComponentRenderer = ({
   timelineActivityId,
   toolCall,
   onToolCallArgumentsChange,
+  onToolCallApprovalLabelsChange,
+  onReady,
   loadingFallback,
   unavailableFallback,
   errorFallback,
@@ -103,6 +112,8 @@ export const FrontComponentRenderer = ({
           timelineActivityId={timelineActivityId}
           toolCall={toolCall}
           onToolCallArgumentsChange={onToolCallArgumentsChange}
+          onToolCallApprovalLabelsChange={onToolCallApprovalLabelsChange}
+          onReady={onReady}
           loadingFallback={loadingFallback}
           unavailableFallback={unavailableFallback}
           errorFallback={errorFallback}
@@ -122,6 +133,8 @@ const FrontComponentRendererContent = ({
   timelineActivityId,
   toolCall,
   onToolCallArgumentsChange,
+  onToolCallApprovalLabelsChange,
+  onReady,
   loadingFallback,
   unavailableFallback,
   errorFallback,
@@ -153,6 +166,7 @@ const FrontComponentRendererContent = ({
     timelineActivityId,
     toolCall,
     onToolCallArgumentsChange,
+    onToolCallApprovalLabelsChange,
     colorScheme,
   });
 
@@ -291,6 +305,7 @@ const FrontComponentRendererContent = ({
             applicationVariables={initialApplicationVariables}
             storageNamespace={storageNamespace}
             onError={handleError}
+            onReady={onReady}
             loadingFallback={loadingFallback}
             errorFallback={errorFallback}
             shouldPreventPageZoom={shouldPreventPageZoom}

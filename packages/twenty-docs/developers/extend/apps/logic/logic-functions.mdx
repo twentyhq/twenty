@@ -823,6 +823,20 @@ const toolCall = useToolCall();
 setToolCallArguments({ ...toolCall?.input, decision: 'DECLINE', reason });
 ```
 
+The component can also rename the buttons with `setToolCallApprovalLabels`, translated with `t` like the rest of its text. When the tool has a front component, the card waits for it before showing the buttons, then shows the labels it set, or **Reject** and **Approve** when it set none or could not load:
+
+```tsx
+import { setToolCallApprovalLabels, useTranslate } from 'twenty-sdk/front-component';
+
+const { t } = useTranslate();
+
+useEffect(() => {
+  setToolCallApprovalLabels({ approve: t('Send response'), reject: t('Not now') });
+}, [t]);
+```
+
+The labels only rename the buttons: approve still runs this tool with the arguments the component set, and reject never runs anything. Set them when the component mounts so they are ready when the buttons appear, and call it again if the wording should follow the person's choice. Keep the `t()` calls in the file that declares the component, the one `twenty app translations extract` reads.
+
 Both `input` and `output` are typed `Record<string, unknown>`, so narrow each field before you use it rather than casting. That matters most for anything you hand to the DOM: a value you drop into an `href` without checking it is a string is a link the tool's output controls.
 
 <Note>

@@ -71,25 +71,70 @@ jest.mock('@/ai-chat/tool-calls/hooks/useFrontComponentIdByToolName', () => ({
   useFrontComponentIdByToolName: () => mockFrontComponentIdByToolName(),
 }));
 
+type ToolFrontComponentLoad =
+  | { status: 'loading' }
+  | { status: 'unavailable' }
+  | { status: 'ready'; labels: { approve?: string; reject?: string } };
+
 type ToolFrontComponentStubProps = {
   toolCall: { input?: Record<string, unknown> };
   onToolCallArgumentsChange: (toolArguments: Record<string, unknown>) => void;
+  onToolCallApprovalLabelsChange: (labels: {
+    approve?: string;
+    reject?: string;
+  }) => void;
+  onReady: () => void;
+  unavailableFallback: ReactNode;
 };
 
-jest.mock('@/ai-chat/tool-calls/components/AiChatToolFrontComponent', () => ({
-  AiChatToolFrontComponent: ({
-    toolCall,
-    onToolCallArgumentsChange,
-  }: ToolFrontComponentStubProps) => (
-    <button
-      onClick={() =>
-        onToolCallArgumentsChange({ ...toolCall.input, decision: 'DECLINE' })
+const READY_WITHOUT_LABELS: ToolFrontComponentLoad = {
+  status: 'ready',
+  labels: {},
+};
+
+const mockToolFrontComponentLoad = jest.fn(
+  (): ToolFrontComponentLoad => READY_WITHOUT_LABELS,
+);
+
+jest.mock('@/ai-chat/tool-calls/components/AiChatToolFrontComponent', () => {
+  const { useEffect } = jest.requireActual('react');
+
+  return {
+    AiChatToolFrontComponent: ({
+      toolCall,
+      onToolCallArgumentsChange,
+      onToolCallApprovalLabelsChange,
+      onReady,
+      unavailableFallback,
+    }: ToolFrontComponentStubProps) => {
+      const load = mockToolFrontComponentLoad();
+
+      useEffect(() => {
+        if (load.status === 'ready') {
+          onToolCallApprovalLabelsChange(load.labels);
+          onReady();
+        }
+      }, [load, onReady, onToolCallApprovalLabelsChange]);
+
+      if (load.status === 'unavailable') {
+        return unavailableFallback;
       }
-    >
-      Decline instead
-    </button>
-  ),
-}));
+
+      return (
+        <button
+          onClick={() =>
+            onToolCallArgumentsChange({
+              ...toolCall.input,
+              decision: 'DECLINE',
+            })
+          }
+        >
+          Decline instead
+        </button>
+      );
+    },
+  };
+});
 
 const mockUsePreview = jest.fn();
 jest.mock('@/ai-chat/tool-calls/hooks/useAiChatFrontComponentPreview', () => ({
@@ -134,6 +179,9 @@ describe('AiChatToolCallApprovalCard', () => {
       .mockReturnValue({ preview: { isCurrent: true }, isRendered: true });
     mockIsFeatureEnabled.mockReset().mockReturnValue(true);
     mockFrontComponentIdByToolName.mockReset().mockReturnValue(new Map());
+    mockToolFrontComponentLoad
+      .mockReset()
+      .mockReturnValue(READY_WITHOUT_LABELS);
   });
 
   it("shows the tool's front component instead of the raw arguments and approves what it sets", async () => {
@@ -169,6 +217,68 @@ describe('AiChatToolCallApprovalCard', () => {
         },
       }),
     );
+  });
+
+  describe('a tool whose front component words the approval', () => {
+    const BOOKING_PROPOSAL: ProposedToolCall = {
+      toolName: 'app_tool_respond_to_cal_booking',
+      toolLabel: 'respond-to-cal-booking',
+      summary: 'Meeting request from Maya',
+      arguments: { bookingId: 'booking-1' },
+      template: 'generic',
+    };
+
+    beforeEach(() => {
+      answerAiChatToolCall.mockReturnValue(new Promise(() => {}));
+      mockFrontComponentIdByToolName.mockReturnValue(
+        new Map([['app_tool_respond_to_cal_booking', 'front-component-1']]),
+      );
+    });
+
+    it('waits for the front component before showing the buttons', () => {
+      mockToolFrontComponentLoad.mockReturnValue({ status: 'loading' });
+
+      renderCard({ proposal: BOOKING_PROPOSAL });
+
+      expect(
+        screen.queryByRole('button', { name: 'Approve' }),
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('button', { name: 'Reject' }),
+      ).not.toBeInTheDocument();
+    });
+
+    it('shows the labels the front component set', async () => {
+      const user = userEvent.setup();
+      mockToolFrontComponentLoad.mockReturnValue({
+        status: 'ready',
+        labels: { approve: 'Send response', reject: 'Not now' },
+      });
+
+      renderCard({ proposal: BOOKING_PROPOSAL });
+
+      expect(screen.getByRole('button', { name: 'Not now' })).toBeVisible();
+      await user.click(screen.getByRole('button', { name: 'Send response' }));
+
+      expect(answerAiChatToolCall).toHaveBeenCalledWith(
+        expect.objectContaining({
+          response: {
+            decision: 'approve',
+            arguments: { bookingId: 'booking-1' },
+          },
+        }),
+      );
+    });
+
+    it('shows Approve and Reject when the front component cannot load', () => {
+      mockToolFrontComponentLoad.mockReturnValue({ status: 'unavailable' });
+
+      renderCard({ proposal: BOOKING_PROPOSAL });
+
+      expect(screen.getByRole('textbox', { name: 'Arguments' })).toBeVisible();
+      expect(screen.getByRole('button', { name: 'Approve' })).toBeVisible();
+      expect(screen.getByRole('button', { name: 'Reject' })).toBeVisible();
+    });
   });
 
   it('shows what the call does and which tool it runs', () => {

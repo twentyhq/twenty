@@ -1,5 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
+import { type ToolCallApprovalLabels } from 'twenty-sdk/front-component';
 import { type ProposedToolCall } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCheck, IconX } from 'twenty-ui/icon';
@@ -7,6 +8,7 @@ import { Button } from 'twenty-ui/primitives/input';
 import { type JsonValue } from 'type-fest';
 
 import { AiChatToolFrontComponent } from '@/ai-chat/tool-calls/components/AiChatToolFrontComponent';
+import { AiChatToolFrontComponentFallbackEffect } from '@/ai-chat/tool-calls/components/AiChatToolFrontComponentFallbackEffect';
 import { AiChatToolCallApprovalArgumentsEditor } from '@/ai-chat/tool-calls/components/AiChatToolCallApprovalArgumentsEditor';
 import { AiChatToolCallApprovalCardLayout } from '@/ai-chat/tool-calls/components/AiChatToolCallApprovalCardLayout';
 import { AiChatToolCallApprovalRecord } from '@/ai-chat/tool-calls/components/AiChatToolCallApprovalRecord';
@@ -38,12 +40,36 @@ export const AiChatToolCallApprovalArgumentsCard = ({
     proposal.toolName,
   );
 
+  const [approvalLabels, setApprovalLabels] = useState<ToolCallApprovalLabels>(
+    {},
+  );
+  const [isFrontComponentReady, setIsFrontComponentReady] = useState(false);
+
+  const handleFrontComponentReady = useCallback(
+    () => setIsFrontComponentReady(true),
+    [],
+  );
+
+  const isWaitingForFrontComponent =
+    template === 'generic' &&
+    isDefined(toolFrontComponentId) &&
+    !isFrontComponentReady;
+
   const argumentsEditor = (
     <AiChatToolCallApprovalArgumentsEditor
       defaultArguments={toolArguments ?? proposal.arguments}
       readonly={isAnswering}
       onChange={setToolArguments}
     />
+  );
+
+  const frontComponentFallback = (
+    <>
+      {argumentsEditor}
+      <AiChatToolFrontComponentFallbackEffect
+        onFallback={handleFrontComponentReady}
+      />
+    </>
   );
 
   const handleRecordFieldChange = (fieldName: string, value: JsonValue) => {
@@ -63,33 +89,35 @@ export const AiChatToolCallApprovalArgumentsCard = ({
       summary={proposal.summary}
       approval={approval}
       actions={
-        <>
-          <Button
-            size="sm"
-            variant="ghost"
-            startIcon={<IconX />}
-            disabled={isAnswering}
-            loading={pendingResponse?.decision === 'reject'}
-            onClick={reject}
-          >
-            {t`Reject`}
-          </Button>
-          <Button
-            size="sm"
-            variant="solid"
-            color="accent"
-            startIcon={<IconCheck />}
-            disabled={isAnswering || !isDefined(toolArguments)}
-            loading={pendingResponse?.decision === 'approve'}
-            onClick={() => {
-              if (isDefined(toolArguments)) {
-                approve({ arguments: toolArguments });
-              }
-            }}
-          >
-            {t`Approve`}
-          </Button>
-        </>
+        !isWaitingForFrontComponent && (
+          <>
+            <Button
+              size="sm"
+              variant="ghost"
+              startIcon={<IconX />}
+              disabled={isAnswering}
+              loading={pendingResponse?.decision === 'reject'}
+              onClick={reject}
+            >
+              {approvalLabels.reject ?? t`Reject`}
+            </Button>
+            <Button
+              size="sm"
+              variant="solid"
+              color="accent"
+              startIcon={<IconCheck />}
+              disabled={isAnswering || !isDefined(toolArguments)}
+              loading={pendingResponse?.decision === 'approve'}
+              onClick={() => {
+                if (isDefined(toolArguments)) {
+                  approve({ arguments: toolArguments });
+                }
+              }}
+            >
+              {approvalLabels.approve ?? t`Approve`}
+            </Button>
+          </>
+        )
       }
     >
       {isDefined(objectNameSingular) && isDefined(recordId) && (
@@ -125,8 +153,10 @@ export const AiChatToolCallApprovalArgumentsCard = ({
             input: toolArguments ?? proposal.arguments,
           }}
           onToolCallArgumentsChange={setToolArguments}
-          unavailableFallback={argumentsEditor}
-          errorFallback={argumentsEditor}
+          onToolCallApprovalLabelsChange={setApprovalLabels}
+          onReady={handleFrontComponentReady}
+          unavailableFallback={frontComponentFallback}
+          errorFallback={frontComponentFallback}
         />
       )}
     </AiChatToolCallApprovalCardLayout>

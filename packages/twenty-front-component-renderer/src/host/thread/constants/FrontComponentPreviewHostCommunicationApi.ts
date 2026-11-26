@@ -13,6 +13,7 @@ export const FRONT_COMPONENT_PREVIEW_HOST_COMMUNICATION_API: FrontComponentHostC
     updateProgress: rejectPreviewHostActionOrThrow,
     copyToClipboard: rejectPreviewHostActionOrThrow,
     setToolCallArguments: rejectPreviewHostActionOrThrow,
+    setToolCallApprovalLabels: rejectPreviewHostActionOrThrow,
     uploadFile: rejectPreviewHostActionOrThrow,
     storageSet: rejectPreviewHostActionOrThrow,
     storageDelete: rejectPreviewHostActionOrThrow,

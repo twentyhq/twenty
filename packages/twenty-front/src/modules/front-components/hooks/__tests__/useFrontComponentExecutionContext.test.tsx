@@ -1555,6 +1555,51 @@ describe('useFrontComponentExecutionContext', () => {
     });
   });
 
+  describe('setToolCallApprovalLabels', () => {
+    const PENDING_TOOL_CALL = {
+      toolCallId: 'call-1',
+      toolName: 'app_tool_respond_to_cal_booking',
+      status: 'approval-requested' as const,
+      input: { bookingId: 'booking-1' },
+    };
+
+    it('hands the non-empty labels to the approval card while the call awaits approval', async () => {
+      const onToolCallApprovalLabelsChange = jest.fn();
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+        toolCall: PENDING_TOOL_CALL,
+        onToolCallApprovalLabelsChange,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.setToolCallApprovalLabels(
+          { approve: 'Envoyer la réponse', reject: '' },
+        );
+      });
+
+      expect(onToolCallApprovalLabelsChange).toHaveBeenCalledWith({
+        approve: 'Envoyer la réponse',
+      });
+    });
+
+    it('ignores labels once the call has been answered', async () => {
+      const onToolCallApprovalLabelsChange = jest.fn();
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+        toolCall: { ...PENDING_TOOL_CALL, status: 'approval-responded' },
+        onToolCallApprovalLabelsChange,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.setToolCallApprovalLabels(
+          { approve: 'Envoyer la réponse' },
+        );
+      });
+
+      expect(onToolCallApprovalLabelsChange).not.toHaveBeenCalled();
+    });
+  });
+
   describe('copyToClipboard', () => {
     it('should copy the provided text through the silent clipboard helper', async () => {
       const { result } = renderUseFrontComponentExecutionContext({

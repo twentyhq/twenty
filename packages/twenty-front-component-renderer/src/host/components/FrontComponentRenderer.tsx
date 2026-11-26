@@ -121,6 +121,8 @@ export const FrontComponentRenderer = ({
             ...frontComponentHostCommunicationApi,
             setToolCallArguments:
               FRONT_COMPONENT_HOST_COMMUNICATION_API_NOOP.setToolCallArguments,
+            setToolCallApprovalLabels:
+              FRONT_COMPONENT_HOST_COMMUNICATION_API_NOOP.setToolCallApprovalLabels,
           }
         : frontComponentHostCommunicationApi,
     [error, frontComponentHostCommunicationApi],
