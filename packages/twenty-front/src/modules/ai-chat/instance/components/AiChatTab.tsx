@@ -7,8 +7,6 @@ import { DropZone } from '@/activities/files/components/DropZone';
 import { AiChatEditorSection } from '@/ai-chat/composer/components/AiChatEditorSection';
 import { AiChatNewThreadRecipientBar } from '@/ai-chat/composer/components/AiChatNewThreadRecipientBar';
 import { useAiChatFileUpload } from '@/ai-chat/composer/hooks/useAiChatFileUpload';
-import { aiChatThreadIsDirectMessageFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadIsDirectMessageFamilySelector';
-import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 
 import { AiChatQueuedMessages } from '@/ai-chat/composer/components/AiChatQueuedMessages';
 import { AiChatTabMessageList } from '@/ai-chat/messages/components/AiChatTabMessageList';
@@ -26,10 +24,6 @@ const StyledContainer = styled.div<{ isDraggingFile: boolean }>`
 export const AiChatTab = () => {
   const [isDraggingFile, setIsDraggingFile] = useState(false);
   const { threadId } = useAiChatInstanceOrThrow();
-  const isDirectMessage = useAtomFamilySelectorValue(
-    aiChatThreadIsDirectMessageFamilySelector,
-    threadId,
-  );
 
   const { uploadFiles } = useAiChatFileUpload();
 
@@ -52,7 +46,7 @@ export const AiChatTab = () => {
   return (
     <StyledContainer
       isDraggingFile={isDraggingFile}
-      onDragEnter={() => !isDirectMessage && setIsDraggingFile(true)}
+      onDragEnter={() => setIsDraggingFile(true)}
       onDragLeave={handleDragLeave}
       onDragOver={(event) => event.preventDefault()}
       onDrop={handleDrop}

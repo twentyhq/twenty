@@ -20,6 +20,7 @@ import { AiChatUserCreditsExhaustedBanner } from '@/ai-chat/usage/components/AiC
 import { AiChatStandaloneError } from '@/ai-chat/composer/components/AiChatStandaloneError';
 import { AiChatComposerAttachmentPreviews } from '@/ai-chat/composer/components/AiChatComposerAttachmentPreviews';
 import { AiChatAddMenu } from '@/ai-chat/composer/components/AiChatAddMenu';
+import { AiChatAttachFileButton } from '@/ai-chat/composer/components/AiChatAttachFileButton';
 import { AiChatDictationButton } from '@/ai-chat/dictation/components/AiChatDictationButton';
 import { AiChatDictationEffect } from '@/ai-chat/dictation/components/AiChatDictationEffect';
 import { AiChatDictationHint } from '@/ai-chat/dictation/components/AiChatDictationHint';
@@ -173,7 +174,9 @@ const EditableAiChatEditorSection = () => {
       )}
       <AiChatComposerActionsRow
         leftActions={
-          !isDirectMessage && (
+          isDirectMessage ? (
+            <AiChatAttachFileButton editor={editor} />
+          ) : (
             <>
               <AiChatAddMenu editor={editor} />
               <AiChatDictationButton />
@@ -218,7 +221,7 @@ const EditableAiChatEditorSection = () => {
         hasPageContentInset={hasPageContentInset}
       >
         {isComposerCentered && <AiChatEmptyState isCentered />}
-        {!isDirectMessage && <AiChatComposerAttachmentPreviews />}
+        <AiChatComposerAttachmentPreviews />
         {hasNoEnabledModels && !isDirectMessage && (
           <AiChatInlineBanner>{t`No AI provider is configured on this instance.`}</AiChatInlineBanner>
         )}

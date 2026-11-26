@@ -92,6 +92,14 @@ const DRAFT_MENTIONING_COMPANY =
     label: 'Acme',
   });
 
+const BRIEF_ATTACHMENT = {
+  type: 'file' as const,
+  fileId: 'file-id',
+  filename: 'brief.pdf',
+  mediaType: 'application/pdf',
+  url: 'https://example.com/brief.pdf',
+};
+
 type SendChatMessageOutcome = 'sent' | 'replying' | 'failed';
 
 const buildSendChatMessageMock = (
@@ -813,7 +821,64 @@ describe('useSendAiChatMessage', () => {
     expect(readPersistedDrafts()[DIRECT_MESSAGE_THREAD_ID]).toContain('Hello');
   });
 
-  it('keeps a new chat to one person as a draft while it has attachments', async () => {
+  it('sends attachments in a direct message', async () => {
+    const result = renderAiChat({
+      persistedDrafts: {
+        [DIRECT_MESSAGE_THREAD_ID]:
+          serializePlainTextAsAdvancedTextEditorDocument('See attached'),
+      },
+      sendChatMessageOutcomes: ['sent'],
+      isAiChatInboxEnabled: true,
+      isDirectMessage: true,
+    });
+    const attachmentsAtom = aiChatComposerAttachmentsFamilyState.atomFamily({
+      threadId: DIRECT_MESSAGE_THREAD_ID,
+    });
+
+    jotaiStore.set(attachmentsAtom, [BRIEF_ATTACHMENT]);
+
+    await send(result);
+
+    expect(sentMessageVariables).toHaveBeenCalledWith(
+      expect.objectContaining({
+        threadId: DIRECT_MESSAGE_THREAD_ID,
+        fileAttachments: [{ id: 'file-id', filename: 'brief.pdf' }],
+      }),
+    );
+    expect(jotaiStore.get(attachmentsAtom)).toEqual([]);
+  });
+
+  it('carries the attachments of a new chat to one person into the direct message it opens', async () => {
+    const result = renderAiChat({
+      persistedDrafts: {
+        [THREAD_ID]: serializePlainTextAsAdvancedTextEditorDocument('Hello'),
+      },
+      sendChatMessageOutcomes: ['sent'],
+      isAiChatInboxEnabled: true,
+      isDirectMessageIdentityEnabled: true,
+      newThreadRecipients: {
+        channelId: null,
+        isAssistantParticipant: false,
+        recipientWorkspaceMemberIds: [RECIPIENT_ID],
+      },
+    });
+    const newChatAttachmentsAtom =
+      aiChatComposerAttachmentsFamilyState.atomFamily({ threadId: THREAD_ID });
+
+    jotaiStore.set(newChatAttachmentsAtom, [BRIEF_ATTACHMENT]);
+
+    await send(result);
+
+    expect(sentMessageVariables).toHaveBeenCalledWith(
+      expect.objectContaining({
+        threadId: DIRECT_MESSAGE_THREAD_ID,
+        fileAttachments: [{ id: 'file-id', filename: 'brief.pdf' }],
+      }),
+    );
+    expect(jotaiStore.get(newChatAttachmentsAtom)).toEqual([]);
+  });
+
+  it('keeps a new chat to one person as a draft while its attachments upload', async () => {
     const draft = serializePlainTextAsAdvancedTextEditorDocument('Hello');
     const result = renderAiChat({
       persistedDrafts: { [THREAD_ID]: draft },
@@ -827,26 +892,16 @@ describe('useSendAiChatMessage', () => {
       },
     });
     const mutate = jest.spyOn(result.current.apolloClient, 'mutate');
+    const uploadingFilesAtom =
+      aiChatComposerUploadingFilesFamilyState.atomFamily({
+        threadId: THREAD_ID,
+      });
 
-    jotaiStore.set(
-      aiChatComposerAttachmentsFamilyState.atomFamily({ threadId: THREAD_ID }),
-      [
-        {
-          type: 'file',
-          fileId: 'file-id',
-          filename: 'brief.pdf',
-          mediaType: 'application/pdf',
-          url: 'https://example.com/brief.pdf',
-        },
-      ],
-    );
+    jotaiStore.set(uploadingFilesAtom, [new File(['brief'], 'brief.pdf')]);
 
     await send(result);
 
-    jotaiStore.set(
-      aiChatComposerAttachmentsFamilyState.atomFamily({ threadId: THREAD_ID }),
-      [],
-    );
+    jotaiStore.set(uploadingFilesAtom, []);
 
     expect(mutate).not.toHaveBeenCalled();
     expect(readPersistedDrafts()).toEqual({ [THREAD_ID]: draft });

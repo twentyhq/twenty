@@ -167,7 +167,7 @@ export const useSendAiChatMessage = () => {
         aiChatComposerUploadingFilesFamilyState.atomFamily({ threadId }),
       );
 
-      if (!isDirectMessage && aiChatComposerUploadingFiles.length > 0) {
+      if (aiChatComposerUploadingFiles.length > 0) {
         enqueueToast({
           status: 'error',
           children: t`Wait for the attachments to finish uploading.`,

@@ -74,9 +74,7 @@ export const useSendAiChatMessageToThread = () => {
       const uploadedFilesAtom = aiChatComposerAttachmentsFamilyState.atomFamily(
         { threadId },
       );
-      const aiChatComposerAttachments = isDirectMessage
-        ? []
-        : store.get(uploadedFilesAtom);
+      const aiChatComposerAttachments = store.get(uploadedFilesAtom);
       const fileIds = aiChatComposerAttachments.map(({ fileId }) => fileId);
       const unconfirmedFirstMessageAtom =
         aiChatThreadReplyUnconfirmedFirstMessageFamilyState.atomFamily(
@@ -142,9 +140,7 @@ export const useSendAiChatMessageToThread = () => {
         filename: file.filename,
       }));
 
-      if (!isDirectMessage) {
-        store.set(uploadedFilesAtom, []);
-      }
+      store.set(uploadedFilesAtom, []);
 
       store.set(isSendingMessageAtom, true);
 
