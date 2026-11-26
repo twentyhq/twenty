@@ -9,7 +9,7 @@ const buildHistorySection = (history: TelegramAssistantTurn[]): string[] => {
 
   return [
     [
-      'Earlier in this chat, oldest first:',
+      'Earlier in this Telegram chat, oldest first:',
       ...history.map(
         (turn) => `Member: ${turn.requestText}\nYou: ${turn.responseText}`,
       ),
@@ -39,14 +39,12 @@ const buildPermissionSection = (workspaceMemberId: string): string =>
     'Your tools are limited to what is permitted. A tool you need being absent means the action is not allowed, not that the object is missing, that the workspace is misconfigured or that the Telegram connection is wrong. Say plainly what cannot be done and who to ask; never invite the requester to name the object, paste a record link or otherwise work around it.',
   ].join('\n\n');
 
-export const buildTelegramAssistantPrompt = ({
-  requestText,
+export const buildTelegramAssistantInstructions = ({
   history,
   workspaceMemberId,
   timeoutSeconds,
   workspaceBaseUrl,
 }: {
-  requestText: string;
   history: TelegramAssistantTurn[];
   workspaceMemberId: string;
   timeoutSeconds: number;
@@ -57,5 +55,4 @@ export const buildTelegramAssistantPrompt = ({
     buildRecordReferenceSection(workspaceBaseUrl),
     buildPermissionSection(workspaceMemberId),
     ...buildHistorySection(history),
-    `Request from Telegram:\n${requestText}`,
   ].join('\n\n');

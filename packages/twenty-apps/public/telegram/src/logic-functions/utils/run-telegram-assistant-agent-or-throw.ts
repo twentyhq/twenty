@@ -6,7 +6,7 @@ import { TELEGRAM_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER } from 'src/constants/uni
 import { TelegramAssistantDeadlineError } from 'src/logic-functions/types/telegram-assistant-deadline-error';
 import { TelegramAssistantEmptyResponseError } from 'src/logic-functions/types/telegram-assistant-empty-response-error';
 import { type TelegramAssistantTurn } from 'src/logic-functions/types/telegram-assistant-turn.type';
-import { buildTelegramAssistantPrompt } from 'src/logic-functions/utils/build-telegram-assistant-prompt';
+import { buildTelegramAssistantInstructions } from 'src/logic-functions/utils/build-telegram-assistant-instructions';
 import { buildTelegramAssistantRequestName } from 'src/logic-functions/utils/build-telegram-assistant-request-name';
 import { raceAgainstTimeoutOrThrow } from 'src/logic-functions/utils/race-against-timeout-or-throw';
 
@@ -42,8 +42,8 @@ export const runTelegramAssistantAgentOrThrow = async ({
         key: requestId,
         title: buildTelegramAssistantRequestName(requestText),
       },
-      input: buildTelegramAssistantPrompt({
-        requestText,
+      input: requestText,
+      additionalInstructions: buildTelegramAssistantInstructions({
         history,
         workspaceMemberId,
         workspaceBaseUrl,

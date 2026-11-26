@@ -123,6 +123,7 @@ describe('answering a question from Telegram', () => {
         agentUniversalIdentifier: TELEGRAM_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
         runAsWorkspaceMemberId: 'member-1',
         thread: { key: 'request-1', title: 'How many open deals?' },
+        input: 'How many open deals?',
       }),
     );
     expect(callsTo('sendChatAction')[0].params).toEqual({
@@ -149,9 +150,12 @@ describe('answering a question from Telegram', () => {
     await send({ text: 'How many open deals?', messageId: 1 });
     await send({ text: 'And the biggest one?', messageId: 2 });
 
-    expect(runAgentMock.mock.calls[1][0].input).toContain(
-      `Member: How many open deals?\nYou: ${ANSWER}\n\nRequest from Telegram:\nAnd the biggest one?`,
-    );
+    expect(runAgentMock.mock.calls[1][0]).toMatchObject({
+      input: 'And the biggest one?',
+      additionalInstructions: expect.stringContaining(
+        `Member: How many open deals?\nYou: ${ANSWER}`,
+      ),
+    });
   });
 
   it('answers a message once when Telegram delivers it twice at the same time', async () => {
