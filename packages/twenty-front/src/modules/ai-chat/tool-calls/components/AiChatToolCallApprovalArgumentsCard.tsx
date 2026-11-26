@@ -13,7 +13,6 @@ import { AiChatToolCallApprovalRecord } from '@/ai-chat/tool-calls/components/Ai
 import { AiChatToolCallApprovalRecordFields } from '@/ai-chat/tool-calls/components/AiChatToolCallApprovalRecordFields';
 import { useAnswerToolCallApproval } from '@/ai-chat/tool-calls/hooks/useAnswerToolCallApproval';
 import { useFrontComponentIdByToolName } from '@/ai-chat/tool-calls/hooks/useFrontComponentIdByToolName';
-import { useGetToolIndex } from '@/ai/hooks/useGetToolIndex';
 
 type AiChatToolCallApprovalArgumentsCardProps = {
   toolCallId: string;
@@ -33,14 +32,10 @@ export const AiChatToolCallApprovalArgumentsCard = ({
     unknown
   > | null>(proposal.arguments);
 
-  const { template, objectNameSingular, recordId } = proposal;
+  const { template, objectNameSingular, recordId, labels } = proposal;
 
   const toolFrontComponentId = useFrontComponentIdByToolName().get(
     proposal.toolName,
-  );
-
-  const toolIndexEntry = useGetToolIndex().toolIndex.find(
-    (entry) => entry.name === proposal.toolName,
   );
 
   const argumentsEditor = (
@@ -77,9 +72,7 @@ export const AiChatToolCallApprovalArgumentsCard = ({
             loading={pendingResponse?.decision === 'reject'}
             onClick={reject}
           >
-            {toolIndexEntry?.rejectLabel ??
-              proposal.labels?.reject ??
-              t`Reject`}
+            {labels?.reject ?? t`Reject`}
           </Button>
           <Button
             size="sm"
@@ -94,9 +87,7 @@ export const AiChatToolCallApprovalArgumentsCard = ({
               }
             }}
           >
-            {toolIndexEntry?.approveLabel ??
-              proposal.labels?.approve ??
-              t`Approve`}
+            {labels?.approve ?? t`Approve`}
           </Button>
         </>
       }

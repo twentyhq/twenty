@@ -7765,7 +7765,6 @@ export type TimelineConfiguration = {
 
 export type ToolIndexEntry = {
   __typename?: 'ToolIndexEntry';
-  approveLabel?: Maybe<Scalars['String']['output']>;
   category: Scalars['String']['output'];
   description: Scalars['String']['output'];
   frontComponentId?: Maybe<Scalars['String']['output']>;
@@ -7774,7 +7773,6 @@ export type ToolIndexEntry = {
   label: Scalars['String']['output'];
   name: Scalars['String']['output'];
   objectName?: Maybe<Scalars['String']['output']>;
-  rejectLabel?: Maybe<Scalars['String']['output']>;
   widgetName?: Maybe<Scalars['String']['output']>;
 };
 

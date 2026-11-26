@@ -119,47 +119,6 @@ describe('extractApplicationTranslations', () => {
     });
   });
 
-  it("extracts the labels of a tool's approval card", async () => {
-    await extract({
-      manifest: {
-        ...EMPTY_MANIFEST,
-        logicFunctions: [
-          {
-            universalIdentifier: 'respond-to-booking',
-            sourceHandlerPath: 'src/respond-to-booking.ts',
-            builtHandlerPath: 'src/respond-to-booking.mjs',
-            builtHandlerChecksum: '',
-            handlerName: 'default',
-            toolTriggerSettings: {
-              approval: {
-                approveLabel: 'Send response',
-                rejectLabel: 'Not now',
-              },
-            },
-          },
-        ],
-      },
-      scaffoldLocale: 'fr-FR',
-    });
-
-    expect(await readCatalog('en.json')).toEqual({
-      'logicFunction.toolTriggerSettings.approval.approveLabel': {
-        'Send response': 'Send response',
-      },
-      'logicFunction.toolTriggerSettings.approval.rejectLabel': {
-        'Not now': 'Not now',
-      },
-    });
-    expect(await readCatalog('fr-FR.json')).toEqual({
-      'logicFunction.toolTriggerSettings.approval.approveLabel': {
-        'Send response': '',
-      },
-      'logicFunction.toolTriggerSettings.approval.rejectLabel': {
-        'Not now': '',
-      },
-    });
-  });
-
   it('scaffolds a target catalog and preserves it on repeated extraction', async () => {
     await extract({ scaffoldLocale: 'fr-FR' });
     expect(await readCatalog('fr-FR.json')).toEqual({

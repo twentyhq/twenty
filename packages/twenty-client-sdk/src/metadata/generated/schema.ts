@@ -3900,7 +3900,6 @@ export interface TimelineConfiguration {
 }
 
 export interface ToolIndexEntry {
-    approveLabel?: Scalars['String']
     category: Scalars['String']
     description: Scalars['String']
     frontComponentId?: Scalars['String']
@@ -3909,7 +3908,6 @@ export interface ToolIndexEntry {
     label: Scalars['String']
     name: Scalars['String']
     objectName?: Scalars['String']
-    rejectLabel?: Scalars['String']
     widgetName?: Scalars['String']
     __typename: 'ToolIndexEntry'
 }
@@ -8994,7 +8992,6 @@ export interface TimelineConfigurationGenqlSelection{
 }
 
 export interface ToolIndexEntryGenqlSelection{
-    approveLabel?: boolean | number
     category?: boolean | number
     description?: boolean | number
     frontComponentId?: boolean | number
@@ -9003,7 +9000,6 @@ export interface ToolIndexEntryGenqlSelection{
     label?: boolean | number
     name?: boolean | number
     objectName?: boolean | number
-    rejectLabel?: boolean | number
     widgetName?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number

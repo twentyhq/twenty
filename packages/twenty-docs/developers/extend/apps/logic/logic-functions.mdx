@@ -844,8 +844,6 @@ export default defineLogicFunction({
 
 The labels only rename the buttons: approve still runs this tool, and reject never runs anything. They also word the person's answer in the conversation, such as `Not now "Meeting request from Maya".` When the person has a business choice to make, such as accepting or declining a meeting, let the front component collect it with `setToolCallArguments` and keep one tool that handles every answer. Pick an approve label that fits every answer, like **Send response** rather than **Accept**, and a reject label that does not sound like an action, like **Not now** rather than **Decline**.
 
-Translate the labels like your other manifest labels: `twenty app translations extract` collects them, and each person sees the buttons in their own language. See [Translations](/developers/extend/apps/operations/translations).
-
 <Note>
   If the identifier matches no front component in the app, the chat falls back
   to the default step row. Front components in the AI chat run under the same

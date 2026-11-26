@@ -1,57 +1,29 @@
 import { buildLogicFunctionToolApproval } from 'src/engine/core-modules/tool-provider/utils/build-logic-function-tool-approval.util';
 
-const keepLabel = ({ message }: { message: string }) => message;
-
 describe('buildLogicFunctionToolApproval', () => {
   it('gives nothing to a tool that does not word its approval', () => {
+    expect(buildLogicFunctionToolApproval(undefined)).toBeUndefined();
     expect(
-      buildLogicFunctionToolApproval({
-        approvalSettings: undefined,
-        translateLabel: keepLabel,
-      }),
-    ).toBeUndefined();
-    expect(
-      buildLogicFunctionToolApproval({
-        approvalSettings: { approveLabel: '', rejectLabel: '' },
-        translateLabel: keepLabel,
-      }),
+      buildLogicFunctionToolApproval({ approveLabel: '', rejectLabel: '' }),
     ).toBeUndefined();
   });
 
-  it('keeps one label when the tool gives only one', () => {
+  it('keeps the labels the tool gave', () => {
     expect(
       buildLogicFunctionToolApproval({
-        approvalSettings: { rejectLabel: 'Not now' },
-        translateLabel: keepLabel,
+        approveLabel: 'Send response',
+        rejectLabel: 'Not now',
       }),
     ).toEqual({
       template: 'generic',
-      labels: { reject: 'Not now' },
+      labels: { approve: 'Send response', reject: 'Not now' },
     });
   });
 
-  it('translates each label with the context the CLI extracts it under', () => {
-    const translationByContext: Record<string, Record<string, string>> = {
-      'logicFunction.toolTriggerSettings.approval.approveLabel': {
-        'Send response': 'Envoyer la réponse',
-      },
-      'logicFunction.toolTriggerSettings.approval.rejectLabel': {
-        'Not now': 'Plus tard',
-      },
-    };
-
-    expect(
-      buildLogicFunctionToolApproval({
-        approvalSettings: {
-          approveLabel: 'Send response',
-          rejectLabel: 'Not now',
-        },
-        translateLabel: ({ message, context }) =>
-          translationByContext[context][message],
-      }),
-    ).toEqual({
+  it('keeps one label when the tool gives only one', () => {
+    expect(buildLogicFunctionToolApproval({ rejectLabel: 'Not now' })).toEqual({
       template: 'generic',
-      labels: { approve: 'Envoyer la réponse', reject: 'Plus tard' },
+      labels: { reject: 'Not now' },
     });
   });
 });

@@ -43,12 +43,6 @@ export class ToolIndexEntryDTO {
   @Field({ nullable: true })
   frontComponentId?: string;
 
-  @Field({ nullable: true })
-  approveLabel?: string;
-
-  @Field({ nullable: true })
-  rejectLabel?: string;
-
   @Field(() => graphqlTypeJson, { nullable: true })
   inputSchema?: object;
 }
@@ -82,22 +76,13 @@ export class ToolIndexResolver {
     application: FlatApplication | undefined,
     @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
   ): Promise<ToolIndexEntryDTO[]> {
-    const toolIndex = await this.toolRegistryService.buildToolIndex(
-      workspace.id,
-      {
-        userId: user?.id,
-        userWorkspaceId,
-        locale,
-        authContext: getWorkspaceAuthContext(),
-        application,
-      },
-    );
-
-    return toolIndex.map((entry) => ({
-      ...entry,
-      approveLabel: entry.approval?.labels?.approve,
-      rejectLabel: entry.approval?.labels?.reject,
-    }));
+    return this.toolRegistryService.buildToolIndex(workspace.id, {
+      userId: user?.id,
+      userWorkspaceId,
+      locale,
+      authContext: getWorkspaceAuthContext(),
+      application,
+    });
   }
 
   // On demand, so listing the tool index does not compute every tool's schema.

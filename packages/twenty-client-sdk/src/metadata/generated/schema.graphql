@@ -5326,7 +5326,6 @@ type TimelineConfiguration {
 }
 
 type ToolIndexEntry {
-  approveLabel: String
   category: String!
   description: String!
   frontComponentId: String
@@ -5335,7 +5334,6 @@ type ToolIndexEntry {
   label: String!
   name: String!
   objectName: String
-  rejectLabel: String
   widgetName: String
 }
 

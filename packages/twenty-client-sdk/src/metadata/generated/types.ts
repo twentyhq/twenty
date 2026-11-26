@@ -14289,9 +14289,6 @@ export default {
             ]
         },
         "ToolIndexEntry": {
-            "approveLabel": [
-                4
-            ],
             "category": [
                 4
             ],
@@ -14314,9 +14311,6 @@ export default {
                 4
             ],
             "objectName": [
-                4
-            ],
-            "rejectLabel": [
                 4
             ],
             "widgetName": [

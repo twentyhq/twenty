@@ -1,8 +1,6 @@
-import { isNonEmptyString } from '@sniptt/guards';
 import { type Manifest } from 'twenty-shared/application';
 import {
   getMetadataLabelContext,
-  TOOL_TRIGGER_APPROVAL_LABEL_CONTEXTS,
   TRANSLATABLE_PROPERTIES_BY_METADATA_NAME,
   type TranslatableMetadataName,
 } from 'twenty-shared/i18n';
@@ -95,21 +93,6 @@ export const collectTranslatableStrings = (
   for (const pageLayoutTab of manifest.pageLayoutTabs ?? []) {
     for (const widget of pageLayoutTab.widgets ?? []) {
       addEntityStrings(widget, 'pageLayoutWidget');
-    }
-  }
-
-  for (const logicFunction of manifest.logicFunctions ?? []) {
-    for (const settingName of ['approveLabel', 'rejectLabel'] as const) {
-      const message =
-        logicFunction.toolTriggerSettings?.approval?.[settingName];
-      const context = TOOL_TRIGGER_APPROVAL_LABEL_CONTEXTS[settingName];
-
-      if (isNonEmptyString(message)) {
-        descriptorByKey.set(JSON.stringify([context, message]), {
-          message,
-          context,
-        });
-      }
     }
   }
 

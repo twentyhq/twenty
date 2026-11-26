@@ -1,15 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
-import { SOURCE_LOCALE } from 'twenty-shared/translations';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import {
   buildToolInputJsonSchema,
   DEFAULT_TOOL_INPUT_SCHEMA,
 } from 'twenty-shared/logic-function';
 
 import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
-import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
-import { translateStandardLabel } from 'src/engine/core-modules/i18n/utils/translate-standard-label.util';
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
@@ -18,7 +15,6 @@ import { ToolCategory } from 'twenty-shared/ai';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { buildLogicFunctionToolApproval } from 'src/engine/core-modules/tool-provider/utils/build-logic-function-tool-approval.util';
@@ -30,8 +26,6 @@ export class LogicFunctionToolProvider implements ToolProvider {
 
   constructor(
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-    private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
-    private readonly i18nService: I18nService,
   ) {}
 
   async isAvailable(_context: ToolProviderContext): Promise<boolean> {
@@ -100,38 +94,13 @@ export class LogicFunctionToolProvider implements ToolProvider {
         }),
     );
 
-    const locale = context.locale ?? SOURCE_LOCALE;
-    const labeledApplicationIds = logicFunctionsWithSchema
-      .filter((logicFunction) =>
-        isDefined(logicFunction.toolTriggerSettings?.approval),
-      )
-      .map((logicFunction) => logicFunction.applicationId);
-    const { catalogByApplicationId } =
-      locale === SOURCE_LOCALE || !isNonEmptyArray(labeledApplicationIds)
-        ? { catalogByApplicationId: undefined }
-        : await this.applicationTranslationCatalogService.getCatalogs({
-            applicationIds: labeledApplicationIds,
-            locale,
-            workspaceId: context.workspaceId,
-          });
-    const i18nInstance = this.i18nService.getI18nInstance(locale);
-
     const descriptors: (ToolIndexEntry | ToolDescriptor)[] = [];
 
     for (const logicFunction of logicFunctionsWithSchema) {
       const toolName = buildLogicFunctionToolName(logicFunction.name);
-      const approval = buildLogicFunctionToolApproval({
-        approvalSettings: logicFunction.toolTriggerSettings?.approval,
-        translateLabel: (label) =>
-          translateStandardLabel({
-            sourceValue: label.message,
-            context: label.context,
-            applicationCatalog: catalogByApplicationId?.get(
-              logicFunction.applicationId,
-            ),
-            i18nInstance,
-          }),
-      });
+      const approval = buildLogicFunctionToolApproval(
+        logicFunction.toolTriggerSettings?.approval,
+      );
 
       const base: ToolIndexEntry = {
         name: toolName,
