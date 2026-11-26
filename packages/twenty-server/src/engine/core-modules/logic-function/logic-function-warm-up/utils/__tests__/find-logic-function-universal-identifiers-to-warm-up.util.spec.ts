@@ -1,4 +1,4 @@
-import { findLogicFunctionUniversalIdentifiersToWarmUp } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/utils/find-logic-function-universal-identifiers-to-warm-up.util';
+import { findLogicFunctionUniversalIdentifiersToWarmUp } from 'src/engine/core-modules/logic-function/logic-function-warm-up/utils/find-logic-function-universal-identifiers-to-warm-up.util';
 import {
   LogicFunctionExecutionMode,
   LogicFunctionRuntime,

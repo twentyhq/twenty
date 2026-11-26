@@ -14,8 +14,10 @@ import { isLogicFunctionReadyForPrebuiltInstall } from 'src/engine/metadata-modu
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
-export class LogicFunctionPrebuiltWarmUpService {
-  private readonly logger = new Logger(LogicFunctionPrebuiltWarmUpService.name);
+export class LogicFunctionPrebuiltInstallService {
+  private readonly logger = new Logger(
+    LogicFunctionPrebuiltInstallService.name,
+  );
 
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -69,7 +71,7 @@ export class LogicFunctionPrebuiltWarmUpService {
     }
   }
 
-  async warmUpLogicFunction({
+  async installPrebuiltBundleIfReady({
     workspaceId,
     applicationId,
     logicFunctionUniversalIdentifier,
@@ -77,7 +79,7 @@ export class LogicFunctionPrebuiltWarmUpService {
     workspaceId: string;
     applicationId: string;
     logicFunctionUniversalIdentifier: string;
-  }): Promise<void> {
+  }): Promise<FlatLogicFunction | undefined> {
     const { flatLogicFunctionMaps, flatApplicationMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatLogicFunctionMaps',
@@ -88,10 +90,10 @@ export class LogicFunctionPrebuiltWarmUpService {
 
     if (!isDefined(flatApplication)) {
       this.logger.warn(
-        `Skipping prebuilt warm-up: application ${applicationId} not found in workspace ${workspaceId}`,
+        `Skipping prebuilt install: application ${applicationId} not found in workspace ${workspaceId}`,
       );
 
-      return;
+      return undefined;
     }
 
     const flatLogicFunction =
@@ -104,12 +106,14 @@ export class LogicFunctionPrebuiltWarmUpService {
       flatLogicFunction.applicationId !== applicationId ||
       !isLogicFunctionReadyForPrebuiltInstall(flatLogicFunction)
     ) {
-      return;
+      return undefined;
     }
 
     await this.ensurePrebuiltBundleInstalled({
       flatLogicFunction,
       flatApplication,
     });
+
+    return flatLogicFunction;
   }
 }

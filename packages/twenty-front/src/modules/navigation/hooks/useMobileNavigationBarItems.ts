@@ -6,6 +6,7 @@ import { type InboxChatAttention } from '@/inbox/types/InboxChatAttention';
 import { getNavigationMenuTabFolderKey } from '@/navigation-menu-item/common/utils/getNavigationMenuTabFolderKey';
 import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
 import { useHasAiChatSectionInSidebar } from '@/navigation-menu-item/display/hooks/useHasAiChatSectionInSidebar';
+import { useGetNavigationMenuTabLabel } from '@/navigation-menu-item/display/hooks/useGetNavigationMenuTabLabel';
 import { useGetNavigationMenuTabAttentionLabel } from '@/navigation-menu-item/display/hooks/useGetNavigationMenuTabAttentionLabel';
 import { useNavigationMenuChatAttention } from '@/navigation-menu-item/display/hooks/useNavigationMenuChatAttention';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
@@ -92,6 +93,7 @@ export const useMobileNavigationBarItems = (): {
     useNavigationMenuChatAttention();
   const getNavigationMenuTabAttentionLabel =
     useGetNavigationMenuTabAttentionLabel();
+  const getNavigationMenuTabLabel = useGetNavigationMenuTabLabel();
   const setCurrentNavigationMenuTabId = useSetAtomState(
     currentNavigationMenuTabIdState,
   );
@@ -135,7 +137,7 @@ export const useMobileNavigationBarItems = (): {
     setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
     setCurrentNavigationMenuTabId(tabId);
 
-    if (isReopeningCurrentTab) {
+    if (isReopeningCurrentTab || !isCustomizableSidebarEnabled) {
       store.set(
         currentNavigationMenuItemFolderIdFamilyState.atomFamily(
           getNavigationMenuTabFolderKey(tabId),
@@ -219,7 +221,7 @@ export const useMobileNavigationBarItems = (): {
         return {
           name: `tab-${tab.id}`,
           label: getNavigationMenuTabAttentionLabel({
-            tabName: tab.name,
+            tabName: getNavigationMenuTabLabel(tab),
             attention,
           }),
           Icon: getIcon(tab.icon ?? NAVIGATION_MENU_TAB_ICON_DEFAULT),

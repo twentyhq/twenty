@@ -51,8 +51,8 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { AiAgentTriggerModule } from 'src/engine/metadata-modules/ai/ai-agent-trigger/ai-agent-trigger.module';
 import { AiChatModule } from 'src/engine/metadata-modules/ai/ai-chat/ai-chat.module';
-import { LogicFunctionPrebuiltWarmUpModule } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/logic-function-prebuilt-warm-up.module';
-import { WarmUpLogicFunctionJob } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/jobs/warm-up-logic-function.job';
+import { LogicFunctionPrebuiltInstallModule } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-install/logic-function-prebuilt-install.module';
+import { WarmUpLogicFunctionJob } from 'src/engine/core-modules/logic-function/logic-function-warm-up/jobs/warm-up-logic-function.job';
 import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/logic-function.module';
 import { NavigationMenuItemModule } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
@@ -106,7 +106,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     AiAgentTriggerModule,
     AiChatModule,
     LogicFunctionModule,
-    LogicFunctionPrebuiltWarmUpModule,
+    LogicFunctionPrebuiltInstallModule,
     EnterpriseModule,
     EmailingModule,
     ApplicationInstallModule,

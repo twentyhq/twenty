@@ -89,7 +89,7 @@ export const WorkflowVariablesDropdown = ({
     setSelectedStep(undefined);
   };
 
-  if (disabled === true || noAvailableVariables) {
+  if (disabled || noAvailableVariables) {
     return (
       <Tooltip
         content={t`No variables are available yet. Variables come from the workflow trigger and previous steps.`}

@@ -80,11 +80,10 @@ export const WorkflowEditActionEmailBase = ({
   const { formData, handleFieldChange, handleFieldsChange, saveAction } =
     useEmailForm({
       action,
-      onActionUpdate:
-        actionOptions.readonly === true
-          ? undefined
-          : actionOptions.onActionUpdate,
-      readonly: actionOptions.readonly === true,
+      onActionUpdate: actionOptions.readonly
+        ? undefined
+        : actionOptions.onActionUpdate,
+      readonly: actionOptions.readonly ?? false,
     });
 
   const [visibleAdvancedFields, setVisibleAdvancedFields] = useState<{
