@@ -2,6 +2,7 @@ import { msg } from '@lingui/core/macro';
 import { compositeTypeDefinitions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { PROVISIONED_COMPOSITE_PROPERTIES } from 'src/engine/metadata-modules/field-metadata/constants/provisioned-composite-properties.constant';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
@@ -29,9 +30,12 @@ const getReservedCompositeFieldNames = (
           return [];
         }
 
-        return compositeType.properties.map((property) =>
-          computeCompositeColumnName(base, property),
-        );
+        return [
+          ...compositeType.properties,
+          ...(PROVISIONED_COMPOSITE_PROPERTIES[
+            universalFlatFieldMetadata.type
+          ] ?? []),
+        ].map((property) => computeCompositeColumnName(base, property));
       }
 
       return [];

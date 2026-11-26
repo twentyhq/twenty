@@ -55,7 +55,7 @@ import {
   type WorkspaceMigrationActionRunnerContext,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { fieldMetadataTypeToColumnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/field-metadata-type-to-column-type.util';
-import { buildServerOnlyCompositeColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/build-server-only-composite-column-definitions.util';
+import { buildProvisionedCompositeColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/build-provisioned-composite-column-definitions.util';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
 import {
@@ -510,13 +510,13 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         });
       }
 
-      await this.addMissingServerOnlyCompositeColumns({
+      await this.addMissingProvisionedCompositeColumns({
         flatFieldMetadata,
         queryRunner,
         schemaName,
         tableName,
       });
-      await this.renameServerOnlyCompositeColumns({
+      await this.renameProvisionedCompositeColumns({
         flatFieldMetadata,
         queryRunner,
         schemaName,
@@ -567,7 +567,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
   }
 
   // A workspace its provisioning command has not reached lacks these columns, and renaming a missing column fails.
-  private async addMissingServerOnlyCompositeColumns({
+  private async addMissingProvisionedCompositeColumns({
     flatFieldMetadata,
     queryRunner,
     schemaName,
@@ -582,7 +582,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       queryRunner,
       schemaName,
       tableName,
-      columnDefinitions: buildServerOnlyCompositeColumnDefinitions({
+      columnDefinitions: buildProvisionedCompositeColumnDefinitions({
         fieldType: flatFieldMetadata.type,
         fieldName: flatFieldMetadata.name,
       }),
@@ -590,7 +590,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     });
   }
 
-  private async renameServerOnlyCompositeColumns({
+  private async renameProvisionedCompositeColumns({
     flatFieldMetadata,
     queryRunner,
     schemaName,
@@ -603,11 +603,11 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     tableName: string;
     toName: string;
   }) {
-    const fromColumnDefinitions = buildServerOnlyCompositeColumnDefinitions({
+    const fromColumnDefinitions = buildProvisionedCompositeColumnDefinitions({
       fieldType: flatFieldMetadata.type,
       fieldName: flatFieldMetadata.name,
     });
-    const toColumnDefinitions = buildServerOnlyCompositeColumnDefinitions({
+    const toColumnDefinitions = buildProvisionedCompositeColumnDefinitions({
       fieldType: flatFieldMetadata.type,
       fieldName: toName,
     });

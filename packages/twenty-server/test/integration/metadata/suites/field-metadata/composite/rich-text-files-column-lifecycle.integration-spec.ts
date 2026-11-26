@@ -31,7 +31,7 @@ const findColumns = async (
 const findColumnNames = async (columnNamePrefix: string): Promise<string[]> =>
   (await findColumns(columnNamePrefix)).map(({ columnName }) => columnName);
 
-describe('Rich text field fileIds column lifecycle', () => {
+describe('Rich text field files column lifecycle', () => {
   let objectMetadataId = '';
   let fieldMetadataId = '';
 
@@ -64,7 +64,7 @@ describe('Rich text field fileIds column lifecycle', () => {
     });
   });
 
-  it('should create the fileIds column with a rich text field', async () => {
+  it('should create the files column with a rich text field', async () => {
     const {
       data: { createOneField },
     } = await createOneFieldMetadata({
@@ -81,36 +81,33 @@ describe('Rich text field fileIds column lifecycle', () => {
 
     expect(await findColumns('summary')).toEqual([
       { columnName: 'summaryBlocknote', dataType: 'text' },
+      { columnName: 'summaryFiles', dataType: 'jsonb' },
       { columnName: 'summaryMarkdown', dataType: 'text' },
       { columnName: 'summaryTiptap', dataType: 'text' },
-      { columnName: 'summary_fileIds', dataType: 'jsonb' },
     ]);
   });
 
-  it('should accept a field named after the rich text field, whose column the fileIds column cannot shadow', async () => {
-    await createOneFieldMetadata({
-      expectToFail: false,
+  it('should refuse a field whose name is the files column of the rich text field', async () => {
+    const { errors } = await createOneFieldMetadata({
+      expectToFail: true,
       input: {
-        name: 'summaryFileIds',
-        label: 'Summary file ids',
+        name: 'summaryFiles',
+        label: 'Summary files',
         type: FieldMetadataType.TEXT,
         objectMetadataId,
       },
       gqlFields: 'id',
     });
 
-    expect(await findColumnNames('summary')).toEqual([
-      'summaryBlocknote',
-      'summaryFileIds',
-      'summaryMarkdown',
-      'summaryTiptap',
-      'summary_fileIds',
+    expect(errors[0].extensions.code).toBe('METADATA_VALIDATION_FAILED');
+    expect(await findColumns('summaryFiles')).toEqual([
+      { columnName: 'summaryFiles', dataType: 'jsonb' },
     ]);
   });
 
-  it('should rename a field whose fileIds column was not provisioned yet', async () => {
+  it('should rename a field whose files column was not provisioned yet', async () => {
     await global.testDataSource.query(
-      `ALTER TABLE "${SCHEMA}"."${TABLE_NAME}" DROP COLUMN "summary_fileIds"`,
+      `ALTER TABLE "${SCHEMA}"."${TABLE_NAME}" DROP COLUMN "summaryFiles"`,
     );
 
     await updateOneFieldMetadata({
@@ -124,14 +121,14 @@ describe('Rich text field fileIds column lifecycle', () => {
 
     expect(await findColumnNames('outline')).toEqual([
       'outlineBlocknote',
+      'outlineFiles',
       'outlineMarkdown',
       'outlineTiptap',
-      'outline_fileIds',
     ]);
-    expect(await findColumnNames('summary')).toEqual(['summaryFileIds']);
+    expect(await findColumnNames('summary')).toEqual([]);
   });
 
-  it('should rename the fileIds column with the field', async () => {
+  it('should rename the files column with the field', async () => {
     await updateOneFieldMetadata({
       expectToFail: false,
       input: {
@@ -144,13 +141,13 @@ describe('Rich text field fileIds column lifecycle', () => {
     expect(await findColumnNames('outline')).toEqual([]);
     expect(await findColumnNames('recap')).toEqual([
       'recapBlocknote',
+      'recapFiles',
       'recapMarkdown',
       'recapTiptap',
-      'recap_fileIds',
     ]);
   });
 
-  it('should drop the fileIds column with the field', async () => {
+  it('should drop the files column with the field', async () => {
     await updateOneFieldMetadata({
       expectToFail: false,
       input: {
@@ -165,6 +162,5 @@ describe('Rich text field fileIds column lifecycle', () => {
     });
 
     expect(await findColumnNames('recap')).toEqual([]);
-    expect(await findColumnNames('summary')).toEqual(['summaryFileIds']);
   });
 });
