@@ -948,10 +948,13 @@ describe('call recorder app lifecycle (integration)', () => {
   };
 
   beforeAll(async () => {
-    client = new CoreApiClient();
     workspaceId = readWorkspaceIdFromApiKey();
     applicationAccessToken = await fetchApplicationAccessToken();
     await waitForCalendarChannelsAccess(applicationAccessToken);
+    // A user can no longer write calendar events or their call recordings; the application can.
+    client = new CoreApiClient({
+      headers: { Authorization: `Bearer ${applicationAccessToken}` },
+    });
     availableCalendarEventFixtures = await discoverVisibleCalendarEventFixtures(
       applicationAccessToken,
     );
@@ -981,13 +984,8 @@ describe('call recorder app lifecycle (integration)', () => {
     vi.stubEnv('RECALL_API_KEY', 'recall-api-key');
     vi.stubEnv('RECALL_REGION', 'us-west-2');
     vi.stubEnv('CALL_RECORDER_STYLE', 'NONE');
-    // Logic functions normally run with an app access token; the workspace
-    // API key is a token with the same workspaceId claim.
-    vi.stubEnv(
-      'TWENTY_APP_ACCESS_TOKEN',
-      process.env[WORKSPACE_API_KEY_ENV] ?? '',
-    );
-    // The calendar channels endpoint only answers the application itself.
+    // Background runs have no user behind them, so both tokens are the application's.
+    vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', applicationAccessToken);
     vi.stubEnv('TWENTY_APP_APPLICATION_ACCESS_TOKEN', applicationAccessToken);
   });
 
