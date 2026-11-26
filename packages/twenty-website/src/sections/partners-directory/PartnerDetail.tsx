@@ -2,7 +2,6 @@ import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import {
   type Icon,
-  IconArrowLeft,
   IconBrandGithub,
   IconBrandLinkedin,
   IconBrandX,
@@ -28,13 +27,11 @@ import { SERVED_GEO_LABELS } from '@/partners-marketplace/served-geo-labels';
 import { SPOKEN_LANGUAGE_LABELS } from '@/partners-marketplace/spoken-language-labels';
 import { titleCaseFallback } from '@/partners-marketplace/title-case-fallback';
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
-import { LocalizedLink } from '@/platform/i18n/LocalizedLink';
 import {
   color,
   DURATION,
   EASING,
   fontFamily,
-  fontSize,
   HERO_COMPOSITION,
   mediaUp,
   MENU_HEIGHT_PX,
@@ -55,6 +52,7 @@ import {
   SectionStack,
   Signoff,
 } from '@/ui';
+import { BackLink } from '@/ui/BackLink';
 
 import { PartnerCard } from './PartnerCard';
 import { PartnerMark } from './PartnerMark';
@@ -110,25 +108,6 @@ const BandMark = styled.div`
 
 // Under the band, the title sits a fixed step below the mark at every width:
 // the section's own top padding minus the mark's half that hangs into it.
-// Back to the list this page came from: the case studies' back link (an
-// arrow and a quiet label), shown at every width here.
-const BackLink = styled(LocalizedLink)`
-  align-items: center;
-  align-self: flex-start;
-  color: ${semanticColor.inkMuted};
-  display: inline-flex;
-  font-family: ${fontFamily('sans')};
-  font-size: ${fontSize(4)};
-  gap: ${spacing(1)};
-  margin-bottom: ${spacing(3)};
-  text-decoration: none;
-  transition: color ${DURATION.xxs} ${EASING.gentle};
-
-  &:hover {
-    color: ${semanticColor.ink};
-  }
-`;
-
 const Header = styled.div`
   margin-top: calc(
     ${MARK_SIZE_PX / 2}px + ${spacing(6)} - ${spacing(RHYTHM.section.top.base)}
@@ -418,10 +397,7 @@ export function PartnerDetail({
       <SectionShell connectsUp rhythm="section" scheme="light">
         <SectionStack>
           <Header>
-            <BackLink href="/partners">
-              <IconArrowLeft aria-hidden size={16} stroke={1.5} />
-              {i18n._(msg`All partners`)}
-            </BackLink>
+            <BackLink href="/partners">{i18n._(msg`All partners`)}</BackLink>
             <Heading as="h1" size="md" weight="light" wrap="normal">
               {partner.name}
             </Heading>
