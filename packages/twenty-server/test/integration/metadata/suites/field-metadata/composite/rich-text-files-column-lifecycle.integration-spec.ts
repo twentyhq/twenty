@@ -105,6 +105,48 @@ describe('Rich text field files column lifecycle', () => {
     ]);
   });
 
+  it('should refuse to create or rename a rich text field whose files column is the name of another field', async () => {
+    await createOneFieldMetadata({
+      expectToFail: false,
+      input: {
+        name: 'agendaFiles',
+        label: 'Agenda files',
+        type: FieldMetadataType.TEXT,
+        objectMetadataId,
+      },
+      gqlFields: 'id',
+    });
+
+    const { errors: createErrors } = await createOneFieldMetadata({
+      expectToFail: true,
+      input: {
+        name: 'agenda',
+        label: 'Agenda',
+        type: FieldMetadataType.RICH_TEXT,
+        objectMetadataId,
+      },
+      gqlFields: 'id',
+    });
+    const { errors: renameErrors } = await updateOneFieldMetadata({
+      expectToFail: true,
+      input: {
+        idToUpdate: fieldMetadataId,
+        updatePayload: { name: 'agenda', label: 'Agenda' },
+      },
+      gqlFields: 'id',
+    });
+
+    expect(createErrors[0].extensions.code).toBe('METADATA_VALIDATION_FAILED');
+    expect(renameErrors[0].extensions.code).toBe('METADATA_VALIDATION_FAILED');
+    expect(await findColumnNames('agenda')).toEqual(['agendaFiles']);
+    expect(await findColumnNames('summary')).toEqual([
+      'summaryBlocknote',
+      'summaryFiles',
+      'summaryMarkdown',
+      'summaryTiptap',
+    ]);
+  });
+
   it('should rename a field whose files column was not provisioned yet', async () => {
     await global.testDataSource.query(
       `ALTER TABLE "${SCHEMA}"."${TABLE_NAME}" DROP COLUMN "summaryFiles"`,

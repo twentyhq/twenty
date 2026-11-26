@@ -18,6 +18,7 @@ import { isFlatFieldMetadataNameSyncedWithLabel } from 'src/engine/metadata-modu
 import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { validateFlatFieldMetadataDisabledFieldPermissionActions } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-disabled-field-permission-actions.util';
 import { validateFlatFieldMetadataFormula } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-formula.util';
+import { validateCompositeFlatFieldMetadataColumnNamesAvailability } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-composite-flat-field-metadata-column-names-availability.util';
 import { validateFlatFieldMetadataNameAvailability } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util';
 import { validateFlatFieldMetadataNameReadByFormulas } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-read-by-formulas.util';
 import { validateFlatFieldMetadataName } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util';
@@ -219,6 +220,12 @@ export class FlatFieldMetadataValidatorService {
           universalFlatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
           universalFlatObjectMetadata: flatObjectMetadata,
           buildOptions,
+        }),
+        ...validateCompositeFlatFieldMetadataColumnNamesAvailability({
+          name: flatFieldMetadataToValidate.name,
+          type: flatFieldMetadataToValidate.type,
+          universalFlatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
+          universalFlatObjectMetadata: flatObjectMetadata,
         }),
         ...validateFlatFieldMetadataNameReadByFormulas({
           universalIdentifier: flatFieldMetadataToValidate.universalIdentifier,
@@ -469,6 +476,12 @@ export class FlatFieldMetadataValidatorService {
           universalFlatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
           universalFlatObjectMetadata: parentFlatObjectMetadata,
           buildOptions,
+        }),
+        ...validateCompositeFlatFieldMetadataColumnNamesAvailability({
+          name: flatFieldMetadataToValidate.name,
+          type: flatFieldMetadataToValidate.type,
+          universalFlatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
+          universalFlatObjectMetadata: parentFlatObjectMetadata,
         }),
       );
 

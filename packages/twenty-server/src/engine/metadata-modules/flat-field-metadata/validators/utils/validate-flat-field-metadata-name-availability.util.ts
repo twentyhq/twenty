@@ -1,11 +1,7 @@
 import { msg } from '@lingui/core/macro';
-import { compositeTypeDefinitions } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
-import { PROVISIONED_COMPOSITE_PROPERTIES } from 'src/engine/metadata-modules/field-metadata/constants/provisioned-composite-properties.constant';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
-import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
-import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
+import { computeCompositeFieldColumnNames } from 'src/engine/metadata-modules/field-metadata/utils/compute-composite-field-column-names.util';
 import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps.util';
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 import { getObjectFieldNamesAndJoinColumnNames } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-object-field-names-and-join-column-names.util';
@@ -17,31 +13,10 @@ import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-mana
 
 const getReservedCompositeFieldNames = (
   objectUniversalFlatFieldMetadatas: UniversalFlatFieldMetadata[],
-): string[] => {
-  return objectUniversalFlatFieldMetadatas.flatMap(
-    (universalFlatFieldMetadata) => {
-      if (isCompositeFieldMetadataType(universalFlatFieldMetadata.type)) {
-        const base = universalFlatFieldMetadata.name;
-        const compositeType = compositeTypeDefinitions.get(
-          universalFlatFieldMetadata.type,
-        );
-
-        if (!isDefined(compositeType)) {
-          return [];
-        }
-
-        return [
-          ...compositeType.properties,
-          ...(PROVISIONED_COMPOSITE_PROPERTIES[
-            universalFlatFieldMetadata.type
-          ] ?? []),
-        ].map((property) => computeCompositeColumnName(base, property));
-      }
-
-      return [];
-    },
+): string[] =>
+  objectUniversalFlatFieldMetadatas.flatMap(({ name, type }) =>
+    computeCompositeFieldColumnNames({ name, type }),
   );
-};
 
 export const validateFlatFieldMetadataNameAvailability = ({
   name,
