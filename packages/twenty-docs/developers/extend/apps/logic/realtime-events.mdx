@@ -153,5 +153,6 @@ Delivery is best effort: an occurrence emitted while a client is disconnected is
 | Events per visitor token | 20 |
 | Visitor token lifetime | 15 minutes by default, 24 hours at most |
 | Open streams per visitor token | 3 |
+| Data waiting for a visitor that stopped reading | 1 MB, then the stream is closed |
 | Subscriptions per front component stream | 20 |
 | `anonymousId` | 1 to 128 characters among `A-Z a-z 0-9 _ -` |

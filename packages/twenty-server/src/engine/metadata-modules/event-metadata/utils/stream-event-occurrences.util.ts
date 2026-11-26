@@ -2,7 +2,10 @@ import { type Request, type Response } from 'express';
 import { type EventOccurrence } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
-import { EVENT_STREAM_HEARTBEAT_INTERVAL_MS } from 'src/engine/metadata-modules/event-metadata/constants/event-stream.constant';
+import {
+  EVENT_STREAM_HEARTBEAT_INTERVAL_MS,
+  EVENT_STREAM_MAX_BUFFERED_BYTES,
+} from 'src/engine/metadata-modules/event-metadata/constants/event-stream.constant';
 
 export const streamEventOccurrences = async ({
   request,
@@ -25,11 +28,6 @@ export const streamEventOccurrences = async ({
   const timers: NodeJS.Timeout[] = [];
   const occurrencesReceivedBeforeStreaming: EventOccurrence[] = [];
 
-  const writeOccurrence = (occurrence: EventOccurrence) =>
-    response.write(
-      `id: ${occurrence.id}\nevent: occurrence\ndata: ${JSON.stringify(occurrence)}\n\n`,
-    );
-
   const close = () => {
     if (isClosed) {
       return;
@@ -44,6 +42,23 @@ export const streamEventOccurrences = async ({
       response.end();
     }
   };
+
+  // Delivery is best effort: a client that stops reading is closed and refetches once it reconnects
+  const write = (chunk: string) => {
+    if (response.writableLength > EVENT_STREAM_MAX_BUFFERED_BYTES) {
+      close();
+      response.destroy();
+
+      return;
+    }
+
+    response.write(chunk);
+  };
+
+  const writeOccurrence = (occurrence: EventOccurrence) =>
+    write(
+      `id: ${occurrence.id}\nevent: occurrence\ndata: ${JSON.stringify(occurrence)}\n\n`,
+    );
 
   request.on('close', close);
 
@@ -78,7 +93,7 @@ export const streamEventOccurrences = async ({
 
   timers.push(
     setInterval(() => {
-      response.write(': heartbeat\n\n');
+      write(': heartbeat\n\n');
     }, EVENT_STREAM_HEARTBEAT_INTERVAL_MS),
   );
 
