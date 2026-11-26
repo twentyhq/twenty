@@ -96,6 +96,11 @@ msgstr ": Oggi{timeZoneAbbreviationSuffix}"
 msgid "· FREE"
 msgstr "· GRATUITO"
 
+#. js-lingui-id: eNVoMO
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "\"{fieldName}\" has many records: read it inside count(), sum(), avg(), min() or max()"
+msgstr "\"{fieldName}\" ha molti record: leggilo all'interno di count(), sum(), avg(), min() o max()"
+
 #. js-lingui-id: Y/jWkl
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "\"{fieldName}\" is not a to-one relation"
@@ -131,6 +136,11 @@ msgstr "\"{path}\" legge un valore precedente, che una formula non può utilizza
 msgid "\"{path}\" reads a relation, but previous values only cover this record's own fields"
 msgstr "\"{path}\" legge una relazione, ma i valori precedenti coprono solo i campi propri di questo record"
 
+#. js-lingui-id: bkN3QG
+#: src/modules/command-menu-item/display/components/CommandMenuAskAiFallbackItem.tsx
+msgid "“{prompt}”"
+msgstr "“{prompt}”"
+
 #. js-lingui-id: sh7E5k
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "\"{subfieldName}\" is not a subfield of \"{fieldName}\""
@@ -139,7 +149,7 @@ msgstr "\"{subfieldName}\" non è un sotto-campo di \"{fieldName}\""
 #. js-lingui-id: caVje7
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "({applicationsCount} {applicationCountLabel})"
-msgstr ""
+msgstr "({applicationsCount} {applicationCountLabel})"
 
 #. js-lingui-id: J3dohc
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -642,6 +652,11 @@ msgstr "{allowedFieldCount} di {fieldCount}"
 msgid "{allowedFieldCount} of {fieldCount} fields"
 msgstr "{allowedFieldCount} di {fieldCount} campi"
 
+#. js-lingui-id: QbSIWf
+#: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
+msgid "{amount} / month"
+msgstr "{amount} / mese"
+
 #. js-lingui-id: WhHyQh
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
 msgid "{apiKeyCount, plural, one {{apiKeyCount} API key} other {{apiKeyCount} API keys}}"
@@ -675,12 +690,12 @@ msgstr "{applicationName}: {settingsMenuItemTitle}"
 #. js-lingui-id: 041Z1f
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "{applicationsCount} paid app"
-msgstr ""
+msgstr "{applicationsCount} app a pagamento"
 
 #. js-lingui-id: tkQrFL
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "{applicationsCount} paid apps"
-msgstr ""
+msgstr "{applicationsCount} applicazioni a pagamento"
 
 #. js-lingui-id: ST9xGf
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
@@ -917,6 +932,21 @@ msgstr "{functionName} accetta {minimumArgumentCount} argomento/i, ma ne ha rice
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "{functionName} takes at least {minimumArgumentCount} argument(s), but got {argumentCount}"
 msgstr "{functionName} accetta almeno {minimumArgumentCount} argomento/i, ma ne ha ricevuti {argumentCount}"
+
+#. js-lingui-id: aGSMaz
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "{functionName}() cannot contain another aggregate"
+msgstr "{functionName}() non può contenere un'altra funzione di aggregazione"
+
+#. js-lingui-id: gT6Kkm
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "{functionName}() needs a relation, for example count(tasks) or sum(deals.amount)"
+msgstr "{functionName}() richiede una relazione, ad esempio count(tasks) o sum(deals.amount)"
+
+#. js-lingui-id: vN+0eR
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "{functionName}() reads related records, which only a formula can do"
+msgstr "{functionName}() legge i record correlati, operazione che può eseguire solo una formula"
 
 #. js-lingui-id: NHstiz
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsProgress.tsx
@@ -1159,22 +1189,22 @@ msgstr "{providerDisplayName} OAuth non è ancora configurato dal tuo amministra
 #. js-lingui-id: VLLE21
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "{quantity} account"
-msgstr ""
+msgstr "{quantity} account"
 
 #. js-lingui-id: XYE5Zk
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "{quantity} accounts"
-msgstr ""
+msgstr "{quantity} account"
 
 #. js-lingui-id: 6sLwwC
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "{quantity} member"
-msgstr ""
+msgstr "{quantity} membro"
 
 #. js-lingui-id: k/jGvO
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "{quantity} members"
-msgstr ""
+msgstr "{quantity} membri"
 
 #. js-lingui-id: 2V2T+0
 #. placeholder {0}: formatNumber(queuedCount)
@@ -1819,6 +1849,11 @@ msgstr "Si apre un modulo per la persona che avvia il workflow e viene compilato
 msgid "A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run. To ask someone for an answer or an approval in their inbox, use a Send to Inbox step instead."
 msgstr "Si apre un modulo per la persona che avvia il workflow e viene compilato sul momento. Con questo trigger, viene visualizzato solo nell'esecuzione del workflow. Per chiedere a qualcuno una risposta o un'approvazione nella sua posta in arrivo, utilizza invece un passaggio Invia a posta in arrivo."
 
+#. js-lingui-id: QbGaDs
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "A formula that aggregates related records is stored, so it cannot read \"{path}\". Aggregate in this field and read it from another formula."
+msgstr "Una formula che aggrega record correlati viene archiviata, quindi non può leggere \"{path}\". Aggrega in questo campo e leggilo da un'altra formula."
+
 #. js-lingui-id: 8fNMpo
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 msgid "A message can have up to {maxAttachmentCount} files"
@@ -1858,6 +1893,11 @@ msgstr "Un ruolo è obbligatorio"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "A role must be selected for the API key"
 msgstr "Un ruolo deve essere selezionato per la chiave API"
+
+#. js-lingui-id: /852Zy
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "A stored formula cannot read \"{path}\""
+msgstr "Una formula archiviata non può leggere \"{path}\""
 
 #. js-lingui-id: yfuxL8
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -1953,11 +1993,6 @@ msgstr "DPA accettati e firmati per questo spazio di lavoro, con la relativa ver
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionsTable.tsx
 msgid "Access"
 msgstr "Accesso"
-
-#. js-lingui-id: 7T2MJI
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Access groups"
-msgstr "Gruppi di accesso"
 
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -4191,7 +4226,7 @@ msgstr "Apostrofo e punto"
 #. js-lingui-id: sRXyRZ
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "app"
-msgstr ""
+msgstr "app"
 
 #. js-lingui-id: LMUw1U
 #: src/modules/log-console/constants/LogConsoleApplicationLogAppColumn.tsx
@@ -4411,7 +4446,7 @@ msgstr "Domini approvati"
 #. js-lingui-id: at3eOk
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "apps"
-msgstr ""
+msgstr "app"
 
 #. js-lingui-id: VDvaN2
 #: src/modules/settings/admin-panel/hooks/useSettingsAdminTabs.ts
@@ -4643,11 +4678,6 @@ msgstr "Ascendente"
 msgid "Asia Pacific"
 msgstr "Asia Pacifico"
 
-#. js-lingui-id: 4mdmhg
-#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
-msgid "Ask & find"
-msgstr "Chiedi e trova"
-
 #. js-lingui-id: 2pXVeV
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Ask a workspace admin for the User Apps permission to connect a calendar account."
@@ -4662,6 +4692,7 @@ msgstr "Chiedi a un amministratore dello spazio di lavoro l'autorizzazione User 
 
 #. js-lingui-id: xWEvuo
 #: src/modules/command-menu-item/display/components/CommandMenuAskAiFallbackItem.tsx
+#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 #: src/modules/side-panel/components/SidePanelAskAiInfo.tsx
@@ -5367,20 +5398,20 @@ msgstr "tra il {startOrdinal} e {endOrdinal} del mese"
 msgid "Bill credits to your workspace"
 msgstr "Addebita crediti al tuo spazio di lavoro"
 
-#. js-lingui-id: WVxikw
+#. js-lingui-id: XJj77g
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
-msgid "Bill your workspace {amount} / month"
-msgstr "Fattura il tuo spazio di lavoro {amount} / mese"
+msgid "Bill your workspace {price}"
+msgstr "Fattura il tuo spazio di lavoro {price}"
 
-#. js-lingui-id: 9nZzfz
+#. js-lingui-id: mZbez3
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
-msgid "Bill your workspace {amount} / month per account"
-msgstr "Fattura il tuo spazio di lavoro {amount} / mese per account"
+msgid "Bill your workspace {price} per account"
+msgstr "Fattura il tuo spazio di lavoro {price} per account"
 
-#. js-lingui-id: iOQoBV
+#. js-lingui-id: oy0GSN
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
-msgid "Bill your workspace {amount} / month per member"
-msgstr "Fattura il tuo spazio di lavoro {amount} / mese per membro"
+msgid "Bill your workspace {price} per member"
+msgstr "Fattura il tuo spazio di lavoro {price} per membro"
 
 #. js-lingui-id: aIkeAd
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
@@ -5410,7 +5441,7 @@ msgstr "Fatturazione - Impostazioni"
 #. js-lingui-id: arWQGP
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
 msgid "Billing email"
-msgstr ""
+msgstr "Email di fatturazione"
 
 #. js-lingui-id: dSjFxR
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -6303,7 +6334,7 @@ msgstr "Cambia avatar"
 #. js-lingui-id: Y1obaF
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
 msgid "Change billing email"
-msgstr ""
+msgstr "Cambia email di fatturazione"
 
 #. js-lingui-id: feCRNv
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -6411,11 +6442,6 @@ msgstr "ruolo del canale"
 msgid "Channel visibility on API keys"
 msgstr "Visibilità dei canali nelle chiavi API"
 
-#. js-lingui-id: Kjphnm
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Channel visibility through rules"
-msgstr "Visibilità del canale tramite regole"
-
 #. js-lingui-id: lfFsZ4
 #: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
 #: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
@@ -6509,11 +6535,6 @@ msgstr "Elenco di controllo"
 #: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Check recent runs"
 msgstr "Controlla le esecuzioni recenti"
-
-#. js-lingui-id: 1rduS8
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Check the create permission on its own when creating records, rather than the update permission."
-msgstr "Controlla separatamente l'autorizzazione di creazione durante la creazione dei record, anziché l'autorizzazione di aggiornamento."
 
 #. js-lingui-id: JslvtK
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -7219,6 +7240,11 @@ msgstr "riduci"
 msgid "Collapse"
 msgstr "Riduci"
 
+#. js-lingui-id: 9prKyv
+#: src/modules/command-menu-item/display/components/CommandMenuItemCollapsibleSectionHeading.tsx
+msgid "Collapse {heading}"
+msgstr "Comprimi {heading}"
+
 #. js-lingui-id: kBUgVh
 #: src/modules/object-record/record-board/record-board-card/components/RecordBoardCardHeader.tsx
 msgid "Collapse card"
@@ -7505,11 +7531,6 @@ msgstr "Anteprima del componente con dati di esempio"
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
 msgid "Compose email"
 msgstr "Componi email"
-
-#. js-lingui-id: xwW7YT
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes."
-msgstr "Calcola i gruppi di accesso che gli elenchi di record utilizzeranno per le autorizzazioni a livello di riga. Abilita dopo il completamento dell'aggiornamento dell'area di lavoro."
 
 #. js-lingui-id: LzmTuU
 #: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
@@ -8888,11 +8909,6 @@ msgstr "Crea Record"
 msgid "Create Record"
 msgstr "Crea Record"
 
-#. js-lingui-id: frmOeu
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Create records permission"
-msgstr "Autorizzazione di creazione dei record"
-
 #. js-lingui-id: fRYkDa
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineCreateRelated.tsx
 #: src/modules/side-panel/hooks/useOpenCreateRelatedRecordInSidePanel.ts
@@ -10010,7 +10026,6 @@ msgstr "Diminuisci valore"
 #: src/modules/settings/experience/components/UiScalePicker.tsx
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
-#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Default"
 msgstr "Predefinito"
 
@@ -10071,11 +10086,6 @@ msgstr "Definisci il nome e la descrizione dell'oggetto"
 #: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
 msgid "Define the name and instructions for this skill"
 msgstr "Definisci il nome e le istruzioni per questa abilità"
-
-#. js-lingui-id: zDccHY
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Define the relations along which a record's permissions extend to related records."
-msgstr "Definisci le relazioni lungo le quali le autorizzazioni di un record si estendono ai record correlati."
 
 #. js-lingui-id: Ntu10D
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -13187,6 +13197,11 @@ msgstr "Esci dal flusso di importazione"
 msgid "Expand"
 msgstr "Espandi"
 
+#. js-lingui-id: AgpQjB
+#: src/modules/command-menu-item/display/components/CommandMenuItemCollapsibleSectionHeading.tsx
+msgid "Expand {heading}"
+msgstr "Espandi {heading}"
+
 #. js-lingui-id: JjrOSL
 #: src/modules/object-record/record-board/record-board-card/components/RecordBoardCardHeader.tsx
 msgid "Expand card"
@@ -14051,7 +14066,6 @@ msgid "Failure Rate"
 msgstr "Tasso di errore"
 
 #. js-lingui-id: 8wngZM
-#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Fallback"
 msgstr "Ripiego"
@@ -16444,11 +16458,6 @@ msgstr "Tra meno di un giorno"
 msgid "In progress"
 msgstr "In corso"
 
-#. js-lingui-id: q6UzTa
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops and related record paths."
-msgstr "In corso: applicare la visibilità dei canali di messaggi e calendario con regole di autorizzazione a livello di record. Richiede salti di relazione e percorsi di record correlati."
-
 #. js-lingui-id: 0Nl1Pt
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx
 msgid "In the list"
@@ -18042,11 +18051,6 @@ msgstr "Consenti ai membri di collegare i propri account"
 msgid "Let people restrict and share individual records."
 msgstr "Consenti alle persone di limitare e condividere singoli record."
 
-#. js-lingui-id: b3MaZQ
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Let record-level permission rules compare a field of a related record."
-msgstr "Consenti alle regole di autorizzazione a livello di record di confrontare un campo di un record correlato."
-
 #. js-lingui-id: oKfDGp
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let text, number, boolean and date fields compute their value from an expression over the record and its related records."
@@ -19400,11 +19404,6 @@ msgstr "Messaggio {recipientName}"
 #: src/modules/chat/components/ChatMessageFloatingActions.tsx
 msgid "Message actions"
 msgstr "Azioni del messaggio"
-
-#. js-lingui-id: 6H0up8
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Message attachments"
-msgstr "Allegati dei messaggi"
 
 #. js-lingui-id: U15XwX
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
@@ -21406,6 +21405,7 @@ msgstr "Nessun record selezionato"
 
 #. js-lingui-id: EqGTpW
 #: src/modules/ai-chat/composer/components/AiChatAddMenuRecordsPage.tsx
+#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 #: src/modules/object-record/record-index/components/RecordIndexEmptyState.tsx
 #: src/modules/object-record/record-picker/components/RecordPickerNoRecordFoundMenuItem.tsx
 #: src/modules/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerMenuItems.tsx
@@ -23338,7 +23338,7 @@ msgstr "App a pagamento"
 #. js-lingui-id: CQnFBr
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "Paid apps installed in this workspace. Prices are added to your invoice"
-msgstr ""
+msgstr "Applicazioni a pagamento installate in questo spazio di lavoro. I prezzi vengono aggiunti alla fattura"
 
 #. js-lingui-id: ijBN4V
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -23565,7 +23565,7 @@ msgstr "per membro"
 #. js-lingui-id: JxgXH1
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "Per month"
-msgstr ""
+msgstr "Al mese"
 
 #. js-lingui-id: qMTN0w
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
@@ -24742,6 +24742,11 @@ msgstr "Leggi, scrivi ed elimina {target}"
 msgid "Read/Edit/Delete permissions"
 msgstr "Permessi di lettura/modifica/eliminazione"
 
+#. js-lingui-id: +a9H8X
+#: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaForm.tsx
+msgid "Reads related records, so the value is stored and updated in the background a few seconds after they change."
+msgstr "Legge record correlati, quindi il valore viene archiviato e aggiornato in background alcuni secondi dopo la loro modifica."
+
 #. js-lingui-id: VJScHU
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
@@ -25019,11 +25024,6 @@ msgstr "Pagina del record"
 msgid "Record page widget"
 msgstr "Widget della pagina del record"
 
-#. js-lingui-id: fHTWNa
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Record rules through relations"
-msgstr "Regole di record tramite relazioni"
-
 #. js-lingui-id: pVTJSR
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
 msgid "Record selection"
@@ -25259,11 +25259,6 @@ msgstr "Rifiutato"
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "related record path"
 msgstr "percorso del record correlato"
-
-#. js-lingui-id: l3qF/i
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Related record paths"
-msgstr "Percorsi dei record correlati"
 
 #. js-lingui-id: uGfOFe
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -26729,6 +26724,8 @@ msgid "SDK"
 msgstr "SDK"
 
 #. js-lingui-id: A1taO8
+#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
+#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/navigation/components/MainNavigationDrawerSearchField.tsx
@@ -27064,7 +27061,7 @@ msgstr "Cerca opzioni"
 #. js-lingui-id: WDcoYK
 #: src/modules/navigation/components/MainNavigationDrawerSearchField.tsx
 msgid "Search or ask..."
-msgstr ""
+msgstr "Cerca o chiedi..."
 
 #. js-lingui-id: IMeaSJ
 #: src/modules/ai-chat/composer/components/AiChatAddMenuRecordsPage.tsx
@@ -27355,6 +27352,11 @@ msgstr "Vedi {objectLabelPlural} corrispondenti"
 #: src/modules/settings/applications/components/SettingsApplicationContentSummarySection.tsx
 msgid "See more"
 msgstr "Vedi altro"
+
+#. js-lingui-id: ssRcpB
+#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
+msgid "See more results"
+msgstr "Vedi altri risultati"
 
 #. js-lingui-id: V7TecA
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
@@ -28259,11 +28261,6 @@ msgstr "Forma, colore, volto"
 #: src/modules/side-panel/hooks/useOpenShareRecordInSidePanel.ts
 msgid "Share"
 msgstr "Condividi"
-
-#. js-lingui-id: nmXzns
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Share calendar events across channels"
-msgstr "Condividi gli eventi del calendario tra i canali"
 
 #. js-lingui-id: S1jlER
 #: src/modules/settings/privacy/components/SettingsPrivacySharingWithTwenty.tsx
@@ -29390,16 +29387,6 @@ msgstr "Arresto in corso"
 msgid "Storage"
 msgstr "Archiviazione"
 
-#. js-lingui-id: vrUVo4
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Store a meeting synced by several calendars of the same provider once, instead of once per calendar."
-msgstr "Memorizza una sola volta una riunione sincronizzata da più calendari dello stesso provider, anziché una volta per calendario."
-
-#. js-lingui-id: YbaJNn
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Store and show files attached to messages. Enabled after the workspace upgrade completes."
-msgstr "Archivia e mostra i file allegati ai messaggi. Abilitato al completamento dell'aggiornamento dello spazio di lavoro."
-
 #. js-lingui-id: juzGVI
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
 msgid "Store the full URL or just the domain"
@@ -30316,6 +30303,11 @@ msgstr "Non è stato possibile caricare l'agente eseguito da questo passaggio. P
 msgid "The API endpoint for your OpenAI-compatible provider"
 msgstr "L'endpoint API per il tuo provider compatibile con OpenAI"
 
+#. js-lingui-id: UIpkEz
+#: src/modules/settings/data-model/fields/forms/formula/constants/FormulaAggregateFunctionDefinitions.ts
+msgid "The average of a number field over the related records, or over those matching the condition."
+msgstr "La media di un campo numerico nei record correlati o in quelli che soddisfano la condizione."
+
 #. js-lingui-id: qjNojw
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "The AWS region for Bedrock"
@@ -30355,6 +30347,11 @@ msgstr "Il codice consente a {memberName} di accedere una volta a questo workspa
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
 msgid "The code of the Twenty partner who referred you"
 msgstr "Il codice del partner Twenty che ti ha segnalato"
+
+#. js-lingui-id: h7Af0y
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "The condition of {functionName}() cannot read \"{relationFieldName}\""
+msgstr "La condizione di {functionName}() non può leggere \"{relationFieldName}\""
 
 #. js-lingui-id: aXzQ65
 #: src/modules/ai-chat/messages/components/AiChatCompactionIndicator.tsx
@@ -30461,6 +30458,11 @@ msgstr "L'accordo completo con i campi compilati per la tua distribuzione."
 msgid "The icon your workflow trigger will display in the command menu"
 msgstr "L'icona che il tuo trigger del flusso di lavoro mostrerà nel menu comandi"
 
+#. js-lingui-id: hP+z/5
+#: src/modules/settings/data-model/fields/forms/formula/constants/FormulaAggregateFunctionDefinitions.ts
+msgid "The largest number or latest date among the related records. With plain values, such as max(a, b), the largest of them."
+msgstr "Il numero più grande o la data più recente tra i record correlati. Con valori semplici, come max(a, b), il maggiore tra essi."
+
 #. js-lingui-id: Qp6vM+
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The largest of the numbers. Values that are not numbers are ignored."
@@ -30543,6 +30545,11 @@ msgstr "Il nome che i destinatari vedono accanto al tuo indirizzo. È impostato 
 msgid "The number of items in the list, or 0 when it is not a list."
 msgstr "Il numero di elementi nell'elenco, oppure 0 quando non è un elenco."
 
+#. js-lingui-id: vXwRDS
+#: src/modules/settings/data-model/fields/forms/formula/constants/FormulaAggregateFunctionDefinitions.ts
+msgid "The number of related records, or of those matching the condition. For example count(tasks, tasks.status == \"TODO\")."
+msgstr "Il numero di record correlati o di quelli che soddisfano la condizione. Ad esempio count(tasks, tasks.status == \"TODO\")."
+
 #. js-lingui-id: SpoTRx
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The number of whole units from the first date to the second, negative when the second is earlier. Minutes and hours are elapsed time; longer units count calendar days and months, in UTC."
@@ -30613,6 +30620,11 @@ msgstr ""
 msgid "The shared email you want to use."
 msgstr "L'email condivisa che vuoi utilizzare."
 
+#. js-lingui-id: q2NONu
+#: src/modules/settings/data-model/fields/forms/formula/constants/FormulaAggregateFunctionDefinitions.ts
+msgid "The smallest number or earliest date among the related records. With plain values, such as min(a, b), the smallest of them."
+msgstr "Il numero più piccolo o la data meno recente tra i record correlati. Con valori semplici, come min(a, b), il minore tra essi."
+
 #. js-lingui-id: CZF2sj
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The smallest of the numbers. Values that are not numbers are ignored."
@@ -30654,6 +30666,11 @@ msgstr "Lo strumento è stato eseguito ma non ha restituito campi, quindi l'outp
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "The tool runs without arguments."
 msgstr "Lo strumento viene eseguito senza argomenti."
+
+#. js-lingui-id: 6XWxWG
+#: src/modules/settings/data-model/fields/forms/formula/constants/FormulaAggregateFunctionDefinitions.ts
+msgid "The total of a number field over the related records, or over those matching the condition."
+msgstr "Il totale di un campo numerico nei record correlati o in quelli che soddisfano la condizione."
 
 #. js-lingui-id: 9q0gnf
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -33389,11 +33406,6 @@ msgstr "Eventi di utilizzo"
 msgid "Usage period"
 msgstr "Periodo di utilizzo"
 
-#. js-lingui-id: js4Y6w
-#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
-msgid "Use ‘{trimmedSidePanelSearch}’ with..."
-msgstr "Usa ‘{trimmedSidePanelSearch}’ con..."
-
 #. js-lingui-id: jFGgyP
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 msgid "Use a backup code to sign in if you lose access to your authenticator app. Each code works once."
@@ -33999,7 +34011,6 @@ msgstr "Violetto"
 #: src/modules/settings/unsubscribe-topics/components/SettingsWorkspaceUnsubscribeTopicSection.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
-#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Visibility"
 msgstr "Visibilità"
 

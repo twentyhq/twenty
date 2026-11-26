@@ -96,6 +96,11 @@ msgstr ": Hôm nay{timeZoneAbbreviationSuffix}"
 msgid "· FREE"
 msgstr "· MIỄN PHÍ"
 
+#. js-lingui-id: eNVoMO
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "\"{fieldName}\" has many records: read it inside count(), sum(), avg(), min() or max()"
+msgstr "\"{fieldName}\" có nhiều bản ghi: hãy đọc nó bên trong count(), sum(), avg(), min() hoặc max()"
+
 #. js-lingui-id: Y/jWkl
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "\"{fieldName}\" is not a to-one relation"
@@ -131,6 +136,11 @@ msgstr "\"{path}\" đọc một giá trị trước đó mà công thức không
 msgid "\"{path}\" reads a relation, but previous values only cover this record's own fields"
 msgstr "\"{path}\" đọc một quan hệ, nhưng các giá trị trước đó chỉ bao gồm các trường riêng của bản ghi này"
 
+#. js-lingui-id: bkN3QG
+#: src/modules/command-menu-item/display/components/CommandMenuAskAiFallbackItem.tsx
+msgid "“{prompt}”"
+msgstr "“{prompt}”"
+
 #. js-lingui-id: sh7E5k
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "\"{subfieldName}\" is not a subfield of \"{fieldName}\""
@@ -139,7 +149,7 @@ msgstr "\"{subfieldName}\" không phải là trường con của \"{fieldName}\"
 #. js-lingui-id: caVje7
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "({applicationsCount} {applicationCountLabel})"
-msgstr ""
+msgstr "({applicationsCount} {applicationCountLabel})"
 
 #. js-lingui-id: J3dohc
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -642,6 +652,11 @@ msgstr "{allowedFieldCount} của {fieldCount}"
 msgid "{allowedFieldCount} of {fieldCount} fields"
 msgstr "{allowedFieldCount} trong số {fieldCount} trường"
 
+#. js-lingui-id: QbSIWf
+#: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
+msgid "{amount} / month"
+msgstr "{amount} / tháng"
+
 #. js-lingui-id: WhHyQh
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
 msgid "{apiKeyCount, plural, one {{apiKeyCount} API key} other {{apiKeyCount} API keys}}"
@@ -675,12 +690,12 @@ msgstr "{applicationName}: {settingsMenuItemTitle}"
 #. js-lingui-id: 041Z1f
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "{applicationsCount} paid app"
-msgstr ""
+msgstr "{applicationsCount} ứng dụng trả phí"
 
 #. js-lingui-id: tkQrFL
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "{applicationsCount} paid apps"
-msgstr ""
+msgstr "{applicationsCount} ứng dụng trả phí"
 
 #. js-lingui-id: ST9xGf
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
@@ -917,6 +932,21 @@ msgstr "{functionName} nhận {minimumArgumentCount} đối số (s), nhưng nh�
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "{functionName} takes at least {minimumArgumentCount} argument(s), but got {argumentCount}"
 msgstr "{functionName} nhận ít nhất {minimumArgumentCount} đối số (s), nhưng nhận {argumentCount}"
+
+#. js-lingui-id: aGSMaz
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "{functionName}() cannot contain another aggregate"
+msgstr "{functionName}() không thể chứa một hàm tổng hợp khác"
+
+#. js-lingui-id: gT6Kkm
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "{functionName}() needs a relation, for example count(tasks) or sum(deals.amount)"
+msgstr "{functionName}() cần một mối quan hệ, ví dụ count(tasks) hoặc sum(deals.amount)"
+
+#. js-lingui-id: vN+0eR
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "{functionName}() reads related records, which only a formula can do"
+msgstr "{functionName}() đọc các bản ghi liên quan, điều mà chỉ công thức mới có thể thực hiện"
 
 #. js-lingui-id: NHstiz
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsProgress.tsx
@@ -1159,22 +1189,22 @@ msgstr "{providerDisplayName} OAuth vẫn chưa được quản trị viên máy
 #. js-lingui-id: VLLE21
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "{quantity} account"
-msgstr ""
+msgstr "{quantity} tài khoản"
 
 #. js-lingui-id: XYE5Zk
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "{quantity} accounts"
-msgstr ""
+msgstr "{quantity} tài khoản"
 
 #. js-lingui-id: 6sLwwC
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "{quantity} member"
-msgstr ""
+msgstr "{quantity} thành viên"
 
 #. js-lingui-id: k/jGvO
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "{quantity} members"
-msgstr ""
+msgstr "{quantity} thành viên"
 
 #. js-lingui-id: 2V2T+0
 #. placeholder {0}: formatNumber(queuedCount)
@@ -1819,6 +1849,11 @@ msgstr "Một biểu mẫu sẽ mở cho người khởi chạy quy trình làm 
 msgid "A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run. To ask someone for an answer or an approval in their inbox, use a Send to Inbox step instead."
 msgstr "Một biểu mẫu sẽ mở cho người khởi chạy quy trình làm việc và được điền tại chỗ. Với trình kích hoạt này, biểu mẫu chỉ hiển thị trong lần chạy quy trình làm việc. Để yêu cầu ai đó trả lời hoặc phê duyệt trong hộp thư đến của họ, hãy dùng bước Gửi đến Hộp thư đến."
 
+#. js-lingui-id: QbGaDs
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "A formula that aggregates related records is stored, so it cannot read \"{path}\". Aggregate in this field and read it from another formula."
+msgstr "Một công thức tổng hợp các bản ghi liên quan được lưu trữ, vì vậy không thể đọc \"{path}\". Hãy tổng hợp trong trường này và đọc từ một công thức khác."
+
 #. js-lingui-id: 8fNMpo
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 msgid "A message can have up to {maxAttachmentCount} files"
@@ -1858,6 +1893,11 @@ msgstr "Vai trò là bắt buộc"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "A role must be selected for the API key"
 msgstr "Phải chọn một vai trò cho khóa API"
+
+#. js-lingui-id: /852Zy
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "A stored formula cannot read \"{path}\""
+msgstr "Một công thức được lưu trữ không thể đọc \"{path}\""
 
 #. js-lingui-id: yfuxL8
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -1953,11 +1993,6 @@ msgstr "Các DPA đã được chấp nhận và ký cho không gian làm việc
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionsTable.tsx
 msgid "Access"
 msgstr "Truy cập"
-
-#. js-lingui-id: 7T2MJI
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Access groups"
-msgstr "Nhóm truy cập"
 
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -4191,7 +4226,7 @@ msgstr "Dấu nháy đơn và dấu chấm"
 #. js-lingui-id: sRXyRZ
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "app"
-msgstr ""
+msgstr "ứng dụng"
 
 #. js-lingui-id: LMUw1U
 #: src/modules/log-console/constants/LogConsoleApplicationLogAppColumn.tsx
@@ -4411,7 +4446,7 @@ msgstr "Miền Đã Được Phê Duyệt"
 #. js-lingui-id: at3eOk
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "apps"
-msgstr ""
+msgstr "ứng dụng"
 
 #. js-lingui-id: VDvaN2
 #: src/modules/settings/admin-panel/hooks/useSettingsAdminTabs.ts
@@ -4643,11 +4678,6 @@ msgstr "Tăng dần"
 msgid "Asia Pacific"
 msgstr "Châu Á - Thái Bình Dương"
 
-#. js-lingui-id: 4mdmhg
-#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
-msgid "Ask & find"
-msgstr "Hỏi và tìm"
-
 #. js-lingui-id: 2pXVeV
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Ask a workspace admin for the User Apps permission to connect a calendar account."
@@ -4662,6 +4692,7 @@ msgstr "Yêu cầu quản trị viên không gian làm việc cấp quyền Ứn
 
 #. js-lingui-id: xWEvuo
 #: src/modules/command-menu-item/display/components/CommandMenuAskAiFallbackItem.tsx
+#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 #: src/modules/side-panel/components/SidePanelAskAiInfo.tsx
@@ -5367,20 +5398,20 @@ msgstr "giữa {startOrdinal} và {endOrdinal} của tháng"
 msgid "Bill credits to your workspace"
 msgstr "Tính phí tín dụng vào không gian làm việc của bạn"
 
-#. js-lingui-id: WVxikw
+#. js-lingui-id: XJj77g
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
-msgid "Bill your workspace {amount} / month"
-msgstr "Lập hóa đơn cho không gian làm việc của bạn {amount} / tháng"
+msgid "Bill your workspace {price}"
+msgstr "Lập hóa đơn cho không gian làm việc của bạn {price}"
 
-#. js-lingui-id: 9nZzfz
+#. js-lingui-id: mZbez3
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
-msgid "Bill your workspace {amount} / month per account"
-msgstr "Lập hóa đơn cho không gian làm việc của bạn {amount} / tháng cho mỗi tài khoản"
+msgid "Bill your workspace {price} per account"
+msgstr "Lập hóa đơn cho không gian làm việc của bạn {price} cho mỗi tài khoản"
 
-#. js-lingui-id: iOQoBV
+#. js-lingui-id: oy0GSN
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
-msgid "Bill your workspace {amount} / month per member"
-msgstr "Lập hóa đơn cho không gian làm việc của bạn {amount} / tháng cho mỗi thành viên"
+msgid "Bill your workspace {price} per member"
+msgstr "Lập hóa đơn cho không gian làm việc của bạn {price} mỗi thành viên"
 
 #. js-lingui-id: aIkeAd
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
@@ -5410,7 +5441,7 @@ msgstr "Thanh toán - Cài đặt"
 #. js-lingui-id: arWQGP
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
 msgid "Billing email"
-msgstr ""
+msgstr "Email thanh toán"
 
 #. js-lingui-id: dSjFxR
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -6303,7 +6334,7 @@ msgstr "Thay đổi ảnh đại diện"
 #. js-lingui-id: Y1obaF
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
 msgid "Change billing email"
-msgstr ""
+msgstr "Thay đổi email thanh toán"
 
 #. js-lingui-id: feCRNv
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -6411,11 +6442,6 @@ msgstr "vai trò kênh"
 msgid "Channel visibility on API keys"
 msgstr "Khả năng hiển thị kênh trên khóa API"
 
-#. js-lingui-id: Kjphnm
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Channel visibility through rules"
-msgstr "Khả năng hiển thị kênh thông qua quy tắc"
-
 #. js-lingui-id: lfFsZ4
 #: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
 #: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
@@ -6509,11 +6535,6 @@ msgstr "Danh sách kiểm tra"
 #: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Check recent runs"
 msgstr "Kiểm tra các lần chạy gần đây"
-
-#. js-lingui-id: 1rduS8
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Check the create permission on its own when creating records, rather than the update permission."
-msgstr "Khi tạo bản ghi, chỉ kiểm tra quyền tạo thay vì quyền cập nhật."
 
 #. js-lingui-id: JslvtK
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -7219,6 +7240,11 @@ msgstr "thu gọn"
 msgid "Collapse"
 msgstr "Thu gọn"
 
+#. js-lingui-id: 9prKyv
+#: src/modules/command-menu-item/display/components/CommandMenuItemCollapsibleSectionHeading.tsx
+msgid "Collapse {heading}"
+msgstr "Thu gọn {heading}"
+
 #. js-lingui-id: kBUgVh
 #: src/modules/object-record/record-board/record-board-card/components/RecordBoardCardHeader.tsx
 msgid "Collapse card"
@@ -7505,11 +7531,6 @@ msgstr "Bản xem trước thành phần với dữ liệu mẫu"
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
 msgid "Compose email"
 msgstr "Soạn email"
-
-#. js-lingui-id: xwW7YT
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes."
-msgstr "Tính toán các nhóm truy cập mà danh sách bản ghi sẽ sử dụng cho quyền ở cấp hàng. Bật sau khi quá trình nâng cấp không gian làm việc hoàn tất."
 
 #. js-lingui-id: LzmTuU
 #: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
@@ -8888,11 +8909,6 @@ msgstr "Tạo Bản ghi"
 msgid "Create Record"
 msgstr "Tạo Bản ghi"
 
-#. js-lingui-id: frmOeu
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Create records permission"
-msgstr "Quyền tạo bản ghi"
-
 #. js-lingui-id: fRYkDa
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineCreateRelated.tsx
 #: src/modules/side-panel/hooks/useOpenCreateRelatedRecordInSidePanel.ts
@@ -10010,7 +10026,6 @@ msgstr "Giảm giá trị"
 #: src/modules/settings/experience/components/UiScalePicker.tsx
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
-#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Default"
 msgstr "Mặc định"
 
@@ -10071,11 +10086,6 @@ msgstr "Xác định tên và mô tả của đối tượng của bạn"
 #: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
 msgid "Define the name and instructions for this skill"
 msgstr "Xác định tên và hướng dẫn cho kỹ năng này"
-
-#. js-lingui-id: zDccHY
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Define the relations along which a record's permissions extend to related records."
-msgstr "Xác định các mối quan hệ mà quyền của một bản ghi được mở rộng sang các bản ghi liên quan."
 
 #. js-lingui-id: Ntu10D
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -13187,6 +13197,11 @@ msgstr "Thoát khỏi luồng nhập"
 msgid "Expand"
 msgstr "Mở rộng"
 
+#. js-lingui-id: AgpQjB
+#: src/modules/command-menu-item/display/components/CommandMenuItemCollapsibleSectionHeading.tsx
+msgid "Expand {heading}"
+msgstr "Mở rộng {heading}"
+
 #. js-lingui-id: JjrOSL
 #: src/modules/object-record/record-board/record-board-card/components/RecordBoardCardHeader.tsx
 msgid "Expand card"
@@ -14051,7 +14066,6 @@ msgid "Failure Rate"
 msgstr "Tỉ lệ thất bại"
 
 #. js-lingui-id: 8wngZM
-#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Fallback"
 msgstr "Dự phòng"
@@ -16444,11 +16458,6 @@ msgstr "Trong chưa đầy một ngày"
 msgid "In progress"
 msgstr "Đang thực hiện"
 
-#. js-lingui-id: q6UzTa
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops and related record paths."
-msgstr "Đang thực hiện: áp dụng khả năng hiển thị kênh tin nhắn và lịch bằng các quy tắc quyền ở cấp bản ghi. Cần các bước nhảy quan hệ và đường dẫn bản ghi liên quan."
-
 #. js-lingui-id: 0Nl1Pt
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx
 msgid "In the list"
@@ -18042,11 +18051,6 @@ msgstr "Cho phép thành viên kết nối tài khoản của riêng họ"
 msgid "Let people restrict and share individual records."
 msgstr "Cho phép mọi người hạn chế và chia sẻ từng bản ghi riêng lẻ."
 
-#. js-lingui-id: b3MaZQ
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Let record-level permission rules compare a field of a related record."
-msgstr "Cho phép các quy tắc quyền ở cấp bản ghi so sánh một trường của bản ghi liên quan."
-
 #. js-lingui-id: oKfDGp
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let text, number, boolean and date fields compute their value from an expression over the record and its related records."
@@ -19400,11 +19404,6 @@ msgstr "Nhắn tin cho {recipientName}"
 #: src/modules/chat/components/ChatMessageFloatingActions.tsx
 msgid "Message actions"
 msgstr "Thao tác tin nhắn"
-
-#. js-lingui-id: 6H0up8
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Message attachments"
-msgstr "Tệp đính kèm tin nhắn"
 
 #. js-lingui-id: U15XwX
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
@@ -21406,6 +21405,7 @@ msgstr "Chưa chọn bản ghi"
 
 #. js-lingui-id: EqGTpW
 #: src/modules/ai-chat/composer/components/AiChatAddMenuRecordsPage.tsx
+#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 #: src/modules/object-record/record-index/components/RecordIndexEmptyState.tsx
 #: src/modules/object-record/record-picker/components/RecordPickerNoRecordFoundMenuItem.tsx
 #: src/modules/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerMenuItems.tsx
@@ -23338,7 +23338,7 @@ msgstr "Ứng dụng trả phí"
 #. js-lingui-id: CQnFBr
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "Paid apps installed in this workspace. Prices are added to your invoice"
-msgstr ""
+msgstr "Các ứng dụng trả phí được cài đặt trong không gian làm việc này. Giá được thêm vào hóa đơn của bạn"
 
 #. js-lingui-id: ijBN4V
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -23565,7 +23565,7 @@ msgstr "mỗi thành viên"
 #. js-lingui-id: JxgXH1
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "Per month"
-msgstr ""
+msgstr "Mỗi tháng"
 
 #. js-lingui-id: qMTN0w
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
@@ -24742,6 +24742,11 @@ msgstr "Đọc, ghi và xóa {target}"
 msgid "Read/Edit/Delete permissions"
 msgstr "Quyền Đọc/Chỉnh sửa/Xóa"
 
+#. js-lingui-id: +a9H8X
+#: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaForm.tsx
+msgid "Reads related records, so the value is stored and updated in the background a few seconds after they change."
+msgstr "Đọc các bản ghi liên quan, vì vậy giá trị được lưu trữ và cập nhật trong nền vài giây sau khi chúng thay đổi."
+
 #. js-lingui-id: VJScHU
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
@@ -25019,11 +25024,6 @@ msgstr "Trang hồ sơ"
 msgid "Record page widget"
 msgstr "Tiện ích trang hồ sơ"
 
-#. js-lingui-id: fHTWNa
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Record rules through relations"
-msgstr "Quy tắc bản ghi thông qua quan hệ"
-
 #. js-lingui-id: pVTJSR
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
 msgid "Record selection"
@@ -25259,11 +25259,6 @@ msgstr "Đã từ chối"
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "related record path"
 msgstr "đường dẫn bản ghi liên quan"
-
-#. js-lingui-id: l3qF/i
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Related record paths"
-msgstr "Đường dẫn bản ghi liên quan"
 
 #. js-lingui-id: uGfOFe
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -26729,6 +26724,8 @@ msgid "SDK"
 msgstr "SDK"
 
 #. js-lingui-id: A1taO8
+#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
+#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/navigation/components/MainNavigationDrawerSearchField.tsx
@@ -27064,7 +27061,7 @@ msgstr "Tùy chọn tìm kiếm"
 #. js-lingui-id: WDcoYK
 #: src/modules/navigation/components/MainNavigationDrawerSearchField.tsx
 msgid "Search or ask..."
-msgstr ""
+msgstr "Tìm kiếm hoặc hỏi..."
 
 #. js-lingui-id: IMeaSJ
 #: src/modules/ai-chat/composer/components/AiChatAddMenuRecordsPage.tsx
@@ -27355,6 +27352,11 @@ msgstr "Xem {objectLabelPlural} phù hợp"
 #: src/modules/settings/applications/components/SettingsApplicationContentSummarySection.tsx
 msgid "See more"
 msgstr "Xem thêm"
+
+#. js-lingui-id: ssRcpB
+#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
+msgid "See more results"
+msgstr "Xem thêm kết quả"
 
 #. js-lingui-id: V7TecA
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
@@ -28259,11 +28261,6 @@ msgstr "Hình dạng, màu sắc, khuôn mặt"
 #: src/modules/side-panel/hooks/useOpenShareRecordInSidePanel.ts
 msgid "Share"
 msgstr "Chia sẻ"
-
-#. js-lingui-id: nmXzns
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Share calendar events across channels"
-msgstr "Chia sẻ sự kiện lịch trên các kênh"
 
 #. js-lingui-id: S1jlER
 #: src/modules/settings/privacy/components/SettingsPrivacySharingWithTwenty.tsx
@@ -29390,16 +29387,6 @@ msgstr "Đang dừng"
 msgid "Storage"
 msgstr "Lưu trữ"
 
-#. js-lingui-id: vrUVo4
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Store a meeting synced by several calendars of the same provider once, instead of once per calendar."
-msgstr "Chỉ lưu một lần cuộc họp được đồng bộ hóa bởi nhiều lịch của cùng một nhà cung cấp, thay vì một lần cho mỗi lịch."
-
-#. js-lingui-id: YbaJNn
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Store and show files attached to messages. Enabled after the workspace upgrade completes."
-msgstr "Lưu trữ và hiển thị các tệp được đính kèm vào tin nhắn. Được bật sau khi hoàn tất nâng cấp không gian làm việc."
-
 #. js-lingui-id: juzGVI
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
 msgid "Store the full URL or just the domain"
@@ -30316,6 +30303,11 @@ msgstr "Không thể tải tác nhân mà bước này chạy. Có thể tác nh
 msgid "The API endpoint for your OpenAI-compatible provider"
 msgstr "API endpoint cho nhà cung cấp tương thích OpenAI của bạn"
 
+#. js-lingui-id: UIpkEz
+#: src/modules/settings/data-model/fields/forms/formula/constants/FormulaAggregateFunctionDefinitions.ts
+msgid "The average of a number field over the related records, or over those matching the condition."
+msgstr "Giá trị trung bình của một trường số trên các bản ghi liên quan hoặc trên những bản ghi khớp với điều kiện."
+
 #. js-lingui-id: qjNojw
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "The AWS region for Bedrock"
@@ -30355,6 +30347,11 @@ msgstr "Mã này cho phép {memberName} đăng nhập vào không gian làm vi�
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
 msgid "The code of the Twenty partner who referred you"
 msgstr "Mã của đối tác Twenty đã giới thiệu bạn"
+
+#. js-lingui-id: h7Af0y
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "The condition of {functionName}() cannot read \"{relationFieldName}\""
+msgstr "Điều kiện của {functionName}() không thể đọc \"{relationFieldName}\""
 
 #. js-lingui-id: aXzQ65
 #: src/modules/ai-chat/messages/components/AiChatCompactionIndicator.tsx
@@ -30461,6 +30458,11 @@ msgstr "Toàn bộ thỏa thuận với các trường đã được điền cho
 msgid "The icon your workflow trigger will display in the command menu"
 msgstr "Biểu tượng trình kích hoạt quy trình công việc sẽ hiển thị trong menu lệnh"
 
+#. js-lingui-id: hP+z/5
+#: src/modules/settings/data-model/fields/forms/formula/constants/FormulaAggregateFunctionDefinitions.ts
+msgid "The largest number or latest date among the related records. With plain values, such as max(a, b), the largest of them."
+msgstr "Số lớn nhất hoặc ngày muộn nhất trong các bản ghi liên quan. Với các giá trị đơn giản, chẳng hạn như max(a, b), là giá trị lớn nhất trong số đó."
+
 #. js-lingui-id: Qp6vM+
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The largest of the numbers. Values that are not numbers are ignored."
@@ -30543,6 +30545,11 @@ msgstr "Tên mà người nhận nhìn thấy bên cạnh địa chỉ của b�
 msgid "The number of items in the list, or 0 when it is not a list."
 msgstr "Số lượng mục trong danh sách, hoặc 0 khi đó không phải là danh sách."
 
+#. js-lingui-id: vXwRDS
+#: src/modules/settings/data-model/fields/forms/formula/constants/FormulaAggregateFunctionDefinitions.ts
+msgid "The number of related records, or of those matching the condition. For example count(tasks, tasks.status == \"TODO\")."
+msgstr "Số lượng bản ghi liên quan hoặc các bản ghi khớp với điều kiện. Ví dụ: count(tasks, tasks.status == \"TODO\")."
+
 #. js-lingui-id: SpoTRx
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The number of whole units from the first date to the second, negative when the second is earlier. Minutes and hours are elapsed time; longer units count calendar days and months, in UTC."
@@ -30613,6 +30620,11 @@ msgstr ""
 msgid "The shared email you want to use."
 msgstr "Email dùng chung mà bạn muốn sử dụng."
 
+#. js-lingui-id: q2NONu
+#: src/modules/settings/data-model/fields/forms/formula/constants/FormulaAggregateFunctionDefinitions.ts
+msgid "The smallest number or earliest date among the related records. With plain values, such as min(a, b), the smallest of them."
+msgstr "Số nhỏ nhất hoặc ngày sớm nhất trong các bản ghi liên quan. Với các giá trị đơn giản, chẳng hạn như min(a, b), là giá trị nhỏ nhất trong số đó."
+
 #. js-lingui-id: CZF2sj
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The smallest of the numbers. Values that are not numbers are ignored."
@@ -30654,6 +30666,11 @@ msgstr "Công cụ đã chạy nhưng không trả về trường nào, nên đ�
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "The tool runs without arguments."
 msgstr "Công cụ chạy mà không có đối số."
+
+#. js-lingui-id: 6XWxWG
+#: src/modules/settings/data-model/fields/forms/formula/constants/FormulaAggregateFunctionDefinitions.ts
+msgid "The total of a number field over the related records, or over those matching the condition."
+msgstr "Tổng của một trường số trên các bản ghi liên quan hoặc trên những bản ghi khớp với điều kiện."
 
 #. js-lingui-id: 9q0gnf
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -33387,11 +33404,6 @@ msgstr "Sự kiện sử dụng"
 msgid "Usage period"
 msgstr "Khoảng thời gian sử dụng"
 
-#. js-lingui-id: js4Y6w
-#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
-msgid "Use ‘{trimmedSidePanelSearch}’ with..."
-msgstr "Sử dụng ‘{trimmedSidePanelSearch}’ với..."
-
 #. js-lingui-id: jFGgyP
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 msgid "Use a backup code to sign in if you lose access to your authenticator app. Each code works once."
@@ -33997,7 +34009,6 @@ msgstr "Tím"
 #: src/modules/settings/unsubscribe-topics/components/SettingsWorkspaceUnsubscribeTopicSection.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
-#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Visibility"
 msgstr "Tính khả dụng"
 

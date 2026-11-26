@@ -84,7 +84,6 @@
     "rollup-plugin-dts": "^6.4.1",
     "tsc-alias": "^1.8.16",
     "twenty-shared": "workspace:*",
-    "twenty-ui": "workspace:*",
     "vite": "^8.0.0"
   },
   "engines": {

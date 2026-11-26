@@ -8,6 +8,7 @@ import { createOneRole } from 'test/integration/metadata/suites/role/utils/creat
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { findUserWorkspaceRoleTargets } from 'test/integration/utils/find-user-workspace-role-targets.util';
 
 import { type AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import { PermissionsExceptionCode } from 'src/engine/permissions/permissions.exception';
@@ -63,10 +64,9 @@ describe('Member role deletion should fail', () => {
       PermissionsExceptionCode.MEMBER_ROLE_CANNOT_BE_DELETED,
     );
 
-    const roleTargets: { roleId: string }[] = await global.testDataSource.query(
-      `SELECT "roleId" FROM core."roleTarget" WHERE "workspaceId" = $1 AND "userWorkspaceId" = $2`,
-      [SEED_APPLE_WORKSPACE_ID, USER_WORKSPACE_DATA_SEED_IDS.JONY],
-    );
+    const roleTargets = await findUserWorkspaceRoleTargets({
+      userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
+    });
 
     expect(roleTargets).toEqual([{ roleId: memberRoleId }]);
   });

@@ -96,6 +96,11 @@ msgstr ": I dag{timeZoneAbbreviationSuffix}"
 msgid "· FREE"
 msgstr "· GRATIS"
 
+#. js-lingui-id: eNVoMO
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "\"{fieldName}\" has many records: read it inside count(), sum(), avg(), min() or max()"
+msgstr "\"{fieldName}\" har mange poster: les det i count(), sum(), avg(), min() eller max()"
+
 #. js-lingui-id: Y/jWkl
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "\"{fieldName}\" is not a to-one relation"
@@ -131,6 +136,11 @@ msgstr "\"{path}\" leser en tidligere verdi, som en formel ikke kan bruke"
 msgid "\"{path}\" reads a relation, but previous values only cover this record's own fields"
 msgstr "\"{path}\" leser en relasjon, men tidligere verdier dekker bare dette postens egne felt"
 
+#. js-lingui-id: bkN3QG
+#: src/modules/command-menu-item/display/components/CommandMenuAskAiFallbackItem.tsx
+msgid "“{prompt}”"
+msgstr "«{prompt}»"
+
 #. js-lingui-id: sh7E5k
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "\"{subfieldName}\" is not a subfield of \"{fieldName}\""
@@ -139,7 +149,7 @@ msgstr "\"{subfieldName}\" er ikke et underfelt av \"{fieldName}\""
 #. js-lingui-id: caVje7
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "({applicationsCount} {applicationCountLabel})"
-msgstr ""
+msgstr "({applicationsCount} {applicationCountLabel})"
 
 #. js-lingui-id: J3dohc
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -642,6 +652,11 @@ msgstr "{allowedFieldCount} av {fieldCount}"
 msgid "{allowedFieldCount} of {fieldCount} fields"
 msgstr "{allowedFieldCount} av {fieldCount} felt"
 
+#. js-lingui-id: QbSIWf
+#: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
+msgid "{amount} / month"
+msgstr "{amount} / måned"
+
 #. js-lingui-id: WhHyQh
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
 msgid "{apiKeyCount, plural, one {{apiKeyCount} API key} other {{apiKeyCount} API keys}}"
@@ -675,12 +690,12 @@ msgstr "{applicationName}: {settingsMenuItemTitle}"
 #. js-lingui-id: 041Z1f
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "{applicationsCount} paid app"
-msgstr ""
+msgstr "{applicationsCount} betalt app"
 
 #. js-lingui-id: tkQrFL
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "{applicationsCount} paid apps"
-msgstr ""
+msgstr "{applicationsCount} betalte apper"
 
 #. js-lingui-id: ST9xGf
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
@@ -917,6 +932,21 @@ msgstr "{functionName} tar {minimumArgumentCount} argument(er), men fikk {argume
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "{functionName} takes at least {minimumArgumentCount} argument(s), but got {argumentCount}"
 msgstr "{functionName} tar minst {minimumArgumentCount} argument(er), men fikk {argumentCount}"
+
+#. js-lingui-id: aGSMaz
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "{functionName}() cannot contain another aggregate"
+msgstr "{functionName}() kan ikke inneholde et annet aggregat"
+
+#. js-lingui-id: gT6Kkm
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "{functionName}() needs a relation, for example count(tasks) or sum(deals.amount)"
+msgstr "{functionName}() trenger en relasjon, for eksempel count(tasks) eller sum(deals.amount)"
+
+#. js-lingui-id: vN+0eR
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "{functionName}() reads related records, which only a formula can do"
+msgstr "{functionName}() leser relaterte poster, noe bare en formel kan gjøre"
 
 #. js-lingui-id: NHstiz
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsProgress.tsx
@@ -1159,22 +1189,22 @@ msgstr "{providerDisplayName} OAuth er ikke satt opp av serveradministratoren di
 #. js-lingui-id: VLLE21
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "{quantity} account"
-msgstr ""
+msgstr "{quantity} konto"
 
 #. js-lingui-id: XYE5Zk
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "{quantity} accounts"
-msgstr ""
+msgstr "{quantity} kontoer"
 
 #. js-lingui-id: 6sLwwC
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "{quantity} member"
-msgstr ""
+msgstr "{quantity} medlem"
 
 #. js-lingui-id: k/jGvO
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "{quantity} members"
-msgstr ""
+msgstr "{quantity} medlemmer"
 
 #. js-lingui-id: 2V2T+0
 #. placeholder {0}: formatNumber(queuedCount)
@@ -1819,6 +1849,11 @@ msgstr "Et skjema åpnes for personen som starter arbeidsflyten, og fylles ut p�
 msgid "A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run. To ask someone for an answer or an approval in their inbox, use a Send to Inbox step instead."
 msgstr "Et skjema åpnes for personen som starter arbeidsflyten, og fylles ut på stedet. Med denne utløseren vises det bare i arbeidsflytkjøringen. Bruk i stedet et Send til innboks-steg for å be noen om et svar eller en godkjenning i innboksen deres."
 
+#. js-lingui-id: QbGaDs
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "A formula that aggregates related records is stored, so it cannot read \"{path}\". Aggregate in this field and read it from another formula."
+msgstr "En formel som aggregerer relaterte poster, lagres og kan derfor ikke lese \"{path}\". Aggreger i dette feltet og les det fra en annen formel."
+
 #. js-lingui-id: 8fNMpo
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 msgid "A message can have up to {maxAttachmentCount} files"
@@ -1858,6 +1893,11 @@ msgstr "En rolle er påkrevd"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "A role must be selected for the API key"
 msgstr "En rolle må velges for API-nøkkelen"
+
+#. js-lingui-id: /852Zy
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "A stored formula cannot read \"{path}\""
+msgstr "En lagret formel kan ikke lese \"{path}\""
 
 #. js-lingui-id: yfuxL8
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -1953,11 +1993,6 @@ msgstr "Godkjente og signerte DPA-er for dette arbeidsområdet, med malversjon o
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionsTable.tsx
 msgid "Access"
 msgstr "Tilgang"
-
-#. js-lingui-id: 7T2MJI
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Access groups"
-msgstr "Tilgangsgrupper"
 
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -4191,7 +4226,7 @@ msgstr "Apostrof og punktum"
 #. js-lingui-id: sRXyRZ
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "app"
-msgstr ""
+msgstr "app"
 
 #. js-lingui-id: LMUw1U
 #: src/modules/log-console/constants/LogConsoleApplicationLogAppColumn.tsx
@@ -4411,7 +4446,7 @@ msgstr "Godkjente domener"
 #. js-lingui-id: at3eOk
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "apps"
-msgstr ""
+msgstr "apper"
 
 #. js-lingui-id: VDvaN2
 #: src/modules/settings/admin-panel/hooks/useSettingsAdminTabs.ts
@@ -4643,11 +4678,6 @@ msgstr "Stigende"
 msgid "Asia Pacific"
 msgstr "Asia-Stillehavet"
 
-#. js-lingui-id: 4mdmhg
-#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
-msgid "Ask & find"
-msgstr "Spør og finn"
-
 #. js-lingui-id: 2pXVeV
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Ask a workspace admin for the User Apps permission to connect a calendar account."
@@ -4662,6 +4692,7 @@ msgstr "Be en administrator for arbeidsområdet om tillatelsen Brukerapper for �
 
 #. js-lingui-id: xWEvuo
 #: src/modules/command-menu-item/display/components/CommandMenuAskAiFallbackItem.tsx
+#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 #: src/modules/side-panel/components/SidePanelAskAiInfo.tsx
@@ -5367,20 +5398,20 @@ msgstr "mellom den {startOrdinal} og {endOrdinal} i måneden"
 msgid "Bill credits to your workspace"
 msgstr "Fakturer kreditter til arbeidsområdet ditt"
 
-#. js-lingui-id: WVxikw
+#. js-lingui-id: XJj77g
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
-msgid "Bill your workspace {amount} / month"
-msgstr "Fakturer arbeidsområdet ditt {amount} / måned"
+msgid "Bill your workspace {price}"
+msgstr "Fakturer arbeidsområdet ditt {price}"
 
-#. js-lingui-id: 9nZzfz
+#. js-lingui-id: mZbez3
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
-msgid "Bill your workspace {amount} / month per account"
-msgstr "Fakturer arbeidsområdet ditt {amount} / måned per konto"
+msgid "Bill your workspace {price} per account"
+msgstr "Fakturer arbeidsområdet ditt {price} per konto"
 
-#. js-lingui-id: iOQoBV
+#. js-lingui-id: oy0GSN
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
-msgid "Bill your workspace {amount} / month per member"
-msgstr "Fakturer arbeidsområdet ditt {amount} / måned per medlem"
+msgid "Bill your workspace {price} per member"
+msgstr "Fakturer arbeidsområdet ditt {price} per medlem"
 
 #. js-lingui-id: aIkeAd
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
@@ -5410,7 +5441,7 @@ msgstr "Fakturering - Innstillinger"
 #. js-lingui-id: arWQGP
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
 msgid "Billing email"
-msgstr ""
+msgstr "Fakturerings-e-post"
 
 #. js-lingui-id: dSjFxR
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -6303,7 +6334,7 @@ msgstr "Endre avatar"
 #. js-lingui-id: Y1obaF
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
 msgid "Change billing email"
-msgstr ""
+msgstr "Endre fakturerings-e-post"
 
 #. js-lingui-id: feCRNv
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -6411,11 +6442,6 @@ msgstr "kanalrolle"
 msgid "Channel visibility on API keys"
 msgstr "Kanaltilgjengelighet for API-nøkler"
 
-#. js-lingui-id: Kjphnm
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Channel visibility through rules"
-msgstr "Kanaltilgjengelighet gjennom regler"
-
 #. js-lingui-id: lfFsZ4
 #: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
 #: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
@@ -6509,11 +6535,6 @@ msgstr "Sjekkliste"
 #: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Check recent runs"
 msgstr "Sjekk nylige kjøringer"
-
-#. js-lingui-id: 1rduS8
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Check the create permission on its own when creating records, rather than the update permission."
-msgstr "Kontroller opprettelsestillatelsen separat når du oppretter poster, i stedet for oppdateringstillatelsen."
 
 #. js-lingui-id: JslvtK
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -7219,6 +7240,11 @@ msgstr "lukk"
 msgid "Collapse"
 msgstr "Lukk"
 
+#. js-lingui-id: 9prKyv
+#: src/modules/command-menu-item/display/components/CommandMenuItemCollapsibleSectionHeading.tsx
+msgid "Collapse {heading}"
+msgstr "Skjul {heading}"
+
 #. js-lingui-id: kBUgVh
 #: src/modules/object-record/record-board/record-board-card/components/RecordBoardCardHeader.tsx
 msgid "Collapse card"
@@ -7505,11 +7531,6 @@ msgstr "Forhåndsvisning av komponent med eksempeldata"
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
 msgid "Compose email"
 msgstr "Skriv e-post"
-
-#. js-lingui-id: xwW7YT
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes."
-msgstr "Beregn tilgangsgruppene som oppføringer av poster vil bruke for tillatelser på radnivå. Aktiver etter at arbeidsområdeoppgraderingen er fullført."
 
 #. js-lingui-id: LzmTuU
 #: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
@@ -8888,11 +8909,6 @@ msgstr "Opprett post"
 msgid "Create Record"
 msgstr "Opprett post"
 
-#. js-lingui-id: frmOeu
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Create records permission"
-msgstr "Tillatelse til å opprette poster"
-
 #. js-lingui-id: fRYkDa
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineCreateRelated.tsx
 #: src/modules/side-panel/hooks/useOpenCreateRelatedRecordInSidePanel.ts
@@ -10010,7 +10026,6 @@ msgstr "Reduser verdi"
 #: src/modules/settings/experience/components/UiScalePicker.tsx
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
-#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Default"
 msgstr "Standard"
 
@@ -10071,11 +10086,6 @@ msgstr "Definer navn og beskrivelse av objektet ditt"
 #: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
 msgid "Define the name and instructions for this skill"
 msgstr "Definer navn og instruksjoner for denne ferdigheten"
-
-#. js-lingui-id: zDccHY
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Define the relations along which a record's permissions extend to related records."
-msgstr "Definer relasjonene som en oppførings tillatelser utvides til relaterte oppføringer langs."
 
 #. js-lingui-id: Ntu10D
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -13187,6 +13197,11 @@ msgstr "Avslutt importflyt"
 msgid "Expand"
 msgstr "Utvid"
 
+#. js-lingui-id: AgpQjB
+#: src/modules/command-menu-item/display/components/CommandMenuItemCollapsibleSectionHeading.tsx
+msgid "Expand {heading}"
+msgstr "Utvid {heading}"
+
 #. js-lingui-id: JjrOSL
 #: src/modules/object-record/record-board/record-board-card/components/RecordBoardCardHeader.tsx
 msgid "Expand card"
@@ -14051,7 +14066,6 @@ msgid "Failure Rate"
 msgstr "Feilrate"
 
 #. js-lingui-id: 8wngZM
-#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Fallback"
 msgstr "Reservealternativ"
@@ -16444,11 +16458,6 @@ msgstr "Om mindre enn en dag"
 msgid "In progress"
 msgstr "Pågår"
 
-#. js-lingui-id: q6UzTa
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops and related record paths."
-msgstr "Pågår: håndhev synlighet for meldings- og kalenderkanaler med tillatelsesregler på postnivå. Krever relasjonshopp og relaterte poststier."
-
 #. js-lingui-id: 0Nl1Pt
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx
 msgid "In the list"
@@ -18042,11 +18051,6 @@ msgstr "La medlemmer koble til sine egne kontoer"
 msgid "Let people restrict and share individual records."
 msgstr "La personer begrense og dele enkeltposter."
 
-#. js-lingui-id: b3MaZQ
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Let record-level permission rules compare a field of a related record."
-msgstr "La tillatelsesregler på postnivå sammenligne et felt i en relatert post."
-
 #. js-lingui-id: oKfDGp
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let text, number, boolean and date fields compute their value from an expression over the record and its related records."
@@ -19400,11 +19404,6 @@ msgstr "Melding {recipientName}"
 #: src/modules/chat/components/ChatMessageFloatingActions.tsx
 msgid "Message actions"
 msgstr "Meldingshandlinger"
-
-#. js-lingui-id: 6H0up8
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Message attachments"
-msgstr "Meldingsvedlegg"
 
 #. js-lingui-id: U15XwX
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
@@ -21406,6 +21405,7 @@ msgstr "Ingen oppføring valgt"
 
 #. js-lingui-id: EqGTpW
 #: src/modules/ai-chat/composer/components/AiChatAddMenuRecordsPage.tsx
+#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 #: src/modules/object-record/record-index/components/RecordIndexEmptyState.tsx
 #: src/modules/object-record/record-picker/components/RecordPickerNoRecordFoundMenuItem.tsx
 #: src/modules/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerMenuItems.tsx
@@ -23338,7 +23338,7 @@ msgstr "Betalt app"
 #. js-lingui-id: CQnFBr
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "Paid apps installed in this workspace. Prices are added to your invoice"
-msgstr ""
+msgstr "Betalte apper installert i dette arbeidsområdet. Prisene legges til på fakturaen din"
 
 #. js-lingui-id: ijBN4V
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -23565,7 +23565,7 @@ msgstr "per medlem"
 #. js-lingui-id: JxgXH1
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "Per month"
-msgstr ""
+msgstr "Per måned"
 
 #. js-lingui-id: qMTN0w
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
@@ -24742,6 +24742,11 @@ msgstr "Les, skriv og slett {target}"
 msgid "Read/Edit/Delete permissions"
 msgstr "Les/rediger/slett-tillatelser"
 
+#. js-lingui-id: +a9H8X
+#: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaForm.tsx
+msgid "Reads related records, so the value is stored and updated in the background a few seconds after they change."
+msgstr "Leser relaterte poster, så verdien lagres og oppdateres i bakgrunnen noen sekunder etter at de endres."
+
 #. js-lingui-id: VJScHU
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
@@ -25019,11 +25024,6 @@ msgstr "Oppføringsside"
 msgid "Record page widget"
 msgstr "Widget for oppføringsside"
 
-#. js-lingui-id: fHTWNa
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Record rules through relations"
-msgstr "Postregler gjennom relasjoner"
-
 #. js-lingui-id: pVTJSR
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
 msgid "Record selection"
@@ -25259,11 +25259,6 @@ msgstr "Avvist"
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "related record path"
 msgstr "relatert oppføringsbane"
-
-#. js-lingui-id: l3qF/i
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Related record paths"
-msgstr "Stier for relaterte oppføringer"
 
 #. js-lingui-id: uGfOFe
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -26729,6 +26724,8 @@ msgid "SDK"
 msgstr "SDK"
 
 #. js-lingui-id: A1taO8
+#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
+#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/navigation/components/MainNavigationDrawerSearchField.tsx
@@ -27064,7 +27061,7 @@ msgstr "Søkealternativer"
 #. js-lingui-id: WDcoYK
 #: src/modules/navigation/components/MainNavigationDrawerSearchField.tsx
 msgid "Search or ask..."
-msgstr ""
+msgstr "Søk eller spør..."
 
 #. js-lingui-id: IMeaSJ
 #: src/modules/ai-chat/composer/components/AiChatAddMenuRecordsPage.tsx
@@ -27355,6 +27352,11 @@ msgstr "Se samsvarende {objectLabelPlural}"
 #: src/modules/settings/applications/components/SettingsApplicationContentSummarySection.tsx
 msgid "See more"
 msgstr "Se mer"
+
+#. js-lingui-id: ssRcpB
+#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
+msgid "See more results"
+msgstr "Se flere resultater"
 
 #. js-lingui-id: V7TecA
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
@@ -28259,11 +28261,6 @@ msgstr "Form, farge, ansikt"
 #: src/modules/side-panel/hooks/useOpenShareRecordInSidePanel.ts
 msgid "Share"
 msgstr "Del"
-
-#. js-lingui-id: nmXzns
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Share calendar events across channels"
-msgstr "Del kalenderhendelser på tvers av kanaler"
 
 #. js-lingui-id: S1jlER
 #: src/modules/settings/privacy/components/SettingsPrivacySharingWithTwenty.tsx
@@ -29390,16 +29387,6 @@ msgstr "Stopper"
 msgid "Storage"
 msgstr "Lager"
 
-#. js-lingui-id: vrUVo4
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Store a meeting synced by several calendars of the same provider once, instead of once per calendar."
-msgstr "Lagre et møte som synkroniseres av flere kalendere fra samme leverandør én gang, i stedet for én gang per kalender."
-
-#. js-lingui-id: YbaJNn
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Store and show files attached to messages. Enabled after the workspace upgrade completes."
-msgstr "Lagre og vis filer som er vedlagt meldinger. Aktiveres etter at oppgraderingen av arbeidsområdet er fullført."
-
 #. js-lingui-id: juzGVI
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
 msgid "Store the full URL or just the domain"
@@ -30316,6 +30303,11 @@ msgstr "Agenten som dette trinnet kjører, kunne ikke lastes inn. Den kan ha bli
 msgid "The API endpoint for your OpenAI-compatible provider"
 msgstr "API-endepunktet for din OpenAI-kompatible tilbyder"
 
+#. js-lingui-id: UIpkEz
+#: src/modules/settings/data-model/fields/forms/formula/constants/FormulaAggregateFunctionDefinitions.ts
+msgid "The average of a number field over the related records, or over those matching the condition."
+msgstr "Gjennomsnittet av et tallfelt på tvers av relaterte poster, eller av dem som oppfyller betingelsen."
+
 #. js-lingui-id: qjNojw
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "The AWS region for Bedrock"
@@ -30355,6 +30347,11 @@ msgstr "Koden lar {memberName} logge på dette arbeidsområdet én gang uten aut
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
 msgid "The code of the Twenty partner who referred you"
 msgstr "Koden til Twenty-partneren som henviste deg"
+
+#. js-lingui-id: h7Af0y
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "The condition of {functionName}() cannot read \"{relationFieldName}\""
+msgstr "Betingelsen for {functionName}() kan ikke lese \"{relationFieldName}\""
 
 #. js-lingui-id: aXzQ65
 #: src/modules/ai-chat/messages/components/AiChatCompactionIndicator.tsx
@@ -30461,6 +30458,11 @@ msgstr "Den fullstendige avtalen med felter fylt ut for ditt miljø."
 msgid "The icon your workflow trigger will display in the command menu"
 msgstr "Ikonet som arbeidsflyt-triggeren din vil vise i kommandomenyen"
 
+#. js-lingui-id: hP+z/5
+#: src/modules/settings/data-model/fields/forms/formula/constants/FormulaAggregateFunctionDefinitions.ts
+msgid "The largest number or latest date among the related records. With plain values, such as max(a, b), the largest of them."
+msgstr "Det største tallet eller den nyeste datoen blant de relaterte postene. Med enkle verdier, som max(a, b), den største av dem."
+
 #. js-lingui-id: Qp6vM+
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The largest of the numbers. Values that are not numbers are ignored."
@@ -30543,6 +30545,11 @@ msgstr "Navnet mottakerne ser ved siden av adressen din. Det blir satt når kana
 msgid "The number of items in the list, or 0 when it is not a list."
 msgstr "Antallet elementer i listen, eller 0 når det ikke er en liste."
 
+#. js-lingui-id: vXwRDS
+#: src/modules/settings/data-model/fields/forms/formula/constants/FormulaAggregateFunctionDefinitions.ts
+msgid "The number of related records, or of those matching the condition. For example count(tasks, tasks.status == \"TODO\")."
+msgstr "Antallet relaterte poster, eller av dem som oppfyller betingelsen. For eksempel count(tasks, tasks.status == \"TODO\")."
+
 #. js-lingui-id: SpoTRx
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The number of whole units from the first date to the second, negative when the second is earlier. Minutes and hours are elapsed time; longer units count calendar days and months, in UTC."
@@ -30613,6 +30620,11 @@ msgstr ""
 msgid "The shared email you want to use."
 msgstr "Den delte e-posten du vil bruke."
 
+#. js-lingui-id: q2NONu
+#: src/modules/settings/data-model/fields/forms/formula/constants/FormulaAggregateFunctionDefinitions.ts
+msgid "The smallest number or earliest date among the related records. With plain values, such as min(a, b), the smallest of them."
+msgstr "Det minste tallet eller den tidligste datoen blant de relaterte postene. Med enkle verdier, som min(a, b), den minste av dem."
+
 #. js-lingui-id: CZF2sj
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The smallest of the numbers. Values that are not numbers are ignored."
@@ -30654,6 +30666,11 @@ msgstr "Verktøyet kjørte, men returnerte ingen felt, så forventet utdata ble 
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "The tool runs without arguments."
 msgstr "Verktøyet kjører uten argumenter."
+
+#. js-lingui-id: 6XWxWG
+#: src/modules/settings/data-model/fields/forms/formula/constants/FormulaAggregateFunctionDefinitions.ts
+msgid "The total of a number field over the related records, or over those matching the condition."
+msgstr "Summen av et tallfelt på tvers av relaterte poster, eller av dem som oppfyller betingelsen."
 
 #. js-lingui-id: 9q0gnf
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -33387,11 +33404,6 @@ msgstr "Brukshendelser"
 msgid "Usage period"
 msgstr "Bruksperiode"
 
-#. js-lingui-id: js4Y6w
-#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
-msgid "Use ‘{trimmedSidePanelSearch}’ with..."
-msgstr "Bruk ‘{trimmedSidePanelSearch}’ med..."
-
 #. js-lingui-id: jFGgyP
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 msgid "Use a backup code to sign in if you lose access to your authenticator app. Each code works once."
@@ -33997,7 +34009,6 @@ msgstr "Fiolett"
 #: src/modules/settings/unsubscribe-topics/components/SettingsWorkspaceUnsubscribeTopicSection.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
-#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Visibility"
 msgstr "Synlighet"
 

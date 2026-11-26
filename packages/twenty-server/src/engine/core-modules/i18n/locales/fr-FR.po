@@ -256,11 +256,6 @@ msgstr "Un décompte d'enregistrements liés ne peut pas avoir de champ d'enregi
 msgid "A count of related records cannot use a field"
 msgstr "Un décompte d'enregistrements liés ne peut pas utiliser de champ"
 
-#. js-lingui-id: gN4DZ+
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-formula.util.ts
-msgid "A currency formula needs a currency code"
-msgstr "Une formule de devise nécessite un code de devise"
-
 #. js-lingui-id: TjN8GI
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -298,6 +293,11 @@ msgstr "Une erreur du gestionnaire DNS s'est produite."
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "A field with this name already exists."
 msgstr "Un champ portant ce nom existe déjà."
+
+#. js-lingui-id: lDO6A7
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-formula.util.ts
+msgid "A formula cannot read its own value, directly or through other formulas"
+msgstr "Une formule ne peut pas lire sa propre valeur, directement ou par l’intermédiaire d’autres formules"
 
 #. js-lingui-id: 01ujS8
 #: src/engine/api/common/common-args-processors/data-arg-processor/data-arg-processor.service.ts
@@ -3215,11 +3215,6 @@ msgctxt "fieldMetadata.description"
 msgid "Chats tied to the opportunity"
 msgstr "Chats liés à l'opportunité"
 
-#. js-lingui-id: YNDJWu
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
-msgid "Checking whether a one-to-many relation is empty requires relation hops in row level permission predicates"
-msgstr "La vérification qu'une relation un-à-plusieurs est vide nécessite des sauts de relation dans les prédicats d'autorisation au niveau des lignes"
-
 #. js-lingui-id: ZgijCO
 #: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
 msgid "Choose an active tab and a widget position matching its layout mode."
@@ -4249,12 +4244,12 @@ msgstr "Le modèle Cron \"{pattern}\" est invalide"
 #. js-lingui-id: sJbCNC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-cron-trigger-spread.util.ts
 msgid "Cron trigger spread must be between 2 minutes and 24 hours."
-msgstr ""
+msgstr "La répartition du déclencheur Cron doit être comprise entre 2 minutes et 24 heures."
 
 #. js-lingui-id: GbygrC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-cron-trigger-spread.util.ts
 msgid "Cron trigger spreadMs must be an integer between {CRON_TRIGGER_MIN_SPREAD_MS} and {CRON_TRIGGER_MAX_SPREAD_MS}"
-msgstr ""
+msgstr "La valeur spreadMs du déclencheur Cron doit être un entier compris entre {CRON_TRIGGER_MIN_SPREAD_MS} et {CRON_TRIGGER_MAX_SPREAD_MS}"
 
 #. js-lingui-id: ViG9dm
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
@@ -10460,7 +10455,7 @@ msgstr "Seule l'application qui possède cet agent peut modifier ses déclencheu
 #. js-lingui-id: xCGjjr
 #: src/engine/permissions/metadata-permissions/utils/get-privatable-entity-privacy-validation-errors.util.ts
 msgid "Only the person who created this can change who sees it"
-msgstr ""
+msgstr "Seule la personne qui a créé ceci peut modifier qui le voit"
 
 #. js-lingui-id: MPDvEo
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
@@ -11431,16 +11426,6 @@ msgstr "Il manque une valeur au prédicat"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Predicate value is not valid for this operand"
 msgstr "La valeur du prédicat n’est pas valide pour cet opérande"
-
-#. js-lingui-id: nSv3rP
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
-msgid "Predicates reaching a field through a relation are not enabled for this workspace"
-msgstr "Les prédicats atteignant un champ via une relation ne sont pas activés pour cet espace de travail"
-
-#. js-lingui-id: v5akl/
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
-msgid "Predicates reading the current member through a relation are not enabled for this workspace"
-msgstr "Les prédicats lisant le membre actuel via une relation ne sont pas activés pour cet espace de travail"
 
 #. js-lingui-id: /h13bI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -12765,12 +12750,6 @@ msgstr "Les autorisations d'enregistrements au niveau des lignes qui masquent ou
 msgctxt "fieldMetadata.label"
 msgid "Rule"
 msgstr "Règle"
-
-#. js-lingui-id: zhLAHJ
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
-msgid "Rules through a relation are not enabled for this workspace"
-msgstr "Les règles via une relation ne sont pas activées pour cet espace de travail"
 
 #. js-lingui-id: F1qT/F
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -15783,7 +15762,6 @@ msgid "This operand is not supported for this field"
 msgstr "Cet opérande n'est pas pris en charge pour ce champ"
 
 #. js-lingui-id: sf5yLA
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This operand is not supported for this relation"

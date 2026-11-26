@@ -324,8 +324,6 @@ describe('core workflow visibility (e2e)', () => {
     });
   });
 
-  // Pre-visibility workflows and those whose creator left (owner FK is ON DELETE SET NULL) have no owner,
-  // and without a claim nobody could reach them while they still run.
   describe('an ownerless workflow', () => {
     let ownerlessCoreWorkflowId: string;
 
@@ -350,58 +348,52 @@ describe('core workflow visibility (e2e)', () => {
       }
     });
 
-    it('is claimable by any member who can already edit it', async () => {
-      const response = await asOtherMember(CORE_WORKFLOW_BY_ID_QUERY, {
-        coreWorkflowId: ownerlessCoreWorkflowId,
-      });
+    it('lets no member change its privacy', async () => {
+      for (const requester of [workflowGraphqlRequest, asOtherMember]) {
+        const response = await requester(CORE_WORKFLOW_BY_ID_QUERY, {
+          coreWorkflowId: ownerlessCoreWorkflowId,
+        });
 
-      expect(response.body.errors).toBeUndefined();
-      expect(response.body.data.coreWorkflowById).toMatchObject({
-        canChangeVisibility: true,
-      });
+        expect(response.body.errors).toBeUndefined();
+        expect(response.body.data.coreWorkflowById).toMatchObject({
+          isPrivate: false,
+          canChangeVisibility: false,
+        });
+      }
     });
 
-    it('belongs to whoever claims it first, and only to them', async () => {
-      const claim = await asOtherMember(UPDATE_CORE_WORKFLOW_MUTATION, {
+    it('refuses to make it private', async () => {
+      for (const requester of [workflowGraphqlRequest, asOtherMember]) {
+        const response = await requester(UPDATE_CORE_WORKFLOW_MUTATION, {
+          input: {
+            coreWorkflowId: ownerlessCoreWorkflowId,
+            isPrivate: true,
+          },
+        });
+
+        expect(response.body.errors?.[0]?.extensions?.code).toBe(
+          'METADATA_VALIDATION_FAILED',
+        );
+      }
+    });
+
+    it('accepts an update that keeps it shared, without making the caller its creator', async () => {
+      const response = await asOtherMember(UPDATE_CORE_WORKFLOW_MUTATION, {
         input: {
           coreWorkflowId: ownerlessCoreWorkflowId,
           isPrivate: false,
         },
       });
 
-      expect(claim.body.errors).toBeUndefined();
+      expect(response.body.errors).toBeUndefined();
 
-      const asCreatorOfNothing = await workflowGraphqlRequest(
-        CORE_WORKFLOW_BY_ID_QUERY,
-        { coreWorkflowId: ownerlessCoreWorkflowId },
-      );
-
-      expect(asCreatorOfNothing.body.data.coreWorkflowById).toMatchObject({
-        canChangeVisibility: false,
-      });
-    });
-
-    // The claim is the UPDATE's own WHERE, which is what stops two simultaneous claims both passing.
-    it('refuses a second claim even though the workflow is still workspace-visible', async () => {
-      const secondClaim = await workflowGraphqlRequest(
-        UPDATE_CORE_WORKFLOW_MUTATION,
-        {
-          input: {
-            coreWorkflowId: ownerlessCoreWorkflowId,
-            isPrivate: true,
-          },
-        },
-      );
-
-      expect(secondClaim.body.errors).toBeDefined();
-
-      const stillShared = await asOtherMember(CORE_WORKFLOW_BY_ID_QUERY, {
+      const afterUpdate = await asOtherMember(CORE_WORKFLOW_BY_ID_QUERY, {
         coreWorkflowId: ownerlessCoreWorkflowId,
       });
 
-      expect(stillShared.body.data.coreWorkflowById).toMatchObject({
+      expect(afterUpdate.body.data.coreWorkflowById).toMatchObject({
         isPrivate: false,
-        canChangeVisibility: true,
+        canChangeVisibility: false,
       });
     });
   });
@@ -994,67 +986,6 @@ describe('core workflow visibility (e2e)', () => {
           ownerlessPrivateCoreWorkflowId,
         );
       }
-    });
-  });
-
-  describe('two members claiming an ownerless workflow at the same time', () => {
-    let contestedCoreWorkflowId: string;
-
-    beforeAll(async () => {
-      ({ coreWorkflowId: contestedCoreWorkflowId } = await createCoreWorkflow({
-        name: 'Contested Ownerless Workflow',
-      }));
-
-      await global.testDataSource.query(
-        `UPDATE core."workflow" SET "createdByUserWorkspaceId" = NULL WHERE id = $1`,
-        [contestedCoreWorkflowId],
-      );
-
-      await recomputeAppleWorkflowCaches(['flatWorkflowMaps']);
-    });
-
-    afterAll(async () => {
-      if (isDefined(contestedCoreWorkflowId)) {
-        await deleteCoreWorkflows({
-          coreWorkflowIds: [contestedCoreWorkflowId],
-        });
-      }
-    });
-
-    it('lets exactly one of them win', async () => {
-      const claimInput = {
-        input: {
-          coreWorkflowId: contestedCoreWorkflowId,
-          isPrivate: false,
-        },
-      };
-
-      const claims = await Promise.all([
-        workflowGraphqlRequest(UPDATE_CORE_WORKFLOW_MUTATION, claimInput),
-        asOtherMember(UPDATE_CORE_WORKFLOW_MUTATION, claimInput),
-      ]);
-
-      const refusedClaims = claims.filter(({ body }) => isDefined(body.errors));
-
-      expect(refusedClaims).toHaveLength(1);
-      expect(['FORBIDDEN', 'METADATA_VALIDATION_FAILED']).toContain(
-        refusedClaims[0].body.errors[0].extensions.code,
-      );
-
-      const ownershipViews = await Promise.all([
-        workflowGraphqlRequest(CORE_WORKFLOW_BY_ID_QUERY, {
-          coreWorkflowId: contestedCoreWorkflowId,
-        }),
-        asOtherMember(CORE_WORKFLOW_BY_ID_QUERY, {
-          coreWorkflowId: contestedCoreWorkflowId,
-        }),
-      ]);
-
-      expect(
-        ownershipViews.map(
-          ({ body }) => body.data.coreWorkflowById.canChangeVisibility,
-        ),
-      ).toEqual(claims.map(({ body }) => !isDefined(body.errors)));
     });
   });
 

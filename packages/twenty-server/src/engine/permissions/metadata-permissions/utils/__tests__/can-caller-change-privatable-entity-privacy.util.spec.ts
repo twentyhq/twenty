@@ -45,13 +45,13 @@ describe('canCallerChangePrivatableEntityPrivacy', () => {
     ).toBe(false);
   });
 
-  it('lets any member change the privacy of an entity with no creator', () => {
+  it('refuses members on an entity with no creator', () => {
     expect(
       canCallerChangePrivatableEntityPrivacy({
         privatableEntity: ownerlessEntity,
         authContext: buildMemberAuthContext('someone-else'),
       }),
-    ).toBe(true);
+    ).toBe(false);
   });
 
   it('refuses callers that are not workspace members, even without a creator', () => {

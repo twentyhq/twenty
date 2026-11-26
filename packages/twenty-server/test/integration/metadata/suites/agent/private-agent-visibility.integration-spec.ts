@@ -132,37 +132,24 @@ describe('private agent visibility (integration)', () => {
       });
     });
 
-    it('cannot be made private by an API key', async () => {
-      const { errors } = await updateOneAgent({
-        expectToFail: true,
-        input: { id: sharedAgentId, isPrivate: true },
-        gqlFields: AGENT_GQL_FIELDS,
-        token: API_KEY_ACCESS_TOKEN,
-      });
+    it('cannot be made private by an API key or by a member', async () => {
+      for (const token of [
+        API_KEY_ACCESS_TOKEN,
+        APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      ]) {
+        const { errors } = await updateOneAgent({
+          expectToFail: true,
+          input: { id: sharedAgentId, isPrivate: true },
+          gqlFields: AGENT_GQL_FIELDS,
+          token,
+        });
 
-      expect(errors?.[0]?.extensions?.code).toBe(
-        ErrorCode.METADATA_VALIDATION_FAILED,
-      );
-    });
+        expect(errors?.[0]?.extensions?.code).toBe(
+          ErrorCode.METADATA_VALIDATION_FAILED,
+        );
+      }
 
-    it('becomes owned by the member who makes it private', async () => {
-      const { data } = await updateOneAgent({
-        expectToFail: false,
-        input: { id: sharedAgentId, isPrivate: true },
-        gqlFields: AGENT_GQL_FIELDS,
-        token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
-      });
-
-      expect(data.updateOneAgent).toEqual({
-        id: sharedAgentId,
-        isPrivate: true,
-      });
-      expect(await findAgentIds(API_KEY_ACCESS_TOKEN)).not.toContain(
-        sharedAgentId,
-      );
-      expect(await findAgentIds(APPLE_JANE_ADMIN_ACCESS_TOKEN)).toContain(
-        sharedAgentId,
-      );
+      expect(await findAgentIds(API_KEY_ACCESS_TOKEN)).toContain(sharedAgentId);
     });
   });
 });

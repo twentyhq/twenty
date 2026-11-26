@@ -197,7 +197,7 @@ export class ApplicationMessageChannelsService {
     const savedMessageChannel =
       await this.messageChannelRepository.save(entity);
 
-    await this.channelVisibilityRuleSyncSchedulerService.scheduleSyncIfEnabled(
+    await this.channelVisibilityRuleSyncSchedulerService.scheduleSync(
       workspaceId,
     );
 
@@ -297,7 +297,7 @@ export class ApplicationMessageChannelsService {
     await this.messageChannelRepository.update({ id, workspaceId }, data);
 
     if (isDefined(data.visibility)) {
-      await this.channelVisibilityRuleSyncSchedulerService.scheduleSyncIfEnabled(
+      await this.channelVisibilityRuleSyncSchedulerService.scheduleSync(
         workspaceId,
       );
     }
@@ -322,7 +322,7 @@ export class ApplicationMessageChannelsService {
 
     await this.messageChannelRepository.delete({ id, workspaceId });
 
-    await this.channelVisibilityRuleSyncSchedulerService.scheduleSyncIfEnabled(
+    await this.channelVisibilityRuleSyncSchedulerService.scheduleSync(
       workspaceId,
     );
 

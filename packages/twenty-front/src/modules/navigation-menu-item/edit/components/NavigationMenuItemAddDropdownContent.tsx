@@ -5,6 +5,7 @@ import { useNavigationMenuItemAddOptions } from '@/navigation-menu-item/edit/hoo
 import { type NavigationMenuItemAddStep } from '@/navigation-menu-item/edit/types/NavigationMenuItemAddStep';
 import { getNavigationMenuItemTabId } from '@/navigation-menu-item/common/utils/getNavigationMenuItemTabId';
 import { getNavigationMenuItemContainerId } from '@/navigation-menu-item/common/utils/getNavigationMenuItemContainerId';
+import { useWorkspaceSidebarRootContainerId } from '@/navigation-menu-item/display/hooks/useWorkspaceSidebarRootContainerId';
 import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
 import { NavigationMenuAddSectionHiddenItems } from '@/navigation-menu-item/edit/components/NavigationMenuAddSectionHiddenItems';
 import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
@@ -69,6 +70,7 @@ export const NavigationMenuItemAddDropdownContent = ({
   const [objectId, setObjectId] = useState<string | null>(null);
   const { currentItems, createItem } =
     useNavigationMenuItemEditController(section);
+  const workspaceSidebarRootContainerId = useWorkspaceSidebarRootContainerId();
   const insertionIndex =
     position ??
     currentItems.filter(
@@ -86,13 +88,14 @@ export const NavigationMenuItemAddDropdownContent = ({
         items: currentItems,
       }) === targetTabId,
   );
-  const targetContainerId = getNavigationMenuItemContainerId({
-    item: { parentId },
-    items: currentItems,
-  });
+  const targetContainerId =
+    getNavigationMenuItemContainerId({
+      item: { parentId },
+      items: currentItems,
+    }) ?? workspaceSidebarRootContainerId;
   const isInTargetContainer = (item: (typeof currentItems)[number]) =>
-    getNavigationMenuItemContainerId({ item, items: currentItems }) ===
-    targetContainerId;
+    (getNavigationMenuItemContainerId({ item, items: currentItems }) ??
+      workspaceSidebarRootContainerId) === targetContainerId;
 
   const navigate = (next: Step) => {
     goToPage(next);

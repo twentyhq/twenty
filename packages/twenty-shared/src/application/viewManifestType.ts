@@ -10,7 +10,6 @@ import {
   type ViewPresetFilter,
   type ViewSortDirection,
   type ViewType,
-  type ViewVisibility,
 } from '@/types';
 
 export type ViewManifestFilterValue =
@@ -86,7 +85,6 @@ export type ViewManifest = SyncableEntityOptions & {
   icon?: string;
   position?: number;
   isCompact?: boolean;
-  visibility?: ViewVisibility;
   openRecordIn?: ViewOpenRecordIn;
   mainGroupByFieldMetadataUniversalIdentifier?: string;
   shouldHideEmptyGroups?: boolean;

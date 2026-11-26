@@ -71,13 +71,12 @@ export const WorkflowEditActionClassify = ({
 }: WorkflowEditActionClassifyProps) => {
   const { t } = useLingui();
 
-  const readonly = actionOptions.readonly === true;
+  const readonly = actionOptions.readonly ?? false;
   const { input, updateInput } = useClassifyForm({
     action,
-    onActionUpdate:
-      actionOptions.readonly === true
-        ? undefined
-        : actionOptions.onActionUpdate,
+    onActionUpdate: actionOptions.readonly
+      ? undefined
+      : actionOptions.onActionUpdate,
     readonly,
   });
   const questions = input.questions;

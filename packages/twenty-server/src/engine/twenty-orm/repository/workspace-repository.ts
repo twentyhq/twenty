@@ -1956,7 +1956,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
   private buildRecordAccessGroupWriteTarget() {
     return {
-      featureFlagsMap: this.options.internalContext.featureFlagsMap,
       workspaceId: this.options.internalContext.workspaceId,
       objectMetadataId: this.options.flatObjectMetadata.id,
     };

@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
-import { FeatureFlagKey, MessageParticipantRole } from 'twenty-shared/types';
+import { MessageParticipantRole } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
+import { buildCreatedByFromApplication } from 'src/engine/core-modules/actor/utils/build-created-by-from-application.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { APP_INGESTION_LOCK_OPTIONS } from 'src/engine/metadata-modules/message-channel/constants/app-ingestion-lock-options.constant';
 import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { type AppMessageInput } from 'src/engine/metadata-modules/message-channel/dtos/ingest-app-messages.input';
@@ -24,6 +24,7 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { PersonHandleFieldService } from 'src/modules/match-participant/person-handle-field/person-handle-field.service';
 import { type PersonHandleField } from 'src/modules/match-participant/person-handle-field/types/person-handle-field.type';
@@ -47,9 +48,9 @@ export class ApplicationMessageIngestionService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly cacheLockService: CacheLockService,
     private readonly personHandleFieldService: PersonHandleFieldService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
     @InjectWorkspaceScopedRepository(MessageFolderEntity)
     private readonly messageFolderRepository: WorkspaceScopedRepository<MessageFolderEntity>,
-    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async ingest({
@@ -84,6 +85,12 @@ export class ApplicationMessageIngestionService {
         messageChannel.participantHandleFieldUniversalIdentifier,
     });
 
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatApplicationMaps',
+      ]);
+    const application = flatApplicationMaps.byId[applicationId];
+
     const messagesToSave = messages.map((message) =>
       this.toMessageWithParticipants({
         message: isDefined(personHandleField)
@@ -113,6 +120,9 @@ export class ApplicationMessageIngestionService {
           workspaceId,
           folderLinkUpdate: 'add',
           personHandleField: personHandleField ?? undefined,
+          createdBy: isDefined(application)
+            ? buildCreatedByFromApplication({ application })
+            : undefined,
         }),
       buildAppIngestionLockKey({ workspaceId, messageChannelId }),
       APP_INGESTION_LOCK_OPTIONS,
@@ -168,16 +178,6 @@ export class ApplicationMessageIngestionService {
     messageIds: string[];
   }): Promise<Set<string>> {
     if (messageIds.length === 0) {
-      return new Set();
-    }
-
-    const isMessageAttachmentEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_MESSAGE_ATTACHMENT_ENABLED,
-        workspaceId,
-      );
-
-    if (!isMessageAttachmentEnabled) {
       return new Set();
     }
 

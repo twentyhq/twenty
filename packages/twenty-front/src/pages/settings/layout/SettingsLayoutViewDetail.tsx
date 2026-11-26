@@ -64,11 +64,6 @@ export const SettingsLayoutViewDetail = () => {
           value: objectLabel ?? view.objectUniversalIdentifier,
         },
         { key: 'icon', label: t`Icon`, value: view.icon ?? t`Not set` },
-        {
-          key: 'visibility',
-          label: t`Visibility`,
-          value: view.visibility ?? t`Default`,
-        },
       ]
     : [];
 

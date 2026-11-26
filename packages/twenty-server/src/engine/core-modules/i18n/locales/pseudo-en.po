@@ -251,11 +251,6 @@ msgstr ""
 msgid "A count of related records cannot use a field"
 msgstr ""
 
-#. js-lingui-id: gN4DZ+
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-formula.util.ts
-msgid "A currency formula needs a currency code"
-msgstr ""
-
 #. js-lingui-id: TjN8GI
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -292,6 +287,11 @@ msgstr ""
 #. js-lingui-id: othZF2
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "A field with this name already exists."
+msgstr ""
+
+#. js-lingui-id: lDO6A7
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-formula.util.ts
+msgid "A formula cannot read its own value, directly or through other formulas"
 msgstr ""
 
 #. js-lingui-id: 01ujS8
@@ -3208,11 +3208,6 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Chats tied to the opportunity"
-msgstr ""
-
-#. js-lingui-id: YNDJWu
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
-msgid "Checking whether a one-to-many relation is empty requires relation hops in row level permission predicates"
 msgstr ""
 
 #. js-lingui-id: ZgijCO
@@ -11427,16 +11422,6 @@ msgstr ""
 msgid "Predicate value is not valid for this operand"
 msgstr ""
 
-#. js-lingui-id: nSv3rP
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
-msgid "Predicates reaching a field through a relation are not enabled for this workspace"
-msgstr ""
-
-#. js-lingui-id: v5akl/
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
-msgid "Predicates reading the current member through a relation are not enabled for this workspace"
-msgstr ""
-
 #. js-lingui-id: /h13bI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -12759,12 +12744,6 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Rule"
-msgstr ""
-
-#. js-lingui-id: zhLAHJ
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
-msgid "Rules through a relation are not enabled for this workspace"
 msgstr ""
 
 #. js-lingui-id: F1qT/F
@@ -15778,7 +15757,6 @@ msgid "This operand is not supported for this field"
 msgstr ""
 
 #. js-lingui-id: sf5yLA
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This operand is not supported for this relation"

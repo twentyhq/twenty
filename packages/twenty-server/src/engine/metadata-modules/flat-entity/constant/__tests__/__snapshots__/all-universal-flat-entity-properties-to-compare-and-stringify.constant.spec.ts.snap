@@ -19,7 +19,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "overrides",
       "isSystem",
       "isPrivate",
-      "createdByUserWorkspaceId",
     ],
     "propertiesToStringify": [
       "responseFormat",
@@ -522,7 +521,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
   "view": {
     "propertiesToCompare": [
       "deletedAt",
-      "createdByUserWorkspaceId",
       "name",
       "type",
       "icon",
@@ -648,7 +646,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "name",
       "isSystem",
       "isPrivate",
-      "createdByUserWorkspaceId",
       "lastPublishedCoreWorkflowVersionId",
     ],
     "propertiesToStringify": [],

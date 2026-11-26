@@ -18,7 +18,6 @@ import {
   ViewPresetFilter,
   ViewSortDirection,
   ViewType,
-  ViewVisibility,
 } from 'twenty-shared/types';
 
 import { fromFlatViewToViewManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-view-to-view-manifest.util';
@@ -60,7 +59,6 @@ const VIEW_MANIFEST: Required<
   icon: 'IconLayoutKanban',
   position: 3,
   isCompact: true,
-  visibility: ViewVisibility.UNLISTED,
   openRecordIn: ViewOpenRecordIn.RECORD_PAGE,
   mainGroupByFieldMetadataUniversalIdentifier: STAGE_FIELD_UID,
   shouldHideEmptyGroups: true,
@@ -213,7 +211,6 @@ describe('fromFlatViewToViewManifest', () => {
       icon: 'IconList',
       position: 0,
       isCompact: false,
-      visibility: ViewVisibility.WORKSPACE,
       openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
       shouldHideEmptyGroups: false,
       shouldDisplayGroupsAsTabs: false,

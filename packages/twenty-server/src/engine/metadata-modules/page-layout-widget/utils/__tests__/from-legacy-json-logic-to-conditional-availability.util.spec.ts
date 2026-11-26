@@ -1,7 +1,7 @@
 import {
-  evaluateConditionalAvailabilityNode,
-  printConditionalAvailabilityNode,
-} from 'twenty-shared/conditional-availability';
+  evaluateConditionalEvaluationNode,
+  printConditionalEvaluationNode,
+} from 'twenty-shared/conditional-evaluation';
 import { isDefined } from 'twenty-shared/utils';
 
 import { fromLegacyJsonLogicToConditionalAvailability } from 'src/engine/metadata-modules/page-layout-widget/utils/from-legacy-json-logic-to-conditional-availability.util';
@@ -11,9 +11,7 @@ const recordField = (name: string) => ({ var: `selectedRecords.0.${name}` });
 const printConvertedRule = (jsonLogic: unknown): string | undefined => {
   const node = fromLegacyJsonLogicToConditionalAvailability(jsonLogic);
 
-  return isDefined(node)
-    ? printConditionalAvailabilityNode({ node })
-    : undefined;
+  return isDefined(node) ? printConditionalEvaluationNode({ node }) : undefined;
 };
 
 describe('fromLegacyJsonLogicToConditionalAvailability', () => {
@@ -159,7 +157,7 @@ describe('fromLegacyJsonLogicToConditionalAvailability', () => {
     });
 
     expect(
-      evaluateConditionalAvailabilityNode({
+      evaluateConditionalEvaluationNode({
         node,
         context: { device: 'DESKTOP', selectedRecords: [], featureFlags: {} },
       }),
@@ -172,7 +170,7 @@ describe('fromLegacyJsonLogicToConditionalAvailability', () => {
     });
 
     expect(
-      evaluateConditionalAvailabilityNode({
+      evaluateConditionalEvaluationNode({
         node,
         context: { device: 'DESKTOP', selectedRecords: [], featureFlags: {} },
       }),

@@ -2,7 +2,6 @@ import { type ViewManifest } from 'twenty-shared/application';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
-import { getViewVisibilityFromIsPrivate } from 'src/engine/metadata-modules/view/utils/get-view-visibility-from-is-private.util';
 
 export type ViewChildrenManifests = Pick<
   ViewManifest,
@@ -39,7 +38,6 @@ export const fromFlatViewToViewManifest = ({
   icon: flatView.icon,
   position: flatView.position,
   isCompact: flatView.isCompact,
-  visibility: getViewVisibilityFromIsPrivate(flatView.isPrivate),
   openRecordIn: flatView.openRecordIn,
   shouldHideEmptyGroups: flatView.shouldHideEmptyGroups,
   shouldDisplayGroupsAsTabs: flatView.shouldDisplayGroupsAsTabs,

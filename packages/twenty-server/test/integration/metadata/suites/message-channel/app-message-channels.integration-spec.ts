@@ -18,10 +18,15 @@ import { createOneRole } from 'test/integration/metadata/suites/role/utils/creat
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
+import {
+  grantRoleWideAccessToChannelObjects,
+  revokeRoleWideAccessToChannelObjects,
+} from 'test/integration/utils/role-wide-access-to-channel-objects.util';
 import { type Manifest } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   ConnectedAccountProvider,
+  FieldActorSource,
   MessageChannelType,
   MessageChannelVisibility,
   MessageParticipantRole,
@@ -438,6 +443,7 @@ describe('app message channels API (e2e)', () => {
   };
 
   beforeAll(async () => {
+    await grantRoleWideAccessToChannelObjects();
     for (const { appId, roleId, providerId, sourcePath } of [
       {
         appId: OWNING_APP_ID,
@@ -620,6 +626,7 @@ describe('app message channels API (e2e)', () => {
         applicationUniversalIdentifier: appId,
       });
     }
+    await revokeRoleWideAccessToChannelObjects();
   }, 120000);
 
   describe('createAppMessageChannel', () => {
@@ -835,6 +842,42 @@ describe('app message channels API (e2e)', () => {
       });
     });
 
+    it('records the application as the creator of the messages and thread it ingests', async () => {
+      const channel = await createChannelOrThrow();
+
+      const response = await ingest({
+        messageChannelId: channel.id,
+        messages: [
+          buildMessage({
+            externalId: `msg-${uuidv4()}`,
+            threadExternalId: `thread-${uuidv4()}`,
+            senderHandle: 'candidate@linkedin.test',
+          }),
+        ],
+      });
+
+      const [{ messageId, messageThreadId }] =
+        response.body.data.ingestAppMessages.messages;
+
+      const createdByApplication = {
+        createdBySource: FieldActorSource.APPLICATION,
+        createdByContext: { applicationId: owningApplicationDbId },
+      };
+
+      expect(
+        await globalThis.testDataSource.query(
+          `SELECT "createdBySource", "createdByContext" FROM "${WORKSPACE_SCHEMA}"."message" WHERE id = $1`,
+          [messageId],
+        ),
+      ).toEqual([createdByApplication]);
+      expect(
+        await globalThis.testDataSource.query(
+          `SELECT "createdBySource", "createdByContext" FROM "${WORKSPACE_SCHEMA}"."messageThread" WHERE id = $1`,
+          [messageThreadId],
+        ),
+      ).toEqual([createdByApplication]);
+    });
+
     it('exposes the app channel on the timeline threads of the matched person', async () => {
       const channel = await createChannelOrThrow();
       const personId = uuidv4();
@@ -911,7 +954,7 @@ describe('app message channels API (e2e)', () => {
       }
     });
 
-    it('returns no channel for a message thread the user cannot read', async () => {
+    it('returns the channel of a message thread the role cannot read, through the individual role', async () => {
       const channel = await createChannelOrThrow();
 
       const ingestResponse = await ingest({
@@ -1000,7 +1043,9 @@ describe('app message channels API (e2e)', () => {
         const restrictedResponse = await queryThreadChannelAsJony();
 
         expect(restrictedResponse.body.errors).toBeUndefined();
-        expect(restrictedResponse.body.data.getMessageThreadChannel).toBeNull();
+        expect(restrictedResponse.body.data.getMessageThreadChannel).toEqual(
+          readableResponse.body.data.getMessageThreadChannel,
+        );
       } finally {
         await updateWorkspaceMemberRole({
           expectToFail: false,
