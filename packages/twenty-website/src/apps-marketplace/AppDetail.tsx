@@ -1,16 +1,32 @@
 import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
+import {
+  type Icon,
+  IconArrowLeft,
+  IconBug,
+  IconCode,
+  IconDatabase,
+  IconDownload,
+  IconFileText,
+  IconKey,
+  IconLayout,
+  IconMail,
+  IconRobot,
+  IconWorldWww,
+} from '@tabler/icons-react';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ArrowUpRight } from '@/icons';
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
+import { LocalizedLink } from '@/platform/i18n/LocalizedLink';
 import { SITE_URLS } from '@/platform/site-urls';
 import {
   color,
   DURATION,
   EASING,
   fontFamily,
+  fontSize,
   HERO_COMPOSITION,
   mediaUp,
   MENU_HEIGHT_PX,
@@ -78,6 +94,25 @@ const CoverIcon = styled.div`
 
 // Under the band, the title sits a fixed step below the icon at every width:
 // the section's own top padding minus the icon's half that hangs into it.
+// Back to the list this page came from: the case studies' back link (an
+// arrow and a quiet label), shown at every width here.
+const BackLink = styled(LocalizedLink)`
+  align-items: center;
+  align-self: flex-start;
+  color: ${semanticColor.inkMuted};
+  display: inline-flex;
+  font-family: ${fontFamily('sans')};
+  font-size: ${fontSize(4)};
+  gap: ${spacing(1)};
+  margin-bottom: ${spacing(3)};
+  text-decoration: none;
+  transition: color ${DURATION.xxs} ${EASING.gentle};
+
+  &:hover {
+    color: ${semanticColor.ink};
+  }
+`;
+
 const Header = styled.div`
   margin-top: calc(
     ${ICON_SIZE_PX / 2}px + ${spacing(6)} - ${spacing(RHYTHM.section.top.base)}
@@ -168,33 +203,38 @@ const Side = styled.aside`
 
 // Label above its value, as a role sits under a name in Testimonials: the
 // label is muted small text so the value carries the weight.
-const SideFieldStack = styled.div`
-  display: flex;
-  flex-direction: column;
+// A fact told by its icon, as the case studies' reading time: the icon
+// stands for the label, which stays for screen readers.
+const SideFieldRow = styled.div`
+  column-gap: ${spacing(3)};
+  display: grid;
+  grid-template-columns: ${spacing(4)} minmax(0, 1fr);
 
-  & > * + * {
-    margin-top: ${spacing(1.5)};
+  /* centred on the text's first line (bodySm) */
+  & > svg {
+    color: ${semanticColor.inkMuted};
+    margin-top: ${spacing(1)};
   }
 `;
 
 const SideField = ({
   children,
+  icon: FieldIcon,
   label,
 }: {
   children: ReactNode;
+  icon: Icon;
   label: string;
 }) => (
-  <SideFieldStack>
-    <Body as="span" muted size="xs">
-      {label}
-    </Body>
+  <SideFieldRow aria-label={label} role="group">
+    <FieldIcon aria-hidden size={16} stroke={1.5} />
     {children}
-  </SideFieldStack>
+  </SideFieldRow>
 );
 
 const SideGroup = styled.div`
   & > * + * {
-    margin-top: ${spacing(4)};
+    margin-top: ${spacing(3)};
   }
 `;
 
@@ -237,12 +277,6 @@ const SideLink = styled(ExternalLink)`
       transition: none;
     }
   }
-`;
-
-const SideLinks = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${spacing(1.5)};
 `;
 
 const SHOWN_NAMES = 3;
@@ -344,6 +378,7 @@ export function AppDetail({ app, apps, locale }: AppDetailProps) {
   const addsSections = [
     {
       id: 'data',
+      icon: IconDatabase,
       title: i18n._(msg`Data`),
       lines: [
         ...names(content.objects),
@@ -356,6 +391,7 @@ export function AppDetail({ app, apps, locale }: AppDetailProps) {
     },
     {
       id: 'interface',
+      icon: IconLayout,
       title: i18n._(msg`Interface`),
       lines: [
         ...new Set(
@@ -365,6 +401,7 @@ export function AppDetail({ app, apps, locale }: AppDetailProps) {
     },
     {
       id: 'automation',
+      icon: IconRobot,
       title: i18n._(msg`Automation and AI`),
       lines: [
         ...names(content.agents),
@@ -379,6 +416,7 @@ export function AppDetail({ app, apps, locale }: AppDetailProps) {
     },
     {
       id: 'access',
+      icon: IconKey,
       title: i18n._(msg`Access`),
       lines: [
         ...(content.connectionProviders ?? []).map((provider) =>
@@ -406,6 +444,10 @@ export function AppDetail({ app, apps, locale }: AppDetailProps) {
       <SectionShell connectsUp rhythm="section" scheme="light">
         <SectionStack>
           <Header>
+            <BackLink href="/apps">
+              <IconArrowLeft aria-hidden size={16} stroke={1.5} />
+              {i18n._(msg`All apps`)}
+            </BackLink>
             <Heading as="h1" size="md" weight="light" wrap="normal">
               {app.name}
             </Heading>
@@ -423,12 +465,17 @@ export function AppDetail({ app, apps, locale }: AppDetailProps) {
             <Side>
               <SideAction>{install}</SideAction>
               <SideGroup>
-                <SideField label={i18n._(msg`Developer`)}>
-                  <Body size="sm">{app.author}</Body>
+                <SideField icon={IconCode} label={i18n._(msg`Developer`)}>
+                  <Body size="sm">{i18n._(msg`By ${app.author}`)}</Body>
                 </SideField>
                 {isDefined(installs) && (
-                  <SideField label={i18n._(msg`Installed by`)}>
-                    <Body size="sm">{i18n._(msg`${installs} workspaces`)}</Body>
+                  <SideField
+                    icon={IconDownload}
+                    label={i18n._(msg`Installed by`)}
+                  >
+                    <Body size="sm">
+                      {i18n._(msg`Installed by ${installs} workspaces`)}
+                    </Body>
                   </SideField>
                 )}
               </SideGroup>
@@ -439,7 +486,11 @@ export function AppDetail({ app, apps, locale }: AppDetailProps) {
                     const lines = [...new Set(section.lines)];
 
                     return (
-                      <SideField key={section.id} label={section.title}>
+                      <SideField
+                        icon={section.icon}
+                        key={section.id}
+                        label={section.title}
+                      >
                         <ValueList>
                           {lines.slice(0, SHOWN_NAMES).map((line) => (
                             <li key={line}>{line}</li>
@@ -462,34 +513,46 @@ export function AppDetail({ app, apps, locale }: AppDetailProps) {
                 app.issueReportUrl,
                 app.emailSupport,
               ].some(isDefined) && (
-                <SideField label={i18n._(msg`Resources`)}>
-                  <SideLinks>
-                    {isDefined(app.websiteUrl) && (
+                <SideGroup aria-label={i18n._(msg`Resources`)} role="group">
+                  {isDefined(app.websiteUrl) && (
+                    <SideField icon={IconWorldWww} label={i18n._(msg`Website`)}>
                       <SideLink href={app.websiteUrl}>
                         {i18n._(msg`Website`)}
                         <ArrowUpRight />
                       </SideLink>
-                    )}
-                    {isDefined(app.termsUrl) && (
+                    </SideField>
+                  )}
+                  {isDefined(app.termsUrl) && (
+                    <SideField icon={IconFileText} label={i18n._(msg`Terms`)}>
                       <SideLink href={app.termsUrl}>
                         {i18n._(msg`Terms`)}
                         <ArrowUpRight />
                       </SideLink>
-                    )}
-                    {isDefined(app.issueReportUrl) && (
+                    </SideField>
+                  )}
+                  {isDefined(app.issueReportUrl) && (
+                    <SideField
+                      icon={IconBug}
+                      label={i18n._(msg`Report an issue`)}
+                    >
                       <SideLink href={app.issueReportUrl}>
                         {i18n._(msg`Report an issue`)}
                         <ArrowUpRight />
                       </SideLink>
-                    )}
-                    {isDefined(app.emailSupport) && (
+                    </SideField>
+                  )}
+                  {isDefined(app.emailSupport) && (
+                    <SideField
+                      icon={IconMail}
+                      label={i18n._(msg`Email support`)}
+                    >
                       <SideLink href={`mailto:${app.emailSupport}`}>
                         {i18n._(msg`Email support`)}
                         <ArrowUpRight />
                       </SideLink>
-                    )}
-                  </SideLinks>
-                </SideField>
+                    </SideField>
+                  )}
+                </SideGroup>
               )}
             </Side>
           </Columns>
