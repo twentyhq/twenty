@@ -56,7 +56,7 @@ const StyledMessageListContent = styled(StyledAiChatContentContainer)<{
   gap: ${CHAT_MESSAGE_LIST_GAP};
   padding: ${({ hasPageContentInset }) =>
     hasPageContentInset
-      ? `${themeCssVariables.spacing[4]} ${AI_CHAT_PAGE_CONTENT_INLINE_PADDING} 0`
+      ? `${themeCssVariables.spacing[4]} ${AI_CHAT_PAGE_CONTENT_INLINE_PADDING}`
       : themeCssVariables.spacing[4]};
 `;
 
