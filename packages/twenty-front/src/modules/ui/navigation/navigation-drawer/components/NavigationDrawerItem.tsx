@@ -151,10 +151,7 @@ const StyledLabelParent = styled.div`
 const StyledItemLabel = styled.span<{ $isUnread: boolean }>`
   color: ${({ $isUnread }) =>
     $isUnread ? themeCssVariables.font.color.primary : 'inherit'};
-  font-weight: ${({ $isUnread }) =>
-    $isUnread
-      ? themeCssVariables.font.weight.semiBold
-      : themeCssVariables.font.weight.medium};
+  font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
 const StyledItemSecondaryLabel = styled.span`

@@ -1,28 +1,23 @@
-import { isDefined } from 'twenty-shared/utils';
 import { useTheme } from 'twenty-ui/theme';
 
 import { PageFavicon } from '@/app/components/PageFavicon';
-import { useInboxChatAttention } from '@/inbox/hooks/useInboxChatAttention';
+import { useHasVisibleSidebarRedNotification } from '@/navigation/hooks/useHasVisibleSidebarRedNotification';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const WorkspaceAppPageFavicon = () => {
   const theme = useTheme();
-  const { chatAttention } = useInboxChatAttention();
+  const hasVisibleSidebarRedNotification =
+    useHasVisibleSidebarRedNotification();
   const isCustomizableSidebarEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
   );
 
-  const attentionDotColorByChatAttention = {
-    'needs-input': theme.color.red,
-    unread: theme.font.color.tertiary,
-  };
-
   return (
     <PageFavicon
       attentionDotColor={
-        isCustomizableSidebarEnabled && isDefined(chatAttention)
-          ? attentionDotColorByChatAttention[chatAttention]
+        isCustomizableSidebarEnabled && hasVisibleSidebarRedNotification
+          ? theme.color.red
           : undefined
       }
     />
