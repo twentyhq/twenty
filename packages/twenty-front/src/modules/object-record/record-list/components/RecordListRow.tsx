@@ -125,32 +125,41 @@ export const RecordListRow = ({ recordId, rowRef }: RecordListRowProps) => {
     return null;
   }
 
-  const dateFieldDefinition = getRecordListRowDateFieldDefinition(
+  const listDateFieldDefinition = getRecordListRowDateFieldDefinition(
     isDefined(recordIndexListDateFieldMetadataId)
       ? fieldDefinitionByFieldMetadataItemId[recordIndexListDateFieldMetadataId]
       : undefined,
   );
 
-  const displayedDateFieldDefinition =
-    isDefined(dateFieldDefinition) &&
+  const listDateFieldDefinitionDisplayedAtRowEnd =
+    isDefined(listDateFieldDefinition) &&
     !isFieldValueEmpty({
-      fieldDefinition: dateFieldDefinition,
-      fieldValue: recordStore[dateFieldDefinition.metadata.fieldName],
+      fieldDefinition: listDateFieldDefinition,
+      fieldValue: recordStore[listDateFieldDefinition.metadata.fieldName],
     })
-      ? dateFieldDefinition
+      ? listDateFieldDefinition
       : undefined;
 
-  const visibleRecordFieldsExceptLabelIdentifierAndDate =
+  const fieldMetadataItemIdDisplayedAsRowTitle =
+    labelIdentifierFieldMetadataItem?.id;
+  const fieldMetadataItemIdDisplayedAsRowDate =
+    listDateFieldDefinition?.fieldMetadataId;
+
+  const fieldMetadataItemIdsAlreadyDisplayedInRow = [
+    fieldMetadataItemIdDisplayedAsRowTitle,
+    fieldMetadataItemIdDisplayedAsRowDate,
+  ].filter(isDefined);
+
+  const visibleRecordFieldsNotAlreadyDisplayedInRow =
     visibleRecordFields.filter(
       (recordField) =>
-        recordField.fieldMetadataItemId !==
-          labelIdentifierFieldMetadataItem?.id &&
-        recordField.fieldMetadataItemId !==
-          dateFieldDefinition?.fieldMetadataId,
+        !fieldMetadataItemIdsAlreadyDisplayedInRow.includes(
+          recordField.fieldMetadataItemId,
+        ),
     );
 
   const nonEmptyRecordFields =
-    visibleRecordFieldsExceptLabelIdentifierAndDate.flatMap((recordField) => {
+    visibleRecordFieldsNotAlreadyDisplayedInRow.flatMap((recordField) => {
       const fieldDefinition =
         fieldDefinitionByFieldMetadataItemId[recordField.fieldMetadataItemId];
 
@@ -179,7 +188,7 @@ export const RecordListRow = ({ recordId, rowRef }: RecordListRowProps) => {
   const displayedFieldsLayout = computeRecordListDisplayedFields({
     rowWidth: recordListRowWidth,
     populatedFieldCount: nonEmptyRecordFields.length,
-    hasDate: isDefined(displayedDateFieldDefinition),
+    hasDate: isDefined(listDateFieldDefinitionDisplayedAtRowEnd),
   });
 
   const displayedRecordFields = nonEmptyRecordFields.slice(
@@ -288,11 +297,13 @@ export const RecordListRow = ({ recordId, rowRef }: RecordListRowProps) => {
               )}
             </StyledOverflowChipContainer>
           )}
-          {isDefined(displayedDateFieldDefinition) && (
+          {isDefined(listDateFieldDefinitionDisplayedAtRowEnd) && (
             <RecordListRowField
               recordId={recordId}
-              fieldMetadataItemId={displayedDateFieldDefinition.fieldMetadataId}
-              fieldDefinition={displayedDateFieldDefinition}
+              fieldMetadataItemId={
+                listDateFieldDefinitionDisplayedAtRowEnd.fieldMetadataId
+              }
+              fieldDefinition={listDateFieldDefinitionDisplayedAtRowEnd}
               maxWidth={RECORD_LIST_ROW_DATE_MAX_WIDTH}
             />
           )}
