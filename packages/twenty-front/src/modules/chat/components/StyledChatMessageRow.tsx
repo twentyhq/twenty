@@ -21,7 +21,9 @@ export const StyledChatMessageRow = styled.div<{
   }
 
   &:hover:not(:has([data-hover-card-ignore]:hover)) .message-actions,
-  &:focus-within:not(:has([data-hover-card-ignore]:hover)) .message-actions {
+  &:focus-visible .message-actions,
+  &:has(:focus-visible):not(:has([data-hover-card-ignore]:hover))
+    .message-actions {
     opacity: 1;
     pointer-events: auto;
   }
