@@ -13,7 +13,6 @@ import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -37,7 +36,6 @@ export const MainNavigationDrawerContextMenu = ({
   const [position, setPosition] = useState<PositionType>({ x: null, y: null });
   const [targetSectionId, setTargetSectionId] = useState<string | null>(null);
   const { openDropdown } = useOpenDropdown();
-  const { closeDropdown } = useCloseDropdown();
 
   const canOpenContextMenu =
     canCustomizeSidebar &&
@@ -85,9 +83,6 @@ export const MainNavigationDrawerContextMenu = ({
           >
             <MainNavigationDrawerContextMenuContent
               targetSectionId={targetSectionId}
-              onClose={() =>
-                closeDropdown(MAIN_NAVIGATION_DRAWER_CONTEXT_MENU_DROPDOWN_ID)
-              }
             />
           </DropdownContent>
         </DropdownRoot>

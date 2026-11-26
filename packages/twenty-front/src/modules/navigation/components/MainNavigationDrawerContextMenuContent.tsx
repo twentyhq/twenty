@@ -20,18 +20,19 @@ import { getNavigationMenuSectionNavigationSectionId } from '@/navigation-menu-i
 import { NavigationMenuCustomizeSidebarMenuContent } from '@/navigation-menu-item/edit/components/NavigationMenuCustomizeSidebarMenuContent';
 import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
 import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
+import { requestInLayoutCustomizationMode } from '@/navigation/utils/requestInLayoutCustomizationMode';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isNavigationSectionOpenFamilyState } from '@/ui/navigation/navigation-drawer/states/isNavigationSectionOpenFamilyState';
 
 type MainNavigationDrawerContextMenuContentProps = {
   targetSectionId: string | null;
-  onClose: () => void;
 };
 
 export const MainNavigationDrawerContextMenuContent = ({
   targetSectionId,
-  onClose,
 }: MainNavigationDrawerContextMenuContentProps) => {
   const { t } = useLingui();
+  const { closeDropdown } = useCloseDropdown();
   const store = useStore();
   const containerId = useActiveNavigationMenuTab()?.id ?? null;
   const sections = useWorkspaceNavigationMenuContainers({
@@ -47,8 +48,13 @@ export const MainNavigationDrawerContextMenuContent = ({
   );
   const targetSectionName = targetSection?.name ?? '';
 
+  const requestAfterEnteringCustomizationMode = (request: () => void) => {
+    closeDropdown();
+    requestInLayoutCustomizationMode({ enterLayoutCustomizationMode, request });
+  };
+
   const setAllSectionsOpen = (isOpen: boolean) => {
-    onClose();
+    closeDropdown();
 
     for (const section of sections) {
       store.set(
@@ -67,14 +73,13 @@ export const MainNavigationDrawerContextMenuContent = ({
             id: 'add-item',
             label: t`Add item to ${targetSectionName}`,
             Icon: IconPlus,
-            onClick: () => {
-              onClose();
-              store.set(
-                navigationMenuSectionIdAddingItemState.atom,
-                targetSection.id,
-              );
-              enterLayoutCustomizationMode();
-            },
+            onClick: () =>
+              requestAfterEnteringCustomizationMode(() =>
+                store.set(
+                  navigationMenuSectionIdAddingItemState.atom,
+                  targetSection.id,
+                ),
+              ),
           },
         ]
       : []),
@@ -82,11 +87,10 @@ export const MainNavigationDrawerContextMenuContent = ({
       id: 'add-section',
       label: t`Add section`,
       Icon: IconNewSection,
-      onClick: () => {
-        onClose();
-        store.set(isNavigationMenuAddSectionRequestedState.atom, true);
-        enterLayoutCustomizationMode();
-      },
+      onClick: () =>
+        requestAfterEnteringCustomizationMode(() =>
+          store.set(isNavigationMenuAddSectionRequestedState.atom, true),
+        ),
     },
   ];
 

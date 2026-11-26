@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useReducedMotion } from 'framer-motion';
-import { useCallback, useRef, useState } from 'react';
+import { useRef } from 'react';
 import {
   type BuiltInSectionKey,
   NavigationMenuItemType,
@@ -73,16 +72,10 @@ export const NavigationMenuAddSectionButton = ({
   const { openDropdown } = useOpenDropdown();
   const dropdownId = `navigation-menu-add-section-${containerId ?? 'home'}`;
   const triggerRef = useRef<HTMLDivElement>(null);
-  const shouldReduceMotion = useReducedMotion();
-  const [hasEntered, setHasEntered] = useState(false);
   const [
     isNavigationMenuAddSectionRequested,
     setIsNavigationMenuAddSectionRequested,
   ] = useAtomState(isNavigationMenuAddSectionRequestedState);
-
-  const scrollTriggerIntoView = useCallback(() => {
-    triggerRef.current?.scrollIntoView({ block: 'center' });
-  }, []);
 
   if (!isCustomizableSidebarEnabled) {
     return null;
@@ -117,23 +110,17 @@ export const NavigationMenuAddSectionButton = ({
 
   return (
     <NavigationDrawerSection>
-      <NavigationMenuItemEntrance onEntered={() => setHasEntered(true)}>
-        <DropdownRoot
-          dropdownId={dropdownId}
-          type="menu"
-          onOpenChange={(open) => {
-            if (!open && isNavigationMenuAddSectionRequested) {
-              setIsNavigationMenuAddSectionRequested(false);
-            }
-          }}
-        >
-          {isNavigationMenuAddSectionRequested &&
-            (hasEntered || shouldReduceMotion === true) && (
-              <NavigationMenuItemDropdownOpenEffect
-                dropdownId={dropdownId}
-                onOpen={scrollTriggerIntoView}
-              />
-            )}
+      <NavigationMenuItemEntrance>
+        <DropdownRoot dropdownId={dropdownId} type="menu">
+          {isNavigationMenuAddSectionRequested && (
+            <NavigationMenuItemDropdownOpenEffect
+              dropdownId={dropdownId}
+              onOpen={() => {
+                setIsNavigationMenuAddSectionRequested(false);
+                triggerRef.current?.scrollIntoView({ block: 'center' });
+              }}
+            />
+          )}
           <Dropdown.Trigger
             nativeButton={false}
             render={

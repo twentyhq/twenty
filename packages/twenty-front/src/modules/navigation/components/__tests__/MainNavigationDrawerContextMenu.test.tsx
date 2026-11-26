@@ -10,7 +10,7 @@ import { type NamedNavigationMenuItem } from '@/navigation-menu-item/common/type
 import { MainNavigationDrawerContextMenu } from '@/navigation/components/MainNavigationDrawerContextMenu';
 import { isNavigationSectionOpenFamilyState } from '@/ui/navigation/navigation-drawer/states/isNavigationSectionOpenFamilyState';
 
-const mockEnterLayoutCustomizationMode = jest.fn();
+const mockEnterLayoutCustomizationMode = jest.fn(() => true);
 
 jest.mock(
   '@/layout-customization/hooks/useEnterLayoutCustomizationMode',

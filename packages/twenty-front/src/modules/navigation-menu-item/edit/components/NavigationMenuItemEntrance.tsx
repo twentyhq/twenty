@@ -11,12 +11,10 @@ const AnimatedContainer = motion.create(StyledContainer);
 
 type NavigationMenuItemEntranceProps = {
   children: ReactNode;
-  onEntered?: () => void;
 };
 
 export const NavigationMenuItemEntrance = ({
   children,
-  onEntered,
 }: NavigationMenuItemEntranceProps) => {
   const theme = useTheme();
   const shouldReduceMotion = useReducedMotion();
@@ -28,7 +26,6 @@ export const NavigationMenuItemEntrance = ({
       transition={{
         duration: shouldReduceMotion ? 0 : theme.animation.duration.normal,
       }}
-      onAnimationComplete={onEntered}
     >
       {children}
     </AnimatedContainer>
