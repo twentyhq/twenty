@@ -10,14 +10,13 @@ import {
   TELEGRAM_HEALTH_CHECK_UNIVERSAL_IDENTIFIER,
   TELEGRAM_UPDATES_RESOLVER_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
+import { TELEGRAM_REJECTED_BOT_TOKEN_ERROR_CODES } from 'src/logic-functions/constants/telegram-rejected-bot-token-error-codes';
 import { TELEGRAM_WEBHOOK_ERROR_WINDOW_SECONDS } from 'src/logic-functions/constants/telegram-webhook-error-window-seconds';
 import { findTelegramUserLinks } from 'src/logic-functions/data/find-telegram-user-links';
 import { TelegramApiError } from 'src/logic-functions/types/telegram-api-error';
 import { type TelegramWebhookInfo } from 'src/logic-functions/types/telegram-webhook-info.type';
 import { callTelegramApiOrThrow } from 'src/logic-functions/utils/call-telegram-api-or-throw';
 import { getTelegramBotCredentials } from 'src/logic-functions/utils/get-telegram-bot-credentials';
-
-const UNAUTHORIZED_ERROR_CODE = 401;
 
 const hasRecentDeliveryError = (webhookInfo: TelegramWebhookInfo): boolean =>
   isNonEmptyString(webhookInfo.last_error_message) &&
@@ -41,8 +40,6 @@ export const telegramHealthCheckHandler =
     const { botToken } = botCredentials.credentials;
 
     try {
-      await callTelegramApiOrThrow({ botToken, method: 'getMe' });
-
       const webhookInfo = await callTelegramApiOrThrow<TelegramWebhookInfo>({
         botToken,
         method: 'getWebhookInfo',
@@ -79,21 +76,26 @@ export const telegramHealthCheckHandler =
         return {
           status: 'WARNING',
           title: 'Telegram could not deliver messages to this server',
-          description: `Telegram reported in the last hour: ${webhookInfo.last_error_message}. Check that the server URL is public and reachable over HTTPS.`,
+          description: `Telegram reported in the last hour: ${webhookInfo.last_error_message}. Check that the server URL is public and reachable over HTTPS. If Telegram reports a 401, TELEGRAM_WEBHOOK_SECRET changed: start a new connection from the Telegram settings to register it again.`,
         };
       }
 
       return { status: 'OK' };
     } catch (error) {
+      if (!(error instanceof TelegramApiError)) {
+        throw error;
+      }
+
       if (
-        error instanceof TelegramApiError &&
-        error.errorCode === UNAUTHORIZED_ERROR_CODE
+        TELEGRAM_REJECTED_BOT_TOKEN_ERROR_CODES.some(
+          (errorCode) => errorCode === error.errorCode,
+        )
       ) {
         return {
           status: 'ERROR',
           title: 'Telegram rejected the bot token',
           description:
-            'The token in TELEGRAM_BOT_TOKEN is no longer valid, so the bot cannot answer. A server admin has to set a current token from @BotFather.',
+            'Telegram does not accept the token in TELEGRAM_BOT_TOKEN, so the bot cannot answer. A server admin has to set a current token from @BotFather.',
         };
       }
 

@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createCoreClientFake } from 'src/__tests__/utils/create-core-client-fake';
 import { stubTelegramApi } from 'src/__tests__/utils/stub-telegram-api';
 import { telegramHealthCheckHandler } from 'src/logic-functions/telegram-health-check';
+import { type TelegramWebhookInfo } from 'src/logic-functions/types/telegram-webhook-info.type';
 
 const { clientHolder } = vi.hoisted(() => {
   const clientHolder: {
@@ -25,6 +26,8 @@ vi.mock('twenty-sdk/utils', async (importOriginal) => ({
 
 const WEBHOOK_URL = 'https://twenty.example/s/telegram-updates';
 const NOW = new Date('2026-11-26T10:00:00.000Z');
+const NOW_SECONDS = NOW.getTime() / 1000;
+const LAST_ERROR_MESSAGE = 'Wrong response from the webhook: 502 Bad Gateway';
 const LINK = {
   id: 'link-1',
   telegramUserId: '42',
@@ -37,7 +40,7 @@ describe('checking the health of the Telegram bot', () => {
     links = [],
     failures = {},
   }: {
-    webhookInfo?: object;
+    webhookInfo?: TelegramWebhookInfo;
     links?: (typeof LINK)[];
     failures?: NonNullable<Parameters<typeof stubTelegramApi>[0]>['failures'];
   } = {}) => {
@@ -74,11 +77,12 @@ describe('checking the health of the Telegram bot', () => {
     });
   });
 
-  it('reports a rejected bot token', async () => {
+  it.each([
+    { error_code: 401, description: 'Unauthorized' },
+    { error_code: 404, description: 'Not Found' },
+  ])('reports a bot token rejected with $error_code', async (failure) => {
     await expect(
-      check({
-        failures: { getMe: [{ error_code: 401, description: 'Unauthorized' }] },
-      }),
+      check({ failures: { getWebhookInfo: [failure] } }),
     ).resolves.toMatchObject({
       status: 'ERROR',
       title: 'Telegram rejected the bot token',
@@ -89,7 +93,7 @@ describe('checking the health of the Telegram bot', () => {
     await expect(
       check({
         failures: {
-          getMe: [{ error_code: 502, description: 'Bad Gateway' }],
+          getWebhookInfo: [{ error_code: 502, description: 'Bad Gateway' }],
         },
       }),
     ).resolves.toMatchObject({
@@ -113,6 +117,20 @@ describe('checking the health of the Telegram bot', () => {
     });
   });
 
+  it('does not blame Telegram when the connected accounts cannot be read', async () => {
+    stubTelegramApi({ results: { getWebhookInfo: { url: '' } } });
+    clientHolder.client = {
+      ...createCoreClientFake().client,
+      query: async () => {
+        throw new Error('core API is down');
+      },
+    };
+
+    await expect(telegramHealthCheckHandler()).rejects.toThrow(
+      'core API is down',
+    );
+  });
+
   it('reports a webhook that points to another server', async () => {
     await expect(
       check({ webhookInfo: { url: 'https://other.example/s/telegram' } }),
@@ -122,28 +140,28 @@ describe('checking the health of the Telegram bot', () => {
     });
   });
 
-  it('warns about a delivery error from the last hour and ignores an older one', async () => {
-    const lastErrorMessage = 'Wrong response from the webhook: 502 Bad Gateway';
-    const nowSeconds = NOW.getTime() / 1000;
-
+  it('warns about a delivery error from the last hour', async () => {
     await expect(
       check({
         webhookInfo: {
           url: WEBHOOK_URL,
-          last_error_date: nowSeconds - 600,
-          last_error_message: lastErrorMessage,
+          last_error_date: NOW_SECONDS - 600,
+          last_error_message: LAST_ERROR_MESSAGE,
         },
       }),
     ).resolves.toMatchObject({
       status: 'WARNING',
-      description: expect.stringContaining(lastErrorMessage),
+      description: expect.stringContaining(LAST_ERROR_MESSAGE),
     });
+  });
+
+  it('ignores a delivery error older than an hour', async () => {
     await expect(
       check({
         webhookInfo: {
           url: WEBHOOK_URL,
-          last_error_date: nowSeconds - 7200,
-          last_error_message: lastErrorMessage,
+          last_error_date: NOW_SECONDS - 7200,
+          last_error_message: LAST_ERROR_MESSAGE,
         },
       }),
     ).resolves.toEqual({ status: 'OK' });
