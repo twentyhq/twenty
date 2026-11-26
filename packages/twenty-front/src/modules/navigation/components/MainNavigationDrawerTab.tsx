@@ -1,7 +1,11 @@
 import { NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerCollapsedButtonSize';
 import { styled } from '@linaria/react';
 import { motion, useReducedMotion } from 'framer-motion';
-import { type ReactNode } from 'react';
+import {
+  type ComponentPropsWithRef,
+  type MouseEvent,
+  type ReactNode,
+} from 'react';
 import { type IconComponent } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
@@ -96,7 +100,10 @@ const StyledModeLabelBase = styled.span`
 
 const StyledModeLabel = motion.create(StyledModeLabelBase);
 
-type MainNavigationDrawerTabProps = {
+type MainNavigationDrawerTabProps = Omit<
+  ComponentPropsWithRef<'button'>,
+  'onClick'
+> & {
   Icon: IconComponent;
   label: string;
   isActive: boolean;
@@ -104,7 +111,7 @@ type MainNavigationDrawerTabProps = {
   isDisabled: boolean;
   tooltip: string;
   shouldShowTooltip: boolean;
-  onClick: () => void;
+  onClick: (event: MouseEvent<HTMLButtonElement>) => void;
   ariaLabel?: string;
   iconAccessory?: ReactNode;
   isLabelHidden?: boolean;
@@ -124,6 +131,7 @@ export const MainNavigationDrawerTab = ({
   iconAccessory,
   isLabelHidden = false,
   isSelectedInEditMode = false,
+  ...buttonProps
 }: MainNavigationDrawerTabProps) => {
   const theme = useTheme();
   const shouldReduceMotion = useReducedMotion();
@@ -138,6 +146,8 @@ export const MainNavigationDrawerTab = ({
       positionMethod="fixed"
     >
       <StyledMode
+        // oxlint-disable-next-line react/jsx-props-no-spreading
+        {...buttonProps}
         type="button"
         isActive={isActive}
         isExpanded={isExpanded}
@@ -146,12 +156,12 @@ export const MainNavigationDrawerTab = ({
         aria-label={ariaLabel ?? label}
         aria-current={isActive || undefined}
         aria-disabled={isDisabled}
-        onClick={() => {
+        onClick={(event) => {
           if (isDisabled) {
             return;
           }
 
-          onClick();
+          onClick(event);
         }}
       >
         <StyledModeIcon>

@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type MouseEvent, useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { useIcons } from 'twenty-ui/icon/provider';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
@@ -78,7 +79,6 @@ export const MainNavigationDrawerSidebarTab = ({
 
   const handleClick = () => {
     if (isActive && isTabMenuAvailable) {
-      openTabMenu();
       return;
     }
 
@@ -131,43 +131,43 @@ export const MainNavigationDrawerSidebarTab = ({
     />
   );
 
+  if (!isTabMenuAvailable) {
+    return <StyledAnchor>{tabButton}</StyledAnchor>;
+  }
+
   return (
-    <>
+    <DropdownRoot
+      dropdownId={dropdownId}
+      type="menu"
+      onOpenChange={handleTabMenuOpenChange}
+    >
+      {navigationMenuItemIdToRename === tab.id && (
+        <NavigationMenuItemDropdownOpenEffect
+          dropdownId={dropdownId}
+          onOpen={() => setNavigationMenuItemIdToRename(null)}
+        />
+      )}
       <StyledAnchor
         ref={anchorRef}
         onContextMenu={
           isLayoutCustomizationModeEnabled ? handleContextMenu : undefined
         }
       >
-        {tabButton}
+        {isActive ? <Dropdown.Trigger render={tabButton} /> : tabButton}
       </StyledAnchor>
-      {isTabMenuAvailable && (
-        <DropdownRoot
-          dropdownId={dropdownId}
-          type="menu"
-          onOpenChange={handleTabMenuOpenChange}
-        >
-          {navigationMenuItemIdToRename === tab.id && (
-            <NavigationMenuItemDropdownOpenEffect
-              dropdownId={dropdownId}
-              onOpen={() => setNavigationMenuItemIdToRename(null)}
-            />
-          )}
-          <DropdownContent
-            anchor={anchorRef}
-            side="bottom"
-            align="start"
-            width={GenericDropdownContentWidth.Large}
-            aria-label={t`Tab actions`}
-          >
-            {isLayoutCustomizationModeEnabled ? (
-              <NavigationMenuTabMenuContent tab={tab} />
-            ) : (
-              <NavigationMenuCustomizeSidebarMenuContent />
-            )}
-          </DropdownContent>
-        </DropdownRoot>
-      )}
-    </>
+      <DropdownContent
+        anchor={anchorRef}
+        side="bottom"
+        align="start"
+        width={GenericDropdownContentWidth.Large}
+        aria-label={t`Tab actions`}
+      >
+        {isLayoutCustomizationModeEnabled ? (
+          <NavigationMenuTabMenuContent tab={tab} />
+        ) : (
+          <NavigationMenuCustomizeSidebarMenuContent />
+        )}
+      </DropdownContent>
+    </DropdownRoot>
   );
 };

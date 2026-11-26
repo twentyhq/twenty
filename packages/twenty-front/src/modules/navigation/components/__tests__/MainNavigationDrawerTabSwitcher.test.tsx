@@ -368,6 +368,26 @@ describe('MainNavigationDrawerTabSwitcher', () => {
     expect(mockSwitchToNavigationMenuTab).not.toHaveBeenCalled();
   });
 
+  it('toggles the tab menu from the active sidebar tab button itself', async () => {
+    jest
+      .mocked(useWorkspaceNavigationMenuContainers)
+      .mockReturnValue([salesTab]);
+    jest.mocked(useActiveNavigationMenuTab).mockReturnValue(salesTab);
+
+    renderTabSwitcher();
+
+    const salesButton = screen.getByRole('button', { name: 'Sales' });
+
+    expect(salesButton).toHaveAttribute('aria-haspopup', 'menu');
+
+    await userEvent.click(salesButton);
+    expect(salesButton).toHaveAttribute('aria-expanded', 'true');
+
+    await userEvent.click(salesButton);
+    expect(salesButton).toHaveAttribute('aria-expanded', 'false');
+    expect(mockSwitchToNavigationMenuTab).not.toHaveBeenCalled();
+  });
+
   it('reopens the active sidebar tab when the sidebar cannot be customized', async () => {
     mockCanCustomizeSidebar = false;
     jest
