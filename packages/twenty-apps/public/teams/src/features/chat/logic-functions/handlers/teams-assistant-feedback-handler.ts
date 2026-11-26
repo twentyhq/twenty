@@ -50,7 +50,6 @@ export const teamsAssistantFeedbackHandler = async ({
     return { skipped: true, reason: 'No request matches the rated answer' };
   }
 
-  // The rating describes the answer given to the requester, so other members of a group chat or channel cannot set it.
   if (request.teamsUserId !== teamsUserId) {
     return {
       skipped: true,
