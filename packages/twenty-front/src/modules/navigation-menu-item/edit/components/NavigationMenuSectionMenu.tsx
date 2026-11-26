@@ -5,7 +5,6 @@ import { IconDotsVertical } from 'twenty-ui/icon';
 
 import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
 import { navigationMenuSectionIdToAddItemState } from '@/navigation-menu-item/common/states/navigationMenuSectionIdToAddItemState';
-import { getNavigationMenuSectionNavigationSectionId } from '@/navigation-menu-item/common/utils/getNavigationMenuSectionNavigationSectionId';
 import { isNavigationMenuItemBuiltInSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemBuiltInSection';
 import { NavigationMenuItemMenu } from '@/navigation-menu-item/edit/components/NavigationMenuItemMenu';
 import { NavigationMenuSectionMenuContent } from '@/navigation-menu-item/edit/components/NavigationMenuSectionMenuContent';
@@ -35,7 +34,7 @@ export const NavigationMenuSectionMenu = ({
     type: 'actions',
   });
   const { openNavigationSection } = useNavigationSection(
-    getNavigationMenuSectionNavigationSectionId(section),
+    `navigation-menu-section-${section.id}`,
   );
   const dropdownId = getNavigationMenuSectionMenuDropdownId(section.id);
   const isBuiltInSection = isNavigationMenuItemBuiltInSection(section);
