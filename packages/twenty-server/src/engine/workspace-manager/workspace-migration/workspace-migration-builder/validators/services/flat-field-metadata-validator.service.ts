@@ -269,8 +269,7 @@ export class FlatFieldMetadataValidatorService {
         flatFieldMetadataToValidate,
         universalFlatObjectMetadataMaps: flatObjectMetadataMaps,
         universalFlatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
-        existingUniversalSettings:
-          existingFlatFieldMetadataToUpdate.universalSettings,
+        existingFormula: existingFlatFieldMetadataToUpdate.formula,
         isFormulaFieldEnabled:
           additionalCacheDataMaps.featureFlagsMap[
             FeatureFlagKey.IS_FORMULA_FIELD_ENABLED

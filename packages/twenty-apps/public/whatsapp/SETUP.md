@@ -41,6 +41,7 @@ The LinkedIn app can share the same Unipile application: give each app its own w
 | Webhook | `whatsapp-webhook-resolver` | Checks the `unipile-signature` header and dispatches the event to the workspace that connected the account |
 | New message | `whatsapp-handle-webhook-event` | Ingests the message into the member's channel; flags the connection when the device is unlinked from the phone |
 | Reply | `whatsapp-send-message` | Sends a reply written in Twenty to the conversation's Unipile chat; the `message.new` webhook that follows is de-duplicated on the returned message id |
+| Upgrade | `whatsapp-post-install` | Keeps connections made before 0.2.0 on **All chats**, their import policy until **Contacts only** became the default |
 | Disconnect, uninstall | `whatsapp-on-disconnect`, `whatsapp-uninstall` | Deletes the channel and the Unipile account, which Unipile bills per connected account |
 
 Participants are identified by their phone number, read from the `public_identifier` Unipile exposes or from a `…@s.whatsapp.net` id. Participants WhatsApp only identifies by a `…@lid` id have no known number and are left out.

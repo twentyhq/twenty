@@ -127,6 +127,8 @@ export const fromFieldManifestToUniversalFlatFieldMetadata = ({
     options: resolveManifestFieldOptions(fieldManifest),
     defaultValue,
     universalSettings: fieldManifest.universalSettings ?? null,
+    formula:
+      'formula' in fieldManifest ? (fieldManifest.formula ?? null) : null,
     isActive: true,
     isSystem: false,
     isSystemSideEffect: false,

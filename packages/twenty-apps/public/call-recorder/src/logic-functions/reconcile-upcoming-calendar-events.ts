@@ -1,4 +1,3 @@
-import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 
 import { RECONCILE_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
@@ -7,6 +6,7 @@ import { reconcileCallRecorderForCalendarEventIds } from 'src/logic-functions/fl
 import { type CallRecorderReconciliationActionCounts } from 'src/logic-functions/types/call-recorder-reconciliation-action-counts.type';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { buildRetryableStepFailure } from 'src/logic-functions/utils/build-step-failure.util';
+import { createCoreApiClientRunningAsApplication } from 'src/logic-functions/utils/create-core-api-client-running-as-application.util';
 import { toIdList } from 'src/logic-functions/utils/to-id-list.util';
 
 type ReconcileUpcomingCalendarEventsResult =
@@ -16,7 +16,6 @@ type ReconcileUpcomingCalendarEventsResult =
       reconciledCalendarEventIds: string[];
       actionCounts: CallRecorderReconciliationActionCounts;
     };
-import { fetchWithRateLimitRetry } from 'src/logic-functions/utils/fetch-with-rate-limit-retry.util';
 
 export const reconcileUpcomingCalendarEventsHandler = async (
   payload: unknown,
@@ -30,7 +29,7 @@ export const reconcileUpcomingCalendarEventsHandler = async (
   try {
     const reconciliationResults =
       await reconcileCallRecorderForCalendarEventIds({
-        client: new CoreApiClient({ fetch: fetchWithRateLimitRetry }),
+        client: createCoreApiClientRunningAsApplication(),
         calendarEventIds,
       });
 

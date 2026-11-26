@@ -28712,20 +28712,10 @@ msgstr "O‘tkazib yuborish"
 msgid "Skip anyway"
 msgstr "Baribir o‘tkazib yuborish"
 
-#. js-lingui-id: 5jWe/6
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Skip calendar events with no participant outside the workspace domain, unless internal import is turned on."
-msgstr "Ichki import yoqilmagan bo‘lsa, ish maydoni domenidan tashqarida ishtirokchisi bo‘lmagan kalendar tadbirlarini o‘tkazib yuboring."
-
 #. js-lingui-id: TyudBs
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Skip creating a Name field "
 msgstr "Name maydonini yaratishni o‘tkazib yuborish "
-
-#. js-lingui-id: pmVASU
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Skip internal meetings"
-msgstr "Ichki uchrashuvlarni o‘tkazib yuborish"
 
 #. js-lingui-id: PlF+NA
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
@@ -31245,6 +31235,7 @@ msgstr "Ushbu provayder ichki o'rnatilgan. API kalitini uning sahifasidan sozlan
 
 #. js-lingui-id: qfpz3J
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
+#: src/modules/views/utils/computeRelationFilterDisplayValue.ts
 msgid "This record"
 msgstr "Ushbu yozuv"
 
