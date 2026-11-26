@@ -7,7 +7,9 @@ import { isDefined } from '@/utils/validation/isDefined';
 export const listFieldMetadataFormulaFieldNodes = ({
   formula,
 }: {
-  formula?: Partial<FieldMetadataFormula> | null;
+  formula?: Partial<
+    Pick<FieldMetadataFormula, 'tree' | 'currencyCodeTree'>
+  > | null;
 }): ExpressionFieldNode[] =>
   [
     getFieldMetadataFormulaTree({ formula }),

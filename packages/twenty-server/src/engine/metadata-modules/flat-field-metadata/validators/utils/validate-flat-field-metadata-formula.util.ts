@@ -1,6 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import isEqual from 'lodash.isequal';
-import { RelationType } from 'twenty-shared/types';
+import { type FieldMetadataFormula, RelationType } from 'twenty-shared/types';
 import {
   compileFormulaExpression,
   getFieldMetadataFormulaEvaluation,
@@ -55,6 +55,17 @@ const toCanonicalFormulaTexts = ({
   expression: toCanonicalFormulaText(expression),
   currencyCodeExpression: toCanonicalFormulaText(currencyCodeExpression),
 });
+
+const buildMissingExpressionErrors = (
+  formula: FieldMetadataFormula,
+): FlatFieldMetadataValidationError[] => [
+  {
+    code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+    message: 'Formula must have a non-empty expression',
+    userFriendlyMessage: msg`A formula needs an expression`,
+    value: formula,
+  },
+];
 
 export const validateFlatFieldMetadataFormula = ({
   flatFieldMetadataToValidate: {
@@ -130,14 +141,7 @@ export const validateFlatFieldMetadataFormula = ({
   }
 
   if (!isFormulaFieldMetadata({ formula })) {
-    return [
-      {
-        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        message: 'Formula must have a non-empty expression',
-        userFriendlyMessage: msg`A formula needs an expression`,
-        value: formula,
-      },
-    ];
+    return buildMissingExpressionErrors(formula);
   }
 
   const universalFlatObjectMetadata =
@@ -192,14 +196,7 @@ export const validateFlatFieldMetadataFormula = ({
   });
 
   if (!isDefined(expression)) {
-    return [
-      {
-        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        message: 'Formula must have a non-empty expression',
-        userFriendlyMessage: msg`A formula needs an expression`,
-        value: formula,
-      },
-    ];
+    return buildMissingExpressionErrors(formula);
   }
 
   // An existing formula stays editable when the flag is turned off; storing it as a tree or respacing it is no edit

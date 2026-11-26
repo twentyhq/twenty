@@ -127,15 +127,17 @@ export class ApplicationManifestExportService {
             objectUniversalIdentifier
           ];
 
-        return isDefined(universalFlatObjectMetadata)
-          ? buildFormulaFieldDescriptorsFromUniversalFlatEntityMaps({
-              universalFlatObjectMetadata,
-              universalFlatObjectMetadataMaps:
-                allFlatEntityMaps.flatObjectMetadataMaps,
-              universalFlatFieldMetadataMaps:
-                allFlatEntityMaps.flatFieldMetadataMaps,
-            })
-          : [];
+        if (!isDefined(universalFlatObjectMetadata)) {
+          return [];
+        }
+
+        return buildFormulaFieldDescriptorsFromUniversalFlatEntityMaps({
+          universalFlatObjectMetadata,
+          universalFlatObjectMetadataMaps:
+            allFlatEntityMaps.flatObjectMetadataMaps,
+          universalFlatFieldMetadataMaps:
+            allFlatEntityMaps.flatFieldMetadataMaps,
+        });
       },
     });
     const exportedObjectUniversalIdentifiers = new Set(

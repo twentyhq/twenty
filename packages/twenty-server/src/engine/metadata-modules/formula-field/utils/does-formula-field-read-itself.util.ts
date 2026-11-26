@@ -4,7 +4,10 @@ import {
   listFieldMetadataFormulaFieldNodes,
 } from 'twenty-shared/utils';
 
-type ReadableFormula = Partial<FieldMetadataFormula> | null | undefined;
+type ReadableFormula =
+  | Partial<Pick<FieldMetadataFormula, 'tree' | 'currencyCodeTree'>>
+  | null
+  | undefined;
 
 const listReadUniversalIdentifiers = (formula: ReadableFormula): string[] =>
   listFieldMetadataFormulaFieldNodes({ formula }).flatMap(

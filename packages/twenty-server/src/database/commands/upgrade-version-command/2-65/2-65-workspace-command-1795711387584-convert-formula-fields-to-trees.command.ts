@@ -99,18 +99,30 @@ export class ConvertFormulaFieldsToTreesCommand extends ProvisionedWorkspaceComm
       };
 
       const result =
-        applicationUniversalIdentifier ===
-        TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER
-          ? await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
-              migrationArgs,
-            )
-          : await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
-              migrationArgs,
-            );
+        await this.validateBuildAndRunWorkspaceMigration(migrationArgs);
 
       if (result.status === 'fail') {
         throw new WorkspaceMigrationBuilderException(result);
       }
     }
+  }
+
+  private validateBuildAndRunWorkspaceMigration(
+    migrationArgs: Parameters<
+      WorkspaceMigrationValidateBuildAndRunService['validateBuildAndRunWorkspaceMigration']
+    >[0],
+  ) {
+    if (
+      migrationArgs.applicationUniversalIdentifier ===
+      TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER
+    ) {
+      return this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
+        migrationArgs,
+      );
+    }
+
+    return this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      migrationArgs,
+    );
   }
 }

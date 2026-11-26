@@ -104,11 +104,11 @@ const buildRelationProperties = (
 export const fromFlatFieldMetadataToFieldManifest = ({
   flatFieldMetadata,
   flatFieldMetadataOptionMaps,
-  formulaFields = [],
+  formulaFields,
 }: {
   flatFieldMetadata: UniversalFlatFieldMetadata;
   flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMapsForOptions;
-  formulaFields?: ValidationRuleFieldDescriptor[];
+  formulaFields: ValidationRuleFieldDescriptor[];
 }): FieldManifest => {
   // Reapplying an export writes the app's base rows, so workspace overrides stay out of it.
   const options = resolveFlatFieldMetadataOptions({
