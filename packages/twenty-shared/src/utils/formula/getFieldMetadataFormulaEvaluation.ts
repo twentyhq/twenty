@@ -6,7 +6,9 @@ import { isDefined } from '@/utils/validation/isDefined';
 export const getFieldMetadataFormulaEvaluation = ({
   formula,
 }: {
-  formula?: Partial<FieldMetadataFormula> | null;
+  formula?: Partial<
+    Pick<FieldMetadataFormula, 'expression' | 'evaluation'>
+  > | null;
 }): FieldMetadataFormulaEvaluation | undefined => {
   if (!isDefined(getFieldMetadataFormulaExpression({ formula }))) {
     return undefined;

@@ -8,8 +8,18 @@ export const isFieldMetadataFormulaUnchanged = ({
   formula,
   existingFormula,
 }: {
-  formula: Partial<FieldMetadataFormula> | null | undefined;
-  existingFormula: Partial<FieldMetadataFormula> | null | undefined;
+  formula:
+    | Partial<
+        Pick<FieldMetadataFormula, 'expression' | 'currencyCodeExpression'>
+      >
+    | null
+    | undefined;
+  existingFormula:
+    | Partial<
+        Pick<FieldMetadataFormula, 'expression' | 'currencyCodeExpression'>
+      >
+    | null
+    | undefined;
 }): boolean =>
   getFieldMetadataFormulaExpression({ formula }) ===
     getFieldMetadataFormulaExpression({ formula: existingFormula }) &&

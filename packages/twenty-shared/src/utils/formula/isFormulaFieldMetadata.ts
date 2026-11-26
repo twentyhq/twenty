@@ -5,5 +5,5 @@ import { isDefined } from '@/utils/validation/isDefined';
 export const isFormulaFieldMetadata = ({
   formula,
 }: {
-  formula?: Partial<FieldMetadataFormula> | null;
+  formula?: Partial<Pick<FieldMetadataFormula, 'expression'>> | null;
 }): boolean => isDefined(getFieldMetadataFormulaExpression({ formula }));

@@ -13,7 +13,9 @@ type FormulaFieldDescriptorSource = {
   name: string;
   type: FieldMetadataType;
   universalIdentifier: string;
-  formula: Partial<FieldMetadataFormula> | null;
+  formula: Partial<
+    Pick<FieldMetadataFormula, 'expression' | 'evaluation'>
+  > | null;
 };
 
 type FormulaFieldDescriptorSourceReader<
