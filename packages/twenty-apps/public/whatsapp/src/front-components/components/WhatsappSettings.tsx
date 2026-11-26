@@ -15,6 +15,7 @@ import {
 } from 'twenty-ui/theme';
 
 import { WHATSAPP_SETTINGS_ROUTE_PATHS } from 'src/constants/whatsapp-settings-route-paths.constant';
+import { WhatsappAccountBanners } from 'src/front-components/components/WhatsappAccountBanners';
 import { WhatsappAccountField } from 'src/front-components/components/WhatsappAccountField';
 import { WhatsappContactAutoCreationSection } from 'src/front-components/components/WhatsappContactAutoCreationSection';
 import { WhatsappImportSection } from 'src/front-components/components/WhatsappImportSection';
@@ -205,18 +206,21 @@ export const WhatsappSettings = () => {
         )}
         {view?.isConnected && (
           <>
+            <WhatsappAccountBanners
+              isAuthFailed={view.connection.isAuthFailed}
+              historyImport={view.historyImport}
+              isImportRetrying={isImportRetrying}
+              onRetryImport={handleRetryImport}
+            />
             <WhatsappAccountField
               name={view.connection.name}
               handle={view.connection.handle}
-              isAuthFailed={view.connection.isAuthFailed}
               historyImport={view.historyImport}
               importProgress={
                 importProgress?.runId === view.historyImport?.runId
                   ? importProgress?.progress
                   : undefined
               }
-              isImportRetrying={isImportRetrying}
-              onRetryImport={handleRetryImport}
             />
             <WhatsappImportSection
               importPolicy={view.settings.importPolicy}
