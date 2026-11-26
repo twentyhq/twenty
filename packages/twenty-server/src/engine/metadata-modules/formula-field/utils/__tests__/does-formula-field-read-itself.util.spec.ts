@@ -1,6 +1,8 @@
+import { type FieldMetadataFormula } from 'twenty-shared/types';
+
 import { doesFormulaFieldReadItself } from 'src/engine/metadata-modules/formula-field/utils/does-formula-field-read-itself.util';
 
-const FORMULA_BY_UNIVERSAL_IDENTIFIER: Record<string, unknown> = {
+const FORMULA_BY_UNIVERSAL_IDENTIFIER: Record<string, FieldMetadataFormula> = {
   'person-team-size-uid': {
     expression: 'count(reports) + sum(reports.teamSize)',
     bindings: {
