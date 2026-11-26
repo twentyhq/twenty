@@ -72,7 +72,6 @@ type Assertions = [
       | 'anyFieldFilterValue'
       | 'presetFilter'
       | 'isPrivate'
-      | 'createdByUserWorkspaceId'
       | 'isActive'
       | 'universalOverrides'
     >

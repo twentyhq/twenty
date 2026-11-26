@@ -220,6 +220,7 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
       page={SidePanelPages.SearchRecords}
       pageTitle={msg`Search`}
       pageIcon={IconSearch}
+      shouldResetSearchObjectFilter={true}
     />
   ),
   [EngineComponentKey.ASK_AI]: (

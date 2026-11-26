@@ -1,7 +1,7 @@
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { type DataSource } from 'typeorm';
 
-import { AGENT_HISTORY_OBJECT_NAMES } from 'src/engine/metadata-modules/ai/ai-history/constants/agent-history-object-names.constant';
+import { ACTIVE_AGENT_HISTORY_TABLES } from 'src/database/commands/agent-history/agent-history-tables.constant';
 import { type AgentHistoryUpgradeStorageService } from 'src/database/commands/agent-history/agent-history-upgrade-storage.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
@@ -30,8 +30,8 @@ export const isEmptyUnprovisionedAgentHistoryWorkspace = async ({
       return false;
     }
     const history = await runner.query(
-      `SELECT 1 WHERE ${AGENT_HISTORY_OBJECT_NAMES.map(
-        (name) =>
+      `SELECT 1 WHERE ${ACTIVE_AGENT_HISTORY_TABLES.map(
+        ({ name }) =>
           `EXISTS (SELECT 1 FROM core."${name}" WHERE "workspaceId" = $1)`,
       ).join(' OR ')}`,
       [workspaceId],

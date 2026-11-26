@@ -49,7 +49,7 @@
     },
     "test:ci": {
       "executor": "nx:run-commands",
-      "dependsOn": ["^build"],
+      "dependsOn": ["^build", "twenty-ui:build"],
       "options": {
         "cwd": "packages/twenty-server",
         "command": "jest --config ./jest.config.mjs --ci --maxWorkers=3 --workerIdleMemoryLimit=1GB --cacheDirectory=../../.cache/jest/packages/twenty-server"
@@ -193,6 +193,13 @@
       }
     },
     "test": {
+      "dependsOn": ["^build", "twenty-ui:build"],
+      "inputs": [
+        "^default",
+        "excludeStories",
+        "{workspaceRoot}/jest.preset.js",
+        { "projects": "twenty-ui", "input": "production" }
+      ],
       "options": {
         "command": "jest --config ./jest.config.mjs --silent --coverageReporters=text-summary --cacheDirectory=../../.cache/jest/{projectRoot} --maxWorkers=50%"
       },

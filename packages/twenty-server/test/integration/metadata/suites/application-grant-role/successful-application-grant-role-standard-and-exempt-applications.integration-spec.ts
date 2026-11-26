@@ -13,6 +13,7 @@ import {
 import { loginAsTwentyCli } from 'test/integration/metadata/suites/application/utils/login-as-twenty-cli.util';
 import { uninstallApplication } from 'test/integration/metadata/suites/application/utils/uninstall-application.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { ROLE_WIDE_ACCESS_REVOKED_OBJECT_UNIVERSAL_IDENTIFIERS } from 'test/integration/utils/role-wide-access-to-channel-objects.util';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
@@ -110,7 +111,7 @@ describe('Application grants of twenty-standard and of exempt applications', () 
       jest.useFakeTimers();
     });
 
-    it('gives twenty-standard a grant equal to Admin', async () => {
+    it('gives twenty-standard a grant equal to Admin before its channel objects were revoked', async () => {
       const grant = await findGrantRoleByApplicationUniversalIdentifier({
         universalIdentifier: TWENTY_STANDARD_APPLICATION.universalIdentifier,
         workspaceId: workspaceId!,
@@ -123,9 +124,35 @@ describe('Application grants of twenty-standard and of exempt applications', () 
         isEditable: false,
         canBeAssignedToApplications: true,
       });
-      expect(await findRolePermissionSnapshot(grant!.role.id)).toEqual(
-        await findRolePermissionSnapshot(await findAdminRoleId(workspaceId!)),
+      const revokedObjectMetadataIds: string[] = (
+        await globalThis.testDataSource.query(
+          `SELECT id FROM core."objectMetadata" WHERE "workspaceId" = $1 AND "universalIdentifier" = ANY($2)`,
+          [workspaceId, ROLE_WIDE_ACCESS_REVOKED_OBJECT_UNIVERSAL_IDENTIFIERS],
+        )
+      ).map(({ id }: { id: string }) => id);
+      const withoutRevokedObjects = <TRow extends { objectMetadataId: string }>(
+        rows: TRow[],
+      ) =>
+        rows.filter(
+          ({ objectMetadataId }) =>
+            !revokedObjectMetadataIds.includes(objectMetadataId),
+        );
+      const adminSnapshot = await findRolePermissionSnapshot(
+        await findAdminRoleId(workspaceId!),
       );
+
+      expect(await findRolePermissionSnapshot(grant!.role.id)).toEqual({
+        ...adminSnapshot,
+        objectPermissions: withoutRevokedObjects(
+          adminSnapshot.objectPermissions,
+        ),
+        rowLevelPermissionPredicates: withoutRevokedObjects(
+          adminSnapshot.rowLevelPermissionPredicates,
+        ),
+        rowLevelPermissionPredicateGroups: withoutRevokedObjects(
+          adminSnapshot.rowLevelPermissionPredicateGroups,
+        ),
+      });
     });
 
     it('gives the workspace custom application no grant', async () => {

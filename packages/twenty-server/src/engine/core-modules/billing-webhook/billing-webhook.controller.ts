@@ -125,6 +125,7 @@ export class BillingWebhookController {
         );
 
       case BillingWebhookEvent.CUSTOMER_CREATED:
+      case BillingWebhookEvent.CUSTOMER_UPDATED:
       case BillingWebhookEvent.PAYMENT_METHOD_ATTACHED:
       case BillingWebhookEvent.PAYMENT_METHOD_DETACHED:
         return await this.billingWebhookCustomerService.processStripeEvent(

@@ -147,7 +147,10 @@ describe('validateFlatFieldMetadataFormula', () => {
     expect(validateCurrency('supplier.revenue.currencyCode')).toEqual([]);
     expect(validateCurrency('"USD"')).toEqual([]);
     expect(validateCurrency()).toEqual([
-      { message: 'A currency formula needs a currency code expression' },
+      {
+        message:
+          'Invalid formula: A currency formula needs a currency code expression',
+      },
     ]);
     expect(validateCurrency('missing')).toEqual([
       { message: expect.stringContaining('Invalid formula') },

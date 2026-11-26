@@ -19,6 +19,7 @@ import {
   Worker,
 } from 'bullmq';
 import { type JobState as BullMQJobState } from 'bullmq/dist/esm/types';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -54,6 +55,7 @@ import {
 } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-limiter';
 import { JobSizeLimiter } from 'src/engine/core-modules/message-queue/drivers/memory/job-size-limiter';
 import { JOBS_EXIST_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/memory/jobs-exist-script.constant';
+import { JOBS_PERSISTED_OPTIONS_SCRIPT } from 'src/engine/core-modules/message-queue/constants/jobs-persisted-options-script.constant';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MESSAGE_QUEUE_WORKER_CONFIG } from 'src/engine/core-modules/message-queue/message-queue-worker-config.constant';
 import {
@@ -69,6 +71,7 @@ import { computeJobSizeBytes } from 'src/engine/core-modules/message-queue/utils
 import { runRedisScript } from 'src/engine/core-modules/message-queue/utils/run-redis-script.util';
 import { buildJobLogContext } from 'src/engine/core-modules/message-queue/utils/build-job-log-context.util';
 import { computeJobQueueWaitMs } from 'src/engine/core-modules/message-queue/utils/compute-job-queue-wait-ms.util';
+import { getQueueJobScheduledAt } from 'src/engine/core-modules/message-queue/utils/get-queue-job-scheduled-at.util';
 import { isQueueJobIdAlreadyWaiting } from 'src/engine/core-modules/message-queue/utils/is-queue-job-id-already-waiting.util';
 import { JOB_LATENCY_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/job-latency-ms-bucket-boundaries.constant';
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
@@ -87,6 +90,7 @@ type BullMQJobsOptions = JobsOptions & {
   fairBase?: number;
   memoryGroupKeys?: string[];
   memorySizeBytes?: number;
+  scheduledAt?: number;
 };
 
 type PreparedJob = { options: BullMQJobsOptions; sizeBytes: number };
@@ -707,16 +711,18 @@ export class BullMQDriver
       additionalGroupKeys: options.fairnessGroupKeys,
       delay: options.delay,
       staticPriority: queueOptions.priority,
+      limiter: options.limiter,
     });
 
     const [job] = await this.addPreparedJobs({
       queueName,
       preparedJobs: [preparedJob],
       addJobs: async () => [
-        await this.queueMap[queueName].add(jobName, data, {
-          ...preparedJob.options,
-          ...jobOptions,
-        }),
+        await this.queueMap[queueName].add(
+          jobName,
+          data,
+          this.withScheduledAt({ ...preparedJob.options, ...jobOptions }),
+        ),
       ],
     });
 
@@ -738,7 +744,11 @@ export class BullMQDriver
       scope: QueueJobScope;
     }[];
     additionalGroupKeys?: string[];
-  }): Promise<{ preparedJobs: PreparedJob[]; availableBytes: number | null }> {
+  }): Promise<{
+    preparedJobs: PreparedJob[];
+    availableBytes: number | null;
+    existingJobIds: Set<string>;
+  }> {
     const sizedJobs = jobs.map(({ index, data, options, scope }) => ({
       index,
       groupKeys: buildQueueJobGroupKeys({ scope, additionalGroupKeys }),
@@ -796,7 +806,64 @@ export class BullMQDriver
       };
     });
 
-    return { preparedJobs, availableBytes };
+    return { preparedJobs, availableBytes, existingJobIds };
+  }
+
+  private withScheduledAt(
+    options: BullMQJobsOptions,
+  ): BullMQJobsOptions & { scheduledAt: number } {
+    const timestamp = options.timestamp ?? Date.now();
+
+    return {
+      ...options,
+      timestamp,
+      scheduledAt: timestamp + (options.delay ?? 0),
+    };
+  }
+
+  private async findPersistedScheduledAts({
+    queueName,
+    jobIds,
+  }: {
+    queueName: MessageQueue;
+    jobIds: string[];
+  }): Promise<Map<string, number>> {
+    if (jobIds.length === 0) {
+      return new Map();
+    }
+
+    const queue = this.queueMap[queueName];
+    const values = String(
+      await runRedisScript({
+        client: await queue.client,
+        script: JOBS_PERSISTED_OPTIONS_SCRIPT,
+        keys: jobIds.map((jobId) => queue.toKey(jobId)),
+        args: [],
+      }),
+    ).split('\n');
+
+    return new Map(
+      jobIds.flatMap((jobId, index) => {
+        const [rawOptions, rawTimestamp] = values.slice(
+          index * 2,
+          index * 2 + 2,
+        );
+
+        if (!isNonEmptyString(rawOptions) || !isNonEmptyString(rawTimestamp)) {
+          return [];
+        }
+
+        return [
+          [
+            jobId,
+            getQueueJobScheduledAt({
+              timestamp: Number(rawTimestamp),
+              options: JSON.parse(rawOptions),
+            }),
+          ],
+        ];
+      }),
+    );
   }
 
   private async findExistingJobIds({
@@ -1056,51 +1123,52 @@ export class BullMQDriver
     }
 
     const queueOptions = this.buildJobsOptions(options);
-    const { preparedJobs, availableBytes } = await this.prepareJobs({
-      queueName,
-      jobName,
-      jobs: jobsToAdd.map((job, index) => ({
-        index: job.inputIndex,
-        data: job.data,
-        options: {
-          ...queueOptions,
-          jobId:
-            job.jobId ??
-            (isDefined(queueOptions.jobId)
-              ? `${queueOptions.jobId}-${index}`
-              : undefined),
-        },
-        scope: job,
-      })),
-      additionalGroupKeys: options?.fairnessGroupKeys,
-    });
+    const { preparedJobs, availableBytes, existingJobIds } =
+      await this.prepareJobs({
+        queueName,
+        jobName,
+        jobs: jobsToAdd.map((job, index) => ({
+          index: job.inputIndex,
+          data: job.data,
+          options: {
+            ...queueOptions,
+            jobId:
+              job.jobId ??
+              (isDefined(queueOptions.jobId)
+                ? `${queueOptions.jobId}-${index}`
+                : undefined),
+          },
+          scope: job,
+        })),
+        additionalGroupKeys: options?.fairnessGroupKeys,
+      });
 
-    // BullMQ ignores a re-added job id, so it must not take a pacing slot.
-    const existingPacedJobIds = this.fairQueueScheduler.hasGroupLimiter(
-      queueName,
-    )
-      ? await this.findExistingJobIds({
-          queueName,
-          jobIds: jobsToAdd.flatMap((job) =>
-            isDefined(job.jobId) && isDefined(job.groupKey ?? options?.groupKey)
-              ? [job.jobId]
-              : [],
-          ),
-        })
-      : new Set<string>();
-
-    const jobOptions = await this.fairQueueScheduler.computeJobOptions({
-      queueName,
-      scopes: jobsToAdd,
-      limiterGroupKeys: jobsToAdd.map((job) =>
-        isDefined(job.jobId) && existingPacedJobIds.has(job.jobId)
-          ? undefined
-          : (job.groupKey ?? options?.groupKey),
-      ),
-      additionalGroupKeys: options?.fairnessGroupKeys,
-      delay: options?.delay,
-      staticPriority: queueOptions.priority,
-    });
+    const newJobs = jobsToAdd.filter(
+      (job) => !isDefined(job.jobId) || !existingJobIds.has(job.jobId),
+    );
+    const newJobsOptions =
+      newJobs.length === 0
+        ? []
+        : await this.fairQueueScheduler.computeJobOptions({
+            queueName,
+            scopes: newJobs,
+            limiterGroupKeys: newJobs.map(
+              (job) => job.groupKey ?? options?.groupKey,
+            ),
+            additionalGroupKeys: options?.fairnessGroupKeys,
+            delay: options?.delay,
+            staticPriority: queueOptions.priority,
+            limiter: options?.limiter,
+          });
+    const fairJobOptionsByJob = new Map(
+      newJobs.map((job, index) => [job, newJobsOptions[index]]),
+    );
+    const jobsOptions = jobsToAdd.map((job, index) =>
+      this.withScheduledAt({
+        ...preparedJobs[index].options,
+        ...fairJobOptionsByJob.get(job),
+      }),
+    );
 
     const addedJobs = await this.addPreparedJobs({
       queueName,
@@ -1110,18 +1178,32 @@ export class BullMQDriver
           jobsToAdd.map(({ data }, index) => ({
             name: jobName,
             data,
-            opts: {
-              ...preparedJobs[index].options,
-              ...jobOptions[index],
-            },
+            opts: jobsOptions[index],
           })),
         ),
+    });
+
+    const persistedScheduledAts = await this.findPersistedScheduledAts({
+      queueName,
+      jobIds: jobsToAdd.flatMap((job) =>
+        isDefined(job.jobId) && job.isJobIdGenerated !== true
+          ? [job.jobId]
+          : [],
+      ),
     });
 
     return {
       jobs: addedJobs.flatMap((addedJob, index) =>
         isDefined(addedJob.id)
-          ? [{ jobId: addedJob.id, sizeBytes: preparedJobs[index].sizeBytes }]
+          ? [
+              {
+                jobId: addedJob.id,
+                sizeBytes: preparedJobs[index].sizeBytes,
+                scheduledAt:
+                  persistedScheduledAts.get(addedJob.id) ??
+                  jobsOptions[index].scheduledAt,
+              },
+            ]
           : [],
       ),
       availableBytes,
@@ -1211,6 +1293,8 @@ export class BullMQDriver
       return undefined;
     }
 
+    const jobOptions: BullMQJobsOptions = job.opts;
+
     return {
       id: job.id,
       data: job.data,
@@ -1219,6 +1303,10 @@ export class BullMQDriver
       failedReason: job.failedReason,
       progress: job.progress,
       timestamp: job.timestamp,
+      scheduledAt: getQueueJobScheduledAt({
+        timestamp: job.timestamp,
+        options: jobOptions,
+      }),
       processedOn: job.processedOn,
       finishedOn: job.finishedOn,
       broadcastTo: this.getBroadcastTo(job),

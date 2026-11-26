@@ -10,12 +10,15 @@ import { v4 } from 'uuid';
 
 import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { buildJobStatus } from 'src/engine/core-modules/message-queue/utils/build-job-status.util';
+import { ENQUEUE_JOB_LIMITER_MAX_INTERVAL_MS } from 'src/engine/core-modules/application/application-job/constants/enqueue-job-limiter-max-interval-ms.constant';
+import { ENQUEUE_JOB_LIMITER_MIN_INTERVAL_MS } from 'src/engine/core-modules/application/application-job/constants/enqueue-job-limiter-min-interval-ms.constant';
 import { ENQUEUE_JOB_DEFAULT_RETRY_LIMIT } from 'src/engine/core-modules/application/application-job/constants/enqueue-job-default-retry-limit.constant';
 import { ENQUEUE_JOB_PRIORITY } from 'src/engine/core-modules/application/application-job/constants/enqueue-job-priority.constant';
 import { MAX_JOBS_PER_STATUS_READ } from 'src/engine/core-modules/application/application-job/constants/max-jobs-per-status-read.constant';
 import { type EnqueueJobInputDTO } from 'src/engine/core-modules/application/application-job/dtos/enqueue-job.input';
 import { type EnqueueJobsInputDTO } from 'src/engine/core-modules/application/application-job/dtos/enqueue-jobs.input';
 import { type JobStatusDTO } from 'src/engine/core-modules/message-queue/dtos/job-status.dto';
+import { isValidMessageQueueLimiter } from 'src/engine/core-modules/message-queue/utils/is-valid-message-queue-limiter.util';
 import { buildQueueJobId } from 'src/engine/core-modules/application/application-job/utils/build-queue-job-id.util';
 import {
   ApplicationException,
@@ -84,9 +87,11 @@ export class ApplicationJobService {
     userWorkspaceId: string | null;
     input: EnqueueJobsInputDTO;
   }): Promise<EnqueueJobsResult> {
-    const { logicFunctionUniversalIdentifier } = input;
+    const { logicFunctionUniversalIdentifier, limiter } = input;
 
     const jobItems = this.getJobItems(input);
+
+    this.validateLimiterOrThrow(input);
 
     const { flatLogicFunctionMaps, flatApplicationMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -136,6 +141,7 @@ export class ApplicationJobService {
             ...(isDefined(userWorkspaceId) ? { userWorkspaceId } : {}),
           },
           jobId: buildQueueJobId({ workspaceId, jobId: jobIds[index] }),
+          isJobIdGenerated: !isDefined(jobItem.jobId),
           workspaceId,
           applicationUniversalIdentifier: application.universalIdentifier,
         })),
@@ -146,12 +152,19 @@ export class ApplicationJobService {
             ENQUEUE_JOB_DEFAULT_RETRY_LIMIT,
           backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
           priority: ENQUEUE_JOB_PRIORITY,
+          doNotCheckDuplicatesBasedOnPrefix: true,
           ...(isDefined(input.delayMs) ? { delay: input.delayMs } : {}),
+          ...(isDefined(limiter)
+            ? {
+                limiter,
+                groupKey: `logicFunction:${flatLogicFunction.id}:limiter:${limiter.max}:${limiter.durationMs}`,
+              }
+            : {}),
         },
       );
 
-    const sizeBytesByQueueJobId = new Map(
-      jobs.map(({ jobId, sizeBytes }) => [jobId, sizeBytes]),
+    const enqueuedJobsByQueueJobId = new Map(
+      jobs.map((enqueuedJob) => [enqueuedJob.jobId, enqueuedJob]),
     );
 
     return {
@@ -160,11 +173,19 @@ export class ApplicationJobService {
       enqueuedJobsCount: jobItems.length,
       jobIds,
       jobs: jobIds.flatMap((jobId) => {
-        const sizeBytes = sizeBytesByQueueJobId.get(
+        const enqueuedJob = enqueuedJobsByQueueJobId.get(
           buildQueueJobId({ workspaceId, jobId }),
         );
 
-        return isDefined(sizeBytes) ? [{ jobId, sizeBytes }] : [];
+        return isDefined(enqueuedJob)
+          ? [
+              {
+                jobId,
+                sizeBytes: enqueuedJob.sizeBytes,
+                scheduledAt: enqueuedJob.scheduledAt,
+              },
+            ]
+          : [];
       }),
       availableBytes,
     };
@@ -197,6 +218,36 @@ export class ApplicationJobService {
 
       return [buildJobStatus({ jobId, job })];
     });
+  }
+
+  private validateLimiterOrThrow({
+    limiter,
+    delayMs,
+  }: Pick<EnqueueJobsInputDTO, 'limiter' | 'delayMs'>): void {
+    if (!isDefined(limiter)) {
+      return;
+    }
+
+    if (isDefined(delayMs)) {
+      throw new ApplicationException(
+        'Provide either delayMs or limiter, not both',
+        ApplicationExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    const intervalMs = limiter.durationMs / limiter.max;
+
+    if (
+      !isValidMessageQueueLimiter(limiter) ||
+      !Number.isInteger(limiter.durationMs) ||
+      intervalMs < ENQUEUE_JOB_LIMITER_MIN_INTERVAL_MS ||
+      intervalMs > ENQUEUE_JOB_LIMITER_MAX_INTERVAL_MS
+    ) {
+      throw new ApplicationException(
+        `limiter max and durationMs must be positive integers with durationMs / max between ${ENQUEUE_JOB_LIMITER_MIN_INTERVAL_MS} and ${ENQUEUE_JOB_LIMITER_MAX_INTERVAL_MS} ms`,
+        ApplicationExceptionCode.INVALID_INPUT,
+      );
+    }
   }
 
   private getJobItems(input: EnqueueJobsInputDTO): EnqueueJobItem[] {

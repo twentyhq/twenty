@@ -63,7 +63,7 @@ Tipuri de declanșatoare disponibile:
 <Note>
 Pentru a apela o funcție logică declanșată de o rută dintr-o componentă front-end (headless), consultă [Apelarea unei funcții logice](/ro/developers/extend/apps/layout/front-components#calling-a-logic-function).
 </Note>
-* **cron**: Rulează funcția pe un program folosind o expresie CRON.
+* **cron**: Rulează funcția pe un program folosind o expresie CRON. Setați `spreadMs` pentru a împiedica toate spațiile de lucru să îl ruleze în același minut. Consultați [Distribuiți un cron între spațiile de lucru](#spread-a-cron-across-workspaces).
 * **databaseEvent**: Se execută când înregistrările unui obiect sunt create, actualizate, șterse, distruse, restaurate sau upsertate. Îl puteți limita la actualizările unor câmpuri și la înregistrările care îndeplinesc o condiție. Consultați [încărcăturile utile ale evenimentelor bazei de date](#database-event-trigger-payload).
 * **serverRoute**: Expune o singură rută HTTP la nivelul înregistrării. O funcție de tip **resolver** (declarată cu `serverRouteTriggerSettings`) rulează în workspace-ul proprietar și fie returnează un `Response` sincron, fie workspace-ul țintă ȘI funcția logică de pus în coadă; pe ramura de punere în coadă, platforma confirmă cu `202` și rulează acea **țintă** în coada worker-ului. Consultați [declanșatorul de rută de server](#server-route-trigger).
 
@@ -1268,5 +1268,26 @@ Puncte cheie:
 Nu trebuie să transmiteți aceste valori clienților — aceștia citesc automat din `process.env`, iar [Ale cui accesări le utilizează un apel](#whose-access-a-call-uses) explică alegerea dintre ele. Permisiunile proprii ale aplicației dvs. sunt determinate de rolul declarat cu `defineApplicationRole()` (sau referențiat prin `defaultRoleUniversalIdentifier` în `application-config.ts`); o execuție care acționează ca o persoană nu poate depăși niciodată acel rol sau rolul persoanei.
 
 </Note>
+
+## Distribuiți un cron între spațiile de lucru
+
+O expresie cron se potrivește în același minut în fiecare spațiu de lucru care a instalat aplicația dvs. Adăugați `spreadMs` pentru a decala execuțiile fiecărui spațiu de lucru cu propriul său decalaj:
+
+```ts
+export default defineLogicFunction({
+  universalIdentifier: 'b7c2e4d1-0f5a-4c3e-9d8b-6a1f2e3c4d5b',
+  name: 'nightly-sweep',
+  cronTriggerSettings: { pattern: '0 3 * * *', spreadMs: 60 * 60 * 1000 },
+  handler,
+});
+```
+
+Fiecare spațiu de lucru primește un decalaj în `[0, spreadMs)`, rotunjit în jos la minut și derivat din spațiul de lucru și `universalIdentifier` al funcției, astfel încât rămâne același de la o execuție la următoarea. Expresia este evaluată cu acest decalaj mai târziu în spațiul de lucru: în exemplul de mai sus, un spațiu de lucru cu un decalaj de 37 de minute rulează la 03:37 în fiecare zi.
+
+* `spreadMs` este un număr întreg între `120000` (2 minute) și `86400000` (24 de ore).
+* Decalajul modifică momentul în care rulează cron-ul, nu frecvența. Un cron care rulează în fiecare minut rulează în continuare în fiecare minut, iar un cron orar cu un `spreadMs` de 24 de ore rulează în continuare o dată pe oră în fiecare spațiu de lucru.
+* Nu există un interval minim între spațiile de lucru și nicio limită pentru câte rulează în același minut: decalajele sunt distribuite, nu coordonate.
+* Modificarea `spreadMs` modifică decalajul, astfel încât execuția din jurul modificării poate fi omisă sau poate avea loc de două ori.
+* Fără `spreadMs`, cron-ul rulează în minutul în care expresia sa se potrivește.
 
 <PageBanner illustration="card-page-logic-functions" />

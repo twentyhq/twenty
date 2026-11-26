@@ -15,7 +15,6 @@ import { findViewChildIds } from 'test/integration/metadata/suites/view/utils/fi
 import { findViewChild } from 'test/integration/metadata/suites/view/utils/find-view-child.util';
 import { updateOneView } from 'test/integration/metadata/suites/view/utils/update-one-view.util';
 import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
-import { ViewVisibility } from 'twenty-shared/types';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
@@ -55,7 +54,7 @@ describe('unlisted view children read visibility (integration)', () => {
     ({ viewId: unlistedViewId, childIdByChildName } =
       await createViewWithChildren({
         name: 'Guest private opportunities',
-        visibility: ViewVisibility.UNLISTED,
+        isPrivate: true,
         token: APPLE_PHIL_GUEST_ACCESS_TOKEN,
       }));
   });

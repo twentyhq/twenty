@@ -8,6 +8,12 @@ import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-m
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 
 export const STANDARD_NAVIGATION_MENU_ITEMS = {
+  inboxSection: {
+    universalIdentifier: '20202020-b017-4b17-8b17-c0aba11c0017',
+    type: NavigationMenuItemType.SECTION,
+    builtInSectionKey: 'aiChatInbox',
+    position: -2,
+  },
   favoritesSection: {
     universalIdentifier: '20202020-b00f-4b0f-8b0f-c0aba11c000f',
     type: NavigationMenuItemType.SECTION,
@@ -121,6 +127,33 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
     type: NavigationMenuItemType.NATIVE_PAGE,
     nativePageKey: 'agents',
     folderUniversalIdentifier: '20202020-b007-4b07-8b07-c0aba11c0007',
+    position: 2,
+  },
+  chatsTab: {
+    universalIdentifier: '20202020-b016-4b16-8b16-c0aba11c0016',
+    type: NavigationMenuItemType.TAB,
+    name: i18nLabel(
+      msg({ message: `Chats`, context: 'navigationMenuItem.name' }),
+    ),
+    icon: 'IconMessage',
+    position: 0,
+  },
+  chatsTabFavoriteChats: {
+    universalIdentifier: '20202020-b018-4b18-8b18-c0aba11c0018',
+    type: NavigationMenuItemType.SECTION,
+    builtInSectionKey: 'aiChatFavorites',
+    position: 0,
+  },
+  chatsTabChannels: {
+    universalIdentifier: '20202020-b011-4b11-8b11-c0aba11c0011',
+    type: NavigationMenuItemType.SECTION,
+    builtInSectionKey: 'aiChatChannels',
+    position: 1,
+  },
+  chatsTabRecentChats: {
+    universalIdentifier: '20202020-b019-4b19-8b19-c0aba11c0019',
+    type: NavigationMenuItemType.SECTION,
+    builtInSectionKey: 'aiChatRecents',
     position: 2,
   },
 } as const;

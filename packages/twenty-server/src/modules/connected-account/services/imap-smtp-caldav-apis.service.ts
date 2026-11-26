@@ -184,7 +184,7 @@ export class ImapSmtpCalDavApiService {
       },
     );
 
-    await this.channelVisibilityRuleSyncSchedulerService.scheduleSyncIfEnabled(
+    await this.channelVisibilityRuleSyncSchedulerService.scheduleSync(
       workspaceId,
     );
 

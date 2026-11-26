@@ -63,7 +63,9 @@ twenty app add validation-rule --name invoice-has-amount --object <object-uuid>
 * `isIn(field('stage'), ['NEW', 'WON'])` verifică o valoare într-o listă.
 * Funcții precum `isNonEmptyString` și `isDefined` și funcțiile de dată `dateDiff(from, to, unit)` (unități întregi de la o dată la alta, precum `dateDiff(createdAt, now, 'HOUR')`), `dateAdd(date, amount, unit)`, `dateTrunc(date, unit)`, `datePart(date, part)` și `isInRelativeDateRange(date, direction, amount, unit)`, cu direcția `'PAST'`, `'NEXT'` sau `'THIS'` și unitatea `'DAY'`, `'WEEK'`, `'MONTH'`, `'QUARTER'` sau `'YEAR'`, precum `isInRelativeDateRange(closeDate, 'PAST', 30, 'DAY')`.
 * `if(condition, valueIfTrue, valueIfFalse)`, care returnează a doua valoare când condiția este adevărată și a treia în caz contrar.
-* `coalesce(value, ...fallbacks)`, `concat(value, ...values)`, `lower(text)`, `upper(text)`, `min(number, ...numbers)`, `max(number, ...numbers)` și `roundTo(number, decimals)`, care calculează valori.
+* `coalesce(value, ...fallbacks)`, `concat(value, ...values)`, `lower(text)`, `upper(text)`, `min(number, ...numbers)`, `max(number, ...numbers)` și `roundTo(number, decimals)`, care calculează valori. `roundTo` rotunjește jumătățile în sens opus lui zero, astfel încât `roundTo(2.55, 1)` este `2.6`.
+
+Fiecare funcție primește argumentele enumerate în semnătura sa, iar `...` reprezintă orice număr de valori suplimentare. Un apel cu un număr diferit de argumente nu trece validarea, cum ar fi `if` cu două argumente.
 
 `daysSince(date)` a fost eliminată. Înlocuiți-o în regulile existente cu `dateDiff(date, now, 'DAY')`. Unitățile pentru `dateDiff`, `dateAdd` și `dateTrunc` sunt `'MINUTE'`, `'HOUR'`, `'DAY'`, `'WEEK'`, `'MONTH'`, `'QUARTER'` sau `'YEAR'`; componentele pentru `datePart` sunt `'YEAR'`, `'QUARTER'`, `'MONTH'`, `'WEEK'`, `'DAY'`, `'DAY_OF_WEEK'`, `'HOUR'` sau `'MINUTE'`. Datele sunt citite în UTC, iar `dateAdd` nu returnează nicio valoare atunci când data sau rezultatul se încadrează în afara anilor 1-9999. O dată comparată cu o dată și o oră compară zilele lor UTC, inclusiv cu `eq` și `notEq`.
 

@@ -27,7 +27,9 @@ const StyledSortItemContainer = styled.div`
 `;
 
 const StyledAddButtonContainer = styled.div`
-  margin-top: ${themeCssVariables.spacing[1]};
+  &:not(:first-child) {
+    margin-top: ${themeCssVariables.spacing[1]};
+  }
 `;
 
 type RecordTableSettingsSortsContentProps = {

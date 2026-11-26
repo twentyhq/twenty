@@ -89,6 +89,7 @@ import { AiToolCallAnswerModule } from 'src/engine/metadata-modules/ai/ai-tool-c
 import { ClientConfigModule } from './client-config/client-config.module';
 import { EventLogsViewerModule } from './event-logs/event-logs-viewer.module';
 import { FileApiModule } from './file/file-api.module';
+import { StoredFormulaFieldModule } from 'src/engine/core-modules/stored-formula-field/stored-formula-field.module';
 
 @Module({
   imports: [
@@ -188,6 +189,7 @@ import { FileApiModule } from './file/file-api.module';
     EventLogsViewerModule,
     PreInstalledAppsModule,
     AppBillingModule,
+    StoredFormulaFieldModule,
   ],
   providers: [
     {

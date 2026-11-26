@@ -310,4 +310,12 @@ describe('compileValidationRuleExpression with previous values', () => {
       errorParams: { fieldName: 'closeDate' },
     });
   });
+  it('should reject an aggregate, which only a formula can compute', () => {
+    expect(
+      compileValidationRuleExpression({
+        expression: 'sum(amount.amountMicros) > 0',
+        fields: OPPORTUNITY_FIELDS,
+      }),
+    ).toMatchObject({ isValid: false, errorCode: 'AGGREGATE_NOT_ALLOWED' });
+  });
 });

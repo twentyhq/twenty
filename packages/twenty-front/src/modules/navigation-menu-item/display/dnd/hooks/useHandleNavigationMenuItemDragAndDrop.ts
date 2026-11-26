@@ -41,7 +41,7 @@ export const useHandleNavigationMenuItemDragAndDrop = (
     Pick<NavigationMenuItem, 'id' | 'position' | 'parentId' | 'type'>
   > =>
     isDraftMode
-      ? (store.get(navigationMenuItemsDraftState.atom) ?? []).sort(
+      ? [...(store.get(navigationMenuItemsDraftState.atom) ?? [])].sort(
           (a, b) => a.position - b.position,
         )
       : navigationMenuItemsSorted;
@@ -97,29 +97,20 @@ export const useHandleNavigationMenuItemDragAndDrop = (
     });
   };
 
-  const handleNavigationMenuItemDragAndDrop = async (
-    result: NavigationMenuItemDropResult,
-  ) => {
+  const getDropPlacement = (result: NavigationMenuItemDropResult) => {
     const { destination, source, draggableId } = result;
 
     if (!destination) {
-      return;
-    }
-
-    if (
-      destination.droppableId === source.droppableId &&
-      destination.index === source.index
-    ) {
-      return;
+      return null;
     }
 
     if (!isDropAllowed(source.droppableId, destination.droppableId)) {
-      return;
+      return null;
     }
 
     const draggedItem = allItems.find((item) => item.id === draggableId);
     if (!draggedItem) {
-      return;
+      return null;
     }
 
     const getNavigationMenuItemById = (id: string) =>
@@ -130,7 +121,7 @@ export const useHandleNavigationMenuItemDragAndDrop = (
       getNavigationMenuItemById,
     });
     if (!isDefined(destinationTarget)) {
-      return;
+      return null;
     }
 
     const sourceParentId =
@@ -159,6 +150,32 @@ export const useHandleNavigationMenuItemDragAndDrop = (
           items: allItems,
         }))
     ) {
+      return null;
+    }
+
+    return placement;
+  };
+
+  const isNavigationMenuItemDropAllowed = (
+    result: NavigationMenuItemDropResult,
+  ) => isDefined(getDropPlacement(result));
+
+  const handleNavigationMenuItemDragAndDrop = async (
+    result: NavigationMenuItemDropResult,
+  ) => {
+    const { destination, source, draggableId } = result;
+
+    if (
+      isDefined(destination) &&
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    ) {
+      return;
+    }
+
+    const placement = getDropPlacement(result);
+
+    if (!isDefined(placement)) {
       return;
     }
 
@@ -175,5 +192,8 @@ export const useHandleNavigationMenuItemDragAndDrop = (
     }
   };
 
-  return { handleNavigationMenuItemDragAndDrop };
+  return {
+    handleNavigationMenuItemDragAndDrop,
+    isNavigationMenuItemDropAllowed,
+  };
 };

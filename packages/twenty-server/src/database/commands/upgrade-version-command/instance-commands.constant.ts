@@ -341,6 +341,9 @@ import { AddSourceFieldToFieldPermissionFastInstanceCommand } from 'src/database
 import { AddInboxViewTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795526052553-add-inbox-view-type';
 import { AddUserWorkspaceDefaultAvatarFileIdSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-instance-command-slow-1795536145181-add-user-workspace-default-avatar-file-id';
 import { DropLegacyWorkflowVersionIdColumnsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-instance-command-fast-1795538016002-drop-legacy-workflow-version-id-columns';
+import { AddStripeCustomerEmailToBillingCustomerFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-instance-command-fast-1795601185766-add-stripe-customer-email-to-billing-customer';
+import { RelaxViewVisibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-instance-command-fast-1795618787744-relax-view-visibility';
+import { RenameAgentChatChannelTablesToInboxChannelFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-instance-command-fast-1795688525750-rename-agent-chat-channel-tables-to-inbox-channel';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -684,4 +687,7 @@ export const INSTANCE_COMMANDS = [
   AddInboxViewTypeFastInstanceCommand,
   AddUserWorkspaceDefaultAvatarFileIdSlowInstanceCommand,
   DropLegacyWorkflowVersionIdColumnsFastInstanceCommand,
+  AddStripeCustomerEmailToBillingCustomerFastInstanceCommand,
+  RelaxViewVisibilityFastInstanceCommand,
+  RenameAgentChatChannelTablesToInboxChannelFastInstanceCommand,
 ];

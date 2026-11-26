@@ -60,15 +60,16 @@ Una singola chiamata a `getJobs` legge al massimo `200` ID, lo stesso limite che
 
 Ogni voce contiene l'ID richiesto:
 
-| Campo          | Cosa contiene                                                                              |
-| -------------- | ------------------------------------------------------------------------------------------ |
-| `jobId`        | L'ID usato per il polling.                                                                 |
-| `stato`        | `WAITING`, `PRIORITIZED`, `DELAYED`, `ACTIVE`, `WAITING_CHILDREN`, `COMPLETED` o `FAILED`. |
-| `attemptsMade` | Tentativi della coda effettuati finora, incluso quello corrente.                           |
-| `failedReason` | Il messaggio di errore dell'ultimo tentativo non riuscito, altrimenti `null`.              |
-| `enqueuedAt`   | Quando il job è stato accettato, in millisecondi epoch.                                    |
-| `startedAt`    | Quando un worker lo ha prelevato, `null` mentre è ancora in attesa.                        |
-| `finishedAt`   | Quando è stato completato o non è riuscito, `null` mentre è ancora in esecuzione.          |
+| Campo          | Cosa contiene                                                                                                                                                  |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `jobId`        | L'ID usato per il polling.                                                                                                                                     |
+| `stato`        | `WAITING`, `PRIORITIZED`, `DELAYED`, `ACTIVE`, `WAITING_CHILDREN`, `COMPLETED` o `FAILED`.                                                                     |
+| `attemptsMade` | Tentativi della coda effettuati finora, incluso quello corrente.                                                                                               |
+| `failedReason` | Il messaggio di errore dell'ultimo tentativo non riuscito, altrimenti `null`.                                                                                  |
+| `enqueuedAt`   | Quando il job è stato accettato, in millisecondi epoch.                                                                                                        |
+| `scheduledAt`  | Quando il job è diventato idoneo per l'esecuzione per la prima volta, in millisecondi epoch. Vedi [Quando viene pianificato un job](#when-a-job-is-scheduled). |
+| `startedAt`    | Quando un worker lo ha prelevato, `null` mentre è ancora in attesa.                                                                                            |
+| `finishedAt`   | Quando è stato completato o non è riuscito, `null` mentre è ancora in esecuzione.                                                                              |
 
 Un job che non è ancora stato prelevato viene normalmente indicato come `PRIORITIZED` anziché `WAITING`, perché i job dell'applicazione vengono accodati con una priorità bassa fissa. `COMPLETED` e `FAILED` sono gli stati terminali. Un ciclo di polling dovrebbe anche interrompersi autonomamente dopo un numero limitato di tentativi anziché attendere per sempre, poiché un'esecuzione è leggibile solo finché la coda la conserva: 4 ore dopo il completamento, 7 giorni dopo un errore e, in entrambi i casi, solo gli ultimi 1000 job in tale stato.
 
@@ -95,10 +96,11 @@ Un `jobId` è anche una chiave di idempotenza: l'accodamento di un ID che la cod
 
 Le opzioni si applicano a ogni esecuzione nel batch.
 
-| Opzione      | Predefinito | Intervallo                 | Cosa fa                                                                                                                                                                                                        |
-| ------------ | ----------- | -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `retryLimit` | `0`         | `0`–`10`                   | Tentativi aggiuntivi complessivi nella coda. I nuovi tentativi richiesti dall'applicazione sono limitati a `3`. Aumenta questo valore solo per gli handler che possono essere eseguiti due volte in sicurezza. |
-| `delayMs`    | `0`         | `0`–`604800000` (7 giorni) | Attendi questo intervallo prima che le esecuzioni diventino idonee.                                                                                                                                            |
+| Opzione      | Predefinito | Intervallo                              | Cosa fa                                                                                                                                                                                                        |
+| ------------ | ----------- | --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `retryLimit` | `0`         | `0`–`10`                                | Tentativi aggiuntivi complessivi nella coda. I nuovi tentativi richiesti dall'applicazione sono limitati a `3`. Aumenta questo valore solo per gli handler che possono essere eseguiti due volte in sicurezza. |
+| `delayMs`    | `0`         | `0`–`604800000` (7 giorni)              | Attendi questo intervallo prima che le esecuzioni diventino idonee.                                                                                                                                            |
+| `limiter`    | nessuno     | `durationMs / max` tra `100` ms e 1 ora | Distribuisci uniformemente le esecuzioni, al massimo `max` per `durationMs`. Vedi [Scagliona le esecuzioni con un limitatore](#pace-runs-with-a-limiter). Non può essere combinato con `delayMs`.              |
 
 ```ts
 await enqueueJobs({
@@ -119,6 +121,43 @@ export default defineLogicFunction({
 });
 ```
 
+## Scagliona le esecuzioni con un limitatore
+
+Passa `limiter: { max, durationMs }` per distanziare le esecuzioni di una chiamata di un intervallo di `durationMs / max`, ad esempio per rimanere al di sotto di un limite di frequenza di terze parti.
+
+```ts
+await enqueueJobs({
+  logicFunctionUniversalIdentifier: ENRICH_COMPANY,
+  jobs: companies.map((company) => ({ payload: { companyId: company.id } })),
+  limiter: { max: 10, durationMs: 60_000 },
+});
+```
+
+Qui un'esecuzione diventa idonea ogni 6 secondi. Come funziona:
+
+* Le chiamate della stessa funzione nello stesso spazio di lavoro con gli stessi `max` e `durationMs` condividono un'unica pianificazione, quindi una seconda chiamata continua dopo le esecuzioni riservate dalla prima. La modifica di uno dei due valori avvia una pianificazione separata.
+* A ogni esecuzione viene assegnato il successivo slot libero, oppure quello attuale se la pianificazione è inattiva, e lo slot successivo viene spostato avanti di un intervallo. Le esecuzioni sono distribuite uniformemente, mai a raffiche.
+* Non esiste un limite temporale: un batch di grandi dimensioni può essere pianificato con giorni di anticipo. Si applicano comunque i normali limiti della [memoria della coda](#queue-memory) e un arretrato di lunga durata mantiene la propria memoria finché non viene smaltito.
+* `max` e `durationMs` devono essere numeri interi positivi con un intervallo compreso tra `100` ms e 1 ora. La combinazione di `limiter` con `delayMs`, anche `delayMs: 0`, viene rifiutata con `INVALID_INPUT` e non viene messo nulla in coda.
+* Vengono scaglionate solo le esecuzioni delle chiamate che passano `limiter`. I tentativi mantengono il proprio backoff e le esecuzioni avviate da cron, eventi del database, `onConnect` o route del server non vengono scaglionate.
+* Rimettere in coda un `jobId` ancora presente nella coda non occupa un altro slot.
+* Il limitatore distanzia il momento in cui le esecuzioni diventano idonee. Non limita quante ne vengono eseguite contemporaneamente e un'esecuzione può iniziare dopo il proprio slot quando i worker sono occupati.
+* Se lo scaglionamento non è disponibile a causa di un guasto tecnico, le esecuzioni vengono messe in coda senza scaglionamento anziché essere rifiutate.
+
+## Quando un job viene pianificato
+
+Ogni voce di `jobs` restituita da `enqueueJobs` e ogni stato restituito da `getJobs` include `scheduledAt`: il momento in cui il job è diventato idoneo per la prima volta a essere eseguito, in millisecondi epoch.
+
+| Il job è stato messo in coda | `scheduledAt`                             |
+| ---------------------------- | ----------------------------------------- |
+| Con un `limiter`             | Lo slot che gli è stato assegnato.        |
+| Con `delayMs`                | Quando è stato accettato, più il ritardo. |
+| Altrimenti                   | Quando è stato accettato.                 |
+
+Viene impostato una sola volta, quando il job viene accettato, e non cambia mai in seguito, inclusi i tentativi. Mettere in coda un `jobId` ancora presente nella coda restituisce il `scheduledAt` del job esistente. Una volta che il job è stato espulso, un nuovo job con lo stesso id ne riceve uno nuovo.
+
+`scheduledAt` non è una previsione di quando il job inizierà: confrontalo con `startedAt` per vedere quanto tempo ha atteso un worker.
+
 <Note>
 **La priorità non è ancora configurabile.** I job in coda vengono sempre eseguiti alla priorità più bassa, così il lavoro della piattaforma non viene mai ritardato rispetto ai job dell'applicazione. Il controllo sulla priorità sarà disponibile a breve.
 </Note>
@@ -133,7 +172,7 @@ I job in coda risiedono in memoria finché non terminano, pertanto ogni spazio d
 
 | Campo            | Cosa contiene                                                                                                                                                                                            |
 | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `lavori`         | Il `jobId` e il `sizeBytes` di ogni job accodato.                                                                                                                                                        |
+| `lavori`         | Il `jobId`, `sizeBytes` e [`scheduledAt`](#when-a-job-is-scheduled) di ogni job messo in coda.                                                                                                           |
 | `availableBytes` | Memoria che l'applicazione e lo spazio di lavoro possono ancora accodare al momento di questa chiamata. `null` quando il server non limita la memoria della coda. È un'istantanea, non una prenotazione. |
 
 Quando viene raggiunto un limite, l'intera chiamata viene rifiutata e non viene accodato nulla:
@@ -331,6 +370,6 @@ Cosa rende tutto questo solido:
 * **Rendi esplicita la condizione di terminazione.** Usa la ricorsione solo finché torna un blocco completo. Una catena che si interrompe solo su "nessun risultato" continuerà all'infinito se la fonte restituisce mai una pagina corta a metà percorso.
 * **Conserva i progressi prima di mettere in coda l'esecuzione successiva,** così un anello fallito riparte dall'ultimo blocco completato invece che dall'inizio.
 * **Mantieni ogni blocco idempotente.** Rielaborare un blocco dopo un ritentativo non deve causare scritture duplicate: usa chiavi di scrittura sul record o sull'id esterno che stai elaborando.
-* **Preferisci una catena a blocchi a un'unica enorme suddivisione parallela** quando il lavoro colpisce una terza parte con limitazione di velocità: una catena con `delayMs` si autoregola, mentre migliaia di job messi in coda in una volta sola diventano tutti idonei immediatamente.
+* **Scagliona un fan-out che raggiunge una terza parte soggetta a limitazione di frequenza** con un [`limiter`](#pace-runs-with-a-limiter), oppure usa una catena suddivisa in blocchi con `delayMs`. Migliaia di job messi in coda senza nessuno dei due diventano immediatamente idonei.
 
 <PageBanner illustration="card-page-background-jobs" />

@@ -37,7 +37,19 @@ const FIELDS: ValidationRuleFieldDescriptor[] = [
       toDescriptor({ name: 'name', type: FieldMetadataType.TEXT }),
     ],
   },
+  {
+    ...toDescriptor({ name: 'lines', type: FieldMetadataType.RELATION }),
+    relationType: RelationType.ONE_TO_MANY,
+    relationTargetFields: [
+      toDescriptor({ name: 'price', type: FieldMetadataType.NUMBER }),
+      toDescriptor({ name: 'isActive', type: FieldMetadataType.BOOLEAN }),
+      toDescriptor({ name: 'dueDate', type: FieldMetadataType.DATE }),
+    ],
+  },
 ];
+
+const LINES_FROM_SQL =
+  'FROM "workspace"."line" AS "aggregate_lines" WHERE "aggregate_lines"."gadgetId" = "record"."id" AND "aggregate_lines"."deletedAt" IS NULL';
 
 const compile = ({
   type,
@@ -53,7 +65,13 @@ const compile = ({
     expression,
     currencyCodeExpression,
     selectEnumSqlType: '"workspace"."gadget_stage_enum"',
-    resolveReference: buildFormulaSqlReferenceResolverFromDescriptors(FIELDS),
+    resolveReference: buildFormulaSqlReferenceResolverFromDescriptors({
+      fields: FIELDS,
+    }),
+    resolveAggregationSource: (relationFieldName) =>
+      relationFieldName === 'lines'
+        ? { tableSql: '"workspace"."line"', joinColumnName: 'gadgetId' }
+        : undefined,
   });
 
 describe('compileFormulaFieldToSql', () => {
@@ -104,6 +122,77 @@ describe('compileFormulaFieldToSql', () => {
       expressions: [{ expression: sql }],
     });
   });
+
+  it.each<{ type: FormulaFieldMetadataType; expression: string; sql: string }>([
+    {
+      type: FieldMetadataType.NUMBER,
+      expression: 'count(lines)',
+      sql: `(SELECT COUNT(*)::numeric ${LINES_FROM_SQL})`,
+    },
+    {
+      type: FieldMetadataType.NUMBER,
+      expression: 'sum(lines.price, lines.isActive and price > 0)',
+      sql: `(SELECT SUM("aggregate_lines"."price"::numeric) ${LINES_FROM_SQL} AND ((COALESCE("aggregate_lines"."isActive", FALSE) AND COALESCE("record"."price"::numeric > 0::numeric, FALSE))))`,
+    },
+    {
+      type: FieldMetadataType.DATE,
+      expression: 'max(lines.dueDate)',
+      sql: `(SELECT MAX("aggregate_lines"."dueDate") ${LINES_FROM_SQL})`,
+    },
+  ])(
+    'should aggregate the related records for $expression',
+    ({ type, expression, sql }) => {
+      const compilation = compile({ type, expression });
+
+      expect(compilation.isValid).toBe(true);
+      expect(
+        compilation.isValid && compilation.expressions[0].expression,
+      ).toContain(sql);
+    },
+  );
+
+  it('should keep max of plain values a scalar function', () => {
+    const compilation = compile({
+      type: FieldMetadataType.NUMBER,
+      expression: 'max(price, 0)',
+    });
+
+    expect(
+      compilation.isValid && compilation.expressions[0].expression,
+    ).toContain('GREATEST(');
+  });
+
+  it.each<{
+    type: FormulaFieldMetadataType;
+    expression: string;
+    errorMessage: string;
+  }>([
+    {
+      type: FieldMetadataType.NUMBER,
+      expression: 'sum(lines.isActive)',
+      errorMessage: 'sum() needs a number, but got true or false',
+    },
+    {
+      type: FieldMetadataType.NUMBER,
+      expression: 'count(supplier)',
+      errorMessage:
+        'count() needs a relation, for example count(tasks) or sum(deals.amount)',
+    },
+    {
+      type: FieldMetadataType.NUMBER,
+      expression: 'count(lines, lines.price)',
+      errorMessage:
+        'The condition of count() needs true or false, but got a number',
+    },
+  ])(
+    'should refuse the aggregate $expression',
+    ({ type, expression, errorMessage }) => {
+      expect(compile({ type, expression })).toEqual({
+        isValid: false,
+        errorMessage,
+      });
+    },
+  );
 
   it('should read an empty number as 0 and a division by zero as empty', () => {
     expect(

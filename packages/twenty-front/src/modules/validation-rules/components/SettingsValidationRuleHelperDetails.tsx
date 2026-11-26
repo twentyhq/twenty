@@ -72,11 +72,14 @@ const StyledExample = styled.div`
 type SettingsValidationRuleHelperDetailsProps = {
   item: ValidationRuleHelperItem;
   editorFields: ValidationRuleEditorField[];
+  // Field examples and the related-record note describe rules checked on save, not other expressions
+  shouldShowValidationRuleGuidance: boolean;
 };
 
 export const SettingsValidationRuleHelperDetails = ({
   item,
   editorFields,
+  shouldShowValidationRuleGuidance,
 }: SettingsValidationRuleHelperDetailsProps) => {
   const { t, i18n } = useLingui();
   const theme = useTheme();
@@ -84,10 +87,13 @@ export const SettingsValidationRuleHelperDetails = ({
 
   const ItemIcon = getValidationRuleHelperItemIcon({ item, getIcon });
 
-  const examples = computeValidationRuleHelperItemExamples({
-    item,
-    fields: editorFields,
-  });
+  const examples =
+    item.kind === 'field' && !shouldShowValidationRuleGuidance
+      ? []
+      : computeValidationRuleHelperItemExamples({
+          item,
+          fields: editorFields,
+        });
 
   const itemIcon = (
     <ItemIcon
@@ -144,7 +150,7 @@ export const SettingsValidationRuleHelperDetails = ({
       return t(item.definition.description);
     }
 
-    return item.field.readsRelatedRecord
+    return shouldShowValidationRuleGuidance && item.field.readsRelatedRecord
       ? t`Checked only when the record this rule belongs to is saved. Editing the related record does not check it again.`
       : undefined;
   };

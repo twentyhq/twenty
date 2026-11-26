@@ -233,6 +233,10 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
           "format": "uuid",
           "type": "string",
         },
+        "isPrivate": {
+          "description": "Whether the view is private to its creator. Defaults to false on create, which is almost always the best fit: the view is visible to everyone, as REQUIRED for any view backing a dashboard widget. Only set true for a personal view a specific user explicitly asked for, AND only when a user identity is available. A private view created without a creator is invisible to everyone (its dashboard widget renders blank), so never make widget-backing views private.",
+          "type": "boolean",
+        },
         "kanbanAggregateOperation": {
           "description": "Aggregate operation for kanban columns (e.g. "SUM", "COUNT").",
           "enum": [
@@ -308,14 +312,6 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
           ],
           "type": "string",
         },
-        "visibility": {
-          "description": "View visibility. Defaults to WORKSPACE on create, which is almost always the best fit — it makes the view visible to everyone and is REQUIRED for any view backing a dashboard widget. Only set UNLISTED for a private, personal view a specific user explicitly asked for, AND only when a user identity is available. An UNLISTED view created without an owner is invisible to everyone (its dashboard widget renders blank), so never use UNLISTED for widget-backing views.",
-          "enum": [
-            "WORKSPACE",
-            "UNLISTED",
-          ],
-          "type": "string",
-        },
       },
       "type": "object",
     },
@@ -353,6 +349,11 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
           "default": "IconList",
           "description": "Icon identifier (e.g., "IconList", "IconCheckbox")",
           "type": "string",
+        },
+        "isPrivate": {
+          "default": false,
+          "description": "Whether the view is private to its creator. ALWAYS prefer false (the default): shared views and any view backing a dashboard widget must be visible to everyone. Only set true for a personal view a single user explicitly asked for, AND only when a user identity is available. A private view created without a creator is invisible to everyone (e.g. its dashboard widget renders blank), so never make widget-backing views private.",
+          "type": "boolean",
         },
         "kanbanAggregateOperation": {
           "description": "Aggregate operation for kanban columns (e.g., "SUM", "AVG", "COUNT")",
@@ -400,15 +401,6 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
             "KANBAN_WIDGET",
             "LIST_WIDGET",
             "CALENDAR_WIDGET",
-          ],
-          "type": "string",
-        },
-        "visibility": {
-          "default": "WORKSPACE",
-          "description": "View visibility. ALWAYS prefer WORKSPACE (the default) — it is the right choice for shared views and for any view backing a dashboard widget, so the view is visible to everyone. Only use UNLISTED for a private, personal view explicitly requested by a single user, AND only when a user identity is available. An UNLISTED view created without an owner becomes invisible to everyone (e.g. its dashboard widget renders blank), so never use UNLISTED for widget-backing views.",
-          "enum": [
-            "WORKSPACE",
-            "UNLISTED",
           ],
           "type": "string",
         },

@@ -19,6 +19,19 @@ export type WorkspaceRelationShape = {
   joinColumnName?: string;
 };
 
+export type WorkspaceComputedLookupShape = {
+  alias: string;
+  relationFieldName: string;
+};
+
+export type WorkspaceComputedColumnShape = {
+  columnName: string;
+  sqlType: string;
+  // Undefined when the value cannot be computed, so the column reads as NULL
+  expression?: string;
+  dependencies: { alias: string; fieldMetadataId: string }[];
+};
+
 export type WorkspaceTableShape = {
   objectMetadataId: string;
   nameSingular: string;
@@ -28,4 +41,7 @@ export type WorkspaceTableShape = {
   columnNames: string[];
   relationShapeByFieldName: Record<string, WorkspaceRelationShape>;
   hasDeletedAtColumn: boolean;
+  hasAccessGroupIdsColumn?: boolean;
+  computedColumnShapes?: WorkspaceComputedColumnShape[];
+  computedLookupShapes?: WorkspaceComputedLookupShape[];
 };

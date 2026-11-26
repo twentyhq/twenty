@@ -88,11 +88,42 @@ const SUPPLIER_RELATION_SETTINGS = {
   joinColumnName: 'supplierId',
 };
 
+const GADGETS_RELATION_SETTINGS = {
+  relationType: RelationType.ONE_TO_MANY,
+};
+
 const SUPPLIER_FIELDS = [
   buildSupplierField({
     id: 'supplier-name',
     name: 'name',
     type: FieldMetadataType.TEXT,
+  }),
+  getFlatFieldMetadataMock({
+    id: 'supplier-gadgets',
+    universalIdentifier: 'supplier-gadgets-uid',
+    name: 'gadgets',
+    type: FieldMetadataType.RELATION,
+    objectMetadataId: SUPPLIER_OBJECT_ID,
+    objectMetadataUniversalIdentifier: SUPPLIER_OBJECT_UNIVERSAL_IDENTIFIER,
+    relationTargetObjectMetadataId: GADGET_OBJECT_ID,
+    relationTargetObjectMetadataUniversalIdentifier:
+      GADGET_OBJECT_UNIVERSAL_IDENTIFIER,
+    relationTargetFieldMetadataId: 'gadget-supplier',
+    relationTargetFieldMetadataUniversalIdentifier: 'gadget-supplier-uid',
+    settings: GADGETS_RELATION_SETTINGS,
+    universalSettings: GADGETS_RELATION_SETTINGS,
+  }),
+  buildSupplierField({
+    id: 'supplier-gadget-count',
+    name: 'gadgetCount',
+    type: FieldMetadataType.NUMBER,
+    expression: 'count(gadgets)',
+  }),
+  buildSupplierField({
+    id: 'supplier-stock-value',
+    name: 'stockValue',
+    type: FieldMetadataType.NUMBER,
+    expression: 'sum(gadgets.price, gadgets.quantity > 0)',
   }),
   buildSupplierField({
     id: 'supplier-revenue',

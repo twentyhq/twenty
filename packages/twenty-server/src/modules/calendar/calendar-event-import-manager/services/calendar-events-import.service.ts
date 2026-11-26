@@ -90,8 +90,7 @@ export class CalendarEventsImportService {
 
           const userWorkspace = await this.userWorkspaceRepository.findOne({
             where: {
-              id: (connectedAccount as unknown as { userWorkspaceId: string })
-                .userWorkspaceId,
+              id: connectedAccount.userWorkspaceId,
             },
           });
 

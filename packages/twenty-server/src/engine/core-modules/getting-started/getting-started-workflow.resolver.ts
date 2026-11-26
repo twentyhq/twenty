@@ -20,7 +20,8 @@ import { WorkflowQueryValidationGraphqlApiExceptionFilter } from 'src/engine/cor
 import { WorkflowTriggerGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-trigger-graphql-api-exception.filter';
 import { WorkflowVersionValidationGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-version-validation-graphql-api-exception.filter';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { AuthContext } from 'src/engine/decorators/auth/auth-context.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { BillingEnabledGuard } from 'src/engine/guards/billing-enabled.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/permissions/utils/permissions-graphql-api-exception.filter';
@@ -85,13 +86,13 @@ export class GettingStartedWorkflowResolver {
   @Mutation(() => GettingStartedWorkflowDTO)
   async prepareGettingStartedWorkflow(
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthContext() authContext: WorkspaceAuthContext,
     @Args('stepActionKey', { type: () => GettingStartedStepActionKey })
     stepActionKey: GettingStartedStepActionKey,
   ): Promise<GettingStartedWorkflowDTO> {
     return this.gettingStartedWorkflowWorkspaceService.prepareWorkflowOrThrow({
       workspaceId: workspace.id,
-      userWorkspaceId,
+      authContext,
       stepActionKey,
     });
   }

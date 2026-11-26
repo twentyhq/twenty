@@ -8,6 +8,7 @@ import { IconComment, IconHome, IconSettings } from 'twenty-ui/icon';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
+import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
 import { MainNavigationDrawerTabSwitcher } from '@/navigation/components/MainNavigationDrawerTabSwitcher';
@@ -43,7 +44,23 @@ jest.mock(
   }),
 );
 
+jest.mock('@/navigation/hooks/useCanCustomizeSidebar', () => ({
+  useCanCustomizeSidebar: () => mockCanCustomizeSidebar,
+}));
+
+const mockEnterLayoutCustomizationMode = jest.fn();
+
+jest.mock(
+  '@/layout-customization/hooks/useEnterLayoutCustomizationMode',
+  () => ({
+    useEnterLayoutCustomizationMode: () => ({
+      enterLayoutCustomizationMode: mockEnterLayoutCustomizationMode,
+    }),
+  }),
+);
+
 let mockIsInboxEnabled = true;
+let mockCanCustomizeSidebar = true;
 let mockChatAttention: {
   chatAttention: InboxChatAttention | null;
   unreadOpenThreadCount: number;
@@ -108,9 +125,11 @@ const buildOpenThreadsSummaryMock = (hasUnreadOpenThread: boolean) => ({
 const renderTabSwitcher = ({
   isLayoutCustomizationModeEnabled = false,
   hasUnreadOpenThread = false,
+  isPinnedToBottom = false,
 }: {
   isLayoutCustomizationModeEnabled?: boolean;
   hasUnreadOpenThread?: boolean;
+  isPinnedToBottom?: boolean;
 } = {}) => {
   const store = createStore();
 
@@ -129,7 +148,9 @@ const renderTabSwitcher = ({
         <MockedProvider
           mocks={[buildOpenThreadsSummaryMock(hasUnreadOpenThread)]}
         >
-          <MainNavigationDrawerTabSwitcher />
+          <MainNavigationDrawerTabSwitcher
+            isPinnedToBottom={isPinnedToBottom}
+          />
         </MockedProvider>
       </JotaiProvider>
     </I18nProvider>,
@@ -145,6 +166,7 @@ describe('MainNavigationDrawerTabSwitcher', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockIsInboxEnabled = true;
+    mockCanCustomizeSidebar = true;
     mockChatAttention = null;
 
     jest.mocked(useNavigationDrawerTabs).mockReturnValue([
@@ -298,6 +320,118 @@ describe('MainNavigationDrawerTabSwitcher', () => {
     expect(mockSwitchNavigationDrawerTab).not.toHaveBeenCalled();
   });
 
+  it('opens a sidebar tab and its menu on right-click in edit mode', async () => {
+    jest
+      .mocked(useWorkspaceNavigationMenuContainers)
+      .mockReturnValue([salesTab]);
+
+    renderTabSwitcher({ isLayoutCustomizationModeEnabled: true });
+
+    await userEvent.pointer({
+      keys: '[MouseRight]',
+      target: screen.getByLabelText('Sales'),
+    });
+
+    expect(mockSwitchToNavigationMenuTab).toHaveBeenCalledWith('sales-tab-id');
+    expect(await screen.findByText('Delete tab')).toBeInTheDocument();
+  });
+
+  it('does not open the sidebar tab menu on right-click outside edit mode', async () => {
+    jest
+      .mocked(useWorkspaceNavigationMenuContainers)
+      .mockReturnValue([salesTab]);
+
+    renderTabSwitcher();
+
+    await userEvent.pointer({
+      keys: '[MouseRight]',
+      target: screen.getByLabelText('Sales'),
+    });
+
+    expect(mockSwitchToNavigationMenuTab).not.toHaveBeenCalled();
+    expect(screen.queryByText('Delete tab')).not.toBeInTheDocument();
+  });
+
+  it('opens the customize menu when the active sidebar tab is clicked again', async () => {
+    jest
+      .mocked(useWorkspaceNavigationMenuContainers)
+      .mockReturnValue([salesTab]);
+    jest.mocked(useActiveNavigationMenuTab).mockReturnValue(salesTab);
+
+    renderTabSwitcher();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Sales' }));
+
+    await userEvent.click(await screen.findByText('Customize sidebar'));
+
+    expect(mockEnterLayoutCustomizationMode).toHaveBeenCalledTimes(1);
+    expect(mockSwitchToNavigationMenuTab).not.toHaveBeenCalled();
+  });
+
+  it('toggles the tab menu from the active sidebar tab button itself', async () => {
+    jest
+      .mocked(useWorkspaceNavigationMenuContainers)
+      .mockReturnValue([salesTab]);
+    jest.mocked(useActiveNavigationMenuTab).mockReturnValue(salesTab);
+
+    renderTabSwitcher();
+
+    const salesButton = screen.getByRole('button', { name: 'Sales' });
+
+    expect(salesButton).toHaveAttribute('aria-haspopup', 'menu');
+
+    await userEvent.click(salesButton);
+    expect(salesButton).toHaveAttribute('aria-expanded', 'true');
+
+    await userEvent.click(salesButton);
+    expect(salesButton).toHaveAttribute('aria-expanded', 'false');
+    expect(mockSwitchToNavigationMenuTab).not.toHaveBeenCalled();
+  });
+
+  it('reopens the active sidebar tab when the sidebar cannot be customized', async () => {
+    mockCanCustomizeSidebar = false;
+    jest
+      .mocked(useWorkspaceNavigationMenuContainers)
+      .mockReturnValue([salesTab]);
+    jest.mocked(useActiveNavigationMenuTab).mockReturnValue(salesTab);
+
+    renderTabSwitcher();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Sales' }));
+
+    expect(mockSwitchToNavigationMenuTab).toHaveBeenCalledWith('sales-tab-id');
+    expect(screen.queryByText('Customize sidebar')).not.toBeInTheDocument();
+  });
+
+  it('selects the active sidebar tab when its menu opens in edit mode', async () => {
+    jest
+      .mocked(useWorkspaceNavigationMenuContainers)
+      .mockReturnValue([salesTab]);
+    jest.mocked(useActiveNavigationMenuTab).mockReturnValue(salesTab);
+
+    const { store } = renderTabSwitcher({
+      isLayoutCustomizationModeEnabled: true,
+    });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Sales' }));
+
+    expect(await screen.findByText('Delete tab')).toBeInTheDocument();
+    expect(store.get(selectedNavigationMenuItemIdInEditModeState.atom)).toBe(
+      'sales-tab-id',
+    );
+    expect(mockSwitchToNavigationMenuTab).not.toHaveBeenCalled();
+  });
+
+  it('labels an unnamed sidebar tab "Tab"', () => {
+    jest
+      .mocked(useWorkspaceNavigationMenuContainers)
+      .mockReturnValue([{ ...salesTab, name: '' }]);
+
+    renderTabSwitcher();
+
+    expect(screen.getByRole('button', { name: 'Tab' })).toBeInTheDocument();
+  });
+
   it('marks the open sidebar tab as current instead of Home', () => {
     jest
       .mocked(useWorkspaceNavigationMenuContainers)
@@ -315,25 +449,55 @@ describe('MainNavigationDrawerTabSwitcher', () => {
     );
   });
 
-  it('keeps the attention on the open sidebar tab', () => {
+  it.each([
+    [true, 'Sales'],
+    [false, 'Sales, needs your input'],
+  ] as const)(
+    'drops the attention from the open sidebar tab only while the drawer is expanded (expanded=%s)',
+    (isExpanded, expectedName) => {
+      jest
+        .mocked(useIsNavigationDrawerContentExpanded)
+        .mockReturnValue(isExpanded);
+      jest
+        .mocked(useWorkspaceNavigationMenuContainers)
+        .mockReturnValue([salesTab]);
+      jest.mocked(useActiveNavigationMenuTab).mockReturnValue(salesTab);
+      mockChatAttention = {
+        chatAttention: 'needs-input',
+        unreadOpenThreadCount: 0,
+        getTabChatAttention: () => 'needs-input',
+      };
+
+      renderTabSwitcher();
+
+      expect(
+        screen.getByRole('button', { name: expectedName }),
+      ).toHaveAttribute('aria-current', 'true');
+    },
+  );
+
+  it.each([
+    [false, 'auto'],
+    [true, '0px'],
+  ] as const)(
+    'labels the active Home tab unless the row is pinned to the bottom (pinned=%s)',
+    (isPinnedToBottom, expectedLabelWidth) => {
+      renderTabSwitcher({ isPinnedToBottom });
+
+      const homeButton = screen.getByRole('button', { name: 'Home' });
+
+      expect(homeButton).toHaveAttribute('aria-current', 'true');
+      expect(screen.getByText('Home')).toHaveStyle({
+        width: expectedLabelWidth,
+      });
+    },
+  );
+
+  it('marks Home when a chat section sits at its top level', () => {
     jest
       .mocked(useWorkspaceNavigationMenuContainers)
       .mockReturnValue([salesTab]);
     jest.mocked(useActiveNavigationMenuTab).mockReturnValue(salesTab);
-    mockChatAttention = {
-      chatAttention: 'needs-input',
-      unreadOpenThreadCount: 0,
-      getTabChatAttention: () => 'needs-input',
-    };
-
-    renderTabSwitcher();
-
-    expect(
-      screen.getByRole('button', { name: 'Sales, needs your input' }),
-    ).toHaveAttribute('aria-current', 'true');
-  });
-
-  it('marks Home when a chat section sits at its top level', () => {
     mockChatAttention = {
       chatAttention: 'unread',
       unreadOpenThreadCount: 0,
@@ -346,4 +510,27 @@ describe('MainNavigationDrawerTabSwitcher', () => {
       screen.getByRole('button', { name: 'Home, unread' }),
     ).toBeInTheDocument();
   });
+
+  it.each([
+    [true, 'Home'],
+    [false, 'Home, unread'],
+  ] as const)(
+    'drops the attention from open Home only while the drawer is expanded (expanded=%s)',
+    (isExpanded, expectedName) => {
+      jest
+        .mocked(useIsNavigationDrawerContentExpanded)
+        .mockReturnValue(isExpanded);
+      mockChatAttention = {
+        chatAttention: 'unread',
+        unreadOpenThreadCount: 0,
+        getTabChatAttention: (tabId) => (tabId === null ? 'unread' : null),
+      };
+
+      renderTabSwitcher();
+
+      expect(
+        screen.getByRole('button', { name: expectedName }),
+      ).toBeInTheDocument();
+    },
+  );
 });

@@ -396,7 +396,6 @@ const buildWorkspaceMember = (workspaceMember: Record<string, unknown>) => ({
 
 const build = (roleIds: string[], workspaceMember?: RlsWorkspaceMember) =>
   buildRlsRecordFilter({
-    isRelationHopEnabled: false,
     flatFieldMetadataMaps,
     flatFieldMetadataOptionMaps,
     flatObjectMetadataMaps,
@@ -496,10 +495,6 @@ describe('buildRlsRecordFilter', () => {
         { and: [{ name: { ilike: '%from-root-b%' } }] },
       ],
     });
-  });
-
-  it('should match nothing for a predicate reached through a relation hop', () => {
-    expect(build([RELATION_HOP_ROLE_ID])).toEqual(UNSATISFIABLE_RECORD_FILTER);
   });
 
   describe('predicate bound to a workspace member field', () => {
@@ -639,7 +634,6 @@ describe('buildRecordFilterForRule with access group member values', () => {
     flatFieldMetadataOptionMaps?: FlatFieldMetadataOptionMapsForOptions;
   }) =>
     buildRecordFilterForRule({
-      isRelationHopEnabled: false,
       flatFieldMetadataMaps,
       flatFieldMetadataOptionMaps: targetFlatFieldMetadataOptionMaps,
       flatObjectMetadataMaps,
@@ -722,7 +716,6 @@ describe('buildRecordFilterForRule with access group member values', () => {
   it('should compare a relation field to the id of the member', () => {
     expect(
       buildRecordFilterForRule({
-        isRelationHopEnabled: false,
         flatFieldMetadataMaps,
         flatFieldMetadataOptionMaps,
         flatObjectMetadataMaps,
@@ -751,7 +744,6 @@ describe('buildRecordFilterForRule with access group member values', () => {
   it('should match nothing for a field compared to a member field of another type', () => {
     expect(
       buildRecordFilterForRule({
-        isRelationHopEnabled: false,
         flatFieldMetadataMaps,
         flatFieldMetadataOptionMaps,
         flatObjectMetadataMaps,
@@ -775,7 +767,6 @@ describe('buildRecordFilterForRule with access group member values', () => {
     (memberValue) => {
       expect(
         buildRecordFilterForRule({
-          isRelationHopEnabled: false,
           flatFieldMetadataMaps,
           flatFieldMetadataOptionMaps,
           flatObjectMetadataMaps,

@@ -1,6 +1,5 @@
 /* @license Enterprise */
 
-import { isAccessGroupsEnabled } from 'src/engine/permissions/internal/access-group/utils/is-access-groups-enabled.util';
 import { findRelatedRecordPathsFeedingAccessGroups } from 'src/engine/permissions/internal/access-group/utils/find-related-record-paths-feeding-access-groups.util';
 import { type PermissionsObjectAccessRequest } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
 import { type ResolvedRelatedRecordPath } from 'src/engine/permissions/internal/related-record-path/types/resolved-related-record-path.type';
@@ -17,7 +16,6 @@ export const findRelatedRecordPathsExtendingAccess = ({
 >): ResolvedRelatedRecordPath[] => {
   if (
     operationType === 'create' ||
-    !isAccessGroupsEnabled(metadataMaps) ||
     temporaryExcludePermissionStorageObject(flatObjectMetadata)
   ) {
     return [];

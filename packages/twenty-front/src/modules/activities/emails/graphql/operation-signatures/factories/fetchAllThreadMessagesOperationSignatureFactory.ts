@@ -4,15 +4,11 @@ import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 
 type FetchAllThreadMessagesOperationSignatureFactory = {
   messageThreadId: string | null;
-  isMessageAttachmentEnabled: boolean;
 };
 
 export const fetchAllThreadMessagesOperationSignatureFactory: RecordGqlOperationSignatureFactory<
   FetchAllThreadMessagesOperationSignatureFactory
-> = ({
-  messageThreadId,
-  isMessageAttachmentEnabled,
-}: FetchAllThreadMessagesOperationSignatureFactory) => ({
+> = ({ messageThreadId }: FetchAllThreadMessagesOperationSignatureFactory) => ({
   objectNameSingular: StandardObjectNameSingular.Message,
   variables: {
     filter: {
@@ -36,13 +32,10 @@ export const fetchAllThreadMessagesOperationSignatureFactory: RecordGqlOperation
     text: true,
     receivedAt: true,
     isDraft: true,
-    // message.attachments only exists once the workspace upgrade has run
-    ...(isMessageAttachmentEnabled && {
-      attachments: {
-        id: true,
-        file: true,
-      },
-    }),
+    attachments: {
+      id: true,
+      file: true,
+    },
     messageThread: {
       id: true,
     },

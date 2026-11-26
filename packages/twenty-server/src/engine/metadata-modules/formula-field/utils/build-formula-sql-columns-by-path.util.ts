@@ -11,6 +11,7 @@ import { type FormulaSqlColumn } from 'src/engine/metadata-modules/formula-field
 
 type FormulaSqlColumnSource = {
   name: string;
+  universalIdentifier: string;
   type: FieldMetadataType;
   relationType?: RelationType;
 };
@@ -20,7 +21,7 @@ export const buildFormulaSqlColumnsByPath = (
 ): Map<string, FormulaSqlColumn> => {
   const formulaSqlColumnsByPath = new Map<string, FormulaSqlColumn>();
 
-  for (const { name, type, relationType } of fields) {
+  for (const { name, universalIdentifier, type, relationType } of fields) {
     if (type === FieldMetadataType.MORPH_RELATION) {
       continue;
     }
@@ -32,7 +33,7 @@ export const buildFormulaSqlColumnsByPath = (
       formulaSqlColumnsByPath.set(name, {
         columnName: computeMorphOrRelationFieldJoinColumnName({ name }),
         columnFieldMetadataType: type,
-        fieldName: name,
+        fieldUniversalIdentifier: universalIdentifier,
       });
 
       continue;
@@ -48,7 +49,7 @@ export const buildFormulaSqlColumnsByPath = (
       formulaSqlColumnsByPath.set(name, {
         columnName: name,
         columnFieldMetadataType: type,
-        fieldName: name,
+        fieldUniversalIdentifier: universalIdentifier,
       });
 
       continue;
@@ -58,7 +59,7 @@ export const buildFormulaSqlColumnsByPath = (
       formulaSqlColumnsByPath.set(`${name}.${compositeProperty.name}`, {
         columnName: computeCompositeColumnName(name, compositeProperty),
         columnFieldMetadataType: compositeProperty.type,
-        fieldName: name,
+        fieldUniversalIdentifier: universalIdentifier,
       });
     }
   }

@@ -9,7 +9,7 @@ import {
 } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { ViewType, ViewVisibility } from 'twenty-shared/types';
+import { ViewType } from 'twenty-shared/types';
 import {
   hasObjectMetadataLabelPlaceholder,
   type MetadataLabelPlaceholderValues,
@@ -21,13 +21,13 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
-import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { AuthContext } from 'src/engine/decorators/auth/auth-context.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { buildViewNameObjectLabels } from 'src/engine/metadata-modules/view/utils/build-view-name-object-labels.util';
 import { resolveViewName } from 'src/engine/metadata-modules/view/utils/resolve-view-name.util';
-import { getViewVisibilityFromIsPrivate } from 'src/engine/metadata-modules/view/utils/get-view-visibility-from-is-private.util';
 import { ViewFieldGroupDTO } from 'src/engine/metadata-modules/view-field-group/dtos/view-field-group.dto';
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
 import { ViewFilterGroupDTO } from 'src/engine/metadata-modules/view-filter-group/dtos/view-filter-group.dto';
@@ -99,14 +99,6 @@ export class ViewResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): boolean {
     return view.applicationId === workspace.workspaceCustomApplicationId;
-  }
-
-  @ResolveField(() => ViewVisibility, {
-    deprecationReason: 'Use isPrivate instead',
-  })
-  @UseGuards(NoPermissionGuard)
-  visibility(@Parent() view: Pick<ViewDTO, 'isPrivate'>): ViewVisibility {
-    return getViewVisibilityFromIsPrivate(view.isPrivate);
   }
 
   // A workspace-custom view can point at a standard object, so the label resolves against the object's application
@@ -190,13 +182,12 @@ export class ViewResolver {
   async createView(
     @Args('input') input: CreateViewInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
+    @AuthContext() authContext: WorkspaceAuthContext,
   ): Promise<ViewDTO> {
     return await this.viewService.createOne({
       createViewInput: input,
       workspaceId: workspace.id,
-      createdByUserWorkspaceId: userWorkspaceId,
+      authContext,
     });
   }
 
@@ -210,13 +201,12 @@ export class ViewResolver {
     @Args('id', { type: () => String }) id: string,
     @Args('input') input: UpdateViewInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
+    @AuthContext() authContext: WorkspaceAuthContext,
   ): Promise<ViewDTO> {
     return await this.viewService.updateOne({
       updateViewInput: { ...input, id },
       workspaceId: workspace.id,
-      userWorkspaceId,
+      authContext,
     });
   }
 

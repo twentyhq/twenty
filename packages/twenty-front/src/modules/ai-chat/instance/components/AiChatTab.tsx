@@ -10,7 +10,6 @@ import { useAiChatFileUpload } from '@/ai-chat/composer/hooks/useAiChatFileUploa
 import { aiChatThreadIsDirectMessageFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadIsDirectMessageFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 
-import { AiChatQueuedMessages } from '@/ai-chat/composer/components/AiChatQueuedMessages';
 import { AiChatTabMessageList } from '@/ai-chat/messages/components/AiChatTabMessageList';
 
 const StyledContainer = styled.div<{ isDraggingFile: boolean }>`
@@ -67,7 +66,6 @@ export const AiChatTab = () => {
         <>
           <AiChatNewThreadRecipientBar />
           <AiChatTabMessageList />
-          <AiChatQueuedMessages />
           <AiChatEditorSection key={threadId} />
         </>
       )}

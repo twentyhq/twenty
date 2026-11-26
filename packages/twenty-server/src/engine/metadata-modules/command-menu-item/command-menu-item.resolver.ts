@@ -16,7 +16,6 @@ import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-contex
 import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
-import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
@@ -149,14 +148,11 @@ export class CommandMenuItemResolver {
   @UseGuards(AccessPolicyGuard(COMMAND_MENU_ITEM_READ_ACCESS_POLICY))
   @AllowSuspendedWorkspace()
   async commandMenuItems(
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<CommandMenuItemDTO[]> {
     return await this.withoutInaccessibleWorkflowItems({
       commandMenuItems: await this.commandMenuItemService.findAll(workspace.id),
       workspaceId: workspace.id,
-      userWorkspaceId,
     });
   }
 
@@ -164,8 +160,6 @@ export class CommandMenuItemResolver {
   @UseGuards(AccessPolicyGuard(COMMAND_MENU_ITEM_READ_ACCESS_POLICY))
   async commandMenuItem(
     @Args('id', { type: () => UUIDScalarType }) id: string,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<CommandMenuItemDTO | null> {
     const commandMenuItem = await this.commandMenuItemService.findById(
@@ -181,7 +175,6 @@ export class CommandMenuItemResolver {
       await this.withoutInaccessibleWorkflowItems({
         commandMenuItems: [commandMenuItem],
         workspaceId: workspace.id,
-        userWorkspaceId,
       });
 
     return accessibleCommandMenuItem ?? null;
@@ -227,16 +220,13 @@ export class CommandMenuItemResolver {
   private async withoutInaccessibleWorkflowItems({
     commandMenuItems,
     workspaceId,
-    userWorkspaceId,
   }: {
     commandMenuItems: CommandMenuItemDTO[];
     workspaceId: string;
-    userWorkspaceId: string | undefined;
   }): Promise<CommandMenuItemDTO[]> {
     const inaccessibleWorkflowVersionIds =
       await this.coreWorkflowAccessService.findInaccessibleWorkflowVersionIds({
         workspaceId,
-        userWorkspaceId,
         coreWorkflowVersionIds: commandMenuItems
           .map(({ coreWorkflowVersionId }) => coreWorkflowVersionId)
           .filter(isDefined),

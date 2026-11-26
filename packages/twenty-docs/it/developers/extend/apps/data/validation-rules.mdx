@@ -63,7 +63,9 @@ twenty app add validation-rule --name invoice-has-amount --object <object-uuid>
 * `isIn(field('stage'), ['NEW', 'WON'])` confronta un valore con un elenco.
 * Funzioni quali `isNonEmptyString` e `isDefined`, e le funzioni di data `dateDiff(from, to, unit)` (unità intere da una data a un'altra, come `dateDiff(createdAt, now, 'HOUR')`), `dateAdd(date, amount, unit)`, `dateTrunc(date, unit)`, `datePart(date, part)` e `isInRelativeDateRange(date, direction, amount, unit)`, con direzione `'PAST'`, `'NEXT'` o `'THIS'` e unità `'DAY'`, `'WEEK'`, `'MONTH'`, `'QUARTER'` o `'YEAR'`, come `isInRelativeDateRange(closeDate, 'PAST', 30, 'DAY')`.
 * `if(condition, valueIfTrue, valueIfFalse)`, che restituisce il secondo valore quando la condizione è vera e il terzo altrimenti.
-* `coalesce(value, ...fallbacks)`, `concat(value, ...values)`, `lower(text)`, `upper(text)`, `min(number, ...numbers)`, `max(number, ...numbers)` e `roundTo(number, decimals)`, che calcolano valori.
+* `coalesce(value, ...fallbacks)`, `concat(value, ...values)`, `lower(text)`, `upper(text)`, `min(number, ...numbers)`, `max(number, ...numbers)` e `roundTo(number, decimals)`, che calcolano valori. `roundTo` arrotonda le metà lontano da zero, quindi `roundTo(2.55, 1)` è `2.6`.
+
+Ogni funzione accetta gli argomenti elencati dalla sua firma e `...` indica un numero qualsiasi di valori aggiuntivi. Una chiamata con un numero diverso di argomenti non supera la convalida, come `if` con due argomenti.
 
 `daysSince(date)` è stata rimossa. Sostituiscila nelle regole esistenti con `dateDiff(date, now, 'DAY')`. Le unità per `dateDiff`, `dateAdd` e `dateTrunc` sono `'MINUTE'`, `'HOUR'`, `'DAY'`, `'WEEK'`, `'MONTH'`, `'QUARTER'` o `'YEAR'`; le parti per `datePart` sono `'YEAR'`, `'QUARTER'`, `'MONTH'`, `'WEEK'`, `'DAY'`, `'DAY_OF_WEEK'`, `'HOUR'` o `'MINUTE'`. Le date vengono lette in UTC e `dateAdd` non restituisce alcun valore quando la data o il risultato non rientra negli anni da 1 a 9999. Una data confrontata con una data e un'ora confronta i rispettivi giorni UTC, anche con `eq` e `notEq`.
 

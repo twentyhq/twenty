@@ -1,5 +1,5 @@
 import { type NormalizedPageLayoutWidgetManifest } from 'twenty-shared/application';
-import { validateConditionalAvailabilityNode } from 'twenty-shared/conditional-availability';
+import { validateConditionalEvaluationNode } from 'twenty-shared/conditional-evaluation';
 import { isDefined } from 'twenty-shared/utils';
 
 import { fromLegacyJsonLogicToConditionalAvailability } from 'src/engine/metadata-modules/page-layout-widget/utils/from-legacy-json-logic-to-conditional-availability.util';
@@ -25,7 +25,7 @@ export const fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget = ({
   // TODO(@neo773): a manifest declares its rule as json-logic, so the tree is filled from it; without this a sync empties the tree of the widget
   const conditionalAvailability =
     isDefined(conditionalAvailabilityFromJsonLogic) &&
-    validateConditionalAvailabilityNode({
+    validateConditionalEvaluationNode({
       node: conditionalAvailabilityFromJsonLogic,
       metadataName: 'pageLayoutWidget',
     }).isValid

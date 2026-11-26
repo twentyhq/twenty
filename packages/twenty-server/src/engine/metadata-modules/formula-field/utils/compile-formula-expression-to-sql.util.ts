@@ -1,10 +1,16 @@
 import { isBoolean, isNumber, isString } from '@sniptt/guards';
 import { type ExpressionInstruction } from 'twenty-shared/types';
-import { isDefined, parseExpressionInstructions } from 'twenty-shared/utils';
+import {
+  getFormulaAggregateCall,
+  isDefined,
+  parseExpressionInstructions,
+} from 'twenty-shared/utils';
 
 import { FORMULA_SQL_MAX_LENGTH } from 'src/engine/metadata-modules/formula-field/constants/formula-sql-max-length.constant';
 import { FormulaSqlCompilationException } from 'src/engine/metadata-modules/formula-field/exceptions/formula-sql-compilation.exception';
+import { type FormulaSqlAggregationSource } from 'src/engine/metadata-modules/formula-field/types/formula-sql-aggregation-source.type';
 import { type FormulaSqlValue } from 'src/engine/metadata-modules/formula-field/types/formula-sql-value.type';
+import { compileFormulaSqlAggregateOrThrow } from 'src/engine/metadata-modules/formula-field/utils/compile-formula-sql-aggregate.util';
 import { compileFormulaSqlMembershipOrThrow } from 'src/engine/metadata-modules/formula-field/utils/compile-formula-sql-membership.util';
 import { compileFormulaSqlFunctionOrThrow } from 'src/engine/metadata-modules/formula-field/utils/formula-sql-functions.util';
 import {
@@ -21,6 +27,10 @@ type FormulaSqlStackEntry =
 export type FormulaSqlReferenceResolver = (
   path: string,
 ) => FormulaSqlValue | undefined;
+
+export type FormulaSqlAggregationSourceResolver = (
+  relationFieldName: string,
+) => FormulaSqlAggregationSource | undefined;
 
 const NOW_PATH = 'now';
 
@@ -45,9 +55,11 @@ const compileLiteralOrThrow = (literal: unknown): FormulaSqlValue => {
 const compileInstructions = ({
   instructions,
   resolveReference,
+  resolveAggregationSource,
 }: {
   instructions: ExpressionInstruction[];
   resolveReference: FormulaSqlReferenceResolver;
+  resolveAggregationSource?: FormulaSqlAggregationSourceResolver;
 }): FormulaSqlValue => {
   const stack: FormulaSqlStackEntry[] = [];
 
@@ -92,8 +104,68 @@ const compileInstructions = ({
   const popValueOrThrow = (): FormulaSqlValue =>
     toValueOrThrow(popEntryOrThrow());
 
+  const popEntriesOrThrow = (count: number): FormulaSqlStackEntry[] =>
+    Array.from({ length: count }, popEntryOrThrow).reverse();
+
   const popValuesOrThrow = (count: number): FormulaSqlValue[] =>
-    Array.from({ length: count }, popValueOrThrow).reverse();
+    popEntriesOrThrow(count).map(toValueOrThrow);
+
+  const compileAggregateOrThrow = ({
+    name,
+    argumentEntries,
+  }: {
+    name: string;
+    argumentEntries: FormulaSqlStackEntry[];
+  }): FormulaSqlValue | undefined => {
+    const aggregateCall = getFormulaAggregateCall({
+      functionName: name,
+      argumentPaths: argumentEntries.map((entry) =>
+        entry.kind === 'path' ? entry.path : undefined,
+      ),
+      getToManyRelationName: (path) => {
+        const [relationFieldName] = path.split('.');
+
+        return isDefined(relationFieldName) &&
+          isDefined(resolveAggregationSource?.(relationFieldName))
+          ? relationFieldName
+          : undefined;
+      },
+    });
+
+    if (!isDefined(aggregateCall)) {
+      return undefined;
+    }
+
+    const [relationEntry, conditionEntry] = argumentEntries;
+    const aggregationSource = aggregateCall.isValid
+      ? resolveAggregationSource?.(aggregateCall.relationName)
+      : undefined;
+
+    if (
+      !aggregateCall.isValid ||
+      !isDefined(relationEntry) ||
+      !isDefined(aggregationSource)
+    ) {
+      throw new FormulaSqlCompilationException({
+        message: `${name}() needs a relation, for example count(tasks) or sum(deals.amount)`,
+      });
+    }
+
+    const relationFieldName = aggregateCall.relationName;
+
+    return compileFormulaSqlAggregateOrThrow({
+      functionName: aggregateCall.functionName,
+      relationFieldName,
+      aggregationSource,
+      aggregatedValue:
+        aggregateCall.functionName === 'count'
+          ? undefined
+          : toValueOrThrow(relationEntry),
+      condition: isDefined(conditionEntry)
+        ? toValueOrThrow(conditionEntry)
+        : undefined,
+    });
+  };
 
   for (const { type, value } of instructions) {
     switch (type) {
@@ -124,7 +196,11 @@ const compileInstructions = ({
 
         stack.push({
           kind: 'value',
-          value: compileInstructions({ instructions: value, resolveReference }),
+          value: compileInstructions({
+            instructions: value,
+            resolveReference,
+            resolveAggregationSource,
+          }),
         });
         break;
       case 'IARRAY':
@@ -165,7 +241,7 @@ const compileInstructions = ({
         break;
       }
       case 'IFUNCALL': {
-        const formulaSqlValues = popValuesOrThrow(Number(value));
+        const argumentEntries = popEntriesOrThrow(Number(value));
         const functionEntry = popEntryOrThrow();
 
         if (functionEntry.kind !== 'path') {
@@ -176,10 +252,15 @@ const compileInstructions = ({
 
         stack.push({
           kind: 'value',
-          value: compileFormulaSqlFunctionOrThrow({
-            name: functionEntry.path,
-            formulaSqlValues,
-          }),
+          value:
+            compileAggregateOrThrow({
+              name: functionEntry.path,
+              argumentEntries,
+            }) ??
+            compileFormulaSqlFunctionOrThrow({
+              name: functionEntry.path,
+              formulaSqlValues: argumentEntries.map(toValueOrThrow),
+            }),
         });
         break;
       }
@@ -215,14 +296,17 @@ const compileInstructions = ({
 export const compileFormulaExpressionToSqlOrThrow = ({
   expression,
   resolveReference,
+  resolveAggregationSource,
 }: {
   expression: string;
   resolveReference: FormulaSqlReferenceResolver;
+  resolveAggregationSource?: FormulaSqlAggregationSourceResolver;
 }): FormulaSqlValue => {
   try {
     return compileInstructions({
       instructions: parseExpressionInstructions(expression),
       resolveReference,
+      resolveAggregationSource,
     });
   } catch (error) {
     if (error instanceof FormulaSqlCompilationException) {

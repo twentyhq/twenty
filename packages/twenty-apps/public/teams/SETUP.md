@@ -32,7 +32,7 @@ the chat Bot Connector. They are optional at registration so Teams can be
 installed without transcript setup. Both `MICROSOFT_CLIENT_ID` and
 `MICROSOFT_CLIENT_SECRET` must be configured before users can add a Microsoft
 connection. Bot credentials are not needed for transcript imports. See
-[Bot server variables](#bot-server-variables) for the unreleased chat feature.
+[Bot server variables](#bot-server-variables) for chat.
 
 ## Microsoft 365 organization settings
 
@@ -52,8 +52,8 @@ requires it.
 
 ## Bot server variables
 
-These variables are for the Teams chat assistant, which is not available in
-this release. Skip this section when setting up transcript imports.
+These variables are for the Teams chat assistant. Skip this section when setting
+up transcript imports.
 
 The bot's identity is an Entra app registration behind an Azure Bot resource.
 An admin configures these on the Teams application registration under
@@ -69,15 +69,11 @@ three credentials before bot operations can run.
 
 ## Chat
 
-Chat is not available in this release. The following setup is for development
-and a future chat release.
-
 Chat lets workspace members message the Teams Assistant bot from Microsoft
-Teams. It needs the [bot server variables](#bot-server-variables), the
-`IS_CHAT_ASSISTANT_RELEASED` release flag, and the workspace's **Enable chat**
-setting. Chat supports Microsoft 365 commercial tenants. GCC tenants should
-work according to Microsoft's documentation but have not been tested. GCC High
-and DoD tenants are not supported.
+Teams. It needs the [bot server variables](#bot-server-variables) and the
+workspace's **Enable chat** setting. Chat supports Microsoft 365 commercial
+tenants. GCC tenants should work according to Microsoft's documentation but
+have not been tested. GCC High and DoD tenants are not supported.
 
 1. In the Azure Bot resource, set the messaging endpoint to
    `https://<your-twenty-host>/webhooks/server/<application-registration-id>/c78db1b1-a0ec-4183-9edd-63299ab5a477`
@@ -101,6 +97,10 @@ and DoD tenants are not supported.
    allowed. For users of other Microsoft organizations to install the bot,
    the bot's Entra app registration must support **Accounts in any
    organizational directory**; the Azure Bot stays **Single Tenant**.
+   The manifest also declares the bot's prompt starters. Teams only reads them
+   from an uploaded package, so after pulling a manifest change, rebuild the
+   package and upload it again as an update; its `version` is bumped with each
+   change so Teams accepts it over the installed one.
 
 3. Add a **workspace-shared** Microsoft connection and turn on **Enable chat**,
    in either order. The connection claims its Microsoft tenant for this
@@ -123,7 +123,8 @@ workspace has turned **Enable chat** off. The bot answers direct messages, and
 channel or group messages that mention it. It posts a short welcome when it is
 installed, once per conversation, and answers `help`, `hi`, `hello` or a bare
 mention with the same text, without running the assistant or needing a linked
-account. It answers as the
+account. In a personal chat that text comes with its example questions as
+suggested actions. It answers as the
 workspace member whose email matches the sender's Microsoft account, links that
 account under **Linked Teams accounts**, and replies with a short notice when no
 member matches. Members who can manage roles can remove a link there, link a
@@ -257,18 +258,14 @@ plus [Teams transcript API access settings](https://learn.microsoft.com/en-us/mi
   them requires a new build and deployment; a workspace setting cannot override
   them.
 
-`IS_CHAT_ASSISTANT_RELEASED` controls availability of chat, and
-`IS_TRANSCRIPT_HISTORY_IMPORT_RELEASED` shows the Import history section. Both
-start as `false`. Settings hides chat and Import history until their flags are
-on, retaining any saved workspace preference. Transcript imports and summaries
+`IS_TRANSCRIPT_HISTORY_IMPORT_RELEASED` shows the Import history section. It
+starts as `false`, so Settings hides Import history until the flag is on,
+retaining any saved workspace preference. Chat, transcript imports and summaries
 have no release flag.
 
-The frontend and handlers share
-`isFeatureEnabled({ isAvailable, settingValue })`. Pass the feature's release
-flag as `isAvailable`; the serialized workspace setting must also be `'true'`.
-In a logic function, use `process.env[CHAT_ENABLED_APPLICATION_VARIABLE_KEY]` as
-`settingValue`. Transcript handlers call `isTeamsTranscriptImportEnabled()`
-instead.
+A feature is on when its workspace setting is `'true'`. In a logic function,
+`isTeamsChatEnabled()` reads `process.env[CHAT_ENABLED_APPLICATION_VARIABLE_KEY]`
+and transcript handlers call `isTeamsTranscriptImportEnabled()`.
 The settings page initializes from `getApplicationVariable` and updates its
 local value after a successful save. Changes made by another client require a
 page refresh. Live updates need shared host/SDK support for application-variable

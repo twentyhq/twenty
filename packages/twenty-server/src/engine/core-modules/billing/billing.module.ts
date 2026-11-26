@@ -8,6 +8,8 @@ import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/w
 import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
 import { BillingArrangementModule } from 'src/engine/core-modules/billing/billing-arrangement.module';
 import { BillingGaugeService } from 'src/engine/core-modules/billing/billing-gauge.service';
+import { BillingCustomerResolver } from 'src/engine/core-modules/billing/billing-customer.resolver';
+import { DomainServerConfigModule } from 'src/engine/core-modules/domain/domain-server-config/domain-server-config.module';
 import { BillingSubscriptionItemResolver } from 'src/engine/core-modules/billing/billing-subscription-item.resolver';
 import { BillingResolver } from 'src/engine/core-modules/billing/billing.resolver';
 import { BillingSyncCustomerDataCommand } from 'src/engine/core-modules/billing/commands/billing-sync-customer-data.command';
@@ -65,6 +67,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     CacheLockModule,
     ClickHouseModule,
     CoreEntityCacheModule,
+    DomainServerConfigModule,
     StripeModule,
     PermissionsModule,
     WorkspaceCacheModule,
@@ -94,6 +97,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     BillingPortalWorkspaceService,
     BillingProductService,
     BillingResolver,
+    BillingCustomerResolver,
     BillingSubscriptionItemResolver,
     BillingPlanService,
     BillingWorkspaceMemberListener,

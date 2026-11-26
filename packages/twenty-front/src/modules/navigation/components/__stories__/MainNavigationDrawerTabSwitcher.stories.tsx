@@ -99,7 +99,6 @@ const TabSwitcherStory = ({
 
 const meta: Meta<TabSwitcherStoryProps> = {
   title: 'Modules/Navigation/MainNavigationDrawerTabSwitcher',
-  component: MainNavigationDrawerTabSwitcher,
   decorators: [ComponentDecorator, ToastDecorator],
   parameters: { container: { width: 240, height: 180 } },
   args: {

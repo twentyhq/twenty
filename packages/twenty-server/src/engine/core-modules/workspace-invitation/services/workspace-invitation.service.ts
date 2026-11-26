@@ -402,7 +402,10 @@ export class WorkspaceInvitationService {
         const subject = i18n._(joinTeamMsg);
 
         await this.emailService.send({
-          from: `${senderName.firstName} ${senderName.lastName} (via Twenty) <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,
+          from: {
+            name: `${senderName.firstName} ${senderName.lastName} (via Twenty)`,
+            address: this.twentyConfigService.get('EMAIL_FROM_ADDRESS'),
+          },
           to: invitation.value.email,
           subject,
           text,

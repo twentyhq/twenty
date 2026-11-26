@@ -1113,6 +1113,7 @@ type Billing {
 type BillingCustomer {
   hasPaymentMethod: Boolean
   id: UUID!
+  stripeCustomerEmail: String
   userCreditsFallback: UserCreditsFallback!
 }
 
@@ -1252,6 +1253,9 @@ enum BillingSubscriptionCollectionMethod {
 }
 
 type BillingSubscriptionItem {
+  applicationLogoUrl: String
+  applicationName: String
+  applicationPricePer: ApplicationBillingPriceUnit
   billingProduct: BillingProduct!
   creditAmount: Float
   hasReachedCurrentPeriodCap: Boolean!
@@ -2053,7 +2057,7 @@ input CreateViewInput {
   groupLoadLimit: Int = 8
   icon: String!
   id: UUID
-  isCompact: Boolean = false
+  isCompact: Boolean
   isPrivate: Boolean
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID
@@ -2072,7 +2076,6 @@ input CreateViewInput {
   shouldDisplayGroupsAsTabs: Boolean = false
   shouldHideEmptyGroups: Boolean = false
   type: ViewType = TABLE
-  visibility: ViewVisibility @deprecated(reason: "Use isPrivate instead")
 }
 
 input CreateViewSortInput {
@@ -2436,9 +2439,15 @@ type EnqueueJobResult {
 input EnqueueJobsInput {
   delayMs: Int
   jobs: [EnqueueJobItemInput!]
+  limiter: EnqueueJobsLimiterInput
   logicFunctionUniversalIdentifier: String!
   payloads: [JSON!] @deprecated(reason: "Use jobs instead.")
   retryLimit: Int
+}
+
+input EnqueueJobsLimiterInput {
+  durationMs: Int!
+  max: Int!
 }
 
 type EnqueueJobsResult {
@@ -2452,6 +2461,7 @@ type EnqueueJobsResult {
 
 type EnqueuedJob {
   jobId: String!
+  scheduledAt: Float!
   sizeBytes: Int!
 }
 
@@ -2553,19 +2563,13 @@ type FeatureFlag {
 }
 
 enum FeatureFlagKey {
-  IS_ACCESS_GROUPS_ENABLED
   IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED
   IS_AI_CHAT_COMPONENT_BUILDER_ENABLED
   IS_AI_CHAT_INBOX_ENABLED
   IS_AI_DATA_POLICY_ENABLED
-  IS_APPLICATION_PRICE_BILLING_ENABLED
-  IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED
   IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED
-  IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED
   IS_CHANNEL_VISIBILITY_ENFORCED_ON_API_KEYS
-  IS_CHANNEL_VISIBILITY_RLS_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
-  IS_CREATE_RECORDS_PERMISSION_ENABLED
   IS_CUSTOMIZABLE_SIDEBAR_ENABLED
   IS_FORMULA_FIELD_ENABLED
   IS_GETTING_STARTED_ENABLED
@@ -2573,13 +2577,10 @@ enum FeatureFlagKey {
   IS_INTERNAL_IMPORT_COLUMN_ENABLED
   IS_LOOKUP_COLUMNS_ENABLED
   IS_MCP_SERVERS_ENABLED
-  IS_MESSAGE_ATTACHMENT_ENABLED
   IS_PRIVATE_RECORDS_ENABLED
   IS_RECORD_GROUP_TABS_ENABLED
   IS_RECORD_LEVEL_SHARING_ENABLED
-  IS_RELATED_RECORD_PATHS_ENABLED
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
-  IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED
   IS_WIDGET_CONDITIONAL_AVAILABILITY_ENABLED
 }
 
@@ -3102,6 +3103,7 @@ type JobStatus {
   finishedAt: Float
   jobId: String!
   progress: Int
+  scheduledAt: Float!
   startedAt: Float
   state: JobState!
 }
@@ -5963,7 +5965,6 @@ input UpdateViewInput {
   shouldHideEmptyGroups: Boolean
   translations: [MetadataTranslationOverrideInput!]
   type: ViewType
-  visibility: ViewVisibility @deprecated(reason: "Use isPrivate instead")
 }
 
 input UpdateViewSortInput {
@@ -6521,7 +6522,6 @@ type View {
   viewFilters: [ViewFilter!]!
   viewGroups: [ViewGroup!]!
   viewSorts: [ViewSort!]!
-  visibility: ViewVisibility! @deprecated(reason: "Use isPrivate instead")
   workspaceId: UUID!
 }
 
@@ -6743,11 +6743,6 @@ enum ViewType {
   LIST_WIDGET
   TABLE
   TABLE_WIDGET
-}
-
-enum ViewVisibility {
-  UNLISTED
-  WORKSPACE
 }
 
 type Webhook {

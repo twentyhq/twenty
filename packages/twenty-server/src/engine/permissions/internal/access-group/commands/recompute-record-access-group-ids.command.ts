@@ -11,7 +11,6 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { AccessGroupPropagationPlanService } from 'src/engine/permissions/internal/access-group/services/access-group-propagation-plan.service';
 import { RecordAccessGroupMetadataMapsService } from 'src/engine/permissions/internal/access-group/services/record-access-group-metadata-maps.service';
-import { isAccessGroupsEnabled } from 'src/engine/permissions/internal/access-group/utils/is-access-groups-enabled.util';
 import { isObjectUsingRecordAccessGroups } from 'src/engine/permissions/internal/access-group/utils/is-object-using-record-access-groups.util';
 import { planRecordAccessGroupComputes } from 'src/engine/permissions/internal/access-group/utils/plan-record-access-group-computes.util';
 
@@ -50,10 +49,6 @@ export class RecomputeRecordAccessGroupIdsCommand extends ProvisionedWorkspaceCo
   }: RunOnWorkspaceArgs<RecomputeRecordAccessGroupIdsCommandOptions>): Promise<void> {
     const metadataMaps =
       await this.recordAccessGroupMetadataMapsService.find(workspaceId);
-
-    if (!isAccessGroupsEnabled(metadataMaps)) {
-      return;
-    }
 
     const isUsingRecordAccessGroups = (objectMetadataId: string) =>
       isObjectUsingRecordAccessGroups({ ...metadataMaps, objectMetadataId });

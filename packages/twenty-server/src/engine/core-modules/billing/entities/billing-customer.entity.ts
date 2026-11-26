@@ -12,6 +12,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { ADD_STRIPE_CUSTOMER_EMAIL_TO_BILLING_CUSTOMER_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-64/add-stripe-customer-email-to-billing-customer-upgrade-command-name.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { BillingEntitlementEntity } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
@@ -40,6 +41,13 @@ export class BillingCustomerEntity extends WorkspaceRelatedEntity {
 
   @Column({ nullable: false, unique: true })
   stripeCustomerId: string;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_STRIPE_CUSTOMER_EMAIL_TO_BILLING_CUSTOMER_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: true, type: 'varchar' })
+  stripeCustomerEmail: string | null;
 
   // Null means unknown (customer created before the flag existed and not synced yet).
   @Field(() => Boolean, { nullable: true })

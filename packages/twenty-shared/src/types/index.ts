@@ -127,6 +127,7 @@ export {
   isFieldMetadataTypeWithDefaultValue,
 } from './FieldMetadataDefaultValue';
 export type { FieldMetadataFormula } from './FieldMetadataFormula';
+export type { FieldMetadataFormulaEvaluation } from './FieldMetadataFormulaEvaluation';
 export type { FieldMetadataMultiItemSettings } from './FieldMetadataMultiItemSettings';
 export { FieldMetadataSettingsOnClickAction } from './FieldMetadataMultiItemSettings';
 export type {
@@ -163,6 +164,8 @@ export type {
 export { FILTERABLE_FIELD_TYPES } from './FilterableFieldType';
 export { FirstDayOfTheWeek } from './FirstDayOfTheWeek';
 export type { FormatRecordSerializedRelationProperties } from './FormatRecordSerializedRelationProperties';
+export type { FormulaAggregateCall } from './FormulaAggregateCall';
+export type { FormulaAggregateFunctionName } from './FormulaAggregateFunctionName';
 export type { FormulaFieldMetadataType } from './FormulaFieldMetadataType';
 export type { FromTo } from './FromToType';
 export { HTTPMethod } from './HttpMethod';

@@ -1,10 +1,6 @@
 import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
-import {
-  ViewOpenRecordIn,
-  ViewType,
-  ViewVisibility,
-} from 'twenty-shared/types';
+import { ViewOpenRecordIn, ViewType } from 'twenty-shared/types';
 
 import { type ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { type ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
@@ -60,7 +56,7 @@ export const createTestViewWithRestApi = async (
     position: 0,
     isCompact: false,
     openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
-    visibility: ViewVisibility.WORKSPACE,
+    isPrivate: false,
     ...restParams,
   };
 

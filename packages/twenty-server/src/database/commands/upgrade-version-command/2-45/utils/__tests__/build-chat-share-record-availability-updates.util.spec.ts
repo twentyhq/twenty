@@ -1,4 +1,4 @@
-import { evaluateConditionalAvailabilityExpression } from 'twenty-shared/conditional-availability';
+import { evaluateConditionalEvaluationExpression } from 'twenty-shared/conditional-evaluation';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -54,7 +54,7 @@ const isAvailable = (
   featureFlags: Record<string, boolean>,
   objectMetadataItem: Record<string, unknown>,
 ) =>
-  evaluateConditionalAvailabilityExpression(expression, {
+  evaluateConditionalEvaluationExpression(expression, {
     featureFlags,
     objectMetadataItem,
     numberOfSelectedRecords: 1,

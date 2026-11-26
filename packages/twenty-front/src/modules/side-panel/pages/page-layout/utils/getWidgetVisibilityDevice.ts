@@ -2,7 +2,7 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { EXPRESSION_DEVICE_DESKTOP } from '@/side-panel/pages/page-layout/constants/ExpressionDeviceDesktop';
 import { EXPRESSION_DEVICE_MOBILE } from '@/side-panel/pages/page-layout/constants/ExpressionDeviceMobile';
 import { type WidgetVisibilityDevice } from '@/side-panel/pages/page-layout/types/WidgetVisibilityDevice';
-import { buildDeviceConditionalAvailability } from 'twenty-shared/conditional-availability';
+import { buildDeviceConditionalEvaluationNode } from 'twenty-shared/conditional-evaluation';
 import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
@@ -40,7 +40,7 @@ export const getWidgetVisibilityDevice = ({
   if (
     isDeeplyEqual(
       widget?.conditionalAvailability,
-      buildDeviceConditionalAvailability('MOBILE'),
+      buildDeviceConditionalEvaluationNode('MOBILE'),
       { strict: true },
     )
   ) {
@@ -50,7 +50,7 @@ export const getWidgetVisibilityDevice = ({
   if (
     isDeeplyEqual(
       widget?.conditionalAvailability,
-      buildDeviceConditionalAvailability('DESKTOP'),
+      buildDeviceConditionalEvaluationNode('DESKTOP'),
       { strict: true },
     )
   ) {

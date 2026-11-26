@@ -5,6 +5,8 @@ import { currentNavigationMenuTabIdState } from '@/navigation-menu-item/common/s
 import { type InboxChatAttention } from '@/inbox/types/InboxChatAttention';
 import { getNavigationMenuTabFolderKey } from '@/navigation-menu-item/common/utils/getNavigationMenuTabFolderKey';
 import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
+import { useHasAiChatSectionInSidebar } from '@/navigation-menu-item/display/hooks/useHasAiChatSectionInSidebar';
+import { useGetNavigationMenuTabLabel } from '@/navigation-menu-item/display/hooks/useGetNavigationMenuTabLabel';
 import { useGetNavigationMenuTabAttentionLabel } from '@/navigation-menu-item/display/hooks/useGetNavigationMenuTabAttentionLabel';
 import { useNavigationMenuChatAttention } from '@/navigation-menu-item/display/hooks/useNavigationMenuChatAttention';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
@@ -22,22 +24,30 @@ import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigatio
 import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { useStore } from 'jotai';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AppPath, NavigationMenuItemType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { getAppPath, isDefined } from 'twenty-shared/utils';
 import {
   type IconComponent,
   IconHome,
+  IconInbox,
   IconMessageCirclePlus,
   IconSearch,
 } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
+import { isNavigationDrawerTabShown } from '@/navigation/utils/isNavigationDrawerTabShown';
+import { isInboxPath } from '~/utils/isInboxPath';
 
 type MobileNavigationBarItemName =
   | 'home'
+  | 'inbox'
   | 'search'
   | 'newAiChat'
   | `tab-${string}`;
@@ -66,15 +76,24 @@ export const useMobileNavigationBarItems = (): {
   const { alphaSortedActiveNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
+  const isAiChatInboxEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+  );
+  const isCustomizableSidebarEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
+  );
+  const hasAiChatSectionInSidebar = useHasAiChatSectionInSidebar();
   const { getIcon } = useIcons();
   const navigationMenuTabs = useWorkspaceNavigationMenuContainers({
     type: NavigationMenuItemType.TAB,
     containerId: null,
   });
   const activeNavigationMenuTab = useActiveNavigationMenuTab();
-  const { getTabChatAttention } = useNavigationMenuChatAttention();
+  const { getTabChatAttention, unreadOpenThreadCount } =
+    useNavigationMenuChatAttention();
   const getNavigationMenuTabAttentionLabel =
     useGetNavigationMenuTabAttentionLabel();
+  const getNavigationMenuTabLabel = useGetNavigationMenuTabLabel();
   const setCurrentNavigationMenuTabId = useSetAtomState(
     currentNavigationMenuTabIdState,
   );
@@ -118,7 +137,7 @@ export const useMobileNavigationBarItems = (): {
     setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
     setCurrentNavigationMenuTabId(tabId);
 
-    if (isReopeningCurrentTab) {
+    if (isReopeningCurrentTab || !isCustomizableSidebarEnabled) {
       store.set(
         currentNavigationMenuItemFolderIdFamilyState.atomFamily(
           getNavigationMenuTabFolderKey(tabId),
@@ -130,9 +149,23 @@ export const useMobileNavigationBarItems = (): {
     navigate(AppPath.Home, { replace: isSettingsDrawer });
   };
 
-  const homeChatAttention = getTabChatAttention(null);
+  const isOnInboxPage = isInboxPath(pathname);
+  const inboxAttention: InboxChatAttention | null =
+    unreadOpenThreadCount > 0 && !isOnInboxPage ? 'unread' : null;
+
+  const openInbox = () => {
+    closeSidePanelMenu();
+    closeSettingsDrawer();
+    navigate(getAppPath(AppPath.AiChatInbox, { threadId: null }), {
+      replace: isSettingsDrawer,
+    });
+  };
 
   const getActiveItemName = (): MobileNavigationBarItemName | '' => {
+    if (isOnInboxPage) {
+      return 'inbox';
+    }
+
     if (pathname !== AppPath.Home) {
       return '';
     }
@@ -142,8 +175,12 @@ export const useMobileNavigationBarItems = (): {
       : 'home';
   };
 
+  const activeItemName = getActiveItemName();
+  const homeChatAttention =
+    activeItemName === 'home' ? null : getTabChatAttention(null);
+
   return {
-    activeItemName: getActiveItemName(),
+    activeItemName,
     items: [
       {
         name: 'home',
@@ -155,13 +192,36 @@ export const useMobileNavigationBarItems = (): {
         onClick: () => openHomePageOnTab(null),
         attention: homeChatAttention,
       },
+      ...(isAiChatInboxEnabled &&
+      isNavigationDrawerTabShown({
+        tab: NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
+        hasAiPermission,
+        hasAiChatSectionInSidebar,
+        isCustomizableSidebarEnabled,
+      })
+        ? [
+            {
+              name: 'inbox' as const,
+              label: getNavigationMenuTabAttentionLabel({
+                tabName: t`Inbox`,
+                attention: inboxAttention,
+              }),
+              Icon: IconInbox,
+              onClick: openInbox,
+              attention: inboxAttention,
+            },
+          ]
+        : []),
       ...navigationMenuTabs.map((tab, index): MobileNavigationBarItem => {
-        const attention = getTabChatAttention(tab.id);
+        const attention =
+          activeItemName === `tab-${tab.id}`
+            ? null
+            : getTabChatAttention(tab.id);
 
         return {
           name: `tab-${tab.id}`,
           label: getNavigationMenuTabAttentionLabel({
-            tabName: tab.name,
+            tabName: getNavigationMenuTabLabel(tab),
             attention,
           }),
           Icon: getIcon(tab.icon ?? NAVIGATION_MENU_TAB_ICON_DEFAULT),
@@ -191,7 +251,7 @@ export const useMobileNavigationBarItems = (): {
           openRecordsSearchPage();
         },
       },
-      ...(hasAiPermission
+      ...(hasAiPermission && !isAiChatInboxEnabled
         ? [
             {
               name: 'newAiChat' as const,

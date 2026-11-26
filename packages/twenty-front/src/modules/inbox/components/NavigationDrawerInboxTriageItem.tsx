@@ -18,6 +18,7 @@ import { isInboxOpenThreadPresetFilter } from '@/inbox/utils/isInboxOpenThreadPr
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isInboxPath } from '~/utils/isInboxPath';
+import { NavigationMenuTabFirstItemOpenEffect } from '@/navigation-menu-item/display/effect-components/NavigationMenuTabFirstItemOpenEffect';
 
 const StyledCount = styled.span`
   display: flex;
@@ -51,21 +52,26 @@ export const NavigationDrawerInboxTriageItem = ({
   const hasCount = isDefined(count) && count > 0;
 
   return (
-    <NavigationDrawerItem
-      label={t(INBOX_THREAD_PRESET_FILTER_LABELS[presetFilter])}
-      isUnread={isUnread}
-      Icon={INBOX_THREAD_PRESET_FILTER_ICONS[presetFilter]}
-      active={isInboxPath(location.pathname) && isCurrentFilter}
-      onClick={() => openInboxPresetFilter(presetFilter)}
-      triggerEvent="CLICK"
-      rightOptions={
-        hasCount ? (
-          <StyledCount>
-            <Badge>{count}</Badge>
-          </StyledCount>
-        ) : undefined
-      }
-      alwaysShowRightOptions={hasCount}
-    />
+    <>
+      <NavigationMenuTabFirstItemOpenEffect
+        onOpen={() => openInboxPresetFilter(presetFilter)}
+      />
+      <NavigationDrawerItem
+        label={t(INBOX_THREAD_PRESET_FILTER_LABELS[presetFilter])}
+        isUnread={isUnread}
+        Icon={INBOX_THREAD_PRESET_FILTER_ICONS[presetFilter]}
+        active={isInboxPath(location.pathname) && isCurrentFilter}
+        onClick={() => openInboxPresetFilter(presetFilter)}
+        triggerEvent="CLICK"
+        rightOptions={
+          hasCount ? (
+            <StyledCount>
+              <Badge>{count}</Badge>
+            </StyledCount>
+          ) : undefined
+        }
+        alwaysShowRightOptions={hasCount}
+      />
+    </>
   );
 };

@@ -20,7 +20,6 @@ import {
   ViewKey,
   ViewPresetFilter,
   ViewType,
-  ViewVisibility,
 } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -66,7 +65,7 @@ export class CreateViewInput {
 
   @IsOptional()
   @IsBoolean()
-  @Field({ nullable: true, defaultValue: false })
+  @Field({ nullable: true })
   isCompact?: boolean;
 
   @IsOptional()
@@ -146,14 +145,6 @@ export class CreateViewInput {
   @IsBoolean()
   @Field(() => Boolean, { nullable: true })
   isPrivate?: boolean;
-
-  @IsOptional()
-  @IsEnum(ViewVisibility)
-  @Field(() => ViewVisibility, {
-    nullable: true,
-    deprecationReason: 'Use isPrivate instead',
-  })
-  visibility?: ViewVisibility;
 
   @HideField()
   universalIdentifier?: string;

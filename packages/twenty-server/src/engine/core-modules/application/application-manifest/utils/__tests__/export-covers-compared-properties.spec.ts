@@ -37,7 +37,6 @@ import {
   ViewPresetFilter,
   ViewSortDirection,
   ViewType,
-  ViewVisibility,
   WidgetType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -183,7 +182,6 @@ const VIEW_MANIFEST: ViewManifest = {
   icon: 'IconLayoutKanban',
   position: 3,
   isCompact: true,
-  visibility: ViewVisibility.UNLISTED,
   openRecordIn: ViewOpenRecordIn.RECORD_PAGE,
   mainGroupByFieldMetadataUniversalIdentifier: FIELD_UID,
   shouldHideEmptyGroups: true,
@@ -575,12 +573,8 @@ const EXPORTED_KINDS: ExportedKind[] = [
         },
       }),
     ),
-    renamedProperties: { isPrivate: 'visibility' },
-    workspaceLocalProperties: [
-      'isActive',
-      'universalOverrides',
-      'createdByUserWorkspaceId',
-    ],
+    renamedProperties: {},
+    workspaceLocalProperties: ['isActive', 'universalOverrides', 'isPrivate'],
     knownGaps: VIEW_KIND_GAPS,
   },
   {
@@ -949,7 +943,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
       exportWorkflowManifestOrThrow(WORKFLOW_MANIFEST),
     ),
     renamedProperties: { versionDefinitionHash: 'version' },
-    workspaceLocalProperties: ['isPrivate', 'createdByUserWorkspaceId'],
+    workspaceLocalProperties: ['isPrivate'],
     knownGaps: {
       isSystem: 'system workflows are reported as excluded',
       lastPublishedCoreWorkflowVersionId:
@@ -960,11 +954,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
     metadataName: 'agent',
     emittedProperties: Object.keys(EXPORTED_AGENT_MANIFEST),
     renamedProperties: {},
-    workspaceLocalProperties: [
-      ...WORKSPACE_LOCAL_PROPERTIES,
-      'isPrivate',
-      'createdByUserWorkspaceId',
-    ],
+    workspaceLocalProperties: [...WORKSPACE_LOCAL_PROPERTIES, 'isPrivate'],
     knownGaps: {
       modelConfiguration:
         'no manifest slot; an agent with one is reported as unsupported',
