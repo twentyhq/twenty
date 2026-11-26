@@ -1,5 +1,6 @@
 import { DEFAULT_VIEW_GROUP_LOAD_LIMIT } from 'twenty-shared/constants';
-import { ViewOpenRecordIn, ViewVisibility } from 'twenty-shared/types';
+import { ViewOpenRecordIn } from 'twenty-shared/types';
+import { isViewCompactByDefault } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
@@ -39,10 +40,11 @@ export const buildBaseUniversalFlatView = ({
     updatedAt: createdAt,
     deletedAt: null,
     anyFieldFilterValue: null,
+    presetFilter: null,
     calendarFieldMetadataUniversalIdentifier: null,
     calendarEndFieldMetadataUniversalIdentifier: null,
     calendarLayout: null,
-    isCompact: false,
+    isCompact: isViewCompactByDefault(type),
     shouldHideEmptyGroups: false,
     shouldDisplayGroupsAsTabs: false,
     kanbanColumnWidth: null,
@@ -53,7 +55,7 @@ export const buildBaseUniversalFlatView = ({
     openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
     position,
     universalIdentifier,
-    visibility: ViewVisibility.WORKSPACE,
+    isPrivate: false,
     createdByUserWorkspaceId: null,
     isActive: true,
     isSystemSideEffect,

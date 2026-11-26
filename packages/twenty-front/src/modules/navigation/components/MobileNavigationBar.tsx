@@ -3,14 +3,16 @@ import { MOBILE_NAVIGATION_BAR_PADDING } from '@/navigation/constants/MobileNavi
 import { useMobileNavigationBarItems } from '@/navigation/hooks/useMobileNavigationBarItems';
 import { isMobileNavigationBarVisibleState } from '@/navigation/states/isMobileNavigationBarVisibleState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
-import { StyledNavigationDrawerUnreadDot } from '@/ui/navigation/navigation-drawer/components/StyledNavigationDrawerUnreadDot';
+import { StyledNavigationDrawerAttentionDot } from '@/navigation/components/StyledNavigationDrawerAttentionDot';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
+import { isDefined } from 'twenty-shared/utils';
 import { Fragment } from 'react';
 import { useLocation } from 'react-router-dom';
 import { IconButton } from 'twenty-ui/components/input';
+import { Separator } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { isAiChatPath } from '~/utils/isAiChatPath';
 
@@ -66,20 +68,15 @@ const StyledNavigationBar = styled.nav`
   }
 `;
 
-const StyledDivider = styled.span`
-  align-self: stretch;
-  background: ${themeCssVariables.border.color.medium};
-  margin: ${themeCssVariables.spacing[2]} 0;
-  width: 1px;
+const StyledSeparatorContainer = styled.div`
+  align-self: center;
+  display: flex;
+  height: ${themeCssVariables.spacing[5]};
 `;
 
 const StyledIconContainer = styled.span`
   display: flex;
   position: relative;
-`;
-
-const StyledUnreadDot = styled(StyledNavigationDrawerUnreadDot)`
-  background: ${themeCssVariables.color.red};
 `;
 
 const navigationButtonClassName = css`
@@ -121,7 +118,7 @@ export const MobileNavigationBar = () => {
           inert={isHidden || undefined}
         >
           {items.map(
-            ({ Icon, name, label, onClick, isUnread, hasDividerAfter }) => (
+            ({ Icon, name, label, onClick, attention, hasDividerAfter }) => (
               <Fragment key={name}>
                 <IconButton
                   className={navigationButtonClassName}
@@ -134,10 +131,19 @@ export const MobileNavigationBar = () => {
                 >
                   <StyledIconContainer>
                     <Icon className={navigationIconClassName} aria-hidden />
-                    {isUnread && <StyledUnreadDot aria-hidden />}
+                    {isDefined(attention) && (
+                      <StyledNavigationDrawerAttentionDot
+                        data-attention={attention}
+                        aria-hidden
+                      />
+                    )}
                   </StyledIconContainer>
                 </IconButton>
-                {hasDividerAfter && <StyledDivider aria-hidden />}
+                {hasDividerAfter && (
+                  <StyledSeparatorContainer>
+                    <Separator orientation="vertical" />
+                  </StyledSeparatorContainer>
+                )}
               </Fragment>
             ),
           )}

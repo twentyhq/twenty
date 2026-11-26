@@ -1,0 +1,169 @@
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+const mocks = vi.hoisted(() => ({
+  listConnections: vi.fn(),
+  listMessageChannels: vi.fn(),
+  enqueueJobs: vi.fn(),
+  getJobs: vi.fn(),
+  kvStore: new Map<string, unknown>(),
+}));
+
+vi.mock('twenty-sdk/define', () => ({
+  defineLogicFunction: (config: unknown) => config,
+}));
+
+vi.mock('twenty-sdk/logic-function', () => ({
+  listConnections: mocks.listConnections,
+  listMessageChannels: mocks.listMessageChannels,
+  enqueueJobs: mocks.enqueueJobs,
+  getJobs: mocks.getJobs,
+  kv: {
+    get: async (key: string) => mocks.kvStore.get(key) ?? null,
+    set: async (key: string, value: unknown) => {
+      mocks.kvStore.set(key, value);
+    },
+    delete: async (key: string) => mocks.kvStore.delete(key),
+  },
+}));
+
+const { whatsappSyncHistoryHandler } =
+  await import('src/logic-functions/whatsapp-sync-history');
+
+const HISTORY_KEY = 'whatsapp-history-import:connection-id';
+
+const syncHistory = () =>
+  whatsappSyncHistoryHandler(
+    {},
+    {
+      userWorkspaceId: 'member-user-workspace-id',
+    },
+  );
+
+const setHistoryImport = (
+  status: 'IMPORTING' | 'COMPLETED' | 'FAILED' | 'CANCELLED',
+) =>
+  mocks.kvStore.set(HISTORY_KEY, {
+    runId: 'run-1',
+    importPolicy: 'ALL',
+    status,
+    importedConversationCount: 12,
+    processedConversationCount: 20,
+    startedAt: '2026-10-01T00:00:00.000Z',
+  });
+
+describe('whatsappSyncHistoryHandler', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mocks.kvStore.clear();
+    mocks.listConnections.mockResolvedValue([
+      {
+        id: 'connection-id',
+        name: 'Ada Lovelace',
+        handle: '+33611111111',
+        userWorkspaceId: 'member-user-workspace-id',
+        authFailedAt: null,
+      },
+    ]);
+    mocks.getJobs.mockImplementation(async (jobIds: string[]) =>
+      jobIds.map((jobId) => ({ jobId, state: 'ACTIVE' })),
+    );
+    mocks.listMessageChannels.mockResolvedValue([
+      { id: 'channel-id', visibility: 'METADATA' },
+    ]);
+  });
+
+  it.each(['COMPLETED', 'FAILED', 'CANCELLED'] as const)(
+    'starts a new run after a %s one',
+    async (status) => {
+      setHistoryImport(status);
+
+      const view = await syncHistory();
+
+      expect(mocks.enqueueJobs).toHaveBeenCalledTimes(1);
+      expect(view).toEqual(
+        expect.objectContaining({
+          historyImport: expect.objectContaining({
+            status: 'IMPORTING',
+            processedConversationCount: 0,
+          }),
+        }),
+      );
+      expect(
+        (mocks.kvStore.get(HISTORY_KEY) as { runId: string }).runId,
+      ).not.toBe('run-1');
+    },
+  );
+
+  it('starts the first run of a connection that never synced', async () => {
+    await syncHistory();
+
+    expect(mocks.enqueueJobs).toHaveBeenCalledTimes(1);
+  });
+
+  it('limits the run to the most recent conversations', async () => {
+    await syncHistory();
+
+    expect(mocks.kvStore.get(HISTORY_KEY)).toEqual(
+      expect.objectContaining({ status: 'IMPORTING', conversationLimit: 100 }),
+    );
+  });
+
+  it('imports the selected conversations', async () => {
+    mocks.kvStore.set('whatsapp-settings:connection-id', {
+      importPolicy: 'SELECTED',
+      selectedChats: [{ id: 'chat-1', name: 'chat-1' }],
+    });
+
+    await syncHistory();
+
+    expect(mocks.enqueueJobs).toHaveBeenCalledOnce();
+    expect(mocks.kvStore.get(HISTORY_KEY)).toEqual(
+      expect.objectContaining({
+        status: 'IMPORTING',
+        importPolicy: 'SELECTED',
+      }),
+    );
+  });
+
+  it('imports nothing while no conversation is selected', async () => {
+    mocks.kvStore.set('whatsapp-settings:connection-id', {
+      importPolicy: 'SELECTED',
+      selectedChats: [],
+    });
+
+    await syncHistory();
+
+    expect(mocks.enqueueJobs).not.toHaveBeenCalled();
+  });
+
+  it('leaves a running import alone', async () => {
+    setHistoryImport('IMPORTING');
+
+    await syncHistory();
+
+    expect(mocks.enqueueJobs).not.toHaveBeenCalled();
+    expect((mocks.kvStore.get(HISTORY_KEY) as { runId: string }).runId).toBe(
+      'run-1',
+    );
+  });
+
+  it('restarts a run whose planning job is gone', async () => {
+    setHistoryImport('IMPORTING');
+    mocks.getJobs.mockResolvedValue([]);
+
+    await syncHistory();
+
+    expect(mocks.enqueueJobs).toHaveBeenCalledTimes(1);
+    expect(
+      (mocks.kvStore.get(HISTORY_KEY) as { runId: string }).runId,
+    ).not.toBe('run-1');
+  });
+
+  it('refuses a member without a WhatsApp connection', async () => {
+    mocks.listConnections.mockResolvedValue([]);
+
+    await expect(syncHistory()).rejects.toThrow(
+      'Connect your WhatsApp account first.',
+    );
+  });
+});

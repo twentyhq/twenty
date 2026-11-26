@@ -23,8 +23,6 @@ export const InboxLayoutDropdown = () => {
   const handleLayoutSelect = (layout: InboxLayout) => {
     setInboxLayout(layout);
 
-    // The menu sits on the list, so the list stays on screen instead of the
-    // chat open beside it
     if (layout === INBOX_LAYOUT.RECORD_PAGE) {
       // oxlint-disable-next-line twenty/no-navigate-prefer-link
       navigate(AppPath.AiChatInbox, { threadId: null });

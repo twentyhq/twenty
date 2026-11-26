@@ -5,6 +5,12 @@ import { computeNavigationMenuItemDropPlacement } from '@/navigation-menu-item/c
 
 const SORTED_ITEMS = [
   {
+    id: 'tab',
+    type: NavigationMenuItemType.TAB,
+    parentId: null,
+    position: 0,
+  },
+  {
     id: 'pipeline',
     type: NavigationMenuItemType.SECTION,
     parentId: 'tab',
@@ -134,6 +140,54 @@ describe('computeNavigationMenuItemDropPlacement', () => {
     expect(placement).not.toBeNull();
     expect(placement?.parentId).toBeUndefined();
     expect(placement?.position).toBeLessThan(0);
+  });
+
+  it('should move a section above the items of its tab', () => {
+    const placement = computeNavigationMenuItemDropPlacement({
+      draggedItem: { id: 'accounts', type: NavigationMenuItemType.SECTION },
+      sourceParentId: 'tab',
+      destinationTarget: { kind: 'tabOrSectionList', parentId: 'tab' },
+      destinationIndex: 0,
+      sortedItems: SORTED_ITEMS,
+    });
+
+    expect(placement?.parentId).toBeUndefined();
+    expect(placement?.position).toBeLessThan(0);
+  });
+
+  it('should place an item between two sections of its tab', () => {
+    const placement = computeNavigationMenuItemDropPlacement({
+      draggedItem: PIPELINE_LINK,
+      sourceParentId: 'pipeline',
+      destinationTarget: { kind: 'tabOrSectionList', parentId: 'tab' },
+      destinationIndex: 1,
+      sortedItems: SORTED_ITEMS,
+    });
+
+    expect(placement?.parentId).toBe('tab');
+    expect(placement?.position).toBeGreaterThan(0);
+    expect(placement?.position).toBeLessThan(1);
+  });
+
+  it('should refuse a section dropped into a section or a folder', () => {
+    expect(
+      computeNavigationMenuItemDropPlacement({
+        draggedItem: { id: 'accounts', type: NavigationMenuItemType.SECTION },
+        sourceParentId: 'tab',
+        destinationTarget: { kind: 'tabOrSectionList', parentId: 'pipeline' },
+        destinationIndex: 0,
+        sortedItems: SORTED_ITEMS,
+      }),
+    ).toBeNull();
+    expect(
+      computeNavigationMenuItemDropPlacement({
+        draggedItem: { id: 'accounts', type: NavigationMenuItemType.SECTION },
+        sourceParentId: 'tab',
+        destinationTarget: { kind: 'folder', parentId: 'pipeline-folder' },
+        destinationIndex: 0,
+        sortedItems: SORTED_ITEMS,
+      }),
+    ).toBeNull();
   });
 
   it('should refuse a folder dropped into a folder', () => {

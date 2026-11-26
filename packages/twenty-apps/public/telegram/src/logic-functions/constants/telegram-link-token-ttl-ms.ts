@@ -1,0 +1,1 @@
+export const TELEGRAM_LINK_TOKEN_TTL_MS = 10 * 60 * 1000;

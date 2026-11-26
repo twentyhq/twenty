@@ -53,6 +53,8 @@ const OWNER_COMPANY_FIELD_ID = 'owner-company-field';
 const OWNER_PERSON_FIELD_ID = 'owner-person-field';
 const MORPH_TARGET_ROLE_ID = 'morph-target-role-1';
 const MORPH_HEAD_ROLE_ID = 'morph-head-role-1';
+const MORPH_TARGET_EMPTY_ROLE_ID = 'morph-target-empty-role-1';
+const MORPH_TARGET_NOT_EMPTY_ROLE_ID = 'morph-target-not-empty-role-1';
 const OWNER_RECORD_ID = '11111111-1111-4111-8111-111111111111';
 
 const buildMaps = <TFlatEntity extends SyncableFlatEntity>(
@@ -286,6 +288,18 @@ const predicates = [
     operand: RowLevelPermissionPredicateOperand.IS,
     value: { selectedRecordIds: [OWNER_RECORD_ID] },
   }),
+  buildPredicate('predicate-morph-target-empty', MORPH_TARGET_EMPTY_ROLE_ID, {
+    fieldMetadataId: OWNER_COMPANY_FIELD_ID,
+    operand: RowLevelPermissionPredicateOperand.IS_EMPTY,
+  }),
+  buildPredicate(
+    'predicate-morph-target-not-empty',
+    MORPH_TARGET_NOT_EMPTY_ROLE_ID,
+    {
+      fieldMetadataId: OWNER_COMPANY_FIELD_ID,
+      operand: RowLevelPermissionPredicateOperand.IS_NOT_EMPTY,
+    },
+  ),
   buildPredicate('predicate-text-is', TEXT_IS_ROLE_ID, {
     operand: RowLevelPermissionPredicateOperand.IS,
     value: 'stale-value',
@@ -382,7 +396,6 @@ const buildWorkspaceMember = (workspaceMember: Record<string, unknown>) => ({
 
 const build = (roleIds: string[], workspaceMember?: RlsWorkspaceMember) =>
   buildRlsRecordFilter({
-    isRelationHopEnabled: false,
     flatFieldMetadataMaps,
     flatFieldMetadataOptionMaps,
     flatObjectMetadataMaps,
@@ -465,6 +478,16 @@ describe('buildRlsRecordFilter', () => {
     },
   );
 
+  it.each([
+    [MORPH_TARGET_EMPTY_ROLE_ID, 'NULL'],
+    [MORPH_TARGET_NOT_EMPTY_ROLE_ID, 'NOT_NULL'],
+  ])(
+    'should check only the target own join column for an emptiness predicate on a morph target (%s)',
+    (roleId, is) => {
+      expect(build([roleId])).toEqual({ ownerCompanyId: { is } });
+    },
+  );
+
   it('should require every root group of a rule', () => {
     expect(build([TWO_ROOT_GROUPS_ROLE_ID])).toEqual({
       and: [
@@ -472,10 +495,6 @@ describe('buildRlsRecordFilter', () => {
         { and: [{ name: { ilike: '%from-root-b%' } }] },
       ],
     });
-  });
-
-  it('should match nothing for a predicate reached through a relation hop', () => {
-    expect(build([RELATION_HOP_ROLE_ID])).toEqual(UNSATISFIABLE_RECORD_FILTER);
   });
 
   describe('predicate bound to a workspace member field', () => {
@@ -615,7 +634,6 @@ describe('buildRecordFilterForRule with access group member values', () => {
     flatFieldMetadataOptionMaps?: FlatFieldMetadataOptionMapsForOptions;
   }) =>
     buildRecordFilterForRule({
-      isRelationHopEnabled: false,
       flatFieldMetadataMaps,
       flatFieldMetadataOptionMaps: targetFlatFieldMetadataOptionMaps,
       flatObjectMetadataMaps,
@@ -698,7 +716,6 @@ describe('buildRecordFilterForRule with access group member values', () => {
   it('should compare a relation field to the id of the member', () => {
     expect(
       buildRecordFilterForRule({
-        isRelationHopEnabled: false,
         flatFieldMetadataMaps,
         flatFieldMetadataOptionMaps,
         flatObjectMetadataMaps,
@@ -727,7 +744,6 @@ describe('buildRecordFilterForRule with access group member values', () => {
   it('should match nothing for a field compared to a member field of another type', () => {
     expect(
       buildRecordFilterForRule({
-        isRelationHopEnabled: false,
         flatFieldMetadataMaps,
         flatFieldMetadataOptionMaps,
         flatObjectMetadataMaps,
@@ -751,7 +767,6 @@ describe('buildRecordFilterForRule with access group member values', () => {
     (memberValue) => {
       expect(
         buildRecordFilterForRule({
-          isRelationHopEnabled: false,
           flatFieldMetadataMaps,
           flatFieldMetadataOptionMaps,
           flatObjectMetadataMaps,

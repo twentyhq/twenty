@@ -60,10 +60,25 @@ describe('findWebhooksMatchingEventName', () => {
           exact: ['workflowRun.updated'],
           everything: ['*.*'],
           anyObject: ['*.updated'],
+          anyOperation: ['workflowRun.*'],
         },
         'workflowRun.updated',
       ),
     ).toEqual(['exact']);
+  });
+
+  it('keeps wildcard matching for other workflowRun events', () => {
+    expect(
+      findMatchingWebhookIds(
+        {
+          exact: ['workflowRun.created'],
+          everything: ['*.*'],
+          anyObject: ['*.created'],
+          anyOperation: ['workflowRun.*'],
+        },
+        'workflowRun.created',
+      ),
+    ).toEqual(['exact', 'everything', 'anyObject', 'anyOperation']);
   });
 
   it('returns nothing when the workspace has no webhooks', () => {

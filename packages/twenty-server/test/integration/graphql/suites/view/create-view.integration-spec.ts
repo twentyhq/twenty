@@ -1,10 +1,15 @@
+import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { createOneSelectFieldMetadataForIntegrationTests } from 'test/integration/metadata/suites/field-metadata/utils/create-one-select-field-metadata-for-integration-tests.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
 import { assertViewStructure } from 'test/integration/utils/view-test.util';
-import { ViewOpenRecordIn, ViewType } from 'twenty-shared/types';
+import {
+  ViewOpenRecordIn,
+  ViewPresetFilter,
+  ViewType,
+} from 'twenty-shared/types';
 
 describe('Create core view', () => {
   let testObjectMetadataId: string;
@@ -107,5 +112,44 @@ describe('Create core view', () => {
       isCompact: false,
       openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
     });
+  });
+
+  it('should create a list view compact unless told otherwise', async () => {
+    const { data: defaultListData } = await createOneView({
+      input: {
+        name: 'Default List View',
+        objectMetadataId: testObjectMetadataId,
+        icon: 'IconList',
+        type: ViewType.LIST,
+      },
+      expectToFail: false,
+    });
+    const { data: twoLineListData } = await createOneView({
+      input: {
+        name: 'Two-line List View',
+        objectMetadataId: testObjectMetadataId,
+        icon: 'IconList',
+        type: ViewType.LIST,
+        isCompact: false,
+      },
+      expectToFail: false,
+    });
+
+    expect(defaultListData.createView.isCompact).toBe(true);
+    expect(twoLineListData.createView.isCompact).toBe(false);
+  });
+
+  it('should refuse preset filters on a view of another object than the inbox chat thread', async () => {
+    const { errors } = await createOneView({
+      input: {
+        name: 'Preset View',
+        objectMetadataId: testObjectMetadataId,
+        icon: 'IconList',
+        presetFilter: ViewPresetFilter.INBOX_OPEN,
+      },
+      expectToFail: true,
+    });
+
+    expectOneNotInternalServerErrorSnapshot({ errors });
   });
 });

@@ -14,7 +14,7 @@ describe('doesApplicationBillCredits', () => {
     ).toBe(true);
   });
 
-  it('should bill credits when the app declares a recurring charge', () => {
+  it('should not bill credits for a recurring charge alone', () => {
     expect(
       doesApplicationBillCredits({
         recurring: {
@@ -25,7 +25,7 @@ describe('doesApplicationBillCredits', () => {
           },
         },
       }),
-    ).toBe(true);
+    ).toBe(false);
   });
 
   it('should not bill credits for a pricing line alone', () => {

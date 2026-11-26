@@ -9,13 +9,19 @@ export type CalendarEventSaveOperations = {
     criteria: string;
     partialEntity: Partial<CalendarEventWorkspaceEntity>;
   }[];
-  associationsToInsert: Pick<
+  associationsToInsert: (Pick<
     CalendarChannelEventAssociationWorkspaceEntity,
     | 'calendarEventId'
     | 'eventExternalId'
     | 'calendarChannelId'
     | 'recurringEventExternalId'
-  >[];
+  > &
+    Partial<
+      Pick<
+        CalendarChannelEventAssociationWorkspaceEntity,
+        'accountOwnerId' | 'handle'
+      >
+    >)[];
   associationsToUpdate: {
     criteria: string;
     partialEntity: Partial<CalendarChannelEventAssociationWorkspaceEntity>;

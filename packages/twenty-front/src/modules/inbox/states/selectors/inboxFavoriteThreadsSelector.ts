@@ -40,7 +40,6 @@ export const inboxFavoriteThreadsSelector = createAtomSelector<
           return [];
         }
 
-        // The loaded chat carries its latest title and deletion, which the favorite's identifier doesn't follow.
         const loadedThread = get(
           aiChatThreadRecordFamilySelector,
           item.targetRecordId,

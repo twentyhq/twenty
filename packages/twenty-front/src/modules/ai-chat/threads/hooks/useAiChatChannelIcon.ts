@@ -2,7 +2,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconHash } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
 
-// The icon set loads lazily, so the default stands in until it has
 export const useAiChatChannelIcon = (icon: string | null | undefined) => {
   const { getIcons } = useIcons();
 

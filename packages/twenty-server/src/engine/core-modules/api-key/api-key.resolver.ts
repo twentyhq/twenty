@@ -23,6 +23,7 @@ import { API_KEY_READ_ACCESS_POLICY } from 'src/engine/core-modules/api-key/cons
 import { API_KEY_ROLE_WRITE_ACCESS_POLICY } from 'src/engine/core-modules/api-key/constants/api-key-role-write-access-policy.constant';
 import { API_KEY_WRITE_ACCESS_POLICY } from 'src/engine/core-modules/api-key/constants/api-key-write-access-policy.constant';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 
 @MetadataResolver(() => ApiKeyEntity)
 @UseInterceptors(WorkspaceMigrationGraphqlApiExceptionInterceptor)
@@ -149,6 +150,7 @@ export class ApiKeyResolver {
   }
 
   @ResolveField(() => RoleDTO)
+  @UseGuards(NoPermissionGuard)
   async role(
     @Parent() apiKey: ApiKeyEntity,
     @AuthWorkspace() workspace: WorkspaceEntity,

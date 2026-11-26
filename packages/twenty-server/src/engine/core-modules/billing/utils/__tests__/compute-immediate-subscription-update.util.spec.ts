@@ -82,6 +82,25 @@ describe('computeImmediateSubscriptionUpdate', () => {
     ).toEqual({ type: SubscriptionUpdateType.QUANTITIES, newSeats: 3 });
   });
 
+  it('keeps an applications update when only the application items change', () => {
+    expect(
+      computeImmediateSubscriptionUpdate({
+        subscriptionUpdate: { type: SubscriptionUpdateType.APPLICATIONS },
+        currentPrices,
+        toUpdatePrices: {
+          ...currentPrices,
+          applicationItems: [
+            {
+              stripeProductId: 'prod_application',
+              stripePriceId: 'price_application_year',
+              quantity: 1,
+            },
+          ],
+        },
+      }),
+    ).toEqual({ type: SubscriptionUpdateType.APPLICATIONS });
+  });
+
   it('returns the requested update when a price and the seat count both change', () => {
     expect(
       computeImmediateSubscriptionUpdate({

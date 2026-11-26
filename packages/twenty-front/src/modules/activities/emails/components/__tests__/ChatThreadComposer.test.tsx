@@ -3,6 +3,8 @@ import { I18nProvider } from '@lingui/react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
+import { TOUCH_DEVICE_MEDIA_QUERY } from 'twenty-ui/utilities';
+
 import { ChatThreadComposer } from '@/activities/emails/components/ChatThreadComposer';
 
 const mockSendAppChannelMessage = jest.fn();
@@ -113,7 +115,6 @@ describe('ChatThreadComposer', () => {
           channelName="LinkedIn"
           recipientName="Ada"
           isDisconnected={false}
-          canAttachFiles
           onSendMessage={mockSendAppChannelMessage}
           onMessageSent={onMessageSent}
         />
@@ -126,7 +127,12 @@ describe('ChatThreadComposer', () => {
 
     await userEvent.upload(fileInput, deck);
 
-    expect(screen.getByText('deck.pdf')).toBeInTheDocument();
+    expect(
+      screen
+        .getByText('deck.pdf')
+        .compareDocumentPosition(screen.getByRole('textbox')) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
 
     await userEvent.click(screen.getByRole('button', { name: 'Send' }));
     await userEvent.click(await screen.findByRole('button', { name: 'Retry' }));
@@ -149,7 +155,6 @@ describe('ChatThreadComposer', () => {
           channelName="LinkedIn"
           recipientName="Ada"
           isDisconnected={false}
-          canAttachFiles
           onSendMessage={mockSendAppChannelMessage}
           onMessageSent={jest.fn()}
         />
@@ -171,6 +176,35 @@ describe('ChatThreadComposer', () => {
     expect(mockEnqueueToast).toHaveBeenCalledWith(
       expect.objectContaining({ status: 'error' }),
     );
+  });
+
+  it('attaches files pasted into the message box', async () => {
+    render(
+      <I18nProvider i18n={i18n}>
+        <ChatThreadComposer
+          channelName="LinkedIn"
+          recipientName="Ada"
+          isDisconnected={false}
+          onSendMessage={mockSendAppChannelMessage}
+          onMessageSent={jest.fn()}
+        />
+      </I18nProvider>,
+    );
+
+    // jsdom has no DataTransfer; a file copied in Finder also exposes its name as text
+    const clipboardData = {
+      files: [new File(['image'], 'screenshot.png', { type: 'image/png' })],
+      types: ['text/plain', 'Files'],
+      getData: (format: string) =>
+        format === 'text/plain' || format === 'text' ? 'screenshot.png' : '',
+    } as unknown as DataTransfer;
+
+    await userEvent.click(screen.getByRole('textbox'));
+    await userEvent.paste(clipboardData);
+
+    expect(screen.getByText('screenshot.png')).toBeInTheDocument();
+    expect(screen.getByRole('textbox')).toHaveValue('');
+    expect(screen.getByRole('button', { name: 'Send' })).toBeEnabled();
   });
 
   it('explains why a message failed and only discards the local copy', async () => {
@@ -264,5 +298,39 @@ describe('ChatThreadComposer', () => {
         'activities/chatThreadComposerDraftFamilyState__thread-2',
       ),
     ).toBe(JSON.stringify('Before reconnecting'));
+  });
+
+  it('inserts a new line instead of sending on Enter on a touch device', async () => {
+    const originalMatchMedia = window.matchMedia;
+
+    window.matchMedia = (query: string) =>
+      Object.assign(new EventTarget(), {
+        matches: query === TOUCH_DEVICE_MEDIA_QUERY,
+        media: query,
+        onchange: null,
+        addListener: jest.fn(),
+        removeListener: jest.fn(),
+      });
+
+    try {
+      render(
+        <I18nProvider i18n={i18n}>
+          <ChatThreadComposer
+            channelName="LinkedIn"
+            recipientName="Ada"
+            isDisconnected={false}
+            onSendMessage={mockSendAppChannelMessage}
+            onMessageSent={jest.fn()}
+          />
+        </I18nProvider>,
+      );
+
+      await userEvent.type(screen.getByRole('textbox'), 'Hello{Enter}Ada');
+
+      expect(screen.getByRole('textbox')).toHaveValue('Hello\nAda');
+      expect(mockSendAppChannelMessage).not.toHaveBeenCalled();
+    } finally {
+      window.matchMedia = originalMatchMedia;
+    }
   });
 });

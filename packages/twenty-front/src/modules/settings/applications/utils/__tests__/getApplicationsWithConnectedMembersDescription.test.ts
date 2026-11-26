@@ -26,10 +26,9 @@ describe('getApplicationsWithConnectedMembersDescription', () => {
             sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
           }),
         ),
-        applicationAuthorizations: [
-          { applicationId: 'first' },
-          { applicationId: 'first' },
-          { applicationId: 'second' },
+        connectedMemberCounts: [
+          { applicationId: 'first', connectedMemberCount: 2 },
+          { applicationId: 'second', connectedMemberCount: 1 },
         ],
       });
 
@@ -46,7 +45,9 @@ describe('getApplicationsWithConnectedMembersDescription', () => {
           sourceType: ApplicationRegistrationSourceType.NPM,
         }),
       ],
-      applicationAuthorizations: [{ applicationId: 'installed' }],
+      connectedMemberCounts: [
+        { applicationId: 'installed', connectedMemberCount: 1 },
+      ],
     });
 
     expect(application.description).toBe('Stored description');

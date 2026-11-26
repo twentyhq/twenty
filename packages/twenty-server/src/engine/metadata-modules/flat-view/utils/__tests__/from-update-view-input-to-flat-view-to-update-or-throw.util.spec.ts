@@ -4,7 +4,6 @@ import {
   FieldMetadataType,
   ViewOpenRecordIn,
   ViewType,
-  ViewVisibility,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -105,7 +104,7 @@ const buildExistingFlatView = ({
     isCompact: false,
     isActive: true,
     openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
-    visibility: ViewVisibility.WORKSPACE,
+    isPrivate: false,
     createdByUserWorkspaceId: null,
     createdAt: existingViewGroup.createdAt,
     updatedAt: existingViewGroup.updatedAt,
@@ -121,6 +120,7 @@ const buildExistingFlatView = ({
     anyFieldFilterValue: null,
     shouldHideEmptyGroups: false,
     shouldDisplayGroupsAsTabs: false,
+    presetFilter: null,
     kanbanColumnWidth: null,
     groupLoadLimit: DEFAULT_VIEW_GROUP_LOAD_LIMIT,
     isSystemSideEffect: false,
@@ -248,6 +248,31 @@ describe('fromUpdateViewInputToFlatViewToUpdateOrThrow', () => {
     expect(result.flatViewGroupsToDelete).toEqual([existingViewGroup]);
     expect(result.flatViewGroupsToCreate).toEqual([]);
   });
+
+  it.each([
+    { isCompact: undefined, expectedIsCompact: true },
+    { isCompact: false, expectedIsCompact: false },
+  ])(
+    'resolves Compact view when an overridden view becomes a list: %j',
+    ({ isCompact, expectedIsCompact }) => {
+      const { flatViewToUpdate } = updateView({
+        groupingOverride: COMPANY_FIELD_ID,
+        updateViewInput: {
+          mainGroupByFieldMetadataId: null,
+          type: ViewType.LIST,
+          isCompact,
+        },
+      });
+
+      expect(flatViewToUpdate.isCompact).toBe(false);
+      expect(
+        resolveEffectiveUniversalFlatEntity({
+          metadataName: 'view',
+          universalFlatEntity: flatViewToUpdate,
+        }).isCompact,
+      ).toBe(expectedIsCompact);
+    },
+  );
 
   describe('translations', () => {
     const buildI18nContext = (locale: 'en' | 'fr-FR' | 'zh-CN') => ({

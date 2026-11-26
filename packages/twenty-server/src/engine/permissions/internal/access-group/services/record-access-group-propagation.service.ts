@@ -2,18 +2,17 @@
 
 import { Injectable } from '@nestjs/common';
 
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
+import { MAX_RECORDS_RECOMPUTED_IN_WRITE } from 'src/engine/permissions/internal/access-group/constants/max-records-recomputed-in-write.constant';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { AccessGroupPropagationPlanService } from 'src/engine/permissions/internal/access-group/services/access-group-propagation-plan.service';
 import { RecordAccessGroupComputationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-computation.service';
 import { RecordAccessGroupMetadataMapsService } from 'src/engine/permissions/internal/access-group/services/record-access-group-metadata-maps.service';
 import { type RecomputeRecordAccessGroupIdsOfRecordsJobData } from 'src/engine/permissions/internal/access-group/types/recompute-record-access-group-ids-of-records-job-data.type';
 import { type RecordAccessGroupComputationMetadataMaps } from 'src/engine/permissions/internal/access-group/types/record-access-group-computation-metadata-maps.type';
 import { findRelatedRecordPathsFeedingAccessGroups } from 'src/engine/permissions/internal/access-group/utils/find-related-record-paths-feeding-access-groups.util';
 import { isRelatedRecordPathFollowed } from 'src/engine/permissions/internal/access-group/utils/is-related-record-path-followed.util';
-import { isObjectUsingRecordAccessGroups } from 'src/engine/permissions/internal/access-group/utils/is-object-using-record-access-groups.util';
-import { type RelatedRecordPathFollowingLookup } from 'src/engine/permissions/internal/record-permission-repository/types/related-record-path-following-lookup.type';
+import { type RelatedRecordPathFollowingQuery } from 'src/engine/permissions/internal/record-permission-repository/types/related-record-path-following-query.type';
 import { RecordAccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-access-group.repository';
 import { type ResolvedRelatedRecordPath } from 'src/engine/permissions/internal/related-record-path/types/resolved-related-record-path.type';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
@@ -25,31 +24,7 @@ export class RecordAccessGroupPropagationService {
     private readonly recordAccessGroupComputationService: RecordAccessGroupComputationService,
     private readonly recordAccessGroupMetadataMapsService: RecordAccessGroupMetadataMapsService,
     private readonly recordAccessGroupRepository: RecordAccessGroupRepository,
-    private readonly accessGroupPropagationPlanService: AccessGroupPropagationPlanService,
   ) {}
-
-  async planAndApplyRecomputeOfRelatedRecordPathTargets({
-    workspaceId,
-  }: {
-    workspaceId: string;
-  }): Promise<void> {
-    const metadataMaps =
-      await this.recordAccessGroupMetadataMapsService.findAfterEvictingLocalCache(
-        workspaceId,
-      );
-    const objectMetadataIds = new Set(
-      metadataMaps.resolvedRelatedRecordPaths.map(
-        ({ targetObjectMetadataId }) => targetObjectMetadataId,
-      ),
-    );
-
-    await this.accessGroupPropagationPlanService.planAndApplyComputes({
-      workspaceId,
-      objectMetadataIds: [...objectMetadataIds].filter((objectMetadataId) =>
-        isObjectUsingRecordAccessGroups({ ...metadataMaps, objectMetadataId }),
-      ),
-    });
-  }
 
   async recomputeRecordAccessGroupIdsOfRecordsAndPropagate({
     workspaceId,
@@ -85,7 +60,6 @@ export class RecordAccessGroupPropagationService {
     }
   }
 
-  // TODO(@charlesBochet): above MAX_RECORDS_RECOMPUTED_IN_WRITE, queue a job after commit once the transaction scope exposes afterCommit
   async recomputeRecordsFollowingRelatedRecordPathsInWrite({
     workspaceId,
     objectMetadataId,
@@ -106,6 +80,21 @@ export class RecordAccessGroupPropagationService {
         transactionScope,
       },
     )) {
+      const { afterCommit } = transactionScope;
+
+      if (
+        followingRecords.recordIds.length > MAX_RECORDS_RECOMPUTED_IN_WRITE &&
+        isDefined(afterCommit)
+      ) {
+        afterCommit(() =>
+          this.recordAccessGroupComputationService.queueRecomputeRecordAccessGroupIdsOfRecords(
+            { workspaceId, ...followingRecords },
+          ),
+        );
+
+        continue;
+      }
+
       await this.recomputeRecordsFollowingRelatedRecordPathsInWrite({
         workspaceId,
         objectMetadataId: followingRecords.objectMetadataId,
@@ -144,7 +133,7 @@ export class RecordAccessGroupPropagationService {
   }): Promise<RelatedRecords[]> {
     const metadataMaps =
       await this.recordAccessGroupMetadataMapsService.find(workspaceId);
-    const lookups: RelatedRecordPathFollowingLookup[] = [];
+    const followingQueries: RelatedRecordPathFollowingQuery[] = [];
 
     for (const resolvedPath of this.findRelatedRecordPathsLeadingFromObject({
       metadataMaps,
@@ -180,7 +169,7 @@ export class RecordAccessGroupPropagationService {
           continue;
         }
 
-        lookups.push({
+        followingQueries.push({
           targetFlatObjectMetadata: findFlatEntityByIdInFlatEntityMapsOrThrow({
             flatEntityId: targetObjectMetadataId,
             flatEntityMaps: metadataMaps.flatObjectMetadataMaps,
@@ -195,7 +184,7 @@ export class RecordAccessGroupPropagationService {
 
     const followingRecords =
       await this.recordAccessGroupRepository.findRecordsFollowingRelatedRecordPaths(
-        { workspaceId, lookups, transactionScope },
+        { workspaceId, followingQueries, transactionScope },
       );
     const followingObjectMetadataIds = [
       ...new Set(

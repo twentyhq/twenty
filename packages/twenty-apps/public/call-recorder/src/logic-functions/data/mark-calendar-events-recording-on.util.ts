@@ -26,7 +26,7 @@ export const markCalendarEventsRecordingOn = async (
               callRecorderPreference: { is: 'NULL' },
             },
             data: {
-              callRecorderPreference: CallRecorderPreference.ON,
+              callRecorderPreference: CallRecorderPreference.AUTO,
             },
           },
           id: true,

@@ -1,3 +1,4 @@
+import { type ViewFieldRelationScope } from 'twenty-shared/types';
 import { type AggregateOperations } from '~/generated-metadata/graphql';
 
 export type RecordField = {
@@ -9,4 +10,6 @@ export type RecordField = {
   size: number;
   aggregateOperation?: AggregateOperations | null;
   relationTargetFieldMetadataId?: string | null;
+  relationScope?: ViewFieldRelationScope | null;
+  label?: string | null;
 };

@@ -34,7 +34,10 @@ export const useUpsertFindManyRecordsQueryInCache = ({
     recordGqlFields?: RecordGqlFields;
     computeReferences?: boolean;
   }) => {
-    const findManyRecordsQueryForCacheOverwrite = generateFindManyRecordsQuery({
+    const {
+      query: findManyRecordsQueryForCacheOverwrite,
+      variables: relationsWithArgumentsVariables,
+    } = generateFindManyRecordsQuery({
       objectMetadataItem,
       objectMetadataItems,
       recordGqlFields,
@@ -52,7 +55,7 @@ export const useUpsertFindManyRecordsQueryInCache = ({
 
     apolloCoreClient.writeQuery({
       query: findManyRecordsQueryForCacheOverwrite,
-      variables: queryVariables,
+      variables: { ...queryVariables, ...relationsWithArgumentsVariables },
       data: {
         [objectMetadataItem.namePlural]: newObjectRecordConnection,
       },

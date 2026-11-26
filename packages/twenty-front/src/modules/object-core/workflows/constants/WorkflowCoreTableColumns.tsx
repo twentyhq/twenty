@@ -78,13 +78,13 @@ export const WORKFLOW_CORE_TABLE_COLUMNS: CoreObjectTableColumn<CoreWorkflowTabl
       ),
     },
     {
-      fieldName: 'visibility',
+      fieldName: 'isPrivate',
       fieldLabel: msg`Visibility`,
       FieldIcon: IconShare,
       align: 'left',
       gridTrack: '120px',
       renderCell: (workflow) => (
-        <CoreWorkflowVisibilityCell visibility={workflow.visibility} />
+        <CoreWorkflowVisibilityCell isPrivate={workflow.isPrivate} />
       ),
     },
     {

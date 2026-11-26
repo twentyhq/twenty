@@ -27,7 +27,6 @@ export const AiChatToolCallApprovalArgumentsCard = ({
   const approval = useAnswerToolCallApproval({ toolCallId, proposal });
   const { pendingResponse, isAnswering, approve, reject } = approval;
 
-  // null while the raw arguments do not parse, which blocks approving
   const [toolArguments, setToolArguments] = useState<Record<
     string,
     unknown

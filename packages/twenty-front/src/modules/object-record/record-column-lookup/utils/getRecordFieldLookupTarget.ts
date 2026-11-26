@@ -1,19 +1,10 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
+import { type RecordFieldLookupTarget } from '@/object-record/record-column-lookup/types/RecordFieldLookupTarget';
+import { getRelationLookupTarget } from '@/object-record/record-column-lookup/utils/getRelationLookupTarget';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
-import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
-import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isPlainManyToOneRelationField } from '@/object-record/utils/isPlainManyToOneRelationField';
-import { findRelationTargetObjectMetadataItem } from '@/related-record-paths/utils/findRelationTargetObjectMetadataItem';
-import { findById, isDefined } from 'twenty-shared/utils';
-
-export type RecordFieldLookupTarget = {
-  relationFieldName: string;
-  relationObjectMetadataItem: EnrichedObjectMetadataItem;
-  lookupTargetFieldMetadataItem: FieldMetadataItem;
-  lookupTargetFieldDefinition: FieldDefinition<FieldMetadata>;
-};
+import { isDefined } from 'twenty-shared/utils';
 
 export const getRecordFieldLookupTarget = ({
   recordField,
@@ -35,29 +26,9 @@ export const getRecordFieldLookupTarget = ({
     return undefined;
   }
 
-  const relationObjectMetadataItem = findRelationTargetObjectMetadataItem({
-    fieldMetadataItem,
+  return getRelationLookupTarget({
+    relationFieldMetadataItem: fieldMetadataItem,
+    relationTargetFieldMetadataId: recordField.relationTargetFieldMetadataId,
     objectMetadataItems,
   });
-
-  const lookupTargetFieldMetadataItem = relationObjectMetadataItem?.fields.find(
-    findById(recordField.relationTargetFieldMetadataId),
-  );
-
-  if (
-    !isDefined(relationObjectMetadataItem) ||
-    !isDefined(lookupTargetFieldMetadataItem)
-  ) {
-    return undefined;
-  }
-
-  return {
-    relationFieldName: fieldMetadataItem.name,
-    relationObjectMetadataItem,
-    lookupTargetFieldMetadataItem,
-    lookupTargetFieldDefinition: formatFieldMetadataItemAsFieldDefinition({
-      field: lookupTargetFieldMetadataItem,
-      objectMetadataItem: relationObjectMetadataItem,
-    }),
-  };
 };

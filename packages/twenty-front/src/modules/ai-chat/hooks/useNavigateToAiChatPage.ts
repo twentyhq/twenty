@@ -4,9 +4,10 @@ import { useStore } from 'jotai';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { getAiChatPageRoute } from '@/ai-chat/utils/getAiChatPageRoute';
 
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { checkIfFeatureFlagIsEnabledOnWorkspace } from '@/workspace/utils/checkIfFeatureFlagIsEnabledOnWorkspace';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
@@ -15,9 +16,6 @@ export const useNavigateToAiChatPage = () => {
   const store = useStore();
   const navigate = useNavigateApp();
   const { closeSidePanelMenu } = useSidePanelMenu();
-  const isAiChatInboxEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
-  );
 
   const navigateToAiChatPage = ({
     threadId,
@@ -36,7 +34,10 @@ export const useNavigateToAiChatPage = () => {
     const isNewChat = threadId === store.get(newAiChatThreadIdState.atom);
 
     const aiChatPageRoute = getAiChatPageRoute({
-      isInbox: isAiChatInboxEnabled,
+      isInbox: checkIfFeatureFlagIsEnabledOnWorkspace(
+        FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+        store.get(currentWorkspaceState.atom),
+      ),
       threadId:
         isDefined(threadId) && isValidUuid(threadId) && !isNewChat
           ? threadId
@@ -49,9 +50,6 @@ export const useNavigateToAiChatPage = () => {
       undefined,
       {
         state: {
-          // Read from the window rather than useLocation so that opening a new
-          // chat does not require a router context from every caller of
-          // useSwitchToNewAiChat, front components included.
           returnLocation: `${window.location.pathname}${window.location.search}${window.location.hash}`,
         },
       },

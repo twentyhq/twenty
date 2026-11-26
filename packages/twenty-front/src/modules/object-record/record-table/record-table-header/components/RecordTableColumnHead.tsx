@@ -2,8 +2,10 @@ import { styled } from '@linaria/react';
 import { FieldDescriptionTooltip } from '@/object-record/record-field/ui/components/FieldDescriptionTooltip';
 
 import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
-import { useRecordFieldLookupTarget } from '@/object-record/record-column-lookup/hooks/useRecordFieldLookupTarget';
 import { getRecordFieldColumnHeader } from '@/object-record/record-column-lookup/utils/getRecordFieldColumnHeader';
+import { ScopedRelationColumnIcon } from '@/object-record/record-column-scope/components/ScopedRelationColumnIcon';
+import { getScopedRelationColumnDescription } from '@/object-record/record-column-scope/utils/getScopedRelationColumnDescription';
+import { useRecordFieldColumnKind } from '@/object-record/record-column-scope/hooks/useRecordFieldColumnKind';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { RECORD_TABLE_CELL_CONTENT_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableCellContentClassName';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
@@ -27,6 +29,10 @@ const StyledIcon = styled.div`
   flex-shrink: 0;
 `;
 
+const StyledStackIcon = styled(StyledIcon)`
+  margin-right: ${themeCssVariables.spacing[1]};
+`;
+
 type RecordTableColumnHeadProps = {
   recordField: RecordField;
 };
@@ -41,27 +47,40 @@ export const RecordTableColumnHead = ({
     { fieldMetadataItemId: recordField.fieldMetadataItemId },
   );
 
-  const lookupTarget = useRecordFieldLookupTarget(recordField);
+  const columnKind = useRecordFieldColumnKind(recordField.id);
   const foundFieldMetadataItem =
     correspondingFieldMetadataItem.foundFieldMetadataItem;
   const fieldMetadataItem = isDefined(foundFieldMetadataItem)
     ? getRecordFieldColumnHeader({
         fieldMetadataItem: foundFieldMetadataItem,
-        lookupTarget,
+        columnKind,
+        customLabel: recordField.label,
       })
     : undefined;
+
+  const isScopedRelationColumn = 'scopedRelationAlias' in columnKind;
 
   const { getIcon } = useIcons();
   const Icon = getIcon(fieldMetadataItem?.icon);
 
   return (
     <StyledTitle className={RECORD_TABLE_CELL_CONTENT_CLASS_NAME}>
-      <StyledIcon>
-        <Icon size={theme.icon.size.md} />
-      </StyledIcon>
+      {isScopedRelationColumn ? (
+        <StyledStackIcon>
+          <ScopedRelationColumnIcon Icon={Icon} />
+        </StyledStackIcon>
+      ) : (
+        <StyledIcon>
+          <Icon size={theme.icon.size.md} />
+        </StyledIcon>
+      )}
       <FieldDescriptionTooltip
         label={fieldMetadataItem?.label}
-        description={fieldMetadataItem?.description}
+        description={
+          isScopedRelationColumn && isDefined(foundFieldMetadataItem)
+            ? getScopedRelationColumnDescription(foundFieldMetadataItem.label)
+            : fieldMetadataItem?.description
+        }
       />
     </StyledTitle>
   );

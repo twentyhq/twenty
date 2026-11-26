@@ -5,6 +5,7 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { ApplicationBillingPriceService } from 'src/engine/core-modules/application/application-billing-price/application-billing-price.service';
 import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
 import { MarketplaceAppDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app.dto';
 import { MarketplaceAppDetailDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-detail.dto';
@@ -48,6 +49,7 @@ export class MarketplaceResolver {
     @InjectMessageQueue(MessageQueue.cronQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly applicationBillingPriceService: ApplicationBillingPriceService,
   ) {}
 
   @Query(() => [MarketplaceAppDTO])
@@ -82,6 +84,8 @@ export class MarketplaceResolver {
       shouldIncludeMcpServerApplications: await this.isMcpServersEnabled(
         workspace.id,
       ),
+      shouldIncludeBillingPrices:
+        this.applicationBillingPriceService.shouldShowApplicationPrices(),
     });
   }
 

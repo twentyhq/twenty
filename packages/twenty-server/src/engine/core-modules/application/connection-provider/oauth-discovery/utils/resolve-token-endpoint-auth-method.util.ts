@@ -1,4 +1,4 @@
-import { type OAuthClientInformationFull } from '@modelcontextprotocol/sdk/shared/auth.js';
+import { type OAuthClientInformationFull } from '@modelcontextprotocol/client';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type OAuthTokenEndpointAuthMethod } from 'src/engine/core-modules/application/connection-provider/types/resolved-oauth-client.type';

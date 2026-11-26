@@ -8,7 +8,6 @@ import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomS
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
-// The record API refuses a suspended workspace, so its chats never load
 export const inboxRecentThreadsLoadingSelector = createAtomSelector<boolean>({
   key: 'inboxRecentThreadsLoadingSelector',
   get: ({ get }) =>

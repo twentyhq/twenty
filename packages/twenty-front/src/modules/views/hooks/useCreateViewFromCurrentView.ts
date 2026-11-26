@@ -26,6 +26,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { v4 } from 'uuid';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
+import { removeTypenames } from '~/utils/removeTypenames';
 
 export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
   const { performViewApiCreate } = usePerformViewApiPersist();
@@ -78,7 +79,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
         calendarFieldMetadataId,
         calendarEndFieldMetadataId,
         type,
-        visibility,
+        isPrivate,
       }: Partial<
         Pick<
           GraphQLView,
@@ -89,7 +90,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
           | 'calendarFieldMetadataId'
           | 'calendarEndFieldMetadataId'
           | 'type'
-          | 'visibility'
+          | 'isPrivate'
         >
       >,
       shouldCopyFiltersAndSortsAndAggregate?: boolean,
@@ -142,6 +143,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
             type: viewType,
             objectMetadataId: sourceView.objectMetadataId,
             anyFieldFilterValue: anyFieldFilterValue,
+            presetFilter: sourceView.presetFilter,
             calendarLayout:
               viewType === ViewType.CALENDAR
                 ? ViewCalendarLayout.MONTH
@@ -154,7 +156,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
               viewType === ViewType.CALENDAR
                 ? calendarEndFieldMetadataId
                 : undefined,
-            visibility,
+            isPrivate,
           },
         },
         objectMetadataItem.id,
@@ -189,6 +191,8 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
             viewFieldGroupId: viewField.viewFieldGroupId,
             relationTargetFieldMetadataId:
               viewField.relationTargetFieldMetadataId,
+            relationScope: removeTypenames(viewField.relationScope),
+            label: viewField.label,
             viewId: newViewId,
           })),
       });

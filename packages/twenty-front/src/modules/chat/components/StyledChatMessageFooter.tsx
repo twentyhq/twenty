@@ -4,6 +4,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 export const StyledChatMessageFooter = styled.div<{
   isSpreadOut?: boolean;
+  isCompact?: boolean;
   isRightAligned: boolean;
 }>`
   align-items: center;
@@ -16,6 +17,7 @@ export const StyledChatMessageFooter = styled.div<{
   gap: ${themeCssVariables.spacing[1]};
   justify-content: ${({ isSpreadOut }) =>
     isSpreadOut ? 'space-between' : 'flex-start'};
-  margin-top: ${themeCssVariables.spacing[2]};
+  margin-top: ${({ isCompact }) =>
+    isCompact ? themeCssVariables.spacing[1] : themeCssVariables.spacing[2]};
   width: 100%;
 `;

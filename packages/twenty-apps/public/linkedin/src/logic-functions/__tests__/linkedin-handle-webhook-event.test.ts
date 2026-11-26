@@ -5,6 +5,7 @@ import { type UnipileWebhookEvent } from 'src/unipile/types/unipile-webhook-even
 
 const mocks = vi.hoisted(() => ({
   listConnections: vi.fn(),
+  enqueueJobs: vi.fn(),
   listMessageChannels: vi.fn(),
   ingestMessages: vi.fn(),
   uploadMessageAttachment: vi.fn(),
@@ -23,7 +24,11 @@ vi.mock('twenty-sdk/define', () => ({
 }));
 
 vi.mock('twenty-sdk/logic-function', () => ({
+  RetryableLogicFunctionError: class RetryableLogicFunctionError extends Error {
+    name = 'RetryableLogicFunctionError';
+  },
   listConnections: mocks.listConnections,
+  enqueueJobs: mocks.enqueueJobs,
   listMessageChannels: mocks.listMessageChannels,
   ingestMessages: mocks.ingestMessages,
   uploadMessageAttachment: mocks.uploadMessageAttachment,
@@ -49,6 +54,9 @@ vi.mock('src/unipile/utils/get-unipile-chat.util', () => ({
 vi.mock('src/unipile/utils/download-unipile-message-attachment.util', () => ({
   downloadUnipileMessageAttachment: mocks.downloadUnipileMessageAttachment,
 }));
+
+const { UnipileRateLimitError, UnipileRequestError } =
+  await import('src/unipile/utils/request-unipile.util');
 
 const { linkedinHandleWebhookEventHandler } =
   await import('src/logic-functions/linkedin-handle-webhook-event');
@@ -260,6 +268,7 @@ describe('linkedinHandleWebhookEventHandler', () => {
     expect(mocks.getUnipileChat).toHaveBeenCalledExactlyOnceWith({
       accountId: 'acc_1',
       chatId: 'chat-1',
+      deadlineAtMs: expect.any(Number),
     });
     expect(
       mocks.ingestMessages.mock.calls[0][0].messages[0].participants,
@@ -288,6 +297,178 @@ describe('linkedinHandleWebhookEventHandler', () => {
         id: true,
       },
     });
+  });
+
+  it('ingests a new message of a conversation the member selected, as it arrives', async () => {
+    mocks.kvGet.mockImplementation(async (key: string) =>
+      key === 'linkedin-settings:connection-id'
+        ? {
+            importPolicy: 'SELECTED',
+            selectedChats: [{ id: 'chat-1', name: 'Daphné Müller' }],
+          }
+        : null,
+    );
+
+    await expect(
+      linkedinHandleWebhookEventHandler(
+        buildMessageEvent({
+          sender_id: DAPHNE.id,
+          sender: DAPHNE,
+          is_sender: false,
+        }),
+      ),
+    ).resolves.toEqual({ handled: true });
+    expect(mocks.ingestMessages).toHaveBeenCalledOnce();
+  });
+
+  it('leaves out a message of a conversation the member did not select, without reading it', async () => {
+    mocks.kvGet.mockImplementation(async (key: string) =>
+      key === 'linkedin-settings:connection-id'
+        ? {
+            importPolicy: 'SELECTED',
+            selectedChats: [{ id: 'chat-2', name: 'chat-2' }],
+          }
+        : null,
+    );
+
+    await expect(
+      linkedinHandleWebhookEventHandler(
+        buildMessageEvent({
+          sender_id: DAPHNE.id,
+          sender: DAPHNE,
+          is_sender: false,
+        }),
+      ),
+    ).resolves.toEqual({
+      handled: false,
+      reason: 'Conversation is not selected',
+    });
+    expect(mocks.getUnipileChat).not.toHaveBeenCalled();
+    expect(mocks.ingestMessages).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    [
+      'Unipile answers 503',
+      new UnipileRequestError('Service unavailable', 503),
+    ],
+    ['the network drops', new TypeError('fetch failed')],
+  ])('asks for the job to be retried when %s', async (_case, error) => {
+    mocks.getUnipileChat.mockRejectedValue(error);
+
+    await expect(
+      linkedinHandleWebhookEventHandler(
+        buildMessageEvent({
+          sender_id: DAPHNE.id,
+          sender: DAPHNE,
+          is_sender: false,
+        }),
+      ),
+    ).rejects.toMatchObject({
+      name: 'RetryableLogicFunctionError',
+      message: error.message,
+    });
+    expect(mocks.ingestMessages).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    [
+      'the chat',
+      () =>
+        mocks.getUnipileChat.mockRejectedValue(
+          new UnipileRateLimitError('Retry in 60 seconds.', 61),
+        ),
+      61,
+    ],
+    [
+      'a profile',
+      () =>
+        mocks.getUnipileUser.mockRejectedValue(
+          new UnipileRateLimitError('Retry in 2 hours.', 7201),
+        ),
+      7201,
+    ],
+  ])(
+    'runs the event again once the rate limit on %s has reset, not before',
+    async (_case, rateLimit, retryAfterSeconds) => {
+      rateLimit();
+
+      const event = buildMessageEvent({
+        sender_id: DAPHNE.id,
+        sender: DAPHNE,
+        is_sender: false,
+      });
+
+      await expect(linkedinHandleWebhookEventHandler(event)).resolves.toEqual({
+        handled: false,
+        reason: `Rate limited, retried in ${retryAfterSeconds}s`,
+      });
+      expect(mocks.enqueueJobs).toHaveBeenCalledExactlyOnceWith({
+        logicFunctionUniversalIdentifier: expect.any(String),
+        jobs: [
+          {
+            jobId: 'linkedin-webhook-event-evt_1-rate-limit-1',
+            payload: { ...event, rateLimitRetryCount: 1 },
+          },
+        ],
+        delayMs: retryAfterSeconds * 1000,
+      });
+    },
+  );
+
+  it('stops waiting for a rate limit that never resets and lets the queue decide', async () => {
+    mocks.getUnipileChat.mockRejectedValue(
+      new UnipileRateLimitError('Retry in 60 seconds.', 61),
+    );
+
+    await expect(
+      linkedinHandleWebhookEventHandler({
+        ...buildMessageEvent({
+          sender_id: DAPHNE.id,
+          sender: DAPHNE,
+          is_sender: false,
+        }),
+        rateLimitRetryCount: 3,
+      }),
+    ).rejects.toMatchObject({ name: 'RetryableLogicFunctionError' });
+    expect(mocks.enqueueJobs).not.toHaveBeenCalled();
+  });
+
+  it('gives Unipile no longer than the job has left to return the chat and the profile', async () => {
+    vi.useFakeTimers({ now: 0 });
+
+    await linkedinHandleWebhookEventHandler(
+      buildMessageEvent({
+        sender_id: DAPHNE.id,
+        sender: DAPHNE,
+        is_sender: false,
+      }),
+    );
+
+    expect(mocks.getUnipileChat).toHaveBeenCalledWith(
+      expect.objectContaining({ deadlineAtMs: 20_000 }),
+    );
+    expect(mocks.getUnipileUser).toHaveBeenCalledWith(
+      expect.objectContaining({ deadlineAtMs: 20_000 }),
+    );
+
+    vi.useRealTimers();
+  });
+
+  it('fails without a retry on an error another attempt would not fix', async () => {
+    mocks.getUnipileChat.mockRejectedValue(
+      new UnipileRequestError('Chat not found', 404),
+    );
+
+    await expect(
+      linkedinHandleWebhookEventHandler(
+        buildMessageEvent({
+          sender_id: DAPHNE.id,
+          sender: DAPHNE,
+          is_sender: false,
+        }),
+      ),
+    ).rejects.toMatchObject({ name: 'UnipileRequestError' });
   });
 
   it('ignores events of accounts no connection owns', async () => {

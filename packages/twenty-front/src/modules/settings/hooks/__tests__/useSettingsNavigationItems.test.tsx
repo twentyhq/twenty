@@ -183,6 +183,30 @@ describe('useSettingsNavigationItems', () => {
     expect(billingItem?.isHidden).toBe(true);
   });
 
+  it.each([
+    { permissionFlags: [PermissionFlagType.BILLING], isHidden: false },
+    { permissionFlags: [PermissionFlagType.WORKSPACE], isHidden: true },
+  ])(
+    'should set billing navigation hidden to $isHidden with $permissionFlags',
+    ({ permissionFlags, isHidden }) => {
+      jotaiStore.set(billingState.atom, {
+        ...mockBilling,
+        isBillingEnabled: true,
+      });
+      setPermissionFlags(permissionFlags);
+
+      const { result } = renderHook(() => useSettingsNavigationItems(), {
+        wrapper: Wrapper,
+      });
+
+      const billingItem = result.current
+        .find((section) => section.label === 'Workspace')
+        ?.items.find((item) => item.label === 'Billing');
+
+      expect(billingItem?.isHidden).toBe(isHidden);
+    },
+  );
+
   it('should show user section items regardless of permissions', () => {
     setPermissionFlags([]);
 

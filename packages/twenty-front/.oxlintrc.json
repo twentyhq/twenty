@@ -140,6 +140,24 @@
       {
         "directions": [
           {
+            "sourcePath": "/src/pages/inbox/",
+            "forbiddenImportPrefixes": ["~/pages/"],
+            "ignoredSourcePaths": ["/__tests__/", "/__stories__/"],
+            "reason": "a page only composes modules, so it must not import another page. Move the shared piece into the module that owns it."
+          },
+          {
+            "sourcePath": "/src/pages/legacy-ai-chat/",
+            "forbiddenImportPrefixes": ["~/pages/"],
+            "ignoredSourcePaths": ["/__tests__/", "/__stories__/"],
+            "reason": "a page only composes modules, so it must not import another page. Move the shared piece into the module that owns it."
+          },
+          {
+            "sourcePath": "/src/pages/object-record/",
+            "forbiddenImportPrefixes": ["~/pages/"],
+            "ignoredSourcePaths": ["/__tests__/", "/__stories__/"],
+            "reason": "a page only composes modules, so it must not import another page. Move the shared piece into the module that owns it."
+          },
+          {
             "sourcePath": "/src/modules/ai-chat/",
             "forbiddenImportPrefixes": ["@/inbox/", "@/legacy-ai-chat/"],
             "ignoredSourcePaths": [

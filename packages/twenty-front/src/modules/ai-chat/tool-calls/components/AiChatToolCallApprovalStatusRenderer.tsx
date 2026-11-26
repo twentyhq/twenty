@@ -31,7 +31,6 @@ export const AiChatToolCallApprovalStatusRenderer = ({
     | undefined;
   const result = output?.result;
   const status: ProposeToolCallToolStatus = result?.status ?? 'pending';
-  // refused when proposed, or failing outright, the call never reached the person
   const hasFailedToPropose =
     toolPart.state === 'output-error' ||
     (isDefined(output) && !isDefined(result));

@@ -13,6 +13,7 @@ import {
   CalendarChannelException,
   CalendarChannelExceptionCode,
 } from 'src/engine/metadata-modules/calendar-channel/calendar-channel.exception';
+import { ChannelVisibilityRuleSyncSchedulerService } from 'src/engine/permissions/channel-visibility/services/channel-visibility-rule-sync-scheduler.service';
 import { CALENDAR_CHANNEL_DELETED_EVENT } from 'src/engine/metadata-modules/calendar-channel/constants/calendar-channel-deleted.constant';
 import { CalendarChannelDTO } from 'src/engine/metadata-modules/calendar-channel/dtos/calendar-channel.dto';
 import { type PublicCalendarChannelDTO } from 'src/engine/metadata-modules/calendar-channel/dtos/public-calendar-channel.dto';
@@ -30,6 +31,7 @@ export class CalendarChannelMetadataService {
     private readonly repository: Repository<CalendarChannelEntity>,
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+    private readonly channelVisibilityRuleSyncSchedulerService: ChannelVisibilityRuleSyncSchedulerService,
   ) {}
 
   async findAll(workspaceId: string): Promise<CalendarChannelDTO[]> {
@@ -225,8 +227,13 @@ export class CalendarChannelMetadataService {
     },
   ): Promise<CalendarChannelDTO> {
     const entity = this.repository.create(data);
+    const savedEntity = await this.repository.save(entity);
 
-    return this.repository.save(entity);
+    await this.channelVisibilityRuleSyncSchedulerService.scheduleSync(
+      data.workspaceId,
+    );
+
+    return savedEntity;
   }
 
   async update({
@@ -243,6 +250,12 @@ export class CalendarChannelMetadataService {
       data as Record<string, unknown>,
     );
 
+    if ('visibility' in data) {
+      await this.channelVisibilityRuleSyncSchedulerService.scheduleSync(
+        workspaceId,
+      );
+    }
+
     return this.repository.findOneOrFail({ where: { id, workspaceId } });
   }
 
@@ -258,6 +271,10 @@ export class CalendarChannelMetadataService {
     });
 
     await this.repository.delete({ id, workspaceId });
+
+    await this.channelVisibilityRuleSyncSchedulerService.scheduleSync(
+      workspaceId,
+    );
 
     this.workspaceEventEmitter.emitCustomBatchEvent<CalendarChannelDeletedEvent>(
       CALENDAR_CHANNEL_DELETED_EVENT,

@@ -1,3 +1,4 @@
+import { getCanSendAiChatMessage } from '@/ai-chat/composer/utils/getCanSendAiChatMessage';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -9,5 +10,5 @@ export const useCanSendAiChatMessage = () => {
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
 
-  return aiModels.length > 0 || isAiChatInboxEnabled;
+  return getCanSendAiChatMessage({ aiModels, isAiChatInboxEnabled });
 };

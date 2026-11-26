@@ -44,28 +44,6 @@ exports[`View Filter Group read should fail when the view filter group is delete
 }
 `;
 
-exports[`View Filter Group read should fail when the view filter group is soft-deleted 1`] = `
-{
-  "extensions": {
-    "code": "NOT_FOUND",
-    "userFriendlyMessage": "An error occurred.",
-  },
-  "message": "View filter group (id: <id>) not found",
-  "name": "NotFoundError",
-}
-`;
-
-exports[`View Filter Group read should fail when the view filter group is soft-deleted 2`] = `
-{
-  "code": "VIEW_FILTER_GROUP_NOT_FOUND",
-  "error": "Error",
-  "messages": [
-    "View filter group (id: <id>) not found",
-  ],
-  "statusCode": 404,
-}
-`;
-
 exports[`View Filter Group read should fail when the view of the view filter group is deleted 1`] = `
 {
   "extensions": {
@@ -78,28 +56,6 @@ exports[`View Filter Group read should fail when the view of the view filter gro
 `;
 
 exports[`View Filter Group read should fail when the view of the view filter group is deleted 2`] = `
-{
-  "code": "VIEW_FILTER_GROUP_NOT_FOUND",
-  "error": "Error",
-  "messages": [
-    "View filter group (id: <id>) not found",
-  ],
-  "statusCode": 404,
-}
-`;
-
-exports[`View Filter Group read should fail when the view of the view filter group is soft-deleted 1`] = `
-{
-  "extensions": {
-    "code": "NOT_FOUND",
-    "userFriendlyMessage": "An error occurred.",
-  },
-  "message": "View filter group (id: <id>) not found",
-  "name": "NotFoundError",
-}
-`;
-
-exports[`View Filter Group read should fail when the view of the view filter group is soft-deleted 2`] = `
 {
   "code": "VIEW_FILTER_GROUP_NOT_FOUND",
   "error": "Error",

@@ -43,7 +43,7 @@ export const buildAgentChatWebPushNotification = ({
   >;
   isPreviewEnabled: boolean;
   assistantDisplayName: string;
-}): Omit<WebPushNotification, 'renotify'> => {
+}): Omit<WebPushNotification, 'renotify' | 'badgeCount'> => {
   const url = getAppPath(AppPath.AiChatInbox, { threadId: thread.id });
   const tag = getAgentChatWebPushNotificationTag(thread.id);
   const newMessageLabel = i18n._(msg`New message`);

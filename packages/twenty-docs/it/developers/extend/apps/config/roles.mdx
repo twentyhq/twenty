@@ -88,8 +88,10 @@ di predicati.
 
 Un predicato fa riferimento a un campo tramite il relativo `universalIdentifier`, un `operand` e (facoltativamente) un
 campo workspaceMember il cui valore viene iniettato al momento della query — così puoi esprimere "la relazione di proprietario
-del record **è** l'attuale membro dello spazio di lavoro". Questo ruolo può creare qualsiasi azienda, ma legge e
-aggiorna solo le aziende di cui è proprietario:
+del record **è** l'attuale membro dello spazio di lavoro". Con `relationFieldUniversalIdentifier`, un predicato
+confronta invece un campo dei record correlati tramite quel campo di relazione, ad esempio
+`messageChannelId` delle associazioni di canale di un messaggio. Questo ruolo può creare qualsiasi azienda, ma legge
+e aggiorna solo le aziende di sua proprietà:
 
 ```ts src/roles/partner-role.ts
 import {

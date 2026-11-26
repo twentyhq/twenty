@@ -38,6 +38,7 @@ type Assertions = [
       | 'defaultValue'
       | 'overrides'
       | 'options'
+      | 'formula'
       | 'isUnique'
       | 'isSearchable'
       | 'isAuditLogged'
@@ -70,8 +71,8 @@ type Assertions = [
       | 'kanbanColumnWidth'
       | 'groupLoadLimit'
       | 'anyFieldFilterValue'
-      | 'visibility'
-      | 'createdByUserWorkspaceId'
+      | 'presetFilter'
+      | 'isPrivate'
       | 'isActive'
       | 'universalOverrides'
     >

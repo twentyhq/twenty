@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { In, IsNull, Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { ApplicationAuthorizationEntity } from 'src/engine/core-modules/application/application-authorization/application-authorization.entity';
@@ -150,10 +151,12 @@ export class ApplicationAuthorizationService {
 
   async findActiveAuthorizationsForWorkspace({
     workspaceId,
+    applicationId,
   }: {
     workspaceId: string;
+    applicationId?: string;
   }): Promise<ApplicationAuthorizationEntity[]> {
-    return await this.applicationAuthorizationRepository
+    const queryBuilder = this.applicationAuthorizationRepository
       .createQueryBuilder('applicationAuthorization')
       .innerJoinAndSelect('applicationAuthorization.application', 'application')
       .leftJoinAndSelect(
@@ -163,9 +166,42 @@ export class ApplicationAuthorizationService {
       .where('applicationAuthorization.workspaceId = :workspaceId', {
         workspaceId,
       })
-      .andWhere('applicationAuthorization.revokedAt IS NULL')
+      .andWhere('applicationAuthorization.revokedAt IS NULL');
+
+    if (isDefined(applicationId)) {
+      queryBuilder.andWhere(
+        'applicationAuthorization.applicationId = :applicationId',
+        { applicationId },
+      );
+    }
+
+    return await queryBuilder
       .orderBy('applicationAuthorization.lastUsedAt', 'DESC')
       .getMany();
+  }
+
+  // Inner join drops authorizations of soft-deleted applications, as in the listings
+  async countActiveAuthorizationsByApplicationForWorkspace({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<{ applicationId: string; connectedMemberCount: number }[]> {
+    const rows = await this.applicationAuthorizationRepository
+      .createQueryBuilder('applicationAuthorization')
+      .innerJoin('applicationAuthorization.application', 'application')
+      .select('applicationAuthorization.applicationId', 'applicationId')
+      .addSelect('COUNT(*)', 'connectedMemberCount')
+      .where('applicationAuthorization.workspaceId = :workspaceId', {
+        workspaceId,
+      })
+      .andWhere('applicationAuthorization.revokedAt IS NULL')
+      .groupBy('applicationAuthorization.applicationId')
+      .getRawMany<{ applicationId: string; connectedMemberCount: string }>();
+
+    return rows.map(({ applicationId, connectedMemberCount }) => ({
+      applicationId,
+      connectedMemberCount: Number(connectedMemberCount),
+    }));
   }
 
   async isAccessTokenAuthorized(
@@ -238,31 +274,25 @@ export class ApplicationAuthorizationService {
       | { id: string; workspaceId: string }
       | { userId: string; applicationId: string },
   ): Promise<boolean> {
-    const activeAuthorizations =
-      await this.applicationAuthorizationRepository.find({
-        where: { ...criteria, revokedAt: IsNull() },
-        select: { id: true },
-      });
+    // Every criterion matches at most one row: an id, or the unique (userId, applicationId) pair
+    const { raw } = await this.applicationAuthorizationRepository
+      .createQueryBuilder()
+      .update()
+      .set({ revokedAt: new Date() })
+      .where({ ...criteria, revokedAt: IsNull() })
+      .returning(['id'])
+      .execute();
 
-    if (activeAuthorizations.length === 0) {
+    const revokedAuthorizationId: unknown = raw[0]?.id;
+
+    if (!isNonEmptyString(revokedAuthorizationId)) {
       return false;
     }
 
-    const authorizationIds = activeAuthorizations.map(({ id }) => id);
-
-    await this.applicationAuthorizationRepository.update(
-      { id: In(authorizationIds), revokedAt: IsNull() },
-      { revokedAt: new Date() },
-    );
-
     // Access tokens are checked against the cached row, so they die here rather than at expiry
-    await Promise.all(
-      authorizationIds.map((authorizationId) =>
-        this.coreEntityCacheService.invalidate(
-          'applicationAuthorization',
-          authorizationId,
-        ),
-      ),
+    await this.coreEntityCacheService.invalidate(
+      'applicationAuthorization',
+      revokedAuthorizationId,
     );
 
     return true;

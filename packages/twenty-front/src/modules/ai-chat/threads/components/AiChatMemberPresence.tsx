@@ -4,7 +4,7 @@ import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { aiChatOnlineWorkspaceMemberIdsState } from '@/ai-chat/threads/states/aiChatOnlineWorkspaceMemberIdsState';
+import { onlineWorkspaceMemberIdsState } from '@/tab-presence/states/onlineWorkspaceMemberIdsState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledPresence = styled.span`
@@ -16,14 +16,15 @@ const StyledDot = styled.span<{ isOnline: boolean }>`
   background: ${({ isOnline }) =>
     isOnline
       ? themeCssVariables.color.green
-      : themeCssVariables.font.color.light};
-  border: 1px solid ${themeCssVariables.background.primary};
+      : themeCssVariables.grayScale.gray9};
   border-radius: ${themeCssVariables.border.radius.rounded};
-  bottom: calc(-1 * ${themeCssVariables.spacing['0.5']});
-  box-sizing: border-box;
+  bottom: calc(-0.5 * ${themeCssVariables.spacing['0.5']});
+  box-shadow: 0 0 0 ${themeCssVariables.spacing['0.5']}
+    ${themeCssVariables.background.primary};
+  corner-shape: round;
   height: ${themeCssVariables.spacing['1.5']};
   position: absolute;
-  right: calc(-1 * ${themeCssVariables.spacing['0.5']});
+  right: calc(-0.5 * ${themeCssVariables.spacing['0.5']});
   width: ${themeCssVariables.spacing['1.5']};
 `;
 
@@ -37,18 +38,15 @@ export const AiChatMemberPresence = ({
   children,
 }: AiChatMemberPresenceProps) => {
   const { t } = useLingui();
-  const aiChatOnlineWorkspaceMemberIds = useAtomStateValue(
-    aiChatOnlineWorkspaceMemberIdsState,
+  const onlineWorkspaceMemberIds = useAtomStateValue(
+    onlineWorkspaceMemberIdsState,
   );
 
-  if (
-    !isDefined(aiChatOnlineWorkspaceMemberIds) ||
-    !isDefined(workspaceMemberId)
-  ) {
+  if (!isDefined(onlineWorkspaceMemberIds) || !isDefined(workspaceMemberId)) {
     return children;
   }
 
-  const isOnline = aiChatOnlineWorkspaceMemberIds.includes(workspaceMemberId);
+  const isOnline = onlineWorkspaceMemberIds.includes(workspaceMemberId);
 
   return (
     <StyledPresence>

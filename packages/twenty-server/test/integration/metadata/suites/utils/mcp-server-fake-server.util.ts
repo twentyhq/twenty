@@ -4,8 +4,7 @@ import {
 } from 'test/integration/metadata/suites/utils/mcp-server-fake-oauth-server.util';
 import http from 'http';
 
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
+import { createMcpHandler, McpServer } from '@modelcontextprotocol/server';
 import { isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
@@ -35,7 +34,7 @@ const createMcpServer = ({
       'search_docs',
       {
         description: 'Search the documentation',
-        inputSchema: { query: z.string() },
+        inputSchema: z.object({ query: z.string() }),
         annotations: { readOnlyHint: true },
       },
       async ({ query }) => ({
@@ -49,7 +48,7 @@ const createMcpServer = ({
       'delete_page',
       {
         description: 'Delete a documentation page',
-        inputSchema: { pageId: z.string() },
+        inputSchema: z.object({ pageId: z.string() }),
         annotations: { destructiveHint: true },
       },
       async ({ pageId }) => ({
@@ -66,22 +65,54 @@ const createMcpServer = ({
   return mcpServer;
 };
 
-// A stateless transport is single-use, so every request gets its own server and transport.
+const readRequestBody = async (
+  request: http.IncomingMessage,
+): Promise<string> => {
+  const chunks: Buffer[] = [];
+
+  for await (const chunk of request) {
+    chunks.push(Buffer.from(chunk));
+  }
+
+  return Buffer.concat(chunks).toString('utf8');
+};
+
 const handleMcpRequest = async ({
   request,
   response,
   state,
+  baseUrl,
 }: {
   request: http.IncomingMessage;
   response: http.ServerResponse;
   state: FakeMcpServerState;
+  baseUrl: string;
 }): Promise<void> => {
-  const transport = new StreamableHTTPServerTransport({
-    sessionIdGenerator: undefined,
-  });
+  const headers = new Headers();
 
-  await createMcpServer(state).connect(transport);
-  await transport.handleRequest(request, response);
+  for (const [name, value] of Object.entries(request.headers)) {
+    if (isString(value)) {
+      headers.set(name, value);
+    }
+  }
+
+  const body =
+    request.method === 'POST' ? await readRequestBody(request) : undefined;
+  const mcpResponse = await createMcpHandler(() =>
+    createMcpServer(state),
+  ).fetch(
+    new Request(`${baseUrl}${request.url ?? '/'}`, {
+      method: request.method,
+      headers,
+      body,
+    }),
+  );
+
+  response.writeHead(
+    mcpResponse.status,
+    Object.fromEntries(mcpResponse.headers.entries()),
+  );
+  response.end(Buffer.from(await mcpResponse.arrayBuffer()));
 };
 
 export const startFakeMcpServer = ({
@@ -127,7 +158,7 @@ export const startFakeMcpServer = ({
         return;
       }
 
-      await handleMcpRequest({ request, response, state });
+      await handleMcpRequest({ request, response, state, baseUrl });
     };
 
     const server = http.createServer((request, response) => {

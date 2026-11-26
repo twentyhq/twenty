@@ -9,7 +9,6 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { UpdateFocusedTabInput } from 'src/engine/core-modules/web-push/dtos/update-focused-tab.input';
 import { UpdateInboxNotificationSettingsInput } from 'src/engine/core-modules/web-push/dtos/update-inbox-notification-settings.input';
 import { UpsertWebPushSubscriptionInput } from 'src/engine/core-modules/web-push/dtos/upsert-web-push-subscription.input';
 import { WebPushGraphqlApiExceptionFilter } from 'src/engine/core-modules/web-push/filters/web-push-graphql-api-exception.filter';
@@ -17,7 +16,6 @@ import { WebPushService } from 'src/engine/core-modules/web-push/services/web-pu
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @UsePipes(ResolverValidationPipe)
@@ -62,22 +60,6 @@ export class WebPushResolver {
         this.userSessionCookieService.extractSessionTokenFromRequest(
           context.req,
         ),
-    });
-
-    return true;
-  }
-
-  @Mutation(() => Boolean)
-  async updateFocusedTab(
-    @Args('input') { tabId, isFocused }: UpdateFocusedTabInput,
-    @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthWorkspaceMemberId() workspaceMemberId: string,
-  ): Promise<boolean> {
-    await this.webPushService.updateFocusedTab({
-      workspaceId: workspace.id,
-      workspaceMemberId,
-      tabId,
-      isFocused,
     });
 
     return true;

@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import chunk from 'lodash.chunk';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
+import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 import { v4 } from 'uuid';
@@ -17,6 +18,13 @@ import { type MessageWithParticipants } from 'src/modules/messaging/message-impo
 type MessageToRefresh = Pick<
   MessageWorkspaceEntity,
   'id' | 'subject' | 'receivedAt' | 'text' | 'isDraft'
+>;
+
+type MessageChannelMessageAssociationSource = Partial<
+  Pick<
+    MessageChannelMessageAssociationWorkspaceEntity,
+    'accountOwnerId' | 'handle'
+  >
 >;
 
 type MessageAccumulator = {
@@ -35,7 +43,8 @@ type MessageAccumulator = {
   > &
     Partial<Pick<MessageWorkspaceEntity, 'createdBy'>>;
   sentDraftToRefresh?: MessageToRefresh;
-  threadToCreate?: Pick<MessageThreadWorkspaceEntity, 'id' | 'subject'>;
+  threadToCreate?: Pick<MessageThreadWorkspaceEntity, 'id' | 'subject'> &
+    Partial<Pick<MessageThreadWorkspaceEntity, 'createdBy'>>;
   messageChannelMessageAssociationToCreate?: Pick<
     MessageChannelMessageAssociationWorkspaceEntity,
     | 'id'
@@ -44,7 +53,9 @@ type MessageAccumulator = {
     | 'messageExternalId'
     | 'messageThreadExternalId'
     | 'direction'
-  >;
+  > &
+    MessageChannelMessageAssociationSource &
+    Partial<Pick<MessageChannelMessageAssociationWorkspaceEntity, 'createdBy'>>;
 };
 @Injectable()
 export class MessagingMessageService {
@@ -52,12 +63,22 @@ export class MessagingMessageService {
 
   constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
 
-  public async saveMessagesWithinTransaction(
-    messages: MessageWithParticipants[],
-    messageChannelId: string,
-    transactionScope: WorkspaceTransactionScope,
-    workspaceId: string,
-  ): Promise<{
+  public async saveMessagesWithinTransaction({
+    messages,
+    messageChannelId,
+    transactionScope,
+    workspaceId,
+    associationSource,
+    createdBy,
+  }: {
+    messages: MessageWithParticipants[];
+    messageChannelId: string;
+    transactionScope: WorkspaceTransactionScope;
+    workspaceId: string;
+    associationSource: MessageChannelMessageAssociationSource;
+    // stamped on the records this call creates, never on existing ones
+    createdBy?: ActorMetadata;
+  }): Promise<{
     createdMessages: Partial<MessageWorkspaceEntity>[];
     refetchedMessageChannelMessageAssociationIds: string[];
     sentDraftMessageIds: string[];
@@ -143,6 +164,7 @@ export class MessagingMessageService {
         await this.enrichMessageAccumulatorWithMessageThreadToCreate(
           messages,
           messageAccumulatorMap,
+          createdBy,
         );
 
         const associationToCreateByMessageId = new Map<
@@ -173,6 +195,8 @@ export class MessagingMessageService {
             );
           }
 
+          const messageCreatedBy = message.createdBy ?? createdBy;
+
           let newOrExistingMessageId: string;
 
           if (!isDefined(messageAccumulator.existingMessageInDB)) {
@@ -186,8 +210,8 @@ export class MessagingMessageService {
               text: message.text,
               messageThreadId,
               isDraft: message.isDraft,
-              ...(isDefined(message.createdBy)
-                ? { createdBy: message.createdBy }
+              ...(isDefined(messageCreatedBy)
+                ? { createdBy: messageCreatedBy }
                 : {}),
             };
 
@@ -233,6 +257,10 @@ export class MessagingMessageService {
               messageExternalId: message.externalId,
               messageThreadExternalId: message.messageThreadExternalId,
               direction: message.direction,
+              ...associationSource,
+              ...(isDefined(messageCreatedBy)
+                ? { createdBy: messageCreatedBy }
+                : {}),
             };
 
             associationToCreateByMessageId.set(
@@ -566,6 +594,7 @@ export class MessagingMessageService {
   private async enrichMessageAccumulatorWithMessageThreadToCreate(
     messages: MessageWithParticipants[],
     messageAccumulatorMap: Map<string, MessageAccumulator>,
+    createdBy?: ActorMetadata,
   ) {
     for (const [index, message] of messages.entries()) {
       const messageAccumulator = messageAccumulatorMap.get(message.externalId);
@@ -612,9 +641,12 @@ export class MessagingMessageService {
       if (!isDefined(newOrExistingMessageThreadId)) {
         newOrExistingMessageThreadId = v4();
 
+        const threadCreatedBy = message.createdBy ?? createdBy;
+
         messageAccumulator.threadToCreate = {
           id: newOrExistingMessageThreadId,
           subject: message.subject,
+          ...(isDefined(threadCreatedBy) ? { createdBy: threadCreatedBy } : {}),
         };
       }
 

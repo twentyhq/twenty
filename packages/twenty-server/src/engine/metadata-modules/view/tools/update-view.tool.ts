@@ -48,7 +48,7 @@ export class UpdateViewTool extends BaseTool<typeof updateViewInputSchema> {
         icon: input.icon,
       },
       workspaceId,
-      userWorkspaceId,
+      authContext,
     });
 
     return {
@@ -60,7 +60,7 @@ export class UpdateViewTool extends BaseTool<typeof updateViewInputSchema> {
         objectMetadataId: view.objectMetadataId,
         type: view.type,
         icon: view.icon,
-        visibility: view.visibility,
+        isPrivate: view.isPrivate,
       },
     };
   }

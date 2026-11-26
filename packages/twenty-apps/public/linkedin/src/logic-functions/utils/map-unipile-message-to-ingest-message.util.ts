@@ -34,7 +34,13 @@ const buildLinkedinMessageParticipants = ({
         handle: buildLinkedinProfileHandle({ id: message.sender_id }),
       };
 
-  return [sender, { role: 'TO', handle: channelHandle }];
+  return [
+    sender,
+    { role: 'TO', handle: channelHandle },
+    ...counterparts
+      .map((user) => buildLinkedinParticipant({ role: 'TO', user }))
+      .filter(({ handle }) => handle !== sender.handle),
+  ];
 };
 
 export const mapUnipileMessageToIngestMessage = ({

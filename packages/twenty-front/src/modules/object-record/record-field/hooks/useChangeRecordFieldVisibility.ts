@@ -4,6 +4,7 @@ import { currentRecordFieldsComponentState } from '@/object-record/record-field/
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
+import { buildAddedRecordField } from '@/object-record/record-field/utils/buildAddedRecordField';
 import { findCanonicalRecordField } from '@/object-record/record-field/utils/findCanonicalRecordField';
 import { mapRecordFieldToViewField } from '@/views/utils/mapRecordFieldToViewField';
 import { isDefined } from 'twenty-shared/utils';
@@ -87,15 +88,11 @@ export const useChangeRecordFieldVisibility = (
     fieldMetadataId: string;
     relationTargetFieldMetadataId: string;
   }) => {
-    const lookupRecordField: RecordField = {
-      id: v4(),
+    const lookupRecordField = buildAddedRecordField({
+      currentRecordFields,
       fieldMetadataItemId: fieldMetadataId,
-      size: 100,
-      isVisible: true,
-      isCanonical: false,
-      position: getLastPosition() + 1,
       relationTargetFieldMetadataId,
-    };
+    });
 
     upsertRecordField(lookupRecordField);
 

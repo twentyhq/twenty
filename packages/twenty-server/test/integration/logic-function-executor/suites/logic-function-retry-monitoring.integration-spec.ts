@@ -223,9 +223,11 @@ describe('Logic function retry monitoring (integration)', () => {
           workspaceId: SEED_APPLE_WORKSPACE_ID,
           applicationRetryCount: 2,
         },
+        jobId: 'job-id',
         retryLimit: 3,
         attemptsMade: 3,
         persistRetryCount,
+        enqueueJobFailureHandler: jest.fn(),
       }),
     ).resolves.toBeUndefined();
 

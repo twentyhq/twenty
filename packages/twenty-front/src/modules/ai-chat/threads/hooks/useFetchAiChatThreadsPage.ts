@@ -1,10 +1,7 @@
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
-import {
-  StandardObjectNameSingular,
-  type RecordGqlOperationFilter,
-} from 'twenty-shared/types';
+import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import {
   canAccessThroughAllRecordsOrRlsPermission,
   isDefined,
@@ -19,7 +16,7 @@ import { getAiChatThreadParticipantFromRecord } from '@/ai-chat/threads/utils/ge
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
+import { aiChatThreadObjectMetadataItemSelector } from '@/ai-chat/threads/states/selectors/aiChatThreadObjectMetadataItemSelector';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { objectPermissionsByObjectMetadataIdSelector } from '@/object-metadata/states/objectPermissionsByObjectMetadataIdSelector';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
@@ -57,16 +54,13 @@ export const useFetchAiChatThreadsPage = () => {
         return undefined;
       }
 
-      const chatObjectMetadataItem = store.get(
-        objectMetadataItemFamilySelector.selectorFamily({
-          objectName: StandardObjectNameSingular.AgentChatThread,
-          objectNameType: 'singular',
-        }),
+      const aiChatThreadObjectMetadataItem = store.get(
+        aiChatThreadObjectMetadataItemSelector.atom,
       );
 
       if (
-        !isDefined(chatObjectMetadataItem) ||
-        !isNonEmptyArray(chatObjectMetadataItem.readableFields)
+        !isDefined(aiChatThreadObjectMetadataItem) ||
+        !isNonEmptyArray(aiChatThreadObjectMetadataItem.readableFields)
       ) {
         return undefined;
       }
@@ -74,7 +68,7 @@ export const useFetchAiChatThreadsPage = () => {
       const hasReadPermission = canAccessThroughAllRecordsOrRlsPermission({
         objectRecordsPermissions: getObjectPermissionsForObject(
           objectPermissionsByObjectMetadataId,
-          chatObjectMetadataItem.id,
+          aiChatThreadObjectMetadataItem.id,
         ),
         operationType: 'read',
       });
@@ -90,11 +84,11 @@ export const useFetchAiChatThreadsPage = () => {
       const result = await apolloCoreClient
         .query<RecordGqlOperationFindManyResult>({
           query: generateFindManyRecordsQuery({
-            objectMetadataItem: chatObjectMetadataItem,
+            objectMetadataItem: aiChatThreadObjectMetadataItem,
             objectMetadataItems: store.get(objectMetadataItemsSelector.atom),
             recordGqlFields: AI_CHAT_THREAD_RECORD_GQL_FIELDS,
             objectPermissionsByObjectMetadataId,
-          }),
+          }).query,
           variables: {
             filter: isDefined(threadIdFilter)
               ? { and: [AI_CHAT_THREADS_FILTER, threadIdFilter] }
@@ -111,7 +105,8 @@ export const useFetchAiChatThreadsPage = () => {
           return undefined;
         });
 
-      const connection = result?.data?.[chatObjectMetadataItem.namePlural];
+      const connection =
+        result?.data?.[aiChatThreadObjectMetadataItem.namePlural];
 
       if (!isDefined(connection)) {
         return undefined;
@@ -125,7 +120,6 @@ export const useFetchAiChatThreadsPage = () => {
         threads: records.map(
           ({ participants: _participants, ...thread }) => thread,
         ),
-        // Roles that read every record get every member's row
         participants: records
           .flatMap(({ participants }) => participants ?? [])
           .filter(

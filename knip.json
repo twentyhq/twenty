@@ -2,7 +2,6 @@
   "$schema": "https://unpkg.com/knip@6/schema.json",
   "ignoreWorkspaces": [
     "packages/twenty-docs",
-    "packages/twenty-apps/**",
     "packages/twenty-front-component-renderer"
   ],
   "rules": {
@@ -19,6 +18,9 @@
     "unresolved": "warn"
   },
   "workspaces": {
+    ".": {
+      "ignoreDependencies": ["eslint-plugin-lingui"]
+    },
     "packages/twenty-server": {
       "entry": [
         "src/main.ts",
@@ -31,13 +33,12 @@
         "src/engine/metadata-modules/ai/ai-front-component/utils/execute-front-component-builder-request.util.ts",
         "src/engine/metadata-modules/ai/ai-front-component/front-component-compiler.service.ts",
         "src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/http-egress/http-egress-lambda.handler.ts",
+        "src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/sdk-client-generation/sdk-client-generation-lambda.handler.ts",
         "lingui.config.ts",
         "scripts/**/*.ts",
         "**/*.spec.ts",
         "**/*.integration-spec.ts",
         "test/integration/graphql/codegen/index.ts",
-        "test/integration/utils/setup-test.ts",
-        "test/integration/utils/teardown-test.ts",
         "src/database/typeorm/core/legacy-typeorm-migrations-do-not-add/**/*.ts"
       ],
       "project": ["src/**/*.ts", "test/**/*.ts", "scripts/**/*.ts"],
@@ -55,11 +56,10 @@
         "src/engine/metadata-modules/*/constants/standard-*-names.ts",
         "src/engine/metadata-modules/*/constants/standard-*-titles.ts"
       ],
-      "ignoreDependencies": ["@types/psl", "twenty-ui"]
+      "ignoreDependencies": ["@types/psl"]
     },
     "packages/twenty-front": {
       "entry": [
-        "src/index.tsx",
         "public/service-worker.js",
         "src/**/graphql/**/*.{ts,tsx}",
         "src/modules/geo-map/graphql-query/*.{ts,tsx}",
@@ -79,8 +79,6 @@
         "@storybook/addon-coverage",
         "buffer",
         "emojibase-data",
-        "esbuild",
-        "playwright",
         "rollup-plugin-node-polyfills"
       ]
     },
@@ -92,6 +90,33 @@
       "entry": ["scripts/**/*.ts", "docs/**/*.ts"],
       "ignore": ["src/styles/abstracts/**"],
       "ignoreDependencies": ["@storybook/addon-coverage", "@swc/core"]
+    },
+    "packages/create-twenty-app": {
+      "ignoreDependencies": ["jest-environment-node"]
+    },
+    "packages/twenty-cli": {
+      "entry": ["scripts/**/*.mjs"],
+      "ignoreDependencies": ["vite-tsconfig-paths"]
+    },
+    "packages/twenty-companion": {
+      "entry": ["lingui.config.ts"]
+    },
+    "packages/twenty-e2e-testing": {
+      "entry": ["playwright.config.ts", "tests/**/*.ts", "reporters/**/*.ts"],
+      "playwright": false
+    },
+    "packages/twenty-emails": {
+      "ignoreDependencies": ["@lingui/swc-plugin"]
+    },
+    "packages/twenty-sdk": {
+      "ignoreDependencies": ["preact"]
+    },
+    "packages/twenty-website": {
+      "entry": ["lingui.config.ts", "wyw-in-js.config.cjs"],
+      "ignoreDependencies": ["@lingui/swc-plugin"]
+    },
+    "packages/twenty-zapier": {
+      "ignoreDependencies": ["jest-environment-node"]
     }
   }
 }

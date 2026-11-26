@@ -15,8 +15,6 @@ const StyledPile = styled.div`
   width: 100%;
 `;
 
-// Each card sits a step lower and wider than the one behind it, leaving the
-// title of the cards behind in view
 const StyledCard = styled.div<{ $depth: number }>`
   align-items: flex-start;
   background: ${themeCssVariables.background.primary};

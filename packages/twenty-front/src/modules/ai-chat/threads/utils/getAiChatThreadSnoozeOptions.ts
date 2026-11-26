@@ -32,8 +32,6 @@ const isSameDay = (
   second: Temporal.ZonedDateTime,
 ) => first.toPlainDate().equals(second.toPlainDate());
 
-// An option that is already behind, or that lands on the same moment as
-// another, is left out rather than shown twice.
 export const getAiChatThreadSnoozeOptions = ({
   now: instant,
   timeZone,
@@ -41,13 +39,10 @@ export const getAiChatThreadSnoozeOptions = ({
   now: Date;
   timeZone: string;
 }): AiChatThreadSnoozeOption[] => {
-  // Worked out on the member's clock, which can differ from the browser's
   const now = Temporal.Instant.fromEpochMilliseconds(
     instant.getTime(),
   ).toZonedDateTimeISO(timeZone);
   const thisEvening = atHour(now, EVENING_HOUR);
-  // Rounded to a round hour, the way a person would say it: up, unless that
-  // would push it into tomorrow
   const laterTodayRoundedUp = startOfHour(
     now.add({
       hours: LATER_TODAY_HOURS + (now.minute > 0 ? 1 : 0),
@@ -58,7 +53,6 @@ export const getAiChatThreadSnoozeOptions = ({
     : startOfHour(now.add({ hours: LATER_TODAY_HOURS }));
   const dayAfter = now.add({ days: 1 });
   const tomorrow = atHour(dayAfter, MORNING_HOUR);
-  // From Sunday, next Monday is tomorrow, so next week starts the Monday after
   const nextWeek = atHour(
     dayAfter.add({
       days:

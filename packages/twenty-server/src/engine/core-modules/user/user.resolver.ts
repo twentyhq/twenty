@@ -9,7 +9,6 @@ import { msg } from '@lingui/core/macro';
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, Repository } from 'typeorm';
 
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
@@ -49,6 +48,7 @@ import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { assertWorkspaceMemberUpdateUsesNonCustomFieldsOnly } from 'src/engine/core-modules/user/utils/assert-workspace-member-update-non-custom-fields.util';
 import { assertWorkspaceMemberUpdateValuesAreValid } from 'src/engine/core-modules/user/utils/assert-workspace-member-update-values-are-valid.util';
+import { trimWorkspaceMemberName } from 'src/engine/core-modules/user/utils/trim-workspace-member-name.util';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
@@ -73,7 +73,7 @@ import {
 } from 'src/engine/permissions/permissions.exception';
 import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 import { RolePermissionsService } from 'src/engine/permissions/role-permissions.service';
-import { type UserWorkspacePermissions } from 'src/engine/permissions/types/user-workspace-permissions.type';
+import { UserWorkspacePermissionsReadService } from 'src/engine/permissions/user-workspace-permissions-read.service';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/permissions/utils/permissions-graphql-api-exception.filter';
 import { fromUserWorkspacePermissionsToUserWorkspacePermissionsDto } from 'src/engine/metadata-modules/role/utils/fromUserWorkspacePermissionsToUserWorkspacePermissionsDto';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -82,6 +82,7 @@ import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/acc
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 
 const USER_ACCESS_POLICY: AccessPolicy = {
   authPrincipals: {
@@ -92,6 +93,17 @@ const USER_ACCESS_POLICY: AccessPolicy = {
   },
   requiredPermissionFlags: [],
 };
+
+const USER_SESSION_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: true,
+    apiKey: false,
+    oauthClient: false,
+    application: false,
+  },
+  requiredPermissionFlags: [],
+};
+
 const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) {
     return null;
@@ -119,29 +131,8 @@ export class UserResolver {
     private readonly workspaceMemberTranspiler: WorkspaceMemberTranspiler,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
+    private readonly userWorkspacePermissionsReadService: UserWorkspacePermissionsReadService,
   ) {}
-
-  private async getUserWorkspacePermissions({
-    currentUserWorkspace,
-    workspace,
-  }: {
-    workspace: WorkspaceEntity;
-    currentUserWorkspace: UserWorkspaceEntity;
-  }): Promise<UserWorkspacePermissions> {
-    const workspaceIsPendingOrOngoingCreation = [
-      WorkspaceActivationStatus.PENDING_CREATION,
-      WorkspaceActivationStatus.ONGOING_CREATION,
-    ].includes(workspace.activationStatus);
-
-    if (workspaceIsPendingOrOngoingCreation) {
-      return this.settingPermissionsService.getDefaultUserWorkspacePermissions();
-    }
-
-    return await this.settingPermissionsService.getUserWorkspacePermissions({
-      userWorkspaceId: currentUserWorkspace.id,
-      workspaceId: workspace.id,
-    });
-  }
 
   @Query(() => UserEntity)
   @UseGuards(AccessPolicyGuard(USER_ACCESS_POLICY))
@@ -192,10 +183,12 @@ export class UserResolver {
 
     const userWorkspacePermissions =
       fromUserWorkspacePermissionsToUserWorkspacePermissionsDto(
-        await this.getUserWorkspacePermissions({
-          currentUserWorkspace,
-          workspace: refreshedWorkspace,
-        }),
+        await this.userWorkspacePermissionsReadService.findCurrentUserWorkspacePermissions(
+          {
+            workspace: refreshedWorkspace,
+            userWorkspaceId: currentUserWorkspace.id,
+          },
+        ),
       );
 
     const twoFactorAuthenticationMethodSummary = isUserSession
@@ -219,6 +212,7 @@ export class UserResolver {
   @ResolveField(() => GraphQLJSONObject, {
     nullable: true,
   })
+  @UseGuards(NoPermissionGuard)
   async userVars(
     @Parent() user: UserEntity,
     @AuthWorkspace({ allowUndefined: true })
@@ -250,6 +244,7 @@ export class UserResolver {
   @ResolveField(() => WorkspaceMemberDTO, {
     nullable: true,
   })
+  @UseGuards(NoPermissionGuard)
   async workspaceMember(
     @Parent() user: UserEntity,
     @AuthWorkspace({ allowUndefined: true })
@@ -297,6 +292,7 @@ export class UserResolver {
   @ResolveField(() => [WorkspaceMemberDTO], {
     nullable: true,
   })
+  @UseGuards(NoPermissionGuard)
   async workspaceMembers(
     @Parent() _user: UserEntity,
     @AuthWorkspace({ allowUndefined: true })
@@ -368,6 +364,7 @@ export class UserResolver {
   @ResolveField(() => [DeletedWorkspaceMemberDTO], {
     nullable: true,
   })
+  @UseGuards(NoPermissionGuard)
   async deletedWorkspaceMembers(
     @Parent() _user: UserEntity,
     @AuthWorkspace({ allowUndefined: true })
@@ -389,11 +386,13 @@ export class UserResolver {
   @ResolveField(() => Boolean, {
     name: 'hasPassword',
   })
+  @UseGuards(NoPermissionGuard)
   hasPassword(@Parent() user: UserEntity): boolean {
     return isDefined(user.passwordHash);
   }
 
   @ResolveField(() => Boolean)
+  @UseGuards(NoPermissionGuard)
   canAccessFullAdminPanel(
     @Parent() user: UserEntity,
     @AuthWorkspace({ allowUndefined: true })
@@ -411,6 +410,7 @@ export class UserResolver {
   }
 
   @ResolveField(() => Boolean)
+  @UseGuards(NoPermissionGuard)
   canImpersonate(
     @Parent() user: UserEntity,
     @AuthWorkspace({ allowUndefined: true })
@@ -430,14 +430,8 @@ export class UserResolver {
   @ResolveField(() => String, {
     nullable: true,
   })
-  supportUserHash(
-    @Parent() parent: UserEntity,
-    @AuthIsUserSession() isUserSession: boolean,
-  ): string | null {
-    if (!isUserSession) {
-      throw buildUserSessionRequiredError();
-    }
-
+  @UseGuards(AccessPolicyGuard(USER_SESSION_ACCESS_POLICY))
+  supportUserHash(@Parent() parent: UserEntity): string | null {
     if (
       this.twentyConfigService.get('SUPPORT_DRIVER') !== SupportDriver.FRONT
     ) {
@@ -602,13 +596,13 @@ export class UserResolver {
       );
     }
 
-    assertWorkspaceMemberUpdateUsesNonCustomFieldsOnly({
-      update: input.update,
-    });
+    const update = isDefined(input.update.name)
+      ? { ...input.update, name: trimWorkspaceMemberName(input.update.name) }
+      : input.update;
 
-    assertWorkspaceMemberUpdateValuesAreValid({
-      update: input.update,
-    });
+    assertWorkspaceMemberUpdateUsesNonCustomFieldsOnly({ update });
+
+    assertWorkspaceMemberUpdateValuesAreValid({ update });
 
     const workspaceMemberRepository =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () =>
@@ -633,7 +627,7 @@ export class UserResolver {
     const workspaceMemberUpdatePayload: Partial<WorkspaceMemberWorkspaceEntity> =
       {
         id: workspaceMember.id,
-        ...(input.update as Partial<WorkspaceMemberWorkspaceEntity>),
+        ...(update as Partial<WorkspaceMemberWorkspaceEntity>),
       };
 
     await this.workspaceOrmManager.executeInWorkspaceContext(() =>
@@ -668,6 +662,7 @@ export class UserResolver {
   @ResolveField(() => OnboardingStatus, {
     nullable: true,
   })
+  @UseGuards(NoPermissionGuard)
   async onboardingStatus(
     @Parent() user: UserEntity,
     @AuthWorkspace({ allowUndefined: true })
@@ -686,6 +681,7 @@ export class UserResolver {
   @ResolveField(() => OnboardingStatus, {
     nullable: true,
   })
+  @UseGuards(NoPermissionGuard)
   async previousOnboardingStatus(
     @Parent() user: UserEntity,
     @AuthWorkspace({ allowUndefined: true })
@@ -704,6 +700,7 @@ export class UserResolver {
   @ResolveField(() => Boolean, {
     nullable: true,
   })
+  @UseGuards(NoPermissionGuard)
   async isWorkspaceCreator(
     @Parent() user: UserEntity,
     @AuthWorkspace({ allowUndefined: true })
@@ -722,6 +719,7 @@ export class UserResolver {
   @ResolveField(() => WorkspaceEntity, {
     nullable: true,
   })
+  @UseGuards(NoPermissionGuard)
   async currentWorkspace(
     @AuthWorkspace({ allowUndefined: true })
     workspace: WorkspaceEntity | undefined,
@@ -738,14 +736,8 @@ export class UserResolver {
   @ResolveField(() => [UserWorkspaceEntity], {
     nullable: false,
   })
-  async workspaces(
-    @Parent() user: UserEntity,
-    @AuthIsUserSession() isUserSession: boolean,
-  ) {
-    if (!isUserSession) {
-      throw buildUserSessionRequiredError();
-    }
-
+  @UseGuards(AccessPolicyGuard(USER_SESSION_ACCESS_POLICY))
+  async workspaces(@Parent() user: UserEntity) {
     return user.userWorkspaces;
   }
 
@@ -754,30 +746,20 @@ export class UserResolver {
     name: 'userWorkspaces',
     nullable: false,
   })
-  async userWorkspacesField(
-    @Parent() user: UserEntity,
-    @AuthIsUserSession() isUserSession: boolean,
-  ) {
-    if (!isUserSession) {
-      throw buildUserSessionRequiredError();
-    }
-
+  @UseGuards(AccessPolicyGuard(USER_SESSION_ACCESS_POLICY))
+  async userWorkspacesField(@Parent() user: UserEntity) {
     return user.userWorkspaces;
   }
 
   @ResolveField(() => AvailableWorkspaces)
+  @UseGuards(AccessPolicyGuard(USER_SESSION_ACCESS_POLICY))
   async availableWorkspaces(
     @AuthUser() user: AuthContextUser,
     @AuthProvider() authProvider: AuthProviderEnum,
     @AuthWorkspace({ allowUndefined: true })
     workspace: WorkspaceEntity | undefined,
     @AuthAuthenticatedAt() authenticatedAt: Date | undefined,
-    @AuthIsUserSession() isUserSession: boolean,
   ): Promise<AvailableWorkspaces> {
-    if (!isUserSession) {
-      throw buildUserSessionRequiredError();
-    }
-
     return this.userWorkspaceService.setLoginTokenToAvailableWorkspacesWhenAuthProviderMatch(
       await this.userWorkspaceService.findAvailableWorkspacesByEmail(
         user.email,

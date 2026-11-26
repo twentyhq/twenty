@@ -66,7 +66,7 @@ exports[`Applications acting with their grant role should fail should refuse an 
 }
 `;
 
-exports[`Applications acting with their grant role should fail should refuse twenty-standard acting for an Admin member creating a record share, where creating is disabled 1`] = `
+exports[`Applications acting with their grant role should fail should refuse twenty-standard acting for an Admin member creating an agent turn, where creating is disabled 1`] = `
 {
   "extensions": {
     "code": "FORBIDDEN",

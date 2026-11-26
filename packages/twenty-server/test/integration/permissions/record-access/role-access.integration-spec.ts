@@ -1,9 +1,12 @@
+import { buildPermissionTestAuthContext } from 'test/integration/permissions/utils/build-permission-test-auth-context.util';
 import { describePermissionTestWorkspace } from 'test/integration/permissions/utils/describe-permission-test-workspace.util';
 import {
   type PermissionTestExpectedAnswers,
   type PermissionTestPrincipals,
+  type PermissionTestRoleGrant,
 } from 'test/integration/permissions/utils/permission-test-workspace.type';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { v4 } from 'uuid';
 
 import { type PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
 import { type RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
@@ -348,6 +351,162 @@ describePermissionTestWorkspace({
           });
 
         expect([...roleIdsUnableToRead]).toEqual([roleIds.none]);
+      });
+    });
+
+    describe('a write that sets a relation', () => {
+      const RELATION_TARGET_NOT_READABLE =
+        'Relation target record is not readable by your current role';
+
+      const buildNoteTargetWriteQuestion = async (
+        role: PermissionTestRoleGrant,
+      ) => {
+        const workspace = findWorkspace();
+        const [{ noteTargetObjectMetadataId, joinColumnName }]: {
+          noteTargetObjectMetadataId: string;
+          joinColumnName: string;
+        }[] = await global.testDataSource.query(
+          `SELECT "field"."objectMetadataId" AS "noteTargetObjectMetadataId", COALESCE("field"."settings"->>'joinColumnName', "field"."name" || 'Id') AS "joinColumnName"
+             FROM core."fieldMetadata" "field"
+             JOIN core."objectMetadata" "object" ON "object"."id" = "field"."objectMetadataId"
+             WHERE "object"."workspaceId" = $1 AND "object"."nameSingular" = 'noteTarget' AND "field"."relationTargetObjectMetadataId" = $2`,
+          [workspace.workspaceId, workspace.objectMetadataId],
+        );
+
+        return {
+          recordPermissionsReadService:
+            getAppProviderByClassName<RecordPermissionsReadService>(
+              'RecordPermissionsReadService',
+            ),
+          principals:
+            await getAppProviderByClassName<PrincipalPermissionsReadService>(
+              'PrincipalPermissionsReadService',
+            ).resolvePermissionsPrincipalsOrThrow({
+              authContext: await buildPermissionTestAuthContext({
+                principals: {
+                  mainPrincipal: { type: 'workspaceMember', role },
+                  limitingPrincipal: NO_LIMITING_PRINCIPAL,
+                  applicationPrincipal: CUSTOM_APPLICATION,
+                },
+                workspace,
+              }),
+            }),
+          objectMetadataId: noteTargetObjectMetadataId,
+          joinColumnName,
+          recordIds: workspace.recordIds,
+          transactionScope: {
+            workspaceId: workspace.workspaceId,
+            executeRawQuery: (sql: string, parameters?: unknown[]) =>
+              global.testDataSource.query(sql, parameters),
+          },
+        };
+      };
+
+      const assertNoteTargetCreated = async ({
+        role,
+        targetRecord,
+      }: {
+        role: PermissionTestRoleGrant;
+        targetRecord: 'insideEveryFilter' | 'outsideStatusFilter';
+      }) => {
+        const {
+          recordPermissionsReadService,
+          joinColumnName,
+          recordIds,
+          ...question
+        } = await buildNoteTargetWriteQuestion(role);
+
+        return recordPermissionsReadService.assertCreatedRecordsMatchRowLevelPermissionsOrThrow(
+          {
+            ...question,
+            records: [{ id: v4(), [joinColumnName]: recordIds[targetRecord] }],
+          },
+        );
+      };
+
+      const assertNoteTargetUpdated = async ({
+        targetRecordBefore,
+        targetRecordAfter,
+      }: {
+        targetRecordBefore: 'insideEveryFilter' | 'outsideStatusFilter';
+        targetRecordAfter: 'insideEveryFilter' | 'outsideStatusFilter';
+      }) => {
+        const {
+          recordPermissionsReadService,
+          joinColumnName,
+          recordIds,
+          ...question
+        } = await buildNoteTargetWriteQuestion('rowLevel');
+
+        return recordPermissionsReadService.assertUpdatesKeepRecordAccessOrThrow(
+          {
+            ...question,
+            updates: [
+              {
+                rawRecordBefore: {
+                  id: v4(),
+                  [joinColumnName]: recordIds[targetRecordBefore],
+                },
+                setColumns: { [joinColumnName]: recordIds[targetRecordAfter] },
+              },
+            ],
+            formatRecords: (rawRecords) => rawRecords,
+          },
+        );
+      };
+
+      it('lets a row level role target a record it can read', async () => {
+        await expect(
+          assertNoteTargetCreated({
+            role: 'rowLevel',
+            targetRecord: 'insideEveryFilter',
+          }),
+        ).resolves.toBeUndefined();
+      });
+
+      it('refuses a row level role targeting a record it cannot read', async () => {
+        await expect(
+          assertNoteTargetCreated({
+            role: 'rowLevel',
+            targetRecord: 'outsideStatusFilter',
+          }),
+        ).rejects.toThrow(RELATION_TARGET_NOT_READABLE);
+      });
+
+      it('refuses a role without a row level rule targeting a record it cannot read', async () => {
+        await expect(
+          assertNoteTargetCreated({
+            role: 'none',
+            targetRecord: 'insideEveryFilter',
+          }),
+        ).rejects.toThrow(RELATION_TARGET_NOT_READABLE);
+      });
+
+      it('lets a role with all records target any record', async () => {
+        await expect(
+          assertNoteTargetCreated({
+            role: 'allRecords',
+            targetRecord: 'outsideStatusFilter',
+          }),
+        ).resolves.toBeUndefined();
+      });
+
+      it('refuses an update that retargets a record the role cannot read', async () => {
+        await expect(
+          assertNoteTargetUpdated({
+            targetRecordBefore: 'insideEveryFilter',
+            targetRecordAfter: 'outsideStatusFilter',
+          }),
+        ).rejects.toThrow(RELATION_TARGET_NOT_READABLE);
+      });
+
+      it('keeps an update that leaves an unreadable target unchanged', async () => {
+        await expect(
+          assertNoteTargetUpdated({
+            targetRecordBefore: 'outsideStatusFilter',
+            targetRecordAfter: 'outsideStatusFilter',
+          }),
+        ).resolves.toBeUndefined();
       });
     });
   },

@@ -156,7 +156,7 @@ export const SettingsRolePermissionsObjectOverrideRow = ({
           <ChevronIcon size={theme.icon.size.md} />
         </TableCell>
       </TableRow>
-      <Collapsible.Panel dimension="height" containAnimation={false}>
+      <Collapsible.Panel dimension="height">
         <SettingsRolePermissionsObjectOverridePanel
           roleId={roleId}
           objectMetadataItem={objectMetadataItem}

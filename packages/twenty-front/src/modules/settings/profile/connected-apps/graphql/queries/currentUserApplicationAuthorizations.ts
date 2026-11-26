@@ -6,6 +6,8 @@ export const CURRENT_USER_APPLICATION_AUTHORIZATIONS = gql`
       id
       applicationId
       applicationName
+      applicationLogoUrl
+      scopes
       lastUsedAt
     }
   }

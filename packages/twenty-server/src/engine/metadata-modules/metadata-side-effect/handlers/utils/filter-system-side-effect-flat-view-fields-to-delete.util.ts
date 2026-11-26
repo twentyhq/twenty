@@ -21,10 +21,7 @@ export const filterSystemSideEffectFlatViewFieldsToDelete = ({
     const flatViewField =
       flatViewFieldMaps.byUniversalIdentifier[viewFieldUniversalIdentifier];
 
-    if (
-      !isDefined(flatViewField) ||
-      flatViewField.isSystemSideEffect !== true
-    ) {
+    if (!isDefined(flatViewField) || !flatViewField.isSystemSideEffect) {
       continue;
     }
 

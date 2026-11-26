@@ -1,5 +1,7 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+
 import {
   buildCountStatement,
   buildSelectStatement,
@@ -38,7 +40,8 @@ const buildState = (
   findOptions: { select: { id: true } },
   extraSelectClauses: [],
   columnSelections: [],
-  columnNullifyConditions: {},
+  unreadableColumnConditions: {},
+  unreadableRelationConditions: {},
   joinClauses: [],
   whereClauses: [],
   rowAccessConditions: [],
@@ -59,10 +62,10 @@ const OR_CHAIN_WHERE_CLAUSES: SelectStatementState['whereClauses'] = [
 const ROW_ACCESS_CONDITION = '"person"."ownerId" = :ownerId';
 
 describe('buildSelectStatement', () => {
-  it('should project a column as null when its nullify condition holds', () => {
+  it('should project a column as null when its unreadable condition holds', () => {
     const sql = buildSelectStatement(
       buildState({
-        columnNullifyConditions: {
+        unreadableColumnConditions: {
           person: {
             id: ['"person"."ownerId" = :ownerId', '"person"."x" = :x'],
           },
@@ -75,10 +78,10 @@ describe('buildSelectStatement', () => {
     );
   });
 
-  it('should nullify a column selected under its own alias', () => {
+  it('should read a column selected under its own alias as null', () => {
     const sql = buildSelectStatement(
       buildState({
-        columnNullifyConditions: { person: { id: ['"person"."x" = :x'] } },
+        unreadableColumnConditions: { person: { id: ['"person"."x" = :x'] } },
         extraSelectClauses: [{ expression: '"person"."id"', alias: 'imageId' }],
       }),
     );
@@ -88,15 +91,213 @@ describe('buildSelectStatement', () => {
     );
   });
 
-  it('should not nullify columns in a grouped query', () => {
+  it('should group an unreadable column by its null value and leave out the rows it is unreadable on', () => {
     const sql = buildSelectStatement(
       buildState({
-        columnNullifyConditions: { person: { id: ['"person"."x" = :x'] } },
+        unreadableColumnConditions: { person: { id: ['"person"."x" = :x'] } },
+        extraSelectClauses: [{ expression: '"person"."id"', alias: 'groupId' }],
         groupByExpressions: ['"person"."id"'],
       }),
     );
+    const unreadableColumn =
+      '(CASE WHEN ("person"."x" = :x) THEN NULL ELSE "person"."id" END)';
 
-    expect(sql).not.toContain('CASE WHEN');
+    expect(sql).toContain(`${unreadableColumn} AS "groupId"`);
+    expect(sql).toContain(`GROUP BY ${unreadableColumn}`);
+    expect(sql).toContain('NOT COALESCE(("person"."x" = :x), FALSE)');
+  });
+
+  it('should make a condition on an unreadable column unknown on the rows it is unreadable on, order on the null value, and leave row access conditions and string literals alone', () => {
+    const sql = buildSelectStatement(
+      buildState({
+        unreadableColumnConditions: { person: { id: ['"person"."x" = :x'] } },
+        whereClauses: [
+          {
+            operator: 'and',
+            sql: `"person"."id" = :a AND "person"."name" = '"person"."id"'`,
+          },
+        ],
+        rowAccessConditions: ['"person"."id" = :ownerId'],
+        orderByClauses: [{ expression: '"person"."id"', direction: 'ASC' }],
+        includeDeleted: true,
+      }),
+    );
+    const unreadableColumn =
+      '(CASE WHEN ("person"."x" = :x) THEN NULL ELSE "person"."id" END)';
+
+    expect(sql).toContain(
+      `WHERE ((CASE WHEN COALESCE(("person"."x" = :x), FALSE) THEN NULL ELSE ${unreadableColumn} = :a AND "person"."name" = '"person"."id"' END)) AND ("person"."id" = :ownerId)`,
+    );
+    expect(sql).toContain(`ORDER BY ${unreadableColumn} ASC`);
+  });
+
+  it('should keep matching through another condition of an OR when one condition reads an unreadable column', () => {
+    const sql = buildSelectStatement(
+      buildState({
+        unreadableColumnConditions: { person: { id: ['"person"."x" = :x'] } },
+        whereClauses: [
+          {
+            operator: 'and',
+            isNegated: false,
+            clauses: [
+              { operator: 'and', sql: '"person"."name" = :name' },
+              { operator: 'or', sql: '"person"."id" = :a' },
+            ],
+          },
+        ],
+        includeDeleted: true,
+      }),
+    );
+
+    expect(sql).toContain(
+      'WHERE ("person"."name" = :name OR (CASE WHEN COALESCE(("person"."x" = :x), FALSE) THEN NULL ELSE (CASE WHEN ("person"."x" = :x) THEN NULL ELSE "person"."id" END) = :a END))',
+    );
+    expect(sql).not.toContain('NOT COALESCE');
+  });
+
+  it('should keep a negated condition on an unreadable column unknown on the rows it is unreadable on', () => {
+    const sql = buildSelectStatement(
+      buildState({
+        unreadableColumnConditions: { person: { id: ['"person"."x" = :x'] } },
+        whereClauses: [
+          {
+            operator: 'and',
+            isNegated: true,
+            clauses: [{ operator: 'and', sql: '"person"."id" IS NULL' }],
+          },
+        ],
+        includeDeleted: true,
+      }),
+    );
+
+    expect(sql).toContain(
+      'WHERE NOT ((CASE WHEN COALESCE(("person"."x" = :x), FALSE) THEN NULL ELSE (CASE WHEN ("person"."x" = :x) THEN NULL ELSE "person"."id" END) IS NULL END))',
+    );
+  });
+
+  it('should compare an unreadable column as null in a condition that orders pages', () => {
+    const sql = buildSelectStatement(
+      buildState({
+        unreadableColumnConditions: { person: { id: ['"person"."x" = :x'] } },
+        whereClauses: [
+          {
+            operator: 'and',
+            isNegated: false,
+            shouldReadUnreadableColumnsAsNull: true,
+            clauses: [{ operator: 'and', sql: '"person"."id" IS NULL' }],
+          },
+        ],
+        includeDeleted: true,
+      }),
+    );
+
+    expect(sql).toContain(
+      'WHERE ((CASE WHEN ("person"."x" = :x) THEN NULL ELSE "person"."id" END) IS NULL)',
+    );
+  });
+
+  it('should make a relation filter condition unknown on the related rows its column is unreadable on', () => {
+    const sql = buildSelectStatement(
+      buildState({
+        unreadableColumnConditions: {
+          task: { title: ['"task"."x" = :x'] },
+        },
+        whereClauses: [{ operator: 'and', sql: '__exists_task__' }],
+        existsFilterClauses: [
+          {
+            token: '__exists_task__',
+            alias: 'task',
+            parentAlias: 'person',
+            relationFieldName: 'tasks',
+            targetTableShape: { ...personTableShape, tableName: 'task' },
+            correlationCondition: '"task"."personId" = "person"."id"',
+            conditionClauses: [
+              { operator: 'and', sql: `"task"."title" = 'Secret'` },
+            ],
+            additionalOnConditions: [],
+          },
+        ],
+        includeDeleted: true,
+      }),
+    );
+    const subquery = sql.slice(sql.indexOf('EXISTS'));
+
+    expect(subquery).toContain(
+      `(CASE WHEN COALESCE(("task"."x" = :x), FALSE) THEN NULL ELSE (CASE WHEN ("task"."x" = :x) THEN NULL ELSE "task"."title" END) = 'Secret' END)`,
+    );
+    expect(sql.slice(0, sql.indexOf('EXISTS'))).not.toContain('CASE WHEN');
+  });
+
+  it('should make a relation filter unknown on the rows its relation is unreadable on, and stop its link there', () => {
+    const sql = buildSelectStatement(
+      buildState({
+        unreadableRelationConditions: {
+          person: { tasks: ['"person"."x" = :x'] },
+        },
+        whereClauses: [{ operator: 'and', sql: '__exists_task__' }],
+        existsFilterClauses: [
+          {
+            token: '__exists_task__',
+            alias: 'task',
+            parentAlias: 'person',
+            relationFieldName: 'tasks',
+            targetTableShape: { ...personTableShape, tableName: 'task' },
+            correlationCondition: '"task"."personId" = "person"."id"',
+            conditionClauses: [
+              { operator: 'and', sql: `"task"."title" = 'Open'` },
+            ],
+            additionalOnConditions: [],
+          },
+        ],
+        includeDeleted: true,
+      }),
+    );
+
+    expect(sql).toContain(
+      'WHERE (CASE WHEN COALESCE(("person"."x" = :x), FALSE) THEN NULL ELSE EXISTS (',
+    );
+    expect(sql).toContain(
+      'WHERE "task"."personId" = "person"."id" AND NOT COALESCE(("person"."x" = :x), FALSE) AND',
+    );
+  });
+
+  it('should join nothing from the rows a relation is unreadable on', () => {
+    const sql = buildSelectStatement(
+      buildState({
+        unreadableRelationConditions: {
+          person: { company: ['"person"."x" = :x'] },
+        },
+        joinClauses: [
+          {
+            alias: 'company',
+            parentAlias: 'person',
+            relationFieldName: 'company',
+            targetTableShape: { ...personTableShape, tableName: 'company' },
+            relationType: RelationType.MANY_TO_ONE,
+            joinType: 'LEFT',
+            condition: '"person"."companyId" = "company"."id"',
+            additionalOnConditions: [],
+          },
+        ],
+        includeDeleted: true,
+      }),
+    );
+
+    expect(sql).toContain(
+      'LEFT JOIN "workspace_1wgvd1injqtife6y4rvfbu3h5"."company" AS "company" ON ("person"."companyId" = "company"."id") AND (NOT COALESCE(("person"."x" = :x), FALSE))',
+    );
+  });
+
+  it('should keep every row when only a sort reads an unreadable column', () => {
+    const sql = buildSelectStatement(
+      buildState({
+        unreadableColumnConditions: { person: { id: ['"person"."x" = :x'] } },
+        orderByClauses: [{ expression: '"person"."id"', direction: 'ASC' }],
+        includeDeleted: true,
+      }),
+    );
+
+    expect(sql).not.toContain('NOT COALESCE');
   });
 
   it('should keep row access conditions outside a user OR chain', () => {

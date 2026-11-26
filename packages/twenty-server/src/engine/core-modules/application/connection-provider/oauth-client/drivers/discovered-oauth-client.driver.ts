@@ -1,21 +1,17 @@
 import { Injectable } from '@nestjs/common';
 
 import {
+  checkResourceAllowed,
   discoverAuthorizationServerMetadata,
   discoverOAuthProtectedResourceMetadata,
+  type FetchLike,
   isHttpsUrl,
-  type OAuthDiscoveryState,
-  registerClient,
-} from '@modelcontextprotocol/sdk/client/auth.js';
-import {
   type OAuthClientInformationFull,
+  type OAuthDiscoveryState,
   type OAuthProtectedResourceMetadata,
-} from '@modelcontextprotocol/sdk/shared/auth.js';
-import {
-  checkResourceAllowed,
+  registerClient,
   resourceUrlFromServerUrl,
-} from '@modelcontextprotocol/sdk/shared/auth-utils.js';
-import { type FetchLike } from '@modelcontextprotocol/sdk/shared/transport.js';
+} from '@modelcontextprotocol/client';
 import isEqual from 'lodash.isequal';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 

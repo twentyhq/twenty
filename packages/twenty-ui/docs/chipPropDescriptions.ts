@@ -9,6 +9,8 @@ export const CHIP_PROP_DESCRIPTIONS = {
   color: 'Primary or secondary text color.',
   shape: 'Square or round corners.',
   weight: 'Font weight of the content.',
+  padding:
+    'Inline padding on each side: `sm` is 4px and `md` is 8px. When omitted, the variant sets it.',
   clickable:
     'Enables hover and pointer styling. Defaults to whether `onClick` is supplied; does not change the default div or add keyboard behavior.',
   startElement: 'Content before the label, such as an avatar or icon.',

@@ -1,0 +1,1 @@
+export const LINKEDIN_CHAT_OPTIONS_MAX_COUNT = 200;

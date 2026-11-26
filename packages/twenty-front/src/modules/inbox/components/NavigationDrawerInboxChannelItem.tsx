@@ -10,6 +10,7 @@ import { AiChatChannelIcon } from '@/ai-chat/threads/components/AiChatChannelIco
 import { NavigationDrawerInboxChannelActionsDropdown } from '@/inbox/components/NavigationDrawerInboxChannelActionsDropdown';
 import { NavigationDrawerInboxChannelNavigation } from '@/inbox/components/NavigationDrawerInboxChannelNavigation';
 import { useAiChatChannelIcon } from '@/ai-chat/threads/hooks/useAiChatChannelIcon';
+import { getAiChatChannelColor } from '@/ai-chat/threads/utils/getAiChatChannelColor';
 import { useDeleteInboxChannel } from '@/inbox/hooks/useDeleteInboxChannel';
 import { useIsInboxShowingDirectMessage } from '@/inbox/hooks/useIsInboxShowingDirectMessage';
 import { useUpdateInboxChannel } from '@/inbox/hooks/useUpdateInboxChannel';
@@ -32,7 +33,6 @@ const StyledIconPickerTrigger = styled.div`
   display: flex;
 `;
 
-// The picker opens from the icon, so its clicks must not open the channel
 const stopPropagation = (event: MouseEvent) => event.stopPropagation();
 
 type NavigationDrawerInboxChannelItemProps = {
@@ -65,8 +65,8 @@ export const NavigationDrawerInboxChannelItem = ({
     isDropdownOpenComponentState,
     dropdownId,
   );
-  const { updateAgentChatChannel } = useUpdateInboxChannel();
-  const { deleteAgentChatChannel } = useDeleteInboxChannel();
+  const { updateInboxChannel } = useUpdateInboxChannel();
+  const { deleteInboxChannel } = useDeleteInboxChannel();
   const { openDropdown } = useOpenDropdown();
   const { openDialog } = useDialog();
   const [draftName, setDraftName] = useState<string | null>(null);
@@ -80,7 +80,7 @@ export const NavigationDrawerInboxChannelItem = ({
     const trimmedName = name.trim();
 
     if (isNonEmptyString(trimmedName) && trimmedName !== channel.name) {
-      void updateAgentChatChannel({
+      void updateInboxChannel({
         channelId: channel.id,
         input: { name: trimmedName },
       });
@@ -116,15 +116,15 @@ export const NavigationDrawerInboxChannelItem = ({
         dropdownId={iconPickerDropdownId}
         selectedIconKey={channel.icon ?? undefined}
         onChange={({ iconKey }) =>
-          void updateAgentChatChannel({
+          void updateInboxChannel({
             channelId: channel.id,
             input: { icon: iconKey },
           })
         }
         iconColorPicker={{
-          selectedColor: parseThemeColor(channel.color),
+          selectedColor: parseThemeColor(getAiChatChannelColor(channel)),
           onColorChange: (color) =>
-            void updateAgentChatChannel({
+            void updateInboxChannel({
               channelId: channel.id,
               input: { color },
             }),
@@ -168,7 +168,7 @@ export const NavigationDrawerInboxChannelItem = ({
                 })
               }
               onUpdate={(input) =>
-                void updateAgentChatChannel({ channelId: channel.id, input })
+                void updateInboxChannel({ channelId: channel.id, input })
               }
               onDelete={(destinationChannelId) => {
                 setDeleteDestinationChannelId(destinationChannelId);
@@ -187,7 +187,7 @@ export const NavigationDrawerInboxChannelItem = ({
             : t`With no other channel to move its chats to, only an empty channel can be deleted. This cannot be undone.`
         }
         onConfirmClick={() =>
-          void deleteAgentChatChannel({
+          void deleteInboxChannel({
             channelId: channel.id,
             destinationChannelId: deleteDestinationChannelId,
           })

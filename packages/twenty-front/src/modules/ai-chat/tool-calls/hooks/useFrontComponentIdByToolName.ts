@@ -18,7 +18,6 @@ export const useFrontComponentIdByToolName = (): Map<string, string> => {
     const frontComponentIdByToolName = new Map<string, string>();
 
     for (const entry of toolIndex) {
-      // Built-in widgets render inside the step group, so they win over an app component.
       if (isDefined(entry.widgetName) && isToolWidgetName(entry.widgetName)) {
         continue;
       }

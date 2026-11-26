@@ -3,7 +3,6 @@
 exports[`View Filter Group read should succeed should find a view filter group among all view filter groups 1`] = `
 {
   "createdAt": Any<String>,
-  "deletedAt": null,
   "id": Any<String>,
   "logicalOperator": "AND",
   "parentViewFilterGroupId": null,
@@ -17,7 +16,6 @@ exports[`View Filter Group read should succeed should find a view filter group a
 exports[`View Filter Group read should succeed should find a view filter group among the view filter groups of its view 1`] = `
 {
   "createdAt": Any<String>,
-  "deletedAt": null,
   "id": Any<String>,
   "logicalOperator": "AND",
   "parentViewFilterGroupId": null,
@@ -31,7 +29,6 @@ exports[`View Filter Group read should succeed should find a view filter group a
 exports[`View Filter Group read should succeed should find a view filter group by id 1`] = `
 {
   "createdAt": Any<String>,
-  "deletedAt": null,
   "id": Any<String>,
   "logicalOperator": "AND",
   "parentViewFilterGroupId": null,
@@ -49,7 +46,6 @@ exports[`View Filter Group read should succeed should return a view filter group
   "childViewFilterGroupIds": [],
   "childViewFilterGroupUniversalIdentifiers": [],
   "createdAt": Any<String>,
-  "deletedAt": null,
   "id": Any<String>,
   "logicalOperator": "AND",
   "parentViewFilterGroupId": null,
@@ -76,7 +72,6 @@ exports[`View Filter Group read should succeed should return a view filter group
   "childViewFilterGroupIds": [],
   "childViewFilterGroupUniversalIdentifiers": [],
   "createdAt": Any<String>,
-  "deletedAt": null,
   "id": Any<String>,
   "logicalOperator": "AND",
   "parentViewFilterGroupId": null,
@@ -103,7 +98,6 @@ exports[`View Filter Group read should succeed should return a view filter group
   "childViewFilterGroupIds": [],
   "childViewFilterGroupUniversalIdentifiers": [],
   "createdAt": Any<String>,
-  "deletedAt": null,
   "id": Any<String>,
   "logicalOperator": "AND",
   "parentViewFilterGroupId": null,

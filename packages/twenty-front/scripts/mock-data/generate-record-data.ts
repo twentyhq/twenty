@@ -64,7 +64,7 @@ const generateForObject = async (
     depth: 1,
   });
 
-  const queryDocument = generateFindManyRecordsQuery({
+  const { query: queryDocument } = generateFindManyRecordsQuery({
     objectMetadataItem,
     objectMetadataItems,
     recordGqlFields,

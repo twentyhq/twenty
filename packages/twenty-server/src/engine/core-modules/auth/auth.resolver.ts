@@ -80,6 +80,7 @@ import { FileUploadTargetDTO } from 'src/engine/core-modules/file/file-upload/dt
 import { FileUploadGraphqlApiExceptionFilter } from 'src/engine/core-modules/file/file-upload/filters/file-upload-graphql-api-exception.filter';
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
+import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
@@ -125,6 +126,7 @@ import { SignUpInput } from './dto/sign-up.input';
 import { UserCredentialsInput } from './dto/user-credentials.input';
 import { CheckUserExistDTO } from './dto/user-exists.dto';
 import { EmailAndCaptchaInput } from './dto/user-exists.input';
+import { WorkspaceFromInviteHashDTO } from './dto/workspace-from-invite-hash.dto';
 import { WorkspaceInviteHashValidDTO } from './dto/workspace-invite-hash-valid.dto';
 import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input';
 import { AuthService } from './services/auth.service';
@@ -222,6 +224,7 @@ export class AuthResolver {
     private readonly fileUploadService: FileUploadService,
     private readonly userSessionService: UserSessionService,
     private readonly userSessionCookieService: UserSessionCookieService,
+    private readonly fileUrlService: FileUrlService,
   ) {}
 
   @UseGuards(CaptchaGuard, PublicEndpointGuard, NoPermissionGuard)
@@ -256,14 +259,27 @@ export class AuthResolver {
     );
   }
 
-  @Query(() => WorkspaceEntity)
+  @Query(() => WorkspaceFromInviteHashDTO)
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async findWorkspaceFromInviteHash(
     @Args() workspaceInviteHashValidInput: WorkspaceInviteHashValidInput,
-  ): Promise<WorkspaceEntity> {
-    return await this.authService.findWorkspaceFromInviteHashOrFail(
+  ): Promise<WorkspaceFromInviteHashDTO> {
+    const workspace = await this.authService.findWorkspaceFromInviteHashOrFail(
       workspaceInviteHashValidInput.inviteHash,
     );
+
+    return {
+      id: workspace.id,
+      displayName: workspace.displayName ?? null,
+      logo: isDefined(workspace.logoFileId)
+        ? await this.fileUrlService.signFileByIdUrl({
+            fileId: workspace.logoFileId,
+            workspaceId: workspace.id,
+            fileFolder: FileFolder.CorePicture,
+          })
+        : '',
+      allowImpersonation: workspace.allowImpersonation,
+    };
   }
 
   @Mutation(() => LoginTokenDTO)
@@ -906,6 +922,7 @@ export class AuthResolver {
         impersonatedUserWorkspaceId,
         impersonatorUserId,
         impersonatedUserId,
+        impersonationLevel,
       } = await this.validateAndLogImpersonation(
         tokenPayload,
         workspace,
@@ -921,6 +938,7 @@ export class AuthResolver {
           impersonatedUserWorkspaceId,
           _impersonatorUserId: impersonatorUserId,
           impersonatedUserId,
+          impersonationLevel,
         });
     } else {
       await this.validateRegularAuthentication(workspace, userWorkspace);
@@ -1143,6 +1161,7 @@ export class AuthResolver {
       impersonatedUserWorkspaceId: toImpersonateUserWorkspace.id,
       impersonatorUserId: impersonatorUserWorkspace.user.id,
       impersonatedUserId: toImpersonateUserWorkspace.user.id,
+      impersonationLevel: authorizationResult.level,
     };
   }
 

@@ -22,7 +22,7 @@ export const useSettingsAgentToolsTable = () => {
     toolIndex,
     loading: toolIndexLoading,
     error: toolIndexError,
-  } = useGetToolIndex();
+  } = useGetToolIndex({ isRefreshedOnMount: true });
 
   const { data: applicationsData } =
     useQuery<FindManyApplicationsForToolTableQuery>(

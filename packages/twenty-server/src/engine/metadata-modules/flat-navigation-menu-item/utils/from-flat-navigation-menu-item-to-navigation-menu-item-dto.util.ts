@@ -37,6 +37,7 @@ export const fromFlatNavigationMenuItemToNavigationMenuItemDto = (
     position: effectiveFlatNavigationMenuItem.position,
     workspaceId: effectiveFlatNavigationMenuItem.workspaceId,
     applicationId: effectiveFlatNavigationMenuItem.applicationId ?? undefined,
+    universalIdentifier: effectiveFlatNavigationMenuItem.universalIdentifier,
     isActive: effectiveFlatNavigationMenuItem.isActive !== false,
     createdAt: new Date(effectiveFlatNavigationMenuItem.createdAt),
     updatedAt: new Date(effectiveFlatNavigationMenuItem.updatedAt),

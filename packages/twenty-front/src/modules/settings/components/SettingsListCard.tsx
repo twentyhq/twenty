@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 import { type ComponentType } from 'react';
 
 import { SettingsListSkeletonCard } from '@/settings/components/SettingsListSkeletonCard';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type IconComponent, IconPlus } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
@@ -44,6 +45,7 @@ type SettingsListCardProps<ListItem extends { id: string }> = {
   RowIcon?: IconComponent;
   RowIconFn?: (item: ListItem) => IconComponent | undefined;
   RowIconColor?: string;
+  RowLeftComponent?: ComponentType<{ item: ListItem }>;
   RowRightComponent: ComponentType<{ item: ListItem }>;
   footerButtonLabel?: string;
   onFooterButtonClick?: () => void;
@@ -64,6 +66,7 @@ export const SettingsListCard = <
   RowIcon,
   RowIconFn,
   RowIconColor,
+  RowLeftComponent,
   RowRightComponent,
   onFooterButtonClick,
   footerButtonLabel,
@@ -82,6 +85,11 @@ export const SettingsListCard = <
           key={item.id}
           LeftIcon={RowIconFn ? RowIconFn(item) : RowIcon}
           LeftIconColor={RowIconColor}
+          leftComponent={
+            isDefined(RowLeftComponent) ? (
+              <RowLeftComponent item={item} />
+            ) : undefined
+          }
           label={getItemLabel(item)}
           description={getItemDescription?.(item)}
           rightComponent={<RowRightComponent item={item} />}

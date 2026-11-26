@@ -1,7 +1,6 @@
 import { type ObjectRecord } from 'twenty-shared/types';
 import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metadata/graphql';
 
-// Record events carry the whole row, along with fields the inbox has no use for
 export const getAiChatThreadParticipantFromRecord = (
   record: ObjectRecord,
 ): AgentChatThreadParticipantFieldsFragment => ({

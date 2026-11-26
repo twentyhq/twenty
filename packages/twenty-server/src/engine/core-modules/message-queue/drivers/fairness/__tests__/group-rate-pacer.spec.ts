@@ -62,7 +62,19 @@ const createPacer = async () => {
     metricsService: metricsService as never,
   });
 
-  return { redis, runCommand, metricsService, pacer };
+  return {
+    redis,
+    runCommand,
+    metricsService,
+    pacer: {
+      computeDelays: async (
+        input: Parameters<GroupRatePacer['computeDelays']>[0],
+      ) => (await pacer.computeDelays(input))?.delays,
+      computeDelaysAndNow: (
+        input: Parameters<GroupRatePacer['computeDelays']>[0],
+      ) => pacer.computeDelays(input),
+    },
+  };
 };
 
 describe('GroupRatePacer', () => {
@@ -349,6 +361,19 @@ describe('GroupRatePacer', () => {
 
     expect(Number(await redis.get(slotKey))).toBe(NOW_MS + 5_000);
     expect(await redis.pttl(slotKey)).toBeLessThanOrEqual(5_000);
+  });
+
+  it('returns the Redis clock the delays are measured from', async () => {
+    const { pacer } = await createPacer();
+
+    expect(
+      await pacer.computeDelaysAndNow({
+        queueName: QUEUE,
+        requests: withLimiters(APPLICATION_LIMITS, [
+          { groupKeys: ['application:H'], jobCount: 2 },
+        ]),
+      }),
+    ).toEqual({ nowMs: NOW_MS, delays: [[0, 1_000]] });
   });
 
   it('returns undefined and counts a fallback when Redis fails', async () => {

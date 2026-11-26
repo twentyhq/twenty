@@ -137,7 +137,6 @@ describe('writeDefineFile', () => {
         name: 'Companies by owner',
         objectUniversalIdentifier: 'object-uid',
         type: 'TABLE_WIDGET',
-        visibility: 'WORKSPACE',
         openRecordIn: 'SIDE_PANEL',
         calendarLayout: 'MONTH',
         kanbanAggregateOperation: 'COUNT',
@@ -185,12 +184,10 @@ describe('writeDefineFile', () => {
           '  ViewOpenRecordIn,\n' +
           '  ViewSortDirection,\n' +
           '  ViewType,\n' +
-          '  ViewVisibility,\n' +
           "} from 'twenty-sdk/define';\n",
       ),
     ).toBe(true);
     expect(file).toContain('type: ViewType.TABLE_WIDGET,');
-    expect(file).toContain('visibility: ViewVisibility.WORKSPACE,');
     expect(file).toContain('openRecordIn: ViewOpenRecordIn.SIDE_PANEL,');
     expect(file).toContain('calendarLayout: ViewCalendarLayout.MONTH,');
     expect(file).toContain(
@@ -259,6 +256,39 @@ describe('writeDefineFile', () => {
     expect(file).toContain(
       "import { defineViewField, AggregateOperations } from 'twenty-sdk/define';",
     );
+  });
+
+  it('should write the enums of a view field relation scope as their members', () => {
+    const { content: file } = writeDefineFile({
+      definer: 'defineViewField',
+      config: {
+        universalIdentifier: 'view-field-uid',
+        viewUniversalIdentifier: 'view-uid',
+        fieldMetadataUniversalIdentifier: 'field-uid',
+        position: 0,
+        relationScope: {
+          filters: [
+            {
+              id: 'filter-id',
+              fieldMetadataUniversalIdentifier: 'stage-uid',
+              operand: 'IS',
+              value: ['OPEN'],
+              filterGroupId: 'group-id',
+            },
+          ],
+          filterGroups: [{ id: 'group-id', logicalOperator: 'AND' }],
+          sorts: [],
+          aggregateOperation: 'SUM',
+        },
+      },
+      enumBindings: VIEW_FIELD_ENUM_BINDINGS,
+    });
+
+    expect(file).toContain('operand: ViewFilterOperand.IS,');
+    expect(file).toContain(
+      'logicalOperator: ViewFilterGroupLogicalOperator.AND,',
+    );
+    expect(file).toContain('aggregateOperation: AggregateOperations.SUM,');
   });
 
   it('should write every bound page layout property as its enum symbol and import each symbol on its own line', () => {

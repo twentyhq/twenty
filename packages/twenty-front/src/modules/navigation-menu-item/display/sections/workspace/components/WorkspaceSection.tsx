@@ -9,13 +9,12 @@ import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/us
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { preloadNavigationMenuItemDndKit } from '@/navigation-menu-item/display/dnd/preloadNavigationMenuItemDndKit';
+import { useSelectActiveNavigationMenuItemInEditMode } from '@/navigation-menu-item/display/hooks/useSelectActiveNavigationMenuItemInEditMode';
 import { useNavigationMenuItemSectionItems } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemSectionItems';
 import { useEditModeNavigationMenuItemClick } from '@/navigation-menu-item/edit/hooks/useEditModeNavigationMenuItemClick';
 import { WorkspaceSectionContainer } from '@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionContainer';
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { WorkspaceSectionHeaderAddDropdown } from '@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionHeaderAddDropdown';
@@ -43,10 +42,9 @@ export const WorkspaceSection = () => {
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
-  const [
-    selectedNavigationMenuItemIdInEditMode,
-    setSelectedNavigationMenuItemIdInEditMode,
-  ] = useAtomState(selectedNavigationMenuItemIdInEditModeState);
+  const selectedNavigationMenuItemIdInEditMode = useAtomStateValue(
+    selectedNavigationMenuItemIdInEditModeState,
+  );
   const { openNavigationSection } = useNavigationSection(
     doNotTranslate('Workspace'),
   );
@@ -59,14 +57,8 @@ export const WorkspaceSection = () => {
   };
 
   const handleNavigationMenuItemClick = useEditModeNavigationMenuItemClick();
-  const handleActiveObjectMetadataItemClick = (
-    _objectMetadataItem: EnrichedObjectMetadataItem,
-    navigationMenuItemId: string,
-  ) => {
-    if (enterLayoutCustomizationMode()) {
-      setSelectedNavigationMenuItemIdInEditMode(navigationMenuItemId);
-    }
-  };
+  const handleActiveObjectMetadataItemClick =
+    useSelectActiveNavigationMenuItemInEditMode();
 
   if (isCustomizableSidebarEnabled && items.length === 0) {
     return null;

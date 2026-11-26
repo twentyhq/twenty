@@ -572,6 +572,12 @@ export const STANDARD_OBJECT_FIELDS = {
     recurringEventExternalId: {
       universalIdentifier: '20202020-c58f-4c69-9bf8-9518fa31aa50',
     },
+    accountOwner: {
+      universalIdentifier: 'c87b6c5a-d761-4d8f-b62e-af459a11ba1f',
+    },
+    handle: {
+      universalIdentifier: 'f3a2e285-abb7-44c5-a4bf-06a44101a33f',
+    },
   },
   calendarEventParticipant: {
     ...buildStandardObjectSystemFields(
@@ -983,6 +989,12 @@ export const STANDARD_OBJECT_FIELDS = {
     },
     messageFolders: {
       universalIdentifier: '9bfc9da7-ae2d-44fd-9563-ede90c5d6222',
+    },
+    accountOwner: {
+      universalIdentifier: 'a54a940b-d839-4c47-a02c-5bab7e300841',
+    },
+    handle: {
+      universalIdentifier: 'ff274ea7-69e0-4d54-9389-8ec8f14c7073',
     },
   },
   messageChannelMessageAssociationMessageFolder: {
@@ -1575,6 +1587,12 @@ export const STANDARD_OBJECT_FIELDS = {
     },
     calendarEventParticipants: {
       universalIdentifier: '20202020-0dbc-4841-9ce1-3e793b5b3512',
+    },
+    accountOwnerForCalendarChannelEventAssociations: {
+      universalIdentifier: '56aec2c7-5ae1-413c-81e8-880623b8f8b2',
+    },
+    accountOwnerForMessageChannelMessageAssociations: {
+      universalIdentifier: 'cfe10518-02e1-456f-a41a-0cc99b1686fe',
     },
     timelineActivities: {
       universalIdentifier: '20202020-e15b-47b8-94fe-8200e3c66615',

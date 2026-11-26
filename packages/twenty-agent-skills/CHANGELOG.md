@@ -10,6 +10,9 @@ Entries reference the canonical skills (`create-app`, `develop-app`, `manage-app
 
 ### Changed
 
+- `develop-app`: documented computed `formula` fields on the app data model.
+- `develop-app`: documented `cronTriggerSettings.spreadMs` for spreading crons across workspaces, the `enqueueJobs` `limiter` option and the `scheduledAt` job field.
+- `develop-app`: documented `isWorkEmail` from the new `twenty-sdk/email` entry for telling a company address from a personal one.
 - `develop-app`: replaced `daysSince` with the date functions `dateDiff`, `dateAdd`, `dateTrunc` and `datePart` in validation rule expressions.
 - `manage-app`: covered CLI connections through authenticating proxies (`--proxy-header`, `--proxy-header-command`, `TWENTY_PROXY_HEADERS`, `TWENTY_PROXY_HEADER_COMMAND`, `PROXY_AUTH_REQUIRED`).
 - `develop-app`: documented `api-key` connection providers for services that authenticate with a key the user pastes.

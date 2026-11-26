@@ -4,6 +4,7 @@ import {
   type ObjectRecordsOperationType,
 } from 'twenty-shared/types';
 
+import { type RlsWorkspaceMemberRelationValueMaps } from 'src/engine/permissions/internal/rls/types/rls-workspace-member-relation-value-maps.type';
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatRelatedRecordPathMaps } from 'src/engine/metadata-modules/flat-related-record-path/types/flat-related-record-path-maps.type';
@@ -23,6 +24,7 @@ export type PermissionsMetadataMaps = {
   featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
   rolesPermissions: Record<string, RoleRecordsPermissions>;
   flatWorkspaceMemberMaps?: FlatWorkspaceMemberMaps;
+  rlsWorkspaceMemberRelationValueMaps?: RlsWorkspaceMemberRelationValueMaps;
   flatRelatedRecordPathMaps?: FlatRelatedRecordPathMaps;
 };
 

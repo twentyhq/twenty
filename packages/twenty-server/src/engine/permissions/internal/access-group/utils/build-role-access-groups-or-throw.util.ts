@@ -13,9 +13,10 @@ import {
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
-import { type AccessGroupWithoutCompactId } from 'src/engine/permissions/internal/access-group/types/access-group.type';
+import { type AccessGroupWithoutCompactId } from 'src/engine/permissions/internal/access-group/types/access-group-without-compact-id.type';
 import { buildAccessGroupMemberFieldValuesOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-access-group-member-field-values-or-throw.util';
 import { computeAccessGroupHash } from 'src/engine/permissions/internal/access-group/utils/compute-access-group-hash.util';
+import { resolveAccessGroupRuleShape } from 'src/engine/permissions/internal/access-group/utils/resolve-access-group-rule-shape.util';
 import { type RlsWorkspaceMember } from 'src/engine/permissions/internal/rls/types/rls-workspace-member.type';
 
 const ALL_OPERATION_TYPES: ObjectRecordsOperationType[] = [
@@ -27,21 +28,17 @@ const ALL_OPERATION_TYPES: ObjectRecordsOperationType[] = [
 ];
 
 export const buildRoleAccessGroupsOrThrow = ({
-  roleId,
   objectMetadataId,
   objectRecordsPermissions,
   operationTypes = ALL_OPERATION_TYPES,
   workspaceMembers,
   flatFieldMetadataMaps,
-  isRelationHopEnabled,
 }: {
-  roleId: string;
   objectMetadataId: string;
   objectRecordsPermissions: ObjectRecordsPermissions | undefined;
   operationTypes?: ObjectRecordsOperationType[];
   workspaceMembers: RlsWorkspaceMember[];
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
-  isRelationHopEnabled: boolean;
 }): AccessGroupWithoutCompactId[] => {
   if (!isDefined(objectRecordsPermissions)) {
     return [];
@@ -64,35 +61,50 @@ export const buildRoleAccessGroupsOrThrow = ({
     ),
   );
 
-  const buildAccessGroup = ({
-    rowLevelPermissionRule,
-    memberFieldValues,
-  }: {
-    rowLevelPermissionRule: RowLevelRecordsPermissions | null;
-    memberFieldValues: AccessGroupWithoutCompactId['memberFieldValues'];
-  }): AccessGroupWithoutCompactId => {
-    const rowLevelPermissionPredicateGroupId =
-      rowLevelPermissionRule?.ruleId ?? null;
+  const unreadableFieldIdsOfObject = objectRecordsPermissions.unreadableFields;
+
+  const buildAllRecordsAccessGroup = (): AccessGroupWithoutCompactId => {
+    const { ruleShapeHash, unreadableFieldIds } = resolveAccessGroupRuleShape({
+      objectMetadataId,
+      objectUnreadableFieldIds: unreadableFieldIdsOfObject,
+      rowLevelPermissionRule: null,
+    });
 
     return {
+      type: 'ALL_RECORDS',
       groupHash: computeAccessGroupHash({
-        roleId,
-        objectMetadataId,
-        rowLevelPermissionRule,
-        rowLevelPermissionPredicateGroupId,
-        memberFieldValues,
-        isRelationHopEnabled,
+        ruleShapeHash,
+        accessGroupSplitValue: { type: 'ALL_RECORDS' },
       }),
-      roleId,
       objectMetadataId,
-      rowLevelPermissionPredicateGroupId,
-      memberFieldValues,
+      ruleShapeHash,
+      unreadableFieldIds,
     };
   };
 
   const buildRuleAccessGroups = (
     rowLevelPermissionRule: RowLevelRecordsPermissions,
   ): AccessGroupWithoutCompactId[] => {
+    const { ruleShapeHash, unreadableFieldIds, splitPredicate } =
+      resolveAccessGroupRuleShape({
+        objectMetadataId,
+        objectUnreadableFieldIds: unreadableFieldIdsOfObject,
+        rowLevelPermissionRule,
+      });
+    const groupShape = { objectMetadataId, ruleShapeHash, unreadableFieldIds };
+
+    if (isDefined(splitPredicate)) {
+      return [...new Set(splitPredicate.value)].map((value) => ({
+        ...groupShape,
+        type: 'RLS_LITERAL_VALUE',
+        groupHash: computeAccessGroupHash({
+          ruleShapeHash,
+          accessGroupSplitValue: { type: 'RLS_LITERAL_VALUE', value },
+        }),
+        value,
+      }));
+    }
+
     const workspaceMemberBoundPredicates =
       rowLevelPermissionRule.predicates.filter(
         ({ workspaceMemberFieldMetadataId }) =>
@@ -101,7 +113,14 @@ export const buildRoleAccessGroupsOrThrow = ({
 
     if (workspaceMemberBoundPredicates.length === 0) {
       return [
-        buildAccessGroup({ rowLevelPermissionRule, memberFieldValues: null }),
+        {
+          ...groupShape,
+          type: 'RLS_RULE',
+          groupHash: computeAccessGroupHash({
+            ruleShapeHash,
+            accessGroupSplitValue: { type: 'RLS_RULE' },
+          }),
+        },
       ];
     }
 
@@ -110,21 +129,23 @@ export const buildRoleAccessGroupsOrThrow = ({
         workspaceMemberBoundPredicates,
         workspaceMember,
         flatFieldMetadataMaps,
-      }).map((memberFieldValues) =>
-        buildAccessGroup({ rowLevelPermissionRule, memberFieldValues }),
-      ),
+      }).map((memberFieldValues) => ({
+        ...groupShape,
+        type: 'RLS_MEMBER_VALUE' as const,
+        groupHash: computeAccessGroupHash({
+          ruleShapeHash,
+          accessGroupSplitValue: {
+            type: 'RLS_MEMBER_VALUE',
+            memberFieldValues,
+          },
+        }),
+        memberFieldValues,
+      })),
     );
   };
 
   return [
-    ...(isReachingAllRecords
-      ? [
-          buildAccessGroup({
-            rowLevelPermissionRule: null,
-            memberFieldValues: null,
-          }),
-        ]
-      : []),
+    ...(isReachingAllRecords ? [buildAllRecordsAccessGroup()] : []),
     ...rowLevelPermissionRules.flatMap(buildRuleAccessGroups),
   ];
 };

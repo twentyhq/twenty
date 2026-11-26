@@ -117,11 +117,7 @@ export const WorkflowRunVisualizerEffect = ({
         return;
       }
 
-      const workflowDiagramStatus = store.get(workflowDiagramStatusState);
-
-      if (workflowDiagramStatus !== 'done') {
-        store.set(workflowDiagramStatusState, 'computing-diagram');
-      }
+      store.set(workflowDiagramStatusState, 'computing-diagram');
 
       store.set(flow, {
         workflowVersionId: versionId,
@@ -161,9 +157,7 @@ export const WorkflowRunVisualizerEffect = ({
         }),
       };
 
-      if (workflowDiagramStatus !== 'done') {
-        store.set(workflowDiagramStatusState, 'computing-dimensions');
-      }
+      store.set(workflowDiagramStatusState, 'computing-dimensions');
 
       if (!isDefined(stepToOpenByDefault)) {
         store.set(workflowDiagram, baseWorkflowRunDiagram);

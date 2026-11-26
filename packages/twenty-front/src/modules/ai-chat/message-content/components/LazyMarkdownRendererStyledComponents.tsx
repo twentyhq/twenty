@@ -1,4 +1,6 @@
 import { type MarkdownDisplayMode } from '@/ai-chat/message-content/types/MarkdownDisplayMode';
+import { CHAT_MESSAGE_META_SPACER_HEIGHT } from '@/chat/constants/ChatMessageMetaSpacerHeight';
+import { CHAT_MESSAGE_META_SPACER_WIDTH } from '@/chat/constants/ChatMessageMetaSpacerWidth';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -19,6 +21,16 @@ export const StyledMarkdownContainer = styled.div<{
 
   &:empty {
     display: none;
+  }
+
+  > .markdown-paragraph:last-child::after {
+    content: '';
+    display: inline-block;
+    width: ${CHAT_MESSAGE_META_SPACER_WIDTH};
+  }
+
+  &:has(> :last-child:not(.markdown-paragraph)) {
+    padding-bottom: ${CHAT_MESSAGE_META_SPACER_HEIGHT};
   }
 
   .markdown-link {
@@ -113,23 +125,11 @@ export const StyledMarkdownContainer = styled.div<{
   }
 
   :not(pre) > code {
-    background-color: ${themeCssVariables.background.tertiary};
+    background-color: ${themeCssVariables.background.transparent.light};
     border-radius: ${themeCssVariables.border.radius.sm};
-    color: ${themeCssVariables.color.red10};
     font-family: ${themeCssVariables.code.font.family}, monospace;
-    font-size: 1em;
+    font-size: 0.9em;
     padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[1]};
-    transition: all calc(${themeCssVariables.animation.duration.fast} * 1s) ease;
-  }
-
-  :not(pre) > code[style*='cursor: pointer'] {
-    background-color: ${themeCssVariables.background.secondary};
-    border: 1px solid ${themeCssVariables.accent.accent10};
-    color: ${themeCssVariables.accent.accent10};
-  }
-
-  :not(pre) > code[style*='cursor: pointer']:hover {
-    background-color: ${themeCssVariables.background.transparent.blue};
   }
 
   .markdown-code-outer-container {

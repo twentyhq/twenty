@@ -23,6 +23,14 @@ describe('formatNumber', () => {
     it('should format apply decimals correctly', () => {
       expect(formatNumber(123.456, { decimals: 2 })).toEqual('123.46');
     });
+    it('should keep the default precision when decimals is undefined', () => {
+      expect(formatNumber(7.5, { decimals: undefined })).toEqual('7.5');
+    });
+    it('should pad to the minimum decimals', () => {
+      expect(formatNumber(7, { decimals: 2, minimumDecimals: 2 })).toEqual(
+        '7.00',
+      );
+    });
   });
   describe('with localized formats', () => {
     it('should format with COMMAS_AND_DOT', () => {

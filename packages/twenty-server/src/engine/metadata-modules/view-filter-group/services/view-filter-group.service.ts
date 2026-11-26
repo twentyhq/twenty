@@ -8,8 +8,8 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { type FlatViewFilterGroup } from 'src/engine/metadata-modules/flat-view-filter-group/types/flat-view-filter-group.type';
-import { findFlatViewAvailableToUser } from 'src/engine/metadata-modules/flat-view/utils/find-flat-view-available-to-user.util';
-import { findManyFlatViewChildrenAvailableToUser } from 'src/engine/metadata-modules/flat-view/utils/find-many-flat-view-children-available-to-user.util';
+import { findFlatViewVisibleToCaller } from 'src/engine/metadata-modules/flat-view/utils/find-flat-view-visible-to-caller.util';
+import { findManyFlatViewChildrenVisibleToCaller } from 'src/engine/metadata-modules/flat-view/utils/find-many-flat-view-children-visible-to-caller.util';
 import { sortByPositionInViewFilterGroup } from 'src/engine/metadata-modules/flat-view/utils/sort-by-position-in-view-filter-group.util';
 import { fromCreateViewFilterGroupInputToFlatViewFilterGroupToCreate } from 'src/engine/metadata-modules/flat-view-filter-group/utils/from-create-view-filter-group-input-to-flat-view-filter-group-to-create.util';
 import { fromDestroyViewFilterGroupInputToFlatViewFilterGroupOrThrow } from 'src/engine/metadata-modules/flat-view-filter-group/utils/from-destroy-view-filter-group-input-to-flat-view-filter-group-or-throw.util';
@@ -258,23 +258,19 @@ export class ViewFilterGroupService {
       );
     }
 
-    return fromFlatViewFilterGroupToViewFilterGroupDto({
-      ...existingFlatViewFilterGroup,
-      deletedAt: new Date().toISOString(),
-    });
+    return fromFlatViewFilterGroupToViewFilterGroupDto(
+      existingFlatViewFilterGroup,
+    );
   }
 
   async findByWorkspaceId({
     workspaceId,
-    userWorkspaceId,
   }: {
     workspaceId: string;
-    userWorkspaceId: string | undefined;
   }): Promise<ViewFilterGroupDTO[]> {
     const flatViewFilterGroups =
-      await this.findManyFlatViewFilterGroupsVisibleToUser({
+      await this.findManyFlatViewFilterGroupsVisibleToCaller({
         workspaceId,
-        userWorkspaceId,
       });
 
     return flatViewFilterGroups.map(
@@ -285,17 +281,14 @@ export class ViewFilterGroupService {
   async findByViewId({
     workspaceId,
     viewId,
-    userWorkspaceId,
   }: {
     workspaceId: string;
     viewId: string;
-    userWorkspaceId: string | undefined;
   }): Promise<ViewFilterGroupDTO[]> {
     const flatViewFilterGroups =
-      await this.findManyFlatViewFilterGroupsVisibleToUser({
+      await this.findManyFlatViewFilterGroupsVisibleToCaller({
         workspaceId,
         viewId,
-        userWorkspaceId,
       });
 
     return flatViewFilterGroups.map(
@@ -303,14 +296,12 @@ export class ViewFilterGroupService {
     );
   }
 
-  private async findManyFlatViewFilterGroupsVisibleToUser({
+  private async findManyFlatViewFilterGroupsVisibleToCaller({
     workspaceId,
     viewId,
-    userWorkspaceId,
   }: {
     workspaceId: string;
     viewId?: string;
-    userWorkspaceId: string | undefined;
   }): Promise<FlatViewFilterGroup[]> {
     const { flatViewFilterGroupMaps, flatViewMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -321,12 +312,11 @@ export class ViewFilterGroupService {
       );
 
     return sortByPositionInViewFilterGroup(
-      findManyFlatViewChildrenAvailableToUser({
+      findManyFlatViewChildrenVisibleToCaller({
         flatViewMaps,
         flatViewChildMaps: flatViewFilterGroupMaps,
         flatViewChildIdsKey: 'viewFilterGroupIds',
         viewId,
-        userWorkspaceId,
       }),
     );
   }
@@ -334,11 +324,9 @@ export class ViewFilterGroupService {
   async findByIdOrThrow({
     id,
     workspaceId,
-    userWorkspaceId,
   }: {
     id: string;
     workspaceId: string;
-    userWorkspaceId: string | undefined;
   }): Promise<ViewFilterGroupDTO> {
     const { flatViewFilterGroupMaps, flatViewMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -354,12 +342,10 @@ export class ViewFilterGroupService {
 
     if (
       !isDefined(flatViewFilterGroup) ||
-      flatViewFilterGroup.deletedAt !== null ||
       !isDefined(
-        findFlatViewAvailableToUser({
+        findFlatViewVisibleToCaller({
           viewId: flatViewFilterGroup.viewId,
           flatViewMaps,
-          userWorkspaceId,
         }),
       )
     ) {

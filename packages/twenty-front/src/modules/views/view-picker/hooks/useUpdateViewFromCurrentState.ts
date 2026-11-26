@@ -11,7 +11,7 @@ import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states
 import { viewPickerModeComponentState } from '@/views/view-picker/states/viewPickerModeComponentState';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
-import { viewPickerVisibilityComponentState } from '@/views/view-picker/states/viewPickerVisibilityComponentState';
+import { viewPickerIsPrivateComponentState } from '@/views/view-picker/states/viewPickerIsPrivateComponentState';
 
 export const useUpdateViewFromCurrentState = () => {
   const { canPersistChanges } = useCanPersistViewChanges();
@@ -38,8 +38,8 @@ export const useUpdateViewFromCurrentState = () => {
   const viewPickerReferenceViewIdCallbackState =
     useAtomComponentStateCallbackState(viewPickerReferenceViewIdComponentState);
 
-  const viewPickerVisibilityCallbackState = useAtomComponentStateCallbackState(
-    viewPickerVisibilityComponentState,
+  const viewPickerIsPrivateCallbackState = useAtomComponentStateCallbackState(
+    viewPickerIsPrivateComponentState,
   );
 
   const { performViewApiUpdate } = usePerformViewApiUpdate();
@@ -63,7 +63,7 @@ export const useUpdateViewFromCurrentState = () => {
     const viewPickerSelectedIcon = store.get(
       viewPickerSelectedIconCallbackState,
     );
-    const visibility = store.get(viewPickerVisibilityCallbackState);
+    const isPrivate = store.get(viewPickerIsPrivateCallbackState);
 
     try {
       await performViewApiUpdate({
@@ -71,7 +71,7 @@ export const useUpdateViewFromCurrentState = () => {
         input: {
           name: viewPickerInputName,
           icon: viewPickerSelectedIcon,
-          visibility: visibility,
+          isPrivate,
         },
       });
     } finally {
@@ -86,7 +86,7 @@ export const useUpdateViewFromCurrentState = () => {
     viewPickerReferenceViewIdCallbackState,
     viewPickerInputNameCallbackState,
     viewPickerSelectedIconCallbackState,
-    viewPickerVisibilityCallbackState,
+    viewPickerIsPrivateCallbackState,
     performViewApiUpdate,
     store,
   ]);

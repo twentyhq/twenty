@@ -34,6 +34,7 @@ import { resolveNavigationMenuItemParentIdAlias } from 'src/engine/metadata-modu
 import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 
 @UseInterceptors(
   WorkspaceMigrationGraphqlApiExceptionInterceptor,
@@ -48,6 +49,7 @@ export class NavigationMenuItemResolver {
   ) {}
 
   @ResolveField(() => String, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   async name(
     @Parent() navigationMenuItem: NavigationMenuItemDTO,
     @Context() context: { loaders: IDataloaders } & I18nContext,
@@ -200,6 +202,7 @@ export class NavigationMenuItemResolver {
   }
 
   @ResolveField(() => RecordIdentifierDTO, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   async targetRecordIdentifier(
     @Parent() navigationMenuItem: NavigationMenuItemDTO,
     @AuthWorkspace() workspace: WorkspaceEntity,

@@ -4,17 +4,18 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useRefreshInboxChannelSummaries } from '@/inbox/hooks/useRefreshInboxChannelSummaries';
+import { useRefreshShownInboxThreadList } from '@/inbox/hooks/useRefreshShownInboxThreadList';
 import { INBOX_DEFAULT_SELECTED_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxDefaultSelectedThreadListSource';
 import { aiChatChannelsState } from '@/ai-chat/threads/states/aiChatChannelsState';
 import { inboxSelectedThreadListSourceState } from '@/inbox/states/inboxSelectedThreadListSourceState';
 import { isInboxSelectedThreadListSourceAccessible } from '@/inbox/utils/isInboxSelectedThreadListSourceAccessible';
 import { GetAgentChatChannelsDocument } from '~/generated-metadata/graphql';
 
-// A failed load keeps what was shown, as the next change loads again
 export const useRefreshInboxChannels = () => {
   const apolloClient = useApolloClient();
   const store = useStore();
   const { refreshInboxChannelSummaries } = useRefreshInboxChannelSummaries();
+  const { refreshShownInboxThreadList } = useRefreshShownInboxThreadList();
 
   const refreshInboxChannels = useCallback(async () => {
     const [channelsResult] = await Promise.all([
@@ -45,8 +46,14 @@ export const useRefreshInboxChannels = () => {
         inboxSelectedThreadListSourceState.atom,
         INBOX_DEFAULT_SELECTED_THREAD_LIST_SOURCE,
       );
+      refreshShownInboxThreadList();
     }
-  }, [apolloClient, refreshInboxChannelSummaries, store]);
+  }, [
+    apolloClient,
+    refreshInboxChannelSummaries,
+    refreshShownInboxThreadList,
+    store,
+  ]);
 
   return { refreshInboxChannels };
 };

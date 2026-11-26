@@ -118,6 +118,9 @@ export class NavigationMenuItemDTO {
   @Field(() => UUIDScalarType, { nullable: true })
   applicationId?: string;
 
+  @Field(() => UUIDScalarType, { nullable: true })
+  universalIdentifier?: string;
+
   @Field(() => Boolean, { nullable: false })
   isActive: boolean;
 

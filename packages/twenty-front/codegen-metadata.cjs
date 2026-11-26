@@ -50,6 +50,7 @@ module.exports = {
     './src/modules/record-export/graphql/**/*.{ts,tsx}',
     './src/modules/metadata-store/graphql/**/*.{ts,tsx}',
     './src/modules/sse-db-event/graphql/**/*.{ts,tsx}',
+    './src/modules/tab-presence/graphql/**/*.{ts,tsx}',
     './src/modules/geo-map/graphql-query/*.{ts,tsx}',
 
     './src/pages/**/graphql/**/*.{ts,tsx}',

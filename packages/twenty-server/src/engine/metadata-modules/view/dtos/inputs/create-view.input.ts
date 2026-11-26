@@ -18,8 +18,8 @@ import {
   ViewCalendarLayout,
   ViewOpenRecordIn,
   ViewKey,
+  ViewPresetFilter,
   ViewType,
-  ViewVisibility,
 } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -65,7 +65,7 @@ export class CreateViewInput {
 
   @IsOptional()
   @IsBoolean()
-  @Field({ nullable: true, defaultValue: false })
+  @Field({ nullable: true })
   isCompact?: boolean;
 
   @IsOptional()
@@ -117,6 +117,11 @@ export class CreateViewInput {
   anyFieldFilterValue?: string;
 
   @IsOptional()
+  @IsEnum(ViewPresetFilter)
+  @Field(() => ViewPresetFilter, { nullable: true })
+  presetFilter?: ViewPresetFilter;
+
+  @IsOptional()
   @IsEnum(ViewCalendarLayout)
   @Field(() => ViewCalendarLayout, { nullable: true })
   calendarLayout?: ViewCalendarLayout;
@@ -137,11 +142,9 @@ export class CreateViewInput {
   mainGroupByFieldMetadataId?: string;
 
   @IsOptional()
-  @IsEnum(ViewVisibility)
-  @Field(() => ViewVisibility, {
-    nullable: true,
-  })
-  visibility?: ViewVisibility;
+  @IsBoolean()
+  @Field(() => Boolean, { nullable: true })
+  isPrivate?: boolean;
 
   @HideField()
   universalIdentifier?: string;

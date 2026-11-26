@@ -3,24 +3,22 @@ import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThr
 import { isDefined } from 'twenty-shared/utils';
 
 import { useIsOnNewAiChatSlot } from '@/ai-chat/hooks/useIsOnNewAiChatSlot';
-import { aiChatErrorFamilyState } from '@/ai-chat/states/aiChatErrorFamilyState';
-import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai-chat/states/aiChatIsAwaitingFirstChunkFamilyState';
-import { aiChatIsStreamingFamilyState } from '@/ai-chat/states/aiChatIsStreamingFamilyState';
+import { aiChatThreadReplyErrorFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyErrorFamilyState';
+import { aiChatThreadReplyStatusFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyStatusFamilyState';
 import { aiChatHasMessageFamilySelector } from '@/ai-chat/states/selectors/aiChatHasMessageFamilySelector';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
 export const useShouldShowAiChatEmptyState = () => {
   const { threadId } = useAiChatInstanceOrThrow();
-  const aiChatError = useAtomFamilyStateValue(aiChatErrorFamilyState, {
-    threadId,
-  });
-  const aiChatIsAwaitingFirstChunk = useAtomFamilyStateValue(
-    aiChatIsAwaitingFirstChunkFamilyState,
-    { threadId },
+  const aiChatThreadReplyError = useAtomFamilyStateValue(
+    aiChatThreadReplyErrorFamilyState,
+    {
+      threadId,
+    },
   );
-  const aiChatIsStreaming = useAtomFamilyStateValue(
-    aiChatIsStreamingFamilyState,
+  const aiChatThreadReplyStatus = useAtomFamilyStateValue(
+    aiChatThreadReplyStatusFamilyState,
     { threadId },
   );
 
@@ -37,8 +35,8 @@ export const useShouldShowAiChatEmptyState = () => {
     isOnNewAiChatSlot &&
     !isMobile &&
     !aiChatHasMessage &&
-    !isDefined(aiChatError) &&
-    !aiChatIsAwaitingFirstChunk &&
-    !aiChatIsStreaming
+    !isDefined(aiChatThreadReplyError) &&
+    aiChatThreadReplyStatus !== 'awaiting-first-chunk' &&
+    aiChatThreadReplyStatus !== 'streaming'
   );
 };

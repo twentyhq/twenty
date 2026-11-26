@@ -16,6 +16,12 @@ export const fromFlatLogicFunctionToLogicFunctionManifest = (
       ? { description: logicFunction.description }
       : {}),
     timeoutSeconds: logicFunction.timeoutSeconds,
+    ...(isDefined(logicFunction.retryLimit)
+      ? { retryLimit: logicFunction.retryLimit }
+      : {}),
+    ...(isDefined(logicFunction.jobFailureHandlerName)
+      ? { jobFailureHandlerName: logicFunction.jobFailureHandlerName }
+      : {}),
     sourceHandlerPath: logicFunction.sourceHandlerPath,
     builtHandlerPath: logicFunction.builtHandlerPath,
     builtHandlerChecksum: logicFunction.checksum,

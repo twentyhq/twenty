@@ -6,8 +6,9 @@ import {
   ViewType,
   ViewKey,
   ViewOpenRecordIn,
-  ViewVisibility,
+  type ViewPresetFilter,
 } from 'twenty-shared/types';
+import { isViewCompactByDefault } from 'twenty-shared/utils';
 
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
@@ -30,6 +31,7 @@ export type CreateStandardViewOptions<O extends AllStandardObjectName> = {
   mainGroupByFieldName?: AllStandardObjectFieldName<O>;
   calendarFieldName?: AllStandardObjectFieldName<O>;
   calendarEndFieldName?: AllStandardObjectFieldName<O>;
+  presetFilter?: ViewPresetFilter | null;
 };
 
 export type CreateStandardViewArgs<
@@ -51,13 +53,14 @@ export const createStandardViewFlatMetadata = <
     key,
     position,
     icon,
-    isCompact = false,
+    isCompact = isViewCompactByDefault(type),
     openRecordIn = ViewOpenRecordIn.SIDE_PANEL,
     kanbanAggregateOperation = null,
     kanbanAggregateOperationFieldName,
     mainGroupByFieldName,
     calendarFieldName,
     calendarEndFieldName,
+    presetFilter = null,
   },
   standardObjectMetadataRelatedEntityIds,
   twentyStandardApplicationId,
@@ -157,7 +160,8 @@ export const createStandardViewFlatMetadata = <
     calendarFieldMetadataId,
     calendarEndFieldMetadataId,
     anyFieldFilterValue: null,
-    visibility: ViewVisibility.WORKSPACE,
+    presetFilter,
+    isPrivate: false,
     createdByUserWorkspaceId: null,
     isActive: true,
     isSystemSideEffect:

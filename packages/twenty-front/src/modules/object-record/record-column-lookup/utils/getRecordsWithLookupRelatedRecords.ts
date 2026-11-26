@@ -7,33 +7,33 @@ const isRelatedRecord = (value: unknown): value is ObjectRecord =>
   isNonEmptyString(value.id) &&
   isNonEmptyString(value.__typename);
 
-// A lookup cell reads its related record from that record's own store entry, as Apollo normalizes it
+// A lookup cell reads its related records from their own store entries, as Apollo normalizes them
 export const getRecordsWithLookupRelatedRecords = ({
   records,
-  lookupRelationFieldNames,
+  lookupRelationRecordKeys,
 }: {
   records: ObjectRecord[];
-  lookupRelationFieldNames: string[];
+  lookupRelationRecordKeys: string[];
 }): ObjectRecord[] => {
-  if (!isNonEmptyArray(lookupRelationFieldNames)) {
+  if (!isNonEmptyArray(lookupRelationRecordKeys)) {
     return records;
   }
 
   const relatedRecordById = new Map<string, ObjectRecord>();
 
   for (const record of records) {
-    for (const relationFieldName of lookupRelationFieldNames) {
-      const relatedRecord = record[relationFieldName];
+    for (const lookupRelationRecordKey of lookupRelationRecordKeys) {
+      const relatedRecords = [record[lookupRelationRecordKey]]
+        .flat()
+        .filter(isRelatedRecord);
 
-      if (!isRelatedRecord(relatedRecord)) {
-        continue;
+      for (const relatedRecord of relatedRecords) {
+        // Two relations can reach one record with different selected fields
+        relatedRecordById.set(relatedRecord.id, {
+          ...relatedRecordById.get(relatedRecord.id),
+          ...relatedRecord,
+        });
       }
-
-      // Two relations can reach one record with different selected fields
-      relatedRecordById.set(relatedRecord.id, {
-        ...relatedRecordById.get(relatedRecord.id),
-        ...relatedRecord,
-      });
     }
   }
 

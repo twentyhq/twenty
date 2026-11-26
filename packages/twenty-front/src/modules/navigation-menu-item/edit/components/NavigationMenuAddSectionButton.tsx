@@ -1,15 +1,18 @@
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import {
   type BuiltInSectionKey,
   NavigationMenuItemType,
 } from 'twenty-shared/types';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconPlus } from 'twenty-ui/icon';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { NAVIGATION_MENU_BUILT_IN_SECTIONS } from '@/navigation-menu-item/common/constants/NavigationMenuBuiltInSections';
 import { canAddBuiltInSectionToContainer } from '@/navigation-menu-item/common/utils/canAddBuiltInSectionToContainer';
 import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
-import { useAreAiChatSectionsAvailable } from '@/navigation-menu-item/display/hooks/useAreAiChatSectionsAvailable';
+import { useNavigationMenuBuiltInSectionAvailability } from '@/navigation-menu-item/display/hooks/useNavigationMenuBuiltInSectionAvailability';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { NavigationMenuAddSectionHiddenItems } from '@/navigation-menu-item/edit/components/NavigationMenuAddSectionHiddenItems';
 import { NavigationMenuItemEntrance } from '@/navigation-menu-item/edit/components/NavigationMenuItemEntrance';
@@ -21,11 +24,24 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
+import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
+import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
+
+const StyledAddSectionIcon = styled.span`
+  align-items: center;
+  color: ${themeCssVariables.font.color.tertiary};
+  display: flex;
+  justify-content: center;
+  width: ${themeCssVariables.spacing[6]};
+
+  .section-title-container:hover & {
+    color: ${themeCssVariables.font.color.secondary};
+  }
+`;
 
 type NavigationMenuAddSectionButtonProps = {
   containerId: string | null;
@@ -35,10 +51,12 @@ export const NavigationMenuAddSectionButton = ({
   containerId,
 }: NavigationMenuAddSectionButtonProps) => {
   const { t } = useLingui();
+  const theme = useTheme();
   const isCustomizableSidebarEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
   );
-  const areAiChatSectionsAvailable = useAreAiChatSectionsAvailable();
+  const { isBuiltInSectionAvailable } =
+    useNavigationMenuBuiltInSectionAvailability();
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
   const hiddenNavigationMenuItems =
     useHiddenNavigationMenuItemsInTab(containerId);
@@ -47,6 +65,7 @@ export const NavigationMenuAddSectionButton = ({
     navigationMenuItemIdToRenameState,
   );
   const { closeDropdown } = useCloseDropdown();
+  const { openDropdown } = useOpenDropdown();
   const dropdownId = `navigation-menu-add-section-${containerId ?? 'home'}`;
 
   if (!isCustomizableSidebarEnabled) {
@@ -55,7 +74,7 @@ export const NavigationMenuAddSectionButton = ({
 
   const builtInSectionsToOffer = NAVIGATION_MENU_BUILT_IN_SECTIONS.filter(
     (builtInSection) =>
-      (!builtInSection.isAi || areAiChatSectionsAvailable) &&
+      isBuiltInSectionAvailable(builtInSection.key) &&
       canAddBuiltInSectionToContainer({
         builtInSectionKey: builtInSection.key,
         containerId,
@@ -87,12 +106,20 @@ export const NavigationMenuAddSectionButton = ({
           <Dropdown.Trigger
             nativeButton={false}
             render={
-              <div tabIndex={-1}>
-                <NavigationDrawerItem
-                  Icon={IconPlus}
+              <div>
+                <NavigationDrawerSectionTitle
                   label={t`Add section`}
-                  triggerEvent="CLICK"
-                  variant="tertiary"
+                  onClick={() =>
+                    openDropdown({
+                      dropdownComponentInstanceIdFromProps: dropdownId,
+                    })
+                  }
+                  rightIcon={
+                    <StyledAddSectionIcon>
+                      <IconPlus size="12px" stroke={theme.icon.stroke.lg} />
+                    </StyledAddSectionIcon>
+                  }
+                  alwaysShowRightIcon
                 />
               </div>
             }
@@ -100,8 +127,33 @@ export const NavigationMenuAddSectionButton = ({
           <DropdownContent
             side="right"
             align="start"
-            width={GenericDropdownContentWidth.Large}
+            width={GenericDropdownContentWidth.ExtraLarge}
+            aria-label={t`Add section`}
           >
+            {isNonEmptyArray(builtInSectionsToOffer) && (
+              <>
+                <Dropdown.Section>
+                  {builtInSectionsToOffer.map((builtInSection) => (
+                    <NavigationMenuItemSelectableItem
+                      key={builtInSection.key}
+                      item={{
+                        id: builtInSection.key,
+                        label: t(builtInSection.label),
+                        icon: (
+                          <ColoredIcon
+                            Icon={builtInSection.Icon}
+                            color={builtInSection.color}
+                          />
+                        ),
+                        onClick: () =>
+                          handleBuiltInSectionClick(builtInSection.key),
+                      }}
+                    />
+                  ))}
+                </Dropdown.Section>
+                <Dropdown.Separator />
+              </>
+            )}
             <Dropdown.Section>
               <NavigationMenuItemSelectableItem
                 item={{
@@ -111,23 +163,6 @@ export const NavigationMenuAddSectionButton = ({
                   onClick: handleCustomSectionClick,
                 }}
               />
-              {builtInSectionsToOffer.map((builtInSection) => (
-                <NavigationMenuItemSelectableItem
-                  key={builtInSection.key}
-                  item={{
-                    id: builtInSection.key,
-                    label: t(builtInSection.label),
-                    icon: (
-                      <ColoredIcon
-                        Icon={builtInSection.Icon}
-                        color={builtInSection.color}
-                      />
-                    ),
-                    onClick: () =>
-                      handleBuiltInSectionClick(builtInSection.key),
-                  }}
-                />
-              ))}
             </Dropdown.Section>
             <NavigationMenuAddSectionHiddenItems
               containerId={containerId}

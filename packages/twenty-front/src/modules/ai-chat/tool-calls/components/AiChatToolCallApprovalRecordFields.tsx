@@ -8,7 +8,6 @@ import { AiChatToolCallApprovalCurrentValue } from '@/ai-chat/tool-calls/compone
 import { useToolCallApprovalFieldDefinitions } from '@/ai-chat/tool-calls/hooks/useToolCallApprovalFieldDefinitions';
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
 
-// approvers read amounts in currency units, as the record shows them, not as micros
 const CURRENCY_INPUT_SETTINGS = {
   type: FieldMetadataType.CURRENCY,
   amountUnit: 'units',
@@ -29,7 +28,6 @@ const StyledUnknownField = styled.div`
 type AiChatToolCallApprovalRecordFieldsProps = {
   objectNameSingular: string;
   values: Record<string, unknown>;
-  // an update shows each field's current value next to the proposed one
   recordId?: string;
   readonly: boolean;
   onChange: (fieldName: string, value: JsonValue) => void;

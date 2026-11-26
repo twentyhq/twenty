@@ -6,7 +6,7 @@ import { Provider as JotaiProvider } from 'jotai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { AiChatMessageReactions } from '@/ai-chat/messages/components/AiChatMessageReactions';
-import { aiChatMessageReactionsFamilyState } from '@/ai-chat/messages/states/aiChatMessageReactionsFamilyState';
+import { aiChatMessageReactionsFamilyState } from '@/ai-chat/states/server/aiChatMessageReactionsFamilyState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import {
@@ -103,7 +103,9 @@ describe('AiChatMessageReactions', () => {
     ).toHaveAttribute('aria-pressed', 'false');
   });
 
-  it('toggles your reaction when you click an emoji', async () => {
+  it('shows who used an emoji on hover', async () => {
+    const user = userEvent.setup();
+
     jotaiStore.set(
       aiChatMessageReactionsFamilyState.atomFamily({
         messageId: MESSAGE_ID,
@@ -120,14 +122,9 @@ describe('AiChatMessageReactions', () => {
 
     renderReactions();
 
-    await userEvent.click(
-      screen.getByRole('button', { name: '🎉 by Tom Martin' }),
-    );
+    await user.hover(screen.getByRole('button', { name: '🎉 by Tom Martin' }));
 
-    expect(mockToggleAiChatMessageReaction).toHaveBeenCalledWith({
-      messageId: MESSAGE_ID,
-      emoji: '🎉',
-    });
+    expect(await screen.findByRole('tooltip')).toHaveTextContent('Tom Martin');
   });
 
   it('names the assistant among those who used an emoji', () => {

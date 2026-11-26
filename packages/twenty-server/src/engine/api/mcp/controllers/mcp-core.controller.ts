@@ -1,17 +1,11 @@
 import {
-  Body,
   Controller,
-  Headers,
-  HttpCode,
-  HttpStatus,
   Post,
   Query,
   Req,
   Res,
   UseFilters,
   UseGuards,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 
 import * as Sentry from '@sentry/node';
@@ -19,13 +13,13 @@ import { type Request, type Response } from 'express';
 import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { JsonRpc } from 'src/engine/api/mcp/dtos/json-rpc';
 import { McpAuthGuard } from 'src/engine/api/mcp/guards/mcp-auth.guard';
 import { parseMcpToolMode } from 'src/engine/api/mcp/utils/parse-mcp-tool-mode.util';
 import { McpProtocolService } from 'src/engine/api/mcp/services/mcp-protocol.service';
 import { type McpCoreQueryContext } from 'src/engine/api/mcp/types/mcp-core-query-context.type';
 import { getMcpRequestLogFields } from 'src/engine/api/mcp/utils/get-mcp-request-log-fields.util';
-import { writeSseEvent } from 'src/engine/api/mcp/utils/write-sse-event.util';
+import { buildMcpWebRequest } from 'src/engine/api/mcp/utils/build-mcp-web-request.util';
+import { writeMcpWebResponse } from 'src/engine/api/mcp/utils/write-mcp-web-response.util';
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { buildWorkspaceAuthContextFromRequest } from 'src/engine/core-modules/auth/utils/build-workspace-auth-context-from-request.util';
@@ -65,16 +59,7 @@ export class McpCoreController {
   constructor(private readonly mcpProtocolService: McpProtocolService) {}
 
   @Post()
-  @HttpCode(HttpStatus.OK)
-  @UsePipes(
-    new ValidationPipe({
-      transform: true,
-      whitelist: true,
-      forbidNonWhitelisted: true,
-    }),
-  )
   async handleMcpCore(
-    @Body() body: JsonRpc,
     @AuthWorkspace() workspace: FlatWorkspace,
     @AuthApiKey() apiKey: FlatApiKey | undefined,
     @AuthUser({ allowUndefined: true }) user: UserEntity | undefined,
@@ -82,13 +67,13 @@ export class McpCoreController {
     userWorkspaceId: string | undefined,
     @AuthApplication({ allowUndefined: true })
     application: FlatApplication | undefined,
-    @Headers('accept') acceptHeader: string | undefined,
     @Req() request: Request,
-    @Res({ passthrough: true }) res: Response,
+    @Res() res: Response,
     @Query('mode') mode?: string,
-  ) {
-    const { method: mcpMethod, toolName: mcpToolName } =
-      getMcpRequestLogFields(body);
+  ): Promise<void> {
+    const { method: mcpMethod, toolName: mcpToolName } = getMcpRequestLogFields(
+      request.body,
+    );
 
     request.mcpMethod = mcpMethod;
     request.mcpToolName = mcpToolName;
@@ -110,52 +95,27 @@ export class McpCoreController {
       toolMode: parseMcpToolMode(mode),
     };
 
-    // JSON-RPC notifications (no id) expect no response body regardless of Accept
-    if (!isDefined(body.id)) {
-      await this.mcpProtocolService.handleMCPCoreQuery(body, queryContext);
+    const abortController = new AbortController();
 
-      res.status(HttpStatus.ACCEPTED);
+    res.on('close', () => abortController.abort());
 
-      return;
-    }
+    const response = await this.mcpProtocolService.handleRequest({
+      request: buildMcpWebRequest({
+        url: `${request.protocol}://${request.get('host')}${request.originalUrl}`,
+        method: request.method,
+        headers: request.headers,
+        signal: abortController.signal,
+      }),
+      parsedBody: request.body,
+      method: mcpMethod,
+      context: queryContext,
+    });
 
-    const clientAcceptsSse =
-      isDefined(acceptHeader) &&
-      acceptHeader
-        .split(',')
-        .some((type) => type.trim().startsWith('text/event-stream'));
-
-    if (clientAcceptsSse) {
-      res.setHeader('Content-Type', 'text/event-stream');
-      res.setHeader('Cache-Control', 'no-cache');
-      res.setHeader('Connection', 'keep-alive');
-      // Prevent browsers from MIME-sniffing the SSE stream as HTML
-      res.setHeader('X-Content-Type-Options', 'nosniff');
-
-      const sseWriter = (data: Record<string, unknown>) => {
-        writeSseEvent(res, data);
-      };
-
-      const result = await this.mcpProtocolService.handleMCPCoreQuery(
-        body,
-        queryContext,
-        sseWriter,
-      );
-
-      if (isDefined(result)) {
-        writeSseEvent(res, result);
-      }
-
-      res.end();
-
-      return;
-    }
-
-    const result = await this.mcpProtocolService.handleMCPCoreQuery(
-      body,
-      queryContext,
-    );
-
-    return result;
+    await writeMcpWebResponse({
+      response,
+      res,
+      isEventStreamAccepted:
+        request.header('accept')?.includes('text/event-stream') ?? false,
+    });
   }
 }

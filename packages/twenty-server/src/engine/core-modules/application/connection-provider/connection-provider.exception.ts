@@ -55,6 +55,8 @@ const getConnectionProviderExceptionUserFriendlyMessage = (
       return msg`We could not verify this key. Check it, or try again later if the service is down.`;
     case ConnectionProviderExceptionCode.API_KEY_MISSING:
       return msg`Enter an API key.`;
+    case ConnectionProviderExceptionCode.APPLICATION_CHARGE_DECLINED:
+      return msg`We couldn't bill this connection. Update your payment method and try again.`;
     default:
       assertUnreachable(code);
   }

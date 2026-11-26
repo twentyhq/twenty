@@ -1,7 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 
-import { ComponentDecorator } from '@ui/testing';
+import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 
 import { EmojiPickerExample } from './EmojiPickerExample';
 import { mockEmojiPickerStoryData } from './mockEmojiPickerStoryData';
@@ -11,6 +11,7 @@ const meta: Meta<typeof EmojiPickerExample> = {
   title: 'UI/Components/Input/EmojiPicker',
   component: EmojiPickerExample,
   decorators: [ComponentDecorator],
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   beforeEach: () => mockEmojiPickerStoryData(),
   args: {
     searchLabel: 'Search emojis',

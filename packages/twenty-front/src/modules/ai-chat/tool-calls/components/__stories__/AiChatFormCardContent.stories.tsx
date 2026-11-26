@@ -17,7 +17,7 @@ const StyledContainer = styled.div`
 `;
 
 const meta = {
-  title: 'Modules/AiChat/AiChatFormCardContent',
+  title: 'Modules/AI/AiChatFormCardContent',
   component: AiChatFormCardContent,
   decorators: [
     (Story) => (

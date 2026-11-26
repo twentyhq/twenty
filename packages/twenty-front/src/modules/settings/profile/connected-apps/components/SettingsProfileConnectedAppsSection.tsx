@@ -1,13 +1,14 @@
 import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
+import { SettingsConnectedAppLogo } from '@/settings/profile/connected-apps/components/SettingsConnectedAppLogo';
+import { getConnectedAppScopeLabels } from '@/settings/profile/connected-apps/utils/getConnectedAppScopeLabels';
 import { SettingsConnectedAppRowDropdownMenu } from '@/settings/profile/connected-apps/components/SettingsConnectedAppRowDropdownMenu';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { Section } from 'twenty-ui/components/layout';
-import { IconApps } from 'twenty-ui/icon';
 import {
   CurrentUserApplicationAuthorizationsDocument,
   type CurrentUserApplicationAuthorizationsQuery,
@@ -31,10 +32,14 @@ export const SettingsProfileConnectedAppsSection = () => {
 
   const getApplicationAuthorizationDescription = ({
     lastUsedAt,
-  }: Pick<ApplicationAuthorizationListItem, 'lastUsedAt'>) => {
+    scopes,
+  }: Pick<ApplicationAuthorizationListItem, 'lastUsedAt' | 'scopes'>) => {
     const lastUsed = beautifyPastDateRelativeToNow(lastUsedAt, localeCatalog);
 
-    return t`Last used ${lastUsed}`;
+    return [
+      ...getConnectedAppScopeLabels(scopes),
+      t`Last used ${lastUsed}`,
+    ].join(' · ');
   };
 
   return (
@@ -52,7 +57,7 @@ export const SettingsProfileConnectedAppsSection = () => {
               applicationAuthorization.applicationName
             }
             getItemDescription={getApplicationAuthorizationDescription}
-            RowIcon={IconApps}
+            RowLeftComponent={SettingsConnectedAppLogo}
             RowRightComponent={SettingsConnectedAppRowDropdownMenu}
           />
         </Section.Root>

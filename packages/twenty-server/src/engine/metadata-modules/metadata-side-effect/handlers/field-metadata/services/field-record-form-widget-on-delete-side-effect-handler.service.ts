@@ -62,7 +62,7 @@ export class FieldRecordFormWidgetOnDeleteSideEffectHandlerService extends Metad
 
     if (
       !isDefined(flatPageLayoutWidgetToDelete) ||
-      flatPageLayoutWidgetToDelete.isSystemSideEffect !== true
+      !flatPageLayoutWidgetToDelete.isSystemSideEffect
     ) {
       return { status: 'noop' };
     }

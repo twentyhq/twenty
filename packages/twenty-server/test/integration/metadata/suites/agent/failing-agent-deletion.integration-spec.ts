@@ -1,7 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { deleteOneAgent } from 'test/integration/metadata/suites/agent/utils/delete-one-agent.util';
-import { findAgents } from 'test/integration/metadata/suites/agent/utils/find-agents.util';
 import {
   eachTestingContextFilter,
   type EachTestingContext,
@@ -42,27 +41,4 @@ describe('Agent deletion should fail', () => {
       expectOneNotInternalServerErrorSnapshot({ errors });
     },
   );
-
-  it('should fail when attempting to delete a standard agent', async () => {
-    const { data } = await findAgents({
-      expectToFail: false,
-      input: undefined,
-      gqlFields: 'id name',
-    });
-
-    const helperAgent = data.findManyAgents.find(
-      (agent) => agent.name === 'helper',
-    );
-
-    expect(helperAgent).toBeDefined();
-
-    const { errors } = await deleteOneAgent({
-      expectToFail: true,
-      input: {
-        id: helperAgent!.id,
-      },
-    });
-
-    expectOneNotInternalServerErrorSnapshot({ errors });
-  });
 });

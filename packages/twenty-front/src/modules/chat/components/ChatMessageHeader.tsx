@@ -4,9 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { dateLocaleState } from '@/localization/states/dateLocaleState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
+import { ChatMessageTime } from '@/chat/components/ChatMessageTime';
 
 const StyledHeader = styled.div`
   align-items: center;
@@ -32,36 +30,31 @@ type ChatMessageHeaderProps = {
   avatar: ReactNode;
   name: string;
   createdAt?: Date | string;
-  receipt?: ReactNode;
 };
 
 export const ChatMessageHeader = ({
   avatar,
   name,
   createdAt,
-  receipt,
 }: ChatMessageHeaderProps) => {
-  const { localeCatalog } = useAtomStateValue(dateLocaleState);
-
   return (
     <StyledHeader>
       {avatar}
       <StyledAuthor>
         <Text
           render={<span />}
-          size="sm"
+          size="md"
           color="primary"
-          weight="medium"
+          weight="semibold"
           truncate
         >
           {name}
         </Text>
         {isDefined(createdAt) && (
-          <Text render={<StyledTime />} size="sm" color="light">
-            {beautifyPastDateRelativeToNow(createdAt, localeCatalog)}
-          </Text>
+          <StyledTime>
+            <ChatMessageTime date={createdAt} />
+          </StyledTime>
         )}
-        {receipt}
       </StyledAuthor>
     </StyledHeader>
   );

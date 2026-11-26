@@ -3,6 +3,7 @@ import * as Sentry from '@sentry/node';
 import GraphQLJSON from 'graphql-type-json';
 import { ApiPath } from 'twenty-shared/types';
 
+import { GRAPHQL_FIELD_RESOLVER_ENHANCERS } from 'src/engine/api/graphql/graphql-config/constants/graphql-field-resolver-enhancers.constant';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
 import { AdminPanelGraphQLApiModule } from 'src/engine/api/graphql/admin-panel-graphql-api.module';
@@ -28,6 +29,7 @@ export const adminPanelModuleFactory = async (
     autoSchemaFile: true,
     include: [AdminPanelGraphQLApiModule],
     resolverSchemaScope: 'admin',
+    fieldResolverEnhancers: GRAPHQL_FIELD_RESOLVER_ENHANCERS,
     buildSchemaOptions: {},
     renderGraphiQL() {
       return renderApolloPlayground({ path: ApiPath.AdminPanel });

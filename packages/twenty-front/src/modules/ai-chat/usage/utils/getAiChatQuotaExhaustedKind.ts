@@ -2,7 +2,6 @@ import { AiChatErrorCode } from '@/ai-chat/utils/aiChatErrorCode';
 import { getGraphqlErrorExtensionsFromError } from '~/utils/get-graphql-error-extensions-from-error.util';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
-// An unreadable refusal is reported as a limit: guessing 'workspaceAllowance' would flip the workspace into the upgrade banner
 export const getAiChatQuotaExhaustedKind = (
   error: unknown,
 ): 'limit' | 'workspaceAllowance' | 'userAllowance' | null => {

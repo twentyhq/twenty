@@ -8,7 +8,6 @@ import {
   ViewCalendarLayout,
   ViewSortDirection,
   ViewType,
-  ViewVisibility,
 } from 'twenty-shared/types';
 
 import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
@@ -109,7 +108,7 @@ describe('View tools', () => {
     objectMetadataId: mockObjectMetadataId,
     type: ViewType.TABLE,
     icon: 'IconBuilding',
-    visibility: ViewVisibility.WORKSPACE,
+    isPrivate: false,
     position: 0,
     createdByUserWorkspaceId: mockUserWorkspaceId,
   };
@@ -315,7 +314,6 @@ describe('View tools', () => {
 
         expect(viewService.findByWorkspaceId).toHaveBeenCalledWith(
           mockWorkspaceId,
-          mockUserWorkspaceId,
         );
         expect(result).toEqual({
           views: [
@@ -325,7 +323,7 @@ describe('View tools', () => {
               objectMetadataId: mockObjectMetadataId,
               type: ViewType.TABLE,
               icon: 'IconBuilding',
-              visibility: ViewVisibility.WORKSPACE,
+              isPrivate: false,
               position: 0,
             },
           ],
@@ -350,7 +348,6 @@ describe('View tools', () => {
         expect(viewService.findByObjectMetadataId).toHaveBeenCalledWith(
           mockWorkspaceId,
           mockObjectMetadataId,
-          mockUserWorkspaceId,
         );
         expect(result).toHaveProperty('views.length', 1);
       });
@@ -404,7 +401,6 @@ describe('View tools', () => {
           viewId: mockViewId,
           workspaceId: mockWorkspaceId,
           currentWorkspaceMemberId: 'workspace-member-id',
-          currentUserWorkspaceId: mockUserWorkspaceId,
         });
         expect(result).toEqual(mockQueryParams);
       });
@@ -420,7 +416,7 @@ describe('View tools', () => {
           objectMetadataId: mockObjectMetadataId,
           type: ViewType.TABLE,
           icon: 'IconTable',
-          visibility: ViewVisibility.WORKSPACE,
+          isPrivate: false,
         };
 
         viewService.createOne.mockResolvedValue(createdView as any);
@@ -442,10 +438,10 @@ describe('View tools', () => {
             objectMetadataId: mockObjectMetadataId,
             icon: 'IconTable',
             type: ViewType.TABLE,
-            visibility: ViewVisibility.WORKSPACE,
+            isPrivate: false,
           },
           workspaceId: mockWorkspaceId,
-          createdByUserWorkspaceId: mockUserWorkspaceId,
+          authContext: expect.objectContaining({ type: 'user' }),
         });
         expect(result).toEqual({
           id: 'new-view-id',
@@ -453,7 +449,7 @@ describe('View tools', () => {
           objectNameSingular: mockObjectNameSingular,
           type: ViewType.TABLE,
           icon: 'IconTable',
-          visibility: ViewVisibility.WORKSPACE,
+          isPrivate: false,
         });
       });
 
@@ -464,7 +460,7 @@ describe('View tools', () => {
           objectMetadataId: mockObjectMetadataId,
           type: ViewType.KANBAN,
           icon: 'IconLayoutKanban',
-          visibility: ViewVisibility.WORKSPACE,
+          isPrivate: false,
         };
 
         viewService.createOne.mockResolvedValue(createdView as any);
@@ -558,7 +554,7 @@ describe('View tools', () => {
           objectMetadataId: mockObjectMetadataId,
           type: ViewType.TABLE,
           icon: 'IconTable',
-          visibility: ViewVisibility.WORKSPACE,
+          isPrivate: false,
         };
 
         viewService.createOne.mockResolvedValue(createdView as any);
@@ -584,7 +580,7 @@ describe('View tools', () => {
           objectMetadataId: mockObjectMetadataId,
           type: ViewType.CALENDAR,
           icon: 'IconCalendar',
-          visibility: ViewVisibility.WORKSPACE,
+          isPrivate: false,
         };
 
         viewService.createOne.mockResolvedValue(createdView as any);
@@ -609,12 +605,12 @@ describe('View tools', () => {
             objectMetadataId: mockObjectMetadataId,
             icon: 'IconCalendar',
             type: ViewType.CALENDAR,
-            visibility: ViewVisibility.WORKSPACE,
+            isPrivate: false,
             calendarLayout: ViewCalendarLayout.WEEK,
             calendarFieldMetadataId: mockCalendarFieldMetadataId,
           },
           workspaceId: mockWorkspaceId,
-          createdByUserWorkspaceId: mockUserWorkspaceId,
+          authContext: expect.objectContaining({ type: 'user' }),
         });
         expect(result).toEqual({
           id: 'new-calendar-view-id',
@@ -622,7 +618,7 @@ describe('View tools', () => {
           objectNameSingular: mockObjectNameSingular,
           type: ViewType.CALENDAR,
           icon: 'IconCalendar',
-          visibility: ViewVisibility.WORKSPACE,
+          isPrivate: false,
         });
       });
 
@@ -662,7 +658,7 @@ describe('View tools', () => {
           objectMetadataId: mockObjectMetadataId,
           type: ViewType.TABLE,
           icon: 'IconList',
-          visibility: ViewVisibility.UNLISTED,
+          isPrivate: true,
         } as any);
 
         const tools = buildViewTools({
@@ -673,13 +669,13 @@ describe('View tools', () => {
         await tools.create_view.execute({
           name: 'My View',
           objectNameSingular: mockObjectNameSingular,
-          visibility: ViewVisibility.UNLISTED,
+          isPrivate: true,
         });
 
         expect(viewService.createOne).toHaveBeenCalledTimes(1);
         expect(viewService.createOne).toHaveBeenCalledWith(
           expect.objectContaining({
-            createdByUserWorkspaceId: mockUserWorkspaceId,
+            authContext: expect.objectContaining({ type: 'user' }),
           }),
         );
       });
@@ -691,7 +687,7 @@ describe('View tools', () => {
           tools.create_view.execute({
             name: 'My View',
             objectNameSingular: mockObjectNameSingular,
-            visibility: ViewVisibility.UNLISTED,
+            isPrivate: true,
           }),
         ).rejects.toThrow(
           'You do not have permission to create workspace-level views',
@@ -704,7 +700,7 @@ describe('View tools', () => {
       it('should update a workspace view', async () => {
         const existingView = {
           ...mockView,
-          visibility: ViewVisibility.WORKSPACE,
+          isPrivate: false,
         };
         const updatedView = {
           ...existingView,
@@ -731,7 +727,7 @@ describe('View tools', () => {
       it('should allow updating own unlisted view', async () => {
         const existingView = {
           ...mockView,
-          visibility: ViewVisibility.UNLISTED,
+          isPrivate: true,
           createdByUserWorkspaceId: mockUserWorkspaceId,
         };
         const updatedView = {
@@ -778,7 +774,7 @@ describe('View tools', () => {
 
         const existingView = {
           ...mockView,
-          visibility: ViewVisibility.UNLISTED,
+          isPrivate: true,
           createdByUserWorkspaceId: mockUserWorkspaceId,
         };
 
@@ -804,7 +800,7 @@ describe('View tools', () => {
       it('should let a Views holder update another users unlisted view', async () => {
         const existingView = {
           ...mockView,
-          visibility: ViewVisibility.UNLISTED,
+          isPrivate: true,
           createdByUserWorkspaceId: 'other-user-workspace-id',
         };
 
@@ -832,7 +828,7 @@ describe('View tools', () => {
 
         const existingView = {
           ...mockView,
-          visibility: ViewVisibility.UNLISTED,
+          isPrivate: true,
           createdByUserWorkspaceId: 'other-user-workspace-id',
         };
 
@@ -875,7 +871,7 @@ describe('View tools', () => {
           objectMetadataId: mockObjectMetadataId,
           type: ViewType.TABLE,
           icon: 'IconTable',
-          visibility: ViewVisibility.WORKSPACE,
+          isPrivate: false,
           viewFields: [{}, {}],
           viewFilters: [{}],
           viewSorts: [{}],
@@ -901,7 +897,7 @@ describe('View tools', () => {
         ).toHaveBeenCalledWith(
           expect.objectContaining({
             workspaceId: mockWorkspaceId,
-            userWorkspaceId: mockUserWorkspaceId,
+            authContext: expect.objectContaining({ type: 'user' }),
             existingViewId: undefined,
             objectMetadataId: mockObjectMetadataId,
             name: 'Pipeline',
@@ -937,7 +933,7 @@ describe('View tools', () => {
           objectMetadataId: mockObjectMetadataId,
           type: ViewType.TABLE,
           icon: 'IconTable',
-          visibility: ViewVisibility.WORKSPACE,
+          isPrivate: false,
           fieldCount: 2,
           filterCount: 1,
           sortCount: 1,
@@ -951,7 +947,7 @@ describe('View tools', () => {
           objectMetadataId: mockObjectMetadataId,
           type: ViewType.TABLE,
           icon: 'IconTable',
-          visibility: ViewVisibility.WORKSPACE,
+          isPrivate: false,
           viewFields: [{}],
         } as any);
 
@@ -998,7 +994,7 @@ describe('View tools', () => {
       it('should delegate filter replacement to upsertCompleteView when updating', async () => {
         const existingView = {
           ...mockView,
-          visibility: ViewVisibility.WORKSPACE,
+          isPrivate: false,
         };
 
         viewService.findById.mockResolvedValue(existingView as any);
@@ -1040,7 +1036,7 @@ describe('View tools', () => {
         const existingView = {
           ...mockView,
           type: ViewType.CALENDAR,
-          visibility: ViewVisibility.WORKSPACE,
+          isPrivate: false,
         };
 
         viewService.findById.mockResolvedValue(existingView as any);
@@ -1073,7 +1069,7 @@ describe('View tools', () => {
       it('should pass an empty sorts array through to upsertCompleteView on update', async () => {
         const existingView = {
           ...mockView,
-          visibility: ViewVisibility.WORKSPACE,
+          isPrivate: false,
         };
 
         viewService.findById.mockResolvedValue(existingView as any);
@@ -1128,7 +1124,7 @@ describe('View tools', () => {
 
         const existingView = {
           ...mockView,
-          visibility: ViewVisibility.UNLISTED,
+          isPrivate: true,
           createdByUserWorkspaceId: 'other-user-workspace-id',
         };
 
@@ -1152,7 +1148,7 @@ describe('View tools', () => {
       it('should delete a workspace view', async () => {
         const existingView = {
           ...mockView,
-          visibility: ViewVisibility.WORKSPACE,
+          isPrivate: false,
         };
         const deletedView = {
           id: mockViewId,
@@ -1204,7 +1200,7 @@ describe('View tools', () => {
 
         const existingView = {
           ...mockView,
-          visibility: ViewVisibility.UNLISTED,
+          isPrivate: true,
           createdByUserWorkspaceId: 'other-user-workspace-id',
         };
 
@@ -1227,7 +1223,7 @@ describe('View tools', () => {
       it('should update a sort on own unlisted view', async () => {
         viewService.findById.mockResolvedValue({
           ...mockView,
-          visibility: ViewVisibility.UNLISTED,
+          isPrivate: true,
           createdByUserWorkspaceId: mockUserWorkspaceId,
         } as any);
         viewSortService.updateOne.mockResolvedValue({
@@ -1267,7 +1263,7 @@ describe('View tools', () => {
 
         viewService.findById.mockResolvedValue({
           ...mockView,
-          visibility: ViewVisibility.UNLISTED,
+          isPrivate: true,
           createdByUserWorkspaceId: 'other-user-workspace-id',
         } as any);
 
@@ -1312,7 +1308,7 @@ describe('View tools', () => {
             : ({
                 ...mockView,
                 id: mockOtherUsersViewId,
-                visibility: ViewVisibility.UNLISTED,
+                isPrivate: true,
                 createdByUserWorkspaceId: 'other-user-workspace-id',
               } as any),
         );

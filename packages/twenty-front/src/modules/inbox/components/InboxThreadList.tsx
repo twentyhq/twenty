@@ -5,7 +5,7 @@ import { InboxThreadListGroup } from '@/inbox/components/InboxThreadListGroup';
 import { InboxThreadListItem } from '@/inbox/components/InboxThreadListItem';
 import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 import { type AiChatThreadRowVariant } from '@/ai-chat/threads/types/AiChatThreadRowVariant';
-import { groupThreadsByDate } from '@/inbox/utils/groupThreadsByDate';
+import { groupInboxThreadsByDate } from '@/inbox/utils/groupInboxThreadsByDate';
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 
 type InboxThreadListProps = {
@@ -60,7 +60,7 @@ export const InboxThreadList = ({
 
   return (
     <>
-      {groupThreadsByDate({ threads, variant, calendarStartDay }).map(
+      {groupInboxThreadsByDate({ threads, variant, calendarStartDay }).map(
         (dateGroup) => (
           <InboxThreadListGroup
             key={dateGroup.id}

@@ -3,8 +3,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metadata/graphql';
 
-// Rows arrive from loads and from changes, possibly out of order, so a row
-// only replaces one it is at least as recent as
 export const mergeAiChatThreadParticipants = (
   participants: Record<string, AgentChatThreadParticipantFieldsFragment>,
   incomingParticipants: AgentChatThreadParticipantFieldsFragment[],

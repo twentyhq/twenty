@@ -16,6 +16,8 @@ Use your **workspace URL** (the URL you use to access Twenty) as the MCP endpoin
 | **Cloud** | `https://{your-workspace-url}/mcp` (e.g. `https://mycompany.twenty.com/mcp`) |
 | **Self-Hosted** | `https://{your-domain}/mcp` |
 
+The endpoint speaks MCP protocol `2026-07-28` and the earlier revisions back to `2024-11-05` over Streamable HTTP. Clients on `2026-07-28` call `server/discover` and send each request on its own; older clients start with `initialize` as before.
+
 ## Authentication Methods
 
 You have two ways to authenticate your MCP client: **OAuth** (recommended) or **API Key**.

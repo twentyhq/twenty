@@ -19,12 +19,9 @@ import { viewPickerMainGroupByFieldMetadataIdComponentState } from '@/views/view
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
 import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
-import { viewPickerVisibilityComponentState } from '@/views/view-picker/states/viewPickerVisibilityComponentState';
+import { viewPickerIsPrivateComponentState } from '@/views/view-picker/states/viewPickerIsPrivateComponentState';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  ViewVisibility,
-  PermissionFlagType,
-} from '~/generated-metadata/graphql';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 export const ViewPickerContentEffect = () => {
   const setViewPickerSelectedIcon = useSetAtomComponentState(
@@ -33,8 +30,8 @@ export const ViewPickerContentEffect = () => {
   const setViewPickerInputName = useSetAtomComponentState(
     viewPickerInputNameComponentState,
   );
-  const setViewPickerVisibility = useSetAtomComponentState(
-    viewPickerVisibilityComponentState,
+  const setViewPickerIsPrivate = useSetAtomComponentState(
+    viewPickerIsPrivateComponentState,
   );
   const { viewPickerMode } = useViewPickerMode();
 
@@ -91,8 +88,8 @@ export const ViewPickerContentEffect = () => {
       } else {
         setViewPickerSelectedIcon(referenceView.icon);
       }
-      setViewPickerVisibility(
-        hasViewPermission ? referenceView.visibility : ViewVisibility.UNLISTED,
+      setViewPickerIsPrivate(
+        hasViewPermission ? referenceView.isPrivate : true,
       );
       setViewPickerInputName(referenceView.name);
       setViewPickerType(referenceView.type);
@@ -114,7 +111,7 @@ export const ViewPickerContentEffect = () => {
     setViewPickerSelectedIcon,
     setViewPickerType,
     setViewPickerCalendarFieldMetadataId,
-    setViewPickerVisibility,
+    setViewPickerIsPrivate,
     viewPickerIsPersisting,
     viewPickerIsDirty,
     viewPickerMode,

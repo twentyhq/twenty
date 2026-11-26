@@ -1,8 +1,8 @@
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { getDomainFromEmail } from 'twenty-shared/utils';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
 
 export const getDomainFromEmailOrThrow = (email: string) => {
   if (!isNonEmptyString(email)) {

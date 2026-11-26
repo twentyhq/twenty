@@ -33,6 +33,10 @@ export const computeImmediateSubscriptionUpdate = ({
     return undefined;
   }
 
+  if (subscriptionUpdate.type === SubscriptionUpdateType.APPLICATIONS) {
+    return subscriptionUpdate;
+  }
+
   return {
     type: SubscriptionUpdateType.QUANTITIES,
     newSeats: toUpdatePrices.seats,

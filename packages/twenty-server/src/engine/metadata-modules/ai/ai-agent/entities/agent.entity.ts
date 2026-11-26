@@ -33,6 +33,7 @@ import { type AgentTrigger } from 'twenty-shared/application';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
 import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity.type';
 import { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
+import { type PrivatableEntity } from 'src/engine/permissions/metadata-permissions/types/privatable-entity.type';
 
 export type AgentOverrides = {
   label?: string;
@@ -55,7 +56,7 @@ export type AgentOverrides = {
 @Index('IDX_AGENT_CREATED_BY_USER_WORKSPACE', ['createdByUserWorkspaceId'])
 export class AgentEntity
   extends OverridableEntity<AgentOverrides>
-  implements Required<AgentEntity>
+  implements Required<AgentEntity>, PrivatableEntity
 {
   @PrimaryGeneratedColumn('uuid')
   id: string;

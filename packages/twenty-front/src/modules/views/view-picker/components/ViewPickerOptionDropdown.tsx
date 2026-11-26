@@ -22,10 +22,7 @@ import {
   IconTrash,
 } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
-import {
-  PermissionFlagType,
-  ViewVisibility,
-} from '~/generated-metadata/graphql';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 type ViewPickerOptionDropdownProps = {
   isIndexView: boolean;
@@ -35,7 +32,7 @@ type ViewPickerOptionDropdownProps = {
     | 'id'
     | 'name'
     | 'icon'
-    | 'visibility'
+    | 'isPrivate'
     | 'createdByUserWorkspaceId'
     | 'applicationId'
   >;
@@ -69,8 +66,7 @@ export const ViewPickerOptionDropdown = ({
   const { deleteManyNavigationMenuItems } = useDeleteManyNavigationMenuItems();
 
   // Users without VIEWS permission can only edit unlisted views (which are always their own, filtered by backend)
-  const canEditView =
-    hasViewsPermission || view.visibility === ViewVisibility.UNLISTED;
+  const canEditView = hasViewsPermission || view.isPrivate;
 
   const currentNavigationMenuItem = navigationMenuItems.find(
     (item) =>

@@ -33,7 +33,6 @@ export const InboxThreadPagination = ({
   const { loadInboxThreadList } = useLoadInboxThreadList();
   const index = threads.findIndex(({ id }) => id === threadId);
 
-  // A chat opened from a link without being listed has no neighbours
   if (index === -1) {
     return null;
   }
@@ -48,8 +47,6 @@ export const InboxThreadPagination = ({
   const nextThreadId =
     index < threads.length - 1 ? threads[index + 1].id : undefined;
 
-  // The list loads more chats as it scrolls, but it is not on screen beside
-  // a chat page, so the next button loads them instead
   const handleNextClick = () => {
     if (!isDefined(nextThreadId)) {
       void fetchMoreThreads();

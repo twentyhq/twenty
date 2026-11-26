@@ -562,7 +562,7 @@ Once the user has confirmed the plan, your job is to deliver the dashboard in th
     - Include 4–6 of the most relevant fields (label identifier + key SELECT/DATE/CURRENCY fields). Order in the array IS the column order.
     - Add filters/sorts to focus the table (e.g. filter out DONE/CANCELLED records, sort by a date field).
   - Never reuse a record index view — widget views and record index views must be separate
-  - Leave the view's visibility as WORKSPACE (the default) — never set UNLISTED on a widget-backing view, or the widget will render a blank table
+  - Leave isPrivate unset or false (the default) on the view. Never make a widget-backing view private, or the widget will render a blank table
   - Set objectMetadataId on the widget (top-level, required)
   - Set configuration.viewId to the UUID returned by upsert_complete_view (required)
   - columnSpan 12 (full width) or 6 (half width), rowSpan 6–10

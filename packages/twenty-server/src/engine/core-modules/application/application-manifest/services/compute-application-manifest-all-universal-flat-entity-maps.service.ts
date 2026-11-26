@@ -21,7 +21,8 @@ import { fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow } from 'src/en
 import { getConnectionProviderManifestLogicFunctionReferences } from 'src/engine/core-modules/application/application-manifest/utils/get-connection-provider-manifest-logic-function-references.util';
 import { fromConnectionProviderManifestToUniversalFlatConnectionProvider } from 'src/engine/core-modules/application/application-manifest/converters/from-connection-provider-manifest-to-universal-flat-connection-provider.util';
 import { fromMcpServerManifestToUniversalFlatMcpServer } from 'src/engine/core-modules/application/application-manifest/converters/from-mcp-server-manifest-to-universal-flat-mcp-server.util';
-import { fromMessagingProviderManifestToUniversalFlatMessagingProvider } from 'src/engine/core-modules/application/application-manifest/converters/from-messaging-provider-manifest-to-universal-flat-messaging-provider.util';
+import { fromMessagingProviderManifestToUniversalFlatMessagingProviderOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-messaging-provider-manifest-to-universal-flat-messaging-provider-or-throw.util';
+import { setFormulaFieldBindingsThroughMutation } from 'src/engine/core-modules/application/application-manifest/utils/set-formula-field-bindings-through-mutation.util';
 import { fromFieldManifestToUniversalFlatFieldMetadata } from 'src/engine/core-modules/application/application-manifest/converters/from-field-manifest-to-universal-flat-field-metadata.util';
 import { fromFrontComponentManifestToUniversalFlatFrontComponent } from 'src/engine/core-modules/application/application-manifest/converters/from-front-component-manifest-to-universal-flat-front-component.util';
 import { fromIndexManifestToUniversalFlatIndex } from 'src/engine/core-modules/application/application-manifest/converters/from-index-manifest-to-universal-flat-index.util';
@@ -315,7 +316,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     for (const messagingProviderManifest of manifest.messagingProviders ?? []) {
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
         universalFlatEntity:
-          fromMessagingProviderManifestToUniversalFlatMessagingProvider({
+          fromMessagingProviderManifestToUniversalFlatMessagingProviderOrThrow({
             messagingProviderManifest,
             applicationUniversalIdentifier,
             now,
@@ -824,6 +825,13 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
           allUniversalFlatEntityMaps.flatSettingsMenuItemMaps,
       });
     }
+
+    setFormulaFieldBindingsThroughMutation({
+      existingFlatFieldMetadataMaps:
+        existingAllFlatEntityMaps.flatFieldMetadataMaps,
+      universalFlatFieldMetadataMapsToMutate:
+        allUniversalFlatEntityMaps.flatFieldMetadataMaps,
+    });
 
     return allUniversalFlatEntityMaps;
   }

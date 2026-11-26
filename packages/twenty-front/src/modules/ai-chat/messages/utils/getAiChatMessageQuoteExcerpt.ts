@@ -5,7 +5,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { AI_CHAT_QUOTE_EXCERPT_MAX_LENGTH } from '@/ai-chat/messages/constants/AiChatQuoteExcerptMaxLength';
 import { parseAiChatMessageQuote } from '@/ai-chat/messages/utils/parseAiChatMessageQuote';
 
-// matching a reply rescans the thread on every streamed chunk, while only the streaming message changes
 const EXCERPT_BY_MESSAGE = new WeakMap<
   Pick<ExtendedUIMessage, 'parts'>,
   string

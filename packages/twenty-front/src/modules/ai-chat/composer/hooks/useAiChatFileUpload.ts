@@ -1,46 +1,51 @@
-import { aiChatSelectedFilesFamilyState } from '@/ai-chat/composer/states/aiChatSelectedFilesFamilyState';
-import { aiChatUploadedFilesFamilyState } from '@/ai-chat/composer/states/aiChatUploadedFilesFamilyState';
+import { aiChatComposerUploadingFilesFamilyState } from '@/ai-chat/composer/states/aiChatComposerUploadingFilesFamilyState';
+import { aiChatComposerAttachmentsFamilyState } from '@/ai-chat/composer/states/aiChatComposerAttachmentsFamilyState';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
 import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
+import { formatFileSize } from '@/file/utils/formatFileSize';
 import { useLingui } from '@lingui/react/macro';
 import { useStore } from 'jotai';
-import { AgentChatThreadConversationType } from 'twenty-shared/ai';
+import {
+  AgentChatThreadConversationType,
+  CODE_INTERPRETER_MAX_INPUT_FILE_SIZE_BYTES,
+} from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
-import { type AiChatFileUIPart } from '@/ai-chat/composer/types/AiChatFileUIPart';
+import { type AiChatFileUIPart } from '@/ai-chat/types/AiChatFileUIPart';
 import { FileFolder } from '~/generated-metadata/graphql';
 
 export const useAiChatFileUpload = () => {
-  const { uploadFile: directUploadFile } = useDirectFileUpload();
+  const { uploadFile } = useDirectFileUpload();
   const { t } = useLingui();
   const { enqueueToast } = useToast();
   const store = useStore();
 
-  const sendFile = async ({
+  const uploadComposerFile = async ({
     file,
     threadId,
   }: {
     file: File;
     threadId: string;
   }): Promise<AiChatFileUIPart | null> => {
-    const selectedFilesAtom = aiChatSelectedFilesFamilyState.atomFamily({
-      threadId,
-    });
+    const uploadingFilesAtom =
+      aiChatComposerUploadingFilesFamilyState.atomFamily({
+        threadId,
+      });
     const abortController = new AbortController();
-    const unsubscribeFromSelectedFiles = store.sub(selectedFilesAtom, () => {
-      if (!store.get(selectedFilesAtom).includes(file)) {
+    const unsubscribeFromUploadingFiles = store.sub(uploadingFilesAtom, () => {
+      if (!store.get(uploadingFilesAtom).includes(file)) {
         abortController.abort();
       }
     });
 
     try {
-      const uploadedFile = await directUploadFile(file, {
+      const uploadedFile = await uploadFile(file, {
         fileFolder: FileFolder.AgentChat,
         signal: abortController.signal,
       });
 
-      if (!store.get(selectedFilesAtom).includes(file)) {
+      if (!store.get(uploadingFilesAtom).includes(file)) {
         return null;
       }
 
@@ -63,9 +68,9 @@ export const useAiChatFileUpload = () => {
 
       return null;
     } finally {
-      unsubscribeFromSelectedFiles();
-      store.set(selectedFilesAtom, (previousSelectedFiles) =>
-        previousSelectedFiles.filter((selectedFile) => selectedFile !== file),
+      unsubscribeFromUploadingFiles();
+      store.set(uploadingFilesAtom, (previousUploadingFiles) =>
+        previousUploadingFiles.filter((selectedFile) => selectedFile !== file),
       );
     }
   };
@@ -88,18 +93,42 @@ export const useAiChatFileUpload = () => {
       return [];
     }
 
+    const acceptedFiles = files.filter((file) => {
+      if (file.size <= CODE_INTERPRETER_MAX_INPUT_FILE_SIZE_BYTES) {
+        return true;
+      }
+
+      const fileName = file.name;
+      const maxUploadSize = formatFileSize(
+        CODE_INTERPRETER_MAX_INPUT_FILE_SIZE_BYTES,
+      );
+
+      enqueueToast({
+        status: 'error',
+        children: t`Couldn't attach "${fileName}". Files must be ${maxUploadSize} or smaller.`,
+      });
+
+      return false;
+    });
+
+    if (!isNonEmptyArray(acceptedFiles)) {
+      return [];
+    }
+
     store.set(
-      aiChatSelectedFilesFamilyState.atomFamily({ threadId }),
-      (previousSelectedFiles) => [...previousSelectedFiles, ...files],
+      aiChatComposerUploadingFilesFamilyState.atomFamily({ threadId }),
+      (previousUploadingFiles) => [...previousUploadingFiles, ...acceptedFiles],
     );
 
     const successfulUploads = (
-      await Promise.all(files.map((file) => sendFile({ file, threadId })))
+      await Promise.all(
+        acceptedFiles.map((file) => uploadComposerFile({ file, threadId })),
+      )
     ).filter(isDefined);
 
     if (isNonEmptyArray(successfulUploads)) {
       store.set(
-        aiChatUploadedFilesFamilyState.atomFamily({ threadId }),
+        aiChatComposerAttachmentsFamilyState.atomFamily({ threadId }),
         (previousUploadedFiles) => [
           ...previousUploadedFiles,
           ...successfulUploads,

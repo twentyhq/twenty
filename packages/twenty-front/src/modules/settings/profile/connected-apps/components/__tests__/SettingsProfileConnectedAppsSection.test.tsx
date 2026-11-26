@@ -23,6 +23,8 @@ const buildAuthorizationsMock = (applicationNames: string[]) => ({
           id: `authorization-${applicationName}`,
           applicationId: `application-${applicationName}`,
           applicationName,
+          applicationLogoUrl: null,
+          scopes: ['api'],
           lastUsedAt: new Date().toISOString(),
         }),
       ),
@@ -56,6 +58,9 @@ describe('SettingsProfileConnectedAppsSection', () => {
     expect(await screen.findByText('Claude')).toBeInTheDocument();
     expect(screen.getByText('ChatGPT')).toBeInTheDocument();
     expect(screen.getByText('Connected apps')).toBeInTheDocument();
+    expect(
+      screen.getAllByText(/^Access your workspace data · Last used /),
+    ).toHaveLength(2);
   });
 
   it('shows nothing when no app is connected', async () => {

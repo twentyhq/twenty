@@ -121,6 +121,8 @@ const workspaceMember: FlatWorkspaceMember = {
   messageParticipants: [],
   blocklist: [],
   calendarEventParticipants: [],
+  accountOwnerForCalendarChannelEventAssociations: [],
+  accountOwnerForMessageChannelMessageAssociations: [],
   timelineActivities: [],
   agentMessages: [],
   agentChatThreads: [],
@@ -133,7 +135,6 @@ const workspaceMember: FlatWorkspaceMember = {
 describe('buildWorkspaceAccessGroups', () => {
   it('should report a role it cannot compute and still build the others', () => {
     const { accessGroups, hasFailures } = buildWorkspaceAccessGroups({
-      featureFlagsMap: {},
       rolesPermissions,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
@@ -144,7 +145,7 @@ describe('buildWorkspaceAccessGroups', () => {
       },
     });
 
-    expect(accessGroups.map(({ roleId }) => roleId)).toEqual(['healthy']);
+    expect(accessGroups.map(({ type }) => type)).toEqual(['ALL_RECORDS']);
     expect(hasFailures).toBe(true);
   });
 });

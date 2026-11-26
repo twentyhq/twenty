@@ -1,5 +1,4 @@
 import { isResizablePanelDraggingState } from '@/ui/layout/resizable-panel/states/isResizablePanelDraggingState';
-import { SidePanelAskAiHandoffEffect } from '@/side-panel/components/SidePanelAskAiHandoffEffect';
 import { SidePanelRouter } from '@/side-panel/components/SidePanelRouter';
 import { SidePanelWidthEffect } from '@/side-panel/components/SidePanelWidthEffect';
 import { SIDE_PANEL_CLICK_OUTSIDE_ID } from '@/side-panel/constants/SidePanelClickOutsideId';
@@ -24,6 +23,7 @@ import { styled } from '@linaria/react';
 import { useReducedMotion } from 'framer-motion';
 import { useStore } from 'jotai';
 import { type AnimationEvent, useCallback, useState } from 'react';
+import { isSidePanelShrinkingFromFullWidthState } from '@/side-panel/states/isSidePanelShrinkingFromFullWidthState';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledSidePanelWrapper = styled.div<{
@@ -91,16 +91,12 @@ export const SidePanelForDesktop = () => {
   const [liveWidth, setLiveWidth] = useState<number | null>(null);
   const [shouldRenderContent, setShouldRenderContent] =
     useState(isSidePanelOpened);
-  const [isShrinkingFromFullWidth, setIsShrinkingFromFullWidth] =
-    useState(false);
-
-  const handleContinueChatFromFullWidth = useCallback(() => {
-    if (shouldReduceMotion === true) {
-      return;
-    }
-
-    setIsShrinkingFromFullWidth(true);
-  }, [shouldReduceMotion]);
+  const [
+    isSidePanelShrinkingFromFullWidth,
+    setIsSidePanelShrinkingFromFullWidth,
+  ] = useAtomState(isSidePanelShrinkingFromFullWidthState);
+  const isShrinkingFromFullWidth =
+    isSidePanelShrinkingFromFullWidth && shouldReduceMotion !== true;
 
   const setIsResizablePanelDragging = useSetAtomState(
     isResizablePanelDraggingState,
@@ -129,7 +125,7 @@ export const SidePanelForDesktop = () => {
       return;
     }
 
-    setIsShrinkingFromFullWidth(false);
+    setIsSidePanelShrinkingFromFullWidth(false);
     handleTransitionEnd();
   };
 
@@ -179,9 +175,6 @@ export const SidePanelForDesktop = () => {
   return (
     <>
       <SidePanelWidthEffect />
-      <SidePanelAskAiHandoffEffect
-        onContinueChatFromFullWidth={handleContinueChatFromFullWidth}
-      />
       {isSidePanelOpened && (
         <ResizeHandle
           edge="left"

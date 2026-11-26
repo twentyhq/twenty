@@ -5,7 +5,6 @@ import {
   ViewFilterGroupLogicalOperator,
   ViewSortDirection,
   ViewType,
-  ViewVisibility,
 } from '~/generated-metadata/graphql';
 
 const SOURCE_VIEW_ID = 'source-view-id';
@@ -21,7 +20,7 @@ const sourceSnapshot: RecordTableWidgetViewSnapshot = {
     type: ViewType.TABLE_WIDGET,
     isCompact: false,
     position: 0,
-    visibility: ViewVisibility.WORKSPACE,
+    isPrivate: false,
     shouldHideEmptyGroups: false,
     isActive: true,
   },

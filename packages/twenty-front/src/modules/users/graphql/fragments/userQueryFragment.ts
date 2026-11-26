@@ -28,6 +28,10 @@ export const USER_QUERY_FRAGMENT = gql`
     isWorkspaceCreator
     workspaceMember {
       ...WorkspaceMemberQueryFragment
+      roles {
+        id
+        universalIdentifier
+      }
     }
     workspaceMembers {
       ...PartialWorkspaceMemberQueryFragment
@@ -50,6 +54,7 @@ export const USER_QUERY_FRAGMENT = gql`
         canDestroyAllRecords
         unreadableFields
         uneditableFields
+        canReadSomeRecords
         rowLevelRecordsPermissions {
           ruleId
           canCreateRecords
@@ -124,6 +129,7 @@ export const USER_QUERY_FRAGMENT = gql`
       }
       billingCustomer {
         id
+        stripeCustomerEmail
         hasPaymentMethod
         userCreditsFallback
       }

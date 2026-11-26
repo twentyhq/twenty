@@ -16,6 +16,7 @@ import {
   type FlatFieldMetadataOptionMapsForOptions,
   resolveFlatFieldMetadataOptions,
 } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-flat-field-metadata-options.util';
+import { omitFormulaFieldBindings } from 'src/engine/metadata-modules/formula-field/utils/omit-formula-field-bindings.util';
 import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
@@ -140,7 +141,10 @@ export const fromFlatFieldMetadataToFieldManifest = ({
       flatFieldMetadata.objectMetadataUniversalIdentifier,
     ...(isMorphOrRelationFieldMetadataType(flatFieldMetadata.type)
       ? buildRelationProperties(flatFieldMetadata)
-      : { universalSettings: flatFieldMetadata.universalSettings }),
+      : {
+          universalSettings: flatFieldMetadata.universalSettings,
+          formula: omitFormulaFieldBindings(flatFieldMetadata.formula),
+        }),
   };
 
   return fieldManifest as FieldManifest;

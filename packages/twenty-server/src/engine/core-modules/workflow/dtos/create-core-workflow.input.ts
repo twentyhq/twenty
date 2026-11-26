@@ -1,7 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { IsEnum, IsOptional, IsString } from 'class-validator';
-import { WorkflowVisibility } from 'twenty-shared/types';
+import { IsBoolean, IsOptional, IsString } from 'class-validator';
 
 @InputType()
 export class CreateCoreWorkflowInput {
@@ -10,8 +9,8 @@ export class CreateCoreWorkflowInput {
   @IsString()
   name?: string;
 
-  @Field(() => WorkflowVisibility, { nullable: true })
+  @Field(() => Boolean, { nullable: true })
   @IsOptional()
-  @IsEnum(WorkflowVisibility)
-  visibility?: WorkflowVisibility;
+  @IsBoolean()
+  isPrivate?: boolean;
 }

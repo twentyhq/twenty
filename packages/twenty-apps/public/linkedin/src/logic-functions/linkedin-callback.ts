@@ -6,6 +6,7 @@ import {
 } from 'twenty-sdk/logic-function';
 
 import { LINKEDIN_CALLBACK_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { UNIPILE_HOSTED_AUTH_CANCELED_ERROR_TITLE } from 'src/unipile/constants/unipile-hosted-auth-canceled-error-title.constant';
 import { UNIPILE_HOSTED_AUTH_LINK_TTL_MILLISECONDS } from 'src/unipile/constants/unipile-hosted-auth-link-ttl-milliseconds.constant';
 import { getUnipileAccount } from 'src/unipile/utils/get-unipile-account.util';
 
@@ -17,6 +18,10 @@ export const linkedinCallbackHandler = async ({
     error_title: errorTitle,
     error_detail: errorDetail,
   } = queryStringParameters;
+
+  if (errorTitle === UNIPILE_HOSTED_AUTH_CANCELED_ERROR_TITLE) {
+    return null;
+  }
 
   if (isNonEmptyString(errorTitle)) {
     throw new Error(

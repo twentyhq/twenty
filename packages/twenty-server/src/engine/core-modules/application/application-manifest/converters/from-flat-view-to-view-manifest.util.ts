@@ -38,11 +38,13 @@ export const fromFlatViewToViewManifest = ({
   icon: flatView.icon,
   position: flatView.position,
   isCompact: flatView.isCompact,
-  visibility: flatView.visibility,
   openRecordIn: flatView.openRecordIn,
   shouldHideEmptyGroups: flatView.shouldHideEmptyGroups,
   shouldDisplayGroupsAsTabs: flatView.shouldDisplayGroupsAsTabs,
   groupLoadLimit: flatView.groupLoadLimit,
+  ...(isDefined(flatView.presetFilter)
+    ? { presetFilter: flatView.presetFilter }
+    : {}),
   ...(isDefined(flatView.mainGroupByFieldMetadataUniversalIdentifier)
     ? {
         mainGroupByFieldMetadataUniversalIdentifier:

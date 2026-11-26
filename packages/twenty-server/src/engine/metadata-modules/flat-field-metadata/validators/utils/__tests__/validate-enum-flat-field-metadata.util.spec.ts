@@ -2,6 +2,7 @@ import {
   FieldMetadataType,
   type EnumFieldMetadataType,
 } from 'twenty-shared/types';
+import { OPTION_DESCRIPTION_MAX_CHAR_LENGTH } from 'twenty-shared/metadata';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
@@ -20,14 +21,14 @@ const OPTION_WITHOUT_COLOR = {
   position: 0,
 };
 
-const validateOptionColor = ({
+const validateOption = ({
   type,
-  colorProperties,
+  optionProperties,
   update,
   additionalOptions = [],
 }: {
   type: EnumFieldMetadataType;
-  colorProperties: { color?: unknown };
+  optionProperties: { color?: unknown; description?: unknown };
   update?: FlatFieldMetadataTypeValidationArgs<EnumFieldMetadataType>['update'];
   additionalOptions?: (typeof OPTION_WITHOUT_COLOR)[];
 }) => {
@@ -50,7 +51,7 @@ const validateOptionColor = ({
       options: [
         {
           ...OPTION_WITHOUT_COLOR,
-          ...colorProperties,
+          ...optionProperties,
         },
         ...additionalOptions,
       ],
@@ -81,26 +82,26 @@ describe('validateEnumSelectFlatFieldMetadata', () => {
     FieldMetadataType.MULTI_SELECT,
   ] as const)('%s option colors', (type) => {
     it.each([
-      { description: 'missing', colorProperties: {} },
-      { description: 'null', colorProperties: { color: null } },
-    ])('allows $description colors', ({ colorProperties }) => {
-      expect(validateOptionColor({ type, colorProperties })).toEqual([]);
+      { description: 'missing', optionProperties: {} },
+      { description: 'null', optionProperties: { color: null } },
+    ])('allows $description colors', ({ optionProperties }) => {
+      expect(validateOption({ type, optionProperties })).toEqual([]);
     });
 
     it('accepts a supported color', () => {
       expect(
-        validateOptionColor({ type, colorProperties: { color: 'blue' } }),
+        validateOption({ type, optionProperties: { color: 'blue' } }),
       ).toEqual([]);
     });
 
     it.each([
-      { description: 'empty', colorProperties: { color: '' } },
-      { description: 'misspelled', colorProperties: { color: 'grey' } },
-      { description: 'non-string', colorProperties: { color: 42 } },
+      { description: 'empty', optionProperties: { color: '' } },
+      { description: 'misspelled', optionProperties: { color: 'grey' } },
+      { description: 'non-string', optionProperties: { color: 42 } },
     ])(
       'rejects $description colors and names the option',
-      ({ colorProperties }) => {
-        const errors = validateOptionColor({ type, colorProperties });
+      ({ optionProperties }) => {
+        const errors = validateOption({ type, optionProperties });
 
         expect(errors).toEqual([
           expect.objectContaining({
@@ -108,7 +109,7 @@ describe('validateEnumSelectFlatFieldMetadata', () => {
             message: expect.stringContaining(
               `Option "${OPTION_WITHOUT_COLOR.label}" color`,
             ),
-            value: colorProperties.color,
+            value: optionProperties.color,
           }),
         ]);
       },
@@ -120,9 +121,9 @@ describe('validateEnumSelectFlatFieldMetadata', () => {
         color: 'grey',
       };
 
-      const errors = validateOptionColor({
+      const errors = validateOption({
         type,
-        colorProperties: { color: 'grey' },
+        optionProperties: { color: 'grey' },
         update: { options: [optionWithUnsupportedColor] },
       });
 
@@ -136,9 +137,9 @@ describe('validateEnumSelectFlatFieldMetadata', () => {
 
     it('allows unrelated updates to fields with an existing unsupported color', () => {
       expect(
-        validateOptionColor({
+        validateOption({
           type,
-          colorProperties: { color: 'grey' },
+          optionProperties: { color: 'grey' },
           update: { label: 'Updated category' },
         }),
       ).toEqual([]);
@@ -155,9 +156,9 @@ describe('validateEnumSelectFlatFieldMetadata', () => {
 
     it('allows an unrelated update to a field whose options of different applications share a position', () => {
       expect(
-        validateOptionColor({
+        validateOption({
           type: FieldMetadataType.SELECT,
-          colorProperties: {},
+          optionProperties: {},
           additionalOptions: [optionAtSamePosition],
           update: { label: 'Updated category' },
         }),
@@ -166,9 +167,9 @@ describe('validateEnumSelectFlatFieldMetadata', () => {
 
     it('rejects writing options that share a position', () => {
       expect(
-        validateOptionColor({
+        validateOption({
           type: FieldMetadataType.SELECT,
-          colorProperties: {},
+          optionProperties: {},
           additionalOptions: [optionAtSamePosition],
           update: { options: [OPTION_WITHOUT_COLOR, optionAtSamePosition] },
         }),
@@ -178,11 +179,57 @@ describe('validateEnumSelectFlatFieldMetadata', () => {
     });
   });
 
+  describe.each([
+    FieldMetadataType.SELECT,
+    FieldMetadataType.MULTI_SELECT,
+  ] as const)('%s option descriptions', (type) => {
+    it.each([
+      { case: 'missing', optionProperties: { color: 'blue' } },
+      { case: 'null', optionProperties: { color: 'blue', description: null } },
+      {
+        case: 'filled',
+        optionProperties: {
+          color: 'blue',
+          description: 'Pricing sent, waiting for a signature',
+        },
+      },
+    ])('allows $case descriptions', ({ optionProperties }) => {
+      expect(validateOption({ type, optionProperties })).toEqual([]);
+    });
+
+    it.each([
+      {
+        case: 'non-string',
+        optionProperties: { color: 'blue', description: 42 },
+      },
+      {
+        case: 'too long',
+        optionProperties: {
+          color: 'blue',
+          description: 'a'.repeat(OPTION_DESCRIPTION_MAX_CHAR_LENGTH + 1),
+        },
+      },
+    ])(
+      'rejects $case descriptions and names the option',
+      ({ optionProperties }) => {
+        expect(validateOption({ type, optionProperties })).toEqual([
+          expect.objectContaining({
+            code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+            message: expect.stringContaining(
+              `Option "${OPTION_WITHOUT_COLOR.label}" description`,
+            ),
+            value: optionProperties.description,
+          }),
+        ]);
+      },
+    );
+  });
+
   it('allows rating options without colors', () => {
     expect(
-      validateOptionColor({
+      validateOption({
         type: FieldMetadataType.RATING,
-        colorProperties: {},
+        optionProperties: {},
       }),
     ).toEqual([]);
   });

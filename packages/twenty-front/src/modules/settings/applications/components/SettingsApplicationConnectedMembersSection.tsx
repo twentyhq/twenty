@@ -24,11 +24,11 @@ export const SettingsApplicationConnectedMembersSection = ({
   );
 
   const { data, error } = useQuery(WorkspaceApplicationAuthorizationsDocument, {
+    variables: { applicationId },
     fetchPolicy: 'cache-and-network',
   });
 
   const connectedMembers = getApplicationConnectedMembers({
-    applicationId,
     applicationAuthorizations: data?.workspaceApplicationAuthorizations ?? [],
     workspaceMembers: currentWorkspaceMembers,
   });

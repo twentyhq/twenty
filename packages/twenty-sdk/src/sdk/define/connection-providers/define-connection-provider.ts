@@ -6,6 +6,8 @@ import {
   CONNECTION_PROVIDER_SCOPES,
   type ConnectionProviderManifest,
   type CustomConnectionProviderConfig,
+  normalizeConnectionProviderManifest,
+  withDeprecatedConnectionProviderReferences,
 } from 'twenty-shared/application';
 import { isDefined, isHttpUrl } from 'twenty-shared/utils';
 
@@ -41,7 +43,7 @@ const getInvalidLogicFunctionReferenceError = ({
 }): string | null =>
   isValidPostgresUuid(universalIdentifier)
     ? null
-    : `Connection provider ${path}.universalIdentifier "${universalIdentifier}" must be the UUID universalIdentifier of a logic function in this app.`;
+    : `Connection provider ${path}UniversalIdentifier "${universalIdentifier}" must be the UUID universalIdentifier of a logic function in this app.`;
 
 const getCustomConfigErrors = (
   custom: CustomConnectionProviderConfig | undefined,
@@ -53,17 +55,18 @@ const getCustomConfigErrors = (
   }
 
   return CUSTOM_LOGIC_FUNCTION_KEYS.flatMap((logicFunctionKey) => {
-    const logicFunction = custom[logicFunctionKey];
+    const universalIdentifier =
+      custom[`${logicFunctionKey}UniversalIdentifier`];
 
-    if (!isDefined(logicFunction)) {
+    if (!isDefined(universalIdentifier)) {
       return [
-        `Custom connection provider must declare custom.${logicFunctionKey}`,
+        `Custom connection provider must declare custom.${logicFunctionKey}UniversalIdentifier`,
       ];
     }
 
     const referenceError = getInvalidLogicFunctionReferenceError({
       path: `custom.${logicFunctionKey}`,
-      universalIdentifier: logicFunction.universalIdentifier,
+      universalIdentifier,
     });
 
     return isDefined(referenceError) ? [referenceError] : [];
@@ -74,6 +77,7 @@ export const defineConnectionProvider: DefineEntity<
   ConnectionProviderManifest
 > = (config) => {
   const errors: string[] = [];
+  const normalizedConfig = normalizeConnectionProviderManifest(config);
 
   if (!config.universalIdentifier) {
     errors.push('Connection provider must have a universalIdentifier');
@@ -96,11 +100,12 @@ export const defineConnectionProvider: DefineEntity<
   }
 
   for (const logicFunctionKey of LOGIC_FUNCTION_KEYS) {
-    const logicFunction = config[logicFunctionKey];
-    const referenceError = isDefined(logicFunction)
+    const universalIdentifier =
+      normalizedConfig[`${logicFunctionKey}UniversalIdentifier`];
+    const referenceError = isDefined(universalIdentifier)
       ? getInvalidLogicFunctionReferenceError({
           path: logicFunctionKey,
-          universalIdentifier: logicFunction.universalIdentifier,
+          universalIdentifier,
         })
       : null;
 
@@ -167,9 +172,13 @@ export const defineConnectionProvider: DefineEntity<
     );
   }
 
-  if (config.type === 'custom') {
-    errors.push(...getCustomConfigErrors(config.custom));
+  if (normalizedConfig.type === 'custom') {
+    errors.push(...getCustomConfigErrors(normalizedConfig.custom));
   }
 
-  return createValidationResult({ config, errors });
+  // Both spellings, so a manifest built by a CLI older than this SDK still reads on older servers.
+  return createValidationResult({
+    config: withDeprecatedConnectionProviderReferences(config),
+    errors,
+  });
 };

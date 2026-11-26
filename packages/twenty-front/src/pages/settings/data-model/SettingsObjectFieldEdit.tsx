@@ -6,6 +6,7 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { useUpdateOneFieldMetadataItem } from '@/object-metadata/hooks/useUpdateOneFieldMetadataItem';
+import { getFieldMetadataItemInputKey } from '@/object-metadata/utils/getFieldMetadataItemInputKey';
 import { formatFieldMetadataItemInput } from '@/object-metadata/utils/formatFieldMetadataItemInput';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
@@ -16,6 +17,7 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/FieldNameMaximumLength';
 import { SettingsDataModelFieldDescriptionForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldDescriptionForm';
 import { SettingsDataModelFieldIconLabelForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm';
+import { SettingsDataModelFieldFormulaSection } from '@/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection';
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
 import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
 import { type SettingsDataModelFieldEditFormValues } from '@/settings/data-model/types/SettingsDataModelFieldEditFormValues';
@@ -38,6 +40,8 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import {
+  getFieldMetadataFormulaCurrencyCodeExpression,
+  getFieldMetadataFormulaExpression,
   getSettingsPath,
   isDefined,
   isEmptyObject,
@@ -162,6 +166,14 @@ export const SettingsObjectFieldEdit = () => {
       isLabelSyncedWithName: fieldMetadataItem?.isLabelSyncedWithName ?? true,
       settings,
       defaultValue,
+      formula:
+        getFieldMetadataFormulaExpression({
+          formula: fieldMetadataItem?.formula,
+        }) ?? '',
+      formulaCurrencyCode:
+        getFieldMetadataFormulaCurrencyCodeExpression({
+          formula: fieldMetadataItem?.formula,
+        }) ?? '',
     },
   });
 
@@ -256,9 +268,12 @@ export const SettingsObjectFieldEdit = () => {
     const otherDirtyFields = omit(dirtyFields, 'relation');
 
     if (Object.keys(otherDirtyFields).length > 0) {
+      const dirtyInputKeys = Object.keys(otherDirtyFields).map(
+        getFieldMetadataItemInputKey,
+      );
       const formattedInput = Object.fromEntries(
         Object.entries(formatFieldMetadataItemInput(formValues)).filter(
-          ([key]) => Object.keys(otherDirtyFields).includes(key),
+          ([key]) => dirtyInputKeys.includes(key),
         ),
       );
 
@@ -432,6 +447,13 @@ export const SettingsObjectFieldEdit = () => {
                   disabled={isFieldPropertiesReadonly}
                 />
               </Section.Root>
+            )}
+            {isCustomField && !isFieldPropertiesReadonly && (
+              <SettingsDataModelFieldFormulaSection
+                objectMetadataItem={objectMetadataItem}
+                fieldType={fieldMetadataItem.type}
+                existingFieldMetadataId={fieldMetadataItem.id}
+              />
             )}
             <Section.Root>
               <Section.Header

@@ -6,7 +6,7 @@ export const INBOX_THREAD_PRESET_FILTER_LABELS: Record<
   AgentChatThreadPresetFilter,
   MessageDescriptor
 > = {
-  active: msg`Open`,
+  active: msg({ message: 'Open', context: 'Inbox thread status' }),
   needsInput: msg`Needs input`,
   mentions: msg`Mentions`,
   assigned: msg`Assigned to me`,

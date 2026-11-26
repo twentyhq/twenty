@@ -18,7 +18,6 @@ const AttachConversationToRecordsOutputSchema = z.object({
 
 type RecordToAttach = z.infer<typeof RecordToAttachSchema>;
 
-// remove the single-record branch with ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME
 const parseRecordsToAttach = (input: ToolInput): RecordToAttach[] => {
   const batchInput = AttachConversationToRecordsInputSchema.safeParse(input);
 

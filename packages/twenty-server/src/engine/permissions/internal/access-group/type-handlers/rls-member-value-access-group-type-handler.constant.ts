@@ -1,0 +1,42 @@
+/* @license Enterprise */
+
+import { isDefined } from 'twenty-shared/utils';
+
+import { type AccessGroupTypeHandler } from 'src/engine/permissions/internal/access-group/types/access-group-type-handler.type';
+import { findAccessGroupColumnOrThrow } from 'src/engine/permissions/internal/access-group/utils/find-access-group-column-or-throw.util';
+
+export const RLS_MEMBER_VALUE_ACCESS_GROUP_TYPE_HANDLER: AccessGroupTypeHandler<'RLS_MEMBER_VALUE'> =
+  {
+    findSplitValue: ({ memberFieldValues }) => memberFieldValues,
+    toRowColumns: ({ memberFieldValues }) => ({
+      memberFieldValues,
+      value: null,
+    }),
+    fromRow: ({ compactId, memberFieldValues }) => ({
+      type: 'RLS_MEMBER_VALUE',
+      memberFieldValues: findAccessGroupColumnOrThrow({
+        compactId,
+        value: memberFieldValues,
+      }),
+    }),
+    buildRecordRule: ({ accessGroup, ruleShape }) => ({
+      rowLevelPermissionRule: ruleShape.rowLevelPermissionRule,
+      memberFieldValues: accessGroup.memberFieldValues,
+    }),
+    buildValueLookupCondition: ({
+      accessGroupAlias,
+      valueExpressions,
+      buildMemberFieldKeyParameterName,
+      residualMemberFieldValuesParameterName,
+    }) =>
+      `${accessGroupAlias}."memberFieldValues" = jsonb_build_object(${valueExpressions
+        .map(
+          (valueExpression, keyIndex) =>
+            `CAST(:${buildMemberFieldKeyParameterName(keyIndex)} AS text), ${valueExpression}`,
+        )
+        .join(', ')})${
+        isDefined(residualMemberFieldValuesParameterName)
+          ? ` || CAST(:${residualMemberFieldValuesParameterName} AS jsonb)`
+          : ''
+      }`,
+  };

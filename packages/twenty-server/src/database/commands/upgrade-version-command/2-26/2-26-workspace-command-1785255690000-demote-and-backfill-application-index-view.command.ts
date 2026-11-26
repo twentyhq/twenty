@@ -312,6 +312,8 @@ export class DemoteAndBackfillApplicationIndexViewCommand extends ProvisionedWor
             position,
             aggregateOperation: null,
             relationTargetFieldMetadataUniversalIdentifier: null,
+            universalRelationScope: null,
+            label: null,
             isActive: true,
             isSystemSideEffect: true,
             isCanonical: true,

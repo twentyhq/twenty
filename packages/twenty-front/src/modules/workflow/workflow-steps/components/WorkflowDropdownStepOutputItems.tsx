@@ -119,7 +119,7 @@ export const WorkflowDropdownStepOutputItems = ({
     : undefined;
 
   const shouldDisplaySubStepObject =
-    subStepObjectDisplay?.isSelectable === true;
+    subStepObjectDisplay?.isSelectable ?? false;
 
   return (
     <>

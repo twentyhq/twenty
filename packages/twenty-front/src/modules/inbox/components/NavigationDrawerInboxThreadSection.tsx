@@ -5,7 +5,7 @@ import { NavigationDrawerInboxThreadItem } from '@/inbox/components/NavigationDr
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
 import { type InboxThreadListItemData } from '@/inbox/types/InboxThreadListItemData';
 
-export type NavigationDrawerInboxThreadSectionProps = {
+type NavigationDrawerInboxThreadSectionProps = {
   sectionId: string;
   title: string;
   threads: InboxThreadListItemData[];

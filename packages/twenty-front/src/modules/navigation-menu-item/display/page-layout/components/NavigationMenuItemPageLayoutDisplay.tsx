@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { useLocation } from 'react-router-dom';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
@@ -6,6 +7,7 @@ import { getPageLayoutNavigationMenuItemComputedLink } from '@/navigation-menu-i
 import type { NavigationMenuItemSectionContentProps } from '@/navigation-menu-item/display/sections/types/NavigationMenuItemSectionContentProps';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { NavigationMenuTabFirstItemOpenEffect } from '@/navigation-menu-item/display/effect-components/NavigationMenuTabFirstItemOpenEffect';
 
 type NavigationMenuItemPageLayoutDisplayProps =
   NavigationMenuItemSectionContentProps;
@@ -28,24 +30,29 @@ export const NavigationMenuItemPageLayoutDisplay = ({
   const isActive = computedLink !== '' && location.pathname === computedLink;
 
   return (
-    <NavigationDrawerItem
-      label={label}
-      to={
-        isLayoutCustomizationModeEnabled || isDragging
-          ? undefined
-          : computedLink
-      }
-      onClick={
-        isLayoutCustomizationModeEnabled
-          ? editModeProps?.onEditModeClick
-          : undefined
-      }
-      Icon={() => <NavigationMenuItemIcon navigationMenuItem={item} />}
-      active={isActive}
-      isSelectedInEditMode={editModeProps?.isSelectedInEditMode}
-      isDragging={isDragging}
-      triggerEvent="CLICK"
-      rightOptions={rightOptions}
-    />
+    <>
+      {isNonEmptyString(computedLink) && (
+        <NavigationMenuTabFirstItemOpenEffect to={computedLink} />
+      )}
+      <NavigationDrawerItem
+        label={label}
+        to={
+          isLayoutCustomizationModeEnabled || isDragging
+            ? undefined
+            : computedLink
+        }
+        onClick={
+          isLayoutCustomizationModeEnabled
+            ? editModeProps?.onEditModeClick
+            : undefined
+        }
+        Icon={() => <NavigationMenuItemIcon navigationMenuItem={item} />}
+        active={isActive}
+        isSelectedInEditMode={editModeProps?.isSelectedInEditMode}
+        isDragging={isDragging}
+        triggerEvent="CLICK"
+        rightOptions={rightOptions}
+      />
+    </>
   );
 };

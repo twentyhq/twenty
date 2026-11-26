@@ -63,15 +63,17 @@ const createChatReferenceElement =
     <Element>{processChildrenForChatReferences(children)}</Element>
   );
 
-// react-markdown uses each entry as the JSX element type, so rebuilding this map
-// per render would remount every node on every streamed chunk.
 const MARKDOWN_COMPONENTS = {
   table: ({ children }: { children?: React.ReactNode }) => (
     <StyledTableScrollContainer>
       <table>{children}</table>
     </StyledTableScrollContainer>
   ),
-  p: createChatReferenceElement(StyledParagraph),
+  p: ({ children }: { children?: React.ReactNode }) => (
+    <StyledParagraph className="markdown-paragraph">
+      {processChildrenForChatReferences(children)}
+    </StyledParagraph>
+  ),
   td: createChatReferenceElement('td'),
   th: createChatReferenceElement('th'),
   li: createChatReferenceElement('li'),

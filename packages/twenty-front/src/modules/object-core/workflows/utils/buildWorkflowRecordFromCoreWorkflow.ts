@@ -7,7 +7,7 @@ export const buildWorkflowRecordFromCoreWorkflow = (
     | 'id'
     | 'name'
     | 'statuses'
-    | 'visibility'
+    | 'isPrivate'
     | 'canChangeVisibility'
     | 'updatedAt'
   >,
@@ -16,7 +16,7 @@ export const buildWorkflowRecordFromCoreWorkflow = (
   id: coreWorkflow.id,
   name: coreWorkflow.name ?? '',
   statuses: coreWorkflow.statuses,
-  visibility: coreWorkflow.visibility,
+  isPrivate: coreWorkflow.isPrivate,
   canChangeVisibility: coreWorkflow.canChangeVisibility,
   updatedAt: coreWorkflow.updatedAt,
   deletedAt: null,

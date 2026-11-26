@@ -1,0 +1,33 @@
+import { OUTPUT_FIELD_TYPE_OPTIONS } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/OutputFieldTypeOptions';
+import { Select } from '@/ui/input/components/Select';
+import { type AgentResponseFieldType } from 'twenty-shared/ai';
+import { useLingui } from '@lingui/react/macro';
+
+type AgentOutputFieldTypeSelectorProps = {
+  value?: AgentResponseFieldType;
+  onChange: (value: AgentResponseFieldType) => void;
+  disabled?: boolean;
+  dropdownId: string;
+};
+
+export const AgentOutputFieldTypeSelector = ({
+  value,
+  onChange,
+  disabled,
+  dropdownId,
+}: AgentOutputFieldTypeSelectorProps) => {
+  const { t } = useLingui();
+  return (
+    <Select
+      dropdownId={dropdownId}
+      label={t`Type`}
+      options={OUTPUT_FIELD_TYPE_OPTIONS.map((option) => ({
+        ...option,
+        label: t(option.label),
+      }))}
+      value={value}
+      onChange={onChange}
+      disabled={disabled}
+    />
+  );
+};

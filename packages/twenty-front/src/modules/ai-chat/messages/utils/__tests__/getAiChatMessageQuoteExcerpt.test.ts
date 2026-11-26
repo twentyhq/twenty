@@ -23,6 +23,22 @@ describe('getAiChatMessageQuoteExcerpt', () => {
     expect(excerpt).toBe(`${'a'.repeat(AI_CHAT_QUOTE_EXCERPT_MAX_LENGTH)}…`);
   });
 
+  it('returns an empty excerpt for a message without text', () => {
+    expect(
+      getAiChatMessageQuoteExcerpt({
+        parts: [
+          {
+            type: 'tool-find_companies',
+            toolCallId: 'call-1',
+            state: 'output-available',
+            input: {},
+            output: {},
+          },
+        ],
+      }),
+    ).toBe('');
+  });
+
   it('leaves out the quote a reply starts with', () => {
     expect(
       getAiChatMessageQuoteExcerpt({

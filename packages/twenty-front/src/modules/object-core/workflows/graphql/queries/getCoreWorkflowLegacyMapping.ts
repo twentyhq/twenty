@@ -7,17 +7,3 @@ export const GET_CORE_WORKFLOW_LEGACY_MAPPING = gql`
     }
   }
 `;
-
-export const GET_CORE_WORKFLOW_VERSION_LEGACY_MAPPING = gql`
-  query GetCoreWorkflowVersionLegacyMapping(
-    $workspaceWorkflowVersionId: UUID!
-  ) {
-    coreWorkflowVersion(
-      workspaceWorkflowVersionId: $workspaceWorkflowVersionId
-    ) {
-      id
-      coreWorkflowId
-      workspaceWorkflowVersionId
-    }
-  }
-`;

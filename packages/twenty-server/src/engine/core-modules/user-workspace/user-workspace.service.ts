@@ -3,8 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { FileFolder, OpenRecordIn } from 'twenty-shared/types';
-import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
-import { In, IsNull, Not, type QueryRunner, type Repository } from 'typeorm';
+import {
+  assertIsDefinedOrThrow,
+  isDefined,
+  typedObjectEntries,
+} from 'twenty-shared/utils';
+import { In, IsNull, type QueryRunner, type Repository } from 'typeorm';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
@@ -23,7 +27,6 @@ import { BillingSeatService } from 'src/engine/core-modules/billing/services/bil
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
-import { extractFileIdFromUrl } from 'src/engine/core-modules/file/files-field/utils/extract-file-id-from-url.util';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { type InboxNotificationSettings } from 'src/engine/core-modules/user-workspace/types/inbox-notification-settings.type';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -41,7 +44,9 @@ import {
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { RoleAssignmentWriteService } from 'src/engine/permissions/role-assignment/role-assignment-write.service';
+import { PRIVATABLE_METADATA_NAMES } from 'src/engine/permissions/metadata-permissions/constants/privatable-metadata-names.constant';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -185,19 +190,19 @@ export class UserWorkspaceService {
     },
     queryRunner?: QueryRunner,
   ): Promise<UserWorkspaceEntity> {
-    const defaultAvatarUrl = await this.computeDefaultAvatarUrl(
+    const defaultAvatarFileId = await this.computeDefaultAvatarFileId({
       userId,
       workspaceId,
       isExistingUser,
       pictureUrl,
       applicationUniversalIdentifier,
       queryRunner,
-    );
+    });
 
     const userWorkspace = this.userWorkspaceRepository.create({
       userId,
       workspaceId,
-      defaultAvatarUrl,
+      defaultAvatarFileId,
       locale: locale ?? SOURCE_LOCALE,
     });
 
@@ -246,7 +251,12 @@ export class UserWorkspaceService {
         openRecordIn: OpenRecordIn.SIDE_PANEL,
         userId: user.id,
         userEmail: user.email,
-        avatarUrl: userWorkspace.defaultAvatarUrl ?? null,
+        avatarUrl: isDefined(userWorkspace.defaultAvatarFileId)
+          ? this.fileUrlService.getLegacyWorkspaceMemberAvatarUrl({
+              fileId: userWorkspace.defaultAvatarFileId,
+              fileFolder: FileFolder.CorePicture,
+            })
+          : null,
         locale: (user.locale ?? SOURCE_LOCALE) as keyof typeof APP_LOCALES,
       });
 
@@ -422,6 +432,9 @@ export class UserWorkspaceService {
       await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
         'flatRoleTargetMaps',
         'userApplicationVariableValueMaps',
+        ...typedObjectEntries(PRIVATABLE_METADATA_NAMES).map(([metadataName]) =>
+          getMetadataFlatEntityMapsKey(metadataName),
+        ),
       ]);
     }
   }
@@ -581,53 +594,33 @@ export class UserWorkspaceService {
     return workspaceMember;
   }
 
-  private async computeDefaultAvatarUrl(
-    userId: string,
-    workspaceId: string,
-    isExistingUser: boolean,
-    pictureUrl?: string,
-    applicationUniversalIdentifier?: string,
-    queryRunner?: QueryRunner,
-  ) {
-    return this.computeDefaultAvatarUrlMigrated(
-      userId,
-      workspaceId,
-      isExistingUser,
-      pictureUrl,
-      applicationUniversalIdentifier,
-      queryRunner,
-    );
-  }
-
-  private async computeDefaultAvatarUrlMigrated(
-    userId: string,
-    workspaceId: string,
-    isExistingUser: boolean,
-    pictureUrl?: string,
-    applicationUniversalIdentifier?: string,
-    queryRunner?: QueryRunner,
-  ) {
+  private async computeDefaultAvatarFileId({
+    userId,
+    workspaceId,
+    isExistingUser,
+    pictureUrl,
+    applicationUniversalIdentifier,
+    queryRunner,
+  }: {
+    userId: string;
+    workspaceId: string;
+    isExistingUser: boolean;
+    pictureUrl?: string;
+    applicationUniversalIdentifier?: string;
+    queryRunner?: QueryRunner;
+  }): Promise<string | undefined> {
     if (isExistingUser) {
-      const userWorkspace = await this.userWorkspaceRepository.findOne({
-        where: {
-          userId,
-          defaultAvatarUrl: Not(IsNull()),
-        },
-        order: {
-          createdAt: 'ASC',
-        },
+      // No filter on defaultAvatarFileId: the column is hidden from the entity until its slow upgrade has run
+      const userWorkspaces = await this.userWorkspaceRepository.find({
+        where: { userId },
+        order: { createdAt: 'ASC' },
       });
 
-      if (!isDefined(userWorkspace?.defaultAvatarUrl)) {
-        return;
-      }
-
-      const sourceFileId = extractFileIdFromUrl(
-        userWorkspace.defaultAvatarUrl,
-        FileFolder.CorePicture,
+      const userWorkspace = userWorkspaces.find((candidate) =>
+        isDefined(candidate.defaultAvatarFileId),
       );
 
-      if (!isDefined(sourceFileId)) {
+      if (!isDefined(userWorkspace?.defaultAvatarFileId)) {
         return;
       }
 
@@ -635,17 +628,14 @@ export class UserWorkspaceService {
         const savedFile =
           await this.fileCorePictureService.copyWorkspaceMemberProfilePicture({
             sourceWorkspaceId: userWorkspace.workspaceId,
-            sourceFileId,
+            sourceFileId: userWorkspace.defaultAvatarFileId,
             targetWorkspaceId: workspaceId,
             targetApplicationUniversalIdentifier:
               applicationUniversalIdentifier,
             queryRunner,
           });
 
-        return this.fileUrlService.getLegacyWorkspaceMemberAvatarUrl({
-          fileId: savedFile.id,
-          fileFolder: FileFolder.CorePicture,
-        });
+        return savedFile.id;
       } catch (error) {
         if (error.code === FileStorageExceptionCode.FILE_NOT_FOUND) {
           return;
@@ -668,14 +658,7 @@ export class UserWorkspaceService {
         },
       );
 
-    if (!isDefined(savedFile)) {
-      return;
-    }
-
-    return this.fileUrlService.getLegacyWorkspaceMemberAvatarUrl({
-      fileId: savedFile.id,
-      fileFolder: FileFolder.CorePicture,
-    });
+    return savedFile?.id;
   }
 
   async castWorkspaceToAvailableWorkspace(workspace: WorkspaceEntity) {

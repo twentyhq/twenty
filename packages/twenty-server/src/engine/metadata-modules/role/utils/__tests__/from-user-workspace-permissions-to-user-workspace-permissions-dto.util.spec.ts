@@ -31,6 +31,7 @@ const toDto = (objectRecordsPermissions: ObjectRecordsPermissions) =>
       objects: { [OBJECT_METADATA_ID]: objectRecordsPermissions },
     },
     permissionFlags: buildPermissionFlags(),
+    objectMetadataIdsWithReadableRecords: new Set(),
   }).objectRecordsPermissions?.[0];
 
 describe('fromUserWorkspacePermissionsToUserWorkspacePermissionsDto', () => {

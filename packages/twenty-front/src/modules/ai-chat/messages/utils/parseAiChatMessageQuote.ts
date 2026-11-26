@@ -5,7 +5,6 @@ import { type AiChatMessageQuote } from '@/ai-chat/messages/types/AiChatMessageQ
 
 const QUOTE_HEADER_REGEX = /^\*\*(.+?):\*\* ?([\s\S]*)$/;
 
-// reads back the quote written by prependAiChatQuoteToText
 export const parseAiChatMessageQuote = (
   text: string,
 ): AiChatMessageQuote | null => {

@@ -22,7 +22,7 @@ export const createStandardNavigationMenuItemFolderFlatMetadata = ({
 }: {
   parent?: Pick<FlatNavigationMenuItem, 'id' | 'universalIdentifier'>;
   universalIdentifier: string;
-  name: string;
+  name: string | null;
   icon?: string | null;
   color: string | null;
   position: number;

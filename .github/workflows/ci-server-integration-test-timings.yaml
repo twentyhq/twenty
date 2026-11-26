@@ -37,12 +37,10 @@ jobs:
           merge-multiple: true
           path: shard-timings
       - name: Download previous timings
-        if: needs.server-integration-test.outputs.timings-run-id != ''
+        if: needs.server-integration-test.outputs.has-previous-timings == 'true'
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
-          name: integration-test-timings
-          run-id: ${{ needs.server-integration-test.outputs.timings-run-id }}
-          github-token: ${{ github.token }}
+          name: previous-integration-test-timings
           path: previous-timings
       - name: Merge shard timings into previous timings
         run: |

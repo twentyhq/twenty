@@ -1,11 +1,9 @@
-import { type ReactNode, useContext, useMemo } from 'react';
+import { type ReactNode, useMemo } from 'react';
 
-import { AiChatInstanceRegistrationEffect } from '@/ai-chat/components/AiChatInstanceRegistrationEffect';
-import { AiChatPrepromptEffect } from '@/ai-chat/composer/components/AiChatPrepromptEffect';
-import { AiChatSendMessageEffect } from '@/ai-chat/instance/components/AiChatSendMessageEffect';
-import { AiChatRuntimeContext } from '@/ai-chat/contexts/AiChatRuntimeContext';
-import { useIsAiChatRuntimeEnabled } from '@/ai-chat/hooks/useIsAiChatRuntimeEnabled';
 import { AiChatInstanceContext } from '@/ai-chat/contexts/AiChatInstanceContext';
+import { AiChatInstanceEffect } from '@/ai-chat/instance/components/AiChatInstanceEffect';
+import { useIsWorkspaceSetupChat } from '@/ai-chat/hooks/useIsWorkspaceSetupChat';
+import { WorkspaceSetupChatKickoffEffect } from '@/onboarding/effect-components/WorkspaceSetupChatKickoffEffect';
 
 type AiChatInstanceProps = {
   instanceId: string;
@@ -20,8 +18,7 @@ export const AiChatInstance = ({
   onThreadChange,
   children,
 }: AiChatInstanceProps) => {
-  const isAiChatRuntimeMounted = useContext(AiChatRuntimeContext);
-  const isAiChatRuntimeEnabled = useIsAiChatRuntimeEnabled();
+  const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
   const aiChatInstance = useMemo(
     () => ({ instanceId, threadId, onThreadChange }),
     [instanceId, threadId, onThreadChange],
@@ -29,11 +26,8 @@ export const AiChatInstance = ({
 
   return (
     <AiChatInstanceContext.Provider value={aiChatInstance}>
-      <AiChatInstanceRegistrationEffect />
-      {isAiChatRuntimeEnabled && <AiChatPrepromptEffect />}
-      {isAiChatRuntimeMounted && isAiChatRuntimeEnabled && (
-        <AiChatSendMessageEffect />
-      )}
+      <AiChatInstanceEffect />
+      {isWorkspaceSetupChat && <WorkspaceSetupChatKickoffEffect />}
       {children}
     </AiChatInstanceContext.Provider>
   );

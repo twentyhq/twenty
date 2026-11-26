@@ -2,6 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { kv } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
+import { consumeLinkedinProfileLookupOrThrow } from 'src/logic-functions/utils/consume-linkedin-profile-lookup-or-throw.util';
 import { getLinkedinPublicIdentifierKey } from 'src/logic-functions/utils/get-linkedin-public-identifier-key.util';
 import { type UnipileUser } from 'src/unipile/types/unipile-user.type';
 import { getUnipileUser } from 'src/unipile/utils/get-unipile-user.util';
@@ -17,11 +18,15 @@ const isPermanentUnipileError = (error: unknown): boolean =>
 export const withLinkedinPublicIdentifier = async ({
   unipileAccountId,
   user,
+  dailyLookupLimit,
   shouldLookUp,
+  deadlineAtMs,
 }: {
   unipileAccountId: string;
   user: UnipileUser;
+  dailyLookupLimit: number;
   shouldLookUp?: () => Promise<boolean>;
+  deadlineAtMs?: number;
 }): Promise<UnipileUser> => {
   if (isNonEmptyString(user.public_identifier)) {
     return user;
@@ -38,10 +43,16 @@ export const withLinkedinPublicIdentifier = async ({
     return user;
   }
 
+  await consumeLinkedinProfileLookupOrThrow({
+    unipileAccountId,
+    dailyLimit: dailyLookupLimit,
+  });
+
   try {
     const { public_identifier: publicIdentifier } = await getUnipileUser({
       accountId: unipileAccountId,
       userId: user.id,
+      deadlineAtMs,
     });
 
     if (!isNonEmptyString(publicIdentifier)) {

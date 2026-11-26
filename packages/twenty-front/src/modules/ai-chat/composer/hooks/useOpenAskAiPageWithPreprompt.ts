@@ -3,17 +3,16 @@ import { type AiModelTier } from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { useAiChatFileUpload } from '@/ai-chat/composer/hooks/useAiChatFileUpload';
-import { useStageAiChatPreprompt } from '@/ai-chat/hooks/useStageAiChatPreprompt';
+import { useApplyAiChatPreprompt } from '@/ai-chat/composer/hooks/useApplyAiChatPreprompt';
 import { useSwitchToNewAiChat } from '@/ai-chat/composer/hooks/useSwitchToNewAiChat';
-import { type AiChatPrepromptMode } from '@/ai-chat/states/aiChatPrepromptState';
+import { type AiChatPrepromptMode } from '@/ai-chat/types/AiChatPrepromptMode';
 import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
-import { aiChatUploadedFilesFamilyState } from '@/ai-chat/composer/states/aiChatUploadedFilesFamilyState';
-import { aiChatOpenThreadIdByInstanceIdState } from '@/ai-chat/states/aiChatOpenThreadIdByInstanceIdState';
+import { aiChatComposerAttachmentsFamilyState } from '@/ai-chat/composer/states/aiChatComposerAttachmentsFamilyState';
+import { aiChatRequiredThreadListenersState } from '@/ai-chat/states/aiChatRequiredThreadListenersState';
 import { aiChatUserSelectedModelTierState } from '@/ai-chat/states/aiChatUserSelectedModelTierState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
-// Kept coarse because it is part of the front component SDK surface.
-export type AiChatModelPreselection = 'FAST' | 'SMART';
+type AiChatModelPreselection = 'FAST' | 'SMART';
 
 const TIER_BY_PRESELECTION: Record<AiChatModelPreselection, AiModelTier> = {
   FAST: 'fast',
@@ -22,8 +21,8 @@ const TIER_BY_PRESELECTION: Record<AiChatModelPreselection, AiModelTier> = {
 
 export const useOpenAskAiPageWithPreprompt = () => {
   const store = useStore();
-  const { switchToNewChat } = useSwitchToNewAiChat();
-  const { stageAiChatPreprompt } = useStageAiChatPreprompt();
+  const { switchToNewAiChat } = useSwitchToNewAiChat();
+  const { applyAiChatPreprompt } = useApplyAiChatPreprompt();
   const setAiChatUserSelectedModelTier = useSetAtomState(
     aiChatUserSelectedModelTierState,
   );
@@ -41,17 +40,16 @@ export const useOpenAskAiPageWithPreprompt = () => {
     model?: AiChatModelPreselection;
     files?: File[];
   }): Promise<string | null> => {
-    const newAiChatThreadId = switchToNewChat();
+    const newAiChatThreadId = switchToNewAiChat();
 
     if (isDefined(model)) {
       const tier = TIER_BY_PRESELECTION[model];
 
-      // null keeps following the workspace, so a later change there applies.
       setAiChatUserSelectedModelTier(tier === chatTier ? null : tier);
     }
 
     if (!isNonEmptyArray(files)) {
-      stageAiChatPreprompt({
+      await applyAiChatPreprompt({
         threadId: newAiChatThreadId,
         serializedDocument,
         mode,
@@ -66,12 +64,12 @@ export const useOpenAskAiPageWithPreprompt = () => {
     });
 
     const isNewChatStillOpen = Object.values(
-      store.get(aiChatOpenThreadIdByInstanceIdState.atom),
+      store.get(aiChatRequiredThreadListenersState.atom),
     ).includes(newAiChatThreadId);
 
     if (!isNewChatStillOpen) {
       store.set(
-        aiChatUploadedFilesFamilyState.atomFamily({
+        aiChatComposerAttachmentsFamilyState.atomFamily({
           threadId: newAiChatThreadId,
         }),
         (previousUploadedFiles) =>
@@ -83,7 +81,7 @@ export const useOpenAskAiPageWithPreprompt = () => {
       return null;
     }
 
-    stageAiChatPreprompt({
+    await applyAiChatPreprompt({
       threadId: newAiChatThreadId,
       serializedDocument,
       mode: isNonEmptyArray(uploadedFiles) ? mode : 'PREFILL',

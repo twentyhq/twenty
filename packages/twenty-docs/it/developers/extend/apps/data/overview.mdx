@@ -113,7 +113,8 @@ Ordina l'array `fields` nel modo in cui Postgres dovrebbe usarlo — la colonna 
 ## Percorsi dei record correlati (opzionale)
 
 <Warning>
-  I percorsi di record correlati sono in anteprima: si sincronizzano con la tua app, ma le autorizzazioni dei record non li utilizzano ancora. Una volta applicati, richiedono il **piano Organization o superiore**, come la [sicurezza a livello di riga](/it/developers/extend/apps/config/roles#row-level-security).
+  I percorsi dei record correlati richiedono il **piano Organization o superiore**, come la
+  [sicurezza a livello di riga](/it/developers/extend/apps/config/roles#row-level-security).
 </Warning>
 
 Un percorso di record correlato inizia su un oggetto e segue fino a tre campi di relazione, ciascuno sull'oggetto raggiunto dal precedente. Le autorizzazioni dei record utilizzano questi percorsi per estendere l'accesso da un record ai relativi record correlati.

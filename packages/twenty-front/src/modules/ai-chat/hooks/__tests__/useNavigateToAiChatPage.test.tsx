@@ -9,7 +9,6 @@ import {
   type AppNavigator,
   AppNavigatorContext,
 } from '@/app/contexts/AppNavigatorContext';
-import { useExpandAskAiSidePanelPage } from '@/side-panel/pages/ask-ai/hooks/useExpandAskAiSidePanelPage';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -45,44 +44,6 @@ describe('useNavigateToAiChatPage', () => {
     jest.clearAllMocks();
     jotaiStore.set(isLayoutCustomizationModeEnabledState.atom, false);
     window.history.pushState({}, '', '/objects/people');
-  });
-
-  it('blocks an already-open chat from expanding until layout editing ends', () => {
-    const { result } = renderHook(() => useExpandAskAiSidePanelPage(), {
-      wrapper: Wrapper,
-    });
-    const expandBeforeEditing = result.current.expand;
-
-    expect(result.current.disabledReason).toBeUndefined();
-
-    act(() => {
-      jotaiStore.set(isLayoutCustomizationModeEnabledState.atom, true);
-    });
-
-    expect(result.current.disabledReason).toBe(
-      'Finish editing the layout to expand chat',
-    );
-
-    act(() => {
-      result.current.expand();
-      expandBeforeEditing();
-    });
-
-    expect(navigateMock).not.toHaveBeenCalled();
-    expect(closeSidePanelMenuMock).not.toHaveBeenCalled();
-
-    act(() => {
-      jotaiStore.set(isLayoutCustomizationModeEnabledState.atom, false);
-    });
-
-    expect(result.current.disabledReason).toBeUndefined();
-
-    act(() => {
-      result.current.expand();
-    });
-
-    expect(navigateMock).toHaveBeenCalledTimes(1);
-    expect(closeSidePanelMenuMock).toHaveBeenCalledTimes(1);
   });
 
   it('should open a new chat and remember where to collapse back to', () => {

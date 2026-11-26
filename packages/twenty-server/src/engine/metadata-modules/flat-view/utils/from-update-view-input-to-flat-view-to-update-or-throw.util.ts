@@ -4,6 +4,7 @@ import {
   extractAndSanitizeObjectStringFields,
   isDefined,
   isNonEmptyArray,
+  isViewCompactByDefault,
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 
@@ -39,7 +40,6 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
   flatViewGroupMaps,
   flatFieldMetadataMaps,
   flatFieldMetadataOptionMaps,
-  userWorkspaceId,
   callerApplicationUniversalIdentifier,
   workspaceCustomApplicationUniversalIdentifier,
 }: {
@@ -48,7 +48,6 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
   flatViewGroupMaps: FlatViewGroupMaps;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
-  userWorkspaceId?: string;
   callerApplicationUniversalIdentifier: string;
   workspaceCustomApplicationUniversalIdentifier: string;
 }): {
@@ -78,9 +77,14 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
 
   const {
     translations: rawTranslations,
-    ...updateViewInputWithoutTranslations
+    isPrivate,
+    ...updateViewInputWithoutTranslationsAndPrivacy
   } = rawUpdateViewInput;
   const translations = rawTranslations ?? [];
+  const updateViewInputWithoutTranslations = {
+    ...updateViewInputWithoutTranslationsAndPrivacy,
+    ...(isDefined(isPrivate) && { isPrivate }),
+  };
 
   const invalidTranslationProperties = findInvalidTranslationOverrideProperties(
     translations,
@@ -98,9 +102,26 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
   const { groupLoadLimit, ...updateViewInputWithoutGroupLoadLimit } =
     updateViewInputWithoutTranslations;
 
+  const effectiveExistingFlatView = resolveEffectiveFlatEntity({
+    metadataName: 'view',
+    flatEntity: existingFlatViewToUpdate,
+  });
+
+  const { type: updatedViewType, isCompact: updatedIsCompact } =
+    updateViewInputWithoutGroupLoadLimit;
+
+  const isViewCompactDefaultChanging =
+    isDefined(updatedViewType) &&
+    isViewCompactByDefault(updatedViewType) !==
+      isViewCompactByDefault(effectiveExistingFlatView.type);
+
   const editableProperties = extractAndSanitizeObjectStringFields(
     {
       ...updateViewInputWithoutGroupLoadLimit,
+      ...(isViewCompactDefaultChanging &&
+        !isDefined(updatedIsCompact) && {
+          isCompact: isViewCompactByDefault(updatedViewType),
+        }),
       ...(groupLoadLimit !== undefined && {
         groupLoadLimit: groupLoadLimit ?? DEFAULT_VIEW_GROUP_LOAD_LIMIT,
       }),
@@ -220,22 +241,6 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
   } else {
     flatViewToUpdate.universalOverrides = null;
   }
-
-  // If changing visibility from WORKSPACE to UNLISTED, ensure createdByUserWorkspaceId is set
-  // This prevents the view from disappearing for the user making the change
-  if (
-    isDefined(rawUpdateViewInput.visibility) &&
-    rawUpdateViewInput.visibility === 'UNLISTED' &&
-    existingFlatViewToUpdate.visibility === 'WORKSPACE' &&
-    isDefined(userWorkspaceId)
-  ) {
-    flatViewToUpdate.createdByUserWorkspaceId = userWorkspaceId;
-  }
-
-  const effectiveExistingFlatView = resolveEffectiveFlatEntity({
-    metadataName: 'view',
-    flatEntity: existingFlatViewToUpdate,
-  });
 
   const effectiveFlatViewToUpdate = resolveEffectiveFlatEntity({
     metadataName: 'view',

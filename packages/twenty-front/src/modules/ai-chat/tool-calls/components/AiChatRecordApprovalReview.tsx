@@ -8,7 +8,7 @@ import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { AiChatApprovalRecordReview } from '@/ai-chat/tool-calls/components/AiChatApprovalRecordReview';
 import { AiChatToolCallApprovalFieldDisplay } from '@/ai-chat/tool-calls/components/AiChatToolCallApprovalFieldDisplay';
 import { AiChatToolCallApprovalRecord } from '@/ai-chat/tool-calls/components/AiChatToolCallApprovalRecord';
-import { AiChatToolCallApprovalRecordStoreEffect } from '@/ai-chat/tool-calls/components/AiChatToolCallApprovalRecordStoreEffect';
+import { UpsertRecordsInStoreEffect } from '@/object-record/record-store/components/UpsertRecordsInStoreEffect';
 import { AI_CHAT_RECORD_APPROVAL_REVIEW_COLUMN_WIDTH } from '@/ai-chat/tool-calls/constants/AiChatRecordApprovalReviewColumnWidth';
 import { useToolCallApprovalFieldDefinitions } from '@/ai-chat/tool-calls/hooks/useToolCallApprovalFieldDefinitions';
 import { type AiChatPendingRecordApproval } from '@/ai-chat/tool-calls/types/AiChatPendingRecordApproval';
@@ -83,16 +83,13 @@ export const AiChatRecordApprovalReview = ({
 
   return (
     <>
-      {recordApprovals.map(({ toolCallId, proposal }) => (
-        <AiChatToolCallApprovalRecordStoreEffect
-          key={toolCallId}
-          record={{
-            ...proposal.arguments,
-            id: toolCallId,
-            __typename: capitalize(objectNameSingular),
-          }}
-        />
-      ))}
+      <UpsertRecordsInStoreEffect
+        records={recordApprovals.map(({ toolCallId, proposal }) => ({
+          ...proposal.arguments,
+          id: toolCallId,
+          __typename: capitalize(objectNameSingular),
+        }))}
+      />
       <AiChatApprovalRecordReview
         label={label}
         operation={operation}

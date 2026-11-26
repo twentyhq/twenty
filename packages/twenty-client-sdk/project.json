@@ -31,14 +31,17 @@
       }
     },
     "test": {
-      "executor": "@nx/vitest:test",
+      "executor": "nx:run-commands",
+      "cache": true,
       "dependsOn": ["^build"],
+      "inputs": ["default", "^default"],
       "options": {
-        "config": "{projectRoot}/vitest.config.ts"
+        "cwd": "{projectRoot}",
+        "command": "vitest run --config ./vitest.config.ts"
       },
       "configurations": {
         "ci": {
-          "watch": false
+          "command": "vitest run --config ./vitest.config.ts"
         }
       }
     },

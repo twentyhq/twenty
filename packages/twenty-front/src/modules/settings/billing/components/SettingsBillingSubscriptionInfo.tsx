@@ -21,6 +21,7 @@ import { useNextInterval } from '@/settings/billing/hooks/useNextInterval';
 import { useNextPlan } from '@/settings/billing/hooks/useNextPlan';
 import { useSplitPhaseItemsInPrices } from '@/settings/billing/hooks/useSplitPhaseItemsInPrices';
 import { billingHasPaymentMethodSelector } from '@/settings/billing/states/billingHasPaymentMethodSelector';
+import { getMonthlyAmountFromBillingPeriodCents } from '@/settings/billing/utils/getMonthlyAmountFromBillingPeriodCents';
 import { isSendInvoiceBillingSubscription } from '@/settings/billing/utils/isSendInvoiceBillingSubscription';
 import { isSubscriptionPaymentOverdue } from '@/settings/billing/utils/isSubscriptionPaymentOverdue';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
@@ -148,7 +149,7 @@ export const SettingsBillingSubscriptionInfo = ({
   };
 
   const hasPermissionToEndTrialPeriod = useHasPermissionFlag(
-    PermissionFlagType.WORKSPACE,
+    PermissionFlagType.BILLING,
   );
 
   const {
@@ -156,6 +157,8 @@ export const SettingsBillingSubscriptionInfo = ({
     perSeatAmountCents,
     seatsSubtotalCents,
     creditsSubtotalCents,
+    applicationsCount,
+    applicationsSubtotalCents,
     totalCents,
   } = useBillingSubscriptionCost();
 
@@ -167,8 +170,10 @@ export const SettingsBillingSubscriptionInfo = ({
   ) =>
     isDefined(cents)
       ? formatNumber(
-          (currentInterval === SubscriptionInterval.Year ? cents / 12 : cents) /
-            100,
+          getMonthlyAmountFromBillingPeriodCents({
+            cents,
+            isYearlyPlan: currentInterval === SubscriptionInterval.Year,
+          }),
           { decimals: 2 },
         )
       : undefined;
@@ -270,6 +275,17 @@ export const SettingsBillingSubscriptionInfo = ({
       ? t`(${currentCreditsByPeriodDisplay} credits/month)`
       : t`(${currentCreditsByPeriodDisplay} credits/year)`
     : undefined;
+  const applicationsSubtotalDisplay = formatBillingPeriodCentsToMonthlyDisplay(
+    applicationsSubtotalCents,
+  );
+  const applicationsSubtotalValue =
+    applicationsCount > 0
+      ? isDefined(applicationsSubtotalDisplay)
+        ? `$${applicationsSubtotalDisplay}`
+        : '-'
+      : undefined;
+  const applicationCountLabel = applicationsCount === 1 ? t`app` : t`apps`;
+  const applicationsSubtotalDetails = t`(${applicationsCount} ${applicationCountLabel})`;
   const totalValue = isDefined(totalDisplay) ? `$${totalDisplay}` : '-';
   const totalIntervalSubtitle = isDefined(totalDisplay)
     ? currentInterval === SubscriptionInterval.Month
@@ -460,6 +476,11 @@ export const SettingsBillingSubscriptionInfo = ({
         description={subscriptionDescription}
       />
       <SettingsBillingSubscriptionInfoCard
+        applicationsSubtotalDetails={applicationsSubtotalDetails}
+        applicationsSubtotalValue={applicationsSubtotalValue}
+        billingEmail={currentWorkspace.billingCustomer?.stripeCustomerEmail}
+        onBillingEmailClick={onManageBilling}
+        isBillingEmailActionDisabled={isManageBillingDisabled}
         canDisplaySwitchToMonthlyAction={canDisplaySwitchToMonthlyAction}
         canDisplaySwitchToYearlyAction={canDisplaySwitchToYearlyAction}
         creditsSubtotalDetails={creditsSubtotalDetails}

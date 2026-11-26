@@ -96,6 +96,7 @@ export const DropdownMenuInput = forwardRef<
       className,
       value,
       placeholder,
+      maxLength,
       instanceId,
       onChange,
       onClickOutside,
@@ -140,6 +141,7 @@ export const DropdownMenuInput = forwardRef<
               autoFocus={autoFocus}
               value={value}
               placeholder={placeholder}
+              maxLength={maxLength}
               onChange={onChange}
               ref={combinedRef}
               withRightComponent={isDefined(rightComponent)}

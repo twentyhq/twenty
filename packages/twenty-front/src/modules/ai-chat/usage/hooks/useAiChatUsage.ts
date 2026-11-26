@@ -3,6 +3,7 @@ import { useQuery } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type AiChatUsage } from '@/ai-chat/usage/types/AiChatUsage';
+import { mapAiChatUsageCounters } from '@/ai-chat/usage/utils/mapAiChatUsageCounters';
 import { GetAiChatUsageDocument } from '~/generated-metadata/graphql';
 
 export const useAiChatUsage = ({
@@ -21,10 +22,7 @@ export const useAiChatUsage = ({
 
   const usage: AiChatUsage | null = isDefined(aiChatUsage)
     ? {
-        limitValue: Number(aiChatUsage.limitValue),
-        consumedValue: isDefined(aiChatUsage.consumedValue)
-          ? Number(aiChatUsage.consumedValue)
-          : null,
+        ...mapAiChatUsageCounters(aiChatUsage),
         periodEnd: aiChatUsage.periodEnd ?? null,
         kind: aiChatUsage.kind,
       }

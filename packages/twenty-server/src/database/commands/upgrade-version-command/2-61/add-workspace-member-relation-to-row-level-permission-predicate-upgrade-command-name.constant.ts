@@ -1,0 +1,2 @@
+export const ADD_WORKSPACE_MEMBER_RELATION_TO_ROW_LEVEL_PERMISSION_PREDICATE_UPGRADE_COMMAND_NAME =
+  '2.61.0_AddWorkspaceMemberRelationToRowLevelPermissionPredicateFastInstanceCommand_1795297090000';

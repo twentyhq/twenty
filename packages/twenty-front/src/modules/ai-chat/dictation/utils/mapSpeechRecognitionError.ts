@@ -1,6 +1,5 @@
 import { type DictationFailureReason } from '@/ai-chat/dictation/types/DictationFailureReason';
 
-// 'aborted' is what a deliberate stop() produces, so it isn't a failure.
 export const mapSpeechRecognitionError = (
   error: string,
 ): DictationFailureReason | undefined => {

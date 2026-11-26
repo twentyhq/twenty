@@ -18,7 +18,6 @@ const StyledReasoningText = styled.div`
     ${themeCssVariables.icon.size.sm} * 1px + ${themeCssVariables.spacing[2]}
   );
 
-  // reasoning uses single newlines as line breaks, which markdown would collapse
   ${StyledParagraph} {
     white-space: pre-line;
   }

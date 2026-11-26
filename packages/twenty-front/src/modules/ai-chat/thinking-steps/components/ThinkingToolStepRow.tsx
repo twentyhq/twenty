@@ -13,7 +13,7 @@ import { useToolDisplayContext } from '@/ai/hooks/useToolDisplayContext';
 import { getThinkingStepLabel } from '@/ai-chat/thinking-steps/utils/getThinkingStepLabel';
 import { getToolIcon } from '@/ai/utils/getToolIcon';
 import { getToolRecordOutput } from '@/ai-chat/thinking-steps/utils/getToolRecordOutput';
-import { unwrapToolInput } from '@/ai/utils/tool-display/unwrapToolInput';
+import { unwrapToolPartInput } from '@/ai/utils/tool-display/unwrapToolPartInput';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
@@ -74,10 +74,7 @@ export const ThinkingToolStepRow = ({
   const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
   const rawToolName = getToolName(part);
-  const { toolInput, toolName } = unwrapToolInput({
-    input: part.input,
-    toolName: rawToolName,
-  });
+  const { toolInput, toolName } = unwrapToolPartInput(part);
 
   const displayContext = useToolDisplayContext();
   const ToolIcon = getToolIcon(toolName);

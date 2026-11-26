@@ -10,6 +10,7 @@ import { z } from 'zod';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
+import { validateMetadataOptionDescription } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-description.util';
 import { validateMetadataOptionLabel } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util';
 import { validateMetadataOptionValue } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-value.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
@@ -105,6 +106,7 @@ export const validateFieldMetadataInputOptions = ({
       validateMetadataOptionId(option.id),
       validateMetadataOptionValue(option.value),
       validateMetadataOptionLabel(option.label),
+      validateMetadataOptionDescription(option),
     ].flat(),
   );
 

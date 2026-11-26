@@ -32,12 +32,11 @@ export class GetViewSortsTool extends BaseTool<typeof getViewSortsInputSchema> {
 
   async execute({
     input,
-    context: { workspaceId, userWorkspaceId },
+    context: { workspaceId },
   }: ToolExecuteArgs<typeof getViewSortsInputSchema>): Promise<ToolOutput> {
     const sorts = await this.viewSortService.findByViewId({
       workspaceId,
       viewId: input.viewId,
-      userWorkspaceId,
     });
 
     return {

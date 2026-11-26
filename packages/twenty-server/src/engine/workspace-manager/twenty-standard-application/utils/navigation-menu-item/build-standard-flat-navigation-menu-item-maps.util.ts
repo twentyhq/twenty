@@ -3,8 +3,10 @@ import { v4 } from 'uuid';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatNavigationMenuItemMaps } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item-maps.type';
+import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { addFlatNavigationMenuItemToMapsAndUpdateIndex } from 'src/engine/metadata-modules/flat-navigation-menu-item/utils/add-flat-navigation-menu-item-to-maps-and-update-index.util';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
+import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
 import {
   STANDARD_NAVIGATION_MENU_ITEM_DEFAULT_COLORS,
   STANDARD_NAVIGATION_MENU_ITEMS,
@@ -25,12 +27,24 @@ const FLAT_NAVIGATION_MENU_ITEM_NAMES = [
   'allTasks',
 ] as const;
 
+const HOME_BUILT_IN_SECTION_NAMES = [
+  'inboxSection',
+  'favoritesSection',
+] as const;
+
+const CHATS_TAB_SECTION_NAMES = [
+  'chatsTabFavoriteChats',
+  'chatsTabChannels',
+  'chatsTabRecentChats',
+] as const;
+
 const FOLDERS = [
   {
-    folderName: 'workflowsFolder',
+    folderName: 'automationsFolder',
     itemNames: [
-      'workflowsFolderAllWorkflows',
-      'workflowsFolderAllWorkflowRuns',
+      'automationsFolderAllWorkflows',
+      'automationsFolderAllWorkflowRuns',
+      'automationsFolderAllAgents',
     ],
   },
   {
@@ -56,6 +70,63 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
     ...createEmptyFlatEntityMaps(),
     byUserWorkspaceIdAndParentId: {},
   };
+
+  const addBuiltInSection = ({
+    sectionName,
+    parent,
+  }: {
+    sectionName:
+      | (typeof HOME_BUILT_IN_SECTION_NAMES)[number]
+      | (typeof CHATS_TAB_SECTION_NAMES)[number];
+    parent?: FlatNavigationMenuItem;
+  }) => {
+    const sectionDefinition = STANDARD_NAVIGATION_MENU_ITEMS[sectionName];
+
+    addFlatNavigationMenuItemToMapsAndUpdateIndex({
+      flatNavigationMenuItem:
+        createStandardNavigationMenuItemSectionFlatMetadata({
+          universalIdentifier: sectionDefinition.universalIdentifier,
+          name: null,
+          builtInSectionKey: sectionDefinition.builtInSectionKey,
+          position: sectionDefinition.position,
+          parent,
+          navigationMenuItemId: v4(),
+          workspaceId,
+          twentyStandardApplicationId,
+          now,
+        }),
+      flatNavigationMenuItemMaps,
+    });
+  };
+
+  for (const sectionName of HOME_BUILT_IN_SECTION_NAMES) {
+    addBuiltInSection({ sectionName });
+  }
+
+  const chatsTabDefinition = STANDARD_NAVIGATION_MENU_ITEMS.chatsTab;
+  const chatsTab: FlatNavigationMenuItem = {
+    ...createStandardNavigationMenuItemFolderFlatMetadata({
+      universalIdentifier: chatsTabDefinition.universalIdentifier,
+      name: chatsTabDefinition.name,
+      icon: chatsTabDefinition.icon,
+      color: null,
+      position: chatsTabDefinition.position,
+      navigationMenuItemId: v4(),
+      workspaceId,
+      twentyStandardApplicationId,
+      now,
+    }),
+    type: NavigationMenuItemType.TAB,
+  };
+
+  addFlatNavigationMenuItemToMapsAndUpdateIndex({
+    flatNavigationMenuItem: chatsTab,
+    flatNavigationMenuItemMaps,
+  });
+
+  for (const sectionName of CHATS_TAB_SECTION_NAMES) {
+    addBuiltInSection({ sectionName, parent: chatsTab });
+  }
 
   const workspaceSectionDefinition =
     STANDARD_NAVIGATION_MENU_ITEMS.workspaceSection;

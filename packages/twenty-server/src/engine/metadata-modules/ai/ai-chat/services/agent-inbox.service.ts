@@ -34,6 +34,9 @@ import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { findAgentChatFlatObjectMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-flat-object-metadata.util';
+import { RecordShareSystemWriteService } from 'src/engine/permissions/record-share/services/record-share-system-write.service';
 
 const findNewWorkspaceMemberIds = (
   thread: AgentChatThreadWorkspaceEntity | null,
@@ -62,6 +65,7 @@ export class AgentInboxService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly inboxDeliveryService: AgentChatInboxDeliveryService,
     private readonly inboxParticipantWriterService: AgentChatInboxParticipantWriterService,
+    private readonly recordShareSystemWriteService: RecordShareSystemWriteService,
   ) {}
 
   // Every record has an id derived from the keys: the thread key picks the
@@ -267,6 +271,14 @@ export class AgentInboxService {
           isArchived: isArchivedOnCreate,
         });
 
+    if (openedThread.isCreated && sender.type === 'application') {
+      await this.grantApplicationCreatorAccess({
+        workspaceId,
+        threadId,
+        flatApplication: sender.application,
+      });
+    }
+
     if (!isDefined(openedThread.thread.deletedAt)) {
       await this.addParticipants({
         workspaceId,
@@ -276,6 +288,37 @@ export class AgentInboxService {
     }
 
     return openedThread;
+  }
+
+  // Threads are private, and the server writes them, so the sending application gets the grant an API create would give it
+  private async grantApplicationCreatorAccess({
+    workspaceId,
+    threadId,
+    flatApplication,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    flatApplication: FlatApplication;
+  }): Promise<void> {
+    const { flatObjectMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+      ]);
+    const threadObjectMetadata = findAgentChatFlatObjectMetadata(
+      flatObjectMetadataMaps,
+      'agentChatThread',
+    );
+
+    if (!isDefined(threadObjectMetadata)) {
+      return;
+    }
+
+    await this.recordShareSystemWriteService.grantApplicationCreatorAccess({
+      workspaceId,
+      objectMetadataId: threadObjectMetadata.id,
+      recordId: threadId,
+      flatApplication,
+    });
   }
 
   private async createThread({

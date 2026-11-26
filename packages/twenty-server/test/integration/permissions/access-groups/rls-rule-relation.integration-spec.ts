@@ -12,10 +12,8 @@ import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delet
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import {
-  FeatureFlagKey,
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
@@ -76,16 +74,17 @@ describe('RLS rules through a relation (integration)', () => {
       values: [SEED_APPLE_WORKSPACE_ID, nameSingular],
     });
 
-  const assignRuleThroughRelation = async ({
+  const assignRule = async ({
     objectMetadataId,
-    relationFieldMetadataId,
-    fieldMetadataId,
-    value,
+    predicate,
   }: {
     objectMetadataId: string;
-    relationFieldMetadataId: string;
-    fieldMetadataId: string;
-    value: string;
+    predicate: {
+      fieldMetadataId: string;
+      relationFieldMetadataId?: string;
+      operand: RowLevelPermissionPredicateOperand;
+      value?: string;
+    };
   }) => {
     const { data } = await createOneRole({
       expectToFail: false,
@@ -126,15 +125,7 @@ describe('RLS rules through a relation (integration)', () => {
                 id: ruleId,
                 logicalOperator:
                   RowLevelPermissionPredicateGroupLogicalOperator.AND,
-                predicates: [
-                  {
-                    id: v4(),
-                    fieldMetadataId,
-                    relationFieldMetadataId,
-                    operand: RowLevelPermissionPredicateOperand.CONTAINS,
-                    value,
-                  },
-                ],
+                predicates: [{ id: v4(), ...predicate }],
               },
             ],
           },
@@ -150,7 +141,7 @@ describe('RLS rules through a relation (integration)', () => {
     });
     await getAppProviderByClassName<AccessGroupSyncService>(
       'AccessGroupSyncService',
-    ).syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
+    ).syncAccessGroups({ workspaceId: SEED_APPLE_WORKSPACE_ID });
     await getAppProviderByClassName<RecordAccessGroupComputationService>(
       'RecordAccessGroupComputationService',
     ).recomputeRecordAccessGroupIdsOfAllObjectRecords({
@@ -165,17 +156,20 @@ describe('RLS rules through a relation (integration)', () => {
       `UPDATE ${COMPANY_TABLE} SET "name" = '${RULE_VALUE}' WHERE "id" = $1`,
       [company.id],
     );
-    await assignRuleThroughRelation({
+    await assignRule({
       objectMetadataId: personObjectMetadataId,
-      relationFieldMetadataId: await findFieldMetadataId(
-        personObjectMetadataId,
-        'company',
-      ),
-      fieldMetadataId: await findFieldMetadataId(
-        companyObjectMetadataId,
-        'name',
-      ),
-      value: RULE_VALUE,
+      predicate: {
+        relationFieldMetadataId: await findFieldMetadataId(
+          personObjectMetadataId,
+          'company',
+        ),
+        fieldMetadataId: await findFieldMetadataId(
+          companyObjectMetadataId,
+          'name',
+        ),
+        operand: RowLevelPermissionPredicateOperand.CONTAINS,
+        value: RULE_VALUE,
+      },
     });
   };
 
@@ -184,19 +178,34 @@ describe('RLS rules through a relation (integration)', () => {
       `UPDATE ${PERSON_TABLE} SET "jobTitle" = '${RULE_VALUE}' WHERE "id" = $1`,
       [person.id],
     );
-    await assignRuleThroughRelation({
+    await assignRule({
       objectMetadataId: companyObjectMetadataId,
-      relationFieldMetadataId: await findFieldMetadataId(
-        companyObjectMetadataId,
-        'people',
-      ),
-      fieldMetadataId: await findFieldMetadataId(
-        personObjectMetadataId,
-        'jobTitle',
-      ),
-      value: RULE_VALUE,
+      predicate: {
+        relationFieldMetadataId: await findFieldMetadataId(
+          companyObjectMetadataId,
+          'people',
+        ),
+        fieldMetadataId: await findFieldMetadataId(
+          personObjectMetadataId,
+          'jobTitle',
+        ),
+        operand: RowLevelPermissionPredicateOperand.CONTAINS,
+        value: RULE_VALUE,
+      },
     });
   };
+
+  const assignCompanyRuleOnEmptyPeople = async () =>
+    assignRule({
+      objectMetadataId: companyObjectMetadataId,
+      predicate: {
+        fieldMetadataId: await findFieldMetadataId(
+          companyObjectMetadataId,
+          'people',
+        ),
+        operand: RowLevelPermissionPredicateOperand.IS_EMPTY,
+      },
+    });
 
   const insertPeople = async ({
     personIds,
@@ -269,15 +278,6 @@ describe('RLS rules through a relation (integration)', () => {
       }),
     );
 
-  const setFeatureFlags = async (value: boolean) => {
-    for (const featureFlag of [
-      FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED,
-      FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED,
-    ]) {
-      await updateFeatureFlag({ featureFlag, value, expectToFail: false });
-    }
-  };
-
   beforeAll(async () => {
     personObjectMetadataId = await findObjectMetadataId('person');
     companyObjectMetadataId = await findObjectMetadataId('company');
@@ -296,8 +296,6 @@ describe('RLS rules through a relation (integration)', () => {
     );
 
     originalMemberRoleId = (await findOneRoleByLabel({ label: 'Member' })).id;
-
-    await setFeatureFlags(true);
   });
 
   afterEach(async () => {
@@ -333,7 +331,6 @@ describe('RLS rules through a relation (integration)', () => {
   });
 
   afterAll(async () => {
-    await setFeatureFlags(false);
     await global.testDataSource.query(
       `DELETE FROM ${PERSON_TABLE} WHERE "id" = $1`,
       [person.id],
@@ -410,6 +407,43 @@ describe('RLS rules through a relation (integration)', () => {
     );
 
     expect(await findCompaniesAsMember()).toEqual([otherCompany.id]);
+  });
+
+  it('should follow a one to many relation becoming empty or not', async () => {
+    await assignCompanyRuleOnEmptyPeople();
+
+    expect(await findCompaniesAsMember()).toEqual([otherCompany.id]);
+
+    await runAsAdminAndWaitForJobs(
+      updateOneOperationFactory({
+        objectMetadataSingularName: 'person',
+        gqlFields: 'id',
+        recordId: person.id,
+        data: { companyId: otherCompany.id },
+      }),
+    );
+
+    expect(await findCompaniesAsMember()).toEqual([company.id]);
+  });
+
+  it('should let a record be created while its one to many relation is empty', async () => {
+    await assignCompanyRuleOnEmptyPeople();
+
+    // Without an id in the input, the database assigns it after the create check runs
+    const response = await makeGraphqlApiRequest(
+      createOneOperationFactory({
+        objectMetadataSingularName: 'company',
+        gqlFields: 'id',
+        data: { name: 'Created without people' },
+      }),
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    await global.testDataSource.query(
+      `DELETE FROM ${COMPANY_TABLE} WHERE "name" = 'Created without people'`,
+    );
+
+    expect(response.body.errors).toBeUndefined();
   });
 
   it('should update the related record a system write moves away from', async () => {
@@ -507,30 +541,5 @@ describe('RLS rules through a relation (integration)', () => {
     );
 
     expect(Number(count)).toBe(personIds.length);
-  });
-
-  it('should stop and resume access when the relation flag is toggled', async () => {
-    const setRelationFlag = async (value: boolean) => {
-      await updateFeatureFlag({
-        featureFlag:
-          FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED,
-        value,
-        expectToFail: false,
-      });
-    };
-
-    await assignPersonRuleThroughCompanyName();
-
-    expect(await findPeopleAsMember([person.id])).toEqual([person.id]);
-
-    await setRelationFlag(false);
-
-    expect(await findPeopleAsMember([person.id])).toEqual([]);
-
-    await waitForAllJobsToFinish();
-    await setRelationFlag(true);
-    await waitForAllJobsToFinish();
-
-    expect(await findPeopleAsMember([person.id])).toEqual([person.id]);
   });
 });

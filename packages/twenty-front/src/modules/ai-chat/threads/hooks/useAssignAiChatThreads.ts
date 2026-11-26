@@ -12,7 +12,6 @@ export const useAssignAiChatThreads = () => {
   const { applyOptimisticAiChatThreadUpdate } =
     useApplyOptimisticAiChatThreadUpdate();
 
-  // The assignee shows right away, and is put back if the server refuses it
   const assignAiChatThreads = useCallback(
     async ({
       threadIds,

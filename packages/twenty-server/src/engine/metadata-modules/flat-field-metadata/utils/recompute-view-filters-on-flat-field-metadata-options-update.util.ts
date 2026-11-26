@@ -1,15 +1,11 @@
-import { isNonEmptyString } from '@sniptt/guards';
 import { type EnumFieldMetadataType, type FromTo } from 'twenty-shared/types';
-import {
-  isDefined,
-  isRecordFilterOperandExpectingValue,
-} from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { compareTwoFlatFieldMetadataEnumOptions } from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata-enum-options.util';
-import { parseSelectFilterValues } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-invalid-select-filter-option-values.util';
+import { computeSelectFilterValueAfterOptionsUpdate } from 'src/engine/metadata-modules/flat-field-metadata/utils/compute-select-filter-value-after-options-update.util';
 import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
 
 type RecomputeViewFiltersOnFlatFieldMetadataOptionsUpdateArgs = {
@@ -54,60 +50,27 @@ export const recomputeViewFiltersOnFlatFieldMetadataOptionsUpdate = ({
   });
 
   for (const viewFilter of flatViewFilters) {
-    const rawViewFilterValue = viewFilter.value;
+    const optionValues = computeSelectFilterValueAfterOptionsUpdate({
+      operand: viewFilter.operand,
+      subFieldName: viewFilter.subFieldName,
+      value: viewFilter.value,
+      fromOptions,
+      deletedOptions: deletedFieldMetadataOptions,
+      updatedOptions: updatedFieldMetadataOptions,
+    });
 
-    if (
-      !isDefined(rawViewFilterValue) ||
-      !isRecordFilterOperandExpectingValue(viewFilter.operand) ||
-      isNonEmptyString(viewFilter.subFieldName)
-    ) {
+    if (!isDefined(optionValues)) {
       continue;
     }
 
-    const viewFilterValue = parseSelectFilterValues(rawViewFilterValue);
-
-    if (!isDefined(viewFilterValue)) {
-      continue;
-    }
-
-    const viewFilterOptions = viewFilterValue
-      .flatMap((value) => {
-        if (!isDefined(fromOptions)) {
-          return undefined;
-        }
-
-        return fromOptions.find((option) => option.value === value);
-      })
-      .filter(isDefined);
-
-    const afterDeleteViewFilterOptions = viewFilterOptions.filter(
-      (viewFilterOption) =>
-        !deletedFieldMetadataOptions.some(
-          (option) => option.value === viewFilterOption.value,
-        ),
-    );
-
-    if (afterDeleteViewFilterOptions.length === 0) {
+    if (optionValues.length === 0) {
       flatViewFiltersToCreateAndUpdate.flatViewFiltersToDelete.push(viewFilter);
       continue;
     }
 
-    const afterUpdateAndDeleteViewFilterOptions =
-      afterDeleteViewFilterOptions.map((viewFilterOption) => {
-        const updatedOption = updatedFieldMetadataOptions.find(
-          ({ from }) => viewFilterOption.value === from.value,
-        );
-
-        return isDefined(updatedOption) ? updatedOption.to : viewFilterOption;
-      });
-
-    const optionsValues = afterUpdateAndDeleteViewFilterOptions.map(
-      (option) => option.value,
-    );
-
     flatViewFiltersToCreateAndUpdate.flatViewFiltersToUpdate.push({
       ...viewFilter,
-      value: optionsValues,
+      value: optionValues,
     });
   }
 

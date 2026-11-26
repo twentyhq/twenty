@@ -33,6 +33,7 @@ export const fromCreateRoleTargetInputToFlatRoleTargetToCreate = ({
   const { roleId, targetId, targetMetadataForeignKey, universalIdentifier } =
     createRoleTargetInput;
 
+  // A role cached before the upgrade that adds this column has no value for it, and the role target column is NOT NULL.
   const isSystemSideEffect =
     findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityMaps: flatRoleMaps,

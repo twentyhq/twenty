@@ -1,13 +1,12 @@
 import type { MessageDescriptor } from '@lingui/core';
 import { type IconComponent } from 'twenty-ui/icon';
 
-import { type AiChatPrepromptMode } from '@/ai-chat/states/aiChatPrepromptState';
+import { type AiChatPrepromptMode } from '@/ai-chat/types/AiChatPrepromptMode';
 
 export type SuggestedPrompt = {
   id: string;
   label: MessageDescriptor;
   Icon: IconComponent;
-  // PREFILL lets the user complete the prompt; SEND is for prompts needing nothing more.
   mode?: AiChatPrepromptMode;
   prompts: MessageDescriptor[];
 };
