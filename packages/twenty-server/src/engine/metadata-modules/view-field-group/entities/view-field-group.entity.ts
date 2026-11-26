@@ -66,7 +66,7 @@ export class ViewFieldGroupEntity
     upgradeCommandName: RELAX_VIEW_DELETED_AT_UPGRADE_COMMAND_NAME,
   })
   @Column({ nullable: true, type: 'timestamptz' })
-  deletedAt: Date | null;
+  deletedAt: WasRemovedInUpgrade<Date> | null;
 
   @ManyToOne(() => ViewEntity, (view) => view.viewFieldGroups, {
     onDelete: 'CASCADE',
