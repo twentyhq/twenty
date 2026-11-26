@@ -24,7 +24,10 @@ export const linkedinUpdateSettingsHandler = async (
   context: Pick<LogicFunctionExecutionContext, 'userWorkspaceId'>,
 ): Promise<LinkedinSettingsView> => {
   const { connections, requestedConnection: connection } =
-    await findOwnLinkedinConnections(context, routePayload.body);
+    await findOwnLinkedinConnections({
+      context,
+      requestBody: routePayload.body,
+    });
 
   if (!isDefined(connection)) {
     throw new Error('Connect your LinkedIn account first.');

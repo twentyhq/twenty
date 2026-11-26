@@ -26,10 +26,10 @@ export const linkedinListChatsHandler = async (
   routePayload: Pick<RoutePayload<Record<string, unknown>>, 'body'>,
   context: Pick<LogicFunctionExecutionContext, 'userWorkspaceId'>,
 ): Promise<LinkedinChatOptionsPage> => {
-  const { requestedConnection: connection } = await findOwnLinkedinConnections(
+  const { requestedConnection: connection } = await findOwnLinkedinConnections({
     context,
-    routePayload.body,
-  );
+    requestBody: routePayload.body,
+  });
   const unipileAccountId = connection?.externalAccountId;
 
   if (!isDefined(connection) || !isNonEmptyString(unipileAccountId)) {

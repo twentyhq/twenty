@@ -93,7 +93,6 @@ export const LinkedinSettings = () => {
     setState({ step: 'ready', view });
   };
 
-  // Responses for a connection the member switched away from are dropped
   const showViewIfDisplayed = (view: LinkedinSettingsView) => {
     if (
       !view.isConnected ||

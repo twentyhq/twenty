@@ -13,12 +13,13 @@ type OwnLinkedinConnections = {
   requestedConnection: AppConnection | undefined;
 };
 
-// A member can connect several LinkedIn accounts (e.g. personal and company);
-// without a `connectedAccountId` in the request body, the first one is used.
-export const findOwnLinkedinConnections = async (
-  context: Pick<LogicFunctionExecutionContext, 'userWorkspaceId'>,
-  requestBody?: Record<string, unknown> | null,
-): Promise<OwnLinkedinConnections> => {
+export const findOwnLinkedinConnections = async ({
+  context,
+  requestBody,
+}: {
+  context: Pick<LogicFunctionExecutionContext, 'userWorkspaceId'>;
+  requestBody?: Record<string, unknown> | null;
+}): Promise<OwnLinkedinConnections> => {
   if (!isDefined(context.userWorkspaceId)) {
     return { connections: [], requestedConnection: undefined };
   }

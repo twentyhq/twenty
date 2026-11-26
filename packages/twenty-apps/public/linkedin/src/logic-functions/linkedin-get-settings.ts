@@ -12,8 +12,10 @@ export const linkedinGetSettingsHandler = async (
   context: Pick<LogicFunctionExecutionContext, 'userWorkspaceId'>,
 ): Promise<LinkedinSettingsView> => {
   const { connections, requestedConnection } = await findOwnLinkedinConnections(
-    context,
-    routePayload.body,
+    {
+      context,
+      requestBody: routePayload.body,
+    },
   );
 
   // The requested connection may have been removed since the page loaded
