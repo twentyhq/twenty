@@ -2,7 +2,6 @@ import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import {
   type Icon,
-  IconArrowLeft,
   IconBug,
   IconCode,
   IconDatabase,
@@ -19,14 +18,12 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ArrowUpRight } from '@/icons';
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
-import { LocalizedLink } from '@/platform/i18n/LocalizedLink';
 import { SITE_URLS } from '@/platform/site-urls';
 import {
   color,
   DURATION,
   EASING,
   fontFamily,
-  fontSize,
   HERO_COMPOSITION,
   mediaUp,
   MENU_HEIGHT_PX,
@@ -45,6 +42,7 @@ import {
   SectionStack,
   Signoff,
 } from '@/ui';
+import { BackLink } from '@/ui/BackLink';
 
 import { AppCards } from './AppCards';
 import { AppIcon } from './AppIcon';
@@ -94,25 +92,6 @@ const CoverIcon = styled.div`
 
 // Under the band, the title sits a fixed step below the icon at every width:
 // the section's own top padding minus the icon's half that hangs into it.
-// Back to the list this page came from: the case studies' back link (an
-// arrow and a quiet label), shown at every width here.
-const BackLink = styled(LocalizedLink)`
-  align-items: center;
-  align-self: flex-start;
-  color: ${semanticColor.inkMuted};
-  display: inline-flex;
-  font-family: ${fontFamily('sans')};
-  font-size: ${fontSize(4)};
-  gap: ${spacing(1)};
-  margin-bottom: ${spacing(3)};
-  text-decoration: none;
-  transition: color ${DURATION.xxs} ${EASING.gentle};
-
-  &:hover {
-    color: ${semanticColor.ink};
-  }
-`;
-
 const Header = styled.div`
   margin-top: calc(
     ${ICON_SIZE_PX / 2}px + ${spacing(6)} - ${spacing(RHYTHM.section.top.base)}
@@ -444,10 +423,7 @@ export function AppDetail({ app, apps, locale }: AppDetailProps) {
       <SectionShell connectsUp rhythm="section" scheme="light">
         <SectionStack>
           <Header>
-            <BackLink href="/apps">
-              <IconArrowLeft aria-hidden size={16} stroke={1.5} />
-              {i18n._(msg`All apps`)}
-            </BackLink>
+            <BackLink href="/apps">{i18n._(msg`All apps`)}</BackLink>
             <Heading as="h1" size="md" weight="light" wrap="normal">
               {app.name}
             </Heading>
