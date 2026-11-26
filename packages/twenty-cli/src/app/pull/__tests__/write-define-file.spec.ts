@@ -137,7 +137,6 @@ describe('writeDefineFile', () => {
         name: 'Companies by owner',
         objectUniversalIdentifier: 'object-uid',
         type: 'TABLE_WIDGET',
-        visibility: 'WORKSPACE',
         openRecordIn: 'SIDE_PANEL',
         calendarLayout: 'MONTH',
         kanbanAggregateOperation: 'COUNT',
@@ -185,12 +184,10 @@ describe('writeDefineFile', () => {
           '  ViewOpenRecordIn,\n' +
           '  ViewSortDirection,\n' +
           '  ViewType,\n' +
-          '  ViewVisibility,\n' +
           "} from 'twenty-sdk/define';\n",
       ),
     ).toBe(true);
     expect(file).toContain('type: ViewType.TABLE_WIDGET,');
-    expect(file).toContain('visibility: ViewVisibility.WORKSPACE,');
     expect(file).toContain('openRecordIn: ViewOpenRecordIn.SIDE_PANEL,');
     expect(file).toContain('calendarLayout: ViewCalendarLayout.MONTH,');
     expect(file).toContain(

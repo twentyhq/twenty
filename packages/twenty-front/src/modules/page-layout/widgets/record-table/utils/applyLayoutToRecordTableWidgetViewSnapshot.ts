@@ -2,7 +2,7 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { type RecordTableWidgetLayoutViewType } from '@/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType';
 import { type RecordTableWidgetViewSnapshot } from '@/page-layout/widgets/record-table/types/RecordTableWidgetViewSnapshot';
 import { buildDraftViewGroupsForFieldMetadataItem } from '@/page-layout/widgets/record-table/utils/buildDraftViewGroupsForFieldMetadataItem';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isViewCompactByDefault } from 'twenty-shared/utils';
 import { ViewCalendarLayout, ViewType } from '~/generated-metadata/graphql';
 
 export const applyLayoutToRecordTableWidgetViewSnapshot = ({
@@ -16,6 +16,12 @@ export const applyLayoutToRecordTableWidgetViewSnapshot = ({
   defaultGroupByFieldMetadataItem: FieldMetadataItem | null;
   defaultCalendarFieldMetadataItem?: FieldMetadataItem | null;
 }): RecordTableWidgetViewSnapshot => {
+  const isCompactByDefault = isViewCompactByDefault(targetViewType);
+  const isCompact =
+    isCompactByDefault === isViewCompactByDefault(widgetViewSnapshot.view.type)
+      ? widgetViewSnapshot.view.isCompact
+      : isCompactByDefault;
+
   if (targetViewType === ViewType.KANBAN_WIDGET) {
     const hasGroupBy = isDefined(
       widgetViewSnapshot.view.mainGroupByFieldMetadataId,
@@ -30,6 +36,7 @@ export const applyLayoutToRecordTableWidgetViewSnapshot = ({
       view: {
         ...widgetViewSnapshot.view,
         type: targetViewType,
+        isCompact,
         mainGroupByFieldMetadataId: hasGroupBy
           ? widgetViewSnapshot.view.mainGroupByFieldMetadataId
           : defaultGroupByFieldMetadataItem?.id,
@@ -58,6 +65,7 @@ export const applyLayoutToRecordTableWidgetViewSnapshot = ({
       view: {
         ...widgetViewSnapshot.view,
         type: targetViewType,
+        isCompact,
         calendarLayout:
           widgetViewSnapshot.view.calendarLayout ?? ViewCalendarLayout.MONTH,
         calendarFieldMetadataId: hasCalendarField
@@ -72,6 +80,7 @@ export const applyLayoutToRecordTableWidgetViewSnapshot = ({
     view: {
       ...widgetViewSnapshot.view,
       type: targetViewType,
+      isCompact,
     },
   };
 };

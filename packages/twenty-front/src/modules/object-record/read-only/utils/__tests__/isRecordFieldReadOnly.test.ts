@@ -153,4 +153,32 @@ describe('isRecordFieldReadOnly', () => {
       }),
     ).toBe(true);
   });
+
+  it('should return true only when every rule allowing updates locks the field', () => {
+    const buildRule = (uneditableFields: string[]) => ({
+      ruleId: uneditableFields.join(),
+      canCreateRecords: false,
+      canReadRecords: true,
+      canUpdateRecords: true,
+      canSoftDeleteRecords: false,
+      canDestroyRecords: false,
+      predicates: [],
+      predicateGroups: [],
+      unreadableFields: [],
+      uneditableFields,
+    });
+    const isReadOnlyWithRules = (uneditableFieldsByRule: string[][]) =>
+      isRecordFieldReadOnly({
+        ...baseParams,
+        objectPermissionsByObjectMetadataId: {
+          [OBJECT_METADATA_ID]: buildObjectPermissions({
+            canUpdateAllRecords: false,
+            rowLevelRecordsPermissions: uneditableFieldsByRule.map(buildRule),
+          }),
+        },
+      });
+
+    expect(isReadOnlyWithRules([[FIELD_METADATA_ID]])).toBe(true);
+    expect(isReadOnlyWithRules([[FIELD_METADATA_ID], []])).toBe(false);
+  });
 });

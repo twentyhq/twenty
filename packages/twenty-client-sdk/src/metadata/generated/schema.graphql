@@ -2057,7 +2057,7 @@ input CreateViewInput {
   groupLoadLimit: Int = 8
   icon: String!
   id: UUID
-  isCompact: Boolean = false
+  isCompact: Boolean
   isPrivate: Boolean
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID

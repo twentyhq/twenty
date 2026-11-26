@@ -14,7 +14,7 @@ import { LogicFunctionExecutionThrottleModule } from 'src/engine/core-modules/lo
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { LogicFunctionPrebuiltWarmUpModule } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/logic-function-prebuilt-warm-up.module';
+import { LogicFunctionPrebuiltInstallModule } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-install/logic-function-prebuilt-install.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
@@ -24,7 +24,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     EventLogLiveModule,
     TokenModule,
     WorkspaceCacheModule,
-    LogicFunctionPrebuiltWarmUpModule,
+    LogicFunctionPrebuiltInstallModule,
     BillingModule,
     WorkspaceDomainsModule,
     ApplicationModule,

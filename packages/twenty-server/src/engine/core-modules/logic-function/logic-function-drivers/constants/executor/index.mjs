@@ -2,7 +2,7 @@ import { promises as fs } from 'fs';
 import { createHash } from 'crypto';
 
 export const handler = async (event) => {
-  const { code, params, context, env, handlerName } = event;
+  const { code, params, context, env, handlerName, isWarmUp } = event;
 
   // oxlint-disable-next-line no-undef
   const oldProcessEnv = { ...process.env };
@@ -14,6 +14,10 @@ export const handler = async (event) => {
     const mainFile = code
       ? await loadFromPayload(code)
       : await import('./prebuilt-logic-function.mjs');
+
+    if (isWarmUp) {
+      return null;
+    }
 
     const handlerFn = handlerName
       .split('.')
