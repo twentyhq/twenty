@@ -97,7 +97,6 @@ export type { ExpressionDate } from './ExpressionDate';
 export type { ExpressionDatePart } from './ExpressionDatePart';
 export type { ExpressionDateUnit } from './ExpressionDateUnit';
 export type { ExpressionEvaluationResult } from './ExpressionEvaluationResult';
-export type { ExpressionInstruction } from './ExpressionInstruction';
 export type { ExpressionSyntaxError } from './ExpressionSyntaxError';
 export type { ExpressionSyntaxErrorCode } from './ExpressionSyntaxErrorCode';
 export type { ExtractPropertiesThatEndsWithId } from './ExtractPropertiesThatEndsWithId';

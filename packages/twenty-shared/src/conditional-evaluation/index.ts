@@ -9,16 +9,11 @@
 
 export { CONDITIONAL_EVALUATION_DEVICES } from './common/constants/ConditionalEvaluationDevices';
 export { CONDITIONAL_EVALUATION_FUNCTIONS } from './common/constants/ConditionalEvaluationFunctions';
-export { CONDITIONAL_EVALUATION_SYMBOL_BY_COMPARISON_OPERATOR } from './common/constants/ConditionalEvaluationSymbolByComparisonOperator';
 export { CONDITIONAL_EVALUATION_VARIABLES } from './common/constants/ConditionalEvaluationVariables';
 export type { ConditionalAvailabilityMetadataName } from './common/types/ConditionalAvailabilityMetadataName';
-export type { ConditionalEvaluationComparisonOperator } from './common/types/ConditionalEvaluationComparisonOperator';
 export type { ConditionalEvaluationDevice } from './common/types/ConditionalEvaluationDevice';
-export type { ConditionalEvaluationLogicalOperator } from './common/types/ConditionalEvaluationLogicalOperator';
 export type { ConditionalEvaluationNode } from './common/types/ConditionalEvaluationNode';
 export { buildDeviceConditionalEvaluationNode } from './common/utils/buildDeviceConditionalEvaluationNode';
-export { conditionalEvaluationComparisonOperatorSchema } from './common/utils/conditionalEvaluationComparisonOperatorSchema';
-export { conditionalEvaluationLogicalOperatorSchema } from './common/utils/conditionalEvaluationLogicalOperatorSchema';
 export { createArrayPropertyCheck } from './common/utils/createArrayPropertyCheck';
 export { joinConditionalEvaluationNodes } from './common/utils/joinConditionalEvaluationNodes';
 export { evaluateConditionalEvaluationExpression } from './evaluate/utils/evaluateConditionalEvaluationExpression';

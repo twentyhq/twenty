@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const conditionalEvaluationComparisonOperatorSchema = z.enum([
+export const expressionComparisonOperatorSchema = z.enum([
   'EQUAL',
   'NOT_EQUAL',
   'LESS_THAN',

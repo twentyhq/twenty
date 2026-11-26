@@ -97,7 +97,7 @@ export { createExpressionEvaluator } from './expression/createExpressionEvaluato
 export { findExpressionAggregationError } from './expression/findExpressionAggregationError';
 export { getExpressionArgumentCountError } from './expression/getExpressionArgumentCountError';
 export { getExpressionSyntaxError } from './expression/getExpressionSyntaxError';
-export { parseExpressionInstructions } from './expression/parseExpressionInstructions';
+export { parseExpressionNode } from './expression/parseExpressionNode';
 export { reduceExpressionNumbers } from './expression/reduceExpressionNumbers';
 export { roundExpressionNumber } from './expression/roundExpressionNumber';
 export { extractAndSanitizeObjectStringFields } from './extractAndSanitizeObjectStringFields';
@@ -428,7 +428,6 @@ export { createValidationRuleEvaluator } from './validation-rule/createValidatio
 export { evaluateValidationRuleExpression } from './validation-rule/evaluateValidationRuleExpression';
 export { getValidationRulePreviousValueFieldPath } from './validation-rule/getValidationRulePreviousValueFieldPath';
 export { getValidationRuleRecordsFromDatabaseEvent } from './validation-rule/getValidationRuleRecordsFromDatabaseEvent';
-export { hasValidationRuleBracketAccess } from './validation-rule/hasValidationRuleBracketAccess';
 export { isValidationRuleDateInRelativeRange } from './validation-rule/isValidationRuleDateInRelativeRange';
 export { isValidationRuleFunctionName } from './validation-rule/isValidationRuleFunctionName';
 export { isValidationRulePreviousValuePath } from './validation-rule/isValidationRulePreviousValuePath';
