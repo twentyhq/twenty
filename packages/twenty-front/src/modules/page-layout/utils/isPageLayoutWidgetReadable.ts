@@ -86,7 +86,7 @@ const getFieldWidgetReadObjectMetadataIds = ({
   ];
 };
 
-// TODO: temporary, remove once conditional availability supports object read access
+// TODO(@thomtrp): temporary, remove once conditional availability supports object read access
 export const isPageLayoutWidgetReadable = ({
   widget,
   pageObjectMetadataId,
