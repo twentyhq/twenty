@@ -16,7 +16,8 @@ const requestedUnknownToolNamesByClient = new WeakMap<
   Set<string>
 >();
 
-// A proposal's card reads its tool's labels from the index, and that tool may come from a newly installed app
+// A proposal's card reads its tool's labels from the index, and that tool may come from a newly installed app.
+// A streaming input holds a prefix of the tool name, which would refetch for every prefix.
 const getReferencedToolNames = (
   toolPart: ToolUIPart | DynamicToolUIPart,
 ): string[] => {
@@ -24,6 +25,7 @@ const getReferencedToolNames = (
 
   if (
     toolName === PROPOSE_TOOL_CALL_TOOL_NAME &&
+    toolPart.state !== 'input-streaming' &&
     isPlainObject(toolPart.input) &&
     isNonEmptyString(toolPart.input.toolName)
   ) {

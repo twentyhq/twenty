@@ -251,6 +251,19 @@ describe('AiChatToolCallApprovalCard', () => {
         screen.queryByRole('button', { name: 'Not now' }),
       ).not.toBeInTheDocument();
     });
+
+    it('keeps the stored labels when the cached tool index has none for the tool', () => {
+      mockToolIndex.mockReturnValue([
+        { name: 'app_tool_respond_to_cal_booking', approval: null },
+      ]);
+
+      renderCard({ proposal: BOOKING_PROPOSAL });
+
+      expect(
+        screen.getByRole('button', { name: 'Send response' }),
+      ).toBeVisible();
+      expect(screen.getByRole('button', { name: 'Not now' })).toBeVisible();
+    });
   });
 
   it('shows what the call does and which tool it runs', () => {

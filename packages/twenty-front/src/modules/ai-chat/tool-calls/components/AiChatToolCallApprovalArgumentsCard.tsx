@@ -40,13 +40,10 @@ export const AiChatToolCallApprovalArgumentsCard = ({
   );
 
   const { toolIndex } = useGetToolIndex();
-  const toolIndexEntry = toolIndex.find(
-    (entry) => entry.name === proposal.toolName,
-  );
   // The tool index is translated for the viewer; the stored labels are in the proposer's language
-  const labels = isDefined(toolIndexEntry)
-    ? toolIndexEntry.approval?.labels
-    : proposal.labels;
+  const labels =
+    toolIndex.find((entry) => entry.name === proposal.toolName)?.approval
+      ?.labels ?? proposal.labels;
 
   const argumentsEditor = (
     <AiChatToolCallApprovalArgumentsEditor

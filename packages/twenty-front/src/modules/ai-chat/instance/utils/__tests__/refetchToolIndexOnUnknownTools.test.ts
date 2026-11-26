@@ -39,14 +39,17 @@ const buildApolloClientWithToolIndex = (toolNames: string[]) => {
   return apolloClient;
 };
 
-const buildProposalMessage = (proposedToolName: string): ExtendedUIMessage => ({
+const buildProposalMessage = (
+  proposedToolName: string,
+  state: 'input-streaming' | 'input-available' = 'input-available',
+): ExtendedUIMessage => ({
   id: `message-${proposedToolName}`,
   role: 'assistant',
   parts: [
     {
       type: `tool-${PROPOSE_TOOL_CALL_TOOL_NAME}`,
       toolCallId: `call-${proposedToolName}`,
-      state: 'input-available',
+      state,
       input: {
         toolName: proposedToolName,
         arguments: {},
@@ -87,6 +90,20 @@ describe('refetchToolIndexOnUnknownTools', () => {
     refetchToolIndexOnUnknownTools({
       apolloClient,
       messages: [buildProposalMessage('app_tool_respond_to_cal_booking')],
+    });
+
+    expect(invalidateToolIndex).not.toHaveBeenCalled();
+  });
+
+  it('ignores the partial tool name of a proposal still streaming', () => {
+    const apolloClient = buildApolloClientWithToolIndex([
+      PROPOSE_TOOL_CALL_TOOL_NAME,
+      'app_tool_respond_to_cal_booking',
+    ]);
+
+    refetchToolIndexOnUnknownTools({
+      apolloClient,
+      messages: [buildProposalMessage('app_tool_res', 'input-streaming')],
     });
 
     expect(invalidateToolIndex).not.toHaveBeenCalled();

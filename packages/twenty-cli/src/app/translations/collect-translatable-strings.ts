@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { type Manifest } from 'twenty-shared/application';
 import {
   getMetadataLabelContext,
@@ -34,7 +35,7 @@ export const collectTranslatableStrings = (
   const descriptorByKey = new Map<string, MessageDescriptor>();
 
   const addString = (value: unknown, context: string) => {
-    if (typeof value !== 'string' || value.length === 0) {
+    if (!isNonEmptyString(value)) {
       return;
     }
 
