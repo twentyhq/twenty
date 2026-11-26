@@ -78,9 +78,7 @@ const readWorkspaceApiKey = (): string => {
   return workspaceApiKey;
 };
 
-// The app's generated client only covers the objects the app uses, but test
-// fixture discovery needs fields that are not part of the app schema; this
-// hits the GraphQL APIs directly.
+// Fixture discovery needs fields outside the app's generated client.
 const twentyGraphql = async <TData>({
   endpointPath,
   query,
@@ -1041,8 +1039,7 @@ describe('call recorder app lifecycle (integration)', () => {
     }
   }, REAL_QUEUE_TIMEOUT_MS);
 
-  // The application cannot destroy recordings, and the workspace key cannot
-  // touch one attached to a meeting, so detach first.
+  // Only the workspace key can destroy, and only recordings detached from their meeting.
   const destroyCallRecordings = async (
     callRecordingIds: string[],
   ): Promise<void> => {
