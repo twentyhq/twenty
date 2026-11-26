@@ -8,7 +8,6 @@ import {
   ViewKey,
   ViewOpenRecordIn,
   ViewType,
-  ViewVisibility,
 } from 'twenty-shared/types';
 
 import { ApplicationExceptionCode } from 'src/engine/core-modules/application/application.exception';
@@ -61,7 +60,6 @@ describe('fromViewManifestToUniversalFlatView', () => {
         isCompact: true,
         shouldHideEmptyGroups: true,
         groupLoadLimit: 50,
-        visibility: ViewVisibility.UNLISTED,
         openRecordIn: ViewOpenRecordIn.RECORD_PAGE,
       },
       applicationUniversalIdentifier,
@@ -74,7 +72,6 @@ describe('fromViewManifestToUniversalFlatView', () => {
     expect(result.isCompact).toBe(true);
     expect(result.shouldHideEmptyGroups).toBe(true);
     expect(result.groupLoadLimit).toBe(50);
-    expect(result.isPrivate).toBe(true);
     expect(result.openRecordIn).toBe(ViewOpenRecordIn.RECORD_PAGE);
   });
 

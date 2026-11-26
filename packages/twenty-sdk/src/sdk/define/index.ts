@@ -261,7 +261,6 @@ export {
   ViewPresetFilter,
   ViewSortDirection,
   ViewType,
-  ViewVisibility,
   WidgetType,
 } from 'twenty-shared/types';
 export type {
