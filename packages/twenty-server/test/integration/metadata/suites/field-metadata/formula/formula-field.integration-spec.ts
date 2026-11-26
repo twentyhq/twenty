@@ -718,12 +718,15 @@ describe('Formula fields', () => {
       [gadgetObjectMetadataId],
     );
 
-    expect(settings.formula).toMatchObject({
-      expression: 'unitPrice * quantity',
-      bindings: {
-        unitPrice: priceUniversalIdentifier,
-        quantity: expect.any(String),
+    expect(settings.formula.expression).toBeUndefined();
+    expect(settings.formula.tree).toMatchObject({
+      type: 'ARITHMETIC',
+      operator: 'MULTIPLY',
+      left: {
+        type: 'FIELD',
+        fieldUniversalIdentifier: priceUniversalIdentifier,
       },
+      right: { type: 'FIELD', fieldUniversalIdentifier: expect.any(String) },
     });
   });
 
