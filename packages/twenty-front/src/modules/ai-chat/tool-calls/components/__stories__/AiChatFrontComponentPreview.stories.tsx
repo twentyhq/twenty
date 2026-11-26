@@ -155,13 +155,9 @@ export const RuntimeError: Story = {
   },
 };
 
-export const Disabled: Story = {
+export const StaleDisabledFeatureFlag: Story = {
   beforeEach: () => seedFrontComponentPreviewWorkspace(false),
-  play: async ({ canvasElement }) => {
-    await expect(
-      within(canvasElement).queryByText('Sample data'),
-    ).not.toBeInTheDocument();
-  },
+  play: InteractivePreview.play,
 };
 
 export const RetryDraftLoad: Story = {
@@ -169,16 +165,16 @@ export const RetryDraftLoad: Story = {
     getWorker().use(
       http.get(
         `${REST_API_BASE_URL}/ai-front-components/drafts/:draftId`,
-        () => new HttpResponse(null, { status: 403 }),
+        () => new HttpResponse(null, { status: 503 }),
         { once: true },
       ),
     );
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(
-      await canvas.findByRole('alert', {}, { timeout: 10000 }),
-    ).toHaveTextContent('Could not load preview.');
+    await expect(await canvas.findByRole('alert')).toHaveTextContent(
+      'Could not load preview.',
+    );
     await userEvent.click(canvas.getByRole('button', { name: 'Retry' }));
     await expect(
       await canvas.findByRole(
@@ -193,46 +189,15 @@ export const RetryDraftLoad: Story = {
 
 export const RetryDependencyLoad: Story = {
   beforeEach: () => {
-    let failures = 0;
     getWorker().use(
       http.get(
         `${REST_API_BASE_URL}/front-component-shared-dependencies/storybook-app/storybook-checksum.js`,
-        () => {
-          failures++;
-          return failures <= 3
-            ? new HttpResponse(null, { status: 503 })
-            : undefined;
-        },
+        () => new HttpResponse(null, { status: 503 }),
+        { once: true },
       ),
     );
   },
   play: RetryDraftLoad.play,
-};
-
-export const RecoverInitialDraftLoad: Story = {
-  beforeEach: () => {
-    getWorker().use(
-      http.get(
-        `${REST_API_BASE_URL}/ai-front-components/drafts/:draftId`,
-        () => new HttpResponse(null, { status: 503 }),
-        { once: true },
-      ),
-    );
-  },
-  play: InteractivePreview.play,
-};
-
-export const RecoverInitialDependencyLoad: Story = {
-  beforeEach: () => {
-    getWorker().use(
-      http.get(
-        `${REST_API_BASE_URL}/front-component-shared-dependencies/storybook-app/storybook-checksum.js`,
-        () => new HttpResponse(null, { status: 503 }),
-        { once: true },
-      ),
-    );
-  },
-  play: InteractivePreview.play,
 };
 
 export const RefreshStatusPreservesInteraction: Story = {

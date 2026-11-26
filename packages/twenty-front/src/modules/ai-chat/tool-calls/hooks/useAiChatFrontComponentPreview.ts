@@ -12,8 +12,6 @@ import { REST_API_BASE_URL } from '@/apollo/constants/RestApiBaseUrl';
 import { getFingerprintedRestUrl } from '@/front-components/utils/getFingerprintedRestUrl';
 
 const SESSION_COOKIE_HEADERS = { [SESSION_COOKIE_OPT_IN_HEADER_NAME]: '1' };
-const PREVIEW_LOAD_MAX_ATTEMPTS = 3;
-const PREVIEW_LOAD_RETRY_DELAY_MS = 1000;
 
 type FrontComponentPreview = {
   pageLayoutType: PageLayoutType.DASHBOARD | PageLayoutType.RECORD_PAGE;
@@ -48,91 +46,66 @@ export const useAiChatFrontComponentPreview = (draftId: string) => {
     }) => {
       setLoadingError(undefined);
 
-      for (let attempt = 0; attempt < PREVIEW_LOAD_MAX_ATTEMPTS; attempt++) {
+      try {
+        const response = await fetch(endpoint, {
+          credentials: 'include',
+          headers: SESSION_COOKIE_HEADERS,
+          signal,
+        });
+
+        if (!response.ok) {
+          throw new CustomError(
+            doNotTranslate(`Preview request failed: ${response.status}`),
+            'AI_FRONT_COMPONENT_PREVIEW_LOAD_FAILED',
+          );
+        }
+        const result: FrontComponentPreview = await response.json();
+
         if (signal.aborted) {
           return false;
         }
 
-        let canRetry = true;
-        let phase = 'draft';
-
-        try {
-          const response = await fetch(endpoint, {
-            credentials: 'include',
-            headers: SESSION_COOKIE_HEADERS,
-            signal,
-          });
-
-          if (!response.ok) {
-            canRetry =
-              response.status === 408 ||
-              response.status === 429 ||
-              response.status >= 500;
-            throw new CustomError(
-              doNotTranslate(`Preview request failed: ${response.status}`),
-              'AI_FRONT_COMPONENT_PREVIEW_LOAD_FAILED',
-            );
-          }
-          const result: FrontComponentPreview = await response.json();
-
-          if (signal.aborted) {
-            return false;
+        setPreview((current) => {
+          if (!isDefined(current)) {
+            return current;
           }
 
-          setPreview((current) => {
-            if (!isDefined(current)) {
-              return current;
-            }
+          return {
+            ...current,
+            isCurrent: result.isCurrent,
+            publishedComponentId: result.publishedComponentId,
+          };
+        });
 
-            return {
-              ...current,
-              isCurrent: result.isCurrent,
-              publishedComponentId: result.publishedComponentId,
-            };
-          });
-
-          if (!shouldLoadDependencies) {
-            return true;
-          }
-
-          phase = 'shared-dependencies';
-          const sharedDependenciesSource = await fetchComponentSource({
-            url: getFingerprintedRestUrl({
-              resource: 'front-component-shared-dependencies',
-              id: result.applicationId,
-              checksum: result.sharedDependenciesChecksum ?? undefined,
-            }),
-            credentials: 'include',
-            headers: SESSION_COOKIE_HEADERS,
-          });
-
-          if (signal.aborted) {
-            return false;
-          }
-          const loadedPreview = { ...result, sharedDependenciesSource };
-          setPreview((current) => current ?? loadedPreview);
+        if (!shouldLoadDependencies) {
           return true;
-        } catch (failure) {
-          if (signal.aborted) {
-            return false;
-          }
-          if (canRetry && attempt < PREVIEW_LOAD_MAX_ATTEMPTS - 1) {
-            await new Promise((resolve) =>
-              setTimeout(resolve, PREVIEW_LOAD_RETRY_DELAY_MS),
-            );
-            continue;
-          }
-          captureException(failure, {
-            tags: { previewLoadPhase: phase },
-            extra: { draftId, attempts: attempt + 1 },
-          });
-          setLoadingError(t`Could not load preview.`);
+        }
+
+        const sharedDependenciesSource = await fetchComponentSource({
+          url: getFingerprintedRestUrl({
+            resource: 'front-component-shared-dependencies',
+            id: result.applicationId,
+            checksum: result.sharedDependenciesChecksum ?? undefined,
+          }),
+          credentials: 'include',
+          headers: SESSION_COOKIE_HEADERS,
+        });
+
+        if (signal.aborted) {
           return false;
         }
+        const loadedPreview = { ...result, sharedDependenciesSource };
+        setPreview((current) => current ?? loadedPreview);
+        return true;
+      } catch (failure) {
+        if (!signal.aborted) {
+          captureException(failure);
+          setLoadingError(t`Could not load preview.`);
+        }
+        return false;
       }
-      return false;
     },
-    [draftId, endpoint, t],
+    [endpoint, t],
   );
 
   const reportPreviewError = useCallback(
