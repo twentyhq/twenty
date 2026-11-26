@@ -5,7 +5,8 @@ import { Injectable } from '@nestjs/common';
 import { msg, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ALL_METADATA_NAME } from 'twenty-shared/metadata';
-import { getValidationRuleTree, isDefined } from 'twenty-shared/utils';
+import { parseStoredExpressionTree } from 'twenty-shared/expression';
+import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { ValidationRuleExceptionCode } from 'src/engine/metadata-modules/validation-rule/validation-rule.exception';
@@ -91,7 +92,7 @@ export class FlatValidationRuleValidatorService {
     // A draft rule has no tree until its expression is written
     const isTreeRequired = isActive || isDefined(tree);
 
-    if (isTreeRequired && !isDefined(getValidationRuleTree({ tree }))) {
+    if (isTreeRequired && !isDefined(parseStoredExpressionTree({ tree }))) {
       errors.push({
         code: ValidationRuleExceptionCode.INVALID_VALIDATION_RULE_EXPRESSION,
         message: t`Validation rule expression cannot be parsed`,

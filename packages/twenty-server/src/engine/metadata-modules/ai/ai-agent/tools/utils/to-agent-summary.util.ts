@@ -1,6 +1,6 @@
-import { type FlatAgentWithRoleId } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
+import { type AgentDTO } from 'src/engine/metadata-modules/ai/ai-agent/dtos/agent.dto';
 
-export const toAgentSummary = (agent: FlatAgentWithRoleId) => ({
+export const toAgentSummary = (agent: AgentDTO) => ({
   id: agent.id,
   name: agent.name,
   label: agent.label,

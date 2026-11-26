@@ -433,7 +433,6 @@ export { createValidationRuleEvaluator } from './validation-rule/createValidatio
 export { evaluateValidationRuleExpression } from './validation-rule/evaluateValidationRuleExpression';
 export { getValidationRulePreviousValueFieldPath } from './validation-rule/getValidationRulePreviousValueFieldPath';
 export { getValidationRuleRecordsFromDatabaseEvent } from './validation-rule/getValidationRuleRecordsFromDatabaseEvent';
-export { getValidationRuleTree } from './validation-rule/getValidationRuleTree';
 export { isValidationRuleDateInRelativeRange } from './validation-rule/isValidationRuleDateInRelativeRange';
 export { isValidationRuleFunctionName } from './validation-rule/isValidationRuleFunctionName';
 export { isValidationRulePreviousValuePath } from './validation-rule/isValidationRulePreviousValuePath';
@@ -443,9 +442,6 @@ export { isValidationRuleValueEmpty } from './validation-rule/isValidationRuleVa
 export { listValidationRuleFieldNodes } from './validation-rule/listValidationRuleFieldNodes';
 export { parseValidationRuleExpression } from './validation-rule/parseValidationRuleExpression';
 export { printValidationRuleExpression } from './validation-rule/printValidationRuleExpression';
-export { renameValidationRuleExpressionFields } from './validation-rule/renameValidationRuleExpressionFields';
-export { renameValidationRuleExpressionToCurrentFieldNames } from './validation-rule/renameValidationRuleExpressionToCurrentFieldNames';
-export { renameValidationRulePath } from './validation-rule/renameValidationRulePath';
 export { resolveValidationRuleIdentifierPath } from './validation-rule/resolveValidationRuleIdentifierPath';
 export { tokenizeValidationRuleExpression } from './validation-rule/tokenizeValidationRuleExpression';
 export { validationRuleParser } from './validation-rule/validationRuleParser';
