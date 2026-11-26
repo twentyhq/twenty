@@ -31,16 +31,6 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   },
   {
     filePath:
-      'packages/twenty-front/src/modules/log-console/components/LogConsoleDetailPanel.tsx',
-    reason: 'Card.Root laid out as a padded error message block',
-  },
-  {
-    filePath:
-      'packages/twenty-front/src/modules/log-console/components/LogConsoleFieldsCard.tsx',
-    reason: 'Card.Root laid out as a padded column of log fields',
-  },
-  {
-    filePath:
       'packages/twenty-front/src/modules/log-console/components/LogConsoleRecordChangeDetail.tsx',
     reason: 'Button placement in its parent column',
   },
@@ -192,6 +182,16 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
     filePath:
       'packages/twenty-front/src/modules/ui/input/components/FormFieldInputContainer.tsx',
     reason: 'Field.Root as a full-width column',
+  },
+  {
+    filePath:
+      'packages/twenty-front/src/modules/ui/layout/details/components/DetailFieldsCard.tsx',
+    reason: 'Card.Root laid out as a padded column of detail fields',
+  },
+  {
+    filePath:
+      'packages/twenty-front/src/modules/ui/layout/details/components/DetailMessageCard.tsx',
+    reason: 'Card.Root laid out as a padded error message block',
   },
   {
     filePath:
