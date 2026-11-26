@@ -71,12 +71,17 @@ const RESTRICTED_TITLE_PLACEHOLDER =
 // The app's generated client only covers the objects the app uses, but test
 // fixture discovery needs fields that are not part of the app schema; this
 // hits the GraphQL APIs directly with the test API key.
-const twentyGraphql = async <TData>(
-  endpointPath: '/graphql' | '/metadata',
-  query: string,
-  variables: Record<string, unknown> = {},
+const twentyGraphql = async <TData>({
+  endpointPath,
+  query,
+  variables = {},
   accessToken = process.env[WORKSPACE_API_KEY_ENV],
-): Promise<TData> => {
+}: {
+  endpointPath: '/graphql' | '/metadata';
+  query: string;
+  variables?: Record<string, unknown>;
+  accessToken?: string;
+}): Promise<TData> => {
   const response = await fetch(`${process.env.TWENTY_API_URL}${endpointPath}`, {
     method: 'POST',
     headers: {
@@ -107,9 +112,9 @@ const fetchApplicationAccessToken = async (): Promise<string> => {
       id: string;
       oAuthClientId: string;
     } | null;
-  }>(
-    '/metadata',
-    `query FindApplicationRegistration($universalIdentifier: String!) {
+  }>({
+    endpointPath: '/metadata',
+    query: `query FindApplicationRegistration($universalIdentifier: String!) {
       findApplicationRegistrationByUniversalIdentifier(
         universalIdentifier: $universalIdentifier
       ) {
@@ -117,8 +122,8 @@ const fetchApplicationAccessToken = async (): Promise<string> => {
         oAuthClientId
       }
     }`,
-    { universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER },
-  );
+    variables: { universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER },
+  });
 
   if (isNull(applicationRegistration)) {
     throw new Error('Call recorder is not registered');
@@ -128,15 +133,15 @@ const fetchApplicationAccessToken = async (): Promise<string> => {
     rotateApplicationRegistrationClientSecret: { clientSecret },
   } = await twentyGraphql<{
     rotateApplicationRegistrationClientSecret: { clientSecret: string };
-  }>(
-    '/metadata',
-    `mutation RotateApplicationRegistrationClientSecret($id: String!) {
+  }>({
+    endpointPath: '/metadata',
+    query: `mutation RotateApplicationRegistrationClientSecret($id: String!) {
       rotateApplicationRegistrationClientSecret(id: $id) {
         clientSecret
       }
     }`,
-    { id: applicationRegistration.id },
-  );
+    variables: { id: applicationRegistration.id },
+  });
   const response = await fetch(`${process.env.TWENTY_API_URL}/oauth/token`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -201,9 +206,9 @@ const discoverVisibleCalendarEventFixtures = async (
   let after: string | null = null;
 
   do {
-    const eventsData: CalendarEventFixturesPage = await twentyGraphql(
-      '/graphql',
-      `query ($after: String) {
+    const eventsData: CalendarEventFixturesPage = await twentyGraphql({
+      endpointPath: '/graphql',
+      query: `query ($after: String) {
         calendarEvents(first: 200, after: $after) {
           edges {
             node {
@@ -225,9 +230,9 @@ const discoverVisibleCalendarEventFixtures = async (
           pageInfo { hasNextPage endCursor }
         }
       }`,
-      { after },
-      applicationAccessToken,
-    );
+      variables: { after },
+      accessToken: applicationAccessToken,
+    });
     const connection = eventsData.calendarEvents;
 
     fixtures.push(
