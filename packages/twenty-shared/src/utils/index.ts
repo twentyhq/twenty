@@ -98,6 +98,7 @@ export { findExpressionAggregationError } from './expression/findExpressionAggre
 export { getExpressionArgumentCountError } from './expression/getExpressionArgumentCountError';
 export { getExpressionSyntaxError } from './expression/getExpressionSyntaxError';
 export { parseExpressionTree } from './expression/parseExpressionTree';
+export { printExpressionNode } from './expression/printExpressionNode';
 export { reduceExpressionNumbers } from './expression/reduceExpressionNumbers';
 export { roundExpressionNumber } from './expression/roundExpressionNumber';
 export { extractAndSanitizeObjectStringFields } from './extractAndSanitizeObjectStringFields';
