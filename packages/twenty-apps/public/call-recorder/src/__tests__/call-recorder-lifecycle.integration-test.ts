@@ -68,19 +68,29 @@ const RECALL_BASE_URL = 'https://us-west-2.recall.ai/api/v1';
 const RESTRICTED_TITLE_PLACEHOLDER =
   'FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED';
 
+const readWorkspaceApiKey = (): string => {
+  const workspaceApiKey = process.env[WORKSPACE_API_KEY_ENV];
+
+  if (!isDefined(workspaceApiKey)) {
+    throw new Error(`${WORKSPACE_API_KEY_ENV} must be set`);
+  }
+
+  return workspaceApiKey;
+};
+
 // The app's generated client only covers the objects the app uses, but test
 // fixture discovery needs fields that are not part of the app schema; this
-// hits the GraphQL APIs directly with the test API key.
+// hits the GraphQL APIs directly.
 const twentyGraphql = async <TData>({
   endpointPath,
   query,
   variables = {},
-  accessToken = process.env[WORKSPACE_API_KEY_ENV],
+  accessToken,
 }: {
   endpointPath: '/graphql' | '/metadata';
   query: string;
   variables?: Record<string, unknown>;
-  accessToken?: string;
+  accessToken: string;
 }): Promise<TData> => {
   const response = await fetch(`${process.env.TWENTY_API_URL}${endpointPath}`, {
     method: 'POST',
@@ -123,6 +133,7 @@ const fetchApplicationAccessToken = async (): Promise<string> => {
       }
     }`,
     variables: { universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER },
+    accessToken: readWorkspaceApiKey(),
   });
 
   if (isNull(applicationRegistration)) {
@@ -141,6 +152,7 @@ const fetchApplicationAccessToken = async (): Promise<string> => {
       }
     }`,
     variables: { id: applicationRegistration.id },
+    accessToken: readWorkspaceApiKey(),
   });
   const response = await fetch(`${process.env.TWENTY_API_URL}/oauth/token`, {
     method: 'POST',
@@ -935,6 +947,7 @@ describe('call recorder app lifecycle (integration)', () => {
   // Built before the fetch interceptor is installed so the shared client's
   // Twenty API traffic always uses the real fetch.
   let client: CoreApiClient;
+  let workspaceApiKeyClient: CoreApiClient;
   let applicationAccessToken: string;
   let workspaceId: string;
   let availableCalendarEventFixtures: CalendarEventFixture[];
@@ -953,10 +966,15 @@ describe('call recorder app lifecycle (integration)', () => {
   };
 
   beforeAll(async () => {
-    client = new CoreApiClient();
     workspaceId = readWorkspaceIdFromApiKey();
     applicationAccessToken = await fetchApplicationAccessToken();
     await waitForCalendarChannelsAccess(applicationAccessToken);
+    client = new CoreApiClient({
+      headers: { Authorization: `Bearer ${applicationAccessToken}` },
+    });
+    workspaceApiKeyClient = new CoreApiClient({
+      headers: { Authorization: `Bearer ${readWorkspaceApiKey()}` },
+    });
     availableCalendarEventFixtures = await discoverVisibleCalendarEventFixtures(
       applicationAccessToken,
     );
@@ -986,13 +1004,8 @@ describe('call recorder app lifecycle (integration)', () => {
     vi.stubEnv('RECALL_API_KEY', 'recall-api-key');
     vi.stubEnv('RECALL_REGION', 'us-west-2');
     vi.stubEnv('CALL_RECORDER_STYLE', 'NONE');
-    // Logic functions normally run with an app access token; the workspace
-    // API key is a token with the same workspaceId claim.
-    vi.stubEnv(
-      'TWENTY_APP_ACCESS_TOKEN',
-      process.env[WORKSPACE_API_KEY_ENV] ?? '',
-    );
-    // The calendar channels endpoint only answers the application itself.
+    // The workspace key can no longer write meetings or their recordings.
+    vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', applicationAccessToken);
     vi.stubEnv('TWENTY_APP_APPLICATION_ACCESS_TOKEN', applicationAccessToken);
   });
 
@@ -1028,11 +1041,21 @@ describe('call recorder app lifecycle (integration)', () => {
     }
   }, REAL_QUEUE_TIMEOUT_MS);
 
+  // The application cannot destroy recordings, and the workspace key cannot
+  // touch one attached to a meeting, so detach first.
   const destroyCallRecordings = async (
     callRecordingIds: string[],
   ): Promise<void> => {
     for (const callRecordingId of callRecordingIds) {
       await client
+        .mutation({
+          updateCallRecording: {
+            __args: { id: callRecordingId, data: { calendarEventId: null } },
+            id: true,
+          },
+        })
+        .catch(() => {});
+      await workspaceApiKeyClient
         .mutation({
           destroyCallRecording: { __args: { id: callRecordingId }, id: true },
         })
@@ -1622,9 +1645,7 @@ describe('call recorder app lifecycle (integration)', () => {
           JSON.stringify(variables).includes('"id":{"in":')
         ) {
           recordingDeleted = true;
-          await client.mutation({
-            destroyCallRecording: { __args: { id: callRecordingId }, id: true },
-          });
+          await destroyCallRecordings([callRecordingId]);
         }
 
         return response;
@@ -4595,6 +4616,7 @@ describe('call recorder app lifecycle (integration)', () => {
       ).toBe('CANCELED');
 
       vi.unstubAllEnvs();
+      vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', applicationAccessToken);
       vi.stubEnv('TWENTY_APP_APPLICATION_ACCESS_TOKEN', applicationAccessToken);
 
       await client.mutation({
