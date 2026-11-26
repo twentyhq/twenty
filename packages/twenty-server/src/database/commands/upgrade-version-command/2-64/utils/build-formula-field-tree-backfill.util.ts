@@ -1,5 +1,4 @@
 import {
-  getFieldMetadataFormulaBindings,
   getFieldMetadataFormulaCurrencyCodeExpression,
   getFieldMetadataFormulaExpression,
   getFieldMetadataFormulaTree,
@@ -11,6 +10,7 @@ import {
 } from 'twenty-shared/utils';
 import { type ValidationRuleFieldDescriptor } from 'twenty-shared/types';
 
+import { getLegacyFormulaFieldBindings } from 'src/database/commands/upgrade-version-command/2-64/utils/get-legacy-formula-field-bindings.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -83,8 +83,9 @@ export const buildFormulaFieldTreeBackfill = ({
           universalFlatFieldMetadataMaps: flatFieldMetadataMaps,
         }).filter((formulaFieldDescriptor) => formulaFieldDescriptor.name !== name)
       : [];
-    const bindings =
-      getFieldMetadataFormulaBindings({ settings: universalSettings }) ?? {};
+    const bindings = getLegacyFormulaFieldBindings({
+      settings: universalSettings,
+    });
     const tree = buildTree({ expression, bindings, fields });
     const currencyCodeTree = isDefined(currencyCodeExpression)
       ? buildTree({ expression: currencyCodeExpression, bindings, fields })

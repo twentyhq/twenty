@@ -5,10 +5,13 @@ import { type ExpressionNode } from '@/expression/types/ExpressionNode';
 import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
 import { isDefined } from '@/utils/validation/isDefined';
 
-const findField = (
-  fields: ValidationRuleFieldDescriptor[] | undefined,
-  name: string | undefined,
-) => fields?.find((field) => field.name === name);
+const findField = ({
+  fields,
+  name,
+}: {
+  fields: ValidationRuleFieldDescriptor[] | undefined;
+  name: string | undefined;
+}) => fields?.find((field) => field.name === name);
 
 const toFieldNode = ({
   path,
@@ -21,7 +24,7 @@ const toFieldNode = ({
 
   if (rootSegment === VALIDATION_RULE_PREVIOUS_VARIABLE_NAME) {
     const [fieldName, subFieldName] = memberSegments;
-    const field = findField(fields, fieldName);
+    const field = findField({ fields, name: fieldName });
 
     return isDefined(field)
       ? {
@@ -33,7 +36,7 @@ const toFieldNode = ({
       : undefined;
   }
 
-  const rootField = findField(fields, rootSegment);
+  const rootField = findField({ fields, name: rootSegment });
   const [memberSegment, subFieldName] = memberSegments;
 
   if (!isDefined(rootField)) {
@@ -48,7 +51,10 @@ const toFieldNode = ({
     };
   }
 
-  const targetField = findField(rootField.relationTargetFields, memberSegment);
+  const targetField = findField({
+    fields: rootField.relationTargetFields,
+    name: memberSegment,
+  });
 
   return isDefined(targetField)
     ? {

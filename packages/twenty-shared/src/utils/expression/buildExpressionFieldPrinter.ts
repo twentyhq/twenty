@@ -33,9 +33,7 @@ export const buildExpressionFieldPrinter = ({
       : fieldByUniversalIdentifier.get(fieldUniversalIdentifier);
 
     return [
-      isPreviousValue === true
-        ? VALIDATION_RULE_PREVIOUS_VARIABLE_NAME
-        : undefined,
+      isPreviousValue ? VALIDATION_RULE_PREVIOUS_VARIABLE_NAME : undefined,
       isDefined(relationFieldUniversalIdentifier)
         ? (relationField?.name ??
           toMissingFieldName(relationFieldUniversalIdentifier))
