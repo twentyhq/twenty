@@ -69,7 +69,7 @@ describe('Query-time formula on an object with private records', () => {
         type: FieldMetadataType.NUMBER,
         objectMetadataId,
         isLabelSyncedWithName: false,
-        settings: { formula: { expression: '1' } },
+        formula: { expression: '1' },
       },
     });
 
