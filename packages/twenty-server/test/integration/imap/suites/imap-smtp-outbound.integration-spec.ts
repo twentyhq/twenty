@@ -14,6 +14,10 @@ import {
   startGreenmailContainer,
 } from 'test/integration/utils/start-greenmail-container.util';
 import { serializeEmailBody } from 'test/integration/utils/serialize-email-body.util';
+import {
+  grantRoleWideAccessToChannelObjects,
+  revokeRoleWideAccessToChannelObjects,
+} from 'test/integration/utils/role-wide-access-to-channel-objects.util';
 
 const PASSWORD = 'greenmail-password';
 const HANDLE = `imap-smtp-outbound-${randomUUID()}@acme.test`;
@@ -24,6 +28,7 @@ describe('IMAP/SMTP outbound messaging (integration)', () => {
   let messageChannelId: string;
 
   beforeAll(async () => {
+    await grantRoleWideAccessToChannelObjects();
     greenmail = await startGreenmailContainer({
       username: HANDLE,
       password: PASSWORD,
@@ -82,6 +87,7 @@ describe('IMAP/SMTP outbound messaging (integration)', () => {
     }
 
     await greenmail?.stop().catch(() => undefined);
+    await revokeRoleWideAccessToChannelObjects();
   });
 
   it('sends a threaded SMTP message through GraphQL and persists it', async () => {

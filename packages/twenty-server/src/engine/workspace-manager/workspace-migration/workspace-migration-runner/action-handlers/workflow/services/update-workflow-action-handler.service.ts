@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isUndefined } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { Equal, IsNull, Or } from 'typeorm';
+import { Equal, IsNull } from 'typeorm';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
@@ -61,34 +61,24 @@ export class UpdateWorkflowActionHandlerService extends WorkspaceMigrationRunner
     const workflowRepository =
       queryRunner.manager.getRepository<WorkflowEntity>(WorkflowEntity);
 
-    const hasPrivacyOrCreatorChange =
-      !isUndefined(update.isPrivate) ||
-      !isUndefined(update.createdByUserWorkspaceId);
-
-    if (!hasPrivacyOrCreatorChange) {
+    if (isUndefined(update.isPrivate)) {
       await workflowRepository.update({ id: entityId, workspaceId }, update);
 
       return;
     }
 
-    const { createdByUserWorkspaceId: currentCreatedByUserWorkspaceId } =
+    const { createdByUserWorkspaceId } =
       findFlatEntityByIdInFlatEntityMapsOrThrow({
         flatEntityId: entityId,
         flatEntityMaps: allFlatEntityMaps.flatWorkflowMaps,
       });
 
-    const resultingCreatedByUserWorkspaceId = isUndefined(
-      update.createdByUserWorkspaceId,
-    )
-      ? currentCreatedByUserWorkspaceId
-      : update.createdByUserWorkspaceId;
-
     const { affected } = await workflowRepository.update(
       {
         id: entityId,
         workspaceId,
-        createdByUserWorkspaceId: isDefined(resultingCreatedByUserWorkspaceId)
-          ? Or(IsNull(), Equal(resultingCreatedByUserWorkspaceId))
+        createdByUserWorkspaceId: isDefined(createdByUserWorkspaceId)
+          ? Equal(createdByUserWorkspaceId)
           : IsNull(),
       },
       update,

@@ -1,5 +1,5 @@
 import { isBoolean, isString } from '@sniptt/guards';
-import { CONDITIONAL_AVAILABILITY_SYMBOL_BY_COMPARISON_OPERATOR } from 'twenty-shared/conditional-availability';
+import { CONDITIONAL_EVALUATION_SYMBOL_BY_COMPARISON_OPERATOR } from 'twenty-shared/conditional-evaluation';
 import {
   EXPRESSION_SYMBOL_BY_ARITHMETIC_OPERATOR,
   EXPRESSION_SYMBOL_BY_UNARY_OPERATOR,
@@ -174,7 +174,7 @@ const compileNodeSqlOrThrow = ({
     case 'COMPARISON':
       return compileBinaryOperator({
         operator:
-          CONDITIONAL_AVAILABILITY_SYMBOL_BY_COMPARISON_OPERATOR[node.operator],
+          CONDITIONAL_EVALUATION_SYMBOL_BY_COMPARISON_OPERATOR[node.operator],
         left: node.left,
         right: node.right,
       });

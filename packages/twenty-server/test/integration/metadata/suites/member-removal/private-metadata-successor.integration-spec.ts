@@ -14,8 +14,8 @@ import { deleteOneAgent } from 'test/integration/metadata/suites/agent/utils/del
 import { updateOneAgent } from 'test/integration/metadata/suites/agent/utils/update-one-agent.util';
 import { createOneViewOnObject } from 'test/integration/metadata/suites/view/utils/create-one-view-on-object.util';
 import { destroyOneView } from 'test/integration/metadata/suites/view/utils/destroy-one-view.util';
-import { findOneView } from 'test/integration/metadata/suites/view/utils/find-one-view.util';
 import { findViewOwnership } from 'test/integration/metadata/suites/view/utils/find-view-ownership.util';
+import { updateOneView } from 'test/integration/metadata/suites/view/utils/update-one-view.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -193,7 +193,7 @@ describe('removing a member from the workspace', () => {
     expect(await findAgentOwner(sharedAgentId)).toBeNull();
   });
 
-  it('lets another member change who sees what they shared, with no other write in between', async () => {
+  it('lets no member change who sees what they shared', async () => {
     const { coreWorkflowById } = await coreWorkflowGraphqlRequest<{
       coreWorkflowById: { canChangeVisibility: boolean };
     }>({
@@ -207,22 +207,29 @@ describe('removing a member from the workspace', () => {
       variables: { coreWorkflowId: sharedCoreWorkflowId },
     });
 
-    const { data: viewData } = await findOneView({
-      viewId: sharedViewId,
-      gqlFields: 'createdByUserWorkspaceId',
-      expectToFail: false,
-      token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
-    });
-
-    const { data: agentData } = await updateOneAgent({
+    const { errors: agentErrors } = await updateOneAgent({
       input: { id: sharedAgentId, isPrivate: true },
       gqlFields: 'isPrivate',
-      expectToFail: false,
+      expectToFail: true,
       token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
     });
 
-    expect(coreWorkflowById.canChangeVisibility).toBe(true);
-    expect(viewData.getView.createdByUserWorkspaceId).toBeNull();
-    expect(agentData.updateOneAgent.isPrivate).toBe(true);
+    const { errors: viewErrors } = await updateOneView({
+      viewId: sharedViewId,
+      input: { id: sharedViewId, isPrivate: true },
+      gqlFields: 'id',
+      expectToFail: true,
+      token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    });
+
+    expect(coreWorkflowById.canChangeVisibility).toBe(false);
+    for (const errors of [agentErrors, viewErrors]) {
+      expect(errors?.[0]?.extensions?.code).toBe('METADATA_VALIDATION_FAILED');
+    }
+    expect(await findAgentOwner(sharedAgentId)).toBeNull();
+    expect(await findViewOwnership(sharedViewId)).toEqual({
+      isPrivate: false,
+      createdByUserWorkspaceId: null,
+    });
   });
 });

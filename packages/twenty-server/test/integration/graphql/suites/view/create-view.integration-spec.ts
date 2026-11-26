@@ -114,6 +114,31 @@ describe('Create core view', () => {
     });
   });
 
+  it('should create a list view compact unless told otherwise', async () => {
+    const { data: defaultListData } = await createOneView({
+      input: {
+        name: 'Default List View',
+        objectMetadataId: testObjectMetadataId,
+        icon: 'IconList',
+        type: ViewType.LIST,
+      },
+      expectToFail: false,
+    });
+    const { data: twoLineListData } = await createOneView({
+      input: {
+        name: 'Two-line List View',
+        objectMetadataId: testObjectMetadataId,
+        icon: 'IconList',
+        type: ViewType.LIST,
+        isCompact: false,
+      },
+      expectToFail: false,
+    });
+
+    expect(defaultListData.createView.isCompact).toBe(true);
+    expect(twoLineListData.createView.isCompact).toBe(false);
+  });
+
   it('should refuse preset filters on a view of another object than the inbox chat thread', async () => {
     const { errors } = await createOneView({
       input: {

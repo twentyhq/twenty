@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AgentChatChannelModule } from 'src/engine/metadata-modules/agent-chat-channel/agent-chat-channel.module';
 import { AiAgentModule } from 'src/engine/metadata-modules/ai/ai-agent/ai-agent.module';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
@@ -17,6 +18,7 @@ import { WorkspaceManagerService } from './workspace-manager.service';
 @Module({
   imports: [
     WorkspaceDataSourceModule,
+    AgentChatChannelModule,
     AiAgentModule,
     TwentyStandardApplicationModule,
     TypeOrmModule.forFeature([UserWorkspaceEntity, WorkspaceEntity]),

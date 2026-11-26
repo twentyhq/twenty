@@ -1,8 +1,8 @@
 import { isBoolean, isNumber, isString } from '@sniptt/guards';
 import { type Instruction } from 'expr-eval-fork';
 
-import { CONDITIONAL_AVAILABILITY_SYMBOL_BY_COMPARISON_OPERATOR } from '@/conditional-availability/constants/ConditionalAvailabilitySymbolByComparisonOperator';
-import { type ConditionalAvailabilityLogicalOperator } from '@/conditional-availability/types/ConditionalAvailabilityLogicalOperator';
+import { CONDITIONAL_EVALUATION_SYMBOL_BY_COMPARISON_OPERATOR } from '@/conditional-evaluation/common/constants/ConditionalEvaluationSymbolByComparisonOperator';
+import { type ConditionalEvaluationLogicalOperator } from '@/conditional-evaluation/common/types/ConditionalEvaluationLogicalOperator';
 import { EXPRESSION_SYMBOL_BY_ARITHMETIC_OPERATOR } from '@/constants/ExpressionSymbolByArithmeticOperator';
 import { EXPRESSION_SYMBOL_BY_UNARY_OPERATOR } from '@/constants/ExpressionSymbolByUnaryOperator';
 import { type ExpressionNode } from '@/types/ExpressionNode';
@@ -20,7 +20,7 @@ const invertSymbols = <TOperator extends string>(
   );
 
 const COMPARISON_OPERATOR_BY_SYMBOL = invertSymbols(
-  CONDITIONAL_AVAILABILITY_SYMBOL_BY_COMPARISON_OPERATOR,
+  CONDITIONAL_EVALUATION_SYMBOL_BY_COMPARISON_OPERATOR,
 );
 const ARITHMETIC_OPERATOR_BY_SYMBOL = invertSymbols(
   EXPRESSION_SYMBOL_BY_ARITHMETIC_OPERATOR,
@@ -30,7 +30,7 @@ const UNARY_OPERATOR_BY_SYMBOL = invertSymbols(
 );
 const LOGICAL_OPERATOR_BY_SYMBOL = new Map<
   string,
-  ConditionalAvailabilityLogicalOperator
+  ConditionalEvaluationLogicalOperator
 >([
   ['and', 'AND'],
   ['or', 'OR'],
@@ -41,7 +41,7 @@ const toGroupChildren = ({
   logicalOperator,
 }: {
   operand: ExpressionNode;
-  logicalOperator: ConditionalAvailabilityLogicalOperator;
+  logicalOperator: ConditionalEvaluationLogicalOperator;
 }): ExpressionNode[] =>
   operand.type === 'GROUP' && operand.logicalOperator === logicalOperator
     ? operand.children

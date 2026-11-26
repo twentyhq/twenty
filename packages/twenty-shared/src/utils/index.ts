@@ -470,4 +470,5 @@ export {
   resolveStringTemplate,
 } from './variable-resolver';
 export { getViewLayoutFromViewType } from './views/getViewLayoutFromViewType';
+export { isViewCompactByDefault } from './views/isViewCompactByDefault';
 export { isWidgetViewType } from './views/isWidgetViewType';

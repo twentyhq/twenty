@@ -5,8 +5,11 @@ import { v4 } from 'uuid';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { addRoleIdsToFlatAgentChatChannel } from 'src/engine/metadata-modules/agent-chat-channel/utils/add-role-ids-to-flat-agent-chat-channel.util';
+import { buildAgentChatChannelViewsToCreateForChannels } from 'src/engine/metadata-modules/agent-chat-channel/utils/build-agent-chat-channel-views-to-create-for-channels.util';
+import { buildAgentChatChannelViewsToCreate } from 'src/engine/metadata-modules/agent-chat-channel/utils/build-agent-chat-channel-views-to-create.util';
 import { buildAgentChatChannelRolesToCreate } from 'src/engine/metadata-modules/agent-chat-channel/utils/build-agent-chat-channel-roles-to-create.util';
 import { findAgentChatChannelRoleUniversalIdentifiersOrThrow } from 'src/engine/metadata-modules/agent-chat-channel/utils/find-agent-chat-channel-role-universal-identifiers-or-throw.util';
+import { findAgentChatChannelFlatViews } from 'src/engine/metadata-modules/agent-chat-channel/utils/find-agent-chat-channel-flat-views.util';
 import { findFlatAgentChatChannelOrThrow } from 'src/engine/metadata-modules/agent-chat-channel/utils/find-flat-agent-chat-channel-or-throw.util';
 import { validateAgentChatChannelNameOrThrow } from 'src/engine/metadata-modules/agent-chat-channel/utils/validate-agent-chat-channel-name-or-throw.util';
 import { type FlatAgentChatChannelWithRoleIds } from 'src/engine/metadata-modules/agent-chat-channel/types/flat-agent-chat-channel-with-role-ids.type';
@@ -17,6 +20,7 @@ import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/
 import { type FlatEntityToCreateDeleteUpdate } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
 import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
+import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -140,6 +144,11 @@ export class AgentChatChannelMetadataService {
           workspaceCustomFlatApplication.universalIdentifier,
         now,
       }),
+      ...buildAgentChatChannelViewsToCreate({
+        channelId,
+        applicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+      }),
     });
 
     return this.findChannelOrThrow({ workspaceId, channelId });
@@ -253,9 +262,16 @@ export class AgentChatChannelMetadataService {
       );
     const { flatAgentChatChannelMaps, flatAgentChatChannelRoleMaps } =
       await this.getChannelMaps(workspaceId);
-    const { flatNavigationMenuItemMaps } =
+    const { flatNavigationMenuItemMaps, flatViewMaps, flatViewFilterMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        { workspaceId, flatMapsKeys: ['flatNavigationMenuItemMaps'] },
+        {
+          workspaceId,
+          flatMapsKeys: [
+            'flatNavigationMenuItemMaps',
+            'flatViewMaps',
+            'flatViewFilterMaps',
+          ],
+        },
       );
     const channel = findFlatAgentChatChannelOrThrow({
       flatAgentChatChannelMaps,
@@ -275,11 +291,59 @@ export class AgentChatChannelMetadataService {
         flatEntityIds: channel.navigationMenuItemIds,
         flatEntityMaps: flatNavigationMenuItemMaps,
       }),
+      viewsToDelete: findAgentChatChannelFlatViews({
+        channelId,
+        flatViewMaps,
+        flatViewFilterMaps,
+      }),
     });
 
     return addRoleIdsToFlatAgentChatChannel({
       channel,
       flatAgentChatChannelRoleMaps,
+    });
+  }
+
+  async ensureChannelViewsExist(workspaceId: string): Promise<void> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+    const { flatAgentChatChannelMaps, flatViewMaps, flatViewFilterMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: [
+            'flatAgentChatChannelMaps',
+            'flatViewMaps',
+            'flatViewFilterMaps',
+          ],
+        },
+      );
+
+    const { viewsToCreate, viewFiltersToCreate } =
+      buildAgentChatChannelViewsToCreateForChannels({
+        channelIds: Object.values(
+          flatAgentChatChannelMaps.byUniversalIdentifier,
+        )
+          .filter(isDefined)
+          .map(({ id }) => id),
+        flatViewMaps,
+        flatViewFilterMaps,
+        applicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+      });
+
+    if (viewsToCreate.length === 0) {
+      return;
+    }
+
+    await this.runMigration({
+      workspaceId,
+      applicationUniversalIdentifier:
+        workspaceCustomFlatApplication.universalIdentifier,
+      viewsToCreate,
+      viewFiltersToCreate,
     });
   }
 
@@ -305,6 +369,9 @@ export class AgentChatChannelMetadataService {
     channelRolesToCreate = [],
     channelRolesToDelete = [],
     navigationMenuItemsToDelete = [],
+    viewsToCreate = [],
+    viewFiltersToCreate = [],
+    viewsToDelete = [],
   }: {
     workspaceId: string;
     applicationUniversalIdentifier: string;
@@ -314,6 +381,9 @@ export class AgentChatChannelMetadataService {
     channelRolesToCreate?: FlatEntityToCreateDeleteUpdate<'agentChatChannelRole'>['flatEntityToCreate'];
     channelRolesToDelete?: FlatAgentChatChannelRole[];
     navigationMenuItemsToDelete?: FlatNavigationMenuItem[];
+    viewsToCreate?: FlatEntityToCreateDeleteUpdate<'view'>['flatEntityToCreate'];
+    viewFiltersToCreate?: FlatEntityToCreateDeleteUpdate<'viewFilter'>['flatEntityToCreate'];
+    viewsToDelete?: FlatView[];
   }): Promise<void> {
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -333,6 +403,16 @@ export class AgentChatChannelMetadataService {
               flatEntityToCreate: [],
               flatEntityToUpdate: [],
               flatEntityToDelete: navigationMenuItemsToDelete,
+            },
+            view: {
+              flatEntityToCreate: viewsToCreate,
+              flatEntityToUpdate: [],
+              flatEntityToDelete: viewsToDelete,
+            },
+            viewFilter: {
+              flatEntityToCreate: viewFiltersToCreate,
+              flatEntityToUpdate: [],
+              flatEntityToDelete: [],
             },
           },
           workspaceId,
