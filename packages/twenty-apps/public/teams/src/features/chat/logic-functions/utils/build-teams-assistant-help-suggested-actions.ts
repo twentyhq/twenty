@@ -4,8 +4,7 @@ import { type TeamsSuggestedActions } from 'src/features/chat/logic-functions/ty
 
 const TEAMS_SUGGESTED_ACTIONS_MAX_COUNT = 3;
 
-// Teams does not document a tapped imBack as mentioning the bot, and outside a
-// personal chat the bot ignores messages that do not mention it.
+// A tapped imBack is not documented to mention the bot, which channels need.
 export const buildTeamsAssistantHelpSuggestedActions = (
   conversationType: string,
 ): TeamsSuggestedActions | undefined =>
