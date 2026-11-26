@@ -5,6 +5,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 
 import { runWorkflowActionStep } from 'test/integration/graphql/suites/workflow/utils/run-workflow-action-step.util';
+import { updateWorkspace } from 'test/integration/graphql/utils/update-workspace.util';
 import { deleteConnectedAccount } from 'test/integration/metadata/suites/connected-account/utils/delete-connected-account.util';
 import { saveImapSmtpCaldavAccount } from 'test/integration/metadata/suites/connected-account/utils/save-imap-smtp-caldav-account.util';
 import { updateConfigVariable } from 'test/integration/twenty-config/utils/update-config-variable.util';
@@ -123,6 +124,9 @@ describe('CalDAV calendar events import without entity tags (integration)', () =
   }, 300000);
 
   afterAll(async () => {
+    await updateWorkspace({
+      data: { isInternalMessagesImportEnabled: false },
+    }).catch(() => undefined);
     await updateConfigVariable({
       input: { key: 'OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS', value: [] },
     }).catch(() => undefined);
@@ -147,6 +151,10 @@ describe('CalDAV calendar events import without entity tags (integration)', () =
   it('keeps one event when an event created from Twenty cannot be read back by its full URL', async () => {
     proxy.degradations.hideFullUrlMultigetMembers = true;
 
+    await updateWorkspace({
+      data: { isInternalMessagesImportEnabled: true },
+    });
+
     const title = `CalDAV created event ${randomUUID()}`;
 
     const workflowRun = await runWorkflowActionStep({
@@ -159,7 +167,6 @@ describe('CalDAV calendar events import without entity tags (integration)', () =
         endsAt: '2026-08-13T10:00:00Z',
         isFullDay: false,
         timeZone: 'UTC',
-        attendees: 'attendee@example.com',
         sendInvitations: false,
         addConferencing: false,
       },
