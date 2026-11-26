@@ -6,6 +6,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { serializeJsonContentAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeJsonContentAsAdvancedTextEditorDocument';
 import { AiChatApprovalEmailReview } from '@/ai-chat/tool-calls/components/AiChatApprovalEmailReview';
 import { AI_CHAT_APPROVAL_EMAIL_REVIEW_FIXTURES } from '@/ai-chat/tool-calls/components/__stories__/aiChatApprovalEmailReviewFixtures';
+import { buildAiChatApprovalReviewEmailDraft } from '@/ai-chat/tool-calls/utils/buildAiChatApprovalReviewEmailDraft';
 
 const REPLACEMENT_BODY = serializeJsonContentAsAdvancedTextEditorDocument({
   type: 'doc',
@@ -34,7 +35,9 @@ const StyledControls = styled.div`
 
 export const AiChatApprovalEmailControlledExample = () => {
   const [draft, setDraft] = useState(() =>
-    structuredClone(AI_CHAT_APPROVAL_EMAIL_REVIEW_FIXTURES[0].draft),
+    buildAiChatApprovalReviewEmailDraft(
+      AI_CHAT_APPROVAL_EMAIL_REVIEW_FIXTURES[0].proposal,
+    ),
   );
   const [disabled, setDisabled] = useState(false);
 

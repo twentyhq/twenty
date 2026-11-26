@@ -1,323 +1,277 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { delay, graphql, HttpResponse } from 'msw';
+import { useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
+import { AiChatApprovalEmailReviewDeck } from '@/ai-chat/tool-calls/components/AiChatApprovalEmailReviewDeck';
 import { AiChatApprovalEmailControlledExample } from '@/ai-chat/tool-calls/components/__stories__/AiChatApprovalEmailControlledExample';
-import { AiChatApprovalEmailReviewExample } from '@/ai-chat/tool-calls/components/__stories__/AiChatApprovalEmailReviewExample';
 import { AI_CHAT_APPROVAL_EMAIL_REVIEW_FIXTURES } from '@/ai-chat/tool-calls/components/__stories__/aiChatApprovalEmailReviewFixtures';
-import { type AiChatApprovalReviewEmail } from '@/ai-chat/tool-calls/types/AiChatApprovalReviewEmail';
-import { type AiChatApprovalReviewStatus } from '@/ai-chat/tool-calls/types/AiChatApprovalReviewStatus';
+import { type AiChatPendingEmailApproval } from '@/ai-chat/tool-calls/types/AiChatPendingEmailApproval';
+import { AiChatInstanceDecorator } from '~/testing/decorators/AiChatInstanceDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
-const EMAIL_REVIEW_STATUSES: readonly AiChatApprovalReviewStatus[] = [
-  'pending',
-  'running',
-  'success',
-  'failed',
-  'blocked',
-  'uncertain',
-  'skipped',
-];
+const THREAD_ID = 'email-approval-review-story';
 
-const EMAIL_REVIEW_STATUS_LABELS = {
-  pending: 'Pending',
-  running: 'Running',
-  success: 'Succeeded',
-  failed: 'Failed',
-  blocked: 'Blocked',
-  uncertain: 'Outcome unknown',
-  skipped: 'Skipped',
-};
+const answerToolCall = fn();
+
+const buildAnswerToolCallHandlers = ({
+  isPending = false,
+}: { isPending?: boolean } = {}) => [
+  graphql.mutation('AnswerToolCall', async ({ variables }) => {
+    answerToolCall(variables.input);
+
+    if (isPending) {
+      await delay('infinite');
+    }
+
+    return HttpResponse.json({
+      data: {
+        answerToolCall: { __typename: 'AnswerToolCallResult', streamId: null },
+      },
+    });
+  }),
+  ...graphqlMocks.handlers,
+];
 
 const getBodyEditor = (canvasElement: HTMLElement) =>
   within(canvasElement).findByRole('textbox', { name: 'Body' });
 
+type EmailReviewDeckProps = {
+  emailApprovals: AiChatPendingEmailApproval[];
+};
+
+const EmailReviewDeck = ({ emailApprovals }: EmailReviewDeckProps) => {
+  const [answeringToolCallIds, setAnsweringToolCallIds] = useState<string[]>(
+    [],
+  );
+
+  return (
+    <AiChatApprovalEmailReviewDeck
+      emailApprovals={emailApprovals}
+      answeringToolCallIds={answeringToolCallIds}
+      onAnsweringToolCallIdsChange={setAnsweringToolCallIds}
+    />
+  );
+};
+
 const meta = {
   title: 'Modules/AI/AiChatApprovalEmailReviewDeck',
-  component: AiChatApprovalEmailReviewExample,
+  component: EmailReviewDeck,
   decorators: [
-    ComponentDecorator,
+    AiChatInstanceDecorator,
+    RootDecorator,
     ObjectMetadataItemsDecorator,
     ToastDecorator,
     MemoryRouterDecorator,
-    RootDecorator,
+    ComponentDecorator,
   ],
   parameters: {
-    container: { width: 688 },
+    aiChatThreadId: THREAD_ID,
+    container: { width: 704 },
     argos: { fitToContent: false },
-    msw: graphqlMocks,
+    msw: { handlers: buildAnswerToolCallHandlers() },
   },
-  args: { onApprove: fn(), onSkip: fn() },
-} satisfies Meta<typeof AiChatApprovalEmailReviewExample>;
+  args: { emailApprovals: AI_CHAT_APPROVAL_EMAIL_REVIEW_FIXTURES },
+  beforeEach: () => {
+    answerToolCall.mockClear();
+  },
+} satisfies Meta<typeof EmailReviewDeck>;
 
 export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
-
-export const RetainedDraftEdits: Story = {
-  play: async ({ args, canvasElement }) => {
+export const FirstOfFive: Story = {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const screen = within(canvasElement.ownerDocument.body);
-    const subject = await canvas.findByRole('textbox', { name: 'Subject' });
 
-    await userEvent.clear(subject);
-    await userEvent.type(subject, 'Revised demo follow-up');
-    const recipientRemoval = canvas.getByRole('button', {
-      name: 'Remove joe@example.com',
-    });
-
-    recipientRemoval.focus();
-    await userEvent.click(recipientRemoval);
-    await userEvent.type(
-      canvas.getByRole('combobox', { name: 'To' }),
-      'joe.revised@example.com{Enter}',
-    );
-    await userEvent.click(canvas.getByRole('button', { name: 'Cc/Bcc' }));
-    await userEvent.type(
-      canvas.getByRole('combobox', { name: 'Cc' }),
-      'team@example.com{Enter}',
-    );
-
-    const bodyEditor = await getBodyEditor(canvasElement);
-
-    await userEvent.clear(bodyEditor);
-    await userEvent.type(bodyEditor, 'Updated walkthrough for Brian and Joe.');
-    await userEvent.type(
-      canvas.getByRole('combobox', { name: 'Bcc' }),
-      'archive@example.com{Enter}',
-    );
-    await userEvent.click(
-      canvas.getByRole('button', { name: 'Next approval' }),
-    );
-
-    const secondSubject = canvas.getByRole('textbox', { name: 'Subject' });
-
-    await userEvent.clear(secondSubject);
-    await userEvent.type(secondSubject, 'Revised reporting walkthrough');
-    await userEvent.click(
-      canvas.getByRole('button', { name: 'Previous approval' }),
-    );
-
-    await expect(canvas.getByRole('textbox', { name: 'Subject' })).toHaveValue(
-      'Revised demo follow-up',
-    );
-    await expect(canvas.getByText('joe.revised@example.com')).toBeVisible();
-    await expect(canvas.getByText('team@example.com')).toBeVisible();
-    await expect(canvas.getByText('archive@example.com')).toBeVisible();
-    await expect(canvas.queryByText('Joe Gebbia')).not.toBeInTheDocument();
-    await expect(await getBodyEditor(canvasElement)).toHaveTextContent(
-      'Updated walkthrough for Brian and Joe.',
-    );
-    await userEvent.click(canvas.getByRole('button', { name: 'Send all 3' }));
-
-    const confirmation = await screen.findByRole('alertdialog');
-
+    await expect(await canvas.findByText('1/5')).toBeVisible();
     await expect(
-      within(confirmation).getByText('3 emails selected · 0 emails skipped'),
+      canvas.getByText('4 more drafts after this one'),
     ).toBeVisible();
+    await expect(canvas.getByText('Brian Chesky')).toBeVisible();
     await expect(
-      within(confirmation).getByText('Checking in before the rollout'),
-    ).toBeVisible();
-    await expect(args.onApprove).not.toHaveBeenCalled();
-    await userEvent.click(
-      within(confirmation).getByRole('button', { name: 'Cancel' }),
-    );
-    await expect(canvas.getByRole('textbox', { name: 'Subject' })).toHaveValue(
-      'Revised demo follow-up',
-    );
-    await userEvent.click(canvas.getByRole('button', { name: 'Send all 3' }));
-    await userEvent.click(
-      within(await screen.findByRole('alertdialog')).getByRole('button', {
-        name: 'Confirm approval',
-      }),
-    );
-
-    await expect(args.onApprove).toHaveBeenCalledTimes(1);
-    await expect(args.onApprove).toHaveBeenCalledWith({
-      emails: [
-        expect.objectContaining({
-          id: 'demo-follow-up',
-          draft: expect.objectContaining({
-            subject: 'Revised demo follow-up',
-            to: [
-              { address: 'brian@example.com', displayName: 'Brian Chesky' },
-              { address: 'joe.revised@example.com' },
-            ],
-            cc: [{ address: 'team@example.com' }],
-            bcc: [{ address: 'archive@example.com' }],
-            body: expect.stringContaining(
-              'Updated walkthrough for Brian and Joe.',
-            ),
-          }),
-        }),
-        expect.objectContaining({
-          id: 'reporting-walkthrough',
-          draft: expect.objectContaining({
-            subject: 'Revised reporting walkthrough',
-          }),
-        }),
-        expect.objectContaining({ id: 'rollout-check-in' }),
-      ],
-    });
-  },
-};
-
-export const IndividualApproval: Story = {
-  play: async ({ args, canvasElement }) => {
-    const canvas = within(canvasElement);
-    const screen = within(canvasElement.ownerDocument.body);
-
-    await userEvent.click(await canvas.findByRole('button', { name: 'Send' }));
-
-    const confirmation = await screen.findByRole('alertdialog');
-
-    await expect(
-      within(confirmation).getByText('1 email selected · 0 emails skipped'),
-    ).toBeVisible();
-    await expect(args.onApprove).not.toHaveBeenCalled();
-    await userEvent.click(
-      within(confirmation).getByRole('button', { name: 'Confirm approval' }),
-    );
-    await expect(args.onApprove).toHaveBeenCalledWith({
-      emails: [AI_CHAT_APPROVAL_EMAIL_REVIEW_FIXTURES[0]],
-    });
-    await expect(canvas.getByText('Succeeded')).toBeVisible();
-    await expect(canvas.getByRole('button', { name: 'Send' })).toBeDisabled();
-    await userEvent.click(
-      canvas.getByRole('button', { name: 'Next approval' }),
-    );
-    await expect(canvas.getByRole('textbox', { name: 'Subject' })).toHaveValue(
-      'Pipeline reporting walkthrough',
-    );
-    await expect(canvas.getByRole('button', { name: 'Send' })).toBeEnabled();
-    await expect(canvas.getByRole('button', { name: 'Skip' })).toBeEnabled();
-    await expect(args.onSkip).not.toHaveBeenCalled();
-    await expect(
-      canvas.getByRole('button', { name: 'Send all 2' }),
+      canvas.getByRole('button', { name: 'Send all 5' }),
     ).toBeEnabled();
-    await userEvent.click(canvas.getByRole('button', { name: 'Send all 2' }));
-    await userEvent.click(
-      within(await screen.findByRole('alertdialog')).getByRole('button', {
-        name: 'Confirm approval',
-      }),
-    );
-    await expect(args.onApprove).toHaveBeenLastCalledWith({
-      emails: AI_CHAT_APPROVAL_EMAIL_REVIEW_FIXTURES.slice(1),
-    });
-    await expect(args.onApprove).toHaveBeenCalledTimes(2);
-  },
-};
-
-export const SkipIsolation: Story = {
-  play: async ({ args, canvasElement }) => {
-    const canvas = within(canvasElement);
-    const screen = within(canvasElement.ownerDocument.body);
-
-    await userEvent.click(await canvas.findByRole('button', { name: 'Skip' }));
-    await expect(args.onSkip).toHaveBeenCalledWith('demo-follow-up');
-    await expect(canvas.getByText('Skipped')).toBeVisible();
-    await expect(args.onApprove).not.toHaveBeenCalled();
-    await expect(canvas.getByRole('button', { name: 'Send' })).toBeDisabled();
-    await userEvent.click(
-      canvas.getByRole('button', { name: 'Next approval' }),
-    );
     await expect(canvas.getByRole('button', { name: 'Send' })).toBeEnabled();
-    await userEvent.click(canvas.getByRole('button', { name: 'Send all 2' }));
-    await userEvent.click(
-      within(await screen.findByRole('alertdialog')).getByRole('button', {
-        name: 'Confirm approval',
-      }),
-    );
-    await expect(args.onApprove).toHaveBeenCalledWith({
-      emails: AI_CHAT_APPROVAL_EMAIL_REVIEW_FIXTURES.slice(1),
-    });
-    await userEvent.click(
-      canvas.getByRole('button', { name: 'Previous approval' }),
-    );
-    await expect(canvas.getByText('Skipped')).toBeVisible();
   },
 };
 
-export const Outcomes: Story = {
-  args: {
-    initialEmails: EMAIL_REVIEW_STATUSES.map<AiChatApprovalReviewEmail>(
-      (status) => ({
-        ...AI_CHAT_APPROVAL_EMAIL_REVIEW_FIXTURES[0],
-        id: `email-${status}`,
-        status,
-        outcomeMessage: `Fixture outcome: ${status}.`,
-        progress: status === 'running' ? { completed: 0, total: 1 } : undefined,
-      }),
-    ),
+export const LastDraft: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const nextDraftButton = await canvas.findByRole('button', {
+      name: 'Next draft',
+    });
+
+    for (let draftIndex = 0; draftIndex < 4; draftIndex++) {
+      await userEvent.click(nextDraftButton);
+    }
+
+    await expect(canvas.getByText('5/5')).toBeVisible();
+    await expect(
+      canvas.getByText('No more drafts after this one'),
+    ).toBeVisible();
+    await expect(canvas.getByRole('textbox', { name: 'Subject' })).toHaveValue(
+      'Renewal coming up next month',
+    );
+  },
+};
+
+export const SingleDraft: Story = {
+  args: { emailApprovals: AI_CHAT_APPROVAL_EMAIL_REVIEW_FIXTURES.slice(0, 1) },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(
+      await canvas.findByText('No more drafts after this one'),
+    ).toBeVisible();
+    await expect(
+      canvas.queryByRole('button', { name: 'Next draft' }),
+    ).not.toBeInTheDocument();
+    await expect(canvas.queryByText(/Send all/)).not.toBeInTheDocument();
+    await expect(canvas.getByRole('button', { name: 'Send' })).toBeEnabled();
+  },
+};
+
+export const Sending: Story = {
+  parameters: {
+    msw: { handlers: buildAnswerToolCallHandlers({ isPending: true }) },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    for (const status of EMAIL_REVIEW_STATUSES) {
-      const editor = await getBodyEditor(canvasElement);
-      const isPending = status === 'pending';
+    await userEvent.click(await canvas.findByRole('button', { name: 'Send' }));
 
-      await waitFor(() =>
-        expect(editor).toHaveAttribute(
-          'contenteditable',
-          isPending ? 'true' : 'false',
-        ),
-      );
+    await waitFor(() =>
+      expect(canvas.getByRole('textbox', { name: 'Subject' })).toBeDisabled(),
+    );
+    await expect(canvas.getByRole('button', { name: 'Skip' })).toBeDisabled();
+    await expect(
+      canvas.getByRole('button', { name: 'Send all 4' }),
+    ).toBeDisabled();
+  },
+};
 
-      if (isPending) {
-        await expect(
-          canvas.getByRole('button', { name: 'Send' }),
-        ).toBeEnabled();
-      }
+export const Sent: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
 
-      if (!isPending) {
-        await expect(
-          canvas.getByText(EMAIL_REVIEW_STATUS_LABELS[status]),
-        ).toBeVisible();
-        await expect(
-          canvas.getByRole('textbox', { name: 'Subject' }),
-        ).toBeDisabled();
-        await expect(
-          canvas.getByRole('button', { name: 'Send' }),
-        ).toBeDisabled();
-        await expect(
-          canvas.getByRole('button', { name: 'Skip' }),
-        ).toBeDisabled();
-        await expect(
-          canvas.queryByRole('combobox', { name: 'To' }),
-        ).not.toBeInTheDocument();
-        await expect(
-          canvas.queryByRole('button', { name: 'Remove brian@example.com' }),
-        ).not.toBeInTheDocument();
-      }
+    await userEvent.click(await canvas.findByRole('button', { name: 'Send' }));
 
-      if (status === 'running') {
-        await expect(
-          canvas.getByRole('progressbar', { name: 'Action progress' }),
-        ).toHaveAttribute('aria-valuenow', '0');
-      }
+    await expect(await canvas.findByText('2/5')).toBeVisible();
+    await expect(
+      canvas.getByRole('button', { name: 'Send all 4' }),
+    ).toBeEnabled();
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Previous draft' }),
+    );
+    await expect(await canvas.findByText('Email sent')).toBeVisible();
+    await expect(canvas.getByRole('button', { name: 'Send' })).toBeDisabled();
+    await expect(answerToolCall).toHaveBeenCalledWith(
+      expect.objectContaining({
+        toolCallId: 'demo-follow-up',
+        response: expect.objectContaining({
+          decision: 'approve',
+          toolName: 'send_email',
+        }),
+      }),
+    );
+  },
+};
 
-      if (status !== 'skipped') {
-        await userEvent.click(
-          canvas.getByRole('button', { name: 'Next approval' }),
-        );
-      }
-    }
+export const EditedDraftIsSent: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const subject = await canvas.findByRole('textbox', { name: 'Subject' });
+
+    await userEvent.clear(subject);
+    await userEvent.type(subject, 'Revised demo follow-up');
+    await userEvent.click(canvas.getByRole('button', { name: 'Next draft' }));
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Previous draft' }),
+    );
+    await expect(canvas.getByRole('textbox', { name: 'Subject' })).toHaveValue(
+      'Revised demo follow-up',
+    );
+    await userEvent.click(canvas.getByRole('button', { name: 'Send' }));
+
+    await waitFor(() =>
+      expect(answerToolCall).toHaveBeenCalledWith(
+        expect.objectContaining({
+          toolCallId: 'demo-follow-up',
+          response: expect.objectContaining({
+            arguments: expect.objectContaining({
+              subject: 'Revised demo follow-up',
+              recipients: {
+                to: 'brian@example.com, joe@example.com',
+                cc: '',
+                bcc: '',
+              },
+            }),
+          }),
+        }),
+      ),
+    );
+  },
+};
+
+export const SendAll: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'Send all 5' }),
+    );
+
+    await waitFor(() => expect(answerToolCall).toHaveBeenCalledTimes(5));
+    await expect(await canvas.findByText('Email sent')).toBeVisible();
+    await expect(canvas.queryByText(/Send all/)).not.toBeInTheDocument();
+  },
+};
+
+export const SkippedDraft: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(await canvas.findByRole('button', { name: 'Skip' }));
+
+    await expect(await canvas.findByText('2/5')).toBeVisible();
+    await expect(answerToolCall).toHaveBeenCalledWith(
+      expect.objectContaining({
+        toolCallId: 'demo-follow-up',
+        response: { decision: 'reject' },
+      }),
+    );
+    await userEvent.click(canvas.getByRole('button', { name: 'Delete draft' }));
+    await expect(await canvas.findByText('3/5')).toBeVisible();
+    await expect(
+      canvas.getByRole('button', { name: 'Send all 3' }),
+    ).toBeEnabled();
   },
 };
 
 export const MissingRecipient: Story = {
   args: {
-    initialEmails: AI_CHAT_APPROVAL_EMAIL_REVIEW_FIXTURES.map((email) =>
-      email.id === 'demo-follow-up'
-        ? { ...email, draft: { ...email.draft, to: [] } }
-        : email,
+    emailApprovals: AI_CHAT_APPROVAL_EMAIL_REVIEW_FIXTURES.map(
+      (emailApproval, index) =>
+        index === 0
+          ? {
+              ...emailApproval,
+              proposal: {
+                ...emailApproval.proposal,
+                arguments: {
+                  ...emailApproval.proposal.arguments,
+                  recipients: { to: '', cc: '', bcc: '' },
+                },
+              },
+            }
+          : emailApproval,
     ),
   },
   play: async ({ canvasElement }) => {
@@ -327,45 +281,15 @@ export const MissingRecipient: Story = {
       await canvas.findByRole('button', { name: 'Send' }),
     ).toBeDisabled();
     await expect(
-      canvas.getByRole('button', { name: 'Send all 3' }),
+      canvas.getByText('Add a recipient before sending'),
+    ).toBeVisible();
+    await expect(
+      canvas.getByRole('button', { name: 'Send all 5' }),
     ).toBeDisabled();
-    await expect(canvas.getByRole('button', { name: 'Skip' })).toBeEnabled();
     await userEvent.type(
       canvas.getByRole('combobox', { name: 'To' }),
       'brian@example.com{Enter}',
     );
-    await expect(canvas.getByRole('button', { name: 'Send' })).toBeEnabled();
-    await expect(
-      canvas.getByRole('button', { name: 'Send all 3' }),
-    ).toBeEnabled();
-  },
-};
-
-export const Empty: Story = {
-  args: { initialEmails: [] },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await expect(await canvas.findByText('No actions to review')).toBeVisible();
-    await expect(canvas.queryByRole('button')).not.toBeInTheDocument();
-  },
-};
-
-export const Single: Story = {
-  args: { initialEmails: AI_CHAT_APPROVAL_EMAIL_REVIEW_FIXTURES.slice(0, 1) },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await expect(
-      await canvas.findByText('No more drafts after this one'),
-    ).toBeVisible();
-    await expect(
-      canvas.queryByRole('button', { name: 'Next approval' }),
-    ).not.toBeInTheDocument();
-    await expect(
-      canvas.queryByRole('button', { name: 'Previous approval' }),
-    ).not.toBeInTheDocument();
-    await expect(canvas.queryByText(/Send all/)).not.toBeInTheDocument();
     await expect(canvas.getByRole('button', { name: 'Send' })).toBeEnabled();
   },
 };
@@ -379,9 +303,6 @@ export const Narrow: Story = {
     });
 
     await expect(await getBodyEditor(canvasElement)).toBeVisible();
-    await expect(review.scrollWidth).toBeLessThanOrEqual(review.clientWidth);
-    await userEvent.click(canvas.getByRole('button', { name: 'Cc/Bcc' }));
-    await expect(canvas.getByRole('combobox', { name: 'Bcc' })).toBeVisible();
     await expect(review.scrollWidth).toBeLessThanOrEqual(review.clientWidth);
   },
 };

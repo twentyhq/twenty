@@ -1,5 +1,8 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
+import { IconButton } from 'twenty-ui/components/input';
+import { IconTrash } from 'twenty-ui/icon';
 import { Input } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -22,6 +25,13 @@ const StyledBody = styled.div`
   padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[1]};
 `;
 
+const StyledToolbar = styled.div`
+  border-top: 1px solid ${themeCssVariables.border.color.light};
+  display: flex;
+  justify-content: flex-end;
+  padding: ${themeCssVariables.spacing[2]};
+`;
+
 type AiChatApprovalEmailReviewProps = {
   draft: AiChatApprovalReviewEmailDraft;
   onDraftChange: (
@@ -30,12 +40,14 @@ type AiChatApprovalEmailReviewProps = {
     ) => AiChatApprovalReviewEmailDraft,
   ) => void;
   disabled?: boolean;
+  onDelete?: () => void;
 };
 
 export const AiChatApprovalEmailReview = ({
   draft,
   onDraftChange,
   disabled = false,
+  onDelete,
 }: AiChatApprovalEmailReviewProps) => {
   const { t } = useLingui();
   const updateDraft = (changes: Partial<AiChatApprovalReviewEmailDraft>) => {
@@ -84,6 +96,19 @@ export const AiChatApprovalEmailReview = ({
           profile={INLINE_EMAIL_BODY_EDITOR_PROFILE}
         />
       </StyledBody>
+      {isDefined(onDelete) && (
+        <StyledToolbar>
+          <IconButton
+            variant="outline"
+            size="sm"
+            aria-label={t`Delete draft`}
+            disabled={disabled}
+            onClick={onDelete}
+          >
+            <IconTrash />
+          </IconButton>
+        </StyledToolbar>
+      )}
     </StyledEmail>
   );
 };
