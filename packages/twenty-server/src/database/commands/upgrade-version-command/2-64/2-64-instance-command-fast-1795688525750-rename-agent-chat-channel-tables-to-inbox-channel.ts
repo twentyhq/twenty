@@ -27,6 +27,7 @@ export class RenameAgentChatChannelTablesToInboxChannelFastInstanceCommand imple
     await queryRunner.query(
       'ALTER TABLE "core"."inboxChannel" RENAME CONSTRAINT "FK_60b86d8db38bff7ebf4b4e3167d" TO "FK_6cdb6b47e76f848b39187537b75"',
     );
+    // TODO(@bosiraphael): drop the agentChatChannel and agentChatChannelRole views in the next version, they only keep pods still on the pre-rename code working during the rollout
     await queryRunner.query(
       'CREATE VIEW "core"."agentChatChannel" AS SELECT * FROM "core"."inboxChannel"',
     );
