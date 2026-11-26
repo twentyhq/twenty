@@ -2,21 +2,21 @@ import { In, type ObjectLiteral } from 'typeorm';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type AgentHistoryObjectName } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-object-name.type';
-import { type InboxObjectNames } from 'src/engine/metadata-modules/ai/ai-history/types/inbox-object-names.type';
+import { type InboxObjectNamesByLegacyName } from 'src/engine/metadata-modules/ai/ai-history/types/inbox-object-names-by-legacy-name.type';
 import { getWorkspaceAgentHistoryTable } from 'src/engine/metadata-modules/ai/ai-history/utils/get-workspace-agent-history-table.util';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 
 export const deleteAgentHistoryRecordsWithShares = async ({
   workspaceId,
   transactionScope,
-  objectNames,
+  inboxObjectNamesByLegacyName,
   name,
   where,
   deleteShares,
 }: {
   workspaceId: string;
   transactionScope: WorkspaceTransactionScope;
-  objectNames: InboxObjectNames;
+  inboxObjectNamesByLegacyName: InboxObjectNamesByLegacyName;
   name: AgentHistoryObjectName;
   where: ObjectLiteral;
   deleteShares: (records: {
@@ -25,7 +25,7 @@ export const deleteAgentHistoryRecordsWithShares = async ({
   }) => Promise<void>;
 }): Promise<number> => {
   const repository = transactionScope.getRepositoryWithoutPermissionChecks(
-    objectNames[name],
+    inboxObjectNamesByLegacyName[name],
     { shouldSkipEventEmission: true },
   );
 
@@ -44,7 +44,7 @@ export const deleteAgentHistoryRecordsWithShares = async ({
   const table = getWorkspaceAgentHistoryTable(workspaceId);
 
   await transactionScope.executeRawQuery(
-    `SELECT id FROM ${table(objectNames[name])} WHERE id = ANY($1::uuid[]) ORDER BY id FOR UPDATE`,
+    `SELECT id FROM ${table(inboxObjectNamesByLegacyName[name])} WHERE id = ANY($1::uuid[]) ORDER BY id FOR UPDATE`,
     [candidateIds],
   );
 
@@ -64,7 +64,7 @@ export const deleteAgentHistoryRecordsWithShares = async ({
     await deleteAgentHistoryRecordsWithShares({
       workspaceId,
       transactionScope,
-      objectNames,
+      inboxObjectNamesByLegacyName,
       name: 'agentTurn',
       where: { threadId: In(recordIds) },
       deleteShares,
@@ -75,7 +75,7 @@ export const deleteAgentHistoryRecordsWithShares = async ({
     await deleteAgentHistoryRecordsWithShares({
       workspaceId,
       transactionScope,
-      objectNames,
+      inboxObjectNamesByLegacyName,
       name: 'agentMessage',
       where:
         name === 'agentChatThread'
@@ -87,9 +87,12 @@ export const deleteAgentHistoryRecordsWithShares = async ({
 
   if (name === 'agentMessage') {
     const { raw: deletedParts } = await transactionScope
-      .getRepositoryWithoutPermissionChecks(objectNames.agentMessagePart, {
-        shouldSkipEventEmission: true,
-      })
+      .getRepositoryWithoutPermissionChecks(
+        inboxObjectNamesByLegacyName.agentMessagePart,
+        {
+          shouldSkipEventEmission: true,
+        },
+      )
       .delete({ messageId: In(recordIds) });
 
     await deleteShares({

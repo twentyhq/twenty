@@ -1,10 +1,10 @@
 import { FeatureFlagKey } from 'twenty-shared/types';
 
-import { getInboxObjectNames } from 'src/engine/metadata-modules/ai/ai-history/utils/get-inbox-object-names.util';
+import { getInboxObjectNamesByLegacyName } from 'src/engine/metadata-modules/ai/ai-history/utils/get-inbox-object-names-by-legacy-name.util';
 
-describe('getInboxObjectNames', () => {
+describe('getInboxObjectNamesByLegacyName', () => {
   it('keeps the legacy names while the workspace flag is off', () => {
-    expect(getInboxObjectNames({})).toEqual({
+    expect(getInboxObjectNamesByLegacyName({})).toEqual({
       agentChatThread: 'agentChatThread',
       agentChatThreadParticipant: 'agentChatThreadParticipant',
       agentChatThreadTarget: 'agentChatThreadTarget',
@@ -17,7 +17,7 @@ describe('getInboxObjectNames', () => {
 
   it('returns the inbox names once the workspace flag is on', () => {
     expect(
-      getInboxObjectNames({
+      getInboxObjectNamesByLegacyName({
         [FeatureFlagKey.IS_INBOX_OBJECT_NAMING_ENABLED]: true,
       }),
     ).toEqual({

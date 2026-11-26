@@ -1,4 +1,4 @@
-export const INBOX_OBJECT_NAMES = {
+export const INBOX_OBJECT_NAMES_BY_LEGACY_NAME = {
   agentChatThread: 'inboxThread',
   agentChatThreadParticipant: 'inboxThreadParticipant',
   agentChatThreadTarget: 'inboxThreadTarget',

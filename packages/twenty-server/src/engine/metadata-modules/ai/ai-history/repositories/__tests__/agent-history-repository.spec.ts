@@ -1,5 +1,5 @@
-import { INBOX_OBJECT_NAMES } from 'src/engine/metadata-modules/ai/ai-history/constants/inbox-object-names.constant';
-import { LEGACY_INBOX_OBJECT_NAMES } from 'src/engine/metadata-modules/ai/ai-history/constants/legacy-inbox-object-names.constant';
+import { INBOX_OBJECT_NAMES_BY_LEGACY_NAME } from 'src/engine/metadata-modules/ai/ai-history/constants/inbox-object-names-by-legacy-name.constant';
+import { LEGACY_INBOX_OBJECT_NAMES_BY_LEGACY_NAME } from 'src/engine/metadata-modules/ai/ai-history/constants/legacy-inbox-object-names-by-legacy-name.constant';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 
@@ -28,7 +28,11 @@ it('reads native workspace fields and precision from workspace storage', async (
     'agentChatThread',
     storage,
     orm as never,
-    { resolve: jest.fn().mockResolvedValue(LEGACY_INBOX_OBJECT_NAMES) },
+    {
+      resolve: jest
+        .fn()
+        .mockResolvedValue(LEGACY_INBOX_OBJECT_NAMES_BY_LEGACY_NAME),
+    },
   );
   await expect(
     repository.find('workspace', {
@@ -59,7 +63,7 @@ it('reads the object under the name resolved for the workspace', async () => {
     'agentChatThread',
     { run: jest.fn(), getContext: jest.fn().mockResolvedValue({}) },
     orm,
-    { resolve: jest.fn().mockResolvedValue(INBOX_OBJECT_NAMES) },
+    { resolve: jest.fn().mockResolvedValue(INBOX_OBJECT_NAMES_BY_LEGACY_NAME) },
   );
 
   await repository.count('workspace');

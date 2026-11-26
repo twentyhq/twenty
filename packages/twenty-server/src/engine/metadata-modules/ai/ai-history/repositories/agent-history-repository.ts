@@ -49,14 +49,14 @@ export class AgentHistoryRepository<TRecord extends { id: string }> {
     ) => Promise<TResult>,
   ): Promise<TResult> {
     const context = await this.storageService.getContext(workspaceId);
-    const objectNames =
+    const inboxObjectNamesByLegacyName =
       await this.inboxObjectNamesResolverService.resolve(workspaceId);
 
     return this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
         work(
           this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<TRecord>(
-            objectNames[this.name],
+            inboxObjectNamesByLegacyName[this.name],
             {
               shouldSkipEventEmission: true,
             },

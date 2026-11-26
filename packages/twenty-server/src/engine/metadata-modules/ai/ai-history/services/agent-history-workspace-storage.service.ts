@@ -6,12 +6,12 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { doNotTranslate } from 'twenty-shared/i18n';
 
 import { InboxObjectNamesResolverService } from 'src/engine/metadata-modules/ai/ai-history/services/inbox-object-names-resolver.service';
-import { type InboxObjectKey } from 'src/engine/metadata-modules/ai/ai-history/types/inbox-object-key.type';
+import { type LegacyInboxObjectName } from 'src/engine/metadata-modules/ai/ai-history/types/legacy-inbox-object-name.type';
 import { getWorkspaceAgentHistoryTable } from 'src/engine/metadata-modules/ai/ai-history/utils/get-workspace-agent-history-table.util';
 
 export type AgentHistoryStorageContext = {
   manager: EntityManager;
-  table: (name: InboxObjectKey) => string;
+  table: (name: LegacyInboxObjectName) => string;
 };
 
 @Injectable()
@@ -33,13 +33,13 @@ export class AgentHistoryWorkspaceStorageService {
       });
     }
 
-    const objectNames =
+    const inboxObjectNamesByLegacyName =
       await this.inboxObjectNamesResolverService.resolve(workspaceId);
     const getTable = getWorkspaceAgentHistoryTable(workspaceId);
 
     return {
       manager: this.dataSource.manager,
-      table: (name) => getTable(objectNames[name]),
+      table: (name) => getTable(inboxObjectNamesByLegacyName[name]),
     };
   }
 

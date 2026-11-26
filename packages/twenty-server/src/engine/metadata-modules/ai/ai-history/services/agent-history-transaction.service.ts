@@ -41,14 +41,14 @@ export class AgentHistoryTransactionService {
     threadId: string | null;
     work: (scope: AgentHistoryTransactionScope) => Promise<TResult>;
   }): Promise<TResult> {
-    const objectNames =
+    const inboxObjectNamesByLegacyName =
       await this.inboxObjectNamesResolverService.resolve(workspaceId);
 
     return this.workspaceOrmManager.executeTransactionInWorkspaceContext(
       (transactionScope) => {
         const getRepository = (name: AgentHistoryObjectName) =>
           transactionScope.getRepositoryWithoutPermissionChecks(
-            objectNames[name],
+            inboxObjectNamesByLegacyName[name],
             { shouldSkipEventEmission: true },
           );
 
@@ -172,7 +172,7 @@ export class AgentHistoryTransactionService {
             return deleteAgentHistoryRecordsWithShares({
               workspaceId,
               transactionScope,
-              objectNames,
+              inboxObjectNamesByLegacyName,
               name,
               where,
               deleteShares: (records) =>

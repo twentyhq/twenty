@@ -666,16 +666,16 @@ export class AgentChatSharingService {
     isArchived?: boolean;
     isSubscribed?: boolean;
   }): Promise<string[]> {
-    const objectNames =
+    const inboxObjectNamesByLegacyName =
       await this.inboxObjectNamesResolverService.resolve(workspaceId);
     const threadRepository =
       transactionScope.getRepositoryWithoutPermissionChecks<AgentChatThreadWorkspaceEntity>(
-        objectNames.agentChatThread,
+        inboxObjectNamesByLegacyName.agentChatThread,
         { shouldSkipEventEmission: true },
       );
     const participantRepository =
       transactionScope.getRepositoryWithoutPermissionChecks<AgentChatThreadParticipantRow>(
-        objectNames.agentChatThreadParticipant,
+        inboxObjectNamesByLegacyName.agentChatThreadParticipant,
         { shouldSkipEventEmission: true },
       );
     const setUpAt = new Date().toISOString();
