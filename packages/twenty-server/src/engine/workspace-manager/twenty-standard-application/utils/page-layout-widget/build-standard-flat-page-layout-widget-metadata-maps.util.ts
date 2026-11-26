@@ -201,17 +201,13 @@ const buildFieldsWidgetConfiguration = ({
 
   const viewId = views[recordPageFieldsViewName]?.id ?? null;
 
-  // @ts-expect-error ignore
-  const viewDefinition = STANDARD_OBJECTS[objectName].views?.[
-    recordPageFieldsViewName
-  ] as
-    | {
-        universalIdentifier: string;
-        viewFieldGroups?: Record<string, { universalIdentifier: string }>;
-      }
-    | undefined;
+  const objectDefinition = STANDARD_OBJECTS[objectName];
 
-  const viewUniversalIdentifier = viewDefinition?.universalIdentifier ?? null;
+  const viewDefinitions: Record<string, { universalIdentifier: string }> =
+    'views' in objectDefinition ? objectDefinition.views : {};
+
+  const viewUniversalIdentifier =
+    viewDefinitions[recordPageFieldsViewName]?.universalIdentifier ?? null;
 
   return {
     configuration: {
