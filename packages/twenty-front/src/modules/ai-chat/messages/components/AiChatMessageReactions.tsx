@@ -82,7 +82,7 @@ export const AiChatMessageReactions = ({
               emoji={emoji}
               count={reactionCount}
               pressed={isSelected}
-              title={reactorNames}
+              tooltip={reactorNames}
               aria-label={t`${emoji} by ${reactorNames}`}
               onPressedChange={() =>
                 void toggleAiChatMessageReaction({ messageId, emoji })
