@@ -1,12 +1,18 @@
-import { isNonEmptyString } from '@sniptt/guards';
-import { type RunAgentInput } from 'twenty-sdk/logic-function';
+import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 
 import { type TelegramAssistantTurn } from 'src/logic-functions/types/telegram-assistant-turn.type';
 
-type TelegramAssistantAgentMessage = Exclude<
-  RunAgentInput['input'],
-  string | undefined
->[number];
+const buildHistorySection = (history: TelegramAssistantTurn[]): string[] =>
+  isNonEmptyArray(history)
+    ? [
+        [
+          'Earlier in this chat, oldest first:',
+          ...history.map(
+            (turn) => `Member: ${turn.requestText}\nYou: ${turn.responseText}`,
+          ),
+        ].join('\n\n'),
+      ]
+    : [];
 
 const buildRecordReferenceSection = (
   workspaceBaseUrl: string | undefined,
@@ -30,7 +36,7 @@ const buildPermissionSection = (workspaceMemberId: string): string =>
     'Your tools are limited to what is permitted. A tool you need being absent means the action is not allowed, not that the object is missing, that the workspace is misconfigured or that the Telegram connection is wrong. Say plainly what cannot be done and who to ask; never invite the requester to name the object, paste a record link or otherwise work around it.',
   ].join('\n\n');
 
-export const buildTelegramAssistantMessages = ({
+export const buildTelegramAssistantPrompt = ({
   requestText,
   history,
   workspaceMemberId,
@@ -42,18 +48,11 @@ export const buildTelegramAssistantMessages = ({
   workspaceMemberId: string;
   timeoutSeconds: number;
   workspaceBaseUrl: string | undefined;
-}): TelegramAssistantAgentMessage[] => [
-  ...history.flatMap((turn): TelegramAssistantAgentMessage[] => [
-    { role: 'user', content: turn.requestText },
-    { role: 'assistant', content: turn.responseText },
-  ]),
-  {
-    role: 'user',
-    content: [
-      `This run is killed after ${timeoutSeconds} seconds and the member gets an error instead of an answer. Keep tool calls focused and reply as soon as you have enough to be useful.`,
-      buildRecordReferenceSection(workspaceBaseUrl),
-      buildPermissionSection(workspaceMemberId),
-      `Request from Telegram:\n${requestText}`,
-    ].join('\n\n'),
-  },
-];
+}): string =>
+  [
+    `The member is told to wait if this run takes more than ${timeoutSeconds} seconds. Keep tool calls focused and reply as soon as you have enough to be useful.`,
+    buildRecordReferenceSection(workspaceBaseUrl),
+    buildPermissionSection(workspaceMemberId),
+    ...buildHistorySection(history),
+    `Request from Telegram:\n${requestText}`,
+  ].join('\n\n');

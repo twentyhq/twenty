@@ -42,6 +42,9 @@ A connection link works once and expires after 10 minutes.
 - **Direct messages only.** The bot ignores groups and channels.
 - **Text only.** Photos, files and voice messages are not read yet.
 - **Recent context only.** The bot remembers the last 10 questions of a chat.
+- **Slow answers arrive late.** After about three and a half minutes the bot
+  says it is still working, then sends the answer when the run ends, for up to
+  30 minutes.
 - **Requests are saved.** Each question and its answer is kept as a Telegram
   Assistant Request in the workspace.
 - **One workspace per Telegram account.** An account connected to one

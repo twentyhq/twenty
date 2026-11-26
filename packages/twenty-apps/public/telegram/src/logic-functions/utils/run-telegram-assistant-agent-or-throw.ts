@@ -6,19 +6,22 @@ import { TELEGRAM_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER } from 'src/constants/uni
 import { TelegramAssistantDeadlineError } from 'src/logic-functions/types/telegram-assistant-deadline-error';
 import { TelegramAssistantEmptyResponseError } from 'src/logic-functions/types/telegram-assistant-empty-response-error';
 import { type TelegramAssistantTurn } from 'src/logic-functions/types/telegram-assistant-turn.type';
-import { buildTelegramAssistantMessages } from 'src/logic-functions/utils/build-telegram-assistant-messages';
+import { buildTelegramAssistantPrompt } from 'src/logic-functions/utils/build-telegram-assistant-prompt';
+import { buildTelegramAssistantRequestName } from 'src/logic-functions/utils/build-telegram-assistant-request-name';
 import { raceAgainstTimeoutOrThrow } from 'src/logic-functions/utils/race-against-timeout-or-throw';
 
 const hasResponseText = (result: object): result is { response: string } =>
   'response' in result && isString(result.response);
 
 export const runTelegramAssistantAgentOrThrow = async ({
+  requestId,
   requestText,
   history,
   workspaceMemberId,
   workspaceBaseUrl,
   deadlineAtMs,
 }: {
+  requestId: string;
   requestText: string;
   history: TelegramAssistantTurn[];
   workspaceMemberId: string;
@@ -28,16 +31,18 @@ export const runTelegramAssistantAgentOrThrow = async ({
   const remainingMs = deadlineAtMs - Date.now();
 
   if (remainingMs <= 0) {
-    throw new TelegramAssistantDeadlineError(
-      'Telegram deadline passed before the agent could start',
-    );
+    throw new Error('Telegram deadline passed before the agent could start');
   }
 
   const agentResult = await raceAgainstTimeoutOrThrow({
     promise: runAgent({
       agentUniversalIdentifier: TELEGRAM_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
       runAsWorkspaceMemberId: workspaceMemberId,
-      input: buildTelegramAssistantMessages({
+      thread: {
+        key: requestId,
+        title: buildTelegramAssistantRequestName(requestText),
+      },
+      input: buildTelegramAssistantPrompt({
         requestText,
         history,
         workspaceMemberId,

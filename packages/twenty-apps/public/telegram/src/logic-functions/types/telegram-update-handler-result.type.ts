@@ -9,5 +9,6 @@ export type TelegramUpdateHandlerResult = {
     | 'CONNECTED'
     | 'TEXT_ONLY'
     | 'ANSWERED'
+    | 'STILL_RUNNING'
     | 'FAILED';
 };

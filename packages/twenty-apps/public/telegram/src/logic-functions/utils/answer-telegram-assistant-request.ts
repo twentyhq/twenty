@@ -1,20 +1,15 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
-import { TELEGRAM_PLAIN_MESSAGE_MAX_LENGTH } from 'src/logic-functions/constants/telegram-plain-message-max-length';
-import { TELEGRAM_RICH_MESSAGE_MAX_LENGTH } from 'src/logic-functions/constants/telegram-rich-message-max-length';
-import { TELEGRAM_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/telegram-assistant-request-status';
 import { claimTelegramAssistantRequest } from 'src/logic-functions/data/claim-telegram-assistant-request';
 import { findTelegramAssistantHistory } from 'src/logic-functions/data/find-telegram-assistant-history';
-import { updateTelegramAssistantRequest } from 'src/logic-functions/data/update-telegram-assistant-request';
-import { buildTelegramAssistantAnswerText } from 'src/logic-functions/utils/build-telegram-assistant-answer-text';
+import { TelegramAssistantDeadlineError } from 'src/logic-functions/types/telegram-assistant-deadline-error';
+import { deliverTelegramAssistantAnswer } from 'src/logic-functions/utils/deliver-telegram-assistant-answer';
+import { failTelegramAssistantRequest } from 'src/logic-functions/utils/fail-telegram-assistant-request';
 import { fetchWorkspaceBaseUrl } from 'src/logic-functions/utils/fetch-workspace-base-url';
-import { getTelegramAssistantFailureText } from 'src/logic-functions/utils/get-telegram-assistant-failure-text';
+import { keepWaitingForTelegramAssistantAnswer } from 'src/logic-functions/utils/keep-waiting-for-telegram-assistant-answer';
 import { recordTelegramAssistantRequestOrThrow } from 'src/logic-functions/utils/record-telegram-assistant-request-or-throw';
 import { runTelegramAssistantAgentOrThrow } from 'src/logic-functions/utils/run-telegram-assistant-agent-or-throw';
-import { sendTelegramAnswer } from 'src/logic-functions/utils/send-telegram-answer';
-import { sendTelegramMessage } from 'src/logic-functions/utils/send-telegram-message';
 import { startTelegramTyping } from 'src/logic-functions/utils/start-telegram-typing';
-import { toErrorMessage } from 'src/logic-functions/utils/to-error-message';
 
 export const answerTelegramAssistantRequest = async ({
   client,
@@ -36,7 +31,7 @@ export const answerTelegramAssistantRequest = async ({
   requestText: string;
   agentDeadlineAtMs: number;
   deliveryDeadlineAtMs: number;
-}): Promise<'ANSWERED' | 'FAILED' | 'SKIPPED'> => {
+}): Promise<'ANSWERED' | 'FAILED' | 'STILL_RUNNING' | 'SKIPPED'> => {
   const telegramChatId = `${chatId}`;
   const requestId = await recordTelegramAssistantRequestOrThrow({
     client,
@@ -56,6 +51,7 @@ export const answerTelegramAssistantRequest = async ({
     return 'SKIPPED';
   }
 
+  const request = { client, botToken, chatId, requestId };
   const stopTyping = startTelegramTyping({ botToken, chatId });
 
   try {
@@ -73,6 +69,7 @@ export const answerTelegramAssistantRequest = async ({
     ]);
 
     const responseText = await runTelegramAssistantAgentOrThrow({
+      requestId,
       requestText,
       history,
       workspaceMemberId,
@@ -80,54 +77,23 @@ export const answerTelegramAssistantRequest = async ({
       deadlineAtMs: agentDeadlineAtMs,
     });
 
-    const answer = { responseText, requestId, workspaceBaseUrl };
-
-    await sendTelegramAnswer({
-      botToken,
-      chatId,
-      deadlineAtMs: deliveryDeadlineAtMs,
-      richText: buildTelegramAssistantAnswerText({
-        ...answer,
-        maxLength: TELEGRAM_RICH_MESSAGE_MAX_LENGTH,
-        isPlainText: false,
-      }),
-      plainText: buildTelegramAssistantAnswerText({
-        ...answer,
-        maxLength: TELEGRAM_PLAIN_MESSAGE_MAX_LENGTH,
-        isPlainText: true,
-      }),
-    });
-    await updateTelegramAssistantRequest({
-      client,
-      id: requestId,
-      status: TELEGRAM_ASSISTANT_REQUEST_STATUS.DONE,
+    await deliverTelegramAssistantAnswer({
+      ...request,
       responseText,
-    }).catch((updateError: unknown) => {
-      console.error('[telegram] could not mark the request done', updateError);
+      workspaceBaseUrl,
+      deadlineAtMs: deliveryDeadlineAtMs,
     });
 
     return 'ANSWERED';
   } catch (error) {
-    console.error('[telegram] could not answer the request', error);
+    if (
+      error instanceof TelegramAssistantDeadlineError &&
+      (await keepWaitingForTelegramAssistantAnswer(request))
+    ) {
+      return 'STILL_RUNNING';
+    }
 
-    await updateTelegramAssistantRequest({
-      client,
-      id: requestId,
-      status: TELEGRAM_ASSISTANT_REQUEST_STATUS.FAILED,
-      errorMessage: toErrorMessage(error),
-    }).catch((updateError: unknown) => {
-      console.error(
-        '[telegram] could not mark the request failed',
-        updateError,
-      );
-    });
-    await sendTelegramMessage({
-      botToken,
-      chatId,
-      text: getTelegramAssistantFailureText(error),
-    }).catch((sendError: unknown) => {
-      console.error('[telegram] could not send the failure reply', sendError);
-    });
+    await failTelegramAssistantRequest({ ...request, error });
 
     return 'FAILED';
   } finally {

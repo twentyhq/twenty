@@ -43,6 +43,8 @@ type RequestClaimFilter = {
   ];
 };
 
+type RequestStatusFilter = { id: { eq: string }; status: { eq: string } };
+
 const LINK_FILTER_FIELDS: (keyof LinkRecord)[] = [
   'id',
   'telegramUserId',
@@ -67,7 +69,10 @@ type FakeMutation = {
     __args: { data: Omit<RequestRecord, 'id' | 'status' | 'updatedAt'> };
   };
   updateTelegramAssistantRequests?: {
-    __args: { data: { status: string }; filter: RequestClaimFilter };
+    __args: {
+      data: { status: string };
+      filter: RequestClaimFilter | RequestStatusFilter;
+    };
   };
   updateTelegramAssistantRequest?: {
     __args: { id: string; data: Partial<RequestRecord> };
@@ -201,14 +206,23 @@ export const createCoreClientFake = ({
         if (isDefined(mutation.updateTelegramAssistantRequests)) {
           const { data, filter } =
             mutation.updateTelegramAssistantRequests.__args;
-          const [{ id }, { or }] = filter.and;
-          const claimed = state.requests.filter(
-            (request) =>
+          const claimed = state.requests.filter((request) => {
+            if (!('and' in filter)) {
+              return (
+                request.id === filter.id.eq &&
+                request.status === filter.status.eq
+              );
+            }
+
+            const [{ id }, { or }] = filter.and;
+
+            return (
               request.id === id.eq &&
               (request.status === 'PENDING' ||
                 (request.status === 'PROCESSING' &&
-                  request.updatedAt < or[1].updatedAt.lt)),
-          );
+                  request.updatedAt < or[1].updatedAt.lt))
+            );
+          });
 
           for (const request of claimed) {
             request.status = data.status;

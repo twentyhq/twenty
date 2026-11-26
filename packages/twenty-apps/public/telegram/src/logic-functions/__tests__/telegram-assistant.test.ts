@@ -2,26 +2,41 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createCoreClientFake } from 'src/__tests__/utils/create-core-client-fake';
 import { stubTelegramApi } from 'src/__tests__/utils/stub-telegram-api';
-import { TELEGRAM_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import {
+  TELEGRAM_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
+  TELEGRAM_LATE_ANSWER_UNIVERSAL_IDENTIFIER,
+} from 'src/constants/universal-identifiers';
 import { TELEGRAM_ASSISTANT_AGENT_BUDGET_SECONDS } from 'src/logic-functions/constants/telegram-assistant-agent-budget-seconds';
 import { TELEGRAM_ASSISTANT_DEADLINE_FAILURE_TEXT } from 'src/logic-functions/constants/telegram-assistant-deadline-failure-text';
 import { TELEGRAM_ASSISTANT_EMPTY_RESPONSE_FAILURE_TEXT } from 'src/logic-functions/constants/telegram-assistant-empty-response-failure-text';
 import { TELEGRAM_ASSISTANT_FAILURE_TEXT } from 'src/logic-functions/constants/telegram-assistant-failure-text';
 import { TELEGRAM_ASSISTANT_HELP_TEXT } from 'src/logic-functions/constants/telegram-assistant-help-text';
+import { TELEGRAM_ASSISTANT_STILL_RUNNING_TEXT } from 'src/logic-functions/constants/telegram-assistant-still-running-text';
+import { TELEGRAM_LATE_ANSWER_CHECK_DELAY_MS } from 'src/logic-functions/constants/telegram-late-answer-check-delay-ms';
+import { TELEGRAM_LATE_ANSWER_GIVE_UP_AFTER_MS } from 'src/logic-functions/constants/telegram-late-answer-give-up-after-ms';
+import { telegramLateAnswerHandler } from 'src/logic-functions/telegram-late-answer';
 import { telegramUpdateHandler } from 'src/logic-functions/telegram-update-handler';
 
-const { clientHolder, runAgentMock } = vi.hoisted(() => {
-  const clientHolder: {
-    client?: ReturnType<typeof createCoreClientFake>['client'];
-  } = {};
+const { clientHolder, runAgentMock, enqueueJobsMock, conversationMock } =
+  vi.hoisted(() => {
+    const clientHolder: {
+      client?: ReturnType<typeof createCoreClientFake>['client'];
+    } = {};
 
-  return { clientHolder, runAgentMock: vi.fn() };
-});
+    return {
+      clientHolder,
+      runAgentMock: vi.fn(),
+      enqueueJobsMock: vi.fn(),
+      conversationMock: vi.fn(),
+    };
+  });
 
 vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
   ...(await importOriginal<Record<string, unknown>>()),
   kv: { delete: vi.fn() },
   runAgent: runAgentMock,
+  enqueueJobs: enqueueJobsMock,
+  listConversationMessages: conversationMock,
 }));
 
 vi.mock('twenty-client-sdk/core', () => ({
@@ -86,6 +101,8 @@ describe('answering a question from Telegram', () => {
     clientHolder.client = coreFake.client;
     telegramCalls = stubTelegramApi();
     runAgentMock.mockReset();
+    enqueueJobsMock.mockReset();
+    conversationMock.mockReset();
     runAgentMock.mockResolvedValue(completedRun(ANSWER));
   });
 
@@ -105,6 +122,7 @@ describe('answering a question from Telegram', () => {
       expect.objectContaining({
         agentUniversalIdentifier: TELEGRAM_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
         runAsWorkspaceMemberId: 'member-1',
+        thread: { key: 'request-1', title: 'How many open deals?' },
       }),
     );
     expect(callsTo('sendChatAction')[0].params).toEqual({
@@ -131,14 +149,8 @@ describe('answering a question from Telegram', () => {
     await send({ text: 'How many open deals?', messageId: 1 });
     await send({ text: 'And the biggest one?', messageId: 2 });
 
-    const messages = runAgentMock.mock.calls[1][0].input;
-
-    expect(messages.slice(0, 2)).toEqual([
-      { role: 'user', content: 'How many open deals?' },
-      { role: 'assistant', content: ANSWER },
-    ]);
-    expect(messages[2].content).toContain(
-      'Request from Telegram:\nAnd the biggest one?',
+    expect(runAgentMock.mock.calls[1][0].input).toContain(
+      `Member: How many open deals?\nYou: ${ANSWER}\n\nRequest from Telegram:\nAnd the biggest one?`,
     );
   });
 
@@ -207,8 +219,48 @@ describe('answering a question from Telegram', () => {
     expect(callsTo('sendMessage')).toEqual([]);
   });
 
-  it('stops waiting for the agent at the deadline and stops the typing status', async () => {
+  it('tells the member to wait and schedules a late answer when the agent outlasts the deadline', async () => {
     runAgentMock.mockReturnValue(new Promise(() => undefined));
+
+    const pending = send({ text: 'How many open deals?' });
+
+    await vi.advanceTimersByTimeAsync(
+      TELEGRAM_ASSISTANT_AGENT_BUDGET_SECONDS * 1000,
+    );
+
+    await expect(pending).resolves.toEqual({ outcome: 'STILL_RUNNING' });
+    expect(callsTo('sendMessage').map((call) => call.params.text)).toEqual([
+      TELEGRAM_ASSISTANT_STILL_RUNNING_TEXT,
+    ]);
+    expect(coreFake.state.requests[0]).toMatchObject({
+      status: 'STILL_RUNNING',
+    });
+    expect(enqueueJobsMock).toHaveBeenCalledWith({
+      logicFunctionUniversalIdentifier:
+        TELEGRAM_LATE_ANSWER_UNIVERSAL_IDENTIFIER,
+      jobs: [
+        {
+          payload: {
+            requestId: 'request-1',
+            chatId: CHAT_ID,
+            giveUpAtMs: Date.now() + TELEGRAM_LATE_ANSWER_GIVE_UP_AFTER_MS,
+          },
+        },
+      ],
+      delayMs: TELEGRAM_LATE_ANSWER_CHECK_DELAY_MS,
+    });
+
+    const typingCallCount = callsTo('sendChatAction').length;
+
+    await vi.advanceTimersByTimeAsync(60_000);
+
+    expect(typingCallCount).toBeGreaterThan(10);
+    expect(callsTo('sendChatAction')).toHaveLength(typingCallCount);
+  });
+
+  it('records a failure when the late answer cannot be scheduled', async () => {
+    runAgentMock.mockReturnValue(new Promise(() => undefined));
+    enqueueJobsMock.mockRejectedValue(new Error('queue unavailable'));
 
     const pending = send({ text: 'How many open deals?' });
 
@@ -220,13 +272,121 @@ describe('answering a question from Telegram', () => {
     expect(callsTo('sendMessage').map((call) => call.params.text)).toEqual([
       TELEGRAM_ASSISTANT_DEADLINE_FAILURE_TEXT,
     ]);
+    expect(coreFake.state.requests[0]).toMatchObject({ status: 'FAILED' });
+  });
 
-    const typingCallCount = callsTo('sendChatAction').length;
+  describe('once the agent has outlasted the deadline', () => {
+    const latePayload = () => enqueueJobsMock.mock.calls[0][0].jobs[0].payload;
 
-    await vi.advanceTimersByTimeAsync(60_000);
+    const conversation = ({
+      texts = [],
+      chunks = [],
+      error = null,
+    }: {
+      texts?: string[];
+      chunks?: object[];
+      error?: { code: string; message: string } | null;
+    }) => ({
+      messages: [
+        { id: 'm1', role: 'user', parts: [{ type: 'text', text: 'prompt' }] },
+        ...(texts.length > 0
+          ? [
+              {
+                id: 'm2',
+                role: 'assistant',
+                parts: [
+                  { type: 'tool-find_companies' },
+                  ...texts.map((text) => ({ type: 'text', text })),
+                ],
+              },
+            ]
+          : []),
+      ],
+      streamCatchup: { chunks, maxSeq: chunks.length, error },
+    });
 
-    expect(typingCallCount).toBeGreaterThan(10);
-    expect(callsTo('sendChatAction')).toHaveLength(typingCallCount);
+    beforeEach(async () => {
+      runAgentMock.mockReturnValue(new Promise(() => undefined));
+
+      const pending = send({ text: 'How many open deals?' });
+
+      await vi.advanceTimersByTimeAsync(
+        TELEGRAM_ASSISTANT_AGENT_BUDGET_SECONDS * 1000,
+      );
+      await pending;
+      telegramCalls.length = 0;
+    });
+
+    it('checks again later while the run is still streaming', async () => {
+      conversationMock.mockResolvedValue(
+        conversation({ texts: ['Looking'], chunks: [{ type: 'text-delta' }] }),
+      );
+
+      await expect(telegramLateAnswerHandler(latePayload())).resolves.toEqual({
+        outcome: 'STILL_RUNNING',
+      });
+      expect(enqueueJobsMock).toHaveBeenCalledTimes(2);
+      expect(telegramCalls).toEqual([]);
+      expect(coreFake.state.requests[0]).toMatchObject({
+        status: 'STILL_RUNNING',
+      });
+    });
+
+    it('sends the answer the run ended with, once', async () => {
+      conversationMock.mockResolvedValue(
+        conversation({ texts: ['Let me look that up.', ANSWER] }),
+      );
+
+      const outcomes = await Promise.all([
+        telegramLateAnswerHandler(latePayload()),
+        telegramLateAnswerHandler(latePayload()),
+      ]);
+
+      expect(outcomes.map(({ outcome }) => outcome).sort()).toEqual([
+        'ANSWERED',
+        'SKIPPED',
+      ]);
+      expect(callsTo('sendRichMessage').map((call) => call.params)).toEqual([
+        { chat_id: CHAT_ID, rich_message: { markdown: ANSWER } },
+      ]);
+      expect(coreFake.state.requests[0]).toMatchObject({
+        status: 'DONE',
+        responseText: { blocknote: null, markdown: ANSWER },
+      });
+    });
+
+    it('reports the failure the run ended with', async () => {
+      conversationMock.mockResolvedValue(
+        conversation({
+          error: { code: 'STREAM_EXECUTION_FAILED', message: 'model down' },
+        }),
+      );
+
+      await expect(telegramLateAnswerHandler(latePayload())).resolves.toEqual({
+        outcome: 'FAILED',
+      });
+      expect(callsTo('sendMessage').map((call) => call.params.text)).toEqual([
+        TELEGRAM_ASSISTANT_FAILURE_TEXT,
+      ]);
+      expect(coreFake.state.requests[0]).toMatchObject({
+        status: 'FAILED',
+        errorMessage: 'model down',
+      });
+    });
+
+    it('gives up when the run shows no outcome by the end of the wait', async () => {
+      conversationMock.mockResolvedValue(conversation({}));
+
+      await vi.advanceTimersByTimeAsync(TELEGRAM_LATE_ANSWER_GIVE_UP_AFTER_MS);
+
+      await expect(telegramLateAnswerHandler(latePayload())).resolves.toEqual({
+        outcome: 'FAILED',
+      });
+      expect(callsTo('sendMessage').map((call) => call.params.text)).toEqual([
+        TELEGRAM_ASSISTANT_DEADLINE_FAILURE_TEXT,
+      ]);
+      expect(coreFake.state.requests[0]).toMatchObject({ status: 'FAILED' });
+    });
   });
 
   it('sends plain text when Telegram refuses the rich message', async () => {
