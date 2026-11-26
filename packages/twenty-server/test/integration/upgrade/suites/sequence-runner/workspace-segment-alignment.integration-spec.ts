@@ -308,6 +308,64 @@ describe('UpgradeSequenceRunnerService — workspace segment alignment (integrat
     ]);
   });
 
+  it('should rerun the workspace segment when instance commands were added before it after workspace creation', async () => {
+    // Sequence: Ic0 → Ic1 → Ic2 → Wc0 → Wc1 → Ic3 → Wc2
+    // WS_1 was created when Ic0 was the last instance command (initial at Wc1),
+    // then Ic1 and Ic2 shipped in a patch release
+    const sequence = [
+      makeFastInstance('Ic0'),
+      makeFastInstance('Ic1'),
+      makeSlowInstance('Ic2'),
+      makeWorkspace('Wc0'),
+      makeWorkspace('Wc1'),
+      makeFastInstance('Ic3'),
+      makeWorkspace('Wc2'),
+    ];
+
+    setMockActiveWorkspaceIds([WS_1]);
+
+    await seedInstanceMigration(context.dataSource, {
+      name: 'Ic0',
+      status: 'completed',
+      workspaceIds: [],
+    });
+
+    await seedWorkspaceMigration(context.dataSource, {
+      name: 'Wc1',
+      status: 'completed',
+      workspaceId: WS_1,
+      isInitial: true,
+    });
+
+    const report = await context.runner.run({
+      sequence,
+      options: DEFAULT_OPTIONS,
+    });
+
+    expect(report.totalFailures).toBe(0);
+
+    const executed = await testGetExecutedMigrationsInOrder(context.dataSource);
+
+    expect(executed.map(migrationRecordToKey)).toStrictEqual([
+      // Seeds
+      'Ic0:instance:completed:1',
+      `Wc1:${WS_1}:completed:1:initial`,
+
+      // New instance commands move the workspace cursor before the segment
+      'Ic1:instance:completed:1',
+      `Ic1:${WS_1}:completed:1`,
+      'Ic2:instance:completed:1',
+      `Ic2:${WS_1}:completed:1`,
+
+      `Wc0:${WS_1}:completed:1`,
+      `Wc1:${WS_1}:completed:2`,
+
+      'Ic3:instance:completed:1',
+      `Ic3:${WS_1}:completed:1`,
+      `Wc2:${WS_1}:completed:1`,
+    ]);
+  });
+
   it('should accept workspaces at the preceding completed IC when others are in the WC segment (-w scenario)', async () => {
     // Sequence: Ic0 → Ic1 → Wc0 → Wc1
     // WS_1 was upgraded via -w and is at Wc1:completed
