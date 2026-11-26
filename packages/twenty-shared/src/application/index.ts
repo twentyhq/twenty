@@ -343,7 +343,6 @@ export type {
   TimelineActivityTypeEmitManifest,
   TimelineActivityTypeManifest,
 } from './timelineActivityTypeManifestType';
-export type { ToolTriggerApprovalSettings } from './toolTriggerApprovalSettingsType';
 export type { ToolTriggerSettings } from './toolTriggerSettingsType';
 export type { UninstallLogicFunctionApplicationManifest } from './uninstallLogicFunctionApplicationType';
 export type { UsageOperationTypeValue } from './usageOperationTypesType';

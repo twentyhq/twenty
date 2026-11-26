@@ -17,7 +17,6 @@ import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
-import { buildLogicFunctionToolApproval } from 'src/engine/core-modules/tool-provider/utils/build-logic-function-tool-approval.util';
 import { buildLogicFunctionToolName } from 'src/engine/core-modules/tool-provider/utils/build-logic-function-tool-name.util';
 
 @Injectable()
@@ -98,9 +97,6 @@ export class LogicFunctionToolProvider implements ToolProvider {
 
     for (const logicFunction of logicFunctionsWithSchema) {
       const toolName = buildLogicFunctionToolName(logicFunction.name);
-      const approval = buildLogicFunctionToolApproval(
-        logicFunction.toolTriggerSettings?.approval,
-      );
 
       const base: ToolIndexEntry = {
         name: toolName,
@@ -116,7 +112,6 @@ export class LogicFunctionToolProvider implements ToolProvider {
         frontComponentId: resolveWidgetFrontComponentId(
           logicFunction.toolTriggerSettings?.frontComponentUniversalIdentifier,
         ),
-        ...(isDefined(approval) && { approval }),
       };
 
       if (includeSchemas) {

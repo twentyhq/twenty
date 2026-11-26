@@ -171,54 +171,6 @@ describe('AiChatToolCallApprovalCard', () => {
     );
   });
 
-  describe('a tool that words its own approval', () => {
-    const BOOKING_PROPOSAL: ProposedToolCall = {
-      toolName: 'app_tool_respond_to_cal_booking',
-      toolLabel: 'respond-to-cal-booking',
-      summary: 'Meeting request from Maya',
-      arguments: { bookingId: 'booking-1' },
-      template: 'generic',
-      labels: { approve: 'Send response', reject: 'Not now' },
-    };
-
-    beforeEach(() => {
-      answerAiChatToolCall.mockReturnValue(new Promise(() => {}));
-      mockFrontComponentIdByToolName.mockReturnValue(
-        new Map([['app_tool_respond_to_cal_booking', 'front-component-1']]),
-      );
-    });
-
-    it('runs the tool with the decision its component set from its own approve label', async () => {
-      const user = userEvent.setup();
-
-      renderCard({ proposal: BOOKING_PROPOSAL });
-
-      await user.click(screen.getByRole('button', { name: 'Decline instead' }));
-      await user.click(screen.getByRole('button', { name: 'Send response' }));
-
-      expect(answerAiChatToolCall).toHaveBeenCalledWith(
-        expect.objectContaining({
-          response: {
-            decision: 'approve',
-            arguments: { bookingId: 'booking-1', decision: 'DECLINE' },
-          },
-        }),
-      );
-    });
-
-    it('rejects from its own reject label', async () => {
-      const user = userEvent.setup();
-
-      renderCard({ proposal: BOOKING_PROPOSAL });
-
-      await user.click(screen.getByRole('button', { name: 'Not now' }));
-
-      expect(answerAiChatToolCall).toHaveBeenCalledWith(
-        expect.objectContaining({ response: { decision: 'reject' } }),
-      );
-    });
-  });
-
   it('shows what the call does and which tool it runs', () => {
     renderCard();
 

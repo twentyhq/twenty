@@ -92,18 +92,14 @@ export const resolveProposedToolCall = async ({
     };
   }
 
-  const {
-    template = 'generic',
-    alternativeToolNames,
-    labels,
-  } = toolIndexEntry.approval ?? {};
+  const { template = 'generic', alternativeToolNames } =
+    toolIndexEntry.approval ?? {};
   const baseProposal = {
     toolName,
     toolLabel: toolIndexEntry.label,
     summary,
     arguments: input.arguments,
     ...(isNonEmptyArray(alternativeToolNames) ? { alternativeToolNames } : {}),
-    ...(isDefined(labels) ? { labels } : {}),
   };
 
   switch (template) {

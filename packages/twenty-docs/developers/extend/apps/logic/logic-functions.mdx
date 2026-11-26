@@ -825,25 +825,6 @@ setToolCallArguments({ ...toolCall?.input, decision: 'DECLINE', reason });
 
 Both `input` and `output` are typed `Record<string, unknown>`, so narrow each field before you use it rather than casting. That matters most for anything you hand to the DOM: a value you drop into an `href` without checking it is a string is a link the tool's output controls.
 
-##### Wording the approval card
-
-A proposed call is reviewed with **Approve** and **Reject** by default. Give the buttons your own wording with `toolTriggerSettings.approval`:
-
-```ts
-export default defineLogicFunction({
-  ...,
-  toolTriggerSettings: {
-    frontComponentUniversalIdentifier: BOOKING_CARD_UNIVERSAL_IDENTIFIER,
-    approval: {
-      approveLabel: 'Send response',
-      rejectLabel: 'Not now',
-    },
-  },
-});
-```
-
-The labels only rename the buttons: approve still runs this tool, and reject never runs anything. When the person has a business choice to make, such as accepting or declining a meeting, let the front component collect it with `setToolCallArguments` and keep one tool that handles every answer. Pick an approve label that fits every answer, like **Send response** rather than **Accept**, and a reject label that does not sound like an action, like **Not now** rather than **Decline**.
-
 <Note>
   If the identifier matches no front component in the app, the chat falls back
   to the default step row. Front components in the AI chat run under the same

@@ -32,7 +32,7 @@ export const AiChatToolCallApprovalArgumentsCard = ({
     unknown
   > | null>(proposal.arguments);
 
-  const { template, objectNameSingular, recordId, labels } = proposal;
+  const { template, objectNameSingular, recordId } = proposal;
 
   const toolFrontComponentId = useFrontComponentIdByToolName().get(
     proposal.toolName,
@@ -72,7 +72,7 @@ export const AiChatToolCallApprovalArgumentsCard = ({
             loading={pendingResponse?.decision === 'reject'}
             onClick={reject}
           >
-            {labels?.reject ?? t`Reject`}
+            {t`Reject`}
           </Button>
           <Button
             size="sm"
@@ -87,7 +87,7 @@ export const AiChatToolCallApprovalArgumentsCard = ({
               }
             }}
           >
-            {labels?.approve ?? t`Approve`}
+            {t`Approve`}
           </Button>
         </>
       }

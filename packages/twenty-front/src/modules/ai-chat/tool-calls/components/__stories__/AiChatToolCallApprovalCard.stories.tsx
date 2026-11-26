@@ -130,30 +130,6 @@ export const UnavailablePreview: Story = {
   },
 };
 
-export const AppToolLabels: Story = {
-  args: {
-    toolCallId: 'booking-call',
-    proposal: {
-      toolName: 'app_tool_respond_to_cal_booking',
-      toolLabel: 'respond-to-cal-booking',
-      summary: 'Meeting request from Maya',
-      arguments: { bookingId: 'booking-1' },
-      template: 'generic',
-      labels: { approve: 'Send response', reject: 'Not now' },
-    },
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    await expect(
-      await canvas.findByRole('button', { name: 'Send response' }),
-    ).toBeEnabled();
-    await expect(canvas.getByRole('button', { name: 'Not now' })).toBeEnabled();
-    await expect(
-      canvas.queryByRole('button', { name: 'Approve' }),
-    ).not.toBeInTheDocument();
-  },
-};
-
 export const DisabledFeature: Story = {
   beforeEach: () => seedFrontComponentPreviewWorkspace(false),
   play: UnavailablePreview.play,
