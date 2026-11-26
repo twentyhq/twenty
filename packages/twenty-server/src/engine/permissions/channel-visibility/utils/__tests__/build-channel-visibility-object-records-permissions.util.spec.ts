@@ -46,6 +46,8 @@ const findReadableChannelIds = (holder: WorkspaceMemberIndividualRoleHolder) =>
       unreadableFieldUniversalIdentifiersByVisibility: {
         [MessageChannelVisibility.METADATA]: ['subject'],
       },
+      canUpdateRecords: false,
+      uneditableFieldUniversalIdentifiers: [],
     }).rowLevelRecordsPermissions ?? []
   ).map(({ unreadableFields, predicateGroups }) => ({
     unreadableFields,
@@ -85,5 +87,30 @@ describe('buildChannelVisibilityObjectRecordsPermissions', () => {
       { unreadableFields: [], channelIds: ['c2'] },
       { unreadableFields: [], channelIds: ['c3'] },
     ]);
+  });
+
+  it('should let visible records be updated outside the uneditable fields', () => {
+    const { rowLevelRecordsPermissions } =
+      buildChannelVisibilityObjectRecordsPermissions({
+        holder: { type: 'userWorkspace', userWorkspaceId: 'alice' },
+        channels,
+        objectUniversalIdentifier: 'calendarEvent',
+        associationRelationFieldUniversalIdentifier: 'associations',
+        channelIdFieldUniversalIdentifier: 'channelId',
+        unreadableFieldUniversalIdentifiersByVisibility: {},
+        canUpdateRecords: true,
+        uneditableFieldUniversalIdentifiers: ['title'],
+      });
+
+    expect(
+      rowLevelRecordsPermissions?.map(
+        ({ canUpdateRecords, uneditableFields }) => ({
+          canUpdateRecords,
+          uneditableFields,
+        }),
+      ),
+    ).toEqual(
+      Array(3).fill({ canUpdateRecords: true, uneditableFields: ['title'] }),
+    );
   });
 });
