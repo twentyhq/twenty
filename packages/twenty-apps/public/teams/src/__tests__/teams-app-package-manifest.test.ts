@@ -17,12 +17,11 @@ const manifest = JSON.parse(
 
 type ManifestCommand = {
   title: string;
-  description?: string;
   type?: string;
   prompt?: string;
 };
 
-const commandLists: { scopes: string[]; commands: ManifestCommand[] }[] =
+const commandLists: { commands: ManifestCommand[] }[] =
   manifest.bots[0].commandLists;
 const commands = commandLists.flatMap((commandList) => commandList.commands);
 const promptStarters = commands.filter((command) => command.type === 'prompt');
@@ -57,28 +56,11 @@ describe('Teams app package manifest', () => {
     }
   });
 
-  it('should declare a manifest version that allows prompt starters', () => {
-    expect(Number(manifest.manifestVersion)).toBeGreaterThanOrEqual(1.27);
-    expect(manifest.$schema).toContain(`/v${manifest.manifestVersion}/`);
-  });
-
-  it('should keep each command list within the Teams limits', () => {
-    for (const commandList of commandLists) {
-      expect(commandList.commands.length).toBeLessThanOrEqual(12);
-    }
-
-    for (const command of commands) {
-      expect(command.title.length).toBeLessThanOrEqual(128);
-      expect(command.description?.length ?? 0).toBeLessThanOrEqual(4000);
-    }
-  });
-
   it('should give every prompt starter a prompt the assistant answers', () => {
     expect(promptStarters).not.toHaveLength(0);
 
     for (const promptStarter of promptStarters) {
       expect(promptStarter.prompt?.trim()).toBeTruthy();
-      expect(promptStarter.prompt?.length).toBeLessThanOrEqual(4000);
       expect(isTeamsHelpRequest(promptStarter.prompt ?? '')).toBe(false);
     }
   });

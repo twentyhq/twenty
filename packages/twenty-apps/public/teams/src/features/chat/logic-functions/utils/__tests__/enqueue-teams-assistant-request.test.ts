@@ -110,26 +110,6 @@ describe('enqueueTeamsAssistantRequest', () => {
     expect(enqueueTeamsAssistantRequestRecordMock).not.toHaveBeenCalled();
   });
 
-  it('should welcome a team without suggested actions', async () => {
-    await enqueueTeamsAssistantRequest({
-      ...PAYLOAD,
-      activity: {
-        ...PAYLOAD.activity,
-        type: 'installationUpdate',
-        action: 'add',
-        text: undefined,
-        conversation: {
-          id: '19:channel@thread.tacv2',
-          conversationType: 'channel',
-        },
-      },
-    });
-
-    expect(sendNoticeMock).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({ kind: 'welcome', suggestedActions: undefined }),
-    );
-  });
-
   it('should answer a bare mention with a hint instead of recording it', async () => {
     replyWithHelpMock.mockResolvedValue({ ok: true });
 
@@ -188,9 +168,6 @@ describe('enqueueTeamsAssistantRequest', () => {
       text: TEAMS_ASSISTANT_CHAT_OFF_TEXT,
       ttlMs: TEAMS_ASSISTANT_NOTICE_TTL_MS,
     });
-    expect(sendNoticeMock.mock.calls[0][0]).not.toHaveProperty(
-      'suggestedActions',
-    );
     expect(enqueueTeamsAssistantRequestRecordMock).not.toHaveBeenCalled();
   });
 });

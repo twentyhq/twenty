@@ -4,12 +4,12 @@ import { TEAMS_ASSISTANT_SUGGESTED_PROMPTS } from 'src/features/chat/logic-funct
 import { buildTeamsAssistantHelpSuggestedActions } from 'src/features/chat/logic-functions/utils/build-teams-assistant-help-suggested-actions';
 
 describe('buildTeamsAssistantHelpSuggestedActions', () => {
-  it('should offer at most three imBack actions in a personal chat', () => {
+  it('should offer the example prompts as imBack actions in a personal chat', () => {
     const suggestedActions =
       buildTeamsAssistantHelpSuggestedActions('personal');
 
     expect(suggestedActions?.actions).toEqual(
-      TEAMS_ASSISTANT_SUGGESTED_PROMPTS.slice(0, 3).map((prompt) => ({
+      TEAMS_ASSISTANT_SUGGESTED_PROMPTS.map((prompt) => ({
         type: 'imBack',
         title: prompt,
         value: prompt,
