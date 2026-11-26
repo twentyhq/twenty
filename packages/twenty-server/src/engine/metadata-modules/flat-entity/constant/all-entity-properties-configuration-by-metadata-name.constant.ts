@@ -433,10 +433,10 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: 'calendarEndFieldMetadataUniversalIdentifier',
       isOverridable: true,
     },
-    listDateFieldMetadataId: {
+    listPinnedFieldMetadataId: {
       toCompare: true,
       toStringify: false,
-      universalProperty: 'listDateFieldMetadataUniversalIdentifier',
+      universalProperty: 'listPinnedFieldMetadataUniversalIdentifier',
       isOverridable: true,
     },
     isPrivate: {

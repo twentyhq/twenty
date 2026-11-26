@@ -139,7 +139,7 @@ export class CreateViewInput {
   @IsOptional()
   @IsUUID()
   @Field(() => UUIDScalarType, { nullable: true })
-  listDateFieldMetadataId?: string;
+  listPinnedFieldMetadataId?: string;
 
   @IsOptional()
   @IsUUID()

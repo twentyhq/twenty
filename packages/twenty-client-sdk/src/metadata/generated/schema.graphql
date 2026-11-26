@@ -2063,7 +2063,7 @@ input CreateViewInput {
   kanbanAggregateOperationFieldMetadataId: UUID
   kanbanColumnWidth: Int
   key: ViewKey
-  listDateFieldMetadataId: UUID
+  listPinnedFieldMetadataId: UUID
   mainGroupByFieldMetadataId: UUID
   name: String!
   objectMetadataId: UUID!
@@ -5955,7 +5955,7 @@ input UpdateViewInput {
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID
   kanbanColumnWidth: Int
-  listDateFieldMetadataId: UUID
+  listPinnedFieldMetadataId: UUID
   mainGroupByFieldMetadataId: UUID
   name: String
 
@@ -6508,7 +6508,7 @@ type View {
   kanbanAggregateOperationFieldMetadataId: UUID
   kanbanColumnWidth: Int
   key: ViewKey
-  listDateFieldMetadataId: UUID
+  listPinnedFieldMetadataId: UUID
   mainGroupByFieldMetadataId: UUID
   name: String!
   objectMetadataId: UUID!

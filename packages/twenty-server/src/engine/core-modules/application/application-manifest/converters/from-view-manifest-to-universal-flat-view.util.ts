@@ -70,8 +70,8 @@ export const fromViewManifestToUniversalFlatView = ({
       viewManifest.calendarFieldMetadataUniversalIdentifier ?? null,
     calendarEndFieldMetadataUniversalIdentifier:
       viewManifest.calendarEndFieldMetadataUniversalIdentifier ?? null,
-    listDateFieldMetadataUniversalIdentifier:
-      viewManifest.listDateFieldMetadataUniversalIdentifier ?? null,
+    listPinnedFieldMetadataUniversalIdentifier:
+      viewManifest.listPinnedFieldMetadataUniversalIdentifier ?? null,
     mainGroupByFieldMetadataUniversalIdentifier:
       viewManifest.mainGroupByFieldMetadataUniversalIdentifier ?? null,
     shouldHideEmptyGroups: viewManifest.shouldHideEmptyGroups ?? false,

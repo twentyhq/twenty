@@ -1,5 +1,5 @@
 import { msg, t } from '@lingui/core/macro';
-import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { ViewExceptionCode } from 'src/engine/metadata-modules/view/exceptions/view.exception';
@@ -7,56 +7,48 @@ import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/wo
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 
-export const validateFlatViewListDateField = ({
+export const validateFlatViewListPinnedField = ({
   flatView,
   flatFieldMetadataMaps,
 }: {
   flatView: Pick<
     UniversalFlatView,
-    | 'listDateFieldMetadataUniversalIdentifier'
+    | 'listPinnedFieldMetadataUniversalIdentifier'
     | 'objectMetadataUniversalIdentifier'
   >;
   flatFieldMetadataMaps: AllUniversalFlatEntityMaps['flatFieldMetadataMaps'];
 }): FlatEntityValidationError[] => {
-  if (!isDefined(flatView.listDateFieldMetadataUniversalIdentifier)) {
+  if (!isDefined(flatView.listPinnedFieldMetadataUniversalIdentifier)) {
     return [];
   }
 
-  const listDateFieldMetadata = findFlatEntityByUniversalIdentifier({
-    universalIdentifier: flatView.listDateFieldMetadataUniversalIdentifier,
+  const listPinnedFieldMetadata = findFlatEntityByUniversalIdentifier({
+    universalIdentifier: flatView.listPinnedFieldMetadataUniversalIdentifier,
     flatEntityMaps: flatFieldMetadataMaps,
   });
 
-  if (!isDefined(listDateFieldMetadata)) {
+  if (!isDefined(listPinnedFieldMetadata)) {
     return [
       {
         code: ViewExceptionCode.INVALID_VIEW_DATA,
-        message: t`List date field metadata not found`,
-        userFriendlyMessage: msg`List date field not found`,
+        message: t`List pinned field metadata not found`,
+        userFriendlyMessage: msg`List pinned field not found`,
       },
     ];
   }
 
-  const errors: FlatEntityValidationError[] = [];
-
   if (
-    listDateFieldMetadata.objectMetadataUniversalIdentifier !==
+    listPinnedFieldMetadata.objectMetadataUniversalIdentifier !==
     flatView.objectMetadataUniversalIdentifier
   ) {
-    errors.push({
-      code: ViewExceptionCode.INVALID_VIEW_DATA,
-      message: t`List date field must belong to the view object`,
-      userFriendlyMessage: msg`List date field must belong to the view object`,
-    });
+    return [
+      {
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`List pinned field must belong to the view object`,
+        userFriendlyMessage: msg`List pinned field must belong to the view object`,
+      },
+    ];
   }
 
-  if (!isFieldMetadataDateKind(listDateFieldMetadata.type)) {
-    errors.push({
-      code: ViewExceptionCode.INVALID_VIEW_DATA,
-      message: t`List date field must be a date or date time field`,
-      userFriendlyMessage: msg`List date field must be a date or date time field`,
-    });
-  }
-
-  return errors;
+  return [];
 };

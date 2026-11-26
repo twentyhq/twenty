@@ -214,12 +214,12 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       isNullable: true,
       universalForeignKey: 'calendarEndFieldMetadataUniversalIdentifier',
     },
-    listDateFieldMetadata: {
+    listPinnedFieldMetadata: {
       metadataName: 'fieldMetadata',
-      foreignKey: 'listDateFieldMetadataId',
+      foreignKey: 'listPinnedFieldMetadataId',
       inverseOneToManyProperty: null,
       isNullable: true,
-      universalForeignKey: 'listDateFieldMetadataUniversalIdentifier',
+      universalForeignKey: 'listPinnedFieldMetadataUniversalIdentifier',
     },
     kanbanAggregateOperationFieldMetadata: {
       metadataName: 'fieldMetadata',

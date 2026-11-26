@@ -123,12 +123,12 @@ export const handleFieldMetadataDeactivationSideEffects = ({
     fromFlatFieldMetadata.kanbanAggregateOperationViewIds,
   );
   const calendarEndViewIds = new Set(fromFlatFieldMetadata.calendarEndViewIds);
-  const listDateViewIds = new Set(
+  const listPinnedFieldViewIds = new Set(
     Object.values(flatViewMaps.byUniversalIdentifier)
       .filter(
         (flatView): flatView is FlatView =>
           isDefined(flatView) &&
-          flatView.listDateFieldMetadataId === fromFlatFieldMetadata.id,
+          flatView.listPinnedFieldMetadataId === fromFlatFieldMetadata.id,
       )
       .map((flatView) => flatView.id),
   );
@@ -136,7 +136,7 @@ export const handleFieldMetadataDeactivationSideEffects = ({
     ...new Set([
       ...kanbanAggregateOperationViewIds,
       ...calendarEndViewIds,
-      ...listDateViewIds,
+      ...listPinnedFieldViewIds,
     ]),
   ].filter((viewId) => !viewIdsToDelete.includes(viewId));
   const flatViewsToUpdate = findManyFlatEntityByIdInFlatEntityMapsOrThrow({
@@ -146,7 +146,7 @@ export const handleFieldMetadataDeactivationSideEffects = ({
     const shouldClearKanbanAggregateOperation =
       kanbanAggregateOperationViewIds.has(flatView.id);
     const shouldClearCalendarEndField = calendarEndViewIds.has(flatView.id);
-    const shouldClearListDateField = listDateViewIds.has(flatView.id);
+    const shouldClearListPinnedField = listPinnedFieldViewIds.has(flatView.id);
 
     return {
       ...flatView,
@@ -159,9 +159,9 @@ export const handleFieldMetadataDeactivationSideEffects = ({
         calendarEndFieldMetadataId: null,
         calendarEndFieldMetadataUniversalIdentifier: null,
       }),
-      ...(shouldClearListDateField && {
-        listDateFieldMetadataId: null,
-        listDateFieldMetadataUniversalIdentifier: null,
+      ...(shouldClearListPinnedField && {
+        listPinnedFieldMetadataId: null,
+        listPinnedFieldMetadataUniversalIdentifier: null,
       }),
     };
   });

@@ -35,7 +35,7 @@ import { DROP_IS_CUSTOM_FROM_AGENT_SKILL_VIEW_INDEX_AND_AGENT_CHAT_CHANNEL_UPGRA
 import { ADD_VIEW_SHOULD_DISPLAY_GROUPS_AS_TABS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-58/add-view-should-display-groups-as-tabs-upgrade-command-name.constant';
 import { ADD_PRESET_FILTER_TO_VIEW_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-63/add-preset-filter-to-view-upgrade-command-name.constant';
 import { ADD_VIEW_IS_PRIVATE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-63/add-view-is-private-upgrade-command-name.constant';
-import { ADD_LIST_DATE_FIELD_METADATA_ID_TO_VIEW_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-64/add-list-date-field-metadata-id-to-view-upgrade-command-name.constant';
+import { ADD_LIST_PINNED_FIELD_METADATA_ID_TO_VIEW_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-64/add-list-pinned-field-metadata-id-to-view-upgrade-command-name.constant';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -62,7 +62,7 @@ export type ViewOverrides = {
   calendarLayout?: ViewCalendarLayout | null;
   calendarFieldMetadataId?: SerializedRelation | null;
   calendarEndFieldMetadataId?: SerializedRelation | null;
-  listDateFieldMetadataId?: SerializedRelation | null;
+  listPinnedFieldMetadataId?: SerializedRelation | null;
   isPrivate?: boolean;
   mainGroupByFieldMetadataId?: SerializedRelation | null;
   shouldHideEmptyGroups?: boolean;
@@ -83,7 +83,7 @@ export type ViewOverrides = {
 ])
 @Index('IDX_VIEW_CALENDAR_FIELD_METADATA', ['calendarFieldMetadataId'])
 @Index('IDX_VIEW_CALENDAR_END_FIELD_METADATA', ['calendarEndFieldMetadataId'])
-@Index('IDX_VIEW_LIST_DATE_FIELD_METADATA', ['listDateFieldMetadataId'])
+@Index('IDX_VIEW_LIST_PINNED_FIELD_METADATA', ['listPinnedFieldMetadataId'])
 @Index('IDX_VIEW_KANBAN_FIELD_METADATA', [
   'kanbanAggregateOperationFieldMetadataId',
 ])
@@ -217,17 +217,17 @@ export class ViewEntity
 
   @WasIntroducedInUpgrade({
     upgradeCommandName:
-      ADD_LIST_DATE_FIELD_METADATA_ID_TO_VIEW_UPGRADE_COMMAND_NAME,
+      ADD_LIST_PINNED_FIELD_METADATA_ID_TO_VIEW_UPGRADE_COMMAND_NAME,
   })
   @Column({ nullable: true, type: 'uuid' })
-  listDateFieldMetadataId: string | null;
+  listPinnedFieldMetadataId: string | null;
 
   @ManyToOne(() => FieldMetadataEntity, {
     onDelete: 'SET NULL',
     nullable: true,
   })
-  @JoinColumn({ name: 'listDateFieldMetadataId' })
-  listDateFieldMetadata: Relation<FieldMetadataEntity> | null;
+  @JoinColumn({ name: 'listPinnedFieldMetadataId' })
+  listPinnedFieldMetadata: Relation<FieldMetadataEntity> | null;
 
   @Column({ nullable: true, type: 'uuid' })
   mainGroupByFieldMetadataId: string | null;

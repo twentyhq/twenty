@@ -1,0 +1,2 @@
+export const ADD_LIST_PINNED_FIELD_METADATA_ID_TO_VIEW_UPGRADE_COMMAND_NAME =
+  '2.64.0_AddListPinnedFieldMetadataIdToViewFastInstanceCommand_1795691416058';

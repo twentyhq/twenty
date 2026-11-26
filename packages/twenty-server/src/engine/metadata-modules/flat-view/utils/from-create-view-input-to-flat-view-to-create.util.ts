@@ -49,7 +49,7 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     objectMetadataUniversalIdentifier,
     calendarFieldMetadataUniversalIdentifier,
     calendarEndFieldMetadataUniversalIdentifier,
-    listDateFieldMetadataUniversalIdentifier,
+    listPinnedFieldMetadataUniversalIdentifier,
     kanbanAggregateOperationFieldMetadataUniversalIdentifier,
     mainGroupByFieldMetadataUniversalIdentifier,
   } = resolveEntityRelationUniversalIdentifiers({
@@ -58,7 +58,7 @@ export const fromCreateViewInputToFlatViewToCreate = ({
       objectMetadataId,
       calendarFieldMetadataId: createViewInput.calendarFieldMetadataId,
       calendarEndFieldMetadataId: createViewInput.calendarEndFieldMetadataId,
-      listDateFieldMetadataId: createViewInput.listDateFieldMetadataId,
+      listPinnedFieldMetadataId: createViewInput.listPinnedFieldMetadataId,
       kanbanAggregateOperationFieldMetadataId:
         createViewInput.kanbanAggregateOperationFieldMetadataId,
       mainGroupByFieldMetadataId: createViewInput.mainGroupByFieldMetadataId,
@@ -81,7 +81,7 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     presetFilter: createViewInput.presetFilter ?? null,
     calendarFieldMetadataUniversalIdentifier,
     calendarEndFieldMetadataUniversalIdentifier,
-    listDateFieldMetadataUniversalIdentifier,
+    listPinnedFieldMetadataUniversalIdentifier,
     calendarLayout: createViewInput.calendarLayout ?? null,
     icon: createViewInput.icon,
     isCompact: createViewInput.isCompact ?? isViewCompactByDefault(viewType),

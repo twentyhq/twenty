@@ -4263,7 +4263,7 @@ export interface View {
     kanbanAggregateOperationFieldMetadataId?: Scalars['UUID']
     kanbanColumnWidth?: Scalars['Int']
     key?: ViewKey
-    listDateFieldMetadataId?: Scalars['UUID']
+    listPinnedFieldMetadataId?: Scalars['UUID']
     mainGroupByFieldMetadataId?: Scalars['UUID']
     name: Scalars['String']
     objectMetadataId: Scalars['UUID']
@@ -6282,7 +6282,7 @@ export interface CreateViewFilterInput {fieldMetadataId: Scalars['UUID'],id?: (S
 
 export interface CreateViewGroupInput {fieldValue: Scalars['String'],id?: (Scalars['UUID'] | null),isVisible?: (Scalars['Boolean'] | null),position?: (Scalars['Float'] | null),viewId: Scalars['UUID']}
 
-export interface CreateViewInput {anyFieldFilterValue?: (Scalars['String'] | null),calendarEndFieldMetadataId?: (Scalars['UUID'] | null),calendarFieldMetadataId?: (Scalars['UUID'] | null),calendarLayout?: (ViewCalendarLayout | null),groupLoadLimit?: (Scalars['Int'] | null),icon: Scalars['String'],id?: (Scalars['UUID'] | null),isCompact?: (Scalars['Boolean'] | null),isPrivate?: (Scalars['Boolean'] | null),kanbanAggregateOperation?: (AggregateOperations | null),kanbanAggregateOperationFieldMetadataId?: (Scalars['UUID'] | null),kanbanColumnWidth?: (Scalars['Int'] | null),key?: (ViewKey | null),listDateFieldMetadataId?: (Scalars['UUID'] | null),mainGroupByFieldMetadataId?: (Scalars['UUID'] | null),name: Scalars['String'],objectMetadataId: Scalars['UUID'],
+export interface CreateViewInput {anyFieldFilterValue?: (Scalars['String'] | null),calendarEndFieldMetadataId?: (Scalars['UUID'] | null),calendarFieldMetadataId?: (Scalars['UUID'] | null),calendarLayout?: (ViewCalendarLayout | null),groupLoadLimit?: (Scalars['Int'] | null),icon: Scalars['String'],id?: (Scalars['UUID'] | null),isCompact?: (Scalars['Boolean'] | null),isPrivate?: (Scalars['Boolean'] | null),kanbanAggregateOperation?: (AggregateOperations | null),kanbanAggregateOperationFieldMetadataId?: (Scalars['UUID'] | null),kanbanColumnWidth?: (Scalars['Int'] | null),key?: (ViewKey | null),listPinnedFieldMetadataId?: (Scalars['UUID'] | null),mainGroupByFieldMetadataId?: (Scalars['UUID'] | null),name: Scalars['String'],objectMetadataId: Scalars['UUID'],
 /** Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
 openRecordIn?: (ViewOpenRecordIn | null),position?: (Scalars['Float'] | null),presetFilter?: (ViewPresetFilter | null),shouldDisplayGroupsAsTabs?: (Scalars['Boolean'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),type?: (ViewType | null)}
 
@@ -9266,7 +9266,7 @@ update: UpdateViewGroupInputUpdates}
 
 export interface UpdateViewGroupInputUpdates {fieldMetadataId?: (Scalars['UUID'] | null),fieldValue?: (Scalars['String'] | null),isVisible?: (Scalars['Boolean'] | null),position?: (Scalars['Float'] | null)}
 
-export interface UpdateViewInput {anyFieldFilterValue?: (Scalars['String'] | null),calendarEndFieldMetadataId?: (Scalars['UUID'] | null),calendarFieldMetadataId?: (Scalars['UUID'] | null),calendarLayout?: (ViewCalendarLayout | null),groupLoadLimit?: (Scalars['Int'] | null),icon?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),isCompact?: (Scalars['Boolean'] | null),isPrivate?: (Scalars['Boolean'] | null),kanbanAggregateOperation?: (AggregateOperations | null),kanbanAggregateOperationFieldMetadataId?: (Scalars['UUID'] | null),kanbanColumnWidth?: (Scalars['Int'] | null),listDateFieldMetadataId?: (Scalars['UUID'] | null),mainGroupByFieldMetadataId?: (Scalars['UUID'] | null),name?: (Scalars['String'] | null),
+export interface UpdateViewInput {anyFieldFilterValue?: (Scalars['String'] | null),calendarEndFieldMetadataId?: (Scalars['UUID'] | null),calendarFieldMetadataId?: (Scalars['UUID'] | null),calendarLayout?: (ViewCalendarLayout | null),groupLoadLimit?: (Scalars['Int'] | null),icon?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),isCompact?: (Scalars['Boolean'] | null),isPrivate?: (Scalars['Boolean'] | null),kanbanAggregateOperation?: (AggregateOperations | null),kanbanAggregateOperationFieldMetadataId?: (Scalars['UUID'] | null),kanbanColumnWidth?: (Scalars['Int'] | null),listPinnedFieldMetadataId?: (Scalars['UUID'] | null),mainGroupByFieldMetadataId?: (Scalars['UUID'] | null),name?: (Scalars['String'] | null),
 /** Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
 openRecordIn?: (ViewOpenRecordIn | null),position?: (Scalars['Float'] | null),shouldDisplayGroupsAsTabs?: (Scalars['Boolean'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),translations?: (MetadataTranslationOverrideInput[] | null),type?: (ViewType | null)}
 
@@ -9638,7 +9638,7 @@ export interface ViewGenqlSelection{
     kanbanAggregateOperationFieldMetadataId?: boolean | number
     kanbanColumnWidth?: boolean | number
     key?: boolean | number
-    listDateFieldMetadataId?: boolean | number
+    listPinnedFieldMetadataId?: boolean | number
     mainGroupByFieldMetadataId?: boolean | number
     name?: boolean | number
     objectMetadataId?: boolean | number

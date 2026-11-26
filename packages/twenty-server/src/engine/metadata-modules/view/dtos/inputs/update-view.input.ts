@@ -102,7 +102,7 @@ export class UpdateViewInput {
   @IsOptional()
   @IsUUID()
   @Field(() => UUIDScalarType, { nullable: true })
-  listDateFieldMetadataId?: string | null;
+  listPinnedFieldMetadataId?: string | null;
 
   @IsOptional()
   @IsBoolean()

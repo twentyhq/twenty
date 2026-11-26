@@ -13,7 +13,7 @@ export const FLAT_VIEW_EDITABLE_PROPERTIES = [
   'calendarLayout',
   'calendarFieldMetadataId',
   'calendarEndFieldMetadataId',
-  'listDateFieldMetadataId',
+  'listPinnedFieldMetadataId',
   'isPrivate',
   'mainGroupByFieldMetadataId',
   'shouldHideEmptyGroups',

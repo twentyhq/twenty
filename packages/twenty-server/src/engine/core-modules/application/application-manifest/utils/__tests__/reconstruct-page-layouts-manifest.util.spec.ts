@@ -148,7 +148,7 @@ const allPetsView: FlatView = {
   kanbanAggregateOperationFieldMetadataId: null,
   calendarFieldMetadataId: null,
   calendarEndFieldMetadataId: null,
-  listDateFieldMetadataId: null,
+  listPinnedFieldMetadataId: null,
   mainGroupByFieldMetadataId: null,
   overrides: null,
   viewFieldIds: [],

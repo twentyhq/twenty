@@ -4586,7 +4586,7 @@ export default {
             "key": [
                 707
             ],
-            "listDateFieldMetadataId": [
+            "listPinnedFieldMetadataId": [
                 573
             ],
             "mainGroupByFieldMetadataId": [
@@ -15733,7 +15733,7 @@ export default {
             "kanbanColumnWidth": [
                 2
             ],
-            "listDateFieldMetadataId": [
+            "listPinnedFieldMetadataId": [
                 573
             ],
             "mainGroupByFieldMetadataId": [
@@ -16887,7 +16887,7 @@ export default {
             "key": [
                 707
             ],
-            "listDateFieldMetadataId": [
+            "listPinnedFieldMetadataId": [
                 573
             ],
             "mainGroupByFieldMetadataId": [
