@@ -6,6 +6,7 @@ import { raceSlackAssistantAgentDeadline } from 'src/logic-functions/utils/race-
 
 const AGENT_RESULT: RunAgentResult = {
   threadId: '7e4b1d4a-2c3f-4a5b-9c8d-1e2f3a4b5c6d',
+  runId: '3c2b1a0f-9e8d-4c7b-8a6f-5e4d3c2b1a0f',
   status: 'COMPLETED',
   result: { text: 'Acme has 3 open deals' },
   error: null,

@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { TEAMS_ASSISTANT_HELP_TEXT } from 'src/features/chat/logic-functions/constants/teams-assistant-help-text';
+import { TEAMS_ASSISTANT_SUGGESTED_PROMPTS } from 'src/features/chat/logic-functions/constants/teams-assistant-suggested-prompts';
 import { replyWithTeamsAssistantHelp } from 'src/features/chat/logic-functions/utils/reply-with-teams-assistant-help';
 
 const { kvMock, sendActivityMock } = vi.hoisted(() => ({
@@ -24,6 +25,7 @@ vi.mock('src/features/chat/logic-functions/utils/send-teams-activity', () => ({
 const EMPTY_REQUEST = {
   teamsActivityId: '1700000000000',
   teamsConversationId: '19:channel@thread.tacv2;messageid=1699999999999',
+  teamsConversationType: 'channel',
   teamsServiceUrl: 'https://smba.trafficmanager.net/amer/',
 };
 
@@ -51,8 +53,33 @@ describe('replyWithTeamsAssistantHelp', () => {
       serviceUrl: EMPTY_REQUEST.teamsServiceUrl,
       conversationId: EMPTY_REQUEST.teamsConversationId,
       accessToken: 'token',
-      activity: { type: 'message', text: TEAMS_ASSISTANT_HELP_TEXT },
+      activity: {
+        type: 'message',
+        textFormat: 'extendedmarkdown',
+        text: TEAMS_ASSISTANT_HELP_TEXT,
+      },
     });
+  });
+
+  it('should offer the example prompts as suggested actions in a personal chat', async () => {
+    await replyWithTeamsAssistantHelp({
+      ...EMPTY_REQUEST,
+      teamsConversationId: 'a:personal-conversation',
+      teamsConversationType: 'personal',
+    });
+
+    const { activity } = sendActivityMock.mock.calls[0][0];
+
+    expect(activity.text).toBe(TEAMS_ASSISTANT_HELP_TEXT);
+    expect(activity.textFormat).toBe('extendedmarkdown');
+    expect(activity.attachments).toBeUndefined();
+    expect(activity.suggestedActions.actions).toEqual(
+      TEAMS_ASSISTANT_SUGGESTED_PROMPTS.map((prompt) => ({
+        type: 'imBack',
+        title: prompt,
+        value: prompt,
+      })),
+    );
   });
 
   it('should not post the hint again for an activity Teams redelivered', async () => {

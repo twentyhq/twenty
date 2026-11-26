@@ -261,6 +261,20 @@ describe('LambdaDriver', () => {
     expect(functionNames).toEqual([`workflow-code-step-${codeStepExecutorId}`]);
   });
 
+  it('warms up an executor without naming a handler to run', async () => {
+    state = 'Active';
+
+    await driver.warmUp({
+      flatLogicFunction: { id: 'logic-function-id' },
+      env: { MY_VARIABLE: 'value' },
+    });
+
+    expect(functionNames).toEqual(['logic-function-id']);
+    expect(payloads).toEqual([
+      { isWarmUp: true, env: { MY_VARIABLE: 'value' } },
+    ]);
+  });
+
   it('rejects oversized browser requests before provisioning or invoking Lambda', async () => {
     await expect(
       driver.transpile({

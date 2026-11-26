@@ -4,6 +4,7 @@ import { CHAT_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/chat/constan
 import { TEAMS_ASSISTANT_CHAT_OFF_TEXT } from 'src/features/chat/logic-functions/constants/teams-assistant-chat-off-text';
 import { TEAMS_ASSISTANT_HELP_TEXT } from 'src/features/chat/logic-functions/constants/teams-assistant-help-text';
 import { TEAMS_ASSISTANT_NOTICE_TTL_MS } from 'src/features/chat/logic-functions/constants/teams-assistant-notice-ttl-ms';
+import { TEAMS_ASSISTANT_SUGGESTED_PROMPTS } from 'src/features/chat/logic-functions/constants/teams-assistant-suggested-prompts';
 import { TEAMS_ASSISTANT_WELCOME_TTL_MS } from 'src/features/chat/logic-functions/constants/teams-assistant-welcome-ttl-ms';
 import { type TeamsActivitiesDispatchPayload } from 'src/features/chat/logic-functions/types/teams-activities-dispatch-payload.type';
 import { enqueueTeamsAssistantRequest } from 'src/features/chat/logic-functions/utils/enqueue-teams-assistant-request';
@@ -98,6 +99,13 @@ describe('enqueueTeamsAssistantRequest', () => {
       kind: 'welcome',
       text: TEAMS_ASSISTANT_HELP_TEXT,
       ttlMs: TEAMS_ASSISTANT_WELCOME_TTL_MS,
+      suggestedActions: {
+        actions: TEAMS_ASSISTANT_SUGGESTED_PROMPTS.map((prompt) => ({
+          type: 'imBack',
+          title: prompt,
+          value: prompt,
+        })),
+      },
     });
     expect(enqueueTeamsAssistantRequestRecordMock).not.toHaveBeenCalled();
   });
@@ -128,6 +136,7 @@ describe('enqueueTeamsAssistantRequest', () => {
     expect(replyWithHelpMock).toHaveBeenCalledExactlyOnceWith({
       teamsActivityId: '1700000000000',
       teamsConversationId: '19:channel@thread.tacv2;messageid=1699999999999',
+      teamsConversationType: 'channel',
       teamsServiceUrl: PAYLOAD.serviceUrl,
     });
     expect(enqueueTeamsAssistantRequestRecordMock).not.toHaveBeenCalled();

@@ -7,6 +7,7 @@ import {
 } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
+import { LINKEDIN_CHAT_OPTIONS_MAX_COUNT } from 'src/constants/linkedin-chat-options-max-count.constant';
 import { LINKEDIN_HISTORY_IMPORT_CHATS_PER_JOB } from 'src/constants/linkedin-history-import-chats-per-job.constant';
 import { LINKEDIN_IMPORT_HISTORY_TIMEOUT_SECONDS } from 'src/constants/linkedin-import-history-timeout-seconds.constant';
 import { LINKEDIN_PLAN_HISTORY_IMPORT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
@@ -22,6 +23,7 @@ import {
   saveLinkedinHistoryImportChunkChats,
   saveLinkedinHistoryImportPlanning,
 } from 'src/logic-functions/utils/linkedin-history-import-kv.util';
+import { orderSelectedLinkedinChatsByRecency } from 'src/logic-functions/utils/order-selected-linkedin-chats-by-recency.util';
 import { type LinkedinImportPolicy } from 'src/types/linkedin-import-policy.type';
 import { type UnipileChat } from 'src/unipile/types/unipile-chat.type';
 import { listUnipileChats } from 'src/unipile/utils/list-unipile-chats.util';
@@ -262,27 +264,35 @@ const planHistoryImport = async ({
     }
   };
 
-  if (importPolicy === 'SELECTED') {
-    const { selectedChats } = await getLinkedinSettings(connectedAccountId);
-
-    // The import job reads each conversation itself, so none is read here
-    return planLimitedHistoryImport({
-      payload,
-      chats: selectedChats.map(({ id, name }) => ({
-        id,
-        name,
-        is_group: false,
-        is_1to1: false,
-      })),
-    });
-  }
-
   const inboxIds = await pauseOnRateLimit(() =>
     listUnipileInboxIds(unipileAccountId),
   );
 
   if (!Array.isArray(inboxIds)) {
     return inboxIds;
+  }
+
+  if (importPolicy === 'SELECTED') {
+    const { selectedChats } = await getLinkedinSettings(connectedAccountId);
+    const recentChats = await pauseOnRateLimit(() =>
+      listMostRecentUnipileChats({
+        accountId: unipileAccountId,
+        inboxIds,
+        limit: LINKEDIN_CHAT_OPTIONS_MAX_COUNT,
+        deadlineAtMs:
+          startedAt + LINKEDIN_PLAN_HISTORY_IMPORT_TIME_BUDGET_MILLISECONDS,
+      }),
+    );
+
+    return Array.isArray(recentChats)
+      ? planLimitedHistoryImport({
+          payload,
+          chats: orderSelectedLinkedinChatsByRecency({
+            selectedChats,
+            recentChats,
+          }),
+        })
+      : recentChats;
   }
 
   if (isDefined(conversationLimit)) {
@@ -410,7 +420,7 @@ export default defineLogicFunction({
   universalIdentifier: LINKEDIN_PLAN_HISTORY_IMPORT_UNIVERSAL_IDENTIFIER,
   name: 'linkedin-plan-history-import',
   description:
-    'Lists the past LinkedIn conversations of a connection to import, the selected ones or the most recent ones across its inboxes up to the limit of the run, stores them page by page for the import jobs and starts the import chain; hands over to a new planning job when its time runs out.',
+    'Lists the past LinkedIn conversations of a connection to import, most recent first, and starts their import.',
   timeoutSeconds: LINKEDIN_IMPORT_HISTORY_TIMEOUT_SECONDS,
   handler: linkedinPlanHistoryImportHandler,
 });

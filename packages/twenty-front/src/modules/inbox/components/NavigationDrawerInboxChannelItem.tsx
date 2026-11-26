@@ -10,6 +10,7 @@ import { AiChatChannelIcon } from '@/ai-chat/threads/components/AiChatChannelIco
 import { NavigationDrawerInboxChannelActionsDropdown } from '@/inbox/components/NavigationDrawerInboxChannelActionsDropdown';
 import { NavigationDrawerInboxChannelNavigation } from '@/inbox/components/NavigationDrawerInboxChannelNavigation';
 import { useAiChatChannelIcon } from '@/ai-chat/threads/hooks/useAiChatChannelIcon';
+import { getAiChatChannelColor } from '@/ai-chat/threads/utils/getAiChatChannelColor';
 import { useDeleteInboxChannel } from '@/inbox/hooks/useDeleteInboxChannel';
 import { useIsInboxShowingDirectMessage } from '@/inbox/hooks/useIsInboxShowingDirectMessage';
 import { useUpdateInboxChannel } from '@/inbox/hooks/useUpdateInboxChannel';
@@ -121,7 +122,7 @@ export const NavigationDrawerInboxChannelItem = ({
           })
         }
         iconColorPicker={{
-          selectedColor: parseThemeColor(channel.color),
+          selectedColor: parseThemeColor(getAiChatChannelColor(channel)),
           onColorChange: (color) =>
             void updateInboxChannel({
               channelId: channel.id,

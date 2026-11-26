@@ -20,17 +20,9 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Record sharing`,
     description: msg`Let people restrict and share individual records.`,
   },
-  [FeatureFlagKey.IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED]: {
-    label: msg`Skip internal meetings`,
-    description: msg`Skip calendar events with no participant outside the workspace domain, unless internal import is turned on.`,
-  },
   [FeatureFlagKey.IS_INTERNAL_IMPORT_COLUMN_ENABLED]: {
     label: msg`Internal import setting column`,
     description: msg`Read the internal import setting from its new workspace column. Turned on by the 2.59 upgrade.`,
-  },
-  [FeatureFlagKey.IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED]: {
-    label: msg`Import recurring meetings 90 days ahead`,
-    description: msg`Import occurrences of recurring Google Calendar meetings up to 90 days ahead only, and import later occurrences as they come within 90 days.`,
   },
   [FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED]: {
     label: msg`Customizable sidebar`,
@@ -51,10 +43,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
   [FeatureFlagKey.IS_MCP_SERVERS_ENABLED]: {
     label: msg`MCP servers`,
     description: msg`Register external MCP servers in Developers settings and expose their tools to AI chat.`,
-  },
-  [FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED]: {
-    label: msg`Channel visibility through rules`,
-    description: msg`In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops and related record paths.`,
   },
   // TODO(@charlesBochet): remove the API key channel visibility exemption after 2026-11-30
   [FeatureFlagKey.IS_CHANNEL_VISIBILITY_ENFORCED_ON_API_KEYS]: {

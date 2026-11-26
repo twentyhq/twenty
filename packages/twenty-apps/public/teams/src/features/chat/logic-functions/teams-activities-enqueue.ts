@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-sdk/utils';
 import { TEAMS_ACTIVITIES_ENQUEUE_UNIVERSAL_IDENTIFIER } from 'src/features/chat/constants/universal-identifiers';
 import { TEAMS_ASSISTANT_AGENT_BUDGET_SECONDS } from 'src/features/chat/logic-functions/constants/teams-assistant-agent-budget-seconds';
 import { TEAMS_ASSISTANT_REQUEST_TIMEOUT_SECONDS } from 'src/features/chat/logic-functions/constants/teams-assistant-request-timeout-seconds';
+import { teamsActivitiesEnqueueJobFailureHandler } from 'src/features/chat/logic-functions/handlers/teams-activities-enqueue-job-failure-handler';
 import { type TeamsActivitiesDispatchPayload } from 'src/features/chat/logic-functions/types/teams-activities-dispatch-payload.type';
 import { type TeamsActivitiesEnqueueResult } from 'src/features/chat/logic-functions/types/teams-activities-enqueue-result.type';
 import { type TeamsAssistantAnswerResult } from 'src/features/chat/logic-functions/types/teams-assistant-answer-result.type';
@@ -35,4 +36,5 @@ export default defineLogicFunction({
     'Receives a verified Microsoft Teams message or install activity from the activities route, in the workspace that claimed its tenant. Posts a welcome when the bot is installed, the help text for help, hi and bare mentions, and a notice when chat is turned off. Otherwise, when chat is enabled, records the message as a Teams Assistant Request, once per conversation and activity id, then answers it: matches the sender to a workspace member by email, runs the Teams Assistant agent as that member and posts the answer back to the conversation.',
   timeoutSeconds: TEAMS_ASSISTANT_REQUEST_TIMEOUT_SECONDS,
   handler: teamsActivitiesEnqueueHandler,
+  onJobFailure: teamsActivitiesEnqueueJobFailureHandler,
 });

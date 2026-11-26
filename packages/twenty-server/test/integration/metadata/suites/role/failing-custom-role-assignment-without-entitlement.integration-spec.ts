@@ -11,6 +11,7 @@ import { updateOneRole } from 'test/integration/metadata/suites/role/utils/updat
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { findUserWorkspaceRoleTargets } from 'test/integration/utils/find-user-workspace-role-targets.util';
 
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { type WorkspaceBillingEntitlementsCacheService } from 'src/engine/core-modules/billing/services/workspace-billing-entitlements-cache.service';
@@ -288,10 +289,9 @@ describe('Custom role assignment without the custom roles entitlement', () => {
 
     expect(errors).toBeUndefined();
 
-    const roleTargets: { roleId: string }[] = await global.testDataSource.query(
-      `SELECT "roleId" FROM core."roleTarget" WHERE "workspaceId" = $1 AND "userWorkspaceId" = $2`,
-      [SEED_APPLE_WORKSPACE_ID, USER_WORKSPACE_DATA_SEED_IDS.PHIL],
-    );
+    const roleTargets = await findUserWorkspaceRoleTargets({
+      userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.PHIL,
+    });
 
     expect(roleTargets).toEqual([{ roleId: guestRoleId }]);
   });

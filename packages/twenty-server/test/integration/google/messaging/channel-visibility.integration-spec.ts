@@ -16,6 +16,8 @@ import { setupGoogleMock } from 'test/integration/google/mocks/setup-google-mock
 import { connectMessagingAccount } from 'test/integration/utils/connect-messaging-account.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { runMessageChannelSync } from 'test/integration/utils/run-message-channel-sync.util';
+import { syncChannelVisibilityRules } from 'test/integration/permissions/channel-visibility/utils/sync-channel-visibility-rules.util';
+import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 
 const HANDLE = 'gmail-channel-visibility@apple.dev';
 const SENDER_HANDLE = 'gmail-channel-visibility-sender@example.com';
@@ -29,13 +31,14 @@ describe('Message channel visibility (integration)', () => {
   setupGoogleMock({ handle: HANDLE, inbox });
 
   let channel: Awaited<ReturnType<typeof connectMessagingAccount>>;
+  let messageIds: string[];
 
   const messageQuery = () =>
     findManyOperationFactory({
       objectMetadataSingularName: 'message',
       objectMetadataPluralName: 'messages',
-      gqlFields: 'subject text',
-      filter: { subject: { eq: subject } },
+      gqlFields: 'id subject text',
+      filter: { id: { in: messageIds } },
     });
 
   const readMessageAs = async (
@@ -79,6 +82,7 @@ describe('Message channel visibility (integration)', () => {
       { id: channel.channelId },
       { visibility },
     );
+    await syncChannelVisibilityRules();
   };
 
   beforeAll(async () => {
@@ -88,6 +92,22 @@ describe('Message channel visibility (integration)', () => {
     });
 
     await runMessageChannelSync(channel.channelId);
+
+    const ownerResponse = await makeGraphqlApiRequest(
+      findManyOperationFactory({
+        objectMetadataSingularName: 'message',
+        objectMetadataPluralName: 'messages',
+        gqlFields: 'id',
+        filter: { subject: { eq: subject } },
+      }),
+    );
+
+    messageIds = ownerResponse.body.data.messages.edges.map(
+      (edge: { node: { id: string } }) => edge.node.id,
+    );
+
+    await syncChannelVisibilityRules();
+    await waitForAllJobsToFinish();
   }, 120000);
 
   afterAll(async () => {

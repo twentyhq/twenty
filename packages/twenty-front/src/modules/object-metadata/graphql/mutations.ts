@@ -107,6 +107,7 @@ export const CREATE_ONE_FIELD_METADATA_ITEM = gql`
       description
       icon
       isActive
+      isUIEditable
       isUnique
       isSearchable
       isNullable
@@ -179,6 +180,7 @@ export const UPDATE_ONE_FIELD_METADATA_ITEM = gql`
       description
       icon
       isActive
+      isUIEditable
       isUnique
       isSearchable
       isNullable

@@ -304,33 +304,16 @@ describe('Chat participation through the authenticated API', () => {
     {
       threadState: 'new',
       hasExistingThread: false,
-      isRecordSharingEnabled: true,
       recipientWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.SCOTT,
     },
     {
       threadState: 'pre-created empty',
       hasExistingThread: true,
-      isRecordSharingEnabled: true,
       recipientWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.SCOTT,
-    },
-    {
-      threadState: 'new with record sharing disabled',
-      hasExistingThread: false,
-      isRecordSharingEnabled: false,
-      recipientWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
     },
   ])(
     'refuses a first send without Ada in a $threadState thread when no picked person can reply',
-    async ({
-      hasExistingThread,
-      isRecordSharingEnabled,
-      recipientWorkspaceMemberId,
-    }) => {
-      await context.featureFlagService.upsertWorkspaceFeatureFlag({
-        workspaceId: context.workspaceId,
-        featureFlag: FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
-        value: isRecordSharingEnabled,
-      });
+    async ({ hasExistingThread, recipientWorkspaceMemberId }) => {
       const threadId = hasExistingThread
         ? await context.createThread()
         : context.registerThread();
@@ -368,28 +351,6 @@ describe('Chat participation through the authenticated API', () => {
       );
 
       expect(hasCreatedThreadEvent).toBe(false);
-
-      if (isRecordSharingEnabled) {
-        return;
-      }
-
-      const retried = await sendChatParticipationMessage({
-        threadId,
-        isAssistantParticipant: true,
-        recipientWorkspaceMemberIds: [recipientWorkspaceMemberId],
-      });
-
-      expect(retried.body.errors).toBeUndefined();
-      expect(retried.body.data.sendChatMessage.streamId).toEqual(
-        expect.any(String),
-      );
-      expect(
-        retried.body.data.sendChatMessage
-          .recipientParticipantWorkspaceMemberIds,
-      ).toEqual([]);
-      expect((await context.readThread(threadId)).isAssistantParticipant).toBe(
-        true,
-      );
     },
   );
 
