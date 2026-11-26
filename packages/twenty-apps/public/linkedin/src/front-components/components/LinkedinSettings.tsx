@@ -63,7 +63,6 @@ export const LinkedinSettings = () => {
   const [pollCount, setPollCount] = useState(0);
 
   const [isImportRetrying, setIsImportRetrying] = useState(false);
-  const [isImportCancelling, setIsImportCancelling] = useState(false);
   const [importProgress, setImportProgress] = useState<{
     runId: string;
     progress: number;
@@ -161,25 +160,6 @@ export const LinkedinSettings = () => {
     }
   };
 
-  const handleCancelImport = async () => {
-    setIsImportCancelling(true);
-
-    try {
-      showView(
-        await postLinkedinSettingsRouteOrThrow({
-          routePath: LINKEDIN_SETTINGS_ROUTE_PATHS.cancelHistoryImport,
-        }),
-      );
-    } catch {
-      enqueueSnackbar({
-        message: t('Could not cancel the LinkedIn import. Try again.'),
-        variant: 'error',
-      });
-    } finally {
-      setIsImportCancelling(false);
-    }
-  };
-
   const view = state.step === 'ready' ? state.view : undefined;
   const isImportingHistory =
     view?.isConnected === true && view.historyImport?.status === 'IMPORTING';
@@ -228,10 +208,6 @@ export const LinkedinSettings = () => {
               name={view.connection.name}
               handle={view.connection.handle}
               isAuthFailed={view.connection.isAuthFailed}
-            />
-            <LinkedinImportSection
-              importPolicy={view.settings.importPolicy}
-              selectedChats={view.settings.selectedChats}
               historyImport={view.historyImport}
               importProgress={
                 importProgress?.runId === view.historyImport?.runId
@@ -239,15 +215,17 @@ export const LinkedinSettings = () => {
                   : undefined
               }
               isImportRetrying={isImportRetrying}
-              isImportCancelling={isImportCancelling}
+              onRetryImport={handleRetryImport}
+            />
+            <LinkedinImportSection
+              importPolicy={view.settings.importPolicy}
+              selectedChats={view.settings.selectedChats}
               onChange={(importPolicy) =>
                 handleSettingsChange({ importPolicy })
               }
               onSelectedChatsChange={(selectedChats) =>
                 handleSettingsChange({ selectedChats })
               }
-              onRetryImport={handleRetryImport}
-              onCancelImport={handleCancelImport}
             />
             <LinkedinVisibilitySection
               visibility={view.settings.visibility}

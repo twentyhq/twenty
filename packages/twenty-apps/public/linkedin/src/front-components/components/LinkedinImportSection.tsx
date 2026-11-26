@@ -4,10 +4,8 @@ import { Section } from 'twenty-ui/components/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { LinkedinChatPicker } from 'src/front-components/components/LinkedinChatPicker';
-import { LinkedinHistoryImportStatus } from 'src/front-components/components/LinkedinHistoryImportStatus';
 import { LinkedinImportPolicyIcon } from 'src/front-components/components/LinkedinImportPolicyIcon';
 import { SettingsRadioCard } from 'src/front-components/components/SettingsRadioCard';
-import { type LinkedinHistoryImportState } from 'src/types/linkedin-history-import-state.type';
 import { type LinkedinImportPolicy } from 'src/types/linkedin-import-policy.type';
 import { type LinkedinSelectedChat } from 'src/types/linkedin-selected-chat.type';
 
@@ -20,27 +18,15 @@ const StyledStack = styled.div`
 type LinkedinImportSectionProps = {
   importPolicy: LinkedinImportPolicy;
   selectedChats: LinkedinSelectedChat[];
-  historyImport: LinkedinHistoryImportState | null;
-  importProgress: number | undefined;
-  isImportRetrying: boolean;
-  isImportCancelling: boolean;
   onChange: (importPolicy: LinkedinImportPolicy) => void;
   onSelectedChatsChange: (selectedChats: LinkedinSelectedChat[]) => void;
-  onRetryImport: () => void;
-  onCancelImport: () => void;
 };
 
 export const LinkedinImportSection = ({
   importPolicy,
   selectedChats,
-  historyImport,
-  importProgress,
-  isImportRetrying,
-  isImportCancelling,
   onChange,
   onSelectedChatsChange,
-  onRetryImport,
-  onCancelImport,
 }: LinkedinImportSectionProps) => (
   <Section.Root>
     <Section.Header
@@ -82,17 +68,6 @@ export const LinkedinImportSection = ({
           },
         ]}
       />
-      {(historyImport?.status === 'IMPORTING' ||
-        historyImport?.status === 'FAILED') && (
-        <LinkedinHistoryImportStatus
-          historyImport={historyImport}
-          progress={importProgress}
-          isRetrying={isImportRetrying}
-          isCancelling={isImportCancelling}
-          onRetry={onRetryImport}
-          onCancel={onCancelImport}
-        />
-      )}
     </StyledStack>
   </Section.Root>
 );
