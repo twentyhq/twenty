@@ -1,8 +1,14 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
+import { syncChannelVisibilityRules } from 'test/integration/permissions/channel-visibility/utils/sync-channel-visibility-rules.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import {
+  grantRoleWideAccessToChannelObjects,
+  revokeRoleWideAccessToChannelObjects,
+} from 'test/integration/utils/role-wide-access-to-channel-objects.util';
 
+import { type AddStandardRelatedRecordPathsCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-workspace-command-1793375369182-add-standard-related-record-paths.command';
 import { type AddMessageAttachmentTargetCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1793876432369-add-message-attachment-target.command';
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -118,6 +124,7 @@ describe('2-57 workspace command - add message attachment target (integration)',
   };
 
   beforeAll(async () => {
+    await grantRoleWideAccessToChannelObjects();
     command = getAppProviderByClassName<AddMessageAttachmentTargetCommand>(
       'AddMessageAttachmentTargetCommand',
     );
@@ -125,11 +132,39 @@ describe('2-57 workspace command - add message attachment target (integration)',
       'WorkspaceCacheService',
     );
 
+    await global.testDataSource.query(
+      `DELETE FROM core."rowLevelPermissionPredicate" "predicate"
+        USING core."fieldMetadata" "field"
+        WHERE "field".id IN ("predicate"."fieldMetadataId", "predicate"."relationFieldMetadataId")
+          AND "field"."workspaceId" = $1
+          AND "field"."universalIdentifier" = $2`,
+      [
+        SEED_APPLE_WORKSPACE_ID,
+        STANDARD_OBJECTS.attachment.fields.targetMessage.universalIdentifier,
+      ],
+    );
+    await workspaceCacheService.invalidateAndRecompute(
+      SEED_APPLE_WORKSPACE_ID,
+      [
+        'flatRowLevelPermissionPredicateMaps',
+        'flatFieldMetadataMaps',
+        'rolesPermissions',
+      ],
+    );
     await removeMessageAttachmentTarget();
   });
 
   afterAll(async () => {
     await command.runOnWorkspace(RUN_ON_WORKSPACE_ARGS);
+    await workspaceCacheService.invalidateAndRecompute(
+      SEED_APPLE_WORKSPACE_ID,
+      ['flatRelatedRecordPathMaps'],
+    );
+    await getAppProviderByClassName<AddStandardRelatedRecordPathsCommand>(
+      'AddStandardRelatedRecordPathsCommand',
+    ).runOnWorkspace(RUN_ON_WORKSPACE_ARGS);
+    await revokeRoleWideAccessToChannelObjects();
+    await syncChannelVisibilityRules();
   });
 
   it('leaves the workspace unchanged on a dry run', async () => {

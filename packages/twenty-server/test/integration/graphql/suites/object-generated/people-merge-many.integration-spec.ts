@@ -7,6 +7,10 @@ import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graph
 import { mergeManyOperationFactory } from 'test/integration/graphql/utils/merge-many-operation-factory.util';
 import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import {
+  grantRoleWideAccessToChannelObjects,
+  revokeRoleWideAccessToChannelObjects,
+} from 'test/integration/utils/role-wide-access-to-channel-objects.util';
 import { gql } from 'graphql-tag';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
@@ -57,6 +61,7 @@ describe('people merge resolvers (integration)', () => {
   };
 
   beforeAll(async () => {
+    await grantRoleWideAccessToChannelObjects();
     const response = await makeMetadataApiRequest({
       query: FIND_CREATED_TIMELINE_ACTIVITY_TYPE,
     });
@@ -853,5 +858,9 @@ describe('people merge resolvers (integration)', () => {
       );
       expect(mergedPerson.whatsapp.additionalPhones).toHaveLength(3);
     });
+  });
+
+  afterAll(async () => {
+    await revokeRoleWideAccessToChannelObjects();
   });
 });

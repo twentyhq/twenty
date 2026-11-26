@@ -7,6 +7,10 @@ import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graph
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import {
+  grantRoleWideAccessToChannelObjects,
+  revokeRoleWideAccessToChannelObjects,
+} from 'test/integration/utils/role-wide-access-to-channel-objects.util';
 
 const PAGE_SIZE = 50;
 
@@ -206,6 +210,7 @@ describe('timeline from object record resolvers (integration)', () => {
   let personWithEvents: { id: string; companyId: string };
 
   beforeAll(async () => {
+    await grantRoleWideAccessToChannelObjects();
     await createTimelineRecord('company', {
       id: TIMELINE_COMPANY_ID,
       name: 'Timeline Source Company',
@@ -358,6 +363,7 @@ describe('timeline from object record resolvers (integration)', () => {
         }),
       );
     }
+    await revokeRoleWideAccessToChannelObjects();
   });
 
   it('should derive a company message timeline from its related people', async () => {
