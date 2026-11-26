@@ -5,7 +5,6 @@ import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useReturnFromExpandedAiChat } from '@/ai-chat/hooks/useReturnFromExpandedAiChat';
-import { isNextAiChatHandoffSkippedState } from '@/ai-chat/states/isNextAiChatHandoffSkippedState';
 import { useSwitchToNewAiChatInInboxChannel } from '@/inbox/hooks/useSwitchToNewAiChatInInboxChannel';
 import { getExpandedAiChatReturnLocation } from '@/ai-chat/utils/getExpandedAiChatReturnLocation';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
@@ -110,7 +109,10 @@ export const useSwitchNavigationDrawerTab = () => {
       leaveSettingsDrawer();
     }
 
-    navigate(path, { replace: isSettingsDrawer });
+    navigate(path, {
+      replace: isSettingsDrawer,
+      state: { isAiChatHandoffSkipped: true },
+    });
   };
 
   const switchToNavigationMenuTab = (tabId: string | null) => {
@@ -124,8 +126,6 @@ export const useSwitchNavigationDrawerTab = () => {
     store.set(navigationMenuTabIdToOpenFirstItemState.atom, null);
 
     if (shouldOpenTabPage) {
-      store.set(isNextAiChatHandoffSkippedState.atom, isAiModePage);
-
       if (!isDefined(tabId)) {
         openNavigationMenuPage(defaultHomePagePath);
         return;
