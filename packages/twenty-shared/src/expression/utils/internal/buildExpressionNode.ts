@@ -137,11 +137,15 @@ const popAndBuildNode = ({
     case 'IVAR':
       return isString(value) ? { type: 'VARIABLE', path: value } : null;
     case 'IMEMBER': {
-      const variable = stack.pop();
+      const object = stack.pop();
 
-      return variable?.type === 'VARIABLE' && isString(value)
-        ? { type: 'VARIABLE', path: `${variable.path}.${value}` }
-        : null;
+      if (!isDefined(object) || !isString(value)) {
+        return null;
+      }
+
+      return object.type === 'VARIABLE'
+        ? { type: 'VARIABLE', path: `${object.path}.${value}` }
+        : { type: 'MEMBER', object, property: value };
     }
     case 'IOP1': {
       const operand = stack.pop();

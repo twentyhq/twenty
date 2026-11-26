@@ -23,6 +23,7 @@ export type { ExpressionInNode } from './types/ExpressionInNode';
 export type { ExpressionListNode } from './types/ExpressionListNode';
 export type { ExpressionLiteralNode } from './types/ExpressionLiteralNode';
 export type { ExpressionLogicalOperator } from './types/ExpressionLogicalOperator';
+export type { ExpressionMemberNode } from './types/ExpressionMemberNode';
 export type { ExpressionNode } from './types/ExpressionNode';
 export type { ExpressionNodeParseResult } from './types/ExpressionNodeParseResult';
 export type { ExpressionNotNode } from './types/ExpressionNotNode';

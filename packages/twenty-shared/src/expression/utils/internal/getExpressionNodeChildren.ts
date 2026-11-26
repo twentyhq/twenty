@@ -16,6 +16,8 @@ export const getExpressionNodeChildren = (
       return node.children;
     case 'NOT':
       return [node.child];
+    case 'MEMBER':
+      return [node.object];
     case 'UNARY':
       return [node.operand];
     case 'FUNCTION_CALL':

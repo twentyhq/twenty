@@ -23,6 +23,8 @@ const getComputationToken = (node: ExpressionNode): string | undefined => {
       return node.fieldUniversalIdentifier;
     case 'CONCATENATION':
       return '||';
+    case 'MEMBER':
+      return `.${node.property}`;
     default:
       return getExpressionNodeChildren(node)
         .map(getComputationToken)

@@ -101,5 +101,7 @@ export const resolveExpressionFieldReferences = ({
       return { ...node, items: node.items.map(resolve) };
     case 'IN':
       return { ...node, value: resolve(node.value), list: resolve(node.list) };
+    case 'MEMBER':
+      return { ...node, object: resolve(node.object) };
   }
 };

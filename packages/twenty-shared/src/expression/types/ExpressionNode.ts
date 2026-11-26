@@ -6,6 +6,7 @@ import { type ExpressionFunctionCallNode } from '@/expression/types/ExpressionFu
 import { type ExpressionGroupNode } from '@/expression/types/ExpressionGroupNode';
 import { type ExpressionInNode } from '@/expression/types/ExpressionInNode';
 import { type ExpressionListNode } from '@/expression/types/ExpressionListNode';
+import { type ExpressionMemberNode } from '@/expression/types/ExpressionMemberNode';
 import { type ExpressionLiteralNode } from '@/expression/types/ExpressionLiteralNode';
 import { type ExpressionNotNode } from '@/expression/types/ExpressionNotNode';
 import { type ExpressionUnaryNode } from '@/expression/types/ExpressionUnaryNode';
@@ -24,4 +25,5 @@ export type ExpressionNode =
   | ExpressionConcatenationNode<ExpressionNode>
   | ExpressionUnaryNode<ExpressionNode>
   | ExpressionListNode<ExpressionNode>
-  | ExpressionInNode<ExpressionNode>;
+  | ExpressionInNode<ExpressionNode>
+  | ExpressionMemberNode<ExpressionNode>;
