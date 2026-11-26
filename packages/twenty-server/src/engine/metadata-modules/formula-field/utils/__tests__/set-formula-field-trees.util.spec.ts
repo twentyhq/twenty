@@ -5,18 +5,10 @@ import {
   FORMULA_FLAT_FIELD_METADATA_MAPS_MOCK,
   FORMULA_FLAT_OBJECT_METADATA_MAPS_MOCK,
 } from 'src/engine/metadata-modules/formula-field/__mocks__/formula-field-flat-entity-maps.mock';
-import { setFormulaFieldBindings } from 'src/engine/metadata-modules/formula-field/utils/set-formula-field-bindings.util';
+import { setFormulaFieldTrees } from 'src/engine/metadata-modules/formula-field/utils/set-formula-field-trees.util';
 
-const setBindings = ({
-  universalSettings,
-  existingUniversalSettings,
-}: {
-  universalSettings: Record<string, unknown> | null;
-  existingUniversalSettings?: Parameters<
-    typeof setFormulaFieldBindings
-  >[0]['existingUniversalSettings'];
-}) =>
-  setFormulaFieldBindings({
+const setGadgetFormulaTrees = (universalSettings: Record<string, unknown>) =>
+  setFormulaFieldTrees({
     universalFlatFieldMetadata: getFlatFieldMetadataMock({
       universalIdentifier: 'gadget-margin-uid',
       name: 'margin',
@@ -25,63 +17,57 @@ const setBindings = ({
       objectMetadataUniversalIdentifier: 'gadget-object-uid',
       universalSettings,
     }),
-    existingUniversalSettings,
     universalFlatObjectMetadataMaps: FORMULA_FLAT_OBJECT_METADATA_MAPS_MOCK,
     universalFlatFieldMetadataMaps: FORMULA_FLAT_FIELD_METADATA_MAPS_MOCK,
   }).universalSettings;
 
-describe('setFormulaFieldBindings', () => {
-  it('should bind the fields a formula reads, replacing what was sent', () => {
+describe('setFormulaFieldTrees', () => {
+  it('should store the formula as a tree reading fields by identifier, dropping what was sent alongside', () => {
     expect(
-      setBindings({
-        universalSettings: {
-          decimals: 2,
-          formula: {
-            expression: 'price * supplier.revenue.amountMicros',
-            bindings: { price: 'forged-uid' },
-          },
+      setGadgetFormulaTrees({
+        decimals: 2,
+        formula: {
+          expression: 'price * supplier.revenue.amountMicros',
+          bindings: { price: 'forged-uid' },
         },
       }),
     ).toEqual({
       decimals: 2,
       formula: {
-        expression: 'price * supplier.revenue.amountMicros',
-        bindings: {
-          price: 'gadget-price-uid',
-          supplier: 'gadget-supplier-uid',
-          'supplier.revenue': 'supplier-revenue-uid',
+        tree: {
+          type: 'ARITHMETIC',
+          operator: 'MULTIPLY',
+          left: { type: 'FIELD', fieldUniversalIdentifier: 'gadget-price-uid' },
+          right: {
+            type: 'FIELD',
+            relationFieldUniversalIdentifier: 'gadget-supplier-uid',
+            fieldUniversalIdentifier: 'supplier-revenue-uid',
+            subFieldName: 'amountMicros',
+          },
         },
       },
     });
   });
 
-  it('should bind nothing when the formula does not compile', () => {
-    expect(
-      setBindings({
-        universalSettings: { formula: { expression: 'missing * 2' } },
-      }),
-    ).toEqual({ formula: { expression: 'missing * 2', bindings: {} } });
+  it('should leave a formula that does not compile as text, for the validator to report', () => {
+    const universalSettings = { formula: { expression: 'missing * 2' } };
+
+    expect(setGadgetFormulaTrees(universalSettings)).toEqual(universalSettings);
   });
 
-  it('should keep the stored bindings while the expression is unchanged', () => {
-    const existingUniversalSettings = {
+  it('should keep stored trees when no text is written', () => {
+    const universalSettings = {
       formula: {
-        expression: 'missing * 2',
-        bindings: { missing: 'deleted-field-uid' },
+        tree: { type: 'FIELD', fieldUniversalIdentifier: 'gadget-price-uid' },
       },
     };
 
-    expect(
-      setBindings({
-        universalSettings: { formula: { expression: 'missing * 2' } },
-        existingUniversalSettings,
-      }),
-    ).toEqual(existingUniversalSettings);
+    expect(setGadgetFormulaTrees(universalSettings)).toEqual(universalSettings);
   });
 
   it('should store a formula that aggregates related records', () => {
     expect(
-      setFormulaFieldBindings({
+      setFormulaFieldTrees({
         universalFlatFieldMetadata: getFlatFieldMetadataMock({
           universalIdentifier: 'supplier-average-price-uid',
           name: 'averagePrice',
@@ -100,10 +86,16 @@ describe('setFormulaFieldBindings', () => {
       }).universalSettings,
     ).toEqual({
       formula: {
-        expression: 'avg(gadgets.price)',
-        bindings: {
-          gadgets: 'supplier-gadgets-uid',
-          'gadgets.price': 'gadget-price-uid',
+        tree: {
+          type: 'FUNCTION_CALL',
+          functionName: 'avg',
+          arguments: [
+            {
+              type: 'FIELD',
+              relationFieldUniversalIdentifier: 'supplier-gadgets-uid',
+              fieldUniversalIdentifier: 'gadget-price-uid',
+            },
+          ],
         },
         evaluation: 'STORED',
       },
@@ -111,8 +103,6 @@ describe('setFormulaFieldBindings', () => {
   });
 
   it('should leave a field without formula untouched', () => {
-    expect(setBindings({ universalSettings: { decimals: 2 } })).toEqual({
-      decimals: 2,
-    });
+    expect(setGadgetFormulaTrees({ decimals: 2 })).toEqual({ decimals: 2 });
   });
 });

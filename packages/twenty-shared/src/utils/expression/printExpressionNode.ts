@@ -5,6 +5,8 @@ import { type ConditionalEvaluationLogicalOperator } from '@/conditional-evaluat
 import { EXPRESSION_SYMBOL_BY_ARITHMETIC_OPERATOR } from '@/constants/ExpressionSymbolByArithmeticOperator';
 import { EXPRESSION_SYMBOL_BY_UNARY_OPERATOR } from '@/constants/ExpressionSymbolByUnaryOperator';
 import { type ExpressionNode } from '@/types/ExpressionNode';
+import { CustomError } from '@/utils/errors/CustomError';
+import { isDefined } from '@/utils/validation/isDefined';
 
 const BACKSLASH_BEFORE_CLOSING_QUOTE_PATTERN = /\\\\"$/;
 const UNICODE_ESCAPED_BACKSLASH_AND_CLOSING_QUOTE = '\\u005c"';
@@ -45,13 +47,18 @@ const printText = (text: string): string =>
     UNICODE_ESCAPED_BACKSLASH_AND_CLOSING_QUOTE,
   );
 
+type FieldNode = Extract<ExpressionNode, { type: 'FIELD' }>;
+
 export const printExpressionNode = ({
   node,
+  printField,
 }: {
   node: ExpressionNode;
+  // Names a field reference, as only the caller knows the current field names
+  printField?: (fieldNode: FieldNode) => string;
 }): string => {
   const print = (childNode: ExpressionNode) =>
-    printExpressionNode({ node: childNode });
+    printExpressionNode({ node: childNode, printField });
 
   const printAbove = (childNode: ExpressionNode, precedence: number) =>
     getPrecedence(childNode) > precedence
@@ -76,6 +83,15 @@ export const printExpressionNode = ({
       return isString(node.value) ? printText(node.value) : String(node.value);
     case 'VARIABLE':
       return node.path;
+    case 'FIELD':
+      if (!isDefined(printField)) {
+        throw new CustomError(
+          'A field reference needs printField to be printed',
+          'MISSING_FIELD_PRINTER',
+        );
+      }
+
+      return printField(node);
     case 'COMPARISON':
       return [
         printAbove(node.left, COMPARISON_PRECEDENCE),

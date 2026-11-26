@@ -5,12 +5,12 @@ import {
   type FormulaSourceUniversalFlatFieldMetadata,
   type FormulaSourceUniversalFlatObjectMetadata,
 } from 'src/engine/metadata-modules/formula-field/utils/build-formula-field-descriptors-from-universal-flat-entity-maps.util';
-import { setFormulaFieldBindings } from 'src/engine/metadata-modules/formula-field/utils/set-formula-field-bindings.util';
+import { setFormulaFieldTrees } from 'src/engine/metadata-modules/formula-field/utils/set-formula-field-trees.util';
 import { type UniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-maps.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
-// A manifest declares only the expression, so its bindings are derived against the fields present after the sync
-export const setFormulaFieldBindingsThroughMutation = ({
+// A manifest declares the formula as text, so its trees are built against the fields present after the sync
+export const setFormulaFieldTreesThroughMutation = ({
   existingFlatFieldMetadataMaps,
   universalFlatFieldMetadataMapsToMutate,
 }: {
@@ -63,12 +63,8 @@ export const setFormulaFieldBindingsThroughMutation = ({
   for (const universalFlatFieldMetadata of formulaUniversalFlatFieldMetadatas) {
     universalFlatFieldMetadataMapsToMutate.byUniversalIdentifier[
       universalFlatFieldMetadata.universalIdentifier
-    ] = setFormulaFieldBindings({
+    ] = setFormulaFieldTrees({
       universalFlatFieldMetadata,
-      existingUniversalSettings:
-        existingFlatFieldMetadataMaps.byUniversalIdentifier[
-          universalFlatFieldMetadata.universalIdentifier
-        ]?.universalSettings,
       universalFlatObjectMetadataMaps: {
         byUniversalIdentifier: objectByUniversalIdentifier,
       },

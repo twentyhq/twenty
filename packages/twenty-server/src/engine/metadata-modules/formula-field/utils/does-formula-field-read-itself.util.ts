@@ -1,7 +1,15 @@
 import {
-  getFieldMetadataFormulaBindings,
   isDefined,
+  listFieldMetadataFormulaFieldNodes,
 } from 'twenty-shared/utils';
+
+const listReadUniversalIdentifiers = (settings: unknown): string[] =>
+  listFieldMetadataFormulaFieldNodes({ settings }).flatMap(
+    ({ fieldUniversalIdentifier, relationFieldUniversalIdentifier }) =>
+      [relationFieldUniversalIdentifier, fieldUniversalIdentifier].filter(
+        isDefined,
+      ),
+  );
 
 export const doesFormulaFieldReadItself = ({
   universalIdentifier,
@@ -13,9 +21,8 @@ export const doesFormulaFieldReadItself = ({
   findUniversalSettings: (fieldUniversalIdentifier: string) => unknown;
 }): boolean => {
   const visitedUniversalIdentifiers = new Set<string>();
-  const universalIdentifiersToVisit = Object.values(
-    getFieldMetadataFormulaBindings({ settings: universalSettings }) ?? {},
-  );
+  const universalIdentifiersToVisit =
+    listReadUniversalIdentifiers(universalSettings);
 
   while (universalIdentifiersToVisit.length > 0) {
     const readUniversalIdentifier = universalIdentifiersToVisit.pop();
@@ -33,10 +40,8 @@ export const doesFormulaFieldReadItself = ({
 
     visitedUniversalIdentifiers.add(readUniversalIdentifier);
     universalIdentifiersToVisit.push(
-      ...Object.values(
-        getFieldMetadataFormulaBindings({
-          settings: findUniversalSettings(readUniversalIdentifier),
-        }) ?? {},
+      ...listReadUniversalIdentifiers(
+        findUniversalSettings(readUniversalIdentifier),
       ),
     );
   }

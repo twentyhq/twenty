@@ -1,12 +1,14 @@
 import { msg } from '@lingui/core/macro';
+import isEqual from 'lodash.isequal';
 import { RelationType } from 'twenty-shared/types';
 import {
   compileFormulaExpression,
-  getFieldMetadataFormulaCurrencyCodeExpression,
   getFieldMetadataFormulaEvaluation,
-  getFieldMetadataFormulaExpression,
+  getFieldMetadataFormulaTree,
   isDefined,
+  isFormulaFieldMetadata,
   isFormulaFieldMetadataType,
+  printFieldMetadataFormula,
 } from 'twenty-shared/utils';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
@@ -19,7 +21,7 @@ import {
 import { buildFormulaSqlReferenceResolverFromDescriptors } from 'src/engine/metadata-modules/formula-field/utils/build-formula-sql-reference-resolver-from-descriptors.util';
 import { compileFormulaFieldToSql } from 'src/engine/metadata-modules/formula-field/utils/compile-formula-field-to-sql.util';
 import { doesFormulaFieldReadItself } from 'src/engine/metadata-modules/formula-field/utils/does-formula-field-read-itself.util';
-import { isFieldMetadataFormulaUnchanged } from 'src/engine/metadata-modules/formula-field/utils/is-field-metadata-formula-unchanged.util';
+import { isCanonicalFormulaTree } from 'src/engine/metadata-modules/formula-field/utils/is-canonical-formula-tree.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
@@ -92,34 +94,13 @@ export const validateFlatFieldMetadataFormula = ({
     ];
   }
 
-  const expression = getFieldMetadataFormulaExpression({
-    settings: universalSettings,
-  });
-
-  if (!isDefined(expression)) {
+  if (!isFormulaFieldMetadata({ settings: universalSettings })) {
     return [
       {
         code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
         message: 'Formula must have a non-empty expression',
         userFriendlyMessage: msg`A formula needs an expression`,
         value: universalSettings.formula,
-      },
-    ];
-  }
-
-  // An existing formula stays editable when the flag is turned off
-  if (
-    !isFormulaFieldEnabled &&
-    !isFieldMetadataFormulaUnchanged({
-      settings: universalSettings,
-      existingSettings: existingUniversalSettings,
-    })
-  ) {
-    return [
-      {
-        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        message: 'Formula fields are not enabled for this workspace',
-        userFriendlyMessage: msg`Formula fields are not enabled for this workspace`,
       },
     ];
   }
@@ -170,9 +151,56 @@ export const validateFlatFieldMetadataFormula = ({
       pendingUniversalFlatFieldMetadataMaps?.byUniversalIdentifier ?? {},
     ).filter(isDefined),
   }).filter((formulaFieldDescriptor) => formulaFieldDescriptor.name !== name);
-  const currencyCodeExpression = getFieldMetadataFormulaCurrencyCodeExpression({
+  const { expression, currencyCodeExpression } = printFieldMetadataFormula({
     settings: universalSettings,
+    fields,
   });
+
+  if (!isDefined(expression)) {
+    return [
+      {
+        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        message: 'Formula must have a non-empty expression',
+        userFriendlyMessage: msg`A formula needs an expression`,
+        value: universalSettings.formula,
+      },
+    ];
+  }
+
+  // An existing formula stays editable when the flag is turned off; it is compared as text, so storing it as a tree is no edit
+  if (
+    !isFormulaFieldEnabled &&
+    !isEqual(
+      { expression, currencyCodeExpression },
+      printFieldMetadataFormula({
+        settings: existingUniversalSettings,
+        fields,
+      }),
+    )
+  ) {
+    return [
+      {
+        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        message: 'Formula fields are not enabled for this workspace',
+        userFriendlyMessage: msg`Formula fields are not enabled for this workspace`,
+      },
+    ];
+  }
+
+  if (
+    isDefined(getFieldMetadataFormulaTree({ settings: universalSettings })) &&
+    !isCanonicalFormulaTree({ settings: universalSettings, fields })
+  ) {
+    return [
+      {
+        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        message:
+          'Invalid formula: its tree does not read back the same, write the formula as text instead',
+        userFriendlyMessage: msg`Invalid formula: write it as text`,
+        value: universalSettings.formula,
+      },
+    ];
+  }
 
   const toInvalidFormulaError = ({
     errorMessage,

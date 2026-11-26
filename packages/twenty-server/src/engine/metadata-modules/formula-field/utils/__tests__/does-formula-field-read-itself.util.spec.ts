@@ -3,19 +3,31 @@ import { doesFormulaFieldReadItself } from 'src/engine/metadata-modules/formula-
 const SETTINGS_BY_UNIVERSAL_IDENTIFIER: Record<string, unknown> = {
   'person-team-size-uid': {
     formula: {
-      expression: 'count(reports) + sum(reports.teamSize)',
-      bindings: {
-        reports: 'person-reports-uid',
-        'reports.teamSize': 'person-team-size-uid',
+      tree: {
+        type: 'FUNCTION_CALL',
+        functionName: 'sum',
+        arguments: [
+          {
+            type: 'FIELD',
+            relationFieldUniversalIdentifier: 'person-reports-uid',
+            fieldUniversalIdentifier: 'person-team-size-uid',
+          },
+        ],
       },
     },
   },
   'company-head-count-uid': {
     formula: {
-      expression: 'sum(people.teamSize)',
-      bindings: {
-        people: 'company-people-uid',
-        'people.teamSize': 'person-team-size-uid',
+      tree: {
+        type: 'FUNCTION_CALL',
+        functionName: 'sum',
+        arguments: [
+          {
+            type: 'FIELD',
+            relationFieldUniversalIdentifier: 'company-people-uid',
+            fieldUniversalIdentifier: 'person-team-size-uid',
+          },
+        ],
       },
     },
   },

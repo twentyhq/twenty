@@ -1,7 +1,6 @@
 import { type FieldMetadataFormulaEvaluation } from '@/types/FieldMetadataFormulaEvaluation';
-import { getFieldMetadataFormulaExpression } from '@/utils/formula/getFieldMetadataFormulaExpression';
+import { isFormulaFieldMetadata } from '@/utils/formula/isFormulaFieldMetadata';
 import { isPlainObject } from '@/utils/typeguard/isPlainObject';
-import { isDefined } from '@/utils/validation/isDefined';
 
 export const getFieldMetadataFormulaEvaluation = ({
   settings,
@@ -11,7 +10,7 @@ export const getFieldMetadataFormulaEvaluation = ({
   if (
     !isPlainObject(settings) ||
     !isPlainObject(settings.formula) ||
-    !isDefined(getFieldMetadataFormulaExpression({ settings }))
+    !isFormulaFieldMetadata({ settings })
   ) {
     return undefined;
   }

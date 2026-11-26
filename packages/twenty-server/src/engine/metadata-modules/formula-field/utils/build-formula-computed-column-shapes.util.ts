@@ -57,6 +57,7 @@ export const buildFormulaComputedColumnShapes = ({
       >();
       const compiledColumns = compileFormulaFieldColumns({
         flatFieldMetadata: formulaFlatFieldMetadata,
+        fields,
         schemaName,
         tableName,
         resolveReference: buildFormulaSqlReferenceResolverFromDescriptors({

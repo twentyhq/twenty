@@ -49,12 +49,13 @@ export const buildStoredFormulaColumnExpressions = ({
   const tableName = computeObjectTargetTable(flatObjectMetadata);
   const { getLookupAlias, getLookupShapes } =
     createFormulaLookupAliasAllocator();
+  const fields = buildFormulaFieldDescriptorsFromFlatEntityMaps({
+    flatObjectMetadata,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
+  });
   const resolveReference = buildFormulaSqlReferenceResolverFromDescriptors({
-    fields: buildFormulaFieldDescriptorsFromFlatEntityMaps({
-      flatObjectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-    }),
+    fields,
     getLookupAlias,
   });
   const resolveAggregationSource = buildFormulaSqlAggregationSourceResolver({
@@ -69,6 +70,7 @@ export const buildStoredFormulaColumnExpressions = ({
       (
         compileFormulaFieldColumns({
           flatFieldMetadata: storedFormulaFlatFieldMetadata,
+          fields,
           schemaName,
           tableName,
           resolveReference,

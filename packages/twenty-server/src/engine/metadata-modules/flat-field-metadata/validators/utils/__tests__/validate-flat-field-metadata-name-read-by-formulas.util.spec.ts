@@ -5,8 +5,18 @@ const UNIVERSAL_FLAT_FIELD_METADATA_MAPS = {
     'total-uid': {
       universalSettings: {
         formula: {
-          expression: 'price * quantity',
-          bindings: { price: 'price-uid', quantity: 'quantity-uid' },
+          tree: {
+            type: 'ARITHMETIC' as const,
+            operator: 'MULTIPLY' as const,
+            left: {
+              type: 'FIELD' as const,
+              fieldUniversalIdentifier: 'price-uid',
+            },
+            right: {
+              type: 'FIELD' as const,
+              fieldUniversalIdentifier: 'quantity-uid',
+            },
+          },
         },
       },
     },

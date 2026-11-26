@@ -6,6 +6,7 @@ export const getExpressionNodeChildren = (
   switch (node.type) {
     case 'LITERAL':
     case 'VARIABLE':
+    case 'FIELD':
       return [];
     case 'COMPARISON':
     case 'ARITHMETIC':

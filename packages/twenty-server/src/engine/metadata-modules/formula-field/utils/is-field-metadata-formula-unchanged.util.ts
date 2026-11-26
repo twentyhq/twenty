@@ -1,7 +1,21 @@
+import isEqual from 'lodash.isequal';
 import {
   getFieldMetadataFormulaCurrencyCodeExpression,
   getFieldMetadataFormulaExpression,
+  getFieldMetadataFormulaTree,
 } from 'twenty-shared/utils';
+
+const readFormula = (settings: unknown) => ({
+  tree: getFieldMetadataFormulaTree({ settings }),
+  currencyCodeTree: getFieldMetadataFormulaTree({
+    settings,
+    isCurrencyCode: true,
+  }),
+  expression: getFieldMetadataFormulaExpression({ settings }),
+  currencyCodeExpression: getFieldMetadataFormulaCurrencyCodeExpression({
+    settings,
+  }),
+});
 
 export const isFieldMetadataFormulaUnchanged = ({
   settings,
@@ -9,10 +23,4 @@ export const isFieldMetadataFormulaUnchanged = ({
 }: {
   settings: unknown;
   existingSettings: unknown;
-}): boolean =>
-  getFieldMetadataFormulaExpression({ settings }) ===
-    getFieldMetadataFormulaExpression({ settings: existingSettings }) &&
-  getFieldMetadataFormulaCurrencyCodeExpression({ settings }) ===
-    getFieldMetadataFormulaCurrencyCodeExpression({
-      settings: existingSettings,
-    });
+}): boolean => isEqual(readFormula(settings), readFormula(existingSettings));
