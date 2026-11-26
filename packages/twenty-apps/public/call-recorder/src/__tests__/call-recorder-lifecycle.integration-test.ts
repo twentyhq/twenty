@@ -4196,6 +4196,31 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(callRecording.externalBotId).toBeTruthy();
     });
 
+    it('schedules a bot when the user who sets On cannot create the recording', async () => {
+      const calendarEventId = await createCalendarEvent({
+        callRecorderPreference: 'ON',
+      });
+      // A run a user starts defaults to their token; the workspace key cannot create meeting recordings.
+      vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', readWorkspaceApiKey());
+
+      const result = await deliverCalendarEventUpdates({
+        calendarEventId,
+        updatedFields: ['callRecorderPreference'],
+        before: { callRecorderPreference: null },
+        after: { callRecorderPreference: 'ON' },
+      });
+
+      expect(result).toEqual(expect.objectContaining({ reconciled: true }));
+
+      const callRecording = (
+        await findCallRecordings({ calendarEventId: { in: [calendarEventId] } })
+      )[0];
+
+      expect(callRecording).toBeDefined();
+      expect(callRecording.recordingRequestStatus).toBe('REQUESTED');
+      expect(recall.bots.has(callRecording.externalBotId)).toBe(true);
+    });
+
     it('keeps an On set by hand on a meeting that already ended', async () => {
       const calendarEventId = await createCalendarEvent({
         startsAt: hoursAgo(3),
