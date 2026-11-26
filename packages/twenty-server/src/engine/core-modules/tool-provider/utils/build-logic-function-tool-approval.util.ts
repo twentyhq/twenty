@@ -3,7 +3,9 @@ import { type ToolApproval } from 'twenty-shared/ai';
 import { type ToolTriggerApprovalSettings } from 'twenty-shared/application';
 
 export const buildLogicFunctionToolApproval = (
-  approvalSettings: ToolTriggerApprovalSettings | undefined,
+  approvalSettings:
+    | Pick<ToolTriggerApprovalSettings, 'approveLabel' | 'rejectLabel'>
+    | undefined,
 ): ToolApproval | undefined => {
   const approveLabel = approvalSettings?.approveLabel;
   const rejectLabel = approvalSettings?.rejectLabel;
