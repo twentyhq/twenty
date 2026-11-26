@@ -11,6 +11,8 @@ import { addWorkflowManifestsToFlatEntityMapsOrThrow } from 'src/engine/core-mod
 import { preallocateWorkflowReferenceIds } from 'src/engine/core-modules/application/application-manifest/utils/preallocate-workflow-reference-ids.util';
 import { buildAllFlatEntityOperationRecordByMetadataNameFromFromTo } from 'src/engine/core-modules/application/application-manifest/utils/build-all-flat-entity-operation-record-by-metadata-name-from-from-to.util';
 import { buildFromToAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/build-from-to-all-universal-flat-entity-maps.util';
+import { isMarketplaceApplication } from 'src/engine/core-modules/application/application-manifest/utils/is-marketplace-application.util';
+import { restrictMarketplaceApplicationRoleAssignabilityThroughMutation } from 'src/engine/core-modules/application/application-manifest/utils/restrict-marketplace-application-role-assignability-through-mutation.util';
 import { getApplicationSubAllFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/get-application-sub-all-flat-entity-maps.util';
 import { assertConnectionProviderLogicFunctionsAreOwn } from 'src/engine/core-modules/application/application-manifest/utils/assert-connection-provider-logic-functions-are-own.util';
 import { resolveApplicationReferenceIdOrThrow } from 'src/engine/core-modules/application/application-manifest/utils/resolve-application-reference-id-or-throw.util';
@@ -239,6 +241,20 @@ export class ApplicationManifestMigrationService {
         { workspaceId },
       );
 
+    const isOwnerMarketplaceApplication = isMarketplaceApplication({
+      universalIdentifier: ownerFlatApplication.universalIdentifier,
+      sourceType: ownerFlatApplication.sourceType,
+      workspaceCustomApplicationUniversalIdentifier:
+        workspaceCustomFlatApplication.universalIdentifier,
+    });
+
+    if (isOwnerMarketplaceApplication) {
+      restrictMarketplaceApplicationRoleAssignabilityThroughMutation({
+        manifest,
+        toAllUniversalFlatEntityMapsToMutate: toAllUniversalFlatEntityMaps,
+      });
+    }
+
     const idByUniversalIdentifierByMetadataName = hasWorkflows
       ? preallocateWorkflowReferenceIds({
           fromAllFlatEntityMaps,
@@ -334,6 +350,7 @@ export class ApplicationManifestMigrationService {
           ownerFlatApplication.universalIdentifier,
         applicationDefaultRoleUniversalIdentifier:
           manifest.application.defaultRoleUniversalIdentifier,
+        isMarketplaceApplication: isOwnerMarketplaceApplication,
         idByUniversalIdentifierByMetadataName,
         dryRun: isDryRun,
         shouldDeferActions,
