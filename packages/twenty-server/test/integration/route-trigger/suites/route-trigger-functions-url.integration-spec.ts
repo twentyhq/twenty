@@ -5,8 +5,12 @@ import {
   insertPublicDomain,
 } from 'test/integration/route-trigger/utils/public-domain-rows.util';
 import { setupHttpResponseLogicFunctionApplication } from 'test/integration/route-trigger/utils/setup-http-response-logic-function-application.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { HTTPMethod } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
+
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const ECHO_FUNCTIONS_URL_HANDLER =
   'export const main = async () => ({ functionsUrl: process.env.TWENTY_FUNCTIONS_URL ?? null });\n';
@@ -117,20 +121,25 @@ describe('RouteTrigger TWENTY_FUNCTIONS_URL (integration)', () => {
       });
     }
   }, 60000);
-  const setPrimaryPublicDomain = ({
+  const setPrimaryPublicDomain = async ({
     applicationId,
     domain,
   }: {
     applicationId: string;
     domain: string;
-  }) =>
-    globalThis.testDataSource.query(
+  }) => {
+    await globalThis.testDataSource.query(
       `UPDATE core."application"
        SET "primaryPublicDomainId" =
          (SELECT id FROM core."publicDomain" WHERE domain = $1)
        WHERE id = $2`,
       [domain, applicationId],
     );
+
+    await getAppProviderByClassName<WorkspaceCacheService>(
+      'WorkspaceCacheService',
+    ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, ['flatApplicationMaps']);
+  };
 
   it('prefers the validated primary public domain of the application', async () => {
     const olderPublicDomain = `older-${uuidv4()}.example.com`;

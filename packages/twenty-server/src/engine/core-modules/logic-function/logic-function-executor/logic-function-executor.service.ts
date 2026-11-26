@@ -695,7 +695,7 @@ export class LogicFunctionExecutorService {
 
     return this.workspaceDomainsService.buildApplicationFunctionsBaseUrl({
       workspace: { id: workspaceId, subdomain: workspace.subdomain },
-      applicationId: flatApplication.id,
+      flatApplication,
     });
   }
 

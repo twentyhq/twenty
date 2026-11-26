@@ -5,6 +5,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { buildUrlWithPathnameAndSearchParams } from 'src/engine/core-modules/domain/domain-server-config/utils/build-url-with-pathname-and-search-params.util';
 import { WorkspaceDomainConfig } from 'src/engine/core-modules/domain/workspace-domains/types/workspace-domain-config.type';
@@ -204,26 +205,32 @@ export class WorkspaceDomainsService {
 
   async buildApplicationFunctionsBaseUrl({
     workspace,
-    applicationId,
+    flatApplication,
   }: {
     workspace: Pick<WorkspaceEntity, 'id' | 'subdomain'>;
-    applicationId: string;
+    flatApplication: Pick<FlatApplication, 'id' | 'primaryPublicDomainId'>;
   }): Promise<string | undefined> {
-    const validatedPublicDomains = await this.publicDomainRepository.find({
-      where: { workspaceId: workspace.id, applicationId, isValidated: true },
-      select: {
-        id: true,
-        domain: true,
-        application: { id: true, primaryPublicDomainId: true },
-      },
-      relations: ['application'],
-      order: { createdAt: 'ASC' },
-    });
+    const validatedPublicDomainWhere = {
+      workspaceId: workspace.id,
+      applicationId: flatApplication.id,
+      isValidated: true,
+    };
+
+    const primaryPublicDomain = isDefined(flatApplication.primaryPublicDomainId)
+      ? await this.publicDomainRepository.findOne({
+          where: {
+            ...validatedPublicDomainWhere,
+            id: flatApplication.primaryPublicDomainId,
+          },
+        })
+      : null;
 
     const functionsPublicDomain =
-      validatedPublicDomains.find(
-        ({ id, application }) => id === application.primaryPublicDomainId,
-      ) ?? validatedPublicDomains[0];
+      primaryPublicDomain ??
+      (await this.publicDomainRepository.findOne({
+        where: validatedPublicDomainWhere,
+        order: { createdAt: 'ASC' },
+      }));
 
     return this.buildPublicFunctionBaseUrl({
       workspace,

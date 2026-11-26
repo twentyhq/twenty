@@ -12,6 +12,7 @@ import { type GraphQLResolveInfo } from 'graphql';
 import { type ApplicationCapability } from 'twenty-shared/application';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { type IframeMediaPermission } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -119,10 +120,22 @@ export class FrontComponentResolver {
     @Parent() frontComponent: FrontComponentDTO,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<string | null> {
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspace.id, [
+        'flatApplicationMaps',
+      ]);
+
+    const flatApplication =
+      flatApplicationMaps.byId[frontComponent.applicationId];
+
+    if (!isDefined(flatApplication)) {
+      return null;
+    }
+
     const functionsBaseUrl =
       await this.workspaceDomainsService.buildApplicationFunctionsBaseUrl({
         workspace,
-        applicationId: frontComponent.applicationId,
+        flatApplication,
       });
 
     return functionsBaseUrl ?? null;
