@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fireEvent, userEvent, waitFor, within } from 'storybook/test';
 
-import { recordIndexListPinnedFieldMetadataIdsComponentState } from '@/object-record/record-index/states/recordIndexListPinnedFieldMetadataIdsComponentState';
+import { recordIndexListPinnedFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexListPinnedFieldMetadataIdComponentState';
 import { RecordList } from '@/object-record/record-list/components/RecordList';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -132,17 +132,15 @@ export const PinnedField: Story = {
       )!;
 
     jotaiStore.set(
-      recordIndexListPinnedFieldMetadataIdsComponentState.atomFamily({
+      recordIndexListPinnedFieldMetadataIdComponentState.atomFamily({
         instanceId: getRecordIndexIdFromObjectNamePluralAndViewId(
           companyObjectMetadataItem.namePlural,
           mockedViews.find((view) => view.name === 'All Companies')!.id,
         ),
       }),
-      [
-        companyObjectMetadataItem.fields.find(
-          (fieldMetadataItem) => fieldMetadataItem.name === 'createdAt',
-        )!.id,
-      ],
+      companyObjectMetadataItem.fields.find(
+        (fieldMetadataItem) => fieldMetadataItem.name === 'createdAt',
+      )!.id,
     );
 
     await waitFor(() =>

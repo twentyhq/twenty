@@ -2,7 +2,7 @@ import { ListItemButton } from 'twenty-ui/components/navigation';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { useSetViewTypeFromLayoutOptionsMenu } from '@/object-record/object-options-dropdown/hooks/useSetViewTypeFromLayoutOptionsMenu';
 import { recordIndexCalendarLayoutComponentState } from '@/object-record/record-index/states/recordIndexCalendarLayoutComponentState';
-import { recordIndexListPinnedFieldMetadataIdsComponentState } from '@/object-record/record-index/states/recordIndexListPinnedFieldMetadataIdsComponentState';
+import { recordIndexListPinnedFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexListPinnedFieldMetadataIdComponentState';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
@@ -72,12 +72,12 @@ export const ObjectOptionsDropdownLayoutContent = () => {
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
-  const recordIndexListPinnedFieldMetadataIds = useAtomComponentStateValue(
-    recordIndexListPinnedFieldMetadataIdsComponentState,
+  const recordIndexListPinnedFieldMetadataId = useAtomComponentStateValue(
+    recordIndexListPinnedFieldMetadataIdComponentState,
   );
 
-  const firstListPinnedFieldMetadataItem = objectMetadataItem.fields.find(
-    (field) => field.id === recordIndexListPinnedFieldMetadataIds.at(0),
+  const listPinnedFieldMetadataItem = objectMetadataItem.fields.find(
+    (field) => field.id === recordIndexListPinnedFieldMetadataId,
   );
 
   const calendarFieldMetadata = currentView?.calendarFieldMetadataId
@@ -346,7 +346,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                       onClick={() => onContentChange('listPinnedField')}
                       startIcon={<IconPin />}
                       description={
-                        firstListPinnedFieldMetadataItem?.label ?? t`None`
+                        listPinnedFieldMetadataItem?.label ?? t`None`
                       }
                       descriptionPlacement="end"
                       hasSubmenu

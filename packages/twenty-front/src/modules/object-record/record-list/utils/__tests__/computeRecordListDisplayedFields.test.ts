@@ -32,7 +32,7 @@ describe('computeRecordListDisplayedFields', () => {
       computeRecordListDisplayedFields({
         rowWidth: 524,
         populatedFieldCount: 3,
-        pinnedFieldCount: 1,
+        hasPinnedField: true,
       }),
     ).toEqual({
       displayedFieldCount: 1,
@@ -82,17 +82,17 @@ describe('computeRecordListDisplayedFields', () => {
   const computeRowContentWidth = ({
     rowWidth,
     populatedFieldCount,
-    pinnedFieldCount,
+    hasPinnedField,
   }: {
     rowWidth: number;
     populatedFieldCount: number;
-    pinnedFieldCount: number;
+    hasPinnedField: boolean;
   }) => {
     const { displayedFieldCount, displayedFieldMaxWidth } =
       computeRecordListDisplayedFields({
         rowWidth,
         populatedFieldCount,
-        pinnedFieldCount,
+        hasPinnedField,
       });
 
     const hiddenFieldCount = populatedFieldCount - displayedFieldCount;
@@ -103,17 +103,17 @@ describe('computeRecordListDisplayedFields', () => {
         ? RECORD_LIST_ROW_OVERFLOW_CHIP_SLOT_WIDTH +
           (displayedFieldCount > 0 ? FIELD_GAP_WIDTH : 0)
         : 0;
-    const pinnedFieldsWidth =
-      pinnedFieldCount * RECORD_LIST_ROW_FIELD_MAX_WIDTH +
-      Math.max(pinnedFieldCount - 1, 0) * FIELD_GAP_WIDTH +
-      (pinnedFieldCount > 0 && populatedFieldCount > 0 ? FIELD_GAP_WIDTH : 0);
+    const pinnedFieldWidth = hasPinnedField
+      ? RECORD_LIST_ROW_FIELD_MAX_WIDTH +
+        (populatedFieldCount > 0 ? FIELD_GAP_WIDTH : 0)
+      : 0;
 
     return (
       WIDTH_RESERVED_BEFORE_FIELDS +
       displayedFieldCount * displayedFieldMaxWidth +
       displayedFieldsGapWidth +
       overflowChipWidth +
-      pinnedFieldsWidth
+      pinnedFieldWidth
     );
   };
 
@@ -125,7 +125,7 @@ describe('computeRecordListDisplayedFields', () => {
           computeRowContentWidth({
             rowWidth,
             populatedFieldCount,
-            pinnedFieldCount: 0,
+            hasPinnedField: false,
           }),
         ).toBeLessThanOrEqual(rowWidth);
       }
@@ -140,7 +140,7 @@ describe('computeRecordListDisplayedFields', () => {
           computeRowContentWidth({
             rowWidth,
             populatedFieldCount,
-            pinnedFieldCount: 1,
+            hasPinnedField: true,
           }),
         ).toBeLessThanOrEqual(rowWidth);
       }

@@ -1,8 +1,7 @@
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getActiveFieldMetadataItems } from '@/object-metadata/utils/getActiveFieldMetadataItems';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
-import { recordIndexListPinnedFieldMetadataIdsComponentState } from '@/object-record/record-index/states/recordIndexListPinnedFieldMetadataIdsComponentState';
+import { recordIndexListPinnedFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexListPinnedFieldMetadataIdComponentState';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
@@ -15,7 +14,6 @@ import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { useLingui } from '@lingui/react/macro';
 import { isNull } from '@sniptt/guards';
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 import { ListItemButton } from 'twenty-ui/components/navigation';
 import { IconChevronLeft, IconCircleOff } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
@@ -30,13 +28,9 @@ export const ObjectOptionsDropdownListPinnedFieldContent = () => {
   const { updateCurrentView } = useUpdateCurrentView();
 
   const [
-    recordIndexListPinnedFieldMetadataIds,
-    setRecordIndexListPinnedFieldMetadataIds,
-  ] = useAtomComponentState(
-    recordIndexListPinnedFieldMetadataIdsComponentState,
-  );
-
-  const listPinnedFieldMetadataId = recordIndexListPinnedFieldMetadataIds.at(0);
+    recordIndexListPinnedFieldMetadataId,
+    setRecordIndexListPinnedFieldMetadataId,
+  ] = useAtomComponentState(recordIndexListPinnedFieldMetadataIdComponentState);
 
   const labelIdentifierFieldMetadataItem =
     getLabelIdentifierFieldMetadataItem(objectMetadataItem);
@@ -57,21 +51,15 @@ export const ObjectOptionsDropdownListPinnedFieldContent = () => {
     .includes(lowerCaseSearchInput);
 
   const handleListPinnedFieldChange = async (
-    pinnedFieldMetadataItem: FieldMetadataItem | null,
+    listPinnedFieldMetadataId: string | null,
   ) => {
-    setRecordIndexListPinnedFieldMetadataIds(
-      isNull(pinnedFieldMetadataItem) ? [] : [pinnedFieldMetadataItem.id],
-    );
+    setRecordIndexListPinnedFieldMetadataId(listPinnedFieldMetadataId);
 
     try {
-      await updateCurrentView({
-        listPinnedFieldUniversalIdentifiers: isNull(pinnedFieldMetadataItem)
-          ? []
-          : [pinnedFieldMetadataItem.universalIdentifier],
-      });
+      await updateCurrentView({ listPinnedFieldMetadataId });
     } catch (error) {
-      setRecordIndexListPinnedFieldMetadataIds(
-        recordIndexListPinnedFieldMetadataIds,
+      setRecordIndexListPinnedFieldMetadataId(
+        recordIndexListPinnedFieldMetadataId,
       );
       throw error;
     }
@@ -103,8 +91,8 @@ export const ObjectOptionsDropdownListPinnedFieldContent = () => {
           <ListItemButton
             onClick={() => handleListPinnedFieldChange(null)}
             role="option"
-            aria-selected={!isDefined(listPinnedFieldMetadataId)}
-            selected={!isDefined(listPinnedFieldMetadataId)}
+            aria-selected={isNull(recordIndexListPinnedFieldMetadataId)}
+            selected={isNull(recordIndexListPinnedFieldMetadataId)}
             indicator="check"
             startIcon={<IconCircleOff />}
           >
@@ -114,10 +102,14 @@ export const ObjectOptionsDropdownListPinnedFieldContent = () => {
         {fieldMetadataItemsMatchingSearch.map((fieldMetadataItem) => (
           <ListItemButton
             key={fieldMetadataItem.id}
-            onClick={() => handleListPinnedFieldChange(fieldMetadataItem)}
+            onClick={() => handleListPinnedFieldChange(fieldMetadataItem.id)}
             role="option"
-            aria-selected={fieldMetadataItem.id === listPinnedFieldMetadataId}
-            selected={fieldMetadataItem.id === listPinnedFieldMetadataId}
+            aria-selected={
+              fieldMetadataItem.id === recordIndexListPinnedFieldMetadataId
+            }
+            selected={
+              fieldMetadataItem.id === recordIndexListPinnedFieldMetadataId
+            }
             indicator="check"
             startIcon={
               <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />

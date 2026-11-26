@@ -3,7 +3,7 @@ import { RecordChip } from '@/object-record/components/RecordChip';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { CoreRecordReferenceFieldsContext } from '@/object-record/record-field/ui/contexts/CoreRecordReferenceFieldsContext';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { recordIndexListPinnedFieldMetadataIdsComponentState } from '@/object-record/record-index/states/recordIndexListPinnedFieldMetadataIdsComponentState';
+import { recordIndexListPinnedFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexListPinnedFieldMetadataIdComponentState';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { RecordListRowField } from '@/object-record/record-list/components/RecordListRowField';
 import { RECORD_LIST_ROW_FIELD_MAX_WIDTH } from '@/object-record/record-list/constants/RecordListRowFieldMaxWidth';
@@ -106,8 +106,8 @@ export const RecordListRow = ({ recordId, rowRef }: RecordListRowProps) => {
     recordListRowWidthComponentState,
   );
 
-  const recordIndexListPinnedFieldMetadataIds = useAtomComponentStateValue(
-    recordIndexListPinnedFieldMetadataIdsComponentState,
+  const recordIndexListPinnedFieldMetadataId = useAtomComponentStateValue(
+    recordIndexListPinnedFieldMetadataIdComponentState,
   );
 
   const { openRecordFromIndexView } = useOpenRecordFromIndexView();
@@ -124,34 +124,30 @@ export const RecordListRow = ({ recordId, rowRef }: RecordListRowProps) => {
     return null;
   }
 
-  const listPinnedFieldDefinitions = recordIndexListPinnedFieldMetadataIds
-    .map((listPinnedFieldMetadataId) =>
-      getRecordListRowPinnedFieldDefinition(
-        fieldDefinitionByFieldMetadataItemId[listPinnedFieldMetadataId],
-      ),
-    )
-    .filter(isDefined);
+  const listPinnedFieldDefinition = getRecordListRowPinnedFieldDefinition(
+    isDefined(recordIndexListPinnedFieldMetadataId)
+      ? fieldDefinitionByFieldMetadataItemId[
+          recordIndexListPinnedFieldMetadataId
+        ]
+      : undefined,
+  );
 
-  const listPinnedFieldDefinitionsDisplayedAtRowEnd =
-    listPinnedFieldDefinitions.filter(
-      (listPinnedFieldDefinition) =>
-        !isRecordListRowFieldValueEmpty({
-          fieldDefinition: listPinnedFieldDefinition,
-          record: recordStore,
-          coreRecordReferenceFields,
-        }),
-    );
+  const isListPinnedFieldDisplayedAtRowEnd =
+    isDefined(listPinnedFieldDefinition) &&
+    !isRecordListRowFieldValueEmpty({
+      fieldDefinition: listPinnedFieldDefinition,
+      record: recordStore,
+      coreRecordReferenceFields,
+    });
 
   const fieldMetadataItemIdDisplayedAsRowTitle =
     labelIdentifierFieldMetadataItem?.id;
-  const fieldMetadataItemIdsDisplayedAsRowPinnedFields =
-    listPinnedFieldDefinitions.map(
-      (listPinnedFieldDefinition) => listPinnedFieldDefinition.fieldMetadataId,
-    );
+  const fieldMetadataItemIdDisplayedAsRowPinnedField =
+    listPinnedFieldDefinition?.fieldMetadataId;
 
   const fieldMetadataItemIdsAlreadyDisplayedInRow = [
     fieldMetadataItemIdDisplayedAsRowTitle,
-    ...fieldMetadataItemIdsDisplayedAsRowPinnedFields,
+    fieldMetadataItemIdDisplayedAsRowPinnedField,
   ].filter(isDefined);
 
   const visibleRecordFieldsNotAlreadyDisplayedInRow =
@@ -187,7 +183,7 @@ export const RecordListRow = ({ recordId, rowRef }: RecordListRowProps) => {
   const displayedFieldsLayout = computeRecordListDisplayedFields({
     rowWidth: recordListRowWidth,
     populatedFieldCount: nonEmptyRecordFields.length,
-    pinnedFieldCount: listPinnedFieldDefinitionsDisplayedAtRowEnd.length,
+    hasPinnedField: isListPinnedFieldDisplayedAtRowEnd,
   });
 
   const displayedRecordFields = nonEmptyRecordFields.slice(
@@ -296,16 +292,13 @@ export const RecordListRow = ({ recordId, rowRef }: RecordListRowProps) => {
               )}
             </StyledOverflowChipContainer>
           )}
-          {listPinnedFieldDefinitionsDisplayedAtRowEnd.map(
-            (listPinnedFieldDefinition) => (
-              <RecordListRowField
-                key={listPinnedFieldDefinition.fieldMetadataId}
-                recordId={recordId}
-                fieldMetadataItemId={listPinnedFieldDefinition.fieldMetadataId}
-                fieldDefinition={listPinnedFieldDefinition}
-                maxWidth={RECORD_LIST_ROW_FIELD_MAX_WIDTH}
-              />
-            ),
+          {isListPinnedFieldDisplayedAtRowEnd && (
+            <RecordListRowField
+              recordId={recordId}
+              fieldMetadataItemId={listPinnedFieldDefinition.fieldMetadataId}
+              fieldDefinition={listPinnedFieldDefinition}
+              maxWidth={RECORD_LIST_ROW_FIELD_MAX_WIDTH}
+            />
           )}
         </StyledFieldsContainer>
       </StyledRow>

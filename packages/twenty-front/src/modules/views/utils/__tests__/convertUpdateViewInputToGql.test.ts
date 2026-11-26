@@ -14,11 +14,11 @@ describe('convertUpdateViewInputToGql', () => {
     expect(convertUpdateViewInputToGql({})).toEqual({ id: undefined });
   });
 
-  it('includes an empty list of pinned fields so it can be cleared', () => {
+  it('includes a null list pinned field so it can be cleared', () => {
     expect(
-      convertUpdateViewInputToGql({ listPinnedFieldUniversalIdentifiers: [] }),
+      convertUpdateViewInputToGql({ listPinnedFieldMetadataId: null }),
     ).toEqual({
-      listPinnedFieldUniversalIdentifiers: [],
+      listPinnedFieldMetadataId: null,
       id: undefined,
     });
   });
