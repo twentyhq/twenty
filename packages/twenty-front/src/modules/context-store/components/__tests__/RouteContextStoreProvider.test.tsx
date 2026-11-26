@@ -13,6 +13,10 @@ jest.mock('@/navigation/hooks/useLastVisitedView', () => ({
   }),
 }));
 
+jest.mock('@/ai-chat/hooks/useInboxObjectNames', () => ({
+  useInboxObjectNames: () => ({ agentChatThread: 'agentChatThread' }),
+}));
+
 jest.mock('@/object-metadata/states/objectMetadataItemsSelector', () => ({
   objectMetadataItemsSelector: { key: 'object-metadata-items' },
 }));

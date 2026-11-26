@@ -1,3 +1,5 @@
+import { INBOX_OBJECT_NAMES } from '@/ai-chat/constants/InboxObjectNames';
+import { LEGACY_INBOX_OBJECT_NAMES } from '@/ai-chat/constants/LegacyInboxObjectNames';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type View } from '@/views/types/View';
 import {
@@ -21,7 +23,8 @@ export const filterAndSortNavigationMenuItems = (
 
   // Chat favorites are listed in the chat menu instead
   const hiddenRecordObjectNames: string[] = [
-    StandardObjectNameSingular.AgentChatThread,
+    LEGACY_INBOX_OBJECT_NAMES.agentChatThread,
+    INBOX_OBJECT_NAMES.agentChatThread,
     StandardObjectNameSingular.Workflow,
   ];
 

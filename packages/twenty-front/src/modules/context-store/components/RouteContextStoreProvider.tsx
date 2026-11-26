@@ -1,6 +1,7 @@
 import { useWorkspaceRouteObjects } from '@/app/routing/components/WorkspaceRouteObjectsProvider';
 import { RouteContextStoreCoreObjectNameEffect } from '@/context-store/components/RouteContextStoreCoreObjectNameEffect';
 import { RouteContextStoreProviderEffect } from '@/context-store/components/RouteContextStoreProviderEffect';
+import { useInboxObjectNames } from '@/ai-chat/hooks/useInboxObjectNames';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
@@ -11,7 +12,7 @@ import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { computeObjectViewTargetIds } from '@/views/utils/computeObjectViewTargetIds';
 import { isUsableLastVisitedView } from '@/views/utils/isUsableLastVisitedView';
 import { matchRoutes, useLocation, useSearchParams } from 'react-router-dom';
-import { AppPath, StandardObjectNameSingular } from 'twenty-shared/types';
+import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { ViewType } from '~/generated-metadata/graphql';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
@@ -76,10 +77,11 @@ export const RouteContextStoreProvider = () => {
     isMatchingLocation(location, AppPath.AgentIndexPage) ||
     isMatchingLocation(location, AppPath.AgentShowPage);
   const isSettingsPage = useIsSettingsPage();
+  const inboxObjectNames = useInboxObjectNames();
 
   const objectNamePlural = routeParams?.objectNamePlural;
   const objectNameSingular = isAiChatPage
-    ? StandardObjectNameSingular.AgentChatThread
+    ? inboxObjectNames.agentChatThread
     : routeParams?.objectNameSingular;
 
   const [searchParams] = useSearchParams();

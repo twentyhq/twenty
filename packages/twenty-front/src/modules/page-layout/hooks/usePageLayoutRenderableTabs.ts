@@ -1,4 +1,6 @@
+import { useInboxObjectNames } from '@/ai-chat/hooks/useInboxObjectNames';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { WIDGET_TYPE_TO_RELATION_FIELD_NAME } from '@/page-layout/constants/WidgetTypeToRelationFieldName';
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { useIsPageLayoutWidgetReadable } from '@/page-layout/hooks/useIsPageLayoutWidgetReadable';
@@ -11,6 +13,7 @@ import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingC
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
+import { WidgetType } from '~/generated-metadata/graphql';
 
 export const usePageLayoutRenderableTabs = () => {
   const isMobile = useIsMobile();
@@ -21,6 +24,7 @@ export const usePageLayoutRenderableTabs = () => {
   const { objectMetadataItems } = useObjectMetadataItems();
   const widgetVisibilityContext = useWidgetVisibilityContext();
   const isWidgetReadable = useIsPageLayoutWidgetReadable();
+  const inboxObjectNames = useInboxObjectNames();
 
   const targetObjectMetadataItem = isDefined(targetRecordIdentifier)
     ? objectMetadataItems.find(
@@ -46,6 +50,11 @@ export const usePageLayoutRenderableTabs = () => {
     : getTabsRenderableForTargetObject({
         tabs: tabsWithVisibleWidgets,
         targetObjectFields: targetObjectMetadataItem?.fields,
+        relationFieldNameByWidgetType: {
+          ...WIDGET_TYPE_TO_RELATION_FIELD_NAME,
+          [WidgetType.CHAT_THREADS]:
+            inboxObjectNames.relationFields.agentChatThreadTargets,
+        },
       });
 
   const { tabsToRenderInTabList, pinnedLeftTab } = getTabsByDisplayMode({

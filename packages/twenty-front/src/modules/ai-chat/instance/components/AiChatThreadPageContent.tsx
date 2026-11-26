@@ -1,6 +1,6 @@
 import { type ReactNode } from 'react';
-import { StandardObjectNameSingular } from 'twenty-shared/types';
 
+import { useInboxObjectNames } from '@/ai-chat/hooks/useInboxObjectNames';
 import { RecordShowPageContent } from '@/object-record/record-show/components/RecordShowPageContent';
 
 type AiChatThreadPageContentProps = {
@@ -17,17 +17,21 @@ export const AiChatThreadPageContent = ({
   headerTitle,
   headerTitlePrefix,
   headerTitleAccessory,
-}: AiChatThreadPageContentProps) => (
-  <RecordShowPageContent
-    parameters={{
-      objectNameSingular: StandardObjectNameSingular.AgentChatThread,
-      objectRecordId: threadId,
-    }}
-    headerActions={headerActions}
-    headerTitle={headerTitle}
-    headerTitlePrefix={headerTitlePrefix}
-    headerTitleAccessory={headerTitleAccessory}
-    headerTitleMode="record-title"
-    isRecordIdentifierBarHidden
-  />
-);
+}: AiChatThreadPageContentProps) => {
+  const inboxObjectNames = useInboxObjectNames();
+
+  return (
+    <RecordShowPageContent
+      parameters={{
+        objectNameSingular: inboxObjectNames.agentChatThread,
+        objectRecordId: threadId,
+      }}
+      headerActions={headerActions}
+      headerTitle={headerTitle}
+      headerTitlePrefix={headerTitlePrefix}
+      headerTitleAccessory={headerTitleAccessory}
+      headerTitleMode="record-title"
+      isRecordIdentifierBarHidden
+    />
+  );
+};

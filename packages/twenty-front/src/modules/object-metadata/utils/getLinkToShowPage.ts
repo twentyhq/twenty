@@ -1,5 +1,6 @@
 import { AppPath, StandardObjectNameSingular } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
+import { isInboxThreadObjectName } from '@/ai-chat/utils/isInboxThreadObjectName';
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
@@ -22,10 +23,7 @@ export const getLinkToShowPage = (
     );
   }
 
-  if (
-    objectNameSingular === StandardObjectNameSingular.AgentChatThread &&
-    record.id
-  ) {
+  if (isInboxThreadObjectName(objectNameSingular) && record.id) {
     return getAppPath(AppPath.AiChatInbox, { threadId: record.id });
   }
 

@@ -1,6 +1,5 @@
 import { useCallback, useMemo } from 'react';
 import {
-  StandardObjectNameSingular,
   type RecordGqlFields,
   type RecordGqlOperationOrderBy,
 } from 'twenty-shared/types';
@@ -15,6 +14,7 @@ import { type AiChatThreadTargetRecord } from '@/ai-chat/threads/types/AiChatThr
 import { fetchAllAiChatThreadLinkIds } from '@/ai-chat/threads/utils/fetchAllAiChatThreadLinkIds';
 import { getAiChatThreadsForRecordPage } from '@/ai-chat/threads/utils/getAiChatThreadsForRecordPage';
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
+import { useInboxObjectNames } from '@/ai-chat/hooks/useInboxObjectNames';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
@@ -75,9 +75,10 @@ export const useAiChatThreadsForRecord = ({
   targetObjectNameSingular,
 }: TargetRecordIdentifier) => {
   const apolloCoreClient = useApolloCoreClient();
+  const inboxObjectNames = useInboxObjectNames();
   const { objectMetadataItems } = useObjectMetadataItems();
   const junctionConfig = useObjectMorphJunctionConfig({
-    objectNameSingular: StandardObjectNameSingular.AgentChatThread,
+    objectNameSingular: inboxObjectNames.agentChatThread,
   });
 
   const filter = useMemo(
@@ -94,8 +95,7 @@ export const useAiChatThreadsForRecord = ({
 
   const isRecordLinkable = isNonEmptyArray(filter?.or);
   const chatObjectMetadataItem = objectMetadataItems.find(
-    ({ nameSingular }) =>
-      nameSingular === StandardObjectNameSingular.AgentChatThread,
+    ({ nameSingular }) => nameSingular === inboxObjectNames.agentChatThread,
   );
 
   const {
@@ -107,7 +107,7 @@ export const useAiChatThreadsForRecord = ({
     hasNextPage,
     queryIdentifier,
   } = useFindManyRecords<AiChatThreadTargetRecord>({
-    objectNameSingular: StandardObjectNameSingular.AgentChatThreadTarget,
+    objectNameSingular: inboxObjectNames.agentChatThreadTarget,
     skip: !isRecordLinkable,
     filter,
     orderBy: [
@@ -121,7 +121,7 @@ export const useAiChatThreadsForRecord = ({
 
   const { findManyRecordsQuery: findThreadLinksQuery } =
     useFindManyRecordsQuery({
-      objectNameSingular: StandardObjectNameSingular.AgentChatThreadTarget,
+      objectNameSingular: inboxObjectNames.agentChatThreadTarget,
       recordGqlFields: CHAT_THREAD_LINK_GQL_FIELDS,
     });
   const junctionObjectPermissions = useObjectPermissionsForObject(
@@ -158,10 +158,10 @@ export const useAiChatThreadsForRecord = ({
 
   const operationSignature = useMemo(
     () => ({
-      objectNameSingular: StandardObjectNameSingular.AgentChatThreadTarget,
+      objectNameSingular: inboxObjectNames.agentChatThreadTarget,
       variables: { filter },
     }),
-    [filter],
+    [filter, inboxObjectNames.agentChatThreadTarget],
   );
 
   useListenToEventsForQuery({

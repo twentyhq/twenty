@@ -1,15 +1,13 @@
 import uniqBy from 'lodash.uniqby';
 import { useCallback, useMemo } from 'react';
-import {
-  StandardObjectNameSingular,
-  type RecordGqlFields,
-} from 'twenty-shared/types';
+import { type RecordGqlFields } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useAttachAiChatThreadToRecord } from '@/ai-chat/threads/hooks/useAttachAiChatThreadToRecord';
 import { useDetachAiChatThreadFromRecord } from '@/ai-chat/threads/hooks/useDetachAiChatThreadFromRecord';
 import { aiChatThreadPermissionsFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadPermissionsFamilySelector';
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
+import { useInboxObjectNames } from '@/ai-chat/hooks/useInboxObjectNames';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { generateJunctionRelationGqlFields } from '@/object-record/graphql/record-gql-fields/utils/generateJunctionRelationGqlFields';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
@@ -36,9 +34,10 @@ export const useAiChatThreadRecordTargets = ({
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
+  const inboxObjectNames = useInboxObjectNames();
   const { objectMetadataItems } = useObjectMetadataItems();
   const objectMorphJunctionConfig = useObjectMorphJunctionConfig({
-    objectNameSingular: StandardObjectNameSingular.AgentChatThread,
+    objectNameSingular: inboxObjectNames.agentChatThread,
   });
   const junctionConfig = isUsableJunctionConfig(objectMorphJunctionConfig)
     ? objectMorphJunctionConfig
@@ -64,7 +63,7 @@ export const useAiChatThreadRecordTargets = ({
     !isAiChatInboxEnabled || !isDefined(junctionConfig);
 
   const { record: thread, refetch } = useFindOneRecord({
-    objectNameSingular: StandardObjectNameSingular.AgentChatThread,
+    objectNameSingular: inboxObjectNames.agentChatThread,
     objectRecordId: threadId,
     recordGqlFields,
     skip: isThreadQuerySkipped,
@@ -72,10 +71,10 @@ export const useAiChatThreadRecordTargets = ({
 
   const linksOperationSignature = useMemo(
     () => ({
-      objectNameSingular: StandardObjectNameSingular.AgentChatThreadTarget,
+      objectNameSingular: inboxObjectNames.agentChatThreadTarget,
       variables: { filter: { threadId: { eq: threadId } } },
     }),
-    [threadId],
+    [inboxObjectNames.agentChatThreadTarget, threadId],
   );
 
   useListenToEventsForQuery({

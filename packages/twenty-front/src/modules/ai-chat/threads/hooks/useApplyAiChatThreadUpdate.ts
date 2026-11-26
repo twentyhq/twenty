@@ -2,6 +2,8 @@ import { useCallback } from 'react';
 
 import { aiChatThreadRecordUpdateCountState } from '@/ai-chat/threads/states/aiChatThreadRecordUpdateCountState';
 import { type AiChatThreadUpdate } from '@/ai-chat/threads/types/AiChatThreadUpdate';
+import { inboxObjectNamesSelector } from '@/ai-chat/states/selectors/inboxObjectNamesSelector';
+import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useStore } from 'jotai';
 
@@ -12,7 +14,14 @@ export const useApplyAiChatThreadUpdate = () => {
   const applyAiChatThreadUpdate = useCallback(
     (update: AiChatThreadUpdate) => {
       upsertRecordsInStore({
-        partialRecords: [{ __typename: 'AgentChatThread', ...update }],
+        partialRecords: [
+          {
+            __typename: getObjectTypename(
+              store.get(inboxObjectNamesSelector.atom).agentChatThread,
+            ),
+            ...update,
+          },
+        ],
       });
       store.set(
         aiChatThreadRecordUpdateCountState.atom,

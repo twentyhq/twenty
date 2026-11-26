@@ -1,6 +1,5 @@
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
-import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type BrowsingContext } from '@/ai-chat/types/BrowsingContext';
@@ -16,6 +15,7 @@ import { contextStoreCurrentPageTypeComponentState } from '@/context-store/state
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
+import { inboxObjectNamesSelector } from '@/ai-chat/states/selectors/inboxObjectNamesSelector';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
@@ -71,7 +71,7 @@ export const useGetBrowsingContext = () => {
     if (
       !objectMetadataItem ||
       objectMetadataItem.nameSingular ===
-        StandardObjectNameSingular.AgentChatThread
+        store.get(inboxObjectNamesSelector.atom).agentChatThread
     ) {
       return null;
     }

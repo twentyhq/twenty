@@ -1,4 +1,5 @@
 import { aiChatThreadParticipantsState } from '@/ai-chat/threads/states/aiChatThreadParticipantsState';
+import { useInboxObjectNames } from '@/ai-chat/hooks/useInboxObjectNames';
 import { inboxSelectedChannelViewSelector } from '@/inbox/states/selectors/inboxSelectedChannelViewSelector';
 import { inboxThreadStatusByThreadIdFamilySelector } from '@/inbox/states/selectors/inboxThreadStatusByThreadIdFamilySelector';
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -37,7 +38,6 @@ import { isNonEmptyArray } from '@sniptt/guards';
 import { useAtomValue } from 'jotai';
 import {
   ContextStorePageType,
-  StandardObjectNameSingular,
   type CommandMenuContextApi,
 } from 'twenty-shared/types';
 import { isDefined, resolveObjectMetadataLabel } from 'twenty-shared/utils';
@@ -110,9 +110,9 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
   const aiChatThreadParticipants = useAtomStateValue(
     aiChatThreadParticipantsState,
   );
+  const inboxObjectNames = useInboxObjectNames();
   const inboxStatusThreadIds =
-    objectMetadataItem?.nameSingular ===
-      StandardObjectNameSingular.AgentChatThread &&
+    objectMetadataItem?.nameSingular === inboxObjectNames.agentChatThread &&
     aiChatThreadParticipants.isLoaded
       ? (recordIds ?? [])
       : [];

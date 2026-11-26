@@ -40,6 +40,9 @@ jest.mock(
   }),
 );
 jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue');
+jest.mock('@/ai-chat/hooks/useInboxObjectNames', () => ({
+  useInboxObjectNames: () => ({ agentChatThread: 'agentChatThread' }),
+}));
 jest.mock('@/auth/states/currentWorkspaceState', () => ({
   currentWorkspaceState: {},
 }));

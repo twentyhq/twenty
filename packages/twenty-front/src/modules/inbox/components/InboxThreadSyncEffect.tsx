@@ -1,6 +1,5 @@
 import { useStore } from 'jotai';
-import { useEffect } from 'react';
-import { StandardObjectNameSingular } from 'twenty-shared/types';
+import { useEffect, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useAiChatPageThreadId } from '@/ai-chat/hooks/useAiChatPageThreadId';
@@ -9,6 +8,7 @@ import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selec
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { useAddInboxThread } from '@/inbox/hooks/useAddInboxThread';
 import { useHandleInboxThreadRecordOperation } from '@/inbox/hooks/useHandleInboxThreadRecordOperation';
+import { useInboxObjectNames } from '@/ai-chat/hooks/useInboxObjectNames';
 import { useInboxThreadSyncStatus } from '@/inbox/hooks/useInboxThreadSyncStatus';
 import { useRefreshShownInboxThreadList } from '@/inbox/hooks/useRefreshShownInboxThreadList';
 import { useReloadInboxThreads } from '@/inbox/hooks/useReloadInboxThreads';
@@ -23,13 +23,9 @@ import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 const INBOX_THREADS_LOAD_RETRY_DELAY_MS = 3000;
 
-const AI_CHAT_THREADS_OPERATION_SIGNATURE = {
-  objectNameSingular: StandardObjectNameSingular.AgentChatThread,
-  variables: {},
-};
-
 export const InboxThreadSyncEffect = () => {
   const store = useStore();
+  const inboxObjectNames = useInboxObjectNames();
   const { chatObjectMetadataItemId, isThreadSyncEnabled, canLoadChatThreads } =
     useInboxThreadSyncStatus();
   const areFieldMetadataItemsLoaded =
@@ -112,9 +108,17 @@ export const InboxThreadSyncEffect = () => {
     store,
   ]);
 
+  const inboxThreadsOperationSignature = useMemo(
+    () => ({
+      objectNameSingular: inboxObjectNames.agentChatThread,
+      variables: {},
+    }),
+    [inboxObjectNames.agentChatThread],
+  );
+
   useListenToEventsForQuery({
     queryId: 'agent-chat-thread-record-operations',
-    operationSignature: AI_CHAT_THREADS_OPERATION_SIGNATURE,
+    operationSignature: inboxThreadsOperationSignature,
     skip: !isThreadSyncEnabled,
     onSseReconnected: reloadThreads,
   });

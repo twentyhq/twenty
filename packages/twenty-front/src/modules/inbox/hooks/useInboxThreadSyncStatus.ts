@@ -1,4 +1,3 @@
-import { StandardObjectNameSingular } from 'twenty-shared/types';
 import {
   canAccessThroughAllRecordsOrRlsPermission,
   isDefined,
@@ -6,16 +5,18 @@ import {
 } from 'twenty-shared/utils';
 
 import { useCanSyncInbox } from '@/inbox/hooks/useCanSyncInbox';
+import { useInboxObjectNames } from '@/ai-chat/hooks/useInboxObjectNames';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 
 export const useInboxThreadSyncStatus = () => {
   const canSyncInbox = useCanSyncInbox();
+  const inboxObjectNames = useInboxObjectNames();
   const chatObjectMetadataItem = useAtomFamilySelectorValue(
     objectMetadataItemFamilySelector,
     {
-      objectName: StandardObjectNameSingular.AgentChatThread,
+      objectName: inboxObjectNames.agentChatThread,
       objectNameType: 'singular',
     },
   );

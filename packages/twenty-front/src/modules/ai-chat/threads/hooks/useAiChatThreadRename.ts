@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { useToast } from 'twenty-ui/components/feedback';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { useInboxObjectNames } from '@/ai-chat/hooks/useInboxObjectNames';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 
 export const useAiChatThreadRename = (thread: {
@@ -11,6 +11,7 @@ export const useAiChatThreadRename = (thread: {
 }) => {
   const { updateOneRecord } = useUpdateOneRecord();
   const { enqueueToast } = useToast();
+  const inboxObjectNames = useInboxObjectNames();
 
   const [isRenaming, setIsRenaming] = useState(false);
   const [draftTitle, setDraftTitle] = useState(thread.title ?? '');
@@ -35,7 +36,7 @@ export const useAiChatThreadRename = (thread: {
 
     try {
       await updateOneRecord({
-        objectNameSingular: StandardObjectNameSingular.AgentChatThread,
+        objectNameSingular: inboxObjectNames.agentChatThread,
         idToUpdate: thread.id,
         updateOneRecordInput: { title: trimmed },
       });

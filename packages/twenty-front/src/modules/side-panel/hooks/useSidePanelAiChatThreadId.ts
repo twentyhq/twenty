@@ -1,10 +1,8 @@
 import { useAtomValue } from 'jotai';
-import {
-  SidePanelPages,
-  StandardObjectNameSingular,
-} from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { useInboxObjectNames } from '@/ai-chat/hooks/useInboxObjectNames';
 import { askAiSidePanelThreadIdComponentState } from '@/side-panel/states/askAiSidePanelThreadIdComponentState';
 import { useCurrentSidePanelRoutedPath } from '@/side-panel/routing/hooks/useCurrentSidePanelRoutedPath';
 import { getRecordShowParamsFromPath } from '@/side-panel/routing/utils/getRecordShowParamsFromPath';
@@ -13,6 +11,7 @@ import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavi
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useSidePanelAiChatThreadId = () => {
+  const inboxObjectNames = useInboxObjectNames();
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
   const currentSidePanelItem = useAtomStateValue(
     sidePanelNavigationStackState,
@@ -36,7 +35,7 @@ export const useSidePanelAiChatThreadId = () => {
   }
 
   return sidePanelRecord?.objectNameSingular ===
-    StandardObjectNameSingular.AgentChatThread
+    inboxObjectNames.agentChatThread
     ? sidePanelRecord.objectRecordId
     : undefined;
 };
