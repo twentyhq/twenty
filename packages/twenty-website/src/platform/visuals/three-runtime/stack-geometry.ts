@@ -3,11 +3,16 @@ import * as THREE from 'three';
 import { mergeGeometries } from '../halftone-studio/engine/merge-geometries';
 
 // One copy of a model in a stack. The model is laid flat (its face up), then
-// placed in its own units: x and z in widths, y in thicknesses.
+// placed in its own units: x and z in widths, y in thicknesses. A copy can
+// lean (tiltX, tiltZ) and turn (turn) about its own centre, in radians, so a
+// pile can be poured rather than stacked.
 export type HalftoneModelStackPlacement = {
   x: number;
   y: number;
   z: number;
+  tiltX?: number;
+  tiltZ?: number;
+  turn?: number;
 };
 
 export type HalftoneModelStack = {
@@ -81,8 +86,18 @@ export function stackGeometry(
   const flatCenter = new THREE.Vector3();
   flat.boundingBox?.getCenter(flatCenter);
 
-  const copies = placements.map(({ x, y, z }) =>
-    flat.clone().translate(x * size.x, y * size.y, z * size.z),
+  const copies = placements.map(({ x, y, z, tiltX = 0, tiltZ = 0, turn = 0 }) =>
+    flat
+      .clone()
+      .translate(-flatCenter.x, -flatCenter.y, -flatCenter.z)
+      .rotateY(turn)
+      .rotateX(tiltX)
+      .rotateZ(tiltZ)
+      .translate(
+        flatCenter.x + x * size.x,
+        flatCenter.y + y * size.y,
+        flatCenter.z + z * size.z,
+      ),
   );
   const geometry = mergeGeometries(copies);
   copies.forEach((copy) => copy.dispose());
@@ -140,6 +155,9 @@ export function stackGeometry(
 
   const motions = new Map<number, CopyMotion>();
   let shown = 0;
+  // nothing drawn until the first setVisible: otherwise the whole stack
+  // shows for a frame before the copies drop in
+  geometry.setDrawRange(0, 0);
   let frameId: number | null = null;
 
   const drawnCount = () =>
