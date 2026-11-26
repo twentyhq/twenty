@@ -97,7 +97,7 @@ describe('getCommandMenuInlineSearchRecordRows', () => {
     });
   });
 
-  it('keeps previous record rows while searching', () => {
+  it('keeps previous record rows without the footer while searching', () => {
     const searchResultItems = buildSearchResultItems(2);
 
     expect(
@@ -108,7 +108,7 @@ describe('getCommandMenuInlineSearchRecordRows', () => {
       }),
     ).toEqual({
       inlineSearchResultItems: searchResultItems,
-      shouldDisplaySeeInSearchResults: true,
+      shouldDisplaySeeInSearchResults: false,
       shouldDisplaySearchingRecords: false,
       shouldDisplayNoRecordsFound: false,
     });

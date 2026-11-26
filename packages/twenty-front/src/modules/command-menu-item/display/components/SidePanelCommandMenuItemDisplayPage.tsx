@@ -5,7 +5,7 @@ import { COMMAND_MENU_ITEM_SECTIONS_IN_DISPLAY_ORDER } from '@/command-menu-item
 import { COMMAND_MENU_NO_RECORDS_FOUND_ITEM_ID } from '@/command-menu-item/constants/CommandMenuNoRecordsFoundItemId';
 import { COMMAND_MENU_SEARCHING_RECORDS_ITEM_ID } from '@/command-menu-item/constants/CommandMenuSearchingRecordsItemId';
 import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
-import { COMMAND_MENU_SEE_MORE_RECORDS_ITEM_ID } from '@/command-menu-item/constants/CommandMenuSeeMoreRecordsItemId';
+import { COMMAND_MENU_SEE_IN_SEARCH_RESULTS_ITEM_ID } from '@/command-menu-item/constants/CommandMenuSeeInSearchResultsItemId';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { CommandMenuAskAiFallbackItem } from '@/command-menu-item/display/components/CommandMenuAskAiFallbackItem';
 import { CommandMenuItemRenderer } from '@/command-menu-item/display/components/CommandMenuItemRenderer';
@@ -15,6 +15,7 @@ import { useCommandMenuItemCurrentViewSectionContext } from '@/command-menu-item
 import { useCommandMenuItemObjectSectionContext } from '@/command-menu-item/display/hooks/useCommandMenuItemObjectSectionContext';
 import { useCommandMenuItemSelectionSectionContext } from '@/command-menu-item/display/hooks/useCommandMenuItemSelectionSectionContext';
 import { useCommandMenuItemWorkspaceSectionContext } from '@/command-menu-item/display/hooks/useCommandMenuItemWorkspaceSectionContext';
+import { getCommandMenuDefaultSelectedItemId } from '@/command-menu-item/display/utils/getCommandMenuDefaultSelectedItemId';
 import { getCommandMenuInlineSearchRecordRows } from '@/command-menu-item/display/utils/getCommandMenuInlineSearchRecordRows';
 import { interpolateCommandMenuItemFields } from '@/command-menu-item/display/utils/interpolateCommandMenuItemFields';
 import { type CommandMenuItemSection } from '@/command-menu-item/types/CommandMenuItemSection';
@@ -90,8 +91,6 @@ const INITIAL_SECTIONS_TOGGLE_STATE: SectionsToggleState = {
 
 const COLLAPSIBLE_SECTIONS: readonly CommandMenuItemSection[] =
   COLLAPSIBLE_COMMAND_MENU_ITEM_SECTIONS;
-
-const MINIMUM_QUESTION_WORD_COUNT = 4;
 
 const getSectionHeaderItemId = (section: CommandMenuItemSection) =>
   `command-menu-section-header-${section}`;
@@ -332,7 +331,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
         ...getSectionCommandItemIds(section),
         ...inlineSearchResultItems.map((item) => item.id),
         ...(shouldDisplaySeeInSearchResults
-          ? [COMMAND_MENU_SEE_MORE_RECORDS_ITEM_ID]
+          ? [COMMAND_MENU_SEE_IN_SEARCH_RESULTS_ITEM_ID]
           : []),
         ...displayedFallbackCommandMenuItems.map((item) => item.id),
       ];
@@ -374,31 +373,12 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     ? undefined
     : inlineSearchResultItems[0]?.id;
 
-  const doesSearchReadAsQuestion =
-    trimmedSidePanelSearch.endsWith('?') ||
-    trimmedSidePanelSearch.split(/\s+/).length >= MINIMUM_QUESTION_WORD_COUNT;
-
-  const getDefaultSelectedItemId = () => {
-    if (!isSearchActive) {
-      return undefined;
-    }
-
-    if (isDefined(firstCommandItemId)) {
-      return firstCommandItemId;
-    }
-
-    if (shouldDisplayAskAiPrompt && doesSearchReadAsQuestion) {
-      return COMMAND_MENU_ASK_AI_FALLBACK_ITEM_ID;
-    }
-
-    if (isDefined(firstRecordItemId)) {
-      return firstRecordItemId;
-    }
-
-    return null;
-  };
-
-  const defaultSelectedItemId = getDefaultSelectedItemId();
+  const defaultSelectedItemId = getCommandMenuDefaultSelectedItemId({
+    trimmedSearch: trimmedSidePanelSearch,
+    firstCommandItemId,
+    firstRecordItemId,
+    shouldDisplayAskAiPrompt,
+  });
 
   const getSectionPreview = (section: DisplayedCommandMenuItemSection) =>
     getCommandMenuItemSectionPreview({
@@ -413,7 +393,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
       objectMetadataItems,
     });
 
-  const handleSeeMoreRecords = () => {
+  const handleSeeInSearchResults = () => {
     setSidePanelSearchObjectFilter(null);
     navigateSidePanelMenu({
       page: SidePanelPages.SearchRecords,
@@ -430,15 +410,15 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
       ))}
       {shouldDisplaySeeInSearchResults && (
         <SelectableListItem
-          itemId={COMMAND_MENU_SEE_MORE_RECORDS_ITEM_ID}
-          onEnter={handleSeeMoreRecords}
+          itemId={COMMAND_MENU_SEE_IN_SEARCH_RESULTS_ITEM_ID}
+          onEnter={handleSeeInSearchResults}
         >
           <CommandMenuItem
-            id={COMMAND_MENU_SEE_MORE_RECORDS_ITEM_ID}
+            id={COMMAND_MENU_SEE_IN_SEARCH_RESULTS_ITEM_ID}
             label={t`See in search results`}
             description={searchResultsCountLabel}
             Icon={IconArrowRight}
-            onClick={handleSeeMoreRecords}
+            onClick={handleSeeInSearchResults}
           />
         </SelectableListItem>
       )}

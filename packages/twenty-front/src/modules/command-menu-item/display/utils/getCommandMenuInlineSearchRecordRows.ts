@@ -26,7 +26,8 @@ export const getCommandMenuInlineSearchRecordRows = ({
       0,
       COMMAND_MENU_INLINE_SEARCH_RECORDS_LIMIT,
     ),
-    shouldDisplaySeeInSearchResults: hasSearchResultItems,
+    shouldDisplaySeeInSearchResults:
+      hasSearchResultItems && !isSearchingRecords,
     shouldDisplaySearchingRecords: isSearchingRecords && !hasSearchResultItems,
     shouldDisplayNoRecordsFound: !isSearchingRecords && !hasSearchResultItems,
   };
