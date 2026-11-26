@@ -31245,6 +31245,7 @@ msgstr "Ten dostawca jest wbudowany. Ustaw jego klucz API na jego stronie."
 
 #. js-lingui-id: qfpz3J
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
+#: src/modules/views/utils/computeRelationFilterDisplayValue.ts
 msgid "This record"
 msgstr "Ten rekord"
 

@@ -31247,6 +31247,7 @@ msgstr "Questo provider è integrato. Imposta la relativa chiave API dalla sua p
 
 #. js-lingui-id: qfpz3J
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
+#: src/modules/views/utils/computeRelationFilterDisplayValue.ts
 msgid "This record"
 msgstr "Questo record"
 

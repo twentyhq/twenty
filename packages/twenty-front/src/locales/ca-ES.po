@@ -31245,6 +31245,7 @@ msgstr "Aquest proveïdor està integrat. Configureu la seva clau d'API des de l
 
 #. js-lingui-id: qfpz3J
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
+#: src/modules/views/utils/computeRelationFilterDisplayValue.ts
 msgid "This record"
 msgstr "Aquest registre"
 

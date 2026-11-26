@@ -31245,6 +31245,7 @@ msgstr "Dieser Anbieter ist integriert. Legen Sie seinen API-Schlüssel auf sein
 
 #. js-lingui-id: qfpz3J
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
+#: src/modules/views/utils/computeRelationFilterDisplayValue.ts
 msgid "This record"
 msgstr "Dieser Datensatz"
 

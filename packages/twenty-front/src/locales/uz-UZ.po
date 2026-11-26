@@ -31245,6 +31245,7 @@ msgstr "Ushbu provayder ichki o'rnatilgan. API kalitini uning sahifasidan sozlan
 
 #. js-lingui-id: qfpz3J
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
+#: src/modules/views/utils/computeRelationFilterDisplayValue.ts
 msgid "This record"
 msgstr "Ushbu yozuv"
 

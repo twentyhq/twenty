@@ -31245,6 +31245,7 @@ msgstr "Acest furnizor este integrat. Setați cheia sa API din pagina sa."
 
 #. js-lingui-id: qfpz3J
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
+#: src/modules/views/utils/computeRelationFilterDisplayValue.ts
 msgid "This record"
 msgstr "Această înregistrare"
 

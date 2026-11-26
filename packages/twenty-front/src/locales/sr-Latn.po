@@ -31245,6 +31245,7 @@ msgstr "Ovaj pružalac usluga je ugrađen. Postavite njegov API ključ na njegov
 
 #. js-lingui-id: qfpz3J
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
+#: src/modules/views/utils/computeRelationFilterDisplayValue.ts
 msgid "This record"
 msgstr "Ovaj zapis"
 

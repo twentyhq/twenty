@@ -31245,6 +31245,7 @@ msgstr "此提供商为内置提供商。请在其页面中设置 API 密钥。"
 
 #. js-lingui-id: qfpz3J
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
+#: src/modules/views/utils/computeRelationFilterDisplayValue.ts
 msgid "This record"
 msgstr "此记录"
 

@@ -31245,6 +31245,7 @@ msgstr "Denne leverandøren er innebygd. Angi API-nøkkelen fra siden dens."
 
 #. js-lingui-id: qfpz3J
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
+#: src/modules/views/utils/computeRelationFilterDisplayValue.ts
 msgid "This record"
 msgstr "Denne oppføringen"
 

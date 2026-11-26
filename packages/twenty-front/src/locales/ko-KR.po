@@ -31245,6 +31245,7 @@ msgstr "이 제공업체는 기본 제공됩니다. 해당 페이지에서 API �
 
 #. js-lingui-id: qfpz3J
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
+#: src/modules/views/utils/computeRelationFilterDisplayValue.ts
 msgid "This record"
 msgstr "이 레코드"
 
