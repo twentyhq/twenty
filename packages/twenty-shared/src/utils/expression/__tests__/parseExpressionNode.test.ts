@@ -1,14 +1,14 @@
-import { parseExpressionTree } from '@/utils/expression/parseExpressionTree';
+import { parseExpressionNode } from '@/utils/expression/parseExpressionNode';
 
-describe('parseExpressionTree', () => {
+describe('parseExpressionNode', () => {
   it('should build a call over member paths with a nested condition', () => {
     expect(
-      parseExpressionTree(
+      parseExpressionNode(
         'sum(deals.amount, deals.isWon and not deals.isArchived)',
       ),
     ).toEqual({
       isValid: true,
-      tree: {
+      node: {
         type: 'FUNCTION_CALL',
         functionName: 'sum',
         arguments: [
@@ -30,9 +30,9 @@ describe('parseExpressionTree', () => {
   });
 
   it('should keep the operand order of arithmetic and membership', () => {
-    expect(parseExpressionTree('price - discount in [1, 2]')).toEqual({
+    expect(parseExpressionNode('price - discount in [1, 2]')).toEqual({
       isValid: true,
-      tree: {
+      node: {
         type: 'IN',
         value: {
           type: 'ARITHMETIC',
@@ -52,14 +52,14 @@ describe('parseExpressionTree', () => {
   });
 
   it('should refuse bracket access', () => {
-    expect(parseExpressionTree('emails[0]')).toMatchObject({
+    expect(parseExpressionNode('emails[0]')).toMatchObject({
       isValid: false,
       errorCode: 'BRACKET_ACCESS',
     });
   });
 
   it('should refuse several statements', () => {
-    expect(parseExpressionTree('amount > 1; amount < 2')).toMatchObject({
+    expect(parseExpressionNode('amount > 1; amount < 2')).toMatchObject({
       isValid: false,
       errorCode: 'INVALID_SYNTAX',
       errorParams: { token: ';' },
@@ -67,7 +67,7 @@ describe('parseExpressionTree', () => {
   });
 
   it('should report a syntax error', () => {
-    expect(parseExpressionTree('amount +')).toMatchObject({
+    expect(parseExpressionNode('amount +')).toMatchObject({
       isValid: false,
       errorCode: 'INCOMPLETE_EXPRESSION',
     });

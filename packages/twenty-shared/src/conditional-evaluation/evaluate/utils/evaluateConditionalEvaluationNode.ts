@@ -1,7 +1,7 @@
 import { isFunction, isObject, isString } from '@sniptt/guards';
 
 import { CONDITIONAL_EVALUATION_FUNCTIONS } from '@/conditional-evaluation/common/constants/ConditionalEvaluationFunctions';
-import { type ConditionalEvaluationComparisonOperator } from '@/conditional-evaluation/common/types/ConditionalEvaluationComparisonOperator';
+import { type ExpressionComparisonOperator } from '@/expression/types/ExpressionComparisonOperator';
 import { type ConditionalEvaluationNode } from '@/conditional-evaluation/common/types/ConditionalEvaluationNode';
 import { FORBIDDEN_PROPERTY_NAMES } from '@/constants/ForbiddenPropertyNames';
 import { isDefined } from '@/utils/validation/isDefined';
@@ -59,7 +59,7 @@ const compareValues = ({
   left,
   right,
 }: {
-  operator: ConditionalEvaluationComparisonOperator;
+  operator: ExpressionComparisonOperator;
   left: unknown;
   right: unknown;
 }): boolean => {

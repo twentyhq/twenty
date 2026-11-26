@@ -1,13 +1,13 @@
-import { type ExpressionTreeResult } from '@/types/ExpressionTreeResult';
-import { buildExpressionTree } from '@/utils/expression/internal/buildExpressionTree';
+import { type ExpressionNodeParseResult } from '@/expression/types/ExpressionNodeParseResult';
+import { toExpressionNodeParseResult } from '@/expression/utils/internal/toExpressionNodeParseResult';
 import { getExpressionSyntaxError } from '@/utils/expression/getExpressionSyntaxError';
 import { parseValidationRuleExpression } from '@/utils/validation-rule/parseValidationRuleExpression';
 
-export const parseExpressionTree = (
+export const parseExpressionNode = (
   expression: string,
-): ExpressionTreeResult => {
+): ExpressionNodeParseResult => {
   try {
-    return buildExpressionTree(
+    return toExpressionNodeParseResult(
       parseValidationRuleExpression(expression).tokens,
     );
   } catch (error) {

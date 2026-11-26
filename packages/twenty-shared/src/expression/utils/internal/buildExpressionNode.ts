@@ -1,11 +1,12 @@
 import { isBoolean, isNumber, isString } from '@sniptt/guards';
 import { type Instruction } from 'expr-eval-fork';
 
-import { CONDITIONAL_EVALUATION_SYMBOL_BY_COMPARISON_OPERATOR } from '@/conditional-evaluation/common/constants/ConditionalEvaluationSymbolByComparisonOperator';
-import { type ConditionalEvaluationLogicalOperator } from '@/conditional-evaluation/common/types/ConditionalEvaluationLogicalOperator';
-import { EXPRESSION_SYMBOL_BY_ARITHMETIC_OPERATOR } from '@/constants/ExpressionSymbolByArithmeticOperator';
-import { EXPRESSION_SYMBOL_BY_UNARY_OPERATOR } from '@/constants/ExpressionSymbolByUnaryOperator';
-import { type ExpressionNode } from '@/types/ExpressionNode';
+import { EXPRESSION_PREFIX_FUNCTION_NAMES } from '@/expression/constants/ExpressionPrefixFunctionNames';
+import { EXPRESSION_SYMBOL_BY_ARITHMETIC_OPERATOR } from '@/expression/constants/ExpressionSymbolByArithmeticOperator';
+import { EXPRESSION_SYMBOL_BY_COMPARISON_OPERATOR } from '@/expression/constants/ExpressionSymbolByComparisonOperator';
+import { EXPRESSION_SYMBOL_BY_UNARY_OPERATOR } from '@/expression/constants/ExpressionSymbolByUnaryOperator';
+import { type ExpressionLogicalOperator } from '@/expression/types/ExpressionLogicalOperator';
+import { type ExpressionNode } from '@/expression/types/ExpressionNode';
 import { typedObjectEntries } from '@/utils/typed-object-entries';
 import { isDefined } from '@/utils/validation/isDefined';
 
@@ -20,7 +21,7 @@ const invertSymbols = <TOperator extends string>(
   );
 
 const COMPARISON_OPERATOR_BY_SYMBOL = invertSymbols(
-  CONDITIONAL_EVALUATION_SYMBOL_BY_COMPARISON_OPERATOR,
+  EXPRESSION_SYMBOL_BY_COMPARISON_OPERATOR,
 );
 const ARITHMETIC_OPERATOR_BY_SYMBOL = invertSymbols(
   EXPRESSION_SYMBOL_BY_ARITHMETIC_OPERATOR,
@@ -28,10 +29,7 @@ const ARITHMETIC_OPERATOR_BY_SYMBOL = invertSymbols(
 const UNARY_OPERATOR_BY_SYMBOL = invertSymbols(
   EXPRESSION_SYMBOL_BY_UNARY_OPERATOR,
 );
-const LOGICAL_OPERATOR_BY_SYMBOL = new Map<
-  string,
-  ConditionalEvaluationLogicalOperator
->([
+const LOGICAL_OPERATOR_BY_SYMBOL = new Map<string, ExpressionLogicalOperator>([
   ['and', 'AND'],
   ['or', 'OR'],
 ]);
@@ -41,7 +39,7 @@ const toGroupChildren = ({
   logicalOperator,
 }: {
   operand: ExpressionNode;
-  logicalOperator: ConditionalEvaluationLogicalOperator;
+  logicalOperator: ExpressionLogicalOperator;
 }): ExpressionNode[] =>
   operand.type === 'GROUP' && operand.logicalOperator === logicalOperator
     ? operand.children
@@ -81,6 +79,10 @@ const toBinaryNode = ({
     return { type: 'ARITHMETIC', operator: arithmeticOperator, left, right };
   }
 
+  if (symbol === '||') {
+    return { type: 'CONCATENATION', left, right };
+  }
+
   return symbol === 'in' ? { type: 'IN', value: left, list: right } : null;
 };
 
@@ -97,6 +99,18 @@ const toUnaryNode = ({
 
   if (symbol === '-' && operand.type === 'LITERAL' && isNumber(operand.value)) {
     return { type: 'LITERAL', value: -operand.value };
+  }
+
+  if (
+    EXPRESSION_PREFIX_FUNCTION_NAMES.some(
+      (prefixFunctionName) => prefixFunctionName === symbol,
+    )
+  ) {
+    return {
+      type: 'FUNCTION_CALL',
+      functionName: symbol,
+      arguments: [operand],
+    };
   }
 
   const unaryOperator = UNARY_OPERATOR_BY_SYMBOL.get(symbol);

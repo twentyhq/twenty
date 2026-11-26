@@ -1,7 +1,7 @@
 import { VALIDATION_RULE_FUNCTIONS } from '@/constants/ValidationRuleFunctions';
-import { type ExpressionNode } from '@/types/ExpressionNode';
+import { type ExpressionNode } from '@/expression/types/ExpressionNode';
 import { type ValidationRuleErrorParams } from '@/types/ValidationRuleErrorParams';
-import { getExpressionNodeChildren } from '@/utils/expression/internal/getExpressionNodeChildren';
+import { getExpressionNodeChildren } from '@/expression/utils/internal/getExpressionNodeChildren';
 import { isValidationRuleFunctionName } from '@/utils/validation-rule/isValidationRuleFunctionName';
 import { isDefined } from '@/utils/validation/isDefined';
 

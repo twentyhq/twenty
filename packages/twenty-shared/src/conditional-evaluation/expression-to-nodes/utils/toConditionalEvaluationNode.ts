@@ -2,11 +2,11 @@
 import { type Instruction } from 'expr-eval-fork';
 
 import { type ConditionalEvaluationNode } from '@/conditional-evaluation/common/types/ConditionalEvaluationNode';
-import { EXPRESSION_SYMBOL_BY_ARITHMETIC_OPERATOR } from '@/constants/ExpressionSymbolByArithmeticOperator';
-import { EXPRESSION_SYMBOL_BY_UNARY_OPERATOR } from '@/constants/ExpressionSymbolByUnaryOperator';
-import { type ExpressionNode } from '@/types/ExpressionNode';
-import { buildExpressionNode } from '@/utils/expression/internal/buildExpressionNode';
-import { getExpressionNodeChildren } from '@/utils/expression/internal/getExpressionNodeChildren';
+import { EXPRESSION_SYMBOL_BY_ARITHMETIC_OPERATOR } from '@/expression/constants/ExpressionSymbolByArithmeticOperator';
+import { EXPRESSION_SYMBOL_BY_UNARY_OPERATOR } from '@/expression/constants/ExpressionSymbolByUnaryOperator';
+import { type ExpressionNode } from '@/expression/types/ExpressionNode';
+import { buildExpressionNode } from '@/expression/utils/internal/buildExpressionNode';
+import { getExpressionNodeChildren } from '@/expression/utils/internal/getExpressionNodeChildren';
 import { isDefined } from '@/utils/validation/isDefined';
 
 const getComputationToken = (node: ExpressionNode): string | undefined => {
@@ -19,6 +19,8 @@ const getComputationToken = (node: ExpressionNode): string | undefined => {
       return '[';
     case 'IN':
       return 'in';
+    case 'CONCATENATION':
+      return '||';
     default:
       return getExpressionNodeChildren(node)
         .map(getComputationToken)
