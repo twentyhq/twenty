@@ -13,6 +13,7 @@ import { StyledChatComposerBox } from '@/chat/components/StyledChatComposerBox';
 import { AiChatInlineBanner } from '@/ai-chat/components/AiChatInlineBanner';
 import { AiChatEmptyState } from '@/ai-chat/composer/components/AiChatEmptyState';
 import { AiChatParticipantMentionBar } from '@/ai-chat/composer/components/AiChatParticipantMentionBar';
+import { AiChatQueuedMessages } from '@/ai-chat/composer/components/AiChatQueuedMessages';
 import { AiChatPendingAskGate } from '@/ai-chat/tool-calls/components/AiChatPendingAskGate';
 import { AiChatWorkspaceCreditsExhaustedBanner } from '@/ai-chat/usage/components/AiChatWorkspaceCreditsExhaustedBanner';
 import { AiChatUsageLimitReachedBanner } from '@/ai-chat/usage/components/AiChatUsageLimitReachedBanner';
@@ -72,6 +73,12 @@ const StyledInputArea = styled(StyledAiChatContentContainer)<{
 const StyledInputBox = styled(StyledChatComposerBox)<{ isMobile: boolean }>`
   min-height: ${({ isMobile }) =>
     isMobile ? 'auto' : themeCssVariables.spacing[20]};
+`;
+
+const StyledComposerStack = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 `;
 
 const StyledEditorWrapper = styled.div<{ isMobile: boolean }>`
@@ -230,7 +237,10 @@ const EditableAiChatEditorSection = () => {
         )}
         {!isDirectMessage && <AiChatUserCreditsExhaustedBanner />}
         {!isDirectMessage && <AiChatParticipantMentionBar editor={editor} />}
-        <AiChatPendingAskGate>{composer}</AiChatPendingAskGate>
+        <StyledComposerStack>
+          <AiChatQueuedMessages />
+          <AiChatPendingAskGate>{composer}</AiChatPendingAskGate>
+        </StyledComposerStack>
       </StyledInputArea>
       <StyledComposerBottomSpacer
         className={isComposerCentered ? 'is-centered' : undefined}

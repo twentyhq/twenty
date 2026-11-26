@@ -31,7 +31,7 @@ jest.mock(
   () => ({
     useNavigationMenuChatAttention: () => ({
       getTabChatAttention: (tabId: string | null) =>
-        tabId === 'sales-tab' ? 'needs-input' : null,
+        tabId === null || tabId === 'sales-tab' ? 'needs-input' : null,
       unreadOpenThreadCount: mockUnreadOpenThreadCount,
     }),
   }),
@@ -149,6 +149,36 @@ describe('useMobileNavigationBarItems', () => {
 
     expect(result.current.location.pathname).toBe('/home');
     expect(result.current.activeItemName).toBe('tab-sales-tab');
+  });
+
+  it('drops the attention from Home on the home page only', () => {
+    const getHomeItem = (pathname: string) =>
+      renderMobileNavigationBarItems(pathname).result.current.items.find(
+        ({ name }) => name === 'home',
+      );
+
+    expect(getHomeItem('/home')).toMatchObject({
+      label: 'Home',
+      attention: null,
+    });
+    expect(getHomeItem('/objects/people')).toMatchObject({
+      label: 'Home, needs your input',
+      attention: 'needs-input',
+    });
+  });
+
+  it('drops the attention from the sidebar tab that is open', () => {
+    jest
+      .mocked(useWorkspaceNavigationMenuContainers)
+      .mockReturnValue([SALES_TAB]);
+
+    const { result } = renderMobileNavigationBarItems('/objects/people');
+
+    act(() => tapItem(result, 'tab-sales-tab'));
+
+    expect(
+      result.current.items.find(({ name }) => name === 'tab-sales-tab'),
+    ).toMatchObject({ label: 'Sales', attention: null });
   });
 
   it('labels an unnamed sidebar tab "Tab"', () => {
