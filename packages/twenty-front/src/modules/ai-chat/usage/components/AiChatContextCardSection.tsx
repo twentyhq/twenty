@@ -14,7 +14,7 @@ const StyledSectionTitle = styled.span`
   display: flex;
   font-size: ${themeCssVariables.font.size.xs};
   font-weight: ${themeCssVariables.font.weight.semiBold};
-  height: 20px;
+  height: ${themeCssVariables.spacing[5]};
 `;
 
 type AiChatContextCardSectionProps = {
