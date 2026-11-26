@@ -45,7 +45,12 @@ export const answerTelegramAssistantRequest = async ({
     requestText,
   });
 
-  if (!(await claimTelegramAssistantRequest({ client, id: requestId }))) {
+  const isClaimed = await claimTelegramAssistantRequest({
+    client,
+    id: requestId,
+  });
+
+  if (!isClaimed) {
     return 'SKIPPED';
   }
 
@@ -94,6 +99,8 @@ export const answerTelegramAssistantRequest = async ({
       id: requestId,
       status: TELEGRAM_ASSISTANT_REQUEST_STATUS.DONE,
       responseText,
+    }).catch((updateError: unknown) => {
+      console.error('[telegram] could not mark the request done', updateError);
     });
 
     return 'ANSWERED';

@@ -3,8 +3,9 @@ import { type RunAgentInput } from 'twenty-sdk/logic-function';
 
 import { type TelegramAssistantTurn } from 'src/logic-functions/types/telegram-assistant-turn.type';
 
-type TelegramAssistantAgentMessage = NonNullable<
-  RunAgentInput['messages']
+type TelegramAssistantAgentMessage = Exclude<
+  RunAgentInput['input'],
+  string | undefined
 >[number];
 
 const buildRecordReferenceSection = (

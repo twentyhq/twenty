@@ -5,13 +5,11 @@ import { stubTelegramApi } from 'src/__tests__/utils/stub-telegram-api';
 import { TELEGRAM_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { TELEGRAM_ASSISTANT_AGENT_BUDGET_SECONDS } from 'src/logic-functions/constants/telegram-assistant-agent-budget-seconds';
 import { TELEGRAM_ASSISTANT_DEADLINE_FAILURE_TEXT } from 'src/logic-functions/constants/telegram-assistant-deadline-failure-text';
+import { TELEGRAM_ASSISTANT_EMPTY_RESPONSE_FAILURE_TEXT } from 'src/logic-functions/constants/telegram-assistant-empty-response-failure-text';
 import { TELEGRAM_ASSISTANT_FAILURE_TEXT } from 'src/logic-functions/constants/telegram-assistant-failure-text';
 import { TELEGRAM_ASSISTANT_HELP_TEXT } from 'src/logic-functions/constants/telegram-assistant-help-text';
 import { TELEGRAM_ASSISTANT_TEXT_ONLY_TEXT } from 'src/logic-functions/constants/telegram-assistant-text-only-text';
-import { TELEGRAM_PLAIN_MESSAGE_MAX_LENGTH } from 'src/logic-functions/constants/telegram-plain-message-max-length';
-import { TELEGRAM_RICH_MESSAGE_MAX_LENGTH } from 'src/logic-functions/constants/telegram-rich-message-max-length';
 import { telegramUpdateHandler } from 'src/logic-functions/telegram-update-handler';
-import { buildTelegramAssistantAnswerText } from 'src/logic-functions/utils/build-telegram-assistant-answer-text';
 
 const { clientHolder, runAgentMock } = vi.hoisted(() => {
   const clientHolder: {
@@ -134,7 +132,7 @@ describe('answering a question from Telegram', () => {
     await send({ text: 'How many open deals?', messageId: 1 });
     await send({ text: 'And the biggest one?', messageId: 2 });
 
-    const messages = runAgentMock.mock.calls[1][0].messages;
+    const messages = runAgentMock.mock.calls[1][0].input;
 
     expect(messages.slice(0, 2)).toEqual([
       { role: 'user', content: 'How many open deals?' },
@@ -186,6 +184,37 @@ describe('answering a question from Telegram', () => {
       status: 'FAILED',
       errorMessage: 'model unavailable',
     });
+  });
+
+  it('asks the member to try again when the agent finishes without an answer', async () => {
+    runAgentMock.mockResolvedValue(completedRun('  '));
+
+    await expect(send({ text: 'How many open deals?' })).resolves.toEqual({
+      outcome: 'FAILED',
+    });
+    expect(callsTo('sendMessage').map((call) => call.params.text)).toEqual([
+      TELEGRAM_ASSISTANT_EMPTY_RESPONSE_FAILURE_TEXT,
+    ]);
+  });
+
+  it('does not send a failure reply when the answer was delivered but could not be saved', async () => {
+    const mutate = coreFake.client.mutation;
+
+    vi.spyOn(coreFake.client, 'mutation').mockImplementation(
+      async (mutation) => {
+        if ('updateTelegramAssistantRequest' in mutation) {
+          throw new Error('database unavailable');
+        }
+
+        return mutate(mutation);
+      },
+    );
+
+    await expect(send({ text: 'How many open deals?' })).resolves.toEqual({
+      outcome: 'ANSWERED',
+    });
+    expect(callsTo('sendRichMessage')).toHaveLength(1);
+    expect(callsTo('sendMessage')).toEqual([]);
   });
 
   it('stops waiting for the agent at the deadline and stops the typing status', async () => {
@@ -267,57 +296,5 @@ describe('answering a question from Telegram', () => {
       TELEGRAM_ASSISTANT_HELP_TEXT,
     ]);
     expect(runAgentMock).not.toHaveBeenCalled();
-  });
-});
-
-describe('buildTelegramAssistantAnswerText', () => {
-  const longAnswer = `${'x'.repeat(99)}\n`.repeat(400);
-
-  it('shortens a rich answer over the limit on a line break and links to the full one', () => {
-    const answerText = buildTelegramAssistantAnswerText({
-      responseText: longAnswer,
-      requestId: 'request-1',
-      workspaceBaseUrl: 'https://acme.twenty.example',
-      maxLength: TELEGRAM_RICH_MESSAGE_MAX_LENGTH,
-      isPlainText: false,
-    });
-
-    expect([...answerText].length).toBeLessThanOrEqual(
-      TELEGRAM_RICH_MESSAGE_MAX_LENGTH,
-    );
-    expect(answerText).toMatch(
-      /x{99}\n\n_Shortened to fit Telegram\. \[Read the full answer in Twenty\]\(https:\/\/acme\.twenty\.example\/object\/telegramAssistantRequest\/request-1\)_$/,
-    );
-  });
-
-  it('shortens the plain-text fallback to its own limit with a bare link', () => {
-    const answerText = buildTelegramAssistantAnswerText({
-      responseText: longAnswer,
-      requestId: 'request-1',
-      workspaceBaseUrl: 'https://acme.twenty.example',
-      maxLength: TELEGRAM_PLAIN_MESSAGE_MAX_LENGTH,
-      isPlainText: true,
-    });
-
-    expect([...answerText].length).toBeLessThanOrEqual(
-      TELEGRAM_PLAIN_MESSAGE_MAX_LENGTH,
-    );
-    expect(answerText).toMatch(
-      /x{99}\n\nShortened to fit Telegram\. Read the full answer in Twenty: https:\/\/acme\.twenty\.example\/object\/telegramAssistantRequest\/request-1$/,
-    );
-  });
-
-  it('closes a code block the cut left open', () => {
-    const answerText = buildTelegramAssistantAnswerText({
-      responseText: `\`\`\`\n${'code line\n'.repeat(4000)}\`\`\``,
-      requestId: 'request-1',
-      workspaceBaseUrl: undefined,
-      maxLength: TELEGRAM_RICH_MESSAGE_MAX_LENGTH,
-      isPlainText: false,
-    });
-
-    expect(answerText).toContain(
-      'code line\n```\n\nShortened to fit Telegram.',
-    );
   });
 });

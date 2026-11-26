@@ -1,6 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 
+import { raceAgainstTimeoutOrThrow } from 'src/logic-functions/utils/race-against-timeout-or-throw';
 import { toErrorMessage } from 'src/logic-functions/utils/to-error-message';
 
 const LOOKUP_TIMEOUT_MS = 5000;
@@ -21,18 +22,12 @@ const readWorkspaceBaseUrl = async (): Promise<string | undefined> => {
 };
 
 export const fetchWorkspaceBaseUrl = async (): Promise<string | undefined> => {
-  let timeoutTimer: ReturnType<typeof setTimeout> | undefined;
-
   try {
-    const baseUrl = await Promise.race([
-      readWorkspaceBaseUrl(),
-      new Promise<never>((_, reject) => {
-        timeoutTimer = setTimeout(
-          () => reject(new Error(`lookup took over ${LOOKUP_TIMEOUT_MS}ms`)),
-          LOOKUP_TIMEOUT_MS,
-        );
-      }),
-    ]);
+    const baseUrl = await raceAgainstTimeoutOrThrow({
+      promise: readWorkspaceBaseUrl(),
+      timeoutMs: LOOKUP_TIMEOUT_MS,
+      timeoutError: new Error(`lookup took over ${LOOKUP_TIMEOUT_MS}ms`),
+    });
 
     if (!isNonEmptyString(baseUrl)) {
       console.warn(
@@ -47,7 +42,5 @@ export const fetchWorkspaceBaseUrl = async (): Promise<string | undefined> => {
     );
 
     return undefined;
-  } finally {
-    clearTimeout(timeoutTimer);
   }
 };

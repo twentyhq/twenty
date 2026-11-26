@@ -7,6 +7,7 @@ import { TelegramAssistantDeadlineError } from 'src/logic-functions/types/telegr
 import { TelegramAssistantEmptyResponseError } from 'src/logic-functions/types/telegram-assistant-empty-response-error';
 import { type TelegramAssistantTurn } from 'src/logic-functions/types/telegram-assistant-turn.type';
 import { buildTelegramAssistantMessages } from 'src/logic-functions/utils/build-telegram-assistant-messages';
+import { raceAgainstTimeoutOrThrow } from 'src/logic-functions/utils/race-against-timeout-or-throw';
 
 const hasResponseText = (result: object): result is { response: string } =>
   'response' in result && isString(result.response);
@@ -32,50 +33,37 @@ export const runTelegramAssistantAgentOrThrow = async ({
     );
   }
 
-  const deadline: { timer?: ReturnType<typeof setTimeout> } = {};
-
-  try {
-    const agentResult = await Promise.race([
-      runAgent({
-        agentUniversalIdentifier: TELEGRAM_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
-        runAsWorkspaceMemberId: workspaceMemberId,
-        messages: buildTelegramAssistantMessages({
-          requestText,
-          history,
-          workspaceMemberId,
-          workspaceBaseUrl,
-          timeoutSeconds: Math.ceil(remainingMs / 1000),
-        }),
+  const agentResult = await raceAgainstTimeoutOrThrow({
+    promise: runAgent({
+      agentUniversalIdentifier: TELEGRAM_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
+      runAsWorkspaceMemberId: workspaceMemberId,
+      input: buildTelegramAssistantMessages({
+        requestText,
+        history,
+        workspaceMemberId,
+        workspaceBaseUrl,
+        timeoutSeconds: Math.ceil(remainingMs / 1000),
       }),
-      new Promise<never>((_, reject) => {
-        deadline.timer = setTimeout(
-          () =>
-            reject(
-              new TelegramAssistantDeadlineError(
-                'Agent did not answer before the Telegram deadline',
-              ),
-            ),
-          remainingMs,
-        );
-      }),
-    ]);
+    }),
+    timeoutMs: remainingMs,
+    timeoutError: new TelegramAssistantDeadlineError(
+      'Agent did not answer before the Telegram deadline',
+    ),
+  });
 
-    if (!agentResult.success || !isDefined(agentResult.result)) {
-      throw new Error(agentResult.error ?? 'Agent run failed');
-    }
-
-    const responseText = hasResponseText(agentResult.result)
-      ? agentResult.result.response.trim()
-      : '';
-
-    if (!isNonEmptyString(responseText)) {
-      throw new TelegramAssistantEmptyResponseError(
-        'Agent returned an empty response',
-      );
-    }
-
-    return responseText;
-  } finally {
-    clearTimeout(deadline.timer);
+  if (!agentResult.success || !isDefined(agentResult.result)) {
+    throw new Error(agentResult.error ?? 'Agent run failed');
   }
+
+  const responseText = hasResponseText(agentResult.result)
+    ? agentResult.result.response.trim()
+    : '';
+
+  if (!isNonEmptyString(responseText)) {
+    throw new TelegramAssistantEmptyResponseError(
+      'Agent returned an empty response',
+    );
+  }
+
+  return responseText;
 };
