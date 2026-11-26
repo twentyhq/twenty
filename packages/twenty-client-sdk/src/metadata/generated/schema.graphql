@@ -187,7 +187,6 @@ type AgentMessage {
   reactions: [AgentMessageReactionSummary!]!
   role: String!
   senderApplicationId: UUID
-  senderUserWorkspaceId: UUID
   senderWorkspaceMemberId: UUID
   status: String!
   threadId: UUID!
