@@ -1,3 +1,4 @@
+import { type FrontComponentHostCommunicationApi } from '@/types/FrontComponentHostCommunicationApi';
 import { useMemo } from 'react';
 import { type FrontComponentSelectedObjectMetadata } from 'twenty-sdk/front-component';
 
@@ -14,6 +15,7 @@ type FrontComponentSourceRendererProps = {
   selectedRecordIds?: string[];
   selectedObjectMetadata?: FrontComponentSelectedObjectMetadata | null;
   colorScheme: 'light' | 'dark';
+  queryMetadata?: FrontComponentHostCommunicationApi['queryMetadata'];
   onReady?: () => void;
   onError: (error?: Error) => void;
 };
@@ -28,12 +30,20 @@ export const FrontComponentSourceRenderer = ({
   selectedRecordIds = EMPTY_SELECTED_RECORD_IDS,
   selectedObjectMetadata = null,
   colorScheme,
+  queryMetadata,
   onReady,
   onError,
 }: FrontComponentSourceRendererProps) => {
   const sdkClientSources = useMemo(
     () => createMockSdkClientSources(mockQueryResult),
     [mockQueryResult],
+  );
+  const hostCommunicationApi = useMemo(
+    () => ({
+      ...FRONT_COMPONENT_PREVIEW_HOST_COMMUNICATION_API,
+      queryMetadata,
+    }),
+    [queryMetadata],
   );
   const executionContext = useMemo(
     () => ({
@@ -55,9 +65,7 @@ export const FrontComponentSourceRenderer = ({
       sharedDependenciesSource={sharedDependenciesSource}
       sdkClientSources={sdkClientSources}
       executionContext={executionContext}
-      frontComponentHostCommunicationApi={
-        FRONT_COMPONENT_PREVIEW_HOST_COMMUNICATION_API
-      }
+      frontComponentHostCommunicationApi={hostCommunicationApi}
       colorScheme={colorScheme}
       onReady={onReady}
       onError={onError}

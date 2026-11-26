@@ -95,7 +95,7 @@ export const buildFrontComponent = async ({
             return {
               errors: [
                 {
-                  text: `Unsupported import: ${path}. Use React, ${FRONT_COMPONENT_CORE_API_CLIENT_IMPORT_SPECIFIER}, twenty-sdk/front-component and the supported twenty-ui imports.`,
+                  text: `Unsupported import: ${path}. Use React, ${FRONT_COMPONENT_CORE_API_CLIENT_IMPORT_SPECIFIER}, twenty-client-sdk/metadata, twenty-sdk/front-component and the supported twenty-ui imports.`,
                 },
               ],
             };

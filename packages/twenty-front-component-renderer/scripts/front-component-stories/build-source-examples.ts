@@ -184,6 +184,7 @@ const buildSourceExamples = async (): Promise<void> => {
 
   const commonOptions: esbuild.BuildOptions = {
     bundle: true,
+    external: ['twenty-client-sdk/metadata'],
     splitting: false,
     format: 'esm',
     outExtension: { '.js': '.mjs' },

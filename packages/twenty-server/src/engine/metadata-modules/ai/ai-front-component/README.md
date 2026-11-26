@@ -14,7 +14,11 @@ There is no separate list of supported exports.
 - Dashboard previews have no selection. Context hooks update when context changes;
   unavailable context, such as the current user, remains null or unset.
 - Core API reads use sample data. Only direct ID-equality filtering is evaluated.
-  Mutations and Metadata API calls fail explicitly in preview.
+  Metadata API queries use the signed-in user permissions and live workspace
+  metadata, including field options and colors. Import `MetadataApiClient` from
+  `twenty-client-sdk/metadata`. Mutations fail explicitly in preview.
+  API clients must use static imports, their temporary module URLs are revoked
+  after initial loading.
 - Host actions reject with `FRONT_COMPONENT_PREVIEW_HOST_ACTION_UNAVAILABLE`.
   Preview cannot navigate, open host panels or confirmation modals, upload files,
   copy to the clipboard, persist storage, or change chat tool arguments.

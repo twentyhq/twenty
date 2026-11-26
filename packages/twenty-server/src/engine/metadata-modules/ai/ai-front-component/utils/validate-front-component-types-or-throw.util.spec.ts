@@ -1,4 +1,7 @@
-import { encodeFrontComponentTypeReferencesOrThrow } from 'twenty-shared/front-component-build';
+import {
+  collectFrontComponentTypeReferences,
+  encodeFrontComponentTypeReferencesOrThrow,
+} from 'twenty-shared/front-component-build';
 import { getFrontComponentCompilerTypeReferences } from 'src/engine/metadata-modules/ai/ai-front-component/utils/get-front-component-compiler-type-references.util';
 import { validateFrontComponentTypesOrThrow } from 'src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-types-or-throw.util';
 
@@ -99,4 +102,23 @@ it('rejects invalid public navigation paths', () => {
       export const Component = () => <button onClick={() => navigate('/not-an-app-path')}>Open</button>;`,
     }),
   ).toThrow('TS2345');
+});
+
+it('typechecks Metadata API field option queries against client declarations', () => {
+  const metadataTypeReferences = encodeFrontComponentTypeReferencesOrThrow({
+    ...getFrontComponentCompilerTypeReferences(),
+    ...collectFrontComponentTypeReferences({
+      directory: __dirname,
+      dependencies: ['twenty-client-sdk/metadata'],
+    }),
+  }).toString('base64');
+  expect(() =>
+    validateFrontComponentTypesOrThrow({
+      typeReferences: metadataTypeReferences,
+      source: `import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+      export const Component = () => <button onClick={() => new MetadataApiClient().query({
+        object: { __args: { id: 'opportunity' }, fields: { __args: { filter: {}, paging: { first: 100 } }, edges: { node: { name: true, options: true } } } },
+      })}>Read stage options</button>;`,
+    }),
+  ).not.toThrow();
 });

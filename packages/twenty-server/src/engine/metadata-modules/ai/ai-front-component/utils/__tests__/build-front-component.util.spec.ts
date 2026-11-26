@@ -72,6 +72,19 @@ const INPUT = {
 };
 
 describe('buildFrontComponent', () => {
+  it('builds direct Metadata API reads and keeps the runtime client external', async () => {
+    const { compiledSource, hasSdkClientImport } = await buildFrontComponent({
+      ...INPUT,
+      source: `import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+        export const Component = () => <button onClick={() => new MetadataApiClient().query({ objects: { edges: { node: { nameSingular: true, fields: { edges: { node: { name: true, options: true } } } } } } })}>Load stages</button>;`,
+    });
+    expect(compiledSource).toContain('twenty-client-sdk/metadata');
+    expect(hasSdkClientImport).toBe(true);
+    await expect(
+      transform(compiledSource, { loader: 'js' }),
+    ).resolves.toHaveProperty('code');
+  });
+
   it('bundles the SDK record hooks without requiring them in the app dependencies', async () => {
     const { compiledSource, source } = await buildFrontComponent({
       ...INPUT,
@@ -184,6 +197,7 @@ describe('buildFrontComponent', () => {
     'react-dom/client',
     'twenty-shared/types',
     'twenty-client-sdk/core',
+    'twenty-client-sdk/metadata',
   ])(
     'rejects unsupported dynamic import %s during the build',
     async (importPath) => {

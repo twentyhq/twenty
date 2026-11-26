@@ -16,6 +16,7 @@ import {
 } from 'twenty-sdk/front-component';
 
 export type FrontComponentHostCommunicationApi = {
+  queryMetadata?: (selection: Record<string, unknown>) => Promise<unknown>;
   navigate: NavigateFunction;
   requestAccessTokenRefresh: RequestAccessTokenRefreshFunction;
   openSidePanelPage: OpenSidePanelPageFunction;

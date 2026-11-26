@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import { Button } from 'twenty-ui/primitives/input';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { FrontComponentSourceRenderer } from 'twenty-front-component-renderer';
@@ -6,6 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Badge } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables, useThemeColorScheme } from 'twenty-ui/theme';
 
+import { queryFrontComponentPreviewMetadata } from '@/ai-chat/tool-calls/utils/queryFrontComponentPreviewMetadata';
 import { AiChatFrontComponentPreviewEffect } from '@/ai-chat/tool-calls/components/AiChatFrontComponentPreviewEffect';
 import { type useAiChatFrontComponentPreview } from '@/ai-chat/tool-calls/hooks/useAiChatFrontComponentPreview';
 
@@ -47,10 +50,14 @@ export const AiChatFrontComponentPreviewContent = ({
 }: AiChatFrontComponentPreviewContentProps) => {
   const { t } = useLingui();
   const colorScheme = useThemeColorScheme();
+  const [retryCount, setRetryCount] = useState(0);
 
   return (
     <StyledPreview>
-      <AiChatFrontComponentPreviewEffect loadPreview={loadPreview} />
+      <AiChatFrontComponentPreviewEffect
+        key={retryCount}
+        loadPreview={loadPreview}
+      />
       <div>
         <Badge>{t`Sample data`}</Badge>
         {isDefined(preview) && (
@@ -78,6 +85,7 @@ export const AiChatFrontComponentPreviewContent = ({
               componentSource={preview.componentSource}
               sharedDependenciesSource={preview.sharedDependenciesSource}
               mockQueryResult={preview.mockQueryResult}
+              queryMetadata={queryFrontComponentPreviewMetadata}
               selectedRecordIds={preview.selectedRecordIds}
               selectedObjectMetadata={preview.selectedObjectMetadata}
               colorScheme={colorScheme}
@@ -93,6 +101,11 @@ export const AiChatFrontComponentPreviewContent = ({
         </span>
       )}
       {isDefined(error) && <span role="alert">{error}</span>}
+      {isDefined(error) && !isDefined(preview) && (
+        <Button size="sm" onClick={() => setRetryCount((count) => count + 1)}>
+          {t`Retry`}
+        </Button>
+      )}
     </StyledPreview>
   );
 };
