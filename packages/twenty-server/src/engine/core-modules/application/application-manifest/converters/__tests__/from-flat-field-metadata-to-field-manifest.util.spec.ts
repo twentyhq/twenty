@@ -79,6 +79,7 @@ const TEXT_FIELD_MANIFEST: Required<
   icon: 'IconAbc',
   options: null,
   universalSettings: null,
+  formula: null,
   defaultValue: "'untitled'",
   isNullable: false,
   isUIEditable: false,

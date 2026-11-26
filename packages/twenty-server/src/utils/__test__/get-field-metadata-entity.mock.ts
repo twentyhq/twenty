@@ -65,6 +65,7 @@ export const getMockFieldMetadataEntity = <
     defaultValue: null,
     options: null,
     settings: null,
+    formula: null,
     createdAt: new Date(),
     updatedAt: new Date(),
     isActive: true,
