@@ -178,6 +178,7 @@ export const resolveRuntimeLimitingRole = ({
               objectMetadataId,
               fieldMetadataId: flatFieldMetadata.id,
               rowLevelPermissionRuleId: null,
+              sourceFieldMetadataId: null,
               canReadFieldValue: fieldPermission.canReadFieldValue,
               canUpdateFieldValue: fieldPermission.canUpdateFieldValue,
             },

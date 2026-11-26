@@ -3,6 +3,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
+import { type FindOptionsWhere, In, Not } from 'typeorm';
 
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
@@ -13,6 +14,7 @@ import { RowLevelPermissionPredicateGroupDTO } from 'src/engine/metadata-modules
 import { RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { isWorkspaceMemberIndividualRole } from 'src/engine/permissions/workspace-member-individual-role/utils/is-workspace-member-individual-role.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
@@ -57,12 +59,40 @@ export class RowLevelPermissionPredicateGroupService {
       .map(fromFlatRowLevelPermissionPredicateGroupToDto);
   }
 
-  public async deleteAllRowLevelPermissionPredicateGroups(workspaceId: string) {
+  public async deleteRowLevelPermissionPredicateGroupsOutsideIndividualRoles({
+    workspaceId,
+    keptPredicateGroupIds,
+  }: {
+    workspaceId: string;
+    keptPredicateGroupIds: string[];
+  }) {
+    const { flatRoleMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatRoleMaps'],
+        },
+      );
+
+    const individualRoleIds = Object.values(flatRoleMaps.byUniversalIdentifier)
+      .filter(isDefined)
+      .filter(isWorkspaceMemberIndividualRole)
+      .map(({ id }) => id);
+
+    const criteria: FindOptionsWhere<RowLevelPermissionPredicateGroupEntity> = {
+      ...(individualRoleIds.length > 0 && {
+        roleId: Not(In(individualRoleIds)),
+      }),
+      ...(keptPredicateGroupIds.length > 0 && {
+        id: Not(In(keptPredicateGroupIds)),
+      }),
+    };
+
     // Checking first keeps the common no-op a read and lets cleanup retry on every pass after a failed attempt
     const hasPredicateGroups =
       (await this.rowLevelPermissionPredicateGroupRepository.count(
         workspaceId,
-        {},
+        { where: criteria },
       )) > 0;
 
     if (!hasPredicateGroups) {
@@ -71,13 +101,14 @@ export class RowLevelPermissionPredicateGroupService {
 
     await this.rowLevelPermissionPredicateGroupRepository.delete(
       workspaceId,
-      {},
+      criteria,
     );
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'rolesPermissions',
       'flatRowLevelPermissionPredicateMaps',
       'flatRowLevelPermissionPredicateGroupMaps',
+      'flatFieldPermissionMaps',
     ]);
   }
 

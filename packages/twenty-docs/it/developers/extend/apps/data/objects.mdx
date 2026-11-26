@@ -141,7 +141,7 @@ I tipi compositi memorizzano più sotto-campi (ad es. `FULL_NAME` = nome + cogno
 
 ### Seleziona opzioni
 
-Per `SELECT` e `MULTI_SELECT`, fornisci un array `options` non vuoto di oggetti. Ogni opzione ha un `value`, un `label` e una `position`. Il relativo `color` è facoltativo e, se omesso o null, il valore predefinito è `gray`.
+Per `SELECT` e `MULTI_SELECT`, fornisci un array `options` non vuoto di oggetti. Ogni opzione ha un `value`, un `label` e una `position`. Il relativo `color` è facoltativo e, se omesso o null, il valore predefinito è `gray`. Anche la relativa `description` è facoltativa: fino a 255 caratteri, mostrata come tooltip quando gli utenti selezionano l'opzione.
 
 Se fornito, `color` deve essere uno dei seguenti: `red`, `ruby`, `crimson`, `tomato`, `orange`, `amber`, `yellow`, `lime`, `grass`, `green`, `jade`, `mint`, `turquoise`, `cyan`, `sky`, `blue`, `iris`, `violet`, `purple`, `plum`, `pink`, `bronze`, `gold`, `brown`, `gray`.
 
@@ -149,9 +149,9 @@ Sia `defineObject()` sia `defineField()` restituiscono errori di convalida per c
 
 #### Modifiche dello spazio di lavoro alle tue opzioni
 
-Uno spazio di lavoro può rinominare, ricolorare, riordinare e disattivare le opzioni fornite dalla tua app e aggiungere opzioni proprie. Non può rimuovere le tue opzioni né modificarne il `value`.
+Uno spazio di lavoro può rinominare, ricolorare, descrivere, riordinare e disattivare le opzioni fornite dall'app, nonché aggiungere opzioni proprie. Non può rimuovere le tue opzioni né modificarne il `value`.
 
-Queste modifiche vengono mantenute quando la tua app viene nuovamente sincronizzata. La modifica di `label`, `color` o `position` di un'opzione nella tua app modifica il valore predefinito, non ciò che uno spazio di lavoro ha già sovrascritto. Le opzioni aggiunte dallo spazio di lavoro e quelle che ha disattivato rimangono invariate.
+Queste modifiche vengono mantenute quando la tua app viene nuovamente sincronizzata. La modifica di `label`, `color`, `description` o `position` di un'opzione nell'app modifica il valore predefinito, non ciò che uno spazio di lavoro ha già sovrascritto. Le opzioni aggiunte dallo spazio di lavoro e quelle che ha disattivato rimangono invariate.
 
 Quando leggi le `options` di un campo dall'API dei metadati, due proprietà descrivono lo stato di tale spazio di lavoro. Twenty le imposta; la tua app non le dichiara:
 

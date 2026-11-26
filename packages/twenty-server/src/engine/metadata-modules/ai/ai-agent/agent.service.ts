@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { getUserWorkspaceIdFromAuthContext } from 'src/engine/core-modules/auth/utils/get-user-workspace-id-from-auth-context.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type CreateAgentInput } from 'src/engine/metadata-modules/ai/ai-agent/dtos/create-agent.input';
 import { type UpdateAgentInput } from 'src/engine/metadata-modules/ai/ai-agent/dtos/update-agent.input';
@@ -9,7 +11,7 @@ import { addAgentTriggerConditionBindingsOrThrow } from 'src/engine/metadata-mod
 import { fromCreateAgentInputToFlatAgent } from 'src/engine/metadata-modules/ai/ai-agent/utils/from-create-agent-input-to-flat-agent.util';
 import { fromUpdateAgentInputToFlatAgentToUpdate } from 'src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util';
 import { FlatAgentWithRoleId } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
-import { isAgentVisibleToUser } from 'src/engine/metadata-modules/ai/ai-agent/utils/is-agent-visible-to-user.util';
+import { isPrivatableEntityVisibleToCaller } from 'src/engine/permissions/metadata-permissions/utils/is-privatable-entity-visible-to-caller.util';
 import { resolveEffectiveAgent } from 'src/engine/metadata-modules/flat-agent/utils/resolve-effective-agent.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -39,10 +41,8 @@ export class AgentService {
 
   async findManyAgents({
     workspaceId,
-    userWorkspaceId,
   }: {
     workspaceId: string;
-    userWorkspaceId: string | undefined;
   }): Promise<FlatAgentWithRoleId[]> {
     const { flatAgentMaps, flatRoleTargetByAgentIdMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -53,7 +53,7 @@ export class AgentService {
     return Object.values(flatAgentMaps.byUniversalIdentifier)
       .filter(isDefined)
       .filter((flatAgent) =>
-        isAgentVisibleToUser({ agent: flatAgent, userWorkspaceId }),
+        isPrivatableEntityVisibleToCaller({ privatableEntity: flatAgent }),
       )
       .map((flatAgent) => {
         const roleId = flatRoleTargetByAgentIdMaps[flatAgent.id]?.roleId;
@@ -68,11 +68,9 @@ export class AgentService {
   async findOneAgentById({
     id,
     workspaceId,
-    userWorkspaceId,
   }: {
     workspaceId: string;
     id: string;
-    userWorkspaceId: string | undefined;
   }): Promise<FlatAgentWithRoleId> {
     const { flatAgentMaps, flatRoleTargetByAgentIdMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -87,7 +85,7 @@ export class AgentService {
 
     if (
       !isDefined(flatAgent) ||
-      !isAgentVisibleToUser({ agent: flatAgent, userWorkspaceId })
+      !isPrivatableEntityVisibleToCaller({ privatableEntity: flatAgent })
     ) {
       throw new AiException(`Agent not found`, AiExceptionCode.AGENT_NOT_FOUND);
     }
@@ -100,11 +98,11 @@ export class AgentService {
   async createOneAgent({
     input: { isSystem = false, ...input },
     workspaceId,
-    userWorkspaceId,
+    authContext,
   }: {
     input: CreateAgentInput & { isSystem?: boolean };
     workspaceId: string;
-    userWorkspaceId: string | undefined;
+    authContext: WorkspaceAuthContext | undefined;
   }): Promise<FlatAgentWithRoleId> {
     const {
       flatApplicationMaps,
@@ -146,7 +144,7 @@ export class AgentService {
         },
         isSystem,
         workspaceId,
-        userWorkspaceId,
+        userWorkspaceId: getUserWorkspaceIdFromAuthContext(authContext),
         flatApplication: resolvedFlatApplication,
         flatRoleMaps,
       });
@@ -170,6 +168,7 @@ export class AgentService {
           },
           workspaceId,
           isSystemBuild: false,
+          authContext,
           applicationUniversalIdentifier:
             workspaceCustomFlatApplication.universalIdentifier,
         },
@@ -201,11 +200,11 @@ export class AgentService {
   async updateOneAgent({
     input,
     workspaceId,
-    userWorkspaceId,
+    authContext,
   }: {
     input: UpdateAgentInput;
     workspaceId: string;
-    userWorkspaceId: string | undefined;
+    authContext: WorkspaceAuthContext | undefined;
   }): Promise<FlatAgentWithRoleId> {
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
@@ -252,7 +251,6 @@ export class AgentService {
         workspaceCustomFlatApplication.universalIdentifier,
       workspaceCustomApplicationUniversalIdentifier:
         workspaceCustomFlatApplication.universalIdentifier,
-      userWorkspaceId,
     });
 
     const validateAndBuildResult =
@@ -278,6 +276,7 @@ export class AgentService {
           },
           workspaceId,
           isSystemBuild: false,
+          authContext,
           applicationUniversalIdentifier:
             workspaceCustomFlatApplication.universalIdentifier,
         },
@@ -315,13 +314,11 @@ export class AgentService {
   async deleteOneAgent({
     id,
     workspaceId,
-    userWorkspaceId,
   }: {
     id: string;
     workspaceId: string;
-    userWorkspaceId: string | undefined;
   }): Promise<FlatAgentWithRoleId> {
-    await this.findOneAgentById({ id, workspaceId, userWorkspaceId });
+    await this.findOneAgentById({ id, workspaceId });
 
     const deletedAgents = await this.deleteManyAgents({
       ids: [id],

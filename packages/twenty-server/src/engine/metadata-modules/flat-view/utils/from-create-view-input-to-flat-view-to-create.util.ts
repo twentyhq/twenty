@@ -1,6 +1,7 @@
 import { DEFAULT_VIEW_GROUP_LOAD_LIMIT } from 'twenty-shared/constants';
 import {
   isDefined,
+  isViewCompactByDefault,
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
@@ -12,7 +13,6 @@ import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-m
 import { computeFlatViewGroupsOnViewCreate } from 'src/engine/metadata-modules/flat-view-group/utils/compute-flat-view-groups-on-view-create.util';
 import { validateViewGroupLoadLimitOrThrow } from 'src/engine/metadata-modules/flat-view/utils/validate-view-group-load-limit-or-throw.util';
 import { type CreateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/create-view.input';
-import { resolveViewIsPrivateFromInput } from 'src/engine/metadata-modules/view/utils/resolve-view-is-private-from-input.util';
 import { type UniversalFlatViewGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-group.type';
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
 
@@ -66,6 +66,7 @@ export const fromCreateViewInputToFlatViewToCreate = ({
 
   const mainGroupByFieldMetadataId =
     createViewInput.mainGroupByFieldMetadataId ?? null;
+  const viewType = createViewInput.type ?? ViewType.TABLE;
 
   const flatViewToCreate: UniversalFlatView & { id: string } = {
     id: viewId,
@@ -80,7 +81,7 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     calendarEndFieldMetadataUniversalIdentifier,
     calendarLayout: createViewInput.calendarLayout ?? null,
     icon: createViewInput.icon,
-    isCompact: createViewInput.isCompact ?? false,
+    isCompact: createViewInput.isCompact ?? isViewCompactByDefault(viewType),
     shouldHideEmptyGroups: createViewInput.shouldHideEmptyGroups ?? false,
     shouldDisplayGroupsAsTabs:
       createViewInput.shouldDisplayGroupsAsTabs ?? false,
@@ -93,13 +94,9 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     key: createViewInput.key ?? null,
     openRecordIn: createViewInput.openRecordIn ?? ViewOpenRecordIn.SIDE_PANEL,
     position: createViewInput.position ?? 0,
-    type: createViewInput.type ?? ViewType.TABLE,
+    type: viewType,
     universalIdentifier: createViewInput.universalIdentifier ?? v4(),
-    isPrivate:
-      resolveViewIsPrivateFromInput({
-        isPrivate: createViewInput.isPrivate,
-        visibility: createViewInput.visibility,
-      }) ?? false,
+    isPrivate: createViewInput.isPrivate ?? false,
     createdByUserWorkspaceId: createdByUserWorkspaceId ?? null,
     isActive: true,
     isSystemSideEffect: false,

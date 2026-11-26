@@ -55,7 +55,6 @@ export const createListWorkflowsTool = (
         const { edges, pageInfo, totalCount } =
           await deps.coreWorkflowListService.findManyByWorkspaceId({
             workspaceId: context.workspaceId,
-            userWorkspaceId: context.userWorkspaceId,
             callerApplication: undefined,
             first: parameters.limit ?? DEFAULT_LIST_WORKFLOWS_LIMIT,
             after: parameters.after,

@@ -32,12 +32,8 @@ jest.mock(
   '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers',
 );
 jest.mock(
-  '@/navigation-menu-item/display/containers/components/NavigationMenuSectionList',
-  () => ({ NavigationMenuSectionList: () => null }),
-);
-jest.mock(
-  '@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionListReadOnly',
-  () => ({ WorkspaceSectionListReadOnly: () => null }),
+  '@/navigation-menu-item/display/containers/components/NavigationMenuContainerContent',
+  () => ({ NavigationMenuContainerContent: () => null }),
 );
 
 jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
@@ -71,7 +67,7 @@ const renderTabContent = (permissionFlags: PermissionFlagType[]) => {
     <I18nProvider i18n={i18n}>
       <JotaiProvider store={store}>
         <MemoryRouter>
-          <NavigationMenuTabContent tab={{ id: 'sales-tab-id' }} />
+          <NavigationMenuTabContent containerId="sales-tab-id" />
         </MemoryRouter>
       </JotaiProvider>
     </I18nProvider>,

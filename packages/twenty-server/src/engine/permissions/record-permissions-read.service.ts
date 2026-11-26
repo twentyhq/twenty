@@ -51,8 +51,8 @@ import { type RecordPermissionTransactionScope } from 'src/engine/permissions/ty
 import { isObjectOperationDisabledToPrincipals } from 'src/engine/permissions/internal/role/utils/is-object-operation-disabled-to-principals.util';
 import { canRelatedRecordPathExtendAccessToObject } from 'src/engine/permissions/internal/related-record-path/utils/can-related-record-path-extend-access-to-object.util';
 import { areRecordIdsReadableByPrincipals } from 'src/engine/permissions/internal/role/utils/are-record-ids-readable-by-principals.util';
-import { isRelatedRecordPathsEnabled } from 'src/engine/permissions/internal/related-record-path/utils/is-related-record-paths-enabled.util';
 import { canRelatedRecordPathExtendAccess } from 'src/engine/permissions/internal/related-record-path/utils/can-related-record-path-extend-access.util';
+import { type RelatedRecordPathUnreadableNestedField } from 'src/engine/permissions/internal/related-record-path/utils/find-related-record-path-unreadable-nested-fields.util';
 import { buildRecordShareOrPrivateRecordAccessSQLCondition } from 'src/engine/permissions/internal/combine/utils/build-record-share-or-private-record-access-sql-condition.util';
 import { combineSQLConditionOutcomesWithOr } from 'src/engine/permissions/internal/record-permission-repository/utils/combine-sql-condition-outcomes-with-or.util';
 import {
@@ -288,12 +288,7 @@ export class RecordPermissionsReadService {
       operationType: 'read',
     });
 
-    if (
-      !isDefined(readRequest) ||
-      (!isObjectOperationDisabledToPrincipals(readRequest) &&
-        isObjectOperationDeniedToPrincipals(readRequest) &&
-        !isRelatedRecordPathsEnabled(readRequest.metadataMaps))
-    ) {
+    if (!isDefined(readRequest)) {
       return new Set();
     }
 
@@ -431,6 +426,46 @@ export class RecordPermissionsReadService {
           }),
       }),
     ]);
+  }
+
+  async buildReadRecordsAccessSQLConditionsShowingSourceFields({
+    tableAlias,
+    sourceFields,
+    ...question
+  }: {
+    principals: PermissionsPrincipalsWithRolesContext;
+    objectMetadataId: string;
+    tableAlias: string;
+    sourceFields: RelatedRecordPathUnreadableNestedField[];
+  }): Promise<(SQLCondition | boolean)[]> {
+    const objectAccessRequest = await this.findObjectAccessRequestOrThrow({
+      ...question,
+      operationType: 'read',
+    });
+
+    if (!canRelatedRecordPathExtendAccess(objectAccessRequest)) {
+      return sourceFields.map(() => true);
+    }
+
+    const [
+      principalsAccessGroupCompactIds,
+      principalsRelatedRecordPathAccessGroupCompactIdsShowingFields,
+    ] = await Promise.all([
+      this.findPrincipalsAccessGroupCompactIds(objectAccessRequest),
+      this.accessGroupReadService.findPrincipalsRelatedRecordPathAccessGroupCompactIdsShowingFields(
+        { request: objectAccessRequest, sourceFields },
+      ),
+    ]);
+
+    return principalsRelatedRecordPathAccessGroupCompactIdsShowingFields.map(
+      (principalsRelatedRecordPathAccessGroupCompactIds) =>
+        this.buildRecordsAccessSQLCondition({
+          objectAccessRequest,
+          tableAlias,
+          principalsAccessGroupCompactIds,
+          principalsRelatedRecordPathAccessGroupCompactIds,
+        }),
+    );
   }
 
   private async findPrincipalsAccessGroupCompactIds(
@@ -833,10 +868,7 @@ export class RecordPermissionsReadService {
     tableAlias?: string;
     hypotheticalRecordShareAccessLevel?: RecordShareAccessLevel;
   }): SQLCondition | boolean {
-    if (
-      operationType === 'create' ||
-      !isRelatedRecordPathsEnabled(metadataMaps)
-    ) {
+    if (operationType === 'create') {
       return this.buildEntrySQLCondition({
         principals,
         metadataMaps,

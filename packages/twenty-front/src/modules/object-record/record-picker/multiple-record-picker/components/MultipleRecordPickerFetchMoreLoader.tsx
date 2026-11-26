@@ -112,9 +112,11 @@ export const MultipleRecordPickerFetchMoreLoader = () => {
         if (inView) {
           setMultipleRecordPickerIsFetchingMore(true);
 
-          await fetchMore();
-
-          setMultipleRecordPickerIsFetchingMore(false);
+          try {
+            await fetchMore();
+          } finally {
+            setMultipleRecordPickerIsFetchingMore(false);
+          }
         }
       },
       [fetchMore, setMultipleRecordPickerIsFetchingMore],

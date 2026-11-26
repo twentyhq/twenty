@@ -45,7 +45,6 @@ export const createComputeStepOutputSchemaTool = (
           await deps.coreWorkflowVersionListService.findOneByCoreWorkflowVersionId(
             {
               workspaceId: context.workspaceId,
-              userWorkspaceId: context.userWorkspaceId,
               callerApplication: undefined,
               coreWorkflowVersionId: parameters.coreWorkflowVersionId,
             },

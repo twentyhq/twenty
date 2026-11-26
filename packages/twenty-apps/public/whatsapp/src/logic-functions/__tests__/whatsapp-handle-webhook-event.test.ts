@@ -100,7 +100,11 @@ describe('whatsappHandleWebhookEventHandler', () => {
     mocks.listMessageChannels.mockResolvedValue([
       { id: 'channel-id', handle: CHANNEL_HANDLE },
     ]);
-    mocks.kvGet.mockResolvedValue(null);
+    mocks.kvGet.mockImplementation(async (key: string) =>
+      key === 'whatsapp-settings:connection-id'
+        ? { importPolicy: 'ALL' }
+        : null,
+    );
     mocks.ingestMessages.mockResolvedValue([]);
     mocks.query.mockResolvedValue({ people: { edges: [] } });
     mocks.getUnipileChat.mockResolvedValue({
@@ -478,6 +482,28 @@ describe('whatsappHandleWebhookEventHandler', () => {
         }),
       ),
     ).rejects.toMatchObject({ name: 'UnipileRequestError' });
+  });
+
+  it('ingests a new message of a conversation the member selected, as it arrives', async () => {
+    mocks.kvGet.mockImplementation(async (key: string) =>
+      key === 'whatsapp-settings:connection-id'
+        ? {
+            importPolicy: 'SELECTED',
+            selectedChats: [{ id: 'chat-1', name: 'Daphné Müller' }],
+          }
+        : null,
+    );
+
+    await expect(
+      whatsappHandleWebhookEventHandler(
+        buildMessageEvent({
+          sender_id: DAPHNE.id,
+          sender: DAPHNE,
+          is_sender: false,
+        }),
+      ),
+    ).resolves.toEqual({ handled: true });
+    expect(mocks.ingestMessages).toHaveBeenCalledOnce();
   });
 
   it('leaves out a message of a conversation the member did not select, without reading it', async () => {

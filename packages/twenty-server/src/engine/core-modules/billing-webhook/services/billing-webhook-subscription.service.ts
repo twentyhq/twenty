@@ -27,6 +27,7 @@ import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entit
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingApplicationSyncService } from 'src/engine/core-modules/billing/services/billing-application-sync.service';
 import { BillingWebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
+import { BillingTrialExtensionService } from 'src/engine/core-modules/billing/services/billing-trial-extension.service';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
@@ -73,6 +74,7 @@ export class BillingWebhookSubscriptionService {
     private readonly stripeSubscriptionService: StripeSubscriptionService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly cacheLockService: CacheLockService,
+    private readonly billingTrialExtensionService: BillingTrialExtensionService,
   ) {}
 
   async processStripeEvent(
@@ -170,6 +172,7 @@ export class BillingWebhookSubscriptionService {
           currentPeriodStart: true,
           currentPeriodEnd: true,
           currentPeriodMaxSeats: true,
+          trialEnd: true,
         },
         relations: [
           'billingSubscriptionItems',
@@ -177,6 +180,19 @@ export class BillingWebhookSubscriptionService {
         ],
       },
     );
+
+    const isOtherSubscriptionLive = allLiveSubscriptions.some(
+      (customerSubscription) => customerSubscription.id !== data.object.id,
+    );
+
+    if (!isOtherSubscriptionLive) {
+      await this.billingTrialExtensionService.syncStripeTrialEnd({
+        workspaceId,
+        previousTrialEnd: storedSubscription?.trialEnd ?? null,
+        status: incomingSubscription.status,
+        trialEnd: incomingSubscription.trialEnd ?? null,
+      });
+    }
 
     await this.billingSubscriptionRepository.upsert(
       {

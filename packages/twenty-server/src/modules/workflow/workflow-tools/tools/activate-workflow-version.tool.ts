@@ -32,7 +32,6 @@ export const createActivateWorkflowVersionTool = (
         return await deps.coreWorkflowLifecycleService.activateCoreWorkflowVersion(
           {
             workspaceId: context.workspaceId,
-            userWorkspaceId: context.userWorkspaceId,
             coreWorkflowVersionId: parameters.coreWorkflowVersionId,
           },
         );

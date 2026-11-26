@@ -101,9 +101,11 @@ describe('2-61 workspace command - add workspace navigation menu section (integr
       });
     const movedItemIds = navigationMenuItemsBefore
       .filter(
-        ({ userWorkspaceId, parentId, applicationId }) =>
+        ({ userWorkspaceId, parentId, applicationId, type }) =>
           !isDefined(userWorkspaceId) &&
           !isDefined(parentId) &&
+          type !== 'SECTION' &&
+          type !== 'TAB' &&
           [
             twentyStandardFlatApplication.id,
             workspaceCustomFlatApplication.id,

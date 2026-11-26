@@ -2,7 +2,6 @@ import {
   Check,
   Column,
   CreateDateColumn,
-  DeleteDateColumn,
   Entity,
   Index,
   JoinColumn,
@@ -46,6 +45,7 @@ import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entiti
 import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
 import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity.type';
+import { type PrivatableEntity } from 'src/engine/permissions/metadata-permissions/types/privatable-entity.type';
 
 export type ViewOverrides = {
   isActive?: boolean;
@@ -79,7 +79,6 @@ export type ViewOverrides = {
   'objectMetadataId',
   'workspaceId',
 ])
-@Index('IDX_VIEW_VISIBILITY', ['visibility'])
 @Index('IDX_VIEW_CALENDAR_FIELD_METADATA', ['calendarFieldMetadataId'])
 @Index('IDX_VIEW_CALENDAR_END_FIELD_METADATA', ['calendarEndFieldMetadataId'])
 @Index('IDX_VIEW_KANBAN_FIELD_METADATA', [
@@ -93,7 +92,7 @@ export type ViewOverrides = {
 )
 export class ViewEntity
   extends OverridableEntity<ViewOverrides>
-  implements Required<ViewEntity>
+  implements Required<ViewEntity>, PrivatableEntity
 {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -259,7 +258,7 @@ export class ViewEntity
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 
-  @DeleteDateColumn({ type: 'timestamptz' })
+  @Column({ nullable: true, type: 'timestamptz' })
   deletedAt: Date | null;
 
   @Column({ nullable: true, type: 'text', default: null })
@@ -285,13 +284,12 @@ export class ViewEntity
   @Column({
     type: 'enum',
     enum: Object.values(ViewVisibility),
-    nullable: false,
-    default: ViewVisibility.WORKSPACE,
+    nullable: true,
     select: false,
     insert: false,
     update: false,
   })
-  visibility: WasRemovedInUpgrade<ViewVisibility>;
+  visibility: WasRemovedInUpgrade<ViewVisibility | null>;
 
   @WasIntroducedInUpgrade({
     upgradeCommandName: ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME,

@@ -44,6 +44,7 @@ import { FRONT_COMPONENT_READ_ACCESS_POLICY } from 'src/engine/metadata-modules/
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 import { getGraphqlFieldSelections } from 'src/engine/api/graphql/workspace-resolver-builder/utils/get-graphql-field-selections.util';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 
 const FRONT_COMPONENT_USER_SESSION_ACCESS_POLICY: AccessPolicy = {
   authPrincipals: {
@@ -94,6 +95,7 @@ export class FrontComponentResolver {
   ) {}
 
   @ResolveField(() => String, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   async frontComponentSharedDependenciesChecksum(
     @Parent() frontComponent: FrontComponentDTO,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -110,6 +112,7 @@ export class FrontComponentResolver {
   }
 
   @ResolveField(() => String, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   async applicationName(
     @Parent() frontComponent: FrontComponentDTO,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -123,6 +126,7 @@ export class FrontComponentResolver {
   }
 
   @ResolveField(() => [String], { nullable: true })
+  @UseGuards(NoPermissionGuard)
   async applicationGrantedCapabilities(
     @Parent() frontComponent: FrontComponentDTO,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -139,6 +143,7 @@ export class FrontComponentResolver {
   }
 
   @ResolveField(() => [IframeMediaPermissionDTO], { nullable: true })
+  @UseGuards(NoPermissionGuard)
   async applicationGrantedIframeMediaPermissions(
     @Parent() frontComponent: FrontComponentDTO,
     @AuthWorkspace()

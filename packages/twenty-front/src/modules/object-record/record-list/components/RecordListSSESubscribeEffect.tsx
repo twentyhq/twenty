@@ -1,5 +1,5 @@
 import { useRefetchFindManyRecords } from '@/object-record/hooks/useRefetchFindManyRecords';
-import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
+import { useFindManyRecordIndexTableParamsWithoutViewPresetFilter } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParamsWithoutViewPresetFilter';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordListComponentInstanceContext } from '@/object-record/record-list/states/contexts/RecordListComponentInstanceContext';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
@@ -14,7 +14,9 @@ export const RecordListSSESubscribeEffect = () => {
     useRecordIndexContextOrThrow();
 
   const { filter, orderBy } =
-    useFindManyRecordIndexTableParams(objectNameSingular);
+    useFindManyRecordIndexTableParamsWithoutViewPresetFilter({
+      objectNameSingular,
+    });
 
   const { refetchFindManyRecords } = useRefetchFindManyRecords({
     objectMetadataNamePlural: objectMetadataItem.namePlural,

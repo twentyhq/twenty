@@ -16,8 +16,9 @@ export const WithLock = (
 
     const originalMethod = descriptor.value;
 
-    // oxlint-disable-next-line typescript/no-explicit-any
-    descriptor.value = async function (...args: any[]) {
+    descriptor.value = async function (
+      ...args: [Record<string, unknown>, ...unknown[]]
+    ) {
       const self = this as { cacheLockService: CacheLockService };
 
       if (!self.cacheLockService) {

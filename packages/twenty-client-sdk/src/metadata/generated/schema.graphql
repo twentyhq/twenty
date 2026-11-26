@@ -42,6 +42,7 @@ type Agent {
   responseFormat: JSON
   roleId: UUID
   triggers: [JSON!]!
+  universalIdentifier: UUID!
   updatedAt: DateTime!
 }
 
@@ -592,6 +593,33 @@ type ApplicationAuthorization {
   workspaceId: UUID!
 }
 
+type ApplicationBillingPrice {
+  amountCents: Int!
+  billingPeriod: ApplicationBillingPricePeriod!
+  currency: ApplicationBillingPriceCurrency!
+  label: String!
+  per: ApplicationBillingPriceUnit
+  type: ApplicationBillingPriceType!
+  universalIdentifier: String!
+}
+
+enum ApplicationBillingPriceCurrency {
+  USD
+}
+
+enum ApplicationBillingPricePeriod {
+  MONTHLY
+}
+
+enum ApplicationBillingPriceType {
+  RECURRING
+}
+
+enum ApplicationBillingPriceUnit {
+  CONNECTED_ACCOUNT
+  WORKSPACE_MEMBER
+}
+
 type ApplicationCapabilityGrant {
   grantedCapabilities: [String!]!
   id: UUID!
@@ -975,7 +1003,7 @@ type AutocompleteResult {
 type AvailableWorkspace {
   displayName: String
   id: UUID!
-  inviteHash: String
+  inviteHash: String @deprecated(reason: "Always null. Will be removed.")
   loginToken: String
   logo: String
   personalInviteToken: String
@@ -1085,6 +1113,7 @@ type Billing {
 type BillingCustomer {
   hasPaymentMethod: Boolean
   id: UUID!
+  stripeCustomerEmail: String
   userCreditsFallback: UserCreditsFallback!
 }
 
@@ -1224,6 +1253,9 @@ enum BillingSubscriptionCollectionMethod {
 }
 
 type BillingSubscriptionItem {
+  applicationLogoUrl: String
+  applicationName: String
+  applicationPricePer: ApplicationBillingPriceUnit
   billingProduct: BillingProduct!
   creditAmount: Float
   hasReachedCurrentPeriodCap: Boolean!
@@ -1314,6 +1346,31 @@ enum CalendarChannelVisibility {
 
 type CalendarConfiguration {
   configurationType: WidgetConfigurationType!
+}
+
+enum CalendarEventRecurrenceFrequency {
+  DAILY
+  MONTHLY
+  WEEKLY
+  YEARLY
+}
+
+input CalendarEventRecurrenceInput {
+  daysOfWeek: [CalendarEventRecurrenceWeekday!]
+  endDate: String
+  endOccurrenceCount: Int
+  frequency: CalendarEventRecurrenceFrequency!
+  interval: Int
+}
+
+enum CalendarEventRecurrenceWeekday {
+  FRIDAY
+  MONDAY
+  SATURDAY
+  SUNDAY
+  THURSDAY
+  TUESDAY
+  WEDNESDAY
 }
 
 type CallRecordingSummaryConfiguration {
@@ -1669,6 +1726,7 @@ input CreateCalendarEventInput {
   endsAt: String!
   isFullDay: Boolean
   location: String
+  recurrence: CalendarEventRecurrenceInput
   sendInvitations: Boolean
   startsAt: String!
   timeZone: String
@@ -1999,7 +2057,7 @@ input CreateViewInput {
   groupLoadLimit: Int = 8
   icon: String!
   id: UUID
-  isCompact: Boolean = false
+  isCompact: Boolean
   isPrivate: Boolean
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID
@@ -2018,7 +2076,6 @@ input CreateViewInput {
   shouldDisplayGroupsAsTabs: Boolean = false
   shouldHideEmptyGroups: Boolean = false
   type: ViewType = TABLE
-  visibility: ViewVisibility @deprecated(reason: "Use isPrivate instead")
 }
 
 input CreateViewSortInput {
@@ -2382,9 +2439,15 @@ type EnqueueJobResult {
 input EnqueueJobsInput {
   delayMs: Int
   jobs: [EnqueueJobItemInput!]
+  limiter: EnqueueJobsLimiterInput
   logicFunctionUniversalIdentifier: String!
   payloads: [JSON!] @deprecated(reason: "Use jobs instead.")
   retryLimit: Int
+}
+
+input EnqueueJobsLimiterInput {
+  durationMs: Int!
+  max: Int!
 }
 
 type EnqueueJobsResult {
@@ -2398,6 +2461,7 @@ type EnqueueJobsResult {
 
 type EnqueuedJob {
   jobId: String!
+  scheduledAt: Float!
   sizeBytes: Int!
 }
 
@@ -2499,31 +2563,25 @@ type FeatureFlag {
 }
 
 enum FeatureFlagKey {
-  IS_ACCESS_GROUPS_ENABLED
   IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED
   IS_AI_CHAT_COMPONENT_BUILDER_ENABLED
   IS_AI_CHAT_INBOX_ENABLED
   IS_AI_DATA_POLICY_ENABLED
-  IS_APPLICATION_PRICE_BILLING_ENABLED
-  IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED
   IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED
-  IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED
   IS_CHANNEL_VISIBILITY_ENFORCED_ON_API_KEYS
-  IS_CHANNEL_VISIBILITY_RLS_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
-  IS_CREATE_RECORDS_PERMISSION_ENABLED
   IS_CUSTOMIZABLE_SIDEBAR_ENABLED
+  IS_FORMULA_FIELD_ENABLED
   IS_GETTING_STARTED_ENABLED
+  IS_INBOX_OBJECT_NAMING_ENABLED
   IS_INTERNAL_IMPORT_COLUMN_ENABLED
   IS_LOOKUP_COLUMNS_ENABLED
   IS_MCP_SERVERS_ENABLED
-  IS_MESSAGE_ATTACHMENT_ENABLED
   IS_PRIVATE_RECORDS_ENABLED
   IS_RECORD_GROUP_TABS_ENABLED
   IS_RECORD_LEVEL_SHARING_ENABLED
-  IS_RELATED_RECORD_PATHS_ENABLED
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
-  IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED
+  IS_WIDGET_CONDITIONAL_AVAILABILITY_ENABLED
 }
 
 type Field {
@@ -3045,6 +3103,7 @@ type JobStatus {
   finishedAt: Float
   jobId: String!
   progress: Int
+  scheduledAt: Float!
   startedAt: Float
   state: JobState!
 }
@@ -3221,6 +3280,7 @@ type MarketplaceApp {
 type MarketplaceAppDetail {
   aboutDescription: String
   author: String
+  billingPrices: [ApplicationBillingPrice!]!
   billsCredits: Boolean!
   category: String
   connectUrl: String
@@ -4787,6 +4847,8 @@ type RowLevelPermissionPredicate {
   value: JSON
   workspaceMemberFieldMetadataId: String
   workspaceMemberRelationFieldMetadataId: String
+  workspaceMemberRelationFilterFieldMetadataId: String
+  workspaceMemberRelationFilterValues: [String!]
   workspaceMemberSubFieldName: String
 }
 
@@ -4867,6 +4929,8 @@ input RowLevelPermissionRulePredicateInput {
   value: JSON
   workspaceMemberFieldMetadataId: String
   workspaceMemberRelationFieldMetadataId: UUID
+  workspaceMemberRelationFilterFieldMetadataId: UUID
+  workspaceMemberRelationFilterValues: [String!]
   workspaceMemberSubFieldName: String
 }
 
@@ -5811,7 +5875,6 @@ input UpdateViewFieldGroupInput {
 }
 
 input UpdateViewFieldGroupInputUpdates {
-  deletedAt: String @deprecated(reason: "Ignored: view field groups are no longer soft-deleted. Use destroyViewFieldGroup instead.")
   isVisible: Boolean
   name: String
   position: Float
@@ -5902,7 +5965,6 @@ input UpdateViewInput {
   shouldHideEmptyGroups: Boolean
   translations: [MetadataTranslationOverrideInput!]
   type: ViewType
-  visibility: ViewVisibility @deprecated(reason: "Use isPrivate instead")
 }
 
 input UpdateViewSortInput {
@@ -6431,7 +6493,6 @@ type View {
   calendarLayout: ViewCalendarLayout
   createdAt: DateTime!
   createdByUserWorkspaceId: UUID
-  deletedAt: DateTime
   groupLoadLimit: Int
   icon: String!
   id: UUID!
@@ -6461,7 +6522,6 @@ type View {
   viewFilters: [ViewFilter!]!
   viewGroups: [ViewGroup!]!
   viewSorts: [ViewSort!]!
-  visibility: ViewVisibility! @deprecated(reason: "Use isPrivate instead")
   workspaceId: UUID!
 }
 
@@ -6479,7 +6539,6 @@ type ViewField {
   aggregateOperation: AggregateOperations
   applicationId: UUID!
   createdAt: DateTime!
-  deletedAt: DateTime
   fieldMetadataId: UUID!
   id: UUID!
   isActive: Boolean!
@@ -6501,7 +6560,6 @@ type ViewField {
 
 type ViewFieldGroup {
   createdAt: DateTime!
-  deletedAt: DateTime
   id: UUID!
   isActive: Boolean!
   isOverridden: Boolean! @deprecated(reason: "isOverridden is deprecated")
@@ -6578,7 +6636,6 @@ input ViewFieldRelationScopeSortInput {
 
 type ViewFilter {
   createdAt: DateTime!
-  deletedAt: DateTime
   fieldMetadataId: UUID!
   id: UUID!
   operand: ViewFilterOperand!
@@ -6594,7 +6651,6 @@ type ViewFilter {
 
 type ViewFilterGroup {
   createdAt: DateTime!
-  deletedAt: DateTime
   id: UUID!
   logicalOperator: ViewFilterGroupLogicalOperator!
   parentViewFilterGroupId: UUID
@@ -6631,7 +6687,6 @@ enum ViewFilterOperand {
 
 type ViewGroup {
   createdAt: DateTime!
-  deletedAt: DateTime
   fieldValue: String!
   id: UUID!
   isVisible: Boolean!
@@ -6662,7 +6717,6 @@ enum ViewPresetFilter {
 
 type ViewSort {
   createdAt: DateTime!
-  deletedAt: DateTime
   direction: ViewSortDirection!
   fieldMetadataId: UUID!
   id: UUID!
@@ -6682,17 +6736,13 @@ enum ViewType {
   CALENDAR
   CALENDAR_WIDGET
   FIELDS_WIDGET
+  INBOX
   KANBAN
   KANBAN_WIDGET
   LIST
   LIST_WIDGET
   TABLE
   TABLE_WIDGET
-}
-
-enum ViewVisibility {
-  UNLISTED
-  WORKSPACE
 }
 
 type Webhook {

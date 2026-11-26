@@ -10,6 +10,36 @@ import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/wo
 import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 
+const groupWorkspaceMemberSidePredicatesByFieldUniversalIdentifier = (
+  flatRowLevelPermissionPredicateMaps: AllUniversalFlatEntityMaps['flatRowLevelPermissionPredicateMaps'],
+): Map<string, string[]> => {
+  const predicateUniversalIdentifiersByField = new Map<string, string[]>();
+
+  for (const predicate of Object.values(
+    flatRowLevelPermissionPredicateMaps.byUniversalIdentifier,
+  )) {
+    if (!isDefined(predicate)) {
+      continue;
+    }
+
+    for (const fieldUniversalIdentifier of [
+      predicate.workspaceMemberRelationFieldMetadataUniversalIdentifier,
+      predicate.workspaceMemberRelationFilterFieldMetadataUniversalIdentifier,
+    ]) {
+      if (isDefined(fieldUniversalIdentifier)) {
+        predicateUniversalIdentifiersByField.set(fieldUniversalIdentifier, [
+          ...(predicateUniversalIdentifiersByField.get(
+            fieldUniversalIdentifier,
+          ) ?? []),
+          predicate.universalIdentifier,
+        ]);
+      }
+    }
+  }
+
+  return predicateUniversalIdentifiersByField;
+};
+
 // The database would cascade or null the rule's reference, silently lifting its row restriction
 export const validateFieldMetadataNotUsedByRowLevelPermissionPredicateCrossEntity =
   ({
@@ -61,6 +91,11 @@ export const validateFieldMetadataNotUsedByRowLevelPermissionPredicateCrossEntit
       ),
     );
 
+    const workspaceMemberSidePredicatesByField =
+      groupWorkspaceMemberSidePredicatesByFieldUniversalIdentifier(
+        optimisticUniversalFlatMaps.flatRowLevelPermissionPredicateMaps,
+      );
+
     for (const deleteAction of deletedFieldActions) {
       const fromFlatFieldMetadata =
         fromFlatFieldMetadataMaps.byUniversalIdentifier[
@@ -81,6 +116,9 @@ export const validateFieldMetadataNotUsedByRowLevelPermissionPredicateCrossEntit
           ...fromFlatFieldMetadata.rowLevelPermissionPredicateUniversalIdentifiers,
           ...fromFlatFieldMetadata.relationRowLevelPermissionPredicateUniversalIdentifiers,
           ...fromFlatFieldMetadata.workspaceMemberRowLevelPermissionPredicateUniversalIdentifiers,
+          ...(workspaceMemberSidePredicatesByField.get(
+            deleteAction.universalIdentifier,
+          ) ?? []),
         ].filter((predicateUniversalIdentifier) => {
           if (
             deletedPredicateUniversalIdentifiers.has(

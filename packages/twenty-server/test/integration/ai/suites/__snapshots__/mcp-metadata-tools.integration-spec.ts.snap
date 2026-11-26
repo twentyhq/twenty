@@ -346,7 +346,40 @@ exports[`MCP metadata tools (integration) should describe the metadata tools to 
     "inputSchema": {
       "properties": {
         "defaultValue": {
-          "description": "Default value",
+          "anyOf": [
+            {
+              "type": "string",
+            },
+            {
+              "type": "number",
+            },
+            {
+              "type": "boolean",
+            },
+            {
+              "items": {},
+              "type": "array",
+            },
+            {
+              "additionalProperties": {},
+              "propertyNames": {
+                "type": "string",
+              },
+              "type": "object",
+            },
+            {
+              "type": "null",
+            },
+          ],
+          "description": "Default value. Text and select values are quoted strings (e.g. "'OPTION_A'"), multi-select an array of them, composite fields an object of subfields.",
+          "type": [
+            "string",
+            "number",
+            "boolean",
+            "array",
+            "object",
+            "null",
+          ],
         },
         "description": {
           "description": "Description",
@@ -386,7 +419,56 @@ exports[`MCP metadata tools (integration) should describe the metadata tools to 
           "type": "string",
         },
         "options": {
+          "anyOf": [
+            {
+              "items": {
+                "additionalProperties": {},
+                "properties": {
+                  "color": {
+                    "description": "Tag color",
+                    "type": [
+                      "string",
+                      "null",
+                    ],
+                  },
+                  "id": {
+                    "description": "Option ID, keep it when updating",
+                    "type": "string",
+                  },
+                  "isActive": {
+                    "description": "Whether it can still be picked",
+                    "type": "boolean",
+                  },
+                  "label": {
+                    "description": "Display label",
+                    "type": "string",
+                  },
+                  "position": {
+                    "description": "Position in the list",
+                    "type": "number",
+                  },
+                  "value": {
+                    "description": "Stored value (SCREAMING_SNAKE_CASE)",
+                    "type": "string",
+                  },
+                },
+                "required": [
+                  "label",
+                  "value",
+                ],
+                "type": "object",
+              },
+              "type": "array",
+            },
+            {
+              "type": "null",
+            },
+          ],
           "description": "SELECT/MULTI_SELECT options: [{ label, value, position, color }]. color is one of red, ruby, crimson, tomato, orange, amber, yellow, lime, grass, green, jade, mint, turquoise, cyan, sky, blue, iris, violet, purple, plum, pink, bronze, gold, brown, gray; defaults to gray when omitted.",
+          "type": [
+            "array",
+            "null",
+          ],
         },
         "relationCreationPayload": {
           "description": "Required when type is RELATION. Defines the relation direction and the inverse field created on the target object.",
@@ -421,7 +503,23 @@ exports[`MCP metadata tools (integration) should describe the metadata tools to 
           "type": "object",
         },
         "settings": {
+          "anyOf": [
+            {
+              "additionalProperties": {},
+              "propertyNames": {
+                "type": "string",
+              },
+              "type": "object",
+            },
+            {
+              "type": "null",
+            },
+          ],
           "description": "Field settings",
+          "type": [
+            "object",
+            "null",
+          ],
         },
         "type": {
           "description": "Field type",
@@ -470,7 +568,40 @@ exports[`MCP metadata tools (integration) should describe the metadata tools to 
     "inputSchema": {
       "properties": {
         "defaultValue": {
-          "description": "Default value",
+          "anyOf": [
+            {
+              "type": "string",
+            },
+            {
+              "type": "number",
+            },
+            {
+              "type": "boolean",
+            },
+            {
+              "items": {},
+              "type": "array",
+            },
+            {
+              "additionalProperties": {},
+              "propertyNames": {
+                "type": "string",
+              },
+              "type": "object",
+            },
+            {
+              "type": "null",
+            },
+          ],
+          "description": "Default value. Text and select values are quoted strings (e.g. "'OPTION_A'"), multi-select an array of them, composite fields an object of subfields.",
+          "type": [
+            "string",
+            "number",
+            "boolean",
+            "array",
+            "object",
+            "null",
+          ],
         },
         "description": {
           "description": "Description",
@@ -510,10 +641,75 @@ exports[`MCP metadata tools (integration) should describe the metadata tools to 
           "type": "string",
         },
         "options": {
+          "anyOf": [
+            {
+              "items": {
+                "additionalProperties": {},
+                "properties": {
+                  "color": {
+                    "description": "Tag color",
+                    "type": [
+                      "string",
+                      "null",
+                    ],
+                  },
+                  "id": {
+                    "description": "Option ID, keep it when updating",
+                    "type": "string",
+                  },
+                  "isActive": {
+                    "description": "Whether it can still be picked",
+                    "type": "boolean",
+                  },
+                  "label": {
+                    "description": "Display label",
+                    "type": "string",
+                  },
+                  "position": {
+                    "description": "Position in the list",
+                    "type": "number",
+                  },
+                  "value": {
+                    "description": "Stored value (SCREAMING_SNAKE_CASE)",
+                    "type": "string",
+                  },
+                },
+                "required": [
+                  "label",
+                  "value",
+                ],
+                "type": "object",
+              },
+              "type": "array",
+            },
+            {
+              "type": "null",
+            },
+          ],
           "description": "SELECT/MULTI_SELECT options: [{ label, value, position, color }]. color is one of red, ruby, crimson, tomato, orange, amber, yellow, lime, grass, green, jade, mint, turquoise, cyan, sky, blue, iris, violet, purple, plum, pink, bronze, gold, brown, gray; defaults to gray when omitted.",
+          "type": [
+            "array",
+            "null",
+          ],
         },
         "settings": {
+          "anyOf": [
+            {
+              "additionalProperties": {},
+              "propertyNames": {
+                "type": "string",
+              },
+              "type": "object",
+            },
+            {
+              "type": "null",
+            },
+          ],
           "description": "Field settings",
+          "type": [
+            "object",
+            "null",
+          ],
         },
       },
       "required": [
@@ -549,7 +745,40 @@ exports[`MCP metadata tools (integration) should describe the metadata tools to 
           "items": {
             "properties": {
               "defaultValue": {
-                "description": "Default value",
+                "anyOf": [
+                  {
+                    "type": "string",
+                  },
+                  {
+                    "type": "number",
+                  },
+                  {
+                    "type": "boolean",
+                  },
+                  {
+                    "items": {},
+                    "type": "array",
+                  },
+                  {
+                    "additionalProperties": {},
+                    "propertyNames": {
+                      "type": "string",
+                    },
+                    "type": "object",
+                  },
+                  {
+                    "type": "null",
+                  },
+                ],
+                "description": "Default value. Text and select values are quoted strings (e.g. "'OPTION_A'"), multi-select an array of them, composite fields an object of subfields.",
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "array",
+                  "object",
+                  "null",
+                ],
               },
               "description": {
                 "description": "Description",
@@ -589,7 +818,56 @@ exports[`MCP metadata tools (integration) should describe the metadata tools to 
                 "type": "string",
               },
               "options": {
+                "anyOf": [
+                  {
+                    "items": {
+                      "additionalProperties": {},
+                      "properties": {
+                        "color": {
+                          "description": "Tag color",
+                          "type": [
+                            "string",
+                            "null",
+                          ],
+                        },
+                        "id": {
+                          "description": "Option ID, keep it when updating",
+                          "type": "string",
+                        },
+                        "isActive": {
+                          "description": "Whether it can still be picked",
+                          "type": "boolean",
+                        },
+                        "label": {
+                          "description": "Display label",
+                          "type": "string",
+                        },
+                        "position": {
+                          "description": "Position in the list",
+                          "type": "number",
+                        },
+                        "value": {
+                          "description": "Stored value (SCREAMING_SNAKE_CASE)",
+                          "type": "string",
+                        },
+                      },
+                      "required": [
+                        "label",
+                        "value",
+                      ],
+                      "type": "object",
+                    },
+                    "type": "array",
+                  },
+                  {
+                    "type": "null",
+                  },
+                ],
                 "description": "SELECT/MULTI_SELECT options: [{ label, value, position, color }]. color is one of red, ruby, crimson, tomato, orange, amber, yellow, lime, grass, green, jade, mint, turquoise, cyan, sky, blue, iris, violet, purple, plum, pink, bronze, gold, brown, gray; defaults to gray when omitted.",
+                "type": [
+                  "array",
+                  "null",
+                ],
               },
               "relationCreationPayload": {
                 "description": "Required when type is RELATION. Defines the relation direction and the inverse field created on the target object.",
@@ -624,7 +902,23 @@ exports[`MCP metadata tools (integration) should describe the metadata tools to 
                 "type": "object",
               },
               "settings": {
+                "anyOf": [
+                  {
+                    "additionalProperties": {},
+                    "propertyNames": {
+                      "type": "string",
+                    },
+                    "type": "object",
+                  },
+                  {
+                    "type": "null",
+                  },
+                ],
                 "description": "Field settings",
+                "type": [
+                  "object",
+                  "null",
+                ],
               },
               "type": {
                 "description": "Field type",
@@ -687,7 +981,40 @@ exports[`MCP metadata tools (integration) should describe the metadata tools to 
           "items": {
             "properties": {
               "defaultValue": {
-                "description": "Default value",
+                "anyOf": [
+                  {
+                    "type": "string",
+                  },
+                  {
+                    "type": "number",
+                  },
+                  {
+                    "type": "boolean",
+                  },
+                  {
+                    "items": {},
+                    "type": "array",
+                  },
+                  {
+                    "additionalProperties": {},
+                    "propertyNames": {
+                      "type": "string",
+                    },
+                    "type": "object",
+                  },
+                  {
+                    "type": "null",
+                  },
+                ],
+                "description": "Default value. Text and select values are quoted strings (e.g. "'OPTION_A'"), multi-select an array of them, composite fields an object of subfields.",
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "array",
+                  "object",
+                  "null",
+                ],
               },
               "description": {
                 "description": "Description",
@@ -727,10 +1054,75 @@ exports[`MCP metadata tools (integration) should describe the metadata tools to 
                 "type": "string",
               },
               "options": {
+                "anyOf": [
+                  {
+                    "items": {
+                      "additionalProperties": {},
+                      "properties": {
+                        "color": {
+                          "description": "Tag color",
+                          "type": [
+                            "string",
+                            "null",
+                          ],
+                        },
+                        "id": {
+                          "description": "Option ID, keep it when updating",
+                          "type": "string",
+                        },
+                        "isActive": {
+                          "description": "Whether it can still be picked",
+                          "type": "boolean",
+                        },
+                        "label": {
+                          "description": "Display label",
+                          "type": "string",
+                        },
+                        "position": {
+                          "description": "Position in the list",
+                          "type": "number",
+                        },
+                        "value": {
+                          "description": "Stored value (SCREAMING_SNAKE_CASE)",
+                          "type": "string",
+                        },
+                      },
+                      "required": [
+                        "label",
+                        "value",
+                      ],
+                      "type": "object",
+                    },
+                    "type": "array",
+                  },
+                  {
+                    "type": "null",
+                  },
+                ],
                 "description": "SELECT/MULTI_SELECT options: [{ label, value, position, color }]. color is one of red, ruby, crimson, tomato, orange, amber, yellow, lime, grass, green, jade, mint, turquoise, cyan, sky, blue, iris, violet, purple, plum, pink, bronze, gold, brown, gray; defaults to gray when omitted.",
+                "type": [
+                  "array",
+                  "null",
+                ],
               },
               "settings": {
+                "anyOf": [
+                  {
+                    "additionalProperties": {},
+                    "propertyNames": {
+                      "type": "string",
+                    },
+                    "type": "object",
+                  },
+                  {
+                    "type": "null",
+                  },
+                ],
                 "description": "Field settings",
+                "type": [
+                  "object",
+                  "null",
+                ],
               },
             },
             "required": [
@@ -845,7 +1237,7 @@ exports[`MCP metadata tools (integration) should describe the metadata tools to 
     "inputSchema": {
       "properties": {
         "expression": {
-          "description": "Condition that must be true for a record to be saved. When it is false, the write is rejected and the message is shown. Reference fields by name, as returned by get_field_metadata. Use dot access for a composite field part (amount.amountMicros, name.firstName) and for a field of a many-to-one related record (company.name), never brackets. Compare select and multi-select fields with option values, e.g. stage == 'CUSTOMER'. Currency amounts are in micros: amount.amountMicros > 1000000000 means more than 1000. Write text in single quotes. Operators: == != < <= > >= + - * / and or not, and value in [a, b]. now is the date and time of the write; true and false are booleans. Functions: isDefined(value) is true when the value is set, even to an empty text; isEmpty(value) is true when the value is not set, an empty text, an empty list, or a composite field with every part empty; isNonEmptyString(value); includes(listOrText, value) is true when a multi-select or array contains the value, or a text contains a text, case-sensitive; arrayLength(list); dateDiff(from, to, unit) is the number of whole units from one date to another, negative when to is earlier, e.g. dateDiff(createdAt, now, 'HOUR'); dateAdd(date, amount, unit) moves a date by whole units; dateTrunc(date, unit) is the start of the unit containing the date; datePart(date, part) is one part of the date as a number, with part 'YEAR', 'QUARTER', 'MONTH', 'WEEK', 'DAY', 'DAY_OF_WEEK' (1 is Monday), 'HOUR' or 'MINUTE'. Units are 'MINUTE', 'HOUR', 'DAY', 'WEEK', 'MONTH', 'QUARTER' or 'YEAR', and dates are read in UTC; isInRelativeDateRange(date, direction, amount, unit) is true when the date falls in the period, with direction 'PAST', 'NEXT' or 'THIS' and unit 'DAY', 'WEEK', 'MONTH', 'QUARTER' or 'YEAR', e.g. isInRelativeDateRange(closeDate, 'PAST', 30, 'DAY'). To require a field, use not isEmpty(field).",
+          "description": "Condition that must be true for a record to be saved. When it is false, the write is rejected and the message is shown. Reference fields by name, as returned by get_field_metadata. Use dot access for a composite field part (amount.amountMicros, name.firstName) and for a field of a many-to-one related record (company.name), never brackets. Compare select and multi-select fields with option values, e.g. stage == 'CUSTOMER'. Currency amounts are in micros: amount.amountMicros > 1000000000 means more than 1000. Write text in single quotes. Operators: == != < <= > >= + - * / and or not, and value in [a, b]. now is the date and time of the write; true and false are booleans. Functions: isDefined(value) is true when the value is set, even to an empty text; isEmpty(value) is true when the value is not set, an empty text, an empty list, or a composite field with every part empty; isNonEmptyString(value); includes(listOrText, value) is true when a multi-select or array contains the value, or a text contains a text, case-sensitive; arrayLength(list); dateDiff(from, to, unit) is the number of whole units from one date to another, negative when to is earlier, e.g. dateDiff(createdAt, now, 'HOUR'); dateAdd(date, amount, unit) moves a date by whole units; dateTrunc(date, unit) is the start of the unit containing the date; datePart(date, part) is one part of the date as a number, with part 'YEAR', 'QUARTER', 'MONTH', 'WEEK', 'DAY', 'DAY_OF_WEEK' (1 is Monday), 'HOUR' or 'MINUTE'. Units are 'MINUTE', 'HOUR', 'DAY', 'WEEK', 'MONTH', 'QUARTER' or 'YEAR', and dates are read in UTC; isInRelativeDateRange(date, direction, amount, unit) is true when the date falls in the period, with direction 'PAST', 'NEXT' or 'THIS' and unit 'DAY', 'WEEK', 'MONTH', 'QUARTER' or 'YEAR', e.g. isInRelativeDateRange(closeDate, 'PAST', 30, 'DAY'); if(condition, valueIfTrue, valueIfFalse) is the second value when the condition is true, otherwise the third; coalesce(value, ...fallbacks) is the first value that is set; concat(value, ...values) joins values as text, skipping the ones that are not set; lower(text) and upper(text) change letter case; min(number, ...numbers) and max(number, ...numbers) ignore values that are not numbers; roundTo(number, decimals) rounds to a number of decimals. a || b joins two values as text, skipping the ones that are not set. To require a field, use not isEmpty(field).",
           "type": "string",
         },
         "objectName": {
@@ -871,7 +1263,7 @@ exports[`MCP metadata tools (integration) should describe the metadata tools to 
           "type": "string",
         },
         "expression": {
-          "description": "Condition that must be true for a record to be saved. When it is false, the write is rejected and the message is shown. Reference fields by name, as returned by get_field_metadata. Use dot access for a composite field part (amount.amountMicros, name.firstName) and for a field of a many-to-one related record (company.name), never brackets. Compare select and multi-select fields with option values, e.g. stage == 'CUSTOMER'. Currency amounts are in micros: amount.amountMicros > 1000000000 means more than 1000. Write text in single quotes. Operators: == != < <= > >= + - * / and or not, and value in [a, b]. now is the date and time of the write; true and false are booleans. Functions: isDefined(value) is true when the value is set, even to an empty text; isEmpty(value) is true when the value is not set, an empty text, an empty list, or a composite field with every part empty; isNonEmptyString(value); includes(listOrText, value) is true when a multi-select or array contains the value, or a text contains a text, case-sensitive; arrayLength(list); dateDiff(from, to, unit) is the number of whole units from one date to another, negative when to is earlier, e.g. dateDiff(createdAt, now, 'HOUR'); dateAdd(date, amount, unit) moves a date by whole units; dateTrunc(date, unit) is the start of the unit containing the date; datePart(date, part) is one part of the date as a number, with part 'YEAR', 'QUARTER', 'MONTH', 'WEEK', 'DAY', 'DAY_OF_WEEK' (1 is Monday), 'HOUR' or 'MINUTE'. Units are 'MINUTE', 'HOUR', 'DAY', 'WEEK', 'MONTH', 'QUARTER' or 'YEAR', and dates are read in UTC; isInRelativeDateRange(date, direction, amount, unit) is true when the date falls in the period, with direction 'PAST', 'NEXT' or 'THIS' and unit 'DAY', 'WEEK', 'MONTH', 'QUARTER' or 'YEAR', e.g. isInRelativeDateRange(closeDate, 'PAST', 30, 'DAY'). To require a field, use not isEmpty(field).",
+          "description": "Condition that must be true for a record to be saved. When it is false, the write is rejected and the message is shown. Reference fields by name, as returned by get_field_metadata. Use dot access for a composite field part (amount.amountMicros, name.firstName) and for a field of a many-to-one related record (company.name), never brackets. Compare select and multi-select fields with option values, e.g. stage == 'CUSTOMER'. Currency amounts are in micros: amount.amountMicros > 1000000000 means more than 1000. Write text in single quotes. Operators: == != < <= > >= + - * / and or not, and value in [a, b]. now is the date and time of the write; true and false are booleans. Functions: isDefined(value) is true when the value is set, even to an empty text; isEmpty(value) is true when the value is not set, an empty text, an empty list, or a composite field with every part empty; isNonEmptyString(value); includes(listOrText, value) is true when a multi-select or array contains the value, or a text contains a text, case-sensitive; arrayLength(list); dateDiff(from, to, unit) is the number of whole units from one date to another, negative when to is earlier, e.g. dateDiff(createdAt, now, 'HOUR'); dateAdd(date, amount, unit) moves a date by whole units; dateTrunc(date, unit) is the start of the unit containing the date; datePart(date, part) is one part of the date as a number, with part 'YEAR', 'QUARTER', 'MONTH', 'WEEK', 'DAY', 'DAY_OF_WEEK' (1 is Monday), 'HOUR' or 'MINUTE'. Units are 'MINUTE', 'HOUR', 'DAY', 'WEEK', 'MONTH', 'QUARTER' or 'YEAR', and dates are read in UTC; isInRelativeDateRange(date, direction, amount, unit) is true when the date falls in the period, with direction 'PAST', 'NEXT' or 'THIS' and unit 'DAY', 'WEEK', 'MONTH', 'QUARTER' or 'YEAR', e.g. isInRelativeDateRange(closeDate, 'PAST', 30, 'DAY'); if(condition, valueIfTrue, valueIfFalse) is the second value when the condition is true, otherwise the third; coalesce(value, ...fallbacks) is the first value that is set; concat(value, ...values) joins values as text, skipping the ones that are not set; lower(text) and upper(text) change letter case; min(number, ...numbers) and max(number, ...numbers) ignore values that are not numbers; roundTo(number, decimals) rounds to a number of decimals. a || b joins two values as text, skipping the ones that are not set. To require a field, use not isEmpty(field).",
           "type": "string",
         },
         "message": {
@@ -914,7 +1306,7 @@ exports[`MCP metadata tools (integration) should describe the metadata tools to 
           "description": "ID of the field the message is shown on, or null to show it on the whole record.",
         },
         "expression": {
-          "description": "Condition that must be true for a record to be saved. When it is false, the write is rejected and the message is shown. Reference fields by name, as returned by get_field_metadata. Use dot access for a composite field part (amount.amountMicros, name.firstName) and for a field of a many-to-one related record (company.name), never brackets. Compare select and multi-select fields with option values, e.g. stage == 'CUSTOMER'. Currency amounts are in micros: amount.amountMicros > 1000000000 means more than 1000. Write text in single quotes. Operators: == != < <= > >= + - * / and or not, and value in [a, b]. now is the date and time of the write; true and false are booleans. Functions: isDefined(value) is true when the value is set, even to an empty text; isEmpty(value) is true when the value is not set, an empty text, an empty list, or a composite field with every part empty; isNonEmptyString(value); includes(listOrText, value) is true when a multi-select or array contains the value, or a text contains a text, case-sensitive; arrayLength(list); dateDiff(from, to, unit) is the number of whole units from one date to another, negative when to is earlier, e.g. dateDiff(createdAt, now, 'HOUR'); dateAdd(date, amount, unit) moves a date by whole units; dateTrunc(date, unit) is the start of the unit containing the date; datePart(date, part) is one part of the date as a number, with part 'YEAR', 'QUARTER', 'MONTH', 'WEEK', 'DAY', 'DAY_OF_WEEK' (1 is Monday), 'HOUR' or 'MINUTE'. Units are 'MINUTE', 'HOUR', 'DAY', 'WEEK', 'MONTH', 'QUARTER' or 'YEAR', and dates are read in UTC; isInRelativeDateRange(date, direction, amount, unit) is true when the date falls in the period, with direction 'PAST', 'NEXT' or 'THIS' and unit 'DAY', 'WEEK', 'MONTH', 'QUARTER' or 'YEAR', e.g. isInRelativeDateRange(closeDate, 'PAST', 30, 'DAY'). To require a field, use not isEmpty(field).",
+          "description": "Condition that must be true for a record to be saved. When it is false, the write is rejected and the message is shown. Reference fields by name, as returned by get_field_metadata. Use dot access for a composite field part (amount.amountMicros, name.firstName) and for a field of a many-to-one related record (company.name), never brackets. Compare select and multi-select fields with option values, e.g. stage == 'CUSTOMER'. Currency amounts are in micros: amount.amountMicros > 1000000000 means more than 1000. Write text in single quotes. Operators: == != < <= > >= + - * / and or not, and value in [a, b]. now is the date and time of the write; true and false are booleans. Functions: isDefined(value) is true when the value is set, even to an empty text; isEmpty(value) is true when the value is not set, an empty text, an empty list, or a composite field with every part empty; isNonEmptyString(value); includes(listOrText, value) is true when a multi-select or array contains the value, or a text contains a text, case-sensitive; arrayLength(list); dateDiff(from, to, unit) is the number of whole units from one date to another, negative when to is earlier, e.g. dateDiff(createdAt, now, 'HOUR'); dateAdd(date, amount, unit) moves a date by whole units; dateTrunc(date, unit) is the start of the unit containing the date; datePart(date, part) is one part of the date as a number, with part 'YEAR', 'QUARTER', 'MONTH', 'WEEK', 'DAY', 'DAY_OF_WEEK' (1 is Monday), 'HOUR' or 'MINUTE'. Units are 'MINUTE', 'HOUR', 'DAY', 'WEEK', 'MONTH', 'QUARTER' or 'YEAR', and dates are read in UTC; isInRelativeDateRange(date, direction, amount, unit) is true when the date falls in the period, with direction 'PAST', 'NEXT' or 'THIS' and unit 'DAY', 'WEEK', 'MONTH', 'QUARTER' or 'YEAR', e.g. isInRelativeDateRange(closeDate, 'PAST', 30, 'DAY'); if(condition, valueIfTrue, valueIfFalse) is the second value when the condition is true, otherwise the third; coalesce(value, ...fallbacks) is the first value that is set; concat(value, ...values) joins values as text, skipping the ones that are not set; lower(text) and upper(text) change letter case; min(number, ...numbers) and max(number, ...numbers) ignore values that are not numbers; roundTo(number, decimals) rounds to a number of decimals. a || b joins two values as text, skipping the ones that are not set. To require a field, use not isEmpty(field).",
           "type": "string",
         },
         "id": {

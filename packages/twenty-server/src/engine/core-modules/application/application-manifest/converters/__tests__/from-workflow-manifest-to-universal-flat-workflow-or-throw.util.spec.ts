@@ -71,7 +71,6 @@ describe('application workflow definitions', () => {
     expect(workflow.workspaceWorkflowId).toBeNull();
     expect(workflow.isSystem).toBe(false);
     expect(workflow.flatUniversalCommandMenuItem).toBeUndefined();
-    expect(version.workspaceWorkflowVersionId).toBeNull();
     expect(version.status).toBe('ACTIVE');
     expect(version.steps?.[0].settings.input).toEqual({
       logicFunctionId:

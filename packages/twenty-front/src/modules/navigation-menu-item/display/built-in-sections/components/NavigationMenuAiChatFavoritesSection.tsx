@@ -7,6 +7,8 @@ import { NavigationDrawerInboxFavoritesSection } from '@/inbox/components/Naviga
 import { inboxFavoriteChannelsSelector } from '@/inbox/states/selectors/inboxFavoriteChannelsSelector';
 import { inboxFavoriteThreadsSelector } from '@/inbox/states/selectors/inboxFavoriteThreadsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 type NavigationMenuAiChatFavoritesSectionProps = {
   headerAction?: ReactNode;
@@ -17,9 +19,14 @@ export const NavigationMenuAiChatFavoritesSection = ({
 }: NavigationMenuAiChatFavoritesSectionProps) => {
   const { t } = useLingui();
   const currentThreadId = useAiChatPageThreadId();
-  const { handleThreadClick } = useAiChatThreadClick({
-    shouldOpenInFullPage: true,
-  });
+  const isAiChatInboxEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+  );
+  const { handleThreadClick } = useAiChatThreadClick(
+    isAiChatInboxEnabled
+      ? { shouldOpenInFullPage: true }
+      : { resetNavigationStack: true },
+  );
   const inboxFavoriteThreads = useAtomStateValue(inboxFavoriteThreadsSelector);
   const inboxFavoriteChannels = useAtomStateValue(
     inboxFavoriteChannelsSelector,

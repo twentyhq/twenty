@@ -29,15 +29,6 @@ class UpdateViewFieldGroupInputUpdates {
   @IsBoolean()
   @Field({ nullable: true })
   isVisible?: boolean;
-
-  @IsOptional()
-  @IsString()
-  @Field({
-    nullable: true,
-    deprecationReason:
-      'Ignored: view field groups are no longer soft-deleted. Use destroyViewFieldGroup instead.',
-  })
-  deletedAt?: string;
 }
 
 @InputType()

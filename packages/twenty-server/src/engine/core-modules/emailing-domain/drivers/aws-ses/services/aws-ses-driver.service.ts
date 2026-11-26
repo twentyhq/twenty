@@ -10,10 +10,12 @@ import {
   DeleteTenantCommand,
   DeleteTenantResourceAssociationCommand,
   GetEmailIdentityCommand,
+  type GetEmailIdentityCommandOutput,
   NotFoundException,
   PutEmailIdentityDkimAttributesCommand,
   PutEmailIdentityDkimSigningAttributesCommand,
 } from '@aws-sdk/client-sesv2';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type AwsSesDriverConfig } from 'src/engine/core-modules/emailing-domain/drivers/interfaces/driver-config.interface';
 import {
@@ -41,6 +43,10 @@ import {
   EmailingDomainDriverExceptionCode,
 } from 'src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
+import {
+  EmailingDomainException,
+  EmailingDomainExceptionCode,
+} from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
 import { type VerificationRecord } from 'src/engine/core-modules/emailing-domain/drivers/types/verifications-record.type';
 
 export class AwsSesDriver implements EmailingDomainDriverInterface {
@@ -80,7 +86,10 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
         verificationRecords: this.withRecordStatus(verificationRecords, status),
       };
     } catch (error) {
-      if (error instanceof EmailingDomainDriverException) {
+      if (
+        error instanceof EmailingDomainDriverException ||
+        error instanceof EmailingDomainException
+      ) {
         throw error;
       }
 
@@ -138,6 +147,25 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
     }
   }
 
+  async assertDomainIsAvailableOrThrow(
+    input: EmailingDomainResourceInput,
+  ): Promise<void> {
+    const identity = await this.findEmailIdentity(input.domain).catch((error) =>
+      this.awsSesHandleErrorService.handleAwsSesError(
+        error,
+        'assertDomainIsAvailableOrThrow',
+      ),
+    );
+
+    if (isDefined(identity)) {
+      this.assertIdentityCreatedForTenantOrThrow(
+        identity,
+        input.domain,
+        this.buildTenantName(input.workspaceId),
+      );
+    }
+  }
+
   async provisionWorkspace(workspaceId: string): Promise<void> {
     const tenantName = this.buildTenantName(workspaceId);
 
@@ -162,6 +190,7 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
         new PutEmailIdentityDkimSigningAttributesCommand({
           EmailIdentity: input.domain,
           SigningAttributesOrigin: 'AWS_SES',
+          SigningAttributes: { NextSigningKeyLength: 'RSA_2048_BIT' },
         }),
       );
 
@@ -232,22 +261,9 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
         }
       });
 
-    const identity = await sesClient
-      .send(new GetEmailIdentityCommand({ EmailIdentity: input.domain }))
-      .catch((error) => {
-        if (!(error instanceof NotFoundException)) {
-          throw error;
-        }
+    const identity = await this.findEmailIdentity(input.domain);
 
-        return null;
-      });
-
-    const isCreatedForTenant =
-      identity?.Tags?.some(
-        (tag) => tag.Key === AWS_SES_TENANT_TAG_KEY && tag.Value === tenantName,
-      ) ?? false;
-
-    if (!isCreatedForTenant) {
+    if (!this.isIdentityCreatedForTenant(identity, tenantName)) {
       this.logger.log(
         `Keeping SES identity ${input.domain}: it was not created for tenant ${tenantName}`,
       );
@@ -344,6 +360,12 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
       });
       const existingIdentity = await sesClient.send(getIdentityCommand);
 
+      this.assertIdentityCreatedForTenantOrThrow(
+        existingIdentity,
+        domain,
+        tenantName,
+      );
+
       const isVerified = existingIdentity.VerifiedForSendingStatus === true;
       const status = this.determineVerificationStatus(existingIdentity);
       const verificationRecords = buildAwsSesVerificationRecords({
@@ -362,6 +384,51 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
       }
       throw error;
     }
+  }
+
+  private async findEmailIdentity(
+    domain: string,
+  ): Promise<GetEmailIdentityCommandOutput | null> {
+    return this.awsSesClientProvider
+      .getSESClient()
+      .send(new GetEmailIdentityCommand({ EmailIdentity: domain }))
+      .catch((error) => {
+        if (!(error instanceof NotFoundException)) {
+          throw error;
+        }
+
+        return null;
+      });
+  }
+
+  private assertIdentityCreatedForTenantOrThrow(
+    identity: GetEmailIdentityCommandOutput,
+    domain: string,
+    tenantName: string,
+  ): void {
+    if (this.isIdentityCreatedForTenant(identity, tenantName)) {
+      return;
+    }
+
+    this.logger.warn(
+      `Refusing SES identity ${domain}: it was not created for tenant ${tenantName}`,
+    );
+
+    throw new EmailingDomainException(
+      `SES identity ${domain} was not created for tenant ${tenantName}`,
+      EmailingDomainExceptionCode.EMAILING_DOMAIN_ALREADY_REGISTERED,
+    );
+  }
+
+  private isIdentityCreatedForTenant(
+    identity: GetEmailIdentityCommandOutput | null,
+    tenantName: string,
+  ): boolean {
+    return (
+      identity?.Tags?.some(
+        (tag) => tag.Key === AWS_SES_TENANT_TAG_KEY && tag.Value === tenantName,
+      ) ?? false
+    );
   }
 
   private async createNewEmailIdentity(

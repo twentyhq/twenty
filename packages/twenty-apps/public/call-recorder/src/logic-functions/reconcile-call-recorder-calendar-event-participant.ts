@@ -9,20 +9,11 @@ import { type DatabaseEventBatchPayload } from 'twenty-sdk/logic-function';
 import { CALENDAR_EVENT_PARTICIPANT_RECONCILIATION_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { BATCH_HANDLER_TIMEOUT_SECONDS } from 'src/logic-functions/constants/batch-handler-timeout-seconds';
 import { type CalendarEventParticipantForDatabaseEvent } from 'src/logic-functions/types/calendar-event-participant-for-database-event.type';
-import { type CallRecorderReconciliationResult } from 'src/logic-functions/types/call-recorder-reconciliation-result.type';
-import { getCalendarEventIdsFromParticipantEvents } from 'src/logic-functions/domain/get-calendar-event-ids-from-participant-events.util';
+import { type UpcomingCalendarEventsReconciliationResult } from 'src/logic-functions/types/upcoming-calendar-events-reconciliation-result.type';
+import { getCalendarEventIdsFromDatabaseEvents } from 'src/logic-functions/domain/get-calendar-event-ids-from-database-events.util';
 import { fetchMemberRecordingPreferenceByUserWorkspaceId } from 'src/logic-functions/data/fetch-member-recording-preference-by-user-workspace-id.util';
-import { fetchUpcomingCalendarEvents } from 'src/logic-functions/data/fetch-upcoming-calendar-events.util';
-import { reconcileCallRecorderForCalendarEventIds } from 'src/logic-functions/flows/reconcile-call-recorder.util';
+import { reconcileCallRecorderForUpcomingCalendarEventIds } from 'src/logic-functions/flows/reconcile-call-recorder-for-upcoming-calendar-event-ids.util';
 import { fetchWithRateLimitRetry } from 'src/logic-functions/utils/fetch-with-rate-limit-retry.util';
-
-type CalendarEventParticipantBatchReconciliationResult =
-  | { skipped: true; reason: string }
-  | {
-      reconciled: true;
-      calendarEventIds: string[];
-      reconciliationResults: CallRecorderReconciliationResult[];
-    };
 
 export const reconcileCallRecorderCalendarEventParticipantHandler = async (
   batch: Pick<
@@ -31,10 +22,8 @@ export const reconcileCallRecorderCalendarEventParticipantHandler = async (
     >,
     'events'
   >,
-): Promise<CalendarEventParticipantBatchReconciliationResult> => {
-  const calendarEventIds = getCalendarEventIdsFromParticipantEvents(
-    batch.events,
-  );
+): Promise<UpcomingCalendarEventsReconciliationResult> => {
+  const calendarEventIds = getCalendarEventIdsFromDatabaseEvents(batch.events);
 
   if (!isNonEmptyArray(calendarEventIds)) {
     return { skipped: true, reason: 'no calendar event' };
@@ -54,30 +43,10 @@ export const reconcileCallRecorderCalendarEventParticipantHandler = async (
     };
   }
 
-  const client = new CoreApiClient({ fetch: fetchWithRateLimitRetry });
-  const upcomingCalendarEventIds = new Set(
-    (await fetchUpcomingCalendarEvents(client, new Date())).map(
-      (upcomingCalendarEvent) => upcomingCalendarEvent.id,
-    ),
-  );
-  const upcomingChangedCalendarEventIds = calendarEventIds.filter(
-    (calendarEventId) => upcomingCalendarEventIds.has(calendarEventId),
-  );
-
-  if (!isNonEmptyArray(upcomingChangedCalendarEventIds)) {
-    return { skipped: true, reason: 'no upcoming calendar event' };
-  }
-
-  const reconciliationResults = await reconcileCallRecorderForCalendarEventIds({
-    client,
-    calendarEventIds: upcomingChangedCalendarEventIds,
+  return reconcileCallRecorderForUpcomingCalendarEventIds({
+    client: new CoreApiClient({ fetch: fetchWithRateLimitRetry }),
+    calendarEventIds,
   });
-
-  return {
-    reconciled: true,
-    calendarEventIds: upcomingChangedCalendarEventIds,
-    reconciliationResults,
-  };
 };
 
 export default defineLogicFunction({

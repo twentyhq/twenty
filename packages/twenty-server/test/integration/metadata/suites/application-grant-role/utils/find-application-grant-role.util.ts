@@ -88,6 +88,10 @@ export const findApplicationDefaultRoleId = async ({
   return requestedRoleId;
 };
 
+type ObjectScopedPermissionRow = Record<string, unknown> & {
+  objectMetadataId: string;
+};
+
 const sortByKey = <TRow extends Record<string, unknown>>(rows: TRow[]) =>
   [...rows].sort((left, right) =>
     JSON.stringify(left).localeCompare(JSON.stringify(right)),
@@ -103,7 +107,7 @@ export const findRolePermissionSnapshot = async (roleId: string) => {
      FROM core."role" WHERE id = $1`,
   );
 
-  const objectPermissions = await query(
+  const objectPermissions: ObjectScopedPermissionRow[] = await query(
     `SELECT "objectMetadataId", "canReadObjectRecords", "canCreateObjectRecords", "canUpdateObjectRecords",
             "canSoftDeleteObjectRecords", "canDestroyObjectRecords"
      FROM core."objectPermission" WHERE "roleId" = $1`,
@@ -118,7 +122,7 @@ export const findRolePermissionSnapshot = async (roleId: string) => {
     `SELECT "permissionFlagId" FROM core."rolePermissionFlag" WHERE "roleId" = $1`,
   );
 
-  const rowLevelPermissionPredicates = await query(
+  const rowLevelPermissionPredicates: ObjectScopedPermissionRow[] = await query(
     `SELECT predicate."objectMetadataId", predicate."fieldMetadataId",
             predicate."relationFieldMetadataId", predicate.operand, predicate.value,
             predicate."subFieldName", predicate."workspaceMemberFieldMetadataId",
@@ -132,8 +136,9 @@ export const findRolePermissionSnapshot = async (roleId: string) => {
      WHERE predicate."roleId" = $1 AND predicate."deletedAt" IS NULL`,
   );
 
-  const rowLevelPermissionPredicateGroups = await query(
-    `SELECT "group"."objectMetadataId", "group"."logicalOperator",
+  const rowLevelPermissionPredicateGroups: ObjectScopedPermissionRow[] =
+    await query(
+      `SELECT "group"."objectMetadataId", "group"."logicalOperator",
             "group"."positionInRowLevelPermissionPredicateGroup",
             "group"."canReadRecords", "group"."canCreateRecords", "group"."canUpdateRecords",
             "group"."canSoftDeleteRecords", "group"."canDestroyRecords",
@@ -143,7 +148,7 @@ export const findRolePermissionSnapshot = async (roleId: string) => {
      LEFT JOIN core."rowLevelPermissionPredicateGroup" AS parent
        ON parent.id = "group"."parentRowLevelPermissionPredicateGroupId"
      WHERE "group"."roleId" = $1 AND "group"."deletedAt" IS NULL`,
-  );
+    );
 
   return {
     switches,

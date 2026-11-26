@@ -5,7 +5,6 @@ import { Injectable } from '@nestjs/common';
 import { UPDATE_SUBSCRIPTION_QUANTITY_JOB_RETRY_OPTIONS } from 'src/engine/core-modules/billing/constants/update-subscription-quantity-job-retry-options.constant';
 import { SYNC_SUBSCRIPTION_APPLICATIONS_JOB_NAME } from 'src/engine/core-modules/billing/constants/sync-subscription-applications-job-name.constant';
 import { type SyncSubscriptionApplicationsJobData } from 'src/engine/core-modules/billing/jobs/sync-subscription-applications.job';
-import { BillingApplicationProductService } from 'src/engine/core-modules/billing/services/billing-application-product.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -17,16 +16,10 @@ export class BillingApplicationSyncService {
     @InjectMessageQueue(MessageQueue.billingQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly billingApplicationProductService: BillingApplicationProductService,
   ) {}
 
-  async isApplicationBillingActive(workspaceId: string): Promise<boolean> {
-    return (
-      this.twentyConfigService.get('IS_BILLING_ENABLED') &&
-      (await this.billingApplicationProductService.isApplicationPriceBillingEnabled(
-        workspaceId,
-      ))
-    );
+  isApplicationBillingActive(): boolean {
+    return this.twentyConfigService.get('IS_BILLING_ENABLED');
   }
 
   async enqueueApplicationsSync({
@@ -34,7 +27,7 @@ export class BillingApplicationSyncService {
   }: {
     workspaceId: string;
   }): Promise<void> {
-    if (!(await this.isApplicationBillingActive(workspaceId))) {
+    if (!this.isApplicationBillingActive()) {
       return;
     }
 

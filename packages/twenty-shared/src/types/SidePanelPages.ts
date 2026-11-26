@@ -53,6 +53,7 @@ export enum SidePanelPages {
   AgentCoreTrigger = 'agent-core-trigger',
   AgentCoreDataAccess = 'agent-core-data-access',
   AgentCoreTools = 'agent-core-tools',
+  AgentCoreTest = 'agent-core-test',
   ShareRecord = 'share-record',
   SnoozeAiChat = 'snooze-ai-chat',
   AssignAiChat = 'assign-ai-chat',

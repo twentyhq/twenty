@@ -1,3 +1,4 @@
+import { parseConditionalEvaluationExpression } from 'twenty-shared/conditional-evaluation';
 import {
   PageLayoutType,
   type PageLayoutWidgetConditionalDisplay,
@@ -6,6 +7,10 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
@@ -88,6 +93,19 @@ export const createStandardPageLayoutWidgetFlatMetadata = ({
   const tabIds = layoutIds.tabs[tabTitle];
   const widgetIds = tabIds.widgets[widgetName];
 
+  const conditionalAvailabilityParseResult =
+    parseConditionalEvaluationExpression({
+      expression: conditionalAvailabilityExpression,
+      metadataName: 'pageLayoutWidget',
+    });
+
+  if (!conditionalAvailabilityParseResult.isValid) {
+    throw new ApplicationException(
+      `Invalid rule on built-in widget ${layoutName} ${tabTitle} ${widgetName}: ${conditionalAvailabilityParseResult.errorMessage}`,
+      ApplicationExceptionCode.INVALID_INPUT,
+    );
+  }
+
   return {
     id: widgetIds.id,
     universalIdentifier: widgetDef.universalIdentifier,
@@ -109,10 +127,11 @@ export const createStandardPageLayoutWidgetFlatMetadata = ({
     createdAt: now,
     updatedAt: now,
     deletedAt: null,
+    // TODO(@neo773): the two legacy rule columns are still filled so the runtime can read them; stop one release after stored rules are copied to trees
     conditionalDisplay: conditionalDisplay ?? null,
     conditionalAvailabilityExpression:
       conditionalAvailabilityExpression ?? null,
-    conditionalAvailability: null,
+    conditionalAvailability: conditionalAvailabilityParseResult.node,
     overrides: null,
     universalOverrides: null,
   };

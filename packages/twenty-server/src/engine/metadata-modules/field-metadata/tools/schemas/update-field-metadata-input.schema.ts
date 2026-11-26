@@ -1,6 +1,10 @@
 import { z } from 'zod';
 
-import { SELECT_OPTIONS_DESCRIPTION } from 'src/engine/metadata-modules/field-metadata/tools/constants/select-options-description.constant';
+import {
+  fieldMetadataDefaultValueInputSchema,
+  fieldMetadataOptionsInputSchema,
+  fieldMetadataSettingsInputSchema,
+} from 'src/engine/metadata-modules/field-metadata/tools/schemas/field-metadata-configuration-input.schema';
 
 export const updateFieldMetadataInputSchema = z.object({
   id: z.string().uuid().describe('Field ID'),
@@ -14,9 +18,9 @@ export const updateFieldMetadataInputSchema = z.object({
   isActive: z.boolean().optional().describe('Active state'),
   isNullable: z.boolean().optional().describe('Nullable'),
   isUnique: z.boolean().optional().describe('Unique constraint'),
-  defaultValue: z.unknown().optional().describe('Default value'),
-  options: z.unknown().optional().describe(SELECT_OPTIONS_DESCRIPTION),
-  settings: z.unknown().optional().describe('Field settings'),
+  defaultValue: fieldMetadataDefaultValueInputSchema,
+  options: fieldMetadataOptionsInputSchema,
+  settings: fieldMetadataSettingsInputSchema,
   isLabelSyncedWithName: z
     .boolean()
     .optional()

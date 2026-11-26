@@ -1,4 +1,5 @@
 import { billingState } from '@/client-config/states/billingState';
+import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
 import { TAB_LIST_GAP } from '@/ui/layout/tab-list/constants/TabListGap';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
@@ -9,6 +10,7 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { NavigationLink } from '@/ui/input/components/NavigationLink';
 import { TabButton } from 'twenty-ui/components/navigation';
 import { IconColorSwatch, IconCreditCard, IconGauge } from 'twenty-ui/icon';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 const StyledTabBar = styled.div`
   display: flex;
@@ -22,6 +24,7 @@ export const SettingsBillingTabBar = () => {
   const { t } = useLingui();
   const location = useLocation();
   const billing = useAtomStateValue(billingState);
+  const permissionFlagMap = useAtomStateValue(permissionFlagMapSelector);
 
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
 
@@ -42,10 +45,23 @@ export const SettingsBillingTabBar = () => {
       title: t`Billing`,
       Icon: IconCreditCard,
       path: billingPath,
+      permissionFlag: PermissionFlagType.BILLING,
     },
-    { id: 'plans', title: t`Plans`, Icon: IconColorSwatch, path: plansPath },
-    { id: 'limits', title: t`Limits`, Icon: IconGauge, path: limitsPath },
-  ];
+    {
+      id: 'plans',
+      title: t`Plans`,
+      Icon: IconColorSwatch,
+      path: plansPath,
+      permissionFlag: PermissionFlagType.BILLING,
+    },
+    {
+      id: 'limits',
+      title: t`Limits`,
+      Icon: IconGauge,
+      path: limitsPath,
+      permissionFlag: PermissionFlagType.WORKSPACE,
+    },
+  ].filter(({ permissionFlag }) => permissionFlagMap[permissionFlag]);
 
   return (
     <StyledTabBar>

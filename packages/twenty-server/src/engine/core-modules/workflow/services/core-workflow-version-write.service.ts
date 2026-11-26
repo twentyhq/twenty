@@ -108,45 +108,15 @@ export class CoreWorkflowVersionWriteService {
 
   async getValidatedDraftCoreWorkflowVersion({
     workspaceId,
-    userWorkspaceId,
     coreWorkflowVersionId,
   }: {
     workspaceId: string;
-    userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
   }): Promise<ValidatedDraftCoreWorkflowVersion> {
-    await this.coreWorkflowAccessService.assertCoreWorkflowVersionsAreAccessibleOrThrow(
-      {
-        workspaceId,
-        userWorkspaceId,
-        coreWorkflowVersionIds: [coreWorkflowVersionId],
-      },
-    );
-
-    const coreWorkflowVersion =
-      await this.coreWorkflowVersionRepository.findOne(workspaceId, {
-        where: { id: coreWorkflowVersionId },
-      });
-
-    if (!isDefined(coreWorkflowVersion)) {
-      throw new WorkflowQueryValidationException(
-        `Core workflow version '${coreWorkflowVersionId}' not found`,
-        WorkflowQueryValidationExceptionCode.FORBIDDEN,
-        {
-          userFriendlyMessage: msg`Workflow version not found`,
-        },
+    const { coreWorkflowVersion } =
+      await this.coreWorkflowAccessService.findEditableCoreWorkflowVersionOrThrow(
+        { workspaceId, coreWorkflowVersionId },
       );
-    }
-
-    if (isDefined(coreWorkflowVersion.coreWorkflowId)) {
-      await this.coreWorkflowAccessService.assertCoreWorkflowsAreEditableOrThrow(
-        {
-          workspaceId,
-          userWorkspaceId,
-          coreWorkflowIds: [coreWorkflowVersion.coreWorkflowId],
-        },
-      );
-    }
 
     if (coreWorkflowVersion.status !== CoreWorkflowVersionStatus.DRAFT) {
       throw new WorkflowQueryValidationException(
@@ -259,6 +229,11 @@ export class CoreWorkflowVersionWriteService {
             `UPDATE core."workflow" SET "updatedAt" = now() WHERE "workspaceId" = $1 AND "id" = $2`,
             [workspaceId, flatWorkflowVersion.coreWorkflowId],
           );
+
+          await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
+            workspaceId,
+            flatMapsKeys: ['flatWorkflowMaps'],
+          });
         }
       },
     );
@@ -352,7 +327,6 @@ export class CoreWorkflowVersionWriteService {
               steps: steps ?? null,
               status: CoreWorkflowVersionStatus.DRAFT,
               isSystemSideEffect: false,
-              workspaceWorkflowVersionId: null,
               applicationUniversalIdentifier:
                 workspaceCustomFlatApplication.universalIdentifier,
               createdAt,

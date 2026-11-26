@@ -41,7 +41,7 @@ export class AdminPanelUserLookupService {
     private readonly featureFlagRepository: WorkspaceScopedRepository<FeatureFlagEntity>,
   ) {}
 
-  private buildFallbackAvatarUrlsByUserId(
+  private buildFallbackAvatarFileIdsByUserId(
     workspaceUsers: UserWorkspaceEntity[],
   ): Map<string, string | null> {
     return new Map(
@@ -49,7 +49,7 @@ export class AdminPanelUserLookupService {
         .filter((workspaceUser) => isDefined(workspaceUser.user))
         .map((workspaceUser) => [
           workspaceUser.user.id,
-          workspaceUser.defaultAvatarUrl ?? null,
+          workspaceUser.defaultAvatarFileId,
         ]),
     );
   }
@@ -123,8 +123,8 @@ export class AdminPanelUserLookupService {
         const [avatarUrlsByUserId, adminUserIds] = await Promise.all([
           this.userService.loadSignedAvatarUrlsByUserId({
             workspace: userWorkspace.workspace,
-            fallbackAvatarUrlsByUserId:
-              this.buildFallbackAvatarUrlsByUserId(workspaceUsers),
+            fallbackAvatarFileIdsByUserId:
+              this.buildFallbackAvatarFileIdsByUserId(workspaceUsers),
           }),
           this.getAdminUserIds({
             workspaceId: userWorkspace.workspace.id,
@@ -211,7 +211,7 @@ export class AdminPanelUserLookupService {
     const [avatarUrlsByUserId, adminUserIds] = await Promise.all([
       this.userService.loadSignedAvatarUrlsByUserId({
         workspace,
-        fallbackAvatarUrlsByUserId: this.buildFallbackAvatarUrlsByUserId(
+        fallbackAvatarFileIdsByUserId: this.buildFallbackAvatarFileIdsByUserId(
           definedWorkspaceUsers,
         ),
       }),

@@ -38,6 +38,8 @@ export const fromRowLevelPermissionPredicateManifestToUniversalFlatRowLevelPermi
       workspaceMemberSubFieldName:
         rowLevelPermissionPredicateManifest.workspaceMemberSubFieldName ?? null,
       workspaceMemberRelationFieldMetadataUniversalIdentifier: null,
+      workspaceMemberRelationFilterFieldMetadataUniversalIdentifier: null,
+      workspaceMemberRelationFilterValues: null,
       rowLevelPermissionPredicateGroupUniversalIdentifier:
         rowLevelPermissionPredicateManifest.predicateGroupUniversalIdentifier ??
         null,

@@ -14,6 +14,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ADD_ROW_LEVEL_PERMISSION_RULE_LINKS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-58/add-row-level-permission-rule-links-upgrade-command-name.constant';
 import { ADD_RLS_RULE_FIELD_PERMISSIONS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-57/add-rls-rule-field-permissions-upgrade-command-name.constant';
+import { ADD_SOURCE_FIELD_TO_FIELD_PERMISSION_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-63/add-source-field-to-field-permission-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -100,6 +101,20 @@ export class FieldPermissionEntity extends SyncableEntity {
   })
   @JoinColumn({ name: 'rowLevelPermissionRuleId' })
   rowLevelPermissionRule: Relation<RowLevelPermissionRuleEntity> | null;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_SOURCE_FIELD_TO_FIELD_PERMISSION_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: true, type: 'uuid' })
+  sourceFieldMetadataId: string | null;
+
+  @ManyToOne(() => FieldMetadataEntity, {
+    onDelete: 'CASCADE',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'sourceFieldMetadataId' })
+  sourceFieldMetadata: Relation<FieldMetadataEntity> | null;
 
   @Column({ nullable: true, type: 'boolean' })
   canReadFieldValue?: boolean | null;

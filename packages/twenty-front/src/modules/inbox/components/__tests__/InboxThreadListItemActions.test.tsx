@@ -73,6 +73,13 @@ jest.mock('@/ai-chat/threads/hooks/useAiChatThreadRename', () => ({
   }),
 }));
 
+let mockIsMobile = false;
+
+jest.mock('twenty-ui/utilities', () => ({
+  ...jest.requireActual('twenty-ui/utilities'),
+  useIsMobile: () => mockIsMobile,
+}));
+
 jest.mock('@/ai-chat/threads/hooks/useExecuteAiChatThreadStatusAction', () => ({
   useExecuteAiChatThreadStatusAction: () => ({
     executeAiChatThreadStatusAction: jest.fn(),
@@ -209,6 +216,10 @@ describe('InboxThreadListItem action availability', () => {
     i18n.activate(SOURCE_LOCALE);
   });
 
+  beforeEach(() => {
+    mockIsMobile = false;
+  });
+
   it.each([
     {
       reason: 'AI permission is missing',
@@ -335,4 +346,24 @@ describe('InboxThreadListItem action availability', () => {
       screen.queryByRole('button', { name: 'Chat actions' }),
     ).not.toBeInTheDocument();
   });
+
+  it.each([
+    { scope: 'INBOX', hiddenButtons: ['Snooze', 'Done'] },
+    { scope: 'SNOOZED', hiddenButtons: ['Change', 'Wake now'] },
+    { scope: 'ARCHIVED', hiddenButtons: ['Reopen'] },
+  ] satisfies { scope: ThreadScope; hiddenButtons: string[] }[])(
+    'leaves $scope triage to More on mobile',
+    async ({ scope, hiddenButtons }) => {
+      mockIsMobile = true;
+
+      await renderThread({ scope });
+
+      expect(
+        screen.getByRole('button', { name: 'Chat actions' }),
+      ).toBeInTheDocument();
+      hiddenButtons.forEach((name) =>
+        expect(screen.queryByRole('button', { name })).not.toBeInTheDocument(),
+      );
+    },
+  );
 });

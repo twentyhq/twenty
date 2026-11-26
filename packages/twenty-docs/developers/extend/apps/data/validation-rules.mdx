@@ -62,6 +62,10 @@ twenty app add validation-rule --name invoice-has-amount --object <object-uuid>
 - `add`, `subtract`, `multiply` and `divide` compute values.
 - `isIn(field('stage'), ['NEW', 'WON'])` checks a value against a list.
 - Functions such as `isNonEmptyString` and `isDefined`, and the date functions `dateDiff(from, to, unit)` (whole units from one date to another, such as `dateDiff(createdAt, now, 'HOUR')`), `dateAdd(date, amount, unit)`, `dateTrunc(date, unit)`, `datePart(date, part)` and `isInRelativeDateRange(date, direction, amount, unit)`, with direction `'PAST'`, `'NEXT'` or `'THIS'` and unit `'DAY'`, `'WEEK'`, `'MONTH'`, `'QUARTER'` or `'YEAR'`, such as `isInRelativeDateRange(closeDate, 'PAST', 30, 'DAY')`.
+- `if(condition, valueIfTrue, valueIfFalse)`, which returns the second value when the condition is true and the third one otherwise.
+- `coalesce(value, ...fallbacks)`, `concat(value, ...values)`, `lower(text)`, `upper(text)`, `min(number, ...numbers)`, `max(number, ...numbers)` and `roundTo(number, decimals)`, which compute values. `roundTo` rounds halves away from zero, so `roundTo(2.55, 1)` is `2.6`.
+
+Each function takes the arguments its signature lists, and `...` stands for any number of further values. A call with a different number of arguments fails validation, such as `if` with two arguments.
 
 `daysSince(date)` has been removed. Replace it in existing rules with `dateDiff(date, now, 'DAY')`. Units for `dateDiff`, `dateAdd` and `dateTrunc` are `'MINUTE'`, `'HOUR'`, `'DAY'`, `'WEEK'`, `'MONTH'`, `'QUARTER'` or `'YEAR'`; parts for `datePart` are `'YEAR'`, `'QUARTER'`, `'MONTH'`, `'WEEK'`, `'DAY'`, `'DAY_OF_WEEK'`, `'HOUR'` or `'MINUTE'`. Dates are read in UTC, and `dateAdd` gives no value when the date or the result falls outside the years 1 to 9999. A date compared with a date and time compares their UTC days, with `eq` and `notEq` too.
 
@@ -73,7 +77,7 @@ The builder outputs a plain string, which is what [`twenty app pull`](/developer
 expression: 'amount > 0 and isNonEmptyString(reference)',
 ```
 
-Strings use `and`, `or`, `not`, `==`, `!=`, `<`, `<=`, `>`, `>=`, `+`, `-`, `*`, `/` and `in [...]`, not `&&` or `||`. Text goes in single or double quotes. A previous value is written `previous.stage`:
+Strings use `and`, `or`, `not`, `==`, `!=`, `<`, `<=`, `>`, `>=`, `+`, `-`, `*`, `/` and `in [...]`, not `&&` or `||`. `||` joins two values as one text and skips a value that is not set. Text goes in single or double quotes. A previous value is written `previous.stage`:
 
 ```ts
 // A proposal only follows a meeting

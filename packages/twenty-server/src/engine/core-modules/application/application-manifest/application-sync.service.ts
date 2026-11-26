@@ -212,7 +212,6 @@ export class ApplicationSyncService {
         manifest.application.requestedIframeMediaPermissions,
       ),
       logicFunctionLayerId: null,
-      defaultRoleId: null,
       requestedRoleId: null,
       defaultRole: null,
       settingsCustomTabFrontComponentId: null,

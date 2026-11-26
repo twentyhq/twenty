@@ -1,6 +1,6 @@
 import { PageLayoutWidgetExceptionCode } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 import { validatePageLayoutWidgetConditionalAvailability } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util';
-import { CONDITIONAL_AVAILABILITY_MAX_NODE_COUNT } from 'twenty-shared/conditional-availability';
+import { CONDITIONAL_EVALUATION_MAX_NODE_COUNT } from 'twenty-shared/conditional-evaluation';
 
 const validateConditionalAvailability = (conditionalAvailability: unknown) =>
   validatePageLayoutWidgetConditionalAvailability({ conditionalAvailability });
@@ -40,7 +40,7 @@ describe('validatePageLayoutWidgetConditionalAvailability', () => {
         type: 'GROUP',
         logicalOperator: 'OR',
         children: Array.from(
-          { length: CONDITIONAL_AVAILABILITY_MAX_NODE_COUNT },
+          { length: CONDITIONAL_EVALUATION_MAX_NODE_COUNT },
           () => ({ type: 'LITERAL', value: true }),
         ),
       }),

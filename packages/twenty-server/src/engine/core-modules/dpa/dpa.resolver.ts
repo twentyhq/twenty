@@ -17,25 +17,26 @@ import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/permissions/utils/permissions-graphql-api-exception.filter';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
+
+const DPA_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  },
+  requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
+};
 
 @CoreResolver(() => DpaAgreementEntity)
 @UseFilters(AuthGraphqlApiExceptionFilter, PermissionsGraphqlApiExceptionFilter)
-@UseGuards(
-  AccessPolicyGuard({
-    authPrincipals: {
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: true,
-    },
-    requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
-  }),
-)
 @UsePipes(ResolverValidationPipe)
 export class DpaResolver {
   constructor(private readonly dpaService: DpaService) {}
@@ -43,11 +44,13 @@ export class DpaResolver {
   // Region/entity/law/SCC state are resolved server-side from the workspace
   // deployment; the customer cannot pick them.
   @Query(() => DpaDocumentDTO)
+  @UseGuards(AccessPolicyGuard(DPA_ACCESS_POLICY))
   dpaPreview(@AuthWorkspace() workspace: WorkspaceEntity): DpaDocumentDTO {
     return this.dpaService.getPreviewForWorkspace(workspace);
   }
 
   @Query(() => [DpaAgreementEntity])
+  @UseGuards(AccessPolicyGuard(DPA_ACCESS_POLICY))
   async dpaAgreements(
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<DpaAgreementEntity[]> {
@@ -55,6 +58,7 @@ export class DpaResolver {
   }
 
   @Mutation(() => GenerateSignedDpaResult)
+  @UseGuards(AccessPolicyGuard(DPA_ACCESS_POLICY))
   async generateSignedDpa(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUser() user: UserEntity,
@@ -70,6 +74,7 @@ export class DpaResolver {
 
   // Null for click-through records, which have no signed PDF.
   @ResolveField(() => String, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   async downloadUrl(
     @Parent() agreement: DpaAgreementEntity,
     @AuthWorkspace() workspace: WorkspaceEntity,

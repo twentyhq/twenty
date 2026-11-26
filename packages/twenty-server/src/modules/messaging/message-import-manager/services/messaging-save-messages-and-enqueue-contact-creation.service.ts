@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import {
+  type ActorMetadata,
   FieldActorSource,
   MessageChannelContactAutoCreationPolicy,
   MessageChannelType,
@@ -58,6 +59,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
     workspaceId,
     folderLinkUpdate,
     personHandleField,
+    createdBy,
   }: {
     messagesToSave: MessageWithParticipants[];
     messageChannel: MessageChannelEntity;
@@ -65,6 +67,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
     workspaceId: string;
     folderLinkUpdate: MessageFolderLinkUpdate;
     personHandleField?: PersonHandleField;
+    createdBy?: ActorMetadata;
   }): Promise<
     | {
         messageExternalIdsAndIdsMap: Map<string, string>;
@@ -104,6 +107,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
             transactionScope,
             workspaceId,
             associationSource,
+            createdBy,
           });
 
           const folderAssociations: MessageChannelMessageAssociationFolderAssociation[] =
@@ -127,6 +131,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
                 {
                   messageChannelMessageAssociationId: associationId,
                   messageFolderIds,
+                  createdBy: message.createdBy ?? createdBy,
                 },
               ];
             });
@@ -212,6 +217,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
                     ...participant,
                     messageId,
                     shouldCreateContact,
+                    createdBy: message.createdBy ?? createdBy,
                   };
                 })
               : [];
@@ -236,7 +242,13 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
 
               return isDefined(messageId) &&
                 isNonEmptyArray(message.attachmentFiles)
-                ? [{ messageId, attachmentFiles: message.attachmentFiles }]
+                ? [
+                    {
+                      messageId,
+                      attachmentFiles: message.attachmentFiles,
+                      createdBy: message.createdBy ?? createdBy,
+                    },
+                  ]
                 : [];
             }),
             workspaceId,

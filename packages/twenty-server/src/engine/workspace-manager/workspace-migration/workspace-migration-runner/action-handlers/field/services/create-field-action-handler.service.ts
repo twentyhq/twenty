@@ -7,6 +7,7 @@ import { v4 } from 'uuid';
 
 import { buildManyToOneForeignKeyDefinition } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/build-many-to-one-foreign-key-definition.util';
 import { getDeferredForeignKeyValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/get-deferred-foreign-key-validation.util';
+import { getDeferredStoredFormulaFieldsComputation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/get-deferred-stored-formula-fields-computation.util';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -208,7 +209,12 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
   override getDeferredOperation(
     context: WorkspaceMigrationActionRunnerContext<FlatCreateFieldAction>,
   ) {
-    return getDeferredForeignKeyValidation(context);
+    return (
+      getDeferredForeignKeyValidation(context) ??
+      getDeferredStoredFormulaFieldsComputation({
+        flatFieldMetadata: context.flatAction.flatEntity,
+      })
+    );
   }
 
   private async executeSingleFieldMetadataWorkspaceSchema({

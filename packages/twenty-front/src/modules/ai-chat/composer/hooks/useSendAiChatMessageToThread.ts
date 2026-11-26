@@ -1,5 +1,4 @@
 import { useApolloClient } from '@apollo/client/react';
-import { isUndefined } from '@sniptt/guards';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -10,7 +9,6 @@ import { useOptimisticallyRestoreOnSend } from '@/ai-chat/composer/hooks/useOpti
 import { useWarnAboutParticipantMentionsNotAdded } from '@/ai-chat/composer/hooks/useWarnAboutParticipantMentionsNotAdded';
 import { aiChatComposerAttachmentsFamilyState } from '@/ai-chat/composer/states/aiChatComposerAttachmentsFamilyState';
 import { aiChatComposerNewThreadRecipientsFamilyState } from '@/ai-chat/composer/states/aiChatComposerNewThreadRecipientsFamilyState';
-import { aiChatThreadReplyLastBrowsingContextFamilyState } from '@/ai-chat/composer/states/aiChatThreadReplyLastBrowsingContextFamilyState';
 import { aiChatThreadReplyUnconfirmedFirstMessageFamilyState } from '@/ai-chat/composer/states/aiChatThreadReplyUnconfirmedFirstMessageFamilyState';
 import { type AiChatMessageToSend } from '@/ai-chat/composer/types/AiChatMessageToSend';
 import { createOptimisticAiChatUserMessage } from '@/ai-chat/composer/utils/createOptimisticAiChatUserMessage';
@@ -79,15 +77,6 @@ export const useSendAiChatMessageToThread = () => {
       const aiChatComposerAttachments = isDirectMessage
         ? []
         : store.get(uploadedFilesAtom);
-      const browsingContext = getBrowsingContext();
-      const lastSentBrowsingContextAtom =
-        aiChatThreadReplyLastBrowsingContextFamilyState.atomFamily(threadId);
-      const lastSentBrowsingContext = store.get(lastSentBrowsingContextAtom);
-      const isBrowsingContextChanged = isUndefined(lastSentBrowsingContext)
-        ? isDefined(browsingContext)
-        : !isDeeplyEqual(browsingContext, lastSentBrowsingContext, {
-            strict: true,
-          });
       const fileIds = aiChatComposerAttachments.map(({ fileId }) => fileId);
       const unconfirmedFirstMessageAtom =
         aiChatThreadReplyUnconfirmedFirstMessageFamilyState.atomFamily(
@@ -166,10 +155,7 @@ export const useSendAiChatMessageToThread = () => {
             threadId,
             text: contentToSend,
             messageId,
-            browsingContext:
-              isDirectMessage || !isBrowsingContextChanged
-                ? null
-                : browsingContext,
+            browsingContext: isDirectMessage ? null : getBrowsingContext(),
             modelId: isDirectMessage
               ? undefined
               : getAiChatModelIdForRequest(store),
@@ -205,10 +191,6 @@ export const useSendAiChatMessageToThread = () => {
               currentWorkspaceState.atom,
               markWorkspaceCreditsAvailable,
             );
-          }
-
-          if (isBrowsingContextChanged) {
-            store.set(lastSentBrowsingContextAtom, browsingContext);
           }
         } else {
           store.set(

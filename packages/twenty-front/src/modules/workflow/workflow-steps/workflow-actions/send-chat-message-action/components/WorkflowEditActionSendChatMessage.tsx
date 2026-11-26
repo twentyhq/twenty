@@ -46,7 +46,7 @@ export const WorkflowEditActionSendChatMessage = ({
 
   const saveAction = useDebouncedCallback(
     (nextFormData: SendChatMessageFormData) => {
-      if (actionOptions.readonly === true) {
+      if (actionOptions.readonly) {
         return;
       }
 

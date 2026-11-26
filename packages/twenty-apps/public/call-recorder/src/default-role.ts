@@ -90,5 +90,6 @@ export default defineApplicationRole({
     // variables through the metadata API, which is gated behind this flag.
     SystemPermissionFlag.APPLICATIONS,
     SystemPermissionFlag.READ_PRIVATE_CHANNELS,
+    SystemPermissionFlag.USER_APPS,
   ],
 });

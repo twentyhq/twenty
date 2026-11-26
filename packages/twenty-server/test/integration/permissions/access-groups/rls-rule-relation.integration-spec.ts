@@ -12,10 +12,8 @@ import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delet
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import {
-  FeatureFlagKey,
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
@@ -280,15 +278,6 @@ describe('RLS rules through a relation (integration)', () => {
       }),
     );
 
-  const setFeatureFlags = async (value: boolean) => {
-    for (const featureFlag of [
-      FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED,
-      FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED,
-    ]) {
-      await updateFeatureFlag({ featureFlag, value, expectToFail: false });
-    }
-  };
-
   beforeAll(async () => {
     personObjectMetadataId = await findObjectMetadataId('person');
     companyObjectMetadataId = await findObjectMetadataId('company');
@@ -307,8 +296,6 @@ describe('RLS rules through a relation (integration)', () => {
     );
 
     originalMemberRoleId = (await findOneRoleByLabel({ label: 'Member' })).id;
-
-    await setFeatureFlags(true);
   });
 
   afterEach(async () => {
@@ -344,7 +331,6 @@ describe('RLS rules through a relation (integration)', () => {
   });
 
   afterAll(async () => {
-    await setFeatureFlags(false);
     await global.testDataSource.query(
       `DELETE FROM ${PERSON_TABLE} WHERE "id" = $1`,
       [person.id],
@@ -555,30 +541,5 @@ describe('RLS rules through a relation (integration)', () => {
     );
 
     expect(Number(count)).toBe(personIds.length);
-  });
-
-  it('should stop and resume access when the relation flag is toggled', async () => {
-    const setRelationFlag = async (value: boolean) => {
-      await updateFeatureFlag({
-        featureFlag:
-          FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED,
-        value,
-        expectToFail: false,
-      });
-    };
-
-    await assignPersonRuleThroughCompanyName();
-
-    expect(await findPeopleAsMember([person.id])).toEqual([person.id]);
-
-    await setRelationFlag(false);
-
-    expect(await findPeopleAsMember([person.id])).toEqual([]);
-
-    await waitForAllJobsToFinish();
-    await setRelationFlag(true);
-    await waitForAllJobsToFinish();
-
-    expect(await findPeopleAsMember([person.id])).toEqual([person.id]);
   });
 });

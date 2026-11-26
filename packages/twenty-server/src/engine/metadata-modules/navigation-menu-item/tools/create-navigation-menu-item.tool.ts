@@ -65,7 +65,7 @@ const createNavigationMenuItemInputSchema = z.discriminatedUnion('type', [
       .enum(BUILT_IN_SECTION_KEYS)
       .optional()
       .describe(
-        'Adds a built-in section instead of a custom one: favorites (personal favorites), aiChatInbox (Triage), aiChatFavorites (Favorite chats), aiChatChannels (Channels), aiChatRecents (Recent chats) or aiAgents (Agents).',
+        'Adds a built-in section instead of a custom one: favorites (personal favorites), aiChatInbox (Inbox), aiChatFavorites (Favorite chats), aiChatChannels (Channels), aiChatRecents (Recent chats) or aiAgents (Agents).',
       ),
     name: requiredNameField
       .optional()
@@ -271,13 +271,11 @@ export class CreateNavigationMenuItemTool extends BaseTool<
           scope: 'workspace',
           type: NavigationMenuItemType.SECTION,
         });
-        const isAlreadyInContainer =
-          (input.builtInSectionKey === 'favorites' && containerId === null) ||
-          workspaceSections.some(
-            (section) =>
-              section.builtInSectionKey === input.builtInSectionKey &&
-              (section.parentId ?? null) === containerId,
-          );
+        const isAlreadyInContainer = workspaceSections.some(
+          (section) =>
+            section.builtInSectionKey === input.builtInSectionKey &&
+            (section.parentId ?? null) === containerId,
+        );
 
         if (isAlreadyInContainer) {
           return {

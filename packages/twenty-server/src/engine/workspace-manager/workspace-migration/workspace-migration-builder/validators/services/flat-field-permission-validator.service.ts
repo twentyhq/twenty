@@ -10,6 +10,7 @@ import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspa
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { validateFieldPermissionUnreadableNestedSource } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util';
 import { validateFieldPermissionGrantsNoDisabledAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-grants-no-disabled-action.util';
 import { getMarketplaceApplicationRoleRestrictionErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-restriction-errors.util';
 import { getRoleNotEditableErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-not-editable-errors.util';
@@ -123,6 +124,13 @@ export class FlatFieldPermissionValidatorService {
           buildOptions.applicationDefaultRoleUniversalIdentifier,
         workspaceCustomApplicationUniversalIdentifier:
           buildOptions.workspaceCustomApplicationUniversalIdentifier,
+      }),
+    );
+
+    validationResult.errors.push(
+      ...validateFieldPermissionUnreadableNestedSource({
+        flatFieldPermission: flatFieldPermissionToValidate,
+        flatFieldMetadataMaps,
       }),
     );
 
@@ -281,6 +289,13 @@ export class FlatFieldPermissionValidatorService {
           buildOptions.applicationDefaultRoleUniversalIdentifier,
         workspaceCustomApplicationUniversalIdentifier:
           buildOptions.workspaceCustomApplicationUniversalIdentifier,
+      }),
+    );
+
+    validationResult.errors.push(
+      ...validateFieldPermissionUnreadableNestedSource({
+        flatFieldPermission: updatedFlatFieldPermission,
+        flatFieldMetadataMaps,
       }),
     );
 

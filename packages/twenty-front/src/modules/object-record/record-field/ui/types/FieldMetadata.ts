@@ -173,6 +173,7 @@ type FieldSelectMetadataOption = {
   label: string;
   color: ThemeColor;
   value: string;
+  description?: string | null;
   isActive?: boolean;
 };
 

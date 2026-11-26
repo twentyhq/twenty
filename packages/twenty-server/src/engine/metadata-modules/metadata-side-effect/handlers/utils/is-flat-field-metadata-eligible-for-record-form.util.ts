@@ -3,6 +3,7 @@ import {
   isFieldMetadataEligibleForRecordForm,
 } from 'twenty-shared/utils';
 
+import { isFieldMetadataUIEditable } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-field-metadata-ui-editable.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 
@@ -38,7 +39,10 @@ export const isFlatFieldMetadataEligibleForRecordForm = (
       property: 'isActive',
     }),
     isSystem: flatFieldMetadata.isSystem,
-    isUIEditable: flatFieldMetadata.isUIEditable,
+    isUIEditable: isFieldMetadataUIEditable({
+      isUIEditable: flatFieldMetadata.isUIEditable,
+      settings: universalSettings,
+    }),
     relationType:
       isDefined(universalSettings) && 'relationType' in universalSettings
         ? universalSettings.relationType

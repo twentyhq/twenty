@@ -441,6 +441,13 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       isNullable: true,
       universalForeignKey: 'rowLevelPermissionRuleUniversalIdentifier',
     },
+    sourceFieldMetadata: {
+      metadataName: 'fieldMetadata',
+      foreignKey: 'sourceFieldMetadataId',
+      inverseOneToManyProperty: null,
+      isNullable: true,
+      universalForeignKey: 'sourceFieldMetadataUniversalIdentifier',
+    },
   },
   pageLayout: {
     workspace: null,
@@ -527,6 +534,14 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       isNullable: true,
       universalForeignKey:
         'workspaceMemberRelationFieldMetadataUniversalIdentifier',
+    },
+    workspaceMemberRelationFilterFieldMetadata: {
+      metadataName: 'fieldMetadata',
+      foreignKey: 'workspaceMemberRelationFilterFieldMetadataId',
+      inverseOneToManyProperty: null,
+      isNullable: true,
+      universalForeignKey:
+        'workspaceMemberRelationFilterFieldMetadataUniversalIdentifier',
     },
     objectMetadata: {
       metadataName: 'objectMetadata',

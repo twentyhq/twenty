@@ -91,8 +91,9 @@ describe('NavigationDrawerInboxTriageSection', () => {
   it('counts every open chat and flags Open when one is unread', async () => {
     renderTriage({ summary: { ...READ_SUMMARY, hasUnreadOpenThread: true } });
 
+    expect(await screen.findByText('2')).toBeVisible();
     expect(
-      await screen.findByRole('button', { name: /^Open\s*, unread · 2$/ }),
+      screen.getByRole('button', { name: /^Open\s*, unread/ }),
     ).toBeVisible();
     expect(screen.getByRole('button', { name: 'Snoozed' })).toBeVisible();
     expect(screen.getByRole('button', { name: 'Done' })).toBeVisible();
@@ -101,9 +102,8 @@ describe('NavigationDrawerInboxTriageSection', () => {
   it('shows Open as read when every open chat is read', async () => {
     renderTriage();
 
-    expect(
-      await screen.findByRole('button', { name: 'Open · 2' }),
-    ).toBeVisible();
+    expect(await screen.findByText('2')).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Open' })).toBeVisible();
   });
 
   it('keeps Open, Snoozed and Done in navigation', () => {

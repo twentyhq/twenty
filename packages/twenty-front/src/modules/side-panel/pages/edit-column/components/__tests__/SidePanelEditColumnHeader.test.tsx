@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { useState } from 'react';
 
-const DEFAULT_LABEL = 'Tasks · Filtered';
+const DEFAULT_LABEL = 'Tasks · Summary';
 
 const EditableHeader = ({
   storedLabel,

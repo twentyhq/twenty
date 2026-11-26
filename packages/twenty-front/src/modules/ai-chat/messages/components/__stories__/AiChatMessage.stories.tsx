@@ -18,7 +18,7 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AiChatMessage } from '@/ai-chat/messages/components/AiChatMessage';
-import { AI_CHAT_MESSAGE_LIST_GAP } from '@/ai-chat/messages/constants/AiChatMessageListGap';
+import { CHAT_MESSAGE_LIST_GAP } from '@/chat/constants/ChatMessageListGap';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -68,7 +68,7 @@ const StyledConversationContainer = styled.div`
 const StyledMessageListContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${AI_CHAT_MESSAGE_LIST_GAP};
+  gap: ${CHAT_MESSAGE_LIST_GAP};
   max-width: 700px;
   padding: 24px;
 `;
@@ -850,8 +850,7 @@ export const MultiplayerConversation: Story = {
     const selectedReaction = canvas.getByRole('button', { name: '👍 by You' });
     await expect(selectedReaction).toBeVisible();
     selectedReaction.focus();
-    await userEvent.tab({ shift: true });
-    await userEvent.tab({ shift: true });
+    await userEvent.tab();
     const addReactionButton = canvas.getAllByRole('button', {
       name: 'Add reaction',
     })[1];
@@ -960,8 +959,13 @@ export const GroupedMessages: Story = {
       secondQuickRow.getBoundingClientRect().top -
         firstQuickRow.getBoundingClientRect().bottom,
     ).toBe(2);
-    await expect(canvas.getAllByRole('time')).toHaveLength(4);
+    await expect(canvas.getAllByRole('time')).toHaveLength(6);
     await expect(within(lastQuickRow).getByRole('time')).toBeVisible();
+    await expect(
+      within(getMessageRow('It moved to my pipeline last week')).getByRole(
+        'time',
+      ),
+    ).toBeVisible();
     await expect(lastQuickRow.getBoundingClientRect().height).toBe(
       secondQuickRow.getBoundingClientRect().height,
     );
@@ -983,6 +987,9 @@ export const GroupedMessages: Story = {
     await waitFor(() => expect(copyButton).toBeVisible());
     await expect(copyButton.getBoundingClientRect().right).toBeLessThanOrEqual(
       canvas.getByText('Who owns it now?').getBoundingClientRect().left,
+    );
+    await expect(copyButton.getBoundingClientRect().top).toBeLessThan(
+      secondQuickRow.getBoundingClientRect().top,
     );
   },
 };

@@ -7,10 +7,8 @@ import { createOneRole } from 'test/integration/metadata/suites/role/utils/creat
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import {
-  FeatureFlagKey,
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
@@ -51,13 +49,6 @@ describe('querying many records through access groups (integration)', () => {
       (edge: { node: { id: string } }) => edge.node.id,
     );
   };
-
-  const setAccessGroupsEnabled = (value: boolean) =>
-    updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED,
-      value,
-      expectToFail: false,
-    });
 
   beforeAll(async () => {
     [{ id: objectMetadataId }] = await global.testDataSource.query(
@@ -137,7 +128,6 @@ describe('querying many records through access groups (integration)', () => {
         workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
       },
     });
-    await setAccessGroupsEnabled(true);
     await getAppProviderByClassName<AccessGroupSyncService>(
       'AccessGroupSyncService',
     ).syncAccessGroups({ workspaceId: SEED_APPLE_WORKSPACE_ID });
@@ -150,7 +140,6 @@ describe('querying many records through access groups (integration)', () => {
   });
 
   afterAll(async () => {
-    await setAccessGroupsEnabled(false);
     await updateWorkspaceMemberRole({
       expectToFail: false,
       input: {
@@ -188,12 +177,7 @@ describe('querying many records through access groups (integration)', () => {
 
     try {
       expect(await findPersonIdsAsMember()).toEqual([]);
-
-      await setAccessGroupsEnabled(false);
-
-      expect(await findPersonIdsAsMember()).toEqual([PARIS_PERSON_ID]);
     } finally {
-      await setAccessGroupsEnabled(true);
       await global.testDataSource.query(
         `UPDATE ${PERSON_TABLE} SET "_accessGroupIds" = $1 WHERE "id" = $2`,
         [accessGroupIds, PARIS_PERSON_ID],

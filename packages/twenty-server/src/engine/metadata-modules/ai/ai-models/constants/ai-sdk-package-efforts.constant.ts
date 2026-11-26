@@ -1,6 +1,7 @@
 import { type AmazonBedrockLanguageModelOptions } from '@ai-sdk/amazon-bedrock';
 import { type AnthropicLanguageModelOptions } from '@ai-sdk/anthropic';
 import { type GoogleLanguageModelOptions } from '@ai-sdk/google';
+import { type GroqLanguageModelChatOptions } from '@ai-sdk/groq';
 import { type MistralLanguageModelOptions } from '@ai-sdk/mistral';
 import { type XaiLanguageModelResponsesOptions } from '@ai-sdk/xai';
 import {
@@ -14,6 +15,7 @@ import {
   AI_SDK_AZURE,
   AI_SDK_BEDROCK,
   AI_SDK_GOOGLE,
+  AI_SDK_GROQ,
   AI_SDK_MISTRAL,
   AI_SDK_OPENAI,
   AI_SDK_OPENAI_COMPATIBLE,
@@ -29,6 +31,7 @@ type BedrockEffort = NonNullable<
 type GoogleThinkingLevel = NonNullable<
   NonNullable<GoogleLanguageModelOptions['thinkingConfig']>['thinkingLevel']
 >;
+type GroqEffort = NonNullable<GroqLanguageModelChatOptions['reasoningEffort']>;
 type MistralEffort = NonNullable<
   MistralLanguageModelOptions['reasoningEffort']
 >;
@@ -63,6 +66,12 @@ export const AI_SDK_PACKAGE_EFFORTS: Partial<
     'medium',
     'high',
   ] satisfies readonly GoogleThinkingLevel[],
+  [AI_SDK_GROQ]: [
+    'none',
+    'low',
+    'medium',
+    'high',
+  ] satisfies readonly GroqEffort[],
   [AI_SDK_MISTRAL]: ['none', 'high'] satisfies readonly MistralEffort[],
   [AI_SDK_XAI]: ['low', 'medium', 'high'] satisfies readonly XaiEffort[],
 };

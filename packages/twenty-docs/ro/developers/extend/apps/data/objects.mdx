@@ -140,7 +140,7 @@ Tipurile compuse stochează mai multe sub‑câmpuri (de ex. `FULL_NAME` = prenu
 
 ### Selectați opțiunile
 
-Pentru `SELECT` și `MULTI_SELECT`, furnizați o matrice `options` nevidă de obiecte. Fiecare opțiune are un `value`, un `label` și un `position`. `color` este opțională și are implicit valoarea `gray` atunci când este omisă sau nulă.
+Pentru `SELECT` și `MULTI_SELECT`, furnizați o matrice `options` nevidă de obiecte. Fiecare opțiune are un `value`, un `label` și un `position`. `color` este opțională și are implicit valoarea `gray` atunci când este omisă sau nulă. Și `description` este opțională: până la 255 de caractere, afișate ca indiciu când utilizatorii aleg opțiunea.
 
 Când este furnizată, `color` trebuie să fie una dintre: `red`, `ruby`, `crimson`, `tomato`, `orange`, `amber`, `yellow`, `lime`, `grass`, `green`, `jade`, `mint`, `turquoise`, `cyan`, `sky`, `blue`, `iris`, `violet`, `purple`, `plum`, `pink`, `bronze`, `gold`, `brown`, `gray`.
 
@@ -148,9 +148,9 @@ Atât `defineObject()`, cât și `defineField()` returnează erori de validare p
 
 #### Modificările spațiului de lucru asupra opțiunilor tale
 
-Un spațiu de lucru poate redenumi, recolora, reordona și dezactiva opțiunile cu care este livrată aplicația ta și poate adăuga propriile opțiuni. Nu poate elimina opțiunile tale și nici modifica `value`-ul acestora.
+Un spațiu de lucru poate redenumi, recolora, descrie, reordona și dezactiva opțiunile cu care este livrată aplicația ta și poate adăuga propriile opțiuni. Nu poate elimina opțiunile tale și nici modifica `value`-ul acestora.
 
-Aceste modificări sunt păstrate când aplicația ta este sincronizată din nou. Schimbarea `label`, `color` sau `position` ale unei opțiuni în aplicația dvs. modifică valoarea implicită, nu ceea ce un spațiu de lucru a suprascris deja. Opțiunile pe care spațiul de lucru le-a adăugat și opțiunile pe care le-a dezactivat rămân neschimbate.
+Aceste modificări sunt păstrate când aplicația ta este sincronizată din nou. Modificarea `label`, `color`, `description` sau `position` ale unei opțiuni în aplicația ta modifică valoarea implicită, nu ceea ce un spațiu de lucru a suprascris deja. Opțiunile pe care spațiul de lucru le-a adăugat și opțiunile pe care le-a dezactivat rămân neschimbate.
 
 Când citiți `options` ale unui câmp din API-ul de metadate, două proprietăți descriu starea acelui spațiu de lucru. Twenty le setează; aplicația dvs. nu le declară:
 

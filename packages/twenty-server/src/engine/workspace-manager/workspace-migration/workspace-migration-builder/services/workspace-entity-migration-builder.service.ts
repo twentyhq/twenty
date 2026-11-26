@@ -22,6 +22,8 @@ import { MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-en
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
+import { assignPrivatableEntityCreatorOnCreate } from 'src/engine/permissions/metadata-permissions/utils/assign-privatable-entity-creator-on-create.util';
+import { getPrivatableEntityPrivacyValidationErrors } from 'src/engine/permissions/metadata-permissions/utils/get-privatable-entity-privacy-validation-errors.util';
 import { WorkspaceMigrationBuilderAdditionalCacheDataMaps } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-builder-additional-cache-data-maps.type';
 import { AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
 import { MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
@@ -249,11 +251,16 @@ export abstract class WorkspaceEntityMigrationBuilderService<
           flatEntityMaps: createdFlatEntityMaps,
         });
 
-      const universalFlatEntityToCreate =
-        resetUniversalFlatEntityForeignKeyAggregators({
+      const universalFlatEntityToCreate = assignPrivatableEntityCreatorOnCreate(
+        {
           metadataName: this.metadataName,
-          universalFlatEntity: rawUniversalflatEntityToCreate,
-        });
+          universalFlatEntity: resetUniversalFlatEntityForeignKeyAggregators({
+            metadataName: this.metadataName,
+            universalFlatEntity: rawUniversalflatEntityToCreate,
+          }),
+          authContext: buildOptions.authContext,
+        },
+      );
 
       const universalIdentifierToDelete =
         universalFlatEntityToCreate.universalIdentifier;
@@ -342,24 +349,41 @@ export abstract class WorkspaceEntityMigrationBuilderService<
         additionalCacheDataMaps,
         universalIdentifier: flatEntityToUpdateUniversalIdentifier,
       });
-      const divergenceErrors = this.validateNoNonUpdatablePropertyDivergence(
-        flatEntityUpdate.nonUpdatablePropertyDivergences,
-      );
+      const fromFlatEntity =
+        fromFlatEntityMaps.byUniversalIdentifier[
+          flatEntityToUpdateUniversalIdentifier
+        ];
+      const centralizedUpdateErrors = [
+        ...this.validateNoNonUpdatablePropertyDivergence(
+          flatEntityUpdate.nonUpdatablePropertyDivergences,
+        ),
+        ...(isDefined(fromFlatEntity)
+          ? getPrivatableEntityPrivacyValidationErrors({
+              metadataName: this.metadataName,
+              fromUniversalFlatEntity: fromFlatEntity,
+              toUniversalFlatEntity: {
+                ...fromFlatEntity,
+                ...flatEntityUpdate.update,
+              },
+              authContext: buildOptions.authContext,
+            })
+          : []),
+      ];
 
       if (validationResult.status === 'fail') {
         allValidationResult.push({
           ...validationResult,
-          errors: [...validationResult.errors, ...divergenceErrors],
+          errors: [...validationResult.errors, ...centralizedUpdateErrors],
         });
         continue;
       }
 
-      if (divergenceErrors.length > 0) {
+      if (centralizedUpdateErrors.length > 0) {
         allValidationResult.push({
           flatEntityMinimalInformation: {
             universalIdentifier: flatEntityToUpdateUniversalIdentifier,
           } as Partial<MetadataFlatEntity<T>>,
-          errors: divergenceErrors,
+          errors: centralizedUpdateErrors,
           metadataName: this.metadataName,
           type: 'update',
         });
@@ -570,9 +594,16 @@ export abstract class WorkspaceEntityMigrationBuilderService<
           ],
       });
 
+    const privacyErrors = getPrivatableEntityPrivacyValidationErrors({
+      metadataName: this.metadataName,
+      toUniversalFlatEntity: args.flatEntityToValidate,
+      authContext: args.buildOptions.authContext,
+    });
+
     const centralizedErrors = [
       ...uuidValidationResult,
       ...perTypeExistenceResult,
+      ...privacyErrors,
     ];
 
     const result = await this.validateFlatEntityCreation(args);

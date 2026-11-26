@@ -79,7 +79,7 @@ export const NavigationDrawerInboxContent = () => {
   const recentThreads = filterInboxRecentThreads({
     threads,
     favoriteThreads: inboxFavoriteThreads,
-    isDirectMessageEnabled,
+    shouldExcludeDirectMessages: isDirectMessageEnabled,
   }).slice(0, INBOX_RECENT_THREADS_MAX_COUNT);
 
   return (

@@ -2,6 +2,7 @@
 
 import { Injectable } from '@nestjs/common';
 
+import { isBoolean } from '@sniptt/guards';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -12,6 +13,7 @@ import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/co
 import { RESTRICTED_PLACEHOLDER_FIELD_UNIVERSAL_IDENTIFIERS } from 'src/engine/permissions/constants/restricted-placeholder-field-universal-identifiers.constant';
 import { buildFieldsUnreadableByEveryMatchingRuleSQLConditions } from 'src/engine/permissions/internal/field-access/utils/build-fields-unreadable-by-every-matching-rule-sql-conditions.util';
 import { findRlsRuleInaccessibleFields } from 'src/engine/permissions/internal/field-access/utils/find-rls-rule-inaccessible-fields.util';
+import { findRelatedRecordPathUnreadableNestedFields } from 'src/engine/permissions/internal/related-record-path/utils/find-related-record-path-unreadable-nested-fields.util';
 import { renderRlsRecordFilterToSql } from 'src/engine/permissions/internal/rls/utils/render-rls-record-filter-to-sql.util';
 import { buildRlsRulesRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-rls-rule-record-filter.util';
 import {
@@ -19,14 +21,21 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
+import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { type ObjectQuestion } from 'src/engine/permissions/types/record-permissions-question.type';
 import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
+
+type UnreadableFieldsSQLCondition = {
+  fieldMetadataIds: string[];
+  sqlCondition: SQLCondition;
+};
 
 @Injectable()
 export class RecordFieldPermissionsReadService {
   constructor(
     private readonly permissionsMetadataMapsService: PermissionsMetadataMapsService,
+    private readonly recordPermissionsReadService: RecordPermissionsReadService,
   ) {}
 
   findUnreadableFields(question: ObjectQuestion): Promise<Set<string>> {
@@ -48,16 +57,61 @@ export class RecordFieldPermissionsReadService {
     objectMetadataId,
     tableAlias,
   }: ObjectQuestion & { tableAlias: string }): Promise<
-    {
-      fieldMetadataIds: string[];
-      sqlCondition: SQLCondition;
-      placeholderFieldMetadataIds: string[];
-    }[]
+    (UnreadableFieldsSQLCondition & { placeholderFieldMetadataIds: string[] })[]
   > {
     if (!isDefined(principals)) {
       return [];
     }
 
+    const unreadableFieldsSQLConditions = [
+      ...(await this.buildRlsRuleUnreadableFieldsSQLConditions({
+        principals,
+        objectMetadataId,
+        tableAlias,
+      })),
+      ...(await this.buildUnreadableNestedFieldsSQLConditions({
+        principals,
+        objectMetadataId,
+        tableAlias,
+      })),
+    ];
+
+    if (!isNonEmptyArray(unreadableFieldsSQLConditions)) {
+      return [];
+    }
+
+    const { metadataMaps, flatObjectMetadata } =
+      await this.findObjectMetadataOrThrow({ principals, objectMetadataId });
+
+    const placeholderFieldMetadataIds =
+      findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMaps({
+        flatEntityMaps: metadataMaps.flatFieldMetadataMaps,
+        universalIdentifiers:
+          RESTRICTED_PLACEHOLDER_FIELD_UNIVERSAL_IDENTIFIERS,
+      })
+        .filter(
+          (flatFieldMetadata) =>
+            flatFieldMetadata.objectMetadataId === flatObjectMetadata.id,
+        )
+        .map(({ id }) => id);
+
+    return unreadableFieldsSQLConditions.map(
+      (unreadableFieldsSQLCondition) => ({
+        ...unreadableFieldsSQLCondition,
+        placeholderFieldMetadataIds,
+      }),
+    );
+  }
+
+  private async buildRlsRuleUnreadableFieldsSQLConditions({
+    principals,
+    objectMetadataId,
+    tableAlias,
+  }: {
+    principals: PermissionsPrincipalsWithRolesContext;
+    objectMetadataId: string;
+    tableAlias: string;
+  }): Promise<UnreadableFieldsSQLCondition[]> {
     const rlsRuleInaccessibleFields = findRlsRuleInaccessibleFields({
       principals,
       metadataMaps: await this.permissionsMetadataMapsService.loadForPrincipals(
@@ -74,41 +128,86 @@ export class RecordFieldPermissionsReadService {
     const { metadataMaps, flatObjectMetadata } =
       await this.findObjectMetadataOrThrow({ principals, objectMetadataId });
 
-    const rlsRuleSQLConditions = rlsRuleInaccessibleFields.map(
-      ({ rowLevelPermissionRule, fieldMetadataIds }) => ({
-        fieldMetadataIds,
-        sqlCondition: renderRlsRecordFilterToSql({
-          recordFilter: buildRlsRulesRecordFilter({
-            principals,
-            metadataMaps,
-            rowLevelPermissionRules: [rowLevelPermissionRule],
-          }),
-          tableAlias,
-          objectMetadata: flatObjectMetadata,
-          flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
-          flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
-        }) ?? { sql: 'TRUE', parameters: {} },
-      }),
-    );
-
-    const placeholderFieldMetadataIds =
-      findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMaps({
-        flatEntityMaps: metadataMaps.flatFieldMetadataMaps,
-        universalIdentifiers:
-          RESTRICTED_PLACEHOLDER_FIELD_UNIVERSAL_IDENTIFIERS,
-      })
-        .filter(
-          (flatFieldMetadata) =>
-            flatFieldMetadata.objectMetadataId === flatObjectMetadata.id,
-        )
-        .map(({ id }) => id);
-
     return buildFieldsUnreadableByEveryMatchingRuleSQLConditions(
-      rlsRuleSQLConditions,
-    ).map((unreadableFieldsSQLCondition) => ({
-      ...unreadableFieldsSQLCondition,
-      placeholderFieldMetadataIds,
-    }));
+      rlsRuleInaccessibleFields.map(
+        ({ rowLevelPermissionRule, fieldMetadataIds }) => ({
+          fieldMetadataIds,
+          sqlCondition: renderRlsRecordFilterToSql({
+            recordFilter: buildRlsRulesRecordFilter({
+              principals,
+              metadataMaps,
+              rowLevelPermissionRules: [rowLevelPermissionRule],
+            }),
+            tableAlias,
+            objectMetadata: flatObjectMetadata,
+            flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
+            flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
+          }) ?? { sql: 'TRUE', parameters: {} },
+        }),
+      ),
+    );
+  }
+
+  private async buildUnreadableNestedFieldsSQLConditions({
+    principals,
+    objectMetadataId,
+    tableAlias,
+  }: {
+    principals: PermissionsPrincipalsWithRolesContext;
+    objectMetadataId: string;
+    tableAlias: string;
+  }): Promise<UnreadableFieldsSQLCondition[]> {
+    const { metadataMaps, flatObjectMetadata } =
+      await this.findObjectMetadataOrThrow({ principals, objectMetadataId });
+    const unreadableNestedFields = findRelatedRecordPathUnreadableNestedFields({
+      principals,
+      metadataMaps,
+      flatObjectMetadata,
+    });
+
+    if (!isNonEmptyArray(unreadableNestedFields)) {
+      return [];
+    }
+
+    const fieldReadableSQLConditions =
+      await this.recordPermissionsReadService.buildReadRecordsAccessSQLConditionsShowingSourceFields(
+        {
+          principals,
+          objectMetadataId,
+          tableAlias,
+          sourceFields: unreadableNestedFields,
+        },
+      );
+
+    return unreadableNestedFields.flatMap(
+      ({ fieldMetadataId }, unreadableNestedFieldIndex) => {
+        const fieldReadableSQLCondition =
+          fieldReadableSQLConditions[unreadableNestedFieldIndex];
+
+        if (isBoolean(fieldReadableSQLCondition)) {
+          if (fieldReadableSQLCondition) {
+            return [];
+          }
+
+          return [
+            {
+              fieldMetadataIds: [fieldMetadataId],
+              sqlCondition: { sql: 'TRUE', parameters: {} },
+            },
+          ];
+        }
+
+        return [
+          {
+            fieldMetadataIds: [fieldMetadataId],
+            sqlCondition: {
+              sql: `NOT (${fieldReadableSQLCondition.sql})`,
+              parameters: fieldReadableSQLCondition.parameters,
+            },
+          },
+        ];
+      },
+    );
   }
 
   private async findObjectInaccessibleFieldMetadataIds({

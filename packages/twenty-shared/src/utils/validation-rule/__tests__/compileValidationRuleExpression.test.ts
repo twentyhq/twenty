@@ -84,6 +84,32 @@ describe('compileValidationRuleExpression', () => {
     expect(compile('isDefined(now)')).toEqual({ isValid: true, bindings: {} });
   });
 
+  it.each([
+    ['upper()', 'upper takes 1 argument(s), but got 0'],
+    ['upper(stage, "b") == "A"', 'upper takes 1 argument(s), but got 2'],
+    ['isDefined(if(isQualified, stage))', 'if takes 3 argument(s), but got 2'],
+    [
+      'includes(tags) or isQualified',
+      'includes takes 2 argument(s), but got 1',
+    ],
+  ])(
+    'should reject a wrong argument count in %s',
+    (expression, errorMessage) => {
+      expect(compile(expression)).toMatchObject({
+        isValid: false,
+        errorCode: 'WRONG_ARGUMENT_COUNT',
+        errorMessage,
+      });
+    },
+  );
+
+  it('should accept the argument counts each function takes', () => {
+    expect(
+      compile('isDefined(coalesce(stage, "a", "b")) and roundTo(1, 2) > 0')
+        .isValid,
+    ).toBe(true);
+  });
+
   it('should reject an unknown field', () => {
     expect(compile('closeDate > now')).toEqual({
       isValid: false,
@@ -283,5 +309,13 @@ describe('compileValidationRuleExpression with previous values', () => {
       errorCode: 'UNKNOWN_FIELD',
       errorParams: { fieldName: 'closeDate' },
     });
+  });
+  it('should reject an aggregate, which only a formula can compute', () => {
+    expect(
+      compileValidationRuleExpression({
+        expression: 'sum(amount.amountMicros) > 0',
+        fields: OPPORTUNITY_FIELDS,
+      }),
+    ).toMatchObject({ isValid: false, errorCode: 'AGGREGATE_NOT_ALLOWED' });
   });
 });

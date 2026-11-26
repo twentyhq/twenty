@@ -55,7 +55,7 @@ Folosește nume de câmpuri precum `employees`, în loc de etichete de afișare 
 | `true`, `false`                                                      | Compară câmpuri booleene.                     |
 | `acum`                                                               | Folosește data și ora salvării.               |
 
-Puneți textul între ghilimele simple sau duble și utilizați paranteze pentru a grupa condițiile. Utilizați `and` și `or` în loc de `&&` și `||`.
+Puneți textul între ghilimele simple sau duble și utilizați paranteze pentru a grupa condițiile. Folosește `and` și `or` în loc de `&&` și `||`: `||` unește două valori într-un singur text, ignorând o valoare care nu este setată, la fel ca `concat`.
 
 ### Verificați valorile lipsă
 
@@ -78,6 +78,17 @@ Pentru a face obligatoriu un câmp, utilizați `not isEmpty(fieldName)`. Acest l
 | `dateTrunc(date, unit)`                                | Obține începutul unității care conține data, în UTC. Săptămânile încep luni.                                                                                                                                                                            |
 | `datePart(date, part)`                                 | Obține o parte a datei ca număr, în UTC: `"YEAR"`, `"QUARTER"`, `"MONTH"`, `"WEEK"`, `"DAY"`, `"DAY_OF_WEEK"` (1 este luni), `"HOUR"` sau `"MINUTE"`.                                                                                                   |
 | `isInRelativeDateRange(date, direction, amount, unit)` | Verifică dacă o dată se încadrează într-o perioadă calculată de astăzi, în UTC. `direction` este `"PAST"`, `"NEXT"` sau `"THIS"`, iar `unit` este `"DAY"`, `"WEEK"`, `"MONTH"`, `"QUARTER"` sau `"YEAR"`. `"PAST"` și `"NEXT"` exclud perioada curentă. |
+
+### Calculează valorile
+
+| Funcție                                              | Folosiți                                                                               |
+| ---------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `if(condition, valueIfTrue, valueIfFalse)`           | Obține a doua valoare când condiția este adevărată, altfel pe a treia.                 |
+| `coalesce(value, ...fallbacks)`                      | Obține prima valoare care este setată.                                                 |
+| `concat(value, ...values)`                           | Unește valorile într-un singur text. Valorile care nu sunt setate sunt omise.          |
+| `lower(text)`, `upper(text)`                         | Schimbă majusculele și minusculele unui text.                                          |
+| `min(number, ...numbers)`, `max(number, ...numbers)` | Obține cel mai mic sau cel mai mare număr. Valorile care nu sunt numere sunt ignorate. |
+| `roundTo(number, decimals)`                          | Rotunjește un număr la un număr de zecimale.                                           |
 
 `daysSince(date)` a fost eliminată. Utilizează în schimb `dateDiff(date, now, 'DAY')`.
 

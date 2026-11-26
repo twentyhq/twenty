@@ -2,7 +2,11 @@ import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { z } from 'zod';
 
 import { RELATION_TYPE_DESCRIPTION } from 'src/engine/metadata-modules/field-metadata/tools/constants/relation-type-description.constant';
-import { SELECT_OPTIONS_DESCRIPTION } from 'src/engine/metadata-modules/field-metadata/tools/constants/select-options-description.constant';
+import {
+  fieldMetadataDefaultValueInputSchema,
+  fieldMetadataOptionsInputSchema,
+  fieldMetadataSettingsInputSchema,
+} from 'src/engine/metadata-modules/field-metadata/tools/schemas/field-metadata-configuration-input.schema';
 
 const relationCreationPayloadSchema = z.object({
   type: z.nativeEnum(RelationType).describe(RELATION_TYPE_DESCRIPTION),
@@ -34,9 +38,9 @@ export const createFieldMetadataInputSchema = z.object({
     ),
   isNullable: z.boolean().optional().describe('Nullable'),
   isUnique: z.boolean().optional().describe('Unique constraint'),
-  defaultValue: z.unknown().optional().describe('Default value'),
-  options: z.unknown().optional().describe(SELECT_OPTIONS_DESCRIPTION),
-  settings: z.unknown().optional().describe('Field settings'),
+  defaultValue: fieldMetadataDefaultValueInputSchema,
+  options: fieldMetadataOptionsInputSchema,
+  settings: fieldMetadataSettingsInputSchema,
   isLabelSyncedWithName: z
     .boolean()
     .optional()

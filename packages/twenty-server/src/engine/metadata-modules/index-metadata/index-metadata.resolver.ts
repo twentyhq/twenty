@@ -22,23 +22,24 @@ import { objectMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-mo
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/permissions/utils/permissions-graphql-api-exception.filter';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 
-@UseGuards(
-  AccessPolicyGuard({
-    authPrincipals: {
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: true,
+const INDEX_METADATA_WRITE_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
     },
-    requiredPermissionFlags: [PermissionFlagType.DATA_MODEL],
-  }),
-)
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  },
+  requiredPermissionFlags: [PermissionFlagType.DATA_MODEL],
+};
+
 @MetadataResolver(() => IndexMetadataDTO)
 @UsePipes(ResolverValidationPipe)
 @UseFilters(
@@ -53,6 +54,7 @@ export class IndexMetadataResolver {
     nullable: true,
     deprecationReason: IS_CUSTOM_DEPRECATION_REASON,
   })
+  @UseGuards(NoPermissionGuard)
   isCustom(
     @Parent() indexMetadata: IndexMetadataDTO,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -64,6 +66,7 @@ export class IndexMetadataResolver {
   }
 
   @ResolveField(() => [IndexFieldMetadataDTO], { nullable: false })
+  @UseGuards(NoPermissionGuard)
   async indexFieldMetadataList(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Parent() indexMetadata: IndexMetadataDTO,
@@ -86,6 +89,7 @@ export class IndexMetadataResolver {
   }
 
   @Mutation(() => IndexMetadataDTO)
+  @UseGuards(AccessPolicyGuard(INDEX_METADATA_WRITE_ACCESS_POLICY))
   async createOneIndex(
     @Args('input') input: CreateOneIndexInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -103,6 +107,7 @@ export class IndexMetadataResolver {
   }
 
   @Mutation(() => IndexMetadataDTO)
+  @UseGuards(AccessPolicyGuard(INDEX_METADATA_WRITE_ACCESS_POLICY))
   async deleteOneIndex(
     @Args('input') input: DeleteOneIndexInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

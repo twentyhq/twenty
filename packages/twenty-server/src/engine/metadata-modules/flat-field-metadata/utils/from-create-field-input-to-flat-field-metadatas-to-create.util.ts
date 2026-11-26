@@ -20,9 +20,10 @@ import { type FieldInputTranspilationResult } from 'src/engine/metadata-modules/
 import { fromMorphRelationCreateFieldInputToFlatFieldMetadatas } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-morph-relation-create-field-input-to-flat-field-metadatas.util';
 import { fromRelationCreateFieldInputToFlatFieldMetadatas } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadatas.util';
 import { getDefaultFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-default-flat-field-metadata-from-create-field-input.util';
-import { sanitizeSelectOptionColors } from 'src/engine/metadata-modules/flat-field-metadata/utils/sanitize-select-option-colors.util';
+import { sanitizeSelectOptions } from 'src/engine/metadata-modules/flat-field-metadata/utils/sanitize-select-options.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
+import { keepFormulaSettings } from 'src/engine/metadata-modules/formula-field/utils/keep-formula-settings.util';
 
 export type FromCreateFieldInputToFlatObjectMetadataArgs = {
   createFieldInput: Omit<CreateFieldInput, 'workspaceId'>;
@@ -117,7 +118,9 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
               type: createFieldInput.type,
               defaultValue: commonFlatFieldMetadata.defaultValue as string, // Could this be improved ?
               options: generateRatingOptions(),
-              universalSettings: null,
+              universalSettings: keepFormulaSettings(
+                commonFlatFieldMetadata.universalSettings,
+              ),
             } satisfies UniversalFlatFieldMetadata<
               typeof createFieldInput.type
             >,
@@ -128,7 +131,7 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
     }
     case FieldMetadataType.SELECT:
     case FieldMetadataType.MULTI_SELECT: {
-      const options = sanitizeSelectOptionColors(
+      const options = sanitizeSelectOptions(
         (createFieldInput?.options ?? []).map<
           FieldMetadataOptions<typeof createFieldInput.type>[number]
         >((option) => ({
@@ -151,7 +154,12 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
               type: createFieldInput.type,
               options,
               defaultValue: commonFlatFieldMetadata.defaultValue as string, // Could this be improved ?
-              universalSettings: null,
+              universalSettings:
+                createFieldInput.type === FieldMetadataType.MULTI_SELECT
+                  ? null
+                  : keepFormulaSettings(
+                      commonFlatFieldMetadata.universalSettings,
+                    ),
             } satisfies UniversalFlatFieldMetadata<
               typeof createFieldInput.type
             >,

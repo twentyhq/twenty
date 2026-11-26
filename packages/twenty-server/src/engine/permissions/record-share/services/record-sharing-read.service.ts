@@ -128,7 +128,6 @@ export class RecordSharingReadService {
     return this.resolveCanManageSharing({
       args,
       flatObjectMetadata,
-      featureFlagsMap,
       permissions,
       viewerAccessLevel,
     });
@@ -168,7 +167,6 @@ export class RecordSharingReadService {
     const canManageSharing = await this.resolveCanManageSharing({
       args,
       flatObjectMetadata,
-      featureFlagsMap,
       permissions,
       viewerAccessLevel,
     });
@@ -208,18 +206,15 @@ export class RecordSharingReadService {
   private async resolveCanManageSharing({
     args,
     flatObjectMetadata,
-    featureFlagsMap,
     permissions,
     viewerAccessLevel,
   }: {
     args: Pick<RecordSharingArgs, 'authContext'>;
     flatObjectMetadata: FlatObjectMetadata;
-    featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
     permissions: Pick<RecordPermissionsDTO, 'canUpdate'>;
     viewerAccessLevel: RecordShareAccessLevel | null;
   }): Promise<boolean> {
     return (
-      isRecordSharingEnabled({ featureFlagsMap }) &&
       permissions.canUpdate &&
       viewerAccessLevel === RecordShareAccessLevel.FULL &&
       (await this.recordPermissionsReadService.canAllRecordsOrRlsAccessOperation(

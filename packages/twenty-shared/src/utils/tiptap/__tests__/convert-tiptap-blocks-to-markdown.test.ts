@@ -97,7 +97,7 @@ describe('convertTipTapBlocksToMarkdown', () => {
           ],
         },
       ],
-      markdown: 'First\nSecond',
+      markdown: 'First  \nSecond',
     },
   ])('should convert $name', ({ blocks, markdown }) => {
     expect(convertTipTapBlocksToMarkdown(JSON.stringify(blocks))).toBe(

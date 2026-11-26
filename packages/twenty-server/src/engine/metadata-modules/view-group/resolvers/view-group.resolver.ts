@@ -2,7 +2,6 @@ import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { CreateViewGroupInput } from 'src/engine/metadata-modules/view-group/dtos/inputs/create-view-group.input';
@@ -27,8 +26,6 @@ export class ViewGroupResolver {
   @Query(() => [ViewGroupDTO])
   async getViewGroups(
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
     @Args('viewId', { type: () => String, nullable: true })
     viewId?: string,
   ): Promise<ViewGroupDTO[]> {
@@ -36,13 +33,11 @@ export class ViewGroupResolver {
       return this.viewGroupService.findByViewId({
         workspaceId: workspace.id,
         viewId,
-        userWorkspaceId,
       });
     }
 
     return this.viewGroupService.findByWorkspaceId({
       workspaceId: workspace.id,
-      userWorkspaceId,
     });
   }
 
@@ -50,13 +45,10 @@ export class ViewGroupResolver {
   async getViewGroup(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
   ): Promise<ViewGroupDTO> {
     return this.viewGroupService.findByIdOrThrow({
       id,
       workspaceId: workspace.id,
-      userWorkspaceId,
     });
   }
 

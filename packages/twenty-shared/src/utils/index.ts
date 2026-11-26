@@ -92,7 +92,14 @@ export { parseExpressionDate } from './expression-date/parseExpressionDate';
 export { toExpressionDateTimeInUtc } from './expression-date/toExpressionDateTimeInUtc';
 export { truncateExpressionDate } from './expression-date/truncateExpressionDate';
 export { truncateTowardZero } from './expression-date/truncateTowardZero';
+export { compileExpression } from './expression/compileExpression';
+export { createExpressionEvaluator } from './expression/createExpressionEvaluator';
+export { findExpressionAggregationError } from './expression/findExpressionAggregationError';
+export { getExpressionArgumentCountError } from './expression/getExpressionArgumentCountError';
 export { getExpressionSyntaxError } from './expression/getExpressionSyntaxError';
+export { parseExpressionInstructions } from './expression/parseExpressionInstructions';
+export { reduceExpressionNumbers } from './expression/reduceExpressionNumbers';
+export { roundExpressionNumber } from './expression/roundExpressionNumber';
 export { extractAndSanitizeObjectStringFields } from './extractAndSanitizeObjectStringFields';
 export { computeMorphRelationGqlFieldName } from './fieldMetadata/compute-morph-relation-gql-field-name';
 export {
@@ -241,6 +248,17 @@ export {
 } from './filter/utils/validation-schemas/jsonRelationFilterValueSchema';
 export { formatBytes } from './format/formatBytes';
 export { formatToShortNumber } from './format/formatToShortNumber';
+export { compileFormulaExpression } from './formula/compileFormulaExpression';
+export { getFieldMetadataFormulaBindings } from './formula/getFieldMetadataFormulaBindings';
+export { getFieldMetadataFormulaCurrencyCodeExpression } from './formula/getFieldMetadataFormulaCurrencyCodeExpression';
+export { getFieldMetadataFormulaEvaluation } from './formula/getFieldMetadataFormulaEvaluation';
+export { getFieldMetadataFormulaExpression } from './formula/getFieldMetadataFormulaExpression';
+export { getFormulaAggregateCall } from './formula/getFormulaAggregateCall';
+export { getFormulaEvaluationFromBindings } from './formula/getFormulaEvaluationFromBindings';
+export { isFormulaAggregateFunctionName } from './formula/isFormulaAggregateFunctionName';
+export { isFormulaFieldMetadata } from './formula/isFormulaFieldMetadata';
+export { isFormulaFieldMetadataType } from './formula/isFormulaFieldMetadataType';
+export { isQueryTimeFormulaFieldMetadata } from './formula/isQueryTimeFormulaFieldMetadata';
 export { fromArrayToUniqueKeyRecord } from './from-array-to-unique-key-record.util';
 export { fromArrayToValuesByKeyRecord } from './fromArrayToValuesByKeyRecord.util';
 export { getUrlSafely } from './getUrlSafely';
@@ -412,6 +430,7 @@ export { getValidationRulePreviousValueFieldPath } from './validation-rule/getVa
 export { getValidationRuleRecordsFromDatabaseEvent } from './validation-rule/getValidationRuleRecordsFromDatabaseEvent';
 export { hasValidationRuleBracketAccess } from './validation-rule/hasValidationRuleBracketAccess';
 export { isValidationRuleDateInRelativeRange } from './validation-rule/isValidationRuleDateInRelativeRange';
+export { isValidationRuleFunctionName } from './validation-rule/isValidationRuleFunctionName';
 export { isValidationRulePreviousValuePath } from './validation-rule/isValidationRulePreviousValuePath';
 export { isValidationRuleReservedName } from './validation-rule/isValidationRuleReservedName';
 export { isValidationRuleValueDefined } from './validation-rule/isValidationRuleValueDefined';
@@ -452,4 +471,5 @@ export {
   resolveStringTemplate,
 } from './variable-resolver';
 export { getViewLayoutFromViewType } from './views/getViewLayoutFromViewType';
+export { isViewCompactByDefault } from './views/isViewCompactByDefault';
 export { isWidgetViewType } from './views/isWidgetViewType';

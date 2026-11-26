@@ -25,6 +25,10 @@ import {
 } from 'src/engine/twenty-orm/query-builder/types/query-builder.type';
 import { WorkspaceMutationQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-mutation-query-builder';
 import { type MutationKind } from 'src/engine/twenty-orm/sql/utils/build-mutation-statement.util';
+import {
+  buildComputedTableSource,
+  type ComputedTableSourcePermissions,
+} from 'src/engine/twenty-orm/sql/utils/build-computed-table-source.util';
 import { buildOrderByClauses } from 'src/engine/twenty-orm/sql/utils/build-order-by-clauses.util';
 import { collectReferencedColumnNames } from 'src/engine/twenty-orm/sql/utils/collect-referenced-column-names.util';
 import { compileTwentyOrmStatement } from 'src/engine/twenty-orm/utils/compile-twenty-orm-statement.util';
@@ -51,6 +55,7 @@ import {
   type UnreadableColumnPlaceholders,
   type UnreadableRelationConditions,
   type SelectStatementState,
+  type TableSourceByObjectMetadataId,
   type WhereClause,
   UNREADABLE_COLUMN_PLACEHOLDER_PARAMETER_NAME,
 } from 'src/engine/twenty-orm/sql/utils/build-select-statement.util';
@@ -112,6 +117,11 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     {};
   private readonly unreadableRelationConditions: UnreadableRelationConditions =
     {};
+  private shouldReadStoredColumnsOnly = false;
+  private readonly computedTableSourcePermissionsByObjectMetadataId = new Map<
+    string,
+    ComputedTableSourcePermissions
+  >();
 
   constructor(alias: string, context: QueryBuilderContext) {
     this.alias = alias;
@@ -172,6 +182,16 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
 
     for (const alias of this.aliasesWithRowLevelPermissionApplied) {
       cloned.aliasesWithRowLevelPermissionApplied.add(alias);
+    }
+
+    cloned.shouldReadStoredColumnsOnly = this.shouldReadStoredColumnsOnly;
+
+    for (const [objectMetadataId, permissions] of this
+      .computedTableSourcePermissionsByObjectMetadataId) {
+      cloned.computedTableSourcePermissionsByObjectMetadataId.set(
+        objectMetadataId,
+        permissions,
+      );
     }
 
     return cloned;
@@ -595,6 +615,78 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     this.isLockedForUpdate = true;
 
     return this;
+  }
+
+  withStoredColumnsOnly(): this {
+    this.shouldReadStoredColumnsOnly = true;
+
+    return this;
+  }
+
+  getTableShapesMissingComputedTableSourcePermissions(): WorkspaceTableShape[] {
+    return this.getStatementTableShapes().filter(
+      ({ objectMetadataId, computedColumnShapes }) =>
+        isNonEmptyArray(computedColumnShapes) &&
+        !this.computedTableSourcePermissionsByObjectMetadataId.has(
+          objectMetadataId,
+        ),
+    );
+  }
+
+  setComputedTableSourcePermissions({
+    objectMetadataId,
+    permissions,
+    parameters,
+  }: {
+    objectMetadataId: string;
+    permissions: ComputedTableSourcePermissions;
+    parameters: Record<string, unknown>;
+  }): this {
+    this.computedTableSourcePermissionsByObjectMetadataId.set(
+      objectMetadataId,
+      permissions,
+    );
+
+    return this.setParameters(parameters);
+  }
+
+  private getStatementTableShapes(): WorkspaceTableShape[] {
+    const tableShapeByObjectMetadataId = new Map(
+      [
+        this.tableShape,
+        ...this.joinClauses.map(({ targetTableShape }) => targetTableShape),
+        ...this.existsFilterClauses.map(
+          ({ targetTableShape }) => targetTableShape,
+        ),
+      ].map((tableShape) => [tableShape.objectMetadataId, tableShape]),
+    );
+
+    return [...tableShapeByObjectMetadataId.values()];
+  }
+
+  // A row lock cannot reach through the outer join a lookup needs, so a locked read sees stored columns
+  private buildTableSourceByObjectMetadataId(): TableSourceByObjectMetadataId {
+    if (this.shouldReadStoredColumnsOnly || this.isLockedForUpdate) {
+      return {};
+    }
+
+    return Object.fromEntries(
+      this.getStatementTableShapes().flatMap((tableShape) => {
+        const tableSource = buildComputedTableSource({
+          tableShape,
+          getTableShape: this.context.tableShapeByObjectMetadataId,
+          recordReadRestrictions: this.recordReadRestrictions,
+          permissions:
+            this.computedTableSourcePermissionsByObjectMetadataId.get(
+              tableShape.objectMetadataId,
+            ),
+        });
+
+        return isDefined(tableSource)
+          ? [[tableShape.objectMetadataId, tableSource]]
+          : [];
+      }),
+    );
   }
 
   take(count: number): this {
@@ -1380,6 +1472,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       limitValue: this.limitValue,
       offsetValue: this.offsetValue,
       isLockedForUpdate: this.isLockedForUpdate,
+      tableSourceByObjectMetadataId: this.buildTableSourceByObjectMetadataId(),
     };
   }
 }

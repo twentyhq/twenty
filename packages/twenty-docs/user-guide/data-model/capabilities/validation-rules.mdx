@@ -55,7 +55,7 @@ Use field names such as `employees`, rather than display labels such as **Employ
 | `true`, `false`                  | Compare boolean fields.             |
 | `now`                            | Use the date and time of the save.  |
 
-Put text in single or double quotes and use parentheses to group conditions. Use `and` and `or` rather than `&&` and `||`.
+Put text in single or double quotes and use parentheses to group conditions. Use `and` and `or` rather than `&&` and `||`: `||` joins two values as one text, skipping a value that is not set, as `concat` does.
 
 ### Check for Missing Values
 
@@ -78,6 +78,17 @@ To make a field required, use `not isEmpty(fieldName)`. This also works for comp
 | `dateTrunc(date, unit)` | Get the start of the unit that contains the date, in UTC. Weeks start on Monday. |
 | `datePart(date, part)` | Get one part of the date as a number, in UTC: `"YEAR"`, `"QUARTER"`, `"MONTH"`, `"WEEK"`, `"DAY"`, `"DAY_OF_WEEK"` (1 is Monday), `"HOUR"` or `"MINUTE"`. |
 | `isInRelativeDateRange(date, direction, amount, unit)` | Check whether a date falls in a period counted from today, in UTC. `direction` is `"PAST"`, `"NEXT"` or `"THIS"`, `unit` is `"DAY"`, `"WEEK"`, `"MONTH"`, `"QUARTER"` or `"YEAR"`. `"PAST"` and `"NEXT"` leave out the current period. |
+
+### Compute Values
+
+| Function                                    | Use                                                                       |
+| ------------------------------------------- | ------------------------------------------------------------------------- |
+| `if(condition, valueIfTrue, valueIfFalse)` | Get the second value when the condition is true, otherwise the third one. |
+| `coalesce(value, ...fallbacks)`             | Get the first value that is set.                                          |
+| `concat(value, ...values)`                  | Join values as one text. Values that are not set are skipped.             |
+| `lower(text)`, `upper(text)`                | Change the letter case of a text.                                         |
+| `min(number, ...numbers)`, `max(number, ...numbers)` | Get the smallest or largest number. Values that are not numbers are ignored. |
+| `roundTo(number, decimals)`                 | Round a number to a number of decimals.                                   |
 
 `daysSince(date)` has been removed. Use `dateDiff(date, now, 'DAY')` instead.
 

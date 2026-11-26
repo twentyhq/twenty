@@ -2,85 +2,35 @@ import { createOneOperationFactory } from 'test/integration/graphql/utils/create
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { findWorkspaceCustomApplicationId } from 'test/integration/metadata/suites/application-default-role/utils/find-application-default-role.util';
 import { findCurrentUserObjectRecordsPermissions } from 'test/integration/permissions/channel-visibility/utils/find-current-user-object-records-permissions.util';
 import { findObjectMetadataIdByName } from 'test/integration/utils/find-object-metadata-id-by-name.util';
+import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
 import { updateMessageChannelVisibility } from 'test/integration/permissions/channel-visibility/utils/update-message-channel-visibility.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { syncChannelVisibilityRules } from 'test/integration/permissions/channel-visibility/utils/sync-channel-visibility-rules.util';
-import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
+import {
+  grantRoleWideAccessToChannelObjects,
+  revokeRoleWideAccessToChannelObjects,
+} from 'test/integration/utils/role-wide-access-to-channel-objects.util';
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FeatureFlagKey } from 'twenty-shared/types';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 
-import { type RevokeRoleWideAccessToChannelObjectsCommand } from 'src/engine/permissions/channel-visibility/commands/revoke-role-wide-access-to-channel-objects.command';
-import { CHANNEL_CHILD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'src/engine/permissions/channel-visibility/constants/channel-child-object-universal-identifiers.constant';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { CALENDAR_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/calendar-channel-seed-ids.constant';
 import { MESSAGE_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/message-channel-seed-ids.constant';
-import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
-const FLAGS = [
-  FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED,
-  FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED,
-  FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED,
-  FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED,
-];
-
-const revokeRoleWideAccessToChannelObjects = () =>
-  getAppProviderByClassName<RevokeRoleWideAccessToChannelObjectsCommand>(
-    'RevokeRoleWideAccessToChannelObjectsCommand',
-  ).runOnWorkspace({
-    workspaceId: SEED_APPLE_WORKSPACE_ID,
-    options: {},
-    index: 0,
-    total: 1,
-  });
-
-const restoreRoleWideAccessToChannelObjects = async () => {
-  await global.testDataSource.query(
-    `DELETE FROM core."objectPermission" "objectPermission"
-      USING core."objectMetadata" "objectMetadata"
-      WHERE "objectMetadata".id = "objectPermission"."objectMetadataId"
-        AND "objectPermission"."workspaceId" = $1
-        AND "objectMetadata"."universalIdentifier" = ANY($2)`,
-    [
-      SEED_APPLE_WORKSPACE_ID,
-      [
-        STANDARD_OBJECTS.message.universalIdentifier,
-        STANDARD_OBJECTS.calendarEvent.universalIdentifier,
-        ...CHANNEL_CHILD_OBJECT_UNIVERSAL_IDENTIFIERS,
-        STANDARD_OBJECTS.attachment.universalIdentifier,
-      ],
-    ],
-  );
-  await global.testDataSource.query(
-    `DELETE FROM core."rowLevelPermissionRule" "rule"
-      USING core."objectMetadata" "objectMetadata", core."role" "role"
-      WHERE "objectMetadata".id = "rule"."objectMetadataId"
-        AND "role".id = "rule"."roleId"
-        AND "role"."canBeAssignedToUsers"
-        AND "rule"."workspaceId" = $1
-        AND "objectMetadata"."universalIdentifier" = $2`,
-    [SEED_APPLE_WORKSPACE_ID, STANDARD_OBJECTS.attachment.universalIdentifier],
-  );
-  await getAppProviderByClassName<WorkspaceCacheService>(
-    'WorkspaceCacheService',
-  ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, [
-    'flatObjectPermissionMaps',
-    'flatRowLevelPermissionRuleMaps',
-    'flatRowLevelPermissionPredicateGroupMaps',
-    'flatRowLevelPermissionPredicateMaps',
-    'rolesPermissions',
-  ]);
-};
-
-const createAttachment = async (
-  data: Record<string, unknown>,
-): Promise<string> => {
+const createRecord = async ({
+  objectMetadataSingularName,
+  data,
+}: {
+  objectMetadataSingularName: string;
+  data: Record<string, unknown>;
+}): Promise<string> => {
   const response = await makeGraphqlApiRequest(
     createOneOperationFactory({
-      objectMetadataSingularName: 'attachment',
+      objectMetadataSingularName,
       gqlFields: 'id',
       data,
     }),
@@ -88,19 +38,48 @@ const createAttachment = async (
 
   expect(response.body.errors).toBeUndefined();
 
-  return response.body.data.createAttachment.id;
+  return response.body.data[`create${capitalize(objectMetadataSingularName)}`]
+    .id;
 };
 
-const destroyAttachment = async (attachmentId: string) => {
+const destroyRecord = async ({
+  objectMetadataSingularName,
+  recordId,
+}: {
+  objectMetadataSingularName: string;
+  recordId: string;
+}) => {
   const response = await makeGraphqlApiRequest(
     destroyOneOperationFactory({
-      objectMetadataSingularName: 'attachment',
+      objectMetadataSingularName,
       gqlFields: 'id',
-      recordId: attachmentId,
+      recordId,
     }),
   );
 
   expect(response.body.errors).toBeUndefined();
+};
+
+const findCalendarEventIdOfChannel = async (
+  calendarChannelId: string,
+): Promise<string> => {
+  const response = await makeGraphqlApiRequest(
+    findManyOperationFactory({
+      objectMetadataSingularName: 'calendarEvent',
+      objectMetadataPluralName: 'calendarEvents',
+      gqlFields: 'id',
+      filter: {
+        calendarChannelEventAssociations: {
+          calendarChannelId: { eq: calendarChannelId },
+        },
+      },
+    }),
+    APPLE_JANE_ADMIN_ACCESS_TOKEN,
+  );
+
+  expect(response.body.errors).toBeUndefined();
+
+  return response.body.data.calendarEvents.edges[0].node.id;
 };
 
 const setJonyChannelVisibility = (visibility: string) =>
@@ -144,68 +123,95 @@ describe('channel visibility through row level rules (integration)', () => {
   let companyId: string;
   let companyAttachmentId: string;
   let messageAttachmentId: string;
+  let callRecordingWithoutEventId: string;
+  let callRecordingOfOtherMemberMetadataEventId: string;
+  let callRecordingOfOwnMetadataEventId: string;
+  let callRecordingOfSharedEventId: string;
 
   beforeAll(async () => {
+    await grantRoleWideAccessToChannelObjects();
     const [jonyMessage] = await findMessagesOfChannel({
       messageChannelId: MESSAGE_CHANNEL_DATA_SEED_IDS.JONY,
       token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
     });
 
     // Seeded companies may be gone: other suites of the same shard delete them all
-    const companyResponse = await makeGraphqlApiRequest(
-      createOneOperationFactory({
-        objectMetadataSingularName: 'company',
-        gqlFields: 'id',
-        data: { name: 'Channel visibility company' },
-      }),
-    );
-
-    expect(companyResponse.body.errors).toBeUndefined();
-    companyId = companyResponse.body.data.createCompany.id;
-
-    companyAttachmentId = await createAttachment({
-      name: 'Company attachment',
-      targetCompanyId: companyId,
+    companyId = await createRecord({
+      objectMetadataSingularName: 'company',
+      data: { name: 'Channel visibility company' },
     });
-    messageAttachmentId = await createAttachment({
-      name: 'Message attachment',
-      targetMessageId: jonyMessage.id,
+    companyAttachmentId = await createRecord({
+      objectMetadataSingularName: 'attachment',
+      data: { name: 'Company attachment', targetCompanyId: companyId },
+    });
+    messageAttachmentId = await createRecord({
+      objectMetadataSingularName: 'attachment',
+      data: { name: 'Message attachment', targetMessageId: jonyMessage.id },
+    });
+    callRecordingWithoutEventId = await createRecord({
+      objectMetadataSingularName: 'callRecording',
+      data: { title: 'Call recording without event' },
+    });
+    callRecordingOfOtherMemberMetadataEventId = await createRecord({
+      objectMetadataSingularName: 'callRecording',
+      data: {
+        title: 'Call recording of a metadata event of another member',
+        calendarEventId: await findCalendarEventIdOfChannel(
+          CALENDAR_CHANNEL_DATA_SEED_IDS.TIM,
+        ),
+      },
+    });
+    callRecordingOfOwnMetadataEventId = await createRecord({
+      objectMetadataSingularName: 'callRecording',
+      data: {
+        title: 'Call recording of an own metadata event',
+        calendarEventId: await findCalendarEventIdOfChannel(
+          CALENDAR_CHANNEL_DATA_SEED_IDS.PHIL,
+        ),
+      },
+    });
+    callRecordingOfSharedEventId = await createRecord({
+      objectMetadataSingularName: 'callRecording',
+      data: {
+        title: 'Call recording of a shared event',
+        calendarEventId: await findCalendarEventIdOfChannel(
+          CALENDAR_CHANNEL_DATA_SEED_IDS.JONY,
+        ),
+      },
     });
 
-    for (const featureFlag of FLAGS) {
-      await updateFeatureFlag({
-        featureFlag,
-        value: true,
-        expectToFail: false,
-      });
-    }
-    await syncChannelVisibilityRules();
     await revokeRoleWideAccessToChannelObjects();
+    await syncChannelVisibilityRules();
     await waitForAllJobsToFinish();
   });
 
   afterAll(async () => {
-    await restoreRoleWideAccessToChannelObjects();
-    await destroyAttachment(companyAttachmentId);
-    await destroyAttachment(messageAttachmentId);
-    await makeGraphqlApiRequest(
-      destroyOneOperationFactory({
-        objectMetadataSingularName: 'company',
-        gqlFields: 'id',
-        recordId: companyId,
-      }),
-    );
-    await setJonyChannelVisibility('SHARE_EVERYTHING');
-
-    for (const featureFlag of [...FLAGS].reverse()) {
-      await updateFeatureFlag({
-        featureFlag,
-        value: false,
-        expectToFail: false,
+    await grantRoleWideAccessToChannelObjects();
+    for (const attachmentId of [companyAttachmentId, messageAttachmentId]) {
+      await destroyRecord({
+        objectMetadataSingularName: 'attachment',
+        recordId: attachmentId,
       });
     }
-    await syncChannelVisibilityRules();
+    for (const callRecordingId of [
+      callRecordingWithoutEventId,
+      callRecordingOfOtherMemberMetadataEventId,
+      callRecordingOfOwnMetadataEventId,
+      callRecordingOfSharedEventId,
+    ]) {
+      await destroyRecord({
+        objectMetadataSingularName: 'callRecording',
+        recordId: callRecordingId,
+      });
+    }
+    await destroyRecord({
+      objectMetadataSingularName: 'company',
+      recordId: companyId,
+    });
+    await setJonyChannelVisibility('SHARE_EVERYTHING');
+
     await waitForAllJobsToFinish();
+    await revokeRoleWideAccessToChannelObjects();
   });
 
   it('reads every field of a channel that shares everything', async () => {
@@ -285,6 +291,140 @@ describe('channel visibility through row level rules (integration)', () => {
 
     expect(await findAttachmentIds()).toEqual(
       [companyAttachmentId, messageAttachmentId].sort(),
+    );
+  });
+
+  it('shows a thread subject only through a message whose subject the reader can read', async () => {
+    await setJonyChannelVisibility('METADATA');
+
+    const findJonyMessageThreads = async (token: string) => {
+      const messagesResponse = await makeGraphqlApiRequest(
+        findManyOperationFactory({
+          objectMetadataSingularName: 'message',
+          objectMetadataPluralName: 'messages',
+          gqlFields: 'id messageThreadId',
+          filter: {
+            messageChannelMessageAssociations: {
+              messageChannelId: { eq: MESSAGE_CHANNEL_DATA_SEED_IDS.JONY },
+            },
+          },
+        }),
+        token,
+      );
+
+      expect(messagesResponse.body.errors).toBeUndefined();
+
+      const messageThreadIds = [
+        ...new Set<string>(
+          messagesResponse.body.data.messages.edges
+            .map(
+              ({ node }: { node: { messageThreadId: string | null } }) =>
+                node.messageThreadId,
+            )
+            .filter(isDefined),
+        ),
+      ];
+      const messageThreadsResponse = await makeGraphqlApiRequest(
+        findManyOperationFactory({
+          objectMetadataSingularName: 'messageThread',
+          objectMetadataPluralName: 'messageThreads',
+          gqlFields: 'id subject messages { edges { node { subject } } }',
+          filter: { id: { in: messageThreadIds } },
+        }),
+        token,
+      );
+
+      expect(messageThreadsResponse.body.errors).toBeUndefined();
+
+      return messageThreadsResponse.body.data.messageThreads.edges.map(
+        ({
+          node,
+        }: {
+          node: {
+            subject: string;
+            messages: { edges: { node: { subject: string } }[] };
+          };
+        }) => ({
+          subject: node.subject,
+          hasMessageWithReadableSubject: node.messages.edges.some(
+            ({ node: message }) =>
+              message.subject !==
+              FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
+          ),
+        }),
+      );
+    };
+
+    const ownerMessageThreads = await findJonyMessageThreads(
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(ownerMessageThreads.length).toBeGreaterThan(0);
+    expect(
+      ownerMessageThreads.some(
+        ({ subject }: { subject: string }) =>
+          subject === FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
+      ),
+    ).toBe(false);
+
+    const guestMessageThreads = await findJonyMessageThreads(
+      APPLE_PHIL_GUEST_ACCESS_TOKEN,
+    );
+
+    expect(
+      guestMessageThreads.some(
+        ({ subject }: { subject: string }) =>
+          subject === FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
+      ),
+    ).toBe(true);
+
+    for (const {
+      subject,
+      hasMessageWithReadableSubject,
+    } of guestMessageThreads) {
+      expect(subject !== FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED).toBe(
+        hasMessageWithReadableSubject,
+      );
+    }
+  });
+
+  it('reads the call recordings with no calendar event, and those of a calendar event only when it is fully readable', async () => {
+    const findCallRecordingIds = async (token: string) => {
+      const response = await makeGraphqlApiRequest(
+        findManyOperationFactory({
+          objectMetadataSingularName: 'callRecording',
+          objectMetadataPluralName: 'callRecordings',
+          gqlFields: 'id',
+          filter: {
+            id: {
+              in: [
+                callRecordingWithoutEventId,
+                callRecordingOfOtherMemberMetadataEventId,
+                callRecordingOfOwnMetadataEventId,
+                callRecordingOfSharedEventId,
+              ],
+            },
+          },
+        }),
+        token,
+      );
+
+      expect(response.body.errors).toBeUndefined();
+
+      return response.body.data.callRecordings.edges
+        .map(({ node }: { node: { id: string } }) => node.id)
+        .sort();
+    };
+
+    expect(await findCallRecordingIds(APPLE_PHIL_GUEST_ACCESS_TOKEN)).toEqual(
+      [
+        callRecordingWithoutEventId,
+        callRecordingOfOwnMetadataEventId,
+        callRecordingOfSharedEventId,
+      ].sort(),
+    );
+    expect(await findCallRecordingIds(APPLE_JONY_MEMBER_ACCESS_TOKEN)).toEqual(
+      [callRecordingWithoutEventId, callRecordingOfSharedEventId].sort(),
     );
   });
 
@@ -408,6 +548,59 @@ describe('channel visibility through row level rules (integration)', () => {
       });
       await waitForAllJobsToFinish();
     }
+  });
+
+  it('lets an application read each channel it does not own as a member who does not own it', async () => {
+    const { applicationAccessToken } =
+      await generateAppleAdminApplicationTokenPair({
+        applicationId: await findWorkspaceCustomApplicationId(),
+      });
+
+    const findJonyMessagesAsApplication = async () => {
+      const response = await makeGraphqlApiRequest(
+        findManyOperationFactory({
+          objectMetadataSingularName: 'message',
+          objectMetadataPluralName: 'messages',
+          gqlFields: 'id subject text',
+          filter: {
+            messageChannelMessageAssociations: {
+              messageChannelId: { eq: MESSAGE_CHANNEL_DATA_SEED_IDS.JONY },
+            },
+          },
+        }),
+        applicationAccessToken.token,
+      );
+
+      return (response.body.data?.messages?.edges ?? []).map(
+        ({ node }: { node: { subject: string; text: string } }) => node,
+      );
+    };
+
+    await setJonyChannelVisibility('SHARE_EVERYTHING');
+
+    const sharedMessages = await findJonyMessagesAsApplication();
+
+    expect(sharedMessages.length).toBeGreaterThan(0);
+    expect(
+      sharedMessages.some(
+        ({ subject, text }: { subject: string; text: string }) =>
+          subject === FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED ||
+          text === FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
+      ),
+    ).toBe(false);
+
+    await setJonyChannelVisibility('METADATA');
+
+    const metadataMessages = await findJonyMessagesAsApplication();
+
+    expect(metadataMessages.length).toBeGreaterThan(0);
+    expect(
+      metadataMessages.every(
+        ({ subject, text }: { subject: string; text: string }) =>
+          subject === FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED &&
+          text === FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
+      ),
+    ).toBe(true);
   });
 
   it('cannot read the title of an event of a metadata calendar of another member', async () => {

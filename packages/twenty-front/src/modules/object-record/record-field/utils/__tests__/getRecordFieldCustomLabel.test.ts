@@ -1,6 +1,6 @@
 import { getRecordFieldCustomLabel } from '@/object-record/record-field/utils/getRecordFieldCustomLabel';
 
-const DEFAULT_LABEL = 'Tasks · Filtered';
+const DEFAULT_LABEL = 'Tasks · Summary';
 
 describe('getRecordFieldCustomLabel', () => {
   it('keeps a renamed label without its surrounding spaces', () => {

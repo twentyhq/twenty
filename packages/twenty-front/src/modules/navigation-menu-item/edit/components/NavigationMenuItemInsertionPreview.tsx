@@ -16,6 +16,7 @@ type NavigationMenuItemInsertionPreviewProps = {
   parentId: string | null;
   index: number;
   sectionId: NavigationSections;
+  isInFolder?: boolean;
   subItemState?: NavigationDrawerSubItemState;
 };
 
@@ -28,6 +29,7 @@ export const NavigationMenuItemInsertionPreview = ({
   parentId,
   index,
   sectionId,
+  isInFolder = false,
   subItemState,
 }: NavigationMenuItemInsertionPreviewProps) => {
   const navigationMenuItemInsertionPreview = useAtomStateValue(
@@ -68,7 +70,7 @@ export const NavigationMenuItemInsertionPreview = ({
   return (
     <StyledPreview
       ref={setAnchor}
-      isInFolder={isDefined(parentId)}
+      isInFolder={isInFolder}
       role="status"
       aria-label={t`Select a menu item`}
     >
@@ -76,7 +78,7 @@ export const NavigationMenuItemInsertionPreview = ({
         label={t`Select a menu item`}
         Icon={getIcon('IconFold')}
         variant="placeholder"
-        indentationLevel={isDefined(parentId) ? 2 : 1}
+        indentationLevel={isInFolder ? 2 : 1}
         subItemState={subItemState}
       />
     </StyledPreview>

@@ -18,7 +18,7 @@ import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFla
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getWorkspaceFeatureFlagsMap } from '@/workspace/utils/getWorkspaceFeatureFlagsMap';
 import { useMemo } from 'react';
-import { evaluateConditionalAvailabilityExpression } from 'twenty-shared/conditional-availability';
+import { evaluateConditionalEvaluationExpression } from 'twenty-shared/conditional-evaluation';
 import {
   ContextStorePageType,
   type CommandMenuContextApi,
@@ -98,7 +98,7 @@ export const StandalonePageCommandMenu = () => {
       )
       .filter(doesCommandMenuItemMatchPageLayoutId(currentPageLayoutId))
       .filter((item) =>
-        evaluateConditionalAvailabilityExpression(
+        evaluateConditionalEvaluationExpression(
           item.conditionalAvailabilityExpression,
           commandMenuContextApi,
         ),

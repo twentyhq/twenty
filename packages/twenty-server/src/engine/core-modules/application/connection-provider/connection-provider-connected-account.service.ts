@@ -19,8 +19,10 @@ import {
   ConnectedAccountEntity,
   type ConnectedAccountScope,
 } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { CONNECTED_ACCOUNT_BILLED_EVENT } from 'src/engine/metadata-modules/connected-account/constants/connected-account-billed.constant';
 import { CONNECTED_ACCOUNT_CONNECTION_CHANGED_EVENT } from 'src/engine/metadata-modules/connected-account/constants/connected-account-connection-changed.constant';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
+import { type ConnectedAccountBilledEvent } from 'src/engine/metadata-modules/connected-account/types/connected-account-billed.type';
 import { type ConnectedAccountConnectionChangedEvent } from 'src/engine/metadata-modules/connected-account/types/connected-account-connection-changed.type';
 import { buildConnectedAccountUsableByCallerWhere } from 'src/engine/metadata-modules/connected-account/utils/build-connected-account-usable-by-caller-where.util';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
@@ -192,7 +194,7 @@ export class ConnectionProviderConnectedAccountService {
       const connectedAccount = isDefined(reconnectingAccount?.archivedAt)
         ? await this.chargeThenPersist({
             workspaceId,
-            applicationId: provider.applicationId,
+            provider,
             persist: reconnect,
           })
         : await reconnect();
@@ -222,7 +224,7 @@ export class ConnectionProviderConnectedAccountService {
 
     const connectedAccount = await this.chargeThenPersist({
       workspaceId,
-      applicationId: provider.applicationId,
+      provider,
       persist: () => this.connectedAccountRepository.save(created),
     });
 
@@ -233,18 +235,18 @@ export class ConnectionProviderConnectedAccountService {
 
   private async chargeThenPersist({
     workspaceId,
-    applicationId,
+    provider,
     persist,
   }: {
     workspaceId: string;
-    applicationId: string;
+    provider: Pick<ConnectionProviderEntity, 'displayName' | 'applicationId'>;
     persist: () => Promise<ConnectedAccountEntity>;
   }): Promise<ConnectedAccountEntity> {
     const chargeOutcome =
       await this.billingSubscriptionUpdateService.chargeApplicationsThenPersist(
         {
           workspaceId,
-          additionalConnectedAccountApplicationId: applicationId,
+          additionalConnectedAccountApplicationId: provider.applicationId,
           persist,
         },
       );
@@ -256,7 +258,50 @@ export class ConnectionProviderConnectedAccountService {
       );
     }
 
+    if (chargeOutcome.isCharged) {
+      this.emitBilled({
+        connectedAccount: chargeOutcome.persisted,
+        connectionProviderDisplayName: provider.displayName,
+      });
+    }
+
     return chargeOutcome.persisted;
+  }
+
+  private emitBilled({
+    connectedAccount: {
+      id,
+      workspaceId,
+      applicationId,
+      handle,
+      userWorkspaceId,
+    },
+    connectionProviderDisplayName,
+  }: {
+    connectedAccount: Pick<
+      ConnectedAccountEntity,
+      'id' | 'workspaceId' | 'applicationId' | 'handle' | 'userWorkspaceId'
+    >;
+    connectionProviderDisplayName: string;
+  }): void {
+    if (!isDefined(applicationId)) {
+      return;
+    }
+
+    this.workspaceEventEmitter.emitCustomBatchEvent<ConnectedAccountBilledEvent>(
+      CONNECTED_ACCOUNT_BILLED_EVENT,
+      [
+        {
+          connectedAccountId: id,
+          applicationId,
+          handle,
+          userWorkspaceId,
+          connectionProviderDisplayName,
+          billedAt: new Date().toISOString(),
+        },
+      ],
+      workspaceId,
+    );
   }
 
   private emitConnectionChanged({

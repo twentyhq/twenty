@@ -458,7 +458,6 @@ describe('reconstructWorkflowsManifest', () => {
           id: builderVersionId,
           universalIdentifier: `8${universalIdentifier.slice(1)}`,
           isSystemSideEffect: false,
-          workspaceWorkflowVersionId: 'workspace-workflow-version-id',
           ...versionOverrides,
         },
       });

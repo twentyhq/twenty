@@ -3,6 +3,8 @@ import { Dropdown } from 'twenty-ui/components/navigation';
 
 import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 type NavigationMenuItemSelectableItemProps = { item: NavigationMenuItemOption };
 
@@ -10,6 +12,12 @@ export const NavigationMenuItemSelectableItem = ({
   item,
 }: NavigationMenuItemSelectableItemProps) => {
   const { t } = useLingui();
+  const isCustomizableSidebarEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
+  );
+  const alreadyAddedText = isCustomizableSidebarEnabled
+    ? t`Already in this section`
+    : t`Already in sidebar`;
 
   return (
     <Dropdown.OptionItem
@@ -24,7 +32,7 @@ export const NavigationMenuItemSelectableItem = ({
       closeOnSelect={!item.hasSubMenu}
       disabled={item.isDisabled}
       description={
-        item.isAlreadyInSidebar ? t`Already in sidebar` : item.contextualText
+        item.isAlreadyInSidebar ? alreadyAddedText : item.contextualText
       }
       hasSubmenu={item.hasSubMenu}
     >

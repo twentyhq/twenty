@@ -6,8 +6,7 @@ import {
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
-import { computeAgentPrivacyUpdateOrThrow } from 'src/engine/metadata-modules/ai/ai-agent/utils/compute-agent-privacy-update-or-throw.util';
-import { isAgentVisibleToUser } from 'src/engine/metadata-modules/ai/ai-agent/utils/is-agent-visible-to-user.util';
+import { isPrivatableEntityVisibleToCaller } from 'src/engine/permissions/metadata-permissions/utils/is-privatable-entity-visible-to-caller.util';
 import {
   AiException,
   AiExceptionCode,
@@ -126,7 +125,6 @@ export type FromUpdateAgentInputToFlatAgentToUpdateArgs = {
   flatRoleTargetByAgentIdMaps: FlatRoleTargetByAgentIdMaps;
   callerApplicationUniversalIdentifier: string;
   workspaceCustomApplicationUniversalIdentifier: string;
-  userWorkspaceId: string | undefined;
 } & Pick<AllFlatEntityMaps, 'flatRoleMaps'>;
 
 export const fromUpdateAgentInputToFlatAgentToUpdate = ({
@@ -136,7 +134,6 @@ export const fromUpdateAgentInputToFlatAgentToUpdate = ({
   flatRoleMaps,
   callerApplicationUniversalIdentifier,
   workspaceCustomApplicationUniversalIdentifier,
-  userWorkspaceId,
 }: FromUpdateAgentInputToFlatAgentToUpdateArgs): {
   flatAgentToUpdate: FlatAgent;
 } & FlatRoleTargetToUpdateCreateDelete => {
@@ -153,7 +150,7 @@ export const fromUpdateAgentInputToFlatAgentToUpdate = ({
 
   if (
     !isDefined(existingFlatAgent) ||
-    !isAgentVisibleToUser({ agent: existingFlatAgent, userWorkspaceId })
+    !isPrivatableEntityVisibleToCaller({ privatableEntity: existingFlatAgent })
   ) {
     throw new AiException('Agent not found', AiExceptionCode.AGENT_NOT_FOUND, {
       userFriendlyMessage: msg`The agent you are looking for could not be found. It may have been deleted or you may not have access to it.`,
@@ -209,6 +206,8 @@ export const fromUpdateAgentInputToFlatAgentToUpdate = ({
       workspaceCustomApplicationUniversalIdentifier,
     });
 
+  const { isPrivate } = rawUpdateAgentInput;
+
   const flatAgentToUpdate: FlatAgent = {
     ...mergeUpdateInExistingRecord({
       existing: existingFlatAgent,
@@ -216,11 +215,7 @@ export const fromUpdateAgentInputToFlatAgentToUpdate = ({
       update: updatedEditableProperties,
     }),
     overrides,
-    ...computeAgentPrivacyUpdateOrThrow({
-      existingFlatAgent,
-      isPrivate: rawUpdateAgentInput.isPrivate,
-      userWorkspaceId,
-    }),
+    ...(isDefined(isPrivate) ? { isPrivate } : {}),
   };
 
   const {

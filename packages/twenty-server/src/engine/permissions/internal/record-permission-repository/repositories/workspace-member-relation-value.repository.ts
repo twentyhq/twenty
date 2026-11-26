@@ -2,6 +2,8 @@
 
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { RecordPermissionQueryService } from 'src/engine/permissions/internal/record-permission-repository/services/record-permission-query.service';
 import { buildWorkspaceTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-workspace-table-expression.util';
@@ -14,6 +16,7 @@ export type WorkspaceMemberRelationValueLookup = {
   workspaceMemberColumnName: string;
   relatedColumnName: string;
   valueColumnName: string;
+  filter: { columnName: string; values: string[] } | null;
 };
 
 export type WorkspaceMemberRelationValueRow = {
@@ -46,6 +49,9 @@ export class WorkspaceMemberRelationValueRepository {
           sql: lookups
             .map((lookup, lookupIndex) => {
               const relatedValueColumn = `"related".${escapeIdentifier(lookup.valueColumnName)}`;
+              const filterCondition = isDefined(lookup.filter)
+                ? `AND CAST("related".${escapeIdentifier(lookup.filter.columnName)} AS text) = ANY(:filterValues${lookupIndex})`
+                : '';
 
               return `SELECT ${lookupIndex} AS "lookupIndex", "member"."id" AS "workspaceMemberId", array_agg(DISTINCT CAST(${relatedValueColumn} AS text)) AS "values"
               FROM ${buildWorkspaceTableExpression({
@@ -64,10 +70,17 @@ export class WorkspaceMemberRelationValueRepository {
               WHERE "member"."deletedAt" IS NULL
                 AND "related"."deletedAt" IS NULL
                 AND ${relatedValueColumn} IS NOT NULL
+                ${filterCondition}
               GROUP BY "member"."id"`;
             })
             .join(' UNION ALL '),
-          parameters: {},
+          parameters: Object.fromEntries(
+            lookups.flatMap((lookup, lookupIndex) =>
+              isDefined(lookup.filter)
+                ? [[`filterValues${lookupIndex}`, lookup.filter.values]]
+                : [],
+            ),
+          ),
         },
       },
     );

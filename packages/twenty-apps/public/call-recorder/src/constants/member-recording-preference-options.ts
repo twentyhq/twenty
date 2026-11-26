@@ -1,11 +1,13 @@
+import { msg } from 'twenty-sdk/front-component';
+
 import { type MemberRecordingPreference } from 'src/logic-functions/types/member-recording-preference.type';
 
 export const MEMBER_RECORDING_PREFERENCE_OPTIONS: {
-  label: string;
+  label: ReturnType<typeof msg>;
   value: MemberRecordingPreference;
 }[] = [
-  { label: 'All my meetings', value: 'ALL' },
-  { label: 'Only internal meetings', value: 'INTERNAL' },
-  { label: 'Only external meetings', value: 'EXTERNAL' },
-  { label: 'None of my meetings', value: 'NONE' },
+  { label: msg('All meetings'), value: 'ALL' },
+  { label: msg('Internal meetings'), value: 'INTERNAL' },
+  { label: msg('External meetings'), value: 'EXTERNAL' },
+  { label: msg('None'), value: 'NONE' },
 ];

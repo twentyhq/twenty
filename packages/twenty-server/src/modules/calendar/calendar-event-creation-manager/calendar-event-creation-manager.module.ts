@@ -11,6 +11,7 @@ import { CalendarEventComposerService } from 'src/modules/calendar/calendar-even
 import { CreateCalendarEventService } from 'src/modules/calendar/calendar-event-creation-manager/services/create-calendar-event.service';
 import { CalDavDriverModule } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/caldav-driver.module';
 import { CalendarEventImportManagerModule } from 'src/modules/calendar/calendar-event-import-manager/calendar-event-import-manager.module';
+import { MicrosoftCalendarDriverModule } from 'src/modules/calendar/calendar-event-import-manager/drivers/microsoft-calendar/microsoft-calendar-driver.module';
 import { OAuth2ClientManagerModule } from 'src/modules/connected-account/oauth2-client-manager/oauth2-client-manager.module';
 import { MessagingSmtpDriverModule } from 'src/modules/messaging/message-import-manager/drivers/smtp/messaging-smtp-driver.module';
 
@@ -20,6 +21,7 @@ import { MessagingSmtpDriverModule } from 'src/modules/messaging/message-import-
     OAuth2ClientManagerModule,
     CalendarEventImportManagerModule,
     CalDavDriverModule,
+    MicrosoftCalendarDriverModule,
     MessagingSmtpDriverModule,
   ],
   providers: [

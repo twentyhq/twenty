@@ -96,14 +96,12 @@ export class WorkflowVersionStepOperationsWorkspaceService {
   async runStepCreationSideEffectsAndBuildStep({
     type,
     workspaceId,
-    userWorkspaceId,
     position,
     id,
     defaultSettings,
   }: {
     type: WorkflowActionType;
     workspaceId: string;
-    userWorkspaceId: string | undefined;
     position?: WorkflowStepPositionInput;
     id?: string;
     defaultSettings?: Record<string, unknown>;
@@ -539,7 +537,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         if (isNonEmptyString(defaultAgentId)) {
           const agent =
             await this.workflowAiAgentStepAgentService.findAgentRunnableByNewStepOrThrow(
-              { agentId: defaultAgentId, workspaceId, userWorkspaceId },
+              { agentId: defaultAgentId, workspaceId },
             );
 
           return {

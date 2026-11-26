@@ -2410,7 +2410,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         workspace,
       );
       const coreVersions = await global.testDataSource.query(
-        `SELECT cv.id, cv."workspaceWorkflowVersionId", cv."workflowId", cw."workspaceWorkflowId", cw."lastPublishedCoreWorkflowVersionId"
+        `SELECT cv.id, cv."workflowId", cw."workspaceWorkflowId", cw."lastPublishedCoreWorkflowVersionId"
          FROM core."workflowVersion" cv
          JOIN core.workflow cw ON cw.id = cv."coreWorkflowId" AND cw."workspaceId" = $1
          WHERE cv."workspaceId" = $1`,
@@ -2419,7 +2419,6 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       expect(coreVersions).toHaveLength(2);
       for (const coreVersion of coreVersions) {
         expect(coreVersion).toMatchObject({
-          workspaceWorkflowVersionId: null,
           workflowId: null,
           workspaceWorkflowId: null,
           lastPublishedCoreWorkflowVersionId: coreVersion.id,

@@ -23,6 +23,7 @@ const buildJobStatus = (
   state,
   attemptsMade: 1,
   enqueuedAt: 1,
+  scheduledAt: 1,
   ...(progress === undefined ? {} : { progress }),
 });
 

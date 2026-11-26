@@ -1,6 +1,7 @@
 import { GettingStartedPromptAction } from '@/getting-started/components/GettingStartedPromptAction';
 import { GettingStartedWorkflowAction } from '@/getting-started/components/GettingStartedWorkflowAction';
 import { GETTING_STARTED_CUSTOM_STEP_ACTIONS } from '@/getting-started/constants/GettingStartedCustomStepActions';
+import { GETTING_STARTED_CUSTOM_STEP_DONE_ACTIONS } from '@/getting-started/constants/GettingStartedCustomStepDoneActions';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -10,11 +11,20 @@ import {
 
 type GettingStartedStepActionProps = {
   stepDefinition: GettingStartedStepDefinition;
+  isCompleted: boolean;
 };
 
 export const GettingStartedStepAction = ({
   stepDefinition,
+  isCompleted,
 }: GettingStartedStepActionProps) => {
+  if (isCompleted) {
+    const CustomStepDoneAction =
+      GETTING_STARTED_CUSTOM_STEP_DONE_ACTIONS[stepDefinition.actionKey];
+
+    return isDefined(CustomStepDoneAction) ? <CustomStepDoneAction /> : null;
+  }
+
   switch (stepDefinition.kind) {
     case GettingStartedStepKind.PROMPT:
       return <GettingStartedPromptAction stepDefinition={stepDefinition} />;

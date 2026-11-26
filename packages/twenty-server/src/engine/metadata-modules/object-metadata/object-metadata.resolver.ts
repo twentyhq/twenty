@@ -61,6 +61,7 @@ import { OBJECT_METADATA_READ_ACCESS_POLICY } from 'src/engine/metadata-modules/
 import { OBJECT_METADATA_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/object-metadata/constants/object-metadata-write-access-policy.constant';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 
 const OBJECT_RECORD_STATISTICS_ACCESS_POLICY: AccessPolicy = {
   authPrincipals: {
@@ -163,6 +164,7 @@ export class ObjectMetadataResolver {
   }
 
   @ResolveField(() => ObjectFieldsConnectionDTO)
+  @UseGuards(NoPermissionGuard)
   async fields(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Parent() objectMetadata: Pick<ObjectMetadataDTO, 'id'>,
@@ -190,6 +192,7 @@ export class ObjectMetadataResolver {
   }
 
   @ResolveField(() => ObjectIndexMetadatasConnectionDTO)
+  @UseGuards(NoPermissionGuard)
   async indexMetadatas(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Parent() objectMetadata: Pick<ObjectMetadataDTO, 'id'>,
@@ -219,6 +222,7 @@ export class ObjectMetadataResolver {
   @ResolveField(() => Boolean, {
     deprecationReason: 'Use isUIEditable',
   })
+  @UseGuards(NoPermissionGuard)
   async isUIReadOnly(
     @Parent() objectMetadata: ObjectMetadataDTO,
   ): Promise<boolean> {
@@ -283,6 +287,7 @@ export class ObjectMetadataResolver {
   }
 
   @ResolveField(() => String, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   async labelPlural(
     @Parent() objectMetadata: ObjectMetadataDTO,
     @Context() context: { loaders: IDataloaders } & I18nContext,
@@ -297,6 +302,7 @@ export class ObjectMetadataResolver {
   }
 
   @ResolveField(() => String, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   async labelSingular(
     @Parent() objectMetadata: ObjectMetadataDTO,
     @Context() context: { loaders: IDataloaders } & I18nContext,
@@ -311,6 +317,7 @@ export class ObjectMetadataResolver {
   }
 
   @ResolveField(() => String, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   async description(
     @Parent() objectMetadata: ObjectMetadataDTO,
     @Context() context: { loaders: IDataloaders } & I18nContext,
@@ -325,6 +332,7 @@ export class ObjectMetadataResolver {
   }
 
   @ResolveField(() => String, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   async icon(
     @Parent() objectMetadata: ObjectMetadataDTO,
     @Context() context: { loaders: IDataloaders } & I18nContext,
@@ -339,6 +347,7 @@ export class ObjectMetadataResolver {
   }
 
   @ResolveField(() => String, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   async color(
     @Parent() objectMetadata: ObjectMetadataDTO,
     @Context() context: { loaders: IDataloaders } & I18nContext,
@@ -353,6 +362,7 @@ export class ObjectMetadataResolver {
   }
 
   @ResolveField(() => UUIDScalarType, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   imageIdentifierFieldMetadataId(
     @Parent() objectMetadata: ObjectMetadataDTO,
   ): string | null {
@@ -437,6 +447,7 @@ export class ObjectMetadataResolver {
   }
 
   @ResolveField(() => [FieldMetadataDTO], { nullable: false })
+  @UseGuards(NoPermissionGuard)
   async fieldsList(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Parent() objectMetadata: ObjectMetadataDTO,
@@ -460,6 +471,7 @@ export class ObjectMetadataResolver {
   }
 
   @ResolveField(() => [IndexMetadataDTO], { nullable: false })
+  @UseGuards(NoPermissionGuard)
   async indexMetadataList(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Parent() objectMetadata: ObjectMetadataDTO,
@@ -482,6 +494,7 @@ export class ObjectMetadataResolver {
   }
 
   @ResolveField(() => [SearchFieldMetadataDTO], { nullable: false })
+  @UseGuards(NoPermissionGuard)
   async searchFieldMetadataList(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Parent() objectMetadata: ObjectMetadataDTO,

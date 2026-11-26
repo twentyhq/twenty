@@ -37,7 +37,6 @@ import {
   ViewPresetFilter,
   ViewSortDirection,
   ViewType,
-  ViewVisibility,
   WidgetType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -183,7 +182,6 @@ const VIEW_MANIFEST: ViewManifest = {
   icon: 'IconLayoutKanban',
   position: 3,
   isCompact: true,
-  visibility: ViewVisibility.UNLISTED,
   openRecordIn: ViewOpenRecordIn.RECORD_PAGE,
   mainGroupByFieldMetadataUniversalIdentifier: FIELD_UID,
   shouldHideEmptyGroups: true,
@@ -357,6 +355,9 @@ const ALL_RECORDS_UNDER_RECORDS_PERMISSIONS =
   'written as can…AllRecords under recordsPermissions';
 const FIELD_RESTRICTION_LISTS =
   'written as unreadableFields and uneditableFields under its object or rule';
+
+const NOT_IN_APP_MANIFESTS_YET =
+  'only set on individual roles, which are not exported';
 
 const NESTED_IN_RULE =
   'a predicate and a predicate group are written under their rule';
@@ -572,12 +573,8 @@ const EXPORTED_KINDS: ExportedKind[] = [
         },
       }),
     ),
-    renamedProperties: { isPrivate: 'visibility' },
-    workspaceLocalProperties: [
-      'isActive',
-      'universalOverrides',
-      'createdByUserWorkspaceId',
-    ],
+    renamedProperties: {},
+    workspaceLocalProperties: ['isActive', 'universalOverrides', 'isPrivate'],
     knownGaps: VIEW_KIND_GAPS,
   },
   {
@@ -809,6 +806,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
       rowLevelPermissionPredicateGroupUniversalIdentifier:
         FIELD_RESTRICTION_LISTS,
       rowLevelPermissionRuleUniversalIdentifier: FIELD_RESTRICTION_LISTS,
+      sourceFieldMetadataUniversalIdentifier: NOT_IN_APP_MANIFESTS_YET,
     },
   },
   {
@@ -897,6 +895,9 @@ const EXPORTED_KINDS: ExportedKind[] = [
         'no manifest slot yet for a predicate reached through a relation',
       workspaceMemberRelationFieldMetadataUniversalIdentifier:
         WORKSPACE_MEMBER_RELATION_GAP,
+      workspaceMemberRelationFilterFieldMetadataUniversalIdentifier:
+        WORKSPACE_MEMBER_RELATION_GAP,
+      workspaceMemberRelationFilterValues: WORKSPACE_MEMBER_RELATION_GAP,
       rowLevelPermissionRuleUniversalIdentifier: NESTED_IN_RULE,
     },
   },
@@ -942,11 +943,9 @@ const EXPORTED_KINDS: ExportedKind[] = [
       exportWorkflowManifestOrThrow(WORKFLOW_MANIFEST),
     ),
     renamedProperties: { versionDefinitionHash: 'version' },
-    workspaceLocalProperties: ['isPrivate', 'createdByUserWorkspaceId'],
+    workspaceLocalProperties: ['isPrivate'],
     knownGaps: {
       isSystem: 'system workflows are reported as excluded',
-      lastPublishedVersionId:
-        'legacy workspace version pointer, kept while the active version matches the definition',
       lastPublishedCoreWorkflowVersionId:
         'the sync points it at the active version, or at the one it publishes from the definition',
     },
@@ -955,11 +954,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
     metadataName: 'agent',
     emittedProperties: Object.keys(EXPORTED_AGENT_MANIFEST),
     renamedProperties: {},
-    workspaceLocalProperties: [
-      ...WORKSPACE_LOCAL_PROPERTIES,
-      'isPrivate',
-      'createdByUserWorkspaceId',
-    ],
+    workspaceLocalProperties: [...WORKSPACE_LOCAL_PROPERTIES, 'isPrivate'],
     knownGaps: {
       modelConfiguration:
         'no manifest slot; an agent with one is reported as unsupported',

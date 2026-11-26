@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { google } from 'googleapis';
+import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
+import { type calendar_v3 as calendarV3, google } from 'googleapis';
 
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { formatGoogleCalendarEvents } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/utils/format-google-calendar-event.util';
 import { toGoogleEventInput } from 'src/modules/calendar/calendar-event-creation-manager/drivers/utils/to-google-event-input.util';
@@ -20,6 +22,7 @@ const GOOGLE_CALENDAR_ID = 'primary';
 export class GoogleCalendarCreateEventService implements CalendarEventCreationDriver {
   constructor(
     private readonly googleOAuth2ClientProvider: GoogleOAuth2ClientProvider,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   async createCalendarEvent(
@@ -43,12 +46,45 @@ export class GoogleCalendarCreateEventService implements CalendarEventCreationDr
         requestBody: toGoogleEventInput(input),
       });
 
-      return formatGoogleCalendarEvents([data])[0];
+      const firstOccurrence = await this.findFirstOccurrenceAsListedBySync({
+        googleCalendarClient,
+        createdEvent: data,
+      });
+
+      return formatGoogleCalendarEvents([firstOccurrence ?? data])[0];
     } catch (error) {
       throw new CalendarEventCreationException(
         `Failed to create Google calendar event: ${error instanceof Error ? error.message : 'unknown error'}`,
         CalendarEventCreationExceptionCode.PROVIDER_REQUEST_FAILED,
       );
     }
+  }
+
+  private async findFirstOccurrenceAsListedBySync({
+    googleCalendarClient,
+    createdEvent,
+  }: {
+    googleCalendarClient: calendarV3.Calendar;
+    createdEvent: calendarV3.Schema$Event;
+  }): Promise<calendarV3.Schema$Event | undefined> {
+    if (
+      !isNonEmptyArray(createdEvent.recurrence) ||
+      !isNonEmptyString(createdEvent.id)
+    ) {
+      return undefined;
+    }
+
+    return googleCalendarClient.events
+      .instances({
+        calendarId: GOOGLE_CALENDAR_ID,
+        eventId: createdEvent.id,
+        maxResults: 1,
+      })
+      .then(({ data }) => data.items?.[0])
+      .catch((error: unknown) => {
+        this.exceptionHandlerService.captureExceptions([error]);
+
+        return undefined;
+      });
   }
 }

@@ -2,20 +2,28 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { EXPRESSION_DEVICE_DESKTOP } from '@/side-panel/pages/page-layout/constants/ExpressionDeviceDesktop';
 import { EXPRESSION_DEVICE_MOBILE } from '@/side-panel/pages/page-layout/constants/ExpressionDeviceMobile';
 import { type WidgetVisibilityDevice } from '@/side-panel/pages/page-layout/types/WidgetVisibilityDevice';
-import { buildDeviceConditionalAvailability } from 'twenty-shared/conditional-availability';
+import { buildDeviceConditionalEvaluationNode } from 'twenty-shared/conditional-evaluation';
 import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-export const getWidgetVisibilityDevice = (
+type GetWidgetVisibilityDeviceParams = {
   widget:
     | Pick<
         PageLayoutWidget,
         'conditionalAvailabilityExpression' | 'conditionalAvailability'
       >
-    | undefined,
-): WidgetVisibilityDevice => {
-  // TODO(@neo773): the legacy text rule is read for widgets not converted yet; drop these three checks one release after stored rules are converted to trees
-  const legacyExpression = widget?.conditionalAvailabilityExpression;
+    | undefined;
+  isWidgetConditionalAvailabilityEnabled: boolean;
+};
+
+export const getWidgetVisibilityDevice = ({
+  widget,
+  isWidgetConditionalAvailabilityEnabled,
+}: GetWidgetVisibilityDeviceParams): WidgetVisibilityDevice => {
+  // TODO(@neo773): a workspace without the flag still reads its legacy text rule; drop these three checks with the two legacy rule columns
+  const legacyExpression = isWidgetConditionalAvailabilityEnabled
+    ? undefined
+    : widget?.conditionalAvailabilityExpression;
 
   if (legacyExpression === EXPRESSION_DEVICE_MOBILE) {
     return 'MOBILE';
@@ -32,7 +40,7 @@ export const getWidgetVisibilityDevice = (
   if (
     isDeeplyEqual(
       widget?.conditionalAvailability,
-      buildDeviceConditionalAvailability('MOBILE'),
+      buildDeviceConditionalEvaluationNode('MOBILE'),
       { strict: true },
     )
   ) {
@@ -42,7 +50,7 @@ export const getWidgetVisibilityDevice = (
   if (
     isDeeplyEqual(
       widget?.conditionalAvailability,
-      buildDeviceConditionalAvailability('DESKTOP'),
+      buildDeviceConditionalEvaluationNode('DESKTOP'),
       { strict: true },
     )
   ) {

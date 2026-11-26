@@ -10,6 +10,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { temporaryExcludePermissionStorageObject } from 'src/engine/permissions/utils/temporary-exclude-permission-storage-object.util';
 import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
@@ -124,5 +125,7 @@ export const buildWorkspaceTableShape = ({
     columnNames: Object.keys(columnShapeByColumnName),
     relationShapeByFieldName,
     hasDeletedAtColumn: isDefined(columnShapeByColumnName['deletedAt']),
+    hasAccessGroupIdsColumn:
+      !temporaryExcludePermissionStorageObject(flatObjectMetadata),
   };
 };

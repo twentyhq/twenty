@@ -96,6 +96,11 @@ export const SettingsAdminQueueJobsTable = ({
     { value: JobState.WAITING_CHILDREN, label: t`Waiting Children` },
   ];
 
+  const changePage = (newPage: number) => {
+    setPage(newPage);
+    setSelectedJobIds(new Set());
+  };
+
   const offset = page * LIMIT;
 
   const { data, loading, refetch } = useQuery(GetQueueJobsDocument, {
@@ -226,8 +231,7 @@ export const SettingsAdminQueueJobsTable = ({
           options={jobStateOptions}
           onChange={(value) => {
             setStateFilter(value as JobState);
-            setPage(0);
-            setSelectedJobIds(new Set());
+            changePage(0);
           }}
           selectSizeVariant="small"
         />
@@ -375,7 +379,7 @@ export const SettingsAdminQueueJobsTable = ({
 
           <StyledPaginationContainer>
             <Button
-              onClick={() => setPage((p) => Math.max(0, p - 1))}
+              onClick={() => changePage(Math.max(0, page - 1))}
               disabled={page === 0 || loading}
               size="sm"
               variant="outline"
@@ -385,7 +389,7 @@ export const SettingsAdminQueueJobsTable = ({
               {totalCount > 0 ? Math.max(1, Math.ceil(totalCount / LIMIT)) : ''}
             </div>
             <Button
-              onClick={() => setPage((p) => p + 1)}
+              onClick={() => changePage(page + 1)}
               disabled={!hasMore || loading}
               size="sm"
               variant="outline"

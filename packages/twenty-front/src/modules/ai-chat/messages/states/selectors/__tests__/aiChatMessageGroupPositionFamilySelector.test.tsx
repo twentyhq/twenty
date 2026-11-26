@@ -7,6 +7,7 @@ import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { aiChatMessageGroupPositionFamilySelector } from '@/ai-chat/messages/states/selectors/aiChatMessageGroupPositionFamilySelector';
 import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
 import { aiChatThreadViewVisitFamilyState } from '@/ai-chat/states/view/aiChatThreadViewVisitFamilyState';
+import { workspaceMemberFormatPreferencesState } from '@/localization/states/workspaceMemberFormatPreferencesState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -82,6 +83,10 @@ describe('aiChatMessageGroupPositionFamilySelector', () => {
   beforeEach(() => {
     resetJotaiStore();
     jotaiStore.set(
+      workspaceMemberFormatPreferencesState.atom,
+      (formatPreferences) => ({ ...formatPreferences, timeZone: 'UTC' }),
+    );
+    jotaiStore.set(
       aiChatThreadDisplayedMessagesFamilyState.atomFamily({
         threadId: THREAD_ID,
       }),
@@ -97,6 +102,8 @@ describe('aiChatMessageGroupPositionFamilySelector', () => {
         isGroupedWithPrevious: false,
         isGroupedWithNext: true,
         isTimeSharedWithNext: true,
+        isFirstOfDay: true,
+        isFollowedByNewDay: false,
       },
     },
     {
@@ -106,6 +113,8 @@ describe('aiChatMessageGroupPositionFamilySelector', () => {
         isGroupedWithPrevious: true,
         isGroupedWithNext: true,
         isTimeSharedWithNext: false,
+        isFirstOfDay: false,
+        isFollowedByNewDay: false,
       },
     },
     {
@@ -115,6 +124,8 @@ describe('aiChatMessageGroupPositionFamilySelector', () => {
         isGroupedWithPrevious: true,
         isGroupedWithNext: false,
         isTimeSharedWithNext: false,
+        isFirstOfDay: false,
+        isFollowedByNewDay: false,
       },
     },
     {
@@ -124,6 +135,8 @@ describe('aiChatMessageGroupPositionFamilySelector', () => {
         isGroupedWithPrevious: false,
         isGroupedWithNext: false,
         isTimeSharedWithNext: false,
+        isFirstOfDay: false,
+        isFollowedByNewDay: false,
       },
     },
   ])('$description', ({ messageId, expected }) => {
@@ -149,5 +162,35 @@ describe('aiChatMessageGroupPositionFamilySelector', () => {
     expect(renderGroupPosition('teammate-unread').isGroupedWithPrevious).toBe(
       false,
     );
+  });
+
+  it('splits a group at the first message of a new day', () => {
+    jotaiStore.set(
+      aiChatThreadDisplayedMessagesFamilyState.atomFamily({
+        threadId: THREAD_ID,
+      }),
+      [
+        buildMessage({
+          id: 'late-evening',
+          senderWorkspaceMemberId: 'sender',
+          createdAt: '2026-11-20T23:59:00.000Z',
+        }),
+        buildMessage({
+          id: 'next-morning',
+          senderWorkspaceMemberId: 'sender',
+          createdAt: '2026-11-21T00:01:00.000Z',
+        }),
+      ],
+    );
+
+    expect(renderGroupPosition('late-evening')).toMatchObject({
+      isFirstOfDay: true,
+      isGroupedWithNext: false,
+      isFollowedByNewDay: true,
+    });
+    expect(renderGroupPosition('next-morning')).toMatchObject({
+      isFirstOfDay: true,
+      isGroupedWithPrevious: false,
+    });
   });
 });

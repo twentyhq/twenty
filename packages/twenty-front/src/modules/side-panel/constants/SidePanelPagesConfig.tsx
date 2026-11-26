@@ -2,6 +2,7 @@ import { SidePanelCommandMenuItemDisplayPage } from '@/command-menu-item/display
 import { SidePanelCommandMenuItemEditPage } from '@/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage';
 import { SidePanelCoreAgentDataAccessPage } from '@/object-core/agents/components/SidePanelCoreAgentDataAccessPage';
 import { SidePanelCoreAgentFiltersPage } from '@/object-core/agents/components/SidePanelCoreAgentFiltersPage';
+import { SidePanelCoreAgentTestPage } from '@/object-core/agents/components/SidePanelCoreAgentTestPage';
 import { SidePanelCoreAgentToolsPage } from '@/object-core/agents/components/SidePanelCoreAgentToolsPage';
 import { SidePanelCoreAgentTriggerPage } from '@/object-core/agents/components/SidePanelCoreAgentTriggerPage';
 import { SidePanelCoreAgentTriggerTypePage } from '@/object-core/agents/components/SidePanelCoreAgentTriggerTypePage';
@@ -130,6 +131,7 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<
   [SidePanelPages.AgentCoreTrigger, <SidePanelCoreAgentTriggerPage />],
   [SidePanelPages.AgentCoreDataAccess, <SidePanelCoreAgentDataAccessPage />],
   [SidePanelPages.AgentCoreTools, <SidePanelCoreAgentToolsPage />],
+  [SidePanelPages.AgentCoreTest, <SidePanelCoreAgentTestPage />],
   [SidePanelPages.WorkflowVersions, <SidePanelCoreWorkflowVersionsPage />],
   [SidePanelPages.WorkflowVersion, <SidePanelCoreWorkflowVersionPage />],
   [SidePanelPages.ShareRecord, <SidePanelShareRecordPage />],

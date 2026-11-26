@@ -527,9 +527,7 @@ export class ApplicationManifestMigrationService {
                 ?.runOnUserPreferences ?? false,
           }
         : {}),
-      ...(isDefined(requestedRoleId)
-        ? { requestedRoleId, defaultRoleId: requestedRoleId }
-        : {}),
+      ...(isDefined(requestedRoleId) ? { requestedRoleId } : {}),
     });
   }
 }

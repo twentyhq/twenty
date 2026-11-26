@@ -3,6 +3,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
+import { computeStandardAgentChatThreadViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-agent-chat-thread-views.util';
 import { computeStandardAttachmentViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-attachment-views.util';
 import { computeStandardBlocklistViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-blocklist-views.util';
 import { computeStandardCalendarChannelEventAssociationViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-calendar-channel-event-association-views.util';
@@ -35,6 +36,7 @@ type StandardViewBuilder<P extends AllStandardObjectName> = (
 ) => Record<string, FlatView>;
 
 const STANDARD_FLAT_VIEW_METADATA_BUILDERS_BY_OBJECT_NAME = {
+  agentChatThread: computeStandardAgentChatThreadViews,
   attachment: computeStandardAttachmentViews,
   blocklist: computeStandardBlocklistViews,
   calendarChannelEventAssociation:

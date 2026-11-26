@@ -181,6 +181,7 @@ export { getWorkflowCommandMenuItemUniversalIdentifier } from './deterministic-i
 export { getWorkflowVersionUniversalIdentifier } from './deterministic-identifier/get-workflow-version-universal-identifier.util';
 export type {
   EnqueueJobOptions,
+  EnqueueJobsLimiter,
   EnqueueJobInput,
   EnqueueJobResult,
   EnqueueJobItem,

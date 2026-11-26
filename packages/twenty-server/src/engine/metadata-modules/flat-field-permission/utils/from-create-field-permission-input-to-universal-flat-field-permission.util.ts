@@ -77,6 +77,7 @@ export const fromCreateFieldPermissionInputToUniversalFlatFieldPermission = ({
     rowLevelPermissionRuleUniversalIdentifier:
       rowLevelPermissionPredicateGroup?.rowLevelPermissionRuleUniversalIdentifier ??
       null,
+    sourceFieldMetadataUniversalIdentifier: null,
     canReadFieldValue: fieldPermissionInput.canReadFieldValue ?? undefined,
     canUpdateFieldValue: fieldPermissionInput.canUpdateFieldValue ?? undefined,
     createdAt: now,

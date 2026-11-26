@@ -13,7 +13,6 @@ import { findObjectMetadataIdByName } from 'test/integration/utils/find-object-m
 import {
   ViewFilterGroupLogicalOperator,
   ViewFilterOperand,
-  ViewVisibility,
 } from 'twenty-shared/types';
 
 const KEPT_PERSON_ID = randomUUID();
@@ -75,7 +74,7 @@ describe('group by with an unlisted view (integration)', () => {
       objectNameSingular: 'person',
       input: {
         name: 'Member private people',
-        visibility: ViewVisibility.UNLISTED,
+        isPrivate: true,
       },
       token,
     });
@@ -83,7 +82,7 @@ describe('group by with an unlisted view (integration)', () => {
       objectNameSingular: 'person',
       input: {
         name: 'Member private people search',
-        visibility: ViewVisibility.UNLISTED,
+        isPrivate: true,
         anyFieldFilterValue: KEPT_JOB_TITLE,
       },
       token,

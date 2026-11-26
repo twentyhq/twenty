@@ -1298,6 +1298,44 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     engineComponentKey: EngineComponentKey.EMAIL_PAGE_STYLE,
     hotKeys: null,
   },
+  goToWorkflows: {
+    universalIdentifier: 'e04acd97-dc5a-42d4-98b9-615cd7289488',
+    label: i18nLabel(
+      msg({ message: `Go to Workflows`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconSettingsAutomation',
+    isPinned: false,
+    position: 46.25,
+    shortLabel: i18nLabel(
+      msg({ message: `Workflows`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+    conditionalAvailabilityExpression: 'permissionFlags.WORKFLOWS',
+    availabilityObjectMetadataUniversalIdentifier: null,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.NAVIGATION,
+    hotKeys: ['G', 'W'],
+    payload: { path: '/workflows' },
+  },
+  goToAgents: {
+    universalIdentifier: 'd4e9a36b-00df-46e0-ac40-e10ee08975da',
+    label: i18nLabel(
+      msg({ message: `Go to Agents`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconLego',
+    isPinned: false,
+    position: 46.5,
+    shortLabel: i18nLabel(
+      msg({ message: `Agents`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+    conditionalAvailabilityExpression: 'permissionFlags.AI',
+    availabilityObjectMetadataUniversalIdentifier: null,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.NAVIGATION,
+    hotKeys: ['G', 'A'],
+    payload: { path: '/agents' },
+  },
   goToSettings: {
     universalIdentifier: 'ef9aba44-0068-453e-930a-f8c182af18ee',
     label: i18nLabel(

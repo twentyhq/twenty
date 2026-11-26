@@ -15,7 +15,9 @@ import { WHATSAPP_SELECTED_CHATS_MAX_COUNT } from 'src/constants/whatsapp-select
 import { WhatsappChatPickerSkeleton } from 'src/front-components/components/WhatsappChatPickerSkeleton';
 import { OnMountEffect } from 'src/front-components/components/OnMountEffect';
 import { fetchWhatsappChatOptions } from 'src/front-components/utils/fetch-whatsapp-chat-options.util';
+import { filterWhatsappChatsByName } from 'src/front-components/utils/filter-whatsapp-chats-by-name.util';
 import { getUnlistedSelectedWhatsappChats } from 'src/front-components/utils/get-unlisted-selected-whatsapp-chats.util';
+import { loadMoreWhatsappChatOptions } from 'src/front-components/utils/load-more-whatsapp-chat-options.util';
 import { toggleWhatsappChatSelection } from 'src/front-components/utils/toggle-whatsapp-chat-selection.util';
 import { type WhatsappChatOption } from 'src/types/whatsapp-chat-option.type';
 import { type WhatsappChatOptionsPage } from 'src/types/whatsapp-chat-options-page.type';
@@ -67,36 +69,36 @@ export const WhatsappChatPicker = ({
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [search, setSearch] = useState('');
 
-  const loadChats = async (requestedLimit: number) => {
+  const loadFirstChats = async () => {
     try {
-      const page = await fetchWhatsappChatOptions(requestedLimit);
-
-      setLimit(requestedLimit);
-      setState({ step: 'ready', page });
+      setState({ step: 'ready', page: await fetchWhatsappChatOptions(limit) });
     } catch {
-      setState((current) =>
-        current.step === 'ready' ? current : { step: 'unavailable' },
-      );
+      setState({ step: 'unavailable' });
     }
   };
 
   const handleRetry = async () => {
     setState({ step: 'loading' });
-    await loadChats(limit);
+    await loadFirstChats();
   };
 
   const handleLoadMore = async () => {
     setIsLoadingMore(true);
-    await loadChats(limit + WHATSAPP_CHAT_OPTIONS_PAGE_SIZE);
+
+    const requestedLimit = limit + WHATSAPP_CHAT_OPTIONS_PAGE_SIZE;
+    const page = await loadMoreWhatsappChatOptions(requestedLimit);
+
+    if (isDefined(page)) {
+      setLimit(requestedLimit);
+      setState({ step: 'ready', page });
+    }
+
     setIsLoadingMore(false);
   };
 
-  const normalizedSearch = search.trim().toLowerCase();
   const visibleChats =
     state.step === 'ready'
-      ? state.page.chats.filter((chat) =>
-          chat.name.toLowerCase().includes(normalizedSearch),
-        )
+      ? filterWhatsappChatsByName({ chats: state.page.chats, search })
       : [];
   const selectedChatIds = new Set(selectedChats.map((chat) => chat.id));
   const isChatSelected = (chat: WhatsappChatOption): boolean =>
@@ -113,14 +115,16 @@ export const WhatsappChatPicker = ({
       ? state.page.chats.filter(isChatSelected).length +
         unlistedSelectedChats.length
       : selectedChats.length;
-  const visibleUnlistedSelectedChats =
-    normalizedSearch === '' ? unlistedSelectedChats : [];
+  const visibleUnlistedSelectedChats = filterWhatsappChatsByName({
+    chats: unlistedSelectedChats,
+    search,
+  });
   const isSelectionFull =
     selectedChats.length >= WHATSAPP_SELECTED_CHATS_MAX_COUNT;
 
   return (
     <StyledContainer>
-      <OnMountEffect onMount={() => loadChats(limit)} />
+      <OnMountEffect onMount={loadFirstChats} />
       <SearchInput
         aria-label={t('Search conversations')}
         placeholder={t('Search conversations')}

@@ -3,6 +3,7 @@ import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
 
+import { AiChatSkeletonLoader } from '@/ai-chat/components/AiChatSkeletonLoader';
 import { useAiChatPageThreadId } from '@/ai-chat/hooks/useAiChatPageThreadId';
 import { useAiChatThreadClick } from '@/ai-chat/threads/hooks/useAiChatThreadClick';
 import { InboxThreadListFetchMoreTrigger } from '@/inbox/components/InboxThreadListFetchMoreTrigger';
@@ -15,6 +16,7 @@ import { filterInboxRecentThreads } from '@/inbox/utils/filterInboxRecentThreads
 import { NAVIGATION_MENU_SECTION_VISIBLE_ITEM_LIMIT } from '@/navigation-menu-item/common/constants/NavigationMenuSectionVisibleItemLimit';
 import { isNavigationMenuSectionShowingAllItemsFamilyState } from '@/navigation-menu-item/common/states/isNavigationMenuSectionShowingAllItemsFamilyState';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
+import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -33,21 +35,28 @@ export const NavigationMenuAiChatRecentsSection = ({
     'AiChatRecents',
   );
   const currentThreadId = useAiChatPageThreadId();
-  const { handleThreadClick } = useAiChatThreadClick({
-    shouldOpenInFullPage: true,
-  });
-  const isDirectMessageEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED,
+  const isAiChatInboxEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
-  const { threads, inboxThreadList } = useInboxThreadList(
+  const { handleThreadClick } = useAiChatThreadClick(
+    isAiChatInboxEnabled
+      ? { shouldOpenInFullPage: true }
+      : { resetNavigationStack: true },
+  );
+  const isExpanded = useIsNavigationDrawerContentExpanded();
+  const { threads, inboxThreadList, isLoading } = useInboxThreadList(
     INBOX_RECENT_THREAD_LIST_SOURCE,
   );
   const inboxFavoriteThreads = useAtomStateValue(inboxFavoriteThreadsSelector);
   const recentThreads = filterInboxRecentThreads({
     threads,
     favoriteThreads: inboxFavoriteThreads,
-    isDirectMessageEnabled,
+    shouldExcludeDirectMessages: false,
   });
+
+  if (isLoading && !isDefined(headerAction)) {
+    return isExpanded ? <AiChatSkeletonLoader /> : null;
+  }
 
   if (recentThreads.length === 0 && !isDefined(headerAction)) {
     return (

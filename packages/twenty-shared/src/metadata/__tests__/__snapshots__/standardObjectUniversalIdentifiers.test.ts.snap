@@ -178,6 +178,42 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
     },
     "universalIdentifier": "fab0fff8-0c90-4116-9bb0-7dbc07392633",
+    "views": {
+      "assignedToMe": {
+        "universalIdentifier": "1cddfa2c-38c0-4fda-80f3-cd01e37bf8e3",
+        "viewFields": {},
+        "viewFilters": {
+          "assigneeIsMe": {
+            "universalIdentifier": "defbcad5-d91f-4e9a-90c6-9bac578ef374",
+          },
+        },
+      },
+      "done": {
+        "universalIdentifier": "81ee1b41-8035-46d1-85ae-18a75616954a",
+        "viewFields": {},
+      },
+      "mentions": {
+        "universalIdentifier": "0a5d7727-2263-46b1-a795-9227559faf6f",
+        "viewFields": {},
+      },
+      "needsInput": {
+        "universalIdentifier": "0b97f7e4-423a-4e2f-93b9-7a5bcde62c03",
+        "viewFields": {},
+        "viewFilters": {
+          "pendingQuestionMessageIdIsNotEmpty": {
+            "universalIdentifier": "05baa741-58a6-4641-abe2-267a1268e53b",
+          },
+        },
+      },
+      "open": {
+        "universalIdentifier": "e9a3781b-db78-41bb-a0e4-f6324770432a",
+        "viewFields": {},
+      },
+      "snoozed": {
+        "universalIdentifier": "31e8f41f-53ed-4dfd-aaa7-6d0d5dd2d56d",
+        "viewFields": {},
+      },
+    },
   },
   "agentChatThreadParticipant": {
     "fields": {

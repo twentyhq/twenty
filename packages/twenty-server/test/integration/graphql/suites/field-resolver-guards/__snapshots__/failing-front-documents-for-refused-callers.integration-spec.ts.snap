@@ -1,0 +1,50 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`The GetCurrentUser document of twenty-front should fail should refuse an API key 1`] = `
+{
+  "errors": [
+    {
+      "extensions": {
+        "code": "FORBIDDEN",
+        "userFriendlyMessage": "You do not have permission to perform this action.",
+      },
+      "message": "This endpoint is not available to this caller",
+    },
+  ],
+}
+`;
+
+exports[`The GetCurrentUser document of twenty-front should fail should refuse an application token bound to a user 1`] = `
+{
+  "errors": [
+    {
+      "extensions": {
+        "code": "FORBIDDEN",
+        "userFriendlyMessage": "You do not have permission to perform this action.",
+      },
+      "message": "This endpoint is not available to this caller",
+    },
+    {
+      "extensions": {
+        "code": "FORBIDDEN",
+        "userFriendlyMessage": "You do not have permission to perform this action.",
+      },
+      "message": "This endpoint is not available to this caller",
+    },
+  ],
+}
+`;
+
+exports[`The GetCurrentUser document of twenty-front should fail should refuse an application token without user 1`] = `
+{
+  "errors": [
+    {
+      "extensions": {
+        "code": "FORBIDDEN",
+        "userFriendlyMessage": "You do not have permission to perform this action.",
+      },
+      "message": "This endpoint is not available to this caller",
+    },
+  ],
+}
+`;

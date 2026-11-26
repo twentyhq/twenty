@@ -105,6 +105,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ai-sdk/groq@npm:4.0.54":
+  version: 4.0.54
+  resolution: "@ai-sdk/groq@npm:4.0.54"
+  dependencies:
+    "@ai-sdk/provider": "npm:4.0.21"
+    "@ai-sdk/provider-utils": "npm:5.0.53"
+  peerDependencies:
+    zod: ^3.25.76 || ^4.1.8
+  checksum: 10c0/7d81332deb470fd08e6802706284dc0fe9a51cfee09558806c278a675468b3ef76dbc6626c8bc839cd9828287d67e2f08d88a18e09cb1b68745225698c5b5f46
+  languageName: node
+  linkType: hard
+
 "@ai-sdk/mistral@npm:^4.0.56":
   version: 4.0.56
   resolution: "@ai-sdk/mistral@npm:4.0.56"
@@ -6681,26 +6693,6 @@ __metadata:
   version: 1.0.3
   resolution: "@gar/promise-retry@npm:1.0.3"
   checksum: 10c0/885b02c8b0d75b2d215da25f3b639158c4fbe8fefe0d79163304534b9a6d0710db4b7699f7cd3cc1a730792bff04cbe19f4850a62d3e105a663eaeec88f38332
-  languageName: node
-  linkType: hard
-
-"@genql/runtime@npm:^2.10.0":
-  version: 2.10.0
-  resolution: "@genql/runtime@npm:2.10.0"
-  dependencies:
-    "@types/qs": "npm:^6.9.0"
-    "@types/ws": "npm:^6.0.1"
-    graphql-query-batcher: "npm:^1.0.1"
-    isomorphic-unfetch: "npm:^3.0.0"
-    lodash: "npm:^4.17.20"
-    subscriptions-transport-ws: "npm:^0.9.16"
-    tslib: "npm:^2.0.0"
-    utility-types: "npm:^3.10.0"
-    ws: "npm:^6.1.4"
-    zen-observable-ts: "npm:^0.8.21"
-  peerDependencies:
-    graphql: "*"
-  checksum: 10c0/e2a886c2469c933681e2b0ddd6a5b7f4cb12932251ba460e3cf2db4246817da79313ea4ba9769ec7cbe53ab9c1cb81ad8fcce6a969cd241185b79398d2a4f3c6
   languageName: node
   linkType: hard
 
@@ -19940,7 +19932,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/qs@npm:*, @types/qs@npm:^6.15.1, @types/qs@npm:^6.9.0, @types/qs@npm:^6.9.18":
+"@types/qs@npm:*, @types/qs@npm:^6.15.1, @types/qs@npm:^6.9.18":
   version: 6.15.1
   resolution: "@types/qs@npm:6.15.1"
   checksum: 10c0/1dfdbcb4cf2a8f66d57f0b9a9fe6b1c7091cb816687b6698c1351eaf31f62e412cea9b7453a9637b570cd5fad8dced527e5a9e69b4fcc6e318daacd8b749f094
@@ -20245,15 +20237,6 @@ __metadata:
   version: 3.0.2
   resolution: "@types/whatwg-mimetype@npm:3.0.2"
   checksum: 10c0/dad39d1e4abe760a0a963c84bbdbd26b1df0eb68aff83bdf6ecbb50ad781ead777f6906d19a87007790b750f7500a12e5624d31fc6a1529d14bd19b5c3a316d1
-  languageName: node
-  linkType: hard
-
-"@types/ws@npm:^6.0.1":
-  version: 6.0.4
-  resolution: "@types/ws@npm:6.0.4"
-  dependencies:
-    "@types/node": "npm:*"
-  checksum: 10c0/fa958e64596ca9487c3ed6012834de70b47f25d971f1950cfb8e6a99cb77ff340ae82ac7627744e01b58010674ef8ede07d5a2ac29ca9ad0d67a430fcc69ae14
   languageName: node
   linkType: hard
 
@@ -23586,13 +23569,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"async-limiter@npm:~1.0.0":
-  version: 1.0.1
-  resolution: "async-limiter@npm:1.0.1"
-  checksum: 10c0/0693d378cfe86842a70d4c849595a0bb50dc44c11649640ca982fa90cbfc74e3cc4753b5a0847e51933f2e9c65ce8e05576e75e5e1fd963a086e673735b35969
-  languageName: node
-  linkType: hard
-
 "async-lock@npm:^1.4.1":
   version: 1.4.1
   resolution: "async-lock@npm:1.4.1"
@@ -23981,13 +23957,6 @@ __metadata:
   peerDependencies:
     "@babel/core": ^7.0.0
   checksum: 10c0/ec5fd0276b5630b05f0c14bb97cc3815c6b31600c683ebb51372e54dcb776cff790bdeeabd5b8d01ede375a040337ccbf6a3ccd68d3a34219125945e167ad943
-  languageName: node
-  linkType: hard
-
-"backo2@npm:^1.0.2":
-  version: 1.0.2
-  resolution: "backo2@npm:1.0.2"
-  checksum: 10c0/a9e825a6a38a6d1c4a94476eabc13d6127dfaafb0967baf104affbb67806ae26abbb58dab8d572d2cd21ef06634ff57c3ad48dff14b904e18de1474cc2f22bf3
   languageName: node
   linkType: hard
 
@@ -28581,13 +28550,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eventemitter3@npm:^3.1.0":
-  version: 3.1.2
-  resolution: "eventemitter3@npm:3.1.2"
-  checksum: 10c0/c67262eccbf85848b7cc6d4abb6c6e34155e15686db2a01c57669fd0d44441a574a19d44d25948b442929e065774cbe5003d8e77eed47674fbf876ac77887793
-  languageName: node
-  linkType: hard
-
 "eventemitter3@npm:^4.0.0":
   version: 4.0.7
   resolution: "eventemitter3@npm:4.0.7"
@@ -30454,13 +30416,6 @@ __metadata:
   bin:
     graphql: dist/temp-bin.js
   checksum: 10c0/fe340823b90f418fa466c0dedfdf0070ab658530bfbad3386aefa58998d272c6971d93e95ecd0ea44a36df2edc3471273b2b467a1526c8f62da1df400cc172e1
-  languageName: node
-  linkType: hard
-
-"graphql-query-batcher@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "graphql-query-batcher@npm:1.0.1"
-  checksum: 10c0/804d0f4064721a2116a16b9eac422e9233e85f4ab5b250cb8f83662725658ffde35779a8ae8211037f3dd2f9717de8cb63b394ad8057ce22171a83db2471196a
   languageName: node
   linkType: hard
 
@@ -32708,16 +32663,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"isomorphic-unfetch@npm:^3.0.0":
-  version: 3.1.0
-  resolution: "isomorphic-unfetch@npm:3.1.0"
-  dependencies:
-    node-fetch: "npm:^2.6.1"
-    unfetch: "npm:^4.2.0"
-  checksum: 10c0/d3b61fca06304db692b7f76bdfd3a00f410e42cfa7403c3b250546bf71589d18cf2f355922f57198e4cc4a9872d3647b20397a5c3edf1a347c90d57c83cf2a89
-  languageName: node
-  linkType: hard
-
 "isomorphic-ws@npm:^5.0.0":
   version: 5.0.0
   resolution: "isomorphic-ws@npm:5.0.0"
@@ -32837,7 +32782,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"iterall@npm:^1.2.1, iterall@npm:^1.3.0":
+"iterall@npm:^1.3.0":
   version: 1.3.0
   resolution: "iterall@npm:1.3.0"
   checksum: 10c0/40de624e5fe937c4c0e511981b91caea9ff2142bfc0316cccc8506eaa03aa253820cc17c5bc5f0a98706c7268a373e5ebee9af9a0c8a359730cf7c05938b57b5
@@ -35007,7 +34952,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash@npm:4, lodash@npm:4.18.1, lodash@npm:^4.17.14, lodash@npm:^4.17.15, lodash@npm:^4.17.19, lodash@npm:^4.17.20, lodash@npm:^4.17.21":
+"lodash@npm:4, lodash@npm:4.18.1, lodash@npm:^4.17.14, lodash@npm:^4.17.15, lodash@npm:^4.17.19, lodash@npm:^4.17.21":
   version: 4.18.1
   resolution: "lodash@npm:4.18.1"
   checksum: 10c0/757228fc68805c59789e82185135cf85f05d0b2d3d54631d680ca79ec21944ec8314d4533639a14b8bcfbd97a517e78960933041a5af17ecb693ec6eecb99a27
@@ -37288,7 +37233,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-fetch@npm:2, node-fetch@npm:2.7.0, node-fetch@npm:^2.6.1, node-fetch@npm:^2.6.12, node-fetch@npm:^2.6.7, node-fetch@npm:^2.7.0":
+"node-fetch@npm:2, node-fetch@npm:2.7.0, node-fetch@npm:^2.6.12, node-fetch@npm:^2.6.7, node-fetch@npm:^2.7.0":
   version: 2.7.0
   resolution: "node-fetch@npm:2.7.0"
   dependencies:
@@ -44450,21 +44395,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"subscriptions-transport-ws@npm:^0.9.16":
-  version: 0.9.19
-  resolution: "subscriptions-transport-ws@npm:0.9.19"
-  dependencies:
-    backo2: "npm:^1.0.2"
-    eventemitter3: "npm:^3.1.0"
-    iterall: "npm:^1.2.1"
-    symbol-observable: "npm:^1.0.4"
-    ws: "npm:^5.2.0 || ^6.0.0 || ^7.0.0"
-  peerDependencies:
-    graphql: ">=0.10.0"
-  checksum: 10c0/6f2ade56865f0ba291d3ff82c79781b051c2374873bac853286fedfdbc05001b8c4018ab7cba44af667ead7f573e48d18892d58a8f9ca8d90dfb4bff5c125045
-  languageName: node
-  linkType: hard
-
 "sumchecker@npm:^3.0.1":
   version: 3.0.1
   resolution: "sumchecker@npm:3.0.1"
@@ -44596,13 +44526,6 @@ __metadata:
     "@vue/test-utils":
       optional: true
   checksum: 10c0/d1ce61697537ed1769ddf8e876d7bfea3e01344a402a28dcbc591ee7369f92814e78ba41fec7de40ff6706f280bdcd9ce70bc99700eab5748b2fd34b277a5574
-  languageName: node
-  linkType: hard
-
-"symbol-observable@npm:^1.0.4":
-  version: 1.2.0
-  resolution: "symbol-observable@npm:1.2.0"
-  checksum: 10c0/009fee50798ef80ed4b8195048288f108b03de162db07493f2e1fd993b33fafa72d659e832b584da5a2427daa78e5a738fb2a9ab027ee9454252e0bedbcd1fdc
   languageName: node
   linkType: hard
 
@@ -45004,6 +44927,13 @@ __metadata:
   version: 2.0.0
   resolution: "timeout-signal@npm:2.0.0"
   checksum: 10c0/dd0a41712552fd45e075664edbdb5d1715a0791e6a206f1d00f5808b954b18046f87b71a7b9216a5030ba772516212b696bbbfb3115bf81b3277b04f62aab135
+  languageName: node
+  linkType: hard
+
+"timezones-ical-library@npm:3.0.0":
+  version: 3.0.0
+  resolution: "timezones-ical-library@npm:3.0.0"
+  checksum: 10c0/0a1a4a975a983efea5c8afa2739c0b3aff60fafb433cb9defdc09201970780694d81597916c8f2c3492faab1d93ef69a4ed58f51aba023b9c8df7cae528bfc3d
   languageName: node
   linkType: hard
 
@@ -45551,7 +45481,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:^1.9.0, tslib@npm:^1.9.3":
+"tslib@npm:^1.9.0":
   version: 1.14.1
   resolution: "tslib@npm:1.14.1"
   checksum: 10c0/69ae09c49eea644bc5ebe1bca4fa4cc2c82b7b3e02f43b84bd891504edf66dbc6b2ec0eef31a957042de2269139e4acff911e6d186a258fb14069cd7f6febce2
@@ -45617,7 +45547,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "twenty-client-sdk@workspace:packages/twenty-client-sdk"
   dependencies:
-    "@genql/runtime": "npm:^2.10.0"
     "@types/lodash": "npm:^4.17.24"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260116.1"
     esbuild: "npm:^0.28.1"
@@ -45628,7 +45557,6 @@ __metadata:
     twenty-shared: "workspace:*"
     typescript: "npm:^5.9.3"
     vite: "npm:^8.0.0"
-    vite-plugin-dts: "npm:^4.5.4"
     vitest: "npm:^4.1.12"
   languageName: unknown
   linkType: soft
@@ -45679,6 +45607,7 @@ __metadata:
     react-email: "npm:^6.11.16"
     tsc-alias: "npm:^1.8.16"
     twenty-shared: "workspace:*"
+    vite: "npm:^8.0.0"
   peerDependencies:
     react: ^18.2.0 || ^19.0.0
     react-dom: ^18.2.0 || ^19.0.0
@@ -45975,7 +45904,6 @@ __metadata:
     tsc-alias: "npm:^1.8.16"
     twenty-client-sdk: "workspace:*"
     twenty-shared: "workspace:*"
-    twenty-ui: "workspace:*"
     uuid: "npm:^13.0.2"
     vite: "npm:^8.0.0"
   languageName: unknown
@@ -45989,6 +45917,7 @@ __metadata:
     "@ai-sdk/anthropic": "npm:^4.0.71"
     "@ai-sdk/azure": "npm:^4.0.89"
     "@ai-sdk/google": "npm:^4.0.87"
+    "@ai-sdk/groq": "npm:4.0.54"
     "@ai-sdk/mistral": "npm:^4.0.56"
     "@ai-sdk/openai": "npm:^4.0.83"
     "@ai-sdk/openai-compatible": "npm:^3.0.62"
@@ -46197,6 +46126,7 @@ __metadata:
     tar: "npm:^7.5.9"
     temporal-polyfill: "npm:^0.3.0"
     testcontainers: "npm:12.1.0"
+    timezones-ical-library: "npm:3.0.0"
     ts-jest: "npm:^29.1.1"
     ts-node: "npm:10.9.1"
     tsconfig-paths: "npm:^4.2.0"
@@ -46264,7 +46194,6 @@ __metadata:
     typescript: "npm:^5.9.3"
     uuid: "npm:^11.1.1"
     vite: "npm:^8.0.0"
-    vite-plugin-dts: "npm:^4.5.4"
     zod: "npm:^4.6.6"
   languageName: unknown
   linkType: soft
@@ -46984,13 +46913,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unfetch@npm:^4.2.0":
-  version: 4.2.0
-  resolution: "unfetch@npm:4.2.0"
-  checksum: 10c0/a5c0a896a6f09f278b868075aea65652ad185db30e827cb7df45826fe5ab850124bf9c44c4dafca4bf0c55a0844b17031e8243467fcc38dd7a7d435007151f1b
-  languageName: node
-  linkType: hard
-
 "unhead@npm:3.4.3":
   version: 3.4.3
   resolution: "unhead@npm:3.4.3"
@@ -47585,13 +47507,6 @@ __metadata:
   version: 1.0.2
   resolution: "util-deprecate@npm:1.0.2"
   checksum: 10c0/41a5bdd214df2f6c3ecf8622745e4a366c4adced864bc3c833739791aeeeb1838119af7daed4ba36428114b5c67dcda034a79c882e97e43c03e66a4dd7389942
-  languageName: node
-  linkType: hard
-
-"utility-types@npm:^3.10.0":
-  version: 3.11.0
-  resolution: "utility-types@npm:3.11.0"
-  checksum: 10c0/2f1580137b0c3e6cf5405f37aaa8f5249961a76d26f1ca8efc0ff49a2fc0e0b2db56de8e521a174d075758e0c7eb3e590edec0832eb44478b958f09914920f19
   languageName: node
   linkType: hard
 
@@ -48808,30 +48723,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ws@npm:^5.2.0 || ^6.0.0 || ^7.0.0":
-  version: 7.5.11
-  resolution: "ws@npm:7.5.11"
-  peerDependencies:
-    bufferutil: ^4.0.1
-    utf-8-validate: ^5.0.2
-  peerDependenciesMeta:
-    bufferutil:
-      optional: true
-    utf-8-validate:
-      optional: true
-  checksum: 10c0/7972670b676fb1ccba73b0899ca3c2e04e8c2075629c2614cced7f556536f96a672bbf4619fc5a06c8b8720bb839a47ca88c69c95dc14c9c61a99fbecba1c866
-  languageName: node
-  linkType: hard
-
-"ws@npm:^6.1.4":
-  version: 6.2.4
-  resolution: "ws@npm:6.2.4"
-  dependencies:
-    async-limiter: "npm:~1.0.0"
-  checksum: 10c0/5c2b9474164f9cb68c7776a1d10b0461c186f3a69bffb1028fca33eba5ab7206a09173fb0b311d6c5a81c8cf148406f8deb0b7d899542ab8ca67407d99717dad
-  languageName: node
-  linkType: hard
-
 "wsl-utils@npm:^0.1.0":
   version: 0.1.0
   resolution: "wsl-utils@npm:0.1.0"
@@ -49370,23 +49261,6 @@ __metadata:
     jsonschema: "npm:1.5.0"
     lodash: "npm:4.18.1"
   checksum: 10c0/cf3f9cb5e77199357c1f7cb2413fc54c6df053311dc96db6e5e9a4e530c4d4a2258d40e800b6f5957f3bccc9212065043ad71b4bd65e756983636a5866835a86
-  languageName: node
-  linkType: hard
-
-"zen-observable-ts@npm:^0.8.21":
-  version: 0.8.21
-  resolution: "zen-observable-ts@npm:0.8.21"
-  dependencies:
-    tslib: "npm:^1.9.3"
-    zen-observable: "npm:^0.8.0"
-  checksum: 10c0/fe4a02f862b5f7e8ae0f86230c37b84c7d5611f5c206981afb4043e732d04cf7067a6cbe1ba82d20f18b735a3387937195a12542158a631d308ae3959a1d93c4
-  languageName: node
-  linkType: hard
-
-"zen-observable@npm:^0.8.0":
-  version: 0.8.15
-  resolution: "zen-observable@npm:0.8.15"
-  checksum: 10c0/71cc2f2bbb537300c3f569e25693d37b3bc91f225cefce251a71c30bc6bb3e7f8e9420ca0eb57f2ac9e492b085b8dfa075fd1e8195c40b83c951dd59c6e4fbf8
   languageName: node
   linkType: hard
 

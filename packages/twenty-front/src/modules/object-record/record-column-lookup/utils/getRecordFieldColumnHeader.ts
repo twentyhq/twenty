@@ -29,8 +29,8 @@ type ColumnHeaderColumnKind =
       >;
     };
 
-const getFilteredLabel = (fieldMetadataItem: ColumnHeaderFieldMetadataItem) =>
-  `${fieldMetadataItem.label} · ${t`Filtered`}`;
+const getSummaryLabel = (fieldMetadataItem: ColumnHeaderFieldMetadataItem) =>
+  `${fieldMetadataItem.label} · ${t`Summary`}`;
 
 const getDefaultRecordFieldColumnHeader = ({
   fieldMetadataItem,
@@ -45,21 +45,21 @@ const getDefaultRecordFieldColumnHeader = ({
     case 'scopedRecords':
       return {
         ...fieldMetadataItem,
-        label: getFilteredLabel(fieldMetadataItem),
+        label: getSummaryLabel(fieldMetadataItem),
       };
     case 'summary':
       return {
         ...fieldMetadataItem,
         label: isDefined(columnKind.summary)
           ? `${fieldMetadataItem.label} · ${getRecordFieldSummaryLabel(columnKind.summary)}`
-          : getFilteredLabel(fieldMetadataItem),
+          : getSummaryLabel(fieldMetadataItem),
       };
     case 'lookup':
     case 'scopedLookup': {
       const { lookupTargetFieldMetadataItem } = columnKind.lookupTarget;
       const label =
         columnKind.kind === 'scopedLookup'
-          ? getFilteredLabel(fieldMetadataItem)
+          ? getSummaryLabel(fieldMetadataItem)
           : fieldMetadataItem.label;
 
       return {

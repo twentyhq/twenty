@@ -22,7 +22,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { parseMetadataRestPagination } from 'src/engine/api/rest/metadata/utils/parse-metadata-rest-pagination.util';
 import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { AuthContext } from 'src/engine/decorators/auth/auth-context.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { RequestLocale } from 'src/engine/decorators/locale/request-locale.decorator';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
@@ -68,14 +69,11 @@ export class ViewController {
     @Req() request: AuthenticatedRequest,
     @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
     @Query('objectMetadataId') objectMetadataId?: string,
   ) {
     const page = await this.viewService.findManyWithRelationsPaginated({
       workspaceId: workspace.id,
       objectMetadataId,
-      userWorkspaceId,
       pagination: parseMetadataRestPagination(request),
     });
 
@@ -96,14 +94,11 @@ export class ViewController {
     @Param('id') id: string,
     @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
   ): Promise<ViewDTO> {
     const view =
-      await this.viewService.findByIdWithRelationsVisibleToUserOrThrow({
+      await this.viewService.findByIdWithRelationsVisibleToCallerOrThrow({
         id,
         workspaceId: workspace.id,
-        userWorkspaceId,
       });
 
     const processedViews = await this.processViewsWithTemplates(
@@ -123,11 +118,13 @@ export class ViewController {
   async create(
     @Body() input: CreateViewInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthContext() authContext: WorkspaceAuthContext,
     @RequestLocale() locale?: keyof typeof APP_LOCALES,
   ): Promise<ViewDTO> {
     const view = await this.viewService.createOne({
       createViewInput: input,
       workspaceId: workspace.id,
+      authContext,
     });
 
     const processedViews = await this.processViewsWithTemplates(
@@ -150,8 +147,7 @@ export class ViewController {
     @Body() input: UpdateViewInput,
     @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
+    @AuthContext() authContext: WorkspaceAuthContext,
   ): Promise<ViewDTO> {
     const updatedView = await this.viewService.updateOne({
       updateViewInput: {
@@ -159,7 +155,7 @@ export class ViewController {
         id,
       },
       workspaceId: workspace.id,
-      userWorkspaceId,
+      authContext,
     });
 
     const processedViews = await this.processViewsWithTemplates(

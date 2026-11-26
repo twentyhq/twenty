@@ -48,7 +48,6 @@ const AVAILABLE_WORKSPACES: AvailableWorkspace[] = [
 const INVITED_WORKSPACE: AvailableWorkspace = {
   id: 'invited',
   displayName: 'Invited workspace',
-  inviteHash: 'workspace-invite',
   personalInviteToken: 'personal-invite',
   sso: [],
   workspaceUrls: { subdomainUrl: 'https://invited.example.com' },
@@ -171,12 +170,12 @@ export const PagesAndWorkspaceLinks: Story = {
       });
       expect(invitedWorkspace).toHaveAttribute(
         'href',
-        'https://invited.example.com/invite/workspace-invite?inviteToken=personal-invite',
+        'https://invited.example.com/welcome?inviteToken=personal-invite',
       );
       await userEvent.click(invitedWorkspace);
       await waitFor(() =>
         expect(openWindow).toHaveBeenCalledWith(
-          'https://invited.example.com/invite/workspace-invite?inviteToken=personal-invite&locale=en',
+          'https://invited.example.com/welcome?inviteToken=personal-invite&locale=en',
           '_self',
         ),
       );
@@ -207,7 +206,7 @@ export const RootInvitationLink: Story = {
 
     expect(invitedWorkspace).toHaveAttribute(
       'href',
-      'https://invited.example.com/invite/workspace-invite?inviteToken=personal-invite',
+      'https://invited.example.com/welcome?inviteToken=personal-invite',
     );
     await userEvent.keyboard('{Escape}');
     await waitFor(() =>

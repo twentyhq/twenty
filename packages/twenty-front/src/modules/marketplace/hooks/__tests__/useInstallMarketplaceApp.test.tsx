@@ -70,10 +70,9 @@ describe('useInstallMarketplaceApp', () => {
       },
     );
 
-    await act(async () => {
-      await result.current.install();
-    });
+    const isInstallQueued = await act(() => result.current.install());
 
+    expect(isInstallQueued).toBe(true);
     expect(result.current.isInstalling).toBe(true);
     expect(result.current.installProgress).toBeUndefined();
 
@@ -84,6 +83,7 @@ describe('useInstallMarketplaceApp', () => {
         attemptsMade: 1,
         progress: 43,
         enqueuedAt: 1,
+        scheduledAt: 1,
       });
     });
 
@@ -96,6 +96,7 @@ describe('useInstallMarketplaceApp', () => {
         attemptsMade: 1,
         failedReason: 'Manifest validation failed',
         enqueuedAt: 1,
+        scheduledAt: 1,
       });
     });
 
@@ -135,6 +136,7 @@ describe('useInstallMarketplaceApp', () => {
         attemptsMade: 1,
         progress: 86,
         enqueuedAt: 1,
+        scheduledAt: 1,
       });
     });
 

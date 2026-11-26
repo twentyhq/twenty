@@ -279,21 +279,25 @@ describe('2-42 workspace command 1789744500000 - PurgeSoftDeletedViewsCommand (i
       { applicationId: twentyStandardApplicationId },
     );
 
-    await getCoreRepository<ViewEntity>(ViewEntity).softDelete({
-      id: In([purgedViewId, ...lastViewIds]),
-    });
-    await getCoreRepository<ViewFieldEntity>(ViewFieldEntity).softDelete({
-      id: In([labelIdentifierViewFieldId, softDeletedViewFieldId]),
-    });
-    await getCoreRepository<ViewFilterEntity>(ViewFilterEntity).softDelete({
-      id: softDeletedViewFilterId,
-    });
+    await getCoreRepository<ViewEntity>(ViewEntity).update(
+      { id: In([purgedViewId, ...lastViewIds]) },
+      { deletedAt: new Date() },
+    );
+    await getCoreRepository<ViewFieldEntity>(ViewFieldEntity).update(
+      { id: In([labelIdentifierViewFieldId, softDeletedViewFieldId]) },
+      { deletedAt: new Date() },
+    );
+    await getCoreRepository<ViewFilterEntity>(ViewFilterEntity).update(
+      { id: softDeletedViewFilterId },
+      { deletedAt: new Date() },
+    );
     await getCoreRepository<ViewFilterGroupEntity>(
       ViewFilterGroupEntity,
-    ).softDelete({ id: softDeletedViewFilterGroupId });
-    await getCoreRepository<ViewSortEntity>(ViewSortEntity).softDelete({
-      id: softDeletedViewSortId,
-    });
+    ).update({ id: softDeletedViewFilterGroupId }, { deletedAt: new Date() });
+    await getCoreRepository<ViewSortEntity>(ViewSortEntity).update(
+      { id: softDeletedViewSortId },
+      { deletedAt: new Date() },
+    );
 
     await getAppProviderByClassName<WorkspaceCacheService>(
       'WorkspaceCacheService',
