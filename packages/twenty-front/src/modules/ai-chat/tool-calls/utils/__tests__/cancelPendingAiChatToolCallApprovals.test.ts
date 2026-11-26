@@ -10,7 +10,13 @@ const PROPOSAL = {
   template: 'generic',
 };
 
-const buildApprovalPart = (toolCallId: string, status: string) => ({
+const buildApprovalPart = ({
+  toolCallId,
+  status,
+}: {
+  toolCallId: string;
+  status: string;
+}) => ({
   type: 'tool-propose_tool_call' as const,
   toolCallId,
   state: 'output-available' as const,
@@ -34,7 +40,7 @@ describe('cancelPendingAiChatToolCallApprovals', () => {
         role: 'assistant',
         parts: [
           { type: 'text', text: 'I need your approval' },
-          buildApprovalPart('call-1', 'pending'),
+          buildApprovalPart({ toolCallId: 'call-1', status: 'pending' }),
         ],
       },
     ];
@@ -56,7 +62,9 @@ describe('cancelPendingAiChatToolCallApprovals', () => {
       {
         id: 'assistant-1',
         role: 'assistant',
-        parts: [buildApprovalPart('call-1', 'approved')],
+        parts: [
+          buildApprovalPart({ toolCallId: 'call-1', status: 'approved' }),
+        ],
       },
       {
         id: 'assistant-2',
