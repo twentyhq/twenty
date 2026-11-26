@@ -1,7 +1,6 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
 const { fields: calendarEventFields } = STANDARD_OBJECTS.calendarEvent;
@@ -21,16 +20,20 @@ const SYNCED_CALENDAR_EVENT_FIELD_UNIVERSAL_IDENTIFIERS = [
   calendarEventFields.conferenceLink,
 ].map(({ universalIdentifier }) => universalIdentifier);
 
-export const buildSyncedCalendarEventFieldLockUpdates = ({
+export const buildSyncedCalendarEventFieldLockUpdates = <
+  TField extends Pick<
+    FlatFieldMetadata,
+    'disabledFieldPermissionActions' | 'updatedAt'
+  >,
+>({
   flatFieldMetadataMaps,
   now,
 }: {
-  flatFieldMetadataMaps: Pick<
-    FlatEntityMaps<FlatFieldMetadata>,
-    'byUniversalIdentifier'
-  >;
+  flatFieldMetadataMaps: {
+    byUniversalIdentifier: Partial<Record<string, TField>>;
+  };
   now: string;
-}): FlatFieldMetadata[] =>
+}): TField[] =>
   SYNCED_CALENDAR_EVENT_FIELD_UNIVERSAL_IDENTIFIERS.map(
     (universalIdentifier) =>
       flatFieldMetadataMaps.byUniversalIdentifier[universalIdentifier],

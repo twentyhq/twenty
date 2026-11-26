@@ -233,294 +233,321 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  title: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'title',
-      type: FieldMetadataType.TEXT,
-      label: i18nLabel(
-        msg({ message: `Title`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({ message: `Title`, context: 'fieldMetadata.description' }),
-      ),
-      icon: 'IconH1',
-      isNullable: true,
-      isUIEditable: false,
-      disabledFieldPermissionActions:
-        PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  isCanceled: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'isCanceled',
-      type: FieldMetadataType.BOOLEAN,
-      label: i18nLabel(
-        msg({ message: `Is canceled`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({ message: `Is canceled`, context: 'fieldMetadata.description' }),
-      ),
-      icon: 'IconCalendarCancel',
-      isNullable: false,
-      isUIEditable: false,
-      disabledFieldPermissionActions:
-        PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
-      defaultValue: false,
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  isFullDay: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'isFullDay',
-      type: FieldMetadataType.BOOLEAN,
-      label: i18nLabel(
-        msg({ message: `Is Full Day`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({ message: `Is Full Day`, context: 'fieldMetadata.description' }),
-      ),
-      icon: 'IconHours24',
-      isNullable: false,
-      isUIEditable: false,
-      disabledFieldPermissionActions:
-        PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
-      defaultValue: false,
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  startsAt: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'startsAt',
-      type: FieldMetadataType.DATE_TIME,
-      label: i18nLabel(
-        msg({ message: `Start Date`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({ message: `Start Date`, context: 'fieldMetadata.description' }),
-      ),
-      icon: 'IconCalendarClock',
-      isNullable: true,
-      isUIEditable: false,
-      disabledFieldPermissionActions:
-        PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  endsAt: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'endsAt',
-      type: FieldMetadataType.DATE_TIME,
-      label: i18nLabel(
-        msg({ message: `End Date`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({ message: `End Date`, context: 'fieldMetadata.description' }),
-      ),
-      icon: 'IconCalendarClock',
-      isNullable: true,
-      isUIEditable: false,
-      disabledFieldPermissionActions:
-        PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  externalCreatedAt: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'externalCreatedAt',
-      type: FieldMetadataType.DATE_TIME,
-      label: i18nLabel(
-        msg({ message: `Creation DateTime`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({
-          message: `Creation DateTime`,
-          context: 'fieldMetadata.description',
-        }),
-      ),
-      icon: 'IconCalendarPlus',
-      isNullable: true,
-      isUIEditable: false,
-      disabledFieldPermissionActions:
-        PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  externalUpdatedAt: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'externalUpdatedAt',
-      type: FieldMetadataType.DATE_TIME,
-      label: i18nLabel(
-        msg({ message: `Update DateTime`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({
-          message: `Update DateTime`,
-          context: 'fieldMetadata.description',
-        }),
-      ),
-      icon: 'IconCalendarCog',
-      isNullable: true,
-      isUIEditable: false,
-      disabledFieldPermissionActions:
-        PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  description: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'description',
-      type: FieldMetadataType.TEXT,
-      label: i18nLabel(
-        msg({ message: `Description`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({ message: `Description`, context: 'fieldMetadata.description' }),
-      ),
-      icon: 'IconFileDescription',
-      isNullable: true,
-      isUIEditable: false,
-      disabledFieldPermissionActions:
-        PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
-      settings: { displayedMaxRows: 99 },
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  location: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'location',
-      type: FieldMetadataType.TEXT,
-      label: i18nLabel(
-        msg({ message: `Location`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({ message: `Location`, context: 'fieldMetadata.description' }),
-      ),
-      icon: 'IconMapPin',
-      isNullable: true,
-      isUIEditable: false,
-      disabledFieldPermissionActions:
-        PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  iCalUid: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'iCalUid',
-      type: FieldMetadataType.TEXT,
-      label: i18nLabel(
-        msg({ message: `iCal UID`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({ message: `iCal UID`, context: 'fieldMetadata.description' }),
-      ),
-      icon: 'IconKey',
-      isNullable: true,
-      isUIEditable: false,
-      disabledFieldPermissionActions:
-        PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  conferenceSolution: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'conferenceSolution',
-      type: FieldMetadataType.TEXT,
-      label: i18nLabel(
-        msg({ message: `Conference Solution`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({
-          message: `Conference Solution`,
-          context: 'fieldMetadata.description',
-        }),
-      ),
-      icon: 'IconScreenShare',
-      isNullable: true,
-      isUIEditable: false,
-      disabledFieldPermissionActions:
-        PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  conferenceLink: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'conferenceLink',
-      type: FieldMetadataType.LINKS,
-      label: i18nLabel(
-        msg({ message: `Meet Link`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({ message: `Meet Link`, context: 'fieldMetadata.description' }),
-      ),
-      icon: 'IconLink',
-      isNullable: true,
-      isUIEditable: false,
-      disabledFieldPermissionActions:
-        PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
+  title: {
+    ...createStandardFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        fieldName: 'title',
+        type: FieldMetadataType.TEXT,
+        label: i18nLabel(
+          msg({ message: `Title`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({ message: `Title`, context: 'fieldMetadata.description' }),
+        ),
+        icon: 'IconH1',
+        isNullable: true,
+        isUIEditable: false,
+      },
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
+  },
+  isCanceled: {
+    ...createStandardFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        fieldName: 'isCanceled',
+        type: FieldMetadataType.BOOLEAN,
+        label: i18nLabel(
+          msg({ message: `Is canceled`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({ message: `Is canceled`, context: 'fieldMetadata.description' }),
+        ),
+        icon: 'IconCalendarCancel',
+        isNullable: false,
+        isUIEditable: false,
+        defaultValue: false,
+      },
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
+  },
+  isFullDay: {
+    ...createStandardFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        fieldName: 'isFullDay',
+        type: FieldMetadataType.BOOLEAN,
+        label: i18nLabel(
+          msg({ message: `Is Full Day`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({ message: `Is Full Day`, context: 'fieldMetadata.description' }),
+        ),
+        icon: 'IconHours24',
+        isNullable: false,
+        isUIEditable: false,
+        defaultValue: false,
+      },
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
+  },
+  startsAt: {
+    ...createStandardFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        fieldName: 'startsAt',
+        type: FieldMetadataType.DATE_TIME,
+        label: i18nLabel(
+          msg({ message: `Start Date`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({ message: `Start Date`, context: 'fieldMetadata.description' }),
+        ),
+        icon: 'IconCalendarClock',
+        isNullable: true,
+        isUIEditable: false,
+      },
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
+  },
+  endsAt: {
+    ...createStandardFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        fieldName: 'endsAt',
+        type: FieldMetadataType.DATE_TIME,
+        label: i18nLabel(
+          msg({ message: `End Date`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({ message: `End Date`, context: 'fieldMetadata.description' }),
+        ),
+        icon: 'IconCalendarClock',
+        isNullable: true,
+        isUIEditable: false,
+      },
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
+  },
+  externalCreatedAt: {
+    ...createStandardFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        fieldName: 'externalCreatedAt',
+        type: FieldMetadataType.DATE_TIME,
+        label: i18nLabel(
+          msg({ message: `Creation DateTime`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Creation DateTime`,
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconCalendarPlus',
+        isNullable: true,
+        isUIEditable: false,
+      },
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
+  },
+  externalUpdatedAt: {
+    ...createStandardFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        fieldName: 'externalUpdatedAt',
+        type: FieldMetadataType.DATE_TIME,
+        label: i18nLabel(
+          msg({ message: `Update DateTime`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Update DateTime`,
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconCalendarCog',
+        isNullable: true,
+        isUIEditable: false,
+      },
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
+  },
+  description: {
+    ...createStandardFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        fieldName: 'description',
+        type: FieldMetadataType.TEXT,
+        label: i18nLabel(
+          msg({ message: `Description`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({ message: `Description`, context: 'fieldMetadata.description' }),
+        ),
+        icon: 'IconFileDescription',
+        isNullable: true,
+        isUIEditable: false,
+        settings: { displayedMaxRows: 99 },
+      },
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
+  },
+  location: {
+    ...createStandardFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        fieldName: 'location',
+        type: FieldMetadataType.TEXT,
+        label: i18nLabel(
+          msg({ message: `Location`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({ message: `Location`, context: 'fieldMetadata.description' }),
+        ),
+        icon: 'IconMapPin',
+        isNullable: true,
+        isUIEditable: false,
+      },
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
+  },
+  iCalUid: {
+    ...createStandardFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        fieldName: 'iCalUid',
+        type: FieldMetadataType.TEXT,
+        label: i18nLabel(
+          msg({ message: `iCal UID`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({ message: `iCal UID`, context: 'fieldMetadata.description' }),
+        ),
+        icon: 'IconKey',
+        isNullable: true,
+        isUIEditable: false,
+      },
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
+  },
+  conferenceSolution: {
+    ...createStandardFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        fieldName: 'conferenceSolution',
+        type: FieldMetadataType.TEXT,
+        label: i18nLabel(
+          msg({
+            message: `Conference Solution`,
+            context: 'fieldMetadata.label',
+          }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Conference Solution`,
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconScreenShare',
+        isNullable: true,
+        isUIEditable: false,
+      },
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
+  },
+  conferenceLink: {
+    ...createStandardFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        fieldName: 'conferenceLink',
+        type: FieldMetadataType.LINKS,
+        label: i18nLabel(
+          msg({ message: `Meet Link`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({ message: `Meet Link`, context: 'fieldMetadata.description' }),
+        ),
+        icon: 'IconLink',
+        isNullable: true,
+        isUIEditable: false,
+      },
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
+  },
   calendarChannelEventAssociations: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,

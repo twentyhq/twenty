@@ -8,11 +8,14 @@ const { fields } = STANDARD_OBJECTS.calendarEvent;
 const buildField = (
   universalIdentifier: string,
   disabledFieldPermissionActions: FlatFieldMetadata['disabledFieldPermissionActions'],
-) =>
-  ({
-    universalIdentifier,
-    disabledFieldPermissionActions,
-  }) as FlatFieldMetadata;
+): Pick<
+  FlatFieldMetadata,
+  'universalIdentifier' | 'disabledFieldPermissionActions' | 'updatedAt'
+> => ({
+  universalIdentifier,
+  disabledFieldPermissionActions,
+  updatedAt: '2026-01-01T00:00:00.000Z',
+});
 
 describe('buildSyncedCalendarEventFieldLockUpdates', () => {
   it('should lock synced fields that are not locked yet and leave the others alone', () => {
