@@ -182,10 +182,6 @@ export class FlatFieldPermissionValidatorService {
       type: 'update',
     });
 
-    validationResult.errors.push(
-      ...getMarketplaceApplicationRoleRestrictionErrors({ buildOptions }),
-    );
-
     if (!isDefined(existingFlatFieldPermission)) {
       validationResult.errors.push({
         code: PermissionsExceptionCode.FIELD_PERMISSION_NOT_FOUND,
@@ -194,6 +190,21 @@ export class FlatFieldPermissionValidatorService {
       });
 
       return validationResult;
+    }
+
+    // An installed restriction may still be lifted, so only adding one is refused
+    const isRestrictionAdded = (
+      ['canReadFieldValue', 'canUpdateFieldValue'] as const
+    ).some(
+      (grant) =>
+        flatEntityUpdate[grant] === false &&
+        existingFlatFieldPermission[grant] !== false,
+    );
+
+    if (isRestrictionAdded) {
+      validationResult.errors.push(
+        ...getMarketplaceApplicationRoleRestrictionErrors({ buildOptions }),
+      );
     }
 
     const updatedFlatFieldPermission = {

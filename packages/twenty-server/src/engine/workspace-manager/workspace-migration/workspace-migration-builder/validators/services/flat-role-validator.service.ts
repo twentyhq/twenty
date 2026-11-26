@@ -197,6 +197,7 @@ export class FlatRoleValidatorService {
     validationResult.errors.push(
       ...getMarketplaceApplicationRoleAssignabilityErrors({
         flatRole: toFlatRole,
+        fromFlatRole,
         buildOptions,
       }),
     );

@@ -12,19 +12,29 @@ const isMarketplaceApplicationBuild = ({
 }: WorkspaceMigrationValidationBuildOptions): boolean =>
   !isSystemBuild && isMarketplaceApplication === true;
 
-// Members and API keys must not hold a role an app upgrade can widen
+type RoleAssignability = Pick<
+  UniversalFlatRole,
+  'canBeAssignedToUsers' | 'canBeAssignedToApiKeys'
+>;
+
+// Members and API keys must not hold a role an app upgrade can widen. An
+// installed role may still update while it moves toward agent-only, so only
+// turning a flag on is refused there.
 export const getMarketplaceApplicationRoleAssignabilityErrors = ({
   flatRole,
+  fromFlatRole,
   buildOptions,
 }: {
-  flatRole: Pick<
-    UniversalFlatRole,
-    'canBeAssignedToUsers' | 'canBeAssignedToApiKeys'
-  >;
+  flatRole: RoleAssignability;
+  fromFlatRole?: RoleAssignability;
   buildOptions: WorkspaceMigrationValidationBuildOptions;
-}): FlatEntityValidationError[] =>
-  (flatRole.canBeAssignedToUsers || flatRole.canBeAssignedToApiKeys) &&
-  isMarketplaceApplicationBuild(buildOptions)
+}): FlatEntityValidationError[] => {
+  const isFlagRefused = (flag: keyof RoleAssignability) =>
+    flatRole[flag] === true && fromFlatRole?.[flag] !== true;
+
+  return (isFlagRefused('canBeAssignedToUsers') ||
+    isFlagRefused('canBeAssignedToApiKeys')) &&
+    isMarketplaceApplicationBuild(buildOptions)
     ? [
         {
           code: PermissionsExceptionCode.MARKETPLACE_APPLICATION_ROLE_ASSIGNABILITY,
@@ -33,6 +43,7 @@ export const getMarketplaceApplicationRoleAssignabilityErrors = ({
         },
       ]
     : [];
+};
 
 export const getMarketplaceApplicationRoleRestrictionErrors = ({
   buildOptions,

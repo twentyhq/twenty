@@ -85,6 +85,53 @@ describe('getMarketplaceApplicationRoleAssignabilityErrors', () => {
   );
 });
 
+describe('getMarketplaceApplicationRoleAssignabilityErrors on update', () => {
+  const ASSIGNABLE_EVERYWHERE = {
+    canBeAssignedToUsers: true,
+    canBeAssignedToApiKeys: true,
+  };
+
+  it.each([
+    {
+      title: 'keeps both flags on',
+      flatRole: ASSIGNABLE_EVERYWHERE,
+    },
+    {
+      title: 'turns one flag off',
+      flatRole: { canBeAssignedToUsers: true, canBeAssignedToApiKeys: false },
+    },
+    {
+      title: 'turns both flags off',
+      flatRole: { canBeAssignedToUsers: false, canBeAssignedToApiKeys: false },
+    },
+  ])('accepts an installed role update that $title', ({ flatRole }) => {
+    expect(
+      getMarketplaceApplicationRoleAssignabilityErrors({
+        flatRole,
+        fromFlatRole: ASSIGNABLE_EVERYWHERE,
+        buildOptions: MARKETPLACE_BUILD,
+      }),
+    ).toEqual([]);
+  });
+
+  it('refuses an update that turns a flag back on', () => {
+    expect(
+      getMarketplaceApplicationRoleAssignabilityErrors({
+        flatRole: ASSIGNABLE_EVERYWHERE,
+        fromFlatRole: {
+          canBeAssignedToUsers: true,
+          canBeAssignedToApiKeys: false,
+        },
+        buildOptions: MARKETPLACE_BUILD,
+      }),
+    ).toEqual([
+      expect.objectContaining({
+        code: PermissionsExceptionCode.MARKETPLACE_APPLICATION_ROLE_ASSIGNABILITY,
+      }),
+    ]);
+  });
+});
+
 describe('getMarketplaceApplicationRoleRestrictionErrors', () => {
   it('refuses any row-level rule or field permission on a marketplace application', () => {
     expect(
