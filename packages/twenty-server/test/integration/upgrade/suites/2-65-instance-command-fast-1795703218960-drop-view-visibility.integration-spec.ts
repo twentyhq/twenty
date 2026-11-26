@@ -18,7 +18,13 @@ describe('2-65 instance command 1795703218960 - drop view visibility (integratio
     return rows.map(({ id }) => id);
   };
 
-  const setIsPrivate = (viewId: string, isPrivate: boolean) =>
+  const setIsPrivate = ({
+    viewId,
+    isPrivate,
+  }: {
+    viewId: string;
+    isPrivate: boolean;
+  }) =>
     queryRunner.query(
       `UPDATE "core"."view" SET "isPrivate" = $2 WHERE "id" = $1`,
       [viewId, isPrivate],
@@ -70,8 +76,8 @@ describe('2-65 instance command 1795703218960 - drop view visibility (integratio
 
     const [privateViewId, sharedViewId] = await findSeededViewIds(2);
 
-    await setIsPrivate(privateViewId, true);
-    await setIsPrivate(sharedViewId, false);
+    await setIsPrivate({ viewId: privateViewId, isPrivate: true });
+    await setIsPrivate({ viewId: sharedViewId, isPrivate: false });
 
     await dropVisibilityCommand.down(queryRunner);
 
