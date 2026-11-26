@@ -2,17 +2,20 @@ import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 
 import { type TelegramAssistantTurn } from 'src/logic-functions/types/telegram-assistant-turn.type';
 
-const buildHistorySection = (history: TelegramAssistantTurn[]): string[] =>
-  isNonEmptyArray(history)
-    ? [
-        [
-          'Earlier in this chat, oldest first:',
-          ...history.map(
-            (turn) => `Member: ${turn.requestText}\nYou: ${turn.responseText}`,
-          ),
-        ].join('\n\n'),
-      ]
-    : [];
+const buildHistorySection = (history: TelegramAssistantTurn[]): string[] => {
+  if (!isNonEmptyArray(history)) {
+    return [];
+  }
+
+  return [
+    [
+      'Earlier in this chat, oldest first:',
+      ...history.map(
+        (turn) => `Member: ${turn.requestText}\nYou: ${turn.responseText}`,
+      ),
+    ].join('\n\n'),
+  ];
+};
 
 const buildRecordReferenceSection = (
   workspaceBaseUrl: string | undefined,
