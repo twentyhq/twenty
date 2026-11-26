@@ -20,7 +20,6 @@ export const buildChannelVisibilityObjectRecordsPermissions = ({
   channelIdFieldUniversalIdentifier,
   unreadableFieldUniversalIdentifiersByVisibility,
   canUpdateRecords,
-  uneditableFieldUniversalIdentifiers,
 }: {
   holder: WorkspaceMemberIndividualRoleHolder;
   channels: (Pick<
@@ -36,7 +35,6 @@ export const buildChannelVisibilityObjectRecordsPermissions = ({
     Record<MessageChannelVisibility, string[]>
   >;
   canUpdateRecords: boolean;
-  uneditableFieldUniversalIdentifiers: string[];
 }): ObjectRecordsPermissionsManifest => {
   const roleUniversalIdentifier =
     getWorkspaceMemberIndividualRoleUniversalIdentifier({ holder });
@@ -75,7 +73,6 @@ export const buildChannelVisibilityObjectRecordsPermissions = ({
             unreadableFields:
               unreadableFieldUniversalIdentifiersByVisibility[visibility] ?? [],
             canUpdateRecords,
-            uneditableFields: uneditableFieldUniversalIdentifiers,
             predicateGroups: [
               {
                 universalIdentifier: buildUniversalIdentifier('group'),
