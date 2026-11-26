@@ -25,7 +25,8 @@ import { ApplicationEventEmitterService } from 'src/engine/metadata-modules/even
       userSession: false,
       apiKey: false,
       oauthClient: false,
-      application: true,
+      // A front component token carries a member, who must not act as the app
+      application: { withUser: false, withoutUser: true },
     },
     requiredPermissionFlags: [],
   }),

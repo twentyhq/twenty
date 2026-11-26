@@ -5,6 +5,7 @@ import { setupApplicationForSync } from 'test/integration/metadata/suites/applic
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
+import { generateApplicationAccessToken } from 'test/integration/utils/generate-application-access-token.util';
 import { type EventManifest } from 'twenty-shared/application';
 import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 import { v4 as uuidv4 } from 'uuid';
@@ -67,6 +68,7 @@ const syncEvents = ({
 
 describe('app events (e2e)', () => {
   let applicationToken: string;
+  let frontComponentToken: string;
   let companyId: string;
 
   const emit = (input: Record<string, unknown>) =>
@@ -90,7 +92,12 @@ describe('app events (e2e)', () => {
       [TEST_APP_ID],
     );
 
-    applicationToken = (
+    applicationToken = await generateApplicationAccessToken({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      applicationId: application.id,
+    });
+
+    frontComponentToken = (
       await generateAppleAdminApplicationTokenPair({
         applicationId: application.id,
       })
@@ -166,6 +173,21 @@ describe('app events (e2e)', () => {
       id: expect.any(String),
       occurredAt: expect.any(String),
     });
+  });
+
+  it('refuses a member acting through a front component token', async () => {
+    const response = await makeMetadataApiRequest(
+      {
+        query: EMIT_APP_EVENT_MUTATION,
+        variables: {
+          input: { event: 'messageAdded', properties: { companyId } },
+        },
+      },
+      frontComponentToken,
+    );
+
+    expect(response.body.data?.emitAppEvent ?? null).toBeNull();
+    expect(response.body.errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
   });
 
   it('refuses properties that do not match the definition', async () => {
