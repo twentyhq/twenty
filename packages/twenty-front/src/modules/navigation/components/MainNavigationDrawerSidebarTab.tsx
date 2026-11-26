@@ -37,6 +37,7 @@ type MainNavigationDrawerSidebarTabProps = {
   isActive: boolean;
   isExpanded: boolean;
   shouldShowTooltip: boolean;
+  isLabelHidden: boolean;
   attention: InboxChatAttention | null;
 };
 
@@ -45,6 +46,7 @@ export const MainNavigationDrawerSidebarTab = ({
   isActive,
   isExpanded,
   shouldShowTooltip,
+  isLabelHidden,
   attention,
 }: MainNavigationDrawerSidebarTabProps) => {
   const { t } = useLingui();
@@ -81,7 +83,7 @@ export const MainNavigationDrawerSidebarTab = ({
   };
 
   const handleClick = () => {
-    if (isActive && isTabMenuAvailable) {
+    if (isActive && isLayoutCustomizationModeEnabled) {
       return;
     }
 
@@ -113,6 +115,7 @@ export const MainNavigationDrawerSidebarTab = ({
       isDisabled={false}
       tooltip={tabLabel}
       shouldShowTooltip={shouldShowTooltip}
+      isLabelHidden={isLabelHidden}
       onClick={handleClick}
       isSelectedInEditMode={
         isLayoutCustomizationModeEnabled &&
@@ -150,13 +153,12 @@ export const MainNavigationDrawerSidebarTab = ({
           onOpen={() => setNavigationMenuItemIdToRename(null)}
         />
       )}
-      <StyledAnchor
-        ref={anchorRef}
-        onContextMenu={
-          isLayoutCustomizationModeEnabled ? handleContextMenu : undefined
-        }
-      >
-        {isActive ? <Dropdown.Trigger render={tabButton} /> : tabButton}
+      <StyledAnchor ref={anchorRef} onContextMenu={handleContextMenu}>
+        {isActive && isLayoutCustomizationModeEnabled ? (
+          <Dropdown.Trigger render={tabButton} />
+        ) : (
+          tabButton
+        )}
       </StyledAnchor>
       <DropdownContent
         anchor={anchorRef}

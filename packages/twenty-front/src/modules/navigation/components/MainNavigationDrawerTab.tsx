@@ -40,10 +40,7 @@ const StyledMode = styled.button<{
   font-weight: ${themeCssVariables.font.weight.medium};
   gap: ${({ isLabelShown }) =>
     isLabelShown ? themeCssVariables.spacing[1] : '0'};
-  height: ${({ isExpanded }) =>
-    isExpanded
-      ? themeCssVariables.spacing[7]
-      : `${NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE}px`};
+  height: ${NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE}px;
   justify-content: ${({ isExpanded }) =>
     isExpanded ? 'flex-start' : 'center'};
   min-width: 0;
@@ -53,7 +50,7 @@ const StyledMode = styled.button<{
       : 'none'};
   outline-offset: -1px;
   padding: ${({ isExpanded }) =>
-    isExpanded ? `0 ${themeCssVariables.spacing['1.5']}` : '0'};
+    isExpanded ? `0 ${themeCssVariables.spacing[2]}` : '0'};
   transition:
     background calc(${themeCssVariables.animation.duration.fast} * 1s) ease,
     color calc(${themeCssVariables.animation.duration.fast} * 1s) ease,
@@ -142,7 +139,7 @@ export const MainNavigationDrawerTab = ({
       content={tooltip}
       disabled={!shouldShowTooltip && !isDisabled}
       delay={TooltipDelay.noDelay}
-      side={isExpanded ? 'bottom' : 'right'}
+      side={isExpanded ? (isLabelHidden ? 'top' : 'bottom') : 'right'}
       positionMethod="fixed"
     >
       <StyledMode

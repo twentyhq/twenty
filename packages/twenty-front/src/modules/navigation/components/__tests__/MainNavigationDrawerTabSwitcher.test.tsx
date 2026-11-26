@@ -337,7 +337,7 @@ describe('MainNavigationDrawerTabSwitcher', () => {
     expect(await screen.findByText('Delete tab')).toBeInTheDocument();
   });
 
-  it('does not open the sidebar tab menu on right-click outside edit mode', async () => {
+  it('opens a sidebar tab and the customize menu on right-click outside edit mode', async () => {
     jest
       .mocked(useWorkspaceNavigationMenuContainers)
       .mockReturnValue([salesTab]);
@@ -349,11 +349,12 @@ describe('MainNavigationDrawerTabSwitcher', () => {
       target: screen.getByLabelText('Sales'),
     });
 
-    expect(mockSwitchToNavigationMenuTab).not.toHaveBeenCalled();
+    expect(mockSwitchToNavigationMenuTab).toHaveBeenCalledWith('sales-tab-id');
+    expect(await screen.findByText('Customize sidebar')).toBeInTheDocument();
     expect(screen.queryByText('Delete tab')).not.toBeInTheDocument();
   });
 
-  it('opens the customize menu when the active sidebar tab is clicked again', async () => {
+  it('keeps the active sidebar tab open when it is clicked again outside edit mode', async () => {
     jest
       .mocked(useWorkspaceNavigationMenuContainers)
       .mockReturnValue([salesTab]);
@@ -363,19 +364,17 @@ describe('MainNavigationDrawerTabSwitcher', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Sales' }));
 
-    await userEvent.click(await screen.findByText('Customize sidebar'));
-
-    expect(mockEnterLayoutCustomizationMode).toHaveBeenCalledTimes(1);
-    expect(mockSwitchToNavigationMenuTab).not.toHaveBeenCalled();
+    expect(mockSwitchToNavigationMenuTab).toHaveBeenCalledWith('sales-tab-id');
+    expect(screen.queryByText('Customize sidebar')).not.toBeInTheDocument();
   });
 
-  it('toggles the tab menu from the active sidebar tab button itself', async () => {
+  it('toggles the tab menu from the active sidebar tab button itself in edit mode', async () => {
     jest
       .mocked(useWorkspaceNavigationMenuContainers)
       .mockReturnValue([salesTab]);
     jest.mocked(useActiveNavigationMenuTab).mockReturnValue(salesTab);
 
-    renderTabSwitcher();
+    renderTabSwitcher({ isLayoutCustomizationModeEnabled: true });
 
     const salesButton = screen.getByRole('button', { name: 'Sales' });
 
