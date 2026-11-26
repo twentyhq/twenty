@@ -138,15 +138,20 @@ describe('AppNavigationDrawer', () => {
     );
   });
 
-  it('hides the bottom tabs in settings with the customizable sidebar', () => {
+  it('keeps the bottom tabs mounted when the drawer content changes', () => {
     jest.mocked(useIsFeatureEnabled).mockReturnValue(true);
-    jest.mocked(useIsSettingsDrawer).mockReturnValue(true);
 
-    render(<AppNavigationDrawer />);
+    const { rerender } = render(<AppNavigationDrawer />);
+    const modeSwitcher = screen.getByRole('button', {
+      name: 'Navigation modes',
+    });
+
+    jest.mocked(useIsSettingsDrawer).mockReturnValue(true);
+    rerender(<AppNavigationDrawer />);
 
     expect(screen.getByText('Settings content')).toBeInTheDocument();
-    expect(
-      screen.queryByRole('button', { name: 'Navigation modes' }),
-    ).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Navigation modes' })).toBe(
+      modeSwitcher,
+    );
   });
 });
