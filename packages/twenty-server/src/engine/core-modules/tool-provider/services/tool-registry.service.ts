@@ -15,6 +15,7 @@ import { type ToolRetrievalOptions } from 'src/engine/core-modules/tool-provider
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
+import { addChatReferencesToToolOutput } from 'src/engine/core-modules/tool-provider/output-transforms/add-chat-references-to-tool-output.util';
 import { compactToolOutput } from 'src/engine/core-modules/tool-provider/output-transforms/compact-tool-output.util';
 import { normalizeToolOutputToJsonValues } from 'src/engine/core-modules/tool-provider/output-transforms/normalize-tool-output-to-json-values.util';
 import { type DatabaseCrudOperation } from 'src/engine/core-modules/tool-provider/constants/database-crud-operation.const';
@@ -170,7 +171,9 @@ export class ToolRegistryService {
         );
 
         const compacted = compactOutput
-          ? (compactToolOutput(result) as ToolOutput)
+          ? (compactToolOutput(
+              addChatReferencesToToolOutput(result),
+            ) as ToolOutput)
           : result;
 
         const inlined = spillLargeOutput
@@ -449,7 +452,7 @@ export class ToolRegistryService {
     );
 
     const compacted = options?.compactOutput
-      ? (compactToolOutput(result) as ToolOutput)
+      ? (compactToolOutput(addChatReferencesToToolOutput(result)) as ToolOutput)
       : result;
 
     const inlined = options?.spillLargeOutput
