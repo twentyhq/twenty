@@ -11,7 +11,7 @@ import { PasswordUpdateNotifyEmail, renderEmail } from 'twenty-emails';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { AppPath, ConnectedAccountProvider } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
-import { IsNull, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import {
   AppTokenEntity,
@@ -43,10 +43,8 @@ import { type GoogleRequest } from 'src/engine/core-modules/auth/strategies/goog
 import { type MicrosoftRequest } from 'src/engine/core-modules/auth/strategies/microsoft.auth.strategy';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { SsoExchangeTokenService } from 'src/engine/core-modules/auth/token/services/sso-exchange-token.service';
 import { AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import {
   type AuthProviderWithPasswordType,
   type ExistingUserOrNewUser,
@@ -91,7 +89,6 @@ export class AuthService {
     private readonly ssoExchangeTokenService: SsoExchangeTokenService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly domainServerConfigService: DomainServerConfigService,
-    private readonly refreshTokenService: RefreshTokenService,
     private readonly loginTokenService: LoginTokenService,
     private readonly guardRedirectService: GuardRedirectService,
     private readonly userWorkspaceService: UserWorkspaceService,
@@ -438,22 +435,15 @@ export class AuthService {
       workspaceId,
       authProvider,
     });
-    const refreshToken = await this.refreshTokenService.generateRefreshToken({
-      userId: user.id,
-      workspaceId,
-      authProvider,
-      targetedTokenType: JwtTokenTypeEnum.ACCESS,
-    });
 
     return {
       tokens: {
         accessOrWorkspaceAgnosticToken: accessToken,
-        refreshToken,
       },
     };
   }
 
-  async generateImpersonationAccessTokenAndRefreshToken({
+  async generateImpersonationAccessToken({
     workspaceId,
     impersonatorUserWorkspaceId,
     impersonatedUserWorkspaceId,
@@ -489,18 +479,6 @@ export class AuthService {
       impersonatorUserWorkspaceId,
       impersonatedUserWorkspaceId,
     });
-    const refreshToken = await this.refreshTokenService.generateRefreshToken(
-      {
-        userId: impersonatedUserId,
-        workspaceId,
-        authProvider: AuthProviderEnum.Impersonation,
-        targetedTokenType: JwtTokenTypeEnum.ACCESS,
-        isImpersonating: true,
-        impersonatorUserWorkspaceId,
-        impersonatedUserWorkspaceId,
-      },
-      true,
-    );
 
     void eventLogContext.insertWorkspaceEvent(IMPERSONATION_EVENT, {
       level: impersonationLevel,
@@ -511,7 +489,6 @@ export class AuthService {
     return {
       tokens: {
         accessOrWorkspaceAgnosticToken: accessToken,
-        refreshToken,
       },
     };
   }
@@ -805,17 +782,6 @@ export class AuthService {
     await this.userRepository.update(userId, {
       passwordHash: newPasswordHash,
     });
-
-    await this.appTokenRepository.update(
-      {
-        userId,
-        type: AppTokenType.RefreshToken,
-        revokedAt: IsNull(),
-      },
-      {
-        revokedAt: new Date(),
-      },
-    );
 
     await this.userSessionService.revokeAllSessionsForUser({
       userId,

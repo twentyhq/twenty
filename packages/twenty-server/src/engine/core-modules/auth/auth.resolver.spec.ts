@@ -9,7 +9,6 @@ import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/
 import { ImpersonationAuthorizationService } from 'src/engine/core-modules/impersonation/services/impersonation-authorization.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
-import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { SsoExchangeTokenService } from 'src/engine/core-modules/auth/token/services/sso-exchange-token.service';
 import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
 import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
@@ -48,7 +47,6 @@ import { AuthService } from './services/auth.service';
 import { ResetPasswordService } from './services/reset-password.service';
 import { EmailVerificationTokenService } from './token/services/email-verification-token.service';
 import { LoginTokenService } from './token/services/login-token.service';
-import { RenewTokenService } from './token/services/renew-token.service';
 import { TransientTokenService } from './token/services/transient-token.service';
 
 describe('AuthResolver', () => {
@@ -109,10 +107,6 @@ describe('AuthResolver', () => {
           },
         },
         {
-          provide: RefreshTokenService,
-          useValue: {},
-        },
-        {
           provide: UserService,
           useValue: {
             findUserByEmail: jest.fn(),
@@ -163,10 +157,6 @@ describe('AuthResolver', () => {
             findFirstWorkspaceByUserId: jest.fn(),
             setLoginTokenToAvailableWorkspacesWhenAuthProviderMatch: jest.fn(),
           },
-        },
-        {
-          provide: RenewTokenService,
-          useValue: {},
         },
         {
           provide: SignInUpService,

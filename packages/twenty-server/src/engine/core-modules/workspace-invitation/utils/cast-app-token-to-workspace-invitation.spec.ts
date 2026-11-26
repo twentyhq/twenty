@@ -14,7 +14,7 @@ describe('castAppTokenToWorkspaceInvitation', () => {
   it('should throw an error if token type is not an invitation token', () => {
     const appToken = {
       id: '1',
-      type: AppTokenType.RefreshToken,
+      type: AppTokenType.PasswordResetToken,
       context: { email: 'test@example.com' },
       expiresAt: new Date(),
     } as AppTokenEntity;

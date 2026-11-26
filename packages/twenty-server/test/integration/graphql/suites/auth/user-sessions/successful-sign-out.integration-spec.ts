@@ -8,6 +8,7 @@ import {
 } from 'test/integration/graphql/suites/auth/user-sessions/utils/sign-in-with-cookie-capture.util';
 import {
   currentUserIdentityQueryFactory,
+  legacySignOutWithRefreshTokenQueryFactory,
   signOutQueryFactory,
 } from 'test/integration/graphql/suites/auth/user-sessions/utils/user-session-operations.util';
 
@@ -65,6 +66,29 @@ describe('successful sign-out (integration)', () => {
 
     expect(reuseResponse.body.errors).toBeDefined();
     expect(hasClearingCookie(reuseResponse)).toBe(true);
+  });
+
+  it('should still accept the ignored refreshToken argument sent by stale front bundles', async () => {
+    const signInResponse = await signInWithCookieCapture({
+      originHeader: ALLOWED_ORIGIN,
+    });
+    const sessionCookie = extractSessionCookie(signInResponse);
+
+    if (!sessionCookie) {
+      throw new Error('Expected a session cookie from sign-in');
+    }
+
+    const signOutResponse = await postMetadataOperationWithHeaders(
+      legacySignOutWithRefreshTokenQueryFactory('stale-refresh-token'),
+      {
+        originHeader: ALLOWED_ORIGIN,
+        cookieHeader: sessionCookie.cookieHeader,
+      },
+    );
+
+    expect(signOutResponse.body.errors).toBeUndefined();
+    expect(signOutResponse.body.data.signOut).toBe(true);
+    expect(hasClearingCookie(signOutResponse)).toBe(true);
   });
 
   it('should not clear anything on a cookie-less sign-out, so a cross-site POST cannot log a visitor out', async () => {

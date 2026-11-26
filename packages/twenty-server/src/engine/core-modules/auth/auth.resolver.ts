@@ -32,7 +32,6 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { ApiKeyTokenInput } from 'src/engine/core-modules/auth/dto/api-key-token.input';
-import { AppTokenInput } from 'src/engine/core-modules/auth/dto/app-token.input';
 import { AuthorizeAppDTO } from 'src/engine/core-modules/auth/dto/authorize-app.dto';
 import { AuthorizeAppInput } from 'src/engine/core-modules/auth/dto/authorize-app.input';
 import { AvailableWorkspacesAndAccessTokensDTO } from 'src/engine/core-modules/auth/dto/available-workspaces-and-access-tokens.dto';
@@ -57,13 +56,10 @@ import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/
 import { EmailVerificationTokenService } from 'src/engine/core-modules/auth/token/services/email-verification-token.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { assertLoginTokenIsNotForImpersonation } from 'src/engine/core-modules/auth/utils/assert-login-token-is-not-for-impersonation.util';
-import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
-import { RenewTokenService } from 'src/engine/core-modules/auth/token/services/renew-token.service';
 import { SsoExchangeTokenService } from 'src/engine/core-modules/auth/token/services/sso-exchange-token.service';
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
 import { AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { LoginTokenJwtPayload } from 'src/engine/core-modules/auth/types/login-token-jwt-payload.type';
 import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
 import { WorkspaceCreationCaptchaGuard } from 'src/engine/core-modules/captcha/workspace-creation-captcha.guard';
@@ -201,7 +197,6 @@ export class AuthResolver {
     private readonly twoFactorAuthenticationService: TwoFactorAuthenticationService,
     private readonly twoFactorAuthenticationRecoveryService: TwoFactorAuthenticationRecoveryService,
     private authService: AuthService,
-    private renewTokenService: RenewTokenService,
     private userService: UserService,
     private apiKeyService: ApiKeyService,
     private accessTokenService: AccessTokenService,
@@ -209,7 +204,6 @@ export class AuthResolver {
     private loginTokenService: LoginTokenService,
     private workspaceAgnosticTokenService: WorkspaceAgnosticTokenService,
     private ssoExchangeTokenService: SsoExchangeTokenService,
-    private refreshTokenService: RefreshTokenService,
     private signInUpService: SignInUpService,
     private transientTokenService: TransientTokenService,
     private emailVerificationService: EmailVerificationService,
@@ -350,18 +344,12 @@ export class AuthResolver {
               authProvider: AuthProviderEnum.Password,
             },
           ),
-        refreshToken: await this.refreshTokenService.generateRefreshToken({
-          userId: user.id,
-          authProvider: AuthProviderEnum.Password,
-          targetedTokenType: JwtTokenTypeEnum.WORKSPACE_AGNOSTIC,
-        }),
       },
     };
 
     await this.userSessionService.issueSessionForTokenPair({
       tokenPair: result.tokens,
       request: context.req,
-      origin: 'sign_in',
     });
 
     return result;
@@ -461,18 +449,12 @@ export class AuthResolver {
               authProvider: AuthProviderEnum.Password,
             },
           ),
-        refreshToken: await this.refreshTokenService.generateRefreshToken({
-          userId: user.id,
-          authProvider: AuthProviderEnum.Password,
-          targetedTokenType: JwtTokenTypeEnum.WORKSPACE_AGNOSTIC,
-        }),
       },
     };
 
     await this.userSessionService.issueSessionForTokenPair({
       tokenPair: result.tokens,
       request: context.req,
-      origin: 'sign_in',
     });
 
     return result;
@@ -519,7 +501,6 @@ export class AuthResolver {
     await this.userSessionService.issueSessionForTokenPair({
       tokenPair: authTokens.tokens,
       request: context.req,
-      origin: 'sign_in',
     });
 
     return authTokens;
@@ -571,7 +552,6 @@ export class AuthResolver {
     await this.userSessionService.issueSessionForTokenPair({
       tokenPair: authTokens.tokens,
       request: context.req,
-      origin: 'sign_in',
     });
 
     return {
@@ -629,18 +609,12 @@ export class AuthResolver {
               authProvider: AuthProviderEnum.Password,
             },
           ),
-        refreshToken: await this.refreshTokenService.generateRefreshToken({
-          userId: user.id,
-          authProvider: AuthProviderEnum.Password,
-          targetedTokenType: JwtTokenTypeEnum.WORKSPACE_AGNOSTIC,
-        }),
       },
     };
 
     await this.userSessionService.issueSessionForTokenPair({
       tokenPair: result.tokens,
       request: context.req,
-      origin: 'sign_in',
     });
 
     return result;
@@ -931,15 +905,14 @@ export class AuthResolver {
 
       await this.loginTokenService.consumeLoginTokenOrThrow(tokenPayload);
 
-      authTokens =
-        await this.authService.generateImpersonationAccessTokenAndRefreshToken({
-          workspaceId,
-          impersonatorUserWorkspaceId,
-          impersonatedUserWorkspaceId,
-          _impersonatorUserId: impersonatorUserId,
-          impersonatedUserId,
-          impersonationLevel,
-        });
+      authTokens = await this.authService.generateImpersonationAccessToken({
+        workspaceId,
+        impersonatorUserWorkspaceId,
+        impersonatedUserWorkspaceId,
+        _impersonatorUserId: impersonatorUserId,
+        impersonatedUserId,
+        impersonationLevel,
+      });
     } else {
       await this.validateRegularAuthentication(workspace, userWorkspace);
 
@@ -955,7 +928,6 @@ export class AuthResolver {
     await this.userSessionService.issueSessionForTokenPair({
       tokenPair: authTokens.tokens,
       request: context.req,
-      origin: 'sign_in',
     });
 
     return authTokens;
@@ -983,18 +955,12 @@ export class AuthResolver {
               authProvider,
             },
           ),
-        refreshToken: await this.refreshTokenService.generateRefreshToken({
-          userId,
-          authProvider,
-          targetedTokenType: JwtTokenTypeEnum.WORKSPACE_AGNOSTIC,
-        }),
       },
     };
 
     await this.userSessionService.issueSessionForTokenPair({
       tokenPair: authTokens.tokens,
       request: context.req,
-      origin: 'sign_in',
     });
 
     return authTokens;
@@ -1197,32 +1163,17 @@ export class AuthResolver {
     });
   }
 
-  @Mutation(() => AuthTokens)
-  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
-  @AllowSuspendedWorkspace()
-  async renewToken(
-    @Args() args: AppTokenInput,
-    @Context() context: { req: Request },
-  ): Promise<AuthTokens> {
-    const tokens = await this.renewTokenService.generateTokensFromRefreshToken(
-      args.appToken,
-    );
-
-    await this.userSessionService.issueSessionForTokenPair({
-      tokenPair: tokens,
-      request: context.req,
-      origin: 'renewal_bridge',
-    });
-
-    return { tokens: tokens };
-  }
-
   @Mutation(() => Boolean)
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   @AllowSuspendedWorkspace()
   async signOut(
     @Context() context: { req: Request },
-    @Args('refreshToken', { nullable: true }) refreshToken?: string,
+    @Args('refreshToken', {
+      type: () => String,
+      nullable: true,
+      deprecationReason: 'Ignored: refresh tokens are no longer issued.',
+    })
+    _refreshToken: string | undefined,
   ): Promise<boolean> {
     try {
       await this.userSessionService.signOut({
@@ -1230,7 +1181,6 @@ export class AuthResolver {
           this.userSessionCookieService.extractSessionTokenFromRequest(
             context.req,
           ),
-        refreshToken,
       });
     } finally {
       // Public, and SameSite=Lax keeps the cookie off cross-site POSTs: clearing unconditionally lets any site sign visitors out

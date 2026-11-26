@@ -9,17 +9,12 @@ import { isDefined } from 'twenty-shared/utils';
 import { IsNull, MoreThan, Repository } from 'typeorm';
 
 import {
-  AppTokenEntity,
-  AppTokenType,
-} from 'src/engine/core-modules/app-token/app-token.entity';
-import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { type AuthTokenPair } from 'src/engine/core-modules/auth/dto/auth-token-pair.dto';
 import { type AccessTokenJwtPayload } from 'src/engine/core-modules/auth/types/access-token-jwt-payload.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
-import { type RefreshTokenJwtPayload } from 'src/engine/core-modules/auth/types/refresh-token-jwt-payload.type';
 import { type WorkspaceAgnosticTokenJwtPayload } from 'src/engine/core-modules/auth/types/workspace-agnostic-token-jwt-payload.type';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
@@ -33,7 +28,6 @@ import { UserSessionRevokedReason } from 'src/engine/core-modules/user-session/t
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
 import { type CachedUserSession } from 'src/engine/core-modules/user-session/types/cached-user-session.type';
 import { type CreateUserSessionInput } from 'src/engine/core-modules/user-session/types/create-user-session-input.type';
-import { type UserSessionCreationOrigin } from 'src/engine/core-modules/user-session/types/user-session-creation-origin.type';
 import { extractCloudflareGeolocationFromRequest } from 'src/engine/core-modules/user-session/utils/extract-cloudflare-geolocation-from-request.util';
 import { isRequestOriginAllowed } from 'src/engine/core-modules/user-session/utils/is-request-origin-allowed.util';
 import { generateUserSessionToken } from 'src/engine/core-modules/user-session/utils/generate-user-session-token.util';
@@ -67,8 +61,6 @@ export class UserSessionService {
   constructor(
     @InjectRepository(UserSessionEntity)
     private readonly userSessionRepository: Repository<UserSessionEntity>,
-    @InjectRepository(AppTokenEntity)
-    private readonly appTokenRepository: Repository<AppTokenEntity>,
     @InjectCacheStorage(CacheStorageNamespace.EngineAuthSession)
     private readonly cacheStorageService: CacheStorageService,
     private readonly twentyConfigService: TwentyConfigService,
@@ -80,11 +72,9 @@ export class UserSessionService {
   async issueSessionForTokenPair({
     tokenPair,
     request,
-    origin,
   }: {
     tokenPair: AuthTokenPair;
     request: Request;
-    origin: UserSessionCreationOrigin;
   }): Promise<void> {
     const response = request.res;
 
@@ -108,7 +98,6 @@ export class UserSessionService {
       const sessionInput = this.buildCreateSessionInputFromTokenPair(
         tokenPair,
         request,
-        origin,
       );
 
       if (!isDefined(sessionInput)) {
@@ -120,28 +109,6 @@ export class UserSessionService {
 
       const presentedSessionToken =
         this.userSessionCookieService.extractSessionTokenFromRequest(request);
-
-      if (isDefined(presentedSessionToken) && origin === 'renewal_bridge') {
-        try {
-          const { payload: presentedPayload } = await this.resolveSession(
-            presentedSessionToken,
-          );
-
-          if (
-            this.isSessionScopeMatchingRenewal(presentedPayload, sessionInput)
-          ) {
-            return;
-          }
-        } catch (error) {
-          if (
-            !(error instanceof AuthException) ||
-            (error.code !== AuthExceptionCode.UNAUTHENTICATED &&
-              error.code !== AuthExceptionCode.SESSION_SUPERSEDED)
-          ) {
-            throw error;
-          }
-        }
-      }
 
       // Create the replacement first so a failed insert leaves the browser its working credential.
       const { sessionToken, session } = await this.createSession(sessionInput);
@@ -205,37 +172,9 @@ export class UserSessionService {
     });
   }
 
-  private isSessionScopeMatchingRenewal(
-    presentedPayload: AccessTokenJwtPayload | WorkspaceAgnosticTokenJwtPayload,
-    sessionInput: CreateUserSessionInput,
-  ): boolean {
-    if (presentedPayload.type !== JwtTokenTypeEnum.ACCESS) {
-      return (
-        presentedPayload.userId === sessionInput.userId &&
-        !isDefined(sessionInput.workspaceId) &&
-        sessionInput.isImpersonating !== true
-      );
-    }
-
-    return (
-      presentedPayload.userId === sessionInput.userId &&
-      (presentedPayload.workspaceId ?? null) ===
-        (sessionInput.workspaceId ?? null) &&
-      (presentedPayload.isImpersonating === true) ===
-        (sessionInput.isImpersonating === true) &&
-      (presentedPayload.userWorkspaceId ?? null) ===
-        (sessionInput.userWorkspaceId ?? null) &&
-      (presentedPayload.impersonatorUserWorkspaceId ?? null) ===
-        (sessionInput.impersonatorUserWorkspaceId ?? null) &&
-      (presentedPayload.impersonatedUserWorkspaceId ?? null) ===
-        (sessionInput.impersonatedUserWorkspaceId ?? null)
-    );
-  }
-
   private buildCreateSessionInputFromTokenPair(
     tokenPair: AuthTokenPair,
     request: Request,
-    origin: UserSessionCreationOrigin,
   ): CreateUserSessionInput | undefined {
     const payload = this.jwtWrapperService.decode<
       AccessTokenJwtPayload | WorkspaceAgnosticTokenJwtPayload
@@ -262,7 +201,6 @@ export class UserSessionService {
         isImpersonating: payload.isImpersonating === true,
         impersonatorUserWorkspaceId: payload.impersonatorUserWorkspaceId,
         impersonatedUserWorkspaceId: payload.impersonatedUserWorkspaceId,
-        origin,
         ...requestMetadata,
       };
     }
@@ -271,7 +209,6 @@ export class UserSessionService {
       return {
         userId: payload.userId ?? payload.sub,
         authProvider: payload.authProvider,
-        origin,
         ...requestMetadata,
       };
     }
@@ -343,7 +280,7 @@ export class UserSessionService {
       }),
     );
 
-    if (input.origin === 'sign_in' && isDefined(session.workspaceId)) {
+    if (isDefined(session.workspaceId)) {
       this.emitAuthSessionEvent(session, 'user_signed_in');
     }
 
@@ -561,59 +498,13 @@ export class UserSessionService {
     return revokedSessions.length;
   }
 
-  async signOut({
-    sessionToken,
-    refreshToken,
-  }: {
-    sessionToken?: string;
-    refreshToken?: string;
-  }): Promise<void> {
-    try {
-      if (isNonEmptyString(sessionToken)) {
-        await this.revokeSessionByToken(
-          sessionToken,
-          UserSessionRevokedReason.UserSignOut,
-        );
-      }
-    } finally {
-      if (isNonEmptyString(refreshToken)) {
-        await this.revokePresentedRefreshToken(refreshToken);
-      }
-    }
-  }
-
-  private async revokePresentedRefreshToken(
-    refreshToken: string,
-  ): Promise<void> {
-    let payload: RefreshTokenJwtPayload | undefined;
-
-    try {
-      await this.jwtWrapperService.verifyJwtToken(refreshToken);
-
-      payload = this.jwtWrapperService.decode<RefreshTokenJwtPayload>(
-        refreshToken,
-        { json: true },
+  async signOut({ sessionToken }: { sessionToken?: string }): Promise<void> {
+    if (isNonEmptyString(sessionToken)) {
+      await this.revokeSessionByToken(
+        sessionToken,
+        UserSessionRevokedReason.UserSignOut,
       );
-    } catch {
-      return;
     }
-
-    if (
-      payload?.type !== JwtTokenTypeEnum.REFRESH ||
-      !isNonEmptyString(payload.jti)
-    ) {
-      return;
-    }
-
-    // Outside the catch: a storage failure leaves a usable refresh token behind, so it must surface.
-    await this.appTokenRepository.update(
-      {
-        id: payload.jti,
-        type: AppTokenType.RefreshToken,
-        revokedAt: IsNull(),
-      },
-      { revokedAt: new Date() },
-    );
   }
 
   private async revokeSessionEntity(

@@ -30,10 +30,6 @@ export const getAuthTokensFromLoginToken = async ({
             token
             expiresAt
           }
-          refreshToken {
-            token
-            expiresAt
-          }
         }
       }
     }

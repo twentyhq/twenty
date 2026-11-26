@@ -10,7 +10,6 @@ import { getAuthTokensFromTwoFactorAuthenticationRecoveryCode } from 'test/integ
 import { getLoginTokenFromCredentialsQueryFactory } from 'test/integration/graphql/utils/get-login-token-from-credentials.query-factory.util';
 import { initiateOtpProvisioning } from 'test/integration/graphql/utils/initiate-otp-provisioning.util';
 import { initiateOtpProvisioningForAuthenticatedUser } from 'test/integration/graphql/utils/initiate-otp-provisioning-for-authenticated-user.util';
-import { renewToken } from 'test/integration/graphql/utils/renew-token.util';
 import { verifyTwoFactorAuthenticationMethod } from 'test/integration/graphql/utils/verify-two-factor-authentication-method.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { makeAdminPanelApiRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
@@ -556,7 +555,7 @@ describe('Two-factor authentication recovery codes (integration)', () => {
     it('removes the authenticator, signs out other sessions and works only once', async () => {
       const otpLoginToken = await getJonyLoginToken();
 
-      const { data: otpData, errors: otpErrors } = await getAuthTokensFromOtp({
+      const { errors: otpErrors } = await getAuthTokensFromOtp({
         loginToken: otpLoginToken,
         otp: await generateOtp(jonySecret),
         origin: buildAppleWorkspaceOrigin(),
@@ -564,16 +563,6 @@ describe('Two-factor authentication recovery codes (integration)', () => {
       });
 
       expect(otpErrors).toBeUndefined();
-
-      const rotatedRefreshToken =
-        otpData.getAuthTokensFromOTP.tokens.refreshToken.token;
-
-      const rotationResponse = await renewToken(rotatedRefreshToken);
-
-      expect(rotationResponse.body.errors).toBeUndefined();
-
-      const refreshTokenFromBeforeRecovery =
-        rotationResponse.body.data.renewToken.tokens.refreshToken.token;
 
       const { recoveryCode } = await generateCodeForJony();
       const loginToken = await getJonyLoginToken();
@@ -630,18 +619,6 @@ describe('Two-factor authentication recovery codes (integration)', () => {
       );
 
       expect(revokedSessions.length).toBeGreaterThan(0);
-
-      for (const refreshToken of [
-        refreshTokenFromBeforeRecovery,
-        rotatedRefreshToken,
-      ]) {
-        const renewResponse = await renewToken(refreshToken);
-
-        expect(renewResponse.body.data).toBeNull();
-        expect(renewResponse.body.errors?.[0]?.extensions?.code).toBe(
-          'FORBIDDEN',
-        );
-      }
 
       const { errors: replayErrors } =
         await getAuthTokensFromTwoFactorAuthenticationRecoveryCode({
@@ -857,45 +834,6 @@ describe('Two-factor authentication recovery codes (integration)', () => {
 
       await deleteRecoveryCodes();
       jonySecret = await enrollAuthenticator(APPLE_JONY_MEMBER_ACCESS_TOKEN);
-    });
-
-    it('refuses a refresh token renewal that was in flight when a recovery revoked the sessions', async () => {
-      const { data } = await getAuthTokensFromOtp({
-        loginToken: await getJonyLoginToken(),
-        otp: await generateOtp(jonySecret),
-        origin: buildAppleWorkspaceOrigin(),
-        expectToFail: false,
-      });
-
-      const lock = await holdUserAuthenticationLock(USER_DATA_SEED_IDS.JONY);
-
-      let renewal: ReturnType<typeof renewToken> | undefined;
-
-      try {
-        renewal = renewToken(
-          data.getAuthTokensFromOTP.tokens.refreshToken.token,
-        );
-
-        await waitUntilARequestAwaitsTheUserAuthenticationLock();
-
-        await lock.query(
-          `UPDATE core."appToken" SET "revokedAt" = COALESCE("revokedAt", now()), "context" = COALESCE("context", '{}'::jsonb) || jsonb_build_object('revokedReason', $4::text) WHERE "userId" = $1 AND "workspaceId" = $2 AND "type" = $3`,
-          [
-            USER_DATA_SEED_IDS.JONY,
-            SEED_APPLE_WORKSPACE_ID,
-            AppTokenType.RefreshToken,
-            UserSessionRevokedReason.TwoFactorAuthenticationReset,
-          ],
-        );
-        await lock.commitTransaction();
-      } finally {
-        await releaseUserAuthenticationLock(lock);
-      }
-
-      const response = await renewal;
-
-      expect(response.body.data).toBeNull();
-      expect(response.body.errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
     });
 
     it('stops accepting guesses once the member bucket is spent', async () => {
