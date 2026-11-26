@@ -22,7 +22,10 @@ const convertFlatValidationRule = ({
   allFlatEntityMaps,
 }: {
   flatValidationRule: FlatValidationRule;
-  allFlatEntityMaps: AllFlatEntityMaps;
+  allFlatEntityMaps: Pick<
+    AllFlatEntityMaps,
+    'flatObjectMetadataMaps' | 'flatFieldMetadataMaps'
+  >;
 }): { manifest: ValidationRuleManifest } | { reason: string } => {
   const expression = printFlatValidationRuleExpression({
     flatValidationRule,

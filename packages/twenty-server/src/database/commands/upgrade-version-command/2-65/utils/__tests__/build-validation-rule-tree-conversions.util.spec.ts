@@ -50,7 +50,6 @@ const buildMaps = () => {
   return { flatObjectMetadataMaps, flatFieldMetadataMaps };
 };
 
-// The shape rules had before trees: text naming fields as they were when saved, and bindings
 const buildLegacyRule = (
   rule: Pick<FlatValidationRule, 'id' | 'expression'> &
     Partial<FlatValidationRule>,

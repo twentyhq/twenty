@@ -11,7 +11,16 @@ export const fromValidationRuleManifestToUniversalFlatValidationRule = ({
   applicationUniversalIdentifier,
   now,
 }: {
-  validationRuleManifest: Omit<ValidationRuleManifest, 'expression'>;
+  validationRuleManifest: Pick<
+    ValidationRuleManifest,
+    | 'universalIdentifier'
+    | 'objectUniversalIdentifier'
+    | 'errorFieldUniversalIdentifier'
+    | 'name'
+    | 'description'
+    | 'icon'
+    | 'message'
+  >;
   tree: UniversalFlatValidationRule['tree'];
   isActive: boolean;
   applicationUniversalIdentifier: string;
