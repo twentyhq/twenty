@@ -1,6 +1,7 @@
 import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { WidgetType } from '~/generated-metadata/graphql';
 
+// TODO: temporary, remove once conditional availability supports object read access
 export const WIDGET_TYPE_TO_READ_OBJECT_NAME_SINGULAR: Partial<
   Record<WidgetType, StandardObjectNameSingular>
 > = {

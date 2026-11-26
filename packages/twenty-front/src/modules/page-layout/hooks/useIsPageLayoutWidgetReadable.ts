@@ -10,6 +10,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { viewsByIdMapSelector } from '@/views/states/selectors/viewsByIdMapSelector';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 
+// TODO: temporary, remove once conditional availability supports object read access
 export const useIsPageLayoutWidgetReadable = () => {
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
   const { objectMetadataItems } = useObjectMetadataItems();
