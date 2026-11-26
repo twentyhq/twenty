@@ -22,7 +22,7 @@ import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
-@RegisteredWorkspaceCommand('2.65.0', 1795701054812)
+@RegisteredWorkspaceCommand('2.65.0', 1795707939505)
 @Command({
   name: 'upgrade:2-65:provision-rich-text-files-columns',
   description:
