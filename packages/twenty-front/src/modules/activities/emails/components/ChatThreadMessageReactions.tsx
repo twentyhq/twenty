@@ -6,6 +6,7 @@ import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { type ChatMessageReaction } from '@/activities/emails/types/ChatMessageReaction';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { formatDisplayList } from '~/utils/format/formatDisplayList';
 
 const StyledReactions = styled.div`
@@ -35,7 +36,11 @@ export const ChatThreadMessageReactions = ({
         const reactors = formatDisplayList(reactorNames);
 
         return (
-          <Tooltip key={emoji} content={reactors}>
+          <Tooltip
+            key={emoji}
+            content={reactors}
+            delay={TooltipDelay.shortDelay}
+          >
             <StyledReaction>
               <ReactionButton
                 emoji={emoji}

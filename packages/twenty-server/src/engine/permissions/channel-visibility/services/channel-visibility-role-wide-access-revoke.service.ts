@@ -106,12 +106,14 @@ export class ChannelVisibilityRoleWideAccessRevokeService {
       flatRoleMaps,
       flatObjectPermissionMaps,
       flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
       rolesPermissions,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'rolesPermissions',
       'flatRoleMaps',
       'flatObjectPermissionMaps',
       'flatObjectMetadataMaps',
+      'flatFieldMetadataMaps',
     ]);
 
     const userRoles = Object.values(flatRoleMaps.byUniversalIdentifier)
@@ -227,7 +229,14 @@ export class ChannelVisibilityRoleWideAccessRevokeService {
             objectUniversalIdentifier
           ];
 
-        if (!isDefined(flatObjectMetadata)) {
+        if (
+          !isDefined(flatObjectMetadata) ||
+          !isDefined(
+            flatFieldMetadataMaps.byUniversalIdentifier[
+              channelRecordFieldUniversalIdentifier
+            ],
+          )
+        ) {
           continue;
         }
 

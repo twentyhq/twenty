@@ -6,6 +6,7 @@ import {
   type LogicFunctionExecutionContext,
 } from 'twenty-sdk/logic-function';
 
+import { WHATSAPP_CHAT_OPTIONS_MAX_COUNT } from 'src/constants/whatsapp-chat-options-max-count.constant';
 import { WHATSAPP_HISTORY_IMPORT_CHATS_PER_JOB } from 'src/constants/whatsapp-history-import-chats-per-job.constant';
 import { WHATSAPP_IMPORT_HISTORY_TIMEOUT_SECONDS } from 'src/constants/whatsapp-import-history-timeout-seconds.constant';
 import { WHATSAPP_PLAN_HISTORY_IMPORT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
@@ -21,6 +22,7 @@ import {
   saveWhatsappHistoryImportChunkChats,
   saveWhatsappHistoryImportPlanning,
 } from 'src/logic-functions/utils/whatsapp-history-import-kv.util';
+import { orderSelectedWhatsappChatsByRecency } from 'src/logic-functions/utils/order-selected-whatsapp-chats-by-recency.util';
 import { type WhatsappImportPolicy } from 'src/types/whatsapp-import-policy.type';
 import { type UnipileChat } from 'src/unipile/types/unipile-chat.type';
 import { UnipileRateLimitError } from 'src/unipile/utils/request-unipile.util';
@@ -156,12 +158,17 @@ const planHistoryImport = async ({
     const deadlineAtMs =
       Date.now() + WHATSAPP_PLAN_HISTORY_IMPORT_TIME_BUDGET_MILLISECONDS;
 
-    // The import job reads each selected conversation itself, so none is read here
     chats =
       importPolicy === 'SELECTED'
-        ? (await getWhatsappSettings(connectedAccountId)).selectedChats.map(
-            ({ id, name }) => ({ id, name, is_group: false, is_1to1: false }),
-          )
+        ? orderSelectedWhatsappChatsByRecency({
+            selectedChats: (await getWhatsappSettings(connectedAccountId))
+              .selectedChats,
+            recentChats: await listMostRecentUnipileChats({
+              accountId: unipileAccountId,
+              limit: WHATSAPP_CHAT_OPTIONS_MAX_COUNT,
+              deadlineAtMs,
+            }),
+          })
         : await listMostRecentUnipileChats({
             accountId: unipileAccountId,
             limit: conversationLimit,
@@ -269,7 +276,7 @@ export default defineLogicFunction({
   universalIdentifier: WHATSAPP_PLAN_HISTORY_IMPORT_UNIVERSAL_IDENTIFIER,
   name: 'whatsapp-plan-history-import',
   description:
-    'Lists the past WhatsApp conversations of a connection to import, the selected ones or the most recent ones up to the limit of the run, stores them page by page for the import jobs and starts the import chain.',
+    'Lists the past WhatsApp conversations of a connection to import, most recent first, and starts their import.',
   timeoutSeconds: WHATSAPP_IMPORT_HISTORY_TIMEOUT_SECONDS,
   handler: whatsappPlanHistoryImportHandler,
 });

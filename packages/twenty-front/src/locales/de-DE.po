@@ -9616,7 +9616,7 @@ msgid "Customize record page"
 msgstr "Datensatzseite anpassen"
 
 #. js-lingui-id: hxjpaE
-#: src/modules/navigation/components/MainNavigationDrawerContextMenu.tsx
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuCustomizeSidebarMenuContent.tsx
 #: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
 #: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
 msgid "Customize sidebar"
@@ -16382,11 +16382,6 @@ msgstr "Neue E-Mails aus diesem Konto importieren"
 msgid "Import new events from this account"
 msgstr "Neue Ereignisse aus diesem Konto importieren"
 
-#. js-lingui-id: 4Ljmum
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Import occurrences of recurring Google Calendar meetings up to 90 days ahead only, and import later occurrences as they come within 90 days."
-msgstr "Importiere Vorkommen wiederkehrender Google Calendar-Termine nur bis zu 90 Tage im Voraus und importiere spätere Vorkommen, sobald sie innerhalb von 90 Tagen liegen."
-
 #. js-lingui-id: D5QSQM
 #: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx
 msgid "Import only selected folders/labels"
@@ -16396,11 +16391,6 @@ msgstr "Nur ausgewählte Ordner/Labels importieren"
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
 msgid "Import or add the MCP configuration from JetBrains settings."
 msgstr "Importieren oder fügen Sie die MCP-Konfiguration aus den JetBrains-Einstellungen hinzu."
-
-#. js-lingui-id: 8zGGat
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Import recurring meetings 90 days ahead"
-msgstr "Wiederkehrende Termine 90 Tage im Voraus importieren"
 
 #. js-lingui-id: LHHO6e
 #: src/modules/getting-started/constants/GettingStartedImportPrompt.ts
@@ -26034,11 +26024,6 @@ msgstr "Eingeschränkt"
 msgid "Result"
 msgstr "Ergebnis"
 
-#. js-lingui-id: kx0s+n
-#: src/modules/side-panel/pages/search/components/SidePanelSearchRecordsPage.tsx
-msgid "Results"
-msgstr "Ergebnisse"
-
 #. js-lingui-id: v39wLo
 #: src/modules/log-console/components/LogConsoleResults.tsx
 #: src/modules/settings/event-logs/components/SettingsLogs.tsx
@@ -27115,6 +27100,7 @@ msgstr "Mitglieder des Arbeitsbereichs suchen"
 
 #. js-lingui-id: YIix5Y
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
+#: src/modules/navigation/components/MainNavigationDrawerSearchField.tsx
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 msgid "Search..."
 msgstr "Suche..."
@@ -29264,7 +29250,7 @@ msgstr "Beginnt um"
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
 #: src/modules/ui/field/input/components/AddressInput.tsx
 msgid "State"
-msgstr "Zustand"
+msgstr "Bundesland/Region"
 
 #. js-lingui-id: EPFwS4
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
@@ -29984,6 +29970,7 @@ msgid "System skills"
 msgstr "Systemfähigkeiten"
 
 #. js-lingui-id: HuA3RU
+#: src/modules/navigation-menu-item/display/hooks/useGetNavigationMenuTabLabel.ts
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
 msgid "Tab"

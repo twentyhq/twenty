@@ -5,6 +5,7 @@ const mocks = vi.hoisted(() => ({
   listMessageChannels: vi.fn(),
   updateMessageChannel: vi.fn(),
   enqueueJobs: vi.fn(),
+  getJobs: vi.fn(),
   kvStore: new Map<string, unknown>(),
 }));
 
@@ -17,10 +18,14 @@ vi.mock('twenty-sdk/logic-function', () => ({
   listMessageChannels: mocks.listMessageChannels,
   updateMessageChannel: mocks.updateMessageChannel,
   enqueueJobs: mocks.enqueueJobs,
+  getJobs: mocks.getJobs,
   kv: {
     get: async (key: string) => mocks.kvStore.get(key) ?? null,
     set: async (key: string, value: unknown) => {
       mocks.kvStore.set(key, value);
+    },
+    delete: async (key: string) => {
+      mocks.kvStore.delete(key);
     },
   },
 }));
@@ -38,11 +43,12 @@ const updateSettings = (body: Record<string, unknown>) =>
     },
   );
 
-const setHistoryImport = (importPolicy: 'ALL' | 'CONTACTS_ONLY') =>
+const setHistoryImport = (status: 'COMPLETED' | 'IMPORTING') =>
   mocks.kvStore.set(HISTORY_KEY, {
     runId: 'run-1',
-    importPolicy,
-    status: 'COMPLETED',
+    importPolicy: 'CONTACTS_ONLY',
+    conversationLimit: 100,
+    status,
     importedConversationCount: 12,
     startedAt: '2026-10-01T00:00:00.000Z',
   });
@@ -67,25 +73,25 @@ describe('whatsappUpdateSettingsHandler', () => {
     mocks.listMessageChannels.mockResolvedValue([
       { id: 'channel-id', visibility: 'METADATA' },
     ]);
-    setHistoryImport('ALL');
+    mocks.getJobs.mockImplementation(async (jobIds: string[]) =>
+      jobIds.map((jobId) => ({ jobId, state: 'DELAYED' })),
+    );
+    setHistoryImport('COMPLETED');
   });
 
   it('saves the valid fields of the member connection and ignores the others', async () => {
     const view = await updateSettings({
       contactAutoCreationPolicy: 'NONE',
-      areGroupChatsImported: 'yes',
+      areChatsMarkedAsRead: 'yes',
       importPolicy: 'SOME',
-      historyConversationLimit: 30,
     });
 
     expect(view).toEqual(
       expect.objectContaining({
         isConnected: true,
         settings: {
-          importPolicy: 'ALL',
+          importPolicy: 'CONTACTS_ONLY',
           selectedChats: [],
-          areGroupChatsImported: true,
-          historyConversationLimit: 20,
           contactAutoCreationPolicy: 'NONE',
           areChatsMarkedAsRead: false,
           visibility: 'METADATA',
@@ -96,24 +102,7 @@ describe('whatsappUpdateSettingsHandler', () => {
       false,
     );
     expect(mocks.updateMessageChannel).not.toHaveBeenCalled();
-    expect(mocks.enqueueJobs).not.toHaveBeenCalled();
   });
-
-  it.each([0, 20, 50, 100])(
-    'saves %i past conversations to import',
-    async (historyConversationLimit) => {
-      const view = await updateSettings({ historyConversationLimit });
-
-      expect(view).toEqual(
-        expect.objectContaining({
-          settings: expect.objectContaining({ historyConversationLimit }),
-        }),
-      );
-      expect(mocks.kvStore.get('whatsapp-settings:connection-id')).toEqual(
-        expect.objectContaining({ historyConversationLimit }),
-      );
-    },
-  );
 
   it('saves whether chats opened in Twenty are marked as read on WhatsApp', async () => {
     const view = await updateSettings({ areChatsMarkedAsRead: true });
@@ -140,16 +129,66 @@ describe('whatsappUpdateSettingsHandler', () => {
     ).not.toHaveProperty('visibility');
   });
 
-  it.each([
-    [{ importPolicy: 'ALL' }],
-    [{ importPolicy: 'CONTACTS_ONLY' }],
-    [{ areGroupChatsImported: true }],
-    [{ historyConversationLimit: 50 }],
-  ])('leaves importing to the Sync button when saving %o', async (update) => {
-    setHistoryImport('CONTACTS_ONLY');
+  it.each([[{ importPolicy: 'ALL' }], [{ contactAutoCreationPolicy: 'NONE' }]])(
+    'imports the past conversations again when saving %o',
+    async (update) => {
+      const view = await updateSettings(update);
 
+      expect(mocks.enqueueJobs).toHaveBeenCalledExactlyOnceWith(
+        expect.objectContaining({ delayMs: 15 * 1000 }),
+      );
+      expect(view).toEqual(
+        expect.objectContaining({
+          historyImport: expect.objectContaining({ status: 'IMPORTING' }),
+        }),
+      );
+      expect(mocks.kvStore.get(HISTORY_KEY)).toEqual(
+        expect.objectContaining({
+          runId: expect.not.stringMatching(/^run-1$/),
+        }),
+      );
+    },
+  );
+
+  it.each([
+    [{ importPolicy: 'CONTACTS_ONLY' }],
+    [{ visibility: 'SHARE_EVERYTHING' }],
+    [{ areChatsMarkedAsRead: true }],
+  ])('leaves the past conversations alone when saving %o', async (update) => {
     await updateSettings(update);
 
     expect(mocks.enqueueJobs).not.toHaveBeenCalled();
+    expect(mocks.kvStore.get(HISTORY_KEY)).toEqual(
+      expect.objectContaining({ runId: 'run-1', status: 'COMPLETED' }),
+    );
+  });
+
+  it('replaces a running import and drops what it had listed', async () => {
+    setHistoryImport('IMPORTING');
+    mocks.kvStore.set('whatsapp-history-import-planning:connection-id:run-1', {
+      plannedChunkCount: 1,
+      plannedConversationCount: 20,
+    });
+
+    await updateSettings({ importPolicy: 'ALL' });
+
+    expect(mocks.enqueueJobs).toHaveBeenCalledOnce();
+    expect(
+      mocks.kvStore.has('whatsapp-history-import-planning:connection-id:run-1'),
+    ).toBe(false);
+    expect(mocks.kvStore.get(HISTORY_KEY)).toEqual(
+      expect.objectContaining({ status: 'IMPORTING', importPolicy: 'ALL' }),
+    );
+  });
+
+  it('stops a running import once no conversation is selected', async () => {
+    setHistoryImport('IMPORTING');
+
+    await updateSettings({ importPolicy: 'SELECTED' });
+
+    expect(mocks.enqueueJobs).not.toHaveBeenCalled();
+    expect(mocks.kvStore.get(HISTORY_KEY)).toEqual(
+      expect.objectContaining({ runId: 'run-1', status: 'CANCELLED' }),
+    );
   });
 });
