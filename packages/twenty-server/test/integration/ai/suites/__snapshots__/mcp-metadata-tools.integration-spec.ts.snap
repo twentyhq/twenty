@@ -385,6 +385,34 @@ exports[`MCP metadata tools (integration) should describe the metadata tools to 
           "description": "Description",
           "type": "string",
         },
+        "formula": {
+          "anyOf": [
+            {
+              "properties": {
+                "currencyCodeExpression": {
+                  "description": "Required for a CURRENCY formula, whose expression is the amount in micros: the currency code as text, e.g. "USD" or amount.currencyCode.",
+                  "type": "string",
+                },
+                "expression": {
+                  "description": "Formula computing the field value from other fields of the same record, read-only for record writes. Reference fields by name, with dot access for a composite part (amount.amountMicros) or a field of a many-to-one related record (company.name). Aggregate a one-to-many relation with count(relation, condition?), sum(relation.field, condition?), avg, min and max, e.g. count(tasks), sum(opportunities.amount.amountMicros, opportunities.stage == 'CUSTOMER'). Same operators and functions as validation rules. Load the metadata-building skill for the full syntax and check the expression with validate_formula_expression first.",
+                  "type": "string",
+                },
+              },
+              "required": [
+                "expression",
+              ],
+              "type": "object",
+            },
+            {
+              "type": "null",
+            },
+          ],
+          "description": "Makes the field a formula field. Only for types TEXT, NUMBER, BOOLEAN, DATE, DATE_TIME, SELECT, RATING, CURRENCY. Formula fields cannot be unique or the record label. bindings and evaluation are computed by the server: do not send them. On update, leave it out to keep the formula, or send null to remove it.",
+          "type": [
+            "object",
+            "null",
+          ],
+        },
         "icon": {
           "description": "Tabler icon name, PascalCase with "Icon" prefix (e.g. IconCurrencyDollar, IconCalendarTime, IconPaw). Set one matching the field meaning; falls back to a type-based default.",
           "type": "string",
@@ -506,35 +534,8 @@ exports[`MCP metadata tools (integration) should describe the metadata tools to 
           "anyOf": [
             {
               "additionalProperties": {},
-              "properties": {
-                "formula": {
-                  "anyOf": [
-                    {
-                      "properties": {
-                        "currencyCodeExpression": {
-                          "description": "Required for a CURRENCY formula, whose expression is the amount in micros: the currency code as text, e.g. "USD" or amount.currencyCode.",
-                          "type": "string",
-                        },
-                        "expression": {
-                          "description": "Formula computing the field value from other fields of the same record, read-only for record writes. Reference fields by name, with dot access for a composite part (amount.amountMicros) or a field of a many-to-one related record (company.name). Aggregate a one-to-many relation with count(relation, condition?), sum(relation.field, condition?), avg, min and max, e.g. count(tasks), sum(opportunities.amount.amountMicros, opportunities.stage == 'CUSTOMER'). Same operators and functions as validation rules. Load the metadata-building skill for the full syntax and check the expression with validate_formula_expression first.",
-                          "type": "string",
-                        },
-                      },
-                      "required": [
-                        "expression",
-                      ],
-                      "type": "object",
-                    },
-                    {
-                      "type": "null",
-                    },
-                  ],
-                  "description": "Makes the field a formula field. Only for types TEXT, NUMBER, BOOLEAN, DATE, DATE_TIME, SELECT, RATING, CURRENCY. Formula fields cannot be unique or the record label. bindings and evaluation are computed by the server: do not send them.",
-                  "type": [
-                    "object",
-                    "null",
-                  ],
-                },
+              "propertyNames": {
+                "type": "string",
               },
               "type": "object",
             },
@@ -542,7 +543,7 @@ exports[`MCP metadata tools (integration) should describe the metadata tools to 
               "type": "null",
             },
           ],
-          "description": "Field settings. On update they replace the existing settings, except formula: left out it is kept, null removes it.",
+          "description": "Field settings",
           "type": [
             "object",
             "null",
@@ -634,6 +635,34 @@ exports[`MCP metadata tools (integration) should describe the metadata tools to 
           "description": "Description",
           "type": "string",
         },
+        "formula": {
+          "anyOf": [
+            {
+              "properties": {
+                "currencyCodeExpression": {
+                  "description": "Required for a CURRENCY formula, whose expression is the amount in micros: the currency code as text, e.g. "USD" or amount.currencyCode.",
+                  "type": "string",
+                },
+                "expression": {
+                  "description": "Formula computing the field value from other fields of the same record, read-only for record writes. Reference fields by name, with dot access for a composite part (amount.amountMicros) or a field of a many-to-one related record (company.name). Aggregate a one-to-many relation with count(relation, condition?), sum(relation.field, condition?), avg, min and max, e.g. count(tasks), sum(opportunities.amount.amountMicros, opportunities.stage == 'CUSTOMER'). Same operators and functions as validation rules. Load the metadata-building skill for the full syntax and check the expression with validate_formula_expression first.",
+                  "type": "string",
+                },
+              },
+              "required": [
+                "expression",
+              ],
+              "type": "object",
+            },
+            {
+              "type": "null",
+            },
+          ],
+          "description": "Makes the field a formula field. Only for types TEXT, NUMBER, BOOLEAN, DATE, DATE_TIME, SELECT, RATING, CURRENCY. Formula fields cannot be unique or the record label. bindings and evaluation are computed by the server: do not send them. On update, leave it out to keep the formula, or send null to remove it.",
+          "type": [
+            "object",
+            "null",
+          ],
+        },
         "icon": {
           "description": "Tabler icon name (e.g. IconCurrencyDollar)",
           "type": "string",
@@ -723,35 +752,8 @@ exports[`MCP metadata tools (integration) should describe the metadata tools to 
           "anyOf": [
             {
               "additionalProperties": {},
-              "properties": {
-                "formula": {
-                  "anyOf": [
-                    {
-                      "properties": {
-                        "currencyCodeExpression": {
-                          "description": "Required for a CURRENCY formula, whose expression is the amount in micros: the currency code as text, e.g. "USD" or amount.currencyCode.",
-                          "type": "string",
-                        },
-                        "expression": {
-                          "description": "Formula computing the field value from other fields of the same record, read-only for record writes. Reference fields by name, with dot access for a composite part (amount.amountMicros) or a field of a many-to-one related record (company.name). Aggregate a one-to-many relation with count(relation, condition?), sum(relation.field, condition?), avg, min and max, e.g. count(tasks), sum(opportunities.amount.amountMicros, opportunities.stage == 'CUSTOMER'). Same operators and functions as validation rules. Load the metadata-building skill for the full syntax and check the expression with validate_formula_expression first.",
-                          "type": "string",
-                        },
-                      },
-                      "required": [
-                        "expression",
-                      ],
-                      "type": "object",
-                    },
-                    {
-                      "type": "null",
-                    },
-                  ],
-                  "description": "Makes the field a formula field. Only for types TEXT, NUMBER, BOOLEAN, DATE, DATE_TIME, SELECT, RATING, CURRENCY. Formula fields cannot be unique or the record label. bindings and evaluation are computed by the server: do not send them.",
-                  "type": [
-                    "object",
-                    "null",
-                  ],
-                },
+              "propertyNames": {
+                "type": "string",
               },
               "type": "object",
             },
@@ -759,7 +761,7 @@ exports[`MCP metadata tools (integration) should describe the metadata tools to 
               "type": "null",
             },
           ],
-          "description": "Field settings. On update they replace the existing settings, except formula: left out it is kept, null removes it.",
+          "description": "Field settings",
           "type": [
             "object",
             "null",
@@ -837,6 +839,34 @@ exports[`MCP metadata tools (integration) should describe the metadata tools to 
               "description": {
                 "description": "Description",
                 "type": "string",
+              },
+              "formula": {
+                "anyOf": [
+                  {
+                    "properties": {
+                      "currencyCodeExpression": {
+                        "description": "Required for a CURRENCY formula, whose expression is the amount in micros: the currency code as text, e.g. "USD" or amount.currencyCode.",
+                        "type": "string",
+                      },
+                      "expression": {
+                        "description": "Formula computing the field value from other fields of the same record, read-only for record writes. Reference fields by name, with dot access for a composite part (amount.amountMicros) or a field of a many-to-one related record (company.name). Aggregate a one-to-many relation with count(relation, condition?), sum(relation.field, condition?), avg, min and max, e.g. count(tasks), sum(opportunities.amount.amountMicros, opportunities.stage == 'CUSTOMER'). Same operators and functions as validation rules. Load the metadata-building skill for the full syntax and check the expression with validate_formula_expression first.",
+                        "type": "string",
+                      },
+                    },
+                    "required": [
+                      "expression",
+                    ],
+                    "type": "object",
+                  },
+                  {
+                    "type": "null",
+                  },
+                ],
+                "description": "Makes the field a formula field. Only for types TEXT, NUMBER, BOOLEAN, DATE, DATE_TIME, SELECT, RATING, CURRENCY. Formula fields cannot be unique or the record label. bindings and evaluation are computed by the server: do not send them. On update, leave it out to keep the formula, or send null to remove it.",
+                "type": [
+                  "object",
+                  "null",
+                ],
               },
               "icon": {
                 "description": "Tabler icon name, PascalCase with "Icon" prefix (e.g. IconCurrencyDollar, IconCalendarTime, IconPaw). Set one matching the field meaning; falls back to a type-based default.",
@@ -959,35 +989,8 @@ exports[`MCP metadata tools (integration) should describe the metadata tools to 
                 "anyOf": [
                   {
                     "additionalProperties": {},
-                    "properties": {
-                      "formula": {
-                        "anyOf": [
-                          {
-                            "properties": {
-                              "currencyCodeExpression": {
-                                "description": "Required for a CURRENCY formula, whose expression is the amount in micros: the currency code as text, e.g. "USD" or amount.currencyCode.",
-                                "type": "string",
-                              },
-                              "expression": {
-                                "description": "Formula computing the field value from other fields of the same record, read-only for record writes. Reference fields by name, with dot access for a composite part (amount.amountMicros) or a field of a many-to-one related record (company.name). Aggregate a one-to-many relation with count(relation, condition?), sum(relation.field, condition?), avg, min and max, e.g. count(tasks), sum(opportunities.amount.amountMicros, opportunities.stage == 'CUSTOMER'). Same operators and functions as validation rules. Load the metadata-building skill for the full syntax and check the expression with validate_formula_expression first.",
-                                "type": "string",
-                              },
-                            },
-                            "required": [
-                              "expression",
-                            ],
-                            "type": "object",
-                          },
-                          {
-                            "type": "null",
-                          },
-                        ],
-                        "description": "Makes the field a formula field. Only for types TEXT, NUMBER, BOOLEAN, DATE, DATE_TIME, SELECT, RATING, CURRENCY. Formula fields cannot be unique or the record label. bindings and evaluation are computed by the server: do not send them.",
-                        "type": [
-                          "object",
-                          "null",
-                        ],
-                      },
+                    "propertyNames": {
+                      "type": "string",
                     },
                     "type": "object",
                   },
@@ -995,7 +998,7 @@ exports[`MCP metadata tools (integration) should describe the metadata tools to 
                     "type": "null",
                   },
                 ],
-                "description": "Field settings. On update they replace the existing settings, except formula: left out it is kept, null removes it.",
+                "description": "Field settings",
                 "type": [
                   "object",
                   "null",
@@ -1101,6 +1104,34 @@ exports[`MCP metadata tools (integration) should describe the metadata tools to 
                 "description": "Description",
                 "type": "string",
               },
+              "formula": {
+                "anyOf": [
+                  {
+                    "properties": {
+                      "currencyCodeExpression": {
+                        "description": "Required for a CURRENCY formula, whose expression is the amount in micros: the currency code as text, e.g. "USD" or amount.currencyCode.",
+                        "type": "string",
+                      },
+                      "expression": {
+                        "description": "Formula computing the field value from other fields of the same record, read-only for record writes. Reference fields by name, with dot access for a composite part (amount.amountMicros) or a field of a many-to-one related record (company.name). Aggregate a one-to-many relation with count(relation, condition?), sum(relation.field, condition?), avg, min and max, e.g. count(tasks), sum(opportunities.amount.amountMicros, opportunities.stage == 'CUSTOMER'). Same operators and functions as validation rules. Load the metadata-building skill for the full syntax and check the expression with validate_formula_expression first.",
+                        "type": "string",
+                      },
+                    },
+                    "required": [
+                      "expression",
+                    ],
+                    "type": "object",
+                  },
+                  {
+                    "type": "null",
+                  },
+                ],
+                "description": "Makes the field a formula field. Only for types TEXT, NUMBER, BOOLEAN, DATE, DATE_TIME, SELECT, RATING, CURRENCY. Formula fields cannot be unique or the record label. bindings and evaluation are computed by the server: do not send them. On update, leave it out to keep the formula, or send null to remove it.",
+                "type": [
+                  "object",
+                  "null",
+                ],
+              },
               "icon": {
                 "description": "Tabler icon name (e.g. IconCurrencyDollar)",
                 "type": "string",
@@ -1190,35 +1221,8 @@ exports[`MCP metadata tools (integration) should describe the metadata tools to 
                 "anyOf": [
                   {
                     "additionalProperties": {},
-                    "properties": {
-                      "formula": {
-                        "anyOf": [
-                          {
-                            "properties": {
-                              "currencyCodeExpression": {
-                                "description": "Required for a CURRENCY formula, whose expression is the amount in micros: the currency code as text, e.g. "USD" or amount.currencyCode.",
-                                "type": "string",
-                              },
-                              "expression": {
-                                "description": "Formula computing the field value from other fields of the same record, read-only for record writes. Reference fields by name, with dot access for a composite part (amount.amountMicros) or a field of a many-to-one related record (company.name). Aggregate a one-to-many relation with count(relation, condition?), sum(relation.field, condition?), avg, min and max, e.g. count(tasks), sum(opportunities.amount.amountMicros, opportunities.stage == 'CUSTOMER'). Same operators and functions as validation rules. Load the metadata-building skill for the full syntax and check the expression with validate_formula_expression first.",
-                                "type": "string",
-                              },
-                            },
-                            "required": [
-                              "expression",
-                            ],
-                            "type": "object",
-                          },
-                          {
-                            "type": "null",
-                          },
-                        ],
-                        "description": "Makes the field a formula field. Only for types TEXT, NUMBER, BOOLEAN, DATE, DATE_TIME, SELECT, RATING, CURRENCY. Formula fields cannot be unique or the record label. bindings and evaluation are computed by the server: do not send them.",
-                        "type": [
-                          "object",
-                          "null",
-                        ],
-                      },
+                    "propertyNames": {
+                      "type": "string",
                     },
                     "type": "object",
                   },
@@ -1226,7 +1230,7 @@ exports[`MCP metadata tools (integration) should describe the metadata tools to 
                     "type": "null",
                   },
                 ],
-                "description": "Field settings. On update they replace the existing settings, except formula: left out it is kept, null removes it.",
+                "description": "Field settings",
                 "type": [
                   "object",
                   "null",
