@@ -87,7 +87,7 @@ describe('sending a Telegram message to a workspace member', () => {
     expect(calls).toEqual([]);
   });
 
-  it('refuses a missing member, an empty text and a text over the Telegram limit', async () => {
+  it('refuses a missing workspace member id', async () => {
     const calls = stubTelegramApi();
 
     await expect(
@@ -96,12 +96,28 @@ describe('sending a Telegram message to a workspace member', () => {
       success: false,
       error: 'workspaceMemberId is required.',
     });
+    expect(calls).toEqual([]);
+  });
+
+  it.each([
+    { label: 'a missing text', text: undefined },
+    { label: 'a blank text', text: '  ' },
+    { label: 'a text that is not a string', text: 42 },
+  ])('refuses $label', async ({ text }) => {
+    const calls = stubTelegramApi();
+
     await expect(
-      telegramSendMessageHandler({ workspaceMemberId: 'member-1', text: '  ' }),
+      telegramSendMessageHandler({ workspaceMemberId: 'member-1', text }),
     ).resolves.toEqual({
       success: false,
       error: 'text is required and cannot be empty.',
     });
+    expect(calls).toEqual([]);
+  });
+
+  it('refuses a text over the Telegram limit', async () => {
+    const calls = stubTelegramApi();
+
     await expect(
       telegramSendMessageHandler({
         workspaceMemberId: 'member-1',
@@ -109,8 +125,7 @@ describe('sending a Telegram message to a workspace member', () => {
       }),
     ).resolves.toEqual({
       success: false,
-      error:
-        'text is too long: Telegram accepts at most 4096 characters, got 4097.',
+      error: `text is too long: Telegram accepts at most ${TELEGRAM_PLAIN_MESSAGE_MAX_LENGTH} characters, got ${TELEGRAM_PLAIN_MESSAGE_MAX_LENGTH + 1}.`,
     });
     expect(calls).toEqual([]);
   });

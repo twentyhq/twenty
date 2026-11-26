@@ -50,9 +50,9 @@ export const telegramSendMessageHandler = async ({
       client,
       filter: { workspaceMemberId },
     });
-    const telegramUserId = links.find((link) =>
-      isDefined(link.telegramUserId),
-    )?.telegramUserId;
+    const telegramUserId = links
+      .map((link) => link.telegramUserId)
+      .find(isDefined);
 
     if (!isDefined(telegramUserId)) {
       return {
