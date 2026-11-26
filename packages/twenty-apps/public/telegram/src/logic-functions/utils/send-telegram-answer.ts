@@ -9,13 +9,18 @@ const RATE_LIMITED_ERROR_CODE = 429;
 const sleep = (milliseconds: number) =>
   new Promise((resolve) => setTimeout(resolve, milliseconds));
 
-const getRetryDelaySeconds = (error: unknown): number | undefined =>
-  error instanceof TelegramApiError &&
-  error.errorCode === RATE_LIMITED_ERROR_CODE &&
-  isNumber(error.retryAfterSeconds) &&
-  error.retryAfterSeconds <= TELEGRAM_SEND_RETRY_MAX_WAIT_SECONDS
-    ? error.retryAfterSeconds
-    : undefined;
+const getRetryDelaySeconds = (error: unknown): number | undefined => {
+  if (
+    !(error instanceof TelegramApiError) ||
+    error.errorCode !== RATE_LIMITED_ERROR_CODE ||
+    !isNumber(error.retryAfterSeconds) ||
+    error.retryAfterSeconds > TELEGRAM_SEND_RETRY_MAX_WAIT_SECONDS
+  ) {
+    return undefined;
+  }
+
+  return error.retryAfterSeconds;
+};
 
 const callOnceMoreWhenRateLimited = async (
   call: () => Promise<unknown>,

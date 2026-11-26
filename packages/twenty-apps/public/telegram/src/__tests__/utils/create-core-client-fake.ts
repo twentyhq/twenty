@@ -34,7 +34,12 @@ type RequestFilter = {
 type RequestClaimFilter = {
   and: [
     { id: { eq: string } },
-    { or: [unknown, { updatedAt: { lt: string } }] },
+    {
+      or: [
+        { status: { eq: string } },
+        { status: { eq: string }; updatedAt: { lt: string } },
+      ];
+    },
   ];
 };
 

@@ -32,13 +32,15 @@ export const recordTelegramAssistantRequestOrThrow = async ({
       requestText,
     });
   } catch (error) {
-    const existingRequestId = isDuplicateRecordError(error)
-      ? await findTelegramAssistantRequestId({
-          client,
-          telegramChatId,
-          telegramMessageId,
-        })
-      : undefined;
+    if (!isDuplicateRecordError(error)) {
+      throw error;
+    }
+
+    const existingRequestId = await findTelegramAssistantRequestId({
+      client,
+      telegramChatId,
+      telegramMessageId,
+    });
 
     if (!isDefined(existingRequestId)) {
       throw error;

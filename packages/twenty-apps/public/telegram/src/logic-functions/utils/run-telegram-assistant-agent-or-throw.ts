@@ -1,5 +1,6 @@
 import { isNonEmptyString, isString } from '@sniptt/guards';
 import { runAgent } from 'twenty-sdk/logic-function';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { TELEGRAM_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { TelegramAssistantDeadlineError } from 'src/logic-functions/types/telegram-assistant-deadline-error';
@@ -59,7 +60,7 @@ export const runTelegramAssistantAgentOrThrow = async ({
       }),
     ]);
 
-    if (!agentResult.success || agentResult.result === null) {
+    if (!agentResult.success || !isDefined(agentResult.result)) {
       throw new Error(agentResult.error ?? 'Agent run failed');
     }
 
