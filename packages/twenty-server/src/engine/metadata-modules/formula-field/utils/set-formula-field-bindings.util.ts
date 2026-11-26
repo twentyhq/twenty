@@ -8,8 +8,11 @@ import {
   getFieldMetadataFormulaCurrencyCodeExpression,
   getFieldMetadataFormulaEvaluation,
   getFieldMetadataFormulaExpression,
+  getFieldMetadataFormulaTree,
   getFormulaEvaluationFromBindings,
   isDefined,
+  parseExpressionNode,
+  resolveExpressionFieldReferences,
 } from 'twenty-shared/utils';
 
 import {
@@ -72,11 +75,23 @@ export const setFormulaFieldBindings = <
 
   const getDerivedSettings = (): Pick<
     FieldMetadataFormula,
-    'bindings' | 'evaluation'
+    'bindings' | 'evaluation' | 'tree' | 'currencyCodeTree'
   > => {
     if (isDefined(existingBindings)) {
+      const existingTree = getFieldMetadataFormulaTree({
+        settings: existingUniversalSettings,
+      });
+      const existingCurrencyCodeTree = getFieldMetadataFormulaTree({
+        settings: existingUniversalSettings,
+        isCurrencyCode: true,
+      });
+
       return {
         bindings: existingBindings,
+        ...(isDefined(existingTree) ? { tree: existingTree } : {}),
+        ...(isDefined(existingCurrencyCodeTree)
+          ? { currencyCodeTree: existingCurrencyCodeTree }
+          : {}),
         ...keepStoredFormulaEvaluation(
           getFieldMetadataFormulaEvaluation({
             settings: existingUniversalSettings,
@@ -101,24 +116,41 @@ export const setFormulaFieldBindings = <
         ),
     }).filter((formulaFieldDescriptor) => formulaFieldDescriptor.name !== name);
 
-    const bindings = [expression, currencyCodeExpression]
-      .filter(isDefined)
-      .reduce<ValidationRuleBindings>(
-        (accumulatedBindings, formulaExpression) => {
-          const compilation = compileFormulaExpression({
-            expression: formulaExpression,
-            fields,
-          });
+    const compileToTree = (formulaExpression: string) => {
+      const compilation = compileFormulaExpression({
+        expression: formulaExpression,
+        fields,
+      });
+      const parsing = parseExpressionNode(formulaExpression);
 
-          return compilation.isValid
-            ? { ...accumulatedBindings, ...compilation.bindings }
-            : accumulatedBindings;
-        },
-        {},
-      );
+      return compilation.isValid && parsing.isValid
+        ? {
+            bindings: compilation.bindings,
+            tree: resolveExpressionFieldReferences({
+              node: parsing.node,
+              fields,
+            }),
+          }
+        : undefined;
+    };
+
+    const compiledExpression = compileToTree(expression);
+    const compiledCurrencyCodeExpression = isDefined(currencyCodeExpression)
+      ? compileToTree(currencyCodeExpression)
+      : undefined;
+    const bindings: ValidationRuleBindings = {
+      ...compiledExpression?.bindings,
+      ...compiledCurrencyCodeExpression?.bindings,
+    };
 
     return {
       bindings,
+      ...(isDefined(compiledExpression)
+        ? { tree: compiledExpression.tree }
+        : {}),
+      ...(isDefined(compiledCurrencyCodeExpression)
+        ? { currencyCodeTree: compiledCurrencyCodeExpression.tree }
+        : {}),
       ...keepStoredFormulaEvaluation(
         getFormulaEvaluationFromBindings({ bindings, fields }),
       ),

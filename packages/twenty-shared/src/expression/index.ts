@@ -16,6 +16,7 @@ export type { ExpressionArithmeticOperator } from './types/ExpressionArithmeticO
 export type { ExpressionComparisonNode } from './types/ExpressionComparisonNode';
 export type { ExpressionComparisonOperator } from './types/ExpressionComparisonOperator';
 export type { ExpressionConcatenationNode } from './types/ExpressionConcatenationNode';
+export type { ExpressionFieldNode } from './types/ExpressionFieldNode';
 export type { ExpressionFunctionCallNode } from './types/ExpressionFunctionCallNode';
 export type { ExpressionGroupNode } from './types/ExpressionGroupNode';
 export type { ExpressionInNode } from './types/ExpressionInNode';

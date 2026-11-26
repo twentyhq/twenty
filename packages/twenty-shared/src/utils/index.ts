@@ -92,6 +92,7 @@ export { parseExpressionDate } from './expression-date/parseExpressionDate';
 export { toExpressionDateTimeInUtc } from './expression-date/toExpressionDateTimeInUtc';
 export { truncateExpressionDate } from './expression-date/truncateExpressionDate';
 export { truncateTowardZero } from './expression-date/truncateTowardZero';
+export { buildExpressionFieldPrinter } from './expression/buildExpressionFieldPrinter';
 export { compileExpression } from './expression/compileExpression';
 export { createExpressionEvaluator } from './expression/createExpressionEvaluator';
 export { findExpressionAggregationError } from './expression/findExpressionAggregationError';
@@ -99,6 +100,7 @@ export { getExpressionArgumentCountError } from './expression/getExpressionArgum
 export { getExpressionSyntaxError } from './expression/getExpressionSyntaxError';
 export { parseExpressionNode } from './expression/parseExpressionNode';
 export { reduceExpressionNumbers } from './expression/reduceExpressionNumbers';
+export { resolveExpressionFieldReferences } from './expression/resolveExpressionFieldReferences';
 export { roundExpressionNumber } from './expression/roundExpressionNumber';
 export { extractAndSanitizeObjectStringFields } from './extractAndSanitizeObjectStringFields';
 export { computeMorphRelationGqlFieldName } from './fieldMetadata/compute-morph-relation-gql-field-name';
@@ -253,6 +255,7 @@ export { getFieldMetadataFormulaBindings } from './formula/getFieldMetadataFormu
 export { getFieldMetadataFormulaCurrencyCodeExpression } from './formula/getFieldMetadataFormulaCurrencyCodeExpression';
 export { getFieldMetadataFormulaEvaluation } from './formula/getFieldMetadataFormulaEvaluation';
 export { getFieldMetadataFormulaExpression } from './formula/getFieldMetadataFormulaExpression';
+export { getFieldMetadataFormulaTree } from './formula/getFieldMetadataFormulaTree';
 export { getFormulaAggregateCall } from './formula/getFormulaAggregateCall';
 export { getFormulaEvaluationFromBindings } from './formula/getFormulaEvaluationFromBindings';
 export { isFormulaAggregateFunctionName } from './formula/isFormulaAggregateFunctionName';

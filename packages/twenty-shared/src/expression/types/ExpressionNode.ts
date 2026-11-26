@@ -1,5 +1,6 @@
 import { type ExpressionArithmeticNode } from '@/expression/types/ExpressionArithmeticNode';
 import { type ExpressionComparisonNode } from '@/expression/types/ExpressionComparisonNode';
+import { type ExpressionFieldNode } from '@/expression/types/ExpressionFieldNode';
 import { type ExpressionConcatenationNode } from '@/expression/types/ExpressionConcatenationNode';
 import { type ExpressionFunctionCallNode } from '@/expression/types/ExpressionFunctionCallNode';
 import { type ExpressionGroupNode } from '@/expression/types/ExpressionGroupNode';
@@ -14,6 +15,7 @@ import { type ExpressionVariableNode } from '@/expression/types/ExpressionVariab
 export type ExpressionNode =
   | ExpressionLiteralNode
   | ExpressionVariableNode
+  | ExpressionFieldNode
   | ExpressionComparisonNode<ExpressionNode>
   | ExpressionGroupNode<ExpressionNode>
   | ExpressionNotNode<ExpressionNode>

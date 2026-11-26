@@ -51,6 +51,17 @@ describe('setFormulaFieldBindings', () => {
           supplier: 'gadget-supplier-uid',
           'supplier.revenue': 'supplier-revenue-uid',
         },
+        tree: {
+          type: 'ARITHMETIC',
+          operator: 'MULTIPLY',
+          left: { type: 'FIELD', fieldUniversalIdentifier: 'gadget-price-uid' },
+          right: {
+            type: 'FIELD',
+            relationFieldUniversalIdentifier: 'gadget-supplier-uid',
+            fieldUniversalIdentifier: 'supplier-revenue-uid',
+            subFieldName: 'amountMicros',
+          },
+        },
       },
     });
   });
@@ -104,6 +115,17 @@ describe('setFormulaFieldBindings', () => {
         bindings: {
           gadgets: 'supplier-gadgets-uid',
           'gadgets.price': 'gadget-price-uid',
+        },
+        tree: {
+          type: 'FUNCTION_CALL',
+          functionName: 'avg',
+          arguments: [
+            {
+              type: 'FIELD',
+              relationFieldUniversalIdentifier: 'supplier-gadgets-uid',
+              fieldUniversalIdentifier: 'gadget-price-uid',
+            },
+          ],
         },
         evaluation: 'STORED',
       },
