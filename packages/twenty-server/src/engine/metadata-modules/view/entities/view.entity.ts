@@ -35,7 +35,7 @@ import { DROP_IS_CUSTOM_FROM_AGENT_SKILL_VIEW_INDEX_AND_AGENT_CHAT_CHANNEL_UPGRA
 import { ADD_VIEW_SHOULD_DISPLAY_GROUPS_AS_TABS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-58/add-view-should-display-groups-as-tabs-upgrade-command-name.constant';
 import { ADD_PRESET_FILTER_TO_VIEW_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-63/add-preset-filter-to-view-upgrade-command-name.constant';
 import { ADD_VIEW_IS_PRIVATE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-63/add-view-is-private-upgrade-command-name.constant';
-import { ADD_LIST_PINNED_FIELD_UNIVERSAL_IDENTIFIERS_TO_VIEW_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-64/add-list-pinned-field-universal-identifiers-to-view-upgrade-command-name.constant';
+import { ADD_LIST_PINNED_FIELD_UNIVERSAL_IDENTIFIERS_TO_VIEW_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-65/add-list-pinned-field-universal-identifiers-to-view-upgrade-command-name.constant';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
