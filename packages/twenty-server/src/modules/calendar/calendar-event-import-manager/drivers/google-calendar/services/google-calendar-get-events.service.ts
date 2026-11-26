@@ -28,7 +28,7 @@ export class GoogleCalendarGetEventsService {
   }: {
     connectedAccount: Pick<ConnectedAccountEntity, 'provider' | 'id'>;
     syncCursor?: string;
-    recurringEventHorizon?: Date;
+    recurringEventHorizon: Date;
   }): Promise<GetCalendarEventsResponse> {
     const googleCalendarClient =
       await this.getGoogleCalendarClient(connectedAccount);
@@ -82,7 +82,6 @@ export class GoogleCalendarGetEventsService {
         if (item.status === 'cancelled') {
           calendarEventIdsToDelete.push(item.id);
         } else if (
-          isDefined(recurringEventHorizon) &&
           isNonEmptyString(item.recurringEventId) &&
           isDefined(itemStartTime) &&
           itemStartTime >= recurringEventHorizon.getTime()
