@@ -1,9 +1,10 @@
 import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
 import { COLLAPSIBLE_COMMAND_MENU_ITEM_SECTIONS } from '@/command-menu-item/constants/CollapsibleCommandMenuItemSections';
 import { COMMAND_MENU_ASK_AI_FALLBACK_ITEM_ID } from '@/command-menu-item/constants/CommandMenuAskAiFallbackItemId';
-import { COMMAND_MENU_INLINE_SEARCH_RECORDS_LIMIT } from '@/command-menu-item/constants/CommandMenuInlineSearchRecordsLimit';
 import { COMMAND_MENU_ITEM_SECTIONS_IN_DISPLAY_ORDER } from '@/command-menu-item/constants/CommandMenuItemSectionsInDisplayOrder';
 import { COMMAND_MENU_NO_RECORDS_FOUND_ITEM_ID } from '@/command-menu-item/constants/CommandMenuNoRecordsFoundItemId';
+import { COMMAND_MENU_SEARCHING_RECORDS_ITEM_ID } from '@/command-menu-item/constants/CommandMenuSearchingRecordsItemId';
+import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
 import { COMMAND_MENU_SEE_MORE_RECORDS_ITEM_ID } from '@/command-menu-item/constants/CommandMenuSeeMoreRecordsItemId';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { CommandMenuAskAiFallbackItem } from '@/command-menu-item/display/components/CommandMenuAskAiFallbackItem';
@@ -133,6 +134,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
 
   const {
     searchResultItems,
+    hasNextPage: hasMoreSearchRecordsThanFetched,
     loading: isLoadingSearchRecords,
     isWaitingForDebouncedSearch,
     error: searchRecordsError,
@@ -140,7 +142,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     shouldSkip: !isInlineRecordSearchEnabled,
     shouldSkipEmptySearch: true,
     shouldIgnoreObjectFilter: true,
-    limit: COMMAND_MENU_INLINE_SEARCH_RECORDS_LIMIT + 1,
+    limit: MAX_SEARCH_RESULTS,
   });
 
   const isSearchingRecords =
@@ -194,14 +196,18 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
 
   const {
     inlineSearchResultItems,
-    hasMoreSearchResultItems,
+    shouldDisplaySeeInSearchResults,
+    shouldDisplaySearchingRecords,
     shouldDisplayNoRecordsFound,
-    isRecordSearchFallbackRedundant,
   } = getCommandMenuInlineSearchRecordRows({
     searchResultItems,
     isInlineRecordSearchActive,
     isSearchingRecords,
   });
+
+  const searchResultsCountLabel = hasMoreSearchRecordsThanFetched
+    ? `${searchResultItems.length}+`
+    : `${searchResultItems.length}`;
 
   const isSectionOpen = (section: CommandMenuItemSection) => {
     if (!COLLAPSIBLE_SECTIONS.includes(section)) {
@@ -300,7 +306,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     isSearchActive && !hasMatchingCommand
       ? fallbackCommandMenuItems.filter(
           (item) =>
-            !isRecordSearchFallbackRedundant ||
+            !isInlineRecordSearchActive ||
             item.engineComponentKey !==
               EngineComponentKey.SEARCH_RECORDS_FALLBACK,
         )
@@ -325,7 +331,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
       return [
         ...getSectionCommandItemIds(section),
         ...inlineSearchResultItems.map((item) => item.id),
-        ...(hasMoreSearchResultItems
+        ...(shouldDisplaySeeInSearchResults
           ? [COMMAND_MENU_SEE_MORE_RECORDS_ITEM_ID]
           : []),
         ...displayedFallbackCommandMenuItems.map((item) => item.id),
@@ -337,7 +343,8 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
 
   const isSectionDisplayed = (section: DisplayedCommandMenuItemSection) =>
     getSectionRowItemIds(section).length > 0 ||
-    (section === 'SEARCH' && shouldDisplayNoRecordsFound);
+    (section === 'SEARCH' &&
+      (shouldDisplayNoRecordsFound || shouldDisplaySearchingRecords));
 
   const displayedSections =
     COMMAND_MENU_ITEM_SECTIONS_IN_DISPLAY_ORDER.filter(isSectionDisplayed);
@@ -380,16 +387,12 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
       return firstCommandItemId;
     }
 
-    if (isDefined(firstRecordItemId)) {
-      return firstRecordItemId;
-    }
-
-    if (isInlineRecordSearchActive && isSearchingRecords) {
-      return null;
-    }
-
     if (shouldDisplayAskAiPrompt && doesSearchReadAsQuestion) {
       return COMMAND_MENU_ASK_AI_FALLBACK_ITEM_ID;
+    }
+
+    if (isDefined(firstRecordItemId)) {
+      return firstRecordItemId;
     }
 
     return null;
@@ -425,18 +428,27 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
       {inlineSearchResultItems.map((item) => (
         <SidePanelSearchRecordItem key={item.id} item={item} />
       ))}
-      {hasMoreSearchResultItems && (
+      {shouldDisplaySeeInSearchResults && (
         <SelectableListItem
           itemId={COMMAND_MENU_SEE_MORE_RECORDS_ITEM_ID}
           onEnter={handleSeeMoreRecords}
         >
           <CommandMenuItem
             id={COMMAND_MENU_SEE_MORE_RECORDS_ITEM_ID}
-            label={t`See more results`}
+            label={t`See in search results`}
+            description={searchResultsCountLabel}
             Icon={IconArrowRight}
             onClick={handleSeeMoreRecords}
           />
         </SelectableListItem>
+      )}
+      {shouldDisplaySearchingRecords && (
+        <CommandMenuItem
+          id={COMMAND_MENU_SEARCHING_RECORDS_ITEM_ID}
+          label={t`Searching records...`}
+          Icon={IconSearch}
+          disabled
+        />
       )}
       {shouldDisplayNoRecordsFound && (
         <CommandMenuItem

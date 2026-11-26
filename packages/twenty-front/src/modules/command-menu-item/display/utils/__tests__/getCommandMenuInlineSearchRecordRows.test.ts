@@ -22,13 +22,13 @@ describe('getCommandMenuInlineSearchRecordRows', () => {
       }),
     ).toEqual({
       inlineSearchResultItems: [],
-      hasMoreSearchResultItems: false,
+      shouldDisplaySeeInSearchResults: false,
+      shouldDisplaySearchingRecords: false,
       shouldDisplayNoRecordsFound: false,
-      isRecordSearchFallbackRedundant: false,
     });
   });
 
-  it('caps record rows and offers more results once the search settles', () => {
+  it('caps record rows and links to the search results', () => {
     const searchResultItems = buildSearchResultItems(
       COMMAND_MENU_INLINE_SEARCH_RECORDS_LIMIT + 1,
     );
@@ -44,9 +44,26 @@ describe('getCommandMenuInlineSearchRecordRows', () => {
         0,
         COMMAND_MENU_INLINE_SEARCH_RECORDS_LIMIT,
       ),
-      hasMoreSearchResultItems: true,
+      shouldDisplaySeeInSearchResults: true,
+      shouldDisplaySearchingRecords: false,
       shouldDisplayNoRecordsFound: false,
-      isRecordSearchFallbackRedundant: true,
+    });
+  });
+
+  it('links to the search results when settled results fit in the rows', () => {
+    const searchResultItems = buildSearchResultItems(2);
+
+    expect(
+      getCommandMenuInlineSearchRecordRows({
+        searchResultItems,
+        isInlineRecordSearchActive: true,
+        isSearchingRecords: false,
+      }),
+    ).toEqual({
+      inlineSearchResultItems: searchResultItems,
+      shouldDisplaySeeInSearchResults: true,
+      shouldDisplaySearchingRecords: false,
+      shouldDisplayNoRecordsFound: false,
     });
   });
 
@@ -59,52 +76,28 @@ describe('getCommandMenuInlineSearchRecordRows', () => {
       }),
     ).toEqual({
       inlineSearchResultItems: [],
-      hasMoreSearchResultItems: false,
+      shouldDisplaySeeInSearchResults: false,
+      shouldDisplaySearchingRecords: false,
       shouldDisplayNoRecordsFound: true,
-      isRecordSearchFallbackRedundant: true,
     });
   });
 
-  it('keeps the record search fallback when settled results fit in the rows', () => {
-    const searchResultItems = buildSearchResultItems(2);
-
+  it('displays searching records until the first results arrive', () => {
     expect(
       getCommandMenuInlineSearchRecordRows({
-        searchResultItems,
-        isInlineRecordSearchActive: true,
-        isSearchingRecords: false,
-      }),
-    ).toEqual({
-      inlineSearchResultItems: searchResultItems,
-      hasMoreSearchResultItems: false,
-      shouldDisplayNoRecordsFound: false,
-      isRecordSearchFallbackRedundant: false,
-    });
-  });
-
-  it('keeps previous record rows without footer rows while searching', () => {
-    const searchResultItems = buildSearchResultItems(
-      COMMAND_MENU_INLINE_SEARCH_RECORDS_LIMIT + 1,
-    );
-
-    expect(
-      getCommandMenuInlineSearchRecordRows({
-        searchResultItems,
+        searchResultItems: [],
         isInlineRecordSearchActive: true,
         isSearchingRecords: true,
       }),
     ).toEqual({
-      inlineSearchResultItems: searchResultItems.slice(
-        0,
-        COMMAND_MENU_INLINE_SEARCH_RECORDS_LIMIT,
-      ),
-      hasMoreSearchResultItems: false,
+      inlineSearchResultItems: [],
+      shouldDisplaySeeInSearchResults: false,
+      shouldDisplaySearchingRecords: true,
       shouldDisplayNoRecordsFound: false,
-      isRecordSearchFallbackRedundant: true,
     });
   });
 
-  it('keeps the record search fallback while searching when previous rows fit', () => {
+  it('keeps previous record rows while searching', () => {
     const searchResultItems = buildSearchResultItems(2);
 
     expect(
@@ -115,9 +108,9 @@ describe('getCommandMenuInlineSearchRecordRows', () => {
       }),
     ).toEqual({
       inlineSearchResultItems: searchResultItems,
-      hasMoreSearchResultItems: false,
+      shouldDisplaySeeInSearchResults: true,
+      shouldDisplaySearchingRecords: false,
       shouldDisplayNoRecordsFound: false,
-      isRecordSearchFallbackRedundant: false,
     });
   });
 });

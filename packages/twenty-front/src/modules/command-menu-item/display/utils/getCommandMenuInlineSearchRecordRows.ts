@@ -13,29 +13,21 @@ export const getCommandMenuInlineSearchRecordRows = ({
   if (!isInlineRecordSearchActive) {
     return {
       inlineSearchResultItems: [],
-      hasMoreSearchResultItems: false,
+      shouldDisplaySeeInSearchResults: false,
+      shouldDisplaySearchingRecords: false,
       shouldDisplayNoRecordsFound: false,
-      isRecordSearchFallbackRedundant: false,
     };
   }
 
-  const hasMoreDisplayedSearchResultItems =
-    searchResultItems.length > COMMAND_MENU_INLINE_SEARCH_RECORDS_LIMIT;
-
-  const hasMoreSearchResultItems =
-    !isSearchingRecords && hasMoreDisplayedSearchResultItems;
-
-  const shouldDisplayNoRecordsFound =
-    !isSearchingRecords && searchResultItems.length === 0;
+  const hasSearchResultItems = searchResultItems.length > 0;
 
   return {
     inlineSearchResultItems: searchResultItems.slice(
       0,
       COMMAND_MENU_INLINE_SEARCH_RECORDS_LIMIT,
     ),
-    hasMoreSearchResultItems,
-    shouldDisplayNoRecordsFound,
-    isRecordSearchFallbackRedundant:
-      hasMoreDisplayedSearchResultItems || shouldDisplayNoRecordsFound,
+    shouldDisplaySeeInSearchResults: hasSearchResultItems,
+    shouldDisplaySearchingRecords: isSearchingRecords && !hasSearchResultItems,
+    shouldDisplayNoRecordsFound: !isSearchingRecords && !hasSearchResultItems,
   };
 };
