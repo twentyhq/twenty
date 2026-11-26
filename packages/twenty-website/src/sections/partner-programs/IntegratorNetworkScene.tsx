@@ -18,7 +18,6 @@ import {
   REDUCED_MOTION,
   semanticColor,
 } from '@/tokens';
-import { cssVariableStyle } from '@/ui/css-variable-style';
 
 // The integrators hero: an integrator's tools, so the page reads as theirs at
 // first sight, and the money they bring. A terminal, very large, between
@@ -63,41 +62,10 @@ const TOOL_SETTINGS = {
   },
 } satisfies HalftoneModelProps['settings'];
 
-// The row, left to right: code braces, the terminal, a keyboard key (the
-// site's own code keycap). Each model's share of the banner's height, the way
-// it turns (the sides face in towards the terminal), how far it sits up from
-// the banner's middle, and how far it tucks in on its neighbours, in banner
-// heights.
-const ITEMS = [
-  {
-    model: 'braces',
-    size: 0.46,
-    turn: 0.32,
-    lean: 0,
-    lift: 0.32,
-    tuck: -0.02,
-    geometry: undefined,
-  },
-  {
-    model: 'terminal',
-    size: 0.8,
-    turn: 0,
-    lean: 0,
-    lift: 0.36,
-    tuck: 0,
-    geometry: undefined,
-  },
-  {
-    model: 'code-keycap',
-    size: 0.56,
-    turn: -0.32,
-    // seen from above, so its top and the </> on it show
-    lean: 0.65,
-    lift: 0.32,
-    tuck: -0.02,
-    geometry: undefined,
-  },
-] as const;
+// The three, composed into one model (integrator-tools.glb: the middle one large,
+// the sides smaller and turned in), so the hero holds two canvases and
+// leaves the page's budget to the sections below.
+const ROW_MODEL = '/models/integrator-tools.glb';
 
 // The money it brings: a small mountain of coins (coin.glb, as on the
 // creators hero), poured rather than stacked, each coin leaning and turned
@@ -140,6 +108,14 @@ const BASE_SETTINGS = {
   },
 } satisfies HalftoneModelProps['settings'];
 
+const ROW_SETTINGS = {
+  ...TOOL_SETTINGS,
+  previewDistance: 1.45,
+  // the camera sits closer to the wide composition: smaller cells keep the
+  // same line spacing as the single models had
+  halftone: { ...TOOL_SETTINGS.halftone, scale: 4.5 },
+} satisfies HalftoneModelProps['settings'];
+
 // The hero's backdrop: the banner's room under the copy.
 const Backdrop = styled.div`
   inset: 0;
@@ -168,20 +144,16 @@ const Base = styled.div`
   width: calc(${HERO_COMPOSITION.visualBannerHeight} * 1.3);
 `;
 
-// A model's square frame, sized against the banner (--size), moved up from
-// its middle (--lift) and tucked in on its neighbours (--tuck).
+// The composition's frame: wide, raised a little from the banner's middle,
+// fading in once its model has loaded.
 const Tool = styled.div`
-  /* each tool fades in on its own beat, so the models loading at different
-     moments never pop in */
-  animation: integratorToolIn ${DURATION.lg} ${EASING.gentle} both;
-  animation-delay: calc(var(--order) * ${DURATION.xs} + ${DURATION.md});
-  aspect-ratio: 1;
+  animation: rowIn ${DURATION.lg} ${EASING.gentle} ${DURATION.md} both;
   flex-shrink: 0;
-  height: calc(var(--size) * 100%);
-  margin-inline: calc(var(--tuck) * ${HERO_COMPOSITION.visualBannerHeight});
-  transform: translateY(calc(var(--lift) * -100%));
+  height: 70%;
+  transform: translateY(-38%);
+  width: calc(${HERO_COMPOSITION.visualBannerHeight} * 2.4);
 
-  @keyframes integratorToolIn {
+  @keyframes rowIn {
     from {
       opacity: 0;
     }
@@ -243,24 +215,9 @@ export function IntegratorNetworkScene() {
   return (
     <Backdrop aria-hidden ref={frameRef}>
       <Row>
-        {ITEMS.map((item, index) => (
-          <Tool
-            key={item.model}
-            style={cssVariableStyle({
-              '--lift': item.lift,
-              '--order': index,
-              '--size': item.size,
-              '--tuck': item.tuck,
-            })}
-          >
-            <HalftoneModel
-              geometryOptions={item.geometry}
-              initialPose={{ rotationX: item.lean, rotationY: item.turn }}
-              modelUrl={`/models/${item.model}.glb`}
-              settings={TOOL_SETTINGS}
-            />
-          </Tool>
-        ))}
+        <Tool>
+          <HalftoneModel modelUrl={ROW_MODEL} settings={ROW_SETTINGS} />
+        </Tool>
       </Row>
       <Base>
         <HalftoneModel
