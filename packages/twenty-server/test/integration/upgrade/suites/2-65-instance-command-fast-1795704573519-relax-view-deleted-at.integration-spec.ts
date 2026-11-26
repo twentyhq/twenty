@@ -1,3 +1,5 @@
+import { randomUUID } from 'node:crypto';
+
 import { type QueryRunner } from 'typeorm';
 
 import { RelaxViewDeletedAtFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-fast-1795704573519-relax-view-deleted-at';
@@ -43,6 +45,39 @@ describe('2-65 instance command 1795704573519 - relax view deletedAt (integratio
     expect(viewFieldIndex).toContain('"isCanonical" = true');
     expect(viewSortIndex).not.toContain('deletedAt');
     expect(viewSortIndex).not.toContain('WHERE');
+  });
+
+  it('removes soft-deleted view fields that would collide with the rebuilt index', async () => {
+    const [liveViewField]: { id: string }[] = await queryRunner.query(
+      `SELECT "id" FROM "core"."viewField"
+        WHERE "deletedAt" IS NULL AND "isCanonical" = true
+        LIMIT 1`,
+    );
+    const softDeletedViewFieldId = randomUUID();
+
+    await queryRunner.query(
+      `INSERT INTO "core"."viewField"
+        SELECT (jsonb_populate_record(
+          NULL::"core"."viewField",
+          to_jsonb("viewField") || jsonb_build_object(
+            'id', $1::uuid,
+            'universalIdentifier', $1::uuid,
+            'deletedAt', now()
+          )
+        )).*
+        FROM "core"."viewField" "viewField"
+        WHERE "viewField"."id" = $2`,
+      [softDeletedViewFieldId, liveViewField.id],
+    );
+
+    await relaxDeletedAtCommand.up(queryRunner);
+
+    const remainingViewFields: { id: string }[] = await queryRunner.query(
+      `SELECT "id" FROM "core"."viewField" WHERE "id" = ANY($1)`,
+      [[liveViewField.id, softDeletedViewFieldId]],
+    );
+
+    expect(remainingViewFields).toEqual([{ id: liveViewField.id }]);
   });
 
   it('restores the deletedAt condition on down', async () => {

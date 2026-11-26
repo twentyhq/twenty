@@ -7,6 +7,26 @@ import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 export class RelaxViewDeletedAtFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
+      `DELETE FROM "core"."viewField" "softDeleted"
+        USING "core"."viewField" "other"
+        WHERE "softDeleted"."deletedAt" IS NOT NULL
+          AND "softDeleted"."isCanonical" = true
+          AND "other"."isCanonical" = true
+          AND "other"."viewId" = "softDeleted"."viewId"
+          AND "other"."fieldMetadataId" = "softDeleted"."fieldMetadataId"
+          AND "other"."id" <> "softDeleted"."id"
+          AND ("other"."deletedAt" IS NULL OR "other"."id" < "softDeleted"."id")`,
+    );
+    await queryRunner.query(
+      `DELETE FROM "core"."viewSort" "softDeleted"
+        USING "core"."viewSort" "other"
+        WHERE "softDeleted"."deletedAt" IS NOT NULL
+          AND "other"."viewId" = "softDeleted"."viewId"
+          AND "other"."fieldMetadataId" = "softDeleted"."fieldMetadataId"
+          AND "other"."id" <> "softDeleted"."id"
+          AND ("other"."deletedAt" IS NULL OR "other"."id" < "softDeleted"."id")`,
+    );
+    await queryRunner.query(
       'DROP INDEX IF EXISTS "core"."IDX_VIEW_FIELD_FIELD_METADATA_ID_VIEW_ID_UNIQUE"',
     );
     await queryRunner.query(
