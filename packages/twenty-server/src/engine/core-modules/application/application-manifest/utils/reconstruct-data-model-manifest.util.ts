@@ -79,11 +79,11 @@ const getUnsupportedIndexReason = ({
 
 export const reconstructDataModelManifest = ({
   applicationAllFlatEntityMaps,
-  getFormulaFields = () => [],
+  getFormulaFields,
 }: {
   applicationAllFlatEntityMaps: AllFlatEntityMaps;
   // A formula may read fields of other applications, so they are named from the whole workspace
-  getFormulaFields?: (
+  getFormulaFields: (
     objectUniversalIdentifier: string,
   ) => ValidationRuleFieldDescriptor[];
 }): {
