@@ -2,8 +2,6 @@
 
 import { Injectable } from '@nestjs/common';
 
-import { msg } from '@lingui/core/macro';
-import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -327,20 +325,6 @@ export class ValidationRuleService {
       id: input.id,
       workspaceId,
     });
-
-    // Fence until upgrade:2-65:convert-validation-rules-to-trees reached the workspace, drop it in 2.66
-    if (
-      isNonEmptyString(existingFlatValidationRule.expression?.trim()) &&
-      !isDefined(existingFlatValidationRule.tree)
-    ) {
-      throw new ValidationRuleException(
-        `Validation rule ${input.id} is not stored as a tree yet`,
-        ValidationRuleExceptionCode.INVALID_VALIDATION_RULE_INPUT,
-        {
-          userFriendlyMessage: msg`This validation rule is being upgraded. Try again in a few minutes.`,
-        },
-      );
-    }
 
     const tree = computeValidationRuleTree({
       expression: input.update.expression,

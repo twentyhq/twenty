@@ -1,7 +1,11 @@
 import { type ExpressionNode } from 'twenty-shared/expression';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
-import { buildValidationRuleTreeConversions } from 'src/database/commands/upgrade-version-command/2-65/utils/build-validation-rule-tree-conversions.util';
+import {
+  buildValidationRuleTreeConversions,
+  type LegacyValidationRuleText,
+} from 'src/database/commands/upgrade-version-command/2-65/utils/build-validation-rule-tree-conversions.util';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
@@ -50,9 +54,8 @@ const buildMaps = () => {
   return { flatObjectMetadataMaps, flatFieldMetadataMaps };
 };
 
-const buildLegacyRule = (
-  rule: Pick<FlatValidationRule, 'id' | 'expression'> &
-    Partial<FlatValidationRule>,
+const buildRule = (
+  rule: Pick<FlatValidationRule, 'id'> & Partial<FlatValidationRule>,
 ): FlatValidationRule => ({
   workspaceId: 'workspace-id',
   applicationId: 'application-id',
@@ -65,7 +68,6 @@ const buildLegacyRule = (
   name: rule.id,
   description: null,
   icon: null,
-  bindings: {},
   tree: null,
   message: 'Message',
   isActive: true,
@@ -74,9 +76,20 @@ const buildLegacyRule = (
   ...rule,
 });
 
-const convert = (flatValidationRules: FlatValidationRule[]) =>
+const convert = (
+  rules: {
+    rule: FlatValidationRule;
+    legacyText?: LegacyValidationRuleText;
+  }[],
+) =>
   buildValidationRuleTreeConversions({
-    flatValidationRules,
+    flatValidationRules: rules.map(({ rule }) => rule),
+    legacyValidationRuleTextById: new Map(
+      rules.flatMap(
+        ({ rule, legacyText }): [string, LegacyValidationRuleText][] =>
+          isDefined(legacyText) ? [[rule.id, legacyText]] : [],
+      ),
+    ),
     ...buildMaps(),
   });
 
@@ -84,22 +97,22 @@ describe('buildValidationRuleTreeConversions', () => {
   it('should store the rule as a tree reading the bound fields by identifier', () => {
     const { flatValidationRulesToUpdate, unparsableValidationRuleIds } =
       convert([
-        buildLegacyRule({
-          id: 'renamed',
-          expression: 'employees > 10 and previous.stage != "WON"',
-          bindings: {
-            employees: 'employees',
-            'previous.stage': 'stage',
+        {
+          rule: buildRule({ id: 'renamed' }),
+          legacyText: {
+            expression: 'employees > 10 and previous.stage != "WON"',
+            bindings: {
+              employees: 'employees',
+              'previous.stage': 'stage',
+            },
           },
-        }),
+        },
       ]);
 
     expect(unparsableValidationRuleIds).toEqual([]);
     expect(flatValidationRulesToUpdate).toMatchObject([
       {
         id: 'renamed',
-        expression: null,
-        bindings: {},
         isActive: true,
         tree: {
           type: 'GROUP',
@@ -127,40 +140,63 @@ describe('buildValidationRuleTreeConversions', () => {
     ]);
   });
 
-  it('should clear the text of a rule that has none yet', () => {
+  it('should leave a draft rule that has no text yet', () => {
     expect(
       convert([
-        buildLegacyRule({ id: 'draft', expression: '', isActive: false }),
+        {
+          rule: buildRule({ id: 'draft', isActive: false }),
+          legacyText: { expression: ' ', bindings: {} },
+        },
       ]).flatValidationRulesToUpdate,
-    ).toMatchObject([{ id: 'draft', expression: null, tree: null }]);
+    ).toEqual([]);
   });
 
   it('should turn off a rule whose text no longer parses, keeping its text', () => {
     const { flatValidationRulesToUpdate, unparsableValidationRuleIds } =
       convert([
-        buildLegacyRule({ id: 'active', expression: 'stage ==' }),
-        buildLegacyRule({
-          id: 'inactive',
-          expression: 'stage ==',
-          isActive: false,
-        }),
+        {
+          rule: buildRule({ id: 'active' }),
+          legacyText: { expression: 'stage ==', bindings: {} },
+        },
+        {
+          rule: buildRule({ id: 'inactive', isActive: false }),
+          legacyText: { expression: 'stage ==', bindings: {} },
+        },
       ]);
 
     expect(unparsableValidationRuleIds).toEqual(['active', 'inactive']);
-    expect(flatValidationRulesToUpdate).toMatchObject([
-      { id: 'active', expression: 'stage ==', tree: null, isActive: false },
+    expect(flatValidationRulesToUpdate).toEqual([
+      buildRule({ id: 'active', isActive: false }),
     ]);
   });
 
   it('should leave a rule already stored as a tree', () => {
     expect(
       convert([
-        buildLegacyRule({
-          id: 'converted',
-          expression: null,
-          tree: READ_STAGE_TREE,
-        }),
+        {
+          rule: buildRule({ id: 'converted', tree: READ_STAGE_TREE }),
+          legacyText: { expression: 'stage == "WON"', bindings: {} },
+        },
       ]).flatValidationRulesToUpdate,
     ).toEqual([]);
+  });
+
+  it('should leave a rule without legacy text', () => {
+    expect(
+      convert([{ rule: buildRule({ id: 'created-as-tree' }) }])
+        .flatValidationRulesToUpdate,
+    ).toEqual([]);
+  });
+
+  it('should never put the legacy text on the rules it updates', () => {
+    const [convertedRule] = convert([
+      {
+        rule: buildRule({ id: 'converted' }),
+        legacyText: { expression: 'stage == "WON"', bindings: {} },
+      },
+    ]).flatValidationRulesToUpdate;
+
+    expect(convertedRule).not.toHaveProperty('expression');
+    expect(convertedRule).not.toHaveProperty('bindings');
   });
 });

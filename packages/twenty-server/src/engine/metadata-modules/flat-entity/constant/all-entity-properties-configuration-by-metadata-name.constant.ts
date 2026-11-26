@@ -2635,16 +2635,6 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
-    expression: {
-      toCompare: true,
-      toStringify: false,
-      universalProperty: undefined,
-    },
-    bindings: {
-      toCompare: true,
-      toStringify: true,
-      universalProperty: undefined,
-    },
     tree: {
       toCompare: true,
       toStringify: true,

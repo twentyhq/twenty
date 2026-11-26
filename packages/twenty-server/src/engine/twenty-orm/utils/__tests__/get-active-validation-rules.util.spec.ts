@@ -30,8 +30,6 @@ const RULE: FlatValidationRule = {
   name: 'Minimum employees',
   description: null,
   icon: null,
-  expression: null,
-  bindings: {},
   tree: MINIMUM_EMPLOYEES_TREE,
   message: 'At least ten employees are required',
   isActive: true,

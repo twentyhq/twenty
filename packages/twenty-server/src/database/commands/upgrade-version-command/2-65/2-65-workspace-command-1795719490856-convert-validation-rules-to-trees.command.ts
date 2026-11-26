@@ -1,11 +1,16 @@
+import { InjectDataSource } from '@nestjs/typeorm';
 import { Command } from 'nest-commander';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { DataSource } from 'typeorm';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { buildValidationRuleTreeConversions } from 'src/database/commands/upgrade-version-command/2-65/utils/build-validation-rule-tree-conversions.util';
+import {
+  buildValidationRuleTreeConversions,
+  type LegacyValidationRuleText,
+} from 'src/database/commands/upgrade-version-command/2-65/utils/build-validation-rule-tree-conversions.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatValidationRule } from 'src/engine/metadata-modules/flat-validation-rule/types/flat-validation-rule.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -23,6 +28,7 @@ export class ConvertValidationRulesToTreesCommand extends ProvisionedWorkspaceCo
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
+    @InjectDataSource() private readonly dataSource: DataSource,
   ) {
     super(workspaceIteratorService);
   }
@@ -41,11 +47,26 @@ export class ConvertValidationRulesToTreesCommand extends ProvisionedWorkspaceCo
       'flatFieldMetadataMaps',
     ]);
 
+    const legacyValidationRules: ({ id: string } & LegacyValidationRuleText)[] =
+      await this.dataSource.query(
+        `SELECT "id", "expression", "bindings" FROM "core"."validationRule"
+         WHERE "workspaceId" = $1
+           AND "tree" IS NULL
+           AND "expression" IS NOT NULL`,
+        [workspaceId],
+      );
+
     const { flatValidationRulesToUpdate, unparsableValidationRuleIds } =
       buildValidationRuleTreeConversions({
         flatValidationRules: Object.values(
           flatValidationRuleMaps.byUniversalIdentifier,
         ).filter(isDefined),
+        legacyValidationRuleTextById: new Map(
+          legacyValidationRules.map(({ id, expression, bindings }) => [
+            id,
+            { expression, bindings },
+          ]),
+        ),
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
       });

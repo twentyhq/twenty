@@ -54,8 +54,6 @@ export const fromCreateValidationRuleInputToFlatValidationRuleToCreate = ({
     name: createValidationRuleInput.name.trim(),
     description: createValidationRuleInput.description ?? null,
     icon: createValidationRuleInput.icon ?? null,
-    expression: null,
-    bindings: {},
     tree,
     message: createValidationRuleInput.message.trim(),
     isActive: createValidationRuleInput.isActive ?? true,
