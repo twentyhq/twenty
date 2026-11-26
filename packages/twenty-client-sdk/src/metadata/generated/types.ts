@@ -534,9 +534,6 @@ export default {
             "senderApplicationId": [
                 573
             ],
-            "senderUserWorkspaceId": [
-                573
-            ],
             "senderWorkspaceMemberId": [
                 573
             ],

@@ -54,7 +54,7 @@ describe('Persisted chat senders', () => {
     const message = await chat.addMessage({
       workspaceId,
       threadId,
-      userWorkspaceId,
+      workspaceMemberId,
       uiMessage: {
         role: AgentMessageRole.USER,
         parts: [{ type: 'text', text: 'Hello' }],
