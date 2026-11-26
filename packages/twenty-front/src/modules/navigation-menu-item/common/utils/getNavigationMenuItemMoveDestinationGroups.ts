@@ -18,21 +18,24 @@ export const getNavigationMenuItemMoveDestinationGroups = ({
 }): NavigationMenuItemMoveDestinationGroup[] => {
   const getFolderDestinations = (
     parentId: string | null,
-  ): NavigationMenuItemMoveDestination[] =>
-    canMoveIntoFolder
-      ? items
-          .filter(
-            (item) =>
-              isNavigationMenuItemFolder(item) &&
-              (item.parentId ?? null) === parentId,
-          )
-          .sort((a, b) => a.position - b.position)
-          .map((folder) => ({
-            kind: 'folder',
-            containerId: folder.id,
-            item: folder,
-          }))
-      : [];
+  ): NavigationMenuItemMoveDestination[] => {
+    if (!canMoveIntoFolder) {
+      return [];
+    }
+
+    return items
+      .filter(
+        (item) =>
+          isNavigationMenuItemFolder(item) &&
+          (item.parentId ?? null) === parentId,
+      )
+      .sort((a, b) => a.position - b.position)
+      .map((folder) => ({
+        kind: 'folder',
+        containerId: folder.id,
+        item: folder,
+      }));
+  };
 
   return [null, ...tabIds]
     .map((tabId) => ({
