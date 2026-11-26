@@ -5,8 +5,8 @@ import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 
 const PURGE_BATCH_SIZE = 10000;
 
-@RegisteredInstanceCommand('2.65.0', 1795727906799, { type: 'slow' })
-export class PurgeRefreshTokensSlowInstanceCommand implements SlowInstanceCommand {
+@RegisteredInstanceCommand('2.65.0', 1795731384123, { type: 'slow' })
+export class PurgeExpiredRefreshTokensSlowInstanceCommand implements SlowInstanceCommand {
   async runDataMigration(dataSource: DataSource): Promise<void> {
     let deletedCount = 0;
 
@@ -16,6 +16,11 @@ export class PurgeRefreshTokensSlowInstanceCommand implements SlowInstanceComman
           WHERE "id" IN (
             SELECT "id" FROM "core"."appToken"
              WHERE "type" = 'REFRESH_TOKEN'
+               AND (
+                 "expiresAt" < now()
+                 OR "revokedAt" IS NOT NULL
+                 OR "deletedAt" IS NOT NULL
+               )
              LIMIT $1
           )`,
         [PURGE_BATCH_SIZE],
