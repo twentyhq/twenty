@@ -37,7 +37,7 @@ export const LinkedinAccountBanners = ({
   return (
     <StyledBanners>
       {isAuthFailed && (
-        <InlineBanner status="warning" fullWidth>
+        <InlineBanner status="warning" fullWidth embedded>
           {t(
             'LinkedIn signed you out. Reconnect your account to keep syncing.',
           )}
@@ -48,6 +48,7 @@ export const LinkedinAccountBanners = ({
           status="error"
           role="alert"
           fullWidth
+          embedded
           action={
             <InlineBanner.Action
               onClick={onRetryImport}
@@ -62,7 +63,7 @@ export const LinkedinAccountBanners = ({
         </InlineBanner>
       )}
       {isDefined(importResumeAt) && (
-        <InlineBanner status="info" fullWidth>
+        <InlineBanner status="info" fullWidth embedded>
           {t(
             'LinkedIn limits how much can be imported each day. The import resumes {resumeAt}.',
             {
