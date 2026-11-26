@@ -25,7 +25,8 @@ const StyledSearchButton = styled.button`
   && {
     block-size: ${themeCssVariables.spacing[7]};
     gap: ${themeCssVariables.spacing[2]};
-    padding-inline: ${themeCssVariables.spacing['1.5']} 7px;
+    padding-inline: ${themeCssVariables.spacing['1.5']}
+      calc(${themeCssVariables.spacing[2]} - 1px);
   }
 
   cursor: pointer;
