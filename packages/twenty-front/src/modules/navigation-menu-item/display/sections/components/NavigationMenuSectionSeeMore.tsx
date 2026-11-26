@@ -3,20 +3,24 @@ import { type ReactNode } from 'react';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
 import { Collapsible } from 'twenty-ui/primitives/layout';
 
+import { isNavigationMenuSectionShowingAllItemsFamilyState } from '@/navigation-menu-item/common/states/isNavigationMenuSectionShowingAllItemsFamilyState';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
+import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
 
 type NavigationMenuSectionSeeMoreProps = {
-  isShowingAllItems: boolean;
-  onToggle: () => void;
+  sectionId: string;
   hiddenItems: ReactNode;
 };
 
 export const NavigationMenuSectionSeeMore = ({
-  isShowingAllItems,
-  onToggle,
+  sectionId,
   hiddenItems,
 }: NavigationMenuSectionSeeMoreProps) => {
   const { t } = useLingui();
+  const [isShowingAllItems, setIsShowingAllItems] = useAtomFamilyState(
+    isNavigationMenuSectionShowingAllItemsFamilyState,
+    sectionId,
+  );
 
   return (
     <Collapsible.Root open={isShowingAllItems}>
@@ -27,7 +31,7 @@ export const NavigationMenuSectionSeeMore = ({
         variant="tertiary"
         preventCollapseOnMobile
         triggerEvent="CLICK"
-        onClick={onToggle}
+        onClick={() => setIsShowingAllItems(!isShowingAllItems)}
       />
     </Collapsible.Root>
   );

@@ -72,6 +72,21 @@ const StyledFolderContainer = styled.div<{
   }
 `;
 
+const StyledChevronButton = styled.button`
+  align-items: center;
+  background: none;
+  border: none;
+  border-radius: ${themeCssVariables.border.radius.sm};
+  color: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  padding: 0;
+
+  &:focus-visible {
+    outline: 2px solid ${themeCssVariables.color.blue};
+  }
+`;
+
 const StyledAddMenuItem = styled.div<{ isHidden: boolean }>`
   display: ${({ isHidden }) => (isHidden ? 'none' : 'contents')};
 `;
@@ -226,8 +241,24 @@ export const NavigationMenuItemFolderDnd = ({
         isWorkspace && isFolderEditHighlighted && !isExpanded
       }
       onClick={handleHeaderClick}
-      aria-expanded={isOpen}
-      trailingIcon={<NavigationMenuItemFolderChevron isOpen={isOpen} />}
+      aria-expanded={shouldUseEditModeClick ? undefined : isOpen}
+      trailingIcon={
+        shouldUseEditModeClick ? (
+          <StyledChevronButton
+            type="button"
+            aria-label={isOpen ? t`Collapse folder` : t`Expand folder`}
+            aria-expanded={isOpen}
+            onClick={(event) => {
+              event.stopPropagation();
+              handleToggle();
+            }}
+          >
+            <NavigationMenuItemFolderChevron isOpen={isOpen} />
+          </StyledChevronButton>
+        ) : (
+          <NavigationMenuItemFolderChevron isOpen={isOpen} />
+        )
+      }
       rightOptions={shouldUseEditModeClick ? undefined : headerRightOptions}
       className="navigation-drawer-item"
       isRightOptionsDropdownOpen={

@@ -16,10 +16,8 @@ import { useInboxThreadList } from '@/inbox/hooks/useInboxThreadList';
 import { inboxFavoriteThreadsSelector } from '@/inbox/states/selectors/inboxFavoriteThreadsSelector';
 import { filterInboxRecentThreads } from '@/inbox/utils/filterInboxRecentThreads';
 import { NAVIGATION_MENU_SECTION_VISIBLE_ITEM_LIMIT } from '@/navigation-menu-item/common/constants/NavigationMenuSectionVisibleItemLimit';
-import { isNavigationMenuSectionShowingAllItemsFamilyState } from '@/navigation-menu-item/common/states/isNavigationMenuSectionShowingAllItemsFamilyState';
 import { NavigationMenuSectionSeeMore } from '@/navigation-menu-item/display/sections/components/NavigationMenuSectionSeeMore';
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
-import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -39,10 +37,6 @@ export const NavigationMenuAiChatRecentsSection = ({
   headerAction,
 }: NavigationMenuAiChatRecentsSectionProps) => {
   const { t } = useLingui();
-  const [isShowingAllThreads, setIsShowingAllThreads] = useAtomFamilyState(
-    isNavigationMenuSectionShowingAllItemsFamilyState,
-    'AiChatRecents',
-  );
   const currentThreadId = useAiChatPageThreadId();
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
@@ -99,8 +93,7 @@ export const NavigationMenuAiChatRecentsSection = ({
       footer={
         hasHiddenThreads && (
           <NavigationMenuSectionSeeMore
-            isShowingAllItems={isShowingAllThreads}
-            onToggle={() => setIsShowingAllThreads(!isShowingAllThreads)}
+            sectionId="AiChatRecents"
             hiddenItems={
               <StyledHiddenThreads>
                 {hiddenThreads.map((thread) => (
