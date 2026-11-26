@@ -4,7 +4,7 @@ import { http, HttpResponse } from 'msw';
 import { type MswHandler } from 'test/integration/utils/http-mock.util';
 
 // Only the onboarding import sends a positive `in:` term. The full sync's
-// `-label:` / `-category:` exclusions and `label:` inclusions stay unapplied.
+// `-label:` / `-category:` exclusions and `labelIds` inclusions stay unapplied.
 const INCLUDED_LABEL_REGEX = /(?:^|\s)in:(\w+)/g;
 
 const matchesSearchFilter = (

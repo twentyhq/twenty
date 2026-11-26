@@ -22,7 +22,11 @@ export const googleIdentityHandlers = (
     HttpResponse.json({ scope: GOOGLE_OAUTH_SCOPES, email: handle }),
   ),
   http.get('https://gmail.googleapis.com/gmail/v1/users/me/profile', () =>
-    HttpResponse.json({ emailAddress: handle, messagesTotal: 0 }),
+    HttpResponse.json({
+      emailAddress: handle,
+      messagesTotal: 0,
+      historyId: '987654321',
+    }),
   ),
   http.get('https://people.googleapis.com/v1/people/me', () =>
     HttpResponse.json({ names: [{ displayName: 'Jane Austen' }] }),
