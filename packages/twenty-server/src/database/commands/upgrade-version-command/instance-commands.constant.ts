@@ -346,7 +346,8 @@ import { RelaxViewVisibilityFastInstanceCommand } from 'src/database/commands/up
 import { RenameAgentChatChannelTablesToInboxChannelFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-instance-command-fast-1795688525750-rename-agent-chat-channel-tables-to-inbox-channel';
 import { AddFieldMetadataFormulaColumnFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-fast-1795701090644-add-field-metadata-formula-column';
 import { MoveFieldMetadataFormulaOutOfSettingsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-slow-1795701107918-move-field-metadata-formula-out-of-settings';
-import { AddListPinnedFieldMetadataIdToViewFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-fast-1795709450596-add-list-pinned-field-metadata-id-to-view';
+import { DropViewVisibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-fast-1795709923763-drop-view-visibility';
+import { AddListPinnedFieldMetadataIdToViewFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-fast-1795713501522-add-list-pinned-field-metadata-id-to-view';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -695,5 +696,6 @@ export const INSTANCE_COMMANDS = [
   RenameAgentChatChannelTablesToInboxChannelFastInstanceCommand,
   AddFieldMetadataFormulaColumnFastInstanceCommand,
   MoveFieldMetadataFormulaOutOfSettingsSlowInstanceCommand,
+  DropViewVisibilityFastInstanceCommand,
   AddListPinnedFieldMetadataIdToViewFastInstanceCommand,
 ];
