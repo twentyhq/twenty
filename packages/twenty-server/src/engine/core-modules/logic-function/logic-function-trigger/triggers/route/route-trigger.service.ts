@@ -257,7 +257,11 @@ export class RouteTriggerService {
   }: {
     request: Request;
     httpMethod: HTTPMethod;
-  }): Promise<{ response: RouteTriggerResponse; isPublicDomain: boolean }> {
+  }): Promise<{
+    response: RouteTriggerResponse;
+    isPublicDomain: boolean;
+    isSingleApplicationHost: boolean;
+  }> {
     const { workspace, applicationId, isPublicDomain, authenticationContext } =
       await this.resolveRouteTriggerRequestContextOrFail(request);
 
@@ -365,6 +369,11 @@ export class RouteTriggerService {
       );
     }
 
-    return { response: outcome.response, isPublicDomain };
+    return {
+      response: outcome.response,
+      isPublicDomain,
+      // Only a validated public domain row binds the host to one application.
+      isSingleApplicationHost: isDefined(applicationId),
+    };
   }
 }

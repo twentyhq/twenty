@@ -368,7 +368,7 @@ export class ApplicationService {
     return application;
   }
 
-  async findPrimaryPublicDomainName({
+  async findOldestValidatedPublicDomainName({
     applicationId,
     workspaceId,
   }: {
@@ -377,10 +377,17 @@ export class ApplicationService {
   }): Promise<string | null> {
     const application = await this.applicationRepository.findOne(workspaceId, {
       where: { id: applicationId },
-      relations: ['primaryPublicDomain'],
+      relations: ['publicDomains'],
     });
 
-    return application?.primaryPublicDomain?.domain ?? null;
+    const oldestValidatedPublicDomain = (application?.publicDomains ?? [])
+      .filter((publicDomain) => publicDomain.isValidated)
+      .sort(
+        (first, second) =>
+          first.createdAt.getTime() - second.createdAt.getTime(),
+      )[0];
+
+    return oldestValidatedPublicDomain?.domain ?? null;
   }
 
   async countInstalledWorkspacesForApplication(

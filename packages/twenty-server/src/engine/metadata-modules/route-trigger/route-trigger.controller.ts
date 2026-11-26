@@ -37,11 +37,15 @@ export class RouteTriggerController {
     response: Response,
     httpMethod: HTTPMethod,
   ) {
-    const { response: triggerResponse, isPublicDomain } =
-      await this.routeTriggerService.handle({ request, httpMethod });
+    const {
+      response: triggerResponse,
+      isPublicDomain,
+      isSingleApplicationHost,
+    } = await this.routeTriggerService.handle({ request, httpMethod });
 
     sendRouteTriggerResponse(response, triggerResponse, {
       allowAllHeaders: isPublicDomain,
+      sandboxDocument: !isSingleApplicationHost,
     });
   }
 

@@ -103,6 +103,14 @@ export class WorkspaceDomainsService {
     return foundWorkspace;
   }
 
+  // A row is created before its DNS is proven, so only validated rows may route traffic.
+  private findValidatedPublicDomain(domain: string) {
+    return this.publicDomainRepository.findOne({
+      where: { domain, isValidated: true },
+      relations: ['workspace', 'workspace.workspaceSsoIdentityProviders'],
+    });
+  }
+
   async getWorkspaceByOriginOrDefaultWorkspace(origin: string) {
     const { workspace } = await this.resolveWorkspaceAndPublicDomain(origin);
 
@@ -120,9 +128,7 @@ export class WorkspaceDomainsService {
     if (!this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED')) {
       // Still resolve the public domain so route triggers can scope by application.
       const publicDomain = isDefined(customDomain)
-        ? await this.publicDomainRepository.findOne({
-            where: { domain: customDomain },
-          })
+        ? await this.findValidatedPublicDomain(customDomain)
         : null;
 
       return {
@@ -135,10 +141,8 @@ export class WorkspaceDomainsService {
     if (isUnderPublicDomainUrl) {
       const hostname = new URL(origin).hostname;
 
-      const registeredPublicDomain = await this.publicDomainRepository.findOne({
-        where: { domain: hostname },
-        relations: ['workspace', 'workspace.workspaceSsoIdentityProviders'],
-      });
+      const registeredPublicDomain =
+        await this.findValidatedPublicDomain(hostname);
 
       if (isDefined(registeredPublicDomain)) {
         return {
@@ -189,10 +193,7 @@ export class WorkspaceDomainsService {
       };
     }
 
-    const publicDomain = await this.publicDomainRepository.findOne({
-      where: { domain: customDomain },
-      relations: ['workspace', 'workspace.workspaceSsoIdentityProviders'],
-    });
+    const publicDomain = await this.findValidatedPublicDomain(customDomain);
 
     return {
       workspace: publicDomain?.workspace ?? undefined,

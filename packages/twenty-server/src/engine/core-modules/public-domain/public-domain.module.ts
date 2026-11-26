@@ -6,6 +6,7 @@ import { PublicDomainService } from 'src/engine/core-modules/public-domain/publi
 import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import { PublicDomainResolver } from 'src/engine/core-modules/public-domain/public-domain.resolver';
 import { DnsManagerModule } from 'src/engine/core-modules/dns-manager/dns-manager.module';
+import { DomainServerConfigModule } from 'src/engine/core-modules/domain/domain-server-config/domain-server-config.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { CheckPublicDomainsValidRecordsCronCommand } from 'src/engine/core-modules/public-domain/crons/commands/check-public-domains-valid-records.cron.command';
 import { CheckPublicDomainsValidRecordsCronJob } from 'src/engine/core-modules/public-domain/crons/jobs/check-public-domains-valid-records.cron.job';
@@ -24,6 +25,7 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
       ApplicationEntity,
     ]),
     DnsManagerModule,
+    DomainServerConfigModule,
     PermissionsModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
   ],

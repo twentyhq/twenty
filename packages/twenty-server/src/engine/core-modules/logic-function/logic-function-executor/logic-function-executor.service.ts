@@ -696,7 +696,7 @@ export class LogicFunctionExecutorService {
     }
 
     const primaryPublicDomain =
-      await this.applicationService.findPrimaryPublicDomainName({
+      await this.applicationService.findOldestValidatedPublicDomainName({
         applicationId: flatApplication.id,
         workspaceId,
       });
