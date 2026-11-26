@@ -1,6 +1,8 @@
 import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useMemo } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
+import { VALIDATION_RULE_PREVIOUS_VARIABLE_NAME } from 'twenty-shared/constants';
 import { type ValidationRuleFieldDescriptor } from 'twenty-shared/types';
 import {
   compileFormulaExpression,
@@ -14,6 +16,7 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { buildFormulaFieldEditorInputs } from '@/settings/data-model/fields/forms/formula/utils/buildFormulaFieldEditorInputs';
 import { getFormulaFunctionDefinitions } from '@/settings/data-model/fields/forms/formula/utils/getFormulaFunctionDefinitions';
 import { ValidationRuleExpressionEditor } from '@/validation-rules/components/ValidationRuleExpressionEditor';
+import { VALIDATION_RULE_KEYWORDS } from '@/validation-rules/constants/ValidationRuleKeywords';
 
 const getFormulaEvaluationHint = ({
   expression,
@@ -43,6 +46,10 @@ export const settingsDataModelFieldFormulaFormSchema = z.object({
 });
 
 const FORMULA_FUNCTION_DEFINITIONS = getFormulaFunctionDefinitions();
+
+const FORMULA_KEYWORD_DEFINITIONS = VALIDATION_RULE_KEYWORDS.filter(
+  ({ name }) => name !== VALIDATION_RULE_PREVIOUS_VARIABLE_NAME,
+);
 
 type SettingsDataModelFieldFormulaFormValues = z.infer<
   typeof settingsDataModelFieldFormulaFormSchema
@@ -78,6 +85,17 @@ export const SettingsDataModelFieldFormulaForm = ({
     <Controller
       name={name}
       control={control}
+      rules={{
+        validate: (expression) => {
+          if (!isNonEmptyString(expression)) {
+            return true;
+          }
+
+          const compilation = compileFormulaExpression({ expression, fields });
+
+          return compilation.isValid || compilation.errorMessage;
+        },
+      }}
       render={({ field: { onChange, value } }) => (
         <Card.Root fullWidth>
           <ValidationRuleExpressionEditor
@@ -87,6 +105,8 @@ export const SettingsDataModelFieldFormulaForm = ({
             onChange={onChange}
             compileExpression={compileFormulaExpression}
             functionDefinitions={FORMULA_FUNCTION_DEFINITIONS}
+            keywordDefinitions={FORMULA_KEYWORD_DEFINITIONS}
+            shouldShowValidationRuleGuidance={false}
             hint={getFormulaEvaluationHint({
               expression: value ?? '',
               fields,

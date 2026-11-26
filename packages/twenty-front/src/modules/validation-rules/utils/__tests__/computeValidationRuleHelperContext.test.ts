@@ -1,4 +1,5 @@
 import { buildValidationRuleEditorFields } from '@/validation-rules/utils/buildValidationRuleEditorFields';
+import { VALIDATION_RULE_KEYWORDS } from '@/validation-rules/constants/ValidationRuleKeywords';
 import { computeValidationRuleHelperContext } from '@/validation-rules/utils/computeValidationRuleHelperContext';
 import { type ValidationRuleHelperItem } from '@/validation-rules/types/ValidationRuleHelperItem';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
@@ -123,5 +124,26 @@ describe('computeValidationRuleHelperContext', () => {
     expect(names).toContain('and');
     expect(names).not.toContain('closeDate');
     expect(names).not.toContain('isDefined');
+  });
+
+  it('should offer neither previous nor its fields when the keywords leave it out', () => {
+    const keywordDefinitions = VALIDATION_RULE_KEYWORDS.filter(
+      ({ name }) => name !== 'previous',
+    );
+
+    expect(
+      computeValidationRuleHelperContext({
+        textBeforeCursor: 'prev',
+        fields,
+        keywordDefinitions,
+      }).items,
+    ).toEqual([]);
+    expect(
+      computeValidationRuleHelperContext({
+        textBeforeCursor: 'previous.',
+        fields,
+        keywordDefinitions,
+      }).items,
+    ).toEqual([]);
   });
 });

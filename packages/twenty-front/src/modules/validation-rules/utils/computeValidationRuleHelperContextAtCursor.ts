@@ -11,10 +11,12 @@ export const computeValidationRuleHelperContextAtCursor = ({
   editor,
   fields,
   functionDefinitions,
+  keywordDefinitions,
 }: {
   editor: Editor;
   fields: ValidationRuleEditorField[];
   functionDefinitions?: ValidationRuleSyntaxDefinition[];
+  keywordDefinitions?: ValidationRuleSyntaxDefinition[];
 }): ValidationRuleHelperContext => {
   const { doc, selection } = editor.state;
   const nodeBeforeCursor = selection.$from.nodeBefore;
@@ -27,5 +29,6 @@ export const computeValidationRuleHelperContextAtCursor = ({
         : undefined,
     fields,
     functionDefinitions,
+    keywordDefinitions,
   });
 };

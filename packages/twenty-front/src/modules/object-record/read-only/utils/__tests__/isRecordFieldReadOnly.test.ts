@@ -58,6 +58,18 @@ describe('isRecordFieldReadOnly', () => {
     ).toBe(true);
   });
 
+  it('should return true for a formula field, whose value is computed', () => {
+    expect(
+      isRecordFieldReadOnly({
+        ...baseParams,
+        fieldMetadataItem: {
+          ...baseParams.fieldMetadataItem,
+          settings: { formula: { expression: 'price * 2' } },
+        },
+      }),
+    ).toBe(true);
+  });
+
   it('should return true when object lacks update permissions', () => {
     expect(
       isRecordFieldReadOnly({
