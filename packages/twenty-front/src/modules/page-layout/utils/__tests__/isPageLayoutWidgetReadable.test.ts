@@ -4,61 +4,56 @@ import { type FieldConfiguration } from '@/page-layout/types/FieldConfiguration'
 import { isPageLayoutWidgetReadable } from '@/page-layout/utils/isPageLayoutWidgetReadable';
 import {
   FieldDisplayMode,
-  RelationType,
   WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
-const COMPANY_ID = 'company-id';
-const TASK_ID = 'task-id';
-const OPPORTUNITY_ID = 'opportunity-id';
+const OBJECT_METADATA_ITEMS = getTestEnrichedObjectMetadataItemsMock();
 
-const OPPORTUNITIES_FIELD_ID = 'company-opportunities-field-id';
-const COMPANY_NAME_FIELD_ID = 'company-name-field-id';
+const COMPANY_ID = getMockObjectMetadataItemOrThrow('company').id;
+const PERSON_ID = getMockObjectMetadataItemOrThrow('person').id;
+const OPPORTUNITY_ID = getMockObjectMetadataItemOrThrow('opportunity').id;
+const TASK_ID = getMockObjectMetadataItemOrThrow('task').id;
+const EMPLOYMENT_HISTORY_ID =
+  getMockObjectMetadataItemOrThrow('employmentHistory').id;
 
-const OBJECT_METADATA_ITEMS = [
-  {
-    id: COMPANY_ID,
-    nameSingular: 'company',
-    fields: [
-      { id: COMPANY_NAME_FIELD_ID, relation: null },
-      {
-        id: OPPORTUNITIES_FIELD_ID,
-        relation: {
-          type: RelationType.ONE_TO_MANY,
-          sourceFieldMetadata: {
-            id: OPPORTUNITIES_FIELD_ID,
-            name: 'opportunities',
-          },
-          targetFieldMetadata: {
-            id: 'opportunity-company-field-id',
-            name: 'company',
-          },
-          sourceObjectMetadata: {
-            id: COMPANY_ID,
-            nameSingular: 'company',
-            namePlural: 'companies',
-          },
-          targetObjectMetadata: {
-            id: OPPORTUNITY_ID,
-            nameSingular: 'opportunity',
-            namePlural: 'opportunities',
-          },
-        },
-      },
-    ],
-  },
-  { id: TASK_ID, nameSingular: 'task', fields: [] },
-  { id: OPPORTUNITY_ID, nameSingular: 'opportunity', fields: [] },
-];
+const getFieldId = (objectNameSingular: string, fieldName: string) => {
+  const field = getMockObjectMetadataItemOrThrow(
+    objectNameSingular,
+  ).fields.find(({ name }) => name === fieldName);
 
-const buildFieldConfiguration = (
-  fieldMetadataId: string,
-): FieldConfiguration => ({
+  if (field === undefined) {
+    throw new Error(`Missing ${objectNameSingular}.${fieldName} mock field`);
+  }
+
+  return field.id;
+};
+
+const JUNCTION_VIEW_ID = 'employment-history-view-id';
+const COMPANY_VIEW_ID = 'company-view-id';
+
+const VIEWS_BY_ID_MAP = new Map([
+  [JUNCTION_VIEW_ID, { objectMetadataId: EMPLOYMENT_HISTORY_ID }],
+  [COMPANY_VIEW_ID, { objectMetadataId: COMPANY_ID }],
+]);
+
+const buildFieldConfiguration = ({
+  fieldMetadataId,
+  nestedRelationFieldMetadataId,
+  viewId,
+}: {
+  fieldMetadataId: string;
+  nestedRelationFieldMetadataId?: string;
+  viewId?: string;
+}): FieldConfiguration => ({
   __typename: 'FieldConfiguration',
   configurationType: WidgetConfigurationType.FIELD,
   fieldMetadataId,
-  fieldDisplayMode: FieldDisplayMode.FIELD,
+  nestedRelationFieldMetadataId,
+  viewId,
+  fieldDisplayMode: FieldDisplayMode.TABLE,
 });
 
 const buildObjectPermissions = (
@@ -75,18 +70,27 @@ const buildObjectPermissions = (
 
 const isReadable = ({
   type,
-  objectMetadataId,
+  pageObjectMetadataId,
   configuration = null,
   unreadableObjectMetadataIds,
+  objectMetadataItems = OBJECT_METADATA_ITEMS,
 }: {
   type: WidgetType;
-  objectMetadataId?: string | null;
+  pageObjectMetadataId: string;
   configuration?: FieldConfiguration | null;
   unreadableObjectMetadataIds: string[];
+  objectMetadataItems?: typeof OBJECT_METADATA_ITEMS;
 }) =>
   isPageLayoutWidgetReadable({
-    widget: { type, objectMetadataId, configuration },
-    objectMetadataItems: OBJECT_METADATA_ITEMS,
+    widget: {
+      type,
+      objectMetadataId:
+        type === WidgetType.IFRAME ? null : pageObjectMetadataId,
+      configuration,
+    },
+    pageObjectMetadataId,
+    objectMetadataItems,
+    viewsByIdMap: VIEWS_BY_ID_MAP,
     objectPermissionsByObjectMetadataId: Object.fromEntries(
       OBJECT_METADATA_ITEMS.map(({ id }) => [
         id,
@@ -100,8 +104,8 @@ describe('isPageLayoutWidgetReadable', () => {
     expect(
       isReadable({
         type: WidgetType.IFRAME,
-        objectMetadataId: null,
-        unreadableObjectMetadataIds: [COMPANY_ID, TASK_ID, OPPORTUNITY_ID],
+        pageObjectMetadataId: COMPANY_ID,
+        unreadableObjectMetadataIds: [COMPANY_ID],
       }),
     ).toBe(true);
   });
@@ -110,27 +114,17 @@ describe('isPageLayoutWidgetReadable', () => {
     expect(
       isReadable({
         type: WidgetType.RECORD_TABLE,
-        objectMetadataId: OPPORTUNITY_ID,
+        pageObjectMetadataId: OPPORTUNITY_ID,
         unreadableObjectMetadataIds: [OPPORTUNITY_ID],
       }),
     ).toBe(false);
-  });
-
-  it('keeps a widget bound to a readable object', () => {
-    expect(
-      isReadable({
-        type: WidgetType.RECORD_TABLE,
-        objectMetadataId: OPPORTUNITY_ID,
-        unreadableObjectMetadataIds: [TASK_ID],
-      }),
-    ).toBe(true);
   });
 
   it('hides a built-in widget whose data object the viewer cannot read', () => {
     expect(
       isReadable({
         type: WidgetType.TASKS,
-        objectMetadataId: COMPANY_ID,
+        pageObjectMetadataId: COMPANY_ID,
         unreadableObjectMetadataIds: [TASK_ID],
       }),
     ).toBe(false);
@@ -140,7 +134,7 @@ describe('isPageLayoutWidgetReadable', () => {
     expect(
       isReadable({
         type: WidgetType.TASKS,
-        objectMetadataId: COMPANY_ID,
+        pageObjectMetadataId: COMPANY_ID,
         unreadableObjectMetadataIds: [OPPORTUNITY_ID],
       }),
     ).toBe(true);
@@ -149,9 +143,12 @@ describe('isPageLayoutWidgetReadable', () => {
   it('keeps a built-in widget whose data object is not in the workspace', () => {
     expect(
       isReadable({
-        type: WidgetType.CALENDAR,
-        objectMetadataId: COMPANY_ID,
-        unreadableObjectMetadataIds: [],
+        type: WidgetType.TASKS,
+        pageObjectMetadataId: COMPANY_ID,
+        unreadableObjectMetadataIds: [TASK_ID],
+        objectMetadataItems: OBJECT_METADATA_ITEMS.filter(
+          ({ id }) => id !== TASK_ID,
+        ),
       }),
     ).toBe(true);
   });
@@ -160,8 +157,23 @@ describe('isPageLayoutWidgetReadable', () => {
     expect(
       isReadable({
         type: WidgetType.FIELD,
-        objectMetadataId: COMPANY_ID,
-        configuration: buildFieldConfiguration(OPPORTUNITIES_FIELD_ID),
+        pageObjectMetadataId: COMPANY_ID,
+        configuration: buildFieldConfiguration({
+          fieldMetadataId: getFieldId('company', 'opportunities'),
+        }),
+        unreadableObjectMetadataIds: [OPPORTUNITY_ID],
+      }),
+    ).toBe(false);
+  });
+
+  it('resolves a related records field configured by name', () => {
+    expect(
+      isReadable({
+        type: WidgetType.FIELD,
+        pageObjectMetadataId: COMPANY_ID,
+        configuration: buildFieldConfiguration({
+          fieldMetadataId: 'opportunities',
+        }),
         unreadableObjectMetadataIds: [OPPORTUNITY_ID],
       }),
     ).toBe(false);
@@ -171,9 +183,56 @@ describe('isPageLayoutWidgetReadable', () => {
     expect(
       isReadable({
         type: WidgetType.FIELD,
-        objectMetadataId: COMPANY_ID,
-        configuration: buildFieldConfiguration(COMPANY_NAME_FIELD_ID),
+        pageObjectMetadataId: COMPANY_ID,
+        configuration: buildFieldConfiguration({
+          fieldMetadataId: getFieldId('company', 'name'),
+        }),
         unreadableObjectMetadataIds: [OPPORTUNITY_ID],
+      }),
+    ).toBe(true);
+  });
+
+  it('hides a nested relation field whose last hop the viewer cannot read', () => {
+    expect(
+      isReadable({
+        type: WidgetType.FIELD,
+        pageObjectMetadataId: COMPANY_ID,
+        configuration: buildFieldConfiguration({
+          fieldMetadataId: getFieldId('company', 'people'),
+          nestedRelationFieldMetadataId: getFieldId(
+            'person',
+            'pointOfContactForOpportunities',
+          ),
+        }),
+        unreadableObjectMetadataIds: [OPPORTUNITY_ID],
+      }),
+    ).toBe(false);
+  });
+
+  it('hides a junction field whose target behind the junction the viewer cannot read', () => {
+    expect(
+      isReadable({
+        type: WidgetType.FIELD,
+        pageObjectMetadataId: PERSON_ID,
+        configuration: buildFieldConfiguration({
+          fieldMetadataId: getFieldId('person', 'previousCompanies'),
+          viewId: COMPANY_VIEW_ID,
+        }),
+        unreadableObjectMetadataIds: [COMPANY_ID],
+      }),
+    ).toBe(false);
+  });
+
+  it('keeps a junction field whose view lists the readable junction records', () => {
+    expect(
+      isReadable({
+        type: WidgetType.FIELD,
+        pageObjectMetadataId: PERSON_ID,
+        configuration: buildFieldConfiguration({
+          fieldMetadataId: getFieldId('person', 'previousCompanies'),
+          viewId: JUNCTION_VIEW_ID,
+        }),
+        unreadableObjectMetadataIds: [COMPANY_ID],
       }),
     ).toBe(true);
   });

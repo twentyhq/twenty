@@ -4,28 +4,87 @@ import {
 } from 'twenty-shared/utils';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectPermissionsByObjectMetadataId } from '@/object-metadata/types/ObjectPermissionsByObjectMetadataId';
+import { doesFieldMetadataItemMatchFieldMetadataId } from '@/object-metadata/utils/doesFieldMetadataItemMatchFieldMetadataId';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { WIDGET_TYPE_TO_READ_OBJECT_NAME_SINGULAR } from '@/page-layout/constants/WidgetTypeToReadObjectNameSingular';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { getFieldWidgetRelationTraversal } from '@/page-layout/widgets/field/utils/getFieldWidgetRelationTraversal';
+import { resolveFieldWidgetNestedRelation } from '@/page-layout/widgets/field/utils/resolveFieldWidgetNestedRelation';
+import { type View } from '@/views/types/View';
 
 type IsPageLayoutWidgetReadableArguments = {
   widget: Pick<PageLayoutWidget, 'type' | 'objectMetadataId'> & {
     configuration?: PageLayoutWidget['configuration'] | null;
   };
-  objectMetadataItems: (Pick<
-    EnrichedObjectMetadataItem,
-    'id' | 'nameSingular'
-  > & {
-    fields: Pick<FieldMetadataItem, 'id' | 'relation'>[];
-  })[];
+  pageObjectMetadataId: string | null | undefined;
+  objectMetadataItems: EnrichedObjectMetadataItem[];
+  viewsByIdMap: Map<string, Pick<View, 'objectMetadataId'>>;
   objectPermissionsByObjectMetadataId: ObjectPermissionsByObjectMetadataId;
+};
+
+const getFieldWidgetReadObjectMetadataIds = ({
+  widget,
+  pageObjectMetadataId,
+  objectMetadataItems,
+  viewsByIdMap,
+}: Omit<
+  IsPageLayoutWidgetReadableArguments,
+  'objectPermissionsByObjectMetadataId'
+>): (string | undefined)[] => {
+  if (widget.configuration?.__typename !== 'FieldConfiguration') {
+    return [];
+  }
+
+  const { fieldMetadataId, nestedRelationFieldMetadataId, viewId } =
+    widget.configuration;
+
+  const sourceFieldMetadataItem = objectMetadataItems
+    .find(
+      (objectMetadataItem) => objectMetadataItem.id === pageObjectMetadataId,
+    )
+    ?.fields.find(
+      (fieldMetadataItem) =>
+        fieldMetadataItem.name === fieldMetadataId ||
+        doesFieldMetadataItemMatchFieldMetadataId({
+          fieldMetadataItem,
+          fieldMetadataId,
+        }),
+    );
+
+  const relationTargetObjectMetadataId =
+    sourceFieldMetadataItem?.relation?.targetObjectMetadata.id;
+
+  if (!isDefined(relationTargetObjectMetadataId)) {
+    return [];
+  }
+
+  const { targetObjectMetadataId } = getFieldWidgetRelationTraversal({
+    sourceFieldMetadataItem,
+    nestedRelationFieldMetadataItem: resolveFieldWidgetNestedRelation({
+      objectMetadataItems,
+      relationTargetObjectMetadataId,
+      nestedRelationFieldMetadataId,
+    })?.nestedRelationFieldMetadataItem,
+    objectMetadataItems,
+  });
+
+  const isViewOnRelationTargetObject =
+    isDefined(viewId) &&
+    viewsByIdMap.get(viewId)?.objectMetadataId ===
+      relationTargetObjectMetadataId;
+
+  return [
+    relationTargetObjectMetadataId,
+    isViewOnRelationTargetObject ? undefined : targetObjectMetadataId,
+  ];
 };
 
 export const isPageLayoutWidgetReadable = ({
   widget,
+  pageObjectMetadataId,
   objectMetadataItems,
+  viewsByIdMap,
   objectPermissionsByObjectMetadataId,
 }: IsPageLayoutWidgetReadableArguments): boolean => {
   const readObjectNameSingular =
@@ -38,23 +97,15 @@ export const isPageLayoutWidgetReadable = ({
       )?.id
     : undefined;
 
-  const relationFieldMetadataIds =
-    widget.configuration?.__typename === 'FieldConfiguration'
-      ? [
-          widget.configuration.fieldMetadataId,
-          widget.configuration.nestedRelationFieldMetadataId,
-        ].filter(isDefined)
-      : [];
-
-  const relationTargetObjectMetadataIds = objectMetadataItems
-    .flatMap((objectMetadataItem) => objectMetadataItem.fields)
-    .filter((field) => relationFieldMetadataIds.includes(field.id))
-    .map((field) => field.relation?.targetObjectMetadata.id);
-
   return [
     widget.objectMetadataId,
     readObjectMetadataId,
-    ...relationTargetObjectMetadataIds,
+    ...getFieldWidgetReadObjectMetadataIds({
+      widget,
+      pageObjectMetadataId,
+      objectMetadataItems,
+      viewsByIdMap,
+    }),
   ]
     .filter(isDefined)
     .every((objectMetadataId) =>

@@ -6,12 +6,15 @@ import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageL
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { isPageLayoutWidgetReadable } from '@/page-layout/utils/isPageLayoutWidgetReadable';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { viewsByIdMapSelector } from '@/views/states/selectors/viewsByIdMapSelector';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 
 export const useIsPageLayoutWidgetReadable = () => {
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+  const viewsByIdMap = useAtomStateValue(viewsByIdMapSelector);
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
   const shouldHideUnreadableWidgets =
     currentPageLayout.type === PageLayoutType.RECORD_PAGE &&
@@ -27,12 +30,16 @@ export const useIsPageLayoutWidgetReadable = () => {
       !shouldHideUnreadableWidgets ||
       isPageLayoutWidgetReadable({
         widget,
+        pageObjectMetadataId: currentPageLayout.objectMetadataId,
         objectMetadataItems,
+        viewsByIdMap,
         objectPermissionsByObjectMetadataId,
       }),
     [
       shouldHideUnreadableWidgets,
+      currentPageLayout.objectMetadataId,
       objectMetadataItems,
+      viewsByIdMap,
       objectPermissionsByObjectMetadataId,
     ],
   );
