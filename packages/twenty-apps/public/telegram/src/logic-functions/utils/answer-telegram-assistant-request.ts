@@ -1,5 +1,7 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
+import { TELEGRAM_PLAIN_MESSAGE_MAX_LENGTH } from 'src/logic-functions/constants/telegram-plain-message-max-length';
+import { TELEGRAM_RICH_MESSAGE_MAX_LENGTH } from 'src/logic-functions/constants/telegram-rich-message-max-length';
 import { TELEGRAM_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/telegram-assistant-request-status';
 import { claimTelegramAssistantRequest } from 'src/logic-functions/data/claim-telegram-assistant-request';
 import { findTelegramAssistantHistory } from 'src/logic-functions/data/find-telegram-assistant-history';
@@ -71,13 +73,20 @@ export const answerTelegramAssistantRequest = async ({
       deadlineAtMs: agentDeadlineAtMs,
     });
 
+    const answer = { responseText, requestId, workspaceBaseUrl };
+
     await sendTelegramAnswer({
       botToken,
       chatId,
-      text: buildTelegramAssistantAnswerText({
-        responseText,
-        requestId,
-        workspaceBaseUrl,
+      richText: buildTelegramAssistantAnswerText({
+        ...answer,
+        maxLength: TELEGRAM_RICH_MESSAGE_MAX_LENGTH,
+        isPlainText: false,
+      }),
+      plainText: buildTelegramAssistantAnswerText({
+        ...answer,
+        maxLength: TELEGRAM_PLAIN_MESSAGE_MAX_LENGTH,
+        isPlainText: true,
       }),
     });
     await updateTelegramAssistantRequest({

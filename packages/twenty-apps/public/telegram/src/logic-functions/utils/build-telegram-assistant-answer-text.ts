@@ -1,7 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { TELEGRAM_ASSISTANT_REQUEST_OBJECT_NAME_SINGULAR } from 'src/constants/telegram-assistant-request-object-name-singular';
-import { TELEGRAM_RICH_MESSAGE_MAX_LENGTH } from 'src/logic-functions/constants/telegram-rich-message-max-length';
 
 const CODE_FENCE = '```';
 const CLOSING_FENCE = `\n${CODE_FENCE}`;
@@ -9,29 +8,47 @@ const CLOSING_FENCE = `\n${CODE_FENCE}`;
 const hasOpenCodeFence = (text: string): boolean =>
   text.split(CODE_FENCE).length % 2 === 0;
 
+const buildTruncationNotice = ({
+  requestUrl,
+  isPlainText,
+}: {
+  requestUrl: string | undefined;
+  isPlainText: boolean;
+}): string => {
+  if (!isNonEmptyString(requestUrl)) {
+    return '\n\nShortened to fit Telegram. The full answer is on this request in Twenty.';
+  }
+
+  return isPlainText
+    ? `\n\nShortened to fit Telegram. Read the full answer in Twenty: ${requestUrl}`
+    : `\n\n_Shortened to fit Telegram. [Read the full answer in Twenty](${requestUrl})_`;
+};
+
 export const buildTelegramAssistantAnswerText = ({
   responseText,
   requestId,
   workspaceBaseUrl,
+  maxLength,
+  isPlainText,
 }: {
   responseText: string;
   requestId: string;
   workspaceBaseUrl: string | undefined;
+  maxLength: number;
+  isPlainText: boolean;
 }): string => {
   const characters = [...responseText];
 
-  if (characters.length <= TELEGRAM_RICH_MESSAGE_MAX_LENGTH) {
+  if (characters.length <= maxLength) {
     return responseText;
   }
 
-  const notice = isNonEmptyString(workspaceBaseUrl)
-    ? `\n\n_Shortened to fit Telegram. [Read the full answer in Twenty](${workspaceBaseUrl}/object/${TELEGRAM_ASSISTANT_REQUEST_OBJECT_NAME_SINGULAR}/${requestId})_`
-    : '\n\n_Shortened to fit Telegram. The full answer is on this request in Twenty._';
+  const requestUrl = isNonEmptyString(workspaceBaseUrl)
+    ? `${workspaceBaseUrl}/object/${TELEGRAM_ASSISTANT_REQUEST_OBJECT_NAME_SINGULAR}/${requestId}`
+    : undefined;
+  const notice = buildTruncationNotice({ requestUrl, isPlainText });
   const head = characters
-    .slice(
-      0,
-      TELEGRAM_RICH_MESSAGE_MAX_LENGTH - notice.length - CLOSING_FENCE.length,
-    )
+    .slice(0, maxLength - notice.length - CLOSING_FENCE.length)
     .join('');
   const lastLineBreakIndex = head.lastIndexOf('\n');
   const keptText =
@@ -39,5 +56,8 @@ export const buildTelegramAssistantAnswerText = ({
       ? head.slice(0, lastLineBreakIndex)
       : head;
 
-  return `${keptText}${hasOpenCodeFence(keptText) ? CLOSING_FENCE : ''}${notice}`;
+  const closingFence =
+    !isPlainText && hasOpenCodeFence(keptText) ? CLOSING_FENCE : '';
+
+  return `${keptText}${closingFence}${notice}`;
 };

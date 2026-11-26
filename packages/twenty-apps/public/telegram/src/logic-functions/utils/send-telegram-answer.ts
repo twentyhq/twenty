@@ -1,6 +1,5 @@
 import { isNumber } from '@sniptt/guards';
 
-import { TELEGRAM_PLAIN_MESSAGE_MAX_LENGTH } from 'src/logic-functions/constants/telegram-plain-message-max-length';
 import { TELEGRAM_SEND_RETRY_MAX_WAIT_SECONDS } from 'src/logic-functions/constants/telegram-send-retry-max-wait-seconds';
 import { TelegramApiError } from 'src/logic-functions/types/telegram-api-error';
 import { callTelegramApiOrThrow } from 'src/logic-functions/utils/call-telegram-api-or-throw';
@@ -38,18 +37,20 @@ const callOnceMoreWhenRateLimited = async (
 export const sendTelegramAnswer = async ({
   botToken,
   chatId,
-  text,
+  richText,
+  plainText,
 }: {
   botToken: string;
   chatId: number;
-  text: string;
+  richText: string;
+  plainText: string;
 }): Promise<void> => {
   try {
     await callOnceMoreWhenRateLimited(() =>
       callTelegramApiOrThrow({
         botToken,
         method: 'sendRichMessage',
-        params: { chat_id: chatId, rich_message: { markdown: text } },
+        params: { chat_id: chatId, rich_message: { markdown: richText } },
       }),
     );
   } catch (error) {
@@ -66,10 +67,7 @@ export const sendTelegramAnswer = async ({
       callTelegramApiOrThrow({
         botToken,
         method: 'sendMessage',
-        params: {
-          chat_id: chatId,
-          text: [...text].slice(0, TELEGRAM_PLAIN_MESSAGE_MAX_LENGTH).join(''),
-        },
+        params: { chat_id: chatId, text: plainText },
       }),
     );
   }
