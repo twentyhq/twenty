@@ -25,7 +25,7 @@ const buildToolStepOutcome = ({
   step,
 }: {
   toolCall: { toolCallId: string; toolName: string; input: unknown };
-  step: SeededToolStep;
+  step: Pick<SeededToolStep, 'errorText' | 'output'>;
 }) => {
   if (isDefined(step.errorText)) {
     return { ...toolCall, type: 'tool-error' as const, error: step.errorText };
