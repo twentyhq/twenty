@@ -458,7 +458,8 @@ const CONVERSATIONS_TO_SEED: ConversationToSeed[] = [
       AGENT_CHAT_PENDING_INPUT_THREAD_DATA_SEED_IDS.APPROVED_RECORD_DELETE,
     title: 'Remove the duplicate Apple One deal',
     askedBy: 'TIM',
-    prompt: 'The Apple One bundle deal was entered twice. Remove the duplicate.',
+    prompt:
+      'The Apple One bundle deal was entered twice. Remove the duplicate.',
     intro: 'This is the duplicate. Delete it?',
     calls: [DUPLICATE_DEAL_DELETION_CALL],
     answer: {

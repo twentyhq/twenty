@@ -171,9 +171,7 @@ export const AiChatToolCallApprovalDecidedDetails = ({
         {isNonEmptyString(feedback) && (
           <StyledNote isError={false}>{t`Feedback: ${feedback}`}</StyledNote>
         )}
-        {isNonEmptyString(error) && (
-          <StyledNote isError>{error}</StyledNote>
-        )}
+        {isNonEmptyString(error) && <StyledNote isError>{error}</StyledNote>}
       </StyledAiChatAskCard>
     </AiChatAskDetails>
   );

@@ -67,7 +67,9 @@ const StyledOptionsList = styled.div`
 const StyledOptionRow = styled.div<{ isSelected: boolean }>`
   align-items: center;
   background: ${({ isSelected }) =>
-    isSelected ? themeCssVariables.background.transparent.light : 'transparent'};
+    isSelected
+      ? themeCssVariables.background.transparent.light
+      : 'transparent'};
   border-radius: ${themeCssVariables.border.radius.sm};
   box-sizing: border-box;
   display: flex;
@@ -126,7 +128,10 @@ export const AiChatQuestionAnsweredDetails = ({
                       selectedOptionIndices.includes(optionIndex);
 
                     return (
-                      <StyledOptionRow key={optionIndex} isSelected={isSelected}>
+                      <StyledOptionRow
+                        key={optionIndex}
+                        isSelected={isSelected}
+                      >
                         <NumberIcon
                           size={theme.icon.size.sm}
                           color={themeCssVariables.font.color.tertiary}

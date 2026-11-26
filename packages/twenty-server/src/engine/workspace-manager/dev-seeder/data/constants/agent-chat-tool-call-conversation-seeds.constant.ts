@@ -72,7 +72,8 @@ export const AGENT_CHAT_TOOL_CALL_CONVERSATION_SEEDS: AgentChatToolCallConversat
     {
       threadId: AGENT_CHAT_TOOL_CALL_THREAD_DATA_SEED_IDS.RECORD_LOOKUPS,
       title: 'Review the biggest open deals',
-      prompt: 'Which open deals are the biggest, and how do they split by stage?',
+      prompt:
+        'Which open deals are the biggest, and how do they split by stage?',
       steps: [
         {
           toolName: 'load_skills',
@@ -314,7 +315,9 @@ export const AGENT_CHAT_TOOL_CALL_CONVERSATION_SEEDS: AgentChatToolCallConversat
           toolArguments: {},
           message: 'Found 1 connected account',
           result: {
-            connectedAccounts: [{ handle: 'tim@apple.dev', provider: 'google' }],
+            connectedAccounts: [
+              { handle: 'tim@apple.dev', provider: 'google' },
+            ],
           },
         }),
         executeToolStep({
