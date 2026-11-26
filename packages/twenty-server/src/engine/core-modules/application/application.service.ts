@@ -368,28 +368,6 @@ export class ApplicationService {
     return application;
   }
 
-  async findOldestValidatedPublicDomainName({
-    applicationId,
-    workspaceId,
-  }: {
-    applicationId: string;
-    workspaceId: string;
-  }): Promise<string | null> {
-    const application = await this.applicationRepository.findOne(workspaceId, {
-      where: { id: applicationId },
-      relations: ['publicDomains'],
-    });
-
-    const oldestValidatedPublicDomain = (application?.publicDomains ?? [])
-      .filter((publicDomain) => publicDomain.isValidated)
-      .sort(
-        (first, second) =>
-          first.createdAt.getTime() - second.createdAt.getTime(),
-      )[0];
-
-    return oldestValidatedPublicDomain?.domain ?? null;
-  }
-
   async countInstalledWorkspacesForApplication(
     universalIdentifier: string,
   ): Promise<number> {

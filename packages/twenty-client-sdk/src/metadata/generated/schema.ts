@@ -1826,6 +1826,7 @@ export interface FormFieldConfiguration {
 }
 
 export interface FrontComponent {
+    applicationFunctionsBaseUrl?: Scalars['String']
     applicationGrantedCapabilities?: Scalars['String'][]
     applicationGrantedIframeMediaPermissions?: IframeMediaPermission[]
     applicationId: Scalars['UUID']
@@ -6750,6 +6751,7 @@ export interface FormFieldConfigurationGenqlSelection{
 }
 
 export interface FrontComponentGenqlSelection{
+    applicationFunctionsBaseUrl?: boolean | number
     applicationGrantedCapabilities?: boolean | number
     applicationGrantedIframeMediaPermissions?: IframeMediaPermissionGenqlSelection
     applicationId?: boolean | number

@@ -2936,6 +2936,7 @@ export type FormFieldConfiguration = {
 
 export type FrontComponent = {
   __typename?: 'FrontComponent';
+  applicationFunctionsBaseUrl?: Maybe<Scalars['String']['output']>;
   applicationGrantedCapabilities?: Maybe<Array<Scalars['String']['output']>>;
   applicationGrantedIframeMediaPermissions?: Maybe<Array<IframeMediaPermission>>;
   applicationId: Scalars['UUID']['output'];

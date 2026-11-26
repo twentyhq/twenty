@@ -202,6 +202,25 @@ export class WorkspaceDomainsService {
     };
   }
 
+  async buildApplicationFunctionsBaseUrl({
+    workspace,
+    applicationId,
+  }: {
+    workspace: Pick<WorkspaceEntity, 'id' | 'subdomain'>;
+    applicationId: string;
+  }): Promise<string | undefined> {
+    const oldestValidatedPublicDomain =
+      await this.publicDomainRepository.findOne({
+        where: { workspaceId: workspace.id, applicationId, isValidated: true },
+        order: { createdAt: 'ASC' },
+      });
+
+    return this.buildPublicFunctionBaseUrl({
+      workspace,
+      primaryPublicDomain: oldestValidatedPublicDomain?.domain,
+    });
+  }
+
   buildPublicFunctionBaseUrl({
     workspace,
     primaryPublicDomain,

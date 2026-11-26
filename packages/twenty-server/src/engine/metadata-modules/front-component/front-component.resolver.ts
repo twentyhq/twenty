@@ -24,6 +24,7 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { IframeMediaPermissionDTO } from 'src/engine/core-modules/workspace/dtos/iframe-media-permission.dto';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -92,6 +93,7 @@ export class FrontComponentResolver {
     private readonly userApplicationVariableValueService: UserApplicationVariableValueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationService: ApplicationService,
+    private readonly workspaceDomainsService: WorkspaceDomainsService,
   ) {}
 
   @ResolveField(() => String, { nullable: true })
@@ -109,6 +111,21 @@ export class FrontComponentResolver {
       flatApplicationMaps.byId[frontComponent.applicationId]
         ?.frontComponentSharedDependenciesChecksum ?? null
     );
+  }
+
+  @ResolveField(() => String, { nullable: true })
+  @UseGuards(NoPermissionGuard)
+  async applicationFunctionsBaseUrl(
+    @Parent() frontComponent: FrontComponentDTO,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<string | null> {
+    const functionsBaseUrl =
+      await this.workspaceDomainsService.buildApplicationFunctionsBaseUrl({
+        workspace,
+        applicationId: frontComponent.applicationId,
+      });
+
+    return functionsBaseUrl ?? null;
   }
 
   @ResolveField(() => String, { nullable: true })
