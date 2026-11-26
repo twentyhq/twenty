@@ -22,8 +22,11 @@ const buildFlatFieldMetadataMaps = (
 });
 
 const getErrorMessages = (
-  ...args: Parameters<typeof validateFlatViewListPinnedFields>
-) => validateFlatViewListPinnedFields(...args).map((error) => error.message);
+  ...validationArguments: Parameters<typeof validateFlatViewListPinnedFields>
+) =>
+  validateFlatViewListPinnedFields(...validationArguments).map(
+    (error) => error.message,
+  );
 
 describe('validateFlatViewListPinnedFields', () => {
   it('accepts a view without pinned fields', () => {
