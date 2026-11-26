@@ -1,6 +1,7 @@
 import { kv } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
+import { type TeamsSuggestedActions } from 'src/features/chat/logic-functions/types/teams-suggested-actions.type';
 import { buildTeamsMessageActivity } from 'src/features/chat/logic-functions/utils/build-teams-message-activity';
 import { getTeamsConnectorAccessTokenOrThrow } from 'src/features/chat/logic-functions/utils/get-teams-connector-access-token-or-throw';
 import { sendTeamsActivity } from 'src/features/chat/logic-functions/utils/send-teams-activity';
@@ -11,12 +12,14 @@ export const sendTeamsReplyOnce = async ({
   serviceUrl,
   conversationId,
   text,
+  suggestedActions,
 }: {
   kvKey: string;
   ttlMs: number;
   serviceUrl: string;
   conversationId: string;
   text: string;
+  suggestedActions?: TeamsSuggestedActions;
 }): Promise<boolean> => {
   const existingClaim = await kv.get<{ expiresAt: number }>(kvKey);
 
@@ -31,7 +34,7 @@ export const sendTeamsReplyOnce = async ({
       serviceUrl,
       conversationId,
       accessToken: await getTeamsConnectorAccessTokenOrThrow(),
-      activity: buildTeamsMessageActivity({ text }),
+      activity: buildTeamsMessageActivity({ text, suggestedActions }),
     });
   } catch (error) {
     await kv
