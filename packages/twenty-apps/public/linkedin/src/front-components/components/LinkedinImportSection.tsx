@@ -16,6 +16,7 @@ const StyledStack = styled.div`
 `;
 
 type LinkedinImportSectionProps = {
+  connectedAccountId: string;
   importPolicy: LinkedinImportPolicy;
   selectedChats: LinkedinSelectedChat[];
   onChange: (importPolicy: LinkedinImportPolicy) => void;
@@ -23,6 +24,7 @@ type LinkedinImportSectionProps = {
 };
 
 export const LinkedinImportSection = ({
+  connectedAccountId,
   importPolicy,
   selectedChats,
   onChange,
@@ -61,6 +63,7 @@ export const LinkedinImportSection = ({
             description: t('Import only the conversations you pick'),
             cardContentExpanded: (
               <LinkedinChatPicker
+                connectedAccountId={connectedAccountId}
                 selectedChats={selectedChats}
                 onChange={onSelectedChatsChange}
               />

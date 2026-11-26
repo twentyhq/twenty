@@ -101,6 +101,58 @@ describe('linkedinUpdateSettingsHandler', () => {
     expect(mocks.updateMessageChannel).not.toHaveBeenCalled();
   });
 
+  it('saves the settings of the requested connection when the member has several', async () => {
+    mocks.listConnections.mockResolvedValue([
+      {
+        id: 'connection-id',
+        name: 'Ada Lovelace',
+        handle: 'https://www.linkedin.com/in/ada',
+        userWorkspaceId: 'member-user-workspace-id',
+        authFailedAt: null,
+      },
+      {
+        id: 'company-connection-id',
+        name: 'Ada at Analytical Engines',
+        handle: 'https://www.linkedin.com/in/ada-company',
+        userWorkspaceId: 'member-user-workspace-id',
+        authFailedAt: null,
+      },
+    ]);
+
+    const view = await updateSettings({
+      connectedAccountId: 'connection-id',
+      areChatsMarkedAsRead: true,
+    });
+
+    expect(mocks.kvStore.get('linkedin-settings:connection-id')).toEqual(
+      expect.objectContaining({ areChatsMarkedAsRead: true }),
+    );
+    expect(mocks.kvStore.has('linkedin-settings:company-connection-id')).toBe(
+      false,
+    );
+    expect(view).toEqual(
+      expect.objectContaining({
+        connection: expect.objectContaining({ id: 'connection-id' }),
+        connections: [
+          expect.objectContaining({ id: 'company-connection-id' }),
+          expect.objectContaining({ id: 'connection-id' }),
+        ],
+      }),
+    );
+  });
+
+  it('refuses a connection of another member', async () => {
+    await expect(
+      updateSettings({
+        connectedAccountId: 'other-connection-id',
+        isNameMatchingEnabled: false,
+      }),
+    ).rejects.toThrow('Connect your LinkedIn account first.');
+    expect(mocks.kvStore.has('linkedin-settings:other-connection-id')).toBe(
+      false,
+    );
+  });
+
   it('saves whether chats opened in Twenty are marked as read on LinkedIn', async () => {
     const view = await updateSettings({ areChatsMarkedAsRead: true });
 

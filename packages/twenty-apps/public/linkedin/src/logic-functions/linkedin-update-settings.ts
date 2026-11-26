@@ -11,7 +11,7 @@ import { LINKEDIN_HISTORY_IMPORT_DEBOUNCE_MILLISECONDS } from 'src/constants/lin
 import { LINKEDIN_SETTINGS_ROUTE_PATHS } from 'src/constants/linkedin-settings-route-paths.constant';
 import { LINKEDIN_UPDATE_SETTINGS_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { buildLinkedinSettingsView } from 'src/logic-functions/utils/build-linkedin-settings-view.util';
-import { findOwnLinkedinConnection } from 'src/logic-functions/utils/find-own-linkedin-connection.util';
+import { findOwnLinkedinConnections } from 'src/logic-functions/utils/find-own-linkedin-connections.util';
 import { getLinkedinConnectionKvKey } from 'src/logic-functions/utils/get-linkedin-connection-kv-key.util';
 import { getLinkedinSettings } from 'src/logic-functions/utils/get-linkedin-settings.util';
 import { hasLinkedinImportSettingChanged } from 'src/logic-functions/utils/has-linkedin-import-setting-changed.util';
@@ -23,7 +23,8 @@ export const linkedinUpdateSettingsHandler = async (
   routePayload: RoutePayload<Record<string, unknown>>,
   context: Pick<LogicFunctionExecutionContext, 'userWorkspaceId'>,
 ): Promise<LinkedinSettingsView> => {
-  const connection = await findOwnLinkedinConnection(context);
+  const { connections, requestedConnection: connection } =
+    await findOwnLinkedinConnections(context, routePayload.body);
 
   if (!isDefined(connection)) {
     throw new Error('Connect your LinkedIn account first.');
@@ -66,14 +67,14 @@ export const linkedinUpdateSettingsHandler = async (
     });
   }
 
-  return buildLinkedinSettingsView(connection);
+  return buildLinkedinSettingsView({ connection, connections });
 };
 
 export default defineLogicFunction({
   universalIdentifier: LINKEDIN_UPDATE_SETTINGS_UNIVERSAL_IDENTIFIER,
   name: 'linkedin-update-settings',
   description:
-    'Saves the LinkedIn sync settings of the requesting member connection.',
+    'Saves the LinkedIn sync settings of one of the requesting member connections.',
   timeoutSeconds: 15,
   handler: linkedinUpdateSettingsHandler,
   httpRouteTriggerSettings: {
