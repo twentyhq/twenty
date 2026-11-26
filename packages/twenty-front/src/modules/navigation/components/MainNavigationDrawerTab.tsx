@@ -12,6 +12,7 @@ const StyledMode = styled.button<{
   isActive: boolean;
   isExpanded: boolean;
   isLabelShown: boolean;
+  isSelectedInEditMode: boolean;
 }>`
   align-items: center;
   background: ${({ isActive }) =>
@@ -42,6 +43,11 @@ const StyledMode = styled.button<{
   justify-content: ${({ isExpanded }) =>
     isExpanded ? 'flex-start' : 'center'};
   min-width: 0;
+  outline: ${({ isSelectedInEditMode }) =>
+    isSelectedInEditMode
+      ? `1px solid ${themeCssVariables.color.blue}`
+      : 'none'};
+  outline-offset: -1px;
   padding: ${({ isExpanded }) =>
     isExpanded ? `0 ${themeCssVariables.spacing['1.5']}` : '0'};
   transition:
@@ -102,6 +108,7 @@ type MainNavigationDrawerTabProps = {
   ariaLabel?: string;
   iconAccessory?: ReactNode;
   isLabelHidden?: boolean;
+  isSelectedInEditMode?: boolean;
 };
 
 export const MainNavigationDrawerTab = ({
@@ -116,6 +123,7 @@ export const MainNavigationDrawerTab = ({
   ariaLabel,
   iconAccessory,
   isLabelHidden = false,
+  isSelectedInEditMode = false,
 }: MainNavigationDrawerTabProps) => {
   const theme = useTheme();
   const shouldReduceMotion = useReducedMotion();
@@ -134,6 +142,7 @@ export const MainNavigationDrawerTab = ({
         isActive={isActive}
         isExpanded={isExpanded}
         isLabelShown={isLabelShown}
+        isSelectedInEditMode={isSelectedInEditMode}
         aria-label={ariaLabel ?? label}
         aria-current={isActive || undefined}
         aria-disabled={isDisabled}

@@ -1,20 +1,22 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type MouseEvent } from 'react';
-import { Dropdown } from 'twenty-ui/components/navigation';
+import { type MouseEvent, useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon/provider';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { NAVIGATION_MENU_TAB_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/NavigationMenuTabIconDefault';
 import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
+import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { type NamedNavigationMenuItem } from '@/navigation-menu-item/common/types/NamedNavigationMenuItem';
 import { type InboxChatAttention } from '@/inbox/types/InboxChatAttention';
 import { useGetNavigationMenuTabAttentionLabel } from '@/navigation-menu-item/display/hooks/useGetNavigationMenuTabAttentionLabel';
+import { NavigationMenuTabCustomizeMenuContent } from '@/navigation-menu-item/edit/components/NavigationMenuTabCustomizeMenuContent';
 import { NavigationMenuTabMenuContent } from '@/navigation-menu-item/edit/components/NavigationMenuTabMenuContent';
 import { NavigationMenuItemDropdownOpenEffect } from '@/navigation-menu-item/edit/effect-components/NavigationMenuItemDropdownOpenEffect';
 import { MainNavigationDrawerTab } from '@/navigation/components/MainNavigationDrawerTab';
 import { StyledNavigationDrawerAttentionDot } from '@/navigation/components/StyledNavigationDrawerAttentionDot';
+import { useCanCustomizeSidebar } from '@/navigation/hooks/useCanCustomizeSidebar';
 import { useSwitchNavigationDrawerTab } from '@/navigation/hooks/useSwitchNavigationDrawerTab';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
@@ -52,22 +54,51 @@ export const MainNavigationDrawerSidebarTab = ({
   );
   const [navigationMenuItemIdToRename, setNavigationMenuItemIdToRename] =
     useAtomState(navigationMenuItemIdToRenameState);
+  const [
+    selectedNavigationMenuItemIdInEditMode,
+    setSelectedNavigationMenuItemIdInEditMode,
+  ] = useAtomState(selectedNavigationMenuItemIdInEditModeState);
+  const canCustomizeSidebar = useCanCustomizeSidebar();
   const { switchToNavigationMenuTab } = useSwitchNavigationDrawerTab();
   const { openDropdown } = useOpenDropdown();
+  const anchorRef = useRef<HTMLSpanElement>(null);
   const dropdownId = `navigation-menu-tab-menu-${tab.id}`;
+  const isTabMenuAvailable =
+    isLayoutCustomizationModeEnabled || canCustomizeSidebar;
+
+  const openTabMenu = () =>
+    openDropdown({ dropdownComponentInstanceIdFromProps: dropdownId });
+
+  const selectTab = () => {
+    setSelectedNavigationMenuItemIdInEditMode((selectedId) =>
+      selectedId === tab.id ? null : selectedId,
+    );
+    switchToNavigationMenuTab(tab.id);
+  };
 
   const handleClick = () => {
-    if (isLayoutCustomizationModeEnabled && isActive) {
+    if (isActive && isTabMenuAvailable) {
+      openTabMenu();
       return;
     }
 
-    switchToNavigationMenuTab(tab.id);
+    selectTab();
+  };
+
+  const handleTabMenuOpenChange = (isOpen: boolean) => {
+    if (isOpen && isLayoutCustomizationModeEnabled) {
+      setSelectedNavigationMenuItemIdInEditMode(tab.id);
+    }
   };
 
   const handleContextMenu = (event: MouseEvent<HTMLSpanElement>) => {
     event.preventDefault();
-    handleClick();
-    openDropdown({ dropdownComponentInstanceIdFromProps: dropdownId });
+
+    if (!isActive) {
+      selectTab();
+    }
+
+    openTabMenu();
   };
 
   const tabButton = (
@@ -80,6 +111,11 @@ export const MainNavigationDrawerSidebarTab = ({
       tooltip={tab.name}
       shouldShowTooltip={shouldShowTooltip}
       onClick={handleClick}
+      isSelectedInEditMode={
+        isLayoutCustomizationModeEnabled &&
+        isActive &&
+        selectedNavigationMenuItemIdInEditMode === tab.id
+      }
       ariaLabel={getNavigationMenuTabAttentionLabel({
         tabName: tab.name,
         attention,
@@ -95,34 +131,43 @@ export const MainNavigationDrawerSidebarTab = ({
     />
   );
 
-  if (!isLayoutCustomizationModeEnabled) {
-    return <StyledAnchor>{tabButton}</StyledAnchor>;
-  }
-
   return (
-    <DropdownRoot dropdownId={dropdownId} type="menu">
-      {navigationMenuItemIdToRename === tab.id && (
-        <NavigationMenuItemDropdownOpenEffect
-          dropdownId={dropdownId}
-          onOpen={() => setNavigationMenuItemIdToRename(null)}
-        />
-      )}
-      <Dropdown.Trigger
-        render={<StyledAnchor onContextMenu={handleContextMenu} />}
-        nativeButton={false}
-        disabled={!isActive}
-        tabIndex={-1}
+    <>
+      <StyledAnchor
+        ref={anchorRef}
+        onContextMenu={
+          isLayoutCustomizationModeEnabled ? handleContextMenu : undefined
+        }
       >
         {tabButton}
-      </Dropdown.Trigger>
-      <DropdownContent
-        side="bottom"
-        align="start"
-        width={GenericDropdownContentWidth.Large}
-        aria-label={t`Tab actions`}
-      >
-        <NavigationMenuTabMenuContent tab={tab} />
-      </DropdownContent>
-    </DropdownRoot>
+      </StyledAnchor>
+      {isTabMenuAvailable && (
+        <DropdownRoot
+          dropdownId={dropdownId}
+          type="menu"
+          onOpenChange={handleTabMenuOpenChange}
+        >
+          {navigationMenuItemIdToRename === tab.id && (
+            <NavigationMenuItemDropdownOpenEffect
+              dropdownId={dropdownId}
+              onOpen={() => setNavigationMenuItemIdToRename(null)}
+            />
+          )}
+          <DropdownContent
+            anchor={anchorRef}
+            side="bottom"
+            align="start"
+            width={GenericDropdownContentWidth.Large}
+            aria-label={t`Tab actions`}
+          >
+            {isLayoutCustomizationModeEnabled ? (
+              <NavigationMenuTabMenuContent tab={tab} />
+            ) : (
+              <NavigationMenuTabCustomizeMenuContent />
+            )}
+          </DropdownContent>
+        </DropdownRoot>
+      )}
+    </>
   );
 };
