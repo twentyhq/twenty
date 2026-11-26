@@ -125,6 +125,7 @@ export const NavigationDrawerInboxChannelNavigation = ({
                 <NavigationDrawerItem
                   key={channelStatus}
                   label={t(label)}
+                  accessibleSecondaryLabel={hasCount ? `${count}` : undefined}
                   Icon={Icon}
                   isUnread={isDefined(unreadKey) ? summary?.[unreadKey] : false}
                   active={index === selectedIndex}

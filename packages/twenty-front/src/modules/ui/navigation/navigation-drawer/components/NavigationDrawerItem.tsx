@@ -222,6 +222,7 @@ export const NavigationDrawerItem = ({
   className,
   label,
   secondaryLabel,
+  accessibleSecondaryLabel,
   indentationLevel = DEFAULT_INDENTATION_LEVEL,
   Icon,
   trailingIcon,
@@ -433,6 +434,12 @@ export const NavigationDrawerItem = ({
                           {' · '}
                           {secondaryLabel}
                         </StyledItemSecondaryLabel>
+                      )}
+                      {isDefined(accessibleSecondaryLabel) && (
+                        <VisuallyHidden>
+                          {' · '}
+                          {accessibleSecondaryLabel}
+                        </VisuallyHidden>
                       )}
                     </>
                   }

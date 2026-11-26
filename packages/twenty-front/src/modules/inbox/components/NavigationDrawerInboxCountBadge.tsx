@@ -1,9 +1,10 @@
 import { styled } from '@linaria/react';
 import { Badge } from 'twenty-ui/primitives/data-display';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledCount = styled.span`
   display: flex;
-  padding-right: 3px;
+  padding-right: ${themeCssVariables.spacing['1.5']};
 `;
 
 type NavigationDrawerInboxCountBadgeProps = {
