@@ -7,12 +7,8 @@ import {
 } from 'src/engine/metadata-modules/formula-field/__mocks__/formula-field-flat-entity-maps.mock';
 import { setFormulaFieldTrees } from 'src/engine/metadata-modules/formula-field/utils/set-formula-field-trees.util';
 
-const setGadgetFormulaTrees = (
-  universalSettings: Record<string, unknown>,
-  existingUniversalSettings?: Record<string, unknown>,
-) =>
+const setGadgetFormulaTrees = (universalSettings: Record<string, unknown>) =>
   setFormulaFieldTrees({
-    existingUniversalSettings,
     universalFlatFieldMetadata: getFlatFieldMetadataMock({
       universalIdentifier: 'gadget-margin-uid',
       name: 'margin',
@@ -67,25 +63,6 @@ describe('setFormulaFieldTrees', () => {
     };
 
     expect(setGadgetFormulaTrees(universalSettings)).toEqual(universalSettings);
-  });
-
-  it('should keep the stored tree over unchanged text kept from 2.64, which a rename leaves stale', () => {
-    const tree = {
-      type: 'FIELD',
-      fieldUniversalIdentifier: 'gadget-price-uid',
-    };
-    const settingsKeptFrom264 = {
-      formula: {
-        expression: 'cost',
-        bindings: { cost: 'gadget-price-uid' },
-        tree,
-        evaluation: 'STORED',
-      },
-    };
-
-    expect(
-      setGadgetFormulaTrees(settingsKeptFrom264, settingsKeptFrom264),
-    ).toEqual({ formula: { tree, evaluation: 'STORED' } });
   });
 
   it('should store a formula that aggregates related records', () => {

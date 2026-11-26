@@ -1,7 +1,7 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { buildFormulaFieldTreeBackfill } from 'src/database/commands/upgrade-version-command/2-64/utils/build-formula-field-tree-backfill.util';
+import { buildFormulaFieldTreeConversions } from 'src/database/commands/upgrade-version-command/2-65/utils/build-formula-field-tree-conversions.util';
 import { addAllFlatEntitiesToFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/__tests__/add-all-flat-entities-to-flat-entity-maps.test-util';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
@@ -37,10 +37,10 @@ const buildTextFormulaField = ({
   });
 };
 
-const backfill = (
+const convert = (
   textFormulaFields: ReturnType<typeof buildTextFormulaField>[],
 ) =>
-  buildFormulaFieldTreeBackfill({
+  buildFormulaFieldTreeConversions({
     flatObjectMetadataMaps: addAllFlatEntitiesToFlatEntityMaps({
       flatEntities: [
         FORMULA_SUPPLIER_FLAT_OBJECT_METADATA_MOCK,
@@ -71,19 +71,17 @@ const backfill = (
     }),
   });
 
-describe('buildFormulaFieldTreeBackfill', () => {
-  it('should add a tree next to the text, following bindings to renamed fields', () => {
+describe('buildFormulaFieldTreeConversions', () => {
+  it('should store the formula as a tree instead of text, following bindings to renamed fields', () => {
     const doubleCost = buildTextFormulaField({
       id: 'gadget-double-cost',
       name: 'doubleCost',
       expression: 'cost * 2',
     });
 
-    const { flatFieldMetadatasToUpdate } = backfill([doubleCost]);
+    const { flatFieldMetadatasToUpdate } = convert([doubleCost]);
     const expectedSettings = {
       formula: {
-        expression: 'cost * 2',
-        bindings: { cost: 'gadget-price-uid' },
         tree: {
           type: 'ARITHMETIC',
           operator: 'MULTIPLY',
@@ -102,20 +100,18 @@ describe('buildFormulaFieldTreeBackfill', () => {
     );
   });
 
-  it('should report a formula that does not parse and leave formulas that have a tree', () => {
+  it('should leave a formula that does not compile as text, and formulas that have a tree alone', () => {
     const unparsed = buildTextFormulaField({
       id: 'gadget-unparsed',
       name: 'unparsed',
       expression: 'cost *',
     });
 
-    const { flatFieldMetadatasToUpdate, unparsedFormulaFieldNames } = backfill([
+    const { flatFieldMetadatasToUpdate, textFormulaFieldNames } = convert([
       unparsed,
     ]);
 
-    expect(unparsedFormulaFieldNames).toEqual(['unparsed']);
-    expect(
-      flatFieldMetadatasToUpdate.map(({ name }) => name).sort(),
-    ).toEqual(['broken']);
+    expect(textFormulaFieldNames.sort()).toEqual(['broken', 'unparsed']);
+    expect(flatFieldMetadatasToUpdate).toEqual([]);
   });
 });

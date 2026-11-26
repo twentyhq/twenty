@@ -5,20 +5,20 @@ import { isNonEmptyArray } from 'twenty-shared/utils';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { buildFormulaFieldTreeBackfill } from 'src/database/commands/upgrade-version-command/2-64/utils/build-formula-field-tree-backfill.util';
+import { buildFormulaFieldTreeConversions } from 'src/database/commands/upgrade-version-command/2-65/utils/build-formula-field-tree-conversions.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.64.0', 1795692743312)
+@RegisteredWorkspaceCommand('2.65.0', 1795696302450)
 @Command({
-  name: 'upgrade:2-64:backfill-formula-field-trees',
+  name: 'upgrade:2-65:convert-formula-fields-to-trees',
   description:
-    'Store a tree reading fields by identifier next to the text of each formula field',
+    'Store each formula field as a tree reading fields by identifier, instead of text and bindings',
 })
-export class BackfillFormulaFieldTreesCommand extends ProvisionedWorkspaceCommandRunner {
+export class ConvertFormulaFieldsToTreesCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -37,15 +37,15 @@ export class BackfillFormulaFieldTreesCommand extends ProvisionedWorkspaceComman
         'flatFieldMetadataMaps',
       ]);
 
-    const { flatFieldMetadatasToUpdate, unparsedFormulaFieldNames } =
-      buildFormulaFieldTreeBackfill({
+    const { flatFieldMetadatasToUpdate, textFormulaFieldNames } =
+      buildFormulaFieldTreeConversions({
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
       });
 
-    if (isNonEmptyArray(unparsedFormulaFieldNames)) {
+    if (isNonEmptyArray(textFormulaFieldNames)) {
       this.logger.warn(
-        `Workspace ${workspaceId}: formula field(s) ${unparsedFormulaFieldNames.join(', ')} do not parse and get no tree`,
+        `Workspace ${workspaceId}: formula field(s) ${textFormulaFieldNames.join(', ')} do not compile and stay as text`,
       );
     }
 

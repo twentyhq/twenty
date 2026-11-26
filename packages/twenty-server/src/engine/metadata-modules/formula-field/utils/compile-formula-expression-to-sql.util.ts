@@ -162,7 +162,6 @@ const compileNodeSqlOrThrow = ({
       throw new FormulaSqlCompilationException({
         message: 'A list can only be written after "in"',
       });
-    // Stored trees are printed with the current field names before they are compiled
     case 'FIELD':
       throw new FormulaSqlCompilationException({
         message: 'A field reference must be printed before it is compiled',

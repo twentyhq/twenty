@@ -1,4 +1,6 @@
+import { type ValidationRuleFieldDescriptor } from 'twenty-shared/types';
 import {
+  compileFormulaExpression,
   getFieldMetadataFormulaCurrencyCodeExpression,
   getFieldMetadataFormulaExpression,
   getFieldMetadataFormulaTree,
@@ -8,9 +10,8 @@ import {
   renameValidationRuleExpressionToCurrentFieldNames,
   resolveExpressionFieldReferences,
 } from 'twenty-shared/utils';
-import { type ValidationRuleFieldDescriptor } from 'twenty-shared/types';
 
-import { getLegacyFormulaFieldBindings } from 'src/database/commands/upgrade-version-command/2-64/utils/get-legacy-formula-field-bindings.util';
+import { getLegacyFormulaFieldBindings } from 'src/database/commands/upgrade-version-command/2-65/utils/get-legacy-formula-field-bindings.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -25,21 +26,21 @@ const buildTree = ({
   bindings: Record<string, string>;
   fields: ValidationRuleFieldDescriptor[];
 }) => {
-  const parsing = parseExpressionNode(
-    renameValidationRuleExpressionToCurrentFieldNames({
-      expression,
-      bindings,
-      fields,
-    }),
-  );
+  const currentExpression = renameValidationRuleExpressionToCurrentFieldNames({
+    expression,
+    bindings,
+    fields,
+  });
+  const parsing = parseExpressionNode(currentExpression);
 
-  return parsing.isValid
+  return parsing.isValid &&
+    compileFormulaExpression({ expression: currentExpression, fields }).isValid
     ? resolveExpressionFieldReferences({ node: parsing.node, fields })
     : undefined;
 };
 
-// Text and bindings stay, as the 2.64 runtime still reads them; a formula that no longer parses keeps no tree
-export const buildFormulaFieldTreeBackfill = ({
+// Bindings lead the text back to the current field names; a formula that no longer compiles keeps its text, which is still read
+export const buildFormulaFieldTreeConversions = ({
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
 }: {
@@ -47,10 +48,10 @@ export const buildFormulaFieldTreeBackfill = ({
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
 }): {
   flatFieldMetadatasToUpdate: FlatFieldMetadata[];
-  unparsedFormulaFieldNames: string[];
+  textFormulaFieldNames: string[];
 } => {
   const flatFieldMetadatasToUpdate: FlatFieldMetadata[] = [];
-  const unparsedFormulaFieldNames: string[] = [];
+  const textFormulaFieldNames: string[] = [];
 
   for (const flatFieldMetadata of Object.values(
     flatFieldMetadataMaps.byUniversalIdentifier,
@@ -59,14 +60,6 @@ export const buildFormulaFieldTreeBackfill = ({
     const expression = getFieldMetadataFormulaExpression({
       settings: universalSettings,
     });
-    const currencyCodeExpression =
-      getFieldMetadataFormulaCurrencyCodeExpression({
-        settings: universalSettings,
-      });
-    const universalFlatObjectMetadata =
-      flatObjectMetadataMaps.byUniversalIdentifier[
-        flatFieldMetadata.objectMetadataUniversalIdentifier
-      ];
 
     if (
       !isDefined(expression) ||
@@ -76,6 +69,14 @@ export const buildFormulaFieldTreeBackfill = ({
       continue;
     }
 
+    const currencyCodeExpression =
+      getFieldMetadataFormulaCurrencyCodeExpression({
+        settings: universalSettings,
+      });
+    const universalFlatObjectMetadata =
+      flatObjectMetadataMaps.byUniversalIdentifier[
+        flatFieldMetadata.objectMetadataUniversalIdentifier
+      ];
     const fields = isDefined(universalFlatObjectMetadata)
       ? buildFormulaFieldDescriptorsFromUniversalFlatEntityMaps({
           universalFlatObjectMetadata,
@@ -95,20 +96,20 @@ export const buildFormulaFieldTreeBackfill = ({
       !isDefined(tree) ||
       (isDefined(currencyCodeExpression) && !isDefined(currencyCodeTree))
     ) {
-      unparsedFormulaFieldNames.push(name);
+      textFormulaFieldNames.push(name);
       continue;
     }
 
-    const storedFormula =
+    const storedEvaluation =
       'formula' in universalSettings && isPlainObject(universalSettings.formula)
-        ? universalSettings.formula
-        : {};
+        ? universalSettings.formula.evaluation
+        : undefined;
     const settings = {
       ...universalSettings,
       formula: {
-        ...storedFormula,
         tree,
         ...(isDefined(currencyCodeTree) ? { currencyCodeTree } : {}),
+        ...(isDefined(storedEvaluation) ? { evaluation: storedEvaluation } : {}),
       },
     };
 
@@ -119,5 +120,5 @@ export const buildFormulaFieldTreeBackfill = ({
     });
   }
 
-  return { flatFieldMetadatasToUpdate, unparsedFormulaFieldNames };
+  return { flatFieldMetadatasToUpdate, textFormulaFieldNames };
 };
