@@ -13,7 +13,6 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { type FlatValidationRule } from 'src/engine/metadata-modules/flat-validation-rule/types/flat-validation-rule.type';
 import { buildValidationRuleFieldDescriptors } from 'src/engine/metadata-modules/validation-rule/utils/build-validation-rule-field-descriptors.util';
 
-// Bindings lead the text back to the current field names; a rule whose text no longer parses keeps it and is turned off
 export const buildValidationRuleTreeConversions = ({
   flatValidationRules,
   flatObjectMetadataMaps,

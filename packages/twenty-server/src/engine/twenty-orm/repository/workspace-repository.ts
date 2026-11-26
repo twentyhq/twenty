@@ -759,7 +759,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
     const shouldReadRecordsBeforeWrite = validationRules.some(({ tree }) =>
       listValidationRuleFieldNodes({ tree }).some(
-        ({ isPreviousValue }) => isPreviousValue === true,
+        ({ isPreviousValue }) => isPreviousValue,
       ),
     );
 

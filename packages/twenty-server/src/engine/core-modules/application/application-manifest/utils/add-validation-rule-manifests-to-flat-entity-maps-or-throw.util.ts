@@ -235,10 +235,13 @@ const buildFieldRemovedFromApplicationException = ({
     ApplicationExceptionCode.INVALID_INPUT,
   );
 
-const buildTree = (
-  expression: string,
-  fields: ValidationRuleFieldDescriptor[],
-): ExpressionNode | null => {
+const buildTree = ({
+  expression,
+  fields,
+}: {
+  expression: string;
+  fields: ValidationRuleFieldDescriptor[];
+}): ExpressionNode | null => {
   const parsing = parseExpressionNode(expression);
 
   return parsing.isValid
@@ -320,7 +323,7 @@ const resolveValidationRuleTree = ({
       .isValid
   ) {
     return {
-      tree: buildTree(expression, activeFields),
+      tree: buildTree({ expression, fields: activeFields }),
       isActive: existingFlatValidationRule?.isActive ?? true,
     };
   }
@@ -387,7 +390,10 @@ const resolveValidationRuleTree = ({
     );
   }
 
-  return { tree: buildTree(expression, fieldsAfterSync), isActive: false };
+  return {
+    tree: buildTree({ expression, fields: fieldsAfterSync }),
+    isActive: false,
+  };
 };
 
 export const addValidationRuleManifestsToFlatEntityMapsOrThrow = ({

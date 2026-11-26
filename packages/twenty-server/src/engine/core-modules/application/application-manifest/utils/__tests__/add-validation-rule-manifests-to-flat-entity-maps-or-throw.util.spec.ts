@@ -35,10 +35,13 @@ const buildField = (
     ...field,
   });
 
-const toTree = (
-  expression: string,
-  fieldUniversalIdentifierByName: Record<string, string>,
-) => {
+const toTree = ({
+  expression,
+  fieldUniversalIdentifierByName,
+}: {
+  expression: string;
+  fieldUniversalIdentifierByName: Record<string, string>;
+}) => {
   const parsing = parseExpressionNode(expression);
 
   if (!parsing.isValid) {
@@ -224,7 +227,10 @@ describe('addValidationRuleManifestsToFlatEntityMapsOrThrow', () => {
       message: 'Add employees',
     };
     const EXISTING_RULE = buildExistingRule({
-      tree: toTree(RULE.expression, { employees: 'employees' }),
+      tree: toTree({
+        expression: RULE.expression,
+        fieldUniversalIdentifierByName: { employees: 'employees' },
+      }),
     });
 
     const sync = (maps: ReturnType<typeof buildMaps>) =>
@@ -282,9 +288,12 @@ describe('addValidationRuleManifestsToFlatEntityMapsOrThrow', () => {
           });
         maps.existingAllFlatEntityMaps.flatValidationRuleMaps.byUniversalIdentifier.rule =
           buildExistingRule({
-            tree: toTree(expression, {
-              employees: 'employees',
-              score: 'ownScore',
+            tree: toTree({
+              expression,
+              fieldUniversalIdentifierByName: {
+                employees: 'employees',
+                score: 'ownScore',
+              },
             }),
           });
 
@@ -313,7 +322,10 @@ describe('addValidationRuleManifestsToFlatEntityMapsOrThrow', () => {
           });
         maps.existingAllFlatEntityMaps.flatValidationRuleMaps.byUniversalIdentifier.rule =
           buildExistingRule({
-            tree: toTree('headcount > 0', { headcount: 'employees' }),
+            tree: toTree({
+              expression: 'headcount > 0',
+              fieldUniversalIdentifierByName: { headcount: 'employees' },
+            }),
           });
 
         return maps;
@@ -389,7 +401,10 @@ describe('addValidationRuleManifestsToFlatEntityMapsOrThrow', () => {
         });
       maps.existingAllFlatEntityMaps.flatValidationRuleMaps.byUniversalIdentifier.rule =
         buildExistingRule({
-          tree: toTree(RULE.expression, { employees: 'ownEmployees' }),
+          tree: toTree({
+            expression: RULE.expression,
+            fieldUniversalIdentifierByName: { employees: 'ownEmployees' },
+          }),
         });
 
       expect(() => sync(maps)).toThrow(

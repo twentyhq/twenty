@@ -80,8 +80,7 @@ const isSameTreeUpToRenamedFields = ({
   );
 };
 
-// A workspace can rename a field outside the app, so the manifest may still name it by its old name.
-// The app names its own fields in the manifest, so those must keep their saved names.
+// A workspace can rename a field outside the app, so only the app's own fields must keep their manifest names
 export const isSavedValidationRuleTreeRenamedFromManifest = ({
   manifestExpression,
   savedTree,
@@ -106,7 +105,7 @@ export const isSavedValidationRuleTreeRenamedFromManifest = ({
   }) => {
     const segments = path.split('.');
     const savedSegments: SavedPathSegment[] = [
-      isPreviousValue === true
+      isPreviousValue
         ? { name: VALIDATION_RULE_PREVIOUS_VARIABLE_NAME }
         : undefined,
       isDefined(relationFieldUniversalIdentifier)
