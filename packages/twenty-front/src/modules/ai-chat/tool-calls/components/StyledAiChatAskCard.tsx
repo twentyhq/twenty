@@ -11,10 +11,4 @@ export const StyledAiChatAskCard = styled.div<{ isPadded?: boolean }>`
   gap: ${({ isPadded }) => (isPadded ? themeCssVariables.spacing[2] : '0')};
   padding: ${({ isPadded }) => (isPadded ? themeCssVariables.spacing[2] : '0')};
   width: 100%;
-
-  &[data-docked] {
-    border-bottom: 0;
-    border-radius: ${themeCssVariables.border.radius.sm}
-      ${themeCssVariables.border.radius.sm} 0 0;
-  }
 `;

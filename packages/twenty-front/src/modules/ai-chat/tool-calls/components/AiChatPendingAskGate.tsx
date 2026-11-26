@@ -3,7 +3,6 @@ import { type ReactNode } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatPendingToolCallRequests } from '@/ai-chat/tool-calls/components/AiChatPendingToolCallRequests';
-import { AiChatIsToolCallDockedContext } from '@/ai-chat/tool-calls/contexts/AiChatIsToolCallDockedContext';
 import { useAiChatPendingToolCalls } from '@/ai-chat/tool-calls/hooks/useAiChatPendingToolCalls';
 
 const StyledInputStack = styled.div`
@@ -16,6 +15,12 @@ const StyledBlockingToolInset = styled.div`
   box-sizing: border-box;
   padding: 0 ${themeCssVariables.spacing[2]};
   width: 100%;
+
+  [data-blocking-tool-card] {
+    border-bottom: 0;
+    border-radius: ${themeCssVariables.border.radius.sm}
+      ${themeCssVariables.border.radius.sm} 0 0;
+  }
 `;
 
 type AiChatPendingAskGateProps = {
@@ -40,9 +45,7 @@ export const AiChatPendingAskGate = ({
     <StyledInputStack>
       {hasPendingToolCalls &&
         (isComposerShown ? (
-          <AiChatIsToolCallDockedContext.Provider value={true}>
-            <StyledBlockingToolInset>{requests}</StyledBlockingToolInset>
-          </AiChatIsToolCallDockedContext.Provider>
+          <StyledBlockingToolInset>{requests}</StyledBlockingToolInset>
         ) : (
           requests
         ))}
