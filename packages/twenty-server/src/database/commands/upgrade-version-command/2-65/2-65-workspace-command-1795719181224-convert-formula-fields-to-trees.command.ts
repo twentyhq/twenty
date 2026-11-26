@@ -1,24 +1,24 @@
 import { Command } from 'nest-commander';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { buildValidationRuleTreeConversions } from 'src/database/commands/upgrade-version-command/2-65/utils/build-validation-rule-tree-conversions.util';
+import { buildFormulaFieldTreeConversions } from 'src/database/commands/upgrade-version-command/2-65/utils/build-formula-field-tree-conversions.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-import { type FlatValidationRule } from 'src/engine/metadata-modules/flat-validation-rule/types/flat-validation-rule.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.65.0', 1795714382870)
+@RegisteredWorkspaceCommand('2.65.0', 1795719181224)
 @Command({
-  name: 'upgrade:2-65:convert-validation-rules-to-trees',
+  name: 'upgrade:2-65:convert-formula-fields-to-trees',
   description:
-    'Store each validation rule as a tree reading fields by identifier, instead of text and bindings',
+    'Store each formula field as a tree reading fields by identifier, instead of text and bindings',
 })
-export class ConvertValidationRulesToTreesCommand extends ProvisionedWorkspaceCommandRunner {
+export class ConvertFormulaFieldsToTreesCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -31,55 +31,48 @@ export class ConvertValidationRulesToTreesCommand extends ProvisionedWorkspaceCo
     workspaceId,
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
-    const {
-      flatValidationRuleMaps,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-      'flatValidationRuleMaps',
-      'flatObjectMetadataMaps',
-      'flatFieldMetadataMaps',
-    ]);
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+        'flatFieldMetadataMaps',
+      ]);
 
-    const { flatValidationRulesToUpdate, unparsableValidationRuleIds } =
-      buildValidationRuleTreeConversions({
-        flatValidationRules: Object.values(
-          flatValidationRuleMaps.byUniversalIdentifier,
-        ).filter(isDefined),
+    const { flatFieldMetadatasToUpdate, textFormulaFieldNames } =
+      buildFormulaFieldTreeConversions({
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
       });
 
-    if (isNonEmptyArray(unparsableValidationRuleIds)) {
+    if (isNonEmptyArray(textFormulaFieldNames)) {
       this.logger.warn(
-        `Workspace ${workspaceId}: validation rule(s) ${unparsableValidationRuleIds.join(', ')} do not parse, keep their text and are turned off`,
+        `Workspace ${workspaceId}: formula field(s) ${textFormulaFieldNames.join(', ')} do not compile and stay as text`,
       );
     }
 
     this.logger.log(
-      `${options.dryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: updating ${flatValidationRulesToUpdate.length} validation rule(s)`,
+      `${options.dryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: storing ${flatFieldMetadatasToUpdate.length} formula field(s) as trees`,
     );
 
-    if (options.dryRun || !isNonEmptyArray(flatValidationRulesToUpdate)) {
+    if (options.dryRun || !isNonEmptyArray(flatFieldMetadatasToUpdate)) {
       return;
     }
 
-    await this.updateFlatValidationRulesOrThrow({
+    await this.updateFlatFieldMetadatasOrThrow({
       workspaceId,
-      flatValidationRulesToUpdate,
+      flatFieldMetadatasToUpdate,
     });
   }
 
-  private async updateFlatValidationRulesOrThrow({
+  private async updateFlatFieldMetadatasOrThrow({
     workspaceId,
-    flatValidationRulesToUpdate,
+    flatFieldMetadatasToUpdate,
   }: {
     workspaceId: string;
-    flatValidationRulesToUpdate: FlatValidationRule[];
+    flatFieldMetadatasToUpdate: FlatFieldMetadata[];
   }): Promise<void> {
     const applicationUniversalIdentifiers = [
       ...new Set(
-        flatValidationRulesToUpdate.map(
+        flatFieldMetadatasToUpdate.map(
           ({ applicationUniversalIdentifier }) =>
             applicationUniversalIdentifier,
         ),
@@ -93,12 +86,12 @@ export class ConvertValidationRulesToTreesCommand extends ProvisionedWorkspaceCo
         isSystemBuild: true,
         applicationUniversalIdentifier,
         allFlatEntityOperationByMetadataName: {
-          validationRule: {
+          fieldMetadata: {
             flatEntityToCreate: [],
             flatEntityToDelete: [],
-            flatEntityToUpdate: flatValidationRulesToUpdate.filter(
-              (flatValidationRule) =>
-                flatValidationRule.applicationUniversalIdentifier ===
+            flatEntityToUpdate: flatFieldMetadatasToUpdate.filter(
+              (flatFieldMetadata) =>
+                flatFieldMetadata.applicationUniversalIdentifier ===
                 applicationUniversalIdentifier,
             ),
           },

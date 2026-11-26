@@ -38,10 +38,6 @@ export default defineRole({
         canUpdateAllRecords: true,
         canSoftDeleteAllRecords: false,
         canDestroyAllRecords: false,
-        unreadableFields: [
-          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name
-            .universalIdentifier,
-        ],
       },
     ],
   },
@@ -58,6 +54,32 @@ export default defineRole({
   `unreadableFields` e `uneditableFields` (identificatori universali dei campi; un campo che non può essere
   letto non può nemmeno essere modificato), e le sue [autorizzazioni sui record a livello di riga](#row-level-security).
 
+## Ruoli al di fuori dell'applicazione personalizzata dello spazio di lavoro
+
+Un'app installata dal marketplace, da un tarball o con `twenty app dev` viene eseguita negli spazi di lavoro di altre
+persone, quindi i suoi ruoli descrivono solo ciò che l'app e i suoi agenti possono fare:
+
+* **Solo gli agenti li possiedono.** Twenty memorizza il [ruolo funzione predefinito](#the-default-function-role)
+  e i ruoli dei tuoi [agenti](#agent-roles) con `canBeAssignedToUsers` e
+  `canBeAssignedToApiKeys` impostati su `false`, indipendentemente da ciò che indica la sorgente. Qualsiasi altro `defineRole()` deve
+  impostare entrambi su `false`.
+* **Nessun permesso a livello di campo o riga.** `unreadableFields`, `uneditableFields`,
+  `rowLevelRecordsPermissions` e le relative forme deprecate (`fieldPermissions`,
+  `rowLevelPermissionPredicates`, `rowLevelPermissionPredicateGroups`) vengono rifiutati. Lo spazio di lavoro
+  li configura sui propri ruoli.
+
+`twenty app build` e `dev` segnalano come avviso un ruolo che viola queste regole. `plan`, `apply`
+e `dev` hanno quindi esito negativo, a meno che la destinazione non sia l'applicazione personalizzata dello spazio di lavoro, e `publish` ha sempre
+esito negativo. Una sincronizzazione inviata direttamente all'API viene rifiutata con `MARKETPLACE_APPLICATION_ROLE_ASSIGNABILITY`
+o `MARKETPLACE_APPLICATION_ROLE_RESTRICTION`. Un'app installata precedente a queste regole può
+eseguire l'aggiornamento rimuovendo ciò che viene rifiutato: disattivare un flag o rimuovere un
+permesso a livello di campo o riga è accettato.
+
+L'applicazione personalizzata dello spazio di lavoro, il progetto che `twenty app pull` crea per uno spazio di lavoro (vedi
+[Recuperare il codice sorgente di un'app installata](/it/developers/extend/apps/operations/sync-and-recovery#pulling-an-installed-app-back-to-source)),
+è il luogo per i ruoli destinati ai membri dello spazio di lavoro o alle chiavi API e per i permessi a livello di campo e riga
+descritti di seguito.
+
 <Note>
   `SystemPermissionFlag.USER_APPS` e `SystemPermissionFlag.WORKSPACE_APPS`
   sono disponibili in `twenty-sdk` dalla versione 2.54; le versioni precedenti li denominano
@@ -69,6 +91,11 @@ export default defineRole({
 </Note>
 
 ## Sicurezza a livello di riga
+
+<Note>
+  Solo l'applicazione personalizzata dello spazio di lavoro può dichiarare permessi a livello di riga e campo. Vedi
+  [Ruoli al di fuori dell'applicazione personalizzata dello spazio di lavoro](#roles-outside-the-workspace-custom-application).
+</Note>
 
 Le autorizzazioni a livello di riga richiedono il **piano Organization o superiore** — consulta i
 [prezzi](https://twenty.com/pricing). Ciò che accade con un piano senza il diritto è trattato nelle
@@ -289,12 +316,12 @@ Note:
 
 ### Ruoli agente
 
-Il ruolo dell'applicazione è ciò che un workspace esamina quando installa la tua app, quindi deve coprire tutto ciò che l'app stessa può fare. Qualsiasi ruolo assegnato a un agente tramite `roleUniversalIdentifier` in `defineAgent()` non deve concedere più del ruolo dell'applicazione: nessuna azione su oggetti, accesso ai campi, flag di autorizzazione o ambito a livello di riga che il ruolo dell'applicazione non possiede. In caso contrario, la compilazione non riesce e viene visualizzato un errore che elenca le concessioni in eccesso. I ruoli che la tua app fornisce per i membri del workspace o le chiavi API non sono soggetti a questa regola, poiché l'app non viene mai eseguita con essi. Il controllo richiede il ruolo dell'applicazione nel codice sorgente della tua app, quindi viene ignorato quando il ruolo predefinito è definito altrove.
+Il ruolo dell'applicazione è ciò che un workspace esamina quando installa la tua app, quindi deve coprire tutto ciò che l'app stessa può fare. Qualsiasi ruolo assegnato a un agente tramite `roleUniversalIdentifier` in `defineAgent()` non deve concedere più del ruolo dell'applicazione: nessuna azione su oggetti, accesso ai campi, flag di autorizzazione o ambito a livello di riga che il ruolo dell'applicazione non possiede. In caso contrario, la compilazione non riesce e viene visualizzato un errore che elenca le concessioni in eccesso. I ruoli che l'applicazione personalizzata dello spazio di lavoro fornisce per i membri dello spazio di lavoro o le chiavi API non sono soggetti a questa regola, poiché l'app non viene mai eseguita con essi. Il controllo richiede il ruolo dell'applicazione nel codice sorgente della tua app, quindi viene ignorato quando il ruolo predefinito è definito altrove.
 
 ## Migliori Pratiche
 
 * Parti dal ruolo generato dallo scaffold, poi restringilo progressivamente: il ruolo predefinito concede un ampio accesso in lettura, che raramente è ciò che vuoi in produzione.
-* Elenca in `recordsPermissions.objects` solo gli oggetti di cui le tue funzioni hanno effettivamente bisogno e usa `unreadableFields` e `uneditableFields` per nascondere o bloccare i campi di cui non hanno bisogno.
+* Elenca in `recordsPermissions.objects` solo gli oggetti di cui le tue funzioni hanno effettivamente bisogno.
 * `permissionFlagUniversalIdentifiers` controllano l'accesso alle funzionalità a livello di piattaforma. Mantienili al minimo.
 * Un flag di autorizzazione dichiarato dalla tua app con `definePermissionFlag()` ha un `permissionType`: `'tool'` (il valore predefinito) per una funzionalità che può essere concessa a un agente o a un utente, `'settings'` per un flag che sblocca un'area delle impostazioni.
 * Vedi un esempio di lavoro: [`examples/hello-world/src/roles/default-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/hello-world/src/roles/default-role.ts).

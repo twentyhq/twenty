@@ -524,7 +524,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
   },
   "view": {
     "propertiesToCompare": [
-      "deletedAt",
       "name",
       "type",
       "icon",
@@ -538,6 +537,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "calendarLayout",
       "calendarFieldMetadataUniversalIdentifier",
       "calendarEndFieldMetadataUniversalIdentifier",
+      "listPinnedFieldMetadataUniversalIdentifier",
       "isPrivate",
       "mainGroupByFieldMetadataUniversalIdentifier",
       "shouldHideEmptyGroups",
@@ -561,7 +561,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "relationTargetFieldMetadataUniversalIdentifier",
       "universalRelationScope",
       "label",
-      "deletedAt",
       "viewUniversalIdentifier",
       "isActive",
       "universalOverrides",
@@ -577,7 +576,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "position",
       "isVisible",
       "isActive",
-      "deletedAt",
       "viewUniversalIdentifier",
       "overrides",
     ],
@@ -588,7 +586,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
   "viewFilter": {
     "propertiesToCompare": [
       "viewUniversalIdentifier",
-      "deletedAt",
       "fieldMetadataUniversalIdentifier",
       "operand",
       "value",
@@ -604,7 +601,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
   "viewFilterGroup": {
     "propertiesToCompare": [
       "viewUniversalIdentifier",
-      "deletedAt",
       "parentViewFilterGroupUniversalIdentifier",
       "logicalOperator",
       "positionInViewFilterGroup",
@@ -616,7 +612,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "isVisible",
       "fieldValue",
       "position",
-      "deletedAt",
       "viewUniversalIdentifier",
     ],
     "propertiesToStringify": [],
@@ -628,7 +623,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "fieldMetadataUniversalIdentifier",
       "relationTargetFieldMetadataUniversalIdentifier",
       "viewUniversalIdentifier",
-      "deletedAt",
     ],
     "propertiesToStringify": [],
   },
