@@ -80,10 +80,10 @@ export const buildStoredFormulaWatchPlans = ({
         })
       : undefined;
 
-  for (const { objectMetadataId, settings } of Object.values(
+  for (const { objectMetadataId, formula } of Object.values(
     flatFieldMetadataMaps.byUniversalIdentifier,
   ).filter(isDefined)) {
-    if (getFieldMetadataFormulaEvaluation({ settings }) !== 'STORED') {
+    if (getFieldMetadataFormulaEvaluation({ formula }) !== 'STORED') {
       continue;
     }
 
@@ -94,7 +94,7 @@ export const buildStoredFormulaWatchPlans = ({
     for (const {
       fieldUniversalIdentifier,
       relationFieldUniversalIdentifier,
-    } of listFieldMetadataFormulaFieldNodes({ settings })) {
+    } of listFieldMetadataFormulaFieldNodes({ formula })) {
       const readFlatFieldMetadata = findFlatFieldMetadata(
         fieldUniversalIdentifier,
       );

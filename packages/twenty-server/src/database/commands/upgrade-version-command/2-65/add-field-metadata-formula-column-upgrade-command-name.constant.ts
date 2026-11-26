@@ -1,0 +1,2 @@
+export const ADD_FIELD_METADATA_FORMULA_COLUMN_UPGRADE_COMMAND_NAME =
+  '2.65.0_AddFieldMetadataFormulaColumnFastInstanceCommand_1795701090644';

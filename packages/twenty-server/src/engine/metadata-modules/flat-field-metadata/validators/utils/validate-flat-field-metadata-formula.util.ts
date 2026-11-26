@@ -8,7 +8,6 @@ import {
   isDefined,
   isFormulaFieldMetadata,
   isFormulaFieldMetadataType,
-  isPlainObject,
   parseExpressionNode,
   printFieldMetadataFormula,
 } from 'twenty-shared/utils';
@@ -62,12 +61,12 @@ export const validateFlatFieldMetadataFormula = ({
     name,
     type,
     universalIdentifier,
-    universalSettings,
+    formula,
     objectMetadataUniversalIdentifier,
     isUnique,
     isSearchable,
   },
-  existingUniversalSettings,
+  existingFormula,
   universalFlatObjectMetadataMaps,
   universalFlatFieldMetadataMaps,
   pendingUniversalFlatFieldMetadataMaps,
@@ -78,12 +77,12 @@ export const validateFlatFieldMetadataFormula = ({
     | 'name'
     | 'type'
     | 'universalIdentifier'
-    | 'universalSettings'
+    | 'formula'
     | 'objectMetadataUniversalIdentifier'
     | 'isUnique'
     | 'isSearchable'
   >;
-  existingUniversalSettings?: UniversalFlatFieldMetadata['universalSettings'];
+  existingFormula?: UniversalFlatFieldMetadata['formula'];
   universalFlatObjectMetadataMaps: {
     byUniversalIdentifier: Partial<
       Record<
@@ -100,11 +99,7 @@ export const validateFlatFieldMetadataFormula = ({
   pendingUniversalFlatFieldMetadataMaps?: FormulaSourceUniversalFlatFieldMetadataMaps;
   isFormulaFieldEnabled: boolean;
 }): FlatFieldMetadataValidationError[] => {
-  if (
-    !isDefined(universalSettings) ||
-    !('formula' in universalSettings) ||
-    !isDefined(universalSettings.formula)
-  ) {
+  if (!isDefined(formula)) {
     return [];
   }
 
@@ -120,9 +115,8 @@ export const validateFlatFieldMetadataFormula = ({
   }
 
   if (
-    isPlainObject(universalSettings.formula) &&
-    isDefined(universalSettings.formula.tree) &&
-    !isDefined(getFieldMetadataFormulaTree({ settings: universalSettings }))
+    isDefined(formula?.tree) &&
+    !isDefined(getFieldMetadataFormulaTree({ formula }))
   ) {
     return [
       {
@@ -130,18 +124,18 @@ export const validateFlatFieldMetadataFormula = ({
         message:
           'Invalid formula: its tree is not an expression tree, write the formula as text instead',
         userFriendlyMessage: msg`Invalid formula: write it as text`,
-        value: universalSettings.formula,
+        value: formula,
       },
     ];
   }
 
-  if (!isFormulaFieldMetadata({ settings: universalSettings })) {
+  if (!isFormulaFieldMetadata({ formula })) {
     return [
       {
         code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
         message: 'Formula must have a non-empty expression',
         userFriendlyMessage: msg`A formula needs an expression`,
-        value: universalSettings.formula,
+        value: formula,
       },
     ];
   }
@@ -193,7 +187,7 @@ export const validateFlatFieldMetadataFormula = ({
     ).filter(isDefined),
   }).filter((formulaFieldDescriptor) => formulaFieldDescriptor.name !== name);
   const { expression, currencyCodeExpression } = printFieldMetadataFormula({
-    settings: universalSettings,
+    formula,
     fields,
   });
 
@@ -203,7 +197,7 @@ export const validateFlatFieldMetadataFormula = ({
         code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
         message: 'Formula must have a non-empty expression',
         userFriendlyMessage: msg`A formula needs an expression`,
-        value: universalSettings.formula,
+        value: formula,
       },
     ];
   }
@@ -215,7 +209,7 @@ export const validateFlatFieldMetadataFormula = ({
       toCanonicalFormulaTexts({ expression, currencyCodeExpression }),
       toCanonicalFormulaTexts(
         printFieldMetadataFormula({
-          settings: existingUniversalSettings,
+          formula: existingFormula,
           fields,
         }),
       ),
@@ -248,9 +242,7 @@ export const validateFlatFieldMetadataFormula = ({
       const compilation = compileFormulaExpression({
         expression: formulaExpression,
         fields,
-        evaluation: getFieldMetadataFormulaEvaluation({
-          settings: universalSettings,
-        }),
+        evaluation: getFieldMetadataFormulaEvaluation({ formula }),
       });
 
       return compilation.isValid
@@ -306,8 +298,8 @@ export const validateFlatFieldMetadataFormula = ({
   if (
     doesFormulaFieldReadItself({
       universalIdentifier,
-      universalSettings,
-      findUniversalSettings: (fieldUniversalIdentifier) =>
+      formula,
+      findFormula: (fieldUniversalIdentifier) =>
         (
           pendingUniversalFlatFieldMetadataMaps?.byUniversalIdentifier[
             fieldUniversalIdentifier
@@ -315,7 +307,7 @@ export const validateFlatFieldMetadataFormula = ({
           universalFlatFieldMetadataMaps.byUniversalIdentifier[
             fieldUniversalIdentifier
           ]
-        )?.universalSettings,
+        )?.formula,
     })
   ) {
     return [

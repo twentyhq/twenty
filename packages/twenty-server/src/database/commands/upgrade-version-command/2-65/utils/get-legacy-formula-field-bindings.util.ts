@@ -3,23 +3,17 @@ import { type ValidationRuleBindings } from 'twenty-shared/types';
 import { isPlainObject } from 'twenty-shared/utils';
 
 export const getLegacyFormulaFieldBindings = ({
-  settings,
+  formula,
 }: {
-  settings?: unknown;
+  formula?: unknown;
 }): ValidationRuleBindings => {
-  if (!isPlainObject(settings) || !isPlainObject(settings.formula)) {
-    return {};
-  }
-
-  const bindings = settings.formula.bindings;
-
-  if (!isPlainObject(bindings)) {
+  if (!isPlainObject(formula) || !isPlainObject(formula.bindings)) {
     return {};
   }
 
   return Object.fromEntries(
-    Object.entries(bindings).filter((binding): binding is [string, string] =>
-      isString(binding[1]),
+    Object.entries(formula.bindings).filter(
+      (binding): binding is [string, string] => isString(binding[1]),
     ),
   );
 };

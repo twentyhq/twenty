@@ -1,10 +1,13 @@
+import { type FieldMetadataFormula } from 'twenty-shared/types';
 import {
   isDefined,
   listFieldMetadataFormulaFieldNodes,
 } from 'twenty-shared/utils';
 
-const listReadUniversalIdentifiers = (settings: unknown): string[] =>
-  listFieldMetadataFormulaFieldNodes({ settings }).flatMap(
+type ReadableFormula = Partial<FieldMetadataFormula> | null | undefined;
+
+const listReadUniversalIdentifiers = (formula: ReadableFormula): string[] =>
+  listFieldMetadataFormulaFieldNodes({ formula }).flatMap(
     ({ fieldUniversalIdentifier, relationFieldUniversalIdentifier }) =>
       [relationFieldUniversalIdentifier, fieldUniversalIdentifier].filter(
         isDefined,
@@ -13,16 +16,15 @@ const listReadUniversalIdentifiers = (settings: unknown): string[] =>
 
 export const doesFormulaFieldReadItself = ({
   universalIdentifier,
-  universalSettings,
-  findUniversalSettings,
+  formula,
+  findFormula,
 }: {
   universalIdentifier: string;
-  universalSettings: unknown;
-  findUniversalSettings: (fieldUniversalIdentifier: string) => unknown;
+  formula: ReadableFormula;
+  findFormula: (fieldUniversalIdentifier: string) => ReadableFormula;
 }): boolean => {
   const visitedUniversalIdentifiers = new Set<string>();
-  const universalIdentifiersToVisit =
-    listReadUniversalIdentifiers(universalSettings);
+  const universalIdentifiersToVisit = listReadUniversalIdentifiers(formula);
 
   while (universalIdentifiersToVisit.length > 0) {
     const readUniversalIdentifier = universalIdentifiersToVisit.pop();
@@ -40,9 +42,7 @@ export const doesFormulaFieldReadItself = ({
 
     visitedUniversalIdentifiers.add(readUniversalIdentifier);
     universalIdentifiersToVisit.push(
-      ...listReadUniversalIdentifiers(
-        findUniversalSettings(readUniversalIdentifier),
-      ),
+      ...listReadUniversalIdentifiers(findFormula(readUniversalIdentifier)),
     );
   }
 

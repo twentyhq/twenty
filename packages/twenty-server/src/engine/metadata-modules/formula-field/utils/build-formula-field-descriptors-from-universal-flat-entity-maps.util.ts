@@ -11,6 +11,7 @@ export type FormulaSourceUniversalFlatFieldMetadata = Pick<
   | 'type'
   | 'universalIdentifier'
   | 'universalSettings'
+  | 'formula'
   | 'objectMetadataUniversalIdentifier'
   | 'relationTargetObjectMetadataUniversalIdentifier'
 >;

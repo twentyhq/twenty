@@ -156,7 +156,7 @@ export const SettingsObjectFieldEdit = () => {
     getFieldMetadataItemInitialValues(fieldMetadataItem);
   const { expression: formulaExpression, currencyCodeExpression } =
     printFieldMetadataFormula({
-      settings: fieldMetadataItem?.settings,
+      formula: fieldMetadataItem?.formula,
       fields: isDefined(objectMetadataItem)
         ? buildFormulaFieldEditorInputs({
             objectMetadataItem,
@@ -277,12 +277,9 @@ export const SettingsObjectFieldEdit = () => {
         getFieldMetadataItemInputKey,
       );
       const formattedInput = Object.fromEntries(
-        Object.entries(
-          formatFieldMetadataItemInput({
-            ...formValues,
-            existingSettings: fieldMetadataItem.settings,
-          }),
-        ).filter(([key]) => dirtyInputKeys.includes(key)),
+        Object.entries(formatFieldMetadataItemInput(formValues)).filter(
+          ([key]) => dirtyInputKeys.includes(key),
+        ),
       );
 
       const updateResult = await updateOneFieldMetadataItem({

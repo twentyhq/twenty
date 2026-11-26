@@ -5,7 +5,6 @@ import {
   getFieldMetadataFormulaExpression,
   getFieldMetadataFormulaTree,
   isDefined,
-  isPlainObject,
   parseExpressionNode,
   renameValidationRuleExpressionToCurrentFieldNames,
   resolveExpressionFieldReferences,
@@ -56,23 +55,18 @@ export const buildFormulaFieldTreeConversions = ({
   for (const flatFieldMetadata of Object.values(
     flatFieldMetadataMaps.byUniversalIdentifier,
   ).filter(isDefined)) {
-    const { universalSettings, name } = flatFieldMetadata;
-    const expression = getFieldMetadataFormulaExpression({
-      settings: universalSettings,
-    });
+    const { formula, name } = flatFieldMetadata;
+    const expression = getFieldMetadataFormulaExpression({ formula });
 
     if (
       !isDefined(expression) ||
-      !isDefined(universalSettings) ||
-      isDefined(getFieldMetadataFormulaTree({ settings: universalSettings }))
+      isDefined(getFieldMetadataFormulaTree({ formula }))
     ) {
       continue;
     }
 
     const currencyCodeExpression =
-      getFieldMetadataFormulaCurrencyCodeExpression({
-        settings: universalSettings,
-      });
+      getFieldMetadataFormulaCurrencyCodeExpression({ formula });
     const universalFlatObjectMetadata =
       flatObjectMetadataMaps.byUniversalIdentifier[
         flatFieldMetadata.objectMetadataUniversalIdentifier
@@ -84,9 +78,7 @@ export const buildFormulaFieldTreeConversions = ({
           universalFlatFieldMetadataMaps: flatFieldMetadataMaps,
         }).filter((formulaFieldDescriptor) => formulaFieldDescriptor.name !== name)
       : [];
-    const bindings = getLegacyFormulaFieldBindings({
-      settings: universalSettings,
-    });
+    const bindings = getLegacyFormulaFieldBindings({ formula });
     const tree = buildTree({ expression, bindings, fields });
     const currencyCodeTree = isDefined(currencyCodeExpression)
       ? buildTree({ expression: currencyCodeExpression, bindings, fields })
@@ -100,23 +92,15 @@ export const buildFormulaFieldTreeConversions = ({
       continue;
     }
 
-    const storedEvaluation =
-      'formula' in universalSettings && isPlainObject(universalSettings.formula)
-        ? universalSettings.formula.evaluation
-        : undefined;
-    const settings = {
-      ...universalSettings,
+    flatFieldMetadatasToUpdate.push({
+      ...flatFieldMetadata,
       formula: {
         tree,
         ...(isDefined(currencyCodeTree) ? { currencyCodeTree } : {}),
-        ...(isDefined(storedEvaluation) ? { evaluation: storedEvaluation } : {}),
+        ...(isDefined(formula?.evaluation)
+          ? { evaluation: formula.evaluation }
+          : {}),
       },
-    };
-
-    flatFieldMetadatasToUpdate.push({
-      ...flatFieldMetadata,
-      settings,
-      universalSettings: settings,
     });
   }
 

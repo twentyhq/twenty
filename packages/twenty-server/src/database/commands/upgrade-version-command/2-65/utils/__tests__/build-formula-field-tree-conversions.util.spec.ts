@@ -20,9 +20,8 @@ const buildTextFormulaField = ({
   name: string;
   expression: string;
 }) => {
-  const settings = {
-    formula: { expression, bindings: { cost: 'gadget-price-uid' } },
-  };
+  // The shape formulas had before trees, with legacy bindings
+  const formula = { expression, bindings: { cost: 'gadget-price-uid' } };
 
   return getFlatFieldMetadataMock({
     id,
@@ -32,9 +31,8 @@ const buildTextFormulaField = ({
     objectMetadataId: FORMULA_GADGET_FLAT_OBJECT_METADATA_MOCK.id,
     objectMetadataUniversalIdentifier:
       FORMULA_GADGET_FLAT_OBJECT_METADATA_MOCK.universalIdentifier,
-    settings,
-    universalSettings: settings,
-  });
+    formula,
+  } as Parameters<typeof getFlatFieldMetadataMock>[0]);
 };
 
 const convert = (
@@ -80,22 +78,19 @@ describe('buildFormulaFieldTreeConversions', () => {
     });
 
     const { flatFieldMetadatasToUpdate } = convert([doubleCost]);
-    const expectedSettings = {
-      formula: {
-        tree: {
-          type: 'ARITHMETIC',
-          operator: 'MULTIPLY',
-          left: { type: 'FIELD', fieldUniversalIdentifier: 'gadget-price-uid' },
-          right: { type: 'LITERAL', value: 2 },
-        },
+    const expectedFormula = {
+      tree: {
+        type: 'ARITHMETIC',
+        operator: 'MULTIPLY',
+        left: { type: 'FIELD', fieldUniversalIdentifier: 'gadget-price-uid' },
+        right: { type: 'LITERAL', value: 2 },
       },
     };
 
     expect(flatFieldMetadatasToUpdate).toContainEqual(
       expect.objectContaining({
         universalIdentifier: doubleCost.universalIdentifier,
-        settings: expectedSettings,
-        universalSettings: expectedSettings,
+        formula: expectedFormula,
       }),
     );
   });

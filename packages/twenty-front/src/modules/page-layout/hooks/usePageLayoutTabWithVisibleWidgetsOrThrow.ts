@@ -1,5 +1,6 @@
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
+import { useIsPageLayoutWidgetReadable } from '@/page-layout/hooks/useIsPageLayoutWidgetReadable';
 import { useWidgetVisibilityContext } from '@/page-layout/hooks/useWidgetVisibilityContext';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { filterVisibleWidgets } from '@/page-layout/utils/filterVisibleWidgets';
@@ -15,6 +16,7 @@ export const usePageLayoutTabWithVisibleWidgetsOrThrow = (
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
   const widgetVisibilityContext = useWidgetVisibilityContext();
+  const isWidgetReadable = useIsPageLayoutWidgetReadable();
 
   const tab = currentPageLayout.tabs.find((tab) => tab.id === tabId);
 
@@ -28,7 +30,7 @@ export const usePageLayoutTabWithVisibleWidgetsOrThrow = (
     const widgets = isPageLayoutInEditMode
       ? activeWidgets
       : filterVisibleWidgets({
-          widgets: activeWidgets,
+          widgets: activeWidgets.filter(isWidgetReadable),
           context: widgetVisibilityContext,
         });
 
@@ -39,7 +41,7 @@ export const usePageLayoutTabWithVisibleWidgetsOrThrow = (
           ? sortWidgetsByVerticalListPosition(widgets)
           : widgets,
     };
-  }, [isPageLayoutInEditMode, tab, widgetVisibilityContext]);
+  }, [isPageLayoutInEditMode, tab, widgetVisibilityContext, isWidgetReadable]);
 
   if (!isDefined(tabWithVisibleWidgets)) {
     throw new Error(doNotTranslate('Tab not found'));

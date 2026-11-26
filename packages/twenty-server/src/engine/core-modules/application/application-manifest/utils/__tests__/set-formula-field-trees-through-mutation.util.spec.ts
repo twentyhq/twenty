@@ -18,9 +18,7 @@ const buildManifestField = ({
     type: FieldMetadataType.NUMBER,
     objectMetadataId: 'gadget-object',
     objectMetadataUniversalIdentifier: 'gadget-object-uid',
-    universalSettings: isDefined(expression)
-      ? { formula: { expression } }
-      : null,
+    formula: isDefined(expression) ? { expression } : null,
   });
 
 describe('setFormulaFieldTreesThroughMutation', () => {
@@ -45,21 +43,19 @@ describe('setFormulaFieldTreesThroughMutation', () => {
     expect(
       universalFlatFieldMetadataMapsToMutate.byUniversalIdentifier,
     ).toMatchObject({
-      [discount.universalIdentifier]: { universalSettings: null },
+      [discount.universalIdentifier]: { formula: null },
       [netPrice.universalIdentifier]: {
-        universalSettings: {
-          formula: {
-            tree: {
-              type: 'ARITHMETIC',
-              operator: 'SUBTRACT',
-              left: {
-                type: 'FIELD',
-                fieldUniversalIdentifier: 'gadget-price-uid',
-              },
-              right: {
-                type: 'FIELD',
-                fieldUniversalIdentifier: discount.universalIdentifier,
-              },
+        formula: {
+          tree: {
+            type: 'ARITHMETIC',
+            operator: 'SUBTRACT',
+            left: {
+              type: 'FIELD',
+              fieldUniversalIdentifier: 'gadget-price-uid',
+            },
+            right: {
+              type: 'FIELD',
+              fieldUniversalIdentifier: discount.universalIdentifier,
             },
           },
         },

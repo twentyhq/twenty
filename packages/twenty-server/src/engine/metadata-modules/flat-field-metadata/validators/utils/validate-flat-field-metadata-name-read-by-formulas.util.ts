@@ -19,7 +19,7 @@ export const validateFlatFieldMetadataNameReadByFormulas = ({
   name: string;
   universalFlatFieldMetadataMaps: {
     byUniversalIdentifier: Partial<
-      Record<string, Pick<UniversalFlatFieldMetadata, 'universalSettings'>>
+      Record<string, Pick<UniversalFlatFieldMetadata, 'formula'>>
     >;
   };
 }): FlatFieldMetadataValidationError[] => {
@@ -27,8 +27,8 @@ export const validateFlatFieldMetadataNameReadByFormulas = ({
     universalFlatFieldMetadataMaps.byUniversalIdentifier,
   )
     .filter(isDefined)
-    .some(({ universalSettings }) =>
-      listFieldMetadataFormulaFieldNodes({ settings: universalSettings }).some(
+    .some(({ formula }) =>
+      listFieldMetadataFormulaFieldNodes({ formula }).some(
         ({ fieldUniversalIdentifier, relationFieldUniversalIdentifier }) =>
           (relationFieldUniversalIdentifier === universalIdentifier &&
             isValidationRuleReservedName({ name, isMember: false })) ||

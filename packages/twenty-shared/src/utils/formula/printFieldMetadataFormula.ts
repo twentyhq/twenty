@@ -1,3 +1,4 @@
+import { type FieldMetadataFormula } from '@/types/FieldMetadataFormula';
 import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
 import { buildExpressionFieldPrinter } from '@/utils/expression/buildExpressionFieldPrinter';
 import { printExpressionNode } from '@/expression/utils/printExpressionNode';
@@ -7,26 +8,26 @@ import { getFieldMetadataFormulaTree } from '@/utils/formula/getFieldMetadataFor
 import { isDefined } from '@/utils/validation/isDefined';
 
 export const printFieldMetadataFormula = ({
-  settings,
+  formula,
   fields,
 }: {
-  settings?: unknown;
+  formula?: Partial<FieldMetadataFormula> | null;
   fields: ValidationRuleFieldDescriptor[];
 }): { expression?: string; currencyCodeExpression?: string } => {
   const printField = buildExpressionFieldPrinter({ fields });
-  const tree = getFieldMetadataFormulaTree({ settings });
+  const tree = getFieldMetadataFormulaTree({ formula });
 
   if (!isDefined(tree)) {
     return {
-      expression: getFieldMetadataFormulaExpression({ settings }),
+      expression: getFieldMetadataFormulaExpression({ formula }),
       currencyCodeExpression: getFieldMetadataFormulaCurrencyCodeExpression({
-        settings,
+        formula,
       }),
     };
   }
 
   const currencyCodeTree = getFieldMetadataFormulaTree({
-    settings,
+    formula,
     isCurrencyCode: true,
   });
 

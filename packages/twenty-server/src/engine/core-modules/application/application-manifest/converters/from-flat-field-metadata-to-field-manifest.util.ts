@@ -19,7 +19,7 @@ import {
   type FlatFieldMetadataOptionMapsForOptions,
   resolveFlatFieldMetadataOptions,
 } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-flat-field-metadata-options.util';
-import { printFormulaFieldUniversalSettings } from 'src/engine/metadata-modules/formula-field/utils/print-formula-field-universal-settings.util';
+import { printFormulaFieldText } from 'src/engine/metadata-modules/formula-field/utils/print-formula-field-text.util';
 import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
@@ -147,8 +147,9 @@ export const fromFlatFieldMetadataToFieldManifest = ({
     ...(isMorphOrRelationFieldMetadataType(flatFieldMetadata.type)
       ? buildRelationProperties(flatFieldMetadata)
       : {
-          universalSettings: printFormulaFieldUniversalSettings({
-            universalSettings: flatFieldMetadata.universalSettings,
+          universalSettings: flatFieldMetadata.universalSettings,
+          formula: printFormulaFieldText({
+            formula: flatFieldMetadata.formula,
             fields: formulaFields,
           }),
         }),

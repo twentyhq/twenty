@@ -3,24 +3,22 @@ import { validateFlatFieldMetadataNameReadByFormulas } from 'src/engine/metadata
 const UNIVERSAL_FLAT_FIELD_METADATA_MAPS = {
   byUniversalIdentifier: {
     'total-uid': {
-      universalSettings: {
-        formula: {
-          tree: {
-            type: 'ARITHMETIC' as const,
-            operator: 'MULTIPLY' as const,
-            left: {
-              type: 'FIELD' as const,
-              fieldUniversalIdentifier: 'price-uid',
-            },
-            right: {
-              type: 'FIELD' as const,
-              fieldUniversalIdentifier: 'quantity-uid',
-            },
+      formula: {
+        tree: {
+          type: 'ARITHMETIC' as const,
+          operator: 'MULTIPLY' as const,
+          left: {
+            type: 'FIELD' as const,
+            fieldUniversalIdentifier: 'price-uid',
+          },
+          right: {
+            type: 'FIELD' as const,
+            fieldUniversalIdentifier: 'quantity-uid',
           },
         },
       },
     },
-    'price-uid': { universalSettings: null },
+    'price-uid': { formula: null },
   },
 };
 

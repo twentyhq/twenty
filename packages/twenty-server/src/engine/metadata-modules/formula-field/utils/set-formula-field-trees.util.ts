@@ -20,12 +20,10 @@ import {
   type FormulaSourceUniversalFlatObjectMetadata,
 } from 'src/engine/metadata-modules/formula-field/utils/build-formula-field-descriptors-from-universal-flat-entity-maps.util';
 import { keepStoredFormulaEvaluation } from 'src/engine/metadata-modules/formula-field/utils/keep-stored-formula-evaluation.util';
-import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
 // Text that does not compile is left as it is, for the validator to report
 export const setFormulaFieldTrees = <
-  TUniversalFlatFieldMetadata extends FormulaSourceUniversalFlatFieldMetadata &
-    Pick<UniversalFlatFieldMetadata, 'universalSettings'>,
+  TUniversalFlatFieldMetadata extends FormulaSourceUniversalFlatFieldMetadata,
 >({
   universalFlatFieldMetadata,
   universalFlatObjectMetadataMaps,
@@ -45,17 +43,19 @@ export const setFormulaFieldTrees = <
   };
   pendingUniversalFlatFieldMetadatas?: FormulaSourceUniversalFlatFieldMetadata[];
 }): TUniversalFlatFieldMetadata => {
-  const { universalSettings, universalIdentifier, name } =
-    universalFlatFieldMetadata;
+  const {
+    formula: writtenFormula,
+    universalIdentifier,
+    name,
+  } = universalFlatFieldMetadata;
   const universalFlatObjectMetadata =
     universalFlatObjectMetadataMaps.byUniversalIdentifier[
       universalFlatFieldMetadata.objectMetadataUniversalIdentifier
     ];
 
   if (
-    !isDefined(universalSettings) ||
     !isDefined(universalFlatObjectMetadata) ||
-    !isFormulaFieldMetadata({ settings: universalSettings })
+    !isFormulaFieldMetadata({ formula: writtenFormula })
   ) {
     return universalFlatFieldMetadata;
   }
@@ -73,17 +73,17 @@ export const setFormulaFieldTrees = <
   }).filter((formulaFieldDescriptor) => formulaFieldDescriptor.name !== name);
   // A formula sent as a tree is written as its text, so both go through the same compilation
   const { expression, currencyCodeExpression } = isDefined(
-    getFieldMetadataFormulaExpression({ settings: universalSettings }),
+    getFieldMetadataFormulaExpression({ formula: writtenFormula }),
   )
     ? {
         expression: getFieldMetadataFormulaExpression({
-          settings: universalSettings,
+          formula: writtenFormula,
         }),
         currencyCodeExpression: getFieldMetadataFormulaCurrencyCodeExpression({
-          settings: universalSettings,
+          formula: writtenFormula,
         }),
       }
-    : printFieldMetadataFormula({ settings: universalSettings, fields });
+    : printFieldMetadataFormula({ formula: writtenFormula, fields });
 
   if (!isDefined(expression)) {
     return universalFlatFieldMetadata;
@@ -134,8 +134,5 @@ export const setFormulaFieldTrees = <
     ),
   };
 
-  return {
-    ...universalFlatFieldMetadata,
-    universalSettings: { ...universalSettings, formula },
-  };
+  return { ...universalFlatFieldMetadata, formula };
 };

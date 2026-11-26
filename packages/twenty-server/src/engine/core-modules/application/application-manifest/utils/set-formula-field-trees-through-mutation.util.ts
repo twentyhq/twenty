@@ -26,9 +26,7 @@ export const setFormulaFieldTreesThroughMutation = ({
     universalFlatFieldMetadataMapsToMutate.byUniversalIdentifier,
   )
     .filter(isDefined)
-    .filter(({ universalSettings }) =>
-      isFormulaFieldMetadata({ settings: universalSettings }),
-    );
+    .filter(isFormulaFieldMetadata);
 
   if (formulaUniversalFlatFieldMetadatas.length === 0) {
     return;

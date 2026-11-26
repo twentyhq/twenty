@@ -32,15 +32,13 @@ describe('buildStoredFormulaWatchPlans', () => {
         'gadget-supplier-label-uid'
       ]!,
       universalIdentifier: 'gadget-stored-label-uid',
-      settings: {
-        formula: {
-          tree: {
-            type: 'FIELD' as const,
-            relationFieldUniversalIdentifier: 'gadget-supplier-uid',
-            fieldUniversalIdentifier: 'supplier-name-uid',
-          },
-          evaluation: 'STORED' as const,
+      formula: {
+        tree: {
+          type: 'FIELD' as const,
+          relationFieldUniversalIdentifier: 'gadget-supplier-uid',
+          fieldUniversalIdentifier: 'supplier-name-uid',
         },
+        evaluation: 'STORED' as const,
       },
     };
 

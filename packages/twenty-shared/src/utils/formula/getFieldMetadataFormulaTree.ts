@@ -1,21 +1,19 @@
 import { type ExpressionNode } from '@/expression/types/ExpressionNode';
 import { expressionNodeSchema } from '@/expression/utils/expressionNodeSchema';
-import { isPlainObject } from '@/utils/typeguard/isPlainObject';
+import { type FieldMetadataFormula } from '@/types/FieldMetadataFormula';
 
 // A stored tree is only read once it has the shape of an expression tree, so a malformed one reads as missing
 export const getFieldMetadataFormulaTree = ({
-  settings,
+  formula,
   isCurrencyCode = false,
 }: {
-  settings?: unknown;
+  formula?: Partial<
+    Pick<FieldMetadataFormula, 'tree' | 'currencyCodeTree'>
+  > | null;
   isCurrencyCode?: boolean;
 }): ExpressionNode | undefined => {
-  if (!isPlainObject(settings) || !isPlainObject(settings.formula)) {
-    return undefined;
-  }
-
   const parsing = expressionNodeSchema.safeParse(
-    isCurrencyCode ? settings.formula.currencyCodeTree : settings.formula.tree,
+    isCurrencyCode ? formula?.currencyCodeTree : formula?.tree,
   );
 
   return parsing.success ? parsing.data : undefined;

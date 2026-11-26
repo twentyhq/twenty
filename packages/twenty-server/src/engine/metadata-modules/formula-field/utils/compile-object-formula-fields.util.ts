@@ -113,7 +113,7 @@ const compileObjectFormulaFields = ({
         flatFieldMetadata,
         isStored:
           getFieldMetadataFormulaEvaluation({
-            settings: flatFieldMetadata.settings,
+            formula: flatFieldMetadata.formula,
           }) === 'STORED',
         columns,
         dependencies: [...dependencyByKey.values()],
