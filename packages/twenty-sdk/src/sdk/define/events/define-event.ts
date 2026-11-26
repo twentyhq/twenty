@@ -25,7 +25,6 @@ export const defineEvent: DefineEntity<EventManifest> = (config) => {
       ...getEventDefinitionErrors({
         name: config.name,
         properties: config.properties ?? [],
-        capabilities: config.capabilities,
       }),
     );
   }

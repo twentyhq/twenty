@@ -1,7 +1,4 @@
-import {
-  type EventCapabilitiesManifest,
-  type EventPropertyManifest,
-} from 'twenty-shared/application';
+import { type EventPropertyManifest } from 'twenty-shared/application';
 import {
   Column,
   CreateDateColumn,
@@ -43,9 +40,6 @@ export class EventMetadataEntity
 
   @Column({ nullable: false, type: 'jsonb', default: [] })
   properties: EventPropertyManifest[];
-
-  @Column({ nullable: false, type: 'jsonb', default: {} })
-  capabilities: EventCapabilitiesManifest;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

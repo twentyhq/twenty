@@ -111,11 +111,9 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "description",
       "icon",
       "properties",
-      "capabilities",
     ],
     "propertiesToStringify": [
       "properties",
-      "capabilities",
     ],
   },
   "fieldMetadata": {

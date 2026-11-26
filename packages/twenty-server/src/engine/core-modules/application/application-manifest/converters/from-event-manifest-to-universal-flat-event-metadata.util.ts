@@ -18,7 +18,6 @@ export const fromEventManifestToUniversalFlatEventMetadata = ({
   description: eventManifest.description ?? null,
   icon: eventManifest.icon ?? null,
   properties: eventManifest.properties ?? [],
-  capabilities: eventManifest.capabilities ?? {},
   createdAt: now,
   updatedAt: now,
 });

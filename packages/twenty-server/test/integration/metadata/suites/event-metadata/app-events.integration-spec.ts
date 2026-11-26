@@ -115,7 +115,7 @@ describe('app events (e2e)', () => {
 
   it('stores the declared event', async () => {
     const storedEvents = await globalThis.testDataSource.query(
-      `SELECT name, properties, capabilities FROM core."eventMetadata" WHERE "universalIdentifier" = $1`,
+      `SELECT name, properties FROM core."eventMetadata" WHERE "universalIdentifier" = $1`,
       [MESSAGE_ADDED_EVENT_ID],
     );
 
@@ -123,7 +123,6 @@ describe('app events (e2e)', () => {
       {
         name: 'messageAdded',
         properties: MESSAGE_ADDED_EVENT.properties,
-        capabilities: {},
       },
     ]);
   });
@@ -141,20 +140,6 @@ describe('app events (e2e)', () => {
             },
           ],
         },
-      ],
-      expectToFail: true,
-    });
-  });
-
-  it('refuses a capability the server does not support', async () => {
-    await syncEvents({
-      events: [
-        JSON.parse(
-          JSON.stringify({
-            ...MESSAGE_ADDED_EVENT,
-            capabilities: { triggers: true },
-          }),
-        ),
       ],
       expectToFail: true,
     });

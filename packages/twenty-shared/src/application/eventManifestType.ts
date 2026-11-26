@@ -17,14 +17,10 @@ export type EventPropertyManifest =
       objectUniversalIdentifier: string;
     });
 
-// Each capability (realtime, triggers, storage) adds its own key when it ships
-export type EventCapabilitiesManifest = Record<string, never>;
-
 export type EventManifest = SyncableEntityOptions & {
   name: string;
   label: string;
   description?: string;
   icon?: string;
   properties: EventPropertyManifest[];
-  capabilities?: EventCapabilitiesManifest;
 };
