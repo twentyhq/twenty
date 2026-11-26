@@ -1,36 +1,36 @@
 ---
-title: App kinds
-description: The workspace Custom application and marketplace apps, and how they differ.
+title: Apps and the workspace application
+description: The two kinds of application in a workspace, and how they differ.
 ---
 
 import { PageBanner } from "/snippets/page-banner.mdx"
 
-Every app is built with the same SDK and CLI, but Twenty treats two kinds of app differently.
+Twenty uses the same SDK and CLI for two kinds of application, but treats them differently.
 
 ## The two kinds
 
-- **The workspace Custom application.** Each workspace has exactly one. It owns what users build in the UI: objects, fields, views, page layouts, workflows, roles, agents and so on. Turning it into source lets you version and review a workspace's own setup in Git.
-- **Marketplace apps.** Every other app: installed from npm through the marketplace, deployed as a tarball, or synced with `twenty app dev`. A marketplace app is meant to run in many workspaces, so it only manages the entities it declares.
+- **The workspace application.** Each workspace has exactly one. It owns what users build in the UI: objects, fields, views, page layouts, workflows, roles, agents and so on. Turning it into source lets you version and review a workspace's own setup in Git.
+- **Apps.** Every other application: installed from npm through the marketplace, deployed as a tarball, or synced with `twenty app dev`. An app is meant to run in many workspaces, so it only manages the entities it declares.
 
 ## Getting a project
 
-| Kind                             | How you start                                                                                                                                                                                                                       |
-| -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Workspace Custom application     | Run `twenty app pull` outside any app. It creates a project bound to the workspace's Custom application, then pulls its definitions. See [Pulling an installed app back to source](/developers/extend/apps/operations/sync-and-recovery#pulling-an-installed-app-back-to-source). |
-| Marketplace app                  | Run `twenty app init`. See [Quick start](/developers/extend/apps/getting-started/quick-start).                                                                                                                                      |
+| Kind                  | How you start                                                                                                                                                                                                                  |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Workspace application | Run `twenty app pull` outside any app. It creates a project bound to the workspace application, then pulls its definitions. See [Pulling an installed app back to source](/developers/extend/apps/operations/sync-and-recovery#pulling-an-installed-app-back-to-source). |
+| App                   | Run `twenty app init`. See [Quick start](/developers/extend/apps/getting-started/quick-start).                                                                                                                                 |
 
 ## Differences
 
-| | Workspace Custom application | Marketplace app |
+| | Workspace application | App |
 | --- | --- | --- |
-| **Pruning on `plan`, `apply` and `dev`** | Entities missing from source are kept unless you pass `--prune`, since pull cannot export everything the app owns yet. | Entities missing from source are deleted unless you pass `--no-prune`. See [Syncing & recovery](/developers/extend/apps/operations/sync-and-recovery). |
-| **Workflows** | The workflow builder and your code are both authoritative: pull writes the active version and apply publishes a new one. See [Workflows](/developers/extend/apps/logic/workflows#workflows-of-the-workspace-custom-application). | Installed workflows are read-only in the workspace; users duplicate one to customize it. |
-| **Roles and permissions** | May ship roles for workspace members and API keys, with field and row-level permissions. | Roles can only be held by the app itself and its agents, and cannot declare field or row-level permissions. See [Roles outside the workspace Custom application](/developers/extend/apps/config/roles#roles-outside-the-workspace-custom-application). |
+| **Pruning on `plan`, `apply` and `dev`** | Entities missing from source are kept unless you pass `--prune`, since pull cannot export everything the workspace application owns yet. | Entities missing from source are deleted unless you pass `--no-prune`. See [Syncing & recovery](/developers/extend/apps/operations/sync-and-recovery). |
+| **Workflows** | The workflow builder and your code are both authoritative: pull writes the active version and apply publishes a new one. See [Workflows](/developers/extend/apps/logic/workflows#workflows-of-the-workspace-application). | Installed workflows are read-only in the workspace; users duplicate one to customize it. |
+| **Roles and permissions** | May ship roles for workspace members and API keys, with field and row-level permissions. | Roles can only be held by the app itself and its agents, and cannot declare field or row-level permissions. See [Roles outside the workspace application](/developers/extend/apps/config/roles#roles-outside-the-workspace-application). |
 | **Publishing** | Not published: it belongs to one workspace and syncs with `twenty app apply`. | Published with `twenty app publish`, to npm or as a tarball. See [Publishing](/developers/extend/apps/operations/publishing). |
 
 ## Which one to use
 
-- Work on the workspace Custom application when you manage one workspace's own setup: its data model, views, workflows and member roles, kept in source alongside what people change in the UI.
-- Build a marketplace app when the same features should be installed in several workspaces, yours or other people's.
+- Work on the workspace application when you manage one workspace's own setup: its data model, views, workflows and member roles, kept in source alongside what people change in the UI.
+- Build an app when the same features should be installed in several workspaces, yours or other people's.
 
 <PageBanner illustration="dev-apps" />

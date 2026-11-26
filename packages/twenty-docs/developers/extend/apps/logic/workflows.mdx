@@ -77,7 +77,7 @@ Key points:
 
 Steps and triggers point at metadata by universal identifier, never by name or id:
 - **Objects and fields**: your app's own, or standard ones through `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`. The example above assumes the app also defines a `leadScore` number field on Company with [`defineField()`](/developers/extend/apps/data/extending-objects): a record step that writes a field missing from the workspace fails the install.
-- **Logic functions**: your app's own, exposed as a [workflow action](/developers/extend/apps/logic/logic-functions#exposing-a-function-as-an-ai-tool-or-workflow-action) with `workflowActionTriggerSettings`. The workspace Custom application can also reference the workflow actions of the other apps installed in the workspace, as workflows built in the app can.
+- **Logic functions**: your app's own, exposed as a [workflow action](/developers/extend/apps/logic/logic-functions#exposing-a-function-as-an-ai-tool-or-workflow-action) with `workflowActionTriggerSettings`. The workspace application can also reference the workflow actions of the other apps installed in the workspace, as workflows built in the app can.
 - **Agents**: your app's own, from [`defineAgent()`](/developers/extend/apps/logic/skills-and-agents).
 
 A reference Twenty can't resolve fails the install.
@@ -140,9 +140,9 @@ Their inputs match the steps of the [workflow builder](/user-guide/workflows/cap
 - Installing a new version of the app updates the workflow in place.
 - Users can't edit an installed workflow. To customize one, they duplicate it: the copy is theirs to edit.
 
-## Workflows of the workspace Custom application
+## Workflows of the workspace application
 
-The [workspace Custom application](/developers/extend/apps/getting-started/app-kinds) owns the workflows built in the workflow builder, and code is as authoritative for them as the builder:
+The [workspace application](/developers/extend/apps/getting-started/app-kinds) owns the workflows built in the workflow builder, and code is as authoritative for them as the builder:
 - `twenty app pull` writes each one from its active version, the one the builder last published. A workflow whose active version uses settings a `defineWorkflow()` file can't express, such as a record filter on a field of a related record, is reported and left in place. So is a Code step created before steps stored their source, until it is edited once in the builder or upgraded.
 - A pulled workflow keeps what the builder stored: a trigger without a `universalIdentifier`, the trigger's builder name, a `position` of `null` for a node the builder never placed, and an `outputSchema` that differs from the computed one. These fields need twenty-sdk 2.53.0 or later, applied to a server on 2.53.0 or later: older versions reject them as unknown keys. Code steps need twenty-sdk 2.56.0 or later, applied to a server on 2.56.0 or later: older versions reject them as an unsupported step type.
 - `twenty app apply` publishes like the builder. A workflow whose definition matches its active version is left alone. Otherwise the active version is archived and the definition becomes a new active version, so past runs keep the version they ran.

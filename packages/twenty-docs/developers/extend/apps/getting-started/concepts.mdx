@@ -11,7 +11,7 @@ import { CardTitle } from "/snippets/card-title.mdx"
 
 An app is a collection of **entities** declared using `defineEntity()` functions from the `twenty-sdk` package. The CLI detects these declarations via AST analysis at build time and produces a **manifest** — a complete description of what your app adds to a workspace. These functions validate your configuration at build time and provide IDE autocompletion and type safety.
 
-An app is either a marketplace app, meant for many workspaces, or the workspace Custom application, one per workspace, which owns what users build in the UI. See [App kinds](/developers/extend/apps/getting-started/app-kinds).
+An app is meant for many workspaces. Each workspace also has one workspace application, which owns what users build in the UI. See [Apps and the workspace application](/developers/extend/apps/getting-started/app-kinds).
 
 ```
 your-app/
