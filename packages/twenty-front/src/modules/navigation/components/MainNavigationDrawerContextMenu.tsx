@@ -34,6 +34,7 @@ export const MainNavigationDrawerContextMenu = ({
     isLayoutCustomizationModeEnabledState,
   );
   const [position, setPosition] = useState<PositionType>({ x: null, y: null });
+  const [targetSectionId, setTargetSectionId] = useState<string | null>(null);
   const { openDropdown } = useOpenDropdown();
 
   const canOpenContextMenu =
@@ -54,6 +55,11 @@ export const MainNavigationDrawerContextMenu = ({
 
     event.preventDefault();
     setPosition({ x: event.clientX, y: event.clientY });
+    setTargetSectionId(
+      target
+        ?.closest('[data-navigation-menu-section-id]')
+        ?.getAttribute('data-navigation-menu-section-id') ?? null,
+    );
     openDropdown({
       dropdownComponentInstanceIdFromProps:
         MAIN_NAVIGATION_DRAWER_CONTEXT_MENU_DROPDOWN_ID,
@@ -75,7 +81,9 @@ export const MainNavigationDrawerContextMenu = ({
             width={GenericDropdownContentWidth.Large}
             aria-label={t`Sidebar actions`}
           >
-            <MainNavigationDrawerContextMenuContent />
+            <MainNavigationDrawerContextMenuContent
+              targetSectionId={targetSectionId}
+            />
           </DropdownContent>
         </DropdownRoot>
       )}

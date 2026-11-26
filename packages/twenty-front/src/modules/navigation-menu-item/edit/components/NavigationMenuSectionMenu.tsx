@@ -28,8 +28,10 @@ export const NavigationMenuSectionMenu = ({
   const { t } = useLingui();
   const [navigationMenuItemIdToRename, setNavigationMenuItemIdToRename] =
     useAtomState(navigationMenuItemIdToRenameState);
-  const [navigationMenuSectionIdToAddItem, setNavigationMenuSectionIdToAddItem] =
-    useAtomState(navigationMenuSectionIdToAddItemState);
+  const [
+    navigationMenuSectionIdToAddItem,
+    setNavigationMenuSectionIdToAddItem,
+  ] = useAtomState(navigationMenuSectionIdToAddItemState);
   const [mode, setMode] = useState<NavigationMenuItemMenuMode>({
     type: 'actions',
   });

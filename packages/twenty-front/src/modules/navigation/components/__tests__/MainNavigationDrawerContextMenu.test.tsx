@@ -6,11 +6,14 @@ import { createStore, Provider as JotaiProvider } from 'jotai';
 import { MemoryRouter } from 'react-router-dom';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 
+import { navigationMenuSectionIdToAddItemState } from '@/navigation-menu-item/common/states/navigationMenuSectionIdToAddItemState';
 import { type NamedNavigationMenuItem } from '@/navigation-menu-item/common/types/NamedNavigationMenuItem';
 import { MainNavigationDrawerContextMenu } from '@/navigation/components/MainNavigationDrawerContextMenu';
+import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { isNavigationSectionOpenFamilyState } from '@/ui/navigation/navigation-drawer/states/isNavigationSectionOpenFamilyState';
 
 let mockSections: Partial<NamedNavigationMenuItem>[] = [];
+const mockEnterLayoutCustomizationMode = jest.fn();
 
 jest.mock('@/navigation/hooks/useCanCustomizeSidebar', () => ({
   useCanCustomizeSidebar: () => true,
@@ -38,7 +41,7 @@ jest.mock(
   '@/layout-customization/hooks/useEnterLayoutCustomizationMode',
   () => ({
     useEnterLayoutCustomizationMode: () => ({
-      enterLayoutCustomizationMode: jest.fn(),
+      enterLayoutCustomizationMode: mockEnterLayoutCustomizationMode,
     }),
   }),
 );
@@ -66,6 +69,12 @@ const renderSidebar = () => {
         <MemoryRouter>
           <MainNavigationDrawerContextMenu>
             <div>Search</div>
+            <div data-navigation-menu-section-id="custom-section">
+              <span>Sales</span>
+            </div>
+            <div data-navigation-menu-section-id="favorites-section">
+              <span>Favorites</span>
+            </div>
           </MainNavigationDrawerContextMenu>
         </MemoryRouter>
       </JotaiProvider>
@@ -77,13 +86,74 @@ const renderSidebar = () => {
       isNavigationSectionOpenFamilyState.atomFamily(navigationSectionId),
     );
 
-  return { isSectionOpen };
+  const getSectionIdToAddItem = () =>
+    store.get(navigationMenuSectionIdToAddItemState.atom);
+
+  const isDropdownOpen = (dropdownId: string) =>
+    store.get(
+      isDropdownOpenComponentState.atomFamily({ instanceId: dropdownId }),
+    );
+
+  return { isSectionOpen, getSectionIdToAddItem, isDropdownOpen };
 };
 
 describe('MainNavigationDrawerContextMenu', () => {
   beforeEach(() => {
     mockSections = [CUSTOM_SECTION, FAVORITES_SECTION];
+    mockEnterLayoutCustomizationMode.mockReset().mockReturnValue(true);
     localStorage.clear();
+  });
+
+  it('should add an item to the right-clicked section in edit mode', async () => {
+    const user = userEvent.setup();
+    const { getSectionIdToAddItem } = renderSidebar();
+
+    fireEvent.contextMenu(screen.getByText('Sales'));
+    await user.click(await screen.findByText('Add item to Sales'));
+
+    expect(mockEnterLayoutCustomizationMode).toHaveBeenCalled();
+    expect(getSectionIdToAddItem()).toBe('custom-section');
+  });
+
+  it('should only offer to add an item inside a custom section', async () => {
+    renderSidebar();
+
+    fireEvent.contextMenu(screen.getByText('Search'));
+    expect(await screen.findByText('Add section')).toBeVisible();
+    expect(screen.queryByText(/Add item to/)).not.toBeInTheDocument();
+  });
+
+  it('should not offer to add an item to a built-in section', async () => {
+    renderSidebar();
+
+    fireEvent.contextMenu(screen.getByText('Favorites'));
+    expect(await screen.findByText('Add section')).toBeVisible();
+    expect(screen.queryByText(/Add item to/)).not.toBeInTheDocument();
+  });
+
+  it('should open the add section menu in edit mode', async () => {
+    const user = userEvent.setup();
+    const { isDropdownOpen } = renderSidebar();
+
+    fireEvent.contextMenu(screen.getByText('Search'));
+    await user.click(await screen.findByText('Add section'));
+
+    expect(mockEnterLayoutCustomizationMode).toHaveBeenCalled();
+    expect(isDropdownOpen('navigation-menu-add-section-home')).toBe(true);
+  });
+
+  it('should open nothing when edit mode is refused', async () => {
+    mockEnterLayoutCustomizationMode.mockReturnValue(false);
+    const user = userEvent.setup();
+    const { getSectionIdToAddItem, isDropdownOpen } = renderSidebar();
+
+    fireEvent.contextMenu(screen.getByText('Sales'));
+    await user.click(await screen.findByText('Add item to Sales'));
+    fireEvent.contextMenu(screen.getByText('Search'));
+    await user.click(await screen.findByText('Add section'));
+
+    expect(getSectionIdToAddItem()).toBeNull();
+    expect(isDropdownOpen('navigation-menu-add-section-home')).toBe(false);
   });
 
   it('should collapse then expand every section of the tab', async () => {
