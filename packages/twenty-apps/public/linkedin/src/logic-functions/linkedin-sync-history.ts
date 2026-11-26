@@ -42,7 +42,7 @@ export default defineLogicFunction({
   universalIdentifier: LINKEDIN_SYNC_HISTORY_UNIVERSAL_IDENTIFIER,
   name: 'linkedin-sync-history',
   description:
-    'Starts importing the past LinkedIn conversations of the requesting member connection again, after an import that failed: the ones they selected, or the most recent ones.',
+    'Retries the LinkedIn history import of the requesting member connection.',
   timeoutSeconds: 15,
   handler: linkedinSyncHistoryHandler,
   httpRouteTriggerSettings: {

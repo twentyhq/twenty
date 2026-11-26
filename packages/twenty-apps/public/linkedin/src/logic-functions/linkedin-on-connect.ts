@@ -76,7 +76,7 @@ export default defineLogicFunction({
   universalIdentifier: LINKEDIN_ON_CONNECT_UNIVERSAL_IDENTIFIER,
   name: 'linkedin-on-connect',
   description:
-    'Creates the message channel of a new LinkedIn connection, lets members reply through it, routes its Unipile webhooks to this workspace and imports its most recent conversations; a reconnection imports them again.',
+    'Creates the message channel of a LinkedIn connection and imports its most recent conversations.',
   timeoutSeconds: 30,
   handler: linkedinOnConnectHandler,
 });

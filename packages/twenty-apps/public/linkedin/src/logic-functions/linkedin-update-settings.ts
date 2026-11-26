@@ -7,7 +7,7 @@ import {
 } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
-import { LINKEDIN_HISTORY_IMPORT_START_DELAY_MILLISECONDS } from 'src/constants/linkedin-history-import-start-delay-milliseconds.constant';
+import { LINKEDIN_HISTORY_IMPORT_DEBOUNCE_MILLISECONDS } from 'src/constants/linkedin-history-import-debounce-milliseconds.constant';
 import { LINKEDIN_SETTINGS_ROUTE_PATHS } from 'src/constants/linkedin-settings-route-paths.constant';
 import { LINKEDIN_UPDATE_SETTINGS_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { buildLinkedinSettingsView } from 'src/logic-functions/utils/build-linkedin-settings-view.util';
@@ -62,7 +62,7 @@ export const linkedinUpdateSettingsHandler = async (
     await restartLinkedinHistoryImport({
       connectedAccountId: connection.id,
       settings,
-      delayMs: LINKEDIN_HISTORY_IMPORT_START_DELAY_MILLISECONDS,
+      delayMs: LINKEDIN_HISTORY_IMPORT_DEBOUNCE_MILLISECONDS,
     });
   }
 
@@ -73,7 +73,7 @@ export default defineLogicFunction({
   universalIdentifier: LINKEDIN_UPDATE_SETTINGS_UNIVERSAL_IDENTIFIER,
   name: 'linkedin-update-settings',
   description:
-    'Saves the LinkedIn sync settings of the requesting member connection, and imports its past conversations again when the settings that decide what is imported change.',
+    'Saves the LinkedIn sync settings of the requesting member connection.',
   timeoutSeconds: 15,
   handler: linkedinUpdateSettingsHandler,
   httpRouteTriggerSettings: {

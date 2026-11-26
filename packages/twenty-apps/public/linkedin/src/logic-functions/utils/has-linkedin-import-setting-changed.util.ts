@@ -10,7 +10,7 @@ type LinkedinImportSettings = Pick<
 
 const getSelectedChatIds = ({
   selectedChats,
-}: LinkedinImportSettings): string =>
+}: Pick<LinkedinSettings, 'selectedChats'>): string =>
   selectedChats
     .map(({ id }) => id)
     .sort()
