@@ -1,15 +1,9 @@
 import { VALIDATION_RULE_FUNCTIONS } from '@/constants/ValidationRuleFunctions';
-import { type ExpressionInstruction } from '@/types/ExpressionInstruction';
+import { type ExpressionNode } from '@/expression/types/ExpressionNode';
 import { type ValidationRuleErrorParams } from '@/types/ValidationRuleErrorParams';
+import { getExpressionNodeChildren } from '@/expression/utils/internal/getExpressionNodeChildren';
 import { isValidationRuleFunctionName } from '@/utils/validation-rule/isValidationRuleFunctionName';
 import { isDefined } from '@/utils/validation/isDefined';
-
-const OPERAND_COUNT_BY_OPERATOR_TYPE: Partial<Record<string, number>> = {
-  IMEMBER: 1,
-  IOP1: 1,
-  IOP2: 2,
-  IOP3: 3,
-};
 
 type ArgumentCountError = {
   errorMessage: string;
@@ -20,10 +14,10 @@ const getFunctionCallArgumentCountError = ({
   functionName,
   argumentCount,
 }: {
-  functionName: string | undefined;
+  functionName: string;
   argumentCount: number;
 }): ArgumentCountError | undefined => {
-  if (!isDefined(functionName) || !isValidationRuleFunctionName(functionName)) {
+  if (!isValidationRuleFunctionName(functionName)) {
     return undefined;
   }
 
@@ -54,51 +48,20 @@ const getFunctionCallArgumentCountError = ({
 };
 
 export const getExpressionArgumentCountError = (
-  instructions: ExpressionInstruction[],
+  node: ExpressionNode,
 ): ArgumentCountError | undefined => {
-  const functionNameStack: (string | undefined)[] = [];
-  const popOperands = (count: number) =>
-    functionNameStack.splice(functionNameStack.length - count, count);
+  for (const child of getExpressionNodeChildren(node)) {
+    const childError = getExpressionArgumentCountError(child);
 
-  for (const { type, value } of instructions) {
-    if (type === 'IEXPR' && Array.isArray(value)) {
-      const nestedError = getExpressionArgumentCountError(value);
-
-      if (isDefined(nestedError)) {
-        return nestedError;
-      }
+    if (isDefined(childError)) {
+      return childError;
     }
-
-    if (type === 'IVAR') {
-      functionNameStack.push(String(value));
-      continue;
-    }
-
-    if (type === 'IFUNCALL') {
-      const argumentCount = Number(value);
-
-      popOperands(argumentCount);
-
-      const functionName = functionNameStack.pop();
-
-      const callError = getFunctionCallArgumentCountError({
-        functionName,
-        argumentCount,
-      });
-
-      if (isDefined(callError)) {
-        return callError;
-      }
-    } else {
-      popOperands(
-        type === 'IARRAY'
-          ? Number(value)
-          : (OPERAND_COUNT_BY_OPERATOR_TYPE[type] ?? 0),
-      );
-    }
-
-    functionNameStack.push(undefined);
   }
 
-  return undefined;
+  return node.type === 'FUNCTION_CALL'
+    ? getFunctionCallArgumentCountError({
+        functionName: node.functionName,
+        argumentCount: node.arguments.length,
+      })
+    : undefined;
 };

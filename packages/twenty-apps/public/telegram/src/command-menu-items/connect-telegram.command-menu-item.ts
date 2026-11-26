@@ -9,7 +9,6 @@ export default defineCommandMenuItem({
   universalIdentifier: CONNECT_TELEGRAM_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIER,
   label: 'Connect Telegram',
   shortLabel: 'Telegram',
-  icon: 'IconBrandTelegram',
   isPinned: false,
   availabilityType: 'GLOBAL',
   frontComponentUniversalIdentifier:

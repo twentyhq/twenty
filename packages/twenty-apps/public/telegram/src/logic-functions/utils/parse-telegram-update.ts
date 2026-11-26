@@ -49,5 +49,10 @@ export const parseTelegramUpdate = (
     return { kind: 'DISCONNECT', ...sender };
   }
 
-  return { kind: 'MESSAGE', ...sender };
+  return {
+    kind: 'MESSAGE',
+    ...sender,
+    messageId: message.message_id,
+    text,
+  };
 };
