@@ -14,7 +14,6 @@ import {
 } from 'src/engine/permissions/channel-visibility/constants/channel-visibility-rule-sync-lock.constant';
 import { CHANNEL_CHILD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'src/engine/permissions/channel-visibility/constants/channel-child-object-universal-identifiers.constant';
 import { buildChannelVisibilityObjectRecordsPermissions } from 'src/engine/permissions/channel-visibility/utils/build-channel-visibility-object-records-permissions.util';
-import { isChannelVisibilityRlsEnabled } from 'src/engine/permissions/channel-visibility/utils/is-channel-visibility-rls-enabled.util';
 import { type WorkspaceMemberIndividualRoleHolder } from 'src/engine/permissions/workspace-member-individual-role/types/workspace-member-individual-role.type';
 import { WorkspaceMemberIndividualRoleService } from 'src/engine/permissions/workspace-member-individual-role/services/workspace-member-individual-role.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -49,25 +48,21 @@ export class ChannelVisibilityRuleSyncService {
   }
 
   private async writeOrRemoveRules(workspaceId: string): Promise<void> {
-    const { featureFlagsMap, flatWorkspaceMemberMaps } =
+    const { flatWorkspaceMemberMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'featureFlagsMap',
         'flatWorkspaceMemberMaps',
       ]);
 
-    const holders: WorkspaceMemberIndividualRoleHolder[] =
-      isChannelVisibilityRlsEnabled(featureFlagsMap)
-        ? [
-            ...Object.keys(flatWorkspaceMemberMaps.idByUserWorkspaceId).map(
-              (userWorkspaceId) => ({
-                type: 'userWorkspace' as const,
-                userWorkspaceId,
-              }),
-            ),
-            // TODO(@charlesBochet): remove the API key channel visibility exemption after 2026-11-30
-            { type: 'apiKeys' as const },
-          ]
-        : [];
+    const holders: WorkspaceMemberIndividualRoleHolder[] = [
+      ...Object.keys(flatWorkspaceMemberMaps.idByUserWorkspaceId).map(
+        (userWorkspaceId) => ({
+          type: 'userWorkspace' as const,
+          userWorkspaceId,
+        }),
+      ),
+      // TODO(@charlesBochet): remove the API key channel visibility exemption after 2026-11-30
+      { type: 'apiKeys' as const },
+    ];
 
     const [messageChannels, calendarChannels] = await Promise.all([
       this.messageChannelRepository.find({

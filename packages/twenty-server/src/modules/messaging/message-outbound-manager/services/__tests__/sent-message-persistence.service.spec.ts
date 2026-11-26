@@ -1,6 +1,5 @@
 import { type Repository } from 'typeorm';
 
-import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { type FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { type FilesFieldService } from 'src/engine/core-modules/file/files-field/services/files-field.service';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
@@ -46,7 +45,6 @@ describe('SentMessagePersistenceService', () => {
   const saveMessagesAndEnqueueContactCreation = jest.fn();
   const uploadFile = jest.fn();
   const deleteFilesFieldFile = jest.fn();
-  const isFeatureEnabled = jest.fn();
   const findFiles = jest.fn();
 
   const service = new SentMessagePersistenceService(
@@ -57,7 +55,6 @@ describe('SentMessagePersistenceService', () => {
       saveMessagesAndEnqueueContactCreation,
     } as unknown as MessagingSaveMessagesAndEnqueueContactCreationService,
     { uploadFile, deleteFilesFieldFile } as unknown as FilesFieldService,
-    { isFeatureEnabled } as unknown as FeatureFlagService,
     { find: findFiles } as unknown as WorkspaceScopedRepository<FileEntity>,
   );
 
@@ -67,7 +64,6 @@ describe('SentMessagePersistenceService', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     saveMessagesAndEnqueueContactCreation.mockResolvedValue(undefined);
-    isFeatureEnabled.mockResolvedValue(true);
     findFiles.mockResolvedValue([]);
   });
 
@@ -94,15 +90,6 @@ describe('SentMessagePersistenceService', () => {
     expect(getSavedMessage().attachmentFiles).toEqual([
       { fileId: 'file-1', label: 'report.pdf' },
     ]);
-  });
-
-  it('should not store attachments when message attachments are disabled', async () => {
-    isFeatureEnabled.mockResolvedValue(false);
-
-    await service.persistSentMessage(buildInput());
-
-    expect(uploadFile).not.toHaveBeenCalled();
-    expect(getSavedMessage().attachmentFiles).toEqual([]);
   });
 
   it('should delete only unclaimed attachment copies when the message save fails', async () => {

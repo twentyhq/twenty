@@ -7,6 +7,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { WasRenamedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-renamed-in-upgrade.decorator';
 import { type LimitKind } from 'src/engine/core-modules/usage-limit/types/limit-kind.type';
 import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
 import { type PeriodUnit } from 'src/engine/core-modules/usage-limit/types/period-unit.type';
@@ -47,6 +48,13 @@ export class UsageLimitEntity extends WorkspaceRelatedEntity {
   @Column({ type: 'varchar' })
   limitKind: LimitKind;
 
+  @WasRenamedInUpgrade([
+    {
+      previousName: 'windowSeconds',
+      upgradeCommandName:
+        '2.38.0_ReshapeUsageLimitPeriodFastInstanceCommand_1788367160891',
+    },
+  ])
   @Column({ type: 'int' })
   periodCount: number;
 

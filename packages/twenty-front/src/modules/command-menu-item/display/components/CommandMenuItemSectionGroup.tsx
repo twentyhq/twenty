@@ -5,6 +5,8 @@ import { type IconComponent } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
+import { CommandMenuItemCollapsibleSectionHeading } from '@/command-menu-item/display/components/CommandMenuItemCollapsibleSectionHeading';
+import { CommandMenuItemSectionHeading } from '@/command-menu-item/display/components/CommandMenuItemSectionHeading';
 import { type CommandMenuItemSectionContext } from '@/command-menu-item/types/CommandMenuItemSectionContext';
 import { useLingui } from '@lingui/react/macro';
 
@@ -16,16 +18,6 @@ const StyledSection = styled.div`
   & + & {
     margin-top: ${themeCssVariables.spacing[3]};
   }
-`;
-
-const StyledHeading = styled.div`
-  align-items: center;
-  border-bottom: 1px solid ${themeCssVariables.border.color.medium};
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-  height: ${themeCssVariables.spacing[8]};
-  padding-left: ${themeCssVariables.spacing[1]};
-  user-select: none;
 `;
 
 // Same width as a command's icon tile, so headings line up with command labels.
@@ -57,10 +49,18 @@ const StyledGroup = styled.div`
   }
 `;
 
+type CommandMenuItemSectionGroupCollapsible = {
+  headerItemId: string;
+  isOpen: boolean;
+  preview: string;
+  onToggle: () => void;
+};
+
 type CommandMenuItemSectionGroupProps = {
   heading: string;
   Icon?: IconComponent;
   context?: CommandMenuItemSectionContext;
+  collapsible?: CommandMenuItemSectionGroupCollapsible;
   children: ReactNode;
 };
 
@@ -68,6 +68,7 @@ export const CommandMenuItemSectionGroup = ({
   heading,
   Icon,
   context,
+  collapsible,
   children,
 }: CommandMenuItemSectionGroupProps) => {
   const { t } = useLingui();
@@ -79,27 +80,47 @@ export const CommandMenuItemSectionGroup = ({
 
   const contextLabel = context?.label;
 
+  const headingContent = (
+    <>
+      {isDefined(context?.icon) ? (
+        <StyledHeadingIcon>{context.icon}</StyledHeadingIcon>
+      ) : (
+        isDefined(Icon) && (
+          <StyledHeadingIcon>
+            <Icon size={theme.icon.size.md} />
+          </StyledHeadingIcon>
+        )
+      )}
+      <StyledHeadingText>
+        <OverflowingTextWithTooltip
+          text={
+            isDefined(contextLabel) ? t`${heading}: ${contextLabel}` : heading
+          }
+        />
+      </StyledHeadingText>
+    </>
+  );
+
+  const isOpen = collapsible?.isOpen ?? true;
+
   return (
     <StyledSection>
-      <StyledHeading>
-        {isDefined(context?.icon) ? (
-          <StyledHeadingIcon>{context.icon}</StyledHeadingIcon>
-        ) : (
-          isDefined(Icon) && (
-            <StyledHeadingIcon>
-              <Icon size={theme.icon.size.md} />
-            </StyledHeadingIcon>
-          )
-        )}
-        <StyledHeadingText>
-          <OverflowingTextWithTooltip
-            text={
-              isDefined(contextLabel) ? t`${heading}: ${contextLabel}` : heading
-            }
-          />
-        </StyledHeadingText>
-      </StyledHeading>
-      <StyledGroup>{children}</StyledGroup>
+      {isDefined(collapsible) ? (
+        <CommandMenuItemCollapsibleSectionHeading
+          headerItemId={collapsible.headerItemId}
+          heading={heading}
+          isOpen={collapsible.isOpen}
+          preview={collapsible.preview}
+          onToggle={collapsible.onToggle}
+        >
+          {headingContent}
+        </CommandMenuItemCollapsibleSectionHeading>
+      ) : (
+        <CommandMenuItemSectionHeading>
+          {headingContent}
+        </CommandMenuItemSectionHeading>
+      )}
+      {isOpen && <StyledGroup>{children}</StyledGroup>}
     </StyledSection>
   );
 };

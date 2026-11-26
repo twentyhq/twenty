@@ -1,3 +1,4 @@
+import { EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT } from '@/conditional-availability/constants/EmptyConditionalAvailabilityCurrentUserContext';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { buildWidgetVisibilityContext } from '@/page-layout/utils/buildWidgetVisibilityContext';
 import { getTabsWithVisibleWidgets } from '@/page-layout/utils/getTabsWithVisibleWidgets';
@@ -76,6 +77,8 @@ describe('getTabsWithVisibleWidgets', () => {
         tabs,
         isEditMode: false,
         context: buildWidgetVisibilityContext({
+          currentUserContext:
+            EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
           isMobile: false,
           isInSidePanel: false,
         }),
@@ -102,6 +105,8 @@ describe('getTabsWithVisibleWidgets', () => {
         tabs,
         isEditMode: false,
         context: buildWidgetVisibilityContext({
+          currentUserContext:
+            EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
           isMobile: false,
           isInSidePanel: false,
         }),
@@ -130,6 +135,8 @@ describe('getTabsWithVisibleWidgets', () => {
         tabs,
         isEditMode: false,
         context: buildWidgetVisibilityContext({
+          currentUserContext:
+            EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
           isMobile: false,
           isInSidePanel: false,
         }),
@@ -150,6 +157,8 @@ describe('getTabsWithVisibleWidgets', () => {
         tabs,
         isEditMode: false,
         context: buildWidgetVisibilityContext({
+          currentUserContext:
+            EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
           isMobile: false,
           isInSidePanel: false,
         }),
@@ -167,6 +176,8 @@ describe('getTabsWithVisibleWidgets', () => {
         tabs,
         isEditMode: false,
         context: buildWidgetVisibilityContext({
+          currentUserContext:
+            EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
           isMobile: false,
           isInSidePanel: false,
         }),
@@ -194,6 +205,8 @@ describe('getTabsWithVisibleWidgets', () => {
         tabs,
         isEditMode: true,
         context: buildWidgetVisibilityContext({
+          currentUserContext:
+            EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
           isMobile: false,
           isInSidePanel: false,
         }),
@@ -217,6 +230,8 @@ describe('getTabsWithVisibleWidgets', () => {
         tabs,
         isEditMode: true,
         context: buildWidgetVisibilityContext({
+          currentUserContext:
+            EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
           isMobile: false,
           isInSidePanel: false,
         }),
@@ -235,6 +250,8 @@ describe('getTabsWithVisibleWidgets', () => {
         tabs,
         isEditMode: true,
         context: buildWidgetVisibilityContext({
+          currentUserContext:
+            EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
           isMobile: false,
           isInSidePanel: false,
         }),
@@ -261,6 +278,8 @@ describe('getTabsWithVisibleWidgets', () => {
         tabs,
         isEditMode: true,
         context: buildWidgetVisibilityContext({
+          currentUserContext:
+            EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
           isMobile: false,
           isInSidePanel: false,
         }),
@@ -278,6 +297,8 @@ describe('getTabsWithVisibleWidgets', () => {
         tabs: [],
         isEditMode: false,
         context: buildWidgetVisibilityContext({
+          currentUserContext:
+            EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
           isMobile: false,
           isInSidePanel: false,
         }),
@@ -301,6 +322,8 @@ describe('getTabsWithVisibleWidgets', () => {
         tabs,
         isEditMode: false,
         context: buildWidgetVisibilityContext({
+          currentUserContext:
+            EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
           isMobile: false,
           isInSidePanel: false,
         }),
@@ -339,6 +362,8 @@ describe('getTabsWithVisibleWidgets', () => {
         tabs,
         isEditMode: false,
         context: buildWidgetVisibilityContext({
+          currentUserContext:
+            EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
           isMobile: false,
           isInSidePanel: false,
         }),
@@ -375,6 +400,8 @@ describe('getTabsWithVisibleWidgets', () => {
         tabs: [sentOnlyTab(), createMockTab('always', [createMockWidget('w')])],
         isEditMode: false,
         context: buildWidgetVisibilityContext({
+          currentUserContext:
+            EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
           isMobile: false,
           isInSidePanel: false,
           targetRecord: { id: 'record-1', status: 'DRAFT' },
@@ -390,6 +417,8 @@ describe('getTabsWithVisibleWidgets', () => {
         tabs: [sentOnlyTab(), createMockTab('always', [createMockWidget('w')])],
         isEditMode: false,
         context: buildWidgetVisibilityContext({
+          currentUserContext:
+            EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
           isMobile: false,
           isInSidePanel: false,
           targetRecord: { id: 'record-1', status: 'SENT' },
@@ -406,6 +435,8 @@ describe('getTabsWithVisibleWidgets', () => {
         tabs: [sentOnlyTab(), createMockTab('always', [createMockWidget('w')])],
         isEditMode: false,
         context: buildWidgetVisibilityContext({
+          currentUserContext:
+            EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
           isMobile: false,
           isInSidePanel: false,
         }),
@@ -428,6 +459,8 @@ describe('getTabsWithVisibleWidgets', () => {
         ],
         isEditMode: false,
         context: buildWidgetVisibilityContext({
+          currentUserContext:
+            EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
           isMobile: false,
           isInSidePanel: false,
         }),

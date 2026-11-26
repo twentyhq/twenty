@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
   RecordShareException,
@@ -29,30 +27,14 @@ export class ShareRecordTool implements Tool {
   inputSchema = ShareRecordToolInputZodSchema;
 
   constructor(
-    private readonly featureFlagService: FeatureFlagService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordSharingWriteService: RecordSharingWriteService,
   ) {}
-
-  isEnabled(workspaceId: string): Promise<boolean> {
-    return this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
-      workspaceId,
-    );
-  }
 
   async execute(
     parameters: ToolInput,
     context: ToolExecutionContext,
   ): Promise<ToolOutput> {
-    if (!(await this.isEnabled(context.workspaceId))) {
-      return {
-        success: false,
-        message: FAILURE_MESSAGE,
-        error: 'Record sharing is not enabled in this workspace',
-      };
-    }
-
     const parseResult = ShareRecordToolInputZodSchema.safeParse(parameters);
 
     if (!parseResult.success) {

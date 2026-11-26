@@ -20,7 +20,7 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
-import { buildDeviceConditionalAvailability } from 'twenty-shared/conditional-availability';
+import { buildDeviceConditionalEvaluationNode } from 'twenty-shared/conditional-evaluation';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
@@ -279,7 +279,7 @@ export const WidgetVisibility: Story = {
           instanceId: WIDGET_SETTINGS_STORY_LAYOUT_ID,
         }),
       ).tabs[0].widgets[0].conditionalAvailability,
-    ).toEqual(buildDeviceConditionalAvailability('DESKTOP'));
+    ).toEqual(buildDeviceConditionalEvaluationNode('DESKTOP'));
     await userEvent.click(trigger);
     expect(
       await body.findByRole('option', { name: 'Desktop' }),

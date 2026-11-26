@@ -131,6 +131,7 @@ import { prefillWorkflows } from 'src/engine/workspace-manager/standard-objects-
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-migration/constant/default-feature-flags';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { ChannelVisibilityRoleWideAccessRevokeService } from 'src/engine/permissions/channel-visibility/services/channel-visibility-role-wide-access-revoke.service';
 
 // far longer than a real activation, so an older ONGOING_CREATION is a crashed attempt that may be reclaimed
 const WORKSPACE_ACTIVATION_STALE_LOCK_TIMEOUT_MS = 5 * 60 * 1000;
@@ -178,6 +179,7 @@ export class WorkspaceService {
   };
 
   constructor(
+    private readonly channelVisibilityRoleWideAccessRevokeService: ChannelVisibilityRoleWideAccessRevokeService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly eventEmitter: EventEmitter2,
@@ -748,6 +750,10 @@ export class WorkspaceService {
         workspaceId: workspace.id,
         schemaName: getWorkspaceSchemaName(workspace.id),
       });
+
+      await this.channelVisibilityRoleWideAccessRevokeService.revokeRoleWideAccess(
+        { workspaceId: workspace.id },
+      );
 
       await this.activateAndInitializeUpgradeState({
         workspaceId: workspace.id,

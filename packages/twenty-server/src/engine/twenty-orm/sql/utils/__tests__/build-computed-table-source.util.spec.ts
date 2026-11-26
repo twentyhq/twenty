@@ -130,6 +130,22 @@ describe('buildComputedTableSource', () => {
     );
   });
 
+  it('should select the access group ids column of a table that has one', () => {
+    expect(
+      buildComputedTableSource({
+        tableShape: { ...GADGET_TABLE_SHAPE, hasAccessGroupIdsColumn: true },
+        getTableShape: () => SUPPLIER_TABLE_SHAPE,
+        recordReadRestrictions: {
+          unreadableFieldMetadataIds: new Set(),
+          unreadableObjectMetadataIds: new Set(),
+        },
+        permissions: undefined,
+      }),
+    ).toBe(
+      `(SELECT ${STORED_COLUMNS}, "record"."_accessGroupIds", ${TOTAL}, ${SUPPLIER_LABEL} ${FROM} ${LOOKUP_JOIN})`,
+    );
+  });
+
   it('should only reach the related records the caller can read', () => {
     expect(
       build({

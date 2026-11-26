@@ -576,11 +576,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
       }),
     ),
     renamedProperties: { isPrivate: 'visibility' },
-    workspaceLocalProperties: [
-      'isActive',
-      'universalOverrides',
-      'createdByUserWorkspaceId',
-    ],
+    workspaceLocalProperties: ['isActive', 'universalOverrides'],
     knownGaps: VIEW_KIND_GAPS,
   },
   {
@@ -949,7 +945,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
       exportWorkflowManifestOrThrow(WORKFLOW_MANIFEST),
     ),
     renamedProperties: { versionDefinitionHash: 'version' },
-    workspaceLocalProperties: ['isPrivate', 'createdByUserWorkspaceId'],
+    workspaceLocalProperties: ['isPrivate'],
     knownGaps: {
       isSystem: 'system workflows are reported as excluded',
       lastPublishedCoreWorkflowVersionId:
@@ -960,11 +956,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
     metadataName: 'agent',
     emittedProperties: Object.keys(EXPORTED_AGENT_MANIFEST),
     renamedProperties: {},
-    workspaceLocalProperties: [
-      ...WORKSPACE_LOCAL_PROPERTIES,
-      'isPrivate',
-      'createdByUserWorkspaceId',
-    ],
+    workspaceLocalProperties: [...WORKSPACE_LOCAL_PROPERTIES, 'isPrivate'],
     knownGaps: {
       modelConfiguration:
         'no manifest slot; an agent with one is reported as unsupported',

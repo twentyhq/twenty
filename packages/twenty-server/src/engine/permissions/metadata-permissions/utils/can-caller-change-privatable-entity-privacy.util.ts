@@ -23,7 +23,7 @@ export const canCallerChangePrivatableEntityPrivacy = ({
 
   return (
     isUserAuthContext(authContext) &&
-    (!isDefined(privatableEntity.createdByUserWorkspaceId) ||
-      privatableEntity.createdByUserWorkspaceId === authContext.userWorkspaceId)
+    isDefined(privatableEntity.createdByUserWorkspaceId) &&
+    privatableEntity.createdByUserWorkspaceId === authContext.userWorkspaceId
   );
 };

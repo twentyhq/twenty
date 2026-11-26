@@ -10,6 +10,7 @@ import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delet
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { findUserWorkspaceRoleTargets } from 'test/integration/utils/find-user-workspace-role-targets.util';
 
 import { RoleTargetExceptionCode } from 'src/engine/metadata-modules/role/exceptions/role-target.exception';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
@@ -140,11 +141,10 @@ describe('Role deletion with targets still assigned', () => {
   let roleId: string;
   let apiKeyId: string;
 
-  const findJonyRoleTargets = (): Promise<{ roleId: string }[]> =>
-    global.testDataSource.query(
-      `SELECT "roleId" FROM core."roleTarget" WHERE "userWorkspaceId" = $1`,
-      [USER_WORKSPACE_DATA_SEED_IDS.JONY],
-    );
+  const findJonyRoleTargets = () =>
+    findUserWorkspaceRoleTargets({
+      userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
+    });
 
   beforeAll(async () => {
     memberRoleId = (await findOneRoleByLabel({ label: 'Member' })).id;

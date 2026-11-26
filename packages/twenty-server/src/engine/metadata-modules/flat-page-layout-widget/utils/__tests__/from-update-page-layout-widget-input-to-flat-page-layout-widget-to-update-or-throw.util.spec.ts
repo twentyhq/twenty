@@ -1,4 +1,4 @@
-import { buildDeviceConditionalAvailability } from 'twenty-shared/conditional-availability';
+import { buildDeviceConditionalEvaluationNode } from 'twenty-shared/conditional-evaluation';
 import { PageLayoutTabLayoutMode, WidgetType } from 'twenty-shared/types';
 
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
@@ -41,7 +41,7 @@ const buildFormFieldWidget = (
     ...overrides,
   }) as FlatPageLayoutWidget;
 
-const DEVICE_IS_MOBILE = buildDeviceConditionalAvailability('MOBILE');
+const DEVICE_IS_MOBILE = buildDeviceConditionalEvaluationNode('MOBILE');
 
 const updateWidget = ({
   existingWidget,
