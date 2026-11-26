@@ -170,7 +170,6 @@ export interface AgentMessage {
     reactions: AgentMessageReactionSummary[]
     role: Scalars['String']
     senderApplicationId?: Scalars['UUID']
-    senderUserWorkspaceId?: Scalars['UUID']
     senderWorkspaceMemberId?: Scalars['UUID']
     status: Scalars['String']
     threadId: Scalars['UUID']
@@ -4830,7 +4829,6 @@ export interface AgentMessageGenqlSelection{
     reactions?: AgentMessageReactionSummaryGenqlSelection
     role?: boolean | number
     senderApplicationId?: boolean | number
-    senderUserWorkspaceId?: boolean | number
     senderWorkspaceMemberId?: boolean | number
     status?: boolean | number
     threadId?: boolean | number

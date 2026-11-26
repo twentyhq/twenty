@@ -418,11 +418,9 @@ describe('Shared conversation API boundaries', () => {
         expect.objectContaining({
           id: messageId,
           senderWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-          senderUserWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
         }),
         expect.objectContaining({
           senderWorkspaceMemberId: null,
-          senderUserWorkspaceId: null,
         }),
       ]),
     );

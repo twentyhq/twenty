@@ -215,7 +215,6 @@ export type AgentMessage = {
   reactions: Array<AgentMessageReactionSummary>;
   role: Scalars['String']['output'];
   senderApplicationId?: Maybe<Scalars['UUID']['output']>;
-  senderUserWorkspaceId?: Maybe<Scalars['UUID']['output']>;
   senderWorkspaceMemberId?: Maybe<Scalars['UUID']['output']>;
   status: Scalars['String']['output'];
   threadId: Scalars['UUID']['output'];
