@@ -71,17 +71,14 @@ describe('buildSettingsGoToCommandLabelUpdates', () => {
   });
 
   it('targets the current standard settings Go to commands', () => {
-    const standardItemByUniversalIdentifier = new Map(
-      Object.values(STANDARD_COMMAND_MENU_ITEMS).map((item) => [
-        item.universalIdentifier,
-        item,
-      ]),
-    );
+    const standardCommandMenuItems = Object.values(STANDARD_COMMAND_MENU_ITEMS);
 
     SETTINGS_GO_TO_COMMAND_LABEL_RENAMES.forEach(
       ({ universalIdentifier, currentLabel }) => {
         expect(
-          standardItemByUniversalIdentifier.get(universalIdentifier)?.label,
+          standardCommandMenuItems.find(
+            (item) => item.universalIdentifier === universalIdentifier,
+          )?.label,
         ).toBe(currentLabel);
       },
     );
