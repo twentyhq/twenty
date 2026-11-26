@@ -366,6 +366,28 @@ msgstr "Ένας σύνδεσμος που παρακολουθείται σε �
 msgid "A marketing email can only be sent to one recipient at a time, so each person gets their own unsubscribe link."
 msgstr "Ένα email μάρκετινγκ μπορεί να σταλεί μόνο σε έναν παραλήπτη κάθε φορά, ώστε κάθε άτομο να λαμβάνει τον δικό του σύνδεσμο κατάργησης εγγραφής."
 
+#. js-lingui-id: TS5uum
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-restriction-errors.util.ts
+msgid "A marketplace application cannot declare row-level rules or field permissions"
+msgstr ""
+
+#. js-lingui-id: bH9jpk
+#: src/engine/permissions/permissions.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-restriction-errors.util.ts
+msgid "A marketplace application cannot declare row-level rules or field permissions."
+msgstr ""
+
+#. js-lingui-id: +//ajp
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-assignability-errors.util.ts
+msgid "A marketplace application role can only be assigned to agents"
+msgstr ""
+
+#. js-lingui-id: BRZH6M
+#: src/engine/permissions/permissions.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-assignability-errors.util.ts
+msgid "A marketplace application role can only be assigned to agents."
+msgstr ""
+
 #. js-lingui-id: Spm4/x
 #: src/engine/metadata-modules/message-channel/services/application-message-send.service.ts
 msgid "A message needs text or at least one attachment."

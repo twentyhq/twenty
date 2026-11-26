@@ -366,6 +366,28 @@ msgstr "Egy kampányban követett hivatkozás"
 msgid "A marketing email can only be sent to one recipient at a time, so each person gets their own unsubscribe link."
 msgstr "Marketing e-mail egyszerre csak egy címzettnek küldhető, így mindenki saját leiratkozási hivatkozást kap."
 
+#. js-lingui-id: TS5uum
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-restriction-errors.util.ts
+msgid "A marketplace application cannot declare row-level rules or field permissions"
+msgstr ""
+
+#. js-lingui-id: bH9jpk
+#: src/engine/permissions/permissions.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-restriction-errors.util.ts
+msgid "A marketplace application cannot declare row-level rules or field permissions."
+msgstr ""
+
+#. js-lingui-id: +//ajp
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-assignability-errors.util.ts
+msgid "A marketplace application role can only be assigned to agents"
+msgstr ""
+
+#. js-lingui-id: BRZH6M
+#: src/engine/permissions/permissions.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-assignability-errors.util.ts
+msgid "A marketplace application role can only be assigned to agents."
+msgstr ""
+
 #. js-lingui-id: Spm4/x
 #: src/engine/metadata-modules/message-channel/services/application-message-send.service.ts
 msgid "A message needs text or at least one attachment."
