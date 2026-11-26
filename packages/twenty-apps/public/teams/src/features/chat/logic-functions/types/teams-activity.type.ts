@@ -6,4 +6,5 @@ export type TeamsActivity = {
   text?: string;
   attachments?: TeamsActivityAttachment[];
   entities?: TeamsActivityEntity[];
+  channelData?: { feedbackLoop?: { type: 'default' } };
 };

@@ -7,4 +7,8 @@ export type TeamsActivityEntity = {
   streamId?: string;
   streamType?: 'informative' | 'streaming' | 'final';
   streamSequence?: number;
+  '@type'?: string;
+  '@context'?: string;
+  '@id'?: string;
+  additionalType?: string[];
 };

@@ -10,6 +10,7 @@ import { findTeamsAssistantHistory } from 'src/features/chat/logic-functions/dat
 import { updateTeamsAssistantRequest } from 'src/features/chat/logic-functions/data/update-teams-assistant-request';
 import { type TeamsAssistantAnswerResult } from 'src/features/chat/logic-functions/types/teams-assistant-answer-result.type';
 import { type TeamsAssistantRequestRecord } from 'src/features/chat/logic-functions/types/teams-assistant-request-record.type';
+import { buildTeamsAssistantAnswerMarkers } from 'src/features/chat/logic-functions/utils/build-teams-assistant-answer-markers';
 import { buildTeamsAssistantAnswerText } from 'src/features/chat/logic-functions/utils/build-teams-assistant-answer-text';
 import { buildTeamsAssistantRequestName } from 'src/features/chat/logic-functions/utils/build-teams-assistant-request-name';
 import { fetchWorkspaceBaseUrl } from 'src/features/chat/logic-functions/utils/fetch-workspace-base-url';
@@ -116,18 +117,20 @@ export const answerTeamsAssistantRequest = async ({
       deadlineAtMs: agentDeadlineAtMs,
     });
 
-    await status.finish(
+    const teamsAnswerActivityId = await status.finish(
       buildTeamsAssistantAnswerText({
         responseText,
         requestId: request.id,
         workspaceBaseUrl,
       }),
+      buildTeamsAssistantAnswerMarkers(),
     );
     await updateTeamsAssistantRequest({
       client,
       id: request.id,
       status: TEAMS_ASSISTANT_REQUEST_STATUS.DONE,
       responseText,
+      teamsAnswerActivityId,
     }).catch(() => undefined);
 
     return { status: 'answered' };

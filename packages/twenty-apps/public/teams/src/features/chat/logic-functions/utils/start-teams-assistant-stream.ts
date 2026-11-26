@@ -2,6 +2,7 @@ import { type TeamsActivity } from 'src/features/chat/logic-functions/types/team
 import { type TeamsAssistantStatusWriter } from 'src/features/chat/logic-functions/types/teams-assistant-status-writer.type';
 import { buildTeamsActivityPath } from 'src/features/chat/logic-functions/utils/build-teams-activity-path';
 import { getTeamsConnectorAccessTokenOrThrow } from 'src/features/chat/logic-functions/utils/get-teams-connector-access-token-or-throw';
+import { parseTeamsActivityId } from 'src/features/chat/logic-functions/utils/parse-teams-activity-id';
 import { requestTeamsConnector } from 'src/features/chat/logic-functions/utils/request-teams-connector';
 import { sendTeamsActivity } from 'src/features/chat/logic-functions/utils/send-teams-activity';
 
@@ -30,15 +31,15 @@ export const startTeamsAssistantStream = async ({
     },
   });
 
-  // Follow-up stream calls answer 202 with no payload to parse.
+  // Follow-up stream calls can answer 202 with no payload.
   const sendStreamActivity = async ({
     activity,
     retryAbortSignal,
   }: {
     activity: TeamsActivity;
     retryAbortSignal?: AbortSignal;
-  }) => {
-    await requestTeamsConnector({
+  }) =>
+    requestTeamsConnector({
       serviceUrl,
       path: buildTeamsActivityPath({ conversationId }),
       method: 'POST',
@@ -46,13 +47,12 @@ export const startTeamsAssistantStream = async ({
       body: activity,
       retryAbortSignal,
     });
-  };
 
   return {
-    update: (text) => {
+    update: async (text) => {
       streamSequence += 1;
 
-      return sendStreamActivity({
+      await sendStreamActivity({
         activity: {
           type: 'typing',
           text,
@@ -68,16 +68,22 @@ export const startTeamsAssistantStream = async ({
         retryAbortSignal: streamClosing.signal,
       });
     },
-    finish: (text) => {
+    finish: async (text, answerMarkers) => {
       streamClosing.abort();
 
-      return sendStreamActivity({
+      const responseBody = await sendStreamActivity({
         activity: {
           type: 'message',
           text,
-          entities: [{ type: 'streaminfo', streamId, streamType: 'final' }],
+          ...answerMarkers,
+          entities: [
+            ...(answerMarkers?.entities ?? []),
+            { type: 'streaminfo', streamId, streamType: 'final' },
+          ],
         },
       });
+
+      return parseTeamsActivityId(responseBody) ?? streamId;
     },
   };
 };

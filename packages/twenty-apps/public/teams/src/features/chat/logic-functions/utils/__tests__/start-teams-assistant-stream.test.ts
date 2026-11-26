@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { buildTeamsAssistantAnswerMarkers } from 'src/features/chat/logic-functions/utils/build-teams-assistant-answer-markers';
 import { startTeamsAssistantStream } from 'src/features/chat/logic-functions/utils/start-teams-assistant-stream';
 
 const { sendActivityMock, requestConnectorMock } = vi.hoisted(() => ({
@@ -101,6 +102,51 @@ describe('startTeamsAssistantStream', () => {
         ],
       },
     ]);
+  });
+
+  it('should label the final message as AI generated with feedback buttons when it is an answer', async () => {
+    const writer = await startTeamsAssistantStream({
+      ...CONVERSATION,
+      text: 'Thinking…',
+    });
+    const answerMarkers = buildTeamsAssistantAnswerMarkers();
+
+    await writer.finish('Acme has 3 open deals.', answerMarkers);
+
+    expect(streamedActivities()).toEqual([
+      {
+        type: 'message',
+        text: 'Acme has 3 open deals.',
+        channelData: answerMarkers.channelData,
+        entities: [
+          ...answerMarkers.entities,
+          { type: 'streaminfo', streamId: 'stream-1', streamType: 'final' },
+        ],
+      },
+    ]);
+  });
+
+  it('should return the stream id as the answer activity id when the final call returns none', async () => {
+    const writer = await startTeamsAssistantStream({
+      ...CONVERSATION,
+      text: 'Thinking…',
+    });
+
+    await expect(writer.finish('Acme has 3 open deals.')).resolves.toBe(
+      'stream-1',
+    );
+  });
+
+  it('should return the activity id of the final message when Teams sends one', async () => {
+    const writer = await startTeamsAssistantStream({
+      ...CONVERSATION,
+      text: 'Thinking…',
+    });
+    requestConnectorMock.mockResolvedValue('{"id":"final-activity-1"}');
+
+    await expect(writer.finish('Acme has 3 open deals.')).resolves.toBe(
+      'final-activity-1',
+    );
   });
 
   it('should stop update retries once the final message is sent', async () => {

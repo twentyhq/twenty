@@ -12,6 +12,7 @@ export const updateTeamsAssistantRequest = async ({
   workspaceMemberId,
   requestText,
   name,
+  teamsAnswerActivityId,
 }: {
   client: Pick<CoreApiClient, 'mutation'>;
   id: string;
@@ -21,6 +22,7 @@ export const updateTeamsAssistantRequest = async ({
   workspaceMemberId?: string;
   requestText?: string;
   name?: string;
+  teamsAnswerActivityId?: string;
 }): Promise<void> => {
   await client.mutation({
     updateTeamsAssistantRequest: {
@@ -37,6 +39,9 @@ export const updateTeamsAssistantRequest = async ({
             ? { requestText: { blocknote: null, markdown: requestText } }
             : {}),
           ...(isDefined(name) ? { name } : {}),
+          ...(isDefined(teamsAnswerActivityId)
+            ? { teamsAnswerActivityId }
+            : {}),
         },
       },
       id: true,

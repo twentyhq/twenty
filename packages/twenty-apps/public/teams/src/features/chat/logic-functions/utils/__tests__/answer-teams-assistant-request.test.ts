@@ -7,6 +7,7 @@ import { TEAMS_ASSISTANT_REQUEST_STATUS } from 'src/features/chat/logic-function
 import { TEAMS_ASSISTANT_UNMATCHED_REQUEST_NAME } from 'src/features/chat/logic-functions/constants/teams-assistant-unmatched-request-name';
 import { TEAMS_ASSISTANT_UNMATCHED_SENDER_TEXT } from 'src/features/chat/logic-functions/constants/teams-assistant-unmatched-sender-text';
 import { answerTeamsAssistantRequest } from 'src/features/chat/logic-functions/utils/answer-teams-assistant-request';
+import { buildTeamsAssistantAnswerMarkers } from 'src/features/chat/logic-functions/utils/build-teams-assistant-answer-markers';
 
 const {
   claimMock,
@@ -102,7 +103,7 @@ describe('answerTeamsAssistantRequest', () => {
     claimMock.mockResolvedValue(true);
     updateMock.mockResolvedValue(undefined);
     startStatusMock.mockResolvedValue({ finish: finishMock });
-    finishMock.mockResolvedValue(undefined);
+    finishMock.mockResolvedValue('answer-activity-1');
     resolveSenderMock.mockResolvedValue('workspace-member-1');
     runAgentMock.mockResolvedValue('Acme has 3 open deals.');
     findHistoryMock.mockResolvedValue([]);
@@ -124,12 +125,16 @@ describe('answerTeamsAssistantRequest', () => {
         workspaceBaseUrl: 'https://acme.twenty.com',
       }),
     );
-    expect(finishedTexts()).toEqual(['Acme has 3 open deals.']);
+    expect(finishMock).toHaveBeenCalledExactlyOnceWith(
+      'Acme has 3 open deals.',
+      buildTeamsAssistantAnswerMarkers(),
+    );
     expect(updateMock).toHaveBeenLastCalledWith(
       expect.objectContaining({
         id: REQUEST.id,
         status: TEAMS_ASSISTANT_REQUEST_STATUS.DONE,
         responseText: 'Acme has 3 open deals.',
+        teamsAnswerActivityId: 'answer-activity-1',
       }),
     );
   });
@@ -201,7 +206,9 @@ describe('answerTeamsAssistantRequest', () => {
 
     await expect(answer()).resolves.toMatchObject({ status: 'declined' });
     expect(runAgentMock).not.toHaveBeenCalled();
-    expect(finishedTexts()).toEqual([TEAMS_ASSISTANT_UNMATCHED_SENDER_TEXT]);
+    expect(finishMock.mock.calls).toEqual([
+      [TEAMS_ASSISTANT_UNMATCHED_SENDER_TEXT],
+    ]);
     expect(updateMock).not.toHaveBeenCalledWith(
       expect.objectContaining({ requestText: expect.anything() }),
     );
@@ -216,7 +223,9 @@ describe('answerTeamsAssistantRequest', () => {
     );
 
     await expect(answer()).resolves.toMatchObject({ status: 'failed' });
-    expect(finishedTexts()).toEqual([TEAMS_ASSISTANT_DEADLINE_FAILURE_TEXT]);
+    expect(finishMock.mock.calls).toEqual([
+      [TEAMS_ASSISTANT_DEADLINE_FAILURE_TEXT],
+    ]);
   });
 
   it('should reply with a generic message and record the error when the agent fails', async () => {
@@ -226,7 +235,7 @@ describe('answerTeamsAssistantRequest', () => {
       status: 'failed',
       reason: 'Agent run failed',
     });
-    expect(finishedTexts()).toEqual([TEAMS_ASSISTANT_FAILURE_TEXT]);
+    expect(finishMock.mock.calls).toEqual([[TEAMS_ASSISTANT_FAILURE_TEXT]]);
     expect(updateMock).toHaveBeenLastCalledWith(
       expect.objectContaining({
         status: TEAMS_ASSISTANT_REQUEST_STATUS.FAILED,

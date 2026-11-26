@@ -130,6 +130,12 @@ Assistant Request only once the sender is matched to a workspace member, so
 messages from unlinked accounts are not stored. Requests recorded before this
 behavior shipped keep their text.
 
+Assistant answers carry the Teams **AI generated** label and thumbs up and down
+buttons. A rating and its optional comment are saved in the **Feedback** and
+**Feedback comment** fields of the Teams Assistant Request, and only the member
+who asked can rate an answer. Welcome, help, notice and failure messages carry
+neither.
+
 ## Twenty registration and shared webhook
 
 The transcript webhook uses a server route shared by all installations on a

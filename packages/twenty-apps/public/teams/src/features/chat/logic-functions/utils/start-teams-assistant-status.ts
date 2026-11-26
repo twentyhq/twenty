@@ -6,6 +6,7 @@ import {
 } from 'src/features/chat/logic-functions/constants/teams-assistant-status-steps';
 import { TEAMS_ASSISTANT_STREAM_HANDOFF_STEP } from 'src/features/chat/logic-functions/constants/teams-assistant-stream-handoff-step';
 import { TEAMS_PERSONAL_CONVERSATION_TYPE } from 'src/features/chat/logic-functions/constants/teams-personal-conversation-type';
+import { type TeamsAssistantAnswerMarkers } from 'src/features/chat/logic-functions/types/teams-assistant-answer-markers.type';
 import { type TeamsAssistantStatusWriter } from 'src/features/chat/logic-functions/types/teams-assistant-status-writer.type';
 import { getTeamsConnectorAccessTokenOrThrow } from 'src/features/chat/logic-functions/utils/get-teams-connector-access-token-or-throw';
 import { sendTeamsActivity } from 'src/features/chat/logic-functions/utils/send-teams-activity';
@@ -23,13 +24,18 @@ export const startTeamsAssistantStatus = async ({
   conversationId: string;
   conversationType: string;
 }): Promise<Pick<TeamsAssistantStatusWriter, 'finish'>> => {
-  const sendMessage = async (text: string) => {
-    await sendTeamsActivity({
+  const sendMessage = async (
+    text: string,
+    answerMarkers?: TeamsAssistantAnswerMarkers,
+  ) => {
+    const { id } = await sendTeamsActivity({
       serviceUrl,
       conversationId,
       accessToken: await getTeamsConnectorAccessTokenOrThrow(),
-      activity: { type: 'message', text },
+      activity: { type: 'message', text, ...answerMarkers },
     });
+
+    return id;
   };
 
   if (conversationType !== TEAMS_PERSONAL_CONVERSATION_TYPE) {
@@ -96,21 +102,21 @@ export const startTeamsAssistantStatus = async ({
   };
 
   return {
-    finish: async (text) => {
+    finish: async (text, answerMarkers) => {
       timers.forEach(clearTimeout);
       await waitForPendingUpdate();
 
       if (!isStreamOpen) {
-        return sendMessage(text);
+        return sendMessage(text, answerMarkers);
       }
 
-      await writer.finish(text).catch((error: unknown) => {
+      return writer.finish(text, answerMarkers).catch((error: unknown) => {
         console.warn(
           `[teams] could not finish the stream in ${conversationId}`,
           error,
         );
 
-        return sendMessage(text);
+        return sendMessage(text, answerMarkers);
       });
     },
   };

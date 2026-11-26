@@ -5,6 +5,7 @@ import {
   TEAMS_ASSISTANT_STATUS_STEPS,
 } from 'src/features/chat/logic-functions/constants/teams-assistant-status-steps';
 import { TEAMS_ASSISTANT_STREAM_HANDOFF_STEP } from 'src/features/chat/logic-functions/constants/teams-assistant-stream-handoff-step';
+import { buildTeamsAssistantAnswerMarkers } from 'src/features/chat/logic-functions/utils/build-teams-assistant-answer-markers';
 import { startTeamsAssistantStatus } from 'src/features/chat/logic-functions/utils/start-teams-assistant-status';
 
 const { sendActivityMock, startStreamMock, updateMock, finishMock } =
@@ -74,14 +75,58 @@ describe('startTeamsAssistantStatus', () => {
       TEAMS_ASSISTANT_STATUS_STEPS.slice(0, 2).map((step) => step.text),
     );
 
-    await status.finish('Acme has 3 open deals.');
+    const answerMarkers = buildTeamsAssistantAnswerMarkers();
+    finishMock.mockResolvedValue('stream-1');
+
+    await expect(
+      status.finish('Acme has 3 open deals.', answerMarkers),
+    ).resolves.toBe('stream-1');
     await vi.runAllTimersAsync();
 
     expect(updateMock).toHaveBeenCalledTimes(2);
     expect(finishMock).toHaveBeenCalledExactlyOnceWith(
       'Acme has 3 open deals.',
+      answerMarkers,
     );
     expect(sendActivityMock).not.toHaveBeenCalled();
+  });
+
+  it('should send a labelled plain reply outside personal chats and return its activity id', async () => {
+    const status = await startTeamsAssistantStatus({
+      ...CONVERSATION,
+      conversationType: 'channel',
+    });
+    const answerMarkers = buildTeamsAssistantAnswerMarkers();
+
+    await expect(
+      status.finish('Acme has 3 open deals.', answerMarkers),
+    ).resolves.toBe('activity-1');
+
+    expect(startStreamMock).not.toHaveBeenCalled();
+    expect(sendActivityMock).toHaveBeenCalledExactlyOnceWith({
+      ...CONVERSATION,
+      accessToken: 'token',
+      activity: {
+        type: 'message',
+        text: 'Acme has 3 open deals.',
+        ...answerMarkers,
+      },
+    });
+  });
+
+  it('should send texts that are not answers without the label or feedback buttons', async () => {
+    const status = await startTeamsAssistantStatus({
+      ...CONVERSATION,
+      conversationType: 'channel',
+    });
+
+    await status.finish('Something went wrong.');
+
+    expect(sendActivityMock).toHaveBeenCalledExactlyOnceWith({
+      ...CONVERSATION,
+      accessToken: 'token',
+      activity: { type: 'message', text: 'Something went wrong.' },
+    });
   });
 
   it('should send a plain message when the stream cannot be opened', async () => {
@@ -110,9 +155,17 @@ describe('startTeamsAssistantStatus', () => {
 
     const status = await startTeamsAssistantStatus(PERSONAL);
 
-    await status.finish('Acme has 3 open deals.');
+    const answerMarkers = buildTeamsAssistantAnswerMarkers();
 
-    expect(sentMessageTexts()).toEqual(['Acme has 3 open deals.']);
+    await expect(
+      status.finish('Acme has 3 open deals.', answerMarkers),
+    ).resolves.toBe('activity-1');
+
+    expect(
+      sendActivityMock.mock.calls.map(([{ activity }]) => activity),
+    ).toEqual([
+      { type: 'message', text: 'Acme has 3 open deals.', ...answerMarkers },
+    ]);
 
     warnSpy.mockRestore();
   });
@@ -133,6 +186,7 @@ describe('startTeamsAssistantStatus', () => {
     expect(updateMock).toHaveBeenCalledTimes(2);
     expect(finishMock).toHaveBeenCalledExactlyOnceWith(
       'Acme has 3 open deals.',
+      undefined,
     );
     expect(warnSpy).toHaveBeenCalledTimes(1);
 
@@ -155,6 +209,7 @@ describe('startTeamsAssistantStatus', () => {
 
     expect(finishMock).toHaveBeenCalledExactlyOnceWith(
       'Acme has 3 open deals.',
+      undefined,
     );
   });
 
