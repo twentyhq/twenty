@@ -30,7 +30,8 @@
     "test:watch": "vitest --config vitest.unit.config.ts"
   },
   "dependencies": {
-    "@sniptt/guards": "^0.2.0"
+    "@sniptt/guards": "^0.2.0",
+    "react-qr-code": "^2.0.18"
   },
   "devDependencies": {
     "@emotion/react": "^11.14.0",

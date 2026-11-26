@@ -57,7 +57,7 @@ describe('export file cleanup (integration)', () => {
       mimeType: 'text/csv',
     });
     await globalThis.testDataSource.query(
-      'UPDATE core.file SET "createdAt" = $2, status = $3 WHERE id = $1',
+      'UPDATE core.file SET "createdAt" = $2, "updatedAt" = $2, status = $3 WHERE id = $1',
       [id, new Date(Date.now() - ageMinutes * 60_000), status],
     );
     return file;

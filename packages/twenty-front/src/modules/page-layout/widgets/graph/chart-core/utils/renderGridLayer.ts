@@ -7,8 +7,6 @@ type RenderGridLayerParams = {
   isVertical: boolean;
   gridColor: string;
   lineWidth: number;
-  dashLength: number;
-  dashGap: number;
 };
 
 export const renderGridLayer = ({
@@ -20,16 +18,12 @@ export const renderGridLayer = ({
   isVertical,
   gridColor,
   lineWidth,
-  dashLength,
-  dashGap,
 }: RenderGridLayerParams): void => {
   ctx.strokeStyle = gridColor;
   ctx.lineWidth = lineWidth;
-  ctx.setLineDash([dashLength, dashGap]);
 
   const range = valueDomain.max - valueDomain.min;
   if (range === 0) {
-    ctx.setLineDash([]);
     return;
   }
 
@@ -52,6 +46,4 @@ export const renderGridLayer = ({
     }
     ctx.stroke();
   }
-
-  ctx.setLineDash([]);
 };
