@@ -9,11 +9,12 @@ import { TEAMS_PERSONAL_CONVERSATION_TYPE } from 'src/features/chat/logic-functi
 import { type TeamsAssistantStatusWriter } from 'src/features/chat/logic-functions/types/teams-assistant-status-writer.type';
 import { getTeamsConnectorAccessTokenOrThrow } from 'src/features/chat/logic-functions/utils/get-teams-connector-access-token-or-throw';
 import { sendTeamsActivity } from 'src/features/chat/logic-functions/utils/send-teams-activity';
+import { startTeamsAssistantPlaceholder } from 'src/features/chat/logic-functions/utils/start-teams-assistant-placeholder';
 import { startTeamsAssistantStream } from 'src/features/chat/logic-functions/utils/start-teams-assistant-stream';
 
 const PENDING_UPDATE_WAIT_MS = 5000;
 
-// Teams only streams in one-on-one chats, so other conversations get a plain reply at the end.
+// REST streaming is only documented for one-on-one chats, so other conversations get a placeholder message.
 export const startTeamsAssistantStatus = async ({
   serviceUrl,
   conversationId,
@@ -33,7 +34,11 @@ export const startTeamsAssistantStatus = async ({
   };
 
   if (conversationType !== TEAMS_PERSONAL_CONVERSATION_TYPE) {
-    return { finish: sendMessage };
+    return startTeamsAssistantPlaceholder({
+      serviceUrl,
+      conversationId,
+      sendMessage,
+    });
   }
 
   const writer = await startTeamsAssistantStream({
