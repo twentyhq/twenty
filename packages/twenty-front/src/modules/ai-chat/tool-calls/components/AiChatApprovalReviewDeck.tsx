@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { CountPager } from 'twenty-ui/components/navigation';
 import { Button } from 'twenty-ui/primitives/input';
@@ -9,7 +8,6 @@ import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatApprovalOutcome } from '@/ai-chat/tool-calls/components/AiChatApprovalOutcome';
-import { AiChatIsToolCallDockedContext } from '@/ai-chat/tool-calls/contexts/AiChatIsToolCallDockedContext';
 import { type AiChatApprovalReviewCard } from '@/ai-chat/tool-calls/types/AiChatApprovalReviewCard';
 
 const DECK_EDGE_HEIGHT_PX = 4;
@@ -32,14 +30,6 @@ const StyledStackEdge = styled.div<{ inset: number }>`
   box-sizing: border-box;
   height: ${DECK_EDGE_HEIGHT_PX}px;
   margin: 0 ${({ inset }) => inset}px;
-`;
-
-const StyledCardRoot = styled(Card.Root)`
-  &[data-docked] {
-    border-bottom: 0;
-    border-radius: ${themeCssVariables.border.radius.sm}
-      ${themeCssVariables.border.radius.sm} 0 0;
-  }
 `;
 
 const StyledHeader = styled.div`
@@ -128,7 +118,6 @@ export const AiChatApprovalReviewDeck = ({
   disabled = false,
 }: AiChatApprovalReviewDeckProps) => {
   const { t } = useLingui();
-  const isDocked = useContext(AiChatIsToolCallDockedContext);
   const activeCard = cards[activeIndex];
 
   if (!isDefined(activeCard)) {
@@ -168,12 +157,11 @@ export const AiChatApprovalReviewDeck = ({
       {cards.length > 1 && (
         <StyledStackEdge inset={DECK_MIDDLE_EDGE_INSET_PX} />
       )}
-      <StyledCardRoot
+      <Card.Root
         fullWidth
         variant="compact"
         role="group"
         aria-label={activeCard.title}
-        data-docked={isDocked || undefined}
       >
         <Card.Header>
           <StyledHeader>
@@ -247,7 +235,7 @@ export const AiChatApprovalReviewDeck = ({
             </StyledActions>
           </StyledFooter>
         </Card.Footer>
-      </StyledCardRoot>
+      </Card.Root>
     </StyledDeck>
   );
 };

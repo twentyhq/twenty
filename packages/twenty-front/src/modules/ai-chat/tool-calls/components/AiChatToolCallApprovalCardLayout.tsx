@@ -79,7 +79,7 @@ export const AiChatToolCallApprovalCardLayout = ({
   const isDocked = useContext(AiChatIsToolCallDockedContext);
 
   return (
-    <StyledAiChatAskCard isPadded isDocked={isDocked}>
+    <StyledAiChatAskCard isPadded data-docked={isDocked || undefined}>
       <StyledHeader>
         <StyledTitleRow>
           {isDefined(Icon) && (
