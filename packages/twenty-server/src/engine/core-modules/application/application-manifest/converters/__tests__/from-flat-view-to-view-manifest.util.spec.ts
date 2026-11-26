@@ -191,7 +191,6 @@ describe('fromFlatViewToViewManifest', () => {
       viewSortUniversalIdentifiers: [],
       createdAt: NOW,
       updatedAt: NOW,
-      deletedAt: null,
     };
 
     expect(roundTripFlatView(flatView)).toBeUndefined();

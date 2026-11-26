@@ -9,6 +9,8 @@ import {
   type Relation,
   UpdateDateColumn,
 } from 'typeorm';
+import { RELAX_VIEW_DELETED_AT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-65/relax-view-deleted-at-upgrade-command-name.constant';
+import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 import {
   AggregateOperations,
   type SerializedRelation,
@@ -53,7 +55,7 @@ export type ViewFieldOverrides = {
   ['fieldMetadataId', 'viewId'],
   {
     unique: true,
-    where: '"deletedAt" IS NULL AND "isCanonical" = true',
+    where: '"isCanonical" = true',
   },
 )
 export class ViewFieldEntity
@@ -140,8 +142,11 @@ export class ViewFieldEntity
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 
+  @WasRemovedInUpgrade({
+    upgradeCommandName: RELAX_VIEW_DELETED_AT_UPGRADE_COMMAND_NAME,
+  })
   @Column({ nullable: true, type: 'timestamptz' })
-  deletedAt: Date | null;
+  deletedAt: WasRemovedInUpgrade<Date | null>;
 
   @ManyToOne(() => ViewEntity, (view) => view.viewFields, {
     onDelete: 'CASCADE',

@@ -345,11 +345,6 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     key: { toCompare: false, toStringify: false, universalProperty: undefined },
-    deletedAt: {
-      toCompare: true,
-      toStringify: false,
-      universalProperty: undefined,
-    },
     createdByUserWorkspaceId: {
       toCompare: false,
       toStringify: false,
@@ -526,11 +521,6 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
-    deletedAt: {
-      toStringify: false,
-      universalProperty: undefined,
-      toCompare: true,
-    },
     createdAt: {
       toCompare: false,
       universalProperty: undefined,
@@ -609,11 +599,6 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
       isOverridable: true,
     },
-    deletedAt: {
-      toCompare: true,
-      toStringify: false,
-      universalProperty: undefined,
-    },
     createdAt: {
       toCompare: false,
       toStringify: false,
@@ -658,11 +643,6 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     position: {
-      toCompare: true,
-      toStringify: false,
-      universalProperty: undefined,
-    },
-    deletedAt: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
@@ -829,11 +809,6 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: 'viewUniversalIdentifier',
-    },
-    deletedAt: {
-      toCompare: true,
-      toStringify: false,
-      universalProperty: undefined,
     },
     fieldMetadataId: {
       toCompare: true,
@@ -1997,22 +1972,12 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: 'viewUniversalIdentifier',
     },
-    deletedAt: {
-      toCompare: true,
-      toStringify: false,
-      universalProperty: undefined,
-    },
   },
   viewFilterGroup: {
     viewId: {
       toCompare: true,
       toStringify: false,
       universalProperty: 'viewUniversalIdentifier',
-    },
-    deletedAt: {
-      toCompare: true,
-      toStringify: false,
-      universalProperty: undefined,
     },
     parentViewFilterGroupId: {
       toCompare: true,

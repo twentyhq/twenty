@@ -144,6 +144,5 @@ export const createStandardViewFieldFlatMetadata = <
     universalOverrides: null,
     createdAt: now,
     updatedAt: now,
-    deletedAt: null,
   };
 };

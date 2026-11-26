@@ -26,6 +26,5 @@ export const fromViewFieldGroupManifestToUniversalFlatViewFieldGroup = ({
     viewFieldUniversalIdentifiers: [],
     createdAt: now,
     updatedAt: now,
-    deletedAt: null,
   };
 };

@@ -10,6 +10,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { RELAX_VIEW_DELETED_AT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-65/relax-view-deleted-at-upgrade-command-name.constant';
+import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
@@ -42,8 +44,11 @@ export class ViewGroupEntity
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 
+  @WasRemovedInUpgrade({
+    upgradeCommandName: RELAX_VIEW_DELETED_AT_UPGRADE_COMMAND_NAME,
+  })
   @Column({ nullable: true, type: 'timestamptz' })
-  deletedAt: Date | null;
+  deletedAt: WasRemovedInUpgrade<Date | null>;
 
   @ManyToOne(() => ViewEntity, (view) => view.viewGroups, {
     onDelete: 'CASCADE',

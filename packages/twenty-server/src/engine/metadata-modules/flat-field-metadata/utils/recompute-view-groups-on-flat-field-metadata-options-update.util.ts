@@ -167,7 +167,6 @@ export const recomputeViewGroupsOnFlatFieldMetadataOptionsUpdate = ({
             workspaceId,
             createdAt: createdAt,
             updatedAt: createdAt,
-            deletedAt: null,
             universalIdentifier: viewGroupId,
             isVisible,
             fieldValue: option.value,

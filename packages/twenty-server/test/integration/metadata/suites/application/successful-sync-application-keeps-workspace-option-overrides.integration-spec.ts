@@ -101,7 +101,6 @@ const findKanbanGroupValues = async (): Promise<string[]> => {
       `SELECT "viewGroup"."fieldValue" FROM core."viewGroup" "viewGroup"
         JOIN core.view view ON view.id = "viewGroup"."viewId"
         WHERE view."workspaceId" = $1 AND view."universalIdentifier" = $2
-          AND "viewGroup"."deletedAt" IS NULL
         ORDER BY "viewGroup"."fieldValue"`,
       [SEED_APPLE_WORKSPACE_ID, KANBAN_VIEW_ID],
     );

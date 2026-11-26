@@ -4,12 +4,7 @@ import { type ViewFilterDTO } from 'src/engine/metadata-modules/view-filter/dtos
 export const fromFlatViewFilterToViewFilterDto = (
   flatViewFilter: FlatViewFilter,
 ): ViewFilterDTO => {
-  const {
-    createdAt,
-    updatedAt,
-    deletedAt: _deletedAt,
-    ...rest
-  } = flatViewFilter;
+  const { createdAt, updatedAt, ...rest } = flatViewFilter;
 
   return {
     ...rest,

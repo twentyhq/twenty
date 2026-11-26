@@ -53,7 +53,6 @@ describe('fromFlatViewGroupToViewGroupManifest', () => {
       position: 0,
       createdAt: NOW,
       updatedAt: NOW,
-      deletedAt: null,
     };
 
     expect(roundTripFlatViewGroup(flatViewGroup)).toBeUndefined();

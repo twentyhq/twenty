@@ -92,7 +92,6 @@ export const recomputeViewGroupsOnEnumFlatFieldMetadataIsNullableUpdate = ({
         workspaceId: toFlatFieldMetadata.workspaceId,
         createdAt,
         updatedAt: createdAt,
-        deletedAt: null,
         viewId: flatView.id,
         applicationId: toFlatFieldMetadata.applicationId,
       });

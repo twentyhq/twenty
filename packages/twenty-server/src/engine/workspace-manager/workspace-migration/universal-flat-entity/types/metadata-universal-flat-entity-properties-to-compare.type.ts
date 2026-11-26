@@ -54,7 +54,6 @@ type Assertions = [
       MetadataUniversalFlatEntityPropertiesToCompare<'view'>,
       | 'name'
       | 'icon'
-      | 'deletedAt'
       | 'type'
       | 'position'
       | 'isCompact'

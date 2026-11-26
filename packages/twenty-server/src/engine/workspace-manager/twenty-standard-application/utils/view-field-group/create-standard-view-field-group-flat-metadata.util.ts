@@ -74,6 +74,5 @@ export const createStandardViewFieldGroupFlatMetadata = <
     overrides: null,
     createdAt: now,
     updatedAt: now,
-    deletedAt: null,
   };
 };

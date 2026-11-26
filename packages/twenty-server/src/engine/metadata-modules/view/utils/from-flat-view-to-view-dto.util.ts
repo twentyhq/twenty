@@ -7,12 +7,7 @@ export const fromFlatViewToViewDto = (flatView: FlatView): ViewDTO => {
     metadataName: 'view',
     flatEntity: flatView,
   });
-  const {
-    createdAt,
-    updatedAt,
-    deletedAt: _deletedAt,
-    ...rest
-  } = effectiveFlatView;
+  const { createdAt, updatedAt, ...rest } = effectiveFlatView;
 
   return {
     ...rest,

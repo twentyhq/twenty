@@ -184,6 +184,5 @@ export const createStandardViewFlatMetadata = <
     viewSortUniversalIdentifiers: [],
     createdAt: now,
     updatedAt: now,
-    deletedAt: null,
   };
 };

@@ -164,7 +164,6 @@ export class FieldRecordPageViewFieldOnCreateSideEffectHandlerService extends Me
       universalOverrides: null,
       createdAt,
       updatedAt: createdAt,
-      deletedAt: null,
     };
   }
 

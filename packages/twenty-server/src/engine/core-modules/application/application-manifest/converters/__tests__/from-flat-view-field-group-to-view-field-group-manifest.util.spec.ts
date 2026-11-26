@@ -59,7 +59,6 @@ describe('fromFlatViewFieldGroupToViewFieldGroupManifest', () => {
       viewFieldUniversalIdentifiers: [],
       createdAt: NOW,
       updatedAt: NOW,
-      deletedAt: null,
     };
 
     expect(roundTripFlatViewFieldGroup(flatViewFieldGroup)).toBeUndefined();

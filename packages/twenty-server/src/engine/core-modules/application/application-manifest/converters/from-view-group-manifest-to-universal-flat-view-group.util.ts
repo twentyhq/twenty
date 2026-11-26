@@ -22,6 +22,5 @@ export const fromViewGroupManifestToUniversalFlatViewGroup = ({
     position: viewGroupManifest.position,
     createdAt: now,
     updatedAt: now,
-    deletedAt: null,
   };
 };

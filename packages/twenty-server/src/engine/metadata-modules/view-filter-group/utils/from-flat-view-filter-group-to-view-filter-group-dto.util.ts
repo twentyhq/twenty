@@ -4,12 +4,7 @@ import { type ViewFilterGroupDTO } from 'src/engine/metadata-modules/view-filter
 export const fromFlatViewFilterGroupToViewFilterGroupDto = (
   flatViewFilterGroup: FlatViewFilterGroup,
 ): ViewFilterGroupDTO => {
-  const {
-    createdAt,
-    updatedAt,
-    deletedAt: _deletedAt,
-    ...rest
-  } = flatViewFilterGroup;
+  const { createdAt, updatedAt, ...rest } = flatViewFilterGroup;
 
   return {
     ...rest,

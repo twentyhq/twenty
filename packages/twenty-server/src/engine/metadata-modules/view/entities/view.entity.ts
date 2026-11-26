@@ -11,6 +11,7 @@ import {
   type Relation,
   UpdateDateColumn,
 } from 'typeorm';
+import { RELAX_VIEW_DELETED_AT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-65/relax-view-deleted-at-upgrade-command-name.constant';
 import { DEFAULT_VIEW_GROUP_LOAD_LIMIT } from 'twenty-shared/constants';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import {
@@ -258,8 +259,11 @@ export class ViewEntity
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 
+  @WasRemovedInUpgrade({
+    upgradeCommandName: RELAX_VIEW_DELETED_AT_UPGRADE_COMMAND_NAME,
+  })
   @Column({ nullable: true, type: 'timestamptz' })
-  deletedAt: Date | null;
+  deletedAt: WasRemovedInUpgrade<Date | null>;
 
   @Column({ nullable: true, type: 'text', default: null })
   anyFieldFilterValue: string | null;

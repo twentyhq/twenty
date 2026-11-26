@@ -59,7 +59,6 @@ describe('fromFlatViewFilterGroupToViewFilterGroupManifest', () => {
       viewFilterUniversalIdentifiers: [],
       createdAt: NOW,
       updatedAt: NOW,
-      deletedAt: null,
     };
 
     expect(roundTripFlatViewFilterGroup(flatViewFilterGroup)).toBeUndefined();

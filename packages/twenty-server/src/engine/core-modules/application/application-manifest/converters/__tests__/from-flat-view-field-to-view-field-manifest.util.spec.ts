@@ -115,7 +115,6 @@ describe('fromFlatViewFieldToViewFieldManifest', () => {
       universalOverrides: null,
       createdAt: NOW,
       updatedAt: NOW,
-      deletedAt: null,
     };
 
     expect(roundTripFlatViewField(flatViewField)).toBeUndefined();
