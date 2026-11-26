@@ -1,0 +1,2 @@
+export const ADD_LIST_PINNED_FIELD_UNIVERSAL_IDENTIFIERS_TO_VIEW_UPGRADE_COMMAND_NAME =
+  '2.64.0_AddListPinnedFieldUniversalIdentifiersToViewFastInstanceCommand_1795697154656';

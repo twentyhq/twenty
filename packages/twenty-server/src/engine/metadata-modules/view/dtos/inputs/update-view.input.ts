@@ -2,6 +2,7 @@ import { Field, InputType, Int } from '@nestjs/graphql';
 
 import { Type } from 'class-transformer';
 import {
+  IsArray,
   IsBoolean,
   IsEnum,
   IsInt,
@@ -100,9 +101,10 @@ export class UpdateViewInput {
   calendarEndFieldMetadataId?: string | null;
 
   @IsOptional()
-  @IsUUID()
-  @Field(() => UUIDScalarType, { nullable: true })
-  listPinnedFieldMetadataId?: string | null;
+  @IsArray()
+  @IsUUID(undefined, { each: true })
+  @Field(() => [UUIDScalarType], { nullable: true })
+  listPinnedFieldUniversalIdentifiers?: string[];
 
   @IsOptional()
   @IsBoolean()

@@ -16,7 +16,6 @@ const VIEW_OVERRIDES_FIELD_METADATA_FOREIGN_KEYS = [
   'kanbanAggregateOperationFieldMetadataId',
   'calendarFieldMetadataId',
   'calendarEndFieldMetadataId',
-  'listPinnedFieldMetadataId',
   'mainGroupByFieldMetadataId',
 ] as const;
 
@@ -44,7 +43,6 @@ const fromViewOverridesToUniversalOverridesEntry = ({
     kanbanAggregateOperationFieldMetadataId: _kanban,
     calendarFieldMetadataId: _calendar,
     calendarEndFieldMetadataId: _calendarEnd,
-    listPinnedFieldMetadataId: _listPinnedField,
     mainGroupByFieldMetadataId: _mainGroupBy,
     ...scalarOverrides
   } = overrides;

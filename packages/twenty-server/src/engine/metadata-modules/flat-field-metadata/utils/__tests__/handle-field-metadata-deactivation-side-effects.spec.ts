@@ -63,17 +63,18 @@ describe('handleFieldMetadataDeactivationSideEffects', () => {
     ]);
   });
 
-  it('clears the list pinned field without deleting the view', () => {
+  it('unpins the deactivated field without deleting the view', () => {
     const view = {
       ...getFlatView('list-view-id'),
-      listPinnedFieldMetadataId: 'list-pinned-field-id',
-      listPinnedFieldMetadataUniversalIdentifier:
-        'list-pinned-field-universal-identifier',
+      listPinnedFieldUniversalIdentifiers: [
+        'kept-pinned-field-universal-identifier',
+        'pinned-field-universal-identifier',
+      ],
     };
     const fromFlatFieldMetadata = getFlatFieldMetadataMock({
-      id: 'list-pinned-field-id',
+      id: 'pinned-field-id',
       objectMetadataId: 'object-id',
-      universalIdentifier: 'list-pinned-field-universal-identifier',
+      universalIdentifier: 'pinned-field-universal-identifier',
       type: FieldMetadataType.DATE_TIME,
     });
 
@@ -94,8 +95,9 @@ describe('handleFieldMetadataDeactivationSideEffects', () => {
     expect(result.flatViewsToUpdate).toEqual([
       expect.objectContaining({
         id: view.id,
-        listPinnedFieldMetadataId: null,
-        listPinnedFieldMetadataUniversalIdentifier: null,
+        listPinnedFieldUniversalIdentifiers: [
+          'kept-pinned-field-universal-identifier',
+        ],
         calendarEndFieldMetadataId: 'calendar-end-field-id',
       }),
     ]);

@@ -35,7 +35,6 @@ export class CreateViewActionHandlerService extends WorkspaceMigrationRunnerActi
     const {
       calendarFieldMetadataId,
       calendarEndFieldMetadataId,
-      listPinnedFieldMetadataId,
       kanbanAggregateOperationFieldMetadataId,
       mainGroupByFieldMetadataId,
       objectMetadataId,
@@ -63,7 +62,6 @@ export class CreateViewActionHandlerService extends WorkspaceMigrationRunnerActi
         ...action.flatEntity,
         calendarFieldMetadataId,
         calendarEndFieldMetadataId,
-        listPinnedFieldMetadataId,
         kanbanAggregateOperationFieldMetadataId,
         mainGroupByFieldMetadataId,
         objectMetadataId,

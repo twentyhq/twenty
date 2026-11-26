@@ -132,7 +132,7 @@ export const createStandardViewFlatMetadata = <
   return {
     calendarFieldMetadataUniversalIdentifier,
     calendarEndFieldMetadataUniversalIdentifier,
-    listPinnedFieldMetadataUniversalIdentifier: null,
+    listPinnedFieldUniversalIdentifiers: [],
     kanbanAggregateOperationFieldMetadataUniversalIdentifier,
     mainGroupByFieldMetadataUniversalIdentifier,
     objectMetadataUniversalIdentifier,
@@ -160,7 +160,6 @@ export const createStandardViewFlatMetadata = <
     calendarLayout: null,
     calendarFieldMetadataId,
     calendarEndFieldMetadataId,
-    listPinnedFieldMetadataId: null,
     anyFieldFilterValue: null,
     presetFilter,
     isPrivate: false,

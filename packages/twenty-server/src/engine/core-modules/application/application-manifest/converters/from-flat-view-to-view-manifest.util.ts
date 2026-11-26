@@ -83,10 +83,10 @@ export const fromFlatViewToViewManifest = ({
           flatView.calendarEndFieldMetadataUniversalIdentifier,
       }
     : {}),
-  ...(isDefined(flatView.listPinnedFieldMetadataUniversalIdentifier)
+  ...(isNonEmptyArray(flatView.listPinnedFieldUniversalIdentifiers)
     ? {
-        listPinnedFieldMetadataUniversalIdentifier:
-          flatView.listPinnedFieldMetadataUniversalIdentifier,
+        listPinnedFieldUniversalIdentifiers:
+          flatView.listPinnedFieldUniversalIdentifiers,
       }
     : {}),
   ...withoutEmptyCollections(children),
