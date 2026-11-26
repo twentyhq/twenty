@@ -12,6 +12,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { workspaceMemberFormatPreferencesState } from '@/localization/states/workspaceMemberFormatPreferencesState';
 import { LogConsole } from '@/log-console/components/LogConsole';
+import { LOG_CONSOLE_SOURCES } from '@/log-console/constants/LogConsoleSources';
 import { LOG_CONSOLE_TAB_LIST_INSTANCE_ID } from '@/log-console/constants/LogConsoleTabListInstanceId';
 import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFullScreenState';
 import { logConsoleActiveSourceIdState } from '@/log-console/states/logConsoleActiveSourceIdState';
@@ -176,6 +177,11 @@ const meta: Meta<PageDecoratorArgs> = {
     jotaiStore.set(logConsoleHeightState.atom, null);
     jotaiStore.set(isLogConsoleFullScreenState.atom, false);
     jotaiStore.set(logConsoleActiveSourceIdState.atom, null);
+    jotaiStore.set(logConsoleTimeRangeState.atom, '24h');
+    jotaiStore.set(logConsoleTimeZoneState.atom, 'member');
+    LOG_CONSOLE_SOURCES.forEach((source) =>
+      jotaiStore.set(logConsoleFiltersFamilyState.atomFamily(source.id), []),
+    );
   },
   parameters: {
     layout: 'fullscreen',
