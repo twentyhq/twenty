@@ -8,6 +8,8 @@ import { AiChatMessageAuthorAvatar } from '@/ai-chat/messages/components/AiChatM
 import { AiChatMessageAuthorResolver } from '@/ai-chat/messages/components/AiChatMessageAuthorResolver';
 import { useAiChatMessageAuthor } from '@/ai-chat/messages/hooks/useAiChatMessageAuthor';
 import { StyledChatMessageBubble } from '@/chat/components/StyledChatMessageBubble';
+import { CHAT_MESSAGE_HEADER_BOTTOM_MARGIN } from '@/chat/constants/ChatMessageHeaderBottomMargin';
+import { CHAT_MESSAGE_HEADER_HEIGHT } from '@/chat/constants/ChatMessageHeaderHeight';
 
 const StyledToolsOnlyTurn = styled.div<{ hasTrailingSpace: boolean }>`
   align-items: flex-start;
@@ -15,7 +17,7 @@ const StyledToolsOnlyTurn = styled.div<{ hasTrailingSpace: boolean }>`
   gap: ${themeCssVariables.spacing[2]};
   margin-bottom: ${({ hasTrailingSpace }) =>
     hasTrailingSpace
-      ? `calc(${themeCssVariables.spacing[4]} + ${themeCssVariables.spacing[3]})`
+      ? `calc(${CHAT_MESSAGE_HEADER_HEIGHT} + ${CHAT_MESSAGE_HEADER_BOTTOM_MARGIN})`
       : '0'};
 `;
 

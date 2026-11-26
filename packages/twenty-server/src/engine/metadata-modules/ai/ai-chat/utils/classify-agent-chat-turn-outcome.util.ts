@@ -61,7 +61,7 @@ export const classifyAgentChatTurnOutcome = ({
   }
 
   if (isToolsOnly) {
-    return { kind: 'completed', outcome: 'silent' };
+    return { kind: 'completed', outcome: 'tools_only' };
   }
 
   return { kind: 'failed', failurePhase: 'no_text' };

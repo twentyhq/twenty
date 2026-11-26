@@ -1,17 +1,22 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isObject } from '@sniptt/guards';
 import { isToolUIPart } from 'ai';
 
 import { type ExtendedUIMessagePart } from '../types/ExtendedUIMessagePart';
 import { isNoReplyToolPart } from './is-no-reply-tool-part.util';
 import { isPausingToolPart } from './is-pausing-tool-part.util';
 
-const isFinishedToolPart = (part: ExtendedUIMessagePart): boolean =>
+// record tools report a failure as an output with success: false, not as output-error
+const isSucceededToolPart = (part: ExtendedUIMessagePart): boolean =>
   isToolUIPart(part) &&
-  !isNoReplyToolPart(part) &&
-  (part.state === 'output-available' || part.state === 'output-error');
+  part.state === 'output-available' &&
+  !(
+    isObject(part.output) &&
+    'success' in part.output &&
+    part.output.success === false
+  );
 
 const isWithoutVisibleReply = (part: ExtendedUIMessagePart): boolean =>
-  (isToolUIPart(part) && !isPausingToolPart(part)) ||
+  (isSucceededToolPart(part) && !isPausingToolPart(part)) ||
   part.type === 'step-start' ||
   part.type === 'reasoning' ||
   part.type === 'data-thread-title' ||
@@ -20,4 +25,5 @@ const isWithoutVisibleReply = (part: ExtendedUIMessagePart): boolean =>
 export const isToolsOnlyAgentChatMessageParts = (
   parts: ExtendedUIMessagePart[],
 ): boolean =>
-  parts.some(isFinishedToolPart) && parts.every(isWithoutVisibleReply);
+  parts.some((part) => isSucceededToolPart(part) && !isNoReplyToolPart(part)) &&
+  parts.every(isWithoutVisibleReply);

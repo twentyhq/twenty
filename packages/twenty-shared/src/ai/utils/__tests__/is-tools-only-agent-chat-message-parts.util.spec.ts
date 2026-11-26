@@ -10,12 +10,20 @@ const createCompanyPart: ExtendedUIMessagePart = {
   output: { success: true },
 };
 
-const failedReactionPart: ExtendedUIMessagePart = {
-  type: 'tool-react_to_message',
-  toolCallId: 'react-call',
+const erroredCreateCompanyPart: ExtendedUIMessagePart = {
+  type: 'tool-create_company',
+  toolCallId: 'errored-create-company-call',
   state: 'output-error',
   input: {},
   errorText: 'Failed',
+};
+
+const unsuccessfulCreateCompanyPart: ExtendedUIMessagePart = {
+  type: 'tool-create_company',
+  toolCallId: 'unsuccessful-create-company-call',
+  state: 'output-available',
+  input: {},
+  output: { success: false, error: 'A company with this domain exists' },
 };
 
 const runningCreateCompanyPart: ExtendedUIMessagePart = {
@@ -47,10 +55,24 @@ describe('isToolsOnlyAgentChatMessageParts', () => {
         { type: 'step-start' },
         { type: 'reasoning', text: 'Creating the company' },
         createCompanyPart,
-        failedReactionPart,
         { type: 'text', text: '  ' },
       ]),
     ).toBe(true);
+  });
+
+  it('rejects a turn in which a tool threw', () => {
+    expect(
+      isToolsOnlyAgentChatMessageParts([
+        createCompanyPart,
+        erroredCreateCompanyPart,
+      ]),
+    ).toBe(false);
+  });
+
+  it('rejects a turn whose tool reported a failure', () => {
+    expect(
+      isToolsOnlyAgentChatMessageParts([unsuccessfulCreateCompanyPart]),
+    ).toBe(false);
   });
 
   it('rejects a turn that wrote a reply', () => {

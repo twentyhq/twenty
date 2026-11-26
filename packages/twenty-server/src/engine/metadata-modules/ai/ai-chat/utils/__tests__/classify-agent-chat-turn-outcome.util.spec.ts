@@ -75,14 +75,14 @@ describe('classifyAgentChatTurnOutcome', () => {
     ).toEqual({ kind: 'failed', failurePhase: 'no_text' });
   });
 
-  it('counts a turn that only ran tools as silent rather than failed', () => {
+  it('completes a turn that only ran tools rather than failing it', () => {
     expect(
       classifyAgentChatTurnOutcome({
         ...baseTurn,
         hasText: false,
         isToolsOnly: true,
       }),
-    ).toEqual({ kind: 'completed', outcome: 'silent' });
+    ).toEqual({ kind: 'completed', outcome: 'tools_only' });
   });
 
   it('keeps the credits failure of a turn cut off after its tools', () => {
