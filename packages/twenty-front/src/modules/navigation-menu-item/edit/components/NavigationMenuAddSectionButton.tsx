@@ -17,6 +17,7 @@ import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks
 import { NavigationMenuAddSectionHiddenItems } from '@/navigation-menu-item/edit/components/NavigationMenuAddSectionHiddenItems';
 import { NavigationMenuItemEntrance } from '@/navigation-menu-item/edit/components/NavigationMenuItemEntrance';
 import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
+import { getNavigationMenuAddSectionDropdownId } from '@/navigation-menu-item/edit/utils/getNavigationMenuAddSectionDropdownId';
 import { useHiddenNavigationMenuItemsInTab } from '@/navigation-menu-item/edit/hooks/useHiddenNavigationMenuItemsInTab';
 import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
@@ -66,7 +67,7 @@ export const NavigationMenuAddSectionButton = ({
   );
   const { closeDropdown } = useCloseDropdown();
   const { openDropdown } = useOpenDropdown();
-  const dropdownId = `navigation-menu-add-section-${containerId ?? 'home'}`;
+  const dropdownId = getNavigationMenuAddSectionDropdownId(containerId);
 
   if (!isCustomizableSidebarEnabled) {
     return null;

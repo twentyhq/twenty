@@ -1,3 +1,4 @@
+import { styled } from '@linaria/react';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
@@ -12,6 +13,10 @@ import { NavigationMenuAddSectionButton } from '@/navigation-menu-item/edit/comp
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
+
+const StyledSectionArea = styled.div`
+  display: contents;
+`;
 
 type NavigationMenuContainerBlock =
   | { kind: 'items'; items: NavigationMenuItem[] }
@@ -83,10 +88,12 @@ export const NavigationMenuContainerContent = ({
     <>
       {getNavigationMenuContainerBlocks(sortedChildren).map((block) =>
         block.kind === 'section' ? (
-          <NavigationMenuSectionRenderer
+          <StyledSectionArea
             key={block.section.id}
-            section={block.section}
-          />
+            data-navigation-menu-section-id={block.section.id}
+          >
+            <NavigationMenuSectionRenderer section={block.section} />
+          </StyledSectionArea>
         ) : (
           <NavigationDrawerSection key={block.items[0].id}>
             <WorkspaceSectionListReadOnly
