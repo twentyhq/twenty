@@ -1,2 +1,2 @@
 export const ADD_LOGIC_FUNCTION_IS_WARM_UPGRADE_COMMAND_NAME =
-  '2.65.0_AddLogicFunctionIsWarmFastInstanceCommand_1795710859669';
+  '2.65.0_AddLogicFunctionIsWarmFastInstanceCommand_1795715676865';
