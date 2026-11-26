@@ -16,7 +16,6 @@ import { useColorScheme } from '@/workspace-member/hooks/useColorScheme';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { getWorkspaceAvatarColorSeed } from '@/workspace/utils/getWorkspaceAvatarColorSeed';
-import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Link } from 'react-router-dom';
@@ -34,16 +33,10 @@ import {
   IconUserPlus,
 } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-import { themeCssVariables } from 'twenty-ui/theme';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
-
-const StyledHeaderAvatar = styled.span`
-  display: flex;
-  margin-right: ${themeCssVariables.spacing[1]};
-`;
 
 export const MultiWorkspaceDropdownDefaultComponents = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
@@ -87,18 +80,14 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
   return (
     <>
       <Dropdown.Header>
-        <StyledHeaderAvatar>
-          <Avatar
-            imageProps={{ alt: '' }}
-            name={currentWorkspace?.displayName || ''}
-            colorSeed={getWorkspaceAvatarColorSeed(
-              currentWorkspace?.displayName,
-            )}
-            src={getAbsoluteImageUrl(
-              currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO,
-            )}
-          />
-        </StyledHeaderAvatar>
+        <Avatar
+          imageProps={{ alt: '' }}
+          name={currentWorkspace?.displayName || ''}
+          colorSeed={getWorkspaceAvatarColorSeed(currentWorkspace?.displayName)}
+          src={getAbsoluteImageUrl(
+            currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO,
+          )}
+        />
         <Dropdown.Title>{currentWorkspace?.displayName}</Dropdown.Title>
         <DropdownRoot
           dropdownId="multi-workspace-dropdown-context-menu"

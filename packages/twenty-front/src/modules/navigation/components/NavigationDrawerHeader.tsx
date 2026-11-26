@@ -11,6 +11,8 @@ import { MainNavigationDrawerEditButton } from '@/navigation/components/MainNavi
 import { MultiWorkspaceDropdownButton } from '@/navigation/components/MultiWorkspaceDropdown/MultiWorkspaceDropdownButton';
 import { NavigationDrawerCloseSettingsButton } from '@/navigation/components/NavigationDrawerCloseSettingsButton';
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapseButton';
 import { useLingui } from '@lingui/react/macro';
@@ -67,6 +69,11 @@ export const NavigationDrawerHeader = () => {
     FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
   );
   const isSettingsDrawer = useIsSettingsDrawer();
+  const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
+    WorkspaceActivationStatus.SUSPENDED,
+  );
+  const shouldShowCloseSettingsButton =
+    isCustomizableSidebarEnabled && isSettingsDrawer && !isWorkspaceSuspended;
 
   const searchButton = !isMobile && !isCustomizableSidebarEnabled && (
     <LightIconButton
@@ -83,7 +90,7 @@ export const NavigationDrawerHeader = () => {
     <StyledContainer>
       <StyledHeaderRow>
         <StyledWorkspaceDropdownContainer>
-          {isCustomizableSidebarEnabled && isSettingsDrawer ? (
+          {shouldShowCloseSettingsButton ? (
             <NavigationDrawerCloseSettingsButton />
           ) : (
             <MultiWorkspaceDropdownButton />
