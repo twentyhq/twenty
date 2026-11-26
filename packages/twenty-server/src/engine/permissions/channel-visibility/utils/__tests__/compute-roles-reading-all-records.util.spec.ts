@@ -4,12 +4,15 @@ import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-appl
 
 const OBJECT_METADATA_ID = 'object-metadata-id';
 
-const buildRole = (id: string, overrides = {}) => ({
+const buildRole = ({
   id,
-  universalIdentifier: `${id}-universal-identifier`,
-  canBeAssignedToUsers: true,
-  ...overrides,
-});
+  universalIdentifier = `${id}-universal-identifier`,
+  canBeAssignedToUsers = true,
+}: {
+  id: string;
+  universalIdentifier?: string;
+  canBeAssignedToUsers?: boolean;
+}) => ({ id, universalIdentifier, canBeAssignedToUsers });
 
 const buildRolesPermissions = (
   canReadAllRecordsByRoleId: Record<string, boolean>,
@@ -39,7 +42,8 @@ const buildRolesPermissions = (
     ),
   );
 
-const ADMIN_ROLE = buildRole('admin', {
+const ADMIN_ROLE = buildRole({
+  id: 'admin',
   universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
 });
 
@@ -47,7 +51,7 @@ describe('computeRolesReadingAllRecords', () => {
   it('should report no role when no role reads all the records of the object', () => {
     expect(
       computeRolesReadingAllRecords({
-        flatRoles: [ADMIN_ROLE, buildRole('member')],
+        flatRoles: [ADMIN_ROLE, buildRole({ id: 'member' })],
         rolesPermissions: buildRolesPermissions({
           admin: false,
           member: false,
@@ -62,9 +66,9 @@ describe('computeRolesReadingAllRecords', () => {
       computeRolesReadingAllRecords({
         flatRoles: [
           ADMIN_ROLE,
-          buildRole('member'),
-          buildRole('support'),
-          buildRole('sales'),
+          buildRole({ id: 'member' }),
+          buildRole({ id: 'support' }),
+          buildRole({ id: 'sales' }),
         ],
         rolesPermissions: buildRolesPermissions({
           admin: true,
@@ -80,7 +84,11 @@ describe('computeRolesReadingAllRecords', () => {
   it('should count roles when the admin role does not read all records', () => {
     expect(
       computeRolesReadingAllRecords({
-        flatRoles: [ADMIN_ROLE, buildRole('support'), buildRole('sales')],
+        flatRoles: [
+          ADMIN_ROLE,
+          buildRole({ id: 'support' }),
+          buildRole({ id: 'sales' }),
+        ],
         rolesPermissions: buildRolesPermissions({
           admin: false,
           support: true,
@@ -94,7 +102,7 @@ describe('computeRolesReadingAllRecords', () => {
   it('should leave out roles that cannot be assigned to users', () => {
     expect(
       computeRolesReadingAllRecords({
-        flatRoles: [buildRole('apiKey', { canBeAssignedToUsers: false })],
+        flatRoles: [buildRole({ id: 'apiKey', canBeAssignedToUsers: false })],
         rolesPermissions: buildRolesPermissions({ apiKey: true }),
         objectMetadataId: OBJECT_METADATA_ID,
       }),

@@ -18,8 +18,7 @@ export const computeRolesReadingAllRecords = ({
   const rolesReadingAllRecords = flatRoles.filter(
     ({ id, canBeAssignedToUsers }) =>
       canBeAssignedToUsers &&
-      rolesPermissions[id]?.objects[objectMetadataId]?.canReadAllRecords ===
-        true,
+      rolesPermissions[id]?.objects[objectMetadataId]?.canReadAllRecords,
   );
   const isAdminRoleIncluded = rolesReadingAllRecords.some(
     ({ universalIdentifier }) =>

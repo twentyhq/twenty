@@ -52,6 +52,7 @@ import {
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
+import { ROLES_READING_ALL_RECORDS_ACCESS_POLICY } from 'src/engine/permissions/channel-visibility/constants/roles-reading-all-records-access-policy.constant';
 import { RolesReadingAllRecordsDTO } from 'src/engine/permissions/channel-visibility/dtos/roles-reading-all-records.dto';
 import { ChannelVisibilityRoleWideAccessReadService } from 'src/engine/permissions/channel-visibility/services/channel-visibility-role-wide-access-read.service';
 
@@ -192,7 +193,7 @@ export class MessageChannelResolver {
   }
 
   @Query(() => RolesReadingAllRecordsDTO)
-  @UseGuards(AccessPolicyGuard(MESSAGE_CHANNEL_ACCESS_POLICY))
+  @UseGuards(AccessPolicyGuard(ROLES_READING_ALL_RECORDS_ACCESS_POLICY))
   async rolesReadingAllMessages(
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<RolesReadingAllRecordsDTO> {
