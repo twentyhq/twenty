@@ -146,7 +146,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     flatAction: { entityId, update },
     allFlatEntityMaps: { flatFieldMetadataMaps },
   }: WorkspaceMigrationActionRunnerContext<FlatUpdateFieldAction>) {
-    if (!isDefined(update.settings)) {
+    if (!isDefined(update.formula)) {
       return undefined;
     }
 
@@ -160,13 +160,11 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
 
     if (
       isFieldMetadataFormulaUnchanged({
-        settings: update.settings,
-        existingSettings: existingFlatFieldMetadata.settings,
+        formula: update.formula,
+        existingFormula: existingFlatFieldMetadata.formula,
       }) &&
-      getFieldMetadataFormulaEvaluation({ settings: update.settings }) ===
-        getFieldMetadataFormulaEvaluation({
-          settings: existingFlatFieldMetadata.settings,
-        })
+      getFieldMetadataFormulaEvaluation({ formula: update.formula }) ===
+        getFieldMetadataFormulaEvaluation(existingFlatFieldMetadata)
     ) {
       return undefined;
     }
@@ -174,7 +172,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     return getDeferredStoredFormulaFieldsComputation({
       flatFieldMetadata: {
         ...existingFlatFieldMetadata,
-        settings: update.settings,
+        formula: update.formula,
       },
     });
   }

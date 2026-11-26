@@ -30,19 +30,19 @@ export type CompiledFormulaFieldColumn = {
 const ENUM_COLUMN_TYPE = 'enum';
 
 export const compileFormulaFieldColumns = ({
-  flatFieldMetadata: { name, type, settings },
+  flatFieldMetadata: { name, type, formula },
   schemaName,
   tableName,
   resolveReference,
   resolveAggregationSource,
 }: {
-  flatFieldMetadata: Pick<OrmFlatFieldMetadata, 'name' | 'type' | 'settings'>;
+  flatFieldMetadata: Pick<OrmFlatFieldMetadata, 'name' | 'type' | 'formula'>;
   schemaName: string;
   tableName: string;
   resolveReference: FormulaSqlReferenceResolver;
   resolveAggregationSource?: FormulaSqlAggregationSourceResolver;
 }): CompiledFormulaFieldColumn[] | undefined => {
-  const expression = getFieldMetadataFormulaExpression({ settings });
+  const expression = getFieldMetadataFormulaExpression({ formula });
 
   if (!isFormulaFieldMetadataType(type) || !isDefined(expression)) {
     return undefined;
@@ -55,7 +55,7 @@ export const compileFormulaFieldColumns = ({
     fieldMetadataType: type,
     expression,
     currencyCodeExpression: getFieldMetadataFormulaCurrencyCodeExpression({
-      settings,
+      formula,
     }),
     selectEnumSqlType: enumSqlType,
     resolveReference,

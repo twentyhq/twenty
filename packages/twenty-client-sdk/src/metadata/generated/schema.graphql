@@ -1779,6 +1779,7 @@ input CreateEmailingDomainInput {
 input CreateFieldInput {
   defaultValue: JSON
   description: String
+  formula: JSON
   icon: String
   isActive: Boolean
   isAuditLogged: Boolean
@@ -2057,7 +2058,7 @@ input CreateViewInput {
   groupLoadLimit: Int = 8
   icon: String!
   id: UUID
-  isCompact: Boolean = false
+  isCompact: Boolean
   isPrivate: Boolean
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID
@@ -2567,10 +2568,7 @@ enum FeatureFlagKey {
   IS_AI_CHAT_COMPONENT_BUILDER_ENABLED
   IS_AI_CHAT_INBOX_ENABLED
   IS_AI_DATA_POLICY_ENABLED
-  IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED
-  IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED
   IS_CHANNEL_VISIBILITY_ENFORCED_ON_API_KEYS
-  IS_CHANNEL_VISIBILITY_RLS_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
   IS_CUSTOMIZABLE_SIDEBAR_ENABLED
   IS_FORMULA_FIELD_ENABLED
@@ -2592,6 +2590,7 @@ type Field {
   defaultValue: JSON
   description: String
   disabledFieldPermissionActions: [String!]
+  formula: JSON
   icon: String
   id: UUID!
   isActive: Boolean
@@ -5576,6 +5575,7 @@ input UpdateEmailGroupChannelInput {
 input UpdateFieldInput {
   defaultValue: JSON
   description: String
+  formula: JSON
   icon: String
   isActive: Boolean
   isAuditLogged: Boolean

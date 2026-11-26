@@ -6,7 +6,6 @@ import {
   type UserWorkspaceAuthContext,
   type WorkspaceAuthContext,
 } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
   RecordShareException,
@@ -39,20 +38,14 @@ const FLAT_OBJECT_METADATA_MAPS = {
 
 describe('ShareRecordTool', () => {
   let tool: ShareRecordTool;
-  let isFeatureEnabled: jest.Mock;
   let setShare: jest.Mock;
 
   beforeEach(async () => {
-    isFeatureEnabled = jest.fn().mockResolvedValue(true);
     setShare = jest.fn().mockResolvedValue({});
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ShareRecordTool,
-        {
-          provide: FeatureFlagService,
-          useValue: { isFeatureEnabled },
-        },
         {
           provide: WorkspaceCacheService,
           useValue: {
@@ -123,15 +116,6 @@ describe('ShareRecordTool', () => {
         },
       }),
     );
-  });
-
-  it('refuses to share when record sharing is not enabled', async () => {
-    isFeatureEnabled.mockResolvedValue(false);
-
-    const result = await execute({ workspaceMemberId: WORKSPACE_MEMBER_ID });
-
-    expect(result.success).toBe(false);
-    expect(setShare).not.toHaveBeenCalled();
   });
 
   it.each([

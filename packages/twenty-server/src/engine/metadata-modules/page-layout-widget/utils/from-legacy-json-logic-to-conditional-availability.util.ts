@@ -6,9 +6,9 @@ import {
   isString,
 } from '@sniptt/guards';
 import {
-  type ConditionalAvailabilityNode,
-  joinConditionalAvailabilityNodes,
-} from 'twenty-shared/conditional-availability';
+  type ConditionalEvaluationNode,
+  joinConditionalEvaluationNodes,
+} from 'twenty-shared/conditional-evaluation';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 type JsonLogicLiteral = string | number | boolean;
@@ -58,8 +58,8 @@ const toSelectedRecordsCall = ({
   functionName: 'every' | 'everyEquals' | 'includesSome';
   propertyPath: string;
   value?: JsonLogicLiteral;
-}): ConditionalAvailabilityNode => {
-  const propertyArguments: ConditionalAvailabilityNode[] = [
+}): ConditionalEvaluationNode => {
+  const propertyArguments: ConditionalEvaluationNode[] = [
     { type: 'VARIABLE', path: 'selectedRecords' },
     { type: 'LITERAL', value: propertyPath },
   ];
@@ -75,7 +75,7 @@ const toSelectedRecordsCall = ({
 
 const toOperandNode = (
   operand: unknown,
-): ConditionalAvailabilityNode | undefined => {
+): ConditionalEvaluationNode | undefined => {
   if (isJsonLogicLiteral(operand)) {
     return { type: 'LITERAL', value: operand };
   }
@@ -115,7 +115,7 @@ const toEqualityNode = ({
   isStrict: boolean;
   firstOperand: unknown;
   secondOperand: unknown;
-}): ConditionalAvailabilityNode | undefined => {
+}): ConditionalEvaluationNode | undefined => {
   if (
     !isStrict &&
     !isSameUnderLooseAndStrictEquality({ firstOperand, secondOperand })
@@ -155,7 +155,7 @@ const toMembershipNode = ({
 }: {
   firstOperand: unknown;
   secondOperand: unknown;
-}): ConditionalAvailabilityNode | undefined => {
+}): ConditionalEvaluationNode | undefined => {
   const containerPropertyPath =
     getFirstSelectedRecordPropertyPath(secondOperand);
 
@@ -179,7 +179,7 @@ const toMembershipNode = ({
     return undefined;
   }
 
-  return joinConditionalAvailabilityNodes({
+  return joinConditionalEvaluationNodes({
     logicalOperator: 'OR',
     nodes: secondOperand.map((value) =>
       toSelectedRecordsCall({
@@ -193,7 +193,7 @@ const toMembershipNode = ({
 
 const toVariableTruthinessNode = (
   operand: unknown,
-): ConditionalAvailabilityNode | undefined => {
+): ConditionalEvaluationNode | undefined => {
   const propertyPath = getFirstSelectedRecordPropertyPath(operand);
 
   if (isDefined(propertyPath)) {
@@ -210,8 +210,8 @@ const toVariableTruthinessNode = (
 };
 
 const toNegatedNode = (
-  child: ConditionalAvailabilityNode | undefined,
-): ConditionalAvailabilityNode | undefined =>
+  child: ConditionalEvaluationNode | undefined,
+): ConditionalEvaluationNode | undefined =>
   isDefined(child) ? { type: 'NOT', child } : undefined;
 
 const toComparisonNode = ({
@@ -220,7 +220,7 @@ const toComparisonNode = ({
 }: {
   operator: string;
   operands: unknown;
-}): ConditionalAvailabilityNode | undefined => {
+}): ConditionalEvaluationNode | undefined => {
   if (!isArray(operands) || operands.length !== 2) {
     return undefined;
   }
@@ -249,7 +249,7 @@ const toComparisonNode = ({
 
 export const fromLegacyJsonLogicToConditionalAvailability = (
   jsonLogic: unknown,
-): ConditionalAvailabilityNode | undefined => {
+): ConditionalEvaluationNode | undefined => {
   const entries = isPlainObject(jsonLogic) ? Object.entries(jsonLogic) : [];
 
   if (entries.length !== 1) {
@@ -268,7 +268,7 @@ export const fromLegacyJsonLogicToConditionalAvailability = (
     );
 
     return children.every(isDefined)
-      ? joinConditionalAvailabilityNodes({
+      ? joinConditionalEvaluationNodes({
           logicalOperator: operator === 'and' ? 'AND' : 'OR',
           nodes: children,
         })

@@ -6442,11 +6442,6 @@ msgstr "kanalrolle"
 msgid "Channel visibility on API keys"
 msgstr "Kanaltilgjengelighet for API-nøkler"
 
-#. js-lingui-id: Kjphnm
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Channel visibility through rules"
-msgstr "Kanaltilgjengelighet gjennom regler"
-
 #. js-lingui-id: lfFsZ4
 #: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
 #: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
@@ -9621,7 +9616,7 @@ msgid "Customize record page"
 msgstr "Tilpass oppføringssiden"
 
 #. js-lingui-id: hxjpaE
-#: src/modules/navigation/components/MainNavigationDrawerContextMenu.tsx
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuCustomizeSidebarMenuContent.tsx
 #: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
 #: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
 msgid "Customize sidebar"
@@ -10031,7 +10026,6 @@ msgstr "Reduser verdi"
 #: src/modules/settings/experience/components/UiScalePicker.tsx
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
-#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Default"
 msgstr "Standard"
 
@@ -16388,11 +16382,6 @@ msgstr "Importer nye e-poster fra denne kontoen"
 msgid "Import new events from this account"
 msgstr "Importer nye hendelser fra denne kontoen"
 
-#. js-lingui-id: 4Ljmum
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Import occurrences of recurring Google Calendar meetings up to 90 days ahead only, and import later occurrences as they come within 90 days."
-msgstr "Importer forekomster av gjentakende Google Kalender-møter bare opptil 90 dager frem i tid, og importer senere forekomster når de kommer innenfor 90 dager."
-
 #. js-lingui-id: D5QSQM
 #: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx
 msgid "Import only selected folders/labels"
@@ -16402,11 +16391,6 @@ msgstr "Importer kun valgte mapper/etiketter"
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
 msgid "Import or add the MCP configuration from JetBrains settings."
 msgstr "Importer eller legg til MCP-konfigurasjonen fra JetBrains-innstillingene."
-
-#. js-lingui-id: 8zGGat
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Import recurring meetings 90 days ahead"
-msgstr "Importer gjentakende møter 90 dager frem i tid"
 
 #. js-lingui-id: LHHO6e
 #: src/modules/getting-started/constants/GettingStartedImportPrompt.ts
@@ -16463,11 +16447,6 @@ msgstr "Om mindre enn en dag"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 msgid "In progress"
 msgstr "Pågår"
-
-#. js-lingui-id: q6UzTa
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops and related record paths."
-msgstr "Pågår: håndhev synlighet for meldings- og kalenderkanaler med tillatelsesregler på postnivå. Krever relasjonshopp og relaterte poststier."
 
 #. js-lingui-id: 0Nl1Pt
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx
@@ -26045,11 +26024,6 @@ msgstr "Begrenset"
 msgid "Result"
 msgstr "Resultat"
 
-#. js-lingui-id: kx0s+n
-#: src/modules/side-panel/pages/search/components/SidePanelSearchRecordsPage.tsx
-msgid "Results"
-msgstr "Resultater"
-
 #. js-lingui-id: v39wLo
 #: src/modules/log-console/components/LogConsoleResults.tsx
 #: src/modules/settings/event-logs/components/SettingsLogs.tsx
@@ -27126,6 +27100,7 @@ msgstr "Søk etter medlemmer i arbeidsområdet"
 
 #. js-lingui-id: YIix5Y
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
+#: src/modules/navigation/components/MainNavigationDrawerSearchField.tsx
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 msgid "Search..."
 msgstr "Søk..."
@@ -28737,20 +28712,10 @@ msgstr "Hopp over"
 msgid "Skip anyway"
 msgstr "Hopp over likevel"
 
-#. js-lingui-id: 5jWe/6
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Skip calendar events with no participant outside the workspace domain, unless internal import is turned on."
-msgstr "Hopp over kalenderhendelser uten deltakere utenfor arbeidsområdets domene, med mindre intern import er slått på."
-
 #. js-lingui-id: TyudBs
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Skip creating a Name field "
 msgstr "Hopp over å opprette et Navn-felt "
-
-#. js-lingui-id: pmVASU
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Skip internal meetings"
-msgstr "Hopp over interne møter"
 
 #. js-lingui-id: PlF+NA
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
@@ -29995,6 +29960,7 @@ msgid "System skills"
 msgstr "Systemferdigheter"
 
 #. js-lingui-id: HuA3RU
+#: src/modules/navigation-menu-item/display/hooks/useGetNavigationMenuTabLabel.ts
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
 msgid "Tab"
@@ -31269,6 +31235,7 @@ msgstr "Denne leverandøren er innebygd. Angi API-nøkkelen fra siden dens."
 
 #. js-lingui-id: qfpz3J
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
+#: src/modules/views/utils/computeRelationFilterDisplayValue.ts
 msgid "This record"
 msgstr "Denne oppføringen"
 
@@ -34020,7 +33987,6 @@ msgstr "Fiolett"
 #: src/modules/settings/unsubscribe-topics/components/SettingsWorkspaceUnsubscribeTopicSection.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
-#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Visibility"
 msgstr "Synlighet"
 

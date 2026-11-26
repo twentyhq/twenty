@@ -5,14 +5,14 @@ import { getConditionalAvailabilityFilterVariableOperators } from '@/conditional
 import { getConditionalAvailabilityFilterVariablePath } from '@/conditional-availability/utils/getConditionalAvailabilityFilterVariablePath';
 import { isConditionalAvailabilityFilterValueValid } from '@/conditional-availability/utils/isConditionalAvailabilityFilterValueValid';
 import { isString } from '@sniptt/guards';
-import { type ConditionalAvailabilityNode } from 'twenty-shared/conditional-availability';
+import { type ConditionalEvaluationNode } from 'twenty-shared/conditional-evaluation';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 export const convertConditionalAvailabilityComparisonNodeToFilter = ({
   node,
 }: {
-  node: ConditionalAvailabilityNode;
+  node: ConditionalEvaluationNode;
 }): ConditionalAvailabilityFilter | null => {
   if (node.type !== 'COMPARISON') {
     return null;

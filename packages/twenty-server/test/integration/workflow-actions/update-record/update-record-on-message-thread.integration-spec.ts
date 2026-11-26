@@ -4,6 +4,10 @@ import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { findRecordNodesByFilter } from 'test/integration/utils/find-records-by-filter.util';
+import {
+  grantRoleWideAccessToChannelObjects,
+  revokeRoleWideAccessToChannelObjects,
+} from 'test/integration/utils/role-wide-access-to-channel-objects.util';
 import { isDefined } from 'twenty-shared/utils';
 
 import { MESSAGE_THREAD_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-thread-data-seeds.constant';
@@ -25,6 +29,7 @@ describe('UPDATE_RECORD workflow action on message threads (integration)', () =>
   let categoryFieldMetadataId: string | undefined;
 
   beforeAll(async () => {
+    await grantRoleWideAccessToChannelObjects();
     const { objects } = await findManyObjectMetadata({
       input: { filter: {}, paging: { first: 1000 } },
       gqlFields: 'id nameSingular',
@@ -67,6 +72,7 @@ describe('UPDATE_RECORD workflow action on message threads (integration)', () =>
       input: { idToDelete: categoryFieldMetadataId },
       expectToFail: false,
     });
+    await revokeRoleWideAccessToChannelObjects();
   });
 
   it('updates a custom field and returns only the record id', async () => {

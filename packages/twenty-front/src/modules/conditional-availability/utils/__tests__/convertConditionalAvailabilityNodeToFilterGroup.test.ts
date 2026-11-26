@@ -1,9 +1,9 @@
 import { convertConditionalAvailabilityFilterOrGroupToNode } from '@/conditional-availability/utils/convertConditionalAvailabilityFilterOrGroupToNode';
 import { convertConditionalAvailabilityNodeToFilterGroup } from '@/conditional-availability/utils/convertConditionalAvailabilityNodeToFilterGroup';
 import {
-  buildDeviceConditionalAvailability,
-  type ConditionalAvailabilityNode,
-} from 'twenty-shared/conditional-availability';
+  buildDeviceConditionalEvaluationNode,
+  type ConditionalEvaluationNode,
+} from 'twenty-shared/conditional-evaluation';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 const ADMIN_ROLE_UNIVERSAL_IDENTIFIER = '20202020-0000-4000-8000-000000000001';
@@ -19,7 +19,7 @@ const comparison = ({
   operator: 'EQUAL' | 'NOT_EQUAL';
   variablePath: string;
   value: string;
-}): ConditionalAvailabilityNode => ({
+}): ConditionalEvaluationNode => ({
   type: 'COMPARISON',
   operator,
   left: { type: 'VARIABLE', path: variablePath },
@@ -40,9 +40,9 @@ const workspaceMemberIsNot = (workspaceMemberId: string) =>
     value: workspaceMemberId,
   });
 
-const DEVICE_IS_MOBILE = buildDeviceConditionalAvailability('MOBILE');
+const DEVICE_IS_MOBILE = buildDeviceConditionalEvaluationNode('MOBILE');
 
-const getFilterGroupOrThrow = (node: ConditionalAvailabilityNode) => {
+const getFilterGroupOrThrow = (node: ConditionalEvaluationNode) => {
   const filterGroup = convertConditionalAvailabilityNodeToFilterGroup({ node });
 
   assertIsDefinedOrThrow(filterGroup);
@@ -167,7 +167,7 @@ describe('convertConditionalAvailabilityNodeToFilterGroup', () => {
       logicalOperator: 'OR',
       children: [
         DEVICE_IS_MOBILE,
-        buildDeviceConditionalAvailability('DESKTOP'),
+        buildDeviceConditionalEvaluationNode('DESKTOP'),
       ],
     });
 
@@ -209,7 +209,7 @@ describe('convertConditionalAvailabilityNodeToFilterGroup', () => {
     ]);
   });
 
-  it.each<{ title: string; node: ConditionalAvailabilityNode }>([
+  it.each<{ title: string; node: ConditionalEvaluationNode }>([
     {
       title: 'a third level of groups',
       node: {

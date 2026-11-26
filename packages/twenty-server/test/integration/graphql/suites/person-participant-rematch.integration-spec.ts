@@ -6,6 +6,10 @@ import { findManyOperationFactory } from 'test/integration/graphql/utils/find-ma
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
+import {
+  grantRoleWideAccessToChannelObjects,
+  revokeRoleWideAccessToChannelObjects,
+} from 'test/integration/utils/role-wide-access-to-channel-objects.util';
 
 type Participant = {
   id: string;
@@ -14,6 +18,10 @@ type Participant = {
 };
 
 describe('participant rematch when a person changes', () => {
+  beforeAll(async () => {
+    await grantRoleWideAccessToChannelObjects();
+  });
+
   let personId: string;
   let messageThreadId: string;
   let messageId: string;
@@ -172,5 +180,9 @@ describe('participant rematch when a person changes', () => {
       'ADA@rematch.test': null,
       'urn:li:person:ada': personId,
     });
+  });
+
+  afterAll(async () => {
+    await revokeRoleWideAccessToChannelObjects();
   });
 });

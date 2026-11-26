@@ -65,7 +65,7 @@ export class CreateViewInput {
 
   @IsOptional()
   @IsBoolean()
-  @Field({ nullable: true, defaultValue: false })
+  @Field({ nullable: true })
   isCompact?: boolean;
 
   @IsOptional()

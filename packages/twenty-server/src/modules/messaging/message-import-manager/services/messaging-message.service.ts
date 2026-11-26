@@ -54,7 +54,8 @@ type MessageAccumulator = {
     | 'messageThreadExternalId'
     | 'direction'
   > &
-    MessageChannelMessageAssociationSource;
+    MessageChannelMessageAssociationSource &
+    Partial<Pick<MessageChannelMessageAssociationWorkspaceEntity, 'createdBy'>>;
 };
 @Injectable()
 export class MessagingMessageService {
@@ -75,7 +76,7 @@ export class MessagingMessageService {
     transactionScope: WorkspaceTransactionScope;
     workspaceId: string;
     associationSource: MessageChannelMessageAssociationSource;
-    // stamped on the messages and threads this call creates, never on existing ones
+    // stamped on the records this call creates, never on existing ones
     createdBy?: ActorMetadata;
   }): Promise<{
     createdMessages: Partial<MessageWorkspaceEntity>[];
@@ -194,12 +195,12 @@ export class MessagingMessageService {
             );
           }
 
+          const messageCreatedBy = message.createdBy ?? createdBy;
+
           let newOrExistingMessageId: string;
 
           if (!isDefined(messageAccumulator.existingMessageInDB)) {
             newOrExistingMessageId = v4();
-
-            const messageCreatedBy = message.createdBy ?? createdBy;
 
             const messageToCreate = {
               id: newOrExistingMessageId,
@@ -257,6 +258,9 @@ export class MessagingMessageService {
               messageThreadExternalId: message.messageThreadExternalId,
               direction: message.direction,
               ...associationSource,
+              ...(isDefined(messageCreatedBy)
+                ? { createdBy: messageCreatedBy }
+                : {}),
             };
 
             associationToCreateByMessageId.set(
@@ -637,10 +641,12 @@ export class MessagingMessageService {
       if (!isDefined(newOrExistingMessageThreadId)) {
         newOrExistingMessageThreadId = v4();
 
+        const threadCreatedBy = message.createdBy ?? createdBy;
+
         messageAccumulator.threadToCreate = {
           id: newOrExistingMessageThreadId,
           subject: message.subject,
-          ...(isDefined(createdBy) ? { createdBy } : {}),
+          ...(isDefined(threadCreatedBy) ? { createdBy: threadCreatedBy } : {}),
         };
       }
 

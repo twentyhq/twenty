@@ -31,6 +31,13 @@ export class DeferredWorkspaceOperationEntity extends WorkspaceRelatedEntity {
   @Column({ type: 'varchar' })
   applicationUniversalIdentifier: string;
 
+  @WasRenamedInUpgrade([
+    {
+      previousName: 'actionHandlerKey',
+      upgradeCommandName:
+        '2.43.0_RenameDeferredWorkspaceMigrationActionNameFastInstanceCommand_1790255000000',
+    },
+  ])
   @Column({ type: 'varchar' })
   name: PersistedDeferredWorkspaceOperation['name'];
 

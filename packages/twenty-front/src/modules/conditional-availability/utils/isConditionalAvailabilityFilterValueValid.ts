@@ -1,6 +1,6 @@
 import { type ConditionalAvailabilityFilterVariable } from '@/conditional-availability/types/ConditionalAvailabilityFilterVariable';
 import { isNonEmptyString } from '@sniptt/guards';
-import { CONDITIONAL_AVAILABILITY_DEVICES } from 'twenty-shared/conditional-availability';
+import { CONDITIONAL_EVALUATION_DEVICES } from 'twenty-shared/conditional-evaluation';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 export const isConditionalAvailabilityFilterValueValid = ({
@@ -15,9 +15,7 @@ export const isConditionalAvailabilityFilterValueValid = ({
     case 'currentWorkspaceMember':
       return isNonEmptyString(value);
     case 'device':
-      return CONDITIONAL_AVAILABILITY_DEVICES.some(
-        (device) => device === value,
-      );
+      return CONDITIONAL_EVALUATION_DEVICES.some((device) => device === value);
     default:
       return assertUnreachable(variable);
   }

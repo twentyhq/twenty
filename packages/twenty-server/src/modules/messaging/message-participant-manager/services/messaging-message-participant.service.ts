@@ -70,7 +70,7 @@ export class MessagingMessageParticipantService {
           existingParticipant: findExisting(participant),
         }));
 
-        const participantsToCreate: Pick<
+        const participantsToCreate: (Pick<
           MessageParticipantWorkspaceEntity,
           | 'messageId'
           | 'handle'
@@ -78,18 +78,25 @@ export class MessagingMessageParticipantService {
           | 'role'
           | 'personId'
           | 'workspaceMemberId'
-        >[] = participantsWithExisting
-          .filter(({ existingParticipant }) => !isDefined(existingParticipant))
-          .map(({ participant }) => {
-            return {
-              messageId: participant.messageId,
-              handle: participant.handle,
-              displayName: participant.displayName,
-              role: participant.role,
-              personId: participant.personId ?? null,
-              workspaceMemberId: participant.workspaceMemberId ?? null,
-            };
-          });
+        > &
+          Pick<ParticipantWithMessageId, 'createdBy'>)[] =
+          participantsWithExisting
+            .filter(
+              ({ existingParticipant }) => !isDefined(existingParticipant),
+            )
+            .map(({ participant }) => {
+              return {
+                messageId: participant.messageId,
+                handle: participant.handle,
+                displayName: participant.displayName,
+                role: participant.role,
+                personId: participant.personId ?? null,
+                workspaceMemberId: participant.workspaceMemberId ?? null,
+                ...(isDefined(participant.createdBy)
+                  ? { createdBy: participant.createdBy }
+                  : {}),
+              };
+            });
 
         // Without this a re-ingested participant would keep its original unlinked row forever
         const identityUpdates = participantsWithExisting.flatMap(

@@ -5,7 +5,7 @@ import { createEmptyConditionalAvailabilityFilter } from '@/conditional-availabi
 import { updateConditionalAvailabilityFilter } from '@/conditional-availability/utils/updateConditionalAvailabilityFilter';
 import { updateConditionalAvailabilityFilterGroup } from '@/conditional-availability/utils/updateConditionalAvailabilityFilterGroup';
 import { updateConditionalAvailabilityFilterOperator } from '@/conditional-availability/utils/updateConditionalAvailabilityFilterOperator';
-import { buildDeviceConditionalAvailability } from 'twenty-shared/conditional-availability';
+import { buildDeviceConditionalEvaluationNode } from 'twenty-shared/conditional-evaluation';
 
 const ADMIN_ROLE_UNIVERSAL_IDENTIFIER = '20202020-0000-4000-8000-000000000001';
 const SALES_ROLE_UNIVERSAL_IDENTIFIER = '20202020-0000-4000-8000-000000000002';
@@ -73,7 +73,7 @@ describe('convertConditionalAvailabilityFilterOrGroupToNode', () => {
     expect(convertToNode(filterGroupWithMobileDevice)).toEqual({
       type: 'GROUP',
       logicalOperator: 'AND',
-      children: [ROLE_NODE, buildDeviceConditionalAvailability('MOBILE')],
+      children: [ROLE_NODE, buildDeviceConditionalEvaluationNode('MOBILE')],
     });
   });
 
@@ -144,7 +144,7 @@ describe('convertConditionalAvailabilityFilterOrGroupToNode', () => {
     expect(convertToNode(filterGroupJoinedWithOr)).toEqual({
       type: 'GROUP',
       logicalOperator: 'OR',
-      children: [ROLE_NODE, buildDeviceConditionalAvailability('DESKTOP')],
+      children: [ROLE_NODE, buildDeviceConditionalEvaluationNode('DESKTOP')],
     });
   });
 });

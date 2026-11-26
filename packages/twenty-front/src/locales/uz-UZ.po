@@ -6442,11 +6442,6 @@ msgstr "kanal roli"
 msgid "Channel visibility on API keys"
 msgstr "API kalitlarida kanal ko‘rinishi"
 
-#. js-lingui-id: Kjphnm
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Channel visibility through rules"
-msgstr "Qoidalar orqali kanal ko‘rinishi"
-
 #. js-lingui-id: lfFsZ4
 #: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
 #: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
@@ -9621,7 +9616,7 @@ msgid "Customize record page"
 msgstr "Yozuv sahifasini moslashtirish"
 
 #. js-lingui-id: hxjpaE
-#: src/modules/navigation/components/MainNavigationDrawerContextMenu.tsx
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuCustomizeSidebarMenuContent.tsx
 #: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
 #: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
 msgid "Customize sidebar"
@@ -10031,7 +10026,6 @@ msgstr "Qiymatni kamaytirish"
 #: src/modules/settings/experience/components/UiScalePicker.tsx
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
-#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Default"
 msgstr "Standart"
 
@@ -16388,11 +16382,6 @@ msgstr "Bu hisobdan yangi xatlarni import qilish"
 msgid "Import new events from this account"
 msgstr "Bu hisobdan yangi tadbirlarni import qilish"
 
-#. js-lingui-id: 4Ljmum
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Import occurrences of recurring Google Calendar meetings up to 90 days ahead only, and import later occurrences as they come within 90 days."
-msgstr "Takrorlanuvchi Google Calendar uchrashuvlarining faqat 90 kun oldingacha bo‘lgan takrorlarini import qiling va keyingi takrorlarni ular 90 kun oralig‘iga kirganda import qiling."
-
 #. js-lingui-id: D5QSQM
 #: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx
 msgid "Import only selected folders/labels"
@@ -16402,11 +16391,6 @@ msgstr "Faqat tanlangan jildlar/yorliqlarni import qilish"
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
 msgid "Import or add the MCP configuration from JetBrains settings."
 msgstr "JetBrains sozlamalaridan MCP konfiguratsiyasini import qiling yoki qo‘shing."
-
-#. js-lingui-id: 8zGGat
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Import recurring meetings 90 days ahead"
-msgstr "Takrorlanuvchi uchrashuvlarni 90 kun oldindan import qilish"
 
 #. js-lingui-id: LHHO6e
 #: src/modules/getting-started/constants/GettingStartedImportPrompt.ts
@@ -16463,11 +16447,6 @@ msgstr "Bir kundan kam vaqt ichida"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 msgid "In progress"
 msgstr "Jarayonda"
-
-#. js-lingui-id: q6UzTa
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops and related record paths."
-msgstr "Jarayonda: xabar va taqvim kanallari ko‘rinishini yozuv darajasidagi ruxsat qoidalari bilan majburan qo‘llash. Aloqa o‘tishlari va bog‘liq yozuv yo‘llari kerak."
 
 #. js-lingui-id: 0Nl1Pt
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx
@@ -26045,11 +26024,6 @@ msgstr "Cheklangan"
 msgid "Result"
 msgstr "Natija"
 
-#. js-lingui-id: kx0s+n
-#: src/modules/side-panel/pages/search/components/SidePanelSearchRecordsPage.tsx
-msgid "Results"
-msgstr "Natijalar"
-
 #. js-lingui-id: v39wLo
 #: src/modules/log-console/components/LogConsoleResults.tsx
 #: src/modules/settings/event-logs/components/SettingsLogs.tsx
@@ -27126,6 +27100,7 @@ msgstr "Ish maydoni a’zolarini qidirish"
 
 #. js-lingui-id: YIix5Y
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
+#: src/modules/navigation/components/MainNavigationDrawerSearchField.tsx
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 msgid "Search..."
 msgstr "Qidirish..."
@@ -28737,20 +28712,10 @@ msgstr "O‘tkazib yuborish"
 msgid "Skip anyway"
 msgstr "Baribir o‘tkazib yuborish"
 
-#. js-lingui-id: 5jWe/6
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Skip calendar events with no participant outside the workspace domain, unless internal import is turned on."
-msgstr "Ichki import yoqilmagan bo‘lsa, ish maydoni domenidan tashqarida ishtirokchisi bo‘lmagan kalendar tadbirlarini o‘tkazib yuboring."
-
 #. js-lingui-id: TyudBs
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Skip creating a Name field "
 msgstr "Name maydonini yaratishni o‘tkazib yuborish "
-
-#. js-lingui-id: pmVASU
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Skip internal meetings"
-msgstr "Ichki uchrashuvlarni o‘tkazib yuborish"
 
 #. js-lingui-id: PlF+NA
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
@@ -29995,6 +29960,7 @@ msgid "System skills"
 msgstr "Tizim ko‘nikmalari"
 
 #. js-lingui-id: HuA3RU
+#: src/modules/navigation-menu-item/display/hooks/useGetNavigationMenuTabLabel.ts
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
 msgid "Tab"
@@ -31269,6 +31235,7 @@ msgstr "Ushbu provayder ichki o'rnatilgan. API kalitini uning sahifasidan sozlan
 
 #. js-lingui-id: qfpz3J
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
+#: src/modules/views/utils/computeRelationFilterDisplayValue.ts
 msgid "This record"
 msgstr "Ushbu yozuv"
 
@@ -34020,7 +33987,6 @@ msgstr "To‘q binafsha"
 #: src/modules/settings/unsubscribe-topics/components/SettingsWorkspaceUnsubscribeTopicSection.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
-#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Visibility"
 msgstr "Ko‘rinish darajasi"
 

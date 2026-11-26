@@ -6442,11 +6442,6 @@ msgstr "نقش کانال"
 msgid "Channel visibility on API keys"
 msgstr "قابلیت مشاهده کانال در کلیدهای API"
 
-#. js-lingui-id: Kjphnm
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Channel visibility through rules"
-msgstr "قابلیت مشاهده کانال از طریق قوانین"
-
 #. js-lingui-id: lfFsZ4
 #: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
 #: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
@@ -9621,7 +9616,7 @@ msgid "Customize record page"
 msgstr "سفارشی‌سازی صفحه رکورد"
 
 #. js-lingui-id: hxjpaE
-#: src/modules/navigation/components/MainNavigationDrawerContextMenu.tsx
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuCustomizeSidebarMenuContent.tsx
 #: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
 #: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
 msgid "Customize sidebar"
@@ -10031,7 +10026,6 @@ msgstr "کاهش مقدار"
 #: src/modules/settings/experience/components/UiScalePicker.tsx
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
-#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Default"
 msgstr "پیش‌فرض"
 
@@ -16388,11 +16382,6 @@ msgstr "وارد کردن ایمیل‌های جدید از این حساب"
 msgid "Import new events from this account"
 msgstr "وارد کردن رویدادهای جدید از این حساب"
 
-#. js-lingui-id: 4Ljmum
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Import occurrences of recurring Google Calendar meetings up to 90 days ahead only, and import later occurrences as they come within 90 days."
-msgstr "فقط رخدادهای جلسه‌های تکرارشونده Google Calendar را تا ۹۰ روز آینده وارد کنید و رخدادهای بعدی را هنگامی که در بازه ۹۰ روزه قرار می‌گیرند وارد کنید."
-
 #. js-lingui-id: D5QSQM
 #: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx
 msgid "Import only selected folders/labels"
@@ -16402,11 +16391,6 @@ msgstr "وارد کردن فقط پوشه‌ها/برچسب‌های انتخا�
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
 msgid "Import or add the MCP configuration from JetBrains settings."
 msgstr "پیکربندی MCP را از تنظیمات JetBrains وارد یا اضافه کنید."
-
-#. js-lingui-id: 8zGGat
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Import recurring meetings 90 days ahead"
-msgstr "وارد کردن جلسه‌های تکرارشونده تا ۹۰ روز آینده"
 
 #. js-lingui-id: LHHO6e
 #: src/modules/getting-started/constants/GettingStartedImportPrompt.ts
@@ -16463,11 +16447,6 @@ msgstr "تا کمتر از یک روز دیگر"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 msgid "In progress"
 msgstr "در حال انجام"
-
-#. js-lingui-id: q6UzTa
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops and related record paths."
-msgstr "در حال انجام: اعمال قابلیت مشاهده کانال‌های پیام و تقویم با قوانین مجوز در سطح رکورد. به پیمایش‌های رابطه و مسیرهای رکورد مرتبط نیاز دارد."
 
 #. js-lingui-id: 0Nl1Pt
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx
@@ -26045,11 +26024,6 @@ msgstr "محدود"
 msgid "Result"
 msgstr "نتیجه"
 
-#. js-lingui-id: kx0s+n
-#: src/modules/side-panel/pages/search/components/SidePanelSearchRecordsPage.tsx
-msgid "Results"
-msgstr "نتایج"
-
 #. js-lingui-id: v39wLo
 #: src/modules/log-console/components/LogConsoleResults.tsx
 #: src/modules/settings/event-logs/components/SettingsLogs.tsx
@@ -27126,6 +27100,7 @@ msgstr "جستجوی اعضای فضای کاری"
 
 #. js-lingui-id: YIix5Y
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
+#: src/modules/navigation/components/MainNavigationDrawerSearchField.tsx
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 msgid "Search..."
 msgstr "جستجو..."
@@ -28737,20 +28712,10 @@ msgstr "رد کردن"
 msgid "Skip anyway"
 msgstr "به‌هرحال رد کردن"
 
-#. js-lingui-id: 5jWe/6
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Skip calendar events with no participant outside the workspace domain, unless internal import is turned on."
-msgstr "رویدادهای تقویم را که هیچ شرکت‌کننده‌ای خارج از دامنه فضای کاری ندارند، نادیده بگیرید؛ مگر اینکه وارد کردن داخلی روشن باشد."
-
 #. js-lingui-id: TyudBs
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Skip creating a Name field "
 msgstr "از ایجاد فیلد نام صرف‌نظر کنید "
-
-#. js-lingui-id: pmVASU
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Skip internal meetings"
-msgstr "جلسه‌های داخلی را نادیده بگیرید"
 
 #. js-lingui-id: PlF+NA
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
@@ -29995,6 +29960,7 @@ msgid "System skills"
 msgstr "مهارت‌های سیستم"
 
 #. js-lingui-id: HuA3RU
+#: src/modules/navigation-menu-item/display/hooks/useGetNavigationMenuTabLabel.ts
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
 msgid "Tab"
@@ -31269,6 +31235,7 @@ msgstr "این ارائه‌دهنده داخلی است. کلید API آن را
 
 #. js-lingui-id: qfpz3J
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
+#: src/modules/views/utils/computeRelationFilterDisplayValue.ts
 msgid "This record"
 msgstr "این رکورد"
 
@@ -34020,7 +33987,6 @@ msgstr "بنفش مایل به آبی"
 #: src/modules/settings/unsubscribe-topics/components/SettingsWorkspaceUnsubscribeTopicSection.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
-#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Visibility"
 msgstr "قابلیت مشاهده"
 

@@ -6442,11 +6442,6 @@ msgstr "rol de canal"
 msgid "Channel visibility on API keys"
 msgstr "Visibilitat dels canals a les claus d'API"
 
-#. js-lingui-id: Kjphnm
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Channel visibility through rules"
-msgstr "Visibilitat dels canals mitjançant regles"
-
 #. js-lingui-id: lfFsZ4
 #: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
 #: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
@@ -9621,7 +9616,7 @@ msgid "Customize record page"
 msgstr "Personalitza la pàgina del registre"
 
 #. js-lingui-id: hxjpaE
-#: src/modules/navigation/components/MainNavigationDrawerContextMenu.tsx
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuCustomizeSidebarMenuContent.tsx
 #: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
 #: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
 msgid "Customize sidebar"
@@ -10031,7 +10026,6 @@ msgstr "Disminueix el valor"
 #: src/modules/settings/experience/components/UiScalePicker.tsx
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
-#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Default"
 msgstr "Per defecte"
 
@@ -16388,11 +16382,6 @@ msgstr "Importa correus electrònics nous d'aquest compte"
 msgid "Import new events from this account"
 msgstr "Importa esdeveniments nous d'aquest compte"
 
-#. js-lingui-id: 4Ljmum
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Import occurrences of recurring Google Calendar meetings up to 90 days ahead only, and import later occurrences as they come within 90 days."
-msgstr "Importa les ocurrències de reunions recurrents de Google Calendar amb un màxim de 90 dies d'antelació i importa les ocurrències posteriors quan quedin dins dels 90 dies."
-
 #. js-lingui-id: D5QSQM
 #: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx
 msgid "Import only selected folders/labels"
@@ -16402,11 +16391,6 @@ msgstr "Importa només les carpetes/etiquetes seleccionades"
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
 msgid "Import or add the MCP configuration from JetBrains settings."
 msgstr "Importa o afegeix la configuració MCP des de la configuració de JetBrains."
-
-#. js-lingui-id: 8zGGat
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Import recurring meetings 90 days ahead"
-msgstr "Importa reunions recurrents amb 90 dies d'antelació"
 
 #. js-lingui-id: LHHO6e
 #: src/modules/getting-started/constants/GettingStartedImportPrompt.ts
@@ -16463,11 +16447,6 @@ msgstr "En menys d'un dia"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 msgid "In progress"
 msgstr "En progrés"
-
-#. js-lingui-id: q6UzTa
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops and related record paths."
-msgstr "En curs: aplicar la visibilitat dels canals de missatges i calendaris amb regles de permisos a nivell de registre. Calen salts de relació i camins de registres relacionats."
 
 #. js-lingui-id: 0Nl1Pt
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx
@@ -26045,11 +26024,6 @@ msgstr "Restringit"
 msgid "Result"
 msgstr "Resultat"
 
-#. js-lingui-id: kx0s+n
-#: src/modules/side-panel/pages/search/components/SidePanelSearchRecordsPage.tsx
-msgid "Results"
-msgstr "Resultats"
-
 #. js-lingui-id: v39wLo
 #: src/modules/log-console/components/LogConsoleResults.tsx
 #: src/modules/settings/event-logs/components/SettingsLogs.tsx
@@ -27126,6 +27100,7 @@ msgstr "Cerca membres de l'espai de treball"
 
 #. js-lingui-id: YIix5Y
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
+#: src/modules/navigation/components/MainNavigationDrawerSearchField.tsx
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 msgid "Search..."
 msgstr "Cerca..."
@@ -28737,20 +28712,10 @@ msgstr "Omitir"
 msgid "Skip anyway"
 msgstr "Omet igualment"
 
-#. js-lingui-id: 5jWe/6
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Skip calendar events with no participant outside the workspace domain, unless internal import is turned on."
-msgstr "Omet els esdeveniments del calendari sense cap participant extern al domini de l'espai de treball, tret que la importació interna estigui activada."
-
 #. js-lingui-id: TyudBs
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Skip creating a Name field "
 msgstr "Omet crear un camp Nom "
-
-#. js-lingui-id: pmVASU
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Skip internal meetings"
-msgstr "Omet les reunions internes"
 
 #. js-lingui-id: PlF+NA
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
@@ -29995,6 +29960,7 @@ msgid "System skills"
 msgstr "Habilitats del sistema"
 
 #. js-lingui-id: HuA3RU
+#: src/modules/navigation-menu-item/display/hooks/useGetNavigationMenuTabLabel.ts
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
 msgid "Tab"
@@ -31269,6 +31235,7 @@ msgstr "Aquest proveïdor està integrat. Configureu la seva clau d'API des de l
 
 #. js-lingui-id: qfpz3J
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
+#: src/modules/views/utils/computeRelationFilterDisplayValue.ts
 msgid "This record"
 msgstr "Aquest registre"
 
@@ -34020,7 +33987,6 @@ msgstr "Violeta"
 #: src/modules/settings/unsubscribe-topics/components/SettingsWorkspaceUnsubscribeTopicSection.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
-#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Visibility"
 msgstr "Visibilitat"
 

@@ -2,14 +2,14 @@ import { type ConditionalAvailabilityFilter } from '@/conditional-availability/t
 import { type ConditionalAvailabilityFilterGroup } from '@/conditional-availability/types/ConditionalAvailabilityFilterGroup';
 import { convertConditionalAvailabilityComparisonNodeToFilter } from '@/conditional-availability/utils/convertConditionalAvailabilityComparisonNodeToFilter';
 import { mergeConditionalAvailabilityFilters } from '@/conditional-availability/utils/mergeConditionalAvailabilityFilters';
-import { type ConditionalAvailabilityNode } from 'twenty-shared/conditional-availability';
+import { type ConditionalEvaluationNode } from 'twenty-shared/conditional-evaluation';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 export const convertConditionalAvailabilityNodeToFilterOrGroup = ({
   node,
 }: {
-  node: ConditionalAvailabilityNode;
+  node: ConditionalEvaluationNode;
 }):
   | ConditionalAvailabilityFilter
   | ConditionalAvailabilityFilterGroup

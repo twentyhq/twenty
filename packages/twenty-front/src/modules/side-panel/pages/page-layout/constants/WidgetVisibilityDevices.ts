@@ -1,6 +1,6 @@
-import { CONDITIONAL_AVAILABILITY_DEVICES } from 'twenty-shared/conditional-availability';
+import { CONDITIONAL_EVALUATION_DEVICES } from 'twenty-shared/conditional-evaluation';
 
 export const WIDGET_VISIBILITY_DEVICES = [
   'ANY_DEVICE',
-  ...CONDITIONAL_AVAILABILITY_DEVICES,
+  ...CONDITIONAL_EVALUATION_DEVICES,
 ] as const;

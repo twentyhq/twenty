@@ -3,9 +3,9 @@ import { type ConditionalAvailabilityFilterGroup } from '@/conditional-availabil
 import { getConditionalAvailabilityFilterComparisonOperator } from '@/conditional-availability/utils/getConditionalAvailabilityFilterComparisonOperator';
 import { getConditionalAvailabilityFilterVariablePath } from '@/conditional-availability/utils/getConditionalAvailabilityFilterVariablePath';
 import {
-  type ConditionalAvailabilityNode,
-  joinConditionalAvailabilityNodes,
-} from 'twenty-shared/conditional-availability';
+  type ConditionalEvaluationNode,
+  joinConditionalEvaluationNodes,
+} from 'twenty-shared/conditional-evaluation';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
@@ -15,7 +15,7 @@ export const convertConditionalAvailabilityFilterOrGroupToNode = ({
   filterOrGroup:
     | ConditionalAvailabilityFilter
     | ConditionalAvailabilityFilterGroup;
-}): ConditionalAvailabilityNode | null => {
+}): ConditionalEvaluationNode | null => {
   if (filterOrGroup.type === 'filterGroup') {
     const childNodes = filterOrGroup.children
       .map((child) =>
@@ -26,7 +26,7 @@ export const convertConditionalAvailabilityFilterOrGroupToNode = ({
       .filter(isDefined);
 
     return isNonEmptyArray(childNodes)
-      ? joinConditionalAvailabilityNodes({
+      ? joinConditionalEvaluationNodes({
           nodes: childNodes,
           logicalOperator: filterOrGroup.logicalOperator,
         })
@@ -46,7 +46,7 @@ export const convertConditionalAvailabilityFilterOrGroupToNode = ({
     { operator },
   );
 
-  return joinConditionalAvailabilityNodes({
+  return joinConditionalEvaluationNodes({
     nodes: values.map((value) => ({
       type: 'COMPARISON',
       operator: comparisonOperator,
