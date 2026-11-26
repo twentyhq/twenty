@@ -4,7 +4,6 @@ import { CALL_RECORDER_SETTINGS_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from 'src
 import { WORKSPACE_SETTINGS_MENU_ITEM_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 
 export default defineSettingsMenuItem({
-  // Reuse the identity that Twenty generated for the previous workspace tab.
   universalIdentifier: WORKSPACE_SETTINGS_MENU_ITEM_UNIVERSAL_IDENTIFIER,
   frontComponentUniversalIdentifier:
     CALL_RECORDER_SETTINGS_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
