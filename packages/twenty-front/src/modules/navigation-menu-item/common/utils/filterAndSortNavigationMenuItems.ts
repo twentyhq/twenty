@@ -25,6 +25,7 @@ export const filterAndSortNavigationMenuItems = (
 
   // Chat favorites are listed in the chat menu instead
   const hiddenRecordObjectNames: string[] = [
+    // TODO(@bosiraphael): remove the legacy name with IS_INBOX_OBJECT_NAMING_ENABLED
     LEGACY_INBOX_OBJECT_NAMES_BY_LEGACY_NAME.agentChatThread,
     INBOX_OBJECT_NAMES_BY_LEGACY_NAME.agentChatThread,
     StandardObjectNameSingular.Workflow,

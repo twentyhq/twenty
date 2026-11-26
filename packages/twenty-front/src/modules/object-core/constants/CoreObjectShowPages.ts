@@ -25,6 +25,7 @@ export const CORE_OBJECT_SHOW_PAGES: ReadonlyMap<
       ),
     ),
   ],
+  // TODO(@bosiraphael): remove the legacy entry with IS_INBOX_OBJECT_NAMING_ENABLED
   [
     LEGACY_INBOX_OBJECT_NAMES_BY_LEGACY_NAME.agentChatThread,
     lazy(() =>
