@@ -445,7 +445,7 @@ describe('AiChatToolCallApprovalCard', () => {
     },
   );
 
-  it('blocks approval and explains an unavailable feature', () => {
+  it('shows a server-authorized preview despite a stale disabled client flag', () => {
     mockIsFeatureEnabled.mockReturnValue(false);
     renderCard({
       proposal: {
@@ -455,12 +455,12 @@ describe('AiChatToolCallApprovalCard', () => {
       },
     });
 
-    expect(screen.getByRole('alert')).toHaveTextContent(
-      'Could not load preview.',
-    );
-    expect(screen.getByRole('button', { name: 'Approve' })).toBeDisabled();
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Approve' })).toBeEnabled();
     expect(screen.getByRole('button', { name: 'Reject' })).toBeEnabled();
-    expect(screen.queryByRole('region')).not.toBeInTheDocument();
+    expect(
+      screen.getByRole('region', { name: 'Preview of current' }),
+    ).toBeInTheDocument();
   });
 
   it('does not refresh front components after approving another tool', async () => {
