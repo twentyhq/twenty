@@ -1,8 +1,8 @@
 import { ViewType } from '@/types';
 import { getViewLayoutFromViewType } from '@/utils/views/getViewLayoutFromViewType';
 
-type ViewTypeValue = `${ViewType}`;
-
-export const isViewCompactByDefault = (viewType: ViewTypeValue): boolean => {
+export const isViewCompactByDefault = (
+  viewType: Parameters<typeof getViewLayoutFromViewType>[0],
+): boolean => {
   return getViewLayoutFromViewType(viewType) === ViewType.LIST;
 };
