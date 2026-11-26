@@ -80,6 +80,7 @@ const StyledChevronButton = styled.button`
   color: inherit;
   cursor: pointer;
   display: inline-flex;
+  flex-shrink: 0;
   padding: 0;
 
   &:focus-visible {

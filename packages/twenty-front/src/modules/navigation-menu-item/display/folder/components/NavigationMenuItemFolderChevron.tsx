@@ -4,6 +4,7 @@ import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 const StyledContainer = styled.span<{ isOpen: boolean }>`
   display: inline-flex;
+  flex-shrink: 0;
   transform: rotate(${({ isOpen }) => (isOpen ? 90 : 0)}deg);
   transition: transform
     calc(${themeCssVariables.animation.duration.normal} * 1s) ease;

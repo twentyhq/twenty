@@ -138,6 +138,7 @@ const StyledLabelParent = styled.div`
   align-items: center;
   display: flex;
   flex: 1 1 auto;
+  gap: ${themeCssVariables.spacing[1]};
   min-width: 0px;
   overflow: hidden;
   text-overflow: clip;
@@ -165,12 +166,6 @@ const StyledItemSecondaryLabel = styled.span`
 const StyledNavigationDrawerItemContainer = styled.div`
   display: flex;
   width: 100%;
-`;
-
-const StyledTrailingIcon = styled.span`
-  display: inline-flex;
-  flex-shrink: 0;
-  margin-left: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledSpacer = styled.span`
@@ -450,9 +445,7 @@ export const NavigationDrawerItem = ({
                   }
                 />
               )}
-              {isDefined(trailingIcon) && isExpanded && (
-                <StyledTrailingIcon>{trailingIcon}</StyledTrailingIcon>
-              )}
+              {isExpanded && trailingIcon}
             </StyledLabelParent>
 
             {showStyledSpacer && <StyledSpacer />}
