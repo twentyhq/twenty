@@ -4,13 +4,11 @@ import { type calendar_v3 } from 'googleapis';
 import {
   CalendarChannelSyncStage,
   ConnectedAccountProvider,
-  FeatureFlagKey,
 } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { googleCalendarEvent } from 'test/integration/google/mocks/google-calendar-event.util';
 import { setupGoogleMock } from 'test/integration/google/mocks/setup-google-mock.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { connectMessagingAccount } from 'test/integration/utils/connect-messaging-account.util';
 import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 import { findImportedCalendarEventTitles } from 'test/integration/utils/find-imported-records.util';
@@ -92,13 +90,6 @@ describe('Google calendar recurring event horizon (integration)', () => {
 
   let channel: Awaited<ReturnType<typeof connectMessagingAccount>>;
   let workspaceId: string;
-
-  const setRecurringEventHorizonEnabled = (value: boolean) =>
-    updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED,
-      value,
-      expectToFail: false,
-    });
 
   const findRecurringEventWakeUps = (): Promise<
     CalendarRecurringEventWakeUp[]
@@ -212,13 +203,10 @@ describe('Google calendar recurring event horizon (integration)', () => {
   });
 
   afterAll(async () => {
-    await setRecurringEventHorizonEnabled(false);
     await channel?.cleanup();
   });
 
-  it('imports every instance while the flag is off and removes the ones beyond 90 days once it is on', async () => {
-    await setRecurringEventHorizonEnabled(false);
-
+  it('imports recurring instances within 90 days and single events at any date', async () => {
     const recurringEventId = `series-${randomUUID()}`;
     const instanceWithinHorizon = buildRecurringEventInstance({
       recurringEventId,
@@ -239,14 +227,6 @@ describe('Google calendar recurring event horizon (integration)', () => {
       singleEventBeyondHorizon,
     ];
 
-    await runFullCalendarSync(events);
-
-    expect(
-      await findImportedCalendarEventTitles(getSortedEventTitles(events)),
-    ).toEqual(getSortedEventTitles(events));
-    expect(await findRecurringEventWakeUps()).toEqual([]);
-
-    await setRecurringEventHorizonEnabled(true);
     google.serveRecurringEventInstances({
       recurringEventId,
       instances: [instanceWithinHorizon, instanceBeyondHorizon],
@@ -262,8 +242,6 @@ describe('Google calendar recurring event horizon (integration)', () => {
   }, 120000);
 
   it('schedules one wake-up per recurring event at its earliest instance beyond 90 days, in whatever order Google lists them', async () => {
-    await setRecurringEventHorizonEnabled(true);
-
     const weeklyEventId = `series-${randomUUID()}`;
     const [
       instanceInHundredThirtyDays,
@@ -324,8 +302,6 @@ describe('Google calendar recurring event horizon (integration)', () => {
   }, 120000);
 
   it('imports the instances within 90 days that the sync did not bring', async () => {
-    await setRecurringEventHorizonEnabled(true);
-
     const recurringEventId = `series-${randomUUID()}`;
     const [
       instanceInTenDays,
@@ -390,15 +366,9 @@ describe('Google calendar recurring event horizon (integration)', () => {
           failure: { status: 404, reason: 'notFound', message: 'Not Found' },
         }),
     },
-    {
-      title: 'once the flag is turned off',
-      makeWakeUpObsolete: () => setRecurringEventHorizonEnabled(false),
-    },
   ])(
     'removes the wake-up $title',
     async ({ makeWakeUpObsolete }) => {
-      await setRecurringEventHorizonEnabled(true);
-
       const recurringEventId = `series-${randomUUID()}`;
       const instanceWithinHorizon = buildRecurringEventInstance({
         recurringEventId,
@@ -427,8 +397,6 @@ describe('Google calendar recurring event horizon (integration)', () => {
   );
 
   it('keeps the wake-up and checks again a day later while calendar sync is paused', async () => {
-    await setRecurringEventHorizonEnabled(true);
-
     const recurringEventId = `series-${randomUUID()}`;
     const instanceWithinHorizon = buildRecurringEventInstance({
       recurringEventId,
