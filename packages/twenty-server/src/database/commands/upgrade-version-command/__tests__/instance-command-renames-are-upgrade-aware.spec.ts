@@ -25,10 +25,18 @@ type CoreEntity = {
   columns: { propertyName: string; columnNames: string[] }[];
 };
 
-const listFiles = (directory: string, suffix: string) =>
-  readdirSync(directory, { recursive: true, encoding: 'utf8' })
-    .filter((path) => path.endsWith(suffix))
-    .map((path) => join(directory, path));
+const listInstanceCommandFiles = () =>
+  readdirSync(UPGRADE_COMMANDS_DIRECTORY, {
+    recursive: true,
+    encoding: 'utf8',
+  })
+    .filter(
+      (path) =>
+        path.includes('-instance-command-') &&
+        path.endsWith('.ts') &&
+        !path.endsWith('.spec.ts'),
+    )
+    .map((path) => join(UPGRADE_COMMANDS_DIRECTORY, path));
 
 const loadCoreEntities = (): CoreEntity[] => {
   const entityGlobs = Array.isArray(typeORMCoreModuleOptions.entities)
@@ -111,14 +119,7 @@ describe('instance command renames', () => {
     const coreEntities = loadCoreEntities();
     const problems: string[] = [];
 
-    const instanceCommandFiles = listFiles(
-      UPGRADE_COMMANDS_DIRECTORY,
-      '.ts',
-    ).filter(
-      (path) => path.includes('-instance-command-') && !path.endsWith('.spec.ts'),
-    );
-
-    for (const commandFile of instanceCommandFiles) {
+    for (const commandFile of listInstanceCommandFiles()) {
       const source = readFileSync(commandFile, 'utf8');
       const stepName = extractStepName(source);
       const upMethodSource = extractUpMethodSource(source);
