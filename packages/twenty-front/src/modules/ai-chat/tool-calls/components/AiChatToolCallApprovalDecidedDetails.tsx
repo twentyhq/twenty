@@ -88,6 +88,11 @@ export const AiChatToolCallApprovalDecidedDetails = ({
   const { t } = useLingui();
   const theme = useTheme();
   const { proposal, status, feedback, error } = result;
+  const outcomeError =
+    error ??
+    (status === 'conflict'
+      ? t`The record changed since it was proposed, so nothing was run.`
+      : undefined);
   const { template, objectNameSingular, recordId } = proposal;
   const toolFrontComponentId = useFrontComponentIdByToolName().get(
     proposal.toolName,
@@ -171,7 +176,9 @@ export const AiChatToolCallApprovalDecidedDetails = ({
         {isNonEmptyString(feedback) && (
           <StyledNote isError={false}>{t`Feedback: ${feedback}`}</StyledNote>
         )}
-        {isNonEmptyString(error) && <StyledNote isError>{error}</StyledNote>}
+        {isNonEmptyString(outcomeError) && (
+          <StyledNote isError>{outcomeError}</StyledNote>
+        )}
       </StyledAiChatAskCard>
     </AiChatAskDetails>
   );

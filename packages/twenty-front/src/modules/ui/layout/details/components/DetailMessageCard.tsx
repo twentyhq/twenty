@@ -3,12 +3,11 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { LightButton } from 'twenty-ui/components/input';
 import { Section } from 'twenty-ui/components/layout';
-import { IconCopy } from 'twenty-ui/icon';
+import { IconChevronDown, IconCopy } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { FieldWidgetShowMoreButton } from '@/page-layout/widgets/field/components/FieldWidgetShowMoreButton';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const COLLAPSED_MESSAGE_STACK_LINE_COUNT = 1;
@@ -79,10 +78,14 @@ export const DetailMessageCard = ({
         ))}
         {hiddenMessageStackLineCount > 0 && (
           <StyledShowMoreContainer>
-            <FieldWidgetShowMoreButton
-              remainingCount={hiddenMessageStackLineCount}
+            <LightButton
+              emphasis="subtle"
+              size="sm"
+              startIcon={<IconChevronDown />}
               onClick={() => setIsExpanded(true)}
-            />
+            >
+              {t`More (${hiddenMessageStackLineCount})`}
+            </LightButton>
           </StyledShowMoreContainer>
         )}
       </StyledMessageCard>

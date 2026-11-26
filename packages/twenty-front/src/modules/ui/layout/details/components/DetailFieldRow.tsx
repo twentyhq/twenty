@@ -4,12 +4,14 @@ import { type IconComponent } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
+const DETAIL_FIELD_LABEL_WIDTH_PX = 92;
+
 const StyledDetailFieldRow = styled.div`
   align-items: center;
   display: grid;
   gap: ${themeCssVariables.spacing[1]};
-  grid-template-columns: 92px minmax(0, 1fr);
-  min-height: 24px;
+  grid-template-columns: ${DETAIL_FIELD_LABEL_WIDTH_PX}px minmax(0, 1fr);
+  min-height: ${themeCssVariables.spacing[6]};
 `;
 
 export const StyledDetailFieldLabel = styled.div`

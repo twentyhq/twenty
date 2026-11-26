@@ -53,7 +53,7 @@ const StyledQuestionText = styled.p`
   font-weight: ${themeCssVariables.font.weight.medium};
   line-height: 1.4;
   margin: 0;
-  min-height: 24px;
+  min-height: ${themeCssVariables.spacing[6]};
   overflow-wrap: anywhere;
   padding-left: ${themeCssVariables.spacing[1]};
 `;
@@ -74,7 +74,7 @@ const StyledOptionRow = styled.div<{ isSelected: boolean }>`
   box-sizing: border-box;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
-  min-height: 32px;
+  min-height: ${themeCssVariables.spacing[8]};
   padding: 0 ${themeCssVariables.spacing[1]};
 `;
 

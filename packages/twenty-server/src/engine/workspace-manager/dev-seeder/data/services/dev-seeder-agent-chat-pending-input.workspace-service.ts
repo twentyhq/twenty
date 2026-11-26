@@ -282,6 +282,28 @@ type ConversationToSeed = {
   sharedWith?: { member: Member; accessLevel: RecordShareAccessLevel };
 };
 
+const buildSeededToolOutput = ({
+  toolName,
+  executedTool,
+}: {
+  toolName: string;
+  executedTool: NonNullable<ConversationToSeed['answer']>['executedTool'];
+}) => {
+  if (toolName.startsWith('find_one_')) {
+    return {
+      success: true,
+      message: 'Found record',
+      result: { records: [executedTool?.recordSnapshot] },
+    };
+  }
+
+  return {
+    success: true,
+    message: executedTool?.message ?? 'Email sent successfully',
+    result: executedTool?.result,
+  };
+};
+
 const CONVERSATIONS_TO_SEED: ConversationToSeed[] = [
   {
     threadId: AGENT_CHAT_PENDING_INPUT_THREAD_DATA_SEED_IDS.PENDING_QUESTIONS,
@@ -609,23 +631,10 @@ export class DevSeederAgentChatPendingInputWorkspaceService {
           context: {
             // Seeds never send anything; the email reads as sent
             executeTool: async ({ toolName }) =>
-              toolName.startsWith('find_one_')
-                ? {
-                    success: true,
-                    message: 'Found record',
-                    result: {
-                      records: [
-                        conversation.answer?.executedTool?.recordSnapshot,
-                      ],
-                    },
-                  }
-                : {
-                    success: true,
-                    message:
-                      conversation.answer?.executedTool?.message ??
-                      'Email sent successfully',
-                    result: conversation.answer?.executedTool?.result,
-                  },
+              buildSeededToolOutput({
+                toolName,
+                executedTool: conversation.answer?.executedTool,
+              }),
           },
         })
       : undefined;

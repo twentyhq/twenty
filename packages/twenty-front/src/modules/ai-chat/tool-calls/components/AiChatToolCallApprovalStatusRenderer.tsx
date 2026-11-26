@@ -18,24 +18,19 @@ import { TextWithChatReferences } from '@/ai-chat/message-content/components/Tex
 import { getChatReferencePlainText } from '@/ai-chat/message-content/utils/getChatReferencePlainText';
 import { getToolIcon } from '@/ai/utils/getToolIcon';
 
-const DECIDED_APPROVAL_STATUSES = [
-  'approved',
-  'rejected',
-  'failed',
-  'conflict',
-] as const satisfies readonly ProposeToolCallToolStatus[];
+const IS_FAILURE_BY_DECIDED_APPROVAL_STATUS = {
+  approved: false,
+  rejected: false,
+  failed: true,
+  conflict: true,
+} as const satisfies Partial<Record<ProposeToolCallToolStatus, boolean>>;
 
-type DecidedApprovalStatus = (typeof DECIDED_APPROVAL_STATUSES)[number];
+type DecidedApprovalStatus = keyof typeof IS_FAILURE_BY_DECIDED_APPROVAL_STATUS;
 
 const isDecidedApprovalStatus = (
   status: ProposeToolCallToolStatus,
 ): status is DecidedApprovalStatus =>
-  DECIDED_APPROVAL_STATUSES.some((decidedStatus) => decidedStatus === status);
-
-const FAILED_APPROVAL_STATUSES: ProposeToolCallToolStatus[] = [
-  'failed',
-  'conflict',
-];
+  status in IS_FAILURE_BY_DECIDED_APPROVAL_STATUS;
 
 export const AiChatToolCallApprovalStatusRenderer = ({
   toolPart,
@@ -92,7 +87,16 @@ export const AiChatToolCallApprovalStatusRenderer = ({
     !hasFailedToPropose &&
     isDecidedApprovalStatus(status)
   ) {
-    const hasFailed = FAILED_APPROVAL_STATUSES.includes(status);
+    const hasFailed = IS_FAILURE_BY_DECIDED_APPROVAL_STATUS[status];
+    const decidedDetailByStatus: Record<
+      DecidedApprovalStatus,
+      string | undefined
+    > = {
+      approved: undefined,
+      rejected: t`Rejected`,
+      failed: t`Failed`,
+      conflict: t`Not run: the record changed`,
+    };
     const ToolIcon = getToolIcon(result.proposal.toolName);
 
     return (
@@ -109,7 +113,7 @@ export const AiChatToolCallApprovalStatusRenderer = ({
             )
           }
           label={getChatReferencePlainText(result.proposal.summary)}
-          detail={status === 'rejected' ? t`Rejected` : undefined}
+          detail={decidedDetailByStatus[status]}
           isActive={false}
           isError={hasFailed}
           details={
