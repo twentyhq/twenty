@@ -35,6 +35,7 @@ import { DROP_IS_CUSTOM_FROM_AGENT_SKILL_VIEW_INDEX_AND_AGENT_CHAT_CHANNEL_UPGRA
 import { ADD_VIEW_SHOULD_DISPLAY_GROUPS_AS_TABS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-58/add-view-should-display-groups-as-tabs-upgrade-command-name.constant';
 import { ADD_PRESET_FILTER_TO_VIEW_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-63/add-preset-filter-to-view-upgrade-command-name.constant';
 import { ADD_VIEW_IS_PRIVATE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-63/add-view-is-private-upgrade-command-name.constant';
+import { DROP_VIEW_VISIBILITY_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-65/drop-view-visibility-upgrade-command-name.constant';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -287,6 +288,9 @@ export class ViewEntity
   @Column({ type: 'boolean', nullable: false, default: false })
   isPrivate: boolean;
 
+  @WasRemovedInUpgrade({
+    upgradeCommandName: DROP_VIEW_VISIBILITY_UPGRADE_COMMAND_NAME,
+  })
   @Column({
     type: 'enum',
     enum: Object.values(ViewVisibility),

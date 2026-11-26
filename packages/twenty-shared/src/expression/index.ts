@@ -31,3 +31,4 @@ export type { ExpressionUnaryOperator } from './types/ExpressionUnaryOperator';
 export type { ExpressionVariableNode } from './types/ExpressionVariableNode';
 export { expressionComparisonOperatorSchema } from './utils/expressionComparisonOperatorSchema';
 export { expressionLogicalOperatorSchema } from './utils/expressionLogicalOperatorSchema';
+export { printExpressionNode } from './utils/printExpressionNode';
