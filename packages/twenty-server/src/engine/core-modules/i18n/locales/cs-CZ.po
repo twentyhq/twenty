@@ -7501,7 +7501,7 @@ msgstr "Neplatný vzorec: {errorMessage}"
 #. js-lingui-id: uJjrgd
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-formula.util.ts
 msgid "Invalid formula: write it as text"
-msgstr ""
+msgstr "Neplatný vzorec: zapište jej jako text"
 
 #. js-lingui-id: rFH0az
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
@@ -14458,7 +14458,7 @@ msgstr "Podmínka spuštění agenta je neplatná"
 #. js-lingui-id: 2l+SMV
 #: src/engine/metadata-modules/logic-function/services/logic-function-from-source.service.ts
 msgid "The condition of the database event trigger is invalid"
-msgstr ""
+msgstr "Podmínka triggeru události databáze je neplatná"
 
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider
@@ -16078,7 +16078,7 @@ msgstr "Tento uživatel není členem pracovního prostoru."
 #. js-lingui-id: BFSoo/
 #: src/engine/metadata-modules/validation-rule/validation-rule.service.ts
 msgid "This validation rule is being upgraded. Try again in a few minutes."
-msgstr ""
+msgstr "Toto validační pravidlo se aktualizuje. Zkuste to znovu za několik minut."
 
 #. js-lingui-id: LtsBYU
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts

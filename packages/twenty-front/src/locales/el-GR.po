@@ -28103,7 +28103,7 @@ msgstr "Ορίστε τις απαιτούμενες μεταβλητές δια
 #. js-lingui-id: L/hdCR
 #: src/modules/settings/applications/components/SettingsApplicationConfigurationSection.tsx
 msgid "Set up {applicationName} for your workspace"
-msgstr ""
+msgstr "Ρυθμίστε το {applicationName} για τον χώρο εργασίας σας"
 
 #. js-lingui-id: tG3Y2G
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx

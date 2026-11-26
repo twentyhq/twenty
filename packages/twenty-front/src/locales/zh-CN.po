@@ -28103,7 +28103,7 @@ msgstr "设置所需的服务器变量：{missingVariableKeys}"
 #. js-lingui-id: L/hdCR
 #: src/modules/settings/applications/components/SettingsApplicationConfigurationSection.tsx
 msgid "Set up {applicationName} for your workspace"
-msgstr ""
+msgstr "为你的工作区设置 {applicationName}"
 
 #. js-lingui-id: tG3Y2G
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx

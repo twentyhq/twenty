@@ -28103,7 +28103,7 @@ msgstr "필수 서버 변수 설정: {missingVariableKeys}"
 #. js-lingui-id: L/hdCR
 #: src/modules/settings/applications/components/SettingsApplicationConfigurationSection.tsx
 msgid "Set up {applicationName} for your workspace"
-msgstr ""
+msgstr "워크스페이스에 {applicationName} 설정하기"
 
 #. js-lingui-id: tG3Y2G
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx

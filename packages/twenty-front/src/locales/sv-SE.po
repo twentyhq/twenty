@@ -28107,7 +28107,7 @@ msgstr "Ange de obligatoriska servervariablerna: {missingVariableKeys}"
 #. js-lingui-id: L/hdCR
 #: src/modules/settings/applications/components/SettingsApplicationConfigurationSection.tsx
 msgid "Set up {applicationName} for your workspace"
-msgstr ""
+msgstr "Konfigurera {applicationName} för din arbetsyta"
 
 #. js-lingui-id: tG3Y2G
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx

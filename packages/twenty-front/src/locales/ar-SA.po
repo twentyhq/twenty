@@ -28103,7 +28103,7 @@ msgstr "عيّن متغيرات الخادم المطلوبة: {missingVariableK
 #. js-lingui-id: L/hdCR
 #: src/modules/settings/applications/components/SettingsApplicationConfigurationSection.tsx
 msgid "Set up {applicationName} for your workspace"
-msgstr ""
+msgstr "أعِدّ {applicationName} لمساحة العمل الخاصة بك"
 
 #. js-lingui-id: tG3Y2G
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx

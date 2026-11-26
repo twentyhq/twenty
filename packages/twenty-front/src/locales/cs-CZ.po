@@ -28103,7 +28103,7 @@ msgstr "Nastavte požadované proměnné serveru: {missingVariableKeys}"
 #. js-lingui-id: L/hdCR
 #: src/modules/settings/applications/components/SettingsApplicationConfigurationSection.tsx
 msgid "Set up {applicationName} for your workspace"
-msgstr ""
+msgstr "Nastavte {applicationName} pro svůj pracovní prostor"
 
 #. js-lingui-id: tG3Y2G
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx

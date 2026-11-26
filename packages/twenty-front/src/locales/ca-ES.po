@@ -28103,7 +28103,7 @@ msgstr "Defineix les variables de servidor necessàries: {missingVariableKeys}"
 #. js-lingui-id: L/hdCR
 #: src/modules/settings/applications/components/SettingsApplicationConfigurationSection.tsx
 msgid "Set up {applicationName} for your workspace"
-msgstr ""
+msgstr "Configura {applicationName} per al teu espai de treball"
 
 #. js-lingui-id: tG3Y2G
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx

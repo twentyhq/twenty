@@ -7501,7 +7501,7 @@ msgstr "Công thức không hợp lệ: {errorMessage}"
 #. js-lingui-id: uJjrgd
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-formula.util.ts
 msgid "Invalid formula: write it as text"
-msgstr ""
+msgstr "Công thức không hợp lệ: hãy viết dưới dạng văn bản"
 
 #. js-lingui-id: rFH0az
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
@@ -14458,7 +14458,7 @@ msgstr "Điều kiện của trình kích hoạt tác tử không hợp lệ"
 #. js-lingui-id: 2l+SMV
 #: src/engine/metadata-modules/logic-function/services/logic-function-from-source.service.ts
 msgid "The condition of the database event trigger is invalid"
-msgstr ""
+msgstr "Điều kiện của trình kích hoạt sự kiện cơ sở dữ liệu không hợp lệ"
 
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider
@@ -16078,7 +16078,7 @@ msgstr "Người dùng này không phải là thành viên của không gian là
 #. js-lingui-id: BFSoo/
 #: src/engine/metadata-modules/validation-rule/validation-rule.service.ts
 msgid "This validation rule is being upgraded. Try again in a few minutes."
-msgstr ""
+msgstr "Quy tắc xác thực này đang được nâng cấp. Hãy thử lại sau vài phút."
 
 #. js-lingui-id: LtsBYU
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts

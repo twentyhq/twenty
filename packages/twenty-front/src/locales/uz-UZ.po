@@ -28103,7 +28103,7 @@ msgstr "Talab qilinadigan server o‘zgaruvchilarini o‘rnating: {missingVariab
 #. js-lingui-id: L/hdCR
 #: src/modules/settings/applications/components/SettingsApplicationConfigurationSection.tsx
 msgid "Set up {applicationName} for your workspace"
-msgstr ""
+msgstr "Ish maydoningiz uchun {applicationName} ilovasini sozlang"
 
 #. js-lingui-id: tG3Y2G
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx

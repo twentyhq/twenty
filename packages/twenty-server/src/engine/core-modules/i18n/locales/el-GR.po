@@ -7501,7 +7501,7 @@ msgstr "Μη έγκυρη φόρμουλα: {errorMessage}"
 #. js-lingui-id: uJjrgd
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-formula.util.ts
 msgid "Invalid formula: write it as text"
-msgstr ""
+msgstr "Μη έγκυρος τύπος: γράψτε τον ως κείμενο"
 
 #. js-lingui-id: rFH0az
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
@@ -14458,7 +14458,7 @@ msgstr "Η συνθήκη ενός εναύσματος πράκτορα δεν 
 #. js-lingui-id: 2l+SMV
 #: src/engine/metadata-modules/logic-function/services/logic-function-from-source.service.ts
 msgid "The condition of the database event trigger is invalid"
-msgstr ""
+msgstr "Η συνθήκη του εναύσματος συμβάντος της βάσης δεδομένων δεν είναι έγκυρη"
 
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider
@@ -16078,7 +16078,7 @@ msgstr "Αυτός ο χρήστης δεν αποτελεί μέρος του �
 #. js-lingui-id: BFSoo/
 #: src/engine/metadata-modules/validation-rule/validation-rule.service.ts
 msgid "This validation rule is being upgraded. Try again in a few minutes."
-msgstr ""
+msgstr "Αυτός ο κανόνας επικύρωσης αναβαθμίζεται. Δοκιμάστε ξανά σε λίγα λεπτά."
 
 #. js-lingui-id: LtsBYU
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts

@@ -28103,7 +28103,7 @@ msgstr "Gerekli sunucu değişkenlerini ayarlayın: {missingVariableKeys}"
 #. js-lingui-id: L/hdCR
 #: src/modules/settings/applications/components/SettingsApplicationConfigurationSection.tsx
 msgid "Set up {applicationName} for your workspace"
-msgstr ""
+msgstr "Çalışma alanınız için {applicationName} uygulamasını ayarlayın"
 
 #. js-lingui-id: tG3Y2G
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
