@@ -1040,7 +1040,8 @@ describe('call recorder app lifecycle (integration)', () => {
   }, REAL_QUEUE_TIMEOUT_MS);
 
   const warnCleanupFailure =
-    (step: string, callRecordingId: string) => (error: unknown) =>
+    ({ step, callRecordingId }: { step: string; callRecordingId: string }) =>
+    (error: unknown) =>
       console.warn(
         `[test cleanup] ${step} failed for call recording ${callRecordingId}: ${error instanceof Error ? error.message : String(error)}`,
       );
@@ -1064,12 +1065,12 @@ describe('call recorder app lifecycle (integration)', () => {
             id: true,
           },
         })
-        .catch(warnCleanupFailure('detach', callRecordingId));
+        .catch(warnCleanupFailure({ step: 'detach', callRecordingId }));
       await workspaceApiKeyClient
         .mutation({
           destroyCallRecording: { __args: { id: callRecordingId }, id: true },
         })
-        .catch(warnCleanupFailure('destroy', callRecordingId));
+        .catch(warnCleanupFailure({ step: 'destroy', callRecordingId }));
     }
   };
 
