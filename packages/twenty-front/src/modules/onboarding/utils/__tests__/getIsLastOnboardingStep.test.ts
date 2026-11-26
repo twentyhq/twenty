@@ -28,7 +28,6 @@ const buildArgs = ({
       : [],
   },
   isBillingEnabled,
-  isBookCallRequired: false,
 });
 
 describe('getIsLastOnboardingStep', () => {

@@ -1520,7 +1520,6 @@ type ClientConfig {
   enterpriseInstanceType: String!
   frontDomain: String!
   isAttachmentPreviewEnabled: Boolean!
-  isBookCallOnboardingStepEnabled: Boolean!
   isClickHouseConfigured: Boolean!
   isCloudflareIntegrationEnabled: Boolean!
   isCompanyEnrichmentEnabled: Boolean!
@@ -3620,7 +3619,6 @@ type Mutation {
   claimApplicationRegistrationOwnership(applicationRegistrationId: String!): ApplicationRegistration!
   completeAppTarballUpload(fileId: UUID!): ApplicationRegistration!
   completeApplicationFileUploads(applicationUniversalIdentifier: String!, fileIds: [UUID!]!): CompleteApplicationFileUploadsResult!
-  completeBookCallOnboardingStep(hasBookedCall: Boolean! = false, isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
   completeFileUpload(fileId: String!): FileWithSignedUrl!
   completeNewWorkspaceLogoUpload(fileId: String!, workspaceId: String!): FileWithSignedUrl!
   completeWorkspaceLogoUpload(fileId: String!): FileWithSignedUrl!
@@ -4144,7 +4142,6 @@ type ObjectRecordsPermissions {
 
 """Onboarding status"""
 enum OnboardingStatus {
-  BOOK_CALL
   COMPLETED
   INVITE_TEAM
   PLAN_REQUIRED
@@ -6948,7 +6945,6 @@ enum WorkspaceCompanyEnrichmentOutcome {
 
 type WorkspaceCompanyEnrichmentResult {
   enrichment: JSON
-  isBookCallOnboardingStepPending: Boolean!
   outcome: WorkspaceCompanyEnrichmentOutcome!
   personEnrichment: JSON
   personOutcome: WorkspacePersonEnrichmentOutcome!

@@ -24,7 +24,6 @@ export type ClientConfig = {
   authProviders: AuthProviders;
   billing: Billing;
   calendarBookingPageId?: string;
-  isBookCallOnboardingStepEnabled: boolean;
   isCompanyEnrichmentEnabled: boolean;
   canManageFeatureFlags: boolean;
   captcha: Captcha;

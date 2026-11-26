@@ -13,13 +13,6 @@ import {
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 import { BookCall } from '~/pages/onboarding/BookCall';
-import { OnboardingStatus } from '~/generated-metadata/graphql';
-
-const mockOnboardingStatus = jest.fn();
-
-jest.mock('@/onboarding/hooks/useOnboardingStatus', () => ({
-  useOnboardingStatus: () => mockOnboardingStatus(),
-}));
 
 jest.mock('@/onboarding/components/BookCallEmbed', () => ({
   BookCallEmbed: ({
@@ -27,10 +20,6 @@ jest.mock('@/onboarding/components/BookCallEmbed', () => ({
   }: {
     calendarBookingPageId: string;
   }) => <div data-testid="book-call-embed">{calendarBookingPageId}</div>,
-}));
-
-jest.mock('@/onboarding/components/BookCallOnboardingStepActions', () => ({
-  BookCallOnboardingStepActions: () => <div>Skip</div>,
 }));
 
 dynamicActivate(SOURCE_LOCALE);
@@ -56,7 +45,6 @@ describe('BookCall', () => {
   beforeEach(() => {
     resetJotaiStore();
     jest.clearAllMocks();
-    mockOnboardingStatus.mockReturnValue(OnboardingStatus.BOOK_CALL);
   });
 
   it('should render the step heading alongside the embed', () => {
@@ -71,20 +59,9 @@ describe('BookCall', () => {
   });
 
   it('should redirect to the plan step rather than render an empty embed', () => {
-    mockOnboardingStatus.mockReturnValue(OnboardingStatus.PLAN_REQUIRED);
-
     renderPage();
 
     expect(screen.getByText('Choose your plan')).toBeInTheDocument();
-    expect(screen.queryByTestId('book-call-embed')).not.toBeInTheDocument();
-  });
-
-  it('should stay on the step without an embed rather than bounce against the redirect engine', () => {
-    renderPage();
-
-    expect(screen.getByText('Talk to our team')).toBeInTheDocument();
-    expect(screen.getByText('Skip')).toBeInTheDocument();
-    expect(screen.queryByText('Choose your plan')).not.toBeInTheDocument();
     expect(screen.queryByTestId('book-call-embed')).not.toBeInTheDocument();
   });
 });

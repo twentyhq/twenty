@@ -6,10 +6,8 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import { billingState } from '@/client-config/states/billingState';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
-import { isBookCallOnboardingStepEnabledState } from '@/client-config/states/isBookCallOnboardingStepEnabledState';
 import { OnboardingConstructionSiteCanvasEffect } from '@/onboarding/components/OnboardingConstructionSite/OnboardingConstructionSiteCanvasEffect';
 import { getOnboardingConstructionSiteStage } from '@/onboarding/components/OnboardingConstructionSite/getOnboardingConstructionSiteStage';
-import { getIsBookCallRequired } from '@/onboarding/utils/getIsBookCallRequired';
 import { getIsLastOnboardingStep } from '@/onboarding/utils/getIsLastOnboardingStep';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { themeCssVariables, useThemeColorScheme } from 'twenty-ui/theme';
@@ -50,9 +48,6 @@ export const OnboardingConstructionSite = () => {
     clientConfigApiStatusState,
   ).isLoadedOnce;
   const isCurrentUserLoaded = useAtomStateValue(isCurrentUserLoadedState);
-  const isBookCallOnboardingStepEnabled = useAtomStateValue(
-    isBookCallOnboardingStepEnabledState,
-  );
   const colorScheme = useThemeColorScheme();
   const prefersReducedMotion = useMediaQuery(
     doNotTranslate('(prefers-reduced-motion: reduce)'),
@@ -68,10 +63,6 @@ export const OnboardingConstructionSite = () => {
       currentUser,
       currentWorkspace,
       isBillingEnabled: billing?.isBillingEnabled ?? false,
-      isBookCallRequired: getIsBookCallRequired({
-        isBookCallOnboardingStepEnabled,
-        currentUser,
-      }),
     }),
   });
 

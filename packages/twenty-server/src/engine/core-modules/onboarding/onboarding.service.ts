@@ -28,7 +28,6 @@ import {
 } from 'src/engine/core-modules/onboarding/onboarding.exception';
 import { type ReversibleOnboardingStep } from 'src/engine/core-modules/onboarding/types/reversible-onboarding-step.type';
 import { getOnboardingEnrichmentCreditRewardMicro } from 'src/engine/core-modules/onboarding/utils/get-onboarding-enrichment-credit-reward-micro.util';
-import { readBookCallStepMinEmployeeCount } from 'src/engine/core-modules/onboarding/utils/read-book-call-step-min-employee-count.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -39,7 +38,6 @@ export enum OnboardingStepKeys {
   ONBOARDING_CONNECT_ACCOUNT_PENDING = 'ONBOARDING_CONNECT_ACCOUNT_PENDING',
   ONBOARDING_INVITE_TEAM_PENDING = 'ONBOARDING_INVITE_TEAM_PENDING',
   ONBOARDING_CREATE_PROFILE_PENDING = 'ONBOARDING_CREATE_PROFILE_PENDING',
-  ONBOARDING_BOOK_CALL_PENDING = 'ONBOARDING_BOOK_CALL_PENDING',
   ONBOARDING_REVERSIBLE_STEP_HISTORY = 'ONBOARDING_REVERSIBLE_STEP_HISTORY',
 }
 
@@ -47,7 +45,6 @@ export type OnboardingKeyValueTypeMap = {
   [OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING]: boolean;
   [OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING]: boolean;
   [OnboardingStepKeys.ONBOARDING_CREATE_PROFILE_PENDING]: boolean;
-  [OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING]: boolean;
   [OnboardingStepKeys.ONBOARDING_REVERSIBLE_STEP_HISTORY]: ReversibleOnboardingStep[];
 };
 
@@ -145,9 +142,6 @@ export class OnboardingService {
     const isInviteTeamPending =
       userVars.get(OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING) === true;
 
-    const isBookCallPending =
-      userVars.get(OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING) === true;
-
     if (isConnectAccountPending) {
       return OnboardingStatus.SYNC_EMAIL;
     }
@@ -164,14 +158,6 @@ export class OnboardingService {
       await this.billingService.isSubscriptionIncompleteOnboardingStatus(
         workspace.id,
       );
-
-    if (
-      isBookCallPending &&
-      isPlanRequired &&
-      isDefined(readBookCallStepMinEmployeeCount(this.twentyConfigService))
-    ) {
-      return OnboardingStatus.BOOK_CALL;
-    }
 
     if (isPlanRequired) {
       return OnboardingStatus.PLAN_REQUIRED;
@@ -400,15 +386,6 @@ export class OnboardingService {
       case OnboardingStatus.INVITE_TEAM:
         // User-scoped: the workspace-scoped flag would pull every other member back to the invite screen.
         return this.setOnboardingInviteTeamPending(
-          {
-            userId,
-            workspaceId,
-            value: true,
-          },
-          queryRunner,
-        );
-      case OnboardingStatus.BOOK_CALL:
-        return this.setOnboardingBookCallPending(
           {
             userId,
             workspaceId,
@@ -788,130 +765,6 @@ export class OnboardingService {
         workspace: { id: workspaceId },
       });
     }
-  }
-
-  async isOnboardingBookCallPending({
-    userId,
-    workspaceId,
-  }: {
-    userId: string;
-    workspaceId: string;
-  }): Promise<boolean> {
-    if (
-      !isDefined(readBookCallStepMinEmployeeCount(this.twentyConfigService))
-    ) {
-      return false;
-    }
-
-    return (
-      (await this.userVarsService.get({
-        userId,
-        workspaceId,
-        key: OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING,
-      })) === true
-    );
-  }
-
-  async setOnboardingBookCallPending(
-    {
-      userId,
-      workspaceId,
-      value,
-    }: {
-      userId: string;
-      workspaceId: string;
-      value: boolean;
-    },
-    queryRunner?: QueryRunner,
-  ) {
-    if (!value) {
-      await this.userVarsService.delete(
-        {
-          userId,
-          workspaceId,
-          key: OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING,
-        },
-        queryRunner,
-      );
-
-      return;
-    }
-
-    await this.userVarsService.set(
-      {
-        userId,
-        workspaceId,
-        key: OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING,
-        value: true,
-      },
-      queryRunner,
-    );
-  }
-
-  async completeOnboardingBookCallStep({
-    userId,
-    workspaceId,
-    hasBookedCall,
-    isAutoSkipped,
-  }: {
-    userId: string;
-    workspaceId: string;
-    hasBookedCall: boolean;
-    isAutoSkipped: boolean;
-  }) {
-    await this.runStepTransitionInLockedTransaction(
-      { userId, workspaceId },
-      async (queryRunner) => {
-        const hasClaimedBookCallStep = await this.claimOnboardingBookCallStep(
-          { userId, workspaceId },
-          queryRunner,
-        );
-
-        if (!hasClaimedBookCallStep || isAutoSkipped) {
-          return;
-        }
-
-        if (hasBookedCall) {
-          await this.clearReversibleOnboardingStepHistoryAfterIrreversibleStep(
-            { userId, workspaceId },
-            queryRunner,
-          );
-
-          return;
-        }
-
-        await this.pushReversibleOnboardingStep(
-          {
-            userId,
-            workspaceId,
-            step: OnboardingStatus.BOOK_CALL,
-          },
-          queryRunner,
-        );
-      },
-    );
-  }
-
-  private async claimOnboardingBookCallStep(
-    {
-      userId,
-      workspaceId,
-    }: {
-      userId: string;
-      workspaceId: string;
-    },
-    queryRunner?: QueryRunner,
-  ): Promise<boolean> {
-    const affectedRows = await this.userVarsService.delete(
-      {
-        userId,
-        workspaceId,
-        key: OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING,
-      },
-      queryRunner,
-    );
-
-    return isDefined(affectedRows) && affectedRows > 0;
   }
 
   async setOnboardingCreateProfilePending(

@@ -70,6 +70,5 @@ export const mockedClientConfig: ClientConfig = {
   isClickHouseConfigured: false,
   isWorkspaceSchemaDDLLocked: false,
   isOnboardingAiChatEnabled: false,
-  isBookCallOnboardingStepEnabled: false,
   isCompanyEnrichmentEnabled: false,
 };

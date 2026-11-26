@@ -71,19 +71,12 @@ export class CompanyEnrichmentResolver {
       });
     }
 
-    const isBookCallOnboardingStepPending =
-      await this.onboardingService.isOnboardingBookCallPending({
-        userId: user.id,
-        workspaceId: workspace.id,
-      });
-
     return {
       ...enrichmentResult,
       outcome: WorkspaceCompanyEnrichmentOutcome[enrichmentResult.outcome],
       personOutcome:
         WorkspacePersonEnrichmentOutcome[personEnrichmentResult.outcome],
       personEnrichment: personEnrichmentResult.enrichment,
-      isBookCallOnboardingStepPending,
     };
   }
 }

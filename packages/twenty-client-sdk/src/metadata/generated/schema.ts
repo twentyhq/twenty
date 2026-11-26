@@ -1332,7 +1332,6 @@ export interface ClientConfig {
     enterpriseInstanceType: Scalars['String']
     frontDomain: Scalars['String']
     isAttachmentPreviewEnabled: Scalars['Boolean']
-    isBookCallOnboardingStepEnabled: Scalars['Boolean']
     isClickHouseConfigured: Scalars['Boolean']
     isCloudflareIntegrationEnabled: Scalars['Boolean']
     isCompanyEnrichmentEnabled: Scalars['Boolean']
@@ -2496,7 +2495,6 @@ export interface Mutation {
     claimApplicationRegistrationOwnership: ApplicationRegistration
     completeAppTarballUpload: ApplicationRegistration
     completeApplicationFileUploads: CompleteApplicationFileUploadsResult
-    completeBookCallOnboardingStep: OnboardingStepSuccess
     completeFileUpload: FileWithSignedUrl
     completeNewWorkspaceLogoUpload: FileWithSignedUrl
     completeWorkspaceLogoUpload: FileWithSignedUrl
@@ -2985,7 +2983,7 @@ export interface ObjectRecordsPermissions {
 
 
 /** Onboarding status */
-export type OnboardingStatus = 'BOOK_CALL' | 'COMPLETED' | 'INVITE_TEAM' | 'PLAN_REQUIRED' | 'PROFILE_CREATION' | 'SYNC_EMAIL' | 'WORKSPACE_ACTIVATION'
+export type OnboardingStatus = 'COMPLETED' | 'INVITE_TEAM' | 'PLAN_REQUIRED' | 'PROFILE_CREATION' | 'SYNC_EMAIL' | 'WORKSPACE_ACTIVATION'
 
 export interface OnboardingStepNavigation {
     /** Onboarding status the user landed on */
@@ -4554,7 +4552,6 @@ export type WorkspaceCompanyEnrichmentOutcome = 'matched' | 'transientError' | '
 
 export interface WorkspaceCompanyEnrichmentResult {
     enrichment?: Scalars['JSON']
-    isBookCallOnboardingStepPending: Scalars['Boolean']
     outcome: WorkspaceCompanyEnrichmentOutcome
     personEnrichment?: Scalars['JSON']
     personOutcome: WorkspacePersonEnrichmentOutcome
@@ -6045,7 +6042,6 @@ export interface ClientConfigGenqlSelection{
     enterpriseInstanceType?: boolean | number
     frontDomain?: boolean | number
     isAttachmentPreviewEnabled?: boolean | number
-    isBookCallOnboardingStepEnabled?: boolean | number
     isClickHouseConfigured?: boolean | number
     isCloudflareIntegrationEnabled?: boolean | number
     isCompanyEnrichmentEnabled?: boolean | number
@@ -7456,7 +7452,6 @@ export interface MutationGenqlSelection{
     claimApplicationRegistrationOwnership?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
     completeAppTarballUpload?: (ApplicationRegistrationGenqlSelection & { __args: {fileId: Scalars['UUID']} })
     completeApplicationFileUploads?: (CompleteApplicationFileUploadsResultGenqlSelection & { __args: {applicationUniversalIdentifier: Scalars['String'], fileIds: Scalars['UUID'][]} })
-    completeBookCallOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {hasBookedCall: Scalars['Boolean'], isAutoSkipped: Scalars['Boolean']} })
     completeFileUpload?: (FileWithSignedUrlGenqlSelection & { __args: {fileId: Scalars['String']} })
     completeNewWorkspaceLogoUpload?: (FileWithSignedUrlGenqlSelection & { __args: {fileId: Scalars['String'], workspaceId: Scalars['String']} })
     completeWorkspaceLogoUpload?: (FileWithSignedUrlGenqlSelection & { __args: {fileId: Scalars['String']} })
@@ -9959,7 +9954,6 @@ export interface WorkspaceAiStatsGenqlSelection{
 
 export interface WorkspaceCompanyEnrichmentResultGenqlSelection{
     enrichment?: boolean | number
-    isBookCallOnboardingStepPending?: boolean | number
     outcome?: boolean | number
     personEnrichment?: boolean | number
     personOutcome?: boolean | number
@@ -13782,7 +13776,6 @@ export const enumObjectRecordGroupByDateGranularity = {
 }
 
 export const enumOnboardingStatus = {
-   BOOK_CALL: 'BOOK_CALL' as const,
    COMPLETED: 'COMPLETED' as const,
    INVITE_TEAM: 'INVITE_TEAM' as const,
    PLAN_REQUIRED: 'PLAN_REQUIRED' as const,
