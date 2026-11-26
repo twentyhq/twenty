@@ -11,7 +11,7 @@ import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 import { validateFieldPermissionGrantsNoDisabledAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-grants-no-disabled-action.util';
-import { getMarketplaceApplicationRoleRestrictionErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-errors.util';
+import { getMarketplaceApplicationRoleRestrictionErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-restriction-errors.util';
 import { getRoleNotEditableErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-not-editable-errors.util';
 import { validateRoleBelongsToCallerApplication } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util';
 import { isSameRowLevelPermissionPredicateGroup } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/is-same-row-level-permission-predicate-group.util';

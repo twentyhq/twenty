@@ -1,10 +1,11 @@
-import { type Manifest } from '@/application/manifestType';
+import { type ApplicationManifest } from '@/application/applicationType';
 import {
   type LegacyCompliantRoleManifest,
   type ObjectRecordsPermissionsManifest,
 } from '@/application/roleManifestType';
 import {
   type ApplicationManifestRoleKind,
+  type ApplicationManifestRoleSources,
   classifyApplicationManifestRoles,
 } from '@/application/utils/classifyApplicationManifestRoles';
 import { normalizeLegacyCompliantRoleManifest } from '@/application/utils/normalizeLegacyCompliantRoleManifest';
@@ -48,7 +49,13 @@ const isAssignableToMembersOrApiKeys = ({
 export const getApplicationManifestRoleViolations = ({
   manifest,
 }: {
-  manifest: Pick<Manifest, 'application' | 'roles' | 'agents'>;
+  manifest: Pick<ApplicationManifestRoleSources, 'agents'> & {
+    application: Pick<
+      ApplicationManifest,
+      'universalIdentifier' | 'defaultRoleUniversalIdentifier'
+    >;
+    roles: LegacyCompliantRoleManifest[];
+  };
 }): ApplicationManifestRoleViolation[] => {
   const { roleKindsByUniversalIdentifier } = classifyApplicationManifestRoles({
     manifest,

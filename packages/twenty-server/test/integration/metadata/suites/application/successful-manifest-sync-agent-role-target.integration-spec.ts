@@ -16,7 +16,6 @@ const TEST_AGENT_ID = uuidv4();
 
 const AGENT_GQL_FIELDS = 'id name label roleId applicationId';
 
-// A marketplace app can only declare the second role while an agent uses it
 const buildManifest = (
   overrides?: Partial<Pick<Manifest, 'agents' | 'roles'>>,
 ) =>
@@ -31,18 +30,14 @@ const buildManifest = (
           description: 'A test role',
           canBeAssignedToAgents: true,
         },
-        ...((overrides?.agents ?? []).some(
-          (agent) => agent.roleUniversalIdentifier === TEST_SECOND_ROLE_ID,
-        )
-          ? [
-              {
-                universalIdentifier: TEST_SECOND_ROLE_ID,
-                label: 'Second Agent Role',
-                description: 'Another agent-assignable role',
-                canBeAssignedToAgents: true,
-              },
-            ]
-          : []),
+        {
+          universalIdentifier: TEST_SECOND_ROLE_ID,
+          label: 'Second Agent Role',
+          description: 'Another agent-assignable role',
+          canBeAssignedToAgents: true,
+          canBeAssignedToUsers: false,
+          canBeAssignedToApiKeys: false,
+        },
       ],
       ...overrides,
     },

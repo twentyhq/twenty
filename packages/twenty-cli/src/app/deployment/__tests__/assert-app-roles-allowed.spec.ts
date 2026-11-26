@@ -1,3 +1,4 @@
+import { type LegacyCompliantRoleManifest } from 'twenty-shared/application';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
@@ -14,7 +15,9 @@ vi.mock('@/app/fetch-workspace-or-throw', () => ({
 
 const APP_ID = '20202020-0000-4000-8000-000000000001';
 
-const buildWithRoles = (roles: unknown[]): ToolingBuild => ({
+const buildWithRoles = (
+  roles: LegacyCompliantRoleManifest[],
+): ToolingBuild => ({
   buildId: 'build-id',
   contentHash: 'hash',
   application: { universalIdentifier: APP_ID, name: 'app', displayName: 'App' },
@@ -35,7 +38,12 @@ const REQUESTED_ROLE = {
   label: 'Requested',
 };
 const STANDALONE_ROLE = { universalIdentifier: 'member-role', label: 'Member' };
-const target = { apiUrl: 'http://localhost:3000' } as ResolvedTarget;
+const target: ResolvedTarget = {
+  apiUrl: 'http://localhost:3000',
+  bearerToken: 'token',
+  credentialKind: 'apiKey',
+  source: 'environment',
+};
 const signal = new AbortController().signal;
 
 describe('assertMarketplaceAppRolesOrThrow', () => {
@@ -110,7 +118,7 @@ describe('assertAppRolesAllowedOnTargetOrThrow', () => {
     vi.mocked(fetchWorkspaceOrThrow).mockResolvedValue({
       id: 'workspace-id',
       workspaceCustomApplication: { universalIdentifier: APP_ID.toUpperCase() },
-    } as Awaited<ReturnType<typeof fetchWorkspaceOrThrow>>);
+    });
 
     await expect(
       assertAppRolesAllowedOnTargetOrThrow({
@@ -127,7 +135,7 @@ describe('assertAppRolesAllowedOnTargetOrThrow', () => {
       workspaceCustomApplication: {
         universalIdentifier: '20202020-0000-4000-8000-000000000002',
       },
-    } as Awaited<ReturnType<typeof fetchWorkspaceOrThrow>>);
+    });
 
     await expect(
       assertAppRolesAllowedOnTargetOrThrow({

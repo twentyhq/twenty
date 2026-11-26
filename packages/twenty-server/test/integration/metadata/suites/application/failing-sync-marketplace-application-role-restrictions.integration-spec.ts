@@ -152,9 +152,9 @@ const buildRestrictedManifest = ({
   });
 };
 
-const countRows = async (table: string, universalIdentifier: string) => {
+const countRoles = async (universalIdentifier: string) => {
   const [{ count }] = await globalThis.testDataSource.query(
-    `SELECT count(*)::int AS count FROM core."${table}"
+    `SELECT count(*)::int AS count FROM core."role"
      WHERE "universalIdentifier" = $1 AND "workspaceId" = $2`,
     [universalIdentifier, SEED_APPLE_WORKSPACE_ID],
   );
@@ -219,7 +219,7 @@ describe('Marketplace application roles', () => {
           });
 
           expectRoleRestrictionErrorSnapshot(errors);
-          expect(await countRows('role', roleId)).toBe(0);
+          expect(await countRoles(roleId)).toBe(0);
         },
       );
     });
@@ -243,7 +243,7 @@ describe('Marketplace application roles', () => {
       });
 
       expectRoleRestrictionErrorSnapshot(errors);
-      expect(await countRows('role', standaloneRoleId)).toBe(0);
+      expect(await countRoles(standaloneRoleId)).toBe(0);
     });
 
     it('accepts a standalone role assignable to agents only', async () => {
@@ -368,7 +368,7 @@ describe('Marketplace application roles', () => {
         });
 
         expectRoleRestrictionErrorSnapshot(errors);
-        expect(await countRows('role', roleId)).toBe(0);
+        expect(await countRoles(roleId)).toBe(0);
       },
     );
   });

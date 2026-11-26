@@ -10,7 +10,6 @@ const TEST_APP_ID = uuidv4();
 const TEST_ROLE_ID = uuidv4();
 const TEST_SECOND_ROLE_ID = uuidv4();
 
-// Only the requested role and agent roles are synced for an app
 const VIEWER_AGENT: Manifest['agents'][number] = {
   universalIdentifier: uuidv4(),
   name: 'viewer-agent',

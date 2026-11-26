@@ -357,6 +357,7 @@ export {
 export type {
   ApplicationManifestRoleKind,
   ClassifiedApplicationManifestRoles,
+  ApplicationManifestRoleSources,
 } from './utils/classifyApplicationManifestRoles';
 export { classifyApplicationManifestRoles } from './utils/classifyApplicationManifestRoles';
 export { computeDependencyFileChecksum } from './utils/computeDependencyFileChecksum';

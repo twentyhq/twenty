@@ -44,9 +44,7 @@ const getViolations = ({
       application: {
         universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
         defaultRoleUniversalIdentifier,
-      } as Parameters<
-        typeof getApplicationManifestRoleViolations
-      >[0]['manifest']['application'],
+      },
       roles,
       agents,
     },

@@ -1,4 +1,6 @@
-import { type Manifest } from '@/application/manifestType';
+import { type AgentManifest } from '@/application/agentManifestType';
+import { type ApplicationManifest } from '@/application/applicationType';
+import { type LegacyCompliantRoleManifest } from '@/application/roleManifestType';
 import { isDefined } from '@/utils/validation/isDefined';
 
 export type ApplicationManifestRoleKind = 'requested' | 'agent';
@@ -8,11 +10,16 @@ export type ClassifiedApplicationManifestRoles = {
   standaloneRoleUniversalIdentifiers: Set<string>;
 };
 
-// A defineRole() role an agent uses is an agent role, not a standalone one
+export type ApplicationManifestRoleSources = {
+  application: Pick<ApplicationManifest, 'defaultRoleUniversalIdentifier'>;
+  roles: Pick<LegacyCompliantRoleManifest, 'universalIdentifier'>[];
+  agents: Pick<AgentManifest, 'roleUniversalIdentifier'>[];
+};
+
 export const classifyApplicationManifestRoles = ({
   manifest,
 }: {
-  manifest: Pick<Manifest, 'application' | 'roles' | 'agents'>;
+  manifest: ApplicationManifestRoleSources;
 }): ClassifiedApplicationManifestRoles => {
   const agentRoleUniversalIdentifiers = new Set(
     manifest.agents

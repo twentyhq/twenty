@@ -1,27 +1,16 @@
-import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { PermissionsExceptionCode } from 'src/engine/permissions/permissions.exception';
 import { type WorkspaceMigrationValidationBuildOptions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-builder-options.type';
-import {
-  getMarketplaceApplicationRoleAssignabilityErrors,
-  getMarketplaceApplicationRoleRestrictionErrors,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-errors.util';
+import { getMarketplaceApplicationRoleAssignabilityErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-assignability-errors.util';
 
 const buildOptionsFor = ({
   isMarketplaceApplication,
   isSystemBuild = false,
-}: {
-  isMarketplaceApplication?: boolean;
-  isSystemBuild?: boolean;
-}): WorkspaceMigrationValidationBuildOptions => ({
-  isSystemBuild,
-  isMarketplaceApplication,
-  applicationUniversalIdentifier: 'application',
-  workspaceCustomApplicationUniversalIdentifier: 'workspace-custom-application',
-  flatApplicationMaps: {
-    byId: {},
-    idByUniversalIdentifier: {},
-  } satisfies FlatApplicationCacheMaps,
-});
+}: Partial<
+  Pick<
+    WorkspaceMigrationValidationBuildOptions,
+    'isSystemBuild' | 'isMarketplaceApplication'
+  >
+>) => ({ isSystemBuild, isMarketplaceApplication });
 
 const MARKETPLACE_BUILD = buildOptionsFor({ isMarketplaceApplication: true });
 
@@ -129,27 +118,5 @@ describe('getMarketplaceApplicationRoleAssignabilityErrors on update', () => {
         code: PermissionsExceptionCode.MARKETPLACE_APPLICATION_ROLE_ASSIGNABILITY,
       }),
     ]);
-  });
-});
-
-describe('getMarketplaceApplicationRoleRestrictionErrors', () => {
-  it('refuses any row-level rule or field permission on a marketplace application', () => {
-    expect(
-      getMarketplaceApplicationRoleRestrictionErrors({
-        buildOptions: MARKETPLACE_BUILD,
-      }),
-    ).toEqual([
-      expect.objectContaining({
-        code: PermissionsExceptionCode.MARKETPLACE_APPLICATION_ROLE_RESTRICTION,
-      }),
-    ]);
-  });
-
-  it.each(UNRESTRICTED_BUILDS)('accepts them for $title', ({ options }) => {
-    expect(
-      getMarketplaceApplicationRoleRestrictionErrors({
-        buildOptions: buildOptionsFor(options),
-      }),
-    ).toEqual([]);
   });
 });

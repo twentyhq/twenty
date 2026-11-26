@@ -4,6 +4,7 @@ import {
   getApplicationManifestRoleViolations,
   type Manifest,
 } from 'twenty-shared/application';
+import { isArray } from '@sniptt/guards';
 import { isNonEmptyArray, isPlainObject } from 'twenty-shared/utils';
 
 import { fetchWorkspaceOrThrow } from '@/app/fetch-workspace-or-throw';
@@ -12,23 +13,17 @@ import { type ToolingBuild } from '@/app/types/tooling-result.type';
 import { CliError } from '@/output/cli-error';
 import { type ResolvedTarget } from '@/target/types/resolved-target.type';
 
-const getRoleViolations = (build: ToolingBuild) => {
-  const manifest = build.manifest as Partial<
-    Pick<Manifest, 'application' | 'roles' | 'agents'>
-  >;
+const hasRoleManifests = (
+  manifest: ToolingBuild['manifest'],
+): manifest is Pick<Manifest, 'application' | 'roles' | 'agents'> =>
+  isPlainObject(manifest.application) &&
+  isArray(manifest.roles) &&
+  isArray(manifest.agents);
 
-  if (!isPlainObject(manifest.application)) {
-    return [];
-  }
-
-  return getApplicationManifestRoleViolations({
-    manifest: {
-      application: manifest.application,
-      roles: manifest.roles ?? [],
-      agents: manifest.agents ?? [],
-    },
-  });
-};
+const getRoleViolations = ({ manifest }: ToolingBuild) =>
+  hasRoleManifests(manifest)
+    ? getApplicationManifestRoleViolations({ manifest })
+    : [];
 
 const throwRoleViolations = ({
   build,
@@ -56,8 +51,7 @@ export const assertMarketplaceAppRolesOrThrow = ({
   }
 };
 
-// Only the workspace custom app may declare standalone roles, row-level rules and
-// field permissions, and the build alone cannot tell it apart from a marketplace app.
+// The build alone cannot tell the workspace custom app from a marketplace app
 export const assertAppRolesAllowedOnTargetOrThrow = async ({
   build,
   target,
