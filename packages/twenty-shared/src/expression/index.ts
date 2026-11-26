@@ -33,4 +33,5 @@ export type { ExpressionVariableNode } from './types/ExpressionVariableNode';
 export { expressionComparisonOperatorSchema } from './utils/expressionComparisonOperatorSchema';
 export { expressionLogicalOperatorSchema } from './utils/expressionLogicalOperatorSchema';
 export { expressionNodeSchema } from './utils/expressionNodeSchema';
+export { parseStoredExpressionTree } from './utils/parseStoredExpressionTree';
 export { printExpressionNode } from './utils/printExpressionNode';

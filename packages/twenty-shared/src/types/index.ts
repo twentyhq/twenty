@@ -359,6 +359,7 @@ export type {
   StepFilterWithPotentiallyDeprecatedOperand,
 } from './StepFilters';
 export { StepLogicalOperator } from './StepFilters';
+export type { StoredExpressionTree } from './StoredExpressionTree';
 export type { SupportedViewGroupLoadLimit } from './SupportedViewGroupLoadLimit';
 export type { TagColor } from './TagColor';
 export { TwoFactorAuthenticationStrategy } from './TwoFactorAuthenticationStrategy';

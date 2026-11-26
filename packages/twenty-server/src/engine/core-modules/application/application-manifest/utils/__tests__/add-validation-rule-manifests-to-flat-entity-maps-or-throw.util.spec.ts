@@ -1,4 +1,9 @@
+import { type ExpressionNode } from 'twenty-shared/expression';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+import {
+  parseExpressionNode,
+  resolveExpressionFieldReferences,
+} from 'twenty-shared/utils';
 
 import { addValidationRuleManifestsToFlatEntityMapsOrThrow } from 'src/engine/core-modules/application/application-manifest/utils/add-validation-rule-manifests-to-flat-entity-maps-or-throw.util';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
@@ -12,6 +17,7 @@ const OWNER_APPLICATION = {
   universalIdentifier: 'owner-application',
 };
 const NOW = '2026-10-20T00:00:00.000Z';
+const TRUE_TREE: ExpressionNode = { type: 'LITERAL', value: true };
 
 const buildField = (
   field: Pick<
@@ -29,6 +35,31 @@ const buildField = (
     ...field,
   });
 
+const toTree = ({
+  expression,
+  fieldUniversalIdentifierByName,
+}: {
+  expression: string;
+  fieldUniversalIdentifierByName: Record<string, string>;
+}) => {
+  const parsing = parseExpressionNode(expression);
+
+  if (!parsing.isValid) {
+    throw new Error(parsing.errorMessage);
+  }
+
+  return resolveExpressionFieldReferences({
+    node: parsing.node,
+    fields: Object.entries(fieldUniversalIdentifierByName).map(
+      ([name, universalIdentifier]) => ({
+        name,
+        universalIdentifier,
+        type: FieldMetadataType.NUMBER,
+      }),
+    ),
+  });
+};
+
 const buildExistingRule = (
   rule: Partial<FlatValidationRule>,
 ): FlatValidationRule => ({
@@ -44,8 +75,9 @@ const buildExistingRule = (
   name: 'Rule',
   description: null,
   icon: null,
-  expression: 'true',
+  expression: null,
   bindings: {},
+  tree: TRUE_TREE,
   message: 'Message',
   isActive: true,
   createdAt: NOW,
@@ -132,11 +164,30 @@ describe('addValidationRuleManifestsToFlatEntityMapsOrThrow', () => {
       name: 'Large companies need a reference',
       description: null,
       icon: null,
-      expression: 'company.employees < 100 or isNonEmptyString(reference)',
-      bindings: {
-        company: 'company',
-        'company.employees': 'employees',
-        reference: 'reference',
+      expression: null,
+      bindings: {},
+      tree: {
+        type: 'GROUP',
+        logicalOperator: 'OR',
+        children: [
+          {
+            type: 'COMPARISON',
+            operator: 'LESS_THAN',
+            left: {
+              type: 'FIELD',
+              relationFieldUniversalIdentifier: 'company',
+              fieldUniversalIdentifier: 'employees',
+            },
+            right: { type: 'LITERAL', value: 100 },
+          },
+          {
+            type: 'FUNCTION_CALL',
+            functionName: 'isNonEmptyString',
+            arguments: [
+              { type: 'FIELD', fieldUniversalIdentifier: 'reference' },
+            ],
+          },
+        ],
       },
       message: 'Add a reference',
       isActive: true,
@@ -176,8 +227,10 @@ describe('addValidationRuleManifestsToFlatEntityMapsOrThrow', () => {
       message: 'Add employees',
     };
     const EXISTING_RULE = buildExistingRule({
-      expression: RULE.expression,
-      bindings: { employees: 'employees' },
+      tree: toTree({
+        expression: RULE.expression,
+        fieldUniversalIdentifierByName: { employees: 'employees' },
+      }),
     });
 
     const sync = (maps: ReturnType<typeof buildMaps>) =>
@@ -208,7 +261,7 @@ describe('addValidationRuleManifestsToFlatEntityMapsOrThrow', () => {
       sync(maps);
       expect(syncedRule(maps)).toMatchObject({
         isActive: false,
-        bindings: { employees: 'employees' },
+        tree: EXISTING_RULE.tree,
       });
     });
 
@@ -235,8 +288,13 @@ describe('addValidationRuleManifestsToFlatEntityMapsOrThrow', () => {
           });
         maps.existingAllFlatEntityMaps.flatValidationRuleMaps.byUniversalIdentifier.rule =
           buildExistingRule({
-            expression,
-            bindings: { employees: 'employees', score: 'ownScore' },
+            tree: toTree({
+              expression,
+              fieldUniversalIdentifierByName: {
+                employees: 'employees',
+                score: 'ownScore',
+              },
+            }),
           });
 
         expect(() =>
@@ -264,8 +322,10 @@ describe('addValidationRuleManifestsToFlatEntityMapsOrThrow', () => {
           });
         maps.existingAllFlatEntityMaps.flatValidationRuleMaps.byUniversalIdentifier.rule =
           buildExistingRule({
-            expression: 'headcount > 0',
-            bindings: { headcount: 'employees' },
+            tree: toTree({
+              expression: 'headcount > 0',
+              fieldUniversalIdentifierByName: { headcount: 'employees' },
+            }),
           });
 
         return maps;
@@ -276,8 +336,7 @@ describe('addValidationRuleManifestsToFlatEntityMapsOrThrow', () => {
 
         sync(maps);
         expect(syncedRule(maps)).toMatchObject({
-          expression: 'headcount > 0',
-          bindings: { headcount: 'employees' },
+          tree: EXISTING_RULE.tree,
           isActive: true,
         });
       });
@@ -323,7 +382,7 @@ describe('addValidationRuleManifestsToFlatEntityMapsOrThrow', () => {
       sync(maps);
       expect(syncedRule(maps)).toMatchObject({
         isActive: false,
-        bindings: EXISTING_RULE.bindings,
+        tree: EXISTING_RULE.tree,
       });
     });
 
@@ -335,13 +394,18 @@ describe('addValidationRuleManifestsToFlatEntityMapsOrThrow', () => {
       maps.existingAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier.ownEmployees =
         buildField({
           universalIdentifier: 'ownEmployees',
-          name: 'employeeCount',
+          name: 'employees',
           type: FieldMetadataType.NUMBER,
           objectMetadataUniversalIdentifier: 'company',
           applicationId: OWNER_APPLICATION.id,
         });
       maps.existingAllFlatEntityMaps.flatValidationRuleMaps.byUniversalIdentifier.rule =
-        { ...EXISTING_RULE, bindings: { employees: 'ownEmployees' } };
+        buildExistingRule({
+          tree: toTree({
+            expression: RULE.expression,
+            fieldUniversalIdentifierByName: { employees: 'ownEmployees' },
+          }),
+        });
 
       expect(() => sync(maps)).toThrow(
         'Validation rule "Company has employees" uses the field "employees", which no longer exists. Update the rule\'s expression or add the field back to your app.',

@@ -1,5 +1,6 @@
-import { FieldMetadataType, RelationType } from '@/types';
-import { renameValidationRuleExpressionToCurrentFieldNames } from '@/utils/validation-rule/renameValidationRuleExpressionToCurrentFieldNames';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+
+import { renameLegacyExpressionToCurrentFieldNames } from 'src/database/commands/upgrade-version-command/2-65/utils/rename-legacy-expression-to-current-field-names.util';
 
 const FIELDS = [
   {
@@ -22,10 +23,10 @@ const FIELDS = [
   },
 ];
 
-describe('renameValidationRuleExpressionToCurrentFieldNames', () => {
+describe('renameLegacyExpressionToCurrentFieldNames', () => {
   it('should print each bound path with the current names of its fields', () => {
     expect(
-      renameValidationRuleExpressionToCurrentFieldNames({
+      renameLegacyExpressionToCurrentFieldNames({
         expression:
           "stage == 'WON' and previous.stage != 'WON' and company.employees > 100",
         bindings: {
@@ -43,7 +44,7 @@ describe('renameValidationRuleExpressionToCurrentFieldNames', () => {
 
   it('should leave strings, functions and unbound paths as written', () => {
     expect(
-      renameValidationRuleExpressionToCurrentFieldNames({
+      renameLegacyExpressionToCurrentFieldNames({
         expression: "isDefined(stage) and name == 'stage'",
         bindings: { stage: 'opportunity-stage' },
         fields: FIELDS,

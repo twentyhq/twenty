@@ -1,7 +1,5 @@
 import { type FieldMetadataFormulaEvaluation } from './FieldMetadataFormulaEvaluation';
-
-// The universal flat entity mapping walks every object type, which a recursive tree would blow up: read trees with getFieldMetadataFormulaTree
-type StoredExpressionTree = object;
+import { type StoredExpressionTree } from './StoredExpressionTree';
 
 export type FieldMetadataFormula = {
   tree?: StoredExpressionTree;

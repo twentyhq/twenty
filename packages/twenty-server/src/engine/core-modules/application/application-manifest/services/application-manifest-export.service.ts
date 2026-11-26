@@ -230,6 +230,7 @@ export class ApplicationManifestExportService {
       workspaceId,
       applicationUniversalIdentifier,
       applicationAllFlatEntityMaps,
+      allFlatEntityMaps,
       shouldIncludeLogicFunctionSources,
       fileBudget,
       exportedFiles: sourceFiles,

@@ -70,7 +70,6 @@ export const CoreAgentRecordTriggerForm = ({
               eventName: `${nextObjectType}.${event}`,
               updatedFields: undefined,
               condition: undefined,
-              conditionBindings: undefined,
             },
           })
         }
@@ -96,7 +95,6 @@ export const CoreAgentRecordTriggerForm = ({
           key={objectType}
           objectMetadataItem={selectedObjectMetadataItem}
           condition={trigger.settings.condition ?? ''}
-          conditionBindings={trigger.settings.conditionBindings}
           onConditionChange={(condition) =>
             onTriggerUpdate({
               ...trigger,
@@ -105,7 +103,6 @@ export const CoreAgentRecordTriggerForm = ({
                 condition: isNonEmptyString(condition.trim())
                   ? condition
                   : undefined,
-                conditionBindings: undefined,
               },
             })
           }

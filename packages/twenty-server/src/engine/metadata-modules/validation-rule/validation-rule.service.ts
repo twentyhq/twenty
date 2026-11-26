@@ -2,6 +2,8 @@
 
 import { Injectable } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -18,9 +20,9 @@ import { fromUpdateValidationRuleInputToFlatValidationRuleToUpdate } from 'src/e
 import { type CreateValidationRuleInput } from 'src/engine/metadata-modules/validation-rule/dtos/create-validation-rule.input';
 import { type UpdateValidationRuleInput } from 'src/engine/metadata-modules/validation-rule/dtos/update-validation-rule.input';
 import { type ValidationRuleDTO } from 'src/engine/metadata-modules/validation-rule/dtos/validation-rule.dto';
-import { compileValidationRuleExpressionOrThrow } from 'src/engine/metadata-modules/validation-rule/utils/compile-validation-rule-expression-or-throw.util';
+import { compileValidationRuleTreeOrThrow } from 'src/engine/metadata-modules/validation-rule/utils/compile-validation-rule-tree-or-throw.util';
+import { computeValidationRuleTree } from 'src/engine/metadata-modules/validation-rule/utils/compute-validation-rule-tree.util';
 import { findActiveFlatValidationRulesReadingField } from 'src/engine/metadata-modules/validation-rule/utils/find-active-flat-validation-rules-reading-field.util';
-import { computeValidationRuleBindings } from 'src/engine/metadata-modules/validation-rule/utils/compute-validation-rule-bindings.util';
 import {
   ValidationRuleException,
   ValidationRuleExceptionCode,
@@ -113,14 +115,20 @@ export class ValidationRuleService {
     id: string;
     workspaceId: string;
   }): Promise<ValidationRuleDTO> {
-    const { flatValidationRuleMaps } = await this.getFlatMaps(workspaceId);
+    const {
+      flatValidationRuleMaps,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    } = await this.getFlatMaps(workspaceId);
 
-    return fromFlatValidationRuleToValidationRuleDto(
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
+    return fromFlatValidationRuleToValidationRuleDto({
+      flatValidationRule: findFlatEntityByIdInFlatEntityMapsOrThrow({
         flatEntityId: id,
         flatEntityMaps: flatValidationRuleMaps,
       }),
-    );
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    });
   }
 
   private async findExistingFlatValidationRuleOrThrow({
@@ -158,7 +166,11 @@ export class ValidationRuleService {
       return [];
     }
 
-    const { flatValidationRuleMaps } = await this.getFlatMaps(workspaceId);
+    const {
+      flatValidationRuleMaps,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    } = await this.getFlatMaps(workspaceId);
 
     return Object.values(flatValidationRuleMaps.byUniversalIdentifier)
       .filter(isDefined)
@@ -171,7 +183,13 @@ export class ValidationRuleService {
           left.createdAt.localeCompare(right.createdAt) ||
           left.id.localeCompare(right.id),
       )
-      .map(fromFlatValidationRuleToValidationRuleDto);
+      .map((flatValidationRule) =>
+        fromFlatValidationRuleToValidationRuleDto({
+          flatValidationRule,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+        }),
+      );
   }
 
   async findActiveReadingField({
@@ -209,7 +227,13 @@ export class ValidationRuleService {
         }),
       ].map(({ universalIdentifier }) => universalIdentifier),
       flatValidationRuleMaps,
-    }).map(fromFlatValidationRuleToValidationRuleDto);
+    }).map((flatValidationRule) =>
+      fromFlatValidationRuleToValidationRuleDto({
+        flatValidationRule,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      }),
+    );
   }
 
   async validateExpressionOrThrow({
@@ -226,8 +250,9 @@ export class ValidationRuleService {
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       await this.getFlatMaps(workspaceId);
 
-    compileValidationRuleExpressionOrThrow({
+    compileValidationRuleTreeOrThrow({
       expression,
+      isActive: true,
       objectMetadataId,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -251,7 +276,7 @@ export class ValidationRuleService {
         { workspaceId },
       );
 
-    const bindings = computeValidationRuleBindings({
+    const tree = computeValidationRuleTree({
       expression: input.expression,
       isActive: input.isActive ?? true,
       objectMetadataId: input.objectMetadataId,
@@ -262,7 +287,7 @@ export class ValidationRuleService {
     const flatValidationRuleToCreate =
       fromCreateValidationRuleInputToFlatValidationRuleToCreate({
         createValidationRuleInput: input,
-        bindings,
+        tree,
         workspaceId,
         flatApplication: workspaceCustomFlatApplication,
         flatObjectMetadataMaps,
@@ -303,9 +328,22 @@ export class ValidationRuleService {
       workspaceId,
     });
 
-    const bindings = computeValidationRuleBindings({
-      expression:
-        input.update.expression ?? existingFlatValidationRule.expression,
+    // Fence until upgrade:2-65:convert-validation-rules-to-trees reached the workspace, drop it in 2.66
+    if (
+      isNonEmptyString(existingFlatValidationRule.expression?.trim()) &&
+      !isDefined(existingFlatValidationRule.tree)
+    ) {
+      throw new ValidationRuleException(
+        `Validation rule ${input.id} is not stored as a tree yet`,
+        ValidationRuleExceptionCode.INVALID_VALIDATION_RULE_INPUT,
+        {
+          userFriendlyMessage: msg`This validation rule is being upgraded. Try again in a few minutes.`,
+        },
+      );
+    }
+
+    const tree = computeValidationRuleTree({
+      expression: input.update.expression,
       isActive: input.update.isActive ?? existingFlatValidationRule.isActive,
       objectMetadataId: existingFlatValidationRule.objectMetadataId,
       existingFlatValidationRule,
@@ -317,7 +355,7 @@ export class ValidationRuleService {
       fromUpdateValidationRuleInputToFlatValidationRuleToUpdate({
         existingFlatValidationRule,
         update: input.update,
-        bindings,
+        tree,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
       });
@@ -345,8 +383,10 @@ export class ValidationRuleService {
   }): Promise<ValidationRuleDTO> {
     await this.assertHasValidationRulesEntitlement(workspaceId);
 
-    const { existingFlatValidationRule } =
-      await this.findExistingFlatValidationRuleOrThrow({ id, workspaceId });
+    const {
+      existingFlatValidationRule,
+      flatMaps: { flatObjectMetadataMaps, flatFieldMetadataMaps },
+    } = await this.findExistingFlatValidationRuleOrThrow({ id, workspaceId });
 
     await this.runValidationRuleMigration({
       workspaceId,
@@ -359,8 +399,10 @@ export class ValidationRuleService {
         'Multiple validation errors occurred while deleting validation rule',
     });
 
-    return fromFlatValidationRuleToValidationRuleDto(
-      existingFlatValidationRule,
-    );
+    return fromFlatValidationRuleToValidationRuleDto({
+      flatValidationRule: existingFlatValidationRule,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    });
   }
 }
