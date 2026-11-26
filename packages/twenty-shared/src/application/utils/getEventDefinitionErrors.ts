@@ -1,9 +1,12 @@
 import { isArray, isNumber, isObject, isString } from '@sniptt/guards';
 
+import { EVENT_CAPABILITY_NAMES } from '@/application/constants/EventCapabilityNames';
 import { EVENT_LIMITS } from '@/application/constants/EventLimits';
 import { EVENT_NAME_PATTERN } from '@/application/constants/EventNamePattern';
+import { EVENT_REALTIME_SCOPE_KINDS } from '@/application/constants/EventRealtimeScopeKinds';
 import { EVENT_SCHEMA_PROPERTY_TYPES } from '@/application/constants/EventSchemaPropertyTypes';
 import { EVENT_SCHEMA_STRING_FORMATS } from '@/application/constants/EventSchemaStringFormats';
+import { type EventCapabilitiesManifest } from '@/application/eventManifestType';
 import { isValidUniversalIdentifier } from '@/application/utils/isValidUniversalIdentifier';
 import { type InputJsonSchema } from '@/logic-function/input-json-schema.type';
 import { isDefined } from '@/utils/validation/isDefined';
@@ -93,12 +96,67 @@ const getEventSchemaPropertyErrors = ({
   return errors;
 };
 
+const getEventCapabilitiesErrors = ({
+  eventName,
+  schema,
+  capabilities,
+}: {
+  eventName: string;
+  schema: InputJsonSchema;
+  capabilities: EventCapabilitiesManifest;
+}): string[] => {
+  const errors: string[] = [];
+
+  for (const capabilityName of Object.keys(capabilities)) {
+    if (!EVENT_CAPABILITY_NAMES.includes(capabilityName)) {
+      errors.push(
+        `Event "${eventName}" declares capability "${capabilityName}", which is not supported`,
+      );
+    }
+  }
+
+  const scopeKeys = new Set<string>();
+
+  for (const scope of capabilities.realtime?.scopes ?? []) {
+    if (!EVENT_REALTIME_SCOPE_KINDS.includes(scope.kind)) {
+      errors.push(
+        `Event "${eventName}" realtime scope kind must be one of: ${EVENT_REALTIME_SCOPE_KINDS.join(', ')}`,
+      );
+      continue;
+    }
+
+    const scopeKey =
+      scope.kind === 'record' ? `record:${scope.property}` : scope.kind;
+
+    if (scopeKeys.has(scopeKey)) {
+      errors.push(
+        `Event "${eventName}" declares realtime scope "${scopeKey}" twice`,
+      );
+    }
+
+    scopeKeys.add(scopeKey);
+
+    if (
+      scope.kind === 'record' &&
+      schema.properties?.[scope.property]?.type !== 'record'
+    ) {
+      errors.push(
+        `Event "${eventName}" record scope must name a record property, got "${scope.property}"`,
+      );
+    }
+  }
+
+  return errors;
+};
+
 export const getEventDefinitionErrors = ({
   name,
   schema,
+  capabilities,
 }: {
   name: string;
   schema: InputJsonSchema;
+  capabilities?: EventCapabilitiesManifest | null;
 }): string[] => {
   const errors: string[] = [];
 
@@ -155,6 +213,12 @@ export const getEventDefinitionErrors = ({
         `Event "${name}" requires "${requiredName}", which is not one of its properties`,
       );
     }
+  }
+
+  if (isDefined(capabilities)) {
+    errors.push(
+      ...getEventCapabilitiesErrors({ eventName: name, schema, capabilities }),
+    );
   }
 
   return errors;

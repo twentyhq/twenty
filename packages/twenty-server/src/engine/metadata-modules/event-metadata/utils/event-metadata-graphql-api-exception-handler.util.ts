@@ -1,7 +1,9 @@
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
+  AuthenticationError,
   ConflictError,
+  ForbiddenError,
   NotFoundError,
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -18,9 +20,17 @@ export const eventMetadataGraphqlApiExceptionHandler = (error: Error) => {
       case EventMetadataExceptionCode.INVALID_EVENT_METADATA_INPUT:
       case EventMetadataExceptionCode.INVALID_EVENT_PROPERTIES:
       case EventMetadataExceptionCode.INVALID_EVENT_TARGET:
+      case EventMetadataExceptionCode.INVALID_VISITOR_EVENT_TOKEN_INPUT:
+      case EventMetadataExceptionCode.INVALID_EVENT_SUBSCRIPTION:
         throw new UserInputError(error);
       case EventMetadataExceptionCode.EVENT_METADATA_NAME_ALREADY_EXISTS:
         throw new ConflictError(error);
+      case EventMetadataExceptionCode.EVENT_SUBSCRIPTION_FORBIDDEN:
+      case EventMetadataExceptionCode.TOO_MANY_VISITOR_EVENT_STREAMS:
+        throw new ForbiddenError(error);
+      case EventMetadataExceptionCode.INVALID_VISITOR_EVENT_TOKEN:
+      case EventMetadataExceptionCode.EVENT_STREAM_ACCESS_EXPIRED:
+        throw new AuthenticationError(error);
       default: {
         return assertUnreachable(error.code);
       }

@@ -9,7 +9,10 @@ import {
   Matches,
 } from 'class-validator';
 import GraphQLJSON from 'graphql-type-json';
-import { EVENT_OCCURRENCE_ID_PATTERN } from 'twenty-shared/application';
+import {
+  ANONYMOUS_ID_PATTERN,
+  EVENT_OCCURRENCE_ID_PATTERN,
+} from 'twenty-shared/application';
 
 @InputType('EmitAppEventInput')
 export class EmitAppEventInput {
@@ -33,4 +36,9 @@ export class EmitAppEventInput {
   @IsObject()
   @IsOptional()
   properties?: Record<string, unknown>;
+
+  @Field({ nullable: true })
+  @Matches(ANONYMOUS_ID_PATTERN)
+  @IsOptional()
+  anonymousId?: string;
 }

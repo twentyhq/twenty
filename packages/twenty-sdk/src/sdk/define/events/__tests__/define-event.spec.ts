@@ -17,6 +17,11 @@ const baseValidConfig: EventManifest = {
     },
     required: ['conversationId'],
   },
+  capabilities: {
+    realtime: {
+      scopes: [{ kind: 'record', property: 'conversationId' }, { kind: 'visitor' }],
+    },
+  },
 };
 
 describe('defineEvent', () => {
@@ -37,7 +42,11 @@ describe('defineEvent', () => {
   });
 
   it('accepts an event without a schema', () => {
-    const { schema: _schema, ...configWithoutSchema } = baseValidConfig;
+    const {
+      schema: _schema,
+      capabilities: _capabilities,
+      ...configWithoutSchema
+    } = baseValidConfig;
 
     expect(defineEvent(configWithoutSchema).success).toBe(true);
   });
@@ -50,6 +59,18 @@ describe('defineEvent', () => {
         properties: {
           author: { type: 'object', properties: { name: { type: 'string' } } },
         },
+      },
+      capabilities: undefined,
+    });
+
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects a record scope on an undeclared property', () => {
+    const result = defineEvent({
+      ...baseValidConfig,
+      capabilities: {
+        realtime: { scopes: [{ kind: 'record', property: 'threadId' }] },
       },
     });
 

@@ -110,6 +110,12 @@ export type {
   EmitEventResult,
 } from 'twenty-shared/application';
 
+export { createVisitorEventToken } from '@/sdk/logic-function/events/create-visitor-event-token';
+export type {
+  CreateVisitorEventTokenInput,
+  CreateVisitorEventTokenResult,
+} from 'twenty-shared/application';
+
 export { sendInboxMessage } from '@/sdk/inbox/send-inbox-message';
 export { inboxMention } from '@/sdk/inbox/mentions/inbox-mention';
 export { inboxReferenceRecord } from '@/sdk/inbox/mentions/inbox-reference-record';

@@ -1,6 +1,6 @@
 # Logic
 
-Use this reference for Twenty app logic functions, skills, agents, events, and connection providers.
+Use this reference for Twenty app logic functions, skills, agents, realtime events, and connection providers.
 
 ## Logic Functions
 
@@ -177,14 +177,18 @@ const { object } = await ai.generate({
 - `await attachRecordToInboxThread({ threadId, objectNameSingular, recordId })` links a conversation to a person, company, opportunity or custom object record, and `detachRecordFromInboxThread` with the same input removes the link. Both are idempotent and run with the same access as `sendInboxMessage`: a member must be able to edit the conversation, and the app can act on one it wrote in or one its default role was granted (`THREAD_NOT_FOUND` otherwise). The record must be readable with that access (`RECORD_NOT_FOUND` otherwise).
 - `await archiveInboxThread({ threadId, workspaceMemberIds })` archives a conversation the app wrote for those members, as if each archived it from their inbox, for work done elsewhere (an email sent from Gmail). App tokens only; every member must be able to read the conversation, or it fails with `THREAD_NOT_FOUND` and archives it for nobody. A new message brings it back. Without `workspaceMemberIds` it marks the conversation done in its channel instead, leaving members' inboxes alone (`CHAT_THREAD_NOT_IN_CHANNEL` if it is in none).
 
-## Events
+## Realtime Events
 
-Events are in beta. To record that something happened in the app's domain, declare the event with `defineEvent` from `twenty-sdk/define` and emit it with `emitEvent` from `twenty-sdk/logic-function`. See the [events guide](https://docs.twenty.com/developers/extend/apps/logic/events.md).
+Events are in beta. To push live updates to front components or to visitors on an external website, declare the event with `defineEvent` from `twenty-sdk/define` and emit it with `emitEvent` from `twenty-sdk/logic-function`. Never poll for this. See the [realtime events guide](https://docs.twenty.com/developers/extend/apps/logic/realtime-events.md).
 
 - `name` and property names are camelCase; an event name is unique within the app. Dotted names are reserved for events Twenty emits.
 - `schema` is an object schema in the tool trigger `inputSchema` format: property `type` is `string` (optionally `format: 'date-time'` or `'uuid'`), `number`, `integer`, `boolean` or `record` (with `objectUniversalIdentifier`), or left out for any JSON value. `required` lists the required properties. Properties are flat, up to 50.
-- `emitEvent({ event, properties, id })` names the event by `event` or by `eventUniversalIdentifier`, never both. Set `id` (jobId rules) when a retry could emit the same occurrence twice. It is refused when the event is not the app's, a property is undeclared or mistyped, or the payload exceeds 32 KB, and returns the occurrence `id` and `occurredAt`.
-- Nothing receives an occurrence yet: do not use an event to notify a person, a front component or another function.
+- `capabilities.realtime.scopes` decides who receives an occurrence, never the emitter: `{ kind: 'record', property }` (a `record` property) reaches the app's front components whose viewer can read the referenced record, `{ kind: 'visitor' }` reaches holders of a visitor token for the occurrence's `anonymousId`.
+- `emitEvent({ event, properties, id?, anonymousId? })` names the event by `event` or by `eventUniversalIdentifier`, never both. It is refused when the event is not the app's, a property is undeclared or mistyped, or the payload exceeds 32 KB. `anonymousId` (1 to 128 of `A-Z a-z 0-9 _ -`) is needed only for visitor delivery.
+- Set `id` (jobId rules) when a retry could emit the same occurrence twice: an id the app already emitted in the last 24 hours returns the first occurrence and delivers nothing again.
+- Everything in an occurrence is visible to its whole scope. Emit thin events (ids and what changed) and let receivers refetch through the APIs, where field permissions apply.
+- For a visitor, mint a token in the public route the widget calls with `createVisitorEventToken({ anonymousId, events, expiresInSeconds? })` (15 minutes by default, 24 hours max, up to 20 events), then have the widget open an `EventSource` on `<server-url>/app-events/stream?token=<token>` and listen for `occurrence` messages, each `{ id, type, occurredAt, properties }`. The token is not an API credential, and the stream closes when it expires.
+- Delivery is best effort with no replay: keep the source of truth in records and refetch on (re)connect.
 
 Requires `"engines": { "twenty": ">=2.66.0" }`.
 

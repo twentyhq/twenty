@@ -43,6 +43,7 @@ describe('emitEvent', () => {
     const input = {
       event: 'messageAdded',
       properties: { conversationId: 'conversation-1', text: 'Hello' },
+      anonymousId: 'visitor-1',
     };
 
     const result = await emitEvent(input);
