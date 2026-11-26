@@ -10,4 +10,4 @@ export const FORMULA_EXPRESSION_DESCRIPTION = [
 export const FORMULA_CURRENCY_CODE_EXPRESSION_DESCRIPTION =
   'Required for a CURRENCY formula, whose expression is the amount in micros: the currency code as text, e.g. "USD" or amount.currencyCode.';
 
-export const FORMULA_SETTINGS_DESCRIPTION = `Makes the field a formula field. Only for types ${FORMULA_FIELD_METADATA_TYPES.join(', ')}. Formula fields cannot be unique or the record label. bindings and evaluation are computed by the server: do not send them.`;
+export const FORMULA_DESCRIPTION = `Makes the field a formula field. Only for types ${FORMULA_FIELD_METADATA_TYPES.join(', ')}. Formula fields cannot be unique or the record label. bindings and evaluation are computed by the server: do not send them. On update, leave it out to keep the formula, or send null to remove it.`;

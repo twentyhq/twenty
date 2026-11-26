@@ -45,11 +45,11 @@ export const computeFormulaFieldUpdatesAfterFieldRenames = ({
       pendingUniversalFlatFieldMetadataUpdateByUniversalIdentifier[
         universalIdentifier
       ] ?? existingUniversalFlatFieldMetadata;
-    const settings = universalFlatFieldMetadata.universalSettings;
-    const expression = getFieldMetadataFormulaExpression({ settings });
+    const { formula } = universalFlatFieldMetadata;
+    const expression = getFieldMetadataFormulaExpression({ formula });
     const currencyCodeExpression =
-      getFieldMetadataFormulaCurrencyCodeExpression({ settings });
-    const bindings = getFieldMetadataFormulaBindings({ settings });
+      getFieldMetadataFormulaCurrencyCodeExpression({ formula });
+    const bindings = getFieldMetadataFormulaBindings({ formula });
 
     if (
       !isDefined(expression) ||
@@ -106,22 +106,15 @@ export const computeFormulaFieldUpdatesAfterFieldRenames = ({
 
     universalFlatFieldMetadataToUpdate[universalIdentifier] = {
       ...universalFlatFieldMetadata,
-      universalSettings: {
-        ...settings,
-        formula: {
-          expression: renameExpression(expression),
-          ...(isDefined(currencyCodeExpression)
-            ? {
-                currencyCodeExpression: renameExpression(
-                  currencyCodeExpression,
-                ),
-              }
-            : {}),
-          bindings: renamedBindings,
-          ...keepStoredFormulaEvaluation(
-            getFieldMetadataFormulaEvaluation({ settings }),
-          ),
-        },
+      formula: {
+        expression: renameExpression(expression),
+        ...(isDefined(currencyCodeExpression)
+          ? { currencyCodeExpression: renameExpression(currencyCodeExpression) }
+          : {}),
+        bindings: renamedBindings,
+        ...keepStoredFormulaEvaluation(
+          getFieldMetadataFormulaEvaluation({ formula }),
+        ),
       },
     };
   }

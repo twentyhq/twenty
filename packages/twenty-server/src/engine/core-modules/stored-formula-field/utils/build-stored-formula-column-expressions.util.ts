@@ -36,8 +36,8 @@ export const buildStoredFormulaColumnExpressions = ({
     flatObjectMetadata,
     flatFieldMetadataMaps,
   ).filter(
-    ({ id, settings }) =>
-      getFieldMetadataFormulaEvaluation({ settings }) === 'STORED' &&
+    ({ id, formula }) =>
+      getFieldMetadataFormulaEvaluation({ formula }) === 'STORED' &&
       (!isDefined(formulaFieldMetadataIds) ||
         formulaFieldMetadataIds.includes(id)),
   );

@@ -14,7 +14,6 @@ import { FLAT_FIELD_METADATA_MORPH_RELATION_EDITABLE_PROPERTIES_ON_SIBLING_MORPH
 import { FLAT_FIELD_METADATA_RELATION_EDITABLE_PROPERTIES_ON_SIBLING_MORPH_OR_RELATION_UPDATE_CONSTANT } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-relation-editable-properties-on-sibling-morph-or-relation-update.constant';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { findFlatFieldMetadatasRelatedToMorphRelationOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-flat-field-metadatas-related-to-morph-relation-or-throw.util';
-import { keepExistingFormulaWhenLeftOut } from 'src/engine/metadata-modules/formula-field/utils/keep-existing-formula-when-left-out.util';
 import { findRelationFlatFieldMetadataTargetFlatFieldMetadataOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-relation-flat-field-metadatas-target-flat-field-metadata-or-throw.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { sanitizeRawUpdateFieldInput } from 'src/engine/metadata-modules/flat-field-metadata/utils/sanitize-raw-update-field-input';
@@ -89,12 +88,7 @@ export const computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate = ({
   };
 
   if (updatedEditableFieldProperties.settings !== undefined) {
-    const updatedSettings = keepExistingFormulaWhenLeftOut({
-      settings: toFlatFieldMetadata.settings,
-      existingSettings: fromFlatFieldMetadata.settings,
-    });
-
-    toFlatFieldMetadata.settings = updatedSettings;
+    const updatedSettings = toFlatFieldMetadata.settings;
 
     const isRelationSettings =
       isFieldMetadataSettingsOfType(

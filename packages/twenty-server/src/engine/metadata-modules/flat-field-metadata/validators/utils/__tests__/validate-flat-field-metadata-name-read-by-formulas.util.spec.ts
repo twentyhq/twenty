@@ -3,14 +3,12 @@ import { validateFlatFieldMetadataNameReadByFormulas } from 'src/engine/metadata
 const UNIVERSAL_FLAT_FIELD_METADATA_MAPS = {
   byUniversalIdentifier: {
     'total-uid': {
-      universalSettings: {
-        formula: {
-          expression: 'price * quantity',
-          bindings: { price: 'price-uid', quantity: 'quantity-uid' },
-        },
+      formula: {
+        expression: 'price * quantity',
+        bindings: { price: 'price-uid', quantity: 'quantity-uid' },
       },
     },
-    'price-uid': { universalSettings: null },
+    'price-uid': { formula: null },
   },
 };
 

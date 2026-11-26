@@ -172,7 +172,7 @@ describe('computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate', () => {
       relatedFlatFieldMetadatasFromTo[0].fromFlatFieldMetadata,
     );
   });
-  describe('formula settings', () => {
+  describe('formula', () => {
     const flatObjectMetadata = getFlatObjectMetadataMock({
       universalIdentifier: 'object-uid',
       id: 'object-id',
@@ -184,17 +184,25 @@ describe('computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate', () => {
       id: 'formula-id',
       objectMetadataId: flatObjectMetadata.id,
       type: FieldMetadataType.NUMBER,
-      settings: { decimals: 0, formula },
-      universalSettings: { decimals: 0, formula },
+      settings: { decimals: 0 },
+      universalSettings: { decimals: 0 },
+      formula,
       applicationUniversalIdentifier: CUSTOM,
     });
 
-    const updateSettings = (settings: Record<string, unknown> | null) =>
+    const update = (
+      rawUpdateFieldInput: Omit<
+        Parameters<
+          typeof computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate
+        >[0]['rawUpdateFieldInput'],
+        'id' | 'workspaceId'
+      >,
+    ) =>
       computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate({
         rawUpdateFieldInput: {
           id: formulaFlatFieldMetadata.id,
           workspaceId: 'workspace-id',
-          settings,
+          ...rawUpdateFieldInput,
         },
         fromFlatFieldMetadata: formulaFlatFieldMetadata,
         flatObjectMetadata,
@@ -207,25 +215,21 @@ describe('computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate', () => {
         workspaceCustomApplicationUniversalIdentifier: CUSTOM,
       }).flatFieldMetadataFromTo.toFlatFieldMetadata;
 
-    it('keeps the formula when the settings update leaves it out', () => {
-      expect(updateSettings({ decimals: 2 })).toMatchObject({
-        settings: { decimals: 2, formula },
-        universalSettings: { decimals: 2, formula },
+    it('keeps the formula when only the settings change', () => {
+      expect(update({ settings: { decimals: 2 } })).toMatchObject({
+        settings: { decimals: 2 },
+        formula,
       });
     });
 
-    it('replaces the formula when the settings update sends one', () => {
-      expect(
-        updateSettings({ formula: { expression: 'weight * 3' } }),
-      ).toMatchObject({
-        settings: { formula: { expression: 'weight * 3' } },
-      });
+    it('replaces the formula when the update sends one', () => {
+      expect(update({ formula: { expression: 'weight * 3' } }).formula).toEqual(
+        { expression: 'weight * 3' },
+      );
     });
 
-    it('removes the formula when the settings update sends null', () => {
-      expect(updateSettings({ decimals: 2, formula: null })).toMatchObject({
-        settings: { decimals: 2, formula: null },
-      });
+    it('removes the formula when the update sends null', () => {
+      expect(update({ formula: null }).formula).toBeNull();
     });
   });
 });

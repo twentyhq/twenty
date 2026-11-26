@@ -75,7 +75,7 @@ describe('generateRecordPropertiesJsonSchema', () => {
             getToolSchemaFieldMock({
               name: 'taskCount',
               type: FieldMetadataType.NUMBER,
-              settings: { formula: { expression: 'count(tasks)' } },
+              formula: { expression: 'count(tasks)' },
             }),
           ],
         },

@@ -35,10 +35,10 @@ const createFormulaField = ({
       type,
       objectMetadataId,
       isLabelSyncedWithName: false,
-      settings: { formula: { expression } },
+      formula: { expression },
       ...(isUnique ? { isUnique } : {}),
     },
-    gqlFields: 'id settings',
+    gqlFields: 'id formula',
   });
 
 describe('Formula fields', () => {
@@ -268,10 +268,10 @@ describe('Formula fields', () => {
           type,
           objectMetadataId: gadgetObjectMetadataId,
           isLabelSyncedWithName: false,
-          settings: { formula: { expression } },
+          formula: { expression },
           ...(type === FieldMetadataType.SELECT ? { options } : {}),
         },
-        gqlFields: 'id settings',
+        gqlFields: 'id formula',
       });
     }
 
@@ -295,7 +295,7 @@ describe('Formula fields', () => {
       type: FieldMetadataType.CURRENCY,
       objectMetadataId: gadgetObjectMetadataId,
       isLabelSyncedWithName: false,
-      settings: { formula },
+      formula,
     });
 
     await createOneFieldMetadata({
@@ -307,7 +307,7 @@ describe('Formula fields', () => {
           currencyCodeExpression: 'if(quantity > 100, "EUR", "USD")',
         },
       }),
-      gqlFields: 'id settings',
+      gqlFields: 'id formula',
     });
     await createOneFieldMetadata({
       expectToFail: false,
@@ -713,12 +713,12 @@ describe('Formula fields', () => {
         `SELECT "universalIdentifier" FROM core."fieldMetadata" WHERE "id" = $1`,
         [priceFieldMetadataId],
       );
-    const [{ settings }] = await global.testDataSource.query(
-      `SELECT "settings" FROM core."fieldMetadata" WHERE "objectMetadataId" = $1 AND "name" = 'total'`,
+    const [{ formula }] = await global.testDataSource.query(
+      `SELECT "formula" FROM core."fieldMetadata" WHERE "objectMetadataId" = $1 AND "name" = 'total'`,
       [gadgetObjectMetadataId],
     );
 
-    expect(settings.formula).toMatchObject({
+    expect(formula).toMatchObject({
       expression: 'unitPrice * quantity',
       bindings: {
         unitPrice: priceUniversalIdentifier,
@@ -748,7 +748,7 @@ describe('Formula fields', () => {
     );
     expect(await findGadget('total')).toEqual({ total: 125 });
   });
-  it('should keep a formula when a settings update leaves it out, and remove it on null', async () => {
+  it('should keep a formula when only its settings change, and remove it on null', async () => {
     const {
       data: {
         createOneField: { id: doubleQuantityFieldMetadataId },
@@ -760,33 +760,29 @@ describe('Formula fields', () => {
       expression: 'quantity * 2',
     });
 
-    const updateSettings = (settings: Record<string, unknown>) =>
+    const updateField = (updatePayload: Record<string, unknown>) =>
       updateOneFieldMetadata({
         expectToFail: false,
-        input: {
-          idToUpdate: doubleQuantityFieldMetadataId,
-          updatePayload: { settings },
-        },
-        gqlFields: 'id settings',
+        input: { idToUpdate: doubleQuantityFieldMetadataId, updatePayload },
+        gqlFields: 'id settings formula',
       });
 
     const {
-      data: {
-        updateOneField: { settings: settingsWithoutFormulaSent },
-      },
-    } = await updateSettings({ decimals: 1 });
+      data: { updateOneField: fieldWithNewSettings },
+    } = await updateField({ settings: { decimals: 1 } });
 
-    expect(settingsWithoutFormulaSent).toMatchObject({
-      decimals: 1,
+    expect(fieldWithNewSettings).toMatchObject({
+      settings: { decimals: 1 },
       formula: { expression: 'quantity * 2' },
     });
 
     const {
-      data: {
-        updateOneField: { settings: settingsWithFormulaRemoved },
-      },
-    } = await updateSettings({ decimals: 1, formula: null });
+      data: { updateOneField: fieldWithoutFormula },
+    } = await updateField({ formula: null });
 
-    expect(settingsWithFormulaRemoved).toEqual({ decimals: 1, formula: null });
+    expect(fieldWithoutFormula).toMatchObject({
+      settings: { decimals: 1 },
+      formula: null,
+    });
   });
 });

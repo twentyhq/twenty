@@ -4,17 +4,16 @@ import { isPlainObject } from '@/utils/typeguard/isPlainObject';
 import { isDefined } from '@/utils/validation/isDefined';
 
 export const getFieldMetadataFormulaEvaluation = ({
-  settings,
+  formula,
 }: {
-  settings?: unknown;
+  formula?: unknown;
 }): FieldMetadataFormulaEvaluation | undefined => {
   if (
-    !isPlainObject(settings) ||
-    !isPlainObject(settings.formula) ||
-    !isDefined(getFieldMetadataFormulaExpression({ settings }))
+    !isPlainObject(formula) ||
+    !isDefined(getFieldMetadataFormulaExpression({ formula }))
   ) {
     return undefined;
   }
 
-  return settings.formula.evaluation === 'STORED' ? 'STORED' : 'QUERY_TIME';
+  return formula.evaluation === 'STORED' ? 'STORED' : 'QUERY_TIME';
 };

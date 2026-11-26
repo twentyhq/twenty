@@ -14,6 +14,7 @@ export const FLAT_FIELD_METADATA_EDITABLE_PROPERTIES = {
     'name',
     'options',
     'settings',
+    'formula',
   ],
   standard: [
     'defaultValue',
@@ -24,6 +25,7 @@ export const FLAT_FIELD_METADATA_EDITABLE_PROPERTIES = {
     'label',
     'options',
     'settings',
+    'formula',
     'isSearchable',
     'isUnique',
   ],

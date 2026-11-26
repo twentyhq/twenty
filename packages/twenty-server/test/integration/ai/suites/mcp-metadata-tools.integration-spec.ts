@@ -59,6 +59,7 @@ type FieldSummary = {
   type: string;
   label?: string;
   settings?: Record<string, unknown>;
+  formula?: Record<string, unknown>;
 };
 type ObjectSummary = {
   id: string;
@@ -602,7 +603,7 @@ describe('MCP metadata tools (integration)', () => {
     });
   });
 
-  it('should keep a formula through an update of the other settings', async () => {
+  it('should create a formula field and keep its formula when its settings change', async () => {
     const parcel = await runMetadataTool<ObjectSummary>({
       toolName: 'create_object_metadata',
       toolArguments: {
@@ -632,7 +633,7 @@ describe('MCP metadata tools (integration)', () => {
         type: 'NUMBER',
         name: 'doubleWeight',
         label: 'Double weight',
-        settings: { formula: { expression: 'weight * 2' } },
+        formula: { expression: 'weight * 2' },
       },
     });
 
@@ -649,10 +650,8 @@ describe('MCP metadata tools (integration)', () => {
         fieldName: 'doubleWeight',
       }),
     ).toMatchObject({
-      settings: {
-        decimals: 1,
-        formula: { expression: 'weight * 2' },
-      },
+      settings: { decimals: 1 },
+      formula: { expression: 'weight * 2' },
     });
   });
 

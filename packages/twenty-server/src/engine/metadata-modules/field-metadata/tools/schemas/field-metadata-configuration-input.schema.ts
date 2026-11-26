@@ -2,9 +2,9 @@ import { z } from 'zod';
 
 import {
   FORMULA_CURRENCY_CODE_EXPRESSION_DESCRIPTION,
+  FORMULA_DESCRIPTION,
   FORMULA_EXPRESSION_DESCRIPTION,
-  FORMULA_SETTINGS_DESCRIPTION,
-} from 'src/engine/metadata-modules/field-metadata/tools/constants/formula-settings-description.constant';
+} from 'src/engine/metadata-modules/field-metadata/tools/constants/formula-description.constant';
 import { SELECT_OPTIONS_DESCRIPTION } from 'src/engine/metadata-modules/field-metadata/tools/constants/select-options-description.constant';
 
 const fieldMetadataOptionInputSchema = z.looseObject({
@@ -38,7 +38,7 @@ export const fieldMetadataOptionsInputSchema = z
   .optional()
   .describe(SELECT_OPTIONS_DESCRIPTION);
 
-const fieldMetadataFormulaInputSchema = z
+export const fieldMetadataFormulaInputSchema = z
   .object({
     expression: z.string().describe(FORMULA_EXPRESSION_DESCRIPTION),
     currencyCodeExpression: z
@@ -49,13 +49,11 @@ const fieldMetadataFormulaInputSchema = z
   .nullable()
   .meta({ type: ['object', 'null'] })
   .optional()
-  .describe(FORMULA_SETTINGS_DESCRIPTION);
+  .describe(FORMULA_DESCRIPTION);
 
 export const fieldMetadataSettingsInputSchema = z
-  .looseObject({ formula: fieldMetadataFormulaInputSchema })
+  .record(z.string(), z.unknown())
   .nullable()
   .meta({ type: ['object', 'null'] })
   .optional()
-  .describe(
-    'Field settings. On update they replace the existing settings, except formula: left out it is kept, null removes it.',
-  );
+  .describe('Field settings');
