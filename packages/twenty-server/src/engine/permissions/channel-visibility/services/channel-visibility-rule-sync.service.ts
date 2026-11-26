@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { MessageChannelVisibility } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
@@ -19,8 +20,6 @@ import { WorkspaceMemberIndividualRoleService } from 'src/engine/permissions/wor
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const { message, messageThread, calendarEvent } = STANDARD_OBJECTS;
-
-const SYSTEM_FIELD_NAMES_LEFT_EDITABLE = ['id', 'updatedAt', 'updatedBy'];
 
 @Injectable()
 export class ChannelVisibilityRuleSyncService {
@@ -50,10 +49,25 @@ export class ChannelVisibilityRuleSyncService {
   }
 
   private async writeOrRemoveRules(workspaceId: string): Promise<void> {
-    const { flatWorkspaceMemberMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatWorkspaceMemberMaps',
-      ]);
+    const {
+      flatWorkspaceMemberMaps,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatWorkspaceMemberMaps',
+      'flatObjectMetadataMaps',
+      'flatFieldMetadataMaps',
+    ]);
+    const hasObject = (objectUniversalIdentifier: string) =>
+      isDefined(
+        flatObjectMetadataMaps.byUniversalIdentifier[objectUniversalIdentifier],
+      );
+    const keepExistingFields = (fieldUniversalIdentifiers: string[]) =>
+      fieldUniversalIdentifiers.filter((fieldUniversalIdentifier) =>
+        isDefined(
+          flatFieldMetadataMaps.byUniversalIdentifier[fieldUniversalIdentifier],
+        ),
+      );
 
     const holders: WorkspaceMemberIndividualRoleHolder[] = [
       ...Object.keys(flatWorkspaceMemberMaps.idByUserWorkspaceId).map(
@@ -94,18 +108,17 @@ export class ChannelVisibilityRuleSyncService {
                 STANDARD_OBJECTS.messageChannelMessageAssociation.fields
                   .messageChannelId.universalIdentifier,
               unreadableFieldUniversalIdentifiersByVisibility: {
-                [MessageChannelVisibility.SUBJECT]: [
+                [MessageChannelVisibility.SUBJECT]: keepExistingFields([
                   message.fields.text.universalIdentifier,
                   message.fields.attachments.universalIdentifier,
-                ],
-                [MessageChannelVisibility.METADATA]: [
+                ]),
+                [MessageChannelVisibility.METADATA]: keepExistingFields([
                   message.fields.subject.universalIdentifier,
                   message.fields.text.universalIdentifier,
                   message.fields.attachments.universalIdentifier,
-                ],
+                ]),
               },
               canUpdateRecords: false,
-              uneditableFieldUniversalIdentifiers: [],
             }),
             buildChannelVisibilityObjectRecordsPermissions({
               holder,
@@ -118,21 +131,13 @@ export class ChannelVisibilityRuleSyncService {
                 STANDARD_OBJECTS.calendarChannelEventAssociation.fields
                   .calendarChannelId.universalIdentifier,
               unreadableFieldUniversalIdentifiersByVisibility: {
-                [MessageChannelVisibility.METADATA]: [
+                [MessageChannelVisibility.METADATA]: keepExistingFields([
                   calendarEvent.fields.title.universalIdentifier,
                   calendarEvent.fields.description.universalIdentifier,
                   calendarEvent.fields.callRecordings.universalIdentifier,
-                ],
+                ]),
               },
               canUpdateRecords: true,
-              uneditableFieldUniversalIdentifiers: Object.entries(
-                calendarEvent.fields,
-              )
-                .filter(
-                  ([fieldName]) =>
-                    !SYSTEM_FIELD_NAMES_LEFT_EDITABLE.includes(fieldName),
-                )
-                .map(([, { universalIdentifier }]) => universalIdentifier),
             }),
             ...[
               ...CHANNEL_CHILD_OBJECT_UNIVERSAL_IDENTIFIERS,
@@ -141,14 +146,18 @@ export class ChannelVisibilityRuleSyncService {
             ].map((objectUniversalIdentifier) => ({
               objectUniversalIdentifier,
             })),
-          ].map((objectRecordsPermissions) => ({
-            ...objectRecordsPermissions,
-            canReadAllRecords: false,
-            canCreateAllRecords: false,
-            canUpdateAllRecords: false,
-            canSoftDeleteAllRecords: false,
-            canDestroyAllRecords: false,
-          })),
+          ]
+            .filter(({ objectUniversalIdentifier }) =>
+              hasObject(objectUniversalIdentifier),
+            )
+            .map((objectRecordsPermissions) => ({
+              ...objectRecordsPermissions,
+              canReadAllRecords: false,
+              canCreateAllRecords: false,
+              canUpdateAllRecords: false,
+              canSoftDeleteAllRecords: false,
+              canDestroyAllRecords: false,
+            })),
         },
         unreadableNestedFields: [
           {
@@ -158,7 +167,13 @@ export class ChannelVisibilityRuleSyncService {
             sourceFieldUniversalIdentifier:
               message.fields.subject.universalIdentifier,
           },
-        ],
+        ].filter(
+          ({ fieldUniversalIdentifier, sourceFieldUniversalIdentifier }) =>
+            keepExistingFields([
+              fieldUniversalIdentifier,
+              sourceFieldUniversalIdentifier,
+            ]).length === 2,
+        ),
       })),
     });
   }
