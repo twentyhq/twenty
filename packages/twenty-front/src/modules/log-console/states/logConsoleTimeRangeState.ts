@@ -10,5 +10,5 @@ export const logConsoleTimeRangeState = createAtomState<LogConsoleTimeRange>({
   validateInitFn: (timeRange) =>
     timeRange === 'today' ||
     timeRange === 'yesterday' ||
-    timeRange in LOG_CONSOLE_TIME_RANGE_PRESETS,
+    Object.hasOwn(LOG_CONSOLE_TIME_RANGE_PRESETS, timeRange),
 });
