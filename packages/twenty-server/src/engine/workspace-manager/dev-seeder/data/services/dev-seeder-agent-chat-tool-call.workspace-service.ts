@@ -14,10 +14,25 @@ import { IS_PRIVATE_COLUMN_NAME } from 'src/engine/permissions/private-record/co
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { AGENT_CHAT_TOOL_CALL_CONVERSATION_SEEDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/agent-chat-tool-call-conversation-seeds.constant';
+import { type SeededToolStep } from 'src/engine/workspace-manager/dev-seeder/data/utils/seeded-tool-step.type';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 const AGENT_CHAT_TOOL_CALL_SEED_NAMESPACE =
   '8b1d6e40-3f72-4c9a-a5d8-6e0f1b2c3d47';
+
+const buildToolStepOutcome = ({
+  toolCall,
+  step,
+}: {
+  toolCall: { toolCallId: string; toolName: string; input: unknown };
+  step: SeededToolStep;
+}) => {
+  if (isDefined(step.errorText)) {
+    return { ...toolCall, type: 'tool-error' as const, error: step.errorText };
+  }
+
+  return { ...toolCall, type: 'tool-result' as const, output: step.output };
+};
 
 @Injectable()
 export class DevSeederAgentChatToolCallWorkspaceService {
@@ -95,17 +110,7 @@ export class DevSeederAgentChatToolCallWorkspaceService {
                   type: 'tool-call' as const,
                   providerExecuted: step.providerExecuted,
                 },
-                isDefined(step.errorText)
-                  ? {
-                      ...toolCall,
-                      type: 'tool-error' as const,
-                      error: step.errorText,
-                    }
-                  : {
-                      ...toolCall,
-                      type: 'tool-result' as const,
-                      output: step.output,
-                    },
+                buildToolStepOutcome({ toolCall, step }),
               ],
             };
           }),

@@ -59,10 +59,7 @@ export const SidePanelAiChatToolCallPage = () => {
 
   const payloadSections = [
     { title: t`Input`, payload: toolInput },
-    {
-      title: t`Output`,
-      payload: hasError ? undefined : aiChatToolCallPart.output,
-    },
+    { title: t`Output`, payload: aiChatToolCallPart.output },
   ].filter(({ payload }) => isDefined(payload));
 
   return (

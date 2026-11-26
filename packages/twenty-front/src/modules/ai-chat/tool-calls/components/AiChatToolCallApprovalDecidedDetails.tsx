@@ -6,7 +6,7 @@ import {
   type ProposeToolCallToolStatus,
 } from 'twenty-shared/ai';
 import { type FrontComponentToolCallStatus } from 'twenty-sdk/front-component';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 import { IconMail } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
@@ -118,6 +118,24 @@ export const AiChatToolCallApprovalDecidedDetails = ({
     />
   );
 
+  const genericContent = isDefined(toolFrontComponentId) ? (
+    <AiChatToolFrontComponent
+      frontComponentId={toolFrontComponentId}
+      toolCall={{
+        toolCallId,
+        toolName: proposal.toolName,
+        status: FRONT_COMPONENT_STATUS_BY_APPROVAL_STATUS[status],
+        input: proposal.arguments,
+        output: isPlainObject(result.output) ? result.output : undefined,
+        errorText: error,
+      }}
+      unavailableFallback={argumentsEditor}
+      errorFallback={argumentsEditor}
+    />
+  ) : (
+    argumentsEditor
+  );
+
   return (
     <AiChatAskDetails>
       <StyledAiChatAskCard>
@@ -160,22 +178,7 @@ export const AiChatToolCallApprovalDecidedDetails = ({
           {!isEmail &&
             !hasRecordFields &&
             template !== 'recordDelete' &&
-            (isDefined(toolFrontComponentId) ? (
-              <AiChatToolFrontComponent
-                frontComponentId={toolFrontComponentId}
-                toolCall={{
-                  toolCallId,
-                  toolName: proposal.toolName,
-                  status: FRONT_COMPONENT_STATUS_BY_APPROVAL_STATUS[status],
-                  input: proposal.arguments,
-                  errorText: error,
-                }}
-                unavailableFallback={argumentsEditor}
-                errorFallback={argumentsEditor}
-              />
-            ) : (
-              argumentsEditor
-            ))}
+            genericContent}
         </StyledBody>
         {isNonEmptyString(feedback) && (
           <StyledNote isError={false}>{t`Feedback: ${feedback}`}</StyledNote>
