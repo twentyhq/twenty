@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -57,7 +57,11 @@ export class AgentChatThreadService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     @InjectWorkspaceScopedRepository(AgentChatChannelEntity)
     private readonly channelRepository: WorkspaceScopedRepository<AgentChatChannelEntity>,
-    private readonly inboxObjectNamesResolverService: InboxObjectNamesResolverService,
+    @Inject(InboxObjectNamesResolverService)
+    private readonly inboxObjectNamesResolverService: Pick<
+      InboxObjectNamesResolverService,
+      'resolve'
+    >,
   ) {}
 
   async createThread(

@@ -6,7 +6,9 @@ import { LEGACY_INBOX_OBJECT_NAMES } from 'src/engine/metadata-modules/ai/ai-his
 import { type InboxObjectNames } from 'src/engine/metadata-modules/ai/ai-history/types/inbox-object-names.type';
 
 export const getInboxObjectNames = (
-  featureFlagsMap: Partial<FeatureFlagMap>,
+  featureFlagsMap: Partial<
+    Pick<FeatureFlagMap, FeatureFlagKey.IS_INBOX_OBJECT_NAMING_ENABLED>
+  >,
 ): InboxObjectNames =>
   featureFlagsMap[FeatureFlagKey.IS_INBOX_OBJECT_NAMING_ENABLED]
     ? INBOX_OBJECT_NAMES
