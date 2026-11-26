@@ -186,8 +186,7 @@ export const useSendAiChatMessageToThread = () => {
           data?.sendChatMessage.queued ||
           isDefined(data?.sendChatMessage.streamId);
 
-        // a started stream proves the server closed the pending approvals, a queued message may
-        // wait behind an answer still running
+        // only a started stream proves the server closed the pending approvals
         if (isDefined(data?.sendChatMessage.streamId)) {
           store.set(messagesAtom, cancelPendingAiChatToolCallApprovals);
         }
