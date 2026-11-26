@@ -393,4 +393,26 @@ describe('Record-level sharing on an object open by default', () => {
       await setRecordSharingAndPrivateRecordsEnabled(true);
     }
   });
+
+  it('should keep a private record private while record sharing is off', async () => {
+    await setPrivate({ isPrivate: true });
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
+      value: false,
+      expectToFail: false,
+    });
+
+    try {
+      expect(await findRecordIds(APPLE_JONY_MEMBER_ACCESS_TOKEN)).toEqual([]);
+      expect((await readSharing()).body.data.recordSharing).toMatchObject({
+        isPrivate: true,
+      });
+    } finally {
+      await updateFeatureFlag({
+        featureFlag: FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
+        value: true,
+        expectToFail: false,
+      });
+    }
+  });
 });

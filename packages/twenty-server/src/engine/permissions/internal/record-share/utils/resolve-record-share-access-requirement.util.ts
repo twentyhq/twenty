@@ -26,6 +26,7 @@ export const resolveRecordShareAccessRequirement = (
     !isNonEmptyArray(accessLevels) ||
     !canRecordShareAccessOperation({
       flatObjectMetadata: request.flatObjectMetadata,
+      featureFlagsMap: request.metadataMaps.featureFlagsMap,
       operationType: request.operationType,
     })
   ) {

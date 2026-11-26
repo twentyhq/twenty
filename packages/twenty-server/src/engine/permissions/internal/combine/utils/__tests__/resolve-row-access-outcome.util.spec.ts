@@ -101,6 +101,16 @@ describe('resolveRowAccessOutcome', () => {
   });
 
   it('denies an operation the role lacks when no share can grant it', () => {
+    expect(resolveOutcome({ operationType: 'update' })).toBe(false);
+    expect(
+      resolveOutcome({
+        principals: {
+          ...readOnlyPrincipals,
+          mainPrincipal: { type: 'role', roleIds: ['missing-role'] },
+          applicationPrincipal: { type: 'customApplication' },
+        },
+      }),
+    ).toBe(false);
     expect(
       resolveOutcome({
         operationType: 'create',

@@ -212,6 +212,12 @@ describe('findAccessibleRecordIds', () => {
     jest.mocked(resolveRlsRuleRecordFilter).mockReturnValue(null);
   });
 
+  it('grants a member whose role has no access only the private records they created', async () => {
+    expect(await findGranted({ principals: deniedPrincipals })).toEqual(
+      new Set(['active-private']),
+    );
+  });
+
   it('keeps the role to public records, treating a record it cannot find as public', async () => {
     expect(await findGranted({ principals: rolePrincipals })).toEqual(
       new Set(['active-shared', 'archived-shared']),
@@ -251,17 +257,17 @@ describe('findAccessibleRecordIds', () => {
     ).toEqual(new Set());
   });
 
-  it('grants private records to their creator and shared records whatever the role filter', async () => {
+  it('grants private records to their creator whatever the role filter', async () => {
     restrictRoleToStatusThroughRlsRule('none');
 
     expect(await findGranted({ principals: memberPrincipals })).toEqual(
-      new Set(['active-shared', 'active-private', 'archived-shared']),
+      new Set(['active-private']),
     );
 
     restrictRoleToStatusThroughRlsRule('active');
 
     expect(await findGranted({ principals: memberPrincipals })).toEqual(
-      new Set(['active-shared', 'active-private', 'archived-shared']),
+      new Set(['active-shared', 'active-private']),
     );
   });
 

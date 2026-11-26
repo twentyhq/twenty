@@ -17,12 +17,18 @@ export type CreatedRecordSharing = {
 
 // shareWith also reaches records created through nested relations, whose objects may not be shareable
 export const resolveCreatedRecordSharingOrThrow = ({
+  isRecordSharingEnabled,
   isPrivateByDefault,
   shareWith,
 }: {
+  isRecordSharingEnabled: boolean;
   isPrivateByDefault: boolean;
   shareWith?: ShareWithInput[] | null;
 }): CreatedRecordSharing | null => {
+  if (!isRecordSharingEnabled) {
+    return isPrivateByDefault ? { shareWith: [], isPrivate: true } : null;
+  }
+
   const entries = shareWith ?? [];
   const everyoneEntries = entries.filter((entry) => entry.everyone);
 

@@ -304,6 +304,26 @@ describe('Access to all records and ownership transfer', () => {
     }
   });
 
+  it('should keep private records private while record sharing is off', async () => {
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
+      value: false,
+      expectToFail: false,
+    });
+
+    try {
+      expect(await findRecordIds(APPLE_PHIL_GUEST_ACCESS_TOKEN)).not.toContain(
+        RESTRICTED_RECORD_ID,
+      );
+    } finally {
+      await updateFeatureFlag({
+        featureFlag: FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
+        value: true,
+        expectToFail: false,
+      });
+    }
+  });
+
   it('should hand the records a removed member managed to the successor', async () => {
     await setShare({
       recordId: SHARED_RECORD_ID,

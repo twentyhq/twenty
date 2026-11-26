@@ -5,9 +5,7 @@ import { useToast } from 'twenty-ui/components/feedback';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useRefreshRecordPermissions } from '@/object-record/record-sharing/hooks/useRefreshRecordPermissions';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import {
-  FeatureFlagKey,
   GetRecordSharingDocument,
   RemoveRecordShareDocument,
   SetRecordPrivateDocument,
@@ -24,9 +22,6 @@ export const useRecordSharing = ({
   recordTarget: RecordTargetInput;
 }) => {
   const { setRecordPermissions } = useRefreshRecordPermissions();
-  const isRecordLevelSharingEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
-  );
   const { enqueueToast } = useToast();
   const { data, loading, error, refetch } = useQuery(GetRecordSharingDocument, {
     variables: { target: recordTarget },
@@ -129,9 +124,8 @@ export const useRecordSharing = ({
   const sharing = isDefined(data?.recordSharing)
     ? {
         ...data.recordSharing,
-        isShareable: isRecordLevelSharingEnabled,
         canManageSharing:
-          isRecordLevelSharingEnabled && data.recordSharing.canManageSharing,
+          data.recordSharing.isShareable && data.recordSharing.canManageSharing,
       }
     : undefined;
 
