@@ -1152,6 +1152,7 @@ describe('record export lifecycle (integration)', () => {
       value: companies[0].name,
       ruleGrants: { canReadRecords: true },
     });
+    await waitForAllJobsToFinish();
     const recordExport = await exportToCompletion(
       input,
       APPLE_JONY_MEMBER_ACCESS_TOKEN,
