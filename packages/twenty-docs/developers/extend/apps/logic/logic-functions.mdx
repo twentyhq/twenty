@@ -1289,4 +1289,22 @@ Each workspace gets an offset in `[0, spreadMs)`, rounded down to the minute and
 - Changing `spreadMs` changes the offset, so the run around the change can be skipped or happen twice.
 - Without `spreadMs`, the cron runs at the minute its pattern matches.
 
+## Keep a function warm
+
+The first run after a function has been idle for a while starts cold: its executor has to load your bundle before your handler runs. When a user waits on the result, for example an AI tool call or an HTTP route answering a webhook handshake, set `isWarm` to avoid that delay:
+
+```ts
+export default defineLogicFunction({
+  universalIdentifier: 'c4a9e1f2-7b3d-4e8a-9f6c-2d5b8a1e3f70',
+  name: 'lookup-company',
+  isWarm: true,
+  handler,
+});
+```
+
+- Twenty pings the function every minute to keep one executor warm.
+- Each run of a warm function costs twice the normal credits, for both the invocation and the duration charge. The pings themselves are free.
+- Only one executor is kept warm: when several runs start at the same time, the ones beyond the first can still start cold.
+- Leave it off for queued, cron and background work, where nobody waits on the first run.
+
 <PageBanner illustration="card-page-logic-functions" />
