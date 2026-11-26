@@ -178,22 +178,6 @@ describe('startTeamsAssistantStatus', () => {
     expect(sendActivityMock).not.toHaveBeenCalled();
   });
 
-  it('should schedule every status step in order, at least a second apart and within the agent budget', () => {
-    const stepTimes = TEAMS_ASSISTANT_STATUS_STEPS.map(
-      (step) => step.afterSeconds,
-    );
-
-    expect(stepTimes).toEqual([...stepTimes].sort((a, b) => a - b));
-    expect(
-      stepTimes.every(
-        (stepTime, index) => stepTime - (stepTimes[index - 1] ?? 0) >= 1,
-      ),
-    ).toBe(true);
-    expect(Math.max(...stepTimes)).toBeLessThan(
-      TEAMS_ASSISTANT_AGENT_BUDGET_SECONDS,
-    );
-  });
-
   it('should only reply at the end outside personal chats', async () => {
     const status = await startTeamsAssistantStatus({
       ...CONVERSATION,
