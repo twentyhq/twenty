@@ -1,11 +1,7 @@
 import { sendInboxMessage } from 'twenty-sdk/logic-function';
 
+import { type InboxMessage } from 'src/logic-functions/types/inbox-message.type';
 import { isNotFoundError } from 'src/logic-functions/utils/is-not-found-error.util';
-
-type InboxMessage = Omit<
-  Parameters<typeof sendInboxMessage>[0],
-  'workspaceMemberIds'
->;
 
 type SendInboxMessageToEachMemberResult = {
   skippedWorkspaceMemberIds: string[];

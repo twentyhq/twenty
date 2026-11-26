@@ -9,7 +9,7 @@ import { fetchMemberApplicationVariables } from 'src/logic-functions/data/fetch-
 import { findCallRecordingForInbox } from 'src/logic-functions/data/find-call-recording-for-inbox.util';
 import { isInboxEnabled } from 'src/logic-functions/data/is-inbox-enabled.util';
 import { sendInboxMessageToEachMember } from 'src/logic-functions/data/send-inbox-message-to-each-member.util';
-import { extractCallRecordingSummaryGist } from 'src/logic-functions/domain/extract-call-recording-summary-gist.util';
+import { buildCallRecordingRecapMessage } from 'src/logic-functions/domain/build-call-recording-recap-message.util';
 import { getCalendarOwnerWorkspaceMemberIds } from 'src/logic-functions/domain/get-calendar-owner-workspace-member-ids.util';
 import { getWorkspaceMemberIdsWithInboxRecaps } from 'src/logic-functions/domain/get-workspace-member-ids-with-inbox-recaps.util';
 import { isCallRecordingCreatedByCallRecorder } from 'src/logic-functions/domain/is-call-recording-created-by-call-recorder.util';
@@ -35,14 +35,6 @@ type PostCallRecordingToInboxResult =
 
 const buildRecordingReadyMessageKey = (workspaceMemberId: string): string =>
   `call-recording-ready-${workspaceMemberId}`;
-
-const buildRecapMessageKey = ({
-  callRecordingId,
-  workspaceMemberId,
-}: {
-  callRecordingId: string;
-  workspaceMemberId: string;
-}): string => `call-recording-recap-${callRecordingId}-${workspaceMemberId}`;
 
 export const postCallRecordingToInbox = async ({
   client,
@@ -114,25 +106,16 @@ export const postCallRecordingToInbox = async ({
   const hasInboxRecaps = (workspaceMemberId: string): boolean =>
     workspaceMemberIdsWithInboxRecaps.has(workspaceMemberId);
   const recapWorkspaceMemberIds = workspaceMemberIds.filter(hasInboxRecaps);
-  const gist = extractCallRecordingSummaryGist(summaryMarkdown);
-
   const recapResult = await sendInboxMessageToEachMember({
     workspaceMemberIds: recapWorkspaceMemberIds,
-    buildMessage: (workspaceMemberId) => {
-      const messageKey = buildRecapMessageKey({
+    buildMessage: (workspaceMemberId) =>
+      buildCallRecordingRecapMessage({
         callRecordingId: callRecording.id,
         workspaceMemberId,
-      });
-
-      return {
-        threadKey: messageKey,
-        idempotencyKey: messageKey,
-        title: calendarEvent?.title ?? 'Call recap',
-        text: isUndefined(gist)
-          ? `Your call was recorded: ${callRecordingReference}.`
-          : `${gist}\n\n${callRecordingReference}`,
-      };
-    },
+        callRecordingReference,
+        calendarEventTitle: calendarEvent?.title,
+        summaryMarkdown,
+      }),
   });
   const recordingReadyResult = await sendInboxMessageToEachMember({
     workspaceMemberIds: workspaceMemberIds.filter(

@@ -301,6 +301,57 @@ describe('post-call-recording-to-inbox logic function', () => {
     );
   });
 
+  it('lists the action items in the recap and offers to create the tasks', async () => {
+    seed({
+      callRecording: {
+        ...CALL_RECORDING,
+        summary: {
+          markdown:
+            '## Gist\nGood call.\n\n## Action Items\n**Alex**\n- Send the pricing deck\n\n## Notes\n**Intro** — 0:00',
+        },
+      },
+      calendarOwnerWorkspaceMemberIds: ['member-1'],
+      recapsValueByWorkspaceMemberId: { 'member-1': 'true' },
+    });
+
+    await postCallRecordingToInboxHandler(buildSummaryUpdateEvent());
+
+    expect(sendInboxMessageMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        text: 'Good call.\n\n**Action items**\n\n**Alex**\n- Send the pricing deck\n\n[[record:call-recording-1]]',
+        toolCall: expect.objectContaining({
+          input: expect.objectContaining({
+            options: [
+              { label: 'Create the follow-up tasks' },
+              { label: 'Draft a follow-up email' },
+            ],
+          }),
+        }),
+      }),
+    );
+  });
+
+  it('sends the action items alone when the summary has no gist', async () => {
+    seed({
+      callRecording: {
+        ...CALL_RECORDING,
+        summary: {
+          markdown: '## Action Items\n**Alex**\n- Send the pricing deck',
+        },
+      },
+      calendarOwnerWorkspaceMemberIds: ['member-1'],
+      recapsValueByWorkspaceMemberId: { 'member-1': 'true' },
+    });
+
+    await postCallRecordingToInboxHandler(buildSummaryUpdateEvent());
+
+    expect(sendInboxMessageMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        text: '**Action items**\n\n**Alex**\n- Send the pricing deck\n\n[[record:call-recording-1]]',
+      }),
+    );
+  });
+
   it('does not show a meeting title that is not shared', async () => {
     seed({
       calendarOwnerWorkspaceMemberIds: ['member-1'],
