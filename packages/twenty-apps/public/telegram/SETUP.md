@@ -67,8 +67,8 @@ A Telegram account can be claimed by one workspace at a time on a server.
 
 ## Troubleshooting
 
-- **A banner on the app page.** The app checks the bot each time its page is
-  opened and says what is wrong: the variables are missing, Telegram rejected
+- **A banner on the app page.** The app's health check says what is wrong
+  with the bot: the variables are missing, Telegram rejected
   the token, the webhook is missing or points to another server, or Telegram
   failed to deliver messages in the last hour.
 - **The bot does not answer.** Check both server variables are set, then ask
