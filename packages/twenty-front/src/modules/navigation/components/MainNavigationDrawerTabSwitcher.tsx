@@ -222,6 +222,7 @@ export const MainNavigationDrawerTabSwitcher = ({
                   key="add-tab"
                   isExpanded={isExpanded}
                   shouldShowTooltip={shouldShowTooltips}
+                  isLabelHidden={isPinnedToBottom}
                 />,
               ]
             : []),

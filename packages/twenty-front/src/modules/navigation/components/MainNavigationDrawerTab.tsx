@@ -140,12 +140,20 @@ export const MainNavigationDrawerTab = ({
   const shouldReduceMotion = useReducedMotion();
   const isLabelShown = isExpanded && isActive && !isLabelHidden;
 
+  const getTooltipSide = () => {
+    if (!isExpanded) {
+      return 'right';
+    }
+
+    return isLabelHidden ? 'top' : 'bottom';
+  };
+
   return (
     <Tooltip
       content={tooltip}
       disabled={!shouldShowTooltip && !isDisabled}
       delay={TooltipDelay.noDelay}
-      side={isExpanded ? (isLabelHidden ? 'top' : 'bottom') : 'right'}
+      side={getTooltipSide()}
       positionMethod="fixed"
     >
       <StyledMode
