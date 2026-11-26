@@ -3,21 +3,21 @@ import { isNonEmptyString } from '@sniptt/guards';
 const normalizeHostname = (hostname: string) =>
   hostname.trim().toLowerCase().replace(/\.$/, '');
 
-export const isInstanceHostname = ({
+export const isHostnameOrSubdomainOf = ({
   hostname,
-  instanceHostnames,
+  domains,
 }: {
   hostname: string;
-  instanceHostnames: (string | undefined)[];
+  domains: (string | undefined)[];
 }): boolean => {
   const normalizedHostname = normalizeHostname(hostname);
 
-  return instanceHostnames
+  return domains
     .filter(isNonEmptyString)
     .map(normalizeHostname)
     .some(
-      (instanceHostname) =>
-        normalizedHostname === instanceHostname ||
-        normalizedHostname.endsWith(`.${instanceHostname}`),
+      (domain) =>
+        normalizedHostname === domain ||
+        normalizedHostname.endsWith(`.${domain}`),
     );
 };

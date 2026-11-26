@@ -1,7 +1,7 @@
-import { isInstanceHostname } from 'src/engine/core-modules/domain/domain-server-config/utils/is-instance-hostname.util';
+import { isHostnameOrSubdomainOf } from 'src/engine/core-modules/domain/domain-server-config/utils/is-hostname-or-subdomain-of.util';
 
-describe('isInstanceHostname', () => {
-  const instanceHostnames = ['twenty.com', 'api.example.com', 'withtwenty.com'];
+describe('isHostnameOrSubdomainOf', () => {
+  const domains = ['twenty.com', 'api.example.com', 'withtwenty.com'];
 
   it.each([
     { hostname: 'twenty.com', expected: true },
@@ -14,14 +14,14 @@ describe('isInstanceHostname', () => {
     { hostname: 'donate.charity.org', expected: false },
     { hostname: 'nottwenty.com', expected: false },
   ])('returns $expected for $hostname', ({ hostname, expected }) => {
-    expect(isInstanceHostname({ hostname, instanceHostnames })).toBe(expected);
+    expect(isHostnameOrSubdomainOf({ hostname, domains })).toBe(expected);
   });
 
-  it('ignores unset instance hostnames', () => {
+  it('ignores unset domains', () => {
     expect(
-      isInstanceHostname({
+      isHostnameOrSubdomainOf({
         hostname: 'donate.charity.org',
-        instanceHostnames: [undefined, ''],
+        domains: [undefined, ''],
       }),
     ).toBe(false);
   });
