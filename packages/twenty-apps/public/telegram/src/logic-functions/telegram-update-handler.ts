@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-sdk/utils';
 
 import { TELEGRAM_UPDATE_HANDLER_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { TELEGRAM_ASSISTANT_AGENT_BUDGET_SECONDS } from 'src/logic-functions/constants/telegram-assistant-agent-budget-seconds';
+import { TELEGRAM_ASSISTANT_DELIVERY_BUDGET_SECONDS } from 'src/logic-functions/constants/telegram-assistant-delivery-budget-seconds';
 import { TELEGRAM_ASSISTANT_HELP_TEXT } from 'src/logic-functions/constants/telegram-assistant-help-text';
 import { TELEGRAM_ASSISTANT_REQUEST_TIMEOUT_SECONDS } from 'src/logic-functions/constants/telegram-assistant-request-timeout-seconds';
 import { TELEGRAM_ASSISTANT_TEXT_ONLY_TEXT } from 'src/logic-functions/constants/telegram-assistant-text-only-text';
@@ -34,8 +35,7 @@ export const telegramUpdateHandler = async (
   payload: TelegramUpdatesDispatchPayload,
   context: Pick<LogicFunctionExecutionContext, 'workspaceId'>,
 ): Promise<TelegramUpdateHandlerResult> => {
-  const agentDeadlineAtMs =
-    Date.now() + TELEGRAM_ASSISTANT_AGENT_BUDGET_SECONDS * 1000;
+  const startedAtMs = Date.now();
   const event = parseTelegramUpdate(payload.update);
 
   if (!isDefined(event)) {
@@ -111,7 +111,10 @@ export const telegramUpdateHandler = async (
     telegramUserId,
     workspaceMemberId,
     requestText: event.text,
-    agentDeadlineAtMs,
+    agentDeadlineAtMs:
+      startedAtMs + TELEGRAM_ASSISTANT_AGENT_BUDGET_SECONDS * 1000,
+    deliveryDeadlineAtMs:
+      startedAtMs + TELEGRAM_ASSISTANT_DELIVERY_BUDGET_SECONDS * 1000,
   });
 
   return { outcome };

@@ -25,6 +25,7 @@ export const answerTelegramAssistantRequest = async ({
   workspaceMemberId,
   requestText,
   agentDeadlineAtMs,
+  deliveryDeadlineAtMs,
 }: {
   client: Pick<CoreApiClient, 'query' | 'mutation'>;
   botToken: string;
@@ -34,6 +35,7 @@ export const answerTelegramAssistantRequest = async ({
   workspaceMemberId: string;
   requestText: string;
   agentDeadlineAtMs: number;
+  deliveryDeadlineAtMs: number;
 }): Promise<'ANSWERED' | 'FAILED' | 'SKIPPED'> => {
   const telegramChatId = `${chatId}`;
   const requestId = await recordTelegramAssistantRequestOrThrow({
@@ -83,6 +85,7 @@ export const answerTelegramAssistantRequest = async ({
     await sendTelegramAnswer({
       botToken,
       chatId,
+      deadlineAtMs: deliveryDeadlineAtMs,
       richText: buildTelegramAssistantAnswerText({
         ...answer,
         maxLength: TELEGRAM_RICH_MESSAGE_MAX_LENGTH,
@@ -107,13 +110,6 @@ export const answerTelegramAssistantRequest = async ({
   } catch (error) {
     console.error('[telegram] could not answer the request', error);
 
-    await sendTelegramMessage({
-      botToken,
-      chatId,
-      text: getTelegramAssistantFailureText(error),
-    }).catch((sendError: unknown) => {
-      console.error('[telegram] could not send the failure reply', sendError);
-    });
     await updateTelegramAssistantRequest({
       client,
       id: requestId,
@@ -124,6 +120,13 @@ export const answerTelegramAssistantRequest = async ({
         '[telegram] could not mark the request failed',
         updateError,
       );
+    });
+    await sendTelegramMessage({
+      botToken,
+      chatId,
+      text: getTelegramAssistantFailureText(error),
+    }).catch((sendError: unknown) => {
+      console.error('[telegram] could not send the failure reply', sendError);
     });
 
     return 'FAILED';

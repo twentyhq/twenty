@@ -268,6 +268,38 @@ describe('answering a question from Telegram', () => {
     expect(callsTo('sendMessage')).toEqual([]);
   });
 
+  it('records the failure instead of waiting on a rate limit past the time left to deliver', async () => {
+    telegramCalls = stubTelegramApi({
+      failures: {
+        sendRichMessage: [
+          {
+            error_code: 429,
+            description: 'Too Many Requests: retry after 20',
+            parameters: { retry_after: 20 },
+          },
+        ],
+      },
+    });
+    runAgentMock.mockReturnValue(
+      new Promise((resolve) =>
+        setTimeout(
+          () => resolve(completedRun(ANSWER)),
+          (TELEGRAM_ASSISTANT_AGENT_BUDGET_SECONDS - 1) * 1000,
+        ),
+      ),
+    );
+
+    const pending = send({ text: 'How many open deals?' });
+
+    await vi.advanceTimersByTimeAsync(
+      (TELEGRAM_ASSISTANT_AGENT_BUDGET_SECONDS - 1) * 1000,
+    );
+
+    await expect(pending).resolves.toEqual({ outcome: 'FAILED' });
+    expect(callsTo('sendRichMessage')).toHaveLength(1);
+    expect(coreFake.state.requests[0]).toMatchObject({ status: 'FAILED' });
+  });
+
   it('answers a command with the help text, without running the agent', async () => {
     await expect(send({ text: '/help' })).resolves.toEqual({
       outcome: 'CONNECTED',
