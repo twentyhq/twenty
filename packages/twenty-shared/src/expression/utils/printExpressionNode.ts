@@ -140,6 +140,8 @@ export const printExpressionNode = ({
       return `not ${printAbove({ childNode: node.child, precedence: PREFIX_PRECEDENCE - 1 })}`;
     case 'UNARY':
       return `${EXPRESSION_SYMBOL_BY_UNARY_OPERATOR[node.operator]}${printAbove({ childNode: node.operand, precedence: PREFIX_PRECEDENCE })}`;
+    case 'MEMBER':
+      return `(${print(node.object)}).${node.property}`;
     case 'LIST':
       return `[${node.items.map(print).join(', ')}]`;
     case 'FUNCTION_CALL':

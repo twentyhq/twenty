@@ -35,6 +35,7 @@ const CANONICAL_EXPRESSIONS = [
   'dateDiff(createdAt, now, "DAY") <= 30',
   'max(deals.amount)',
   'roundTo(price * 1.2, 2)',
+  '(coalesce(name, "")).firstName == "Bob"',
 ];
 
 describe('printExpressionNode', () => {
@@ -70,6 +71,7 @@ describe('printExpressionNode', () => {
     'a - -1',
     'length (a || b) * 2',
     'abs -a',
+    '(a + b).c * 2',
   ])('should read back the same tree after printing %p', (expression) => {
     const node = parseOrThrow(expression);
 
