@@ -8,7 +8,7 @@ export const computeRichTextFieldFilesToPersist = ({
   uploadedFiles,
   serializedDocument,
 }: {
-  listedFiles: FieldFilesValue[];
+  listedFiles: RichTextFieldFile[];
   uploadedFiles: RichTextFieldFile[];
   serializedDocument: string;
 }): RichTextFieldFile[] | undefined => {

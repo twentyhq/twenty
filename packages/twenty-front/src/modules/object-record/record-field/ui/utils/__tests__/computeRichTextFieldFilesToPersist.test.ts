@@ -1,6 +1,11 @@
 import { computeRichTextFieldFilesToPersist } from '@/object-record/record-field/ui/utils/computeRichTextFieldFilesToPersist';
 
 const LISTED_FILE = { fileId: 'listed-file-id', label: 'listed.png' };
+const LISTED_FILE_FROM_SERVER = {
+  ...LISTED_FILE,
+  url: 'https://signed',
+  extension: '.png',
+};
 const UPLOADED_FILE = { fileId: 'uploaded-file-id', label: 'uploaded.png' };
 
 const buildDocument = (fileIds: string[]) =>
@@ -16,9 +21,7 @@ describe('computeRichTextFieldFilesToPersist', () => {
   it('should add an uploaded file the document references to the listed files', () => {
     expect(
       computeRichTextFieldFilesToPersist({
-        listedFiles: [
-          { ...LISTED_FILE, url: 'https://signed', extension: '.png' },
-        ],
+        listedFiles: [LISTED_FILE_FROM_SERVER],
         uploadedFiles: [UPLOADED_FILE],
         serializedDocument: buildDocument([UPLOADED_FILE.fileId]),
       }),
