@@ -32,10 +32,14 @@ const buildTree = ({
   });
   const parsing = parseExpressionNode(currentExpression);
 
-  return parsing.isValid &&
-    compileFormulaExpression({ expression: currentExpression, fields }).isValid
-    ? resolveExpressionFieldReferences({ node: parsing.node, fields })
-    : undefined;
+  if (
+    !parsing.isValid ||
+    !compileFormulaExpression({ expression: currentExpression, fields }).isValid
+  ) {
+    return undefined;
+  }
+
+  return resolveExpressionFieldReferences({ node: parsing.node, fields });
 };
 
 // Bindings lead the text back to the current field names; a formula that no longer compiles keeps its text, which is still read

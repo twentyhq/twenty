@@ -22,23 +22,35 @@ export const buildExpressionFieldPrinter = ({
     subFieldName,
     isPreviousValue,
   }) => {
-    const relationField = isDefined(relationFieldUniversalIdentifier)
-      ? fieldByUniversalIdentifier.get(relationFieldUniversalIdentifier)
+    const previousSegment = isPreviousValue
+      ? VALIDATION_RULE_PREVIOUS_VARIABLE_NAME
       : undefined;
-    const field = isDefined(relationFieldUniversalIdentifier)
-      ? relationField?.relationTargetFields?.find(
-          ({ universalIdentifier }) =>
-            universalIdentifier === fieldUniversalIdentifier,
-        )
-      : fieldByUniversalIdentifier.get(fieldUniversalIdentifier);
+
+    if (!isDefined(relationFieldUniversalIdentifier)) {
+      const field = fieldByUniversalIdentifier.get(fieldUniversalIdentifier);
+
+      return [
+        previousSegment,
+        field?.name ?? toMissingFieldName(fieldUniversalIdentifier),
+        subFieldName,
+      ]
+        .filter(isDefined)
+        .join('.');
+    }
+
+    const relationField = fieldByUniversalIdentifier.get(
+      relationFieldUniversalIdentifier,
+    );
+    const targetField = relationField?.relationTargetFields?.find(
+      ({ universalIdentifier }) =>
+        universalIdentifier === fieldUniversalIdentifier,
+    );
 
     return [
-      isPreviousValue ? VALIDATION_RULE_PREVIOUS_VARIABLE_NAME : undefined,
-      isDefined(relationFieldUniversalIdentifier)
-        ? (relationField?.name ??
-          toMissingFieldName(relationFieldUniversalIdentifier))
-        : undefined,
-      field?.name ?? toMissingFieldName(fieldUniversalIdentifier),
+      previousSegment,
+      relationField?.name ??
+        toMissingFieldName(relationFieldUniversalIdentifier),
+      targetField?.name ?? toMissingFieldName(fieldUniversalIdentifier),
       subFieldName,
     ]
       .filter(isDefined)

@@ -71,7 +71,6 @@ export const setFormulaFieldTrees = <
           universalIdentifier,
       ),
   }).filter((formulaFieldDescriptor) => formulaFieldDescriptor.name !== name);
-  // A formula sent as a tree is written as its text, so both go through the same compilation
   const { expression, currencyCodeExpression } = isDefined(
     getFieldMetadataFormulaExpression({ formula: writtenFormula }),
   )

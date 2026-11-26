@@ -2,7 +2,6 @@ import { type ExpressionNode } from '@/expression/types/ExpressionNode';
 import { expressionNodeSchema } from '@/expression/utils/expressionNodeSchema';
 import { type FieldMetadataFormula } from '@/types/FieldMetadataFormula';
 
-// A stored tree is only read once it has the shape of an expression tree, so a malformed one reads as missing
 export const getFieldMetadataFormulaTree = ({
   formula,
   isCurrencyCode = false,
