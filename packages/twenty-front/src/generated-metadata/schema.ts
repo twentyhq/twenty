@@ -1989,6 +1989,7 @@ export type CreateNavigationMenuItemInput = {
   type: NavigationMenuItemType;
   userWorkspaceId?: InputMaybe<Scalars['UUID']['input']>;
   viewId?: InputMaybe<Scalars['UUID']['input']>;
+  visibleItemLimit?: InputMaybe<Scalars['Int']['input']>;
   workflowId?: InputMaybe<Scalars['UUID']['input']>;
 };
 
@@ -5724,6 +5725,7 @@ export type NavigationMenuItem = {
   updatedAt: Scalars['DateTime']['output'];
   userWorkspaceId?: Maybe<Scalars['UUID']['output']>;
   viewId?: Maybe<Scalars['UUID']['output']>;
+  visibleItemLimit?: Maybe<Scalars['Int']['output']>;
   workflowId?: Maybe<Scalars['UUID']['output']>;
 };
 
@@ -8139,6 +8141,7 @@ export type UpdateNavigationMenuItemInput = {
   pageLayoutId?: InputMaybe<Scalars['UUID']['input']>;
   parentId?: InputMaybe<Scalars['UUID']['input']>;
   position?: InputMaybe<Scalars['Float']['input']>;
+  visibleItemLimit?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type UpdateObjectPayload = {

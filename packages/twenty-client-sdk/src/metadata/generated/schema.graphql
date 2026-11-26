@@ -1870,6 +1870,7 @@ input CreateNavigationMenuItemInput {
   type: NavigationMenuItemType!
   userWorkspaceId: UUID
   viewId: UUID
+  visibleItemLimit: Int
   workflowId: UUID
 }
 
@@ -3942,6 +3943,7 @@ type NavigationMenuItem {
   updatedAt: DateTime!
   userWorkspaceId: UUID
   viewId: UUID
+  visibleItemLimit: Int
   workflowId: UUID
 }
 
@@ -5692,6 +5694,7 @@ input UpdateNavigationMenuItemInput {
   pageLayoutId: UUID
   parentId: UUID
   position: Float
+  visibleItemLimit: Int
 }
 
 input UpdateObjectPayload {
