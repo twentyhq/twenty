@@ -18,7 +18,6 @@ import {
   REDUCED_MOTION,
   semanticColor,
 } from '@/tokens';
-import { cssVariableStyle } from '@/ui/css-variable-style';
 
 // The creators hero: the channels a creator posts on, so the page reads as
 // theirs at first sight, and the money they bring. YouTube, very large,
@@ -62,15 +61,10 @@ const CHANNEL_SETTINGS = {
   },
 } satisfies HalftoneModelProps['settings'];
 
-// The row, left to right: each model, its share of the banner's height, the
-// way it turns (the side channels face in towards YouTube), how far it sits
-// up from the banner's middle, and how far it tucks in on its neighbours, in
-// banner heights.
-const ITEMS = [
-  { model: 'email', size: 0.54, turn: 0.38, lift: 0.3, tuck: -0.02 },
-  { model: 'youtube', size: 0.8, turn: 0, lift: 0.36, tuck: 0 },
-  { model: 'discord', size: 0.54, turn: -0.38, lift: 0.3, tuck: -0.02 },
-] as const;
+// The three, composed into one model (creator-channels.glb: the middle one large,
+// the sides smaller and turned in), so the hero holds two canvases and
+// leaves the page's budget to the sections below.
+const ROW_MODEL = '/models/creator-channels.glb';
 
 // The money it brings: a small mountain of coins (coin.glb), poured rather
 // than stacked, each coin leaning and turned its own way. It builds itself
@@ -113,6 +107,14 @@ const PILE_SETTINGS = {
   },
 } satisfies HalftoneModelProps['settings'];
 
+const ROW_SETTINGS = {
+  ...CHANNEL_SETTINGS,
+  previewDistance: 1.45,
+  // the camera sits closer to the wide composition: smaller cells keep the
+  // same line spacing as the single models had
+  halftone: { ...CHANNEL_SETTINGS.halftone, scale: 4.5 },
+} satisfies HalftoneModelProps['settings'];
+
 // The hero's backdrop: the banner's room under the copy.
 const Backdrop = styled.div`
   inset: 0;
@@ -141,20 +143,16 @@ const Pile = styled.div`
   width: calc(${HERO_COMPOSITION.visualBannerHeight} * 1.3);
 `;
 
-// A model's square frame, sized against the banner (--size), moved up from
-// its middle (--lift) and tucked in on its neighbours (--tuck).
+// The composition's frame: wide, raised a little from the banner's middle,
+// fading in once its model has loaded.
 const Channel = styled.div`
-  /* each channel fades in on its own beat, so the models loading at
-     different moments never pop in */
-  animation: creatorChannelIn ${DURATION.lg} ${EASING.gentle} both;
-  animation-delay: calc(var(--order) * ${DURATION.xs} + ${DURATION.md});
-  aspect-ratio: 1;
+  animation: rowIn ${DURATION.lg} ${EASING.gentle} ${DURATION.md} both;
   flex-shrink: 0;
-  height: calc(var(--size) * 100%);
-  margin-inline: calc(var(--tuck) * ${HERO_COMPOSITION.visualBannerHeight});
-  transform: translateY(calc(var(--lift) * -100%));
+  height: 70%;
+  transform: translateY(-38%);
+  width: calc(${HERO_COMPOSITION.visualBannerHeight} * 2.4);
 
-  @keyframes creatorChannelIn {
+  @keyframes rowIn {
     from {
       opacity: 0;
     }
@@ -216,23 +214,9 @@ export function CreatorReferralScene() {
   return (
     <Backdrop aria-hidden ref={frameRef}>
       <Row>
-        {ITEMS.map((item, index) => (
-          <Channel
-            key={item.model}
-            style={cssVariableStyle({
-              '--lift': item.lift,
-              '--order': index,
-              '--size': item.size,
-              '--tuck': item.tuck,
-            })}
-          >
-            <HalftoneModel
-              initialPose={{ rotationY: item.turn }}
-              modelUrl={`/models/${item.model}.glb`}
-              settings={CHANNEL_SETTINGS}
-            />
-          </Channel>
-        ))}
+        <Channel>
+          <HalftoneModel modelUrl={ROW_MODEL} settings={ROW_SETTINGS} />
+        </Channel>
       </Row>
       <Pile>
         <HalftoneModel
