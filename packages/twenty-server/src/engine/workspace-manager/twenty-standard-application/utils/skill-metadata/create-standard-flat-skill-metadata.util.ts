@@ -1,4 +1,5 @@
 import { msg } from '@lingui/core/macro';
+import { FORMULA_FIELD_METADATA_TYPES } from 'twenty-shared/constants';
 
 import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/flat-skill.type';
 import { type AllStandardSkillName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-skill-name.type';
@@ -672,7 +673,7 @@ You help users manage their workspace data model by creating, updating, and orga
 
 ## Formula Fields
 
-A formula field computes its value from other fields; records never write it. It is a field of type TEXT, NUMBER, BOOLEAN, DATE, DATE_TIME, SELECT, RATING or CURRENCY whose \`formula.expression\` holds the formula: \`formula\` is a property of the field, next to \`settings\`, not inside it. Rollups are formulas too: they aggregate the records of a one-to-many relation.
+A formula field computes its value from other fields; records never write it. It is a field of type ${FORMULA_FIELD_METADATA_TYPES.join(', ')} whose \`formula.expression\` holds the formula: \`formula\` is a property of the field, next to \`settings\`, not inside it. Rollups are formulas too: they aggregate the records of a one-to-many relation.
 
 - Create one with create_field_metadata, e.g. \`{ "type": "NUMBER", "name": "customerDealCount", "label": "Customer deals", "formula": { "expression": "count(opportunities, opportunities.stage == 'CUSTOMER')" } }\` on company
 - Check the expression first with validate_formula_expression: it runs the same checks as the create, and says whether the formula is QUERY_TIME or STORED
