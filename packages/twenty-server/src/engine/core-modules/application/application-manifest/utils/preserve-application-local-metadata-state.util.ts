@@ -1,4 +1,4 @@
-import { WORKSPACE_LOCAL_STATE_PROPERTIES } from 'src/engine/metadata-modules/overrides/constants/workspace-local-state-properties.constant';
+import { APPLICATION_SYNC_LOCAL_STATE_PROPERTIES } from 'src/engine/core-modules/application/application-manifest/constants/application-sync-local-state-properties.constant';
 
 export const preserveApplicationLocalMetadataState = <TEntity extends object>({
   existingEntity,
@@ -18,7 +18,7 @@ export const preserveApplicationLocalMetadataState = <TEntity extends object>({
     return manifestEntity;
   }
 
-  for (const property of WORKSPACE_LOCAL_STATE_PROPERTIES) {
+  for (const property of APPLICATION_SYNC_LOCAL_STATE_PROPERTIES) {
     if (property in existingEntityRecord && property in mergedEntityRecord) {
       mergedEntityRecord[property] = existingEntityRecord[property];
     }
