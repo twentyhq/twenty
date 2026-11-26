@@ -6,7 +6,11 @@ import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { ThinkingStepsDisplay } from '@/ai-chat/thinking-steps/components/ThinkingStepsDisplay';
+import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
+import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
+import { graphqlMocks } from '~/testing/graphqlMocks';
 
 const meta: Meta<typeof ThinkingStepsDisplay> = {
   title: 'Modules/AI/ThinkingStepsDisplay',
@@ -116,7 +120,82 @@ export const FailedTool: Story = {
       expect(canvas.getByText('Timed out after 10s')).toBeVisible();
       expect(
         canvas.getByRole('button', { name: 'Show details' }),
-      ).toBeVisible();
+      ).toBeInTheDocument();
     });
+  },
+};
+
+const RECORD_TOOL_DECORATORS = [
+  IconsProviderDecorator,
+  WorkspaceDecorator,
+  ObjectMetadataItemsDecorator,
+];
+
+const COMPANY_RECORD_REFERENCES = [
+  {
+    objectNameSingular: 'company',
+    recordId: '20202020-a225-4b3d-a89c-7f6c30df998a',
+    displayName: 'Microsoft',
+  },
+  {
+    objectNameSingular: 'company',
+    recordId: '20202020-a8b0-422c-8fcf-5b7496f94975',
+    displayName: 'Meta',
+  },
+  {
+    objectNameSingular: 'company',
+    recordId: '20202020-aaf7-41d6-87a9-7add07bebfd8',
+    displayName: 'SLB',
+  },
+];
+
+export const ToolWithOneRecord: Story = {
+  decorators: RECORD_TOOL_DECORATORS,
+  parameters: { msw: graphqlMocks },
+  args: {
+    parts: [
+      {
+        type: 'dynamic-tool',
+        toolName: 'create_company',
+        toolCallId: 'create-company-call',
+        state: 'output-available',
+        input: { name: 'Microsoft' },
+        output: {
+          message: 'Record created successfully in company',
+          recordReferences: COMPANY_RECORD_REFERENCES.slice(0, 1),
+        },
+      },
+    ],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: '1 step' }));
+    expect(await canvas.findByText('Microsoft')).toBeVisible();
+  },
+};
+
+export const ToolWithSeveralRecords: Story = {
+  decorators: RECORD_TOOL_DECORATORS,
+  parameters: { msw: graphqlMocks },
+  args: {
+    parts: [
+      {
+        type: 'dynamic-tool',
+        toolName: 'find_companies',
+        toolCallId: 'find-companies-call',
+        state: 'output-available',
+        input: {},
+        output: {
+          message: 'Found 3 company records',
+          recordReferences: COMPANY_RECORD_REFERENCES,
+        },
+      },
+    ],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: '1 step' }));
+    expect(await canvas.findByText('3 records')).toBeVisible();
+    expect(canvas.queryByText('Microsoft')).toBeNull();
   },
 };

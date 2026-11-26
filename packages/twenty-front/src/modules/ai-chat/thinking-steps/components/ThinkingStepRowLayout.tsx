@@ -9,8 +9,9 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { ShimmeringText } from '@/ai-chat/components/ShimmeringText';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 
-const StyledRowLabel = styled.div`
-  color: inherit;
+const StyledRowLabel = styled.div<{ isError: boolean }>`
+  color: ${({ isError }) =>
+    isError ? themeCssVariables.font.color.danger : 'inherit'};
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.regular};
   line-height: ${themeCssVariables.text.lineHeight.md};
@@ -35,6 +36,13 @@ const StyledRowLabelContainer = styled.div`
   align-items: center;
   display: flex;
   flex: 1;
+  gap: ${themeCssVariables.spacing[1]};
+  min-width: 0;
+`;
+
+const StyledRowText = styled.div`
+  align-items: baseline;
+  display: flex;
   gap: ${themeCssVariables.spacing[1]};
   min-width: 0;
 `;
@@ -98,17 +106,17 @@ const StyledRowDetail = styled.span`
   color: ${themeCssVariables.font.color.light};
   flex-shrink: 1;
   font-size: ${themeCssVariables.font.size.sm};
+  line-height: ${themeCssVariables.text.lineHeight.md};
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
 
-const StyledRowAction = styled.div<{ isAlwaysVisible: boolean }>`
+const StyledRowAction = styled.div`
   display: flex;
   flex-shrink: 0;
-  margin-left: auto;
-  opacity: ${({ isAlwaysVisible }) => (isAlwaysVisible ? 1 : 0)};
+  opacity: 0;
   transition: opacity calc(${themeCssVariables.animation.duration.fast} * 1s)
     ease-in-out;
 
@@ -122,11 +130,10 @@ type ThinkingStepRowLayoutProps = {
   icon: ReactNode;
   label: string;
   isActive: boolean;
-  detail?: string;
+  detail?: ReactNode;
   details?: ReactNode;
   action?: ReactNode;
-  isActionAlwaysVisible?: boolean;
-  footer?: ReactNode;
+  isError?: boolean;
 };
 
 export const ThinkingStepRowLayout = ({
@@ -136,8 +143,7 @@ export const ThinkingStepRowLayout = ({
   detail,
   details,
   action,
-  isActionAlwaysVisible = false,
-  footer,
+  isError = false,
 }: ThinkingStepRowLayoutProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const isExpandable = isDefined(details);
@@ -146,21 +152,26 @@ export const ThinkingStepRowLayout = ({
     <>
       <StyledIconContainer>{icon}</StyledIconContainer>
       <StyledRowLabelContainer>
-        <StyledRowLabel>
-          {isActive ? (
-            <StyledShimmeringLabel>{label}</StyledShimmeringLabel>
-          ) : (
-            <OverflowingTextWithTooltip
-              text={label}
-              tooltipDelay={TooltipDelay.shortDelay}
-            />
-          )}
-        </StyledRowLabel>
-        {isDefined(detail) && <StyledRowDetail>{detail}</StyledRowDetail>}
+        <StyledRowText>
+          <StyledRowLabel isError={isError}>
+            {isActive ? (
+              <StyledShimmeringLabel>{label}</StyledShimmeringLabel>
+            ) : (
+              <OverflowingTextWithTooltip
+                text={label}
+                tooltipDelay={TooltipDelay.shortDelay}
+              />
+            )}
+          </StyledRowLabel>
+          {isDefined(detail) && <StyledRowDetail>{detail}</StyledRowDetail>}
+        </StyledRowText>
         {isExpandable && (
           <StyledChevronContainer>
             <IconChevronRight size={14} />
           </StyledChevronContainer>
+        )}
+        {!isExpandable && isDefined(action) && (
+          <StyledRowAction>{action}</StyledRowAction>
         )}
       </StyledRowLabelContainer>
     </>
@@ -177,18 +188,10 @@ export const ThinkingStepRowLayout = ({
           {rowContent}
         </Collapsible.Trigger>
       ) : (
-        <StyledRow isExpandable={false}>
-          {rowContent}
-          {isDefined(action) && (
-            <StyledRowAction isAlwaysVisible={isActionAlwaysVisible}>
-              {action}
-            </StyledRowAction>
-          )}
-        </StyledRow>
+        <StyledRow isExpandable={false}>{rowContent}</StyledRow>
       )}
 
       {isExpandable && <Collapsible.Panel>{details}</Collapsible.Panel>}
-      {footer}
     </Collapsible.Root>
   );
 };

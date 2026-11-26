@@ -10,13 +10,11 @@ const StyledFieldsCard = styled(Card.Root)`
   padding: ${themeCssVariables.spacing[2]};
 `;
 
-type LogConsoleFieldsCardProps = {
+type DetailFieldsCardProps = {
   children: ReactNode;
 };
 
-export const LogConsoleFieldsCard = ({
-  children,
-}: LogConsoleFieldsCardProps) => (
+export const DetailFieldsCard = ({ children }: DetailFieldsCardProps) => (
   <StyledFieldsCard backgroundColor={themeCssVariables.background.secondary}>
     {children}
   </StyledFieldsCard>

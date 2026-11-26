@@ -1,4 +1,4 @@
-import { type ChatReferenceMatch } from 'twenty-shared/ai';
+import { type ChatReferenceIdentity } from 'twenty-shared/ai';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ReactNode } from 'react';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
@@ -42,7 +42,7 @@ type ChatReferenceTarget = ChatReferenceDestination & {
 };
 
 export const useChatReferenceTarget = (
-  reference: ChatReferenceMatch,
+  reference: ChatReferenceIdentity & { displayName: string },
 ): ChatReferenceTarget | null => {
   const theme = useTheme();
   const { getIcon } = useIcons();

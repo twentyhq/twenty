@@ -23,7 +23,7 @@ import {
   StyledSettingsBillingCardTitle,
   StyledSettingsBillingCardTitleLabel,
 } from '@/settings/billing/components/internal/SettingsBillingCard';
-import { BillingFieldRow } from '@/settings/billing/components/internal/SettingsBillingCardField';
+import { DetailFieldRow } from '@/ui/layout/details/components/DetailFieldRow';
 import { SettingsPrivacyCompliance } from '@/settings/privacy/components/SettingsPrivacyCompliance';
 import { TWENTY_REPOSITORY_URL } from '@/settings/privacy/constants/TwentyRepositoryUrl';
 import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
@@ -66,26 +66,26 @@ export const SettingsPrivacySafeguards = () => {
           </StyledSettingsBillingCardHeader>
           <StyledSettingsBillingCardGridBody>
             <StyledSettingsBillingCardFieldList>
-              <BillingFieldRow Icon={IconLock} label={t`Encryption`}>
+              <DetailFieldRow Icon={IconLock} label={t`Encryption`}>
                 {t`In transit and at rest`}
-              </BillingFieldRow>
-              <BillingFieldRow Icon={IconDatabase} label={t`Isolation`}>
+              </DetailFieldRow>
+              <DetailFieldRow Icon={IconDatabase} label={t`Isolation`}>
                 {t`Own database schema`}
-              </BillingFieldRow>
-              <BillingFieldRow Icon={IconCpu} label={t`AI training`}>
+              </DetailFieldRow>
+              <DetailFieldRow Icon={IconCpu} label={t`AI training`}>
                 {t`Never, by Twenty or providers`}
-              </BillingFieldRow>
+              </DetailFieldRow>
             </StyledSettingsBillingCardFieldList>
             <StyledSettingsBillingCardFieldListWithDivider>
-              <BillingFieldRow Icon={IconHistory} label={t`Backups`}>
+              <DetailFieldRow Icon={IconHistory} label={t`Backups`}>
                 {t`Daily, kept 30 days`}
-              </BillingFieldRow>
-              <BillingFieldRow Icon={IconBell} label={t`Breaches`}>
+              </DetailFieldRow>
+              <DetailFieldRow Icon={IconBell} label={t`Breaches`}>
                 {t`Notified within 72 hours`}
-              </BillingFieldRow>
-              <BillingFieldRow Icon={IconMap} label={t`Hosting`}>
+              </DetailFieldRow>
+              <DetailFieldRow Icon={IconMap} label={t`Hosting`}>
                 {t`AWS, Frankfurt, Germany`}
-              </BillingFieldRow>
+              </DetailFieldRow>
             </StyledSettingsBillingCardFieldListWithDivider>
           </StyledSettingsBillingCardGridBody>
         </StyledSettingsBillingCard>

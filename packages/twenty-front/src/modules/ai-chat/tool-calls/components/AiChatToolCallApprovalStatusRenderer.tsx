@@ -111,6 +111,7 @@ export const AiChatToolCallApprovalStatusRenderer = ({
           label={getChatReferencePlainText(result.proposal.summary)}
           detail={status === 'rejected' ? t`Rejected` : undefined}
           isActive={false}
+          isError={hasFailed}
           details={
             <AiChatToolCallApprovalDecidedDetails
               toolCallId={toolPart.toolCallId}

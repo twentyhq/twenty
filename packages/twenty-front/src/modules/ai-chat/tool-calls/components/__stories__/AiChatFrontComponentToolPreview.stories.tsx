@@ -65,7 +65,9 @@ export const FailedPreview: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(await canvas.findByRole('button')).toBeVisible();
+    await expect(
+      await canvas.findByRole('button', { name: 'Show details' }),
+    ).toBeInTheDocument();
     await expect(canvas.queryByText('Sample data')).not.toBeInTheDocument();
   },
 };
