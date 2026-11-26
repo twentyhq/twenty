@@ -1,12 +1,14 @@
 import { type QueryRunner } from 'typeorm';
 
 import { AddViewIsPrivateFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795477704494-add-view-is-private';
+import { RelaxViewVisibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-instance-command-fast-1795618787744-relax-view-visibility';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 jest.useRealTimers();
 
 describe('2-63 instance command 1795477704494 - add view isPrivate (integration)', () => {
   const addIsPrivateCommand = new AddViewIsPrivateFastInstanceCommand();
+  const relaxVisibilityCommand = new RelaxViewVisibilityFastInstanceCommand();
   let queryRunner: QueryRunner;
 
   const findSeededViewIds = async (count: number): Promise<string[]> => {
@@ -52,6 +54,7 @@ describe('2-63 instance command 1795477704494 - add view isPrivate (integration)
     queryRunner = globalThis.testDataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
+    await relaxVisibilityCommand.down(queryRunner);
   });
 
   afterEach(async () => {

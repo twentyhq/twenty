@@ -96,13 +96,13 @@
       },
       "require": "./dist/application-runtime/index.cjs"
     },
-    "./conditional-availability": {
-      "types": "./dist/conditional-availability/index.d.ts",
+    "./conditional-evaluation": {
+      "types": "./dist/conditional-evaluation/index.d.ts",
       "import": {
-        "development": "./dist/dev/conditional-availability/index.mjs",
-        "default": "./dist/conditional-availability/index.mjs"
+        "development": "./dist/dev/conditional-evaluation/index.mjs",
+        "default": "./dist/conditional-evaluation/index.mjs"
       },
-      "require": "./dist/conditional-availability/index.cjs"
+      "require": "./dist/conditional-evaluation/index.cjs"
     },
     "./constants": {
       "types": "./dist/constants/index.d.ts",
@@ -238,7 +238,7 @@
     "ai",
     "application",
     "application-runtime",
-    "conditional-availability",
+    "conditional-evaluation",
     "constants",
     "database-events",
     "front-component-build",
@@ -267,8 +267,8 @@
       "application-runtime": [
         "dist/application-runtime/index.d.ts"
       ],
-      "conditional-availability": [
-        "dist/conditional-availability/index.d.ts"
+      "conditional-evaluation": [
+        "dist/conditional-evaluation/index.d.ts"
       ],
       "constants": [
         "dist/constants/index.d.ts"

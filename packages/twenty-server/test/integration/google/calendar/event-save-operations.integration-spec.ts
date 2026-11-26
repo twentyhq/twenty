@@ -17,6 +17,10 @@ import { getCoreRepository } from 'test/integration/utils/get-core-repository.ut
 import { resetCalendarChannelSyncState } from 'test/integration/utils/reset-channel-sync-state.util';
 import { runCalendarChannelEventsImport } from 'test/integration/utils/run-calendar-channel-events-import.util';
 import { runCalendarChannelListFetch } from 'test/integration/utils/run-calendar-channel-list-fetch.util';
+import {
+  grantRoleWideAccessToChannelObjects,
+  revokeRoleWideAccessToChannelObjects,
+} from 'test/integration/utils/role-wide-access-to-channel-objects.util';
 
 const HANDLE = 'calendar-event-save-operations@apple.dev';
 
@@ -128,6 +132,7 @@ describe('Calendar event save operations (integration)', () => {
   };
 
   beforeAll(async () => {
+    await grantRoleWideAccessToChannelObjects();
     channel = await connectMessagingAccount({
       provider: ConnectedAccountProvider.GOOGLE,
       handle: HANDLE,
@@ -136,6 +141,7 @@ describe('Calendar event save operations (integration)', () => {
 
   afterAll(async () => {
     await channel?.cleanup().catch(() => undefined);
+    await revokeRoleWideAccessToChannelObjects();
   });
 
   it('should insert the event, its channel association and its participants on a first import', async () => {

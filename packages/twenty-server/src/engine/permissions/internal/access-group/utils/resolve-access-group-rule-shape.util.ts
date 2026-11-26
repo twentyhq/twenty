@@ -13,7 +13,6 @@ export const resolveAccessGroupRuleShape = ({
   objectMetadataId,
   objectUnreadableFieldIds,
   rowLevelPermissionRule,
-  isRelationHopEnabled,
 }: {
   objectMetadataId: string;
   objectUnreadableFieldIds: string[];
@@ -21,7 +20,6 @@ export const resolveAccessGroupRuleShape = ({
     RowLevelRecordsPermissions,
     'predicates' | 'predicateGroups' | 'unreadableFields'
   > | null;
-  isRelationHopEnabled: boolean;
 }): {
   ruleShapeHash: string;
   unreadableFieldIds: string[];
@@ -43,7 +41,6 @@ export const resolveAccessGroupRuleShape = ({
       rowLevelPermissionRule,
       splitPredicateId: splitPredicate?.id ?? null,
       unreadableFieldIds,
-      isRelationHopEnabled,
     }),
     unreadableFieldIds,
     splitPredicate,

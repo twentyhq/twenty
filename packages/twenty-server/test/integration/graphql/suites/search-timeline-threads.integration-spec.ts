@@ -3,6 +3,10 @@ import { createOneOperation } from 'test/integration/graphql/utils/create-one-op
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids';
+import {
+  grantRoleWideAccessToChannelObjects,
+  revokeRoleWideAccessToChannelObjects,
+} from 'test/integration/utils/role-wide-access-to-channel-objects.util';
 
 import { isDefined } from 'twenty-shared/utils';
 
@@ -125,6 +129,7 @@ const searchTimelineThreads = async (searchInput?: string) => {
 
 describe('searchTimelineThreads (integration)', () => {
   beforeAll(async () => {
+    await grantRoleWideAccessToChannelObjects();
     await createRecord({
       objectMetadataSingularName: 'company',
       input: {
@@ -212,6 +217,7 @@ describe('searchTimelineThreads (integration)', () => {
     }
 
     await destroyRecord('company', COMPANY_ID);
+    await revokeRoleWideAccessToChannelObjects();
   });
 
   it('should list the record threads without fallback when there is no search input', async () => {

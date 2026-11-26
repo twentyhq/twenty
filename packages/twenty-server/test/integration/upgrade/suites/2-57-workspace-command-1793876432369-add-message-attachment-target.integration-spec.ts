@@ -1,12 +1,16 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { syncChannelVisibilityRules } from 'test/integration/permissions/channel-visibility/utils/sync-channel-visibility-rules.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import {
+  grantRoleWideAccessToChannelObjects,
+  revokeRoleWideAccessToChannelObjects,
+} from 'test/integration/utils/role-wide-access-to-channel-objects.util';
 
+import { type AddStandardRelatedRecordPathsCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-workspace-command-1793375369182-add-standard-related-record-paths.command';
 import { type AddMessageAttachmentTargetCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1793876432369-add-message-attachment-target.command';
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -33,39 +37,7 @@ const MESSAGE_ID_INDEX_UNIVERSAL_IDENTIFIER =
 
 describe('2-57 workspace command - add message attachment target (integration)', () => {
   let command: AddMessageAttachmentTargetCommand;
-  let featureFlagService: FeatureFlagService;
   let workspaceCacheService: WorkspaceCacheService;
-  let originalFlagValue: boolean | undefined;
-
-  const findMessageAttachmentFlag = async (): Promise<boolean | undefined> => {
-    const [flag]: { value: boolean }[] = await global.testDataSource.query(
-      `SELECT value FROM core."featureFlag" WHERE "workspaceId" = $1 AND key = $2`,
-      [SEED_APPLE_WORKSPACE_ID, FeatureFlagKey.IS_MESSAGE_ATTACHMENT_ENABLED],
-    );
-
-    return flag?.value;
-  };
-
-  const setMessageAttachmentFlag = async (value: boolean | undefined) => {
-    if (isDefined(value)) {
-      await featureFlagService.upsertWorkspaceFeatureFlag({
-        workspaceId: SEED_APPLE_WORKSPACE_ID,
-        featureFlag: FeatureFlagKey.IS_MESSAGE_ATTACHMENT_ENABLED,
-        value,
-      });
-
-      return;
-    }
-
-    await global.testDataSource.query(
-      `DELETE FROM core."featureFlag" WHERE "workspaceId" = $1 AND key = $2`,
-      [SEED_APPLE_WORKSPACE_ID, FeatureFlagKey.IS_MESSAGE_ATTACHMENT_ENABLED],
-    );
-    await workspaceCacheService.invalidateAndRecompute(
-      SEED_APPLE_WORKSPACE_ID,
-      ['featureFlagsMap'],
-    );
-  };
 
   const getFlatFieldAndIndexMaps = () =>
     workspaceCacheService.getOrRecompute(SEED_APPLE_WORKSPACE_ID, [
@@ -152,23 +124,47 @@ describe('2-57 workspace command - add message attachment target (integration)',
   };
 
   beforeAll(async () => {
+    await grantRoleWideAccessToChannelObjects();
     command = getAppProviderByClassName<AddMessageAttachmentTargetCommand>(
       'AddMessageAttachmentTargetCommand',
     );
-    featureFlagService =
-      getAppProviderByClassName<FeatureFlagService>('FeatureFlagService');
     workspaceCacheService = getAppProviderByClassName<WorkspaceCacheService>(
       'WorkspaceCacheService',
     );
 
-    originalFlagValue = await findMessageAttachmentFlag();
-    await setMessageAttachmentFlag(undefined);
+    await global.testDataSource.query(
+      `DELETE FROM core."rowLevelPermissionPredicate" "predicate"
+        USING core."fieldMetadata" "field"
+        WHERE "field".id IN ("predicate"."fieldMetadataId", "predicate"."relationFieldMetadataId")
+          AND "field"."workspaceId" = $1
+          AND "field"."universalIdentifier" = $2`,
+      [
+        SEED_APPLE_WORKSPACE_ID,
+        STANDARD_OBJECTS.attachment.fields.targetMessage.universalIdentifier,
+      ],
+    );
+    await workspaceCacheService.invalidateAndRecompute(
+      SEED_APPLE_WORKSPACE_ID,
+      [
+        'flatRowLevelPermissionPredicateMaps',
+        'flatFieldMetadataMaps',
+        'rolesPermissions',
+      ],
+    );
     await removeMessageAttachmentTarget();
   });
 
   afterAll(async () => {
     await command.runOnWorkspace(RUN_ON_WORKSPACE_ARGS);
-    await setMessageAttachmentFlag(originalFlagValue);
+    await workspaceCacheService.invalidateAndRecompute(
+      SEED_APPLE_WORKSPACE_ID,
+      ['flatRelatedRecordPathMaps'],
+    );
+    await getAppProviderByClassName<AddStandardRelatedRecordPathsCommand>(
+      'AddStandardRelatedRecordPathsCommand',
+    ).runOnWorkspace(RUN_ON_WORKSPACE_ARGS);
+    await revokeRoleWideAccessToChannelObjects();
+    await syncChannelVisibilityRules();
   });
 
   it('leaves the workspace unchanged on a dry run', async () => {
@@ -182,10 +178,9 @@ describe('2-57 workspace command - add message attachment target (integration)',
       hasIndex: false,
       hasColumn: false,
     });
-    expect(await findMessageAttachmentFlag()).toBeUndefined();
   });
 
-  it('adds both relation fields, the index and the column, enables message attachments, and is a no-op when run again', async () => {
+  it('adds both relation fields, the index and the column, and is a no-op when run again', async () => {
     await command.runOnWorkspace(RUN_ON_WORKSPACE_ARGS);
 
     expect(await findMessageAttachmentTarget()).toEqual({
@@ -193,7 +188,6 @@ describe('2-57 workspace command - add message attachment target (integration)',
       hasIndex: true,
       hasColumn: true,
     });
-    expect(await findMessageAttachmentFlag()).toBe(true);
 
     await command.runOnWorkspace(RUN_ON_WORKSPACE_ARGS);
 
@@ -202,13 +196,5 @@ describe('2-57 workspace command - add message attachment target (integration)',
       hasIndex: true,
       hasColumn: true,
     });
-  });
-
-  it('enables message attachments when the target already exists', async () => {
-    await setMessageAttachmentFlag(undefined);
-
-    await command.runOnWorkspace(RUN_ON_WORKSPACE_ARGS);
-
-    expect(await findMessageAttachmentFlag()).toBe(true);
   });
 });

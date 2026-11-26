@@ -8,6 +8,10 @@ import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { upsertRowLevelPermissionRules } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-rules.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import {
+  grantRoleWideAccessToChannelObjects,
+  revokeRoleWideAccessToChannelObjects,
+} from 'test/integration/utils/role-wide-access-to-channel-objects.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import {
@@ -51,6 +55,7 @@ describe('roles permissions', () => {
   let guestRoleId: string;
 
   beforeAll(async () => {
+    await grantRoleWideAccessToChannelObjects();
     const query = {
       query: `
       query GetRoles {
@@ -967,5 +972,9 @@ describe('roles permissions', () => {
           });
       });
     });
+  });
+
+  afterAll(async () => {
+    await revokeRoleWideAccessToChannelObjects();
   });
 });

@@ -7,8 +7,10 @@ import { AddStandardInboxViewsCommand } from 'src/database/commands/upgrade-vers
 import { RenameWorkflowsNavigationFolderToAutomationsCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-workspace-command-1795538639852-rename-workflows-navigation-folder-to-automations.command';
 import { AddWorkflowsAndAgentsGoToCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-workspace-command-1795538640852-add-workflows-and-agents-go-to-command-menu-items.command';
 import { AddDefaultLayoutNavigationMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-workspace-command-1795595757554-add-default-layout-navigation-menu-items.command';
+import { BackfillBillingCustomerStripeCustomerEmailCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-workspace-command-1795601305717-backfill-billing-customer-stripe-customer-email.command';
 import { AddAiChatChannelAndRecordLinkCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-workspace-command-1795640677144-add-ai-chat-channel-and-record-link-command-menu-items.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/workspace-migration-runner.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
@@ -16,6 +18,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
 @Module({
   imports: [
     ApplicationModule,
+    StripeModule,
     WorkspaceCacheModule,
     WorkspaceIteratorModule,
     WorkspaceMigrationModule,
@@ -28,6 +31,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     RenameWorkflowsNavigationFolderToAutomationsCommand,
     AddWorkflowsAndAgentsGoToCommandMenuItemsCommand,
     AddDefaultLayoutNavigationMenuItemsCommand,
+    BackfillBillingCustomerStripeCustomerEmailCommand,
     AddAiChatChannelAndRecordLinkCommandMenuItemsCommand,
   ],
 })

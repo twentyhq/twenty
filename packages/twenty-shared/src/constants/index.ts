@@ -56,6 +56,8 @@ export { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from './FieldRestric
 export { FIELD_TYPE_DEFAULT_ICONS } from './FieldTypeDefaultIcons';
 export { FILES_FIELD_MAX_NUMBER_OF_VALUES } from './FilesFieldMaxNumberOfValues';
 export { FORBIDDEN_PROPERTY_NAMES } from './ForbiddenPropertyNames';
+export { FORMULA_AGGREGATE_FUNCTION_NAMES } from './FormulaAggregateFunctionNames';
+export { FORMULA_AGGREGATE_MAXIMUM_ARGUMENT_COUNT } from './FormulaAggregateMaximumArgumentCount';
 export { FORMULA_FIELD_METADATA_TYPES } from './FormulaFieldMetadataTypes';
 export { GIN_COMPATIBLE_FIELD_TYPES } from './GinCompatibleFieldTypes';
 export { GROUP_BY_DATE_GRANULARITY_THAT_REQUIRE_TIME_ZONE } from './GroupByDateGranularityThatRequireTimeZone';

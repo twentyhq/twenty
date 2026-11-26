@@ -603,7 +603,7 @@ export class CommonMergeManyQueryRunnerService extends CommonRecordQueryRunnerSe
             .where({ id: In(idsToDelete) }),
           rowLevelPermissionsApplied: false,
           kind: 'delete',
-          columnsToReturn,
+          columnsToReturn: ['id'],
         });
 
         // Row-level permissions filter the delete, so a record the role can read but not delete is skipped silently
