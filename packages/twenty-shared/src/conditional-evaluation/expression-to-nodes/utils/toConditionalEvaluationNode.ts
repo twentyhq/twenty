@@ -21,6 +21,8 @@ const getComputationToken = (node: ExpressionNode): string | undefined => {
       return 'in';
     case 'CONCATENATION':
       return '||';
+    case 'MEMBER':
+      return `.${node.property}`;
     default:
       return getExpressionNodeChildren(node)
         .map(getComputationToken)

@@ -51,6 +51,31 @@ describe('parseExpressionNode', () => {
     });
   });
 
+  it('should read a property of any expression, not only of a field', () => {
+    expect(
+      parseExpressionNode('(coalesce(name, "")).firstName == "Bob"'),
+    ).toEqual({
+      isValid: true,
+      node: {
+        type: 'COMPARISON',
+        operator: 'EQUAL',
+        left: {
+          type: 'MEMBER',
+          object: {
+            type: 'FUNCTION_CALL',
+            functionName: 'coalesce',
+            arguments: [
+              { type: 'VARIABLE', path: 'name' },
+              { type: 'LITERAL', value: '' },
+            ],
+          },
+          property: 'firstName',
+        },
+        right: { type: 'LITERAL', value: 'Bob' },
+      },
+    });
+  });
+
   it('should refuse bracket access', () => {
     expect(parseExpressionNode('emails[0]')).toMatchObject({
       isValid: false,
