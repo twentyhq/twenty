@@ -197,11 +197,11 @@ export const NavigationMenuItemFolderDnd = ({
   const handleHeaderClick = shouldUseEditModeClick
     ? (event?: React.MouseEvent) => {
         event?.stopPropagation();
-        editModeProps?.onEditModeClick?.();
-        if (isDefined(event) && event.detail > 1) {
-          return;
+        if (isSelectedInEditMode) {
+          handleToggle();
+        } else {
+          editModeProps?.onEditModeClick?.();
         }
-        handleToggle();
       }
     : handleToggle;
 
@@ -226,6 +226,7 @@ export const NavigationMenuItemFolderDnd = ({
         isWorkspace && isFolderEditHighlighted && !isExpanded
       }
       onClick={handleHeaderClick}
+      aria-expanded={isOpen}
       trailingIcon={<NavigationMenuItemFolderChevron isOpen={isOpen} />}
       rightOptions={shouldUseEditModeClick ? undefined : headerRightOptions}
       className="navigation-drawer-item"

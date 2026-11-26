@@ -20,7 +20,7 @@ const StyledSectionInnerContainerMinusScrollPadding = styled.div<{
       ? '100%'
       : `calc(100% - ${themeCssVariables.spacing[2]})`};
 
-  ${StyledSection} ${StyledSection} & {
+  [data-nested-sections-fill-width] ${StyledSection} & {
     width: 100%;
   }
 `;
@@ -28,9 +28,11 @@ const StyledSectionInnerContainerMinusScrollPadding = styled.div<{
 export const NavigationDrawerSection = ({
   children,
   className,
+  shouldNestedSectionsFillWidth = false,
 }: {
   children: React.ReactNode;
   className?: string;
+  shouldNestedSectionsFillWidth?: boolean;
 }) => {
   const isMobile = useIsMobile();
   const isNavigationDrawerExpanded = useAtomStateValue(
@@ -39,7 +41,12 @@ export const NavigationDrawerSection = ({
   const isCollapsed = !isMobile && !isNavigationDrawerExpanded;
 
   return (
-    <StyledSection className={className}>
+    <StyledSection
+      className={className}
+      data-nested-sections-fill-width={
+        shouldNestedSectionsFillWidth || undefined
+      }
+    >
       <StyledSectionInnerContainerMinusScrollPadding
         isMobile={isMobile}
         isCollapsed={isCollapsed}

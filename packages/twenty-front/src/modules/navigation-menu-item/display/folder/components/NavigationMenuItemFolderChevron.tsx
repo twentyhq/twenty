@@ -23,7 +23,7 @@ export const NavigationMenuItemFolderChevron = ({
   const theme = useTheme();
 
   return (
-    <StyledContainer isOpen={isOpen}>
+    <StyledContainer isOpen={isOpen} aria-hidden>
       <IconChevronRight
         size={theme.icon.size.sm}
         stroke={theme.icon.stroke.sm}
