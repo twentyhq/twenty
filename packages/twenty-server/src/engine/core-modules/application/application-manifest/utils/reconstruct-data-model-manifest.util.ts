@@ -4,6 +4,7 @@ import {
   type ObjectFieldManifest,
   type ObjectManifest,
 } from 'twenty-shared/application';
+import { type ValidationRuleFieldDescriptor } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { fromFlatFieldMetadataToFieldManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-field-metadata-to-field-manifest.util';
@@ -78,8 +79,13 @@ const getUnsupportedIndexReason = ({
 
 export const reconstructDataModelManifest = ({
   applicationAllFlatEntityMaps,
+  getFormulaFields,
 }: {
   applicationAllFlatEntityMaps: AllFlatEntityMaps;
+  // A formula may read fields of other applications, so they are named from the whole workspace
+  getFormulaFields: (
+    objectUniversalIdentifier: string,
+  ) => ValidationRuleFieldDescriptor[];
 }): {
   objects: ObjectManifest[];
   fields: FieldManifest[];
@@ -187,6 +193,9 @@ export const reconstructDataModelManifest = ({
       fromFlatFieldMetadataToFieldManifest({
         flatFieldMetadata,
         flatFieldMetadataOptionMaps,
+        formulaFields: getFormulaFields(
+          flatFieldMetadata.objectMetadataUniversalIdentifier,
+        ),
       }),
     );
     coverage.push(

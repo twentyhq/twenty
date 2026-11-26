@@ -534,9 +534,6 @@ export default {
             "senderApplicationId": [
                 573
             ],
-            "senderUserWorkspaceId": [
-                573
-            ],
             "senderWorkspaceMemberId": [
                 573
             ],
@@ -4588,6 +4585,9 @@ export default {
             ],
             "key": [
                 707
+            ],
+            "listPinnedFieldMetadataId": [
+                573
             ],
             "mainGroupByFieldMetadataId": [
                 573
@@ -15739,6 +15739,9 @@ export default {
             "kanbanColumnWidth": [
                 2
             ],
+            "listPinnedFieldMetadataId": [
+                573
+            ],
             "mainGroupByFieldMetadataId": [
                 573
             ],
@@ -16889,6 +16892,9 @@ export default {
             ],
             "key": [
                 707
+            ],
+            "listPinnedFieldMetadataId": [
+                573
             ],
             "mainGroupByFieldMetadataId": [
                 573

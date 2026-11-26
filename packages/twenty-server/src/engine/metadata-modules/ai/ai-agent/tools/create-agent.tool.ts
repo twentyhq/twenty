@@ -99,7 +99,12 @@ export class CreateAgentTool extends BaseTool<typeof createAgentInputSchema> {
     return {
       success: true,
       message: `Agent "${agent.label}" created`,
-      result: toAgentSummary(agent),
+      result: toAgentSummary(
+        await this.agentService.toAgentDto({
+          flatAgentWithRoleId: agent,
+          workspaceId,
+        }),
+      ),
     };
   }
 }

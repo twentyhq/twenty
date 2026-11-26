@@ -19,7 +19,7 @@ import { GET_PUBLIC_WORKSPACE_DATA_BY_DOMAIN } from '@/auth/graphql/queries/getP
 import { BILLING_PARTNER_CODE } from '@/settings/billing/graphql/queries/billingPartnerCode';
 import { BILLING_PORTAL_SESSION } from '@/settings/billing/graphql/queries/billingPortalSession';
 import { GET_RESOURCE_CREDIT_USAGE } from '@/settings/billing/graphql/queries/getResourceCreditUsage';
-import { LIST_PLANS } from '@/settings/billing/graphql/queries/listPlans';
+import { BILLING_PLANS } from '@/settings/billing/graphql/queries/billingPlans';
 import { GET_ROLE } from '@/settings/roles/graphql/queries/getRoleQuery';
 import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
 import { mockBillingPlans } from '~/testing/mock-data/billing-plans';
@@ -542,7 +542,7 @@ export const graphqlMocks = {
         },
       });
     }),
-    graphql.query(getOperationName(LIST_PLANS) ?? '', () => {
+    graphql.query(getOperationName(BILLING_PLANS) ?? '', () => {
       return HttpResponse.json({
         data: mockBillingPlans,
       });

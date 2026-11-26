@@ -41,6 +41,8 @@ describe('Sync application should fail on universalIdentifier conflicts', () => 
           {
             universalIdentifier: DUPLICATED_UNIVERSAL_IDENTIFIER,
             label: 'Second Role',
+            canBeAssignedToUsers: false,
+            canBeAssignedToApiKeys: false,
             description: 'Second role',
             objectPermissions: [
               {
@@ -80,6 +82,8 @@ describe('Sync application should fail on universalIdentifier conflicts', () => 
           {
             universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
             label: 'Stolen Admin Role',
+            canBeAssignedToUsers: false,
+            canBeAssignedToApiKeys: false,
             description:
               'Attempts to create a role with the standard admin universalIdentifier',
           },

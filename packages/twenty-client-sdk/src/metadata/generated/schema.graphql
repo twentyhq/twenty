@@ -187,7 +187,6 @@ type AgentMessage {
   reactions: [AgentMessageReactionSummary!]!
   role: String!
   senderApplicationId: UUID
-  senderUserWorkspaceId: UUID
   senderWorkspaceMemberId: UUID
   status: String!
   threadId: UUID!
@@ -2064,6 +2063,7 @@ input CreateViewInput {
   kanbanAggregateOperationFieldMetadataId: UUID
   kanbanColumnWidth: Int
   key: ViewKey
+  listPinnedFieldMetadataId: UUID
   mainGroupByFieldMetadataId: UUID
   name: String!
   objectMetadataId: UUID!
@@ -5955,6 +5955,7 @@ input UpdateViewInput {
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID
   kanbanColumnWidth: Int
+  listPinnedFieldMetadataId: UUID
   mainGroupByFieldMetadataId: UUID
   name: String
 
@@ -6507,6 +6508,7 @@ type View {
   kanbanAggregateOperationFieldMetadataId: UUID
   kanbanColumnWidth: Int
   key: ViewKey
+  listPinnedFieldMetadataId: UUID
   mainGroupByFieldMetadataId: UUID
   name: String!
   objectMetadataId: UUID!

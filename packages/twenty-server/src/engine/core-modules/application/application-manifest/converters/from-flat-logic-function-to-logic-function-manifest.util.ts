@@ -1,11 +1,20 @@
 import { type LogicFunctionManifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
+import { printDatabaseEventTriggerSettings } from 'src/engine/workspace-event-emitter/utils/print-database-event-trigger-settings.util';
 
-export const fromFlatLogicFunctionToLogicFunctionManifest = (
-  logicFunction: FlatLogicFunction,
-): LogicFunctionManifest | undefined => {
+export const fromFlatLogicFunctionToLogicFunctionManifest = ({
+  logicFunction,
+  flatObjectMetadataMaps,
+  flatFieldMetadataMaps,
+}: {
+  logicFunction: FlatLogicFunction;
+} & Pick<
+  AllFlatEntityMaps,
+  'flatObjectMetadataMaps' | 'flatFieldMetadataMaps'
+>): LogicFunctionManifest | undefined => {
   if (!isDefined(logicFunction.checksum)) {
     return undefined;
   }
@@ -31,8 +40,11 @@ export const fromFlatLogicFunctionToLogicFunctionManifest = (
       : {}),
     ...(isDefined(logicFunction.databaseEventTriggerSettings)
       ? {
-          databaseEventTriggerSettings:
-            logicFunction.databaseEventTriggerSettings,
+          databaseEventTriggerSettings: printDatabaseEventTriggerSettings({
+            settings: logicFunction.databaseEventTriggerSettings,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+          }),
         }
       : {}),
     ...(isDefined(logicFunction.httpRouteTriggerSettings)

@@ -185,6 +185,7 @@ export { isPausingToolPart } from './utils/is-pausing-tool-part.util';
 export { isSilentAgentChatMessageParts } from './utils/is-silent-agent-chat-message-parts.util';
 export { isSnakeCaseToolName } from './utils/is-snake-case-tool-name.util';
 export { isSucceededCompleteWorkspaceSetupToolPart } from './utils/is-succeeded-complete-workspace-setup-tool-part.util';
+export { isToolsOnlyAgentChatMessageParts } from './utils/is-tools-only-agent-chat-message-parts.util';
 export { isValidAgentMessageReactionEmoji } from './utils/is-valid-agent-message-reaction-emoji.util';
 export { isValidAgentResponseSchemaPropertyKey } from './utils/is-valid-agent-response-schema-property-key.util';
 export { isValidChatReferenceLabel } from './utils/is-valid-chat-reference-label.util';

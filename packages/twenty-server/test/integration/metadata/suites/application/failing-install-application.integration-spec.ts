@@ -45,6 +45,8 @@ describe('Install application should fail when entity does not exist', () => {
           {
             universalIdentifier: 'not-a-valid-uuid',
             label: 'Invalid UUID Role',
+            canBeAssignedToUsers: false,
+            canBeAssignedToApiKeys: false,
             description: 'Role with invalid universalIdentifier',
           },
         ],

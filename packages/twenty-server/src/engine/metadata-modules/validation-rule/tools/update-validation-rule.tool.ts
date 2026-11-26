@@ -41,7 +41,7 @@ const updateValidationRuleInputSchema = z.object({
   accessPolicy: VALIDATION_RULE_WRITE_ACCESS_POLICY,
   icon: 'IconSettings',
   description:
-    'Update a validation rule. Only the provided properties change. When the user is on a validation rule page (a settings path ending in /validation-rules/<id>), requests about a rule are about that one. An active rule rejects an invalid expression with the reason; an inactive rule only checks it when activated, so check it first with validate_validation_rule_expression. Keep the rule inactive unless the user asks to activate it.',
+    'Update a validation rule. Only the provided properties change. When the user is on a validation rule page (a settings path ending in /validation-rules/<id>), requests about a rule are about that one. An active rule rejects an invalid expression with the reason; an inactive rule only checks its syntax until activated, so check it first with validate_validation_rule_expression. Keep the rule inactive unless the user asks to activate it.',
 })
 export class UpdateValidationRuleTool extends BaseTool<
   typeof updateValidationRuleInputSchema

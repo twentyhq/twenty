@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import {
   createUIMessageStream,
+  type FinishReason,
   readUIMessageStream,
   type TextStreamPart,
   type ToolSet,
@@ -12,6 +13,7 @@ import {
   type ExtendedUIMessage,
   type ExtendedUIMessagePart,
   isSilentAgentChatMessageParts,
+  isToolsOnlyAgentChatMessageParts,
 } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { v5 as uuidv5 } from 'uuid';
@@ -81,6 +83,7 @@ export type AgentTurnStreamResult = {
   replyParts: ExtendedUIMessagePart[];
   isAborted: boolean;
   streamError: unknown;
+  finishReason: FinishReason | undefined;
   usage: AgentTurnStreamUsage;
   modelConfig: AiModelConfig | null;
 };
@@ -113,6 +116,7 @@ export type AgentTurnStreamInput<
     streamed: AgentTurnStreamResult & { started: TStarted },
   ) => Promise<TCompletion>;
   isBackgroundRun?: boolean;
+  canEndWithToolsOnly?: boolean;
 };
 
 export type AgentTurnStreamOutput<
@@ -300,6 +304,7 @@ export class AgentTurnStreamService {
     startTurn,
     completeTurn,
     isBackgroundRun = false,
+    canEndWithToolsOnly = false,
   }: AgentTurnStreamInput<TStarted, TCompletion>): Promise<
     AgentTurnStreamOutput<TStarted, TCompletion>
   > {
@@ -341,6 +346,7 @@ export class AgentTurnStreamService {
       stopReason: completion.stopReason,
       isWaiting: completion.isWaiting,
       isBackgroundRun,
+      canEndWithToolsOnly,
     });
 
     // a worker shutting down interrupted the turn, which fails rather than ends as stopped
@@ -418,6 +424,7 @@ export class AgentTurnStreamService {
       replyParts: [],
       isAborted: false,
       streamError: undefined,
+      finishReason: undefined,
       usage,
       modelConfig: null,
     };
@@ -457,11 +464,12 @@ export class AgentTurnStreamService {
                 agentId,
                 isBuiltInAssistant,
               }),
-            onEnd: async ({ responseMessage, isAborted }) => {
+            onEnd: async ({ responseMessage, isAborted, finishReason }) => {
               try {
                 result.streamError ??= source.getStreamError?.();
                 result.replyParts = responseMessage.parts;
                 result.isAborted = isAborted;
+                result.finishReason = finishReason;
                 isFinalizing = true;
                 await source.pendingWrites;
               } finally {
@@ -570,12 +578,13 @@ export class AgentTurnStreamService {
     stopReason,
     isWaiting = false,
     isBackgroundRun = false,
+    canEndWithToolsOnly = false,
   }: Pick<
     AgentTurnStreamInput<
       { source: AgentTurnStreamSource },
       AgentTurnCompletion
     >,
-    'workspaceId' | 'claim' | 'turnId' | 'agentId'
+    'workspaceId' | 'claim' | 'turnId' | 'agentId' | 'canEndWithToolsOnly'
   > & {
     result: AgentTurnStreamResult;
     modelId: string;
@@ -591,7 +600,6 @@ export class AgentTurnStreamService {
     const replyText =
       findLastMessageText(replyParts) ?? findAwaitingCallText(replyParts);
     const hasText = hasReplyText(replyParts);
-    const isSilent = isSilentAgentChatMessageParts(replyParts);
     const awaitingParts = findAwaitingPausingToolParts(replyParts);
     // without an answerable call nothing can resume the turn, so fail rather than wait forever
     const isAwaitingAnswer =
@@ -601,10 +609,17 @@ export class AgentTurnStreamService {
       hasText,
       isAborted: result.isAborted,
       isAwaitingUserAnswer: awaitingParts.length > 0 || isWaiting,
-      isSilent,
+      isSilent: isSilentAgentChatMessageParts(replyParts),
+      isToolsOnly:
+        canEndWithToolsOnly &&
+        result.finishReason === 'stop' &&
+        isToolsOnlyAgentChatMessageParts(replyParts),
       stopReason,
       isTextReplyRequired: !isBackgroundRun,
     });
+    const isQuiet =
+      outcome.kind === 'completed' &&
+      (outcome.outcome === 'silent' || outcome.outcome === 'tools_only');
 
     if (!isBackgroundRun && isDefined(claim)) {
       this.logTurnWithoutText({
@@ -613,7 +628,7 @@ export class AgentTurnStreamService {
         modelId,
         stopReason,
         hasText,
-        isSilent,
+        isQuiet,
         hasAwaitingCall: awaitingParts.length > 0,
       });
     }
@@ -672,7 +687,7 @@ export class AgentTurnStreamService {
       threadId: claim.threadId,
       streamId: claim.streamId,
       lastMessageText: replyText,
-      shouldRecordActivity: !isSilent && (!isBackgroundRun || isAwaitingAnswer),
+      shouldRecordActivity: !isQuiet && (!isBackgroundRun || isAwaitingAnswer),
       usage: {
         contextWindowTokens: result.modelConfig?.contextWindowTokens ?? null,
         conversationSize: result.usage.conversationSize,
@@ -683,7 +698,7 @@ export class AgentTurnStreamService {
     if (!totalsUpdate.affected) {
       // the reply is saved even though a newer stream owns the thread, and its activity is
       // best-effort so it never turns the saved reply into an error
-      if (!isSilent && !isBackgroundRun) {
+      if (!isQuiet && !isBackgroundRun) {
         await this.threadService
           .recordThreadActivity({
             workspaceId,
@@ -722,7 +737,7 @@ export class AgentTurnStreamService {
     modelId,
     stopReason,
     hasText,
-    isSilent,
+    isQuiet,
     hasAwaitingCall,
   }: {
     claim: Pick<AgentChatStreamClaim, 'threadId' | 'workspaceId'>;
@@ -733,10 +748,10 @@ export class AgentTurnStreamService {
     modelId: string;
     stopReason: StepDebitResult['stopReason'];
     hasText: boolean;
-    isSilent: boolean;
+    isQuiet: boolean;
     hasAwaitingCall: boolean;
   }): void {
-    if ((!isAborted && hasText) || hasAwaitingCall || isSilent) {
+    if ((!isAborted && hasText) || hasAwaitingCall || isQuiet) {
       return;
     }
 
