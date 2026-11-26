@@ -4,6 +4,7 @@ import {
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { v5 } from 'uuid';
 
 import { type CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
@@ -19,6 +20,7 @@ export const buildChannelVisibilityObjectRecordsPermissions = ({
   associationRelationFieldUniversalIdentifier,
   channelIdFieldUniversalIdentifier,
   unreadableFieldUniversalIdentifiersByVisibility,
+  uneditableFieldUniversalIdentifiers,
 }: {
   holder: WorkspaceMemberIndividualRoleHolder;
   channels: (Pick<
@@ -33,6 +35,7 @@ export const buildChannelVisibilityObjectRecordsPermissions = ({
   unreadableFieldUniversalIdentifiersByVisibility: Partial<
     Record<MessageChannelVisibility, string[]>
   >;
+  uneditableFieldUniversalIdentifiers?: string[];
 }): ObjectRecordsPermissionsManifest => {
   const roleUniversalIdentifier =
     getWorkspaceMemberIndividualRoleUniversalIdentifier({ holder });
@@ -43,6 +46,9 @@ export const buildChannelVisibilityObjectRecordsPermissions = ({
 
   return {
     objectUniversalIdentifier,
+    ...(isDefined(uneditableFieldUniversalIdentifiers) && {
+      uneditableFields: uneditableFieldUniversalIdentifiers,
+    }),
     rowLevelRecordsPermissions: Object.values(MessageChannelVisibility).flatMap(
       (visibility) => {
         const channelIds = channels
@@ -70,6 +76,7 @@ export const buildChannelVisibilityObjectRecordsPermissions = ({
             canReadRecords: true,
             unreadableFields:
               unreadableFieldUniversalIdentifiersByVisibility[visibility] ?? [],
+            canUpdateRecords: isDefined(uneditableFieldUniversalIdentifiers),
             predicateGroups: [
               {
                 universalIdentifier: buildUniversalIdentifier('group'),

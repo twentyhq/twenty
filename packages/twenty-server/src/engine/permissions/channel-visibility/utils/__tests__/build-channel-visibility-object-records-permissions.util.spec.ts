@@ -86,4 +86,24 @@ describe('buildChannelVisibilityObjectRecordsPermissions', () => {
       { unreadableFields: [], channelIds: ['c3'] },
     ]);
   });
+
+  it('should let visible records be updated outside the uneditable fields', () => {
+    const { uneditableFields, rowLevelRecordsPermissions } =
+      buildChannelVisibilityObjectRecordsPermissions({
+        holder: { type: 'userWorkspace', userWorkspaceId: 'alice' },
+        channels,
+        objectUniversalIdentifier: 'calendarEvent',
+        associationRelationFieldUniversalIdentifier: 'associations',
+        channelIdFieldUniversalIdentifier: 'channelId',
+        unreadableFieldUniversalIdentifiersByVisibility: {},
+        uneditableFieldUniversalIdentifiers: ['title'],
+      });
+
+    expect(uneditableFields).toEqual(['title']);
+    expect(
+      rowLevelRecordsPermissions?.map(
+        ({ canUpdateRecords }) => canUpdateRecords,
+      ),
+    ).toEqual([true, true, true]);
+  });
 });

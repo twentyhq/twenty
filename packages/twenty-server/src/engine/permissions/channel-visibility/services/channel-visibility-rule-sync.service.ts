@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import {
+  RESERVED_SYSTEM_FIELD_TYPE_BY_NAME,
+  STANDARD_OBJECTS,
+} from 'twenty-shared/metadata';
 import { MessageChannelVisibility } from 'twenty-shared/types';
 import { Repository } from 'typeorm';
 
@@ -120,6 +123,14 @@ export class ChannelVisibilityRuleSyncService {
                   calendarEvent.fields.callRecordings.universalIdentifier,
                 ],
               },
+              uneditableFieldUniversalIdentifiers: Object.entries(
+                calendarEvent.fields,
+              )
+                .filter(
+                  ([fieldName]) =>
+                    !(fieldName in RESERVED_SYSTEM_FIELD_TYPE_BY_NAME),
+                )
+                .map(([, { universalIdentifier }]) => universalIdentifier),
             }),
             ...[
               ...CHANNEL_CHILD_OBJECT_UNIVERSAL_IDENTIFIERS,
