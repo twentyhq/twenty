@@ -10,6 +10,7 @@ Entries reference the canonical skills (`create-app`, `develop-app`, `manage-app
 
 ### Changed
 
+- `develop-app`: documented `toolTriggerSettings.approval` labels for an app tool's approval card, and that they are extracted for translation.
 - `develop-app`: documented `cronTriggerSettings.spreadMs` for spreading crons across workspaces, the `enqueueJobs` `limiter` option and the `scheduledAt` job field.
 - `develop-app`: documented `isWorkEmail` from the new `twenty-sdk/email` entry for telling a company address from a personal one.
 - `develop-app`: replaced `daysSince` with the date functions `dateDiff`, `dateAdd`, `dateTrunc` and `datePart` in validation rule expressions.

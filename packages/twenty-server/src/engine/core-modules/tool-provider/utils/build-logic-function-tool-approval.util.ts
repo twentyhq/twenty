@@ -7,7 +7,9 @@ export const buildLogicFunctionToolApproval = ({
   approvalSettings,
   translateLabel,
 }: {
-  approvalSettings: ToolTriggerApprovalSettings | undefined;
+  approvalSettings:
+    | Pick<ToolTriggerApprovalSettings, 'approveLabel' | 'rejectLabel'>
+    | undefined;
   translateLabel: (label: { message: string; context: string }) => string;
 }): ToolApproval | undefined => {
   const approveLabel = approvalSettings?.approveLabel;

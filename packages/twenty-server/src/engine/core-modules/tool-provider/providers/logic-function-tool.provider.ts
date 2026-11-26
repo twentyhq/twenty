@@ -153,12 +153,11 @@ export class LogicFunctionToolProvider implements ToolProvider {
     return descriptors;
   }
 
-  // Apps never ship a source-locale catalog, so only other locales need a lookup.
   private async buildApprovalLabelTranslator({
     context,
     logicFunctions,
   }: {
-    context: ToolProviderContext;
+    context: Pick<ToolProviderContext, 'locale' | 'workspaceId'>;
     logicFunctions: FlatLogicFunction[];
   }): Promise<
     (label: {

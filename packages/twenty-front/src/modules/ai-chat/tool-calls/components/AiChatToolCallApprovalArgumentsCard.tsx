@@ -40,7 +40,6 @@ export const AiChatToolCallApprovalArgumentsCard = ({
   );
 
   const { toolIndex } = useGetToolIndex();
-  // The tool index is translated for the viewer; the stored labels are in the proposer's language
   const labels =
     toolIndex.find((entry) => entry.name === proposal.toolName)?.approval
       ?.labels ?? proposal.labels;

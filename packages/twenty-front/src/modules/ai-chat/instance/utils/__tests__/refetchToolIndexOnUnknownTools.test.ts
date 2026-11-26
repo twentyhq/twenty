@@ -39,10 +39,13 @@ const buildApolloClientWithToolIndex = (toolNames: string[]) => {
   return apolloClient;
 };
 
-const buildProposalMessage = (
-  proposedToolName: string,
-  state: 'input-streaming' | 'input-available' = 'input-available',
-): ExtendedUIMessage => ({
+const buildProposalMessage = ({
+  proposedToolName,
+  state = 'input-available',
+}: {
+  proposedToolName: string;
+  state?: 'input-streaming' | 'input-available';
+}): ExtendedUIMessage => ({
   id: `message-${proposedToolName}`,
   role: 'assistant',
   parts: [
@@ -71,11 +74,19 @@ describe('refetchToolIndexOnUnknownTools', () => {
 
     refetchToolIndexOnUnknownTools({
       apolloClient,
-      messages: [buildProposalMessage('app_tool_respond_to_cal_booking')],
+      messages: [
+        buildProposalMessage({
+          proposedToolName: 'app_tool_respond_to_cal_booking',
+        }),
+      ],
     });
     refetchToolIndexOnUnknownTools({
       apolloClient,
-      messages: [buildProposalMessage('app_tool_newly_installed')],
+      messages: [
+        buildProposalMessage({
+          proposedToolName: 'app_tool_newly_installed',
+        }),
+      ],
     });
 
     expect(invalidateToolIndex).toHaveBeenCalledTimes(2);
@@ -89,7 +100,11 @@ describe('refetchToolIndexOnUnknownTools', () => {
 
     refetchToolIndexOnUnknownTools({
       apolloClient,
-      messages: [buildProposalMessage('app_tool_respond_to_cal_booking')],
+      messages: [
+        buildProposalMessage({
+          proposedToolName: 'app_tool_respond_to_cal_booking',
+        }),
+      ],
     });
 
     expect(invalidateToolIndex).not.toHaveBeenCalled();
@@ -103,7 +118,12 @@ describe('refetchToolIndexOnUnknownTools', () => {
 
     refetchToolIndexOnUnknownTools({
       apolloClient,
-      messages: [buildProposalMessage('app_tool_res', 'input-streaming')],
+      messages: [
+        buildProposalMessage({
+          proposedToolName: 'app_tool_res',
+          state: 'input-streaming',
+        }),
+      ],
     });
 
     expect(invalidateToolIndex).not.toHaveBeenCalled();
