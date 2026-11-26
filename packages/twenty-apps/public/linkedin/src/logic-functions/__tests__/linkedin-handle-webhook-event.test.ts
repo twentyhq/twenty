@@ -299,6 +299,28 @@ describe('linkedinHandleWebhookEventHandler', () => {
     });
   });
 
+  it('ingests a new message of a conversation the member selected, as it arrives', async () => {
+    mocks.kvGet.mockImplementation(async (key: string) =>
+      key === 'linkedin-settings:connection-id'
+        ? {
+            importPolicy: 'SELECTED',
+            selectedChats: [{ id: 'chat-1', name: 'Daphné Müller' }],
+          }
+        : null,
+    );
+
+    await expect(
+      linkedinHandleWebhookEventHandler(
+        buildMessageEvent({
+          sender_id: DAPHNE.id,
+          sender: DAPHNE,
+          is_sender: false,
+        }),
+      ),
+    ).resolves.toEqual({ handled: true });
+    expect(mocks.ingestMessages).toHaveBeenCalledOnce();
+  });
+
   it('leaves out a message of a conversation the member did not select, without reading it', async () => {
     mocks.kvGet.mockImplementation(async (key: string) =>
       key === 'linkedin-settings:connection-id'
