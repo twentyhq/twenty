@@ -112,14 +112,15 @@ const findTabLink = async ({
 }: {
   canvasElement: HTMLElement;
   name: string;
-}) =>
-  within(
-    await within(canvasElement).findByLabelText(
-      'Application details',
-      undefined,
-      { timeout: 3000 },
-    ),
-  ).findByRole('link', { name }, { timeout: 3000 });
+}) => {
+  const [tabLink] = await within(canvasElement).findAllByRole(
+    'link',
+    { name },
+    { timeout: 3000 },
+  );
+
+  return tabLink;
+};
 
 const runApplicationHealthCheck = fn();
 
