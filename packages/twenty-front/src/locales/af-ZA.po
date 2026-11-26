@@ -2852,11 +2852,6 @@ msgstr "Voeg by tot swartlys"
 msgid "Add to Favorite"
 msgstr "Voeg by tot gunstelinge"
 
-#. js-lingui-id: pBsoKL
-#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
-msgid "Add to favorites"
-msgstr "Voeg by tot gunstelinge"
-
 #. js-lingui-id: A7duaz
 #: src/modules/side-panel/hooks/useOpenAddToMessageListInSidePanel.ts
 #: src/modules/side-panel/pages/add-to-message-list/components/SidePanelAddToMessageListPage.tsx
@@ -7612,6 +7607,7 @@ msgid "Configurable search fields"
 msgstr "Konfigureerbare soekvelde"
 
 #. js-lingui-id: ywFj2D
+#: src/modules/settings/applications/components/SettingsApplicationConfigurationSection.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
 msgid "Configuration"
 msgstr "Konfigurasie"
@@ -15105,7 +15101,6 @@ msgstr "Gemini CLI"
 #: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
-#: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
@@ -23173,6 +23168,7 @@ msgstr "Oorheersings"
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/object-core/workflows/components/CoreWorkflowShowPageTabList.tsx
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/data-model/SettingsObjectOverview.tsx
 #: src/pages/settings/layout/SettingsLayout.tsx
 msgid "Overview"
@@ -25469,7 +25465,6 @@ msgid "Remove from blocklist"
 msgstr "Verwyder uit bloklys"
 
 #. js-lingui-id: T/pF0Z
-#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 #: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderContent.tsx
 #: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
 #: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
@@ -28104,6 +28099,11 @@ msgstr "Stel die vereiste bedienerveranderlikes"
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationConfigurationIssues.tsx
 msgid "Set the required server variables: {missingVariableKeys}"
 msgstr "Stel die vereiste bedienerveranderlikes: {missingVariableKeys}"
+
+#. js-lingui-id: L/hdCR
+#: src/modules/settings/applications/components/SettingsApplicationConfigurationSection.tsx
+msgid "Set up {applicationName} for your workspace"
+msgstr "Stel {applicationName} vir jou werkruimte op"
 
 #. js-lingui-id: tG3Y2G
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
