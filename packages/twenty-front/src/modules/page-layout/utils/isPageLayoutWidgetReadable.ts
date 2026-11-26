@@ -12,6 +12,7 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { getFieldWidgetRelationTraversal } from '@/page-layout/widgets/field/utils/getFieldWidgetRelationTraversal';
 import { resolveFieldWidgetNestedRelation } from '@/page-layout/widgets/field/utils/resolveFieldWidgetNestedRelation';
 import { type View } from '@/views/types/View';
+import { FieldDisplayMode } from '~/generated-metadata/graphql';
 
 type IsPageLayoutWidgetReadableArguments = {
   widget: Pick<PageLayoutWidget, 'type' | 'objectMetadataId'> & {
@@ -36,8 +37,12 @@ const getFieldWidgetReadObjectMetadataIds = ({
     return [];
   }
 
-  const { fieldMetadataId, nestedRelationFieldMetadataId, viewId } =
-    widget.configuration;
+  const {
+    fieldMetadataId,
+    nestedRelationFieldMetadataId,
+    viewId,
+    fieldDisplayMode,
+  } = widget.configuration;
 
   const sourceFieldMetadataItem = objectMetadataItems
     .find(
@@ -69,14 +74,15 @@ const getFieldWidgetReadObjectMetadataIds = ({
     objectMetadataItems,
   });
 
-  const isViewOnRelationTargetObject =
+  const isTableViewOnRelationTargetObject =
+    fieldDisplayMode === FieldDisplayMode.TABLE &&
     isDefined(viewId) &&
     viewsByIdMap.get(viewId)?.objectMetadataId ===
       relationTargetObjectMetadataId;
 
   return [
     relationTargetObjectMetadataId,
-    isViewOnRelationTargetObject ? undefined : targetObjectMetadataId,
+    isTableViewOnRelationTargetObject ? undefined : targetObjectMetadataId,
   ];
 };
 

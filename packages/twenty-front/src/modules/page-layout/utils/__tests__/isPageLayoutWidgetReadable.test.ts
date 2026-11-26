@@ -50,17 +50,19 @@ const buildFieldConfiguration = ({
   fieldMetadataId,
   nestedRelationFieldMetadataId,
   viewId,
+  fieldDisplayMode = FieldDisplayMode.TABLE,
 }: {
   fieldMetadataId: string;
   nestedRelationFieldMetadataId?: string;
   viewId?: string;
+  fieldDisplayMode?: FieldDisplayMode;
 }): FieldConfiguration => ({
   __typename: 'FieldConfiguration',
   configurationType: WidgetConfigurationType.FIELD,
   fieldMetadataId,
   nestedRelationFieldMetadataId,
   viewId,
-  fieldDisplayMode: FieldDisplayMode.TABLE,
+  fieldDisplayMode,
 });
 
 const buildObjectPermissions = (
@@ -257,5 +259,23 @@ describe('isPageLayoutWidgetReadable', () => {
         unreadableObjectMetadataIds: [COMPANY_ID],
       }),
     ).toBe(true);
+  });
+
+  it('hides a junction field switched to card mode whose target behind the junction the viewer cannot read', () => {
+    expect(
+      isReadable({
+        type: WidgetType.FIELD,
+        pageObjectMetadataId: PERSON_ID,
+        configuration: buildFieldConfiguration({
+          fieldMetadataId: getFieldId({
+            objectNameSingular: 'person',
+            fieldName: 'previousCompanies',
+          }),
+          viewId: JUNCTION_VIEW_ID,
+          fieldDisplayMode: FieldDisplayMode.CARD,
+        }),
+        unreadableObjectMetadataIds: [COMPANY_ID],
+      }),
+    ).toBe(false);
   });
 });
