@@ -413,15 +413,26 @@ describe('MainNavigationDrawerTabSwitcher', () => {
     ).toBeInTheDocument();
   });
 
-  it('does not mark Home while it is open in the expanded drawer', () => {
-    mockChatAttention = {
-      chatAttention: 'unread',
-      unreadOpenThreadCount: 0,
-      getTabChatAttention: (tabId) => (tabId === null ? 'unread' : null),
-    };
+  it.each([
+    [true, 'Home'],
+    [false, 'Home, unread'],
+  ] as const)(
+    'drops the attention from open Home only while the drawer is expanded (expanded=%s)',
+    (isExpanded, expectedName) => {
+      jest
+        .mocked(useIsNavigationDrawerContentExpanded)
+        .mockReturnValue(isExpanded);
+      mockChatAttention = {
+        chatAttention: 'unread',
+        unreadOpenThreadCount: 0,
+        getTabChatAttention: (tabId) => (tabId === null ? 'unread' : null),
+      };
 
-    renderTabSwitcher();
+      renderTabSwitcher();
 
-    expect(screen.getByRole('button', { name: 'Home' })).toBeInTheDocument();
-  });
+      expect(
+        screen.getByRole('button', { name: expectedName }),
+      ).toBeInTheDocument();
+    },
+  );
 });

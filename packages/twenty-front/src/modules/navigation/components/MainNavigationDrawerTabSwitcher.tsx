@@ -108,6 +108,7 @@ export const MainNavigationDrawerTabSwitcher = ({
   }
 
   const shouldShowTooltips = !isExpanded && !isMobile;
+  const isTabContentShown = (isActive: boolean) => isActive && isExpanded;
 
   return (
     <StyledSwitcher
@@ -137,7 +138,7 @@ export const MainNavigationDrawerTabSwitcher = ({
           drawerTab === NAVIGATION_DRAWER_TABS.NAVIGATION_MENU;
         const homeChatAttention =
           drawerTab === NAVIGATION_DRAWER_TABS.NAVIGATION_MENU &&
-          !(isActive && isExpanded)
+          !isTabContentShown(isActive)
             ? getTabChatAttention(null)
             : null;
 
@@ -208,7 +209,7 @@ export const MainNavigationDrawerTabSwitcher = ({
                   isExpanded={isExpanded}
                   shouldShowTooltip={shouldShowTooltips}
                   attention={
-                    isTabActive && isExpanded
+                    isTabContentShown(isTabActive)
                       ? null
                       : getTabChatAttention(tab.id)
                   }
