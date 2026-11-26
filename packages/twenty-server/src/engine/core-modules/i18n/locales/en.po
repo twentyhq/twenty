@@ -361,6 +361,28 @@ msgstr "A link tracked in a campaign"
 msgid "A marketing email can only be sent to one recipient at a time, so each person gets their own unsubscribe link."
 msgstr "A marketing email can only be sent to one recipient at a time, so each person gets their own unsubscribe link."
 
+#. js-lingui-id: TS5uum
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-restriction-errors.util.ts
+msgid "A marketplace application cannot declare row-level rules or field permissions"
+msgstr "A marketplace application cannot declare row-level rules or field permissions"
+
+#. js-lingui-id: bH9jpk
+#: src/engine/permissions/permissions.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-restriction-errors.util.ts
+msgid "A marketplace application cannot declare row-level rules or field permissions."
+msgstr "A marketplace application cannot declare row-level rules or field permissions."
+
+#. js-lingui-id: +//ajp
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-assignability-errors.util.ts
+msgid "A marketplace application role can only be assigned to agents"
+msgstr "A marketplace application role can only be assigned to agents"
+
+#. js-lingui-id: BRZH6M
+#: src/engine/permissions/permissions.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-assignability-errors.util.ts
+msgid "A marketplace application role can only be assigned to agents."
+msgstr "A marketplace application role can only be assigned to agents."
+
 #. js-lingui-id: Spm4/x
 #: src/engine/metadata-modules/message-channel/services/application-message-send.service.ts
 msgid "A message needs text or at least one attachment."
@@ -9556,6 +9578,11 @@ msgstr "Name"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{name}\" is not available"
 msgstr "Name \"{name}\" is not available"
+
+#. js-lingui-id: 2tJW5E
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-composite-flat-field-metadata-column-names-availability.util.ts
+msgid "Name \"{name}\" is not available as \"{columnName}\" is already used by another field"
+msgstr "Name \"{name}\" is not available as \"{columnName}\" is already used by another field"
 
 #. js-lingui-id: U8mbyw
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
