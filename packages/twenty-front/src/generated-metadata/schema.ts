@@ -6431,6 +6431,8 @@ export type Query = {
   recordPermissions: Array<RecordPermissionsResult>;
   recordSharing: RecordSharingDto;
   relatedRecordPaths: Array<RelatedRecordPath>;
+  rolesReadingAllCalendarEvents: RolesReadingAllRecords;
+  rolesReadingAllMessages: RolesReadingAllRecords;
   skill?: Maybe<Skill>;
   skills: Array<Skill>;
   timelineActivityTypes: Array<TimelineActivityType>;
@@ -7204,6 +7206,12 @@ export type RolePermissionFlag = {
   flag: Scalars['String']['output'];
   id: Scalars['UUID']['output'];
   roleId: Scalars['UUID']['output'];
+};
+
+export type RolesReadingAllRecords = {
+  __typename?: 'RolesReadingAllRecords';
+  isAdminRoleIncluded: Scalars['Boolean']['output'];
+  otherRoleCount: Scalars['Int']['output'];
 };
 
 export type RotateClientSecret = {

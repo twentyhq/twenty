@@ -4632,6 +4632,8 @@ type Query {
   recordPermissions(targets: [RecordTargetInput!]!): [RecordPermissionsResult!]!
   recordSharing(target: RecordTargetInput!): RecordSharingDTO!
   relatedRecordPaths: [RelatedRecordPath!]!
+  rolesReadingAllCalendarEvents: RolesReadingAllRecords!
+  rolesReadingAllMessages: RolesReadingAllRecords!
   skill(id: UUID!): Skill
   skills: [Skill!]!
   timelineActivityTypes: [TimelineActivityType!]!
@@ -4828,6 +4830,11 @@ type RolePermissionFlag {
   flag: String!
   id: UUID!
   roleId: UUID!
+}
+
+type RolesReadingAllRecords {
+  isAdminRoleIncluded: Boolean!
+  otherRoleCount: Int!
 }
 
 type RotateClientSecret {

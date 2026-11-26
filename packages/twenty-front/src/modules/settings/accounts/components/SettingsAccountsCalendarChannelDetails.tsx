@@ -1,5 +1,6 @@
 import { type CalendarChannel } from '@/accounts/types/CalendarChannel';
 import { UPDATE_CALENDAR_CHANNEL } from '@/settings/accounts/graphql/mutations/updateCalendarChannel';
+import { useChannelVisibilityDescription } from '@/settings/accounts/hooks/useChannelVisibilityDescription';
 import { useMutation } from '@apollo/client/react';
 import { SettingsAccountsChannelSyncSection } from '@/settings/accounts/components/SettingsAccountsChannelSyncSection';
 import { SettingsAccountsEventVisibilitySettingsCard } from '@/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard';
@@ -33,6 +34,7 @@ export const SettingsAccountsCalendarChannelDetails = ({
   calendarChannel,
 }: SettingsAccountsCalendarChannelDetailsProps) => {
   const { t } = useLingui();
+  const visibilityDescription = useChannelVisibilityDescription('calendar');
   const [updateMetadataChannel] = useMutation(UPDATE_CALENDAR_CHANNEL);
 
   const updateChannel = (update: Record<string, unknown>) => {
@@ -69,7 +71,7 @@ export const SettingsAccountsCalendarChannelDetails = ({
       <Section.Root>
         <Section.Header
           title={t`Event visibility`}
-          description={t`Define what will be visible to other users in your workspace`}
+          description={visibilityDescription}
         />
         <SettingsAccountsEventVisibilitySettingsCard
           value={calendarChannel.visibility}

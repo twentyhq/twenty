@@ -9,6 +9,7 @@ import {
 } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { Not } from 'typeorm';
@@ -51,6 +52,8 @@ import {
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
+import { RolesReadingAllRecordsDTO } from 'src/engine/permissions/channel-visibility/dtos/roles-reading-all-records.dto';
+import { ChannelVisibilityRoleWideAccessReadService } from 'src/engine/permissions/channel-visibility/services/channel-visibility-role-wide-access-read.service';
 
 const MESSAGE_CHANNEL_ACCESS_POLICY: AccessPolicy = {
   authPrincipals: {
@@ -93,6 +96,7 @@ export class MessageChannelResolver {
     @InjectWorkspaceScopedRepository(MessageFolderEntity)
     private readonly messageFolderRepository: WorkspaceScopedRepository<MessageFolderEntity>,
     private readonly messagingProcessGroupEmailActionsService: MessagingProcessGroupEmailActionsService,
+    private readonly channelVisibilityRoleWideAccessReadService: ChannelVisibilityRoleWideAccessReadService,
   ) {}
 
   @ResolveField('importProgress', () => Int, { nullable: true })
@@ -185,6 +189,19 @@ export class MessageChannelResolver {
       userWorkspaceId,
       workspaceId: workspace.id,
     });
+  }
+
+  @Query(() => RolesReadingAllRecordsDTO)
+  @UseGuards(AccessPolicyGuard(MESSAGE_CHANNEL_ACCESS_POLICY))
+  async rolesReadingAllMessages(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<RolesReadingAllRecordsDTO> {
+    return this.channelVisibilityRoleWideAccessReadService.findRolesReadingAllRecords(
+      {
+        workspaceId: workspace.id,
+        objectUniversalIdentifier: STANDARD_OBJECTS.message.universalIdentifier,
+      },
+    );
   }
 
   @Mutation(() => MessageChannelDTO)
