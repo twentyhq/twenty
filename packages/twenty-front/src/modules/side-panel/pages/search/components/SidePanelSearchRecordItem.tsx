@@ -3,6 +3,7 @@ import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { type SearchResultItem } from '@/side-panel/pages/search/types/SearchResultItem';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { ListItemIconContainer } from '@/ui/navigation/list-item/components/ListItemIconContainer';
 import { type Ref } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppPath, StandardObjectNameSingular } from 'twenty-shared/types';
@@ -57,12 +58,14 @@ export const SidePanelSearchRecordItem = ({
           description={shouldDisplayObjectLabel ? item.objectLabel : undefined}
           onClick={handleClick}
           LeftComponent={
-            <Avatar
-              shape={item.avatarShape}
-              src={getAbsoluteImageUrl(item.imageUrl)}
-              colorSeed={item.recordId}
-              name={item.label}
-            />
+            <ListItemIconContainer>
+              <Avatar
+                shape={item.avatarShape}
+                src={getAbsoluteImageUrl(item.imageUrl)}
+                colorSeed={item.recordId}
+                name={item.label}
+              />
+            </ListItemIconContainer>
           }
         />
       </div>
