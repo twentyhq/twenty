@@ -19,7 +19,7 @@ export const getNavigationMenuContainersInDisplayOrder = ({
       (item) =>
         (item.parentId ?? null) === containerId &&
         item.type === type &&
-        (item.type === NavigationMenuItemType.TAB ||
+        (type === NavigationMenuItemType.TAB ||
           isNonEmptyString(item.name) ||
           isNavigationMenuItemBuiltInSection(item)),
     )

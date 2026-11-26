@@ -1,5 +1,3 @@
-import { useLingui } from '@lingui/react/macro';
-import { isNonEmptyString } from '@sniptt/guards';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -18,7 +16,6 @@ export const useWorkspaceNavigationMenuContainers = ({
   type: NavigationMenuItemType.TAB | NavigationMenuItemType.SECTION;
   containerId: string | null;
 }) => {
-  const { t } = useLingui();
   const isCustomizableSidebarEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
   );
@@ -37,11 +34,7 @@ export const useWorkspaceNavigationMenuContainers = ({
     navigationMenuItems: workspaceNavigationMenuItems,
     type,
     containerId,
-  }).map((container) =>
-    type === NavigationMenuItemType.TAB && !isNonEmptyString(container.name)
-      ? { ...container, name: t`Tab` }
-      : container,
-  );
+  });
 
   if (type !== NavigationMenuItemType.TAB || isLayoutCustomizationModeEnabled) {
     return containers;
