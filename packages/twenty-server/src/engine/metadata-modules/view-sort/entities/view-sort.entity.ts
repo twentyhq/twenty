@@ -10,8 +10,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { RELAX_VIEW_DELETED_AT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-65/relax-view-deleted-at-upgrade-command-name.constant';
-import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
+import { type WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 import { ADD_VIEW_SORT_RELATION_TARGET_FIELD_METADATA_ID_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-61/add-view-sort-relation-target-field-metadata-id-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -87,10 +86,13 @@ export class ViewSortEntity extends SyncableEntity {
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 
-  @WasRemovedInUpgrade({
-    upgradeCommandName: RELAX_VIEW_DELETED_AT_UPGRADE_COMMAND_NAME,
+  @Column({
+    nullable: true,
+    type: 'timestamptz',
+    select: false,
+    insert: false,
+    update: false,
   })
-  @Column({ nullable: true, type: 'timestamptz' })
   deletedAt?: WasRemovedInUpgrade<Date> | null;
 
   @ManyToOne(() => ViewEntity, (view) => view.viewSorts, {

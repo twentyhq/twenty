@@ -10,8 +10,7 @@ import {
   type Relation,
   UpdateDateColumn,
 } from 'typeorm';
-import { RELAX_VIEW_DELETED_AT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-65/relax-view-deleted-at-upgrade-command-name.constant';
-import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
+import { type WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 import { ViewFilterGroupLogicalOperator } from 'twenty-shared/types';
 
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
@@ -49,10 +48,13 @@ export class ViewFilterGroupEntity extends SyncableEntity {
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 
-  @WasRemovedInUpgrade({
-    upgradeCommandName: RELAX_VIEW_DELETED_AT_UPGRADE_COMMAND_NAME,
+  @Column({
+    nullable: true,
+    type: 'timestamptz',
+    select: false,
+    insert: false,
+    update: false,
   })
-  @Column({ nullable: true, type: 'timestamptz' })
   deletedAt?: WasRemovedInUpgrade<Date> | null;
 
   @ManyToOne(() => ViewEntity, (view) => view.viewFilterGroups, {
