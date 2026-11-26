@@ -4,5 +4,7 @@ import { getFieldMetadataFormulaEvaluation } from '@/utils/formula/getFieldMetad
 export const isQueryTimeFormulaFieldMetadata = ({
   formula,
 }: {
-  formula?: Partial<FieldMetadataFormula> | null;
+  formula?: Partial<
+    Pick<FieldMetadataFormula, 'expression' | 'evaluation'>
+  > | null;
 }): boolean => getFieldMetadataFormulaEvaluation({ formula }) === 'QUERY_TIME';

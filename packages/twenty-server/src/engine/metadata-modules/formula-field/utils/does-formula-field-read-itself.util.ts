@@ -10,10 +10,10 @@ export const doesFormulaFieldReadItself = ({
   findFormula,
 }: {
   universalIdentifier: string;
-  formula: Partial<FieldMetadataFormula> | null;
+  formula: Partial<Pick<FieldMetadataFormula, 'bindings'>> | null;
   findFormula: (
     fieldUniversalIdentifier: string,
-  ) => Partial<FieldMetadataFormula> | null | undefined;
+  ) => Partial<Pick<FieldMetadataFormula, 'bindings'>> | null | undefined;
 }): boolean => {
   const visitedUniversalIdentifiers = new Set<string>();
   const universalIdentifiersToVisit = Object.values(

@@ -7,7 +7,7 @@ import { isPlainObject } from '@/utils/typeguard/isPlainObject';
 export const getFieldMetadataFormulaBindings = ({
   formula,
 }: {
-  formula?: Partial<FieldMetadataFormula> | null;
+  formula?: Partial<Pick<FieldMetadataFormula, 'bindings'>> | null;
 }): ValidationRuleBindings | undefined => {
   if (!isPlainObject(formula?.bindings)) {
     return undefined;
