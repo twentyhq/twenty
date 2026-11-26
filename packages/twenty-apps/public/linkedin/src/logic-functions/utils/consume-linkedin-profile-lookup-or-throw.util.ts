@@ -34,8 +34,7 @@ const countLookupOrThrow = async ({
   await kv.set(key, [...lookupTimestamps, now]);
 };
 
-// One at a time per account: the members of a group are looked up together and would all read the same count.
-// Jobs running at once can still undercount by a few, which the margin under LinkedIn's limit absorbs
+// One at a time per account: the members of a group are looked up together and would all read the same count
 export const consumeLinkedinProfileLookupOrThrow = ({
   unipileAccountId,
   dailyLimit,
