@@ -1,4 +1,3 @@
-import { CoreApiClient } from 'twenty-client-sdk/core';
 import {
   defineLogicFunction,
   type DatabaseEventPayload,
@@ -8,6 +7,7 @@ import {
 import { SUMMARIZE_CALL_RECORDING_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { generateCallRecordingSummary } from 'src/logic-functions/flows/generate-call-recording-summary.util';
 import { buildRetryableStepFailure } from 'src/logic-functions/utils/build-step-failure.util';
+import { createCoreApiClientRunningAsApplication } from 'src/logic-functions/utils/create-core-api-client-running-as-application.util';
 
 const CALL_RECORDING_OBJECT_NAME = 'callRecording';
 const TRANSCRIPT_FIELD_NAME = 'transcript';
@@ -35,7 +35,7 @@ export const summarizeCallRecordingHandler = async (
     return { skipped: true, reason: 'transcript unchanged' };
   }
 
-  const client = new CoreApiClient();
+  const client = createCoreApiClientRunningAsApplication();
 
   try {
     const result = await generateCallRecordingSummary(client, {

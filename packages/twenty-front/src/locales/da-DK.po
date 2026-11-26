@@ -28712,20 +28712,10 @@ msgstr "Spring over"
 msgid "Skip anyway"
 msgstr "Spring over alligevel"
 
-#. js-lingui-id: 5jWe/6
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Skip calendar events with no participant outside the workspace domain, unless internal import is turned on."
-msgstr "Spring kalenderbegivenheder over uden deltagere uden for arbejdsområdets domæne, medmindre intern import er slået til."
-
 #. js-lingui-id: TyudBs
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Skip creating a Name field "
 msgstr "Spring oprettelsen af et navnefelt over "
-
-#. js-lingui-id: pmVASU
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Skip internal meetings"
-msgstr "Spring interne møder over"
 
 #. js-lingui-id: PlF+NA
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
@@ -31247,6 +31237,7 @@ msgstr "Denne udbyder er indbygget. Angiv dens API-nøgle på dens side."
 
 #. js-lingui-id: qfpz3J
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
+#: src/modules/views/utils/computeRelationFilterDisplayValue.ts
 msgid "This record"
 msgstr "Denne post"
 

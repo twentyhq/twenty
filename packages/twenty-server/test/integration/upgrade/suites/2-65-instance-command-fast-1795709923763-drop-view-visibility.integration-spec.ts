@@ -1,11 +1,11 @@
 import { type QueryRunner } from 'typeorm';
 
-import { DropViewVisibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-fast-1795703218960-drop-view-visibility';
+import { DropViewVisibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-fast-1795709923763-drop-view-visibility';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 jest.useRealTimers();
 
-describe('2-65 instance command 1795703218960 - drop view visibility (integration)', () => {
+describe('2-65 instance command 1795709923763 - drop view visibility (integration)', () => {
   const dropVisibilityCommand = new DropViewVisibilityFastInstanceCommand();
   let queryRunner: QueryRunner;
 
