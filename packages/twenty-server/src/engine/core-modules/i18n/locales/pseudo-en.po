@@ -7493,6 +7493,11 @@ msgstr ""
 msgid "Invalid formula: {errorMessage}"
 msgstr ""
 
+#. js-lingui-id: uJjrgd
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-formula.util.ts
+msgid "Invalid formula: write it as text"
+msgstr ""
+
 #. js-lingui-id: rFH0az
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
 msgid "Invalid front component input."
@@ -14441,8 +14446,13 @@ msgid "The condition of a database event trigger must be text"
 msgstr ""
 
 #. js-lingui-id: kxzWhP
-#: src/engine/metadata-modules/ai/ai-agent-trigger/utils/add-agent-trigger-condition-bindings-or-throw.util.ts
+#: src/engine/metadata-modules/ai/ai-agent-trigger/utils/add-agent-trigger-condition-trees-or-throw.util.ts
 msgid "The condition of an agent trigger is invalid"
+msgstr ""
+
+#. js-lingui-id: 2l+SMV
+#: src/engine/metadata-modules/logic-function/services/logic-function-from-source.service.ts
+msgid "The condition of the database event trigger is invalid"
 msgstr ""
 
 #. js-lingui-id: odbiqA
@@ -16058,6 +16068,11 @@ msgstr ""
 #. js-lingui-id: r6G80y
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service.ts
 msgid "This user is not a member of the workspace."
+msgstr ""
+
+#. js-lingui-id: BFSoo/
+#: src/engine/metadata-modules/validation-rule/validation-rule.service.ts
+msgid "This validation rule is being upgraded. Try again in a few minutes."
 msgstr ""
 
 #. js-lingui-id: LtsBYU
