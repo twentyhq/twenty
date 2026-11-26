@@ -2,7 +2,6 @@
 
 import { Injectable } from '@nestjs/common';
 
-import { msg } from '@lingui/core/macro';
 import {
   RecordShareAccessLevel,
   RecordSharePrincipalType,
@@ -11,7 +10,6 @@ import {
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { hasCreatedByField } from 'src/engine/permissions/internal/record-permission-repository/utils/has-created-by-field.util';
 import { type RecordSharingChange } from 'src/engine/permissions/record-share/types/record-sharing-change.type';
 import { PrivateRecordSystemWriteService } from 'src/engine/permissions/private-record/services/private-record-system-write.service';
@@ -36,7 +34,6 @@ import {
 import { type RecordSharingArgs } from 'src/engine/permissions/record-share/types/record-sharing-args.type';
 import { type ShareWithInput } from 'src/engine/permissions/record-share/types/share-with-input.type';
 import { type CreatedRecordSharing } from 'src/engine/permissions/record-share/utils/resolve-created-record-sharing-or-throw.util';
-import { isRecordSharingEnabled } from 'src/engine/permissions/record-share/utils/is-record-sharing-enabled.util';
 import { canSetPrivateRecordState } from 'src/engine/permissions/private-record/utils/can-set-private-record-state.util';
 import { isPrivateByDefaultObject } from 'src/engine/permissions/private-record/utils/is-private-by-default-object.util';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
@@ -72,7 +69,6 @@ export class RecordSharingWriteService {
 
     return this.recordSharingChangeService.runChange({
       args,
-      isChangeEnabled: isRecordSharingEnabled,
       write: async ({
         workspaceId,
         transactionScope,
@@ -111,7 +107,6 @@ export class RecordSharingWriteService {
 
     return this.recordSharingChangeService.runChange({
       args,
-      isChangeEnabled: isRecordSharingEnabled,
       write: ({ workspaceId, transactionScope }) =>
         this.recordShareStorageService.setManualShare({
           workspaceId,
@@ -254,23 +249,12 @@ export class RecordSharingWriteService {
     workspaceId,
     transactionScope,
     flatObjectMetadata,
-    featureFlagsMap,
     creatorWorkspaceMemberId,
     args,
   }: RecordSharingChange & {
     args: RecordSharingArgs & { isPrivate: boolean };
   }): Promise<void> {
     const { isPrivate } = args;
-
-    if (
-      isPrivate &&
-      !isRecordSharingEnabled({ featureFlagsMap }) &&
-      args.authContext.workspaceMemberId !== creatorWorkspaceMemberId
-    ) {
-      throw new NotFoundError('Record not found', {
-        userFriendlyMessage: msg`Record not found`,
-      });
-    }
 
     const { flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [

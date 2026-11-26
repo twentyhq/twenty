@@ -247,24 +247,6 @@ describe('buildAccessSQLCondition', () => {
     ).toMatchObject({ kind: 'gated' });
   });
 
-  it('keeps private sqlConditions without a share block when only private records are on', () => {
-    const policy = buildSQLConditionOutcome({
-      principals: readEverything,
-      metadataMaps,
-      tableAlias: 'company',
-      flatObjectMetadata: buildObject({ id: 'company' }),
-      operationType: 'read',
-    });
-
-    expect(policy).toMatchObject({
-      kind: 'gated',
-      sqlCondition: { sql: expect.stringContaining('_isPrivate') },
-    });
-    expect(
-      policy.kind === 'gated' ? policy.sqlCondition.sql : '',
-    ).not.toContain('recordShare');
-  });
-
   it('adds nothing for private records and shares with both flags off', () => {
     const company = buildObject({ id: 'company' });
 
@@ -451,14 +433,15 @@ describe('buildAccessSQLCondition', () => {
     });
   });
 
-  it('denies an object the principal has no permission on', () => {
+  it('gates an object the principal has no permission on to the records shared with them', () => {
     expect(
       build({
         principals: withoutObjectPermission,
         flatObjectMetadata: note,
       }),
-    ).toEqual({
-      kind: 'denied',
+    ).toMatchObject({
+      kind: 'gated',
+      sqlCondition: { sql: expect.stringContaining('"note_recordShare"') },
     });
   });
 
@@ -650,20 +633,15 @@ describe('buildAccessSQLCondition', () => {
       ).toEqual({ kind: 'denied' });
     });
 
-    it('reaches beyond missing role access only when record sharing is enabled', () => {
-      const noteShareArguments = {
-        ...prospectiveShareArguments,
-        tableAlias: note.nameSingular,
-        flatObjectMetadata: note,
-        principals: withoutObjectPermission,
-      };
-
+    it('reaches beyond missing role access', () => {
       expect(
-        buildSQLConditionOutcome({ ...noteShareArguments, metadataMaps }),
-      ).toEqual({ kind: 'denied' });
-      expect(buildSQLConditionOutcome(noteShareArguments)).toEqual({
-        kind: 'open',
-      });
+        buildSQLConditionOutcome({
+          ...prospectiveShareArguments,
+          tableAlias: note.nameSingular,
+          flatObjectMetadata: note,
+          principals: withoutObjectPermission,
+        }),
+      ).toEqual({ kind: 'open' });
     });
   });
 

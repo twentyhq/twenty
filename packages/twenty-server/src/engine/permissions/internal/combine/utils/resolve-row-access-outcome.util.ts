@@ -19,7 +19,6 @@ export const resolveRowAccessOutcome = (
   if (
     canRecordShareAccessOperation({
       flatObjectMetadata: request.flatObjectMetadata,
-      featureFlagsMap: request.metadataMaps.featureFlagsMap,
       operationType: request.operationType,
     }) &&
     hasHypotheticalRecordShare(request)

@@ -47,7 +47,6 @@ import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/obj
 import { RecordSharingWriteService } from 'src/engine/permissions/record-share/services/record-sharing-write.service';
 import { type ShareWithInput } from 'src/engine/permissions/record-share/types/share-with-input.type';
 import { isPrivateByDefaultObject } from 'src/engine/permissions/private-record/utils/is-private-by-default-object.util';
-import { isRecordSharingEnabled } from 'src/engine/permissions/record-share/utils/is-record-sharing-enabled.util';
 import { resolveCreatedRecordSharingOrThrow } from 'src/engine/permissions/record-share/utils/resolve-created-record-sharing-or-throw.util';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { containsNestedRelationCreate } from 'src/engine/twenty-orm/utils/contains-nested-relation-create.util';
@@ -88,7 +87,6 @@ export class CommonCreateManyQueryRunnerService extends CommonRecordQueryRunnerS
       !isDefined(queryRunnerContext.transactionScope) &&
       (isDefined(
         resolveCreatedRecordSharingOrThrow({
-          isRecordSharingEnabled: isRecordSharingEnabled(queryRunnerContext),
           isPrivateByDefault,
           shareWith: args.shareWith,
         }),
@@ -562,7 +560,6 @@ export class CommonCreateManyQueryRunnerService extends CommonRecordQueryRunnerS
     const { authContext, flatObjectMetadata, transactionScope } =
       queryRunnerContext;
     const createdRecordSharing = resolveCreatedRecordSharingOrThrow({
-      isRecordSharingEnabled: isRecordSharingEnabled(queryRunnerContext),
       isPrivateByDefault: isPrivateByDefaultObject(flatObjectMetadata),
       shareWith,
     });

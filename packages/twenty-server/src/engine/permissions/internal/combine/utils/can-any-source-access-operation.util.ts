@@ -13,7 +13,6 @@ export const canAnySourceAccessOperation = (
   canRlsAccessOperation(request) ||
   canRecordShareAccessOperation({
     flatObjectMetadata: request.flatObjectMetadata,
-    featureFlagsMap: request.metadataMaps.featureFlagsMap,
     operationType: request.operationType,
   }) ||
   canPrivateRecordAccessOperation(request);

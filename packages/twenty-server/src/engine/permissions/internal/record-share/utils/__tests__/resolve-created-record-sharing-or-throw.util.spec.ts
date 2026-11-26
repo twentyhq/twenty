@@ -21,15 +21,9 @@ const EVERYONE_AT_DEFAULT = {
   accessLevel: RecordShareAccessLevel.READ_WRITE,
 };
 const SHAREABLE_OBJECT = {
-  isRecordSharingEnabled: true,
-  isPrivateByDefault: false,
-};
-const ROLE_ONLY_OBJECT = {
-  isRecordSharingEnabled: false,
   isPrivateByDefault: false,
 };
 const PRIVATE_BY_DEFAULT_OBJECT = {
-  isRecordSharingEnabled: true,
   isPrivateByDefault: true,
 };
 
@@ -82,15 +76,6 @@ describe('resolveCreatedRecordSharingOrThrow', () => {
     ).toThrow('A record is either private or follows the roles of its object');
   });
 
-  it('should write nothing when records of the object are not shared', () => {
-    expect(
-      resolveCreatedRecordSharingOrThrow({
-        ...ROLE_ONLY_OBJECT,
-        shareWith: [ROLE_GRANT],
-      }),
-    ).toBeNull();
-  });
-
   it('should create a record of a private-by-default object private unless it is shared with everyone', () => {
     expect(
       resolveCreatedRecordSharingOrThrow({
@@ -104,15 +89,5 @@ describe('resolveCreatedRecordSharingOrThrow', () => {
         shareWith: [EVERYONE_AT_DEFAULT],
       }),
     ).toBeNull();
-  });
-
-  it('should create a record of a private-by-default object private even without record sharing', () => {
-    expect(
-      resolveCreatedRecordSharingOrThrow({
-        ...PRIVATE_BY_DEFAULT_OBJECT,
-        isRecordSharingEnabled: false,
-        shareWith: [ROLE_GRANT],
-      }),
-    ).toEqual({ shareWith: [], isPrivate: true });
   });
 });

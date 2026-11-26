@@ -60,7 +60,6 @@ export class RecordSharePrincipalService {
       recordIds.length === 0 ||
       canRecordShareAccessOperation({
         flatObjectMetadata,
-        featureFlagsMap,
         operationType: 'read',
       })
     ) {
