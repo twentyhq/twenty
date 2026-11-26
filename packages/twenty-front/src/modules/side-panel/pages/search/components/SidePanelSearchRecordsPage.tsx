@@ -7,7 +7,6 @@ import { useSidePanelSearchRecordPreviewItem } from '@/side-panel/pages/search/h
 import { useSidePanelSearchRecords } from '@/side-panel/pages/search/hooks/useSidePanelSearchRecords';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { css } from '@linaria/core';
-import groupBy from 'lodash.groupby';
 import { useMemo, useRef } from 'react';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { isDefined } from 'twenty-shared/utils';
@@ -22,25 +21,21 @@ const previewTooltipClass = css`
 `;
 
 export const SidePanelSearchRecordsPage = () => {
-  const { searchResultItems, loading, noResults, error } =
-    useSidePanelSearchRecords();
+  const {
+    searchResultItems,
+    searchResultItemGroups,
+    loading,
+    noResults,
+    error,
+  } = useSidePanelSearchRecords();
   const isMobile = useIsMobile();
-
-  const searchResultItemsByObjectNameSingular = useMemo(
-    () =>
-      Object.entries(
-        groupBy(searchResultItems, (item) => item.objectNameSingular),
-      ),
-    [searchResultItems],
-  );
 
   const selectableItemIds = useMemo(
     () =>
-      searchResultItemsByObjectNameSingular.flatMap(
-        ([, objectSearchResultItems]) =>
-          objectSearchResultItems.map((item) => item.id),
+      searchResultItemGroups.flatMap((searchResultItemGroup) =>
+        searchResultItemGroup.searchResultItems.map((item) => item.id),
       ),
-    [searchResultItemsByObjectNameSingular],
+    [searchResultItemGroups],
   );
 
   const previewAnchorRef = useRef<HTMLDivElement>(null);
@@ -58,17 +53,14 @@ export const SidePanelSearchRecordsPage = () => {
         loading={loading}
         noResults={noResults}
       >
-        {searchResultItemsByObjectNameSingular.map(
-          ([objectNameSingular, objectSearchResultItems]) => (
-            <SidePanelSearchRecordObjectSection
-              key={objectNameSingular}
-              objectNameSingular={objectNameSingular}
-              searchResultItems={objectSearchResultItems}
-              previewedItemId={previewedItem?.id}
-              previewAnchorRef={previewAnchorRef}
-            />
-          ),
-        )}
+        {searchResultItemGroups.map((searchResultItemGroup) => (
+          <SidePanelSearchRecordObjectSection
+            key={searchResultItemGroup.objectNameSingular}
+            searchResultItemGroup={searchResultItemGroup}
+            previewedItemId={previewedItem?.id}
+            previewAnchorRef={previewAnchorRef}
+          />
+        ))}
       </SidePanelList>
 
       {shouldDisplayPreview && (
