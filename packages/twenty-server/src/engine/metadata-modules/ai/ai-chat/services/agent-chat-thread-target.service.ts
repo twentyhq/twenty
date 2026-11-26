@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
+import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { findAgentChatThreadTargetJoinColumnName } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-thread-target-join-column-name.util';
+import { InboxObjectNamesResolverService } from 'src/engine/metadata-modules/ai/ai-history/services/inbox-object-names-resolver.service';
 import {
   AiException,
   AiExceptionCode,
@@ -13,10 +15,9 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/permissions/permissions.exception';
+import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-
-const AGENT_CHAT_THREAD_TARGET_OBJECT_METADATA_NAME = 'agentChatThreadTarget';
 
 type RecordReference = {
   objectNameSingular: string;
@@ -34,15 +35,14 @@ export class AgentChatThreadTargetService {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly inboxObjectNamesResolverService: InboxObjectNamesResolverService,
   ) {}
 
   // chat turns run in a queue worker, so the sender's context is passed to write the link as them
   async attachThreadToRecord(args: ThreadRecordLinkArgs): Promise<void> {
     await this.writeLinkToReadableRecord({
       ...args,
-      writeLink: async (link) => {
-        const repository = this.getThreadTargetRepository();
-
+      writeLink: async (link, repository) => {
         // only standard legs have a unique index, so custom-object links are deduplicated by lookup
         if (await repository.existsBy(link)) {
           return;
@@ -56,7 +56,7 @@ export class AgentChatThreadTargetService {
   async detachThreadFromRecord(args: ThreadRecordLinkArgs): Promise<void> {
     await this.writeLinkToReadableRecord({
       ...args,
-      writeLink: (link) => this.getThreadTargetRepository().softDelete(link),
+      writeLink: (link, repository) => repository.softDelete(link),
     });
   }
 
@@ -68,12 +68,17 @@ export class AgentChatThreadTargetService {
     authContext,
     writeLink,
   }: ThreadRecordLinkArgs & {
-    writeLink: (link: Record<string, string>) => Promise<unknown>;
+    writeLink: (
+      link: Record<string, string>,
+      repository: WorkspaceRepository<ObjectRecord>,
+    ) => Promise<unknown>;
   }): Promise<void> {
     const joinColumnName = await this.resolveJoinColumnNameOrThrow({
       workspaceId,
       objectNameSingular,
     });
+    const { agentChatThreadTarget: threadTargetObjectName } =
+      await this.inboxObjectNamesResolverService.resolve(workspaceId);
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       // A record in the trash keeps its links, but nothing new is filed under it.
@@ -82,14 +87,11 @@ export class AgentChatThreadTargetService {
         recordId,
       });
 
-      await writeLink({ threadId, [joinColumnName]: recordId });
+      await writeLink(
+        { threadId, [joinColumnName]: recordId },
+        this.workspaceOrmManager.getRepository(threadTargetObjectName),
+      );
     }, authContext);
-  }
-
-  private getThreadTargetRepository() {
-    return this.workspaceOrmManager.getRepository(
-      AGENT_CHAT_THREAD_TARGET_OBJECT_METADATA_NAME,
-    );
   }
 
   private async assertRecordIsReadableOrThrow({

@@ -16,6 +16,7 @@ import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { type AgentHistoryObjectName } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-object-name.type';
 import { AgentHistoryStorageException } from 'src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception';
+import { InboxObjectNamesResolverService } from 'src/engine/metadata-modules/ai/ai-history/services/inbox-object-names-resolver.service';
 import { RecordShareSystemWriteService } from 'src/engine/permissions/record-share/services/record-share-system-write.service';
 import { PrivateRecordSystemWriteService } from 'src/engine/permissions/private-record/services/private-record-system-write.service';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
@@ -29,6 +30,7 @@ export class AgentChatDirectMessageConversationPrivacyService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordShareSystemWriteService: RecordShareSystemWriteService,
     private readonly privateRecordSystemWriteService: PrivateRecordSystemWriteService,
+    private readonly inboxObjectNamesResolverService: InboxObjectNamesResolverService,
   ) {}
 
   async isDirectMessageIdentityEnabled(workspaceId: string): Promise<boolean> {
@@ -136,9 +138,12 @@ export class AgentChatDirectMessageConversationPrivacyService {
     const isDirectMessageIdentityEnabled =
       await this.isDirectMessageIdentityEnabled(workspaceId);
 
+    const { agentChatThread: threadObjectName } =
+      await this.inboxObjectNamesResolverService.resolve(workspaceId);
+
     const thread = await transactionScope
       .getRepositoryWithoutPermissionChecks<AgentChatThreadWorkspaceEntity>(
-        'agentChatThread',
+        threadObjectName,
       )
       .findOne({
         where: { id: threadId },

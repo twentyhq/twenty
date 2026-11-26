@@ -1,3 +1,5 @@
+import { INBOX_OBJECT_NAMES } from 'src/engine/metadata-modules/ai/ai-history/constants/inbox-object-names.constant';
+import { LEGACY_INBOX_OBJECT_NAMES } from 'src/engine/metadata-modules/ai/ai-history/constants/legacy-inbox-object-names.constant';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 
@@ -26,6 +28,7 @@ it('reads native workspace fields and precision from workspace storage', async (
     'agentChatThread',
     storage,
     orm as never,
+    { resolve: jest.fn().mockResolvedValue(LEGACY_INBOX_OBJECT_NAMES) },
   );
   await expect(
     repository.find('workspace', {
@@ -41,4 +44,28 @@ it('reads native workspace fields and precision from workspace storage', async (
   );
   expect(storage.getContext).toHaveBeenCalledWith('workspace');
   expect(storage.getContext).toHaveBeenCalledTimes(2);
+});
+
+it('reads the object under the name resolved for the workspace', async () => {
+  const orm = {
+    executeInWorkspaceContext: jest
+      .fn()
+      .mockImplementation(async (work: () => Promise<unknown>) => work()),
+    getRepositoryWithoutPermissionChecks: jest
+      .fn()
+      .mockReturnValue({ count: jest.fn().mockResolvedValue(0) }),
+  };
+  const repository = new AgentHistoryRepository<AgentChatThreadWorkspaceEntity>(
+    'agentChatThread',
+    { run: jest.fn(), getContext: jest.fn().mockResolvedValue({}) },
+    orm as never,
+    { resolve: jest.fn().mockResolvedValue(INBOX_OBJECT_NAMES) },
+  );
+
+  await repository.count('workspace');
+
+  expect(orm.getRepositoryWithoutPermissionChecks).toHaveBeenCalledWith(
+    'inboxThread',
+    { shouldSkipEventEmission: true },
+  );
 });

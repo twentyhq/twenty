@@ -18,6 +18,7 @@ export class AgentChatThreadLifecycleListener {
   ) {}
 
   @OnDatabaseBatchEvent('agentChatThread', DatabaseEventAction.DESTROYED)
+  @OnDatabaseBatchEvent('inboxThread', DatabaseEventAction.DESTROYED)
   async handleDestroyedThreads(
     payload: WorkspaceEventBatch<
       ObjectRecordDestroyEvent<AgentChatThreadWorkspaceEntity>

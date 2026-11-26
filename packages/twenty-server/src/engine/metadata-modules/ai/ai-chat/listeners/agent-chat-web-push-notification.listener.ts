@@ -24,6 +24,7 @@ export class AgentChatWebPushNotificationListener {
   ) {}
 
   @OnDatabaseBatchEvent('agentChatThread', DatabaseEventAction.UPDATED)
+  @OnDatabaseBatchEvent('inboxThread', DatabaseEventAction.UPDATED)
   async handleUpdatedThreads(
     payload: WorkspaceEventBatch<
       ObjectRecordUpdateEvent<AgentChatThreadWorkspaceEntity>

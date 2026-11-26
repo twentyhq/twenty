@@ -7,16 +7,17 @@ import {
 } from 'twenty-shared/ai';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
-import { type EntityManager } from 'typeorm';
 
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
-import { getAgentMessageReactionTable } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-message-reaction-table.util';
 import { throwAgentChatMessageNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-message-not-found.util';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
-import { AgentHistoryWorkspaceStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
+import {
+  type AgentHistoryStorageContext,
+  AgentHistoryWorkspaceStorageService,
+} from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import {
   AiException,
@@ -154,11 +155,10 @@ export class AgentChatMessageReactionService {
       return new Map();
     }
 
-    return this.findReactionSummaries({
-      manager: this.storageService.getContext(workspaceId).manager,
-      workspaceId,
-      messageIds,
-    });
+    const { manager, table } =
+      await this.storageService.getContext(workspaceId);
+
+    return this.findReactionSummaries({ manager, table, messageIds });
   }
 
   private async writeReaction({
@@ -222,7 +222,7 @@ export class AgentChatMessageReactionService {
         );
 
         const { query, parameters } = buildQuery(
-          getAgentMessageReactionTable(workspaceId),
+          table('agentMessageReaction'),
           { messageId, emoji, workspaceMemberId, agentId },
         );
         const [{ changedCount }] = await manager.query<
@@ -231,7 +231,7 @@ export class AgentChatMessageReactionService {
 
         const reactionsByMessageId = await this.findReactionSummaries({
           manager,
-          workspaceId,
+          table,
           messageIds: [messageId],
         });
 
@@ -258,11 +258,9 @@ export class AgentChatMessageReactionService {
 
   private async findReactionSummaries({
     manager,
-    workspaceId,
+    table,
     messageIds,
-  }: {
-    manager: EntityManager;
-    workspaceId: string;
+  }: Pick<AgentHistoryStorageContext, 'manager' | 'table'> & {
     messageIds: string[];
   }): Promise<Map<string, AgentMessageReactionSummary[]>> {
     const rows = await manager.query<AgentMessageReactionSummaryRow[]>(
@@ -278,7 +276,7 @@ export class AgentChatMessageReactionService {
          ) AS "agentIds",
          bool_or("workspaceMemberId" IS NULL AND "agentId" IS NULL)
            AS "hasAssistantReacted"
-       FROM ${getAgentMessageReactionTable(workspaceId)}
+       FROM ${table('agentMessageReaction')}
        WHERE "messageId" = ANY($1::uuid[]) AND "deletedAt" IS NULL
        GROUP BY "messageId", emoji
        ORDER BY "messageId", MIN("createdAt"), emoji`,

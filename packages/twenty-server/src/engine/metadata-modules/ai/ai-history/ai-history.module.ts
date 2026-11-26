@@ -9,6 +9,7 @@ import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/a
 import { AgentHistoryTransactionService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-transaction.service';
 import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
 import { AgentHistoryWorkspaceStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
+import { InboxObjectNamesResolverService } from 'src/engine/metadata-modules/ai/ai-history/services/inbox-object-names-resolver.service';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { getAgentHistoryRepositoryToken } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -19,9 +20,19 @@ const REPOSITORY_PROVIDERS = AGENT_HISTORY_OBJECT_NAMES.map((objectName) => ({
   useFactory: (
     storageService: AgentHistoryWorkspaceStorageService,
     workspaceOrmManager: WorkspaceOrmManager,
+    inboxObjectNamesResolverService: InboxObjectNamesResolverService,
   ) =>
-    new AgentHistoryRepository(objectName, storageService, workspaceOrmManager),
-  inject: [AgentHistoryWorkspaceStorageService, WorkspaceOrmManager],
+    new AgentHistoryRepository(
+      objectName,
+      storageService,
+      workspaceOrmManager,
+      inboxObjectNamesResolverService,
+    ),
+  inject: [
+    AgentHistoryWorkspaceStorageService,
+    WorkspaceOrmManager,
+    InboxObjectNamesResolverService,
+  ],
 }));
 
 @Module({
@@ -32,6 +43,7 @@ const REPOSITORY_PROVIDERS = AGENT_HISTORY_OBJECT_NAMES.map((objectName) => ({
     PrivateRecordModule,
   ],
   providers: [
+    InboxObjectNamesResolverService,
     AgentHistoryWorkspaceStorageService,
     AgentHistoryTransactionService,
     AgentChatDirectMessageConversationPrivacyService,
@@ -42,6 +54,7 @@ const REPOSITORY_PROVIDERS = AGENT_HISTORY_OBJECT_NAMES.map((objectName) => ({
   ],
   exports: [
     AgentChatDirectMessageConversationPrivacyService,
+    InboxObjectNamesResolverService,
     AgentHistoryWorkspaceStorageService,
     AgentConversationReaderService,
     AgentConversationWriterService,

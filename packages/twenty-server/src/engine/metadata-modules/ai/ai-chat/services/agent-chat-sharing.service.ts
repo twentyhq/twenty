@@ -5,7 +5,6 @@ import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { randomUUID } from 'node:crypto';
 import { buildAgentChatThreadParticipantOwnerShareInsert } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-participant-owner-share-insert.util';
 import { hasAgentChatThreadChannelField } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-agent-chat-thread-channel-field.util';
-import { getAgentChatThreadParticipantTable } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-thread-participant-table.util';
 import { backfillWorkspaceChatThreadOwnerGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/backfill-workspace-chat-thread-owner-grants.util';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -46,6 +45,7 @@ import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/a
 import { AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
+import { InboxObjectNamesResolverService } from 'src/engine/metadata-modules/ai/ai-history/services/inbox-object-names-resolver.service';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -91,6 +91,7 @@ export class AgentChatSharingService {
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     @InjectAgentHistoryRepository('agentMessage')
     private readonly agentMessageRepository: AgentHistoryRepository<AgentMessageWorkspaceEntity>,
+    private readonly inboxObjectNamesResolverService: InboxObjectNamesResolverService,
   ) {}
 
   // TODO(@FelixMalfait): remove once 2.51 leaves the cross-upgrade window. Until
@@ -449,6 +450,9 @@ export class AgentChatSharingService {
       updatedColumns: isDefined(args.title) ? ['title'] : [],
     });
 
+    const { agentChatThread: threadObjectName } =
+      await this.inboxObjectNamesResolverService.resolve(args.workspaceId);
+
     return this.workspaceOrmManager.executeTransactionInWorkspaceContext(
       async (transactionScope) => {
         if (isDefined(args.channelId)) {
@@ -466,7 +470,7 @@ export class AgentChatSharingService {
         });
         const threadRepository =
           transactionScope.getRepositoryWithoutPermissionChecks<AgentChatThreadWorkspaceEntity>(
-            'agentChatThread',
+            threadObjectName,
             { shouldSkipEventEmission: true },
           );
         const threadId = args.id ?? randomUUID();
@@ -539,17 +543,22 @@ export class AgentChatSharingService {
     );
   }
 
-  private validateThreadCreationIsPermitted({
+  private async validateThreadCreationIsPermitted({
     authContext,
     updatedColumns,
   }: {
     authContext: UserWorkspaceAuthContext;
     updatedColumns: string[];
   }): Promise<void> {
+    const { agentChatThread: threadObjectName } =
+      await this.inboxObjectNamesResolverService.resolve(
+        authContext.workspace.id,
+      );
+
     return this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
         this.workspaceOrmManager
-          .getRepository('agentChatThread')
+          .getRepository(threadObjectName)
           .validateWriteIsPermitted({
             operationType: 'create',
             columnsToReturn: ['id'],
@@ -613,7 +622,7 @@ export class AgentChatSharingService {
         }
         await manager.query(
           `WITH participant AS (
-             INSERT INTO ${getAgentChatThreadParticipantTable(args.workspaceId)} ("threadId", "workspaceMemberId", "${IS_PRIVATE_COLUMN_NAME}", "lastReadAt", "isSubscribed")
+             INSERT INTO ${table('agentChatThreadParticipant')} ("threadId", "workspaceMemberId", "${IS_PRIVATE_COLUMN_NAME}", "lastReadAt", "isSubscribed")
              VALUES ($1, $2, true, clock_timestamp(), false)
              ON CONFLICT ("threadId", "workspaceMemberId") DO NOTHING
              RETURNING id, "workspaceMemberId"
@@ -657,14 +666,16 @@ export class AgentChatSharingService {
     isArchived?: boolean;
     isSubscribed?: boolean;
   }): Promise<string[]> {
+    const objectNames =
+      await this.inboxObjectNamesResolverService.resolve(workspaceId);
     const threadRepository =
       transactionScope.getRepositoryWithoutPermissionChecks<AgentChatThreadWorkspaceEntity>(
-        'agentChatThread',
+        objectNames.agentChatThread,
         { shouldSkipEventEmission: true },
       );
     const participantRepository =
       transactionScope.getRepositoryWithoutPermissionChecks<AgentChatThreadParticipantRow>(
-        'agentChatThreadParticipant',
+        objectNames.agentChatThreadParticipant,
         { shouldSkipEventEmission: true },
       );
     const setUpAt = new Date().toISOString();
@@ -812,19 +823,23 @@ export class AgentChatSharingService {
   }
 
   // must run inside the caller's workspace context, whose principals are already preloaded
-  private findThreadIdsGrantedForOperation({
+  private async findThreadIdsGrantedForOperation({
     threadIds,
     operationType,
   }: {
     threadIds: string[];
     operationType: ObjectRecordsOperationType;
   }): Promise<Set<string>> {
-    const { permissionsPrincipals, objectIdByNameSingular } =
+    const { authContext, permissionsPrincipals, objectIdByNameSingular } =
       getWorkspaceContext();
+    const { agentChatThread: threadObjectName } =
+      await this.inboxObjectNamesResolverService.resolve(
+        authContext.workspace.id,
+      );
 
     return this.recordPermissionsReadService.filterGrantedRecordIds({
       principals: permissionsPrincipals,
-      objectMetadataId: objectIdByNameSingular.agentChatThread,
+      objectMetadataId: objectIdByNameSingular[threadObjectName],
       recordIds: threadIds,
       operationType,
     });
