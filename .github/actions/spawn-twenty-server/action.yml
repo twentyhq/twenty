@@ -102,6 +102,8 @@ runs:
     - name: Start server
       if: inputs.source == 'local'
       shell: bash
+      env:
+        APPLICATION_API_RATE_LIMITING_LIMIT: '100000'
       run: nohup npx nx start:ci twenty-server > /tmp/twenty-server.log 2>&1 &
 
     - name: Wait for server to be ready
