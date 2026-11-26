@@ -6,6 +6,7 @@ export type WorkspaceMigrationBuilderOptions = {
   isSystemBuild: boolean;
   applicationUniversalIdentifier: string;
   applicationDefaultRoleUniversalIdentifier?: string;
+  isMarketplaceApplication?: boolean;
 };
 
 // The migration runner resolves the workspace Custom application and the application maps for every build.

@@ -1,7 +1,4 @@
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
-
-import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { PermissionsExceptionCode } from 'src/engine/permissions/permissions.exception';
 import { type WorkspaceMigrationValidationBuildOptions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-builder-options.type';
 import {
@@ -9,48 +6,46 @@ import {
   getMarketplaceApplicationRoleRestrictionErrors,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-errors.util';
 
-const APPLICATION_ID = 'application-id';
-const WORKSPACE_CUSTOM_APPLICATION = 'workspace-custom-application';
-
 const buildOptionsFor = ({
-  universalIdentifier = 'application',
-  sourceType = ApplicationRegistrationSourceType.NPM,
+  isMarketplaceApplication,
   isSystemBuild = false,
 }: {
-  universalIdentifier?: string;
-  sourceType?: ApplicationRegistrationSourceType;
+  isMarketplaceApplication?: boolean;
   isSystemBuild?: boolean;
-} = {}): WorkspaceMigrationValidationBuildOptions => ({
+}): WorkspaceMigrationValidationBuildOptions => ({
   isSystemBuild,
-  applicationUniversalIdentifier: universalIdentifier,
-  workspaceCustomApplicationUniversalIdentifier: WORKSPACE_CUSTOM_APPLICATION,
+  isMarketplaceApplication,
+  applicationUniversalIdentifier: 'application',
+  workspaceCustomApplicationUniversalIdentifier: 'workspace-custom-application',
   flatApplicationMaps: {
-    byId: {
-      [APPLICATION_ID]: {
-        id: APPLICATION_ID,
-        universalIdentifier,
-        sourceType,
-      } as FlatApplication,
-    },
-    idByUniversalIdentifier: { [universalIdentifier]: APPLICATION_ID },
-  },
+    byId: {},
+    idByUniversalIdentifier: {},
+  } satisfies FlatApplicationCacheMaps,
 });
 
-const AGENT_ONLY_ROLE = {
-  canBeAssignedToUsers: false,
-  canBeAssignedToApiKeys: false,
-};
+const MARKETPLACE_BUILD = buildOptionsFor({ isMarketplaceApplication: true });
+
+const UNRESTRICTED_BUILDS = [
+  { title: 'a build that is not a marketplace app sync', options: {} },
+  {
+    title: 'a non-marketplace app sync',
+    options: { isMarketplaceApplication: false },
+  },
+  {
+    title: 'a system build',
+    options: { isMarketplaceApplication: true, isSystemBuild: true },
+  },
+];
 
 describe('getMarketplaceApplicationRoleAssignabilityErrors', () => {
-  it.each([
-    ApplicationRegistrationSourceType.NPM,
-    ApplicationRegistrationSourceType.TARBALL,
-    ApplicationRegistrationSourceType.LOCAL,
-  ])('accepts an agent-only role of a %s application', (sourceType) => {
+  it('accepts an agent-only role of a marketplace application', () => {
     expect(
       getMarketplaceApplicationRoleAssignabilityErrors({
-        flatRole: AGENT_ONLY_ROLE,
-        buildOptions: buildOptionsFor({ sourceType }),
+        flatRole: {
+          canBeAssignedToUsers: false,
+          canBeAssignedToApiKeys: false,
+        },
+        buildOptions: MARKETPLACE_BUILD,
       }),
     ).toEqual([]);
   });
@@ -64,7 +59,7 @@ describe('getMarketplaceApplicationRoleAssignabilityErrors', () => {
       expect(
         getMarketplaceApplicationRoleAssignabilityErrors({
           flatRole,
-          buildOptions: buildOptionsFor(),
+          buildOptions: MARKETPLACE_BUILD,
         }),
       ).toEqual([
         expect.objectContaining({
@@ -74,35 +69,27 @@ describe('getMarketplaceApplicationRoleAssignabilityErrors', () => {
     },
   );
 
-  it.each([
-    {
-      title: 'the workspace custom application',
-      universalIdentifier: WORKSPACE_CUSTOM_APPLICATION,
+  it.each(UNRESTRICTED_BUILDS)(
+    'accepts a role assignable to users for $title',
+    ({ options }) => {
+      expect(
+        getMarketplaceApplicationRoleAssignabilityErrors({
+          flatRole: {
+            canBeAssignedToUsers: true,
+            canBeAssignedToApiKeys: true,
+          },
+          buildOptions: buildOptionsFor(options),
+        }),
+      ).toEqual([]);
     },
-    {
-      title: 'twenty-standard',
-      universalIdentifier: TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-    },
-    {
-      title: 'an OAuth-only application',
-      sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
-    },
-    { title: 'a system build', isSystemBuild: true },
-  ])('accepts a role assignable to users for $title', (options) => {
-    expect(
-      getMarketplaceApplicationRoleAssignabilityErrors({
-        flatRole: { canBeAssignedToUsers: true, canBeAssignedToApiKeys: true },
-        buildOptions: buildOptionsFor(options),
-      }),
-    ).toEqual([]);
-  });
+  );
 });
 
 describe('getMarketplaceApplicationRoleRestrictionErrors', () => {
   it('refuses any row-level rule or field permission on a marketplace application', () => {
     expect(
       getMarketplaceApplicationRoleRestrictionErrors({
-        buildOptions: buildOptionsFor(),
+        buildOptions: MARKETPLACE_BUILD,
       }),
     ).toEqual([
       expect.objectContaining({
@@ -111,12 +98,10 @@ describe('getMarketplaceApplicationRoleRestrictionErrors', () => {
     ]);
   });
 
-  it('accepts them on the workspace custom application', () => {
+  it.each(UNRESTRICTED_BUILDS)('accepts them for $title', ({ options }) => {
     expect(
       getMarketplaceApplicationRoleRestrictionErrors({
-        buildOptions: buildOptionsFor({
-          universalIdentifier: WORKSPACE_CUSTOM_APPLICATION,
-        }),
+        buildOptions: buildOptionsFor(options),
       }),
     ).toEqual([]);
   });

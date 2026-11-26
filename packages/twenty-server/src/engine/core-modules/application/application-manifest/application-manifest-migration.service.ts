@@ -241,14 +241,14 @@ export class ApplicationManifestMigrationService {
         { workspaceId },
       );
 
-    if (
-      isMarketplaceApplication({
-        universalIdentifier: ownerFlatApplication.universalIdentifier,
-        sourceType: ownerFlatApplication.sourceType,
-        workspaceCustomApplicationUniversalIdentifier:
-          workspaceCustomFlatApplication.universalIdentifier,
-      })
-    ) {
+    const isOwnerMarketplaceApplication = isMarketplaceApplication({
+      universalIdentifier: ownerFlatApplication.universalIdentifier,
+      sourceType: ownerFlatApplication.sourceType,
+      workspaceCustomApplicationUniversalIdentifier:
+        workspaceCustomFlatApplication.universalIdentifier,
+    });
+
+    if (isOwnerMarketplaceApplication) {
       restrictMarketplaceApplicationRoleAssignabilityThroughMutation({
         manifest,
         toAllUniversalFlatEntityMapsToMutate: toAllUniversalFlatEntityMaps,
@@ -350,6 +350,7 @@ export class ApplicationManifestMigrationService {
           ownerFlatApplication.universalIdentifier,
         applicationDefaultRoleUniversalIdentifier:
           manifest.application.defaultRoleUniversalIdentifier,
+        isMarketplaceApplication: isOwnerMarketplaceApplication,
         idByUniversalIdentifierByMetadataName,
         dryRun: isDryRun,
         shouldDeferActions,

@@ -54,6 +54,7 @@ type ValidateBuildAndRunWorkspaceMigrationFromRecordArgs = {
   isSystemBuild?: boolean;
   applicationUniversalIdentifier: string;
   applicationDefaultRoleUniversalIdentifier?: string;
+  isMarketplaceApplication?: boolean;
   idByUniversalIdentifierByMetadataName?: IdByUniversalIdentifierByMetadataName;
   dryRun?: boolean;
   shouldDeferActions?: boolean;
@@ -72,6 +73,7 @@ type ComputeAndRunWorkspaceMigrationFromResolvedOperationsArgs = {
   isSystemBuild: boolean;
   applicationUniversalIdentifier: string;
   applicationDefaultRoleUniversalIdentifier?: string;
+  isMarketplaceApplication?: boolean;
   providedIdByUniversalIdentifierByMetadataName?: IdByUniversalIdentifierByMetadataName;
   dryRun?: boolean;
   shouldDeferActions?: boolean;
@@ -326,6 +328,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     isSystemBuild = false,
     applicationUniversalIdentifier,
     applicationDefaultRoleUniversalIdentifier,
+    isMarketplaceApplication,
     idByUniversalIdentifierByMetadataName,
     dryRun,
     shouldDeferActions,
@@ -385,6 +388,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
         isSystemBuild,
         applicationUniversalIdentifier,
         applicationDefaultRoleUniversalIdentifier,
+        isMarketplaceApplication,
         providedIdByUniversalIdentifierByMetadataName:
           idByUniversalIdentifierByMetadataName,
         dryRun,
@@ -407,6 +411,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     isSystemBuild,
     applicationUniversalIdentifier,
     applicationDefaultRoleUniversalIdentifier,
+    isMarketplaceApplication,
     providedIdByUniversalIdentifierByMetadataName,
     dryRun,
     shouldDeferActions,
@@ -457,6 +462,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
         inferDeletionFromMissingEntities,
         applicationUniversalIdentifier,
         applicationDefaultRoleUniversalIdentifier,
+        isMarketplaceApplication,
       },
       fromToAllFlatEntityMaps,
       workspaceId,
