@@ -10,7 +10,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { transformEmailsValue } from 'src/engine/core-modules/record-transformer/utils/transform-emails-value.util';
 import { transformLinksValue } from 'src/engine/core-modules/record-transformer/utils/transform-links-value.util';
 import { transformPhonesValue } from 'src/engine/core-modules/record-transformer/utils/transform-phones-value.util';
-import { transformRichTextValue } from 'src/engine/core-modules/record-transformer/utils/transform-rich-text.util';
+import { transformRichTextFieldValue } from 'src/engine/core-modules/record-transformer/utils/transform-rich-text-field-value.util';
 import { isFieldMetadataSettingsOfType } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-settings-of-type.util';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -80,7 +80,7 @@ export class RecordInputTransformerService {
       case FieldMetadataType.NUMBER:
         return value === null ? null : Number(value);
       case FieldMetadataType.RICH_TEXT:
-        return transformRichTextValue(value);
+        return transformRichTextFieldValue(value);
       case FieldMetadataType.LINKS:
         return transformLinksValue({
           input: value,

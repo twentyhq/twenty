@@ -202,6 +202,15 @@ exports[`MCP database tool input schemas should list the input schemas of the no
           "bodyV2": {
             "additionalProperties": false,
             "properties": {
+              "files": {
+                "enum": [
+                  "AscNullsFirst",
+                  "AscNullsLast",
+                  "DescNullsFirst",
+                  "DescNullsLast",
+                ],
+                "type": "string",
+              },
               "markdown": {
                 "enum": [
                   "AscNullsFirst",

@@ -58,7 +58,7 @@ import { RecordPositionService } from 'src/engine/core-modules/record-position/s
 import { transformEmailsValue } from 'src/engine/core-modules/record-transformer/utils/transform-emails-value.util';
 import { transformLinksValue } from 'src/engine/core-modules/record-transformer/utils/transform-links-value.util';
 import { transformPhonesValue } from 'src/engine/core-modules/record-transformer/utils/transform-phones-value.util';
-import { transformRichTextValue } from 'src/engine/core-modules/record-transformer/utils/transform-rich-text.util';
+import { transformRichTextFieldValue } from 'src/engine/core-modules/record-transformer/utils/transform-rich-text-field-value.util';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -372,7 +372,7 @@ export class DataArgProcessorService {
       case FieldMetadataType.RICH_TEXT: {
         const validatedValue = validateRichTextFieldOrThrow(value, key);
 
-        return transformRichTextValue(validatedValue);
+        return transformRichTextFieldValue(validatedValue);
       }
       case FieldMetadataType.LINKS: {
         const settings = isFieldMetadataSettingsOfType(

@@ -10,6 +10,8 @@ import {
 } from 'twenty-shared/utils';
 import { z } from 'zod';
 
+import { type FileInput } from 'src/engine/api/common/common-args-processors/data-arg-processor/types/file-item.type';
+import { validateFilesFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-files-field-or-throw.util';
 import { validateRawJsonFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-raw-json-field-or-throw.util';
 import { validateTextFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-text-field-or-throw.util';
 import {
@@ -116,6 +118,7 @@ export const validateRichTextFieldOrThrow = (
   blocknote?: string | null;
   markdown?: string | null;
   tiptap?: string | null;
+  files?: FileInput[] | null;
 } | null => {
   const preValidatedValue = validateRawJsonFieldOrThrow(value, fieldName);
 
@@ -137,6 +140,9 @@ export const validateRichTextFieldOrThrow = (
       case 'tiptap':
         validateTipTapFieldOrThrow(subFieldValue, `${fieldName}.${subField}`);
         break;
+      case 'files':
+        validateFilesFieldOrThrow(subFieldValue, `${fieldName}.${subField}`);
+        break;
       default:
         throw new CommonQueryRunnerException(
           `Invalid subfield ${inspect(subField)} for rich text field "${fieldName}"`,
@@ -150,5 +156,6 @@ export const validateRichTextFieldOrThrow = (
     blocknote?: string | null;
     markdown?: string | null;
     tiptap?: string | null;
+    files?: FileInput[] | null;
   };
 };
