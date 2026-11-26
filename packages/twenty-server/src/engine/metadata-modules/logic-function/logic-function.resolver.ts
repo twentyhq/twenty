@@ -138,11 +138,19 @@ export class LogicFunctionResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<LogicFunctionDTO> {
     try {
-      const { flatLogicFunctionMaps } =
+      const {
+        flatLogicFunctionMaps,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      } =
         await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
           {
             workspaceId,
-            flatMapsKeys: ['flatLogicFunctionMaps'],
+            flatMapsKeys: [
+              'flatLogicFunctionMaps',
+              'flatObjectMetadataMaps',
+              'flatFieldMetadataMaps',
+            ],
           },
         );
 
@@ -151,7 +159,11 @@ export class LogicFunctionResolver {
         flatLogicFunctionMaps,
       });
 
-      return fromFlatLogicFunctionToLogicFunctionDto({ flatLogicFunction });
+      return fromFlatLogicFunctionToLogicFunctionDto({
+        flatLogicFunction,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      });
     } catch (error) {
       return logicFunctionGraphQLApiExceptionHandler(error);
     }
@@ -167,11 +179,19 @@ export class LogicFunctionResolver {
     callingApplication: FlatApplication | undefined,
   ): Promise<LogicFunctionDTO[]> {
     try {
-      const { flatLogicFunctionMaps } =
+      const {
+        flatLogicFunctionMaps,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      } =
         await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
           {
             workspaceId,
-            flatMapsKeys: ['flatLogicFunctionMaps'],
+            flatMapsKeys: [
+              'flatLogicFunctionMaps',
+              'flatObjectMetadataMaps',
+              'flatFieldMetadataMaps',
+            ],
           },
         );
 
@@ -188,7 +208,11 @@ export class LogicFunctionResolver {
             }),
         )
         .map((flatLogicFunction) =>
-          fromFlatLogicFunctionToLogicFunctionDto({ flatLogicFunction }),
+          fromFlatLogicFunctionToLogicFunctionDto({
+            flatLogicFunction,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+          }),
         );
     } catch (error) {
       return logicFunctionGraphQLApiExceptionHandler(error);

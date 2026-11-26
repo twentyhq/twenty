@@ -83,6 +83,7 @@ const compileObjectFormulaFields = ({
       const columns =
         compileFormulaFieldColumns({
           flatFieldMetadata,
+          fields,
           schemaName,
           tableName,
           resolveReference: buildFormulaSqlReferenceResolverFromDescriptors({

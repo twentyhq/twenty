@@ -1,16 +1,15 @@
 import { type FieldMetadataFormula } from '@/types/FieldMetadataFormula';
 import { type FieldMetadataFormulaEvaluation } from '@/types/FieldMetadataFormulaEvaluation';
-import { getFieldMetadataFormulaExpression } from '@/utils/formula/getFieldMetadataFormulaExpression';
-import { isDefined } from '@/utils/validation/isDefined';
+import { isFormulaFieldMetadata } from '@/utils/formula/isFormulaFieldMetadata';
 
 export const getFieldMetadataFormulaEvaluation = ({
   formula,
 }: {
   formula?: Partial<
-    Pick<FieldMetadataFormula, 'expression' | 'evaluation'>
+    Pick<FieldMetadataFormula, 'expression' | 'tree' | 'evaluation'>
   > | null;
 }): FieldMetadataFormulaEvaluation | undefined => {
-  if (!isDefined(getFieldMetadataFormulaExpression({ formula }))) {
+  if (!isFormulaFieldMetadata({ formula })) {
     return undefined;
   }
 

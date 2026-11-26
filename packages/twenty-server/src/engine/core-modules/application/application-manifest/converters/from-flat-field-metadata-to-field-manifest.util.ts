@@ -1,7 +1,10 @@
 import { isString } from '@sniptt/guards';
 import { type FieldManifest } from 'twenty-shared/application';
 import { QUOTED_STRING_REGEX } from 'twenty-shared/constants';
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  type ValidationRuleFieldDescriptor,
+} from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import {
@@ -16,7 +19,7 @@ import {
   type FlatFieldMetadataOptionMapsForOptions,
   resolveFlatFieldMetadataOptions,
 } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-flat-field-metadata-options.util';
-import { omitFormulaFieldBindings } from 'src/engine/metadata-modules/formula-field/utils/omit-formula-field-bindings.util';
+import { printFormulaFieldText } from 'src/engine/metadata-modules/formula-field/utils/print-formula-field-text.util';
 import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
@@ -101,9 +104,11 @@ const buildRelationProperties = (
 export const fromFlatFieldMetadataToFieldManifest = ({
   flatFieldMetadata,
   flatFieldMetadataOptionMaps,
+  formulaFields,
 }: {
   flatFieldMetadata: UniversalFlatFieldMetadata;
   flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMapsForOptions;
+  formulaFields: ValidationRuleFieldDescriptor[];
 }): FieldManifest => {
   // Reapplying an export writes the app's base rows, so workspace overrides stay out of it.
   const options = resolveFlatFieldMetadataOptions({
@@ -143,7 +148,10 @@ export const fromFlatFieldMetadataToFieldManifest = ({
       ? buildRelationProperties(flatFieldMetadata)
       : {
           universalSettings: flatFieldMetadata.universalSettings,
-          formula: omitFormulaFieldBindings(flatFieldMetadata.formula),
+          formula: printFormulaFieldText({
+            formula: flatFieldMetadata.formula,
+            fields: formulaFields,
+          }),
         }),
   };
 
