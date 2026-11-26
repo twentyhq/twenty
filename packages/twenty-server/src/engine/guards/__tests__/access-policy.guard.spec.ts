@@ -1032,12 +1032,12 @@ describe('AccessPolicyGuard', () => {
     const FLAGGED_POLICY: AccessPolicy = {
       authPrincipals: ACCEPT_EVERY_PRINCIPAL,
       requiredPermissionFlags: [PermissionFlagType.WORKFLOWS],
-      requiredFeatureFlags: [FeatureFlagKey.IS_GETTING_STARTED_ENABLED],
+      requiredFeatureFlags: [FeatureFlagKey.IS_MCP_SERVERS_ENABLED],
     };
 
     it('should let the caller through when the workspace has the feature flag', async () => {
       mockFeatureFlagService.getWorkspaceFeatureFlagsMap.mockResolvedValue({
-        [FeatureFlagKey.IS_GETTING_STARTED_ENABLED]: true,
+        [FeatureFlagKey.IS_MCP_SERVERS_ENABLED]: true,
       });
 
       await expect(canActivateWithPolicy(FLAGGED_POLICY)).resolves.toBe(true);
@@ -1048,12 +1048,12 @@ describe('AccessPolicyGuard', () => {
 
     it('should refuse before looking up permissions when the workspace lacks the feature flag', async () => {
       mockFeatureFlagService.getWorkspaceFeatureFlagsMap.mockResolvedValue({
-        [FeatureFlagKey.IS_GETTING_STARTED_ENABLED]: false,
+        [FeatureFlagKey.IS_MCP_SERVERS_ENABLED]: false,
       });
 
       await expect(canActivateWithPolicy(FLAGGED_POLICY)).rejects.toThrow(
         new ForbiddenException(
-          `Feature flag "${FeatureFlagKey.IS_GETTING_STARTED_ENABLED}" is not enabled for this workspace`,
+          `Feature flag "${FeatureFlagKey.IS_MCP_SERVERS_ENABLED}" is not enabled for this workspace`,
         ),
       );
       expect(

@@ -65,12 +65,6 @@ export class CompanyEnrichmentResolver {
     ]);
 
     if (enrichmentResult.outcome === 'matched') {
-      await this.onboardingService.setOnboardingBookCallPendingIfQualified({
-        userId: user.id,
-        workspaceId: workspace.id,
-        employeeCount: enrichmentResult.enrichment.employeeCount,
-      });
-
       await this.onboardingService.creditEnrichmentQualificationReward({
         workspaceId: workspace.id,
         employeeCount: enrichmentResult.enrichment.employeeCount,

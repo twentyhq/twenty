@@ -9,7 +9,6 @@ import { GettingStartedSnoozeMenu } from '@/getting-started/components/GettingSt
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { themeCssVariables } from 'twenty-ui/theme';
 import {
-  FeatureFlagKey,
   SubscriptionStatus,
   UserCreditsFallback,
 } from '~/generated-metadata/graphql';
@@ -20,9 +19,6 @@ import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
 const buildTrialingWorkspace = (hasPaymentMethod: boolean) => ({
   ...mockCurrentWorkspace,
-  featureFlags: [
-    { key: FeatureFlagKey.IS_GETTING_STARTED_ENABLED, value: true },
-  ],
   currentBillingSubscription: {
     ...mockCurrentWorkspace.currentBillingSubscription,
     status: SubscriptionStatus.Trialing,

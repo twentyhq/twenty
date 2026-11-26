@@ -2,7 +2,6 @@ import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Context, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
@@ -42,7 +41,7 @@ import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
       application: false,
     },
     requiredPermissionFlags: [PermissionFlagType.WORKFLOWS],
-    requiredFeatureFlags: [FeatureFlagKey.IS_GETTING_STARTED_ENABLED],
+    requiredFeatureFlags: [],
   }),
   BillingEnabledGuard,
 )
