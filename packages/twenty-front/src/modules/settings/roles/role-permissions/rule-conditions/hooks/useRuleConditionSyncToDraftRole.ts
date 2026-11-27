@@ -4,6 +4,7 @@ import { useCallback, useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import {
@@ -20,7 +21,7 @@ type UseRuleConditionSyncToDraftRoleProps = {
   currentRecordFilters: RecordFilter[];
   currentRecordFilterGroups: RecordFilterGroup[];
   hasInitialized: boolean;
-  predicateIdsWithoutFilter: string[];
+  filterableFieldMetadataItems: FieldMetadataItem[];
 };
 
 export const useRuleConditionSyncToDraftRole = ({
@@ -30,7 +31,7 @@ export const useRuleConditionSyncToDraftRole = ({
   currentRecordFilters,
   currentRecordFilterGroups,
   hasInitialized,
-  predicateIdsWithoutFilter,
+  filterableFieldMetadataItems,
 }: UseRuleConditionSyncToDraftRoleProps) => {
   const setSettingsDraftRole = useSetAtomFamilyState(
     settingsDraftRoleFamilyState,
@@ -45,8 +46,10 @@ export const useRuleConditionSyncToDraftRole = ({
         (predicate) =>
           predicate.rowLevelPermissionRuleId !== rowLevelPermissionRuleId ||
           isDefined(predicate.relationFieldMetadataId) ||
-          // e.g. a condition on one target of a morph relation, which the filter builder cannot show
-          predicateIdsWithoutFilter.includes(predicate.id),
+          !filterableFieldMetadataItems.some(
+            (fieldMetadataItem) =>
+              fieldMetadataItem.id === predicate.fieldMetadataId,
+          ),
       );
 
       const otherRuleGroups = (
@@ -95,8 +98,8 @@ export const useRuleConditionSyncToDraftRole = ({
   }, [
     currentRecordFilters,
     currentRecordFilterGroups,
+    filterableFieldMetadataItems,
     objectMetadataItem.id,
-    predicateIdsWithoutFilter,
     roleId,
     rowLevelPermissionRuleId,
     setSettingsDraftRole,

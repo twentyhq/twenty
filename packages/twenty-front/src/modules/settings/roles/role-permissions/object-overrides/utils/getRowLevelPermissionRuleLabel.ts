@@ -1,4 +1,3 @@
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { doesFieldMetadataItemMatchFieldMetadataId } from '@/object-metadata/utils/doesFieldMetadataItemMatchFieldMetadataId';
 import { getRelativeDateDisplayValue } from '@/object-record/object-filter-dropdown/utils/getRelativeDateDisplayValue';
@@ -103,44 +102,9 @@ const getPredicateValueLabel = ({
   return '';
 };
 
-const getPredicateFieldLabel = ({
-  field,
-  fieldMetadataId,
-  objectMetadataItems,
-}: {
-  field?: Pick<FieldMetadataItem, 'label' | 'morphRelations'>;
-  fieldMetadataId: string;
-  objectMetadataItems?: Pick<
-    EnrichedObjectMetadataItem,
-    'id' | 'labelSingular'
-  >[];
-}) => {
-  if (!isDefined(field)) {
-    return t`Unknown field`;
-  }
-
-  const morphTargetObjectMetadataId = field.morphRelations?.find(
-    ({ sourceFieldMetadata }) => sourceFieldMetadata.id === fieldMetadataId,
-  )?.targetObjectMetadata.id;
-
-  const morphTargetObjectLabel = objectMetadataItems?.find(
-    (objectMetadataItem) =>
-      objectMetadataItem.id === morphTargetObjectMetadataId,
-  )?.labelSingular;
-
-  if (!isNonEmptyString(morphTargetObjectLabel)) {
-    return field.label;
-  }
-
-  const morphFieldLabel = field.label;
-
-  return t`${morphFieldLabel} (${morphTargetObjectLabel})`;
-};
-
 export const getRowLevelPermissionRuleLabel = ({
   predicates,
   objectMetadataItem,
-  objectMetadataItems,
   workspaceMemberObjectMetadataItem,
   recordLabelById,
   getDateValueLabel,
@@ -152,10 +116,6 @@ export const getRowLevelPermissionRuleLabel = ({
       'id' | 'label' | 'type' | 'relation' | 'morphRelations'
     >[];
   };
-  objectMetadataItems?: Pick<
-    EnrichedObjectMetadataItem,
-    'id' | 'labelSingular'
-  >[];
   workspaceMemberObjectMetadataItem?: {
     fields: Pick<FieldMetadataItem, 'id' | 'name' | 'label'>[];
   };
@@ -174,11 +134,7 @@ export const getRowLevelPermissionRuleLabel = ({
       fieldMetadataId: firstPredicate.fieldMetadataId,
     }),
   );
-  const fieldLabel = getPredicateFieldLabel({
-    field,
-    fieldMetadataId: firstPredicate.fieldMetadataId,
-    objectMetadataItems,
-  });
+  const fieldLabel = field?.label ?? t`Unknown field`;
 
   const isDateValue =
     isNonEmptyString(firstPredicate.value) &&

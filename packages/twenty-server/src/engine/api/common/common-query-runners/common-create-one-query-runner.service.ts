@@ -54,7 +54,6 @@ export class CommonCreateOneQueryRunnerService extends CommonRecordQueryRunnerSe
 
     const [createdRecord] = result;
 
-    // The read after the insert applies the caller's read rules, which can hide the created record
     if (!isDefined(createdRecord)) {
       throw new PermissionsException(
         PermissionsExceptionMessage.PERMISSION_DENIED,

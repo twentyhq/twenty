@@ -1,8 +1,6 @@
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { findFieldMetadataItemByFieldMetadataId } from '@/object-metadata/utils/findFieldMetadataItemByFieldMetadataId';
 import { useGetRecordFilterDisplayValue } from '@/object-record/record-filter/hooks/useGetRecordFilterDisplayValue';
 import { convertPredicateToRecordFilter } from '@/settings/roles/role-permissions/rule-conditions/utils/rowLevelPermissionPredicateConversion';
 import { getWorkspaceMemberNameById } from '@/settings/roles/role-permissions/object-overrides/utils/getWorkspaceMemberNameById';
@@ -27,18 +25,15 @@ export const useRowLevelPermissionRuleLabel = (
     currentWorkspaceMembers,
   );
 
-  const { objectMetadataItems } = useObjectMetadataItems();
-
   const { getRecordFilterDisplayValue } = useGetRecordFilterDisplayValue();
 
   const getDateValueLabel = (predicate: RowLevelPermissionPredicate) =>
     getRecordFilterDisplayValue(
       convertPredicateToRecordFilter(
         predicate,
-        findFieldMetadataItemByFieldMetadataId({
-          fieldMetadataItems: objectMetadataItem.fields,
-          fieldMetadataId: predicate.fieldMetadataId,
-        }),
+        objectMetadataItem.fields.find(
+          (field) => field.id === predicate.fieldMetadataId,
+        ),
       ),
     ).trim();
 
@@ -46,7 +41,6 @@ export const useRowLevelPermissionRuleLabel = (
     getRowLevelPermissionRuleLabel({
       predicates,
       objectMetadataItem,
-      objectMetadataItems,
       workspaceMemberObjectMetadataItem,
       recordLabelById: workspaceMemberNameById,
       getDateValueLabel,

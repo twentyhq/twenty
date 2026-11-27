@@ -40,11 +40,8 @@ export const useRuleConditionFilterInitialization = ({
     lastInitializedRowLevelPermissionRuleId,
     setLastInitializedRowLevelPermissionRuleId,
   ] = useState<string>('');
-  const [predicateIdsWithoutFilter, setPredicateIdsWithoutFilter] = useState<
-    string[]
-  >([]);
 
-  const { initialFilters, initialPredicateIdsWithoutFilter } = useMemo(() => {
+  const initialFilters = useMemo(() => {
     const predicates = settingsDraftRole.rowLevelPermissionPredicates ?? [];
     const rulePredicates = predicates.filter(
       (predicate) =>
@@ -52,25 +49,15 @@ export const useRuleConditionFilterInitialization = ({
         !isDefined(predicate.relationFieldMetadataId),
     );
 
-    const filtersByPredicateId = new Map(
-      rulePredicates.map((predicate) => [
-        predicate.id,
-        convertPredicateToRecordFilter(
-          predicate,
-          filterableFieldMetadataItems.find(
-            (fieldMetadataItemToFind) =>
-              fieldMetadataItemToFind.id === predicate.fieldMetadataId,
-          ),
-        ),
-      ]),
-    );
-
-    return {
-      initialFilters: [...filtersByPredicateId.values()].filter(isDefined),
-      initialPredicateIdsWithoutFilter: [...filtersByPredicateId.entries()]
-        .filter(([, filter]) => !isDefined(filter))
-        .map(([predicateId]) => predicateId),
-    };
+    return rulePredicates
+      .map((predicate) => {
+        const fieldMetadataItem = filterableFieldMetadataItems.find(
+          (fieldMetadataItemToFind) =>
+            fieldMetadataItemToFind.id === predicate.fieldMetadataId,
+        );
+        return convertPredicateToRecordFilter(predicate, fieldMetadataItem);
+      })
+      .filter(isDefined);
   }, [
     settingsDraftRole.rowLevelPermissionPredicates,
     rowLevelPermissionRuleId,
@@ -104,7 +91,6 @@ export const useRuleConditionFilterInitialization = ({
     if (shouldInitialize) {
       setCurrentRecordFilters(initialFilters);
       setCurrentRecordFilterGroups(initialFilterGroups);
-      setPredicateIdsWithoutFilter(initialPredicateIdsWithoutFilter);
 
       for (const filter of initialFilters) {
         setRecordFilterUsedInAdvancedFilterDropdownRow(filter);
@@ -120,7 +106,6 @@ export const useRuleConditionFilterInitialization = ({
     settingsDraftRole.id,
     initialFilters,
     initialFilterGroups,
-    initialPredicateIdsWithoutFilter,
     hasInitialized,
     lastInitializedRoleId,
     lastInitializedRowLevelPermissionRuleId,
@@ -131,6 +116,5 @@ export const useRuleConditionFilterInitialization = ({
 
   return {
     hasInitialized,
-    predicateIdsWithoutFilter,
   };
 };

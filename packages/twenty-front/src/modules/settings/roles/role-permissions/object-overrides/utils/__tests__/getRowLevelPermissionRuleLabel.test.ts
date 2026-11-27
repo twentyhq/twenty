@@ -114,7 +114,7 @@ describe('getRowLevelPermissionRuleLabel', () => {
     ).toBe('Account Owner is 2 records');
   });
 
-  it('should name a morph relation condition after its field and target object', () => {
+  it('should name a condition on one target of a morph relation after the morph field', () => {
     expect(
       getRowLevelPermissionRuleLabel({
         predicates: [
@@ -125,10 +125,7 @@ describe('getRowLevelPermissionRuleLabel', () => {
           }),
         ],
         objectMetadataItem: OBJECT_METADATA_ITEM,
-        objectMetadataItems: [
-          { id: 'message-object', labelSingular: 'Message' },
-        ],
       }),
-    ).toBe('Related to (Message) is empty');
+    ).toBe('Related to is empty');
   });
 });
