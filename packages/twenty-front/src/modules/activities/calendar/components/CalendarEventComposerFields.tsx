@@ -13,6 +13,7 @@ import { AVAILABLE_TIMEZONE_OPTIONS } from '@/localization/constants/AvailableTi
 import { Select } from '@/ui/input/components/Select';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { styled } from '@linaria/react';
+import { useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Callout } from 'twenty-ui/components/feedback';
 import { Input, Switch } from 'twenty-ui/primitives/input';
@@ -54,6 +55,7 @@ export const CalendarEventComposerFields = ({
   onReauthorize,
 }: CalendarEventComposerFieldsProps) => {
   const { t } = useLingui();
+  const titleInputRef = useRef<HTMLInputElement>(null);
   const hasNotices =
     composerState.accountOptions.length === 0 ||
     composerState.missingScopes.length > 0 ||
@@ -103,8 +105,12 @@ export const CalendarEventComposerFields = ({
             />
           </ComposerFieldRow>
         )}
-        <ComposerFieldRow label={t`Title`}>
+        <ComposerFieldRow
+          label={t`Title`}
+          onClick={() => titleInputRef.current?.focus()}
+        >
           <Input
+            ref={titleInputRef}
             variant="plain"
             type="text"
             aria-label={t`Title`}

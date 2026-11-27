@@ -1,5 +1,6 @@
 import { EmailOperation } from 'twenty-shared/types';
 import { useQuery } from '@apollo/client/react';
+import { useRef } from 'react';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import {
@@ -76,6 +77,7 @@ export const EmailComposerFields = ({
 }: EmailComposerFieldsProps) => {
   const { t } = useLingui();
   const { uploadEmailImage } = useUploadEmailImage();
+  const subjectInputRef = useRef<HTMLInputElement>(null);
   const { data: accountsData } = useQuery<{
     myConnectedAccounts: Pick<
       ConnectedAccount,
@@ -132,8 +134,13 @@ export const EmailComposerFields = ({
           onSubmit={composerState.handleSend}
           contextRecord={contextRecord}
         />
-        <ComposerFieldRow label={t`Subject`} hasDivider={false}>
+        <ComposerFieldRow
+          label={t`Subject`}
+          hasDivider={false}
+          onClick={() => subjectInputRef.current?.focus()}
+        >
           <Input
+            ref={subjectInputRef}
             variant="plain"
             type="text"
             aria-label={t`Subject`}
