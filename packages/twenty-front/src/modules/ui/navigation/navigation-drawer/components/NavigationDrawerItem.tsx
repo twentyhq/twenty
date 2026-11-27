@@ -138,6 +138,7 @@ const StyledLabelParent = styled.div`
   align-items: center;
   display: flex;
   flex: 1 1 auto;
+  gap: ${themeCssVariables.spacing[1]};
   min-width: 0px;
   overflow: hidden;
   text-overflow: clip;
@@ -444,6 +445,7 @@ export const NavigationDrawerItem = ({
                   }
                 />
               )}
+              {isExpanded && trailingIcon}
             </StyledLabelParent>
 
             {showStyledSpacer && <StyledSpacer />}
@@ -517,12 +519,6 @@ export const NavigationDrawerItem = ({
                     {rightOptions}
                   </StyledRightOptionsVisbility>
                 </StyledRightOptionsContainer>
-              </NavigationDrawerAnimatedCollapseWrapper>
-            )}
-
-            {isDefined(trailingIcon) && (
-              <NavigationDrawerAnimatedCollapseWrapper>
-                {trailingIcon}
               </NavigationDrawerAnimatedCollapseWrapper>
             )}
           </StyledItemElementsContainer>
