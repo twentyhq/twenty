@@ -448,30 +448,7 @@ export async function createBandSession({
     interaction.mouseY = 0.5;
   };
 
-  // Hover also reads the pointer from the window: a model drawn in a
-  // section's background, under its content layer, never gets the canvas's
-  // own events. Drags stay canvas-scoped.
-  const handleWindowPointerMove = (event: PointerEvent) => {
-    if (interaction.dragging) {
-      return;
-    }
-    const rect = canvas.getBoundingClientRect();
-    const isInside =
-      event.clientX >= rect.left &&
-      event.clientX <= rect.right &&
-      event.clientY >= rect.top &&
-      event.clientY <= rect.bottom;
-    if (isInside) {
-      handlePointerMove(event);
-    } else if (interaction.pointerInside) {
-      handlePointerLeave();
-    }
-  };
-
   if (!reducedMotion) {
-    window.addEventListener('pointermove', handleWindowPointerMove, {
-      passive: true,
-    });
     canvas.addEventListener('pointerdown', handlePointerDown);
     canvas.addEventListener('pointermove', handlePointerMove);
     canvas.addEventListener('pointerleave', handlePointerLeave);
@@ -781,7 +758,6 @@ export async function createBandSession({
     dispose() {
       frameLoop.dispose();
       sizeObserver?.disconnect();
-      window.removeEventListener('pointermove', handleWindowPointerMove);
       canvas.removeEventListener('pointerdown', handlePointerDown);
       canvas.removeEventListener('pointermove', handlePointerMove);
       canvas.removeEventListener('pointerleave', handlePointerLeave);
