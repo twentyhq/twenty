@@ -7,10 +7,6 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { getAvailableSettingsTabs } from '@/settings/utils/getAvailableSettingsTabs';
-import { useWorkspaceFeatureFlagsMap } from '@/workspace/hooks/useWorkspaceFeatureFlagsMap';
-import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
@@ -20,6 +16,7 @@ import { SettingsAgentSkillsTab } from '~/pages/settings/ai/components/SettingsA
 import { SettingsAgentToolsTab } from '~/pages/settings/ai/components/SettingsAgentToolsTab';
 import { SettingsAiModelsTab } from '~/pages/settings/ai/components/SettingsAiModelsTab';
 import { SettingsAiUsageTab } from '~/pages/settings/ai/components/SettingsAiUsageTab';
+import { useAvailableSettingsTabs } from '@/settings/hooks/useAvailableSettingsTabs';
 import { SETTINGS_AI_TABS } from '@/settings/ai/constants/SettingsAiTabs';
 import McpCoverDark from '@/settings/mcp/assets/mcp-cover-dark.png';
 import McpCoverLight from '@/settings/mcp/assets/mcp-cover-light.png';
@@ -40,16 +37,10 @@ const AI_HERO_DARK = '/images/ai/ai-tools-cover-dark.png';
 const SETTINGS_AI_HERO_INSTANCE_ID_PREFIX = 'settings-ai-hero';
 
 export const SettingsAI = () => {
-  const { t, i18n } = useLingui();
+  const { t } = useLingui();
   const { handleCreateTool, isCreatingTool } = useCreateTool();
   const canReadSystemPrompts = useHasPermissionFlag(PermissionFlagType.AI);
-  const permissionFlagMap = useAtomStateValue(permissionFlagMapSelector);
-  const featureFlagsMap = useWorkspaceFeatureFlagsMap();
-  const tabs = getAvailableSettingsTabs({
-    tabs: SETTINGS_AI_TABS.TABS,
-    permissionFlagMap,
-    featureFlagsMap,
-  }).map(({ id, title, Icon }) => ({ id, title: i18n._(title), Icon }));
+  const tabs = useAvailableSettingsTabs(SETTINGS_AI_TABS.TABS);
   const activeTabId = useSettingsActiveTabId(
     SETTINGS_AI_TABS.COMPONENT_INSTANCE_ID,
     tabs.map((tab) => tab.id),

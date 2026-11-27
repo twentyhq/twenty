@@ -1,17 +1,13 @@
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { useAvailableSettingsTabs } from '@/settings/hooks/useAvailableSettingsTabs';
 import { SETTINGS_APPLICATIONS_TABS } from '@/settings/applications/constants/SettingsApplicationsTabs';
 import { SETTINGS_DEVELOPERS_TABS } from '@/settings/developers/constants/SettingsDevelopersTabs';
-import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
-import { getAvailableSettingsTabs } from '@/settings/utils/getAvailableSettingsTabs';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useWorkspaceFeatureFlagsMap } from '@/workspace/hooks/useWorkspaceFeatureFlagsMap';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
 import { useLingui } from '@lingui/react/macro';
 import { Navigate, useLocation } from 'react-router-dom';
-import { isDefined } from 'twenty-shared/utils';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
@@ -26,22 +22,10 @@ const APPLICATIONS_HERO_INSTANCE_ID_PREFIX = 'settings-applications-hero';
 const LEGACY_DEVELOPER_TAB_HASH = '#developer';
 
 export const SettingsApplications = () => {
-  const { t, i18n } = useLingui();
+  const { t } = useLingui();
   const location = useLocation();
 
-  const permissionFlagMap = useAtomStateValue(permissionFlagMapSelector);
-  const featureFlagsMap = useWorkspaceFeatureFlagsMap();
-
-  const tabs = getAvailableSettingsTabs({
-    tabs: SETTINGS_APPLICATIONS_TABS.TABS,
-    permissionFlagMap,
-    featureFlagsMap,
-  }).map(({ id, title, Icon, pill }) => ({
-    id,
-    title: i18n._(title),
-    Icon,
-    pill: isDefined(pill) ? i18n._(pill) : undefined,
-  }));
+  const tabs = useAvailableSettingsTabs(SETTINGS_APPLICATIONS_TABS.TABS);
 
   const activeTabId = useSettingsActiveTabId(
     SETTINGS_APPLICATIONS_TABS.COMPONENT_INSTANCE_ID,
