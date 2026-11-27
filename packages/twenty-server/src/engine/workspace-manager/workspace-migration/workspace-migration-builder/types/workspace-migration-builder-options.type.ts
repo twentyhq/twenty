@@ -7,6 +7,7 @@ export type WorkspaceMigrationBuilderOptions = {
   isSystemBuild: boolean;
   applicationUniversalIdentifier: string;
   applicationDefaultRoleUniversalIdentifier?: string;
+  isMarketplaceApplication?: boolean;
   authContext?: WorkspaceAuthContext;
 };
 

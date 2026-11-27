@@ -1,4 +1,3 @@
-import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { FieldDisplay } from '@/object-record/record-field/ui/components/FieldDisplay';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
@@ -24,20 +23,20 @@ const StyledFieldContainer = styled.div`
 
 type RecordListRowFieldProps = {
   recordId: string;
-  recordField: RecordField;
+  fieldMetadataItemId: string;
   fieldDefinition: ColumnDefinition<FieldMetadata>;
   maxWidth: number;
 };
 
 export const RecordListRowField = ({
   recordId,
-  recordField,
+  fieldMetadataItemId,
   fieldDefinition,
   maxWidth,
 }: RecordListRowFieldProps) => {
   return (
     <Tooltip.Trigger
-      payload={recordField.fieldMetadataItemId}
+      payload={fieldMetadataItemId}
       delay={TooltipDelay.shortDelay}
       render={<StyledFieldContainer style={{ maxWidth }} />}
     >

@@ -179,8 +179,11 @@ describe('Validation rules across application syncs', () => {
       ]),
     );
 
+    // The tree keeps the deleted field by identifier, which no name prints back to
     expect(validationRuleById.get(twoFieldValidationRuleId)).toMatchObject({
-      expression: 'isNonEmptyString(ticketCode) or isNonEmptyString(priority)',
+      expression: expect.stringMatching(
+        /^isNonEmptyString\(ticketCode\) or isNonEmptyString\(missingField_\w+\)$/,
+      ),
       isActive: false,
     });
     expect(validationRuleById.get(validationRuleId)).toMatchObject({

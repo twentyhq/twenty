@@ -112,6 +112,7 @@ export const createStandardRelationFieldFlatMetadata = <
     overrides: null,
     defaultValue,
     settings,
+    formula: null,
     options: fieldOptions,
     relationTargetFieldMetadataId: targetFieldIds[targetFieldName].id,
     relationTargetObjectMetadataId:

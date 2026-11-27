@@ -37,6 +37,7 @@ type MainNavigationDrawerSidebarTabProps = {
   isActive: boolean;
   isExpanded: boolean;
   shouldShowTooltip: boolean;
+  isLabelHidden: boolean;
   attention: InboxChatAttention | null;
 };
 
@@ -45,6 +46,7 @@ export const MainNavigationDrawerSidebarTab = ({
   isActive,
   isExpanded,
   shouldShowTooltip,
+  isLabelHidden,
   attention,
 }: MainNavigationDrawerSidebarTabProps) => {
   const { t } = useLingui();
@@ -113,6 +115,7 @@ export const MainNavigationDrawerSidebarTab = ({
       isDisabled={false}
       tooltip={tabLabel}
       shouldShowTooltip={shouldShowTooltip}
+      isLabelHidden={isLabelHidden}
       onClick={handleClick}
       isSelectedInEditMode={
         isLayoutCustomizationModeEnabled &&

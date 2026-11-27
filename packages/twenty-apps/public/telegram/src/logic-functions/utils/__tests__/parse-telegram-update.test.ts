@@ -38,6 +38,8 @@ describe('parseTelegramUpdate', () => {
         kind: 'MESSAGE',
         chatId: 42,
         user: USER,
+        messageId: 1,
+        text: text ?? '',
       });
     },
   );

@@ -127,5 +127,6 @@ export const getLegacyAgentHistoryFlatFieldMetadatas = ({
       relationRowLevelPermissionPredicateUniversalIdentifiers: [],
       workspaceMemberRowLevelPermissionPredicateUniversalIdentifiers: [],
       universalSettings: null,
+      formula: null,
     };
   });

@@ -13,7 +13,7 @@ import { type filterEventsMatchingDatabaseEventTrigger } from 'src/engine/worksp
 type FilterMatchingEvents = (
   args: Pick<
     Parameters<typeof filterEventsMatchingDatabaseEventTrigger>[0],
-    'events' | 'eventName' | 'watchedFields' | 'condition' | 'conditionBindings'
+    'events' | 'eventName' | 'watchedFields' | 'condition' | 'conditionTree'
   >,
 ) => ReturnType<typeof filterEventsMatchingDatabaseEventTrigger>;
 
@@ -46,7 +46,7 @@ export const transformEventBatchToEventPayloads = async ({
         eventName: workspaceEventBatch.name,
         watchedFields: triggerSettings?.updatedFields,
         condition: triggerSettings?.condition,
-        conditionBindings: triggerSettings?.conditionBindings,
+        conditionTree: triggerSettings?.conditionTree,
       });
 
     if (isDefined(conditionErrorMessage)) {

@@ -22,7 +22,7 @@ import { getConnectionProviderManifestLogicFunctionReferences } from 'src/engine
 import { fromConnectionProviderManifestToUniversalFlatConnectionProvider } from 'src/engine/core-modules/application/application-manifest/converters/from-connection-provider-manifest-to-universal-flat-connection-provider.util';
 import { fromMcpServerManifestToUniversalFlatMcpServer } from 'src/engine/core-modules/application/application-manifest/converters/from-mcp-server-manifest-to-universal-flat-mcp-server.util';
 import { fromMessagingProviderManifestToUniversalFlatMessagingProviderOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-messaging-provider-manifest-to-universal-flat-messaging-provider-or-throw.util';
-import { setFormulaFieldBindingsThroughMutation } from 'src/engine/core-modules/application/application-manifest/utils/set-formula-field-bindings-through-mutation.util';
+import { setFormulaFieldTreesThroughMutation } from 'src/engine/core-modules/application/application-manifest/utils/set-formula-field-trees-through-mutation.util';
 import { fromFieldManifestToUniversalFlatFieldMetadata } from 'src/engine/core-modules/application/application-manifest/converters/from-field-manifest-to-universal-flat-field-metadata.util';
 import { fromFrontComponentManifestToUniversalFlatFrontComponent } from 'src/engine/core-modules/application/application-manifest/converters/from-front-component-manifest-to-universal-flat-front-component.util';
 import { fromIndexManifestToUniversalFlatIndex } from 'src/engine/core-modules/application/application-manifest/converters/from-index-manifest-to-universal-flat-index.util';
@@ -54,6 +54,7 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { buildDatabaseEventTriggerManifestLookup } from 'src/engine/core-modules/application/application-manifest/utils/build-database-event-trigger-manifest-lookup.util';
+import { resolveAgentTriggerManifestsOrThrow } from 'src/engine/core-modules/application/application-manifest/utils/resolve-agent-trigger-manifests-or-throw.util';
 import { resolveDatabaseEventTriggerManifestSettingsOrThrow } from 'src/engine/core-modules/application/application-manifest/utils/resolve-database-event-trigger-manifest-settings-or-throw.util';
 import { fromAgentManifestToUniversalFlatAgent } from 'src/engine/core-modules/application/utils/from-agent-manifest-to-universal-flat-agent.util';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
@@ -493,21 +494,10 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
         universalFlatEntity: fromAgentManifestToUniversalFlatAgent({
           agentManifest: {
             ...agentManifest,
-            // TODO: remove with the legacy databaseEventTriggerSettings / DATABASE_EVENT manifest form
-            triggers: agentManifest.triggers?.map((trigger) =>
-              trigger.type === 'EVENT' || trigger.type === 'DATABASE_EVENT'
-                ? {
-                    ...trigger,
-                    type: 'DATABASE_EVENT' as const,
-                    settings:
-                      resolveDatabaseEventTriggerManifestSettingsOrThrow({
-                        settings: trigger.settings,
-                        lookup: databaseEventTriggerManifestLookup,
-                        subject: `Agent ${agentManifest.name}`,
-                      }),
-                  }
-                : trigger,
-            ),
+            triggers: resolveAgentTriggerManifestsOrThrow({
+              agentManifest,
+              lookup: databaseEventTriggerManifestLookup,
+            }),
           },
           applicationUniversalIdentifier,
           now,
@@ -826,7 +816,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
       });
     }
 
-    setFormulaFieldBindingsThroughMutation({
+    setFormulaFieldTreesThroughMutation({
       existingFlatFieldMetadataMaps:
         existingAllFlatEntityMaps.flatFieldMetadataMaps,
       universalFlatFieldMetadataMapsToMutate:

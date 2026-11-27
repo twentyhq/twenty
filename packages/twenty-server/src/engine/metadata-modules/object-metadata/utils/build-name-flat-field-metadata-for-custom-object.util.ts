@@ -58,6 +58,7 @@ export const buildNameFlatFieldMetadataForCustomObject = ({
     mainGroupByFieldMetadataViewUniversalIdentifiers: [],
     fieldPermissionUniversalIdentifiers: [],
     universalSettings: null,
+    formula: null,
     viewSortUniversalIdentifiers: [],
     searchFieldMetadataUniversalIdentifiers: [],
     fieldMetadataOptionUniversalIdentifiers: [],

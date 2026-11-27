@@ -25,10 +25,6 @@ export const getAuthTokensFromSsoExchangeToken = async ({
             token
             expiresAt
           }
-          refreshToken {
-            token
-            expiresAt
-          }
         }
       }
     }

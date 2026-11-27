@@ -187,7 +187,6 @@ type AgentMessage {
   reactions: [AgentMessageReactionSummary!]!
   role: String!
   senderApplicationId: UUID
-  senderUserWorkspaceId: UUID
   senderWorkspaceMemberId: UUID
   status: String!
   threadId: UUID!
@@ -984,7 +983,7 @@ type AuthToken {
 
 type AuthTokenPair {
   accessOrWorkspaceAgnosticToken: AuthToken!
-  refreshToken: AuthToken!
+  refreshToken: AuthToken @deprecated(reason: "Always null. Will be removed.")
 }
 
 type AuthTokens {
@@ -1779,6 +1778,7 @@ input CreateEmailingDomainInput {
 input CreateFieldInput {
   defaultValue: JSON
   description: String
+  formula: JSON
   icon: String
   isActive: Boolean
   isAuditLogged: Boolean
@@ -2063,6 +2063,7 @@ input CreateViewInput {
   kanbanAggregateOperationFieldMetadataId: UUID
   kanbanColumnWidth: Int
   key: ViewKey
+  listPinnedFieldMetadataId: UUID
   mainGroupByFieldMetadataId: UUID
   name: String!
   objectMetadataId: UUID!
@@ -2589,6 +2590,7 @@ type Field {
   defaultValue: JSON
   description: String
   disabledFieldPermissionActions: [String!]
+  formula: JSON
   icon: String
   id: UUID!
   isActive: Boolean
@@ -3771,7 +3773,7 @@ type Mutation {
   removeRecordShare(principal: RecordSharePrincipalInput!, target: RecordTargetInput!): RecordSharingDTO!
   removeRoleFromAgent(agentId: UUID!): Boolean!
   renewApplicationToken(applicationRefreshToken: String!): ApplicationTokenPair!
-  renewToken(appToken: String!): AuthTokens!
+  renewToken(appToken: String!): AuthTokens! @deprecated(reason: "Refresh tokens are no longer issued; this is removed once the last one expires.")
   reopenAgentChatThreadInChannel(threadId: UUID!): Boolean!
   reportAppConnectionAuthFailure(input: ReportAppConnectionAuthFailureInput!): Boolean!
   resendEmailVerificationToken(affiliatePartnerName: String, email: String!, origin: String!): ResendEmailVerificationToken!
@@ -3808,7 +3810,7 @@ type Mutation {
   setRecordShare(accessLevel: RecordShareAccessLevel!, principal: RecordSharePrincipalInput!, target: RecordTargetInput!): RecordSharingDTO!
   setResourceCreditSubscriptionPrice(priceId: String!): BillingUpdate!
   signIn(captchaToken: String, email: String!, locale: String, password: String!, verifyEmailRedirectPath: String): AvailableWorkspacesAndAccessTokens!
-  signOut(refreshToken: String): Boolean!
+  signOut(refreshToken: String @deprecated(reason: "Refresh tokens are no longer issued; this is removed once the last one expires.")): Boolean!
   signUp(affiliatePartnerName: String, captchaToken: String, email: String!, locale: String, password: String!, verifyEmailRedirectPath: String): AvailableWorkspacesAndAccessTokens!
   signUpInNewWorkspace(input: SignUpInNewWorkspaceInput): SignUp!
   signUpInWorkspace(captchaToken: String, email: String!, locale: String, password: String!, verifyEmailRedirectPath: String, workspaceId: UUID, workspaceInviteHash: String, workspacePersonalInviteToken: String): SignUp!
@@ -5563,6 +5565,7 @@ input UpdateEmailGroupChannelInput {
 input UpdateFieldInput {
   defaultValue: JSON
   description: String
+  formula: JSON
   icon: String
   isActive: Boolean
   isAuditLogged: Boolean
@@ -5952,6 +5955,7 @@ input UpdateViewInput {
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID
   kanbanColumnWidth: Int
+  listPinnedFieldMetadataId: UUID
   mainGroupByFieldMetadataId: UUID
   name: String
 
@@ -6504,6 +6508,7 @@ type View {
   kanbanAggregateOperationFieldMetadataId: UUID
   kanbanColumnWidth: Int
   key: ViewKey
+  listPinnedFieldMetadataId: UUID
   mainGroupByFieldMetadataId: UUID
   name: String!
   objectMetadataId: UUID!
