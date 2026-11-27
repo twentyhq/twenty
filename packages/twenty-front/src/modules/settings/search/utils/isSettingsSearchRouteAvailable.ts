@@ -7,7 +7,7 @@ export const isSettingsSearchRouteAvailable = ({
   route: { metadata, guards },
   availability,
 }: {
-  route: SettingsSearchRoute;
+  route: Pick<SettingsSearchRoute, 'metadata' | 'guards'>;
   availability: SettingsSearchAvailability;
 }) =>
   (availability.isBillingEnabled || !metadata.isHiddenWhenBillingDisabled) &&
