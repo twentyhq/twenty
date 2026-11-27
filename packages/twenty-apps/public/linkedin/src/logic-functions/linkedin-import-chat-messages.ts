@@ -12,6 +12,7 @@ import { LINKEDIN_HISTORY_IMPORT_TIMEOUT_SECONDS } from 'src/constants/linkedin-
 import { LINKEDIN_IMPORT_CHAT_MESSAGES_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { type LinkedinHistoryImportChatJobResult } from 'src/logic-functions/types/linkedin-history-import-chat-job-result.type';
 import { type LinkedinImportChatMessagesJobPayload } from 'src/logic-functions/types/linkedin-import-chat-messages-job-payload.type';
+import { type LinkedinLegacyImportHistoryJobPayload } from 'src/logic-functions/types/linkedin-legacy-import-history-job-payload.type';
 import { finishLinkedinHistoryImportChat } from 'src/logic-functions/utils/finish-linkedin-history-import-chat.util';
 import { getActiveLinkedinHistoryImportState } from 'src/logic-functions/utils/get-active-linkedin-history-import-state.util';
 import { handleLinkedinHistoryImportChatJobError } from 'src/logic-functions/utils/handle-linkedin-history-import-chat-job-error.util';
@@ -94,14 +95,15 @@ const importChatMessagesPage = async ({
 };
 
 export const linkedinImportChatMessagesHandler = async (
-  payload: LinkedinImportChatMessagesJobPayload,
+  payload:
+    | LinkedinImportChatMessagesJobPayload
+    | LinkedinLegacyImportHistoryJobPayload,
   context?: Pick<LogicFunctionExecutionContext, 'retryCount' | 'maxRetries'>,
 ): Promise<LinkedinHistoryImportChatJobResult> => {
   const invokedAt = Date.now();
 
-  // Jobs queued by the previous version of this function carry no conversation
   if (
-    !isDefined(payload.chat) ||
+    !('chat' in payload) ||
     !isDefined(await getActiveLinkedinHistoryImportState(payload))
   ) {
     return { status: 'CANCELLED' };

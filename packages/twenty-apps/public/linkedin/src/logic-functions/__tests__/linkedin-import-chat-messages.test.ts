@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { type LinkedinHistoryImportState } from 'src/types/linkedin-history-import-state.type';
+import { getLinkedinChatJobIdSegment } from 'src/logic-functions/utils/get-linkedin-history-import-job-id.util';
 
 const mocks = vi.hoisted(() => ({
   getConnection: vi.fn(),
@@ -131,7 +132,7 @@ describe('linkedinImportChatMessagesHandler', () => {
         limiter: { max: 30, durationMs: 60_000 },
         jobs: [
           {
-            jobId: 'linkedin-history-messages-run-1-chat-1-1-0',
+            jobId: `linkedin-history-messages-run-1-${getLinkedinChatJobIdSegment('chat-1')}-1-0`,
             payload: nextPayload,
           },
         ],
@@ -211,7 +212,7 @@ describe('linkedinImportChatMessagesHandler', () => {
     expect(enqueueInput.delayMs).toBe(90_000);
     expect(enqueueInput.jobs).toEqual([
       {
-        jobId: 'linkedin-history-messages-run-1-chat-1-2-1',
+        jobId: `linkedin-history-messages-run-1-${getLinkedinChatJobIdSegment('chat-1')}-2-1`,
         payload: { ...PAYLOAD, cursor: 'cursor-2', pageIndex: 2, attempt: 1 },
       },
     ]);
@@ -235,18 +236,12 @@ describe('linkedinImportChatMessagesHandler', () => {
   });
 
   it('drops a chunk job queued by the previous version of the import', async () => {
-    const legacyPayload: Record<string, unknown> = {
-      connectedAccountId: 'connection-id',
-      runId: 'run-1',
-      chunkIndex: 2,
-    };
-
     await expect(
-      linkedinImportChatMessagesHandler(
-        legacyPayload as unknown as Parameters<
-          typeof linkedinImportChatMessagesHandler
-        >[0],
-      ),
+      linkedinImportChatMessagesHandler({
+        connectedAccountId: 'connection-id',
+        runId: 'run-1',
+        chunkIndex: 2,
+      }),
     ).resolves.toEqual({ status: 'CANCELLED' });
     expect(mocks.listUnipileChatMessagesPage).not.toHaveBeenCalled();
   });

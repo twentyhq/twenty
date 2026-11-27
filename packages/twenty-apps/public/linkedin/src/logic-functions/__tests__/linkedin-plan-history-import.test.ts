@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { type LinkedinHistoryImportState } from 'src/types/linkedin-history-import-state.type';
+import { getLinkedinChatJobIdSegment } from 'src/logic-functions/utils/get-linkedin-history-import-job-id.util';
 
 const mocks = vi.hoisted(() => ({
   getConnection: vi.fn(),
@@ -124,7 +125,7 @@ describe('linkedinPlanHistoryImportHandler', () => {
         limiter: { max: 60, durationMs: 60_000 },
         jobs: [
           expect.objectContaining({
-            jobId: 'linkedin-history-contacts-run-1-chat-0-0',
+            jobId: `linkedin-history-contacts-run-1-${getLinkedinChatJobIdSegment('chat-0')}-0`,
           }),
         ],
       }),

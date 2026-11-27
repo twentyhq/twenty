@@ -4,6 +4,7 @@ import type * as IngestLinkedinMessagesUtil from 'src/logic-functions/utils/inge
 import { type LinkedinHistoryImportState } from 'src/types/linkedin-history-import-state.type';
 
 type IngestLinkedinMessagesModule = typeof IngestLinkedinMessagesUtil;
+import { getLinkedinChatJobIdSegment } from 'src/logic-functions/utils/get-linkedin-history-import-job-id.util';
 
 const mocks = vi.hoisted(() => ({
   getConnection: vi.fn(),
@@ -132,7 +133,7 @@ describe('linkedinImportChatContactsHandler', () => {
       expect.objectContaining({
         jobs: [
           expect.objectContaining({
-            jobId: 'linkedin-history-contacts-run-1-chat-2-0',
+            jobId: `linkedin-history-contacts-run-1-${getLinkedinChatJobIdSegment('chat-2')}-0`,
           }),
         ],
       }),
@@ -140,7 +141,7 @@ describe('linkedinImportChatContactsHandler', () => {
         limiter: { max: 30, durationMs: 60_000 },
         jobs: [
           {
-            jobId: 'linkedin-history-messages-run-1-chat-1-0-0',
+            jobId: `linkedin-history-messages-run-1-${getLinkedinChatJobIdSegment('chat-1')}-0-0`,
             payload: messagesJob.payload,
           },
         ],
@@ -170,7 +171,9 @@ describe('linkedinImportChatContactsHandler', () => {
       getEnqueueInputs().flatMap((input) =>
         input.jobs.map((job: { jobId: string }) => job.jobId),
       ),
-    ).toEqual(['linkedin-history-contacts-run-1-chat-2-0']);
+    ).toEqual([
+      `linkedin-history-contacts-run-1-${getLinkedinChatJobIdSegment('chat-2')}-0`,
+    ]);
     expect(mocks.kvStore.get(CHAT_KEY)).toEqual({ status: 'SKIPPED' });
     expect(mocks.kvStore.get(NEXT_CHAT_KEY)).toEqual(
       expect.objectContaining({ status: 'IMPORTING' }),
@@ -267,7 +270,7 @@ describe('linkedinImportChatContactsHandler', () => {
     expect(enqueueInput.delayMs).toBe(3_600_000);
     expect(enqueueInput.limiter).toBeUndefined();
     expect(enqueueInput.jobs[0].jobId).toBe(
-      'linkedin-history-contacts-run-1-chat-1-1',
+      `linkedin-history-contacts-run-1-${getLinkedinChatJobIdSegment('chat-1')}-1`,
     );
     expect(mocks.kvStore.get(CHAT_KEY)).toEqual(
       expect.objectContaining({
@@ -317,7 +320,9 @@ describe('linkedinImportChatContactsHandler', () => {
       getEnqueueInputs().flatMap((input) =>
         input.jobs.map((job: { jobId: string }) => job.jobId),
       ),
-    ).toEqual(['linkedin-history-messages-run-1-chat-1-0-0']);
+    ).toEqual([
+      `linkedin-history-messages-run-1-${getLinkedinChatJobIdSegment('chat-1')}-0-0`,
+    ]);
     expect(
       mocks.kvStore.get(
         'linkedin-history-import-chat:connection-id:run-1:chat-3',

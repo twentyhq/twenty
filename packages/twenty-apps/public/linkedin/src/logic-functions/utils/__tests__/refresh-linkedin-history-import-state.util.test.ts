@@ -4,6 +4,7 @@ import { type LinkedinHistoryImportChatJob } from 'src/logic-functions/types/lin
 import { type LinkedinHistoryImportChatProgress } from 'src/logic-functions/types/linkedin-history-import-chat-progress.type';
 import { type LinkedinHistoryImportState } from 'src/types/linkedin-history-import-state.type';
 import { type UnipileChat } from 'src/unipile/types/unipile-chat.type';
+import { getLinkedinChatJobIdSegment } from 'src/logic-functions/utils/get-linkedin-history-import-job-id.util';
 
 const mocks = vi.hoisted(() => ({
   getJobs: vi.fn(),
@@ -95,7 +96,8 @@ describe('refreshLinkedinHistoryImportState', () => {
     mocks.kvStore.set(STATE_KEY, RUNNING_STATE);
     mockJobStates({
       'linkedin-history-plan-run-1-0': 'ACTIVE',
-      'linkedin-history-contacts-run-1-chat-3-0': 'WAITING',
+      [`linkedin-history-contacts-run-1-${getLinkedinChatJobIdSegment('chat-3')}-0`]:
+        'WAITING',
     });
   });
 
@@ -167,7 +169,10 @@ describe('refreshLinkedinHistoryImportState', () => {
   });
 
   it('restarts the contacts with the next waiting conversation once no contact job is left', async () => {
-    mockJobStates({ 'linkedin-history-contacts-run-1-chat-1-0': 'FAILED' });
+    mockJobStates({
+      [`linkedin-history-contacts-run-1-${getLinkedinChatJobIdSegment('chat-1')}-0`]:
+        'FAILED',
+    });
     setChats({
       'chat-1': {
         status: 'IMPORTING',
@@ -184,7 +189,7 @@ describe('refreshLinkedinHistoryImportState', () => {
       expect.objectContaining({
         jobs: [
           expect.objectContaining({
-            jobId: 'linkedin-history-contacts-run-1-chat-2-0',
+            jobId: `linkedin-history-contacts-run-1-${getLinkedinChatJobIdSegment('chat-2')}-0`,
           }),
         ],
       }),
@@ -216,8 +221,10 @@ describe('refreshLinkedinHistoryImportState', () => {
   it('shows when the import resumes once every pending conversation waits for a limit', async () => {
     vi.useFakeTimers({ now: Date.UTC(2026, 0, 1) });
     mockJobStates({
-      'linkedin-history-contacts-run-1-chat-1-1': 'DELAYED',
-      'linkedin-history-contacts-run-1-chat-2-1': 'DELAYED',
+      [`linkedin-history-contacts-run-1-${getLinkedinChatJobIdSegment('chat-1')}-1`]:
+        'DELAYED',
+      [`linkedin-history-contacts-run-1-${getLinkedinChatJobIdSegment('chat-2')}-1`]:
+        'DELAYED',
     });
     setChats({
       'chat-1': {
@@ -295,8 +302,10 @@ describe('refreshLinkedinHistoryImportState', () => {
       },
     });
     mockJobStates({
-      'linkedin-history-contacts-run-1-chat-1-0': 'FAILED',
-      'linkedin-history-contacts-run-1-chat-2-0': 'ACTIVE',
+      [`linkedin-history-contacts-run-1-${getLinkedinChatJobIdSegment('chat-1')}-0`]:
+        'FAILED',
+      [`linkedin-history-contacts-run-1-${getLinkedinChatJobIdSegment('chat-2')}-0`]:
+        'ACTIVE',
     });
 
     await expect(
@@ -311,7 +320,10 @@ describe('refreshLinkedinHistoryImportState', () => {
   });
 
   it('queues again a conversation whose job ended without finishing it', async () => {
-    mockJobStates({ 'linkedin-history-contacts-run-1-chat-1-0': 'COMPLETED' });
+    mockJobStates({
+      [`linkedin-history-contacts-run-1-${getLinkedinChatJobIdSegment('chat-1')}-0`]:
+        'COMPLETED',
+    });
     setChats({
       'chat-1': {
         status: 'IMPORTING',
@@ -325,7 +337,7 @@ describe('refreshLinkedinHistoryImportState', () => {
       expect.objectContaining({
         jobs: [
           expect.objectContaining({
-            jobId: 'linkedin-history-contacts-run-1-chat-1-1',
+            jobId: `linkedin-history-contacts-run-1-${getLinkedinChatJobIdSegment('chat-1')}-1`,
           }),
         ],
       }),

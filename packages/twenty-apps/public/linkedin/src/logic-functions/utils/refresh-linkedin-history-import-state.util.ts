@@ -162,18 +162,19 @@ const getChatProgresses = async ({
   );
 
   return Promise.all(
-    progresses.map((progress, index) =>
-      !isDefined(progress)
-        ? failChat({ run, chatId: chatIds[index], error: STALLED_ERROR })
-        : progress.status === 'IMPORTING'
-          ? checkImportingChat({
-              run,
-              chatId: chatIds[index],
-              progress,
-              jobStatusById,
-            })
-          : progress,
-    ),
+    progresses.map((progress, index) => {
+      const chatId = chatIds[index];
+
+      if (!isDefined(progress)) {
+        return failChat({ run, chatId, error: STALLED_ERROR });
+      }
+
+      if (progress.status !== 'IMPORTING') {
+        return progress;
+      }
+
+      return checkImportingChat({ run, chatId, progress, jobStatusById });
+    }),
   );
 };
 
