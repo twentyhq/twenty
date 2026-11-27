@@ -32,25 +32,19 @@ vi.mock('src/unipile/utils/get-unipile-user-profile.util', () => ({
   getUnipileUserProfile: mocks.getUnipileUserProfile,
 }));
 
-const { buildLinkedinProfileHandle } =
-  await import('src/logic-functions/utils/build-linkedin-profile-handle.util');
+const { enrichLinkedinPerson } =
+  await import('src/logic-functions/utils/enrich-linkedin-person.util');
 
-const { enrichLinkedinPersons } =
-  await import('src/logic-functions/utils/enrich-linkedin-persons.util');
+const { UnipileRateLimitError } =
+  await import('src/unipile/utils/request-unipile.util');
 
-const PRIYA = {
-  id: 'priya-provider-id',
-  display_name: 'Priya Shah',
-  public_identifier: 'priya-shah',
-};
-
-const PRIYA_HANDLE = buildLinkedinProfileHandle(PRIYA);
+const EMPTY_PERSON = { jobTitle: null, emails: null, phones: null };
 
 const enrich = () =>
-  enrichLinkedinPersons({
+  enrichLinkedinPerson({
     unipileAccountId: 'unipile-account-id',
-    counterparts: [PRIYA],
-    personIdByHandle: new Map([[PRIYA_HANDLE, 'priya-id']]),
+    personId: 'priya-id',
+    providerUserId: 'priya-provider-id',
     deadlineAtMs: Date.now() + 60_000,
   });
 
@@ -64,14 +58,15 @@ const getUpdatedData = () =>
     ([mutation]) => mutation.updatePeople.__args.data,
   );
 
-describe('enrichLinkedinPersons', () => {
+describe('enrichLinkedinPerson', () => {
   beforeEach(() => {
     mocks.kvStore.clear();
     mocks.clientOptions.length = 0;
     mocks.query.mockReset();
     mocks.mutation.mockReset().mockResolvedValue({ updatePeople: [] });
     mocks.getUnipileUserProfile.mockReset().mockResolvedValue({
-      ...PRIYA,
+      id: 'priya-provider-id',
+      display_name: 'Priya Shah',
       emails: ['priya@acme.com'],
       phone_numbers: ['+33 6 12 34 56 78'],
       specifics: { experience: [{ job_title: 'VP Sales' }] },
@@ -93,7 +88,7 @@ describe('enrichLinkedinPersons', () => {
   });
 
   it('still sets the phone when the email belongs to someone else', async () => {
-    mockPerson({ jobTitle: null, emails: null, phones: null });
+    mockPerson(EMPTY_PERSON);
     mocks.mutation
       .mockResolvedValueOnce({ updatePeople: [] })
       .mockRejectedValueOnce(new Error('duplicate email'));
@@ -108,7 +103,7 @@ describe('enrichLinkedinPersons', () => {
   });
 
   it('keeps a value a member types while the profile is looked up', async () => {
-    mockPerson({ jobTitle: null, emails: null, phones: null });
+    mockPerson(EMPTY_PERSON);
 
     await enrich();
 
@@ -134,7 +129,7 @@ describe('enrichLinkedinPersons', () => {
   });
 
   it('bounds every Twenty call by the deadline', async () => {
-    mockPerson({ jobTitle: null, emails: null, phones: null });
+    mockPerson(EMPTY_PERSON);
 
     await enrich();
 
@@ -159,7 +154,7 @@ describe('enrichLinkedinPersons', () => {
   });
 
   it('looks each person up only once', async () => {
-    mockPerson({ jobTitle: null, emails: null, phones: null });
+    mockPerson(EMPTY_PERSON);
 
     await enrich();
     await enrich();
@@ -167,16 +162,16 @@ describe('enrichLinkedinPersons', () => {
     expect(mocks.getUnipileUserProfile).toHaveBeenCalledTimes(1);
   });
 
-  it('stops looking people up once its share of the daily lookups is used', async () => {
+  it('leaves the person to a later sync once its share of the daily lookups is used', async () => {
     mocks.kvStore.set(
       'linkedin-profile-lookups:unipile-account-id',
       Array.from({ length: 40 }, () => Date.now()),
     );
-    mockPerson({ jobTitle: null, emails: null, phones: null });
+    mockPerson(EMPTY_PERSON);
 
-    await expect(enrich()).resolves.toBeUndefined();
+    await expect(enrich()).rejects.toBeInstanceOf(UnipileRateLimitError);
 
     expect(mocks.getUnipileUserProfile).not.toHaveBeenCalled();
-    expect(mocks.mutation).not.toHaveBeenCalled();
+    expect(mocks.kvStore.has('linkedin-enriched-person:priya-id')).toBe(false);
   });
 });

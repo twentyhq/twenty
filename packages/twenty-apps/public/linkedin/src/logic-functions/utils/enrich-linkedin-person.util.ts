@@ -5,11 +5,9 @@ import { isDefined } from 'twenty-sdk/utils';
 
 import { LINKEDIN_ENRICHMENT_DAILY_PROFILE_LOOKUP_LIMIT } from 'src/constants/linkedin-enrichment-daily-profile-lookup-limit.constant';
 import { buildLinkedinPersonEnrichment } from 'src/logic-functions/utils/build-linkedin-person-enrichment.util';
-import { buildLinkedinProfileHandle } from 'src/logic-functions/utils/build-linkedin-profile-handle.util';
+import { getLinkedinEnrichedPersonKey } from 'src/logic-functions/utils/get-linkedin-enriched-person-key.util';
 import { consumeLinkedinProfileLookupOrThrow } from 'src/logic-functions/utils/consume-linkedin-profile-lookup-or-throw.util';
-import { type UnipileUser } from 'src/unipile/types/unipile-user.type';
 import { getUnipileUserProfile } from 'src/unipile/utils/get-unipile-user-profile.util';
-import { UnipileRateLimitError } from 'src/unipile/utils/request-unipile.util';
 
 type EnrichablePersonRecord = {
   id: string;
@@ -17,9 +15,6 @@ type EnrichablePersonRecord = {
   emails?: { primaryEmail?: string | null } | null;
   phones?: { primaryPhoneNumber?: string | null } | null;
 };
-
-const getLinkedinEnrichedPersonKey = (personId: string) =>
-  `linkedin-enriched-person:${personId}`;
 
 const EMPTY_JOB_TITLE_FILTER = {
   or: [{ jobTitle: { is: 'NULL' as const } }, { jobTitle: { eq: '' } }],
@@ -47,19 +42,19 @@ const createDeadlineBoundFetch =
       signal: AbortSignal.timeout(Math.max(deadlineAtMs - Date.now(), 1)),
     });
 
-const findEnrichablePersons = async ({
-  personIds,
+const findEnrichablePerson = async ({
+  personId,
   deadlineAtMs,
 }: {
-  personIds: string[];
+  personId: string;
   deadlineAtMs: number;
-}): Promise<Map<string, EnrichablePersonRecord>> => {
+}): Promise<EnrichablePersonRecord | undefined> => {
   const { people } = await new CoreApiClient({
     runAs: 'application',
     fetch: createDeadlineBoundFetch(deadlineAtMs),
   }).query({
     people: {
-      __args: { filter: { id: { in: personIds } }, first: personIds.length },
+      __args: { filter: { id: { eq: personId } }, first: 1 },
       edges: {
         node: {
           id: true,
@@ -71,12 +66,9 @@ const findEnrichablePersons = async ({
     },
   });
 
-  return new Map(
-    (people?.edges ?? []).map((edge: { node: EnrichablePersonRecord }) => [
-      edge.node.id,
-      edge.node,
-    ]),
-  );
+  return people?.edges?.map(
+    (edge: { node: EnrichablePersonRecord }) => edge.node,
+  )[0];
 };
 
 // The empty filter keeps a value a member typed during the lookup.
@@ -119,17 +111,35 @@ const hasEmptyEnrichableField = (person: EnrichablePersonRecord): boolean =>
   !isNonEmptyString(person.emails?.primaryEmail) ||
   !isNonEmptyString(person.phones?.primaryPhoneNumber);
 
-const enrichPerson = async ({
+export const enrichLinkedinPerson = async ({
   unipileAccountId,
-  counterpart,
-  person,
+  personId,
+  providerUserId,
   deadlineAtMs,
 }: {
   unipileAccountId: string;
-  counterpart: UnipileUser;
-  person: EnrichablePersonRecord;
+  personId: string;
+  providerUserId: string;
   deadlineAtMs: number;
 }): Promise<void> => {
+  const enrichedPersonKey = getLinkedinEnrichedPersonKey(personId);
+
+  if (await kv.get<boolean>(enrichedPersonKey)) {
+    return;
+  }
+
+  const person = await findEnrichablePerson({ personId, deadlineAtMs });
+
+  if (!isDefined(person)) {
+    return;
+  }
+
+  if (!hasEmptyEnrichableField(person)) {
+    await kv.set(enrichedPersonKey, true);
+
+    return;
+  }
+
   await consumeLinkedinProfileLookupOrThrow({
     unipileAccountId,
     dailyLimit: LINKEDIN_ENRICHMENT_DAILY_PROFILE_LOOKUP_LIMIT,
@@ -138,14 +148,14 @@ const enrichPerson = async ({
   const { jobTitle, email, phoneNumber } = buildLinkedinPersonEnrichment(
     await getUnipileUserProfile({
       accountId: unipileAccountId,
-      userId: counterpart.id,
+      userId: providerUserId,
       deadlineAtMs,
     }),
   );
 
   if (isDefined(jobTitle) && !isNonEmptyString(person.jobTitle)) {
     await setEmptyPersonFieldOrWarn({
-      personId: person.id,
+      personId,
       field: 'job title',
       emptyFieldFilter: EMPTY_JOB_TITLE_FILTER,
       data: { jobTitle },
@@ -155,7 +165,7 @@ const enrichPerson = async ({
 
   if (isDefined(email) && !isNonEmptyString(person.emails?.primaryEmail)) {
     await setEmptyPersonFieldOrWarn({
-      personId: person.id,
+      personId,
       field: 'email',
       emptyFieldFilter: EMPTY_EMAIL_FILTER,
       data: { emails: { primaryEmail: email } },
@@ -168,7 +178,7 @@ const enrichPerson = async ({
     !isNonEmptyString(person.phones?.primaryPhoneNumber)
   ) {
     await setEmptyPersonFieldOrWarn({
-      personId: person.id,
+      personId,
       field: 'phone',
       emptyFieldFilter: EMPTY_PHONE_FILTER,
       data: { phones: { primaryPhoneNumber: phoneNumber } },
@@ -176,85 +186,7 @@ const enrichPerson = async ({
     });
   }
 
-  await kv.set(getLinkedinEnrichedPersonKey(person.id), true);
+  await kv.set(enrichedPersonKey, true);
 
-  console.log(`[linkedin] enriched person ${person.id} from LinkedIn`);
-};
-
-export const enrichLinkedinPersons = async ({
-  unipileAccountId,
-  counterparts,
-  personIdByHandle,
-  deadlineAtMs,
-}: {
-  unipileAccountId: string;
-  counterparts: UnipileUser[];
-  personIdByHandle: Map<string, string>;
-  deadlineAtMs: number;
-}): Promise<void> => {
-  try {
-    const counterpartByPersonId = new Map<string, UnipileUser>();
-
-    for (const counterpart of counterparts) {
-      const personId = personIdByHandle.get(
-        buildLinkedinProfileHandle(counterpart),
-      );
-
-      if (
-        isDefined(personId) &&
-        !counterpartByPersonId.has(personId) &&
-        !(await kv.get<boolean>(getLinkedinEnrichedPersonKey(personId)))
-      ) {
-        counterpartByPersonId.set(personId, counterpart);
-      }
-    }
-
-    if (counterpartByPersonId.size === 0 || Date.now() >= deadlineAtMs) {
-      return;
-    }
-
-    const personById = await findEnrichablePersons({
-      personIds: [...counterpartByPersonId.keys()],
-      deadlineAtMs,
-    });
-
-    for (const [personId, counterpart] of counterpartByPersonId) {
-      const person = personById.get(personId);
-
-      if (!isDefined(person) || !hasEmptyEnrichableField(person)) {
-        continue;
-      }
-
-      if (Date.now() >= deadlineAtMs) {
-        console.warn(
-          '[linkedin] person enrichment reached the job deadline, remaining people skipped',
-        );
-
-        return;
-      }
-
-      try {
-        await enrichPerson({
-          unipileAccountId,
-          counterpart,
-          person,
-          deadlineAtMs,
-        });
-      } catch (error) {
-        if (error instanceof UnipileRateLimitError) {
-          console.warn(`[linkedin] person enrichment paused: ${error.message}`);
-
-          return;
-        }
-
-        console.warn(
-          `[linkedin] could not enrich person ${personId}: ${error instanceof Error ? error.message : String(error)}`,
-        );
-      }
-    }
-  } catch (error) {
-    console.warn(
-      `[linkedin] could not enrich people: ${error instanceof Error ? error.message : String(error)}`,
-    );
-  }
+  console.log(`[linkedin] enriched person ${personId} from LinkedIn`);
 };
