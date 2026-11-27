@@ -179,13 +179,14 @@ const { object } = await ai.generate({
 
 ## Events
 
-To record that something happened in the app's domain, declare the event with `defineEvent` from `twenty-sdk/define` and emit it with `emitEvent` from `twenty-sdk/logic-function`. See the [events guide](https://docs.twenty.com/developers/extend/apps/logic/events.md).
+Events are in beta. To record that something happened in the app's domain, declare the event with `defineEvent` from `twenty-sdk/define` and emit it with `emitEvent` from `twenty-sdk/logic-function`. See the [events guide](https://docs.twenty.com/developers/extend/apps/logic/events.md).
 
-- `name` and property names are camelCase; an event name is unique within the app. Dotted names are reserved for events Twenty emits. Property types are `TEXT`, `NUMBER`, `BOOLEAN`, `DATE_TIME`, `UUID`, `RAW_JSON` and `RECORD_REFERENCE` (with `objectUniversalIdentifier`). Up to 50 properties.
-- `emitEvent({ event, properties })` is refused when the event is not declared, a property is undeclared or mistyped, or the payload exceeds 32 KB. It returns the occurrence `id` and `occurredAt`.
+- `name` and property names are camelCase; an event name is unique within the app. Dotted names are reserved for events Twenty emits.
+- `schema` is an object schema in the tool trigger `inputSchema` format: property `type` is `string` (optionally `format: 'date-time'` or `'uuid'`), `number`, `integer`, `boolean` or `record` (with `objectUniversalIdentifier`), or left out for any JSON value. `required` lists the required properties. Properties are flat, up to 50.
+- `emitEvent({ event, properties, id })` names the event by `event` or by `eventUniversalIdentifier`, never both. Set `id` (jobId rules) when a retry could emit the same occurrence twice. It is refused when the event is not the app's, a property is undeclared or mistyped, or the payload exceeds 32 KB, and returns the occurrence `id` and `occurredAt`.
 - Nothing receives an occurrence yet: do not use an event to notify a person, a front component or another function.
 
-Requires `"engines": { "twenty": ">=2.65.0" }`.
+Requires `"engines": { "twenty": ">=2.66.0" }`.
 
 ## Connection Providers
 
