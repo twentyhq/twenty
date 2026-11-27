@@ -68,7 +68,6 @@ export const DOCUMENTATION_PATHS = {
   DEVELOPERS_EXTEND_APPS_LOGIC_CONNECTIONS:
     '/developers/extend/apps/logic/connections',
   DEVELOPERS_EXTEND_APPS_LOGIC_CREDITS: '/developers/extend/apps/logic/credits',
-  DEVELOPERS_EXTEND_APPS_LOGIC_EVENTS: '/developers/extend/apps/logic/events',
   DEVELOPERS_EXTEND_APPS_LOGIC_INBOX: '/developers/extend/apps/logic/inbox',
   DEVELOPERS_EXTEND_APPS_LOGIC_KEY_VALUE_STORE:
     '/developers/extend/apps/logic/key-value-store',
@@ -78,6 +77,8 @@ export const DOCUMENTATION_PATHS = {
     '/developers/extend/apps/logic/messaging-channels',
   DEVELOPERS_EXTEND_APPS_LOGIC_OVERVIEW:
     '/developers/extend/apps/logic/overview',
+  DEVELOPERS_EXTEND_APPS_LOGIC_REALTIME_EVENTS:
+    '/developers/extend/apps/logic/realtime-events',
   DEVELOPERS_EXTEND_APPS_LOGIC_SKILLS_AND_AGENTS:
     '/developers/extend/apps/logic/skills-and-agents',
   DEVELOPERS_EXTEND_APPS_LOGIC_WORKFLOWS:

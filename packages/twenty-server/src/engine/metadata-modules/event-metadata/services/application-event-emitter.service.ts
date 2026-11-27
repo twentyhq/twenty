@@ -6,18 +6,25 @@ import {
   type EventOccurrence,
   getEventPropertyValuesErrors,
 } from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import {
   EventMetadataException,
   EventMetadataExceptionCode,
 } from 'src/engine/metadata-modules/event-metadata/event-metadata.exception';
+import { EventRealtimeService } from 'src/engine/metadata-modules/event-metadata/services/event-realtime.service';
+import { buildEventRealtimeChannel } from 'src/engine/metadata-modules/event-metadata/utils/build-event-realtime-channel.util';
+import { computeEventOccurrenceRealtimeScopes } from 'src/engine/metadata-modules/event-metadata/utils/compute-event-occurrence-realtime-scopes.util';
 import { findApplicationFlatEventMetadataOrThrow } from 'src/engine/metadata-modules/event-metadata/utils/find-application-flat-event-metadata-or-throw.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
 export class ApplicationEventEmitterService {
-  constructor(private readonly workspaceCacheService: WorkspaceCacheService) {}
+  constructor(
+    private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly eventRealtimeService: EventRealtimeService,
+  ) {}
 
   async emit({
     workspaceId,
@@ -26,6 +33,7 @@ export class ApplicationEventEmitterService {
     eventUniversalIdentifier,
     id,
     properties,
+    anonymousId,
   }: {
     workspaceId: string;
     applicationId: string;
@@ -33,10 +41,12 @@ export class ApplicationEventEmitterService {
     eventUniversalIdentifier?: string;
     id?: string;
     properties: Record<string, unknown>;
+    anonymousId: string | null;
   }): Promise<EmitEventResult> {
-    const { flatEventMetadataMaps } =
+    const { flatEventMetadataMaps, flatObjectMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatEventMetadataMaps',
+        'flatObjectMetadataMaps',
       ]);
 
     const flatEventMetadata = findApplicationFlatEventMetadataOrThrow({
@@ -65,16 +75,46 @@ export class ApplicationEventEmitterService {
       occurredAt: new Date().toISOString(),
       properties,
     };
+    const serializedOccurrence = JSON.stringify(occurrence);
 
     if (
-      Buffer.byteLength(JSON.stringify(occurrence)) >
-      EVENT_LIMITS.MAX_PAYLOAD_BYTES
+      Buffer.byteLength(serializedOccurrence) > EVENT_LIMITS.MAX_PAYLOAD_BYTES
     ) {
       throw new EventMetadataException(
         `An event occurrence cannot exceed ${EVENT_LIMITS.MAX_PAYLOAD_BYTES} bytes`,
         EventMetadataExceptionCode.INVALID_EVENT_PROPERTIES,
       );
     }
+
+    if (isDefined(id)) {
+      const firstOccurredAt = await this.eventRealtimeService.claimOccurrenceId(
+        {
+          workspaceId,
+          applicationId,
+          occurrenceId: id,
+          occurredAt: occurrence.occurredAt,
+        },
+      );
+
+      if (isDefined(firstOccurredAt)) {
+        return { id, occurredAt: firstOccurredAt };
+      }
+    }
+
+    const channels = computeEventOccurrenceRealtimeScopes({
+      flatEventMetadata,
+      flatObjectMetadataMaps,
+      properties,
+      anonymousId,
+    }).map((scope) =>
+      buildEventRealtimeChannel({
+        workspaceId,
+        eventMetadataId: flatEventMetadata.id,
+        scope,
+      }),
+    );
+
+    await this.eventRealtimeService.publish({ channels, serializedOccurrence });
 
     return { id: occurrence.id, occurredAt: occurrence.occurredAt };
   }

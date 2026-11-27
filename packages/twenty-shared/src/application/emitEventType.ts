@@ -6,6 +6,7 @@ export type EmitEventInput = EmitEventTarget & {
   properties?: Record<string, unknown>;
   // Reusing an id makes a retried emission recognizable as the same occurrence
   id?: string;
+  anonymousId?: string;
 };
 
 export type EmitEventResult = {

@@ -17,6 +17,7 @@ export type {
 } from './agentTriggerType';
 export type { AiRunUsage } from './aiRunUsageType';
 export type { AppConnection } from './appConnectionType';
+export type { AppEventSubscription } from './appEventSubscriptionType';
 export type { AppKeyValueScope } from './appKeyValueScopeType';
 export type { AppKeyValue } from './appKeyValueType';
 export type { ApplicationBillingPrice } from './applicationBillingPriceType';
@@ -87,6 +88,7 @@ export type { ConnectionProviderType } from './connectionProviderType';
 export { AGENT_TRIGGER_EVENT_NAME_PATTERN } from './constants/AgentTriggerEventNamePattern';
 export { AGENT_TRIGGER_LIMITS } from './constants/AgentTriggerLimits';
 export { AGENT_TRIGGER_TYPES } from './constants/AgentTriggerTypes';
+export { ANONYMOUS_ID_PATTERN } from './constants/AnonymousIdPattern';
 export { APPLICATION_SOURCE_FILE_EXTENSIONS } from './constants/application-source-file-extensions';
 export { APPLICATION_BILLING_PRICE_CURRENCIES } from './constants/ApplicationBillingPriceCurrencies';
 export { APPLICATION_BILLING_PRICE_PERIODS } from './constants/ApplicationBillingPricePeriods';
@@ -100,9 +102,11 @@ export { DEFAULT_CONNECTION_PROVIDER_SCOPE } from './constants/DefaultConnection
 export { DEFAULT_SETTINGS_MENU_ITEM_POSITION } from './constants/DefaultSettingsMenuItemPosition';
 export { EMPTY_EVENT_SCHEMA } from './constants/EmptyEventSchema';
 export { EMPTY_YARN_LOCK_CONTENT } from './constants/EmptyYarnLockContent';
+export { EVENT_CAPABILITY_NAMES } from './constants/EventCapabilityNames';
 export { EVENT_LIMITS } from './constants/EventLimits';
 export { EVENT_NAME_PATTERN } from './constants/EventNamePattern';
 export { EVENT_OCCURRENCE_ID_PATTERN } from './constants/EventOccurrenceIdPattern';
+export { EVENT_REALTIME_SCOPE_KINDS } from './constants/EventRealtimeScopeKinds';
 export { EVENT_SCHEMA_PROPERTY_TYPES } from './constants/EventSchemaPropertyTypes';
 export { EVENT_SCHEMA_STRING_FORMATS } from './constants/EventSchemaStringFormats';
 export { FRONT_COMPONENT_SHARED_DEPENDENCIES_BUILT_PATH } from './constants/FrontComponentSharedDependenciesBuiltPath';
@@ -199,7 +203,11 @@ export type {
   JobStatusResult,
 } from './enqueueJobType';
 export { SyncableEntity } from './enums/syncable-entities.enum';
-export type { EventManifest } from './eventManifestType';
+export type {
+  EventRealtimeScopeManifest,
+  EventCapabilitiesManifest,
+  EventManifest,
+} from './eventManifestType';
 export type { EventOccurrence } from './eventOccurrenceType';
 export type { EventTriggerManifestSettings } from './eventTriggerManifestSettingsType';
 export type { FieldManifestOptions } from './fieldManifestOptionsType';
@@ -437,6 +445,10 @@ export type {
   ViewSortManifest,
   ViewManifest,
 } from './viewManifestType';
+export type {
+  CreateVisitorEventTokenInput,
+  CreateVisitorEventTokenResult,
+} from './visitorEventTokenType';
 export type { WorkflowActionTriggerSettings } from './workflowActionTriggerSettingsType';
 export type { WorkflowManifest } from './workflowManifestType';
 export { workflowManifestSchema } from './workflowManifestType';

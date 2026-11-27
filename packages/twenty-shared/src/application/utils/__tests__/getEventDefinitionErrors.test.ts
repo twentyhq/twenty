@@ -123,6 +123,70 @@ describe('getEventDefinitionErrors', () => {
     ]);
   });
 
+  it('should accept a record scope on a record property and a visitor scope', () => {
+    expect(
+      getEventDefinitionErrors({
+        name: 'messageAdded',
+        schema: schemaWith({
+          conversationId: {
+            type: 'record',
+            objectUniversalIdentifier: CONVERSATION_OBJECT_UNIVERSAL_IDENTIFIER,
+          },
+        }),
+        capabilities: {
+          realtime: {
+            scopes: [
+              { kind: 'record', property: 'conversationId' },
+              { kind: 'visitor' },
+            ],
+          },
+        },
+      }),
+    ).toEqual([]);
+  });
+
+  it('should reject a record scope on a property that is not a record', () => {
+    expect(
+      getEventDefinitionErrors({
+        name: 'messageAdded',
+        schema: schemaWith({
+          conversationId: { type: 'string', format: 'uuid' },
+        }),
+        capabilities: {
+          realtime: {
+            scopes: [{ kind: 'record', property: 'conversationId' }],
+          },
+        },
+      }),
+    ).toEqual([
+      'Event "messageAdded" record scope must name a record property, got "conversationId"',
+    ]);
+  });
+
+  it('should reject the same scope declared twice', () => {
+    expect(
+      getEventDefinitionErrors({
+        name: 'messageAdded',
+        schema: schemaWith({}),
+        capabilities: {
+          realtime: { scopes: [{ kind: 'visitor' }, { kind: 'visitor' }] },
+        },
+      }),
+    ).toEqual(['Event "messageAdded" declares realtime scope "visitor" twice']);
+  });
+
+  it('should reject a capability that is not supported', () => {
+    expect(
+      getEventDefinitionErrors({
+        name: 'messageAdded',
+        schema: schemaWith({}),
+        capabilities: JSON.parse('{"triggers":true}'),
+      }),
+    ).toEqual([
+      'Event "messageAdded" declares capability "triggers", which is not supported',
+    ]);
+  });
+
   it('should reject a schema written as the former property list', () => {
     const legacySchema = JSON.parse(
       '{"type":"object","properties":[{"name":"text","type":"TEXT"}]}',

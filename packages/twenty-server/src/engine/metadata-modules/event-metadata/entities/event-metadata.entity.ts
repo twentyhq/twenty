@@ -1,4 +1,7 @@
-import { EMPTY_EVENT_SCHEMA } from 'twenty-shared/application';
+import {
+  EMPTY_EVENT_SCHEMA,
+  type EventCapabilitiesManifest,
+} from 'twenty-shared/application';
 import { type InputJsonSchema } from 'twenty-shared/logic-function';
 import {
   Column,
@@ -10,6 +13,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { ADD_EVENT_METADATA_CAPABILITIES_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-66/add-event-metadata-capabilities-upgrade-command-name.constant';
 import { ADD_EVENT_METADATA_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-66/add-event-metadata-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
@@ -42,6 +46,12 @@ export class EventMetadataEntity
 
   @Column({ nullable: false, type: 'jsonb', default: EMPTY_EVENT_SCHEMA })
   schema: JsonbProperty<InputJsonSchema>;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_EVENT_METADATA_CAPABILITIES_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: false, type: 'jsonb', default: {} })
+  capabilities: EventCapabilitiesManifest;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
