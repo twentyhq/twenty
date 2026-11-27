@@ -58,17 +58,37 @@ export const fetchFrontComponentSources = async ({
       : undefined,
   ]);
 
+  const resolveSdkClientSources = async () => {
+    if (
+      !canFetchSdkClientSources ||
+      !containsSdkClientImportSpecifier(componentSource)
+    ) {
+      return providedSdkClientSources;
+    }
+
+    return (
+      prefetchedSdkClientSources ??
+      fetchSdkClientSources({ sdkClientUrls, headers })
+    );
+  };
+
+  const resolveSharedDependenciesSource = async () => {
+    if (
+      !canFetchSharedDependenciesSource ||
+      !containsSharedDependenciesImportSpecifier(componentSource)
+    ) {
+      return providedSharedDependenciesSource;
+    }
+
+    return (
+      prefetchedSharedDependenciesSource ??
+      fetchComponentSource({ url: sharedDependenciesUrl, headers })
+    );
+  };
+
   const [sdkClientSources, sharedDependenciesSource] = await Promise.all([
-    canFetchSdkClientSources &&
-    containsSdkClientImportSpecifier(componentSource)
-      ? (prefetchedSdkClientSources ??
-        fetchSdkClientSources({ sdkClientUrls, headers }))
-      : providedSdkClientSources,
-    canFetchSharedDependenciesSource &&
-    containsSharedDependenciesImportSpecifier(componentSource)
-      ? (prefetchedSharedDependenciesSource ??
-        fetchComponentSource({ url: sharedDependenciesUrl, headers }))
-      : providedSharedDependenciesSource,
+    resolveSdkClientSources(),
+    resolveSharedDependenciesSource(),
   ]);
 
   return { componentSource, sdkClientSources, sharedDependenciesSource };
