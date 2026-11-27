@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { type FieldMetadataFormulaEvaluation } from 'twenty-shared/types';
 import { SegmentedControl } from 'twenty-ui/components/input';
+import { Section } from 'twenty-ui/components/layout';
 import { Field } from 'twenty-ui/primitives/input';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -70,20 +71,22 @@ export const SettingsDataModelFieldFormulaEvaluationField = ({
   };
 
   return (
-    <Field.Root>
-      <Field.Label>{t`Computed`}</Field.Label>
-      <SegmentedControl
-        aria-label={t`Computed`}
-        variant="rectangle"
-        itemWidth="content"
-        options={[
-          { value: 'QUERY_TIME', label: t`Live`, disabled: isAggregating },
-          { value: 'STORED', label: t`Stored` },
-        ]}
-        value={evaluation}
-        onValueChange={handleEvaluationChange}
-      />
-      <Field.Description>{getDescription()}</Field.Description>
-    </Field.Root>
+    <Section.Root>
+      <Field.Root>
+        <Field.Label>{t`Computed`}</Field.Label>
+        <SegmentedControl
+          aria-label={t`Computed`}
+          variant="rectangle"
+          itemWidth="content"
+          options={[
+            { value: 'QUERY_TIME', label: t`Live`, disabled: isAggregating },
+            { value: 'STORED', label: t`Stored` },
+          ]}
+          value={evaluation}
+          onValueChange={handleEvaluationChange}
+        />
+        <Field.Description>{getDescription()}</Field.Description>
+      </Field.Root>
+    </Section.Root>
   );
 };

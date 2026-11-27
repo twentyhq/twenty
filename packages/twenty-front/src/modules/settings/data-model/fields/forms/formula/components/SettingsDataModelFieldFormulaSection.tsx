@@ -58,10 +58,6 @@ export const SettingsDataModelFieldFormulaSection = ({
           name="formula"
           ariaLabel={t`Formula`}
         />
-        <SettingsDataModelFieldFormulaEvaluationField
-          objectMetadataItem={objectMetadataItem}
-          existingFieldMetadataId={existingFieldMetadataId}
-        />
       </Section.Root>
       {fieldType === FieldMetadataType.CURRENCY && (
         <Section.Root>
@@ -77,6 +73,10 @@ export const SettingsDataModelFieldFormulaSection = ({
           />
         </Section.Root>
       )}
+      <SettingsDataModelFieldFormulaEvaluationField
+        objectMetadataItem={objectMetadataItem}
+        existingFieldMetadataId={existingFieldMetadataId}
+      />
     </>
   );
 };
