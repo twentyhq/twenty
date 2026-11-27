@@ -19766,7 +19766,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^24.19.2":
+"@types/node@npm:^24.10.0, @types/node@npm:^24.19.2":
   version: 24.19.2
   resolution: "@types/node@npm:24.19.2"
   dependencies:
@@ -46352,7 +46352,7 @@ __metadata:
   dependencies:
     "@sniptt/guards": "npm:^0.2.0"
     "@types/lodash.startcase": "npm:^4"
-    "@types/node": "npm:^24.0.0"
+    "@types/node": "npm:^24.10.0"
     "@types/semver": "npm:^7.5.8"
     chokidar: "npm:^3.6.0"
     commander: "npm:^14.0.3"
