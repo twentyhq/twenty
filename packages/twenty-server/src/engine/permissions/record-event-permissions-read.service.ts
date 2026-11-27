@@ -25,7 +25,7 @@ import { PrincipalPermissionsReadService } from 'src/engine/permissions/principa
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
-import { RecordVisibilityRestrictionsService } from 'src/engine/permissions/record-visibility-restrictions.service';
+import { RecordReadCustomPermissionsService } from 'src/engine/permissions/record-read-custom-permissions/record-read-custom-permissions.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
 type EventBatchAccessLoaders = {
@@ -48,7 +48,7 @@ export class RecordEventPermissionsReadService {
     private readonly privateRecordRepository: PrivateRecordRepository,
     private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
     private readonly recordPermissionsReadService: RecordPermissionsReadService,
-    private readonly recordVisibilityRestrictionsService: RecordVisibilityRestrictionsService,
+    private readonly recordReadCustomPermissionsService: RecordReadCustomPermissionsService,
   ) {}
 
   async filterReadableEvents<TEvent extends ObjectRecordEvent>({
@@ -109,18 +109,16 @@ export class RecordEventPermissionsReadService {
       metadataMaps,
     });
 
-    return this.recordVisibilityRestrictionsService.applyEventVisibilityRestrictions(
-      {
-        objectNameSingular: eventBatch.objectMetadata.nameSingular,
-        events: eventsWithoutUnreadableFields,
-        permissionsPrincipals: principals,
-        recordReadRestrictions: buildRecordReadRestrictions({
-          recordsPermissions,
-        }),
-        flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
-        flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
-      },
-    );
+    return this.recordReadCustomPermissionsService.restrictEvents({
+      objectNameSingular: eventBatch.objectMetadata.nameSingular,
+      events: eventsWithoutUnreadableFields,
+      permissionsPrincipals: principals,
+      recordReadRestrictions: buildRecordReadRestrictions({
+        recordsPermissions,
+      }),
+      flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
+      flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
+    });
   }
 
   private findEventBatchAccessLoaders(

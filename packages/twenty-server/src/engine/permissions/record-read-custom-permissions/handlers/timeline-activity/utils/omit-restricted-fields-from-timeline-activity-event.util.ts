@@ -8,7 +8,7 @@ import { type RecordReadRestrictions } from 'src/engine/permissions/types/record
 import {
   type IsTimelineActivityRecordReadable,
   omitRestrictedFieldsFromTimelineActivity,
-} from 'src/modules/timeline/utils/omit-restricted-fields-from-timeline-activity.util';
+} from 'src/engine/permissions/record-read-custom-permissions/handlers/timeline-activity/utils/omit-restricted-fields-from-timeline-activity.util';
 
 export const omitRestrictedFieldsFromTimelineActivityEvent = <
   TEvent extends ObjectRecordEvent,

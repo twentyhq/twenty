@@ -1,4 +1,4 @@
-import { Injectable, type OnModuleInit } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
@@ -9,8 +9,8 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
-import { RecordVisibilityRestrictionsService } from 'src/engine/permissions/record-visibility-restrictions.service';
-import { type RecordVisibilityRestrictionHandler } from 'src/engine/permissions/types/record-visibility-restriction-handler.type';
+import { RecordReadCustomPermissionHandler } from 'src/engine/permissions/record-read-custom-permissions/decorators/record-read-custom-permission-handler.decorator';
+import { type RecordReadCustomPermissionHandlerService } from 'src/engine/permissions/record-read-custom-permissions/types/record-read-custom-permission-handler-service.type';
 import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
@@ -23,24 +23,15 @@ import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/module
 const RESTRICTED_MESSAGE_FIELD_NAMES = ['subject', 'text', 'attachments'];
 
 @Injectable()
-export class ApplyMessagesVisibilityRestrictionsService
-  implements RecordVisibilityRestrictionHandler, OnModuleInit
-{
+@RecordReadCustomPermissionHandler('message')
+export class MessageReadCustomPermissionHandlerService implements RecordReadCustomPermissionHandlerService {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    private readonly recordVisibilityRestrictionsService: RecordVisibilityRestrictionsService,
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
   ) {}
 
-  onModuleInit() {
-    this.recordVisibilityRestrictionsService.registerHandler({
-      objectNameSingular: 'message',
-      handler: this,
-    });
-  }
-
-  public async applyVisibilityRestrictions({
+  public async restrictRecords({
     records,
     authContext,
   }: {

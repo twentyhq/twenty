@@ -8,8 +8,8 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
 
-export type RecordVisibilityRestrictionHandler = {
-  applyVisibilityRestrictions: (args: {
+export type RecordReadCustomPermissionHandlerService = {
+  restrictRecords: (args: {
     records: ObjectRecord[];
     authContext: WorkspaceAuthContext;
     permissionsPrincipals: PermissionsPrincipalsWithRolesContext | undefined;
@@ -17,7 +17,7 @@ export type RecordVisibilityRestrictionHandler = {
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   }) => Promise<void>;
-  applyEventVisibilityRestrictions?: <TEvent extends ObjectRecordEvent>(args: {
+  restrictEvents?: <TEvent extends ObjectRecordEvent>(args: {
     events: TEvent[];
     permissionsPrincipals: PermissionsPrincipalsWithRolesContext;
     recordReadRestrictions: RecordReadRestrictions;

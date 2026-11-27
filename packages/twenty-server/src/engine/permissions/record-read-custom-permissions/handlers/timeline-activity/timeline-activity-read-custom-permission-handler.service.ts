@@ -1,4 +1,4 @@
-import { Injectable, type OnModuleInit } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
@@ -7,8 +7,8 @@ import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray, isPlainObject } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
-import { RecordVisibilityRestrictionsService } from 'src/engine/permissions/record-visibility-restrictions.service';
-import { type RecordVisibilityRestrictionHandler } from 'src/engine/permissions/types/record-visibility-restriction-handler.type';
+import { RecordReadCustomPermissionHandler } from 'src/engine/permissions/record-read-custom-permissions/decorators/record-read-custom-permission-handler.decorator';
+import { type RecordReadCustomPermissionHandlerService } from 'src/engine/permissions/record-read-custom-permissions/types/record-read-custom-permission-handler-service.type';
 import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
@@ -18,32 +18,23 @@ import { RecordPermissionsReadService } from 'src/engine/permissions/record-perm
 import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { buildIsTimelineActivityRecordReadable } from 'src/modules/timeline/utils/build-is-timeline-activity-record-readable.util';
-import { findTimelineActivitySubjectColumnNames } from 'src/modules/timeline/utils/find-timeline-activity-subject-column-names.util';
-import { omitRestrictedFieldsFromTimelineActivityEvent } from 'src/modules/timeline/utils/omit-restricted-fields-from-timeline-activity-event.util';
+import { buildIsTimelineActivityRecordReadable } from 'src/engine/permissions/record-read-custom-permissions/handlers/timeline-activity/utils/build-is-timeline-activity-record-readable.util';
+import { findTimelineActivitySubjectColumnNames } from 'src/engine/permissions/record-read-custom-permissions/handlers/timeline-activity/utils/find-timeline-activity-subject-column-names.util';
+import { omitRestrictedFieldsFromTimelineActivityEvent } from 'src/engine/permissions/record-read-custom-permissions/handlers/timeline-activity/utils/omit-restricted-fields-from-timeline-activity-event.util';
 import {
   type IsTimelineActivityRecordReadable,
   omitRestrictedFieldsFromTimelineActivity,
-} from 'src/modules/timeline/utils/omit-restricted-fields-from-timeline-activity.util';
+} from 'src/engine/permissions/record-read-custom-permissions/handlers/timeline-activity/utils/omit-restricted-fields-from-timeline-activity.util';
 
 @Injectable()
-export class ApplyTimelineActivitiesVisibilityRestrictionsService
-  implements RecordVisibilityRestrictionHandler, OnModuleInit
-{
+@RecordReadCustomPermissionHandler('timelineActivity')
+export class TimelineActivityReadCustomPermissionHandlerService implements RecordReadCustomPermissionHandlerService {
   constructor(
-    private readonly recordVisibilityRestrictionsService: RecordVisibilityRestrictionsService,
     private readonly recordPermissionsReadService: RecordPermissionsReadService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
-  onModuleInit() {
-    this.recordVisibilityRestrictionsService.registerHandler({
-      objectNameSingular: 'timelineActivity',
-      handler: this,
-    });
-  }
-
-  public async applyVisibilityRestrictions({
+  public async restrictRecords({
     records,
     authContext,
     permissionsPrincipals,
@@ -51,7 +42,7 @@ export class ApplyTimelineActivitiesVisibilityRestrictionsService
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
   }: Parameters<
-    RecordVisibilityRestrictionHandler['applyVisibilityRestrictions']
+    RecordReadCustomPermissionHandlerService['restrictRecords']
   >[0]): Promise<void> {
     const timelineActivities = records.filter(
       (timelineActivity) => 'properties' in timelineActivity,
@@ -93,9 +84,7 @@ export class ApplyTimelineActivitiesVisibilityRestrictionsService
     }
   }
 
-  public async applyEventVisibilityRestrictions<
-    TEvent extends ObjectRecordEvent,
-  >({
+  public async restrictEvents<TEvent extends ObjectRecordEvent>({
     events,
     permissionsPrincipals,
     recordReadRestrictions,

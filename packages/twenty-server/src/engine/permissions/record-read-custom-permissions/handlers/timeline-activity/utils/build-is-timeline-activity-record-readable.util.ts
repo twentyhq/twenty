@@ -5,7 +5,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import {
   type IsTimelineActivityRecordReadable,
   resolveTimelineActivitySubject,
-} from 'src/modules/timeline/utils/omit-restricted-fields-from-timeline-activity.util';
+} from 'src/engine/permissions/record-read-custom-permissions/handlers/timeline-activity/utils/omit-restricted-fields-from-timeline-activity.util';
 
 export const buildIsTimelineActivityRecordReadable = async ({
   timelineActivities,

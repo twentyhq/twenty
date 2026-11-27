@@ -23,6 +23,7 @@ import { MessagingModule } from 'src/modules/messaging/messaging.module';
 import { OnboardingInviteSuggestionsModule } from 'src/modules/onboarding-invite-suggestions/onboarding-invite-suggestions.module';
 import { WorkflowModule } from 'src/modules/workflow/workflow.module';
 import { WorkspaceMemberModule } from 'src/modules/workspace-member/workspace-member.module';
+import { RecordReadCustomPermissionHandlersModule } from 'src/engine/permissions/record-read-custom-permissions/handlers/record-read-custom-permission-handlers.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { WorkspaceMemberModule } from 'src/modules/workspace-member/workspace-me
     NoteQueryHookModule,
     TaskQueryHookModule,
     TimelineQueryHookModule,
+    RecordReadCustomPermissionHandlersModule,
   ],
 })
 export class ModulesModule {}

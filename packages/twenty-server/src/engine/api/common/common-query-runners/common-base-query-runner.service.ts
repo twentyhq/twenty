@@ -15,7 +15,7 @@ import { OrderByArgProcessorService } from 'src/engine/api/common/common-args-pr
 import { OrderByWithGroupByArgProcessorService } from 'src/engine/api/common/common-args-processors/order-by-with-group-by-arg-processor/order-by-with-group-by-arg-processor.service';
 import { QueryRunnerArgsFactory } from 'src/engine/api/common/common-args-processors/query-runner-args.factory';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations.helper';
-import { CommonRecordVisibilityService } from 'src/engine/api/common/common-record-visibility/common-record-visibility.service';
+import { CommonRecordReadCustomPermissionsService } from 'src/engine/api/common/common-record-read-custom-permissions/common-record-read-custom-permissions.service';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
@@ -108,7 +108,7 @@ export abstract class CommonBaseQueryRunnerService<
   @Inject()
   protected readonly commonResultGettersService: CommonResultGettersService;
   @Inject()
-  protected readonly commonRecordVisibilityService: CommonRecordVisibilityService;
+  protected readonly commonRecordReadCustomPermissionsService: CommonRecordReadCustomPermissionsService;
   @Inject()
   protected readonly usageLimitSpeedService: UsageLimitSpeedService;
   @Inject()
@@ -331,7 +331,7 @@ export abstract class CommonBaseQueryRunnerService<
       selection,
     });
 
-    await this.commonRecordVisibilityService.applyVisibilityRestrictions({
+    await this.commonRecordReadCustomPermissionsService.restrictRecords({
       records: this.getResultRecords(resultWithGetters),
       flatObjectMetadata,
       selection,

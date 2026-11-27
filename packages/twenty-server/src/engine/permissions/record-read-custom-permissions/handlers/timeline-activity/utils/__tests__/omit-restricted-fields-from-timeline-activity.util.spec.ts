@@ -10,8 +10,8 @@ import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { buildRecordReadRestrictions } from 'src/engine/permissions/internal/role/utils/build-record-read-restrictions.util';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
-import { omitRestrictedFieldsFromTimelineActivityEvent } from 'src/modules/timeline/utils/omit-restricted-fields-from-timeline-activity-event.util';
-import { omitRestrictedFieldsFromTimelineActivity } from 'src/modules/timeline/utils/omit-restricted-fields-from-timeline-activity.util';
+import { omitRestrictedFieldsFromTimelineActivityEvent } from 'src/engine/permissions/record-read-custom-permissions/handlers/timeline-activity/utils/omit-restricted-fields-from-timeline-activity-event.util';
+import { omitRestrictedFieldsFromTimelineActivity } from 'src/engine/permissions/record-read-custom-permissions/handlers/timeline-activity/utils/omit-restricted-fields-from-timeline-activity.util';
 
 const PERSON_OBJECT = getFlatObjectMetadataMock({
   id: 'person-object-id',
