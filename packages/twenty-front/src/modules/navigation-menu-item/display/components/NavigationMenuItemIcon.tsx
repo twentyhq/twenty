@@ -29,7 +29,7 @@ import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataI
 import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandardObjectIcon';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { viewsSelector } from '@/views/states/selectors/viewsSelector';
+import { viewSummariesSelector } from '@/views/states/selectors/viewSummariesSelector';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 export const NavigationMenuItemIcon = ({
@@ -42,13 +42,13 @@ export const NavigationMenuItemIcon = ({
     isLayoutCustomizationModeEnabledState,
   );
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
-  const views = useAtomStateValue(viewsSelector);
+  const viewSummaries = useAtomStateValue(viewSummariesSelector);
 
   const objectNameSingular =
     getNavigationMenuItemObjectNameSingular(
       navigationMenuItem,
       objectMetadataItems,
-      views,
+      viewSummaries,
     ) ?? '';
 
   const { Icon: StandardIcon, IconColor } =
@@ -57,7 +57,7 @@ export const NavigationMenuItemIcon = ({
   const isRecord = navigationMenuItem.type === NavigationMenuItemType.RECORD;
 
   const view = isDefined(navigationMenuItem.viewId)
-    ? views.find((view) => view.id === navigationMenuItem.viewId)
+    ? viewSummaries.find((view) => view.id === navigationMenuItem.viewId)
     : undefined;
   const objectMetadataItem = objectMetadataItems.find(
     (item) => item.nameSingular === objectNameSingular,
@@ -146,7 +146,7 @@ export const NavigationMenuItemIcon = ({
     const computedLink = getNavigationMenuItemComputedLink({
       item: navigationMenuItem,
       objectMetadataItems,
-      views,
+      views: viewSummaries,
     });
 
     if (isSafeInternalPath(computedLink)) {
@@ -179,7 +179,7 @@ export const NavigationMenuItemIcon = ({
   const labelIdentifier = getNavigationMenuItemLabel(
     navigationMenuItem,
     objectMetadataItems,
-    views,
+    viewSummaries,
   );
 
   const recordIdentifier =

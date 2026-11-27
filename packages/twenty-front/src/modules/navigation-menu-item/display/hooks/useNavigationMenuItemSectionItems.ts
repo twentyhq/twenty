@@ -5,7 +5,7 @@ import { getWorkspaceSidebarOrphanItemsInDisplayOrder } from '@/navigation-menu-
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { viewsSelector } from '@/views/states/selectors/viewsSelector';
+import { viewSummariesSelector } from '@/views/states/selectors/viewSummariesSelector';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import {
   FeatureFlagKey,
@@ -37,7 +37,7 @@ export const useNavigationMenuItemSectionItems = ({
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
-  const views = useAtomStateValue(viewsSelector);
+  const viewSummaries = useAtomStateValue(viewSummariesSelector);
   const objectMetadataItems = useNavigationObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const isCustomizableSidebarEnabled = useIsFeatureEnabled(
@@ -60,7 +60,7 @@ export const useNavigationMenuItemSectionItems = ({
     workspaceNavigationMenuItems,
     workspaceNavigationMenuItemsSorted,
     objectMetadataItems,
-    views,
+    views: viewSummaries,
     objectPermissionsByObjectMetadataId,
     includeInaccessibleObjectBackedItems: isLayoutCustomizationModeEnabled,
     containerId: rootSectionId ?? containerId,

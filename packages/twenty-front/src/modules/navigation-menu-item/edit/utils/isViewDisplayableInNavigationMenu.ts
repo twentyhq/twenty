@@ -1,6 +1,7 @@
 import { isWidgetViewType } from 'twenty-shared/utils';
 
-import { type View } from '@/views/types/View';
+import { type ViewSummary } from '@/views/types/ViewSummary';
 
-export const isViewDisplayableInNavigationMenu = (view: View): boolean =>
-  !isWidgetViewType(view.type) && !view.isPrivate;
+export const isViewDisplayableInNavigationMenu = (
+  view: Pick<ViewSummary, 'type' | 'isPrivate'>,
+): boolean => !isWidgetViewType(view.type) && !view.isPrivate;

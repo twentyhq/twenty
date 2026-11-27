@@ -17,7 +17,7 @@ import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/displa
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { viewsSelector } from '@/views/states/selectors/viewsSelector';
+import { viewSummariesSelector } from '@/views/states/selectors/viewSummariesSelector';
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
 
 export const useIdentifyActiveNavigationMenuItems = (): {
@@ -28,7 +28,7 @@ export const useIdentifyActiveNavigationMenuItems = (): {
   const lastClickedNavigationMenuItemId = useAtomStateValue(
     lastClickedNavigationMenuItemIdState,
   );
-  const views = useAtomStateValue(viewsSelector);
+  const viewSummaries = useAtomStateValue(viewSummariesSelector);
   const lastVisitedViewPerObjectMetadataItem = useAtomStateValue(
     lastVisitedViewPerObjectMetadataItemState,
   );
@@ -77,14 +77,14 @@ export const useIdentifyActiveNavigationMenuItems = (): {
             getNavigationMenuItemComputedLink({
               item: lastClickedItem,
               objectMetadataItems,
-              views,
+              views: viewSummaries,
               lastVisitedViewPerObjectMetadataItem,
             });
           const lastClickedObjectMetadataId =
             getObjectMetadataForNavigationMenuItem(
               lastClickedItem,
               objectMetadataItems,
-              views,
+              viewSummaries,
             )?.id;
 
           const pathMatches =
@@ -150,7 +150,7 @@ export const useIdentifyActiveNavigationMenuItems = (): {
             const link = getNavigationMenuItemComputedLink({
               item,
               objectMetadataItems,
-              views,
+              views: viewSummaries,
               lastVisitedViewPerObjectMetadataItem,
             });
             return link === currentPath;
@@ -165,7 +165,7 @@ export const useIdentifyActiveNavigationMenuItems = (): {
             const itemObjectMetadataId = getObjectMetadataForNavigationMenuItem(
               item,
               objectMetadataItems,
-              views,
+              viewSummaries,
             )?.id;
             return itemObjectMetadataId === currentObjectMetadataItem?.id;
           })
@@ -229,7 +229,7 @@ export const useIdentifyActiveNavigationMenuItems = (): {
       navigationMenuItems,
       lastClickedNavigationMenuItemId,
       objectMetadataItems,
-      views,
+      viewSummaries,
       lastVisitedViewPerObjectMetadataItem,
       currentPathWithSearch,
       currentPath,

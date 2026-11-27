@@ -26,7 +26,7 @@ import { DEFAULT_SKILL_ICON } from '@/skill-suggestion/constants/DefaultSkillIco
 import { useSkillIcon } from '@/skill-suggestion/hooks/useSkillIcon';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useViewById } from '@/views/hooks/useViewById';
+import { viewSummaryFromViewIdFamilySelector } from '@/views/states/selectors/viewSummaryFromViewIdFamilySelector';
 
 const PROPOSED_OBJECT_METADATA_ICON = 'IconListNumbers';
 const PROPOSED_FIELD_METADATA_ICON = 'IconTag';
@@ -66,9 +66,9 @@ export const useChatReferenceTarget = (
   const objectMetadataItemsByIdMap = useAtomStateValue(
     objectMetadataItemsByIdMapSelector,
   );
-  const { view } = useViewById(
-    reference.kind === 'view' ? reference.viewId : null,
-  );
+  const view = useAtomFamilySelectorValue(viewSummaryFromViewIdFamilySelector, {
+    viewId: reference.kind === 'view' ? reference.viewId : '',
+  });
   const skillIcon = useSkillIcon(
     reference.kind === 'skill' ? reference.skillId : null,
   );

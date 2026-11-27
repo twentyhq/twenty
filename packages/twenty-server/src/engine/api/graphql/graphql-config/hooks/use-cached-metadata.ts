@@ -9,7 +9,6 @@ import { type WorkspaceCacheOrDerivedCacheKeyName } from 'src/engine/workspace-c
 
 export type CachedOperationConfig = {
   dependencies: WorkspaceCacheOrDerivedCacheKeyName[];
-  scope: 'workspace' | 'userWorkspace';
 };
 
 export type CacheMetadataPluginConfig = {
@@ -36,7 +35,7 @@ export function useCachedMetadata(
     operationName: string;
     operationConfig: CachedOperationConfig;
     workspaceId: string;
-    request: Pick<Request, 'locale' | 'body' | 'userWorkspaceId'>;
+    request: Pick<Request, 'locale' | 'body'>;
   }): Promise<string> => {
     const dependencyHash = await config.dependencyHashGetter(
       workspaceId,
@@ -46,12 +45,7 @@ export function useCachedMetadata(
       .update(request.body.query)
       .update(JSON.stringify(request.body.variables ?? null))
       .digest('hex');
-    const userScopeSegment =
-      operationConfig.scope === 'userWorkspace'
-        ? `:${request.userWorkspaceId}`
-        : '';
-
-    return `graphql:operations:${operationName}:${workspaceId}:${dependencyHash}${userScopeSegment}:${request.locale}:${queryHash}`;
+    return `graphql:operations:${operationName}:${workspaceId}:${dependencyHash}:${request.locale}:${queryHash}`;
   };
 
   // oxlint-disable-next-line typescript/no-explicit-any

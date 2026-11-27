@@ -57,6 +57,13 @@ export type WorkspaceDerivedCacheDataMap = {
   flatRoleTargetByApplicationIdMaps: FlatRoleTargetByApplicationIdMaps;
   graphQLResolverNameMap: Record<string, ResolverNameMapEntry>;
   coreWorkflowVersionsByCoreWorkflowId: CoreWorkflowVersionsByCoreWorkflowId;
+  viewHashByViewId: Map<string, string>;
+  viewFieldsHashByViewId: Map<string, string>;
+  viewFieldGroupsHashByViewId: Map<string, string>;
+  viewFiltersHashByViewId: Map<string, string>;
+  viewFilterGroupsHashByViewId: Map<string, string>;
+  viewGroupsHashByViewId: Map<string, string>;
+  viewSortsHashByViewId: Map<string, string>;
 };
 
 export type WorkspaceDerivedCacheKeyName = keyof WorkspaceDerivedCacheDataMap;

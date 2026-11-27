@@ -14,8 +14,14 @@ import { resolveViewNamePlaceholders } from '@/views/utils/resolveViewNamePlaceh
 export const viewsSelector = createAtomSelector<ViewWithRelations[]>({
   key: 'viewsSelector',
   get: ({ get }) => {
-    const allFlatViews = get(metadataStoreState, 'views').current as FlatView[];
-    const flatViews = allFlatViews.filter((view) => view.isActive);
+    const viewsEntry = get(metadataStoreState, 'views');
+    const loadedViewHashByObjectMetadataId =
+      viewsEntry.loadedViewHashByObjectMetadataId ?? {};
+    const flatViews = (viewsEntry.current as FlatView[]).filter(
+      (view) =>
+        view.isActive &&
+        view.objectMetadataId in loadedViewHashByObjectMetadataId,
+    );
     const flatObjectMetadataItems = get(
       metadataStoreState,
       'objectMetadataItems',

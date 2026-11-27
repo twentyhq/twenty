@@ -43,6 +43,7 @@ export type MetadataStoreItem = {
   status: MetadataEntityStoreStatus;
   currentCollectionHash?: string;
   draftCollectionHash?: string;
+  loadedViewHashByObjectMetadataId?: Record<string, string>;
 };
 
 const METADATA_STORE_ITEM_INITIAL_VALUE: MetadataStoreItem = {

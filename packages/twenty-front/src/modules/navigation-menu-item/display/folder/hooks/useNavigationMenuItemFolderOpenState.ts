@@ -15,7 +15,7 @@ import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMeta
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { viewsSelector } from '@/views/states/selectors/viewsSelector';
+import { viewSummariesSelector } from '@/views/states/selectors/viewSummariesSelector';
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
 
 type UseNavigationMenuItemFolderOpenStateParams = {
@@ -30,7 +30,7 @@ export const useNavigationMenuItemFolderOpenState = ({
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
-  const views = useAtomStateValue(viewsSelector);
+  const viewSummaries = useAtomStateValue(viewSummariesSelector);
   const lastVisitedViewPerObjectMetadataItem = useAtomStateValue(
     lastVisitedViewPerObjectMetadataItemState,
   );
@@ -80,7 +80,7 @@ export const useNavigationMenuItemFolderOpenState = ({
           const computedLink = getNavigationMenuItemComputedLink({
             item,
             objectMetadataItems,
-            views,
+            views: viewSummaries,
             lastVisitedViewPerObjectMetadataItem,
           });
           return isNonEmptyString(computedLink);
@@ -90,7 +90,7 @@ export const useNavigationMenuItemFolderOpenState = ({
         const link = getNavigationMenuItemComputedLink({
           item: firstNonLinkItem,
           objectMetadataItems,
-          views,
+          views: viewSummaries,
           lastVisitedViewPerObjectMetadataItem,
         });
         if (isNonEmptyString(link)) {

@@ -4,7 +4,7 @@ import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/state
 import { pageLayoutsWithRelationsSelector } from '@/page-layout/states/pageLayoutsWithRelationsSelector';
 import { SettingsStatsGrid } from '@/settings/components/SettingsStatsGrid';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { viewsSelector } from '@/views/states/selectors/viewsSelector';
+import { viewSummariesSelector } from '@/views/states/selectors/viewSummariesSelector';
 import { useLingui } from '@lingui/react/macro';
 import {
   IconCommand,
@@ -19,7 +19,7 @@ export const SettingsLayoutItemsStats = () => {
 
   const commandMenuItems = useAtomStateValue(commandMenuItemsSelector);
   const navigationMenuItems = useAtomStateValue(navigationMenuItemsSelector);
-  const views = useAtomStateValue(viewsSelector);
+  const viewSummaries = useAtomStateValue(viewSummariesSelector);
   const pageLayoutsWithRelations = useAtomStateValue(
     pageLayoutsWithRelationsSelector,
   );
@@ -44,7 +44,7 @@ export const SettingsLayoutItemsStats = () => {
           {
             Icon: IconTable,
             label: t`Views`,
-            value: views.length.toString(),
+            value: viewSummaries.length.toString(),
           },
           {
             Icon: IconPerspective,

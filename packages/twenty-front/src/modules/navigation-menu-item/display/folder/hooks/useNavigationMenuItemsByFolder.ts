@@ -4,7 +4,7 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { filterAndSortNavigationMenuItems } from '@/navigation-menu-item/common/utils/filterAndSortNavigationMenuItems';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { useNavigationObjectMetadataItems } from '@/navigation-menu-item/common/hooks/useNavigationObjectMetadataItems';
-import { viewsSelector } from '@/views/states/selectors/viewsSelector';
+import { viewSummariesSelector } from '@/views/states/selectors/viewSummariesSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
@@ -25,7 +25,7 @@ type NavigationMenuItemFolderEntry = Pick<
 
 export const useNavigationMenuItemsByFolder = () => {
   const { t } = useLingui();
-  const views = useAtomStateValue(viewsSelector);
+  const viewSummaries = useAtomStateValue(viewSummariesSelector);
   const objectMetadataItems = useNavigationObjectMetadataItems();
 
   const { navigationMenuItems, workspaceNavigationMenuItems } =
@@ -87,7 +87,7 @@ export const useNavigationMenuItemsByFolder = () => {
 
       const sortedItems = filterAndSortNavigationMenuItems(
         itemsInFolder,
-        views,
+        viewSummaries,
         objectMetadataItems,
       );
 

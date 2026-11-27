@@ -18,7 +18,7 @@ import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { viewsSelector } from '@/views/states/selectors/viewsSelector';
+import { viewSummariesSelector } from '@/views/states/selectors/viewSummariesSelector';
 import { useNavigate } from 'react-router-dom';
 import {
   StandardObjectNameSingular,
@@ -66,7 +66,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
     lastVisitedViewPerObjectMetadataItemState,
   );
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
-  const views = useAtomStateValue(viewsSelector);
+  const viewSummaries = useAtomStateValue(viewSummariesSelector);
 
   const canReadSomeRecords = canAccessThroughAllRecordsOrRlsPermission({
     objectRecordsPermissions: getObjectPermissionsForObject(
@@ -95,7 +95,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
     navigationMenuItem: navigationMenuItem ?? undefined,
     objectMetadataItem,
     objectMetadataItems,
-    views,
+    views: viewSummaries,
     lastVisitedViewPerObjectMetadataItem,
   });
 
@@ -115,12 +115,16 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
   const shouldNavigate = !isLayoutCustomizationModeEnabled;
 
   const view = isDefined(navigationMenuItem?.viewId)
-    ? views.find((view) => view.id === navigationMenuItem!.viewId)
+    ? viewSummaries.find((view) => view.id === navigationMenuItem!.viewId)
     : undefined;
   const isViewWithResolvedView = isView && isDefined(view);
 
   const itemLabel = isDefined(navigationMenuItem)
-    ? getNavigationMenuItemLabel(navigationMenuItem, objectMetadataItems, views)
+    ? getNavigationMenuItemLabel(
+        navigationMenuItem,
+        objectMetadataItems,
+        viewSummaries,
+      )
     : objectMetadataItem.labelPlural;
 
   const primaryLabel =

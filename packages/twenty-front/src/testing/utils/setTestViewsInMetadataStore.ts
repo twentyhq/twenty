@@ -23,6 +23,9 @@ export const setTestViewsInMetadataStore = (
     current: flatViews,
     draft: [],
     status: 'up-to-date',
+    loadedViewHashByObjectMetadataId: Object.fromEntries(
+      flatViews.map((flatView) => [flatView.objectMetadataId, 'test-hash']),
+    ),
   });
 
   store.set(metadataStoreState.atomFamily('viewFields'), {

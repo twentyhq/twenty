@@ -2,7 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { getObjectMetadataIdsInDraft } from '@/navigation-menu-item/common/utils/getObjectMetadataIdsInDraft';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { viewsSelector } from '@/views/states/selectors/viewsSelector';
+import { viewSummariesSelector } from '@/views/states/selectors/viewSummariesSelector';
 import { ViewKey } from '@/views/types/ViewKey';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
@@ -16,19 +16,19 @@ type NavigationMenuItemForDedup = Pick<
 export const useNavigationMenuObjectMetadataForSection = (
   sectionItems: NavigationMenuItemForDedup[],
 ) => {
-  const views = useAtomStateValue(viewsSelector);
+  const viewSummaries = useAtomStateValue(viewSummariesSelector);
 
   const objectMetadataIdsAlreadyAdded =
     getObjectMetadataIdsInDraft(sectionItems);
 
   const objectMetadataIdsWithIndexView = new Set(
-    views
+    viewSummaries
       .filter((view) => view.key === ViewKey.INDEX)
       .map((view) => view.objectMetadataId),
   );
 
   const objectMetadataIdsWithAnyView = new Set(
-    views.map((view) => view.objectMetadataId),
+    viewSummaries.map((view) => view.objectMetadataId),
   );
 
   const viewIdsAlreadyAdded = new Set(
@@ -38,7 +38,7 @@ export const useNavigationMenuObjectMetadataForSection = (
   );
 
   return {
-    views,
+    views: viewSummaries,
     objectMetadataIdsAlreadyAdded,
     objectMetadataIdsWithIndexView,
     objectMetadataIdsWithAnyView,

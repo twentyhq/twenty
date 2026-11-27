@@ -4,7 +4,7 @@ import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/r
 import { getWidgetConfigurationViewId } from '@/page-layout/utils/getWidgetConfigurationViewId';
 import { widgetUsesRecordTableView } from '@/page-layout/utils/widgetUsesRecordTableView';
 import { usePerformViewApiPersist } from '@/views/hooks/internal/usePerformViewApiPersist';
-import { viewsSelector } from '@/views/states/selectors/viewsSelector';
+import { viewSummariesSelector } from '@/views/states/selectors/viewSummariesSelector';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -53,7 +53,7 @@ export const useCreatePendingRecordTableWidgetViews = () => {
       );
 
       const existingViewIds = new Set(
-        store.get(viewsSelector.atom).map((view) => view.id),
+        store.get(viewSummariesSelector.atom).map((view) => view.id),
       );
 
       for (const widget of draftRecordTableWidgets) {

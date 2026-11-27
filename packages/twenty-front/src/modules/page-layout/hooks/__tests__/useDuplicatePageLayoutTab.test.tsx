@@ -252,6 +252,9 @@ describe('useDuplicatePageLayoutTab', () => {
       current: [sourceRecordTableViewSnapshot.view],
       draft: [],
       status: 'up-to-date',
+      loadedViewHashByObjectMetadataId: {
+        [sourceRecordTableViewSnapshot.view.objectMetadataId]: 'test-hash',
+      },
     });
     store.set(metadataStoreState.atomFamily('viewFields'), {
       current: sourceRecordTableViewSnapshot.viewFields,

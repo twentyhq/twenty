@@ -12,13 +12,13 @@ import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/display/object/utils/getObjectMetadataForNavigationMenuItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
-import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
+import { type ViewSummary } from '@/views/types/ViewSummary';
 
 type GetWorkspaceSidebarOrphanItemsInDisplayOrderArgs = {
   workspaceNavigationMenuItems: NavigationMenuItem[];
   workspaceNavigationMenuItemsSorted: NavigationMenuItem[];
   objectMetadataItems: EnrichedObjectMetadataItem[];
-  views: ViewWithRelations[];
+  views: ViewSummary[];
   objectPermissionsByObjectMetadataId: Parameters<
     typeof getObjectPermissionsForObject
   >[0];

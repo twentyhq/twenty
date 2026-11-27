@@ -10,4 +10,11 @@ export const WORKSPACE_DERIVED_CACHE_KEY_NAMES = {
   objectIdByName: true,
   fieldIdByObjectIdAndName: true,
   coreWorkflowVersionsByCoreWorkflowId: true,
+  viewHashByViewId: true,
+  viewFieldsHashByViewId: true,
+  viewFieldGroupsHashByViewId: true,
+  viewFiltersHashByViewId: true,
+  viewFilterGroupsHashByViewId: true,
+  viewGroupsHashByViewId: true,
+  viewSortsHashByViewId: true,
 } as const satisfies Record<WorkspaceDerivedCacheKeyName, true>;

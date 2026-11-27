@@ -1,21 +1,32 @@
+import { VIEW_METADATA_ENTITY_KEYS } from '@/metadata-store/constants/ViewMetadataEntityKeys';
 import { FIND_MINIMAL_METADATA } from '@/metadata-store/graphql/queries/findMinimalMetadata';
+import { useReplaceViewMetadataSliceDraft } from '@/metadata-store/hooks/useReplaceViewMetadataSliceDraft';
+import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import {
   ALL_METADATA_ENTITY_KEYS,
   metadataStoreState,
   type MetadataEntityKey,
 } from '@/metadata-store/states/metadataStoreState';
+import { objectViewsHashesState } from '@/metadata-store/states/objectViewsHashesState';
 import { type FlatObjectMetadataItem } from '@/metadata-store/types/FlatObjectMetadataItem';
-import { type FlatView } from '@/metadata-store/types/FlatView';
 import { type FindMinimalMetadataQuery } from '@/metadata-store/types/MinimalMetadata';
+import { getViewMetadataSlice } from '@/metadata-store/utils/getViewMetadataSlice';
 import { mapAllMetadataNameToEntityKey } from '@/metadata-store/utils/mapAllMetadataNameToEntityKey';
+import { mergeMinimalViewsIntoViewMetadataSlice } from '@/metadata-store/utils/mergeMinimalViewsIntoViewMetadataSlice';
 import { useApolloClient } from '@apollo/client/react';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
+const VIEW_METADATA_ENTITY_KEY_SET = new Set<MetadataEntityKey>(
+  VIEW_METADATA_ENTITY_KEYS,
+);
+
 export const useLoadMinimalMetadata = () => {
   const client = useApolloClient();
   const store = useStore();
+  const { applyChanges } = useUpdateMetadataStoreDraft();
+  const { replaceViewMetadataSliceDraft } = useReplaceViewMetadataSliceDraft();
 
   const loadMinimalMetadata = useCallback(async () => {
     const result = await client.query<FindMinimalMetadataQuery>({
@@ -27,7 +38,7 @@ export const useLoadMinimalMetadata = () => {
       return null;
     }
 
-    const { objectMetadataItems, views, collectionHashes } =
+    const { objectMetadataItems, views, objectViewsHashes, collectionHashes } =
       result.data.minimalMetadata;
 
     const staleEntityKeys: MetadataEntityKey[] = [];
@@ -38,7 +49,10 @@ export const useLoadMinimalMetadata = () => {
       for (const { collectionName, hash } of collectionHashes) {
         const entityKey = mapAllMetadataNameToEntityKey(collectionName);
 
-        if (!isDefined(entityKey)) {
+        if (
+          !isDefined(entityKey) ||
+          VIEW_METADATA_ENTITY_KEY_SET.has(entityKey)
+        ) {
           continue;
         }
 
@@ -59,6 +73,7 @@ export const useLoadMinimalMetadata = () => {
 
     for (const entityKey of ALL_METADATA_ENTITY_KEYS) {
       if (
+        !VIEW_METADATA_ENTITY_KEY_SET.has(entityKey) &&
         !entityKeysWithServerHash.has(entityKey) &&
         !staleEntityKeys.includes(entityKey)
       ) {
@@ -67,21 +82,19 @@ export const useLoadMinimalMetadata = () => {
     }
 
     // Cached before the fragment selected universalIdentifier, with a matching hash
-    for (const entityKey of ['views', 'navigationMenuItems'] as const) {
-      const cachedEntities = store.get(
-        metadataStoreState.atomFamily(entityKey),
-      ).current;
+    const navigationMenuItemsEntry = store.get(
+      metadataStoreState.atomFamily('navigationMenuItems'),
+    );
 
-      if (
-        !staleEntityKeys.includes(entityKey) &&
-        cachedEntities.some(
-          (entity) =>
-            !('universalIdentifier' in entity) ||
-            !isDefined(entity.universalIdentifier),
-        )
-      ) {
-        staleEntityKeys.push(entityKey);
-      }
+    if (
+      !staleEntityKeys.includes('navigationMenuItems') &&
+      navigationMenuItemsEntry.current.some(
+        (navigationMenuItem) =>
+          !('universalIdentifier' in navigationMenuItem) ||
+          !isDefined(navigationMenuItem.universalIdentifier),
+      )
+    ) {
+      staleEntityKeys.push('navigationMenuItems');
     }
 
     const objectsEntry = store.get(
@@ -101,20 +114,30 @@ export const useLoadMinimalMetadata = () => {
       );
     }
 
-    const viewsEntry = store.get(metadataStoreState.atomFamily('views'));
+    store.set(
+      objectViewsHashesState.atom,
+      Object.fromEntries(
+        objectViewsHashes.map(({ objectMetadataId, hash }) => [
+          objectMetadataId,
+          hash,
+        ]),
+      ),
+    );
 
-    if (viewsEntry.status === 'empty') {
-      store.set(metadataStoreState.atomFamily('views'), (prev) => ({
-        ...prev,
-        current: views as unknown as FlatView[],
-        status: 'up-to-date',
-        currentCollectionHash: prev.draftCollectionHash,
-        draftCollectionHash: undefined,
-      }));
-    }
+    replaceViewMetadataSliceDraft(
+      mergeMinimalViewsIntoViewMetadataSlice({
+        minimalViews: views,
+        currentSlice: getViewMetadataSlice(store),
+        loadedViewHashByObjectMetadataId: store.get(
+          metadataStoreState.atomFamily('views'),
+        ).loadedViewHashByObjectMetadataId,
+      }),
+    );
+
+    applyChanges();
 
     return { staleEntityKeys };
-  }, [client, store]);
+  }, [client, store, applyChanges, replaceViewMetadataSliceDraft]);
 
   return { loadMinimalMetadata };
 };

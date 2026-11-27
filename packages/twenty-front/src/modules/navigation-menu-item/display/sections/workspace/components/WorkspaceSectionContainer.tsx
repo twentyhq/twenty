@@ -18,7 +18,7 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { viewsSelector } from '@/views/states/selectors/viewsSelector';
+import { viewSummariesSelector } from '@/views/states/selectors/viewSummariesSelector';
 import { useWorkspaceSidebarRootContainerId } from '@/navigation-menu-item/display/hooks/useWorkspaceSidebarRootContainerId';
 
 const LazyWorkspaceSectionListDndKit = lazy(() =>
@@ -52,7 +52,7 @@ export const WorkspaceSectionContainer = ({
   );
   const { toggleNavigationSection, isNavigationSectionOpen } =
     useNavigationSection(doNotTranslate('Workspace'));
-  const views = useAtomStateValue(viewsSelector);
+  const viewSummaries = useAtomStateValue(viewSummariesSelector);
 
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   // TODO(@thomtrp): remove once IS_CUSTOMIZABLE_SIDEBAR_ENABLED is on for every workspace
@@ -89,7 +89,7 @@ export const WorkspaceSectionContainer = ({
                 ? getObjectMetadataForNavigationMenuItem(
                     item,
                     objectMetadataItems,
-                    views,
+                    viewSummaries,
                   )
                 : null;
             onNavigationMenuItemClick({

@@ -1,5 +1,9 @@
 import gql from 'graphql-tag';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
+import { destroyOneView } from 'test/integration/metadata/suites/view/utils/destroy-one-view.util';
+import { updateOneView } from 'test/integration/metadata/suites/view/utils/update-one-view.util';
+import { isDefined } from 'twenty-shared/utils';
 
 const FIND_MINIMAL_METADATA_QUERY = gql`
   query FindMinimalMetadata {
@@ -17,9 +21,19 @@ const FIND_MINIMAL_METADATA_QUERY = gql`
       }
       views {
         id
+        universalIdentifier
+        name
+        icon
         type
         key
         objectMetadataId
+        position
+        isPrivate
+        isActive
+      }
+      objectViewsHashes {
+        objectMetadataId
+        hash
       }
       collectionHashes {
         collectionName
@@ -28,6 +42,32 @@ const FIND_MINIMAL_METADATA_QUERY = gql`
     }
   }
 `;
+
+type MinimalMetadataResponse = {
+  objectMetadataItems: { id: string; namePlural: string }[];
+  views: { id: string; objectMetadataId: string }[];
+  objectViewsHashes: { objectMetadataId: string; hash: string }[];
+};
+
+const fetchMinimalMetadata = async (): Promise<MinimalMetadataResponse> => {
+  const response = await makeMetadataApiRequest({
+    query: FIND_MINIMAL_METADATA_QUERY,
+  });
+
+  expect(response.body.errors).toBeUndefined();
+
+  return response.body.data.minimalMetadata;
+};
+
+const getObjectViewsHashByObjectMetadataId = (
+  minimalMetadata: MinimalMetadataResponse,
+) =>
+  Object.fromEntries(
+    minimalMetadata.objectViewsHashes.map(({ objectMetadataId, hash }) => [
+      objectMetadataId,
+      hash,
+    ]),
+  );
 
 describe('minimalMetadata', () => {
   it('should return objectMetadataItems, views, and collectionHashes', async () => {
@@ -80,9 +120,83 @@ describe('minimalMetadata', () => {
     for (const view of views) {
       expect(view).toMatchObject({
         id: expect.any(String),
+        universalIdentifier: expect.any(String),
+        name: expect.any(String),
         type: expect.any(String),
         objectMetadataId: expect.any(String),
+        position: expect.any(Number),
+        isPrivate: expect.any(Boolean),
+        isActive: expect.any(Boolean),
       });
+    }
+  });
+
+  it('should return one views hash per object that has views', async () => {
+    const { views, objectViewsHashes } = await fetchMinimalMetadata();
+
+    const objectMetadataIdsWithViews = new Set(
+      views.map((view) => view.objectMetadataId),
+    );
+
+    expect(
+      objectViewsHashes.map(({ objectMetadataId }) => objectMetadataId).sort(),
+    ).toEqual([...objectMetadataIdsWithViews].sort());
+  });
+
+  it('should only change the views hash of the object whose views changed', async () => {
+    const before = await fetchMinimalMetadata();
+    const companyObjectMetadata = before.objectMetadataItems.find(
+      (item) => item.namePlural === 'companies',
+    );
+
+    if (!isDefined(companyObjectMetadata)) {
+      throw new Error('Company object metadata not found');
+    }
+
+    const companyObjectMetadataId = companyObjectMetadata.id;
+
+    const {
+      data: { createView },
+    } = await createOneView({
+      expectToFail: false,
+      input: {
+        name: 'Views hash test',
+        icon: 'IconTable',
+        objectMetadataId: companyObjectMetadataId,
+      },
+    });
+
+    try {
+      const afterCreate = await fetchMinimalMetadata();
+      const hashesBefore = getObjectViewsHashByObjectMetadataId(before);
+      const hashesAfterCreate =
+        getObjectViewsHashByObjectMetadataId(afterCreate);
+
+      expect(hashesAfterCreate[companyObjectMetadataId]).not.toBe(
+        hashesBefore[companyObjectMetadataId],
+      );
+
+      for (const [objectMetadataId, hash] of Object.entries(hashesBefore)) {
+        if (objectMetadataId !== companyObjectMetadataId) {
+          expect(hashesAfterCreate[objectMetadataId]).toBe(hash);
+        }
+      }
+
+      await updateOneView({
+        expectToFail: false,
+        viewId: createView.id,
+        input: { id: createView.id, name: 'Views hash test renamed' },
+      });
+
+      const hashesAfterUpdate = getObjectViewsHashByObjectMetadataId(
+        await fetchMinimalMetadata(),
+      );
+
+      expect(hashesAfterUpdate[companyObjectMetadataId]).not.toBe(
+        hashesAfterCreate[companyObjectMetadataId],
+      );
+    } finally {
+      await destroyOneView({ expectToFail: false, viewId: createView.id });
     }
   });
 

@@ -97,10 +97,20 @@ describe('Front documents should resolve every field for an admitted caller', ()
   );
 
   it.each(CALLERS)(
-    'should answer FindAllViews for $title',
+    'should answer FindMinimalMetadata for $title',
     async ({ getToken }) => {
       await expectDocumentToResolve({
-        documentName: 'FindAllViews',
+        documentName: 'FindMinimalMetadata',
+        token: await getToken(),
+      });
+    },
+  );
+
+  it.each(CALLERS)(
+    'should answer FindManyViews for $title',
+    async ({ getToken }) => {
+      await expectDocumentToResolve({
+        documentName: 'FindManyViews',
         token: await getToken(),
       });
     },

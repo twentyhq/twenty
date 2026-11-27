@@ -8,7 +8,7 @@ import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMeta
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { viewsSelector } from '@/views/states/selectors/viewsSelector';
+import { viewSummariesSelector } from '@/views/states/selectors/viewSummariesSelector';
 
 type UseReadableNavigationMenuItemsArgs = {
   topLevelItems: NavigationMenuItem[];
@@ -23,7 +23,7 @@ export const useReadableNavigationMenuItems = ({
     isLayoutCustomizationModeEnabledState,
   );
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
-  const views = useAtomStateValue(viewsSelector);
+  const viewSummaries = useAtomStateValue(viewSummariesSelector);
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const permissionFlagMap = useAtomStateValue(permissionFlagMapSelector);
 
@@ -32,7 +32,7 @@ export const useReadableNavigationMenuItems = ({
       item,
       permissionFlagMap,
       objectMetadataItems,
-      views,
+      views: viewSummaries,
       objectPermissionsByObjectMetadataId,
     });
 
