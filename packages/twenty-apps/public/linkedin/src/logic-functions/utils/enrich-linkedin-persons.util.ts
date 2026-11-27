@@ -14,9 +14,8 @@ import { UnipileRateLimitError } from 'src/unipile/utils/request-unipile.util';
 type EnrichablePersonRecord = {
   id: string;
   jobTitle?: string | null;
-  city?: string | null;
   emails?: { primaryEmail?: string | null } | null;
-  xLink?: { primaryLinkUrl?: string | null } | null;
+  phones?: { primaryPhoneNumber?: string | null } | null;
 };
 
 const getLinkedinEnrichedPersonKey = (personId: string) =>
@@ -32,9 +31,8 @@ const findEnrichablePersons = async (
         node: {
           id: true,
           jobTitle: true,
-          city: true,
           emails: { primaryEmail: true },
-          xLink: { primaryLinkUrl: true },
+          phones: { primaryPhoneNumber: true },
         },
       },
     },
@@ -48,16 +46,28 @@ const findEnrichablePersons = async (
   );
 };
 
-const updatePerson = async (
-  personId: string,
-  data: Record<string, unknown>,
-): Promise<void> => {
-  await new CoreApiClient({ runAs: 'application' }).mutation({
-    updatePeople: {
-      __args: { filter: { id: { eq: personId } }, data },
-      id: true,
-    },
-  });
+// Emails are unique and phones are validated: either can be rejected, never at the cost of the other fields
+const updatePersonOrWarn = async ({
+  personId,
+  field,
+  data,
+}: {
+  personId: string;
+  field: string;
+  data: Record<string, unknown>;
+}): Promise<void> => {
+  try {
+    await new CoreApiClient({ runAs: 'application' }).mutation({
+      updatePeople: {
+        __args: { filter: { id: { eq: personId } }, data },
+        id: true,
+      },
+    });
+  } catch (error) {
+    console.warn(
+      `[linkedin] could not set the ${field} of person ${personId}: ${error instanceof Error ? error.message : String(error)}`,
+    );
+  }
 };
 
 const enrichPerson = async ({
@@ -76,7 +86,7 @@ const enrichPerson = async ({
     dailyLimit: LINKEDIN_ENRICHMENT_DAILY_PROFILE_LOOKUP_LIMIT,
   });
 
-  const enrichment = buildLinkedinPersonEnrichment(
+  const { jobTitle, email, phoneNumber } = buildLinkedinPersonEnrichment(
     await getUnipileUserProfile({
       accountId: unipileAccountId,
       userId: counterpart.id,
@@ -84,37 +94,31 @@ const enrichPerson = async ({
     }),
   );
 
-  const data = {
-    ...(isDefined(enrichment.jobTitle) && !isNonEmptyString(person.jobTitle)
-      ? { jobTitle: enrichment.jobTitle }
-      : {}),
-    ...(isDefined(enrichment.city) && !isNonEmptyString(person.city)
-      ? { city: enrichment.city }
-      : {}),
-    ...(isDefined(enrichment.xLinkUrl) &&
-    !isNonEmptyString(person.xLink?.primaryLinkUrl)
-      ? { xLink: { primaryLinkUrl: enrichment.xLinkUrl } }
-      : {}),
-  };
-
-  if (Object.keys(data).length > 0) {
-    await updatePerson(person.id, data);
+  if (isDefined(jobTitle) && !isNonEmptyString(person.jobTitle)) {
+    await updatePersonOrWarn({
+      personId: person.id,
+      field: 'job title',
+      data: { jobTitle },
+    });
   }
 
-  // Emails are unique on People: a taken one must not block the other fields
+  if (isDefined(email) && !isNonEmptyString(person.emails?.primaryEmail)) {
+    await updatePersonOrWarn({
+      personId: person.id,
+      field: 'email',
+      data: { emails: { primaryEmail: email } },
+    });
+  }
+
   if (
-    isDefined(enrichment.email) &&
-    !isNonEmptyString(person.emails?.primaryEmail)
+    isDefined(phoneNumber) &&
+    !isNonEmptyString(person.phones?.primaryPhoneNumber)
   ) {
-    try {
-      await updatePerson(person.id, {
-        emails: { primaryEmail: enrichment.email },
-      });
-    } catch (error) {
-      console.warn(
-        `[linkedin] could not set the email of person ${person.id}: ${error instanceof Error ? error.message : String(error)}`,
-      );
-    }
+    await updatePersonOrWarn({
+      personId: person.id,
+      field: 'phone',
+      data: { phones: { primaryPhoneNumber: phoneNumber } },
+    });
   }
 
   await kv.set(getLinkedinEnrichedPersonKey(person.id), true);

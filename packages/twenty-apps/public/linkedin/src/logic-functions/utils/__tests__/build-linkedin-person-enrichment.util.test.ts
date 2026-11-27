@@ -5,13 +5,12 @@ import { buildLinkedinPersonEnrichment } from 'src/logic-functions/utils/build-l
 const PRIYA = { id: 'priya-provider-id', display_name: 'Priya Shah' };
 
 describe('buildLinkedinPersonEnrichment', () => {
-  it('takes the current job, the city, the first email and the X profile', () => {
+  it('takes the current job, the first email and the first phone', () => {
     expect(
       buildLinkedinPersonEnrichment({
         ...PRIYA,
-        location: 'Paris, Île-de-France, France',
         emails: ['Priya@Acme.com', 'priya@perso.com'],
-        social_handles: { x: { url: 'https://x.com/priya' } },
+        phone_numbers: [' +33 6 12 34 56 78 '],
         specifics: {
           experience: [
             { job_title: 'Head of Sales', ended_on: '01/01/2024' },
@@ -21,9 +20,8 @@ describe('buildLinkedinPersonEnrichment', () => {
       }),
     ).toEqual({
       jobTitle: 'VP Sales',
-      city: 'Paris',
       email: 'priya@acme.com',
-      xLinkUrl: 'https://x.com/priya',
+      phoneNumber: '+33 6 12 34 56 78',
     });
   });
 
@@ -31,7 +29,6 @@ describe('buildLinkedinPersonEnrichment', () => {
     expect(
       buildLinkedinPersonEnrichment({
         ...PRIYA,
-        location: ' ',
         emails: [],
         specifics: {
           experience: [{ job_title: 'Head of Sales', ended_on: '01/01/2024' }],

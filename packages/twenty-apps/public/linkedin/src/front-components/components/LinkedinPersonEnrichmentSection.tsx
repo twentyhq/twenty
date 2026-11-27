@@ -24,7 +24,7 @@ export const LinkedinPersonEnrichmentSection = ({
         Icon={IconWand}
         title={t('Enrich people from LinkedIn')}
         description={t(
-          'Fill empty job title, city, email and X fields of matched or created people',
+          'Fill the empty job title, email and phone of matched or created people',
         )}
         checked={isPersonEnrichmentEnabled}
         onChange={onChange}

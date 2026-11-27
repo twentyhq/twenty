@@ -66,44 +66,43 @@ describe('enrichLinkedinPersons', () => {
     mocks.mutation.mockReset().mockResolvedValue({ updatePeople: [] });
     mocks.getUnipileUserProfile.mockReset().mockResolvedValue({
       ...PRIYA,
-      location: 'Paris, France',
       emails: ['priya@acme.com'],
+      phone_numbers: ['+33 6 12 34 56 78'],
       specifics: { experience: [{ job_title: 'VP Sales' }] },
     });
   });
 
-  it('fills only the empty fields, the email on its own', async () => {
+  it('fills only the empty fields', async () => {
     mockPerson({
       jobTitle: 'Chief Revenue Officer',
-      city: '',
       emails: { primaryEmail: '' },
-      xLink: { primaryLinkUrl: '' },
+      phones: { primaryPhoneNumber: '612345678' },
     });
 
     await enrich();
 
     expect(getUpdatedData()).toEqual([
-      { city: 'Paris' },
       { emails: { primaryEmail: 'priya@acme.com' } },
     ]);
   });
 
-  it('keeps the other fields when the email belongs to someone else', async () => {
-    mockPerson({ jobTitle: null, city: null, emails: null, xLink: null });
+  it('still sets the phone when the email belongs to someone else', async () => {
+    mockPerson({ jobTitle: null, emails: null, phones: null });
     mocks.mutation
       .mockResolvedValueOnce({ updatePeople: [] })
       .mockRejectedValueOnce(new Error('duplicate email'));
 
     await expect(enrich()).resolves.toBeUndefined();
 
-    expect(getUpdatedData()[0]).toEqual({
-      jobTitle: 'VP Sales',
-      city: 'Paris',
-    });
+    expect(getUpdatedData()).toEqual([
+      { jobTitle: 'VP Sales' },
+      { emails: { primaryEmail: 'priya@acme.com' } },
+      { phones: { primaryPhoneNumber: '+33 6 12 34 56 78' } },
+    ]);
   });
 
   it('looks each person up only once', async () => {
-    mockPerson({ jobTitle: null, city: null, emails: null, xLink: null });
+    mockPerson({ jobTitle: null, emails: null, phones: null });
 
     await enrich();
     await enrich();
@@ -116,7 +115,7 @@ describe('enrichLinkedinPersons', () => {
       'linkedin-profile-lookups:unipile-account-id',
       Array.from({ length: 40 }, () => Date.now()),
     );
-    mockPerson({ jobTitle: null, city: null, emails: null, xLink: null });
+    mockPerson({ jobTitle: null, emails: null, phones: null });
 
     await expect(enrich()).resolves.toBeUndefined();
 
