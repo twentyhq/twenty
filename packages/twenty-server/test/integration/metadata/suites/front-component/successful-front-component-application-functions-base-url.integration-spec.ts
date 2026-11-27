@@ -6,6 +6,7 @@ import { uploadApplicationFile } from 'test/integration/metadata/suites/applicat
 import { findFrontComponentQueryFactory } from 'test/integration/metadata/suites/front-component/utils/find-front-component-query-factory.util';
 import { findFrontComponents } from 'test/integration/metadata/suites/front-component/utils/find-front-components.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { mockCloudflareConfigured } from 'test/integration/route-trigger/utils/mock-cloudflare-configured.util';
 import {
   deletePublicDomains,
   insertPublicDomain,
@@ -121,8 +122,9 @@ describe('Front component application functions base URL', () => {
     }
   });
 
-  it('ignores a public domain that is not validated yet', async () => {
+  it('ignores a public domain that is not validated yet when Cloudflare is configured', async () => {
     const publicDomain = `${uuidv4()}.example.com`;
+    const cloudflareConfigured = mockCloudflareConfigured();
 
     try {
       await insertPublicDomain({
@@ -131,10 +133,9 @@ describe('Front component application functions base URL', () => {
         applicationId,
       });
 
-      expect(await requestApplicationFunctionsBaseUrl()).not.toBe(
-        `https://${publicDomain}`,
-      );
+      expect(await requestApplicationFunctionsBaseUrl()).toBeNull();
     } finally {
+      cloudflareConfigured.mockRestore();
       await deletePublicDomains([publicDomain]);
     }
   });

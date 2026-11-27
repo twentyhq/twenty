@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { buildUrlWithPathnameAndSearchParams } from 'src/engine/core-modules/domain/domain-server-config/utils/build-url-with-pathname-and-search-params.util';
 import { getSubdomainAndCustomDomainFromHostname } from 'src/engine/core-modules/domain/domain-server-config/utils/get-subdomain-and-custom-domain-from-hostname.util';
 import { isHostnameOrSubdomainOf } from 'src/engine/core-modules/domain/domain-server-config/utils/is-hostname-or-subdomain-of.util';
@@ -55,6 +57,10 @@ export class DomainServerConfigService {
       searchParams,
       hash,
     });
+  }
+
+  isPublicDomainValidationEnforced(): boolean {
+    return isNonEmptyString(this.twentyConfigService.get('CLOUDFLARE_API_KEY'));
   }
 
   isInstanceHostname(hostname: string): boolean {

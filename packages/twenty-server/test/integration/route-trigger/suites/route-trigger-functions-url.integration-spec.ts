@@ -5,6 +5,7 @@ import {
   insertPublicDomain,
 } from 'test/integration/route-trigger/utils/public-domain-rows.util';
 import { setupHttpResponseLogicFunctionApplication } from 'test/integration/route-trigger/utils/setup-http-response-logic-function-application.util';
+import { mockCloudflareConfigured } from 'test/integration/route-trigger/utils/mock-cloudflare-configured.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { HTTPMethod } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
@@ -68,10 +69,11 @@ describe('RouteTrigger TWENTY_FUNCTIONS_URL (integration)', () => {
     }
   }, 60000);
 
-  it('ignores a public domain that is not validated yet', async () => {
+  it('ignores a public domain that is not validated yet when Cloudflare is configured', async () => {
     const publicDomain = `${uuidv4()}.example.com`;
     const { path, applicationId, applicationUniversalIdentifier } =
       await setupEchoFunctionsUrlApplication();
+    const cloudflareConfigured = mockCloudflareConfigured();
 
     try {
       await insertPublicDomain({
@@ -80,10 +82,9 @@ describe('RouteTrigger TWENTY_FUNCTIONS_URL (integration)', () => {
         applicationId,
       });
 
-      expect(await requestFunctionsUrl(path)).not.toBe(
-        `https://${publicDomain}`,
-      );
+      expect(await requestFunctionsUrl(path)).toBe('');
     } finally {
+      cloudflareConfigured.mockRestore();
       await deletePublicDomains([publicDomain]);
       await cleanupApplicationAndAppRegistration({
         applicationUniversalIdentifier,
@@ -176,11 +177,12 @@ describe('RouteTrigger TWENTY_FUNCTIONS_URL (integration)', () => {
     }
   }, 60000);
 
-  it('falls back to the oldest validated public domain when the primary one is not validated', async () => {
+  it('falls back to the oldest validated public domain when the primary one is not validated and Cloudflare is configured', async () => {
     const olderPublicDomain = `older-${uuidv4()}.example.com`;
     const primaryPublicDomain = `primary-${uuidv4()}.example.com`;
     const { path, applicationId, applicationUniversalIdentifier } =
       await setupEchoFunctionsUrlApplication();
+    const cloudflareConfigured = mockCloudflareConfigured();
 
     try {
       await insertPublicDomain({
@@ -204,12 +206,35 @@ describe('RouteTrigger TWENTY_FUNCTIONS_URL (integration)', () => {
         `https://${olderPublicDomain}`,
       );
     } finally {
+      cloudflareConfigured.mockRestore();
       await deletePublicDomains([olderPublicDomain, primaryPublicDomain]);
       await cleanupApplicationAndAppRegistration({
         applicationUniversalIdentifier,
       });
     }
   }, 60000);
+
+  it('uses a public domain that is not validated yet when Cloudflare is not configured', async () => {
+    const publicDomain = `${uuidv4()}.example.com`;
+    const { path, applicationId, applicationUniversalIdentifier } =
+      await setupEchoFunctionsUrlApplication();
+
+    try {
+      await insertPublicDomain({
+        domain: publicDomain,
+        isValidated: false,
+        applicationId,
+      });
+
+      expect(await requestFunctionsUrl(path)).toBe(`https://${publicDomain}`);
+    } finally {
+      await deletePublicDomains([publicDomain]);
+      await cleanupApplicationAndAppRegistration({
+        applicationUniversalIdentifier,
+      });
+    }
+  }, 60000);
+
   it('skips a validated public domain on an instance hostname', async () => {
     const instancePublicDomain = `${uuidv4()}.localhost`;
     const publicDomain = `${uuidv4()}.example.com`;

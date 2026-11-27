@@ -113,9 +113,15 @@ export class WorkspaceDomainsService {
     );
   }
 
-  private findValidatedPublicDomain(domain: string) {
+  private getUsablePublicDomainWhere() {
+    return this.domainServerConfigService.isPublicDomainValidationEnforced()
+      ? { isValidated: true }
+      : {};
+  }
+
+  private findUsablePublicDomain(domain: string) {
     return this.publicDomainRepository.findOne({
-      where: { domain, isValidated: true },
+      where: { domain, ...this.getUsablePublicDomainWhere() },
       relations: ['workspace', 'workspace.workspaceSsoIdentityProviders'],
     });
   }
@@ -137,7 +143,7 @@ export class WorkspaceDomainsService {
     if (!this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED')) {
       // Still resolve the public domain so route triggers can scope by application.
       const publicDomain = this.isRegistrablePublicDomain(customDomain)
-        ? await this.findValidatedPublicDomain(customDomain)
+        ? await this.findUsablePublicDomain(customDomain)
         : null;
 
       return {
@@ -190,7 +196,7 @@ export class WorkspaceDomainsService {
     }
 
     const publicDomain = this.isRegistrablePublicDomain(customDomain)
-      ? await this.findValidatedPublicDomain(customDomain)
+      ? await this.findUsablePublicDomain(customDomain)
       : null;
 
     return {
@@ -204,7 +210,10 @@ export class WorkspaceDomainsService {
     const { customDomain } =
       this.domainServerConfigService.getSubdomainAndCustomDomainFromUrl(origin);
 
-    if (!this.isRegistrablePublicDomain(customDomain)) {
+    if (
+      !this.domainServerConfigService.isPublicDomainValidationEnforced() ||
+      !this.isRegistrablePublicDomain(customDomain)
+    ) {
       return false;
     }
 
@@ -220,16 +229,16 @@ export class WorkspaceDomainsService {
     workspace: Pick<WorkspaceEntity, 'id' | 'subdomain'>;
     flatApplication: Pick<FlatApplication, 'id' | 'primaryPublicDomainId'>;
   }): Promise<string | undefined> {
-    const validatedPublicDomains = await this.publicDomainRepository.find({
+    const usablePublicDomains = await this.publicDomainRepository.find({
       where: {
         workspaceId: workspace.id,
         applicationId: flatApplication.id,
-        isValidated: true,
+        ...this.getUsablePublicDomainWhere(),
       },
       order: { createdAt: 'ASC' },
     });
 
-    const routablePublicDomains = validatedPublicDomains.filter(
+    const routablePublicDomains = usablePublicDomains.filter(
       ({ domain }) =>
         !this.domainServerConfigService.isInstanceHostname(domain),
     );

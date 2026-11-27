@@ -5,6 +5,7 @@ import {
   insertPublicDomain,
 } from 'test/integration/route-trigger/utils/public-domain-rows.util';
 import { setupHttpResponseLogicFunctionApplication } from 'test/integration/route-trigger/utils/setup-http-response-logic-function-application.util';
+import { mockCloudflareConfigured } from 'test/integration/route-trigger/utils/mock-cloudflare-configured.util';
 import { HTTPMethod } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -257,7 +258,7 @@ describe('RouteTrigger response headers (integration)', () => {
     }
   }, 60000);
 
-  it('does not serve routes on a host matched only by an unvalidated public domain record', async () => {
+  it('does not serve routes on a host matched only by an unvalidated public domain record when Cloudflare is configured', async () => {
     const unvalidatedPublicDomain = `${uuidv4()}.example.com`;
     const { path, triggerSettings } = buildPublicGetRouteTriggerSettings();
     const { applicationId, applicationUniversalIdentifier } =
@@ -268,6 +269,48 @@ describe('RouteTrigger response headers (integration)', () => {
           headers: {
             'content-type': 'text/html; charset=utf-8',
             'x-application-header': 'not sent',
+          },
+          body: HTML_PAGE_WITH_SCRIPT,
+        },
+        triggerSettings,
+      });
+
+    const cloudflareConfigured = mockCloudflareConfigured();
+
+    try {
+      await insertPublicDomain({
+        domain: unvalidatedPublicDomain,
+        isValidated: false,
+        applicationId,
+      });
+
+      const response = await request(baseUrl)
+        .get(`/s${path}`)
+        .set('Host', `${unvalidatedPublicDomain}:${APP_PORT}`);
+
+      expect(response.status).toBe(404);
+      expect(response.text).not.toContain('routeScriptRan');
+      expect(response.headers['x-application-header']).toBeUndefined();
+    } finally {
+      cloudflareConfigured.mockRestore();
+      await deletePublicDomains([unvalidatedPublicDomain]);
+      await cleanupApplicationAndAppRegistration({
+        applicationUniversalIdentifier,
+      });
+    }
+  }, 60000);
+
+  it('serves routes on a host matched by an unvalidated public domain record when Cloudflare is not configured', async () => {
+    const unvalidatedPublicDomain = `${uuidv4()}.example.com`;
+    const { path, triggerSettings } = buildPublicGetRouteTriggerSettings();
+    const { applicationId, applicationUniversalIdentifier } =
+      await setupHttpResponseLogicFunctionApplication({
+        name: 'Route Response Headers Unmanaged Domain App',
+        response: {
+          status: 200,
+          headers: {
+            'content-type': 'text/html; charset=utf-8',
+            'x-application-header': 'kept',
           },
           body: HTML_PAGE_WITH_SCRIPT,
         },
@@ -285,9 +328,10 @@ describe('RouteTrigger response headers (integration)', () => {
         .get(`/s${path}`)
         .set('Host', `${unvalidatedPublicDomain}:${APP_PORT}`);
 
-      expect(response.status).toBe(404);
-      expect(response.text).not.toContain('routeScriptRan');
-      expect(response.headers['x-application-header']).toBeUndefined();
+      expect(response.status).toBe(200);
+      expect(response.text).toBe(HTML_PAGE_WITH_SCRIPT);
+      expect(response.headers['x-application-header']).toBe('kept');
+      expect(response.headers['content-security-policy']).toBeUndefined();
     } finally {
       await deletePublicDomains([unvalidatedPublicDomain]);
       await cleanupApplicationAndAppRegistration({

@@ -206,8 +206,9 @@ A sandboxed page keeps scripts, forms, popups, modals and downloads, but runs wi
 A custom domain belongs to one application. Register it in **Settings → Applications → your application → Custom Domain**, add the DNS records shown there and wait until it is validated. From then on, `TWENTY_FUNCTIONS_URL` points at it (the oldest validated one when there are several), so links built with `RestApiClient` or `resolveUrl` use that domain.
 
 <Note>
-  Custom domains are validated through Cloudflare. To try one on a local
-  instance, insert its `core.publicDomain` row with `isValidated` set to `true`.
+  Custom domains are validated through Cloudflare. On an instance without
+  Cloudflare configured, a custom domain serves routes as soon as its
+  `core.publicDomain` row exists.
 </Note>
 
 #### Platform error responses
