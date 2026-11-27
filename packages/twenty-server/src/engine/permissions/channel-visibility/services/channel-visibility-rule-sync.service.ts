@@ -7,6 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import {
@@ -28,20 +29,39 @@ export class ChannelVisibilityRuleSyncService {
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
     @InjectRepository(CalendarChannelEntity)
     private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceMemberIndividualRoleService: WorkspaceMemberIndividualRoleService,
     private readonly cacheLockService: CacheLockService,
   ) {}
 
   async syncWorkspace(workspaceId: string): Promise<void> {
-    await this.cacheLockService.withLock(
-      () => this.syncWorkspaceWithLock(workspaceId),
+    await this.withSyncLock(workspaceId, () =>
+      this.syncWorkspaceWithLock(workspaceId),
+    );
+  }
+
+  async withSyncLock<TResult>(
+    workspaceId: string,
+    callback: () => Promise<TResult>,
+  ): Promise<TResult> {
+    return this.cacheLockService.withLock(
+      callback,
       buildChannelVisibilityRuleSyncLockKey(workspaceId),
       CHANNEL_VISIBILITY_RULE_SYNC_LOCK_OPTIONS,
     );
   }
 
   private async syncWorkspaceWithLock(workspaceId: string): Promise<void> {
+    const workspace = await this.workspaceRepository.findOneBy({
+      id: workspaceId,
+    });
+
+    if (!isDefined(workspace)) {
+      return;
+    }
+
     await this.writeOrRemoveRules(workspaceId);
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'rolesPermissions',

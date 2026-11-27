@@ -132,6 +132,7 @@ import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-migration/constant/default-feature-flags';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { ChannelVisibilityRoleWideAccessRevokeService } from 'src/engine/permissions/channel-visibility/services/channel-visibility-role-wide-access-revoke.service';
+import { ChannelVisibilityRuleSyncService } from 'src/engine/permissions/channel-visibility/services/channel-visibility-rule-sync.service';
 
 // far longer than a real activation, so an older ONGOING_CREATION is a crashed attempt that may be reclaimed
 const WORKSPACE_ACTIVATION_STALE_LOCK_TIMEOUT_MS = 5 * 60 * 1000;
@@ -180,6 +181,7 @@ export class WorkspaceService {
 
   constructor(
     private readonly channelVisibilityRoleWideAccessRevokeService: ChannelVisibilityRoleWideAccessRevokeService,
+    private readonly channelVisibilityRuleSyncService: ChannelVisibilityRuleSyncService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly eventEmitter: EventEmitter2,
@@ -948,94 +950,10 @@ export class WorkspaceService {
     const advisoryLockResult =
       await this.postgresAdvisoryLockService.tryWithLock(
         getWorkspaceApplicationUninstallLockName(workspace.id),
-        async () => {
-          const userWorkspaces = await this.userWorkspaceRepository.find({
-            where: {
-              workspaceId: workspace.id,
-            },
-            withDeleted: true,
-          });
-
-          for (const userWorkspace of userWorkspaces) {
-            await this.handleRemoveWorkspaceMember(
-              workspace.id,
-              userWorkspace.userId,
-              false,
-            );
-          }
-          this.logger.log(`workspace ${workspace.id} user workspaces deleted`);
-
-          this.logger.log(`workspace ${workspace.id} cache flushed`);
-
-          if (this.billingService.isBillingEnabled()) {
-            await this.billingSubscriptionService.assertSubscriptionCanceledOrNone(
-              workspace.id,
-            );
-          }
-
-          await this.runPendingApplicationUninstallHooksBeforeHardDelete(
-            workspace,
-          );
-
-          await this.deleteApplicationRuntimeResourcesBeforeHardDelete(
-            workspace.id,
-          );
-
-          await this.deleteWorkspaceSyncableMetadataEntities(workspace);
-
-          await this.workspaceSchemaService.deleteWorkspaceDBSchema(
-            workspace.id,
-          );
-
-          await this.workspaceCacheStorageService.flush(workspace.id);
-          await this.flatEntityMapsCacheService.flushFlatEntityMaps({
-            workspaceId: workspace.id,
-          });
-
-          await this.deleteCascadeMessageQueueService.add<FileWorkspaceFolderDeletionJobData>(
-            FileWorkspaceFolderDeletionJob.name,
-            { workspaceId: workspace.id },
-            {
-              workspaceId: workspace.id,
-              isWorkspaceJob: true,
-            },
-          );
-
-          const emailingDomains = await this.coreDataSource
-            .getRepository(EmailingDomainEntity)
-            .find({ where: { workspaceId: workspace.id } });
-
-          await this.deleteCascadeMessageQueueService.add<EmailingDomainWorkspaceCleanupJobData>(
-            EmailingDomainWorkspaceCleanupJob.name,
-            {
-              workspaceId: workspace.id,
-              domains: emailingDomains.map(
-                (emailingDomain) => emailingDomain.domain,
-              ),
-            },
-            {
-              workspaceId: workspace.id,
-              isWorkspaceJob: true,
-            },
-          );
-
-          if (workspace.customDomain) {
-            await this.dnsManagerService.deleteHostnameSilently(
-              workspace.customDomain,
-            );
-            this.logger.log(`workspace ${workspace.id} custom domain deleted`);
-          }
-
-          await this.workspaceRepository.delete(workspace.id);
-          await this.coreEntityCacheService.invalidate(
-            'workspaceEntity',
-            workspace.id,
-          );
-
-          this.logger.log(`workspace ${workspace.id} hard deleted`);
-
-          return workspace;
-        },
+        () =>
+          this.channelVisibilityRuleSyncService.withSyncLock(workspace.id, () =>
+            this.hardDeleteWorkspace(workspace),
+          ),
       );
 
     if (!advisoryLockResult.acquired) {
@@ -1046,6 +964,89 @@ export class WorkspaceService {
     }
 
     return advisoryLockResult.value;
+  }
+
+  private async hardDeleteWorkspace(
+    workspace: WorkspaceEntity,
+  ): Promise<WorkspaceEntity> {
+    const userWorkspaces = await this.userWorkspaceRepository.find({
+      where: {
+        workspaceId: workspace.id,
+      },
+      withDeleted: true,
+    });
+
+    for (const userWorkspace of userWorkspaces) {
+      await this.handleRemoveWorkspaceMember(
+        workspace.id,
+        userWorkspace.userId,
+        false,
+      );
+    }
+    this.logger.log(`workspace ${workspace.id} user workspaces deleted`);
+
+    this.logger.log(`workspace ${workspace.id} cache flushed`);
+
+    if (this.billingService.isBillingEnabled()) {
+      await this.billingSubscriptionService.assertSubscriptionCanceledOrNone(
+        workspace.id,
+      );
+    }
+
+    await this.runPendingApplicationUninstallHooksBeforeHardDelete(workspace);
+
+    await this.deleteApplicationRuntimeResourcesBeforeHardDelete(workspace.id);
+
+    await this.deleteWorkspaceSyncableMetadataEntities(workspace);
+
+    await this.workspaceSchemaService.deleteWorkspaceDBSchema(workspace.id);
+
+    await this.workspaceCacheStorageService.flush(workspace.id);
+    await this.flatEntityMapsCacheService.flushFlatEntityMaps({
+      workspaceId: workspace.id,
+    });
+
+    await this.deleteCascadeMessageQueueService.add<FileWorkspaceFolderDeletionJobData>(
+      FileWorkspaceFolderDeletionJob.name,
+      { workspaceId: workspace.id },
+      {
+        workspaceId: workspace.id,
+        isWorkspaceJob: true,
+      },
+    );
+
+    const emailingDomains = await this.coreDataSource
+      .getRepository(EmailingDomainEntity)
+      .find({ where: { workspaceId: workspace.id } });
+
+    await this.deleteCascadeMessageQueueService.add<EmailingDomainWorkspaceCleanupJobData>(
+      EmailingDomainWorkspaceCleanupJob.name,
+      {
+        workspaceId: workspace.id,
+        domains: emailingDomains.map((emailingDomain) => emailingDomain.domain),
+      },
+      {
+        workspaceId: workspace.id,
+        isWorkspaceJob: true,
+      },
+    );
+
+    if (workspace.customDomain) {
+      await this.dnsManagerService.deleteHostnameSilently(
+        workspace.customDomain,
+      );
+      this.logger.log(`workspace ${workspace.id} custom domain deleted`);
+    }
+
+    await this.workspaceRepository.delete(workspace.id);
+    await this.coreEntityCacheService.invalidate(
+      'workspaceEntity',
+      workspace.id,
+    );
+
+    this.logger.log(`workspace ${workspace.id} hard deleted`);
+
+    return workspace;
   }
 
   async enqueueWorkspaceDeletionApplicationUninstall(
