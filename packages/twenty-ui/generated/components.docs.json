@@ -15720,6 +15720,13 @@
     "slug": "theme/theme-provider",
     "props": [
       {
+        "name": "accentColor",
+        "type": "\"amber\" | \"blue\" | \"bronze\" | \"brown\" | \"crimson\" | \"cyan\" | \"gold\" | \"grass\" | \"gray\" | \"green\" | \"iris\" | \"jade\" | \"lime\" | \"mint\" | \"orange\" | \"pink\" | \"plum\" | \"purple\" | \"red\" | \"ruby\" | \"sky\" | \"tomato\" | \"turquoise\" | \"violet\" | \"yellow\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Palette the accent tokens point to, on the document root or on a scoped wrapper. Defaults to blue."
+      },
+      {
         "name": "applyToRoot",
         "type": "boolean",
         "required": false,

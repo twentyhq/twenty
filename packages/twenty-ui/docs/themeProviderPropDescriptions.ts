@@ -6,6 +6,8 @@ export const THEME_PROVIDER_PROP_DESCRIPTIONS = {
   children: 'Components that share this theme.',
   colorScheme:
     'Explicit light or dark palette; load its stylesheet before rendering.',
+  accentColor:
+    'Palette the accent tokens point to, on the document root or on a scoped wrapper. Defaults to blue.',
   applyToRoot:
     'Applies the color-scheme class to the document root. Set false for a scoped wrapper.',
   overrides:
