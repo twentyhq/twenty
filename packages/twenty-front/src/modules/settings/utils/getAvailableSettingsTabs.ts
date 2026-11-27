@@ -4,7 +4,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { type PermissionFlagType } from '~/generated-metadata/graphql';
 
 export const getAvailableSettingsTabs = <
-  TTabDefinition extends Pick<SettingsTabDefinition, 'settingsPermission'>,
+  TTabDefinition extends Pick<
+    SettingsTabDefinition,
+    'settingsPermission' | 'requiredFeatureFlag'
+  >,
 >({
   tabs,
   permissionFlagMap,
