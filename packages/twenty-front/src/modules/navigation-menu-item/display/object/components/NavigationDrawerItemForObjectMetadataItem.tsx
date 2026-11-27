@@ -1,5 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { Fragment, type ReactNode } from 'react';
+import { styled } from '@linaria/react';
+import { type ReactNode } from 'react';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { lastClickedNavigationMenuItemIdState } from '@/navigation-menu-item/common/states/lastClickedNavigationMenuItemIdState';
@@ -46,6 +47,11 @@ export type NavigationDrawerItemForObjectMetadataItemProps = {
   isDragging?: boolean;
   rightOptions?: ReactNode;
 };
+
+const StyledLockContainer = styled.span`
+  display: flex;
+  padding-right: ${themeCssVariables.spacing[1]};
+`;
 
 export const NavigationDrawerItemForObjectMetadataItem = ({
   objectMetadataItem,
@@ -201,13 +207,13 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
         alwaysShowRightOptions={showInaccessibleLock}
         rightOptions={
           showInaccessibleLock ? (
-            <Fragment>
+            <StyledLockContainer>
               <IconLock
                 size={theme.icon.size.sm}
                 stroke={theme.icon.stroke.sm}
                 color={themeCssVariables.font.color.tertiary}
               />
-            </Fragment>
+            </StyledLockContainer>
           ) : (
             rightOptions
           )
