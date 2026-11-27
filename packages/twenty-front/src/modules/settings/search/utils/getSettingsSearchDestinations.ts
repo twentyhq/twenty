@@ -13,6 +13,7 @@ import { generatePath } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { type PermissionFlagType } from '~/generated-metadata/graphql';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type SettingsRouteGuard = ComponentProps<typeof SettingsProtectedRouteWrapper>;
 
@@ -34,7 +35,7 @@ export type SettingsSearchAvailability = {
   objectMetadataItems: SettingsSearchObject[];
 };
 
-const OBJECT_PATH_PARAMETER = ':objectNamePlural';
+const OBJECT_PATH_PARAMETERS = [':objectNamePlural'];
 
 const getRouteGuard = (
   routeObject: WorkspaceRouteObject,
@@ -143,18 +144,24 @@ export const getSettingsSearchDestinations = ({
       : [];
   };
 
-  const getPathObjects = (path: SettingsPath) => {
-    if (path.includes(OBJECT_PATH_PARAMETER)) {
-      return availability.objectMetadataItems;
+  const getPathObjects = ({ path, metadata }: SettingsSearchRoute) => {
+    const pathParameters = path.match(/:\w+/g) ?? [];
+
+    if (pathParameters.length === 0) {
+      return [undefined];
     }
 
-    return path.includes(':') ? [] : [undefined];
+    return metadata.expandsPerObject === true &&
+      isDeeplyEqual(pathParameters, OBJECT_PATH_PARAMETERS)
+      ? availability.objectMetadataItems
+      : [];
   };
 
   return routes
     .filter((route) => isRouteAvailable({ route, availability }))
-    .flatMap(({ path, metadata }) =>
-      getPathObjects(path).flatMap((objectMetadataItem) => {
+    .flatMap((route) =>
+      getPathObjects(route).flatMap((objectMetadataItem) => {
+        const { path, metadata } = route;
         const pagePath = isDefined(objectMetadataItem)
           ? generatePath(getSettingsPath(path), {
               objectNamePlural: objectMetadataItem.namePlural,
