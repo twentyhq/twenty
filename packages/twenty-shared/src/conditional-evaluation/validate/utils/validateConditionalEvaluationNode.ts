@@ -1,7 +1,6 @@
-import { CONDITIONAL_EVALUATION_FUNCTIONS } from '@/conditional-evaluation/common/constants/ConditionalEvaluationFunctions';
+import { CONDITIONAL_EVALUATION_CONFIGURATION_BY_METADATA_NAME } from '@/conditional-evaluation/common/constants/ConditionalEvaluationConfigurationByMetadataName';
 import { CONDITIONAL_EVALUATION_MAX_NODE_COUNT } from '@/conditional-evaluation/validate/constants/ConditionalEvaluationMaxNodeCount';
-import { CONDITIONAL_EVALUATION_VARIABLES } from '@/conditional-evaluation/common/constants/ConditionalEvaluationVariables';
-import { type ConditionalAvailabilityMetadataName } from '@/conditional-evaluation/common/types/ConditionalAvailabilityMetadataName';
+import { type ConditionalEvaluationMetadataName } from '@/conditional-evaluation/common/types/ConditionalEvaluationMetadataName';
 import { type ConditionalEvaluationNode } from '@/conditional-evaluation/common/types/ConditionalEvaluationNode';
 import { type ConditionalEvaluationValidationResult } from '@/conditional-evaluation/validate/types/ConditionalEvaluationValidationResult';
 import { conditionalEvaluationNodeSchema } from '@/conditional-evaluation/validate/utils/conditionalEvaluationNodeSchema';
@@ -20,8 +19,11 @@ const getUnknownName = ({
   metadataName,
 }: {
   node: ConditionalEvaluationNode;
-  metadataName: ConditionalAvailabilityMetadataName;
+  metadataName: ConditionalEvaluationMetadataName;
 }): string | undefined => {
+  const configuration =
+    CONDITIONAL_EVALUATION_CONFIGURATION_BY_METADATA_NAME[metadataName];
+
   switch (node.type) {
     case 'VARIABLE': {
       const [variableName] = node.path.split('.');
@@ -31,7 +33,7 @@ const getUnknownName = ({
       }
 
       return Object.prototype.hasOwnProperty.call(
-        CONDITIONAL_EVALUATION_VARIABLES[metadataName],
+        configuration.variables,
         variableName,
       )
         ? undefined
@@ -39,13 +41,16 @@ const getUnknownName = ({
     }
     case 'FUNCTION_CALL':
       return Object.prototype.hasOwnProperty.call(
-        CONDITIONAL_EVALUATION_FUNCTIONS,
+        configuration.functions,
         node.functionName,
       )
         ? undefined
         : node.functionName;
-    case 'LITERAL':
     case 'COMPARISON':
+      return configuration.comparisonOperators.includes(node.operator)
+        ? undefined
+        : node.operator;
+    case 'LITERAL':
     case 'GROUP':
     case 'NOT':
       return undefined;
@@ -65,7 +70,7 @@ export const validateConditionalEvaluationNode = ({
   metadataName,
 }: {
   node: unknown;
-  metadataName: ConditionalAvailabilityMetadataName;
+  metadataName: ConditionalEvaluationMetadataName;
 }): ConditionalEvaluationValidationResult => {
   if (!isDefined(node)) {
     return { isValid: true, node: null };
@@ -113,7 +118,7 @@ export const validateConditionalEvaluationNode = ({
     return {
       isValid: false,
       errorCode: 'UNKNOWN_NAME',
-      errorMessage: `"${unknownName}" is not a variable or function available on ${metadataName}`,
+      errorMessage: `"${unknownName}" is not a variable, function or operator available on ${metadataName}`,
       errorParams: { name: unknownName },
     };
   }

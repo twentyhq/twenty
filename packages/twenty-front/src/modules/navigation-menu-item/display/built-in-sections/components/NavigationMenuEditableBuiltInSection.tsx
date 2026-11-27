@@ -11,7 +11,13 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 type NavigationMenuEditableBuiltInSectionProps = {
   section: Pick<
     NavigationMenuItem,
-    'id' | 'name' | 'icon' | 'parentId' | 'type' | 'builtInSectionKey'
+    | 'id'
+    | 'name'
+    | 'icon'
+    | 'parentId'
+    | 'type'
+    | 'builtInSectionKey'
+    | 'visibleItemLimit'
   >;
 };
 

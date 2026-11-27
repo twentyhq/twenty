@@ -280,7 +280,9 @@ const FrontComponentRendererContent = ({
               initialApplicationTokenPair.applicationAccessToken.token
             }
             apiUrl={REACT_APP_SERVER_BASE_URL}
-            functionsBaseUrl={functionsBaseUrl}
+            functionsBaseUrl={
+              frontComponent.applicationFunctionsBaseUrl ?? functionsBaseUrl
+            }
             sdkClientUrls={sdkClientUrls}
             sharedDependenciesUrl={sharedDependenciesUrl}
             executionContext={executionContext}

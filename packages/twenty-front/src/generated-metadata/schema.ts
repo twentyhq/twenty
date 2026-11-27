@@ -1632,7 +1632,6 @@ export type ClientConfig = {
   enterpriseInstanceType: Scalars['String']['output'];
   frontDomain: Scalars['String']['output'];
   isAttachmentPreviewEnabled: Scalars['Boolean']['output'];
-  isBookCallOnboardingStepEnabled: Scalars['Boolean']['output'];
   isClickHouseConfigured: Scalars['Boolean']['output'];
   isCloudflareIntegrationEnabled: Scalars['Boolean']['output'];
   isCompanyEnrichmentEnabled: Scalars['Boolean']['output'];
@@ -2705,7 +2704,6 @@ export enum FeatureFlagKey {
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED = 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED',
   IS_CUSTOMIZABLE_SIDEBAR_ENABLED = 'IS_CUSTOMIZABLE_SIDEBAR_ENABLED',
   IS_FORMULA_FIELD_ENABLED = 'IS_FORMULA_FIELD_ENABLED',
-  IS_GETTING_STARTED_ENABLED = 'IS_GETTING_STARTED_ENABLED',
   IS_INBOX_OBJECT_NAMING_ENABLED = 'IS_INBOX_OBJECT_NAMING_ENABLED',
   IS_INTERNAL_IMPORT_COLUMN_ENABLED = 'IS_INTERNAL_IMPORT_COLUMN_ENABLED',
   IS_LOOKUP_COLUMNS_ENABLED = 'IS_LOOKUP_COLUMNS_ENABLED',
@@ -2939,6 +2937,7 @@ export type FormFieldConfiguration = {
 
 export type FrontComponent = {
   __typename?: 'FrontComponent';
+  applicationFunctionsBaseUrl?: Maybe<Scalars['String']['output']>;
   applicationGrantedCapabilities?: Maybe<Array<Scalars['String']['output']>>;
   applicationGrantedIframeMediaPermissions?: Maybe<Array<IframeMediaPermission>>;
   applicationId: Scalars['UUID']['output'];
@@ -3809,7 +3808,6 @@ export type Mutation = {
   claimApplicationRegistrationOwnership: ApplicationRegistration;
   completeAppTarballUpload: ApplicationRegistration;
   completeApplicationFileUploads: CompleteApplicationFileUploadsResult;
-  completeBookCallOnboardingStep: OnboardingStepSuccess;
   completeFileUpload: FileWithSignedUrl;
   completeNewWorkspaceLogoUpload: FileWithSignedUrl;
   completeWorkspaceLogoUpload: FileWithSignedUrl;
@@ -4214,12 +4212,6 @@ export type MutationCompleteAppTarballUploadArgs = {
 export type MutationCompleteApplicationFileUploadsArgs = {
   applicationUniversalIdentifier: Scalars['String']['input'];
   fileIds: Array<Scalars['UUID']['input']>;
-};
-
-
-export type MutationCompleteBookCallOnboardingStepArgs = {
-  hasBookedCall?: Scalars['Boolean']['input'];
-  isAutoSkipped?: Scalars['Boolean']['input'];
 };
 
 
@@ -5938,7 +5930,6 @@ export type ObjectRecordsPermissions = {
 
 /** Onboarding status */
 export enum OnboardingStatus {
-  BOOK_CALL = 'BOOK_CALL',
   COMPLETED = 'COMPLETED',
   INVITE_TEAM = 'INVITE_TEAM',
   PLAN_REQUIRED = 'PLAN_REQUIRED',
@@ -9408,7 +9399,6 @@ export enum WorkspaceCompanyEnrichmentOutcome {
 export type WorkspaceCompanyEnrichmentResult = {
   __typename?: 'WorkspaceCompanyEnrichmentResult';
   enrichment?: Maybe<Scalars['JSON']['output']>;
-  isBookCallOnboardingStepPending: Scalars['Boolean']['output'];
   outcome: WorkspaceCompanyEnrichmentOutcome;
   personEnrichment?: Maybe<Scalars['JSON']['output']>;
   personOutcome: WorkspacePersonEnrichmentOutcome;

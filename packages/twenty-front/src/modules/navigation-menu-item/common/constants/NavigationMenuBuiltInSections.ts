@@ -65,6 +65,7 @@ export const NAVIGATION_MENU_BUILT_IN_SECTIONS = [
     color: 'orange',
     isAi: true,
     requiredPermissionFlag: PermissionFlagType.AI,
+    defaultVisibleItemLimit: 5,
   },
   {
     key: 'aiAgents',

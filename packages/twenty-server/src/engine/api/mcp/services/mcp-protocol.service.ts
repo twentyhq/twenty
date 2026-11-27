@@ -21,10 +21,10 @@ import { MCP_GENERIC_MODE_LISTED_TOOL_CATEGORIES } from 'src/engine/api/mcp/cons
 import { MCP_METHODS_RETURNING_INSTRUCTIONS } from 'src/engine/api/mcp/constants/mcp-methods-returning-instructions.constant';
 import { MCP_RESULT_CACHE_HINTS } from 'src/engine/api/mcp/constants/mcp-result-cache-hints.constant';
 import { MCP_SERVER_CAPABILITIES } from 'src/engine/api/mcp/constants/mcp-server-capabilities.constant';
-import { MCP_EXECUTE_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/constants/mcp-execute-tool-annotations.const';
+import { MCP_EXECUTE_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/constants/mcp-execute-tool-annotations.constant';
 import { MCP_OPEN_WORLD_READ_ONLY_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/constants/mcp-open-world-read-only-tool-annotations.constant';
 import { MCP_PROGRESS_NOTIFICATION_METHOD } from 'src/engine/api/mcp/constants/mcp-progress-notification.constant';
-import { MCP_SERVER_INFO } from 'src/engine/api/mcp/constants/mcp-server-info.const';
+import { MCP_SERVER_INFO } from 'src/engine/api/mcp/constants/mcp-server-info.constant';
 import {
   McpException,
   McpExceptionCode,

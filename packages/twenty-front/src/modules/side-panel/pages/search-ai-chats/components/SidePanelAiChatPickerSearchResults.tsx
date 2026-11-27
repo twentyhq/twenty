@@ -1,12 +1,12 @@
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
 
 import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
+import { inboxNamesByLegacyNameSelector } from '@/ai-chat/states/selectors/inboxNamesByLegacyNameSelector';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SidePanelAiChatPickerList } from '@/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerList';
 import { SidePanelAiChatPickerLoadMoreFooter } from '@/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerLoadMoreFooter';
@@ -28,6 +28,9 @@ export const SidePanelAiChatPickerSearchResults = ({
   isSearchPending,
 }: SidePanelAiChatPickerSearchResultsProps) => {
   const { t } = useLingui();
+  const inboxNamesByLegacyName = useAtomStateValue(
+    inboxNamesByLegacyNameSelector,
+  );
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
@@ -41,7 +44,7 @@ export const SidePanelAiChatPickerSearchResults = ({
   const [isLoadingMoreChats, setIsLoadingMoreChats] = useState(false);
   const { records, loading, hasNextPage, error, fetchMoreRecords, refetch } =
     useFindManyRecords<AiChatThreadRecord>({
-      objectNameSingular: StandardObjectNameSingular.AgentChatThread,
+      objectNameSingular: inboxNamesByLegacyName.agentChatThread,
       recordGqlFields: AI_CHAT_PICKER_RECORD_GQL_FIELDS,
       filter: getAiChatThreadSearchFilter({
         searchTerm,

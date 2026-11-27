@@ -13,7 +13,10 @@ import { useNavigationMenuBuiltInSectionAvailability } from '@/navigation-menu-i
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 type NavigationMenuBuiltInSectionProps = {
-  section: Pick<NavigationMenuItem, 'id' | 'builtInSectionKey'>;
+  section: Pick<
+    NavigationMenuItem,
+    'id' | 'builtInSectionKey' | 'visibleItemLimit'
+  >;
   headerAction?: ReactNode;
 };
 
@@ -37,7 +40,12 @@ export const NavigationMenuBuiltInSection = ({
   }
 
   if (section.builtInSectionKey === 'aiAgents') {
-    return <NavigationMenuAiAgentsSection headerAction={headerAction} />;
+    return (
+      <NavigationMenuAiAgentsSection
+        visibleItemLimit={section.visibleItemLimit}
+        headerAction={headerAction}
+      />
+    );
   }
 
   switch (section.builtInSectionKey) {
@@ -49,19 +57,31 @@ export const NavigationMenuBuiltInSection = ({
               ? t(inboxBuiltInSection.label)
               : undefined
           }
+          visibleItemLimit={section.visibleItemLimit}
           headerAction={headerAction}
         />
       );
     case 'aiChatFavorites':
       return (
-        <NavigationMenuAiChatFavoritesSection headerAction={headerAction} />
+        <NavigationMenuAiChatFavoritesSection
+          visibleItemLimit={section.visibleItemLimit}
+          headerAction={headerAction}
+        />
       );
     case 'aiChatChannels':
       return (
-        <NavigationDrawerInboxChannelsSection headerAction={headerAction} />
+        <NavigationDrawerInboxChannelsSection
+          visibleItemLimit={section.visibleItemLimit}
+          headerAction={headerAction}
+        />
       );
     case 'aiChatRecents':
-      return <NavigationMenuAiChatRecentsSection headerAction={headerAction} />;
+      return (
+        <NavigationMenuAiChatRecentsSection
+          visibleItemLimit={section.visibleItemLimit}
+          headerAction={headerAction}
+        />
+      );
     default:
       return null;
   }

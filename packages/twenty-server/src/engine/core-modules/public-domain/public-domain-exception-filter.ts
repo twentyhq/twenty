@@ -17,6 +17,7 @@ export class PublicDomainExceptionFilter implements ExceptionFilter {
     switch (exception.code) {
       case PublicDomainExceptionCode.PUBLIC_DOMAIN_ALREADY_REGISTERED:
       case PublicDomainExceptionCode.DOMAIN_ALREADY_REGISTERED_AS_CUSTOM_DOMAIN:
+      case PublicDomainExceptionCode.DOMAIN_USED_BY_INSTANCE:
         throw new UserInputError(exception);
       case PublicDomainExceptionCode.PUBLIC_DOMAIN_NOT_FOUND:
       case PublicDomainExceptionCode.APPLICATION_NOT_FOUND:

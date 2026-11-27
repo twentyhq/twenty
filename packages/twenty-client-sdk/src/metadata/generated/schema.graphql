@@ -1519,7 +1519,6 @@ type ClientConfig {
   enterpriseInstanceType: String!
   frontDomain: String!
   isAttachmentPreviewEnabled: Boolean!
-  isBookCallOnboardingStepEnabled: Boolean!
   isClickHouseConfigured: Boolean!
   isCloudflareIntegrationEnabled: Boolean!
   isCompanyEnrichmentEnabled: Boolean!
@@ -2574,7 +2573,6 @@ enum FeatureFlagKey {
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
   IS_CUSTOMIZABLE_SIDEBAR_ENABLED
   IS_FORMULA_FIELD_ENABLED
-  IS_GETTING_STARTED_ENABLED
   IS_INBOX_OBJECT_NAMING_ENABLED
   IS_INTERNAL_IMPORT_COLUMN_ENABLED
   IS_LOOKUP_COLUMNS_ENABLED
@@ -2795,6 +2793,7 @@ type FormFieldConfiguration {
 }
 
 type FrontComponent {
+  applicationFunctionsBaseUrl: String
   applicationGrantedCapabilities: [String!]
   applicationGrantedIframeMediaPermissions: [IframeMediaPermission!]
   applicationId: UUID!
@@ -3623,7 +3622,6 @@ type Mutation {
   claimApplicationRegistrationOwnership(applicationRegistrationId: String!): ApplicationRegistration!
   completeAppTarballUpload(fileId: UUID!): ApplicationRegistration!
   completeApplicationFileUploads(applicationUniversalIdentifier: String!, fileIds: [UUID!]!): CompleteApplicationFileUploadsResult!
-  completeBookCallOnboardingStep(hasBookedCall: Boolean! = false, isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
   completeFileUpload(fileId: String!): FileWithSignedUrl!
   completeNewWorkspaceLogoUpload(fileId: String!, workspaceId: String!): FileWithSignedUrl!
   completeWorkspaceLogoUpload(fileId: String!): FileWithSignedUrl!
@@ -4148,7 +4146,6 @@ type ObjectRecordsPermissions {
 
 """Onboarding status"""
 enum OnboardingStatus {
-  BOOK_CALL
   COMPLETED
   INVITE_TEAM
   PLAN_REQUIRED
@@ -6958,7 +6955,6 @@ enum WorkspaceCompanyEnrichmentOutcome {
 
 type WorkspaceCompanyEnrichmentResult {
   enrichment: JSON
-  isBookCallOnboardingStepPending: Boolean!
   outcome: WorkspaceCompanyEnrichmentOutcome!
   personEnrichment: JSON
   personOutcome: WorkspacePersonEnrichmentOutcome!
