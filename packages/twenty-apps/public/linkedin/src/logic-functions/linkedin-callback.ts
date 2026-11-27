@@ -53,6 +53,7 @@ export const linkedinCallbackHandler = async ({
   return {
     externalAccountId: account.id,
     handle: account.name ?? account.user_id,
+    ...(isNonEmptyString(account.name) ? { name: account.name } : {}),
   };
 };
 

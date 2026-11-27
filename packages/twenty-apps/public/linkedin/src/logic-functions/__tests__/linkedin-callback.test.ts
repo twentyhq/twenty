@@ -39,7 +39,24 @@ describe('linkedinCallbackHandler', () => {
 
     await expect(
       linkedinCallbackHandler(buildPayload({ account_id: 'acc_1' })),
-    ).resolves.toEqual({ externalAccountId: 'acc_1', handle: 'Ada Lovelace' });
+    ).resolves.toEqual({
+      externalAccountId: 'acc_1',
+      handle: 'Ada Lovelace',
+      name: 'Ada Lovelace',
+    });
+  });
+
+  it('leaves the connection name to Twenty when Unipile has no account name', async () => {
+    mocks.getUnipileAccount.mockResolvedValue({
+      id: 'acc_1',
+      provider: 'linkedin',
+      user_id: 'ACoME',
+      created_at: new Date().toISOString(),
+    });
+
+    await expect(
+      linkedinCallbackHandler(buildPayload({ account_id: 'acc_1' })),
+    ).resolves.toEqual({ externalAccountId: 'acc_1', handle: 'ACoME' });
   });
 
   it('connects no account and reports no error when the member cancels the sign-in', async () => {
