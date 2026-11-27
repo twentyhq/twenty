@@ -1,6 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import {
   type AppMessageChannel,
+  type IngestMessage,
   type IngestedMessage,
   ingestMessages,
 } from 'twenty-sdk/logic-function';
@@ -53,7 +54,13 @@ const createPersonOrWarn = async ({
   }
 };
 
-const resolvePersonIdByHandle = async ({
+export type WhatsappChatPersons = {
+  personIdByHandle: Map<string, string>;
+  matchedPersonCount: number;
+  createdPersonCount: number;
+};
+
+export const resolveWhatsappChatPersons = async ({
   settings,
   counterparts,
   hasUserSentMessage,
@@ -61,16 +68,9 @@ const resolvePersonIdByHandle = async ({
 }: {
   settings: WhatsappSettings;
   counterparts: WhatsappCounterpart[];
-  hasUserSentMessage: boolean;
+  hasUserSentMessage: () => Promise<boolean>;
   isGroupChat: boolean;
-}): Promise<
-  | {
-      personIdByHandle: Map<string, string>;
-      matchedPersonCount: number;
-      createdPersonCount: number;
-    }
-  | undefined
-> => {
+}): Promise<WhatsappChatPersons | undefined> => {
   const personIdByHandle = new Map<string, string>();
   const unmatchedCounterparts: WhatsappCounterpart[] = [];
 
@@ -95,9 +95,12 @@ const resolvePersonIdByHandle = async ({
   const matchedPersonCount = personIdByHandle.size;
 
   if (
+    unmatchedCounterparts.length === 0 ||
     !isWhatsappContactCreationAllowed({
       policy: settings.contactAutoCreationPolicy,
-      hasUserSentMessage,
+      hasUserSentMessage:
+        settings.contactAutoCreationPolicy === 'SENT' &&
+        (await hasUserSentMessage()),
     })
   ) {
     return { personIdByHandle, matchedPersonCount, createdPersonCount: 0 };
@@ -117,83 +120,69 @@ const resolvePersonIdByHandle = async ({
   return { personIdByHandle, matchedPersonCount, createdPersonCount };
 };
 
-export const ingestWhatsappMessages = async ({
-  unipileAccountId,
-  attachmentDeadlineAtMs,
-  channel,
-  settings,
-  chat,
-  counterparts: counterpartUsers,
+export const mapWhatsappMessages = ({
   messages,
+  channelHandle,
+  counterparts,
 }: {
-  unipileAccountId: string;
-  attachmentDeadlineAtMs: number;
-  channel: Pick<AppMessageChannel, 'id' | 'handle'>;
-  settings: WhatsappSettings;
-  chat: UnipileChat;
-  counterparts: UnipileUser[];
   messages: UnipileMessage[];
-}): Promise<WhatsappIngestResult> => {
-  const isGroupChat = isWhatsappGroupChat(chat);
-
-  const emptyResult = {
-    ingestedMessageCount: 0,
-    matchedPersonCount: 0,
-    createdPersonCount: 0,
-    importedAttachmentCount: 0,
-  };
-
-  if (!isWhatsappChatSelected({ settings, chatId: chat.id })) {
-    return { ...emptyResult, skippedReason: 'NOT_SELECTED' };
-  }
-
-  const counterparts = toWhatsappCounterparts(counterpartUsers);
-
-  if (counterparts.length < counterpartUsers.length) {
-    console.log(
-      `[whatsapp] chat ${chat.id}: ${counterparts.length} of ${counterpartUsers.length} members have a visible phone number`,
-    );
-  }
-
-  const mappedMessages = messages.flatMap((message) => {
+  channelHandle: string;
+  counterparts: WhatsappCounterpart[];
+}): { message: UnipileMessage; ingestMessage: IngestMessage }[] =>
+  messages.flatMap((message) => {
     const ingestMessage = mapUnipileMessageToIngestMessage({
       message,
-      channelHandle: channel.handle,
+      channelHandle,
       counterparts,
     });
 
     return isDefined(ingestMessage) ? [{ message, ingestMessage }] : [];
   });
 
-  if (mappedMessages.length === 0) {
-    const hasContent = messages.some(
-      (message) => !message.is_event && !message.is_deleted,
-    );
+export const setWhatsappChatPersonAvatars = ({
+  counterparts,
+  personIdByHandle,
+  deadlineAtMs,
+}: {
+  counterparts: WhatsappCounterpart[];
+  personIdByHandle: Map<string, string>;
+  deadlineAtMs: number;
+}): Promise<void> =>
+  setMissingWhatsappPersonAvatars({
+    avatars: counterparts.flatMap(({ user, handle }) => {
+      const personId = personIdByHandle.get(handle);
 
-    return {
-      ...emptyResult,
-      skippedReason: hasContent ? 'NO_PHONE' : 'NO_MESSAGES',
-    };
-  }
-
-  if (counterparts.length === 0) {
-    return { ...emptyResult, skippedReason: 'NO_PHONE' };
-  }
-
-  const resolvedPersons = await resolvePersonIdByHandle({
-    settings,
-    counterparts,
-    hasUserSentMessage: mappedMessages.some(({ message }) => message.is_sender),
-    isGroupChat,
+      return isDefined(personId) && isNonEmptyString(user.public_picture_url)
+        ? [{ personId, pictureUrl: user.public_picture_url }]
+        : [];
+    }),
+    deadlineAtMs,
   });
 
-  if (!isDefined(resolvedPersons)) {
-    return { ...emptyResult, skippedReason: 'NO_CONTACT' };
-  }
-
-  const { personIdByHandle, matchedPersonCount, createdPersonCount } =
-    resolvedPersons;
-
+export const ingestWhatsappChatMessages = async ({
+  unipileAccountId,
+  attachmentDeadlineAtMs,
+  channel,
+  chat,
+  counterparts,
+  personIdByHandle,
+  messages,
+}: {
+  unipileAccountId: string;
+  attachmentDeadlineAtMs: number;
+  channel: Pick<AppMessageChannel, 'id' | 'handle'>;
+  chat: UnipileChat;
+  counterparts: WhatsappCounterpart[];
+  personIdByHandle: Map<string, string>;
+  messages: UnipileMessage[];
+}): Promise<
+  Pick<WhatsappIngestResult, 'ingestedMessageCount' | 'importedAttachmentCount'>
+> => {
+  const mappedMessages = mapWhatsappMessages({
+    messages,
+    channelHandle: channel.handle,
+    counterparts,
+  });
   const subject = buildWhatsappChatSubject(chat);
   const ingestMessagesInput = mappedMessages.map(({ ingestMessage }) => ({
     ...ingestMessage,
@@ -254,21 +243,100 @@ export const ingestWhatsappMessages = async ({
     },
   });
 
-  await setMissingWhatsappPersonAvatars({
-    avatars: counterparts.flatMap(({ user, handle }) => {
-      const personId = personIdByHandle.get(handle);
+  return {
+    ingestedMessageCount: ingestMessagesInput.length,
+    importedAttachmentCount,
+  };
+};
 
-      return isDefined(personId) && isNonEmptyString(user.public_picture_url)
-        ? [{ personId, pictureUrl: user.public_picture_url }]
-        : [];
-    }),
+export const ingestWhatsappMessages = async ({
+  unipileAccountId,
+  attachmentDeadlineAtMs,
+  channel,
+  settings,
+  chat,
+  counterparts: counterpartUsers,
+  messages,
+}: {
+  unipileAccountId: string;
+  attachmentDeadlineAtMs: number;
+  channel: Pick<AppMessageChannel, 'id' | 'handle'>;
+  settings: WhatsappSettings;
+  chat: UnipileChat;
+  counterparts: UnipileUser[];
+  messages: UnipileMessage[];
+}): Promise<WhatsappIngestResult> => {
+  const emptyResult = {
+    ingestedMessageCount: 0,
+    matchedPersonCount: 0,
+    createdPersonCount: 0,
+    importedAttachmentCount: 0,
+  };
+
+  if (!isWhatsappChatSelected({ settings, chatId: chat.id })) {
+    return { ...emptyResult, skippedReason: 'NOT_SELECTED' };
+  }
+
+  const counterparts = toWhatsappCounterparts(counterpartUsers);
+
+  if (counterparts.length < counterpartUsers.length) {
+    console.log(
+      `[whatsapp] chat ${chat.id}: ${counterparts.length} of ${counterpartUsers.length} members have a visible phone number`,
+    );
+  }
+
+  const mappedMessages = mapWhatsappMessages({
+    messages,
+    channelHandle: channel.handle,
+    counterparts,
+  });
+
+  if (mappedMessages.length === 0) {
+    const hasContent = messages.some(
+      (message) => !message.is_event && !message.is_deleted,
+    );
+
+    return {
+      ...emptyResult,
+      skippedReason: hasContent ? 'NO_PHONE' : 'NO_MESSAGES',
+    };
+  }
+
+  if (counterparts.length === 0) {
+    return { ...emptyResult, skippedReason: 'NO_PHONE' };
+  }
+
+  const chatPersons = await resolveWhatsappChatPersons({
+    settings,
+    counterparts,
+    hasUserSentMessage: async () =>
+      mappedMessages.some(({ message }) => message.is_sender),
+    isGroupChat: isWhatsappGroupChat(chat),
+  });
+
+  if (!isDefined(chatPersons)) {
+    return { ...emptyResult, skippedReason: 'NO_CONTACT' };
+  }
+
+  const ingestResult = await ingestWhatsappChatMessages({
+    unipileAccountId,
+    attachmentDeadlineAtMs,
+    channel,
+    chat,
+    counterparts,
+    personIdByHandle: chatPersons.personIdByHandle,
+    messages: mappedMessages.map(({ message }) => message),
+  });
+
+  await setWhatsappChatPersonAvatars({
+    counterparts,
+    personIdByHandle: chatPersons.personIdByHandle,
     deadlineAtMs: attachmentDeadlineAtMs,
   });
 
   return {
-    ingestedMessageCount: ingestMessagesInput.length,
-    matchedPersonCount,
-    createdPersonCount,
-    importedAttachmentCount,
+    ...ingestResult,
+    matchedPersonCount: chatPersons.matchedPersonCount,
+    createdPersonCount: chatPersons.createdPersonCount,
   };
 };

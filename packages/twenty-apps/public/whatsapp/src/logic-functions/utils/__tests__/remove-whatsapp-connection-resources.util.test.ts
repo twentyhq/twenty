@@ -28,14 +28,14 @@ describe('removeWhatsappConnectionResources', () => {
     mocks.kvGet.mockResolvedValue(null);
   });
 
-  it('clears the pages and progress of the last import run', async () => {
+  it('clears the listed conversations of the last import run', async () => {
     mocks.kvGet.mockImplementation(async (key: string) => {
       if (key === 'whatsapp-history-import:connection-id') {
         return { runId: 'run-1' };
       }
 
       return key.startsWith('whatsapp-history-import-planning:')
-        ? { plannedChunkCount: 2, plannedConversationCount: 40 }
+        ? { chatIds: ['chat-1', 'chat-2'] }
         : null;
     });
 
@@ -46,10 +46,9 @@ describe('removeWhatsappConnectionResources', () => {
 
     expect(mocks.kvDelete.mock.calls.map(([key]) => key)).toEqual(
       expect.arrayContaining([
-        'whatsapp-history-import-progress:connection-id:run-1',
         'whatsapp-history-import-planning:connection-id:run-1',
-        'whatsapp-history-import-chats:connection-id:run-1:0',
-        'whatsapp-history-import-chats:connection-id:run-1:1',
+        'whatsapp-history-import-chat:connection-id:run-1:chat-1',
+        'whatsapp-history-import-chat:connection-id:run-1:chat-2',
       ]),
     );
   });
