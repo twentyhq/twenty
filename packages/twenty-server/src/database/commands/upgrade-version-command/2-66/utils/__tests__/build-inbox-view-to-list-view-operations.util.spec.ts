@@ -1,7 +1,7 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { ViewType } from 'twenty-shared/types';
 
-import { buildInboxViewToListViewOperations } from 'src/database/commands/upgrade-version-command/2-65/utils/build-inbox-view-to-list-view-operations.util';
+import { buildInboxViewToListViewOperations } from 'src/database/commands/upgrade-version-command/2-66/utils/build-inbox-view-to-list-view-operations.util';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
 const WORKSPACE_CUSTOM_APPLICATION = '20202020-0000-4000-8000-0000000000c1';
