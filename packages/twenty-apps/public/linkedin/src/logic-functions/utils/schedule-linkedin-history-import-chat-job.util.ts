@@ -1,7 +1,8 @@
 import { isDefined } from 'twenty-sdk/utils';
 
 import { type LinkedinHistoryImportChatJob } from 'src/logic-functions/types/linkedin-history-import-chat-job.type';
-import { enqueueLinkedinHistoryImportChatJobs } from 'src/logic-functions/utils/enqueue-linkedin-history-import-chat-jobs.util';
+import { enqueueLinkedinImportChatContactsJob } from 'src/logic-functions/utils/enqueue-linkedin-import-chat-contacts-job.util';
+import { enqueueLinkedinImportChatMessagesJob } from 'src/logic-functions/utils/enqueue-linkedin-import-chat-messages-job.util';
 import { getActiveLinkedinHistoryImportState } from 'src/logic-functions/utils/get-active-linkedin-history-import-state.util';
 import {
   getLinkedinHistoryImportChatProgress,
@@ -40,7 +41,17 @@ export const scheduleLinkedinHistoryImportChatJob = async ({
           : undefined,
     },
   });
-  await enqueueLinkedinHistoryImportChatJobs({ jobs: [job], delayMs });
+  if (job.kind === 'CONTACTS') {
+    await enqueueLinkedinImportChatContactsJob({
+      payload: job.payload,
+      delayMs,
+    });
+  } else {
+    await enqueueLinkedinImportChatMessagesJob({
+      payload: job.payload,
+      delayMs,
+    });
+  }
 
   return true;
 };
