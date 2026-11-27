@@ -1,6 +1,5 @@
 import { createSettingsRouteObjects } from '@/app/components/SettingsRoutes';
 import { type WorkspaceRouteObject } from '@/app/routing/types/WorkspaceRouteObject';
-import { SETTINGS_SEARCH_OBJECT_LABEL_TITLE } from '@/settings/search/constants/SettingsSearchObjectLabelTitle';
 import { type SettingsSearchRouteHandle } from '@/settings/search/types/SettingsSearchRouteHandle';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -61,7 +60,7 @@ describe('settings search route coverage', () => {
 
   it('expands per object only routes keyed by the object name alone', () => {
     const expandedRoutes = SEARCHABLE_ROUTES.filter(
-      ({ settingsSearch }) => settingsSearch.isExpandedPerObject === true,
+      ({ settingsSearch }) => settingsSearch.isExpandedPerObject,
     );
     const expandedPaths = expandedRoutes.map(({ path }) => path);
 
@@ -74,10 +73,9 @@ describe('settings search route coverage', () => {
     expect(
       SEARCHABLE_ROUTES.filter(
         ({ settingsSearch }) =>
-          settingsSearch.isExpandedPerObject !== true &&
-          (settingsSearch.title === SETTINGS_SEARCH_OBJECT_LABEL_TITLE ||
-            ('parentPath' in settingsSearch &&
-              expandedPaths.includes(settingsSearch.parentPath))),
+          !settingsSearch.isExpandedPerObject &&
+          'parentPath' in settingsSearch &&
+          expandedPaths.includes(settingsSearch.parentPath),
       ).map(({ path }) => path),
     ).toEqual([]);
   });

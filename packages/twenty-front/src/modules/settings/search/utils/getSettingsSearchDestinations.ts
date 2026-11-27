@@ -1,7 +1,6 @@
 import { type WorkspaceRouteObject } from '@/app/routing/types/WorkspaceRouteObject';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
-import { SETTINGS_SEARCH_OBJECT_LABEL_TITLE } from '@/settings/search/constants/SettingsSearchObjectLabelTitle';
 import { type SettingsSearchDestination } from '@/settings/search/types/SettingsSearchDestination';
 import { type SettingsSearchRouteHandle } from '@/settings/search/types/SettingsSearchRouteHandle';
 import { type SettingsSearchRouteMetadata } from '@/settings/search/types/SettingsSearchRouteMetadata';
@@ -118,18 +117,22 @@ export const getSettingsSearchDestinations = ({
     routes.map((route) => [route.path, route.metadata]),
   );
 
-  const getTitle = (
-    { title }: SettingsSearchRouteMetadata,
-    objectMetadataItem: SettingsSearchObject | undefined,
-  ) =>
-    title === SETTINGS_SEARCH_OBJECT_LABEL_TITLE
-      ? (objectMetadataItem?.labelPlural ?? '')
-      : i18n._(title);
+  const getTitle = ({
+    metadata: { title },
+    objectMetadataItem,
+  }: {
+    metadata: SettingsSearchRouteMetadata;
+    objectMetadataItem: SettingsSearchObject | undefined;
+  }) =>
+    isDefined(title) ? i18n._(title) : (objectMetadataItem?.labelPlural ?? '');
 
-  const getBreadcrumbs = (
-    metadata: SettingsSearchRouteMetadata,
-    objectMetadataItem: SettingsSearchObject | undefined,
-  ): string[] => {
+  const getBreadcrumbs = ({
+    metadata,
+    objectMetadataItem,
+  }: {
+    metadata: SettingsSearchRouteMetadata;
+    objectMetadataItem: SettingsSearchObject | undefined;
+  }): string[] => {
     if ('section' in metadata) {
       return [i18n._(metadata.section)];
     }
@@ -138,8 +141,11 @@ export const getSettingsSearchDestinations = ({
 
     return isDefined(parentMetadata)
       ? [
-          ...getBreadcrumbs(parentMetadata, objectMetadataItem),
-          getTitle(parentMetadata, objectMetadataItem),
+          ...getBreadcrumbs({
+            metadata: parentMetadata,
+            objectMetadataItem,
+          }),
+          getTitle({ metadata: parentMetadata, objectMetadataItem }),
         ]
       : [];
   };
@@ -151,7 +157,7 @@ export const getSettingsSearchDestinations = ({
       return [undefined];
     }
 
-    return metadata.isExpandedPerObject === true &&
+    return metadata.isExpandedPerObject &&
       isDeeplyEqual(pathParameters, OBJECT_PATH_PARAMETERS)
       ? availability.objectMetadataItems
       : [];
@@ -167,10 +173,9 @@ export const getSettingsSearchDestinations = ({
               objectNamePlural: objectMetadataItem.namePlural,
             })
           : getSettingsPath(path);
-        const title = getTitle(metadata, objectMetadataItem);
-        const breadcrumbs = getBreadcrumbs(metadata, objectMetadataItem);
-        const isObjectPage =
-          metadata.title === SETTINGS_SEARCH_OBJECT_LABEL_TITLE;
+        const title = getTitle({ metadata, objectMetadataItem });
+        const breadcrumbs = getBreadcrumbs({ metadata, objectMetadataItem });
+        const isObjectPage = !isDefined(metadata.title);
         const [defaultTab, ...otherTabs] = getAvailableSettingsTabs({
           tabs: metadata.tabs ?? [],
           permissionFlagMap: availability.permissionFlagMap,
