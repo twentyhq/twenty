@@ -38,15 +38,12 @@ export class RouteTriggerController {
     response: Response,
     httpMethod: HTTPMethod,
   ) {
-    const {
-      response: triggerResponse,
-      publicDomainType,
-      sandboxDocument,
-    } = await this.routeTriggerService.handle({ request, httpMethod });
+    const { response: triggerResponse, publicDomainType } =
+      await this.routeTriggerService.handle({ request, httpMethod });
 
     sendRouteTriggerResponse(response, triggerResponse, {
       allowAllHeaders: isDefined(publicDomainType),
-      sandboxDocument,
+      sandboxDocument: publicDomainType !== 'application',
     });
   }
 

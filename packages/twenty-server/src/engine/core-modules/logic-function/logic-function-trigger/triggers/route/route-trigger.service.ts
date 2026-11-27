@@ -261,7 +261,6 @@ export class RouteTriggerService {
   }): Promise<{
     response: RouteTriggerResponse;
     publicDomainType: PublicDomainType | null;
-    sandboxDocument: boolean;
   }> {
     const {
       workspace,
@@ -377,10 +376,6 @@ export class RouteTriggerService {
     return {
       response: outcome.response,
       publicDomainType,
-      // Single-workspace serves the Twenty app on every host, so a member session can predate the domain.
-      sandboxDocument:
-        publicDomainType !== 'application' ||
-        !this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED'),
     };
   }
 }
