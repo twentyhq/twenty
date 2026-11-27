@@ -522,6 +522,72 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
+  // TEMPDEBUG
+  private tempDebugRunning = new Set<string>();
+  public async tempDebugFindStaleSameHash(workspaceId: string, label: string): Promise<void> {
+    if (this.tempDebugRunning.has(workspaceId)) return;
+    this.tempDebugRunning.add(workspaceId);
+    try {
+      const snapshot: { localKey: string; keyName: WorkspaceCacheKeyName; hash: string; json: string }[] = [];
+      for (const [localKey, entry] of [...this.localCache]) {
+        if (!localKey.endsWith(`:${workspaceId}`)) continue;
+        const keyName = localKey.slice(0, -(workspaceId.length + 1)) as WorkspaceCacheKeyName;
+        if (this.localDataOnlyKeys.has(keyName)) continue;
+        const version = entry.versions.get(entry.latestHash);
+        if (!version || version.state !== 'live') continue;
+        snapshot.push({ localKey, keyName, hash: entry.latestHash, json: JSON.stringify(version.data ?? null) });
+      }
+      if (snapshot.length === 0) return;
+      const values = await this.cacheStorage.mget<unknown>(snapshot.flatMap(({ localKey }) => [`${localKey}:data`, `${localKey}:hash`]));
+      const stale: string[] = [];
+      snapshot.forEach(({ keyName, hash, json }, index) => {
+        const redisData = values[index * 2];
+        const redisHash = values[index * 2 + 1];
+        if (redisHash !== hash || redisData === undefined || redisData === null) return;
+        const expanded = JSON.stringify(this.getProviderOrThrow(keyName).expandFromStorage(redisData as never) ?? null);
+        if (expanded !== json && expanded.length !== json.length) {
+          stale.push(`${keyName}(local=${json.length}b redis=${expanded.length}b)`);
+        }
+      });
+      const findStaleLocalOnlyKeys = async (): Promise<string[]> => {
+        const staleLocalOnly: string[] = [];
+        for (const keyName of this.localDataOnlyKeys) {
+          const localKey = this.buildCacheKey(workspaceId, keyName);
+          const entry = this.localCache.get(localKey);
+          const version = entry?.versions.get(entry.latestHash);
+          if (!entry || !version || version.state !== 'live') continue;
+          const hashBefore = entry.latestHash;
+          const [redisHash] = await this.cacheStorage.mget<string>([`${localKey}:hash`]);
+          if (redisHash !== hashBefore) continue;
+          const provider = this.getProviderOrThrow(keyName);
+          const loader = new WorkspaceCacheRowsBatchLoader(this.coreDataSource, workspaceId);
+          await loader.loadRows(this.collectRowsRequirements([keyName]));
+          const fresh = JSON.stringify((await provider.computeForCache({ workspaceId, rows: loader.readRows(provider.rowsRequirement) } as never)) ?? null);
+          const local = JSON.stringify(version.data ?? null);
+          const [redisHashAfter] = await this.cacheStorage.mget<string>([`${localKey}:hash`]);
+          if (redisHashAfter === hashBefore && this.localCache.get(localKey)?.latestHash === hashBefore && fresh !== local) {
+            staleLocalOnly.push(`${keyName}(local=${local.length}b db=${fresh.length}b)`);
+          }
+        }
+        return staleLocalOnly;
+      };
+      const firstLocalOnly = await findStaleLocalOnlyKeys();
+      if (firstLocalOnly.length > 0) {
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+        const secondLocalOnly = await findStaleLocalOnlyKeys();
+        const names = new Set(secondLocalOnly.map((k) => k.split('(')[0]));
+        stale.push(...firstLocalOnly.filter((k) => names.has(k.split('(')[0])).map((k) => 'LOCALONLY:' + k));
+      }
+      if (stale.length > 0) {
+        console.log('TEMPDEBUG_STALE_SAME_HASH ' + label + ' workspace=' + workspaceId + ' keys=' + stale.join(','));
+      }
+    } catch (error) {
+      console.log('TEMPDEBUG_DETECTOR_ERROR ' + String(error));
+    } finally {
+      this.tempDebugRunning.delete(workspaceId);
+    }
+  }
+
   public async evictWorkspaceFromLocalCache(
     workspaceId: string,
   ): Promise<void> {

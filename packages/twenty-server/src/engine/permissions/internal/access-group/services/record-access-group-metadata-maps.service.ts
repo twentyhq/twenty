@@ -14,6 +14,7 @@ export class RecordAccessGroupMetadataMapsService {
     workspaceId: string,
   ): Promise<RecordAccessGroupComputationMetadataMaps> {
     await this.workspaceCacheService.markWorkspaceLocalCacheStale(workspaceId);
+    void this.workspaceCacheService.tempDebugFindStaleSameHash(workspaceId, 'recompute');
 
     return this.find(workspaceId);
   }
