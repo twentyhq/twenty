@@ -20,10 +20,7 @@ export const SettingsApplicationConnectionProviderSection = ({
 
   return (
     <Section.Root>
-      <Section.Header
-        title={providerDisplayName}
-        description={description}
-      />
+      <Section.Header title={providerDisplayName} description={description} />
       {shouldShowMissingCredentialsBanner && (
         <InlineBanner
           layout="compact"
