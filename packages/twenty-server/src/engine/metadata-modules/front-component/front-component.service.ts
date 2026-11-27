@@ -311,8 +311,8 @@ export class FrontComponentService {
     );
 
     const application =
-      await this.applicationService.findOneApplicationWithRelationsOrThrow({
-        id: frontComponent.applicationId,
+      await this.applicationService.findInstalledFlatApplicationOrThrow({
+        applicationId: frontComponent.applicationId,
         workspaceId,
       });
 
