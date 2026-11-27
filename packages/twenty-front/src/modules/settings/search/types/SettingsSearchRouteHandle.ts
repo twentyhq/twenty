@@ -2,5 +2,5 @@ import { type WorkspaceRouteHandle } from '@/app/routing/types/WorkspaceRouteObj
 import { type SettingsSearchRouteMetadata } from '@/settings/search/types/SettingsSearchRouteMetadata';
 
 export type SettingsSearchRouteHandle = WorkspaceRouteHandle & {
-  settingsSearch?: SettingsSearchRouteMetadata;
+  settingsSearch?: SettingsSearchRouteMetadata | false;
 };

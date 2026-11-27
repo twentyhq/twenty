@@ -55,7 +55,7 @@ const collectSettingsSearchRoutes = ({
       parentGuards: guards,
     });
 
-    if (!isDefined(metadata) || !isDefined(path)) {
+    if (!isDefined(metadata) || metadata === false || !isDefined(path)) {
       return childRoutes;
     }
 

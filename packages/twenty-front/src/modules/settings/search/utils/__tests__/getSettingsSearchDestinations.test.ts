@@ -79,4 +79,24 @@ describe('getSettingsSearchDestinations', () => {
       expect(titles).not.toContain(title);
     }
   });
+
+  it('lists the admin panel only when its routes exist', () => {
+    const getAdminTitles = (isAdminPageEnabled: boolean) =>
+      getTitles(
+        getSettingsSearchDestinations({
+          routeObjects: createWorkspaceRouteObjects({ isAdminPageEnabled }),
+          availability: FULL_AVAILABILITY,
+          i18n,
+        }),
+      );
+
+    expect(getAdminTitles(false)).not.toContain('Admin Panel');
+    expect(getAdminTitles(true)).toContain('Admin Panel');
+  });
+
+  it('skips routes excluded from search', () => {
+    expect(getDestinations().map(({ path }) => path)).not.toContain(
+      '/settings/objects/new',
+    );
+  });
 });
