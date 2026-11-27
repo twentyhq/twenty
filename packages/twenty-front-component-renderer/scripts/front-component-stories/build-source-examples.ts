@@ -178,13 +178,26 @@ const buildInBatches = async (
   }
 };
 
+const externalPreviewMetadataClientPlugin: esbuild.Plugin = {
+  name: 'external-preview-metadata-client',
+  setup(build) {
+    build.onResolve({ filter: /^twenty-client-sdk\/metadata$/ }, (args) => {
+      if (
+        args.importer ===
+        path.join(storiesDir, 'showcase/metadata-preview.front-component.tsx')
+      ) {
+        return { path: args.path, external: true };
+      }
+    });
+  },
+};
+
 const buildSourceExamples = async (): Promise<void> => {
   const entryPoints = resolveEntryPoints();
   const tsconfigPath = path.join(dirname, '../../tsconfig.json');
 
   const commonOptions: esbuild.BuildOptions = {
     bundle: true,
-    external: ['twenty-client-sdk/metadata'],
     splitting: false,
     format: 'esm',
     outExtension: { '.js': '.mjs' },
@@ -202,7 +215,10 @@ const buildSourceExamples = async (): Promise<void> => {
   await buildInBatches(entryPoints, {
     ...commonOptions,
     outdir: exampleSourcesBuiltDir,
-    plugins: getFrontComponentBuildPlugins(),
+    plugins: [
+      externalPreviewMetadataClientPlugin,
+      ...getFrontComponentBuildPlugins(),
+    ],
   });
 
   console.log(
@@ -214,7 +230,10 @@ const buildSourceExamples = async (): Promise<void> => {
   await buildInBatches(entryPoints, {
     ...commonOptions,
     outdir: exampleSourcesBuiltPreactDir,
-    plugins: getFrontComponentBuildPlugins({ usePreact: true }),
+    plugins: [
+      externalPreviewMetadataClientPlugin,
+      ...getFrontComponentBuildPlugins({ usePreact: true }),
+    ],
   });
 
   console.log(
