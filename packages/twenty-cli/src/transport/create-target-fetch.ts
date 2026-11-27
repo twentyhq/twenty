@@ -15,6 +15,16 @@ import { readBoundedBody } from '@/transport/read-bounded-body';
 import { sendWithProxyHeaderRenewal } from '@/transport/send-with-proxy-header-renewal';
 
 const NULL_BODY_STATUSES = new Set([101, 204, 205, 304]);
+const CERTIFICATE_ERROR_CODES = new Set([
+  'CERT_HAS_EXPIRED',
+  'CERT_NOT_YET_VALID',
+  'DEPTH_ZERO_SELF_SIGNED_CERT',
+  'ERR_TLS_CERT_ALTNAME_INVALID',
+  'SELF_SIGNED_CERT_IN_CHAIN',
+  'UNABLE_TO_GET_ISSUER_CERT',
+  'UNABLE_TO_GET_ISSUER_CERT_LOCALLY',
+  'UNABLE_TO_VERIFY_LEAF_SIGNATURE',
+]);
 
 const isRedirectStatus = (status: number) => status >= 300 && status < 400;
 
@@ -60,6 +70,15 @@ export const toTransportError = ({
     cause instanceof Error && 'code' in cause && isString(cause.code)
       ? cause.code
       : undefined;
+
+  if (isDefined(networkCode) && CERTIFICATE_ERROR_CODES.has(networkCode)) {
+    return new CliError({
+      code: 'NETWORK_ERROR',
+      message: `Could not verify the TLS certificate for ${url.origin} (${networkCode}).`,
+      hint: 'Check the server certificate and the trusted certificates on your computer. If your organization inspects HTTPS, ask IT to install its root CA in the system trust store, or set NODE_EXTRA_CA_CERTS to its trusted PEM file before starting twenty.',
+      details: { reason, networkCode },
+    });
+  }
 
   return new CliError({
     code: 'NETWORK_ERROR',

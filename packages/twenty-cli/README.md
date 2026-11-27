@@ -32,6 +32,18 @@ structured result. Saved connections live in `~/.twenty/config.json`.
 Browser sign-in is supported on Twenty 2.42 and later. On older servers, sign in
 with an [API key](docs/commands.md#connections-and-authentication) instead.
 
+### HTTPS inspection and enterprise certificates
+
+The CLI trusts the operating system's certificate store in addition to Node's
+default trusted certificates. On managed computers, IT can deploy the enterprise
+root CA through device management; no CLI-specific certificate setting is needed.
+
+If a certificate cannot be verified, check the server's certificate and the
+computer's trusted roots. For an additional CA available only as a PEM file, set
+`NODE_EXTRA_CA_CERTS=/path/to/company-ca.pem` before starting `twenty`. Certificate
+and hostname verification remain enabled. Containers need their own trusted
+certificates; installing a CA on the host does not install it inside a container.
+
 ## Develop an application
 
 App projects pin Yarn 4 in `packageManager`. Run `corepack enable` once so
