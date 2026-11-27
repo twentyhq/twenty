@@ -325,15 +325,22 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
           workspaceId,
           cacheKeyNames,
         );
-        const freshEntries = this.getFromLocalCache(workspaceId, freshKeys);
+        const { missingKeys: missingFreshKeys, ...freshEntries } =
+          this.getFromLocalCache(workspaceId, freshKeys);
+        const keysToValidate = [...staleKeys, ...missingFreshKeys];
 
-        if (staleKeys.length === 0) {
+        if (keysToValidate.length === 0) {
           return freshEntries;
         }
 
-        const { validKeys, keysNeedingDataFromRedis, keysNeedingRecompute } =
-          await this.validateLocalHashAgainstRedisHash(workspaceId, staleKeys);
-        const validatedEntries = this.getFromLocalCache(workspaceId, validKeys);
+        const {
+          validatedEntries,
+          keysNeedingDataFromRedis,
+          keysNeedingRecompute,
+        } = await this.validateLocalHashAgainstRedisHash(
+          workspaceId,
+          keysToValidate,
+        );
 
         const { redisEntries, missingInRedis } = await this.fetchDataFromRedis(
           workspaceId,
@@ -564,17 +571,17 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     workspaceId: string,
     cacheKeyNames: WorkspaceCacheKeyName[],
   ): Promise<{
-    validKeys: WorkspaceCacheKeyName[];
+    validatedEntries: CacheEntriesResult;
     keysNeedingDataFromRedis: WorkspaceCacheKeyName[];
     keysNeedingRecompute: KeyToRecompute[];
   }> {
-    const validKeys: WorkspaceCacheKeyName[] = [];
+    const validatedEntries: CacheEntriesResult = { data: {}, hashes: {} };
     const keysNeedingDataFromRedis: WorkspaceCacheKeyName[] = [];
     const keysNeedingRecompute: KeyToRecompute[] = [];
 
     if (cacheKeyNames.length === 0) {
       return {
-        validKeys,
+        validatedEntries,
         keysNeedingDataFromRedis,
         keysNeedingRecompute,
       };
@@ -597,8 +604,20 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         localEntry.latestHash === redisHash
       ) {
         localEntry.lastHashCheckedAt = Date.now();
-        validKeys.push(keyName);
-      } else if (this.localDataOnlyKeys.has(keyName)) {
+
+        const { data, hashes, missingKeys } = this.getFromLocalCache(
+          workspaceId,
+          [keyName],
+        );
+
+        if (missingKeys.length === 0) {
+          Object.assign(validatedEntries.data, data);
+          Object.assign(validatedEntries.hashes, hashes);
+          continue;
+        }
+      }
+
+      if (this.localDataOnlyKeys.has(keyName)) {
         keysNeedingRecompute.push({ keyName, expectedHash: redisHash });
       } else {
         keysNeedingDataFromRedis.push(keyName);
@@ -606,7 +625,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     }
 
     return {
-      validKeys,
+      validatedEntries,
       keysNeedingDataFromRedis,
       keysNeedingRecompute,
     };
@@ -821,26 +840,31 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
   private getFromLocalCache(
     workspaceId: string,
     workspaceCacheKeyNames: WorkspaceCacheKeyName[],
-  ): CacheEntriesResult {
-    const result: CacheEntriesResult = { data: {}, hashes: {} };
+  ): CacheEntriesResult & { missingKeys: WorkspaceCacheKeyName[] } {
+    const result: CacheEntriesResult & {
+      missingKeys: WorkspaceCacheKeyName[];
+    } = { data: {}, hashes: {}, missingKeys: [] };
 
     for (const keyName of workspaceCacheKeyNames) {
       const localKey = this.buildCacheKey(workspaceId, keyName);
       const entry = this.localCache.get(localKey);
       const version = entry?.versions.get(entry.latestHash);
 
-      if (isDefined(entry) && isDefined(version)) {
-        const data = this.readVersion({
-          keyName,
-          entry,
-          hash: entry.latestHash,
-          version,
-        });
-
-        Object.assign(result.data, { [keyName]: data });
-        result.hashes[keyName] = entry.latestHash;
-        this.cleanupStaleVersions(entry);
+      if (!isDefined(entry) || !isDefined(version)) {
+        result.missingKeys.push(keyName);
+        continue;
       }
+
+      const data = this.readVersion({
+        keyName,
+        entry,
+        hash: entry.latestHash,
+        version,
+      });
+
+      Object.assign(result.data, { [keyName]: data });
+      result.hashes[keyName] = entry.latestHash;
+      this.cleanupStaleVersions(entry);
     }
 
     return result;
