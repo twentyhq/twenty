@@ -1,11 +1,15 @@
+import { StandalonePageCommandMenu } from '@/command-menu-item/components/StandalonePageCommandMenu';
 import { SettingsEditableTitle } from '@/settings/components/SettingsEditableTitle';
 import { SettingsSecondaryBar } from '@/settings/components/layout/SettingsSecondaryBar';
 import { SidePanelPageTitleSyncEffect } from '@/side-panel/components/SidePanelPageTitleSyncEffect';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/types/BreadcrumbProps';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useId, type JSX, type ReactNode } from 'react';
+import { ContextStorePageType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 type SettingsPageLayoutProps = {
   links: BreadcrumbProps['links'];
@@ -31,6 +35,9 @@ export const SettingsPageLayout = ({
   titleColor,
 }: SettingsPageLayoutProps) => {
   const titleInstanceId = useId();
+  const isCustomizableSidebarEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
+  );
 
   const sidePanelPageTitle =
     pageTitle ??
@@ -67,7 +74,19 @@ export const SettingsPageLayout = ({
             title={formattedTitle}
             icon={icon}
             tag={tag}
-            actionButton={actionButton}
+            actionButton={
+              isCustomizableSidebarEnabled ? (
+                <>
+                  {actionButton}
+                  <StandalonePageCommandMenu
+                    pageType={ContextStorePageType.Settings}
+                    isEditable={false}
+                  />
+                </>
+              ) : (
+                actionButton
+              )
+            }
             centerTitle
             titleColor={titleColor}
           />

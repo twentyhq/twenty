@@ -15,6 +15,7 @@ import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/st
 import { useIsLayoutCustomizationAllowedOnCurrentPage } from '@/layout-customization/hooks/useIsLayoutCustomizationAllowedOnCurrentPage';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
 import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getWorkspaceFeatureFlagsMap } from '@/workspace/utils/getWorkspaceFeatureFlagsMap';
 import { useMemo } from 'react';
@@ -28,7 +29,15 @@ import {
   EngineComponentKey,
 } from '~/generated-metadata/graphql';
 
-export const StandalonePageCommandMenu = () => {
+type StandalonePageCommandMenuProps = {
+  pageType?: ContextStorePageType;
+  isEditable?: boolean;
+};
+
+export const StandalonePageCommandMenu = ({
+  pageType = ContextStorePageType.Standalone,
+  isEditable = true,
+}: StandalonePageCommandMenuProps) => {
   const isLayoutCustomizationAllowedOnCurrentPage =
     useIsLayoutCustomizationAllowedOnCurrentPage();
   const commandMenuItems = useAtomStateValue(commandMenuItemsSelector);
@@ -41,6 +50,7 @@ export const StandalonePageCommandMenu = () => {
   );
   const { targetObjectReadPermissions, targetObjectWritePermissions } =
     useAtomStateValue(commandMenuTargetObjectPermissionsSelector);
+  const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
 
   const commandMenuContextApi = useMemo<CommandMenuContextApi>(() => {
     const featureFlags = getWorkspaceFeatureFlagsMap(
@@ -48,8 +58,8 @@ export const StandalonePageCommandMenu = () => {
     );
 
     return {
-      pageType: ContextStorePageType.Standalone,
-      isInSidePanel: false,
+      pageType,
+      isInSidePanel,
       isDashboardPageLayoutInEditMode: false,
       isLayoutCustomizationModeEnabled,
       favoriteRecordIds: [],
@@ -70,6 +80,8 @@ export const StandalonePageCommandMenu = () => {
       currentView: null,
     };
   }, [
+    pageType,
+    isInSidePanel,
     currentWorkspace?.featureFlags,
     permissionFlagMap,
     currentUser?.canImpersonate,
@@ -125,7 +137,7 @@ export const StandalonePageCommandMenu = () => {
       }}
     >
       <PinnedCommandMenuItemButtons />
-      <CommandMenuItemEditButton />
+      {isEditable && <CommandMenuItemEditButton />}
     </CommandMenuContext.Provider>
   );
 };
