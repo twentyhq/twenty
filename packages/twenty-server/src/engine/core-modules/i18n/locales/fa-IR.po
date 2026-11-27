@@ -13794,6 +13794,11 @@ msgstr "پرچم‌های مجوز استاندارد قابل تغییر نیس
 msgid "Standard skills cannot be modified."
 msgstr "مهارت‌های استاندارد قابل تغییر نیستند."
 
+#. js-lingui-id: w3TWxe
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Start conversation logic function \"{startConversationLogicFunctionUniversalIdentifier}\" was not found in this application"
+msgstr ""
+
 #. js-lingui-id: ndAwoq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -14822,6 +14827,11 @@ msgstr "تابع منطقی که این ارائه‌دهنده پیام‌رس�
 msgid "The logic function this messaging provider sends with was not found in its application."
 msgstr "تابع منطقی که این ارائه‌دهنده پیام‌رسانی با آن ارسال می‌کند، در برنامه آن پیدا نشد."
 
+#. js-lingui-id: 3Auz53
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "The logic function this messaging provider starts conversations with was not found in its application."
+msgstr ""
+
 #. js-lingui-id: zIwdvk
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The logic function to run on connect was not found."
@@ -15841,6 +15851,11 @@ msgstr "این عضو احراز هویت دومرحله‌ای را تنظیم 
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "This message channel cannot send messages."
 msgstr "این کانال پیام نمی‌تواند پیام ارسال کند."
+
+#. js-lingui-id: yXQyf9
+#: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
+msgid "This message channel cannot start new conversations."
+msgstr ""
 
 #. js-lingui-id: Rt42MP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts

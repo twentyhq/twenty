@@ -7866,6 +7866,11 @@ msgstr "Connect AI assistants like Claude or Cursor to your workspace via the Mo
 msgid "Connect an account"
 msgstr "Connect an account"
 
+#. js-lingui-id: uvyCU0
+#: src/modules/page-layout/widgets/messages/components/WidgetActionMessageCompose.tsx
+msgid "Connect an email account"
+msgstr "Connect an email account"
+
 #. js-lingui-id: B+ajzf
 #: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
 msgid "Connect email, WhatsApp or LinkedIn to see your conversations here."
@@ -8570,6 +8575,11 @@ msgstr "Could not run the lookup"
 #: src/modules/object-core/workflows/hooks/useRenameCoreWorkflow.ts
 msgid "Could not save workflow"
 msgstr "Could not save workflow"
+
+#. js-lingui-id: g0DwAz
+#: src/modules/side-panel/pages/start-app-conversation/components/SidePanelStartAppConversationPage.tsx
+msgid "Could not start the conversation"
+msgstr "Could not start the conversation"
 
 #. js-lingui-id: p75IO8
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
@@ -19441,6 +19451,7 @@ msgstr "Merging..."
 #: src/modules/log-console/constants/LogConsoleApplicationLogColumns.tsx
 #: src/modules/object-core/agents/components/CoreAgentTestForm.tsx
 #: src/modules/settings/event-logs/utils/getColumnsForEventLogTable.tsx
+#: src/modules/side-panel/pages/start-app-conversation/components/SidePanelStartAppConversationPage.tsx
 #: src/modules/validation-rules/components/SettingsValidationRuleForm.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowEditActionSendChatMessage.tsx
 msgid "Message"
@@ -19448,6 +19459,7 @@ msgstr "Message"
 
 #. js-lingui-id: bCYjwr
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
+#: src/modules/side-panel/pages/start-app-conversation/components/SidePanelStartAppConversationPage.tsx
 msgid "Message {recipientName}"
 msgstr "Message {recipientName}"
 
@@ -20409,6 +20421,7 @@ msgstr "New Company"
 
 #. js-lingui-id: +HY5kX
 #: src/modules/page-layout/widgets/chat-threads/components/WidgetActionChatThreadCreate.tsx
+#: src/modules/side-panel/hooks/useOpenStartAppConversationInSidePanel.ts
 #: src/modules/side-panel/pages/ask-ai/components/SidePanelAskAiNewChatButton.tsx
 msgid "New conversation"
 msgstr "New conversation"
@@ -24921,6 +24934,7 @@ msgstr "recipient@example.com"
 #: src/modules/activities/emails/components/ChatThreadNewMessage.tsx
 #: src/modules/ai-chat/composer/components/AiChatNewThreadRecipientField.tsx
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
+#: src/modules/side-panel/pages/start-app-conversation/components/SidePanelStartAppConversationPage.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Recipients"
 msgstr "Recipients"
@@ -27922,6 +27936,7 @@ msgstr "Selection"
 #: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalEmailCard.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
 #: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
+#: src/modules/side-panel/pages/start-app-conversation/components/SidePanelStartAppConversationPage.tsx
 msgid "Send"
 msgstr "Send"
 
@@ -35270,6 +35285,7 @@ msgstr "Write a description"
 
 #. js-lingui-id: eWlz27
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
+#: src/modules/side-panel/pages/start-app-conversation/components/SidePanelStartAppConversationPage.tsx
 msgid "Write a message"
 msgstr "Write a message"
 
