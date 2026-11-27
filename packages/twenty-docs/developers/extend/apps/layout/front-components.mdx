@@ -912,14 +912,13 @@ See the [public assets section](/developers/extend/apps/config/public-assets) fo
 
 ## Sharing dependencies across front components
 
-By default, every front component bundles its own copy of the libraries it imports, so an app with five components ships React five times. Declare shared dependencies in your app's `package.json` to build those libraries once and have every component of the app load them from a single cached file:
+Without shared dependencies, every front component bundles its own copy of the libraries it imports, so an app with five components ships React five times. Declare shared dependencies in your app's `package.json` to build those libraries once and have every component of the app load them from a single cached file. Apps scaffolded with `twenty app init` already declare them:
 
 ```json package.json
 {
   "frontComponentSharedDependencies": [
     "react",
-    "react-dom/client",
-    "twenty-ui/primitives/input"
+    "react-dom/client"
   ]
 }
 ```
@@ -946,8 +945,8 @@ export default defineFrontComponent({
 A few things to know:
 
 - **One shared dependencies bundle per app.** The bundle is built from your app's own dependencies, so you keep full control of the versions you ship.
-- **List the exact specifiers you import.** `twenty-ui/primitives/input` and `twenty-ui/primitives/data-display` are two entries; a package name alone does not cover its subpaths. Listing `react` automatically covers `react/jsx-runtime`.
-- **Share `react-dom/client` alongside `react`.** Every component renders through `createRoot`, so leaving it out means each component still bundles React DOM.
+- **React and Twenty UI are shared as a whole.** Once the list has an entry, the bundle also includes `react`, `react-dom`, `react-dom/client`, `react/jsx-runtime` and the main Twenty UI entry points, such as `twenty-ui/primitives/input`, `twenty-ui/icon` and `twenty-ui/theme`, for the packages your app installs.
+- **List other packages by the exact specifiers you import.** A package name alone does not cover its subpaths: `date-fns` and `date-fns/locale` are two entries.
 - **The bundle is cached.** It is served under a content-hash URL with a long-lived immutable cache, so it is downloaded once and reused across all components of the app until one of its dependencies changes.
 - **Components that import none of the shared packages never download it.**
 
