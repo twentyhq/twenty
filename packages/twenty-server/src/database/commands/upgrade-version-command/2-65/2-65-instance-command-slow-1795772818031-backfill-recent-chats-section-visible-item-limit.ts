@@ -4,7 +4,7 @@ import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decor
 import { type SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-@RegisteredInstanceCommand('2.65.0', 1795732313325, { type: 'slow' })
+@RegisteredInstanceCommand('2.65.0', 1795772818031, { type: 'slow' })
 export class BackfillRecentChatsSectionVisibleItemLimitSlowInstanceCommand
   implements SlowInstanceCommand
 {
