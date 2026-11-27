@@ -467,6 +467,9 @@ export {
   IconWorld,
   IconWorldWww,
   IconX,
+  IconZoomIn,
+  IconZoomOut,
+  IconZoomReset,
   IconZzz,
   IconZzzOff,
 } from '@tabler/icons-react';
