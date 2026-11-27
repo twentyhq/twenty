@@ -1,9 +1,12 @@
 import { getConditionalAvailabilityFilterFields } from '@/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterFields';
 
-const getOptionsOfField = (
-  key: string,
-  filterFields: ReturnType<typeof getConditionalAvailabilityFilterFields>,
-) =>
+const getOptionsOfField = ({
+  key,
+  filterFields,
+}: {
+  key: string;
+  filterFields: ReturnType<typeof getConditionalAvailabilityFilterFields>;
+}) =>
   filterFields
     .find((filterField) => filterField.key === key)
     ?.options.map(({ value, label }) => ({ value, label }));
@@ -31,7 +34,7 @@ describe('getConditionalAvailabilityFilterFields', () => {
       workspaceMembers: [],
     });
 
-    expect(getOptionsOfField('currentRole', filterFields)).toEqual([
+    expect(getOptionsOfField({ key: 'currentRole', filterFields })).toEqual([
       { value: 'admin-universal-identifier', label: 'Admin' },
     ]);
   });
@@ -53,7 +56,9 @@ describe('getConditionalAvailabilityFilterFields', () => {
       ],
     });
 
-    expect(getOptionsOfField('currentWorkspaceMember', filterFields)).toEqual([
+    expect(
+      getOptionsOfField({ key: 'currentWorkspaceMember', filterFields }),
+    ).toEqual([
       { value: 'workspace-member-1', label: 'Jane Doe' },
       { value: 'workspace-member-2', label: 'Tim' },
     ]);
@@ -65,7 +70,7 @@ describe('getConditionalAvailabilityFilterFields', () => {
       workspaceMembers: [],
     });
 
-    expect(getOptionsOfField('device', filterFields)).toEqual([
+    expect(getOptionsOfField({ key: 'device', filterFields })).toEqual([
       { value: 'DESKTOP', label: 'Desktop' },
       { value: 'MOBILE', label: 'Mobile' },
     ]);
