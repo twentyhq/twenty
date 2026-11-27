@@ -1,15 +1,13 @@
-import { isDefined } from 'twenty-shared/utils';
 import { type SettingsCustomizeVideoModalTab } from '@/settings/types/SettingsCustomizeVideoModalTab';
 import { SettingsCustomizeVideoModal } from '@/settings/components/SettingsCustomizeVideoModal';
+import { SettingsPreviewCard } from '@/settings/components/SettingsPreviewCard';
+import { SETTINGS_COVER_HEIGHT } from '@/settings/constants/SettingsCoverHeight';
 import { HeroPlayButton } from '@/ui/layout/hero/components/HeroPlayButton';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
-import { Card } from 'twenty-ui/primitives/surfaces';
 import { useThemeColorScheme, themeCssVariables } from 'twenty-ui/theme';
-
-const DEFAULT_COVER_HEIGHT = 150;
 
 const StyledCoverContainer = styled.div<{ coverHeight: number }>`
   background: ${themeCssVariables.background.secondary};
@@ -37,11 +35,6 @@ const StyledOverlay = styled.div`
   position: absolute;
 `;
 
-const StyledFooter = styled.div`
-  background: ${themeCssVariables.background.secondary};
-  border-top: 1px solid ${themeCssVariables.border.color.medium};
-`;
-
 type SettingsDiscoveryHeroCardProps = {
   lightSrc: string;
   darkSrc: string;
@@ -57,7 +50,7 @@ export const SettingsDiscoveryHeroCard = ({
   darkSrc,
   instanceIdPrefix,
   tabs,
-  coverHeight = DEFAULT_COVER_HEIGHT,
+  coverHeight = SETTINGS_COVER_HEIGHT,
   footer,
   playButtonAriaLabel,
 }: SettingsDiscoveryHeroCardProps) => {
@@ -73,20 +66,24 @@ export const SettingsDiscoveryHeroCard = ({
 
   return (
     <>
-      <Card.Root>
-        <StyledCoverContainer coverHeight={coverHeight}>
-          <StyledImage src={src} alt="" aria-hidden />
-          {shouldDisplayVideo && (
-            <StyledOverlay>
-              <HeroPlayButton
-                onClick={() => openDialog(modalInstanceId)}
-                ariaLabel={playButtonAriaLabel ?? t`Watch demo`}
-              />
-            </StyledOverlay>
-          )}
-        </StyledCoverContainer>
-        {isDefined(footer) && <StyledFooter>{footer}</StyledFooter>}
-      </Card.Root>
+      <SettingsPreviewCard
+        hasPreviewGutter={false}
+        isPreviewTitleVisible={false}
+        preview={
+          <StyledCoverContainer coverHeight={coverHeight}>
+            <StyledImage src={src} alt="" aria-hidden />
+            {shouldDisplayVideo && (
+              <StyledOverlay>
+                <HeroPlayButton
+                  onClick={() => openDialog(modalInstanceId)}
+                  ariaLabel={playButtonAriaLabel ?? t`Watch demo`}
+                />
+              </StyledOverlay>
+            )}
+          </StyledCoverContainer>
+        }
+        content={footer}
+      />
       {shouldDisplayVideo && (
         <SettingsCustomizeVideoModal
           modalInstanceId={modalInstanceId}

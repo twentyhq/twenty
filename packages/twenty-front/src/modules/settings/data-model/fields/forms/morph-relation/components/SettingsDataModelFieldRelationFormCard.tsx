@@ -1,7 +1,7 @@
 import { useFormContext } from 'react-hook-form';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
+import { SettingsPreviewCard } from '@/settings/components/SettingsPreviewCard';
 import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
 import {
   SettingsDataModelFieldRelationForm,
@@ -72,7 +72,7 @@ export const SettingsDataModelFieldRelationFormCard = ({
       : RelationType.MANY_TO_ONE;
 
   return (
-    <SettingsDataModelPreviewFormCard
+    <SettingsPreviewCard
       preview={
         <SettingsDataModelFieldRelationPreviewContent isMobile={isMobile}>
           <SettingsDataModelRelationFieldPreviewSubWidget
@@ -120,7 +120,7 @@ export const SettingsDataModelFieldRelationFormCard = ({
           />
         </SettingsDataModelFieldRelationPreviewContent>
       }
-      form={
+      content={
         <>
           <SettingsDataModelFieldRelationForm
             existingFieldMetadataId={existingFieldMetadataId}

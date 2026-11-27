@@ -7,7 +7,7 @@ import { useIcons } from 'twenty-ui/icon/provider';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
+import { SettingsPreviewCard } from '@/settings/components/SettingsPreviewCard';
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ValidationRuleExpressionEditor } from '@/validation-rules/components/ValidationRuleExpressionEditor';
@@ -77,7 +77,7 @@ export const SettingsValidationRuleForm = ({
           title={t`Condition`}
           description={t`Must be true to save. A write that makes it false is rejected.`}
         />
-        <SettingsDataModelPreviewFormCard
+        <SettingsPreviewCard
           isPreviewTitleVisible={false}
           preview={
             <SettingsValidationRulePreview
@@ -88,7 +88,7 @@ export const SettingsValidationRuleForm = ({
               message={values.message}
             />
           }
-          form={
+          content={
             <ValidationRuleExpressionEditor
               value={values.expression}
               fields={fields}

@@ -4,6 +4,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { useUnsubscribeTopics } from '@/activities/emails/hooks/useUnsubscribeTopics';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { SettingsPreviewCard } from '@/settings/components/SettingsPreviewCard';
 import { SettingsUnsubscribePreviewSender } from '@/settings/unsubscribers/components/SettingsUnsubscribePreviewSender';
 import { SettingsUnsubscribePreviewTracking } from '@/settings/unsubscribers/components/SettingsUnsubscribePreviewTracking';
 import { getUnsubscribePageHeaderDescription } from '@/settings/unsubscribers/utils/getUnsubscribePageHeaderDescription';
@@ -17,14 +18,11 @@ import { UnsubscribeTopicVisibility } from '~/generated-metadata/graphql';
 
 const PREVIEW_RECIPIENT_EMAIL_ADDRESS = 'name@example.com';
 
-const StyledViewport = styled.div`
+const StyledStage = styled.div`
   align-items: center;
-  background: ${themeCssVariables.background.secondary};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.md};
   display: flex;
   justify-content: center;
-  padding: ${themeCssVariables.spacing[10]} ${themeCssVariables.spacing[6]};
+  padding: ${themeCssVariables.spacing[6]} ${themeCssVariables.spacing[2]};
 `;
 
 const StyledCardContainer = styled.div`
@@ -84,67 +82,77 @@ export const SettingsUnsubscribePreview = () => {
         title={t`Unsubscribe page`}
         description={t`Preview of the page recipients see when they unsubscribe`}
       />
-      <StyledViewport>
-        {!loading && (
-          <StyledCardContainer>
-            <Card.Root
-              fullWidth
-              backgroundColor={themeCssVariables.background.primary}
-            >
-              <StyledCardBody>
-                <div>
-                  <SettingsUnsubscribePreviewSender
-                    workspaceName={workspaceName}
-                    workspaceLogo={currentWorkspace?.logo}
-                  />
-                  <Section.Header
-                    level={3}
-                    size="lg"
-                    title={t`Do you want to unsubscribe?`}
-                    description={getUnsubscribePageHeaderDescription({
-                      recipientEmailAddress: PREVIEW_RECIPIENT_EMAIL_ADDRESS,
-                      hasPublicTopics,
-                      isTrackingActive,
-                    })}
-                  />
-                  {hasPublicTopics && (
-                    <StyledTopics>
-                      {publicTopics.map((topic) => (
-                        <StyledTopicLabel key={topic.id}>
-                          <Checkbox defaultChecked />
-                          {topic.name ?? t`Untitled topic`}
-                        </StyledTopicLabel>
-                      ))}
-                    </StyledTopics>
-                  )}
-                </div>
-                {isTrackingActive && (
-                  <SettingsUnsubscribePreviewTracking
-                    senderName={
-                      isNonEmptyString(workspaceName)
-                        ? workspaceName
-                        : t`This sender`
-                    }
-                    isOpenTrackingEnabled={isOpenTrackingEnabled}
-                    isClickTrackingEnabled={isClickTrackingEnabled}
-                  />
-                )}
-                {hasPreferences ? (
-                  <StyledActions>
-                    <MainButton fullWidth>{t`Update`}</MainButton>
-                    <LabeledSeparator>{t`Or`}</LabeledSeparator>
-                    <MainButton fullWidth variant="outline" elevated={false}>
-                      {t`Unsubscribe all`}
-                    </MainButton>
-                  </StyledActions>
-                ) : (
-                  <MainButton fullWidth>{t`Unsubscribe`}</MainButton>
-                )}
-              </StyledCardBody>
-            </Card.Root>
-          </StyledCardContainer>
-        )}
-      </StyledViewport>
+      <SettingsPreviewCard
+        isPreviewTitleVisible={false}
+        preview={
+          <StyledStage>
+            {!loading && (
+              <StyledCardContainer>
+                <Card.Root
+                  fullWidth
+                  backgroundColor={themeCssVariables.background.primary}
+                >
+                  <StyledCardBody>
+                    <div>
+                      <SettingsUnsubscribePreviewSender
+                        workspaceName={workspaceName}
+                        workspaceLogo={currentWorkspace?.logo}
+                      />
+                      <Section.Header
+                        level={3}
+                        size="lg"
+                        title={t`Do you want to unsubscribe?`}
+                        description={getUnsubscribePageHeaderDescription({
+                          recipientEmailAddress:
+                            PREVIEW_RECIPIENT_EMAIL_ADDRESS,
+                          hasPublicTopics,
+                          isTrackingActive,
+                        })}
+                      />
+                      {hasPublicTopics && (
+                        <StyledTopics>
+                          {publicTopics.map((topic) => (
+                            <StyledTopicLabel key={topic.id}>
+                              <Checkbox defaultChecked />
+                              {topic.name ?? t`Untitled topic`}
+                            </StyledTopicLabel>
+                          ))}
+                        </StyledTopics>
+                      )}
+                    </div>
+                    {isTrackingActive && (
+                      <SettingsUnsubscribePreviewTracking
+                        senderName={
+                          isNonEmptyString(workspaceName)
+                            ? workspaceName
+                            : t`This sender`
+                        }
+                        isOpenTrackingEnabled={isOpenTrackingEnabled}
+                        isClickTrackingEnabled={isClickTrackingEnabled}
+                      />
+                    )}
+                    {hasPreferences ? (
+                      <StyledActions>
+                        <MainButton fullWidth>{t`Update`}</MainButton>
+                        <LabeledSeparator>{t`Or`}</LabeledSeparator>
+                        <MainButton
+                          fullWidth
+                          variant="outline"
+                          elevated={false}
+                        >
+                          {t`Unsubscribe all`}
+                        </MainButton>
+                      </StyledActions>
+                    ) : (
+                      <MainButton fullWidth>{t`Unsubscribe`}</MainButton>
+                    )}
+                  </StyledCardBody>
+                </Card.Root>
+              </StyledCardContainer>
+            )}
+          </StyledStage>
+        }
+      />
     </Section.Root>
   );
 };
