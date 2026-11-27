@@ -1,8 +1,5 @@
 import { type ValidationRuleFieldDescriptor } from 'twenty-shared/types';
-import {
-  isQueryTimeFormulaFieldMetadata,
-  isValidationRulePreviousValuePath,
-} from 'twenty-shared/utils';
+import { isValidationRulePreviousValuePath } from 'twenty-shared/utils';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type ValidationRuleEditorField } from '@/validation-rules/types/ValidationRuleEditorField';
@@ -33,30 +30,28 @@ export const buildFormulaFieldEditorInputs = ({
   fields: ValidationRuleFieldDescriptor[];
   editorFields: ValidationRuleEditorField[];
 } => {
-  const withStoredFieldsOnly = <TObject extends FormulaFieldEditorObject>(
+  const withoutEditedField = <TObject extends FormulaFieldEditorObject>(
     object: TObject,
   ): TObject => ({
     ...object,
     fields: object.fields.filter(
-      (fieldMetadataItem) =>
-        fieldMetadataItem.id !== fieldMetadataId &&
-        !isQueryTimeFormulaFieldMetadata(fieldMetadataItem),
+      (fieldMetadataItem) => fieldMetadataItem.id !== fieldMetadataId,
     ),
   });
 
-  const storedObjectMetadataItem = withStoredFieldsOnly(objectMetadataItem);
-  const storedObjectMetadataItems =
-    objectMetadataItems.map(withStoredFieldsOnly);
+  const readableObjectMetadataItem = withoutEditedField(objectMetadataItem);
+  const readableObjectMetadataItems =
+    objectMetadataItems.map(withoutEditedField);
 
   return {
     fields: buildValidationRuleFieldDescriptors({
-      objectMetadataItem: storedObjectMetadataItem,
-      objectMetadataItems: storedObjectMetadataItems,
+      objectMetadataItem: readableObjectMetadataItem,
+      objectMetadataItems: readableObjectMetadataItems,
       readableRelationTypes: FORMULA_READABLE_RELATION_TYPES,
     }),
     editorFields: buildValidationRuleEditorFields({
-      objectMetadataItem: storedObjectMetadataItem,
-      objectMetadataItems: storedObjectMetadataItems,
+      objectMetadataItem: readableObjectMetadataItem,
+      objectMetadataItems: readableObjectMetadataItems,
       readableRelationTypes: FORMULA_READABLE_RELATION_TYPES,
     }).filter(({ path }) => !isValidationRulePreviousValuePath(path)),
   };

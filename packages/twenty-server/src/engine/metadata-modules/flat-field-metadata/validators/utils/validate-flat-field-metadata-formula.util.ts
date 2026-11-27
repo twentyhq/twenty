@@ -10,6 +10,7 @@ import {
   isFormulaFieldMetadataType,
   parseExpressionNode,
   printFieldMetadataFormula,
+  substituteQueryTimeFormulaReferences,
 } from 'twenty-shared/utils';
 import { printExpressionNode } from 'twenty-shared/expression';
 
@@ -221,6 +222,34 @@ export const validateFlatFieldMetadataFormula = ({
     ];
   }
 
+  // Checked before reading the other formulas, which stop where they would read this one
+  if (
+    doesFormulaFieldReadItself({
+      universalIdentifier,
+      formula,
+      findFormula: (fieldUniversalIdentifier) =>
+        (
+          pendingUniversalFlatFieldMetadataMaps?.byUniversalIdentifier[
+            fieldUniversalIdentifier
+          ] ??
+          universalFlatFieldMetadataMaps.byUniversalIdentifier[
+            fieldUniversalIdentifier
+          ]
+        )?.formula,
+    })
+  ) {
+    return [
+      ...errors,
+      {
+        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        message:
+          'A formula cannot read its own value, directly or through other formulas',
+        userFriendlyMessage: msg`A formula cannot read its own value, directly or through other formulas`,
+        value: expression,
+      },
+    ];
+  }
+
   const toInvalidFormulaError = ({
     errorMessage,
     value,
@@ -233,7 +262,15 @@ export const validateFlatFieldMetadataFormula = ({
     userFriendlyMessage: msg`Invalid formula: ${errorMessage}`,
     value,
   });
-  const syntaxErrors = [expression, currencyCodeExpression]
+  // The formulas it reads are checked as part of it, so a stored formula cannot read now through a query-time one
+  const substitutedFormulaTexts = printFieldMetadataFormula({
+    formula: substituteQueryTimeFormulaReferences({ formula, fields }),
+    fields,
+  });
+  const syntaxErrors = [
+    substitutedFormulaTexts.expression,
+    substitutedFormulaTexts.currencyCodeExpression,
+  ]
     .filter(isDefined)
     .flatMap((formulaExpression) => {
       const compilation = compileFormulaExpression({
@@ -258,8 +295,8 @@ export const validateFlatFieldMetadataFormula = ({
 
   const sqlCompilation = compileFormulaFieldToSql({
     fieldMetadataType: type,
-    expression,
-    currencyCodeExpression,
+    expression: substitutedFormulaTexts.expression ?? expression,
+    currencyCodeExpression: substitutedFormulaTexts.currencyCodeExpression,
     selectEnumSqlType: 'text',
     resolveReference: buildFormulaSqlReferenceResolverFromDescriptors({
       fields,
@@ -289,32 +326,6 @@ export const validateFlatFieldMetadataFormula = ({
         errorMessage: sqlCompilation.errorMessage,
         value: expression,
       }),
-    ];
-  }
-
-  if (
-    doesFormulaFieldReadItself({
-      universalIdentifier,
-      formula,
-      findFormula: (fieldUniversalIdentifier) =>
-        (
-          pendingUniversalFlatFieldMetadataMaps?.byUniversalIdentifier[
-            fieldUniversalIdentifier
-          ] ??
-          universalFlatFieldMetadataMaps.byUniversalIdentifier[
-            fieldUniversalIdentifier
-          ]
-        )?.formula,
-    })
-  ) {
-    return [
-      {
-        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        message:
-          'A formula cannot read its own value, directly or through other formulas',
-        userFriendlyMessage: msg`A formula cannot read its own value, directly or through other formulas`,
-        value: expression,
-      },
     ];
   }
 

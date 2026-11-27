@@ -69,4 +69,47 @@ describe('buildStoredFormulaWatchPlans', () => {
       new Set(['supplier', 'supplierId']),
     );
   });
+
+  it('should watch what a query-time formula reads when a stored formula reads it', () => {
+    const storedShoutFlatFieldMetadata = {
+      ...FORMULA_FLAT_FIELD_METADATA_MAPS_MOCK.byUniversalIdentifier[
+        'gadget-supplier-label-uid'
+      ]!,
+      universalIdentifier: 'gadget-stored-shout-uid',
+      formula: {
+        tree: {
+          type: 'FIELD' as const,
+          fieldUniversalIdentifier: 'gadget-supplier-shout-uid',
+        },
+        evaluation: 'STORED' as const,
+      },
+    };
+
+    const {
+      lookedUpRecordWatchPlansByObjectMetadataId,
+      watchedOwnFieldNamesByObjectMetadataId,
+    } = buildStoredFormulaWatchPlans({
+      flatObjectMetadataMaps: FORMULA_FLAT_OBJECT_METADATA_MAPS_MOCK,
+      flatFieldMetadataMaps: {
+        ...FORMULA_FLAT_FIELD_METADATA_MAPS_MOCK,
+        byUniversalIdentifier: {
+          ...FORMULA_FLAT_FIELD_METADATA_MAPS_MOCK.byUniversalIdentifier,
+          'gadget-stored-shout-uid': storedShoutFlatFieldMetadata,
+        },
+      },
+    });
+
+    expect(
+      lookedUpRecordWatchPlansByObjectMetadataId['supplier-object'],
+    ).toEqual([
+      {
+        objectMetadataId: 'gadget-object',
+        joinColumnName: 'supplierId',
+        watchedFieldNames: new Set(['name']),
+      },
+    ]);
+    expect(watchedOwnFieldNamesByObjectMetadataId['gadget-object']).toEqual(
+      new Set(['supplier', 'supplierId']),
+    );
+  });
 });

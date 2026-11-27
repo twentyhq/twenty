@@ -81,7 +81,7 @@ describe('buildFormulaComputedColumnShapes', () => {
     });
   });
 
-  it('should leave stored formulas to their column and not let a formula read a query-time formula', () => {
+  it('should leave stored formulas to their column', () => {
     const { computedColumnShapes, computedLookupShapes } =
       buildFormulaComputedColumnShapes({
         flatObjectMetadata: FORMULA_SUPPLIER_FLAT_OBJECT_METADATA_MOCK,
@@ -93,6 +93,45 @@ describe('buildFormulaComputedColumnShapes', () => {
     expect(computedLookupShapes).toEqual([]);
     expect(computedColumnShapes.map(({ columnName }) => columnName)).toEqual([
       'shout',
+      'checkedAt',
     ]);
+  });
+
+  it('should read a query-time formula as its expression, so it depends on what that formula reads', () => {
+    const { computedColumnShapes } = buildGadgetShapes();
+
+    expect(
+      computedColumnShapes.find(
+        ({ columnName }) => columnName === 'doubleTotal',
+      ),
+    ).toEqual({
+      columnName: 'doubleTotal',
+      sqlType: 'float',
+      expression: expect.stringContaining(
+        '(COALESCE("record"."price"::numeric, 0) * COALESCE("record"."quantity"::numeric, 0))',
+      ),
+      dependencies: [
+        { alias: 'record', fieldMetadataId: 'gadget-price' },
+        { alias: 'record', fieldMetadataId: 'gadget-quantity' },
+      ],
+    });
+  });
+
+  it('should read a looked-up query-time formula as its expression over the looked-up record', () => {
+    const { computedColumnShapes } = buildGadgetShapes();
+
+    expect(
+      computedColumnShapes.find(
+        ({ columnName }) => columnName === 'supplierShout',
+      ),
+    ).toEqual({
+      columnName: 'supplierShout',
+      sqlType: 'text',
+      expression: `(COALESCE("lookup0"."name", '') || '!'::text)`,
+      dependencies: [
+        { alias: 'record', fieldMetadataId: 'gadget-supplier' },
+        { alias: 'lookup0', fieldMetadataId: 'supplier-name' },
+      ],
+    });
   });
 });

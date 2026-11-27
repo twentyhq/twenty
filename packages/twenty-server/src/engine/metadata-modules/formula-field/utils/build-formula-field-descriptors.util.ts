@@ -6,6 +6,7 @@ import {
 } from 'twenty-shared/types';
 import {
   isDefined,
+  isFormulaFieldMetadata,
   isQueryTimeFormulaFieldMetadata,
 } from 'twenty-shared/utils';
 
@@ -14,7 +15,7 @@ type FormulaFieldDescriptorSource = {
   type: FieldMetadataType;
   universalIdentifier: string;
   formula: Partial<
-    Pick<FieldMetadataFormula, 'expression' | 'evaluation'>
+    Pick<FieldMetadataFormula, 'tree' | 'currencyCodeTree' | 'evaluation'>
   > | null;
 };
 
@@ -31,13 +32,18 @@ const toScalarFieldDescriptor = ({
   name,
   type,
   universalIdentifier,
+  formula,
 }: FormulaFieldDescriptorSource): ValidationRuleFieldDescriptor => ({
   name,
   type,
   universalIdentifier,
+  ...(isDefined(formula) &&
+  isFormulaFieldMetadata({ formula }) &&
+  isQueryTimeFormulaFieldMetadata({ formula })
+    ? { queryTimeFormula: formula }
+    : {}),
 });
 
-// A formula reads stored values only, so query-time formulas are left out on both sides of a relation
 export const buildFormulaFieldDescriptors = <
   TFlatFieldMetadata extends FormulaFieldDescriptorSource,
 >({
@@ -46,11 +52,8 @@ export const buildFormulaFieldDescriptors = <
   findRelationTargetFlatFieldMetadatas,
 }: {
   flatFieldMetadatas: TFlatFieldMetadata[];
-} & FormulaFieldDescriptorSourceReader<TFlatFieldMetadata>): ValidationRuleFieldDescriptor[] => {
-  const isStored = (flatFieldMetadata: TFlatFieldMetadata) =>
-    !isQueryTimeFormulaFieldMetadata(flatFieldMetadata);
-
-  return flatFieldMetadatas.filter(isStored).map((flatFieldMetadata) => {
+} & FormulaFieldDescriptorSourceReader<TFlatFieldMetadata>): ValidationRuleFieldDescriptor[] =>
+  flatFieldMetadatas.map((flatFieldMetadata) => {
     const settings = getSettings(flatFieldMetadata);
     const relationType =
       isDefined(settings) && 'relationType' in settings
@@ -69,9 +72,6 @@ export const buildFormulaFieldDescriptors = <
       relationType,
       relationTargetFields: findRelationTargetFlatFieldMetadatas(
         flatFieldMetadata,
-      )
-        .filter(isStored)
-        .map(toScalarFieldDescriptor),
+      ).map(toScalarFieldDescriptor),
     };
   });
-};

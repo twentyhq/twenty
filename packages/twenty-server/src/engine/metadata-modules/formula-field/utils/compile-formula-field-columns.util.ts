@@ -7,6 +7,7 @@ import {
   isDefined,
   isFormulaFieldMetadataType,
   printFieldMetadataFormula,
+  substituteQueryTimeFormulaReferences,
 } from 'twenty-shared/utils';
 
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
@@ -45,7 +46,9 @@ export const compileFormulaFieldColumns = ({
   resolveAggregationSource?: FormulaSqlAggregationSourceResolver;
 }): CompiledFormulaFieldColumn[] | undefined => {
   const { expression, currencyCodeExpression } = printFieldMetadataFormula({
-    formula,
+    formula: isDefined(formula)
+      ? substituteQueryTimeFormulaReferences({ formula, fields })
+      : formula,
     fields,
   });
 
