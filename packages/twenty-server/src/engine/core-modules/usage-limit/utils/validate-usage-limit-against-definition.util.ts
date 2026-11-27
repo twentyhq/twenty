@@ -8,7 +8,6 @@ import {
   UsageLimitExceptionCode,
 } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
 import { buildUsageLimitScope } from 'src/engine/core-modules/usage-limit/utils/build-usage-limit-scope.util';
-import { findFixedSpeedWindowSeconds } from 'src/engine/core-modules/usage-limit/utils/find-fixed-speed-window-seconds.util';
 import { findAllowedUsageLimitUnits } from 'src/engine/core-modules/usage-limit/utils/find-allowed-usage-limit-units.util';
 import { findSuppressedUsageLimitDefaults } from 'src/engine/core-modules/usage-limit/utils/find-suppressed-usage-limit-defaults.util';
 import { findUsageLimitDefinition } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-definition.util';
@@ -47,24 +46,6 @@ export const validateUsageLimitAgainstDefinition = (
   if (!definition.allowedSpenderTypes.includes(input.spenderType)) {
     throw new UsageLimitException(
       `${input.resourceType} ${input.limitKind} limits cannot be scoped to ${input.spenderType}`,
-      UsageLimitExceptionCode.LIMIT_INVALID,
-    );
-  }
-
-  const fixedWindowSeconds =
-    input.limitKind === 'speed'
-      ? findFixedSpeedWindowSeconds({
-          resourceType: input.resourceType,
-          operationType: input.operationType,
-        })
-      : null;
-
-  if (
-    isDefined(fixedWindowSeconds) &&
-    input.periodCount !== fixedWindowSeconds
-  ) {
-    throw new UsageLimitException(
-      `${input.resourceType} ${input.operationType} speed limits always cover ${fixedWindowSeconds} seconds`,
       UsageLimitExceptionCode.LIMIT_INVALID,
     );
   }

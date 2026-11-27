@@ -1990,7 +1990,16 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,
     description:
-      'Maximum number of campaign test sends a single workspace may make in 24 hours',
+      'Time-to-live for the per-workspace campaign test send rate limiting window, in milliseconds',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  MESSAGE_CAMPAIGN_TEST_SEND_RATE_LIMITING_TTL_IN_MS = 86_400_000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description:
+      'Maximum number of campaign test sends a single workspace may make in the rate limiting window',
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()

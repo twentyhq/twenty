@@ -6,7 +6,6 @@ import { type UsageLimitDefaultDefinition } from 'src/engine/core-modules/usage-
 import { type UsageLimitScope } from 'src/engine/core-modules/usage-limit/utils/build-usage-limit-scope.util';
 import { findUsageLimitDefaults } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-defaults.util';
 import { getUsageLimitDefaultOperationTypes } from 'src/engine/core-modules/usage-limit/utils/get-usage-limit-default-operation-types.util';
-import { getSpeedLimitDefaultWindowMs } from 'src/engine/core-modules/usage-limit/utils/get-speed-limit-default-window-ms.util';
 import { getUsageLimitDefaultOverrideOperationType } from 'src/engine/core-modules/usage-limit/utils/get-usage-limit-default-override-operation-type.util';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 
@@ -36,12 +35,7 @@ const buildPeriodCount = ({
   getConfigValue: GetConfigValue;
 }): number =>
   usageLimitDefault.limitKind === 'speed'
-    ? Math.ceil(
-        getSpeedLimitDefaultWindowMs({
-          speedLimitDefault: usageLimitDefault,
-          getConfigValue,
-        }) / 1000,
-      )
+    ? Math.ceil(getConfigValue(usageLimitDefault.windowMsConfigVariable) / 1000)
     : usageLimitDefault.periodCount;
 
 export const buildUsageLimitDefaultScopes = ({

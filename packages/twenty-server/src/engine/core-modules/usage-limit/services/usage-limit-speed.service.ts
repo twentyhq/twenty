@@ -16,7 +16,6 @@ import { type SpeedBucketOutcome } from 'src/engine/core-modules/usage-limit/typ
 import { type SpeedBucketRequest } from 'src/engine/core-modules/usage-limit/types/speed-bucket-request.type';
 import { type UsageLimits } from 'src/engine/core-modules/usage-limit/types/usage-limits.type';
 import { buildSpeedBuckets } from 'src/engine/core-modules/usage-limit/utils/build-speed-buckets.util';
-import { getSpeedLimitDefaultWindowMs } from 'src/engine/core-modules/usage-limit/utils/get-speed-limit-default-window-ms.util';
 import { findUsageLimitDefinition } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-definition.util';
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
@@ -239,10 +238,9 @@ export class UsageLimitSpeedService {
           maxTokens: this.twentyConfigService.get(
             speedLimitDefaultDefinition.limitValueConfigVariable,
           ),
-          windowMs: getSpeedLimitDefaultWindowMs({
-            speedLimitDefault: speedLimitDefaultDefinition,
-            getConfigValue: (key) => this.twentyConfigService.get(key),
-          }),
+          windowMs: this.twentyConfigService.get(
+            speedLimitDefaultDefinition.windowMsConfigVariable,
+          ),
         })),
       limits: enforceableLimits,
       authContext,

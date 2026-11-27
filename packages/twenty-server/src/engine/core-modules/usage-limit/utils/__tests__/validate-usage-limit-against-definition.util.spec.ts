@@ -57,18 +57,6 @@ const validAllUsageQuotaLimit: CreateUsageLimitInput = {
   spenderId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
 };
 
-const validCampaignTestSendSpeedLimit: CreateUsageLimitInput = {
-  resourceType: UsageResourceType.EMAIL,
-  operationType: UsageOperationType.MESSAGE_CAMPAIGN_TEST_SEND,
-  spenderType: 'workspace',
-  spenderId: null,
-  limitKind: 'speed',
-  periodCount: 86_400,
-  periodUnit: 'second',
-  unit: UsageUnit.INVOCATION,
-  limitValue: 10,
-};
-
 const rejects = (input: CreateUsageLimitInput, message?: string) =>
   expect(() => validateUsageLimitAgainstDefinition(input)).toThrow(
     expect.objectContaining({
@@ -233,13 +221,5 @@ describe('validateUsageLimitAgainstDefinition', () => {
       periodUnit: 'week',
       unit: UsageUnit.USER_CREDIT,
     });
-  });
-
-  it('accepts a campaign test send limit over its fixed 24 hour window', () => {
-    accepts(validCampaignTestSendSpeedLimit);
-  });
-
-  it('rejects a campaign test send limit over any other window', () => {
-    rejects({ ...validCampaignTestSendSpeedLimit, periodCount: 3_600 });
   });
 });

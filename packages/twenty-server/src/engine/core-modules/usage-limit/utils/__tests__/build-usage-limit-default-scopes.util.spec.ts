@@ -72,14 +72,4 @@ describe('buildUsageLimitDefaultScopes', () => {
       }),
     );
   });
-
-  it('keeps the campaign test send window at 24 hours whatever the config says', () => {
-    expect(buildDefaultScopes({})).toContainEqual(
-      expect.objectContaining({
-        operationType: UsageOperationType.MESSAGE_CAMPAIGN_TEST_SEND,
-        periodUnit: 'second',
-        periodCount: 86_400,
-      }),
-    );
-  });
 });
