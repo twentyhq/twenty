@@ -31,6 +31,7 @@ export type CreateStandardViewOptions<O extends AllStandardObjectName> = {
   mainGroupByFieldName?: AllStandardObjectFieldName<O>;
   calendarFieldName?: AllStandardObjectFieldName<O>;
   calendarEndFieldName?: AllStandardObjectFieldName<O>;
+  listPinnedFieldName?: AllStandardObjectFieldName<O>;
   presetFilter?: ViewPresetFilter | null;
 };
 
@@ -60,6 +61,7 @@ export const createStandardViewFlatMetadata = <
     mainGroupByFieldName,
     calendarFieldName,
     calendarEndFieldName,
+    listPinnedFieldName,
     presetFilter = null,
   },
   standardObjectMetadataRelatedEntityIds,
@@ -105,6 +107,12 @@ export const createStandardViewFlatMetadata = <
       ].id
     : null;
 
+  const listPinnedFieldMetadataId = listPinnedFieldName
+    ? standardObjectMetadataRelatedEntityIds[objectName].fields[
+        listPinnedFieldName
+      ].id
+    : null;
+
   const kanbanAggregateOperationFieldMetadataUniversalIdentifier =
     kanbanAggregateOperationFieldName
       ? // @ts-expect-error ignore
@@ -129,10 +137,16 @@ export const createStandardViewFlatMetadata = <
         .universalIdentifier
     : null;
 
+  const listPinnedFieldMetadataUniversalIdentifier = listPinnedFieldName
+    ? // @ts-expect-error ignore
+      STANDARD_OBJECTS[objectName].fields[listPinnedFieldName]
+        .universalIdentifier
+    : null;
+
   return {
     calendarFieldMetadataUniversalIdentifier,
     calendarEndFieldMetadataUniversalIdentifier,
-    listPinnedFieldMetadataUniversalIdentifier: null,
+    listPinnedFieldMetadataUniversalIdentifier,
     kanbanAggregateOperationFieldMetadataUniversalIdentifier,
     mainGroupByFieldMetadataUniversalIdentifier,
     objectMetadataUniversalIdentifier,
@@ -160,7 +174,7 @@ export const createStandardViewFlatMetadata = <
     calendarLayout: null,
     calendarFieldMetadataId,
     calendarEndFieldMetadataId,
-    listPinnedFieldMetadataId: null,
+    listPinnedFieldMetadataId,
     anyFieldFilterValue: null,
     presetFilter,
     isPrivate: false,
