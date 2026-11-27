@@ -1,7 +1,10 @@
+import { aiChatThreadObjectMetadataItemSelector } from '@/ai-chat/threads/states/selectors/aiChatThreadObjectMetadataItemSelector';
 import { isImpersonatingState } from '@/auth/states/isImpersonatingState';
 import { InboxAppBadgeEffect } from '@/inbox/components/InboxAppBadgeEffect';
 import { InboxChannelSyncEffect } from '@/inbox/components/InboxChannelSyncEffect';
 import { InboxThreadSyncEffect } from '@/inbox/components/InboxThreadSyncEffect';
+import { InboxViewFallbackOrderEffect } from '@/inbox/components/InboxViewFallbackOrderEffect';
+import { InboxViewLiveUpdateEffect } from '@/inbox/components/InboxViewLiveUpdateEffect';
 import { useIsInboxWebPushEnabled } from '@/inbox/hooks/useIsInboxWebPushEnabled';
 import { useActiveNavigationDrawerTab } from '@/navigation/hooks/useActiveNavigationDrawerTab';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
@@ -11,6 +14,7 @@ import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerT
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { WebPushSubscriptionEffect } from '@/web-push/components/WebPushSubscriptionEffect';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { isDefined } from 'twenty-shared/utils';
 import {
   FeatureFlagKey,
   PermissionFlagType,
@@ -26,12 +30,31 @@ export const InboxEffects = () => {
   const isInboxTabActive =
     useActiveNavigationDrawerTab() === NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY;
 
+  const isInboxViewsEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_INBOX_VIEWS_ENABLED,
+  );
+  const aiChatThreadObjectMetadataItem = useAtomStateValue(
+    aiChatThreadObjectMetadataItemSelector,
+  );
+
   const isInboxAvailable = isAiChatInboxEnabled && hasAiPermission;
 
   return (
     <>
       <InboxThreadSyncEffect />
       <InboxChannelSyncEffect />
+      {isInboxAvailable &&
+        isInboxViewsEnabled &&
+        isDefined(aiChatThreadObjectMetadataItem) && (
+          <>
+            <InboxViewFallbackOrderEffect
+              objectMetadataItem={aiChatThreadObjectMetadataItem}
+            />
+            <InboxViewLiveUpdateEffect
+              objectMetadataItem={aiChatThreadObjectMetadataItem}
+            />
+          </>
+        )}
       {isInboxAvailable && !isImpersonating && <TabPresenceEffect />}
       {isInboxAvailable && isInboxTabActive && (
         <OnlineWorkspaceMemberIdsEffect />
