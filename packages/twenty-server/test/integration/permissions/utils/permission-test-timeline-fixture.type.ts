@@ -19,10 +19,7 @@ export type PermissionTestTimelineRole =
   | 'lowVisibilityTier';
 
 export type PermissionTestTimelineFixture = {
-  timelineActivityIdsByRecord: Record<
-    PermissionTestTimelineRecordName,
-    string[]
-  >;
-  targetColumnNameByRecord: Record<PermissionTestTimelineRecordName, string>;
+  timelineActivityIdsByRecord: Map<PermissionTestTimelineRecordName, string[]>;
+  targetColumnNameByRecord: Map<PermissionTestTimelineRecordName, string>;
   tokens: Record<PermissionTestTimelineRole, string>;
 };

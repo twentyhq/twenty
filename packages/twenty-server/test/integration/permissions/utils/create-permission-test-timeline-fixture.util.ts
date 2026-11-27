@@ -5,7 +5,7 @@ import {
   FieldMetadataType,
   RecordShareAccessLevel,
 } from 'twenty-shared/types';
-import { capitalize, isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, capitalize } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
@@ -23,19 +23,19 @@ import { setRecordPrivate } from 'test/integration/metadata/suites/private-recor
 import { createRelatedRecordPath } from 'test/integration/metadata/suites/related-record-path/utils/create-related-record-path.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
+import { buildPermissionTestTimelineValue } from 'test/integration/permissions/utils/build-permission-test-timeline-value.util';
 import { createPermissionTestApiKeyToken } from 'test/integration/permissions/utils/create-permission-test-api-key-token.util';
 import { createPermissionTestRole } from 'test/integration/permissions/utils/create-permission-test-role.util';
 import { createPermissionTestVisibilityTierRole } from 'test/integration/permissions/utils/create-permission-test-visibility-tier-role.util';
-import {
-  type PermissionTestRoleGrant,
-  type PermissionTestWorkspace,
-} from 'test/integration/permissions/utils/permission-test-workspace.type';
-import { buildPermissionTestTimelineValue } from 'test/integration/permissions/utils/build-permission-test-timeline-value.util';
 import {
   type PermissionTestTimelineFixture,
   type PermissionTestTimelineRecordName,
   type PermissionTestTimelineRole,
 } from 'test/integration/permissions/utils/permission-test-timeline-fixture.type';
+import {
+  type PermissionTestRoleGrant,
+  type PermissionTestWorkspace,
+} from 'test/integration/permissions/utils/permission-test-workspace.type';
 import { setRecordShareOperationFactory } from 'test/integration/permissions/utils/set-record-share-operation-factory.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
@@ -48,29 +48,53 @@ import { type DeferredWorkspaceOperationRunnerService } from 'src/engine/workspa
 
 const ITEM_OBJECT_NAME_SINGULAR = 'accessRecordItem';
 
-type ObjectFields = { id: string; fieldIdsByName: Record<string, string> };
+type ObjectFields = { id: string; fieldIdsByName: Map<string, string> };
 
-const findObjectFieldsByNameSingular = async (
-  adminAccessToken: string,
-): Promise<Record<string, ObjectFields>> => {
+type TimelineRecord = {
+  record: PermissionTestTimelineRecordName;
+  objectNameSingular: string;
+  recordId: string;
+};
+
+const findObjectFieldsOrThrow = async ({
+  objectNameSingular,
+  adminAccessToken,
+}: {
+  objectNameSingular: string;
+  adminAccessToken: string;
+}): Promise<ObjectFields> => {
   const { objects } = await findManyObjectMetadata({
     input: { filter: {}, paging: { first: 1000 } },
     gqlFields: 'id nameSingular fieldsList { id name }',
     expectToFail: false,
     token: adminAccessToken,
   });
-
-  return Object.fromEntries(
-    objects.map(({ id, nameSingular, fieldsList }) => [
-      nameSingular,
-      {
-        id,
-        fieldIdsByName: Object.fromEntries(
-          (fieldsList ?? []).map((field) => [field.name, field.id]),
-        ),
-      },
-    ]),
+  const object = objects.find(
+    (candidate) => candidate.nameSingular === objectNameSingular,
   );
+
+  assertIsDefinedOrThrow(object);
+
+  return {
+    id: object.id,
+    fieldIdsByName: new Map(
+      (object.fieldsList ?? []).map((field) => [field.name, field.id]),
+    ),
+  };
+};
+
+const findFieldIdOrThrow = ({
+  objectFields,
+  fieldName,
+}: {
+  objectFields: ObjectFields;
+  fieldName: string;
+}): string => {
+  const fieldId = objectFields.fieldIdsByName.get(fieldName);
+
+  assertIsDefinedOrThrow(fieldId);
+
+  return fieldId;
 };
 
 const createRecordOrThrow = async ({
@@ -96,9 +120,10 @@ const createRecordOrThrow = async ({
   return response.body.data[`create${capitalize(objectNameSingular)}`].id;
 };
 
-const createItemObjectWithItemsField = async (
-  workspace: PermissionTestWorkspace,
-) => {
+const createItemObjectWithItemsField = async ({
+  objectMetadataId,
+  adminAccessToken,
+}: Pick<PermissionTestWorkspace, 'objectMetadataId' | 'adminAccessToken'>) => {
   const { data } = await createOneObjectMetadata({
     input: {
       nameSingular: ITEM_OBJECT_NAME_SINGULAR,
@@ -109,10 +134,10 @@ const createItemObjectWithItemsField = async (
     },
     gqlFields: 'id',
     expectToFail: false,
-    token: workspace.adminAccessToken,
+    token: adminAccessToken,
   });
   const itemsField = await createRelationBetweenObjects({
-    objectMetadataId: workspace.objectMetadataId,
+    objectMetadataId,
     targetObjectMetadataId: data.createOneObject.id,
     type: FieldMetadataType.RELATION,
     relationType: RelationType.ONE_TO_MANY,
@@ -120,19 +145,23 @@ const createItemObjectWithItemsField = async (
     label: 'Items',
     targetFieldLabel: 'Access record',
     targetFieldIcon: 'IconBox',
-    token: workspace.adminAccessToken,
+    token: adminAccessToken,
   });
 
   return {
+    itemObjectMetadataId: data.createOneObject.id,
     itemsFieldId: itemsField.id,
     accessRecordColumnNameOnItem: `${itemsField.relation.targetFieldMetadata.name}Id`,
   };
 };
 
-const createSummaryField = (
-  workspace: PermissionTestWorkspace,
-  objectMetadataId: string,
-) =>
+const createSummaryField = ({
+  objectMetadataId,
+  adminAccessToken,
+}: {
+  objectMetadataId: string;
+  adminAccessToken: string;
+}) =>
   createOneFieldMetadata({
     input: {
       name: 'summary',
@@ -142,27 +171,35 @@ const createSummaryField = (
     },
     gqlFields: 'id',
     expectToFail: false,
-    token: workspace.adminAccessToken,
+    token: adminAccessToken,
   });
 
-const createPrivateRecord = async (workspace: PermissionTestWorkspace) => {
+const createPrivateRecord = async ({
+  workspaceId,
+  objectMetadataId,
+  objectNameSingular,
+  adminAccessToken,
+}: Pick<
+  PermissionTestWorkspace,
+  'workspaceId' | 'objectMetadataId' | 'objectNameSingular' | 'adminAccessToken'
+>): Promise<string> => {
   await updateFeatureFlag({
     featureFlag: FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED,
     value: true,
-    workspaceId: workspace.workspaceId,
+    workspaceId,
     expectToFail: false,
   });
 
   const recordId = await createRecordOrThrow({
-    objectNameSingular: workspace.objectNameSingular,
+    objectNameSingular,
     data: { status: 'active', category: 'core', region: 'europe' },
-    adminAccessToken: workspace.adminAccessToken,
+    adminAccessToken,
   });
   const response = await setRecordPrivate({
-    objectMetadataId: workspace.objectMetadataId,
+    objectMetadataId,
     recordId,
     isPrivate: true,
-    accessToken: workspace.adminAccessToken,
+    accessToken: adminAccessToken,
   });
 
   expect(response.body.errors).toBeUndefined();
@@ -171,15 +208,15 @@ const createPrivateRecord = async (workspace: PermissionTestWorkspace) => {
 };
 
 const denyFieldRead = ({
-  workspace,
   roleId,
   objectMetadataId,
   fieldMetadataId,
+  adminAccessToken,
 }: {
-  workspace: PermissionTestWorkspace;
   roleId: string;
   objectMetadataId: string;
   fieldMetadataId: string;
+  adminAccessToken: string;
 }) =>
   upsertFieldPermissions({
     input: {
@@ -194,7 +231,7 @@ const denyFieldRead = ({
       ],
     },
     expectToFail: false,
-    token: workspace.adminAccessToken,
+    token: adminAccessToken,
   });
 
 const createTokens = async ({
@@ -203,7 +240,15 @@ const createTokens = async ({
   itemObjectMetadataId,
   itemsFieldId,
 }: {
-  workspace: PermissionTestWorkspace;
+  workspace: Pick<
+    PermissionTestWorkspace,
+    | 'objectMetadataId'
+    | 'visibilityTierFieldMetadataId'
+    | 'adminAccessToken'
+    | 'roleIds'
+    | 'apiKeyIds'
+    | 'recordIds'
+  >;
   accessRecordFields: ObjectFields;
   itemObjectMetadataId: string;
   itemsFieldId: string;
@@ -220,7 +265,10 @@ const createTokens = async ({
       label,
       grant,
       rowLevelFilter: {
-        fieldMetadataId: accessRecordFields.fieldIdsByName.status,
+        fieldMetadataId: findFieldIdOrThrow({
+          objectFields: accessRecordFields,
+          fieldName: 'status',
+        }),
         value: 'active',
       },
       objectMetadataId,
@@ -254,10 +302,13 @@ const createTokens = async ({
   });
 
   await denyFieldRead({
-    workspace,
     roleId: summaryDeniedRoleId,
     objectMetadataId,
-    fieldMetadataId: accessRecordFields.fieldIdsByName.summary,
+    fieldMetadataId: findFieldIdOrThrow({
+      objectFields: accessRecordFields,
+      fieldName: 'summary',
+    }),
+    adminAccessToken,
   });
 
   const timelineRelationDeniedRoleId = await createRole({
@@ -266,10 +317,13 @@ const createTokens = async ({
   });
 
   await denyFieldRead({
-    workspace,
     roleId: timelineRelationDeniedRoleId,
     objectMetadataId,
-    fieldMetadataId: accessRecordFields.fieldIdsByName.timelineActivities,
+    fieldMetadataId: findFieldIdOrThrow({
+      objectFields: accessRecordFields,
+      fieldName: 'timelineActivities',
+    }),
+    adminAccessToken,
   });
 
   const sharedRecordRoleId = await createRole({
@@ -345,14 +399,10 @@ const recomputeAccessGroups = async ({
 };
 
 const updateRecordWithTimelineValues = async ({
-  record,
-  objectNameSingular,
-  recordId,
+  timelineRecord: { record, objectNameSingular, recordId },
   adminAccessToken,
 }: {
-  record: PermissionTestTimelineRecordName;
-  objectNameSingular: string;
-  recordId: string;
+  timelineRecord: TimelineRecord;
   adminAccessToken: string;
 }) => {
   const response = await makeGraphqlApiRequest(
@@ -403,50 +453,46 @@ const findTimelineActivityIds = async ({
 export const createPermissionTestTimelineFixture = async (
   workspace: PermissionTestWorkspace,
 ): Promise<PermissionTestTimelineFixture> => {
-  const { adminAccessToken } = workspace;
-  const { itemsFieldId, accessRecordColumnNameOnItem } =
+  const { adminAccessToken, objectNameSingular, recordIds } = workspace;
+  const { itemObjectMetadataId, itemsFieldId, accessRecordColumnNameOnItem } =
     await createItemObjectWithItemsField(workspace);
-  const itemObjectMetadataId = (
-    await findObjectFieldsByNameSingular(adminAccessToken)
-  )[ITEM_OBJECT_NAME_SINGULAR].id;
 
-  await createSummaryField(workspace, workspace.objectMetadataId);
-  await createSummaryField(workspace, itemObjectMetadataId);
-
-  const accessRecordFields = (
-    await findObjectFieldsByNameSingular(adminAccessToken)
-  )[workspace.objectNameSingular];
-
-  if (!isDefined(accessRecordFields)) {
-    throw new Error('Permission test object is missing');
+  for (const objectMetadataId of [
+    workspace.objectMetadataId,
+    itemObjectMetadataId,
+  ]) {
+    await createSummaryField({ objectMetadataId, adminAccessToken });
   }
 
-  const createItem = (accessRecordId: string) =>
-    createRecordOrThrow({
+  const accessRecordFields = await findObjectFieldsOrThrow({
+    objectNameSingular,
+    adminAccessToken,
+  });
+  const accessRecord = (
+    record: PermissionTestTimelineRecordName,
+    recordId: string,
+  ): TimelineRecord => ({ record, objectNameSingular, recordId });
+  const item = async (
+    record: PermissionTestTimelineRecordName,
+    accessRecordId: string,
+  ): Promise<TimelineRecord> => ({
+    record,
+    objectNameSingular: ITEM_OBJECT_NAME_SINGULAR,
+    recordId: await createRecordOrThrow({
       objectNameSingular: ITEM_OBJECT_NAME_SINGULAR,
       data: { [accessRecordColumnNameOnItem]: accessRecordId },
       adminAccessToken,
-    });
-  const accessRecord = (recordId: string) => ({
-    objectNameSingular: workspace.objectNameSingular,
-    recordId,
+    }),
   });
-  const item = async (accessRecordId: string) => ({
-    objectNameSingular: ITEM_OBJECT_NAME_SINGULAR,
-    recordId: await createItem(accessRecordId),
-  });
-  const records: Record<
-    PermissionTestTimelineRecordName,
-    { objectNameSingular: string; recordId: string }
-  > = {
-    insideEveryFilter: accessRecord(workspace.recordIds.insideEveryFilter),
-    outsideStatusFilter: accessRecord(workspace.recordIds.outsideStatusFilter),
-    lowVisibilityTier: accessRecord(workspace.recordIds.lowVisibilityTier),
-    fullVisibilityTier: accessRecord(workspace.recordIds.fullVisibilityTier),
-    privateRecord: accessRecord(await createPrivateRecord(workspace)),
-    itemOfReadableRecord: await item(workspace.recordIds.insideEveryFilter),
-    itemOfUnreadableRecord: await item(workspace.recordIds.outsideStatusFilter),
-  };
+  const timelineRecords: TimelineRecord[] = [
+    accessRecord('insideEveryFilter', recordIds.insideEveryFilter),
+    accessRecord('outsideStatusFilter', recordIds.outsideStatusFilter),
+    accessRecord('lowVisibilityTier', recordIds.lowVisibilityTier),
+    accessRecord('fullVisibilityTier', recordIds.fullVisibilityTier),
+    accessRecord('privateRecord', await createPrivateRecord(workspace)),
+    await item('itemOfReadableRecord', recordIds.insideEveryFilter),
+    await item('itemOfUnreadableRecord', recordIds.outsideStatusFilter),
+  ];
 
   const tokens = await createTokens({
     workspace,
@@ -455,18 +501,8 @@ export const createPermissionTestTimelineFixture = async (
     itemsFieldId,
   });
 
-  const recordEntries = Object.entries(records) as [
-    PermissionTestTimelineRecordName,
-    { objectNameSingular: string; recordId: string },
-  ][];
-
-  for (const [record, { objectNameSingular, recordId }] of recordEntries) {
-    await updateRecordWithTimelineValues({
-      record,
-      objectNameSingular,
-      recordId,
-      adminAccessToken,
-    });
+  for (const timelineRecord of timelineRecords) {
+    await updateRecordWithTimelineValues({ timelineRecord, adminAccessToken });
   }
 
   await waitForAllJobsToFinish();
@@ -475,24 +511,28 @@ export const createPermissionTestTimelineFixture = async (
     objectMetadataIds: [workspace.objectMetadataId, itemObjectMetadataId],
   });
 
-  const targetColumnNameByRecord = Object.fromEntries(
-    recordEntries.map(([record, { objectNameSingular }]) => [
+  const timelineActivityIdsByRecord = new Map<
+    PermissionTestTimelineRecordName,
+    string[]
+  >();
+  const targetColumnNameByRecord = new Map<
+    PermissionTestTimelineRecordName,
+    string
+  >();
+
+  for (const { record, objectNameSingular, recordId } of timelineRecords) {
+    const targetColumnName = `target${capitalize(objectNameSingular)}Id`;
+
+    targetColumnNameByRecord.set(record, targetColumnName);
+    timelineActivityIdsByRecord.set(
       record,
-      `target${capitalize(objectNameSingular)}Id`,
-    ]),
-  ) as Record<PermissionTestTimelineRecordName, string>;
-  const timelineActivityIdsByRecord = Object.fromEntries(
-    await Promise.all(
-      recordEntries.map(async ([record, { recordId }]) => [
-        record,
-        await findTimelineActivityIds({
-          targetColumnName: targetColumnNameByRecord[record],
-          recordId,
-          adminAccessToken,
-        }),
-      ]),
-    ),
-  ) as Record<PermissionTestTimelineRecordName, string[]>;
+      await findTimelineActivityIds({
+        targetColumnName,
+        recordId,
+        adminAccessToken,
+      }),
+    );
+  }
 
   return { timelineActivityIdsByRecord, targetColumnNameByRecord, tokens };
 };

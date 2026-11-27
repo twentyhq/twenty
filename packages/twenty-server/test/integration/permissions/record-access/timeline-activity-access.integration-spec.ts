@@ -1,8 +1,9 @@
 /* @license Enterprise */
 
-import { type ObjectRecordEvent } from 'twenty-shared/database-events';
+import { type ObjectRecordCreateEvent } from 'twenty-shared/database-events';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
@@ -27,6 +28,20 @@ const TIMELINE_FIELD_NAMES: PermissionTestTimelineFieldName[] = [
 ];
 
 const FIXTURE_TIMEOUT_MS = 120000;
+
+const findTimelineActivityIdsOrThrow = ({
+  fixture,
+  record,
+}: {
+  fixture: PermissionTestTimelineFixture;
+  record: PermissionTestTimelineRecordName;
+}): string[] => {
+  const timelineActivityIds = fixture.timelineActivityIdsByRecord.get(record);
+
+  assertIsDefinedOrThrow(timelineActivityIds);
+
+  return timelineActivityIds;
+};
 
 const findReadableFieldNames = ({
   serializedValue,
@@ -62,8 +77,8 @@ describePermissionTestWorkspace({
           gqlFields,
           filter: {
             id: {
-              in: records.flatMap(
-                (record) => fixture.timelineActivityIdsByRecord[record],
+              in: records.flatMap((record) =>
+                findTimelineActivityIdsOrThrow({ fixture, record }),
               ),
             },
           },
@@ -96,7 +111,9 @@ describePermissionTestWorkspace({
           findReadableFieldNames({
             serializedValue: JSON.stringify(
               timelineActivities.filter(({ id }) =>
-                fixture.timelineActivityIdsByRecord[record].includes(id),
+                findTimelineActivityIdsOrThrow({ fixture, record }).includes(
+                  id,
+                ),
               ),
             ),
             record,
@@ -113,7 +130,7 @@ describePermissionTestWorkspace({
         token: workspace.adminAccessToken,
         records,
         gqlFields: `id properties linkedObjectMetadataId linkedRecordId ${records
-          .map((record) => fixture.targetColumnNameByRecord[record])
+          .map((record) => fixture.targetColumnNameByRecord.get(record))
           .join(' ')}`,
       });
       const { flatObjectMetadataMaps } =
@@ -125,9 +142,15 @@ describePermissionTestWorkspace({
           STANDARD_OBJECTS.timelineActivity.universalIdentifier
         ];
 
-      if (!isDefined(timelineActivityObjectMetadata)) {
-        throw new Error('Timeline activity object is missing');
-      }
+      assertIsDefinedOrThrow(timelineActivityObjectMetadata);
+
+      const events: ObjectRecordCreateEvent[] = timelineActivities.map(
+        (timelineActivity) => ({
+          eventId: v4(),
+          recordId: timelineActivity.id,
+          properties: { after: timelineActivity },
+        }),
+      );
 
       const readableEvents =
         await getAppProviderByClassName<RecordEventPermissionsReadService>(
@@ -145,10 +168,7 @@ describePermissionTestWorkspace({
             name: 'timelineActivity.created',
             workspaceId: workspace.workspaceId,
             objectMetadata: timelineActivityObjectMetadata,
-            events: timelineActivities.map((timelineActivity) => ({
-              recordId: timelineActivity.id,
-              properties: { after: timelineActivity },
-            })) as ObjectRecordEvent[],
+            events,
           },
         });
 
@@ -158,7 +178,9 @@ describePermissionTestWorkspace({
           findReadableFieldNames({
             serializedValue: JSON.stringify(
               readableEvents.filter(({ recordId }) =>
-                fixture.timelineActivityIdsByRecord[record].includes(recordId),
+                findTimelineActivityIdsOrThrow({ fixture, record }).includes(
+                  recordId,
+                ),
               ),
             ),
             record,
