@@ -8,7 +8,7 @@ const getOptionsOfField = ({
   filterFields: ReturnType<typeof getConditionalAvailabilityFilterFields>;
 }) =>
   filterFields
-    .find((filterField) => filterField.key === key)
+    .find((filterField) => 'key' in filterField && filterField.key === key)
     ?.options.map(({ value, label }) => ({ value, label }));
 
 describe('getConditionalAvailabilityFilterFields', () => {

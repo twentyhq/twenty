@@ -1,9 +1,11 @@
 import { convertConditionalAvailabilityFilterOrGroupToNode } from '@/conditional-availability/filter-builder/filters-to-nodes/utils/convertConditionalAvailabilityFilterOrGroupToNode';
 import { convertConditionalAvailabilityNodeToFilterGroup } from '@/conditional-availability/filter-builder/nodes-to-filters/utils/convertConditionalAvailabilityNodeToFilterGroup';
+import { CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID } from '@/object-record/object-filter-dropdown/constants/CurrentWorkspaceMemberSelectableItemId';
 import {
   buildDeviceConditionalEvaluationNode,
   type ConditionalEvaluationNode,
 } from 'twenty-shared/conditional-evaluation';
+import { type ExpressionFieldNode } from 'twenty-shared/expression';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 const ADMIN_ROLE_UNIVERSAL_IDENTIFIER = '20202020-0000-4000-8000-000000000001';
@@ -41,6 +43,24 @@ const workspaceMemberIsNot = (workspaceMemberId: string) =>
   });
 
 const DEVICE_IS_MOBILE = buildDeviceConditionalEvaluationNode('MOBILE');
+
+const STAGE_FIELD: ExpressionFieldNode = {
+  type: 'FIELD',
+  fieldUniversalIdentifier: 'stage-universal-identifier',
+};
+
+const ACCOUNT_OWNER_FIELD: ExpressionFieldNode = {
+  type: 'FIELD',
+  relationFieldUniversalIdentifier: 'account-owner-universal-identifier',
+  fieldUniversalIdentifier: 'workspace-member-id-universal-identifier',
+};
+
+const STAGE_IS_WON = {
+  type: 'COMPARISON',
+  operator: 'EQUAL',
+  left: STAGE_FIELD,
+  right: { type: 'LITERAL', value: 'WON' },
+} as const satisfies ConditionalEvaluationNode;
 
 const getFilterGroupOrThrow = (node: ConditionalEvaluationNode) => {
   const filterGroup = convertConditionalAvailabilityNodeToFilterGroup({ node });
@@ -209,7 +229,73 @@ describe('convertConditionalAvailabilityNodeToFilterGroup', () => {
     ]);
   });
 
+  it('should read several values of a record field as one "is any of" filter', () => {
+    const filterGroup = getFilterGroupOrThrow({
+      type: 'GROUP',
+      logicalOperator: 'OR',
+      children: [
+        { ...STAGE_IS_WON },
+        { ...STAGE_IS_WON, right: { type: 'LITERAL', value: 'LOST' } },
+      ],
+    });
+
+    expect(filterGroup.children).toMatchObject([
+      {
+        type: 'filter',
+        field: STAGE_FIELD,
+        operator: 'isAnyOf',
+        values: ['WON', 'LOST'],
+      },
+    ]);
+  });
+
+  it('should read a record field compared with the current workspace member as "Me"', () => {
+    const filterGroup = getFilterGroupOrThrow({
+      type: 'COMPARISON',
+      operator: 'NOT_EQUAL',
+      left: ACCOUNT_OWNER_FIELD,
+      right: { type: 'VARIABLE', path: 'currentWorkspaceMember.id' },
+    });
+
+    expect(filterGroup.children).toMatchObject([
+      {
+        type: 'filter',
+        field: ACCOUNT_OWNER_FIELD,
+        operator: 'isNot',
+        values: [CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID],
+      },
+    ]);
+  });
+
+  it('should keep two record fields as two filters', () => {
+    const filterGroup = getFilterGroupOrThrow({
+      type: 'GROUP',
+      logicalOperator: 'OR',
+      children: [
+        { ...STAGE_IS_WON, left: ACCOUNT_OWNER_FIELD },
+        { ...STAGE_IS_WON, right: { type: 'LITERAL', value: 'LOST' } },
+      ],
+    });
+
+    expect(filterGroup.children).toMatchObject([
+      { field: ACCOUNT_OWNER_FIELD, operator: 'is', values: ['WON'] },
+      { field: STAGE_FIELD, operator: 'is', values: ['LOST'] },
+    ]);
+  });
+
   it.each<{ title: string; node: ConditionalEvaluationNode }>([
+    {
+      title: 'a record field compared with a number',
+      node: { ...STAGE_IS_WON, right: { type: 'LITERAL', value: 3 } },
+    },
+    {
+      title: 'a record field compared with another variable',
+      node: { ...STAGE_IS_WON, right: { type: 'VARIABLE', path: 'device' } },
+    },
+    {
+      title: 'a record field compared with an order operator',
+      node: { ...STAGE_IS_WON, operator: 'GREATER_THAN' },
+    },
     {
       title: 'a third level of groups',
       node: {

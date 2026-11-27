@@ -4,7 +4,10 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID } from '@/object-record/object-filter-dropdown/constants/CurrentWorkspaceMemberSelectableItemId';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 import { t } from '@lingui/core/macro';
-import { CoreObjectNameSingular, FieldMetadataType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  StandardObjectNameSingular,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/icon';
 import { RelationType } from '~/generated-metadata/graphql';
@@ -28,7 +31,7 @@ export const getConditionalAvailabilityRecordFilterFields = ({
 }): ConditionalAvailabilityFilterField[] => {
   const workspaceMemberObjectMetadataItem = objectMetadataItems.find(
     (candidate) =>
-      candidate.nameSingular === CoreObjectNameSingular.WorkspaceMember,
+      candidate.nameSingular === StandardObjectNameSingular.WorkspaceMember,
   );
   const workspaceMemberIdField = workspaceMemberObjectMetadataItem?.fields.find(
     (fieldMetadataItem) => fieldMetadataItem.name === 'id',
