@@ -1,6 +1,7 @@
 import { createWorkspaceRouteObjects } from '@/app/routing/utils/createWorkspaceRouteObjects';
 import { type SettingsSearchAvailability } from '@/settings/search/types/SettingsSearchAvailability';
 import { getSettingsSearchDestinations } from '@/settings/search/utils/getSettingsSearchDestinations';
+import { searchSettingsDestinations } from '@/settings/search/utils/searchSettingsDestinations';
 import { i18n } from '@lingui/core';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { buildRecordFromKeysWithSameValue } from '~/utils/array/buildRecordFromKeysWithSameValue';
@@ -14,6 +15,15 @@ const FULL_AVAILABILITY: SettingsSearchAvailability = {
   permissionFlagMap: ALL_PERMISSIONS,
   featureFlagsMap: {},
   isBillingEnabled: true,
+  objectMetadataItems: [
+    { namePlural: 'people', labelPlural: 'People', labelSingular: 'Person' },
+    {
+      namePlural: 'companies',
+      labelPlural: 'Companies',
+      labelSingular: 'Company',
+    },
+    { namePlural: 'pets', labelPlural: 'Pets', labelSingular: 'Pet' },
+  ],
 };
 
 const getDestinations = (availability = FULL_AVAILABILITY) =>
@@ -29,7 +39,7 @@ const getTitles = (destinations: ReturnType<typeof getDestinations>) =>
 describe('getSettingsSearchDestinations', () => {
   it('builds destinations from the settings route definitions', () => {
     expect(getDestinations()).toContainEqual({
-      id: 'settings-search-billing/limits',
+      id: 'settings-search-/settings/billing/limits',
       path: '/settings/billing/limits',
       title: 'Limits',
       breadcrumbs: ['Workspace', 'Billing'],
@@ -100,7 +110,7 @@ describe('getSettingsSearchDestinations', () => {
 
   it('lists tabs as deep links under their page', () => {
     expect(getDestinations()).toContainEqual({
-      id: 'settings-search-members#roles',
+      id: 'settings-search-/settings/members#roles',
       path: '/settings/members#roles',
       title: 'Roles',
       breadcrumbs: ['Workspace', 'Members'],
@@ -130,5 +140,38 @@ describe('getSettingsSearchDestinations', () => {
     expect(
       destinations.find(({ path }) => path === '/settings/members')?.keywords,
     ).toEqual(['Team']);
+  });
+
+  it('expands object pages for every object, custom ones included', () => {
+    expect(getDestinations()).toEqual(
+      expect.arrayContaining([
+        {
+          id: 'settings-search-/settings/objects/pets',
+          path: '/settings/objects/pets',
+          title: 'Pets',
+          breadcrumbs: ['Workspace', 'Data model'],
+          keywords: ['Pet'],
+        },
+        {
+          id: 'settings-search-/settings/objects/people/object-translations',
+          path: '/settings/objects/people/object-translations',
+          title: 'Translations',
+          breadcrumbs: ['Workspace', 'Data model', 'People'],
+          keywords: ['Edit translations'],
+        },
+      ]),
+    );
+  });
+
+  it.each([
+    ['usage limit', '/settings/billing/limits'],
+    ['roles', '/settings/members#roles'],
+    ['companies', '/settings/objects/companies'],
+    ['people translation', '/settings/objects/people/object-translations'],
+  ])('ranks the expected destination first for "%s"', (search, path) => {
+    expect(
+      searchSettingsDestinations({ destinations: getDestinations(), search })[0]
+        ?.path,
+    ).toBe(path);
   });
 });

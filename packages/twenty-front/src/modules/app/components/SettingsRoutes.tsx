@@ -1209,7 +1209,13 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.ObjectDetail}
         element={<SettingsObjectDetailPage />}
-        handle={MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE}
+        handle={buildSettingsSearchRouteHandle({
+          handle: MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE,
+          settingsSearch: {
+            isExpandedPerObject: true,
+            parentPath: SettingsPath.Objects,
+          },
+        })}
       />
       <Route
         path={SettingsPath.NewObject}
@@ -1244,17 +1250,41 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.ObjectTranslations}
         element={<SettingsObjectTranslations />}
-        handle={MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE}
+        handle={buildSettingsSearchRouteHandle({
+          handle: MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE,
+          settingsSearch: {
+            title: msg`Translations`,
+            isExpandedPerObject: true,
+            parentPath: SettingsPath.ObjectDetail,
+            keywords: [msg`Edit translations`],
+          },
+        })}
       />
       <Route
         path={SettingsPath.ObjectSearch}
         element={<SettingsObjectSearch />}
-        handle={MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE}
+        handle={buildSettingsSearchRouteHandle({
+          handle: MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE,
+          settingsSearch: {
+            title: msg`Search`,
+            isExpandedPerObject: true,
+            parentPath: SettingsPath.ObjectDetail,
+            keywords: [msg`Configure search`],
+          },
+        })}
       />
       <Route
         path={SettingsPath.ObjectIndexes}
         element={<SettingsObjectIndexes />}
-        handle={MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE}
+        handle={buildSettingsSearchRouteHandle({
+          handle: MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE,
+          settingsSearch: {
+            title: msg`Indexes`,
+            isExpandedPerObject: true,
+            parentPath: SettingsPath.ObjectDetail,
+            keywords: [msg`Manage indexes`],
+          },
+        })}
       />
       <Route
         path={SettingsPath.ObjectFieldTranslations}

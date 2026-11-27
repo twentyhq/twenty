@@ -3,8 +3,11 @@ import { type MessageDescriptor } from '@lingui/core';
 import { type SettingsPath } from 'twenty-shared/types';
 
 export type SettingsSearchRouteMetadata = {
-  title: MessageDescriptor;
   keywords?: MessageDescriptor[];
   tabs?: SettingsTabDefinition[];
   isHiddenWhenBillingDisabled?: boolean;
-} & ({ section: MessageDescriptor } | { parentPath: SettingsPath });
+} & (
+  | { title: MessageDescriptor; isExpandedPerObject?: boolean }
+  | { title?: undefined; isExpandedPerObject: true }
+) &
+  ({ section: MessageDescriptor } | { parentPath: SettingsPath });

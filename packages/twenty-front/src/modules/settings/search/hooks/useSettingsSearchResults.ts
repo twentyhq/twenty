@@ -1,5 +1,6 @@
 import { useWorkspaceRouteObjects } from '@/app/routing/components/WorkspaceRouteObjectsProvider';
 import { billingState } from '@/client-config/states/billingState';
+import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
 import { getSettingsSearchDestinations } from '@/settings/search/utils/getSettingsSearchDestinations';
 import { searchSettingsDestinations } from '@/settings/search/utils/searchSettingsDestinations';
@@ -23,15 +24,29 @@ export const useSettingsSearchResults = ({
   const featureFlagsMap = useWorkspaceFeatureFlagsMap();
   const isBillingEnabled =
     useAtomStateValue(billingState)?.isBillingEnabled ?? false;
+  const { activeNonSystemObjectMetadataItems } =
+    useFilteredObjectMetadataItems();
 
   const destinations = useMemo(
     () =>
       getSettingsSearchDestinations({
         routeObjects,
-        availability: { permissionFlagMap, featureFlagsMap, isBillingEnabled },
+        availability: {
+          permissionFlagMap,
+          featureFlagsMap,
+          isBillingEnabled,
+          objectMetadataItems: activeNonSystemObjectMetadataItems,
+        },
         i18n,
       }),
-    [routeObjects, permissionFlagMap, featureFlagsMap, isBillingEnabled, i18n],
+    [
+      routeObjects,
+      permissionFlagMap,
+      featureFlagsMap,
+      isBillingEnabled,
+      activeNonSystemObjectMetadataItems,
+      i18n,
+    ],
   );
 
   return searchSettingsDestinations({
