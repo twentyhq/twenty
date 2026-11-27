@@ -1,0 +1,9 @@
+import {
+  FRONT_COMPONENT_REACT_IMPORTS,
+  FRONT_COMPONENT_UI_IMPORTS,
+} from 'twenty-shared/front-component-build';
+
+export const AI_FRONT_COMPONENT_SHARED_DEPENDENCIES = [
+  ...FRONT_COMPONENT_REACT_IMPORTS,
+  ...FRONT_COMPONENT_UI_IMPORTS,
+];
