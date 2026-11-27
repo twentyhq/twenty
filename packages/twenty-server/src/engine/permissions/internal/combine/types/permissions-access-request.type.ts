@@ -16,6 +16,7 @@ import { type PrivateRecordState } from 'src/engine/permissions/internal/private
 import { type RecordShareGrant } from 'src/engine/permissions/internal/record-share/types/record-share-grant.type';
 import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
+import { type TemporaryChannelWriteAccess } from 'src/engine/permissions/channel-visibility/types/temporary-channel-write-access.type';
 
 export type PermissionsMetadataMaps = {
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
@@ -26,6 +27,8 @@ export type PermissionsMetadataMaps = {
   flatWorkspaceMemberMaps?: FlatWorkspaceMemberMaps;
   rlsWorkspaceMemberRelationValueMaps?: RlsWorkspaceMemberRelationValueMaps;
   flatRelatedRecordPathMaps?: FlatRelatedRecordPathMaps;
+  // TODO(@charlesBochet): remove after 2026-12-27. Temporary channel write access for admins and API keys, only to unblock customers who reported broken links, merges and deletes
+  temporaryChannelWriteAccess?: TemporaryChannelWriteAccess;
 };
 
 export type PermissionsRowAccessRequest = {
