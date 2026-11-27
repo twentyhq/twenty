@@ -119,3 +119,43 @@ it('keeps explicit theme values inside nested providers', () => {
     THEME_LIGHT.font.color.primary,
   );
 });
+
+it('points the accent tokens at the chosen palette until unmounted', () => {
+  const rootStyle = document.documentElement.style;
+
+  const { unmount } = render(
+    <ThemeProvider colorScheme="dark" accentColor="red">
+      <span />
+    </ThemeProvider>,
+  );
+
+  expect(rootStyle.getPropertyValue('--t-accent-accent9')).toBe(
+    'var(--t-color-red9)',
+  );
+  expect(rootStyle.getPropertyValue('--t-accent-transparent')).toBe(
+    'var(--t-color-transparent-red4)',
+  );
+
+  unmount();
+
+  expect(rootStyle.getPropertyValue('--t-accent-accent9')).toBe('');
+});
+
+it("points a scoped provider's accent tokens at its own palette", () => {
+  render(
+    <ThemeProvider colorScheme="light" accentColor="red">
+      <ThemeProvider colorScheme="light" accentColor="blue" applyToRoot={false}>
+        <span data-testid="scoped" />
+      </ThemeProvider>
+    </ThemeProvider>,
+  );
+
+  const scopeWrapper = screen.getByTestId('scoped').parentElement;
+
+  expect(scopeWrapper?.style.getPropertyValue('--t-accent-accent9')).toBe(
+    'var(--t-color-blue9)',
+  );
+  expect(
+    document.documentElement.style.getPropertyValue('--t-accent-accent9'),
+  ).toBe('var(--t-color-red9)');
+});
