@@ -6,12 +6,12 @@ import { DataSource } from 'typeorm';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { findMarketplaceFlatApplications } from 'src/database/commands/upgrade-version-command/2-65/utils/find-marketplace-flat-applications.util';
+import { findMarketplaceFlatApplications } from 'src/database/commands/upgrade-version-command/2-66/utils/find-marketplace-flat-applications.util';
 import {
   planStandaloneRoleHandover,
   type StandaloneRoleHandover,
-} from 'src/database/commands/upgrade-version-command/2-65/utils/plan-standalone-role-handover.util';
-import { selectMarketplaceApplicationRoles } from 'src/database/commands/upgrade-version-command/2-65/utils/select-marketplace-application-roles.util';
+} from 'src/database/commands/upgrade-version-command/2-66/utils/plan-standalone-role-handover.util';
+import { selectMarketplaceApplicationRoles } from 'src/database/commands/upgrade-version-command/2-66/utils/select-marketplace-application-roles.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
@@ -31,9 +31,9 @@ const ROLE_RELATED_FLAT_ENTITY_MAPS_KEYS = (
   ] as const
 ).map(getMetadataFlatEntityMapsKey);
 
-@RegisteredWorkspaceCommand('2.65.0', 1795704446559)
+@RegisteredWorkspaceCommand('2.66.0', 1795788995671)
 @Command({
-  name: 'upgrade:2-65:hand-over-marketplace-application-standalone-roles',
+  name: 'upgrade:2-66:hand-over-marketplace-application-standalone-roles',
   description:
     'Give the workspace custom app the roles a marketplace app declares that are neither its requested role nor used by its agents, keeping their id, holders, rules and field permissions',
 })

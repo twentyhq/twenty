@@ -27,8 +27,8 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
-import { type MoveMarketplaceApplicationRoleHoldersToClonedRolesCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-workspace-command-1795704446558-move-marketplace-application-role-holders-to-cloned-roles.command';
-import { type HandOverMarketplaceApplicationStandaloneRolesCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-workspace-command-1795704446559-hand-over-marketplace-application-standalone-roles.command';
+import { type MoveMarketplaceApplicationRoleHoldersToClonedRolesCommand } from 'src/database/commands/upgrade-version-command/2-66/2-66-workspace-command-1795788995670-move-marketplace-application-role-holders-to-cloned-roles.command';
+import { type HandOverMarketplaceApplicationStandaloneRolesCommand } from 'src/database/commands/upgrade-version-command/2-66/2-66-workspace-command-1795788995671-hand-over-marketplace-application-standalone-roles.command';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
@@ -278,7 +278,7 @@ const withoutIds = (value: unknown): unknown => {
   return value;
 };
 
-describe('2-65 workspace commands - marketplace application roles (integration)', () => {
+describe('2-66 workspace commands - marketplace application roles (integration)', () => {
   const workspaceCacheService = () =>
     getAppProviderByClassName<WorkspaceCacheService>('WorkspaceCacheService');
 

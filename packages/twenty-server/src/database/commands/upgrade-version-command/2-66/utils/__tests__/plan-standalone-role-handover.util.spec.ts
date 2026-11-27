@@ -1,11 +1,11 @@
 import {
   buildRequestedRoleFixture,
   WORKSPACE_CUSTOM_APPLICATION,
-} from 'src/database/commands/upgrade-version-command/2-65/utils/__tests__/marketplace-application-role.fixtures';
+} from 'src/database/commands/upgrade-version-command/2-66/utils/__tests__/marketplace-application-role.fixtures';
 import {
   getHandedOverRoleUniversalIdentifier,
   planStandaloneRoleHandover,
-} from 'src/database/commands/upgrade-version-command/2-65/utils/plan-standalone-role-handover.util';
+} from 'src/database/commands/upgrade-version-command/2-66/utils/plan-standalone-role-handover.util';
 
 const planHandover = () => {
   const { requestedFlatRole, flatEntityMaps } = buildRequestedRoleFixture();

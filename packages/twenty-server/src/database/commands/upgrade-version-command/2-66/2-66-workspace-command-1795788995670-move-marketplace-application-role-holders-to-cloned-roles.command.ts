@@ -8,14 +8,14 @@ import { v4 } from 'uuid';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { findMarketplaceFlatApplications } from 'src/database/commands/upgrade-version-command/2-65/utils/find-marketplace-flat-applications.util';
+import { findMarketplaceFlatApplications } from 'src/database/commands/upgrade-version-command/2-66/utils/find-marketplace-flat-applications.util';
 import {
   buildMarketplaceApplicationRoleOperations,
   type MarketplaceApplicationRoleMigrationPlan,
   type MarketplaceApplicationRoleMigrationSummary,
   type PendingInvitation,
   planMarketplaceApplicationRoleMigration,
-} from 'src/database/commands/upgrade-version-command/2-65/utils/plan-marketplace-application-role-migration.util';
+} from 'src/database/commands/upgrade-version-command/2-66/utils/plan-marketplace-application-role-migration.util';
 import { AppTokenType } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -35,9 +35,9 @@ const formatSummary = (summary: MarketplaceApplicationRoleMigrationSummary) =>
     `${summary.rolesMadeAgentOnly} role(s) made agent-only`,
   ].join('; ');
 
-@RegisteredWorkspaceCommand('2.65.0', 1795704446558)
+@RegisteredWorkspaceCommand('2.66.0', 1795788995670)
 @Command({
-  name: 'upgrade:2-65:move-marketplace-application-role-holders-to-cloned-roles',
+  name: 'upgrade:2-66:move-marketplace-application-role-holders-to-cloned-roles',
   description:
     'Move every holder of a marketplace app requested or agent role, other than its own agents, to a workspace-owned copy, then make the original agent-only without rules or field permissions',
 })

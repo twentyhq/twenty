@@ -2,12 +2,12 @@ import {
   buildRequestedRoleFixture,
   NOW,
   WORKSPACE_CUSTOM_APPLICATION,
-} from 'src/database/commands/upgrade-version-command/2-65/utils/__tests__/marketplace-application-role.fixtures';
+} from 'src/database/commands/upgrade-version-command/2-66/utils/__tests__/marketplace-application-role.fixtures';
 import {
   buildMarketplaceApplicationRoleClone,
   computeMarketplaceApplicationRoleCloneLabel,
   getMarketplaceApplicationRoleCloneUniversalIdentifier,
-} from 'src/database/commands/upgrade-version-command/2-65/utils/build-marketplace-application-role-clone.util';
+} from 'src/database/commands/upgrade-version-command/2-66/utils/build-marketplace-application-role-clone.util';
 
 const ASSIGNABILITY = {
   canBeAssignedToUsers: true,

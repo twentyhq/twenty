@@ -1,5 +1,5 @@
-import { MoveMarketplaceApplicationRoleHoldersToClonedRolesCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-workspace-command-1795704446558-move-marketplace-application-role-holders-to-cloned-roles.command';
-import { HandOverMarketplaceApplicationStandaloneRolesCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-workspace-command-1795704446559-hand-over-marketplace-application-standalone-roles.command';
+import { MoveMarketplaceApplicationRoleHoldersToClonedRolesCommand } from 'src/database/commands/upgrade-version-command/2-66/2-66-workspace-command-1795788995670-move-marketplace-application-role-holders-to-cloned-roles.command';
+import { HandOverMarketplaceApplicationStandaloneRolesCommand } from 'src/database/commands/upgrade-version-command/2-66/2-66-workspace-command-1795788995671-hand-over-marketplace-application-standalone-roles.command';
 import {
   APPLICATION,
   buildFlatRole,
@@ -8,7 +8,7 @@ import {
   buildRoleTargetAndAgentMaps,
   withFlatRoles,
   WORKSPACE_CUSTOM_APPLICATION,
-} from 'src/database/commands/upgrade-version-command/2-65/utils/__tests__/marketplace-application-role.fixtures';
+} from 'src/database/commands/upgrade-version-command/2-66/utils/__tests__/marketplace-application-role.fixtures';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 

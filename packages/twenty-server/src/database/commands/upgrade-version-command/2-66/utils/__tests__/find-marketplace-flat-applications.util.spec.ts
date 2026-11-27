@@ -1,6 +1,6 @@
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 
-import { findMarketplaceFlatApplications } from 'src/database/commands/upgrade-version-command/2-65/utils/find-marketplace-flat-applications.util';
+import { findMarketplaceFlatApplications } from 'src/database/commands/upgrade-version-command/2-66/utils/find-marketplace-flat-applications.util';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 

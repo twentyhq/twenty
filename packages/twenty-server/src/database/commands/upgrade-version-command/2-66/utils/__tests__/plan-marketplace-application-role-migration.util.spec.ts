@@ -7,13 +7,13 @@ import {
   NOW,
   withFlatRoles,
   WORKSPACE_CUSTOM_APPLICATION,
-} from 'src/database/commands/upgrade-version-command/2-65/utils/__tests__/marketplace-application-role.fixtures';
-import { getMarketplaceApplicationRoleCloneUniversalIdentifier } from 'src/database/commands/upgrade-version-command/2-65/utils/build-marketplace-application-role-clone.util';
+} from 'src/database/commands/upgrade-version-command/2-66/utils/__tests__/marketplace-application-role.fixtures';
+import { getMarketplaceApplicationRoleCloneUniversalIdentifier } from 'src/database/commands/upgrade-version-command/2-66/utils/build-marketplace-application-role-clone.util';
 import {
   buildMarketplaceApplicationRoleOperations,
   planMarketplaceApplicationRoleMigration,
   type PendingInvitation,
-} from 'src/database/commands/upgrade-version-command/2-65/utils/plan-marketplace-application-role-migration.util';
+} from 'src/database/commands/upgrade-version-command/2-66/utils/plan-marketplace-application-role-migration.util';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 
 const CLONE_ROLE_UNIVERSAL_IDENTIFIER =

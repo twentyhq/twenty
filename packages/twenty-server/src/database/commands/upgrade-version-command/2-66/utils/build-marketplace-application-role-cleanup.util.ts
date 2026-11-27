@@ -3,7 +3,7 @@ import { getObjectPermissionUniversalIdentifier } from 'twenty-shared/applicatio
 import { isDefined } from 'twenty-shared/utils';
 
 import { addLegacyRowLevelPermissionRuleGrantsToGrantRoleObjectPermissions } from 'src/engine/core-modules/application/application-grant-role/utils/add-legacy-row-level-permission-rule-grants-to-grant-role-object-permissions.util';
-import { type MarketplaceApplicationRoleCloneFlatEntityMaps } from 'src/database/commands/upgrade-version-command/2-65/utils/build-marketplace-application-role-clone.util';
+import { type MarketplaceApplicationRoleCloneFlatEntityMaps } from 'src/database/commands/upgrade-version-command/2-66/utils/build-marketplace-application-role-clone.util';
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 

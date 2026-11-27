@@ -4,8 +4,8 @@ import {
   APPLICATION,
   buildRequestedRoleFixture,
   NOW,
-} from 'src/database/commands/upgrade-version-command/2-65/utils/__tests__/marketplace-application-role.fixtures';
-import { buildMarketplaceApplicationRoleCleanup } from 'src/database/commands/upgrade-version-command/2-65/utils/build-marketplace-application-role-cleanup.util';
+} from 'src/database/commands/upgrade-version-command/2-66/utils/__tests__/marketplace-application-role.fixtures';
+import { buildMarketplaceApplicationRoleCleanup } from 'src/database/commands/upgrade-version-command/2-66/utils/build-marketplace-application-role-cleanup.util';
 
 const universalIdentifiersOf = (rows: { universalIdentifier: string }[]) =>
   rows.map(({ universalIdentifier }) => universalIdentifier).sort();

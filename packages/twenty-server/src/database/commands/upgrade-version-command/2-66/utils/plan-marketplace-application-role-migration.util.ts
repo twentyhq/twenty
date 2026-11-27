@@ -4,18 +4,18 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   buildMarketplaceApplicationRoleCleanup,
   type MarketplaceApplicationRoleCleanup,
-} from 'src/database/commands/upgrade-version-command/2-65/utils/build-marketplace-application-role-cleanup.util';
+} from 'src/database/commands/upgrade-version-command/2-66/utils/build-marketplace-application-role-cleanup.util';
 import {
   buildMarketplaceApplicationRoleClone,
   computeMarketplaceApplicationRoleCloneLabel,
   getMarketplaceApplicationRoleCloneUniversalIdentifier,
   type MarketplaceApplicationRoleClone,
   type MarketplaceApplicationRoleCloneFlatEntityMaps,
-} from 'src/database/commands/upgrade-version-command/2-65/utils/build-marketplace-application-role-clone.util';
+} from 'src/database/commands/upgrade-version-command/2-66/utils/build-marketplace-application-role-clone.util';
 import {
   findOutsideHolderFlatRoleTargets,
   selectMarketplaceApplicationRoles,
-} from 'src/database/commands/upgrade-version-command/2-65/utils/select-marketplace-application-roles.util';
+} from 'src/database/commands/upgrade-version-command/2-66/utils/select-marketplace-application-roles.util';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AllFlatEntityOperationByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';

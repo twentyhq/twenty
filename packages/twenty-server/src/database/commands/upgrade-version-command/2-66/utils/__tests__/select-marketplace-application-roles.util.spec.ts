@@ -4,11 +4,11 @@ import {
   buildFlatRoleTarget,
   buildRoleTargetAndAgentMaps,
   WORKSPACE_CUSTOM_APPLICATION,
-} from 'src/database/commands/upgrade-version-command/2-65/utils/__tests__/marketplace-application-role.fixtures';
+} from 'src/database/commands/upgrade-version-command/2-66/utils/__tests__/marketplace-application-role.fixtures';
 import {
   findOutsideHolderFlatRoleTargets,
   selectMarketplaceApplicationRoles,
-} from 'src/database/commands/upgrade-version-command/2-65/utils/select-marketplace-application-roles.util';
+} from 'src/database/commands/upgrade-version-command/2-66/utils/select-marketplace-application-roles.util';
 
 const requestedFlatRole = buildFlatRole({
   id: 'requested-role-id',

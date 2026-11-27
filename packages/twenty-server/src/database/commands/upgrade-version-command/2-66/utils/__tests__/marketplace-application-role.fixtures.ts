@@ -1,4 +1,4 @@
-import { type MarketplaceApplicationRoleCloneFlatEntityMaps } from 'src/database/commands/upgrade-version-command/2-65/utils/build-marketplace-application-role-clone.util';
+import { type MarketplaceApplicationRoleCloneFlatEntityMaps } from 'src/database/commands/upgrade-version-command/2-66/utils/build-marketplace-application-role-clone.util';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
