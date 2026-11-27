@@ -107,7 +107,8 @@ export const MainNavigationDrawerTabSwitcher = ({
     return null;
   }
 
-  const shouldShowTooltips = !isExpanded && !isMobile;
+  const shouldShowTooltips = (!isExpanded && !isMobile) || isPinnedToBottom;
+  const isTabContentShown = (isActive: boolean) => isActive && isExpanded;
 
   return (
     <StyledSwitcher
@@ -132,11 +133,9 @@ export const MainNavigationDrawerTabSwitcher = ({
         const isDisabled =
           drawerTab !== NAVIGATION_DRAWER_TABS.NAVIGATION_MENU &&
           isLayoutCustomizationModeEnabled;
-        const isLabelHidden =
-          isPinnedToBottom &&
-          drawerTab === NAVIGATION_DRAWER_TABS.NAVIGATION_MENU;
         const homeChatAttention =
-          drawerTab === NAVIGATION_DRAWER_TABS.NAVIGATION_MENU
+          drawerTab === NAVIGATION_DRAWER_TABS.NAVIGATION_MENU &&
+          !isTabContentShown(isActive)
             ? getTabChatAttention(null)
             : null;
 
@@ -151,8 +150,8 @@ export const MainNavigationDrawerTabSwitcher = ({
             tooltip={
               isDisabled ? getDisabledDrawerTabTooltip(drawerTab) : label
             }
-            shouldShowTooltip={shouldShowTooltips || isLabelHidden}
-            isLabelHidden={isLabelHidden}
+            shouldShowTooltip={shouldShowTooltips}
+            isLabelHidden={isPinnedToBottom}
             ariaLabel={
               isUnread
                 ? t`${label}, ${unreadOpenThreadCount} unread`
@@ -196,17 +195,26 @@ export const MainNavigationDrawerTabSwitcher = ({
           <MainNavigationDrawerTabDropTarget key={drawerTab} tabId={null}>
             {drawerTabButton}
           </MainNavigationDrawerTabDropTarget>,
-          ...navigationMenuTabs.map((tab) => (
-            <MainNavigationDrawerTabDropTarget key={tab.id} tabId={tab.id}>
-              <MainNavigationDrawerSidebarTab
-                tab={tab}
-                isActive={activeNavigationMenuTab?.id === tab.id}
-                isExpanded={isExpanded}
-                shouldShowTooltip={shouldShowTooltips}
-                attention={getTabChatAttention(tab.id)}
-              />
-            </MainNavigationDrawerTabDropTarget>
-          )),
+          ...navigationMenuTabs.map((tab) => {
+            const isTabActive = activeNavigationMenuTab?.id === tab.id;
+
+            return (
+              <MainNavigationDrawerTabDropTarget key={tab.id} tabId={tab.id}>
+                <MainNavigationDrawerSidebarTab
+                  tab={tab}
+                  isActive={isTabActive}
+                  isExpanded={isExpanded}
+                  shouldShowTooltip={shouldShowTooltips}
+                  isLabelHidden={isPinnedToBottom}
+                  attention={
+                    isTabContentShown(isTabActive)
+                      ? null
+                      : getTabChatAttention(tab.id)
+                  }
+                />
+              </MainNavigationDrawerTabDropTarget>
+            );
+          }),
           ...(isLayoutCustomizationModeEnabled &&
           tabCountIncludingHome < NAVIGATION_MENU_TAB_MAX_COUNT
             ? [
@@ -214,6 +222,7 @@ export const MainNavigationDrawerTabSwitcher = ({
                   key="add-tab"
                   isExpanded={isExpanded}
                   shouldShowTooltip={shouldShowTooltips}
+                  isLabelHidden={isPinnedToBottom}
                 />,
               ]
             : []),

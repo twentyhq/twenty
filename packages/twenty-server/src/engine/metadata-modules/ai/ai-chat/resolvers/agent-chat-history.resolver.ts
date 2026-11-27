@@ -24,7 +24,6 @@ import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-
 import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @UseGuards(
@@ -53,7 +52,6 @@ export class AgentChatHistoryResolver {
     private readonly streamRecoveryService: AgentChatStreamRecoveryService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly turnRecorderService: AgentTurnRecorderService,
-    private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly messageReactionService: AgentChatMessageReactionService,
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
@@ -81,32 +79,16 @@ export class AgentChatHistoryResolver {
       applicationId: callerApplication?.id,
       workspaceId,
     });
-    const [{ flatWorkspaceMemberMaps }, reactionsByMessageId] =
-      await Promise.all([
-        this.workspaceCacheService.getOrRecompute(workspaceId, [
-          'flatWorkspaceMemberMaps',
-        ]),
-        this.messageReactionService.findReactionsByMessageId({
-          workspaceId,
-          messageIds: messages.map(({ id }) => id),
-        }),
-      ]);
+    const reactionsByMessageId =
+      await this.messageReactionService.findReactionsByMessageId({
+        workspaceId,
+        messageIds: messages.map(({ id }) => id),
+      });
 
-    // fronts cached from the release before still name senders by their membership
-    return messages.map((message) => {
-      const senderUserId = isDefined(message.senderWorkspaceMemberId)
-        ? flatWorkspaceMemberMaps.byId[message.senderWorkspaceMemberId]?.userId
-        : undefined;
-
-      return {
-        ...message,
-        reactions: reactionsByMessageId.get(message.id) ?? [],
-        senderUserWorkspaceId: isDefined(senderUserId)
-          ? (flatWorkspaceMemberMaps.userWorkspaceIdByUserId[senderUserId] ??
-            null)
-          : null,
-      };
-    });
+    return messages.map((message) => ({
+      ...message,
+      reactions: reactionsByMessageId.get(message.id) ?? [],
+    }));
   }
 
   @Query(() => ChatStreamCatchupChunksDTO)

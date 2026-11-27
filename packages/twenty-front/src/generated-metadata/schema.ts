@@ -215,7 +215,6 @@ export type AgentMessage = {
   reactions: Array<AgentMessageReactionSummary>;
   role: Scalars['String']['output'];
   senderApplicationId?: Maybe<Scalars['UUID']['output']>;
-  senderUserWorkspaceId?: Maybe<Scalars['UUID']['output']>;
   senderWorkspaceMemberId?: Maybe<Scalars['UUID']['output']>;
   status: Scalars['String']['output'];
   threadId: Scalars['UUID']['output'];
@@ -1061,7 +1060,8 @@ export type AuthToken = {
 export type AuthTokenPair = {
   __typename?: 'AuthTokenPair';
   accessOrWorkspaceAgnosticToken: AuthToken;
-  refreshToken: AuthToken;
+  /** @deprecated Always null. Will be removed. */
+  refreshToken?: Maybe<AuthToken>;
 };
 
 export type AuthTokens = {
@@ -1899,6 +1899,7 @@ export type CreateEmailingDomainInput = {
 export type CreateFieldInput = {
   defaultValue?: InputMaybe<Scalars['JSON']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
+  formula?: InputMaybe<Scalars['JSON']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
   isActive?: InputMaybe<Scalars['Boolean']['input']>;
   isAuditLogged?: InputMaybe<Scalars['Boolean']['input']>;
@@ -2182,6 +2183,7 @@ export type CreateViewInput = {
   kanbanAggregateOperationFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   kanbanColumnWidth?: InputMaybe<Scalars['Int']['input']>;
   key?: InputMaybe<ViewKey>;
+  listPinnedFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   mainGroupByFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   name: Scalars['String']['input'];
   objectMetadataId: Scalars['UUID']['input'];
@@ -2697,8 +2699,6 @@ export enum FeatureFlagKey {
   IS_AI_CHAT_COMPONENT_BUILDER_ENABLED = 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED',
   IS_AI_CHAT_INBOX_ENABLED = 'IS_AI_CHAT_INBOX_ENABLED',
   IS_AI_DATA_POLICY_ENABLED = 'IS_AI_DATA_POLICY_ENABLED',
-  IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED = 'IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED',
-  IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED = 'IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED',
   IS_CHANNEL_VISIBILITY_ENFORCED_ON_API_KEYS = 'IS_CHANNEL_VISIBILITY_ENFORCED_ON_API_KEYS',
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED = 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED',
   IS_CUSTOMIZABLE_SIDEBAR_ENABLED = 'IS_CUSTOMIZABLE_SIDEBAR_ENABLED',
@@ -2722,6 +2722,7 @@ export type Field = {
   defaultValue?: Maybe<Scalars['JSON']['output']>;
   description?: Maybe<Scalars['String']['output']>;
   disabledFieldPermissionActions?: Maybe<Array<Scalars['String']['output']>>;
+  formula?: Maybe<Scalars['JSON']['output']>;
   icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['UUID']['output'];
   isActive?: Maybe<Scalars['Boolean']['output']>;
@@ -3960,6 +3961,7 @@ export type Mutation = {
   removeRecordShare: RecordSharingDto;
   removeRoleFromAgent: Scalars['Boolean']['output'];
   renewApplicationToken: ApplicationTokenPair;
+  /** @deprecated Refresh tokens are no longer issued; this is removed once the last one expires. */
   renewToken: AuthTokens;
   reopenAgentChatThreadInChannel: Scalars['Boolean']['output'];
   reportAppConnectionAuthFailure: Scalars['Boolean']['output'];
@@ -5157,11 +5159,6 @@ export type MutationSignInArgs = {
   locale?: InputMaybe<Scalars['String']['input']>;
   password: Scalars['String']['input'];
   verifyEmailRedirectPath?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-export type MutationSignOutArgs = {
-  refreshToken?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -8015,6 +8012,7 @@ export type UpdateEmailGroupChannelInput = {
 export type UpdateFieldInput = {
   defaultValue?: InputMaybe<Scalars['JSON']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
+  formula?: InputMaybe<Scalars['JSON']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
   isActive?: InputMaybe<Scalars['Boolean']['input']>;
   isAuditLogged?: InputMaybe<Scalars['Boolean']['input']>;
@@ -8395,6 +8393,7 @@ export type UpdateViewInput = {
   kanbanAggregateOperation?: InputMaybe<AggregateOperations>;
   kanbanAggregateOperationFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   kanbanColumnWidth?: InputMaybe<Scalars['Int']['input']>;
+  listPinnedFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   mainGroupByFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   /** Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
@@ -8937,6 +8936,7 @@ export type View = {
   kanbanAggregateOperationFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
   kanbanColumnWidth?: Maybe<Scalars['Int']['output']>;
   key?: Maybe<ViewKey>;
+  listPinnedFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
   mainGroupByFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
   name: Scalars['String']['output'];
   objectMetadataId: Scalars['UUID']['output'];

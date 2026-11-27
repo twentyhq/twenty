@@ -144,27 +144,26 @@ describe('whatsappPlanHistoryImportHandler', () => {
     expect(getStoredChatIds(1)).toBeUndefined();
   });
 
-  it('hands the conversations the member selected to the import jobs without reading them', async () => {
+  it('hands the conversations the member selected to the import jobs, most recent first', async () => {
     mocks.kvStore.set(STATE_KEY, {
       ...RUNNING_STATE,
       importPolicy: 'SELECTED',
     });
     mocks.kvStore.set('whatsapp-settings:connection-id', {
       importPolicy: 'SELECTED',
-      selectedChats: buildChatIds({ count: 25 }).map((id) => ({
+      selectedChats: ['chat-old', 'chat-1', 'chat-3'].map((id) => ({
         id,
         name: id,
       })),
     });
+    mockChatPages([5]);
 
     await expect(whatsappPlanHistoryImportHandler(PAYLOAD)).resolves.toEqual({
       status: 'PLANNED',
-      chunkCount: 2,
+      chunkCount: 1,
     });
 
-    expect(getStoredChatIds(0)).toEqual(buildChatIds({ count: 20 }));
-    expect(getStoredChatIds(1)).toEqual(buildChatIds({ count: 5, offset: 20 }));
-    expect(mocks.listUnipileChats).not.toHaveBeenCalled();
+    expect(getStoredChatIds(0)).toEqual(['chat-1', 'chat-3', 'chat-old']);
   });
 
   it('starts the import chain on the first page only', async () => {

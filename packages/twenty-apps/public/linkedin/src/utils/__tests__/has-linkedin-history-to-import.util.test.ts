@@ -8,35 +8,25 @@ describe('hasLinkedinHistoryToImport', () => {
       hasLinkedinHistoryToImport({
         importPolicy: 'SELECTED',
         selectedChats: [],
-        historyConversationLimit: 50,
       }),
     ).toBe(false);
   });
 
-  it('has the picked conversations, even with past conversations turned off', () => {
+  it('has the picked conversations', () => {
     expect(
       hasLinkedinHistoryToImport({
         importPolicy: 'SELECTED',
         selectedChats: [{ id: 'chat-1', name: 'Ada Lovelace' }],
-        historyConversationLimit: 0,
       }),
     ).toBe(true);
   });
 
-  it('follows the past conversations setting for the other policies', () => {
-    expect(
-      hasLinkedinHistoryToImport({
-        importPolicy: 'ALL',
-        selectedChats: [{ id: 'chat-1', name: 'Ada Lovelace' }],
-        historyConversationLimit: 0,
-      }),
-    ).toBe(false);
-    expect(
-      hasLinkedinHistoryToImport({
-        importPolicy: 'CONTACTS_ONLY',
-        selectedChats: [],
-        historyConversationLimit: 50,
-      }),
-    ).toBe(true);
-  });
+  it.each(['ALL', 'CONTACTS_ONLY'] as const)(
+    'has the most recent conversations for the %s policy',
+    (importPolicy) => {
+      expect(
+        hasLinkedinHistoryToImport({ importPolicy, selectedChats: [] }),
+      ).toBe(true);
+    },
+  );
 });

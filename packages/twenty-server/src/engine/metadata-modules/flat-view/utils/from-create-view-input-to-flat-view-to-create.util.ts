@@ -1,6 +1,7 @@
 import { DEFAULT_VIEW_GROUP_LOAD_LIMIT } from 'twenty-shared/constants';
 import {
   isDefined,
+  isViewCompactByDefault,
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
@@ -48,6 +49,7 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     objectMetadataUniversalIdentifier,
     calendarFieldMetadataUniversalIdentifier,
     calendarEndFieldMetadataUniversalIdentifier,
+    listPinnedFieldMetadataUniversalIdentifier,
     kanbanAggregateOperationFieldMetadataUniversalIdentifier,
     mainGroupByFieldMetadataUniversalIdentifier,
   } = resolveEntityRelationUniversalIdentifiers({
@@ -56,6 +58,7 @@ export const fromCreateViewInputToFlatViewToCreate = ({
       objectMetadataId,
       calendarFieldMetadataId: createViewInput.calendarFieldMetadataId,
       calendarEndFieldMetadataId: createViewInput.calendarEndFieldMetadataId,
+      listPinnedFieldMetadataId: createViewInput.listPinnedFieldMetadataId,
       kanbanAggregateOperationFieldMetadataId:
         createViewInput.kanbanAggregateOperationFieldMetadataId,
       mainGroupByFieldMetadataId: createViewInput.mainGroupByFieldMetadataId,
@@ -65,6 +68,7 @@ export const fromCreateViewInputToFlatViewToCreate = ({
 
   const mainGroupByFieldMetadataId =
     createViewInput.mainGroupByFieldMetadataId ?? null;
+  const viewType = createViewInput.type ?? ViewType.TABLE;
 
   const flatViewToCreate: UniversalFlatView & { id: string } = {
     id: viewId,
@@ -77,9 +81,10 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     presetFilter: createViewInput.presetFilter ?? null,
     calendarFieldMetadataUniversalIdentifier,
     calendarEndFieldMetadataUniversalIdentifier,
+    listPinnedFieldMetadataUniversalIdentifier,
     calendarLayout: createViewInput.calendarLayout ?? null,
     icon: createViewInput.icon,
-    isCompact: createViewInput.isCompact ?? false,
+    isCompact: createViewInput.isCompact ?? isViewCompactByDefault(viewType),
     shouldHideEmptyGroups: createViewInput.shouldHideEmptyGroups ?? false,
     shouldDisplayGroupsAsTabs:
       createViewInput.shouldDisplayGroupsAsTabs ?? false,
@@ -92,7 +97,7 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     key: createViewInput.key ?? null,
     openRecordIn: createViewInput.openRecordIn ?? ViewOpenRecordIn.SIDE_PANEL,
     position: createViewInput.position ?? 0,
-    type: createViewInput.type ?? ViewType.TABLE,
+    type: viewType,
     universalIdentifier: createViewInput.universalIdentifier ?? v4(),
     isPrivate: createViewInput.isPrivate ?? false,
     createdByUserWorkspaceId: createdByUserWorkspaceId ?? null,

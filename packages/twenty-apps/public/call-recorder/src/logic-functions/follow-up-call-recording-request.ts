@@ -1,5 +1,4 @@
 import { isNumber, isUndefined } from '@sniptt/guards';
-import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 
 import { FOLLOW_UP_CALL_RECORDING_REQUEST_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
@@ -10,7 +9,7 @@ import {
 } from 'src/logic-functions/flows/follow-up-call-recording-request.util';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { buildRetryableStepFailure } from 'src/logic-functions/utils/build-step-failure.util';
-import { fetchWithRateLimitRetry } from 'src/logic-functions/utils/fetch-with-rate-limit-retry.util';
+import { createCoreApiClientRunningAsApplication } from 'src/logic-functions/utils/create-core-api-client-running-as-application.util';
 import { getString } from 'src/logic-functions/utils/get-string.util';
 
 export const followUpCallRecordingRequestHandler = async (
@@ -33,10 +32,7 @@ export const followUpCallRecordingRequestHandler = async (
     const result = await followUpCallRecordingRequest({
       // The follow-up runs long after the run that armed it, so it must not
       // borrow that run's user.
-      client: new CoreApiClient({
-        runAs: 'application',
-        fetch: fetchWithRateLimitRetry,
-      }),
+      client: createCoreApiClientRunningAsApplication(),
       callRecordingId,
       attempt,
       now,

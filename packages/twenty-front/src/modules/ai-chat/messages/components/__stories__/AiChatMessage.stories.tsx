@@ -288,6 +288,31 @@ const mockThinkingStepsDone: ExtendedUIMessage = {
   },
 };
 
+const mockToolsOnlyTurn: ExtendedUIMessage = {
+  id: 'msg-tools-only',
+  role: 'assistant',
+  parts: [
+    {
+      type: 'reasoning',
+      text: 'The member asked for Acme, so I will create the company.',
+      state: 'done',
+    },
+    {
+      type: 'tool-create_company',
+      toolCallId: 'tool-create-company-done',
+      input: { name: 'Acme' },
+      output: { success: true },
+      state: 'output-available',
+    },
+  ],
+  metadata: {
+    createdAt: MOCKED_DATE,
+    startedAt: '2026-01-01T10:00:00.000Z',
+    finishedAt: '2026-01-01T10:00:09.000Z',
+    isBuiltInAssistant: true,
+  },
+};
+
 const mockAnsweredForm: ExtendedUIMessage = {
   id: 'msg-answered-form',
   role: 'assistant',
@@ -954,6 +979,30 @@ export const ApprovedToolCallExpanded: Story = {
     await expect(await canvas.findByText('HTTP Request')).toBeVisible();
     await expect(
       canvas.queryByRole('button', { name: 'Approve' }),
+    ).not.toBeInTheDocument();
+  },
+};
+
+export const ToolsOnlyTurn: Story = {
+  parameters: {
+    isInboxEnabled: true,
+    messages: [mockUserMessage, mockToolsOnlyTurn],
+  },
+  render: () => (
+    <StyledConversationContainer>
+      <AiChatMessage messageId={mockUserMessage.id} />
+      <AiChatMessage messageId={mockToolsOnlyTurn.id} />
+    </StyledConversationContainer>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(
+      await canvas.findByRole('button', { name: /worked for 9s/i }),
+    ).toBeVisible();
+    await expect(canvas.queryByText('Ada')).not.toBeInTheDocument();
+    await expect(
+      canvas.queryByRole('separator', { name: 'New' }),
     ).not.toBeInTheDocument();
   },
 };

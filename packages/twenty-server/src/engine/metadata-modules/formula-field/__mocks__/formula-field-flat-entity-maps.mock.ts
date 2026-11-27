@@ -10,7 +10,7 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
-import { setFormulaFieldBindings } from 'src/engine/metadata-modules/formula-field/utils/set-formula-field-bindings.util';
+import { setFormulaFieldTrees } from 'src/engine/metadata-modules/formula-field/utils/set-formula-field-trees.util';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 
 const SUPPLIER_OBJECT_ID = 'supplier-object';
@@ -35,14 +35,12 @@ const buildField = ({
   expression?: string;
   currencyCodeExpression?: string;
 }) => {
-  const settings = isDefined(expression)
+  const formula = isDefined(expression)
     ? {
-        formula: {
-          expression,
-          ...(isDefined(currencyCodeExpression)
-            ? { currencyCodeExpression }
-            : {}),
-        },
+        expression,
+        ...(isDefined(currencyCodeExpression)
+          ? { currencyCodeExpression }
+          : {}),
       }
     : null;
 
@@ -53,8 +51,7 @@ const buildField = ({
     type,
     objectMetadataId,
     objectMetadataUniversalIdentifier,
-    settings,
-    universalSettings: settings,
+    formula,
   });
 };
 
@@ -228,16 +225,14 @@ const UNIVERSAL_FLAT_FIELD_METADATA_MAPS_WITHOUT_BINDINGS = {
   ),
 };
 
-const FIELDS = FIELDS_WITHOUT_BINDINGS.map((field) => {
-  const { universalSettings } = setFormulaFieldBindings({
+const FIELDS = FIELDS_WITHOUT_BINDINGS.map((field) =>
+  setFormulaFieldTrees({
     universalFlatFieldMetadata: field,
     universalFlatObjectMetadataMaps: FORMULA_FLAT_OBJECT_METADATA_MAPS_MOCK,
     universalFlatFieldMetadataMaps:
       UNIVERSAL_FLAT_FIELD_METADATA_MAPS_WITHOUT_BINDINGS,
-  });
-
-  return { ...field, settings: universalSettings, universalSettings };
-});
+  }),
+);
 
 export const FORMULA_FLAT_FIELD_METADATA_MAPS_MOCK: FlatEntityMaps<FlatFieldMetadata> =
   addAllFlatEntitiesToFlatEntityMaps({

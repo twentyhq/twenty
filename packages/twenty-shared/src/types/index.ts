@@ -97,7 +97,6 @@ export type { ExpressionDate } from './ExpressionDate';
 export type { ExpressionDatePart } from './ExpressionDatePart';
 export type { ExpressionDateUnit } from './ExpressionDateUnit';
 export type { ExpressionEvaluationResult } from './ExpressionEvaluationResult';
-export type { ExpressionInstruction } from './ExpressionInstruction';
 export type { ExpressionSyntaxError } from './ExpressionSyntaxError';
 export type { ExpressionSyntaxErrorCode } from './ExpressionSyntaxErrorCode';
 export type { ExtractPropertiesThatEndsWithId } from './ExtractPropertiesThatEndsWithId';
@@ -360,6 +359,7 @@ export type {
   StepFilterWithPotentiallyDeprecatedOperand,
 } from './StepFilters';
 export { StepLogicalOperator } from './StepFilters';
+export type { StoredExpressionTree } from './StoredExpressionTree';
 export type { SupportedViewGroupLoadLimit } from './SupportedViewGroupLoadLimit';
 export type { TagColor } from './TagColor';
 export { TwoFactorAuthenticationStrategy } from './TwoFactorAuthenticationStrategy';

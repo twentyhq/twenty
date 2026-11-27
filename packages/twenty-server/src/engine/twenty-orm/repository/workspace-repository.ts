@@ -8,7 +8,7 @@ import {
 import {
   isDefined,
   isNonEmptyArray,
-  isValidationRulePreviousValuePath,
+  listValidationRuleFieldNodes,
 } from 'twenty-shared/utils';
 import {
   DeleteResult,
@@ -757,11 +757,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         : write(this);
     }
 
-    const shouldReadRecordsBeforeWrite = validationRules.some(
-      (validationRule) =>
-        Object.keys(validationRule.bindings).some(
-          isValidationRulePreviousValuePath,
-        ),
+    const shouldReadRecordsBeforeWrite = validationRules.some(({ tree }) =>
+      listValidationRuleFieldNodes({ tree }).some(
+        ({ isPreviousValue }) => isPreviousValue,
+      ),
     );
 
     return this.runAtomically((repository) =>

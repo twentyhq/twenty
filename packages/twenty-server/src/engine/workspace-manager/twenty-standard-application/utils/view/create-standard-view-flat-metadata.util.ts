@@ -8,6 +8,7 @@ import {
   ViewOpenRecordIn,
   type ViewPresetFilter,
 } from 'twenty-shared/types';
+import { isViewCompactByDefault } from 'twenty-shared/utils';
 
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
@@ -52,7 +53,7 @@ export const createStandardViewFlatMetadata = <
     key,
     position,
     icon,
-    isCompact = false,
+    isCompact = isViewCompactByDefault(type),
     openRecordIn = ViewOpenRecordIn.SIDE_PANEL,
     kanbanAggregateOperation = null,
     kanbanAggregateOperationFieldName,
@@ -131,6 +132,7 @@ export const createStandardViewFlatMetadata = <
   return {
     calendarFieldMetadataUniversalIdentifier,
     calendarEndFieldMetadataUniversalIdentifier,
+    listPinnedFieldMetadataUniversalIdentifier: null,
     kanbanAggregateOperationFieldMetadataUniversalIdentifier,
     mainGroupByFieldMetadataUniversalIdentifier,
     objectMetadataUniversalIdentifier,
@@ -158,6 +160,7 @@ export const createStandardViewFlatMetadata = <
     calendarLayout: null,
     calendarFieldMetadataId,
     calendarEndFieldMetadataId,
+    listPinnedFieldMetadataId: null,
     anyFieldFilterValue: null,
     presetFilter,
     isPrivate: false,

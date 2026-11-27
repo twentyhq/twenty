@@ -7,6 +7,7 @@ import {
   listMessageChannels,
 } from 'twenty-sdk/logic-function';
 
+import { WHATSAPP_CONNECT_HISTORY_IMPORT_DELAY_MILLISECONDS } from 'src/constants/whatsapp-connect-history-import-delay-milliseconds.constant';
 import { PERSON_PHONES_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/person-phones-field-universal-identifier.constant';
 import {
   WHATSAPP_MESSAGING_PROVIDER_UNIVERSAL_IDENTIFIER,
@@ -14,6 +15,8 @@ import {
 } from 'src/constants/universal-identifiers';
 import { type WhatsappConnectionHookPayload } from 'src/logic-functions/types/whatsapp-connection-hook-payload.type';
 import { getWhatsappChannelIdentityOrThrow } from 'src/logic-functions/utils/get-whatsapp-channel-identity-or-throw.util';
+import { getWhatsappSettings } from 'src/logic-functions/utils/get-whatsapp-settings.util';
+import { restartWhatsappHistoryImport } from 'src/logic-functions/utils/restart-whatsapp-history-import.util';
 import { getUnipileAccountClaimKey } from 'src/unipile/utils/get-unipile-account-claim-key.util';
 
 export const whatsappOnConnectHandler = async ({
@@ -47,6 +50,12 @@ export const whatsappOnConnectHandler = async ({
     scope: 'SERVER',
   });
 
+  await restartWhatsappHistoryImport({
+    connectedAccountId,
+    settings: await getWhatsappSettings(connectedAccountId),
+    delayMs: WHATSAPP_CONNECT_HISTORY_IMPORT_DELAY_MILLISECONDS,
+  });
+
   return { messageChannelId: channel.id };
 };
 
@@ -54,7 +63,7 @@ export default defineLogicFunction({
   universalIdentifier: WHATSAPP_ON_CONNECT_UNIVERSAL_IDENTIFIER,
   name: 'whatsapp-on-connect',
   description:
-    'Creates the message channel of a new WhatsApp connection, matched on the phone numbers of People, and routes its Unipile webhooks to this workspace.',
+    'Creates the message channel of a WhatsApp connection and imports its most recent conversations.',
   timeoutSeconds: 30,
   handler: whatsappOnConnectHandler,
 });

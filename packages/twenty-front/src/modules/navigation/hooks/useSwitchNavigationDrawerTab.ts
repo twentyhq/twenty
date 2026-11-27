@@ -109,7 +109,10 @@ export const useSwitchNavigationDrawerTab = () => {
       leaveSettingsDrawer();
     }
 
-    navigate(path, { replace: isSettingsDrawer });
+    navigate(path, {
+      replace: isSettingsDrawer,
+      state: { isAiChatHandoffSkipped: true },
+    });
   };
 
   const switchToNavigationMenuTab = (tabId: string | null) => {
@@ -164,5 +167,9 @@ export const useSwitchNavigationDrawerTab = () => {
     }
   };
 
-  return { switchNavigationDrawerTab, switchToNavigationMenuTab };
+  return {
+    switchNavigationDrawerTab,
+    switchToNavigationMenu,
+    switchToNavigationMenuTab,
+  };
 };

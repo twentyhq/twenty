@@ -2,7 +2,8 @@ import { Module } from '@nestjs/common';
 
 import { MigrateAgentHistoryToWorkspaceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789914239896-migrate-agent-history-to-workspace.command';
 import { AgentHistoryMigrationModule } from 'src/database/commands/agent-history/agent-history-migration.module';
-import { AgentChatStreamStateModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-stream-state.module';
+import { LegacyAgentChatEventPublisherService } from 'src/database/commands/upgrade-version-command/2-42/services/legacy-agent-chat-event-publisher.service';
+import { LegacyAgentChatStreamHeartbeatService } from 'src/database/commands/upgrade-version-command/2-42/services/legacy-agent-chat-stream-heartbeat.service';
 import { BackfillWorkspaceWorkflowVersionIdCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789652804001-backfill-workspace-workflow-version-id.command';
 import { BackfillWorkflowExecutionCoreIdsCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789719131001-backfill-workflow-execution-core-ids.command';
 import { MakeWorkflowRunProjectionRelationsNullableCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789719131002-make-workflow-run-projection-relations-nullable.command';
@@ -29,7 +30,6 @@ import { UpdateRecordCreationCommandLabelsCommand } from 'src/database/commands/
 @Module({
   imports: [
     AgentHistoryMigrationModule,
-    AgentChatStreamStateModule,
     ApplicationModule,
     MetricsModule,
     WorkflowCoreModule,
@@ -43,6 +43,8 @@ import { UpdateRecordCreationCommandLabelsCommand } from 'src/database/commands/
   providers: [
     UpdateRecordCreationCommandLabelsCommand,
     GateWorkflowFavoritesByCoreIndexFlagCommand,
+    LegacyAgentChatEventPublisherService,
+    LegacyAgentChatStreamHeartbeatService,
     MigrateAgentHistoryToWorkspaceCommand,
     UnpinCreationCommandsOnRecordSelectionCommand,
     RelinkWorkflowVersionsToCoreWorkflowsCommand,

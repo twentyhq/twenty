@@ -248,6 +248,8 @@ Publishing to npm makes your app eligible for the Twenty marketplace. After cata
 }
 ```
 
+Your roles must also follow the [rules for roles outside the workspace Custom application](/developers/extend/apps/config/roles#roles-outside-the-workspace-custom-application): only agents can hold them, and they declare no field or row-level permissions. Otherwise `twenty app publish` fails with `INVALID_INPUT` and lists the offending roles.
+
 ### Marketplace metadata
 
 The `defineApplication()` config supports optional fields that control how your app appears in the marketplace. Use `logo` and `galleryImages` to reference images from the `public/` folder:

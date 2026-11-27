@@ -2,7 +2,9 @@ import { deleteUser } from 'test/integration/graphql/utils/delete-user.util';
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { getCurrentUser } from 'test/integration/graphql/utils/get-current-user.util';
 import { signUp } from 'test/integration/graphql/utils/sign-up.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
+import gql from 'graphql-tag';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type SignUpInput } from 'src/engine/core-modules/auth/dto/sign-up.input';
@@ -38,7 +40,6 @@ describe('Successful User Sign Up (integration)', () => {
     expect(
       firstSignUpData.signUp.tokens.accessOrWorkspaceAgnosticToken.token,
     ).toBeDefined();
-    expect(firstSignUpData.signUp.tokens.refreshToken.token).toBeDefined();
     expect(
       firstSignUpData.signUp.availableWorkspaces.availableWorkspacesForSignIn,
     ).toEqual([]);
@@ -91,5 +92,39 @@ describe('Successful User Sign Up (integration)', () => {
     expect(currentUserAfterSecondSignUp).toMatchSnapshot(
       extractRecordIdsAndDatesAsExpectAny({ ...currentUserAfterSecondSignUp }),
     );
+  });
+
+  it('should answer the refresh token selection of stale front bundles with null', async () => {
+    const response = await makeMetadataApiRequest(
+      {
+        query: gql`
+          mutation SignUp($email: String!, $password: String!) {
+            signUp(email: $email, password: $password) {
+              tokens {
+                accessOrWorkspaceAgnosticToken {
+                  token
+                }
+                refreshToken {
+                  token
+                  expiresAt
+                }
+              }
+            }
+          }
+        `,
+        variables: {
+          email: 'stale-bundle-sign-up@example.com',
+          password: 'Test123!@#',
+        },
+      },
+      undefined,
+    );
+
+    expect(response.body.errors).toBeUndefined();
+
+    createdUserAccessToken =
+      response.body.data.signUp.tokens.accessOrWorkspaceAgnosticToken.token;
+
+    expect(response.body.data.signUp.tokens.refreshToken).toBeNull();
   });
 });

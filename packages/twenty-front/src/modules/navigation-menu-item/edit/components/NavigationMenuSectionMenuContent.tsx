@@ -13,6 +13,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { NAVIGATION_MENU_TAB_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/NavigationMenuTabIconDefault';
 import { canMoveBuiltInSectionToContainer } from '@/navigation-menu-item/common/utils/canMoveBuiltInSectionToContainer';
 import { isNavigationMenuItemBuiltInSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemBuiltInSection';
+import { useGetNavigationMenuTabLabel } from '@/navigation-menu-item/display/hooks/useGetNavigationMenuTabLabel';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
 import { NavigationMenuItemContainerNameEditor } from '@/navigation-menu-item/edit/components/NavigationMenuItemContainerNameEditor';
@@ -37,6 +38,7 @@ export const NavigationMenuSectionMenuContent = ({
   onClose,
 }: NavigationMenuSectionMenuContentProps) => {
   const { t } = useLingui();
+  const getNavigationMenuTabLabel = useGetNavigationMenuTabLabel();
   const { getIcon } = useIcons();
   const { goToPage } = useDropdownPage();
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
@@ -79,7 +81,7 @@ export const NavigationMenuSectionMenuContent = ({
     },
     ...tabs.map((tab) => ({
       id: tab.id,
-      label: tab.name,
+      label: getNavigationMenuTabLabel(tab),
       Icon: getIcon(tab.icon ?? NAVIGATION_MENU_TAB_ICON_DEFAULT),
       isDisabled: !canMoveTo(tab.id),
       onClick: () => moveTo(tab.id),

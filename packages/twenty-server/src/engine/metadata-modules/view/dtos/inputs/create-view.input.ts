@@ -65,7 +65,7 @@ export class CreateViewInput {
 
   @IsOptional()
   @IsBoolean()
-  @Field({ nullable: true, defaultValue: false })
+  @Field({ nullable: true })
   isCompact?: boolean;
 
   @IsOptional()
@@ -135,6 +135,11 @@ export class CreateViewInput {
   @IsUUID()
   @Field(() => UUIDScalarType, { nullable: true })
   calendarEndFieldMetadataId?: string;
+
+  @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  listPinnedFieldMetadataId?: string;
 
   @IsOptional()
   @IsUUID()

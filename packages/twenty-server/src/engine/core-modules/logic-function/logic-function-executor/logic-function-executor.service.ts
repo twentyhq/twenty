@@ -50,7 +50,7 @@ import { buildLogicFunctionExecutionUsage } from 'src/engine/core-modules/logic-
 import { buildLogicFunctionRunMetricEvent } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-run-metric-event.util';
 import { buildWorkflowCodeStepFlatLogicFunction } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-workflow-code-step-flat-logic-function.util';
 import { isLogicFunctionRetryScheduled } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/is-logic-function-retry-scheduled.util';
-import { LogicFunctionPrebuiltWarmUpService } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/logic-function-prebuilt-warm-up.service';
+import { LogicFunctionPrebuiltInstallService } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-install/logic-function-prebuilt-install.service';
 import { SERVER_ROUTE_PATH } from 'src/engine/core-modules/server-route-trigger/constants/server-route-path.constant';
 import {
   ThrottlerExceptionCode,
@@ -130,7 +130,7 @@ export class LogicFunctionExecutorService {
 
   constructor(
     private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
-    private readonly logicFunctionPrebuiltWarmUpService: LogicFunctionPrebuiltWarmUpService,
+    private readonly logicFunctionPrebuiltInstallService: LogicFunctionPrebuiltInstallService,
     private readonly logicFunctionExecutionThrottleService: LogicFunctionExecutionThrottleService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -211,6 +211,41 @@ export class LogicFunctionExecutorService {
         applicationId: flatApplication.id,
       },
     });
+  }
+
+  // Best-effort: a failed warm-up only costs the first real execution a cold start.
+  async warmUp({
+    workspaceId,
+    logicFunctionId,
+  }: {
+    workspaceId: string;
+    logicFunctionId: string;
+  }): Promise<void> {
+    try {
+      const {
+        flatApplication,
+        flatLogicFunction,
+        flatApplicationVariableMaps,
+      } = await this.getFlatEntitiesOrThrow({ workspaceId, logicFunctionId });
+
+      await this.assertApplicationNotStopped(flatApplication);
+
+      // The bundle's module scope may read process.env, and real executions reuse the warmed module.
+      const envVariables = await this.getExecutionEnvVariables({
+        workspaceId,
+        flatApplication,
+        flatApplicationVariableMaps,
+      });
+
+      await this.logicFunctionDriverFactory
+        .getCurrentDriver()
+        .warmUp({ flatLogicFunction, env: envVariables });
+    } catch (error) {
+      this.logger.warn(
+        `Failed to warm up logic function ${logicFunctionId} in workspace ${workspaceId}: ` +
+          `${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
   }
 
   // The build runs after admission so a rejected run never spends a compilation
@@ -339,7 +374,7 @@ export class LogicFunctionExecutorService {
       executionMode ?? flatLogicFunction.executionMode;
 
     if (effectiveExecutionMode === LogicFunctionExecutionMode.PREBUILT) {
-      await this.logicFunctionPrebuiltWarmUpService.ensurePrebuiltBundleInstalled(
+      await this.logicFunctionPrebuiltInstallService.ensurePrebuiltBundleInstalled(
         {
           flatLogicFunction,
           flatApplication,

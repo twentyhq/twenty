@@ -248,6 +248,8 @@ La pubblicazione su npm rende la tua app idonea per il marketplace di Twenty. Do
 }
 ```
 
+Anche i tuoi ruoli devono seguire le [regole per i ruoli al di fuori dell'applicazione personalizzata dell'area di lavoro](/it/developers/extend/apps/config/roles#roles-outside-the-workspace-custom-application): possono essere ricoperti solo dagli agenti e non dichiarano autorizzazioni a livello di campo o riga. In caso contrario, `twenty app publish` non riesce con `INVALID_INPUT` ed elenca i ruoli che causano il problema.
+
 ### Metadati del marketplace
 
 La configurazione `defineApplication()` supporta campi opzionali che controllano come la tua app appare nel marketplace. Usa `logo` e `galleryImages` per fare riferimento alle immagini nella cartella `public/`:

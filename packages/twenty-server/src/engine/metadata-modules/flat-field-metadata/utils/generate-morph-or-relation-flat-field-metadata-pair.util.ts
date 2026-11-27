@@ -135,6 +135,7 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
         createFieldInput.description ?? defaultDescriptionFromField.description,
       defaultValue: null,
       universalSettings: sourceFlatFieldMetadataUniversalSettings,
+      formula: null,
       options: null,
       relationTargetObjectMetadataUniversalIdentifier:
         targetFlatObjectMetadata.universalIdentifier,
@@ -189,6 +190,7 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
     type: targetFlatFieldMetadataType,
     defaultValue: null,
     universalSettings: targetFlatFieldMetadataUniversalSettings,
+    formula: null,
     options: null,
     relationTargetObjectMetadataUniversalIdentifier:
       sourceFlatObjectMetadata.universalIdentifier,

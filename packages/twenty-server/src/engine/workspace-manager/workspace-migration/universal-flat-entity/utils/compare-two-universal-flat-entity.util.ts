@@ -13,6 +13,7 @@ const SERVER_MANAGED_PROPERTIES = new Set([
   'updatedAt',
   'isSystemSideEffect',
   'createdByUserWorkspaceId',
+  'deletedAt',
 ]);
 
 type CompareTwoUniversalFlatEntityArgs<T extends AllMetadataName> = FromTo<
