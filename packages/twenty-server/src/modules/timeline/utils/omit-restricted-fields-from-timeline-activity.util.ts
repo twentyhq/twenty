@@ -57,7 +57,7 @@ export type IsTimelineActivityRecordReadable = (
 ) => boolean;
 
 type TimelineActivitySubject = {
-  flatObjectMetadata: FlatObjectMetadata;
+  flatObjectMetadata: Pick<FlatObjectMetadata, 'id' | 'fieldIds'>;
   recordId: string | undefined;
 };
 
