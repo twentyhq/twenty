@@ -92,6 +92,11 @@ import {
   WorkspaceDeletionApplicationUninstallJob,
   type WorkspaceDeletionApplicationUninstallJobData,
 } from 'src/engine/core-modules/workspace/jobs/workspace-deletion-application-uninstall.job';
+import {
+  buildWorkspaceLockKey,
+  WORKSPACE_LOCK_OPTIONS,
+} from 'src/engine/core-modules/workspace/constants/workspace-lock.constant';
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { getWorkspaceApplicationUninstallLockName } from 'src/engine/core-modules/workspace/utils/get-workspace-application-uninstall-lock-name.util';
 import { upsertIframeMediaPermission } from 'src/engine/core-modules/workspace/utils/upsert-iframe-media-permission.util';
 import { WORKSPACE_REACTIVATED_EVENT } from 'src/engine/core-modules/workspace/constants/workspace-reactivated-event.constant';
@@ -132,7 +137,6 @@ import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-migration/constant/default-feature-flags';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { ChannelVisibilityRoleWideAccessRevokeService } from 'src/engine/permissions/channel-visibility/services/channel-visibility-role-wide-access-revoke.service';
-import { ChannelVisibilityRuleSyncService } from 'src/engine/permissions/channel-visibility/services/channel-visibility-rule-sync.service';
 
 // far longer than a real activation, so an older ONGOING_CREATION is a crashed attempt that may be reclaimed
 const WORKSPACE_ACTIVATION_STALE_LOCK_TIMEOUT_MS = 5 * 60 * 1000;
@@ -181,7 +185,6 @@ export class WorkspaceService {
 
   constructor(
     private readonly channelVisibilityRoleWideAccessRevokeService: ChannelVisibilityRoleWideAccessRevokeService,
-    private readonly channelVisibilityRuleSyncService: ChannelVisibilityRuleSyncService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly eventEmitter: EventEmitter2,
@@ -221,6 +224,7 @@ export class WorkspaceService {
     private readonly upgradeSequenceReaderService: UpgradeSequenceReaderService,
     private readonly sdkClientGenerationService: SdkClientGenerationService,
     private readonly postgresAdvisoryLockService: PostgresAdvisoryLockService,
+    private readonly cacheLockService: CacheLockService,
     private readonly applicationUninstallService: ApplicationUninstallService,
     @Inject(LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN)
     private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
@@ -951,8 +955,10 @@ export class WorkspaceService {
       await this.postgresAdvisoryLockService.tryWithLock(
         getWorkspaceApplicationUninstallLockName(workspace.id),
         () =>
-          this.channelVisibilityRuleSyncService.withSyncLock(workspace.id, () =>
-            this.hardDeleteWorkspace(workspace),
+          this.cacheLockService.withLock(
+            () => this.hardDeleteWorkspace(workspace),
+            buildWorkspaceLockKey(workspace.id),
+            WORKSPACE_LOCK_OPTIONS,
           ),
       );
 

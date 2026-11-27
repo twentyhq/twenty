@@ -7,13 +7,13 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import {
+  buildWorkspaceLockKey,
+  WORKSPACE_LOCK_OPTIONS,
+} from 'src/engine/core-modules/workspace/constants/workspace-lock.constant';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
-import {
-  buildChannelVisibilityRuleSyncLockKey,
-  CHANNEL_VISIBILITY_RULE_SYNC_LOCK_OPTIONS,
-} from 'src/engine/permissions/channel-visibility/constants/channel-visibility-rule-sync-lock.constant';
 import { CHANNEL_CHILD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'src/engine/permissions/channel-visibility/constants/channel-child-object-universal-identifiers.constant';
 import { buildChannelVisibilityObjectRecordsPermissions } from 'src/engine/permissions/channel-visibility/utils/build-channel-visibility-object-records-permissions.util';
 import { type WorkspaceMemberIndividualRoleHolder } from 'src/engine/permissions/workspace-member-individual-role/types/workspace-member-individual-role.type';
@@ -37,19 +37,10 @@ export class ChannelVisibilityRuleSyncService {
   ) {}
 
   async syncWorkspace(workspaceId: string): Promise<void> {
-    await this.withSyncLock(workspaceId, () =>
-      this.syncWorkspaceWithLock(workspaceId),
-    );
-  }
-
-  async withSyncLock<TResult>(
-    workspaceId: string,
-    callback: () => Promise<TResult>,
-  ): Promise<TResult> {
-    return this.cacheLockService.withLock(
-      callback,
-      buildChannelVisibilityRuleSyncLockKey(workspaceId),
-      CHANNEL_VISIBILITY_RULE_SYNC_LOCK_OPTIONS,
+    await this.cacheLockService.withLock(
+      () => this.syncWorkspaceWithLock(workspaceId),
+      buildWorkspaceLockKey(workspaceId),
+      WORKSPACE_LOCK_OPTIONS,
     );
   }
 
