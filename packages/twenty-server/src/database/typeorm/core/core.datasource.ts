@@ -14,6 +14,21 @@ const isRunningCommand = (): boolean => {
   return scriptPath.includes('/command/command.');
 };
 
+const POSTGRES_APPLICATION_NAME_MAX_LENGTH = 63;
+
+// Commands run per workspace on the writer that serves traffic: a name makes them
+// visible in Performance Insights, and no parallel workers keeps one at one core.
+const getCommandSessionOptions = () =>
+  isRunningCommand()
+    ? {
+        application_name: `twenty-command:${process.argv[2] ?? ''}`.slice(
+          0,
+          POSTGRES_APPLICATION_NAME_MAX_LENGTH,
+        ),
+        options: '-c max_parallel_workers_per_gather=0',
+      }
+    : {};
+
 const getLoggingConfig = (): LogLevel[] => {
   if (process.env.NODE_ENV === 'test') {
     return [];
@@ -91,6 +106,7 @@ export const typeORMCoreModuleOptions: TypeOrmModuleOptions = {
       : undefined,
     idleTimeoutMillis: Number(process.env.PG_POOL_IDLE_TIMEOUT_MS ?? 600000),
     allowExitOnIdle: process.env.PG_POOL_ALLOW_EXIT_ON_IDLE === 'true',
+    ...getCommandSessionOptions(),
   },
 };
 
