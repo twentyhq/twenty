@@ -108,13 +108,15 @@ export class ApplyTimelineActivitiesVisibilityRestrictionsService
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   }): Promise<TEvent[]> {
+    const timelineActivitySnapshots = events.flatMap(({ properties }) =>
+      [
+        'before' in properties ? properties.before : undefined,
+        'after' in properties ? properties.after : undefined,
+      ].filter(isPlainObject),
+    );
+
     const isRecordReadable = await this.buildIsRecordReadable({
-      timelineActivities: events.flatMap(({ properties }) =>
-        [
-          'before' in properties ? properties.before : undefined,
-          'after' in properties ? properties.after : undefined,
-        ].filter(isPlainObject),
-      ),
+      timelineActivities: timelineActivitySnapshots,
       permissionsPrincipals,
       flatObjectMetadataMaps,
     });
