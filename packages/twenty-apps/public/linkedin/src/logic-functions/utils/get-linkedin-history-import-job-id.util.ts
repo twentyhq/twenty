@@ -1,3 +1,5 @@
+import { type LinkedinHistoryImportChatJob } from 'src/logic-functions/types/linkedin-history-import-chat-job.type';
+
 export const getLinkedinPlanHistoryImportJobId = ({
   runId,
   continuationIndex = 0,
@@ -6,13 +8,13 @@ export const getLinkedinPlanHistoryImportJobId = ({
   continuationIndex?: number;
 }): string => `linkedin-history-plan-${runId}-${continuationIndex}`;
 
-export const getLinkedinImportHistoryJobId = ({
-  runId,
-  chunkIndex,
-  resumeIndex = 0,
-}: {
-  runId: string;
-  chunkIndex: number;
-  resumeIndex?: number;
-}): string =>
-  `linkedin-history-chunk-${runId}-${chunkIndex}${resumeIndex > 0 ? `-resume-${resumeIndex}` : ''}`;
+export const getLinkedinHistoryImportChatJobId = ({
+  kind,
+  payload,
+}: LinkedinHistoryImportChatJob): string => {
+  const { runId, chat, attempt = 0 } = payload;
+
+  return kind === 'CONTACTS'
+    ? `linkedin-history-contacts-${runId}-${chat.id}-${attempt}`
+    : `linkedin-history-messages-${runId}-${chat.id}-${payload.pageIndex}-${attempt}`;
+};

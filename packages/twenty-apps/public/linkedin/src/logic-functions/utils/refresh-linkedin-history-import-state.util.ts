@@ -1,21 +1,21 @@
 import { getJobs, type JobStatusResult } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
+import { type LinkedinHistoryImportChatProgress } from 'src/logic-functions/types/linkedin-history-import-chat-progress.type';
 import { type LinkedinHistoryImportPlanning } from 'src/logic-functions/types/linkedin-history-import-planning.type';
-import { type LinkedinHistoryImportProgress } from 'src/logic-functions/types/linkedin-history-import-progress.type';
-import { enqueueLinkedinImportHistoryJob } from 'src/logic-functions/utils/enqueue-linkedin-import-history-job.util';
 import {
-  getLinkedinImportHistoryJobId,
+  getLinkedinHistoryImportChatJobId,
   getLinkedinPlanHistoryImportJobId,
 } from 'src/logic-functions/utils/get-linkedin-history-import-job-id.util';
 import { getLinkedinHistoryImportState } from 'src/logic-functions/utils/get-linkedin-history-import-state.util';
 import {
   deleteLinkedinHistoryImportData,
+  getLinkedinHistoryImportChatProgress,
   getLinkedinHistoryImportPlanning,
-  getLinkedinHistoryImportProgress,
-  saveLinkedinHistoryImportProgress,
+  saveLinkedinHistoryImportChatProgress,
 } from 'src/logic-functions/utils/linkedin-history-import-kv.util';
 import { saveLinkedinHistoryImportState } from 'src/logic-functions/utils/save-linkedin-history-import-state.util';
+import { scheduleLinkedinHistoryImportChatJob } from 'src/logic-functions/utils/schedule-linkedin-history-import-chat-job.util';
 import { type LinkedinHistoryImportState } from 'src/types/linkedin-history-import-state.type';
 
 const LINKEDIN_HISTORY_IMPORT_MAX_RECOVERIES = 3;
@@ -24,6 +24,8 @@ const STALLED_ERROR = {
   code: 'STALLED' as const,
   message: 'The import stopped making progress.',
 };
+
+type LinkedinHistoryImportRun = { connectedAccountId: string; runId: string };
 
 export const finishLinkedinHistoryImport = async ({
   connectedAccountId,
@@ -41,10 +43,8 @@ export const finishLinkedinHistoryImport = async ({
   return state;
 };
 
-const getJobStatus = async (
-  jobId: string,
-): Promise<JobStatusResult | undefined> =>
-  (await getJobs([jobId])).find((status) => status.jobId === jobId);
+const getFutureDate = (date: string | undefined): string | undefined =>
+  isDefined(date) && Date.parse(date) > Date.now() ? date : undefined;
 
 const getPlanningError = async (
   planning: LinkedinHistoryImportPlanning,
@@ -54,13 +54,9 @@ const getPlanningError = async (
     return planning.error;
   }
 
-  if (isDefined(planning.chunkCount)) {
-    return undefined;
-  }
-
-  const planJob = await getJobStatus(
-    planning.planJobId ?? getLinkedinPlanHistoryImportJobId({ runId }),
-  );
+  const planJobId =
+    planning.planJobId ?? getLinkedinPlanHistoryImportJobId({ runId });
+  const [planJob] = await getJobs([planJobId]);
 
   if (!isDefined(planJob)) {
     return STALLED_ERROR;
@@ -71,80 +67,146 @@ const getPlanningError = async (
     : undefined;
 };
 
-const getCurrentChunkError = async ({
-  connectedAccountId,
-  runId,
-  planning,
-  progress,
+const failChat = async ({
+  run,
+  chatId,
+  error,
 }: {
-  connectedAccountId: string;
-  runId: string;
-  planning: LinkedinHistoryImportPlanning;
-  progress: LinkedinHistoryImportProgress;
-}): Promise<LinkedinHistoryImportState['error']> => {
-  if (isDefined(progress.error)) {
-    return progress.error;
+  run: LinkedinHistoryImportRun;
+  chatId: string;
+  error: NonNullable<LinkedinHistoryImportChatProgress['error']>;
+}): Promise<LinkedinHistoryImportChatProgress> => {
+  const progress: LinkedinHistoryImportChatProgress = {
+    status: 'FAILED',
+    error,
+  };
+
+  await saveLinkedinHistoryImportChatProgress({ ...run, chatId, progress });
+
+  return progress;
+};
+
+// A job that ended without scheduling its successor or finishing its conversation is enqueued again
+const checkImportingChat = async ({
+  run,
+  chatId,
+  progress,
+  jobStatusById,
+}: {
+  run: LinkedinHistoryImportRun;
+  chatId: string;
+  progress: LinkedinHistoryImportChatProgress;
+  jobStatusById: Map<string, JobStatusResult>;
+}): Promise<LinkedinHistoryImportChatProgress> => {
+  if (!isDefined(progress.job)) {
+    return failChat({ run, chatId, error: STALLED_ERROR });
   }
 
-  const chunkIndex = progress.completedChunkCount;
+  const job = jobStatusById.get(
+    getLinkedinHistoryImportChatJobId(progress.job),
+  );
 
-  if (planning.plannedChunkCount <= chunkIndex) {
-    return undefined;
-  }
-
-  const currentJobId =
-    progress.currentJobId ??
-    getLinkedinImportHistoryJobId({ runId, chunkIndex });
-  const currentJob = await getJobStatus(currentJobId);
-
-  if (currentJob?.state === 'FAILED') {
-    return { code: 'UNKNOWN', message: currentJob.failedReason ?? '' };
-  }
-
-  const hasEndedWithoutFinishing =
-    currentJob?.state === 'COMPLETED' ||
-    (!isDefined(currentJob) && isDefined(progress.currentJobId));
-
-  if (!isDefined(currentJob) && !isDefined(progress.currentJobId)) {
-    await enqueueLinkedinImportHistoryJob({
-      connectedAccountId,
-      runId,
-      chunkIndex,
+  if (job?.state === 'FAILED') {
+    return failChat({
+      run,
+      chatId,
+      error: { code: 'UNKNOWN', message: job.failedReason ?? '' },
     });
-
-    return undefined;
   }
 
-  if (!hasEndedWithoutFinishing) {
-    return undefined;
+  if (isDefined(job) && job.state !== 'COMPLETED') {
+    return progress;
   }
 
   const recoveryCount = (progress.recoveryCount ?? 0) + 1;
 
   if (recoveryCount > LINKEDIN_HISTORY_IMPORT_MAX_RECOVERIES) {
-    return STALLED_ERROR;
+    return failChat({ run, chatId, error: STALLED_ERROR });
   }
 
-  const resumePayload = {
-    connectedAccountId,
-    runId,
-    chunkIndex,
-    resumeIndex: (progress.currentResumeIndex ?? 0) + 1,
-  };
+  const attempt = (progress.job.payload.attempt ?? 0) + 1;
 
-  await saveLinkedinHistoryImportProgress({
-    connectedAccountId,
-    runId,
-    progress: {
-      ...progress,
-      currentJobId: getLinkedinImportHistoryJobId(resumePayload),
-      currentResumeIndex: resumePayload.resumeIndex,
-      recoveryCount,
-    },
+  await scheduleLinkedinHistoryImportChatJob({
+    job:
+      progress.job.kind === 'CONTACTS'
+        ? { kind: 'CONTACTS', payload: { ...progress.job.payload, attempt } }
+        : { kind: 'MESSAGES', payload: { ...progress.job.payload, attempt } },
+    recoveryCount,
   });
-  await enqueueLinkedinImportHistoryJob(resumePayload);
 
-  return undefined;
+  return progress;
+};
+
+const getChatProgresses = async ({
+  run,
+  chatIds,
+}: {
+  run: LinkedinHistoryImportRun;
+  chatIds: string[];
+}): Promise<LinkedinHistoryImportChatProgress[]> => {
+  const progresses = await Promise.all(
+    chatIds.map((chatId) =>
+      getLinkedinHistoryImportChatProgress({ ...run, chatId }),
+    ),
+  );
+  const importingJobIds = progresses.flatMap((progress) =>
+    progress?.status === 'IMPORTING' && isDefined(progress.job)
+      ? [getLinkedinHistoryImportChatJobId(progress.job)]
+      : [],
+  );
+  const jobStatusById = new Map(
+    (importingJobIds.length > 0 ? await getJobs(importingJobIds) : []).map(
+      (job) => [job.jobId, job],
+    ),
+  );
+
+  return Promise.all(
+    progresses.map((progress, index) =>
+      !isDefined(progress)
+        ? failChat({ run, chatId: chatIds[index], error: STALLED_ERROR })
+        : progress.status === 'IMPORTING'
+          ? checkImportingChat({
+              run,
+              chatId: chatIds[index],
+              progress,
+              jobStatusById,
+            })
+          : progress,
+    ),
+  );
+};
+
+const getEarliestResumeAt = (
+  importingProgresses: LinkedinHistoryImportChatProgress[],
+): string | undefined => {
+  const resumeDates = importingProgresses.map((progress) =>
+    getFutureDate(progress.resumeAt),
+  );
+
+  if (resumeDates.length === 0 || !resumeDates.every(isDefined)) {
+    return undefined;
+  }
+
+  return resumeDates.sort()[0];
+};
+
+const finishIfStillImporting = async ({
+  connectedAccountId,
+  state,
+}: {
+  connectedAccountId: string;
+  state: LinkedinHistoryImportState;
+}): Promise<LinkedinHistoryImportState | null> => {
+  const latestState = await getLinkedinHistoryImportState(connectedAccountId);
+
+  if (
+    latestState?.runId !== state.runId ||
+    latestState.status !== 'IMPORTING'
+  ) {
+    return latestState;
+  }
+
+  return finishLinkedinHistoryImport({ connectedAccountId, state });
 };
 
 export const refreshLinkedinHistoryImportState = async (
@@ -157,70 +219,68 @@ export const refreshLinkedinHistoryImportState = async (
   }
 
   const run = { connectedAccountId, runId: state.runId };
-  const [planning, progress] = await Promise.all([
-    getLinkedinHistoryImportPlanning(run),
-    getLinkedinHistoryImportProgress(run),
-  ]);
-  const resumeAt = progress.resumeAt ?? planning.resumeAt;
-  const currentState: LinkedinHistoryImportState = {
-    ...state,
-    importedConversationCount:
-      progress.importedConversationCount +
-      (progress.currentChunkImportedCount ?? 0),
-    processedConversationCount:
-      progress.completedConversationCount + progress.currentChunkProcessedCount,
-    plannedChunkCount: planning.plannedChunkCount,
-    plannedConversationCount: planning.plannedConversationCount,
-    totalConversationCount: planning.reportedConversationCount,
-    chunkCount: planning.chunkCount,
-    resumeAt:
-      isDefined(resumeAt) && Date.parse(resumeAt) > Date.now()
-        ? resumeAt
-        : undefined,
-  };
+  const planning = await getLinkedinHistoryImportPlanning(run);
 
-  if (
-    isDefined(planning.chunkCount) &&
-    progress.completedChunkCount >= planning.chunkCount
-  ) {
-    return finishLinkedinHistoryImport({
-      connectedAccountId,
-      state: {
-        ...currentState,
-        status: 'COMPLETED',
-        finishedAt: new Date().toISOString(),
-      },
-    });
+  if (!isDefined(planning.chatIds)) {
+    const error = await getPlanningError(planning, state.runId);
+    const listingState = {
+      ...state,
+      resumeAt: getFutureDate(planning.resumeAt),
+    };
+
+    return isDefined(error)
+      ? finishIfStillImporting({
+          connectedAccountId,
+          state: {
+            ...listingState,
+            status: 'FAILED',
+            finishedAt: new Date().toISOString(),
+            error,
+          },
+        })
+      : listingState;
   }
 
-  const error =
-    (await getPlanningError(planning, state.runId)) ??
-    (await getCurrentChunkError({
-      ...run,
-      planning,
-      progress,
-    }));
+  const progresses = await getChatProgresses({
+    run,
+    chatIds: planning.chatIds,
+  });
+  const importingProgresses = progresses.filter(
+    (progress) => progress.status === 'IMPORTING',
+  );
+  const importedConversationCount = progresses.filter(
+    (progress) => progress.status === 'IMPORTED',
+  ).length;
+  const currentState: LinkedinHistoryImportState = {
+    ...state,
+    importedConversationCount,
+    processedConversationCount: progresses.length - importingProgresses.length,
+    totalConversationCount: progresses.length,
+    resumeAt: getEarliestResumeAt(importingProgresses),
+  };
 
-  if (!isDefined(error)) {
+  if (importingProgresses.length > 0) {
     return currentState;
   }
 
-  const latestState = await getLinkedinHistoryImportState(connectedAccountId);
+  const chatError = progresses.find((progress) =>
+    isDefined(progress.error),
+  )?.error;
 
-  if (
-    latestState?.runId !== state.runId ||
-    latestState.status !== 'IMPORTING'
-  ) {
-    return latestState;
-  }
-
-  return finishLinkedinHistoryImport({
+  return finishIfStillImporting({
     connectedAccountId,
-    state: {
-      ...currentState,
-      status: 'FAILED',
-      finishedAt: new Date().toISOString(),
-      error,
-    },
+    state:
+      importedConversationCount === 0 && isDefined(chatError)
+        ? {
+            ...currentState,
+            status: 'FAILED',
+            finishedAt: new Date().toISOString(),
+            error: chatError,
+          }
+        : {
+            ...currentState,
+            status: 'COMPLETED',
+            finishedAt: new Date().toISOString(),
+          },
   });
 };
