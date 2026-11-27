@@ -848,7 +848,7 @@ describe('useSendAiChatMessage', () => {
     expect(jotaiStore.get(attachmentsAtom)).toEqual([]);
   });
 
-  it('carries the attachments of a new chat to one person into the direct message it opens', async () => {
+  it('sends the attachments of a new chat to one person in the direct message it opens, leaving files staged there', async () => {
     const result = renderAiChat({
       persistedDrafts: {
         [THREAD_ID]: serializePlainTextAsAdvancedTextEditorDocument('Hello'),
@@ -864,33 +864,31 @@ describe('useSendAiChatMessage', () => {
     });
     const newChatAttachmentsAtom =
       aiChatComposerAttachmentsFamilyState.atomFamily({ threadId: THREAD_ID });
-
-    jotaiStore.set(newChatAttachmentsAtom, [BRIEF_ATTACHMENT]);
-    jotaiStore.set(
+    const directMessageAttachmentsAtom =
       aiChatComposerAttachmentsFamilyState.atomFamily({
         threadId: DIRECT_MESSAGE_THREAD_ID,
-      }),
-      [
-        {
-          ...BRIEF_ATTACHMENT,
-          fileId: 'staged-file-id',
-          filename: 'staged.pdf',
-        },
-      ],
-    );
+      });
+    const stagedAttachment = {
+      ...BRIEF_ATTACHMENT,
+      fileId: 'staged-file-id',
+      filename: 'staged.pdf',
+    };
+
+    jotaiStore.set(newChatAttachmentsAtom, [BRIEF_ATTACHMENT]);
+    jotaiStore.set(directMessageAttachmentsAtom, [stagedAttachment]);
 
     await send(result);
 
     expect(sentMessageVariables).toHaveBeenCalledWith(
       expect.objectContaining({
         threadId: DIRECT_MESSAGE_THREAD_ID,
-        fileAttachments: [
-          { id: 'staged-file-id', filename: 'staged.pdf' },
-          { id: 'file-id', filename: 'brief.pdf' },
-        ],
+        fileAttachments: [{ id: 'file-id', filename: 'brief.pdf' }],
       }),
     );
     expect(jotaiStore.get(newChatAttachmentsAtom)).toEqual([]);
+    expect(jotaiStore.get(directMessageAttachmentsAtom)).toEqual([
+      stagedAttachment,
+    ]);
   });
 
   it('keeps a new chat to one person as a draft while its attachments upload', async () => {

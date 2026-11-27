@@ -73,15 +73,6 @@ export const useOpenNewAiChatAsDirectMessage = () => {
         );
         assertIsDefinedOrThrow(directMessageThread);
 
-        store.set(
-          aiChatComposerAttachmentsFamilyState.atomFamily({
-            threadId: directMessageThreadId,
-          }),
-          (directMessageAttachments) => [
-            ...directMessageAttachments,
-            ...newChatAttachments,
-          ],
-        );
         store.set(newChatAttachmentsAtom, (attachments) =>
           attachments.filter(
             (attachment) => !newChatAttachments.includes(attachment),
@@ -107,7 +98,7 @@ export const useOpenNewAiChatAsDirectMessage = () => {
           );
         }
 
-        return directMessageThreadId;
+        return { directMessageThreadId, attachments: newChatAttachments };
       } catch (error) {
         enqueueToast(getToastOptionsFromError({ error }));
       } finally {
