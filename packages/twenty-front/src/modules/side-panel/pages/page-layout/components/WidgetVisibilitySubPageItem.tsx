@@ -38,9 +38,7 @@ export const WidgetVisibilitySubPageItem = ({
         Icon={hasConditionalAvailability ? IconEyeX : IconEye}
         hasSubMenu
         onClick={handleClick}
-        description={
-          hasConditionalAvailability ? t`Custom rule` : t`Everyone`
-        }
+        description={hasConditionalAvailability ? t`Custom rule` : t`Everyone`}
         contextualTextPosition="right"
       />
     </SelectableListItem>
