@@ -2,10 +2,12 @@ import { type ConditionalAvailabilityFilter } from '@/conditional-availability/f
 import { type ConditionalAvailabilityFilterGroup } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilterGroup';
 import { canConditionalAvailabilityFilterOperatorHoldSeveralValues } from '@/conditional-availability/filter-builder/utils/canConditionalAvailabilityFilterOperatorHoldSeveralValues';
 import { getConditionalAvailabilityFilterComparisonOperator } from '@/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterComparisonOperator';
-import { getConditionalAvailabilityFilterVariableOperators } from '@/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterVariableOperators';
+import { getConditionalAvailabilityFilterLeftNode } from '@/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterLeftNode';
+import { getConditionalAvailabilityFilterOperators } from '@/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterOperators';
 import { type ExpressionLogicalOperator } from 'twenty-shared/expression';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { isDefined } from 'twenty-shared/utils';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const mergeConditionalAvailabilityFilters = ({
   previousFilterOrGroup,
@@ -24,7 +26,12 @@ export const mergeConditionalAvailabilityFilters = ({
   if (
     previousFilterOrGroup?.type !== 'filter' ||
     filterOrGroup.type !== 'filter' ||
-    previousFilterOrGroup.variable !== filterOrGroup.variable
+    !isDeeplyEqual(
+      getConditionalAvailabilityFilterLeftNode({
+        filter: previousFilterOrGroup,
+      }),
+      getConditionalAvailabilityFilterLeftNode({ filter: filterOrGroup }),
+    )
   ) {
     return null;
   }
@@ -34,8 +41,8 @@ export const mergeConditionalAvailabilityFilters = ({
   );
 
   const operatorHoldingSeveralValues =
-    getConditionalAvailabilityFilterVariableOperators({
-      variable: filterOrGroup.variable,
+    getConditionalAvailabilityFilterOperators({
+      filter: filterOrGroup,
     }).find(
       (operator) =>
         getConditionalAvailabilityFilterComparisonOperator({ operator }) ===

@@ -3,6 +3,7 @@ import { useUpdateConditionalAvailabilityFilterSettings } from '@/conditional-av
 import { type ConditionalAvailabilityFilter } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilter';
 import { type ConditionalAvailabilityFilterField } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilterField';
 import { canConditionalAvailabilityFilterOperatorHoldSeveralValues } from '@/conditional-availability/filter-builder/utils/canConditionalAvailabilityFilterOperatorHoldSeveralValues';
+import { findConditionalAvailabilityFilterField } from '@/conditional-availability/filter-builder/utils/findConditionalAvailabilityFilterField';
 import { updateConditionalAvailabilityFilter } from '@/conditional-availability/filter-builder/utils/updateConditionalAvailabilityFilter';
 import { DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownSideOffset';
 import { StyledControlContainer } from '@/ui/input/components/SelectControl';
@@ -66,6 +67,16 @@ export const ConditionalAvailabilityFilterValueInput = ({
     searchPlaceholder: string | null;
     unknownValueLabel: string | null;
   } => {
+    if ('field' in filter) {
+      return {
+        placeholder: canHoldSeveralValues
+          ? t`Select values`
+          : t`Select a value`,
+        searchPlaceholder: t`Search`,
+        unknownValueLabel: null,
+      };
+    }
+
     switch (filter.variable) {
       case 'currentRole':
         return {
@@ -96,7 +107,8 @@ export const ConditionalAvailabilityFilterValueInput = ({
     getVariableValueSettings();
 
   const options =
-    filterFields.find(({ key }) => key === filter.variable)?.options ?? [];
+    findConditionalAvailabilityFilterField({ filterFields, filter })?.options ??
+    [];
 
   const getValueLabel = (value: string) =>
     options.find((option) => option.value === value)?.label ??

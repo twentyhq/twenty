@@ -3,7 +3,7 @@ import { useUpdateConditionalAvailabilityFilterSettings } from '@/conditional-av
 import { type ConditionalAvailabilityFilter } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilter';
 import { type ConditionalAvailabilityFilterOperator } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilterOperator';
 import { getConditionalAvailabilityFilterOperatorLabel } from '@/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterOperatorLabel';
-import { getConditionalAvailabilityFilterVariableOperators } from '@/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterVariableOperators';
+import { getConditionalAvailabilityFilterOperators } from '@/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterOperators';
 import { updateConditionalAvailabilityFilter } from '@/conditional-availability/filter-builder/utils/updateConditionalAvailabilityFilter';
 import { updateConditionalAvailabilityFilterOperator } from '@/conditional-availability/filter-builder/utils/updateConditionalAvailabilityFilterOperator';
 import { DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownSideOffset';
@@ -21,8 +21,8 @@ export const ConditionalAvailabilityFilterOperatorSelect = ({
   const { updateConditionalAvailabilityFilterSettings } =
     useUpdateConditionalAvailabilityFilterSettings();
 
-  const operatorOptions = getConditionalAvailabilityFilterVariableOperators({
-    variable: filter.variable,
+  const operatorOptions = getConditionalAvailabilityFilterOperators({
+    filter,
   }).map((operator) => ({
     value: operator,
     label: getConditionalAvailabilityFilterOperatorLabel({ operator }),

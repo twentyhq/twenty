@@ -5,9 +5,11 @@ import { convertConditionalAvailabilityNodeToFilterGroup } from '@/conditional-a
 import { type ConditionalAvailabilityFilterGroup } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilterGroup';
 import { createEmptyConditionalAvailabilityFilter } from '@/conditional-availability/filter-builder/utils/createEmptyConditionalAvailabilityFilter';
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
+import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { getWidgetConditionalAvailabilityUpdate } from '@/side-panel/pages/page-layout/utils/getWidgetConditionalAvailabilityUpdate';
 import { Select } from '@/ui/input/components/Select';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
@@ -39,7 +41,13 @@ export const WidgetVisibilitySettings = ({
 }: WidgetVisibilitySettingsProps) => {
   const { t } = useLingui();
   const { updatePageLayoutWidget } = useUpdatePageLayoutWidget(pageLayoutId);
-  const filterFields = useConditionalAvailabilityFilterFields();
+  const pageLayoutDraft = useAtomComponentStateValue(
+    pageLayoutDraftComponentState,
+    pageLayoutId,
+  );
+  const filterFields = useConditionalAvailabilityFilterFields({
+    objectMetadataId: pageLayoutDraft.objectMetadataId,
+  });
 
   const [defaultFilterGroup, setDefaultFilterGroup] =
     useState<ConditionalAvailabilityFilterGroup | null>(() =>

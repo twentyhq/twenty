@@ -3,6 +3,9 @@ import { useUpdateConditionalAvailabilityFilterSettings } from '@/conditional-av
 import { type ConditionalAvailabilityFilter } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilter';
 import { type ConditionalAvailabilityFilterField } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilterField';
 import { createEmptyConditionalAvailabilityFilter } from '@/conditional-availability/filter-builder/utils/createEmptyConditionalAvailabilityFilter';
+import { createEmptyConditionalAvailabilityFilterOnField } from '@/conditional-availability/filter-builder/utils/createEmptyConditionalAvailabilityFilterOnField';
+import { findConditionalAvailabilityFilterField } from '@/conditional-availability/filter-builder/utils/findConditionalAvailabilityFilterField';
+import { getConditionalAvailabilityFilterFieldKey } from '@/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterFieldKey';
 import { updateConditionalAvailabilityFilter } from '@/conditional-availability/filter-builder/utils/updateConditionalAvailabilityFilter';
 import { DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownSideOffset';
 import { SelectControl } from '@/ui/input/components/SelectControl';
@@ -10,7 +13,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { useTheme } from 'twenty-ui/theme';
@@ -31,13 +34,24 @@ export const ConditionalAvailabilityFilterFieldSelect = ({
     useUpdateConditionalAvailabilityFilterSettings();
   const [searchInput, setSearchInput] = useState('');
 
-  const selectedField = filterFields.find(({ key }) => key === filter.variable);
+  const getFieldLabel = (field: ConditionalAvailabilityFilterField) =>
+    'field' in field ? field.label : t(field.label);
+
+  const selectedField = findConditionalAvailabilityFilterField({
+    filterFields,
+    filter,
+  });
+  const selectedFieldKey = isDefined(selectedField)
+    ? getConditionalAvailabilityFilterFieldKey({ filterField: selectedField })
+    : null;
 
   const control = (
     <SelectControl
       selectedOption={{
-        value: filter.variable,
-        label: isDefined(selectedField) ? t(selectedField.label) : '',
+        value: selectedFieldKey,
+        label: isDefined(selectedField)
+          ? getFieldLabel(selectedField)
+          : t`Unknown field`,
         Icon: selectedField?.Icon,
       }}
       isDisabled={readonly}
@@ -48,24 +62,52 @@ export const ConditionalAvailabilityFilterFieldSelect = ({
     return control;
   }
 
-  const doesFieldMatchSearch = (field: ConditionalAvailabilityFilterField) =>
-    t(field.label)
+  const matchingFields = filterFields.filter((field) =>
+    getFieldLabel(field)
       .toLocaleLowerCase()
-      .includes(searchInput.trim().toLocaleLowerCase());
+      .includes(searchInput.trim().toLocaleLowerCase()),
+  );
 
-  const currentUserFields = filterFields.filter(
-    (field) => field.key !== 'device' && doesFieldMatchSearch(field),
+  const recordFields = matchingFields.flatMap((field) =>
+    'field' in field ? [field] : [],
   );
-  const deviceFields = filterFields.filter(
-    (field) => field.key === 'device' && doesFieldMatchSearch(field),
-  );
+  const [firstRecordField] = recordFields;
+
+  const sections = [
+    {
+      label: t`Current user`,
+      fields: matchingFields.filter(
+        (field) => 'key' in field && field.key !== 'device',
+      ),
+    },
+    {
+      label: t`Device`,
+      fields: matchingFields.filter(
+        (field) => 'key' in field && field.key === 'device',
+      ),
+    },
+    {
+      label: firstRecordField?.objectLabelSingular ?? '',
+      fields: recordFields,
+    },
+  ].filter(({ fields }) => isNonEmptyArray(fields));
 
   const handleFieldChange = (fieldKey: string | null) => {
-    const field = filterFields.find(({ key }) => key === fieldKey);
+    const field = filterFields.find(
+      (filterField) =>
+        getConditionalAvailabilityFilterFieldKey({ filterField }) === fieldKey,
+    );
 
     if (!isDefined(field)) {
       return;
     }
+
+    const emptyFilter =
+      'field' in field
+        ? createEmptyConditionalAvailabilityFilterOnField({
+            field: field.field,
+          })
+        : createEmptyConditionalAvailabilityFilter({ variable: field.key });
 
     updateConditionalAvailabilityFilterSettings(
       (currentConditionalAvailabilityFilterGroup) =>
@@ -73,24 +115,12 @@ export const ConditionalAvailabilityFilterFieldSelect = ({
           filterGroup: currentConditionalAvailabilityFilterGroup,
           filterId: filter.id,
           update: (filterToUpdate) => ({
-            ...createEmptyConditionalAvailabilityFilter({
-              variable: field.key,
-            }),
+            ...emptyFilter,
             id: filterToUpdate.id,
           }),
         }),
     );
   };
-
-  const renderFieldOption = (field: ConditionalAvailabilityFilterField) => (
-    <Dropdown.OptionItem
-      key={field.key}
-      value={field.key}
-      startIcon={<field.Icon size={theme.icon.size.md} />}
-    >
-      {t(field.label)}
-    </Dropdown.OptionItem>
-  );
 
   return (
     <DropdownRoot
@@ -119,22 +149,32 @@ export const ConditionalAvailabilityFilterFieldSelect = ({
         <Dropdown.Separator />
         <Dropdown.SelectionGroup
           aria-label={t`Field`}
-          value={filter.variable}
+          value={selectedFieldKey}
           onValueChange={handleFieldChange}
         >
           <Dropdown.Section scrollable>
-            {isNonEmptyArray(currentUserFields) && (
-              <Dropdown.Section label={t`Current user`}>
-                {currentUserFields.map(renderFieldOption)}
-              </Dropdown.Section>
-            )}
-            {isNonEmptyArray(currentUserFields) &&
-              isNonEmptyArray(deviceFields) && <Dropdown.Separator />}
-            {isNonEmptyArray(deviceFields) && (
-              <Dropdown.Section label={t`Device`}>
-                {deviceFields.map(renderFieldOption)}
-              </Dropdown.Section>
-            )}
+            {sections.map((section, sectionIndex) => (
+              <Fragment key={section.label}>
+                {sectionIndex > 0 && <Dropdown.Separator />}
+                <Dropdown.Section label={section.label}>
+                  {section.fields.map((field) => {
+                    const fieldKey = getConditionalAvailabilityFilterFieldKey({
+                      filterField: field,
+                    });
+
+                    return (
+                      <Dropdown.OptionItem
+                        key={fieldKey}
+                        value={fieldKey}
+                        startIcon={<field.Icon size={theme.icon.size.md} />}
+                      >
+                        {getFieldLabel(field)}
+                      </Dropdown.OptionItem>
+                    );
+                  })}
+                </Dropdown.Section>
+              </Fragment>
+            ))}
           </Dropdown.Section>
         </Dropdown.SelectionGroup>
       </DropdownContent>

@@ -3,6 +3,7 @@ import { type ConditionalAvailabilityFilter } from '@/conditional-availability/f
 import { getConditionalAvailabilityFilterComparisonOperator } from '@/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterComparisonOperator';
 import { getConditionalAvailabilityFilterVariableOperators } from '@/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterVariableOperators';
 import { getConditionalAvailabilityFilterVariablePath } from '@/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterVariablePath';
+import { convertConditionalAvailabilityFieldComparisonNodeToFilter } from '@/conditional-availability/filter-builder/nodes-to-filters/utils/convertConditionalAvailabilityFieldComparisonNodeToFilter';
 import { isConditionalAvailabilityFilterValueValid } from '@/conditional-availability/filter-builder/nodes-to-filters/utils/isConditionalAvailabilityFilterValueValid';
 import { isString } from '@sniptt/guards';
 import { type ConditionalEvaluationNode } from 'twenty-shared/conditional-evaluation';
@@ -23,6 +24,14 @@ export const convertConditionalAvailabilityComparisonNodeToFilter = ({
     left: variableNode,
     right: literalNode,
   } = node;
+
+  if (variableNode.type === 'FIELD') {
+    return convertConditionalAvailabilityFieldComparisonNodeToFilter({
+      comparisonOperator,
+      field: variableNode,
+      valueNode: literalNode,
+    });
+  }
 
   if (
     variableNode.type !== 'VARIABLE' ||

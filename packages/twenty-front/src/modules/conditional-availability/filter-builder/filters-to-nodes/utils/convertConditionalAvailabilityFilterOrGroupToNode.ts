@@ -1,7 +1,8 @@
 import { type ConditionalAvailabilityFilter } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilter';
 import { type ConditionalAvailabilityFilterGroup } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilterGroup';
 import { getConditionalAvailabilityFilterComparisonOperator } from '@/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterComparisonOperator';
-import { getConditionalAvailabilityFilterVariablePath } from '@/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterVariablePath';
+import { getConditionalAvailabilityFilterLeftNode } from '@/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterLeftNode';
+import { getConditionalAvailabilityFilterRightNode } from '@/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterRightNode';
 import {
   type ConditionalEvaluationNode,
   joinConditionalEvaluationNodes,
@@ -33,14 +34,14 @@ export const convertConditionalAvailabilityFilterOrGroupToNode = ({
       : null;
   }
 
-  const { variable, operator, values } = filterOrGroup;
+  const { operator, values } = filterOrGroup;
 
   if (!isNonEmptyArray(values)) {
     return null;
   }
 
-  const variablePath = getConditionalAvailabilityFilterVariablePath({
-    variable,
+  const leftNode = getConditionalAvailabilityFilterLeftNode({
+    filter: filterOrGroup,
   });
   const comparisonOperator = getConditionalAvailabilityFilterComparisonOperator(
     { operator },
@@ -50,8 +51,11 @@ export const convertConditionalAvailabilityFilterOrGroupToNode = ({
     nodes: values.map((value) => ({
       type: 'COMPARISON',
       operator: comparisonOperator,
-      left: { type: 'VARIABLE', path: variablePath },
-      right: { type: 'LITERAL', value },
+      left: leftNode,
+      right: getConditionalAvailabilityFilterRightNode({
+        filter: filterOrGroup,
+        value,
+      }),
     })),
     logicalOperator:
       comparisonOperator === 'EQUAL'
