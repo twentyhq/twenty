@@ -8,6 +8,7 @@ import {
   useTwoFactorAuthenticationForm,
 } from '@/auth/sign-in-up/hooks/useTwoFactorAuthenticationForm';
 import { loginTokenState } from '@/auth/states/loginTokenState';
+import { qrCodeState } from '@/auth/states/qrCode';
 import {
   SignInUpStep,
   signInUpStepState,
@@ -23,6 +24,7 @@ import { OTPInput, type SlotProps } from 'input-otp';
 import { useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { AppPath } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { MainButton } from 'twenty-ui/components/input';
 import { Button } from 'twenty-ui/primitives/input';
@@ -163,6 +165,7 @@ const StyledSlotGroup = styled.div`
 
 const StyledActionBackLinkContainer = styled.div`
   margin: ${themeCssVariables.spacing[3]} 0 0;
+  max-width: 100%;
 `;
 
 export const SignInUpTOTPVerification = () => {
@@ -174,6 +177,7 @@ export const SignInUpTOTPVerification = () => {
   const navigate = useNavigateApp();
   const { getCaptchaToken } = useGetCaptchaToken();
   const loginToken = useAtomStateValue(loginTokenState);
+  const qrCode = useAtomStateValue(qrCodeState);
   const setSignInUpStep = useSetAtomState(signInUpStepState);
   const { t } = useLingui();
 
@@ -204,7 +208,11 @@ export const SignInUpTOTPVerification = () => {
   };
 
   const handleBack = () => {
-    setSignInUpStep(SignInUpStep.TwoFactorAuthenticationProvision);
+    setSignInUpStep(
+      isDefined(qrCode)
+        ? SignInUpStep.TwoFactorAuthenticationProvision
+        : SignInUpStep.Init,
+    );
   };
 
   const handleUseRecoveryCode = () => {
@@ -264,7 +272,7 @@ export const SignInUpTOTPVerification = () => {
       >{t`Submit`}</MainButton>
       <StyledActionBackLinkContainer>
         <Button variant="link" onClick={handleUseRecoveryCode}>
-          <Trans>Lost your authenticator? Use a backup or recovery code</Trans>
+          <Trans>Lost your authenticator?</Trans>
         </Button>
       </StyledActionBackLinkContainer>
       <StyledActionBackLinkContainer>
