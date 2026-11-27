@@ -81,6 +81,10 @@ describe('getSettingsSearchDestinations', () => {
   });
 
   it('hides billing destinations when billing is disabled', () => {
+    expect(getDestinations().map(({ path }) => path)).toContain(
+      '/settings/billing/limits',
+    );
+
     const paths = getDestinations({
       ...FULL_AVAILABILITY,
       isBillingEnabled: false,
@@ -181,14 +185,14 @@ describe('getSettingsSearchDestinations', () => {
   });
 
   it('applies the tab feature flag on top of the page guard', () => {
-    const getAiOverviewPaths = (featureFlagsMap: Record<string, boolean>) =>
+    const getAiTabPaths = (featureFlagsMap: Record<string, boolean>) =>
       getDestinations({ ...FULL_AVAILABILITY, featureFlagsMap })
         .map(({ path }) => path)
         .filter((path) => path.startsWith('/settings/ai#'));
 
-    expect(getAiOverviewPaths({})).not.toContain('/settings/ai#mcp');
-    expect(getAiOverviewPaths({})).toContain('/settings/ai#models');
-    expect(getAiOverviewPaths({ IS_AI_CHAT_INBOX_ENABLED: true })).toContain(
+    expect(getAiTabPaths({})).not.toContain('/settings/ai#mcp');
+    expect(getAiTabPaths({})).toContain('/settings/ai#models');
+    expect(getAiTabPaths({ IS_AI_CHAT_INBOX_ENABLED: true })).toContain(
       '/settings/ai#mcp',
     );
   });

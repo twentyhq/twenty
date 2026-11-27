@@ -3,14 +3,12 @@ import { isSettingsRouteAccessible } from '@/settings/utils/isSettingsRouteAcces
 import { isDefined } from 'twenty-shared/utils';
 import { type PermissionFlagType } from '~/generated-metadata/graphql';
 
-export const getAvailableSettingsTabs = <
-  TTabDefinition extends SettingsTabDefinition,
->({
+export const getAvailableSettingsTabs = ({
   tabs,
   permissionFlagMap,
   featureFlagsMap,
 }: {
-  tabs: readonly TTabDefinition[];
+  tabs: readonly SettingsTabDefinition[];
   permissionFlagMap: Record<PermissionFlagType, boolean>;
   featureFlagsMap: Record<string, boolean>;
 }) =>

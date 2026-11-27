@@ -2,6 +2,10 @@ import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscove
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SETTINGS_APPLICATIONS_TABS } from '@/settings/applications/constants/SettingsApplicationsTabs';
 import { SETTINGS_DEVELOPERS_TABS } from '@/settings/developers/constants/SettingsDevelopersTabs';
+import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
+import { getAvailableSettingsTabs } from '@/settings/utils/getAvailableSettingsTabs';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useWorkspaceFeatureFlagsMap } from '@/workspace/hooks/useWorkspaceFeatureFlagsMap';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
@@ -25,14 +29,19 @@ export const SettingsApplications = () => {
   const { t, i18n } = useLingui();
   const location = useLocation();
 
-  const tabs = SETTINGS_APPLICATIONS_TABS.TABS.map(
-    ({ id, title, Icon, pill }) => ({
-      id,
-      title: i18n._(title),
-      Icon,
-      pill: isDefined(pill) ? i18n._(pill) : undefined,
-    }),
-  );
+  const permissionFlagMap = useAtomStateValue(permissionFlagMapSelector);
+  const featureFlagsMap = useWorkspaceFeatureFlagsMap();
+
+  const tabs = getAvailableSettingsTabs({
+    tabs: SETTINGS_APPLICATIONS_TABS.TABS,
+    permissionFlagMap,
+    featureFlagsMap,
+  }).map(({ id, title, Icon, pill }) => ({
+    id,
+    title: i18n._(title),
+    Icon,
+    pill: isDefined(pill) ? i18n._(pill) : undefined,
+  }));
 
   const activeTabId = useSettingsActiveTabId(
     SETTINGS_APPLICATIONS_TABS.COMPONENT_INSTANCE_ID,
