@@ -27,6 +27,7 @@ vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
 }));
 
 const SUMMARY = '## Gist\nGood call.';
+const UNAVAILABLE_SUMMARY = '## Summary unavailable\n\nOnly greetings.';
 const MEMBER_CANNOT_RECEIVE_ERROR = {
   errors: [{ extensions: { code: 'NOT_FOUND' } }],
 };
@@ -40,10 +41,21 @@ const CALL_RECORDING = {
 
 type HandlerEvent = Parameters<typeof postCallRecordingToInboxHandler>[0];
 
-const buildSummaryUpdateEvent = (): HandlerEvent => ({
+const buildSummaryUpdateEvent = ({
+  before = null,
+  after = SUMMARY,
+}: {
+  before?: string | null;
+  after?: string | null;
+} = {}): HandlerEvent => ({
   name: 'callRecording.updated',
   recordId: 'call-recording-1',
-  properties: { updatedFields: ['summary'] },
+  properties: {
+    updatedFields: ['summary'],
+    diff: {
+      summary: { before: { markdown: before }, after: { markdown: after } },
+    },
+  },
 });
 
 const buildCalendarChannelId = (workspaceMemberId: string): string =>
@@ -203,13 +215,51 @@ describe('post-call-recording-to-inbox logic function', () => {
     ]);
   });
 
-  it('makes no request when another field changed', async () => {
-    expect(
-      await postCallRecordingToInboxHandler({
+  it('sends when a summary replaces an unavailable one', async () => {
+    await postCallRecordingToInboxHandler(
+      buildSummaryUpdateEvent({ before: UNAVAILABLE_SUMMARY }),
+    );
+
+    expect(sendInboxMessageMock).toHaveBeenCalledTimes(2);
+  });
+
+  it('reads the stored summary when the event carries no diff', async () => {
+    await postCallRecordingToInboxHandler({
+      name: 'callRecording.updated',
+      recordId: 'call-recording-1',
+      properties: { updatedFields: ['summary'] },
+    });
+
+    expect(sendInboxMessageMock).toHaveBeenCalledTimes(2);
+  });
+
+  it.each([
+    {
+      case: 'another field changed',
+      event: {
         ...buildSummaryUpdateEvent(),
         properties: { updatedFields: ['transcript'] },
+      },
+    },
+    {
+      case: 'the summary was edited',
+      event: buildSummaryUpdateEvent({
+        before: SUMMARY,
+        after: '## Gist\nOk.',
       }),
-    ).toMatchObject({ skipped: true });
+    },
+    {
+      case: 'the new summary is unavailable',
+      event: buildSummaryUpdateEvent({ after: UNAVAILABLE_SUMMARY }),
+    },
+    {
+      case: 'the summary was cleared',
+      event: buildSummaryUpdateEvent({ before: SUMMARY, after: null }),
+    },
+  ])('makes no request when $case', async ({ event }) => {
+    expect(await postCallRecordingToInboxHandler(event)).toMatchObject({
+      skipped: true,
+    });
     expect(metadataQueryMock).not.toHaveBeenCalled();
     expect(queryMock).not.toHaveBeenCalled();
     expect(sendInboxMessageMock).not.toHaveBeenCalled();
@@ -270,12 +320,12 @@ describe('post-call-recording-to-inbox logic function', () => {
     expect(sendInboxMessageMock).toHaveBeenCalledTimes(2);
   });
 
-  it('asks for a retry when a send fails', async () => {
+  it('asks for a retry when a send fails, after trying every member', async () => {
     sendInboxMessageMock.mockRejectedValueOnce(new Error('503'));
 
     await expect(
       postCallRecordingToInboxHandler(buildSummaryUpdateEvent()),
     ).rejects.toBeInstanceOf(RetryableLogicFunctionError);
-    expect(sendInboxMessageMock).toHaveBeenCalledTimes(1);
+    expect(sendInboxMessageMock).toHaveBeenCalledTimes(2);
   });
 });

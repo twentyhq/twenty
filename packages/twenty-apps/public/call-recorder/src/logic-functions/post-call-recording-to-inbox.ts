@@ -4,8 +4,10 @@ import {
   type DatabaseEventPayload,
   type ObjectRecordUpdateEvent,
 } from 'twenty-sdk/define';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { POST_CALL_RECORDING_TO_INBOX_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { isCallRecordingSummaryAvailable } from 'src/logic-functions/domain/is-call-recording-summary-available.util';
 import { postCallRecordingToInbox } from 'src/logic-functions/flows/post-call-recording-to-inbox.util';
 import { buildRetryableStepFailure } from 'src/logic-functions/utils/build-step-failure.util';
 
@@ -36,6 +38,16 @@ export const postCallRecordingToInboxHandler = async (
     !updatedFields.includes(SUMMARY_FIELD_NAME)
   ) {
     return { skipped: true, reason: 'not a summary update' };
+  }
+
+  const summaryDiff = event.properties.diff?.summary;
+
+  if (
+    isDefined(summaryDiff) &&
+    (isCallRecordingSummaryAvailable(summaryDiff.before?.markdown) ||
+      !isCallRecordingSummaryAvailable(summaryDiff.after?.markdown))
+  ) {
+    return { skipped: true, reason: 'summary did not become available' };
   }
 
   try {

@@ -91,6 +91,7 @@ export const postCallRecordingToInbox = async ({
     recordId: callRecording.id,
   });
   const skippedWorkspaceMemberIds: string[] = [];
+  const failedSends: { workspaceMemberId: string; error: unknown }[] = [];
 
   for (const workspaceMemberId of workspaceMemberIds) {
     const messageKey = buildRecordingReadyMessageKey(workspaceMemberId);
@@ -104,12 +105,23 @@ export const postCallRecordingToInbox = async ({
         text: `Your call was recorded: ${callRecordingReference}. Open it to read the summary and the transcript.`,
       });
     } catch (error) {
-      if (!isNotFoundError(error)) {
-        throw error;
+      if (isNotFoundError(error)) {
+        skippedWorkspaceMemberIds.push(workspaceMemberId);
+        continue;
       }
 
-      skippedWorkspaceMemberIds.push(workspaceMemberId);
+      failedSends.push({ workspaceMemberId, error });
     }
+  }
+
+  if (isNonEmptyArray(failedSends)) {
+    const [{ workspaceMemberId, error }] = failedSends;
+
+    throw new Error(
+      `${failedSends.length} of ${workspaceMemberIds.length} inbox messages failed for call recording ${callRecording.id}, first for workspace member ${workspaceMemberId}: ${
+        error instanceof Error ? error.message : String(error)
+      }`,
+    );
   }
 
   return {
