@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
-import { MEMBER_ROLE_UNIVERSAL_IDENTIFIER } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -24,7 +23,6 @@ import { ROLE_TARGET_FOREIGN_KEY_PROPERTIES } from 'src/engine/metadata-modules/
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
 import { fromFlatFieldPermissionToFieldPermissionDto } from 'src/engine/metadata-modules/object-permission/utils/from-flat-field-permission-to-field-permission-dto.util';
 import { fromFlatObjectPermissionToObjectPermissionDto } from 'src/engine/metadata-modules/object-permission/utils/from-flat-object-permission-to-object-permission-dto.util';
-import { MEMBER_ROLE_LABEL } from 'src/engine/permissions/role/constants/member-role-label.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -487,65 +485,6 @@ export class RoleService {
     }
 
     return rolesToDelete.map(fromFlatRoleToRoleDto);
-  }
-
-  public async createMemberRole({
-    workspaceId,
-    ownerFlatApplication,
-    label = MEMBER_ROLE_LABEL,
-  }: {
-    ownerFlatApplication: FlatApplication;
-    workspaceId: string;
-    label?: string;
-  }): Promise<RoleDTO> {
-    return this.createRole({
-      input: {
-        universalIdentifier: MEMBER_ROLE_UNIVERSAL_IDENTIFIER,
-        label,
-        description: 'Member role',
-        icon: 'IconUser',
-        canUpdateAllSettings: false,
-        canAccessAllTools: true,
-        canAccessAllAgentChatChannels: true,
-        canReadAllObjectRecords: true,
-        canUpdateAllObjectRecords: true,
-        canSoftDeleteAllObjectRecords: true,
-        canDestroyAllObjectRecords: true,
-        canBeAssignedToUsers: true,
-        canBeAssignedToAgents: false,
-        canBeAssignedToApiKeys: false,
-      },
-      ownerFlatApplication,
-      workspaceId,
-    });
-  }
-
-  public async createGuestRole({
-    workspaceId,
-    ownerFlatApplication,
-  }: {
-    workspaceId: string;
-    ownerFlatApplication: FlatApplication;
-  }): Promise<RoleDTO> {
-    return this.createRole({
-      input: {
-        label: 'Guest',
-        description: 'Guest role',
-        icon: 'IconUser',
-        canUpdateAllSettings: false,
-        canAccessAllTools: false,
-        canAccessAllAgentChatChannels: false,
-        canReadAllObjectRecords: true,
-        canUpdateAllObjectRecords: false,
-        canSoftDeleteAllObjectRecords: false,
-        canDestroyAllObjectRecords: false,
-        canBeAssignedToUsers: true,
-        canBeAssignedToAgents: false,
-        canBeAssignedToApiKeys: false,
-      },
-      workspaceId,
-      ownerFlatApplication,
-    });
   }
 
   private async buildRoleTargetsRebindToDefaultRole({

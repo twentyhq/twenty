@@ -10,7 +10,6 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentChatChannelMetadataService } from 'src/engine/metadata-modules/agent-chat-channel/services/agent-chat-channel-metadata.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { WorkspaceCustomApplicationRoleService } from 'src/engine/metadata-modules/role/services/workspace-custom-application-role.service';
 import { RoleAssignmentWriteService } from 'src/engine/permissions/role-assignment/role-assignment-write.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -26,7 +25,6 @@ export class WorkspaceManagerService {
     private readonly workspaceSchemaService: WorkspaceSchemaService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
-    private readonly roleService: RoleService,
     private readonly workspaceCustomApplicationRoleService: WorkspaceCustomApplicationRoleService,
     private readonly roleAssignmentWriteService: RoleAssignmentWriteService,
     private readonly twentyStandardApplicationService: TwentyStandardApplicationService,
@@ -139,10 +137,12 @@ export class WorkspaceManagerService {
 
     const memberRole =
       existingMemberRole ??
-      (await this.roleService.createMemberRole({
-        workspaceId,
-        ownerFlatApplication: workspaceCustomFlatApplication,
-      }));
+      (await this.workspaceCustomApplicationRoleService.createMemberRoleOrThrow(
+        {
+          workspaceId,
+          workspaceCustomFlatApplication,
+        },
+      ));
 
     await this.workspaceRepository.update(workspaceId, {
       defaultRoleId: memberRole.id,

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { MEMBER_ROLE_UNIVERSAL_IDENTIFIER } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -9,6 +10,9 @@ import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { buildAdminFlatRole } from 'src/engine/metadata-modules/flat-role/utils/build-admin-flat-role.util';
 import { buildWorkspaceCustomApplicationFlatRole } from 'src/engine/metadata-modules/flat-role/utils/build-workspace-custom-application-flat-role.util';
+import { type RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
+import { RoleService } from 'src/engine/metadata-modules/role/role.service';
+import { MEMBER_ROLE_LABEL } from 'src/engine/permissions/role/constants/member-role-label.constants';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -18,6 +22,7 @@ export class WorkspaceCustomApplicationRoleService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
+    private readonly roleService: RoleService,
   ) {}
 
   public async findOrCreateGrantedRoleOrThrow({
@@ -58,6 +63,37 @@ export class WorkspaceCustomApplicationRoleService {
         workspaceId,
         ownerFlatApplication: workspaceCustomFlatApplication,
       }),
+    });
+  }
+
+  public async createMemberRoleOrThrow({
+    workspaceId,
+    workspaceCustomFlatApplication,
+    label = MEMBER_ROLE_LABEL,
+  }: {
+    workspaceId: string;
+    workspaceCustomFlatApplication: FlatApplication;
+    label?: string;
+  }): Promise<RoleDTO> {
+    return this.roleService.createRole({
+      input: {
+        universalIdentifier: MEMBER_ROLE_UNIVERSAL_IDENTIFIER,
+        label,
+        description: 'Member role',
+        icon: 'IconUser',
+        canUpdateAllSettings: false,
+        canAccessAllTools: true,
+        canAccessAllAgentChatChannels: true,
+        canReadAllObjectRecords: true,
+        canUpdateAllObjectRecords: true,
+        canSoftDeleteAllObjectRecords: true,
+        canDestroyAllObjectRecords: true,
+        canBeAssignedToUsers: true,
+        canBeAssignedToAgents: false,
+        canBeAssignedToApiKeys: false,
+      },
+      ownerFlatApplication: workspaceCustomFlatApplication,
+      workspaceId,
     });
   }
 

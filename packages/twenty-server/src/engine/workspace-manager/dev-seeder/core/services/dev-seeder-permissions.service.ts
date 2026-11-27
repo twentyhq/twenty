@@ -110,7 +110,7 @@ export class DevSeederPermissionsService {
           ...Object.values(RANDOM_USER_WORKSPACE_IDS),
         ];
 
-        const guestRole = await this.roleService.createGuestRole({
+        const guestRole = await this.createGuestRoleForSeedWorkspace({
           workspaceId,
           ownerFlatApplication: workspaceCustomFlatApplication,
         });
@@ -195,10 +195,11 @@ export class DevSeederPermissionsService {
       },
     );
 
-    const memberRole = await this.roleService.createMemberRole({
-      workspaceId,
-      ownerFlatApplication: workspaceCustomFlatApplication,
-    });
+    const memberRole =
+      await this.workspaceCustomApplicationRoleService.createMemberRoleOrThrow({
+        workspaceId,
+        workspaceCustomFlatApplication,
+      });
 
     await this.channelVisibilityRoleWideAccessRevokeService.revokeRoleWideAccess(
       { workspaceId },
@@ -251,6 +252,34 @@ export class DevSeederPermissionsService {
     });
 
     return impersonateOnlyRole;
+  }
+
+  private async createGuestRoleForSeedWorkspace({
+    workspaceId,
+    ownerFlatApplication,
+  }: {
+    workspaceId: string;
+    ownerFlatApplication: FlatApplication;
+  }): Promise<RoleDTO> {
+    return this.roleService.createRole({
+      input: {
+        label: 'Guest',
+        description: 'Guest role',
+        icon: 'IconUser',
+        canUpdateAllSettings: false,
+        canAccessAllTools: false,
+        canAccessAllAgentChatChannels: false,
+        canReadAllObjectRecords: true,
+        canUpdateAllObjectRecords: false,
+        canSoftDeleteAllObjectRecords: false,
+        canDestroyAllObjectRecords: false,
+        canBeAssignedToUsers: true,
+        canBeAssignedToAgents: false,
+        canBeAssignedToApiKeys: false,
+      },
+      workspaceId,
+      ownerFlatApplication,
+    });
   }
 
   private async createLimitedRoleForSeedWorkspace({
