@@ -1,3 +1,4 @@
+import { LazyFrontComponentRenderer } from '@/front-components/components/LazyFrontComponentRenderer';
 import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
 import { Tabs } from 'twenty-ui/primitives/navigation';
 import { PageLayoutWidgetDndProvider } from '@/page-layout/components/dnd/PageLayoutWidgetDndProvider';
@@ -29,7 +30,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
-import { PageLayoutType } from '~/generated-metadata/graphql';
+import { PageLayoutType, WidgetType } from '~/generated-metadata/graphql';
 
 const StyledRoot = styled.div`
   display: flex;
@@ -136,6 +137,14 @@ const StyledScrollWrapperContainer = styled.div`
 export const PageLayoutTabsRenderer = () => {
   const workspaceSurface = useWorkspaceSurface();
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
+
+  const hasFrontComponentWidget = currentPageLayout.tabs.some((tab) =>
+    tab.widgets.some((widget) => widget.type === WidgetType.FRONT_COMPONENT),
+  );
+
+  if (hasFrontComponentWidget) {
+    LazyFrontComponentRenderer.preload();
+  }
 
   const { layoutType, targetRecordIdentifier, isRecordIdentifierBarHidden } =
     useLayoutRenderingContext();
