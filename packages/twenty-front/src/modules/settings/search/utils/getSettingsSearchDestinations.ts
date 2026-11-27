@@ -2,6 +2,7 @@ import { type WorkspaceRouteObject } from '@/app/routing/types/WorkspaceRouteObj
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
 import { type SettingsSearchDestination } from '@/settings/search/types/SettingsSearchDestination';
 import { type SettingsSearchRouteMetadata } from '@/settings/search/types/SettingsSearchRouteMetadata';
+import { isSettingsRouteAccessible } from '@/settings/utils/isSettingsRouteAccessible';
 import { type I18n } from '@lingui/core';
 import { isValidElement, type ComponentProps } from 'react';
 import { type SettingsPath } from 'twenty-shared/types';
@@ -57,12 +58,15 @@ const isRouteAvailable = (
   { metadata, guards }: SettingsSearchRoute,
   availability: SettingsSearchAvailability,
 ) =>
-  (availability.isBillingEnabled || metadata.isBillingRequired !== true) &&
-  guards.every(
-    ({ settingsPermission, requiredFeatureFlag }) =>
-      availability.permissionFlagMap[settingsPermission] &&
-      (!isDefined(requiredFeatureFlag) ||
-        availability.featureFlagsMap[requiredFeatureFlag] === true),
+  (availability.isBillingEnabled || metadata.requiresBillingEnabled !== true) &&
+  guards.every(({ settingsPermission, requiredFeatureFlag }) =>
+    isSettingsRouteAccessible({
+      hasPermission: availability.permissionFlagMap[settingsPermission],
+      requiredFeatureFlag,
+      isRequiredFeatureFlagEnabled:
+        isDefined(requiredFeatureFlag) &&
+        availability.featureFlagsMap[requiredFeatureFlag] === true,
+    }),
   );
 
 export const getSettingsSearchDestinations = ({
@@ -80,15 +84,15 @@ export const getSettingsSearchDestinations = ({
   );
 
   const getBreadcrumbs = (metadata: SettingsSearchRouteMetadata): string[] => {
-    const parentMetadata = isDefined(metadata.parentPath)
-      ? metadataByPath.get(metadata.parentPath)
-      : undefined;
-
-    if (isDefined(parentMetadata)) {
-      return [...getBreadcrumbs(parentMetadata), i18n._(parentMetadata.title)];
+    if ('section' in metadata) {
+      return [i18n._(metadata.section)];
     }
 
-    return isDefined(metadata.section) ? [i18n._(metadata.section)] : [];
+    const parentMetadata = metadataByPath.get(metadata.parentPath);
+
+    return isDefined(parentMetadata)
+      ? [...getBreadcrumbs(parentMetadata), i18n._(parentMetadata.title)]
+      : [];
   };
 
   return routes

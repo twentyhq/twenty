@@ -396,7 +396,8 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
 
   const firstRecordItemId = isSearchingRecords
     ? undefined
-    : inlineSearchResultItems[0]?.id;
+    : (inlineSearchResultItems[0]?.id ??
+      (isSettingsPage ? undefined : settingsSearchItemIds[0]));
 
   const defaultSelectedItemId = getCommandMenuDefaultSelectedItemId({
     trimmedSearch: trimmedSidePanelSearch,

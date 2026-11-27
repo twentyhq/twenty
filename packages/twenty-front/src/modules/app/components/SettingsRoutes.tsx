@@ -957,7 +957,7 @@ const createSettingsRouteElements = ({
         handle={withSettingsSearch({
           title: msg`Usage`,
           parentPath: SettingsPath.Billing,
-          isBillingRequired: true,
+          requiresBillingEnabled: true,
         })}
       />
       <Route
@@ -971,7 +971,7 @@ const createSettingsRouteElements = ({
           title: msg`Limits`,
           parentPath: SettingsPath.Billing,
           keywords: [msg`Usage limits`],
-          isBillingRequired: true,
+          requiresBillingEnabled: true,
         })}
       />
       <Route
@@ -1018,7 +1018,7 @@ const createSettingsRouteElements = ({
         handle={withSettingsSearch({
           title: msg`Billing`,
           section: WORKSPACE_SECTION,
-          isBillingRequired: true,
+          requiresBillingEnabled: true,
         })}
       />
       <Route
@@ -1027,7 +1027,7 @@ const createSettingsRouteElements = ({
         handle={withSettingsSearch({
           title: msg`Plans`,
           parentPath: SettingsPath.Billing,
-          isBillingRequired: true,
+          requiresBillingEnabled: true,
         })}
       />
     </Route>

@@ -1,6 +1,7 @@
 import { WorkspaceRouteUnavailable } from '@/ui/layout/page/components/WorkspaceRouteUnavailable';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { isSettingsRouteAccessible } from '@/settings/utils/isSettingsRouteAccessible';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { Trans } from '@lingui/react/macro';
@@ -36,7 +37,13 @@ export const SettingsProtectedRouteWrapper = ({
   }
 
   // TODO: move into PageChangeEffect to avoid conflicting and repeated redirects
-  if ((requiredFeatureFlag && !requiredFeatureFlagEnabled) || !hasPermission) {
+  if (
+    !isSettingsRouteAccessible({
+      hasPermission,
+      requiredFeatureFlag,
+      isRequiredFeatureFlagEnabled: requiredFeatureFlagEnabled,
+    })
+  ) {
     if (workspaceSurface.type === 'side-panel') {
       return (
         <WorkspaceRouteUnavailable>

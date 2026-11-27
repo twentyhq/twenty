@@ -3,8 +3,6 @@ import { type SettingsPath } from 'twenty-shared/types';
 
 export type SettingsSearchRouteMetadata = {
   title: MessageDescriptor;
-  section?: MessageDescriptor;
-  parentPath?: SettingsPath;
   keywords?: MessageDescriptor[];
-  isBillingRequired?: boolean;
-};
+  requiresBillingEnabled?: boolean;
+} & ({ section: MessageDescriptor } | { parentPath: SettingsPath });
