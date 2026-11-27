@@ -3,9 +3,10 @@ import {
   isWorkspaceUiScale,
 } from 'twenty-shared/workspace';
 
+import { SETTINGS_SELECT_DROPDOWN_WIDTH } from '@/settings/constants/SettingsSelectDropdownWidth';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { Select } from '@/ui/input/components/Select';
-import { useUiScaleSelectOptions } from '@/ui/theme/hooks/useUiScaleSelectOptions';
+import { useUiScaleSelectOptions } from '@/settings/hooks/useUiScaleSelectOptions';
 import { type UiScale } from '@/ui/theme/types/UiScale';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useUiScale } from '@/workspace-member/hooks/useUiScale';
@@ -26,7 +27,7 @@ export const UiScalePicker = () => {
   return (
     <Select<UiScale>
       dropdownId="ui-scale-picker"
-      dropdownWidth={218}
+      dropdownWidth={SETTINGS_SELECT_DROPDOWN_WIDTH}
       dropdownWidthAuto
       fullWidth
       needIconCheck

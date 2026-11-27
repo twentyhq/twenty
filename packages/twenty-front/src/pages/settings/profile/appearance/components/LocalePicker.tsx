@@ -1,3 +1,4 @@
+import { SETTINGS_SELECT_DROPDOWN_WIDTH } from '@/settings/constants/SettingsSelectDropdownWidth';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { getDateFnsLocale } from '@/ui/field/display/utils/getDateFnsLocale';
@@ -75,7 +76,7 @@ export const LocalePicker = () => {
   return (
     <Select
       dropdownId="preferred-locale"
-      dropdownWidth={218}
+      dropdownWidth={SETTINGS_SELECT_DROPDOWN_WIDTH}
       dropdownWidthAuto
       fullWidth
       withSearchInput

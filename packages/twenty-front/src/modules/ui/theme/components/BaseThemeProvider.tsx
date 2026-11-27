@@ -42,10 +42,10 @@ export const BaseThemeProvider = ({ children }: BaseThemeProviderProps) => {
     currentWorkspace?.accentColor ??
     workspacePublicData?.accentColor ??
     persistedWorkspaceAccentColor;
-  const uiScale = getEffectiveUiScale(
-    persistedUiScaleStep,
-    currentWorkspace?.uiScale ?? workspacePublicData?.uiScale,
-  );
+  const uiScale = getEffectiveUiScale({
+    memberUiScale: persistedUiScaleStep,
+    workspaceUiScale: currentWorkspace?.uiScale ?? workspacePublicData?.uiScale,
+  });
   const systemColorScheme = useSystemColorScheme();
   const effectiveColorScheme =
     persistedColorScheme === 'System'

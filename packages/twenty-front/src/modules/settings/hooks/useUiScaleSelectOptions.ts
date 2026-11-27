@@ -21,10 +21,13 @@ export const useUiScaleSelectOptions = (workspaceUiScale: WorkspaceUiScale) => {
     Larger: t`Larger`,
   };
 
-  const toOption = <TValue extends UiScale>(
-    uiScale: TValue,
-    displayedUiScale: WorkspaceUiScale,
-  ): SelectOption<TValue> => ({
+  const toOption = <TValue extends UiScale>({
+    uiScale,
+    displayedUiScale,
+  }: {
+    uiScale: TValue;
+    displayedUiScale: WorkspaceUiScale;
+  }): SelectOption<TValue> => ({
     label: labels[uiScale],
     value: uiScale,
     Icon: UI_SCALE_ICONS[uiScale],
@@ -33,11 +36,11 @@ export const useUiScaleSelectOptions = (workspaceUiScale: WorkspaceUiScale) => {
 
   return {
     scaleOptions: WORKSPACE_UI_SCALES.map((uiScale) =>
-      toOption(uiScale, uiScale),
+      toOption({ uiScale, displayedUiScale: uiScale }),
     ),
-    workspaceDefaultOption: toOption(
-      doNotTranslate('Default'),
-      workspaceUiScale,
-    ),
+    workspaceDefaultOption: toOption({
+      uiScale: doNotTranslate('Default'),
+      displayedUiScale: workspaceUiScale,
+    }),
   };
 };
