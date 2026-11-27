@@ -1,8 +1,6 @@
 import { createWorkspaceRouteObjects } from '@/app/routing/utils/createWorkspaceRouteObjects';
-import {
-  getSettingsSearchDestinations,
-  type SettingsSearchAvailability,
-} from '@/settings/search/utils/getSettingsSearchDestinations';
+import { type SettingsSearchAvailability } from '@/settings/search/types/SettingsSearchAvailability';
+import { getSettingsSearchDestinations } from '@/settings/search/utils/getSettingsSearchDestinations';
 import { searchSettingsDestinations } from '@/settings/search/utils/searchSettingsDestinations';
 import { i18n } from '@lingui/core';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
