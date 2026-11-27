@@ -28,6 +28,7 @@ export const collectSettingsSearchRoutes = ({
 
     if (
       !isDefined(metadata) ||
+      metadata === false ||
       !isDefined(path) ||
       !isSettingsPathValue(path)
     ) {

@@ -824,6 +824,17 @@ const MEMBERS_LIST_SETTINGS_ROUTE_HANDLE: SettingsRouteHandle = {
   },
 };
 
+const EXCLUDED_FROM_SETTINGS_SEARCH_ROUTE_HANDLE: SettingsRouteHandle = {
+  ...MAIN_SETTINGS_ROUTE_HANDLE,
+  settingsSearch: false,
+};
+
+const EXCLUDED_FROM_SETTINGS_SEARCH_SIDE_PANEL_ROUTE_HANDLE: SettingsRouteHandle =
+  {
+    ...MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE,
+    settingsSearch: false,
+  };
+
 const buildSettingsSearchRouteHandle = ({
   settingsSearch,
   handle = MAIN_SETTINGS_ROUTE_HANDLE,
@@ -834,6 +845,7 @@ const buildSettingsSearchRouteHandle = ({
 
 const USER_SECTION = msg`User`;
 const WORKSPACE_SECTION = msg`Workspace`;
+const OTHER_SECTION = msg`Other`;
 
 const createSettingsRouteElements = ({
   isAdminPageEnabled,
@@ -875,12 +887,19 @@ const createSettingsRouteElements = ({
             key={legacyAccountsPath}
             path={legacyAccountsPath}
             element={<SettingsLegacyAccountsRedirect />}
+            handle={EXCLUDED_FROM_SETTINGS_SEARCH_ROUTE_HANDLE}
           />
         ),
       )}
       <Route
         path={SettingsPath.AppPreferences}
         element={<SettingsAccounts />}
+        handle={buildSettingsSearchRouteHandle({
+          settingsSearch: {
+            title: msg`Apps preferences`,
+            section: USER_SECTION,
+          },
+        })}
       />
       <Route
         path={SettingsPath.AppPreferencesApp}
@@ -893,6 +912,7 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.AppPreferencesNewAccount}
         element={<SettingsNewAccount />}
+        handle={EXCLUDED_FROM_SETTINGS_SEARCH_ROUTE_HANDLE}
       />
       <Route
         path={SettingsPath.AppPreferencesAccountConfiguration}
@@ -901,6 +921,7 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.AppPreferencesNewImapSmtpCaldavConnection}
         element={<SettingsNewImapSmtpCaldavConnection />}
+        handle={EXCLUDED_FROM_SETTINGS_SEARCH_ROUTE_HANDLE}
       />
       <Route
         path={SettingsPath.AppPreferencesEditImapSmtpCaldavConnection}
@@ -924,10 +945,17 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.WorkspaceCommunications}
         element={<SettingsWorkspaceCommunications />}
+        handle={buildSettingsSearchRouteHandle({
+          settingsSearch: {
+            title: msg`Communication`,
+            section: WORKSPACE_SECTION,
+          },
+        })}
       />
       <Route
         path={SettingsPath.NewEmailGroupChannel}
         element={<SettingsNewEmailGroupChannel />}
+        handle={EXCLUDED_FROM_SETTINGS_SEARCH_ROUTE_HANDLE}
       />
       <Route
         path={SettingsPath.EmailGroupChannelDetail}
@@ -936,6 +964,7 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.NewUnsubscribeTopic}
         element={<SettingsWorkspaceNewUnsubscribeTopic />}
+        handle={EXCLUDED_FROM_SETTINGS_SEARCH_ROUTE_HANDLE}
       />
       <Route
         path={SettingsPath.UnsubscribeTopicDetail}
@@ -944,10 +973,22 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.Unsubscribe}
         element={<SettingsWorkspaceUnsubscribe />}
+        handle={buildSettingsSearchRouteHandle({
+          settingsSearch: {
+            title: msg`Unsubscribe`,
+            parentPath: SettingsPath.WorkspaceCommunications,
+          },
+        })}
       />
       <Route
         path={SettingsPath.WorkspaceBlocklist}
         element={<SettingsWorkspaceBlocklist />}
+        handle={buildSettingsSearchRouteHandle({
+          settingsSearch: {
+            title: msg`Blocklist`,
+            parentPath: SettingsPath.WorkspaceCommunications,
+          },
+        })}
       />
       <Route
         path={SettingsPath.Usage}
@@ -979,19 +1020,26 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.BillingNewLimit}
         element={<SettingsBillingNewLimit />}
+        handle={EXCLUDED_FROM_SETTINGS_SEARCH_ROUTE_HANDLE}
       />
       <Route
         path={SettingsPath.BillingLimitEdit}
         element={<SettingsBillingLimitEdit />}
       />
-      <Route path={SettingsPath.Partner} element={<SettingsPartner />} />
+      <Route
+        path={SettingsPath.Partner}
+        element={<SettingsPartner />}
+        handle={EXCLUDED_FROM_SETTINGS_SEARCH_ROUTE_HANDLE}
+      />
       <Route
         path={SettingsPath.Subdomain}
         element={<SettingsSubdomainPage />}
+        handle={EXCLUDED_FROM_SETTINGS_SEARCH_ROUTE_HANDLE}
       />
       <Route
         path={SettingsPath.CustomDomain}
         element={<SettingsCustomDomainPage />}
+        handle={EXCLUDED_FROM_SETTINGS_SEARCH_ROUTE_HANDLE}
       />
       <Route
         path={SettingsPath.ApplicationPublicDomainNew}
@@ -1001,10 +1049,15 @@ const createSettingsRouteElements = ({
         path={SettingsPath.ApplicationPublicDomainDetail}
         element={<SettingPublicDomain />}
       />
-      <Route path={SettingsPath.LegalDpa} element={<SettingsLegalDpa />} />
+      <Route
+        path={SettingsPath.LegalDpa}
+        element={<SettingsLegalDpa />}
+        handle={EXCLUDED_FROM_SETTINGS_SEARCH_ROUTE_HANDLE}
+      />
       <Route
         path={SettingsPath.LegalDpaNew}
         element={<SettingsLegalDpaNew />}
+        handle={EXCLUDED_FROM_SETTINGS_SEARCH_ROUTE_HANDLE}
       />
     </Route>
     <Route
@@ -1044,11 +1097,27 @@ const createSettingsRouteElements = ({
         />
       }
     >
-      <Route path={SettingsPath.AI} element={<SettingsAI />} />
-      <Route path={SettingsPath.AiPrompts} element={<SettingsAiPrompts />} />
+      <Route
+        path={SettingsPath.AI}
+        element={<SettingsAI />}
+        handle={buildSettingsSearchRouteHandle({
+          settingsSearch: { title: msg`AI`, section: WORKSPACE_SECTION },
+        })}
+      />
+      <Route
+        path={SettingsPath.AiPrompts}
+        element={<SettingsAiPrompts />}
+        handle={buildSettingsSearchRouteHandle({
+          settingsSearch: {
+            title: msg`System Prompt`,
+            parentPath: SettingsPath.AI,
+          },
+        })}
+      />
       <Route
         path={SettingsPath.AiNewSkill}
         element={<SettingsSkillForm mode="create" />}
+        handle={EXCLUDED_FROM_SETTINGS_SEARCH_ROUTE_HANDLE}
       />
       <Route
         path={SettingsPath.AiSkillDetail}
@@ -1074,7 +1143,13 @@ const createSettingsRouteElements = ({
         />
       }
     >
-      <Route path={SettingsPath.Layout} element={<SettingsLayout />} />
+      <Route
+        path={SettingsPath.Layout}
+        element={<SettingsLayout />}
+        handle={buildSettingsSearchRouteHandle({
+          settingsSearch: { title: msg`Layout`, section: WORKSPACE_SECTION },
+        })}
+      />
     </Route>
     <Route
       element={
@@ -1117,7 +1192,13 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.ObjectOverview}
         element={<SettingsObjectOverview />}
-        handle={EXPANDABLE_SETTINGS_ROUTE_HANDLE}
+        handle={buildSettingsSearchRouteHandle({
+          handle: EXPANDABLE_SETTINGS_ROUTE_HANDLE,
+          settingsSearch: {
+            title: msg`Overview`,
+            parentPath: SettingsPath.Objects,
+          },
+        })}
       />
       <Route
         path={SettingsPath.ObjectDetail}
@@ -1127,7 +1208,7 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.NewObject}
         element={<SettingsNewObject />}
-        handle={MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE}
+        handle={EXCLUDED_FROM_SETTINGS_SEARCH_SIDE_PANEL_ROUTE_HANDLE}
       />
       <Route
         path={SettingsPath.ObjectNewFieldSelect}
@@ -1184,7 +1265,7 @@ const createSettingsRouteElements = ({
     >
       <Route
         path={SettingsPath.Roles}
-        handle={MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE}
+        handle={EXCLUDED_FROM_SETTINGS_SEARCH_SIDE_PANEL_ROUTE_HANDLE}
         element={
           <Navigate
             to={`/settings/${SettingsPath.WorkspaceMembersPage}#roles`}
@@ -1200,7 +1281,7 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.RoleCreate}
         element={<SettingsRoleCreate />}
-        handle={MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE}
+        handle={EXCLUDED_FROM_SETTINGS_SEARCH_SIDE_PANEL_ROUTE_HANDLE}
       />
       <Route
         path={SettingsPath.RoleRule}
@@ -1220,6 +1301,7 @@ const createSettingsRouteElements = ({
           key={suffix}
           path={`${LEGACY_DEVELOPERS_SETTINGS_PATH_PREFIX}${suffix}`}
           element={<LegacySettingsPathRedirect to={to} />}
+          handle={EXCLUDED_FROM_SETTINGS_SEARCH_ROUTE_HANDLE}
         />
       ))}
       <Route
@@ -1259,6 +1341,7 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.NewApiKey}
         element={<SettingsDevelopersApiKeysNew />}
+        handle={EXCLUDED_FROM_SETTINGS_SEARCH_ROUTE_HANDLE}
       />
       <Route
         path={SettingsPath.ApiKeyDetail}
@@ -1267,6 +1350,7 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.NewWebhook}
         element={<SettingsDevelopersWebhookNew />}
+        handle={EXCLUDED_FROM_SETTINGS_SEARCH_ROUTE_HANDLE}
       />
       <Route
         path={SettingsPath.WebhookDetail}
@@ -1291,6 +1375,7 @@ const createSettingsRouteElements = ({
         <Route
           path={SettingsPath.AiNewMcpServer}
           element={<SettingsAiMcpServerNew />}
+          handle={EXCLUDED_FROM_SETTINGS_SEARCH_ROUTE_HANDLE}
         />
         <Route
           path={SettingsPath.AiMcpServerDetail}
@@ -1309,6 +1394,13 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.Applications}
         element={<SettingsApplications />}
+        handle={buildSettingsSearchRouteHandle({
+          settingsSearch: {
+            title: msg`Apps`,
+            section: WORKSPACE_SECTION,
+            keywords: [msg`Applications`],
+          },
+        })}
       />
       <Route
         path={SettingsPath.ApplicationDetail}
@@ -1371,6 +1463,7 @@ const createSettingsRouteElements = ({
     <Route
       path="security"
       element={<Navigate to={getSettingsPath(SettingsPath.Security)} replace />}
+      handle={EXCLUDED_FROM_SETTINGS_SEARCH_ROUTE_HANDLE}
     />
 
     <Route
@@ -1383,18 +1476,27 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.NewSsoIdentityProvider}
         element={<SettingsSecuritySsoIdentifyProvider />}
+        handle={EXCLUDED_FROM_SETTINGS_SEARCH_ROUTE_HANDLE}
       />
       <Route
         path={SettingsPath.NewApprovedAccessDomain}
         element={<SettingsSecurityApprovedAccessDomain />}
+        handle={EXCLUDED_FROM_SETTINGS_SEARCH_ROUTE_HANDLE}
       />
     </Route>
 
     {isAdminPageEnabled && (
       <>
-        <Route path={SettingsPath.AdminPanel} element={<SettingsAdmin />} />
+        <Route
+          path={SettingsPath.AdminPanel}
+          element={<SettingsAdmin />}
+          handle={buildSettingsSearchRouteHandle({
+            settingsSearch: { title: msg`Admin Panel`, section: OTHER_SECTION },
+          })}
+        />
         <Route
           path={SettingsPath.Enterprise}
+          handle={EXCLUDED_FROM_SETTINGS_SEARCH_ROUTE_HANDLE}
           element={
             <Navigate
               to={getSettingsPath(SettingsPath.AdminPanelOrganization)}
@@ -1405,14 +1507,17 @@ const createSettingsRouteElements = ({
         <Route
           path={SettingsPath.AdminPanelInferredVersion}
           element={<SettingsAdminInferredVersion />}
+          handle={EXCLUDED_FROM_SETTINGS_SEARCH_ROUTE_HANDLE}
         />
         <Route
           path={SettingsPath.AdminPanelInstanceStatus}
           element={<SettingsAdminInstanceStatus />}
+          handle={EXCLUDED_FROM_SETTINGS_SEARCH_ROUTE_HANDLE}
         />
         <Route
           path={SettingsPath.AdminPanelWorkspacesStatus}
           element={<SettingsAdminWorkspacesStatus />}
+          handle={EXCLUDED_FROM_SETTINGS_SEARCH_ROUTE_HANDLE}
         />
         <Route
           path={SettingsPath.AdminPanelIndicatorHealthStatus}
@@ -1430,6 +1535,7 @@ const createSettingsRouteElements = ({
         <Route
           path={SettingsPath.AdminPanelNewAiProvider}
           element={<SettingsAdminNewAiProvider />}
+          handle={EXCLUDED_FROM_SETTINGS_SEARCH_ROUTE_HANDLE}
         />
         <Route
           path={SettingsPath.AdminPanelNewAiModel}
@@ -1469,7 +1575,13 @@ const createSettingsRouteElements = ({
         />
       }
     >
-      <Route path={SettingsPath.Community} element={<SettingsCommunity />} />
+      <Route
+        path={SettingsPath.Community}
+        element={<SettingsCommunity />}
+        handle={buildSettingsSearchRouteHandle({
+          settingsSearch: { title: msg`Community`, section: OTHER_SECTION },
+        })}
+      />
     </Route>
   </>
 );
