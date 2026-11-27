@@ -131,6 +131,7 @@ export type ThemeType = {
     accent10: string;
     accent11: string;
     accent12: string;
+    transparent: string;
   };
   background: {
     noisy: string;
