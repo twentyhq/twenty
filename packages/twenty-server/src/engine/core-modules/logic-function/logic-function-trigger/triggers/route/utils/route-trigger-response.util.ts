@@ -43,7 +43,10 @@ export const buildRouteTriggerResponse = (
 export const sendRouteTriggerResponse = (
   response: Response,
   { statusCode, headers, body }: RouteTriggerResponse,
-  { allowAllHeaders = false }: { allowAllHeaders?: boolean } = {},
+  {
+    allowAllHeaders = false,
+    sandboxDocument = true,
+  }: { allowAllHeaders?: boolean; sandboxDocument?: boolean } = {},
 ) => {
   response.status(statusCode);
 
@@ -53,7 +56,10 @@ export const sendRouteTriggerResponse = (
     }
   }
 
-  response.append('Content-Security-Policy', ROUTE_RESPONSE_SANDBOX_POLICY);
+  if (sandboxDocument) {
+    response.append('Content-Security-Policy', ROUTE_RESPONSE_SANDBOX_POLICY);
+  }
+
   response.setHeader('X-Content-Type-Options', 'nosniff');
 
   if (!isDefined(body)) {
