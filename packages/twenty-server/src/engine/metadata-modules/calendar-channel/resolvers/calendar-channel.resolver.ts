@@ -2,6 +2,7 @@ import { UseGuards, UseInterceptors, UseFilters } from '@nestjs/common';
 import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
 
 import { CalendarChannelSyncStage } from 'twenty-shared/types';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -20,6 +21,9 @@ import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/se
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
+import { ROLES_READING_ALL_RECORDS_ACCESS_POLICY } from 'src/engine/permissions/channel-visibility/constants/roles-reading-all-records-access-policy.constant';
+import { RolesReadingAllRecordsDTO } from 'src/engine/permissions/channel-visibility/dtos/roles-reading-all-records.dto';
+import { ChannelVisibilityRoleWideAccessReadService } from 'src/engine/permissions/channel-visibility/services/channel-visibility-role-wide-access-read.service';
 
 const CALENDAR_CHANNEL_ACCESS_POLICY: AccessPolicy = {
   authPrincipals: {
@@ -43,6 +47,7 @@ export class CalendarChannelResolver {
   constructor(
     private readonly calendarChannelMetadataService: CalendarChannelMetadataService,
     private readonly calendarChannelSyncStatusService: CalendarChannelSyncStatusService,
+    private readonly channelVisibilityRoleWideAccessReadService: ChannelVisibilityRoleWideAccessReadService,
   ) {}
 
   @ResolveField('connectedAccount', () => ConnectedAccountPublicDTO, {
@@ -89,6 +94,20 @@ export class CalendarChannelResolver {
       userWorkspaceId,
       workspaceId: workspace.id,
     });
+  }
+
+  @Query(() => RolesReadingAllRecordsDTO)
+  @UseGuards(AccessPolicyGuard(ROLES_READING_ALL_RECORDS_ACCESS_POLICY))
+  async rolesReadingAllCalendarEvents(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<RolesReadingAllRecordsDTO> {
+    return this.channelVisibilityRoleWideAccessReadService.findRolesReadingAllRecords(
+      {
+        workspaceId: workspace.id,
+        objectUniversalIdentifier:
+          STANDARD_OBJECTS.calendarEvent.universalIdentifier,
+      },
+    );
   }
 
   @Mutation(() => CalendarChannelDTO)

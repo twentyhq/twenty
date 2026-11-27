@@ -3410,6 +3410,8 @@ export interface Query {
     recordPermissions: RecordPermissionsResult[]
     recordSharing: RecordSharingDTO
     relatedRecordPaths: RelatedRecordPath[]
+    rolesReadingAllCalendarEvents: RolesReadingAllRecords
+    rolesReadingAllMessages: RolesReadingAllRecords
     skill?: Skill
     skills: Skill[]
     timelineActivityTypes: TimelineActivityType[]
@@ -3583,6 +3585,12 @@ export interface RolePermissionFlag {
     id: Scalars['UUID']
     roleId: Scalars['UUID']
     __typename: 'RolePermissionFlag'
+}
+
+export interface RolesReadingAllRecords {
+    isAdminRoleIncluded: Scalars['Boolean']
+    otherRoleCount: Scalars['Int']
+    __typename: 'RolesReadingAllRecords'
 }
 
 export interface RotateClientSecret {
@@ -8427,6 +8435,8 @@ export interface QueryGenqlSelection{
     recordPermissions?: (RecordPermissionsResultGenqlSelection & { __args: {targets: RecordTargetInput[]} })
     recordSharing?: (RecordSharingDTOGenqlSelection & { __args: {target: RecordTargetInput} })
     relatedRecordPaths?: RelatedRecordPathGenqlSelection
+    rolesReadingAllCalendarEvents?: RolesReadingAllRecordsGenqlSelection
+    rolesReadingAllMessages?: RolesReadingAllRecordsGenqlSelection
     skill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
     skills?: SkillGenqlSelection
     timelineActivityTypes?: TimelineActivityTypeGenqlSelection
@@ -8614,6 +8624,13 @@ export interface RolePermissionFlagGenqlSelection{
     flag?: boolean | number
     id?: boolean | number
     roleId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface RolesReadingAllRecordsGenqlSelection{
+    isAdminRoleIncluded?: boolean | number
+    otherRoleCount?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -12294,6 +12311,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isRolePermissionFlag = (obj?: { __typename?: any } | null): obj is RolePermissionFlag => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isRolePermissionFlag"')
       return RolePermissionFlag_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const RolesReadingAllRecords_possibleTypes: string[] = ['RolesReadingAllRecords']
+    export const isRolesReadingAllRecords = (obj?: { __typename?: any } | null): obj is RolesReadingAllRecords => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isRolesReadingAllRecords"')
+      return RolesReadingAllRecords_possibleTypes.includes(obj.__typename)
     }
     
 

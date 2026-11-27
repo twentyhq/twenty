@@ -16,6 +16,7 @@ import { SettingsAccountsMessageAutoCreationCard } from '@/settings/accounts/com
 import { SettingsAccountsMessageFolderCard } from '@/settings/accounts/components/SettingsAccountsMessageFolderCard';
 import { SettingsAccountsMessageVisibilityCard } from '@/settings/accounts/components/SettingsAccountsMessageVisibilityCard';
 import { UPDATE_MESSAGE_CHANNEL } from '@/settings/accounts/graphql/mutations/updateMessageChannel';
+import { useChannelVisibilityDescription } from '@/settings/accounts/hooks/useChannelVisibilityDescription';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { type MessageChannelVisibility } from '~/generated-metadata/graphql';
 import { useLingui } from '@lingui/react/macro';
@@ -53,6 +54,7 @@ export const SettingsAppPreferencesMessageChannelDetails = ({
   messageChannel,
 }: SettingsAppPreferencesMessageChannelDetailsProps) => {
   const { t } = useLingui();
+  const visibilityDescription = useChannelVisibilityDescription('message');
   const [updateMessageChannel] = useMutation(UPDATE_MESSAGE_CHANNEL);
 
   const updateChannel = (update: MessageChannelUpdateInput) => {
@@ -119,7 +121,7 @@ export const SettingsAppPreferencesMessageChannelDetails = ({
         <Section.Root>
           <Section.Header
             title={t`Visibility`}
-            description={t`Define what will be visible to other users in your workspace`}
+            description={visibilityDescription}
           />
           <SettingsAccountsMessageVisibilityCard
             value={messageChannel.visibility}
