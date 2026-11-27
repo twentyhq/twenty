@@ -40,7 +40,7 @@ describe('fetchFrontComponentSources', () => {
     mockedFetchSdkClientSources.mockResolvedValue(SDK_CLIENT_SOURCES);
   });
 
-  it('should start hinted fetches before the component source arrives', async () => {
+  it('should prefetch the dependencies alongside the component source', async () => {
     const deferredComponentSource = createDeferredComponentSource();
 
     mockedFetchComponentSource.mockImplementation(({ url }) =>
@@ -74,7 +74,7 @@ describe('fetchFrontComponentSources', () => {
     expect(mockedFetchSdkClientSources).toHaveBeenCalledTimes(1);
   });
 
-  it('should fall back to scanning the component source without hints', async () => {
+  it('should fall back to scanning the component source when nothing is prefetched', async () => {
     const deferredComponentSource = createDeferredComponentSource();
 
     mockedFetchComponentSource.mockReturnValue(deferredComponentSource.promise);
@@ -97,7 +97,7 @@ describe('fetchFrontComponentSources', () => {
     });
   });
 
-  it('should leave out a hinted source the component source does not import', async () => {
+  it('should leave out a prefetched dependency the component source does not import', async () => {
     mockedFetchComponentSource.mockResolvedValue(SOURCE_WITHOUT_IMPORTS);
 
     await expect(
@@ -113,7 +113,7 @@ describe('fetchFrontComponentSources', () => {
     });
   });
 
-  it('should fail when a hinted fetch fails', async () => {
+  it('should fail when a prefetch fails', async () => {
     mockedFetchComponentSource.mockResolvedValue(SOURCE_IMPORTING_SDK_CLIENT);
     mockedFetchSdkClientSources.mockRejectedValue(new Error('unreachable'));
 
