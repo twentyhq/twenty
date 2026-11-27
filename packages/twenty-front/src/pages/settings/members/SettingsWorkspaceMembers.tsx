@@ -10,11 +10,9 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
 import { SETTINGS_WORKSPACE_MEMBERS_TABS } from '@/settings/members/constants/SettingsWorkspaceMembersTabs';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
 import { getAvailableSettingsTabs } from '@/settings/utils/getAvailableSettingsTabs';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
 import coverDark from '~/pages/settings/members/assets/cover-dark.png';
 import coverLight from '~/pages/settings/members/assets/cover-light.png';
 import { SettingsWorkspaceMembersInviteTab } from '~/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab';
@@ -26,7 +24,6 @@ const SETTINGS_MEMBERS_HERO_INSTANCE_ID_PREFIX = 'settings-members-hero';
 export const SettingsWorkspaceMembers = () => {
   const { t, i18n } = useLingui();
 
-  const hasRolesPermission = useHasPermissionFlag(PermissionFlagType.ROLES);
   const permissionFlagMap = useAtomStateValue(permissionFlagMapSelector);
 
   const tabs = getAvailableSettingsTabs({
@@ -44,11 +41,7 @@ export const SettingsWorkspaceMembers = () => {
       case SETTINGS_WORKSPACE_MEMBERS_TABS.TABS_IDS.INVITE:
         return <SettingsWorkspaceMembersInviteTab />;
       case SETTINGS_WORKSPACE_MEMBERS_TABS.TABS_IDS.ROLES:
-        return hasRolesPermission ? (
-          <SettingsWorkspaceMembersRolesTab />
-        ) : (
-          <SettingsWorkspaceMembersTeamTab />
-        );
+        return <SettingsWorkspaceMembersRolesTab />;
       default:
         return <SettingsWorkspaceMembersTeamTab />;
     }

@@ -123,7 +123,7 @@ export const getSettingsSearchDestinations = ({
     .flatMap(({ path, metadata }) => {
       const title = i18n._(metadata.title);
       const breadcrumbs = getBreadcrumbs(metadata);
-      const tabs = getAvailableSettingsTabs({
+      const [defaultTab, ...otherTabs] = getAvailableSettingsTabs({
         tabs: metadata.tabs ?? [],
         permissionFlagMap: availability.permissionFlagMap,
       });
@@ -134,9 +134,12 @@ export const getSettingsSearchDestinations = ({
           path: getSettingsPath(path),
           title,
           breadcrumbs,
-          keywords: (metadata.keywords ?? []).map((keyword) => i18n._(keyword)),
+          keywords: [
+            ...(metadata.keywords ?? []),
+            ...(isDefined(defaultTab) ? [defaultTab.title] : []),
+          ].map((keyword) => i18n._(keyword)),
         },
-        ...tabs.map((tab) => ({
+        ...otherTabs.map((tab) => ({
           id: `settings-search-${path}#${tab.id}`,
           path: getSettingsPath(path, undefined, undefined, tab.id),
           title: i18n._(tab.title),

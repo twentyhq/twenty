@@ -122,4 +122,15 @@ describe('getSettingsSearchDestinations', () => {
     expect(paths).toContain('/settings/members#invite');
     expect(paths).not.toContain('/settings/members#roles');
   });
+
+  it('folds the default tab into its page', () => {
+    const destinations = getDestinations();
+
+    expect(destinations.map(({ path }) => path)).not.toContain(
+      '/settings/members#team',
+    );
+    expect(
+      destinations.find(({ path }) => path === '/settings/members')?.keywords,
+    ).toEqual(['Team']);
+  });
 });
