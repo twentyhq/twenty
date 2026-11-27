@@ -25,7 +25,11 @@ const APPLICATION_ID = 'application-id';
 const renderEffect = ({
   frontComponents,
 }: {
-  frontComponents: { id: string; applicationId: string; usesSdkClient: boolean }[];
+  frontComponents: {
+    id: string;
+    applicationId: string;
+    usesSdkClient: boolean;
+  }[];
 }) => {
   const store = createStore();
 
