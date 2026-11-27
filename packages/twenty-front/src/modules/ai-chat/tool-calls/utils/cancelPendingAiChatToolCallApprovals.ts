@@ -1,25 +1,18 @@
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
-import { isDefined } from 'twenty-shared/utils';
 
-import { type AiChatPendingToolCall } from '@/ai-chat/tool-calls/types/AiChatPendingToolCall';
 import { buildSkippedToolCallOutput } from '@/ai-chat/tool-calls/utils/buildSkippedToolCallOutput';
-import { parsePendingToolCall } from '@/ai-chat/tool-calls/utils/parsePendingToolCall';
+import { getPendingAiChatToolCallApprovals } from '@/ai-chat/tool-calls/utils/getPendingAiChatToolCallApprovals';
 import { updateToolPartOutput } from '@/ai-chat/tool-calls/utils/updateToolPartOutput';
 
-const isPendingToolCallApproval = (
-  pendingToolCall: AiChatPendingToolCall,
-): pendingToolCall is Extract<
-  AiChatPendingToolCall,
-  { kind: 'toolCallApproval' }
-> => pendingToolCall.kind === 'toolCallApproval';
-
-export const cancelPendingAiChatToolCallApprovals = (
-  messages: ExtendedUIMessage[],
-): ExtendedUIMessage[] =>
-  messages
-    .flatMap((message) => message.parts.map(parsePendingToolCall))
-    .filter(isDefined)
-    .filter(isPendingToolCallApproval)
+export const cancelPendingAiChatToolCallApprovals = ({
+  messages,
+  toolCallIds,
+}: {
+  messages: ExtendedUIMessage[];
+  toolCallIds: string[];
+}): ExtendedUIMessage[] =>
+  getPendingAiChatToolCallApprovals(messages)
+    .filter(({ toolCallId }) => toolCallIds.includes(toolCallId))
     .reduce(
       (updatedMessages, { toolCallId, proposal }) =>
         updateToolPartOutput({

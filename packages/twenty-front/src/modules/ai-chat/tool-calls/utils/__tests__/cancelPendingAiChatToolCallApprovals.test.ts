@@ -45,7 +45,10 @@ describe('cancelPendingAiChatToolCallApprovals', () => {
       },
     ];
 
-    const [message] = cancelPendingAiChatToolCallApprovals(messages);
+    const [message] = cancelPendingAiChatToolCallApprovals({
+      messages,
+      toolCallIds: ['call-1'],
+    });
 
     expect(message.parts[0]).toBe(messages[0].parts[0]);
     expect(message.parts[1]).toMatchObject({
@@ -84,9 +87,35 @@ describe('cancelPendingAiChatToolCallApprovals', () => {
       },
     ];
 
-    const result = cancelPendingAiChatToolCallApprovals(messages);
+    const result = cancelPendingAiChatToolCallApprovals({
+      messages,
+      toolCallIds: ['call-1', 'call-2'],
+    });
 
     expect(result[0]).toBe(messages[0]);
     expect(result[1]).toBe(messages[1]);
+  });
+
+  it('leaves a pending approval it was not asked to cancel', () => {
+    const messages: ExtendedUIMessage[] = [
+      {
+        id: 'assistant-1',
+        role: 'assistant',
+        parts: [
+          buildApprovalPart({ toolCallId: 'call-1', status: 'pending' }),
+          buildApprovalPart({ toolCallId: 'call-2', status: 'pending' }),
+        ],
+      },
+    ];
+
+    const [message] = cancelPendingAiChatToolCallApprovals({
+      messages,
+      toolCallIds: ['call-1'],
+    });
+
+    expect(message.parts[0]).toMatchObject({
+      output: { result: { status: 'skipped' } },
+    });
+    expect(message.parts[1]).toBe(messages[0].parts[1]);
   });
 });
