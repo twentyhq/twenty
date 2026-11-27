@@ -13,10 +13,10 @@ describe('getEffectiveUiScale', () => {
   it('keeps the member choice over the workspace scale', () => {
     expect(
       getEffectiveUiScale({
-        memberUiScale: 'Normal',
-        workspaceUiScale: 'Larger',
+        memberUiScale: 'Large',
+        workspaceUiScale: 'Normal',
       }),
-    ).toBe('Normal');
+    ).toBe('Large');
     expect(
       getEffectiveUiScale({
         memberUiScale: 'Smaller',

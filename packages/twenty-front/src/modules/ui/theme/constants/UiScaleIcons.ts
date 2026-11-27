@@ -6,9 +6,9 @@ import {
   IconZoomReset,
 } from 'twenty-ui/icon';
 
-import { type UiScale } from '@/ui/theme/types/UiScale';
+import { type UiScaleStep } from '@/ui/theme/types/UiScaleStep';
 
-export const UI_SCALE_ICONS: Record<UiScale, IconComponent> = {
+export const UI_SCALE_ICONS: Record<UiScaleStep, IconComponent> = {
   Default: IconSettings,
   Smaller: IconZoomOut,
   Normal: IconZoomReset,

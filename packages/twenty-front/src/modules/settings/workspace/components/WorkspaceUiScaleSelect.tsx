@@ -19,7 +19,7 @@ export const WorkspaceUiScaleSelect = () => {
     ? currentWorkspace.uiScale
     : DEFAULT_WORKSPACE_UI_SCALE;
 
-  const { scaleOptions } = useUiScaleSelectOptions(uiScale);
+  const { workspaceScaleOptions } = useUiScaleSelectOptions(uiScale);
 
   const handleChange = (scale: WorkspaceUiScale) => {
     if (scale === uiScale) {
@@ -41,7 +41,7 @@ export const WorkspaceUiScaleSelect = () => {
       needIconCheck
       selectSizeVariant="small"
       value={uiScale}
-      options={scaleOptions}
+      options={workspaceScaleOptions}
       onChange={handleChange}
     />
   );

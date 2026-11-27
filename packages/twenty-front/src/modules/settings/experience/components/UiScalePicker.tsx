@@ -14,11 +14,12 @@ import { useUiScale } from '@/workspace-member/hooks/useUiScale';
 export const UiScalePicker = () => {
   const { uiScaleStep, setUiScaleStep } = useUiScale();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const { scaleOptions, workspaceDefaultOption } = useUiScaleSelectOptions(
-    isWorkspaceUiScale(currentWorkspace?.uiScale)
-      ? currentWorkspace.uiScale
-      : DEFAULT_WORKSPACE_UI_SCALE,
-  );
+  const { memberScaleOptions, workspaceDefaultOption } =
+    useUiScaleSelectOptions(
+      isWorkspaceUiScale(currentWorkspace?.uiScale)
+        ? currentWorkspace.uiScale
+        : DEFAULT_WORKSPACE_UI_SCALE,
+    );
 
   const handleChange = (step: UiScale) => {
     void setUiScaleStep(step);
@@ -34,7 +35,7 @@ export const UiScalePicker = () => {
       selectSizeVariant="small"
       value={uiScaleStep}
       pinnedOption={workspaceDefaultOption}
-      options={scaleOptions}
+      options={memberScaleOptions}
       onChange={handleChange}
     />
   );
