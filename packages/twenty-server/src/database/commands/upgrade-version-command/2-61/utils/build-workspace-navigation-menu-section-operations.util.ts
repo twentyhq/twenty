@@ -64,6 +64,7 @@ export const buildWorkspaceNavigationMenuSectionOperations = ({
     link: null,
     nativePageKey: null,
     builtInSectionKey: null,
+    visibleItemLimit: null,
     isActive: true,
     overrides: null,
     userWorkspaceId: null,
