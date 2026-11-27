@@ -50,12 +50,17 @@ type RenameFlatEntityMaps = Pick<
 
 const getFlatEntityName = (
   flatEntity: RenamedFlatEntity<RenamedMetadataName>,
-): string =>
-  'nameSingular' in flatEntity
-    ? flatEntity.nameSingular
-    : 'name' in flatEntity
-      ? flatEntity.name
-      : flatEntity.label;
+): string => {
+  if ('nameSingular' in flatEntity) {
+    return flatEntity.nameSingular;
+  }
+
+  if ('name' in flatEntity) {
+    return flatEntity.name;
+  }
+
+  return flatEntity.label;
+};
 
 @RegisteredWorkspaceCommand('2.66.0', 1795794146718)
 @Command({

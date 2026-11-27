@@ -1,5 +1,5 @@
 const OLD_NAME_SUFFIX = 'Old';
-const MAX_OLD_NAME_ATTEMPTS = 100;
+const OLD_LABEL_SUFFIX = ' (Old)';
 
 export const resolveAvailableOldNameSuffixes = ({
   names,
@@ -8,19 +8,17 @@ export const resolveAvailableOldNameSuffixes = ({
   names: string[];
   takenNames: ReadonlySet<string>;
 }): { nameSuffix: string; labelSuffix: string } => {
-  for (let attempt = 1; attempt <= MAX_OLD_NAME_ATTEMPTS; attempt++) {
-    const discriminator = attempt === 1 ? '' : `${attempt}`;
-    const nameSuffix = `${OLD_NAME_SUFFIX}${discriminator}`;
+  let attempt = 1;
+  let nameSuffix = OLD_NAME_SUFFIX;
 
-    if (names.every((name) => !takenNames.has(`${name}${nameSuffix}`))) {
-      return {
-        nameSuffix,
-        labelSuffix: attempt === 1 ? ' (Old)' : ` (Old) ${discriminator}`,
-      };
-    }
+  while (names.some((name) => takenNames.has(`${name}${nameSuffix}`))) {
+    attempt++;
+    nameSuffix = `${OLD_NAME_SUFFIX}${attempt}`;
   }
 
-  throw new Error(
-    `Could not find an available ${OLD_NAME_SUFFIX} suffix for ${names.join(', ')} after ${MAX_OLD_NAME_ATTEMPTS} attempts`,
-  );
+  return {
+    nameSuffix,
+    labelSuffix:
+      attempt === 1 ? OLD_LABEL_SUFFIX : `${OLD_LABEL_SUFFIX} ${attempt}`,
+  };
 };
