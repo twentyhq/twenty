@@ -65,14 +65,3 @@ exports[`Applications acting with their grant role should fail should refuse an 
   "message": "Entity performing the request does not have permission",
 }
 `;
-
-exports[`Applications acting with their grant role should fail should refuse twenty-standard acting for an Admin member creating an agent turn, where creating is disabled 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "subCode": "PERMISSION_DENIED",
-    "userFriendlyMessage": "User does not have permission.",
-  },
-  "message": "Entity performing the request does not have permission",
-}
-`;

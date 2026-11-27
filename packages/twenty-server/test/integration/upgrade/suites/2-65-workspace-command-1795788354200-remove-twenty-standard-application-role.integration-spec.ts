@@ -69,9 +69,10 @@ describe('2-65 workspace command 1795788354200 - RemoveTwentyStandardApplication
   beforeAll(async () => {
     jest.useRealTimers();
 
-    command = getAppProviderByClassName<RemoveTwentyStandardApplicationRoleCommand>(
-      'RemoveTwentyStandardApplicationRoleCommand',
-    );
+    command =
+      getAppProviderByClassName<RemoveTwentyStandardApplicationRoleCommand>(
+        'RemoveTwentyStandardApplicationRoleCommand',
+      );
 
     twentyStandardApplicationId = (await findApplicationIdByUniversalIdentifier(
       { universalIdentifier: TWENTY_STANDARD_APPLICATION.universalIdentifier },
