@@ -5,12 +5,10 @@ import { countAvailableWorkspaces } from '@/auth/utils/availableWorkspacesUtils'
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { useRedirectToDefaultDomain } from '@/domain-manager/hooks/useRedirectToDefaultDomain';
-import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useOpenRecordInPreference } from '@/settings/experience/hooks/useOpenRecordInPreference';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { AvailableWorkspaceItem } from '@/navigation/components/MultiWorkspaceDropdown/internal/components/AvailableWorkspaceItem';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { OPEN_RECORD_IN_OPTIONS } from '@/navigation/constants/OpenRecordInOptions';
@@ -35,7 +33,6 @@ import {
   IconUserPlus,
 } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
@@ -64,31 +61,10 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
   const isCustomizableSidebarEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
   );
-  const isLayoutCustomizationModeEnabled = useAtomStateValue(
-    isLayoutCustomizationModeEnabledState,
-  );
 
   const handleSettings = () => {
     navigateSettings(SettingsPath.ProfilePage);
   };
-
-  const settingsItem = (
-    <Tooltip
-      content={t`Finish editing the layout to open Settings`}
-      disabled={!isLayoutCustomizationModeEnabled}
-      delay={TooltipDelay.noDelay}
-      side="right"
-    >
-      <Dropdown.ActionItem
-        startIcon={<IconSettings />}
-        onClick={handleSettings}
-        disabled={isLayoutCustomizationModeEnabled}
-        focusableWhenDisabled
-      >
-        {t`Settings`}
-      </Dropdown.ActionItem>
-    </Tooltip>
-  );
 
   const handleSupport = () => {
     window.FrontChat?.('show');
@@ -174,7 +150,14 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
         </>
       )}
       <Dropdown.Section>
-        {!isCustomizableSidebarEnabled && isMobile && settingsItem}
+        {!isCustomizableSidebarEnabled && isMobile && (
+          <Dropdown.ActionItem
+            startIcon={<IconSettings />}
+            onClick={handleSettings}
+          >
+            {t`Settings`}
+          </Dropdown.ActionItem>
+        )}
         <Dropdown.ActionItem
           startIcon={
             <SelectOptionIcon
@@ -223,7 +206,14 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
       {isCustomizableSidebarEnabled && (
         <>
           <Dropdown.Separator />
-          <Dropdown.Section>{settingsItem}</Dropdown.Section>
+          <Dropdown.Section>
+            <Dropdown.ActionItem
+              startIcon={<IconSettings />}
+              onClick={handleSettings}
+            >
+              {t`Settings`}
+            </Dropdown.ActionItem>
+          </Dropdown.Section>
         </>
       )}
     </>

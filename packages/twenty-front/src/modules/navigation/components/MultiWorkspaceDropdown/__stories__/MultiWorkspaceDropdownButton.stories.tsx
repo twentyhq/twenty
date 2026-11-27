@@ -11,10 +11,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { graphql, HttpResponse } from 'msw';
 import { expect, fn, spyOn, userEvent, waitFor, within } from 'storybook/test';
 import { OpenRecordIn } from 'twenty-shared/types';
-import {
-  type AvailableWorkspace,
-  FeatureFlagKey,
-} from '~/generated-metadata/graphql';
+import { type AvailableWorkspace } from '~/generated-metadata/graphql';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import {
@@ -220,33 +217,23 @@ export const RootInvitationLink: Story = {
   },
 };
 
-export const SettingsDisabledWhileEditingLayout: Story = {
+export const DisabledWhileEditingLayout: Story = {
   beforeEach: () => {
-    jotaiStore.set(currentWorkspaceState.atom, {
-      ...mockCurrentWorkspace,
-      featureFlags: [
-        {
-          key: FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
-          value: true,
-        },
-      ],
-    });
     jotaiStore.set(isLayoutCustomizationModeEnabledState.atom, true);
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement.ownerDocument.body);
+    const trigger = canvas.getByRole('button', { name: 'Twenty' });
 
-    await userEvent.click(canvas.getByTestId('workspace-dropdown'));
-    const settings = await canvas.findByRole('menuitem', { name: 'Settings' });
-
-    expect(settings).toHaveAttribute('aria-disabled', 'true');
-    await userEvent.hover(settings);
-    expect(
-      await canvas.findByText('Finish editing the layout to open Settings'),
-    ).toBeVisible();
-    await userEvent.click(settings);
-    expect(canvas.getByRole('menu', { name: 'Twenty' })).toBeVisible();
-    await userEvent.keyboard('{Escape}');
+    expect(trigger).toHaveAttribute('aria-disabled', 'true');
+    await userEvent.hover(trigger);
+    await waitFor(() =>
+      expect(
+        canvas.getByText('Finish editing the layout to open this menu'),
+      ).toBeVisible(),
+    );
+    await userEvent.click(trigger);
+    expect(canvas.queryByRole('menu')).not.toBeInTheDocument();
   },
 };
 
