@@ -5,10 +5,12 @@ import {
 } from '@/settings/search/utils/getSettingsSearchDestinations';
 import { i18n } from '@lingui/core';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
+import { buildRecordFromKeysWithSameValue } from '~/utils/array/buildRecordFromKeysWithSameValue';
 
-const ALL_PERMISSIONS = Object.fromEntries(
-  Object.values(PermissionFlagType).map((flag) => [flag, true]),
-) as Record<PermissionFlagType, boolean>;
+const ALL_PERMISSIONS = buildRecordFromKeysWithSameValue(
+  Object.values(PermissionFlagType),
+  true,
+);
 
 const FULL_AVAILABILITY: SettingsSearchAvailability = {
   permissionFlagMap: ALL_PERMISSIONS,

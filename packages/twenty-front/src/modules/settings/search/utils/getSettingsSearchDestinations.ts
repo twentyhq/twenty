@@ -1,11 +1,12 @@
 import { type WorkspaceRouteObject } from '@/app/routing/types/WorkspaceRouteObject';
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
 import { type SettingsSearchDestination } from '@/settings/search/types/SettingsSearchDestination';
+import { type SettingsSearchRouteHandle } from '@/settings/search/types/SettingsSearchRouteHandle';
 import { type SettingsSearchRouteMetadata } from '@/settings/search/types/SettingsSearchRouteMetadata';
 import { isSettingsRouteAccessible } from '@/settings/utils/isSettingsRouteAccessible';
 import { type I18n } from '@lingui/core';
 import { isValidElement, type ComponentProps } from 'react';
-import { type SettingsPath } from 'twenty-shared/types';
+import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { type PermissionFlagType } from '~/generated-metadata/graphql';
 
@@ -31,33 +32,43 @@ const getRouteGuard = (
     ? routeObject.element.props
     : undefined;
 
-const collectSettingsSearchRoutes = (
-  routeObjects: WorkspaceRouteObject[],
-  parentGuards: SettingsRouteGuard[] = [],
-): SettingsSearchRoute[] =>
+const getSettingsSearchMetadata = (
+  handle: SettingsSearchRouteHandle | undefined,
+) => handle?.settingsSearch;
+
+const collectSettingsSearchRoutes = ({
+  routeObjects,
+  parentGuards,
+}: {
+  routeObjects: WorkspaceRouteObject[];
+  parentGuards: SettingsRouteGuard[];
+}): SettingsSearchRoute[] =>
   routeObjects.flatMap((routeObject) => {
     const guard = getRouteGuard(routeObject);
     const guards = isDefined(guard) ? [...parentGuards, guard] : parentGuards;
-    const metadata = routeObject.handle?.settingsSearch;
-    const childRoutes = collectSettingsSearchRoutes(
-      routeObject.children ?? [],
-      guards,
+    const metadata = getSettingsSearchMetadata(routeObject.handle);
+    const path = Object.values(SettingsPath).find(
+      (settingsPath) => settingsPath === routeObject.path,
     );
+    const childRoutes = collectSettingsSearchRoutes({
+      routeObjects: routeObject.children ?? [],
+      parentGuards: guards,
+    });
 
-    if (!isDefined(metadata) || !isDefined(routeObject.path)) {
+    if (!isDefined(metadata) || !isDefined(path)) {
       return childRoutes;
     }
 
-    return [
-      { path: routeObject.path as SettingsPath, metadata, guards },
-      ...childRoutes,
-    ];
+    return [{ path, metadata, guards }, ...childRoutes];
   });
 
-const isRouteAvailable = (
-  { metadata, guards }: SettingsSearchRoute,
-  availability: SettingsSearchAvailability,
-) =>
+const isRouteAvailable = ({
+  route: { metadata, guards },
+  availability,
+}: {
+  route: SettingsSearchRoute;
+  availability: SettingsSearchAvailability;
+}) =>
   (availability.isBillingEnabled || metadata.requiresBillingEnabled !== true) &&
   guards.every(({ settingsPermission, requiredFeatureFlag }) =>
     isSettingsRouteAccessible({
@@ -65,7 +76,7 @@ const isRouteAvailable = (
       requiredFeatureFlag,
       isRequiredFeatureFlagEnabled:
         isDefined(requiredFeatureFlag) &&
-        availability.featureFlagsMap[requiredFeatureFlag] === true,
+        availability.featureFlagsMap[requiredFeatureFlag],
     }),
   );
 
@@ -78,7 +89,10 @@ export const getSettingsSearchDestinations = ({
   availability: SettingsSearchAvailability;
   i18n: I18n;
 }): SettingsSearchDestination[] => {
-  const routes = collectSettingsSearchRoutes(routeObjects);
+  const routes = collectSettingsSearchRoutes({
+    routeObjects,
+    parentGuards: [],
+  });
   const metadataByPath = new Map(
     routes.map((route) => [route.path, route.metadata]),
   );
@@ -96,7 +110,7 @@ export const getSettingsSearchDestinations = ({
   };
 
   return routes
-    .filter((route) => isRouteAvailable(route, availability))
+    .filter((route) => isRouteAvailable({ route, availability }))
     .map(({ path, metadata }) => ({
       id: `settings-search-${path}`,
       path: getSettingsPath(path),
