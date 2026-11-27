@@ -122,6 +122,7 @@ export const NavigationMenuItemAddDropdownContent = ({
     recordSearchLoading,
     isSearchDebouncing,
   } = useNavigationMenuItemAddOptions({
+    section,
     step,
     search,
     objectId,

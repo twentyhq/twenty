@@ -80,6 +80,13 @@ describe('compileValidationRuleExpression', () => {
     });
   });
 
+  it('should accept a property read on any expression, as rules did before trees', () => {
+    expect(compile('(coalesce(amount, "")).currencyCode == "EUR"')).toEqual({
+      isValid: true,
+      bindings: { amount: 'opportunity-amount' },
+    });
+  });
+
   it('should accept now as a value', () => {
     expect(compile('isDefined(now)')).toEqual({ isValid: true, bindings: {} });
   });

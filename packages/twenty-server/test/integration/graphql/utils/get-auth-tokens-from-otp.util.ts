@@ -36,9 +36,6 @@ export const getAuthTokensFromOtp = async ({
           accessOrWorkspaceAgnosticToken {
             token
           }
-          refreshToken {
-            token
-          }
         }
       }
     }

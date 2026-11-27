@@ -83,6 +83,7 @@ const compileObjectFormulaFields = ({
       const columns =
         compileFormulaFieldColumns({
           flatFieldMetadata,
+          fields,
           schemaName,
           tableName,
           resolveReference: buildFormulaSqlReferenceResolverFromDescriptors({
@@ -112,7 +113,7 @@ const compileObjectFormulaFields = ({
         flatFieldMetadata,
         isStored:
           getFieldMetadataFormulaEvaluation({
-            settings: flatFieldMetadata.settings,
+            formula: flatFieldMetadata.formula,
           }) === 'STORED',
         columns,
         dependencies: [...dependencyByKey.values()],

@@ -14,6 +14,8 @@ import {
   isValidUuid,
 } from 'twenty-shared/utils';
 
+import { NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MAX } from 'src/engine/metadata-modules/navigation-menu-item/constants/navigation-menu-item-visible-item-limit-max.constant';
+import { NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MIN } from 'src/engine/metadata-modules/navigation-menu-item/constants/navigation-menu-item-visible-item-limit-min.constant';
 import { NavigationMenuItemExceptionCode } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception';
 import { type UniversalFlatNavigationMenuItem } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-navigation-menu-item.type';
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
@@ -72,6 +74,7 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
     agentChatChannelUniversalIdentifier,
     nativePageKey,
     builtInSectionKey,
+    visibleItemLimit,
     workflowUniversalIdentifier,
     agentUniversalIdentifier,
   } = flatNavigationMenuItem;
@@ -90,6 +93,29 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
       buildInvalidInputError(
         t`A builtInSectionKey is only allowed on SECTION type`,
         msg`A builtInSectionKey is only allowed on SECTION type`,
+      ),
+    ];
+  }
+
+  if (isDefined(visibleItemLimit) && type !== NavigationMenuItemType.SECTION) {
+    return [
+      buildInvalidInputError(
+        t`A visibleItemLimit is only allowed on SECTION type`,
+        msg`A visibleItemLimit is only allowed on SECTION type`,
+      ),
+    ];
+  }
+
+  if (
+    isDefined(visibleItemLimit) &&
+    (!Number.isInteger(visibleItemLimit) ||
+      visibleItemLimit < NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MIN ||
+      visibleItemLimit > NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MAX)
+  ) {
+    return [
+      buildInvalidInputError(
+        t`A visibleItemLimit must be an integer between ${NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MIN} and ${NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MAX}`,
+        msg`A visibleItemLimit must be an integer between ${NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MIN} and ${NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MAX}`,
       ),
     ];
   }

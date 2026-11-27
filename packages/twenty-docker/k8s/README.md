@@ -86,7 +86,7 @@ cd twenty/packages/twenty-docker/k8s
 2. Create Server Secret
 
     ``` bash
-    kubectl create secret generic -n twentycrm tokens --from-literal accessToken=changeme --from-literal loginToken="changeme" --from-literal refreshToken="changeme" --from-literal fileToken="changeme"
+    kubectl create secret generic -n twentycrm tokens --from-literal accessToken=changeme --from-literal loginToken="changeme" --from-literal fileToken="changeme"
     ```
 
 3. Apply the manifests:

@@ -1,6 +1,6 @@
 import { CONDITIONAL_EVALUATION_FUNCTIONS } from '@/conditional-evaluation/common/constants/ConditionalEvaluationFunctions';
 import { type ConditionalEvaluationConfiguration } from '@/conditional-evaluation/common/types/ConditionalEvaluationConfiguration';
-import { conditionalEvaluationComparisonOperatorSchema } from '@/conditional-evaluation/common/utils/conditionalEvaluationComparisonOperatorSchema';
+import { expressionComparisonOperatorSchema } from '@/expression/utils/expressionComparisonOperatorSchema';
 import { type AllMetadataName } from '@/metadata/types/AllMetadataName';
 
 export const CONDITIONAL_EVALUATION_CONFIGURATION_BY_METADATA_NAME = {
@@ -14,7 +14,7 @@ export const CONDITIONAL_EVALUATION_CONFIGURATION_BY_METADATA_NAME = {
       currentWorkspaceMember: true,
     },
     functions: CONDITIONAL_EVALUATION_FUNCTIONS,
-    comparisonOperators: conditionalEvaluationComparisonOperatorSchema.options,
+    comparisonOperators: expressionComparisonOperatorSchema.options,
   },
 } as const satisfies Partial<
   Record<AllMetadataName, ConditionalEvaluationConfiguration>

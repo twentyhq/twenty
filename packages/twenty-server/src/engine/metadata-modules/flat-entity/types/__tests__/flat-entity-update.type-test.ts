@@ -19,6 +19,7 @@ type Assertions = [
       | 'defaultValue'
       | 'overrides'
       | 'options'
+      | 'formula'
       | 'settings'
       | 'isUnique'
       | 'isSearchable'

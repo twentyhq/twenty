@@ -996,7 +996,7 @@ export class AgentRunnerService {
       requiresQueuedMessages,
       agentId: execution.persona.agentId,
       createdBy: execution.executionContext.turnCreatedBy,
-      senderUserWorkspaceId: null,
+      senderWorkspaceMemberId: null,
       senderApplicationId: null,
       messages: [],
     });
@@ -1328,7 +1328,7 @@ export class AgentRunnerService {
       threadId,
       agentId: persona.agentId,
       turnId,
-      senderUserWorkspaceId: prompt?.senderUserWorkspaceId ?? null,
+      senderWorkspaceMemberId: prompt?.senderWorkspaceMemberId ?? null,
       senderApplicationId: prompt?.senderApplicationId ?? null,
       createdBy: executionContext.turnCreatedBy,
       messages: prompt?.messages ?? [],

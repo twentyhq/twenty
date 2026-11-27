@@ -1,10 +1,10 @@
 import { type ConditionalAvailabilityFilter } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilter';
-import { type ConditionalEvaluationLogicalOperator } from 'twenty-shared/conditional-evaluation';
+import { type ExpressionLogicalOperator } from 'twenty-shared/expression';
 
 export type ConditionalAvailabilityFilterGroup = {
   type: 'filterGroup';
   id: string;
-  logicalOperator: ConditionalEvaluationLogicalOperator;
+  logicalOperator: ExpressionLogicalOperator;
   children: (
     | ConditionalAvailabilityFilter
     | ConditionalAvailabilityFilterGroup

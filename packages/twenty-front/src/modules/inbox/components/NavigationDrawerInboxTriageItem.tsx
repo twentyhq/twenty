@@ -1,14 +1,12 @@
-import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useLocation } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { Badge } from 'twenty-ui/primitives/data-display';
-import { themeCssVariables } from 'twenty-ui/theme';
 import {
   AGENT_CHAT_THREAD_PRESET_FILTER,
   type AgentChatThreadPresetFilter,
 } from 'twenty-shared/ai';
 
+import { NavigationDrawerInboxCountBadge } from '@/inbox/components/NavigationDrawerInboxCountBadge';
 import { INBOX_THREAD_PRESET_FILTER_ICONS } from '@/inbox/constants/InboxThreadPresetFilterIcons';
 import { INBOX_THREAD_PRESET_FILTER_LABELS } from '@/inbox/constants/InboxThreadPresetFilterLabels';
 import { INBOX_INSTANCE_ID } from '@/inbox/constants/InboxInstanceId';
@@ -19,11 +17,6 @@ import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/componen
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isInboxPath } from '~/utils/isInboxPath';
 import { NavigationMenuTabFirstItemOpenEffect } from '@/navigation-menu-item/display/effect-components/NavigationMenuTabFirstItemOpenEffect';
-
-const StyledCount = styled.span`
-  display: flex;
-  padding-right: ${themeCssVariables.spacing['1.5']};
-`;
 
 type NavigationDrawerInboxTriageItemProps = {
   presetFilter: AgentChatThreadPresetFilter;
@@ -65,9 +58,7 @@ export const NavigationDrawerInboxTriageItem = ({
         triggerEvent="CLICK"
         rightOptions={
           hasCount ? (
-            <StyledCount>
-              <Badge>{count}</Badge>
-            </StyledCount>
+            <NavigationDrawerInboxCountBadge count={count} />
           ) : undefined
         }
         alwaysShowRightOptions={hasCount}

@@ -6,7 +6,9 @@ import { sidePanelSearchObjectFilterState } from '@/side-panel/states/sidePanelS
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useMemo } from 'react';
+import { SIDE_PANEL_SEARCH_RECORDS_DEBOUNCE_MS } from '@/side-panel/pages/search/constants/SidePanelSearchRecordsDebounceMs';
+import { getSidePanelSearchRecordsToDisplay } from '@/side-panel/pages/search/utils/getSidePanelSearchRecordsToDisplay';
+import { useMemo, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 import { isNonEmptyString } from '@sniptt/guards';
 
@@ -29,7 +31,10 @@ export const useSidePanelSearchRecords = ({
   );
   const trimmedSidePanelSearch = sidePanelSearch.trim();
 
-  const [deferredSidePanelSearch] = useDebounce(trimmedSidePanelSearch, 300);
+  const [deferredSidePanelSearch] = useDebounce(
+    trimmedSidePanelSearch,
+    SIDE_PANEL_SEARCH_RECORDS_DEBOUNCE_MS,
+  );
   const { readableObjectMetadataItems } = useReadableObjectMetadataItems();
   const includedObjectNameSingulars = useSearchableObjectNameSingulars({
     selectedObjectNameSingular: shouldIgnoreObjectFilter
@@ -44,18 +49,39 @@ export const useSidePanelSearchRecords = ({
     (!isNonEmptyString(trimmedSidePanelSearch) ||
       !isNonEmptyString(deferredSidePanelSearch));
 
-  const { loading, searchRecords, error } = useObjectRecordSearchRecords({
-    objectNameSingulars: includedObjectNameSingulars,
-    searchInput: deferredSidePanelSearch,
-    limit,
-    skip: shouldSkip || hasNoSearchableObject || isSkippedEmptySearch,
+  const isSearchSkipped =
+    shouldSkip || hasNoSearchableObject || isSkippedEmptySearch;
+
+  const { loading, searchRecords, hasNextPage, error } =
+    useObjectRecordSearchRecords({
+      objectNameSingulars: includedObjectNameSingulars,
+      searchInput: deferredSidePanelSearch,
+      limit,
+      skip: isSearchSkipped,
+    });
+
+  const [hasSearchSettledSinceLastSkip, setHasSearchSettledSinceLastSkip] =
+    useState(false);
+
+  const {
+    hasSearchSettledSinceLastSkip: nextHasSearchSettledSinceLastSkip,
+    searchRecordsToDisplay,
+  } = getSidePanelSearchRecordsToDisplay({
+    searchRecords,
+    isLoading: loading,
+    isSearchSkipped,
+    hasSearchSettledSinceLastSkip,
   });
+
+  if (nextHasSearchSettledSinceLastSkip !== hasSearchSettledSinceLastSkip) {
+    setHasSearchSettledSinceLastSkip(nextHasSearchSettledSinceLastSkip);
+  }
 
   const isWaitingForDebouncedSearch =
     deferredSidePanelSearch !== trimmedSidePanelSearch;
 
   const searchResultItems: SearchResultItem[] = useMemo(() => {
-    return searchRecords.map((searchRecord) => ({
+    return searchRecordsToDisplay.map((searchRecord) => ({
       id: searchRecord.recordId,
       label: searchRecord.label,
       objectNameSingular: searchRecord.objectNameSingular,
@@ -70,10 +96,11 @@ export const useSidePanelSearchRecords = ({
           ? ('square' as const)
           : ('circle' as const),
     }));
-  }, [searchRecords, readableObjectMetadataItems]);
+  }, [searchRecordsToDisplay, readableObjectMetadataItems]);
 
   return {
     error,
+    hasNextPage,
     loading,
     isWaitingForDebouncedSearch,
     noResults: !searchResultItems.length,

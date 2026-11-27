@@ -199,10 +199,10 @@ describePermissionTestWorkspace({
           expected: REACHES_NOTHING,
         },
         {
-          it: 'with all records and a row level rule does not apply its filter',
+          it: 'with a row level rule drops a record outside its filter',
           applicationPrincipal: { type: 'application', role: 'rowLevel' },
           record: 'outsideRegionFilter',
-          expected: REACHES_EVERY_OPERATION,
+          expected: REACHES_NOTHING,
         },
       ],
     });
@@ -257,10 +257,10 @@ describePermissionTestWorkspace({
           expected: REACHES_NOTHING,
         },
         {
-          it: 'are not held to the filter of the application principal',
+          it: 'are held to the filter of the application principal',
           applicationPrincipal: { type: 'application', role: 'rowLevel' },
           record: 'outsideRegionFilter',
-          expected: REACHES_EVERY_OPERATION,
+          expected: REACHES_NOTHING,
         },
       ],
     });

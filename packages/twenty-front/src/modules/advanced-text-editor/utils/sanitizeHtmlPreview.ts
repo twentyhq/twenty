@@ -1,50 +1,30 @@
+import DOMPurify, { type Config } from 'dompurify';
 import { doNotTranslate } from 'twenty-shared/i18n';
 
-const BLOCKED_ELEMENT_SELECTOR = doNotTranslate(
-  'script, iframe, frame, object, embed, link, meta, base, style, svg, math, template',
-);
+const LINK_TAG_NAMES = ['a', 'area'];
 
-const URL_ATTRIBUTE_NAMES = ['href', 'src', 'xlink:href', 'action'];
+// The preview renders inside the app's own document, so page-wide styles and forms stay out.
+const HTML_PREVIEW_SANITIZE_CONFIG: Config = {
+  USE_PROFILES: { html: true },
+  FORBID_TAGS: [
+    'style',
+    'template',
+    'form',
+    'input',
+    'button',
+    'select',
+    'textarea',
+  ],
+};
 
-const isBlockedUrl = (attributeName: string, rawValue: string): boolean => {
-  const value = rawValue.replace(/[\u0000-\u0020]/g, '').toLowerCase();
+const htmlPreviewPurifier = DOMPurify();
 
-  if (attributeName === 'src' && value.startsWith('data:image/')) {
-    return false;
+htmlPreviewPurifier.addHook('afterSanitizeAttributes', (node) => {
+  if (LINK_TAG_NAMES.includes(node.localName) && node.hasAttribute('href')) {
+    node.setAttribute('target', '_blank');
+    node.setAttribute('rel', doNotTranslate('noopener noreferrer'));
   }
+});
 
-  return (
-    // oxlint-disable-next-line no-script-url -- this is the sanitizer's blocklist
-    value.startsWith('javascript:') ||
-    value.startsWith('vbscript:') ||
-    value.startsWith('data:')
-  );
-};
-
-export const sanitizeHtmlPreview = (html: string): string => {
-  const document = new DOMParser().parseFromString(html, 'text/html');
-
-  document
-    .querySelectorAll(BLOCKED_ELEMENT_SELECTOR)
-    .forEach((element) => element.remove());
-
-  document.body.querySelectorAll('*').forEach((element) => {
-    for (const attribute of [...element.attributes]) {
-      const name = attribute.name.toLowerCase();
-
-      if (name.startsWith('on') || name === 'srcdoc' || name === 'formaction') {
-        element.removeAttribute(attribute.name);
-        continue;
-      }
-
-      if (
-        URL_ATTRIBUTE_NAMES.includes(name) &&
-        isBlockedUrl(name, attribute.value)
-      ) {
-        element.removeAttribute(attribute.name);
-      }
-    }
-  });
-
-  return document.body.innerHTML;
-};
+export const sanitizeHtmlPreview = (html: string): string =>
+  htmlPreviewPurifier.sanitize(html, HTML_PREVIEW_SANITIZE_CONFIG);

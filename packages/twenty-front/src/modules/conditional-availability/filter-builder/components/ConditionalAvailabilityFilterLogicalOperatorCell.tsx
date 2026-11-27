@@ -9,9 +9,9 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import {
-  type ConditionalEvaluationLogicalOperator,
-  conditionalEvaluationLogicalOperatorSchema,
-} from 'twenty-shared/conditional-evaluation';
+  type ExpressionLogicalOperator,
+  expressionLogicalOperatorSchema,
+} from 'twenty-shared/expression';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledText = styled.div`
@@ -62,18 +62,17 @@ export const ConditionalAvailabilityFilterLogicalOperatorCell = ({
     );
   }
 
-  const logicalOperatorOptions =
-    conditionalEvaluationLogicalOperatorSchema.options.map(
-      (logicalOperator) => ({
-        value: logicalOperator,
-        label: getConditionalAvailabilityLogicalOperatorLabel({
-          logicalOperator,
-        }),
+  const logicalOperatorOptions = expressionLogicalOperatorSchema.options.map(
+    (logicalOperator) => ({
+      value: logicalOperator,
+      label: getConditionalAvailabilityLogicalOperatorLabel({
+        logicalOperator,
       }),
-    );
+    }),
+  );
 
   const handleLogicalOperatorChange = (
-    logicalOperator: ConditionalEvaluationLogicalOperator,
+    logicalOperator: ExpressionLogicalOperator,
   ) => {
     updateConditionalAvailabilityFilterSettings(
       (currentConditionalAvailabilityFilterGroup) =>

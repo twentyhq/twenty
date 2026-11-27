@@ -57,6 +57,8 @@ export enum PermissionsExceptionCode {
   ROLE_CANNOT_BE_ASSIGNED_TO_USERS = 'ROLE_CANNOT_BE_ASSIGNED_TO_USERS',
   APPLICATION_ROLE_NOT_FOUND = 'APPLICATION_ROLE_NOT_FOUND',
   ROLE_BELONGS_TO_ANOTHER_APPLICATION = 'ROLE_BELONGS_TO_ANOTHER_APPLICATION',
+  MARKETPLACE_APPLICATION_ROLE_ASSIGNABILITY = 'MARKETPLACE_APPLICATION_ROLE_ASSIGNABILITY',
+  MARKETPLACE_APPLICATION_ROLE_RESTRICTION = 'MARKETPLACE_APPLICATION_ROLE_RESTRICTION',
   RECORD_PERMISSION_QUERY_INVALID = 'RECORD_PERMISSION_QUERY_INVALID',
   RLS_VALIDATION_FAILED = 'RLS_VALIDATION_FAILED',
   RLS_PREDICATE_FIELD_NOT_FOUND = 'RLS_PREDICATE_FIELD_NOT_FOUND',
@@ -169,6 +171,10 @@ const getPermissionsExceptionUserFriendlyMessage = (
       return msg`No role assigned to the application.`;
     case PermissionsExceptionCode.ROLE_BELONGS_TO_ANOTHER_APPLICATION:
       return msg`Cannot target a role owned by another application.`;
+    case PermissionsExceptionCode.MARKETPLACE_APPLICATION_ROLE_ASSIGNABILITY:
+      return msg`A marketplace application role can only be assigned to agents.`;
+    case PermissionsExceptionCode.MARKETPLACE_APPLICATION_ROLE_RESTRICTION:
+      return msg`A marketplace application cannot declare row-level rules or field permissions.`;
     case PermissionsExceptionCode.RLS_VALIDATION_FAILED:
       return msg`Record does not satisfy security constraints.`;
     case PermissionsExceptionCode.RLS_PREDICATE_FIELD_NOT_FOUND:
