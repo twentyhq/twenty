@@ -829,11 +829,17 @@ const EXCLUDED_FROM_SETTINGS_SEARCH_ROUTE_HANDLE: SettingsRouteHandle = {
   settingsSearch: false,
 };
 
+const EXCLUDED_FROM_SETTINGS_SEARCH_SIDE_PANEL_ROUTE_HANDLE: SettingsRouteHandle =
+  {
+    ...MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE,
+    settingsSearch: false,
+  };
+
 const buildSettingsSearchRouteHandle = ({
   settingsSearch,
   handle = MAIN_SETTINGS_ROUTE_HANDLE,
 }: {
-  settingsSearch: SettingsSearchRouteMetadata | false;
+  settingsSearch: SettingsSearchRouteMetadata;
   handle?: SettingsRouteHandle;
 }): SettingsRouteHandle => ({ ...handle, settingsSearch });
 
@@ -1202,10 +1208,7 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.NewObject}
         element={<SettingsNewObject />}
-        handle={buildSettingsSearchRouteHandle({
-          handle: MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE,
-          settingsSearch: false,
-        })}
+        handle={EXCLUDED_FROM_SETTINGS_SEARCH_SIDE_PANEL_ROUTE_HANDLE}
       />
       <Route
         path={SettingsPath.ObjectNewFieldSelect}
@@ -1262,10 +1265,7 @@ const createSettingsRouteElements = ({
     >
       <Route
         path={SettingsPath.Roles}
-        handle={buildSettingsSearchRouteHandle({
-          handle: MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE,
-          settingsSearch: false,
-        })}
+        handle={EXCLUDED_FROM_SETTINGS_SEARCH_SIDE_PANEL_ROUTE_HANDLE}
         element={
           <Navigate
             to={`/settings/${SettingsPath.WorkspaceMembersPage}#roles`}
@@ -1281,10 +1281,7 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.RoleCreate}
         element={<SettingsRoleCreate />}
-        handle={buildSettingsSearchRouteHandle({
-          handle: MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE,
-          settingsSearch: false,
-        })}
+        handle={EXCLUDED_FROM_SETTINGS_SEARCH_SIDE_PANEL_ROUTE_HANDLE}
       />
       <Route
         path={SettingsPath.RoleRule}
