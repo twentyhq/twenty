@@ -1,10 +1,10 @@
 import { styled } from '@linaria/react';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 
-import { NAVIGATION_MENU_SECTION_VISIBLE_ITEM_LIMIT } from '@/navigation-menu-item/common/constants/NavigationMenuSectionVisibleItemLimit';
 import { type NamedNavigationMenuItem } from '@/navigation-menu-item/common/types/NamedNavigationMenuItem';
 import { useNavigationMenuContainerItems } from '@/navigation-menu-item/display/hooks/useNavigationMenuContainerItems';
 import { getNavigationMenuSectionNavigationSectionId } from '@/navigation-menu-item/display/utils/getNavigationMenuSectionNavigationSectionId';
+import { getNavigationSectionVisibleItems } from '@/navigation-menu-item/display/utils/getNavigationSectionVisibleItems';
 import { NavigationMenuItemSection } from '@/navigation-menu-item/display/sections/components/NavigationMenuItemSection';
 import { StyledNavigationMenuItemSectionContentGapOffset } from '@/navigation-menu-item/display/sections/components/StyledNavigationMenuItemSectionContentGapOffset';
 import { WorkspaceSectionListReadOnly } from '@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionListReadOnly';
@@ -16,7 +16,7 @@ const StyledSectionContextMenuTarget = styled.div`
 `;
 
 type NavigationMenuSectionProps = {
-  section: Pick<NamedNavigationMenuItem, 'id' | 'name'>;
+  section: Pick<NamedNavigationMenuItem, 'id' | 'name' | 'visibleItemLimit'>;
 };
 
 export const NavigationMenuSection = ({
@@ -32,16 +32,11 @@ export const NavigationMenuSection = ({
     return null;
   }
 
-  const hasHiddenItems =
-    topLevelItems.length > NAVIGATION_MENU_SECTION_VISIBLE_ITEM_LIMIT;
-
-  const visibleItems = topLevelItems.slice(
-    0,
-    NAVIGATION_MENU_SECTION_VISIBLE_ITEM_LIMIT,
-  );
-  const hiddenItems = topLevelItems.slice(
-    NAVIGATION_MENU_SECTION_VISIBLE_ITEM_LIMIT,
-  );
+  const { visibleItems, hiddenItems, hasHiddenItems } =
+    getNavigationSectionVisibleItems({
+      items: topLevelItems,
+      visibleItemLimit: section.visibleItemLimit,
+    });
   const folderCount = topLevelItems.filter(
     (item) => item.type === NavigationMenuItemType.FOLDER,
   ).length;

@@ -25,6 +25,7 @@ export const buildCreateNavigationMenuItemInput = (
     input.name = draftItem.name ?? undefined;
     input.icon = draftItem.icon ?? null;
     input.builtInSectionKey = draftItem.builtInSectionKey ?? undefined;
+    input.visibleItemLimit = draftItem.visibleItemLimit ?? undefined;
   } else if (isNavigationMenuItemLink(draftItem)) {
     input.name = draftItem.name ?? t`Link`;
     const linkUrl = (draftItem.link ?? '').trim();

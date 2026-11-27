@@ -100,9 +100,19 @@ export const NavigationMenuAddSectionButton = ({
     closeDropdown(dropdownId);
   };
 
-  const handleBuiltInSectionClick = (builtInSectionKey: BuiltInSectionKey) => {
+  const handleBuiltInSectionClick = ({
+    key,
+    defaultVisibleItemLimit,
+  }: {
+    key: BuiltInSectionKey;
+    defaultVisibleItemLimit?: number;
+  }) => {
     createItem(
-      { type: NavigationMenuItemType.SECTION, builtInSectionKey },
+      {
+        type: NavigationMenuItemType.SECTION,
+        builtInSectionKey: key,
+        visibleItemLimit: defaultVisibleItemLimit ?? null,
+      },
       { targetFolderId: containerId },
     );
     closeDropdown(dropdownId);
@@ -164,7 +174,7 @@ export const NavigationMenuAddSectionButton = ({
                           />
                         ),
                         onClick: () =>
-                          handleBuiltInSectionClick(builtInSection.key),
+                          handleBuiltInSectionClick(builtInSection),
                       }}
                     />
                   ))}
