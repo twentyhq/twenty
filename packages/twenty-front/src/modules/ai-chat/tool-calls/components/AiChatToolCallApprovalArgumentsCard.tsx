@@ -1,6 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { useCallback, useState } from 'react';
-import { type ToolCallApprovalLabels } from 'twenty-sdk/front-component';
+import { type ToolCallApprovalCard } from 'twenty-sdk/front-component';
 import { type ProposedToolCall } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCheck, IconX } from 'twenty-ui/icon';
@@ -42,9 +42,9 @@ export const AiChatToolCallApprovalArgumentsCard = ({
   );
   const { loading: isToolIndexLoading } = useGetToolIndex();
 
-  const [approvalLabels, setApprovalLabels] = useState<ToolCallApprovalLabels>(
-    {},
-  );
+  const [approvalCard, setApprovalCard] = useState<
+    ToolCallApprovalCard | undefined
+  >();
   const [isFrontComponentReady, setIsFrontComponentReady] = useState(false);
 
   const handleFrontComponentReady = useCallback(
@@ -88,8 +88,18 @@ export const AiChatToolCallApprovalArgumentsCard = ({
 
   return (
     <AiChatToolCallApprovalCardLayout
-      title={proposal.toolLabel}
-      summary={proposal.summary}
+      title={
+        isWaitingForFrontComponent
+          ? ''
+          : (approvalCard?.title ?? proposal.toolLabel)
+      }
+      summary={
+        isWaitingForFrontComponent
+          ? undefined
+          : isDefined(approvalCard)
+            ? approvalCard.subtitle
+            : proposal.summary
+      }
       approval={approval}
       actions={
         !isWaitingForFrontComponent && (
@@ -102,7 +112,7 @@ export const AiChatToolCallApprovalArgumentsCard = ({
               loading={pendingResponse?.decision === 'reject'}
               onClick={reject}
             >
-              {approvalLabels.reject ?? t`Reject`}
+              {approvalCard?.rejectLabel ?? t`Reject`}
             </Button>
             <Button
               size="sm"
@@ -117,7 +127,7 @@ export const AiChatToolCallApprovalArgumentsCard = ({
                 }
               }}
             >
-              {approvalLabels.approve ?? t`Approve`}
+              {approvalCard?.approveLabel ?? t`Approve`}
             </Button>
           </>
         )
@@ -156,7 +166,7 @@ export const AiChatToolCallApprovalArgumentsCard = ({
             input: toolArguments ?? proposal.arguments,
           }}
           onToolCallArgumentsChange={setToolArguments}
-          onToolCallApprovalLabelsChange={setApprovalLabels}
+          onToolCallApprovalCardChange={setApprovalCard}
           onReady={handleFrontComponentReady}
           unavailableFallback={frontComponentFallback}
           errorFallback={frontComponentFallback}

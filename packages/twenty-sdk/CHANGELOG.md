@@ -8,7 +8,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Added
 
-- **`setToolCallApprovalLabels` in `twenty-sdk/front-component`.** In a tool's approval card, the tool's front component renames the **Approve** and **Reject** buttons, for example with labels translated by `t`. The card waits for the component before showing the buttons and shows Approve and Reject when it sets none. Ignored outside a pending approval. Requires Twenty 2.65.
+- **`setToolCallApprovalCard` in `twenty-sdk/front-component`.** In a tool's approval card, the tool's front component sets the title, subtitle and **Approve** / **Reject** labels, for example translated by `t`. The card waits for the component before showing its header and buttons. A missing title or label keeps its default, and a missing subtitle means no subtitle. Ignored outside a pending approval. Requires Twenty 2.65.
 
 - **`spreadMs` on `cronTriggerSettings`.** Each workspace runs the cron at its own stable offset in `[0, spreadMs)`, whole minutes, instead of every install firing at the same minute. It shifts the cron's phase, not its frequency. `spreadMs` is an integer between 2 minutes and 24 hours. Requires Twenty 2.64.
 

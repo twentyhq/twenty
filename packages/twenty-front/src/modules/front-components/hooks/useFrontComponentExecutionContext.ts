@@ -5,7 +5,7 @@ import { resolveOpenRecordIn } from '@/object-record/record-index/utils/resolveO
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import {
   type FrontComponentToolCall,
-  type ToolCallApprovalLabels,
+  type ToolCallApprovalCard,
 } from 'twenty-sdk/front-component';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -141,7 +141,7 @@ export const useFrontComponentExecutionContext = ({
   timelineActivityId,
   toolCall,
   onToolCallArgumentsChange,
-  onToolCallApprovalLabelsChange,
+  onToolCallApprovalCardChange,
   colorScheme,
 }: {
   frontComponentId: string;
@@ -153,7 +153,7 @@ export const useFrontComponentExecutionContext = ({
   timelineActivityId?: string;
   toolCall?: FrontComponentToolCall;
   onToolCallArgumentsChange?: (toolArguments: Record<string, unknown>) => void;
-  onToolCallApprovalLabelsChange?: (labels: ToolCallApprovalLabels) => void;
+  onToolCallApprovalCardChange?: (card: ToolCallApprovalCard) => void;
   colorScheme: 'light' | 'dark';
 }): {
   executionContext: FrontComponentExecutionContext;
@@ -528,19 +528,25 @@ export const useFrontComponentExecutionContext = ({
       onToolCallArgumentsChange(toolArguments);
     };
 
-  const setToolCallApprovalLabels: FrontComponentHostCommunicationApi['setToolCallApprovalLabels'] =
-    async (labels) => {
+  const setToolCallApprovalCard: FrontComponentHostCommunicationApi['setToolCallApprovalCard'] =
+    async (card) => {
       if (
         toolCall?.status !== 'approval-requested' ||
-        !isDefined(onToolCallApprovalLabelsChange) ||
-        !isPlainObject(labels)
+        !isDefined(onToolCallApprovalCardChange) ||
+        !isPlainObject(card)
       ) {
         return;
       }
 
-      onToolCallApprovalLabelsChange({
-        ...(isNonEmptyString(labels.approve) && { approve: labels.approve }),
-        ...(isNonEmptyString(labels.reject) && { reject: labels.reject }),
+      onToolCallApprovalCardChange({
+        ...(isNonEmptyString(card.title) && { title: card.title }),
+        ...(isNonEmptyString(card.subtitle) && { subtitle: card.subtitle }),
+        ...(isNonEmptyString(card.approveLabel) && {
+          approveLabel: card.approveLabel,
+        }),
+        ...(isNonEmptyString(card.rejectLabel) && {
+          rejectLabel: card.rejectLabel,
+        }),
       });
     };
 
@@ -682,7 +688,7 @@ export const useFrontComponentExecutionContext = ({
       updateProgress,
       copyToClipboard,
       setToolCallArguments,
-      setToolCallApprovalLabels,
+      setToolCallApprovalCard,
       uploadFile: hostUploadFile,
       storageSet,
       storageDelete,

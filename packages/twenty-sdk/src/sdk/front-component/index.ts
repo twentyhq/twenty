@@ -7,7 +7,7 @@ export { enqueueSnackbar } from './functions/enqueueSnackbar';
 export { navigate } from './functions/navigate';
 export { openCommandConfirmationModal } from './functions/openCommandConfirmationModal';
 export { openSidePanelPage } from './functions/openSidePanelPage';
-export { setToolCallApprovalLabels } from './functions/setToolCallApprovalLabels';
+export { setToolCallApprovalCard } from './functions/setToolCallApprovalCard';
 export { setToolCallArguments } from './functions/setToolCallArguments';
 export { unmountFrontComponent } from './functions/unmountFrontComponent';
 export { updateProgress } from './functions/updateProgress';
@@ -51,12 +51,12 @@ export type {
   OpenSidePanelPageFunction,
   OpenSidePanelPageParams,
   RequestAccessTokenRefreshFunction,
-  SetToolCallApprovalLabelsFunction,
+  SetToolCallApprovalCardFunction,
   SetToolCallArgumentsFunction,
   StorageClearFunction,
   StorageDeleteFunction,
   StorageSetFunction,
-  ToolCallApprovalLabels,
+  ToolCallApprovalCard,
   UnmountFrontComponentFunction,
   UpdateProgressFunction,
   UploadedFrontComponentFile,

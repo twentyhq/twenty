@@ -1555,7 +1555,7 @@ describe('useFrontComponentExecutionContext', () => {
     });
   });
 
-  describe('setToolCallApprovalLabels', () => {
+  describe('setToolCallApprovalCard', () => {
     const PENDING_TOOL_CALL = {
       toolCallId: 'call-1',
       toolName: 'app_tool_respond_to_cal_booking',
@@ -1563,40 +1563,46 @@ describe('useFrontComponentExecutionContext', () => {
       input: { bookingId: 'booking-1' },
     };
 
-    it('hands the non-empty labels to the approval card while the call awaits approval', async () => {
-      const onToolCallApprovalLabelsChange = jest.fn();
+    it('hands the non-empty fields to the approval card while the call awaits approval', async () => {
+      const onToolCallApprovalCardChange = jest.fn();
       const { result } = renderUseFrontComponentExecutionContext({
         frontComponentId: FRONT_COMPONENT_ID,
         toolCall: PENDING_TOOL_CALL,
-        onToolCallApprovalLabelsChange,
+        onToolCallApprovalCardChange,
       });
 
       await act(async () => {
-        await result.current.frontComponentHostCommunicationApi.setToolCallApprovalLabels(
-          { approve: 'Envoyer la réponse', reject: '' },
+        await result.current.frontComponentHostCommunicationApi.setToolCallApprovalCard(
+          {
+            title: 'Demande de rendez-vous',
+            subtitle: '',
+            approveLabel: 'Envoyer',
+            rejectLabel: '',
+          },
         );
       });
 
-      expect(onToolCallApprovalLabelsChange).toHaveBeenCalledWith({
-        approve: 'Envoyer la réponse',
+      expect(onToolCallApprovalCardChange).toHaveBeenCalledWith({
+        title: 'Demande de rendez-vous',
+        approveLabel: 'Envoyer',
       });
     });
 
-    it('ignores labels once the call has been answered', async () => {
-      const onToolCallApprovalLabelsChange = jest.fn();
+    it('ignores the card once the call has been answered', async () => {
+      const onToolCallApprovalCardChange = jest.fn();
       const { result } = renderUseFrontComponentExecutionContext({
         frontComponentId: FRONT_COMPONENT_ID,
         toolCall: { ...PENDING_TOOL_CALL, status: 'approval-responded' },
-        onToolCallApprovalLabelsChange,
+        onToolCallApprovalCardChange,
       });
 
       await act(async () => {
-        await result.current.frontComponentHostCommunicationApi.setToolCallApprovalLabels(
-          { approve: 'Envoyer la réponse' },
+        await result.current.frontComponentHostCommunicationApi.setToolCallApprovalCard(
+          { approveLabel: 'Envoyer' },
         );
       });
 
-      expect(onToolCallApprovalLabelsChange).not.toHaveBeenCalled();
+      expect(onToolCallApprovalCardChange).not.toHaveBeenCalled();
     });
   });
 

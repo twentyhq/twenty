@@ -17,7 +17,7 @@ import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { FrontComponentRenderer as SharedFrontComponentRenderer } from 'twenty-front-component-renderer';
 import {
   type FrontComponentToolCall,
-  type ToolCallApprovalLabels,
+  type ToolCallApprovalCard,
 } from 'twenty-sdk/front-component';
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -39,7 +39,7 @@ type FrontComponentRendererProps = {
   timelineActivityId?: string;
   toolCall?: FrontComponentToolCall;
   onToolCallArgumentsChange?: (toolArguments: Record<string, unknown>) => void;
-  onToolCallApprovalLabelsChange?: (labels: ToolCallApprovalLabels) => void;
+  onToolCallApprovalCardChange?: (labels: ToolCallApprovalCard) => void;
   onReady?: () => void;
   loadingFallback?: ReactNode;
   unavailableFallback?: ReactNode;
@@ -60,7 +60,7 @@ type FrontComponentRendererContentProps = {
   timelineActivityId?: string;
   toolCall?: FrontComponentToolCall;
   onToolCallArgumentsChange?: (toolArguments: Record<string, unknown>) => void;
-  onToolCallApprovalLabelsChange?: (labels: ToolCallApprovalLabels) => void;
+  onToolCallApprovalCardChange?: (labels: ToolCallApprovalCard) => void;
   onReady?: () => void;
   loadingFallback?: ReactNode;
   unavailableFallback?: ReactNode;
@@ -77,7 +77,7 @@ export const FrontComponentRenderer = ({
   timelineActivityId,
   toolCall,
   onToolCallArgumentsChange,
-  onToolCallApprovalLabelsChange,
+  onToolCallApprovalCardChange,
   onReady,
   loadingFallback,
   unavailableFallback,
@@ -112,7 +112,7 @@ export const FrontComponentRenderer = ({
           timelineActivityId={timelineActivityId}
           toolCall={toolCall}
           onToolCallArgumentsChange={onToolCallArgumentsChange}
-          onToolCallApprovalLabelsChange={onToolCallApprovalLabelsChange}
+          onToolCallApprovalCardChange={onToolCallApprovalCardChange}
           onReady={onReady}
           loadingFallback={loadingFallback}
           unavailableFallback={unavailableFallback}
@@ -133,7 +133,7 @@ const FrontComponentRendererContent = ({
   timelineActivityId,
   toolCall,
   onToolCallArgumentsChange,
-  onToolCallApprovalLabelsChange,
+  onToolCallApprovalCardChange,
   onReady,
   loadingFallback,
   unavailableFallback,
@@ -166,7 +166,7 @@ const FrontComponentRendererContent = ({
     timelineActivityId,
     toolCall,
     onToolCallArgumentsChange,
-    onToolCallApprovalLabelsChange,
+    onToolCallApprovalCardChange,
     colorScheme,
   });
 

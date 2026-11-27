@@ -10,6 +10,7 @@ import {
 import userEvent from '@testing-library/user-event';
 import { createStore, Provider } from 'jotai';
 import { type ReactNode } from 'react';
+import { type ToolCallApprovalCard } from 'twenty-sdk/front-component';
 import {
   PUBLISH_FRONT_COMPONENT_TOOL_NAME,
   type ProposedToolCall,
@@ -79,34 +80,33 @@ jest.mock('@/ai/hooks/useGetToolIndex', () => ({
 type ToolFrontComponentLoad =
   | { status: 'loading' }
   | { status: 'unavailable' }
-  | { status: 'ready'; labels?: { approve?: string; reject?: string } };
+  | { status: 'ready'; card?: ToolCallApprovalCard };
 
 type ToolFrontComponentStubProps = {
   toolCall: { input?: Record<string, unknown> };
   onToolCallArgumentsChange: (toolArguments: Record<string, unknown>) => void;
-  onToolCallApprovalLabelsChange: (labels: {
-    approve?: string;
-    reject?: string;
-  }) => void;
+  onToolCallApprovalCardChange: (card: ToolCallApprovalCard) => void;
   onReady: () => void;
   unavailableFallback: ReactNode;
 };
 
-const READY_WITHOUT_LABELS: ToolFrontComponentLoad = { status: 'ready' };
+const READY_WITHOUT_CARD: ToolFrontComponentLoad = { status: 'ready' };
 
 const mockToolFrontComponentLoad = jest.fn(
-  (): ToolFrontComponentLoad => READY_WITHOUT_LABELS,
+  (): ToolFrontComponentLoad => READY_WITHOUT_CARD,
 );
 
 jest.mock('@/ai-chat/tool-calls/components/AiChatToolFrontComponent', () => {
   const { useEffect } = jest.requireActual('react');
-  const { isDefined } = jest.requireActual('twenty-shared/utils');
+  const { isDefined } = jest.requireActual<{
+    isDefined: <TValue>(value: TValue | null | undefined) => value is TValue;
+  }>('twenty-shared/utils');
 
   return {
     AiChatToolFrontComponent: ({
       toolCall,
       onToolCallArgumentsChange,
-      onToolCallApprovalLabelsChange,
+      onToolCallApprovalCardChange,
       onReady,
       unavailableFallback,
     }: ToolFrontComponentStubProps) => {
@@ -117,12 +117,12 @@ jest.mock('@/ai-chat/tool-calls/components/AiChatToolFrontComponent', () => {
           return;
         }
 
-        if (isDefined(load.labels)) {
-          onToolCallApprovalLabelsChange(load.labels);
+        if (isDefined(load.card)) {
+          onToolCallApprovalCardChange(load.card);
         }
 
         onReady();
-      }, [load, onReady, onToolCallApprovalLabelsChange]);
+      }, [load, onReady, onToolCallApprovalCardChange]);
 
       if (load.status === 'unavailable') {
         return unavailableFallback;
@@ -187,9 +187,7 @@ describe('AiChatToolCallApprovalCard', () => {
       .mockReturnValue({ preview: { isCurrent: true }, isRendered: true });
     mockIsFeatureEnabled.mockReset().mockReturnValue(true);
     mockFrontComponentIdByToolName.mockReset().mockReturnValue(new Map());
-    mockToolFrontComponentLoad
-      .mockReset()
-      .mockReturnValue(READY_WITHOUT_LABELS);
+    mockToolFrontComponentLoad.mockReset().mockReturnValue(READY_WITHOUT_CARD);
     mockIsToolIndexLoading.mockReset().mockReturnValue(false);
   });
 
@@ -229,10 +227,11 @@ describe('AiChatToolCallApprovalCard', () => {
   });
 
   describe('a tool whose front component words the approval', () => {
+    const BOOKING_SUMMARY = 'Meeting request from Maya';
     const BOOKING_PROPOSAL: ProposedToolCall = {
       toolName: 'app_tool_respond_to_cal_booking',
       toolLabel: 'respond-to-cal-booking',
-      summary: 'Meeting request from Maya',
+      summary: BOOKING_SUMMARY,
       arguments: { bookingId: 'booking-1' },
       template: 'generic',
     };
@@ -244,11 +243,15 @@ describe('AiChatToolCallApprovalCard', () => {
       );
     });
 
-    it('waits for the front component before showing the buttons', () => {
+    it('waits for the front component before showing the header and buttons', () => {
       mockToolFrontComponentLoad.mockReturnValue({ status: 'loading' });
 
       renderCard({ proposal: BOOKING_PROPOSAL });
 
+      expect(
+        screen.queryByText(BOOKING_PROPOSAL.toolLabel),
+      ).not.toBeInTheDocument();
+      expect(screen.queryByText(BOOKING_SUMMARY)).not.toBeInTheDocument();
       expect(
         screen.queryByRole('button', { name: 'Approve' }),
       ).not.toBeInTheDocument();
@@ -257,15 +260,24 @@ describe('AiChatToolCallApprovalCard', () => {
       ).not.toBeInTheDocument();
     });
 
-    it('shows the labels the front component set', async () => {
+    it('shows the card the front component set, without a subtitle when it sets none', async () => {
       const user = userEvent.setup();
       mockToolFrontComponentLoad.mockReturnValue({
         status: 'ready',
-        labels: { approve: 'Send response', reject: 'Not now' },
+        card: {
+          title: 'Meeting request',
+          approveLabel: 'Send response',
+          rejectLabel: 'Not now',
+        },
       });
 
       renderCard({ proposal: BOOKING_PROPOSAL });
 
+      expect(screen.getByText('Meeting request')).toBeVisible();
+      expect(
+        screen.queryByText(BOOKING_PROPOSAL.toolLabel),
+      ).not.toBeInTheDocument();
+      expect(screen.queryByText(BOOKING_SUMMARY)).not.toBeInTheDocument();
       expect(screen.getByRole('button', { name: 'Not now' })).toBeVisible();
       await user.click(screen.getByRole('button', { name: 'Send response' }));
 
@@ -290,9 +302,24 @@ describe('AiChatToolCallApprovalCard', () => {
       ).not.toBeInTheDocument();
     });
 
-    it('shows Approve and Reject when the front component sets no labels', () => {
+    it('shows the subtitle the front component set', () => {
+      mockToolFrontComponentLoad.mockReturnValue({
+        status: 'ready',
+        card: { subtitle: 'Maya Chen, Tuesday 10:00' },
+      });
+
       renderCard({ proposal: BOOKING_PROPOSAL });
 
+      expect(screen.getByText(BOOKING_PROPOSAL.toolLabel)).toBeVisible();
+      expect(screen.getByText('Maya Chen, Tuesday 10:00')).toBeVisible();
+      expect(screen.getByRole('button', { name: 'Approve' })).toBeVisible();
+    });
+
+    it('keeps the default header and buttons when the front component sets no card', () => {
+      renderCard({ proposal: BOOKING_PROPOSAL });
+
+      expect(screen.getByText(BOOKING_PROPOSAL.toolLabel)).toBeVisible();
+      expect(screen.getByText(BOOKING_SUMMARY)).toBeVisible();
       expect(screen.getByRole('button', { name: 'Approve' })).toBeVisible();
       expect(screen.getByRole('button', { name: 'Reject' })).toBeVisible();
     });

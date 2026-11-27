@@ -6,7 +6,7 @@ import {
   type OpenCommandConfirmationModalHostFunction,
   type OpenSidePanelPageFunction,
   type RequestAccessTokenRefreshFunction,
-  type SetToolCallApprovalLabelsFunction,
+  type SetToolCallApprovalCardFunction,
   type SetToolCallArgumentsFunction,
   type StorageClearFunction,
   type StorageDeleteFunction,
@@ -27,7 +27,7 @@ export type FrontComponentHostCommunicationApi = {
   updateProgress: UpdateProgressFunction;
   copyToClipboard: CopyToClipboardFunction;
   setToolCallArguments: SetToolCallArgumentsFunction;
-  setToolCallApprovalLabels: SetToolCallApprovalLabelsFunction;
+  setToolCallApprovalCard: SetToolCallApprovalCardFunction;
   uploadFile: UploadFileFunction;
   storageSet: StorageSetFunction;
   storageDelete: StorageDeleteFunction;

@@ -13,7 +13,7 @@ const createHostThreadImportsStub = (): FrontComponentHostCommunicationApi => ({
   updateProgress: jest.fn(),
   copyToClipboard: jest.fn(),
   setToolCallArguments: jest.fn(),
-  setToolCallApprovalLabels: jest.fn(),
+  setToolCallApprovalCard: jest.fn(),
   uploadFile: jest.fn(),
   storageSet: jest.fn(),
   storageDelete: jest.fn(),
@@ -41,7 +41,7 @@ describe('buildFrontComponentHostCommunicationApiFromThreadImports', () => {
       'openCommandConfirmationModal',
       'openSidePanelPage',
       'requestAccessTokenRefresh',
-      'setToolCallApprovalLabels',
+      'setToolCallApprovalCard',
       'setToolCallArguments',
       'storageClear',
       'storageDelete',
@@ -76,8 +76,8 @@ describe('buildFrontComponentHostCommunicationApiFromThreadImports', () => {
     expect(hostCommunicationApi.setToolCallArguments).toBe(
       hostThreadImports.setToolCallArguments,
     );
-    expect(hostCommunicationApi.setToolCallApprovalLabels).toBe(
-      hostThreadImports.setToolCallApprovalLabels,
+    expect(hostCommunicationApi.setToolCallApprovalCard).toBe(
+      hostThreadImports.setToolCallApprovalCard,
     );
     expect(hostCommunicationApi.storageSet).toBe(hostThreadImports.storageSet);
     expect(hostCommunicationApi.storageDelete).toBe(
