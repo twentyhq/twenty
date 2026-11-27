@@ -103,7 +103,15 @@ export const MainNavigationDrawerTabSwitcher = ({
       : t`Finish editing the layout to open AI`;
   };
 
-  if (drawerTabs.length === 0) {
+  const isOnlyOneTabVisible =
+    drawerTabs.length + navigationMenuTabs.length <= 1;
+
+  if (
+    drawerTabs.length === 0 ||
+    (isPinnedToBottom &&
+      !isLayoutCustomizationModeEnabled &&
+      isOnlyOneTabVisible)
+  ) {
     return null;
   }
 

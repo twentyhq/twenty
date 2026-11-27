@@ -813,13 +813,13 @@ msgstr "Παρουσιάστηκε σφάλμα ταξινόμησης προβ�
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A visibleItemLimit is only allowed on SECTION type"
-msgstr ""
+msgstr "Ένα visibleItemLimit επιτρέπεται μόνο στον τύπο SECTION"
 
 #. js-lingui-id: +DI2pX
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A visibleItemLimit must be an integer between {NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MIN} and {NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MAX}"
-msgstr ""
+msgstr "Το visibleItemLimit πρέπει να είναι ακέραιος αριθμός μεταξύ των {NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MIN} και {NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MAX}"
 
 #. js-lingui-id: SMhyGZ
 #: src/engine/metadata-modules/webhook/webhook.exception.ts
@@ -6642,7 +6642,7 @@ msgstr "Μετάβαση σε {objectLabelPlural}"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to Admin Panel"
-msgstr ""
+msgstr "Μετάβαση στον Πίνακα Διαχείρισης"
 
 #. js-lingui-id: zPVvLp
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -6654,13 +6654,13 @@ msgstr "Μετάβαση στους Πράκτορες"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to AI"
-msgstr ""
+msgstr "Μετάβαση στην ΤΝ"
 
 #. js-lingui-id: OVO+nS
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to Apps"
-msgstr ""
+msgstr "Μετάβαση στις Εφαρμογές"
 
 #. js-lingui-id: TndVqR
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -6672,61 +6672,61 @@ msgstr "Μετάβαση στις προτιμήσεις εφαρμογών"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to Billing"
-msgstr ""
+msgstr "Μετάβαση στη Χρέωση"
 
 #. js-lingui-id: xk8nZG
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to Community"
-msgstr ""
+msgstr "Μετάβαση στην Κοινότητα"
 
 #. js-lingui-id: TMv4vU
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to Data Model"
-msgstr ""
+msgstr "Μετάβαση στο Μοντέλο Δεδομένων"
 
 #. js-lingui-id: nvVoDQ
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to Developers"
-msgstr ""
+msgstr "Μετάβαση στους Προγραμματιστές"
 
 #. js-lingui-id: YTMzOA
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to Domains"
-msgstr ""
+msgstr "Μετάβαση στους Τομείς"
 
 #. js-lingui-id: 8V43iD
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to Experience"
-msgstr ""
+msgstr "Μετάβαση στην Εμπειρία"
 
 #. js-lingui-id: YA1mxo
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to General"
-msgstr ""
+msgstr "Μετάβαση στα Γενικά"
 
 #. js-lingui-id: bSctn/
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to Members"
-msgstr ""
+msgstr "Μετάβαση στα Μέλη"
 
 #. js-lingui-id: F15zBM
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to Roles"
-msgstr ""
+msgstr "Μετάβαση στους Ρόλους"
 
 #. js-lingui-id: R1fbZB
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to Security"
-msgstr ""
+msgstr "Μετάβαση στην Ασφάλεια"
 
 #. js-lingui-id: Rrvufq
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts

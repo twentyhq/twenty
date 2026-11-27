@@ -7,6 +7,11 @@ import { LightIconButton } from 'twenty-ui/components/input';
 import { IconPlus } from 'twenty-ui/icon';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
+import { AI_AGENTS_NAVIGATION_SECTION_ID } from '@/navigation-menu-item/common/constants/AiAgentsNavigationSectionId';
+import { NavigationMenuTabFirstItemOpenEffect } from '@/navigation-menu-item/display/effect-components/NavigationMenuTabFirstItemOpenEffect';
+import { NavigationMenuSectionSeeMore } from '@/navigation-menu-item/display/sections/components/NavigationMenuSectionSeeMore';
+import { StyledNavigationMenuSectionHiddenItems } from '@/navigation-menu-item/display/sections/components/StyledNavigationMenuSectionHiddenItems';
+import { getNavigationSectionVisibleItems } from '@/navigation-menu-item/display/utils/getNavigationSectionVisibleItems';
 import { CoreAgentIcon } from '@/object-core/agents/components/CoreAgentIcon';
 import { useCreateCoreAgent } from '@/object-core/agents/hooks/useCreateCoreAgent';
 import { getCoreAgentLink } from '@/object-core/agents/utils/getCoreAgentLink';
@@ -20,14 +25,14 @@ import {
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 import { logError } from '~/utils/logError';
-import { NavigationMenuTabFirstItemOpenEffect } from '@/navigation-menu-item/display/effect-components/NavigationMenuTabFirstItemOpenEffect';
-import { AI_AGENTS_NAVIGATION_SECTION_ID } from '@/navigation-menu-item/common/constants/AiAgentsNavigationSectionId';
 
 type NavigationMenuAiAgentsSectionProps = {
+  visibleItemLimit?: number | null;
   headerAction?: ReactNode;
 };
 
 export const NavigationMenuAiAgentsSection = ({
+  visibleItemLimit,
   headerAction,
 }: NavigationMenuAiAgentsSectionProps) => {
   const { t } = useLingui();
@@ -44,6 +49,14 @@ export const NavigationMenuAiAgentsSection = ({
     useCreateCoreAgent();
 
   const agents = getSortedNonSystemAgents(data?.findManyAgents ?? []);
+  const {
+    visibleItems: visibleAgents,
+    hiddenItems: hiddenAgents,
+    hasHiddenItems,
+  } = getNavigationSectionVisibleItems({
+    items: agents,
+    visibleItemLimit,
+  });
 
   if (
     !isDefined(headerAction) &&
@@ -51,6 +64,30 @@ export const NavigationMenuAiAgentsSection = ({
   ) {
     return null;
   }
+
+  const renderAgent = (agent: (typeof agents)[number]) => {
+    const agentLink = getCoreAgentLink(agent.id);
+
+    return (
+      <Fragment key={agent.id}>
+        <NavigationMenuTabFirstItemOpenEffect to={agentLink} />
+        <NavigationDrawerItem
+          label={agent.label}
+          to={isLayoutCustomizationModeEnabled ? undefined : agentLink}
+          Icon={() => (
+            <CoreAgentIcon
+              agentId={agent.id}
+              avatarColor={agent.avatarColor}
+              avatarShape={agent.avatarShape}
+              size={16}
+            />
+          )}
+          active={pathname === agentLink}
+          triggerEvent="CLICK"
+        />
+      </Fragment>
+    );
+  };
 
   const handleCreateAgent = async () => {
     await createCoreAgent();
@@ -76,29 +113,17 @@ export const NavigationMenuAiAgentsSection = ({
         ) : undefined)
       }
     >
-      {agents.map((agent) => {
-        const agentLink = getCoreAgentLink(agent.id);
-
-        return (
-          <Fragment key={agent.id}>
-            <NavigationMenuTabFirstItemOpenEffect to={agentLink} />
-            <NavigationDrawerItem
-              label={agent.label}
-              to={isLayoutCustomizationModeEnabled ? undefined : agentLink}
-              Icon={() => (
-                <CoreAgentIcon
-                  agentId={agent.id}
-                  avatarColor={agent.avatarColor}
-                  avatarShape={agent.avatarShape}
-                  size={16}
-                />
-              )}
-              active={pathname === agentLink}
-              triggerEvent="CLICK"
-            />
-          </Fragment>
-        );
-      })}
+      {visibleAgents.map(renderAgent)}
+      {hasHiddenItems && (
+        <NavigationMenuSectionSeeMore
+          sectionId={AI_AGENTS_NAVIGATION_SECTION_ID}
+          hiddenItems={
+            <StyledNavigationMenuSectionHiddenItems>
+              {hiddenAgents.map(renderAgent)}
+            </StyledNavigationMenuSectionHiddenItems>
+          }
+        />
+      )}
     </CollapsibleNavigationDrawerSection>
   );
 };

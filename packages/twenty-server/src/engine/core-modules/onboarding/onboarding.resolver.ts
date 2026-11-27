@@ -72,25 +72,6 @@ export class OnboardingResolver {
     return { success: true };
   }
 
-  @Mutation(() => OnboardingStepSuccessDTO)
-  async completeBookCallOnboardingStep(
-    @AuthUser() user: AuthContextUser,
-    @AuthWorkspace() workspace: WorkspaceEntity,
-    @Args({ name: 'hasBookedCall', type: () => Boolean, defaultValue: false })
-    hasBookedCall: boolean,
-    @Args({ name: 'isAutoSkipped', type: () => Boolean, defaultValue: false })
-    isAutoSkipped: boolean,
-  ): Promise<OnboardingStepSuccessDTO> {
-    await this.onboardingService.completeOnboardingBookCallStep({
-      userId: user.id,
-      workspaceId: workspace.id,
-      hasBookedCall,
-      isAutoSkipped,
-    });
-
-    return { success: true };
-  }
-
   @Mutation(() => OnboardingStepNavigationDTO)
   async goBackToPreviousOnboardingStep(
     @AuthUser() user: AuthContextUser,

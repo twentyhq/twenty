@@ -27,6 +27,10 @@ const StyledBottomTabs = styled.div`
   margin-top: calc(-1 * ${themeCssVariables.spacing[2]});
   min-height: ${themeCssVariables.spacing[12]};
   padding: ${themeCssVariables.spacing[2]};
+
+  &:empty {
+    display: none;
+  }
 `;
 
 const StyledGettingStartedCardContainer = styled.div`
@@ -80,7 +84,7 @@ export const AppNavigationDrawer = ({
           )}
         </NavigationDrawerModeTransition>
 
-        {shouldPinTabsToBottom && (
+        {shouldPinTabsToBottom && !isSettingsDrawer && (
           <>
             <StyledGettingStartedCardContainer>
               {gettingStartedCard}

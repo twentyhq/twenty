@@ -41,7 +41,7 @@ const listValidationRuleFieldReads = (
         fieldUniversalIdentifier,
         isMember:
           isDefined(relationFieldUniversalIdentifier) ||
-          isPreviousValue === true,
+          (isPreviousValue ?? false),
       },
     ],
   );
