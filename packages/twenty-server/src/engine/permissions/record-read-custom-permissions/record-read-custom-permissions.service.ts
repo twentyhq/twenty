@@ -48,8 +48,9 @@ export class RecordReadCustomPermissionsService implements OnModuleInit {
           objectNameSingular,
         )
       ) {
-        throw new Error(
+        throw new PermissionsException(
           `Read custom permission handler for "${objectNameSingular}" is missing from RECORD_READ_CUSTOM_PERMISSION_OBJECT_NAME_SINGULARS`,
+          PermissionsExceptionCode.PERMISSION_DENIED,
         );
       }
 
