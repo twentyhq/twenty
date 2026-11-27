@@ -28,6 +28,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { buildInboxMessageIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-message-ids.util';
+import { buildInboxMessageToolCallId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-message-tool-call-id.util';
 import { buildInboxThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-thread-id.util';
 import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
@@ -54,6 +55,19 @@ const QUESTION = {
   question: 'Do you want to share it with the other attendees?',
   options: [{ label: 'Draft a recap email' }, { label: 'Not now' }],
 };
+
+const proposeEmail = (subject: string) => ({
+  toolName: 'propose_tool_call',
+  input: {
+    toolName: 'send_email',
+    arguments: {
+      recipients: { to: 'team@acme.com', cc: '', bcc: '' },
+      subject,
+      body: { type: 'text', text: 'Thanks for your time today.' },
+    },
+    summary: subject,
+  },
+});
 
 // The model is not called here: the resumed stream is only checked for being
 // queued.
@@ -428,6 +442,124 @@ describe('Sending an inbox message as an application', () => {
       }),
       expect.anything(),
     );
+  });
+
+  it('stacks several calls in one message and resumes the chat only after the last answer', async () => {
+    const threadKey = `inbox-thread-${uuidv4()}`;
+    const idempotencyKey = 'call-recap';
+    const { threadId: stackThreadId, messageId } = buildInboxMessageIds({
+      senderKey: `application:${application.id}`,
+      threadKey,
+      idempotencyKey,
+    });
+    const [followUpCallId, pricingCallId, questionCallId] = [0, 1, 2].map(
+      (position) => buildInboxMessageToolCallId({ messageId, position }),
+    );
+    const readStackPendingQuestionMessageId = async () =>
+      (
+        await global.testDataSource.query(
+          `SELECT "pendingQuestionMessageId" FROM "${schema}"."agentChatThread" WHERE id = $1`,
+          [stackThreadId],
+        )
+      )[0].pendingQuestionMessageId as string | null;
+    const findStackStreamJobs = () =>
+      enqueueStream.mock.calls.filter(
+        ([, jobData]) => jobData?.threadId === stackThreadId,
+      );
+    const answer = (toolCallId: string, response: Record<string, unknown>) =>
+      answerToolCall({
+        toolCall: { threadId: stackThreadId, toolCallId },
+        response,
+      });
+
+    try {
+      const response = await sendInboxMessage(applicationToken, {
+        threadKey,
+        idempotencyKey,
+        toolCall: null,
+        toolCalls: [
+          proposeEmail('Follow-up'),
+          proposeEmail('Pricing'),
+          { toolName: 'ask_question', input: QUESTION },
+        ],
+      });
+
+      expect(response.body.errors).toBeUndefined();
+      expect(
+        await global.testDataSource.query(
+          `SELECT type, "toolCallId" FROM "${schema}"."agentMessagePart"
+           WHERE "messageId" = $1 ORDER BY "orderIndex" ASC`,
+          [messageId],
+        ),
+      ).toEqual([
+        { type: 'text', toolCallId: null },
+        { type: 'tool-propose_tool_call', toolCallId: followUpCallId },
+        { type: 'tool-propose_tool_call', toolCallId: pricingCallId },
+        { type: 'tool-ask_question', toolCallId: questionCallId },
+      ]);
+      expect(await readStackPendingQuestionMessageId()).toBe(messageId);
+
+      for (const toolCallId of [followUpCallId, pricingCallId]) {
+        const answerResponse = await answer(toolCallId, {
+          decision: 'reject',
+        });
+
+        expect(answerResponse.body.errors).toBeUndefined();
+        expect(await readStackPendingQuestionMessageId()).toBe(messageId);
+      }
+
+      expect(findStackStreamJobs()).toHaveLength(0);
+
+      const lastAnswerResponse = await answer(questionCallId, {
+        selectedOptionIndices: [0],
+      });
+
+      expect(lastAnswerResponse.body.errors).toBeUndefined();
+      expect(await readStackPendingQuestionMessageId()).toBeNull();
+      expect(findStackStreamJobs()).toHaveLength(1);
+    } finally {
+      await makeMetadataApiRequest({
+        query: parse(
+          'mutation Stop($threadId: UUID!) { stopAgentChatStream(threadId: $threadId) }',
+        ),
+        variables: { threadId: stackThreadId },
+      });
+      await destroyAgentChatThread({ threadId: stackThreadId });
+    }
+  });
+
+  it.each([
+    [
+      'toolCall and toolCalls together',
+      { toolCalls: [proposeEmail('Follow-up')] },
+    ],
+    [
+      'more than ten calls',
+      {
+        toolCall: null,
+        toolCalls: Array.from({ length: 11 }, (_, index) =>
+          proposeEmail(`Email ${index}`),
+        ),
+      },
+    ],
+  ])('refuses %s without opening a conversation', async (_, overrides) => {
+    const threadKey = `inbox-thread-${uuidv4()}`;
+    const response = await sendInboxMessage(applicationToken, {
+      threadKey,
+      ...overrides,
+    });
+
+    expect(JSON.stringify(response.body.errors)).toContain(
+      'Invalid inbox message tool calls',
+    );
+    expect(
+      await readMessages(
+        buildInboxThreadId({
+          senderKey: `application:${application.id}`,
+          threadKey,
+        }),
+      ),
+    ).toHaveLength(0);
   });
 
   describe('with members mentioned in its text', () => {

@@ -148,7 +148,7 @@ export class AgentCallerConversationService {
   }: {
     workspaceId: string;
     sender: AgentInboxSender;
-    message: Omit<SendInboxMessageInput, 'toolCall'>;
+    message: Omit<SendInboxMessageInput, 'toolCall' | 'toolCalls'>;
     // where the message goes when its recipient cannot join the conversation its key names
     fallbackThreadKey: string;
     awaitedToolCall?: AgentCallerAwaitedToolCall;

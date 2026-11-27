@@ -88,6 +88,42 @@ describe('sendInboxMessage', () => {
     expect(Object.values(sentBody.variables)).toEqual([input]);
   });
 
+  it('sends several tool calls in one message', async () => {
+    fetchSpy.mockResolvedValue(successResponse());
+
+    const sendInboxMessage = await importSendInboxMessage();
+
+    const input = {
+      ...MESSAGE_INPUT,
+      toolCalls: [
+        {
+          logicFunctionUniversalIdentifier: 'call-recap-tool',
+          input: { callRecordingId: 'call-recording-1' },
+        },
+        {
+          toolName: 'propose_tool_call' as const,
+          input: {
+            toolName: 'send_email',
+            arguments: {
+              recipients: { to: 'team@acme.com', cc: '', bcc: '' },
+              subject: 'Follow-up',
+              body: { type: 'text', text: 'Thanks for your time today.' },
+            },
+            summary: 'Send the follow-up email',
+          },
+        },
+      ],
+    };
+
+    await sendInboxMessage(input);
+
+    const [, requestInit] = fetchSpy.mock.calls[0];
+
+    expect(
+      Object.values(JSON.parse(String(requestInit?.body)).variables),
+    ).toEqual([input]);
+  });
+
   it('sends the access token of the person behind the run, like the default clients', async () => {
     vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', 'member-token');
     fetchSpy.mockResolvedValue(successResponse());

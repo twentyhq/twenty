@@ -5105,6 +5105,7 @@ input SendInboxMessageInput {
   threadKey: String!
   title: String!
   toolCall: JSON
+  toolCalls: [JSON!]
   workspaceMemberIds: [UUID!]!
 }
 

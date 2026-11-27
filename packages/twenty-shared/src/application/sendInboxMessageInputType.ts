@@ -6,5 +6,7 @@ export type SendInboxMessageInput = {
   idempotencyKey: string;
   title: string;
   text: string;
+  // set toolCall or toolCalls, not both
   toolCall?: SendInboxMessageToolCall;
+  toolCalls?: SendInboxMessageToolCall[];
 };

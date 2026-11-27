@@ -43,4 +43,8 @@ export class SendInboxMessageInputDTO {
   @IsOptional()
   @Field(() => GraphQLJSON, { nullable: true })
   toolCall?: unknown;
+
+  @IsOptional()
+  @Field(() => [GraphQLJSON], { nullable: true })
+  toolCalls?: unknown[];
 }
