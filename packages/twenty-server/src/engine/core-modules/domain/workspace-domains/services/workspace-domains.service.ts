@@ -8,7 +8,6 @@ import { Repository } from 'typeorm';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { buildUrlWithPathnameAndSearchParams } from 'src/engine/core-modules/domain/domain-server-config/utils/build-url-with-pathname-and-search-params.util';
-import { type PublicDomainType } from 'src/engine/core-modules/domain/workspace-domains/types/public-domain-type.type';
 import { WorkspaceDomainConfig } from 'src/engine/core-modules/domain/workspace-domains/types/workspace-domain-config.type';
 import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -130,7 +129,7 @@ export class WorkspaceDomainsService {
   async resolveWorkspaceAndPublicDomain(origin: string): Promise<{
     workspace: WorkspaceEntity | undefined;
     publicDomain: PublicDomainEntity | null;
-    publicDomainType: PublicDomainType | null;
+    isPublicDomain: boolean;
   }> {
     const { subdomain, customDomain, isUnderPublicDomainUrl } =
       this.domainServerConfigService.getSubdomainAndCustomDomainFromUrl(origin);
@@ -141,18 +140,10 @@ export class WorkspaceDomainsService {
         ? await this.findValidatedPublicDomain(customDomain)
         : null;
 
-      if (isDefined(publicDomain)) {
-        return {
-          workspace: await this.getDefaultWorkspace(),
-          publicDomain,
-          publicDomainType: 'application',
-        };
-      }
-
       return {
         workspace: await this.getDefaultWorkspace(),
-        publicDomain: null,
-        publicDomainType: isUnderPublicDomainUrl ? 'workspace' : null,
+        publicDomain: publicDomain ?? null,
+        isPublicDomain: isUnderPublicDomainUrl || isDefined(publicDomain),
       };
     }
 
@@ -167,7 +158,7 @@ export class WorkspaceDomainsService {
       return {
         workspace: workspaceFromSubdomain,
         publicDomain: null,
-        publicDomainType: 'workspace',
+        isPublicDomain: true,
       };
     }
 
@@ -175,7 +166,7 @@ export class WorkspaceDomainsService {
       return {
         workspace: undefined,
         publicDomain: null,
-        publicDomainType: null,
+        isPublicDomain: false,
       };
     }
 
@@ -194,7 +185,7 @@ export class WorkspaceDomainsService {
       return {
         workspace: workspaceFromCustomDomainOrSubdomain,
         publicDomain: null,
-        publicDomainType: null,
+        isPublicDomain: false,
       };
     }
 
@@ -205,7 +196,7 @@ export class WorkspaceDomainsService {
     return {
       workspace: publicDomain?.workspace ?? undefined,
       publicDomain: publicDomain ?? null,
-      publicDomainType: isDefined(publicDomain) ? 'application' : null,
+      isPublicDomain: isDefined(publicDomain),
     };
   }
 

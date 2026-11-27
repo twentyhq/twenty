@@ -13,7 +13,6 @@ import {
 
 import { Request, Response } from 'express';
 import { ApiPath, HTTPMethod } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
 import { UsageLimitRestApiExceptionFilter } from 'src/engine/core-modules/usage-limit/filters/usage-limit-rest-api-exception.filter';
@@ -38,12 +37,15 @@ export class RouteTriggerController {
     response: Response,
     httpMethod: HTTPMethod,
   ) {
-    const { response: triggerResponse, publicDomainType } =
-      await this.routeTriggerService.handle({ request, httpMethod });
+    const {
+      response: triggerResponse,
+      isPublicDomain,
+      sandboxDocument,
+    } = await this.routeTriggerService.handle({ request, httpMethod });
 
     sendRouteTriggerResponse(response, triggerResponse, {
-      allowAllHeaders: isDefined(publicDomainType),
-      sandboxDocument: publicDomainType !== 'application',
+      allowAllHeaders: isPublicDomain,
+      sandboxDocument,
     });
   }
 

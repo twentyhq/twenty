@@ -14,7 +14,10 @@ import { isUsageRefusedError } from 'src/engine/core-modules/billing/utils/is-us
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth-context.type';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
-import { type PublicDomainType } from 'src/engine/core-modules/domain/workspace-domains/types/public-domain-type.type';
+import {
+  getHostnameFromUrlOrUndefined,
+  isHostUnderPublicFunctionDomain,
+} from 'src/engine/core-modules/domain/domain-server-config/utils/public-function-domain.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
@@ -45,7 +48,7 @@ type RouteTriggerWorkspace = Pick<
 type RouteTriggerRequestContext = {
   workspace: RouteTriggerWorkspace;
   applicationId: string | null;
-  publicDomainType: PublicDomainType | null;
+  isPublicDomain: boolean;
   authenticationContext: RawAuthContext | undefined;
 };
 
@@ -95,7 +98,7 @@ export class RouteTriggerService {
     const {
       workspace: workspaceFromHost,
       publicDomain,
-      publicDomainType,
+      isPublicDomain,
     } = await this.workspaceDomainsService.resolveWorkspaceAndPublicDomain(
       host,
     );
@@ -126,7 +129,7 @@ export class RouteTriggerService {
     return {
       workspace,
       applicationId: publicDomain?.applicationId ?? null,
-      publicDomainType,
+      isPublicDomain,
       authenticationContext,
     };
   }
@@ -175,13 +178,13 @@ export class RouteTriggerService {
   private assertLegacyRouteIsServableOrThrow({
     logicFunction,
     workspace,
-    publicDomainType,
+    isPublicDomain,
   }: {
     logicFunction: LogicFunctionEntity;
     workspace: RouteTriggerWorkspace;
-    publicDomainType: PublicDomainType | null;
+    isPublicDomain: boolean;
   }) {
-    if (isDefined(publicDomainType)) {
+    if (isPublicDomain) {
       return;
     }
 
@@ -260,14 +263,11 @@ export class RouteTriggerService {
     httpMethod: HTTPMethod;
   }): Promise<{
     response: RouteTriggerResponse;
-    publicDomainType: PublicDomainType | null;
+    isPublicDomain: boolean;
+    sandboxDocument: boolean;
   }> {
-    const {
-      workspace,
-      applicationId,
-      publicDomainType,
-      authenticationContext,
-    } = await this.resolveRouteTriggerRequestContextOrFail(request);
+    const { workspace, applicationId, isPublicDomain, authenticationContext } =
+      await this.resolveRouteTriggerRequestContextOrFail(request);
 
     const logicFunctionsWithHttpRouteTrigger =
       await this.logicFunctionRepository.find(workspace.id, {
@@ -287,7 +287,7 @@ export class RouteTriggerService {
     this.assertLegacyRouteIsServableOrThrow({
       logicFunction,
       workspace,
-      publicDomainType,
+      isPublicDomain,
     });
 
     const httpRouteSettings = logicFunction.httpRouteTriggerSettings;
@@ -335,7 +335,7 @@ export class RouteTriggerService {
         pathParameters: pathParams,
         forwardedRequestHeaders:
           httpRouteSettings?.forwardedRequestHeaders ?? [],
-        forwardAllHeaders: isDefined(publicDomainType),
+        forwardAllHeaders: isPublicDomain,
         userId,
         userWorkspaceId,
       });
@@ -373,9 +373,17 @@ export class RouteTriggerService {
       );
     }
 
+    const isSharedPublicDomain = isHostUnderPublicFunctionDomain({
+      host: request.get('host'),
+      publicDomainBaseHostname: getHostnameFromUrlOrUndefined(
+        this.twentyConfigService.get('PUBLIC_DOMAIN_URL'),
+      ),
+    });
+
     return {
       response: outcome.response,
-      publicDomainType,
+      isPublicDomain,
+      sandboxDocument: !isPublicDomain || isSharedPublicDomain,
     };
   }
 }
