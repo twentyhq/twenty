@@ -1,4 +1,6 @@
 import { COLOR_TOKENS } from './color';
+import { token } from './token';
+
 export const ACCENT_TOKENS = {
   primary: COLOR_TOKENS.blue5,
   secondary: COLOR_TOKENS.blue5,
@@ -18,4 +20,8 @@ export const ACCENT_TOKENS = {
   accent10: COLOR_TOKENS.blue10,
   accent11: COLOR_TOKENS.blue11,
   accent12: COLOR_TOKENS.blue12,
+  transparent: token({
+    light: COLOR_TOKENS.transparent.blue3.light,
+    dark: COLOR_TOKENS.transparent.blue4.dark,
+  }),
 };
