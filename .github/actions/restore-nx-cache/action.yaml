@@ -21,7 +21,6 @@ runs:
           v4-nx-${{ inputs.key }}-${{ github.ref_name }}-
           v4-nx-${{ inputs.key }}-main-
         path: ${{ runner.temp }}/nx-remote-cache
-    # Nx is only pointed at the server once it answers, otherwise every Nx command would fail.
     - name: Start Nx cache server
       shell: bash
       env:

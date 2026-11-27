@@ -10,9 +10,6 @@ import {
 import { createServer } from 'node:http';
 import { join } from 'node:path';
 
-// Serves Nx's self-hosted remote cache API (GET/PUT /v1/cache/{hash}) from a directory.
-// Nx fails the command on a 5xx or connection error, so failures answer 404 (miss) or 403 (read-only).
-
 const directory = process.env.NX_CACHE_SERVER_DIRECTORY;
 const usageLog = join(directory, '.usage');
 const CACHE_PATH_PATTERN = /^\/v1\/cache\/([A-Za-z0-9_-]+)$/;
@@ -34,7 +31,6 @@ const end = ({ response, status }) => {
   response.end();
 };
 
-// Read fully before answering so a read failure is a clean 404, never a truncated 200.
 const handleGet = ({ hash, response }) => {
   readFile(join(directory, hash), (error, content) => {
     if (error) {
@@ -64,9 +60,18 @@ const handlePut = ({ hash, request, response }) => {
   const temporaryFile = `${file}.${process.pid}.${Date.now()}.tmp`;
   const output = createWriteStream(temporaryFile);
 
-  const reject = () => {
+  const reject = (error) => {
+    console.error('Could not store Nx cache output', hash, error);
     request.resume();
-    rmSync(temporaryFile, { force: true });
+    try {
+      rmSync(temporaryFile, { force: true });
+    } catch (cleanupError) {
+      console.error(
+        'Could not remove partial Nx cache output',
+        hash,
+        cleanupError,
+      );
+    }
     end({ response, status: 403 });
   };
 
@@ -77,8 +82,8 @@ const handlePut = ({ hash, request, response }) => {
       renameSync(temporaryFile, file);
       recordUsage({ usage: 'write', hash });
       end({ response, status: 200 });
-    } catch {
-      reject();
+    } catch (error) {
+      reject(error);
     }
   });
   request.pipe(output);
@@ -100,7 +105,8 @@ const server = createServer((request, response) => {
 
     request.resume();
     end({ response, status: 404 });
-  } catch {
+  } catch (error) {
+    console.error('Nx cache server could not handle request', error);
     end({ response, status: request.method === 'PUT' ? 403 : 404 });
   }
 });
