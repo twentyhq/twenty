@@ -17,6 +17,7 @@ import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/consta
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getWorkspaceAvatarColorSeed } from '@/workspace/utils/getWorkspaceAvatarColorSeed';
 import { SETTINGS_COVER_HEIGHT } from '@/settings/constants/SettingsCoverHeight';
+import { WORKSPACE_COVER_HALFTONE_TOP_OFFSET } from '@/settings/workspace/constants/WorkspaceCoverHalftoneTopOffset';
 import WorkspaceCoverHalftone from '@/settings/workspace/assets/workspace-cover-halftone.svg';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
@@ -94,7 +95,7 @@ const StyledHalftone = styled.div`
   inset-inline: 0;
   mask-size: 100% 100%;
   position: absolute;
-  top: -197px;
+  top: ${WORKSPACE_COVER_HALFTONE_TOP_OFFSET}px;
 `;
 
 const StyledWindow = styled.div`

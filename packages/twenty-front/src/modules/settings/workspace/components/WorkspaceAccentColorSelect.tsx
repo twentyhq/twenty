@@ -1,5 +1,3 @@
-import { useMutation } from '@apollo/client/react';
-import { isDefined } from 'twenty-shared/utils';
 import {
   DEFAULT_WORKSPACE_ACCENT_COLOR,
   WORKSPACE_ACCENT_COLORS,
@@ -9,18 +7,16 @@ import {
 import { ColorSample } from 'twenty-ui/primitives/data-display';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { SETTINGS_SELECT_DROPDOWN_WIDTH } from '@/settings/constants/SettingsSelectDropdownWidth';
+import { useOptimisticWorkspaceUpdate } from '@/settings/workspace/hooks/useOptimisticWorkspaceUpdate';
 import { Select } from '@/ui/input/components/Select';
 import { useColorLabels } from '@/ui/input/hooks/useColorLabels';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
-import { logError } from '~/utils/logError';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const WorkspaceAccentColorSelect = () => {
   const colorLabels = useColorLabels();
-  const [currentWorkspace, setCurrentWorkspace] = useAtomState(
-    currentWorkspaceState,
-  );
-  const [updateWorkspace] = useMutation(UpdateWorkspaceDocument);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const { updateWorkspaceOptimistically } = useOptimisticWorkspaceUpdate();
 
   const accentColor = isWorkspaceAccentColor(currentWorkspace?.accentColor)
     ? currentWorkspace.accentColor
@@ -32,47 +28,28 @@ export const WorkspaceAccentColorSelect = () => {
     LeftComponent: <ColorSample colorName={color} />,
   }));
 
-  const setAccentColor = (color: WorkspaceAccentColor) =>
-    setCurrentWorkspace((currentValue) =>
-      isDefined(currentValue)
-        ? { ...currentValue, accentColor: color }
-        : currentValue,
-    );
-
-  const handleChange = async (color: WorkspaceAccentColor) => {
+  const handleChange = (color: WorkspaceAccentColor) => {
     if (color === accentColor) {
       return;
     }
 
-    const previousAccentColor = accentColor;
-
-    setAccentColor(color);
-
-    try {
-      const result = await updateWorkspace({
-        variables: { input: { accentColor: color } },
-      });
-
-      if (isDefined(result.error)) {
-        throw result.error;
-      }
-    } catch (error) {
-      setAccentColor(previousAccentColor);
-      logError(error);
-    }
+    void updateWorkspaceOptimistically({
+      update: { accentColor: color },
+      rollback: { accentColor },
+    });
   };
 
   return (
     <Select<WorkspaceAccentColor>
       dropdownId="workspace-accent-color-select"
-      dropdownWidth={218}
+      dropdownWidth={SETTINGS_SELECT_DROPDOWN_WIDTH}
       dropdownWidthAuto
       fullWidth
       needIconCheck
       selectSizeVariant="small"
       value={accentColor}
       options={options}
-      onChange={(color) => void handleChange(color)}
+      onChange={handleChange}
     />
   );
 };

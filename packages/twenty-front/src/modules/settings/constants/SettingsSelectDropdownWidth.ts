@@ -1,0 +1,1 @@
+export const SETTINGS_SELECT_DROPDOWN_WIDTH = 218;
