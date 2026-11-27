@@ -18816,10 +18816,10 @@ msgstr "ستون‌های جستجو"
 msgid "loop"
 msgstr "حلقه"
 
-#. js-lingui-id: UeVuJ/
+#. js-lingui-id: VKHG/4
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
-msgid "Lost your authenticator? Use a backup or recovery code"
-msgstr "برنامه احراز هویت خود را گم کرده‌اید؟ از کد پشتیبان یا بازیابی استفاده کنید"
+msgid "Lost your authenticator?"
+msgstr ""
 
 #. js-lingui-id: GpMARg
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts

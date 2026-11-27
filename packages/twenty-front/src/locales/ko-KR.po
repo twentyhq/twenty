@@ -18816,10 +18816,10 @@ msgstr "조회 열"
 msgid "loop"
 msgstr "반복"
 
-#. js-lingui-id: UeVuJ/
+#. js-lingui-id: VKHG/4
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
-msgid "Lost your authenticator? Use a backup or recovery code"
-msgstr "인증 도구를 분실했나요? 백업 또는 복구 코드를 사용하세요"
+msgid "Lost your authenticator?"
+msgstr ""
 
 #. js-lingui-id: GpMARg
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts

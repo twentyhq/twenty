@@ -18816,10 +18816,10 @@ msgstr "Որոնման սյունակներ"
 msgid "loop"
 msgstr "ցիկլ"
 
-#. js-lingui-id: UeVuJ/
+#. js-lingui-id: VKHG/4
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
-msgid "Lost your authenticator? Use a backup or recovery code"
-msgstr "Կորցրե՞լ եք ձեր նույնականացուցիչը։ Օգտագործեք պահուստային կամ վերականգնման կոդ"
+msgid "Lost your authenticator?"
+msgstr ""
 
 #. js-lingui-id: GpMARg
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
