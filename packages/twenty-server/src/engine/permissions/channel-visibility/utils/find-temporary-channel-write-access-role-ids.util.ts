@@ -8,7 +8,10 @@ export const findTemporaryChannelWriteAccessRoleIds = ({
   temporaryChannelWriteAccess,
 }: {
   mainPrincipal: PermissionsMainPrincipalWithRole;
-  temporaryChannelWriteAccess: TemporaryChannelWriteAccess;
+  temporaryChannelWriteAccess: Pick<
+    TemporaryChannelWriteAccess,
+    'adminRoleId' | 'apiKeysIndividualRoleId'
+  >;
 }): string[] => {
   const { adminRoleId, apiKeysIndividualRoleId } = temporaryChannelWriteAccess;
 
