@@ -14,7 +14,6 @@ import { validateFieldPermissionUnreadableNestedSource } from 'src/engine/worksp
 import { validateFieldPermissionGrantsNoDisabledAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-grants-no-disabled-action.util';
 import { getMarketplaceApplicationRoleRestrictionErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-restriction-errors.util';
 import { isFieldPermissionRestrictionAdded } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/is-field-permission-restriction-added.util';
-import { isWorkspaceEditingAdminRecordPermissions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/is-workspace-editing-admin-record-permissions.util';
 import { getRoleNotEditableErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-not-editable-errors.util';
 import { validateRoleBelongsToCallerApplication } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util';
 import { isSameRowLevelPermissionPredicateGroup } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/is-same-row-level-permission-predicate-group.util';
@@ -76,21 +75,21 @@ export class FlatFieldPermissionValidatorService {
         message: t`Role not found`,
         userFriendlyMessage: msg`Role not found`,
       });
-    } else if (
-      !isWorkspaceEditingAdminRecordPermissions({
-        flatRole: referencedRole,
-        buildOptions,
-      })
-    ) {
+    } else {
       validationResult.errors.push(
         ...validateRoleBelongsToCallerApplication({
           referencedRole,
           buildOptions,
+          isRecordPermission: true,
         }),
       );
 
       validationResult.errors.push(
-        ...getRoleNotEditableErrors({ flatRole: referencedRole, buildOptions }),
+        ...getRoleNotEditableErrors({
+          flatRole: referencedRole,
+          buildOptions,
+          isRecordPermission: true,
+        }),
       );
     }
 
@@ -234,21 +233,21 @@ export class FlatFieldPermissionValidatorService {
         message: t`Role not found`,
         userFriendlyMessage: msg`Role not found`,
       });
-    } else if (
-      !isWorkspaceEditingAdminRecordPermissions({
-        flatRole: referencedRole,
-        buildOptions,
-      })
-    ) {
+    } else {
       validationResult.errors.push(
         ...validateRoleBelongsToCallerApplication({
           referencedRole,
           buildOptions,
+          isRecordPermission: true,
         }),
       );
 
       validationResult.errors.push(
-        ...getRoleNotEditableErrors({ flatRole: referencedRole, buildOptions }),
+        ...getRoleNotEditableErrors({
+          flatRole: referencedRole,
+          buildOptions,
+          isRecordPermission: true,
+        }),
       );
     }
 
@@ -372,17 +371,12 @@ export class FlatFieldPermissionValidatorService {
         flatEntityMaps: flatRoleMaps,
       });
 
-      if (
-        isDefined(referencedRole) &&
-        !isWorkspaceEditingAdminRecordPermissions({
-          flatRole: referencedRole,
-          buildOptions,
-        })
-      ) {
+      if (isDefined(referencedRole)) {
         validationResult.errors.push(
           ...getRoleNotEditableErrors({
             flatRole: referencedRole,
             buildOptions,
+            isRecordPermission: true,
           }),
         );
       }

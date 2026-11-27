@@ -15,7 +15,6 @@ import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 import { getMarketplaceApplicationRoleAssignabilityErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-assignability-errors.util';
-import { isWorkspaceEditingAdminRecordPermissions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/is-workspace-editing-admin-record-permissions.util';
 import { getRoleNotEditableErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-not-editable-errors.util';
 import { validateRoleBelongsToCallerApplication } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util';
 import { validateRoleLabelUniqueness } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-label-uniqueness.util';
@@ -185,29 +184,25 @@ export class FlatRoleValidatorService {
       return validationResult;
     }
 
-    if (
-      !isWorkspaceEditingAdminRecordPermissions({
+    const isRoleWideRecordPermissionsUpdate = Object.keys(
+      flatEntityUpdate,
+    ).every((key) => ROLE_WIDE_RECORD_PERMISSION_KEYS.includes(key));
+
+    validationResult.errors.push(
+      ...getRoleNotEditableErrors({
         flatRole: fromFlatRole,
         buildOptions,
-      }) ||
-      !Object.keys(flatEntityUpdate).every((key) =>
-        ROLE_WIDE_RECORD_PERMISSION_KEYS.includes(key),
-      )
-    ) {
-      validationResult.errors.push(
-        ...getRoleNotEditableErrors({
-          flatRole: fromFlatRole,
-          buildOptions,
-        }),
-      );
+        isRecordPermission: isRoleWideRecordPermissionsUpdate,
+      }),
+    );
 
-      validationResult.errors.push(
-        ...validateRoleBelongsToCallerApplication({
-          referencedRole: fromFlatRole,
-          buildOptions,
-        }),
-      );
-    }
+    validationResult.errors.push(
+      ...validateRoleBelongsToCallerApplication({
+        referencedRole: fromFlatRole,
+        buildOptions,
+        isRecordPermission: isRoleWideRecordPermissionsUpdate,
+      }),
+    );
 
     const toFlatRole = {
       ...fromFlatRole,

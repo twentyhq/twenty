@@ -39,7 +39,6 @@ import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 import { getMarketplaceApplicationRoleRestrictionErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-restriction-errors.util';
-import { isWorkspaceEditingAdminRecordPermissions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/is-workspace-editing-admin-record-permissions.util';
 import { getRoleNotEditableErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-not-editable-errors.util';
 
 const WORKSPACE_MEMBER_RELATION_FILTER_FIELD_TYPES: FieldMetadataType[] = [
@@ -233,14 +232,13 @@ export class FlatRowLevelPermissionPredicateValidatorService {
         message: t`Role not found`,
         userFriendlyMessage: msg`Role not found`,
       });
-    } else if (
-      !isWorkspaceEditingAdminRecordPermissions({
-        flatRole: role,
-        buildOptions,
-      })
-    ) {
+    } else {
       validationResult.errors.push(
-        ...getRoleNotEditableErrors({ flatRole: role, buildOptions }),
+        ...getRoleNotEditableErrors({
+          flatRole: role,
+          buildOptions,
+          isRecordPermission: true,
+        }),
       );
     }
 
@@ -510,14 +508,13 @@ export class FlatRowLevelPermissionPredicateValidatorService {
         message: t`Role not found`,
         userFriendlyMessage: msg`Role not found`,
       });
-    } else if (
-      !isWorkspaceEditingAdminRecordPermissions({
-        flatRole: role,
-        buildOptions,
-      })
-    ) {
+    } else {
       validationResult.errors.push(
-        ...getRoleNotEditableErrors({ flatRole: role, buildOptions }),
+        ...getRoleNotEditableErrors({
+          flatRole: role,
+          buildOptions,
+          isRecordPermission: true,
+        }),
       );
     }
 

@@ -9,9 +9,14 @@ export const isWorkspaceEditingAdminRecordPermissions = ({
   flatRole: Pick<UniversalFlatRole, 'universalIdentifier'>;
   buildOptions: Pick<
     WorkspaceMigrationValidationBuildOptions,
-    | 'applicationUniversalIdentifier'
-    | 'workspaceCustomApplicationUniversalIdentifier'
-  >;
+    'applicationUniversalIdentifier'
+  > &
+    Partial<
+      Pick<
+        WorkspaceMigrationValidationBuildOptions,
+        'workspaceCustomApplicationUniversalIdentifier'
+      >
+    >;
 }): boolean =>
   flatRole.universalIdentifier === STANDARD_ROLE.admin.universalIdentifier &&
   buildOptions.applicationUniversalIdentifier ===
