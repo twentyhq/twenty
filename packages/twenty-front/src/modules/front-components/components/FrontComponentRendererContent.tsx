@@ -12,10 +12,14 @@ import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { useThemeColorScheme } from 'twenty-ui/theme';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { useFrontComponentRendererPrerequisitesOrThrow } from '@/front-components/contexts/FrontComponentRendererPrerequisitesContext';
+import { type FrontComponentSourcesPreload } from '@/front-components/types/FrontComponentSourcesPreload';
+import { type ResolvedFrontComponent } from '@/front-components/types/ResolvedFrontComponent';
 import { FrontComponentRenderer as SharedFrontComponentRenderer } from 'twenty-front-component-renderer';
 
 type FrontComponentRendererContentProps = {
+  frontComponent: ResolvedFrontComponent;
+  applicationAccessToken: string;
+  sourcesPreload: FrontComponentSourcesPreload;
   commandMenuItemId?: string;
   selectedRecordIds?: string[];
   selectedRecordsFilter?: RecordGqlOperationFilter | null;
@@ -29,6 +33,9 @@ type FrontComponentRendererContentProps = {
 };
 
 export const FrontComponentRendererContent = ({
+  frontComponent,
+  applicationAccessToken,
+  sourcesPreload,
   commandMenuItemId,
   selectedRecordIds,
   selectedRecordsFilter,
@@ -40,14 +47,8 @@ export const FrontComponentRendererContent = ({
   errorFallback,
   shouldPreventPageZoom,
 }: FrontComponentRendererContentProps) => {
-  const {
-    frontComponent,
-    applicationAccessToken,
-    componentUrl,
-    sdkClientUrls,
-    sharedDependenciesUrl,
-    preloadedSourcesPromise,
-  } = useFrontComponentRendererPrerequisitesOrThrow();
+  const { componentUrl, sdkClientUrls, sharedDependenciesUrl, sourcesPromise } =
+    sourcesPreload;
 
   const colorScheme = useThemeColorScheme();
   const { enqueueToast } = useToast();
@@ -147,7 +148,7 @@ export const FrontComponentRendererContent = ({
           shouldPrefetchSharedDependenciesSource={isDefined(
             frontComponentSharedDependenciesChecksum,
           )}
-          preloadedSourcesPromise={preloadedSourcesPromise}
+          preloadedSourcesPromise={sourcesPromise}
           executionContext={executionContext}
           frontComponentHostCommunicationApi={
             frontComponentHostCommunicationApi

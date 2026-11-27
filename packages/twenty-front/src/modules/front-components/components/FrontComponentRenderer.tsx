@@ -4,12 +4,18 @@ import { FrontComponentInstanceContext } from '@/front-components/states/context
 import { frontComponentsSelector } from '@/front-components/states/frontComponentsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useQuery } from '@apollo/client/react';
-import { type ReactNode, useId } from 'react';
+import { Fragment, type ReactNode, useId } from 'react';
 import { type FrontComponentToolCall } from 'twenty-sdk/front-component';
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { FrontComponentRendererContent } from '@/front-components/components/FrontComponentRendererContent';
-import { FrontComponentRendererPrerequisitesProvider } from '@/front-components/components/FrontComponentRendererPrerequisitesProvider';
+import { FrontComponentApplicationTokenPairEffect } from '@/front-components/components/FrontComponentApplicationTokenPairEffect';
+import { FrontComponentRendererLoadingStatesResetEffect } from '@/front-components/components/FrontComponentRendererLoadingStatesResetEffect';
+import { FrontComponentSourcesPreloadEffect } from '@/front-components/components/FrontComponentSourcesPreloadEffect';
+import { frontComponentApplicationTokenPairLoadErrorComponentState } from '@/front-components/states/frontComponentApplicationTokenPairLoadErrorComponentState';
+import { frontComponentInitialApplicationAccessTokenComponentState } from '@/front-components/states/frontComponentInitialApplicationAccessTokenComponentState';
+import { frontComponentSourcesPreloadComponentState } from '@/front-components/states/frontComponentSourcesPreloadComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { FindOneFrontComponentDocument } from '~/generated-metadata/graphql';
 
 type FrontComponentRendererProps = {
@@ -56,53 +62,87 @@ export const FrontComponentRenderer = ({
     frontComponentsSelector,
   ).find((frontComponent) => frontComponent.id === frontComponentId);
 
+  const frontComponentInitialApplicationAccessToken =
+    useAtomComponentStateValue(
+      frontComponentInitialApplicationAccessTokenComponentState,
+      frontComponentInstanceId,
+    );
+  const frontComponentApplicationTokenPairLoadError =
+    useAtomComponentStateValue(
+      frontComponentApplicationTokenPairLoadErrorComponentState,
+      frontComponentInstanceId,
+    );
+  const frontComponentSourcesPreload = useAtomComponentStateValue(
+    frontComponentSourcesPreloadComponentState,
+    frontComponentInstanceId,
+  );
+
   const frontComponentFromFindOneQuery =
     loading || isDefined(error)
       ? undefined
       : (data?.frontComponent ?? undefined);
 
-  const isFrontComponentUnavailable =
-    !loading && !isDefined(frontComponentFromFindOneQuery);
-
   const frontComponentFieldsNeededToStartLoading =
     frontComponentFromFindOneQuery ?? frontComponentFromMetadataStore;
 
+  const isFrontComponentNotFound =
+    !loading && !isDefined(frontComponentFromFindOneQuery);
+
+  const isFrontComponentUnavailable =
+    isFrontComponentNotFound ||
+    isDefined(frontComponentApplicationTokenPairLoadError);
+
+  const isReadyToRender =
+    !isFrontComponentUnavailable &&
+    isDefined(frontComponentFromFindOneQuery) &&
+    isDefined(frontComponentInitialApplicationAccessToken) &&
+    isDefined(frontComponentSourcesPreload);
+
   return (
-    <>
-      <FrontComponentLoadErrorToastEffect errorMessage={error?.message} />
-      {!isFrontComponentUnavailable &&
-        !isDefined(frontComponentFieldsNeededToStartLoading) &&
-        loadingFallback}
-      {isFrontComponentUnavailable && unavailableFallback}
-      {!isFrontComponentUnavailable &&
+    <FrontComponentInstanceContext.Provider
+      value={{ instanceId: frontComponentInstanceId }}
+    >
+      <FrontComponentLoadErrorToastEffect
+        errorMessage={
+          error?.message ?? frontComponentApplicationTokenPairLoadError?.message
+        }
+      />
+      {!isFrontComponentNotFound &&
         isDefined(frontComponentFieldsNeededToStartLoading) && (
-          <FrontComponentInstanceContext.Provider
-            value={{ instanceId: frontComponentInstanceId }}
-          >
-            <FrontComponentRendererPrerequisitesProvider
-              key={frontComponentInstanceId}
+          <Fragment key={frontComponentInstanceId}>
+            <FrontComponentRendererLoadingStatesResetEffect />
+            <FrontComponentApplicationTokenPairEffect
+              applicationId={
+                frontComponentFieldsNeededToStartLoading.applicationId
+              }
+            />
+            <FrontComponentSourcesPreloadEffect
               frontComponentFieldsNeededToStartLoading={
                 frontComponentFieldsNeededToStartLoading
               }
-              frontComponentFromFindOneQuery={frontComponentFromFindOneQuery}
-              loadingFallback={loadingFallback}
-              unavailableFallback={unavailableFallback}
-            >
-              <FrontComponentRendererContent
-                commandMenuItemId={commandMenuItemId}
-                selectedRecordIds={selectedRecordIds}
-                selectedRecordsFilter={selectedRecordsFilter}
-                objectNameSingular={objectNameSingular}
-                timelineActivityId={timelineActivityId}
-                toolCall={toolCall}
-                onToolCallArgumentsChange={onToolCallArgumentsChange}
-                loadingFallback={loadingFallback}
-                errorFallback={errorFallback}
-                shouldPreventPageZoom={shouldPreventPageZoom}
-              />
-            </FrontComponentRendererPrerequisitesProvider>
-          </FrontComponentInstanceContext.Provider>
+            />
+          </Fragment>
         )}
-    </>
+      {isFrontComponentUnavailable && unavailableFallback}
+      {!isFrontComponentUnavailable && !isReadyToRender && loadingFallback}
+      {isReadyToRender && (
+        <FrontComponentRendererContent
+          key={frontComponentInstanceId}
+          frontComponent={frontComponentFromFindOneQuery}
+          applicationAccessToken={frontComponentInitialApplicationAccessToken}
+          sourcesPreload={frontComponentSourcesPreload}
+          commandMenuItemId={commandMenuItemId}
+          selectedRecordIds={selectedRecordIds}
+          selectedRecordsFilter={selectedRecordsFilter}
+          objectNameSingular={objectNameSingular}
+          timelineActivityId={timelineActivityId}
+          toolCall={toolCall}
+          onToolCallArgumentsChange={onToolCallArgumentsChange}
+          loadingFallback={loadingFallback}
+          errorFallback={errorFallback}
+          shouldPreventPageZoom={shouldPreventPageZoom}
+        />
+      )}
+    </FrontComponentInstanceContext.Provider>
   );
 };
