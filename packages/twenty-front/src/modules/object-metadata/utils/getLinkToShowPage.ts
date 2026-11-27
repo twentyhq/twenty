@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { AppPath, StandardObjectNameSingular } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
 import { isInboxThreadObjectName } from '@/ai-chat/utils/isInboxThreadObjectName';
@@ -23,7 +24,10 @@ export const getLinkToShowPage = (
     );
   }
 
-  if (isInboxThreadObjectName(objectNameSingular) && record.id) {
+  if (
+    isInboxThreadObjectName(objectNameSingular) &&
+    isNonEmptyString(record.id)
+  ) {
     return getAppPath(AppPath.AiChatInbox, { threadId: record.id });
   }
 
