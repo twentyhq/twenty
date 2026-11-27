@@ -1,4 +1,4 @@
-import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
+import { TableSkeletonRows } from '@/ui/layout/table/components/TableSkeletonRows';
 
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -54,45 +54,48 @@ export const SettingsAgentToolsTable = ({
           <TableHeader />
         </TableRow>
       </StyledTableHeaderRowContainer>
-      {isLoading
-        ? Array.from({ length: 3 }).map((_, index) => (
-            <SkeletonLine height={32} key={index} />
-          ))
-        : tools.map((tool) => {
-            const application = isDefined(tool.applicationId)
-              ? applicationById.get(tool.applicationId)
-              : undefined;
-            const marketplaceApp = isDefined(application)
-              ? marketplaceAppByUniversalIdentifier.get(
-                  application.universalIdentifier,
-                )
-              : undefined;
+      {isLoading ? (
+        <TableSkeletonRows
+          gridTemplateColumns={TOOL_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
+          columnCount={2}
+        />
+      ) : (
+        tools.map((tool) => {
+          const application = isDefined(tool.applicationId)
+            ? applicationById.get(tool.applicationId)
+            : undefined;
+          const marketplaceApp = isDefined(application)
+            ? marketplaceAppByUniversalIdentifier.get(
+                application.universalIdentifier,
+              )
+            : undefined;
 
-            return (
-              <SettingsToolTableRow
-                key={tool.identifier}
-                leftIcon={
-                  <SettingsToolIcon
-                    icon={tool.icon}
-                    toolName={tool.name}
-                    objectName={tool.objectName ?? undefined}
-                    application={application}
-                    marketplaceApp={marketplaceApp}
-                  />
-                }
-                name={tool.label ?? tool.name}
-                applicationId={getToolApplicationId(tool, currentWorkspace)}
-                action={
-                  <IconChevronRight
-                    size={theme.icon.size.md}
-                    stroke={theme.icon.stroke.sm}
-                    color={theme.font.color.tertiary}
-                  />
-                }
-                link={getToolLink(tool)}
-              />
-            );
-          })}
+          return (
+            <SettingsToolTableRow
+              key={tool.identifier}
+              leftIcon={
+                <SettingsToolIcon
+                  icon={tool.icon}
+                  toolName={tool.name}
+                  objectName={tool.objectName ?? undefined}
+                  application={application}
+                  marketplaceApp={marketplaceApp}
+                />
+              }
+              name={tool.label ?? tool.name}
+              applicationId={getToolApplicationId(tool, currentWorkspace)}
+              action={
+                <IconChevronRight
+                  size={theme.icon.size.md}
+                  stroke={theme.icon.stroke.sm}
+                  color={theme.font.color.tertiary}
+                />
+              }
+              link={getToolLink(tool)}
+            />
+          );
+        })
+      )}
     </Table>
   );
 };
