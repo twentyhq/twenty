@@ -165,7 +165,7 @@ Le funzioni logiche ripristinano le definizioni originali e le importazioni loca
 
 **Cosa non scrive:**
 
-* **Non ancora esportati** — elementi del menu dei comandi e del menu delle impostazioni, componenti front delle impostazioni, provider di connessione, variabili dell'applicazione, tipi di attività della timeline.
+* **Non ancora esportato** — voci del menu dei comandi e voci del menu delle impostazioni, impostazioni componenti del fronte, fornitori di connessione, variabili dell'applicazione, tipi di attività della timeline, eventi.
 * **Componenti front-end che l'esportazione non può ancora includere** — il sorgente mancante, gli identificatori calcolati, i metadati diversi da quelli del workspace o la disponibilità dei widget che una singola definizione non può esprimere vengono segnalati e lasciati invariati.
 * **Derivati dal motore** — campi di sistema, relazioni predefinite, viste predefinite e indici sottostanti, e i layout di pagina predefiniti di ciascun oggetto. Il server li ricostruisce durante apply. Un oggetto può comunque puntare il proprio identificatore dell'etichetta a uno di essi, come fanno gli oggetti di giunzione creati nell'interfaccia utente; il puntatore viene scritto e la compilazione lo risolve senza aggiungere un campo.
 * **Inseriti in una vista predefinita o esterna** — i filtri, i gruppi di filtri, gli ordinamenti, i gruppi e i gruppi di campi aggiunti a una vista predefinita del motore o a una vista di proprietà di un'altra applicazione non dispongono ancora di un modulo di origine e vengono segnalati. I campi della vista aggiunti lì vengono scritti come file autonomi, poiché l'identificatore della vista è noto.
