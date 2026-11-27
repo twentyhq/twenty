@@ -5,7 +5,8 @@ import {
 } from 'twenty-front-component-renderer';
 
 import { logError } from '~/utils/logError';
-import { type FrontComponentSourcesPreload } from '@/front-components/types/FrontComponentSourcesPreload';
+import { frontComponentSourcesPreloadComponentState } from '@/front-components/states/frontComponentSourcesPreloadComponentState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
 type FrontComponentSourcesPreloadEffectProps = {
   componentUrl: string;
@@ -14,9 +15,6 @@ type FrontComponentSourcesPreloadEffectProps = {
   applicationAccessToken: string;
   shouldPrefetchSdkClientSources: boolean;
   shouldPrefetchSharedDependenciesSource: boolean;
-  onSourcesPreloadStarted: (
-    sourcesPreload: FrontComponentSourcesPreload,
-  ) => void;
 };
 
 export const FrontComponentSourcesPreloadEffect = ({
@@ -26,8 +24,11 @@ export const FrontComponentSourcesPreloadEffect = ({
   applicationAccessToken,
   shouldPrefetchSdkClientSources,
   shouldPrefetchSharedDependenciesSource,
-  onSourcesPreloadStarted,
 }: FrontComponentSourcesPreloadEffectProps) => {
+  const setFrontComponentSourcesPreload = useSetAtomComponentState(
+    frontComponentSourcesPreloadComponentState,
+  );
+
   useEffect(() => {
     const fetchSourcesOrUndefinedOnFailure = async () => {
       try {
@@ -46,7 +47,7 @@ export const FrontComponentSourcesPreloadEffect = ({
       }
     };
 
-    onSourcesPreloadStarted({
+    setFrontComponentSourcesPreload({
       componentUrl,
       sdkClientUrls,
       sharedDependenciesUrl,
@@ -59,7 +60,7 @@ export const FrontComponentSourcesPreloadEffect = ({
     applicationAccessToken,
     shouldPrefetchSdkClientSources,
     shouldPrefetchSharedDependenciesSource,
-    onSourcesPreloadStarted,
+    setFrontComponentSourcesPreload,
   ]);
 
   return null;

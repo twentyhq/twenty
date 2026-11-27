@@ -1,13 +1,16 @@
 import { FrontComponentApplicationTokenPairEffect } from '@/front-components/components/FrontComponentApplicationTokenPairEffect';
 import { FrontComponentLoadErrorToastEffect } from '@/front-components/components/FrontComponentLoadErrorToastEffect';
 import { FrontComponentSourcesPreloadEffect } from '@/front-components/components/FrontComponentSourcesPreloadEffect';
+import { FrontComponentRendererLoadingStatesResetEffect } from '@/front-components/components/FrontComponentRendererLoadingStatesResetEffect';
 import { FrontComponentRendererPrerequisitesProvider } from '@/front-components/contexts/FrontComponentRendererPrerequisitesContext';
 import { useFrontComponentSourceUrls } from '@/front-components/hooks/useFrontComponentSourceUrls';
-import { type FrontComponentApplicationTokenPair } from '@/front-components/types/FrontComponentApplicationTokenPair';
+import { frontComponentApplicationTokenPairLoadErrorComponentState } from '@/front-components/states/frontComponentApplicationTokenPairLoadErrorComponentState';
+import { frontComponentInitialApplicationAccessTokenComponentState } from '@/front-components/states/frontComponentInitialApplicationAccessTokenComponentState';
+import { frontComponentSourcesPreloadComponentState } from '@/front-components/states/frontComponentSourcesPreloadComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { type FrontComponentFieldsNeededToStartLoading } from '@/front-components/types/FrontComponentFieldsNeededToStartLoading';
-import { type FrontComponentSourcesPreload } from '@/front-components/types/FrontComponentSourcesPreload';
 import { type ResolvedFrontComponent } from '@/front-components/types/ResolvedFrontComponent';
-import { type ReactNode, useCallback, useState } from 'react';
+import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 type FrontComponentRendererPrerequisitesLoaderProps = {
@@ -28,21 +31,16 @@ export const FrontComponentRendererPrerequisitesLoader = ({
   const { applicationId, usesSdkClient } =
     frontComponentFieldsNeededToStartLoading;
 
-  const [initialApplicationTokenPair, setInitialApplicationTokenPair] =
-    useState<FrontComponentApplicationTokenPair | null>(null);
-  const [applicationTokenPairLoadError, setApplicationTokenPairLoadError] =
-    useState<Error | null>(null);
-  const [sourcesPreload, setSourcesPreload] =
-    useState<FrontComponentSourcesPreload | null>(null);
-
-  const handleApplicationTokenPairLoaded = useCallback(
-    (loadedApplicationTokenPair: FrontComponentApplicationTokenPair) => {
-      setInitialApplicationTokenPair(
-        (currentApplicationTokenPair) =>
-          currentApplicationTokenPair ?? loadedApplicationTokenPair,
-      );
-    },
-    [],
+  const frontComponentInitialApplicationAccessToken =
+    useAtomComponentStateValue(
+      frontComponentInitialApplicationAccessTokenComponentState,
+    );
+  const frontComponentApplicationTokenPairLoadError =
+    useAtomComponentStateValue(
+      frontComponentApplicationTokenPairLoadErrorComponentState,
+    );
+  const frontComponentSourcesPreload = useAtomComponentStateValue(
+    frontComponentSourcesPreloadComponentState,
   );
 
   const {
@@ -54,25 +52,23 @@ export const FrontComponentRendererPrerequisitesLoader = ({
   } = useFrontComponentSourceUrls(frontComponentFieldsNeededToStartLoading);
 
   const canStartFetchingSources =
-    isDefined(initialApplicationTokenPair) && isSdkClientReady;
+    isDefined(frontComponentInitialApplicationAccessToken) && isSdkClientReady;
   const isReadyToRender =
     canStartFetchingSources && isDefined(frontComponentFromFindOneQuery);
 
   const doPreloadedSourcesMatchCurrentUrls =
-    isDefined(sourcesPreload) &&
-    sourcesPreload.componentUrl === componentUrl &&
-    sourcesPreload.sdkClientUrls === sdkClientUrls &&
-    sourcesPreload.sharedDependenciesUrl === sharedDependenciesUrl;
+    isDefined(frontComponentSourcesPreload) &&
+    frontComponentSourcesPreload.componentUrl === componentUrl &&
+    frontComponentSourcesPreload.sdkClientUrls === sdkClientUrls &&
+    frontComponentSourcesPreload.sharedDependenciesUrl ===
+      sharedDependenciesUrl;
 
   return (
     <>
-      <FrontComponentApplicationTokenPairEffect
-        applicationId={applicationId}
-        onApplicationTokenPairLoaded={handleApplicationTokenPairLoaded}
-        onApplicationTokenPairLoadFailed={setApplicationTokenPairLoadError}
-      />
+      <FrontComponentRendererLoadingStatesResetEffect />
+      <FrontComponentApplicationTokenPairEffect applicationId={applicationId} />
       <FrontComponentLoadErrorToastEffect
-        errorMessage={applicationTokenPairLoadError?.message}
+        errorMessage={frontComponentApplicationTokenPairLoadError?.message}
       />
       {canStartFetchingSources &&
         !isReadyToRender &&
@@ -81,30 +77,27 @@ export const FrontComponentRendererPrerequisitesLoader = ({
             componentUrl={componentUrl}
             sdkClientUrls={sdkClientUrls}
             sharedDependenciesUrl={sharedDependenciesUrl}
-            applicationAccessToken={
-              initialApplicationTokenPair.applicationAccessToken.token
-            }
+            applicationAccessToken={frontComponentInitialApplicationAccessToken}
             shouldPrefetchSdkClientSources={usesSdkClient}
             shouldPrefetchSharedDependenciesSource={hasSharedDependencies}
-            onSourcesPreloadStarted={setSourcesPreload}
           />
         )}
-      {isDefined(applicationTokenPairLoadError) && unavailableFallback}
-      {!isDefined(applicationTokenPairLoadError) &&
+      {isDefined(frontComponentApplicationTokenPairLoadError) &&
+        unavailableFallback}
+      {!isDefined(frontComponentApplicationTokenPairLoadError) &&
         !isReadyToRender &&
         loadingFallback}
       {isReadyToRender && (
         <FrontComponentRendererPrerequisitesProvider
           value={{
             frontComponent: frontComponentFromFindOneQuery,
-            applicationAccessToken:
-              initialApplicationTokenPair.applicationAccessToken.token,
+            applicationAccessToken: frontComponentInitialApplicationAccessToken,
             componentUrl,
             sdkClientUrls,
             sharedDependenciesUrl,
             hasSharedDependencies,
             preloadedSourcesPromise: doPreloadedSourcesMatchCurrentUrls
-              ? sourcesPreload.sourcesPromise
+              ? frontComponentSourcesPreload.sourcesPromise
               : undefined,
           }}
         >

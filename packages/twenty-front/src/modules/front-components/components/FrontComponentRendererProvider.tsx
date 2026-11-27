@@ -7,7 +7,6 @@ import {
 import { FrontComponentInputFocusCleanupEffect } from '@/front-components/components/FrontComponentInputFocusCleanupEffect';
 import { FrontComponentManagedIframe } from '@/front-components/media-session/components/FrontComponentManagedIframe';
 import { FrontComponentIframeOwnerProvider } from '@/front-components/media-session/contexts/FrontComponentIframeOwnerContext';
-import { FrontComponentInstanceContext } from '@/front-components/states/contexts/FrontComponentInstanceContext';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -55,28 +54,24 @@ export const FrontComponentRendererProvider = ({
   );
 
   return (
-    <FrontComponentInstanceContext.Provider
-      value={{ instanceId: frontComponentId }}
-    >
-      <FrontComponentInputFocusContext.Provider value={setEditableFocused}>
-        <FrontComponentInputFocusCleanupEffect focusId={focusId} />
-        <FrontComponentIframeOwnerProvider
-          value={{
-            owner: {
-              type: 'application',
-              id: applicationId,
-              name: applicationName,
-            },
-            iframeMediaPermissions: applicationGrantedIframeMediaPermissions,
-          }}
+    <FrontComponentInputFocusContext.Provider value={setEditableFocused}>
+      <FrontComponentInputFocusCleanupEffect focusId={focusId} />
+      <FrontComponentIframeOwnerProvider
+        value={{
+          owner: {
+            type: 'application',
+            id: applicationId,
+            name: applicationName,
+          },
+          iframeMediaPermissions: applicationGrantedIframeMediaPermissions,
+        }}
+      >
+        <FrontComponentIframeHostContext.Provider
+          value={FrontComponentManagedIframe}
         >
-          <FrontComponentIframeHostContext.Provider
-            value={FrontComponentManagedIframe}
-          >
-            {children}
-          </FrontComponentIframeHostContext.Provider>
-        </FrontComponentIframeOwnerProvider>
-      </FrontComponentInputFocusContext.Provider>
-    </FrontComponentInstanceContext.Provider>
+          {children}
+        </FrontComponentIframeHostContext.Provider>
+      </FrontComponentIframeOwnerProvider>
+    </FrontComponentInputFocusContext.Provider>
   );
 };
