@@ -1,0 +1,2 @@
+export const ADD_LOGIC_FUNCTION_KEEP_WARM_UPGRADE_COMMAND_NAME =
+  '2.65.0_AddLogicFunctionKeepWarmFastInstanceCommand_1795733526221';

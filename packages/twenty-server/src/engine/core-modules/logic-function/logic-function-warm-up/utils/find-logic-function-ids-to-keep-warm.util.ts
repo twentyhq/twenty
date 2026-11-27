@@ -8,7 +8,7 @@ type KeepWarmCandidate = Pick<
   | 'id'
   | 'applicationId'
   | 'deletedAt'
-  | 'isWarm'
+  | 'keepWarm'
   | 'executionMode'
   | 'isBuildUpToDate'
   | 'checksum'

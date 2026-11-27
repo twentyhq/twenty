@@ -484,24 +484,24 @@ describe('defineLogicFunction', () => {
     );
   });
 
-  it('should accept isWarm', () => {
+  it('should accept keepWarm', () => {
     const config = {
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
       handler: mockHandler,
-      isWarm: true,
+      keepWarm: true,
     };
 
     expect(defineLogicFunction(config).success).toBe(true);
   });
 
-  it('should reject an isWarm that is not a boolean', () => {
+  it('should reject a keepWarm that is not a boolean', () => {
     const result = defineLogicFunction({
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
       handler: mockHandler,
       // @ts-expect-error only a boolean is accepted
-      isWarm: 'yes',
+      keepWarm: 'yes',
     });
 
-    expect(result.errors).toContain('Logic function isWarm must be a boolean');
+    expect(result.errors).toContain('Logic function keepWarm must be a boolean');
   });
 });

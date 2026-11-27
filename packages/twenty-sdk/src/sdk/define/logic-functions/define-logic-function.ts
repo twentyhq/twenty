@@ -68,8 +68,8 @@ export const defineLogicFunction: DefineEntity<LogicFunctionConfig> = (
     );
   }
 
-  if (isDefined(config.isWarm) && typeof config.isWarm !== 'boolean') {
-    errors.push('Logic function isWarm must be a boolean');
+  if (isDefined(config.keepWarm) && typeof config.keepWarm !== 'boolean') {
+    errors.push('Logic function keepWarm must be a boolean');
   }
 
   if (config.cronTriggerSettings) {

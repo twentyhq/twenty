@@ -13,7 +13,7 @@ export type LogicFunctionManifest = SyncableEntityOptions & {
   retryLimit?: number;
   jobFailureHandlerName?: string;
   // Pinged every minute to stay warm (no guarantee); each ping is billed like a run.
-  isWarm?: boolean;
+  keepWarm?: boolean;
   cronTriggerSettings?: CronTriggerSettings;
   eventTriggerSettings?: EventTriggerManifestSettings;
   /** @deprecated Use `eventTriggerSettings` instead. */

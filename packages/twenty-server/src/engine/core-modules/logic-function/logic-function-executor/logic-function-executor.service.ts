@@ -228,7 +228,7 @@ export class LogicFunctionExecutorService {
     }
   }
 
-  // Recurring pings of an isWarm function are billed like an execution; the install-time warmUp stays free.
+  // Recurring pings of a keepWarm function are billed like an execution; the install-time warmUp stays free.
   async keepWarm({
     workspaceId,
     logicFunctionId,

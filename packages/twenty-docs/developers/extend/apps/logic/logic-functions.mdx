@@ -1291,13 +1291,13 @@ Each workspace gets an offset in `[0, spreadMs)`, rounded down to the minute and
 
 ## Keep a function warm
 
-The first run after a function has been idle for a while starts cold: its executor has to load your bundle before your handler runs. When a user waits on the result, for example an AI tool call or an HTTP route answering a webhook handshake, set `isWarm` to avoid that delay:
+The first run after a function has been idle for a while starts cold: its executor has to load your bundle before your handler runs. When a user waits on the result, for example an AI tool call or an HTTP route answering a webhook handshake, set `keepWarm` to avoid that delay:
 
 ```ts
 export default defineLogicFunction({
   universalIdentifier: 'c4a9e1f2-7b3d-4e8a-9f6c-2d5b8a1e3f70',
   name: 'lookup-company',
-  isWarm: true,
+  keepWarm: true,
   handler,
 });
 ```
@@ -1306,7 +1306,7 @@ export default defineLogicFunction({
 - Warmth is not guaranteed. A ping only makes it likely that an executor is still loaded at the next run: the provider can reclaim it at any time, including within the minute after a ping, and that run then starts cold.
 - Only one executor is kept warm: when several runs start at the same time, the ones beyond the first can still start cold.
 - Each ping is billed like a run, with the same invocation and duration charges, about \$0.15 a day per warm function. Pings are reported as **Keep-warm Pings**, apart from **Code Execution**, and the function's real runs keep their normal price.
-- `isWarm` only takes effect on servers that run logic functions on AWS Lambda, as Twenty Cloud does, and on installed apps. Functions synced live with `twenty app dev`, and servers using the local or disabled driver, are neither pinged nor charged.
+- `keepWarm` only takes effect on servers that run logic functions on AWS Lambda, as Twenty Cloud does, and on installed apps. Functions synced live with `twenty app dev`, and servers using the local or disabled driver, are neither pinged nor charged.
 - Leave it off for queued, cron and background work, where nobody waits on the first run.
 
 <PageBanner illustration="card-page-logic-functions" />

@@ -46,7 +46,7 @@ export const fromCreateLogicFunctionFromSourceInputToUniversalFlatLogicFunctionT
       timeoutSeconds: createLogicFunctionFromSourceInput.timeoutSeconds ?? 300,
       jobFailureHandlerName: null,
       retryLimit: null,
-      isWarm: false,
+      keepWarm: false,
       checksum,
       isBuildUpToDate,
       executionMode: LogicFunctionExecutionMode.LIVE,

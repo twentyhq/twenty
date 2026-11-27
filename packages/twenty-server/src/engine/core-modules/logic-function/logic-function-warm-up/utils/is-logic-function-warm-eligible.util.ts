@@ -5,8 +5,8 @@ import { isLogicFunctionReadyForPrebuiltInstall } from 'src/engine/metadata-modu
 export const isLogicFunctionWarmEligible = (
   flatLogicFunction: Pick<
     FlatLogicFunction,
-    'isWarm' | 'executionMode' | 'isBuildUpToDate' | 'checksum'
+    'keepWarm' | 'executionMode' | 'isBuildUpToDate' | 'checksum'
   >,
 ): boolean =>
-  flatLogicFunction.isWarm &&
+  flatLogicFunction.keepWarm &&
   isLogicFunctionReadyForPrebuiltInstall(flatLogicFunction);

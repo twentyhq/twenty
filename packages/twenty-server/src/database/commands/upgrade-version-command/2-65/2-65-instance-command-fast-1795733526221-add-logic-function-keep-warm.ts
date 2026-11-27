@@ -4,16 +4,16 @@ import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decor
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
 @RegisteredInstanceCommand('2.65.0', 1795733526221)
-export class AddLogicFunctionIsWarmFastInstanceCommand implements FastInstanceCommand {
+export class AddLogicFunctionKeepWarmFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'ALTER TABLE "core"."logicFunction" ADD "isWarm" boolean NOT NULL DEFAULT false',
+      'ALTER TABLE "core"."logicFunction" ADD "keepWarm" boolean NOT NULL DEFAULT false',
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'ALTER TABLE "core"."logicFunction" DROP COLUMN "isWarm"',
+      'ALTER TABLE "core"."logicFunction" DROP COLUMN "keepWarm"',
     );
   }
 }

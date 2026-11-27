@@ -10,13 +10,13 @@ const READY_PREBUILT_FIELDS = {
 describe('isLogicFunctionWarmEligible', () => {
   it('accepts a warm function with an installable prebuilt bundle', () => {
     expect(
-      isLogicFunctionWarmEligible({ ...READY_PREBUILT_FIELDS, isWarm: true }),
+      isLogicFunctionWarmEligible({ ...READY_PREBUILT_FIELDS, keepWarm: true }),
     ).toBe(true);
   });
 
   it('rejects a function that is not warm', () => {
     expect(
-      isLogicFunctionWarmEligible({ ...READY_PREBUILT_FIELDS, isWarm: false }),
+      isLogicFunctionWarmEligible({ ...READY_PREBUILT_FIELDS, keepWarm: false }),
     ).toBe(false);
   });
 
@@ -25,7 +25,7 @@ describe('isLogicFunctionWarmEligible', () => {
       isLogicFunctionWarmEligible({
         ...READY_PREBUILT_FIELDS,
         executionMode: LogicFunctionExecutionMode.LIVE,
-        isWarm: true,
+        keepWarm: true,
       }),
     ).toBe(false);
   });
@@ -35,7 +35,7 @@ describe('isLogicFunctionWarmEligible', () => {
       isLogicFunctionWarmEligible({
         ...READY_PREBUILT_FIELDS,
         checksum: null,
-        isWarm: true,
+        keepWarm: true,
       }),
     ).toBe(false);
   });

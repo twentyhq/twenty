@@ -4,7 +4,7 @@ import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-fu
 const WARM_PREBUILT_FUNCTION = {
   applicationId: 'active-application',
   deletedAt: null,
-  isWarm: true,
+  keepWarm: true,
   executionMode: LogicFunctionExecutionMode.PREBUILT,
   isBuildUpToDate: true,
   checksum: 'checksum',
@@ -16,7 +16,7 @@ describe('findLogicFunctionIdsToKeepWarm', () => {
       findLogicFunctionIdsToKeepWarm({
         flatLogicFunctions: [
           { ...WARM_PREBUILT_FUNCTION, id: 'warm' },
-          { ...WARM_PREBUILT_FUNCTION, id: 'not-warm', isWarm: false },
+          { ...WARM_PREBUILT_FUNCTION, id: 'not-warm', keepWarm: false },
           {
             ...WARM_PREBUILT_FUNCTION,
             id: 'live',

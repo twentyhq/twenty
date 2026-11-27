@@ -95,7 +95,7 @@ export const fromLogicFunctionManifestToUniversalFlatLogicFunction = ({
           LOGIC_FUNCTION_MAX_RETRY_LIMIT,
         )
       : null,
-    isWarm: logicFunctionManifest.isWarm ?? false,
+    keepWarm: logicFunctionManifest.keepWarm ?? false,
     sourceHandlerPath: logicFunctionManifest.sourceHandlerPath,
     builtHandlerPath: logicFunctionManifest.builtHandlerPath,
     handlerName: logicFunctionManifest.handlerName,

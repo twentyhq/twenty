@@ -8,7 +8,7 @@ export enum UsageOperationType {
   AI_WORKFLOW_TOKEN = 'AI_WORKFLOW_TOKEN',
   WORKFLOW_EXECUTION = 'WORKFLOW_EXECUTION',
   CODE_EXECUTION = 'CODE_EXECUTION',
-  // Platform-raised keep-warm pings of isWarm logic functions, kept apart from real runs.
+  // Platform-raised keep-warm pings of keepWarm logic functions, kept apart from real runs.
   CODE_KEEP_WARM = 'CODE_KEEP_WARM',
   WEB_SEARCH = 'WEB_SEARCH',
   AI_WORKFLOW_WEB_SEARCH = 'AI_WORKFLOW_WEB_SEARCH',

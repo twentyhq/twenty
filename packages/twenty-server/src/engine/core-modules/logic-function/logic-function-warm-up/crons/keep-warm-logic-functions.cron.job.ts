@@ -50,7 +50,7 @@ export class KeepWarmLogicFunctionsCronJob {
         activationStatus: WorkspaceActivationStatus.ACTIVE,
       })
       .andWhere(
-        `EXISTS (SELECT 1 FROM "core"."logicFunction" "logicFunction" WHERE "logicFunction"."workspaceId" = "workspace"."id" AND "logicFunction"."isWarm" = true AND "logicFunction"."deletedAt" IS NULL)`,
+        `EXISTS (SELECT 1 FROM "core"."logicFunction" "logicFunction" WHERE "logicFunction"."workspaceId" = "workspace"."id" AND "logicFunction"."keepWarm" = true AND "logicFunction"."deletedAt" IS NULL)`,
       )
       .getRawMany<{ id: string }>();
 

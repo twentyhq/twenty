@@ -43,7 +43,7 @@ export const buildUniversalFlatLogicFunctionToCreate = (
     timeoutSeconds: input.timeoutSeconds ?? 300,
     jobFailureHandlerName: input.jobFailureHandlerName ?? null,
     retryLimit: input.retryLimit ?? null,
-    isWarm: input.isWarm ?? false,
+    keepWarm: input.keepWarm ?? false,
     checksum: input.checksum ?? null,
     isBuildUpToDate: input.isBuildUpToDate,
     executionMode: input.executionMode ?? LogicFunctionExecutionMode.LIVE,
