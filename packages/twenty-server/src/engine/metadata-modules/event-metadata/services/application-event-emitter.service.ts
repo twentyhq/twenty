@@ -13,11 +13,15 @@ import {
   EventMetadataExceptionCode,
 } from 'src/engine/metadata-modules/event-metadata/event-metadata.exception';
 import { findApplicationFlatEventMetadataOrThrow } from 'src/engine/metadata-modules/event-metadata/utils/find-application-flat-event-metadata-or-throw.util';
+import { AppEventTriggerService } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/app-event/app-event-trigger.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
 export class ApplicationEventEmitterService {
-  constructor(private readonly workspaceCacheService: WorkspaceCacheService) {}
+  constructor(
+    private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly appEventTriggerService: AppEventTriggerService,
+  ) {}
 
   async emit({
     workspaceId,
@@ -75,6 +79,13 @@ export class ApplicationEventEmitterService {
         EventMetadataExceptionCode.INVALID_EVENT_PROPERTIES,
       );
     }
+
+    await this.appEventTriggerService.triggerLogicFunctions({
+      workspaceId,
+      applicationId,
+      eventUniversalIdentifier: flatEventMetadata.universalIdentifier,
+      occurrence,
+    });
 
     return { id: occurrence.id, occurredAt: occurrence.occurredAt };
   }

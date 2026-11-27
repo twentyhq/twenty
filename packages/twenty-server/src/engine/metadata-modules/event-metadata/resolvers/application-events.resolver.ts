@@ -10,6 +10,8 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
+import { MessageQueueGraphqlApiExceptionFilter } from 'src/engine/core-modules/message-queue/filters/message-queue-graphql-api-exception.filter';
+import { ThrottlerGraphqlApiExceptionFilter } from 'src/engine/core-modules/throttler/filters/throttler-graphql-api-exception.filter';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -34,7 +36,11 @@ import { ApplicationEventEmitterService } from 'src/engine/metadata-modules/even
 @UseInterceptors(EventMetadataGraphqlApiExceptionInterceptor)
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
-@UseFilters(AuthGraphqlApiExceptionFilter)
+@UseFilters(
+  AuthGraphqlApiExceptionFilter,
+  MessageQueueGraphqlApiExceptionFilter,
+  ThrottlerGraphqlApiExceptionFilter,
+)
 export class ApplicationEventsResolver {
   constructor(
     private readonly applicationEventEmitterService: ApplicationEventEmitterService,

@@ -139,6 +139,7 @@ export type {
   ServerRouteResolverResult,
 } from '@/sdk/define/logic-functions/logic-function-config';
 export type { ServerRouteDispatchResult } from 'twenty-shared/application';
+export type { AppEventPayload } from '@/sdk/define/logic-functions/triggers/app-event-payload-type';
 export type { CronPayload } from '@/sdk/define/logic-functions/triggers/cron-payload-type';
 export type {
   DatabaseEventBatchPayload,

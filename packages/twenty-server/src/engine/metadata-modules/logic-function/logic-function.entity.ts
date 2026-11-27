@@ -9,6 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import {
+  AppEventTriggerSettings,
   CronTriggerSettings,
   DatabaseEventTriggerSettings,
   HttpRouteTriggerSettings,
@@ -17,6 +18,7 @@ import {
   WorkflowActionTriggerSettings,
 } from 'twenty-shared/application';
 
+import { ADD_APP_EVENT_TRIGGER_SETTINGS_TO_LOGIC_FUNCTION_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-66/add-app-event-trigger-settings-to-logic-function-upgrade-command-name.constant';
 import { ADD_JOB_CONFIG_TO_WORKFLOW_AND_LOGIC_FUNCTION_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-58/add-job-config-to-workflow-and-logic-function-upgrade-command-name.constant';
 import { ADD_LOGIC_FUNCTION_JOB_FAILURE_HANDLER_NAME_AND_RETRY_LIMIT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-63/add-logic-function-job-failure-handler-name-and-retry-limit-upgrade-command-name.constant';
 import { DROP_JOB_CONFIG_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-61/drop-job-config-upgrade-command-name.constant';
@@ -115,6 +117,13 @@ export class LogicFunctionEntity
 
   @Column({ nullable: true, type: 'jsonb' })
   workflowActionTriggerSettings: JsonbProperty<WorkflowActionTriggerSettings> | null;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_APP_EVENT_TRIGGER_SETTINGS_TO_LOGIC_FUNCTION_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: true, type: 'jsonb' })
+  appEventTriggerSettings: JsonbProperty<AppEventTriggerSettings> | null;
 
   @WasIntroducedInUpgrade({
     upgradeCommandName:

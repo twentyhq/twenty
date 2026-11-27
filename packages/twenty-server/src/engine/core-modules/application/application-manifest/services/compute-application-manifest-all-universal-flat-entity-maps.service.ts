@@ -7,6 +7,7 @@ import {
   type PageLayoutTabManifest,
   normalizePageLayoutTabManifest,
   getDeclaredLegacyRoleRecordsPermissionsKeys,
+  isAppEventTriggerManifestSettings,
   normalizeLegacyCompliantRoleManifest,
   serializeApplicationVariableValue,
 } from 'twenty-shared/application';
@@ -241,27 +242,48 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
         existingFlatEntityMaps: existingAllFlatEntityMaps,
       });
 
+    const applicationEventUniversalIdentifiers = new Set(
+      (manifest.events ?? []).map(
+        (eventManifest) => eventManifest.universalIdentifier,
+      ),
+    );
+
     for (const logicFunctionManifest of manifest.logicFunctions) {
       // TODO: remove with the legacy databaseEventTriggerSettings / DATABASE_EVENT manifest form
       const eventTriggerSettings =
         logicFunctionManifest.eventTriggerSettings ??
         logicFunctionManifest.databaseEventTriggerSettings;
 
+      if (
+        isDefined(eventTriggerSettings) &&
+        isAppEventTriggerManifestSettings(eventTriggerSettings) &&
+        !applicationEventUniversalIdentifiers.has(
+          eventTriggerSettings.eventUniversalIdentifier,
+        )
+      ) {
+        throw new ApplicationException(
+          `Logic function ${logicFunctionManifest.name ?? logicFunctionManifest.universalIdentifier} is triggered by event "${eventTriggerSettings.eventUniversalIdentifier}", which this application does not declare`,
+          ApplicationExceptionCode.INVALID_INPUT,
+        );
+      }
+
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
         universalFlatEntity:
           fromLogicFunctionManifestToUniversalFlatLogicFunction({
-            logicFunctionManifest: isDefined(eventTriggerSettings)
-              ? {
-                  ...logicFunctionManifest,
-                  eventTriggerSettings: undefined,
-                  databaseEventTriggerSettings:
-                    resolveDatabaseEventTriggerManifestSettingsOrThrow({
-                      settings: eventTriggerSettings,
-                      lookup: databaseEventTriggerManifestLookup,
-                      subject: `Logic function ${logicFunctionManifest.name ?? logicFunctionManifest.universalIdentifier}`,
-                    }),
-                }
-              : logicFunctionManifest,
+            logicFunctionManifest:
+              isDefined(eventTriggerSettings) &&
+              !isAppEventTriggerManifestSettings(eventTriggerSettings)
+                ? {
+                    ...logicFunctionManifest,
+                    eventTriggerSettings: undefined,
+                    databaseEventTriggerSettings:
+                      resolveDatabaseEventTriggerManifestSettingsOrThrow({
+                        settings: eventTriggerSettings,
+                        lookup: databaseEventTriggerManifestLookup,
+                        subject: `Logic function ${logicFunctionManifest.name ?? logicFunctionManifest.universalIdentifier}`,
+                      }),
+                  }
+                : logicFunctionManifest,
             applicationUniversalIdentifier,
             applicationSourceType,
             existingFlatLogicFunctionMaps:

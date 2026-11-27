@@ -47,6 +47,15 @@ export const fromFlatLogicFunctionToLogicFunctionManifest = ({
           }),
         }
       : {}),
+    ...(isDefined(logicFunction.appEventTriggerSettings)
+      ? {
+          eventTriggerSettings: {
+            on: 'appEvent',
+            eventUniversalIdentifier:
+              logicFunction.appEventTriggerSettings.eventUniversalIdentifier,
+          },
+        }
+      : {}),
     ...(isDefined(logicFunction.httpRouteTriggerSettings)
       ? { httpRouteTriggerSettings: logicFunction.httpRouteTriggerSettings }
       : {}),

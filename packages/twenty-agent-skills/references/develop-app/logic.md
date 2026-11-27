@@ -184,7 +184,8 @@ Events are in beta. To record that something happened in the app's domain, decla
 - `name` and property names are camelCase; an event name is unique within the app. Dotted names are reserved for events Twenty emits.
 - `schema` is an object schema in the tool trigger `inputSchema` format: property `type` is `string` (optionally `format: 'date-time'` or `'uuid'`), `number`, `integer`, `boolean` or `record` (with `objectUniversalIdentifier`), or left out for any JSON value. `required` lists the required properties. Properties are flat, up to 50.
 - `emitEvent({ event, properties, id })` names the event by `event` or by `eventUniversalIdentifier`, never both. Set `id` (jobId rules) when a retry could emit the same occurrence twice. It is refused when the event is not the app's, a property is undeclared or mistyped, or the payload exceeds 32 KB, and returns the occurrence `id` and `occurredAt`.
-- Nothing receives an occurrence yet: do not use an event to notify a person, a front component or another function.
+- To run a logic function of the same app on each occurrence, set its `eventTriggerSettings` to `{ on: 'appEvent', eventUniversalIdentifier }`. It receives the occurrence (`AppEventPayload`: `{ id, type, occurredAt, properties }`) as a queued job with no member, like a cron run. A trigger on an event the app does not declare fails to sync.
+- Nothing else receives an occurrence yet: do not use an event to notify a person or a front component.
 
 Requires `"engines": { "twenty": ">=2.66.0" }`.
 

@@ -1,7 +1,7 @@
 import { msg } from '@lingui/core/macro';
 import { isString } from '@sniptt/guards';
 import {
-  type EventTriggerManifestSettings,
+  type RecordEventTriggerManifestSettings,
   type DatabaseEventTriggerSettings,
   isRecordEventTriggerManifestSettings,
 } from 'twenty-shared/application';
@@ -95,7 +95,7 @@ export const resolveDatabaseEventTriggerManifestSettingsOrThrow = ({
   lookup,
   subject,
 }: {
-  settings: EventTriggerManifestSettings | DatabaseEventTriggerSettings;
+  settings: RecordEventTriggerManifestSettings | DatabaseEventTriggerSettings;
   lookup: DatabaseEventTriggerManifestLookup;
   subject: string;
 }): DatabaseEventTriggerSettings => {
