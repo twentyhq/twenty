@@ -152,7 +152,7 @@ export const getSettingsSearchDestinations = ({
       return [undefined];
     }
 
-    return metadata.expandsPerObject === true &&
+    return metadata.isExpandedPerObject === true &&
       isDeeplyEqual(pathParameters, OBJECT_PATH_PARAMETERS)
       ? availability.objectMetadataItems
       : [];

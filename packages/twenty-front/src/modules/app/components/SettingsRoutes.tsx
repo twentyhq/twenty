@@ -1208,7 +1208,7 @@ const createSettingsRouteElements = ({
           handle: MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE,
           settingsSearch: {
             title: SETTINGS_SEARCH_OBJECT_LABEL_TITLE,
-            expandsPerObject: true,
+            isExpandedPerObject: true,
             parentPath: SettingsPath.Objects,
           },
         })}
@@ -1253,7 +1253,7 @@ const createSettingsRouteElements = ({
           handle: MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE,
           settingsSearch: {
             title: msg`Translations`,
-            expandsPerObject: true,
+            isExpandedPerObject: true,
             parentPath: SettingsPath.ObjectDetail,
             keywords: [msg`Edit translations`],
           },
@@ -1266,7 +1266,7 @@ const createSettingsRouteElements = ({
           handle: MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE,
           settingsSearch: {
             title: msg`Search`,
-            expandsPerObject: true,
+            isExpandedPerObject: true,
             parentPath: SettingsPath.ObjectDetail,
             keywords: [msg`Configure search`],
           },
@@ -1279,7 +1279,7 @@ const createSettingsRouteElements = ({
           handle: MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE,
           settingsSearch: {
             title: msg`Indexes`,
-            expandsPerObject: true,
+            isExpandedPerObject: true,
             parentPath: SettingsPath.ObjectDetail,
             keywords: [msg`Manage indexes`],
           },
