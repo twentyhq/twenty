@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useToast } from 'twenty-ui/components/feedback';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
-import { useInboxNamesByLegacyName } from '@/ai-chat/hooks/useInboxNamesByLegacyName';
+import { inboxNamesByLegacyNameSelector } from '@/ai-chat/states/selectors/inboxNamesByLegacyNameSelector';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 
 export const useAiChatThreadRename = (thread: {
@@ -11,7 +12,9 @@ export const useAiChatThreadRename = (thread: {
 }) => {
   const { updateOneRecord } = useUpdateOneRecord();
   const { enqueueToast } = useToast();
-  const inboxNamesByLegacyName = useInboxNamesByLegacyName();
+  const inboxNamesByLegacyName = useAtomStateValue(
+    inboxNamesByLegacyNameSelector,
+  );
 
   const [isRenaming, setIsRenaming] = useState(false);
   const [draftTitle, setDraftTitle] = useState(thread.title ?? '');

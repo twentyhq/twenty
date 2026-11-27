@@ -7,7 +7,7 @@ import { contextStoreCurrentCoreObjectNameComponentState } from '@/context-store
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentPageTypeComponentState } from '@/context-store/states/contextStoreCurrentPageTypeComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
-import { useInboxNamesByLegacyName } from '@/ai-chat/hooks/useInboxNamesByLegacyName';
+import { inboxNamesByLegacyNameSelector } from '@/ai-chat/states/selectors/inboxNamesByLegacyNameSelector';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
@@ -17,7 +17,9 @@ import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
 
 export const useAiChatSuggestedPromptsContext =
   (): AiChatSuggestedPromptsContext | null => {
-    const inboxNamesByLegacyName = useInboxNamesByLegacyName();
+    const inboxNamesByLegacyName = useAtomStateValue(
+      inboxNamesByLegacyNameSelector,
+    );
     const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
     const sidePanelNavigationStack = useAtomStateValue(
       sidePanelNavigationStackState,

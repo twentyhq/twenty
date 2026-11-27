@@ -14,7 +14,8 @@ import { type AiChatThreadTargetRecord } from '@/ai-chat/threads/types/AiChatThr
 import { fetchAllAiChatThreadLinkIds } from '@/ai-chat/threads/utils/fetchAllAiChatThreadLinkIds';
 import { getAiChatThreadsForRecordPage } from '@/ai-chat/threads/utils/getAiChatThreadsForRecordPage';
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
-import { useInboxNamesByLegacyName } from '@/ai-chat/hooks/useInboxNamesByLegacyName';
+import { inboxNamesByLegacyNameSelector } from '@/ai-chat/states/selectors/inboxNamesByLegacyNameSelector';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
@@ -75,7 +76,9 @@ export const useAiChatThreadsForRecord = ({
   targetObjectNameSingular,
 }: TargetRecordIdentifier) => {
   const apolloCoreClient = useApolloCoreClient();
-  const inboxNamesByLegacyName = useInboxNamesByLegacyName();
+  const inboxNamesByLegacyName = useAtomStateValue(
+    inboxNamesByLegacyNameSelector,
+  );
   const { objectMetadataItems } = useObjectMetadataItems();
   const junctionConfig = useObjectMorphJunctionConfig({
     objectNameSingular: inboxNamesByLegacyName.agentChatThread,

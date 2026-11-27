@@ -7,7 +7,8 @@ import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconDotsVertical, IconPencil, IconUnlink } from 'twenty-ui/icon';
 
 import { InboxThreadRowTriage } from '@/inbox/components/InboxThreadRowTriage';
-import { useInboxNamesByLegacyName } from '@/ai-chat/hooks/useInboxNamesByLegacyName';
+import { inboxNamesByLegacyNameSelector } from '@/ai-chat/states/selectors/inboxNamesByLegacyNameSelector';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { AiChatThreadCommandMenuItems } from '@/ai-chat/threads/components/AiChatThreadCommandMenuItems';
 import { useRefreshAiChatThreadPermissions } from '@/ai-chat/threads/hooks/useRefreshAiChatThreadPermissions';
 import { useTargetAiChatThreadsInContextStore } from '@/ai-chat/threads/hooks/useTargetAiChatThreadsInContextStore';
@@ -49,7 +50,9 @@ export const InboxThreadActionsDropdown = ({
   shouldShowMore = true,
 }: InboxThreadActionsDropdownProps) => {
   const { t } = useLingui();
-  const inboxNamesByLegacyName = useInboxNamesByLegacyName();
+  const inboxNamesByLegacyName = useAtomStateValue(
+    inboxNamesByLegacyNameSelector,
+  );
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
   const { targetAiChatThreadsInContextStore } =
     useTargetAiChatThreadsInContextStore();

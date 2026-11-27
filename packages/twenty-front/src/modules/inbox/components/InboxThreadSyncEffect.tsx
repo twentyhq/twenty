@@ -8,7 +8,7 @@ import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selec
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { useAddInboxThread } from '@/inbox/hooks/useAddInboxThread';
 import { useHandleInboxThreadRecordOperation } from '@/inbox/hooks/useHandleInboxThreadRecordOperation';
-import { useInboxNamesByLegacyName } from '@/ai-chat/hooks/useInboxNamesByLegacyName';
+import { inboxNamesByLegacyNameSelector } from '@/ai-chat/states/selectors/inboxNamesByLegacyNameSelector';
 import { useInboxThreadSyncStatus } from '@/inbox/hooks/useInboxThreadSyncStatus';
 import { useRefreshShownInboxThreadList } from '@/inbox/hooks/useRefreshShownInboxThreadList';
 import { useReloadInboxThreads } from '@/inbox/hooks/useReloadInboxThreads';
@@ -25,7 +25,9 @@ const INBOX_THREADS_LOAD_RETRY_DELAY_MS = 3000;
 
 export const InboxThreadSyncEffect = () => {
   const store = useStore();
-  const inboxNamesByLegacyName = useInboxNamesByLegacyName();
+  const inboxNamesByLegacyName = useAtomStateValue(
+    inboxNamesByLegacyNameSelector,
+  );
   const { chatObjectMetadataItemId, isThreadSyncEnabled, canLoadChatThreads } =
     useInboxThreadSyncStatus();
   const areFieldMetadataItemsLoaded =

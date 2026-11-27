@@ -1,6 +1,7 @@
 import { type ReactNode } from 'react';
 
-import { useInboxNamesByLegacyName } from '@/ai-chat/hooks/useInboxNamesByLegacyName';
+import { inboxNamesByLegacyNameSelector } from '@/ai-chat/states/selectors/inboxNamesByLegacyNameSelector';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { RecordShowPageContent } from '@/object-record/record-show/components/RecordShowPageContent';
 
 type AiChatThreadPageContentProps = {
@@ -18,7 +19,9 @@ export const AiChatThreadPageContent = ({
   headerTitlePrefix,
   headerTitleAccessory,
 }: AiChatThreadPageContentProps) => {
-  const inboxNamesByLegacyName = useInboxNamesByLegacyName();
+  const inboxNamesByLegacyName = useAtomStateValue(
+    inboxNamesByLegacyNameSelector,
+  );
 
   return (
     <RecordShowPageContent
