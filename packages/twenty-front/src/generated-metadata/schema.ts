@@ -7489,7 +7489,6 @@ export type SendInboxMessageInput = {
   text: Scalars['String']['input'];
   threadKey: Scalars['String']['input'];
   title: Scalars['String']['input'];
-  toolCall?: InputMaybe<Scalars['JSON']['input']>;
   toolCalls?: InputMaybe<Array<Scalars['JSON']['input']>>;
   workspaceMemberIds: Array<Scalars['UUID']['input']>;
 };

@@ -5104,7 +5104,7 @@ input SendInboxMessageInput {
   text: String!
   threadKey: String!
   title: String!
-  toolCall: JSON
+  toolCall: JSON @deprecated(reason: "Use toolCalls instead.")
   toolCalls: [JSON!]
   workspaceMemberIds: [UUID!]!
 }

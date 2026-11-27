@@ -64,14 +64,16 @@ describe('sendInboxMessage', () => {
       idempotencyKey: 'first-call-recording',
       title: 'Your first recording is ready',
       text: 'Your call was recorded.',
-      toolCall: {
-        toolName: 'ask_question' as const,
-        input: {
-          header: 'Share',
-          question: 'Share the recording with the attendees?',
-          options: [{ label: 'Draft an email' }, { label: 'Not now' }],
+      toolCalls: [
+        {
+          toolName: 'ask_question' as const,
+          input: {
+            header: 'Share',
+            question: 'Share the recording with the attendees?',
+            options: [{ label: 'Draft an email' }, { label: 'Not now' }],
+          },
         },
-      },
+      ],
     };
 
     const result = await sendInboxMessage(input);
