@@ -15,7 +15,10 @@ import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { SettingsSkillInactiveMenuDropDown } from '~/pages/settings/ai/components/SettingsSkillInactiveMenuDropDown';
 import { SETTINGS_SKILL_TABLE_METADATA } from '~/pages/settings/ai/constants/SettingsSkillTableMetadata';
 import { type SettingsSkillTableItem } from '~/pages/settings/ai/types/SettingsSkillTableItem';
-import { SettingsSkillTableRow } from './SettingsSkillTableRow';
+import {
+  SettingsSkillTableRow,
+  SKILL_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
+} from './SettingsSkillTableRow';
 
 type SettingsAgentSkillsTableProps = {
   skills: SettingsSkillTableItem[];
@@ -43,7 +46,7 @@ export const SettingsAgentSkillsTable = ({
   return (
     <Table>
       <StyledTableHeaderRowContainer>
-        <TableRow gridTemplateColumns="1fr 120px 36px">
+        <TableRow gridTemplateColumns={SKILL_TABLE_ROW_GRID_TEMPLATE_COLUMNS}>
           {SETTINGS_SKILL_TABLE_METADATA.fields.map(
             (settingsSkillTableMetadataField) => (
               <SortableTableHeader
@@ -61,7 +64,7 @@ export const SettingsAgentSkillsTable = ({
       </StyledTableHeaderRowContainer>
       {showSkeleton ? (
         <TableSkeletonRows
-          gridTemplateColumns="1fr 120px 36px"
+          gridTemplateColumns={SKILL_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
           columnCount={2}
         />
       ) : (
