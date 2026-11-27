@@ -15,7 +15,6 @@ import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/st
 import { useIsLayoutCustomizationAllowedOnCurrentPage } from '@/layout-customization/hooks/useIsLayoutCustomizationAllowedOnCurrentPage';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
 import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
-import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getWorkspaceFeatureFlagsMap } from '@/workspace/utils/getWorkspaceFeatureFlagsMap';
 import { useMemo } from 'react';
@@ -50,7 +49,6 @@ export const StandalonePageCommandMenu = ({
   );
   const { targetObjectReadPermissions, targetObjectWritePermissions } =
     useAtomStateValue(commandMenuTargetObjectPermissionsSelector);
-  const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
 
   const commandMenuContextApi = useMemo<CommandMenuContextApi>(() => {
     const featureFlags = getWorkspaceFeatureFlagsMap(
@@ -59,7 +57,7 @@ export const StandalonePageCommandMenu = ({
 
     return {
       pageType,
-      isInSidePanel,
+      isInSidePanel: false,
       isDashboardPageLayoutInEditMode: false,
       isLayoutCustomizationModeEnabled,
       favoriteRecordIds: [],
@@ -81,7 +79,6 @@ export const StandalonePageCommandMenu = ({
     };
   }, [
     pageType,
-    isInSidePanel,
     currentWorkspace?.featureFlags,
     permissionFlagMap,
     currentUser?.canImpersonate,

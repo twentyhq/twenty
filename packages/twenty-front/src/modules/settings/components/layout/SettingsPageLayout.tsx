@@ -2,6 +2,7 @@ import { StandalonePageCommandMenu } from '@/command-menu-item/components/Standa
 import { SettingsEditableTitle } from '@/settings/components/SettingsEditableTitle';
 import { SettingsSecondaryBar } from '@/settings/components/layout/SettingsSecondaryBar';
 import { SidePanelPageTitleSyncEffect } from '@/side-panel/components/SidePanelPageTitleSyncEffect';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/types/BreadcrumbProps';
@@ -38,6 +39,9 @@ export const SettingsPageLayout = ({
   const isCustomizableSidebarEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
   );
+  const workspaceSurface = useWorkspaceSurface();
+  const shouldShowHeaderCommands =
+    isCustomizableSidebarEnabled && workspaceSurface.type === 'main';
 
   const sidePanelPageTitle =
     pageTitle ??
@@ -75,7 +79,7 @@ export const SettingsPageLayout = ({
             icon={icon}
             tag={tag}
             actionButton={
-              isCustomizableSidebarEnabled ? (
+              shouldShowHeaderCommands ? (
                 <>
                   {actionButton}
                   <StandalonePageCommandMenu
