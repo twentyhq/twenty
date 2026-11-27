@@ -11,11 +11,11 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AgentChatChannelMetadataService } from 'src/engine/metadata-modules/agent-chat-channel/services/agent-chat-channel-metadata.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
+import { WorkspaceCustomApplicationRoleService } from 'src/engine/metadata-modules/role/services/workspace-custom-application-role.service';
 import { RoleAssignmentWriteService } from 'src/engine/permissions/role-assignment/role-assignment-write.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceSchemaService } from 'src/engine/workspace-datasource/workspace-schema.service';
-import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 import { TwentyStandardApplicationService } from 'src/engine/workspace-manager/twenty-standard-application/services/twenty-standard-application.service';
 
 @Injectable()
@@ -27,6 +27,7 @@ export class WorkspaceManagerService {
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly roleService: RoleService,
+    private readonly workspaceCustomApplicationRoleService: WorkspaceCustomApplicationRoleService,
     private readonly roleAssignmentWriteService: RoleAssignmentWriteService,
     private readonly twentyStandardApplicationService: TwentyStandardApplicationService,
     @InjectRepository(WorkspaceEntity)
@@ -72,16 +73,13 @@ export class WorkspaceManagerService {
         },
       );
 
-    const existingAdminRole = await this.roleRepository.findOne(workspaceId, {
-      where: { universalIdentifier: STANDARD_ROLE.admin.universalIdentifier },
-    });
-
-    const adminRole =
-      existingAdminRole ??
-      (await this.roleService.createAdminRole({
-        workspaceId,
-        ownerFlatApplication: workspaceCustomFlatApplication,
-      }));
+    const adminRoleId =
+      await this.workspaceCustomApplicationRoleService.findOrCreateAdminRoleOrThrow(
+        {
+          workspaceId,
+          workspaceCustomFlatApplication,
+        },
+      );
 
     await this.twentyStandardApplicationService.synchronizeTwentyStandardApplicationOrThrow(
       {
@@ -99,15 +97,17 @@ export class WorkspaceManagerService {
       `Metadata creation took ${dataSourceMetadataCreationEnd - dataSourceMetadataCreationStart}ms`,
     );
 
-    await this.roleService.createWorkspaceCustomApplicationRole({
-      workspaceId,
-      workspaceCustomFlatApplication,
-    });
+    await this.workspaceCustomApplicationRoleService.findOrCreateGrantedRoleOrThrow(
+      {
+        workspaceId,
+        workspaceCustomFlatApplication,
+      },
+    );
 
     await this.setupDefaultRoles({
       workspaceId,
       userId,
-      adminRoleId: adminRole.id,
+      adminRoleId,
       workspaceCustomFlatApplication,
     });
   }

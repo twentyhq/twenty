@@ -8,7 +8,6 @@ import { Repository } from 'typeorm';
 
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { WORKSPACE_CUSTOM_APPLICATION_ROLE_UNIVERSAL_IDENTIFIER } from 'src/engine/core-modules/application/constants/workspace-custom-application-role.constant';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -18,8 +17,6 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
-import { buildAdminFlatRole } from 'src/engine/metadata-modules/flat-role/utils/build-admin-flat-role.util';
-import { buildWorkspaceCustomApplicationFlatRole } from 'src/engine/metadata-modules/flat-role/utils/build-workspace-custom-application-flat-role.util';
 import { fromCreateRoleInputToFlatRoleToCreate } from 'src/engine/metadata-modules/flat-role/utils/from-create-role-input-to-flat-role-to-create.util';
 import { fromDeleteRoleInputToFlatRoleOrThrow } from 'src/engine/metadata-modules/flat-role/utils/from-delete-role-input-to-flat-role-or-throw.util';
 import { fromUpdateRoleInputToFlatRoleToUpdateOrThrow } from 'src/engine/metadata-modules/flat-role/utils/from-update-role-input-to-flat-role-to-update-or-throw.util';
@@ -521,102 +518,6 @@ export class RoleService {
       ownerFlatApplication,
       workspaceId,
     });
-  }
-
-  public async createWorkspaceCustomApplicationRole({
-    workspaceId,
-    workspaceCustomFlatApplication,
-  }: {
-    workspaceId: string;
-    workspaceCustomFlatApplication: FlatApplication;
-  }): Promise<void> {
-    const { flatRoleMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatRoleMaps'],
-        },
-      );
-
-    // Workspace activation is retried after a failure, so the role may already exist
-    const existingFlatRole = findFlatEntityByUniversalIdentifier({
-      universalIdentifier:
-        WORKSPACE_CUSTOM_APPLICATION_ROLE_UNIVERSAL_IDENTIFIER,
-      flatEntityMaps: flatRoleMaps,
-    });
-
-    const roleId =
-      existingFlatRole?.id ??
-      (await this.createFlatRoleWithSystemBuildOrThrow({
-        workspaceId,
-        flatRoleToCreate: buildWorkspaceCustomApplicationFlatRole({
-          workspaceId,
-          workspaceCustomFlatApplication,
-        }),
-      }));
-
-    if (workspaceCustomFlatApplication.requestedRoleId === roleId) {
-      return;
-    }
-
-    await this.applicationService.update(workspaceCustomFlatApplication.id, {
-      workspaceId,
-      requestedRoleId: roleId,
-    });
-  }
-
-  public async createAdminRole({
-    workspaceId,
-    ownerFlatApplication,
-  }: {
-    workspaceId: string;
-    ownerFlatApplication: FlatApplication;
-  }): Promise<RoleDTO> {
-    const flatRoleToCreate = buildAdminFlatRole({
-      workspaceId,
-      ownerFlatApplication,
-    });
-
-    await this.createFlatRoleWithSystemBuildOrThrow({
-      workspaceId,
-      flatRoleToCreate,
-    });
-
-    return fromFlatRoleToRoleDto(flatRoleToCreate);
-  }
-
-  private async createFlatRoleWithSystemBuildOrThrow({
-    workspaceId,
-    flatRoleToCreate,
-  }: {
-    workspaceId: string;
-    flatRoleToCreate: FlatRole;
-  }): Promise<string> {
-    const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
-        {
-          allFlatEntityOperationByMetadataName: {
-            role: {
-              flatEntityToCreate: [flatRoleToCreate],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [],
-            },
-          },
-          workspaceId,
-          isSystemBuild: true,
-          applicationUniversalIdentifier:
-            flatRoleToCreate.applicationUniversalIdentifier,
-        },
-      );
-
-    if (validateAndBuildResult.status === 'fail') {
-      throw new WorkspaceMigrationBuilderException(
-        validateAndBuildResult,
-        `Multiple validation errors occurred while creating the ${flatRoleToCreate.label} role`,
-      );
-    }
-
-    return flatRoleToCreate.id;
   }
 
   public async createGuestRole({

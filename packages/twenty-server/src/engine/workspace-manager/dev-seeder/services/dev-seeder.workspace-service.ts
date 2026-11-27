@@ -24,7 +24,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AgentChatChannelMetadataService } from 'src/engine/metadata-modules/agent-chat-channel/services/agent-chat-channel-metadata.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { RoleService } from 'src/engine/metadata-modules/role/role.service';
+import { WorkspaceCustomApplicationRoleService } from 'src/engine/metadata-modules/role/services/workspace-custom-application-role.service';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -87,7 +87,7 @@ export class DevSeederWorkspaceService {
     private readonly upgradeSequenceReaderService: UpgradeSequenceReaderService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly prefillFrontComponentService: PrefillFrontComponentService,
-    private readonly roleService: RoleService,
+    private readonly workspaceCustomApplicationRoleService: WorkspaceCustomApplicationRoleService,
     private readonly secretEncryptionService: SecretEncryptionService,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
@@ -140,10 +140,12 @@ export class DevSeederWorkspaceService {
         },
       );
 
-    await this.roleService.createAdminRole({
-      workspaceId,
-      ownerFlatApplication: workspaceCustomFlatApplication,
-    });
+    await this.workspaceCustomApplicationRoleService.findOrCreateAdminRoleOrThrow(
+      {
+        workspaceId,
+        workspaceCustomFlatApplication,
+      },
+    );
 
     await this.twentyStandardApplicationService.synchronizeTwentyStandardApplicationOrThrow(
       {
