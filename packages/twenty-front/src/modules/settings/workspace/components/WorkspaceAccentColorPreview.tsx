@@ -129,7 +129,7 @@ const StyledBar = styled.div`
 
 const StyledPageBar = styled(StyledBar)`
   height: 40px;
-  padding-inline: ${themeCssVariables.spacing[3]};
+  padding-inline: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledPageTitle = styled.div`
