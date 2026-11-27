@@ -14,6 +14,8 @@ import {
   ValidateNested,
 } from 'class-validator';
 
+import { NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MAX } from 'src/engine/metadata-modules/navigation-menu-item/constants/navigation-menu-item-visible-item-limit-max.constant';
+import { NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MIN } from 'src/engine/metadata-modules/navigation-menu-item/constants/navigation-menu-item-visible-item-limit-min.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @InputType()
@@ -64,8 +66,8 @@ export class UpdateNavigationMenuItemInput {
 
   @IsOptional()
   @IsInt()
-  @Min(1)
-  @Max(100)
+  @Min(NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MIN)
+  @Max(NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MAX)
   @Field(() => Int, { nullable: true })
   visibleItemLimit?: number | null;
 
