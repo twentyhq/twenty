@@ -28,6 +28,19 @@ it('checks the real SDK record context signatures without an app SDK dependency'
   ).toThrow('TS2322');
 });
 
+it('typechecks a widget reading select options from the host', () => {
+  expect(() =>
+    validateFrontComponentTypesOrThrow({
+      typeReferences,
+      source: `import { getObjectMetadata } from 'twenty-sdk/front-component';
+      export const Component = () => <button onClick={async () => {
+        const object = await getObjectMetadata('opportunity');
+        const color: string | undefined = object?.fields.find(field => field.name === 'stage')?.options?.[0]?.color;
+      }}>Read stage</button>;`,
+    }),
+  ).not.toThrow();
+});
+
 it('rejects nonexistent SDK exports even when stale app references declare them', () => {
   expect(() =>
     validateFrontComponentTypesOrThrow({

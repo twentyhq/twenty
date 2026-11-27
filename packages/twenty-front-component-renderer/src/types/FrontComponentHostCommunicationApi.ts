@@ -2,6 +2,7 @@ import {
   type CloseSidePanelFunction,
   type CopyToClipboardFunction,
   type EnqueueSnackbarFunction,
+  type GetObjectMetadataFunction,
   type NavigateFunction,
   type OpenCommandConfirmationModalHostFunction,
   type OpenSidePanelPageFunction,
@@ -18,6 +19,7 @@ import {
 export type FrontComponentHostCommunicationApi = {
   navigate: NavigateFunction;
   requestAccessTokenRefresh: RequestAccessTokenRefreshFunction;
+  getObjectMetadata?: GetObjectMetadataFunction;
   openSidePanelPage: OpenSidePanelPageFunction;
   openCommandConfirmationModal: OpenCommandConfirmationModalHostFunction;
   unmountFrontComponent: UnmountFrontComponentFunction;

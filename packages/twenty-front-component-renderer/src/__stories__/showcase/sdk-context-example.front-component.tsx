@@ -1,5 +1,6 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
+  getObjectMetadata,
   useFrontComponentExecutionContext,
   useUserId,
 } from 'twenty-sdk/front-component';
@@ -34,6 +35,13 @@ const VALUE_STYLE = {
 
 const SdkContextComponent = () => {
   const [renderCount, setRenderCount] = useState(0);
+
+  const [stageLabel, setStageLabel] = useState<string | null>(null);
+  const loadStageLabel = async () => {
+    const opportunity = await getObjectMetadata('opportunity');
+    const stage = opportunity?.fields.find((field) => field.name === 'stage');
+    setStageLabel(stage?.options?.[0]?.label ?? 'No metadata available');
+  };
 
   const userId = useUserId();
 
@@ -75,6 +83,9 @@ const SdkContextComponent = () => {
           {JSON.stringify(fullContext, null, 2)}
         </pre>
       </div>
+
+      <button onClick={loadStageLabel}>Load stage options</button>
+      {stageLabel && <span>{stageLabel}</span>}
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
         <button

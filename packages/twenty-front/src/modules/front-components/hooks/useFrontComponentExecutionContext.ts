@@ -37,6 +37,7 @@ import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainCo
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
 import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
 import { useFrontComponentApplicationTokenPair } from '@/front-components/hooks/useFrontComponentApplicationTokenPair';
+import { useGetFrontComponentObjectMetadata } from '@/front-components/hooks/useGetFrontComponentObjectMetadata';
 import { getMediaFileExtension } from '@/front-components/media-session/utils/getMediaFileExtension';
 import { isNonEmptyBlob } from '@/front-components/utils/isNonEmptyBlob';
 import { setRecordPageActiveTabId } from '@/page-layout/utils/setRecordPageActiveTabId';
@@ -156,6 +157,7 @@ export const useFrontComponentExecutionContext = ({
   storageNamespace?: string;
 } => {
   const currentUser = useAtomStateValue(currentUserState);
+  const getObjectMetadata = useGetFrontComponentObjectMetadata(applicationId);
   const navigateApp = useNavigateApp();
   const location = useLocation();
   const store = useStore();
@@ -652,6 +654,7 @@ export const useFrontComponentExecutionContext = ({
   const frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi =
     {
       navigate,
+      getObjectMetadata,
       requestAccessTokenRefresh,
       openSidePanelPage,
       openCommandConfirmationModal,

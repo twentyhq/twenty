@@ -2,6 +2,7 @@ export { Trans } from './components/Trans';
 export type { TransProps } from './components/Trans';
 export { closeSidePanel } from './functions/closeSidePanel';
 export { copyToClipboard } from './functions/copyToClipboard';
+export { getObjectMetadata } from './functions/getObjectMetadata';
 export { getApplicationVariable } from './functions/getApplicationVariable';
 export { enqueueSnackbar } from './functions/enqueueSnackbar';
 export { navigate } from './functions/navigate';
@@ -33,6 +34,7 @@ export type {
 } from './translations/message';
 export type { FrontComponentExecutionContext } from './types/FrontComponentExecutionContext';
 export type { FrontComponentLocation } from './types/FrontComponentLocation';
+export type { FrontComponentObjectMetadata } from './types/FrontComponentObjectMetadata';
 export type { FrontComponentSelectedObjectMetadata } from './types/FrontComponentSelectedObjectMetadata';
 export type { FrontComponentToolCall } from './types/FrontComponentToolCall';
 export type { FrontComponentToolCallStatus } from './types/FrontComponentToolCallStatus';
@@ -44,6 +46,7 @@ export type {
   CommandConfirmationModalResult,
   CopyToClipboardFunction,
   EnqueueSnackbarFunction,
+  GetObjectMetadataFunction,
   NavigateFunction,
   OpenCommandConfirmationModalFunction,
   OpenCommandConfirmationModalHostFunction,

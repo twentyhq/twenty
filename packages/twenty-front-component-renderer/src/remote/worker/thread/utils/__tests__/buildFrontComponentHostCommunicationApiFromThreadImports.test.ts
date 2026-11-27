@@ -36,6 +36,7 @@ describe('buildFrontComponentHostCommunicationApiFromThreadImports', () => {
       'closeSidePanel',
       'copyToClipboard',
       'enqueueSnackbar',
+      'getObjectMetadata',
       'navigate',
       'openCommandConfirmationModal',
       'openSidePanelPage',

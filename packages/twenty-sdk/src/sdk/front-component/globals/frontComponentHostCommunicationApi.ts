@@ -6,6 +6,7 @@ import {
 } from 'twenty-shared/types';
 import { type getAppPath } from 'twenty-shared/utils';
 
+import { type FrontComponentObjectMetadata } from '../types/FrontComponentObjectMetadata';
 import { type FrontComponentStorageType } from '../types/FrontComponentStorageType';
 
 export type NavigateFunction = <T extends AppPath>(
@@ -117,6 +118,10 @@ export type CloseSidePanelFunction = () => Promise<void>;
 
 export type UpdateProgressFunction = (progress: number) => Promise<void>;
 
+export type GetObjectMetadataFunction = (
+  objectNameSingular: string,
+) => Promise<FrontComponentObjectMetadata | null>;
+
 export type RequestAccessTokenRefreshFunction = () => Promise<string>;
 
 export type CopyToClipboardFunction = (text: string) => Promise<void>;
@@ -171,6 +176,7 @@ export type StorageClearFunction = (params: {
 
 export type FrontComponentHostCommunicationApiStore = {
   navigate?: NavigateFunction;
+  getObjectMetadata?: GetObjectMetadataFunction;
   requestAccessTokenRefresh?: RequestAccessTokenRefreshFunction;
   openSidePanelPage?: OpenSidePanelPageFunction;
   openCommandConfirmationModal?: OpenCommandConfirmationModalFunction;

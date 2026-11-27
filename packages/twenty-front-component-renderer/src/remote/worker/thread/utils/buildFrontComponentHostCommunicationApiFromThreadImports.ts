@@ -6,6 +6,7 @@ export const buildFrontComponentHostCommunicationApiFromThreadImports = (
   hostThreadImports: FrontComponentHostCommunicationApi,
 ): Required<WorkerFrontComponentHostCommunicationApi> => ({
   navigate: hostThreadImports.navigate,
+  getObjectMetadata: hostThreadImports.getObjectMetadata ?? (async () => null),
   requestAccessTokenRefresh: hostThreadImports.requestAccessTokenRefresh,
   openSidePanelPage: hostThreadImports.openSidePanelPage,
   openCommandConfirmationModal:

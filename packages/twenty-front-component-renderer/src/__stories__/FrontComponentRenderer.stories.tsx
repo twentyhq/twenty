@@ -1,6 +1,9 @@
+import { useState } from 'react';
+import { type GetObjectMetadataFunction } from 'twenty-sdk/front-component';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
+import { FRONT_COMPONENT_HOST_COMMUNICATION_API_NOOP } from '@/host/thread/constants/FrontComponentHostCommunicationApiNoop';
 import { FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
 import { getBuiltStoryComponentPathForRender } from '@/__stories__/utils/getBuiltStoryComponentPathForRender';
 
@@ -148,5 +151,75 @@ export const SdkContext: Story = {
     expect(renderCount).toHaveTextContent('Renders: 1');
 
     expect(userIdElement).toHaveTextContent('test-user-abc-123');
+  },
+};
+
+export const CachedObjectMetadata: Story = {
+  ...createComponentStory('sdk-context-example'),
+  render: function Render(args) {
+    const [stageLabel, setStageLabel] = useState<string | null>('Closed won');
+    const getObjectMetadata: GetObjectMetadataFunction = async (
+      objectNameSingular,
+    ) => {
+      if (objectNameSingular !== 'opportunity' || stageLabel === null) {
+        return null;
+      }
+
+      return {
+        id: 'opportunity-id',
+        nameSingular: 'opportunity',
+        namePlural: 'opportunities',
+        labelSingular: 'Opportunity',
+        labelPlural: 'Opportunities',
+        fields: [
+          {
+            id: 'stage-id',
+            name: 'stage',
+            label: 'Sales stage',
+            type: 'SELECT',
+            options: [
+              { value: 'WON', label: stageLabel, position: 0, color: 'green' },
+            ],
+          },
+        ],
+      };
+    };
+
+    return (
+      <>
+        <button onClick={() => setStageLabel('Deal won')}>Rename stage</button>
+        <button onClick={() => setStageLabel(null)}>Disconnect metadata</button>
+        <FrontComponentRenderer
+          componentUrl={args.componentUrl}
+          executionContext={args.executionContext}
+          colorScheme={args.colorScheme}
+          onError={args.onError}
+          frontComponentHostCommunicationApi={{
+            ...FRONT_COMPONENT_HOST_COMMUNICATION_API_NOOP,
+            ...(stageLabel === null ? {} : { getObjectMetadata }),
+          }}
+        />
+      </>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const load = await canvas.findByRole(
+      'button',
+      { name: 'Load stage options' },
+      { timeout: 30000 },
+    );
+    await userEvent.click(load);
+    expect(await canvas.findByText('Closed won')).toBeVisible();
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Rename stage' }));
+    await userEvent.click(load);
+    expect(await canvas.findByText('Deal won')).toBeVisible();
+
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Disconnect metadata' }),
+    );
+    await userEvent.click(load);
+    expect(await canvas.findByText('No metadata available')).toBeVisible();
   },
 };

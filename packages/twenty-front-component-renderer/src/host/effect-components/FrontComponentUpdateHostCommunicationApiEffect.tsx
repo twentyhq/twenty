@@ -12,7 +12,11 @@ export const FrontComponentUpdateHostCommunicationApiEffect = ({
   frontComponentHostCommunicationApi,
 }: FrontComponentUpdateHostCommunicationApiEffectProps) => {
   useEffect(() => {
-    Object.assign(thread.exports, frontComponentHostCommunicationApi);
+    Object.assign(thread.exports, frontComponentHostCommunicationApi, {
+      getObjectMetadata:
+        frontComponentHostCommunicationApi.getObjectMetadata ??
+        (async () => null),
+    });
   }, [thread, frontComponentHostCommunicationApi]);
 
   return null;

@@ -8,6 +8,7 @@ import { themeCssVariables, useThemeColorScheme } from 'twenty-ui/theme';
 
 import { AiChatFrontComponentPreviewEffect } from '@/ai-chat/tool-calls/components/AiChatFrontComponentPreviewEffect';
 import { type useAiChatFrontComponentPreview } from '@/ai-chat/tool-calls/hooks/useAiChatFrontComponentPreview';
+import { useGetFrontComponentObjectMetadata } from '@/front-components/hooks/useGetFrontComponentObjectMetadata';
 
 const StyledPreview = styled.div`
   border: 1px solid ${themeCssVariables.border.color.medium};
@@ -47,6 +48,9 @@ export const AiChatFrontComponentPreviewContent = ({
 }: AiChatFrontComponentPreviewContentProps) => {
   const { t } = useLingui();
   const colorScheme = useThemeColorScheme();
+  const getObjectMetadata = useGetFrontComponentObjectMetadata(
+    preview?.applicationId,
+  );
 
   return (
     <StyledPreview>
@@ -78,6 +82,7 @@ export const AiChatFrontComponentPreviewContent = ({
               componentSource={preview.componentSource}
               sharedDependenciesSource={preview.sharedDependenciesSource}
               mockQueryResult={preview.mockQueryResult}
+              getObjectMetadata={getObjectMetadata}
               selectedRecordIds={preview.selectedRecordIds}
               selectedObjectMetadata={preview.selectedObjectMetadata}
               colorScheme={colorScheme}

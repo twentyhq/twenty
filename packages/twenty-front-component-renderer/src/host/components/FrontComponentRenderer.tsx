@@ -80,7 +80,7 @@ export const FrontComponentRenderer = ({
   applicationVariables,
   storageNamespace,
   executionContext,
-  frontComponentHostCommunicationApi,
+  frontComponentHostCommunicationApi = FRONT_COMPONENT_HOST_COMMUNICATION_API_NOOP,
   mediaSessionHost,
   onError,
   colorScheme,

@@ -576,6 +576,15 @@ The result contains `id` (the workspace's object-metadata UUID), `nameSingular`,
 
 Object metadata can be available even when no records are selected. It belongs to this front component's context, so a side panel can expose a different object from the main page. The hook updates when that context changes and returns `null` when the object cannot be resolved, when no object context is supplied, or when running on an older host that does not provide object metadata.
 
+Use `getObjectMetadata(nameSingular)` from `twenty-sdk/front-component` to read an object's labels, fields and select options from the workspace schema already loaded by Twenty. The lookup also works in AI chat previews. Each call reads the current cache and returns `null` if the schema is unavailable, the object is unknown, or the host does not support this lookup.
+
+```ts
+import { getObjectMetadata } from 'twenty-sdk/front-component';
+
+const opportunity = await getObjectMetadata('opportunity');
+const stageOptions = opportunity?.fields.find((field) => field.name === 'stage')?.options;
+```
+
 ### Host location
 
 Use `useLocation()` to read the route hosting your front component. It returns a `FrontComponentLocation` object with four required string fields: `pathname`, `search`, `hash`, and `origin`. For example, a page at `https://myworkspace.twenty.com/page/page-layout-id?project=abc#details` provides `/page/page-layout-id`, `?project=abc`, `#details`, and `https://myworkspace.twenty.com` respectively. `hash` includes its leading `#` and is `''` when there is no fragment.

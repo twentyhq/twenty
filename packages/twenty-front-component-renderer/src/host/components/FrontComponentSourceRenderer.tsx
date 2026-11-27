@@ -1,5 +1,8 @@
 import { useMemo } from 'react';
-import { type FrontComponentSelectedObjectMetadata } from 'twenty-sdk/front-component';
+import {
+  type FrontComponentSelectedObjectMetadata,
+  type GetObjectMetadataFunction,
+} from 'twenty-sdk/front-component';
 
 import { createMockSdkClientSources } from '@/host/component-source/utils/createMockSdkClientSources';
 
@@ -11,6 +14,7 @@ type FrontComponentSourceRendererProps = {
   componentSource: string;
   sharedDependenciesSource?: string;
   mockQueryResult: Record<string, unknown>;
+  getObjectMetadata?: GetObjectMetadataFunction;
   selectedRecordIds?: string[];
   selectedObjectMetadata?: FrontComponentSelectedObjectMetadata | null;
   colorScheme: 'light' | 'dark';
@@ -25,6 +29,7 @@ export const FrontComponentSourceRenderer = ({
   componentSource,
   sharedDependenciesSource,
   mockQueryResult,
+  getObjectMetadata,
   selectedRecordIds = EMPTY_SELECTED_RECORD_IDS,
   selectedObjectMetadata = null,
   colorScheme,
@@ -34,6 +39,13 @@ export const FrontComponentSourceRenderer = ({
   const sdkClientSources = useMemo(
     () => createMockSdkClientSources(mockQueryResult),
     [mockQueryResult],
+  );
+  const hostCommunicationApi = useMemo(
+    () => ({
+      ...FRONT_COMPONENT_PREVIEW_HOST_COMMUNICATION_API,
+      getObjectMetadata,
+    }),
+    [getObjectMetadata],
   );
   const executionContext = useMemo(
     () => ({
@@ -55,9 +67,7 @@ export const FrontComponentSourceRenderer = ({
       sharedDependenciesSource={sharedDependenciesSource}
       sdkClientSources={sdkClientSources}
       executionContext={executionContext}
-      frontComponentHostCommunicationApi={
-        FRONT_COMPONENT_PREVIEW_HOST_COMMUNICATION_API
-      }
+      frontComponentHostCommunicationApi={hostCommunicationApi}
       colorScheme={colorScheme}
       onReady={onReady}
       onError={onError}
