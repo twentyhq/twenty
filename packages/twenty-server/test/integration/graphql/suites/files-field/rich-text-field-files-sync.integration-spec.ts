@@ -43,6 +43,16 @@ const updateRecordMutation = gql`
   }
 `;
 
+const createRecordsMutation = gql`
+  mutation CreateRichTextFilesTestObjects(
+    $data: [RichTextFilesTestObjectCreateInput!]!
+  ) {
+    createRichTextFilesTestObjects(data: $data) {
+      id
+    }
+  }
+`;
+
 const destroyRecordMutation = gql`
   mutation DestroyRichTextFilesTestObject($id: UUID!) {
     destroyRichTextFilesTestObject(id: $id) {
@@ -221,6 +231,40 @@ describe('Rich text field files sub-field <> files sync', () => {
       files: [{ fileId, label: 'notes.txt' }],
     });
     expect((await findFileRow(fileId))?.deletedAt).toBeNull();
+  });
+
+  it('should leave the text untouched when an update lists only files', async () => {
+    const fileId = await uploadFile(bodyFieldMetadataId);
+    const created = await createRecord([]);
+    const { id } = created.body.data.createRichTextFilesTestObject;
+
+    const updated = await updateRecord({
+      id,
+      body: { files: [{ fileId, label: 'notes.txt' }] },
+    });
+
+    expect(updated.body.errors).toBeUndefined();
+    expect(updated.body.data.updateRichTextFilesTestObject.body).toMatchObject({
+      markdown: 'Notes',
+      files: [{ fileId, label: 'notes.txt' }],
+    });
+  });
+
+  it('should refuse a file two records of one request list', async () => {
+    const fileId = await uploadFile(bodyFieldMetadataId);
+    const body = { markdown: 'Notes', files: [{ fileId, label: 'notes.txt' }] };
+
+    const response = await makeGraphqlApiRequest({
+      query: createRecordsMutation,
+      variables: { data: [{ body }, { body }] },
+    });
+
+    expect(response.body.errors[0].extensions.userFriendlyMessage).toBe(
+      `File ${fileId} is listed more than once. Please re-upload the file.`,
+    );
+    expect(await findFileRow(fileId)).toMatchObject({
+      settings: { isTemporaryFile: true },
+    });
   });
 
   it('should refuse a file uploaded for another field', async () => {

@@ -1,8 +1,4 @@
-import {
-  FieldMetadataType,
-  FileFolder,
-  type ObjectRecord,
-} from 'twenty-shared/types';
+import { FileFolder, type ObjectRecord } from 'twenty-shared/types';
 
 import { type QueryResultGetterHandlerInterface } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-getter-handler.interface';
 
@@ -51,10 +47,10 @@ export class FilesFieldQueryResultGetterHandler implements QueryResultGetterHand
       }
 
       record[field.name] = writeFilesValue({
-        record,
+        fieldValue: record[field.name],
         field,
         filesValue: signedFilesFieldValue,
-      })[field.name];
+      });
     }
 
     return record;

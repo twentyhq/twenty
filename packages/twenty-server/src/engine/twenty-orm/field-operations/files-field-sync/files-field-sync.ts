@@ -465,7 +465,21 @@ export class FilesFieldSync {
         const fieldUniversalIdentifier =
           fieldNameToUniversalIdentifier.get(fieldName);
 
+        const fileIdsAddedElsewhere = new Set(allFileIds.toAdd);
+
         diff.toAdd.forEach((file) => {
+          if (fileIdsAddedElsewhere.has(file.fileId)) {
+            const fileId = file.fileId;
+
+            throw new TwentyOrmException(
+              `File ${fileId} is listed by more than one record or field`,
+              TwentyOrmExceptionCode.INVALID_INPUT,
+              {
+                userFriendlyMessage: msg`File ${fileId} is listed more than once. Please re-upload the file.`,
+              },
+            );
+          }
+
           allFileIds.toAdd.add(file.fileId);
           allFileIdsToFetch.add(file.fileId);
           if (isDefined(fieldUniversalIdentifier)) {
@@ -668,11 +682,14 @@ export class FilesFieldSync {
           return enrichedFile || file;
         });
 
-        updatedEntity = writeFilesValue({
-          record: updatedEntity,
-          field: filesField,
-          filesValue: updatedFiles,
-        });
+        updatedEntity = {
+          ...updatedEntity,
+          [filesField.name]: writeFilesValue({
+            fieldValue: updatedEntity[filesField.name],
+            field: filesField,
+            filesValue: updatedFiles,
+          }),
+        };
       }
 
       return updatedEntity as QueryDeepPartialEntity<Entity>;
