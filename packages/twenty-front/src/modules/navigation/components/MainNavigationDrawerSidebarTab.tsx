@@ -83,7 +83,7 @@ export const MainNavigationDrawerSidebarTab = ({
   };
 
   const handleClick = () => {
-    if (isActive && isTabMenuAvailable) {
+    if (isActive && isLayoutCustomizationModeEnabled) {
       return;
     }
 
@@ -153,13 +153,12 @@ export const MainNavigationDrawerSidebarTab = ({
           onOpen={() => setNavigationMenuItemIdToRename(null)}
         />
       )}
-      <StyledAnchor
-        ref={anchorRef}
-        onContextMenu={
-          isLayoutCustomizationModeEnabled ? handleContextMenu : undefined
-        }
-      >
-        {isActive ? <Dropdown.Trigger render={tabButton} /> : tabButton}
+      <StyledAnchor ref={anchorRef} onContextMenu={handleContextMenu}>
+        {isActive && isLayoutCustomizationModeEnabled ? (
+          <Dropdown.Trigger render={tabButton} />
+        ) : (
+          tabButton
+        )}
       </StyledAnchor>
       <DropdownContent
         anchor={anchorRef}

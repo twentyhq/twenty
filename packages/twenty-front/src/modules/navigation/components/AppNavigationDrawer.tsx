@@ -80,7 +80,7 @@ export const AppNavigationDrawer = ({
           )}
         </NavigationDrawerModeTransition>
 
-        {shouldPinTabsToBottom && (
+        {shouldPinTabsToBottom && !isSettingsDrawer && (
           <>
             <StyledGettingStartedCardContainer>
               {gettingStartedCard}
