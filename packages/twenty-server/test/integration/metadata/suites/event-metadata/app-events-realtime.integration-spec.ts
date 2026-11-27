@@ -335,6 +335,21 @@ describe('app events realtime (e2e)', () => {
     });
   });
 
+  it('refuses an enum that is not a list', async () => {
+    await syncEvents({
+      events: [
+        {
+          ...MESSAGE_ADDED_EVENT,
+          schema: JSON.parse(
+            '{"type":"object","properties":{"channel":{"type":"string","enum":"email"}}}',
+          ),
+          capabilities: undefined,
+        },
+      ],
+      expectToFail: true,
+    });
+  });
+
   it('refuses a record scope on a property that is not a record', async () => {
     await syncEvents({
       events: [
