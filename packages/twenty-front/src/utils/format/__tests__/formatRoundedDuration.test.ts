@@ -10,6 +10,8 @@ describe('formatRoundedDuration', () => {
     [120_000, '2m'],
     [3_600_000, '1h'],
     [3_960_000, '1h 6m'],
+    [86_400_000, '1d'],
+    [93_600_000, '1d 2h'],
   ])('formats %sms as %s', (durationMs, expected) => {
     expect(formatRoundedDuration(durationMs)).toBe(expected);
   });
