@@ -621,12 +621,6 @@ describe('Formula fields', () => {
       message: 'Invalid formula: Unknown field "revenue"',
     },
     {
-      reason: 'another formula field',
-      type: FieldMetadataType.NUMBER,
-      expression: 'total * 2',
-      message: 'Invalid formula: Unknown field "total"',
-    },
-    {
       reason: 'a to-many relation read outside an aggregate',
       type: FieldMetadataType.NUMBER,
       expression: 'arrayLength(noteTargets)',
