@@ -2,16 +2,19 @@ import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { type WidgetVisibilityContext } from '@/page-layout/types/WidgetVisibilityContext';
 import { evaluateWidgetVisibility } from '@/page-layout/utils/evaluateWidgetVisibility';
 import { evaluateConditionalEvaluationNode } from 'twenty-shared/conditional-evaluation';
+import { type ValidationRuleFieldDescriptor } from 'twenty-shared/types';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 type FilterVisibleWidgetsParams = {
   widgets: PageLayoutTab['widgets'];
   context: WidgetVisibilityContext;
+  fields?: ValidationRuleFieldDescriptor[];
 };
 
 export const filterVisibleWidgets = ({
   widgets,
   context,
+  fields,
 }: FilterVisibleWidgetsParams): PageLayoutTab['widgets'] => {
   const isWidgetConditionalAvailabilityEnabled =
     context.featureFlags[
@@ -27,14 +30,19 @@ export const filterVisibleWidgets = ({
         conditionalDisplay: widget.conditionalDisplay,
         conditionalAvailability: widget.conditionalAvailability,
         context,
+        fields,
       }),
     );
   }
+
+  const [targetRecord] = context.selectedRecords;
 
   return widgets.filter((widget) =>
     evaluateConditionalEvaluationNode({
       node: widget.conditionalAvailability,
       context,
+      record: targetRecord,
+      fields,
     }),
   );
 };

@@ -6,6 +6,7 @@ import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageL
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { useIsPageLayoutWidgetReadable } from '@/page-layout/hooks/useIsPageLayoutWidgetReadable';
 import { useWidgetVisibilityContext } from '@/page-layout/hooks/useWidgetVisibilityContext';
+import { useWidgetVisibilityFields } from '@/page-layout/hooks/useWidgetVisibilityFields';
 import { getIsFirstTabPinned } from '@/page-layout/utils/getIsFirstTabPinned';
 import { getTabsByDisplayMode } from '@/page-layout/utils/getTabsByDisplayMode';
 import { getTabsRenderableForTargetObject } from '@/page-layout/utils/getTabsRenderableForTargetObject';
@@ -24,6 +25,7 @@ export const usePageLayoutRenderableTabs = () => {
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
   const { objectMetadataItems } = useObjectMetadataItems();
   const widgetVisibilityContext = useWidgetVisibilityContext();
+  const widgetVisibilityFields = useWidgetVisibilityFields();
   const isWidgetReadable = useIsPageLayoutWidgetReadable();
   const inboxNamesByLegacyName = useAtomStateValue(
     inboxNamesByLegacyNameSelector,
@@ -45,6 +47,7 @@ export const usePageLayoutRenderableTabs = () => {
     tabs: tabsWithReadableWidgets,
     isEditMode: isPageLayoutInEditMode,
     context: widgetVisibilityContext,
+    fields: widgetVisibilityFields,
   });
 
   // Edit mode keeps every tab visible so unsupported widgets can still be removed.

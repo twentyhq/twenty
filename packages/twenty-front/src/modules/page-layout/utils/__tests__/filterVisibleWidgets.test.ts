@@ -2,6 +2,7 @@ import { EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT } from '@/condition
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { filterVisibleWidgets } from '@/page-layout/utils/filterVisibleWidgets';
 import { buildDeviceConditionalEvaluationNode } from 'twenty-shared/conditional-evaluation';
+import { FieldMetadataType } from 'twenty-shared/types';
 import {
   FeatureFlagKey,
   PageLayoutTabLayoutMode,
@@ -167,6 +168,44 @@ describe('filterVisibleWidgets', () => {
       ];
 
       const result = filterVisibleWidgets({ widgets, context });
+
+      expect(result.map((widget) => widget.id)).toEqual(['widget-1']);
+    });
+
+    it('should apply a rule on a field of the record of the page', () => {
+      const buildWidgetForStage = ({
+        id,
+        stage,
+      }: {
+        id: string;
+        stage: string;
+      }) => ({
+        ...createMockWidget(id),
+        conditionalAvailability: {
+          type: 'COMPARISON' as const,
+          operator: 'EQUAL' as const,
+          left: {
+            type: 'FIELD' as const,
+            fieldUniversalIdentifier: 'stage-universal-identifier',
+          },
+          right: { type: 'LITERAL' as const, value: stage },
+        },
+      });
+
+      const result = filterVisibleWidgets({
+        widgets: [
+          buildWidgetForStage({ id: 'widget-1', stage: 'WON' }),
+          buildWidgetForStage({ id: 'widget-2', stage: 'LOST' }),
+        ],
+        context: { ...context, selectedRecords: [{ stage: 'WON' }] },
+        fields: [
+          {
+            name: 'stage',
+            type: FieldMetadataType.SELECT,
+            universalIdentifier: 'stage-universal-identifier',
+          },
+        ],
+      });
 
       expect(result.map((widget) => widget.id)).toEqual(['widget-1']);
     });

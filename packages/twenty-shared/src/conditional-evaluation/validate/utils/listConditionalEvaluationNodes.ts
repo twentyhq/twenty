@@ -6,6 +6,7 @@ const getChildNodes = (
   switch (node.type) {
     case 'LITERAL':
     case 'VARIABLE':
+    case 'FIELD':
       return [];
     case 'COMPARISON':
       return [node.left, node.right];
