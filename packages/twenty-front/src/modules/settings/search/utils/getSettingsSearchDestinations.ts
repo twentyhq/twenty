@@ -2,6 +2,7 @@ import { type WorkspaceRouteObject } from '@/app/routing/types/WorkspaceRouteObj
 import { type SettingsSearchAvailability } from '@/settings/search/types/SettingsSearchAvailability';
 import { type SettingsSearchDestination } from '@/settings/search/types/SettingsSearchDestination';
 import { type SettingsSearchRouteMetadata } from '@/settings/search/types/SettingsSearchRouteMetadata';
+import { getAvailableSettingsTabs } from '@/settings/utils/getAvailableSettingsTabs';
 import { collectSettingsSearchRoutes } from '@/settings/search/utils/collectSettingsSearchRoutes';
 import { isSettingsSearchRouteAvailable } from '@/settings/search/utils/isSettingsSearchRouteAvailable';
 import { type I18n } from '@lingui/core';
@@ -38,11 +39,32 @@ export const getSettingsSearchDestinations = ({
 
   return routes
     .filter((route) => isSettingsSearchRouteAvailable({ route, availability }))
-    .map(({ path, metadata }) => ({
-      id: `settings-search-${path}`,
-      path: getSettingsPath(path),
-      title: i18n._(metadata.title),
-      breadcrumbs: getBreadcrumbs(metadata),
-      keywords: (metadata.keywords ?? []).map((keyword) => i18n._(keyword)),
-    }));
+    .flatMap(({ path, metadata }) => {
+      const title = i18n._(metadata.title);
+      const breadcrumbs = getBreadcrumbs(metadata);
+      const [defaultTab, ...otherTabs] = getAvailableSettingsTabs({
+        tabs: metadata.tabs ?? [],
+        permissionFlagMap: availability.permissionFlagMap,
+      });
+
+      return [
+        {
+          id: `settings-search-${path}`,
+          path: getSettingsPath(path),
+          title,
+          breadcrumbs,
+          keywords: [
+            ...(metadata.keywords ?? []),
+            ...(isDefined(defaultTab) ? [defaultTab.title] : []),
+          ].map((keyword) => i18n._(keyword)),
+        },
+        ...otherTabs.map((tab) => ({
+          id: `settings-search-${path}#${tab.id}`,
+          path: getSettingsPath(path, undefined, undefined, tab.id),
+          title: i18n._(tab.title),
+          breadcrumbs: [...breadcrumbs, title],
+          keywords: [],
+        })),
+      ];
+    });
 };

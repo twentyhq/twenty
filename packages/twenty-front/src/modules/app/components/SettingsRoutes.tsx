@@ -12,6 +12,8 @@ import {
 
 import { type WorkspaceRouteObject } from '@/app/routing/types/WorkspaceRouteObject';
 import { SETTINGS_AI_TABS } from '@/settings/ai/constants/SettingsAiTabs';
+import { SETTINGS_DEVELOPERS_TABS } from '@/settings/developers/constants/SettingsDevelopersTabs';
+import { SETTINGS_WORKSPACE_MEMBERS_TABS } from '@/settings/members/constants/SettingsWorkspaceMembersTabs';
 import { SettingsLegacyAccountsRedirect } from '@/settings/app-preferences/components/SettingsLegacyAccountsRedirect';
 import { APP_PREFERENCES_PATH_BY_LEGACY_ACCOUNTS_PATH } from '@/settings/app-preferences/constants/AppPreferencesPathByLegacyAccountsPath';
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
@@ -1163,7 +1165,11 @@ const createSettingsRouteElements = ({
         element={<SettingsWorkspaceMembers />}
         handle={buildSettingsSearchRouteHandle({
           handle: MEMBERS_LIST_SETTINGS_ROUTE_HANDLE,
-          settingsSearch: { title: msg`Members`, section: WORKSPACE_SECTION },
+          settingsSearch: {
+            title: msg`Members`,
+            section: WORKSPACE_SECTION,
+            tabs: SETTINGS_WORKSPACE_MEMBERS_TABS.TABS,
+          },
         })}
       />
       <Route
@@ -1311,6 +1317,7 @@ const createSettingsRouteElements = ({
           settingsSearch: {
             title: msg`Developers`,
             section: WORKSPACE_SECTION,
+            tabs: SETTINGS_DEVELOPERS_TABS.TABS,
           },
         })}
       />

@@ -2,62 +2,46 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
-import {
-  IconLock,
-  IconSparkle2,
-  IconUserPlus,
-  IconUsers,
-} from 'twenty-ui/icon';
+import { IconSparkle2 } from 'twenty-ui/icon';
 
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
+import { SETTINGS_WORKSPACE_MEMBERS_TABS } from '@/settings/members/constants/SettingsWorkspaceMembersTabs';
+import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
+import { getAvailableSettingsTabs } from '@/settings/utils/getAvailableSettingsTabs';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import coverDark from '~/pages/settings/members/assets/cover-dark.png';
 import coverLight from '~/pages/settings/members/assets/cover-light.png';
 import { SettingsWorkspaceMembersInviteTab } from '~/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab';
 import { SettingsWorkspaceMembersRolesTab } from '~/pages/settings/members/tabs/SettingsWorkspaceMembersRolesTab';
 import { SettingsWorkspaceMembersTeamTab } from '~/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab';
 
-const MEMBERS_TAB_LIST_ID = 'members-tab-list';
-
-const MEMBERS_TAB_TEAM_ID = 'team';
-const MEMBERS_TAB_INVITE_ID = 'invite';
-const MEMBERS_TAB_ROLES_ID = 'roles';
-
 const SETTINGS_MEMBERS_HERO_INSTANCE_ID_PREFIX = 'settings-members-hero';
 
 export const SettingsWorkspaceMembers = () => {
-  const { t } = useLingui();
+  const { t, i18n } = useLingui();
 
-  const hasRolesPermission = useHasPermissionFlag(PermissionFlagType.ROLES);
+  const permissionFlagMap = useAtomStateValue(permissionFlagMapSelector);
 
-  const tabs = [
-    { id: MEMBERS_TAB_TEAM_ID, title: t`Team`, Icon: IconUsers },
-    { id: MEMBERS_TAB_INVITE_ID, title: t`Invite`, Icon: IconUserPlus },
-    ...(hasRolesPermission
-      ? [{ id: MEMBERS_TAB_ROLES_ID, title: t`Roles`, Icon: IconLock }]
-      : []),
-  ];
+  const tabs = getAvailableSettingsTabs({
+    tabs: SETTINGS_WORKSPACE_MEMBERS_TABS.TABS,
+    permissionFlagMap,
+  }).map(({ id, title, Icon }) => ({ id, title: i18n._(title), Icon }));
 
   const activeTabId = useSettingsActiveTabId(
-    MEMBERS_TAB_LIST_ID,
+    SETTINGS_WORKSPACE_MEMBERS_TABS.COMPONENT_INSTANCE_ID,
     tabs.map((tab) => tab.id),
   );
 
   const renderActiveTabContent = () => {
     switch (activeTabId) {
-      case MEMBERS_TAB_INVITE_ID:
+      case SETTINGS_WORKSPACE_MEMBERS_TABS.TABS_IDS.INVITE:
         return <SettingsWorkspaceMembersInviteTab />;
-      case MEMBERS_TAB_ROLES_ID:
-        return hasRolesPermission ? (
-          <SettingsWorkspaceMembersRolesTab />
-        ) : (
-          <SettingsWorkspaceMembersTeamTab />
-        );
+      case SETTINGS_WORKSPACE_MEMBERS_TABS.TABS_IDS.ROLES:
+        return <SettingsWorkspaceMembersRolesTab />;
       default:
         return <SettingsWorkspaceMembersTeamTab />;
     }
@@ -70,7 +54,9 @@ export const SettingsWorkspaceMembers = () => {
         <SettingsTabBar
           aria-label={t`Workspace members`}
           tabs={tabs}
-          componentInstanceId={MEMBERS_TAB_LIST_ID}
+          componentInstanceId={
+            SETTINGS_WORKSPACE_MEMBERS_TABS.COMPONENT_INSTANCE_ID
+          }
         />
       }
       links={[
