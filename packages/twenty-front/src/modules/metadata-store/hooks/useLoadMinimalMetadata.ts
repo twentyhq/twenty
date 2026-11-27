@@ -9,9 +9,9 @@ import {
   type MetadataEntityKey,
 } from '@/metadata-store/states/metadataStoreState';
 import { type FlatObjectMetadataItem } from '@/metadata-store/types/FlatObjectMetadataItem';
-import { type FlatView } from '@/metadata-store/types/FlatView';
 import { type FindMinimalMetadataQuery } from '@/metadata-store/types/MinimalMetadata';
 import { getDraftOrCurrentMetadataItems } from '@/metadata-store/utils/getDraftOrCurrentMetadataItems';
+import { mergeMinimalViewsWithCachedViews } from '@/metadata-store/utils/mergeMinimalViewsWithCachedViews';
 import { mapAllMetadataNameToEntityKey } from '@/metadata-store/utils/mapAllMetadataNameToEntityKey';
 import { useApolloClient } from '@apollo/client/react';
 import { useStore } from 'jotai';
@@ -113,20 +113,13 @@ export const useLoadMinimalMetadata = () => {
       );
 
     if (areViewsStale) {
-      const cachedViewsById = new Map(
-        getDraftOrCurrentMetadataItems({
+      const mergedViews = mergeMinimalViewsWithCachedViews({
+        minimalViews: views,
+        cachedViews: getDraftOrCurrentMetadataItems({
           store,
           metadataEntityKey: 'views',
-        }).map((view) => [view.id, view]),
-      );
-
-      const mergedViews = views.map(
-        ({ __typename: _typename, ...minimalView }) =>
-          ({
-            ...cachedViewsById.get(minimalView.id),
-            ...minimalView,
-          }) as FlatView,
-      );
+        }),
+      });
 
       replaceViewsDraft({
         views: mergedViews,

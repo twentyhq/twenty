@@ -33,10 +33,13 @@ export const useReplaceViewsDraft = () => {
       viewIdsKeepingChildren: Set<string>;
       addedViewChildren?: AddedViewChildren;
     }) => {
-      const replaceChildrenDraft = <TKey extends ViewChildEntityKey>(
-        key: TKey,
-        addedChildren: MetadataEntityTypeMap[TKey][] = [],
-      ) =>
+      const replaceChildrenDraft = <TKey extends ViewChildEntityKey>({
+        key,
+        addedChildren = [],
+      }: {
+        key: TKey;
+        addedChildren?: MetadataEntityTypeMap[TKey][];
+      }) =>
         replaceDraft(key, [
           ...getDraftOrCurrentMetadataItems({
             store,
@@ -46,18 +49,30 @@ export const useReplaceViewsDraft = () => {
         ]);
 
       replaceDraft('views', views);
-      replaceChildrenDraft('viewFields', addedViewChildren?.flatViewFields);
-      replaceChildrenDraft('viewFilters', addedViewChildren?.flatViewFilters);
-      replaceChildrenDraft('viewSorts', addedViewChildren?.flatViewSorts);
-      replaceChildrenDraft('viewGroups', addedViewChildren?.flatViewGroups);
-      replaceChildrenDraft(
-        'viewFilterGroups',
-        addedViewChildren?.flatViewFilterGroups,
-      );
-      replaceChildrenDraft(
-        'viewFieldGroups',
-        addedViewChildren?.flatViewFieldGroups,
-      );
+      replaceChildrenDraft({
+        key: 'viewFields',
+        addedChildren: addedViewChildren?.flatViewFields,
+      });
+      replaceChildrenDraft({
+        key: 'viewFilters',
+        addedChildren: addedViewChildren?.flatViewFilters,
+      });
+      replaceChildrenDraft({
+        key: 'viewSorts',
+        addedChildren: addedViewChildren?.flatViewSorts,
+      });
+      replaceChildrenDraft({
+        key: 'viewGroups',
+        addedChildren: addedViewChildren?.flatViewGroups,
+      });
+      replaceChildrenDraft({
+        key: 'viewFilterGroups',
+        addedChildren: addedViewChildren?.flatViewFilterGroups,
+      });
+      replaceChildrenDraft({
+        key: 'viewFieldGroups',
+        addedChildren: addedViewChildren?.flatViewFieldGroups,
+      });
     },
     [store, replaceDraft],
   );
