@@ -1773,6 +1773,12 @@ export enum ConnectionProviderScope {
   WORKSPACE = 'WORKSPACE'
 }
 
+export type ContinueInteractiveConnectionInput = {
+  action: InteractiveConnectionAction;
+  flowId: Scalars['UUID']['input'];
+  values?: InputMaybe<Scalars['JSON']['input']>;
+};
+
 export type CreateAgentChatChannelInput = {
   color?: InputMaybe<Scalars['String']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
@@ -3249,6 +3255,26 @@ export type InitiateTwoFactorAuthenticationProvisioning = {
   uri: Scalars['String']['output'];
 };
 
+export enum InteractiveConnectionAction {
+  CANCEL = 'CANCEL',
+  POLL = 'POLL',
+  SUBMIT = 'SUBMIT'
+}
+
+export enum InteractiveConnectionStatus {
+  CANCELLED = 'CANCELLED',
+  CONNECTED = 'CONNECTED',
+  IN_PROGRESS = 'IN_PROGRESS'
+}
+
+export type InteractiveConnectionStep = {
+  __typename?: 'InteractiveConnectionStep';
+  connectedAccountId?: Maybe<Scalars['UUID']['output']>;
+  flowId?: Maybe<Scalars['UUID']['output']>;
+  screen?: Maybe<Scalars['JSON']['output']>;
+  status: InteractiveConnectionStatus;
+};
+
 export type InvalidatePassword = {
   __typename?: 'InvalidatePassword';
   /** Boolean that confirms query was dispatched */
@@ -3828,6 +3854,7 @@ export type Mutation = {
   completeWorkspaceLogoUpload: FileWithSignedUrl;
   completeWorkspaceMemberProfilePictureUpload: FileWithSignedUrl;
   connectApplicationWithApiKey: Scalars['UUID']['output'];
+  continueInteractiveConnection: InteractiveConnectionStep;
   createAgentChatChannel: AgentChatChannel;
   createApiKey: ApiKey;
   createAppMessageChannel: MessageChannel;
@@ -4023,6 +4050,7 @@ export type Mutation = {
   snoozeAgentChatThreadInChannel: Scalars['Boolean']['output'];
   startAppChannelConversation: SendAppChannelMessageOutput;
   startChannelSync: ChannelSyncSuccess;
+  startInteractiveConnection: InteractiveConnectionStep;
   startWorkspaceSetupChat: StartWorkspaceSetupChatResult;
   stopAgentChatStream: Scalars['Boolean']['output'];
   stopGenerate: Scalars['Boolean']['output'];
@@ -4255,6 +4283,11 @@ export type MutationCompleteWorkspaceMemberProfilePictureUploadArgs = {
 
 export type MutationConnectApplicationWithApiKeyArgs = {
   input: ConnectApplicationWithApiKeyInput;
+};
+
+
+export type MutationContinueInteractiveConnectionArgs = {
+  input: ContinueInteractiveConnectionInput;
 };
 
 
@@ -5223,6 +5256,11 @@ export type MutationStartAppChannelConversationArgs = {
 
 export type MutationStartChannelSyncArgs = {
   connectedAccountId: Scalars['UUID']['input'];
+};
+
+
+export type MutationStartInteractiveConnectionArgs = {
+  input: StartInteractiveConnectionInput;
 };
 
 
@@ -7645,6 +7683,12 @@ export type StartAppChannelConversationInput = {
   messageChannelId: Scalars['UUID']['input'];
   personId: Scalars['UUID']['input'];
   text: Scalars['String']['input'];
+};
+
+export type StartInteractiveConnectionInput = {
+  applicationId: Scalars['UUID']['input'];
+  providerName: Scalars['String']['input'];
+  reconnectingConnectedAccountId?: InputMaybe<Scalars['UUID']['input']>;
 };
 
 export type StartWorkspaceSetupChatResult = {
