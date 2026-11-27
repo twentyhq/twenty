@@ -34,5 +34,8 @@ export const buildAgentChatChannelViewsToCreateForChannels = <
     viewFiltersToCreate: channelViewsToCreate.flatMap(
       ({ viewFiltersToCreate }) => viewFiltersToCreate,
     ),
+    viewFieldsToCreate: channelViewsToCreate.flatMap(
+      ({ viewFieldsToCreate }) => viewFieldsToCreate,
+    ),
   };
 };
