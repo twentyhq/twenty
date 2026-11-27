@@ -19,7 +19,7 @@ const RECEIPT_ICONS: Record<ChatMessageReceiptStatus, IconComponent> = {
 const StyledReceipt = styled.span<{ isRead: boolean }>`
   color: ${({ isRead }) =>
     isRead
-      ? themeCssVariables.color.blue
+      ? themeCssVariables.accent.accent9
       : themeCssVariables.font.color.tertiary};
   display: inline-flex;
 `;

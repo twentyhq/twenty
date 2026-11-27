@@ -25,7 +25,7 @@ export const WorkflowDiagramConnection = ({
     <path
       d={path}
       fill="none"
-      stroke={theme.color.blue}
+      stroke={theme.accent.accent9}
       markerEnd={`url(#${EDGE_BRANCH_ARROW_MARKER.Selected.markerEnd})`}
     />
   );

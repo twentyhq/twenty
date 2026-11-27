@@ -12,5 +12,5 @@ export const getFormFieldBorderColor = ({
   variant?: FormFieldInputVariant;
 }) =>
   isFocused && hasFullFormFieldBorder({ hasRightElement, variant })
-    ? themeCssVariables.color.blue
+    ? themeCssVariables.accent.accent9
     : themeCssVariables.border.color.medium;

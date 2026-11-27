@@ -21,7 +21,7 @@ const computeBorderColor = (
   >,
 ): string => {
   if (props.isEditable && (props.isEditing || props.isDragging)) {
-    return themeCssVariables.color.blue;
+    return themeCssVariables.accent.accent9;
   }
   if (props.variant === 'framed') {
     return themeCssVariables.border.color.light;

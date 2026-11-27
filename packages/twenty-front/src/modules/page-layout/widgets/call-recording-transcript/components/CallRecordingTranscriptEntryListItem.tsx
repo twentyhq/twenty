@@ -16,7 +16,7 @@ const StyledEntry = styled.li<{
   isSelectable: boolean;
 }>`
   background: ${({ isActive }) =>
-    isActive ? themeCssVariables.background.transparent.blue : 'transparent'};
+    isActive ? themeCssVariables.accent.transparent : 'transparent'};
   border-radius: ${themeCssVariables.border.radius.sm};
   cursor: ${({ isSelectable }) => (isSelectable ? 'pointer' : 'default')};
   display: flex;
@@ -28,7 +28,7 @@ const StyledEntry = styled.li<{
   &:hover {
     background: ${({ isActive, isSelectable }) =>
       isActive
-        ? themeCssVariables.background.transparent.blue
+        ? themeCssVariables.accent.transparent
         : isSelectable
           ? themeCssVariables.background.transparent.lighter
           : 'transparent'};
@@ -57,7 +57,7 @@ const StyledTimestamp = styled.span`
   }
 
   &:focus-visible {
-    outline: 2px solid ${themeCssVariables.border.color.blue};
+    outline: 2px solid ${themeCssVariables.accent.accent7};
     outline-offset: 2px;
   }
 `;

@@ -61,7 +61,7 @@ const StyledEditor = styled.div<{ hasError: boolean }>`
   position: relative;
 
   &:focus-within {
-    border-color: ${themeCssVariables.color.blue};
+    border-color: ${themeCssVariables.accent.accent9};
   }
 
   .tiptap {

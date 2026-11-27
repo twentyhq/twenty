@@ -34,7 +34,7 @@ const StyledGroupContainer = styled.div<{ isDragging: boolean }>`
     isDragging ? themeCssVariables.background.primary : 'transparent'};
   border: 1px solid
     ${({ isDragging }) =>
-      isDragging ? themeCssVariables.color.blue : 'transparent'};
+      isDragging ? themeCssVariables.accent.accent9 : 'transparent'};
   border-radius: ${themeCssVariables.border.radius.md};
   display: flex;
   flex-direction: column;

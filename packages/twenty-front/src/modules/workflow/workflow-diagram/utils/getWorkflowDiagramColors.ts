@@ -80,8 +80,8 @@ export const getWorkflowDiagramColors = ({
     default: {
       return {
         selected: {
-          background: themeCssVariables.color.blue2,
-          borderColor: themeCssVariables.color.blue,
+          background: themeCssVariables.accent.accent2,
+          borderColor: themeCssVariables.accent.accent9,
           color: themeCssVariables.tag.text.blue,
           titleColor: themeCssVariables.font.color.primary,
           tagBackground: themeCssVariables.border.color.strong,

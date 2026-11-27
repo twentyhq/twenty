@@ -45,7 +45,7 @@ const StyledDropZone = styled.div`
 
   &:focus-visible,
   &[data-drag-active] {
-    border-color: ${themeCssVariables.color.blue};
+    border-color: ${themeCssVariables.accent.accent9};
   }
 
   &[data-drag-active] {

@@ -6,9 +6,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 const StyledFilesFieldDropZone = styled.div<{ isDragActive: boolean }>`
   border-radius: ${themeCssVariables.border.radius.md};
   outline: ${({ isDragActive }) =>
-    isDragActive
-      ? `1px dashed ${themeCssVariables.border.color.blue}`
-      : 'none'};
+    isDragActive ? `1px dashed ${themeCssVariables.accent.accent7}` : 'none'};
   outline-offset: -1px;
   width: 100%;
 `;

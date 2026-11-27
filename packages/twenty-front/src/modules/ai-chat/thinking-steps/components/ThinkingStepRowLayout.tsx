@@ -83,7 +83,7 @@ const StyledRow = styled.div<{ isExpandable: boolean }>`
   }
 
   &:focus-visible {
-    outline: 2px solid ${themeCssVariables.color.blue};
+    outline: 2px solid ${themeCssVariables.accent.accent9};
     outline-offset: 2px;
   }
 `;

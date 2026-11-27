@@ -51,16 +51,16 @@ const StyledEditor = styled.div<{
     }
 
     .variable-tag {
-      background-color: ${themeCssVariables.color.blue3};
+      background-color: ${themeCssVariables.accent.accent3};
       border-radius: ${themeCssVariables.border.radius.md};
-      color: ${themeCssVariables.color.blue};
+      color: ${themeCssVariables.accent.accent9};
       padding: ${themeCssVariables.spacing[1]};
     }
 
     .text-tag {
-      background-color: ${themeCssVariables.color.blue3};
+      background-color: ${themeCssVariables.accent.accent3};
       border-radius: ${themeCssVariables.border.radius.md};
-      color: ${themeCssVariables.color.blue};
+      color: ${themeCssVariables.accent.accent9};
       padding: ${themeCssVariables.spacing[1]};
     }
   }

@@ -22,7 +22,7 @@ const StyledReplyLine = styled.div<{ isClickable: boolean }>`
   width: 0;
 
   &:focus-visible {
-    outline: 2px solid ${themeCssVariables.color.blue};
+    outline: 2px solid ${themeCssVariables.accent.accent9};
     outline-offset: ${themeCssVariables.spacing[0.5]};
   }
 `;

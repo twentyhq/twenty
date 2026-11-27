@@ -12,7 +12,7 @@ const StyledEmptyGroupDropZone = styled.div<{ isDropTarget: boolean }>`
   border: 1px dashed
     ${({ isDropTarget }) =>
       isDropTarget
-        ? themeCssVariables.color.blue
+        ? themeCssVariables.accent.accent9
         : themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.sm};
   color: ${themeCssVariables.font.color.light};

@@ -26,7 +26,7 @@ const StyledAnimatedContainer = styled(motion.div)`
 
 const StyledContainer = styled.div`
   align-items: center;
-  background: ${themeCssVariables.color.blue};
+  background: ${themeCssVariables.accent.accent9};
   box-sizing: border-box;
   color: ${themeCssVariables.font.color.onAccent};
   display: flex;

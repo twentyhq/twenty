@@ -30,7 +30,7 @@
 
 .indicator {
   fill: none;
-  stroke: var(--progress-ring-color, var(--t-color-blue));
+  stroke: var(--progress-ring-color, var(--t-accent-accent9));
   transition: stroke-dashoffset duration(normal) ease;
 }
 

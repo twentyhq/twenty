@@ -59,13 +59,13 @@ const StyledFolderContainer = styled.div<{
   border-radius: ${themeCssVariables.border.radius.md};
   outline: ${({ $isSelectedInEditMode }) =>
     $isSelectedInEditMode
-      ? `1px solid ${themeCssVariables.color.blue}`
+      ? `1px solid ${themeCssVariables.accent.accent9}`
       : 'none'};
   outline-offset: -1px;
   transition: background-color 150ms ease-in-out;
 
   &[data-drag-over-header='true'] {
-    background-color: ${themeCssVariables.background.transparent.blue};
+    background-color: ${themeCssVariables.accent.transparent};
   }
 
   &[data-forbidden-drop-target='true'] {

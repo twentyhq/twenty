@@ -59,7 +59,7 @@ const StyledDayHeaderDayContainer = styled.div`
 const StyledDayHeaderDay = styled.span<{ isToday: boolean }>`
   align-items: center;
   background: ${({ isToday }) =>
-    isToday ? themeCssVariables.color.blue : 'transparent'};
+    isToday ? themeCssVariables.accent.accent9 : 'transparent'};
   border-radius: ${({ isToday }) => (isToday ? '4px' : '0')};
   color: ${({ isToday }) =>
     isToday

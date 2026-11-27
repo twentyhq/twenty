@@ -136,7 +136,7 @@ export const SettingsSsoSamlForm = () => {
             <IconCheck
               size={theme.icon.size.md}
               stroke={theme.icon.stroke.lg}
-              color={theme.color.blue}
+              color={theme.accent.accent9}
             />
           )}
         </StyledUploadFileContainer>

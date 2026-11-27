@@ -23,7 +23,7 @@
     display: grid;
 
     &:has(.item:focus-visible) {
-      border-color: var(--t-color-blue);
+      border-color: var(--t-accent-accent9);
     }
 
     .item {

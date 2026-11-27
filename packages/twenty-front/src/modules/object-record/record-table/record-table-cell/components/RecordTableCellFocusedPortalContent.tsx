@@ -27,14 +27,14 @@ const StyledRecordTableCellFocusPortalContent = styled.div<{
   border-radius: ${themeCssVariables.border.radius.sm};
   box-shadow: ${({ isTopEdgeCoveredByHeader }) =>
     isTopEdgeCoveredByHeader
-      ? `inset 0 1px 0 0 ${themeCssVariables.color.blue8}`
+      ? `inset 0 1px 0 0 ${themeCssVariables.accent.accent8}`
       : 'none'};
   box-sizing: border-box;
   display: flex;
 
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
 
-  outline: 1px solid ${themeCssVariables.color.blue8};
+  outline: 1px solid ${themeCssVariables.accent.accent8};
 
   user-select: none;
 `;

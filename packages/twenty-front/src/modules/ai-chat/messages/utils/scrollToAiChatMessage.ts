@@ -8,7 +8,7 @@ const HIGHLIGHT_DURATION_MS = 1500;
 const highlightAiChatMessage = (messageElement: Element) => {
   messageElement.animate(
     [
-      { backgroundColor: themeCssVariables.background.transparent.blue },
+      { backgroundColor: themeCssVariables.accent.transparent },
       { backgroundColor: 'transparent' },
     ],
     { duration: HIGHLIGHT_DURATION_MS, easing: 'ease-out' },

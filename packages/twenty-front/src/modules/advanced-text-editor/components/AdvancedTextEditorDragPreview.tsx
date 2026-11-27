@@ -29,7 +29,7 @@ const StyledDragPreview = styled.div`
 
 const StyledInsertionBadge = styled.span`
   align-items: center;
-  background-color: ${themeCssVariables.color.blue};
+  background-color: ${themeCssVariables.accent.accent9};
   border-radius: ${themeCssVariables.border.radius.rounded};
   display: inline-flex;
   height: 16px;

@@ -5,11 +5,11 @@ import { getSafeUrl } from 'twenty-shared/utils';
 import { linkifyText } from './linkifyText';
 
 const StyledLink = styled.a`
-  color: var(--t-color-blue);
+  color: var(--t-accent-accent9);
   text-decoration: underline;
 
   &:hover {
-    text-decoration-color: var(--t-color-blue);
+    text-decoration-color: var(--t-accent-accent9);
   }
 `;
 

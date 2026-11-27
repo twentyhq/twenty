@@ -19,6 +19,6 @@ export const StyledRecordFormFieldBox = styled.div<{ hasError?: boolean }>`
       ${({ hasError }) =>
         hasError
           ? themeCssVariables.border.color.danger
-          : themeCssVariables.color.blue};
+          : themeCssVariables.accent.accent9};
   }
 `;

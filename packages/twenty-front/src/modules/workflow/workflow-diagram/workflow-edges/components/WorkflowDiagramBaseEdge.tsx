@@ -42,7 +42,7 @@ export const WorkflowDiagramBaseEdge = ({
   });
 
   const stroke = selected
-    ? theme.color.blue
+    ? theme.accent.accent9
     : isHovered
       ? theme.font.color.light
       : theme.border.color.strong;

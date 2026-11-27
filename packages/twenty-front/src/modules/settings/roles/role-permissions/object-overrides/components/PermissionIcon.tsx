@@ -15,12 +15,12 @@ const StyledIconWrapper = styled.div<{ isRevoked?: boolean }>`
   background: ${({ isRevoked }) =>
     isRevoked
       ? themeCssVariables.color.orange3
-      : themeCssVariables.color.blue3};
+      : themeCssVariables.accent.accent3};
   border: 1px solid
     ${({ isRevoked }) =>
       isRevoked
         ? themeCssVariables.color.orange7
-        : themeCssVariables.color.blue7};
+        : themeCssVariables.accent.accent7};
   border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
   height: ${themeCssVariables.spacing[4]};
@@ -31,7 +31,9 @@ const StyledIconWrapper = styled.div<{ isRevoked?: boolean }>`
 const StyledIcon = styled.div<{ isRevoked?: boolean }>`
   align-items: center;
   color: ${({ isRevoked }) =>
-    isRevoked ? themeCssVariables.color.orange : themeCssVariables.color.blue};
+    isRevoked
+      ? themeCssVariables.color.orange
+      : themeCssVariables.accent.accent9};
   display: flex;
   justify-content: center;
 `;

@@ -113,7 +113,9 @@ export const SettingsAdminChatAskQuestionsQuestion = ({
           return (
             <StyledOptionRow key={optionIndex} isSelected={isSelected}>
               <StyledOptionLabelRow>
-                {isSelected && <IconCheck size={14} color={theme.color.blue} />}
+                {isSelected && (
+                  <IconCheck size={14} color={theme.accent.accent9} />
+                )}
                 <TextWithChatReferences text={option.label} />
                 {option.isRecommended === true && (
                   <StyledRecommended>· {t`Recommended`}</StyledRecommended>
@@ -130,7 +132,7 @@ export const SettingsAdminChatAskQuestionsQuestion = ({
         {isNonEmptyString(freeText) && (
           <StyledOptionRow isSelected>
             <StyledOptionLabelRow>
-              <IconCheck size={14} color={theme.color.blue} />
+              <IconCheck size={14} color={theme.accent.accent9} />
               {t`Other`}
             </StyledOptionLabelRow>
             <StyledOptionDescription>

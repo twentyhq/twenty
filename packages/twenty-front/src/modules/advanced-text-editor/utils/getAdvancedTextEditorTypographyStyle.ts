@@ -103,7 +103,7 @@ type AdvancedTextEditorTypography = {
 const APP_TYPOGRAPHY: AdvancedTextEditorTypography = {
   fontFamily: themeCssVariables.font.family,
   fontSize: themeCssVariables.font.size.md,
-  accentColor: themeCssVariables.color.blue,
+  accentColor: themeCssVariables.accent.accent9,
   listMarkerColor: 'inherit',
   headingFontSizes: {
     ...EMAIL_TYPOGRAPHY.headingFontSizes,

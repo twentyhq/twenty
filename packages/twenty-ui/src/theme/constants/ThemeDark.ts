@@ -98,6 +98,7 @@ export const THEME_DARK: typeof THEME_LIGHT = {
     accent10: 'color(display-p3 0.354 0.445 0.866)',
     accent11: 'color(display-p3 0.63 0.69 1)',
     accent12: 'color(display-p3 0.848 0.881 0.99)',
+    transparent: '#3566ff57',
   },
   background: {
     noisy: 'var(--t-background-noisy)',

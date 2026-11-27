@@ -175,7 +175,7 @@ const StyledInput = styled.input<
     border-color: ${({ error }) =>
       error
         ? themeCssVariables.border.color.danger
-        : themeCssVariables.color.blue};
+        : themeCssVariables.accent.accent9};
   }
 
   &[type='number']::-webkit-outer-spin-button,

@@ -32,7 +32,7 @@ export const useStripeAppearance = (): Appearance => {
     variables: {
       fontFamily: theme.font.family,
       fontSizeBase: '13px',
-      colorPrimary: toStripeColor(theme.color.blue),
+      colorPrimary: toStripeColor(theme.accent.accent9),
       colorBackground: toStripeColor(theme.background.primary),
       colorText: toStripeColor(theme.font.color.primary),
       colorTextSecondary: toStripeColor(theme.font.color.tertiary),
@@ -59,7 +59,7 @@ export const useStripeAppearance = (): Appearance => {
         padding: '7px 8px',
       },
       '.Input:focus': {
-        border: `1px solid ${toStripeColor(theme.color.blue)}`,
+        border: `1px solid ${toStripeColor(theme.accent.accent9)}`,
         boxShadow: 'none',
       },
       '.Input--invalid': {

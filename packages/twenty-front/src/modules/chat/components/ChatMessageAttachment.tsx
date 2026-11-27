@@ -24,7 +24,7 @@ const StyledImageButton = styled.button`
   padding: 0;
 
   &:focus-visible {
-    outline: 2px solid ${themeCssVariables.color.blue};
+    outline: 2px solid ${themeCssVariables.accent.accent9};
     outline-offset: -1px;
   }
 `;

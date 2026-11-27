@@ -49,12 +49,12 @@ const StyledTrack = styled.div<{ disabled: boolean }>`
   width: 100%;
 
   &:has(input:focus-visible) {
-    box-shadow: 0 0 0 3px ${themeCssVariables.color.blue3};
+    box-shadow: 0 0 0 3px ${themeCssVariables.accent.accent3};
   }
 `;
 
 const StyledFill = styled.div`
-  background: ${themeCssVariables.color.blue};
+  background: ${themeCssVariables.accent.accent9};
   border-radius: ${themeCssVariables.border.radius.sm};
   corner-shape: round;
   height: ${TRACK_HEIGHT_PX - 2 * TRACK_INSET_PX}px;

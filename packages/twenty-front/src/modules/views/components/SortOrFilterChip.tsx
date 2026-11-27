@@ -33,7 +33,7 @@ const StyledChip = styled.div<{ variant: SortOrFilterChipVariant }>`
         return themeCssVariables.color.red;
       case 'default':
       default:
-        return themeCssVariables.color.blue;
+        return themeCssVariables.accent.accent9;
     }
   }};
   column-gap: ${themeCssVariables.spacing[1]};

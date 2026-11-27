@@ -31,7 +31,7 @@ const StyledDropTarget = styled.div<{
   }
 
   &::before {
-    background-color: ${themeCssVariables.color.blue};
+    background-color: ${themeCssVariables.accent.accent9};
     border-radius: ${themeCssVariables.border.radius.sm};
     content: '';
     opacity: 0;
@@ -59,7 +59,7 @@ const StyledDropTarget = styled.div<{
   }
 
   &[data-drag-over='true'] {
-    background-color: ${themeCssVariables.background.transparent.blue};
+    background-color: ${themeCssVariables.accent.transparent};
   }
 
   &[data-orientation='vertical'][data-drag-over='true']::before {

@@ -59,8 +59,8 @@ const StyledAnswer = styled.span`
   padding: 0 ${themeCssVariables.spacing[2]};
 
   &[data-primary] {
-    background-color: ${themeCssVariables.color.blue};
-    border-color: ${themeCssVariables.color.blue};
+    background-color: ${themeCssVariables.accent.accent9};
+    border-color: ${themeCssVariables.accent.accent9};
     color: ${themeCssVariables.font.color.inverted};
   }
 `;
