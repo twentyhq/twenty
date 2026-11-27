@@ -10,7 +10,7 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentChatChannelMetadataService } from 'src/engine/metadata-modules/agent-chat-channel/services/agent-chat-channel-metadata.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { WorkspaceCustomApplicationRoleService } from 'src/engine/metadata-modules/role/services/workspace-custom-application-role.service';
+import { WorkspaceActivationRoleService } from 'src/engine/metadata-modules/role/services/workspace-activation-role.service';
 import { RoleAssignmentWriteService } from 'src/engine/permissions/role-assignment/role-assignment-write.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -25,7 +25,7 @@ export class WorkspaceManagerService {
     private readonly workspaceSchemaService: WorkspaceSchemaService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
-    private readonly workspaceCustomApplicationRoleService: WorkspaceCustomApplicationRoleService,
+    private readonly workspaceActivationRoleService: WorkspaceActivationRoleService,
     private readonly roleAssignmentWriteService: RoleAssignmentWriteService,
     private readonly twentyStandardApplicationService: TwentyStandardApplicationService,
     @InjectRepository(WorkspaceEntity)
@@ -87,7 +87,7 @@ export class WorkspaceManagerService {
         },
       );
 
-    await this.workspaceCustomApplicationRoleService.findOrCreateGrantedRoleOrThrow(
+    await this.workspaceActivationRoleService.findOrCreateCustomApplicationGrantedRoleOrThrow(
       {
         workspaceId,
         workspaceCustomFlatApplication,
@@ -111,12 +111,10 @@ export class WorkspaceManagerService {
     workspaceCustomFlatApplication: FlatApplication;
   }): Promise<void> {
     const adminRoleId =
-      await this.workspaceCustomApplicationRoleService.findOrCreateAdminRoleOrThrow(
-        {
-          workspaceId,
-          workspaceCustomFlatApplication,
-        },
-      );
+      await this.workspaceActivationRoleService.findOrCreateAdminRoleOrThrow({
+        workspaceId,
+        workspaceCustomFlatApplication,
+      });
 
     const userWorkspace = await this.userWorkspaceRepository.findOneOrFail({
       where: { workspaceId, userId },
@@ -134,12 +132,10 @@ export class WorkspaceManagerService {
 
     const memberRole =
       existingMemberRole ??
-      (await this.workspaceCustomApplicationRoleService.createMemberRoleOrThrow(
-        {
-          workspaceId,
-          workspaceCustomFlatApplication,
-        },
-      ));
+      (await this.workspaceActivationRoleService.createMemberRoleOrThrow({
+        workspaceId,
+        workspaceCustomFlatApplication,
+      }));
 
     await this.workspaceRepository.update(workspaceId, {
       defaultRoleId: memberRole.id,

@@ -17,7 +17,7 @@ import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 @Injectable()
-export class WorkspaceCustomApplicationRoleService {
+export class WorkspaceActivationRoleService {
   constructor(
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
@@ -25,7 +25,7 @@ export class WorkspaceCustomApplicationRoleService {
     private readonly roleService: RoleService,
   ) {}
 
-  public async findOrCreateGrantedRoleOrThrow({
+  public async findOrCreateCustomApplicationGrantedRoleOrThrow({
     workspaceId,
     workspaceCustomFlatApplication,
   }: {

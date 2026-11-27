@@ -13,7 +13,7 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { MEMBER_ROLE_LABEL } from 'src/engine/permissions/role/constants/member-role-label.constants';
-import { WorkspaceCustomApplicationRoleService } from 'src/engine/metadata-modules/role/services/workspace-custom-application-role.service';
+import { WorkspaceActivationRoleService } from 'src/engine/metadata-modules/role/services/workspace-activation-role.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const FLAT_MAPS_REFERENCING_ROLE_UNIVERSAL_IDENTIFIER = (
@@ -39,7 +39,7 @@ export class BackfillMemberRoleUniversalIdentifierCommand extends ProvisionedWor
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationService: ApplicationService,
-    private readonly workspaceCustomApplicationRoleService: WorkspaceCustomApplicationRoleService,
+    private readonly workspaceActivationRoleService: WorkspaceActivationRoleService,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
   ) {
@@ -92,7 +92,7 @@ export class BackfillMemberRoleUniversalIdentifierCommand extends ProvisionedWor
     }
 
     if (!isDefined(memberFlatRole)) {
-      await this.workspaceCustomApplicationRoleService.createMemberRoleOrThrow({
+      await this.workspaceActivationRoleService.createMemberRoleOrThrow({
         workspaceId,
         workspaceCustomFlatApplication,
         label: memberRoleLabel,

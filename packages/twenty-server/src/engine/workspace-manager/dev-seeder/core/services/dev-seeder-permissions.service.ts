@@ -14,7 +14,7 @@ import { RolePermissionFlagService } from 'src/engine/metadata-modules/role-perm
 import { RoleTargetService } from 'src/engine/metadata-modules/role-target/services/role-target.service';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
-import { WorkspaceCustomApplicationRoleService } from 'src/engine/metadata-modules/role/services/workspace-custom-application-role.service';
+import { WorkspaceActivationRoleService } from 'src/engine/metadata-modules/role/services/workspace-activation-role.service';
 import { ChannelVisibilityRoleWideAccessRevokeService } from 'src/engine/permissions/channel-visibility/services/channel-visibility-role-wide-access-revoke.service';
 import { RoleAssignmentWriteService } from 'src/engine/permissions/role-assignment/role-assignment-write.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -35,7 +35,7 @@ export class DevSeederPermissionsService {
 
   constructor(
     private readonly roleService: RoleService,
-    private readonly workspaceCustomApplicationRoleService: WorkspaceCustomApplicationRoleService,
+    private readonly workspaceActivationRoleService: WorkspaceActivationRoleService,
     private readonly roleAssignmentWriteService: RoleAssignmentWriteService,
     private readonly channelVisibilityRoleWideAccessRevokeService: ChannelVisibilityRoleWideAccessRevokeService,
     private readonly objectPermissionService: ObjectPermissionService,
@@ -60,12 +60,10 @@ export class DevSeederPermissionsService {
     light?: boolean;
   }) {
     const adminRoleId =
-      await this.workspaceCustomApplicationRoleService.findOrCreateAdminRoleOrThrow(
-        {
-          workspaceId,
-          workspaceCustomFlatApplication,
-        },
-      );
+      await this.workspaceActivationRoleService.findOrCreateAdminRoleOrThrow({
+        workspaceId,
+        workspaceCustomFlatApplication,
+      });
 
     await this.roleTargetService.create({
       createRoleTargetInput: {
@@ -180,7 +178,7 @@ export class DevSeederPermissionsService {
     workspaceId: string;
     workspaceCustomFlatApplication: FlatApplication;
   }): Promise<RoleDTO> {
-    await this.workspaceCustomApplicationRoleService.findOrCreateGrantedRoleOrThrow(
+    await this.workspaceActivationRoleService.findOrCreateCustomApplicationGrantedRoleOrThrow(
       {
         workspaceId,
         workspaceCustomFlatApplication,
@@ -188,7 +186,7 @@ export class DevSeederPermissionsService {
     );
 
     const memberRole =
-      await this.workspaceCustomApplicationRoleService.createMemberRoleOrThrow({
+      await this.workspaceActivationRoleService.createMemberRoleOrThrow({
         workspaceId,
         workspaceCustomFlatApplication,
       });
