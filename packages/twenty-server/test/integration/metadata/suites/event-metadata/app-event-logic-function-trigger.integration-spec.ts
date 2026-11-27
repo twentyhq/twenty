@@ -9,6 +9,7 @@ import { uploadApplicationFile } from 'test/integration/metadata/suites/applicat
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type MarkerServer } from 'test/integration/types/marker-server.type';
 import { expectEventually } from 'test/integration/utils/expect-eventually.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { generateApplicationAccessToken } from 'test/integration/utils/generate-application-access-token.util';
 import { startMarkerServer } from 'test/integration/utils/start-marker-server.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
@@ -19,6 +20,7 @@ import {
 } from 'twenty-shared/application';
 import { v4 as uuidv4 } from 'uuid';
 
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const TEST_APP_ID = uuidv4();
@@ -189,6 +191,38 @@ describe('logic functions triggered by an app event (e2e)', () => {
         },
       ]);
     });
+  });
+
+  it('fails the emission when the application cannot enqueue more jobs', async () => {
+    const twentyConfigService = getAppProviderByClassName<TwentyConfigService>(
+      'TwentyConfigService',
+    );
+    const readConfig = twentyConfigService.get.bind(twentyConfigService);
+    const configSpy = jest
+      .spyOn(twentyConfigService, 'get')
+      .mockImplementation((key) =>
+        key === 'APPLICATION_JOB_ENQUEUE_RATE_LIMITING_LIMIT'
+          ? 0
+          : readConfig(key),
+      );
+
+    try {
+      const response = await makeMetadataApiRequest(
+        {
+          query: EMIT_APP_EVENT_MUTATION,
+          variables: {
+            input: { event: 'messageAdded', properties: { text: 'Again' } },
+          },
+        },
+        applicationToken,
+      );
+
+      expect(response.body.errors?.[0]?.extensions?.code).toBe(
+        'BAD_USER_INPUT',
+      );
+    } finally {
+      configSpy.mockRestore();
+    }
   });
 
   it('refuses a trigger on an event the application does not declare', async () => {

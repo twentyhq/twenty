@@ -83,7 +83,7 @@ export class AppEventTriggerService {
       }
 
       this.logger.warn(
-        `Enqueue throttled for application ${applicationId} in workspace ${workspaceId}: skipping ${logicFunctions.length} app event trigger(s)`,
+        `Enqueue throttled for application ${applicationId} in workspace ${workspaceId}: refusing ${logicFunctions.length} app event trigger(s)`,
       );
       this.applicationRepeatedEventRecorderService.record({
         entry: buildApplicationJobThrottledLogEntry({
@@ -93,7 +93,7 @@ export class AppEventTriggerService {
         occurrenceCount: logicFunctions.length,
       });
 
-      return;
+      throw error;
     }
 
     // The queue takes one retry limit per call, so jobs are added per limit
@@ -139,7 +139,7 @@ export class AppEventTriggerService {
       }
 
       this.logger.warn(
-        `Enqueue refused for application ${applicationId} in workspace ${workspaceId}: skipping ${logicFunctions.length} app event trigger(s): ${error.message}`,
+        `Enqueue refused for application ${applicationId} in workspace ${workspaceId}: refusing ${logicFunctions.length} app event trigger(s): ${error.message}`,
       );
       this.applicationRepeatedEventRecorderService.record({
         entry: buildApplicationJobMemoryLimitLogEntry({
@@ -149,6 +149,8 @@ export class AppEventTriggerService {
         }),
         occurrenceCount: logicFunctions.length,
       });
+
+      throw error;
     }
   }
 }

@@ -35,7 +35,6 @@ type AgentTriggerManifestBase = {
 export type AgentTriggerManifest =
   | (AgentTriggerManifestBase & {
       type: 'EVENT';
-      // Agents react to record events only
       settings: RecordEventTriggerManifestSettings;
     })
   // Replaced by EVENT; still accepted
