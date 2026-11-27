@@ -363,6 +363,24 @@ describe('connecting a Telegram account', () => {
     expect(telegramCalls).toEqual([]);
   });
 
+  it('answers a tap on a button it does not know, without a notice', async () => {
+    const { resolved } = await deliver({
+      callback_query: {
+        id: 'callback-1',
+        from: TELEGRAM_USER,
+        data: 'other:POSITIVE:request-1',
+      },
+    });
+
+    expect(resolved).toEqual(
+      new Response(
+        { method: 'answerCallbackQuery', callback_query_id: 'callback-1' },
+        { headers: { 'content-type': 'application/json' } },
+      ),
+    );
+    expect(telegramCalls).toEqual([]);
+  });
+
   it('removes the link without replying when the user blocks the bot', async () => {
     await deliver(buildMessageUpdate(`/start ${(await startLink()).token}`));
 

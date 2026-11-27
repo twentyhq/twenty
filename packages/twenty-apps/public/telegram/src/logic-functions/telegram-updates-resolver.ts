@@ -47,6 +47,15 @@ export const telegramUpdatesResolverHandler = async (
   const event = parseTelegramUpdate(update);
 
   if (!isDefined(update) || !isDefined(event)) {
+    const unsupportedCallbackQueryId = update?.callback_query?.id;
+
+    // Telegram shows a progress bar on the button until the tap is answered
+    if (isNonEmptyString(unsupportedCallbackQueryId)) {
+      return buildTelegramCallbackQueryWebhookReply({
+        callbackQueryId: unsupportedCallbackQueryId,
+      });
+    }
+
     return new Response({ ok: true, skipped: 'Unsupported update' });
   }
 
