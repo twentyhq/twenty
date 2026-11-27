@@ -5,7 +5,7 @@ import { type ProgramStep } from './program-step.type';
 export const INTEGRATOR_STEPS: readonly ProgramStep[] = [
   {
     title: msg`Apply`,
-    body: msg`Tell us about your company, the clients you work with and what you have built with Twenty.`,
+    body: msg`Tell us about your company, the clients you work with and what you have built with Twenty. It takes a few minutes.`,
   },
   {
     title: msg`Get your partner code`,
@@ -14,9 +14,5 @@ export const INTEGRATOR_STEPS: readonly ProgramStep[] = [
   {
     title: msg`Bring your clients`,
     body: msg`Earn 20% of seat revenue for 12 months on every client on Organization or Enterprise.`,
-  },
-  {
-    title: msg`Get help when you need it`,
-    body: msg`Ask our team and other partners on the partner Discord.`,
   },
 ];

@@ -418,6 +418,336 @@ export default defineFrontComponent({ universalIdentifier: '${componentIdentifie
     );
   });
 
+  const createImportedComponentExport = (message = 'Hello from helper') => {
+    const exported = createComponentExport();
+    const sources = {
+      [componentPath]: exported.files[0].content.replace(
+        'const Hello = () => <div>Hello</div>;',
+        "import { greeting } from '@app/helper'; import './style.css'; const Hello = () => <div>{greeting}</div>;",
+      ),
+      'src/helper.ts': `import type { Greeting } from './types'; export const greeting: Greeting = '${message}';`,
+      'src/types.ts': 'export type Greeting = string;',
+      'src/front-components/style.css': '@import "./nested.css";',
+      'src/front-components/nested.css':
+        '.logo { background: url("./logo.png"); }',
+      'src/front-components/logo.png': Buffer.from([0, 255, 128, 1]),
+      'tsconfig.json': JSON.stringify({ extends: './config/base.json' }),
+      'config/base.json': JSON.stringify({
+        compilerOptions: {
+          jsx: 'react-jsx',
+          moduleResolution: 'bundler',
+          module: 'esnext',
+          paths: { '@app/*': ['../src/*'] },
+        },
+      }),
+    };
+    return {
+      ...exported,
+      manifest: {
+        ...exported.manifest,
+        frontComponents: exported.manifest.frontComponents.map((component) => ({
+          ...component,
+          sourceFiles: Object.entries(sources).map(([filePath, content]) => ({
+            filePath,
+            checksum: createHash('md5').update(content).digest('hex'),
+          })),
+        })),
+      },
+      files: Object.entries(sources).map(([path, content]) => ({
+        folder: 'source',
+        path,
+        content: Buffer.from(content).toString('base64'),
+        encoding: 'base64',
+      })),
+    };
+  };
+  it('round trips imported frontend sources, aliases, types, nested CSS and binary files through a rebuild', async () => {
+    const exported = createImportedComponentExport();
+    requireSuccess(await pull(exported));
+    await writeFile(join(appPath, 'yarn.lock'), EMPTY_YARN_LOCK_CONTENT);
+    const builtManifest = await buildAndValidateManifest(appPath);
+    assert(builtManifest.success, JSON.stringify(builtManifest));
+    const built = await buildApplication({
+      appPath,
+      manifest: builtManifest.manifest,
+      filePaths: builtManifest.filePaths,
+    });
+    const manifest = manifestUpdateChecksums({
+      manifest: builtManifest.manifest,
+      ...built,
+    });
+    expect(manifest.frontComponents[0].sourceFiles).toEqual(
+      [...exported.manifest.frontComponents[0].sourceFiles].sort(
+        (first, second) => first.filePath.localeCompare(second.filePath),
+      ),
+    );
+    for (const file of exported.files) {
+      expect(await readFile(join(appPath, file.path))).toEqual(
+        Buffer.from(file.content, 'base64'),
+      );
+    }
+    expect(
+      await read('.twenty/output/' + componentPath.replace('.tsx', '.mjs')),
+    ).toContain('Hello from helper');
+    const localHelper = 'export const greeting = "local edit";';
+    await writeFile(join(appPath, 'src/helper.ts'), localHelper);
+    expect(requireSuccess(await pull(exported)).writes).toEqual([]);
+    expect(await read('src/helper.ts')).toBe(localHelper);
+    const updated = requireSuccess(
+      await pull(createImportedComponentExport('Remote update')),
+    );
+    expect(updated.overwrittenLocalChanges).toContainEqual({
+      universalIdentifier: 'source/src/helper.ts',
+      relativePath: 'src/helper.ts',
+    });
+    expect(await read('src/helper.ts')).toContain('Remote update');
+  });
+  const createFunctionExport = (message = 'Hello from a shared helper') => {
+    const exported = createExport({ includeObject: false });
+    const entries = [
+      {
+        universalIdentifier: '12345678-1234-4234-8234-123456789abc',
+        name: 'greet',
+        sourceHandlerPath: 'src/functions/greet.ts',
+      },
+      {
+        universalIdentifier: '23456789-1234-4234-8234-123456789abc',
+        name: 'farewell',
+        sourceHandlerPath: 'src/functions/farewell.ts',
+      },
+    ];
+    const sources: Record<string, string> = {
+      'tsconfig.json': JSON.stringify({
+        compilerOptions: {
+          module: 'esnext',
+          moduleResolution: 'bundler',
+          paths: { '@app/*': ['./src/*'] },
+        },
+      }),
+      'src/shared/message.ts': `import type { Message } from './types'; export const message: Message = '${message}';`,
+      'src/shared/types.ts': 'export type Message = string;',
+      ...Object.fromEntries(
+        entries.map((entry) => [
+          entry.sourceHandlerPath,
+          `import { defineLogicFunction } from 'twenty-sdk/define';
+import { message } from '@app/shared/message';
+const handler = async () => message;
+export default defineLogicFunction({ universalIdentifier: '${entry.universalIdentifier}', name: '${entry.name}', timeoutSeconds: 15, handler });`,
+        ]),
+      ),
+    };
+    return {
+      ...exported,
+      manifest: {
+        ...exported.manifest,
+        logicFunctions: entries.map((entry) => ({
+          ...entry,
+          handlerName: 'handler',
+          timeoutSeconds: 15,
+          builtHandlerPath: entry.sourceHandlerPath.replace('.ts', '.mjs'),
+          builtHandlerChecksum: 'bundle-checksum',
+          sourceFiles: Object.entries(sources)
+            .filter(
+              ([path]) =>
+                !entries.some(
+                  (other) =>
+                    other.sourceHandlerPath === path && other !== entry,
+                ),
+            )
+            .map(([filePath, content]) => ({
+              filePath,
+              checksum: createHash('md5').update(content).digest('hex'),
+            })),
+        })),
+      },
+      coverage: entries.map((entry) => ({
+        metadataName: 'logicFunction',
+        universalIdentifier: entry.universalIdentifier,
+        status: 'EXPORTED',
+        reason: null,
+      })),
+      files: Object.entries(sources).map(([path, content]) => ({
+        folder: 'source',
+        path,
+        content,
+      })),
+    };
+  };
+  it('pulls two logic functions with a shared helper, rebuilds their inventories and preserves local edits', async () => {
+    const exported = createFunctionExport();
+    const first = requireSuccess(await pull(exported));
+    expect(
+      first.writes.filter((write) => write.kind === 'logicFunction'),
+    ).toHaveLength(2);
+    expect(
+      first.writes.filter(
+        (write) => write.relativePath === 'src/shared/message.ts',
+      ),
+    ).toHaveLength(1);
+    await writeFile(join(appPath, 'yarn.lock'), EMPTY_YARN_LOCK_CONTENT);
+    const builtManifest = await buildAndValidateManifest(appPath);
+    assert(builtManifest.success, JSON.stringify(builtManifest));
+    const built = await buildApplication({
+      appPath,
+      manifest: builtManifest.manifest,
+      filePaths: builtManifest.filePaths,
+    });
+    const manifest = manifestUpdateChecksums({
+      manifest: builtManifest.manifest,
+      ...built,
+    });
+    for (const logicFunction of manifest.logicFunctions) {
+      const original = exported.manifest.logicFunctions.find(
+        (entry) =>
+          entry.universalIdentifier === logicFunction.universalIdentifier,
+      )!;
+      expect(logicFunction.sourceFiles).toEqual(
+        [...original.sourceFiles].sort((first, second) =>
+          first.filePath.localeCompare(second.filePath),
+        ),
+      );
+      expect(
+        await read('.twenty/output/' + logicFunction.builtHandlerPath),
+      ).toContain('Hello from a shared helper');
+    }
+    const local = (await read('src/functions/greet.ts')).replace(
+      'timeoutSeconds: 15',
+      'timeoutSeconds: 20',
+    );
+    await writeFile(join(appPath, 'src/functions/greet.ts'), local);
+    await writeFile(
+      join(appPath, 'src/shared/message.ts'),
+      'export const message = "local edit";',
+    );
+    expect(requireSuccess(await pull(exported)).writes).toEqual([]);
+    expect(await read('src/functions/greet.ts')).toBe(local);
+    const updated = requireSuccess(
+      await pull(createFunctionExport('Updated on the server')),
+    );
+    expect(updated.overwrittenLocalChanges).toContainEqual({
+      universalIdentifier: 'source/src/shared/message.ts',
+      relativePath: 'src/shared/message.ts',
+    });
+    expect(await read('src/functions/greet.ts')).toBe(local);
+  });
+  it('refuses to delete a definition still imported by a surviving function', async () => {
+    const exported = createFunctionExport();
+    const [surviving, removed] = exported.manifest.logicFunctions;
+    const removedFile = exported.files.find(
+      (file) => file.path === removed.sourceHandlerPath,
+    )!;
+    const survivingFile = exported.files.find(
+      (file) => file.path === surviving.sourceHandlerPath,
+    )!;
+    removedFile.content += '\nexport const helper = "shared";';
+    survivingFile.content = `import { helper } from './farewell';\n${survivingFile.content.replace('async () => message', 'async () => message + helper')}`;
+    for (const definition of exported.manifest.logicFunctions) {
+      definition.sourceFiles = exported.files.map((file) => ({
+        filePath: file.path,
+        checksum: createHash('md5').update(file.content).digest('hex'),
+      }));
+    }
+    requireSuccess(await pull(exported));
+    const previousBase = await read(BASE_PATH);
+    const result = await pull({
+      ...exported,
+      manifest: { ...exported.manifest, logicFunctions: [surviving] },
+      coverage: exported.coverage.filter(
+        (entry) => entry.universalIdentifier !== removed.universalIdentifier,
+      ),
+    });
+    expect(result).toMatchObject({ success: false });
+    expect(await read(removed.sourceHandlerPath)).toBe(removedFile.content);
+    expect(await read(surviving.sourceHandlerPath)).toBe(survivingFile.content);
+    expect(await read(BASE_PATH)).toBe(previousBase);
+  });
+  it('preserves a function omitted with a coverage gap, then removes it when remotely deleted', async () => {
+    const exported = createFunctionExport();
+    requireSuccess(await pull(exported));
+    const missing = createExport({ includeObject: false });
+    missing.coverage = [
+      {
+        metadataName: 'logicFunction',
+        universalIdentifier:
+          exported.manifest.logicFunctions[0].universalIdentifier,
+        status: 'UNSUPPORTED',
+        reason: 'source inventory is missing',
+      },
+    ];
+    requireSuccess(await pull(missing));
+    expect(await read('src/functions/greet.ts')).toContain(
+      'defineLogicFunction',
+    );
+    await expect(read('src/functions/farewell.ts')).rejects.toMatchObject({
+      code: 'ENOENT',
+    });
+    requireSuccess(await pull(createExport({ includeObject: false })));
+    await expect(read('src/functions/greet.ts')).rejects.toMatchObject({
+      code: 'ENOENT',
+    });
+  });
+  it('preserves unchanged imported definitions and refuses competing metadata regeneration', async () => {
+    requireSuccess(await pull());
+    const objectSource =
+      (await read(OBJECT_PATH)) + '\nexport const greeting = "Pet";\n';
+    await writeFile(join(appPath, OBJECT_PATH), objectSource);
+    const exported = createImportedComponentExport();
+    exported.manifest.objects = createExport().manifest.objects;
+    exported.files.push({
+      folder: 'source',
+      path: OBJECT_PATH,
+      content: Buffer.from(objectSource).toString('base64'),
+      encoding: 'base64',
+    });
+    exported.manifest.frontComponents[0].sourceFiles.push({
+      filePath: OBJECT_PATH,
+      checksum: createHash('md5').update(objectSource).digest('hex'),
+    });
+    const result = requireSuccess(await pull(exported));
+    expect(
+      result.writes.some((write) => write.relativePath === OBJECT_PATH),
+    ).toBe(false);
+    expect(await read(OBJECT_PATH)).toBe(objectSource);
+    expect(requireSuccess(await pull(exported)).writes).toEqual([]);
+
+    exported.manifest.objects = createExport({
+      label: 'Changed in workspace',
+    }).manifest.objects;
+    expect(await pull(exported)).toMatchObject({
+      success: false,
+      error: { code: 'CONFLICT' },
+    });
+    expect(await read(OBJECT_PATH)).toBe(objectSource);
+  });
+
+  it('refuses helper collisions before changing any files', async () => {
+    await mkdir(join(appPath, 'src'), { recursive: true });
+    await writeFile(join(appPath, 'src/helper.ts'), 'unrelated local file');
+    expect(await pull(createImportedComponentExport())).toMatchObject({
+      success: false,
+      error: { code: 'CONFLICT' },
+    });
+    expect(await read('src/helper.ts')).toBe('unrelated local file');
+    await expect(read(componentPath)).rejects.toMatchObject({ code: 'ENOENT' });
+  });
+  it('refuses an imported source symlink before accessing its destination', async () => {
+    const outside = await mkdtemp(join(tmpdir(), 'twenty-helper-outside-'));
+    try {
+      await mkdir(join(appPath, 'src'), { recursive: true });
+      await writeFile(join(outside, 'helper.ts'), 'outside original');
+      await symlink(join(outside, 'helper.ts'), join(appPath, 'src/helper.ts'));
+      expect((await pull(createImportedComponentExport())).success).toBe(false);
+      expect(await readFile(join(outside, 'helper.ts'), 'utf8')).toBe(
+        'outside original',
+      );
+      await expect(read(componentPath)).rejects.toMatchObject({
+        code: 'ENOENT',
+      });
+    } finally {
+      await rm(outside, { recursive: true, force: true });
+    }
+  });
+
   it('builds a pulled component and includes the edited source and bundle in the apply artifacts', async () => {
     const exported = createComponentExport();
     requireSuccess(await pull(exported));

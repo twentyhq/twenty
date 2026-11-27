@@ -3,6 +3,7 @@ import { msg } from '@lingui/core/macro';
 import {
   IconCalendar,
   type IconComponent,
+  IconInbox,
   IconLayoutKanban,
   IconList,
   IconListDetails,
@@ -20,6 +21,7 @@ export const VIEW_TYPE_LABELS = {
   [ViewType.KANBAN]: msg`Kanban`,
   [ViewType.CALENDAR]: msg`Calendar`,
   [ViewType.LIST]: msg`List`,
+  [ViewType.INBOX]: msg`Inbox`,
   [ViewType.FIELDS_WIDGET]: msg`Fields widget`,
   [ViewType.TABLE_WIDGET]: msg`Table widget`,
   [ViewType.KANBAN_WIDGET]: msg`Kanban widget`,
@@ -37,6 +39,7 @@ type ViewTypeIconKey =
 
 const VIEW_TYPE_ICON_COMPONENTS = {
   IconCalendar,
+  IconInbox,
   IconLayoutKanban,
   IconList,
   IconListDetails,

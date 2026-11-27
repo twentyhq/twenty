@@ -4,13 +4,13 @@ import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
+import { coreAgentDraftRoleFamilyState } from '@/object-core/agents/states/coreAgentDraftRoleFamilyState';
+import { coreAgentInitialDraftRoleFamilyState } from '@/object-core/agents/states/coreAgentInitialDraftRoleFamilyState';
 import { coreAgentNewRoleIdFamilyState } from '@/object-core/agents/states/coreAgentNewRoleIdFamilyState';
 import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
 import { buildCoreAgentNewRole } from '@/object-core/agents/utils/buildCoreAgentNewRole';
 import { getAvailableRoleLabel } from '@/object-core/agents/utils/getAvailableRoleLabel';
 import { useSettingsAllRoles } from '@/settings/roles/hooks/useSettingsAllRoles';
-import { settingsInitialDraftRoleFamilyState } from '@/settings/roles/states/settingsInitialDraftRoleFamilyState';
-import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
@@ -28,17 +28,17 @@ export const CoreAgentNewRoleDraftEffect = ({
     coreAgentNewRoleIdFamilyState,
     agent.id,
   );
-  const settingsDraftRole = useAtomFamilyStateValue(
-    settingsDraftRoleFamilyState,
-    coreAgentNewRoleId ?? '',
+  const coreAgentDraftRole = useAtomFamilyStateValue(
+    coreAgentDraftRoleFamilyState,
+    agent.id,
   );
-  const setSettingsDraftRole = useSetAtomFamilyState(
-    settingsDraftRoleFamilyState,
-    coreAgentNewRoleId ?? '',
+  const setCoreAgentDraftRole = useSetAtomFamilyState(
+    coreAgentDraftRoleFamilyState,
+    agent.id,
   );
-  const setSettingsInitialDraftRole = useSetAtomFamilyState(
-    settingsInitialDraftRoleFamilyState,
-    coreAgentNewRoleId ?? '',
+  const setCoreAgentInitialDraftRole = useSetAtomFamilyState(
+    coreAgentInitialDraftRoleFamilyState,
+    agent.id,
   );
 
   useEffect(() => {
@@ -61,7 +61,7 @@ export const CoreAgentNewRoleDraftEffect = ({
     });
     const roleDescription = t`Role for ${agentLabel} agent`;
 
-    if (settingsDraftRole.id !== coreAgentNewRoleId) {
+    if (coreAgentDraftRole.id !== coreAgentNewRoleId) {
       const newRole = buildCoreAgentNewRole({
         roleId: coreAgentNewRoleId,
         agent,
@@ -69,22 +69,22 @@ export const CoreAgentNewRoleDraftEffect = ({
         description: roleDescription,
       });
 
-      setSettingsDraftRole(newRole);
-      setSettingsInitialDraftRole(newRole);
+      setCoreAgentDraftRole(newRole);
+      setCoreAgentInitialDraftRole(newRole);
 
       return;
     }
 
-    if (settingsDraftRole.label === roleLabel) {
+    if (coreAgentDraftRole.label === roleLabel) {
       return;
     }
 
-    setSettingsDraftRole((currentDraftRole) => ({
+    setCoreAgentDraftRole((currentDraftRole) => ({
       ...currentDraftRole,
       label: roleLabel,
       description: roleDescription,
     }));
-    setSettingsInitialDraftRole((currentInitialDraftRole) =>
+    setCoreAgentInitialDraftRole((currentInitialDraftRole) =>
       isDefined(currentInitialDraftRole)
         ? {
             ...currentInitialDraftRole,
@@ -95,11 +95,11 @@ export const CoreAgentNewRoleDraftEffect = ({
     );
   }, [
     agent,
-    settingsDraftRole.id,
-    settingsDraftRole.label,
+    coreAgentDraftRole.id,
+    coreAgentDraftRole.label,
     coreAgentNewRoleId,
-    setSettingsDraftRole,
-    setSettingsInitialDraftRole,
+    setCoreAgentDraftRole,
+    setCoreAgentInitialDraftRole,
     setCoreAgentNewRoleId,
     roles,
     t,

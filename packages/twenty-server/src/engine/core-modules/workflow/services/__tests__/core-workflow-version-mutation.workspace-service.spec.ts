@@ -4,11 +4,10 @@ import { WorkflowActionType } from 'twenty-shared/workflow';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
-import { CoreWorkflowIdResolutionService } from 'src/engine/core-modules/workflow/services/core-workflow-id-resolution.service';
+import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
 import { CoreWorkflowVersionListService } from 'src/engine/core-modules/workflow/services/core-workflow-version-list.service';
 import { CoreWorkflowVersionMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service';
 import { CoreWorkflowVersionWriteService } from 'src/engine/core-modules/workflow/services/core-workflow-version-write.service';
-import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
 import { type WorkflowAiAgentAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
@@ -63,13 +62,12 @@ const buildService = async ({
         provide: getWorkspaceScopedRepositoryToken(WorkflowVersionEntity),
         useValue: {},
       },
-      { provide: CoreWorkflowIdResolutionService, useValue: {} },
+      { provide: CoreWorkflowAccessService, useValue: {} },
       {
         provide: CoreWorkflowVersionWriteService,
         useValue: coreWorkflowVersionWriteService,
       },
       { provide: CoreWorkflowVersionListService, useValue: {} },
-      { provide: WorkflowCoreSyncService, useValue: {} },
       {
         provide: WorkflowVersionStepOperationsWorkspaceService,
         useValue: workflowVersionStepOperationsWorkspaceService,
@@ -112,7 +110,6 @@ describe('CoreWorkflowVersionMutationWorkspaceService.updateStep', () => {
 
     const updatedStep = await service.updateStep({
       workspaceId: WORKSPACE_ID,
-      userWorkspaceId: undefined,
       coreWorkflowVersionId: CORE_WORKFLOW_VERSION_ID,
       step,
     });
@@ -150,7 +147,6 @@ describe('CoreWorkflowVersionMutationWorkspaceService.updateStep', () => {
 
     const updatedStep = await service.updateStep({
       workspaceId: WORKSPACE_ID,
-      userWorkspaceId: undefined,
       coreWorkflowVersionId: CORE_WORKFLOW_VERSION_ID,
       step,
     });

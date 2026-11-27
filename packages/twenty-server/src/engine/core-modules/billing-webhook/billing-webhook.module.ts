@@ -25,6 +25,7 @@ import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entit
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
+import { ChannelVisibilityModule } from 'src/engine/permissions/channel-visibility/channel-visibility.module';
 import { RowLevelPermissionModule } from 'src/engine/metadata-modules/row-level-permission-predicate/row-level-permission.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -49,6 +50,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
       WorkspaceEntity,
     ]),
     RowLevelPermissionModule,
+    ChannelVisibilityModule,
   ],
   controllers: [BillingWebhookController],
   providers: [

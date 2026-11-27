@@ -23,6 +23,7 @@ type AutocompleteRootProps<TItem> = {
   itemToStringValue?: (item: TItem) => string;
   enabled?: boolean;
   openOnValueChange?: boolean;
+  openOnInputClick?: boolean;
   closeOnItemPress?: boolean;
   onClose?: () => void;
   onItemHighlightedByUser?: (item: TItem | undefined) => void;
@@ -38,6 +39,7 @@ export const AutocompleteRoot = <TItem,>({
   itemToStringValue,
   enabled = true,
   openOnValueChange = true,
+  openOnInputClick = false,
   closeOnItemPress = true,
   onClose,
   onItemHighlightedByUser,
@@ -111,6 +113,7 @@ export const AutocompleteRoot = <TItem,>({
         autoHighlight="always"
         value={value}
         open={enabled && isDropdownOpen}
+        openOnInputClick={openOnInputClick}
         itemToStringValue={itemToStringValue}
         onValueChange={handleValueChange}
         onOpenChange={handleOpenChange}

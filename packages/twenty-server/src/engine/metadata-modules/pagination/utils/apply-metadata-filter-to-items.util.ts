@@ -126,7 +126,7 @@ const matchesMetadataComparison = ({
   if (
     normalizedComparison.is !== undefined &&
     (normalizedComparison.is === null
-      ? normalizedValue !== null && normalizedValue !== undefined
+      ? isDefined(normalizedValue)
       : normalizedValue !== normalizedComparison.is)
   ) {
     return false;

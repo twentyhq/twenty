@@ -7,7 +7,7 @@ import { type GranolaBackfillNotePayload } from 'src/logic-functions/types/grano
 import { GranolaInvalidResponseError } from 'src/logic-functions/types/granola-invalid-response-error';
 import { GranolaTranscriptLimitError } from 'src/logic-functions/types/granola-transcript-limit-error';
 import { assertGranolaFolderSelectionReadyOrThrow } from 'src/logic-functions/utils/assert-granola-folder-selection-ready-or-throw.util';
-import { createGranolaClientOrThrow } from 'src/logic-functions/utils/create-granola-client-or-throw.util';
+import { createWorkspaceGranolaClientOrThrow } from 'src/logic-functions/utils/create-workspace-granola-client-or-throw.util';
 import { findGranolaRegistrationForCurrentKey } from 'src/logic-functions/utils/find-granola-registration-for-current-key.util';
 import { isGranolaJobInRegistrationScope } from 'src/logic-functions/utils/is-granola-job-in-registration-scope.util';
 import { rethrowKnownOrWrapGranolaError } from 'src/logic-functions/utils/rethrow-known-or-wrap-granola-error.util';
@@ -31,7 +31,7 @@ export const granolaBackfillNoteHandler = async (
     }
 
     const coreApiClient = new CoreApiClient({ runAs: 'application' });
-    const client = createGranolaClientOrThrow();
+    const client = createWorkspaceGranolaClientOrThrow();
     try {
       const result = await syncGranolaNoteToCallRecordingOrThrow({
         coreApiClient,

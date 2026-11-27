@@ -92,23 +92,28 @@ export class RecordExportQueryService {
         shouldIncludeInactiveFields,
       }),
     );
-    const node: CommonSelectedFields = {};
+    const selectedFieldsByName: CommonSelectedFields['fields'] = {};
 
     for (const column of columns) {
       if (isDefined(column.subFieldName)) {
-        const nested = node[column.fieldName];
-        node[column.fieldName] = {
-          ...(typeof nested === 'object' ? nested : {}),
+        const subFields = selectedFieldsByName[column.fieldName];
+
+        selectedFieldsByName[column.fieldName] = {
+          ...(typeof subFields === 'object' ? subFields : {}),
           [column.subFieldName]: true,
         };
       } else {
-        node[column.fieldName] = true;
+        selectedFieldsByName[column.fieldName] = true;
       }
     }
 
     return {
       columns,
-      selectedFields: { edges: { node } },
+      selectedFields: {
+        fields: selectedFieldsByName,
+        aggregates: [],
+        relations: {},
+      },
       queryRunnerContext: {
         authContext,
         flatObjectMetadata,
@@ -133,7 +138,10 @@ export class RecordExportQueryService {
         this.commonFindManyQueryRunnerService.execute(
           {
             filter: parameters.filter,
-            selectedFields: { ...context.selectedFields, totalCount: true },
+            selectedFields: {
+              ...context.selectedFields,
+              aggregates: ['totalCount'],
+            },
             first: 0,
           },
           context.queryRunnerContext,

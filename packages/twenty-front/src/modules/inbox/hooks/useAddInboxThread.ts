@@ -2,8 +2,8 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { useApplyAiChatThreadUpdate } from '@/ai/hooks/useApplyAiChatThreadUpdate';
-import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
+import { useApplyAiChatThreadUpdate } from '@/ai-chat/threads/hooks/useApplyAiChatThreadUpdate';
+import { type AiChatThreadUpdate } from '@/ai-chat/threads/types/AiChatThreadUpdate';
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
 import { inboxThreadListFamilyState } from '@/inbox/states/inboxThreadListFamilyState';
 import { getInboxThreadListSourceKey } from '@/inbox/utils/getInboxThreadListSourceKey';
@@ -33,7 +33,7 @@ export const useAddInboxThread = () => {
   );
 
   const addInboxThread = useCallback(
-    (thread: Partial<AiChatThreadRecord> & { id: string }) => {
+    (thread: AiChatThreadUpdate) => {
       applyAiChatThreadUpdate(thread);
       prependInboxThreadToRecentList(thread.id);
     },

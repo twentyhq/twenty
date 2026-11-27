@@ -31,6 +31,7 @@ export const assertFlatApplicationIsExportable = (
       return;
     case ApplicationRegistrationSourceType.NPM:
     case ApplicationRegistrationSourceType.TARBALL:
+    case ApplicationRegistrationSourceType.BUNDLED:
       throw new ApplicationException(
         `Application "${flatApplication.name}" was installed from a ${flatApplication.sourceType} package and cannot be exported. Its published version can be reinstalled with twenty app install.`,
         ApplicationExceptionCode.APPLICATION_NOT_EXPORTABLE,

@@ -18,8 +18,11 @@ import {
 } from 'twenty-shared/application';
 
 import { ADD_JOB_CONFIG_TO_WORKFLOW_AND_LOGIC_FUNCTION_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-58/add-job-config-to-workflow-and-logic-function-upgrade-command-name.constant';
+import { ADD_LOGIC_FUNCTION_JOB_FAILURE_HANDLER_NAME_AND_RETRY_LIMIT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-63/add-logic-function-job-failure-handler-name-and-retry-limit-upgrade-command-name.constant';
+import { DROP_JOB_CONFIG_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-61/drop-job-config-upgrade-command-name.constant';
 import { type MessageQueueJobConfig } from 'src/engine/core-modules/message-queue/types/message-queue-job-config.type';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
+import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
@@ -67,6 +70,20 @@ export class LogicFunctionEntity
   @Check(`"timeoutSeconds" >= 1 AND "timeoutSeconds" <= 900`)
   timeoutSeconds: number;
 
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_LOGIC_FUNCTION_JOB_FAILURE_HANDLER_NAME_AND_RETRY_LIMIT_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: true, type: 'varchar' })
+  jobFailureHandlerName: string | null;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_LOGIC_FUNCTION_JOB_FAILURE_HANDLER_NAME_AND_RETRY_LIMIT_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: true, type: 'int' })
+  retryLimit: number | null;
+
   @Column({ nullable: true, type: 'text' })
   checksum: string | null;
 
@@ -103,8 +120,12 @@ export class LogicFunctionEntity
     upgradeCommandName:
       ADD_JOB_CONFIG_TO_WORKFLOW_AND_LOGIC_FUNCTION_UPGRADE_COMMAND_NAME,
   })
+  @WasRemovedInUpgrade({
+    upgradeCommandName: DROP_JOB_CONFIG_UPGRADE_COMMAND_NAME,
+  })
+  // Unused since 2.60. Servers still on 2.59 select it during an upgrade, so the drop waits for 2.61.
   @Column({ nullable: true, type: 'jsonb' })
-  jobConfig: JsonbProperty<MessageQueueJobConfig> | null;
+  jobConfig: WasRemovedInUpgrade<JsonbProperty<MessageQueueJobConfig> | null>;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

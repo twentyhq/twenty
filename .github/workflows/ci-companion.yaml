@@ -2,36 +2,33 @@ name: CI Desktop
 
 on:
   pull_request:
-    paths:
-      - 'packages/twenty-companion/**'
-      - 'packages/twenty-ui/**'
-      - 'packages/twenty-front/**'
-      - 'packages/twenty-oxlint-rules/**'
-      - 'packages/twenty-shared/**'
-      - 'package.json'
-      - 'yarn.lock'
-      - '.github/workflows/ci-companion.yaml'
-  push:
-    branches: [main]
-    paths:
-      - 'packages/twenty-companion/**'
-      - 'packages/twenty-ui/**'
-      - 'packages/twenty-front/**'
-      - 'packages/twenty-oxlint-rules/**'
-      - 'packages/twenty-shared/**'
-      - 'package.json'
-      - 'yarn.lock'
-      - '.github/workflows/ci-companion.yaml'
+  workflow_call:
 
 permissions:
   contents: read
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
-
 jobs:
+  changed-files-check:
+    uses: ./.github/workflows/changed-files.yaml
+    with:
+      files: |
+        packages/twenty-companion/**
+        packages/twenty-ui/**
+        packages/twenty-front/**
+        packages/twenty-oxlint-rules/**
+        packages/twenty-shared/**
+        package.json
+        yarn.lock
+        .github/workflows/ci-companion.yaml
+
+  # Concurrency sits on the gated job so a run with no relevant change never
+  # replaces a pending relevant one on main.
   desktop:
+    needs: changed-files-check
+    if: needs.changed-files-check.outputs.any_changed == 'true'
+    concurrency:
+      group: ci-companion-${{ github.ref }}
+      cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:

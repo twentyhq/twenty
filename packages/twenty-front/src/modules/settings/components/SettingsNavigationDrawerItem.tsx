@@ -20,7 +20,7 @@ export const SettingsNavigationDrawerItem = ({
   const pathName = useResolvedPath(href).pathname;
   const matchResult = useMatch({
     path: pathName,
-    end: item.matchSubPages === false,
+    end: isDefined(item.matchSubPages) && !item.matchSubPages,
   });
 
   const isActive = !!item.path && !!matchResult && !hasActiveSubItem;

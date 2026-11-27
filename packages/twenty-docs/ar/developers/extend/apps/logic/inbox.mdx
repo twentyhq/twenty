@@ -7,7 +7,7 @@ import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## نظرة عامة
 
-يمكن لتطبيقك أن يبدأ ويتابع المحادثات في صندوق الوارد الخاص بأعضاء مساحة العمل، حيث يتحدثون أيضًا مع مساعِدين. يمكن أن تنتهي الرسالة عند سؤال أو استمارة أو تغيير للموافقة عليها، التي يجيب عليها العضو من المحادثة قبل مواصلة المحادثة مع المساعد.
+يمكن لتطبيقك أن يبدأ ويتابع المحادثات في صندوق الوارد الخاص بأعضاء مساحة العمل، حيث يتحدثون أيضًا مع مساعِدين. يمكن أن تنتهي الرسالة بأسئلة أو نماذج أو تغييرات للموافقة عليها، يجيب عنها العضو من الدردشة قبل أن تستمر المحادثة مع المساعد.
 
 يتم تصدير مساعدي صندوق الوارد من كل من '20sdk/logic-function' و '20sdk/front-component'، لذلك يتم تشغيل مجدول وزر في التطبيق الخاص بك بنفس الطريقة.
 
@@ -24,14 +24,16 @@ const { threadId } = await sendInboxMessage({
   idempotencyKey: 'first-call-recording',
   title: 'Your first call recording is ready',
   text: 'Your first call was recorded: **Weekly sync**.',
-  toolCall: {
-    toolName: 'ask_question',
-    input: {
-      header: 'Share',
-      question: 'Do you want to share it with the other attendees?',
-      options: [{ label: 'Draft a recap email' }, { label: 'Not now' }],
+  toolCalls: [
+    {
+      toolName: 'ask_question',
+      input: {
+        header: 'Share',
+        question: 'Do you want to share it with the other attendees?',
+        options: [{ label: 'Draft a recap email' }, { label: 'Not now' }],
+      },
     },
-  },
+  ],
 });
 ```
 
@@ -41,12 +43,57 @@ const { threadId } = await sendInboxMessage({
 * يختار "threadKey" المحادثة لهذا التطبيق، الذي يشارك فيه كل عضو يتم إرساله إليه. المفتاح الجديد يبدأ محادثة بعنوان 'title\`؛ المفتاح الذي استخدمته قبل إضافة الرسالة إلى تلك المحادثة.
 * 'idempotencyKey' يحدد الرسالة داخل المحادثة. إرسال مرة أخرى مع نفس المفاتيح لا يكتب شيئا جديدا، لذا فإن إعادة المحاولة والتشغيل المتزامن لا يكرر الرسالة أبدا.
 * `text' مميز، ويمكن أن تحمل [الإشارات والمراجع المحفوظة](#mentions-and-record-references). يتم إعلام العضو الذي تتم الإشارة إليه، حتى عندما لا يكون ضمن `workspaceMemberIds\`.
-* وينهي 'toolCall' (اختياري) الرسالة على واحد من:
+* ينهي `toolCalls` (اختياري) الرسالة بـ [إجراء واحد أو أكثر](#several-actions-in-one-message)، وكل إجراء منها هو أحد ما يلي:
   * اتصل بالأعضاء الذين يجيبون على المحادثة: 'ask_question' (سؤال واحد متعدد الاختيار)، و 'request_form' (حقول لملء المحادثة) أو 'propose_tool_call' (دعوة للموافقة). و`إدخاله` يأخذ `اسم الأداة`، `الحججة` التي تسميها الأداة و`موجز` في جملة واحدة. يجب أن تكون الأداة أداةً يستطيع الدور الافتراضي لتطبيقك تشغيلها بنفسه، مثل `create_one_person` أو `update_one_opportunity` (مع `id` للسجل)؛ ولا يحتاج البريد الإلكتروني (`send_email` أو `draft_email`، مع `recipients` و`subject` و`body` يحدد تنسيقه: `{ type: 'html', html }` أو `{ type: 'text', text }`؛ تُرفض السلسلة النصية المجردة) إلى أي إذن من تطبيقك. يستعرض العضو المكالمة في نفس البطاقة التي يقترحها المساعد يقوم بتحريره إذا رغب، ويدار المكالمة المعتمدة مع وصولها الخاص؛
   * واحدة من أدوات التطبيق الخاص بك، من خلال 'logicFunctionUniversalIdentifier' ، التي تم توفيرها بواسطة مكون واجهة مع 'input` و 'خرج` تمرير. فهو لا يوقف المحادثة مؤقتا.
-* مكالمة واحدة فقط يمكن أن تنتظر إجابات الأعضاء في محادثة في كل مرة: إرسال مكالمة أخرى قبل أن يفشلوا في الإجابة مع `THREAD_AWAITING_ANSWER`. الرسائل العادية والمكالمات بأداة التطبيق لا تزال مقبولة.
+* أصبح `toolCall` مهجورًا وستتم إزالته: فهو يقبل إجراءً واحدًا، مثل `toolCalls` بإدخال واحد. استخدم `toolCalls`، ولا تضبط كليهما أبدًا.
+* ينتظر الحوار رسالة واحدة في كل مرة: يؤدي إرسال رسالة أخرى تتضمن استدعاءً يجيب عنه العضو، قبل أن يجيب عن كل استدعاءات الرسالة المنتظرة، إلى الفشل مع `THREAD_AWAITING_ANSWER`. الرسائل العادية والمكالمات بأداة التطبيق لا تزال مقبولة.
 * فقط العضو الذي يملك محادثة يمكنه حذفه، ويتم إجراء محادثة محذوفة لكل عضو: لم يتم إنشاؤها، ولم يتم إضافة أي شيء إليها. يمكن للأعضاء الآخرين إلغاء الاشتراك لإخراجه من صندوق الوارد الخاص بهم.
 * ويجب أن يحصل كل عضو على إذن "AI"، وتفشل المكالمة دون كتابة الرسالة عندما لا يتمكن أحدهم من إجراء المحادثة. يجب أن يمنح تطبيقك [الدور الافتراضي](/ar/developers/extend/apps/config/roles) `SystemPermissionFlag.AI`.
+
+### عدة إجراءات في رسالة واحدة
+
+يستقبل `toolCalls` ما يصل إلى 10 استدعاءات، بالترتيب الذي تعرضها به الرسالة. تتراكم الاستدعاءات التي يجيب عنها العضو مثل الاستدعاءات التي يقترحها المساعد في رد واحد: يوافق العضو على كل منها، أو يعدّلها أو يتجاهلها على حدة، ويتولى المساعد المحادثة بعد الإجابة الأخيرة. تُعرض أدوات تطبيقك الخاصة في القائمة مع الرسالة ولا تنتظر شيئًا.
+
+```ts src/logic-functions/post-call-recap.ts
+import { sendInboxMessage } from 'twenty-sdk/logic-function';
+
+await sendInboxMessage({
+  workspaceMemberIds: [workspaceMemberId],
+  threadKey: `call-recap-${call.id}`,
+  idempotencyKey: `call-recap-${call.id}`,
+  title: `Recap of ${call.title}`,
+  text: call.summary,
+  toolCalls: [
+    {
+      logicFunctionUniversalIdentifier: CALL_RECORDING_TOOL_UNIVERSAL_IDENTIFIER,
+      input: { callRecordingId: call.id },
+    },
+    {
+      toolName: 'propose_tool_call',
+      input: {
+        toolName: 'send_email',
+        arguments: {
+          recipients: { to: attendeeEmails.join(', '), cc: '', bcc: '' },
+          subject: `Follow-up: ${call.title}`,
+          body: { type: 'text', text: followUpEmailText },
+        },
+        summary: 'Send the follow-up email to the attendees',
+      },
+    },
+    {
+      toolName: 'propose_tool_call',
+      input: {
+        toolName: 'update_one_opportunity',
+        arguments: { id: opportunity.id, stage: 'PROPOSAL' },
+        summary: 'Move the deal to proposal',
+      },
+    },
+  ],
+});
+```
+
+تُرفض رسالة تحتوي على أكثر من 10 استدعاءات، أو على كل من `toolCall` و`toolCalls`، من دون كتابة أي شيء، وكذلك رسالة تحتوي على استدعاء واحد غير صالح.
 
 ### من يرسل الرسالة
 

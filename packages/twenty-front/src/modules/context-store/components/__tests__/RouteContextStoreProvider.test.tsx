@@ -13,6 +13,10 @@ jest.mock('@/navigation/hooks/useLastVisitedView', () => ({
   }),
 }));
 
+jest.mock('@/ai-chat/states/selectors/inboxNamesByLegacyNameSelector', () => ({
+  inboxNamesByLegacyNameSelector: { key: 'inbox-names-by-legacy-name' },
+}));
+
 jest.mock('@/object-metadata/states/objectMetadataItemsSelector', () => ({
   objectMetadataItemsSelector: { key: 'object-metadata-items' },
 }));
@@ -22,8 +26,12 @@ jest.mock('@/views/states/selectors/viewsSelector', () => ({
 }));
 
 jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue', () => ({
-  useAtomStateValue: ({ key }: { key: string }) =>
-    key === 'object-metadata-items'
+  useAtomStateValue: ({ key }: { key: string }) => {
+    if (key === 'inbox-names-by-legacy-name') {
+      return { agentChatThread: 'agentChatThread' };
+    }
+
+    return key === 'object-metadata-items'
       ? [
           {
             id: 'company-object',
@@ -63,7 +71,8 @@ jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue', () => ({
             objectMetadataId: 'person-object',
             type: 'TABLE',
           },
-        ],
+        ];
+  },
 }));
 
 jest.mock('@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue', () => ({

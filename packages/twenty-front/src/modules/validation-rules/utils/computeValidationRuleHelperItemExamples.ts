@@ -170,15 +170,36 @@ const computeFunctionExamples = ({
         ? [doNotTranslate(`arrayLength(${field.path}) > 0`)]
         : [];
     }
-    case 'daysSince': {
+    case 'dateDiff': {
       const field = findFieldOfTypes(rootFields, DATE_TYPES);
 
       return isDefined(field)
         ? [
             doNotTranslate(
-              `daysSince(${field.path}) >= 0 and daysSince(${field.path}) <= 30`,
+              `dateDiff(${field.path}, now, "DAY") >= 0 and dateDiff(${field.path}, now, "DAY") <= 30`,
             ),
           ]
+        : [];
+    }
+    case 'dateAdd': {
+      const field = findFieldOfTypes(rootFields, DATE_TYPES);
+
+      return isDefined(field)
+        ? [doNotTranslate(`${field.path} <= dateAdd(now, 1, "YEAR")`)]
+        : [];
+    }
+    case 'dateTrunc': {
+      const field = findFieldOfTypes(rootFields, DATE_TYPES);
+
+      return isDefined(field)
+        ? [doNotTranslate(`${field.path} >= dateTrunc(now, "MONTH")`)]
+        : [];
+    }
+    case 'datePart': {
+      const field = findFieldOfTypes(rootFields, DATE_TYPES);
+
+      return isDefined(field)
+        ? [doNotTranslate(`datePart(${field.path}, "DAY_OF_WEEK") <= 5`)]
         : [];
     }
     case 'isInRelativeDateRange': {

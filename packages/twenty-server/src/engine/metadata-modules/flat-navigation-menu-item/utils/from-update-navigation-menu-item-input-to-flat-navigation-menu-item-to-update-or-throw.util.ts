@@ -6,6 +6,7 @@ import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-m
 import { FLAT_NAVIGATION_MENU_ITEM_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-navigation-menu-item/constants/flat-navigation-menu-item-editable-properties.constant';
 import { type FlatNavigationMenuItemMaps } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item-maps.type';
 import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
+import { applyNavigationMenuItemIsActiveOverrideOrThrow } from 'src/engine/metadata-modules/flat-navigation-menu-item/utils/apply-navigation-menu-item-is-active-override-or-throw.util';
 import { type UpdateNavigationMenuItemInput } from 'src/engine/metadata-modules/navigation-menu-item/dtos/update-navigation-menu-item.input';
 import {
   NavigationMenuItemException,
@@ -18,11 +19,13 @@ export const fromUpdateNavigationMenuItemInputToFlatNavigationMenuItemToUpdateOr
     flatNavigationMenuItemMaps,
     flatPageLayoutMaps,
     updateNavigationMenuItemInput,
+    workspaceCustomApplicationUniversalIdentifier,
   }: {
     flatNavigationMenuItemMaps: FlatNavigationMenuItemMaps;
     updateNavigationMenuItemInput: UpdateNavigationMenuItemInput & {
       id: string;
     };
+    workspaceCustomApplicationUniversalIdentifier: string;
   } & Pick<
     AllFlatEntityMaps,
     'flatPageLayoutMaps'
@@ -39,14 +42,22 @@ export const fromUpdateNavigationMenuItemInputToFlatNavigationMenuItemToUpdateOr
       );
     }
 
-    const { id: _id, ...updates } = updateNavigationMenuItemInput;
+    const { id: _id, isActive, ...updates } = updateNavigationMenuItemInput;
+
+    const mergedFlatNavigationMenuItem = mergeUpdateInExistingRecord({
+      existing: existingFlatNavigationMenuItem,
+      properties: [...FLAT_NAVIGATION_MENU_ITEM_EDITABLE_PROPERTIES],
+      update: updates,
+    });
 
     const flatNavigationMenuItemToUpdate = {
-      ...mergeUpdateInExistingRecord({
-        existing: existingFlatNavigationMenuItem,
-        properties: [...FLAT_NAVIGATION_MENU_ITEM_EDITABLE_PROPERTIES],
-        update: updates,
-      }),
+      ...(isDefined(isActive)
+        ? applyNavigationMenuItemIsActiveOverrideOrThrow({
+            flatNavigationMenuItem: mergedFlatNavigationMenuItem,
+            isActive,
+            workspaceCustomApplicationUniversalIdentifier,
+          })
+        : mergedFlatNavigationMenuItem),
       updatedAt: new Date().toISOString(),
     };
 

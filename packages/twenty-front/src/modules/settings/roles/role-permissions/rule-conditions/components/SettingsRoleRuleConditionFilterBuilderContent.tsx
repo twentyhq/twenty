@@ -1,0 +1,163 @@
+/* @license Enterprise */
+
+import { styled } from '@linaria/react';
+import { isDefined } from 'twenty-shared/utils';
+import { IconPlus } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme';
+
+import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
+import { useSetRecordFilterUsedInAdvancedFilterDropdownRow } from '@/object-record/advanced-filter/hooks/useSetRecordFilterUsedInAdvancedFilterDropdownRow';
+import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
+import { rootLevelRecordFilterGroupComponentSelector } from '@/object-record/advanced-filter/states/rootLevelRecordFilterGroupComponentSelector';
+import { isRecordFilterGroupChildARecordFilterGroup } from '@/object-record/advanced-filter/utils/isRecordFilterGroupChildARecordFilterGroup';
+import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
+import { useFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItems';
+import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { SettingsRoleRuleConditionFilterRow } from '@/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionFilterRow';
+import { useRuleConditionFilterActions } from '@/settings/roles/role-permissions/rule-conditions/hooks/useRuleConditionFilterActions';
+import { useRuleConditionFilterInitialization } from '@/settings/roles/role-permissions/rule-conditions/hooks/useRuleConditionFilterInitialization';
+import { useRuleConditionSyncToDraftRole } from '@/settings/roles/role-permissions/rule-conditions/hooks/useRuleConditionSyncToDraftRole';
+import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { useLingui } from '@lingui/react/macro';
+
+const StyledContainer = styled.div`
+  align-items: start;
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledFiltersContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
+  width: 100%;
+`;
+
+const StyledActionButtonWrapper = styled.div`
+  margin-top: ${themeCssVariables.spacing[2]};
+`;
+
+type SettingsRoleRuleConditionFilterBuilderContentProps = {
+  roleId: string;
+  rowLevelPermissionRuleId: string;
+  objectMetadataItem: EnrichedObjectMetadataItem;
+};
+
+export const SettingsRoleRuleConditionFilterBuilderContent = ({
+  roleId,
+  rowLevelPermissionRuleId,
+  objectMetadataItem,
+}: SettingsRoleRuleConditionFilterBuilderContentProps) => {
+  const { t } = useLingui();
+  const settingsDraftRole = useAtomFamilyStateValue(
+    settingsDraftRoleFamilyState,
+    roleId,
+  );
+
+  const { filterableFieldMetadataItems } = useFilterableFieldMetadataItems(
+    objectMetadataItem.id,
+  );
+
+  const setCurrentRecordFilters = useSetAtomComponentState(
+    currentRecordFiltersComponentState,
+  );
+
+  const setCurrentRecordFilterGroups = useSetAtomComponentState(
+    currentRecordFilterGroupsComponentState,
+  );
+
+  const currentRecordFilters = useAtomComponentStateValue(
+    currentRecordFiltersComponentState,
+  );
+
+  const currentRecordFilterGroups = useAtomComponentStateValue(
+    currentRecordFilterGroupsComponentState,
+  );
+
+  const { setRecordFilterUsedInAdvancedFilterDropdownRow } =
+    useSetRecordFilterUsedInAdvancedFilterDropdownRow();
+
+  const rootRecordFilterGroup = useAtomComponentSelectorValue(
+    rootLevelRecordFilterGroupComponentSelector,
+  );
+
+  const { childRecordFiltersAndRecordFilterGroups } =
+    useChildRecordFiltersAndRecordFilterGroups({
+      recordFilterGroupId: rootRecordFilterGroup?.id,
+    });
+
+  const { hasInitialized } = useRuleConditionFilterInitialization({
+    roleId,
+    rowLevelPermissionRuleId,
+    settingsDraftRole,
+    filterableFieldMetadataItems,
+    setCurrentRecordFilters,
+    setCurrentRecordFilterGroups,
+    setRecordFilterUsedInAdvancedFilterDropdownRow,
+  });
+
+  useRuleConditionSyncToDraftRole({
+    roleId,
+    rowLevelPermissionRuleId,
+    objectMetadataItem,
+    currentRecordFilters,
+    currentRecordFilterGroups,
+    hasInitialized,
+  });
+
+  const { handleCreateFirstFilter, handleAddFilter } =
+    useRuleConditionFilterActions({
+      objectMetadataItem,
+    });
+
+  return (
+    <AdvancedFilterContext.Provider value={{ objectMetadataItem }}>
+      {isDefined(rootRecordFilterGroup) ? (
+        <StyledContainer>
+          <StyledFiltersContainer>
+            {childRecordFiltersAndRecordFilterGroups
+              .filter(
+                (child): child is RecordFilter =>
+                  !isRecordFilterGroupChildARecordFilterGroup(child),
+              )
+              .map((child, index) => (
+                <SettingsRoleRuleConditionFilterRow
+                  key={child.id}
+                  recordFilter={child}
+                  index={index}
+                  recordFilterGroup={rootRecordFilterGroup}
+                />
+              ))}
+          </StyledFiltersContainer>
+          <StyledActionButtonWrapper>
+            <CommandMenuButton
+              command={{
+                Icon: IconPlus,
+                label: t`Add condition`,
+                shortLabel: t`Add condition`,
+                key: 'add-condition',
+              }}
+              onClick={() => handleAddFilter(rootRecordFilterGroup)}
+            />
+          </StyledActionButtonWrapper>
+        </StyledContainer>
+      ) : (
+        <Button
+          startIcon={<IconPlus />}
+          size="sm"
+          onClick={handleCreateFirstFilter}
+          variant="outline"
+        >{t`Add condition`}</Button>
+      )}
+    </AdvancedFilterContext.Provider>
+  );
+};

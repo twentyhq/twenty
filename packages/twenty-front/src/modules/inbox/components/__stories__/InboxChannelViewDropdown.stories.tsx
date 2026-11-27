@@ -12,7 +12,7 @@ import { INBOX_INSTANCE_ID } from '@/inbox/constants/InboxInstanceId';
 import { inboxChannelSummariesState } from '@/inbox/states/inboxChannelSummariesState';
 import { inboxSelectedChannelViewSelector } from '@/inbox/states/selectors/inboxSelectedChannelViewSelector';
 import { setInboxSelectedChannelView } from '@/inbox/testing/setInboxSelectedChannelView';
-import { aiChatChannelsState } from '@/ai/states/aiChatChannelsState';
+import { aiChatChannelsState } from '@/ai-chat/threads/states/aiChatChannelsState';
 import { type InboxChannelView } from '@/inbox/types/InboxChannelView';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { NO_RECORD_GROUP_FAMILY_KEY } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';

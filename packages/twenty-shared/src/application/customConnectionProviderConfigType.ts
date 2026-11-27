@@ -1,6 +1,10 @@
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 
 export type CustomConnectionProviderConfig = {
-  authorizeLogicFunction: SyncableEntityOptions;
-  callbackLogicFunction: SyncableEntityOptions;
+  authorizeLogicFunctionUniversalIdentifier?: string;
+  callbackLogicFunctionUniversalIdentifier?: string;
+  /** @deprecated Use `authorizeLogicFunctionUniversalIdentifier` instead. */
+  authorizeLogicFunction?: SyncableEntityOptions;
+  /** @deprecated Use `callbackLogicFunctionUniversalIdentifier` instead. */
+  callbackLogicFunction?: SyncableEntityOptions;
 };

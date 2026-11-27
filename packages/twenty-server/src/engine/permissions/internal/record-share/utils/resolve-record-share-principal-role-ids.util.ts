@@ -4,6 +4,7 @@ import { RecordSharePrincipalType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
+import { resolveRecordSharePrincipalUserWorkspaceId } from 'src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-user-workspace-id.util';
 import { type RecordShare } from 'src/engine/permissions/record-share/types/record-share.type';
 import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map.type';
 
@@ -18,32 +19,18 @@ export const resolveRecordSharePrincipalRoleIds = ({
     'byId' | 'userWorkspaceIdByUserId'
   >;
   userWorkspaceRoleMap: UserWorkspaceRoleMap;
-}): (string | undefined)[] =>
+}): string[][] =>
   principals.map((principal) => {
-    switch (principal.principalType) {
-      case RecordSharePrincipalType.ROLE:
-        return principal.principalId;
-      case RecordSharePrincipalType.WORKSPACE_MEMBER: {
-        const flatWorkspaceMember =
-          flatWorkspaceMemberMaps.byId[principal.principalId];
-
-        if (
-          !isDefined(flatWorkspaceMember) ||
-          isDefined(flatWorkspaceMember.deletedAt)
-        ) {
-          return undefined;
-        }
-
-        const userWorkspaceId =
-          flatWorkspaceMemberMaps.userWorkspaceIdByUserId[
-            flatWorkspaceMember.userId
-          ];
-
-        return isDefined(userWorkspaceId)
-          ? userWorkspaceRoleMap[userWorkspaceId]
-          : undefined;
-      }
-      default:
-        return undefined;
+    if (principal.principalType === RecordSharePrincipalType.ROLE) {
+      return [principal.principalId];
     }
+
+    const userWorkspaceId = resolveRecordSharePrincipalUserWorkspaceId({
+      principal,
+      flatWorkspaceMemberMaps,
+    });
+
+    return isDefined(userWorkspaceId)
+      ? (userWorkspaceRoleMap[userWorkspaceId] ?? [])
+      : [];
   });

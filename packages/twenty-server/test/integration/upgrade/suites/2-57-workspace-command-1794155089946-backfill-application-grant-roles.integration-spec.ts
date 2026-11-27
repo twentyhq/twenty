@@ -10,13 +10,17 @@ import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import {
+  grantRoleWideAccessToChannelObjects,
+  revokeRoleWideAccessToChannelObjects,
+} from 'test/integration/utils/role-wide-access-to-channel-objects.util';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { v4 as uuidv4 } from 'uuid';
 
 import { type BackfillApplicationGrantRolesCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1794155089946-backfill-application-grant-roles.command';
 import { type ApplicationGrantRoleService } from 'src/engine/core-modules/application/application-grant-role/services/application-grant-role.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 jest.setTimeout(120000);
 
@@ -47,6 +51,7 @@ describe('2-57 workspace command - backfill application grants (integration)', (
     );
 
   beforeAll(async () => {
+    await grantRoleWideAccessToChannelObjects();
     command = getAppProviderByClassName<BackfillApplicationGrantRolesCommand>(
       'BackfillApplicationGrantRolesCommand',
     );
@@ -85,17 +90,20 @@ describe('2-57 workspace command - backfill application grants (integration)', (
 
     expect(errors).toBeUndefined();
 
-    applicationIds = await Promise.all(
-      [
-        TWENTY_STANDARD_APPLICATION.universalIdentifier,
-        APPLICATION_UNIVERSAL_IDENTIFIER,
-      ].map(
-        async (universalIdentifier) =>
-          (await findApplicationIdByUniversalIdentifier({
-            universalIdentifier,
-          }))!,
-      ),
+    applicationIds = [
+      (await findApplicationIdByUniversalIdentifier({
+        universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+      }))!,
+    ];
+
+    // Versions before 2.63 also wrote defaultRoleId, which this command reads
+    await globalThis.testDataSource.query(
+      'UPDATE core."application" SET "defaultRoleId" = "requestedRoleId" WHERE id = ANY($1)',
+      [applicationIds],
     );
+    await getAppProviderByClassName<WorkspaceCacheService>(
+      'WorkspaceCacheService',
+    ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, ['flatApplicationMaps']);
 
     const applicationGrantRoleService =
       getAppProviderByClassName<ApplicationGrantRoleService>(
@@ -116,15 +124,16 @@ describe('2-57 workspace command - backfill application grants (integration)', (
       applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
     });
     jest.useFakeTimers();
+    await revokeRoleWideAccessToChannelObjects();
   });
 
   it('writes nothing on a dry run', async () => {
     await runOnWorkspace({ dryRun: true });
 
-    expect(await findGrantRoles()).toEqual([undefined, undefined]);
+    expect(await findGrantRoles()).toEqual([undefined]);
   });
 
-  it('gives twenty-standard and the installed application a grant equal to their requested role', async () => {
+  it('gives the installed application a grant equal to its requested role', async () => {
     await runOnWorkspace();
 
     const grants = await findGrantRoles();

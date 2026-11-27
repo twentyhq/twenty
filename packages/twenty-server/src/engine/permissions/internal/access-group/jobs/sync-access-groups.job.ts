@@ -14,7 +14,7 @@ export class SyncAccessGroupsJob {
   ) {}
 
   @Process(SYNC_ACCESS_GROUPS_JOB_NAME)
-  async handle({ workspaceId }: SyncAccessGroupsJobData): Promise<void> {
-    await this.accessGroupSyncService.syncAccessGroups(workspaceId);
+  async handle(jobData: SyncAccessGroupsJobData): Promise<void> {
+    await this.accessGroupSyncService.syncAccessGroups(jobData);
   }
 }

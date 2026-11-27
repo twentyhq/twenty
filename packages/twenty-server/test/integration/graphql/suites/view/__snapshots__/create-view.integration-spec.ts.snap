@@ -1,0 +1,36 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Create core view should refuse preset filters on a view of another object than the inbox chat thread 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "view": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View preset filter must belong to the view object",
+              "userFriendlyMessage": "This preset filter is not available on this object",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "view",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 view",
+    "summary": {
+      "totalErrors": 1,
+      "view": 1,
+    },
+    "userFriendlyMessage": "This preset filter is not available on this object",
+  },
+  "message": "Multiple validation errors occurred while creating view",
+  "name": "GraphQLError",
+}
+`;

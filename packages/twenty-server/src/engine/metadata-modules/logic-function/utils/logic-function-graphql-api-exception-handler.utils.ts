@@ -39,6 +39,7 @@ export const logicFunctionGraphQLApiExceptionHandler = (error: any) => {
       case LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT:
         throw new UserInputError(error);
       case LogicFunctionExceptionCode.LOGIC_FUNCTION_DISABLED:
+      case LogicFunctionExceptionCode.LOGIC_FUNCTION_WORKSPACE_SUSPENDED:
       case LogicFunctionExceptionCode.LOGIC_FUNCTION_PREBUILT_BUNDLE_NOT_INSTALLED:
         throw new ForbiddenError(error);
       default: {

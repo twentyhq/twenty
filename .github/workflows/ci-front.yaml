@@ -3,14 +3,13 @@ name: CI Front
 on:
   pull_request:
   merge_group:
-  push:
-    branches: [main]
+  workflow_call:
 
 permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}${{ github.ref == 'refs/heads/main' && format('-{0}', github.sha) || '' }}
+  group: ci-front-${{ github.ref }}${{ github.ref == 'refs/heads/main' && format('-{0}', github.sha) || '' }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 env:
@@ -34,6 +33,10 @@ jobs:
         packages/twenty-shared/**
         packages/twenty-sdk/**
         !packages/twenty-sdk/package.json
+  pick-runner:
+    permissions:
+      actions: read
+    uses: ./.github/workflows/ci-pick-runner.yaml
   front-sb-build:
     needs: changed-files-check
     if: >-
@@ -72,7 +75,7 @@ jobs:
         with:
           key: ${{ env.STORYBOOK_BUILD_CACHE_KEY_FOR_SAVE_ACTION }}
   front-sb-test-modules:
-    needs: changed-files-check
+    needs: [changed-files-check, pick-runner]
     if: >-
       always() &&
       (github.event_name == 'push' ||
@@ -86,8 +89,9 @@ jobs:
       scope: modules
       shard: ${{ matrix.shard }}
       shard-count: ${{ strategy.job-total }}
+      runner: ${{ needs.pick-runner.outputs.runner }}
   front-sb-test-pages:
-    needs: changed-files-check
+    needs: [changed-files-check, pick-runner]
     if: >-
       always() &&
       (github.event_name == 'push' ||
@@ -101,8 +105,9 @@ jobs:
       scope: pages
       shard: ${{ matrix.shard }}
       shard-count: ${{ strategy.job-total }}
+      runner: ${{ needs.pick-runner.outputs.runner }}
   front-sb-test-performance:
-    needs: changed-files-check
+    needs: [changed-files-check, pick-runner]
     if: needs.changed-files-check.outputs.any_changed == 'true'
     strategy:
       fail-fast: false
@@ -113,6 +118,7 @@ jobs:
       scope: performance
       shard: ${{ matrix.shard }}
       shard-count: ${{ strategy.job-total }}
+      runner: ${{ needs.pick-runner.outputs.runner }}
   front-sb-screenshots:
     timeout-minutes: 5
     runs-on: ubuntu-latest
@@ -136,10 +142,10 @@ jobs:
           retention-days: 1
           overwrite: true
   front-task:
-    needs: changed-files-check
+    needs: [changed-files-check, pick-runner]
     if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 30
-    runs-on: ubuntu-latest
+    runs-on: ${{ needs.pick-runner.outputs.runner || 'ubuntu-latest' }}
     env:
       NODE_OPTIONS: '--max-old-space-size=6144'
       TASK_CACHE_KEY: front-task-${{ matrix.name }}${{ matrix.shard && format('-{0}', matrix.shard) || '' }}
@@ -210,10 +216,11 @@ jobs:
   ci-front-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-2-cores
     needs:
       [
         changed-files-check,
+        pick-runner,
         front-task,
         front-build,
         front-sb-test-modules,

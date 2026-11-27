@@ -13,6 +13,10 @@ on:
       shard-count:
         type: number
         required: true
+      runner:
+        type: string
+        required: false
+        default: ubuntu-latest
 
 permissions:
   contents: read
@@ -24,7 +28,7 @@ env:
 jobs:
   storybook-test:
     timeout-minutes: 30
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runner || 'ubuntu-latest' }}
     env:
       REACT_APP_SERVER_BASE_URL: http://localhost:3000
       STORYBOOK_URL: http://localhost:6006

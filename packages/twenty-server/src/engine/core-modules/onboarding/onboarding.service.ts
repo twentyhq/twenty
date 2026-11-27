@@ -1,12 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
-import { isNumber } from '@sniptt/guards';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import {
   assertUnreachable,
   isDefined,
   isNonEmptyArray,
+  isWorkEmail,
 } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { type DataSource, type QueryRunner, Repository } from 'typeorm';
@@ -17,7 +16,6 @@ import { BillingCreditService } from 'src/engine/core-modules/billing/services/b
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ONBOARDING_INVITE_TEAM_REWARD_LOCK_OPTIONS } from 'src/engine/core-modules/onboarding/constants/onboarding-invite-team-reward-lock-options';
 import { ONBOARDING_REWARD_IDEMPOTENCY_KEY_PREFIXES } from 'src/engine/core-modules/onboarding/constants/onboarding-reward-idempotency-key-prefixes';
 import { ACQUIRE_ONBOARDING_STEP_TRANSITION_LOCK_STATEMENT } from 'src/engine/core-modules/onboarding/constants/acquire-onboarding-step-transition-lock-statement';
@@ -30,20 +28,16 @@ import {
 } from 'src/engine/core-modules/onboarding/onboarding.exception';
 import { type ReversibleOnboardingStep } from 'src/engine/core-modules/onboarding/types/reversible-onboarding-step.type';
 import { getOnboardingEnrichmentCreditRewardMicro } from 'src/engine/core-modules/onboarding/utils/get-onboarding-enrichment-credit-reward-micro.util';
-import { readBookCallStepMinEmployeeCount } from 'src/engine/core-modules/onboarding/utils/read-book-call-step-min-employee-count.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { OnboardingInviteSuggestionsService } from 'src/modules/onboarding-invite-suggestions/services/onboarding-invite-suggestions.service';
-import { isWorkEmail } from 'src/utils/is-work-email';
 
 export enum OnboardingStepKeys {
   ONBOARDING_CONNECT_ACCOUNT_PENDING = 'ONBOARDING_CONNECT_ACCOUNT_PENDING',
   ONBOARDING_INVITE_TEAM_PENDING = 'ONBOARDING_INVITE_TEAM_PENDING',
   ONBOARDING_CREATE_PROFILE_PENDING = 'ONBOARDING_CREATE_PROFILE_PENDING',
-  ONBOARDING_BOOK_CALL_PENDING = 'ONBOARDING_BOOK_CALL_PENDING',
-  ONBOARDING_BOOK_CALL_OFFERED = 'ONBOARDING_BOOK_CALL_OFFERED',
   ONBOARDING_REVERSIBLE_STEP_HISTORY = 'ONBOARDING_REVERSIBLE_STEP_HISTORY',
 }
 
@@ -51,8 +45,6 @@ export type OnboardingKeyValueTypeMap = {
   [OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING]: boolean;
   [OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING]: boolean;
   [OnboardingStepKeys.ONBOARDING_CREATE_PROFILE_PENDING]: boolean;
-  [OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING]: boolean;
-  [OnboardingStepKeys.ONBOARDING_BOOK_CALL_OFFERED]: boolean;
   [OnboardingStepKeys.ONBOARDING_REVERSIBLE_STEP_HISTORY]: ReversibleOnboardingStep[];
 };
 
@@ -66,7 +58,6 @@ export class OnboardingService {
     private readonly billingCreditGrantService: BillingCreditGrantService,
     private readonly cacheLockService: CacheLockService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
-    private readonly featureFlagService: FeatureFlagService,
     private readonly onboardingInviteSuggestionsService: OnboardingInviteSuggestionsService,
     private readonly userVarsService: UserVarsService<OnboardingKeyValueTypeMap>,
     private readonly twentyConfigService: TwentyConfigService,
@@ -151,9 +142,6 @@ export class OnboardingService {
     const isInviteTeamPending =
       userVars.get(OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING) === true;
 
-    const isBookCallPending =
-      userVars.get(OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING) === true;
-
     if (isConnectAccountPending) {
       return OnboardingStatus.SYNC_EMAIL;
     }
@@ -170,14 +158,6 @@ export class OnboardingService {
       await this.billingService.isSubscriptionIncompleteOnboardingStatus(
         workspace.id,
       );
-
-    if (
-      isBookCallPending &&
-      isPlanRequired &&
-      isDefined(readBookCallStepMinEmployeeCount(this.twentyConfigService))
-    ) {
-      return OnboardingStatus.BOOK_CALL;
-    }
 
     if (isPlanRequired) {
       return OnboardingStatus.PLAN_REQUIRED;
@@ -413,15 +393,6 @@ export class OnboardingService {
           },
           queryRunner,
         );
-      case OnboardingStatus.BOOK_CALL:
-        return this.setOnboardingBookCallPending(
-          {
-            userId,
-            workspaceId,
-            value: true,
-          },
-          queryRunner,
-        );
       default:
         assertUnreachable(step);
     }
@@ -620,13 +591,7 @@ export class OnboardingService {
     userId: string;
     workspaceId: string;
   }) {
-    if (
-      !this.billingService.isBillingEnabled() ||
-      !(await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_GETTING_STARTED_ENABLED,
-        workspaceId,
-      ))
-    ) {
+    if (!this.billingService.isBillingEnabled()) {
       return;
     }
 
@@ -799,205 +764,6 @@ export class OnboardingService {
       this.exceptionHandlerService.captureExceptions([error], {
         workspace: { id: workspaceId },
       });
-    }
-  }
-
-  async isOnboardingBookCallPending({
-    userId,
-    workspaceId,
-  }: {
-    userId: string;
-    workspaceId: string;
-  }): Promise<boolean> {
-    if (
-      !isDefined(readBookCallStepMinEmployeeCount(this.twentyConfigService))
-    ) {
-      return false;
-    }
-
-    return (
-      (await this.userVarsService.get({
-        userId,
-        workspaceId,
-        key: OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING,
-      })) === true
-    );
-  }
-
-  async setOnboardingBookCallPending(
-    {
-      userId,
-      workspaceId,
-      value,
-    }: {
-      userId: string;
-      workspaceId: string;
-      value: boolean;
-    },
-    queryRunner?: QueryRunner,
-  ) {
-    if (!value) {
-      await this.userVarsService.delete(
-        {
-          userId,
-          workspaceId,
-          key: OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING,
-        },
-        queryRunner,
-      );
-
-      return;
-    }
-
-    await this.userVarsService.set(
-      {
-        userId,
-        workspaceId,
-        key: OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING,
-        value: true,
-      },
-      queryRunner,
-    );
-  }
-
-  async completeOnboardingBookCallStep({
-    userId,
-    workspaceId,
-    hasBookedCall,
-    isAutoSkipped,
-  }: {
-    userId: string;
-    workspaceId: string;
-    hasBookedCall: boolean;
-    isAutoSkipped: boolean;
-  }) {
-    await this.runStepTransitionInLockedTransaction(
-      { userId, workspaceId },
-      async (queryRunner) => {
-        const hasClaimedBookCallStep = await this.claimOnboardingBookCallStep(
-          { userId, workspaceId },
-          queryRunner,
-        );
-
-        if (!hasClaimedBookCallStep || isAutoSkipped) {
-          return;
-        }
-
-        if (hasBookedCall) {
-          await this.clearReversibleOnboardingStepHistoryAfterIrreversibleStep(
-            { userId, workspaceId },
-            queryRunner,
-          );
-
-          return;
-        }
-
-        await this.pushReversibleOnboardingStep(
-          {
-            userId,
-            workspaceId,
-            step: OnboardingStatus.BOOK_CALL,
-          },
-          queryRunner,
-        );
-      },
-    );
-  }
-
-  private async claimOnboardingBookCallStep(
-    {
-      userId,
-      workspaceId,
-    }: {
-      userId: string;
-      workspaceId: string;
-    },
-    queryRunner?: QueryRunner,
-  ): Promise<boolean> {
-    const affectedRows = await this.userVarsService.delete(
-      {
-        userId,
-        workspaceId,
-        key: OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING,
-      },
-      queryRunner,
-    );
-
-    return isDefined(affectedRows) && affectedRows > 0;
-  }
-
-  async setOnboardingBookCallPendingIfQualified({
-    userId,
-    workspaceId,
-    employeeCount,
-  }: {
-    userId: string;
-    workspaceId: string;
-    employeeCount: number | null;
-  }): Promise<boolean> {
-    const minEmployeeCount = readBookCallStepMinEmployeeCount(
-      this.twentyConfigService,
-    );
-
-    if (
-      !isDefined(minEmployeeCount) ||
-      !isNumber(employeeCount) ||
-      employeeCount < minEmployeeCount
-    ) {
-      return false;
-    }
-
-    if (
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_GETTING_STARTED_ENABLED,
-        workspaceId,
-      )
-    ) {
-      return false;
-    }
-
-    try {
-      return await this.dataSource.transaction(async (entityManager) => {
-        const { queryRunner } = entityManager;
-
-        if (!isDefined(queryRunner)) {
-          throw new Error('Transaction entity manager has no query runner');
-        }
-
-        // Single-winner gate: a concurrent enrichment must not resurrect a step the user already skipped.
-        const hasClaimedBookCallOffer =
-          await this.userVarsService.setIfNotExists(
-            {
-              userId,
-              workspaceId,
-              key: OnboardingStepKeys.ONBOARDING_BOOK_CALL_OFFERED,
-              value: true,
-            },
-            queryRunner,
-          );
-
-        if (!hasClaimedBookCallOffer) {
-          return false;
-        }
-
-        await this.setOnboardingBookCallPending(
-          {
-            userId,
-            workspaceId,
-            value: true,
-          },
-          queryRunner,
-        );
-
-        return true;
-      });
-    } catch (error) {
-      this.logger.error(
-        `Failed to flag the book-call onboarding step for user ${userId} in workspace ${workspaceId}`,
-        error,
-      );
-
-      return false;
     }
   }
 

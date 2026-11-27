@@ -12,6 +12,7 @@ import {
   assertIsDefinedOrThrow,
   assertUnreachable,
   isDefined,
+  isFormulaFieldMetadata,
 } from 'twenty-shared/utils';
 
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
@@ -171,6 +172,14 @@ export class DataArgProcessorService {
 
         if (isUndefined(value)) {
           continue;
+        }
+
+        if (isFormulaFieldMetadata(fieldMetadata)) {
+          throw new CommonQueryRunnerException(
+            `${key} is a formula field and does not support write operations`,
+            CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+            { userFriendlyMessage: msg`A formula field cannot be edited.` },
+          );
         }
 
         processedRecord[key] = await this.processField({

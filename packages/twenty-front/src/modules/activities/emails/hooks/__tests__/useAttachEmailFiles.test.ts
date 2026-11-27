@@ -98,6 +98,37 @@ describe('useAttachEmailFiles', () => {
     ]);
   });
 
+  it('should drop an upload that finishes after pending uploads were discarded', async () => {
+    let resolveUpload: (attachment: EmailAttachment) => void = () => {};
+    const uploadEmailAttachment = jest.fn(
+      () =>
+        new Promise<EmailAttachment>((resolve) => {
+          resolveUpload = resolve;
+        }),
+    );
+
+    const { view, onFilesAttached, getTriggerUpload } = setup(
+      uploadEmailAttachment,
+    );
+
+    let uploadPromise: Promise<void> | undefined;
+    act(() => {
+      uploadPromise = getTriggerUpload()?.([new File([], 'late.pdf')]);
+    });
+
+    act(() => {
+      view.result.current.discardPendingUploads();
+    });
+
+    await act(async () => {
+      resolveUpload(buildAttachment('late'));
+      await uploadPromise;
+    });
+
+    expect(onFilesAttached).not.toHaveBeenCalled();
+    expect(view.result.current.isUploadingAttachments).toBe(false);
+  });
+
   it('should not touch the attachments when every upload fails', async () => {
     const uploadEmailAttachment = jest.fn(async () => undefined);
 

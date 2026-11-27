@@ -1,2 +1,2 @@
 export const TEAMS_ASSISTANT_FAILURE_TEXT =
-  'Sorry, I could not complete that request. An admin can check the Teams Assistant Request record in Twenty for details.';
+  'That request failed. Try again, and if it keeps failing, an admin can find the details in Twenty.';

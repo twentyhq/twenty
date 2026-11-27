@@ -9,16 +9,19 @@ import {
   UpdateFunctionConfigurationCommand,
 } from '@aws-sdk/client-lambda';
 import { msg } from '@lingui/core/macro';
+import { Logger } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
 import * as fs from 'fs/promises';
 import { join } from 'path';
 import { FRONT_COMPONENT_BUILDER_MAX_PAYLOAD_BYTES } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-builder-max-payload-bytes.constant';
 import { setTimeout } from 'timers/promises';
+import { gzipSync } from 'zlib';
 import { isDefined } from 'twenty-shared/utils';
 
 import { YARN_ENGINE_DIRNAME } from 'src/engine/core-modules/application/application-package/constants/yarn-engine-dirname';
 import { type CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { COMMON_LAYER_DEPENDENCIES_DIRNAME } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/common-layer-dependencies-dirname';
+import { BUILD_TOOL_LAMBDA_RUNTIME } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/build-tool-lambda-runtime.constant';
 import {
   BUILD_LOCK_MAX_RETRIES,
   BUILD_LOCK_RETRY_MS,
@@ -42,6 +45,14 @@ import {
   YARN_INSTALL_LAMBDA_MEMORY_MB,
   YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
+import {
+  SDK_CLIENT_GENERATOR_FUNCTION_NAME_PREFIX,
+  SDK_CLIENT_GENERATOR_LAMBDA_INVOKE_TIMEOUT_MS,
+  SDK_CLIENT_GENERATOR_LAMBDA_MAX_PAYLOAD_BYTES,
+  SDK_CLIENT_GENERATOR_LAMBDA_MEMORY_MB,
+  SDK_CLIENT_GENERATOR_LAMBDA_TIMEOUT_SECONDS,
+  SDK_CLIENT_PACKAGE_TEMPLATE_DIRNAME_IN_FUNCTION,
+} from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/sdk-client-generation-lambda.constant';
 import { type LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
 import {
   type BuilderLambdaPayload,
@@ -50,9 +61,16 @@ import {
   type YarnInstallLambdaPayload,
   type YarnInstallLambdaResult,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
+import {
+  type SdkClientGenerationLambdaPayload,
+  type SdkClientGenerationLambdaFailureCode,
+  type SdkClientGenerationLambdaResult,
+} from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/sdk-client-generation-lambda.type';
 import { buildHttpEgressHandlerBundle } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-http-egress-handler-bundle.util';
 import { buildHttpEgressRequestTooLargeResponse } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-http-egress-request-too-large-response.util';
 import { buildHttpEgressUnavailableResponse } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-http-egress-unavailable-response.util';
+import { buildSdkClientGenerationHandlerBundle } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-sdk-client-generation-handler-bundle.util';
+import { getSdkClientGenerationLambdaFailureCode } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-sdk-client-generation-lambda-failure-code.util';
 import { buildYarnInstallFailureException } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-yarn-install-failure-exception.util';
 import { computeHashedLambdaResourceName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/compute-hashed-lambda-resource-name.util';
 import {
@@ -71,6 +89,12 @@ import { copyCommonLayerDependencies } from 'src/engine/core-modules/logic-funct
 import { copyYarnInstall } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-yarn-install';
 import { createZipFile } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/create-zip-file';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
+import {
+  SdkClientException,
+  SdkClientExceptionCode,
+} from 'src/engine/core-modules/sdk-client/exceptions/sdk-client.exception';
+import { computeSdkClientPackageTemplateFingerprint } from 'src/engine/core-modules/sdk-client/utils/compute-sdk-client-package-template-fingerprint.util';
+import { copySdkClientPackageTemplate } from 'src/engine/core-modules/sdk-client/utils/copy-sdk-client-package-template.util';
 import { type HttpEgressRequest } from 'src/engine/core-modules/tool/tools/http-tool/types/http-egress-request.type';
 import { type HttpEgressResponse } from 'src/engine/core-modules/tool/tools/http-tool/types/http-egress-response.type';
 import { frontComponentBuildResultSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-build-result.schema';
@@ -89,11 +113,15 @@ import {
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 
 export class LambdaToolFunctionsService {
+  private readonly logger = new Logger(LambdaToolFunctionsService.name);
   private commonLayerName: string | undefined;
   private yarnInstallFunctionName: string | undefined;
   private builderFunctionName: string | undefined;
   private httpEgressFunction:
     | { functionName: string; handlerCode: string }
+    | undefined;
+  private sdkClientGeneratorFunctionPromise:
+    | Promise<{ functionName: string; handlerCode: string }>
     | undefined;
 
   constructor(
@@ -360,6 +388,116 @@ export class LambdaToolFunctionsService {
     }
   }
 
+  async generateSdkClientArchive({
+    schema,
+  }: {
+    schema: string;
+  }): Promise<Buffer> {
+    const payload: SdkClientGenerationLambdaPayload = {
+      gzippedSchema: gzipSync(schema).toString('base64'),
+    };
+    const serializedPayload = JSON.stringify(payload);
+
+    const outcome =
+      Buffer.byteLength(serializedPayload) >
+      SDK_CLIENT_GENERATOR_LAMBDA_MAX_PAYLOAD_BYTES
+        ? { failureCode: 'SCHEMA_TOO_LARGE' as const }
+        : await this.runSdkClientGenerator(serializedPayload);
+
+    if ('failureCode' in outcome) {
+      throw new SdkClientException(
+        `SDK client generation Lambda failed: ${outcome.failureCode}`,
+        SdkClientExceptionCode.GENERATION_FAILED,
+        { failureCode: outcome.failureCode },
+      );
+    }
+
+    return outcome.archive;
+  }
+
+  // Callers show the failure to users: AWS errors carry account, role and
+  // function ARNs, and the function's own errors can quote schema text.
+  private async runSdkClientGenerator(
+    serializedPayload: string,
+  ): Promise<
+    { archive: Buffer } | { failureCode: SdkClientGenerationLambdaFailureCode }
+  > {
+    let functionName: string | undefined;
+
+    try {
+      functionName = await this.ensureSdkClientGeneratorLambdaIsActive();
+
+      const lambdaClient = await this.awsClient.getLambdaClient();
+      const result = await lambdaClient.send(
+        new InvokeCommand({
+          FunctionName: functionName,
+          Payload: serializedPayload,
+        }),
+        {
+          abortSignal: AbortSignal.timeout(
+            SDK_CLIENT_GENERATOR_LAMBDA_INVOKE_TIMEOUT_MS,
+          ),
+        },
+      );
+
+      if (isDefined(result.FunctionError) || !isDefined(result.Payload)) {
+        return {
+          failureCode: getSdkClientGenerationLambdaFailureCode({
+            functionError: result.FunctionError,
+            payload: result.Payload?.transformToString(),
+          }),
+        };
+      }
+
+      const generationResult: SdkClientGenerationLambdaResult = JSON.parse(
+        result.Payload.transformToString(),
+      );
+
+      return generationResult.success
+        ? { archive: Buffer.from(generationResult.archive, 'base64') }
+        : { failureCode: generationResult.errorCode };
+    } catch (error) {
+      this.logger.error(
+        `SDK client generator Lambda failed: ${error instanceof Error ? error.message : String(error)}`,
+        error instanceof Error ? error.stack : undefined,
+      );
+
+      if (isDefined(functionName)) {
+        await this.awsClient.clearFunctionCache(functionName);
+      }
+
+      if (error instanceof SyntaxError) {
+        return { failureCode: 'INVALID_RESPONSE' };
+      }
+
+      return {
+        failureCode:
+          error instanceof Error && error.name === 'TimeoutError'
+            ? 'TIMED_OUT'
+            : 'INVOKE_FAILED',
+      };
+    }
+  }
+
+  private async ensureSdkClientGeneratorLambdaIsActive(): Promise<string> {
+    const { functionName, handlerCode } =
+      await this.getSdkClientGeneratorFunction();
+
+    await this.ensureBuildToolLambdaIsActive({
+      functionName,
+      memoryMb: SDK_CLIENT_GENERATOR_LAMBDA_MEMORY_MB,
+      timeoutSeconds: SDK_CLIENT_GENERATOR_LAMBDA_TIMEOUT_SECONDS,
+      copyFiles: async (directory) => {
+        await fs.writeFile(join(directory, 'index.js'), handlerCode);
+        await copySdkClientPackageTemplate(
+          join(directory, SDK_CLIENT_PACKAGE_TEMPLATE_DIRNAME_IN_FUNCTION),
+        );
+      },
+    });
+
+    return functionName;
+  }
+
   private async ensureHttpEgressLambdaIsActive(): Promise<string> {
     const { functionName, handlerCode } = await this.getHttpEgressFunction();
 
@@ -537,7 +675,7 @@ export class LambdaToolFunctionsService {
             Handler: 'index.handler',
             Role: this.options.lambdaRole,
             Tags: this.options.resourceTags,
-            Runtime: LogicFunctionRuntime.NODE22,
+            Runtime: BUILD_TOOL_LAMBDA_RUNTIME,
             Timeout: timeoutSeconds,
             MemorySize: memoryMb,
             EphemeralStorage: { Size: LAMBDA_EPHEMERAL_STORAGE_MB },
@@ -661,6 +799,53 @@ export class LambdaToolFunctionsService {
     };
 
     return this.httpEgressFunction;
+  }
+
+  private getSdkClientGeneratorFunction(): Promise<{
+    functionName: string;
+    handlerCode: string;
+  }> {
+    if (!isDefined(this.sdkClientGeneratorFunctionPromise)) {
+      this.sdkClientGeneratorFunctionPromise =
+        this.computeSdkClientGeneratorFunction().catch((error) => {
+          this.sdkClientGeneratorFunctionPromise = undefined;
+
+          throw error;
+        });
+    }
+
+    return this.sdkClientGeneratorFunctionPromise;
+  }
+
+  private async computeSdkClientGeneratorFunction(): Promise<{
+    functionName: string;
+    handlerCode: string;
+  }> {
+    const [handlerCode, packageTemplateFingerprint, commonLayerName] =
+      await Promise.all([
+        buildSdkClientGenerationHandlerBundle(),
+        computeSdkClientPackageTemplateFingerprint(),
+        this.getCommonLayerName(),
+      ]);
+
+    return {
+      handlerCode,
+      // An existing function is never updated: whatever it runs on must
+      // be in its name, including esbuild from the common layer.
+      functionName: computeHashedLambdaResourceName({
+        resourceNamePrefix: SDK_CLIENT_GENERATOR_FUNCTION_NAME_PREFIX,
+        namespace: this.options.resourceNamespace,
+        contents: [
+          handlerCode,
+          packageTemplateFingerprint,
+          commonLayerName,
+          BUILD_TOOL_LAMBDA_RUNTIME,
+          String(SDK_CLIENT_GENERATOR_LAMBDA_MEMORY_MB),
+          String(SDK_CLIENT_GENERATOR_LAMBDA_TIMEOUT_SECONDS),
+          String(LAMBDA_EPHEMERAL_STORAGE_MB),
+        ],
+      }),
+    };
   }
 
   private async getBuilderFunctionName(): Promise<string> {

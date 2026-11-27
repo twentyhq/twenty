@@ -1,5 +1,5 @@
-import { PermissionIcon } from '@/settings/roles/role-permissions/objects-permissions/components/PermissionIcon';
-import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
+import { PermissionIcon } from '@/settings/roles/role-permissions/object-overrides/components/PermissionIcon';
+import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/object-overrides/constants/SettingsRoleObjectPermissionIconConfig';
 import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { ListItemButton } from 'twenty-ui/components/navigation';

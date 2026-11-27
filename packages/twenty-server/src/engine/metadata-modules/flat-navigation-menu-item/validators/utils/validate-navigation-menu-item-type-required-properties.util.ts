@@ -1,10 +1,12 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg, t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import {
   type AssertUnreachable,
   NavigationMenuItemType,
 } from 'twenty-shared/types';
 import {
+  isBuiltInSectionKey,
   isDefined,
   isSafeInternalPath,
   isNativePageKey,
@@ -12,6 +14,8 @@ import {
   isValidUuid,
 } from 'twenty-shared/utils';
 
+import { NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MAX } from 'src/engine/metadata-modules/navigation-menu-item/constants/navigation-menu-item-visible-item-limit-max.constant';
+import { NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MIN } from 'src/engine/metadata-modules/navigation-menu-item/constants/navigation-menu-item-visible-item-limit-min.constant';
 import { NavigationMenuItemExceptionCode } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception';
 import { type UniversalFlatNavigationMenuItem } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-navigation-menu-item.type';
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
@@ -41,6 +45,19 @@ const validateUuidProperty = ({
     ? []
     : [buildInvalidInputError(message, userFriendlyMessage)];
 
+const validateRequiredName = ({
+  name,
+  message,
+  userFriendlyMessage,
+}: {
+  name: string | null | undefined;
+  message: string;
+  userFriendlyMessage: MessageDescriptor;
+}): NavigationMenuItemValidationError[] =>
+  isNonEmptyString(name?.trim())
+    ? []
+    : [buildInvalidInputError(message, userFriendlyMessage)];
+
 export const validateNavigationMenuItemTypeRequiredProperties = ({
   flatNavigationMenuItem,
 }: {
@@ -56,6 +73,8 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
     pageLayoutUniversalIdentifier,
     agentChatChannelUniversalIdentifier,
     nativePageKey,
+    builtInSectionKey,
+    visibleItemLimit,
     workflowUniversalIdentifier,
     agentUniversalIdentifier,
   } = flatNavigationMenuItem;
@@ -69,16 +88,70 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
     ];
   }
 
+  if (isDefined(builtInSectionKey) && type !== NavigationMenuItemType.SECTION) {
+    return [
+      buildInvalidInputError(
+        t`A builtInSectionKey is only allowed on SECTION type`,
+        msg`A builtInSectionKey is only allowed on SECTION type`,
+      ),
+    ];
+  }
+
+  if (isDefined(visibleItemLimit) && type !== NavigationMenuItemType.SECTION) {
+    return [
+      buildInvalidInputError(
+        t`A visibleItemLimit is only allowed on SECTION type`,
+        msg`A visibleItemLimit is only allowed on SECTION type`,
+      ),
+    ];
+  }
+
+  if (
+    isDefined(visibleItemLimit) &&
+    (!Number.isInteger(visibleItemLimit) ||
+      visibleItemLimit < NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MIN ||
+      visibleItemLimit > NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MAX)
+  ) {
+    return [
+      buildInvalidInputError(
+        t`A visibleItemLimit must be an integer between ${NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MIN} and ${NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MAX}`,
+        msg`A visibleItemLimit must be an integer between ${NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MIN} and ${NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MAX}`,
+      ),
+    ];
+  }
+
   switch (type) {
     case NavigationMenuItemType.FOLDER: {
-      return isDefined(name) && name.trim() !== ''
-        ? []
-        : [
-            buildInvalidInputError(
-              t`A name is required for FOLDER type`,
-              msg`A name is required for FOLDER type`,
-            ),
-          ];
+      return validateRequiredName({
+        name,
+        message: t`A name is required for FOLDER type`,
+        userFriendlyMessage: msg`A name is required for FOLDER type`,
+      });
+    }
+    case NavigationMenuItemType.TAB: {
+      return validateRequiredName({
+        name,
+        message: t`A name is required for TAB type`,
+        userFriendlyMessage: msg`A name is required for TAB type`,
+      });
+    }
+    case NavigationMenuItemType.SECTION: {
+      if (isDefined(builtInSectionKey)) {
+        return isBuiltInSectionKey(builtInSectionKey)
+          ? []
+          : [
+              buildInvalidInputError(
+                t`A valid builtInSectionKey is required for a built-in SECTION`,
+                msg`A valid builtInSectionKey is required for a built-in SECTION`,
+              ),
+            ];
+      }
+
+      return validateRequiredName({
+        name,
+        message: t`A name is required for SECTION type`,
+        userFriendlyMessage: msg`A name is required for SECTION type`,
+      });
     }
     case NavigationMenuItemType.OBJECT: {
       return validateUuidProperty({

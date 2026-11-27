@@ -5,7 +5,8 @@ import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { askAiSidePanelThreadIdComponentState } from '@/side-panel/states/askAiSidePanelThreadIdComponentState';
+import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
 import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
@@ -20,24 +21,30 @@ import { getGettingStartedStepSelection } from '@/getting-started/utils/getGetti
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
 import {
-  FeatureFlagKey,
+  ApplicationRegistrationSourceType,
+  FindInstallApplicationJobStatusDocument,
   FindManyMarketplaceAppsDocument,
+  FindMarketplaceAppDetailDocument,
+  type FindMarketplaceAppDetailQuery,
+  type FindMarketplaceAppDetailQueryVariables,
   GettingStartedProgressDocument,
   type GettingStartedProgressQuery,
   GettingStartedStepActionKey,
   GettingStartedWorkflowPreviewsDocument,
   SubscriptionStatus,
+  TriggerInstallApplicationDocument,
   UpdateGettingStartedDocument,
   type UpdateGettingStartedMutationVariables,
   UserCreditsFallback,
   WorkflowActionType,
 } from '~/generated-metadata/graphql';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
+import { ChatObjectMetadataDecorator } from '~/testing/decorators/ChatObjectMetadataDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import {
@@ -49,9 +56,6 @@ import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
 const TRIALING_WORKSPACE = {
   ...mockCurrentWorkspace,
-  featureFlags: [
-    { key: FeatureFlagKey.IS_GETTING_STARTED_ENABLED, value: true },
-  ],
   currentBillingSubscription: {
     ...mockCurrentWorkspace.currentBillingSubscription,
     status: SubscriptionStatus.Trialing,
@@ -120,6 +124,7 @@ const meta: Meta<typeof GettingStartedPageContent> = {
       </StyledPageFrame>
     ),
     ToastDecorator,
+    ChatObjectMetadataDecorator,
     ObjectMetadataItemsDecorator,
     ComponentWithRouterDecorator,
     (Story, { parameters }) => {
@@ -550,11 +555,21 @@ export const DoneSteps: Story = {
       within(followUpStepCard).getByRole('button', { name: 'Continue thread' }),
     );
 
-    await waitFor(() =>
-      expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(
-        FOLLOW_UP_DEALS_CHAT_THREAD_ID,
-      ),
-    );
+    await waitFor(() => {
+      const askAiPageId = jotaiStore
+        .get(sidePanelNavigationStackState.atom)
+        .at(-1)?.pageId;
+
+      assertIsDefinedOrThrow(askAiPageId);
+
+      expect(
+        jotaiStore.get(
+          askAiSidePanelThreadIdComponentState.atomFamily({
+            instanceId: askAiPageId,
+          }),
+        ),
+      ).toBe(FOLLOW_UP_DEALS_CHAT_THREAD_ID);
+    });
   },
 };
 
@@ -600,6 +615,40 @@ const createAnimationPreviewProgress =
   });
 
 let animationPreviewProgress = createAnimationPreviewProgress();
+
+const ANIMATION_PREVIEW_PROGRESS_MOCKS: MockedResponse[] = [
+  {
+    request: { query: GettingStartedProgressDocument },
+    maxUsageCount: Infinity,
+    result: () => ({
+      data: { gettingStartedProgress: animationPreviewProgress },
+    }),
+  },
+  {
+    request: { query: UpdateGettingStartedDocument, variables: () => true },
+    maxUsageCount: Infinity,
+    result: ({ input }: UpdateGettingStartedMutationVariables) => {
+      animationPreviewProgress = {
+        ...animationPreviewProgress,
+        completedStepActionKeys: [
+          ...new Set(
+            [
+              ...animationPreviewProgress.completedStepActionKeys,
+              input.completedStepActionKey,
+            ].filter(isDefined),
+          ),
+        ],
+        selectedStepActionKey:
+          input.selectedStepActionKey ??
+          animationPreviewProgress.selectedStepActionKey,
+      };
+
+      return {
+        data: { updateGettingStarted: animationPreviewProgress },
+      };
+    },
+  },
+];
 
 const StyledAnimationPreviewToolbar = styled.div`
   display: flex;
@@ -659,40 +708,7 @@ export const StepAnimations: Story = {
     animationPreviewProgress = createAnimationPreviewProgress();
   },
   parameters: {
-    apolloMocks: [
-      WORKFLOW_PREVIEWS_MOCK,
-      {
-        request: { query: GettingStartedProgressDocument },
-        maxUsageCount: Infinity,
-        result: () => ({
-          data: { gettingStartedProgress: animationPreviewProgress },
-        }),
-      },
-      {
-        request: { query: UpdateGettingStartedDocument, variables: () => true },
-        maxUsageCount: Infinity,
-        result: ({ input }: UpdateGettingStartedMutationVariables) => {
-          animationPreviewProgress = {
-            ...animationPreviewProgress,
-            completedStepActionKeys: [
-              ...new Set(
-                [
-                  ...animationPreviewProgress.completedStepActionKeys,
-                  input.completedStepActionKey,
-                ].filter(isDefined),
-              ),
-            ],
-            selectedStepActionKey:
-              input.selectedStepActionKey ??
-              animationPreviewProgress.selectedStepActionKey,
-          };
-
-          return {
-            data: { updateGettingStarted: animationPreviewProgress },
-          };
-        },
-      },
-    ],
+    apolloMocks: [WORKFLOW_PREVIEWS_MOCK, ...ANIMATION_PREVIEW_PROGRESS_MOCKS],
   },
   render: () => <GettingStartedAnimationPreview />,
   play: async ({ canvasElement }) => {
@@ -713,5 +729,117 @@ export const StepAnimations: Story = {
         ).toHaveAttribute('aria-current', 'step'),
       { timeout: 3000 },
     );
+  },
+};
+
+const buildFeaturedAppDetail = (
+  universalIdentifier: string,
+): FindMarketplaceAppDetailQuery['findMarketplaceAppDetail'] => ({
+  __typename: 'MarketplaceAppDetail',
+  id: universalIdentifier,
+  universalIdentifier,
+  name:
+    universalIdentifier === TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS.SLACK
+      ? 'Slack'
+      : 'Fathom',
+  sourceType: ApplicationRegistrationSourceType.NPM,
+  sourcePackage: null,
+  latestAvailableVersion: '1.0.0',
+  isListed: true,
+  description: null,
+  author: 'Twenty',
+  category: 'Communication',
+  logoUrl: null,
+  websiteUrl: null,
+  connectUrl: null,
+  aboutDescription: null,
+  pricingDescription: null,
+  termsUrl: null,
+  emailSupport: null,
+  issueReportUrl: null,
+  galleryImages: [],
+  installCount: 0,
+  defaultRoleUniversalIdentifier: null,
+  requestedCapabilities: [],
+  requestedIframeMediaPermissions: [],
+  billsCredits: false,
+  billingPrices: [],
+  objects: [],
+  roles: [],
+});
+
+export const OptimisticAppInstall: Story = {
+  beforeEach: () => {
+    animationPreviewProgress = {
+      ...TRIAL_PROGRESS,
+      selectedStepActionKey: GettingStartedStepActionKey.INSTALL_APP,
+    };
+  },
+  parameters: {
+    apolloMocks: [
+      WORKFLOW_PREVIEWS_MOCK,
+      FEATURED_MARKETPLACE_APPS_MOCK,
+      ...ANIMATION_PREVIEW_PROGRESS_MOCKS,
+      {
+        request: {
+          query: FindMarketplaceAppDetailDocument,
+          variables: () => true,
+        },
+        maxUsageCount: Infinity,
+        result: ({
+          universalIdentifier,
+        }: FindMarketplaceAppDetailQueryVariables) => ({
+          data: {
+            findMarketplaceAppDetail:
+              buildFeaturedAppDetail(universalIdentifier),
+          },
+        }),
+      },
+      {
+        request: {
+          query: FindInstallApplicationJobStatusDocument,
+          variables: () => true,
+        },
+        maxUsageCount: Infinity,
+        result: { data: { findInstallApplicationJobStatus: null } },
+      },
+      {
+        request: {
+          query: TriggerInstallApplicationDocument,
+          variables: {
+            input: {
+              universalIdentifier:
+                TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS.SLACK,
+            },
+          },
+        },
+        result: {
+          data: {
+            triggerInstallApplication: {
+              jobId: `install-application.workspace-id.${TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS.SLACK}`,
+            },
+          },
+        },
+      },
+    ],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const installSlackButton = await within(
+      await canvas.findByRole('region', { name: 'Install an app' }),
+    ).findByRole('button', { name: 'Install Slack' });
+
+    await waitFor(() => expect(installSlackButton).toBeEnabled());
+    await userEvent.click(installSlackButton);
+    await userEvent.click(
+      await within(document.body).findByRole('button', { name: 'Authorize' }),
+    );
+
+    await expect(
+      await canvas.findByRole('region', { name: 'App installed' }),
+    ).toBeVisible();
+    await expect(
+      canvas.getByRole('img', { name: 'Slack installed' }),
+    ).toBeVisible();
   },
 };

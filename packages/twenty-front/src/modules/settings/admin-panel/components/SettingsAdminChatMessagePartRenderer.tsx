@@ -4,7 +4,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
+import { LazyMarkdownRenderer } from '@/ai-chat/message-content/components/LazyMarkdownRenderer';
 import { SettingsAdminChatAskQuestionsPart } from '@/settings/admin-panel/components/SettingsAdminChatAskQuestionsPart';
 import { SettingsAdminChatCollapsibleSection } from '@/settings/admin-panel/components/SettingsAdminChatCollapsibleSection';
 import { SettingsAdminChatToolCallPart } from '@/settings/admin-panel/components/SettingsAdminChatToolCallPart';

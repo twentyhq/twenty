@@ -4,7 +4,6 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { readIsCompanyEnrichmentEnabled } from 'src/engine/core-modules/company-enrichment/utils/read-is-company-enrichment-enabled.util';
-import { readBookCallStepMinEmployeeCount } from 'src/engine/core-modules/onboarding/utils/read-book-call-step-min-employee-count.util';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
@@ -19,6 +18,7 @@ import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/dr
 import { PUBLIC_FEATURE_FLAGS } from 'src/engine/core-modules/feature-flag/constants/public-feature-flag.const';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
+import { deriveWebPushVapidKeyPair } from 'src/engine/core-modules/web-push/utils/derive-web-push-vapid-key-pair.util';
 import { AI_MODEL_TIERS, parseAiModelVariantId } from 'twenty-shared/ai';
 import { ENTERPRISE_INSTANCE_TYPE } from 'twenty-shared/constants';
 import { MODEL_FAMILY_LABELS } from 'src/engine/metadata-modules/ai/ai-models/constants/model-family-labels.constant';
@@ -68,9 +68,6 @@ export class ClientConfigService {
     const supportDriver = this.twentyConfigService.get('SUPPORT_DRIVER');
     const calendarBookingPageId = this.twentyConfigService.get(
       'CALENDAR_BOOKING_PAGE_ID',
-    );
-    const isBookCallOnboardingStepEnabled = isDefined(
-      readBookCallStepMinEmployeeCount(this.twentyConfigService),
     );
     const isCompanyEnrichmentEnabled = readIsCompanyEnrichmentEnabled(
       this.twentyConfigService,
@@ -320,7 +317,6 @@ export class ClientConfigService {
       calendarBookingPageId: isNonEmptyString(calendarBookingPageId)
         ? calendarBookingPageId
         : undefined,
-      isBookCallOnboardingStepEnabled,
       isCompanyEnrichmentEnabled,
       isCloudflareIntegrationEnabled: this.isCloudflareIntegrationEnabled(),
       isClickHouseConfigured: !!this.twentyConfigService.get('CLICKHOUSE_URL'),
@@ -333,6 +329,9 @@ export class ClientConfigService {
       enterpriseInstanceType:
         this.twentyConfigService.get('ENTERPRISE_INSTANCE_TYPE') ??
         ENTERPRISE_INSTANCE_TYPE.PRODUCTION,
+      webPushVapidPublicKey: deriveWebPushVapidKeyPair({
+        twentyConfigService: this.twentyConfigService,
+      }).publicKey,
     };
 
     const maintenanceMode =

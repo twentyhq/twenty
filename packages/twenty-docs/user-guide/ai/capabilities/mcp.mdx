@@ -16,6 +16,8 @@ Use your **workspace URL** (the URL you use to access Twenty) as the MCP endpoin
 | **Cloud** | `https://{your-workspace-url}/mcp` (e.g. `https://mycompany.twenty.com/mcp`) |
 | **Self-Hosted** | `https://{your-domain}/mcp` |
 
+The endpoint speaks MCP protocol `2026-07-28` and the earlier revisions back to `2024-11-05` over Streamable HTTP. Clients on `2026-07-28` call `server/discover` and send each request on its own; older clients start with `initialize` as before.
+
 ## Authentication Methods
 
 You have two ways to authenticate your MCP client: **OAuth** (recommended) or **API Key**.
@@ -106,19 +108,24 @@ Once connected, the MCP server lists the same tools in every workspace:
 - **Record tools** take the object as an argument: `find_records`, `group_records`, `create_records`, `update_record`, `update_records`, `upsert_records`, `delete_records` and `merge_records`. For example, `find_records({ objectName: "company", select: ["name"] })`.
 - **Discovery tools** tell the assistant what your workspace contains: `list_object_metadata_names` for objects and `get_field_metadata` for the fields of an object.
 - **Metadata tools** to read and change the data model, such as `get_object_metadata` or `create_field_metadata`.
-- **Meta-tools** reach everything else, including workflows, views, dashboards, email and the functions of your installed apps: `get_tool_catalog` to browse a category, `learn_tools` for input schemas and `execute_tool` to run a tool.
+- **Every other built-in tool**, each listed with its input schema: workflows, dashboards, views, navigation, webhooks, roles, agents, front components, and email, calendar and file tools.
+- **Skills and help**: `list_skills`, `load_skills` and `search_help_center`.
 
-Because the list does not depend on your objects, it stays valid for clients that store it, such as apps published in a directory.
+Because the list does not depend on your objects, it stays valid for clients that store it, such as apps published in a directory. Which of these tools you see still depends on your role.
+
+The functions of your installed apps and the tools of MCP servers you connected to Twenty differ per workspace, so this list leaves them out. Use direct mode to reach them.
+
+The list holds about a hundred tool definitions. Clients that load tools on demand, as Claude, Claude Code, Codex and ChatGPT do by default, handle it well. A client that loads every tool definition up front can use a large part of its context: connect it to meta mode instead.
 
 ### Direct mode
 
-Connect to `/mcp?mode=direct` to list one tool per object and operation instead, each with the exact input schema of that object: `find_many_companies`, `create_one_person`, and several hundred more. Tools for objects created while you are connected appear after reconnecting.
+Connect to `/mcp?mode=direct` to list one tool per object and operation instead, each with the exact input schema of that object: `find_many_companies`, `create_one_person`, and several hundred more. Direct mode also lists the other built-in tools, the functions of your installed apps and the tools of your connected MCP servers. Tools for objects created while you are connected appear after reconnecting.
 
 This needs a client that loads tools on demand, as Claude, Claude Code, Codex and OpenCode do by default. A client that loads every tool definition up front, including Claude Code with tool search turned off, can run out of context.
 
 ### Meta mode
 
-Connect to `/mcp?mode=meta` to list only a few meta-tools:
+Connect to `/mcp?mode=meta` to list only a few meta-tools, which reach every tool, including app functions and connected MCP servers:
 
 1. **`learn_tools`** — get the input schema for specific tools
 2. **`execute_tool`** — run a tool

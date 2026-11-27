@@ -3,7 +3,7 @@ title: CLI
 description: Autentifică-te într-un spațiu de lucru, explorează datele acestuia și creează aplicații din terminal folosind CLI-ul Twenty.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
+import { PageBanner } from '/snippets/page-banner.mdx';
 
 ## Rularea CLI-ului
 
@@ -125,22 +125,28 @@ npx twenty@latest app dev
 * `app apply --create` compilează aplicația, o înregistrează în spațiul de lucru, o instalează și îi sincronizează metadatele.
 * `app dev` monitorizează sursa și sincronizează fiecare compilare reușită.
 
+Fișierele locale externe existente utilizează evenimente native ale sistemului de fișiere. Căile lipsă sau șterse utilizează verificări de recuperare o dată pe secundă până când monitorizarea nativă poate fi reluată. Rădăcinile directoarelor home și temporare, precum și directoarele lor părinte, sunt excluse din observarea automată a directoarelor externe. Dacă `WATCH_SCOPE_LIMITED` apare pentru un import lipsă, corectează importul, apoi editează un fișier al aplicației sau repornește `app dev`.
+
+Rulați `twenty app dev --verbose` pentru a vedea căile monitorizate și excluse după prima încercare de compilare și ori de câte ori acestea se modifică. Adăugați `--format ndjson` pentru evenimente de progres structurate `watch-scope`.
+
 Alte comenzi pentru aplicații:
 
-| Comandă                       | Ce face                                                                                               |
-| ----------------------------- | ----------------------------------------------------------------------------------------------------- |
-| `app add`                     | Generează structura unui obiect, câmp, funcții logice sau alte entități                               |
-| `app build` / `app typecheck` | Compilați sau verificați tipurile aplicației local                                                    |
-| `app plan`                    | Previzualizați modificările de metadate pe care le-ar face o aplicare                                 |
-| `app apply`                   | Compilați, încărcați și sincronizați aplicația                                                        |
-| `app generate-client`         | Regenerați clientul API tipizat fără sincronizare                                                     |
-| `app pull`                    | Restaurează metadatele, traducerile, dependențele, resursele publice și sursa componentelor acceptate |
-| `app translations extract`    | Extrage șirurile traducibile în cataloagele din `locales/`                                            |
-| `app publish`                 | Publicați aplicația pe npm sau într-un registru privat Twenty                                         |
-| `app install`                 | Instalați în spațiul de lucru un pachet de aplicație deja înregistrat                                 |
-| `app uninstall`               | Eliminați aplicația și tot ce îi aparține din spațiul de lucru                                        |
+| Comandă                       | Ce face                                                                                                                                                         |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `app add`                     | Generează structura unui obiect, câmp, funcții logice sau alte entități                                                                                         |
+| `app build` / `app typecheck` | Compilați sau verificați tipurile aplicației local                                                                                                              |
+| `app plan`                    | Previzualizați modificările de metadate pe care le-ar face o aplicare                                                                                           |
+| `app apply`                   | Compilați, încărcați și sincronizați aplicația                                                                                                                  |
+| `app generate-client`         | Regenerați clientul API tipizat fără sincronizare                                                                                                               |
+| `app pull`                    | Restaurează metadatele, traducerile, dependențele, resursele publice și sursa funcțiilor de componente și de logică acceptate, cu importuri locale inventariate |
+| `app translations extract`    | Extrage șirurile traducibile în cataloagele din `locales/`                                                                                                      |
+| `app publish`                 | Publicați aplicația pe npm sau într-un registru privat Twenty                                                                                                   |
+| `app install`                 | Instalați în spațiul de lucru un pachet de aplicație deja înregistrat                                                                                           |
+| `app uninstall`               | Eliminați aplicația și tot ce îi aparține din spațiul de lucru                                                                                                  |
 
 Definițiile care lipsesc din sursă sunt șterse implicit din spațiul de lucru. Transmiteți `--no-prune` pentru a le păstra. Aplicația Personalizată pentru spațiul de lucru le păstrează dacă nu transmiteți `--prune`. Ștergerea obiectelor sau a câmpurilor șterge și datele acestora, deci necesită confirmare. Consultați [Sincronizare și recuperare](/ro/developers/extend/apps/operations/sync-and-recovery) pentru detalii.
+
+În afara aplicației Custom din spațiul de lucru, `plan`, `apply`, `dev` și `publish` refuză rolurile pe care le pot avea membrii spațiului de lucru sau cheile API, precum și permisiunile la nivel de câmp sau rând. Consultați [Roluri în afara aplicației Custom din spațiul de lucru](/ro/developers/extend/apps/config/roles#roles-outside-the-workspace-custom-application).
 
 ## Executarea funcțiilor
 

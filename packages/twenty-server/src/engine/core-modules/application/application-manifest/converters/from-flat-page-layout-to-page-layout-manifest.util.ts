@@ -30,8 +30,6 @@ export const fromFlatPageLayoutToPageLayoutManifest = ({
           flatPageLayout.defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier,
       }
     : {}),
-  ...(flatPageLayout.isFirstTabPinned === false
-    ? { isFirstTabPinned: false }
-    : {}),
+  ...(!flatPageLayout.isFirstTabPinned ? { isFirstTabPinned: false } : {}),
   ...(isNonEmptyArray(tabs) ? { tabs } : {}),
 });

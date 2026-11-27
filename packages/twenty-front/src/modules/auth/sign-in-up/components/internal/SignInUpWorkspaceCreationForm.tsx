@@ -15,6 +15,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
+import { WORKSPACE_DISPLAY_NAME_MAX_LENGTH } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton, MainButton } from 'twenty-ui/components/input';
 import { IconTrash, IconUpload } from 'twenty-ui/icon';
@@ -299,6 +300,7 @@ export const SignInUpWorkspaceCreationForm = () => {
             placeholder={t`Apple`}
             onChange={handleWorkspaceNameChange}
             onKeyDown={handleKeyDown}
+            maxLength={WORKSPACE_DISPLAY_NAME_MAX_LENGTH}
             fullWidth
           />
         </OnboardingStepAnimatedItem>

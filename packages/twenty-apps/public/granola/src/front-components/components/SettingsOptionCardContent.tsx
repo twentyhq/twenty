@@ -1,12 +1,16 @@
 import styled from '@emotion/styled';
+import { isNonEmptyString } from '@sniptt/guards';
+import { type ReactNode } from 'react';
+import { isDefined } from 'twenty-sdk/utils';
 import { type IconComponent } from 'twenty-ui/icon';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import {
-  StyledSettingsCardContent,
   StyledSettingsCardDescription,
   StyledSettingsCardIcon,
+  StyledSettingsCardRow,
   StyledSettingsCardTextContainer,
   StyledSettingsCardTitle,
 } from 'src/front-components/components/SettingsCardContentBase';
@@ -22,9 +26,9 @@ const StyledTrailingContainer = styled.div`
 
 type SettingsOptionCardContentProps = {
   Icon?: IconComponent;
-  title: React.ReactNode;
+  title: ReactNode;
   description?: string;
-  children?: React.ReactNode;
+  children?: ReactNode;
 };
 
 export const SettingsOptionCardContent = ({
@@ -33,20 +37,22 @@ export const SettingsOptionCardContent = ({
   description,
   children,
 }: SettingsOptionCardContentProps) => (
-  <StyledSettingsCardContent>
-    {Icon && (
-      <StyledSettingsCardIcon>
-        <SettingsOptionIconCustomizer Icon={Icon} />
-      </StyledSettingsCardIcon>
-    )}
-    <StyledSettingsCardTextContainer>
-      <StyledSettingsCardTitle>{title}</StyledSettingsCardTitle>
-      {description && (
-        <StyledSettingsCardDescription>
-          <OverflowingTextWithTooltip text={description} />
-        </StyledSettingsCardDescription>
+  <Card.Content>
+    <StyledSettingsCardRow>
+      {isDefined(Icon) && (
+        <StyledSettingsCardIcon>
+          <SettingsOptionIconCustomizer Icon={Icon} />
+        </StyledSettingsCardIcon>
       )}
-    </StyledSettingsCardTextContainer>
-    <StyledTrailingContainer>{children}</StyledTrailingContainer>
-  </StyledSettingsCardContent>
+      <StyledSettingsCardTextContainer>
+        <StyledSettingsCardTitle>{title}</StyledSettingsCardTitle>
+        {isNonEmptyString(description) && (
+          <StyledSettingsCardDescription>
+            <OverflowingTextWithTooltip text={description} />
+          </StyledSettingsCardDescription>
+        )}
+      </StyledSettingsCardTextContainer>
+      <StyledTrailingContainer>{children}</StyledTrailingContainer>
+    </StyledSettingsCardRow>
+  </Card.Content>
 );

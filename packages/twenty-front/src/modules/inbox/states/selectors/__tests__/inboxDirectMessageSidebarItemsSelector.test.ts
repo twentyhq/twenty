@@ -1,10 +1,10 @@
 import { createStore } from 'jotai';
 import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 
-import { aiChatThreadParticipantsState } from '@/ai/states/aiChatThreadParticipantsState';
+import { aiChatThreadParticipantsState } from '@/ai-chat/threads/states/aiChatThreadParticipantsState';
 import { inboxDirectMessageSidebarItemsSelector } from '@/inbox/states/selectors/inboxDirectMessageSidebarItemsSelector';
 import { setInboxThreadList } from '@/inbox/testing/setInboxThreadList';
-import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
@@ -111,17 +111,20 @@ describe('inboxDirectMessageSidebarItemsSelector', () => {
       }),
     ]);
     store.set(aiChatThreadParticipantsState.atom, {
-      'unread-dm': {
-        __typename: 'AgentChatThreadParticipant' as const,
-        id: 'participant',
-        threadId: 'unread-dm',
-        lastReadAt: '2026-11-01T10:00:00.000Z',
-        archivedAt: null,
-        snoozedUntil: null,
-        isSubscribed: true,
-        lastMentionedAt: null,
-        mentionsResolvedAt: null,
-        updatedAt: '2026-11-01T10:00:00.000Z',
+      isLoaded: true,
+      rowsByThreadId: {
+        'unread-dm': {
+          __typename: 'AgentChatThreadParticipant' as const,
+          id: 'participant',
+          threadId: 'unread-dm',
+          lastReadAt: '2026-11-01T10:00:00.000Z',
+          archivedAt: null,
+          snoozedUntil: null,
+          isSubscribed: true,
+          lastMentionedAt: null,
+          mentionsResolvedAt: null,
+          updatedAt: '2026-11-01T10:00:00.000Z',
+        },
       },
     });
 

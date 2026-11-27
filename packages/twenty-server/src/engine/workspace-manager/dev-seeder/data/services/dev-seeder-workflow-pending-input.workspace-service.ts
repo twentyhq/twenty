@@ -9,7 +9,6 @@ import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { StepStatus, WorkflowActionType } from 'twenty-shared/workflow';
 import { v5 } from 'uuid';
 
-import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-workspace/services/user-workspace-auth-context.service';
 import {
   WorkflowVersionEntity,
   WorkflowVersionStatus,
@@ -176,7 +175,6 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
     private readonly coreWorkflowRepository: WorkspaceScopedRepository<WorkflowEntity>,
     @InjectWorkspaceScopedRepository(WorkflowVersionEntity)
     private readonly coreWorkflowVersionRepository: WorkspaceScopedRepository<WorkflowVersionEntity>,
-    private readonly userWorkspaceAuthContextService: UserWorkspaceAuthContextService,
   ) {}
 
   async seed({
@@ -186,8 +184,8 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
     workspaceId: string;
     applicationId: string;
   }): Promise<void> {
-    const agent = await this.agentService.createOneAgent(
-      {
+    const agent = await this.agentService.createOneAgent({
+      input: {
         label: 'Workflow Assistant',
         icon: 'IconLego',
         description: 'Runs the seeded workflows that wait for a person.',
@@ -197,7 +195,8 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
         responseFormat: { type: 'text' },
       },
       workspaceId,
-    );
+      authContext: undefined,
+    });
 
     for (const agentWorkflow of AGENT_WORKFLOWS_TO_SEED) {
       const stepId = seedId(agentWorkflow.stepKey, workspaceId);
@@ -285,18 +284,12 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
             throw error;
           });
 
-          const { userWorkspaceId } =
-            await this.userWorkspaceAuthContextService.resolveWorkspaceMember({
-              workspaceId,
-              workspaceMemberId:
-                INITIATORS[agentWorkflow.initiator].workspaceMemberId,
-            });
-
           const openedTurn = await this.agentRunConversationService.openTurn({
             workspaceId,
             threadId,
             agentId: agent.id,
-            senderUserWorkspaceId: userWorkspaceId,
+            senderWorkspaceMemberId:
+              INITIATORS[agentWorkflow.initiator].workspaceMemberId,
             senderApplicationId: null,
             messages: [{ role: 'user', content: agentWorkflow.runPrompt }],
             createdBy:
@@ -334,7 +327,7 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
             turnId,
             role: AgentMessageRole.ASSISTANT,
             agentId: agent.id,
-            senderUserWorkspaceId: null,
+            senderWorkspaceMemberId: null,
             isAwaitingAnswer: true,
             parts: mapAiStepsToUIMessageParts([{ content }]),
           });
@@ -374,7 +367,7 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
         ...INITIATORS[initiator],
         context: {},
       },
-      status: WorkflowRunStatus.NOT_STARTED,
+      status: WorkflowRunStatus.ENQUEUED,
       triggerPayload: {},
       workspaceId,
     });

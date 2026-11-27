@@ -35,28 +35,28 @@ export class RolePermissionsService {
     return this.findPrincipalRoleIds(authContext);
   }
 
-  async findUserWorkspaceRoleIdOrThrow({
+  async findUserWorkspaceRoleIdsOrThrow({
     workspaceId,
     userWorkspaceId,
   }: {
     workspaceId: string;
     userWorkspaceId: string;
-  }): Promise<string> {
+  }): Promise<string[]> {
     const { userWorkspaceRoleMap } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'userWorkspaceRoleMap',
       ]);
 
-    const roleId = userWorkspaceRoleMap[userWorkspaceId];
+    const roleIds = userWorkspaceRoleMap[userWorkspaceId];
 
-    if (!isDefined(roleId)) {
+    if (!isNonEmptyArray(roleIds)) {
       throw new PermissionsException(
         `User workspace ${userWorkspaceId} has no role assigned`,
         PermissionsExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
       );
     }
 
-    return roleId;
+    return roleIds;
   }
 
   async findRolesByUserWorkspaceIds({
@@ -70,18 +70,20 @@ export class RolePermissionsService {
       return new Map();
     }
 
-    const allRoleTargets = await this.roleTargetRepository.find(workspaceId, {
-      where: {
-        userWorkspaceId: In(userWorkspaceIds),
-      },
-      relations: {
-        role: {
-          rolePermissionFlags: {
-            permissionFlag: true,
+    const allRoleTargets = (
+      await this.roleTargetRepository.find(workspaceId, {
+        where: {
+          userWorkspaceId: In(userWorkspaceIds),
+        },
+        relations: {
+          role: {
+            rolePermissionFlags: {
+              permissionFlag: true,
+            },
           },
         },
-      },
-    });
+      })
+    ).filter((roleTarget) => !roleTarget.isSystemSideEffect);
 
     if (!allRoleTargets.length) {
       return new Map();
@@ -110,7 +112,7 @@ export class RolePermissionsService {
   }: {
     workspaceId: string;
     workspaceMemberIds: string[];
-  }): Promise<(string | undefined)[]> {
+  }): Promise<string[][]> {
     const { flatWorkspaceMemberMaps, userWorkspaceRoleMap } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatWorkspaceMemberMaps',

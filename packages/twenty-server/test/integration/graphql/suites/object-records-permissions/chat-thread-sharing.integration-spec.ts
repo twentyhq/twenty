@@ -51,7 +51,7 @@ import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { DatabaseEventAction } from 'src/engine/workspace-event-emitter/enums/database-event-action';
 import { type RecordEventPermissionsReadService } from 'src/engine/permissions/record-event-permissions-read.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { computeEventName } from 'src/engine/workspace-event-emitter/utils/compute-event-name';
@@ -296,7 +296,8 @@ describe('Conversation sharing through the authenticated API', () => {
           'userWorkspaceRoleMap',
           'flatObjectMetadataMaps',
         ]);
-      const roleId = userWorkspaceRoleMap[USER_WORKSPACE_DATA_SEED_IDS.JONY];
+      const roleId =
+        userWorkspaceRoleMap[USER_WORKSPACE_DATA_SEED_IDS.JONY]?.[0];
       if (!isDefined(roleId)) {
         throw new Error('Seeded recipient role is missing');
       }
@@ -414,7 +415,7 @@ describe('Conversation sharing through the authenticated API', () => {
           await destroyThreadRecord(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
         ];
         for (const viewerWrite of viewerWrites) {
-          expect(viewerWrite.body.errors[0].extensions.code).toBe('NOT_FOUND');
+          expect(viewerWrite.body.errors[0].extensions.code).toBe('FORBIDDEN');
         }
         expect(await readStoredThreadState(threadId)).toEqual(
           storedBeforeViewerWrites,
@@ -465,7 +466,7 @@ describe('Conversation sharing through the authenticated API', () => {
       const threadAudience: ThreadAudience =
         audience === 'member'
           ? { workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY }
-          : { roleId: userWorkspaceRoleMap[sender.userWorkspaceId] };
+          : { roleId: userWorkspaceRoleMap[sender.userWorkspaceId]?.[0] };
       const threadId = randomUUID();
       const target = {
         objectMetadataId:
@@ -518,7 +519,7 @@ describe('Conversation sharing through the authenticated API', () => {
           APPLE_JONY_MEMBER_ACCESS_TOKEN,
         );
         expect(editorSoftDelete.body.errors[0].extensions.code).toBe(
-          'NOT_FOUND',
+          'FORBIDDEN',
         );
         expect((await readStoredThreadState(threadId))?.deletedAt).toBeNull();
         const stop = await makeMetadataApiRequest(

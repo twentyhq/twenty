@@ -4,6 +4,7 @@ import { NavigationMenuItemType } from 'twenty-shared/types';
 import { type NewNavigationMenuItemInput } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
 import { CoreAgentIcon } from '@/object-core/agents/components/CoreAgentIcon';
+import { getSortedNonSystemAgents } from '@/object-core/agents/utils/getSortedNonSystemAgents';
 import {
   FindManyAgentsDocument,
   type NavigationMenuItem,
@@ -25,39 +26,34 @@ export const useNavigationMenuItemAgentOptions = ({
     { skip },
   );
 
-  const agentOptions: NavigationMenuItemOption[] = (
-    agentsData?.findManyAgents ?? []
-  )
-    .filter((agent) => !agent.isSystem)
-    .sort((firstAgent, secondAgent) =>
-      firstAgent.label.localeCompare(secondAgent.label),
-    )
-    .map((agent) => {
-      const isAlreadyInSidebar = currentItems.some(
-        (item) => item.agentId === agent.id,
-      );
+  const agentOptions: NavigationMenuItemOption[] = getSortedNonSystemAgents(
+    agentsData?.findManyAgents ?? [],
+  ).map((agent) => {
+    const isAlreadyInSidebar = currentItems.some(
+      (item) => item.agentId === agent.id,
+    );
 
-      return {
-        id: agent.id,
-        label: agent.label,
-        icon: (
-          <CoreAgentIcon
-            agentId={agent.id}
-            avatarColor={agent.avatarColor}
-            avatarShape={agent.avatarShape}
-            size={16}
-          />
-        ),
-        isAlreadyInSidebar,
-        isDisabled: isAlreadyInSidebar,
-        onClick: () =>
-          addItem({
-            type: NavigationMenuItemType.AGENT,
-            agentId: agent.id,
-            name: agent.label,
-          }),
-      };
-    });
+    return {
+      id: agent.id,
+      label: agent.label,
+      icon: (
+        <CoreAgentIcon
+          agentId={agent.id}
+          avatarColor={agent.avatarColor}
+          avatarShape={agent.avatarShape}
+          size={16}
+        />
+      ),
+      isAlreadyInSidebar,
+      isDisabled: isAlreadyInSidebar,
+      onClick: () =>
+        addItem({
+          type: NavigationMenuItemType.AGENT,
+          agentId: agent.id,
+          name: agent.label,
+        }),
+    };
+  });
 
   return { agentOptions, agentOptionsLoading };
 };

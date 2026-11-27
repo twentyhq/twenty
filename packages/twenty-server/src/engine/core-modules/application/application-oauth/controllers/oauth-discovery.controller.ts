@@ -12,6 +12,7 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { cleanServerUrl } from 'src/utils/clean-server-url';
 import { getRequestBaseUrl } from 'src/utils/get-request-base-url.util';
+import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-cli-application-registration.constant';
 
 @Controller(ApiPath.WellKnown)
 export class OAuthDiscoveryController {
@@ -36,7 +37,9 @@ export class OAuthDiscoveryController {
         : `${authorizeBase}/authorize?iss=${encodeURIComponent(issuer)}`;
 
     const cliRegistration =
-      await this.applicationRegistrationService.findOrCreateCliRegistration();
+      await this.applicationRegistrationService.findOrCreateBuiltInRegistrationOrThrow(
+        TWENTY_CLI_APPLICATION_REGISTRATION,
+      );
 
     return {
       issuer,

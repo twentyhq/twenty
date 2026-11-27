@@ -11,7 +11,7 @@ import {
 } from 'twenty-shared/utils';
 import { In, type Repository } from 'typeorm';
 
-import type Stripe from 'stripe';
+import Stripe from 'stripe';
 
 import {
   BillingException,
@@ -25,6 +25,8 @@ import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-pl
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
+import { BillingApplicationProductService } from 'src/engine/core-modules/billing/services/billing-application-product.service';
+import { BillingApplicationSyncService } from 'src/engine/core-modules/billing/services/billing-application-sync.service';
 import { BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
 import { BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
 import { BillingSeatService } from 'src/engine/core-modules/billing/services/billing-seat.service';
@@ -36,6 +38,7 @@ import {
   type SubscriptionUpdate,
   SubscriptionUpdateType,
 } from 'src/engine/core-modules/billing/types/billing-subscription-update.type';
+import { buildApplicationItemsForInterval } from 'src/engine/core-modules/billing/utils/build-application-items-for-interval.util';
 import { computeImmediateSubscriptionUpdate } from 'src/engine/core-modules/billing/utils/compute-immediate-subscription-update.util';
 import { computeSubscriptionUpdateOptions } from 'src/engine/core-modules/billing/utils/compute-subscription-update-options.util';
 import { findSellableBaseProductPriceOrThrow } from 'src/engine/core-modules/billing/utils/find-sellable-base-product-price-or-throw.util';
@@ -43,6 +46,7 @@ import { findProductPriceForIntervalOrThrow } from 'src/engine/core-modules/bill
 import { isResourceCreditPriceForSubscription } from 'src/engine/core-modules/billing/utils/is-resource-credit-price-for-subscription.util';
 import { isSellableCatalogPrice } from 'src/engine/core-modules/billing/utils/is-sellable-catalog-price.util';
 import { isSendInvoiceSubscription } from 'src/engine/core-modules/billing/utils/is-send-invoice-subscription.util';
+import { isSubscriptionQuantityIncrease } from 'src/engine/core-modules/billing/utils/is-subscription-quantity-increase.util';
 import { getBaseProductSubscriptionItemOrThrow } from 'src/engine/core-modules/billing/utils/get-base-product-subscription-item-or-throw.util';
 import { getBillingPlanConfig } from 'src/engine/core-modules/billing/utils/get-billing-plan-config.util';
 import { getPlanSwitchOrThrow } from 'src/engine/core-modules/billing/utils/get-plan-switch-or-throw.util';
@@ -53,6 +57,7 @@ import { buildSubscriptionItemsUpdate } from 'src/engine/core-modules/billing/ut
 import { isSamePhaseSignature } from 'src/engine/core-modules/billing/utils/is-same-phase-signature.util';
 import { toPhaseUpdateParams } from 'src/engine/core-modules/billing/utils/to-phase-update-params.util';
 import { type SubscriptionStripePrices } from 'src/engine/core-modules/billing/types/subscription-stripe-prices.type';
+import { type TargetApplicationProduct } from 'src/engine/core-modules/billing/types/target-application-product.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { buildBillingSubscriptionStateLockKey } from 'src/engine/core-modules/billing/utils/build-billing-subscription-state-lock-key.util';
@@ -76,6 +81,8 @@ export class BillingSubscriptionUpdateService {
     private readonly stripeSubscriptionScheduleService: StripeSubscriptionScheduleService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly billingSeatService: BillingSeatService,
+    private readonly billingApplicationProductService: BillingApplicationProductService,
+    private readonly billingApplicationSyncService: BillingApplicationSyncService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly cacheLockService: CacheLockService,
   ) {}
@@ -162,6 +169,8 @@ export class BillingSubscriptionUpdateService {
     const currentPlan =
       getBaseProductSubscriptionItemOrThrow(billingSubscription).billingProduct
         ?.metadata.planKey;
+
+    assertIsDefinedOrThrow(currentPlan);
 
     await this.updateSubscription(workspaceId, billingSubscription.id, {
       type: SubscriptionUpdateType.PLAN,
@@ -254,12 +263,132 @@ export class BillingSubscriptionUpdateService {
           workspaceId,
           subscriptionId: billingSubscription.id,
           subscriptionUpdate: {
-            type: SubscriptionUpdateType.SEATS,
+            type: SubscriptionUpdateType.QUANTITIES,
             newSeats: billedSeats,
           },
           renewalDate,
         });
       },
+    });
+  }
+
+  async chargeApplications({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<{ isPaymentDeclined: boolean }> {
+    const { isPaymentDeclined } = await this.chargeApplicationsThenPersist({
+      workspaceId,
+      persist: async () => undefined,
+    });
+
+    return { isPaymentDeclined };
+  }
+
+  // Charging and persisting share the subscription update lock so concurrent connections cannot count the same account twice
+  async chargeApplicationsThenPersist<TPersisted>({
+    workspaceId,
+    additionalConnectedAccountApplicationId,
+    persist,
+  }: {
+    workspaceId: string;
+    additionalConnectedAccountApplicationId?: string;
+    persist: () => Promise<TPersisted>;
+  }): Promise<
+    | { isPaymentDeclined: true }
+    | { isPaymentDeclined: false; isCharged: boolean; persisted: TPersisted }
+  > {
+    if (!this.billingApplicationSyncService.isApplicationBillingActive()) {
+      return {
+        isPaymentDeclined: false,
+        isCharged: false,
+        persisted: await persist(),
+      };
+    }
+
+    await this.billingApplicationProductService.createMissingProducts(
+      workspaceId,
+    );
+
+    const billingSubscription =
+      await this.billingSubscriptionService.getCurrentBillingSubscription({
+        workspaceId,
+      });
+
+    if (!isDefined(billingSubscription)) {
+      return {
+        isPaymentDeclined: false,
+        isCharged: false,
+        persisted: await persist(),
+      };
+    }
+
+    const applyApplicationsUpdate = (
+      chargedConnectedAccountApplicationId?: string,
+    ) =>
+      this.applySubscriptionUpdate({
+        workspaceId,
+        subscriptionId: billingSubscription.id,
+        subscriptionUpdate: {
+          type: SubscriptionUpdateType.APPLICATIONS,
+          additionalConnectedAccountApplicationId:
+            chargedConnectedAccountApplicationId,
+        },
+      });
+
+    return await this.cacheLockService.withLock(
+      async () => {
+        try {
+          await applyApplicationsUpdate(
+            additionalConnectedAccountApplicationId,
+          );
+        } catch (error) {
+          if (error instanceof Stripe.errors.StripeCardError) {
+            this.logger.warn(
+              `Application charge declined for workspace ${workspaceId}: ${error.message}`,
+            );
+
+            return { isPaymentDeclined: true as const };
+          }
+
+          throw error;
+        }
+
+        try {
+          return {
+            isPaymentDeclined: false as const,
+            isCharged: true,
+            persisted: await persist(),
+          };
+        } catch (error) {
+          if (isDefined(additionalConnectedAccountApplicationId)) {
+            await applyApplicationsUpdate();
+          }
+
+          throw error;
+        }
+      },
+      buildBillingSubscriptionUpdateLockKey(workspaceId),
+      BILLING_SUBSCRIPTION_STATE_LOCK_OPTIONS,
+    );
+  }
+
+  async syncApplications({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<void> {
+    const billingSubscription =
+      await this.billingSubscriptionService.getCurrentBillingSubscription({
+        workspaceId,
+      });
+
+    if (!isDefined(billingSubscription)) {
+      return;
+    }
+
+    await this.updateSubscription(workspaceId, billingSubscription.id, {
+      type: SubscriptionUpdateType.APPLICATIONS,
     });
   }
 
@@ -328,17 +457,41 @@ export class BillingSubscriptionUpdateService {
       stripeSubscription.items.data,
     );
 
-    const seats =
-      subscriptionUpdate.type === SubscriptionUpdateType.SEATS
-        ? subscriptionUpdate.newSeats
-        : ((await this.billingSeatService.computeCurrentBilledSeats(
-            workspaceId,
-          )) ?? currentPrices.seats);
-
-    const toUpdateCurrentPrices = await this.computeSubscriptionPricesUpdate(
+    const seats = await this.computeTargetSeats({
+      workspaceId,
       subscriptionUpdate,
-      { ...currentPrices, seats },
-    );
+      currentSeats: currentPrices.seats,
+    });
+
+    const targetApplicationProducts =
+      await this.billingApplicationProductService.findTargetApplicationProducts(
+        {
+          workspaceId,
+          subscribedStripeProductIds: currentPrices.applicationItems.map(
+            ({ stripeProductId }) => stripeProductId,
+          ),
+          additionalConnectedAccountApplicationId:
+            subscriptionUpdate.type === SubscriptionUpdateType.APPLICATIONS
+              ? subscriptionUpdate.additionalConnectedAccountApplicationId
+              : undefined,
+        },
+      );
+
+    const updateApplicationProducts =
+      subscriptionUpdate.type === SubscriptionUpdateType.APPLICATIONS
+        ? targetApplicationProducts
+        : targetApplicationProducts.filter(({ billingProduct }) =>
+            currentPrices.applicationItems.some(
+              ({ stripeProductId }) =>
+                stripeProductId === billingProduct.stripeProductId,
+            ),
+          );
+
+    const toUpdateCurrentPrices = await this.computeTargetSubscriptionPrices({
+      subscriptionUpdate,
+      prices: { ...currentPrices, seats },
+      targetApplicationProducts: updateApplicationProducts,
+    });
 
     const shouldUpdateAtPeriodEnd =
       await this.shouldUpdateAtSubscriptionPeriodEnd(
@@ -369,10 +522,11 @@ export class BillingSubscriptionUpdateService {
           nextPhase.items,
         );
 
-        const toUpdateNextPrices = await this.computeSubscriptionPricesUpdate(
+        const toUpdateNextPrices = await this.computeTargetSubscriptionPrices({
           subscriptionUpdate,
-          nextPhasePrices,
-        );
+          prices: nextPhasePrices,
+          targetApplicationProducts: updateApplicationProducts,
+        });
 
         await this.runSubscriptionScheduleUpdate({
           stripeScheduleId: schedule.id,
@@ -394,6 +548,7 @@ export class BillingSubscriptionUpdateService {
       const updatedStripeSubscription = isDefined(immediateSubscriptionUpdate)
         ? await this.applyImmediateSubscriptionUpdate({
             subscription,
+            stripeSubscriptionItems: stripeSubscription.items.data,
             subscriptionUpdate: immediateSubscriptionUpdate,
             currentPrices,
             toUpdateCurrentPrices,
@@ -412,10 +567,11 @@ export class BillingSubscriptionUpdateService {
         const nextPhasePrices = await this.getSubscriptionPricesFromItems(
           nextPhase.items,
         );
-        const toUpdateNextPrices = await this.computeSubscriptionPricesUpdate(
+        const toUpdateNextPrices = await this.computeTargetSubscriptionPrices({
           subscriptionUpdate,
-          nextPhasePrices,
-        );
+          prices: nextPhasePrices,
+          targetApplicationProducts: updateApplicationProducts,
+        });
 
         await this.runSubscriptionScheduleUpdate({
           stripeScheduleId: schedule.id,
@@ -428,6 +584,12 @@ export class BillingSubscriptionUpdateService {
             stripeSubscription.items.data[0].current_period_end,
         });
       }
+    }
+
+    if (updateApplicationProducts.length < targetApplicationProducts.length) {
+      await this.billingApplicationSyncService.enqueueApplicationsSync({
+        workspaceId,
+      });
     }
 
     const syncSubscriptionToDatabase = () =>
@@ -568,16 +730,38 @@ export class BillingSubscriptionUpdateService {
       baseProductPriceId: basePlanPrice.stripePriceId,
       seats: basePlanPhaseItem.quantity,
       resourceCreditPriceId: resourceCreditPrice.stripePriceId,
+      applicationItems: phaseItemPrices
+        .filter(
+          (price) =>
+            price.billingProduct?.metadata?.productKey ===
+            BillingProductKey.APPLICATION,
+        )
+        .map((price) => {
+          const { quantity } = findOrThrow(
+            items,
+            (item) => normalizePriceRef(item.price) === price.stripePriceId,
+          );
+
+          assertIsDefinedOrThrow(quantity);
+
+          return {
+            stripeProductId: price.stripeProductId,
+            stripePriceId: price.stripePriceId,
+            quantity,
+          };
+        }),
     };
   }
 
   private async applyImmediateSubscriptionUpdate({
     subscription,
+    stripeSubscriptionItems,
     subscriptionUpdate,
     currentPrices,
     toUpdateCurrentPrices,
   }: {
     subscription: BillingSubscriptionEntity;
+    stripeSubscriptionItems: Stripe.SubscriptionItem[];
     subscriptionUpdate: SubscriptionUpdate;
     currentPrices: SubscriptionStripePrices;
     toUpdateCurrentPrices: SubscriptionStripePrices;
@@ -592,25 +776,29 @@ export class BillingSubscriptionUpdateService {
       });
     }
 
-    const { proration, anchor, metadata } = computeSubscriptionUpdateOptions(
-      subscriptionUpdate,
-      {
-        currentSeats: currentPrices.seats,
+    const { proration, anchor, metadata, paymentBehavior } =
+      computeSubscriptionUpdateOptions(subscriptionUpdate, {
+        isQuantityIncrease: isSubscriptionQuantityIncrease({
+          currentPrices,
+          toUpdatePrices: toUpdateCurrentPrices,
+        }),
         isTrialing: subscription.status === SubscriptionStatus.Trialing,
         isSendInvoice: isSendInvoiceSubscription(subscription),
-      },
-    );
+      });
 
     return await this.stripeSubscriptionService.updateSubscription(
       subscription.stripeSubscriptionId,
       {
         items: buildSubscriptionItemsUpdate({
           billingSubscriptionItems: subscription.billingSubscriptionItems,
+          stripeSubscriptionItems,
+          currentPrices,
           toUpdatePrices: toUpdateCurrentPrices,
         }),
         proration_behavior: proration,
         billing_cycle_anchor: anchor,
         metadata,
+        payment_behavior: paymentBehavior,
       },
     );
   }
@@ -727,7 +915,8 @@ export class BillingSubscriptionUpdateService {
 
         return isDowngrade;
       }
-      case SubscriptionUpdateType.SEATS:
+      case SubscriptionUpdateType.QUANTITIES:
+      case SubscriptionUpdateType.APPLICATIONS:
         return false;
       case SubscriptionUpdateType.INTERVAL: {
         const currentInterval = subscription.interval;
@@ -746,6 +935,56 @@ export class BillingSubscriptionUpdateService {
     }
   }
 
+  private async computeTargetSeats({
+    workspaceId,
+    subscriptionUpdate,
+    currentSeats,
+  }: {
+    workspaceId: string;
+    subscriptionUpdate: SubscriptionUpdate;
+    currentSeats: number;
+  }): Promise<number> {
+    switch (subscriptionUpdate.type) {
+      case SubscriptionUpdateType.QUANTITIES:
+        return subscriptionUpdate.newSeats;
+      case SubscriptionUpdateType.APPLICATIONS:
+        return currentSeats;
+      default:
+        return (
+          (await this.billingSeatService.computeCurrentBilledSeats(
+            workspaceId,
+          )) ?? currentSeats
+        );
+    }
+  }
+
+  private async computeTargetSubscriptionPrices({
+    subscriptionUpdate,
+    prices,
+    targetApplicationProducts,
+  }: {
+    subscriptionUpdate: SubscriptionUpdate;
+    prices: SubscriptionStripePrices;
+    targetApplicationProducts: TargetApplicationProduct[];
+  }): Promise<SubscriptionStripePrices> {
+    const toUpdatePrices = await this.computeSubscriptionPricesUpdate(
+      subscriptionUpdate,
+      prices,
+    );
+
+    const { interval } = await this.billingPriceRepository.findOneOrFail({
+      where: { stripePriceId: toUpdatePrices.baseProductPriceId },
+    });
+
+    return {
+      ...toUpdatePrices,
+      applicationItems: buildApplicationItemsForInterval({
+        targetApplicationProducts,
+        interval,
+      }),
+    };
+  }
+
   async computeSubscriptionPricesUpdate(
     update: SubscriptionUpdate,
     currentPrices: SubscriptionStripePrices,
@@ -756,7 +995,7 @@ export class BillingSubscriptionUpdateService {
           update.newPlan,
           currentPrices,
         );
-      case SubscriptionUpdateType.SEATS:
+      case SubscriptionUpdateType.QUANTITIES:
         return this.computeSubscriptionPricesUpdateBySeats(
           update.newSeats,
           currentPrices,
@@ -771,6 +1010,8 @@ export class BillingSubscriptionUpdateService {
           update.newResourceCreditPriceId,
           currentPrices,
         );
+      case SubscriptionUpdateType.APPLICATIONS:
+        return currentPrices;
     }
   }
 

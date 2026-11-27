@@ -8,7 +8,7 @@ export const getSlackClient = async (
   options?: WebClientOptions,
 ): Promise<
   | { success: true; client: WebClient; connectionId: string }
-  | { success: false; error: string }
+  | { success: false; error: string; isConnectionMissing?: boolean }
 > => {
   const connectionResult = await getSlackConnection();
 

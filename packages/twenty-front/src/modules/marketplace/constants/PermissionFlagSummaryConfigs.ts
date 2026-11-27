@@ -4,6 +4,7 @@ import {
   IconApi,
   IconApps,
   IconAppWindow,
+  IconAt,
   IconCalendarEvent,
   IconCode,
   type IconComponent,
@@ -140,5 +141,10 @@ export const PERMISSION_FLAG_SUMMARY_CONFIGS: Record<
   [PermissionFlagType.PROFILE_INFORMATION]: {
     Icon: IconUser,
     getLabel: () => t`Edit profile information`,
+  },
+  [PermissionFlagType.READ_PRIVATE_CHANNELS]: {
+    Icon: IconAt,
+    getLabel: () =>
+      t`Read the address, owner and account status of members' private channels`,
   },
 };

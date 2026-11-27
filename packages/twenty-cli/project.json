@@ -29,10 +29,13 @@
       }
     },
     "test": {
-      "executor": "@nx/vitest:test",
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["default", "^default"],
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "config": "{projectRoot}/vitest.config.ts"
+        "cwd": "{projectRoot}",
+        "command": "vitest run --config ./vitest.config.ts"
       }
     }
   }

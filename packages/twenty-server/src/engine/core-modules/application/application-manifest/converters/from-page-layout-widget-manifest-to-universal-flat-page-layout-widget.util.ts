@@ -1,5 +1,8 @@
 import { type NormalizedPageLayoutWidgetManifest } from 'twenty-shared/application';
+import { validateConditionalEvaluationNode } from 'twenty-shared/conditional-evaluation';
+import { isDefined } from 'twenty-shared/utils';
 
+import { fromLegacyJsonLogicToConditionalAvailability } from 'src/engine/metadata-modules/page-layout-widget/utils/from-legacy-json-logic-to-conditional-availability.util';
 import { type UniversalFlatPageLayoutWidget } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-widget.type';
 
 export const fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget = ({
@@ -13,6 +16,22 @@ export const fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget = ({
   applicationUniversalIdentifier: string;
   now: string;
 }): UniversalFlatPageLayoutWidget => {
+  const conditionalDisplay =
+    pageLayoutWidgetManifest.conditionalDisplay ?? null;
+
+  const conditionalAvailabilityFromJsonLogic =
+    fromLegacyJsonLogicToConditionalAvailability(conditionalDisplay);
+
+  // TODO(@neo773): a manifest declares its rule as json-logic, so the tree is filled from it; without this a sync empties the tree of the widget
+  const conditionalAvailability =
+    isDefined(conditionalAvailabilityFromJsonLogic) &&
+    validateConditionalEvaluationNode({
+      node: conditionalAvailabilityFromJsonLogic,
+      metadataName: 'pageLayoutWidget',
+    }).isValid
+      ? conditionalAvailabilityFromJsonLogic
+      : null;
+
   return {
     universalIdentifier: pageLayoutWidgetManifest.universalIdentifier,
     applicationUniversalIdentifier,
@@ -23,7 +42,7 @@ export const fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget = ({
     type: pageLayoutWidgetManifest.type,
     objectMetadataUniversalIdentifier:
       pageLayoutWidgetManifest.objectUniversalIdentifier ?? null,
-    conditionalDisplay: pageLayoutWidgetManifest.conditionalDisplay ?? null,
+    conditionalDisplay,
     position: pageLayoutWidgetManifest.position,
     universalConfiguration:
       pageLayoutWidgetManifest.configuration as UniversalFlatPageLayoutWidget['universalConfiguration'],
@@ -31,6 +50,7 @@ export const fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget = ({
     updatedAt: now,
     deletedAt: null,
     conditionalAvailabilityExpression: null,
+    conditionalAvailability,
     universalOverrides: null,
   };
 };

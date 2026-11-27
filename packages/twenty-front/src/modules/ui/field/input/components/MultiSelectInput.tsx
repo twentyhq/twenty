@@ -1,5 +1,7 @@
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { AddSelectOptionDropdownSection } from '@/ui/input/components/AddSelectOptionDropdownSection';
+import { SelectOptionDescriptionTooltip } from '@/ui/input/components/SelectOptionDescriptionTooltip';
+import { SelectOptionDescriptionTooltipProvider } from '@/ui/input/components/SelectOptionDescriptionTooltipProvider';
 import { filterSelectOptionsBySearch } from '@/ui/input/utils/filterSelectOptionsBySearch';
 import { isKeyboardEventComposing } from '@/ui/utilities/hotkey/utils/isKeyboardEventComposing';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -70,29 +72,37 @@ export const MultiSelectInput = ({
         aria-label={t`Search`}
       />
       <Dropdown.Separator />
-      <Dropdown.Section scrollable>
-        {filteredOptions.map((option) => (
-          <Dropdown.OptionItem
-            key={option.value}
-            onSelect={() => toggleOption(option.value)}
-            selected={values?.includes(option.value) ?? false}
-            closeOnSelect={false}
-            indicator="checkbox"
-          >
-            <Tag
-              color={option.color ?? 'transparent'}
-              startIcon={
-                isDefined(option.Icon) ? createElement(option.Icon) : undefined
-              }
+      <SelectOptionDescriptionTooltipProvider>
+        <Dropdown.Section scrollable>
+          {filteredOptions.map((option) => (
+            <SelectOptionDescriptionTooltip
+              key={option.value}
+              description={option.description}
             >
-              {option.label}
-            </Tag>
-          </Dropdown.OptionItem>
-        ))}
-        {!isNonEmptyArray(filteredOptions) && (
-          <Dropdown.Empty>{t`No option found`}</Dropdown.Empty>
-        )}
-      </Dropdown.Section>
+              <Dropdown.OptionItem
+                onSelect={() => toggleOption(option.value)}
+                selected={values?.includes(option.value) ?? false}
+                closeOnSelect={false}
+                indicator="checkbox"
+              >
+                <Tag
+                  color={option.color ?? 'transparent'}
+                  startIcon={
+                    isDefined(option.Icon)
+                      ? createElement(option.Icon)
+                      : undefined
+                  }
+                >
+                  {option.label}
+                </Tag>
+              </Dropdown.OptionItem>
+            </SelectOptionDescriptionTooltip>
+          ))}
+          {!isNonEmptyArray(filteredOptions) && (
+            <Dropdown.Empty>{t`No option found`}</Dropdown.Empty>
+          )}
+        </Dropdown.Section>
+      </SelectOptionDescriptionTooltipProvider>
       <AddSelectOptionDropdownSection
         searchFilter={searchFilter}
         filteredOptions={filteredOptions}

@@ -17,6 +17,7 @@ import { ApplicationOAuthModule } from 'src/engine/core-modules/application/appl
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { ApplicationUpgradeModule } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { ConnectedAccountBillingNotificationModule } from 'src/engine/core-modules/application/connected-account-billing-notification/connected-account-billing-notification.module';
 import { PreInstalledAppsModule } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.module';
 import { ApprovedAccessDomainModule } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
@@ -62,6 +63,8 @@ import { RedisClientModule } from 'src/engine/core-modules/redis-client/redis-cl
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { SearchModule } from 'src/engine/core-modules/search/search.module';
 import { WorkspaceSsoModule } from 'src/engine/core-modules/sso/sso.module';
+import { TabPresenceModule } from 'src/engine/core-modules/tab-presence/tab-presence.module';
+import { WebPushModule } from 'src/engine/core-modules/web-push/web-push.module';
 import { WellKnownModule } from 'src/engine/core-modules/well-known/well-known.module';
 import { TelemetryModule } from 'src/engine/core-modules/telemetry/telemetry.module';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
@@ -75,6 +78,7 @@ import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-bi
 import { AiModelsModule } from 'src/engine/metadata-modules/ai/ai-models/ai-models.module';
 import { PageLayoutModule } from 'src/engine/metadata-modules/page-layout/page-layout.module';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
+import { ChannelVisibilityModule } from 'src/engine/permissions/channel-visibility/channel-visibility.module';
 import { RowLevelPermissionModule } from 'src/engine/metadata-modules/row-level-permission-predicate/row-level-permission.module';
 import { RecordShareModule } from 'src/engine/permissions/record-share/record-share.module';
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
@@ -85,6 +89,7 @@ import { AiToolCallAnswerModule } from 'src/engine/metadata-modules/ai/ai-tool-c
 import { ClientConfigModule } from './client-config/client-config.module';
 import { EventLogsViewerModule } from './event-logs/event-logs-viewer.module';
 import { FileApiModule } from './file/file-api.module';
+import { StoredFormulaFieldModule } from 'src/engine/core-modules/stored-formula-field/stored-formula-field.module';
 
 @Module({
   imports: [
@@ -102,6 +107,8 @@ import { FileApiModule } from './file/file-api.module';
     RecordShareModule,
     RowLevelPermissionModule,
     OpenApiModule,
+    WebPushModule,
+    TabPresenceModule,
     WellKnownModule,
     ApplicationRegistrationModule,
     ApplicationMonitoringModule,
@@ -109,6 +116,7 @@ import { FileApiModule } from './file/file-api.module';
     ApplicationAuthorizationModule,
     ApplicationModule,
     ApplicationInstallModule,
+    ConnectedAccountBillingNotificationModule,
     ApplicationUpgradeModule,
     ApplicationDevelopmentModule,
     FrontComponentSharedDependenciesModule,
@@ -134,6 +142,7 @@ import { FileApiModule } from './file/file-api.module';
     AdminPanelModule,
     LabModule,
     RoleModule,
+    ChannelVisibilityModule,
     RedisClientModule,
     WorkspaceQueryRunnerModule,
     WorkspaceResolverNameMapCacheModule,
@@ -180,6 +189,7 @@ import { FileApiModule } from './file/file-api.module';
     EventLogsViewerModule,
     PreInstalledAppsModule,
     AppBillingModule,
+    StoredFormulaFieldModule,
   ],
   providers: [
     {

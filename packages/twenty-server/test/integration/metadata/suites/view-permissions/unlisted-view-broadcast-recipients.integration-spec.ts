@@ -12,10 +12,7 @@ import { destroyOneView } from 'test/integration/metadata/suites/view/utils/dest
 import { findViewOwnership } from 'test/integration/metadata/suites/view/utils/find-view-ownership.util';
 import { updateOneView } from 'test/integration/metadata/suites/view/utils/update-one-view.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-import {
-  ViewFilterGroupLogicalOperator,
-  ViewVisibility,
-} from 'twenty-shared/types';
+import { ViewFilterGroupLogicalOperator } from 'twenty-shared/types';
 
 import { type MetadataEventEmitter } from 'src/engine/subscriptions/metadata-event/metadata-event-emitter';
 import { type MetadataEventPublisher } from 'src/engine/subscriptions/metadata-event/metadata-event-publisher';
@@ -98,7 +95,7 @@ describe('unlisted view broadcast recipients (integration)', () => {
       objectNameSingular: 'company',
       input: {
         name: 'Guest private broadcast companies',
-        visibility: ViewVisibility.UNLISTED,
+        isPrivate: true,
       },
       token: APPLE_PHIL_GUEST_ACCESS_TOKEN,
     });
@@ -106,7 +103,7 @@ describe('unlisted view broadcast recipients (integration)', () => {
       objectNameSingular: 'company',
       input: {
         name: 'Workspace broadcast companies',
-        visibility: ViewVisibility.WORKSPACE,
+        isPrivate: false,
       },
     });
     ({ createdByUserWorkspaceId: creatorUserWorkspaceId } =
@@ -161,13 +158,63 @@ describe('unlisted view broadcast recipients (integration)', () => {
     ).toBeUndefined();
   });
 
+  it('should send a delete to everyone but the creator when a workspace view becomes unlisted', async () => {
+    const viewId = await createOneViewOnObject({
+      objectNameSingular: 'company',
+      input: {
+        name: 'Unlisted again companies',
+        isPrivate: true,
+      },
+      token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    });
+    const { createdByUserWorkspaceId } = await findViewOwnership(viewId);
+
+    const updateIsPrivate = async (isPrivate: boolean) => {
+      await updateOneView({
+        viewId,
+        input: { id: viewId, isPrivate },
+        gqlFields: 'id',
+        expectToFail: false,
+        token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      });
+      await emitter.drain();
+    };
+
+    await updateIsPrivate(false);
+    broadcastSpy.mockClear();
+    await updateIsPrivate(true);
+
+    const deletedEvent = findWorkspaceBroadcastEventOrThrow({
+      broadcastSpy,
+      entityName: 'view',
+      recordId: viewId,
+      type: 'deleted',
+    });
+
+    expect(createdByUserWorkspaceId).not.toBeNull();
+    expect(
+      findWorkspaceBroadcastEventOrThrow({
+        broadcastSpy,
+        entityName: 'view',
+        recordId: viewId,
+        type: 'updated',
+      }).recipientUserWorkspaceIds,
+    ).toEqual([createdByUserWorkspaceId]);
+    expect(deletedEvent.recipientUserWorkspaceIds).toBeUndefined();
+    expect(deletedEvent.excludedUserWorkspaceIds).toEqual([
+      createdByUserWorkspaceId,
+    ]);
+
+    await destroyOneView({ viewId });
+  });
+
   it('should send an unlisted view without a creator to nobody', async () => {
     expect(
       await publishAndFindRecipients({
         metadataName: 'view',
         record: {
           id: randomUUID(),
-          visibility: ViewVisibility.UNLISTED,
+          isPrivate: true,
           createdByUserWorkspaceId: null,
         },
       }),

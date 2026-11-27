@@ -2,6 +2,7 @@ export const AI_SDK_PACKAGES = [
   '@ai-sdk/openai',
   '@ai-sdk/anthropic',
   '@ai-sdk/google',
+  '@ai-sdk/groq',
   '@ai-sdk/mistral',
   '@ai-sdk/xai',
   '@ai-sdk/amazon-bedrock',

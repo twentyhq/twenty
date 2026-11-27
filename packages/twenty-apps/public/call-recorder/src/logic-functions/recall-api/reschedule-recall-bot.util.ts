@@ -1,13 +1,11 @@
 import { isUndefined } from '@sniptt/guards';
 
-import { getRecallBotAutomaticLeave } from 'src/logic-functions/constants/recall-bot-automatic-leave';
-import { getRecallBotRecordingConfig } from 'src/logic-functions/constants/recall-bot-recording-config';
 import { type RecallBotScheduleResult } from 'src/logic-functions/types/recall-bot-operation-result.type';
 import {
   extractRecallBotId,
   type RecallBotResponse,
 } from 'src/logic-functions/recall-api/extract-recall-bot-id.util';
-import { computeRecallBotDetectionActivateAfterSeconds } from 'src/logic-functions/domain/compute-recall-bot-detection-activate-after-seconds.util';
+import { buildRecallBotCoreSettings } from 'src/logic-functions/recall-api/build-recall-bot-core-settings.util';
 import { getRecallApiConfig } from 'src/logic-functions/recall-api/get-recall-api-config.util';
 import { getRecallBotChatConfig } from 'src/logic-functions/recall-api/get-recall-bot-chat-config.util';
 import { recallBotApiRequest } from 'src/logic-functions/recall-api/recall-bot-api-request.util';
@@ -32,14 +30,6 @@ export const rescheduleRecallBot = async ({
   }
 
   const effectiveJoinAt = computeMaximumJoinAt(joinAt);
-  const automaticLeave = getRecallBotAutomaticLeave({
-    botDetectionActivateAfterSeconds:
-      computeRecallBotDetectionActivateAfterSeconds({
-        botJoinsAt: effectiveJoinAt,
-        meetingStartsAt,
-      }),
-    botName: configResult.config.botName,
-  });
   const chat = getRecallBotChatConfig();
 
   const result = await recallBotApiRequest<RecallBotResponse>({
@@ -49,10 +39,12 @@ export const rescheduleRecallBot = async ({
     body: {
       meeting_url: meetingUrl,
       join_at: effectiveJoinAt,
-      bot_name: configResult.config.botName,
-      automatic_leave: automaticLeave,
+      ...buildRecallBotCoreSettings({
+        botName: configResult.config.botName,
+        botJoinsAt: effectiveJoinAt,
+        meetingStartsAt,
+      }),
       ...(isUndefined(chat) ? {} : { chat }),
-      recording_config: getRecallBotRecordingConfig(),
       metadata,
     },
   });

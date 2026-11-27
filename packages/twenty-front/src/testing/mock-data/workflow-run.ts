@@ -1,5 +1,3 @@
-// oxlint-disable-next-line typescript/ban-ts-comment
-// @ts-ignore
 import { type WorkflowRun } from '@/workflow/types/Workflow';
 import { StepStatus } from 'twenty-shared/workflow';
 

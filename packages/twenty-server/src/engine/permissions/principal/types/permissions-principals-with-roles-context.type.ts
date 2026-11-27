@@ -13,19 +13,23 @@ import {
 
 type WithRoleId<TPrincipal> = TPrincipal & { roleId: string };
 
-export type PermissionsMainPrincipalWithRole =
-  | WithRoleId<PermissionsWorkspaceMemberPrincipal>
-  | WithRoleId<PermissionsApiKeyPrincipal>
-  | WithRoleId<PermissionsAgentPrincipal>
-  | WithRoleId<PermissionsWebhookPrincipal>
-  | WithRoleId<PermissionsApplicationIdPrincipal>
-  | PermissionsRolePrincipal;
+type WithRoleIds<TPrincipal> = TPrincipal & { roleIds: string[] };
+
+export type PermissionsMainPrincipalWithRole = WithRoleIds<
+  | PermissionsWorkspaceMemberPrincipal
+  | PermissionsApiKeyPrincipal
+  | PermissionsAgentPrincipal
+  | PermissionsWebhookPrincipal
+  | PermissionsApplicationIdPrincipal
+  | PermissionsRolePrincipal
+>;
 
 export type PermissionsLimitingPrincipalWithRole =
   WithRoleId<PermissionsAgentPrincipal>;
 
+// an OAuth-only application without a role of its own has no roleId and adds no limit
 export type PermissionsApplicationPrincipalWithRole =
-  | WithRoleId<PermissionsApplicationIdPrincipal>
+  | (PermissionsApplicationIdPrincipal & { roleId?: string })
   | PermissionsCustomApplicationPrincipal;
 
 export type PermissionsPrincipalsWithRolesContext = {

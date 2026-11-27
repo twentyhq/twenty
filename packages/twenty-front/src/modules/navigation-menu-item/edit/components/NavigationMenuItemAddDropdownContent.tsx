@@ -3,7 +3,11 @@ import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/ty
 import { NavigationMenuItemInsertionPreviewEffect } from '@/navigation-menu-item/edit/effect-components/NavigationMenuItemInsertionPreviewEffect';
 import { useNavigationMenuItemAddOptions } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemAddOptions';
 import { type NavigationMenuItemAddStep } from '@/navigation-menu-item/edit/types/NavigationMenuItemAddStep';
+import { getNavigationMenuItemTabId } from '@/navigation-menu-item/common/utils/getNavigationMenuItemTabId';
+import { getNavigationMenuItemContainerId } from '@/navigation-menu-item/common/utils/getNavigationMenuItemContainerId';
+import { useWorkspaceSidebarRootContainerId } from '@/navigation-menu-item/display/hooks/useWorkspaceSidebarRootContainerId';
 import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
+import { NavigationMenuAddSectionHiddenItems } from '@/navigation-menu-item/edit/components/NavigationMenuAddSectionHiddenItems';
 import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
 import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -36,6 +40,8 @@ const STEP_BY_PAGE: Partial<Record<string, Step>> = {
 type NavigationMenuItemAddDropdownContentProps = {
   dropdownId: string;
   section: NavigationMenuItemSection;
+  // TODO(@thomtrp): remove once IS_CUSTOMIZABLE_SIDEBAR_ENABLED is on for every workspace
+  shouldShowHiddenItems?: boolean;
   parentId?: string;
   position?: number;
   onClose: () => void;
@@ -44,6 +50,7 @@ type NavigationMenuItemAddDropdownContentProps = {
 export const NavigationMenuItemAddDropdownContent = ({
   dropdownId,
   section,
+  shouldShowHiddenItems = false,
   parentId,
   position,
   onClose,
@@ -63,11 +70,32 @@ export const NavigationMenuItemAddDropdownContent = ({
   const [objectId, setObjectId] = useState<string | null>(null);
   const { currentItems, createItem } =
     useNavigationMenuItemEditController(section);
+  const workspaceSidebarRootContainerId = useWorkspaceSidebarRootContainerId();
   const insertionIndex =
     position ??
     currentItems.filter(
       (item) => (item.parentId ?? null) === (parentId ?? null),
     ).length;
+
+  const targetTabId = getNavigationMenuItemTabId({
+    parentId,
+    items: currentItems,
+  });
+  const currentTabItems = currentItems.filter(
+    (item) =>
+      getNavigationMenuItemTabId({
+        parentId: item.parentId,
+        items: currentItems,
+      }) === targetTabId,
+  );
+  const targetContainerId =
+    getNavigationMenuItemContainerId({
+      item: { parentId },
+      items: currentItems,
+    }) ?? workspaceSidebarRootContainerId;
+  const isInTargetContainer = (item: (typeof currentItems)[number]) =>
+    (getNavigationMenuItemContainerId({ item, items: currentItems }) ??
+      workspaceSidebarRootContainerId) === targetContainerId;
 
   const navigate = (next: Step) => {
     goToPage(next);
@@ -94,11 +122,12 @@ export const NavigationMenuItemAddDropdownContent = ({
     recordSearchLoading,
     isSearchDebouncing,
   } = useNavigationMenuItemAddOptions({
+    section,
     step,
     search,
     objectId,
     parentId,
-    currentItems,
+    currentItems: currentTabItems.filter(isInTargetContainer),
     isSearchingAllItems,
     addItem,
     navigateToStep: navigate,
@@ -110,7 +139,7 @@ export const NavigationMenuItemAddDropdownContent = ({
   });
 
   const titles: Record<Step, string> = {
-    main: t`Add menu item`,
+    main: t`Add item`,
     object: t`Object`,
     view: t`View`,
     record: t`Record`,
@@ -196,6 +225,8 @@ export const NavigationMenuItemAddDropdownContent = ({
   };
 
   const emptyMessage = getEmptyMessage();
+  const isItemTypeList =
+    step === 'main' && !isSearchingAllItems && !shouldShowHiddenItems;
 
   return (
     <>
@@ -229,7 +260,7 @@ export const NavigationMenuItemAddDropdownContent = ({
           placeholder={step === 'record' ? t`Search records...` : t`Search...`}
         />
         <Dropdown.Separator />
-        <Dropdown.Section scrollable>
+        <Dropdown.Section scrollable={!isItemTypeList}>
           {groups
             .filter((group) => isNonEmptyArray(group.items))
             .map((group, index) => (
@@ -251,6 +282,12 @@ export const NavigationMenuItemAddDropdownContent = ({
                 </Dropdown.Section>
               </Fragment>
             ))}
+          {shouldShowHiddenItems && step === 'main' && !isSearchingAllItems && (
+            <NavigationMenuAddSectionHiddenItems
+              containerId={targetTabId}
+              dropdownId={dropdownId}
+            />
+          )}
           {!isNonEmptyArray(items) && (
             <Dropdown.Empty>{emptyMessage}</Dropdown.Empty>
           )}

@@ -1,16 +1,22 @@
 import { GettingStartedSidebarCard } from '@/getting-started/components/GettingStartedSidebarCard';
 import { MobileHomeInboxSection } from '@/inbox/components/MobileHomeInboxSection';
+import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
 import { MainNavigationDrawerNavigationContent } from '@/navigation/components/MainNavigationDrawerNavigationContent';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { MultiWorkspaceDropdownButton } from '@/navigation/components/MultiWorkspaceDropdown/MultiWorkspaceDropdownButton';
 import { NavigationDrawerFixedContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerFixedContent';
 import { NavigationDrawerScrollableContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerScrollableContent';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { styled } from '@linaria/react';
 import { Navigate } from 'react-router-dom';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -33,6 +39,10 @@ export const MobileHomePage = () => {
   const isMobile = useIsMobile();
   const { defaultHomePagePath } = useDefaultHomePagePath();
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
+  const activeNavigationMenuTab = useActiveNavigationMenuTab();
+  const isCustomizableSidebarEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
+  );
 
   // Desktop keeps the drawer, so the page has nothing to show there.
   if (!isMobile) {
@@ -49,7 +59,9 @@ export const MobileHomePage = () => {
         <StyledSections>
           <MainNavigationDrawerNavigationContent />
           <GettingStartedSidebarCard />
-          {hasAiPermission && <MobileHomeInboxSection />}
+          {hasAiPermission &&
+            !isCustomizableSidebarEnabled &&
+            !isDefined(activeNavigationMenuTab) && <MobileHomeInboxSection />}
         </StyledSections>
       </NavigationDrawerScrollableContent>
     </StyledContainer>

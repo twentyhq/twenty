@@ -23,6 +23,10 @@ import {
 } from 'twenty-shared/utils';
 import { parseBooleanFromStringValue } from 'twenty-shared/workflow';
 
+import {
+  WorkflowStepExecutorException,
+  WorkflowStepExecutorExceptionCode,
+} from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { findDefaultNullEquivalentValue } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/find-default-null-equivalent-value.util';
 import { parseAndEvaluateRelativeDateFilter } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/parse-and-evaluate-relative-date-filter.util';
 
@@ -197,8 +201,9 @@ function evaluateTextAndArrayFilter(
       return isNotEmptyTextOrArray(filter.leftOperand);
 
     default:
-      throw new Error(
+      throw new WorkflowStepExecutorException(
         `Operand ${filter.operand} not supported for this filter type`,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
       );
   }
 }
@@ -235,8 +240,9 @@ function evaluateRawJsonFilter(filter: ResolvedFilter): boolean {
     case ViewFilterOperand.IS_NOT_EMPTY:
       return !isEmpty;
     default:
-      throw new Error(
+      throw new WorkflowStepExecutorException(
         `Operand ${filter.operand} not supported for raw JSON filter`,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
       );
   }
 }
@@ -253,8 +259,9 @@ function evaluateBooleanFilter(filter: ResolvedFilter): boolean {
         parseBooleanFromStringValue(filter.rightOperand)
       );
     default:
-      throw new Error(
+      throw new WorkflowStepExecutorException(
         `Operand ${filter.operand} not supported for boolean filter`,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
       );
   }
 }
@@ -340,8 +347,9 @@ function evaluateDateFilter(filter: ResolvedFilter): boolean {
       });
 
     default:
-      throw new Error(
+      throw new WorkflowStepExecutorException(
         `Operand ${filter.operand} not supported for date filter`,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
       );
   }
 }
@@ -357,8 +365,9 @@ function evaluateUuidFilter(filter: ResolvedFilter): boolean {
     case ViewFilterOperand.IS_NOT_EMPTY:
       return isNonEmptyString(filter.leftOperand);
     default:
-      throw new Error(
+      throw new WorkflowStepExecutorException(
         `Operand ${filter.operand} not supported for uuid filter`,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
       );
   }
 }
@@ -410,8 +419,9 @@ function evaluateRatingFilter(filter: ResolvedFilter): boolean {
     case ViewFilterOperand.IS_NOT_EMPTY:
       return isDefined(leftRank);
     default:
-      throw new Error(
+      throw new WorkflowStepExecutorException(
         `Operand ${filter.operand} not supported for rating filter`,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
       );
   }
 }
@@ -438,8 +448,9 @@ function evaluateRelationFilter(filter: ResolvedFilter): boolean {
     case ViewFilterOperand.IS_NOT_EMPTY:
       return isNonEmptyString(leftValue);
     default:
-      throw new Error(
+      throw new WorkflowStepExecutorException(
         `Operand ${filter.operand} not supported for relation filter`,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
       );
   }
 }
@@ -456,8 +467,9 @@ function evaluateCurrencyFilter(filter: ResolvedFilter): boolean {
       case ViewFilterOperand.IS_NOT_EMPTY:
         return isNonEmptyString(filter.leftOperand);
       default:
-        throw new Error(
+        throw new WorkflowStepExecutorException(
           `Operand ${filter.operand} not supported for currency filter`,
+          WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
         );
     }
   } else {
@@ -494,8 +506,9 @@ function evaluateNumberFilter(filter: ResolvedFilter): boolean {
       return isLeftValueEmpty || Number(leftValue) !== Number(rightValue);
 
     default:
-      throw new Error(
+      throw new WorkflowStepExecutorException(
         `Operand ${filter.operand} not supported for number filter`,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
       );
   }
 }
@@ -522,8 +535,9 @@ function evaluateDefaultFilter(filter: ResolvedFilter): boolean {
     case ViewFilterOperand.LESS_THAN_OR_EQUAL:
       return Number(leftValue) <= Number(rightValue);
     default:
-      throw new Error(
+      throw new WorkflowStepExecutorException(
         `Operand ${filter.operand} not supported for ${filter.type} filter type`,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
       );
   }
 }
@@ -596,8 +610,9 @@ function evaluateSelectFilter(filter: ResolvedFilter): boolean {
     case ViewFilterOperand.IS_NOT_EMPTY:
       return isNotEmptyTextOrArray(filter.leftOperand);
     default:
-      throw new Error(
+      throw new WorkflowStepExecutorException(
         `Operand ${filter.operand} not supported for select filter`,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
       );
   }
 }

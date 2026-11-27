@@ -3,7 +3,7 @@ title: CLI
 description: Accedi a uno spazio di lavoro, esplora i suoi dati e crea app dal tuo terminale con la CLI di Twenty.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
+import { PageBanner } from '/snippets/page-banner.mdx';
 
 ## Esecuzione della CLI
 
@@ -125,22 +125,28 @@ npx twenty@latest app dev
 * `app apply --create` compila l'app, la registra nello spazio di lavoro, la installa e sincronizza i relativi metadati.
 * `app dev` monitora il codice sorgente e sincronizza ogni build riuscita.
 
+I file locali esterni esistenti usano gli eventi nativi del filesystem. I percorsi mancanti o eliminati usano controlli di ripristino una volta al secondo finché il monitoraggio nativo non può riprendere. Le directory principali home e temporanee e le relative directory ancestrali sono escluse dall'osservazione automatica delle directory esterne. Se `WATCH_SCOPE_LIMITED` viene visualizzato per un'importazione mancante, correggi l'importazione, quindi modifica un file dell'app o riavvia `app dev`.
+
+Esegui `twenty app dev --verbose` per visualizzare i percorsi monitorati ed esclusi dopo il primo tentativo di build e ogni volta che cambiano. Aggiungi `--format ndjson` per eventi di avanzamento strutturati di `watch-scope`.
+
 Altri comandi dell'app:
 
-| Comando                       | Cosa fa                                                                                                                  |
-| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| `app add`                     | Genera lo scheletro di un oggetto, campo, funzione logica o altra entità                                                 |
-| `app build` / `app typecheck` | Compila l'app o esegui il controllo dei tipi localmente                                                                  |
-| `app plan`                    | Visualizza in anteprima le modifiche ai metadati che un'applicazione apporterebbe                                        |
-| `app apply`                   | Compila, carica e sincronizza l'app                                                                                      |
-| `app generate-client`         | Rigenera il client API tipizzato senza sincronizzare                                                                     |
-| `app pull`                    | Ripristina i metadati, le traduzioni, le dipendenze, le risorse pubbliche e il codice sorgente dei componenti supportati |
-| `app translations extract`    | Estrai le stringhe traducibili nei cataloghi in `locales/`                                                               |
-| `app publish`                 | Pubblica l'app su npm o in un registro privato Twenty                                                                    |
-| `app install`                 | Installa nello spazio di lavoro un pacchetto dell'app già registrato                                                     |
-| `app uninstall`               | Rimuovi l'app e tutto ciò che possiede dallo spazio di lavoro                                                            |
+| Comando                       | Cosa fa                                                                                                                                                                     |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `app add`                     | Genera lo scheletro di un oggetto, campo, funzione logica o altra entità                                                                                                    |
+| `app build` / `app typecheck` | Compila l'app o esegui il controllo dei tipi localmente                                                                                                                     |
+| `app plan`                    | Visualizza in anteprima le modifiche ai metadati che un'applicazione apporterebbe                                                                                           |
+| `app apply`                   | Compila, carica e sincronizza l'app                                                                                                                                         |
+| `app generate-client`         | Rigenera il client API tipizzato senza sincronizzare                                                                                                                        |
+| `app pull`                    | Ripristina metadati, traduzioni, dipendenze, risorse pubbliche e il codice sorgente dei componenti supportati e delle funzioni logiche con importazioni locali inventariate |
+| `app translations extract`    | Estrai le stringhe traducibili nei cataloghi in `locales/`                                                                                                                  |
+| `app publish`                 | Pubblica l'app su npm o in un registro privato Twenty                                                                                                                       |
+| `app install`                 | Installa nello spazio di lavoro un pacchetto dell'app già registrato                                                                                                        |
+| `app uninstall`               | Rimuovi l'app e tutto ciò che possiede dallo spazio di lavoro                                                                                                               |
 
 Per impostazione predefinita, le definizioni mancanti dal codice sorgente vengono eliminate dallo spazio di lavoro. Passa `--no-prune` per mantenerli. L'applicazione Custom dell'area di lavoro li mantiene a meno che non passi `--prune`. L'eliminazione di oggetti o campi elimina anche i relativi dati, quindi richiede conferma. Per i dettagli, consulta [Sincronizzazione e ripristino](/it/developers/extend/apps/operations/sync-and-recovery).
+
+Al di fuori dell'applicazione personalizzata dell'area di lavoro, `plan`, `apply`, `dev` e `publish` rifiutano i ruoli che i membri dell'area di lavoro o le chiavi API possono detenere, nonché le autorizzazioni a livello di campo o di riga. Consulta [Ruoli al di fuori dell'applicazione personalizzata dell'area di lavoro](/it/developers/extend/apps/config/roles#roles-outside-the-workspace-custom-application).
 
 ## Esecuzione di funzioni
 

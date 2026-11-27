@@ -4,6 +4,7 @@ import { createAmazonBedrock } from '@ai-sdk/amazon-bedrock';
 import { createAnthropic, type AnthropicProvider } from '@ai-sdk/anthropic';
 import { createAzure } from '@ai-sdk/azure';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
+import { createGroq } from '@ai-sdk/groq';
 import { createMistral } from '@ai-sdk/mistral';
 import { createOpenAI, type OpenAIProvider } from '@ai-sdk/openai';
 import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
@@ -25,6 +26,7 @@ import {
   AI_SDK_AZURE,
   AI_SDK_BEDROCK,
   AI_SDK_GOOGLE,
+  AI_SDK_GROQ,
   AI_SDK_MISTRAL,
   AI_SDK_OPENAI,
   AI_SDK_OPENAI_COMPATIBLE,
@@ -128,6 +130,8 @@ export class SdkProviderFactoryService {
         return this.buildStandardProvider(config, createGoogleGenerativeAI, {
           middleware: sanitizeGeminiToolResultRefsMiddleware,
         });
+      case AI_SDK_GROQ:
+        return this.buildStandardProvider(config, createGroq);
       case AI_SDK_MISTRAL:
         return this.buildStandardProvider(config, createMistral);
       case AI_SDK_XAI:

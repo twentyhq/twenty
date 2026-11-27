@@ -4,7 +4,7 @@ import { addAllFlatEntitiesToFlatEntityMaps } from 'src/engine/core-modules/appl
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
-import { type ObjectMetadataInfo } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import { type ObjectMetadataInfo } from 'src/modules/workflow/common/workspace-services/workflow-metadata-read.workspace-service';
 import { formatWorkflowRecordRelationFields } from 'src/modules/workflow/workflow-executor/utils/format-workflow-record-relation-fields.util';
 
 const ASSIGNEE_ID = 'e1c3f8a0-0000-4000-8000-000000000000';

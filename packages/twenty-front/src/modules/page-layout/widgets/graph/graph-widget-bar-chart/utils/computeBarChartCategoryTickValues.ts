@@ -1,4 +1,4 @@
-import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graph-widget-bar-chart/constants/BarChartConstants';
+import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/CommonChartConstants';
 import { type BarChartDatum } from '@/page-layout/widgets/graph/graph-widget-bar-chart/types/BarChartDatum';
 import { computeMinHeightPerTick } from '@/page-layout/widgets/graph/graph-widget-bar-chart/utils/computeMinHeightPerTick';
 import { computeChartCategoryTickValues } from '@/page-layout/widgets/graph/utils/computeChartCategoryTickValues';
@@ -41,12 +41,15 @@ export const computeBarChartCategoryTickValues = ({
     });
   }
 
-  const widthPerTick = data.length > 0 ? availableAxisSize / data.length : 0;
+  const horizontalLabelSpacing =
+    COMMON_CHART_CONSTANTS.TICK_MINIMUM_NUMBER_OF_DISPLAYED_CHARACTERS *
+      COMMON_CHART_CONSTANTS.HORIZONTAL_LABEL_CHARACTER_WIDTH_RATIO *
+      axisFontSize +
+    COMMON_CHART_CONSTANTS.MINIMUM_GAP_BETWEEN_DATA_LABELS;
 
   return computeChartCategoryTickValues({
     availableSize: availableAxisSize,
-    minimumSizePerTick: BAR_CHART_CONSTANTS.MINIMUM_WIDTH_PER_TICK_ROTATED,
+    minimumSizePerTick: horizontalLabelSpacing,
     values,
-    widthPerTick,
   });
 };

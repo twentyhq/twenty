@@ -14,14 +14,12 @@ import { syncApplication } from 'test/integration/metadata/suites/application/ut
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { type Manifest } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { RowLevelPermissionPredicateOperand } from 'twenty-shared/types';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const TEST_APP_UNIVERSAL_IDENTIFIER = randomUUID();
 const TEST_ROLE_UNIVERSAL_IDENTIFIER = randomUUID();
 const TEST_OBJECT_PERMISSION_UNIVERSAL_IDENTIFIER = randomUUID();
-const TEST_PREDICATE_UNIVERSAL_IDENTIFIER = randomUUID();
 
 const VISIBLE_COMPANY_ID = randomUUID();
 const HIDDEN_COMPANY_ID = randomUUID();
@@ -30,8 +28,6 @@ const HIDDEN_COMPANY_NAME = `Intersection Hidden ${HIDDEN_COMPANY_ID}`;
 
 const COMPANY_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.company.universalIdentifier;
-const COMPANY_NAME_FIELD_UNIVERSAL_IDENTIFIER =
-  STANDARD_OBJECTS.company.fields.name.universalIdentifier;
 
 // Strictly narrower than the admin, so every assertion fails if the application's role is dropped.
 const buildApplicationManifest = (): Manifest =>
@@ -55,15 +51,6 @@ const buildApplicationManifest = (): Manifest =>
               canUpdateObjectRecords: false,
             },
           ],
-          rowLevelPermissionPredicates: [
-            {
-              universalIdentifier: TEST_PREDICATE_UNIVERSAL_IDENTIFIER,
-              objectUniversalIdentifier: COMPANY_UNIVERSAL_IDENTIFIER,
-              fieldUniversalIdentifier: COMPANY_NAME_FIELD_UNIVERSAL_IDENTIFIER,
-              operand: RowLevelPermissionPredicateOperand.CONTAINS,
-              value: 'Intersection Visible',
-            },
-          ],
         },
       ],
     },
@@ -81,12 +68,12 @@ const findApplicationId = async (): Promise<string> => {
 
 const findApplicationDefaultRoleId = async (): Promise<string | null> => {
   const rows = await globalThis.testDataSource.query(
-    `SELECT "defaultRoleId" FROM core."application"
+    `SELECT "requestedRoleId" FROM core."application"
      WHERE "universalIdentifier" = $1 AND "workspaceId" = $2`,
     [TEST_APP_UNIVERSAL_IDENTIFIER, SEED_APPLE_WORKSPACE_ID],
   );
 
-  return rows[0]?.defaultRoleId ?? null;
+  return rows[0]?.requestedRoleId ?? null;
 };
 
 const createCompany = async (id: string, name: string) =>
@@ -172,15 +159,6 @@ describe('An application acting for a user is bound by both roles', () => {
 
   it('should let the user see both companies when acting on their own', async () => {
     const names = await findCompanyNames();
-
-    expect(names).toHaveLength(2);
-    expect(names).toEqual(
-      expect.arrayContaining([VISIBLE_COMPANY_NAME, HIDDEN_COMPANY_NAME]),
-    );
-  });
-
-  it('should ignore the application row-level predicate', async () => {
-    const names = await findCompanyNames(applicationAccessToken);
 
     expect(names).toHaveLength(2);
     expect(names).toEqual(

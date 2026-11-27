@@ -1,5 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
+import {
+  type CallToolRequest,
+  type CallToolResult,
+  type ListToolsResult,
+  createMcpHandler,
+  ProtocolError,
+  Server,
+  type ServerContext,
+} from '@modelcontextprotocol/server';
 import * as Sentry from '@sentry/node';
 import { type ToolSet } from 'ai';
 import { type ToolCategory } from 'twenty-shared/ai';
@@ -9,11 +18,13 @@ import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/constants/mcp-closed-world-read-only-tool-annotations.constant';
 import { MCP_EXCLUDED_TOOL_NAMES } from 'src/engine/api/mcp/constants/mcp-excluded-tool-names.constant';
 import { MCP_GENERIC_MODE_LISTED_TOOL_CATEGORIES } from 'src/engine/api/mcp/constants/mcp-generic-mode-listed-tool-categories.constant';
+import { MCP_METHODS_RETURNING_INSTRUCTIONS } from 'src/engine/api/mcp/constants/mcp-methods-returning-instructions.constant';
+import { MCP_RESULT_CACHE_HINTS } from 'src/engine/api/mcp/constants/mcp-result-cache-hints.constant';
+import { MCP_SERVER_CAPABILITIES } from 'src/engine/api/mcp/constants/mcp-server-capabilities.constant';
 import { MCP_EXECUTE_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/constants/mcp-execute-tool-annotations.constant';
 import { MCP_OPEN_WORLD_READ_ONLY_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/constants/mcp-open-world-read-only-tool-annotations.constant';
-import { MCP_PROTOCOL_VERSION } from 'src/engine/api/mcp/constants/mcp-protocol-version.constant';
+import { MCP_PROGRESS_NOTIFICATION_METHOD } from 'src/engine/api/mcp/constants/mcp-progress-notification.constant';
 import { MCP_SERVER_INFO } from 'src/engine/api/mcp/constants/mcp-server-info.constant';
-import { JsonRpc } from 'src/engine/api/mcp/dtos/json-rpc';
 import {
   McpException,
   McpExceptionCode,
@@ -31,18 +42,10 @@ import {
 } from 'src/engine/api/mcp/tools/list-skills.tool';
 import { type McpAnnotatedTool } from 'src/engine/api/mcp/types/mcp-annotated-tool.type';
 import { type McpCoreQueryContext } from 'src/engine/api/mcp/types/mcp-core-query-context.type';
-import { type McpInitializeResult } from 'src/engine/api/mcp/types/mcp-initialize-result.type';
-import { type McpMethod } from 'src/engine/api/mcp/types/mcp-method.type';
-import { type McpResult } from 'src/engine/api/mcp/types/mcp-result.type';
 import { type McpToolAnnotations } from 'src/engine/api/mcp/types/mcp-tool-annotations.type';
-import { type McpToolCallResult } from 'src/engine/api/mcp/types/mcp-tool-call-result.type';
 import { type McpToolSet } from 'src/engine/api/mcp/types/mcp-tool-set.type';
-import { type McpToolsListResult } from 'src/engine/api/mcp/types/mcp-tools-list-result.type';
 import { buildJsonRpcError } from 'src/engine/api/mcp/utils/build-json-rpc-error.util';
 import { getMcpRegistryToolAnnotations } from 'src/engine/api/mcp/utils/get-mcp-registry-tool-annotations.util';
-import { isMcpMethod } from 'src/engine/api/mcp/utils/is-mcp-method.util';
-import { parseMcpToolCallParams } from 'src/engine/api/mcp/utils/parse-mcp-tool-call-params.util';
-import { wrapJsonRpcResponse } from 'src/engine/api/mcp/utils/wrap-jsonrpc-response.util';
 import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
@@ -104,28 +107,6 @@ export class McpProtocolService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
-
-  private async handleInitialize(
-    context: McpCoreQueryContext,
-  ): Promise<McpInitializeResult> {
-    const instructions =
-      await this.mcpInstructionBuilderService.buildInstructions({
-        workspaceId: context.workspace.id,
-        authContext: context.authContext,
-        toolMode: context.toolMode,
-      });
-
-    return {
-      protocolVersion: MCP_PROTOCOL_VERSION,
-      capabilities: {
-        tools: { listChanged: false },
-        resources: { listChanged: false },
-        prompts: { listChanged: false },
-      },
-      serverInfo: MCP_SERVER_INFO,
-      instructions,
-    };
-  }
 
   private async buildActorMetadata(
     workspaceId: string,
@@ -257,17 +238,73 @@ export class McpProtocolService {
     return { toolSet, toolContext };
   }
 
-  // Returns null for JSON-RPC notifications (no id), which require no response body
-  async handleMCPCoreQuery(
-    { id, method, params }: JsonRpc,
-    context: McpCoreQueryContext,
-    sseWriter?: (data: Record<string, unknown>) => void,
-  ): Promise<Record<string, unknown> | null> {
-    // JSON-RPC notifications have no id and expect no response
-    if (!isDefined(id)) {
-      return null;
-    }
+  async handleRequest({
+    request,
+    parsedBody,
+    method,
+    context,
+  }: {
+    request: Request;
+    parsedBody: unknown;
+    method: string | undefined;
+    context: McpCoreQueryContext;
+  }): Promise<Response> {
+    // The server is built from the caller's auth context, so each request gets its own handler
+    const handler = createMcpHandler(() =>
+      this.buildServer({ context, method }),
+    );
 
+    return handler.fetch(request, { parsedBody });
+  }
+
+  private async buildServer({
+    context,
+    method,
+  }: {
+    context: McpCoreQueryContext;
+    method: string | undefined;
+  }): Promise<Server> {
+    const shouldBuildInstructions =
+      isDefined(method) &&
+      MCP_METHODS_RETURNING_INSTRUCTIONS.includes(method) &&
+      context.authContext.type !== 'pendingActivationUser';
+
+    const server = new Server(MCP_SERVER_INFO, {
+      capabilities: MCP_SERVER_CAPABILITIES,
+      cacheHints: MCP_RESULT_CACHE_HINTS,
+      instructions: shouldBuildInstructions
+        ? await this.buildInstructions(context)
+        : undefined,
+    });
+
+    server.setRequestHandler('tools/list', () =>
+      this.runToolRequest({
+        context,
+        handleToolRequest: () => this.handleToolsList(context),
+      }),
+    );
+    server.setRequestHandler('tools/call', (request, serverContext) =>
+      this.runToolRequest({
+        context,
+        handleToolRequest: () =>
+          this.handleToolsCall({ request, serverContext, context }),
+      }),
+    );
+    server.setRequestHandler('resources/list', async () => ({
+      resources: [],
+    }));
+    server.setRequestHandler('prompts/list', async () => ({ prompts: [] }));
+
+    return server;
+  }
+
+  private async runToolRequest<TResult>({
+    context,
+    handleToolRequest,
+  }: {
+    context: McpCoreQueryContext;
+    handleToolRequest: () => Promise<TResult>;
+  }): Promise<TResult> {
     try {
       // No tool runs without a workspace member, so a user still onboarding is refused upfront
       if (context.authContext.type === 'pendingActivationUser') {
@@ -277,93 +314,81 @@ export class McpProtocolService {
         );
       }
 
-      if (!isMcpMethod(method)) {
-        throw new McpException(
-          `Method '${method}' not found`,
-          McpExceptionCode.METHOD_NOT_FOUND,
-        );
-      }
-
-      const result = await this.dispatchMcpMethod({
-        method,
-        params,
-        context,
-        sseWriter,
-      });
-
-      return wrapJsonRpcResponse(id, { result });
+      return await handleToolRequest();
     } catch (error) {
-      const exception =
-        error instanceof Error ? error : new Error(String(error));
+      const exception = this.reportException({ context, error });
 
-      handleException({
-        exception,
-        exceptionHandlerService: this.exceptionHandlerService,
-        user: isDefined(context.userId) ? { id: context.userId } : undefined,
-        workspace: { id: context.workspace.id },
-      });
+      // The SDK would send any other error's message as is, internal details included
+      const { code, message } = buildJsonRpcError(exception);
 
-      return wrapJsonRpcResponse(id, { error: buildJsonRpcError(exception) });
+      throw new ProtocolError(code, message);
     }
   }
 
-  private async dispatchMcpMethod({
-    method,
-    params,
-    context,
-    sseWriter,
-  }: {
-    method: McpMethod;
-    params: Record<string, unknown> | undefined;
-    context: McpCoreQueryContext;
-    sseWriter?: (data: Record<string, unknown>) => void;
-  }): Promise<McpResult> {
-    switch (method) {
-      case 'initialize':
-        return this.handleInitialize(context);
-      case 'ping':
-        return {};
-      case 'prompts/list':
-        return { prompts: [] };
-      case 'resources/list':
-        return { resources: [] };
-      case 'tools/list':
-        return this.handleToolsList(context);
-      case 'tools/call':
-        return this.handleToolsCall({ params, context, sseWriter });
-      default:
-        return assertUnreachable(method);
+  // The SDK answers a failed server build with a generic error, so only reporting is needed here
+  private async buildInstructions(
+    context: McpCoreQueryContext,
+  ): Promise<string> {
+    try {
+      return await this.mcpInstructionBuilderService.buildInstructions({
+        workspaceId: context.workspace.id,
+        authContext: context.authContext,
+        toolMode: context.toolMode,
+      });
+    } catch (error) {
+      throw this.reportException({ context, error });
     }
+  }
+
+  private reportException({
+    context,
+    error,
+  }: {
+    context: McpCoreQueryContext;
+    error: unknown;
+  }): Error {
+    const exception = error instanceof Error ? error : new Error(String(error));
+
+    handleException({
+      exception,
+      exceptionHandlerService: this.exceptionHandlerService,
+      user: isDefined(context.userId) ? { id: context.userId } : undefined,
+      workspace: { id: context.workspace.id },
+    });
+
+    return exception;
   }
 
   private async handleToolsList(
     context: McpCoreQueryContext,
-  ): Promise<McpToolsListResult> {
+  ): Promise<ListToolsResult> {
     const { toolSet, toolContext } = await this.resolveMcpToolSet(context);
 
-    switch (context.toolMode) {
-      case 'meta':
-        return this.mcpToolExecutorService.handleToolsListing(toolSet);
-      case 'direct': {
-        const {
-          [GET_TOOL_CATALOG_TOOL_NAME]: _getToolCatalogTool,
-          [LEARN_TOOLS_TOOL_NAME]: _learnToolsTool,
-          [EXECUTE_TOOL_TOOL_NAME]: _executeToolTool,
-          ...nativeTools
-        } = toolSet;
+    if (context.toolMode === 'meta') {
+      return this.mcpToolExecutorService.handleToolsListing(toolSet);
+    }
 
+    // Directory reviews (ChatGPT) refuse a generic executor; still callable for clients that listed it
+    const {
+      [GET_TOOL_CATALOG_TOOL_NAME]: _getToolCatalogTool,
+      [LEARN_TOOLS_TOOL_NAME]: _learnToolsTool,
+      [EXECUTE_TOOL_TOOL_NAME]: _executeToolTool,
+      ...nativeTools
+    } = toolSet;
+
+    switch (context.toolMode) {
+      case 'direct':
         return this.mcpToolExecutorService.handleToolsListing({
           ...(await this.buildAnnotatedRegistryTools({ toolContext })),
           ...nativeTools,
         });
-      }
       case 'generic':
         return this.mcpToolExecutorService.handleToolsListing({
           ...(await this.buildAnnotatedRegistryTools({
             toolContext,
             categories: MCP_GENERIC_MODE_LISTED_TOOL_CATEGORIES,
           })),
-          ...toolSet,
+          ...nativeTools,
         });
       default:
         return assertUnreachable(context.toolMode);
@@ -371,24 +396,16 @@ export class McpProtocolService {
   }
 
   private async handleToolsCall({
-    params,
+    request,
+    serverContext,
     context,
-    sseWriter,
   }: {
-    params: Record<string, unknown> | undefined;
+    request: CallToolRequest;
+    serverContext: ServerContext;
     context: McpCoreQueryContext;
-    sseWriter?: (data: Record<string, unknown>) => void;
-  }): Promise<McpToolCallResult> {
-    const toolCallParams = parseMcpToolCallParams(params);
-
-    if (!isDefined(toolCallParams)) {
-      throw new McpException(
-        'tools/call requires params with name and arguments',
-        McpExceptionCode.INVALID_PARAMS,
-      );
-    }
-
-    const { toolName, toolArguments, progressToken } = toolCallParams;
+  }): Promise<CallToolResult> {
+    const { name: toolName, arguments: toolArguments } = request.params;
+    const progressToken = request.params._meta?.progressToken;
 
     const { toolSet } = await this.resolveMcpToolSet(context);
 
@@ -404,8 +421,13 @@ export class McpProtocolService {
             toolArguments: { toolName, arguments: toolArguments ?? {} },
           }
         : { toolName, toolArguments }),
-      progressToken,
-      sseWriter,
+      notifyToolCallStarted: isDefined(progressToken)
+        ? () =>
+            serverContext.mcpReq.notify({
+              method: MCP_PROGRESS_NOTIFICATION_METHOD,
+              params: { progressToken, progress: 0, total: 1 },
+            })
+        : undefined,
     });
   }
 
@@ -465,9 +487,8 @@ export class McpProtocolService {
             descriptor.name,
             {
               ...registryTools[descriptor.name],
-              annotations: getMcpRegistryToolAnnotations(
-                descriptor.executionRef,
-              ),
+              title: descriptor.label,
+              annotations: getMcpRegistryToolAnnotations(descriptor),
             },
           ]),
         );

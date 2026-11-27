@@ -278,13 +278,12 @@ yarn command:prod cron:workflow:automated-cron-trigger
 
 Redis-ul cozii rulează cu `noeviction`: odată ce este plin, fiecare punere în coadă eșuează pentru fiecare spațiu de lucru. Pentru a împiedica un spațiu de lucru sau o aplicație să o umple, fiecare poate utiliza o cotă din memoria pe care celelalte o lasă liberă, iar dimensiunea fiecărui job este limitată.
 
-| Variabilă                                                    | Implicit  | Ce face                                                                                 |
-| ------------------------------------------------------------ | --------- | --------------------------------------------------------------------------------------- |
-| `IS_REDIS_MEMORY_FAIRNESS_ENABLED`                           | `fals`    | Respinge joburile care depășesc limita de dimensiune sau cota lor.                      |
-| `JOB_QUEUE_MAX_JOB_SIZE_BYTES`                               | `5242880` | Cel mai mare job serializat acceptat.                                                   |
-| `JOB_QUEUE_MEMORY_SHARE_BY_WORKSPACE_ID`                     | `0.3`     | Cota din memoria liberă pe care o poate deține un spațiu de lucru.                      |
-| `JOB_QUEUE_MEMORY_SHARE_BY_APPLICATION_UNIVERSAL_IDENTIFIER` | `0.4`     | Cota din memoria liberă pe care o poate deține o aplicație, în toate spațiile de lucru. |
-| `JOB_QUEUE_MEMORY_RESERVE`                                   | `0.1`     | Cota din `maxmemory` care nu este alocată niciodată joburilor.                          |
+| Variabilă                                                    | Implicit   | Ce face                                                                                 |
+| ------------------------------------------------------------ | ---------- | --------------------------------------------------------------------------------------- |
+| `JOB_QUEUE_MAX_JOB_SIZE_BYTES`                               | `20971520` | Cel mai mare job serializat acceptat.                                                   |
+| `JOB_QUEUE_MEMORY_SHARE_BY_WORKSPACE_ID`                     | `0.4`      | Cota din memoria liberă pe care o poate deține un spațiu de lucru.                      |
+| `JOB_QUEUE_MEMORY_SHARE_BY_APPLICATION_UNIVERSAL_IDENTIFIER` | `0.6`      | Cota din memoria liberă pe care o poate deține o aplicație, în toate spațiile de lucru. |
+| `JOB_QUEUE_MEMORY_RESERVE`                                   | `0.1`      | Cota din `maxmemory` care nu este alocată niciodată joburilor.                          |
 
 Limita cotei necesită ca `maxmemory` să fie setat pentru Redis-ul cozii. Refuzurile sunt înregistrate în jurnal și numărate în `job_memory_limit_refused_total` după coadă, numele jobului și motiv, iar `twenty_queue_memory_used_ratio` urmărește utilizarea memoriei. Dacă furnizorul dvs. reține o parte din `maxmemory` (de exemplu, `reserved-memory-percent` din ElastiCache), includeți-o în `JOB_QUEUE_MEMORY_RESERVE`, cu excepția cazului în care `maxmemory` o exclude deja.
 

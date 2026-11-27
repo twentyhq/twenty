@@ -72,6 +72,39 @@ describe('mapUnipileMessageToIngestMessage', () => {
     ]);
   });
 
+  it('addresses a message received in a group to the other members too', () => {
+    expect(
+      mapUnipileMessageToIngestMessage({
+        message: buildMessage(),
+        channelHandle: CHANNEL_HANDLE,
+        counterparts: [
+          {
+            id: 'ACoGRACE',
+            display_name: 'Grace Hopper',
+            public_identifier: 'grace-hopper',
+          },
+          {
+            id: 'ACoSAM',
+            display_name: 'Sam Okafor',
+            public_identifier: 'sam-okafor',
+          },
+        ],
+      })?.participants,
+    ).toEqual([
+      {
+        role: 'FROM',
+        handle: 'https://www.linkedin.com/in/grace-hopper',
+        displayName: 'Grace Hopper',
+      },
+      { role: 'TO', handle: CHANNEL_HANDLE },
+      {
+        role: 'TO',
+        handle: 'https://www.linkedin.com/in/sam-okafor',
+        displayName: 'Sam Okafor',
+      },
+    ]);
+  });
+
   it('falls back to the sender id when the sender profile is missing', () => {
     expect(
       mapUnipileMessageToIngestMessage({

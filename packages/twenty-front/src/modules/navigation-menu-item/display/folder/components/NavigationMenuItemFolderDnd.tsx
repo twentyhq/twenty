@@ -28,6 +28,7 @@ import { SortableDropTargetRefContext } from '@/navigation-menu-item/common/cont
 import { useDeleteManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useDeleteManyNavigationMenuItems';
 import type { NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { getDndKitDropTargetId } from '@/navigation-menu-item/common/utils/getDndKitDropTargetId';
+import { getNavigationMenuItemListDroppableId } from '@/navigation-menu-item/common/utils/getNavigationMenuItemListDroppableId';
 import { NavigationItemDropTarget } from '@/navigation-menu-item/display/dnd/components/NavigationItemDropTarget';
 import {
   FOLDER_HEADER_SLOT_COLLISION_PRIORITY,
@@ -170,7 +171,10 @@ export const NavigationMenuItemFolderDnd = ({
 
   const config = NAVIGATION_MENU_ITEM_SECTION_DROPPABLE_CONFIG[section];
   const folderHeaderDroppableId = `${config.folderHeaderPrefix}${folderId}`;
-  const folderContentDroppableId = `${config.folderPrefix}${folderId}`;
+  const folderContentDroppableId = getNavigationMenuItemListDroppableId({
+    parentId: folderId,
+    navigationMenuItemSection: section,
+  });
   const folderHeaderSlotId = getDndKitDropTargetId(folderHeaderDroppableId, 0);
 
   const isForbiddenDropTarget =
@@ -209,9 +213,7 @@ export const NavigationMenuItemFolderDnd = ({
       onEdit={favoritesEdit.startEditing}
       onDelete={favoritesEdit.handleFolderDelete}
     />
-  ) : (
-    <NavigationMenuItemFolderChevron isOpen={isOpen} />
-  );
+  ) : undefined;
 
   const header = (
     <NavigationDrawerItem
@@ -225,6 +227,20 @@ export const NavigationMenuItemFolderDnd = ({
         isWorkspace && isFolderEditHighlighted && !isExpanded
       }
       onClick={handleHeaderClick}
+      aria-expanded={shouldUseEditModeClick ? undefined : isOpen}
+      trailingIcon={
+        shouldUseEditModeClick ? (
+          <NavigationMenuItemFolderChevronButton
+            isOpen={isOpen}
+            onClick={(event) => {
+              event.stopPropagation();
+              handleToggle();
+            }}
+          />
+        ) : (
+          <NavigationMenuItemFolderChevron isOpen={isOpen} />
+        )
+      }
       rightOptions={shouldUseEditModeClick ? undefined : headerRightOptions}
       className="navigation-drawer-item"
       isRightOptionsDropdownOpen={
@@ -246,7 +262,10 @@ export const NavigationMenuItemFolderDnd = ({
     >
       {showInsertBeforeZone && (
         <NavigationMenuItemInsertBeforeDroppableZone
-          orphanDroppableId={config.orphanDroppableId}
+          orphanDroppableId={getNavigationMenuItemListDroppableId({
+            parentId: item.parentId,
+            navigationMenuItemSection: section,
+          })}
           orphanIndex={orphanIndex}
           itemId={folderId}
           disabled={dropDisabled}
@@ -318,21 +337,7 @@ export const NavigationMenuItemFolderDnd = ({
       >
         <NavigationMenuItemFolderLayout
           header={
-            <NavigationMenuItemEditable
-              item={item}
-              rightOptions={
-                shouldUseEditModeClick &&
-                isExpanded && (
-                  <NavigationMenuItemFolderChevronButton
-                    isOpen={isOpen}
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      handleToggle();
-                    }}
-                  />
-                )
-              }
-            >
+            <NavigationMenuItemEditable item={item}>
               {wrappedHeader}
             </NavigationMenuItemEditable>
           }
@@ -344,6 +349,7 @@ export const NavigationMenuItemFolderDnd = ({
               <Fragment key={navigationMenuItem.id}>
                 <NavigationItemDropTarget
                   parentId={folderId}
+                  isInFolder
                   index={index}
                   sectionId={sectionId}
                   compact={isCompact}
@@ -400,6 +406,7 @@ export const NavigationMenuItemFolderDnd = ({
             >
               <NavigationItemDropTarget
                 parentId={folderId}
+                isInFolder
                 index={navigationMenuItems.length}
                 sectionId={sectionId}
                 compact={isCompact}
@@ -420,7 +427,7 @@ export const NavigationMenuItemFolderDnd = ({
                       position={navigationMenuItems.length}
                     >
                       <NavigationDrawerSubItem
-                        label={t`Add menu item`}
+                        label={t`Add item`}
                         Icon={IconPlus}
                         triggerEvent="CLICK"
                         variant="tertiary"

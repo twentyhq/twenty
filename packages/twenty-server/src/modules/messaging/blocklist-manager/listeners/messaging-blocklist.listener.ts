@@ -19,8 +19,8 @@ import {
   BlocklistReimportMessagesJob,
   type BlocklistReimportMessagesJobData,
 } from 'src/modules/messaging/blocklist-manager/jobs/messaging-blocklist-reimport-messages.job';
-import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { OnDatabaseBatchEvent } from 'src/engine/workspace-event-emitter/decorators/on-database-batch-event.decorator';
+import { DatabaseEventAction } from 'src/engine/workspace-event-emitter/enums/database-event-action';
 
 @Injectable({ scope: Scope.REQUEST })
 export class MessagingBlocklistListener {

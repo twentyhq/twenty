@@ -1,3 +1,7 @@
+import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -6,12 +10,14 @@ import {
   runCliForTest,
 } from '@/__tests__/utils/run-cli-for-test';
 import { getEngineVersionRange } from '@/app/manifest/get-engine-version-range';
+import { getConfigPath } from '@/config/get-config-path';
 import { checkLocalHealth } from '@/local/check-local-health';
 import { waitForLocalHealth } from '@/local/wait-for-local-health';
 import { getLocalEnvironment } from '@/local/get-local-environment';
 import { runDocker } from '@/local/run-docker';
 import { CliError } from '@/output/cli-error';
 
+vi.mock('@/config/get-config-path', () => ({ getConfigPath: vi.fn() }));
 vi.mock('@/local/run-docker', () => ({ runDocker: vi.fn() }));
 vi.mock('@/app/manifest/get-engine-version-range', () => ({
   getEngineVersionRange: vi.fn(),
@@ -80,7 +86,13 @@ const mutations = () =>
   );
 
 describe('local commands', () => {
-  beforeEach(() => {
+  let configDirectory: string;
+  let configPath: string;
+
+  beforeEach(async () => {
+    configDirectory = await mkdtemp(join(tmpdir(), 'twenty-local-guidance-'));
+    configPath = join(configDirectory, 'config.json');
+    vi.mocked(getConfigPath).mockReturnValue(configPath);
     container = makeContainer();
     previousContainer = undefined;
     failure = undefined;
@@ -190,10 +202,94 @@ describe('local commands', () => {
       },
     );
   });
-  afterEach(() => {
+  afterEach(async () => {
     vi.unstubAllEnvs();
     vi.resetAllMocks();
+    await rm(configDirectory, { recursive: true, force: true });
   });
+
+  it.each([
+    { args: [], remoteName: 'local', port: '2020' },
+    { args: ['--test'], remoteName: 'local-test', port: '12021' },
+  ])(
+    'explains how to replace a mismatched $remoteName remote',
+    async ({ args, remoteName, port }) => {
+      container = makeContainer(false);
+      container.HostConfig.PortBindings['2021/tcp'][0].HostPort = port;
+      const config = JSON.stringify({
+        version: 1,
+        remotes: {
+          [remoteName]: {
+            apiUrl: 'http://localhost:3000',
+            apiKey: 'saved-key',
+          },
+        },
+      });
+      await writeFile(configPath, config);
+
+      const result = await runCliForTest(['local', 'start', ...args]);
+
+      expect(getConfigPath).toHaveBeenCalledExactlyOnceWith();
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).toBe(
+        `Local Twenty is ready at http://localhost:${port}\n` +
+          `Saved remote "${remoteName}" currently points to http://localhost:3000.\n` +
+          `To sign in at http://localhost:${port} and update saved remote "${remoteName}", run:\n` +
+          `  twenty auth login --url http://localhost:${port} --name ${remoteName} --replace\n`,
+      );
+      expect(result.stderr).not.toContain('saved-key');
+      expect(await readFile(configPath, 'utf8')).toBe(config);
+      expect(mutations()).toEqual([['start', 'test-container']]);
+    },
+  );
+
+  it.each([undefined, 'http://localhost:12021', 'http://localhost:12021/'])(
+    'keeps the normal sign-in hint with a missing or matching remote (%s)',
+    async (apiUrl) => {
+      if (isDefined(apiUrl)) {
+        await writeFile(
+          configPath,
+          JSON.stringify({
+            version: 1,
+            remotes: { 'local-test': { apiUrl } },
+          }),
+        );
+      }
+
+      const result = await runCliForTest(['local', 'start', '--test']);
+
+      expect(getConfigPath).toHaveBeenCalledExactlyOnceWith();
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).toBe(
+        'Local Twenty is ready at http://localhost:12021\n' +
+          'Sign in: twenty auth login --url http://localhost:12021 --name local-test\n',
+      );
+      expect(mutations()).toEqual([]);
+    },
+  );
+
+  it.each([
+    '{invalid json',
+    JSON.stringify({
+      version: 1,
+      remotes: { 'local-test': { apiUrl: 'invalid' } },
+    }),
+  ])(
+    'keeps local startup independent of invalid authentication config (%s)',
+    async (config) => {
+      await writeFile(configPath, config);
+
+      const result = await runCliForTest(['local', 'start', '--test']);
+
+      expect(getConfigPath).toHaveBeenCalledExactlyOnceWith();
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).toContain(
+        'Local Twenty is ready at http://localhost:12021',
+      );
+      expect(result.stdout).not.toContain('--replace');
+      expect(await readFile(configPath, 'utf8')).toBe(config);
+    },
+  );
 
   it('creates an isolated instance without an app or saved connection', async () => {
     container = undefined;

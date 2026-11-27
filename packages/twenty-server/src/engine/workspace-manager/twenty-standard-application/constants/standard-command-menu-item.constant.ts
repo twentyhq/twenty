@@ -667,7 +667,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'numberOfSelectedRecords == 1 and everyEquals(selectedRecords, "visibility", "WORKSPACE") and every(selectedRecords, "canChangeVisibility") and noneDefined(selectedRecords, "deletedAt") and noneEquals(selectedRecords, "recordPermissions.canUpdate", false)',
+      'numberOfSelectedRecords == 1 and none(selectedRecords, "isPrivate") and every(selectedRecords, "canChangeVisibility") and noneDefined(selectedRecords, "deletedAt") and noneEquals(selectedRecords, "recordPermissions.canUpdate", false)',
     availabilityObjectMetadataUniversalIdentifier: null,
     availabilityCoreObjectName: 'workflow',
     frontComponentUniversalIdentifier: null,
@@ -693,7 +693,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'numberOfSelectedRecords == 1 and everyEquals(selectedRecords, "visibility", "PRIVATE") and every(selectedRecords, "canChangeVisibility") and noneDefined(selectedRecords, "deletedAt")',
+      'numberOfSelectedRecords == 1 and every(selectedRecords, "isPrivate") and every(selectedRecords, "canChangeVisibility") and noneDefined(selectedRecords, "deletedAt")',
     availabilityObjectMetadataUniversalIdentifier: null,
     availabilityCoreObjectName: 'workflow',
     frontComponentUniversalIdentifier: null,
@@ -732,7 +732,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'isSelectAll or someEquals(selectedRecords, "status", "NOT_STARTED") or someEquals(selectedRecords, "status", "ENQUEUED") or someEquals(selectedRecords, "status", "RUNNING")',
+      'isSelectAll or someEquals(selectedRecords, "status", "ENQUEUED") or someEquals(selectedRecords, "status", "RUNNING")',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.workflowRun.universalIdentifier,
     frontComponentUniversalIdentifier: null,
@@ -757,89 +757,6 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_OBJECTS.workflowRun.universalIdentifier,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.RETRY_WORKFLOW_RUN,
-    hotKeys: null,
-  },
-  seeRunsWorkflowVersion: {
-    universalIdentifier: '44e305c7-4f0a-45ec-803f-6471b56455cb',
-    label: i18nLabel(
-      msg({ message: `See Runs`, context: 'commandMenuItem.label' }),
-    ),
-    icon: 'IconHistoryToggle',
-    isPinned: true,
-    position: 37,
-    shortLabel: i18nLabel(
-      msg({ message: `See Runs`, context: 'commandMenuItem.shortLabel' }),
-    ),
-    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
-    conditionalAvailabilityExpression:
-      'everyDefined(selectedRecords, "coreWorkflowVersionId")',
-    availabilityObjectMetadataUniversalIdentifier:
-      STANDARD_OBJECTS.workflowVersion.universalIdentifier,
-    frontComponentUniversalIdentifier: null,
-    engineComponentKey: EngineComponentKey.SEE_RUNS_WORKFLOW_VERSION,
-    hotKeys: null,
-  },
-  seeWorkflowWorkflowVersion: {
-    universalIdentifier: 'b43052db-023e-4083-9b63-2c2dfbfd1320',
-    label: i18nLabel(
-      msg({ message: `See Workflow`, context: 'commandMenuItem.label' }),
-    ),
-    icon: 'IconSettingsAutomation',
-    isPinned: true,
-    position: 38,
-    shortLabel: i18nLabel(
-      msg({ message: `See Workflow`, context: 'commandMenuItem.shortLabel' }),
-    ),
-    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
-    conditionalAvailabilityExpression:
-      'everyDefined(selectedRecords, "coreWorkflowVersionId")',
-    availabilityObjectMetadataUniversalIdentifier:
-      STANDARD_OBJECTS.workflowVersion.universalIdentifier,
-    frontComponentUniversalIdentifier: null,
-    engineComponentKey: EngineComponentKey.SEE_WORKFLOW_WORKFLOW_VERSION,
-    hotKeys: null,
-  },
-  useAsDraftWorkflowVersion: {
-    universalIdentifier: '483c0c1d-ea4d-4a4d-8a59-2dcf9f8e38f6',
-    label: i18nLabel(
-      msg({ message: `Use as Draft`, context: 'commandMenuItem.label' }),
-    ),
-    icon: 'IconPencil',
-    isPinned: true,
-    position: 39,
-    shortLabel: i18nLabel(
-      msg({ message: `Use as Draft`, context: 'commandMenuItem.shortLabel' }),
-    ),
-    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
-    conditionalAvailabilityExpression:
-      'noneEquals(selectedRecords, "status", "DRAFT")',
-    availabilityObjectMetadataUniversalIdentifier:
-      STANDARD_OBJECTS.workflowVersion.universalIdentifier,
-    frontComponentUniversalIdentifier: null,
-    engineComponentKey: EngineComponentKey.USE_AS_DRAFT_WORKFLOW_VERSION,
-    hotKeys: null,
-  },
-  seeVersionsWorkflowVersion: {
-    universalIdentifier: '1d4abeb7-2750-4af7-9a92-fbadd2a9e4ba',
-    label: i18nLabel(
-      msg({
-        message: `See Versions History`,
-        context: 'commandMenuItem.label',
-      }),
-    ),
-    icon: 'IconVersions',
-    isPinned: false,
-    position: 40,
-    shortLabel: i18nLabel(
-      msg({ message: `See Versions`, context: 'commandMenuItem.shortLabel' }),
-    ),
-    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
-    conditionalAvailabilityExpression:
-      'everyDefined(selectedRecords, "coreWorkflowVersionId")',
-    availabilityObjectMetadataUniversalIdentifier:
-      STANDARD_OBJECTS.workflowVersion.universalIdentifier,
-    frontComponentUniversalIdentifier: null,
-    engineComponentKey: EngineComponentKey.SEE_VERSIONS_WORKFLOW_VERSION,
     hotKeys: null,
   },
   searchRecords: {
@@ -1135,12 +1052,30 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'numberOfSelectedRecords >= 1 and permissionFlags.AI and featureFlags.IS_AI_CHAT_INBOX_ENABLED and noneDefined(selectedRecords, "deletedAt") and noneEquals(selectedRecords, "recordPermissions.canUpdate", false)',
+      'numberOfSelectedRecords >= 2 and permissionFlags.AI and featureFlags.IS_AI_CHAT_INBOX_ENABLED and noneDefined(selectedRecords, "deletedAt") and noneEquals(selectedRecords, "recordPermissions.canUpdate", false)',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.agentChatThread.universalIdentifier,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.ASSIGN_AI_CHAT,
     hotKeys: ['A'],
+  },
+  manageAiChatParticipants: {
+    universalIdentifier: 'a80f76ad-a1d3-4e24-b4b7-368e2899752b',
+    label: i18nLabel(
+      msg({ message: `Participants`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconUsers',
+    isPinned: true,
+    position: 80.5,
+    shortLabel: null,
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'numberOfSelectedRecords == 1 and permissionFlags.AI and featureFlags.IS_AI_CHAT_INBOX_ENABLED and noneDefined(selectedRecords, "deletedAt") and noneEquals(selectedRecords, "conversationType", "DIRECT_MESSAGE")',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.MANAGE_AI_CHAT_PARTICIPANTS,
+    hotKeys: null,
   },
   // Chats have their own Share item; it is a system object, so this one never shows there
   shareAnyRecord: {
@@ -1363,6 +1298,44 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     engineComponentKey: EngineComponentKey.EMAIL_PAGE_STYLE,
     hotKeys: null,
   },
+  goToWorkflows: {
+    universalIdentifier: 'e04acd97-dc5a-42d4-98b9-615cd7289488',
+    label: i18nLabel(
+      msg({ message: `Go to Workflows`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconSettingsAutomation',
+    isPinned: false,
+    position: 46.25,
+    shortLabel: i18nLabel(
+      msg({ message: `Workflows`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+    conditionalAvailabilityExpression: 'permissionFlags.WORKFLOWS',
+    availabilityObjectMetadataUniversalIdentifier: null,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.NAVIGATION,
+    hotKeys: ['G', 'W'],
+    payload: { path: '/workflows' },
+  },
+  goToAgents: {
+    universalIdentifier: 'd4e9a36b-00df-46e0-ac40-e10ee08975da',
+    label: i18nLabel(
+      msg({ message: `Go to Agents`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconLego',
+    isPinned: false,
+    position: 46.5,
+    shortLabel: i18nLabel(
+      msg({ message: `Agents`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+    conditionalAvailabilityExpression: 'permissionFlags.AI',
+    availabilityObjectMetadataUniversalIdentifier: null,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.NAVIGATION,
+    hotKeys: ['G', 'A'],
+    payload: { path: '/agents' },
+  },
   goToSettings: {
     universalIdentifier: 'ef9aba44-0068-453e-930a-f8c182af18ee',
     label: i18nLabel(
@@ -1386,7 +1359,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     universalIdentifier: 'bceb0328-c018-48ba-80d8-a1a97dc0a8ba',
     label: i18nLabel(
       msg({
-        message: `Go to Experience Settings`,
+        message: `Go to Experience`,
         context: 'commandMenuItem.label',
       }),
     ),
@@ -1433,7 +1406,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     universalIdentifier: 'ad68e516-96ea-455a-a838-c59788e88c23',
     label: i18nLabel(
       msg({
-        message: `Go to General Settings`,
+        message: `Go to General`,
         context: 'commandMenuItem.label',
       }),
     ),
@@ -1455,7 +1428,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     universalIdentifier: '9302bfeb-f6cd-4858-ab5b-5f70f4d358c4',
     label: i18nLabel(
       msg({
-        message: `Go to Data Model Settings`,
+        message: `Go to Data Model`,
         context: 'commandMenuItem.label',
       }),
     ),
@@ -1477,7 +1450,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     universalIdentifier: 'fb4d9f1b-5b13-49d9-8353-80041719d411',
     label: i18nLabel(
       msg({
-        message: `Go to Members Settings`,
+        message: `Go to Members`,
         context: 'commandMenuItem.label',
       }),
     ),
@@ -1499,7 +1472,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     universalIdentifier: '4050f307-c592-4c9f-ad91-89cde330fbf7',
     label: i18nLabel(
       msg({
-        message: `Go to Roles Settings`,
+        message: `Go to Roles`,
         context: 'commandMenuItem.label',
       }),
     ),
@@ -1521,7 +1494,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     universalIdentifier: '2d071684-fb5e-4222-b560-4c7ab2597fb4',
     label: i18nLabel(
       msg({
-        message: `Go to Domains Settings`,
+        message: `Go to Domains`,
         context: 'commandMenuItem.label',
       }),
     ),
@@ -1543,7 +1516,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     universalIdentifier: 'f46a0fb9-14e9-4d48-801d-c33bdd543f74',
     label: i18nLabel(
       msg({
-        message: `Go to Billing Settings`,
+        message: `Go to Billing`,
         context: 'commandMenuItem.label',
       }),
     ),
@@ -1565,7 +1538,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     universalIdentifier: 'ed2c2fde-1e7a-4a42-ba63-221eaa7c9759',
     label: i18nLabel(
       msg({
-        message: `Go to Developers Settings`,
+        message: `Go to Developers`,
         context: 'commandMenuItem.label',
       }),
     ),
@@ -1586,7 +1559,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   goToSettingsApplications: {
     universalIdentifier: '44db6d7a-79ac-485e-b3da-da8776bd7777',
     label: i18nLabel(
-      msg({ message: `Go to Apps Settings`, context: 'commandMenuItem.label' }),
+      msg({ message: `Go to Apps`, context: 'commandMenuItem.label' }),
     ),
     icon: 'IconApps',
     isPinned: false,
@@ -1605,7 +1578,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   goToSettingsAI: {
     universalIdentifier: '3eaec228-809d-452d-b5ef-7b777398c538',
     label: i18nLabel(
-      msg({ message: `Go to AI Settings`, context: 'commandMenuItem.label' }),
+      msg({ message: `Go to AI`, context: 'commandMenuItem.label' }),
     ),
     icon: 'IconSparkles',
     isPinned: false,
@@ -1625,7 +1598,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     universalIdentifier: '358e69b2-0789-44e2-add7-bdef68413be8',
     label: i18nLabel(
       msg({
-        message: `Go to Security Settings`,
+        message: `Go to Security`,
         context: 'commandMenuItem.label',
       }),
     ),
@@ -1647,7 +1620,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     universalIdentifier: 'dd22798b-fca6-42af-ba3b-0d48f263afbd',
     label: i18nLabel(
       msg({
-        message: `Go to Admin Panel Settings`,
+        message: `Go to Admin Panel`,
         context: 'commandMenuItem.label',
       }),
     ),
@@ -1670,7 +1643,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     universalIdentifier: '5d1ba354-0090-4a42-9a43-601461b26068',
     label: i18nLabel(
       msg({
-        message: `Go to Community Settings`,
+        message: `Go to Community`,
         context: 'commandMenuItem.label',
       }),
     ),

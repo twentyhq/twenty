@@ -30,6 +30,7 @@ export const connectionProviderGraphqlApiExceptionHandler = (error: Error) => {
       case ConnectionProviderExceptionCode.RECONNECT_ACCOUNT_MISMATCH:
       case ConnectionProviderExceptionCode.API_KEY_NOT_VERIFIED:
       case ConnectionProviderExceptionCode.API_KEY_MISSING:
+      case ConnectionProviderExceptionCode.APPLICATION_CHARGE_DECLINED:
         throw new UserInputError(error);
       case ConnectionProviderExceptionCode.CLIENT_CREDENTIALS_NOT_CONFIGURED:
       case ConnectionProviderExceptionCode.TOKEN_EXCHANGE_FAILED:

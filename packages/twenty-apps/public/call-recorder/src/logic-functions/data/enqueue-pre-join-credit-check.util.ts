@@ -1,3 +1,4 @@
+import { isUndefined } from '@sniptt/guards';
 import { enqueueJobs } from 'twenty-sdk/logic-function';
 
 import { CHECK_CREDITS_BEFORE_RECALL_BOT_JOIN_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
@@ -9,10 +10,12 @@ export const enqueuePreJoinCreditCheck = async ({
   callRecordingId,
   externalBotId,
   joinAt,
+  bookedJoinAt,
 }: {
   callRecordingId: string;
   externalBotId: string;
   joinAt: string;
+  bookedJoinAt: string | undefined;
 }): Promise<void> => {
   const joinAtMilliseconds = new Date(joinAt).getTime();
   const checkAtMilliseconds =
@@ -26,8 +29,10 @@ export const enqueuePreJoinCreditCheck = async ({
       jobs: [
         {
           // A re-created or rescheduled bot gets its own check; the queue keeps a completed id for hours.
-          jobId: `credit-check.${callRecordingId}.${externalBotId}.${joinAtMilliseconds}`,
-          payload: { callRecordingId },
+          jobId: `credit-check.${callRecordingId}.${externalBotId}.${joinAtMilliseconds}.${checkAtMilliseconds}`,
+          payload: isUndefined(bookedJoinAt)
+            ? { callRecordingId }
+            : { callRecordingId, bookedJoinAt },
         },
       ],
       retryLimit: ENQUEUED_JOB_RETRY_LIMIT,

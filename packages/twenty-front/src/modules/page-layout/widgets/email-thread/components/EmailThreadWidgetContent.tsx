@@ -2,20 +2,25 @@ import { useCallback, useState } from 'react';
 
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
 import { EmailThreadMessage } from '@/activities/emails/components/EmailThreadMessage';
+import { useComposerDraft } from '@/activities/emails/hooks/useComposerDraft';
 import { useReplyContext } from '@/activities/emails/hooks/useReplyContext';
 import { type EmailDraftPrefill } from '@/activities/emails/types/EmailDraftPrefill';
+import { type EmailReplyMode } from '@/activities/emails/types/EmailReplyMode';
 import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
+import { emailComposerDraftFamilyState } from '@/activities/emails/states/emailComposerDraftFamilyState';
 import { getEmailDraftPrefillFromMessage } from '@/activities/emails/utils/getEmailDraftPrefillFromMessage';
 import { WidgetRelationsHeader } from '@/page-layout/widgets/components/WidgetRelationsHeader';
 import { EmailThreadComposer } from '@/page-layout/widgets/email-thread/components/EmailThreadComposer';
 import { EmailThreadIntermediaryMessages } from '@/page-layout/widgets/email-thread/components/EmailThreadIntermediaryMessages';
 import { getAppReplyTarget } from '@/activities/emails/utils/getAppReplyTarget';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import {
   StyledWidgetContentContainer,
   StyledWidgetScrollContainer,
 } from '@/ui/layout/components/WidgetContentContainer';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
 type EmailThreadWidgetContentProps = {
@@ -43,6 +48,7 @@ export const EmailThreadWidgetContent = ({
   >(null);
   const [clickedDraftPrefill, setClickedDraftPrefill] =
     useState<EmailDraftPrefill | null>(null);
+  const [replyMode, setReplyMode] = useState<EmailReplyMode>('reply');
   const [previousTargetRecordId, setPreviousTargetRecordId] = useState(
     targetRecord.id,
   );
@@ -51,14 +57,29 @@ export const EmailThreadWidgetContent = ({
     setPreviousTargetRecordId(targetRecord.id);
     setComposerIntent(null);
     setClickedDraftPrefill(null);
+    setReplyMode('reply');
   }
 
-  const handleComposerOpenChange = useCallback((open: boolean) => {
-    setComposerIntent(open ? 'opened' : 'closed');
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
+  const emailComposerDraftKey = isDefined(currentWorkspaceMember)
+    ? `${currentWorkspaceMember.id}:${targetRecord.id}`
+    : undefined;
 
-    if (!open) {
-      setClickedDraftPrefill(null);
-    }
+  const [emailComposerDraft] = useComposerDraft({
+    draftFamilyState: emailComposerDraftFamilyState,
+    draftKey: emailComposerDraftKey,
+    defaultDraft: null,
+  });
+
+  const handleComposerOpen = useCallback((nextReplyMode: EmailReplyMode) => {
+    setComposerIntent('opened');
+    setReplyMode(nextReplyMode);
+  }, []);
+
+  const handleComposerClose = useCallback(() => {
+    setComposerIntent('closed');
+    setReplyMode('reply');
+    setClickedDraftPrefill(null);
   }, []);
 
   const handleDraftClick = useCallback(
@@ -95,7 +116,8 @@ export const EmailThreadWidgetContent = ({
       : null);
   const isComposerOpen =
     composerIntent === 'opened' ||
-    (composerIntent === null && isDefined(trailingDraft));
+    (composerIntent === null &&
+      (isDefined(trailingDraft) || isDefined(emailComposerDraft)));
 
   return (
     <StyledWidgetContentContainer>
@@ -126,12 +148,15 @@ export const EmailThreadWidgetContent = ({
       </StyledWidgetScrollContainer>
       {canReply && (
         <EmailThreadComposer
-          key={draftPrefill?.messageId ?? 'reply'}
+          key={`${draftPrefill?.messageId ?? targetRecord.id}-${replyMode}`}
           replyContext={replyContext}
           isInSidePanel={isInSidePanel}
           isComposerOpen={isComposerOpen}
-          setIsComposerOpen={handleComposerOpenChange}
+          onComposerOpen={handleComposerOpen}
+          onComposerClose={handleComposerClose}
+          replyMode={replyMode}
           draftPrefill={draftPrefill}
+          draftKey={isDefined(draftPrefill) ? undefined : emailComposerDraftKey}
           appReplyTarget={appReplyTarget}
         />
       )}

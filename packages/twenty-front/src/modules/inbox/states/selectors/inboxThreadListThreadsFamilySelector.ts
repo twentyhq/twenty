@@ -2,11 +2,11 @@ import { isAgentChatThreadInPresetFilter } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { inboxThreadListFamilyState } from '@/inbox/states/inboxThreadListFamilyState';
-import { aiChatThreadMemberStateFamilySelector } from '@/ai/states/selectors/aiChatThreadMemberStateFamilySelector';
-import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/aiChatThreadRecordFamilySelector';
+import { aiChatThreadInboxStatusFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadInboxStatusFamilySelector';
+import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
 import { inboxRecentThreadsSelector } from '@/inbox/states/selectors/inboxRecentThreadsSelector';
 import { type InboxThreadListSource } from '@/inbox/types/InboxThreadListSource';
-import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 import { filterInboxThreadsWithinLoadedPages } from '@/inbox/utils/filterInboxThreadsWithinLoadedPages';
 import { getInboxThreadListSourceKey } from '@/inbox/utils/getInboxThreadListSourceKey';
 import { isInboxThreadInChannelView } from '@/inbox/utils/isInboxThreadInChannelView';
@@ -28,7 +28,7 @@ export const inboxThreadListThreadsFamilySelector = createAtomFamilySelector<
           (thread) =>
             !isDefined(thread.deletedAt) &&
             (!isDefined(thread.channelId) ||
-              get(aiChatThreadMemberStateFamilySelector, thread.id).scope !==
+              get(aiChatThreadInboxStatusFamilySelector, thread.id).scope !==
                 'NONE'),
         );
       }
@@ -50,7 +50,7 @@ export const inboxThreadListThreadsFamilySelector = createAtomFamilySelector<
 
       const threads = [...threadsById.values()].filter((thread) => {
         const inboxStatus = get(
-          aiChatThreadMemberStateFamilySelector,
+          aiChatThreadInboxStatusFamilySelector,
           thread.id,
         );
 

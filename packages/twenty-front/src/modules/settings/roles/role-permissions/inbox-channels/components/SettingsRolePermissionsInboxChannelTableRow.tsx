@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { Checkbox } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AiChatChannelIcon } from '@/ai/components/AiChatChannelIcon';
+import { AiChatChannelIcon } from '@/ai-chat/threads/components/AiChatChannelIcon';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { type AgentChatChannel } from '~/generated-metadata/graphql';
@@ -12,7 +12,7 @@ const StyledName = styled.span`
 `;
 
 type SettingsRolePermissionsInboxChannelTableRowProps = {
-  channel: Pick<AgentChatChannel, 'name' | 'icon' | 'color'>;
+  channel: Pick<AgentChatChannel, 'id' | 'name' | 'icon' | 'color'>;
   isChecked: boolean;
   isEditable: boolean;
   onToggle: () => void;

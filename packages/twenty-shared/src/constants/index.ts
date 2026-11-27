@@ -39,12 +39,15 @@ export type { DocumentationSupportedLanguage } from './DocumentationSupportedLan
 export { DOCUMENTATION_SUPPORTED_LANGUAGES } from './DocumentationSupportedLanguages';
 export { EMAIL_DRAFTING_PROVIDERS } from './EmailDraftingProviders';
 export { EMAIL_IMAGE_MIME_TYPES } from './EmailImageMimeTypes';
+export { NEWLINE_SEPARATED_EMAIL_PROVIDER_DOMAINS } from './EmailProviderDomains';
 export { EMAIL_SENDING_PROVIDERS } from './EmailSendingProviders';
 export type { EnterpriseInstanceType } from './EnterpriseInstanceType';
 export { ENTERPRISE_INSTANCE_TYPE } from './EnterpriseInstanceType';
 export { EVENT_LOG_RETENTION } from './EventLogRetention';
 export { EVERYONE_PRINCIPAL_ID } from './EveryonePrincipalId';
 export { EXCLUDED_FIELD_NAMES_FROM_AGENT_TOOL_SCHEMA } from './ExcludedFieldNamesFromAgentToolSchema';
+export { EXPRESSION_DATE_PARTS } from './ExpressionDateParts';
+export { EXPRESSION_DATE_UNITS } from './ExpressionDateUnits';
 export { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from './FieldForTotalCountAggregateOperation';
 export { MAX_OPTIONS_TO_DISPLAY } from './FieldMetadataMaxOptionsToDisplay';
 export { FIELD_METADATA_TYPES_NOT_SUPPORTED_IN_GROUP_BY } from './FieldMetadataTypesNotSupportedInGroupBy';
@@ -52,6 +55,10 @@ export { FIELD_REFERENCE_FILTER_OPERATORS } from './FieldReferenceFilterOperator
 export { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from './FieldRestrictedAdditionalPermissionsRequired';
 export { FIELD_TYPE_DEFAULT_ICONS } from './FieldTypeDefaultIcons';
 export { FILES_FIELD_MAX_NUMBER_OF_VALUES } from './FilesFieldMaxNumberOfValues';
+export { FORBIDDEN_PROPERTY_NAMES } from './ForbiddenPropertyNames';
+export { FORMULA_AGGREGATE_FUNCTION_NAMES } from './FormulaAggregateFunctionNames';
+export { FORMULA_AGGREGATE_MAXIMUM_ARGUMENT_COUNT } from './FormulaAggregateMaximumArgumentCount';
+export { FORMULA_FIELD_METADATA_TYPES } from './FormulaFieldMetadataTypes';
 export { GIN_COMPATIBLE_FIELD_TYPES } from './GinCompatibleFieldTypes';
 export { GROUP_BY_DATE_GRANULARITY_THAT_REQUIRE_TIME_ZONE } from './GroupByDateGranularityThatRequireTimeZone';
 export { IANA_TIME_ZONES } from './IanaTimeZones';
@@ -64,6 +71,7 @@ export { MAX_ALLOWED_IFRAME_ORIGINS } from './MaxAllowedIframeOrigins';
 export { MAX_CORE_WORKFLOW_FILTER_RULES } from './MaxCoreWorkflowFilterRules';
 export { MAX_CUSTOM_INDEXES_PER_OBJECT } from './MaxCustomIndexesPerObject';
 export { MAX_EMAIL_RECIPIENTS } from './MaxEmailRecipients';
+export { MCP_SERVER_NAME_MAX_LENGTH } from './McpServerNameMaxLength';
 export { MEDIA_CAPABILITIES } from './MediaCapabilities';
 export { MEMBER_ROLE_UNIVERSAL_IDENTIFIER } from './MemberRoleUniversalIdentifier';
 export { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from './MultiItemFieldDefaultMaxValues';
@@ -88,6 +96,7 @@ export { SESSION_COOKIE_OPT_IN_HEADER_NAME } from './SessionCookieOptInHeaderNam
 export { STANDARD_OBJECT_RECORDS_UNDER_OBJECT_RECORDS_PERMISSIONS } from './StandardObjectRecordsUnderObjectRecordsPermissions';
 export { SUBDOMAIN_PATTERN } from './SubdomainPattern';
 export { SystemPermissionFlag } from './SystemPermissionFlag';
+export { TAB_PRESENCE_HEARTBEAT_INTERVAL_MS } from './TabPresenceHeartbeatIntervalMs';
 export { TAG_COLORS } from './TagColors';
 export { TOOL_PERMISSION_FLAGS } from './ToolPermissionFlags';
 export { TWENTY_COMPANIES_BASE_URL } from './TwentyCompaniesBaseUrl';
@@ -102,3 +111,5 @@ export { VALIDATION_RULE_PREVIOUS_VARIABLE_NAME } from './ValidationRulePrevious
 export { VIEW_GROUP_LOAD_LIMIT_OPTIONS } from './ViewGroupLoadLimitOptions';
 export { VIEW_GROUP_VISIBLE_OPTIONS_MAX } from './ViewGroupVisibleOptionsMax';
 export { VIEW_TYPE_DEFAULT_ICONS } from './ViewTypeDefaultIcons';
+export { WORKSPACE_DISPLAY_NAME_MAX_LENGTH } from './WorkspaceDisplayNameMaxLength';
+export { WORKSPACE_MEMBER_NAME_MAX_LENGTH } from './WorkspaceMemberNameMaxLength';

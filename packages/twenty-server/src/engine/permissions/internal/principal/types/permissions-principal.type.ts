@@ -2,7 +2,6 @@
 
 export type PermissionsRolePrincipal = {
   type: 'role';
-  roleId: string;
 };
 
 export type PermissionsWorkspaceMemberPrincipal = {

@@ -59,7 +59,7 @@ export const findApplicationDefaultRole = async ({
 }) => {
   const { data: applicationData } = await findOneApplication({
     input,
-    gqlFields: 'id defaultRoleId',
+    gqlFields: 'id requestedRoleId',
     expectToFail: false,
     token,
   });
@@ -70,6 +70,6 @@ export const findApplicationDefaultRole = async ({
   });
 
   return rolesData.getRoles.find(
-    ({ id }) => id === applicationData.findOneApplication.defaultRoleId,
+    ({ id }) => id === applicationData.findOneApplication.requestedRoleId,
   );
 };

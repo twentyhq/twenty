@@ -6,6 +6,7 @@ import { DeleteAccount } from '@/settings/profile/components/DeleteAccount';
 import { EmailField } from '@/settings/profile/components/EmailField';
 import { NameFields } from '@/settings/profile/components/NameFields';
 import { SetOrChangePassword } from '@/settings/profile/components/SetOrChangePassword';
+import { SettingsProfileConnectedAppsSection } from '@/settings/profile/connected-apps/components/SettingsProfileConnectedAppsSection';
 import { SettingsProfileDevicesSection } from '@/settings/profile/devices/components/SettingsProfileDevicesSection';
 import { useCanChangePassword } from '@/settings/profile/hooks/useCanChangePassword';
 import { useCurrentUserWorkspaceTwoFactorAuthentication } from '@/settings/two-factor-authentication/hooks/useCurrentUserWorkspaceTwoFactorAuthentication';
@@ -94,6 +95,7 @@ export const SettingsProfile = () => {
           </Section.Root>
         )}
         <SettingsProfileDevicesSection />
+        <SettingsProfileConnectedAppsSection />
         <Section.Root>
           <DeleteAccount />
         </Section.Root>

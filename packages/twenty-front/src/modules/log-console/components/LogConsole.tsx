@@ -30,7 +30,6 @@ import { useSetIsLogConsoleEnabled } from '@/log-console/hooks/useSetIsLogConsol
 import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFullScreenState';
 import { logConsoleActiveSourceIdState } from '@/log-console/states/logConsoleActiveSourceIdState';
 import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
-import { logConsoleFiltersState } from '@/log-console/states/logConsoleFiltersState';
 import { logConsoleHeightState } from '@/log-console/states/logConsoleHeightState';
 import { logConsoleSelectedLogState } from '@/log-console/states/logConsoleSelectedLogState';
 import { type LogConsoleSource } from '@/log-console/types/LogConsoleSource';
@@ -49,14 +48,8 @@ import { getUiZoom } from '@/ui/theme/utils/getUiZoom';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { checkIfBillingEntitlementIsEnabledOnWorkspace } from '@/workspace/utils/checkIfBillingEntitlementIsEnabledOnWorkspace';
 import { BillingEntitlementKey } from '~/generated-metadata/graphql';
-
-const LOG_CONSOLE_HEIGHT_CSS_VARIABLE = '--log-console-height';
-
-const LOG_CONSOLE_DETAIL_PANEL_CSS_VARIABLE =
-  '--log-console-detail-panel-width';
 
 const LOG_CONSOLE_MIN_PAGE_HEIGHT = 120;
 
@@ -242,12 +235,8 @@ const StyledDetailPanelWrapper = styled.div<{
   position: relative;
   transition: ${({ isResizing }) =>
     getLogConsoleTransition(isResizing, ['width'])};
-  width: ${({ isOpen, isResizing, detailPanelWidth }) =>
-    !isOpen
-      ? '0px'
-      : isResizing
-        ? `var(${LOG_CONSOLE_DETAIL_PANEL_CSS_VARIABLE}, ${detailPanelWidth}px)`
-        : `${detailPanelWidth}px`};
+  width: ${({ isOpen, detailPanelWidth }) =>
+    isOpen ? `${detailPanelWidth}px` : '0px'};
 
   @container log-console-body (max-width: ${LOG_CONSOLE_NARROW_BODY_MAX_WIDTH}px) {
     position: static;
@@ -282,7 +271,6 @@ export const LogConsole = () => {
   const [logConsoleHeight, setLogConsoleHeight] = useAtomState(
     logConsoleHeightState,
   );
-  const setLogConsoleFilters = useSetAtomState(logConsoleFiltersState);
   const [logConsoleSelectedLog, setLogConsoleSelectedLog] = useAtomState(
     logConsoleSelectedLogState,
   );
@@ -373,10 +361,10 @@ export const LogConsole = () => {
   const isBodyRendered =
     displayedLayout.isOpen || (isBodyMounted && !shouldReduceMotion);
 
-  const resizedBodyHeight = isResizing
-    ? `var(${LOG_CONSOLE_HEIGHT_CSS_VARIABLE}, ${logConsoleBodyHeight}px)`
-    : `${logConsoleBodyHeight}px`;
-  const bodyHeight = `max(${LOG_CONSOLE_HEIGHT_CONSTRAINTS.min}px, ${resizedBodyHeight})`;
+  const bodyHeight = `${Math.max(
+    liveHeight ?? logConsoleBodyHeight,
+    LOG_CONSOLE_HEIGHT_CONSTRAINTS.min,
+  )}px`;
   const collapsedHeight = `calc(${TAB_LIST_HEIGHT} + ${LOG_CONSOLE_TOP_BORDER_WIDTH} - ${LOG_CONSOLE_BAR_BOTTOM_BORDER_WIDTH})`;
   const openHeight = `calc(${TAB_LIST_HEIGHT} + ${LOG_CONSOLE_TOP_BORDER_WIDTH} + ${bodyHeight})`;
   const spacerHeight = isExiting
@@ -435,29 +423,10 @@ export const LogConsole = () => {
 
   const handleDetailPanelWidthChange = (width: number) => {
     setLiveDetailPanelWidth(null);
-    document.documentElement.style.removeProperty(
-      LOG_CONSOLE_DETAIL_PANEL_CSS_VARIABLE,
-    );
     setDetailPanelWidth(
       Math.max(width, LOG_CONSOLE_DETAIL_PANEL_WIDTH_CONSTRAINTS.min),
     );
     setIsDetailPanelResizing(false);
-  };
-
-  const handleHeightPreview = (height: number) => {
-    setLiveHeight(height);
-    document.documentElement.style.setProperty(
-      LOG_CONSOLE_HEIGHT_CSS_VARIABLE,
-      `${height}px`,
-    );
-  };
-
-  const handleDetailPanelWidthPreview = (width: number) => {
-    setLiveDetailPanelWidth(width);
-    document.documentElement.style.setProperty(
-      LOG_CONSOLE_DETAIL_PANEL_CSS_VARIABLE,
-      `${width}px`,
-    );
   };
 
   const handleResizeEnd = ({
@@ -469,9 +438,6 @@ export const LogConsole = () => {
   }) => {
     setLiveHeight(null);
     setIsResizing(false);
-    document.documentElement.style.removeProperty(
-      LOG_CONSOLE_HEIGHT_CSS_VARIABLE,
-    );
 
     const isCancelledResizeFromCollapsed = cancelled && value === 0;
     const shouldRestoreCollapsedMode =
@@ -487,17 +453,11 @@ export const LogConsole = () => {
   const handleDetailPanelResizeEnd = () => {
     setLiveDetailPanelWidth(null);
     setIsDetailPanelResizing(false);
-    document.documentElement.style.removeProperty(
-      LOG_CONSOLE_DETAIL_PANEL_CSS_VARIABLE,
-    );
   };
 
   const handleHeightChange = (height: number) => {
     setLiveHeight(null);
     setIsResizing(false);
-    document.documentElement.style.removeProperty(
-      LOG_CONSOLE_HEIGHT_CSS_VARIABLE,
-    );
 
     if (height === 0) {
       setLogConsoleDisplayMode('collapsed');
@@ -524,17 +484,9 @@ export const LogConsole = () => {
 
   const changeSource = (sourceId: string) => {
     const selectedSource = sources.find((source) => source.id === sourceId);
-    const filterFields = selectedSource?.filterFields ?? [];
 
     closeSelectedLog();
     setLogConsoleActiveSourceId(selectedSource?.id ?? null);
-    setLogConsoleFilters((filters) =>
-      filters.filter((filter) =>
-        filterFields.some(
-          (filterField) => filterField.id === filter.filterFieldId,
-        ),
-      ),
-    );
   };
 
   const handlePanelTransitionEnd = (event: TransitionEvent<HTMLDivElement>) => {
@@ -648,7 +600,7 @@ export const LogConsole = () => {
                 {renderActiveSource()}
               </StyledActiveSource>
               <StyledDetailPanelWrapper
-                detailPanelWidth={detailPanelWidth}
+                detailPanelWidth={liveDetailPanelWidth ?? detailPanelWidth}
                 isOpen={isDefined(logConsoleSelectedLog)}
                 isResizing={isDetailPanelResizing}
               >
@@ -658,7 +610,7 @@ export const LogConsole = () => {
                     min={LOG_CONSOLE_DETAIL_PANEL_WIDTH_CONSTRAINTS.min}
                     max={LOG_CONSOLE_DETAIL_PANEL_WIDTH_CONSTRAINTS.max}
                     value={liveDetailPanelWidth ?? detailPanelWidth}
-                    onValueChange={handleDetailPanelWidthPreview}
+                    onValueChange={setLiveDetailPanelWidth}
                     onValueCommitted={handleDetailPanelWidthChange}
                     aria-label={t`Resize log details`}
                     scale={getUiZoom}
@@ -678,7 +630,7 @@ export const LogConsole = () => {
             min={logConsoleResizeConstraints.min}
             max={logConsoleResizeConstraints.max}
             value={liveHeight ?? (isOpen ? logConsoleBodyHeight : 0)}
-            onValueChange={handleHeightPreview}
+            onValueChange={setLiveHeight}
             onValueCommitted={handleHeightChange}
             aria-label={t`Resize log console`}
             scale={getUiZoom}

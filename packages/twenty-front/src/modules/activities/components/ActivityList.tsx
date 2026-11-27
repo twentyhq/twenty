@@ -6,14 +6,15 @@ const StyledListContainer = styled.div`
   width: 100%;
 
   &[data-scrollable] {
-    flex: 1;
-    height: 100%;
+    display: flex;
+    flex-direction: column;
+    max-height: 100%;
     min-height: 0;
   }
 `;
 
 const scrollableCardClassName = css`
-  height: 100%;
+  min-height: 0;
   overflow-y: auto;
 `;
 

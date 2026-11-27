@@ -1,4 +1,3 @@
-import { isDefined } from 'class-validator';
 import { DEFAULT_VIEW_GROUP_LOAD_LIMIT } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
@@ -6,8 +5,9 @@ import {
   ViewType,
   ViewKey,
   ViewOpenRecordIn,
-  ViewVisibility,
+  type ViewPresetFilter,
 } from 'twenty-shared/types';
+import { isDefined, isViewCompactByDefault } from 'twenty-shared/utils';
 
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
@@ -30,6 +30,8 @@ export type CreateStandardViewOptions<O extends AllStandardObjectName> = {
   mainGroupByFieldName?: AllStandardObjectFieldName<O>;
   calendarFieldName?: AllStandardObjectFieldName<O>;
   calendarEndFieldName?: AllStandardObjectFieldName<O>;
+  listPinnedFieldName?: AllStandardObjectFieldName<O>;
+  presetFilter?: ViewPresetFilter | null;
 };
 
 export type CreateStandardViewArgs<
@@ -51,13 +53,15 @@ export const createStandardViewFlatMetadata = <
     key,
     position,
     icon,
-    isCompact = false,
+    isCompact = isViewCompactByDefault(type),
     openRecordIn = ViewOpenRecordIn.SIDE_PANEL,
     kanbanAggregateOperation = null,
     kanbanAggregateOperationFieldName,
     mainGroupByFieldName,
     calendarFieldName,
     calendarEndFieldName,
+    listPinnedFieldName,
+    presetFilter = null,
   },
   standardObjectMetadataRelatedEntityIds,
   twentyStandardApplicationId,
@@ -102,6 +106,12 @@ export const createStandardViewFlatMetadata = <
       ].id
     : null;
 
+  const listPinnedFieldMetadataId = isDefined(listPinnedFieldName)
+    ? standardObjectMetadataRelatedEntityIds[objectName].fields[
+        listPinnedFieldName
+      ].id
+    : null;
+
   const kanbanAggregateOperationFieldMetadataUniversalIdentifier =
     kanbanAggregateOperationFieldName
       ? // @ts-expect-error ignore
@@ -126,9 +136,18 @@ export const createStandardViewFlatMetadata = <
         .universalIdentifier
     : null;
 
+  const listPinnedFieldMetadataUniversalIdentifier = isDefined(
+    listPinnedFieldName,
+  )
+    ? // @ts-expect-error ignore
+      STANDARD_OBJECTS[objectName].fields[listPinnedFieldName]
+        .universalIdentifier
+    : null;
+
   return {
     calendarFieldMetadataUniversalIdentifier,
     calendarEndFieldMetadataUniversalIdentifier,
+    listPinnedFieldMetadataUniversalIdentifier,
     kanbanAggregateOperationFieldMetadataUniversalIdentifier,
     mainGroupByFieldMetadataUniversalIdentifier,
     objectMetadataUniversalIdentifier,
@@ -156,8 +175,10 @@ export const createStandardViewFlatMetadata = <
     calendarLayout: null,
     calendarFieldMetadataId,
     calendarEndFieldMetadataId,
+    listPinnedFieldMetadataId,
     anyFieldFilterValue: null,
-    visibility: ViewVisibility.WORKSPACE,
+    presetFilter,
+    isPrivate: false,
     createdByUserWorkspaceId: null,
     isActive: true,
     isSystemSideEffect:

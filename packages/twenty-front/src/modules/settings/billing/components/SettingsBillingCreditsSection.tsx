@@ -161,6 +161,9 @@ export const SettingsBillingCreditsSection = ({
   const isTrialing = subscriptionStatus === SubscriptionStatus.Trialing;
   const shouldUpdatePayment = isSubscriptionPaymentOverdue(subscriptionStatus);
   const hasPermissionToEndTrialPeriod = useHasPermissionFlag(
+    PermissionFlagType.BILLING,
+  );
+  const hasPermissionToViewUsage = useHasPermissionFlag(
     PermissionFlagType.WORKSPACE,
   );
 
@@ -338,12 +341,14 @@ export const SettingsBillingCreditsSection = ({
         </StyledCreditsCardBody>
       </StyledSettingsBillingCard>
       <StyledCreditUsageFooterActions>
-        <NavigationButton
-          to={getSettingsPath(SettingsPath.Usage)}
-          startIcon={<IconChartBar />}
-          size="sm"
-          variant="outline"
-        >{t`View usage`}</NavigationButton>
+        {hasPermissionToViewUsage && (
+          <NavigationButton
+            to={getSettingsPath(SettingsPath.Usage)}
+            startIcon={<IconChartBar />}
+            size="sm"
+            variant="outline"
+          >{t`View usage`}</NavigationButton>
+        )}
         <Button
           startIcon={<IconExternalLink />}
           size="sm"

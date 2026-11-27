@@ -1,10 +1,17 @@
-import { isUndefined } from '@sniptt/guards';
-import { useId, useState } from 'react';
+import { isInteger } from '@sniptt/guards';
+import { useState } from 'react';
+import { type NumberStepperProps } from 'twenty-ui/components/input';
 import { type IconComponent } from 'twenty-ui/icon';
 
 import { SettingsOptionCardContentCounter } from 'src/front-components/components/SettingsOptionCardContentCounter';
 import { useAutosaveApplicationVariable } from 'src/front-components/hooks/use-autosave-application-variable';
-import { getNormalizedNumberValue } from 'src/front-components/utils/get-normalized-number-value.util';
+import { getNonNegativeIntegerValue } from 'src/front-components/utils/get-non-negative-integer-value.util';
+
+const TYPING_CHANGE_REASONS: string[] = [
+  'input-change',
+  'input-paste',
+  'input-clear',
+];
 
 type TimingCounterRowProps = {
   variableKey: string;
@@ -23,28 +30,29 @@ export const TimingCounterRow = ({
   divider,
   persistedValue,
 }: TimingCounterRowProps) => {
-  const inputId = useId();
-  const [inputValue, setInputValue] = useState(persistedValue);
+  const [value, setValue] = useState(() =>
+    getNonNegativeIntegerValue(persistedValue),
+  );
   const { saveDebounced, saveImmediately } = useAutosaveApplicationVariable({
     variableKey,
   });
 
-  const handleChange = (value: string, changeType: 'input' | 'button') => {
-    setInputValue(value);
-
-    const valueToSave = getNormalizedNumberValue(value);
-
-    if (isUndefined(valueToSave)) {
-      saveDebounced.cancel();
+  const handleValueChange: NonNullable<NumberStepperProps['onValueChange']> = (
+    nextValue,
+    eventDetails,
+  ) => {
+    if (!isInteger(nextValue) || nextValue < 0 || nextValue === value) {
       return;
     }
 
-    if (changeType === 'button') {
-      saveImmediately(valueToSave);
+    setValue(nextValue);
+
+    if (TYPING_CHANGE_REASONS.includes(eventDetails.reason)) {
+      saveDebounced(String(nextValue));
       return;
     }
 
-    saveDebounced(valueToSave);
+    saveImmediately(String(nextValue));
   };
 
   return (
@@ -53,14 +61,8 @@ export const TimingCounterRow = ({
       title={title}
       description={description}
       divider={divider}
-      inputId={inputId}
-      value={inputValue}
-      errorMessage={
-        isUndefined(getNormalizedNumberValue(inputValue))
-          ? 'Invalid number'
-          : undefined
-      }
-      onChange={handleChange}
+      value={value}
+      onValueChange={handleValueChange}
       onBlur={() => saveDebounced.flush()}
     />
   );

@@ -70,12 +70,14 @@ const buildPlan = ({
   existingCalendarEvents,
   calendarEventIdToLinkByEventExternalId = new Map(),
   otherCalendarChannels = [],
+  associationSource = {},
 }: {
   fetchedCalendarEvents: FetchedCalendarEvent[];
   existingAssociations: CalendarChannelEventAssociationWorkspaceEntity[];
   existingCalendarEvents: ComparableCalendarEvent[];
   calendarEventIdToLinkByEventExternalId?: Map<string, string>;
   otherCalendarChannels?: CalendarEventSharingChannel[];
+  associationSource?: { accountOwnerId?: string | null; handle?: string };
 }) =>
   buildCalendarEventSaveOperations({
     fetchedCalendarEvents,
@@ -88,6 +90,7 @@ const buildPlan = ({
       [CALENDAR_EVENT_ID, otherCalendarChannels.map(({ id }) => id)],
     ]),
     otherCalendarChannels,
+    associationSource,
   });
 
 describe('buildCalendarEventSaveOperations', () => {
@@ -269,6 +272,45 @@ describe('buildCalendarEventSaveOperations', () => {
     ]);
     expect(plan.existingCalendarEventIds).toEqual([]);
     expect(plan.participantsOfNewEvents).toHaveLength(1);
+  });
+
+  it('records the account owner and the channel handle on inserted and linked associations', () => {
+    const plan = buildPlan({
+      fetchedCalendarEvents: [
+        buildFetchedCalendarEvent(),
+        buildFetchedCalendarEvent({ id: 'linked-event-id' }),
+      ],
+      existingAssociations: [],
+      existingCalendarEvents: [buildExistingCalendarEvent()],
+      calendarEventIdToLinkByEventExternalId: new Map([
+        ['linked-event-id', CALENDAR_EVENT_ID],
+      ]),
+      associationSource: {
+        accountOwnerId: 'workspace-member-id',
+        handle: CHANNEL_HANDLE,
+      },
+    });
+
+    expect(
+      plan.saveOperations.associationsToInsert.map(
+        ({ eventExternalId, accountOwnerId, handle }) => ({
+          eventExternalId,
+          accountOwnerId,
+          handle,
+        }),
+      ),
+    ).toEqual([
+      {
+        eventExternalId: 'external-event-id',
+        accountOwnerId: 'workspace-member-id',
+        handle: CHANNEL_HANDLE,
+      },
+      {
+        eventExternalId: 'linked-event-id',
+        accountOwnerId: 'workspace-member-id',
+        handle: CHANNEL_HANDLE,
+      },
+    ]);
   });
 
   it('links an event stored by another channel instead of inserting a second one', () => {

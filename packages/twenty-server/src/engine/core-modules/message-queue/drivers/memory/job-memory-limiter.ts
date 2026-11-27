@@ -99,12 +99,6 @@ export class JobMemoryLimiter {
 
   constructor(private readonly options: JobMemoryLimiterOptions) {}
 
-  isEnabled(): boolean {
-    return this.options.twentyConfigService.get(
-      'IS_REDIS_MEMORY_FAIRNESS_ENABLED',
-    );
-  }
-
   async admit({
     queueName,
     jobName,
@@ -114,7 +108,7 @@ export class JobMemoryLimiter {
     jobName: string;
     jobs: JobMemoryRequest[];
   }): Promise<JobMemoryAdmission> {
-    if (!this.isEnabled() || NOT_CHARGED_QUEUES.includes(queueName)) {
+    if (NOT_CHARGED_QUEUES.includes(queueName)) {
       return NOT_CHARGED;
     }
 
@@ -342,10 +336,6 @@ export class JobMemoryLimiter {
   async getTopGroupKeyMemoryUsages(
     queueName: MessageQueue,
   ): Promise<GroupKeyMemoryUsage[]> {
-    if (!this.isEnabled()) {
-      return [];
-    }
-
     const client = await this.options.getClient(queueName);
     const cacheKey = `${this.options.keyPrefix}:jobmem:top`;
     const cachedUsages = await client.runCommand('get', [cacheKey]);

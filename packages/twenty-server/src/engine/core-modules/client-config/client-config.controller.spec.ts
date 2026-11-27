@@ -110,7 +110,6 @@ describe('ClientConfigController', () => {
         isImapSmtpCaldavEnabled: false,
         isEmailingDomainInDemoMode: false,
         calendarBookingPageId: undefined,
-        isBookCallOnboardingStepEnabled: false,
         isCompanyEnrichmentEnabled: false,
         isTwoFactorAuthenticationEnabled: false,
         allowRequestsToTwentyIcons: true,
@@ -119,6 +118,7 @@ describe('ClientConfigController', () => {
         isWorkspaceSchemaDDLLocked: false,
         isOnboardingAiChatEnabled: false,
         enterpriseInstanceType: ENTERPRISE_INSTANCE_TYPE.PRODUCTION,
+        webPushVapidPublicKey: 'test-web-push-vapid-public-key',
       };
 
       jest

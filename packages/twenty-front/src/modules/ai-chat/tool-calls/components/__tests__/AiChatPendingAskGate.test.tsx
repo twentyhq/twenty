@@ -1,0 +1,339 @@
+import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { getDefaultStore } from 'jotai';
+import {
+  type AskQuestionItem,
+  type ProposedToolCall,
+  type RequestFormField,
+} from 'twenty-shared/ai';
+
+import { AiChatPendingAskGate } from '@/ai-chat/tool-calls/components/AiChatPendingAskGate';
+import { aiChatRecordApprovalAnsweringToolCallIdsFamilyState } from '@/ai-chat/tool-calls/states/aiChatRecordApprovalAnsweringToolCallIdsFamilyState';
+import { type AiChatPendingQuestion } from '@/ai-chat/tool-calls/types/AiChatPendingQuestion';
+
+const useAiChatPendingToolCalls = jest.fn();
+let displayedThreadId = 'thread-1';
+jest.mock('@/ai-chat/hooks/useAiChatInstanceOrThrow', () => ({
+  useAiChatInstanceOrThrow: () => ({
+    instanceId: 'chat',
+    threadId: displayedThreadId,
+    onThreadChange: () => {},
+  }),
+}));
+jest.mock('@/ai-chat/tool-calls/hooks/useAiChatPendingToolCalls', () => ({
+  useAiChatPendingToolCalls: () => useAiChatPendingToolCalls(),
+}));
+jest.mock('@/ai-chat/tool-calls/components/AiChatQuestionCard', () => ({
+  AiChatQuestionCard: ({
+    pendingQuestion,
+  }: {
+    pendingQuestion: AiChatPendingQuestion;
+  }) => (
+    <div role="group" aria-label="Questions">
+      {pendingQuestion.kind === 'question'
+        ? pendingQuestion.question.question
+        : pendingQuestion.questions[0].question}
+    </div>
+  ),
+}));
+jest.mock('@/ai-chat/tool-calls/components/AiChatFormCard', () => ({
+  AiChatFormCard: ({ fields }: { fields: RequestFormField[] }) => (
+    <div role="group" aria-label="Form">
+      {fields[0].label}
+    </div>
+  ),
+}));
+jest.mock('@/ai-chat/tool-calls/components/AiChatRecordApprovalDeck', () => ({
+  AiChatRecordApprovalDeck: () => (
+    <div role="group" aria-label="Record approvals" />
+  ),
+}));
+jest.mock('@/ai-chat/tool-calls/components/AiChatToolCallApprovalCard', () => ({
+  AiChatToolCallApprovalCard: ({
+    proposal,
+  }: {
+    proposal: ProposedToolCall;
+  }) => (
+    <div role="group" aria-label="Tool call approval">
+      {proposal.summary}
+      <textarea aria-label="Email body" />
+    </div>
+  ),
+}));
+
+const QUESTION: AskQuestionItem = {
+  header: 'Plan',
+  question: 'Which plan?',
+  options: [{ label: 'Pro' }, { label: 'Team' }],
+};
+
+const EMAIL_APPROVAL = {
+  toolCallId: 'call-2',
+  kind: 'toolCallApproval',
+  proposal: {
+    toolName: 'send_email',
+    toolLabel: 'Send Email',
+    summary: 'Your renewal',
+    arguments: {},
+    template: 'email',
+  },
+  isPostedByWorkflow: false,
+};
+
+const RECORD_APPROVAL = {
+  toolCallId: 'call-5',
+  kind: 'toolCallApproval',
+  proposal: {
+    toolName: 'create_person',
+    toolLabel: 'Create person',
+    summary: 'Ada Lovelace',
+    arguments: {},
+    template: 'recordCreate',
+    objectNameSingular: 'person',
+  },
+  isPostedByWorkflow: false,
+};
+
+const renderGate = () =>
+  render(
+    <I18nProvider i18n={i18n}>
+      <AiChatPendingAskGate>
+        <textarea aria-label="Message" />
+      </AiChatPendingAskGate>
+    </I18nProvider>,
+  );
+
+describe('AiChatPendingAskGate', () => {
+  afterEach(() => {
+    displayedThreadId = 'thread-1';
+  });
+
+  it('shows the question the thread waits on in place of the composer', () => {
+    useAiChatPendingToolCalls.mockReturnValue([
+      { toolCallId: 'call-1', kind: 'question', question: QUESTION },
+    ]);
+
+    renderGate();
+
+    expect(screen.getByRole('group', { name: 'Questions' })).toHaveTextContent(
+      'Which plan?',
+    );
+    expect(screen.queryByRole('textbox', { name: 'Message' })).toBeNull();
+  });
+
+  it('keeps the composer usable under an email waiting for approval', () => {
+    useAiChatPendingToolCalls.mockReturnValue([EMAIL_APPROVAL]);
+
+    renderGate();
+
+    expect(
+      screen.getByRole('group', { name: 'Tool call approval' }),
+    ).toHaveTextContent('Your renewal');
+    expect(screen.getByRole('textbox', { name: 'Message' })).toBeVisible();
+  });
+
+  it('shows an approval a workflow waits on in place of the composer', () => {
+    useAiChatPendingToolCalls.mockReturnValue([
+      { ...EMAIL_APPROVAL, isPostedByWorkflow: true },
+    ]);
+
+    renderGate();
+
+    expect(
+      screen.getByRole('group', { name: 'Tool call approval' }),
+    ).toHaveTextContent('Your renewal');
+    expect(screen.queryByRole('textbox', { name: 'Message' })).toBeNull();
+  });
+
+  it.each([
+    {
+      name: 'shows a last record approval on its own card',
+      answeringToolCallIds: [],
+      groupName: 'Tool call approval',
+    },
+    {
+      name: 'keeps the deck while its last record approval is being answered',
+      answeringToolCallIds: ['call-5'],
+      groupName: 'Record approvals',
+    },
+  ])('$name', ({ answeringToolCallIds, groupName }) => {
+    useAiChatPendingToolCalls.mockReturnValue([RECORD_APPROVAL]);
+    getDefaultStore().set(
+      aiChatRecordApprovalAnsweringToolCallIdsFamilyState.atomFamily({
+        threadId: 'thread-1',
+      }),
+      answeringToolCallIds,
+    );
+
+    renderGate();
+
+    expect(screen.getByRole('group', { name: groupName })).toBeVisible();
+  });
+
+  it('shows a form to fill in place of the composer', () => {
+    useAiChatPendingToolCalls.mockReturnValue([
+      {
+        toolCallId: 'call-4',
+        kind: 'form',
+        fields: [{ name: 'closeDate', label: 'Close date', type: 'DATE' }],
+      },
+    ]);
+
+    renderGate();
+
+    expect(screen.getByRole('group', { name: 'Form' })).toHaveTextContent(
+      'Close date',
+    );
+    expect(screen.queryByRole('textbox', { name: 'Message' })).toBeNull();
+  });
+
+  it('steps through several requests, starting with the oldest', async () => {
+    useAiChatPendingToolCalls.mockReturnValue([
+      EMAIL_APPROVAL,
+      { toolCallId: 'call-3', kind: 'question', question: QUESTION },
+    ]);
+
+    renderGate();
+
+    expect(screen.getByText('Request 1 of 2')).toBeInTheDocument();
+    expect(
+      screen.getByRole('group', { name: 'Tool call approval' }),
+    ).toBeVisible();
+    expect(screen.queryByRole('group', { name: 'Questions' })).toBeNull();
+    expect(
+      screen.getByRole('button', { name: 'Previous request' }),
+    ).toBeDisabled();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Next request' }));
+
+    expect(screen.getByText('Request 2 of 2')).toBeInTheDocument();
+    expect(screen.getByRole('group', { name: 'Questions' })).toBeVisible();
+    expect(
+      screen.queryByRole('group', { name: 'Tool call approval' }),
+    ).toBeNull();
+    expect(screen.queryByRole('textbox', { name: 'Message' })).toBeNull();
+  });
+
+  it('shows the request that took the place of an answered one', async () => {
+    const formRequest = {
+      toolCallId: 'call-4',
+      kind: 'form',
+      fields: [{ name: 'closeDate', label: 'Close date', type: 'DATE' }],
+    };
+
+    useAiChatPendingToolCalls.mockReturnValue([
+      EMAIL_APPROVAL,
+      { toolCallId: 'call-3', kind: 'question', question: QUESTION },
+      formRequest,
+    ]);
+
+    const { rerender } = renderGate();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Next request' }));
+    useAiChatPendingToolCalls.mockReturnValue([EMAIL_APPROVAL, formRequest]);
+    rerender(
+      <I18nProvider i18n={i18n}>
+        <AiChatPendingAskGate>
+          <textarea aria-label="Message" />
+        </AiChatPendingAskGate>
+      </I18nProvider>,
+    );
+
+    expect(screen.getByText('Request 2 of 2')).toBeInTheDocument();
+    expect(screen.getByRole('group', { name: 'Form' })).toBeVisible();
+  });
+
+  it('keeps an edited email draft once the question beside it is answered', async () => {
+    useAiChatPendingToolCalls.mockReturnValue([
+      EMAIL_APPROVAL,
+      { toolCallId: 'call-3', kind: 'question', question: QUESTION },
+    ]);
+
+    const { rerender } = renderGate();
+
+    await userEvent.type(
+      screen.getByRole('textbox', { name: 'Email body' }),
+      'See you Monday',
+    );
+    useAiChatPendingToolCalls.mockReturnValue([EMAIL_APPROVAL]);
+    rerender(
+      <I18nProvider i18n={i18n}>
+        <AiChatPendingAskGate>
+          <textarea aria-label="Message" />
+        </AiChatPendingAskGate>
+      </I18nProvider>,
+    );
+
+    expect(screen.getByRole('textbox', { name: 'Email body' })).toHaveValue(
+      'See you Monday',
+    );
+    expect(screen.getByRole('textbox', { name: 'Message' })).toBeVisible();
+  });
+
+  it('opens another conversation on its oldest request', async () => {
+    useAiChatPendingToolCalls.mockReturnValue([
+      EMAIL_APPROVAL,
+      { toolCallId: 'call-3', kind: 'question', question: QUESTION },
+    ]);
+
+    const { rerender } = renderGate();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Next request' }));
+
+    displayedThreadId = 'thread-2';
+    useAiChatPendingToolCalls.mockReturnValue([
+      { toolCallId: 'call-5', kind: 'question', question: QUESTION },
+      EMAIL_APPROVAL,
+    ]);
+    rerender(
+      <I18nProvider i18n={i18n}>
+        <AiChatPendingAskGate>
+          <textarea aria-label="Message" />
+        </AiChatPendingAskGate>
+      </I18nProvider>,
+    );
+
+    expect(screen.getByText('Request 1 of 2')).toBeInTheDocument();
+    expect(screen.getByRole('group', { name: 'Questions' })).toBeVisible();
+  });
+
+  it('opens a later batch of requests on its oldest one', async () => {
+    useAiChatPendingToolCalls.mockReturnValue([
+      EMAIL_APPROVAL,
+      { toolCallId: 'call-3', kind: 'question', question: QUESTION },
+    ]);
+
+    const { rerender } = renderGate();
+    const rerenderGate = () =>
+      rerender(
+        <I18nProvider i18n={i18n}>
+          <AiChatPendingAskGate>
+            <textarea aria-label="Message" />
+          </AiChatPendingAskGate>
+        </I18nProvider>,
+      );
+
+    await userEvent.click(screen.getByRole('button', { name: 'Next request' }));
+    useAiChatPendingToolCalls.mockReturnValue([]);
+    rerenderGate();
+    useAiChatPendingToolCalls.mockReturnValue([
+      { toolCallId: 'call-6', kind: 'question', question: QUESTION },
+      { ...EMAIL_APPROVAL, toolCallId: 'call-7' },
+    ]);
+    rerenderGate();
+
+    expect(screen.getByText('Request 1 of 2')).toBeInTheDocument();
+    expect(screen.getByRole('group', { name: 'Questions' })).toBeVisible();
+  });
+
+  it('shows the composer once nothing is pending', () => {
+    useAiChatPendingToolCalls.mockReturnValue([]);
+
+    renderGate();
+
+    expect(screen.getByRole('textbox', { name: 'Message' })).toBeVisible();
+    expect(screen.queryByRole('group')).toBeNull();
+  });
+});

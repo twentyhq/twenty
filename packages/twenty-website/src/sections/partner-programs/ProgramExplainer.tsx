@@ -1,94 +1,30 @@
 import { type MessageDescriptor } from '@lingui/core';
-import { styled } from '@linaria/react';
+import { type ReactNode } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import {
-  color,
-  DURATION,
-  FONT_WEIGHT,
-  fontFamily,
-  fontSize,
-  mediaUp,
-  radius,
-  REDUCED_MOTION,
-  semanticColor,
-  SHADOW,
-  spacing,
-} from '@/tokens';
-import { Body, Eyebrow, Heading, SectionShell } from '@/ui';
+  Body,
+  Eyebrow,
+  Heading,
+  HeadingPair,
+  SectionIntro,
+  SectionShell,
+} from '@/ui';
 
 import { type ProgramStep } from './program-step.type';
+import {
+  type ProgramFooterRow,
+  ProgramStepList,
+  type ProgramStepListItem,
+} from './ProgramStepList';
 
-// Mirrors partner-lead/PartnerServicesExplainer: sections may not import each other.
-const ExplainerGrid = styled.div`
-  column-gap: ${spacing(10)};
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  row-gap: ${spacing(8)};
-  scroll-margin-top: ${spacing(24)};
-
-  ${mediaUp('md')} {
-    grid-template-columns: 340px minmax(0, 1fr);
-  }
-`;
-
-const ExplainerAside = styled.div`
-  & > * + * {
-    margin-top: ${spacing(4)};
-  }
-
-  ${mediaUp('md')} {
-    align-self: start;
-    position: sticky;
-    top: ${spacing(24)};
-  }
-`;
-
-const ExplainerStack = styled.ol`
-  display: flex;
-  flex-direction: column;
-  gap: ${spacing(3)};
-  list-style: none;
-  padding: 0;
-`;
-
-const ExplainerCard = styled.li`
-  align-items: flex-start;
-  background-color: ${color('white')};
-  border: 1px solid ${semanticColor.line};
-  border-radius: ${radius(2)};
-  column-gap: ${spacing(4)};
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  padding: ${spacing(5)} ${spacing(6)};
-  transition: box-shadow ${DURATION.xs} ease;
-
-  &:hover {
-    box-shadow: ${SHADOW.card};
-  }
-
-  ${REDUCED_MOTION} {
-    transition: none;
-  }
-`;
-
-const ExplainerMarker = styled.span`
-  background-color: ${color('blue')};
-  border-radius: 1px;
-  height: 7px;
-  margin-top: ${spacing(2)};
-  width: 14px;
-`;
-
-const ExplainerTitle = styled.h3`
-  color: ${semanticColor.ink};
-  font-family: ${fontFamily('sans')};
-  font-size: ${fontSize(4.5)};
-  font-weight: ${FONT_WEIGHT.medium};
-  letter-spacing: -0.01em;
-  line-height: 1.3;
-  margin-bottom: ${spacing(1)};
-`;
+// A last row in the step card that is not a step: a marker stands in for the number.
+type ProgramClosingRow = {
+  title: MessageDescriptor;
+  body: MessageDescriptor;
+  marker: ReactNode;
+};
 
 type ProgramExplainerProps = {
   anchorId: string;
@@ -96,6 +32,8 @@ type ProgramExplainerProps = {
   heading: MessageDescriptor;
   body: MessageDescriptor;
   steps: readonly ProgramStep[];
+  closingRow?: ProgramClosingRow;
+  footer?: readonly ProgramFooterRow[];
 };
 
 export function ProgramExplainer({
@@ -104,35 +42,42 @@ export function ProgramExplainer({
   heading,
   body,
   steps,
+  closingRow,
+  footer,
 }: ProgramExplainerProps) {
   const i18n = getServerI18n();
+  const stepItems: ProgramStepListItem[] = steps.map((step) => ({
+    title: i18n._(step.title),
+    body: i18n._(step.body),
+  }));
+  if (isDefined(closingRow)) {
+    stepItems.push({
+      title: i18n._(closingRow.title),
+      body: i18n._(closingRow.body),
+      marker: closingRow.marker,
+    });
+  }
 
   return (
     <SectionShell rhythm="section" scheme="muted">
-      <ExplainerGrid id={anchorId}>
-        <ExplainerAside>
-          <Eyebrow>{i18n._(eyebrow)}</Eyebrow>
-          <Heading as="h2" size="sm" weight="light">
-            {i18n._(heading)}
-          </Heading>
-          <Body muted size="sm">
-            {i18n._(body)}
-          </Body>
-        </ExplainerAside>
-        <ExplainerStack>
-          {steps.map((step) => (
-            <ExplainerCard key={step.title.id}>
-              <ExplainerMarker aria-hidden />
-              <div>
-                <ExplainerTitle>{i18n._(step.title)}</ExplainerTitle>
-                <Body muted size="sm">
-                  {i18n._(step.body)}
-                </Body>
-              </div>
-            </ExplainerCard>
-          ))}
-        </ExplainerStack>
-      </ExplainerGrid>
+      <ProgramStepList
+        anchorId={anchorId}
+        intro={
+          <SectionIntro>
+            <Eyebrow>{i18n._(eyebrow)}</Eyebrow>
+            <HeadingPair>
+              <Heading as="h2" size="sm" weight="light">
+                {i18n._(heading)}
+              </Heading>
+              <Body muted size="sm">
+                {i18n._(body)}
+              </Body>
+            </HeadingPair>
+          </SectionIntro>
+        }
+        steps={stepItems}
+        footerRows={footer}
+      />
     </SectionShell>
   );
 }

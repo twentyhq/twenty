@@ -91,6 +91,27 @@ export const addParticipants = ({
     reason: AgentChatInboxDeliveryReason.MENTION,
   });
 
+const ADD_PARTICIPANTS = parse(
+  `mutation AddParticipants($input: AddAgentChatThreadParticipantsInput!) { addAgentChatThreadParticipants(input: $input) }`,
+);
+
+export const addParticipantsThroughApi = ({
+  threadId,
+  workspaceMemberIds,
+  token = APPLE_JANE_ADMIN_ACCESS_TOKEN,
+}: {
+  threadId: string;
+  workspaceMemberIds: string[];
+  token?: string;
+}) =>
+  makeMetadataApiRequest(
+    {
+      query: ADD_PARTICIPANTS,
+      variables: { input: { threadId, workspaceMemberIds } },
+    },
+    token,
+  );
+
 type Participant = {
   id: string;
   threadId: string;

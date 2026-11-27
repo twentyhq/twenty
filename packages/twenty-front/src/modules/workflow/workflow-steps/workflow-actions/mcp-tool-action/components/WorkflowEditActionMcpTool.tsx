@@ -30,7 +30,7 @@ import { isObject } from '@sniptt/guards';
 import { isDestructiveMcpServerTool } from 'twenty-shared/ai';
 import { jsonSchemaToInputSchema } from 'twenty-shared/logic-function';
 import { isDefined, isEmptyObject } from 'twenty-shared/utils';
-import { getFunctionInputFromInputSchema } from 'twenty-shared/workflow';
+import { getDefaultMcpToolInputFromJsonSchema } from 'twenty-shared/workflow';
 import { Callout } from 'twenty-ui/components/feedback';
 import { IconChevronDown, IconPlayerPlay, IconSettings } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
@@ -116,8 +116,8 @@ export const WorkflowEditActionMcpTool = ({
   const inputSchema = isDefined(tool)
     ? jsonSchemaToInputSchema(tool.inputSchema)
     : undefined;
-  const defaultToolInput = isDefined(inputSchema)
-    ? getFunctionInputFromInputSchema(inputSchema)[0]
+  const defaultToolInput = isDefined(tool)
+    ? getDefaultMcpToolInputFromJsonSchema(tool.inputSchema)
     : undefined;
   const toolInput = isObject(defaultToolInput)
     ? mergeDefaultFunctionInputAndFunctionInput({

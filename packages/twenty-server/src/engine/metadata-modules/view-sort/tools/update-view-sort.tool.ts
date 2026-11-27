@@ -20,6 +20,7 @@ const updateViewSortInputSchema = z.object({
 
 @DefineTool({
   name: 'update_view_sort',
+  isDestructive: true,
   category: ToolCategory.VIEW,
   accessPolicy: VIEW_SORT_ACCESS_POLICY,
   description:

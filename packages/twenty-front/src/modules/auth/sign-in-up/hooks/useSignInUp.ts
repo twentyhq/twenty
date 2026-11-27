@@ -2,6 +2,8 @@ import { useCallback, useState } from 'react';
 import { type SubmitHandler, type UseFormReturn } from 'react-hook-form';
 import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
+
 import { useAuth } from '@/auth/hooks/useAuth';
 import { type Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { lastAuthenticatedMethodState } from '@/auth/states/lastAuthenticatedMethodState';
@@ -13,8 +15,7 @@ import {
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod';
 import { SignInUpMode } from '@/auth/types/SignInUpMode';
-import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
-import { useCaptcha } from '@/client-config/hooks/useCaptcha';
+import { useGetCaptchaToken } from '@/captcha/hooks/useGetCaptchaToken';
 import { useBuildSearchParamsFromUrlSyncedStates } from '@/domain-manager/hooks/useBuildSearchParamsFromUrlSyncedStates';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
@@ -37,7 +38,6 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
   const [signInUpMode, setSignInUpMode] = useAtomState(signInUpModeState);
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
   const workspacePublicData = useAtomStateValue(workspacePublicDataState);
-  const { isCaptchaReady } = useCaptcha();
   const setLastAuthenticatedMethod = useSetAtomState(
     lastAuthenticatedMethodState,
   );
@@ -61,7 +61,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     checkUserExists: { checkUserExistsQuery },
   } = useAuth();
 
-  const { readCaptchaToken } = useReadCaptchaToken();
+  const { getCaptchaToken } = useGetCaptchaToken();
 
   const { buildSearchParamsFromUrlSyncedStates } =
     useBuildSearchParamsFromUrlSyncedStates();
@@ -70,19 +70,13 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     setSignInUpStep(SignInUpStep.Email);
   }, [setSignInUpStep]);
 
-  const errorMsgUserAlreadyExist = t`An error occurred while checking user existence`;
+  const userExistenceCheckErrorMessage = t`An error occurred while checking user existence`;
   const continueWithCredentials = useCallback(async () => {
     if (!form.getValues('email')) {
       return enqueueToast({ status: 'error', children: t`Email is required` });
     }
-    if (!isCaptchaReady) {
-      return enqueueToast({
-        status: 'error',
-        children: t`Captcha (anti-bot check) is still loading, try again`,
-      });
-    }
     try {
-      const token = readCaptchaToken();
+      const token = await getCaptchaToken();
 
       const { data, error } = await checkUserExistsQuery({
         variables: {
@@ -101,19 +95,22 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
           : SignInUpMode.SignUp,
       );
       setSignInUpStep(SignInUpStep.Password);
-    } catch {
-      enqueueToast({ status: 'error', children: errorMsgUserAlreadyExist });
+    } catch (error) {
+      enqueueToast(
+        CombinedGraphQLErrors.is(error)
+          ? getToastOptionsFromError({ error })
+          : { status: 'error', children: userExistenceCheckErrorMessage },
+      );
     }
   }, [
-    readCaptchaToken,
+    getCaptchaToken,
     form,
-    isCaptchaReady,
     enqueueToast,
     t,
     checkUserExistsQuery,
     setSignInUpMode,
     setSignInUpStep,
-    errorMsgUserAlreadyExist,
+    userExistenceCheckErrorMessage,
   ]);
 
   const submitCredentials: SubmitHandler<Form> = useCallback(
@@ -122,15 +119,9 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
         throw new Error(t`Email and password are required`);
       }
 
-      if (!isCaptchaReady) {
-        return enqueueToast({
-          status: 'error',
-          children: t`Captcha (anti-bot check) is still loading, try again`,
-        });
-      }
-
-      const token = readCaptchaToken();
       try {
+        const token = await getCaptchaToken();
+
         setLastAuthenticatedMethod(AuthenticatedMethod.EMAIL);
 
         if (
@@ -187,8 +178,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       }
     },
     [
-      isCaptchaReady,
-      readCaptchaToken,
+      getCaptchaToken,
       signInUpMode,
       isInviteMode,
       signInWithCredentialsInWorkspace,

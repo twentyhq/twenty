@@ -42,8 +42,6 @@ export type QueueJobScope =
   | WorkspaceQueueJobScope
   | ApplicationQueueJobScope;
 
-export type QueueJobLimiter = { key: string } & MessageQueueLimiter;
-
 export type QueueJobSettings = {
   id?: string;
   doNotCheckDuplicatesBasedOnPrefix?: boolean;
@@ -53,8 +51,9 @@ export type QueueJobSettings = {
   delay?: number;
   deduplication?: QueueJobDeduplicationOptions;
   broadcastTo?: QueueJobRecipient;
-  groupKeys?: string[];
-  limiter?: QueueJobLimiter;
+  fairnessGroupKeys?: string[];
+  groupKey?: string;
+  limiter?: MessageQueueLimiter;
 };
 
 export type QueueJobOptions = QueueJobSettings & QueueJobScope;

@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { ChannelVisibilityModule } from 'src/engine/permissions/channel-visibility/channel-visibility.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
@@ -15,6 +16,7 @@ import { MessagingFolderSyncManagerModule } from 'src/modules/messaging/message-
 
 @Module({
   imports: [
+    ChannelVisibilityModule,
     TypeOrmModule.forFeature([
       CalendarChannelEntity,
       ConnectedAccountEntity,

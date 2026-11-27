@@ -1,3 +1,4 @@
+import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { summarizeCallRecordingHandler } from 'src/logic-functions/summarize-call-recording';
@@ -5,11 +6,16 @@ import { summarizeCallRecordingHandler } from 'src/logic-functions/summarize-cal
 const queryMock = vi.hoisted(() => vi.fn());
 const mutationMock = vi.hoisted(() => vi.fn());
 const runAgentMock = vi.hoisted(() => vi.fn());
+const coreClientOptionsMock = vi.hoisted(() => vi.fn());
 
 vi.mock('twenty-client-sdk/core', () => ({
   CoreApiClient: class {
     query = queryMock;
     mutation = mutationMock;
+
+    constructor(options: ConstructorParameters<typeof CoreApiClient>[0]) {
+      coreClientOptionsMock(options);
+    }
   },
 }));
 
@@ -77,6 +83,7 @@ const buildEvent = ({
   name,
   workspaceId: 'workspace-id',
   objectMetadata: FAKE_OBJECT_METADATA,
+  eventId: 'database-event-1',
   recordId,
   properties: { updatedFields },
 });
@@ -136,6 +143,19 @@ describe('summarize-call-recording logic function', () => {
         id: true,
       },
     });
+  });
+
+  it('reads and saves the call recording as the application', async () => {
+    await summarizeCallRecordingHandler(
+      buildEvent({
+        name: 'callRecording.updated',
+        updatedFields: ['transcript'],
+      }),
+    );
+
+    expect(coreClientOptionsMock).toHaveBeenCalledWith(
+      expect.objectContaining({ runAs: 'application' }),
+    );
   });
 
   it('rethrows a generation failure as retryable so the trigger is redelivered', async () => {

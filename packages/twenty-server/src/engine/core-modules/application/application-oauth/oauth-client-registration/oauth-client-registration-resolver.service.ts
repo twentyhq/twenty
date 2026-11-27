@@ -16,7 +16,16 @@ import { type ResolvedOAuthClient } from 'src/engine/core-modules/application/ap
 import { toClientIdMetadataDocumentRegistrationFields } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/utils/to-client-id-metadata-document-registration-fields.util';
 import { PUBLIC_OAUTH_CLIENT_REGISTRATION_VALUES } from 'src/engine/core-modules/application/application-oauth/constants/public-oauth-client-registration-values.constant';
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
+import { findMarketplaceConnectListing } from 'src/engine/core-modules/application/application-marketplace/utils/find-marketplace-connect-listing.util';
+import { type VerifiedOAuthClient } from 'src/engine/core-modules/application/application-oauth/verified-oauth-client/types/verified-oauth-client.type';
+import { findVerifiedOAuthClientForClientIdMetadataDocumentUrl } from 'src/engine/core-modules/application/application-oauth/verified-oauth-client/utils/find-verified-oauth-client-for-client-id-metadata-document-url.util';
+import { isVerifiedOAuthClientRegistration } from 'src/engine/core-modules/application/application-oauth/verified-oauth-client/utils/is-verified-oauth-client-registration.util';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 
 @Injectable()
@@ -26,6 +35,7 @@ export class OAuthClientRegistrationResolverService {
     private readonly applicationRegistrationRepository: Repository<ApplicationRegistrationEntity>,
     private readonly clientIdMetadataDocumentService: ClientIdMetadataDocumentService,
     private readonly throttlerService: ThrottlerService,
+    private readonly applicationRegistrationService: ApplicationRegistrationService,
   ) {}
 
   async throttleClientIdMetadataDocumentFetchOrThrow({
@@ -84,10 +94,33 @@ export class OAuthClientRegistrationResolverService {
   }
 
   // Also for revocation, which must not depend on the client's document still being reachable
-  findRegistrationByOAuthClientId(oAuthClientId: string) {
-    return this.applicationRegistrationRepository.findOne({
+  async findRegistrationByOAuthClientId(
+    oAuthClientId: string,
+  ): Promise<ApplicationRegistrationEntity | null> {
+    const registration = await this.applicationRegistrationRepository.findOne({
       where: { oAuthClientId },
     });
+
+    if (isDefined(registration)) {
+      return registration;
+    }
+
+    const verifiedClient =
+      findVerifiedOAuthClientForClientIdMetadataDocumentUrl(oAuthClientId);
+
+    if (!isDefined(verifiedClient)) {
+      return null;
+    }
+
+    const verifiedClientRegistration =
+      await this.applicationRegistrationRepository.findOne({
+        where: { universalIdentifier: verifiedClient.universalIdentifier },
+      });
+
+    return isDefined(verifiedClientRegistration) &&
+      isVerifiedOAuthClientRegistration(verifiedClientRegistration)
+      ? verifiedClientRegistration
+      : null;
   }
 
   // Only for a signed-in user's authorization: the public token and consent endpoints would store a row for any hosted URL
@@ -98,6 +131,25 @@ export class OAuthClientRegistrationResolverService {
     Extract<ResolvedOAuthClient, { kind: 'clientIdMetadataDocument' }>,
     'clientIdMetadataDocument' | 'registration'
   >): Promise<void> {
+    const verifiedClient =
+      findVerifiedOAuthClientForClientIdMetadataDocumentUrl(
+        clientIdMetadataDocument.clientId,
+      );
+
+    if (isDefined(verifiedClient) && !isDefined(existingRegistration)) {
+      await this.findOrCreateVerifiedClientRegistrationOrThrow(verifiedClient);
+
+      return;
+    }
+
+    // Shared by every document of its store card, so no single document describes it
+    if (
+      isDefined(existingRegistration) &&
+      isVerifiedOAuthClientRegistration(existingRegistration)
+    ) {
+      return;
+    }
+
     const documentFields = toClientIdMetadataDocumentRegistrationFields(
       clientIdMetadataDocument,
     );
@@ -134,5 +186,35 @@ export class OAuthClientRegistrationResolverService {
       })
       .orIgnore()
       .execute();
+  }
+
+  private async findOrCreateVerifiedClientRegistrationOrThrow({
+    universalIdentifier,
+  }: Pick<VerifiedOAuthClient, 'universalIdentifier'>): Promise<void> {
+    const marketplaceConnectListing =
+      findMarketplaceConnectListing(universalIdentifier);
+
+    if (!isDefined(marketplaceConnectListing)) {
+      throw new ApplicationException(
+        `Verified OAuth client ${universalIdentifier} has no store card`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    const registration =
+      await this.applicationRegistrationService.findOrCreateBuiltInRegistrationOrThrow(
+        {
+          universalIdentifier,
+          name: marketplaceConnectListing.name,
+          oAuthScopes: [...ALL_OAUTH_SCOPES],
+        },
+      );
+
+    if (!isVerifiedOAuthClientRegistration(registration)) {
+      throw new ApplicationException(
+        `Universal identifier ${universalIdentifier} of a verified OAuth client is held by another registration`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
   }
 }

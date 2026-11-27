@@ -22,7 +22,8 @@ const isWrite = (value: unknown): value is PullAppResult['writes'][number] =>
   (isPullEntityKind(value.kind) ||
     value.kind === 'translation' ||
     value.kind === 'dependency' ||
-    value.kind === 'publicAsset') &&
+    value.kind === 'publicAsset' ||
+    value.kind === 'source') &&
   isBoolean(value.isRegeneration) &&
   isPath(value);
 

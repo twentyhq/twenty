@@ -29,6 +29,7 @@ export const getLogicFunctionExceptionHttpStatus = (
     case LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND:
       return 404;
     case LogicFunctionExceptionCode.LOGIC_FUNCTION_DISABLED:
+    case LogicFunctionExceptionCode.LOGIC_FUNCTION_WORKSPACE_SUSPENDED:
       return 403;
     default:
       return 500;

@@ -1,12 +1,10 @@
 import styled from '@emotion/styled';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-export const StyledSettingsCardContent = styled.div`
+export const StyledSettingsCardRow = styled.div`
   align-items: center;
-  background-color: ${() => themeCssVariables.background.secondary};
   display: flex;
   gap: ${() => themeCssVariables.spacing[3]};
-  padding: ${() => themeCssVariables.spacing[4]};
 `;
 
 export const StyledSettingsCardIcon = styled.div`

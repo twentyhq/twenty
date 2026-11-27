@@ -9,7 +9,7 @@ Workflow execution uses `core.workflow`, `core.workflowVersion`, and the persist
 | `core.workflow.id` | Authoritative workflow identity. |
 | `core.workflowVersion.coreWorkflowId` | Authoritative version parent, scoped to the same workspace. |
 | `core.workflow.workspaceWorkflowId` | Durable alias for existing webhook URLs and historical billing spender IDs. Keep this alias for the lifetime of those URLs and billing identities. |
-| `core.workflowVersion.workspaceWorkflowVersionId` | Durable alias for legacy run requests and pinned queued payloads. Keep it while any legacy callers or queued jobs can exist. |
+| `core.workflowVersion.workspaceWorkflowVersionId` | Legacy version alias. Nothing reads it at runtime; it is dropped in a later version. |
 | `core.workflowVersion.workflowId` | Nullable legacy parent alias, equal to the workflow's `workspaceWorkflowId`. Null on workflows created without a workspace alias. It is not the execution parent. |
 | `workflowRun.coreWorkflowId`, `workflowRun.coreWorkflowVersionId` | Authoritative identities recorded when a run is created and backfilled for existing runs. |
 | `workflowRun.workflowId`, `workflowRun.workflowVersionId` | Nullable legacy projection relations. New runs leave both null; only runs created before core execution still carry them. |
@@ -21,16 +21,16 @@ Legacy and core run mutations delegate to the same core runner. Core-owned mappi
 
 | Entry point | Definition source |
 | --- | --- |
-| `WorkflowTriggerJob` | Core version supplied in the payload; otherwise the durable legacy version mapping; otherwise the core workflow's published pointer for genuinely unversioned legacy jobs. |
+| `WorkflowTriggerJob` | Core version supplied in the payload. |
 | `RunWorkflowJob` startup | Pinned core version identity and the run's captured trigger and steps. |
 | `RunWorkflowJob` resume and retry | Persisted run state and step information. |
 | `ResumeDelayedWorkflowJob` and form submission | Existing run ID and step ID; the continuation reads the run snapshot. |
 | Database event listener | Core-derived automated trigger cache, with workspace business records and metadata used for filtering. |
 | `WorkflowCronTriggerCronJob` | Current active core cron definition, including when decoding old Redis entries. |
-| Enqueue sweeps, throttling, stalled-run repair | Workspace run rows and run counters; no workflow definition lookup. |
+| Stalled-run repair | Workspace run rows and in-flight queue jobs; no workflow definition lookup. |
 | Workflow run retention | Core workflow identity, with a legacy fallback for historical runs. |
 
-Cron workers share the historical workflow lock key for mapped workflows and the core ID for mirrorless workflows. Cached cron entries are normalized before taking the lock, so an obsolete entry cannot consume the current definition's occurrence. Queue producers retain legacy aliases when available, and consumers continue accepting old envelopes.
+Cron workers share the historical workflow lock key for mapped workflows and the core ID for mirrorless workflows. Cached cron entries are normalized before taking the lock, so an obsolete entry cannot consume the current definition's occurrence. Queue producers keep the legacy workflow alias when available, and always send the core version id.
 
 ## Writes
 

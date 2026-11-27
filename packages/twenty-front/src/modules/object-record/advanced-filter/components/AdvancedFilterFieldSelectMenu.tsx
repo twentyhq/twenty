@@ -1,15 +1,14 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { useAdvancedFilterFieldMetadataItems } from '@/object-record/advanced-filter/hooks/useAdvancedFilterFieldMetadataItems';
 import { useAdvancedFilterFieldSelectDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterFieldSelectDropdown';
 import { useApplyAdvancedFilterSourceField } from '@/object-record/advanced-filter/hooks/useApplyAdvancedFilterSourceField';
 import { usePushFocusForLeafFieldValuePicker } from '@/object-record/advanced-filter/hooks/usePushFocusForLeafFieldValuePicker';
-import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
 import { getAdvancedFilterFieldSubPage } from '@/object-record/advanced-filter/utils/getAdvancedFilterFieldSubPage';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
-import { useFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItems';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useLingui } from '@lingui/react/macro';
-import { Fragment, useContext } from 'react';
+import { Fragment } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Dropdown, useDropdownPage } from 'twenty-ui/components/navigation';
 import { useIcons } from 'twenty-ui/icon/provider';
@@ -34,10 +33,8 @@ export const AdvancedFilterFieldSelectMenu = ({
   const { goToPage } = useDropdownPage();
   const { getIcon } = useIcons();
   const { t } = useLingui();
-  const { objectMetadataItem } = useContext(AdvancedFilterContext);
-  const { filterableFieldMetadataItems } = useFilterableFieldMetadataItems(
-    objectMetadataItem.id,
-  );
+  const { advancedFilterFieldMetadataItems } =
+    useAdvancedFilterFieldMetadataItems();
   const visibleRecordFields = useAtomComponentSelectorValue(
     visibleRecordFieldsComponentSelector,
   );
@@ -45,7 +42,7 @@ export const AdvancedFilterFieldSelectMenu = ({
     (recordField) => recordField.fieldMetadataItemId,
   );
   const filteredSearchInputFieldMetadataItems =
-    filterableFieldMetadataItems.filter((fieldMetadataItem) =>
+    advancedFilterFieldMetadataItems.filter((fieldMetadataItem) =>
       fieldMetadataItem.label
         .toLocaleLowerCase()
         .includes(searchInput.toLocaleLowerCase()),

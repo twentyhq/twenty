@@ -14,7 +14,11 @@ import { NormalizeWorkflowRecordCrudRichTextFieldsCommand } from 'src/database/c
 import { BackfillDeterministicPermissionUniversalIdentifiersCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789553327000-backfill-deterministic-permission-universal-identifiers.command';
 import { SeedObjectInitialViewCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789565000000-seed-object-initial-view.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
-import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/workflow-version-core.module';
+import { LegacyWorkflowVersionCoreUpsertService } from 'src/database/commands/upgrade-version-command/2-20/services/legacy-workflow-version-core-upsert.service';
+import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -24,7 +28,12 @@ import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/w
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([FieldMetadataEntity]),
+    TypeOrmModule.forFeature([
+      FieldMetadataEntity,
+      WorkflowVersionEntity,
+      WorkspaceEntity,
+    ]),
+    WorkspaceManyOrAllFlatEntityMapsCacheModule,
     ApplicationModule,
     WorkspaceCacheModule,
     WorkspaceIteratorModule,
@@ -32,9 +41,10 @@ import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/w
     WorkspaceMigrationRunnerModule,
     WorkspaceSchemaManagerModule,
     WorkspaceSchemaMigrationRunnerActionHandlersModule,
-    WorkflowVersionCoreModule,
   ],
   providers: [
+    provideWorkspaceScopedRepository(WorkflowVersionEntity),
+    LegacyWorkflowVersionCoreUpsertService,
     CorrectStandardFieldAcronymCasingCommand,
     BackfillWorkspaceWorkflowIdOnWorkflowsCommand,
     BackfillCoreVersionPointersCommand,

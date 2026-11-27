@@ -9,6 +9,8 @@ import {
   IconBox,
   IconFolder,
   IconHash,
+  IconLayoutList,
+  IconLayoutSidebar,
   IconLink,
   IconPerspective,
   IconSettingsAutomation,
@@ -42,6 +44,8 @@ export const NavigationMenuItemTypeTooltip = ({
     RECORD: { label: t`Record`, icon: <IconAddressBook size={iconSize} /> },
     LINK: { label: t`Link`, icon: <IconLink size={iconSize} /> },
     FOLDER: { label: t`Folder`, icon: <IconFolder size={iconSize} /> },
+    TAB: { label: t`Tab`, icon: <IconLayoutSidebar size={iconSize} /> },
+    SECTION: { label: t`Section`, icon: <IconLayoutList size={iconSize} /> },
     PAGE_LAYOUT: { label: t`Page`, icon: <IconPerspective size={iconSize} /> },
     AGENT_CHAT_CHANNEL: {
       label: t`Channel`,

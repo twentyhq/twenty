@@ -1,0 +1,1 @@
+export const APPLICATION_BILLING_PRICE_CURRENCIES = ['USD'] as const;

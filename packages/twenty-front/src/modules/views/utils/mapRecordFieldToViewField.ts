@@ -11,6 +11,9 @@ export const mapRecordFieldToViewField = (recordField: RecordField) => {
     position: recordField.position,
     size: recordField.size,
     aggregateOperation: recordField.aggregateOperation,
+    relationTargetFieldMetadataId: recordField.relationTargetFieldMetadataId,
+    relationScope: recordField.relationScope,
+    label: recordField.label,
   };
 
   return viewField;

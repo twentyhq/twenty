@@ -1,6 +1,10 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import {
+  AGENT_CHAT_INBOX_NOTIFICATION_LEVEL,
+  type AgentChatInboxNotificationLevel,
+} from 'twenty-shared/ai';
+import {
   PermissionFlagType,
   PermissionsOnAllObjectRecords,
 } from 'twenty-shared/constants';
@@ -19,9 +23,14 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { ADD_USER_WORKSPACE_INBOX_NOTIFICATION_SETTINGS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-61/add-user-workspace-inbox-notification-settings-upgrade-command-name.constant';
+import { ADD_USER_WORKSPACE_DEFAULT_AVATAR_FILE_ID_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-64/add-user-workspace-default-avatar-file-id-upgrade-command-name.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { TwoFactorAuthenticationMethodSummaryDTO } from 'src/engine/core-modules/two-factor-authentication/dto/two-factor-authentication-method.dto';
 import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
+import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
+import { type WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { ObjectRecordsPermissionsDTO } from 'src/engine/permissions/dtos/object-records-permissions.dto';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity.type';
@@ -46,6 +55,7 @@ registerEnumType(PermissionsOnAllObjectRecords, {
 )
 @Index('IDX_USER_WORKSPACE_USER_ID', ['userId'])
 @Index('IDX_USER_WORKSPACE_WORKSPACE_ID', ['workspaceId'])
+@Index('IDX_USER_WORKSPACE_DEFAULT_AVATAR_FILE_ID', ['defaultAvatarFileId'])
 export class UserWorkspaceEntity extends WorkspaceRelatedEntity {
   @Field(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
@@ -62,12 +72,49 @@ export class UserWorkspaceEntity extends WorkspaceRelatedEntity {
   @Column()
   userId: string;
 
-  @Column({ nullable: true })
-  defaultAvatarUrl: string;
+  @Column({
+    type: 'varchar',
+    nullable: true,
+    select: false,
+    insert: false,
+    update: false,
+  })
+  defaultAvatarUrl: WasRemovedInUpgrade<string>;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_USER_WORKSPACE_DEFAULT_AVATAR_FILE_ID_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: true, type: 'uuid' })
+  defaultAvatarFileId: string | null;
+
+  @ManyToOne(() => FileEntity, { onDelete: 'SET NULL', nullable: true })
+  @JoinColumn({ name: 'defaultAvatarFileId' })
+  defaultAvatarFile: Relation<FileEntity> | null;
 
   @Field(() => String, { nullable: false })
   @Column({ nullable: false, default: SOURCE_LOCALE, type: 'varchar' })
   locale: keyof typeof APP_LOCALES;
+
+  @Field(() => String, { nullable: true })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_USER_WORKSPACE_INBOX_NOTIFICATION_SETTINGS_UPGRADE_COMMAND_NAME,
+  })
+  @Column({
+    nullable: false,
+    default: AGENT_CHAT_INBOX_NOTIFICATION_LEVEL.ALL_FOLLOWED,
+    type: 'varchar',
+  })
+  inboxNotificationLevel: AgentChatInboxNotificationLevel;
+
+  @Field(() => Boolean, { nullable: true })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_USER_WORKSPACE_INBOX_NOTIFICATION_SETTINGS_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: false, default: true, type: 'boolean' })
+  isInboxNotificationPreviewEnabled: boolean;
 
   @Field()
   @CreateDateColumn({ type: 'timestamptz' })

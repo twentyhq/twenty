@@ -4,9 +4,11 @@ import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetad
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
 import { useOptionsForSelect } from '@/object-record/object-filter-dropdown/hooks/useOptionsForSelect';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
-import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
+import { filterValueFieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/filterValueFieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
+import { SelectOptionDescriptionTooltip } from '@/ui/input/components/SelectOptionDescriptionTooltip';
+import { SelectOptionDescriptionTooltipProvider } from '@/ui/input/components/SelectOptionDescriptionTooltipProvider';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
@@ -40,8 +42,8 @@ export const ObjectFilterDropdownOptionSelect = ({
   focusId: string;
 }) => {
   const { t } = useLingui();
-  const fieldMetadataItemUsedInDropdown = useAtomComponentSelectorValue(
-    fieldMetadataItemUsedInDropdownComponentSelector,
+  const filterValueFieldMetadataItem = useAtomComponentSelectorValue(
+    filterValueFieldMetadataItemUsedInDropdownComponentSelector,
   );
 
   const objectFilterDropdownSearchInput = useAtomComponentStateValue(
@@ -86,7 +88,7 @@ export const ObjectFilterDropdownOptionSelect = ({
         '',
     });
 
-  const fieldMetaDataId = fieldMetadataItemUsedInDropdown?.id ?? '';
+  const fieldMetaDataId = filterValueFieldMetadataItem?.id ?? '';
 
   const { selectOptions: sourceFieldSelectOptions } =
     useOptionsForSelect(fieldMetaDataId);
@@ -173,31 +175,37 @@ export const ObjectFilterDropdownOptionSelect = ({
       selectableItemIdArray={objectRecordsIds}
       focusId={focusId}
     >
-      <DropdownMenuItemsContainer isMultiSelect hasMaxHeight>
-        {showNoResult ? (
-          <ListItem disabled>{t`No results`}</ListItem>
-        ) : (
-          optionsInDropdown?.map((option) => (
-            <ListItemButton
-              key={option.id}
-              focused={option.id === selectedItemId}
-              role="option"
-              aria-selected={option.isSelected}
-              selected={option.isSelected}
-              indicator="checkbox"
-              onClick={() =>
-                handleMultipleOptionSelectChange(option, !option.isSelected)
-              }
-            >
-              {isDefined(option.color) ? (
-                <Tag color={option.color}>{option.label}</Tag>
-              ) : (
-                <OverflowingTextWithTooltip text={option.label} />
-              )}
-            </ListItemButton>
-          ))
-        )}
-      </DropdownMenuItemsContainer>
+      <SelectOptionDescriptionTooltipProvider>
+        <DropdownMenuItemsContainer isMultiSelect hasMaxHeight>
+          {showNoResult ? (
+            <ListItem disabled>{t`No results`}</ListItem>
+          ) : (
+            optionsInDropdown?.map((option) => (
+              <SelectOptionDescriptionTooltip
+                key={option.id}
+                description={option.description}
+              >
+                <ListItemButton
+                  focused={option.id === selectedItemId}
+                  role="option"
+                  aria-selected={option.isSelected}
+                  selected={option.isSelected}
+                  indicator="checkbox"
+                  onClick={() =>
+                    handleMultipleOptionSelectChange(option, !option.isSelected)
+                  }
+                >
+                  {isDefined(option.color) ? (
+                    <Tag color={option.color}>{option.label}</Tag>
+                  ) : (
+                    <OverflowingTextWithTooltip text={option.label} />
+                  )}
+                </ListItemButton>
+              </SelectOptionDescriptionTooltip>
+            ))
+          )}
+        </DropdownMenuItemsContainer>
+      </SelectOptionDescriptionTooltipProvider>
     </SelectableList>
   );
 };

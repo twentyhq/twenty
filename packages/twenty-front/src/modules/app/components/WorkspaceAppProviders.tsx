@@ -1,7 +1,7 @@
 import { StrictMode } from 'react';
 import { Outlet } from 'react-router-dom';
 
-import { AiChatProvider } from '@/ai/components/AiChatProvider';
+import { AiChatProvider } from '@/ai-chat/instance/components/AiChatProvider';
 import { TrackPageViewEffect } from '@/analytics/components/TrackPageViewEffect';
 import { SharedAppProviders } from '@/app/components/SharedAppProviders';
 import { InboxEffects } from '@/inbox/components/InboxEffects';
@@ -40,7 +40,7 @@ import { AppToaster } from '@/ui/feedback/toast/components/AppToaster';
 import { GlobalFilePreviewModal } from '@/ui/field/display/components/GlobalFilePreviewModal';
 import { UserThemeProviderEffect } from '@/workspace-member/effect-components/UserThemeProviderEffect';
 import { UserUiScaleProviderEffect } from '@/workspace-member/effect-components/UserUiScaleProviderEffect';
-import { PageFavicon } from '@/app/components/PageFavicon';
+import { WorkspaceAppPageFavicon } from '@/app/components/WorkspaceAppPageFavicon';
 import { UserContextProvider } from '@/users/components/UserContextProvider';
 import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProviderEffect';
 
@@ -77,7 +77,7 @@ export const WorkspaceAppProviders = () => {
                             <EndTrialAfterPaymentMethodGater />
                             <GotoHotkeysEffectsProvider />
                             <WorkspaceAppPageTitle />
-                            <PageFavicon />
+                            <WorkspaceAppPageFavicon />
                             <CoreRecordReferenceFieldsContext.Provider
                               value={WORKFLOW_RUN_CORE_RECORD_REFERENCE_FIELDS}
                             >

@@ -7,7 +7,7 @@ import {
   type FeatureFlagKey,
   RecordSharePrincipalType,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
 import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
@@ -73,7 +73,7 @@ export class RecordSharePrincipalService {
         'userWorkspaceRoleMap',
         'rolesPermissions',
       ]);
-    const roleIds = resolveRecordSharePrincipalRoleIds({
+    const roleIdsByPrincipal = resolveRecordSharePrincipalRoleIds({
       principals: namedPrincipals,
       flatWorkspaceMemberMaps,
       userWorkspaceRoleMap,
@@ -81,18 +81,20 @@ export class RecordSharePrincipalService {
     const roleIdsUnableToReadObject =
       await this.recordPermissionsReadService.filterRoleIdsWithoutReadAccess({
         workspaceId,
-        roleIds: roleIds.filter(isDefined),
+        roleIds: roleIdsByPrincipal.flat(),
         objectMetadataId: flatObjectMetadata.id,
       });
 
     for (const [index, principal] of namedPrincipals.entries()) {
-      const roleId = roleIds[index];
+      const roleIds = (roleIdsByPrincipal[index] ?? []).filter((roleId) =>
+        isDefined(rolesPermissions[roleId]),
+      );
 
-      if (!isDefined(roleId) || !isDefined(rolesPermissions[roleId])) {
+      if (!isNonEmptyArray(roleIds)) {
         continue;
       }
 
-      if (roleIdsUnableToReadObject.has(roleId)) {
+      if (roleIds.every((roleId) => roleIdsUnableToReadObject.has(roleId))) {
         throw new RecordShareException(
           `Principal ${principal.principalId} cannot access ${flatObjectMetadata.nameSingular} records through its role`,
           RecordShareExceptionCode.INVALID_SHARE_WITH,

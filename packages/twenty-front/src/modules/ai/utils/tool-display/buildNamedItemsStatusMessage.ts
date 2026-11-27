@@ -1,6 +1,6 @@
 import { type ToolDisplayContext } from '@/ai/types/ToolDisplayContext';
 import { formatDisplayList } from '~/utils/format/formatDisplayList';
-import { getInnerToolName } from '@/ai/utils/tool-display/getInnerToolName';
+import { getToolLabel } from '@/ai/utils/tool-display/getToolLabel';
 import { pickStatusLabel } from '@/ai/utils/tool-display/pickStatusLabel';
 
 export const buildNamedItemsStatusMessage = ({
@@ -31,7 +31,7 @@ export const buildNamedItemsStatusMessage = ({
   }
 
   const labels = names.map((name) =>
-    getInnerToolName({
+    getToolLabel({
       toolName: name,
       labelByName: displayContext.labelByName,
       output,

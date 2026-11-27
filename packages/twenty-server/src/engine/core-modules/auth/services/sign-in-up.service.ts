@@ -3,7 +3,7 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
 import { TWENTY_ICONS_BASE_URL } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isWorkEmail } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import {
   IsNull,
@@ -73,7 +73,6 @@ import {
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { getDomainFromEmailOrThrow } from 'src/utils/get-domain-from-email-or-throw';
-import { isWorkEmail } from 'src/utils/is-work-email';
 
 @Injectable()
 // oxlint-disable-next-line twenty/inject-workspace-repository

@@ -19,7 +19,6 @@ import {
   ViewCalendarLayout,
   ViewOpenRecordIn,
   ViewType,
-  ViewVisibility,
 } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -101,9 +100,14 @@ export class UpdateViewInput {
   calendarEndFieldMetadataId?: string | null;
 
   @IsOptional()
-  @IsEnum(ViewVisibility)
-  @Field(() => ViewVisibility, { nullable: true })
-  visibility?: ViewVisibility;
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  listPinnedFieldMetadataId?: string | null;
+
+  @IsOptional()
+  @IsBoolean()
+  @Field(() => Boolean, { nullable: true })
+  isPrivate?: boolean;
 
   @IsOptional()
   @IsUUID()

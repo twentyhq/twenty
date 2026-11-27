@@ -1,6 +1,7 @@
-import { aiChatThreadParticipantsState } from '@/ai/states/aiChatThreadParticipantsState';
+import { aiChatThreadParticipantsState } from '@/ai-chat/threads/states/aiChatThreadParticipantsState';
+import { inboxNamesByLegacyNameSelector } from '@/ai-chat/states/selectors/inboxNamesByLegacyNameSelector';
 import { inboxSelectedChannelViewSelector } from '@/inbox/states/selectors/inboxSelectedChannelViewSelector';
-import { inboxThreadMemberStateByThreadIdFamilySelector } from '@/inbox/states/selectors/inboxThreadMemberStateByThreadIdFamilySelector';
+import { inboxThreadStatusByThreadIdFamilySelector } from '@/inbox/states/selectors/inboxThreadStatusByThreadIdFamilySelector';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { EMPTY_COMMAND_MENU_CONTEXT_API } from '@/command-menu-item/constants/EmptyCommandMenuContextApi';
@@ -37,7 +38,6 @@ import { isNonEmptyArray } from '@sniptt/guards';
 import { useAtomValue } from 'jotai';
 import {
   ContextStorePageType,
-  StandardObjectNameSingular,
   type CommandMenuContextApi,
 } from 'twenty-shared/types';
 import { isDefined, resolveObjectMetadataLabel } from 'twenty-shared/utils';
@@ -110,17 +110,20 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
   const aiChatThreadParticipants = useAtomStateValue(
     aiChatThreadParticipantsState,
   );
+  const inboxNamesByLegacyName = useAtomStateValue(
+    inboxNamesByLegacyNameSelector,
+  );
   const inboxStatusThreadIds =
     objectMetadataItem?.nameSingular ===
-      StandardObjectNameSingular.AgentChatThread &&
-    isDefined(aiChatThreadParticipants)
+      inboxNamesByLegacyName.agentChatThread &&
+    aiChatThreadParticipants.isLoaded
       ? (recordIds ?? [])
       : [];
   const inboxSelectedChannelView = useAtomStateValue(
     inboxSelectedChannelViewSelector,
   );
-  const inboxThreadMemberStateByThreadId = useAtomFamilySelectorValue(
-    inboxThreadMemberStateByThreadIdFamilySelector,
+  const inboxThreadStatusByThreadId = useAtomFamilySelectorValue(
+    inboxThreadStatusByThreadIdFamilySelector,
     {
       threadIds: inboxStatusThreadIds,
       // Every menu on the inbox page, the open chat's included, files the
@@ -137,8 +140,8 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
     ...(isDefined(recordPermissionsByRecordId[record.id]) && {
       recordPermissions: recordPermissionsByRecordId[record.id],
     }),
-    ...(isDefined(inboxThreadMemberStateByThreadId[record.id]) && {
-      inboxStatus: inboxThreadMemberStateByThreadId[record.id],
+    ...(isDefined(inboxThreadStatusByThreadId[record.id]) && {
+      inboxStatus: inboxThreadStatusByThreadId[record.id],
     }),
   }));
 

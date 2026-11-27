@@ -1,5 +1,7 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { AppPath, StandardObjectNameSingular } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
+import { isInboxThreadObjectName } from '@/ai-chat/utils/isInboxThreadObjectName';
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
@@ -23,10 +25,10 @@ export const getLinkToShowPage = (
   }
 
   if (
-    objectNameSingular === StandardObjectNameSingular.AgentChatThread &&
-    record.id
+    isInboxThreadObjectName(objectNameSingular) &&
+    isNonEmptyString(record.id)
   ) {
-    return getAppPath(AppPath.AiChat, { threadId: record.id });
+    return getAppPath(AppPath.AiChatInbox, { threadId: record.id });
   }
 
   if (objectNameSingular === StandardObjectNameSingular.TaskTarget) {

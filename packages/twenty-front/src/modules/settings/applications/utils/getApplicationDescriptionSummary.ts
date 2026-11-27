@@ -1,5 +1,5 @@
+import { getPlainTextFromMarkdownTokens } from 'twenty-shared/markdown';
 import { type Token, marked } from 'marked';
-import { getPlainTextFromMarkdownTokens } from '~/utils/string/getPlainTextFromMarkdown';
 
 const withoutImageTokens = (tokens: Token[]): Token[] =>
   tokens.flatMap((token) => {

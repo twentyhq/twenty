@@ -1,3 +1,4 @@
+import { AgentChatThreadConversationType } from '@/ai/types/AgentChatThreadConversationType';
 import { isAgentChatThreadInPresetFilter } from '@/ai/utils/is-agent-chat-thread-in-preset-filter.util';
 
 const OPEN_STATUS = {
@@ -151,4 +152,39 @@ describe('isAgentChatThreadInPresetFilter', () => {
       }),
     ).toBe(true);
   });
+
+  it.each([
+    ['active', OPEN_STATUS, {}],
+    ['needsInput', OPEN_STATUS, { pendingQuestionMessageId: 'message' }],
+    ['mentions', { ...OPEN_STATUS, isMentioned: true }, {}],
+    ['assigned', { ...OPEN_STATUS, isAssignedToMe: true }, {}],
+    ['assignedToAnyone', OPEN_STATUS, { assigneeId: 'member-2' }],
+    ['unassigned', OPEN_STATUS, { assigneeId: null }],
+    ['snoozed', { ...OPEN_STATUS, scope: 'SNOOZED' }, {}],
+    ['done', { ...OPEN_STATUS, scope: 'ARCHIVED' }, {}],
+  ] as const)(
+    'leaves direct messages out of %s',
+    (presetFilter, inboxStatus, thread) => {
+      expect(
+        isAgentChatThreadInPresetFilter({
+          thread: {
+            ...thread,
+            conversationType: AgentChatThreadConversationType.STANDARD,
+          },
+          inboxStatus,
+          presetFilter,
+        }),
+      ).toBe(true);
+      expect(
+        isAgentChatThreadInPresetFilter({
+          thread: {
+            ...thread,
+            conversationType: AgentChatThreadConversationType.DIRECT_MESSAGE,
+          },
+          inboxStatus,
+          presetFilter,
+        }),
+      ).toBe(false);
+    },
+  );
 });

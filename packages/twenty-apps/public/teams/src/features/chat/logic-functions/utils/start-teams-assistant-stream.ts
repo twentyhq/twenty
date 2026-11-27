@@ -1,6 +1,7 @@
 import { type TeamsActivity } from 'src/features/chat/logic-functions/types/teams-activity.type';
 import { type TeamsAssistantStatusWriter } from 'src/features/chat/logic-functions/types/teams-assistant-status-writer.type';
 import { buildTeamsActivityPath } from 'src/features/chat/logic-functions/utils/build-teams-activity-path';
+import { buildTeamsMessageActivity } from 'src/features/chat/logic-functions/utils/build-teams-message-activity';
 import { getTeamsConnectorAccessTokenOrThrow } from 'src/features/chat/logic-functions/utils/get-teams-connector-access-token-or-throw';
 import { requestTeamsConnector } from 'src/features/chat/logic-functions/utils/request-teams-connector';
 import { sendTeamsActivity } from 'src/features/chat/logic-functions/utils/send-teams-activity';
@@ -15,6 +16,7 @@ export const startTeamsAssistantStream = async ({
   text: string;
 }): Promise<TeamsAssistantStatusWriter> => {
   let streamSequence = 1;
+  const streamClosing = new AbortController();
 
   const { id: streamId } = await sendTeamsActivity({
     serviceUrl,
@@ -30,13 +32,20 @@ export const startTeamsAssistantStream = async ({
   });
 
   // Follow-up stream calls answer 202 with no payload to parse.
-  const sendStreamActivity = async (activity: TeamsActivity) => {
+  const sendStreamActivity = async ({
+    activity,
+    retryAbortSignal,
+  }: {
+    activity: TeamsActivity;
+    retryAbortSignal?: AbortSignal;
+  }) => {
     await requestTeamsConnector({
       serviceUrl,
       path: buildTeamsActivityPath({ conversationId }),
       method: 'POST',
       accessToken: await getTeamsConnectorAccessTokenOrThrow(),
       body: activity,
+      retryAbortSignal,
     });
   };
 
@@ -45,23 +54,30 @@ export const startTeamsAssistantStream = async ({
       streamSequence += 1;
 
       return sendStreamActivity({
-        type: 'typing',
-        text,
-        entities: [
-          {
-            type: 'streaminfo',
-            streamId,
-            streamType: 'informative',
-            streamSequence,
-          },
-        ],
+        activity: {
+          type: 'typing',
+          text,
+          entities: [
+            {
+              type: 'streaminfo',
+              streamId,
+              streamType: 'informative',
+              streamSequence,
+            },
+          ],
+        },
+        retryAbortSignal: streamClosing.signal,
       });
     },
-    finish: (text) =>
-      sendStreamActivity({
-        type: 'message',
-        text,
-        entities: [{ type: 'streaminfo', streamId, streamType: 'final' }],
-      }),
+    finish: (text) => {
+      streamClosing.abort();
+
+      return sendStreamActivity({
+        activity: buildTeamsMessageActivity({
+          text,
+          entities: [{ type: 'streaminfo', streamId, streamType: 'final' }],
+        }),
+      });
+    },
   };
 };

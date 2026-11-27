@@ -12,7 +12,6 @@ type NavigationDrawerInboxChannelRolesSubmenuProps = {
   onChange: (roleIds: string[]) => void;
 };
 
-// Roles with access to all channels read it either way, so they stay checked
 export const NavigationDrawerInboxChannelRolesSubmenu = ({
   roleIds,
   onChange,
@@ -23,7 +22,6 @@ export const NavigationDrawerInboxChannelRolesSubmenu = ({
     fetchPolicy: 'cache-and-network',
   });
   const roles = data?.agentChatChannelRoles ?? [];
-  // Kept here so quick toggles build on each other before the list reloads
   const [checkedRoleIds, setCheckedRoleIds] = useState(roleIds);
 
   const toggleRole = (roleId: string) => {

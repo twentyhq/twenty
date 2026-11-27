@@ -21,7 +21,7 @@ import {
   ENTERPRISE_INSTANCE_TYPE,
   type EnterpriseInstanceType,
 } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { type LoggerOptions } from 'typeorm/logger/LoggerOptions';
 
 import { IsLambdaResourceTags } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/decorators/is-lambda-resource-tags.decorator';
@@ -61,6 +61,7 @@ import { IsOptionalOrEmptyString } from 'src/engine/core-modules/twenty-config/d
 import { IsStrictlyLowerThan } from 'src/engine/core-modules/twenty-config/decorators/is-strictly-lower-than.decorator';
 import { IsTwentySemVer } from 'src/engine/core-modules/twenty-config/decorators/is-twenty-semver.decorator';
 import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/enums/config-variable-type.enum';
+import { getMissingServerAdminIdentityAssertionVariables } from 'src/engine/core-modules/twenty-config/utils/get-missing-server-admin-identity-assertion-variables.util';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
 import {
   ConfigVariableException,
@@ -382,24 +383,6 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TOKENS_DURATION,
-    description: 'Duration for which the refresh token is valid',
-    type: ConfigVariableType.STRING,
-  })
-  @IsOptional()
-  REFRESH_TOKEN_EXPIRES_IN = '60d';
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.TOKENS_DURATION,
-    description:
-      'Grace period allowing concurrent refresh token use (e.g. two tabs refreshing simultaneously). Reuse after this window triggers suspicious activity detection.',
-    type: ConfigVariableType.STRING,
-  })
-  @IsNonNegativeDuration()
-  @IsOptional()
-  REFRESH_TOKEN_REUSE_GRACE_PERIOD = '1m';
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.TOKENS_DURATION,
     description:
       'Absolute lifetime of a cookie-based user session, set at sign-in and never extended',
     type: ConfigVariableType.STRING,
@@ -623,6 +606,51 @@ export class ConfigVariables {
   @IsOptional()
   @IsUUID()
   SERVER_ADMIN_WORKSPACE_ID: string | undefined;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
+      'Request header carrying the signed identity assertion (a JWT) that an identity-aware proxy adds in front of the server admin workspace, for example Cf-Access-Jwt-Assertion. Setting it requires the three other SERVER_ADMIN_IDENTITY_ASSERTION variables and SERVER_ADMIN_WORKSPACE_ID: every request into that workspace must then carry an assertion issued to the email of its user.',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  SERVER_ADMIN_IDENTITY_ASSERTION_HEADER: string | undefined;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
+      'URL of the JSON Web Key Set the server admin identity assertions are signed with',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  @IsUrl({ protocols: ['https'], require_tld: false, require_protocol: true })
+  SERVER_ADMIN_IDENTITY_ASSERTION_JWKS_URL: string | undefined;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description: 'Issuer the server admin identity assertions must carry',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  SERVER_ADMIN_IDENTITY_ASSERTION_ISSUER: string | undefined;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description: 'Audience the server admin identity assertions must carry',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  SERVER_ADMIN_IDENTITY_ASSERTION_AUDIENCE: string | undefined;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.STORAGE_CONFIG,
@@ -1225,7 +1253,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BILLING_CONFIG,
     description:
-      'Credit reward tiers for workspaces enrichment matched to a real company, keyed by tier name, as {"midMarket":{"minEmployeeCount":20,"amountMicro":5000000}} (amounts in microCredits). The most generous matching tier wins; no tiers disables the reward. Independent of ONBOARDING_BOOK_CALL_MIN_EMPLOYEE_COUNT, so credits and the book-a-call offer can target different companies.',
+      'Credit reward tiers for workspaces enrichment matched to a real company, keyed by tier name, as {"midMarket":{"minEmployeeCount":20,"amountMicro":5000000}} (amounts in microCredits). The most generous matching tier wins; no tiers disables the reward.',
     isHiddenInAdminPanel: true,
     type: ConfigVariableType.JSON,
   })
@@ -1286,18 +1314,6 @@ export class ConfigVariables {
   })
   @IsOptional()
   CALENDAR_BOOKING_PAGE_ID?: string;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
-    description:
-      'Minimum enriched company employee count required to show the book-a-call onboarding step. Leave unset or set to 0 to disable the step. The step also requires CALENDAR_BOOKING_PAGE_ID.',
-    isHiddenInAdminPanel: true,
-    type: ConfigVariableType.NUMBER,
-  })
-  @CastToPositiveNumber()
-  @IsInt()
-  @IsOptional()
-  ONBOARDING_BOOK_CALL_MIN_EMPLOYEE_COUNT?: number;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGGING,
@@ -1652,30 +1668,12 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
-      'Refuse jobs that would take more than their fair share of the job queue Redis memory',
-    type: ConfigVariableType.BOOLEAN,
-  })
-  @IsOptional()
-  IS_REDIS_MEMORY_FAIRNESS_ENABLED = false;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
-    description:
-      'Delay the jobs that carry a limiter (workflows, logic functions) at enqueue: a burst of max, then one every durationMs / max, per workspace and application. Execution starts are not rechecked, so a paused worker can run overdue jobs together. Off: jobs are never delayed by their limiter.',
-    type: ConfigVariableType.BOOLEAN,
-  })
-  @IsOptional()
-  IS_WORKER_GROUP_LIMITER_ENABLED = false;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
-    description:
-      'Maximum size in bytes of a single job (serialized data and options) when Redis memory fairness is enabled',
+      'Maximum size in bytes of a single job (serialized data and options)',
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
   @IsOptional()
-  JOB_QUEUE_MAX_JOB_SIZE_BYTES = 5_242_880;
+  JOB_QUEUE_MAX_JOB_SIZE_BYTES = 20_971_520;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
@@ -1686,7 +1684,7 @@ export class ConfigVariables {
   @CastToPositiveNumber()
   @IsOptional()
   @Max(1)
-  JOB_QUEUE_MEMORY_SHARE_BY_WORKSPACE_ID = 0.3;
+  JOB_QUEUE_MEMORY_SHARE_BY_WORKSPACE_ID = 0.4;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
@@ -1697,7 +1695,7 @@ export class ConfigVariables {
   @CastToPositiveNumber()
   @IsOptional()
   @Max(1)
-  JOB_QUEUE_MEMORY_SHARE_BY_APPLICATION_UNIVERSAL_IDENTIFIER = 0.4;
+  JOB_QUEUE_MEMORY_SHARE_BY_APPLICATION_UNIVERSAL_IDENTIFIER = 0.6;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
@@ -2375,42 +2373,6 @@ export class ConfigVariables {
   MAX_NUMBER_OF_WORKSPACES_DELETED_PER_EXECUTION = 5;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.RATE_LIMITING,
-    description:
-      'Throttle limit for workflow execution. Remaining will not be enqueued immediately.',
-    type: ConfigVariableType.NUMBER,
-  })
-  @CastToPositiveNumber()
-  WORKFLOW_EXEC_SOFT_THROTTLE_LIMIT = 100;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.RATE_LIMITING,
-    description:
-      'Time-to-live for workflow execution throttle in milliseconds. Remaining will not be enqueued immediately.',
-    type: ConfigVariableType.NUMBER,
-  })
-  @CastToPositiveNumber()
-  WORKFLOW_EXEC_SOFT_THROTTLE_TTL = 60_000;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.RATE_LIMITING,
-    description:
-      'Throttle limit for workflow execution. Remaining will be marked as failed.',
-    type: ConfigVariableType.NUMBER,
-  })
-  @CastToPositiveNumber()
-  WORKFLOW_EXEC_HARD_THROTTLE_LIMIT = 5000;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.RATE_LIMITING,
-    description:
-      'Time-to-live for workflow execution throttle in milliseconds. Remaining will be marked as failed.',
-    type: ConfigVariableType.NUMBER,
-  })
-  @CastToPositiveNumber()
-  WORKFLOW_EXEC_HARD_THROTTLE_TTL = 3_600_000;
-
-  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.CAPTCHA_CONFIG,
     description: 'Driver for captcha integration',
     type: ConfigVariableType.ENUM,
@@ -2817,6 +2779,19 @@ export const validate = (config: Record<string, unknown>): ConfigVariables => {
 
   if (validationErrors.length > 0) {
     logValidatonErrors(validationErrors, 'error');
+    throw new ConfigVariableException(
+      'Config variables validation failed',
+      ConfigVariableExceptionCode.VALIDATION_FAILED,
+    );
+  }
+
+  const missingServerAdminIdentityAssertionVariables =
+    getMissingServerAdminIdentityAssertionVariables(validatedConfig);
+
+  if (isNonEmptyArray(missingServerAdminIdentityAssertionVariables)) {
+    Logger.error(
+      `The server admin identity assertion is partially configured, missing: ${missingServerAdminIdentityAssertionVariables.join(', ')}`,
+    );
     throw new ConfigVariableException(
       'Config variables validation failed',
       ConfigVariableExceptionCode.VALIDATION_FAILED,

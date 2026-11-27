@@ -38,22 +38,22 @@ Each run receives its payload as the handler argument, exactly like any other tr
 </Note>
 
 <Note>
-The older `enqueueJob` helper, which enqueues a single job per call, is deprecated. Use `enqueueJobs` with a one-element `jobs` list instead. The `payloads` argument is deprecated too — pass `jobs` instead, which takes the same payload per run and lets you name each one.
+The older `enqueueJob` helper, which enqueues a single job per call, is deprecated. Use `enqueueJobs` with a one-element `jobs` list instead. The `payloads` argument is deprecated too — pass `jobs` instead, which takes the same payload per run and lets you name each one. The `jobIds` field of the result is deprecated as well: read each id from `jobs` instead.
 </Note>
 
 ## Poll jobs
 
-`enqueueJobs` returns one `jobId` per enqueued run, in the same order as the jobs you passed. `getJobs` reads back where those runs got to, in one call.
+`enqueueJobs` returns one entry per enqueued run in `jobs`, each with its `jobId`, in the same order as the jobs you passed. `getJobs` reads back where those runs got to, in one call.
 
 ```ts
 import { enqueueJobs, getJobs } from 'twenty-sdk/logic-function';
 
-const { jobIds } = await enqueueJobs({
+const { jobs } = await enqueueJobs({
   logicFunctionUniversalIdentifier: ENRICH_COMPANY,
   jobs: [{ payload: { companyId: 'abc' } }],
 });
 
-const statuses = await getJobs(jobIds);
+const statuses = await getJobs(jobs.map(({ jobId }) => jobId));
 ```
 
 A single `getJobs` call reads at most `200` ids, the same ceiling `enqueueJobs` applies to a batch.
@@ -67,6 +67,7 @@ Each entry carries the id you asked for:
 | `attemptsMade` | Queue attempts made so far, including the current one. |
 | `failedReason` | The error message of the last failed attempt, otherwise `null`. |
 | `enqueuedAt` | When the job was accepted, in epoch milliseconds. |
+| `scheduledAt` | When the job first became eligible to run, in epoch milliseconds. See [When a job is scheduled](#when-a-job-is-scheduled). |
 | `startedAt` | When a worker picked it up, `null` while it is still waiting. |
 | `finishedAt` | When it completed or failed, `null` while it is still running. |
 
@@ -99,6 +100,7 @@ Options apply to every run in the batch.
 |--------|---------|-------|--------------|
 | `retryLimit` | `0` | `0`–`10` | Overall extra queue attempts. Application-requested retries are capped at `3`. Only raise this for handlers that are safe to run twice. |
 | `delayMs` | `0` | `0`–`604800000` (7 days) | Wait this long before the runs become eligible. |
+| `limiter` | none | `durationMs / max` between `100` ms and 1 hour | Space the runs evenly, at most `max` per `durationMs`. See [Pace runs with a limiter](#pace-runs-with-a-limiter). Cannot be combined with `delayMs`. |
 
 ```ts
 await enqueueJobs({
@@ -109,6 +111,53 @@ await enqueueJobs({
 });
 ```
 
+To set the retry limit once for every queued run of a function, declare `retryLimit` on the function itself. It applies to runs started by `enqueueJobs`, cron, database events and server routes, and a `retryLimit` passed to `enqueueJobs` overrides it for that call. Without it, the defaults are `0` for `enqueueJobs`, `10` for cron and `3` for database events and server routes.
+
+```ts
+export default defineLogicFunction({
+  universalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
+  retryLimit: 3,
+  handler,
+});
+```
+
+## Pace runs with a limiter
+
+Pass `limiter: { max, durationMs }` to space the runs of a call one interval of `durationMs / max` apart, for example to stay under a third-party rate limit.
+
+```ts
+await enqueueJobs({
+  logicFunctionUniversalIdentifier: ENRICH_COMPANY,
+  jobs: companies.map((company) => ({ payload: { companyId: company.id } })),
+  limiter: { max: 10, durationMs: 60_000 },
+});
+```
+
+Here a run becomes eligible every 6 seconds. How it works:
+
+- Calls for the same function in the same workspace with the same `max` and `durationMs` share one schedule, so a second call continues after the runs the first one reserved. Changing either value starts a separate schedule.
+- Each run is given the next free slot, or now if the schedule is idle, and the next slot moves one interval later. Runs are spaced evenly, never in bursts.
+- There is no horizon: a large batch can be scheduled days ahead. The usual [queue memory](#queue-memory) limits still apply, and a long backlog holds its memory until it drains.
+- `max` and `durationMs` must be positive integers with an interval between `100` ms and 1 hour. Combining `limiter` with `delayMs`, even `delayMs: 0`, is rejected with `INVALID_INPUT` and nothing is enqueued.
+- Only the runs of calls that pass `limiter` are paced. Retries keep their own backoff, and runs started by cron, database events, `onConnect` or server routes are not paced.
+- Re-enqueuing a `jobId` the queue still holds does not take another slot.
+- The limiter spaces when runs become eligible. It does not cap how many run at the same time, and a run can start later than its slot when workers are busy.
+- If pacing is unavailable because of a technical failure, the runs are enqueued without pacing rather than refused.
+
+## When a job is scheduled
+
+Each entry of `jobs` returned by `enqueueJobs`, and each status returned by `getJobs`, carries `scheduledAt`: when the job first became eligible to run, in epoch milliseconds.
+
+| The job was enqueued | `scheduledAt` |
+|----------------------|---------------|
+| With a `limiter` | The slot it was given. |
+| With `delayMs` | When it was accepted, plus the delay. |
+| Otherwise | When it was accepted. |
+
+It is set once, when the job is accepted, and never changes afterwards, including across retries. Enqueuing a `jobId` the queue still holds reports the existing job's `scheduledAt`. Once the job has been evicted, a new job with the same id gets a new one.
+
+`scheduledAt` is not a prediction of when the job starts: compare it with `startedAt` to see how long it waited for a worker.
+
 <Note>
 **Priority is not configurable yet.** Enqueued jobs always run at the lowest priority, so platform work is never delayed behind application jobs. Control over priority is coming soon.
 </Note>
@@ -117,13 +166,13 @@ The queued run inherits the acting user of the function that enqueued it, so it 
 
 ## Queue memory
 
-Queued jobs live in memory until they finish, so each workspace and each application may only hold a share of the queue memory that others leave free. A single job is also capped at 5 MB of serialized payload. These limits only apply on servers that enable them (`IS_REDIS_MEMORY_FAIRNESS_ENABLED`).
+Queued jobs live in memory until they finish, so each workspace and each application may only hold a share of the queue memory that others leave free. A single job is also capped at 20 MB of serialized payload.
 
 `enqueueJobs` reports what each call used. These fields need Twenty 2.57.0 or later, which is also the minimum server version of the SDK:
 
 | Field | What it holds |
 |-------|---------------|
-| `jobs` | Each enqueued job's `jobId` and `sizeBytes`. |
+| `jobs` | Each enqueued job's `jobId`, `sizeBytes` and [`scheduledAt`](#when-a-job-is-scheduled). |
 | `availableBytes` | Memory your application and workspace can still enqueue, as of this call. `null` when the server does not limit queue memory. It is a snapshot, not a reservation. |
 
 When a limit is reached, the whole call is refused and nothing is enqueued:
@@ -167,6 +216,60 @@ The queue delays retry attempts with exponential backoff and jitter. The exact d
 
 <Warning>
 Retries re-run the whole handler and may happen after some side effects succeeded. Make the handler idempotent before requesting retries.
+</Warning>
+
+## React when a job fails for good
+
+A queued run can end without your code reaching its own error handling, for example when it hits `timeoutSeconds`. Add `onJobFailure` next to `handler`, and Twenty calls it once a queued run of the function fails and will not be retried.
+
+```ts src/logic-functions/answer-request.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { type LogicFunctionJobFailure } from 'twenty-sdk/logic-function';
+
+type AnswerRequestPayload = { requestId: string };
+
+export default defineLogicFunction({
+  universalIdentifier: 'b4d7e0f1-5c2a-4e8b-9a3d-6f1e2c7b8a90',
+  name: 'answer-request',
+  timeoutSeconds: 240,
+  handler: async (payload: AnswerRequestPayload) => {
+    // ...
+  },
+  onJobFailure: async ({
+    payload,
+    error,
+  }: LogicFunctionJobFailure<AnswerRequestPayload>) => {
+    await markRequestFailed(payload.requestId, error.message);
+  },
+});
+```
+
+`onJobFailure` receives the failure as its first argument and the same execution context as `handler` as its second:
+
+| Field | Description |
+|-------|-------------|
+| `payload` | The payload of the failed run. |
+| `error.type` | `TimeoutError` for a timeout, the error's `name` for a thrown error or a platform error, `UnrecoverableError` when the job stalled too many times. |
+| `error.message` | The error message. |
+| `job.id` | The queued job that failed. For a job you enqueued with `enqueueJobs`, the `jobId` it returned. |
+| `job.attemptsMade` | How many queue attempts the job made before failing for good. |
+
+It runs as its own queued job, in a fresh process, with the function's `timeoutSeconds`. Its job id is the failed job's id followed by `.on-failure`, so you can poll it with `getJobs`, and one failure never starts it twice.
+
+It runs after:
+
+- an error thrown by your code that is not retried, including a `RetryableLogicFunctionError` once `maxRetries` is reached;
+- a timeout;
+- a platform error once the queued job has no attempts left;
+- the worker process running the job crashing twice. The queue runs the job again after the first crash, and after the second it fails the job with `job stalled more than allowable limit`. `onJobFailure` then runs once a worker picks the job up, so after a full outage it runs when workers are back.
+
+It does not run:
+
+- for executions that do not go through the job queue, such as tool calls, workflow steps and the resolver of a server route (a target function the resolver queues is covered);
+- when `onJobFailure` itself fails, so it cannot loop.
+
+<Warning>
+The failed run may have completed some side effects before it stopped. Do not re-run the same work blindly from `onJobFailure`; record the failure or tell the user instead. Make it idempotent, because the queue retries it up to three times on a platform error. Delivery is best effort: if a worker dies in the instant between a job failing and `onJobFailure` being queued, it does not run.
 </Warning>
 
 ## Use it: page through a long sync
@@ -267,6 +370,6 @@ What makes this hold up:
 - **Make the terminating condition explicit.** Recurse only while a full chunk came back. A chain that stops on "no results" alone will keep going forever if the source ever returns a short page mid-way.
 - **Persist progress before enqueuing the next run,** so a failed link restarts from the last completed chunk instead of the beginning.
 - **Keep each chunk idempotent.** Reprocessing one chunk after a retry must not double-write — key writes on the record or external id you are processing.
-- **Prefer a chunked chain over one giant fan-out** when the work hits a rate-limited third party: a chain with `delayMs` paces itself, whereas thousands of jobs enqueued at once all become eligible immediately.
+- **Pace a fan-out that hits a rate-limited third party** with a [`limiter`](#pace-runs-with-a-limiter), or use a chunked chain with `delayMs`. Thousands of jobs enqueued without either all become eligible immediately.
 
 <PageBanner illustration="card-page-background-jobs" />

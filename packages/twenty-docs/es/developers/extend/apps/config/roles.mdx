@@ -240,8 +240,8 @@ Notas:
 * Los predicados pueden hacer referencia a campos que sean propiedad de tu aplicación o de los objetos estándar de Twenty.
 * La seguridad a nivel de fila se aplica a los espacios de trabajo en el **plan Organization o superior**. En otros
   planes, las reglas declaradas en un manifiesto de aplicación siguen sincronizándose, simplemente no se aplican.
-* La API de metadatos se comporta de manera diferente al manifiesto en este caso: sin el derecho,
-  `upsertRowLevelPermissionPredicates` se rechaza con
+* La API de metadatos se comporta de forma diferente que el manifiesto aquí: sin la autorización,
+  `upsertRowLevelPermissionRules` se rechaza con
   `ROW_LEVEL_PERMISSION_FEATURE_DISABLED` en lugar de sincronizarse. Por lo tanto, un espacio de trabajo en un plan que no
   incluye seguridad a nivel de fila no puede crear predicados fuera de un manifiesto de app, aunque
   el campo `rowLevelPermissionPredicates` está presente en el tipo `Role` al inspeccionar

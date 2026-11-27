@@ -9,6 +9,7 @@ import {
 } from 'twenty-shared/workflow';
 import { z } from 'zod';
 
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type CreatedCoreWorkflow } from 'src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service';
 import {
   WorkflowVersionStepException,
@@ -21,6 +22,7 @@ import {
   type WorkflowToolContext,
   type WorkflowToolDependencies,
 } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
+import { type WorkflowTool } from 'src/modules/workflow/workflow-tools/types/workflow-tool.type';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 const createCompleteWorkflowSchema = z.object({
@@ -77,9 +79,10 @@ type CreateCompleteWorkflowFailure = {
 export const createCreateCompleteWorkflowTool = (
   deps: CreateCompleteWorkflowToolDeps,
   context: WorkflowToolContext,
-) => ({
-  name: 'create_complete_workflow' as const,
-  description: `Create a complete workflow with trigger, steps, and connections in a single operation.
+) =>
+  ({
+    name: 'create_complete_workflow' as const,
+    description: `Create a complete workflow with trigger, steps, and connections in a single operation.
 
 CRITICAL SCHEMA REQUIREMENTS:
 - Trigger type MUST be one of: DATABASE_EVENT, MANUAL, CRON, WEBHOOK
@@ -117,73 +120,72 @@ This is the most efficient way for AI to create workflows as it handles all the 
 Returns the core workflow ID and core workflow version ID, which every other workflow tool expects.
 
 Call validate_workflow once when the workflow is complete, before activating.`,
-  inputSchema: createCompleteWorkflowSchema,
-  execute: async (parameters: {
-    name: string;
-    description?: string;
-    trigger: WorkflowTrigger;
-    steps: WorkflowAction[];
-    edges?: Array<{
-      source: string;
-      target: string;
-      sourceConnectionOptions?: z.infer<
-        typeof workflowStepConnectionOptionsSchema
-      >;
-    }>;
-    activate?: boolean;
-  }) => {
-    const creation = await createWorkflowOrBuildFailure({
-      deps,
-      workspaceId: context.workspaceId,
-      userWorkspaceId: context.userWorkspaceId,
-      name: parameters.name,
-      trigger: parameters.trigger,
-      steps: parameters.steps,
-      edges: parameters.edges ?? [],
-    });
+    inputSchema: createCompleteWorkflowSchema,
+    execute: async (parameters: {
+      name: string;
+      description?: string;
+      trigger: WorkflowTrigger;
+      steps: WorkflowAction[];
+      edges?: Array<{
+        source: string;
+        target: string;
+        sourceConnectionOptions?: z.infer<
+          typeof workflowStepConnectionOptionsSchema
+        >;
+      }>;
+      activate?: boolean;
+    }) => {
+      const creation = await createWorkflowOrBuildFailure({
+        deps,
+        workspaceId: context.workspaceId,
+        authContext: context.authContext,
+        name: parameters.name,
+        trigger: parameters.trigger,
+        steps: parameters.steps,
+        edges: parameters.edges ?? [],
+      });
 
-    if ('failure' in creation) {
-      return creation.failure;
-    }
-
-    const { coreWorkflow, coreWorkflowVersionId } = creation.createdWorkflow;
-
-    const result = {
-      coreWorkflowId: coreWorkflow.id,
-      coreWorkflowVersionId,
-      name: parameters.name,
-      stepIds: parameters.steps.map((step) => step.id),
-    };
-
-    if (parameters.activate) {
-      try {
-        await deps.coreWorkflowLifecycleService.activateCoreWorkflowVersion({
-          workspaceId: context.workspaceId,
-          userWorkspaceId: context.userWorkspaceId,
-          coreWorkflowVersionId,
-        });
-      } catch (error) {
-        return {
-          success: false,
-          message: `Workflow "${parameters.name}" was created as a draft but could not be activated: ${error.message}. Do not create it again: fix the draft (coreWorkflowVersionId ${coreWorkflowVersionId}), call validate_workflow, then activate_workflow_version.`,
-          error: error.message,
-          result,
-        };
+      if ('failure' in creation) {
+        return creation.failure;
       }
-    }
 
-    return {
-      success: true,
-      message: `Workflow "${parameters.name}" created successfully with ${parameters.steps.length} steps`,
-      result,
-    };
-  },
-});
+      const { coreWorkflow, coreWorkflowVersionId } = creation.createdWorkflow;
+
+      const result = {
+        coreWorkflowId: coreWorkflow.id,
+        coreWorkflowVersionId,
+        name: parameters.name,
+        stepIds: parameters.steps.map((step) => step.id),
+      };
+
+      if (parameters.activate) {
+        try {
+          await deps.coreWorkflowLifecycleService.activateCoreWorkflowVersion({
+            workspaceId: context.workspaceId,
+            coreWorkflowVersionId,
+          });
+        } catch (error) {
+          return {
+            success: false,
+            message: `Workflow "${parameters.name}" was created as a draft but could not be activated: ${error.message}. Do not create it again: fix the draft (coreWorkflowVersionId ${coreWorkflowVersionId}), call validate_workflow, then activate_workflow_version.`,
+            error: error.message,
+            result,
+          };
+        }
+      }
+
+      return {
+        success: true,
+        message: `Workflow "${parameters.name}" created successfully with ${parameters.steps.length} steps`,
+        result,
+      };
+    },
+  }) satisfies WorkflowTool;
 
 const createWorkflowOrBuildFailure = async ({
   deps,
   workspaceId,
-  userWorkspaceId,
+  authContext,
   name,
   trigger,
   steps,
@@ -191,7 +193,7 @@ const createWorkflowOrBuildFailure = async ({
 }: {
   deps: CreateCompleteWorkflowToolDeps;
   workspaceId: string;
-  userWorkspaceId: string | undefined;
+  authContext: WorkspaceAuthContext;
   name: string;
   trigger: WorkflowTrigger;
   steps: WorkflowAction[];
@@ -212,7 +214,7 @@ const createWorkflowOrBuildFailure = async ({
       createdWorkflow:
         await deps.coreWorkflowMutationService.createWorkflowWithContent({
           workspaceId,
-          userWorkspaceId,
+          authContext,
           name,
           trigger,
           steps,

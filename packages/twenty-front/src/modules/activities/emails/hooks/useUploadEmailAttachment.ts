@@ -33,19 +33,7 @@ export const useUploadEmailAttachment = () => {
         fileFolder: FileFolder.EmailAttachment,
       });
 
-      const attachment: EmailAttachment = {
-        id: uploadedFile.id,
-        name: file.name,
-      };
-
-      const fileName = file.name;
-
-      enqueueToast({
-        status: 'success',
-        children: t`File "${fileName}" uploaded successfully`,
-      });
-
-      return attachment;
+      return { id: uploadedFile.id, name: file.name };
     } catch (error) {
       logError(`Failed to upload email attachment "${file.name}": ${error}`);
 

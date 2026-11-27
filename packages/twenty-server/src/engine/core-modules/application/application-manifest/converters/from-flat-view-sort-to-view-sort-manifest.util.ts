@@ -15,4 +15,10 @@ export const fromFlatViewSortToViewSortManifest = ({
   ...(isDefined(flatViewSort.subFieldName)
     ? { subFieldName: flatViewSort.subFieldName }
     : {}),
+  ...(isDefined(flatViewSort.relationTargetFieldMetadataUniversalIdentifier)
+    ? {
+        relationTargetFieldMetadataUniversalIdentifier:
+          flatViewSort.relationTargetFieldMetadataUniversalIdentifier,
+      }
+    : {}),
 });

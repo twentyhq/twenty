@@ -50,6 +50,7 @@ describe('slackConnectionStatusHandler', () => {
     vi.mocked(getSlackClient).mockResolvedValue({
       success: false,
       error: 'Slack is not connected.',
+      isConnectionMissing: true,
     });
 
     await expect(slackConnectionStatusHandler()).resolves.toEqual({

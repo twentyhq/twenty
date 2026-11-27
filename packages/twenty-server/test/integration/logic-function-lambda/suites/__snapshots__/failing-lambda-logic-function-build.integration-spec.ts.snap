@@ -1,0 +1,40 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Building a logic function on the Lambda driver should fail when its source imports a file through a glob import 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "LOGIC_FUNCTION_COMPILATION_FAILED",
+    "userFriendlyMessage": "Function code failed to compile.",
+  },
+  "message": "Function code compilation failed: Build failed with 1 error:
+../../tmp/<workDirectory>/<logicFunctionId>/src/index.ts:2:9: ERROR: [plugin: single-source-file] Cannot import a file: a function is built from a single source file",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Building a logic function on the Lambda driver should fail when its source imports a file through a relative path 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "LOGIC_FUNCTION_COMPILATION_FAILED",
+    "userFriendlyMessage": "Function code failed to compile.",
+  },
+  "message": "Function code compilation failed: Build failed with 1 error:
+../../tmp/<workDirectory>/<logicFunctionId>/src/index.ts:1:24: ERROR: [plugin: single-source-file] Cannot import a file: a function is built from a single source file",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Building a logic function on the Lambda driver should fail when its source imports a file through an absolute path 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "LOGIC_FUNCTION_COMPILATION_FAILED",
+    "userFriendlyMessage": "Function code failed to compile.",
+  },
+  "message": "Function code compilation failed: Build failed with 1 error:
+../../tmp/<workDirectory>/<logicFunctionId>/src/index.ts:1:24: ERROR: [plugin: single-source-file] Cannot import a file: a function is built from a single source file",
+  "name": "UserInputError",
+}
+`;

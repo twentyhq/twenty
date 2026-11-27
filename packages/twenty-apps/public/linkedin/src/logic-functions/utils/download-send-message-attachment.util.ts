@@ -1,6 +1,6 @@
+import { type SendAppMessageAttachment } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
-import { type SendAppMessageAttachment } from 'src/types/send-app-message-attachment.type';
 import { type UnipileOutgoingAttachment } from 'src/unipile/types/unipile-outgoing-attachment.type';
 import { readStreamWithinSizeLimitOrThrow } from 'src/utils/read-stream-within-size-limit.util';
 
@@ -34,9 +34,5 @@ export const downloadSendMessageAttachmentOrThrow = async ({
     maxSizeBytes,
   });
 
-  return {
-    content: content.toString('base64'),
-    content_type: contentType,
-    filename,
-  };
+  return { content, contentType, filename };
 };

@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
+import { ApplicationBillingPriceModule } from 'src/engine/core-modules/application/application-billing-price/application-billing-price.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { ApplicationPackageModule } from 'src/engine/core-modules/application/application-package/application-package.module';
 import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.module';
@@ -14,12 +15,14 @@ import { MarketplacePublicResolver } from 'src/engine/core-modules/application/a
 import { MarketplaceQueryService } from 'src/engine/core-modules/application/application-marketplace/marketplace-query.service';
 import { MarketplaceResolver } from 'src/engine/core-modules/application/application-marketplace/marketplace.resolver';
 import { MarketplaceService } from 'src/engine/core-modules/application/application-marketplace/marketplace.service';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { DomainServerConfigModule } from 'src/engine/core-modules/domain/domain-server-config/domain-server-config.module';
 import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { MarketplaceCatalogSyncCommand } from 'src/engine/core-modules/application/application-marketplace/crons/commands/marketplace-catalog-sync.command';
 
 @Module({
   imports: [
+    ApplicationBillingPriceModule,
     ApplicationModule,
     ApplicationPackageModule,
     ApplicationRegistrationLookupModule,
@@ -27,6 +30,7 @@ import { MarketplaceCatalogSyncCommand } from 'src/engine/core-modules/applicati
     ApplicationRegistrationVersionModule,
     CoreEntityCacheModule,
     DomainServerConfigModule,
+    FeatureFlagModule,
     PermissionsModule,
   ],
   providers: [

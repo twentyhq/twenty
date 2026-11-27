@@ -1,7 +1,7 @@
 import { type ReactNode } from 'react';
 
 import { InboxSelectionToContextStoreEffect } from '@/inbox/components/InboxSelectionToContextStoreEffect';
-import { AiChatThreadCommandMenuItems } from '@/ai/components/AiChatThreadCommandMenuItems';
+import { AiChatThreadCommandMenuItems } from '@/ai-chat/threads/components/AiChatThreadCommandMenuItems';
 import { INBOX_INSTANCE_ID } from '@/inbox/constants/InboxInstanceId';
 import { CommandMenuDropdownAtCursor } from '@/command-menu-item/components/CommandMenuDropdownAtCursor';
 import { CommandMenuContextProvider } from '@/command-menu-item/contexts/CommandMenuContextProvider';

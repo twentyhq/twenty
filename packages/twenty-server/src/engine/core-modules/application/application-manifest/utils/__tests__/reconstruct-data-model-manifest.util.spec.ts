@@ -143,6 +143,7 @@ const statusOf = (
 describe('reconstructDataModelManifest', () => {
   it('should inline the object fields, keep the label identifier and drop engine-derived fields', () => {
     const { objects, fields, coverage } = reconstructDataModelManifest({
+      getFormulaFields: () => [],
       applicationAllFlatEntityMaps: buildMaps({
         objects: [petObject],
         fields: [nameField, idField, ageField],
@@ -162,6 +163,7 @@ describe('reconstructDataModelManifest', () => {
 
   it('should export a field of a foreign object as a standalone field', () => {
     const { objects, fields } = reconstructDataModelManifest({
+      getFormulaFields: () => [],
       applicationAllFlatEntityMaps: buildMaps({ fields: [taglineField] }),
     });
 
@@ -173,6 +175,7 @@ describe('reconstructDataModelManifest', () => {
 
   it('should mark an object without label identifier and its fields unsupported', () => {
     const { objects, fields, coverage } = reconstructDataModelManifest({
+      getFormulaFields: () => [],
       applicationAllFlatEntityMaps: buildMaps({
         objects: [
           getFlatObjectMetadataMock({
@@ -216,6 +219,7 @@ describe('reconstructDataModelManifest', () => {
     });
 
     const { indexes, coverage } = reconstructDataModelManifest({
+      getFormulaFields: () => [],
       applicationAllFlatEntityMaps: maps,
     });
 
@@ -235,6 +239,7 @@ describe('reconstructDataModelManifest', () => {
   });
   it('should tell an index on an unsupported object apart from an index outside the application', () => {
     const { coverage } = reconstructDataModelManifest({
+      getFormulaFields: () => [],
       applicationAllFlatEntityMaps: buildMaps({
         objects: [
           getFlatObjectMetadataMock({
@@ -274,6 +279,7 @@ describe('reconstructDataModelManifest', () => {
     });
 
     const { objects, coverage } = reconstructDataModelManifest({
+      getFormulaFields: () => [],
       applicationAllFlatEntityMaps: buildMaps({
         objects: [petObject],
         fields: [nameField, ageField, brokenRelationField],
@@ -289,6 +295,7 @@ describe('reconstructDataModelManifest', () => {
 
   it('should disclose deactivation and workspace overrides on exported rows', () => {
     const { coverage } = reconstructDataModelManifest({
+      getFormulaFields: () => [],
       applicationAllFlatEntityMaps: buildMaps({
         objects: [getFlatObjectMetadataMock({ ...petObject, isActive: false })],
         fields: [

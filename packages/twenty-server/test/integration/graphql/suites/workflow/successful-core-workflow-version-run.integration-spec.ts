@@ -4,7 +4,7 @@ import { deleteCoreWorkflows } from 'test/integration/graphql/suites/workflow/ut
 import { createManualCoreWorkflowDraft } from 'test/integration/graphql/suites/workflow/utils/create-manual-core-workflow-draft.util';
 import { runCoreWorkflowVersion } from 'test/integration/graphql/suites/workflow/utils/run-core-workflow-version.util';
 import { runWorkflowVersionThroughMcp } from 'test/integration/graphql/suites/workflow/utils/run-workflow-version-through-mcp.util';
-import { updateCoreWorkflowVisibility } from 'test/integration/graphql/suites/workflow/utils/update-core-workflow-visibility.util';
+import { updateCoreWorkflowIsPrivate } from 'test/integration/graphql/suites/workflow/utils/update-core-workflow-is-private.util';
 import { destroyWorkflowRun } from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
 import { loginAsTwentyCli } from 'test/integration/metadata/suites/application/utils/login-as-twenty-cli.util';
 import { uninstallApplication } from 'test/integration/metadata/suites/application/utils/uninstall-application.util';
@@ -13,7 +13,7 @@ import {
   type EachTestingContext,
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
-import { FieldActorSource, WorkflowVisibility } from 'twenty-shared/types';
+import { FieldActorSource } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -127,10 +127,10 @@ describe('Core workflow version runs should succeed', () => {
       name: `${RUN_PREFIX} private workflow`,
     });
 
-    await updateCoreWorkflowVisibility({
+    await updateCoreWorkflowIsPrivate({
       input: {
         coreWorkflowId: privateWorkflow.coreWorkflowId,
-        visibility: WorkflowVisibility.PRIVATE,
+        isPrivate: true,
       },
       expectToFail: false,
     });

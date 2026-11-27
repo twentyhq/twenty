@@ -29,7 +29,7 @@ export class FieldUniqueBackingIndexOnCreateSideEffectHandlerService extends Met
     relatedFlatEntityMaps,
   }: BuildSideEffectsArgs<'fieldMetadata'>): MetadataSideEffectResult {
     if (
-      flatFieldMetadata.isUnique !== true ||
+      !flatFieldMetadata.isUnique ||
       isMorphOrRelationUniversalFlatFieldMetadata(flatFieldMetadata)
     ) {
       return { status: 'noop' };

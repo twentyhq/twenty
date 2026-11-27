@@ -22,7 +22,7 @@ export const SettingsEnterpriseFeatureGateCard = ({
   const navigateSettings = useNavigateSettings();
 
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
-  const canAccessAdminPanel = currentUser?.canAccessFullAdminPanel === true;
+  const canAccessAdminPanel = currentUser?.canAccessFullAdminPanel ?? false;
   const canDisplayUpgradeButton = isBillingEnabled || canAccessAdminPanel;
   const upgradeSettingsPath = isBillingEnabled
     ? SettingsPath.BillingPlans

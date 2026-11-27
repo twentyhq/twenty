@@ -33,11 +33,17 @@ export const APP_DEV_COMMAND_DEFINITION: TargetCommandDefinition = {
       flags: '--yes',
       description: 'Allow object and field deletions without asking',
     },
+    {
+      flags: '--verbose',
+      description:
+        'Show watched and excluded external paths when scope changes',
+    },
   ],
   examples: [
     'twenty app dev --remote dev',
     'twenty app dev --create --no-prune',
     'twenty app dev --format ndjson --no-prune',
+    'twenty app dev --verbose',
   ],
   outputModes: ['human', 'ndjson'],
   writes: true,

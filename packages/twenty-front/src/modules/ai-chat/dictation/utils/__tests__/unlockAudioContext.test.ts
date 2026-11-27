@@ -1,0 +1,54 @@
+import { unlockAudioContext } from '@/ai-chat/dictation/utils/unlockAudioContext';
+
+type AudioContextTestWindow = {
+  AudioContext?: typeof AudioContext;
+};
+
+const stubAudioContext = ({
+  doesResumeReject = false,
+}: { doesResumeReject?: boolean } = {}) => {
+  const close = jest.fn(() => Promise.resolve());
+  const resume = jest.fn(() =>
+    doesResumeReject
+      ? Promise.reject(new DOMException('not allowed', 'InvalidStateError'))
+      : Promise.resolve(),
+  );
+
+  Object.defineProperty(window, 'AudioContext', {
+    value: function AudioContext(this: Record<string, unknown>) {
+      this.state = 'suspended';
+      this.resume = resume;
+      this.close = close;
+    },
+    configurable: true,
+  });
+
+  return { close, resume };
+};
+
+describe('unlockAudioContext', () => {
+  afterEach(() => {
+    delete (window as AudioContextTestWindow).AudioContext;
+  });
+
+  it('releases the context it opened', async () => {
+    const { close, resume } = stubAudioContext();
+
+    await unlockAudioContext();
+
+    expect(resume).toHaveBeenCalledTimes(1);
+    expect(close).toHaveBeenCalledTimes(1);
+  });
+
+  it('releases the context even when resuming it fails', async () => {
+    const { close } = stubAudioContext({ doesResumeReject: true });
+
+    await expect(unlockAudioContext()).resolves.toBeUndefined();
+
+    expect(close).toHaveBeenCalledTimes(1);
+  });
+
+  it('does nothing on a browser with no audio context', async () => {
+    await expect(unlockAudioContext()).resolves.toBeUndefined();
+  });
+});

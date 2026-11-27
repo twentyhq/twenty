@@ -167,8 +167,9 @@ export class CommonSelectFieldsBuilder {
 
     return {
       selectedFields: {
-        ...selectableFields,
-        ...relationsSelectFields,
+        fields: selectableFields,
+        aggregates: [],
+        relations: relationsSelectFields,
       },
     };
   }

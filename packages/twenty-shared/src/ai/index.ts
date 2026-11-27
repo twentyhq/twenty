@@ -9,6 +9,8 @@
 
 export { AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR } from './constants/agent-chat-assistant-mention-object-name-singular.const';
 export { AGENT_CHAT_ASSISTANT_NAME } from './constants/agent-chat-assistant-name.const';
+export type { AgentChatInboxNotificationLevel } from './constants/agent-chat-inbox-notification-level.const';
+export { AGENT_CHAT_INBOX_NOTIFICATION_LEVEL } from './constants/agent-chat-inbox-notification-level.const';
 export type { AgentChatThreadPresetFilter } from './constants/agent-chat-thread-preset-filter.const';
 export { AGENT_CHAT_THREAD_PRESET_FILTER } from './constants/agent-chat-thread-preset-filter.const';
 export { AGENT_MESSAGE_REACTION_EMOJI_MAX_LENGTH } from './constants/agent-message-reaction-emoji-max-length.const';
@@ -34,7 +36,12 @@ export type { AutoSelectModelId } from './constants/auto-select-model-id-by-tier
 export { AUTO_SELECT_MODEL_ID_BY_TIER } from './constants/auto-select-model-id-by-tier.const';
 export { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from './constants/auto-select-workspace-default-model-id.const';
 export { CHAT_REFERENCE_BODY_PATTERN } from './constants/chat-reference-body-pattern.const';
+export { CHAT_REFERENCE_IDENTITY_SHAPE_BY_KIND } from './constants/chat-reference-identity-shape-by-kind.const';
+export { CHAT_REFERENCE_MALFORMED_REGEX } from './constants/chat-reference-malformed-regex.const';
+export { CHAT_REFERENCE_METADATA_NAME_REGEX } from './constants/chat-reference-metadata-name-regex.const';
+export { CHAT_REFERENCE_REGEX } from './constants/chat-reference-regex.const';
 export { CHAT_REFERENCE_UUID_REGEX } from './constants/chat-reference-uuid-regex.const';
+export { CODE_INTERPRETER_MAX_INPUT_FILE_SIZE_BYTES } from './constants/code-interpreter-max-input-file-size-bytes.const';
 export { COMPLETE_WORKSPACE_SETUP_TOOL_NAME } from './constants/complete-workspace-setup-tool-name.const';
 export { DATA_RESIDENCIES_BY_REGION } from './constants/data-residencies-by-region.const';
 export type { DataResidencyRegion } from './constants/data-residency-regions.const';
@@ -46,7 +53,9 @@ export { DATABASE_CRUD_OPERATIONS } from './constants/database-crud-operation.co
 export { DEFAULT_AI_AGENT_MODEL_TIER } from './constants/default-ai-agent-model-tier.const';
 export { DEFAULT_AI_CHAT_ASSISTANT_PROFILE } from './constants/default-ai-chat-assistant-profile.const';
 export { DEFAULT_AI_CHAT_MODEL_TIER } from './constants/default-ai-chat-model-tier.const';
+export { INBOX_OBJECT_NAMES_BY_LEGACY_NAME } from './constants/inbox-object-names-by-legacy-name.const';
 export { JEV_MODEL_ID } from './constants/jev-model-id.const';
+export { LEGACY_INBOX_OBJECT_NAMES_BY_LEGACY_NAME } from './constants/legacy-inbox-object-names-by-legacy-name.const';
 export { NO_REPLY_TOOL_NAME } from './constants/no-reply-tool-name.const';
 export { PAUSING_TOOL_NAMES } from './constants/pausing-tool-names.const';
 export { PREVIEW_FRONT_COMPONENT_TOOL_NAME } from './constants/preview-front-component-tool-name.const';
@@ -97,6 +106,10 @@ export type { AskQuestionsToolResult } from './types/AskQuestionsToolResult';
 export type { AskQuestionToolInput } from './types/AskQuestionToolInput';
 export type { AskQuestionToolResult } from './types/AskQuestionToolResult';
 export type { AskQuestionToolStatus } from './types/AskQuestionToolStatus';
+export type { ChannelInboxViewPresetFilter } from './types/ChannelInboxViewPresetFilter';
+export type { ChatReferenceIdentity } from './types/ChatReferenceIdentity';
+export type { ChatReferenceKind } from './types/ChatReferenceKind';
+export type { ChatReferenceMatch } from './types/ChatReferenceMatch';
 export type {
   CodeExecutionFile,
   ExtendedFileUIPart,
@@ -111,7 +124,10 @@ export type {
   ExtendedUIMessage,
 } from './types/ExtendedUIMessage';
 export type { ExtendedUIMessagePart } from './types/ExtendedUIMessagePart';
+export type { InboxObjectNamesByLegacyName } from './types/InboxObjectNamesByLegacyName';
+export type { LegacyInboxObjectName } from './types/LegacyInboxObjectName';
 export type { ModelConfiguration } from './types/ModelConfiguration';
+export type { PersonalInboxViewPresetFilter } from './types/PersonalInboxViewPresetFilter';
 export type { ProposedToolCall } from './types/ProposedToolCall';
 export type { ProposedToolCallTemplate } from './types/ProposedToolCallTemplate';
 export type { ProposeToolCallToolInput } from './types/ProposeToolCallToolInput';
@@ -136,12 +152,19 @@ export {
 export { applyAgentChatInboxAction } from './utils/apply-agent-chat-inbox-action.util';
 export { buildFallbackProposedToolCall } from './utils/build-fallback-proposed-tool-call.util';
 export { computeAgentChatThreadPresetFilterGqlFilter } from './utils/compute-agent-chat-thread-preset-filter-gql-filter.util';
+export { computeRecordGqlOperationFiltersForThreadsArchivedByWorkspaceMember } from './utils/compute-record-gql-operation-filters-for-threads-archived-by-workspace-member.util';
+export { escapeMarkdownForChatReference } from './utils/escape-markdown-for-chat-reference.util';
 export { extractRecordReferenceIds } from './utils/extract-record-reference-ids.util';
 export { formatRecordReference } from './utils/format-record-reference.util';
 export { formatSkillReference } from './utils/format-skill-reference.util';
+export { getAgentChatDirectMessagePeerWorkspaceMemberIds } from './utils/get-agent-chat-direct-message-peer-workspace-member-ids.util';
 export { getAgentChatMentionsResolvedAt } from './utils/get-agent-chat-mentions-resolved-at.util';
+export { getAgentChatPreviewPlainText } from './utils/get-agent-chat-preview-plain-text.util';
+export { getAgentChatThreadDisplayLabel } from './utils/get-agent-chat-thread-display-label.util';
 export { getAgentChatThreadInboxStatus } from './utils/get-agent-chat-thread-inbox-status.util';
+export { getAgentChatWebPushNotificationTag } from './utils/get-agent-chat-web-push-notification-tag.util';
 export { getAiModelTierFromModelId } from './utils/get-ai-model-tier-from-model-id.util';
+export { getChatReferenceSegments } from './utils/get-chat-reference-segments.util';
 export { hasAiRunScopeRepeatedEntries } from './utils/has-ai-run-scope-repeated-entries.util';
 export { inferAiSdkPackage } from './utils/infer-ai-sdk-package.util';
 export { isAgentChatAssistantReference } from './utils/is-agent-chat-assistant-reference.util';
@@ -164,7 +187,9 @@ export { isFrontComponentProposedToolCall } from './utils/is-front-component-pro
 export { isNoReplyToolPart } from './utils/is-no-reply-tool-part.util';
 export { isPausingToolPart } from './utils/is-pausing-tool-part.util';
 export { isSilentAgentChatMessageParts } from './utils/is-silent-agent-chat-message-parts.util';
+export { isSnakeCaseToolName } from './utils/is-snake-case-tool-name.util';
 export { isSucceededCompleteWorkspaceSetupToolPart } from './utils/is-succeeded-complete-workspace-setup-tool-part.util';
+export { isToolsOnlyAgentChatMessageParts } from './utils/is-tools-only-agent-chat-message-parts.util';
 export { isValidAgentMessageReactionEmoji } from './utils/is-valid-agent-message-reaction-emoji.util';
 export { isValidAgentResponseSchemaPropertyKey } from './utils/is-valid-agent-response-schema-property-key.util';
 export { isValidChatReferenceLabel } from './utils/is-valid-chat-reference-label.util';
@@ -173,3 +198,10 @@ export { mapAgentMessagePartToUIMessagePart } from './utils/map-agent-message-pa
 export { mapAgentMessagesToUIMessages } from './utils/map-agent-messages-to-ui-messages.util';
 export { parseAgentChatAssistantReferenceBody } from './utils/parse-agent-chat-assistant-reference-body.util';
 export { parseAiModelVariantId } from './utils/parse-ai-model-variant-id.util';
+export { parseChatReferenceBody } from './utils/parse-chat-reference-body.util';
+export { parseChatReferences } from './utils/parse-chat-references.util';
+export { replaceMalformedChatReferencesWithDisplayName } from './utils/replace-malformed-chat-references-with-display-name.util';
+export { turnAgentChatThreadPresetFilterIntoThreadFieldsRecordGqlOperationFilter } from './utils/turn-agent-chat-thread-preset-filter-into-thread-fields-record-gql-operation-filter.util';
+export { turnChannelInboxViewPresetFilterIntoRecordGqlOperationFilter } from './utils/turn-channel-inbox-view-preset-filter-into-record-gql-operation-filter.util';
+export { turnPersonalInboxViewPresetFilterIntoRecordGqlOperationFilter } from './utils/turn-personal-inbox-view-preset-filter-into-record-gql-operation-filter.util';
+export { turnViewPresetFilterIntoRecordGqlOperationFilter } from './utils/turn-view-preset-filter-into-record-gql-operation-filter.util';

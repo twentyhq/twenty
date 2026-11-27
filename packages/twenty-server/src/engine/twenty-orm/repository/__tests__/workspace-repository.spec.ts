@@ -88,17 +88,25 @@ const DISABLED_FEATURE_FLAGS_MAP = Object.values(FeatureFlagKey).reduce<
 const API_KEY_ID = 'api-key-id';
 const ROLE_ID = 'role-id';
 
+const getStatementKind = (statement: CompiledStatement) =>
+  statement.text.split(' ')[0];
+
 const buildRepository = ({
   shouldBypassPermissionChecks = true,
   shouldSkipEventEmission,
+  statementResultsByKind = {},
+  computedColumnShapes,
 }: {
   shouldBypassPermissionChecks?: boolean;
   shouldSkipEventEmission: boolean;
+  statementResultsByKind?: Record<string, Record<string, unknown>[][]>;
+  computedColumnShapes?: WorkspaceTableShape['computedColumnShapes'];
 }) => {
   const executedStatements: CompiledStatement[] = [];
+  const emitDatabaseBatchEvent = jest.fn();
 
   const repository = new WorkspaceRepository({
-    tableShape,
+    tableShape: { ...tableShape, computedColumnShapes },
     flatObjectMetadata,
     internalContext: {
       workspaceId: 'workspace-id',
@@ -132,7 +140,7 @@ const buildRepository = ({
         releaseRecordStock: jest.fn(),
       },
       objectIdByNameSingular: { delivery: OBJECT_METADATA_ID },
-      eventEmitterService: { emitDatabaseBatchEvent: jest.fn() },
+      eventEmitterService: { emitDatabaseBatchEvent },
       coreDataSource: new DataSource({ type: 'postgres' }),
       recordReadRestrictions: NO_RECORD_READ_RESTRICTIONS,
     },
@@ -145,7 +153,9 @@ const buildRepository = ({
       execute: async (statement: CompiledStatement) => {
         executedStatements.push(statement);
 
-        return [];
+        return (
+          statementResultsByKind[getStatementKind(statement)]?.shift() ?? []
+        );
       },
     },
     permissionsPrincipals: {
@@ -153,7 +163,7 @@ const buildRepository = ({
       mainPrincipal: {
         type: 'apiKey',
         apiKeyId: 'api-key-id',
-        roleId: ROLE_ID,
+        roleIds: [ROLE_ID],
       },
       applicationPrincipal: { type: 'customApplication' },
     },
@@ -167,9 +177,9 @@ const buildRepository = ({
   });
 
   const getExecutedStatementKinds = () =>
-    executedStatements.map((statement) => statement.text.split(' ')[0]);
+    executedStatements.map(getStatementKind);
 
-  return { repository, getExecutedStatementKinds };
+  return { repository, getExecutedStatementKinds, emitDatabaseBatchEvent };
 };
 
 describe('WorkspaceRepository mutations', () => {
@@ -227,6 +237,126 @@ describe('WorkspaceRepository mutations', () => {
         'UPDATE',
         'SELECT',
       ]);
+    });
+
+    it('should emit no event when a filtered update writes no rows', async () => {
+      const { repository, emitDatabaseBatchEvent } = buildRepository({
+        shouldSkipEventEmission: false,
+        statementResultsByKind: {
+          SELECT: [
+            [{ delivery_id: 'delivery-id', delivery_state: 'PENDING' }],
+            [],
+          ],
+          UPDATE: [[]],
+        },
+      });
+
+      const result = await repository.update(
+        { state: 'PENDING' },
+        { state: 'SENT' },
+      );
+
+      expect(result.affected).toBe(0);
+      expect(emitDatabaseBatchEvent).not.toHaveBeenCalled();
+    });
+
+    it('should recover an event only for the row returned by a filtered update', async () => {
+      const { repository, emitDatabaseBatchEvent } = buildRepository({
+        shouldSkipEventEmission: false,
+        statementResultsByKind: {
+          SELECT: [
+            [
+              { delivery_id: 'written-id', delivery_state: 'PENDING' },
+              { delivery_id: 'skipped-id', delivery_state: 'PENDING' },
+            ],
+            [],
+          ],
+          UPDATE: [[{ delivery_id: 'written-id' }]],
+        },
+      });
+
+      await repository.update({ state: 'PENDING' }, { state: 'SENT' });
+
+      expect(emitDatabaseBatchEvent).toHaveBeenCalledWith(
+        expect.objectContaining({
+          events: [
+            expect.objectContaining({
+              recordId: 'written-id',
+              properties: expect.objectContaining({
+                before: expect.objectContaining({ state: 'PENDING' }),
+                after: expect.objectContaining({ state: 'SENT' }),
+              }),
+            }),
+          ],
+        }),
+      );
+    });
+
+    it('should emit a destroy event only for the row returned by a filtered delete', async () => {
+      const { repository, emitDatabaseBatchEvent } = buildRepository({
+        shouldSkipEventEmission: false,
+        statementResultsByKind: {
+          SELECT: [
+            [
+              { delivery_id: 'written-id', delivery_state: 'PENDING' },
+              { delivery_id: 'skipped-id', delivery_state: 'PENDING' },
+            ],
+          ],
+          DELETE: [[{ delivery_id: 'written-id' }]],
+        },
+      });
+
+      await repository.delete({ state: 'PENDING' });
+
+      expect(emitDatabaseBatchEvent).toHaveBeenCalledWith(
+        expect.objectContaining({
+          events: [expect.objectContaining({ recordId: 'written-id' })],
+        }),
+      );
+    });
+
+    it('should leave computed fields out of event records', async () => {
+      const { repository, emitDatabaseBatchEvent } = buildRepository({
+        shouldSkipEventEmission: false,
+        computedColumnShapes: [
+          { columnName: 'state', sqlType: 'text', dependencies: [] },
+        ],
+        statementResultsByKind: {
+          SELECT: [[{ delivery_id: 'written-id', delivery_state: 'STALE' }]],
+          DELETE: [[{ delivery_id: 'written-id' }]],
+        },
+      });
+
+      await repository.delete({ id: 'written-id' });
+
+      const [[{ events }]] = emitDatabaseBatchEvent.mock.calls;
+
+      expect(events[0].properties.before).toEqual(
+        expect.not.objectContaining({ state: expect.anything() }),
+      );
+      expect(events[0].properties.before).toHaveProperty('id', 'written-id');
+    });
+
+    it('should emit no event when a soft delete writes no rows', async () => {
+      const { repository, emitDatabaseBatchEvent } = buildRepository({
+        shouldSkipEventEmission: false,
+        statementResultsByKind: {
+          SELECT: [
+            [{ delivery_id: 'delivery-id', delivery_deletedAt: null }],
+            [
+              {
+                delivery_id: 'delivery-id',
+                delivery_deletedAt: '2026-11-20T00:00:00.000Z',
+              },
+            ],
+          ],
+          UPDATE: [[]],
+        },
+      });
+
+      await repository.softDelete({ id: 'delivery-id' });
+
+      expect(emitDatabaseBatchEvent).not.toHaveBeenCalled();
     });
 
     it('should read the before-image before a delete', async () => {

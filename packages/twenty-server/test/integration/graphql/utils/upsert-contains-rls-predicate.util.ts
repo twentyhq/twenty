@@ -1,13 +1,13 @@
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { revokeObjectRecordsPermissions } from 'test/integration/metadata/suites/object-permission/utils/revoke-object-records-permissions.util';
-import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
+import { upsertRowLevelPermissionRules } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-rules.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { RowLevelPermissionPredicateOperand } from 'twenty-shared/types';
 
-import { type UpsertRowLevelPermissionPredicatesInput } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/inputs/upsert-row-level-permission-predicates.input';
+import { type RowLevelPermissionRuleInput } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/inputs/upsert-row-level-permission-rules.input';
 
 export type RowLevelPermissionRuleGrants = Pick<
-  UpsertRowLevelPermissionPredicatesInput,
+  RowLevelPermissionRuleInput,
   | 'canCreateRecords'
   | 'canReadRecords'
   | 'canUpdateRecords'
@@ -60,20 +60,23 @@ export const upsertContainsRlsPredicate = async ({
     objectMetadataId: objectMetadata.id,
   });
 
-  await upsertRowLevelPermissionPredicates({
+  await upsertRowLevelPermissionRules({
     expectToFail: false,
     input: {
       roleId,
       objectMetadataId: objectMetadata.id,
-      predicates: [
+      rules: [
         {
-          fieldMetadataId: fieldMetadata.id,
-          operand: RowLevelPermissionPredicateOperand.CONTAINS,
-          value,
+          ...ruleGrants,
+          predicates: [
+            {
+              fieldMetadataId: fieldMetadata.id,
+              operand: RowLevelPermissionPredicateOperand.CONTAINS,
+              value,
+            },
+          ],
         },
       ],
-      predicateGroups: [],
-      ...ruleGrants,
     },
   });
 };

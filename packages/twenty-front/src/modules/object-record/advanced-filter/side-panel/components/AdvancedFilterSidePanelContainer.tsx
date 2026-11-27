@@ -33,6 +33,7 @@ export type AdvancedFilterSidePanelContainerProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
   VariablePicker?: VariablePickerComponent;
   isWorkflowFindRecords?: boolean;
+  shouldHideRelationFields?: boolean;
 };
 
 export const AdvancedFilterSidePanelContainer = ({
@@ -41,6 +42,7 @@ export const AdvancedFilterSidePanelContainer = ({
   objectMetadataItem,
   VariablePicker,
   isWorkflowFindRecords,
+  shouldHideRelationFields,
 }: AdvancedFilterSidePanelContainerProps) => {
   const rootRecordFilterGroup = useAtomComponentSelectorValue(
     rootLevelRecordFilterGroupComponentSelector,
@@ -59,6 +61,7 @@ export const AdvancedFilterSidePanelContainer = ({
         readonly,
         VariablePicker,
         objectMetadataItem,
+        shouldHideRelationFields,
       }}
     >
       {isDefined(rootRecordFilterGroup) ? (

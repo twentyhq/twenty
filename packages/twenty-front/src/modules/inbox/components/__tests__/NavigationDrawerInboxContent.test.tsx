@@ -9,16 +9,15 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { NavigationDrawerInboxContent } from '@/inbox/components/NavigationDrawerInboxContent';
 import { setInboxThreadList } from '@/inbox/testing/setInboxThreadList';
 import { type InboxThreadListItemData } from '@/inbox/types/InboxThreadListItemData';
-import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
-import { type DirectMessageSidebarItem } from '@/inbox/types/DirectMessageSidebarItem';
+import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
+import { type InboxDirectMessageSidebarItem } from '@/inbox/types/InboxDirectMessageSidebarItem';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
-import { type AiChatChannel } from '@/ai/types/AiChatChannel';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { type AiChatChannel } from '@/ai-chat/threads/types/AiChatChannel';
 import { messages } from '~/locales/generated/en';
 import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
 
@@ -44,7 +43,6 @@ const buildDirectMessageThread = (id: string): AiChatThreadRecord => ({
 });
 
 const mockFavoriteThreadsAtom = atom<InboxThreadListItemData[]>([]);
-const mockFavoriteChannelsAtom = atom<AiChatChannel[]>([]);
 let mockThreads: AiChatThreadRecord[] = [];
 
 jest.mock('@/inbox/states/selectors/inboxFavoriteThreadsSelector', () => ({
@@ -53,16 +51,6 @@ jest.mock('@/inbox/states/selectors/inboxFavoriteThreadsSelector', () => ({
     key: 'inboxFavoriteThreadsSelector',
     get atom() {
       return mockFavoriteThreadsAtom;
-    },
-  },
-}));
-
-jest.mock('@/inbox/states/selectors/inboxFavoriteChannelsSelector', () => ({
-  inboxFavoriteChannelsSelector: {
-    type: 'Selector',
-    key: 'inboxFavoriteChannelsSelector',
-    get atom() {
-      return mockFavoriteChannelsAtom;
     },
   },
 }));
@@ -79,16 +67,16 @@ jest.mock('@/inbox/components/NavigationDrawerInboxChannelItem', () => ({
   }) => <div>{channel.name}</div>,
 }));
 
-jest.mock('@/inbox/components/NavigationDrawerDirectMessageItem', () => ({
-  NavigationDrawerDirectMessageItem: ({
+jest.mock('@/inbox/components/NavigationDrawerInboxDirectMessageItem', () => ({
+  NavigationDrawerInboxDirectMessageItem: ({
     directMessage,
   }: {
-    directMessage: DirectMessageSidebarItem;
+    directMessage: InboxDirectMessageSidebarItem;
   }) => <div>{directMessage.peer?.name}</div>,
 }));
 
-jest.mock('@/inbox/components/OpenDirectMessageButton', () => ({
-  OpenDirectMessageButton: () => null,
+jest.mock('@/inbox/components/InboxOpenDirectMessageButton', () => ({
+  InboxOpenDirectMessageButton: () => null,
 }));
 
 jest.mock('@/inbox/components/NavigationDrawerInboxThreadItem', () => ({
@@ -116,7 +104,11 @@ jest.mock('@/inbox/hooks/useInboxThreadList', () => ({
   useInboxThreadList: () => ({ threads: mockThreads, isLoading: false }),
 }));
 
-jest.mock('@/ai/hooks/useAiChatThreadClick', () => ({
+jest.mock('@/ai-chat/hooks/useAiChatPageThreadId', () => ({
+  useAiChatPageThreadId: () => null,
+}));
+
+jest.mock('@/ai-chat/threads/hooks/useAiChatThreadClick', () => ({
   useAiChatThreadClick: () => ({ handleThreadClick: jest.fn() }),
 }));
 
@@ -131,24 +123,14 @@ jest.mock('@/inbox/components/NavigationDrawerInboxTriageSection', () => ({
   NavigationDrawerInboxTriageSection: () => <nav aria-label="Triage" />,
 }));
 
-let mockIsInboxEnabled = true;
 let mockIsDirectMessageEnabled = true;
-const mockDirectMessageFeatureFlagKey =
-  FeatureFlagKey.IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED;
 
 jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
-  useIsFeatureEnabled: (featureFlagKey: string) =>
-    featureFlagKey === mockDirectMessageFeatureFlagKey
-      ? mockIsDirectMessageEnabled
-      : mockIsInboxEnabled,
+  useIsFeatureEnabled: () => mockIsDirectMessageEnabled,
 }));
 
 jest.mock('@/inbox/components/NavigationDrawerInboxChannelsSection', () => ({
   NavigationDrawerInboxChannelsSection: () => null,
-}));
-
-jest.mock('@/inbox/components/InboxThreadListFetchMoreTrigger', () => ({
-  InboxThreadListFetchMoreTrigger: () => <div>Load more chats</div>,
 }));
 
 jest.mock('@/inbox/components/NavigationDrawerInboxThreadSection', () => ({
@@ -176,10 +158,9 @@ const renderContent = () =>
     </JotaiProvider>,
   );
 
-describe('NavigationDrawerAiChatContent', () => {
+describe('NavigationDrawerInboxContent', () => {
   beforeEach(() => {
     resetJotaiStore();
-    mockIsInboxEnabled = true;
     mockIsDirectMessageEnabled = true;
     mockThreads = [
       buildThread('chat-1', 'Pipeline review'),
@@ -202,78 +183,13 @@ describe('NavigationDrawerAiChatContent', () => {
     expect(within(recents).queryByText('Quarterly plan')).toBeNull();
   });
 
-  it('lists favorite channels before favorite chats', () => {
-    jotaiStore.set(mockFavoriteChannelsAtom, [
-      {
-        __typename: 'AgentChatChannel',
-        id: 'channel-1',
-        name: 'Support',
-        icon: null,
-        color: null,
-        position: 1,
-        roleIds: [],
-        applicationId: 'workspace-custom-application-id',
-        isAccessible: true,
-      },
-    ]);
-    jotaiStore.set(mockFavoriteThreadsAtom, [
-      { id: 'chat-2', title: 'Quarterly plan', deletedAt: null },
-    ]);
-
-    const { getByRole } = renderContent();
-
-    const favorites = getByRole('region', { name: 'Favorites' });
-
-    expect(
-      within(favorites)
-        .getAllByText(/Support|Quarterly plan/)
-        .map((element) => element.textContent),
-    ).toEqual(['Support', 'Quarterly plan']);
-  });
-
-  it('leaves favorite channels out while the inbox feature flag is off', () => {
-    mockIsInboxEnabled = false;
-    jotaiStore.set(mockFavoriteChannelsAtom, [
-      {
-        __typename: 'AgentChatChannel',
-        id: 'channel-1',
-        name: 'Support',
-        icon: null,
-        color: null,
-        position: 1,
-        roleIds: [],
-        applicationId: 'workspace-custom-application-id',
-        isAccessible: true,
-      },
-    ]);
-    jotaiStore.set(mockFavoriteThreadsAtom, [
-      { id: 'chat-2', title: 'Quarterly plan', deletedAt: null },
-    ]);
-
-    const { getByRole, queryByText } = renderContent();
-
-    const favorites = getByRole('region', { name: 'Favorites' });
-
-    expect(within(favorites).getByText('Quarterly plan')).toBeInTheDocument();
-    expect(queryByText('Support')).toBeNull();
-  });
-
-  it('shows the triage section with the inbox feature flag on', () => {
+  it('shows the triage section', () => {
     const { getByRole } = renderContent();
 
     expect(getByRole('navigation', { name: 'Triage' })).toBeInTheDocument();
   });
 
-  it('hides the triage section while the inbox feature flag is off', () => {
-    mockIsInboxEnabled = false;
-
-    const { queryByRole } = renderContent();
-
-    expect(queryByRole('navigation', { name: 'Triage' })).toBeNull();
-    expect(queryByRole('region', { name: 'Recent' })).toBeInTheDocument();
-  });
-
-  it('caps Recent at 5 non-favorite chats with the inbox feature flag on', () => {
+  it('caps Recent at 5 non-favorite chats', () => {
     mockThreads = Array.from({ length: 8 }, (_, index) =>
       buildThread(`chat-${index}`, `Chat ${index}`),
     );
@@ -281,7 +197,7 @@ describe('NavigationDrawerAiChatContent', () => {
       { id: 'chat-0', title: 'Chat 0', deletedAt: null },
     ]);
 
-    const { getByRole, queryByText } = renderContent();
+    const { getByRole } = renderContent();
 
     const recents = getByRole('region', { name: 'Recent' });
 
@@ -289,21 +205,6 @@ describe('NavigationDrawerAiChatContent', () => {
     expect(within(recents).queryByText('Chat 0')).toBeNull();
     expect(within(recents).getByText('Chat 5')).toBeInTheDocument();
     expect(within(recents).queryByText('Chat 6')).toBeNull();
-    expect(queryByText('Load more chats')).toBeNull();
-  });
-
-  it('does not cap Recent while the inbox feature flag is off', () => {
-    mockIsInboxEnabled = false;
-    mockThreads = Array.from({ length: 7 }, (_, index) =>
-      buildThread(`chat-${index}`, `Chat ${index}`),
-    );
-
-    const { getByRole, getByText } = renderContent();
-
-    const recents = getByRole('region', { name: 'Recent' });
-
-    expect(within(recents).getAllByText(/^Chat \d$/)).toHaveLength(7);
-    expect(getByText('Load more chats')).toBeInTheDocument();
   });
 
   it('lists direct messages in their own section instead of Recent', () => {
@@ -346,7 +247,7 @@ describe('NavigationDrawerAiChatContent', () => {
     ).toBeVisible();
   });
 
-  it('shows no Favorites section without favorite chats or channels', () => {
+  it('shows no Favorites section without favorite chats', () => {
     jotaiStore.set(mockFavoriteThreadsAtom, []);
 
     const { queryByRole } = renderContent();

@@ -1,4 +1,4 @@
-import { type ToolSet } from 'ai';
+import { type Tool } from 'ai';
 import { z } from 'zod';
 
 import { isNonEmptyString } from '@sniptt/guards';
@@ -20,7 +20,10 @@ export const humanizeToolName = (name: string): string =>
     .join(' ');
 
 export const toolSetToDescriptors = (
-  toolSet: ToolSet,
+  toolSet: Record<
+    string,
+    Tool & { isDestructive?: boolean; isReadOnly?: boolean }
+  >,
   category: ToolCategory,
   options?: ToolSetToDescriptorsOptions,
 ): (ToolIndexEntry | ToolDescriptor)[] => {
@@ -35,6 +38,8 @@ export const toolSetToDescriptors = (
       category,
       executionRef: { kind: 'static' as const, toolId: name },
       ...(options?.icon && { icon: options.icon }),
+      ...(tool.isDestructive && { isDestructive: true }),
+      ...(tool.isReadOnly && { isReadOnly: true }),
     };
 
     if (!includeSchemas) {

@@ -70,7 +70,7 @@ jest.mock('~/hooks/useNavigateSettings', () => ({
   useNavigateSettings: jest.fn(() => jest.fn()),
 }));
 
-jest.mock('@/ai/components/LazyMarkdownRenderer', () => ({
+jest.mock('@/ai-chat/message-content/components/LazyMarkdownRenderer', () => ({
   LazyMarkdownRenderer: ({ text }: { text: string }) => (
     <div data-testid="markdown-renderer">{text}</div>
   ),

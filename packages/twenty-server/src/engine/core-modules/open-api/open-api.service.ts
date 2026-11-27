@@ -8,7 +8,7 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { DatabaseEventAction } from 'src/engine/workspace-event-emitter/enums/database-event-action';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { baseSchema } from 'src/engine/core-modules/open-api/utils/base-schema.util';
 import {

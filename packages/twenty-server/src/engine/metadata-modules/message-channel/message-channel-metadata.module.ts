@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
-import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { EmailingDomainModule } from 'src/engine/core-modules/emailing-domain/emailing-domain.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileEmailAttachmentModule } from 'src/engine/core-modules/file/file-email-attachment/file-email-attachment.module';
@@ -33,10 +32,11 @@ import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-co
 import { MessagingImportManagerModule } from 'src/modules/messaging/message-import-manager/messaging-import-manager.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
+import { ChannelVisibilityModule } from 'src/engine/permissions/channel-visibility/channel-visibility.module';
 
 @Module({
   imports: [
-    FeatureFlagModule,
+    ChannelVisibilityModule,
     TypeOrmModule.forFeature([
       MessageChannelEntity,
       MessageFolderEntity,

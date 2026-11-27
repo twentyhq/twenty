@@ -29,6 +29,9 @@ export const commonQueryRunnerToRestApiExceptionHandler = (
     case CommonQueryRunnerExceptionCode.TOO_COMPLEX_QUERY:
     case CommonQueryRunnerExceptionCode.MISSING_TIMEZONE_FOR_DATE_GROUP_BY:
     case CommonQueryRunnerExceptionCode.INVALID_TIMEZONE:
+    case CommonQueryRunnerExceptionCode.FIELD_NOT_FOUND:
+    case CommonQueryRunnerExceptionCode.INVALID_DIRECTION:
+    case CommonQueryRunnerExceptionCode.MAX_DEPTH_REACHED:
       throw new BadRequestException(error.message);
     case CommonQueryRunnerExceptionCode.RECORD_NOT_FOUND:
       throw new NotFoundException('Record not found');
@@ -37,6 +40,9 @@ export const commonQueryRunnerToRestApiExceptionHandler = (
     case CommonQueryRunnerExceptionCode.MISSING_FLAT_INDEX_MAPS:
     case CommonQueryRunnerExceptionCode.MISSING_SYSTEM_FIELD:
     case CommonQueryRunnerExceptionCode.INTERNAL_SERVER_ERROR:
+    case CommonQueryRunnerExceptionCode.INVALID_POST_HOOK_PAYLOAD:
+    case CommonQueryRunnerExceptionCode.RELATION_SETTINGS_NOT_FOUND:
+    case CommonQueryRunnerExceptionCode.RELATION_TARGET_OBJECT_METADATA_NOT_FOUND:
       throw new InternalServerErrorException(error.message);
     default: {
       return assertUnreachable(error.code);

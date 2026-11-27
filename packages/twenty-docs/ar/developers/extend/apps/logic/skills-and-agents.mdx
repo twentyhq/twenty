@@ -163,17 +163,15 @@ export default defineMcpServer({
   name: 'github',
   label: 'GitHub',
   url: 'https://api.githubcopilot.com/mcp/',
-  connectionProvider: {
-    universalIdentifier: GITHUB_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER,
-  },
+  connectionProviderUniversalIdentifier: GITHUB_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER,
 });
 ```
 
 النقاط الرئيسية:
 * `name` بصيغة snake_case (أحرف صغيرة وأرقام وشرطات سفلية، يبدأ بحرف، وبحد أقصى 32 حرفًا) وفريد في مساحة العمل. يُضاف كبادئة إلى أسماء أدوات الخادم.
 * يجب أن يكون `url` عنوان URL من نوع HTTP أو HTTPS.
-* يشير `connectionProvider` (اختياري) إلى [موفر اتصال](/ar/developers/extend/apps/logic/connections) معلن بواسطة التطبيق نفسه. ترسل الاستدعاءات رمز الوصول الخاص بذلك الاتصال كرمز Bearer. احذفه لخادم عام.
-* لا يمكن أن يتغير عنوان URL في إصدار لاحق أثناء ربط موفر اتصال، لذلك لا تُرسل الرموز أبدًا إلى مضيف آخر.
+* يشير `connectionProviderUniversalIdentifier` (اختياري) إلى [موفر اتصال](/ar/developers/extend/apps/logic/connections) معلن بواسطة التطبيق نفسه. ترسل الاستدعاءات رمز الوصول الخاص بذلك الاتصال كرمز Bearer. احذفه لخادم عام. يأخذ الخادم الذي ينشر إعدادات OAuth الخاصة به موفّر `oauth-discovery` يكون `resourceUrl` الخاص به هو عنوان URL للخادم (Twenty 2.59.0 أو إصدار أحدث).
+* لا يمكن تغيير عنوان URL في إصدار لاحق ما دام موفر الاتصال نفسه يظل مرتبطًا. يعني تغيير عنوان URL ربط موفر مختلف في الوقت نفسه، لذلك لا تُرسل الرموز المميزة مطلقًا إلى مضيف آخر.
 * يمكن لمساحات العمل إلغاء تنشيط الخادم؛ ويحافظ إصدار لاحق من التطبيق على هذا الخيار.
 * يتطلب `"engines": { "twenty": ">=2.53.0" }`.
 

@@ -2,13 +2,17 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { RetryableLogicFunctionError } from 'twenty-sdk/logic-function';
 
 import { buildGranolaNote } from 'src/__tests__/utils/build-granola-note.util';
+import { GRANOLA_API_KEY_ENV_VAR_NAME } from 'src/logic-functions/constants/granola-api-key-env-var-name';
 import { GranolaApiError } from 'src/logic-functions/types/granola-api-error';
 import { GranolaInvalidResponseError } from 'src/logic-functions/types/granola-invalid-response-error';
 import { createGranolaClientOrThrow } from 'src/logic-functions/utils/create-granola-client-or-throw.util';
 
 const API_KEY = 'grn_test_secret';
 
-afterEach(() => vi.unstubAllGlobals());
+afterEach(() => {
+  vi.unstubAllEnvs();
+  vi.unstubAllGlobals();
+});
 
 describe('createGranolaClientOrThrow', () => {
   it('sends authenticated list filters and opaque cursors without mangling them', async () => {
@@ -122,5 +126,13 @@ describe('createGranolaClientOrThrow', () => {
       'not set',
     );
     expect(mockedFetch).not.toHaveBeenCalled();
+  });
+
+  it('rejects a missing key even when the workspace key is set', () => {
+    vi.stubEnv(GRANOLA_API_KEY_ENV_VAR_NAME, API_KEY);
+
+    expect(() => createGranolaClientOrThrow({ apiKey: undefined })).toThrow(
+      'Granola API key is not set.',
+    );
   });
 });

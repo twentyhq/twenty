@@ -28,6 +28,8 @@ const appAgent: FlatAgent = {
   triggers: [],
   isSystem: true,
   isActive: true,
+  isPrivate: false,
+  createdByUserWorkspaceId: null,
   overrides: null,
   navigationMenuItemIds: [],
   navigationMenuItemUniversalIdentifiers: [],
@@ -98,7 +100,11 @@ describe('fromUpdateAgentInputToFlatAgentToUpdate', () => {
       },
     });
     expect(
-      fromFlatAgentWithRoleIdToAgentDto({ ...flatAgentToUpdate, roleId: null }),
+      fromFlatAgentWithRoleIdToAgentDto({
+        flatAgentWithRoleId: { ...flatAgentToUpdate, roleId: null },
+        flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
+        flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
+      }),
     ).toMatchObject({
       name: 'researcher',
       label: 'Market researcher',

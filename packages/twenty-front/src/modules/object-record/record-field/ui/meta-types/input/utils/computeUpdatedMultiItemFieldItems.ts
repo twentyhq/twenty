@@ -2,7 +2,21 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { toSpliced } from '~/utils/array/toSpliced';
 
-export const computeUpdatedMultiItemFieldItems = <T>({
+export function computeUpdatedMultiItemFieldItems<T>(params: {
+  sanitizedInput: string;
+  items: T[];
+  editingIndex: number | null;
+  singleItemMode: boolean;
+  formatInput: (params: { input: string; itemIndex?: number }) => T;
+}): T[];
+export function computeUpdatedMultiItemFieldItems(params: {
+  sanitizedInput: string;
+  items: string[];
+  editingIndex: number | null;
+  singleItemMode: boolean;
+  formatInput?: undefined;
+}): string[];
+export function computeUpdatedMultiItemFieldItems<T>({
   sanitizedInput,
   items,
   editingIndex,
@@ -10,11 +24,11 @@ export const computeUpdatedMultiItemFieldItems = <T>({
   formatInput,
 }: {
   sanitizedInput: string;
-  items: T[];
+  items: (T | string)[];
   editingIndex: number | null;
   singleItemMode: boolean;
   formatInput?: (params: { input: string; itemIndex?: number }) => T;
-}): T[] => {
+}): (T | string)[] {
   const isAdding = !isDefined(editingIndex);
 
   if (!isNonEmptyString(sanitizedInput)) {
@@ -32,9 +46,9 @@ export const computeUpdatedMultiItemFieldItems = <T>({
         input: sanitizedInput,
         itemIndex: isAdding ? undefined : editingIndex,
       })
-    : (sanitizedInput as unknown as T);
+    : sanitizedInput;
 
   return isAdding
     ? [...items, newItem]
     : toSpliced(items, editingIndex, 1, newItem);
-};
+}

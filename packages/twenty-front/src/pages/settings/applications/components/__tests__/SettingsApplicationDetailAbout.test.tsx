@@ -6,7 +6,7 @@ import userEvent from '@testing-library/user-event';
 import { type DeveloperLinks } from '@/settings/applications/components/SettingsApplicationAboutSidebar';
 import { SettingsApplicationDetailAbout } from '~/pages/settings/applications/components/SettingsApplicationDetailAbout';
 
-jest.mock('@/ai/components/LazyMarkdownRenderer', () => ({
+jest.mock('@/ai-chat/message-content/components/LazyMarkdownRenderer', () => ({
   LazyMarkdownRenderer: ({
     text,
     noImage,
@@ -38,7 +38,7 @@ const DEVELOPER_LINKS: DeveloperLinks = {
 
 type RenderAboutOptions = {
   aboutDescription?: string | null;
-  billsCredits?: boolean;
+  isPaid?: boolean;
   description?: string | null;
   developerLinks?: DeveloperLinks;
   installCount?: number;
@@ -48,7 +48,7 @@ type RenderAboutOptions = {
 // null opts out of a default, undefined keeps it.
 const renderAbout = ({
   aboutDescription = ABOUT_DESCRIPTION,
-  billsCredits = false,
+  isPaid = false,
   description = SHORT_DESCRIPTION,
   developerLinks = DEVELOPER_LINKS,
   installCount = 7,
@@ -69,7 +69,7 @@ const renderAbout = ({
         installCount={installCount}
         category="Finance"
         pricingDescription="$0.02 per minute recorded"
-        billsCredits={billsCredits}
+        isPaid={isPaid}
         developerLinks={developerLinks}
         onShare={onShare ?? undefined}
       />
@@ -96,18 +96,18 @@ describe('SettingsApplicationDetailAbout', () => {
     expect(await screen.findByText('1,098 installs')).toBeVisible();
   });
 
-  it('shows that the application bills credits, with its pricing on hover', async () => {
-    renderAbout({ billsCredits: true });
+  it('shows that the application is paid, with its pricing on hover', async () => {
+    renderAbout({ isPaid: true });
 
-    await userEvent.setup().hover(screen.getByText('Bills credits'));
+    await userEvent.setup().hover(screen.getByText('Paid app'));
 
     expect(await screen.findByText('$0.02 per minute recorded')).toBeVisible();
   });
 
-  it('does not claim credit billing for an application that bills none', () => {
+  it('does not claim billing for a free application', () => {
     renderAbout();
 
-    expect(screen.queryByText('Bills credits')).not.toBeInTheDocument();
+    expect(screen.queryByText('Paid app')).not.toBeInTheDocument();
   });
 
   it('renders the application identity, metadata and resources', () => {

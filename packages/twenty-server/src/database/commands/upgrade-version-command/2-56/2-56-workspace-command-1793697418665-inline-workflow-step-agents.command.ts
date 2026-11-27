@@ -5,7 +5,7 @@ import {
   type ModelConfiguration,
 } from 'twenty-shared/ai';
 import { type RolePermissionGrants } from 'twenty-shared/application';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 import { type DataSource } from 'typeorm';
 
@@ -336,7 +336,7 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
         findFlatEntityByUniversalIdentifier({
           flatEntityMaps: flatObjectMetadataMaps,
           universalIdentifier:
-            STANDARD_OBJECTS.workflowVersion.universalIdentifier,
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowVersion,
         }),
       )
     ) {

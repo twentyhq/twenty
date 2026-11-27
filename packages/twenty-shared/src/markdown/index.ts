@@ -8,3 +8,7 @@
  */
 
 export { getMarkdownTextChatReferences } from './utils/get-markdown-text-chat-references.util';
+export {
+  getPlainTextFromMarkdownTokens,
+  getPlainTextFromMarkdown,
+} from './utils/get-plain-text-from-markdown.util';

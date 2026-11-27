@@ -7,15 +7,20 @@ import { getUnipileRequestOptions } from 'src/unipile/utils/get-unipile-request-
 export const getUnipileChat = async ({
   accountId,
   chatId,
+  deadlineAtMs,
 }: {
   accountId: string;
   chatId: string;
+  deadlineAtMs?: number;
 }): Promise<UnipileChat> => {
-  const { data } = await requestUnipile('get chat', () =>
-    new UnipileMessaging().getChat({
-      ...getUnipileRequestOptions(),
-      path: { account_id: accountId, chat_id: chatId },
-    }),
+  const { data } = await requestUnipile(
+    'get chat',
+    () =>
+      new UnipileMessaging().getChat({
+        ...getUnipileRequestOptions(),
+        path: { account_id: accountId, chat_id: chatId },
+      }),
+    { deadlineAtMs },
   );
 
   return data;

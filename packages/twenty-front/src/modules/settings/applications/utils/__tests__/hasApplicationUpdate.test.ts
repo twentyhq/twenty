@@ -3,6 +3,7 @@ import { hasApplicationUpdate } from '@/settings/applications/utils/hasApplicati
 
 describe('hasApplicationUpdate', () => {
   it.each([
+    ApplicationRegistrationSourceType.BUNDLED,
     ApplicationRegistrationSourceType.NPM,
     ApplicationRegistrationSourceType.TARBALL,
   ])(

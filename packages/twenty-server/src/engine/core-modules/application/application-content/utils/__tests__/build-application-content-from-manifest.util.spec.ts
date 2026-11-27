@@ -173,6 +173,27 @@ describe('buildApplicationContentFromManifest', () => {
     ]);
   });
 
+  it('should list MCP servers with their URL', () => {
+    const content = buildApplicationContentFromManifest({
+      mcpServers: [
+        {
+          universalIdentifier: 'stripe-mcp',
+          name: 'stripe',
+          label: 'Stripe',
+          url: 'https://mcp.stripe.com',
+        },
+      ],
+    });
+
+    expect(content.mcpServers).toEqual([
+      {
+        universalIdentifier: 'stripe-mcp',
+        label: 'Stripe',
+        description: 'https://mcp.stripe.com',
+      },
+    ]);
+  });
+
   it('should read the parent folder from manifests that still use folderUniversalIdentifier', () => {
     const content = buildApplicationContentFromManifest({
       navigationMenuItems: [

@@ -7,9 +7,9 @@ import {
   IconFolder,
   IconFolderRoot,
 } from 'twenty-ui/icon';
+import { Checkbox } from 'twenty-ui/primitives/input';
 import { THEME_COMMON, themeCssVariables } from 'twenty-ui/theme';
 
-import { Checkbox } from 'src/front-components/components/Checkbox';
 import {
   GRANOLA_FOLDER_TREE_INDENT_PIXELS,
   GranolaFolderTreeBreadcrumb,
@@ -194,7 +194,9 @@ export const GranolaFolderTreeItem = ({
                 indeterminate={isIndeterminate}
                 disabled={isDisabled}
                 aria-label={folder.name}
-                onChange={(checked) => onToggleFolder(folder.id, checked)}
+                onCheckedChange={(checked) =>
+                  onToggleFolder(folder.id, checked)
+                }
               />
             </span>
           </StyledRightSection>

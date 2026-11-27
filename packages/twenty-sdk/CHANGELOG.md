@@ -6,11 +6,37 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+### Added
+
+- **`spreadMs` on `cronTriggerSettings`.** Each workspace runs the cron at its own stable offset in `[0, spreadMs)`, whole minutes, instead of every install firing at the same minute. It shifts the cron's phase, not its frequency. `spreadMs` is an integer between 2 minutes and 24 hours. Requires Twenty 2.64.
+
+- **`limiter` on `enqueueJobs`.** `limiter: { max, durationMs }` spaces the runs of a call `durationMs / max` apart, sharing one schedule with every call for the same function and values in the workspace. It cannot be combined with `delayMs`. Requires Twenty 2.64.
+
+- **`scheduledAt` on the jobs returned by `enqueueJobs` and `getJobs`.** When the job first became eligible to run, in epoch milliseconds. It never changes after the job is accepted. Both calls now always request it, so from this SDK version `enqueueJobs` and `getJobs` require Twenty 2.64.
+
+- **`onJobFailure` on `defineLogicFunction`.** Declare it next to `handler` and Twenty calls it, as its own queued job, when a queued run of the function fails and will not be retried: an uncaught error, a timeout, `RetryableLogicFunctionError` past `maxRetries`, a platform error once the job has no attempts left, or a worker process crashing twice while running it. It receives a `LogicFunctionJobFailure` with the original `payload`, the `error` (`type`, `message`) and the `job` (`id`, `attemptsMade`). It does not run for executions outside the job queue, or when `onJobFailure` itself fails. Requires Twenty 2.63.
+
+- **`retryLimit` on `defineLogicFunction`.** Sets the queue retry limit (0 to 10) for every queued run of the function, whether started by `enqueueJobs`, cron, a database event or a server route. A `retryLimit` passed to `enqueueJobs` still overrides it for that call. Requires Twenty 2.63.
+
+- **Date functions in rule expressions: `dateDiff`, `dateAdd`, `dateTrunc` and `datePart`.** They take a unit (`'MINUTE'`, `'HOUR'`, `'DAY'`, `'WEEK'`, `'MONTH'`, `'QUARTER'` or `'YEAR'`) or, for `datePart`, a part (`'YEAR'`, `'QUARTER'`, `'MONTH'`, `'WEEK'`, `'DAY'`, `'DAY_OF_WEEK'`, `'HOUR'` or `'MINUTE'`), read dates in UTC, and are available as `ruleExpression.dateDiff(...)` and so on. Minutes and hours are elapsed time; longer units count calendar days and months.
+
+### Deprecated
+
+- **References written as `{ universalIdentifier }` on connection providers, messaging providers and MCP servers.** Write them as a universal identifier instead, like every other reference in an app: `identifyAccountLogicFunctionUniversalIdentifier`, `onConnectLogicFunctionUniversalIdentifier`, `onDisconnectLogicFunctionUniversalIdentifier`, `custom.authorizeLogicFunctionUniversalIdentifier` and `custom.callbackLogicFunctionUniversalIdentifier` on `defineConnectionProvider`; `connectionProviderUniversalIdentifier`, `sendMessageLogicFunctionUniversalIdentifier` and `markThreadAsReadLogicFunctionUniversalIdentifier` on `defineMessagingProvider`; `connectionProviderUniversalIdentifier` on `defineMcpServer`. The object form (`onConnectLogicFunction: { universalIdentifier }` and so on) keeps working and is marked `@deprecated`. When both are set, the universal identifier wins. The CLI writes both forms into the built manifest, so an app using the new spelling still syncs to a server older than 2.63.
+
+- **`databaseEventTriggerSettings`, the `payloads` argument of `enqueueJobs` and the `jobIds` field of its result are now marked `@deprecated`.** They keep working. Use `eventTriggerSettings`, the `jobs` argument and the `jobs` result field instead. `enqueueJob` was already marked.
+
 ### Changed
 
 - **`INBOX_ASSISTANT_MENTION` now writes a canonical assistant reference instead of plain `@Ada` text.** The inbox keeps the saved label and assistant identity when rendering the message. Existing plain text is unchanged. This does not change assistant participation or reply selection for application messages.
 
 ### Breaking Changes
+
+- **Date comparisons in rule expressions now compare values rather than timestamp spellings.** `==` and `!=` compare a date with a date-time by UTC calendar day; two date-times compare as instants for equality and ordering, including equivalent offsets and fractional-second precision. Existing rules and trigger conditions that relied on strict string equality or lexicographic timestamp ordering can change result.
+
+- **`ruleExpression.daysSince` is removed; use `ruleExpression.dateDiff(field, ruleExpression.now, 'DAY')`.** `dateDiff` gives the same whole UTC days, and also minutes, hours, weeks, months, quarters or years. `daysSince` is also removed from string expressions. Update existing rules to `dateDiff(date, now, 'DAY')` before upgrading.
+
+- **`STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` no longer includes `workflowVersion`.** Workflow versions live in Twenty's core workflow store, and Twenty 2.60 drops the legacy workspace `workflowVersion` object from every workspace, along with `workflowRun.workflowVersion`, `timelineActivity.targetWorkflowVersion` and any other relation field that points at it. Remove references to the identifier, including relation fields that target it.
 
 - **`STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` no longer includes `workflow` or `workflowAutomatedTrigger`.** Workflows live in Twenty's core workflow store, and Twenty 2.58 drops these legacy workspace objects from every workspace, along with any relation fields that point at them. Remove references to both identifiers, including relation fields that target them. To ship a workflow with your app, declare it with `defineWorkflow()`.
 

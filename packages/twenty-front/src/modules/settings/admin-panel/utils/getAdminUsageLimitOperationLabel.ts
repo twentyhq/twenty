@@ -5,7 +5,7 @@ import { type AdminUsageLimitRow } from '@/settings/admin-panel/types/AdminUsage
 import { getUsageOperationTypeLabel } from '@/settings/usage/utils/getUsageOperationTypeLabel';
 
 export const getAdminUsageLimitOperationLabel = (
-  row: AdminUsageLimitRow,
+  row: Pick<AdminUsageLimitRow, 'operationType'>,
 ): string => {
   const operationLabel = getUsageOperationTypeLabel(row.operationType);
 

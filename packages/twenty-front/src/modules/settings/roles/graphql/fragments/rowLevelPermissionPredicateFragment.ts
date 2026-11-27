@@ -14,6 +14,7 @@ export const ROW_LEVEL_PERMISSION_PREDICATE_FRAGMENT = gql`
     workspaceMemberSubFieldName
     rowLevelPermissionPredicateGroupId
     positionInRowLevelPermissionPredicateGroup
+    rowLevelPermissionRuleId
     roleId
     value
   }

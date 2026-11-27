@@ -17,14 +17,9 @@ import { type EmailToolInput } from 'src/engine/core-modules/tool/tools/email-to
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 
-import {
-  deleteLegacyWorkspaceWorkflowRecords,
-  linkCoreWorkflowToLegacyWorkspaceIds,
-} from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
 import {
   runWorkflowActionStep,
   type WorkflowActionStepRun,
@@ -42,6 +37,10 @@ import {
   type GreenmailServer,
   startGreenmailContainer,
 } from 'test/integration/utils/start-greenmail-container.util';
+import {
+  grantRoleWideAccessToChannelObjects,
+  revokeRoleWideAccessToChannelObjects,
+} from 'test/integration/utils/role-wide-access-to-channel-objects.util';
 
 const PASSWORD = 'greenmail-password';
 const HANDLE = `email-body-formats-${randomUUID()}@acme.test`;
@@ -66,21 +65,15 @@ const findPersistedMessageText = async (subject: string) => {
   return message?.text;
 };
 
-const WORKSPACE_SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
-
 const EMAIL_STEP_BODY_PATH = `jsonb_path_query_first(steps, '$[*] ? (@.type == "SEND_EMAIL" || @.type == "DRAFT_EMAIL").settings.input.body') #>> '{}'`;
 
 const readStoredBodies = async (coreWorkflowVersionId: string) => {
-  const [workspaceRow] = await global.testDataSource.query(
-    `SELECT ${EMAIL_STEP_BODY_PATH} AS body FROM "${WORKSPACE_SCHEMA}"."workflowVersion" WHERE "coreWorkflowVersionId" = $1`,
-    [coreWorkflowVersionId],
-  );
   const [coreRow] = await global.testDataSource.query(
     `SELECT ${EMAIL_STEP_BODY_PATH} AS body FROM core."workflowVersion" WHERE "id" = $1`,
     [coreWorkflowVersionId],
   );
 
-  return { workspaceBody: workspaceRow.body, coreBody: coreRow.body };
+  return { coreBody: coreRow.body };
 };
 
 const storeBodyAsBeforeTheUpgrade = async (
@@ -173,6 +166,7 @@ describe('Outbound email body formats (integration)', () => {
   };
 
   beforeAll(async () => {
+    await grantRoleWideAccessToChannelObjects();
     await updateConfigVariable({
       input: { key: 'OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS', value: ['*'] },
     });
@@ -229,6 +223,7 @@ describe('Outbound email body formats (integration)', () => {
     }
 
     await greenmail?.stop().catch(() => undefined);
+    await revokeRoleWideAccessToChannelObjects();
   });
 
   describe('workflow email body stored as a document', () => {
@@ -442,28 +437,6 @@ describe('Outbound email body formats (integration)', () => {
   });
 
   describe('upgrade command', () => {
-    const legacyWorkspaceWorkflowVersionIds: string[] = [];
-
-    const linkLegacyWorkspaceCopy = async (coreWorkflowVersionId: string) => {
-      const [{ coreWorkflowId }] = await global.testDataSource.query(
-        `SELECT "coreWorkflowId" FROM core."workflowVersion" WHERE id = $1`,
-        [coreWorkflowVersionId],
-      );
-      const { workspaceWorkflowVersionIds } =
-        await linkCoreWorkflowToLegacyWorkspaceIds({
-          coreWorkflowId,
-          withWorkspaceRecords: true,
-        });
-
-      legacyWorkspaceWorkflowVersionIds.push(...workspaceWorkflowVersionIds);
-    };
-
-    afterAll(async () => {
-      await deleteLegacyWorkspaceWorkflowRecords({
-        workspaceWorkflowVersionIds: legacyWorkspaceWorkflowVersionIds,
-      });
-    });
-
     const runUpgradeCommand = ({
       dryRun,
       commandClassName = 'ConvertWorkflowEmailBodiesToEmailDocumentsCommand',
@@ -492,17 +465,13 @@ describe('Outbound email body formats (integration)', () => {
 
     const convertStoredBodyBeforeRun =
       (legacyBody: string) => async (coreWorkflowVersionId: string) => {
-        await linkLegacyWorkspaceCopy(coreWorkflowVersionId);
-
         expect(await readStoredBodies(coreWorkflowVersionId)).toEqual({
-          workspaceBody: legacyBody,
           coreBody: legacyBody,
         });
 
         await runUpgradeCommand({ dryRun: true });
 
         expect(await readStoredBodies(coreWorkflowVersionId)).toEqual({
-          workspaceBody: legacyBody,
           coreBody: legacyBody,
         });
 
@@ -510,10 +479,9 @@ describe('Outbound email body formats (integration)', () => {
 
         const convertedBodies = await readStoredBodies(coreWorkflowVersionId);
 
-        expect(convertedBodies.coreBody).toBe(convertedBodies.workspaceBody);
         expect(
           parseCanonicalEmailDocument(
-            parseJson<unknown>(convertedBodies.workspaceBody),
+            parseJson<unknown>(convertedBodies.coreBody),
           ).success,
         ).toBe(true);
 
@@ -523,55 +491,6 @@ describe('Outbound email body formats (integration)', () => {
           convertedBodies,
         );
       };
-
-    it('converts the core and workspace copies each from its own steps', async () => {
-      const readEmailStepNames = async (coreWorkflowVersionId: string) => {
-        const selectEmailStepName = `jsonb_path_query_first(steps, '$[*] ? (@.type == "SEND_EMAIL").name') #>> '{}'`;
-        const [workspaceRow] = await global.testDataSource.query(
-          `SELECT ${selectEmailStepName} AS name FROM "${WORKSPACE_SCHEMA}"."workflowVersion" WHERE "coreWorkflowVersionId" = $1`,
-          [coreWorkflowVersionId],
-        );
-        const [coreRow] = await global.testDataSource.query(
-          `SELECT ${selectEmailStepName} AS name FROM core."workflowVersion" WHERE "id" = $1`,
-          [coreWorkflowVersionId],
-        );
-
-        return { workspaceName: workspaceRow.name, coreName: coreRow.name };
-      };
-
-      await runSendEmailWorkflow({
-        body: '<p>Hello</p>',
-        beforeRun: async (coreWorkflowVersionId) => {
-          await linkLegacyWorkspaceCopy(coreWorkflowVersionId);
-          await global.testDataSource.query(
-            `UPDATE core."workflowVersion"
-             SET steps = jsonb_set(steps, '{0,name}', '"Renamed in core only"')
-             WHERE "id" = $1`,
-            [coreWorkflowVersionId],
-          );
-          const namesBeforeUpgrade = await readEmailStepNames(
-            coreWorkflowVersionId,
-          );
-
-          await runUpgradeCommand({ dryRun: false });
-
-          expect(await readEmailStepNames(coreWorkflowVersionId)).toEqual(
-            namesBeforeUpgrade,
-          );
-          expect(namesBeforeUpgrade.coreName).toBe('Renamed in core only');
-
-          const { workspaceBody, coreBody } = await readStoredBodies(
-            coreWorkflowVersionId,
-          );
-
-          for (const body of [workspaceBody, coreBody]) {
-            expect(
-              parseCanonicalEmailDocument(parseJson<unknown>(body)).success,
-            ).toBe(true);
-          }
-        },
-      });
-    }, 300000);
 
     it.each([
       {
@@ -612,14 +531,12 @@ describe('Outbound email body formats (integration)', () => {
       await runSendEmailWorkflow({
         body: ' ',
         beforeRun: async (coreWorkflowVersionId) => {
-          await linkLegacyWorkspaceCopy(coreWorkflowVersionId);
           await runUpgradeCommand({
             dryRun: true,
             commandClassName: 'BackfillEmptyWorkflowEmailBodiesCommand',
           });
 
           expect(await readStoredBodies(coreWorkflowVersionId)).toEqual({
-            workspaceBody: ' ',
             coreBody: ' ',
           });
 
@@ -629,7 +546,6 @@ describe('Outbound email body formats (integration)', () => {
           });
 
           expect(await readStoredBodies(coreWorkflowVersionId)).toEqual({
-            workspaceBody: serializedEmptyDocument,
             coreBody: serializedEmptyDocument,
           });
         },

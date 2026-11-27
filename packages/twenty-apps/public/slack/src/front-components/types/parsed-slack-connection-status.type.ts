@@ -5,4 +5,5 @@ export type ParsedSlackConnectionStatus = {
   installedSlackTeamId: string | undefined;
   connectionHealth: SlackConnectionHealth | undefined;
   hasRosterMatchFailed: boolean;
+  hasConnectionStatusFailed: boolean;
 };

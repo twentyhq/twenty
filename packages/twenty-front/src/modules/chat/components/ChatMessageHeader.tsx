@@ -4,16 +4,16 @@ import { isDefined } from 'twenty-shared/utils';
 import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { dateLocaleState } from '@/localization/states/dateLocaleState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
+import { ChatMessageTime } from '@/chat/components/ChatMessageTime';
+import { CHAT_MESSAGE_HEADER_BOTTOM_MARGIN } from '@/chat/constants/ChatMessageHeaderBottomMargin';
+import { CHAT_MESSAGE_HEADER_HEIGHT } from '@/chat/constants/ChatMessageHeaderHeight';
 
 const StyledHeader = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
-  height: ${themeCssVariables.spacing[4]};
-  margin-bottom: ${themeCssVariables.spacing[3]};
+  height: ${CHAT_MESSAGE_HEADER_HEIGHT};
+  margin-bottom: ${CHAT_MESSAGE_HEADER_BOTTOM_MARGIN};
   min-width: 0;
 `;
 
@@ -32,36 +32,31 @@ type ChatMessageHeaderProps = {
   avatar: ReactNode;
   name: string;
   createdAt?: Date | string;
-  receipt?: ReactNode;
 };
 
 export const ChatMessageHeader = ({
   avatar,
   name,
   createdAt,
-  receipt,
 }: ChatMessageHeaderProps) => {
-  const { localeCatalog } = useAtomStateValue(dateLocaleState);
-
   return (
     <StyledHeader>
       {avatar}
       <StyledAuthor>
         <Text
           render={<span />}
-          size="sm"
+          size="md"
           color="primary"
-          weight="medium"
+          weight="semibold"
           truncate
         >
           {name}
         </Text>
         {isDefined(createdAt) && (
-          <Text render={<StyledTime />} size="sm" color="light">
-            {beautifyPastDateRelativeToNow(createdAt, localeCatalog)}
-          </Text>
+          <StyledTime>
+            <ChatMessageTime date={createdAt} />
+          </StyledTime>
         )}
-        {receipt}
       </StyledAuthor>
     </StyledHeader>
   );

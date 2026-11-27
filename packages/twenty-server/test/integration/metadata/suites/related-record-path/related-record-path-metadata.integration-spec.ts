@@ -11,9 +11,9 @@ import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { createRelatedRecordPath } from 'test/integration/metadata/suites/related-record-path/utils/create-related-record-path.util';
 import { deleteRelatedRecordPath } from 'test/integration/metadata/suites/related-record-path/utils/delete-related-record-path.util';
 import { findRelatedRecordPaths } from 'test/integration/metadata/suites/related-record-path/utils/find-related-record-paths.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
+import { updateRelatedRecordPath } from 'test/integration/metadata/suites/related-record-path/utils/update-related-record-path.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
-import { FeatureFlagKey, FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -106,12 +106,6 @@ describe('Related record path metadata', () => {
   };
 
   beforeAll(async () => {
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED,
-      value: true,
-      expectToFail: false,
-    });
-
     const { objects } = await findManyObjectMetadata({
       expectToFail: false,
       input: { filter: {}, paging: { first: 1000 } },
@@ -184,36 +178,28 @@ describe('Related record path metadata', () => {
   });
 
   afterAll(async () => {
-    try {
-      const remainingPathIds = await findPathIds();
+    const remainingPathIds = await findPathIds();
 
-      for (const pathId of createdPathIds) {
-        if (remainingPathIds.includes(pathId)) {
-          await deleteRelatedRecordPath(pathId);
-        }
+    for (const pathId of createdPathIds) {
+      if (remainingPathIds.includes(pathId)) {
+        await deleteRelatedRecordPath(pathId);
       }
+    }
 
-      await deleteObject(projectObjectMetadataId);
+    await deleteObject(projectObjectMetadataId);
 
-      const { objects } = await findManyObjectMetadata({
-        expectToFail: false,
-        input: { filter: {}, paging: { first: 1000 } },
-        gqlFields: 'id',
-      });
+    const { objects } = await findManyObjectMetadata({
+      expectToFail: false,
+      input: { filter: {}, paging: { first: 1000 } },
+      gqlFields: 'id',
+    });
 
-      if (
-        objects.some(
-          (object: { id: string }) => object.id === taskObjectMetadataId,
-        )
-      ) {
-        await deleteObject(taskObjectMetadataId);
-      }
-    } finally {
-      await updateFeatureFlag({
-        featureFlag: FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED,
-        value: false,
-        expectToFail: false,
-      });
+    if (
+      objects.some(
+        (object: { id: string }) => object.id === taskObjectMetadataId,
+      )
+    ) {
+      await deleteObject(taskObjectMetadataId);
     }
   });
 
@@ -255,6 +241,91 @@ describe('Related record path metadata', () => {
 
     await deleteRelatedRecordPath(
       response.body.data.createRelatedRecordPath.id,
+    );
+  });
+
+  it('should update a path of the workspace in place', async () => {
+    const response = await createPath({
+      firstFieldMetadataId: projectTasksFieldMetadataId,
+    });
+    const createdPath = response.body.data.createRelatedRecordPath;
+
+    const updateResponse = await updateRelatedRecordPath({
+      id: createdPath.id,
+      isInherent: true,
+      isActive: false,
+    });
+
+    expect(updateResponse.body.errors).toBeUndefined();
+    expect(updateResponse.body.data.updateRelatedRecordPath).toMatchObject({
+      isInherent: true,
+      isActive: false,
+    });
+    expect(
+      await global.testDataSource.query(
+        `SELECT "isInherent", "isActive", "overrides" FROM core."relatedRecordPath" WHERE "id" = $1`,
+        [createdPath.id],
+      ),
+    ).toEqual([{ isInherent: true, isActive: false, overrides: null }]);
+
+    await deleteRelatedRecordPath(createdPath.id);
+  });
+
+  it('should store an update of a standard path as an override', async () => {
+    const [{ id: standardPathId }] = await global.testDataSource.query(
+      `SELECT "path"."id" FROM core."relatedRecordPath" "path"
+       JOIN core."fieldMetadata" "field" ON "field"."id" = "path"."firstFieldMetadataId"
+       WHERE "path"."objectMetadataId" = $1 AND "field"."name" = 'noteTargets'`,
+      [personObjectMetadataId],
+    );
+
+    try {
+      const updateResponse = await updateRelatedRecordPath({
+        id: standardPathId,
+        isInherent: true,
+      });
+
+      expect(updateResponse.body.errors).toBeUndefined();
+      expect(updateResponse.body.data.updateRelatedRecordPath.isInherent).toBe(
+        true,
+      );
+
+      const [storedPath] = await global.testDataSource.query(
+        `SELECT "isInherent", "overrides" FROM core."relatedRecordPath" WHERE "id" = $1`,
+        [standardPathId],
+      );
+
+      expect(storedPath.isInherent).toBe(false);
+      expect(storedPath.overrides).not.toBeNull();
+    } finally {
+      await updateRelatedRecordPath({ id: standardPathId, isInherent: false });
+    }
+  });
+
+  it('should reject an update that makes inherent paths form a cycle', async () => {
+    const projectToTasksResponse = await createPath({
+      firstFieldMetadataId: projectTasksFieldMetadataId,
+      isInherent: true,
+    });
+    const taskToProjectResponse = await createRelatedRecordPath({
+      objectMetadataId: taskObjectMetadataId,
+      firstFieldMetadataId: taskProjectFieldMetadataId,
+    });
+    const taskToProjectPath =
+      taskToProjectResponse.body.data.createRelatedRecordPath;
+
+    const updateResponse = await updateRelatedRecordPath({
+      id: taskToProjectPath.id,
+      isInherent: true,
+    });
+
+    expect(JSON.stringify(updateResponse.body.errors)).toContain(
+      'Inherent related record paths cannot form a cycle',
+    );
+
+    await deleteRelatedRecordPath(taskToProjectPath.id);
+    await deleteRelatedRecordPath(
+      projectToTasksResponse.body.data.createRelatedRecordPath.id,
     );
   });
 

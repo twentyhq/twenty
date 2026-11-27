@@ -1,0 +1,124 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`View Filter read should succeed should find a view filter among all view filters 1`] = `
+{
+  "createdAt": Any<String>,
+  "fieldMetadataId": Any<String>,
+  "id": Any<String>,
+  "operand": "CONTAINS",
+  "positionInViewFilterGroup": 0,
+  "relationTargetFieldMetadataId": null,
+  "subFieldName": null,
+  "updatedAt": Any<String>,
+  "value": "private",
+  "viewFilterGroupId": Any<String>,
+  "viewId": Any<String>,
+  "workspaceId": Any<String>,
+}
+`;
+
+exports[`View Filter read should succeed should find a view filter among the view filters of its view 1`] = `
+{
+  "createdAt": Any<String>,
+  "fieldMetadataId": Any<String>,
+  "id": Any<String>,
+  "operand": "CONTAINS",
+  "positionInViewFilterGroup": 0,
+  "relationTargetFieldMetadataId": null,
+  "subFieldName": null,
+  "updatedAt": Any<String>,
+  "value": "private",
+  "viewFilterGroupId": Any<String>,
+  "viewId": Any<String>,
+  "workspaceId": Any<String>,
+}
+`;
+
+exports[`View Filter read should succeed should find a view filter by id 1`] = `
+{
+  "createdAt": Any<String>,
+  "fieldMetadataId": Any<String>,
+  "id": Any<String>,
+  "operand": "CONTAINS",
+  "positionInViewFilterGroup": 0,
+  "relationTargetFieldMetadataId": null,
+  "subFieldName": null,
+  "updatedAt": Any<String>,
+  "value": "private",
+  "viewFilterGroupId": Any<String>,
+  "viewId": Any<String>,
+  "workspaceId": Any<String>,
+}
+`;
+
+exports[`View Filter read should succeed should return a view filter on GET /metadata/viewFilters 1`] = `
+{
+  "applicationId": Any<String>,
+  "applicationUniversalIdentifier": Any<String>,
+  "createdAt": Any<String>,
+  "fieldMetadataId": Any<String>,
+  "fieldMetadataUniversalIdentifier": Any<String>,
+  "id": Any<String>,
+  "operand": "CONTAINS",
+  "positionInViewFilterGroup": 0,
+  "relationTargetFieldMetadataId": null,
+  "relationTargetFieldMetadataUniversalIdentifier": null,
+  "subFieldName": null,
+  "universalIdentifier": Any<String>,
+  "updatedAt": Any<String>,
+  "value": "private",
+  "viewFilterGroupId": Any<String>,
+  "viewFilterGroupUniversalIdentifier": Any<String>,
+  "viewId": Any<String>,
+  "viewUniversalIdentifier": Any<String>,
+  "workspaceId": Any<String>,
+}
+`;
+
+exports[`View Filter read should succeed should return a view filter on GET /metadata/viewFilters/:id 1`] = `
+{
+  "applicationId": Any<String>,
+  "applicationUniversalIdentifier": Any<String>,
+  "createdAt": Any<String>,
+  "fieldMetadataId": Any<String>,
+  "fieldMetadataUniversalIdentifier": Any<String>,
+  "id": Any<String>,
+  "operand": "CONTAINS",
+  "positionInViewFilterGroup": 0,
+  "relationTargetFieldMetadataId": null,
+  "relationTargetFieldMetadataUniversalIdentifier": null,
+  "subFieldName": null,
+  "universalIdentifier": Any<String>,
+  "updatedAt": Any<String>,
+  "value": "private",
+  "viewFilterGroupId": Any<String>,
+  "viewFilterGroupUniversalIdentifier": Any<String>,
+  "viewId": Any<String>,
+  "viewUniversalIdentifier": Any<String>,
+  "workspaceId": Any<String>,
+}
+`;
+
+exports[`View Filter read should succeed should return a view filter on GET /metadata/viewFilters?viewId= 1`] = `
+{
+  "applicationId": Any<String>,
+  "applicationUniversalIdentifier": Any<String>,
+  "createdAt": Any<String>,
+  "fieldMetadataId": Any<String>,
+  "fieldMetadataUniversalIdentifier": Any<String>,
+  "id": Any<String>,
+  "operand": "CONTAINS",
+  "positionInViewFilterGroup": 0,
+  "relationTargetFieldMetadataId": null,
+  "relationTargetFieldMetadataUniversalIdentifier": null,
+  "subFieldName": null,
+  "universalIdentifier": Any<String>,
+  "updatedAt": Any<String>,
+  "value": "private",
+  "viewFilterGroupId": Any<String>,
+  "viewFilterGroupUniversalIdentifier": Any<String>,
+  "viewId": Any<String>,
+  "viewUniversalIdentifier": Any<String>,
+  "workspaceId": Any<String>,
+}
+`;

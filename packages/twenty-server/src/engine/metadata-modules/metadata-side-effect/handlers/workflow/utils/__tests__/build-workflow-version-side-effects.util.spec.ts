@@ -109,6 +109,7 @@ const persisted = ({ workflow, version }: ReturnType<typeof convert>) => {
     ...version,
     workspaceId: APPLICATION_ID,
     applicationId: APPLICATION_ID,
+    coreWorkflowId: storedWorkflow.id,
   };
   return maps;
 };

@@ -5,6 +5,7 @@ import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { ApplicationManifestModule } from 'src/engine/core-modules/application/application-manifest/application-manifest.module';
 import { PreInstalledAppsModule } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.module';
+import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { EventLogRetentionModule } from 'src/engine/core-modules/event-logs/retention/event-log-retention.module';
 import { CompanyEnrichmentModule } from 'src/engine/core-modules/company-enrichment/company-enrichment.module';
@@ -43,6 +44,7 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 import { StandardObjectsPrefillModule } from 'src/engine/workspace-manager/standard-objects-prefill-data/standard-objects-prefill.module';
+import { ChannelVisibilityModule } from 'src/engine/permissions/channel-visibility/channel-visibility.module';
 
 @Module({
   imports: [
@@ -55,10 +57,12 @@ import { StandardObjectsPrefillModule } from 'src/engine/workspace-manager/stand
     MetricsModule,
     StandardObjectsPrefillModule,
     BillingModule,
+    CacheLockModule,
     EventLogRetentionModule,
     FileModule,
     UserWorkspaceModule,
     WorkspaceManagerModule,
+    ChannelVisibilityModule,
     FeatureFlagModule,
     WorkspaceDataSourceModule,
     PermissionsModule,

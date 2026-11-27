@@ -1,9 +1,8 @@
-import { isNumber, isObject, isString } from '@sniptt/guards';
+import { isObject, isString } from '@sniptt/guards';
 import { AppConnectionAuthFailedError } from 'twenty-sdk/logic-function';
 
+import { isTransientLinkedinError } from 'src/logic-functions/utils/is-transient-linkedin-error.util';
 import { type LinkedinHistoryImportState } from 'src/types/linkedin-history-import-state.type';
-
-const TRANSIENT_HTTP_STATUSES = [429, 500, 502, 503, 504];
 
 const getErrorMessage = (error: unknown): string => {
   if (error instanceof Error) {
@@ -41,11 +40,7 @@ export const getLinkedinHistoryImportError = (
     return { code: 'AUTH_FAILED', message };
   }
 
-  if (
-    (error instanceof Error &&
-      (error.name === 'TypeError' || error.name === 'AbortError')) ||
-    (isNumber(status) && TRANSIENT_HTTP_STATUSES.includes(status))
-  ) {
+  if (isTransientLinkedinError(error)) {
     return { code: 'UNREACHABLE', message };
   }
 

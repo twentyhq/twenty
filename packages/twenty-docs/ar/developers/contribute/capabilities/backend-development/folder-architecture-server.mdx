@@ -71,7 +71,6 @@ workspace
     └───storage
     └───utils
   └───workspace-resolver-builder
-    └───factories
     └───interfaces
   └───workspace-query-builder
     └───factories
@@ -84,11 +83,9 @@ workspace
   └───workspace-migration-runner
   └───utils
   └───workspace.module.ts
-  └───workspace.factory.spec.ts
-  └───workspace.factory.ts
 ```
 
-يحتوي الجذر في دليل مساحة العمل على `workspace.factory.ts`، ملف يحتوي على وظيفة `createGraphQLSchema`. تولّد هذه الوظيفة مخططًا خاصًا بمساحة العمل باستخدام البيانات الوصفية لتخصيص المخطط لمساحات العمل الفردية. من خلال فصل بناء المخطط والمستعرض، نستخدم وظيفة `makeExecutableSchema`، التي تجمع بين هذه العناصر المنفصلة.
+تحصل كل مساحة عمل على مخطط GraphQL مُنشأ من بياناتها الوصفية. يُحتفظ بالمخطط بصيغة SDL، وتُنفَّذ الطلبات عبر التنفيذ المباشر، الذي يحلل المستند ويستدعي مشغلات الاستعلامات دون بناء مخطط قابل للتنفيذ.
 
 تعتمد هذه الاستراتيجية على التنظيم ولا تساعد فقط في التنظيم، لكنها أيضًا تحسن الأداء، مثل تخزين تعريفات النوع المولدة مؤقتًا لتعزيز الأداء والتوسع.
 
@@ -121,9 +118,9 @@ workspace
 
 ### منشئ محلل مساحة العمل
 
-إنشاء وظائف المعالجات للاستعلام وتعديل مخطط GraphQL.
+يربط كل أسلوب محلل (`findMany`، `createOne`، ...) بالحقول التي يحددها الاستعلام.
 
-كل مصنع في هذا الدليل مسؤول عن إنتاج نوع محلل مميز، مثل `FindManyResolverFactory`، المصمم للتطبيق المتكيف عبر جداول مختلفة.
+تشغّل `WorkspaceResolverRunnerService` (في `direct-execution/services`) مشغّل الاستعلام المشترك المطابق لطريقة ما، ويُسقِط `graphQLFormatResultFromSelectedFields` نتيجته في الاستجابة بتمرير واحد.
 
 ### مشغل استعلامات مساحة العمل
 

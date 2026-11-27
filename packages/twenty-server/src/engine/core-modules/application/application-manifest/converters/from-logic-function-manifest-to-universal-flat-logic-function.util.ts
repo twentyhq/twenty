@@ -2,6 +2,7 @@ import { parse } from 'path';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { type LogicFunctionManifest } from 'twenty-shared/application';
+import { LOGIC_FUNCTION_MAX_RETRY_LIMIT } from 'twenty-shared/logic-function';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
@@ -87,6 +88,13 @@ export const fromLogicFunctionManifestToUniversalFlatLogicFunction = ({
     )
       ? Math.min(timeoutSeconds, CONNECTION_FLOW_LOGIC_FUNCTION_TIMEOUT_SECONDS)
       : timeoutSeconds,
+    jobFailureHandlerName: logicFunctionManifest.jobFailureHandlerName ?? null,
+    retryLimit: isDefined(logicFunctionManifest.retryLimit)
+      ? Math.min(
+          Math.max(Math.trunc(logicFunctionManifest.retryLimit), 0),
+          LOGIC_FUNCTION_MAX_RETRY_LIMIT,
+        )
+      : null,
     sourceHandlerPath: logicFunctionManifest.sourceHandlerPath,
     builtHandlerPath: logicFunctionManifest.builtHandlerPath,
     handlerName: logicFunctionManifest.handlerName,
@@ -102,7 +110,6 @@ export const fromLogicFunctionManifestToUniversalFlatLogicFunction = ({
     toolTriggerSettings: logicFunctionManifest.toolTriggerSettings ?? null,
     workflowActionTriggerSettings:
       logicFunctionManifest.workflowActionTriggerSettings ?? null,
-    jobConfig: null,
     isBuildUpToDate: true,
     executionMode: resolveExecutionMode({
       logicFunctionManifest,

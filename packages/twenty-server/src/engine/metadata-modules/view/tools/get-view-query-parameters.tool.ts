@@ -17,6 +17,7 @@ const getViewQueryParamsInputSchema = z.object({
 
 @DefineTool({
   name: 'get_view_query_parameters',
+  isReadOnly: true,
   category: ToolCategory.VIEW,
   accessPolicy: VIEW_READ_ACCESS_POLICY,
   description:
@@ -33,7 +34,7 @@ export class GetViewQueryParametersTool extends BaseTool<
 
   async execute({
     input,
-    context: { workspaceId, userWorkspaceId, actorMetadata },
+    context: { workspaceId, actorMetadata },
   }: ToolExecuteArgs<
     typeof getViewQueryParamsInputSchema
   >): Promise<ToolOutput> {
@@ -45,7 +46,6 @@ export class GetViewQueryParametersTool extends BaseTool<
         viewId: input.viewId,
         workspaceId,
         currentWorkspaceMemberId,
-        currentUserWorkspaceId: userWorkspaceId,
       });
 
     return {

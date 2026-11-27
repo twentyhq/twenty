@@ -38,6 +38,7 @@ const buildFlatRole = (
   description: null,
   icon: null,
   isEditable: true,
+  isSystemSideEffect: false,
   canBeAssignedToUsers: true,
   canBeAssignedToAgents: true,
   canBeAssignedToApiKeys: true,
@@ -76,6 +77,7 @@ const buildFlatRoleTarget = (
   flatRoleTarget: Pick<FlatRoleTarget, 'id' | 'roleId' | 'userWorkspaceId'>,
 ): FlatRoleTarget => ({
   ...FLAT_ENTITY_DEFAULTS,
+  isSystemSideEffect: false,
   agentId: null,
   apiKeyId: null,
   webhookId: null,

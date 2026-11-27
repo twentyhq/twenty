@@ -1,109 +1,25 @@
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
-import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
-import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
-import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
-import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
-import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { useCurrentRecordGroupDefinition } from '@/object-record/record-group/hooks/useCurrentRecordGroupDefinition';
-import { useRecordGroupFilter } from '@/object-record/record-group/hooks/useRecordGroupFilter';
-import { isRecordGroupTabsDisplayedComponentSelector } from '@/object-record/record-group/states/selectors/isRecordGroupTabsDisplayedComponentSelector';
-import { recordIndexGroupLoadLimitComponentState } from '@/object-record/record-index/states/recordIndexGroupLoadLimitComponentState';
-import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import {
-  combineFilters,
-  computeRecordGqlOperationFilter,
-  isDefined,
-  turnAnyFieldFilterIntoRecordGqlFilter,
-} from 'twenty-shared/utils';
+import { useFindManyRecordIndexTableParamsWithoutViewPresetFilter } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParamsWithoutViewPresetFilter';
+import { useCurrentViewPresetFilterAsRecordGqlOperationFilter } from '@/views/hooks/useCurrentViewPresetFilterAsRecordGqlOperationFilter';
+import { combineFilters } from 'twenty-shared/utils';
 
 export const useFindManyRecordIndexTableParams = (
   objectNameSingular: string,
   instanceId?: string,
 ) => {
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular,
-  });
-  const { objectMetadataItems } = useObjectMetadataItems();
-
-  const { recordGroupFilter } = useRecordGroupFilter(
-    objectMetadataItem?.fields,
-  );
-
-  const currentRecordGroupDefinition = useCurrentRecordGroupDefinition();
-
-  const currentRecordFilterGroups = useAtomComponentStateValue(
-    currentRecordFilterGroupsComponentState,
-    instanceId,
-  );
-
-  const currentRecordSorts = useAtomComponentStateValue(
-    currentRecordSortsComponentState,
-    instanceId,
-  );
-
-  const currentRecordFilters = useAtomComponentStateValue(
-    currentRecordFiltersComponentState,
-    instanceId,
-  );
-
-  const recordIndexGroupLoadLimit = useAtomComponentStateValue(
-    recordIndexGroupLoadLimitComponentState,
-    instanceId,
-  );
-
-  const isRecordGroupTabsDisplayed = useAtomComponentSelectorValue(
-    isRecordGroupTabsDisplayedComponentSelector,
-    instanceId,
-  );
-
-  const { filterValueDependencies } = useFilterValueDependencies();
-
-  const flattenedFieldMetadataItems = useAtomStateValue(
-    flattenedFieldMetadataItemsSelector,
-  );
-
-  const currentFilters = computeRecordGqlOperationFilter({
-    fieldMetadataItems: flattenedFieldMetadataItems,
-    recordFilterGroups: currentRecordFilterGroups,
-    recordFilters: currentRecordFilters,
-    filterValueDependencies,
-  });
-
-  const anyFieldFilterValue = useAtomComponentStateValue(
-    anyFieldFilterValueComponentState,
-    instanceId,
-  );
-
-  const { recordGqlOperationFilter: anyFieldFilter } =
-    turnAnyFieldFilterIntoRecordGqlFilter({
-      fields: objectMetadataItem?.readableFields ?? [],
-      filterValue: anyFieldFilterValue,
+  const findManyRecordIndexTableParamsWithoutViewPresetFilter =
+    useFindManyRecordIndexTableParamsWithoutViewPresetFilter({
+      objectNameSingular,
+      instanceId,
     });
 
-  const orderBy = turnSortsIntoOrderBy(
-    objectMetadataItem,
-    currentRecordSorts,
-    objectMetadataItems,
-  );
-
-  const combinedFilter = combineFilters([
-    currentFilters,
-    recordGroupFilter,
-    anyFieldFilter,
-  ]);
+  const currentViewPresetFilterAsRecordGqlOperationFilter =
+    useCurrentViewPresetFilterAsRecordGqlOperationFilter();
 
   return {
-    objectNameSingular,
-    filter: combinedFilter,
-    orderBy,
-    // Omitting limit lets ungrouped views and group tabs fall through to QUERY_DEFAULT_LIMIT_RECORDS
-    ...(isDefined(currentRecordGroupDefinition) && !isRecordGroupTabsDisplayed
-      ? { limit: recordIndexGroupLoadLimit }
-      : {}),
+    ...findManyRecordIndexTableParamsWithoutViewPresetFilter,
+    filter: combineFilters([
+      findManyRecordIndexTableParamsWithoutViewPresetFilter.filter,
+      currentViewPresetFilterAsRecordGqlOperationFilter,
+    ]),
   };
 };

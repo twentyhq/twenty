@@ -2,7 +2,8 @@ name: Visual Regression Dispatch
 
 # Dispatches visual regression processing to twenty-factory after CI completes.
 # Runs in the context of the base repo (not the fork) so it has access to secrets,
-# making it work for external contributor PRs.
+# making it work for external contributor PRs. On main, CI Main calls it as soon as
+# CI UI or CI Front succeeds, without waiting for the rest of the run.
 #
 # All paths trigger the same twenty-factory workflow (post-visual-regression-comment.yaml)
 # via workflow_dispatch, passing the project as an input. twenty-factory routes to the
@@ -12,6 +13,11 @@ on:
   workflow_run:
     workflows: ['CI UI', 'CI Front']
     types: [completed]
+  workflow_call:
+    inputs:
+      project:
+        required: true
+        type: string
 
 permissions:
   actions: read
@@ -20,7 +26,9 @@ permissions:
 
 jobs:
   resolve-context:
-    if: github.event.workflow_run.conclusion == 'success'
+    if: >-
+      github.event_name != 'workflow_run' ||
+      github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     outputs:
@@ -36,14 +44,17 @@ jobs:
       - name: Resolve workflow context
         id: context
         uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
+        env:
+          CALLER_PROJECT: ${{ inputs.project }}
         with:
           script: |
-            const name = context.payload.workflow_run.name;
+            const name = context.payload.workflow_run?.name ?? context.workflow;
             const projectByWorkflow = {
               'CI UI': 'twenty-ui',
               'CI Front': 'twenty-front',
             };
-            const project = projectByWorkflow[name] ?? 'twenty-front';
+            const project =
+              process.env.CALLER_PROJECT || (projectByWorkflow[name] ?? 'twenty-front');
             const artifactName = `argos-screenshots-${project}`;
             core.setOutput('workflow_name', name);
             core.setOutput('project', project);
@@ -56,15 +67,16 @@ jobs:
         with:
           script: |
             const artifactName = '${{ steps.context.outputs.artifact_name }}';
-            const runId = context.payload.workflow_run.id;
+            const runId = context.payload.workflow_run?.id ?? context.runId;
 
-            const { data: artifacts } = await github.rest.actions.listWorkflowRunArtifacts({
+            const artifacts = await github.paginate(github.rest.actions.listWorkflowRunArtifacts, {
               owner: context.repo.owner,
               repo: context.repo.repo,
               run_id: runId,
+              per_page: 100,
             });
 
-            const found = artifacts.artifacts.some(a => a.name === artifactName);
+            const found = artifacts.some(a => a.name === artifactName);
             core.setOutput('exists', found ? 'true' : 'false');
 
             if (!found) {
@@ -177,10 +189,10 @@ jobs:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           PROJECT: ${{ needs.resolve-context.outputs.project }}
           PR_NUMBER: ${{ needs.resolve-context.outputs.pr_number }}
-          WORKFLOW_RUN_ID: ${{ github.event.workflow_run.id }}
+          WORKFLOW_RUN_ID: ${{ github.event.workflow_run.id || github.run_id }}
           REPOSITORY: ${{ github.repository }}
-          BRANCH: ${{ github.event.workflow_run.head_branch }}
-          COMMIT: ${{ github.event.workflow_run.head_sha }}
+          BRANCH: ${{ github.event.workflow_run.head_branch || github.ref_name }}
+          COMMIT: ${{ github.event.workflow_run.head_sha || github.sha }}
           REFERENCE_COMMIT: ${{ needs.resolve-context.outputs.merge_base_sha }}
           PARENT_COMMITS: ${{ needs.resolve-context.outputs.parent_commits }}
           ARTIFACT_NAME: ${{ needs.resolve-context.outputs.artifact_name }}

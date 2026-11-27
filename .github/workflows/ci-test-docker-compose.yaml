@@ -175,7 +175,7 @@ jobs:
   ci-test-docker-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-2-cores
     needs: [changed-files-check, test-compose, test-app-dev]
     steps:
       - name: Fail job if any needs failed

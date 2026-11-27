@@ -14,7 +14,7 @@ import {
   type LogicFunctionExecutionMode,
   type LogicFunctionRuntime,
 } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
-import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
+import { type ExecutableFlatLogicFunction } from 'src/engine/core-modules/logic-function/logic-function-drivers/types/executable-flat-logic-function.type';
 
 export type LogicFunctionExecuteError = {
   errorType: string;
@@ -32,7 +32,7 @@ export type LogicFunctionExecuteResult = {
 };
 
 export type LogicFunctionExecuteParams = {
-  flatLogicFunction: FlatLogicFunction;
+  flatLogicFunction: ExecutableFlatLogicFunction;
   flatApplication: FlatApplication;
   payload: object;
   context: LogicFunctionExecutionContext;
@@ -42,8 +42,16 @@ export type LogicFunctionExecuteParams = {
 };
 
 export type LogicFunctionInstallPrebuiltBundleParams = {
-  flatLogicFunction: FlatLogicFunction;
+  flatLogicFunction: ExecutableFlatLogicFunction;
   flatApplication: FlatApplication;
+};
+
+export type LogicFunctionWarmUpParams = {
+  flatLogicFunction: Pick<
+    ExecutableFlatLogicFunction,
+    'id' | 'executorNamePrefix'
+  >;
+  env?: Record<string, string>;
 };
 
 export type LogicFunctionTranspileParams = {
@@ -63,7 +71,7 @@ export type LogicFunctionDeleteApplicationResourcesParams = {
 };
 
 export interface LogicFunctionDriver {
-  delete(flatLogicFunction: FlatLogicFunction): Promise<void>;
+  delete(flatLogicFunction: ExecutableFlatLogicFunction): Promise<void>;
   deleteApplicationResources(
     params: LogicFunctionDeleteApplicationResourcesParams,
   ): Promise<void>;
@@ -81,8 +89,9 @@ export interface LogicFunctionDriver {
     params: LogicFunctionInstallPrebuiltBundleParams,
   ): Promise<void>;
   getInstalledBundleChecksum(
-    flatLogicFunction: FlatLogicFunction,
+    flatLogicFunction: ExecutableFlatLogicFunction,
   ): Promise<string | null>;
+  warmUp(params: LogicFunctionWarmUpParams): Promise<void>;
   executeHttpRequest(request: HttpEgressRequest): Promise<HttpEgressResponse>;
 }
 

@@ -4,6 +4,7 @@ import { TEAMS_ASSISTANT_DEADLINE_FAILURE_TEXT } from 'src/features/chat/logic-f
 import { TEAMS_ASSISTANT_FAILURE_TEXT } from 'src/features/chat/logic-functions/constants/teams-assistant-failure-text';
 import { TeamsAssistantDeadlineError } from 'src/features/chat/logic-functions/types/teams-assistant-deadline-error';
 import { TEAMS_ASSISTANT_REQUEST_STATUS } from 'src/features/chat/logic-functions/constants/teams-assistant-request-status';
+import { TEAMS_ASSISTANT_UNMATCHED_REQUEST_NAME } from 'src/features/chat/logic-functions/constants/teams-assistant-unmatched-request-name';
 import { TEAMS_ASSISTANT_UNMATCHED_SENDER_TEXT } from 'src/features/chat/logic-functions/constants/teams-assistant-unmatched-sender-text';
 import { answerTeamsAssistantRequest } from 'src/features/chat/logic-functions/utils/answer-teams-assistant-request';
 
@@ -133,6 +134,18 @@ describe('answerTeamsAssistantRequest', () => {
     );
   });
 
+  it('should save the request text only once the sender is matched', async () => {
+    await answer();
+
+    expect(updateMock).toHaveBeenCalledWith({
+      client: expect.anything(),
+      id: REQUEST.id,
+      workspaceMemberId: 'workspace-member-1',
+      requestText: REQUEST.requestText,
+      name: REQUEST.requestText,
+    });
+  });
+
   it('should pass the earlier turns of the sender in this conversation to the agent', async () => {
     const history = [{ requestText: 'hi', responseText: 'Hi!' }];
     findHistoryMock.mockResolvedValue(history);
@@ -189,6 +202,12 @@ describe('answerTeamsAssistantRequest', () => {
     await expect(answer()).resolves.toMatchObject({ status: 'declined' });
     expect(runAgentMock).not.toHaveBeenCalled();
     expect(finishedTexts()).toEqual([TEAMS_ASSISTANT_UNMATCHED_SENDER_TEXT]);
+    expect(updateMock).not.toHaveBeenCalledWith(
+      expect.objectContaining({ requestText: expect.anything() }),
+    );
+    expect(updateMock).toHaveBeenCalledWith(
+      expect.objectContaining({ name: TEAMS_ASSISTANT_UNMATCHED_REQUEST_NAME }),
+    );
   });
 
   it('should tell the member when the agent ran out of time', async () => {

@@ -4,13 +4,15 @@ import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 import { readSlackRosterMatchRunOutcome } from 'src/logic-functions/utils/read-slack-roster-match-run-outcome';
 import { resolveSlackConnectionHealth } from 'src/logic-functions/utils/resolve-slack-connection-health';
 
-type SlackConnectionStatusResult = {
-  success: true;
-  isConnected: boolean;
-  installedSlackTeamId?: string;
-  connectionHealth?: SlackConnectionHealth;
-  hasRosterMatchFailed?: boolean;
-};
+type SlackConnectionStatusResult =
+  | {
+      success: true;
+      isConnected: boolean;
+      installedSlackTeamId?: string;
+      connectionHealth?: SlackConnectionHealth;
+      hasRosterMatchFailed?: boolean;
+    }
+  | { success: false; error: string };
 
 export const slackConnectionStatusHandler =
   async (): Promise<SlackConnectionStatusResult> => {
@@ -20,7 +22,9 @@ export const slackConnectionStatusHandler =
     });
 
     if (!slackClientResult.success) {
-      return { success: true, isConnected: false };
+      return slackClientResult.isConnectionMissing
+        ? { success: true, isConnected: false }
+        : { success: false, error: slackClientResult.error };
     }
 
     const [connectionHealthReport, rosterMatchRunOutcome] = await Promise.all([

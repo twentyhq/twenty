@@ -28,6 +28,7 @@ const buildEvent = ({
   before?: CalendarEventForDatabaseEvent;
   after?: CalendarEventForDatabaseEvent;
 } = {}) => ({
+  eventId: 'database-event-1',
   recordId: after.id,
   properties: { updatedFields, before, after },
 });
@@ -150,9 +151,40 @@ describe('buildCalendarEventReconciliationPayload', () => {
   });
 
   it.each([
+    ['blank', 'Auto', null, 'AUTO'],
+    ['Auto', 'blank', 'AUTO', null],
+    ['Auto', 'On', 'AUTO', 'ON'],
+  ])(
+    'treats a preference change from %s to %s as an echo candidate',
+    (_beforeLabel, _afterLabel, beforePreference, afterPreference) => {
+      expect(
+        buildCalendarEventReconciliationPayload({
+          action: 'updated',
+          events: [
+            buildEvent({
+              updatedFields: ['callRecorderPreference'],
+              before: buildCalendarEvent({
+                callRecorderPreference: beforePreference,
+              }),
+              after: buildCalendarEvent({
+                callRecorderPreference: afterPreference,
+              }),
+            }),
+          ],
+        }),
+      ).toEqual({
+        calendarEventIds: [],
+        echoCandidateCalendarEventIds: ['calendar-event-1'],
+        removedOccurrences: [],
+      });
+    },
+  );
+
+  it.each([
     ['blank', 'Off', null, 'OFF'],
     ['Off', 'blank', 'OFF', null],
     ['On', 'Off', 'ON', 'OFF'],
+    ['Auto', 'Off', 'AUTO', 'OFF'],
   ])(
     'reconciles a preference change from %s to %s',
     (_beforeLabel, _afterLabel, beforePreference, afterPreference) => {

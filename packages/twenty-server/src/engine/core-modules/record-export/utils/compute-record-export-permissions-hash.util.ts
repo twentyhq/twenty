@@ -8,7 +8,7 @@ export const computeRecordExportPermissionsHash = ({
   grantRoleId,
 }: {
   permissionsHash: string;
-  application: Pick<FlatApplication, 'id' | 'defaultRoleId' | 'deletedAt'>;
+  application: Pick<FlatApplication, 'id' | 'requestedRoleId' | 'deletedAt'>;
   grantRoleId: string | undefined;
 }): string =>
   createHash('sha256')
@@ -17,7 +17,8 @@ export const computeRecordExportPermissionsHash = ({
         permissionsHash,
         application: {
           id: application.id,
-          defaultRoleId: application.defaultRoleId,
+          // Key kept so hashes of exports started before the rename still match
+          defaultRoleId: application.requestedRoleId,
           deletedAt: application.deletedAt,
           grantRoleId: grantRoleId ?? null,
         },

@@ -1,10 +1,8 @@
-import { v4 } from 'uuid';
-
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
-import { type RowLevelPermissionPredicateInput } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/inputs/upsert-row-level-permission-predicates.input';
+import { type FlattenedRowLevelPermissionPredicateInput } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flattened-row-level-permission-rule-inputs.type';
 import { type FlatRowLevelPermissionPredicateGroup } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group.type';
 import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate.type';
 
@@ -17,20 +15,21 @@ export const fromCreateRowLevelPermissionPredicateInputToFlatRowLevelPermissionP
     roleUniversalIdentifier,
     objectMetadataUniversalIdentifier,
     flatApplication,
+    rowLevelPermissionRuleUniversalIdentifier,
     flatFieldMetadataMaps,
     flatRowLevelPermissionPredicateGroupMaps,
   }: {
-    input: RowLevelPermissionPredicateInput;
+    input: FlattenedRowLevelPermissionPredicateInput;
     roleId: string;
     objectMetadataId: string;
     workspaceId: string;
     roleUniversalIdentifier: string;
     objectMetadataUniversalIdentifier: string;
     flatApplication: FlatApplication;
+    rowLevelPermissionRuleUniversalIdentifier: string;
   } & Pick<AllFlatEntityMaps, 'flatFieldMetadataMaps'> & {
       flatRowLevelPermissionPredicateGroupMaps: FlatEntityMaps<FlatRowLevelPermissionPredicateGroup>;
     }): FlatRowLevelPermissionPredicate => {
-    const predicateId = input.id ?? v4();
     const createdAt = new Date().toISOString();
 
     const {
@@ -38,6 +37,8 @@ export const fromCreateRowLevelPermissionPredicateInputToFlatRowLevelPermissionP
       relationFieldMetadataUniversalIdentifier,
       rowLevelPermissionPredicateGroupUniversalIdentifier,
       workspaceMemberFieldMetadataUniversalIdentifier,
+      workspaceMemberRelationFieldMetadataUniversalIdentifier,
+      workspaceMemberRelationFilterFieldMetadataUniversalIdentifier,
     } = resolveEntityRelationUniversalIdentifiers({
       metadataName: 'rowLevelPermissionPredicate',
       foreignKeyValues: {
@@ -46,6 +47,10 @@ export const fromCreateRowLevelPermissionPredicateInputToFlatRowLevelPermissionP
         rowLevelPermissionPredicateGroupId:
           input.rowLevelPermissionPredicateGroupId,
         workspaceMemberFieldMetadataId: input.workspaceMemberFieldMetadataId,
+        workspaceMemberRelationFieldMetadataId:
+          input.workspaceMemberRelationFieldMetadataId,
+        workspaceMemberRelationFilterFieldMetadataId:
+          input.workspaceMemberRelationFilterFieldMetadataId,
       },
       flatEntityMaps: {
         flatFieldMetadataMaps,
@@ -54,7 +59,7 @@ export const fromCreateRowLevelPermissionPredicateInputToFlatRowLevelPermissionP
     });
 
     return {
-      id: predicateId,
+      id: input.id,
       workspaceId,
       roleId,
       roleUniversalIdentifier,
@@ -71,17 +76,25 @@ export const fromCreateRowLevelPermissionPredicateInputToFlatRowLevelPermissionP
         input.workspaceMemberFieldMetadataId ?? null,
       workspaceMemberFieldMetadataUniversalIdentifier,
       workspaceMemberSubFieldName: input.workspaceMemberSubFieldName ?? null,
+      workspaceMemberRelationFieldMetadataId:
+        input.workspaceMemberRelationFieldMetadataId ?? null,
+      workspaceMemberRelationFieldMetadataUniversalIdentifier,
+      workspaceMemberRelationFilterFieldMetadataId:
+        input.workspaceMemberRelationFilterFieldMetadataId ?? null,
+      workspaceMemberRelationFilterFieldMetadataUniversalIdentifier,
+      workspaceMemberRelationFilterValues:
+        input.workspaceMemberRelationFilterValues ?? null,
       rowLevelPermissionPredicateGroupId:
-        input.rowLevelPermissionPredicateGroupId ?? null,
+        input.rowLevelPermissionPredicateGroupId,
       rowLevelPermissionPredicateGroupUniversalIdentifier,
-      rowLevelPermissionRuleId: null,
-      rowLevelPermissionRuleUniversalIdentifier: null,
+      rowLevelPermissionRuleId: input.rowLevelPermissionRuleId,
+      rowLevelPermissionRuleUniversalIdentifier,
       positionInRowLevelPermissionPredicateGroup:
-        input.positionInRowLevelPermissionPredicateGroup ?? null,
+        input.positionInRowLevelPermissionPredicateGroup,
       createdAt,
       updatedAt: createdAt,
       deletedAt: null,
-      universalIdentifier: predicateId,
+      universalIdentifier: input.id,
       applicationId: flatApplication.id,
       applicationUniversalIdentifier: flatApplication.universalIdentifier,
     };

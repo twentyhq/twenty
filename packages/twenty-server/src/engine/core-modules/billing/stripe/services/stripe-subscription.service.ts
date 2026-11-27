@@ -89,11 +89,4 @@ export class StripeSubscriptionService {
   ): Promise<Stripe.Subscription> {
     return this.stripe.subscriptions.update(stripeSubscriptionId, updateData);
   }
-
-  getBillingThresholds(meterPriceFlatAmount: number) {
-    return {
-      amount_gte: Math.max(meterPriceFlatAmount * 2, 10000),
-      reset_billing_cycle_anchor: false,
-    };
-  }
 }

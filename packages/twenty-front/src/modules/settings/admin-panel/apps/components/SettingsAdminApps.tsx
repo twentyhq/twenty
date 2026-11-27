@@ -76,6 +76,10 @@ const SOURCE_TYPE_FILTER_OPTIONS: {
     sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
     label: doNotTranslate('OAuth'),
   },
+  {
+    sourceType: ApplicationRegistrationSourceType.BUNDLED,
+    label: msg`Bundled`,
+  },
   { sourceType: ApplicationRegistrationSourceType.LOCAL, label: msg`Local` },
 ];
 

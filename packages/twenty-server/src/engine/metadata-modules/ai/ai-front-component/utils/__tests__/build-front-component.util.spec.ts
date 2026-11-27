@@ -16,7 +16,13 @@ const sharedDependencies: Parameters<
     [
       'react',
       {
-        namedExports: ['useEffect', 'useState', 'useSyncExternalStore'],
+        namedExports: [
+          'useCallback',
+          'useEffect',
+          'useRef',
+          'useState',
+          'useSyncExternalStore',
+        ],
         hasDefaultExport: true,
       },
     ],
@@ -66,6 +72,55 @@ const INPUT = {
 };
 
 describe('buildFrontComponent', () => {
+  it('bundles the SDK record hooks without requiring them in the app dependencies', async () => {
+    const { compiledSource, source } = await buildFrontComponent({
+      ...INPUT,
+      pageLayoutType: PageLayoutType.RECORD_PAGE,
+      source: `import { useSelectedRecordIds, useSelectedObjectMetadata } from 'twenty-sdk/front-component';
+        export const Component = () => <div>{useSelectedObjectMetadata()?.nameSingular}: {useSelectedRecordIds()[0]}</div>;`,
+    });
+
+    expect(compiledSource).toContain('__twentySdkExecutionContext__');
+    expect(compiledSource).not.toContain('twenty-sdk/front-component');
+    expect(source).toContain("from 'twenty-sdk/front-component'");
+    await expect(
+      transform(compiledSource, { loader: 'js' }),
+    ).resolves.toHaveProperty('code');
+  });
+
+  it('bundles public context hooks, translation and navigation without API clients', async () => {
+    const { compiledSource, hasSdkClientImport } = await buildFrontComponent({
+      ...INPUT,
+      source: `import { AppPath, navigate, useRecordId, useColorScheme, Trans } from 'twenty-sdk/front-component';
+        export const Component = () => <button onClick={() => navigate(AppPath.Settings)}><Trans message="Open" />{useRecordId()} {useColorScheme()}</button>;`,
+    });
+    expect(compiledSource).toContain('frontComponentHostCommunicationApi');
+    expect(compiledSource).not.toContain('twenty-client-sdk/');
+    expect(hasSdkClientImport).toBe(false);
+  });
+
+  it('marks metadata-backed SDK helpers as needing an app client', async () => {
+    const { compiledSource, hasSdkClientImport } = await buildFrontComponent({
+      ...INPUT,
+      source: `import { sendInboxMessage } from 'twenty-sdk/front-component';
+        export const Component = () => <button onClick={() => sendInboxMessage({ body: 'Hello' })}>Send</button>;`,
+    });
+    expect(compiledSource).toContain('twenty-client-sdk/metadata');
+    expect(hasSdkClientImport).toBe(true);
+  });
+
+  it.each(['inboxMention', 'inboxReferenceRecord'])(
+    'rejects %s because the renderer cannot load its REST client',
+    async (helper) => {
+      await expect(
+        buildFrontComponent({
+          ...INPUT,
+          source: `import { ${helper} } from 'twenty-sdk/front-component';
+          export const Component = () => <button onClick={() => ${helper}('record-id')}>Open</button>;`,
+        }),
+      ).rejects.toThrow('REST-backed SDK helpers are unavailable');
+    },
+  );
   it.each([PageLayoutType.DASHBOARD, PageLayoutType.RECORD_PAGE] as const)(
     'builds one editable SDK file for the selected %s surface',
     async (pageLayoutType) => {

@@ -14,7 +14,7 @@ const baseInput = {
 
 const application = {
   id: 'app-1',
-  defaultRoleId: 'app-role-1',
+  requestedRoleId: 'app-role-1',
 } as NonNullable<RawAuthContext['application']>;
 
 describe('buildUserAuthContext', () => {

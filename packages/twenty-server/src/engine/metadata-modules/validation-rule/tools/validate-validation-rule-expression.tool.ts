@@ -22,6 +22,7 @@ const validateValidationRuleExpressionInputSchema = z.object({
 
 @DefineTool({
   name: 'validate_validation_rule_expression',
+  isReadOnly: true,
   category: ToolCategory.METADATA,
   accessPolicy: VALIDATION_RULE_WRITE_ACCESS_POLICY,
   icon: 'IconSettings',

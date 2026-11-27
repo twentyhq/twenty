@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Requests into the server admin workspace when its signing keys cannot be fetched should refuse a valid assertion 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "IDENTITY_ASSERTION_REQUIRED",
+    "userFriendlyMessage": {
+      "id": Any<String>,
+      "message": "You do not have permission to perform this action.",
+    },
+  },
+  "message": "The server admin workspace requires a valid identity assertion",
+}
+`;

@@ -42,10 +42,27 @@ describe('slackHealthCheckHandler', () => {
     await expect(slackHealthCheckHandler()).resolves.toEqual({ status: 'OK' });
   });
 
-  it('should report nothing when Slack is not connected', async () => {
+  it('should point to the connection when Slack is not connected', async () => {
     vi.mocked(getSlackClient).mockResolvedValue({
       success: false,
       error: 'Slack is not connected.',
+      isConnectionMissing: true,
+    });
+
+    await expect(slackHealthCheckHandler()).resolves.toEqual({
+      status: 'WARNING',
+      title: 'Slack is not connected',
+      description: expect.stringContaining('Add a connection'),
+      action: { label: 'Manage connection', location: '#general/connections' },
+    });
+
+    expect(resolveSlackConnectionHealth).not.toHaveBeenCalled();
+  });
+
+  it('should report nothing when the connection could not be looked up', async () => {
+    vi.mocked(getSlackClient).mockResolvedValue({
+      success: false,
+      error: 'network down',
     });
 
     await expect(slackHealthCheckHandler()).resolves.toEqual({ status: 'OK' });

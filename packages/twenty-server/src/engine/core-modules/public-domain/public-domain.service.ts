@@ -8,6 +8,7 @@ import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialE
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
+import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { PublicDomainDTO } from 'src/engine/core-modules/public-domain/dtos/public-domain.dto';
 import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import {
@@ -22,6 +23,7 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 export class PublicDomainService {
   constructor(
     private readonly dnsManagerService: DnsManagerService,
+    private readonly domainServerConfigService: DomainServerConfigService,
     @InjectWorkspaceScopedRepository(PublicDomainEntity)
     private readonly publicDomainRepository: WorkspaceScopedRepository<PublicDomainEntity>,
     // Hostname-to-workspace resolution at request-routing time, before workspace context exists.
@@ -62,6 +64,13 @@ export class PublicDomainService {
     applicationId: string;
   }): Promise<PublicDomainDTO> {
     const formattedDomain = domain.trim().toLowerCase();
+
+    if (this.domainServerConfigService.isInstanceHostname(formattedDomain)) {
+      throw new PublicDomainException(
+        'Domain is used by this instance',
+        PublicDomainExceptionCode.DOMAIN_USED_BY_INSTANCE,
+      );
+    }
 
     const [workspaceWithCustomDomain, existingPublicDomain, application] =
       await Promise.all([

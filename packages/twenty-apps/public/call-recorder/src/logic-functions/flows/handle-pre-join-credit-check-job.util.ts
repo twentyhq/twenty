@@ -28,6 +28,7 @@ export const handlePreJoinCreditCheckJob = async (
         fetch: fetchWithTimeout,
       }),
       callRecordingId,
+      bookedJoinAt: getString(body?.bookedJoinAt),
       now: new Date(),
     });
   } catch (error) {

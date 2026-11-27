@@ -18,23 +18,8 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 
-@UseGuards(
-  AccessPolicyGuard({
-    authPrincipals: {
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: true,
-    },
-    requiredPermissionFlags: [PermissionFlagType.APPLICATIONS],
-  }),
-)
 @MetadataResolver(() => ApplicationVariableEntityDTO)
 @UseFilters(
   ApplicationVariableEntityExceptionFilter,
@@ -47,11 +32,28 @@ export class ApplicationVariableEntityResolver {
   ) {}
 
   @ResolveField(() => String)
+  @UseGuards(NoPermissionGuard)
   value(@Parent() applicationVariable: ApplicationVariableEntity): string {
     return this.applicationVariableService.getDisplayValue(applicationVariable);
   }
 
   @Mutation(() => Boolean)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: true,
+        oauthClient: true,
+        application: true,
+      },
+      requiredPermissionFlags: [PermissionFlagType.APPLICATIONS],
+    }),
+  )
   async updateOneApplicationVariable(
     @Args() { key, value, applicationId }: UpdateApplicationVariableEntityInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

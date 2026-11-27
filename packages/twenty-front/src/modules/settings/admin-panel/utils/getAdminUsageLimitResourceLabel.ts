@@ -5,7 +5,7 @@ import { USAGE_LIMIT_RESOURCE_TYPE_LABELS } from '@/settings/billing/constants/U
 import { isKeyOfRecord } from '@/settings/billing/utils/isKeyOfRecord';
 
 export const getAdminUsageLimitResourceLabel = (
-  row: AdminUsageLimitRow,
+  row: Pick<AdminUsageLimitRow, 'resourceType'>,
 ): string =>
   isKeyOfRecord(USAGE_LIMIT_RESOURCE_TYPE_LABELS, row.resourceType)
     ? t(USAGE_LIMIT_RESOURCE_TYPE_LABELS[row.resourceType])

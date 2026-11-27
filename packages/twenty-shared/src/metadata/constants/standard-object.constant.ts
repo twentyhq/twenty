@@ -108,6 +108,9 @@ export const STANDARD_OBJECTS = {
       eventExternalIdIndex: {
         universalIdentifier: 'b14d63d0-c1ab-470f-927d-9c0c05277caa',
       },
+      accountOwnerIdIndex: {
+        universalIdentifier: '740776d1-fe14-41b9-80b9-11c610765f0c',
+      },
     },
     views: {
       allCalendarChannelEventAssociations: buildStandardObjectIndexView({
@@ -541,6 +544,9 @@ export const STANDARD_OBJECTS = {
       },
       messageChannelIdMessageIdUniqueIndex: {
         universalIdentifier: '1b86ece8-7ce3-4df3-8771-fd4b5d45b2f2',
+      },
+      accountOwnerIdIndex: {
+        universalIdentifier: '0797b417-8f87-4df1-b838-d85fbb663110',
       },
     },
     views: {
@@ -1265,9 +1271,6 @@ export const STANDARD_OBJECTS = {
       taskIdIndex: {
         universalIdentifier: '609cf622-86ef-48d1-812b-e1cab610a46c',
       },
-      workflowVersionIdIndex: {
-        universalIdentifier: 'd94329b3-5dc8-4141-ae28-31afe28f7135',
-      },
       workflowRunIdIndex: {
         universalIdentifier: '1a2bd046-7c23-4e0a-9f8a-c3ca3a16d3b9',
       },
@@ -1298,7 +1301,6 @@ export const STANDARD_OBJECTS = {
           'targetOpportunity',
           'targetTask',
           'targetNote',
-          'targetWorkflowVersion',
           'targetWorkflowRun',
           'targetDashboard',
         ],
@@ -1309,9 +1311,6 @@ export const STANDARD_OBJECTS = {
     universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowRun,
     fields: STANDARD_OBJECT_FIELDS.workflowRun,
     indexes: {
-      workflowVersionIdIndex: {
-        universalIdentifier: '8183c8d2-9114-4b6e-8c5d-12a3b14a5a14',
-      },
       coreWorkflowIdCreatedAtIndex: {
         universalIdentifier: '5f16fa40-7dd4-4a30-8331-9ad4a106f6be',
       },
@@ -1333,7 +1332,6 @@ export const STANDARD_OBJECTS = {
         viewFieldNames: [
           'status',
           'coreWorkflowId',
-          'workflowVersion',
           'startedAt',
           'endedAt',
           'createdAt',
@@ -1342,43 +1340,6 @@ export const STANDARD_OBJECTS = {
           'state',
           'updatedAt',
           'updatedBy',
-          'timelineActivities',
-        ],
-        viewFieldGroupNames: {
-          general: 'General',
-          system: 'System',
-        },
-      }),
-    },
-  },
-  workflowVersion: {
-    universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowVersion,
-    fields: STANDARD_OBJECT_FIELDS.workflowVersion,
-    indexes: {
-      searchVectorGinIndex: {
-        universalIdentifier: '6f3a65eb-2aee-4108-b8a0-c62da419d1dc',
-      },
-    },
-    views: {
-      allWorkflowVersions: buildStandardObjectIndexView({
-        objectUniversalIdentifier:
-          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowVersion,
-        fields: STANDARD_OBJECT_FIELDS.workflowVersion,
-        viewFieldNames: ['name', 'status', 'updatedAt', 'runs'],
-      }),
-      workflowVersionRecordPageFields: buildStandardObjectRecordPageFieldsView({
-        objectUniversalIdentifier:
-          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowVersion,
-        fields: STANDARD_OBJECT_FIELDS.workflowVersion,
-        viewFieldNames: [
-          'status',
-          'trigger',
-          'createdAt',
-          'steps',
-          'createdBy',
-          'updatedAt',
-          'updatedBy',
-          'runs',
           'timelineActivities',
         ],
         viewFieldGroupNames: {
@@ -1447,6 +1408,156 @@ export const STANDARD_OBJECTS = {
       },
       channelLastActivityIndex: {
         universalIdentifier: 'bd129bd1-db66-4c74-a64e-819d2edd3062',
+      },
+    },
+    views: {
+      open: {
+        universalIdentifier: 'e9a3781b-db78-41bb-a0e4-f6324770432a',
+        viewFields: {
+          title: {
+            universalIdentifier: 'ee0068ac-e2e1-41f3-ab91-7e170f8d57e9',
+          },
+          channelId: {
+            universalIdentifier: '11bb7c71-b3b8-40ac-83bc-7b898c143396',
+          },
+          lastMessageSenderWorkspaceMemberId: {
+            universalIdentifier: '80112b71-a98a-4bd1-9368-75c4def1e1d2',
+          },
+          lastMessageText: {
+            universalIdentifier: 'b2a48e39-4497-40a2-ab6d-fc149e14b86b',
+          },
+          assignee: {
+            universalIdentifier: '66d7c094-38ae-48ec-b13e-b0ab1524191d',
+          },
+          createdAt: {
+            universalIdentifier: 'dddf8ac0-a06b-42c6-a046-ea4c6c5b3fea',
+          },
+        },
+      },
+      needsInput: {
+        universalIdentifier: '0b97f7e4-423a-4e2f-93b9-7a5bcde62c03',
+        viewFields: {
+          title: {
+            universalIdentifier: '21f4b070-eae9-4ee6-bd12-d8d32a49051a',
+          },
+          channelId: {
+            universalIdentifier: '3bb7d1e3-3f20-45fe-bb21-60129f802503',
+          },
+          lastMessageSenderWorkspaceMemberId: {
+            universalIdentifier: '0efa3f82-9f99-4144-8eef-0e5a51459ee9',
+          },
+          lastMessageText: {
+            universalIdentifier: 'a856d3ac-dc8c-48b8-8b3a-9294a9a4ed9e',
+          },
+          assignee: {
+            universalIdentifier: '8c6353a2-a98a-4872-9c08-bbaa5009d1a0',
+          },
+          createdAt: {
+            universalIdentifier: 'c0cdc31f-35d1-411b-8f76-0ff3bc4ff1be',
+          },
+        },
+        viewFilters: {
+          pendingQuestionMessageIdIsNotEmpty: {
+            universalIdentifier: '05baa741-58a6-4641-abe2-267a1268e53b',
+          },
+        },
+      },
+      mentions: {
+        universalIdentifier: '0a5d7727-2263-46b1-a795-9227559faf6f',
+        viewFields: {
+          title: {
+            universalIdentifier: '3bb06dae-01f9-419c-8713-b578fb6db17e',
+          },
+          channelId: {
+            universalIdentifier: '2908aae6-ddac-43da-8126-ec723064d176',
+          },
+          lastMessageSenderWorkspaceMemberId: {
+            universalIdentifier: '0cc4c6ad-85aa-42a5-8753-d8e9c8f6006f',
+          },
+          lastMessageText: {
+            universalIdentifier: '7da6c3f5-d109-4172-a1ac-e8dd51a628cf',
+          },
+          assignee: {
+            universalIdentifier: '923ab6e6-6b33-484c-922b-b1d2b498ee6f',
+          },
+          createdAt: {
+            universalIdentifier: '9260f1b6-d144-4c3e-86ef-a94a9b7a3886',
+          },
+        },
+      },
+      assignedToMe: {
+        universalIdentifier: '1cddfa2c-38c0-4fda-80f3-cd01e37bf8e3',
+        viewFields: {
+          title: {
+            universalIdentifier: '842e98ae-5749-41c2-890e-d802a69103c2',
+          },
+          channelId: {
+            universalIdentifier: 'c98ab809-cb33-45a3-8060-b935578dab4d',
+          },
+          lastMessageSenderWorkspaceMemberId: {
+            universalIdentifier: 'b72268ee-b72c-4e76-a4bd-43d3efb8ecd7',
+          },
+          lastMessageText: {
+            universalIdentifier: 'bc270344-a41b-4b32-8c51-9c244ffc3261',
+          },
+          assignee: {
+            universalIdentifier: '86d1e298-5878-43bb-bac8-3d856ac94ee8',
+          },
+          createdAt: {
+            universalIdentifier: 'f30f67f7-ea19-48fa-acf9-e0a3530fbe01',
+          },
+        },
+        viewFilters: {
+          assigneeIsMe: {
+            universalIdentifier: 'defbcad5-d91f-4e9a-90c6-9bac578ef374',
+          },
+        },
+      },
+      snoozed: {
+        universalIdentifier: '31e8f41f-53ed-4dfd-aaa7-6d0d5dd2d56d',
+        viewFields: {
+          title: {
+            universalIdentifier: 'c178dd98-fd51-488c-9c79-3d05dcba71e8',
+          },
+          channelId: {
+            universalIdentifier: 'fcf7ec22-671a-4da0-afd1-268adc014419',
+          },
+          lastMessageSenderWorkspaceMemberId: {
+            universalIdentifier: 'f2e2b179-2422-40d9-8283-d71911f363d8',
+          },
+          lastMessageText: {
+            universalIdentifier: 'a7723344-d641-4065-a227-2cc12eceedb8',
+          },
+          assignee: {
+            universalIdentifier: 'cf4acc66-0a78-4674-a857-93c54d555515',
+          },
+          createdAt: {
+            universalIdentifier: 'fecf62fb-bbe8-4047-94b8-98dc5b81025f',
+          },
+        },
+      },
+      done: {
+        universalIdentifier: '81ee1b41-8035-46d1-85ae-18a75616954a',
+        viewFields: {
+          title: {
+            universalIdentifier: 'bd6443df-ffd7-4f47-8c21-0ae9d2ebf914',
+          },
+          channelId: {
+            universalIdentifier: 'd21a5acf-35a2-4336-8cb8-08d9cc5a3178',
+          },
+          lastMessageSenderWorkspaceMemberId: {
+            universalIdentifier: '39d57c55-54ef-4120-8419-51f70b2b1619',
+          },
+          lastMessageText: {
+            universalIdentifier: 'f7d8f9ee-a16a-4fd5-b66a-67bb07ca9ae6',
+          },
+          assignee: {
+            universalIdentifier: '7f42091b-4767-4c79-ac8f-0764356d89df',
+          },
+          createdAt: {
+            universalIdentifier: '5b0fa198-535c-47df-91fd-4f57c2cf5daa',
+          },
+        },
       },
     },
   },

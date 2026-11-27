@@ -2,7 +2,7 @@ import { type NodeViewProps } from '@tiptap/core';
 import { NodeViewWrapper } from '@tiptap/react';
 import { isAgentChatAssistantReference } from 'twenty-shared/ai';
 
-import { AiChatAssistantMentionChip } from '@/ai/components/AiChatAssistantMentionChip';
+import { AiChatAssistantMentionChip } from '@/ai-chat/components/AiChatAssistantMentionChip';
 import { MentionRecordChip } from '@/mention/components/MentionRecordChip';
 
 type MentionChipProps = Pick<NodeViewProps, 'node'>;

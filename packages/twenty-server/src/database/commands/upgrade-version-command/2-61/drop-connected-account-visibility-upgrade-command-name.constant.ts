@@ -1,0 +1,2 @@
+export const DROP_CONNECTED_ACCOUNT_VISIBILITY_UPGRADE_COMMAND_NAME =
+  '2.61.0_DropConnectedAccountVisibilityFastInstanceCommand_1795178831970';

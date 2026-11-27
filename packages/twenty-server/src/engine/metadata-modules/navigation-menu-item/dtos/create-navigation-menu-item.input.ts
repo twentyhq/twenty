@@ -1,16 +1,26 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, InputType, Int } from '@nestjs/graphql';
 
-import { NATIVE_PAGE_KEYS, type NativePageKey } from 'twenty-shared/types';
+import {
+  BUILT_IN_SECTION_KEYS,
+  type BuiltInSectionKey,
+  NATIVE_PAGE_KEYS,
+  type NativePageKey,
+} from 'twenty-shared/types';
 import {
   IsEnum,
   IsIn,
+  IsInt,
   IsNumber,
   IsOptional,
   IsString,
   IsUUID,
+  Max,
+  Min,
 } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MAX } from 'src/engine/metadata-modules/navigation-menu-item/constants/navigation-menu-item-visible-item-limit-max.constant';
+import { NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MIN } from 'src/engine/metadata-modules/navigation-menu-item/constants/navigation-menu-item-visible-item-limit-min.constant';
 import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
 
 @InputType()
@@ -58,6 +68,18 @@ export class CreateNavigationMenuItemInput {
   @IsIn(NATIVE_PAGE_KEYS)
   @Field(() => String, { nullable: true })
   nativePageKey?: NativePageKey | null;
+
+  @IsOptional()
+  @IsIn(BUILT_IN_SECTION_KEYS)
+  @Field(() => String, { nullable: true })
+  builtInSectionKey?: BuiltInSectionKey | null;
+
+  @IsOptional()
+  @IsInt()
+  @Min(NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MIN)
+  @Max(NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MAX)
+  @Field(() => Int, { nullable: true })
+  visibleItemLimit?: number | null;
 
   @IsOptional()
   @IsString()

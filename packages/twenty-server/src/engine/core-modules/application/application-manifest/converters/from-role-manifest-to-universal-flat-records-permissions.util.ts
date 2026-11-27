@@ -92,6 +92,7 @@ export const fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow = ({
       fieldMetadataUniversalIdentifier: fieldUniversalIdentifier,
       rowLevelPermissionPredicateGroupUniversalIdentifier,
       rowLevelPermissionRuleUniversalIdentifier,
+      sourceFieldMetadataUniversalIdentifier: null,
       canReadFieldValue: unreadableFields.includes(fieldUniversalIdentifier)
         ? false
         : null,

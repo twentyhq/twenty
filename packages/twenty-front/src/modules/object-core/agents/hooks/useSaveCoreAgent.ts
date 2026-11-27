@@ -8,13 +8,13 @@ import { useCoreAgentDirtyState } from '@/object-core/agents/hooks/useCoreAgentD
 import { useCoreAgentDraft } from '@/object-core/agents/hooks/useCoreAgentDraft';
 import { useCoreAgentRole } from '@/object-core/agents/hooks/useCoreAgentRole';
 import { coreAgentDiscardCountFamilyState } from '@/object-core/agents/states/coreAgentDiscardCountFamilyState';
+import { coreAgentDraftRoleFamilyState } from '@/object-core/agents/states/coreAgentDraftRoleFamilyState';
+import { coreAgentInitialDraftRoleFamilyState } from '@/object-core/agents/states/coreAgentInitialDraftRoleFamilyState';
 import { coreAgentIsSavingFamilyState } from '@/object-core/agents/states/coreAgentIsSavingFamilyState';
 import { coreAgentNewRoleIdFamilyState } from '@/object-core/agents/states/coreAgentNewRoleIdFamilyState';
 import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
 import { getCoreAgentDraftError } from '@/object-core/agents/utils/getCoreAgentDraftError';
 import { useSaveDraftRoleToDB } from '@/settings/roles/role/hooks/useSaveDraftRoleToDB';
-import { settingsInitialDraftRoleFamilyState } from '@/settings/roles/states/settingsInitialDraftRoleFamilyState';
-import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import {
@@ -40,18 +40,27 @@ export const useSaveCoreAgent = (agent: CoreAgent) => {
   const { draft, resetDraft, resetDraftIfUnchanged } = useCoreAgentDraft(agent);
   const { roleId, isNewRole } = useCoreAgentRole(agent);
   const { isDraftDirty, isRoleDirty } = useCoreAgentDirtyState(agent);
+  const coreAgentDraftRole = useAtomFamilyStateValue(
+    coreAgentDraftRoleFamilyState,
+    agent.id,
+  );
   const { saveDraftRoleToDB } = useSaveDraftRoleToDB({
     roleId,
     isCreateMode: isNewRole,
+    draftRole: coreAgentDraftRole,
   });
 
-  const settingsInitialDraftRole = useAtomFamilyStateValue(
-    settingsInitialDraftRoleFamilyState,
-    roleId,
+  const coreAgentInitialDraftRole = useAtomFamilyStateValue(
+    coreAgentInitialDraftRoleFamilyState,
+    agent.id,
   );
-  const setSettingsDraftRole = useSetAtomFamilyState(
-    settingsDraftRoleFamilyState,
-    roleId,
+  const setCoreAgentDraftRole = useSetAtomFamilyState(
+    coreAgentDraftRoleFamilyState,
+    agent.id,
+  );
+  const setCoreAgentInitialDraftRole = useSetAtomFamilyState(
+    coreAgentInitialDraftRoleFamilyState,
+    agent.id,
   );
   const setCoreAgentDiscardCount = useSetAtomFamilyState(
     coreAgentDiscardCountFamilyState,
@@ -79,7 +88,16 @@ export const useSaveCoreAgent = (agent: CoreAgent) => {
 
     try {
       if (isRoleDirty) {
-        await saveDraftRoleToDB();
+        const savedRole = await saveDraftRoleToDB();
+
+        if (isDefined(savedRole)) {
+          setCoreAgentInitialDraftRole(savedRole);
+          setCoreAgentDraftRole((currentDraftRole) =>
+            isDeeplyEqual(currentDraftRole, coreAgentDraftRole)
+              ? savedRole
+              : currentDraftRole,
+          );
+        }
       }
 
       if (isDraftDirty) {
@@ -122,8 +140,8 @@ export const useSaveCoreAgent = (agent: CoreAgent) => {
     resetDraft();
     setCoreAgentDiscardCount((discardCount) => discardCount + 1);
 
-    if (isDefined(settingsInitialDraftRole)) {
-      setSettingsDraftRole(settingsInitialDraftRole);
+    if (isDefined(coreAgentInitialDraftRole)) {
+      setCoreAgentDraftRole(coreAgentInitialDraftRole);
     }
   };
 

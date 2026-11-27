@@ -17,6 +17,8 @@ const VIEW_SORT_MANIFEST: Required<ViewSortManifest> = {
   fieldMetadataUniversalIdentifier: FIELD_UID,
   direction: ViewSortDirection.DESC,
   subFieldName: 'amountMicros',
+  relationTargetFieldMetadataUniversalIdentifier:
+    '55555555-5555-4555-8555-555555555555',
 };
 
 const forward = (viewSortManifest: ViewSortManifest) =>
@@ -53,6 +55,7 @@ describe('fromFlatViewSortToViewSortManifest', () => {
       fieldMetadataUniversalIdentifier: FIELD_UID,
       direction: ViewSortDirection.ASC,
       subFieldName: null,
+      relationTargetFieldMetadataUniversalIdentifier: null,
       createdAt: NOW,
       updatedAt: NOW,
       deletedAt: null,

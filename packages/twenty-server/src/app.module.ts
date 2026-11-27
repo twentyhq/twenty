@@ -7,7 +7,6 @@ import { SentryModule } from '@sentry/nestjs/setup';
 import { ApiPath } from 'twenty-shared/types';
 
 import { AdminPanelGraphQLApiModule } from 'src/engine/api/graphql/admin-panel-graphql-api.module';
-import { CoreGraphQLApiModule } from 'src/engine/api/graphql/core-graphql-api.module';
 import { GraphQLConfigModule } from 'src/engine/api/graphql/graphql-config/graphql-config.module';
 import { GraphQLConfigService } from 'src/engine/api/graphql/graphql-config/graphql-config.service';
 import { MetadataGraphQLApiModule } from 'src/engine/api/graphql/metadata-graphql-api.module';
@@ -60,7 +59,6 @@ const MIGRATED_REST_METHODS = [
     ModulesModule,
     // Needed for the user workspace middleware
     WorkspaceCacheStorageModule,
-    CoreGraphQLApiModule,
     MetadataGraphQLApiModule,
     AdminPanelGraphQLApiModule,
     RestApiModule,

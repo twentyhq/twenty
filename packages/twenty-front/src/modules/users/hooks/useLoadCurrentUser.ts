@@ -87,6 +87,10 @@ export const useLoadCurrentUser = () => {
             .objectRecordsPermissions as CurrentUserWorkspace['objectRecordsPermissions']) ??
           [],
         isImpersonating: user.currentUserWorkspace.isImpersonating ?? false,
+        inboxNotificationLevel:
+          user.currentUserWorkspace.inboxNotificationLevel,
+        isInboxNotificationPreviewEnabled:
+          user.currentUserWorkspace.isInboxNotificationPreviewEnabled,
       });
     }
 

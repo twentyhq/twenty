@@ -3,6 +3,7 @@ import { Field, HideField, InputType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
 import {
   IsArray,
+  IsBoolean,
   IsIn,
   IsNotEmpty,
   IsObject,
@@ -99,6 +100,11 @@ export class CreateAgentInput {
   @IsOptional()
   @Field(() => [GraphQLJSON], { nullable: true })
   triggers?: AgentTrigger[];
+
+  @IsBoolean()
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  isPrivate?: boolean;
 
   @HideField()
   applicationId?: string;

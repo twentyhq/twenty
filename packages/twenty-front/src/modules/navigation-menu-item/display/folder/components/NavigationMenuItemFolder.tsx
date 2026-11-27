@@ -142,11 +142,11 @@ const NavigationMenuItemFolderReadOnlyContent = ({
             )}
             active={!isOpen && hasActiveChild}
             onClick={handleToggle}
+            aria-expanded={isOpen}
             className="navigation-drawer-item"
             triggerEvent="CLICK"
             preventCollapseOnMobile={isMobile}
-            alwaysShowRightOptions
-            rightOptions={<NavigationMenuItemFolderChevron isOpen={isOpen} />}
+            trailingIcon={<NavigationMenuItemFolderChevron isOpen={isOpen} />}
           />
         </NavigationMenuItemEditable>
       }

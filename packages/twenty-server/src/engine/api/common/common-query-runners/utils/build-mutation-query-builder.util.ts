@@ -1,6 +1,8 @@
+import { isNonEmptyArray } from 'twenty-shared/utils';
+
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { type GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
+import { type CommonQueryParser } from 'src/engine/api/common/common-query-parsers/common-query.parser';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type MutationKind } from 'src/engine/twenty-orm/sql/utils/build-mutation-statement.util';
@@ -9,7 +11,7 @@ type BuildMutationQueryBuilderArgs = {
   repository: WorkspaceRepository;
   alias: string;
   filter: Partial<ObjectRecordFilter>;
-  commonQueryParser: GraphqlQueryParser;
+  commonQueryParser: CommonQueryParser;
   kind: MutationKind;
 };
 
@@ -25,11 +27,19 @@ export const buildMutationQueryBuilder = async ({
 }> => {
   const filteredQueryBuilder = repository.createQueryBuilder(alias);
 
-  commonQueryParser.applyFilterToBuilder(filteredQueryBuilder, alias, filter);
+  commonQueryParser.applyFilterToBuilder({
+    queryBuilder: filteredQueryBuilder,
+    objectNameSingular: alias,
+    recordFilter: filter,
+  });
 
   const hasRelationTraversal = filteredQueryBuilder.getJoinAliases().length > 0;
+  // A write statement reads the stored table, where computed columns hold no value for its filter
+  const hasComputedColumns = isNonEmptyArray(
+    filteredQueryBuilder.tableShape.computedColumnShapes,
+  );
 
-  if (!hasRelationTraversal) {
+  if (!hasRelationTraversal && !hasComputedColumns) {
     return {
       selectQueryBuilder: filteredQueryBuilder,
       rowLevelPermissionsApplied: false,

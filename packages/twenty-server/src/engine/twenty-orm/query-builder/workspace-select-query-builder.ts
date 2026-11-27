@@ -1,6 +1,7 @@
 import { type QueryConfig, types } from 'pg';
+import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 import { type FeatureFlagKey } from 'twenty-shared/types';
-import { isDefined, pascalCase } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray, pascalCase } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 import { InstanceChecker } from 'typeorm/util/InstanceChecker';
 
@@ -24,6 +25,10 @@ import {
 } from 'src/engine/twenty-orm/query-builder/types/query-builder.type';
 import { WorkspaceMutationQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-mutation-query-builder';
 import { type MutationKind } from 'src/engine/twenty-orm/sql/utils/build-mutation-statement.util';
+import {
+  buildComputedTableSource,
+  type ComputedTableSourcePermissions,
+} from 'src/engine/twenty-orm/sql/utils/build-computed-table-source.util';
 import { buildOrderByClauses } from 'src/engine/twenty-orm/sql/utils/build-order-by-clauses.util';
 import { collectReferencedColumnNames } from 'src/engine/twenty-orm/sql/utils/collect-referenced-column-names.util';
 import { compileTwentyOrmStatement } from 'src/engine/twenty-orm/utils/compile-twenty-orm-statement.util';
@@ -46,9 +51,13 @@ import {
   type JoinClause,
   type OrderByClause,
   type SelectClause,
-  type ColumnNullifyConditions,
+  type UnreadableColumnConditions,
+  type UnreadableColumnPlaceholders,
+  type UnreadableRelationConditions,
   type SelectStatementState,
+  type TableSourceByObjectMetadataId,
   type WhereClause,
+  UNREADABLE_COLUMN_PLACEHOLDER_PARAMETER_NAME,
 } from 'src/engine/twenty-orm/sql/utils/build-select-statement.util';
 import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
@@ -102,8 +111,17 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
   private includeDeleted = false;
   private explicitSelection?: string[];
   private readonly aliasesWithRowLevelPermissionApplied = new Set<string>();
-  private readonly aliasesWithColumnNullifyApplied = new Set<string>();
-  private readonly columnNullifyConditions: ColumnNullifyConditions = {};
+  private readonly aliasesWithUnreadableColumnsApplied = new Set<string>();
+  private readonly unreadableColumnConditions: UnreadableColumnConditions = {};
+  private readonly unreadableColumnPlaceholders: UnreadableColumnPlaceholders =
+    {};
+  private readonly unreadableRelationConditions: UnreadableRelationConditions =
+    {};
+  private shouldReadStoredColumnsOnly = false;
+  private readonly computedTableSourcePermissionsByObjectMetadataId = new Map<
+    string,
+    ComputedTableSourcePermissions
+  >();
 
   constructor(alias: string, context: QueryBuilderContext) {
     this.alias = alias;
@@ -166,6 +184,16 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       cloned.aliasesWithRowLevelPermissionApplied.add(alias);
     }
 
+    cloned.shouldReadStoredColumnsOnly = this.shouldReadStoredColumnsOnly;
+
+    for (const [objectMetadataId, permissions] of this
+      .computedTableSourcePermissionsByObjectMetadataId) {
+      cloned.computedTableSourcePermissionsByObjectMetadataId.set(
+        objectMetadataId,
+        permissions,
+      );
+    }
+
     return cloned;
   }
 
@@ -197,6 +225,24 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     parameters?: Record<string, unknown>,
   ): this {
     return this.appendWhere('and', condition, parameters);
+  }
+
+  andWhereReadingUnreadableColumnsAsNull({
+    condition,
+    parameters,
+  }: {
+    condition: WhereConditionLike;
+    parameters?: Record<string, unknown>;
+  }): this {
+    const whereClauseCount = this.whereClauses.length;
+
+    this.appendWhere('and', condition, parameters);
+
+    for (const whereClause of this.whereClauses.slice(whereClauseCount)) {
+      whereClause.shouldReadUnreadableColumnsAsNull = true;
+    }
+
+    return this;
   }
 
   orWhere(
@@ -571,6 +617,78 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     return this;
   }
 
+  withStoredColumnsOnly(): this {
+    this.shouldReadStoredColumnsOnly = true;
+
+    return this;
+  }
+
+  getTableShapesMissingComputedTableSourcePermissions(): WorkspaceTableShape[] {
+    return this.getStatementTableShapes().filter(
+      ({ objectMetadataId, computedColumnShapes }) =>
+        isNonEmptyArray(computedColumnShapes) &&
+        !this.computedTableSourcePermissionsByObjectMetadataId.has(
+          objectMetadataId,
+        ),
+    );
+  }
+
+  setComputedTableSourcePermissions({
+    objectMetadataId,
+    permissions,
+    parameters,
+  }: {
+    objectMetadataId: string;
+    permissions: ComputedTableSourcePermissions;
+    parameters: Record<string, unknown>;
+  }): this {
+    this.computedTableSourcePermissionsByObjectMetadataId.set(
+      objectMetadataId,
+      permissions,
+    );
+
+    return this.setParameters(parameters);
+  }
+
+  private getStatementTableShapes(): WorkspaceTableShape[] {
+    const tableShapeByObjectMetadataId = new Map(
+      [
+        this.tableShape,
+        ...this.joinClauses.map(({ targetTableShape }) => targetTableShape),
+        ...this.existsFilterClauses.map(
+          ({ targetTableShape }) => targetTableShape,
+        ),
+      ].map((tableShape) => [tableShape.objectMetadataId, tableShape]),
+    );
+
+    return [...tableShapeByObjectMetadataId.values()];
+  }
+
+  // A row lock cannot reach through the outer join a lookup needs, so a locked read sees stored columns
+  private buildTableSourceByObjectMetadataId(): TableSourceByObjectMetadataId {
+    if (this.shouldReadStoredColumnsOnly || this.isLockedForUpdate) {
+      return {};
+    }
+
+    return Object.fromEntries(
+      this.getStatementTableShapes().flatMap((tableShape) => {
+        const tableSource = buildComputedTableSource({
+          tableShape,
+          getTableShape: this.context.tableShapeByObjectMetadataId,
+          recordReadRestrictions: this.recordReadRestrictions,
+          permissions:
+            this.computedTableSourcePermissionsByObjectMetadataId.get(
+              tableShape.objectMetadataId,
+            ),
+        });
+
+        return isDefined(tableSource)
+          ? [[tableShape.objectMetadataId, tableSource]]
+          : [];
+      }),
+    );
+  }
+
   take(count: number): this {
     return this.limit(count);
   }
@@ -703,31 +821,66 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     return Number(rows[0]?.count ?? 0);
   }
 
-  markColumnNullifyApplied(alias: string): boolean {
-    if (this.aliasesWithColumnNullifyApplied.has(alias)) {
+  markUnreadableColumnsApplied(alias: string): boolean {
+    if (this.aliasesWithUnreadableColumnsApplied.has(alias)) {
       return false;
     }
 
-    this.aliasesWithColumnNullifyApplied.add(alias);
+    this.aliasesWithUnreadableColumnsApplied.add(alias);
 
     return true;
   }
 
-  nullifyColumnsWhen({
+  makeRelationsUnreadableWhen({
+    alias,
+    relationFieldNames,
+    condition,
+  }: {
+    alias: string;
+    relationFieldNames: string[];
+    condition: SQLCondition;
+  }): this {
+    const unreadableRelationConditionsOfAlias =
+      (this.unreadableRelationConditions[alias] ??= {});
+
+    for (const relationFieldName of relationFieldNames) {
+      (unreadableRelationConditionsOfAlias[relationFieldName] ??= []).push(
+        condition.sql,
+      );
+    }
+
+    return this.setParameters(condition.parameters);
+  }
+
+  makeColumnsUnreadableWhen({
     alias,
     columnNames,
     condition,
+    placeholderColumnNames = [],
   }: {
     alias: string;
     columnNames: string[];
     condition: SQLCondition;
+    placeholderColumnNames?: string[];
   }): this {
-    const columnNullifyConditionsOfAlias = (this.columnNullifyConditions[
+    const unreadableColumnConditionsOfAlias = (this.unreadableColumnConditions[
       alias
     ] ??= {});
 
     for (const columnName of columnNames) {
-      (columnNullifyConditionsOfAlias[columnName] ??= []).push(condition.sql);
+      (unreadableColumnConditionsOfAlias[columnName] ??= []).push(
+        condition.sql,
+      );
+    }
+
+    if (isNonEmptyArray(placeholderColumnNames)) {
+      (this.unreadableColumnPlaceholders[alias] ??= []).push(
+        ...placeholderColumnNames,
+      );
+      this.setParameter(
+        UNREADABLE_COLUMN_PLACEHOLDER_PARAMETER_NAME,
+        FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
+      );
     }
 
     return this.setParameters(condition.parameters);
@@ -861,20 +1014,14 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
 
       condition.whereFactory(nestedBuilder);
 
-      const nestedSql = nestedBuilder.buildWhereExpression({
-        includeSoftDeletePredicate: false,
-        substituteExistsFilters: false,
-      });
-
       this.setParameters(nestedBuilder.parameters);
       this.existsFilterClauses.push(...nestedBuilder.existsFilterClauses);
 
-      if (nestedSql.length > 0) {
+      if (isNonEmptyArray(nestedBuilder.whereClauses)) {
         this.whereClauses.push({
           operator,
-          sql: isNegatedWhereFactoryLike(condition)
-            ? `NOT (${nestedSql})`
-            : `(${nestedSql})`,
+          isNegated: isNegatedWhereFactoryLike(condition),
+          clauses: [...nestedBuilder.whereClauses],
         });
       }
 
@@ -1079,10 +1226,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
         relationFieldName,
         targetTableShape,
         correlationCondition,
-        conditionSql: nestedBuilder.buildWhereExpression({
-          includeSoftDeletePredicate: false,
-          substituteExistsFilters: false,
-        }),
+        conditionClauses: [...nestedBuilder.whereClauses],
         additionalOnConditions: [],
       },
       ...nestedBuilder.existsFilterClauses,
@@ -1313,7 +1457,9 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       explicitSelection: this.explicitSelection,
       extraSelectClauses: this.extraSelectClauses,
       columnSelections: this.resolveColumnSelections(),
-      columnNullifyConditions: this.columnNullifyConditions,
+      unreadableColumnConditions: this.unreadableColumnConditions,
+      unreadableColumnPlaceholders: this.unreadableColumnPlaceholders,
+      unreadableRelationConditions: this.unreadableRelationConditions,
       joinClauses: this.joinClauses,
       whereClauses: this.whereClauses,
       rowAccessConditions: this.rowAccessConditions,
@@ -1326,6 +1472,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       limitValue: this.limitValue,
       offsetValue: this.offsetValue,
       isLockedForUpdate: this.isLockedForUpdate,
+      tableSourceByObjectMetadataId: this.buildTableSourceByObjectMetadataId(),
     };
   }
 }

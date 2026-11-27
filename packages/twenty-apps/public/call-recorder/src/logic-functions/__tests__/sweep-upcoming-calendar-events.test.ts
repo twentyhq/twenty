@@ -34,7 +34,12 @@ describe('sweepUpcomingCalendarEventsHandler', () => {
     upcomingCalendarEventIds = [];
     queryMock.mockImplementation(async () => ({
       calendarEvents: buildConnection(
-        upcomingCalendarEventIds.map((id) => ({ id })),
+        upcomingCalendarEventIds.map((id, calendarEventIndex) => ({
+          id,
+          startsAt: new Date(
+            Date.UTC(2026, 6, 4, 12, calendarEventIndex),
+          ).toISOString(),
+        })),
       ),
     }));
     enqueueJobsMock.mockImplementation(async ({ payloads }) => ({

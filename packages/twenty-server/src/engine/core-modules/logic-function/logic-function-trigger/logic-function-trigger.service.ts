@@ -10,6 +10,7 @@ import {
   buildRouteTriggerResponse,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/route-trigger-response.util';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export type LogicFunctionTriggerOutcome =
   | { kind: 'response'; response: RouteTriggerResponse }
@@ -19,6 +20,7 @@ export type LogicFunctionTriggerOutcome =
 export class LogicFunctionTriggerService {
   constructor(
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async run({
@@ -43,6 +45,9 @@ export class LogicFunctionTriggerService {
       pathParameters,
       forwardedRequestHeaders,
       forwardAllHeaders,
+      identityAssertionHeaderName: this.twentyConfigService.get(
+        'SERVER_ADMIN_IDENTITY_ASSERTION_HEADER',
+      ),
       userWorkspaceId: userWorkspaceId ?? null,
     });
 

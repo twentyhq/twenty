@@ -1,18 +1,20 @@
 import { IconMessage } from 'twenty-ui/icon';
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useId } from 'react';
 
 import { InboxThreadActionsDropdown } from '@/inbox/components/InboxThreadActionsDropdown';
-import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
-import { useIsAiChatThreadShownAsUnread } from '@/ai/hooks/useIsAiChatThreadShownAsUnread';
-import { useAiChatThreadDisplayLabel } from '@/ai/hooks/useAiChatThreadDisplayLabel';
+import { useAiChatThreadRename } from '@/ai-chat/threads/hooks/useAiChatThreadRename';
+import { useIsAiChatThreadShownAsUnread } from '@/ai-chat/threads/hooks/useIsAiChatThreadShownAsUnread';
+import { useAiChatThreadDisplayLabel } from '@/ai-chat/threads/hooks/useAiChatThreadDisplayLabel';
 import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { type InboxThreadListItemData } from '@/inbox/types/InboxThreadListItemData';
+import { NavigationMenuTabFirstItemOpenEffect } from '@/navigation-menu-item/display/effect-components/NavigationMenuTabFirstItemOpenEffect';
 
 type NavigationDrawerInboxThreadItemProps = {
   thread: InboxThreadListItemData;
@@ -36,7 +38,7 @@ export const NavigationDrawerInboxThreadItem = ({
     commitRename,
   } = useAiChatThreadRename(thread);
 
-  const isDeleted = Boolean(thread.deletedAt);
+  const isDeleted = isNonEmptyString(thread.deletedAt);
   const isShownAsUnread = useIsAiChatThreadShownAsUnread(thread);
   const displayLabel = useAiChatThreadDisplayLabel({
     thread,
@@ -61,21 +63,26 @@ export const NavigationDrawerInboxThreadItem = ({
   }
 
   return (
-    <NavigationDrawerItem
-      Icon={isExpanded ? undefined : IconMessage}
-      label={displayLabel}
-      active={isActive}
-      onClick={() => onClick(thread)}
-      variant={isDeleted ? 'tertiary' : 'default'}
-      isUnread={isShownAsUnread}
-      isRightOptionsDropdownOpen={isDropdownOpen}
-      rightOptions={
-        <InboxThreadActionsDropdown
-          thread={thread}
-          instanceId={actionsInstanceId}
-          onRenameRequested={startRename}
-        />
-      }
-    />
+    <>
+      {!isDeleted && (
+        <NavigationMenuTabFirstItemOpenEffect onOpen={() => onClick(thread)} />
+      )}
+      <NavigationDrawerItem
+        Icon={isExpanded ? undefined : IconMessage}
+        label={displayLabel}
+        active={isActive}
+        onClick={() => onClick(thread)}
+        variant={isDeleted ? 'tertiary' : 'default'}
+        isUnread={isShownAsUnread}
+        isRightOptionsDropdownOpen={isDropdownOpen}
+        rightOptions={
+          <InboxThreadActionsDropdown
+            thread={thread}
+            instanceId={actionsInstanceId}
+            onRenameRequested={startRename}
+          />
+        }
+      />
+    </>
   );
 };

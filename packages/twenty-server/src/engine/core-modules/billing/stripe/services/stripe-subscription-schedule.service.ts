@@ -64,10 +64,30 @@ export class StripeSubscriptionScheduleService {
     };
   }
 
-  async getSubscriptionWithSchedule(stripeSubscriptionId: string) {
-    return (await this.stripe.subscriptions.retrieve(stripeSubscriptionId, {
-      expand: ['schedule'],
-    })) as SubscriptionWithSchedule;
+  async getSubscriptionWithSchedule(
+    stripeSubscriptionId: string,
+  ): Promise<SubscriptionWithSchedule> {
+    const subscription = (await this.stripe.subscriptions.retrieve(
+      stripeSubscriptionId,
+      { expand: ['schedule'] },
+    )) as SubscriptionWithSchedule;
+
+    if (!subscription.items.has_more) {
+      return subscription;
+    }
+
+    const subscriptionItems = await this.stripe.subscriptionItems
+      .list({ subscription: stripeSubscriptionId, limit: 100 })
+      .autoPagingToArray({ limit: 1000 });
+
+    return {
+      ...subscription,
+      items: {
+        ...subscription.items,
+        data: subscriptionItems,
+        has_more: false,
+      },
+    };
   }
 
   async listCustomerNotEndedSubscriptionsWithSchedule(

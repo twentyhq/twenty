@@ -13,7 +13,7 @@ import {
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApplicationAuthorizationService } from 'src/engine/core-modules/application/application-authorization/services/application-authorization.service';
-import { isRefreshTokenCoveredByAuthorization } from 'src/engine/core-modules/application/application-authorization/utils/is-refresh-token-covered-by-authorization.util';
+import { isApplicationTokenCoveredByAuthorization } from 'src/engine/core-modules/application/application-authorization/utils/is-application-token-covered-by-authorization.util';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { OAuthClientRegistrationResolverService } from 'src/engine/core-modules/application/application-oauth/oauth-client-registration/oauth-client-registration-resolver.service';
@@ -267,13 +267,14 @@ export class OAuthService {
       applicationRegistration.oAuthScopes.join(' ');
 
     // Recorded first so a refresh token never exists without a revocable grant
-    await this.applicationAuthorizationService.recordAuthorization({
-      userId: authCodeToken.userId,
-      workspaceId: authCodeToken.workspaceId,
-      userWorkspaceId: userWorkspace.id,
-      applicationId: application.id,
-      scopes: this.parseScopes(grantedScope),
-    });
+    const applicationAuthorizationId =
+      await this.applicationAuthorizationService.recordAuthorization({
+        userId: authCodeToken.userId,
+        workspaceId: authCodeToken.workspaceId,
+        userWorkspaceId: userWorkspace.id,
+        applicationId: application.id,
+        scopes: this.parseScopes(grantedScope),
+      });
 
     const { applicationAccessToken, applicationRefreshToken } =
       await this.applicationTokenService.generateApplicationTokenPair({
@@ -281,6 +282,7 @@ export class OAuthService {
         applicationId: application.id,
         userId: authCodeToken.userId,
         userWorkspaceId: userWorkspace.id,
+        applicationAuthorizationId,
       });
 
     this.logger.log(
@@ -416,21 +418,25 @@ export class OAuthService {
         );
       }
 
-      if (isDefined(payload.userId)) {
-        const authorizationError = await this.consumeUserAuthorization({
-          userId: payload.userId,
-          workspaceId: payload.workspaceId,
-          applicationId: application.id,
-          refreshToken: payload,
-        });
+      const consumedAuthorization = isDefined(payload.userId)
+        ? await this.consumeUserAuthorization({
+            userId: payload.userId,
+            workspaceId: payload.workspaceId,
+            applicationId: application.id,
+            refreshToken: payload,
+          })
+        : undefined;
 
-        if (authorizationError) {
-          return authorizationError;
-        }
+      if (isDefined(consumedAuthorization?.error)) {
+        return consumedAuthorization.error;
       }
 
       const { applicationAccessToken, applicationRefreshToken } =
-        await this.applicationTokenService.renewApplicationTokens(payload);
+        await this.applicationTokenService.renewApplicationTokens({
+          ...payload,
+          applicationAuthorizationId:
+            consumedAuthorization?.applicationAuthorizationId,
+        });
 
       this.logger.log(
         `Refresh token exchanged: client=${clientId} application=${payload.applicationId}`,
@@ -622,6 +628,14 @@ export class OAuthService {
           return { active: false };
         }
 
+        if (
+          !(await this.applicationAuthorizationService.isAccessTokenAuthorized(
+            payload,
+          ))
+        ) {
+          return { active: false };
+        }
+
         return {
           active: true,
           sub: payload.sub,
@@ -680,7 +694,10 @@ export class OAuthService {
     workspaceId: string;
     applicationId: string;
     refreshToken: Pick<ApplicationRefreshTokenJwtPayload, 'iat'>;
-  }): Promise<OAuthErrorResponse | null> {
+  }): Promise<
+    | { error: OAuthErrorResponse; applicationAuthorizationId?: never }
+    | { error?: never; applicationAuthorizationId: string }
+  > {
     const authorization =
       await this.applicationAuthorizationService.findByUserAndApplication({
         userId,
@@ -689,14 +706,19 @@ export class OAuthService {
 
     if (
       isDefined(authorization) &&
-      !isRefreshTokenCoveredByAuthorization({ authorization, refreshToken })
+      !isApplicationTokenCoveredByAuthorization({
+        authorization,
+        token: refreshToken,
+      })
     ) {
-      return this.errorResponse(
-        'invalid_grant',
-        isDefined(authorization.revokedAt)
-          ? 'The user revoked this application access'
-          : 'Refresh token was issued for an earlier authorization',
-      );
+      return {
+        error: this.errorResponse(
+          'invalid_grant',
+          isDefined(authorization.revokedAt)
+            ? 'The user revoked this application access'
+            : 'Refresh token was issued for an earlier authorization',
+        ),
+      };
     }
 
     // Member removal soft-deletes the membership, which an existing grant outlives
@@ -705,30 +727,33 @@ export class OAuthService {
     });
 
     if (!userWorkspace) {
-      return this.errorResponse(
-        'invalid_grant',
-        'User no longer has access to this workspace',
-      );
+      return {
+        error: this.errorResponse(
+          'invalid_grant',
+          'User no longer has access to this workspace',
+        ),
+      };
     }
 
     if (!isDefined(authorization)) {
-      await this.applicationAuthorizationService.backfillAuthorizationFromRefreshToken(
-        {
-          userId,
-          workspaceId,
-          userWorkspaceId: userWorkspace.id,
-          applicationId,
-        },
-      );
-
-      return null;
+      return {
+        applicationAuthorizationId:
+          await this.applicationAuthorizationService.backfillAuthorizationFromRefreshToken(
+            {
+              userId,
+              workspaceId,
+              userWorkspaceId: userWorkspace.id,
+              applicationId,
+            },
+          ),
+      };
     }
 
     await this.applicationAuthorizationService.touchLastUsedAt(
       authorization.id,
     );
 
-    return null;
+    return { applicationAuthorizationId: authorization.id };
   }
 
   // Lays a row down first, or the refresh path would backfill a fresh active one for a pre-table token
@@ -781,7 +806,10 @@ export class OAuthService {
 
     return (
       !isDefined(authorization) ||
-      isRefreshTokenCoveredByAuthorization({ authorization, refreshToken })
+      isApplicationTokenCoveredByAuthorization({
+        authorization,
+        token: refreshToken,
+      })
     );
   }
 

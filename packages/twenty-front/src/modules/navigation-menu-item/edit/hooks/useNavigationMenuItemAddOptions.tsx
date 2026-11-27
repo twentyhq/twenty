@@ -28,6 +28,7 @@ import { getNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
 import { NATIVE_PAGE_NAVIGATION_MENU_ITEM_CONFIGS } from '@/navigation-menu-item/display/native-page/constants/NativePageNavigationMenuItemConfigs';
 import { hasNativePagePermission } from '@/navigation-menu-item/display/native-page/utils/hasNativePagePermission';
+import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
 import { type NewNavigationMenuItemInput } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 import { useNavigationMenuItemAutomationOptions } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemAutomationOptions';
@@ -47,6 +48,7 @@ import { ViewKey } from '@/views/types/ViewKey';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 type UseNavigationMenuItemAddOptionsParams = {
+  section: NavigationMenuItemSection;
   step: NavigationMenuItemAddStep;
   search: string;
   objectId: string | null;
@@ -59,6 +61,7 @@ type UseNavigationMenuItemAddOptionsParams = {
 };
 
 export const useNavigationMenuItemAddOptions = ({
+  section,
   step,
   search,
   objectId,
@@ -71,6 +74,9 @@ export const useNavigationMenuItemAddOptions = ({
 }: UseNavigationMenuItemAddOptionsParams) => {
   const { t } = useLingui();
   const theme = useTheme();
+  const isParentFolder =
+    currentItems.find((item) => item.id === parentId)?.type ===
+    NavigationMenuItemType.FOLDER;
   const { getIcon } = useIcons();
 
   const {
@@ -116,13 +122,16 @@ export const useNavigationMenuItemAddOptions = ({
         .map((view) => view.objectMetadataId),
     ),
   });
+  const isAddingToFavorites = section === 'favorite';
   const { hasAutomationAccess, automationItemGroups, automationLoading } =
     useNavigationMenuItemAutomationOptions({
       search,
-      skip: step !== 'automation' && !isSearchingAllItems,
+      skip:
+        isAddingToFavorites || (step !== 'automation' && !isSearchingAllItems),
       currentItems,
       addItem,
     });
+  const canAddAutomations = hasAutomationAccess && !isAddingToFavorites;
 
   const getItems = (
     targetStep: NavigationMenuItemAddStep = step,
@@ -152,7 +161,7 @@ export const useNavigationMenuItemAddOptions = ({
           onClick: () => navigateToStep('record'),
           hasSubMenu: true,
         },
-        ...(hasAutomationAccess
+        ...(canAddAutomations
           ? [
               {
                 id: 'automation',
@@ -170,11 +179,11 @@ export const useNavigationMenuItemAddOptions = ({
         {
           id: 'folder',
           label: t`Folder`,
-          contextualText: isDefined(parentId)
+          contextualText: isParentFolder
             ? t`Cannot nest folders into folders`
             : undefined,
-          Icon: isDefined(parentId) ? IconFolder : undefined,
-          icon: isDefined(parentId) ? undefined : (
+          Icon: isParentFolder ? IconFolder : undefined,
+          icon: isParentFolder ? undefined : (
             <ColoredIcon
               Icon={IconFolder}
               color={DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER}
@@ -187,7 +196,7 @@ export const useNavigationMenuItemAddOptions = ({
               color: DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER,
             });
           },
-          isDisabled: isDefined(parentId),
+          isDisabled: isParentFolder,
         },
         {
           id: 'link',

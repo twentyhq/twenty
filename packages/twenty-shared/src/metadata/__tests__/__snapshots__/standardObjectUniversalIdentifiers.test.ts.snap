@@ -178,6 +178,156 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
     },
     "universalIdentifier": "fab0fff8-0c90-4116-9bb0-7dbc07392633",
+    "views": {
+      "assignedToMe": {
+        "universalIdentifier": "1cddfa2c-38c0-4fda-80f3-cd01e37bf8e3",
+        "viewFields": {
+          "assignee": {
+            "universalIdentifier": "86d1e298-5878-43bb-bac8-3d856ac94ee8",
+          },
+          "channelId": {
+            "universalIdentifier": "c98ab809-cb33-45a3-8060-b935578dab4d",
+          },
+          "createdAt": {
+            "universalIdentifier": "f30f67f7-ea19-48fa-acf9-e0a3530fbe01",
+          },
+          "lastMessageSenderWorkspaceMemberId": {
+            "universalIdentifier": "b72268ee-b72c-4e76-a4bd-43d3efb8ecd7",
+          },
+          "lastMessageText": {
+            "universalIdentifier": "bc270344-a41b-4b32-8c51-9c244ffc3261",
+          },
+          "title": {
+            "universalIdentifier": "842e98ae-5749-41c2-890e-d802a69103c2",
+          },
+        },
+        "viewFilters": {
+          "assigneeIsMe": {
+            "universalIdentifier": "defbcad5-d91f-4e9a-90c6-9bac578ef374",
+          },
+        },
+      },
+      "done": {
+        "universalIdentifier": "81ee1b41-8035-46d1-85ae-18a75616954a",
+        "viewFields": {
+          "assignee": {
+            "universalIdentifier": "7f42091b-4767-4c79-ac8f-0764356d89df",
+          },
+          "channelId": {
+            "universalIdentifier": "d21a5acf-35a2-4336-8cb8-08d9cc5a3178",
+          },
+          "createdAt": {
+            "universalIdentifier": "5b0fa198-535c-47df-91fd-4f57c2cf5daa",
+          },
+          "lastMessageSenderWorkspaceMemberId": {
+            "universalIdentifier": "39d57c55-54ef-4120-8419-51f70b2b1619",
+          },
+          "lastMessageText": {
+            "universalIdentifier": "f7d8f9ee-a16a-4fd5-b66a-67bb07ca9ae6",
+          },
+          "title": {
+            "universalIdentifier": "bd6443df-ffd7-4f47-8c21-0ae9d2ebf914",
+          },
+        },
+      },
+      "mentions": {
+        "universalIdentifier": "0a5d7727-2263-46b1-a795-9227559faf6f",
+        "viewFields": {
+          "assignee": {
+            "universalIdentifier": "923ab6e6-6b33-484c-922b-b1d2b498ee6f",
+          },
+          "channelId": {
+            "universalIdentifier": "2908aae6-ddac-43da-8126-ec723064d176",
+          },
+          "createdAt": {
+            "universalIdentifier": "9260f1b6-d144-4c3e-86ef-a94a9b7a3886",
+          },
+          "lastMessageSenderWorkspaceMemberId": {
+            "universalIdentifier": "0cc4c6ad-85aa-42a5-8753-d8e9c8f6006f",
+          },
+          "lastMessageText": {
+            "universalIdentifier": "7da6c3f5-d109-4172-a1ac-e8dd51a628cf",
+          },
+          "title": {
+            "universalIdentifier": "3bb06dae-01f9-419c-8713-b578fb6db17e",
+          },
+        },
+      },
+      "needsInput": {
+        "universalIdentifier": "0b97f7e4-423a-4e2f-93b9-7a5bcde62c03",
+        "viewFields": {
+          "assignee": {
+            "universalIdentifier": "8c6353a2-a98a-4872-9c08-bbaa5009d1a0",
+          },
+          "channelId": {
+            "universalIdentifier": "3bb7d1e3-3f20-45fe-bb21-60129f802503",
+          },
+          "createdAt": {
+            "universalIdentifier": "c0cdc31f-35d1-411b-8f76-0ff3bc4ff1be",
+          },
+          "lastMessageSenderWorkspaceMemberId": {
+            "universalIdentifier": "0efa3f82-9f99-4144-8eef-0e5a51459ee9",
+          },
+          "lastMessageText": {
+            "universalIdentifier": "a856d3ac-dc8c-48b8-8b3a-9294a9a4ed9e",
+          },
+          "title": {
+            "universalIdentifier": "21f4b070-eae9-4ee6-bd12-d8d32a49051a",
+          },
+        },
+        "viewFilters": {
+          "pendingQuestionMessageIdIsNotEmpty": {
+            "universalIdentifier": "05baa741-58a6-4641-abe2-267a1268e53b",
+          },
+        },
+      },
+      "open": {
+        "universalIdentifier": "e9a3781b-db78-41bb-a0e4-f6324770432a",
+        "viewFields": {
+          "assignee": {
+            "universalIdentifier": "66d7c094-38ae-48ec-b13e-b0ab1524191d",
+          },
+          "channelId": {
+            "universalIdentifier": "11bb7c71-b3b8-40ac-83bc-7b898c143396",
+          },
+          "createdAt": {
+            "universalIdentifier": "dddf8ac0-a06b-42c6-a046-ea4c6c5b3fea",
+          },
+          "lastMessageSenderWorkspaceMemberId": {
+            "universalIdentifier": "80112b71-a98a-4bd1-9368-75c4def1e1d2",
+          },
+          "lastMessageText": {
+            "universalIdentifier": "b2a48e39-4497-40a2-ab6d-fc149e14b86b",
+          },
+          "title": {
+            "universalIdentifier": "ee0068ac-e2e1-41f3-ab91-7e170f8d57e9",
+          },
+        },
+      },
+      "snoozed": {
+        "universalIdentifier": "31e8f41f-53ed-4dfd-aaa7-6d0d5dd2d56d",
+        "viewFields": {
+          "assignee": {
+            "universalIdentifier": "cf4acc66-0a78-4674-a857-93c54d555515",
+          },
+          "channelId": {
+            "universalIdentifier": "fcf7ec22-671a-4da0-afd1-268adc014419",
+          },
+          "createdAt": {
+            "universalIdentifier": "fecf62fb-bbe8-4047-94b8-98dc5b81025f",
+          },
+          "lastMessageSenderWorkspaceMemberId": {
+            "universalIdentifier": "f2e2b179-2422-40d9-8283-d71911f363d8",
+          },
+          "lastMessageText": {
+            "universalIdentifier": "a7723344-d641-4065-a227-2cc12eceedb8",
+          },
+          "title": {
+            "universalIdentifier": "c178dd98-fd51-488c-9c79-3d05dcba71e8",
+          },
+        },
+      },
+    },
   },
   "agentChatThreadParticipant": {
     "fields": {
@@ -782,6 +932,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
   },
   "calendarChannelEventAssociation": {
     "fields": {
+      "accountOwner": {
+        "universalIdentifier": "c87b6c5a-d761-4d8f-b62e-af459a11ba1f",
+      },
       "calendarChannelId": {
         "universalIdentifier": "20202020-93ee-4da4-8d58-0282c4a9cb7d",
       },
@@ -799,6 +952,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
       "eventExternalId": {
         "universalIdentifier": "20202020-9ec8-48bb-b279-21d0734a75a1",
+      },
+      "handle": {
+        "universalIdentifier": "f3a2e285-abb7-44c5-a4bf-06a44101a33f",
       },
       "id": {
         "universalIdentifier": "091cefe6-349d-57a5-8a88-1e1d8bf99937",
@@ -820,6 +976,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
     },
     "indexes": {
+      "accountOwnerIdIndex": {
+        "universalIdentifier": "740776d1-fe14-41b9-80b9-11c610765f0c",
+      },
       "calendarChannelIdIndex": {
         "universalIdentifier": "ff6b86c1-3112-4dfa-b734-c4789111a716",
       },
@@ -2060,6 +2219,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
   },
   "messageChannelMessageAssociation": {
     "fields": {
+      "accountOwner": {
+        "universalIdentifier": "a54a940b-d839-4c47-a02c-5bab7e300841",
+      },
       "createdAt": {
         "universalIdentifier": "044a7327-5d2a-5d40-b23b-79342304ff26",
       },
@@ -2071,6 +2233,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
       "direction": {
         "universalIdentifier": "75c9b0f7-9e76-44d4-a2f9-47051e61eec7",
+      },
+      "handle": {
+        "universalIdentifier": "ff274ea7-69e0-4d54-9389-8ec8f14c7073",
       },
       "id": {
         "universalIdentifier": "a433efbf-d423-5a5a-9615-143b0abd53ed",
@@ -2107,6 +2272,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
     },
     "indexes": {
+      "accountOwnerIdIndex": {
+        "universalIdentifier": "0797b417-8f87-4df1-b838-d85fbb663110",
+      },
       "messageChannelIdIndex": {
         "universalIdentifier": "9894f9a3-0225-4e7b-9f6a-23d4e2576784",
       },
@@ -3768,9 +3936,6 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "targetWorkflowRun": {
         "universalIdentifier": "b1df837a-e304-5cde-97e6-ab8348739774",
       },
-      "targetWorkflowVersion": {
-        "universalIdentifier": "2da44ef9-dc63-5c9c-a9fb-58933ed03bc2",
-      },
       "timelineActivityTypeId": {
         "universalIdentifier": "20202020-e5f8-4839-9dcf-781e260624ee",
       },
@@ -3818,9 +3983,6 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "workflowRunIdIndex": {
         "universalIdentifier": "1a2bd046-7c23-4e0a-9f8a-c3ca3a16d3b9",
       },
-      "workflowVersionIdIndex": {
-        "universalIdentifier": "d94329b3-5dc8-4141-ae28-31afe28f7135",
-      },
       "workspaceMemberIdIndex": {
         "universalIdentifier": "5e0b2391-85ca-4a66-aef4-52d74245bec2",
       },
@@ -3861,9 +4023,6 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           },
           "targetWorkflowRun": {
             "universalIdentifier": "13fff327-8fbe-5a91-8d95-4a9ca455cfe9",
-          },
-          "targetWorkflowVersion": {
-            "universalIdentifier": "c4aa8b50-d9bb-5395-a90a-fa0d36312634",
           },
           "workspaceMember": {
             "universalIdentifier": "09d2d7d9-6809-561b-9dc7-1588b6a18673",
@@ -3928,9 +4087,6 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "updatedBy": {
         "universalIdentifier": "0411c5af-6d79-5c36-b3a6-895d1e40ce8a",
       },
-      "workflowVersion": {
-        "universalIdentifier": "20202020-2f52-4ba8-8dc4-d0d6adb9578d",
-      },
     },
     "indexes": {
       "coreWorkflowIdCreatedAtIndex": {
@@ -3938,9 +4094,6 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
       "searchVectorGinIndex": {
         "universalIdentifier": "e0ac5ad2-d0c8-4f72-b710-8e53b9dc18d9",
-      },
-      "workflowVersionIdIndex": {
-        "universalIdentifier": "8183c8d2-9114-4b6e-8c5d-12a3b14a5a14",
       },
     },
     "universalIdentifier": "20202020-4e28-4e95-a9d7-6c00874f843c",
@@ -4003,131 +4156,20 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           "updatedBy": {
             "universalIdentifier": "adba3145-4271-5477-b3f0-d26928c06cbe",
           },
-          "workflowVersion": {
-            "universalIdentifier": "725c75f2-a07e-5740-8b6b-62574e5f3acf",
-          },
-        },
-      },
-    },
-  },
-  "workflowVersion": {
-    "fields": {
-      "coreWorkflowVersionId": {
-        "universalIdentifier": "20202020-58b4-46e8-b6d2-f1f3c74cf7f4",
-      },
-      "createdAt": {
-        "universalIdentifier": "97b8d13e-ea41-5da4-90df-886ff017f584",
-      },
-      "createdBy": {
-        "universalIdentifier": "d0f60c58-354e-5174-b852-98bac4c24285",
-      },
-      "deletedAt": {
-        "universalIdentifier": "0a9cb619-d402-5d91-81ab-5a8e51a95274",
-      },
-      "id": {
-        "universalIdentifier": "81e02441-5817-54f7-9edc-fac66c7c3415",
-      },
-      "name": {
-        "universalIdentifier": "20202020-a12f-4cca-9937-a2e40cc65509",
-      },
-      "position": {
-        "universalIdentifier": "bb0c73bd-d371-5e72-b2a0-05d8be1668f1",
-      },
-      "runs": {
-        "universalIdentifier": "20202020-1d08-46df-901a-85045f18099a",
-      },
-      "searchVector": {
-        "universalIdentifier": "19e1428c-2e0e-5a3d-a4f2-099856164cd8",
-      },
-      "status": {
-        "universalIdentifier": "20202020-5a34-440e-8a25-39d8c3d1d4cf",
-      },
-      "steps": {
-        "universalIdentifier": "20202020-5988-4a64-b94a-1f9b7b989039",
-      },
-      "timelineActivities": {
-        "universalIdentifier": "4be90325-f6ca-5931-a977-1194bb4b3d5c",
-      },
-      "trigger": {
-        "universalIdentifier": "20202020-4eae-43e7-86e0-212b41a30b48",
-      },
-      "updatedAt": {
-        "universalIdentifier": "f1ee5b97-9893-5124-8c7c-1a57888808f1",
-      },
-      "updatedBy": {
-        "universalIdentifier": "c48bd686-933c-57b7-8767-55dba5090eac",
-      },
-    },
-    "indexes": {
-      "searchVectorGinIndex": {
-        "universalIdentifier": "6f3a65eb-2aee-4108-b8a0-c62da419d1dc",
-      },
-    },
-    "universalIdentifier": "20202020-d65d-4ab9-9344-d77bfb376a3d",
-    "views": {
-      "allWorkflowVersions": {
-        "universalIdentifier": "a305b346-a83c-5bdd-880b-7a8e71310bf3",
-        "viewFields": {
-          "name": {
-            "universalIdentifier": "84a34cf6-7fd8-5972-894d-bc21e026f334",
-          },
-          "runs": {
-            "universalIdentifier": "255ab204-2ebe-582c-bfbd-4a846490d721",
-          },
-          "status": {
-            "universalIdentifier": "6ec4080f-d57e-5837-8f99-b36cebbb2fde",
-          },
-          "updatedAt": {
-            "universalIdentifier": "604b9aaa-ed58-5e44-869a-0e6402c00c64",
-          },
-        },
-      },
-      "workflowVersionRecordPageFields": {
-        "universalIdentifier": "4325242c-c819-5ecf-8b66-4c7b02627a77",
-        "viewFieldGroups": {
-          "general": {
-            "universalIdentifier": "86ed1b24-a576-5498-8fb8-b7819ace07c3",
-          },
-          "system": {
-            "universalIdentifier": "e08b6ee2-ade7-541b-b4e2-2c0cd03b1a5c",
-          },
-        },
-        "viewFields": {
-          "createdAt": {
-            "universalIdentifier": "4e95828c-c5f8-5b7e-a8a3-7f247d8bdfac",
-          },
-          "createdBy": {
-            "universalIdentifier": "2885fb8d-a2c0-5198-bbc3-c6b77bfdd570",
-          },
-          "runs": {
-            "universalIdentifier": "cd54fd1a-bd06-5c9a-ab49-5569ec37f12f",
-          },
-          "status": {
-            "universalIdentifier": "73f2e3f5-38b3-541e-9d96-797f0ae6455a",
-          },
-          "steps": {
-            "universalIdentifier": "300eae90-9f50-5e85-8e5f-9da4a4c6ec28",
-          },
-          "timelineActivities": {
-            "universalIdentifier": "f94ccbfc-4cbf-5a62-b857-b6874698f9da",
-          },
-          "trigger": {
-            "universalIdentifier": "b03c8136-8e0a-5f40-826f-77e5db12ae26",
-          },
-          "updatedAt": {
-            "universalIdentifier": "2467c5d2-a894-59f4-a11c-2e121d02badc",
-          },
-          "updatedBy": {
-            "universalIdentifier": "c9412819-e456-58a8-bae9-8d6110772f09",
-          },
         },
       },
     },
   },
   "workspaceMember": {
     "fields": {
+      "accountOwnerForCalendarChannelEventAssociations": {
+        "universalIdentifier": "56aec2c7-5ae1-413c-81e8-880623b8f8b2",
+      },
       "accountOwnerForCompanies": {
         "universalIdentifier": "20202020-dc29-4bd4-a3c1-29eafa324bee",
+      },
+      "accountOwnerForMessageChannelMessageAssociations": {
+        "universalIdentifier": "cfe10518-02e1-456f-a41a-0cc99b1686fe",
       },
       "agentChatThreadParticipants": {
         "universalIdentifier": "d1de909f-a0eb-4e94-8903-abec012864c9",

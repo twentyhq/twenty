@@ -20,10 +20,11 @@ export const prepareAppPull = async ({
 
   const normalizedTarget = normalizePullTarget(target);
 
+  const manifest = toPullManifest(applicationExport.manifest);
   const files = parsePullFiles({
     value: applicationExport.files,
-    frontComponents:
-      toPullManifest(applicationExport.manifest).frontComponents ?? [],
+    logicFunctions: manifest.logicFunctions ?? [],
+    frontComponents: manifest.frontComponents ?? [],
   });
 
   await assertPullPaths({

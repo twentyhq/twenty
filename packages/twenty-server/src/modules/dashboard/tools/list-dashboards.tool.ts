@@ -28,6 +28,7 @@ export const createListDashboardsTool = ({
   context: PageLayoutToolContextWithPermissions;
 }) => ({
   name: 'list_dashboards' as const,
+  isReadOnly: true,
   description: `List all dashboards in the workspace. Use get_dashboard to retrieve full layout structure.`,
   inputSchema: listDashboardsSchema,
   execute: async (parameters: { limit?: number }) => {

@@ -18,6 +18,7 @@ const SMALL_COMPANY_ID = randomUUID();
 const buildOpportunityCreatedEvent = (
   companyId: string | null,
 ): ObjectRecordEvent => ({
+  eventId: 'event-1',
   recordId: randomUUID(),
   properties: { after: { stage: 'NEW', companyId } },
 });
@@ -70,7 +71,7 @@ describe('Database event trigger conditions on related records', () => {
         'flatObjectMetadataMaps',
       ]);
     const application = Object.values(flatApplicationMaps.byId).find(
-      (candidate) => isDefined(candidate?.defaultRoleId),
+      (candidate) => isDefined(candidate?.requestedRoleId),
     );
     const objectMetadata = Object.values(
       flatObjectMetadataMaps.byUniversalIdentifier,

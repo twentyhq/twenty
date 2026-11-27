@@ -5,7 +5,5 @@ export const isVerifiedOAuthClientUniversalIdentifier = (
 ): boolean =>
   VERIFIED_OAUTH_CLIENTS.some(
     (verifiedClient) =>
-      'registrationUniversalIdentifier' in verifiedClient &&
-      verifiedClient.registrationUniversalIdentifier ===
-        universalIdentifier.toLowerCase(),
+      verifiedClient.universalIdentifier === universalIdentifier.toLowerCase(),
   );

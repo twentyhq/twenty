@@ -3,15 +3,15 @@ import {
   GRANOLA_PAGE_INTERVAL_MILLISECONDS,
 } from 'src/constants/granola-api.constant';
 import { type GranolaFolder } from 'src/logic-functions/types/granola-api.type';
-import { createGranolaClientOrThrow } from 'src/logic-functions/utils/create-granola-client-or-throw.util';
+import { type createGranolaClientOrThrow } from 'src/logic-functions/utils/create-granola-client-or-throw.util';
 import { getGranolaNextPage } from 'src/logic-functions/utils/get-granola-next-page.util';
 import { sleepForMilliseconds } from 'src/logic-functions/utils/sleep-for-milliseconds.util';
 
 export const listAllGranolaFoldersOrThrow = async ({
-  client = createGranolaClientOrThrow(),
+  client,
 }: {
-  client?: Pick<ReturnType<typeof createGranolaClientOrThrow>, 'listFolders'>;
-} = {}): Promise<GranolaFolder[]> => {
+  client: Pick<ReturnType<typeof createGranolaClientOrThrow>, 'listFolders'>;
+}): Promise<GranolaFolder[]> => {
   const folders: GranolaFolder[] = [];
   let cursor: string | undefined;
 

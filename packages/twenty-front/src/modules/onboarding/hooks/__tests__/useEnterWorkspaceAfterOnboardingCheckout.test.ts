@@ -6,7 +6,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
 import { useEnterWorkspaceAfterOnboardingCheckout } from '@/onboarding/hooks/useEnterWorkspaceAfterOnboardingCheckout';
 import { isOnboardingCheckoutPendingState } from '@/onboarding/states/isOnboardingCheckoutPendingState';
-import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { isWorkspaceSetupChatActiveState } from '@/ai-chat/states/isWorkspaceSetupChatActiveState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -66,9 +66,7 @@ describe('useEnterWorkspaceAfterOnboardingCheckout', () => {
       onboardingStatus: OnboardingStatus.COMPLETED,
     });
 
-    expect(jotaiStore.get(shouldOpenAiChatAfterOnboardingState.atom)).toBe(
-      true,
-    );
+    expect(jotaiStore.get(isWorkspaceSetupChatActiveState.atom)).toBe(true);
   });
 
   it('should not open the setup chat when the ai chat is disabled', () => {
@@ -79,9 +77,7 @@ describe('useEnterWorkspaceAfterOnboardingCheckout', () => {
     });
 
     expect(jotaiStore.get(isOnboardingCheckoutPendingState.atom)).toBe(false);
-    expect(jotaiStore.get(shouldOpenAiChatAfterOnboardingState.atom)).toBe(
-      false,
-    );
+    expect(jotaiStore.get(isWorkspaceSetupChatActiveState.atom)).toBe(false);
   });
 
   it('should do nothing when no onboarding checkout is pending', () => {
@@ -90,9 +86,7 @@ describe('useEnterWorkspaceAfterOnboardingCheckout', () => {
       onboardingStatus: OnboardingStatus.COMPLETED,
     });
 
-    expect(jotaiStore.get(shouldOpenAiChatAfterOnboardingState.atom)).toBe(
-      false,
-    );
+    expect(jotaiStore.get(isWorkspaceSetupChatActiveState.atom)).toBe(false);
   });
 
   it('should keep the checkout pending while the onboarding is not completed yet', () => {
@@ -102,9 +96,7 @@ describe('useEnterWorkspaceAfterOnboardingCheckout', () => {
     });
 
     expect(jotaiStore.get(isOnboardingCheckoutPendingState.atom)).toBe(true);
-    expect(jotaiStore.get(shouldOpenAiChatAfterOnboardingState.atom)).toBe(
-      false,
-    );
+    expect(jotaiStore.get(isWorkspaceSetupChatActiveState.atom)).toBe(false);
   });
 
   it('should consume the pending onboarding checkout so it cannot replay', () => {
@@ -115,12 +107,10 @@ describe('useEnterWorkspaceAfterOnboardingCheckout', () => {
 
     expect(jotaiStore.get(isOnboardingCheckoutPendingState.atom)).toBe(false);
 
-    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, false);
+    jotaiStore.set(isWorkspaceSetupChatActiveState.atom, false);
 
     enterWorkspace();
 
-    expect(jotaiStore.get(shouldOpenAiChatAfterOnboardingState.atom)).toBe(
-      false,
-    );
+    expect(jotaiStore.get(isWorkspaceSetupChatActiveState.atom)).toBe(false);
   });
 });

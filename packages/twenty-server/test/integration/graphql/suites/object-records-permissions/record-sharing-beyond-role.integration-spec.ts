@@ -23,11 +23,12 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { upsertObjectPermissions } from 'test/integration/metadata/suites/object-permission/utils/upsert-object-permissions.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
-import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
+import { upsertRowLevelPermissionRules } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-rules.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { resolveWorkspaceMemberAuthContext } from 'test/integration/utils/resolve-workspace-member-auth-context.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 
 import { type RecordSharePrincipalInput } from 'src/engine/permissions/record-share/dtos/record-sharing.dto';
 import { type PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
@@ -452,26 +453,30 @@ describe('Records shared beyond the role that can access their object', () => {
   });
 
   it('should let a named grant reach a record the row filter of the role hides', async () => {
-    await upsertRowLevelPermissionPredicates({
+    await upsertRowLevelPermissionRules({
       expectToFail: false,
       input: {
         roleId: memberRoleId,
         objectMetadataId,
-        canCreateRecords: true,
-        canReadRecords: true,
-        canUpdateRecords: true,
-        canSoftDeleteRecords: true,
-        canDestroyRecords: true,
-        predicates: [
+        rules: [
           {
-            fieldMetadataId: nameFieldMetadataId,
-            operand: RowLevelPermissionPredicateOperand.CONTAINS,
-            value: 'Visible',
+            canCreateRecords: true,
+            canReadRecords: true,
+            canUpdateRecords: true,
+            canSoftDeleteRecords: true,
+            canDestroyRecords: true,
+            predicates: [
+              {
+                fieldMetadataId: nameFieldMetadataId,
+                operand: RowLevelPermissionPredicateOperand.CONTAINS,
+                value: 'Visible',
+              },
+            ],
           },
         ],
-        predicateGroups: [],
       },
     });
+    await waitForAllJobsToFinish();
 
     try {
       expect((await findIdsAsJony()).ids).toEqual([OTHER_RECORD_ID]);
@@ -488,39 +493,42 @@ describe('Records shared beyond the role that can access their object', () => {
         (await renameAsJony('Edited under a row filter')).body.errors,
       ).toBeUndefined();
     } finally {
-      await upsertRowLevelPermissionPredicates({
+      await upsertRowLevelPermissionRules({
         expectToFail: false,
         input: {
           roleId: memberRoleId,
           objectMetadataId,
-          predicates: [],
-          predicateGroups: [],
+          rules: [],
         },
       });
     }
   });
 
   it('should refuse a merge that would delete a record shared for editing only', async () => {
-    await upsertRowLevelPermissionPredicates({
+    await upsertRowLevelPermissionRules({
       expectToFail: false,
       input: {
         roleId: memberRoleId,
         objectMetadataId,
-        canCreateRecords: true,
-        canReadRecords: true,
-        canUpdateRecords: true,
-        canSoftDeleteRecords: true,
-        canDestroyRecords: true,
-        predicates: [
+        rules: [
           {
-            fieldMetadataId: nameFieldMetadataId,
-            operand: RowLevelPermissionPredicateOperand.CONTAINS,
-            value: 'Visible',
+            canCreateRecords: true,
+            canReadRecords: true,
+            canUpdateRecords: true,
+            canSoftDeleteRecords: true,
+            canDestroyRecords: true,
+            predicates: [
+              {
+                fieldMetadataId: nameFieldMetadataId,
+                operand: RowLevelPermissionPredicateOperand.CONTAINS,
+                value: 'Visible',
+              },
+            ],
           },
         ],
-        predicateGroups: [],
       },
     });
+    await waitForAllJobsToFinish();
 
     try {
       await setShare({
@@ -545,13 +553,12 @@ describe('Records shared beyond the role that can access their object', () => {
         [SHARED_RECORD_ID, OTHER_RECORD_ID].sort(),
       );
     } finally {
-      await upsertRowLevelPermissionPredicates({
+      await upsertRowLevelPermissionRules({
         expectToFail: false,
         input: {
           roleId: memberRoleId,
           objectMetadataId,
-          predicates: [],
-          predicateGroups: [],
+          rules: [],
         },
       });
     }

@@ -9,7 +9,6 @@ import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/
 import { ImpersonationAuthorizationService } from 'src/engine/core-modules/impersonation/services/impersonation-authorization.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
-import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { SsoExchangeTokenService } from 'src/engine/core-modules/auth/token/services/sso-exchange-token.service';
 import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
 import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
@@ -27,6 +26,7 @@ import { EmailVerificationService } from 'src/engine/core-modules/email-verifica
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
+import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
 import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
 import { SsoService } from 'src/engine/core-modules/sso/services/sso.service';
@@ -108,10 +108,6 @@ describe('AuthResolver', () => {
           },
         },
         {
-          provide: RefreshTokenService,
-          useValue: {},
-        },
-        {
           provide: UserService,
           useValue: {
             findUserByEmail: jest.fn(),
@@ -139,6 +135,10 @@ describe('AuthResolver', () => {
         },
         {
           provide: FileUploadService,
+          useValue: {},
+        },
+        {
+          provide: FileUrlService,
           useValue: {},
         },
         {

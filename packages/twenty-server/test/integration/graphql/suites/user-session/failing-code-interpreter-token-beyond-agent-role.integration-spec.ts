@@ -216,9 +216,9 @@ describe('Code interpreter sandbox token beyond the agent role should be refused
         [application.agentId],
       );
 
-    const [{ defaultRoleId: applicationRoleId }] =
+    const [{ requestedRoleId: applicationRoleId }] =
       await globalThis.testDataSource.query(
-        `SELECT "defaultRoleId" FROM core."application" WHERE id = $1`,
+        `SELECT "requestedRoleId" FROM core."application" WHERE id = $1`,
         [application.id],
       );
 

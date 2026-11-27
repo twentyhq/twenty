@@ -11,7 +11,6 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatFieldPermissionMaps } from 'src/engine/metadata-modules/flat-field-permission/types/flat-field-permission-maps.type';
 import { type FlatFieldPermission } from 'src/engine/metadata-modules/flat-field-permission/types/flat-field-permission.type';
 import { fromCreateFieldPermissionInputToUniversalFlatFieldPermission } from 'src/engine/metadata-modules/flat-field-permission/utils/from-create-field-permission-input-to-universal-flat-field-permission.util';
@@ -64,6 +63,8 @@ const toUniversalFlatFieldPermissionToDelete = (
     fieldPermission.rowLevelPermissionPredicateGroupUniversalIdentifier,
   rowLevelPermissionRuleUniversalIdentifier:
     fieldPermission.rowLevelPermissionRuleUniversalIdentifier,
+  sourceFieldMetadataUniversalIdentifier:
+    fieldPermission.sourceFieldMetadataUniversalIdentifier,
   canReadFieldValue: fieldPermission.canReadFieldValue ?? undefined,
   canUpdateFieldValue: fieldPermission.canUpdateFieldValue ?? undefined,
   createdAt: fieldPermission.createdAt,
@@ -101,7 +102,7 @@ export class FieldPermissionService {
         ),
         this.workspaceCacheService.getOrRecompute(workspaceId, [
           'flatFieldPermissionMaps',
-        ] as unknown as Parameters<WorkspaceCacheService['getOrRecompute']>[1]),
+        ]),
       ]);
     const flatRoleMaps = flatMapsForRoleObjectField.flatRoleMaps;
     const flatObjectMetadataMaps =
@@ -110,11 +111,8 @@ export class FieldPermissionService {
       flatMapsForRoleObjectField.flatFieldMetadataMaps;
     const flatRowLevelPermissionPredicateGroupMaps =
       flatMapsForRoleObjectField.flatRowLevelPermissionPredicateGroupMaps;
-    const flatFieldPermissionMapsResolved: FlatFieldPermissionMaps = (
-      flatFieldPermissionMapsResult as unknown as {
-        flatFieldPermissionMaps: FlatFieldPermissionMaps;
-      }
-    ).flatFieldPermissionMaps;
+    const flatFieldPermissionMapsResolved: FlatFieldPermissionMaps =
+      flatFieldPermissionMapsResult.flatFieldPermissionMaps;
 
     const { rolesPermissions } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -269,6 +267,8 @@ export class FieldPermissionService {
               current.rowLevelPermissionPredicateGroupUniversalIdentifier,
             rowLevelPermissionRuleUniversalIdentifier:
               current.rowLevelPermissionRuleUniversalIdentifier,
+            sourceFieldMetadataUniversalIdentifier:
+              current.sourceFieldMetadataUniversalIdentifier,
             canReadFieldValue: effectiveCanRead,
             canUpdateFieldValue: effectiveCanUpdate,
             createdAt: current.createdAt,
@@ -329,13 +329,10 @@ export class FieldPermissionService {
       'rolesPermissions',
     ]);
 
-    const freshFlatFieldPermissionMaps: FlatFieldPermissionMaps = (
-      (await this.workspaceCacheService.getOrRecompute(workspaceId, [
+    const { flatFieldPermissionMaps: freshFlatFieldPermissionMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatFieldPermissionMaps',
-      ] as unknown as Parameters<
-        WorkspaceCacheService['getOrRecompute']
-      >[1])) as unknown as { flatFieldPermissionMaps: FlatFieldPermissionMaps }
-    ).flatFieldPermissionMaps;
+      ]);
 
     const resultFieldPermissions = Object.values(
       freshFlatFieldPermissionMaps.byUniversalIdentifier,
@@ -499,16 +496,16 @@ export class FieldPermissionService {
       );
     }
 
-    // An unreadable column reads as null, which a required field cannot return, and a join would still read through an unreadable relation
+    // An unreadable column reads as null, which a required field cannot return
     if (
       flatFieldMetadata.isNullable === false ||
-      isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)
+      flatFieldMetadata.type === FieldMetadataType.MORPH_RELATION
     ) {
       throw new PermissionsException(
         `Field ${flatFieldMetadata.name} cannot be restricted on a row level permission rule`,
         PermissionsExceptionCode.INVALID_ARG,
         {
-          userFriendlyMessage: msg`Required fields and relations cannot be restricted on a row level permission rule.`,
+          userFriendlyMessage: msg`Required fields and morph relations cannot be restricted on a row level permission rule.`,
         },
       );
     }

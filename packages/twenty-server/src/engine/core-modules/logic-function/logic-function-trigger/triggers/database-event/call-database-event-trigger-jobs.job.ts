@@ -4,11 +4,11 @@ import { isDefined } from 'twenty-shared/utils';
 
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
 
-import { buildLogicFunctionJobLimiter } from 'src/engine/core-modules/logic-function/utils/build-logic-function-job-limiter.util';
 import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { ApplicationRepeatedEventRecorderService } from 'src/engine/core-modules/event-logs/emit/application-repeated-event-recorder.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
+import { type QueueJobToAdd } from 'src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueException } from 'src/engine/core-modules/message-queue/message-queue.exception';
@@ -158,37 +158,51 @@ export class CallDatabaseEventTriggerJobsJob {
         logicFunctionPayloads,
       });
 
-      const logicFunctionsById = new Map(
-        logicFunctions.map((logicFunction) => [
-          logicFunction.id,
-          logicFunction,
-        ]),
-      );
+      // The queue takes one retry limit per call, so jobs are added per limit.
+      const logicFunctionTriggerJobsByRetryLimit = new Map<
+        number,
+        QueueJobToAdd<LogicFunctionTriggerJobData>[]
+      >();
 
-      try {
-        await this.messageQueueService.bulkAdd<LogicFunctionTriggerJobData>(
-          LogicFunctionTriggerJob.name,
-          logicFunctionPayloads.map((logicFunctionPayload, index) => ({
+      for (const [
+        index,
+        logicFunctionPayload,
+      ] of logicFunctionPayloads.entries()) {
+        const retryLimit =
+          logicFunctions.find(
+            (logicFunction) =>
+              logicFunction.id === logicFunctionPayload.logicFunctionId,
+          )?.retryLimit ?? 3;
+
+        logicFunctionTriggerJobsByRetryLimit.set(retryLimit, [
+          ...(logicFunctionTriggerJobsByRetryLimit.get(retryLimit) ?? []),
+          {
             data: {
               ...logicFunctionPayload,
               applicationUniversalIdentifier: application.universalIdentifier,
             },
             jobId: logicFunctionTriggerJobIds[index],
-            limiter: buildLogicFunctionJobLimiter({
-              logicFunctionId: logicFunctionPayload.logicFunctionId,
-              limiter: logicFunctionsById.get(
-                logicFunctionPayload.logicFunctionId,
-              )?.jobConfig?.limiter,
-            }),
             workspaceId: workspaceEventBatch.workspaceId,
             applicationUniversalIdentifier: application.universalIdentifier,
-          })),
-          {
-            retryLimit: 3,
-            backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
-            doNotCheckDuplicatesBasedOnPrefix: true,
           },
-        );
+        ]);
+      }
+
+      try {
+        for (const [
+          retryLimit,
+          logicFunctionTriggerJobs,
+        ] of logicFunctionTriggerJobsByRetryLimit) {
+          await this.messageQueueService.bulkAdd<LogicFunctionTriggerJobData>(
+            LogicFunctionTriggerJob.name,
+            logicFunctionTriggerJobs,
+            {
+              retryLimit,
+              backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
+              doNotCheckDuplicatesBasedOnPrefix: true,
+            },
+          );
+        }
       } catch (error) {
         if (!(error instanceof MessageQueueException)) {
           throw error;

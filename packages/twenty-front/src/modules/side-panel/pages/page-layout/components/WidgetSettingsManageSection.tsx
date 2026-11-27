@@ -62,9 +62,7 @@ export const WidgetSettingsManageSection = ({
   const { openDialog } = useDialog();
   const { openDropdown } = useOpenDropdown();
 
-  const visibilityLabel = useTranslatedVisibilityLabel(
-    widgetInEditMode?.conditionalAvailabilityExpression,
-  );
+  const visibilityLabel = useTranslatedVisibilityLabel(widgetInEditMode);
 
   if (!isDefined(pageLayoutEditingWidgetId)) {
     return null;

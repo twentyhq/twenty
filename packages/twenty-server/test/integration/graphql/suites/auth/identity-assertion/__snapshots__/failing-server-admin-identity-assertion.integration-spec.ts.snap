@@ -1,0 +1,99 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Requests refused in the server admin workspace behind an identity-aware proxy should refuse a request with an assertion for another audience 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "IDENTITY_ASSERTION_REQUIRED",
+    "userFriendlyMessage": {
+      "id": Any<String>,
+      "message": "You do not have permission to perform this action.",
+    },
+  },
+  "message": "The server admin workspace requires a valid identity assertion",
+}
+`;
+
+exports[`Requests refused in the server admin workspace behind an identity-aware proxy should refuse a request with an assertion from another issuer 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "IDENTITY_ASSERTION_REQUIRED",
+    "userFriendlyMessage": {
+      "id": Any<String>,
+      "message": "You do not have permission to perform this action.",
+    },
+  },
+  "message": "The server admin workspace requires a valid identity assertion",
+}
+`;
+
+exports[`Requests refused in the server admin workspace behind an identity-aware proxy should refuse a request with an assertion issued to another user 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "IDENTITY_ASSERTION_REQUIRED",
+    "userFriendlyMessage": {
+      "id": Any<String>,
+      "message": "You do not have permission to perform this action.",
+    },
+  },
+  "message": "The server admin workspace requires a valid identity assertion",
+}
+`;
+
+exports[`Requests refused in the server admin workspace behind an identity-aware proxy should refuse a request with an assertion signed by an unknown key 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "IDENTITY_ASSERTION_REQUIRED",
+    "userFriendlyMessage": {
+      "id": Any<String>,
+      "message": "You do not have permission to perform this action.",
+    },
+  },
+  "message": "The server admin workspace requires a valid identity assertion",
+}
+`;
+
+exports[`Requests refused in the server admin workspace behind an identity-aware proxy should refuse a request with an assertion that carries no email 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "IDENTITY_ASSERTION_REQUIRED",
+    "userFriendlyMessage": {
+      "id": Any<String>,
+      "message": "You do not have permission to perform this action.",
+    },
+  },
+  "message": "The server admin workspace requires a valid identity assertion",
+}
+`;
+
+exports[`Requests refused in the server admin workspace behind an identity-aware proxy should refuse a request with an expired assertion 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "IDENTITY_ASSERTION_REQUIRED",
+    "userFriendlyMessage": {
+      "id": Any<String>,
+      "message": "You do not have permission to perform this action.",
+    },
+  },
+  "message": "The server admin workspace requires a valid identity assertion",
+}
+`;
+
+exports[`Requests refused in the server admin workspace behind an identity-aware proxy should refuse a request without an assertion 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "IDENTITY_ASSERTION_REQUIRED",
+    "userFriendlyMessage": {
+      "id": Any<String>,
+      "message": "You do not have permission to perform this action.",
+    },
+  },
+  "message": "The server admin workspace requires a valid identity assertion",
+}
+`;

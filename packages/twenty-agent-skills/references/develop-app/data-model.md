@@ -93,9 +93,29 @@ Select and multi-select option `value` strings must be uppercase snake case:
 
 For select fields, default values must be quoted string expressions like `"'PLANNED'"`, not plain strings like `'planned'`.
 
-A workspace can relabel, recolor, reorder and deactivate the options an app ships, and add its own; it cannot remove them or change their `value`. Those changes survive later syncs, so changing an option's `label`, `color` or `position` in the app only changes the default. In a field's `options` read from the metadata API, `isActive: false` marks an option the workspace deactivated, and a read-only `applicationId` is present on an option owned by another application than the field, such as one the workspace added. Twenty sets both; do not declare them in the app.
+An option can also take an optional `description` (up to 255 characters), shown as a tooltip in pickers and group headers.
+
+A workspace can relabel, recolor, describe, reorder and deactivate the options an app ships, and add its own; it cannot remove them or change their `value`. Those changes survive later syncs, so changing an option's `label`, `color`, `description` or `position` in the app only changes the default. In a field's `options` read from the metadata API, `isActive: false` marks an option the workspace deactivated, and a read-only `applicationId` is present on an option owned by another application than the field, such as one the workspace added. Twenty sets both; do not declare them in the app.
 
 An option can carry its own `id`. When set, it must be a lowercase UUID (version 4 or later) used by one option only: a sync fails if two fields share an option `id`.
+
+### Formula Fields
+
+A `formula` makes a field computed: records cannot write it. Set it on the field next to `universalSettings`, never inside it. It applies to `TEXT`, `NUMBER`, `BOOLEAN`, `DATE`, `DATE_TIME`, `SELECT`, `RATING` and `CURRENCY` fields:
+
+```ts
+{
+  type: FieldType.NUMBER,
+  name: 'total',
+  label: 'Total',
+  formula: { expression: 'price * quantity' },
+}
+```
+
+- `expression` reads the record's fields by name, composite parts with a dot (`amount.amountMicros`), many-to-one related fields (`company.name`) and aggregates over a one-to-many relation (`count(tasks)`, `sum(deals.amount.amountMicros, deals.stage == 'WON')`).
+- A `CURRENCY` formula computes micros and also needs `currencyCodeExpression`, such as `"USD"` or `amount.currencyCode`.
+- A formula field cannot be unique, searchable or the label identifier.
+- Formula fields need the `IS_FORMULA_FIELD_ENABLED` feature flag; without it the sync fails with `Formula fields are not enabled for this workspace`.
 
 ### Relations
 
@@ -126,11 +146,11 @@ When adding permissions:
 - Check whether the app introduces side effects through logic functions before granting write access.
 - To keep some permissions from being granted on an object, set `disabledObjectPermissionActions` on `defineObject()`, for example `['canDestroyObjectRecords']`. Allowed values are the object permission flags: `'canReadObjectRecords'`, `'canCreateObjectRecords'`, `'canUpdateObjectRecords'`, `'canSoftDeleteObjectRecords'` and `'canDestroyObjectRecords'`. Creating records still follows the update permission for now: disabling `'canUpdateObjectRecords'` also disables `'canCreateObjectRecords'`, and disabling `'canCreateObjectRecords'` alone has no effect yet. Users, API keys and agents never get these actions on that object, whatever their role grants; the app's own logic functions keep them. List the update, soft-delete and destroy flags to make an object only the app can write.
 - To do the same on one field, set `disabledFieldPermissionActions` on the field, with `'canReadFieldValue'` and/or `'canUpdateFieldValue'`. `['canUpdateFieldValue']` makes a field only the app can write, which suits values the app computes or syncs.
-- To extend access from a record to its related records, declare a related record path with `defineRelatedRecordPath()`: an `objectUniversalIdentifier`, then `firstFieldMetadataUniversalIdentifier` and optionally `secondFieldMetadataUniversalIdentifier` and `thirdFieldMetadataUniversalIdentifier`, each a relation field on the object the previous hop reached. Set `isInherent: true` for records that belong to their parent (attachments, timeline activities): those follow whenever the parent is readable. Leave it unset for paths that should apply only when the role grants the starting object directly. Convention: `src/related-record-paths/`. Paths are in preview: they sync, but record permissions don't use them yet, and once enforced they require the Organization plan or above, like row-level security.
+- To extend access from a record to its related records, declare a related record path with `defineRelatedRecordPath()`: an `objectUniversalIdentifier`, then `firstFieldMetadataUniversalIdentifier` and optionally `secondFieldMetadataUniversalIdentifier` and `thirdFieldMetadataUniversalIdentifier`, each a relation field on the object the previous hop reached. Set `isInherent: true` for records that belong to their parent (attachments, timeline activities): those follow whenever the parent is readable. Leave it unset for paths that should apply only when the role grants the starting object directly. Convention: `src/related-record-paths/`. Paths require the Organization plan or above, like row-level security.
 
 ## Validation Rules
 
-Declare record validation with `defineValidationRule`. A record is rejected when the expression is false. `universalIdentifier`, `objectUniversalIdentifier`, `name`, `expression` and `message` are required; `errorFieldUniversalIdentifier`, `description` and `icon` are optional. Write the expression with the `ruleExpression` builder, or as a string using `and`, `or`, `not`, `==`, `!=`, `<`, `<=`, `>`, `>=`, `+`, `-`, `*`, `/` and `in [...]` (not `&&`), and functions such as `isDefined`, `isEmpty`, `isNonEmptyString` and `includes`. Two date functions are available in both forms: `daysSince(date)` returns whole days since the date (negative for a future date), and `isInRelativeDateRange(date, direction, amount, unit)` checks a period, with direction `'PAST'`, `'NEXT'` or `'THIS'` and unit `'DAY'`, `'WEEK'`, `'MONTH'`, `'QUARTER'` or `'YEAR'`, such as `isInRelativeDateRange(closeDate, 'PAST', 30, 'DAY')`.
+Declare record validation with `defineValidationRule`. A record is rejected when the expression is false. `universalIdentifier`, `objectUniversalIdentifier`, `name`, `expression` and `message` are required; `errorFieldUniversalIdentifier`, `description` and `icon` are optional. Write the expression with the `ruleExpression` builder, or as a string using `and`, `or`, `not`, `==`, `!=`, `<`, `<=`, `>`, `>=`, `+`, `-`, `*`, `/` and `in [...]` (not `&&`), and functions such as `isDefined`, `isEmpty`, `isNonEmptyString` and `includes`. Date functions are available in both forms, read dates in UTC, and take a unit `'MINUTE'`, `'HOUR'`, `'DAY'`, `'WEEK'`, `'MONTH'`, `'QUARTER'` or `'YEAR'`: `dateDiff(from, to, unit)` returns whole units between two dates (minutes and hours are elapsed time, longer units count calendar days and months), such as `dateDiff(createdAt, now, 'HOUR') < 24`; `dateAdd(date, amount, unit)` moves a date; `dateTrunc(date, unit)` returns the start of the unit; `datePart(date, part)` returns `'YEAR'`, `'QUARTER'`, `'MONTH'`, `'WEEK'`, `'DAY'`, `'DAY_OF_WEEK'` (1 is Monday), `'HOUR'` or `'MINUTE'` as a number; and `isInRelativeDateRange(date, direction, amount, unit)` checks a period, with direction `'PAST'`, `'NEXT'` or `'THIS'` and unit `'DAY'`, `'WEEK'`, `'MONTH'`, `'QUARTER'` or `'YEAR'`, such as `isInRelativeDateRange(closeDate, 'PAST', 30, 'DAY')`. `if(condition, valueIfTrue, valueIfFalse)` returns the second value when the condition is true and the third one otherwise. `coalesce(value, ...fallbacks)`, `concat(value, ...values)`, `lower(text)`, `upper(text)`, `min(number, ...numbers)`, `max(number, ...numbers)` and `roundTo(number, decimals)` compute values.
 
 ```ts
 import { defineValidationRule, ruleExpression } from 'twenty-sdk/define';

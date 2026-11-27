@@ -9,7 +9,6 @@ import {
 } from 'test/integration/metadata/suites/utils/webhook-test.util';
 import { createOneViewOnObject } from 'test/integration/metadata/suites/view/utils/create-one-view-on-object.util';
 import { destroyOneView } from 'test/integration/metadata/suites/view/utils/destroy-one-view.util';
-import { ViewVisibility, WorkflowVisibility } from 'twenty-shared/types';
 
 describe('private metadata webhooks (integration)', () => {
   let unlistedViewId: string;
@@ -29,7 +28,7 @@ describe('private metadata webhooks (integration)', () => {
       objectNameSingular: 'company',
       input: {
         name: 'Guest private webhook companies',
-        visibility: ViewVisibility.UNLISTED,
+        isPrivate: true,
       },
       token: APPLE_PHIL_GUEST_ACCESS_TOKEN,
     });
@@ -37,7 +36,7 @@ describe('private metadata webhooks (integration)', () => {
       objectNameSingular: 'company',
       input: {
         name: 'Workspace webhook companies',
-        visibility: ViewVisibility.WORKSPACE,
+        isPrivate: false,
       },
     });
 
@@ -64,13 +63,13 @@ describe('private metadata webhooks (integration)', () => {
     expect(
       await findSentRecordIds({
         metadataName: 'view',
-        record: { id: unlistedViewId, visibility: ViewVisibility.UNLISTED },
+        record: { id: unlistedViewId, isPrivate: true },
       }),
     ).toEqual([]);
     expect(
       await findSentRecordIds({
         metadataName: 'view',
-        record: { id: workspaceViewId, visibility: ViewVisibility.WORKSPACE },
+        record: { id: workspaceViewId, isPrivate: false },
       }),
     ).toEqual([workspaceViewId]);
   });
@@ -107,16 +106,13 @@ describe('private metadata webhooks (integration)', () => {
     expect(
       await findSentRecordIds({
         metadataName: 'workflow',
-        record: { id: randomUUID(), visibility: WorkflowVisibility.PRIVATE },
+        record: { id: randomUUID(), isPrivate: true },
       }),
     ).toEqual([]);
     expect(
       await findSentRecordIds({
         metadataName: 'workflow',
-        record: {
-          id: workspaceWorkflowId,
-          visibility: WorkflowVisibility.WORKSPACE,
-        },
+        record: { id: workspaceWorkflowId, isPrivate: false },
       }),
     ).toEqual([workspaceWorkflowId]);
   });

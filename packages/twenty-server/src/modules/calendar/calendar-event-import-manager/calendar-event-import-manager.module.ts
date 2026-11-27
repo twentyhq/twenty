@@ -9,6 +9,7 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { CalendarEventCleanerModule } from 'src/modules/calendar/calendar-event-cleaner/calendar-event-cleaner.module';
 import { CalendarCommonModule } from 'src/modules/calendar/common/calendar-common.module';
 import { CalendarTriggerEventListFetchCommand } from 'src/modules/calendar/calendar-event-import-manager/commands/calendar-trigger-event-list-fetch.command';
@@ -40,6 +41,7 @@ import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklis
 
 @Module({
   imports: [
+    WorkspaceCacheModule,
     CalendarEventParticipantManagerModule,
     TypeOrmModule.forFeature([
       WorkspaceEntity,

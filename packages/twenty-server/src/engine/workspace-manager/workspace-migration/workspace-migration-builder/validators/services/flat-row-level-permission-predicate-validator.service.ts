@@ -6,7 +6,6 @@ import { msg, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { ALL_METADATA_NAME, STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
-  FeatureFlagKey,
   FieldMetadataType,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
@@ -17,6 +16,7 @@ import {
   getFilterValueValidationIssue,
   isDefined,
   isMorphRelationHead,
+  isNonEmptyArray,
   isRecordFilterOperandExpectingValue,
   isRecordFilterValueValid,
   isWorkspaceMemberFieldCompatibleWithRlsPredicate,
@@ -34,17 +34,24 @@ import {
   FailedFlatEntityValidation,
   type FlatEntityValidationError,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
+import { type UniversalFlatRowLevelPermissionPredicate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-row-level-permission-predicate.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { getMarketplaceApplicationRoleRestrictionErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-restriction-errors.util';
 import { getRoleNotEditableErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-not-editable-errors.util';
+
+const WORKSPACE_MEMBER_RELATION_FILTER_FIELD_TYPES: FieldMetadataType[] = [
+  FieldMetadataType.SELECT,
+  FieldMetadataType.TEXT,
+  FieldMetadataType.BOOLEAN,
+];
 
 @Injectable()
 export class FlatRowLevelPermissionPredicateValidatorService {
   validateFlatRowLevelPermissionPredicateCreation({
     flatEntityToValidate: flatPredicateToValidate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
-    additionalCacheDataMaps,
     buildOptions,
   }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.rowLevelPermissionPredicate
@@ -64,6 +71,10 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       metadataName: 'rowLevelPermissionPredicate',
       type: 'create',
     });
+
+    validationResult.errors.push(
+      ...getMarketplaceApplicationRoleRestrictionErrors({ buildOptions }),
+    );
 
     const existingPredicate = findFlatEntityByUniversalIdentifier({
       universalIdentifier: flatPredicateToValidate.universalIdentifier,
@@ -101,10 +112,6 @@ export class FlatRowLevelPermissionPredicateValidatorService {
           relationFieldMetadataUniversalIdentifier:
             flatPredicateToValidate.relationFieldMetadataUniversalIdentifier,
           flatFieldMetadataMaps,
-          isRelationHopEnabled:
-            additionalCacheDataMaps.featureFlagsMap[
-              FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED
-            ],
         }),
       );
 
@@ -116,6 +123,17 @@ export class FlatRowLevelPermissionPredicateValidatorService {
 
       if (isDefined(unsupportedOperandError)) {
         validationResult.errors.push(unsupportedOperandError);
+      }
+
+      const oneToManyRelationError = this.getOneToManyRelationError({
+        fieldMetadata,
+        operand: flatPredicateToValidate.operand,
+        relationFieldMetadataUniversalIdentifier:
+          flatPredicateToValidate.relationFieldMetadataUniversalIdentifier,
+      });
+
+      if (isDefined(oneToManyRelationError)) {
+        validationResult.errors.push(oneToManyRelationError);
       }
 
       const invalidValueError = this.getInvalidValueError({
@@ -131,20 +149,33 @@ export class FlatRowLevelPermissionPredicateValidatorService {
         validationResult.errors.push(invalidValueError);
       }
 
-      const workspaceMemberFieldError = this.getWorkspaceMemberFieldError({
-        fieldMetadata,
-        operand: flatPredicateToValidate.operand,
-        subFieldName: flatPredicateToValidate.subFieldName,
-        workspaceMemberSubFieldName:
-          flatPredicateToValidate.workspaceMemberSubFieldName,
-        workspaceMemberFieldMetadata: this.findWorkspaceMemberFieldMetadata({
+      const workspaceMemberRelationError = this.getWorkspaceMemberRelationError(
+        {
+          predicate: flatPredicateToValidate,
+          flatFieldMetadataMaps,
+        },
+      );
+      const workspaceMemberFieldError =
+        workspaceMemberRelationError ??
+        this.getWorkspaceMemberFieldError({
+          fieldMetadata,
+          operand: flatPredicateToValidate.operand,
+          subFieldName: flatPredicateToValidate.subFieldName,
+          workspaceMemberSubFieldName:
+            flatPredicateToValidate.workspaceMemberSubFieldName,
+          workspaceMemberFieldMetadata: this.findWorkspaceMemberFieldMetadata({
+            workspaceMemberFieldMetadataUniversalIdentifier:
+              flatPredicateToValidate.workspaceMemberFieldMetadataUniversalIdentifier,
+            flatFieldMetadataMaps,
+          }),
           workspaceMemberFieldMetadataUniversalIdentifier:
             flatPredicateToValidate.workspaceMemberFieldMetadataUniversalIdentifier,
-          flatFieldMetadataMaps,
-        }),
-        workspaceMemberFieldMetadataUniversalIdentifier:
-          flatPredicateToValidate.workspaceMemberFieldMetadataUniversalIdentifier,
-      });
+          workspaceMemberFieldObjectUniversalIdentifier:
+            this.findWorkspaceMemberFieldObjectUniversalIdentifier({
+              predicate: flatPredicateToValidate,
+              flatFieldMetadataMaps,
+            }),
+        });
 
       if (isDefined(workspaceMemberFieldError)) {
         validationResult.errors.push(workspaceMemberFieldError);
@@ -203,7 +234,12 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       });
     } else {
       validationResult.errors.push(
-        ...getRoleNotEditableErrors({ flatRole: role, buildOptions }),
+        ...getRoleNotEditableErrors({
+          flatRole: role,
+          buildOptions,
+          // TODO(@charlesBochet): temporary Admin record permissions exception, remove once the workspace owns Admin's record permissions
+          isRecordPermissionsChange: true,
+        }),
       );
     }
 
@@ -246,7 +282,6 @@ export class FlatRowLevelPermissionPredicateValidatorService {
     universalIdentifier,
     flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
-    additionalCacheDataMaps,
     buildOptions,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.rowLevelPermissionPredicate
@@ -271,6 +306,10 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       metadataName: 'rowLevelPermissionPredicate',
       type: 'update',
     });
+
+    validationResult.errors.push(
+      ...getMarketplaceApplicationRoleRestrictionErrors({ buildOptions }),
+    );
 
     if (!isDefined(existingPredicate)) {
       validationResult.errors.push({
@@ -334,10 +373,6 @@ export class FlatRowLevelPermissionPredicateValidatorService {
           relationFieldMetadataUniversalIdentifier:
             updatedPredicate.relationFieldMetadataUniversalIdentifier,
           flatFieldMetadataMaps,
-          isRelationHopEnabled:
-            additionalCacheDataMaps.featureFlagsMap[
-              FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED
-            ],
         }),
       );
     }
@@ -353,7 +388,12 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       'operand' in flatEntityUpdate ||
       'fieldMetadataUniversalIdentifier' in flatEntityUpdate ||
       'subFieldName' in flatEntityUpdate ||
-      'workspaceMemberFieldMetadataUniversalIdentifier' in flatEntityUpdate
+      'workspaceMemberFieldMetadataUniversalIdentifier' in flatEntityUpdate ||
+      'workspaceMemberRelationFieldMetadataUniversalIdentifier' in
+        flatEntityUpdate ||
+      'workspaceMemberRelationFilterFieldMetadataUniversalIdentifier' in
+        flatEntityUpdate ||
+      'workspaceMemberRelationFilterValues' in flatEntityUpdate
     ) {
       const unsupportedOperandError = this.getUnsupportedOperandError({
         fieldType: fieldMetadata.type,
@@ -363,6 +403,17 @@ export class FlatRowLevelPermissionPredicateValidatorService {
 
       if (isDefined(unsupportedOperandError)) {
         validationResult.errors.push(unsupportedOperandError);
+      }
+
+      const oneToManyRelationError = this.getOneToManyRelationError({
+        fieldMetadata,
+        operand: updatedPredicate.operand,
+        relationFieldMetadataUniversalIdentifier:
+          updatedPredicate.relationFieldMetadataUniversalIdentifier,
+      });
+
+      if (isDefined(oneToManyRelationError)) {
+        validationResult.errors.push(oneToManyRelationError);
       }
 
       const invalidValueError = this.getInvalidValueError({
@@ -378,20 +429,30 @@ export class FlatRowLevelPermissionPredicateValidatorService {
         validationResult.errors.push(invalidValueError);
       }
 
-      const workspaceMemberFieldError = this.getWorkspaceMemberFieldError({
-        fieldMetadata,
-        operand: updatedPredicate.operand,
-        subFieldName: updatedPredicate.subFieldName,
-        workspaceMemberSubFieldName:
-          updatedPredicate.workspaceMemberSubFieldName,
-        workspaceMemberFieldMetadata: this.findWorkspaceMemberFieldMetadata({
+      const workspaceMemberFieldError =
+        this.getWorkspaceMemberRelationError({
+          predicate: updatedPredicate,
+          flatFieldMetadataMaps,
+        }) ??
+        this.getWorkspaceMemberFieldError({
+          fieldMetadata,
+          operand: updatedPredicate.operand,
+          subFieldName: updatedPredicate.subFieldName,
+          workspaceMemberSubFieldName:
+            updatedPredicate.workspaceMemberSubFieldName,
+          workspaceMemberFieldMetadata: this.findWorkspaceMemberFieldMetadata({
+            workspaceMemberFieldMetadataUniversalIdentifier:
+              updatedPredicate.workspaceMemberFieldMetadataUniversalIdentifier,
+            flatFieldMetadataMaps,
+          }),
           workspaceMemberFieldMetadataUniversalIdentifier:
             updatedPredicate.workspaceMemberFieldMetadataUniversalIdentifier,
-          flatFieldMetadataMaps,
-        }),
-        workspaceMemberFieldMetadataUniversalIdentifier:
-          updatedPredicate.workspaceMemberFieldMetadataUniversalIdentifier,
-      });
+          workspaceMemberFieldObjectUniversalIdentifier:
+            this.findWorkspaceMemberFieldObjectUniversalIdentifier({
+              predicate: updatedPredicate,
+              flatFieldMetadataMaps,
+            }),
+        });
 
       if (isDefined(workspaceMemberFieldError)) {
         validationResult.errors.push(workspaceMemberFieldError);
@@ -450,7 +511,12 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       });
     } else {
       validationResult.errors.push(
-        ...getRoleNotEditableErrors({ flatRole: role, buildOptions }),
+        ...getRoleNotEditableErrors({
+          flatRole: role,
+          buildOptions,
+          // TODO(@charlesBochet): temporary Admin record permissions exception, remove once the workspace owns Admin's record permissions
+          isRecordPermissionsChange: true,
+        }),
       );
     }
 
@@ -499,7 +565,6 @@ export class FlatRowLevelPermissionPredicateValidatorService {
     objectMetadataUniversalIdentifier,
     relationFieldMetadataUniversalIdentifier,
     flatFieldMetadataMaps,
-    isRelationHopEnabled,
   }: {
     fieldMetadata: UniversalFlatFieldMetadata;
     objectMetadataUniversalIdentifier: string;
@@ -507,23 +572,12 @@ export class FlatRowLevelPermissionPredicateValidatorService {
     flatFieldMetadataMaps:
       | UniversalFlatEntityMaps<UniversalFlatFieldMetadata>
       | undefined;
-    isRelationHopEnabled: boolean;
   }): FlatEntityValidationError[] {
     if (
       !isDefined(relationFieldMetadataUniversalIdentifier) ||
       !isDefined(flatFieldMetadataMaps)
     ) {
       return [];
-    }
-
-    if (!isRelationHopEnabled) {
-      return [
-        {
-          code: RowLevelPermissionPredicateExceptionCode.ROW_LEVEL_PERMISSION_FEATURE_DISABLED,
-          message: t`Predicates reaching a field through a relation are not enabled for this workspace`,
-          userFriendlyMessage: msg`Rules through a relation are not enabled for this workspace`,
-        },
-      ];
     }
 
     const relationFieldMetadata = findFlatEntityByUniversalIdentifier({
@@ -633,6 +687,202 @@ export class FlatRowLevelPermissionPredicateValidatorService {
     );
   }
 
+  private findWorkspaceMemberFieldObjectUniversalIdentifier({
+    predicate,
+    flatFieldMetadataMaps,
+  }: {
+    predicate: Pick<
+      UniversalFlatRowLevelPermissionPredicate,
+      'workspaceMemberRelationFieldMetadataUniversalIdentifier'
+    >;
+    flatFieldMetadataMaps:
+      | UniversalFlatEntityMaps<UniversalFlatFieldMetadata>
+      | undefined;
+  }): string | null | undefined {
+    if (
+      !isDefined(
+        predicate.workspaceMemberRelationFieldMetadataUniversalIdentifier,
+      )
+    ) {
+      return STANDARD_OBJECTS.workspaceMember.universalIdentifier;
+    }
+
+    return this.findWorkspaceMemberFieldMetadata({
+      workspaceMemberFieldMetadataUniversalIdentifier:
+        predicate.workspaceMemberRelationFieldMetadataUniversalIdentifier,
+      flatFieldMetadataMaps,
+    })?.relationTargetObjectMetadataUniversalIdentifier;
+  }
+
+  private getWorkspaceMemberRelationError({
+    predicate,
+    flatFieldMetadataMaps,
+  }: {
+    predicate: Pick<
+      UniversalFlatRowLevelPermissionPredicate,
+      | 'workspaceMemberFieldMetadataUniversalIdentifier'
+      | 'workspaceMemberRelationFieldMetadataUniversalIdentifier'
+      | 'workspaceMemberRelationFilterFieldMetadataUniversalIdentifier'
+      | 'workspaceMemberRelationFilterValues'
+    >;
+    flatFieldMetadataMaps:
+      | UniversalFlatEntityMaps<UniversalFlatFieldMetadata>
+      | undefined;
+  }): FlatEntityValidationError | undefined {
+    const {
+      workspaceMemberFieldMetadataUniversalIdentifier,
+      workspaceMemberRelationFieldMetadataUniversalIdentifier,
+      workspaceMemberRelationFilterFieldMetadataUniversalIdentifier,
+      workspaceMemberRelationFilterValues,
+    } = predicate;
+
+    if (!isDefined(workspaceMemberRelationFieldMetadataUniversalIdentifier)) {
+      if (
+        isDefined(
+          workspaceMemberRelationFilterFieldMetadataUniversalIdentifier,
+        ) ||
+        isDefined(workspaceMemberRelationFilterValues)
+      ) {
+        return {
+          code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
+          message: t`A workspace member relation filter needs a workspace member relation`,
+          userFriendlyMessage: msg`Choose the relation of the workspace member to filter`,
+        };
+      }
+
+      return undefined;
+    }
+
+    const workspaceMemberRelationFieldMetadata =
+      this.findWorkspaceMemberFieldMetadata({
+        workspaceMemberFieldMetadataUniversalIdentifier:
+          workspaceMemberRelationFieldMetadataUniversalIdentifier,
+        flatFieldMetadataMaps,
+      });
+
+    if (!isDefined(workspaceMemberRelationFieldMetadata)) {
+      return {
+        code: RowLevelPermissionPredicateExceptionCode.FIELD_METADATA_NOT_FOUND,
+        message: t`Workspace member relation field metadata not found`,
+        userFriendlyMessage: msg`Workspace member relation field metadata not found`,
+      };
+    }
+
+    if (
+      workspaceMemberRelationFieldMetadata.objectMetadataUniversalIdentifier !==
+        STANDARD_OBJECTS.workspaceMember.universalIdentifier ||
+      workspaceMemberRelationFieldMetadata.type !==
+        FieldMetadataType.RELATION ||
+      !isMorphOrRelationUniversalFlatFieldMetadata(
+        workspaceMemberRelationFieldMetadata,
+      ) ||
+      workspaceMemberRelationFieldMetadata.universalSettings?.relationType !==
+        RelationType.ONE_TO_MANY ||
+      !isDefined(
+        workspaceMemberRelationFieldMetadata.relationTargetObjectMetadataUniversalIdentifier,
+      )
+    ) {
+      const workspaceMemberRelationFieldName =
+        workspaceMemberRelationFieldMetadata.name;
+
+      return {
+        code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
+        message: t`Field "${workspaceMemberRelationFieldName}" is not a one-to-many relation of the workspaceMember object`,
+        userFriendlyMessage: msg`This field is not a one-to-many relation of the workspace member object`,
+      };
+    }
+
+    if (!isDefined(workspaceMemberFieldMetadataUniversalIdentifier)) {
+      return {
+        code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
+        message: t`A workspace member relation needs the field to read on its related records`,
+        userFriendlyMessage: msg`Choose the field to read on the related records`,
+      };
+    }
+
+    return this.getWorkspaceMemberRelationFilterError({
+      workspaceMemberRelationFilterFieldMetadataUniversalIdentifier,
+      workspaceMemberRelationFilterValues,
+      relatedObjectMetadataUniversalIdentifier:
+        workspaceMemberRelationFieldMetadata.relationTargetObjectMetadataUniversalIdentifier,
+      flatFieldMetadataMaps,
+    });
+  }
+
+  private getWorkspaceMemberRelationFilterError({
+    workspaceMemberRelationFilterFieldMetadataUniversalIdentifier,
+    workspaceMemberRelationFilterValues,
+    relatedObjectMetadataUniversalIdentifier,
+    flatFieldMetadataMaps,
+  }: {
+    workspaceMemberRelationFilterFieldMetadataUniversalIdentifier:
+      | string
+      | null
+      | undefined;
+    workspaceMemberRelationFilterValues: string[] | null | undefined;
+    relatedObjectMetadataUniversalIdentifier: string;
+    flatFieldMetadataMaps:
+      | UniversalFlatEntityMaps<UniversalFlatFieldMetadata>
+      | undefined;
+  }): FlatEntityValidationError | undefined {
+    if (
+      !isDefined(
+        workspaceMemberRelationFilterFieldMetadataUniversalIdentifier,
+      ) &&
+      !isDefined(workspaceMemberRelationFilterValues)
+    ) {
+      return undefined;
+    }
+
+    if (
+      !isDefined(
+        workspaceMemberRelationFilterFieldMetadataUniversalIdentifier,
+      ) ||
+      !isNonEmptyArray(workspaceMemberRelationFilterValues) ||
+      !workspaceMemberRelationFilterValues.every(isNonEmptyString)
+    ) {
+      return {
+        code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
+        message: t`A workspace member relation filter needs a field and at least one value`,
+        userFriendlyMessage: msg`Choose the field and the values to keep on the related records`,
+      };
+    }
+
+    const workspaceMemberRelationFilterFieldMetadata =
+      this.findWorkspaceMemberFieldMetadata({
+        workspaceMemberFieldMetadataUniversalIdentifier:
+          workspaceMemberRelationFilterFieldMetadataUniversalIdentifier,
+        flatFieldMetadataMaps,
+      });
+
+    if (!isDefined(workspaceMemberRelationFilterFieldMetadata)) {
+      return {
+        code: RowLevelPermissionPredicateExceptionCode.FIELD_METADATA_NOT_FOUND,
+        message: t`Workspace member relation filter field metadata not found`,
+        userFriendlyMessage: msg`Workspace member relation filter field metadata not found`,
+      };
+    }
+
+    if (
+      workspaceMemberRelationFilterFieldMetadata.objectMetadataUniversalIdentifier !==
+        relatedObjectMetadataUniversalIdentifier ||
+      !WORKSPACE_MEMBER_RELATION_FILTER_FIELD_TYPES.includes(
+        workspaceMemberRelationFilterFieldMetadata.type,
+      )
+    ) {
+      const workspaceMemberRelationFilterFieldName =
+        workspaceMemberRelationFilterFieldMetadata.name;
+
+      return {
+        code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
+        message: t`Field "${workspaceMemberRelationFilterFieldName}" is not a select, text or boolean field of the related records`,
+        userFriendlyMessage: msg`Filter the related records on one of their select, text or boolean fields`,
+      };
+    }
+
+    return undefined;
+  }
+
   private getWorkspaceMemberFieldError({
     fieldMetadata,
     operand,
@@ -640,6 +890,7 @@ export class FlatRowLevelPermissionPredicateValidatorService {
     workspaceMemberFieldMetadata,
     workspaceMemberFieldMetadataUniversalIdentifier,
     workspaceMemberSubFieldName,
+    workspaceMemberFieldObjectUniversalIdentifier,
   }: {
     fieldMetadata: UniversalFlatFieldMetadata;
     operand: RowLevelPermissionPredicateOperand;
@@ -647,6 +898,7 @@ export class FlatRowLevelPermissionPredicateValidatorService {
     workspaceMemberSubFieldName: string | null | undefined;
     workspaceMemberFieldMetadata: UniversalFlatFieldMetadata | undefined;
     workspaceMemberFieldMetadataUniversalIdentifier: string | null | undefined;
+    workspaceMemberFieldObjectUniversalIdentifier: string | null | undefined;
   }) {
     if (!isDefined(workspaceMemberFieldMetadataUniversalIdentifier)) {
       return undefined;
@@ -662,7 +914,7 @@ export class FlatRowLevelPermissionPredicateValidatorService {
 
     if (
       workspaceMemberFieldMetadata.objectMetadataUniversalIdentifier !==
-      STANDARD_OBJECTS.workspaceMember.universalIdentifier
+      workspaceMemberFieldObjectUniversalIdentifier
     ) {
       const workspaceMemberFieldName = workspaceMemberFieldMetadata.name;
 
@@ -738,6 +990,16 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       };
     }
 
+    const isRecordIdOfWorkspaceMemberFieldTarget =
+      fieldMetadata.type === FieldMetadataType.UUID &&
+      fieldMetadata.name === 'id' &&
+      fieldMetadata.objectMetadataUniversalIdentifier ===
+        workspaceMemberFieldMetadata.relationTargetObjectMetadataUniversalIdentifier;
+
+    if (isRecordIdOfWorkspaceMemberFieldTarget) {
+      return undefined;
+    }
+
     if (
       fieldMetadata.type !== FieldMetadataType.RELATION ||
       !isDefined(
@@ -753,6 +1015,45 @@ export class FlatRowLevelPermissionPredicateValidatorService {
         code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
         message: t`Fields "${fieldName}" and "${workspaceMemberFieldName}" must be relations pointing to the same object to be compared`,
         userFriendlyMessage: msg`These two relation fields do not point to the same object`,
+      };
+    }
+
+    return undefined;
+  }
+
+  private getOneToManyRelationError({
+    fieldMetadata,
+    operand,
+    relationFieldMetadataUniversalIdentifier,
+  }: {
+    fieldMetadata: UniversalFlatFieldMetadata;
+    operand: RowLevelPermissionPredicateOperand;
+    relationFieldMetadataUniversalIdentifier: string | null;
+  }) {
+    if (
+      isDefined(relationFieldMetadataUniversalIdentifier) ||
+      !isMorphOrRelationUniversalFlatFieldMetadata(fieldMetadata) ||
+      fieldMetadata.universalSettings?.relationType !== RelationType.ONE_TO_MANY
+    ) {
+      return undefined;
+    }
+
+    if (fieldMetadata.type === FieldMetadataType.MORPH_RELATION) {
+      return {
+        code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
+        message: t`A one-to-many morph relation cannot be compared directly, go through the relation to compare a field of its records`,
+        userFriendlyMessage: msg`This operand is not supported for this relation`,
+      };
+    }
+
+    if (
+      operand !== RowLevelPermissionPredicateOperand.IS_EMPTY &&
+      operand !== RowLevelPermissionPredicateOperand.IS_NOT_EMPTY
+    ) {
+      return {
+        code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
+        message: t`A one-to-many relation only supports the IS_EMPTY and IS_NOT_EMPTY operands, go through the relation to compare a field of its records`,
+        userFriendlyMessage: msg`This operand is not supported for this relation`,
       };
     }
 

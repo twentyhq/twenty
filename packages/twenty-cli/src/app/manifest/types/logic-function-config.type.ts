@@ -3,11 +3,19 @@ import {
   type ServerRouteDispatchResult,
   type ServerRouteTriggerSettings,
 } from 'twenty-shared/application';
-import { type LogicFunctionExecutionContext } from 'twenty-shared/logic-function';
+import {
+  type LogicFunctionExecutionContext,
+  type LogicFunctionJobFailure,
+} from 'twenty-shared/logic-function';
 import { type LogicFunctionHttpResponse } from 'twenty-shared/types';
 
 export type LogicFunctionHandler<TPayload = never> = (
   payload: TPayload,
+  context: LogicFunctionExecutionContext,
+) => unknown;
+
+export type LogicFunctionJobFailureHandler<TPayload = never> = (
+  failure: LogicFunctionJobFailure<TPayload>,
   context: LogicFunctionExecutionContext,
 ) => unknown;
 
@@ -30,8 +38,11 @@ type LogicFunctionConfigBase = Omit<
   | 'builtHandlerPath'
   | 'builtHandlerChecksum'
   | 'handlerName'
+  | 'jobFailureHandlerName'
   | 'serverRouteTriggerSettings'
->;
+> & {
+  onJobFailure?: LogicFunctionJobFailureHandler;
+};
 
 export type LogicFunctionConfig = LogicFunctionConfigBase &
   (

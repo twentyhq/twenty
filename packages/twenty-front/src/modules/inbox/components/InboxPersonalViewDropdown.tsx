@@ -1,5 +1,4 @@
 import { useLingui } from '@lingui/react/macro';
-import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   AGENT_CHAT_THREAD_PRESET_FILTER,
@@ -11,17 +10,16 @@ import { INBOX_OPEN_THREAD_PRESET_FILTERS } from '@/inbox/constants/InboxOpenThr
 import { INBOX_THREAD_PRESET_FILTER_ICONS } from '@/inbox/constants/InboxThreadPresetFilterIcons';
 import { INBOX_THREAD_PRESET_FILTER_LABELS } from '@/inbox/constants/InboxThreadPresetFilterLabels';
 import { useInboxOpenThreadsSummary } from '@/inbox/hooks/useInboxOpenThreadsSummary';
+import { useOpenInboxPresetFilter } from '@/inbox/hooks/useOpenInboxPresetFilter';
 import { inboxSelectedThreadListSourceState } from '@/inbox/states/inboxSelectedThreadListSourceState';
 import { isInboxOpenThreadPresetFilter } from '@/inbox/utils/isInboxOpenThreadPresetFilter';
-import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const InboxPersonalViewDropdown = () => {
   const { t } = useLingui();
-  const navigate = useNavigateApp();
-  const [inboxSelectedThreadListSource, setInboxSelectedThreadListSource] =
-    useAtomState(inboxSelectedThreadListSourceState);
+  const inboxSelectedThreadListSource = useAtomStateValue(
+    inboxSelectedThreadListSourceState,
+  );
   const selectedPresetFilter =
     inboxSelectedThreadListSource.type === 'presetFilter'
       ? inboxSelectedThreadListSource.presetFilter
@@ -34,7 +32,7 @@ export const InboxPersonalViewDropdown = () => {
     assignedThreadCount,
     unassignedThreadCount,
   } = useInboxOpenThreadsSummary();
-  const { resetRecordSelection } = useResetRecordSelection();
+  const { openInboxPresetFilter } = useOpenInboxPresetFilter();
   const countByPresetFilter: Partial<
     Record<AgentChatThreadPresetFilter, number>
   > = {
@@ -44,15 +42,6 @@ export const InboxPersonalViewDropdown = () => {
     [AGENT_CHAT_THREAD_PRESET_FILTER.ASSIGNED_TO_ME]: assignedToMeThreadCount,
     [AGENT_CHAT_THREAD_PRESET_FILTER.ASSIGNED_TO_ANYONE]: assignedThreadCount,
     [AGENT_CHAT_THREAD_PRESET_FILTER.UNASSIGNED]: unassignedThreadCount,
-  };
-
-  const handleSelect = (presetFilter: AgentChatThreadPresetFilter) => {
-    resetRecordSelection();
-    setInboxSelectedThreadListSource({
-      type: 'presetFilter',
-      presetFilter,
-    });
-    navigate(AppPath.AiChatInbox, { threadId: null });
   };
 
   return (
@@ -68,7 +57,7 @@ export const InboxPersonalViewDropdown = () => {
         Icon: INBOX_THREAD_PRESET_FILTER_ICONS[presetFilter],
         count: countByPresetFilter[presetFilter],
         isSelected: presetFilter === selectedPresetFilter,
-        onSelect: () => handleSelect(presetFilter),
+        onSelect: () => openInboxPresetFilter(presetFilter),
       }))}
     />
   );

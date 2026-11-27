@@ -149,9 +149,9 @@ const extractOrderByFieldNames = (orderBy: unknown): string[] => {
 
 const buildSelectedFieldsOverride = (
   select: string[],
-  allSelectableFields: CommonSelectedFields,
+  allSelectableFields: CommonSelectedFields['fields'],
   fieldNameToType: Map<string, FieldMetadataType>,
-): CommonSelectedFields => {
+): CommonSelectedFields['fields'] => {
   const fieldsToInclude = new Set([...select, 'id']);
 
   const fieldsToProcess = Object.fromEntries(
@@ -187,7 +187,7 @@ export const buildEffectiveSelectedFields = ({
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   selectedFields: CommonSelectedFields;
-  selectableRelationFields: CommonSelectedFields;
+  selectableRelationFields: CommonSelectedFields['relations'];
   unreadableFieldMetadataIds: ReadonlySet<string>;
 }): { effectiveSelectedFields: CommonSelectedFields; warnings: string[] } => {
   const filterFieldNames = extractFilterFieldNames(filter);
@@ -220,7 +220,7 @@ export const buildEffectiveSelectedFields = ({
     rawSelect: select,
     filterFieldNames,
     orderByFieldNames,
-    allSelectableFieldNames: Object.keys(selectedFields),
+    allSelectableFieldNames: Object.keys(selectedFields.fields),
     labelIdentifierFieldName,
     objectName,
     selectableRelationFieldNames: Object.keys(selectableRelationFields),
@@ -232,7 +232,7 @@ export const buildEffectiveSelectedFields = ({
     flatFieldMetadataMaps,
   );
 
-  const selectedRelationFields: CommonSelectedFields = {};
+  const selectedRelationFields: CommonSelectedFields['relations'] = {};
 
   for (const fieldName of relationSelect) {
     const fieldValue = selectableRelationFields[fieldName];
@@ -244,12 +244,13 @@ export const buildEffectiveSelectedFields = ({
 
   return {
     effectiveSelectedFields: {
-      ...buildSelectedFieldsOverride(
-        cleanSelect,
-        selectedFields,
+      fields: buildSelectedFieldsOverride(
+        cleanSelect.filter((fieldName) => !relationSelect.includes(fieldName)),
+        selectedFields.fields,
         fieldNameToType,
       ),
-      ...selectedRelationFields,
+      aggregates: [],
+      relations: selectedRelationFields,
     },
     warnings,
   };
@@ -276,10 +277,10 @@ const buildFieldNameToTypeMap = (
 };
 
 const stripSubFieldsByType = (
-  fields: CommonSelectedFields,
+  fields: CommonSelectedFields['fields'],
   fieldNameToType: Map<string, FieldMetadataType>,
-): CommonSelectedFields => {
-  const result: CommonSelectedFields = {};
+): CommonSelectedFields['fields'] => {
+  const result: CommonSelectedFields['fields'] = {};
 
   for (const [fieldName, fieldValue] of Object.entries(fields)) {
     result[fieldName] = stripFieldSubFieldsByType(
@@ -294,9 +295,9 @@ const stripSubFieldsByType = (
 
 const stripFieldSubFieldsByType = (
   fieldName: string,
-  fieldValue: boolean | CommonSelectedFields,
+  fieldValue: boolean | Record<string, boolean>,
   fieldNameToType: Map<string, FieldMetadataType>,
-): boolean | CommonSelectedFields => {
+): boolean | Record<string, boolean> => {
   if (!isObject(fieldValue) || isNull(fieldValue)) {
     return fieldValue;
   }
@@ -310,11 +311,11 @@ const stripFieldSubFieldsByType = (
     return fieldValue;
   }
 
-  const stripped: CommonSelectedFields = {};
+  const stripped: Record<string, boolean> = {};
 
   for (const [subFieldName, subFieldValue] of Object.entries(fieldValue)) {
     if (!subFieldsToExclude.has(subFieldName)) {
-      stripped[subFieldName] = subFieldValue as boolean;
+      stripped[subFieldName] = subFieldValue;
     }
   }
 

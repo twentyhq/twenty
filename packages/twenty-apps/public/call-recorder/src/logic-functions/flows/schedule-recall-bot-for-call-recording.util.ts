@@ -162,6 +162,7 @@ export const scheduleRecallBotForCallRecording = async (
       callRecordingId: callRecording.id,
       externalBotId: scheduleResult.externalBotId,
       joinAt,
+      bookedJoinAt: joinAt,
     });
   }
 

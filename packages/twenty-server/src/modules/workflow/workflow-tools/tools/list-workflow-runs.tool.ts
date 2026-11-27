@@ -10,6 +10,7 @@ import {
   type WorkflowToolContext,
   type WorkflowToolDependencies,
 } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
+import { type WorkflowTool } from 'src/modules/workflow/workflow-tools/types/workflow-tool.type';
 
 const DEFAULT_LIMIT = 10;
 const MAX_LIMIT = 50;
@@ -46,58 +47,60 @@ export const createListWorkflowRunsTool = (
     >;
   },
   context: WorkflowToolContext,
-) => ({
-  name: 'list_workflow_runs' as const,
-  description:
-    'List workflow runs, optionally filtered by core workflow and/or status, ordered from most to least recent. Use this to find the relevant run (for example the latest failed run of a workflow) before inspecting it in detail with get_workflow_run.',
-  inputSchema: listWorkflowRunsSchema,
-  execute: async (parameters: ListWorkflowRunsInput) => {
-    try {
-      return await deps.workspaceOrmManager.executeInWorkspaceContext(
-        async () => {
-          const workflowRunRepository =
-            deps.workspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
-              'workflowRun',
-            );
+) =>
+  ({
+    name: 'list_workflow_runs' as const,
+    isReadOnly: true,
+    description:
+      'List workflow runs, optionally filtered by core workflow and/or status, ordered from most to least recent. Use this to find the relevant run (for example the latest failed run of a workflow) before inspecting it in detail with get_workflow_run.',
+    inputSchema: listWorkflowRunsSchema,
+    execute: async (parameters: ListWorkflowRunsInput) => {
+      try {
+        return await deps.workspaceOrmManager.executeInWorkspaceContext(
+          async () => {
+            const workflowRunRepository =
+              deps.workspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
+                'workflowRun',
+              );
 
-          const where: FindOptionsWhere<WorkflowRunWorkspaceEntity> = {};
+            const where: FindOptionsWhere<WorkflowRunWorkspaceEntity> = {};
 
-          if (isDefined(parameters.coreWorkflowId)) {
-            where.coreWorkflowId = parameters.coreWorkflowId;
-          }
+            if (isDefined(parameters.coreWorkflowId)) {
+              where.coreWorkflowId = parameters.coreWorkflowId;
+            }
 
-          if (isDefined(parameters.status)) {
-            where.status = parameters.status;
-          }
+            if (isDefined(parameters.status)) {
+              where.status = parameters.status;
+            }
 
-          const workflowRuns = await workflowRunRepository.find({
-            where,
-            order: { createdAt: 'DESC' },
-            take: parameters.limit ?? DEFAULT_LIMIT,
-          });
+            const workflowRuns = await workflowRunRepository.find({
+              where,
+              order: { createdAt: 'DESC' },
+              take: parameters.limit ?? DEFAULT_LIMIT,
+            });
 
-          return {
-            success: true,
-            workflowRuns: workflowRuns.map((workflowRun) => ({
-              id: workflowRun.id,
-              name: workflowRun.name,
-              status: workflowRun.status,
-              error: workflowRun.state?.workflowRunError,
-              startedAt: workflowRun.startedAt,
-              endedAt: workflowRun.endedAt,
-              coreWorkflowId: workflowRun.coreWorkflowId,
-              coreWorkflowVersionId: workflowRun.coreWorkflowVersionId,
-            })),
-          };
-        },
-        context.authContext,
-      );
-    } catch (error) {
-      return {
-        success: false,
-        error: error.message,
-        message: `Failed to list workflow runs: ${error.message}`,
-      };
-    }
-  },
-});
+            return {
+              success: true,
+              workflowRuns: workflowRuns.map((workflowRun) => ({
+                id: workflowRun.id,
+                name: workflowRun.name,
+                status: workflowRun.status,
+                error: workflowRun.state?.workflowRunError,
+                startedAt: workflowRun.startedAt,
+                endedAt: workflowRun.endedAt,
+                coreWorkflowId: workflowRun.coreWorkflowId,
+                coreWorkflowVersionId: workflowRun.coreWorkflowVersionId,
+              })),
+            };
+          },
+          context.authContext,
+        );
+      } catch (error) {
+        return {
+          success: false,
+          error: error.message,
+          message: `Failed to list workflow runs: ${error.message}`,
+        };
+      }
+    },
+  }) satisfies WorkflowTool;

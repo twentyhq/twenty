@@ -2,7 +2,6 @@ import { randomUUID } from 'node:crypto';
 
 import { activateWorkspace } from 'test/integration/graphql/utils/activate-workspace.util';
 import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-auth-tokens-from-login-token.util';
-import { renewToken } from 'test/integration/graphql/utils/renew-token.util';
 import { signUpInNewWorkspace } from 'test/integration/graphql/utils/sign-up-in-new-workspace.util';
 import { signUp } from 'test/integration/graphql/utils/sign-up.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
@@ -60,12 +59,6 @@ export const createPermissionTestActiveWorkspace = async ({
     expectToFail: false,
   });
 
-  const renewTokenResponse = await renewToken(
-    authTokens.tokens.refreshToken.token,
-  );
-
-  expect(renewTokenResponse.body.errors).toBeUndefined();
-
   const { inviteHash } = activatedWorkspace;
 
   if (!isDefined(inviteHash)) {
@@ -76,8 +69,6 @@ export const createPermissionTestActiveWorkspace = async ({
     workspaceId: newWorkspace.workspace.id,
     workspaceOrigin,
     inviteHash,
-    adminAccessToken:
-      renewTokenResponse.body.data.renewToken.tokens
-        .accessOrWorkspaceAgnosticToken.token,
+    adminAccessToken: authTokens.tokens.accessOrWorkspaceAgnosticToken.token,
   };
 };

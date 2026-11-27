@@ -1,5 +1,5 @@
+import { evictLeastRecentlyUsed } from 'twenty-shared/utils';
 import { type WorkspaceLocalCacheEntry } from 'src/engine/workspace-cache/types/workspace-local-cache-entry.type';
-import { evictLeastRecentlyUsed } from 'src/utils/lru-map.util';
 
 export type LocalCacheSweepConfig = {
   ttlMs: number;

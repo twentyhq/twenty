@@ -36,9 +36,7 @@ import { AI_CHAT_TOOL_NAMES_TO_PRELOAD } from 'src/engine/metadata-modules/ai/ai
 import { AI_CHAT_WORKSPACE_SETUP_STREAM_FUNCTION_ID } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-workspace-setup-stream-function-id.constant';
 import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { AgentChatMessageReactionService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-message-reaction.service';
-import { AgentChatThreadTargetService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-target.service';
 import { MessagePruningService } from 'src/engine/metadata-modules/ai/ai-chat/services/message-pruning.service';
-import { createAttachConversationToRecordsTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/attach-conversation-to-records.tool';
 import { createReactToMessageTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/react-to-message.tool';
 import { createCompleteWorkspaceSetupTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/complete-workspace-setup.tool';
 import { type AgentChatSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-sender.type';
@@ -108,6 +106,7 @@ type ChatExecutionProfile = {
   >;
   isWorkspaceSetupKickoffTurn: boolean;
   canAttachConversationToRecords: boolean;
+  hasFileTools: boolean;
 };
 
 @Injectable()
@@ -121,7 +120,6 @@ export class ChatExecutionService {
     private readonly codeInterpreterService: CodeInterpreterService,
     private readonly messagePruningService: MessagePruningService,
     private readonly chatActorService: AgentChatActorService,
-    private readonly agentChatThreadTargetService: AgentChatThreadTargetService,
     private readonly agentChatMessageReactionService: AgentChatMessageReactionService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly agentTurnService: AgentTurnService,
@@ -218,6 +216,7 @@ export class ChatExecutionService {
             browsingContext: executionProfile.browsingContext,
             workspaceMemberId: authContext.workspaceMemberId,
             timezone: userContext.timezone,
+            hasFileTools: executionProfile.hasFileTools,
           },
         );
         const { contexts, conversation } = splitContextInstructions(
@@ -255,10 +254,12 @@ export class ChatExecutionService {
             toolCatalog: toolset.toolCatalog,
             ...skillContext,
             preloadedTools: toolset.directToolNames,
-            uploadedFilesContext: {
-              uploadedFiles: collectUploadedFileReferences(messages),
-              codeInterpreterFiles,
-            },
+            uploadedFilesContext: executionProfile.hasFileTools
+              ? {
+                  uploadedFiles: collectUploadedFileReferences(messages),
+                  codeInterpreterFiles,
+                }
+              : undefined,
             workspaceInstructions:
               workspace.aiAdditionalInstructions ?? undefined,
             userContext,
@@ -349,6 +350,7 @@ export class ChatExecutionService {
           Promise.resolve({ skillCatalog: [], referencedSkills: [] }),
         isWorkspaceSetupKickoffTurn: false,
         canAttachConversationToRecords: false,
+        hasFileTools: false,
       };
     }
 
@@ -372,7 +374,12 @@ export class ChatExecutionService {
         registryAccess: {
           type: 'assistant',
           toolContext,
-          excludedToolNames: AI_CHAT_EXCLUDED_TOOL_NAMES,
+          excludedToolNames: canAttachConversationToRecords
+            ? AI_CHAT_EXCLUDED_TOOL_NAMES
+            : new Set([
+                ...AI_CHAT_EXCLUDED_TOOL_NAMES,
+                ATTACH_CONVERSATION_TO_RECORDS_TOOL_NAME,
+              ]),
           preloadedToolNames: AI_CHAT_TOOL_NAMES_TO_PRELOAD,
         },
         canAskHumans: true,
@@ -382,16 +389,6 @@ export class ChatExecutionService {
             ? {
                 [COMPLETE_WORKSPACE_SETUP_TOOL_NAME]:
                   createCompleteWorkspaceSetupTool(),
-              }
-            : {}),
-          ...(canAttachConversationToRecords
-            ? {
-                [ATTACH_CONVERSATION_TO_RECORDS_TOOL_NAME]:
-                  createAttachConversationToRecordsTool({
-                    agentChatThreadTargetService:
-                      this.agentChatThreadTargetService,
-                    toolContext,
-                  }),
               }
             : {}),
           ...(isAiChatInboxEnabled && isDefined(latestUserMessage)
@@ -419,6 +416,7 @@ export class ChatExecutionService {
       }),
       isWorkspaceSetupKickoffTurn,
       canAttachConversationToRecords,
+      hasFileTools: true,
     };
   }
 
@@ -429,6 +427,7 @@ export class ChatExecutionService {
     browsingContext,
     workspaceMemberId,
     timezone,
+    hasFileTools,
   }: {
     workspace: WorkspaceEntity;
     messages: ExtendedUIMessage[];
@@ -436,11 +435,13 @@ export class ChatExecutionService {
     browsingContext: BrowsingContextType | null;
     workspaceMemberId: string;
     timezone: string | null;
+    hasFileTools: boolean;
   }): {
     preparedMessages: ExtendedUIMessage[];
     codeInterpreterFiles: UploadedFileReference[];
   } {
-    const isCodeInterpreterEnabled = this.codeInterpreterService.isEnabled();
+    const isCodeInterpreterEnabled =
+      hasFileTools && this.codeInterpreterService.isEnabled();
 
     let processedMessages = replaceUnsupportedFileParts(
       messages,
@@ -492,7 +493,7 @@ export class ChatExecutionService {
     const lastUserMessage = messages[lastUserIndex];
     const browsingContextPart = {
       type: 'text' as const,
-      text: `<browsing_context note="Only use this if the user explicitly asks about the current page, record, or view. Do not call any tools based on this context.">\n${contextString}\n</browsing_context>`,
+      text: `<browsing_context note="What the user has open. Use it only when the user refers to it (for example 'this account' or 'here'), and then use its IDs in tool calls as needed. Do not act on it otherwise.">\n${contextString}\n</browsing_context>`,
     };
 
     return [

@@ -27,13 +27,13 @@ import {
   WorkflowActionType,
 } from 'twenty-shared/workflow';
 
-import { type DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { checkStringIsDatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/utils/check-string-is-database-event-action';
+import { type DatabaseEventAction } from 'src/engine/workspace-event-emitter/enums/database-event-action';
+import { checkStringIsDatabaseEventAction } from 'src/engine/workspace-event-emitter/utils/check-string-is-database-event-action';
 import { resolveEffectiveAgent } from 'src/engine/metadata-modules/flat-agent/utils/resolve-effective-agent.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { generateFakeValue } from 'src/engine/utils/generate-fake-value';
-import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import { WorkflowMetadataReadService } from 'src/modules/workflow/common/workspace-services/workflow-metadata-read.workspace-service';
 import { DEFAULT_ITERATOR_CURRENT_ITEM } from 'src/modules/workflow/workflow-builder/workflow-schema/constants/default-iterator-current-item.const';
 import {
   Leaf,
@@ -63,7 +63,7 @@ export class WorkflowSchemaWorkspaceService {
   private readonly logger = new Logger(WorkflowSchemaWorkspaceService.name);
 
   constructor(
-    private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
+    private readonly workflowMetadataReadService: WorkflowMetadataReadService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
@@ -348,7 +348,7 @@ export class WorkflowSchemaWorkspaceService {
     }
 
     const objectMetadataInfo =
-      await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
+      await this.workflowMetadataReadService.getObjectMetadataInfo(
         nameSingular,
         workspaceId,
       );
@@ -372,7 +372,7 @@ export class WorkflowSchemaWorkspaceService {
     });
 
     const objectMetadataInfo =
-      await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
+      await this.workflowMetadataReadService.getObjectMetadataInfo(
         objectType,
         workspaceId,
       );
@@ -412,7 +412,7 @@ export class WorkflowSchemaWorkspaceService {
     workspaceId: string;
   }): Promise<OutputSchema> {
     const objectMetadataInfo =
-      await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
+      await this.workflowMetadataReadService.getObjectMetadataInfo(
         objectType,
         workspaceId,
       );
@@ -435,7 +435,7 @@ export class WorkflowSchemaWorkspaceService {
     const [objectType, action] = eventName.split('.');
 
     const objectMetadataInfo =
-      await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
+      await this.workflowMetadataReadService.getObjectMetadataInfo(
         objectType,
         workspaceId,
       );
@@ -564,8 +564,7 @@ export class WorkflowSchemaWorkspaceService {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       objectIdByNameSingular,
-    } =
-      await this.workflowCommonWorkspaceService.getFlatEntityMaps(workspaceId);
+    } = await this.workflowMetadataReadService.getFlatEntityMaps(workspaceId);
 
     return generateFakeFormResponse({
       formFieldMetadataItems,
@@ -612,7 +611,7 @@ export class WorkflowSchemaWorkspaceService {
 
     if (availability.type === 'BULK_RECORDS') {
       const objectMetadataInfo =
-        await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
+        await this.workflowMetadataReadService.getObjectMetadataInfo(
           availability.objectNameSingular,
           workspaceId,
         );
@@ -701,7 +700,7 @@ export class WorkflowSchemaWorkspaceService {
         case WorkflowTriggerType.MANUAL: {
           if (trigger.settings.availability?.type === 'BULK_RECORDS') {
             const objectMetadataInfo =
-              await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
+              await this.workflowMetadataReadService.getObjectMetadataInfo(
                 trigger.settings.availability.objectNameSingular,
                 workspaceId,
               );
@@ -750,7 +749,7 @@ export class WorkflowSchemaWorkspaceService {
     switch (step.type) {
       case WorkflowActionType.FIND_RECORDS: {
         const objectMetadataInfo =
-          await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
+          await this.workflowMetadataReadService.getObjectMetadataInfo(
             step.settings.input.objectName,
             workspaceId,
           );

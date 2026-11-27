@@ -21,6 +21,7 @@ import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/service
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { type UpgradeMigrationStatus } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AgentChatChannelMetadataService } from 'src/engine/metadata-modules/agent-chat-channel/services/agent-chat-channel-metadata.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
@@ -60,6 +61,7 @@ import { getSeedFrontComponentDefinitions } from 'src/engine/workspace-manager/s
 import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 import { TwentyStandardApplicationService } from 'src/engine/workspace-manager/twenty-standard-application/services/twenty-standard-application.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-cli-application-registration.constant';
 
 @Injectable()
 export class DevSeederWorkspaceService {
@@ -75,6 +77,7 @@ export class DevSeederWorkspaceService {
     private readonly devSeederWorkflowPendingInputService: DevSeederWorkflowPendingInputWorkspaceService,
     private readonly devSeederAgentChatPendingInputService: DevSeederAgentChatPendingInputWorkspaceService,
     private readonly devSeederAgentChatChannelService: DevSeederAgentChatChannelWorkspaceService,
+    private readonly agentChatChannelMetadataService: AgentChatChannelMetadataService,
     private readonly applicationService: ApplicationService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -112,7 +115,9 @@ export class DevSeederWorkspaceService {
       initialCursor,
     });
 
-    await this.applicationRegistrationService.findOrCreateCliRegistration();
+    await this.applicationRegistrationService.findOrCreateBuiltInRegistrationOrThrow(
+      TWENTY_CLI_APPLICATION_REGISTRATION,
+    );
 
     const schemaName =
       await this.workspaceSchemaService.createWorkspaceDBSchema(workspaceId);
@@ -137,6 +142,10 @@ export class DevSeederWorkspaceService {
       {
         workspaceId,
       },
+    );
+
+    await this.agentChatChannelMetadataService.ensureChannelViewsExist(
+      workspaceId,
     );
 
     await this.sdkClientGenerationService.generateSdkClientForApplication({

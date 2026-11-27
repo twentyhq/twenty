@@ -76,6 +76,7 @@ type SettingsListItemCardContentProps = {
   divider?: boolean;
   LeftIcon?: IconComponent;
   LeftIconColor?: string;
+  leftComponent?: ReactNode;
   onClick?: () => void;
   rightComponent: ReactNode;
   to?: string;
@@ -87,6 +88,7 @@ export const SettingsListItemCardContent = ({
   divider,
   LeftIcon,
   LeftIconColor,
+  leftComponent,
   onClick,
   rightComponent,
   to,
@@ -120,6 +122,7 @@ export const SettingsListItemCardContent = ({
           color={LeftIconColor ?? 'currentColor'}
         />
       )}
+      {leftComponent}
       <StyledContent>
         <StyledLabel id={labelId}>{label}</StyledLabel>
         {hasDescription && (

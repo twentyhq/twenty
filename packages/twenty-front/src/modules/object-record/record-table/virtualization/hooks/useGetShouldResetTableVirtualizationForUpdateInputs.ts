@@ -1,15 +1,19 @@
 import { useActiveFieldMetadataItems } from '@/object-metadata/hooks/useActiveFieldMetadataItems';
+import { useGetRecordFieldLookupTarget } from '@/object-record/record-column-lookup/hooks/useGetRecordFieldLookupTarget';
+import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { type ObjectRecordOperationUpdateInput } from '@/object-record/types/ObjectRecordOperationUpdateInput';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { mapById } from 'twenty-shared/utils';
+import { isDefined, mapById } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useGetShouldResetTableVirtualizationForUpdateInputs = () => {
-  const { objectMetadataItem } = useRecordIndexContextOrThrow();
+  const { objectMetadataItem, fieldMetadataItemByFieldMetadataItemId } =
+    useRecordIndexContextOrThrow();
 
   const { activeFieldMetadataItems } = useActiveFieldMetadataItems({
     objectMetadataItem,
@@ -23,6 +27,26 @@ export const useGetShouldResetTableVirtualizationForUpdateInputs = () => {
     currentRecordFiltersComponentState,
   );
 
+  const visibleRecordFields = useAtomComponentSelectorValue(
+    visibleRecordFieldsComponentSelector,
+  );
+
+  const getRecordFieldLookupTarget = useGetRecordFieldLookupTarget();
+
+  const lookupRelationFieldMetadataItemIds = visibleRecordFields
+    .filter((recordField) =>
+      isDefined(
+        getRecordFieldLookupTarget({
+          recordField,
+          fieldMetadataItem:
+            fieldMetadataItemByFieldMetadataItemId[
+              recordField.fieldMetadataItemId
+            ],
+        }),
+      ),
+    )
+    .map(({ fieldMetadataItemId }) => fieldMetadataItemId);
+
   const getShouldResetTableVirtualizationForUpdateInputs = (
     updateInputs: ObjectRecordOperationUpdateInput[],
   ) => {
@@ -30,6 +54,7 @@ export const useGetShouldResetTableVirtualizationForUpdateInputs = () => {
 
     let thereIsAnUpdateOnAFilteredField = false;
     let thereIsAnUpdateOnASortedField = false;
+    let thereIsAnUpdateOnALookupRelation = false;
 
     for (const updateInput of updateInputs) {
       const fieldNamesForUpdateInput = updateInput.updatedFields.flatMap(
@@ -67,13 +92,26 @@ export const useGetShouldResetTableVirtualizationForUpdateInputs = () => {
       if (updateOnASortedField) {
         thereIsAnUpdateOnASortedField = true;
       }
+
+      // The update returns the new related record without its looked-up field
+      if (
+        updatedFieldMetadataItemIds.some((fieldMetadataItemId) =>
+          lookupRelationFieldMetadataItemIds.includes(fieldMetadataItemId),
+        )
+      ) {
+        thereIsAnUpdateOnALookupRelation = true;
+      }
     }
 
     if (updatedFieldNames.has('position')) {
       return true;
     }
 
-    return thereIsAnUpdateOnAFilteredField || thereIsAnUpdateOnASortedField;
+    return (
+      thereIsAnUpdateOnAFilteredField ||
+      thereIsAnUpdateOnASortedField ||
+      thereIsAnUpdateOnALookupRelation
+    );
   };
 
   return {

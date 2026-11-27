@@ -295,4 +295,8 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
 ]
 `;
 
-exports[`getMetadataRelatedMetadataNames should return related metadata names for workflowVersion 1`] = `[]`;
+exports[`getMetadataRelatedMetadataNames should return related metadata names for workflowVersion 1`] = `
+[
+  "workflow",
+]
+`;

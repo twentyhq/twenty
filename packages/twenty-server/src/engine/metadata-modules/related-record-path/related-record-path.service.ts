@@ -13,8 +13,10 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import { type FlatRelatedRecordPath } from 'src/engine/metadata-modules/flat-related-record-path/types/flat-related-record-path.type';
 import { fromCreateRelatedRecordPathInputToFlatRelatedRecordPathToCreateOrThrow } from 'src/engine/metadata-modules/flat-related-record-path/utils/from-create-related-record-path-input-to-flat-related-record-path-to-create-or-throw.util';
 import { fromFlatRelatedRecordPathToRelatedRecordPathDto } from 'src/engine/metadata-modules/flat-related-record-path/utils/from-flat-related-record-path-to-related-record-path-dto.util';
+import { fromUpdateRelatedRecordPathInputToFlatRelatedRecordPathToUpdateOrThrow } from 'src/engine/metadata-modules/flat-related-record-path/utils/from-update-related-record-path-input-to-flat-related-record-path-to-update-or-throw.util';
 import { type CreateRelatedRecordPathInput } from 'src/engine/metadata-modules/related-record-path/dtos/create-related-record-path.input';
 import { type RelatedRecordPathDTO } from 'src/engine/metadata-modules/related-record-path/dtos/related-record-path.dto';
+import { type UpdateRelatedRecordPathInput } from 'src/engine/metadata-modules/related-record-path/dtos/update-related-record-path.input';
 import {
   RelatedRecordPathException,
   RelatedRecordPathExceptionCode,
@@ -72,14 +74,16 @@ export class RelatedRecordPathService {
   private async runRelatedRecordPathMigrationOrThrow({
     workspaceId,
     applicationUniversalIdentifier,
-    flatEntityToCreate,
-    flatEntityToDelete,
+    flatEntityToCreate = [],
+    flatEntityToUpdate = [],
+    flatEntityToDelete = [],
     errorMessage,
   }: {
     workspaceId: string;
     applicationUniversalIdentifier: string;
-    flatEntityToCreate: FlatRelatedRecordPath[];
-    flatEntityToDelete: FlatRelatedRecordPath[];
+    flatEntityToCreate?: FlatRelatedRecordPath[];
+    flatEntityToUpdate?: FlatRelatedRecordPath[];
+    flatEntityToDelete?: FlatRelatedRecordPath[];
     errorMessage: string;
   }): Promise<void> {
     const validateAndBuildResult =
@@ -88,7 +92,7 @@ export class RelatedRecordPathService {
           allFlatEntityOperationByMetadataName: {
             relatedRecordPath: {
               flatEntityToCreate,
-              flatEntityToUpdate: [],
+              flatEntityToUpdate,
               flatEntityToDelete,
             },
           },
@@ -157,7 +161,6 @@ export class RelatedRecordPathService {
       applicationUniversalIdentifier:
         workspaceCustomFlatApplication.universalIdentifier,
       flatEntityToCreate: [flatRelatedRecordPathToCreate],
-      flatEntityToDelete: [],
       errorMessage:
         'Multiple validation errors occurred while creating related record path',
     });
@@ -169,6 +172,48 @@ export class RelatedRecordPathService {
       findFlatEntityByIdInFlatEntityMapsOrThrow({
         flatEntityId: flatRelatedRecordPathToCreate.id,
         flatEntityMaps: flatRelatedRecordPathMaps,
+      }),
+    );
+  }
+
+  async update({
+    input,
+    workspaceId,
+  }: {
+    input: UpdateRelatedRecordPathInput;
+    workspaceId: string;
+  }): Promise<RelatedRecordPathDTO> {
+    await this.assertHasRelatedRecordPathsEntitlementOrThrow(workspaceId);
+
+    const workspaceCustomFlatApplication =
+      await this.findWorkspaceCustomFlatApplication(workspaceId);
+
+    const flatRelatedRecordPathToUpdate =
+      fromUpdateRelatedRecordPathInputToFlatRelatedRecordPathToUpdateOrThrow({
+        updateRelatedRecordPathInput: input,
+        existingFlatRelatedRecordPath: findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: input.id,
+          flatEntityMaps: await this.getFlatRelatedRecordPathMaps(workspaceId),
+        }),
+        callerApplicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+        workspaceCustomApplicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+      });
+
+    await this.runRelatedRecordPathMigrationOrThrow({
+      workspaceId,
+      applicationUniversalIdentifier:
+        workspaceCustomFlatApplication.universalIdentifier,
+      flatEntityToUpdate: [flatRelatedRecordPathToUpdate],
+      errorMessage:
+        'Multiple validation errors occurred while updating related record path',
+    });
+
+    return fromFlatRelatedRecordPathToRelatedRecordPathDto(
+      findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: input.id,
+        flatEntityMaps: await this.getFlatRelatedRecordPathMaps(workspaceId),
       }),
     );
   }
@@ -204,7 +249,6 @@ export class RelatedRecordPathService {
       workspaceId,
       applicationUniversalIdentifier:
         workspaceCustomFlatApplication.universalIdentifier,
-      flatEntityToCreate: [],
       flatEntityToDelete: [existingFlatRelatedRecordPath],
       errorMessage:
         'Multiple validation errors occurred while deleting related record path',

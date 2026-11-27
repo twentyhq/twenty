@@ -1,25 +1,24 @@
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { InboxThreadListFetchMoreTrigger } from '@/inbox/components/InboxThreadListFetchMoreTrigger';
-import { AiChatSkeletonLoader } from '@/ai/components/internal/AiChatSkeletonLoader';
+import { AiChatSkeletonLoader } from '@/ai-chat/components/AiChatSkeletonLoader';
 import { NavigationDrawerInboxChannelsSection } from '@/inbox/components/NavigationDrawerInboxChannelsSection';
 import { NavigationDrawerInboxFavoritesSection } from '@/inbox/components/NavigationDrawerInboxFavoritesSection';
 import { NavigationDrawerInboxThreadSection } from '@/inbox/components/NavigationDrawerInboxThreadSection';
 import { NavigationDrawerInboxTriageSection } from '@/inbox/components/NavigationDrawerInboxTriageSection';
-import { NavigationDrawerDirectMessagesSection } from '@/inbox/components/NavigationDrawerDirectMessagesSection';
-import { OpenDirectMessageButton } from '@/inbox/components/OpenDirectMessageButton';
+import { NavigationDrawerInboxDirectMessagesSection } from '@/inbox/components/NavigationDrawerInboxDirectMessagesSection';
+import { InboxOpenDirectMessageButton } from '@/inbox/components/InboxOpenDirectMessageButton';
 import { INBOX_RECENT_THREADS_MAX_COUNT } from '@/inbox/constants/InboxRecentThreadsMaxCount';
-import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
+import { useAiChatThreadClick } from '@/ai-chat/threads/hooks/useAiChatThreadClick';
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
+import { INBOX_RECENTS_NAVIGATION_SECTION_ID } from '@/inbox/constants/InboxRecentsNavigationSectionId';
 import { useInboxThreadList } from '@/inbox/hooks/useInboxThreadList';
 import { inboxDirectMessageSidebarItemsSelector } from '@/inbox/states/selectors/inboxDirectMessageSidebarItemsSelector';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { inboxFavoriteChannelsSelector } from '@/inbox/states/selectors/inboxFavoriteChannelsSelector';
+import { useAiChatPageThreadId } from '@/ai-chat/hooks/useAiChatPageThreadId';
 import { inboxFavoriteThreadsSelector } from '@/inbox/states/selectors/inboxFavoriteThreadsSelector';
+import { filterInboxRecentThreads } from '@/inbox/utils/filterInboxRecentThreads';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -45,34 +44,22 @@ const StyledSectionsContainer = styled.div`
   gap: ${themeCssVariables.spacing[3]};
 `;
 
-const AI_CHAT_RECENTS_NAVIGATION_SECTION_ID = 'AiChatRecents';
-
 export const NavigationDrawerInboxContent = () => {
   const { t } = useLingui();
   const isExpanded = useIsNavigationDrawerContentExpanded();
 
-  const isAiChatInboxEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
-  );
   const isDirectMessageEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED,
   );
-  const isDirectMessagesSectionShown =
-    isAiChatInboxEnabled && isDirectMessageEnabled;
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
-  const { handleThreadClick } = useAiChatThreadClick(
-    isAiChatInboxEnabled
-      ? { shouldOpenInFullPage: true }
-      : { resetNavigationStack: true },
-  );
+  const aiChatPageThreadId = useAiChatPageThreadId();
+  const { handleThreadClick } = useAiChatThreadClick({
+    shouldOpenInFullPage: true,
+  });
 
   const { threads, isLoading } = useInboxThreadList(
     INBOX_RECENT_THREAD_LIST_SOURCE,
   );
   const inboxFavoriteThreads = useAtomStateValue(inboxFavoriteThreadsSelector);
-  const inboxFavoriteChannels = useAtomStateValue(
-    inboxFavoriteChannelsSelector,
-  );
   const inboxDirectMessageSidebarItems = useAtomStateValue(
     inboxDirectMessageSidebarItemsSelector,
   );
@@ -85,56 +72,41 @@ export const NavigationDrawerInboxContent = () => {
     );
   }
 
-  const inboxFavoriteThreadIds = new Set(
-    inboxFavoriteThreads.map(({ id }) => id),
-  );
-  const threadsOutsideOtherSections = threads.filter(
-    ({ id, conversationType }) =>
-      !inboxFavoriteThreadIds.has(id) &&
-      !(
-        isDirectMessagesSectionShown &&
-        conversationType === AgentChatThreadConversationType.DIRECT_MESSAGE
-      ),
-  );
-  const recentThreads = isAiChatInboxEnabled
-    ? threadsOutsideOtherSections.slice(0, INBOX_RECENT_THREADS_MAX_COUNT)
-    : threadsOutsideOtherSections;
+  const recentThreads = filterInboxRecentThreads({
+    threads,
+    favoriteThreads: inboxFavoriteThreads,
+    shouldExcludeDirectMessages: isDirectMessageEnabled,
+  }).slice(0, INBOX_RECENT_THREADS_MAX_COUNT);
 
   return (
     <StyledContainer>
       <StyledThreadList>
         <StyledSectionsContainer>
-          {isAiChatInboxEnabled && <NavigationDrawerInboxTriageSection />}
+          <NavigationDrawerInboxTriageSection />
           <NavigationDrawerInboxFavoritesSection
-            channels={isAiChatInboxEnabled ? inboxFavoriteChannels : []}
             threads={inboxFavoriteThreads}
-            currentThreadId={currentAiChatThread}
+            currentThreadId={aiChatPageThreadId}
             onThreadClick={handleThreadClick}
           />
-          {isAiChatInboxEnabled && <NavigationDrawerInboxChannelsSection />}
-          {isDirectMessagesSectionShown && (
-            <NavigationDrawerDirectMessagesSection
+          <NavigationDrawerInboxChannelsSection />
+          {isDirectMessageEnabled && (
+            <NavigationDrawerInboxDirectMessagesSection
               directMessages={inboxDirectMessageSidebarItems}
-              currentThreadId={currentAiChatThread}
+              currentThreadId={aiChatPageThreadId}
               onSelect={(threadId) => handleThreadClick({ id: threadId })}
-              memberPicker={<OpenDirectMessageButton />}
+              memberPicker={<InboxOpenDirectMessageButton />}
             />
           )}
           {recentThreads.length > 0 && (
             <NavigationDrawerInboxThreadSection
-              sectionId={AI_CHAT_RECENTS_NAVIGATION_SECTION_ID}
+              sectionId={INBOX_RECENTS_NAVIGATION_SECTION_ID}
               title={t`Recent`}
               threads={recentThreads}
-              currentThreadId={currentAiChatThread}
+              currentThreadId={aiChatPageThreadId}
               onThreadClick={handleThreadClick}
             />
           )}
         </StyledSectionsContainer>
-        {!isAiChatInboxEnabled && (
-          <InboxThreadListFetchMoreTrigger
-            source={INBOX_RECENT_THREAD_LIST_SOURCE}
-          />
-        )}
       </StyledThreadList>
     </StyledContainer>
   );

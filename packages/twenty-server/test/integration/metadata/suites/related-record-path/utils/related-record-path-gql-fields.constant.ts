@@ -7,6 +7,7 @@ export const RELATED_RECORD_PATH_GQL_FIELDS = `
   secondFieldMetadataId
   thirdFieldMetadataId
   isInherent
+  isActive
 `;
 
 export type RelatedRecordPathResponse = {
@@ -16,4 +17,5 @@ export type RelatedRecordPathResponse = {
   secondFieldMetadataId: string | null;
   thirdFieldMetadataId: string | null;
   isInherent: boolean;
+  isActive: boolean;
 };

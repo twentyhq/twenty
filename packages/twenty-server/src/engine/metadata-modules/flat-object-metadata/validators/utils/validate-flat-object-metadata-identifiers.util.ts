@@ -1,6 +1,7 @@
 import { msg } from '@lingui/core/macro';
 import {
   isDefined,
+  isFormulaFieldMetadata,
   isLabelIdentifierFieldMetadataTypes,
   isSearchableFieldType,
 } from 'twenty-shared/utils';
@@ -52,6 +53,13 @@ export const validateFlatObjectMetadataIdentifiers = ({
         message:
           'labelIdentifierFieldMetadataUniversalIdentifier validation failed: field type not compatible',
         userFriendlyMessage: msg`Field cannot be used as label identifier due to its type: should be of type UUID, text or full name`,
+      });
+    } else if (isFormulaFieldMetadata(universalFlatFieldMetadata)) {
+      errors.push({
+        code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+        message:
+          'labelIdentifierFieldMetadataUniversalIdentifier validation failed: field is a formula',
+        userFriendlyMessage: msg`The field used as record label cannot be a formula`,
       });
     } else if (!isSearchableFieldType(universalFlatFieldMetadata.type)) {
       errors.push({

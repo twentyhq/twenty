@@ -174,7 +174,11 @@ export const createPermissionTestWorkspace =
 
     return {
       workspaceId,
+      workspaceOrigin,
+      inviteHash,
+      adminAccessToken: accessToken,
       objectMetadataId,
+      visibilityTierFieldMetadataId: fields.visibilityTier.id,
       objectNameSingular: OBJECT_NAME_SINGULAR,
       roleIds,
       workspaceMemberIds,
@@ -226,6 +230,9 @@ export const createPermissionTestWorkspace =
         sharedWithMemberWithoutAccess: await createRecordSharedWithMember(
           workspaceMemberIds.none,
         ),
+        lowVisibilityTier: await createRecord({ visibilityTier: 'LOW' }),
+        mediumVisibilityTier: await createRecord({ visibilityTier: 'MEDIUM' }),
+        fullVisibilityTier: await createRecord({ visibilityTier: 'FULL' }),
       },
     };
   };

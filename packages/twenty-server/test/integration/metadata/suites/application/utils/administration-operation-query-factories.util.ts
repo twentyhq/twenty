@@ -343,12 +343,12 @@ export const ADMINISTRATION_OPERATION_QUERY_FACTORIES = {
       },
     },
   }),
-  upsertRowLevelPermissionPredicates: () => ({
+  upsertRowLevelPermissionRules: () => ({
     query: gql`
-      mutation UpsertRowLevelPermissionPredicates(
-        $input: UpsertRowLevelPermissionPredicatesInput!
+      mutation UpsertRowLevelPermissionRules(
+        $input: UpsertRowLevelPermissionRulesInput!
       ) {
-        upsertRowLevelPermissionPredicates(input: $input) {
+        upsertRowLevelPermissionRules(input: $input) {
           __typename
         }
       }
@@ -357,8 +357,7 @@ export const ADMINISTRATION_OPERATION_QUERY_FACTORIES = {
       input: {
         roleId: PLACEHOLDER_ID,
         objectMetadataId: PLACEHOLDER_ID,
-        predicates: [],
-        predicateGroups: [],
+        rules: [],
       },
     },
   }),

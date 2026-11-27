@@ -17,6 +17,7 @@ export const getBillingExceptionStatusCode = (
     case BillingExceptionCode.BILLING_SUBSCRIPTION_ITEM_NOT_FOUND:
     case BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_FOUND:
     case BillingExceptionCode.BILLING_CREDIT_GRANT_NOT_FOUND:
+    case BillingExceptionCode.BILLING_ARRANGEMENT_NOT_FOUND:
       return 404;
     case BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_IN_TRIAL_PERIOD:
     case BillingExceptionCode.BILLING_MISSING_REQUEST_BODY:
@@ -28,6 +29,10 @@ export const getBillingExceptionStatusCode = (
     case BillingExceptionCode.BILLING_PARTNER_CODE_INVALID:
     case BillingExceptionCode.BILLING_PARTNER_CODE_LOCKED:
     case BillingExceptionCode.BILLING_PARTNER_CODE_NOT_ELIGIBLE:
+    case BillingExceptionCode.BILLING_ARRANGEMENT_INVALID:
+    case BillingExceptionCode.BILLING_ARRANGEMENT_OVERLAP:
+    case BillingExceptionCode.BILLING_ARRANGEMENT_NOT_MANAGEABLE:
+    case BillingExceptionCode.BILLING_ARRANGEMENT_SEAT_CAP_BELOW_MEMBERS:
       return 400;
     case BillingExceptionCode.BILLING_SUBSCRIPTION_INACTIVE:
     case BillingExceptionCode.BILLING_UPGRADE_INVOICE_PAYMENT_FAILED:
@@ -48,7 +53,6 @@ export const getBillingExceptionStatusCode = (
     case BillingExceptionCode.BILLING_USAGE_UNAVAILABLE:
     case BillingExceptionCode.BILLING_UPGRADE_INVOICE_VOID_FAILED:
     case BillingExceptionCode.BILLING_CREDIT_TOP_UP_NOT_GRANTED:
-    case BillingExceptionCode.BILLING_ARRANGEMENT_INVALID:
       return 500;
     default: {
       return assertUnreachable(exception.code);

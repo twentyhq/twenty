@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type InboxChannelView } from '@/inbox/types/InboxChannelView';
-import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 import { getInboxThreadChannelStatus } from '@/inbox/utils/getInboxThreadChannelStatus';
 import { isInboxThreadInChannelThreadFilter } from '@/inbox/utils/isInboxThreadInChannelThreadFilter';
 import { AgentChatChannelAssignmentFilter } from '~/generated-metadata/graphql';

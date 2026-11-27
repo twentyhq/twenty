@@ -11,7 +11,7 @@ import {
 export const resolveWorkflowRunApplicationOrThrow = <
   TApplication extends Pick<
     FlatApplication,
-    'id' | 'name' | 'deletedAt' | 'defaultRoleId' | 'sourceType'
+    'id' | 'name' | 'deletedAt' | 'requestedRoleId' | 'sourceType'
   >,
 >({
   applicationId,

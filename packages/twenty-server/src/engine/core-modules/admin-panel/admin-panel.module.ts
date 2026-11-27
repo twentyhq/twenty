@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
 import { AdminPanelAiProviderResolver } from 'src/engine/core-modules/admin-panel/admin-panel-ai-provider.resolver';
 import { AdminPanelApplicationRegistrationResolver } from 'src/engine/core-modules/admin-panel/admin-panel-application-registration.resolver';
+import { AdminPanelBillingArrangementResolver } from 'src/engine/core-modules/admin-panel/admin-panel-billing-arrangement.resolver';
 import { AdminPanelUsageLimitResolver } from 'src/engine/core-modules/admin-panel/admin-panel-usage-limit.resolver';
 import { AdminPanelWorkspaceDataExportResolver } from 'src/engine/core-modules/admin-panel/admin-panel-workspace-data-export.resolver';
 import { AdminPanelHealthService } from 'src/engine/core-modules/admin-panel/admin-panel-health.service';
@@ -19,6 +20,7 @@ import { WorkerHealthIndicator } from 'src/engine/core-modules/admin-panel/indic
 import { MaintenanceModeService } from 'src/engine/core-modules/admin-panel/maintenance-mode.service';
 import { AdminPanelAiProviderService } from 'src/engine/core-modules/admin-panel/services/admin-panel-ai-provider.service';
 import { AdminPanelUsageLimitService } from 'src/engine/core-modules/admin-panel/services/admin-panel-usage-limit.service';
+import { AdminPanelBillingArrangementService } from 'src/engine/core-modules/admin-panel/services/admin-panel-billing-arrangement.service';
 import { AdminPanelBillingService } from 'src/engine/core-modules/admin-panel/services/admin-panel-billing.service';
 import { AdminPanelChatService } from 'src/engine/core-modules/admin-panel/services/admin-panel-chat.service';
 import { AdminPanelConfigService } from 'src/engine/core-modules/admin-panel/services/admin-panel-config.service';
@@ -28,9 +30,11 @@ import { AdminPanelStatisticsService } from 'src/engine/core-modules/admin-panel
 import { AdminPanelUserLookupService } from 'src/engine/core-modules/admin-panel/services/admin-panel-user-lookup.service';
 import { AdminPanelVersionService } from 'src/engine/core-modules/admin-panel/services/admin-panel-version.service';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
+import { BillingArrangementModule } from 'src/engine/core-modules/billing/billing-arrangement.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
+import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
 import { EventLogEmitterModule } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.module';
@@ -66,6 +70,8 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
       BillingPriceEntity,
     ]),
     BillingModule,
+    BillingArrangementModule,
+    CacheLockModule,
     UsageLimitInstanceOverrideModule,
     FileModule,
     WorkspaceDomainsModule,
@@ -92,6 +98,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     AdminPanelResolver,
     AdminPanelAiProviderResolver,
     AdminPanelApplicationRegistrationResolver,
+    AdminPanelBillingArrangementResolver,
     AdminPanelUsageLimitResolver,
     AdminPanelWorkspaceDataExportResolver,
     AdminPanelUsageLimitService,
@@ -100,6 +107,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     AdminPanelServerAdminService,
     AdminPanelStatisticsService,
     AdminPanelBillingService,
+    AdminPanelBillingArrangementService,
     AdminPanelChatService,
     AdminPanelConfigService,
     AdminPanelSigningKeyService,

@@ -30,6 +30,7 @@ const buildCalendarEventRule = (
 const buildStartsAtUpdatedEvent = (
   recordId = CALENDAR_EVENT_ID,
 ): ObjectRecordBaseEvent => ({
+  eventId: 'event-1',
   recordId,
   properties: {
     diff: {
@@ -66,6 +67,7 @@ describe('buildLinkedTimelineActivityHappensAtSyncUpdates', () => {
 
   it('ignores updates not touching the semantic timestamp', () => {
     const titleOnlyEvent: ObjectRecordBaseEvent = {
+      eventId: 'event-1',
       recordId: CALENDAR_EVENT_ID,
       properties: {
         diff: { title: { before: 'Old', after: 'New' } },

@@ -4,6 +4,7 @@ import { currentRecordFieldsComponentState } from '@/object-record/record-field/
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
+import { buildAddedRecordField } from '@/object-record/record-field/utils/buildAddedRecordField';
 import { findCanonicalRecordField } from '@/object-record/record-field/utils/findCanonicalRecordField';
 import { mapRecordFieldToViewField } from '@/views/utils/mapRecordFieldToViewField';
 import { isDefined } from 'twenty-shared/utils';
@@ -27,6 +28,10 @@ export const useChangeRecordFieldVisibility = (
 
   const { saveViewFields } = useSaveCurrentViewFields();
 
+  const getLastPosition = () =>
+    currentRecordFields.toSorted(sortByProperty('position', 'desc'))?.[0]
+      ?.position ?? 0;
+
   const changeRecordFieldVisibility = async ({
     fieldMetadataId,
     recordFieldId,
@@ -36,9 +41,7 @@ export const useChangeRecordFieldVisibility = (
     recordFieldId?: string;
     isVisible: boolean;
   }) => {
-    const lastPosition =
-      currentRecordFields.toSorted(sortByProperty('position', 'desc'))?.[0]
-        ?.position ?? 0;
+    const lastPosition = getLastPosition();
 
     const shouldShowFieldMetadataItem = isVisible === true;
     const correspondingRecordField = isDefined(recordFieldId)
@@ -78,7 +81,26 @@ export const useChangeRecordFieldVisibility = (
     }
   };
 
+  const addLookupRecordField = async ({
+    fieldMetadataId,
+    relationTargetFieldMetadataId,
+  }: {
+    fieldMetadataId: string;
+    relationTargetFieldMetadataId: string;
+  }) => {
+    const lookupRecordField = buildAddedRecordField({
+      currentRecordFields,
+      fieldMetadataItemId: fieldMetadataId,
+      relationTargetFieldMetadataId,
+    });
+
+    upsertRecordField(lookupRecordField);
+
+    await saveViewFields([mapRecordFieldToViewField(lookupRecordField)]);
+  };
+
   return {
     changeRecordFieldVisibility,
+    addLookupRecordField,
   };
 };

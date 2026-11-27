@@ -4,7 +4,7 @@ import { getConnectionAccessTokenOrThrow } from 'src/logic-functions/utils/get-c
 
 export const getSlackConnection = async (): Promise<
   | { success: true; accessToken: string; connectionId: string }
-  | { success: false; error: string }
+  | { success: false; error: string; isConnectionMissing?: boolean }
 > => {
   try {
     const connections = await listConnections({ providerName: 'slack' });
@@ -17,6 +17,7 @@ export const getSlackConnection = async (): Promise<
         success: false,
         error:
           'Slack is not connected. Open the Slack app settings and click "Add connection" first.',
+        isConnectionMissing: true,
       };
     }
 

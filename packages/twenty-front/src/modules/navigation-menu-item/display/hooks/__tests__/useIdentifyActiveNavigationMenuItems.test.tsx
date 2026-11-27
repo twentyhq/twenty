@@ -18,6 +18,7 @@ const WORKFLOWS_NATIVE_PAGE_ITEM: NavigationMenuItem = {
   type: NavigationMenuItemType.NATIVE_PAGE,
   nativePageKey: 'workflows',
   position: 0,
+  isActive: true,
   createdAt: '',
   updatedAt: '',
 };
@@ -27,6 +28,7 @@ const PEOPLE_VIEW_ITEM: NavigationMenuItem = {
   type: NavigationMenuItemType.VIEW,
   viewId: PEOPLE_VIEW_ID,
   position: 1,
+  isActive: true,
   createdAt: '',
   updatedAt: '',
 };
@@ -36,6 +38,7 @@ const WORKFLOWS_LINK_ITEM: NavigationMenuItem = {
   type: NavigationMenuItemType.LINK,
   link: '/workflows',
   position: 2,
+  isActive: true,
   createdAt: '',
   updatedAt: '',
 };

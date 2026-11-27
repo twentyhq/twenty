@@ -1,0 +1,1 @@
+export const SETTINGS_TEXTAREA_ROWS = 4;

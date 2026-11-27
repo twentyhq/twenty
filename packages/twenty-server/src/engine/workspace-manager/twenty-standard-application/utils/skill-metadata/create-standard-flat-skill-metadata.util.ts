@@ -562,7 +562,7 @@ Once the user has confirmed the plan, your job is to deliver the dashboard in th
     - Include 4–6 of the most relevant fields (label identifier + key SELECT/DATE/CURRENCY fields). Order in the array IS the column order.
     - Add filters/sorts to focus the table (e.g. filter out DONE/CANCELLED records, sort by a date field).
   - Never reuse a record index view — widget views and record index views must be separate
-  - Leave the view's visibility as WORKSPACE (the default) — never set UNLISTED on a widget-backing view, or the widget will render a blank table
+  - Leave isPrivate unset or false (the default) on the view. Never make a widget-backing view private, or the widget will render a blank table
   - Set objectMetadataId on the widget (top-level, required)
   - Set configuration.viewId to the UUID returned by upsert_complete_view (required)
   - columnSpan 12 (full width) or 6 (half width), rowSpan 6–10
@@ -1700,7 +1700,7 @@ Permissions decide who can see and change company data, so a wrong guess is expe
 
 Dropping an override silently widens access. Treat "I only sent the object I changed" as a bug.
 
-\`upsert_row_level_permission_rules\` behaves the same way for a given role + object: the \`predicates\` and \`predicateGroups\` arrays are the complete rule set, anything omitted is deleted, and empty arrays clear all rules.
+\`upsert_row_level_permission_rules\` behaves the same way for a given role + object: the \`rules\` array is the complete rule set, any rule, group or predicate omitted is deleted, and an empty array clears all rules. Send a rule's id to update it rather than replace it.
 
 ## Permission rules the API enforces
 

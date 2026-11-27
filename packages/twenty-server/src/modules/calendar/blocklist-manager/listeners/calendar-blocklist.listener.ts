@@ -19,8 +19,8 @@ import {
   BlocklistReimportCalendarEventsJob,
   type BlocklistReimportCalendarEventsJobData,
 } from 'src/modules/calendar/blocklist-manager/jobs/blocklist-reimport-calendar-events.job';
-import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { OnDatabaseBatchEvent } from 'src/engine/workspace-event-emitter/decorators/on-database-batch-event.decorator';
+import { DatabaseEventAction } from 'src/engine/workspace-event-emitter/enums/database-event-action';
 
 @Injectable()
 export class CalendarBlocklistListener {

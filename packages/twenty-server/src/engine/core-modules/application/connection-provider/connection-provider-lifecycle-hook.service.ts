@@ -331,6 +331,7 @@ export class ConnectionProviderLifecycleHookService {
         workspaceId,
         payload: this.buildPayload({ provider, connectedAccountId }),
         shouldEnforceUsageLimits: false,
+        shouldRefuseSuspendedWorkspace: false,
       });
 
       if (isDefined(executionResult.error)) {

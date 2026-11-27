@@ -4,8 +4,6 @@ import { motion, useIsPresent, useReducedMotion } from 'framer-motion';
 import { type ReactNode } from 'react';
 import { ANIMATION } from 'twenty-ui/theme';
 
-import { InboxConversationCloseEffect } from '@/inbox/components/InboxConversationCloseEffect';
-
 const StyledPane = styled(motion.div)`
   bottom: 0;
   display: flex;
@@ -52,7 +50,6 @@ export const InboxConversationPane = ({
         ease: 'easeInOut',
       }}
     >
-      <InboxConversationCloseEffect isPresent={isPresent} />
       {children}
     </StyledPane>
   );

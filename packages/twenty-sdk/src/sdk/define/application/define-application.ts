@@ -1,12 +1,22 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import {
+  APPLICATION_BILLING_PRICE_CURRENCIES,
+  APPLICATION_BILLING_PRICE_PERIODS,
+  APPLICATION_BILLING_PRICE_TYPES,
+  APPLICATION_BILLING_PRICE_UNITS,
   APPLICATION_CATEGORIES,
   APPLICATION_VARIABLE_SCOPES,
+  isApplicationBillingPriceAmount,
+  isApplicationBillingPriceCurrency,
+  isApplicationBillingPricePeriod,
+  isApplicationBillingPriceType,
+  isApplicationBillingPriceUnit,
   isApplicationVariableScope,
   isKnownApplicationCategory,
   isRecurringChargePeriod,
   isRecurringChargeUnit,
   isUsageOperationTypeValue,
+  MAX_APPLICATION_BILLING_PRICE_AMOUNT_CENTS,
   MAX_RECURRING_CHARGE_MICRO_CREDITS_PER_UNIT,
   RECURRING_CHARGE_PERIODS,
   RECURRING_CHARGE_UNITS,
@@ -160,6 +170,69 @@ export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
       );
     }
   }
+
+  if (Object.values(recurringCharges).some(isDefined)) {
+    warnings.push(
+      '`billing.recurring` is no longer charged. Declare `billing.prices` instead.',
+    );
+  }
+
+  (config.billing?.prices ?? []).forEach((price, index) => {
+    const priceName = `billing.prices[${index}]`;
+
+    if (!isNonEmptyString(price.universalIdentifier)) {
+      errors.push(`${priceName} must have a universalIdentifier`);
+    }
+
+    if (!isNonEmptyString(price.label)) {
+      errors.push(`${priceName} must have a non empty label`);
+    }
+
+    if (isDefined(price.description) && !isNonEmptyString(price.description)) {
+      errors.push(`${priceName} must have a non empty description when set`);
+    }
+
+    if (!isApplicationBillingPriceType(price.type)) {
+      errors.push(
+        `${priceName} must have a known type (${APPLICATION_BILLING_PRICE_TYPES.join(
+          ', ',
+        )})`,
+      );
+    }
+
+    if (!isApplicationBillingPricePeriod(price.billingPeriod)) {
+      errors.push(
+        `${priceName} must have a known billingPeriod (${APPLICATION_BILLING_PRICE_PERIODS.join(
+          ', ',
+        )})`,
+      );
+    }
+
+    if (!isApplicationBillingPriceAmount(price.amountCents)) {
+      errors.push(
+        `${priceName} must have a positive integer amountCents of at most ${MAX_APPLICATION_BILLING_PRICE_AMOUNT_CENTS}`,
+      );
+    }
+
+    if (
+      isDefined(price.currency) &&
+      !isApplicationBillingPriceCurrency(price.currency)
+    ) {
+      errors.push(
+        `${priceName} must be priced in a supported currency (${APPLICATION_BILLING_PRICE_CURRENCIES.join(
+          ', ',
+        )}) or omit \`currency\``,
+      );
+    }
+
+    if (isDefined(price.per) && !isApplicationBillingPriceUnit(price.per)) {
+      errors.push(
+        `${priceName} must be billed per a known unit (${APPLICATION_BILLING_PRICE_UNITS.join(
+          ', ',
+        )}) or omit \`per\` for a flat fee`,
+      );
+    }
+  });
 
   for (const [variableName, variable] of Object.entries(
     config.serverVariables ?? {},

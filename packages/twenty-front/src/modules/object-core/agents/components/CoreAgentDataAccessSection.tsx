@@ -1,3 +1,4 @@
+import { getObjectDisabledOperations } from '@/settings/roles/role-permissions/object-overrides/utils/getObjectDisabledOperations';
 import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { SidePanelPages } from 'twenty-shared/types';
@@ -19,7 +20,7 @@ import { getCoreAgentObjectRules } from '@/object-core/agents/utils/getCoreAgent
 import { getCoreAgentRecordAccessLevels } from '@/object-core/agents/utils/getCoreAgentRecordAccessLevels';
 import { getRoleWithCoreAgentRecordAccessLevel } from '@/object-core/agents/utils/getRoleWithCoreAgentRecordAccessLevel';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
-import { useObjectMetadataItemsThatCanHavePermission } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useObjectMetadataItemsThatCanHavePermission';
+import { useObjectMetadataItemsThatCanHavePermission } from '@/settings/roles/role-permissions/object-overrides/hooks/useObjectMetadataItemsThatCanHavePermission';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type CoreAgentDataAccessSectionProps = {
@@ -60,11 +61,11 @@ export const CoreAgentDataAccessSection = ({
       return [];
     }
 
-    const { hasRecordLevelFilter, unreadableFieldCount, readOnlyFieldCount } =
+    const { hasRule, unreadableFieldCount, readOnlyFieldCount } =
       getCoreAgentObjectRules({ role, objectMetadataId });
 
     return [
-      hasRecordLevelFilter ? t`Record-level filter` : undefined,
+      hasRule ? t`Record-level filter` : undefined,
       unreadableFieldCount > 0
         ? plural(unreadableFieldCount, {
             one: `Can't see # field`,
@@ -110,6 +111,7 @@ export const CoreAgentDataAccessSection = ({
       const levels = getCoreAgentRecordAccessLevels({
         role,
         objectMetadataId: objectMetadataItem.id,
+        disabledOperations: getObjectDisabledOperations(objectMetadataItem),
       });
 
       const objectRules = formatObjectRules({

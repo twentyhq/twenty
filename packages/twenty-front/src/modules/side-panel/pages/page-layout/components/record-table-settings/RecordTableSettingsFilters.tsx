@@ -4,11 +4,10 @@ import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/reco
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { useRecordTableWidgetFilterCallbacks } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetFilterCallbacks';
-import { useRecordTableWidgetViewForDisplay } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetViewForDisplay';
 import { RecordTableSettingsFiltersInitializeStateEffect } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsFiltersInitializeStateEffect';
 import { InputLabel } from '@/ui/input/components/internal/InputLabel/InputLabel';
+import { type View } from '@/views/types/View';
 import { styled } from '@linaria/react';
-import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useLingui } from '@lingui/react/macro';
 
@@ -20,43 +19,32 @@ const StyledFilterSettingsContainer = styled.div`
 `;
 
 type RecordTableSettingsFiltersProps = {
-  viewId: string;
+  view: View;
   widgetId: string;
   pageLayoutId: string;
-  objectMetadataId: string;
 };
 
 export const RecordTableSettingsFilters = ({
-  viewId,
+  view,
   widgetId,
   pageLayoutId,
-  objectMetadataId,
 }: RecordTableSettingsFiltersProps) => {
   const { t } = useLingui();
-  const { view } = useRecordTableWidgetViewForDisplay({
-    viewId,
-    widgetId,
-    pageLayoutId,
-  });
   const { objectMetadataItem } = useObjectMetadataItemById({
-    objectId: objectMetadataId,
+    objectId: view.objectMetadataId,
   });
 
   const recordIndexId = getRecordIndexIdFromObjectNamePluralAndViewId(
     objectMetadataItem.namePlural,
-    viewId,
+    view.id,
   );
 
   const { handleFilterUpdate } = useRecordTableWidgetFilterCallbacks({
     pageLayoutId,
     widgetId,
-    viewId,
+    viewId: view.id,
     recordIndexId,
   });
-
-  if (!isDefined(view)) {
-    return null;
-  }
 
   return (
     <StyledFilterSettingsContainer>

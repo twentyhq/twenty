@@ -108,6 +108,7 @@ describe('buildApiAccessLogLine', () => {
         impersonationContext: {
           impersonatorUserWorkspaceId: 'impersonator-user-workspace-id',
           impersonatedUserWorkspaceId: 'impersonated-user-workspace-id',
+          level: 'workspace',
         },
       },
     });

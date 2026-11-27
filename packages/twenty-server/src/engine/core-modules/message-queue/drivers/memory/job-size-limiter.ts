@@ -21,10 +21,6 @@ export class JobSizeLimiter {
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
-  isEnabled(): boolean {
-    return this.twentyConfigService.get('IS_REDIS_MEMORY_FAIRNESS_ENABLED');
-  }
-
   checkJobSizesOrThrow({
     queueName,
     jobName,
@@ -34,10 +30,6 @@ export class JobSizeLimiter {
     jobName: string;
     jobs: SizedJob[];
   }): void {
-    if (!this.isEnabled()) {
-      return;
-    }
-
     const maxBytes = this.twentyConfigService.get(
       'JOB_QUEUE_MAX_JOB_SIZE_BYTES',
     );

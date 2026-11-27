@@ -2,6 +2,7 @@ import { gql } from 'graphql-tag';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 import { CALENDAR_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/calendar-channel-seed-ids.constant';
+import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { CONNECTED_ACCOUNT_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/connected-account-data-seeds.constant';
 
 describe('calendarChannelResolver (e2e)', () => {
@@ -31,6 +32,35 @@ describe('calendarChannelResolver (e2e)', () => {
       expect(channelIds).not.toContain(CALENDAR_CHANNEL_DATA_SEED_IDS.JONY);
     });
 
+    it('should return the connected account of each calendar channel', async () => {
+      const response = await makeMetadataApiRequest({
+        query: gql`
+          query MyCalendarChannels {
+            myCalendarChannels {
+              id
+              connectedAccount {
+                id
+                userWorkspaceId
+              }
+            }
+          }
+        `,
+      });
+
+      expect(response.status).toBe(200);
+      expect(response.body.errors).toBeUndefined();
+
+      const janeChannel = response.body.data.myCalendarChannels.find(
+        (channel: { id: string }) =>
+          channel.id === CALENDAR_CHANNEL_DATA_SEED_IDS.JANE,
+      );
+
+      expect(janeChannel.connectedAccount).toEqual({
+        id: CONNECTED_ACCOUNT_DATA_SEED_IDS.JANE,
+        userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+      });
+    });
+
     it('should deny filtering by another user connectedAccountId', async () => {
       const response = await makeMetadataApiRequest({
         query: gql`
@@ -58,6 +88,9 @@ describe('calendarChannelResolver (e2e)', () => {
             updateCalendarChannel(input: $input) {
               id
               visibility
+              connectedAccount {
+                userWorkspaceId
+              }
             }
           }
         `,
@@ -74,6 +107,10 @@ describe('calendarChannelResolver (e2e)', () => {
       expect(response.body.data.updateCalendarChannel.visibility).toBe(
         'METADATA',
       );
+      expect(
+        response.body.data.updateCalendarChannel.connectedAccount
+          .userWorkspaceId,
+      ).toBe(USER_WORKSPACE_DATA_SEED_IDS.JANE);
     });
 
     it('should deny updating another user channel', async () => {

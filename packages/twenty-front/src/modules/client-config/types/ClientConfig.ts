@@ -24,7 +24,6 @@ export type ClientConfig = {
   authProviders: AuthProviders;
   billing: Billing;
   calendarBookingPageId?: string;
-  isBookCallOnboardingStepEnabled: boolean;
   isCompanyEnrichmentEnabled: boolean;
   canManageFeatureFlags: boolean;
   captcha: Captcha;
@@ -55,4 +54,5 @@ export type ClientConfig = {
   allowRequestsToTwentyIcons: boolean;
   maintenance?: ClientConfigMaintenanceMode;
   enterpriseInstanceType?: EnterpriseInstanceType;
+  webPushVapidPublicKey?: string | null;
 };

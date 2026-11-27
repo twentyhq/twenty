@@ -25,6 +25,7 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { IframeMediaPermissionDTO } from 'src/engine/core-modules/workspace/dtos/iframe-media-permission.dto';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -44,7 +45,8 @@ import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/wor
 import { FRONT_COMPONENT_READ_ACCESS_POLICY } from 'src/engine/metadata-modules/front-component/constants/front-component-read-access-policy.constant';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
-import { getResolverSelectedFields } from 'src/engine/api/graphql/workspace-resolver-builder/utils/get-resolver-selected-fields.util';
+import { getGraphqlFieldSelections } from 'src/engine/api/graphql/workspace-resolver-builder/utils/get-graphql-field-selections.util';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 
 const FRONT_COMPONENT_USER_SESSION_ACCESS_POLICY: AccessPolicy = {
   authPrincipals: {
@@ -92,9 +94,11 @@ export class FrontComponentResolver {
     private readonly userApplicationVariableValueService: UserApplicationVariableValueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationService: ApplicationService,
+    private readonly workspaceDomainsService: WorkspaceDomainsService,
   ) {}
 
   @ResolveField(() => String, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   async frontComponentSharedDependenciesChecksum(
     @Parent() frontComponent: FrontComponentDTO,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -111,6 +115,34 @@ export class FrontComponentResolver {
   }
 
   @ResolveField(() => String, { nullable: true })
+  @UseGuards(NoPermissionGuard)
+  async applicationFunctionsBaseUrl(
+    @Parent() frontComponent: FrontComponentDTO,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<string | null> {
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspace.id, [
+        'flatApplicationMaps',
+      ]);
+
+    const flatApplication =
+      flatApplicationMaps.byId[frontComponent.applicationId];
+
+    if (!isDefined(flatApplication)) {
+      return null;
+    }
+
+    const functionsBaseUrl =
+      await this.workspaceDomainsService.buildApplicationFunctionsBaseUrl({
+        workspace,
+        flatApplication,
+      });
+
+    return functionsBaseUrl ?? null;
+  }
+
+  @ResolveField(() => String, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   async applicationName(
     @Parent() frontComponent: FrontComponentDTO,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -124,6 +156,7 @@ export class FrontComponentResolver {
   }
 
   @ResolveField(() => [String], { nullable: true })
+  @UseGuards(NoPermissionGuard)
   async applicationGrantedCapabilities(
     @Parent() frontComponent: FrontComponentDTO,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -140,6 +173,7 @@ export class FrontComponentResolver {
   }
 
   @ResolveField(() => [IframeMediaPermissionDTO], { nullable: true })
+  @UseGuards(NoPermissionGuard)
   async applicationGrantedIframeMediaPermissions(
     @Parent() frontComponent: FrontComponentDTO,
     @AuthWorkspace()
@@ -195,10 +229,12 @@ export class FrontComponentResolver {
       return null;
     }
 
-    const selectedFields = getResolverSelectedFields(info);
+    const selectedFieldNames = getGraphqlFieldSelections(info).map(
+      ({ fieldName }) => fieldName,
+    );
 
     const [applicationTokenPair, applicationVariables] = await Promise.all([
-      isDefined(selectedFields.applicationTokenPair)
+      selectedFieldNames.includes('applicationTokenPair')
         ? this.applicationTokenService.generateApplicationTokenPair({
             applicationId: dto.applicationId,
             workspaceId: workspace.id,
@@ -206,7 +242,7 @@ export class FrontComponentResolver {
             userId: user.id,
           })
         : undefined,
-      isDefined(selectedFields.applicationVariables)
+      selectedFieldNames.includes('applicationVariables')
         ? this.getPublicApplicationVariables({
             workspaceId: workspace.id,
             applicationId: dto.applicationId,

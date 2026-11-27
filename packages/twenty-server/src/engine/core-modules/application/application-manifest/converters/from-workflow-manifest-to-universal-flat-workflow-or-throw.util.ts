@@ -16,7 +16,6 @@ import {
   type WorkflowManifest,
   workflowManifestSchema,
 } from 'twenty-shared/application';
-import { WorkflowVisibility } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
 import { WorkflowVersionStatus } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
@@ -25,11 +24,11 @@ import { type FlatWorkflowVersion } from 'src/engine/metadata-modules/flat-workf
 import { type UniversalFlatWorkflow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-workflow.type';
 import { type UniversalFlatWorkflowVersion } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-workflow-version.type';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
-import { DEFAULT_WORKFLOW_JOB_CONFIG } from 'src/engine/core-modules/workflow/constants/default-workflow-job-config.constant';
 
 const fromFlatWorkflowVersionToUniversalFlatWorkflowVersion = ({
   workspaceId: _workspaceId,
   applicationId: _applicationId,
+  coreWorkflowId: _coreWorkflowId,
   ...universalFlatWorkflowVersion
 }: FlatWorkflowVersion): UniversalFlatWorkflowVersion & { id: string } =>
   universalFlatWorkflowVersion;
@@ -41,7 +40,7 @@ const buildPublishedFlatUniversalWorkflowVersion = ({
   UniversalFlatWorkflowVersion,
   | 'universalIdentifier'
   | 'applicationUniversalIdentifier'
-  | 'coreWorkflowId'
+  | 'coreWorkflowUniversalIdentifier'
   | 'workflowId'
   | 'steps'
   | 'createdAt'
@@ -51,7 +50,6 @@ const buildPublishedFlatUniversalWorkflowVersion = ({
   trigger: WorkflowTrigger;
 }): UniversalFlatWorkflowVersion & { id: string } => ({
   ...version,
-  workspaceWorkflowVersionId: null,
   isSystemSideEffect: true,
   status: WorkflowVersionStatus.ACTIVE,
   triggers: [trigger],
@@ -117,7 +115,7 @@ export const fromWorkflowManifestToUniversalFlatWorkflowOrThrow = ({
               workflowUniversalIdentifier: definition.universalIdentifier,
             }),
         applicationUniversalIdentifier,
-        coreWorkflowId: workflowId,
+        coreWorkflowUniversalIdentifier: definition.universalIdentifier,
         workflowId: existingWorkflow?.workspaceWorkflowId ?? null,
         trigger,
         steps,
@@ -137,13 +135,9 @@ export const fromWorkflowManifestToUniversalFlatWorkflowOrThrow = ({
     applicationUniversalIdentifier,
     name: definition.name,
     isSystem: definition.isSystem ?? false,
-    jobConfig: DEFAULT_WORKFLOW_JOB_CONFIG,
-    visibility: WorkflowVisibility.WORKSPACE,
+    isPrivate: false,
     createdByUserWorkspaceId: null,
     workspaceWorkflowId: null,
-    lastPublishedVersionId: isDefined(keptActiveVersion)
-      ? (existingWorkflow?.lastPublishedVersionId ?? null)
-      : null,
     lastPublishedCoreWorkflowVersionId: versionId,
     navigationMenuItemUniversalIdentifiers: [],
     createdAt: existingWorkflow?.createdAt ?? now,

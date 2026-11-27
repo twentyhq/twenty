@@ -16,9 +16,8 @@ export const RecordCalendarSSESubscribeEffect = () => {
   const recordCalendarSelectedDate = useAtomComponentStateValue(
     recordCalendarSelectedDateComponentState,
   );
-  const { dateRangeFilter } = useRecordCalendarQueryDateRangeFilter(
-    recordCalendarSelectedDate,
-  );
+  const { dateRangeFilterWithoutViewPresetFilter } =
+    useRecordCalendarQueryDateRangeFilter(recordCalendarSelectedDate);
 
   const orderBy: RecordGqlOperationOrderBy =
     !objectMetadataItem.isRemote &&
@@ -37,7 +36,7 @@ export const RecordCalendarSSESubscribeEffect = () => {
     operationSignature: {
       objectNameSingular: objectMetadataItem.nameSingular,
       variables: {
-        filter: dateRangeFilter,
+        filter: dateRangeFilterWithoutViewPresetFilter,
         orderBy,
       },
     },

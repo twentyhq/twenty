@@ -150,7 +150,7 @@ export const useCreateManyRecords = <
           __typename: getObjectTypename(objectMetadataItem.nameSingular),
         });
 
-        return created !== undefined && created !== null ? [created] : [];
+        return isDefined(created) ? [created] : [];
       },
     );
 
@@ -164,7 +164,7 @@ export const useCreateManyRecords = <
             computeReferences: false,
           });
 
-          return node !== undefined && node !== null ? [node] : [];
+          return isDefined(node) ? [node] : [];
         },
       );
 

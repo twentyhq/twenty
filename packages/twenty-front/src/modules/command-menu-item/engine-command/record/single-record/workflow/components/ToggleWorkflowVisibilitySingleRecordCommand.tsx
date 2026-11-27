@@ -5,20 +5,16 @@ import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
-import {
-  UpdateCoreWorkflowVisibilityDocument,
-  WorkflowVisibility,
-} from '~/generated/graphql';
+import { UpdateCoreWorkflowDocument } from '~/generated/graphql';
 
 export const ToggleWorkflowVisibilitySingleRecordCommand = () => {
   const { selectedRecords } = useHeadlessCommandContextApi();
 
   const selectedRecord = selectedRecords[0];
   const apolloCoreClient = useApolloCoreClient();
-  const [updateCoreWorkflowVisibility] = useMutation(
-    UpdateCoreWorkflowVisibilityDocument,
-    { client: apolloCoreClient },
-  );
+  const [updateCoreWorkflow] = useMutation(UpdateCoreWorkflowDocument, {
+    client: apolloCoreClient,
+  });
 
   if (!isDefined(selectedRecord)) {
     throw new Error(
@@ -27,14 +23,11 @@ export const ToggleWorkflowVisibilitySingleRecordCommand = () => {
   }
 
   const handleExecute = () =>
-    updateCoreWorkflowVisibility({
+    updateCoreWorkflow({
       variables: {
         input: {
           coreWorkflowId: selectedRecord.id,
-          visibility:
-            selectedRecord.visibility === WorkflowVisibility.PRIVATE
-              ? WorkflowVisibility.WORKSPACE
-              : WorkflowVisibility.PRIVATE,
+          isPrivate: !selectedRecord.isPrivate,
         },
       },
     });

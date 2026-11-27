@@ -23,13 +23,11 @@ export class CoreWorkflowVersionRunService {
     workflowRunId?: string;
     payload?: object | null;
   }): Promise<{ workflowRunId: string }> {
-    const { workspace, userWorkspaceId, application, workspaceMember } =
-      authContext;
+    const { workspace, application, workspaceMember } = authContext;
 
     await this.coreWorkflowAccessService.assertCoreWorkflowVersionsAreAccessibleOrThrow(
       {
         workspaceId: workspace.id,
-        userWorkspaceId,
         coreWorkflowVersionIds: [coreWorkflowVersionId],
       },
     );

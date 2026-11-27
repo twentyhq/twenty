@@ -48,7 +48,11 @@ export const canManifestExpressFlatEntity = ({
     return false;
   }
 
-  if (metadataName === 'role' && flatEntity.isEditable === false) {
+  if (
+    metadataName === 'role' &&
+    isDefined(flatEntity.isEditable) &&
+    !flatEntity.isEditable
+  ) {
     return false;
   }
 

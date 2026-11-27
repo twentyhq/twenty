@@ -3,7 +3,12 @@ import { useTrackedQueueJob } from '@/queue-job/hooks/useTrackedQueueJob';
 import { type TrackedJobStatus } from '@/queue-job/types/TrackedJobStatus';
 import { isTerminalJobState } from '@/queue-job/utils/isTerminalJobState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useLazyQuery, useMutation, useQuery } from '@apollo/client/react';
+import {
+  useApolloClient,
+  useLazyQuery,
+  useMutation,
+  useQuery,
+} from '@apollo/client/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -33,6 +38,7 @@ export const useUninstallApplication = ({
     { fetchPolicy: 'network-only' },
   );
   const setCurrentWorkspace = useSetAtomState(currentWorkspaceState);
+  const apolloClient = useApolloClient();
 
   const { data: jobStatusData } = useQuery(
     FindUninstallApplicationJobStatusDocument,
@@ -81,13 +87,20 @@ export const useUninstallApplication = ({
           : currentWorkspace,
       );
 
+      // No broadcast so the page being left does not refetch the deleted app
+      apolloClient.cache.evict({
+        id: 'ROOT_QUERY',
+        fieldName: 'findOneApplication',
+        broadcast: false,
+      });
+
       enqueueToast({
         status: 'success',
         children: t`Application successfully uninstalled.`,
       });
       onCompleted?.();
     },
-    [enqueueToast, onCompleted, setCurrentWorkspace, t],
+    [apolloClient, enqueueToast, onCompleted, setCurrentWorkspace, t],
   );
 
   const fetchUninstallJobStatus = useCallback(

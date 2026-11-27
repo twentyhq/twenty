@@ -1,6 +1,7 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { act, render, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { type ReactNode } from 'react';
 import { MemoryRouter, useNavigate } from 'react-router-dom';
 import { SidePanelPages } from 'twenty-shared/types';
@@ -8,6 +9,13 @@ import { IconSettings } from 'twenty-ui/icon';
 
 import { PageChangeEffect } from '@/app/effect-components/PageChangeEffect';
 import { WorkspaceRouteObjectsContext } from '@/app/routing/components/WorkspaceRouteObjectsProvider';
+import { useCommandMenuHotKeys } from '@/command-menu/hooks/useCommandMenuHotKeys';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
+import { NO_RECORD_GROUP_FAMILY_KEY } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
+import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
+import { isRecordSelectedComponentFamilyState } from '@/object-record/record-selection/states/isRecordSelectedComponentFamilyState';
+import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import {
   type SidePanelNavigationStackItem,
@@ -62,6 +70,12 @@ const MainPageNavigatorEffect = () => {
   return null;
 };
 
+const CommandMenuHotKeysEffect = () => {
+  useCommandMenuHotKeys();
+
+  return null;
+};
+
 const renderPageChangeEffect = () => {
   const BaseWrapper = getJestMetadataAndApolloMocksWrapper({
     apolloMocks: [],
@@ -80,7 +94,13 @@ const renderPageChangeEffect = () => {
     </BaseWrapper>
   );
 
-  render(<PageChangeEffect />, { wrapper });
+  render(
+    <>
+      <PageChangeEffect />
+      <CommandMenuHotKeysEffect />
+    </>,
+    { wrapper },
+  );
 };
 
 const openSidePanelWith = (
@@ -259,5 +279,55 @@ describe('PageChangeEffect', () => {
       jotaiStore.get(currentGlobalHotkeysConfigSelector.atom)
         .enableGlobalHotkeysConflictingWithKeyboard,
     ).toBe(true);
+  });
+
+  it('should keep the record selection when opening the command menu with Cmd+K', async () => {
+    const viewId = 'people-view-id';
+    const recordId = 'person-record-id';
+    const recordIndexId = getRecordIndexIdFromObjectNamePluralAndViewId(
+      'people',
+      viewId,
+    );
+    const isRecordSelectedAtom =
+      isRecordSelectedComponentFamilyState.atomFamily({
+        instanceId: recordIndexId,
+        familyKey: recordId,
+      });
+
+    renderPageChangeEffect();
+
+    act(() => navigateMainPage?.(`/objects/people?viewId=${viewId}`));
+    await waitFor(() => {
+      expect(jotaiStore.get(focusStackState.atom).at(-1)?.focusId).toBe(
+        PageFocusId.RecordIndex,
+      );
+    });
+
+    act(() => {
+      jotaiStore.set(
+        contextStoreCurrentViewIdComponentState.atomFamily({
+          instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+        }),
+        viewId,
+      );
+      jotaiStore.set(
+        recordIndexRecordIdsByGroupComponentFamilyState.atomFamily({
+          instanceId: recordIndexId,
+          familyKey: NO_RECORD_GROUP_FAMILY_KEY,
+        }),
+        [recordId],
+      );
+    });
+
+    act(() => {
+      jotaiStore.set(isRecordSelectedAtom, true);
+    });
+
+    await userEvent.keyboard('{Meta>}k{/Meta}');
+
+    await waitFor(() => {
+      expect(jotaiStore.get(isSidePanelOpenedState.atom)).toBe(true);
+    });
+    expect(jotaiStore.get(isRecordSelectedAtom)).toBe(true);
   });
 });

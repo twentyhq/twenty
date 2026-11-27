@@ -13,6 +13,7 @@ const FLAT_ROLE: UniversalFlatRole = {
   universalIdentifier: ROLE_UNIVERSAL_IDENTIFIER,
   applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
   isEditable: true,
+  isSystemSideEffect: false,
   label: 'Scheduling app',
   description: null,
   icon: null,

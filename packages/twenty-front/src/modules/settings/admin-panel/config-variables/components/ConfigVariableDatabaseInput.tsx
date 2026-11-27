@@ -237,7 +237,7 @@ export const ConfigVariableDatabaseInput = ({
               try {
                 onChange(JSON.parse(text) as Record<string, unknown>);
               } catch {
-                onChange(text as unknown as ConfigVariableValue);
+                onChange(text);
               }
             }}
           />

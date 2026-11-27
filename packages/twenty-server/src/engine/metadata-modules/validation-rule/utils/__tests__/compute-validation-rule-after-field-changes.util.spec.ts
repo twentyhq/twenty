@@ -4,30 +4,73 @@ import { type ValidationRuleFieldChange } from 'src/engine/metadata-modules/vali
 import { computeValidationRuleAfterFieldChanges } from 'src/engine/metadata-modules/validation-rule/utils/compute-validation-rule-after-field-changes.util';
 
 const AMOUNT_UNIVERSAL_IDENTIFIER = 'amount-universal-identifier';
-const CODE_UNIVERSAL_IDENTIFIER = 'code-universal-identifier';
 const COMPANY_UNIVERSAL_IDENTIFIER = 'company-universal-identifier';
 const EMPLOYEES_UNIVERSAL_IDENTIFIER = 'employees-universal-identifier';
-const PRIORITY_UNIVERSAL_IDENTIFIER = 'priority-universal-identifier';
 const STAGE_UNIVERSAL_IDENTIFIER = 'stage-universal-identifier';
 
+// stage != "CUSTOMER" or not isEmpty(amount)
 const RULE = {
-  expression: 'stage != "CUSTOMER" or not isEmpty(amount)',
-  bindings: {
-    stage: STAGE_UNIVERSAL_IDENTIFIER,
-    amount: AMOUNT_UNIVERSAL_IDENTIFIER,
+  tree: {
+    type: 'GROUP',
+    logicalOperator: 'OR',
+    children: [
+      {
+        type: 'COMPARISON',
+        operator: 'NOT_EQUAL',
+        left: {
+          type: 'FIELD',
+          fieldUniversalIdentifier: STAGE_UNIVERSAL_IDENTIFIER,
+        },
+        right: { type: 'LITERAL', value: 'CUSTOMER' },
+      },
+      {
+        type: 'NOT',
+        child: {
+          type: 'FUNCTION_CALL',
+          functionName: 'isEmpty',
+          arguments: [
+            {
+              type: 'FIELD',
+              fieldUniversalIdentifier: AMOUNT_UNIVERSAL_IDENTIFIER,
+            },
+          ],
+        },
+      },
+    ],
   },
   isActive: true,
   errorFieldMetadataUniversalIdentifier: AMOUNT_UNIVERSAL_IDENTIFIER,
 };
 
+// company.employees > 10
 const COMPANY_RULE = {
   ...RULE,
-  expression: 'not isDefined(company) or company.employees > 10',
-  bindings: {
-    company: COMPANY_UNIVERSAL_IDENTIFIER,
-    'company.employees': EMPLOYEES_UNIVERSAL_IDENTIFIER,
+  tree: {
+    type: 'COMPARISON',
+    operator: 'GREATER_THAN',
+    left: {
+      type: 'FIELD',
+      relationFieldUniversalIdentifier: COMPANY_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier: EMPLOYEES_UNIVERSAL_IDENTIFIER,
+    },
+    right: { type: 'LITERAL', value: 10 },
   },
   errorFieldMetadataUniversalIdentifier: null,
+};
+
+// previous.stage != "WON"
+const PREVIOUS_STAGE_RULE = {
+  ...COMPANY_RULE,
+  tree: {
+    type: 'COMPARISON',
+    operator: 'NOT_EQUAL',
+    left: {
+      type: 'FIELD',
+      fieldUniversalIdentifier: STAGE_UNIVERSAL_IDENTIFIER,
+      isPreviousValue: true,
+    },
+    right: { type: 'LITERAL', value: 'WON' },
+  },
 };
 
 const rename = (
@@ -37,6 +80,15 @@ const rename = (
   fieldUniversalIdentifier,
   newFieldName,
   shouldDisableRulesReadingField: false,
+  isDeleted: false,
+});
+
+const retype = (
+  fieldUniversalIdentifier: string,
+): ValidationRuleFieldChange => ({
+  fieldUniversalIdentifier,
+  newFieldName: null,
+  shouldDisableRulesReadingField: true,
   isDeleted: false,
 });
 
@@ -50,38 +102,16 @@ const deletion = (
 });
 
 describe('computeValidationRuleAfterFieldChanges', () => {
-  it('should rename a field in the expression and the bindings, leaving strings alone', () => {
+  it('should leave the rule as it is when a field it reads is renamed', () => {
     expect(
       computeValidationRuleAfterFieldChanges({
-        validationRule: {
-          ...RULE,
-          expression: 'amount.amountMicros > 0 and stage != "amount"',
-        },
-        fieldChanges: [rename(AMOUNT_UNIVERSAL_IDENTIFIER, 'dealValue')],
+        validationRule: RULE,
+        fieldChanges: [
+          rename(AMOUNT_UNIVERSAL_IDENTIFIER, 'dealValue'),
+          rename(STAGE_UNIVERSAL_IDENTIFIER, 'amount'),
+        ],
       }),
-    ).toMatchObject({
-      expression: 'dealValue.amountMicros > 0 and stage != "amount"',
-      bindings: {
-        dealValue: AMOUNT_UNIVERSAL_IDENTIFIER,
-        stage: STAGE_UNIVERSAL_IDENTIFIER,
-      },
-      isActive: true,
-    });
-  });
-
-  it('should rename a related-record field, the relation itself, or both at once', () => {
-    expect(
-      computeValidationRuleAfterFieldChanges({
-        validationRule: COMPANY_RULE,
-        fieldChanges: [rename(EMPLOYEES_UNIVERSAL_IDENTIFIER, 'headcount')],
-      }).expression,
-    ).toBe('not isDefined(company) or company.headcount > 10');
-    expect(
-      computeValidationRuleAfterFieldChanges({
-        validationRule: COMPANY_RULE,
-        fieldChanges: [rename(COMPANY_UNIVERSAL_IDENTIFIER, 'account')],
-      }).expression,
-    ).toBe('not isDefined(account) or account.employees > 10');
+    ).toBe(RULE);
     expect(
       computeValidationRuleAfterFieldChanges({
         validationRule: COMPANY_RULE,
@@ -90,57 +120,58 @@ describe('computeValidationRuleAfterFieldChanges', () => {
           rename(EMPLOYEES_UNIVERSAL_IDENTIFIER, 'headcount'),
         ],
       }),
-    ).toMatchObject({
-      expression: 'not isDefined(account) or account.headcount > 10',
-      bindings: {
-        account: COMPANY_UNIVERSAL_IDENTIFIER,
-        'account.headcount': EMPLOYEES_UNIVERSAL_IDENTIFIER,
-      },
-    });
+    ).toBe(COMPANY_RULE);
   });
 
-  it('should rename a field read through its previous value', () => {
+  it('should disable the rule when a field it reads is renamed to a reserved word', () => {
+    for (const reservedName of ['now', 'isDefined', 'true']) {
+      expect(
+        computeValidationRuleAfterFieldChanges({
+          validationRule: RULE,
+          fieldChanges: [rename(STAGE_UNIVERSAL_IDENTIFIER, reservedName)],
+        }),
+      ).toEqual({ ...RULE, isActive: false });
+    }
+
     expect(
       computeValidationRuleAfterFieldChanges({
-        validationRule: {
-          ...RULE,
-          expression: 'stage == previous.stage or previous.stage != "WON"',
-          bindings: {
-            stage: STAGE_UNIVERSAL_IDENTIFIER,
-            'previous.stage': STAGE_UNIVERSAL_IDENTIFIER,
-          },
-        },
-        fieldChanges: [rename(STAGE_UNIVERSAL_IDENTIFIER, 'dealStage')],
+        validationRule: COMPANY_RULE,
+        fieldChanges: [rename(COMPANY_UNIVERSAL_IDENTIFIER, 'now')],
       }),
-    ).toMatchObject({
-      expression:
-        'dealStage == previous.dealStage or previous.dealStage != "WON"',
-      bindings: {
-        dealStage: STAGE_UNIVERSAL_IDENTIFIER,
-        'previous.dealStage': STAGE_UNIVERSAL_IDENTIFIER,
-      },
-      isActive: true,
-    });
+    ).toEqual({ ...COMPANY_RULE, isActive: false });
   });
 
-  it('should rename a composite field read through its previous value', () => {
+  it('should only disable for names reserved after a dot when the field is read after one', () => {
     expect(
       computeValidationRuleAfterFieldChanges({
-        validationRule: {
-          ...RULE,
-          expression: 'previous.amount.amountMicros > 0',
-          bindings: { 'previous.amount': AMOUNT_UNIVERSAL_IDENTIFIER },
-        },
-        fieldChanges: [rename(AMOUNT_UNIVERSAL_IDENTIFIER, 'dealAmount')],
+        validationRule: COMPANY_RULE,
+        fieldChanges: [rename(EMPLOYEES_UNIVERSAL_IDENTIFIER, 'now')],
       }),
-    ).toMatchObject({
-      expression: 'previous.dealAmount.amountMicros > 0',
-      bindings: { 'previous.dealAmount': AMOUNT_UNIVERSAL_IDENTIFIER },
-      isActive: true,
-    });
+    ).toBe(COMPANY_RULE);
+    expect(
+      computeValidationRuleAfterFieldChanges({
+        validationRule: PREVIOUS_STAGE_RULE,
+        fieldChanges: [rename(STAGE_UNIVERSAL_IDENTIFIER, 'now')],
+      }),
+    ).toBe(PREVIOUS_STAGE_RULE);
+    expect(
+      computeValidationRuleAfterFieldChanges({
+        validationRule: COMPANY_RULE,
+        fieldChanges: [rename(EMPLOYEES_UNIVERSAL_IDENTIFIER, 'and')],
+      }),
+    ).toEqual({ ...COMPANY_RULE, isActive: false });
   });
 
-  it('should apply a rename and a deletion of two fields of the same rule together', () => {
+  it('should disable the rule when a field it reads changes type', () => {
+    expect(
+      computeValidationRuleAfterFieldChanges({
+        validationRule: COMPANY_RULE,
+        fieldChanges: [retype(EMPLOYEES_UNIVERSAL_IDENTIFIER)],
+      }),
+    ).toEqual({ ...COMPANY_RULE, isActive: false });
+  });
+
+  it('should disable the rule and move its errors to the record level when the error field it reads is deleted', () => {
     expect(
       computeValidationRuleAfterFieldChanges({
         validationRule: RULE,
@@ -150,93 +181,18 @@ describe('computeValidationRuleAfterFieldChanges', () => {
         ],
       }),
     ).toEqual({
-      expression: 'phase != "CUSTOMER" or not isEmpty(amount)',
-      bindings: {
-        phase: STAGE_UNIVERSAL_IDENTIFIER,
-        amount: AMOUNT_UNIVERSAL_IDENTIFIER,
-      },
+      ...RULE,
       isActive: false,
       errorFieldMetadataUniversalIdentifier: null,
     });
-  });
-
-  it('should swap two field names in one pass', () => {
-    expect(
-      computeValidationRuleAfterFieldChanges({
-        validationRule: RULE,
-        fieldChanges: [
-          rename(STAGE_UNIVERSAL_IDENTIFIER, 'amount'),
-          rename(AMOUNT_UNIVERSAL_IDENTIFIER, 'stage'),
-        ],
-      }),
-    ).toMatchObject({
-      expression: 'amount != "CUSTOMER" or not isEmpty(stage)',
-      bindings: {
-        amount: STAGE_UNIVERSAL_IDENTIFIER,
-        stage: AMOUNT_UNIVERSAL_IDENTIFIER,
-      },
-      isActive: true,
-    });
-  });
-
-  it('should keep the condition and disable the rule when a rename takes the name of a field it still reads', () => {
-    const validationRule = {
-      expression: 'isNonEmptyString(code) and isNonEmptyString(priority)',
-      bindings: {
-        code: CODE_UNIVERSAL_IDENTIFIER,
-        priority: PRIORITY_UNIVERSAL_IDENTIFIER,
-      },
-      isActive: true,
-      errorFieldMetadataUniversalIdentifier: null,
-    };
-
-    expect(
-      computeValidationRuleAfterFieldChanges({
-        validationRule,
-        fieldChanges: [
-          rename(PRIORITY_UNIVERSAL_IDENTIFIER, 'code'),
-          deletion(CODE_UNIVERSAL_IDENTIFIER),
-        ],
-      }),
-    ).toEqual({ ...validationRule, isActive: false });
-  });
-
-  it('should keep the condition and disable the rule when a field it reads is renamed to a reserved word', () => {
-    for (const reservedName of ['now', 'isDefined', 'true']) {
-      expect(
-        computeValidationRuleAfterFieldChanges({
-          validationRule: RULE,
-          fieldChanges: [rename(STAGE_UNIVERSAL_IDENTIFIER, reservedName)],
-        }),
-      ).toEqual({ ...RULE, isActive: false });
-    }
-  });
-
-  it('should rename a related-record field to a name that is only reserved at the start of a path', () => {
-    expect(
-      computeValidationRuleAfterFieldChanges({
-        validationRule: COMPANY_RULE,
-        fieldChanges: [rename(EMPLOYEES_UNIVERSAL_IDENTIFIER, 'now')],
-      }),
-    ).toMatchObject({
-      expression: 'not isDefined(company) or company.now > 10',
-      isActive: true,
-    });
-    expect(
-      computeValidationRuleAfterFieldChanges({
-        validationRule: COMPANY_RULE,
-        fieldChanges: [rename(EMPLOYEES_UNIVERSAL_IDENTIFIER, 'and')],
-      }),
-    ).toEqual({ ...COMPANY_RULE, isActive: false });
   });
 
   it('should move errors shown on the field to the record level without disabling a rule that does not read it', () => {
     expect(
       computeValidationRuleAfterFieldChanges({
         validationRule: {
-          ...RULE,
-          expression: 'isDefined(stage)',
-          bindings: { stage: STAGE_UNIVERSAL_IDENTIFIER },
+          ...COMPANY_RULE,
+          errorFieldMetadataUniversalIdentifier: AMOUNT_UNIVERSAL_IDENTIFIER,
         },
         fieldChanges: [deletion(AMOUNT_UNIVERSAL_IDENTIFIER)],
       }),
@@ -244,6 +200,17 @@ describe('computeValidationRuleAfterFieldChanges', () => {
       isActive: true,
       errorFieldMetadataUniversalIdentifier: null,
     });
+  });
+
+  it('should leave a rule without a tree active', () => {
+    const draftRule = { ...RULE, tree: null };
+
+    expect(
+      computeValidationRuleAfterFieldChanges({
+        validationRule: draftRule,
+        fieldChanges: [retype(STAGE_UNIVERSAL_IDENTIFIER)],
+      }),
+    ).toBe(draftRule);
   });
 
   it('should give the same result when the changes are applied again', () => {

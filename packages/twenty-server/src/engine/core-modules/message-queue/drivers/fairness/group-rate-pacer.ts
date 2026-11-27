@@ -3,6 +3,7 @@ import { Logger } from '@nestjs/common';
 import { type RedisClient } from 'bullmq';
 
 import { GROUP_RATE_PACE_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/fairness/group-rate-pace-script.constant';
+import { isValidMessageQueueLimiter } from 'src/engine/core-modules/message-queue/utils/is-valid-message-queue-limiter.util';
 import { runRedisScript } from 'src/engine/core-modules/message-queue/utils/run-redis-script.util';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { type MessageQueueLimiter } from 'src/engine/core-modules/message-queue/types/message-queue-limiter.type';
@@ -19,6 +20,11 @@ export type GroupRatePaceRequest = {
   jobCount: number;
 };
 
+export type GroupRatePaceResult = {
+  nowMs: number;
+  delays: number[][];
+};
+
 type GroupRatePacerOptions = {
   getClient: (queueName: MessageQueue) => Promise<RedisClient>;
   keyPrefix: string;
@@ -28,7 +34,6 @@ type GroupRatePacerOptions = {
 type PacedGroupKey = {
   groupKey: string;
   intervalMs: number;
-  toleranceMs: number;
 };
 
 export class GroupRatePacer {
@@ -44,22 +49,14 @@ export class GroupRatePacer {
     queueName: MessageQueue;
     requests: GroupRatePaceRequest[];
     notBeforeDelayMs?: number;
-  }): Promise<number[][] | undefined> {
+  }): Promise<GroupRatePaceResult | undefined> {
     const pacedKeysByRequest = requests.map(({ limiters }) =>
       limiters.flatMap(({ groupKey, limiter }): PacedGroupKey[] => {
-        if (limiter.max <= 0) {
+        if (!isValidMessageQueueLimiter(limiter)) {
           return [];
         }
 
-        const intervalMs = limiter.durationMs / limiter.max;
-
-        return [
-          {
-            groupKey,
-            intervalMs,
-            toleranceMs: Math.max(0, limiter.max - 1) * intervalMs,
-          },
-        ];
+        return [{ groupKey, intervalMs: limiter.durationMs / limiter.max }];
       }),
     );
     const distinctPacedKeys = [
@@ -88,10 +85,7 @@ export class GroupRatePacer {
         ),
         args: [
           distinctPacedKeys.length,
-          ...distinctPacedKeys.flatMap(({ intervalMs, toleranceMs }) => [
-            intervalMs,
-            toleranceMs,
-          ]),
+          ...distinctPacedKeys.map(({ intervalMs }) => intervalMs),
           notBeforeDelayMs,
           requests.length,
           ...requests.flatMap(({ jobCount }, requestIndex) => [
@@ -118,7 +112,7 @@ export class GroupRatePacer {
         );
       }
 
-      return requests.map(({ jobCount }, requestIndex) => {
+      const delays = requests.map(({ jobCount }, requestIndex) => {
         const firstDueTimeIndex = pacedKeysByRequest
           .slice(0, requestIndex)
           .reduce((count, pacedKeys) => count + pacedKeys.length, 0);
@@ -139,6 +133,8 @@ export class GroupRatePacer {
           ),
         );
       });
+
+      return { nowMs, delays };
     } catch (error) {
       this.logger.warn(
         `Failed to pace the group keys on queue ${queueName}: ${error instanceof Error ? error.message : String(error)}`,

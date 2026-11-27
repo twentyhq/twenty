@@ -11,6 +11,7 @@ import { isCoreAgentMatchingFilterSettings } from '@/object-core/agents/utils/is
 const buildAgent = (overrides: Partial<CoreAgent>): CoreAgent => ({
   __typename: 'Agent',
   id: 'agent-1',
+  universalIdentifier: 'agent-universal-identifier-1',
   name: 'leadQualifier',
   label: 'Lead qualifier',
   description: null,

@@ -31,6 +31,7 @@ export enum PermissionsExceptionCode {
   OBJECT_METADATA_NOT_FOUND = 'OBJECT_METADATA_NOT_FOUND_PERMISSIONS',
   INVALID_SETTING = 'INVALID_SETTING_PERMISSIONS',
   ROLE_NOT_EDITABLE = 'ROLE_NOT_EDITABLE',
+  RECORD_NOT_EDITABLE = 'RECORD_NOT_EDITABLE',
   DEFAULT_ROLE_CANNOT_BE_DELETED = 'DEFAULT_ROLE_CANNOT_BE_DELETED',
   MEMBER_ROLE_CANNOT_BE_DELETED = 'MEMBER_ROLE_CANNOT_BE_DELETED',
   CUSTOM_ROLES_NOT_ENTITLED = 'CUSTOM_ROLES_NOT_ENTITLED',
@@ -56,6 +57,8 @@ export enum PermissionsExceptionCode {
   ROLE_CANNOT_BE_ASSIGNED_TO_USERS = 'ROLE_CANNOT_BE_ASSIGNED_TO_USERS',
   APPLICATION_ROLE_NOT_FOUND = 'APPLICATION_ROLE_NOT_FOUND',
   ROLE_BELONGS_TO_ANOTHER_APPLICATION = 'ROLE_BELONGS_TO_ANOTHER_APPLICATION',
+  MARKETPLACE_APPLICATION_ROLE_ASSIGNABILITY = 'MARKETPLACE_APPLICATION_ROLE_ASSIGNABILITY',
+  MARKETPLACE_APPLICATION_ROLE_RESTRICTION = 'MARKETPLACE_APPLICATION_ROLE_RESTRICTION',
   RECORD_PERMISSION_QUERY_INVALID = 'RECORD_PERMISSION_QUERY_INVALID',
   RLS_VALIDATION_FAILED = 'RLS_VALIDATION_FAILED',
   RLS_PREDICATE_FIELD_NOT_FOUND = 'RLS_PREDICATE_FIELD_NOT_FOUND',
@@ -116,6 +119,8 @@ const getPermissionsExceptionUserFriendlyMessage = (
       return msg`Invalid permission setting.`;
     case PermissionsExceptionCode.ROLE_NOT_EDITABLE:
       return msg`This role cannot be edited.`;
+    case PermissionsExceptionCode.RECORD_NOT_EDITABLE:
+      return msg`You do not have permission to change this record.`;
     case PermissionsExceptionCode.DEFAULT_ROLE_CANNOT_BE_DELETED:
       return msg`The default role cannot be deleted.`;
     case PermissionsExceptionCode.MEMBER_ROLE_CANNOT_BE_DELETED:
@@ -166,6 +171,10 @@ const getPermissionsExceptionUserFriendlyMessage = (
       return msg`No role assigned to the application.`;
     case PermissionsExceptionCode.ROLE_BELONGS_TO_ANOTHER_APPLICATION:
       return msg`Cannot target a role owned by another application.`;
+    case PermissionsExceptionCode.MARKETPLACE_APPLICATION_ROLE_ASSIGNABILITY:
+      return msg`A marketplace application role can only be assigned to agents.`;
+    case PermissionsExceptionCode.MARKETPLACE_APPLICATION_ROLE_RESTRICTION:
+      return msg`A marketplace application cannot declare row-level rules or field permissions.`;
     case PermissionsExceptionCode.RLS_VALIDATION_FAILED:
       return msg`Record does not satisfy security constraints.`;
     case PermissionsExceptionCode.RLS_PREDICATE_FIELD_NOT_FOUND:
@@ -210,6 +219,7 @@ export enum PermissionsExceptionMessage {
   OBJECT_METADATA_NOT_FOUND = 'Object metadata not found',
   INVALID_SETTING = 'Invalid permission setting (unknown value)',
   ROLE_NOT_EDITABLE = 'Role is not editable',
+  RECORD_NOT_EDITABLE = 'Record is not editable',
   DEFAULT_ROLE_CANNOT_BE_DELETED = 'Default role cannot be deleted',
   MEMBER_ROLE_CANNOT_BE_DELETED = 'Member role cannot be deleted',
   CANNOT_ADD_OBJECT_PERMISSION_ON_SYSTEM_OBJECT = 'Cannot add object permission on system object',

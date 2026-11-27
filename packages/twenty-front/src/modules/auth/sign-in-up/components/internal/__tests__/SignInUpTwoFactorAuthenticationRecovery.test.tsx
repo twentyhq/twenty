@@ -30,12 +30,8 @@ jest.mock('@/auth/hooks/useAuth', () => ({
   }),
 }));
 
-jest.mock('@/captcha/hooks/useReadCaptchaToken', () => ({
-  useReadCaptchaToken: () => ({ readCaptchaToken: () => 'captcha-token' }),
-}));
-
-jest.mock('@/client-config/hooks/useCaptcha', () => ({
-  useCaptcha: () => ({ isCaptchaReady: true }),
+jest.mock('@/captcha/hooks/useGetCaptchaToken', () => ({
+  useGetCaptchaToken: () => ({ getCaptchaToken: async () => 'captcha-token' }),
 }));
 
 jest.mock('~/hooks/useNavigateApp', () => ({

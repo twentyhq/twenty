@@ -71,7 +71,6 @@ workspace
     └───storage
     └───utils
   └───workspace-resolver-builder
-    └───factories
     └───interfaces
   └───workspace-query-builder
     └───factories
@@ -84,12 +83,10 @@ workspace
   └───workspace-migration-runner
   └───utils
   └───workspace.module.ts
-  └───workspace.factory.spec.ts
-  └───workspace.factory.ts
 ```
 
 
-The root of the workspace directory includes the `workspace.factory.ts`, a file containing the `createGraphQLSchema` function. This function generates workspace-specific schema by using the metadata to tailor a schema for individual workspaces. By separating the schema and resolver construction, we use the `makeExecutableSchema` function, which combines these discrete elements.
+Each workspace gets a GraphQL schema generated from its metadata. The schema is kept as SDL, and requests are run through direct execution, which parses the document and calls the query runners without building an executable schema.
 
 This strategy is not just about organization, but also helps with optimization, such as caching generated type definitions to enhance performance and scalability.
 
@@ -121,9 +118,9 @@ Includes the `TypeDefinitionsStorage` class that contains reusable type definiti
 
 ### Workspace Resolver Builder
 
-Creates resolver functions for querying and mutating the GraphQL schema.
+Maps each resolver method (`findMany`, `createOne`, ...) to the fields a query selects.
 
-Each factory in this directory is responsible for producing a distinct resolver type, such as the `FindManyResolverFactory`, designed for adaptable application across various tables.
+`WorkspaceResolverRunnerService` (in `direct-execution/services`) runs the matching common query runner for a method, and `graphQLFormatResultFromSelectedFields` projects its result into the response in one pass.
 
 ### Workspace Query Runner
 

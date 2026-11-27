@@ -4,7 +4,6 @@ import { Args, Mutation, Query } from '@nestjs/graphql';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { CreateViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/create-view-filter-group.input';
@@ -29,8 +28,6 @@ export class ViewFilterGroupResolver {
   @Query(() => [ViewFilterGroupDTO])
   async getViewFilterGroups(
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
     @Args('viewId', { type: () => String, nullable: true })
     viewId?: string,
   ): Promise<ViewFilterGroupDTO[]> {
@@ -38,13 +35,11 @@ export class ViewFilterGroupResolver {
       return this.viewFilterGroupService.findByViewId({
         workspaceId: workspace.id,
         viewId,
-        userWorkspaceId,
       });
     }
 
     return this.viewFilterGroupService.findByWorkspaceId({
       workspaceId: workspace.id,
-      userWorkspaceId,
     });
   }
 
@@ -52,13 +47,10 @@ export class ViewFilterGroupResolver {
   async getViewFilterGroup(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
   ): Promise<ViewFilterGroupDTO> {
     return this.viewFilterGroupService.findByIdOrThrow({
       id,
       workspaceId: workspace.id,
-      userWorkspaceId,
     });
   }
 

@@ -32,6 +32,7 @@ const objectItem: NavigationMenuItem = {
   type: NavigationMenuItemType.OBJECT,
   targetObjectMetadataId: 'obj-1',
   position: 0,
+  isActive: true,
   createdAt: '',
   updatedAt: '',
 };

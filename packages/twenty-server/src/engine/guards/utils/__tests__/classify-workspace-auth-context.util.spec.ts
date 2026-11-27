@@ -35,9 +35,18 @@ const CASES: [string, object, AuthPrincipalVariant | undefined][] = [
     { kind: 'userSession', variant: 'playground' },
   ],
   [
-    'an impersonated member as an impersonated user session',
-    { type: 'user', ...memberFields, userSessionVariant: 'impersonated' },
-    { kind: 'userSession', variant: 'impersonated' },
+    'a member impersonated at server level as a server-impersonated user session',
+    { type: 'user', ...memberFields, userSessionVariant: 'serverImpersonated' },
+    { kind: 'userSession', variant: 'serverImpersonated' },
+  ],
+  [
+    'a member impersonated at workspace level as a workspace-impersonated user session',
+    {
+      type: 'user',
+      ...memberFields,
+      userSessionVariant: 'workspaceImpersonated',
+    },
+    { kind: 'userSession', variant: 'workspaceImpersonated' },
   ],
   [
     'a member still activating the workspace as a standard user session',

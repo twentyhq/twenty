@@ -8,7 +8,6 @@ import {
   ViewKey,
   ViewOpenRecordIn,
   ViewType,
-  ViewVisibility,
 } from 'twenty-shared/types';
 
 import { ApplicationExceptionCode } from 'src/engine/core-modules/application/application.exception';
@@ -42,7 +41,7 @@ describe('fromViewManifestToUniversalFlatView', () => {
     expect(result.isCompact).toBe(false);
     expect(result.shouldHideEmptyGroups).toBe(false);
     expect(result.groupLoadLimit).toBe(DEFAULT_VIEW_GROUP_LOAD_LIMIT);
-    expect(result.visibility).toBe(ViewVisibility.WORKSPACE);
+    expect(result.isPrivate).toBe(false);
     expect(result.openRecordIn).toBe(ViewOpenRecordIn.SIDE_PANEL);
     expect(result.key).toBeNull();
     expect(result.createdAt).toBe(now);
@@ -61,7 +60,6 @@ describe('fromViewManifestToUniversalFlatView', () => {
         isCompact: true,
         shouldHideEmptyGroups: true,
         groupLoadLimit: 50,
-        visibility: ViewVisibility.UNLISTED,
         openRecordIn: ViewOpenRecordIn.RECORD_PAGE,
       },
       applicationUniversalIdentifier,
@@ -74,7 +72,6 @@ describe('fromViewManifestToUniversalFlatView', () => {
     expect(result.isCompact).toBe(true);
     expect(result.shouldHideEmptyGroups).toBe(true);
     expect(result.groupLoadLimit).toBe(50);
-    expect(result.visibility).toBe(ViewVisibility.UNLISTED);
     expect(result.openRecordIn).toBe(ViewOpenRecordIn.RECORD_PAGE);
   });
 

@@ -5,6 +5,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
 
+import { ApplicationAuthorizationService } from 'src/engine/core-modules/application/application-authorization/services/application-authorization.service';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import {
   AuthException,
@@ -137,6 +138,10 @@ describe('JwtAuthStrategy', () => {
     jest.clearAllMocks();
   });
 
+  const applicationAuthorizationService = {
+    isAccessTokenAuthorized: jest.fn().mockResolvedValue(true),
+  };
+
   const createStrategy = async () => {
     const module = await Test.createTestingModule({
       providers: [
@@ -149,6 +154,10 @@ describe('JwtAuthStrategy', () => {
         },
         { provide: WorkspaceCacheService, useValue: workspaceCacheService },
         { provide: CoreEntityCacheService, useValue: coreEntityCacheService },
+        {
+          provide: ApplicationAuthorizationService,
+          useValue: applicationAuthorizationService,
+        },
         {
           provide: SettingPermissionsService,
           useValue: settingPermissionsService,
@@ -502,6 +511,34 @@ describe('JwtAuthStrategy', () => {
         },
         tokenType: JwtTokenTypeEnum.APPLICATION_ACCESS,
       });
+    });
+
+    it('should reject a token whose application authorization was revoked', async () => {
+      const applicationId = randomUUID();
+      const workspaceId = randomUUID();
+
+      workspaceStore[workspaceId] = Object.assign(new WorkspaceEntity(), {
+        id: workspaceId,
+        deletedAt: null,
+      });
+      applicationStore[workspaceId] = {
+        [applicationId]: { id: applicationId },
+      };
+      applicationAuthorizationService.isAccessTokenAuthorized.mockResolvedValueOnce(
+        false,
+      );
+
+      strategy = await createStrategy();
+
+      await expect(
+        strategy.validate({
+          sub: applicationId,
+          type: JwtTokenTypeEnum.APPLICATION_ACCESS,
+          applicationId,
+          workspaceId,
+          applicationAuthorizationId: randomUUID(),
+        } as JwtPayload),
+      ).rejects.toMatchObject({ code: AuthExceptionCode.UNAUTHENTICATED });
     });
 
     it('should reject a cleanup token when it belongs to a different deletion request', async () => {
@@ -1281,6 +1318,7 @@ describe('JwtAuthStrategy', () => {
       expect(result.impersonationContext?.impersonatedUserWorkspaceId).toBe(
         validUserWorkspaceId,
       );
+      expect(result.impersonationContext?.level).toBe('workspace');
     });
 
     it('should successfully validate server level impersonation with permission', async () => {
@@ -1358,6 +1396,7 @@ describe('JwtAuthStrategy', () => {
       expect(result.impersonationContext?.impersonatedUserWorkspaceId).toBe(
         validUserWorkspaceId,
       );
+      expect(result.impersonationContext?.level).toBe('server');
     });
   });
 

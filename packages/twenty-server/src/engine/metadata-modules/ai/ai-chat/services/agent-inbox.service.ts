@@ -17,7 +17,7 @@ import { type AgentInboxSender } from 'src/engine/metadata-modules/ai/ai-chat/ty
 import { resolveEmailToolCallProposal } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-email-tool-call-proposal.util';
 import { buildInboxMessageIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-message-ids.util';
 import { buildInboxThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-thread-id.util';
-import { buildInboxMessageToolCallPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-message-tool-call-part.util';
+import { buildInboxMessageToolCallParts } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-message-tool-call-parts.util';
 import { buildToolPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-tool-part.util';
 import { extractInboxMessageMentionedWorkspaceMemberIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/extract-inbox-message-mentioned-workspace-member-ids.util';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
@@ -34,6 +34,9 @@ import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { findAgentChatFlatObjectMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-flat-object-metadata.util';
+import { RecordShareSystemWriteService } from 'src/engine/permissions/record-share/services/record-share-system-write.service';
 
 const findNewWorkspaceMemberIds = (
   thread: AgentChatThreadWorkspaceEntity | null,
@@ -62,6 +65,7 @@ export class AgentInboxService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly inboxDeliveryService: AgentChatInboxDeliveryService,
     private readonly inboxParticipantWriterService: AgentChatInboxParticipantWriterService,
+    private readonly recordShareSystemWriteService: RecordShareSystemWriteService,
   ) {}
 
   // Every record has an id derived from the keys: the thread key picks the
@@ -78,7 +82,10 @@ export class AgentInboxService {
   }: {
     workspaceId: string;
     sender: AgentInboxSender;
-    input: Omit<SendInboxMessageInput, 'toolCall'> & { toolCall?: unknown };
+    input: Omit<SendInboxMessageInput, 'toolCall' | 'toolCalls'> & {
+      toolCall?: unknown;
+      toolCalls?: unknown;
+    };
     // without a resolver, only emails can be proposed: they need no tool of the sender's
     resolveProposal?: ResolveInboxProposal;
     // a pausing call the server resolves, with its pending output, only when the message is written,
@@ -136,24 +143,23 @@ export class AgentInboxService {
       threadId,
       toolCallId,
     });
-    const toolCallPart = isDefined(awaitingToolCall)
+    const toolCallParts = isDefined(awaitingToolCall)
       ? {
-          part: buildToolPart({ ...awaitingToolCall, toolCallId }),
+          parts: [buildToolPart({ ...awaitingToolCall, toolCallId })],
           isAwaitingAnswer: true,
         }
-      : isDefined(input.toolCall)
-        ? await buildInboxMessageToolCallPart({
-            toolCall: input.toolCall,
-            toolCallId,
-            resolveProposal,
-            findApplicationTool: (logicFunctionUniversalIdentifier) =>
-              this.findApplicationTool({
-                workspaceId,
-                applicationId: senderDetails.applicationId,
-                logicFunctionUniversalIdentifier,
-              }),
-          })
-        : undefined;
+      : await buildInboxMessageToolCallParts({
+          toolCall: input.toolCall,
+          toolCalls: input.toolCalls,
+          messageId,
+          resolveProposal,
+          findApplicationTool: (logicFunctionUniversalIdentifier) =>
+            this.findApplicationTool({
+              workspaceId,
+              applicationId: senderDetails.applicationId,
+              logicFunctionUniversalIdentifier,
+            }),
+        });
 
     const { thread } = await openThread();
 
@@ -165,11 +171,10 @@ export class AgentInboxService {
       senderDescription: senderDetails.description,
     });
 
-    const parts: ExtendedUIMessagePart[] = [{ type: 'text', text: input.text }];
-
-    if (isDefined(toolCallPart)) {
-      parts.push(toolCallPart.part);
-    }
+    const parts: ExtendedUIMessagePart[] = [
+      { type: 'text', text: input.text },
+      ...toolCallParts.parts,
+    ];
 
     const isWritten = await this.ignoreDuplicate(() =>
       this.conversationWriterService.insertMessage({
@@ -179,20 +184,14 @@ export class AgentInboxService {
         turnId,
         role: AgentMessageRole.ASSISTANT,
         agentId: null,
-        senderUserWorkspaceId: null,
+        senderWorkspaceMemberId: null,
         senderApplicationId: senderDetails.applicationId,
-        isAwaitingAnswer: toolCallPart?.isAwaitingAnswer,
+        isAwaitingAnswer: toolCallParts.isAwaitingAnswer,
         parts,
       }),
     );
 
     if (isWritten) {
-      await this.threadService.recordThreadActivity({
-        workspaceId,
-        threadId,
-        text: input.text,
-        threadBefore: thread,
-      });
       await this.mentionParticipants({
         workspaceId,
         thread,
@@ -200,6 +199,12 @@ export class AgentInboxService {
         workspaceMemberIds: extractInboxMessageMentionedWorkspaceMemberIds(
           input.text,
         ),
+      });
+      await this.threadService.recordThreadActivity({
+        workspaceId,
+        threadId,
+        text: input.text,
+        threadBefore: thread,
       });
     }
 
@@ -267,6 +272,14 @@ export class AgentInboxService {
           isArchived: isArchivedOnCreate,
         });
 
+    if (openedThread.isCreated && sender.type === 'application') {
+      await this.grantApplicationCreatorAccess({
+        workspaceId,
+        threadId,
+        flatApplication: sender.application,
+      });
+    }
+
     if (!isDefined(openedThread.thread.deletedAt)) {
       await this.addParticipants({
         workspaceId,
@@ -276,6 +289,37 @@ export class AgentInboxService {
     }
 
     return openedThread;
+  }
+
+  // Threads are private, and the server writes them, so the sending application gets the grant an API create would give it
+  private async grantApplicationCreatorAccess({
+    workspaceId,
+    threadId,
+    flatApplication,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    flatApplication: FlatApplication;
+  }): Promise<void> {
+    const { flatObjectMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+      ]);
+    const threadObjectMetadata = findAgentChatFlatObjectMetadata(
+      flatObjectMetadataMaps,
+      'agentChatThread',
+    );
+
+    if (!isDefined(threadObjectMetadata)) {
+      return;
+    }
+
+    await this.recordShareSystemWriteService.grantApplicationCreatorAccess({
+      workspaceId,
+      objectMetadataId: threadObjectMetadata.id,
+      recordId: threadId,
+      flatApplication,
+    });
   }
 
   private async createThread({
@@ -451,7 +495,7 @@ export class AgentInboxService {
         turnId,
         role: AgentMessageRole.SYSTEM,
         agentId: null,
-        senderUserWorkspaceId: null,
+        senderWorkspaceMemberId: null,
         parts: [
           {
             type: 'text',

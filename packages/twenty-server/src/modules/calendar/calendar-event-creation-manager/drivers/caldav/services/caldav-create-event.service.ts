@@ -7,12 +7,15 @@ import { v4 as uuid } from 'uuid';
 
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { CalDavInvitationService } from 'src/modules/calendar/calendar-event-creation-manager/drivers/caldav/services/caldav-invitation.service';
+import { toICalTimeZone } from 'src/modules/calendar/calendar-event-creation-manager/drivers/utils/to-ical-time-zone.util';
 import {
   CalendarEventCreationException,
   CalendarEventCreationExceptionCode,
 } from 'src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception';
 import { type CalendarEventCreationDriver } from 'src/modules/calendar/calendar-event-creation-manager/interfaces/calendar-event-creation-driver.interface';
 import { type CalendarEventToCreate } from 'src/modules/calendar/calendar-event-creation-manager/types/calendar-event-to-create.type';
+import { toCalendarEventTemporalDateTime } from 'src/modules/calendar/calendar-event-creation-manager/utils/to-calendar-event-temporal-date-time.util';
+import { toICalRecurrenceRule } from 'src/modules/calendar/calendar-event-creation-manager/utils/to-ical-recurrence-rule.util';
 import { CalDavClientProvider } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/providers/caldav-client.provider';
 import { CalDavFetchEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-fetch-events.service';
 import { CalendarEventParticipantResponseStatus } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
@@ -66,13 +69,36 @@ export class CalDavCreateEventService implements CalendarEventCreationDriver {
       );
 
       const uid = uuid();
-      const calendar = ical({ prodId: '//Twenty//Calendar//EN' });
+      const { timeZoneId, vTimezoneBlock } = toICalTimeZone(input.timeZone);
+      const calendar = ical({
+        prodId: '//Twenty//Calendar//EN',
+        timezone: { name: null, generator: () => vTimezoneBlock },
+      });
+      const start = toCalendarEventTemporalDateTime({
+        isoDateTime: input.startsAt,
+        isFullDay: input.isFullDay,
+        timeZone: timeZoneId,
+      });
+      const end = toCalendarEventTemporalDateTime({
+        isoDateTime: input.endsAt,
+        isFullDay: input.isFullDay,
+        timeZone: timeZoneId,
+      });
+      const recurrenceRule = isDefined(input.recurrence)
+        ? toICalRecurrenceRule({
+            recurrence: input.recurrence,
+            isFullDay: input.isFullDay,
+            timeZone: timeZoneId,
+          })
+        : null;
 
       calendar.createEvent({
         id: uid,
-        start: new Date(input.startsAt),
-        end: new Date(input.endsAt),
+        start,
+        end,
         allDay: input.isFullDay,
+        timezone: input.isFullDay ? null : timeZoneId,
+        repeating: recurrenceRule,
         summary: input.title,
         description: input.description,
         location: input.location,

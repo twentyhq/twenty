@@ -10,11 +10,11 @@ import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query
 
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import {
-  GraphqlQueryRunnerException,
-  GraphqlQueryRunnerExceptionCode,
-} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
-import { assertFieldIsReadableOrThrow } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/assert-field-is-readable-or-throw.util';
-import { isOrderByDirection } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/is-order-by-direction.util';
+  CommonQueryRunnerException,
+  CommonQueryRunnerExceptionCode,
+} from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+import { assertFieldIsReadableOrThrow } from 'src/engine/api/common/common-query-parsers/utils/assert-field-is-readable-or-throw.util';
+import { isOrderByDirection } from 'src/engine/api/common/common-query-parsers/common-query-order/utils/is-order-by-direction.util';
 import { resolveFilterKeyFieldMetadata } from 'src/engine/record-filter/utils/resolve-filter-key-field-metadata.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -55,9 +55,9 @@ export const checkIfLeafCanCarryCursorValue = (leaf: OrderByLeaf): boolean => {
 };
 
 const throwInvalidOrderByInput = (message: string): never => {
-  throw new GraphqlQueryRunnerException(
+  throw new CommonQueryRunnerException(
     message,
-    GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+    CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
     { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
   );
 };
@@ -122,9 +122,9 @@ const resolveRelationLeaf = ({
 
   if (!isDefined(targetFieldMetadata)) {
     if (strictValidation) {
-      throw new GraphqlQueryRunnerException(
+      throw new CommonQueryRunnerException(
         `Nested field "${targetFieldName}" not found in target object "${targetObjectMetadata.nameSingular}"`,
-        GraphqlQueryRunnerExceptionCode.FIELD_NOT_FOUND,
+        CommonQueryRunnerExceptionCode.FIELD_NOT_FOUND,
         { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
     }
@@ -236,9 +236,9 @@ export const resolveOrderByLeaves = ({
 
       if (!isDefined(fieldMetadata)) {
         if (strictValidation) {
-          throw new GraphqlQueryRunnerException(
+          throw new CommonQueryRunnerException(
             `Field "${fieldName}" does not exist or is not sortable`,
-            GraphqlQueryRunnerExceptionCode.FIELD_NOT_FOUND,
+            CommonQueryRunnerExceptionCode.FIELD_NOT_FOUND,
             { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
           );
         }

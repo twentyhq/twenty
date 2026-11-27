@@ -25,6 +25,10 @@ export class AgentDTO {
   @Field(() => UUIDScalarType)
   id: string;
 
+  @IsUUID()
+  @Field(() => UUIDScalarType)
+  universalIdentifier: string;
+
   @IsString()
   @Field()
   name: string;
@@ -70,6 +74,13 @@ export class AgentDTO {
   @IsBoolean()
   @Field()
   isActive: boolean;
+
+  @IsBoolean()
+  @Field()
+  isPrivate: boolean;
+
+  @HideField()
+  createdByUserWorkspaceId: string | null;
 
   @HideField()
   workspaceId: string;

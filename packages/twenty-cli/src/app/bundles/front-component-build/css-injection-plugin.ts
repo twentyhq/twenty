@@ -5,7 +5,13 @@ import { getWatchInputPlugins } from '@/app/dev/collect-watch-inputs';
 export const createAppCssInjectionPlugin = ({
   onSourceFiles,
 }: {
-  onSourceFiles?: (paths: string[]) => void;
+  onSourceFiles?: ({
+    paths,
+    entryPath,
+  }: {
+    paths: string[];
+    entryPath: string;
+  }) => void;
 } = {}) =>
   createCssInjectionPlugin({
     getBuildPlugins: getWatchInputPlugins,

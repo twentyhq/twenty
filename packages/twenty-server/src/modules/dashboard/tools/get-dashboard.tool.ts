@@ -35,6 +35,7 @@ export const createGetDashboardTool = (
   context: PageLayoutToolContextWithPermissions,
 ) => ({
   name: 'get_dashboard' as const,
+  isReadOnly: true,
   description: `Get a dashboard with its full layout structure including tabs and widgets.`,
   inputSchema: getDashboardSchema,
   execute: async (parameters: { dashboardId: string }) => {

@@ -153,6 +153,37 @@ describe('filterRequestHeaders', () => {
       'x-array-header': 'a, b',
     });
   });
+
+  it('should not forward the identity assertion header', () => {
+    const result = filterRequestHeaders({
+      requestHeaders: {
+        'cf-access-jwt-assertion': 'assertion',
+        'x-custom-header': 'custom-value',
+      },
+      forwardedRequestHeaders: ['Cf-Access-Jwt-Assertion', 'x-custom-header'],
+      identityAssertionHeaderName: 'Cf-Access-Jwt-Assertion',
+    });
+
+    expect(result).toEqual({
+      'x-custom-header': 'custom-value',
+    });
+  });
+
+  it('should not forward the identity assertion header when all headers are forwarded', () => {
+    const result = filterRequestHeaders({
+      requestHeaders: {
+        'cf-access-jwt-assertion': 'assertion',
+        'x-custom-header': 'custom-value',
+      },
+      forwardedRequestHeaders: [],
+      forwardAllHeaders: true,
+      identityAssertionHeaderName: 'Cf-Access-Jwt-Assertion',
+    });
+
+    expect(result).toEqual({
+      'x-custom-header': 'custom-value',
+    });
+  });
 });
 
 describe('extractBody', () => {

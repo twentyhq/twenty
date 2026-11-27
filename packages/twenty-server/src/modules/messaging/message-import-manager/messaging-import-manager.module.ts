@@ -51,11 +51,13 @@ import { MessagingProcessFolderActionsService } from 'src/modules/messaging/mess
 import { MessagingProcessGroupEmailActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-group-email-actions.service';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { MessageParticipantManagerModule } from 'src/modules/messaging/message-participant-manager/message-participant-manager.module';
 import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/messaging-monitoring.module';
 import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
 @Module({
   imports: [
+    WorkspaceCacheModule,
     FeatureFlagModule,
     FilesFieldModule,
     MessagingGmailDriverModule,

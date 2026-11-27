@@ -21,11 +21,13 @@ const buildContext = ({
   type = 'graphql',
   operation = 'query',
   isSuspendedWorkspaceAllowed = false,
+  isFieldResolver = false,
 }: {
   workspace: Record<string, unknown> | undefined;
   type?: string;
   operation?: string;
   isSuspendedWorkspaceAllowed?: boolean;
+  isFieldResolver?: boolean;
 }) => {
   const reflector = new Reflector();
 
@@ -39,7 +41,12 @@ const buildContext = ({
 
   jest.spyOn(GqlExecutionContext, 'create').mockReturnValue({
     getContext: () => ({ req: { workspace } }),
-    getInfo: () => ({ operation: { operation } }),
+    getInfo: () => ({
+      operation: { operation },
+      path: isFieldResolver
+        ? { prev: { prev: undefined, key: 'currentUser' }, key: 'workspace' }
+        : { prev: undefined, key: 'currentUser' },
+    }),
   } as any);
 
   const context = buildExecutionContextMock({
@@ -153,6 +160,19 @@ describe('WorkspaceNotSuspendedGuard', () => {
           deletedAt: '2026-09-16T10:00:00.000Z',
         },
         operation: 'mutation',
+      });
+
+      expect(guard.canActivate(context)).toBe(true);
+    },
+  );
+
+  it.each(SUSPENDED_STATUSES)(
+    'should let a field resolver through on a %s workspace, its root operation being already checked',
+    (activationStatus) => {
+      const { guard, context } = buildContext({
+        workspace: { id: 'workspace-id', activationStatus },
+        operation: 'query',
+        isFieldResolver: true,
       });
 
       expect(guard.canActivate(context)).toBe(true);

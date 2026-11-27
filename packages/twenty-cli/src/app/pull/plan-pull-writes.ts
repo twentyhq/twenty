@@ -15,7 +15,8 @@ export type PullWriteKind =
   | PullEntityKind
   | 'translation'
   | 'dependency'
-  | 'publicAsset';
+  | 'publicAsset'
+  | 'source';
 
 export type PullWrite<TContent extends string | Buffer = string | Buffer> = {
   kind: PullWriteKind;

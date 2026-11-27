@@ -59,7 +59,7 @@ const meta: Meta<PageDecoratorArgs> = {
                 canBeUninstalled: true,
                 isUninstallBlockedByOtherWorkspaceInstallations: false,
                 autoUpgrade: false,
-                defaultRoleId: null,
+                requestedRoleId: null,
                 settingsCustomTabFrontComponentId: null,
                 healthCheckLogicFunctionId: null,
                 availablePackages: {},

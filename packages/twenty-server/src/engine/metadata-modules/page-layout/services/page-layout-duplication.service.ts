@@ -328,6 +328,7 @@ export class PageLayoutDuplicationService {
             type: originalWidget.type,
             objectMetadataId: originalWidget.objectMetadataId,
             configuration: originalWidget.configuration,
+            conditionalAvailability: originalWidget.conditionalAvailability,
             pageLayoutTabId: newTabId,
           },
           workspaceId,

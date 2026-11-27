@@ -7,6 +7,7 @@ import { getViewSortsToCreate } from '@/views/utils/getViewSortsToCreate';
 import { getViewSortsToDelete } from '@/views/utils/getViewSortsToDelete';
 import { getViewSortsToUpdate } from '@/views/utils/getViewSortsToUpdate';
 import { mapRecordSortToViewSort } from '@/views/utils/mapRecordSortToViewSort';
+import { mapViewSortToCreateViewSortMutationVariables } from '@/views/utils/mapViewSortToCreateViewSortMutationVariables';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -53,15 +54,12 @@ export const useSaveRecordSortsToViewSorts = () => {
       newViewSorts,
     );
 
-    const createViewSortInputs = viewSortsToCreate.map((viewSort) => ({
-      input: {
-        id: viewSort.id,
-        fieldMetadataId: viewSort.fieldMetadataId,
+    const createViewSortInputs = viewSortsToCreate.map((viewSort) =>
+      mapViewSortToCreateViewSortMutationVariables({
+        viewSort,
         viewId: currentView.id,
-        direction: viewSort.direction,
-        subFieldName: viewSort.subFieldName ?? null,
-      },
-    }));
+      }),
+    );
 
     const updateViewSortInputs = viewSortsToUpdate.map((viewSort) => ({
       input: {
@@ -69,6 +67,8 @@ export const useSaveRecordSortsToViewSorts = () => {
         update: {
           direction: viewSort.direction,
           subFieldName: viewSort.subFieldName ?? null,
+          relationTargetFieldMetadataId:
+            viewSort.relationTargetFieldMetadataId ?? null,
         },
       },
     }));

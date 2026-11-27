@@ -12,6 +12,8 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { assertUpdatedColumnsAreEditableOrThrow } from 'src/engine/permissions/internal/field-access/utils/assert-updated-columns-are-editable-or-throw.util';
@@ -49,8 +51,8 @@ import { type RecordPermissionTransactionScope } from 'src/engine/permissions/ty
 import { isObjectOperationDisabledToPrincipals } from 'src/engine/permissions/internal/role/utils/is-object-operation-disabled-to-principals.util';
 import { canRelatedRecordPathExtendAccessToObject } from 'src/engine/permissions/internal/related-record-path/utils/can-related-record-path-extend-access-to-object.util';
 import { areRecordIdsReadableByPrincipals } from 'src/engine/permissions/internal/role/utils/are-record-ids-readable-by-principals.util';
-import { isRelatedRecordPathsEnabled } from 'src/engine/permissions/internal/related-record-path/utils/is-related-record-paths-enabled.util';
 import { canRelatedRecordPathExtendAccess } from 'src/engine/permissions/internal/related-record-path/utils/can-related-record-path-extend-access.util';
+import { type RelatedRecordPathUnreadableNestedField } from 'src/engine/permissions/internal/related-record-path/utils/find-related-record-path-unreadable-nested-fields.util';
 import { buildRecordShareOrPrivateRecordAccessSQLCondition } from 'src/engine/permissions/internal/combine/utils/build-record-share-or-private-record-access-sql-condition.util';
 import { combineSQLConditionOutcomesWithOr } from 'src/engine/permissions/internal/record-permission-repository/utils/combine-sql-condition-outcomes-with-or.util';
 import {
@@ -70,6 +72,7 @@ import { findAccessibleRecordIds } from 'src/engine/permissions/internal/combine
 import { type PrivateRecordState } from 'src/engine/permissions/internal/private-record/types/private-record-state.type';
 import { type RecordShareGrant } from 'src/engine/permissions/internal/record-share/types/record-share-grant.type';
 import { buildRecordReadRestrictions } from 'src/engine/permissions/internal/role/utils/build-record-read-restrictions.util';
+import { findRelationTargetRecordIdsByObjectMetadataId } from 'src/engine/permissions/internal/rls/utils/find-relation-target-record-ids-by-object-metadata-id.util';
 import { validateRlsPredicatesForRecords } from 'src/engine/permissions/internal/rls/utils/validate-rls-predicates-for-records.util';
 import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
 
@@ -100,6 +103,7 @@ export class RecordPermissionsReadService {
     private readonly privateRecordRepository: PrivateRecordRepository,
     private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
     private readonly accessGroupReadService: AccessGroupReadService,
+    private readonly metricsService: MetricsService,
   ) {}
 
   async findRecordsActions({
@@ -139,6 +143,39 @@ export class RecordPermissionsReadService {
           canSoftDelete: isAllowed(recordId, 'softDelete'),
         },
       ]),
+    );
+  }
+
+  async findObjectMetadataIdsWithReadableRecords({
+    principals,
+  }: {
+    principals: PermissionsPrincipalsWithRolesContext;
+  }): Promise<Set<string>> {
+    const { flatObjectMetadataMaps } =
+      await this.permissionsMetadataMapsService.loadForPrincipals({
+        principals,
+      });
+
+    const objectMetadataIds = Object.values(
+      flatObjectMetadataMaps.byUniversalIdentifier,
+    )
+      .filter(isDefined)
+      .map(({ id }) => id);
+
+    const isReadableByObjectMetadataId = await Promise.all(
+      objectMetadataIds.map((objectMetadataId) =>
+        this.canAccessSomeRecords({
+          principals,
+          objectMetadataId,
+          operationType: 'read',
+        }),
+      ),
+    );
+
+    return new Set(
+      objectMetadataIds.filter(
+        (_objectMetadataId, index) => isReadableByObjectMetadataId[index],
+      ),
     );
   }
 
@@ -221,7 +258,7 @@ export class RecordPermissionsReadService {
               getPermissionsPrincipalsRecordsPermissions({
                 principals: buildRolePermissionsPrincipals({
                   workspaceId,
-                  roleId,
+                  roleIds: [roleId],
                 }),
                 metadataMaps,
               }).objects[objectMetadataId],
@@ -251,12 +288,7 @@ export class RecordPermissionsReadService {
       operationType: 'read',
     });
 
-    if (
-      !isDefined(readRequest) ||
-      (!isObjectOperationDisabledToPrincipals(readRequest) &&
-        isObjectOperationDeniedToPrincipals(readRequest) &&
-        !isRelatedRecordPathsEnabled(readRequest.metadataMaps))
-    ) {
+    if (!isDefined(readRequest)) {
       return new Set();
     }
 
@@ -353,7 +385,7 @@ export class RecordPermissionsReadService {
       principalsRelatedRecordPathAccessGroupCompactIds,
     ] = await Promise.all([
       this.findPrincipalsAccessGroupCompactIds(objectAccessRequest),
-      this.accessGroupReadService.findPrincipalsRelatedRecordPathCompactIds(
+      this.accessGroupReadService.findPrincipalsRelatedRecordPathAccessGroupCompactIds(
         objectAccessRequest,
       ),
     ]);
@@ -364,8 +396,19 @@ export class RecordPermissionsReadService {
       principalsAccessGroupCompactIds,
       principalsRelatedRecordPathAccessGroupCompactIds,
     });
+    const isAccessExtendedByRelatedRecordPath =
+      canRelatedRecordPathExtendAccess(objectAccessRequest);
 
-    if (!canRelatedRecordPathExtendAccess(objectAccessRequest)) {
+    this.metricsService.incrementCounterBy({
+      key: MetricsKeys.RecordPermissionsReadAccessCondition,
+      amount: 1,
+      attributes: {
+        strategy: resolveRecordsAccessSQLConditionStrategy(objectAccessRequest),
+        related_record_path: isAccessExtendedByRelatedRecordPath,
+      },
+    });
+
+    if (!isAccessExtendedByRelatedRecordPath) {
       return sqlCondition;
     }
 
@@ -385,6 +428,46 @@ export class RecordPermissionsReadService {
     ]);
   }
 
+  async buildReadRecordsAccessSQLConditionsShowingSourceFields({
+    tableAlias,
+    sourceFields,
+    ...question
+  }: {
+    principals: PermissionsPrincipalsWithRolesContext;
+    objectMetadataId: string;
+    tableAlias: string;
+    sourceFields: RelatedRecordPathUnreadableNestedField[];
+  }): Promise<(SQLCondition | boolean)[]> {
+    const objectAccessRequest = await this.findObjectAccessRequestOrThrow({
+      ...question,
+      operationType: 'read',
+    });
+
+    if (!canRelatedRecordPathExtendAccess(objectAccessRequest)) {
+      return sourceFields.map(() => true);
+    }
+
+    const [
+      principalsAccessGroupCompactIds,
+      principalsRelatedRecordPathAccessGroupCompactIdsShowingFields,
+    ] = await Promise.all([
+      this.findPrincipalsAccessGroupCompactIds(objectAccessRequest),
+      this.accessGroupReadService.findPrincipalsRelatedRecordPathAccessGroupCompactIdsShowingFields(
+        { request: objectAccessRequest, sourceFields },
+      ),
+    ]);
+
+    return principalsRelatedRecordPathAccessGroupCompactIdsShowingFields.map(
+      (principalsRelatedRecordPathAccessGroupCompactIds) =>
+        this.buildRecordsAccessSQLCondition({
+          objectAccessRequest,
+          tableAlias,
+          principalsAccessGroupCompactIds,
+          principalsRelatedRecordPathAccessGroupCompactIds,
+        }),
+    );
+  }
+
   private async findPrincipalsAccessGroupCompactIds(
     objectAccessRequest: PermissionsObjectAccessRequest,
   ): Promise<number[] | undefined> {
@@ -395,7 +478,7 @@ export class RecordPermissionsReadService {
       return undefined;
     }
 
-    return this.accessGroupReadService.findPrincipalsCompactIds({
+    return this.accessGroupReadService.findPrincipalsAccessGroupCompactIds({
       principals: objectAccessRequest.principals,
       objectMetadataId: objectAccessRequest.flatObjectMetadata.id,
       operationType: 'read',
@@ -465,6 +548,14 @@ export class RecordPermissionsReadService {
         operationType: 'create',
       });
 
+    await this.assertRelationTargetRecordsReadableOrThrow({
+      principals,
+      metadataMaps,
+      flatObjectMetadata,
+      writtenColumns: records,
+      transactionScope,
+    });
+
     await validateRlsPredicatesForRecords({
       records,
       objectMetadata: flatObjectMetadata,
@@ -499,6 +590,20 @@ export class RecordPermissionsReadService {
         objectMetadataId,
         operationType: 'update',
       });
+
+    await this.assertRelationTargetRecordsReadableOrThrow({
+      principals,
+      metadataMaps,
+      flatObjectMetadata,
+      writtenColumns: updates.map(({ rawRecordBefore, setColumns }) =>
+        Object.fromEntries(
+          Object.entries(setColumns).filter(
+            ([columnName, value]) => value !== rawRecordBefore[columnName],
+          ),
+        ),
+      ),
+      transactionScope,
+    });
 
     if (
       !isMainRoleRestrictedByRlsRule({
@@ -566,6 +671,69 @@ export class RecordPermissionsReadService {
         'Updated record does not satisfy row-level security constraints of your current role',
         PermissionsExceptionCode.RLS_VALIDATION_FAILED,
       );
+    }
+  }
+
+  private async assertRelationTargetRecordsReadableOrThrow({
+    principals,
+    metadataMaps,
+    flatObjectMetadata,
+    writtenColumns,
+    transactionScope,
+  }: Pick<
+    PermissionsObjectAccessRequest,
+    'principals' | 'metadataMaps' | 'flatObjectMetadata'
+  > & {
+    writtenColumns: Record<string, unknown>[];
+    transactionScope: RecordPermissionTransactionScope;
+  }): Promise<void> {
+    const relationTargetRecordIdsByObjectMetadataId =
+      findRelationTargetRecordIdsByObjectMetadataId({
+        flatObjectMetadata,
+        flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
+        writtenColumns,
+      });
+
+    for (const [
+      relationTargetObjectMetadataId,
+      relationTargetRecordIds,
+    ] of relationTargetRecordIdsByObjectMetadataId) {
+      const relationTargetFlatObjectMetadata = this.findFlatObjectMetadata({
+        metadataMaps,
+        objectMetadataId: relationTargetObjectMetadataId,
+      });
+
+      if (
+        !isDefined(relationTargetFlatObjectMetadata) ||
+        this.buildSelectableRecordsSQLCondition({
+          principals,
+          metadataMaps,
+          flatObjectMetadata: relationTargetFlatObjectMetadata,
+          operationType: 'read',
+        }) === true
+      ) {
+        continue;
+      }
+
+      const readableRecordIds = await this.findAccessibleRecordIds({
+        principals,
+        objectMetadataId: relationTargetObjectMetadataId,
+        operationType: 'read',
+        recordIds: [...relationTargetRecordIds],
+        transactionScope,
+      });
+
+      if (
+        [...relationTargetRecordIds].some(
+          (relationTargetRecordId) =>
+            !readableRecordIds.has(relationTargetRecordId),
+        )
+      ) {
+        throw new PermissionsException(
+          'Relation target record is not readable by your current role',
+          PermissionsExceptionCode.RLS_VALIDATION_FAILED,
+        );
+      }
     }
   }
 
@@ -700,10 +868,7 @@ export class RecordPermissionsReadService {
     tableAlias?: string;
     hypotheticalRecordShareAccessLevel?: RecordShareAccessLevel;
   }): SQLCondition | boolean {
-    if (
-      operationType === 'create' ||
-      !isRelatedRecordPathsEnabled(metadataMaps)
-    ) {
+    if (operationType === 'create') {
       return this.buildEntrySQLCondition({
         principals,
         metadataMaps,
@@ -723,7 +888,6 @@ export class RecordPermissionsReadService {
       buildEntrySQLCondition: (entry) =>
         this.buildEntrySQLCondition({
           principals,
-          metadataMaps,
           operationType,
           ...entry,
           hypotheticalRecordShareAccessLevel:

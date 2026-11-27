@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type InboxLoadedThreadList } from '@/inbox/types/InboxLoadedThreadList';
-import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 
 export const filterInboxThreadsWithinLoadedPages = ({
   threads,

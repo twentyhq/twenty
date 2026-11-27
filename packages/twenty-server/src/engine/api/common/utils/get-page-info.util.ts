@@ -4,7 +4,7 @@ import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query
 
 import { type CommonPageInfo } from 'src/engine/api/common/types/common-page-info.type';
 import { type CursorPageFlags } from 'src/engine/api/types/cursor-page-flags.type';
-import { encodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
+import { encodeCursor } from 'src/engine/api/common/utils/cursors.util';
 import { type OrderByValuesByRecordId } from 'src/engine/api/utils/build-order-by-values-by-record-id.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';

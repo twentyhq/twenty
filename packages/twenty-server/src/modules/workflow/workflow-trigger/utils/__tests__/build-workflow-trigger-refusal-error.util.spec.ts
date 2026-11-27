@@ -15,7 +15,6 @@ const buildSizeLimiter = () =>
     {
       get: (key: string) =>
         ({
-          IS_REDIS_MEMORY_FAIRNESS_ENABLED: true,
           JOB_QUEUE_MAX_JOB_SIZE_BYTES: MAX_JOB_SIZE_BYTES,
         })[key],
     } as never,

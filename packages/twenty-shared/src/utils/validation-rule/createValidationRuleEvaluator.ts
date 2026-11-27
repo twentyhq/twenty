@@ -1,19 +1,12 @@
-import { type Expression } from 'expr-eval-fork';
-
 import { type ValidationRuleEvaluationResult } from '@/types/ValidationRuleEvaluationResult';
 import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
-import { buildValidationRuleEvaluationContext } from '@/utils/validation-rule/buildValidationRuleEvaluationContext';
-import { parseValidationRuleExpression } from '@/utils/validation-rule/parseValidationRuleExpression';
-import { runWithValidationRuleNow } from '@/utils/validation-rule/internal/runWithValidationRuleNow';
+import { createExpressionEvaluator } from '@/utils/expression/createExpressionEvaluator';
 
 type ValidationRuleEvaluator = (params: {
   record: Record<string, unknown>;
   previousRecord?: Record<string, unknown>;
   now: string;
 }) => ValidationRuleEvaluationResult;
-
-const toErrorMessage = (error: unknown) =>
-  error instanceof Error ? error.message : String(error);
 
 export const createValidationRuleEvaluator = ({
   expression,
@@ -22,46 +15,23 @@ export const createValidationRuleEvaluator = ({
   expression: string;
   fields: ValidationRuleFieldDescriptor[];
 }): ValidationRuleEvaluator => {
-  let parsedExpression: Expression;
+  const evaluateExpression = createExpressionEvaluator({ expression, fields });
 
-  try {
-    parsedExpression = parseValidationRuleExpression(expression);
-  } catch (error) {
-    const errorMessage = toErrorMessage(error);
+  return (params) => {
+    const evaluation = evaluateExpression(params);
 
-    return () => ({ status: 'errored', errorMessage });
-  }
-
-  const identifierPaths = parsedExpression.variables({ withMembers: true });
-  const fieldByName = new Map(fields.map((field) => [field.name, field]));
-
-  return ({ record, previousRecord, now }) => {
-    try {
-      const result: unknown = runWithValidationRuleNow({
-        now,
-        run: () =>
-          parsedExpression.evaluate(
-            buildValidationRuleEvaluationContext({
-              record,
-              previousRecord,
-              fieldByName,
-              identifierPaths,
-              now,
-            }),
-          ),
-      });
-
-      if (typeof result !== 'boolean') {
-        return {
-          status: 'errored',
-          errorMessage: 'Expression did not return true or false',
-          errorCode: 'NON_BOOLEAN_RESULT',
-        };
-      }
-
-      return result ? { status: 'passed' } : { status: 'failed' };
-    } catch (error) {
-      return { status: 'errored', errorMessage: toErrorMessage(error) };
+    if (evaluation.status === 'errored') {
+      return evaluation;
     }
+
+    if (typeof evaluation.value !== 'boolean') {
+      return {
+        status: 'errored',
+        errorMessage: 'Expression did not return true or false',
+        errorCode: 'NON_BOOLEAN_RESULT',
+      };
+    }
+
+    return evaluation.value ? { status: 'passed' } : { status: 'failed' };
   };
 };

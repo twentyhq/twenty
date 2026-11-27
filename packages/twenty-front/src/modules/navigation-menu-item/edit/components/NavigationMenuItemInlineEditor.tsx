@@ -62,6 +62,10 @@ const StyledLabelButton = styled(StyledButton)`
     outline-offset: -2px;
   }
 `;
+const StyledFolderLabelButton = styled(StyledLabelButton)`
+  flex: 0 1 auto;
+  width: auto;
+`;
 const StyledNameInput = styled(TextInput)`
   font-weight: ${themeCssVariables.font.weight.medium};
   min-width: 0;
@@ -121,6 +125,7 @@ export const NavigationMenuItemInlineEditor = ({
     );
   };
   const isFolder = item.type === NavigationMenuItemType.FOLDER;
+  const LabelButton = isFolder ? StyledFolderLabelButton : StyledLabelButton;
   const select = () => setSelectedNavigationMenuItemIdInEditMode(item.id);
   const finishRename = (value: string, clearSelection = true) => {
     void updateItem(item.id, { name: value.trim() || initialName });
@@ -179,7 +184,7 @@ export const NavigationMenuItemInlineEditor = ({
         }
       />
     ) : (
-      <StyledLabelButton
+      <LabelButton
         type="button"
         aria-pressed={isFolder ? isSelected : undefined}
         aria-description={
@@ -199,7 +204,7 @@ export const NavigationMenuItemInlineEditor = ({
         }}
       >
         {isFolder ? item.name : getLinkNavigationMenuItemLabel(item)}
-      </StyledLabelButton>
+      </LabelButton>
     );
   return (
     <NavigationDrawerItemEditingContext.Provider

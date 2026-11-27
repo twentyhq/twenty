@@ -15,6 +15,7 @@ import { doesCommandMenuItemMatchPageType } from '@/command-menu-item/utils/does
 import { doesCommandMenuItemMatchSelectionState } from '@/command-menu-item/utils/doesCommandMenuItemMatchSelectionState';
 import { getCommandMenuContextApiForContainerType } from '@/command-menu-item/utils/getCommandMenuContextApiForContainerType';
 import { mergeGlobalRecordCreationCommandMenuItems } from '@/command-menu-item/utils/mergeGlobalRecordCreationCommandMenuItems';
+import { inboxNamesByLegacyNameSelector } from '@/ai-chat/states/selectors/inboxNamesByLegacyNameSelector';
 import { useIsLayoutCustomizationAllowedOnCurrentPage } from '@/layout-customization/hooks/useIsLayoutCustomizationAllowedOnCurrentPage';
 import {
   currentPageLayoutIdState,
@@ -23,12 +24,11 @@ import {
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useContext, useMemo } from 'react';
 import { isString } from '@sniptt/guards';
+import { evaluateConditionalEvaluationExpression } from 'twenty-shared/conditional-evaluation';
 import {
   ContextStorePageType,
-  StandardObjectNameSingular,
   type CommandMenuContextApi,
 } from 'twenty-shared/types';
-import { evaluateConditionalAvailabilityExpression } from 'twenty-shared/utils';
 import { EngineComponentKey } from '~/generated-metadata/graphql';
 
 const WORKSPACE_DEFINITION_COMMANDS = new Set<EngineComponentKey>([
@@ -68,6 +68,9 @@ export const CommandMenuContextProviderContent = ({
   const isCoreWorkflowIndex =
     isCoreWorkflow &&
     commandMenuContextApi.pageType === ContextStorePageType.Index;
+  const inboxNamesByLegacyName = useAtomStateValue(
+    inboxNamesByLegacyNameSelector,
+  );
   const commandMenuItems = useAtomStateValue(commandMenuItemsSelector);
   const {
     hasGlobalRecordCreationCommandTemplate,
@@ -107,7 +110,7 @@ export const CommandMenuContextProviderContent = ({
     const isInboxHeader =
       containerType === CommandMenuItemContainerType.ShowPageHeader &&
       commandMenuContextApi.objectMetadataItem.nameSingular ===
-        StandardObjectNameSingular.AgentChatThread &&
+        inboxNamesByLegacyName.agentChatThread &&
       (commandMenuContextApi.featureFlags.IS_AI_CHAT_INBOX_ENABLED ?? false);
 
     const contextCommandMenuItems = commandMenuItemsToDisplay
@@ -120,11 +123,6 @@ export const CommandMenuContextProviderContent = ({
         (item) =>
           !isCoreWorkflow ||
           !WORKSPACE_DEFINITION_COMMANDS.has(item.engineComponentKey),
-      )
-      .filter(
-        (item) =>
-          item.engineComponentKey !==
-          EngineComponentKey.SEE_VERSION_WORKFLOW_RUN,
       )
       .filter(
         (item) =>
@@ -147,7 +145,7 @@ export const CommandMenuContextProviderContent = ({
       .filter(doesCommandMenuItemMatchSelectionState(hasSelectedRecords))
       .filter(doesCommandMenuItemMatchPageLayoutId(effectivePageLayoutId))
       .filter((item) =>
-        evaluateConditionalAvailabilityExpression(
+        evaluateConditionalEvaluationExpression(
           item.conditionalAvailabilityExpression,
           commandMenuContextApiForAvailability,
         ),
@@ -186,6 +184,7 @@ export const CommandMenuContextProviderContent = ({
     isInPreviewMode,
     isLayoutCustomizationAllowedOnCurrentPage,
     isCoreWorkflowIndex,
+    inboxNamesByLegacyName.agentChatThread,
   ]);
 
   return (

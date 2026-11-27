@@ -1,7 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  getDomainFromEmail,
+  isDefined,
+  isWorkDomain,
+} from 'twenty-shared/utils';
 import {
   type WorkspaceCompanyEnrichment,
   type WorkspaceEnrichmentResult,
@@ -27,8 +31,6 @@ import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-
 import { readIsCompanyEnrichmentEnabled } from 'src/engine/core-modules/company-enrichment/utils/read-is-company-enrichment-enabled.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
-import { isWorkDomain } from 'src/utils/is-work-email';
 
 @Injectable()
 // oxlint-disable-next-line twenty/inject-workspace-repository

@@ -1,7 +1,9 @@
+import { EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT } from '@/conditional-availability/conditional-availability-user-context/constants/EmptyConditionalAvailabilityCurrentUserContext';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { filterVisibleWidgets } from '@/page-layout/utils/filterVisibleWidgets';
+import { buildDeviceConditionalEvaluationNode } from 'twenty-shared/conditional-evaluation';
 import {
-  FieldDisplayMode,
+  FeatureFlagKey,
   PageLayoutTabLayoutMode,
   WidgetConfigurationType,
   WidgetType,
@@ -50,7 +52,11 @@ describe('filterVisibleWidgets', () => {
 
     const result = filterVisibleWidgets({
       widgets,
-      context: { device: 'DESKTOP', selectedRecords: [], featureFlags: {} },
+      context: {
+        ...EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
+        device: 'DESKTOP',
+        selectedRecords: [],
+      },
     });
 
     expect(result).toHaveLength(3);
@@ -70,7 +76,11 @@ describe('filterVisibleWidgets', () => {
 
     const result = filterVisibleWidgets({
       widgets,
-      context: { device: 'MOBILE', selectedRecords: [], featureFlags: {} },
+      context: {
+        ...EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
+        device: 'MOBILE',
+        selectedRecords: [],
+      },
     });
 
     expect(result).toHaveLength(2);
@@ -90,7 +100,11 @@ describe('filterVisibleWidgets', () => {
 
     const result = filterVisibleWidgets({
       widgets,
-      context: { device: 'DESKTOP', selectedRecords: [], featureFlags: {} },
+      context: {
+        ...EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
+        device: 'DESKTOP',
+        selectedRecords: [],
+      },
     });
 
     expect(result).toHaveLength(2);
@@ -100,7 +114,11 @@ describe('filterVisibleWidgets', () => {
   it('should handle empty widgets array', () => {
     const result = filterVisibleWidgets({
       widgets: [],
-      context: { device: 'DESKTOP', selectedRecords: [], featureFlags: {} },
+      context: {
+        ...EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
+        device: 'DESKTOP',
+        selectedRecords: [],
+      },
     });
 
     expect(result).toHaveLength(0);
@@ -118,83 +136,155 @@ describe('filterVisibleWidgets', () => {
 
     filterVisibleWidgets({
       widgets,
-      context: { device: 'DESKTOP', selectedRecords: [], featureFlags: {} },
+      context: {
+        ...EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
+        device: 'DESKTOP',
+        selectedRecords: [],
+      },
     });
 
     expect(widgets).toHaveLength(originalLength);
   });
 
-  describe('hiddenFieldMetadataIdsOrNames', () => {
-    const createMockFieldWidget = (
-      id: string,
-      fieldMetadataId: string,
-    ): PageLayoutTab['widgets'][0] => ({
-      ...createMockWidget(id),
-      type: WidgetType.FIELD,
-      configuration: {
-        __typename: 'FieldConfiguration',
-        configurationType: WidgetConfigurationType.FIELD,
-        fieldMetadataId,
-        fieldDisplayMode: FieldDisplayMode.CARD,
+  describe('when the workspace reads the conditional availability tree only', () => {
+    const context = {
+      ...EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
+      device: 'DESKTOP' as const,
+      selectedRecords: [],
+      featureFlags: {
+        [FeatureFlagKey.IS_WIDGET_CONDITIONAL_AVAILABILITY_ENABLED]: true,
       },
+    };
+
+    it('should hide a widget whose tree does not match', () => {
+      const widgets = [
+        createMockWidget('widget-1'),
+        {
+          ...createMockWidget('widget-2'),
+          conditionalAvailability:
+            buildDeviceConditionalEvaluationNode('MOBILE'),
+        },
+      ];
+
+      const result = filterVisibleWidgets({ widgets, context });
+
+      expect(result.map((widget) => widget.id)).toEqual(['widget-1']);
     });
 
-    it('should filter out a field widget referencing a hidden field by id', () => {
+    it('should ignore the legacy rules of a widget', () => {
+      const widgets = [
+        createMockWidget('widget-1', {
+          and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
+        }),
+        {
+          ...createMockWidget('widget-2'),
+          conditionalAvailabilityExpression: 'device == "MOBILE"',
+        },
+      ];
+
+      const result = filterVisibleWidgets({ widgets, context });
+
+      expect(result.map((widget) => widget.id)).toEqual([
+        'widget-1',
+        'widget-2',
+      ]);
+    });
+
+    it('should apply a rule on the role of the current workspace member', () => {
+      const buildWidgetForRole = ({
+        id,
+        roleUniversalIdentifier,
+      }: {
+        id: string;
+        roleUniversalIdentifier: string;
+      }) => ({
+        ...createMockWidget(id),
+        conditionalAvailability: {
+          type: 'COMPARISON' as const,
+          operator: 'EQUAL' as const,
+          left: {
+            type: 'VARIABLE' as const,
+            path: 'currentRole.universalIdentifier',
+          },
+          right: { type: 'LITERAL' as const, value: roleUniversalIdentifier },
+        },
+      });
+
       const result = filterVisibleWidgets({
         widgets: [
-          createMockFieldWidget('widget-1', 'field-id-1'),
-          createMockFieldWidget('widget-2', 'field-id-2'),
+          buildWidgetForRole({
+            id: 'widget-for-sales',
+            roleUniversalIdentifier: 'sales-role-universal-identifier',
+          }),
+          buildWidgetForRole({
+            id: 'widget-for-support',
+            roleUniversalIdentifier: 'support-role-universal-identifier',
+          }),
         ],
         context: {
-          device: 'DESKTOP',
-          selectedRecords: [],
-          featureFlags: {},
-          hiddenFieldMetadataIdsOrNames: ['field-id-1'],
+          ...context,
+          currentRole: {
+            universalIdentifier: 'sales-role-universal-identifier',
+          },
         },
       });
 
-      expect(result).toHaveLength(1);
-      expect(result[0].id).toBe('widget-2');
+      expect(result.map((widget) => widget.id)).toEqual(['widget-for-sales']);
     });
 
-    it('should filter out a field widget referencing a hidden field by name', () => {
-      const result = filterVisibleWidgets({
-        widgets: [createMockFieldWidget('widget-1', 'workflow')],
-        context: {
-          device: 'DESKTOP',
-          selectedRecords: [],
-          featureFlags: {},
-          hiddenFieldMetadataIdsOrNames: ['field-id-1', 'workflow'],
+    it('should evaluate a rule on the role while the role is not loaded', () => {
+      const roleIsSales = {
+        type: 'COMPARISON' as const,
+        operator: 'EQUAL' as const,
+        left: {
+          type: 'VARIABLE' as const,
+          path: 'currentRole.universalIdentifier',
         },
-      });
-
-      expect(result).toHaveLength(0);
-    });
-
-    it('should keep non-field widgets referencing a hidden name', () => {
-      const result = filterVisibleWidgets({
-        widgets: [createMockWidget('widget-1')],
-        context: {
-          device: 'DESKTOP',
-          selectedRecords: [],
-          featureFlags: {},
-          hiddenFieldMetadataIdsOrNames: ['workflow'],
+        right: {
+          type: 'LITERAL' as const,
+          value: 'sales-role-universal-identifier',
         },
-      });
+      };
+      const deviceIsDesktop = buildDeviceConditionalEvaluationNode('DESKTOP');
 
-      expect(result).toHaveLength(1);
-    });
-
-    it('should keep every field widget when nothing is hidden', () => {
       const result = filterVisibleWidgets({
         widgets: [
-          createMockFieldWidget('widget-1', 'field-id-1'),
-          createMockFieldWidget('widget-2', 'field-id-2'),
+          {
+            ...createMockWidget('widget-for-sales'),
+            conditionalAvailability: roleIsSales,
+          },
+          {
+            ...createMockWidget('widget-for-everyone-but-sales'),
+            conditionalAvailability: {
+              ...roleIsSales,
+              operator: 'NOT_EQUAL' as const,
+            },
+          },
+          {
+            ...createMockWidget('widget-for-sales-or-desktop'),
+            conditionalAvailability: {
+              type: 'GROUP' as const,
+              logicalOperator: 'OR' as const,
+              children: [roleIsSales, deviceIsDesktop],
+            },
+          },
+          {
+            ...createMockWidget('widget-for-desktop-or-sales'),
+            conditionalAvailability: {
+              type: 'GROUP' as const,
+              logicalOperator: 'OR' as const,
+              children: [deviceIsDesktop, roleIsSales],
+            },
+          },
         ],
-        context: { device: 'DESKTOP', selectedRecords: [], featureFlags: {} },
+        context,
       });
 
-      expect(result).toHaveLength(2);
+      expect(result.map((widget) => widget.id)).toEqual([
+        'widget-for-everyone-but-sales',
+        'widget-for-sales-or-desktop',
+        'widget-for-desktop-or-sales',
+      ]);
     });
   });
 });

@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { Fragment, type ReactNode, useId } from 'react';
+import { isDefined } from 'twenty-sdk/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { Radio } from 'src/front-components/components/Radio';
@@ -31,6 +32,12 @@ const StyledOptionDescription = styled.div`
   font-size: ${() => themeCssVariables.font.size.sm};
 `;
 
+const StyledExpandedContent = styled.div`
+  background-color: ${() => themeCssVariables.background.secondary};
+  padding: 0 ${() => themeCssVariables.spacing[4]}
+    ${() => themeCssVariables.spacing[4]};
+`;
+
 const StyledRadioContainer = styled.span`
   align-items: center;
   display: flex;
@@ -43,6 +50,7 @@ export type SettingsRadioCardOption<TValue extends string> = {
   cardMedia: ReactNode;
   title: string;
   description: string;
+  cardContentExpanded?: ReactNode;
 };
 
 type SettingsRadioCardProps<TValue extends string> = {
@@ -85,6 +93,12 @@ export const SettingsRadioCard = <TValue extends string>({
                 />
               </StyledRadioContainer>
             </StyledOptionRow>
+            {option.value === value &&
+              isDefined(option.cardContentExpanded) && (
+                <StyledExpandedContent>
+                  {option.cardContentExpanded}
+                </StyledExpandedContent>
+              )}
             {index < options.length - 1 && <Separator />}
           </Fragment>
         );

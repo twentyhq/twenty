@@ -8,13 +8,20 @@ const VALID_UUID = '20202020-b001-4b01-8b01-c0aba11c0001';
 const OTHER_VALID_UUID = '20202020-b002-4b02-8b02-c0aba11c0002';
 
 const buildFlatNavigationMenuItem = (
-  overrides: Partial<UniversalFlatNavigationMenuItem>,
+  overrides: Omit<
+    Partial<UniversalFlatNavigationMenuItem>,
+    'nativePageKey' | 'builtInSectionKey'
+  > & {
+    nativePageKey?: string | null;
+    builtInSectionKey?: string | null;
+  },
 ): UniversalFlatNavigationMenuItem =>
   ({
     universalIdentifier: VALID_UUID,
     name: null,
     link: null,
     nativePageKey: null,
+    builtInSectionKey: null,
     icon: null,
     color: null,
     position: 0,
@@ -46,6 +53,14 @@ describe('validateNavigationMenuItemTypeRequiredProperties', () => {
     {
       type: NavigationMenuItemType.FOLDER,
       expectedMessages: ['A name is required for FOLDER type'],
+    },
+    {
+      type: NavigationMenuItemType.TAB,
+      expectedMessages: ['A name is required for TAB type'],
+    },
+    {
+      type: NavigationMenuItemType.SECTION,
+      expectedMessages: ['A name is required for SECTION type'],
     },
     {
       type: NavigationMenuItemType.OBJECT,
@@ -111,6 +126,14 @@ describe('validateNavigationMenuItemTypeRequiredProperties', () => {
       overrides: { name: 'My folder' },
     },
     {
+      type: NavigationMenuItemType.TAB,
+      overrides: { name: 'My tab' },
+    },
+    {
+      type: NavigationMenuItemType.SECTION,
+      overrides: { name: 'My section' },
+    },
+    {
       type: NavigationMenuItemType.OBJECT,
       overrides: { targetObjectMetadataUniversalIdentifier: VALID_UUID },
     },
@@ -167,8 +190,7 @@ describe('validateNavigationMenuItemTypeRequiredProperties', () => {
     const errors = validateNavigationMenuItemTypeRequiredProperties({
       flatNavigationMenuItem: buildFlatNavigationMenuItem({
         type: NavigationMenuItemType.NATIVE_PAGE,
-        nativePageKey:
-          'settings' as UniversalFlatNavigationMenuItem['nativePageKey'],
+        nativePageKey: 'settings',
       }),
     });
 
@@ -176,6 +198,87 @@ describe('validateNavigationMenuItemTypeRequiredProperties', () => {
       'A valid nativePageKey is required for NATIVE_PAGE type',
     ]);
   });
+
+  it('should accept a built-in section without a name', () => {
+    expect(
+      validateNavigationMenuItemTypeRequiredProperties({
+        flatNavigationMenuItem: buildFlatNavigationMenuItem({
+          type: NavigationMenuItemType.SECTION,
+          builtInSectionKey: 'favorites',
+        }),
+      }),
+    ).toEqual([]);
+  });
+
+  it('should report an error when the built-in section key is unknown', () => {
+    const errors = validateNavigationMenuItemTypeRequiredProperties({
+      flatNavigationMenuItem: buildFlatNavigationMenuItem({
+        type: NavigationMenuItemType.SECTION,
+        builtInSectionKey: 'unknown',
+      }),
+    });
+
+    expect(errors.map(({ message }) => message)).toEqual([
+      'A valid builtInSectionKey is required for a built-in SECTION',
+    ]);
+  });
+
+  it('should report an error when a built-in section key is set on another type', () => {
+    const errors = validateNavigationMenuItemTypeRequiredProperties({
+      flatNavigationMenuItem: buildFlatNavigationMenuItem({
+        type: NavigationMenuItemType.FOLDER,
+        name: 'Folder',
+        builtInSectionKey: 'favorites',
+      }),
+    });
+
+    expect(errors.map(({ message }) => message)).toEqual([
+      'A builtInSectionKey is only allowed on SECTION type',
+    ]);
+  });
+
+  it('should accept a visible item limit on a section', () => {
+    expect(
+      validateNavigationMenuItemTypeRequiredProperties({
+        flatNavigationMenuItem: buildFlatNavigationMenuItem({
+          type: NavigationMenuItemType.SECTION,
+          name: 'Section',
+          visibleItemLimit: 5,
+        }),
+      }),
+    ).toEqual([]);
+  });
+
+  it('should report an error when a visible item limit is set on another type', () => {
+    const errors = validateNavigationMenuItemTypeRequiredProperties({
+      flatNavigationMenuItem: buildFlatNavigationMenuItem({
+        type: NavigationMenuItemType.FOLDER,
+        name: 'Folder',
+        visibleItemLimit: 5,
+      }),
+    });
+
+    expect(errors.map(({ message }) => message)).toEqual([
+      'A visibleItemLimit is only allowed on SECTION type',
+    ]);
+  });
+
+  it.each([0, 101, 2.5])(
+    'should report an error when the visible item limit is %s',
+    (visibleItemLimit) => {
+      const errors = validateNavigationMenuItemTypeRequiredProperties({
+        flatNavigationMenuItem: buildFlatNavigationMenuItem({
+          type: NavigationMenuItemType.SECTION,
+          name: 'Section',
+          visibleItemLimit,
+        }),
+      });
+
+      expect(errors.map(({ message }) => message)).toEqual([
+        'A visibleItemLimit must be an integer between 1 and 100',
+      ]);
+    },
+  );
 
   it('should return an error when type is unknown', () => {
     const errors = validateNavigationMenuItemTypeRequiredProperties({

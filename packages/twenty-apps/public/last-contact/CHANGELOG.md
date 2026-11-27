@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.12.0
+
+- Add an "Add columns" button to the app settings. It opens Ask AI with a prefilled prompt to show the last-contact columns on the All People, All Companies and All Opportunities views, skipping any of those views that do not exist. Companies and Opportunities get Last contact and Last contact item; People get Last contact, Last outbound, Last inbound, Last contact by, Last email and Last meeting.
+- Warn on the app settings page when one of those views, as owned by the workspace, hides a last-contact column, with a button to the settings tab. The warning about missing synced emails and meetings still takes priority.
+- Add a "Hide suggestion" button next to "Add columns" that stops this warning for the whole workspace. The settings tab shows "Add columns" while some columns are missing, and "Hide suggestion" until the warning is hidden.
+- Give the settings tab the `settings` slug so links can open it directly.
+- Require Twenty 2.60.0 or later, and use twenty-sdk and twenty-client-sdk 2.60.0.
+
 ## 1.11.0
 
 - Ignore draft emails. A draft linked to a person was counted as a contact, both when its participant was linked and in the backfill, so writing an email without sending it moved the person's last contact.

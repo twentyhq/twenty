@@ -1,0 +1,103 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`View Sort read should succeed should find a view sort among all view sorts 1`] = `
+{
+  "createdAt": Any<String>,
+  "direction": "ASC",
+  "fieldMetadataId": Any<String>,
+  "id": Any<String>,
+  "relationTargetFieldMetadataId": null,
+  "subFieldName": null,
+  "updatedAt": Any<String>,
+  "viewId": Any<String>,
+  "workspaceId": Any<String>,
+}
+`;
+
+exports[`View Sort read should succeed should find a view sort among the view sorts of its view 1`] = `
+{
+  "createdAt": Any<String>,
+  "direction": "ASC",
+  "fieldMetadataId": Any<String>,
+  "id": Any<String>,
+  "relationTargetFieldMetadataId": null,
+  "subFieldName": null,
+  "updatedAt": Any<String>,
+  "viewId": Any<String>,
+  "workspaceId": Any<String>,
+}
+`;
+
+exports[`View Sort read should succeed should find a view sort by id 1`] = `
+{
+  "createdAt": Any<String>,
+  "direction": "ASC",
+  "fieldMetadataId": Any<String>,
+  "id": Any<String>,
+  "relationTargetFieldMetadataId": null,
+  "subFieldName": null,
+  "updatedAt": Any<String>,
+  "viewId": Any<String>,
+  "workspaceId": Any<String>,
+}
+`;
+
+exports[`View Sort read should succeed should return a view sort on GET /metadata/viewSorts 1`] = `
+{
+  "applicationId": Any<String>,
+  "applicationUniversalIdentifier": Any<String>,
+  "createdAt": Any<String>,
+  "direction": "ASC",
+  "fieldMetadataId": Any<String>,
+  "fieldMetadataUniversalIdentifier": Any<String>,
+  "id": Any<String>,
+  "relationTargetFieldMetadataId": null,
+  "relationTargetFieldMetadataUniversalIdentifier": null,
+  "subFieldName": null,
+  "universalIdentifier": Any<String>,
+  "updatedAt": Any<String>,
+  "viewId": Any<String>,
+  "viewUniversalIdentifier": Any<String>,
+  "workspaceId": Any<String>,
+}
+`;
+
+exports[`View Sort read should succeed should return a view sort on GET /metadata/viewSorts/:id 1`] = `
+{
+  "applicationId": Any<String>,
+  "applicationUniversalIdentifier": Any<String>,
+  "createdAt": Any<String>,
+  "direction": "ASC",
+  "fieldMetadataId": Any<String>,
+  "fieldMetadataUniversalIdentifier": Any<String>,
+  "id": Any<String>,
+  "relationTargetFieldMetadataId": null,
+  "relationTargetFieldMetadataUniversalIdentifier": null,
+  "subFieldName": null,
+  "universalIdentifier": Any<String>,
+  "updatedAt": Any<String>,
+  "viewId": Any<String>,
+  "viewUniversalIdentifier": Any<String>,
+  "workspaceId": Any<String>,
+}
+`;
+
+exports[`View Sort read should succeed should return a view sort on GET /metadata/viewSorts?viewId= 1`] = `
+{
+  "applicationId": Any<String>,
+  "applicationUniversalIdentifier": Any<String>,
+  "createdAt": Any<String>,
+  "direction": "ASC",
+  "fieldMetadataId": Any<String>,
+  "fieldMetadataUniversalIdentifier": Any<String>,
+  "id": Any<String>,
+  "relationTargetFieldMetadataId": null,
+  "relationTargetFieldMetadataUniversalIdentifier": null,
+  "subFieldName": null,
+  "universalIdentifier": Any<String>,
+  "updatedAt": Any<String>,
+  "viewId": Any<String>,
+  "viewUniversalIdentifier": Any<String>,
+  "workspaceId": Any<String>,
+}
+`;

@@ -6,19 +6,19 @@ import { isDefined, isNonEmptyArray, isValidUuid } from 'twenty-shared/utils';
 
 import { INBOX_CHANNEL_THREAD_LIST_PAGE_SIZE } from '@/inbox/constants/InboxChannelThreadListPageSize';
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
-import { useAddAiChatThreadParticipants } from '@/ai/hooks/useAddAiChatThreadParticipants';
-import { useCaptureAiChatSession } from '@/ai/hooks/useCaptureAiChatSession';
-import { useFetchAiChatThreadsPage } from '@/ai/hooks/useFetchAiChatThreadsPage';
-import { useRefreshAiChatThreadPermissions } from '@/ai/hooks/useRefreshAiChatThreadPermissions';
+import { useAddAiChatThreadParticipants } from '@/ai-chat/threads/hooks/useAddAiChatThreadParticipants';
+import { useCaptureInboxSession } from '@/inbox/hooks/useCaptureInboxSession';
+import { useFetchAiChatThreadsPage } from '@/ai-chat/threads/hooks/useFetchAiChatThreadsPage';
+import { useRefreshAiChatThreadPermissions } from '@/ai-chat/threads/hooks/useRefreshAiChatThreadPermissions';
 import { inboxThreadListFamilyState } from '@/inbox/states/inboxThreadListFamilyState';
 import { inboxThreadListLoadCountFamilyState } from '@/inbox/states/inboxThreadListLoadCountFamilyState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { getCurrentAiChatPageThreadId } from '@/ai-chat/utils/getCurrentAiChatPageThreadId';
 import { inboxFavoriteThreadsSelector } from '@/inbox/states/selectors/inboxFavoriteThreadsSelector';
-import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/aiChatThreadRecordFamilySelector';
+import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
 import { type InboxThreadListSource } from '@/inbox/types/InboxThreadListSource';
-import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 import { getInboxThreadListSourceKey } from '@/inbox/utils/getInboxThreadListSourceKey';
-import { mergeLoadedAiChatThread } from '@/ai/utils/mergeLoadedAiChatThread';
+import { mergeLoadedAiChatThread } from '@/ai-chat/threads/utils/mergeLoadedAiChatThread';
 import { mergeInboxThreadListIds } from '@/inbox/utils/mergeInboxThreadListIds';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
@@ -47,7 +47,7 @@ export const useLoadInboxThreadList = () => {
     useRefreshAiChatThreadPermissions();
   const { addAiChatThreadParticipants } = useAddAiChatThreadParticipants();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
-  const { captureAiChatSession } = useCaptureAiChatSession();
+  const { captureInboxSession } = useCaptureInboxSession();
 
   const fetchThreadsByIds = useCallback(
     async (
@@ -192,7 +192,7 @@ export const useLoadInboxThreadList = () => {
         return undefined;
       }
 
-      const { isSameSession } = captureAiChatSession();
+      const { isSameSession } = captureInboxSession();
       const loadCount = store.get(loadCountAtom) + (isFetchMore ? 0 : 1);
 
       store.set(loadCountAtom, loadCount);
@@ -225,7 +225,7 @@ export const useLoadInboxThreadList = () => {
         return undefined;
       }
 
-      const selectedThreadId = store.get(currentAiChatThreadState.atom);
+      const selectedThreadId = getCurrentAiChatPageThreadId(store);
 
       await refreshAiChatThreadPermissions([
         ...page.threadIds,
@@ -289,7 +289,7 @@ export const useLoadInboxThreadList = () => {
     },
     [
       addAiChatThreadParticipants,
-      captureAiChatSession,
+      captureInboxSession,
       fetchListPage,
       fetchThreadsByIds,
       refreshAiChatThreadPermissions,

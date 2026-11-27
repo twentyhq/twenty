@@ -82,4 +82,32 @@ describe('toMicrosoftEventInput', () => {
     expect(event.isOnlineMeeting).toBe(true);
     expect(event.onlineMeetingProvider).toBe('teamsForBusiness');
   });
+
+  it('maps a weekly recurrence to a Graph pattern and range', () => {
+    const event = toMicrosoftEventInput({
+      ...baseInput,
+      recurrence: {
+        frequency: 'WEEKLY',
+        interval: 2,
+        daysOfWeek: ['WEDNESDAY', 'FRIDAY'],
+        firstOccurrenceDate: '2026-07-01',
+        endDate: '2026-12-31',
+      },
+    });
+
+    expect(event.recurrence).toEqual({
+      pattern: {
+        type: 'weekly',
+        interval: 2,
+        daysOfWeek: ['wednesday', 'friday'],
+        firstDayOfWeek: 'monday',
+      },
+      range: {
+        type: 'endDate',
+        startDate: '2026-07-01',
+        endDate: '2026-12-31',
+        recurrenceTimeZone: 'America/New_York',
+      },
+    });
+  });
 });

@@ -1,6 +1,9 @@
-import { Field, HideField, ObjectType } from '@nestjs/graphql';
+import { Field, HideField, Int, ObjectType } from '@nestjs/graphql';
 
-import { type NativePageKey } from 'twenty-shared/types';
+import {
+  type BuiltInSectionKey,
+  type NativePageKey,
+} from 'twenty-shared/types';
 import {
   IsDateString,
   IsNotEmpty,
@@ -60,6 +63,14 @@ export class NavigationMenuItemDTO {
 
   @IsOptional()
   @Field(() => String, { nullable: true })
+  builtInSectionKey?: BuiltInSectionKey | null;
+
+  @IsOptional()
+  @Field(() => Int, { nullable: true })
+  visibleItemLimit?: number | null;
+
+  @IsOptional()
+  @Field(() => String, { nullable: true })
   icon?: string | null;
 
   @IsOptional()
@@ -110,6 +121,12 @@ export class NavigationMenuItemDTO {
 
   @Field(() => UUIDScalarType, { nullable: true })
   applicationId?: string;
+
+  @Field(() => UUIDScalarType, { nullable: true })
+  universalIdentifier?: string;
+
+  @Field(() => Boolean, { nullable: false })
+  isActive: boolean;
 
   @IsDateString()
   @Field()

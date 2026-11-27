@@ -35,7 +35,7 @@ export class StripeCustomerService {
     workspaceId: string,
   ) {
     await this.stripe.customers.update(stripeCustomerId, {
-      metadata: { workspaceId: workspaceId },
+      metadata: { workspaceId },
     });
   }
 
@@ -101,15 +101,15 @@ export class StripeCustomerService {
     });
   }
 
-  async ensureDefaultPaymentMethod(stripeCustomerId: string): Promise<void> {
+  async ensureDefaultPaymentMethod(stripeCustomerId: string): Promise<boolean> {
     const customer = await this.stripe.customers.retrieve(stripeCustomerId);
 
     if ('deleted' in customer && customer.deleted === true) {
-      return;
+      return false;
     }
 
     if (isDefined(customer.invoice_settings?.default_payment_method)) {
-      return;
+      return true;
     }
 
     const { data: paymentMethods } =
@@ -119,12 +119,14 @@ export class StripeCustomerService {
     const paymentMethodId = paymentMethods[0]?.id;
 
     if (!isDefined(paymentMethodId)) {
-      return;
+      return false;
     }
 
     await this.stripe.customers.update(stripeCustomerId, {
       invoice_settings: { default_payment_method: paymentMethodId },
     });
+
+    return true;
   }
 
   async setDefaultPaymentMethod({
@@ -163,6 +165,7 @@ export class StripeCustomerService {
 
     await this.billingCustomerRepository.insert(workspaceId, {
       stripeCustomerId: customer.id,
+      stripeCustomerEmail: customer.email,
       hasPaymentMethod: false,
     });
 

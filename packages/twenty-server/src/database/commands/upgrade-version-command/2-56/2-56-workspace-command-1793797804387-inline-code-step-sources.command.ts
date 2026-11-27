@@ -1,7 +1,7 @@
 import { isNonEmptyString, isUndefined } from '@sniptt/guards';
 import chunk from 'lodash.chunk';
 import { Command } from 'nest-commander';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { CODE_STEP_SOURCE_MAX_LENGTH } from 'twenty-shared/workflow';
@@ -83,7 +83,7 @@ export class InlineCodeStepSourcesCommand extends ProvisionedWorkspaceCommandRun
         dataSource,
         workspaceId,
         objectUniversalIdentifier:
-          STANDARD_OBJECTS.workflowVersion.universalIdentifier,
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowVersion,
         tableName: `${schemaName}."workflowVersion"`,
       })
     ) {

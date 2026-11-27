@@ -8,7 +8,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { Link } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui/primitives/data-display';
+import { Avatar, Tag } from 'twenty-ui/primitives/data-display';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type MarketplaceApp } from '~/generated-metadata/graphql';
@@ -26,6 +26,7 @@ const StyledApplicationCardContent = styled(StyledSettingsCardContent)`
 `;
 
 const StyledTextColumn = styled.div`
+  flex: 1;
   min-width: 0;
 `;
 
@@ -94,6 +95,7 @@ export const SettingsAvailableApplicationCard = ({
             <StyledAuthor>{t`by ${author}`}</StyledAuthor>
           )}
         </StyledTextColumn>
+        {application.hasMcpServers && <Tag color="gray">{t`MCP`}</Tag>}
       </StyledApplicationCardContent>
     </Card.Root>
   );

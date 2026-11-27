@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
+import { BUNDLED_APPLICATIONS } from 'src/engine/core-modules/application/application-bundled/constants/bundled-applications.constant';
 import {
   MarketplaceService,
   type RegistryPackageInfo,
@@ -30,9 +31,24 @@ export class MarketplaceCatalogSyncService {
   ) {}
 
   async syncCatalog(): Promise<void> {
+    await this.syncBundledApps();
     await this.syncRegistryApps();
 
     this.logger.log('Marketplace catalog sync completed');
+  }
+
+  private async syncBundledApps(): Promise<void> {
+    for (const bundledApplication of BUNDLED_APPLICATIONS) {
+      try {
+        await this.applicationRegistrationService.upsertBundled(
+          bundledApplication,
+        );
+      } catch (error) {
+        this.logger.error(
+          `Failed to sync bundled app "${bundledApplication.manifest.application.displayName}": ${error instanceof Error ? error.message : String(error)}`,
+        );
+      }
+    }
   }
 
   private async syncRegistryApps(): Promise<void> {

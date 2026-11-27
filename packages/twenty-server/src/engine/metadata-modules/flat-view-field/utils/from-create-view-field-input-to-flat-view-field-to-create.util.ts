@@ -1,10 +1,15 @@
-import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'twenty-shared/utils';
+import {
+  isDefined,
+  normalizeViewFieldLabel,
+  trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
+} from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
 import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/metadata-modules/flat-view-field/constants/default-view-field-size.constant';
+import { fromViewFieldRelationScopeToUniversalRelationScope } from 'src/engine/metadata-modules/flat-view-field/utils/from-view-field-relation-scope-to-universal-relation-scope.util';
 import { type CreateViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/create-view-field.input';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
 
@@ -30,6 +35,7 @@ export const fromCreateViewFieldInputToFlatViewFieldToCreate = ({
     viewId,
     viewFieldGroupId,
     relationTargetFieldMetadataId,
+    relationScope,
     ...createViewFieldInput
   } = trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
     rawCreateViewFieldInput,
@@ -84,6 +90,14 @@ export const fromCreateViewFieldInputToFlatViewFieldToCreate = ({
     universalOverrides: null,
     viewFieldGroupUniversalIdentifier,
     relationTargetFieldMetadataUniversalIdentifier,
+    universalRelationScope: isDefined(relationScope)
+      ? fromViewFieldRelationScopeToUniversalRelationScope({
+          relationScope,
+          fieldMetadataUniversalIdentifierById:
+            flatFieldMetadataMaps.universalIdentifierById,
+        })
+      : null,
+    label: normalizeViewFieldLabel(createViewFieldInput.label ?? null),
     applicationUniversalIdentifier: flatApplication.universalIdentifier,
   };
 };

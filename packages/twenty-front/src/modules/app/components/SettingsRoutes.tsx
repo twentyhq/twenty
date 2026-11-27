@@ -22,7 +22,10 @@ import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLo
 import { SettingPublicDomain } from '@/settings/domains/components/SettingPublicDomain';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 
 const SettingsGraphQLPlayground = lazy(() =>
   import('~/pages/settings/developers/playground/SettingsGraphQLPlayground').then(
@@ -572,6 +575,18 @@ const SettingsDevelopersWebhookDetail = lazy(() =>
   ),
 );
 
+const SettingsAiMcpServerNew = lazy(() =>
+  import('~/pages/settings/ai/SettingsAiMcpServerNew').then((module) => ({
+    default: module.SettingsAiMcpServerNew,
+  })),
+);
+
+const SettingsAiMcpServerDetail = lazy(() =>
+  import('~/pages/settings/ai/SettingsAiMcpServerDetail').then((module) => ({
+    default: module.SettingsAiMcpServerDetail,
+  })),
+);
+
 const SettingsObjectNewFieldSelect = lazy(() =>
   import('~/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect').then(
     (module) => ({
@@ -772,20 +787,10 @@ const SettingsRoleEdit = lazy(() =>
   })),
 );
 
-const SettingsRoleObjectLevel = lazy(() =>
-  import('~/pages/settings/members/roles/SettingsRoleObjectLevel').then(
-    (module) => ({
-      default: module.SettingsRoleObjectLevel,
-    }),
-  ),
-);
-
-const SettingsRoleAddObjectLevel = lazy(() =>
-  import('~/pages/settings/members/roles/SettingsRoleAddObjectLevel').then(
-    (module) => ({
-      default: module.SettingsRoleAddObjectLevel,
-    }),
-  ),
+const SettingsRoleRule = lazy(() =>
+  import('~/pages/settings/members/roles/SettingsRoleRule').then((module) => ({
+    default: module.SettingsRoleRule,
+  })),
 );
 
 type CreateSettingsRouteObjectsArgs = {
@@ -911,11 +916,6 @@ const createSettingsRouteElements = ({
         path={SettingsPath.WorkspaceBlocklist}
         element={<SettingsWorkspaceBlocklist />}
       />
-      <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
-      <Route
-        path={SettingsPath.BillingPlans}
-        element={<SettingsBillingPlans />}
-      />
       <Route path={SettingsPath.Usage} element={<SettingsUsage />} />
       <Route
         path={SettingsPath.UsageUserDetail}
@@ -954,6 +954,19 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.LegalDpaNew}
         element={<SettingsLegalDpaNew />}
+      />
+    </Route>
+    <Route
+      element={
+        <SettingsProtectedRouteWrapper
+          settingsPermission={PermissionFlagType.BILLING}
+        />
+      }
+    >
+      <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
+      <Route
+        path={SettingsPath.BillingPlans}
+        element={<SettingsBillingPlans />}
       />
     </Route>
     <Route
@@ -1113,13 +1126,8 @@ const createSettingsRouteElements = ({
         handle={MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE}
       />
       <Route
-        path={SettingsPath.RoleObjectLevel}
-        element={<SettingsRoleObjectLevel />}
-        handle={MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE}
-      />
-      <Route
-        path={SettingsPath.RoleAddObjectLevel}
-        element={<SettingsRoleAddObjectLevel />}
+        path={SettingsPath.RoleRule}
+        element={<SettingsRoleRule />}
         handle={MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE}
       />
     </Route>
@@ -1178,6 +1186,31 @@ const createSettingsRouteElements = ({
         path={SettingsPath.WebhookDetail}
         element={<SettingsDevelopersWebhookDetail />}
       />
+    </Route>
+    <Route
+      element={
+        <SettingsProtectedRouteWrapper
+          settingsPermission={PermissionFlagType.AI_SETTINGS}
+          requiredFeatureFlag={FeatureFlagKey.IS_MCP_SERVERS_ENABLED}
+        />
+      }
+    >
+      <Route
+        element={
+          <SettingsProtectedRouteWrapper
+            settingsPermission={PermissionFlagType.API_KEYS_AND_WEBHOOKS}
+          />
+        }
+      >
+        <Route
+          path={SettingsPath.AiNewMcpServer}
+          element={<SettingsAiMcpServerNew />}
+        />
+        <Route
+          path={SettingsPath.AiMcpServerDetail}
+          element={<SettingsAiMcpServerDetail />}
+        />
+      </Route>
     </Route>
 
     <Route

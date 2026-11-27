@@ -16,6 +16,8 @@ Folosește **URL-ul spațiului de lucru** (URL-ul pe care îl folosești pentru 
 | **Cloud**            | `https://{your-workspace-url}/mcp` (de ex. `https://mycompany.twenty.com/mcp`) |
 | **Găzduire proprie** | `https://{your-domain}/mcp`                                                    |
 
+Endpointul utilizează protocolul MCP `2026-07-28` și revizuirile anterioare până la `2024-11-05` prin HTTP streamabil. Clienții pe `2026-07-28` apelează `server/discover` și trimit fiecare solicitare separat; clienții mai vechi încep cu `initialize`, ca înainte.
+
 ## Metode de autentificare
 
 Ai două moduri de a-ți autentifica clientul MCP: **OAuth** (recomandat) sau **Cheie API**.
@@ -106,19 +108,24 @@ Odată conectat, serverul MCP listează aceleași instrumente în fiecare spați
 * **Instrumentele pentru înregistrări** primesc obiectul ca argument: `find_records`, `group_records`, `create_records`, `update_record`, `update_records`, `upsert_records`, `delete_records` și `merge_records`. De exemplu, `find_records({ objectName: "company", select: ["name"] })`.
 * **Instrumentele de descoperire** îi indică asistentului ce conține spațiul dvs. de lucru: `list_object_metadata_names` pentru obiecte și `get_field_metadata` pentru câmpurile unui obiect.
 * **Instrumente de metadate** pentru citirea și modificarea modelului de date, cum ar fi `get_object_metadata` sau `create_field_metadata`.
-* **Instrumentele meta** oferă acces la orice altceva, inclusiv la Workflows, vizualizări, tablouri de bord, e-mail și funcțiile aplicațiilor instalate: `get_tool_catalog` pentru a explora o categorie, `learn_tools` pentru schemele de intrare și `execute_tool` pentru a rula un instrument.
+* **Toate celelalte instrumente integrate**, fiecare enumerat cu schema sa de intrare: fluxuri de lucru, panouri de control, vizualizări, navigare, webhookuri, roluri, agenți, componente front-end și instrumente pentru e-mail, calendar și fișiere.
+* **Competențe și ajutor**: `list_skills`, `load_skills` și `search_help_center`.
 
-Deoarece lista nu depinde de obiectele dvs., rămâne validă pentru clienții care o stochează, cum ar fi aplicațiile publicate într-un director.
+Deoarece lista nu depinde de obiectele dvs., rămâne validă pentru clienții care o stochează, cum ar fi aplicațiile publicate într-un director. Instrumentele dintre acestea pe care le vedeți depind în continuare de rolul dvs.
+
+Funcțiile aplicațiilor instalate și instrumentele serverelor MCP pe care le-ați conectat la Twenty diferă în funcție de spațiul de lucru, așa că această listă nu le include. Utilizați modul direct pentru a ajunge la ele.
+
+Lista conține aproximativ o sută de definiții de instrumente. Clienții care încarcă instrumente la cerere, așa cum fac implicit Claude, Claude Code, Codex și ChatGPT, gestionează bine acest lucru. Un client care încarcă de la început fiecare definiție de instrument poate utiliza o mare parte din contextul său: conectați-l în schimb la modul meta.
 
 ### Mod direct
 
-Conectați-vă la `/mcp?mode=direct` pentru a lista în schimb câte un instrument pentru fiecare obiect și operațiune, fiecare cu schema de intrare exactă a obiectului respectiv: `find_many_companies`, `create_one_person` și câteva sute în plus. Instrumentele pentru obiectele create în timp ce sunteți conectat apar după reconectare.
+Conectați-vă la `/mcp?mode=direct` pentru a lista în schimb câte un instrument pentru fiecare obiect și operațiune, fiecare cu schema de intrare exactă a obiectului respectiv: `find_many_companies`, `create_one_person` și câteva sute în plus. Modul direct listează și celelalte instrumente integrate, funcțiile aplicațiilor instalate și instrumentele serverelor MCP conectate. Instrumentele pentru obiectele create în timp ce sunteți conectat apar după reconectare.
 
 Este necesar un client care încarcă instrumente la cerere, așa cum fac implicit Claude, Claude Code, Codex și OpenCode. Un client care încarcă inițial fiecare definiție de instrument, inclusiv Claude Code cu căutarea de instrumente dezactivată, poate rămâne fără context.
 
 ### Modul meta
 
-Conectați-vă la `/mcp?mode=meta` pentru a lista doar câteva instrumente meta:
+Conectați-vă la `/mcp?mode=meta` pentru a lista doar câteva meta-instrumente, care pot accesa fiecare instrument, inclusiv funcțiile aplicațiilor și serverele MCP conectate:
 
 1. **`learn_tools`** — obține schema de intrare pentru instrumente specifice
 2. **`execute_tool`** — rulează un instrument

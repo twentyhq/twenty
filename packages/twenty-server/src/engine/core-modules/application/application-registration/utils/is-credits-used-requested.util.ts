@@ -1,12 +1,8 @@
 import { type GraphQLResolveInfo } from 'graphql';
-import { isDefined } from 'twenty-shared/utils';
 
-import { getResolverSelectedFields } from 'src/engine/api/graphql/workspace-resolver-builder/utils/get-resolver-selected-fields.util';
+import { getGraphqlFieldSelections } from 'src/engine/api/graphql/workspace-resolver-builder/utils/get-graphql-field-selections.util';
 
-export const isCreditsUsedRequested = (info: GraphQLResolveInfo): boolean => {
-  const fields = getResolverSelectedFields(info);
-
-  return (
-    isDefined(fields.creditsUsedBreakdown) || isDefined(fields.totalCreditsUsed)
+export const isCreditsUsedRequested = (info: GraphQLResolveInfo): boolean =>
+  getGraphqlFieldSelections(info).some(({ fieldName }) =>
+    ['creditsUsedBreakdown', 'totalCreditsUsed'].includes(fieldName),
   );
-};

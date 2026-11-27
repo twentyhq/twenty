@@ -2,11 +2,9 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FilesFieldService } from 'src/engine/core-modules/file/files-field/services/files-field.service';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -30,7 +28,6 @@ export class SentMessagePersistenceService {
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
     private readonly saveMessagesAndEnqueueContactCreationService: MessagingSaveMessagesAndEnqueueContactCreationService,
     private readonly filesFieldService: FilesFieldService,
-    private readonly featureFlagService: FeatureFlagService,
     @InjectWorkspaceScopedRepository(FileEntity)
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
   ) {}
@@ -107,16 +104,6 @@ export class SentMessagePersistenceService {
     MessageAttachmentFile[]
   > {
     if (!isNonEmptyArray(attachments)) {
-      return [];
-    }
-
-    const isMessageAttachmentEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_MESSAGE_ATTACHMENT_ENABLED,
-        workspaceId,
-      );
-
-    if (!isMessageAttachmentEnabled) {
       return [];
     }
 

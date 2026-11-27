@@ -1,6 +1,4 @@
 import {
-  type LegacyRowLevelPermissionPredicateGroupManifest,
-  type LegacyRowLevelPermissionPredicateManifest,
   type RowLevelPermissionRuleManifest,
   type RowLevelPermissionRulePredicateGroupManifest,
   type RowLevelPermissionRulePredicateManifest,
@@ -10,11 +8,25 @@ export type RowLevelPermissionRuleLink = {
   rowLevelPermissionRuleUniversalIdentifier: string;
 };
 
+export type FlattenedRowLevelPermissionPredicateGroupManifest = Omit<
+  RowLevelPermissionRulePredicateGroupManifest,
+  'predicates' | 'predicateGroups'
+> &
+  RowLevelPermissionRuleLink & {
+    objectUniversalIdentifier: string;
+    parentPredicateGroupUniversalIdentifier?: string | null;
+  };
+
+export type FlattenedRowLevelPermissionPredicateManifest =
+  RowLevelPermissionRulePredicateManifest &
+    RowLevelPermissionRuleLink & {
+      objectUniversalIdentifier: string;
+      predicateGroupUniversalIdentifier?: string | null;
+    };
+
 export type FlattenedRowLevelPermissionRuleManifests = {
-  predicateGroups: (LegacyRowLevelPermissionPredicateGroupManifest &
-    RowLevelPermissionRuleLink)[];
-  predicates: (LegacyRowLevelPermissionPredicateManifest &
-    RowLevelPermissionRuleLink)[];
+  predicateGroups: FlattenedRowLevelPermissionPredicateGroupManifest[];
+  predicates: FlattenedRowLevelPermissionPredicateManifest[];
 };
 
 export const flattenRowLevelPermissionRuleManifests = ({

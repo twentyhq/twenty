@@ -2,13 +2,19 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type MutationKind } from 'src/engine/twenty-orm/sql/utils/build-mutation-statement.util';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 
-export const getUpdateEventColumnsToReturn = (
-  columnsToReturn: string[],
-  tableShape: WorkspaceTableShape,
-): string[] =>
-  isDefined(tableShape.columnShapeByColumnName.updatedAt)
+export const getMutationEventColumnsToReturn = ({
+  kind,
+  columnsToReturn,
+  tableShape,
+}: {
+  kind: MutationKind;
+  columnsToReturn: string[];
+  tableShape: Pick<WorkspaceTableShape, 'columnShapeByColumnName'>;
+}): string[] =>
+  kind === 'update' && isDefined(tableShape.columnShapeByColumnName.updatedAt)
     ? [...new Set([...columnsToReturn, 'id', 'updatedAt'])]
     : [...new Set([...columnsToReturn, 'id'])];
 

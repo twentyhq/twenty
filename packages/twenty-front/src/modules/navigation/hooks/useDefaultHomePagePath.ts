@@ -1,7 +1,11 @@
 import { currentUserState } from '@/auth/states/currentUserState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { metadataStoreStatusFamilySelector } from '@/metadata-store/states/metadataStoreStatusFamilySelector';
+import { useNavigationMenuItemsByFolder } from '@/navigation-menu-item/display/folder/hooks/useNavigationMenuItemsByFolder';
 import { useNavigationMenuItemSectionItems } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemSectionItems';
+import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
+import { useSortedNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useSortedNavigationMenuItems';
+import { getHomeNavigationMenuItemsInDisplayOrder } from '@/navigation-menu-item/display/utils/getHomeNavigationMenuItemsInDisplayOrder';
 import { type ObjectPathInfo } from '@/navigation/types/ObjectPathInfo';
 import { getFirstNavigationMenuItemLink } from '@/navigation/utils/getFirstNavigationMenuItemLink';
 import { computeObjectViewTargetIds } from '@/views/utils/computeObjectViewTargetIds';
@@ -14,10 +18,12 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import isEmpty from 'lodash.isempty';
 import { useCallback, useMemo } from 'react';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getAppPath, getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const useDefaultHomePagePath = () => {
   const currentUser = useAtomStateValue(currentUserState);
@@ -38,7 +44,15 @@ export const useDefaultHomePagePath = () => {
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const views = useAtomStateValue(viewsSelector);
-  const navigationMenuItemsInDisplayOrder = useNavigationMenuItemSectionItems();
+  const isCustomizableSidebarEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
+  );
+  const legacyNavigationMenuItemsInDisplayOrder =
+    useNavigationMenuItemSectionItems({ shouldFlattenTopLevelSections: true });
+  const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
+  const { workspaceNavigationMenuItemsSorted } = useSortedNavigationMenuItems();
+  const { workspaceNavigationMenuItemsByFolder } =
+    useNavigationMenuItemsByFolder();
 
   const readableNonSystemObjectMetadataItems = useMemo(
     () =>
@@ -64,6 +78,30 @@ export const useDefaultHomePagePath = () => {
     },
     [views],
   );
+
+  const navigationMenuItemsInDisplayOrder = useMemo(() => {
+    if (!isCustomizableSidebarEnabled) {
+      return legacyNavigationMenuItemsInDisplayOrder;
+    }
+
+    return getHomeNavigationMenuItemsInDisplayOrder({
+      workspaceNavigationMenuItems,
+      workspaceNavigationMenuItemsSorted,
+      workspaceNavigationMenuItemsByFolder,
+      objectMetadataItems,
+      views,
+      objectPermissionsByObjectMetadataId,
+    });
+  }, [
+    isCustomizableSidebarEnabled,
+    legacyNavigationMenuItemsInDisplayOrder,
+    workspaceNavigationMenuItems,
+    workspaceNavigationMenuItemsSorted,
+    workspaceNavigationMenuItemsByFolder,
+    objectMetadataItems,
+    objectPermissionsByObjectMetadataId,
+    views,
+  ]);
 
   const firstNavigationMenuItemLink = useMemo(
     () =>

@@ -14,6 +14,8 @@ type NavigationMenuItemAddDropdownProps = {
   children: ReactElement;
   instanceId?: string;
   section?: NavigationMenuItemSection;
+  // TODO(@thomtrp): remove once IS_CUSTOMIZABLE_SIDEBAR_ENABLED is on for every workspace
+  shouldShowHiddenItems?: boolean;
   onOpen?: () => void;
 } & (
   | { parentId: string; position: number }
@@ -24,6 +26,7 @@ export const NavigationMenuItemAddDropdown = ({
   children,
   instanceId,
   section = 'workspace',
+  shouldShowHiddenItems = false,
   parentId,
   position,
   onOpen,
@@ -60,6 +63,7 @@ export const NavigationMenuItemAddDropdown = ({
       >
         <NavigationMenuItemAddDropdownContent
           section={section}
+          shouldShowHiddenItems={shouldShowHiddenItems}
           dropdownId={dropdownId}
           parentId={parentId}
           position={position}

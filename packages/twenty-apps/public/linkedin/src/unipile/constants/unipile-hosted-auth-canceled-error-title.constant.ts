@@ -1,0 +1,1 @@
+export const UNIPILE_HOSTED_AUTH_CANCELED_ERROR_TITLE = 'Canceled';

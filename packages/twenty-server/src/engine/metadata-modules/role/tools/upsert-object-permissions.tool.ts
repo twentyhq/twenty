@@ -43,6 +43,7 @@ const upsertObjectPermissionsInputSchema = z.object({
 
 @DefineTool({
   name: 'upsert_object_permissions',
+  isDestructive: true,
   category: ToolCategory.ROLE,
   accessPolicy: ROLE_WRITE_ACCESS_POLICY,
   description: `Set per-object permission overrides on a role, e.g. make an object read-only for that role.

@@ -10,16 +10,21 @@ import { getPermissionsPrincipalsActingApplication } from 'src/engine/permission
 import { getPermissionsPrincipalsLimitingRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-limiting-role-ids.util';
 import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/constants/no-role-records-permissions.constant';
 import { computePermissionIntersection } from 'src/engine/permissions/internal/role/utils/compute-permission-intersection.util';
+import { computePermissionUnion } from 'src/engine/permissions/internal/role/utils/compute-permission-union.util';
 import { restrictRecordsPermissionsToDisabledActions } from 'src/engine/permissions/internal/role/utils/restrict-records-permissions-to-disabled-actions.util';
 import { toLimitingRoleRecordsPermissions } from 'src/engine/permissions/internal/role/utils/to-limiting-role-records-permissions.util';
 import { restrictRecordsPermissionsToRuntimeLimitingRole } from 'src/engine/permissions/internal/role/utils/restrict-records-permissions-to-runtime-limiting-role.util';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
+import { type TemporaryChannelWriteAccess } from 'src/engine/permissions/channel-visibility/types/temporary-channel-write-access.type';
+import { findTemporaryChannelWriteAccessRoleIds } from 'src/engine/permissions/channel-visibility/utils/find-temporary-channel-write-access-role-ids.util';
+import { restoreChannelWriteAccess } from 'src/engine/permissions/channel-visibility/utils/restore-channel-write-access.util';
 
 export const computePrincipalsRecordsPermissions = ({
   principals,
   rolesPermissions,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
+  temporaryChannelWriteAccess,
 }: {
   principals: Pick<
     PermissionsPrincipalsWithRolesContext,
@@ -31,10 +36,41 @@ export const computePrincipalsRecordsPermissions = ({
   rolesPermissions: Record<string, RoleRecordsPermissions>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+  temporaryChannelWriteAccess?: TemporaryChannelWriteAccess;
 }): RoleRecordsPermissions => {
   const actingApplication = getPermissionsPrincipalsActingApplication({
     principals,
   });
+
+  // TODO(@charlesBochet): remove after 2026-12-27. Temporary channel write access for admins and API keys, only to unblock customers who reported broken links, merges and deletes
+  const temporaryChannelWriteAccessRoleIds = isDefined(
+    temporaryChannelWriteAccess,
+  )
+    ? findTemporaryChannelWriteAccessRoleIds({
+        mainPrincipal: principals.mainPrincipal,
+        temporaryChannelWriteAccess,
+      })
+    : [];
+
+  const findMainRoleRecordsPermissions = (
+    roleId: string,
+  ): RoleRecordsPermissions | undefined => {
+    const roleRecordsPermissions = rolesPermissions[roleId];
+
+    if (
+      !isDefined(roleRecordsPermissions) ||
+      !isDefined(temporaryChannelWriteAccess) ||
+      !temporaryChannelWriteAccessRoleIds.includes(roleId)
+    ) {
+      return roleRecordsPermissions;
+    }
+
+    return restoreChannelWriteAccess({
+      recordsPermissions: roleRecordsPermissions,
+      objectMetadataIds: temporaryChannelWriteAccess.objectMetadataIds,
+      writeAccess: temporaryChannelWriteAccess.adminWriteAccess,
+    });
+  };
 
   const restrictToDisabledActions = ({
     roleId,
@@ -43,7 +79,9 @@ export const computePrincipalsRecordsPermissions = ({
     roleId: string;
     isLimitingRole: boolean;
   }) => {
-    const roleRecordsPermissions = rolesPermissions[roleId];
+    const roleRecordsPermissions = isLimitingRole
+      ? rolesPermissions[roleId]
+      : findMainRoleRecordsPermissions(roleId);
 
     if (!isDefined(roleRecordsPermissions)) {
       return undefined;
@@ -55,26 +93,31 @@ export const computePrincipalsRecordsPermissions = ({
         : roleRecordsPermissions,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-      actingApplicationId:
-        roleId === actingApplication?.roleId
-          ? actingApplication.applicationId
-          : undefined,
+      actingApplicationId: actingApplication?.roleIds.includes(roleId)
+        ? actingApplication.applicationId
+        : undefined,
     });
   };
 
-  const recordsPermissionsPerRole = [
-    restrictToDisabledActions({
-      roleId: principals.mainPrincipal.roleId,
-      isLimitingRole: false,
-    }),
-    ...getPermissionsPrincipalsLimitingRoleIds(principals).map((roleId) =>
+  const mainRecordsPermissionsPerRole = principals.mainPrincipal.roleIds.map(
+    (roleId) => restrictToDisabledActions({ roleId, isLimitingRole: false }),
+  );
+  const limitingRecordsPermissionsPerRole =
+    getPermissionsPrincipalsLimitingRoleIds(principals).map((roleId) =>
       restrictToDisabledActions({ roleId, isLimitingRole: true }),
-    ),
-  ];
+    );
 
-  if (!recordsPermissionsPerRole.every(isDefined)) {
+  if (
+    !mainRecordsPermissionsPerRole.every(isDefined) ||
+    !limitingRecordsPermissionsPerRole.every(isDefined)
+  ) {
     return NO_ROLE_RECORDS_PERMISSIONS;
   }
+
+  const recordsPermissionsPerRole = [
+    computePermissionUnion(mainRecordsPermissionsPerRole),
+    ...limitingRecordsPermissionsPerRole,
+  ];
 
   const recordsPermissions = computePermissionIntersection(
     recordsPermissionsPerRole,

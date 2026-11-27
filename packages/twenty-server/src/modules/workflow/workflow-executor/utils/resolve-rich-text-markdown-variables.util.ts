@@ -1,7 +1,7 @@
 import { isString } from '@sniptt/guards';
 import { isPlainObject, resolveStringTemplate } from 'twenty-shared/utils';
 
-import { type ObjectMetadataInfo } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import { type ObjectMetadataInfo } from 'src/modules/workflow/common/workspace-services/workflow-metadata-read.workspace-service';
 import { findRichTextFieldNames } from 'src/modules/workflow/workflow-executor/utils/find-rich-text-field-names.util';
 
 // resolveInput would turn a markdown that is exactly one variable into a number or an object

@@ -24,7 +24,7 @@ export const lockAgentChatChannelForThreadWriteOrThrow = async ({
     [buildAgentChatChannelDeletionLockKey({ workspaceId, channelId })],
   );
 
-  if (isLocked !== true) {
+  if (!isLocked) {
     throwAgentChatChannelBusy();
   }
 

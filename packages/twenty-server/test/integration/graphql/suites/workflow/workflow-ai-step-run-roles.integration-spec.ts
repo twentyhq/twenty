@@ -23,7 +23,7 @@ import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/
 import { updateOneRole } from 'test/integration/metadata/suites/role/utils/update-one-role.util';
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
 import { upsertPermissionFlags } from 'test/integration/metadata/suites/role-permission-flag/utils/upsert-permission-flags.util';
-import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
+import { upsertRowLevelPermissionRules } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-rules.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { createScriptedLanguageModel } from 'test/utils/create-scripted-language-model.util';
 import { type AiRunScope } from 'twenty-shared/ai';
@@ -165,21 +165,25 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
       },
     });
 
-  const setMemberRowRule = (predicates: { value: string }[]) =>
-    upsertRowLevelPermissionPredicates({
+  const setMemberRowRule = (predicates: { value: string }[]) => {
+    const memberRowRule = {
+      canReadRecords: true,
+      predicates: predicates.map(({ value }) => ({
+        fieldMetadataId: nameFieldMetadataId,
+        operand: RowLevelPermissionPredicateOperand.CONTAINS,
+        value,
+      })),
+    };
+
+    return upsertRowLevelPermissionRules({
       expectToFail: false,
       input: {
         roleId: memberRoleId,
         objectMetadataId,
-        canReadRecords: true,
-        predicates: predicates.map(({ value }) => ({
-          fieldMetadataId: nameFieldMetadataId,
-          operand: RowLevelPermissionPredicateOperand.CONTAINS,
-          value,
-        })),
-        predicateGroups: [],
+        rules: predicates.length === 0 ? [] : [memberRowRule],
       },
     });
+  };
 
   const setMemberToolAccess = (canAccessAllTools: boolean) =>
     updateOneRole({
@@ -220,11 +224,6 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
       settings: { outputSchema: {} },
       nextStepIds: [step.id],
     };
-    const [{ workspaceWorkflowVersionId }] = await global.testDataSource.query(
-      `SELECT "workspaceWorkflowVersionId" FROM core."workflowVersion" WHERE id = $1`,
-      [coreWorkflowVersionId],
-    );
-
     await global.testDataSource.query(
       `UPDATE core."workflowVersion" SET triggers = $2, steps = $3, status = 'ACTIVE' WHERE id = $1`,
       [
@@ -234,16 +233,8 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
       ],
     );
     await global.testDataSource.query(
-      `UPDATE "${schema}"."workflowVersion" SET trigger = $2, steps = $3, status = 'ACTIVE' WHERE id = $1`,
-      [
-        workspaceWorkflowVersionId,
-        JSON.stringify(trigger),
-        JSON.stringify([step]),
-      ],
-    );
-    await global.testDataSource.query(
-      `UPDATE core.workflow SET "lastPublishedCoreWorkflowVersionId" = $2, "lastPublishedVersionId" = $3 WHERE id = $1`,
-      [coreWorkflowId, coreWorkflowVersionId, workspaceWorkflowVersionId],
+      `UPDATE core.workflow SET "lastPublishedCoreWorkflowVersionId" = $2 WHERE id = $1`,
+      [coreWorkflowId, coreWorkflowVersionId],
     );
 
     return coreWorkflowVersionId;

@@ -1,7 +1,5 @@
 export type VerifiedOAuthClient = {
   name: string;
-  marketplaceAppUniversalIdentifier: string;
-} & (
-  | { registrationUniversalIdentifier: string }
-  | { clientIdMetadataDocumentUrl: string }
-);
+  universalIdentifier: string;
+  clientIdMetadataDocumentUrl: string | null;
+};

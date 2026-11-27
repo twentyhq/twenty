@@ -13,7 +13,7 @@ export const getPermissionsPrincipalsRoleIds = (
   ...new Set(
     [
       principals.limitingPrincipal?.roleId,
-      principals.mainPrincipal.roleId,
+      ...principals.mainPrincipal.roleIds,
       principals.applicationPrincipal.type === 'customApplication'
         ? undefined
         : principals.applicationPrincipal.roleId,

@@ -1,5 +1,11 @@
-import { COMMAND_MENU_ITEM_SECTIONS_IN_DISPLAY_ORDER } from '@/command-menu-item/constants/CommandMenuItemSectionsInDisplayOrder';
+import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
+import { COLLAPSIBLE_COMMAND_MENU_ITEM_SECTIONS } from '@/command-menu-item/constants/CollapsibleCommandMenuItemSections';
 import { COMMAND_MENU_ASK_AI_FALLBACK_ITEM_ID } from '@/command-menu-item/constants/CommandMenuAskAiFallbackItemId';
+import { COMMAND_MENU_ITEM_SECTIONS_IN_DISPLAY_ORDER } from '@/command-menu-item/constants/CommandMenuItemSectionsInDisplayOrder';
+import { COMMAND_MENU_NO_RECORDS_FOUND_ITEM_ID } from '@/command-menu-item/constants/CommandMenuNoRecordsFoundItemId';
+import { COMMAND_MENU_SEARCHING_RECORDS_ITEM_ID } from '@/command-menu-item/constants/CommandMenuSearchingRecordsItemId';
+import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
+import { COMMAND_MENU_SEE_IN_SEARCH_RESULTS_ITEM_ID } from '@/command-menu-item/constants/CommandMenuSeeInSearchResultsItemId';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { CommandMenuAskAiFallbackItem } from '@/command-menu-item/display/components/CommandMenuAskAiFallbackItem';
 import { CommandMenuItemRenderer } from '@/command-menu-item/display/components/CommandMenuItemRenderer';
@@ -7,60 +13,98 @@ import { CommandMenuItemSectionGroup } from '@/command-menu-item/display/compone
 import { useCommandMenuAppActions } from '@/command-menu-item/display/hooks/useCommandMenuAppActions';
 import { useCommandMenuItemCurrentViewSectionContext } from '@/command-menu-item/display/hooks/useCommandMenuItemCurrentViewSectionContext';
 import { useCommandMenuItemObjectSectionContext } from '@/command-menu-item/display/hooks/useCommandMenuItemObjectSectionContext';
-import { useCommandMenuItemWorkspaceSectionContext } from '@/command-menu-item/display/hooks/useCommandMenuItemWorkspaceSectionContext';
 import { useCommandMenuItemSelectionSectionContext } from '@/command-menu-item/display/hooks/useCommandMenuItemSelectionSectionContext';
+import { useCommandMenuItemWorkspaceSectionContext } from '@/command-menu-item/display/hooks/useCommandMenuItemWorkspaceSectionContext';
+import { getCommandMenuDefaultSelectedItemId } from '@/command-menu-item/display/utils/getCommandMenuDefaultSelectedItemId';
+import { getCommandMenuInlineSearchRecordRows } from '@/command-menu-item/display/utils/getCommandMenuInlineSearchRecordRows';
+import { interpolateCommandMenuItemFields } from '@/command-menu-item/display/utils/interpolateCommandMenuItemFields';
 import { type CommandMenuItemSection } from '@/command-menu-item/types/CommandMenuItemSection';
+import { getCommandMenuItemSectionPreview } from '@/command-menu-item/utils/getCommandMenuItemSectionPreview';
 import { groupCommandMenuItems } from '@/command-menu-item/utils/groupCommandMenuItems';
 import { groupCommandMenuItemsBySection } from '@/command-menu-item/utils/groupCommandMenuItemsBySection';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectsCommands } from '@/object-core/commands/components/CoreObjectsCommands';
 import { useCoreObjectsCommands } from '@/object-core/commands/hooks/useCoreObjectsCommands';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useFilterCommandMenuItemsWithSidePanelSearch } from '@/side-panel/pages/root/hooks/useFilterCommandMenuItemsWithSidePanelSearch';
+import { SidePanelSearchRecordItem } from '@/side-panel/pages/search/components/SidePanelSearchRecordItem';
+import { useSidePanelSearchRecords } from '@/side-panel/pages/search/hooks/useSidePanelSearchRecords';
+import { sidePanelSearchObjectFilterState } from '@/side-panel/states/sidePanelSearchObjectFilterState';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useContext, useMemo } from 'react';
+import { useContext, useMemo, useState } from 'react';
+import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconApps,
+  IconArrowRight,
   IconArrowUpRight,
   IconBox,
   IconCheckbox,
   IconCommand,
-  IconLifebuoy,
   IconPlus,
   IconSearch,
+  IconSearchOff,
+  IconSparkles,
   IconTable,
   type IconComponent,
 } from 'twenty-ui/icon';
 import {
   CommandMenuItemAvailabilityType,
+  EngineComponentKey,
+  FeatureFlagKey,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 
-const SECTION_ICONS: Record<CommandMenuItemSection, IconComponent> = {
+type DisplayedCommandMenuItemSection =
+  (typeof COMMAND_MENU_ITEM_SECTIONS_IN_DISPLAY_ORDER)[number];
+
+const SECTION_ICONS: Record<DisplayedCommandMenuItemSection, IconComponent> = {
   SELECTION: IconCheckbox,
   CURRENT_VIEW: IconTable,
   THIS_OBJECT: IconBox,
-  ASK_AND_FIND: IconSearch,
-  CREATE_RECORD: IconPlus,
   WORKSPACE: IconApps,
   GO_TO: IconArrowUpRight,
+  CREATE_RECORD: IconPlus,
   DEVELOPER: IconCommand,
-  FALLBACK: IconLifebuoy,
+  ASK_AI: IconSparkles,
+  SEARCH: IconSearch,
 };
+
+type SectionsToggleState = {
+  search: string;
+  isOpenBySection: Partial<Record<CommandMenuItemSection, boolean>>;
+};
+
+const INITIAL_SECTIONS_TOGGLE_STATE: SectionsToggleState = {
+  search: '',
+  isOpenBySection: {},
+};
+
+const COLLAPSIBLE_SECTIONS: readonly CommandMenuItemSection[] =
+  COLLAPSIBLE_COMMAND_MENU_ITEM_SECTIONS;
+
+const getSectionHeaderItemId = (section: CommandMenuItemSection) =>
+  `command-menu-section-header-${section}`;
 
 export const SidePanelCommandMenuItemDisplayPage = () => {
   const { t } = useLingui();
   const { appActions } = useCommandMenuAppActions();
-  const { closeSidePanelMenu } = useSidePanelMenu();
+  const { closeSidePanelMenu, navigateSidePanelMenu } = useSidePanelMenu();
+  const { objectMetadataItems } = useObjectMetadataItems();
 
   const sidePanelSearch = useAtomStateValue(sidePanelSearchState);
+  const setSidePanelSearchObjectFilter = useSetAtomState(
+    sidePanelSearchObjectFilterState,
+  );
   const { commandMenuItems, commandMenuContextApi } =
     useContext(CommandMenuContext);
 
@@ -79,6 +123,29 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     coreObjectSectionContext ?? metadataObjectSectionContext;
   const workspaceSectionContext = useCommandMenuItemWorkspaceSectionContext();
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
+  const isInlineRecordSearchEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
+  );
+
+  const [sectionsToggleState, setSectionsToggleState] = useState(
+    INITIAL_SECTIONS_TOGGLE_STATE,
+  );
+
+  const {
+    searchResultItems,
+    hasNextPage: hasMoreSearchRecordsThanFetched,
+    loading: isLoadingSearchRecords,
+    isWaitingForDebouncedSearch,
+    error: searchRecordsError,
+  } = useSidePanelSearchRecords({
+    shouldSkip: !isInlineRecordSearchEnabled,
+    shouldSkipEmptySearch: true,
+    shouldIgnoreObjectFilter: true,
+    limit: MAX_SEARCH_RESULTS,
+  });
+
+  const isSearchingRecords =
+    isLoadingSearchRecords || isWaitingForDebouncedSearch;
 
   const { filterCommandMenuItemsWithSidePanelSearch } =
     useFilterCommandMenuItemsWithSidePanelSearch({
@@ -114,6 +181,11 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
 
   const isSearchActive = isNonEmptyString(trimmedSidePanelSearch);
 
+  const shouldDisplayAskAiPrompt = isSearchActive && hasAiPermission;
+
+  const isInlineRecordSearchActive =
+    isSearchActive && isInlineRecordSearchEnabled;
+
   const matchingItems = filterCommandMenuItemsWithSidePanelSearch(
     nonFallbackCommandMenuItems,
   );
@@ -121,7 +193,53 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
   const commandMenuItemsBySection =
     groupCommandMenuItemsBySection(matchingItems);
 
-  const getSectionHeading = (section: CommandMenuItemSection) => {
+  const {
+    inlineSearchResultItems,
+    shouldDisplaySeeInSearchResults,
+    shouldDisplaySearchingRecords,
+    shouldDisplayNoRecordsFound,
+  } = getCommandMenuInlineSearchRecordRows({
+    searchResultItems,
+    isInlineRecordSearchActive,
+    isSearchingRecords,
+  });
+
+  const searchResultsCountLabel = hasMoreSearchRecordsThanFetched
+    ? `${searchResultItems.length}+`
+    : `${searchResultItems.length}`;
+
+  const isSectionOpen = (section: CommandMenuItemSection) => {
+    if (!COLLAPSIBLE_SECTIONS.includes(section)) {
+      return true;
+    }
+
+    const isOpenForSearch =
+      sectionsToggleState.search === trimmedSidePanelSearch
+        ? sectionsToggleState.isOpenBySection[section]
+        : undefined;
+
+    return isOpenForSearch ?? isSearchActive;
+  };
+
+  const setSectionOpen = ({
+    section,
+    isOpen,
+  }: {
+    section: CommandMenuItemSection;
+    isOpen: boolean;
+  }) => {
+    setSectionsToggleState((toggleState) => ({
+      search: trimmedSidePanelSearch,
+      isOpenBySection: {
+        ...(toggleState.search === trimmedSidePanelSearch
+          ? toggleState.isOpenBySection
+          : {}),
+        [section]: isOpen,
+      },
+    }));
+  };
+
+  const getSectionHeading = (section: DisplayedCommandMenuItemSection) => {
     switch (section) {
       case 'SELECTION':
         return t`Selection`;
@@ -129,18 +247,18 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
         return t`View`;
       case 'THIS_OBJECT':
         return isDefined(objectSectionContext) ? t`Object` : t`This object`;
-      case 'ASK_AND_FIND':
-        return t`Ask & find`;
-      case 'CREATE_RECORD':
-        return t`Create record`;
       case 'WORKSPACE':
         return t`Workspace`;
       case 'GO_TO':
         return t`Go to`;
+      case 'CREATE_RECORD':
+        return t`Create record`;
       case 'DEVELOPER':
         return t`Developer`;
-      case 'FALLBACK':
-        return t`Fallback`;
+      case 'ASK_AI':
+        return t`Ask AI`;
+      case 'SEARCH':
+        return t`Search`;
     }
   };
 
@@ -177,103 +295,245 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     return getSectionAppActions(section).map((item) => item.id);
   };
 
-  const hasNoMatchingItems =
-    !matchingItems.length &&
-    appActions.length === 0 &&
-    coreObjectCommandIds.length === 0 &&
-    coreSelectionCommandIds.length === 0;
+  const hasMatchingCommand = COMMAND_MENU_ITEM_SECTIONS_IN_DISPLAY_ORDER.some(
+    (section) =>
+      commandMenuItemsBySection[section].length > 0 ||
+      getSectionExtraItemIds(section).length > 0,
+  );
 
-  const shouldDisplayAskAiFallbackItem = isSearchActive && hasAiPermission;
+  const displayedFallbackCommandMenuItems =
+    isSearchActive && !hasMatchingCommand
+      ? fallbackCommandMenuItems.filter(
+          (item) =>
+            !isInlineRecordSearchActive ||
+            item.engineComponentKey !==
+              EngineComponentKey.SEARCH_RECORDS_FALLBACK,
+        )
+      : [];
 
-  const shouldDisplayFallbackItems =
-    hasNoMatchingItems &&
-    (fallbackCommandMenuItems.length > 0 || shouldDisplayAskAiFallbackItem);
-
-  const shouldDisplayNoResults =
-    isSearchActive && hasNoMatchingItems && !shouldDisplayFallbackItems;
-
-  const selectableItemIds = [
-    ...COMMAND_MENU_ITEM_SECTIONS_IN_DISPLAY_ORDER.flatMap((section) => [
-      ...commandMenuItemsBySection[section].map((item) => item.id),
-      ...getSectionExtraItemIds(section),
-    ]),
-    ...(shouldDisplayFallbackItems && shouldDisplayAskAiFallbackItem
-      ? [COMMAND_MENU_ASK_AI_FALLBACK_ITEM_ID]
-      : []),
-    ...(shouldDisplayFallbackItems
-      ? fallbackCommandMenuItems.map((item) => item.id)
-      : []),
+  const getSectionCommandItemIds = (section: CommandMenuItemSection) => [
+    ...commandMenuItemsBySection[section].map((item) => item.id),
+    ...getSectionExtraItemIds(section),
   ];
 
-  return (
-    <SidePanelList
-      selectableItemIds={selectableItemIds}
-      noResults={shouldDisplayNoResults}
-    >
-      {COMMAND_MENU_ITEM_SECTIONS_IN_DISPLAY_ORDER.map((section) => {
-        const sectionCommandMenuItems = commandMenuItemsBySection[section];
+  const getSectionRowItemIds = (
+    section: DisplayedCommandMenuItemSection,
+  ): string[] => {
+    if (section === 'ASK_AI' && shouldDisplayAskAiPrompt) {
+      return [
+        COMMAND_MENU_ASK_AI_FALLBACK_ITEM_ID,
+        ...getSectionCommandItemIds(section),
+      ];
+    }
 
-        if (
-          sectionCommandMenuItems.length === 0 &&
-          getSectionExtraItemIds(section).length === 0
-        ) {
-          return null;
-        }
+    if (section === 'SEARCH' && isSearchActive) {
+      return [
+        ...getSectionCommandItemIds(section),
+        ...inlineSearchResultItems.map((item) => item.id),
+        ...(shouldDisplaySeeInSearchResults
+          ? [COMMAND_MENU_SEE_IN_SEARCH_RESULTS_ITEM_ID]
+          : []),
+        ...displayedFallbackCommandMenuItems.map((item) => item.id),
+      ];
+    }
+
+    return getSectionCommandItemIds(section);
+  };
+
+  const isSectionDisplayed = (section: DisplayedCommandMenuItemSection) =>
+    getSectionRowItemIds(section).length > 0 ||
+    (section === 'SEARCH' &&
+      (shouldDisplayNoRecordsFound || shouldDisplaySearchingRecords));
+
+  const displayedSections =
+    COMMAND_MENU_ITEM_SECTIONS_IN_DISPLAY_ORDER.filter(isSectionDisplayed);
+
+  const getSelectableSectionItemIds = (
+    section: DisplayedCommandMenuItemSection,
+  ) => {
+    if (!COLLAPSIBLE_SECTIONS.includes(section)) {
+      return getSectionRowItemIds(section);
+    }
+
+    return [
+      getSectionHeaderItemId(section),
+      ...(isSectionOpen(section) ? getSectionRowItemIds(section) : []),
+    ];
+  };
+
+  const selectableItemIds = displayedSections.flatMap(
+    getSelectableSectionItemIds,
+  );
+
+  const firstCommandItemId = displayedSections
+    .filter((section) => isSectionOpen(section))
+    .flatMap(getSectionCommandItemIds)[0];
+
+  const firstRecordItemId = isSearchingRecords
+    ? undefined
+    : inlineSearchResultItems[0]?.id;
+
+  const defaultSelectedItemId = getCommandMenuDefaultSelectedItemId({
+    trimmedSearch: trimmedSidePanelSearch,
+    firstCommandItemId,
+    firstRecordItemId,
+    shouldDisplayAskAiPrompt,
+  });
+
+  const getSectionPreview = (section: DisplayedCommandMenuItemSection) =>
+    getCommandMenuItemSectionPreview({
+      section,
+      sectionHeading: getSectionHeading(section),
+      commandMenuItems: commandMenuItemsBySection[section].map((item) => ({
+        label: interpolateCommandMenuItemFields(item, commandMenuContextApi)
+          .label,
+        creationTargetObjectMetadataId: item.creationTargetObjectMetadataId,
+        navigationTargetObjectMetadataId: item.navigationTargetObjectMetadataId,
+      })),
+      objectMetadataItems,
+    });
+
+  const handleSeeInSearchResults = () => {
+    setSidePanelSearchObjectFilter(null);
+    navigateSidePanelMenu({
+      page: SidePanelPages.SearchRecords,
+      pageTitle: t`Search`,
+      pageIcon: IconSearch,
+    });
+  };
+
+  const renderSearchRows = () => (
+    <>
+      {renderSectionCommandRows('SEARCH')}
+      {inlineSearchResultItems.map((item) => (
+        <SidePanelSearchRecordItem key={item.id} item={item} />
+      ))}
+      {shouldDisplaySeeInSearchResults && (
+        <SelectableListItem
+          itemId={COMMAND_MENU_SEE_IN_SEARCH_RESULTS_ITEM_ID}
+          onEnter={handleSeeInSearchResults}
+        >
+          <CommandMenuItem
+            id={COMMAND_MENU_SEE_IN_SEARCH_RESULTS_ITEM_ID}
+            label={t`See in search results`}
+            description={searchResultsCountLabel}
+            Icon={IconArrowRight}
+            onClick={handleSeeInSearchResults}
+          />
+        </SelectableListItem>
+      )}
+      {shouldDisplaySearchingRecords && (
+        <CommandMenuItem
+          id={COMMAND_MENU_SEARCHING_RECORDS_ITEM_ID}
+          label={t`Searching records...`}
+          Icon={IconSearch}
+          disabled
+        />
+      )}
+      {shouldDisplayNoRecordsFound && (
+        <CommandMenuItem
+          id={COMMAND_MENU_NO_RECORDS_FOUND_ITEM_ID}
+          label={t`No records found`}
+          Icon={IconSearchOff}
+          disabled
+        />
+      )}
+      {displayedFallbackCommandMenuItems.map((item) => (
+        <CommandMenuItemRenderer item={item} key={item.id} />
+      ))}
+    </>
+  );
+
+  const renderSectionCommandRows = (section: CommandMenuItemSection) => (
+    <>
+      {commandMenuItemsBySection[section].map((item) => (
+        <CommandMenuItemRenderer item={item} key={item.id} />
+      ))}
+      {(section === 'THIS_OBJECT' || section === 'SELECTION') && (
+        <CoreObjectsCommands section={section} />
+      )}
+      {getSectionAppActions(section).map((item) => {
+        const handleClick = () => {
+          item.onClick();
+          closeSidePanelMenu();
+        };
 
         return (
-          <CommandMenuItemSectionGroup
-            heading={getSectionHeading(section)}
-            Icon={SECTION_ICONS[section]}
-            context={getSectionContext(section)}
-            key={section}
+          <SelectableListItem
+            key={item.id}
+            itemId={item.id}
+            onEnter={handleClick}
           >
-            {sectionCommandMenuItems.map((item) => (
-              <CommandMenuItemRenderer item={item} key={item.id} />
-            ))}
-            {(section === 'THIS_OBJECT' || section === 'SELECTION') && (
-              <CoreObjectsCommands section={section} />
-            )}
-            {getSectionAppActions(section).map((item) => {
-              const handleClick = () => {
-                item.onClick();
-                closeSidePanelMenu();
-              };
-
-              return (
-                <SelectableListItem
-                  key={item.id}
-                  itemId={item.id}
-                  onEnter={handleClick}
-                >
-                  <CommandMenuItem
-                    id={item.id}
-                    label={item.label}
-                    Icon={item.Icon}
-                    onClick={handleClick}
-                  />
-                </SelectableListItem>
-              );
-            })}
-          </CommandMenuItemSectionGroup>
+            <CommandMenuItem
+              id={item.id}
+              label={item.label}
+              Icon={item.Icon}
+              onClick={handleClick}
+            />
+          </SelectableListItem>
         );
       })}
-      {shouldDisplayFallbackItems && (
-        <CommandMenuItemSectionGroup
-          heading={
-            isSearchActive
-              ? t`Use ‘${trimmedSidePanelSearch}’ with...`
-              : getSectionHeading('FALLBACK')
-          }
-          Icon={IconLifebuoy}
-        >
-          {shouldDisplayAskAiFallbackItem && (
-            <CommandMenuAskAiFallbackItem prompt={trimmedSidePanelSearch} />
-          )}
-          {fallbackCommandMenuItems.map((item) => (
-            <CommandMenuItemRenderer item={item} key={item.id} />
-          ))}
-        </CommandMenuItemSectionGroup>
-      )}
-    </SidePanelList>
+    </>
+  );
+
+  const renderSectionRows = (section: DisplayedCommandMenuItemSection) => {
+    if (section === 'ASK_AI' && shouldDisplayAskAiPrompt) {
+      return (
+        <>
+          <CommandMenuAskAiFallbackItem
+            prompt={trimmedSidePanelSearch}
+            isDefaultSelection={
+              defaultSelectedItemId === COMMAND_MENU_ASK_AI_FALLBACK_ITEM_ID
+            }
+          />
+          {renderSectionCommandRows(section)}
+        </>
+      );
+    }
+
+    if (section === 'SEARCH' && isSearchActive) {
+      return renderSearchRows();
+    }
+
+    return renderSectionCommandRows(section);
+  };
+
+  return (
+    <>
+      <ToastOnQueryErrorEffect error={searchRecordsError} />
+      <SidePanelList
+        selectableItemIds={selectableItemIds}
+        defaultSelectedItemId={defaultSelectedItemId}
+      >
+        {displayedSections.map((section) => {
+          const heading = getSectionHeading(section);
+
+          return (
+            <CommandMenuItemSectionGroup
+              heading={heading}
+              Icon={SECTION_ICONS[section]}
+              context={getSectionContext(section)}
+              collapsible={
+                COLLAPSIBLE_SECTIONS.includes(section)
+                  ? {
+                      headerItemId: getSectionHeaderItemId(section),
+                      isOpen: isSectionOpen(section),
+                      preview: getSectionPreview(section),
+                      onToggle: () =>
+                        setSectionOpen({
+                          section,
+                          isOpen: !isSectionOpen(section),
+                        }),
+                    }
+                  : undefined
+              }
+              key={section}
+            >
+              {renderSectionRows(section)}
+            </CommandMenuItemSectionGroup>
+          );
+        })}
+      </SidePanelList>
+    </>
   );
 };

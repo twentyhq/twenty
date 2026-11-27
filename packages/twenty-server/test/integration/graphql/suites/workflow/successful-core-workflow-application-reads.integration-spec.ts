@@ -26,7 +26,6 @@ import {
   type EachTestingContext,
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
-import { WorkflowVisibility } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -112,7 +111,7 @@ describe('Core workflow reads through an application should succeed', () => {
       },
       workspaceWorkflow: await createMemberCoreWorkflow({
         name: `${RUN_PREFIX} workspace workflow`,
-        visibility: WorkflowVisibility.WORKSPACE,
+        isPrivate: false,
       }),
     };
   }, 120000);

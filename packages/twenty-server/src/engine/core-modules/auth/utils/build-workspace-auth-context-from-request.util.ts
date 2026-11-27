@@ -12,16 +12,16 @@ import { buildApiKeyAuthContext } from 'src/engine/core-modules/auth/utils/build
 import { buildApplicationAuthContext } from 'src/engine/core-modules/auth/utils/build-application-auth-context.util';
 import { buildPendingActivationUserAuthContext } from 'src/engine/core-modules/auth/utils/build-pending-activation-user-auth-context.util';
 import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-user-auth-context.util';
-import { isImpersonating } from 'src/engine/guards/utils/is-impersonating.util';
+import { getUserSessionVariantFromImpersonationContext } from 'src/engine/guards/utils/get-user-session-variant-from-impersonation-context.util';
 
 const getUserSessionVariant = (req: Request): UserSessionVariant => {
   if (req.tokenType === JwtTokenTypeEnum.PLAYGROUND) {
     return 'playground';
   }
 
-  return isImpersonating(req.impersonationContext)
-    ? 'impersonated'
-    : 'standard';
+  return getUserSessionVariantFromImpersonationContext(
+    req.impersonationContext,
+  );
 };
 
 export const buildWorkspaceAuthContextFromRequest = (

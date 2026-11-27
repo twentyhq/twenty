@@ -148,6 +148,7 @@ describe('WorkflowWaitingStepWorkspaceService as a wake-up owner', () => {
         doNotCheckDuplicatesBasedOnPrefix: true,
         workspaceId: WORKSPACE_ID,
         applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+        groupKey: 'workflow',
       },
     );
   });

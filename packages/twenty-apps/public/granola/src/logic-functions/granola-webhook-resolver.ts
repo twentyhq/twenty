@@ -6,7 +6,9 @@ import {
   type ServerRouteResolverResult,
 } from 'twenty-sdk/logic-function';
 
+import { GRANOLA_PERSONAL_REGISTRATION_PREFIX } from 'src/constants/granola-personal-connection.constant';
 import {
+  GRANOLA_PERSONAL_WEBHOOK_UNIVERSAL_IDENTIFIER,
   GRANOLA_WEBHOOK_RESOLVER_UNIVERSAL_IDENTIFIER,
   GRANOLA_WEBHOOK_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
@@ -33,6 +35,21 @@ export const granolaWebhookResolverHandler = async (
       { status: 404 },
     );
   }
+  if (registrationId.startsWith(GRANOLA_PERSONAL_REGISTRATION_PREFIX)) {
+    return {
+      workspaceId,
+      targetLogicFunctionUniversalIdentifier:
+        GRANOLA_PERSONAL_WEBHOOK_UNIVERSAL_IDENTIFIER,
+      payload: {
+        routePayload,
+        receivedAt,
+        connectionId: registrationId.slice(
+          GRANOLA_PERSONAL_REGISTRATION_PREFIX.length,
+        ),
+      },
+    };
+  }
+
   return {
     workspaceId,
     targetLogicFunctionUniversalIdentifier:

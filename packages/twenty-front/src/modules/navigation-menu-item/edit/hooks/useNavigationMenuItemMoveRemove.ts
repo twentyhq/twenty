@@ -1,18 +1,30 @@
 import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { getPositionBetween } from '@/navigation-menu-item/common/utils/getPositionBetween';
+import { getNavigationMenuItemDescendantIds } from '@/navigation-menu-item/common/utils/getNavigationMenuItemDescendantIds';
+import { getNavigationMenuItemMovedPosition } from '@/navigation-menu-item/common/utils/getNavigationMenuItemMovedPosition';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
+import { useWorkspaceSidebarRootContainerId } from '@/navigation-menu-item/display/hooks/useWorkspaceSidebarRootContainerId';
 import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 import { useNavigationMenuItemEditSectionItems } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditSectionItems';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const useNavigationMenuItemMoveRemove = (
   section: NavigationMenuItemSection,
+  containerId: string | null = null,
 ) => {
   const { currentItems, updateItem, deleteItems } =
     useNavigationMenuItemEditController(section);
-  const items = useNavigationMenuItemEditSectionItems(section);
+  const items = useNavigationMenuItemEditSectionItems(section, containerId);
   const visibleItemIds = new Set(items.map((item) => item.id));
+  const workspaceSidebarRootContainerId = useWorkspaceSidebarRootContainerId();
+  const isCustomizableSidebarEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
+  );
+  const rootContainerId =
+    section === 'workspace' ? workspaceSidebarRootContainerId : null;
 
   const getSortedSiblings = (navigationMenuItemId: string) => {
     const currentItem = currentItems.find(
@@ -21,50 +33,39 @@ export const useNavigationMenuItemMoveRemove = (
     if (!isDefined(currentItem)) {
       return null;
     }
-    const parentId = currentItem.parentId ?? null;
+    const parentId = currentItem.parentId ?? rootContainerId;
     return currentItems
       .filter(
         (item) =>
-          (item.parentId ?? null) === parentId && visibleItemIds.has(item.id),
+          (item.parentId ?? rootContainerId) === parentId &&
+          (visibleItemIds.has(item.id) ||
+            (isCustomizableSidebarEnabled &&
+              item.type === NavigationMenuItemType.SECTION)),
       )
       .sort((a, b) => a.position - b.position);
   };
 
-  const moveUp = async (navigationMenuItemId: string) => {
+  const move = async (navigationMenuItemId: string, offset: -1 | 1) => {
     const siblings = getSortedSiblings(navigationMenuItemId);
     if (!isDefined(siblings)) {
       return;
     }
-    const currentIndex = siblings.findIndex(
-      (item) => item.id === navigationMenuItemId,
-    );
-    if (currentIndex <= 0) {
+    const position = getNavigationMenuItemMovedPosition({
+      siblings,
+      itemId: navigationMenuItemId,
+      offset,
+    });
+    if (!isDefined(position)) {
       return;
     }
-    const prev = siblings[currentIndex - 1];
-    const prevPrev = siblings[currentIndex - 2];
-    await updateItem(navigationMenuItemId, {
-      position: getPositionBetween(prevPrev?.position, prev.position),
-    });
+    await updateItem(navigationMenuItemId, { position });
   };
 
-  const moveDown = async (navigationMenuItemId: string) => {
-    const siblings = getSortedSiblings(navigationMenuItemId);
-    if (!isDefined(siblings)) {
-      return;
-    }
-    const currentIndex = siblings.findIndex(
-      (item) => item.id === navigationMenuItemId,
-    );
-    if (currentIndex < 0 || currentIndex >= siblings.length - 1) {
-      return;
-    }
-    const next = siblings[currentIndex + 1];
-    const nextNext = siblings[currentIndex + 2];
-    await updateItem(navigationMenuItemId, {
-      position: getPositionBetween(next.position, nextNext?.position),
-    });
-  };
+  const moveUp = (navigationMenuItemId: string) =>
+    move(navigationMenuItemId, -1);
+
+  const moveDown = (navigationMenuItemId: string) =>
+    move(navigationMenuItemId, 1);
 
   const remove = async (navigationMenuItemId: string) => {
     const itemToRemove = currentItems.find(
@@ -74,15 +75,13 @@ export const useNavigationMenuItemMoveRemove = (
       return;
     }
 
-    if (isNavigationMenuItemFolder(itemToRemove)) {
-      const childIds = currentItems
-        .filter((item) => item.parentId === navigationMenuItemId)
-        .map((item) => item.id);
-      await deleteItems([navigationMenuItemId, ...childIds]);
-      return;
-    }
-
-    await deleteItems([navigationMenuItemId]);
+    await deleteItems([
+      navigationMenuItemId,
+      ...getNavigationMenuItemDescendantIds({
+        items: currentItems,
+        ancestorId: navigationMenuItemId,
+      }),
+    ]);
   };
 
   const moveToFolder = async (

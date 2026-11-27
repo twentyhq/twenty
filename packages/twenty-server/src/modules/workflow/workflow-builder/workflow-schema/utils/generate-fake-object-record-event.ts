@@ -1,5 +1,5 @@
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { type ObjectMetadataInfo } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import { DatabaseEventAction } from 'src/engine/workspace-event-emitter/enums/database-event-action';
+import { type ObjectMetadataInfo } from 'src/modules/workflow/common/workspace-services/workflow-metadata-read.workspace-service';
 import {
   type FieldOutputSchema,
   type RecordOutputSchema,

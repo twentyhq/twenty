@@ -12,7 +12,11 @@ import {
   FileFolder,
   TwoFactorAuthenticationStrategy,
 } from 'twenty-shared/types';
-import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  isDefined,
+  isNonEmptyString,
+} from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
@@ -53,13 +57,11 @@ import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/
 import { EmailVerificationTokenService } from 'src/engine/core-modules/auth/token/services/email-verification-token.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { assertLoginTokenIsNotForImpersonation } from 'src/engine/core-modules/auth/utils/assert-login-token-is-not-for-impersonation.util';
-import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { RenewTokenService } from 'src/engine/core-modules/auth/token/services/renew-token.service';
 import { SsoExchangeTokenService } from 'src/engine/core-modules/auth/token/services/sso-exchange-token.service';
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
 import { AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { LoginTokenJwtPayload } from 'src/engine/core-modules/auth/types/login-token-jwt-payload.type';
 import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
 import { WorkspaceCreationCaptchaGuard } from 'src/engine/core-modules/captcha/workspace-creation-captcha.guard';
@@ -76,6 +78,7 @@ import { FileUploadTargetDTO } from 'src/engine/core-modules/file/file-upload/dt
 import { FileUploadGraphqlApiExceptionFilter } from 'src/engine/core-modules/file/file-upload/filters/file-upload-graphql-api-exception.filter';
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
+import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
@@ -121,6 +124,7 @@ import { SignUpInput } from './dto/sign-up.input';
 import { UserCredentialsInput } from './dto/user-credentials.input';
 import { CheckUserExistDTO } from './dto/user-exists.dto';
 import { EmailAndCaptchaInput } from './dto/user-exists.input';
+import { WorkspaceFromInviteHashDTO } from './dto/workspace-from-invite-hash.dto';
 import { WorkspaceInviteHashValidDTO } from './dto/workspace-invite-hash-valid.dto';
 import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input';
 import { AuthService } from './services/auth.service';
@@ -129,10 +133,30 @@ import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 
 const WORKSPACE_CREATION_ACCESS_POLICY: AccessPolicy = {
   authPrincipals: {
-    userSession: true,
+    userSession: {
+      standard: true,
+      impersonated: false,
+      playground: false,
+      workspaceAgnostic: true,
+    },
     apiKey: false,
     oauthClient: { withUser: true, withoutUser: false },
     application: { withUser: true, withoutUser: false },
+  },
+  requiredPermissionFlags: [],
+};
+
+const NEW_WORKSPACE_SIGN_UP_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: false,
+      playground: false,
+      workspaceAgnostic: true,
+    },
+    apiKey: false,
+    oauthClient: false,
+    application: false,
   },
   requiredPermissionFlags: [],
 };
@@ -183,7 +207,6 @@ export class AuthResolver {
     private loginTokenService: LoginTokenService,
     private workspaceAgnosticTokenService: WorkspaceAgnosticTokenService,
     private ssoExchangeTokenService: SsoExchangeTokenService,
-    private refreshTokenService: RefreshTokenService,
     private signInUpService: SignInUpService,
     private transientTokenService: TransientTokenService,
     private emailVerificationService: EmailVerificationService,
@@ -198,6 +221,7 @@ export class AuthResolver {
     private readonly fileUploadService: FileUploadService,
     private readonly userSessionService: UserSessionService,
     private readonly userSessionCookieService: UserSessionCookieService,
+    private readonly fileUrlService: FileUrlService,
   ) {}
 
   @UseGuards(CaptchaGuard, PublicEndpointGuard, NoPermissionGuard)
@@ -232,14 +256,27 @@ export class AuthResolver {
     );
   }
 
-  @Query(() => WorkspaceEntity)
+  @Query(() => WorkspaceFromInviteHashDTO)
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async findWorkspaceFromInviteHash(
     @Args() workspaceInviteHashValidInput: WorkspaceInviteHashValidInput,
-  ): Promise<WorkspaceEntity> {
-    return await this.authService.findWorkspaceFromInviteHashOrFail(
+  ): Promise<WorkspaceFromInviteHashDTO> {
+    const workspace = await this.authService.findWorkspaceFromInviteHashOrFail(
       workspaceInviteHashValidInput.inviteHash,
     );
+
+    return {
+      id: workspace.id,
+      displayName: workspace.displayName ?? null,
+      logo: isDefined(workspace.logoFileId)
+        ? await this.fileUrlService.signFileByIdUrl({
+            fileId: workspace.logoFileId,
+            workspaceId: workspace.id,
+            fileFolder: FileFolder.CorePicture,
+          })
+        : '',
+      allowImpersonation: workspace.allowImpersonation,
+    };
   }
 
   @Mutation(() => LoginTokenDTO)
@@ -310,18 +347,12 @@ export class AuthResolver {
               authProvider: AuthProviderEnum.Password,
             },
           ),
-        refreshToken: await this.refreshTokenService.generateRefreshToken({
-          userId: user.id,
-          authProvider: AuthProviderEnum.Password,
-          targetedTokenType: JwtTokenTypeEnum.WORKSPACE_AGNOSTIC,
-        }),
       },
     };
 
     await this.userSessionService.issueSessionForTokenPair({
       tokenPair: result.tokens,
       request: context.req,
-      origin: 'sign_in',
     });
 
     return result;
@@ -421,18 +452,12 @@ export class AuthResolver {
               authProvider: AuthProviderEnum.Password,
             },
           ),
-        refreshToken: await this.refreshTokenService.generateRefreshToken({
-          userId: user.id,
-          authProvider: AuthProviderEnum.Password,
-          targetedTokenType: JwtTokenTypeEnum.WORKSPACE_AGNOSTIC,
-        }),
       },
     };
 
     await this.userSessionService.issueSessionForTokenPair({
       tokenPair: result.tokens,
       request: context.req,
-      origin: 'sign_in',
     });
 
     return result;
@@ -479,7 +504,6 @@ export class AuthResolver {
     await this.userSessionService.issueSessionForTokenPair({
       tokenPair: authTokens.tokens,
       request: context.req,
-      origin: 'sign_in',
     });
 
     return authTokens;
@@ -531,7 +555,6 @@ export class AuthResolver {
     await this.userSessionService.issueSessionForTokenPair({
       tokenPair: authTokens.tokens,
       request: context.req,
-      origin: 'sign_in',
     });
 
     return {
@@ -589,18 +612,12 @@ export class AuthResolver {
               authProvider: AuthProviderEnum.Password,
             },
           ),
-        refreshToken: await this.refreshTokenService.generateRefreshToken({
-          userId: user.id,
-          authProvider: AuthProviderEnum.Password,
-          targetedTokenType: JwtTokenTypeEnum.WORKSPACE_AGNOSTIC,
-        }),
       },
     };
 
     await this.userSessionService.issueSessionForTokenPair({
       tokenPair: result.tokens,
       request: context.req,
-      origin: 'sign_in',
     });
 
     return result;
@@ -702,7 +719,7 @@ export class AuthResolver {
 
   @Mutation(() => SignUpDTO)
   @UseGuards(
-    AccessPolicyGuard(AUTH_WRITE_ACCESS_POLICY),
+    AccessPolicyGuard(NEW_WORKSPACE_SIGN_UP_ACCESS_POLICY),
     WorkspaceCreationCaptchaGuard,
   )
   @AllowSuspendedWorkspace()
@@ -882,6 +899,7 @@ export class AuthResolver {
         impersonatedUserWorkspaceId,
         impersonatorUserId,
         impersonatedUserId,
+        impersonationLevel,
       } = await this.validateAndLogImpersonation(
         tokenPayload,
         workspace,
@@ -890,14 +908,14 @@ export class AuthResolver {
 
       await this.loginTokenService.consumeLoginTokenOrThrow(tokenPayload);
 
-      authTokens =
-        await this.authService.generateImpersonationAccessTokenAndRefreshToken({
-          workspaceId,
-          impersonatorUserWorkspaceId,
-          impersonatedUserWorkspaceId,
-          _impersonatorUserId: impersonatorUserId,
-          impersonatedUserId,
-        });
+      authTokens = await this.authService.generateImpersonationAccessToken({
+        workspaceId,
+        impersonatorUserWorkspaceId,
+        impersonatedUserWorkspaceId,
+        _impersonatorUserId: impersonatorUserId,
+        impersonatedUserId,
+        impersonationLevel,
+      });
     } else {
       await this.validateRegularAuthentication(workspace, userWorkspace);
 
@@ -913,7 +931,6 @@ export class AuthResolver {
     await this.userSessionService.issueSessionForTokenPair({
       tokenPair: authTokens.tokens,
       request: context.req,
-      origin: 'sign_in',
     });
 
     return authTokens;
@@ -941,18 +958,12 @@ export class AuthResolver {
               authProvider,
             },
           ),
-        refreshToken: await this.refreshTokenService.generateRefreshToken({
-          userId,
-          authProvider,
-          targetedTokenType: JwtTokenTypeEnum.WORKSPACE_AGNOSTIC,
-        }),
       },
     };
 
     await this.userSessionService.issueSessionForTokenPair({
       tokenPair: authTokens.tokens,
       request: context.req,
-      origin: 'sign_in',
     });
 
     return authTokens;
@@ -1024,6 +1035,13 @@ export class AuthResolver {
     targetUserEmail: string,
   ) {
     const { impersonatorUserWorkspaceId } = tokenPayload;
+
+    if (!isNonEmptyString(impersonatorUserWorkspaceId)) {
+      throw new AuthException(
+        'Impersonation login token does not name an impersonator',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
 
     const impersonatorUserWorkspace =
       await this.userWorkspaceRepository.findOne({
@@ -1112,11 +1130,27 @@ export class AuthResolver {
       impersonatedUserWorkspaceId: toImpersonateUserWorkspace.id,
       impersonatorUserId: impersonatorUserWorkspace.user.id,
       impersonatedUserId: toImpersonateUserWorkspace.user.id,
+      impersonationLevel: authorizationResult.level,
     };
   }
 
   @Mutation(() => AuthorizeAppDTO)
-  @UseGuards(AccessPolicyGuard(AUTH_WRITE_ACCESS_POLICY))
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: false,
+          playground: true,
+          workspaceAgnostic: true,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
+    }),
+  )
   async authorizeApp(
     @Args() authorizeAppInput: AuthorizeAppInput,
     @AuthUser() user: AuthContextUser,
@@ -1132,24 +1166,18 @@ export class AuthResolver {
     });
   }
 
-  @Mutation(() => AuthTokens)
+  @Mutation(() => AuthTokens, {
+    deprecationReason:
+      'Refresh tokens are no longer issued; this is removed once the last one expires.',
+  })
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   @AllowSuspendedWorkspace()
-  async renewToken(
-    @Args() args: AppTokenInput,
-    @Context() context: { req: Request },
-  ): Promise<AuthTokens> {
-    const tokens = await this.renewTokenService.generateTokensFromRefreshToken(
-      args.appToken,
-    );
-
-    await this.userSessionService.issueSessionForTokenPair({
-      tokenPair: tokens,
-      request: context.req,
-      origin: 'renewal_bridge',
-    });
-
-    return { tokens: tokens };
+  async renewToken(@Args() args: AppTokenInput): Promise<AuthTokens> {
+    return {
+      tokens: await this.renewTokenService.generateTokensFromRefreshToken(
+        args.appToken,
+      ),
+    };
   }
 
   @Mutation(() => Boolean)
@@ -1157,7 +1185,13 @@ export class AuthResolver {
   @AllowSuspendedWorkspace()
   async signOut(
     @Context() context: { req: Request },
-    @Args('refreshToken', { nullable: true }) refreshToken?: string,
+    @Args('refreshToken', {
+      type: () => String,
+      nullable: true,
+      deprecationReason:
+        'Refresh tokens are no longer issued; this is removed once the last one expires.',
+    })
+    refreshToken: string | undefined,
   ): Promise<boolean> {
     try {
       await this.userSessionService.signOut({
@@ -1185,7 +1219,7 @@ export class AuthResolver {
       authPrincipals: {
         userSession: {
           standard: true,
-          impersonated: true,
+          impersonated: false,
           playground: false,
           workspaceAgnostic: false,
         },
@@ -1216,7 +1250,7 @@ export class AuthResolver {
       authPrincipals: {
         userSession: {
           standard: true,
-          impersonated: true,
+          impersonated: false,
           playground: false,
           workspaceAgnostic: false,
         },

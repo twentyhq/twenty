@@ -11,6 +11,8 @@ import { addWorkflowManifestsToFlatEntityMapsOrThrow } from 'src/engine/core-mod
 import { preallocateWorkflowReferenceIds } from 'src/engine/core-modules/application/application-manifest/utils/preallocate-workflow-reference-ids.util';
 import { buildAllFlatEntityOperationRecordByMetadataNameFromFromTo } from 'src/engine/core-modules/application/application-manifest/utils/build-all-flat-entity-operation-record-by-metadata-name-from-from-to.util';
 import { buildFromToAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/build-from-to-all-universal-flat-entity-maps.util';
+import { isMarketplaceApplication } from 'src/engine/core-modules/application/application-manifest/utils/is-marketplace-application.util';
+import { restrictMarketplaceApplicationRoleAssignabilityThroughMutation } from 'src/engine/core-modules/application/application-manifest/utils/restrict-marketplace-application-role-assignability-through-mutation.util';
 import { getApplicationSubAllFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/get-application-sub-all-flat-entity-maps.util';
 import { assertConnectionProviderLogicFunctionsAreOwn } from 'src/engine/core-modules/application/application-manifest/utils/assert-connection-provider-logic-functions-are-own.util';
 import { resolveApplicationReferenceIdOrThrow } from 'src/engine/core-modules/application/application-manifest/utils/resolve-application-reference-id-or-throw.util';
@@ -21,7 +23,7 @@ import {
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
-import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
+import { CoreWorkflowTriggerService } from 'src/engine/core-modules/workflow/services/core-workflow-trigger.service';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
@@ -41,7 +43,7 @@ export class ApplicationManifestMigrationService {
     private readonly applicationService: ApplicationService,
     private readonly computeManifestFlatEntityMapsService: ComputeApplicationManifestAllUniversalFlatEntityMapsService,
     private readonly logger: LoggerService,
-    private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
+    private readonly coreWorkflowTriggerService: CoreWorkflowTriggerService,
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
   ) {}
 
@@ -239,6 +241,20 @@ export class ApplicationManifestMigrationService {
         { workspaceId },
       );
 
+    const isOwnerMarketplaceApplication = isMarketplaceApplication({
+      universalIdentifier: ownerFlatApplication.universalIdentifier,
+      sourceType: ownerFlatApplication.sourceType,
+      workspaceCustomApplicationUniversalIdentifier:
+        workspaceCustomFlatApplication.universalIdentifier,
+    });
+
+    if (isOwnerMarketplaceApplication) {
+      restrictMarketplaceApplicationRoleAssignabilityThroughMutation({
+        manifest,
+        toAllUniversalFlatEntityMapsToMutate: toAllUniversalFlatEntityMaps,
+      });
+    }
+
     const idByUniversalIdentifierByMetadataName = hasWorkflows
       ? preallocateWorkflowReferenceIds({
           fromAllFlatEntityMaps,
@@ -334,6 +350,7 @@ export class ApplicationManifestMigrationService {
           ownerFlatApplication.universalIdentifier,
         applicationDefaultRoleUniversalIdentifier:
           manifest.application.defaultRoleUniversalIdentifier,
+        isMarketplaceApplication: isOwnerMarketplaceApplication,
         idByUniversalIdentifierByMetadataName,
         dryRun: isDryRun,
         shouldDeferActions,
@@ -372,7 +389,7 @@ export class ApplicationManifestMigrationService {
         inferDeletionFromMissingEntities,
       });
 
-      await this.workflowVersionCoreSyncService.publishCronTriggerCacheEntries(
+      await this.coreWorkflowTriggerService.publishCronTriggerCacheEntries(
         buildApplicationWorkflowCronTriggerCacheEntries({
           workspaceId,
           workflows: applicationWorkflows,
@@ -429,7 +446,7 @@ export class ApplicationManifestMigrationService {
       'flatLogicFunctionMaps',
     ]);
 
-    let defaultRoleId: string | null = null;
+    let requestedRoleId: string | null = null;
 
     for (const role of manifest.roles) {
       const flatRoleId = resolveApplicationReferenceIdOrThrow({
@@ -443,7 +460,7 @@ export class ApplicationManifestMigrationService {
         role.universalIdentifier ===
         manifest.application.defaultRoleUniversalIdentifier
       ) {
-        defaultRoleId = flatRoleId;
+        requestedRoleId = flatRoleId;
       }
     }
 
@@ -510,7 +527,7 @@ export class ApplicationManifestMigrationService {
                 ?.runOnUserPreferences ?? false,
           }
         : {}),
-      ...(isDefined(defaultRoleId) ? { defaultRoleId } : {}),
+      ...(isDefined(requestedRoleId) ? { requestedRoleId } : {}),
     });
   }
 }

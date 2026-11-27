@@ -16,6 +16,10 @@ import { createOneRole } from 'test/integration/metadata/suites/role/utils/creat
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids';
+import {
+  grantRoleWideAccessToChannelObjects,
+  revokeRoleWideAccessToChannelObjects,
+} from 'test/integration/utils/role-wide-access-to-channel-objects.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -93,6 +97,7 @@ describe('systemObjectRecordsPermissions', () => {
   let noOverrideApiKeyToken: string;
 
   beforeAll(async () => {
+    await grantRoleWideAccessToChannelObjects();
     const { objects } = await findManyObjectMetadata({
       expectToFail: false,
       input: { filter: {}, paging: { first: 1000 } },
@@ -229,6 +234,7 @@ describe('systemObjectRecordsPermissions', () => {
         });
       }
     }
+    await revokeRoleWideAccessToChannelObjects();
   });
 
   describe('API key whose role overrides message to read-only', () => {
@@ -301,19 +307,18 @@ describe('systemObjectRecordsPermissions', () => {
   });
 
   describe('API key whose role has no override on message', () => {
-    it('should allow updating a message through the system object default', async () => {
+    it('should deny updating a message, as the role denies updates by default', async () => {
       const response = await makeGraphqlApiRequest(
         updateOneOperationFactory({
           objectMetadataSingularName: 'message',
           gqlFields: MESSAGE_GQL_FIELDS,
           recordId: messageId,
-          data: { text: 'Updated through the system object default' },
+          data: { text: 'Updated without an override' },
         }),
         noOverrideApiKeyToken,
       );
 
-      expect(response.body.errors).toBeUndefined();
-      expect(response.body.data.updateMessage.id).toBe(messageId);
+      expectPermissionDenied(response);
     });
 
     it('should deny updating a standard object', async () => {

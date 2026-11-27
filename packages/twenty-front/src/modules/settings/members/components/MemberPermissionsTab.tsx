@@ -151,7 +151,11 @@ export const MemberPermissionsTab = ({
             variant="outline"
           >{t`Open in Roles`}</Button>
         </StyledRoleContainer>
-        <SettingsRolePermissions roleId={primaryRole.id} isEditable={false} />
+        <SettingsRolePermissions
+          roleId={primaryRole.id}
+          areRecordPermissionsEditable={false}
+          arePermissionFlagsEditable={false}
+        />
       </Section.Root>
 
       {pendingRole && (

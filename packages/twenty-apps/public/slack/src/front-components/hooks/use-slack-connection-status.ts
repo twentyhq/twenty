@@ -5,6 +5,7 @@ import { SLACK_USER_LINKS_CONNECTION_STATUS_ROUTE_PATH } from 'src/constants/sla
 import { type ParsedSlackConnectionStatus } from 'src/front-components/types/parsed-slack-connection-status.type';
 import {
   DISCONNECTED_SLACK_CONNECTION_STATUS,
+  FAILED_SLACK_CONNECTION_STATUS,
   parseSlackConnectionStatus,
 } from 'src/front-components/utils/parse-slack-connection-status.util';
 
@@ -17,6 +18,20 @@ const LOADING_STATE: SlackConnectionStatusState = {
   isConnectionStatusLoading: true,
 };
 
+const fetchSlackConnectionStatus =
+  async (): Promise<ParsedSlackConnectionStatus> => {
+    try {
+      const result = await new RestApiClient().post(
+        `/s${SLACK_USER_LINKS_CONNECTION_STATUS_ROUTE_PATH}`,
+        {},
+      );
+
+      return parseSlackConnectionStatus(result);
+    } catch {
+      return FAILED_SLACK_CONNECTION_STATUS;
+    }
+  };
+
 export const useSlackConnectionStatus = (): SlackConnectionStatusState => {
   const [state, setState] = useState<SlackConnectionStatusState>(LOADING_STATE);
 
@@ -24,18 +39,7 @@ export const useSlackConnectionStatus = (): SlackConnectionStatusState => {
     let cancelled = false;
 
     const fetchConnectionStatus = async () => {
-      let connectionStatus: ParsedSlackConnectionStatus;
-
-      try {
-        const result = await new RestApiClient().post(
-          `/s${SLACK_USER_LINKS_CONNECTION_STATUS_ROUTE_PATH}`,
-          {},
-        );
-
-        connectionStatus = parseSlackConnectionStatus(result);
-      } catch {
-        connectionStatus = DISCONNECTED_SLACK_CONNECTION_STATUS;
-      }
+      const connectionStatus = await fetchSlackConnectionStatus();
 
       if (!cancelled) {
         setState({ ...connectionStatus, isConnectionStatusLoading: false });

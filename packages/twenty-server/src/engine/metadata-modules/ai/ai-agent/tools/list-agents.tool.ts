@@ -15,6 +15,7 @@ const listAgentsInputSchema = z.object({});
 
 @DefineTool({
   name: 'list_agents',
+  isReadOnly: true,
   category: ToolCategory.AGENT,
   accessPolicy: {
     ...AGENT_READ_ACCESS_POLICY,
@@ -32,22 +33,27 @@ export class ListAgentsTool extends BaseTool<typeof listAgentsInputSchema> {
   async execute({
     context: { workspaceId, application, authContext },
   }: ToolExecuteArgs<typeof listAgentsInputSchema>): Promise<ToolOutput> {
-    const agents = await this.agentService.findManyAgents(workspaceId);
+    const agents = await this.agentService.findManyAgents({
+      workspaceId,
+    });
 
-    const listedAgents = agents
-      .filter(
-        (agent) =>
-          agent.isActive &&
-          !agent.isSystem &&
-          canCallerReachApplication({
-            callingApplication: application,
-            applicationId: agent.applicationId,
-            operation: 'read',
-            workspaceCustomApplicationId:
-              authContext?.workspace.workspaceCustomApplicationId,
-          }),
-      )
-      .map(toAgentSummary);
+    const listedAgents = (
+      await this.agentService.toAgentDtos({
+        flatAgentsWithRoleId: agents.filter(
+          (agent) =>
+            agent.isActive &&
+            !agent.isSystem &&
+            canCallerReachApplication({
+              callingApplication: application,
+              applicationId: agent.applicationId,
+              operation: 'read',
+              workspaceCustomApplicationId:
+                authContext?.workspace.workspaceCustomApplicationId,
+            }),
+        ),
+        workspaceId,
+      })
+    ).map(toAgentSummary);
 
     return {
       success: true,

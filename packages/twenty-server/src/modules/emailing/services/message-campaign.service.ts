@@ -4,7 +4,7 @@ import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { MessageCampaignStatus } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { getDomainFromEmail, isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { CAMPAIGN_SEND_RETRY_BACKOFF } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-retry-backoff.constant';
@@ -45,7 +45,6 @@ import { type SendCampaignResult } from 'src/modules/emailing/types/send-campaig
 import { collectCampaignVariableNamesFromTemplatesOrThrow } from 'src/modules/emailing/utils/collect-campaign-variable-names-from-templates-or-throw.util';
 import { renderCampaignEmail } from 'src/modules/emailing/utils/render-campaign-email.util';
 import { sendableCampaignSchema } from 'src/modules/emailing/zod-schemas/sendable-campaign.zod-schema';
-import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
 
 type SendableCampaign = z.infer<typeof sendableCampaignSchema>;
 
@@ -173,8 +172,8 @@ export class MessageCampaignService {
     requestedScheduledAt?: Date;
     expectedRecipientCount?: number;
   }): Promise<PreparedCampaignSend> {
-    const roleId =
-      await this.rolePermissionsService.findUserWorkspaceRoleIdOrThrow({
+    const roleIds =
+      await this.rolePermissionsService.findUserWorkspaceRoleIdsOrThrow({
         workspaceId,
         userWorkspaceId,
       });
@@ -211,7 +210,7 @@ export class MessageCampaignService {
       });
 
     return {
-      roleId,
+      roleIds,
       emailingDomainId: emailingDomain.id,
       messageChannelId: messageChannel.id,
       sendableRecipients,
@@ -310,14 +309,14 @@ export class MessageCampaignService {
     from: MessageCampaignStatus;
     fromScheduledAt?: Date;
   }): Promise<SendCampaignResult> {
-    const { roleId, emailingDomainId, messageChannelId, sendableRecipients } =
+    const { roleIds, emailingDomainId, messageChannelId, sendableRecipients } =
       prepared;
 
     const claimed =
       await this.messageCampaignLifecycleService.transitionCampaignStatus({
         workspaceId,
         campaignId,
-        roleId,
+        roleIds,
         from,
         to: MessageCampaignStatus.SENDING,
         scheduledAt: null,
@@ -353,7 +352,7 @@ export class MessageCampaignService {
         await this.messageCampaignLifecycleService.transitionCampaignStatus({
           workspaceId,
           campaignId,
-          roleId,
+          roleIds,
           from: MessageCampaignStatus.SENDING,
           to: from,
           scheduledAt: fromScheduledAt ?? null,

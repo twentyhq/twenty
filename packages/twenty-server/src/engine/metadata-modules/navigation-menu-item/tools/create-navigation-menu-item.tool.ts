@@ -1,7 +1,14 @@
 import { ToolCategory } from 'twenty-shared/ai';
-import { NavigationMenuItemType, NATIVE_PAGE_KEYS } from 'twenty-shared/types';
+import {
+  BUILT_IN_SECTION_KEYS,
+  FeatureFlagKey,
+  NavigationMenuItemType,
+  NATIVE_PAGE_KEYS,
+} from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
@@ -24,7 +31,9 @@ const commonOptionalFields = {
   parentId: z
     .uuid()
     .optional()
-    .describe('Parent folder id, if the item should live inside a folder.'),
+    .describe(
+      'Parent id: a folder, a section or a tab the item should live inside. A tab takes no parent, a section only a tab, and a folder a tab or a section.',
+    ),
 };
 
 const requiredNameField = z
@@ -43,6 +52,28 @@ const derivedNameField = z
   );
 
 const createNavigationMenuItemInputSchema = z.discriminatedUnion('type', [
+  z.object({
+    type: z.literal(NavigationMenuItemType.TAB),
+    scope: navigationMenuItemScopeSchema,
+    name: requiredNameField,
+    ...commonOptionalFields,
+  }),
+  z.object({
+    type: z.literal(NavigationMenuItemType.SECTION),
+    scope: navigationMenuItemScopeSchema,
+    builtInSectionKey: z
+      .enum(BUILT_IN_SECTION_KEYS)
+      .optional()
+      .describe(
+        'Adds a built-in section instead of a custom one: favorites (personal favorites), aiChatInbox (Inbox), aiChatFavorites (Favorite chats), aiChatChannels (Channels), aiChatRecents (Recent chats) or aiAgents (Agents).',
+      ),
+    name: requiredNameField
+      .optional()
+      .describe(
+        'Label shown in the sidebar. Required for a custom section; omit it for a built-in section to keep its default label.',
+      ),
+    ...commonOptionalFields,
+  }),
   z.object({
     type: z.literal(NavigationMenuItemType.FOLDER),
     scope: navigationMenuItemScopeSchema,
@@ -122,8 +153,15 @@ const toServiceInput = (
   };
 
   switch (params.type) {
+    case NavigationMenuItemType.TAB:
     case NavigationMenuItemType.FOLDER:
       return { ...base, name: params.name };
+    case NavigationMenuItemType.SECTION:
+      return {
+        ...base,
+        name: params.name,
+        builtInSectionKey: params.builtInSectionKey,
+      };
     case NavigationMenuItemType.LINK:
       return { ...base, name: params.name, link: params.link };
     case NavigationMenuItemType.OBJECT:
@@ -163,6 +201,8 @@ const toServiceInput = (
   description: `Create a navigation menu item. With scope='user' it becomes a personal favorite for the current user; with scope='workspace' it is shared with everyone (requires LAYOUTS permission).
 
 Type chooses the variant:
+- TAB: a sidebar tab next to Home, holding sections and items (name required, workspace scope, no parent). Only available when the customizable sidebar is enabled for the workspace.
+- SECTION: a titled group inside a tab or on Home (workspace scope). Only available when the customizable sidebar is enabled. Pass a name for a custom section, or a builtInSectionKey to add a built-in section such as Channels or Recent chats.
 - FOLDER: a group to nest other items into (name required).
 - LINK: an external URL pinned in the sidebar (name + link required).
 - OBJECT: pins an object's standard view (label auto-derived from the object's plural name; only pass 'name' if the user wants a custom label).
@@ -180,6 +220,7 @@ export class CreateNavigationMenuItemTool extends BaseTool<
 
   constructor(
     private readonly navigationMenuItemService: NavigationMenuItemService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {
     super();
   }
@@ -191,6 +232,60 @@ export class CreateNavigationMenuItemTool extends BaseTool<
     typeof createNavigationMenuItemInputSchema
   >): Promise<ToolOutput> {
     try {
+      if (
+        input.type === NavigationMenuItemType.TAB ||
+        input.type === NavigationMenuItemType.SECTION
+      ) {
+        const isCustomizableSidebarEnabled =
+          await this.featureFlagService.isFeatureEnabled(
+            FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
+            workspaceId,
+          );
+
+        if (!isCustomizableSidebarEnabled) {
+          return {
+            success: false,
+            message:
+              'Tabs and sections need the customizable sidebar to be enabled for this workspace.',
+            error: 'customizable_sidebar_disabled',
+          };
+        }
+
+        if (input.scope !== 'workspace') {
+          return {
+            success: false,
+            message:
+              "Tabs and sections are shared with the workspace: use scope='workspace'.",
+            error: 'tab_or_section_requires_workspace_scope',
+          };
+        }
+      }
+
+      if (
+        input.type === NavigationMenuItemType.SECTION &&
+        isDefined(input.builtInSectionKey)
+      ) {
+        const containerId = input.parentId ?? null;
+        const workspaceSections = await this.navigationMenuItemService.findAll({
+          workspaceId,
+          scope: 'workspace',
+          type: NavigationMenuItemType.SECTION,
+        });
+        const isAlreadyInContainer = workspaceSections.some(
+          (section) =>
+            section.builtInSectionKey === input.builtInSectionKey &&
+            (section.parentId ?? null) === containerId,
+        );
+
+        if (isAlreadyInContainer) {
+          return {
+            success: false,
+            message: `The ${input.builtInSectionKey} built-in section is already in this container (possibly hidden).`,
+            error: 'built_in_section_already_in_container',
+          };
+        }
+      }
+
       if (input.scope === 'user' && !userWorkspaceId) {
         return {
           success: false,
@@ -213,6 +308,7 @@ export class CreateNavigationMenuItemTool extends BaseTool<
           id: created.id,
           type: created.type,
           name: created.name,
+          builtInSectionKey: created.builtInSectionKey,
           scope: created.userWorkspaceId ? 'user' : 'workspace',
           parentId: created.parentId,
           position: created.position,

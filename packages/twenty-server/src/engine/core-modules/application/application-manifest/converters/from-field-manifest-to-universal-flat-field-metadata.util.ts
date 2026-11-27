@@ -14,7 +14,7 @@ import { generateDefaultValue } from 'src/engine/metadata-modules/field-metadata
 import { isAuditLoggableFieldType } from 'src/engine/metadata-modules/field-metadata/utils/is-audit-loggable-field-type.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { nullifyEmptyCompositeDefaultValue } from 'src/engine/metadata-modules/flat-field-metadata/utils/nullify-empty-composite-default-value.util';
-import { sanitizeSelectOptionColors } from 'src/engine/metadata-modules/flat-field-metadata/utils/sanitize-select-option-colors.util';
+import { sanitizeSelectOptions } from 'src/engine/metadata-modules/flat-field-metadata/utils/sanitize-select-options.util';
 import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
@@ -82,7 +82,7 @@ const resolveManifestFieldOptions = (
   }
 
   return isFieldMetadataSelectKind(fieldManifest.type)
-    ? sanitizeSelectOptionColors(fieldManifest.options)
+    ? sanitizeSelectOptions(fieldManifest.options)
     : fieldManifest.options;
 };
 
@@ -127,6 +127,8 @@ export const fromFieldManifestToUniversalFlatFieldMetadata = ({
     options: resolveManifestFieldOptions(fieldManifest),
     defaultValue,
     universalSettings: fieldManifest.universalSettings ?? null,
+    formula:
+      'formula' in fieldManifest ? (fieldManifest.formula ?? null) : null,
     isActive: true,
     isSystem: false,
     isSystemSideEffect: false,

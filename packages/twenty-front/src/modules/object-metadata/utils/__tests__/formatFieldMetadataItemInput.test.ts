@@ -47,6 +47,40 @@ describe('formatFieldMetadataItemInput', () => {
     expect(result).toEqual(expected);
   });
 
+  it('should send a formula next to the settings', () => {
+    expect(
+      formatFieldMetadataItemInput({
+        settings: { decimals: 2 },
+        formula: ' price * quantity ',
+      }),
+    ).toMatchObject({
+      settings: { decimals: 2 },
+      formula: { expression: 'price * quantity' },
+    });
+  });
+
+  it('should send the currency code expression of a currency formula', () => {
+    expect(
+      formatFieldMetadataItemInput({
+        formula: 'amount.amountMicros * 2',
+        formulaCurrencyCode: ' amount.currencyCode ',
+      }).formula,
+    ).toEqual({
+      expression: 'amount.amountMicros * 2',
+      currencyCodeExpression: 'amount.currencyCode',
+    });
+  });
+
+  it('should remove the formula when it is emptied', () => {
+    expect(formatFieldMetadataItemInput({ formula: ' ' }).formula).toBeNull();
+  });
+
+  it('should leave the formula out when the form has none', () => {
+    expect(
+      formatFieldMetadataItemInput({ settings: { decimals: 2 } }).formula,
+    ).toBeUndefined();
+  });
+
   it('should handle input without options', () => {
     const input = {
       label: 'Example Label',

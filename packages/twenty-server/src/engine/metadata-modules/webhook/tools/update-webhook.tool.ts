@@ -31,6 +31,7 @@ const updateWebhookInputSchema = z.object({
 
 @DefineTool({
   name: 'update_webhook',
+  isDestructive: true,
   category: ToolCategory.WEBHOOK,
   accessPolicy: WEBHOOK_WRITE_ACCESS_POLICY,
   description: `Update an existing webhook. Only the fields you pass are modified; everything else is preserved.`,

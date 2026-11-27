@@ -57,6 +57,7 @@ import { ApplicationTargetGuard } from 'src/engine/guards/application-target.gua
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 
 const LOGIC_FUNCTION_READ_ACCESS_POLICY: AccessPolicy = {
   authPrincipals: {
@@ -137,11 +138,19 @@ export class LogicFunctionResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<LogicFunctionDTO> {
     try {
-      const { flatLogicFunctionMaps } =
+      const {
+        flatLogicFunctionMaps,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      } =
         await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
           {
             workspaceId,
-            flatMapsKeys: ['flatLogicFunctionMaps'],
+            flatMapsKeys: [
+              'flatLogicFunctionMaps',
+              'flatObjectMetadataMaps',
+              'flatFieldMetadataMaps',
+            ],
           },
         );
 
@@ -150,7 +159,11 @@ export class LogicFunctionResolver {
         flatLogicFunctionMaps,
       });
 
-      return fromFlatLogicFunctionToLogicFunctionDto({ flatLogicFunction });
+      return fromFlatLogicFunctionToLogicFunctionDto({
+        flatLogicFunction,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      });
     } catch (error) {
       return logicFunctionGraphQLApiExceptionHandler(error);
     }
@@ -166,11 +179,19 @@ export class LogicFunctionResolver {
     callingApplication: FlatApplication | undefined,
   ): Promise<LogicFunctionDTO[]> {
     try {
-      const { flatLogicFunctionMaps } =
+      const {
+        flatLogicFunctionMaps,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      } =
         await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
           {
             workspaceId,
-            flatMapsKeys: ['flatLogicFunctionMaps'],
+            flatMapsKeys: [
+              'flatLogicFunctionMaps',
+              'flatObjectMetadataMaps',
+              'flatFieldMetadataMaps',
+            ],
           },
         );
 
@@ -187,7 +208,11 @@ export class LogicFunctionResolver {
             }),
         )
         .map((flatLogicFunction) =>
-          fromFlatLogicFunctionToLogicFunctionDto({ flatLogicFunction }),
+          fromFlatLogicFunctionToLogicFunctionDto({
+            flatLogicFunction,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+          }),
         );
     } catch (error) {
       return logicFunctionGraphQLApiExceptionHandler(error);
@@ -195,6 +220,7 @@ export class LogicFunctionResolver {
   }
 
   @ResolveField(() => Boolean, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   async canRunOnDemand(
     @Parent() { id }: Pick<LogicFunctionDTO, 'id'>,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

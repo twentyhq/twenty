@@ -8,13 +8,20 @@ import { GranolaFolderPicker } from 'src/front-components/components/GranolaFold
 import { GranolaFolderPolicyRadioCard } from 'src/front-components/components/GranolaFolderPolicyRadioCard';
 import { OnMountEffect } from 'src/front-components/components/OnMountEffect';
 import { StyledSettingsSectionStack } from 'src/front-components/components/StyledSettingsSectionStack';
+import { type GranolaFoldersResult } from 'src/front-components/types/granola-folders-result.type';
 import { type GranolaStoredFolderSelection } from 'src/front-components/types/granola-stored-folder-selection.type';
 import { fetchGranolaFolderSelectionOrThrow } from 'src/front-components/utils/fetch-granola-folder-selection-or-throw.util';
+import { fetchGranolaFoldersOrThrow } from 'src/front-components/utils/fetch-granola-folders-or-throw.util';
+import { getGranolaWorkspaceFolderPolicyOptions } from 'src/front-components/utils/get-granola-workspace-folder-policy-options.util';
 
 type GranolaStoredSelectionState =
   | { step: 'LOADING' }
   | { step: 'FAILED' }
-  | { step: 'LOADED'; storedSelection: GranolaStoredFolderSelection };
+  | {
+      step: 'LOADED';
+      storedSelection: GranolaStoredFolderSelection;
+      folderListRequest: Promise<GranolaFoldersResult | undefined>;
+    };
 
 export const GranolaFolderSection = () => {
   const [storedSelectionState, setStoredSelectionState] =
@@ -23,13 +30,16 @@ export const GranolaFolderSection = () => {
   const loadStoredSelection = async () => {
     setStoredSelectionState({ step: 'LOADING' });
 
+    const folderListRequest = fetchGranolaFoldersOrThrow().catch(
+      () => undefined,
+    );
     const storedSelection = await fetchGranolaFolderSelectionOrThrow().catch(
       () => undefined,
     );
 
     setStoredSelectionState(
       isDefined(storedSelection)
-        ? { step: 'LOADED', storedSelection }
+        ? { step: 'LOADED', storedSelection, folderListRequest }
         : { step: 'FAILED' },
     );
   };
@@ -45,10 +55,16 @@ export const GranolaFolderSection = () => {
       />
       <StyledSettingsSectionStack>
         {storedSelectionState.step === 'LOADING' && (
-          <GranolaFolderPolicyRadioCard policy={undefined} />
+          <GranolaFolderPolicyRadioCard
+            options={getGranolaWorkspaceFolderPolicyOptions()}
+            policy={undefined}
+          />
         )}
         {storedSelectionState.step === 'LOADED' && (
-          <GranolaFolderPicker {...storedSelectionState.storedSelection} />
+          <GranolaFolderPicker
+            {...storedSelectionState.storedSelection}
+            folderListRequest={storedSelectionState.folderListRequest}
+          />
         )}
         {storedSelectionState.step === 'FAILED' && (
           <InlineBanner

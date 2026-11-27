@@ -190,6 +190,23 @@ describe('evaluateValidationRuleExpression', () => {
     ).toEqual({ status: 'failed' });
   });
 
+  it('should check that a date equals a date-time by its UTC calendar day', () => {
+    const record = {
+      signedOn: '2026-09-01',
+      createdAt: '2026-09-23T10:00:00.000Z',
+    };
+
+    expect(
+      evaluate('signedOn == dateTrunc(createdAt, "MONTH")', record),
+    ).toEqual({ status: 'passed' });
+    expect(
+      evaluate('signedOn != dateTrunc(createdAt, "MONTH")', record),
+    ).toEqual({ status: 'failed' });
+    expect(evaluate('signedOn == createdAt', record)).toEqual({
+      status: 'failed',
+    });
+  });
+
   it('should keep comparing dates and plain texts as strings', () => {
     expect(
       evaluate('signedOn < "2026-09-24"', { signedOn: '2026-09-23' }),

@@ -15,6 +15,7 @@ import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { isChannelVisibilityEnforcedByIndividualRole } from 'src/engine/permissions/channel-visibility/utils/is-channel-visibility-enforced-by-individual-role.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
@@ -46,6 +47,10 @@ export class ApplyMessagesVisibilityRestrictionsService
     records: ObjectRecord[];
     authContext: WorkspaceAuthContext;
   }): Promise<void> {
+    if (isChannelVisibilityEnforcedByIndividualRole(authContext)) {
+      return;
+    }
+
     const restrictableMessages = records.filter((message) =>
       RESTRICTED_MESSAGE_FIELD_NAMES.some((fieldName) => fieldName in message),
     );

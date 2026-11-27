@@ -1,5 +1,4 @@
-import { applyObjectPermissionChange } from '@/settings/roles/role-permissions/object-level-permissions/utils/applyObjectPermissionChange';
-import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
+import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/object-overrides/constants/SettingsRoleObjectPermissionIconConfig';
 import {
   type AiRunScope,
   type AiRunScopeObjectPermission,
@@ -55,11 +54,11 @@ export const applyWorkflowAiAgentScopeObjectPermissionChange = ({
   ) ?? { objectUniversalIdentifier };
 
   const changedObjectPermission: AiRunScopeObjectPermission = isGranted
-    ? applyObjectPermissionChange({
-        objectPermission: existingObjectPermission,
-        permissionKey,
-        value: true,
-      })
+    ? {
+        ...existingObjectPermission,
+        [permissionKey]: true,
+        canReadObjectRecords: true,
+      }
     : removePropertiesFromRecord(existingObjectPermission, removedActions);
 
   const hasRemainingPermission = OBJECT_PERMISSION_ACTIONS.some((action) =>

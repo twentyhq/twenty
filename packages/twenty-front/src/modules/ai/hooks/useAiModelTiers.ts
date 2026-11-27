@@ -8,7 +8,7 @@ import { getPercentDelta } from '@/ai/utils/getPercentDelta';
 import { hasCostPerTaskForEveryModel } from '@/ai/utils/hasCostPerTaskForEveryModel';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { aiModelTiersState } from '@/client-config/states/aiModelTiersState';
-import { workspaceAiModelsSelector } from '@/ai/states/workspaceAiModelsSelector';
+import { workspaceAiModelsSelector } from '@/ai/states/selectors/workspaceAiModelsSelector';
 import { findAiModelTierForDataPolicy } from '@/ai/utils/findAiModelTierForDataPolicy';
 import { getWorkspaceAiDataPolicy } from '@/ai/utils/getWorkspaceAiDataPolicy';
 import { getAiModelBlendedCostPerMillionTokens } from '@/ai/utils/getAiModelBlendedCostPerMillionTokens';
@@ -17,7 +17,6 @@ import { type ClientAiModelConfig } from '~/generated-metadata/graphql';
 
 const REFERENCE_TIER: AiModelTier = 'balanced';
 
-// One basis for every tier: cost per task when all have one, catalog price otherwise.
 const getCostDeltaPercent = ({
   model,
   referenceModel,

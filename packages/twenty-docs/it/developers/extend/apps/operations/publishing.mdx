@@ -42,7 +42,7 @@ twenty app build
 
 Esegue il controllo dei tipi e raggruppa l'app in uno snapshot temporaneo della CLI. Usa `--json` per esaminare il manifest e i metadati dell'artefatto. `twenty app publish` crea il pacchetto stesso; non è necessaria una build separata del tarball.
 
-Le build mantengono i file di ingresso del frontend e delle funzioni logiche, i relativi helper e tipi locali importati, la configurazione TypeScript locale e CSS e risorse annidati. I percorsi e i byte originali vengono conservati in un inventario delle sorgenti. Le dipendenze in `node_modules`, i file non correlati e le importazioni esterne alla directory dell'app (inclusi i target dei collegamenti simbolici) sono esclusi dall'inventario. Queste esclusioni non impediscono la build delle app esistenti. Se utilizzi `package.json#files`, includi queste sorgenti conservate, altrimenti la pubblicazione segnalerà i file mancanti. I pacchetti installati meno recenti devono essere ricompilati e pubblicati per ottenere questo inventario. Ciò non amplia ancora i file ripristinati da `twenty app pull`.
+Le build mantengono i file di ingresso del frontend e delle funzioni logiche, i relativi helper e tipi locali importati, la configurazione TypeScript locale e CSS e risorse annidati. I percorsi e i byte originali vengono conservati in un inventario delle sorgenti. Le dipendenze in `node_modules`, i file non correlati e le importazioni esterne alla directory dell'app (inclusi i target dei collegamenti simbolici) sono esclusi dall'inventario. Queste esclusioni non impediscono la build delle app esistenti. Se utilizzi `package.json#files`, includi queste sorgenti conservate, altrimenti la pubblicazione segnalerà i file mancanti. I pacchetti installati meno recenti devono essere ricompilati e pubblicati per ottenere questo inventario. `twenty app pull` ripristina i componenti frontend, le funzioni logiche e le relative dipendenze locali inventariate sui server che supportano tali esportazioni. Le funzioni logiche richiedono un inventario aggiornato per funzione; ricompilare e applicare oppure pubblicare le applicazioni meno recenti prima di estrarne le sorgenti.
 
 ### Compatibilità dell'inventario dei sorgenti
 
@@ -247,6 +247,8 @@ La pubblicazione su npm rende la tua app idonea per il marketplace di Twenty. Do
   "keywords": ["twenty-app"]
 }
 ```
+
+Anche i tuoi ruoli devono seguire le [regole per i ruoli al di fuori dell'applicazione personalizzata dell'area di lavoro](/it/developers/extend/apps/config/roles#roles-outside-the-workspace-custom-application): possono essere ricoperti solo dagli agenti e non dichiarano autorizzazioni a livello di campo o riga. In caso contrario, `twenty app publish` non riesce con `INVALID_INPUT` ed elenca i ruoli che causano il problema.
 
 ### Metadati del marketplace
 

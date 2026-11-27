@@ -38,10 +38,6 @@ export default defineRole({
         canUpdateAllRecords: true,
         canSoftDeleteAllRecords: false,
         canDestroyAllRecords: false,
-        unreadableFields: [
-          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name
-            .universalIdentifier,
-        ],
       },
     ],
   },
@@ -58,6 +54,32 @@ export default defineRole({
   `unreadableFields` and `uneditableFields` (field universal identifiers; a field that cannot be
   read cannot be edited either), and its [row-level records permissions](#row-level-security).
 
+## Roles outside the workspace Custom application
+
+An app installed from the marketplace, from a tarball or with `twenty app dev` runs inside other
+people's workspaces, so its roles only describe what the app and its agents can do:
+
+- **Only agents hold them.** Twenty stores the [default function role](#the-default-function-role)
+  and the roles of your [agents](#agent-roles) with `canBeAssignedToUsers` and
+  `canBeAssignedToApiKeys` set to `false`, whatever the source says. Any other `defineRole()` must
+  set both to `false` itself.
+- **No field or row-level permissions.** `unreadableFields`, `uneditableFields`,
+  `rowLevelRecordsPermissions` and their deprecated forms (`fieldPermissions`,
+  `rowLevelPermissionPredicates`, `rowLevelPermissionPredicateGroups`) are refused. The workspace
+  configures them on its own roles.
+
+`twenty app build` and `dev` report a role that breaks these rules as a warning. `plan`, `apply`
+and `dev` then fail unless the target is the workspace Custom application, and `publish` always
+fails. A sync sent straight to the API is refused with `MARKETPLACE_APPLICATION_ROLE_ASSIGNABILITY`
+or `MARKETPLACE_APPLICATION_ROLE_RESTRICTION`. An installed app that predates these rules can
+upgrade by removing what they refuse: turning a flag off or dropping a field or row-level
+permission is accepted.
+
+The workspace Custom application, the project `twenty app pull` creates for a workspace (see
+[Pulling an installed app back to source](/developers/extend/apps/operations/sync-and-recovery#pulling-an-installed-app-back-to-source)),
+is the place for roles meant for workspace members or API keys, and for the field and row-level
+permissions described below.
+
 <Note>
   `SystemPermissionFlag.USER_APPS` and `SystemPermissionFlag.WORKSPACE_APPS`
   are available from `twenty-sdk` 2.54 onward; earlier versions name them
@@ -69,6 +91,11 @@ export default defineRole({
 </Note>
 
 ## Row-level security
+
+<Note>
+  Only the workspace Custom application can declare row-level and field permissions. See
+  [Roles outside the workspace Custom application](#roles-outside-the-workspace-custom-application).
+</Note>
 
 Row-level permissions require the **Organization plan or above** — see
 [pricing](https://twenty.com/pricing). What happens on a plan without the entitlement is covered in
@@ -88,8 +115,10 @@ group.
 
 A predicate references a field by its `universalIdentifier`, an `operand`, and (optionally) a
 workspaceMember field whose value is injected at query time — so you can express "the record's owner
-relation **is** the current workspace member". This role can create any company, but reads and
-updates only the companies it owns:
+relation **is** the current workspace member". With `relationFieldUniversalIdentifier`, a predicate
+compares a field of the records related through that relation field instead, for example the
+`messageChannelId` of a message's channel associations. This role can create any company, but reads
+and updates only the companies it owns:
 
 ```ts src/roles/partner-role.ts
 import {
@@ -243,7 +272,7 @@ Notes:
 - Row-level security is enforced for workspaces on the **Organization plan or above**. On other
   plans the rules declared in an app manifest still sync, they are simply not enforced.
 - The Metadata API behaves differently from the manifest here: without the entitlement,
-  `upsertRowLevelPermissionPredicates` is rejected with
+  `upsertRowLevelPermissionRules` is rejected with
   `ROW_LEVEL_PERMISSION_FEATURE_DISABLED` rather than syncing. A workspace on a plan that does not
   include row-level security therefore cannot create predicates outside of an app manifest, even
   though the `rowLevelPermissionPredicates` field is present on the `Role` type when you introspect
@@ -287,12 +316,12 @@ Notes:
 
 ### Agent roles
 
-The application role is what a workspace reviews when it installs your app, so it must cover everything the app itself can do. Any role you assign to an agent through `roleUniversalIdentifier` on `defineAgent()` must not grant more than the application role: no object action, field access, permission flag or row-level scope the application role lacks. If it does, the build fails with an error listing the excess grants. Roles your app ships for workspace members or API keys are not held to this rule, since the app never runs with them. The check needs the application role in your app's source, so it is skipped when the default role is defined elsewhere.
+The application role is what a workspace reviews when it installs your app, so it must cover everything the app itself can do. Any role you assign to an agent through `roleUniversalIdentifier` on `defineAgent()` must not grant more than the application role: no object action, field access, permission flag or row-level scope the application role lacks. If it does, the build fails with an error listing the excess grants. Roles the workspace Custom application ships for workspace members or API keys are not held to this rule, since the app never runs with them. The check needs the application role in your app's source, so it is skipped when the default role is defined elsewhere.
 
 ## Best practices
 
 - Start from the scaffolded role, then progressively restrict it — the default grants broad read access, which is rarely what you want in production.
-- List in `recordsPermissions.objects` only the objects your functions actually need, and use `unreadableFields` and `uneditableFields` to hide or lock the fields they do not.
+- List in `recordsPermissions.objects` only the objects your functions actually need.
 - `permissionFlagUniversalIdentifiers` control access to platform-level capabilities. Keep them minimal.
 - A permission flag your app declares with `definePermissionFlag()` carries a `permissionType`: `'tool'` (the default) for a capability an agent or a user can be granted, `'settings'` for a flag that unlocks a settings area.
 - See a working example: [`examples/hello-world/src/roles/default-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/hello-world/src/roles/default-role.ts).

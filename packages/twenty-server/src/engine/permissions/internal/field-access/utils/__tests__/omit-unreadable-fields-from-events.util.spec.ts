@@ -63,6 +63,7 @@ const buildUpdateEvent = ({
   recordId: string;
   updatedFields: ('name' | 'secret')[];
 }): ObjectRecordUpdateEvent => ({
+  eventId: 'event-1',
   recordId,
   properties: {
     updatedFields,

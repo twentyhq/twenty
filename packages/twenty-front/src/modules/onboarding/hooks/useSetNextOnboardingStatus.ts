@@ -3,12 +3,11 @@ import { isDefined } from 'twenty-shared/utils';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
-import { isBookCallOnboardingStepEnabledState } from '@/client-config/states/isBookCallOnboardingStepEnabledState';
 import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
 import { onboardingNavigationDirectionState } from '@/onboarding/states/onboardingNavigationDirectionState';
-import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { hasOpenedWorkspaceSetupChatSidePanelState } from '@/onboarding/states/hasOpenedWorkspaceSetupChatSidePanelState';
+import { isWorkspaceSetupChatActiveState } from '@/ai-chat/states/isWorkspaceSetupChatActiveState';
 import { getHasJustCompletedOnboarding } from '@/onboarding/utils/getHasJustCompletedOnboarding';
-import { getIsBookCallRequired } from '@/onboarding/utils/getIsBookCallRequired';
 import { getNextOnboardingStatus } from '@/onboarding/utils/getNextOnboardingStatus';
 import { getNextPreviousOnboardingStatus } from '@/onboarding/utils/getNextPreviousOnboardingStatus';
 import { type OnboardingStepHistoryEffect } from '@/onboarding/types/OnboardingStepHistoryEffect';
@@ -37,12 +36,6 @@ export const useSetNextOnboardingStatus = () => {
         currentUser,
         currentWorkspace,
         isBillingEnabled,
-        isBookCallRequired: getIsBookCallRequired({
-          isBookCallOnboardingStepEnabled: store.get(
-            isBookCallOnboardingStepEnabledState.atom,
-          ),
-          currentUser: store.get(currentUserState.atom),
-        }),
       });
 
       store.set(onboardingNavigationDirectionState.atom, 'forward');
@@ -68,9 +61,10 @@ export const useSetNextOnboardingStatus = () => {
         })
       ) {
         store.set(
-          shouldOpenAiChatAfterOnboardingState.atom,
+          isWorkspaceSetupChatActiveState.atom,
           isOnboardingAiChatEnabled && currentUser?.isWorkspaceCreator === true,
         );
+        store.set(hasOpenedWorkspaceSetupChatSidePanelState.atom, false);
       }
     },
     [

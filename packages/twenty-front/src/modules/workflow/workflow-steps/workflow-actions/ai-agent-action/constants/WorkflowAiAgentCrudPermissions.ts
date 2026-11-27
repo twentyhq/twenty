@@ -1,4 +1,4 @@
-import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
+import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/object-overrides/constants/SettingsRoleObjectPermissionIconConfig';
 import { t } from '@lingui/core/macro';
 
 export const CRUD_PERMISSIONS: Array<{

@@ -21,6 +21,7 @@ const SOURCE_TYPE_LABELS: Record<
   ApplicationRegistrationSourceType,
   MessageDescriptor
 > = {
+  [ApplicationRegistrationSourceType.BUNDLED]: msg`Bundled`,
   [ApplicationRegistrationSourceType.LOCAL]: msg`Local`,
   [ApplicationRegistrationSourceType.NPM]: msg`NPM`,
   [ApplicationRegistrationSourceType.OAUTH_ONLY]: msg`OAuth`,

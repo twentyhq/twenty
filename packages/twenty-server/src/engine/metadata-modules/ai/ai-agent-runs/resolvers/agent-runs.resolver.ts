@@ -76,7 +76,10 @@ export class AgentRunsResolver {
   ): Promise<AgentRunDTO[]> {
     // The application target guard lets unknown ids through, and turns outlive
     // their agent, so a deleted agent's runs would otherwise reach any app
-    await this.agentService.findOneAgentById({ id: agentId, workspaceId });
+    await this.agentService.findOneAgentById({
+      id: agentId,
+      workspaceId,
+    });
 
     return this.agentRunsService.findAgentRuns({
       workspaceId,
@@ -93,7 +96,9 @@ export class AgentRunsResolver {
     @AuthApplication({ allowUndefined: true })
     callingApplication: FlatApplication | undefined,
   ): Promise<AgentRunSummaryDTO[]> {
-    const flatAgents = await this.agentService.findManyAgents(workspaceId);
+    const flatAgents = await this.agentService.findManyAgents({
+      workspaceId,
+    });
 
     return this.agentRunStatisticsService.findRunSummaries({
       workspaceId,
@@ -128,7 +133,10 @@ export class AgentRunsResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<AgentRunInsightsDTO> {
     // Same reason as agentRuns: turns outlive their agent
-    await this.agentService.findOneAgentById({ id: agentId, workspaceId });
+    await this.agentService.findOneAgentById({
+      id: agentId,
+      workspaceId,
+    });
 
     return this.agentRunStatisticsService.findRunInsights({
       workspaceId,

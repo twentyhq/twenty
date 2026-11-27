@@ -2,6 +2,7 @@ import { defineLogicFunction } from 'twenty-sdk/define';
 
 import { GRANOLA_FOLDERS_ROUTE_PATH } from 'src/constants/granola-folders-route-path';
 import { GRANOLA_FOLDERS_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { createWorkspaceGranolaClientOrThrow } from 'src/logic-functions/utils/create-workspace-granola-client-or-throw.util';
 import { currentUserCanManageGranolaOrThrow } from 'src/logic-functions/utils/current-user-can-manage-granola-or-throw.util';
 import { listAllGranolaFoldersOrThrow } from 'src/logic-functions/utils/list-all-granola-folders-or-throw.util';
 import { readGranolaFolderSelection } from 'src/logic-functions/utils/read-granola-folder-selection.util';
@@ -16,7 +17,9 @@ export const granolaFoldersHandler = async () => {
 
   return {
     success: true,
-    folders: await listAllGranolaFoldersOrThrow(),
+    folders: await listAllGranolaFoldersOrThrow({
+      client: createWorkspaceGranolaClientOrThrow(),
+    }),
     ...(await readGranolaFolderSelection()),
   };
 };

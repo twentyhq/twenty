@@ -13,7 +13,6 @@ import { BillingProductEntity } from 'src/engine/core-modules/billing/entities/b
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { type SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
-import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 import { type BillingGetPlanResult } from 'src/engine/core-modules/billing/types/billing-get-plan-result.type';
 import { type BillingGetPricesPerPlanResult } from 'src/engine/core-modules/billing/types/billing-get-prices-per-plan-result.type';
 import { assertPlanIsSellableOrThrow } from 'src/engine/core-modules/billing/utils/assert-plan-is-sellable-or-throw.util';
@@ -52,10 +51,6 @@ export class BillingPlanService {
         (product) => product.metadata.planKey === planKey,
       );
 
-      const meteredProducts = planProducts.filter(
-        (product) =>
-          product.metadata.priceUsageBased === BillingUsageType.METERED,
-      );
       const baseProducts = planProducts.filter(
         (product) =>
           product.metadata.productKey === BillingProductKey.BASE_PRODUCT,
@@ -75,7 +70,6 @@ export class BillingPlanService {
         isCheckoutDefault: planKey === defaultPlanKey,
         upgradePlanKeys,
         downgradePlanKeys,
-        meteredProducts,
         baseProducts,
         resourceCreditProducts,
       };
@@ -105,14 +99,11 @@ export class BillingPlanService {
         BillingExceptionCode.BILLING_PLAN_NOT_FOUND,
       );
     }
-    const { meteredProducts, baseProducts, resourceCreditProducts } = plan;
+    const { baseProducts, resourceCreditProducts } = plan;
 
     const filterPricesByInterval = (product: BillingProductEntity) =>
       product.billingPrices.filter((price) => price.interval === interval);
 
-    const meteredProductPrices = meteredProducts.flatMap(
-      filterPricesByInterval,
-    );
     const baseProductPrices = baseProducts.flatMap(filterPricesByInterval);
 
     const resourceCreditProductPrices = resourceCreditProducts.flatMap(
@@ -120,7 +111,6 @@ export class BillingPlanService {
     );
 
     return {
-      meteredProductPrices,
       baseProductPrices,
       resourceCreditProductPrices,
     };

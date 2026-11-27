@@ -23,4 +23,7 @@ export class RelatedRecordPathDTO {
 
   @Field(() => Boolean)
   isInherent: boolean;
+
+  @Field(() => Boolean)
+  isActive: boolean;
 }

@@ -76,6 +76,7 @@ type AgentRunTurnInput = {
   canAskHumans?: boolean;
   baseSystemPrompt: string;
   workspaceId: string;
+  threadId?: string;
   executionContext: AgentRunExecutionContext;
   additionalExcludedToolNames?: readonly string[];
   toolLoadingStrategy?: AgentToolLoadingStrategy;
@@ -125,6 +126,7 @@ export class AgentRunTurnService {
     messages,
     baseSystemPrompt,
     workspaceId,
+    threadId,
     executionContext,
     additionalExcludedToolNames = [],
     toolLoadingStrategy = 'preload',
@@ -157,6 +159,7 @@ export class AgentRunTurnService {
     const registryAccess = await this.buildAgentRegistryAccess({
       persona,
       workspaceId,
+      threadId,
       executionContext,
       additionalExcludedToolNames,
       toolLoadingStrategy,
@@ -461,6 +464,7 @@ export class AgentRunTurnService {
   private async buildAgentRegistryAccess({
     persona,
     workspaceId,
+    threadId,
     executionContext: { authContext, actorMetadata },
     additionalExcludedToolNames,
     toolLoadingStrategy,
@@ -471,7 +475,8 @@ export class AgentRunTurnService {
     | 'executionContext'
     | 'additionalExcludedToolNames'
     | 'toolLoadingStrategy'
-  >): Promise<AgentRegistryAccess> {
+  > &
+    Pick<AgentRunTurnInput, 'threadId'>): Promise<AgentRegistryAccess> {
     const runAuthContext =
       await this.agentRunPersonaService.resolveRunAuthContext({
         workspaceId,
@@ -489,6 +494,7 @@ export class AgentRunTurnService {
     const toolContext: ToolContext = {
       workspaceId,
       agentId: persona.agentId ?? undefined,
+      threadId,
       authContext: runAuthContext,
       application: getAuthContextApplication(runAuthContext),
       actorMetadata,

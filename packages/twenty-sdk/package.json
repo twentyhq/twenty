@@ -5,7 +5,7 @@
     "url": "git+https://github.com/twentyhq/twenty.git",
     "directory": "packages/twenty-sdk"
   },
-  "version": "2.60.0",
+  "version": "2.66.0",
   "sideEffects": false,
   "files": [
     "dist",
@@ -28,6 +28,11 @@
       "types": "./dist/billing/index.d.ts",
       "import": "./dist/billing/index.mjs",
       "require": "./dist/billing/index.cjs"
+    },
+    "./email": {
+      "types": "./dist/email/index.d.ts",
+      "import": "./dist/email/index.mjs",
+      "require": "./dist/email/index.cjs"
     },
     "./define": {
       "types": "./dist/define/index.d.ts",
@@ -71,19 +76,15 @@
     "uuid": "^13.0.2"
   },
   "devDependencies": {
-    "@prettier/sync": "^0.5.2",
     "@types/node": "^24.0.0",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
     "@typescript/native-preview": "^7.0.0-dev.20260116.1",
     "@vitest/coverage-v8": "^4.0.18",
-    "prettier": "^3.1.1",
     "rollup-plugin-dts": "^6.4.1",
     "tsc-alias": "^1.8.16",
     "twenty-shared": "workspace:*",
-    "twenty-ui": "workspace:*",
-    "vite": "^8.0.0",
-    "vite-plugin-dts": "^4.5.4"
+    "vite": "^8.0.0"
   },
   "engines": {
     "node": "^24.5.0 || ^26.5.1",
@@ -97,6 +98,9 @@
       ],
       "define": [
         "dist/define/index.d.ts"
+      ],
+      "email": [
+        "dist/email/index.d.ts"
       ],
       "front-component": [
         "dist/front-component/index.d.ts"

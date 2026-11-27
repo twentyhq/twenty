@@ -236,7 +236,10 @@
             {
               "key": "aiHowTos",
               "label": "How-Tos",
-              "pages": ["user-guide/ai/how-tos/ai-faq"]
+              "pages": [
+                "user-guide/ai/how-tos/ai-faq",
+                "user-guide/ai/how-tos/inbox-notifications"
+              ]
             }
           ]
         },

@@ -2,7 +2,7 @@ import { type ChangeEvent, useCallback, useState } from 'react';
 
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
 import { useObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useObjectFilterDropdownFilterValue';
-import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
+import { filterValueFieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/filterValueFieldMetadataItemUsedInDropdownComponentSelector';
 import { DropdownMenuInput } from '@/ui/layout/dropdown/components/DropdownMenuInput';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -16,8 +16,8 @@ type ObjectFilterDropdownNumberInputProps = {
 export const ObjectFilterDropdownNumberInput = ({
   filterDropdownId,
 }: ObjectFilterDropdownNumberInputProps) => {
-  const fieldMetadataItemUsedInDropdown = useAtomComponentSelectorValue(
-    fieldMetadataItemUsedInDropdownComponentSelector,
+  const filterValueFieldMetadataItem = useAtomComponentSelectorValue(
+    filterValueFieldMetadataItemUsedInDropdownComponentSelector,
   );
 
   const { objectFilterDropdownFilterValue } =
@@ -55,7 +55,7 @@ export const ObjectFilterDropdownNumberInput = ({
         value={objectFilterDropdownFilterValue}
         autoFocus
         type="number"
-        placeholder={fieldMetadataItemUsedInDropdown?.label}
+        placeholder={filterValueFieldMetadataItem?.label}
         onChange={handleInputChange}
         onEnter={() => closeDropdown(filterDropdownId)}
       />

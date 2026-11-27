@@ -1,4 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { type ParsedSlackConnectionStatus } from 'src/front-components/types/parsed-slack-connection-status.type';
 import {
@@ -13,7 +14,13 @@ export const DISCONNECTED_SLACK_CONNECTION_STATUS: ParsedSlackConnectionStatus =
     installedSlackTeamId: undefined,
     connectionHealth: undefined,
     hasRosterMatchFailed: false,
+    hasConnectionStatusFailed: false,
   };
+
+export const FAILED_SLACK_CONNECTION_STATUS: ParsedSlackConnectionStatus = {
+  ...DISCONNECTED_SLACK_CONNECTION_STATUS,
+  hasConnectionStatusFailed: true,
+};
 
 const KNOWN_HEALTH_VALUES: string[] = Object.values(SLACK_CONNECTION_HEALTH);
 
@@ -27,7 +34,11 @@ export const parseSlackConnectionStatus = (
 ): ParsedSlackConnectionStatus => {
   const record = asRecord(value);
 
-  if (record?.isConnected !== true) {
+  if (!isDefined(record) || record.success === false) {
+    return FAILED_SLACK_CONNECTION_STATUS;
+  }
+
+  if (record.isConnected !== true) {
     return DISCONNECTED_SLACK_CONNECTION_STATUS;
   }
 
@@ -42,5 +53,6 @@ export const parseSlackConnectionStatus = (
       ? record.connectionHealth
       : undefined,
     hasRosterMatchFailed: record.hasRosterMatchFailed === true,
+    hasConnectionStatusFailed: false,
   };
 };

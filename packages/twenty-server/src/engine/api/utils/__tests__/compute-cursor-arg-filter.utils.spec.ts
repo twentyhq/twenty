@@ -9,7 +9,7 @@ import {
   type ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { GraphqlQueryRunnerException } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
+import { CommonQueryRunnerException } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -470,7 +470,7 @@ describe('computeCursorArgFilter', () => {
           flatFieldMetadataMaps,
           isForwardPagination: true,
         }),
-      ).toThrow(GraphqlQueryRunnerException);
+      ).toThrow(CommonQueryRunnerException);
     });
 
     it('should throw error for missing orderBy entry', () => {
@@ -486,7 +486,7 @@ describe('computeCursorArgFilter', () => {
           flatFieldMetadataMaps,
           isForwardPagination: true,
         }),
-      ).toThrow(GraphqlQueryRunnerException);
+      ).toThrow(CommonQueryRunnerException);
     });
   });
 

@@ -15,6 +15,10 @@ type PredicateReferenceProperty =
   | 'relationRowLevelPermissionPredicateUniversalIdentifiers'
   | 'workspaceMemberRowLevelPermissionPredicateUniversalIdentifiers';
 
+type WorkspaceMemberReferenceProperty =
+  | 'workspaceMemberRelationFieldMetadataUniversalIdentifier'
+  | 'workspaceMemberRelationFilterFieldMetadataUniversalIdentifier';
+
 const buildTerritoryField = (
   referenceProperty: PredicateReferenceProperty | null,
 ) => ({
@@ -29,6 +33,34 @@ const buildTerritoryField = (
     : {}),
 });
 
+const buildPredicatesInMigrationMaps = ({
+  isPredicateInMigrationMaps,
+  workspaceMemberReferenceProperty,
+}: {
+  isPredicateInMigrationMaps: boolean;
+  workspaceMemberReferenceProperty: WorkspaceMemberReferenceProperty | null;
+}) => {
+  if (
+    !isPredicateInMigrationMaps &&
+    !isDefined(workspaceMemberReferenceProperty)
+  ) {
+    return {};
+  }
+
+  const predicate: Record<string, string> = {
+    universalIdentifier: PREDICATE_UNIVERSAL_IDENTIFIER,
+    roleUniversalIdentifier: ROLE_UNIVERSAL_IDENTIFIER,
+    objectMetadataUniversalIdentifier: COMPANY_OBJECT_UNIVERSAL_IDENTIFIER,
+  };
+
+  if (isDefined(workspaceMemberReferenceProperty)) {
+    predicate[workspaceMemberReferenceProperty] =
+      TERRITORY_FIELD_UNIVERSAL_IDENTIFIER;
+  }
+
+  return { [PREDICATE_UNIVERSAL_IDENTIFIER]: predicate };
+};
+
 const buildDeleteActions = (universalIdentifiers: string[]) =>
   universalIdentifiers.map((universalIdentifier) => ({ universalIdentifier }));
 
@@ -38,12 +70,14 @@ const validate = ({
   deletedRoleUniversalIdentifiers = [],
   deletedObjectUniversalIdentifiers = [],
   isPredicateInMigrationMaps = false,
+  workspaceMemberReferenceProperty = null,
 }: {
   referenceProperty?: PredicateReferenceProperty | null;
   deletedPredicateUniversalIdentifiers?: string[];
   deletedRoleUniversalIdentifiers?: string[];
   deletedObjectUniversalIdentifiers?: string[];
   isPredicateInMigrationMaps?: boolean;
+  workspaceMemberReferenceProperty?: WorkspaceMemberReferenceProperty | null;
 }) =>
   validateFieldMetadataNotUsedByRowLevelPermissionPredicateCrossEntity({
     fromFlatFieldMetadataMaps: {
@@ -57,16 +91,10 @@ const validate = ({
     optimisticUniversalFlatMaps: {
       flatRowLevelPermissionPredicateMaps: {
         ...createEmptyFlatEntityMaps(),
-        byUniversalIdentifier: isPredicateInMigrationMaps
-          ? {
-              [PREDICATE_UNIVERSAL_IDENTIFIER]: {
-                universalIdentifier: PREDICATE_UNIVERSAL_IDENTIFIER,
-                roleUniversalIdentifier: ROLE_UNIVERSAL_IDENTIFIER,
-                objectMetadataUniversalIdentifier:
-                  COMPANY_OBJECT_UNIVERSAL_IDENTIFIER,
-              },
-            }
-          : {},
+        byUniversalIdentifier: buildPredicatesInMigrationMaps({
+          isPredicateInMigrationMaps,
+          workspaceMemberReferenceProperty,
+        }),
       } as never,
     },
     orchestratorActionsReport: {
@@ -103,6 +131,21 @@ describe('validateFieldMetadataNotUsedByRowLevelPermissionPredicateCrossEntity',
           code: FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
         }),
       ]);
+    },
+  );
+
+  it.each([
+    'workspaceMemberRelationFieldMetadataUniversalIdentifier',
+    'workspaceMemberRelationFilterFieldMetadataUniversalIdentifier',
+  ] as const)(
+    'rejects deleting a field a predicate reads on the member side through %s',
+    (workspaceMemberReferenceProperty) => {
+      expect(
+        validate({
+          referenceProperty: null,
+          workspaceMemberReferenceProperty,
+        }),
+      ).toHaveLength(1);
     },
   );
 

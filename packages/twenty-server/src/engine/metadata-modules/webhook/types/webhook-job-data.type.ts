@@ -12,6 +12,7 @@ type WebhookJobBase = {
 };
 
 export type CallWebhookJobData = WebhookJobBase & {
+  eventId: string;
   objectMetadata: { id: string; nameSingular: string };
   workspaceMemberId?: string;
   applicationId?: string;

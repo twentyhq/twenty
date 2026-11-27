@@ -2,15 +2,17 @@ import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { CoreRecordReferenceFieldsContext } from '@/object-record/record-field/ui/contexts/CoreRecordReferenceFieldsContext';
-import { getFieldValueSourceDefinition } from '@/object-record/record-field/ui/utils/getFieldValueSourceDefinition';
-import { isFieldValueEmpty } from '@/object-record/record-field/ui/utils/isFieldValueEmpty';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { recordIndexListPinnedFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexListPinnedFieldMetadataIdComponentState';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { RecordListRowField } from '@/object-record/record-list/components/RecordListRowField';
+import { RECORD_LIST_ROW_FIELD_MAX_WIDTH } from '@/object-record/record-list/constants/RecordListRowFieldMaxWidth';
 import { RECORD_LIST_ROW_LABEL_IDENTIFIER_WIDTH } from '@/object-record/record-list/constants/RecordListRowLabelIdentifierWidth';
 import { RECORD_LIST_ROW_OVERFLOW_CHIP_SLOT_WIDTH } from '@/object-record/record-list/constants/RecordListRowOverflowChipSlotWidth';
 import { recordListRowWidthComponentState } from '@/object-record/record-list/states/recordListRowWidthComponentState';
 import { computeRecordListDisplayedFields } from '@/object-record/record-list/utils/computeRecordListDisplayedFields';
+import { getRecordListRowPinnedFieldDefinition } from '@/object-record/record-list/utils/getRecordListRowPinnedFieldDefinition';
+import { isRecordListRowFieldValueEmpty } from '@/object-record/record-list/utils/isRecordListRowFieldValueEmpty';
 import { useOpenRecordContextMenu } from '@/object-record/record-selection/hooks/useOpenRecordContextMenu';
 import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { useToggleRecordSelection } from '@/object-record/record-selection/hooks/useToggleRecordSelection';
@@ -104,6 +106,10 @@ export const RecordListRow = ({ recordId, rowRef }: RecordListRowProps) => {
     recordListRowWidthComponentState,
   );
 
+  const recordIndexListPinnedFieldMetadataId = useAtomComponentStateValue(
+    recordIndexListPinnedFieldMetadataIdComponentState,
+  );
+
   const { openRecordFromIndexView } = useOpenRecordFromIndexView();
 
   const isRecordSelected = useAtomComponentFamilyStateValue(
@@ -118,13 +124,42 @@ export const RecordListRow = ({ recordId, rowRef }: RecordListRowProps) => {
     return null;
   }
 
-  const visibleRecordFieldsExceptLabelIdentifier = visibleRecordFields.filter(
-    (recordField) =>
-      recordField.fieldMetadataItemId !== labelIdentifierFieldMetadataItem?.id,
+  const listPinnedFieldDefinition = getRecordListRowPinnedFieldDefinition(
+    isDefined(recordIndexListPinnedFieldMetadataId)
+      ? fieldDefinitionByFieldMetadataItemId[
+          recordIndexListPinnedFieldMetadataId
+        ]
+      : undefined,
   );
 
-  const nonEmptyRecordFields = visibleRecordFieldsExceptLabelIdentifier.flatMap(
-    (recordField) => {
+  const isListPinnedFieldDisplayedAtRowEnd =
+    isDefined(listPinnedFieldDefinition) &&
+    !isRecordListRowFieldValueEmpty({
+      fieldDefinition: listPinnedFieldDefinition,
+      record: recordStore,
+      coreRecordReferenceFields,
+    });
+
+  const fieldMetadataItemIdDisplayedAsRowTitle =
+    labelIdentifierFieldMetadataItem?.id;
+  const fieldMetadataItemIdDisplayedAsRowPinnedField =
+    listPinnedFieldDefinition?.fieldMetadataId;
+
+  const fieldMetadataItemIdsAlreadyDisplayedInRow = [
+    fieldMetadataItemIdDisplayedAsRowTitle,
+    fieldMetadataItemIdDisplayedAsRowPinnedField,
+  ].filter(isDefined);
+
+  const visibleRecordFieldsNotAlreadyDisplayedInRow =
+    visibleRecordFields.filter(
+      (recordField) =>
+        !fieldMetadataItemIdsAlreadyDisplayedInRow.includes(
+          recordField.fieldMetadataItemId,
+        ),
+    );
+
+  const nonEmptyRecordFields =
+    visibleRecordFieldsNotAlreadyDisplayedInRow.flatMap((recordField) => {
       const fieldDefinition =
         fieldDefinitionByFieldMetadataItemId[recordField.fieldMetadataItemId];
 
@@ -132,28 +167,23 @@ export const RecordListRow = ({ recordId, rowRef }: RecordListRowProps) => {
         return [];
       }
 
-      const fieldValueSourceDefinition = getFieldValueSourceDefinition({
-        fieldDefinition,
-        coreRecordReferenceFields,
-      });
-
       if (
-        isFieldValueEmpty({
-          fieldDefinition: fieldValueSourceDefinition,
-          fieldValue:
-            recordStore[fieldValueSourceDefinition.metadata.fieldName],
+        isRecordListRowFieldValueEmpty({
+          fieldDefinition,
+          record: recordStore,
+          coreRecordReferenceFields,
         })
       ) {
         return [];
       }
 
       return [{ recordField, fieldDefinition }];
-    },
-  );
+    });
 
   const displayedFieldsLayout = computeRecordListDisplayedFields({
     rowWidth: recordListRowWidth,
     populatedFieldCount: nonEmptyRecordFields.length,
+    hasPinnedField: isListPinnedFieldDisplayedAtRowEnd,
   });
 
   const displayedRecordFields = nonEmptyRecordFields.slice(
@@ -231,7 +261,7 @@ export const RecordListRow = ({ recordId, rowRef }: RecordListRowProps) => {
             <RecordListRowField
               key={recordField.id}
               recordId={recordId}
-              recordField={recordField}
+              fieldMetadataItemId={recordField.fieldMetadataItemId}
               fieldDefinition={fieldDefinition}
               maxWidth={displayedFieldsLayout.displayedFieldMaxWidth}
             />
@@ -261,6 +291,14 @@ export const RecordListRow = ({ recordId, rowRef }: RecordListRowProps) => {
                 </Chip>
               )}
             </StyledOverflowChipContainer>
+          )}
+          {isListPinnedFieldDisplayedAtRowEnd && (
+            <RecordListRowField
+              recordId={recordId}
+              fieldMetadataItemId={listPinnedFieldDefinition.fieldMetadataId}
+              fieldDefinition={listPinnedFieldDefinition}
+              maxWidth={RECORD_LIST_ROW_FIELD_MAX_WIDTH}
+            />
           )}
         </StyledFieldsContainer>
       </StyledRow>

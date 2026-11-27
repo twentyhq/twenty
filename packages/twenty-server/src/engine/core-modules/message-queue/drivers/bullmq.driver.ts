@@ -19,12 +19,12 @@ import {
   Worker,
 } from 'bullmq';
 import { type JobState as BullMQJobState } from 'bullmq/dist/esm/types';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import {
   type QueueCronJobOptions,
-  type QueueJobLimiter,
   type QueueJobOptions,
   type QueueJobRecipient,
   type QueueJobScope,
@@ -45,6 +45,7 @@ import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-
 
 import { DEFAULT_JOB_PRIORITY } from 'src/engine/core-modules/message-queue/constants/default-job-priority.constant';
 import { QUEUE_JOB_CHANGED_EVENT } from 'src/engine/core-modules/message-queue/constants/queue-job-changed-event.constant';
+import { QUEUE_JOB_FAILED_EVENT } from 'src/engine/core-modules/message-queue/constants/queue-job-failed-event.constant';
 import { QUEUE_RETENTION } from 'src/engine/core-modules/message-queue/constants/queue-retention.constants';
 import { FairQueueScheduler } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-queue-scheduler';
 import {
@@ -54,12 +55,15 @@ import {
 } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-limiter';
 import { JobSizeLimiter } from 'src/engine/core-modules/message-queue/drivers/memory/job-size-limiter';
 import { JOBS_EXIST_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/memory/jobs-exist-script.constant';
+import { JOBS_PERSISTED_OPTIONS_SCRIPT } from 'src/engine/core-modules/message-queue/constants/jobs-persisted-options-script.constant';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MESSAGE_QUEUE_WORKER_CONFIG } from 'src/engine/core-modules/message-queue/message-queue-worker-config.constant';
 import {
   MessageQueueException,
   MessageQueueExceptionCode,
 } from 'src/engine/core-modules/message-queue/message-queue.exception';
 import { type QueueJobChangedEvent } from 'src/engine/core-modules/message-queue/types/queue-job-changed-event.type';
+import { type QueueJobFailedEvent } from 'src/engine/core-modules/message-queue/types/queue-job-failed-event.type';
 import { getJobKey } from 'src/engine/core-modules/message-queue/utils/get-job-key.util';
 import { buildQueueJobIdWithSuffix } from 'src/engine/core-modules/message-queue/utils/build-queue-job-id-with-suffix.util';
 import { buildQueueJobGroupKeys } from 'src/engine/core-modules/message-queue/utils/build-queue-job-group-keys.util';
@@ -67,6 +71,7 @@ import { computeJobSizeBytes } from 'src/engine/core-modules/message-queue/utils
 import { runRedisScript } from 'src/engine/core-modules/message-queue/utils/run-redis-script.util';
 import { buildJobLogContext } from 'src/engine/core-modules/message-queue/utils/build-job-log-context.util';
 import { computeJobQueueWaitMs } from 'src/engine/core-modules/message-queue/utils/compute-job-queue-wait-ms.util';
+import { getQueueJobScheduledAt } from 'src/engine/core-modules/message-queue/utils/get-queue-job-scheduled-at.util';
 import { isQueueJobIdAlreadyWaiting } from 'src/engine/core-modules/message-queue/utils/is-queue-job-id-already-waiting.util';
 import { JOB_LATENCY_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/job-latency-ms-bucket-boundaries.constant';
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
@@ -85,6 +90,7 @@ type BullMQJobsOptions = JobsOptions & {
   fairBase?: number;
   memoryGroupKeys?: string[];
   memorySizeBytes?: number;
+  scheduledAt?: number;
 };
 
 type PreparedJob = { options: BullMQJobsOptions; sizeBytes: number };
@@ -122,8 +128,8 @@ export class BullMQDriver
         this.queueMap[queueName].toKey(jobId),
       keyPrefix: options.prefix ?? 'bull',
       metricsService,
-      isGroupLimiterEnabled: () =>
-        twentyConfigService.get('IS_WORKER_GROUP_LIMITER_ENABLED'),
+      getGroupLimiter: (queueName) =>
+        MESSAGE_QUEUE_WORKER_CONFIG[queueName].workerOptions.groupLimiter,
     });
     this.jobSizeLimiter = new JobSizeLimiter(
       metricsService,
@@ -379,11 +385,11 @@ export class BullMQDriver
       ...(isDefined(options?.maxStalledCount)
         ? { maxStalledCount: options.maxStalledCount }
         : {}),
-      ...(isDefined(options?.rateLimit)
+      ...(isDefined(options?.globalLimiter)
         ? {
             limiter: {
-              max: options.rateLimit.max,
-              duration: options.rateLimit.durationMs,
+              max: options.globalLimiter.max,
+              duration: options.globalLimiter.durationMs,
             },
           }
         : {}),
@@ -436,6 +442,7 @@ export class BullMQDriver
               id: job.id ?? '',
               name: job.name,
               retryLimit: Math.max(0, (job.opts.attempts ?? 1) - 1),
+              attemptsMade: job.attemptsMade,
               updateData: (data) => job.updateData(data),
               updateProgress: (progress) => job.updateProgress(progress),
               abortSignal,
@@ -485,10 +492,25 @@ export class BullMQDriver
       void this.clearOversizedCompletedJobData(job);
       this.releaseFinishedJobMemory({ queueName, job });
     });
-    this.workerMap[queueName].on('failed', (job) => {
-      if (isDefined(job?.finishedOn)) {
-        this.releaseFinishedJobMemory({ queueName, job });
+    this.workerMap[queueName].on('failed', (job, error) => {
+      if (!isDefined(job?.finishedOn)) {
+        return;
       }
+
+      this.releaseFinishedJobMemory({ queueName, job });
+      this.eventEmitter.emit(QUEUE_JOB_FAILED_EVENT, {
+        queueName,
+        job: {
+          id: job.id ?? '',
+          name: job.name,
+          data: job.data,
+          attemptsMade: job.attemptsMade,
+        },
+        error: {
+          name: error.name,
+          message: error.message,
+        },
+      } satisfies QueueJobFailedEvent);
     });
 
     this.workerMap[queueName].on('completed', (job) => {
@@ -659,7 +681,10 @@ export class BullMQDriver
     if (options.id && !options.doNotCheckDuplicatesBasedOnPrefix) {
       const waitingJobIds = await this.getWaitingJobIds({
         queueName,
-        includeDelayed: this.isPacedJob(options.limiter),
+        includeDelayed: this.isPacedJob({
+          queueName,
+          groupKey: options.groupKey,
+        }),
       });
 
       if (
@@ -676,26 +701,28 @@ export class BullMQDriver
       queueName,
       jobName,
       jobs: [{ index: 0, data, options: queueOptions, scope: options }],
-      additionalGroupKeys: options.groupKeys,
+      additionalGroupKeys: options.fairnessGroupKeys,
     });
 
     const [jobOptions] = await this.fairQueueScheduler.computeJobOptions({
       queueName,
       scopes: [options],
-      limiters: [options.limiter],
-      additionalGroupKeys: options.groupKeys,
+      limiterGroupKeys: [options.groupKey],
+      additionalGroupKeys: options.fairnessGroupKeys,
       delay: options.delay,
       staticPriority: queueOptions.priority,
+      limiter: options.limiter,
     });
 
     const [job] = await this.addPreparedJobs({
       queueName,
       preparedJobs: [preparedJob],
       addJobs: async () => [
-        await this.queueMap[queueName].add(jobName, data, {
-          ...preparedJob.options,
-          ...jobOptions,
-        }),
+        await this.queueMap[queueName].add(
+          jobName,
+          data,
+          this.withScheduledAt({ ...preparedJob.options, ...jobOptions }),
+        ),
       ],
     });
 
@@ -707,7 +734,6 @@ export class BullMQDriver
     jobName,
     jobs,
     additionalGroupKeys,
-    shouldReportSizes = false,
   }: {
     queueName: MessageQueue;
     jobName: string;
@@ -718,20 +744,16 @@ export class BullMQDriver
       scope: QueueJobScope;
     }[];
     additionalGroupKeys?: string[];
-    shouldReportSizes?: boolean;
-  }): Promise<{ preparedJobs: PreparedJob[]; availableBytes: number | null }> {
-    const isLimitingEnabled = this.jobMemoryLimiter.isEnabled();
+  }): Promise<{
+    preparedJobs: PreparedJob[];
+    availableBytes: number | null;
+    existingJobIds: Set<string>;
+  }> {
     const sizedJobs = jobs.map(({ index, data, options, scope }) => ({
       index,
       groupKeys: buildQueueJobGroupKeys({ scope, additionalGroupKeys }),
-      sizeBytes:
-        isLimitingEnabled || shouldReportSizes
-          ? computeJobSizeBytes({ data, options })
-          : 0,
-      options: {
-        ...options,
-        jobId: options.jobId ?? (isLimitingEnabled ? v4() : undefined),
-      },
+      sizeBytes: computeJobSizeBytes({ data, options }),
+      options: { ...options, jobId: options.jobId ?? v4() },
     }));
 
     this.jobSizeLimiter.checkJobSizesOrThrow({
@@ -744,14 +766,12 @@ export class BullMQDriver
       })),
     });
 
-    const existingJobIds = isLimitingEnabled
-      ? await this.findExistingJobIds({
-          queueName,
-          jobIds: jobs.flatMap(({ options }) =>
-            isDefined(options.jobId) ? [options.jobId] : [],
-          ),
-        })
-      : new Set<string>();
+    const existingJobIds = await this.findExistingJobIds({
+      queueName,
+      jobIds: jobs.flatMap(({ options }) =>
+        isDefined(options.jobId) ? [options.jobId] : [],
+      ),
+    });
     const chargeableJobs = sizedJobs.filter(
       ({ options }) =>
         isDefined(options.jobId) && !existingJobIds.has(options.jobId),
@@ -786,7 +806,64 @@ export class BullMQDriver
       };
     });
 
-    return { preparedJobs, availableBytes };
+    return { preparedJobs, availableBytes, existingJobIds };
+  }
+
+  private withScheduledAt(
+    options: BullMQJobsOptions,
+  ): BullMQJobsOptions & { scheduledAt: number } {
+    const timestamp = options.timestamp ?? Date.now();
+
+    return {
+      ...options,
+      timestamp,
+      scheduledAt: timestamp + (options.delay ?? 0),
+    };
+  }
+
+  private async findPersistedScheduledAts({
+    queueName,
+    jobIds,
+  }: {
+    queueName: MessageQueue;
+    jobIds: string[];
+  }): Promise<Map<string, number>> {
+    if (jobIds.length === 0) {
+      return new Map();
+    }
+
+    const queue = this.queueMap[queueName];
+    const values = String(
+      await runRedisScript({
+        client: await queue.client,
+        script: JOBS_PERSISTED_OPTIONS_SCRIPT,
+        keys: jobIds.map((jobId) => queue.toKey(jobId)),
+        args: [],
+      }),
+    ).split('\n');
+
+    return new Map(
+      jobIds.flatMap((jobId, index) => {
+        const [rawOptions, rawTimestamp] = values.slice(
+          index * 2,
+          index * 2 + 2,
+        );
+
+        if (!isNonEmptyString(rawOptions) || !isNonEmptyString(rawTimestamp)) {
+          return [];
+        }
+
+        return [
+          [
+            jobId,
+            getQueueJobScheduledAt({
+              timestamp: Number(rawTimestamp),
+              options: JSON.parse(rawOptions),
+            }),
+          ],
+        ];
+      }),
+    );
   }
 
   private async findExistingJobIds({
@@ -948,9 +1025,15 @@ export class BullMQDriver
   }
 
   // A paced job waits in the delayed set, so only paced jobs dedupe against it.
-  private isPacedJob(limiter: QueueJobLimiter | undefined): boolean {
+  private isPacedJob({
+    queueName,
+    groupKey,
+  }: {
+    queueName: MessageQueue;
+    groupKey: string | undefined;
+  }): boolean {
     return (
-      isDefined(limiter) && this.fairQueueScheduler.isGroupLimiterEnabled()
+      isDefined(groupKey) && this.fairQueueScheduler.hasGroupLimiter(queueName)
     );
   }
 
@@ -975,18 +1058,22 @@ export class BullMQDriver
   >({
     queueName,
     jobs,
-    defaultLimiter,
+    defaultGroupKey,
   }: {
     queueName: MessageQueue;
     jobs: TJob[];
-    defaultLimiter: QueueJobLimiter | undefined;
+    defaultGroupKey: string | undefined;
   }): Promise<TJob[]> {
     if (!jobs.some((job) => isDefined(job.jobId))) {
       return jobs;
     }
 
     const isPacedJobById = (job: TJob) =>
-      isDefined(job.jobId) && this.isPacedJob(job.limiter ?? defaultLimiter);
+      isDefined(job.jobId) &&
+      this.isPacedJob({
+        queueName,
+        groupKey: job.groupKey ?? defaultGroupKey,
+      });
     const waitingJobIds = await this.getWaitingJobIds({
       queueName,
       includeDelayed: false,
@@ -1028,7 +1115,7 @@ export class BullMQDriver
       : await this.filterOutAlreadyWaitingJobs({
           queueName,
           jobs: indexedJobs,
-          defaultLimiter: options?.limiter,
+          defaultGroupKey: options?.groupKey,
         });
 
     if (jobsToAdd.length === 0) {
@@ -1036,50 +1123,52 @@ export class BullMQDriver
     }
 
     const queueOptions = this.buildJobsOptions(options);
-    const { preparedJobs, availableBytes } = await this.prepareJobs({
-      queueName,
-      jobName,
-      jobs: jobsToAdd.map((job, index) => ({
-        index: job.inputIndex,
-        data: job.data,
-        options: {
-          ...queueOptions,
-          jobId:
-            job.jobId ??
-            (isDefined(queueOptions.jobId)
-              ? `${queueOptions.jobId}-${index}`
-              : undefined),
-        },
-        scope: job,
-      })),
-      additionalGroupKeys: options?.groupKeys,
-      shouldReportSizes: true,
-    });
+    const { preparedJobs, availableBytes, existingJobIds } =
+      await this.prepareJobs({
+        queueName,
+        jobName,
+        jobs: jobsToAdd.map((job, index) => ({
+          index: job.inputIndex,
+          data: job.data,
+          options: {
+            ...queueOptions,
+            jobId:
+              job.jobId ??
+              (isDefined(queueOptions.jobId)
+                ? `${queueOptions.jobId}-${index}`
+                : undefined),
+          },
+          scope: job,
+        })),
+        additionalGroupKeys: options?.fairnessGroupKeys,
+      });
 
-    // BullMQ ignores a re-added job id, so it must not take a pacing slot.
-    const existingPacedJobIds = this.fairQueueScheduler.isGroupLimiterEnabled()
-      ? await this.findExistingJobIds({
-          queueName,
-          jobIds: jobsToAdd.flatMap((job) =>
-            isDefined(job.jobId) && isDefined(job.limiter ?? options?.limiter)
-              ? [job.jobId]
-              : [],
-          ),
-        })
-      : new Set<string>();
-
-    const jobOptions = await this.fairQueueScheduler.computeJobOptions({
-      queueName,
-      scopes: jobsToAdd,
-      limiters: jobsToAdd.map((job) =>
-        isDefined(job.jobId) && existingPacedJobIds.has(job.jobId)
-          ? undefined
-          : (job.limiter ?? options?.limiter),
-      ),
-      additionalGroupKeys: options?.groupKeys,
-      delay: options?.delay,
-      staticPriority: queueOptions.priority,
-    });
+    const newJobs = jobsToAdd.filter(
+      (job) => !isDefined(job.jobId) || !existingJobIds.has(job.jobId),
+    );
+    const newJobsOptions =
+      newJobs.length === 0
+        ? []
+        : await this.fairQueueScheduler.computeJobOptions({
+            queueName,
+            scopes: newJobs,
+            limiterGroupKeys: newJobs.map(
+              (job) => job.groupKey ?? options?.groupKey,
+            ),
+            additionalGroupKeys: options?.fairnessGroupKeys,
+            delay: options?.delay,
+            staticPriority: queueOptions.priority,
+            limiter: options?.limiter,
+          });
+    const fairJobOptionsByJob = new Map(
+      newJobs.map((job, index) => [job, newJobsOptions[index]]),
+    );
+    const jobsOptions = jobsToAdd.map((job, index) =>
+      this.withScheduledAt({
+        ...preparedJobs[index].options,
+        ...fairJobOptionsByJob.get(job),
+      }),
+    );
 
     const addedJobs = await this.addPreparedJobs({
       queueName,
@@ -1089,18 +1178,32 @@ export class BullMQDriver
           jobsToAdd.map(({ data }, index) => ({
             name: jobName,
             data,
-            opts: {
-              ...preparedJobs[index].options,
-              ...jobOptions[index],
-            },
+            opts: jobsOptions[index],
           })),
         ),
+    });
+
+    const persistedScheduledAts = await this.findPersistedScheduledAts({
+      queueName,
+      jobIds: jobsToAdd.flatMap((job) =>
+        isDefined(job.jobId) && job.isJobIdGenerated !== true
+          ? [job.jobId]
+          : [],
+      ),
     });
 
     return {
       jobs: addedJobs.flatMap((addedJob, index) =>
         isDefined(addedJob.id)
-          ? [{ jobId: addedJob.id, sizeBytes: preparedJobs[index].sizeBytes }]
+          ? [
+              {
+                jobId: addedJob.id,
+                sizeBytes: preparedJobs[index].sizeBytes,
+                scheduledAt:
+                  persistedScheduledAts.get(addedJob.id) ??
+                  jobsOptions[index].scheduledAt,
+              },
+            ]
           : [],
       ),
       availableBytes,
@@ -1190,6 +1293,8 @@ export class BullMQDriver
       return undefined;
     }
 
+    const jobOptions: BullMQJobsOptions = job.opts;
+
     return {
       id: job.id,
       data: job.data,
@@ -1198,6 +1303,10 @@ export class BullMQDriver
       failedReason: job.failedReason,
       progress: job.progress,
       timestamp: job.timestamp,
+      scheduledAt: getQueueJobScheduledAt({
+        timestamp: job.timestamp,
+        options: jobOptions,
+      }),
       processedOn: job.processedOn,
       finishedOn: job.finishedOn,
       broadcastTo: this.getBroadcastTo(job),

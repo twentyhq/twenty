@@ -2,8 +2,13 @@ import { executeToolThroughMcp } from 'test/integration/ai/utils/execute-tool-th
 import { callMcpTool } from 'test/integration/graphql/suites/application-role-intersection/utils/call-mcp-tool.util';
 import { findObjectMetadataIdByName } from 'test/integration/utils/find-object-metadata-id-by-name.util';
 import { getMcpToolCatalog } from 'test/integration/graphql/suites/application-role-intersection/utils/get-mcp-tool-catalog.util';
+import {
+  grantRoleWideAccessToChannelObjects,
+  revokeRoleWideAccessToChannelObjects,
+} from 'test/integration/utils/role-wide-access-to-channel-objects.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { ToolCategory } from 'twenty-shared/ai';
+import { WORKSPACE_CUSTOM_APPLICATION_ROLE_LABEL } from 'src/engine/core-modules/application/constants/workspace-custom-application-role.constant';
 
 const ROLE_TOOL_NAMES = [
   'list_roles',
@@ -32,6 +37,10 @@ const listRolesThroughMcp = async (): Promise<RoleSummary[]> => {
 };
 
 describe('MCP role tools (integration)', () => {
+  beforeAll(async () => {
+    await grantRoleWideAccessToChannelObjects();
+  });
+
   afterAll(async () => {
     const leakedRoles = (await listRolesThroughMcp()).filter(({ label }) =>
       label.startsWith(ROLE_LABEL),
@@ -43,6 +52,7 @@ describe('MCP role tools (integration)', () => {
         toolArguments: { roleId: id },
       });
     }
+    await revokeRoleWideAccessToChannelObjects();
   });
 
   it('should describe the role tools to the model', async () => {
@@ -137,19 +147,18 @@ describe('MCP role tools (integration)', () => {
   });
 
   it('should refuse row-level rules on a non-editable role', async () => {
-    const adminRole = (await listRolesThroughMcp()).find(
-      ({ label }) => label === 'Admin',
+    const nonEditableRole = (await listRolesThroughMcp()).find(
+      ({ label }) => label === WORKSPACE_CUSTOM_APPLICATION_ROLE_LABEL,
     );
 
-    jestExpectToBeDefined(adminRole);
+    jestExpectToBeDefined(nonEditableRole);
 
     const refused = await executeToolThroughMcp({
       toolName: 'upsert_row_level_permission_rules',
       toolArguments: {
-        roleId: adminRole.id,
+        roleId: nonEditableRole.id,
         objectMetadataId: await findObjectMetadataIdByName('company'),
-        predicates: [],
-        predicateGroups: [{ logicalOperator: 'AND' }],
+        rules: [{ predicateGroups: [{ logicalOperator: 'AND' }] }],
       },
     });
 
@@ -168,7 +177,7 @@ describe('MCP role tools (integration)', () => {
     });
 
     expect(
-      rolesWithRules.result?.roles.find(({ id }) => id === adminRole.id)
+      rolesWithRules.result?.roles.find(({ id }) => id === nonEditableRole.id)
         ?.rowLevelPermissionPredicateGroups,
     ).toEqual([]);
   });

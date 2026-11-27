@@ -27,6 +27,7 @@ export const OBJECT_METADATA_FRAGMENT = gql`
     isSearchable
     openRecordIn
     duplicateCriteria
+    disabledObjectPermissionActions
     searchFieldMetadataList {
       id
       fieldMetadataId
@@ -74,6 +75,7 @@ export const OBJECT_METADATA_FRAGMENT = gql`
       defaultValue
       options
       settings
+      formula
       isLabelSyncedWithName
       morphId
       applicationId

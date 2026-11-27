@@ -23,6 +23,7 @@ const previewCampaignSendInputSchema = z.object({
 
 @DefineTool({
   name: 'preview_campaign_send',
+  isReadOnly: true,
   category: ToolCategory.ACTION,
   accessPolicy: MESSAGE_CAMPAIGN_SEND_ACCESS_POLICY,
   description:

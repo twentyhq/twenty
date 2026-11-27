@@ -2,7 +2,7 @@ import { upsertObjectPermissions } from 'test/integration/metadata/suites/object
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { updateOneRole } from 'test/integration/metadata/suites/role/utils/update-one-role.util';
-import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
+import { upsertRowLevelPermissionRules } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-rules.util';
 import { findObjectMetadataIdByName } from 'test/integration/utils/find-object-metadata-id-by-name.util';
 import { RowLevelPermissionPredicateGroupLogicalOperator } from 'twenty-shared/types';
 
@@ -30,13 +30,13 @@ const findObjectCreatePermission = async ({
   return objectPermission.canCreateObjectRecords;
 };
 
-const findGroupCreatePermission = async (groupId: string) => {
-  const [group] = await global.testDataSource.query(
-    'SELECT "canCreateRecords" FROM core."rowLevelPermissionPredicateGroup" WHERE id = $1',
-    [groupId],
+const findRuleCreatePermission = async (ruleId: string) => {
+  const [rule] = await global.testDataSource.query(
+    'SELECT "canCreateRecords" FROM core."rowLevelPermissionRule" WHERE id = $1',
+    [ruleId],
   );
 
-  return group.canCreateRecords;
+  return rule.canCreateRecords;
 };
 
 const createRole = async (canUpdateAllObjectRecords: boolean) => {
@@ -141,47 +141,49 @@ describe('create permission when update is granted', () => {
     );
   });
 
-  it('should follow update on row level permission groups', async () => {
+  it('should follow update on row level permission rules', async () => {
     const roleId = await createTrackedRole(false);
     const objectMetadataId = await findObjectMetadataIdByName('company');
-    const upsertGroup = async ({
+    const upsertRule = async ({
       canUpdateRecords,
       id,
     }: {
       canUpdateRecords: boolean;
       id?: string;
     }) => {
-      const { data } = await upsertRowLevelPermissionPredicates({
+      const { data } = await upsertRowLevelPermissionRules({
         expectToFail: false,
         input: {
           roleId,
           objectMetadataId,
-          predicates: [],
-          predicateGroups: [
+          rules: [
             {
               id,
-              objectMetadataId,
-              logicalOperator:
-                RowLevelPermissionPredicateGroupLogicalOperator.AND,
               canUpdateRecords,
+              predicateGroups: [
+                {
+                  logicalOperator:
+                    RowLevelPermissionPredicateGroupLogicalOperator.AND,
+                },
+              ],
             },
           ],
         },
       });
 
-      return data.upsertRowLevelPermissionPredicates.predicateGroups[0].id;
+      return data.upsertRowLevelPermissionRules.rules[0].id;
     };
 
-    const groupId = await upsertGroup({ canUpdateRecords: false });
+    const ruleId = await upsertRule({ canUpdateRecords: false });
 
-    expect(await findGroupCreatePermission(groupId)).toBe(false);
+    expect(await findRuleCreatePermission(ruleId)).toBe(false);
 
-    await upsertGroup({ canUpdateRecords: true, id: groupId });
+    await upsertRule({ canUpdateRecords: true, id: ruleId });
 
-    expect(await findGroupCreatePermission(groupId)).toBe(true);
+    expect(await findRuleCreatePermission(ruleId)).toBe(true);
 
-    await upsertGroup({ canUpdateRecords: false, id: groupId });
+    await upsertRule({ canUpdateRecords: false, id: ruleId });
 
-    expect(await findGroupCreatePermission(groupId)).toBe(false);
+    expect(await findRuleCreatePermission(ruleId)).toBe(false);
   });
 });

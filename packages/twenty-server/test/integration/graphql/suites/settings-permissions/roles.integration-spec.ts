@@ -6,8 +6,12 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
-import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
+import { upsertRowLevelPermissionRules } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-rules.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import {
+  grantRoleWideAccessToChannelObjects,
+  revokeRoleWideAccessToChannelObjects,
+} from 'test/integration/utils/role-wide-access-to-channel-objects.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import {
@@ -23,6 +27,7 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
+import { WORKSPACE_CUSTOM_APPLICATION_ROLE_LABEL } from 'src/engine/core-modules/application/constants/workspace-custom-application-role.constant';
 
 const client = request(`http://localhost:${APP_PORT}`);
 
@@ -49,8 +54,10 @@ async function assertPermissionDeniedForMemberWithMemberRole({
 describe('roles permissions', () => {
   let adminRoleId: string;
   let guestRoleId: string;
+  let nonEditableRoleId: string;
 
   beforeAll(async () => {
+    await grantRoleWideAccessToChannelObjects();
     const query = {
       query: `
       query GetRoles {
@@ -75,6 +82,11 @@ describe('roles permissions', () => {
     guestRoleId = resp.body.data.getRoles.find(
       // @ts-expect-error legacy noImplicitAny
       (role) => role.label === 'Guest',
+    ).id;
+
+    nonEditableRoleId = resp.body.data.getRoles.find(
+      // @ts-expect-error legacy noImplicitAny
+      (role) => role.label === WORKSPACE_CUSTOM_APPLICATION_ROLE_LABEL,
     ).id;
   });
 
@@ -239,24 +251,28 @@ describe('roles permissions', () => {
         const {
           data: rowLevelPermissionData,
           errors: rowLevelPermissionErrors,
-        } = await upsertRowLevelPermissionPredicates({
+        } = await upsertRowLevelPermissionRules({
           expectToFail: false,
           input: {
             roleId: relationsRoleId,
             objectMetadataId: companyObjectMetadata.id,
-            predicates: [
+            rules: [
               {
-                fieldMetadataId: companyNameField.id,
-                operand: RowLevelPermissionPredicateOperand.CONTAINS,
-                value: 'Apple',
+                predicates: [
+                  {
+                    fieldMetadataId: companyNameField.id,
+                    operand: RowLevelPermissionPredicateOperand.CONTAINS,
+                    value: 'Apple',
+                  },
+                ],
               },
-            ],
-            predicateGroups: [
               {
-                objectMetadataId: companyObjectMetadata.id,
-                logicalOperator:
-                  RowLevelPermissionPredicateGroupLogicalOperator.AND,
-                parentRowLevelPermissionPredicateGroupId: null,
+                predicateGroups: [
+                  {
+                    logicalOperator:
+                      RowLevelPermissionPredicateGroupLogicalOperator.AND,
+                  },
+                ],
               },
             ],
           },
@@ -266,10 +282,9 @@ describe('roles permissions', () => {
         jestExpectToBeDefined(rowLevelPermissionData);
 
         relationsPredicateId =
-          rowLevelPermissionData.upsertRowLevelPermissionPredicates
-            .predicates[0].id;
+          rowLevelPermissionData.upsertRowLevelPermissionRules.predicates[0].id;
         relationsPredicateGroupId =
-          rowLevelPermissionData.upsertRowLevelPermissionPredicates
+          rowLevelPermissionData.upsertRowLevelPermissionRules
             .predicateGroups[0].id;
 
         const apiKeyResponse = await makeMetadataApiRequest({
@@ -805,7 +820,7 @@ describe('roles permissions', () => {
         const query = {
           query: upsertObjectPermissionMutation({
             objectMetadataId: listingObjectId,
-            roleId: adminRoleId,
+            roleId: nonEditableRoleId,
           }),
         };
 
@@ -964,5 +979,9 @@ describe('roles permissions', () => {
           });
       });
     });
+  });
+
+  afterAll(async () => {
+    await revokeRoleWideAccessToChannelObjects();
   });
 });

@@ -9,6 +9,7 @@ const buildUpdateEvent = ({
   recordId: string;
   updatedFields: string[];
 }): ObjectRecordEvent => ({
+  eventId: 'event-1',
   recordId,
   properties: { before: {}, after: {}, updatedFields, diff: {} },
 });

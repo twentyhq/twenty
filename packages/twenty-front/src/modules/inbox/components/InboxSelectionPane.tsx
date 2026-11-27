@@ -6,7 +6,7 @@ import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { InboxSelectionPile } from '@/inbox/components/InboxSelectionPile';
-import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';

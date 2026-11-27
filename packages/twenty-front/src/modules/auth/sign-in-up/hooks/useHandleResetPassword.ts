@@ -2,8 +2,7 @@ import { useCallback } from 'react';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
-import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
-import { useCaptcha } from '@/client-config/hooks/useCaptcha';
+import { useGetCaptchaToken } from '@/captcha/hooks/useGetCaptchaToken';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMutation } from '@apollo/client/react';
@@ -16,8 +15,7 @@ export const useHandleResetPassword = () => {
   const [emailPasswordResetLink] = useMutation(EmailPasswordResetLinkDocument);
   const workspacePublicData = useAtomStateValue(workspacePublicDataState);
   const currentUser = useAtomStateValue(currentUserState);
-  const { isCaptchaReady } = useCaptcha();
-  const { readCaptchaToken } = useReadCaptchaToken();
+  const { getCaptchaToken } = useGetCaptchaToken();
 
   const { t } = useLingui();
 
@@ -29,17 +27,9 @@ export const useHandleResetPassword = () => {
           return;
         }
 
-        if (!isCaptchaReady) {
-          enqueueToast({
-            status: 'error',
-            children: t`Captcha (anti-bot check) is still loading, try again`,
-          });
-          return;
-        }
-
-        const captchaToken = readCaptchaToken();
-
         try {
+          const captchaToken = await getCaptchaToken();
+
           const { data } = await emailPasswordResetLink({
             variables: workspacePublicData?.id
               ? { email, workspaceId: workspacePublicData.id, captchaToken }
@@ -65,8 +55,7 @@ export const useHandleResetPassword = () => {
       enqueueToast,
       t,
       emailPasswordResetLink,
-      isCaptchaReady,
-      readCaptchaToken,
+      getCaptchaToken,
     ],
   );
 

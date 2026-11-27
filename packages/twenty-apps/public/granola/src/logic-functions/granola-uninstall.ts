@@ -5,14 +5,15 @@ import { isDefined } from 'twenty-sdk/utils';
 import { GRANOLA_HISTORY_SCHEDULE_KEY } from 'src/constants/granola.constant';
 import { GRANOLA_UNINSTALL_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { cleanupPendingGranolaRegistrationOrThrow } from 'src/logic-functions/utils/cleanup-pending-granola-registration-or-throw.util';
-import { createGranolaClientOrThrow } from 'src/logic-functions/utils/create-granola-client-or-throw.util';
+import { createWorkspaceGranolaClientOrThrow } from 'src/logic-functions/utils/create-workspace-granola-client-or-throw.util';
+import { disconnectAllGranolaPersonalConnections } from 'src/logic-functions/utils/disconnect-all-granola-personal-connections.util';
 import { isGranolaApiKeySet } from 'src/logic-functions/utils/is-granola-api-key-set.util';
 import { removeGranolaWebhookRegistration } from 'src/logic-functions/utils/remove-granola-webhook-registration.util';
 import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
 export const granolaUninstallHandler = async () => {
   const client = isGranolaApiKeySet()
-    ? createGranolaClientOrThrow()
+    ? createWorkspaceGranolaClientOrThrow()
     : undefined;
 
   if (isDefined(client)) {
@@ -31,6 +32,12 @@ export const granolaUninstallHandler = async () => {
     }
   }
 
+  await disconnectAllGranolaPersonalConnections().catch((error: unknown) => {
+    console.error(
+      `[granola] Could not list personal connections during uninstall; check Granola webhook settings. ${toErrorMessage(error)}`,
+    );
+  });
+
   await kv.delete(GRANOLA_HISTORY_SCHEDULE_KEY);
 
   return removeGranolaWebhookRegistration({ client });
@@ -39,7 +46,7 @@ export const granolaUninstallHandler = async () => {
 export default defineUninstallLogicFunction({
   universalIdentifier: GRANOLA_UNINSTALL_UNIVERSAL_IDENTIFIER,
   name: 'granola-uninstall',
-  description: 'Removes the registered Granola webhook on uninstall.',
+  description: 'Removes the workspace and personal Granola webhooks.',
   timeoutSeconds: 30,
   handler: granolaUninstallHandler,
 });

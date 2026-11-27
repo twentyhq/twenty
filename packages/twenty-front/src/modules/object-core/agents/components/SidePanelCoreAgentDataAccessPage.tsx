@@ -7,14 +7,13 @@ import { IconLock } from 'twenty-ui/icon';
 import { SidePanelCoreAgentReadOnlyBanner } from '@/object-core/agents/components/SidePanelCoreAgentReadOnlyBanner';
 import { SidePanelCoreAgentRoleLayout } from '@/object-core/agents/components/SidePanelCoreAgentRoleLayout';
 import { SidePanelCoreAgentSearchInput } from '@/object-core/agents/components/SidePanelCoreAgentSearchInput';
-import { SidePanelCoreAgentRecordAccessGroup } from '@/object-core/agents/components/SidePanelCoreAgentRecordAccessGroup';
+import { SidePanelCoreAgentRecordAccessSection } from '@/object-core/agents/components/SidePanelCoreAgentRecordAccessSection';
 import { CORE_AGENT_RECORD_ACCESS_LEVELS } from '@/object-core/agents/constants/CoreAgentRecordAccessLevels';
 import { useCoreAgentSidePanelRole } from '@/object-core/agents/hooks/useCoreAgentSidePanelRole';
 import { type CoreAgentRecordAccessLevel } from '@/object-core/agents/types/CoreAgentRecordAccessLevel';
 import { getCoreAgentRecordAccessItemId } from '@/object-core/agents/utils/getCoreAgentRecordAccessItemId';
 import { getRoleWithCoreAgentRecordAccessLevel } from '@/object-core/agents/utils/getRoleWithCoreAgentRecordAccessLevel';
-import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
-import { useObjectMetadataItemsThatCanHavePermission } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useObjectMetadataItemsThatCanHavePermission';
+import { useObjectMetadataItemsThatCanHavePermission } from '@/settings/roles/role-permissions/object-overrides/hooks/useObjectMetadataItemsThatCanHavePermission';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 
 export const SidePanelCoreAgentDataAccessPage = () => {
@@ -83,7 +82,7 @@ export const SidePanelCoreAgentDataAccessPage = () => {
           <SidePanelCoreAgentReadOnlyBanner message={readOnlyMessage} />
         )}
         {isGeneralShown && (
-          <SidePanelCoreAgentRecordAccessGroup
+          <SidePanelCoreAgentRecordAccessSection
             heading={t`General`}
             Icon={IconLock}
             role={role}
@@ -94,14 +93,11 @@ export const SidePanelCoreAgentDataAccessPage = () => {
           />
         )}
         {matchingObjectMetadataItems.map((objectMetadataItem) => (
-          <SidePanelCoreAgentRecordAccessGroup
+          <SidePanelCoreAgentRecordAccessSection
             key={objectMetadataItem.id}
             heading={objectMetadataItem.labelPlural}
-            objectIcon={
-              <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
-            }
+            objectMetadataItem={objectMetadataItem}
             role={role}
-            objectMetadataId={objectMetadataItem.id}
             isReadOnly={isReadOnly}
             onLevelChange={({ level, isEnabled }) =>
               handleLevelChange({

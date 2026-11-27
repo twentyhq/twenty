@@ -19,6 +19,7 @@ const getValidationRulesInputSchema = z.object({
 
 @DefineTool({
   name: 'get_validation_rules',
+  isReadOnly: true,
   category: ToolCategory.METADATA,
   accessPolicy: VALIDATION_RULE_READ_ACCESS_POLICY,
   icon: 'IconSettings',

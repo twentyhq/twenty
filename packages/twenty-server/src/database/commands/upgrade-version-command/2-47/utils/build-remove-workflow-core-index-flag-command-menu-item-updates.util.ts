@@ -1,4 +1,4 @@
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
@@ -33,7 +33,7 @@ const FAVORITES_EXPRESSION_REPLACEMENTS = FAVORITES_EXPRESSION_PREFIXES.map(
 
 const isWorkflowVersionNavigation = (commandMenuItem: FlatCommandMenuItem) =>
   commandMenuItem.navigationTargetObjectMetadataUniversalIdentifier ===
-  STANDARD_OBJECTS.workflowVersion.universalIdentifier;
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowVersion;
 
 const isApplicationWorkflowCommand = (commandMenuItem: FlatCommandMenuItem) =>
   commandMenuItem.engineComponentKey ===

@@ -11,6 +11,13 @@ type NpmPackOutput = {
   files: { path: string }[];
 };
 
+// npm 12 keys the packed packages by name instead of listing them.
+const getSinglePackedPackage = (result: unknown): unknown => {
+  const packages = isPlainObject(result) ? Object.values(result) : result;
+
+  return isArray(packages) && packages.length === 1 ? packages[0] : undefined;
+};
+
 export const parseNpmPackOutputOrThrow = (stdout: string): NpmPackOutput => {
   let result: unknown;
 
@@ -24,7 +31,7 @@ export const parseNpmPackOutputOrThrow = (stdout: string): NpmPackOutput => {
     });
   }
 
-  const packed = isArray(result) && result.length === 1 ? result[0] : undefined;
+  const packed = getSinglePackedPackage(result);
 
   if (
     !isPlainObject(packed) ||

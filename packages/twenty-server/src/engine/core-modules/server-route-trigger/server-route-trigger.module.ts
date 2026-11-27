@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { EventLogEmitterModule } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
@@ -14,7 +15,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([LogicFunctionEntity]),
+    TypeOrmModule.forFeature([LogicFunctionEntity, ApplicationEntity]),
     EventLogEmitterModule,
     MetricsModule,
     JwtModule,
@@ -22,6 +23,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
   controllers: [ServerRouteTriggerController],
   providers: [
     provideWorkspaceScopedRepository(LogicFunctionEntity),
+    provideWorkspaceScopedRepository(ApplicationEntity),
     ServerRouteTriggerService,
     ServerRouteAuthorizationHeaderService,
     ServerRouteReachabilityService,

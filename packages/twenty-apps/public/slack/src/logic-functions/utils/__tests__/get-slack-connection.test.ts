@@ -76,7 +76,11 @@ describe('getSlackConnection', () => {
 
     const result = await getSlackConnection();
 
-    expect(result.success).toBe(false);
+    expect(result).toEqual({
+      success: false,
+      error: expect.stringContaining('Slack is not connected'),
+      isConnectionMissing: true,
+    });
   });
 
   it('should fail gracefully when listing connections throws', async () => {

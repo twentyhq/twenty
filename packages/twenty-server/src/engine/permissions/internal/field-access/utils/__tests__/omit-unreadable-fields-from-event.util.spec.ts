@@ -73,6 +73,7 @@ type CompanyEventRecord = {
 };
 
 const updateEvent: ObjectRecordUpdateEvent<CompanyEventRecord> = {
+  eventId: 'event-1',
   recordId: 'record-1',
   userId: 'user-1',
   properties: {
@@ -160,6 +161,7 @@ describe('omitUnreadableFieldsFromEvent', () => {
         unreadableFields: [SALARY_FIELD_ID],
       }),
     ).toEqual({
+      eventId: 'event-1',
       recordId: 'record-1',
       userId: 'user-1',
       properties: {
@@ -197,6 +199,7 @@ describe('omitUnreadableFieldsFromEvent', () => {
 
   it('should keep a deleted record whose snapshot only sits in before', () => {
     const deleteEvent: ObjectRecordDestroyEvent<CompanyEventRecord> = {
+      eventId: 'event-2',
       recordId: 'record-1',
       properties: { before: { id: 'record-1', name: 'Old', salary: 100 } },
     };
@@ -211,6 +214,7 @@ describe('omitUnreadableFieldsFromEvent', () => {
 
   it('should drop the join column of an unreadable relation alongside its name', () => {
     const companyUpdateEvent: ObjectRecordUpdateEvent<CompanyEventRecord> = {
+      eventId: 'event-3',
       recordId: 'record-1',
       properties: {
         updatedFields: ['name', 'company', 'companyId'],
@@ -238,6 +242,7 @@ describe('omitUnreadableFieldsFromEvent', () => {
 
   it('should drop both join column spellings when settings rename it', () => {
     const ownerUpdateEvent: ObjectRecordUpdateEvent<CompanyEventRecord> = {
+      eventId: 'event-4',
       recordId: 'record-1',
       properties: {
         updatedFields: ['owner', 'ownerId'],

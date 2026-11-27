@@ -5,12 +5,14 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { MarketplaceCatalogSyncCronCommand } from 'src/engine/core-modules/application/application-marketplace/crons/commands/marketplace-catalog-sync.cron.command';
 import { StaleRegistrationCleanupCronCommand } from 'src/engine/core-modules/application/application-oauth/stale-registration-cleanup/commands/stale-registration-cleanup.cron.command';
-import { ApplicationRecurringChargeCronCommand } from 'src/engine/core-modules/billing/app-billing/crons/commands/application-recurring-charge.cron.command';
 import { BillingReminderCronCommand } from 'src/engine/core-modules/billing/reminders/crons/commands/billing-reminder.cron.command';
 import { CheckEmailingDomainVerificationCronCommand } from 'src/engine/core-modules/emailing-domain/crons/commands/check-emailing-domain-verification.cron.command';
 import { EnterpriseKeyValidationCronCommand } from 'src/engine/core-modules/enterprise/cron/command/organization-key-validation.cron.command';
 import { EventLogCleanupCronCommand } from 'src/engine/core-modules/event-logs/cleanup/commands/event-log-cleanup.cron.command';
 import { PendingFileCleanupCronCommand } from 'src/engine/core-modules/file/file-upload/crons/commands/pending-file-cleanup.cron.command';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { UsageLimitInstanceOverrideExpiryCronCommand } from 'src/engine/core-modules/usage-limit/instance-override/crons/commands/usage-limit-instance-override-expiry.cron.command';
 import { WorkspaceDataExportCleanupCronCommand } from 'src/engine/core-modules/workspace-data-export/crons/commands/workspace-data-export-cleanup.cron.command';
 import { RotateSigningKeysCronCommand } from 'src/engine/core-modules/jwt/crons/commands/rotate-signing-keys.cron.command';
@@ -38,8 +40,12 @@ import { MessagingOngoingStaleCronCommand } from 'src/modules/messaging/message-
 import { MessagingRelaunchFailedMessageChannelsCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-relaunch-failed-message-channels.cron.command';
 import { WorkflowCleanWorkflowRunsCronCommand } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/command/workflow-clean-workflow-runs.cron.command';
 import { WorkflowHandleStaledRunsCronCommand } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/command/workflow-handle-staled-runs.cron.command';
-import { WorkflowRunEnqueueCronCommand } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/command/workflow-run-enqueue.cron.command';
 import { WorkflowCronTriggerCronCommand } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/commands/workflow-cron-trigger.cron.command';
+
+const LEGACY_CRON_JOB_NAMES = [
+  'ApplicationRecurringChargeCronJob',
+  'WorkflowRunEnqueueCronJob',
+];
 
 @Command({
   name: 'cron:register:all',
@@ -65,7 +71,6 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly reconcileCampaignStatsCronCommand: ReconcileCampaignStatsCronCommand,
 
     private readonly workflowCronTriggerCronCommand: WorkflowCronTriggerCronCommand,
-    private readonly workflowRunEnqueueCronCommand: WorkflowRunEnqueueCronCommand,
     private readonly workflowHandleStaledRunsCronCommand: WorkflowHandleStaledRunsCronCommand,
     private readonly workflowCleanWorkflowRunsCronCommand: WorkflowCleanWorkflowRunsCronCommand,
     private readonly pendingWakeUpSweepCronCommand: PendingWakeUpSweepCronCommand,
@@ -88,15 +93,20 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly deferredWorkspaceOperationRecoveryCronCommand: DeferredWorkspaceOperationRecoveryCronCommand,
     private readonly billingReminderCronCommand: BillingReminderCronCommand,
     private readonly usageLimitInstanceOverrideExpiryCronCommand: UsageLimitInstanceOverrideExpiryCronCommand,
-    private readonly applicationRecurringChargeCronCommand: ApplicationRecurringChargeCronCommand,
     private readonly userSessionCleanupCronCommand: UserSessionCleanupCronCommand,
     private readonly twentyConfigService: TwentyConfigService,
+    @InjectMessageQueue(MessageQueue.cronQueue)
+    private readonly cronMessageQueueService: MessageQueueService,
   ) {
     super();
   }
 
   async run(): Promise<void> {
     this.logger.log('Registering all background sync cron jobs...');
+
+    for (const jobName of LEGACY_CRON_JOB_NAMES) {
+      await this.cronMessageQueueService.removeCron({ jobName });
+    }
 
     const isSigningKeyAutoRotationEnabled = isDefined(
       this.twentyConfigService.get('SIGNING_KEY_ROTATION_DAYS'),
@@ -168,10 +178,6 @@ export class CronRegisterAllCommand extends CommandRunner {
       {
         name: 'WorkflowCronTrigger',
         command: this.workflowCronTriggerCronCommand,
-      },
-      {
-        name: 'WorkflowRunEnqueue',
-        command: this.workflowRunEnqueueCronCommand,
       },
       {
         name: 'WorkflowHandleStaledRuns',
@@ -247,11 +253,6 @@ export class CronRegisterAllCommand extends CommandRunner {
       {
         name: 'UsageLimitInstanceOverrideExpiry',
         command: this.usageLimitInstanceOverrideExpiryCronCommand,
-        isEnabled: isBillingEnabled,
-      },
-      {
-        name: 'ApplicationRecurringCharge',
-        command: this.applicationRecurringChargeCronCommand,
         isEnabled: isBillingEnabled,
       },
       {

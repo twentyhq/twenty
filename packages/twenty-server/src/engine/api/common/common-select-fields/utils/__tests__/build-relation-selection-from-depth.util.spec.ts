@@ -182,17 +182,43 @@ const buildArgs = (
 describe('buildRelationSelectionFromDepth', () => {
   it('should expand relations but not timeline activities at depth 1', () => {
     expect(buildRelationSelectionFromDepth(buildArgs(1))).toEqual({
-      company: { name: true, accountOwnerId: true, timelineActivities: true },
+      company: {
+        fieldName: 'company',
+        selectedFields: {
+          fields: {
+            name: true,
+            accountOwnerId: true,
+            timelineActivities: true,
+          },
+          aggregates: [],
+          relations: {},
+        },
+      },
     });
   });
 
   it('should expand nested relations but not their timeline activities at depth 2', () => {
     expect(buildRelationSelectionFromDepth(buildArgs(2))).toEqual({
       company: {
-        name: true,
-        accountOwnerId: true,
-        timelineActivities: true,
-        accountOwner: { name: true },
+        fieldName: 'company',
+        selectedFields: {
+          fields: {
+            name: true,
+            accountOwnerId: true,
+            timelineActivities: true,
+          },
+          aggregates: [],
+          relations: {
+            accountOwner: {
+              fieldName: 'accountOwner',
+              selectedFields: {
+                fields: { name: true },
+                aggregates: [],
+                relations: {},
+              },
+            },
+          },
+        },
       },
     });
   });

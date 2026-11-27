@@ -1,17 +1,15 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import {
-  type QueueJobLimiter,
-  type QueueJobScope,
-} from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
+import { type QueueJobScope } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 
 export const buildPaceSlotKey = ({
   scope,
-  limiter,
+  groupKey,
 }: {
-  scope: Pick<QueueJobScope, 'workspaceId' | 'applicationUniversalIdentifier'>;
-  limiter: Pick<QueueJobLimiter, 'key'>;
+  scope: Pick<QueueJobScope, 'workspaceId'>;
+  groupKey: string | undefined;
 }): string | undefined =>
-  isDefined(scope.workspaceId)
-    ? `${scope.workspaceId}:${scope.applicationUniversalIdentifier ?? '-'}:${limiter.key}`
+  isDefined(scope.workspaceId) && isDefined(groupKey)
+    ? // From 2.60 on, reserved slots live under this prefix, so it must not change.
+      `${scope.workspaceId}:jobGroup:${groupKey}`
     : undefined;

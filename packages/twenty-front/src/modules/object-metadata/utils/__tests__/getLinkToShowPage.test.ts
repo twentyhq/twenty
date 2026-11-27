@@ -9,7 +9,7 @@ describe('getLinkToShowPage', () => {
 
   it('links a chat to the chat page', () => {
     expect(getLinkToShowPage('agentChatThread', { id: 'chat-id' })).toBe(
-      '/chat/chat-id',
+      '/inbox/chat-id',
     );
   });
 

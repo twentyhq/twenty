@@ -14,7 +14,7 @@ Ogni app deve avere esattamente una chiamata a `defineApplication`. Dichiara:
 * **Funzionalità multimediali** *(facoltativo)*: accesso al microfono o alla fotocamera richiesto dai componenti front, approvato separatamente dalle autorizzazioni del ruolo.
 * **Variabili** *(opzionali)* — coppie chiave–valore esposte al tuo codice come variabili d'ambiente.
 * **Hook di pre-installazione / post-installazione / disinstallazione** *(opzionali)* — vedi [Funzioni logiche](/it/developers/extend/apps/logic/logic-functions).
-* **Fatturazione** *(facoltativa)* — `billing.recurring` per le tariffe di abbonamento che la piattaforma addebita automaticamente, `billing.operations` per ciò per cui l'app addebita crediti e `billing.description` per il marketplace; vedi [Addebito di crediti](/it/developers/extend/apps/logic/credits).
+* **Fatturazione** *(facoltativo)* — `billing.prices` per indicare quanto costa la tua app in valuta reale, `billing.operations` per indicare per cosa la tua app addebita crediti e `billing.description` per il marketplace; vedi [Addebito di crediti](/it/developers/extend/apps/logic/credits).
 
 ```ts src/application-config.ts
 import { defineApplication } from 'twenty-sdk/define';

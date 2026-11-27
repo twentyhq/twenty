@@ -1,3 +1,4 @@
+import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -21,6 +22,7 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { ViewType } from '@/views/types/ViewType';
+import { useCurrentViewPresetFilterAsRecordGqlOperationFilter } from '@/views/hooks/useCurrentViewPresetFilterAsRecordGqlOperationFilter';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 export type UseRecordDataOptions = {
@@ -99,6 +101,9 @@ export const useRecordIndexLazyFetchRecords = ({
     contextStoreTargetedRecordsRule.mode === 'selection' &&
     contextStoreTargetedRecordsRule.selectedRecordIds.length === 0;
 
+  const currentViewPresetFilterAsRecordGqlOperationFilter =
+    useCurrentViewPresetFilterAsRecordGqlOperationFilter();
+
   const contextStoreFilter = computeContextStoreFilters({
     contextStoreTargetedRecordsRule,
     contextStoreFilters,
@@ -107,6 +112,7 @@ export const useRecordIndexLazyFetchRecords = ({
     fieldMetadataItems: flattenedFieldMetadataItems,
     filterValueDependencies,
     contextStoreAnyFieldFilterValue,
+    currentViewPresetFilterAsRecordGqlOperationFilter,
   });
 
   const queryFilter = isEmptySelection
@@ -122,7 +128,9 @@ export const useRecordIndexLazyFetchRecords = ({
     ColumnDefinition<FieldMetadata>,
     'label' | 'type' | 'metadata'
   >[] = [
+    // Extra columns would export as duplicates of their canonical column
     ...visibleRecordFields
+      .filter(isCanonicalRecordField)
       .map((field: RecordField) => {
         const fieldMetadataItem = objectMetadataItem.fields.find(
           (fieldMetadataItem) =>

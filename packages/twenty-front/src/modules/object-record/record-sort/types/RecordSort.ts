@@ -5,4 +5,5 @@ export type RecordSort = {
   fieldMetadataId: string;
   direction: ViewSortDirection;
   subFieldName?: string | null;
+  relationTargetFieldMetadataId?: string | null;
 };

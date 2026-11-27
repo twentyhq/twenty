@@ -46,7 +46,4 @@ export class ViewFilterDTO {
 
   @Field()
   updatedAt: Date;
-
-  @Field(() => Date, { nullable: true })
-  deletedAt?: Date | null;
 }

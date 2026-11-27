@@ -20,6 +20,7 @@ import { isPlainObject } from 'twenty-shared/utils';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 
 import { buildTestAppWorker } from '@/app/__tests__/utils/build-test-app-worker';
+import { readWatchInputStamp } from '@/app/dev/read-watch-input-stamp';
 import { type WatchInputs } from '@/app/dev/types/watch-inputs.type';
 import { runAppWorker } from '@/app/run-app-worker';
 
@@ -376,7 +377,7 @@ describe('dev watch inputs reported by the app worker', () => {
     expect(missing.isSuccess).toBe(false);
     expect(
       findInput(missing.watchInputs ?? [], 'directory', extrasDirectory)?.stamp,
-    ).toBe(JSON.stringify([]));
+    ).toBe(readWatchInputStamp({ path: extrasDirectory, kind: 'directory' }));
 
     await writeFile(
       join(extrasDirectory, 'extra.js'),
@@ -388,7 +389,7 @@ describe('dev watch inputs reported by the app worker', () => {
     expect(created.isSuccess, JSON.stringify(created.result)).toBe(true);
     expect(
       findInput(created.watchInputs ?? [], 'directory', extrasDirectory)?.stamp,
-    ).toBe(JSON.stringify([['extra.js', false, true, false]]));
+    ).toBe(readWatchInputStamp({ path: extrasDirectory, kind: 'directory' }));
     expect(
       findInput(
         created.watchInputs ?? [],

@@ -30,7 +30,6 @@ import { UpdateEmailGroupChannelInput } from 'src/engine/metadata-modules/messag
 import { CreateEmailGroupChannelOutput } from 'src/engine/metadata-modules/message-channel/dtos/create-email-group-channel.output';
 import { MessageChannelDTO } from 'src/engine/metadata-modules/message-channel/dtos/message-channel.dto';
 import { UpdateMessageChannelInput } from 'src/engine/metadata-modules/message-channel/dtos/update-message-channel.input';
-import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { MessageChannelGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/message-channel/interceptors/message-channel-graphql-api-exception.interceptor';
 import { MessageChannelMetadataService } from 'src/engine/metadata-modules/message-channel/message-channel-metadata.service';
 import { ApplicationMessageChannelsService } from 'src/engine/metadata-modules/message-channel/services/application-message-channels.service';
@@ -51,6 +50,7 @@ import {
 } from 'twenty-shared/types';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 
 const MESSAGE_CHANNEL_ACCESS_POLICY: AccessPolicy = {
   authPrincipals: {
@@ -96,6 +96,7 @@ export class MessageChannelResolver {
   ) {}
 
   @ResolveField('importProgress', () => Int, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   async importProgress(
     @Parent() messageChannel: MessageChannelDTO,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -109,6 +110,7 @@ export class MessageChannelResolver {
   @ResolveField('connectedAccount', () => ConnectedAccountPublicDTO, {
     nullable: true,
   })
+  @UseGuards(NoPermissionGuard)
   async connectedAccount(
     @Parent() messageChannel: MessageChannelDTO,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -246,7 +248,7 @@ export class MessageChannelResolver {
       input.update.excludeGroupEmails !== messageChannel.excludeGroupEmails
     ) {
       await this.messagingProcessGroupEmailActionsService.markMessageChannelAsPendingGroupEmailsAction(
-        messageChannel as unknown as MessageChannelEntity,
+        messageChannel,
         workspace.id,
         input.update.excludeGroupEmails
           ? MessageChannelPendingGroupEmailsAction.GROUP_EMAILS_DELETION

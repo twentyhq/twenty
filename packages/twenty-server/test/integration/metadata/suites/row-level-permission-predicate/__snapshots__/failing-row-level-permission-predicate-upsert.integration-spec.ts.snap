@@ -1,5 +1,40 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Row Level Permission Predicate upsert should fail when a one to many relation is compared with an operand other than emptiness 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "rowLevelPermissionPredicate": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA",
+              "message": "A one-to-many relation only supports the IS_EMPTY and IS_NOT_EMPTY operands, go through the relation to compare a field of its records",
+              "userFriendlyMessage": "This operand is not supported for this relation",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "rowLevelPermissionPredicate",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 rowLevelPermissionPredicate",
+    "summary": {
+      "rowLevelPermissionPredicate": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "This operand is not supported for this relation",
+  },
+  "message": "Validation errors occurred while upserting row level permission predicates",
+  "name": "GraphQLError",
+}
+`;
+
 exports[`Row Level Permission Predicate upsert should fail when adding a predicate group to a non-editable role 1`] = `
 {
   "extensions": {
@@ -97,33 +132,6 @@ exports[`Row Level Permission Predicate upsert should fail when fieldMetadataId 
 }
 `;
 
-exports[`Row Level Permission Predicate upsert should fail when objectMetadataId in predicate group does not exist 1`] = `
-{
-  "extensions": {
-    "code": "NOT_FOUND",
-    "subCode": "RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND",
-    "userFriendlyMessage": "An error occurred.",
-  },
-  "message": "Could not find objectMetadata for given objectMetadataId",
-  "name": "NotFoundError",
-}
-`;
-
-exports[`Row Level Permission Predicate upsert should fail when objectMetadataId in predicate group is not a valid UUID 1`] = `
-{
-  "extensions": {
-    "code": "GRAPHQL_VALIDATION_FAILED",
-    "http": {
-      "status": 400,
-    },
-    "userFriendlyMessage": "An error occurred.",
-    "value": "invalid-uuid",
-  },
-  "message": "Invalid UUID: 'invalid-uuid'",
-  "name": "ValidationError",
-}
-`;
-
 exports[`Row Level Permission Predicate upsert should fail when objectMetadataId is not a valid UUID 1`] = `
 {
   "extensions": {
@@ -139,53 +147,6 @@ exports[`Row Level Permission Predicate upsert should fail when objectMetadataId
 }
 `;
 
-exports[`Row Level Permission Predicate upsert should fail when parentRowLevelPermissionPredicateGroupId in group does not exist 1`] = `
-{
-  "extensions": {
-    "code": "NOT_FOUND",
-    "subCode": "RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND",
-    "userFriendlyMessage": "An error occurred.",
-  },
-  "message": "Could not find rowLevelPermissionPredicateGroup for given parentRowLevelPermissionPredicateGroupId",
-  "name": "NotFoundError",
-}
-`;
-
-exports[`Row Level Permission Predicate upsert should fail when relation hops are not enabled for the workspace 1`] = `
-{
-  "extensions": {
-    "code": "METADATA_VALIDATION_FAILED",
-    "errors": {
-      "rowLevelPermissionPredicate": [
-        {
-          "errors": [
-            {
-              "code": "ROW_LEVEL_PERMISSION_FEATURE_DISABLED",
-              "message": "Predicates reaching a field through a relation are not enabled for this workspace",
-              "userFriendlyMessage": "Rules through a relation are not enabled for this workspace",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "rowLevelPermissionPredicate",
-          "status": "fail",
-          "type": "create",
-        },
-      ],
-    },
-    "message": "Validation failed for 1 rowLevelPermissionPredicate",
-    "summary": {
-      "rowLevelPermissionPredicate": 1,
-      "totalErrors": 1,
-    },
-    "userFriendlyMessage": "Rules through a relation are not enabled for this workspace",
-  },
-  "message": "Validation errors occurred while upserting row level permission predicates",
-  "name": "GraphQLError",
-}
-`;
-
 exports[`Row Level Permission Predicate upsert should fail when roleId is not a valid UUID 1`] = `
 {
   "extensions": {
@@ -198,18 +159,6 @@ exports[`Row Level Permission Predicate upsert should fail when roleId is not a 
   },
   "message": "Invalid UUID: 'invalid-uuid'",
   "name": "ValidationError",
-}
-`;
-
-exports[`Row Level Permission Predicate upsert should fail when rowLevelPermissionPredicateGroupId in predicate does not exist 1`] = `
-{
-  "extensions": {
-    "code": "BAD_USER_INPUT",
-    "subCode": "INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA",
-    "userFriendlyMessage": "Invalid row level permission predicate data.",
-  },
-  "message": "Referenced predicate group is not a group of this role and object. Reference a group declared in predicateGroups or an existing group of this role and object.",
-  "name": "UserInputError",
 }
 `;
 
@@ -338,6 +287,30 @@ exports[`Row Level Permission Predicate upsert should fail when the relation hop
     "userFriendlyMessage": "Invalid row level permission predicate data.",
   },
   "message": "relationFieldMetadataId does not point to a relation field. A rule can only reach another object through a relation.",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Row Level Permission Predicate upsert should fail when the workspace member field is not a field of the object the workspace member relation reaches 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA",
+    "userFriendlyMessage": "Invalid row level permission predicate data.",
+  },
+  "message": "workspaceMemberFieldMetadataId is not a field of the workspaceMember object, or of the object its relation reaches. The rule would silently never apply.",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Row Level Permission Predicate upsert should fail when the workspace member relation is not a relation of the workspace member 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA",
+    "userFriendlyMessage": "Invalid row level permission predicate data.",
+  },
+  "message": "workspaceMemberFieldMetadataId is not a field of the workspaceMember object, or of the object its relation reaches. The rule would silently never apply.",
   "name": "UserInputError",
 }
 `;

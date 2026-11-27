@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { type AiChatThreadRowVariant } from '@/ai/types/AiChatThreadRowVariant';
+import { type AiChatThreadRowVariant } from '@/ai-chat/threads/types/AiChatThreadRowVariant';
 
 const COMPACT_HEADER_PADDING = `0 ${themeCssVariables.spacing[1]}`;
 const DEFAULT_HEADER_PADDING = `${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[2]}`;

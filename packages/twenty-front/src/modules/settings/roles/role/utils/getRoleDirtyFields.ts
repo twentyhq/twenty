@@ -31,6 +31,10 @@ export const getRoleDirtyFields = (
       sortById(draftRole.rowLevelPermissionPredicateGroups),
       sortById(persistedRole.rowLevelPermissionPredicateGroups),
     ),
+    rowLevelPermissionRules: isDeeplyEqual(
+      sortById(draftRole.rowLevelPermissionRules),
+      sortById(persistedRole.rowLevelPermissionRules),
+    ),
   };
 
   return Object.fromEntries(

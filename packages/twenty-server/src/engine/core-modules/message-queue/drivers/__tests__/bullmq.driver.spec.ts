@@ -4,6 +4,7 @@ import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/
 import { type WorkspaceQueueJobScope } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import { DEFAULT_JOB_PRIORITY } from 'src/engine/core-modules/message-queue/constants/default-job-priority.constant';
 import { QUEUE_JOB_CHANGED_EVENT } from 'src/engine/core-modules/message-queue/constants/queue-job-changed-event.constant';
+import { QUEUE_JOB_FAILED_EVENT } from 'src/engine/core-modules/message-queue/constants/queue-job-failed-event.constant';
 import { BullMQDriver } from 'src/engine/core-modules/message-queue/drivers/bullmq.driver';
 import {
   FAIR_REBASE_STEP,
@@ -23,6 +24,7 @@ const mockGetRanges = jest.fn();
 const mockGetJob = jest.fn();
 const mockAdd = jest.fn();
 const mockAddBulk = jest.fn();
+const mockRunCommand = jest.fn().mockResolvedValue('');
 const mockSetGlobalConcurrency = jest.fn();
 const mockRemoveGlobalConcurrency = jest.fn();
 const mockGetJobCountByTypes = jest.fn();
@@ -43,6 +45,8 @@ jest.mock('bullmq', () => ({
     setGlobalConcurrency: mockSetGlobalConcurrency,
     removeGlobalConcurrency: mockRemoveGlobalConcurrency,
     getJobCountByTypes: mockGetJobCountByTypes,
+    client: Promise.resolve({ runCommand: mockRunCommand }),
+    toKey: (jobId: string) => `bull:queue:${jobId}`,
   })),
   Worker: jest
     .fn()
@@ -196,10 +200,10 @@ describe('BullMQDriver deduplication', () => {
         mockAddBulk.mock.calls[0][0].map(
           (job: { opts: { jobId?: string } }) => job.opts.jobId,
         ),
-      ).toEqual(['ws-1.new-job-id', undefined]);
+      ).toEqual(['ws-1.new-job-id', 'generated-uuid-000000000000000000000']);
       expect(jobs.map(({ jobId }) => jobId)).toEqual([
         'ws-1.new-job-id',
-        'auto-1',
+        'generated-uuid-000000000000000000000',
       ]);
     });
 
@@ -288,11 +292,99 @@ describe('BullMQDriver progress', () => {
   );
 });
 
+describe('BullMQDriver scheduledAt', () => {
+  const driver = new BullMQDriver(
+    {} as never,
+    { incrementCounterForEvent: jest.fn() } as never,
+    mockTwentyConfigService as never,
+    {} as never,
+  );
+  const timestamp = 1_788_000_000_000;
+
+  driver.register(MessageQueue.workspaceQueue);
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockAllocateTickets.mockResolvedValue(undefined);
+    mockAddBulk.mockImplementation(async (jobs) =>
+      jobs.map((job: { opts: { jobId?: string } }) => ({ id: job.opts.jobId })),
+    );
+  });
+
+  it('stores the initial eligibility date in the job options', async () => {
+    jest.setSystemTime(timestamp);
+
+    const { jobs } = await driver.bulkAdd(
+      MessageQueue.workspaceQueue,
+      'job',
+      [{ data: {}, ...SYSTEM_JOB }],
+      { delay: 3_000, doNotCheckDuplicatesBasedOnPrefix: true },
+    );
+
+    expect(mockAddBulk).toHaveBeenCalledWith([
+      expect.objectContaining({
+        opts: expect.objectContaining({
+          timestamp,
+          delay: 3_000,
+          scheduledAt: timestamp + 3_000,
+        }),
+      }),
+    ]);
+    expect(jobs.map(({ scheduledAt }) => scheduledAt)).toEqual([
+      timestamp + 3_000,
+    ]);
+  });
+
+  it.each([
+    ['active', 0, undefined],
+    ['delayed', 1, 30_000],
+    ['completed', 2, 0],
+  ])(
+    'keeps the stored date of a %s job after %s retries',
+    async (state, attemptsMade, currentDelay) => {
+      mockGetJob.mockResolvedValue({
+        id: 'job-id',
+        data: {},
+        opts: { delay: 500, scheduledAt: timestamp + 500 },
+        delay: currentDelay,
+        timestamp,
+        attemptsMade,
+        getState: jest.fn().mockResolvedValue(state),
+      });
+
+      const jobs = await driver.getJobs(MessageQueue.workspaceQueue, [
+        'job-id',
+      ]);
+
+      expect(jobs['job-id']?.scheduledAt).toBe(timestamp + 500);
+    },
+  );
+
+  it('derives the date of a job stored before scheduledAt from its insertion options', async () => {
+    mockGetJob.mockResolvedValue({
+      id: 'job-id',
+      data: {},
+      opts: { delay: 500 },
+      delay: 30_000,
+      timestamp,
+      attemptsMade: 1,
+      getState: jest.fn().mockResolvedValue('delayed'),
+    });
+
+    const jobs = await driver.getJobs(MessageQueue.workspaceQueue, ['job-id']);
+
+    expect(jobs['job-id']?.scheduledAt).toBe(timestamp + 500);
+  });
+});
+
 describe('BullMQDriver job change events', () => {
   const eventEmitter = { emit: jest.fn() };
   const driver = new BullMQDriver(
     {} as never,
-    { recordHistogram: jest.fn() } as never,
+    {
+      recordHistogram: jest.fn(),
+      incrementCounterForEvent: jest.fn(),
+    } as never,
     mockTwentyConfigService as never,
     eventEmitter as never,
   );
@@ -360,6 +452,61 @@ describe('BullMQDriver job change events', () => {
     );
 
     expect(eventEmitter.emit).not.toHaveBeenCalled();
+  });
+
+  const getFailedJobListeners = () => {
+    driver.work(MessageQueue.workspaceQueue, async () => {});
+    const workerInstances = mockWorkerConstructor.mock.results;
+    const worker = workerInstances[workerInstances.length - 1].value;
+
+    return worker.on.mock.calls
+      .filter(([name]: [string, unknown]) => name === 'failed')
+      .map(([, listener]: [string, (...args: unknown[]) => void]) => listener);
+  };
+
+  const failedJob = {
+    id: 'job-id',
+    name: 'LogicFunctionTriggerJob',
+    data: { logicFunctionId: 'logic-function-id' },
+    opts: {},
+    attemptsMade: 2,
+    timestamp: 1,
+  };
+
+  it('reports a job that failed for good', () => {
+    const job = { ...failedJob, finishedOn: 2 };
+    const error = new Error('job stalled more than allowable limit');
+
+    error.name = 'UnrecoverableError';
+
+    for (const onFailed of getFailedJobListeners()) {
+      onFailed(job, error);
+    }
+
+    expect(eventEmitter.emit).toHaveBeenCalledWith(QUEUE_JOB_FAILED_EVENT, {
+      queueName: MessageQueue.workspaceQueue,
+      job: {
+        id: 'job-id',
+        name: 'LogicFunctionTriggerJob',
+        data: { logicFunctionId: 'logic-function-id' },
+        attemptsMade: 2,
+      },
+      error: {
+        name: 'UnrecoverableError',
+        message: 'job stalled more than allowable limit',
+      },
+    });
+  });
+
+  it('does not report a failed attempt that will be retried', () => {
+    for (const onFailed of getFailedJobListeners()) {
+      onFailed(failedJob, new Error('Lambda unreachable'));
+    }
+
+    expect(eventEmitter.emit).not.toHaveBeenCalledWith(
+      QUEUE_JOB_FAILED_EVENT,
+      expect.anything(),
+    );
   });
 });
 
@@ -677,7 +824,10 @@ describe('BullMQDriver fair tickets', () => {
       MessageQueue.workspaceQueue,
       'job',
       {},
-      { ...buildWorkspaceJobScope('ws-1'), groupKeys: ['integration:slack'] },
+      {
+        ...buildWorkspaceJobScope('ws-1'),
+        fairnessGroupKeys: ['integration:slack'],
+      },
     );
 
     expect(mockAllocateTickets).toHaveBeenCalledWith({
@@ -824,9 +974,8 @@ describe('BullMQDriver job size limit', () => {
   const SMALL_DATA = { workspaceId: 'ws-1' };
   const LARGE_DATA = { workspaceId: 'ws-1', blob: 'x'.repeat(4096) };
 
-  const buildDriver = (isEnabled: boolean) => {
+  const buildDriver = () => {
     const configValues: Record<string, unknown> = {
-      IS_REDIS_MEMORY_FAIRNESS_ENABLED: isEnabled,
       JOB_QUEUE_MAX_JOB_SIZE_BYTES: MAX_JOB_SIZE_BYTES,
     };
     const metricsService = {
@@ -854,8 +1003,8 @@ describe('BullMQDriver job size limit', () => {
     );
   });
 
-  it('refuses the whole batch before adding when a job is too large when enabled', async () => {
-    const { driver } = buildDriver(true);
+  it('refuses the whole batch before adding when a job is too large', async () => {
+    const { driver } = buildDriver();
 
     await expect(
       driver.bulkAdd(MessageQueue.workspaceQueue, 'job', [
@@ -871,7 +1020,7 @@ describe('BullMQDriver job size limit', () => {
   });
 
   it('reports the index of the oversized job in the caller batch', async () => {
-    const { driver } = buildDriver(true);
+    const { driver } = buildDriver();
 
     mockGetRanges.mockResolvedValue(['waiting-job']);
 
@@ -887,8 +1036,8 @@ describe('BullMQDriver job size limit', () => {
     ).rejects.toMatchObject({ details: { index: 1 } });
   });
 
-  it('refuses a single job that is too large when enabled', async () => {
-    const { driver } = buildDriver(true);
+  it('refuses a single job that is too large', async () => {
+    const { driver } = buildDriver();
 
     await expect(
       driver.add(
@@ -902,7 +1051,7 @@ describe('BullMQDriver job size limit', () => {
   });
 
   it('counts the refusal of a job that is too large', async () => {
-    const { driver, metricsService } = buildDriver(true);
+    const { driver, metricsService } = buildDriver();
 
     await expect(
       driver.add(
@@ -923,24 +1072,8 @@ describe('BullMQDriver job size limit', () => {
     });
   });
 
-  it('adds a job that is too large when disabled', async () => {
-    const { driver, metricsService } = buildDriver(false);
-
-    await driver.add(
-      MessageQueue.workspaceQueue,
-      'job',
-      LARGE_DATA,
-      SYSTEM_JOB,
-    );
-
-    expect(mockAdd).toHaveBeenCalledTimes(1);
-    expect(metricsService.incrementCounterForEvent).not.toHaveBeenCalledWith(
-      expect.objectContaining({ key: MetricsKeys.JobMemoryLimitRefused }),
-    );
-  });
-
   it('fails a job permanently when it enqueues a job that is too large', async () => {
-    const { driver } = buildDriver(true);
+    const { driver } = buildDriver();
 
     driver.work(MessageQueue.workspaceQueue, async () => {
       throw new MessageQueueException(
@@ -968,7 +1101,7 @@ describe('BullMQDriver job size limit', () => {
   });
 
   it('lets the job retry when it is refused for memory', async () => {
-    const { driver } = buildDriver(true);
+    const { driver } = buildDriver();
 
     driver.work(MessageQueue.workspaceQueue, async () => {
       throw new MessageQueueException(

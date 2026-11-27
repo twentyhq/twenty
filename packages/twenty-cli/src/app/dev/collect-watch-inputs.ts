@@ -68,7 +68,7 @@ const recordInput = (
 const recordParent = (inputs: Map<string, WatchInput>, path: string) => {
   let parent = dirname(path);
 
-  while (dirname(parent) !== parent) {
+  while (true) {
     try {
       if (statSync(parent).isDirectory()) {
         recordInput(inputs, parent, 'directory');
@@ -77,7 +77,11 @@ const recordParent = (inputs: Map<string, WatchInput>, path: string) => {
       }
     } catch {}
 
-    parent = dirname(parent);
+    const ancestor = dirname(parent);
+    if (ancestor === parent) {
+      return;
+    }
+    parent = ancestor;
   }
 };
 

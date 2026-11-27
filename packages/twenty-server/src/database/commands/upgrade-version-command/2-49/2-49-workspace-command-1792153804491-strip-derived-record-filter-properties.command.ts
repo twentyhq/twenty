@@ -1,5 +1,8 @@
 import { Command } from 'nest-commander';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import {
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+  STANDARD_OBJECTS,
+} from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 import { type DataSource } from 'typeorm';
 
@@ -106,7 +109,7 @@ export class StripDerivedRecordFilterPropertiesCommand extends ProvisionedWorksp
       findFlatEntityByUniversalIdentifier<FlatObjectMetadata>({
         flatEntityMaps: flatObjectMetadataMaps,
         universalIdentifier:
-          STANDARD_OBJECTS.workflowVersion.universalIdentifier,
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowVersion,
       }),
     );
 

@@ -102,6 +102,7 @@ export class MarketplaceCatalogCacheProviderService extends CoreEntityCacheProvi
       logoUrl: catalogCard.logoUrl ?? undefined,
       sourcePackage: catalogCard.sourcePackage ?? undefined,
       isListed: catalogCard.isListed,
+      hasMcpServers: catalogCard.hasMcpServers,
     };
   }
 }

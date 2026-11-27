@@ -1,12 +1,16 @@
+import { RecordTableCellLookupFieldContext } from '@/object-record/record-column-lookup/components/RecordTableCellLookupFieldContext';
+import { useRecordFieldColumnKind } from '@/object-record/record-column-scope/hooks/useRecordFieldColumnKind';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableCellFieldContextGeneric } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextGeneric';
 import { RecordTableCellFieldContextLabelIdentifier } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextLabelIdentifier';
 import { getRecordTableCellInputIdPrefix } from '@/object-record/record-table/utils/getRecordTableCellInputIdPrefix';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { type ReactNode } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 type RecordTableCellFieldContextWrapperProps = {
   children: ReactNode;
@@ -17,12 +21,18 @@ export const RecordTableCellFieldContextWrapper = ({
   recordField,
   children,
 }: RecordTableCellFieldContextWrapperProps) => {
-  const { recordId } = useRecordTableRowContextOrThrow();
+  const { recordId, isRecordReadOnly, restrictedFieldNames } =
+    useRecordTableRowContextOrThrow();
+
+  const { objectMetadataItem } = useRecordTableContextOrThrow();
 
   const {
     fieldMetadataItemByFieldMetadataItemId,
+    fieldDefinitionByFieldMetadataItemId,
     labelIdentifierFieldMetadataItem,
   } = useRecordIndexContextOrThrow();
+
+  const columnKind = useRecordFieldColumnKind(recordField.id);
 
   const fieldMetadataItem =
     fieldMetadataItemByFieldMetadataItemId[recordField.fieldMetadataItemId];
@@ -36,6 +46,24 @@ export const RecordTableCellFieldContextWrapper = ({
   const isLabelIdentifier =
     labelIdentifierFieldMetadataItem?.id === recordField.fieldMetadataItemId;
 
+  if (columnKind.kind === 'lookup') {
+    return (
+      <RecordTableCellLookupFieldContext
+        key={instanceId}
+        recordFieldId={recordField.id}
+        fieldMetadataItem={fieldMetadataItem}
+        lookupTarget={columnKind.lookupTarget}
+      >
+        {children}
+      </RecordTableCellLookupFieldContext>
+    );
+  }
+
+  const scopedRelationAlias =
+    'scopedRelationAlias' in columnKind
+      ? columnKind.scopedRelationAlias
+      : undefined;
+
   return (
     <RecordFieldComponentInstanceContext.Provider value={{ instanceId }}>
       {isLabelIdentifier ? (
@@ -45,7 +73,22 @@ export const RecordTableCellFieldContextWrapper = ({
       ) : (
         <RecordTableCellFieldContextGeneric
           key={instanceId}
-          recordField={recordField}
+          target={{
+            recordId,
+            objectMetadataItem,
+            fieldMetadataItem,
+            fieldDefinition:
+              fieldDefinitionByFieldMetadataItemId[
+                recordField.fieldMetadataItemId
+              ],
+            // A scoped relation only lists part of the related records, which the relation picker cannot edit
+            isRecordReadOnly:
+              (isRecordReadOnly ?? false) || isDefined(scopedRelationAlias),
+            restrictedFieldNames: scopedRelationAlias?.isRestricted
+              ? [...restrictedFieldNames, fieldMetadataItem.name]
+              : restrictedFieldNames,
+            fieldValueKey: scopedRelationAlias?.responseKey,
+          }}
         >
           {children}
         </RecordTableCellFieldContextGeneric>

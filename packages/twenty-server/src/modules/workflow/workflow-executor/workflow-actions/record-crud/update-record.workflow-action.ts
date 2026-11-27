@@ -5,7 +5,7 @@ import { isDefined, isValidUuid, resolveInput } from 'twenty-shared/utils';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
 import { UpdateRecordService } from 'src/engine/core-modules/record-crud/services/update-record.service';
-import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import { WorkflowMetadataReadService } from 'src/modules/workflow/common/workspace-services/workflow-metadata-read.workspace-service';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
@@ -27,7 +27,7 @@ export class UpdateRecordWorkflowAction implements WorkflowAction {
   constructor(
     private readonly updateRecordService: UpdateRecordService,
     private readonly workflowExecutionContextService: WorkflowExecutionContextService,
-    private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
+    private readonly workflowMetadataReadService: WorkflowMetadataReadService,
   ) {}
 
   async execute({
@@ -53,7 +53,7 @@ export class UpdateRecordWorkflowAction implements WorkflowAction {
     const rawInput = step.settings.input as WorkflowUpdateRecordActionInput;
 
     const objectMetadataInfo =
-      await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
+      await this.workflowMetadataReadService.getObjectMetadataInfo(
         rawInput.objectName,
         workspaceId,
       );

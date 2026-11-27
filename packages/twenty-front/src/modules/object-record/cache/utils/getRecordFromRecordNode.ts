@@ -1,4 +1,5 @@
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
+import { getRelationAggregateRecordKey } from '@/object-record/cache/utils/getRelationAggregateRecordKey';
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from 'twenty-shared/utils';
@@ -12,21 +13,43 @@ export const getRecordFromRecordNode = <T extends ObjectRecord>({
 
   return {
     ...Object.fromEntries(
-      Object.entries(recordNode).map(([fieldName, value]) => {
+      Object.entries(recordNode).flatMap(([fieldName, value]) => {
         if (
           !isDefined(value) ||
           Array.isArray(value) ||
           typeof value !== 'object'
         ) {
-          return [fieldName, value];
+          return [[fieldName, value]];
         }
 
-        return isDefined(value.edges)
-          ? [
-              fieldName,
-              getRecordsFromRecordConnection({ recordConnection: value }),
-            ]
-          : [fieldName, getRecordFromRecordNode<T>({ recordNode: value })];
+        if (!isDefined(value.edges)) {
+          return [
+            [fieldName, getRecordFromRecordNode<T>({ recordNode: value })],
+          ];
+        }
+
+        const {
+          edges: _edges,
+          pageInfo: _pageInfo,
+          __typename: _typename,
+          ...aggregateValues
+        } = value;
+
+        return [
+          [
+            fieldName,
+            getRecordsFromRecordConnection({ recordConnection: value }),
+          ],
+          ...Object.entries(aggregateValues).map(
+            ([aggregateGqlFieldName, aggregateValue]) => [
+              getRelationAggregateRecordKey({
+                relationRecordKey: fieldName,
+                aggregateGqlFieldName,
+              }),
+              aggregateValue,
+            ],
+          ),
+        ];
       }),
     ),
     // Only adds `id` and `__typename` if they exist.

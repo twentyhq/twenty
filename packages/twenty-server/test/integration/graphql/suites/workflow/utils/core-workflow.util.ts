@@ -3,7 +3,6 @@ import { randomUUID } from 'node:crypto';
 import request from 'supertest';
 import { isDefined } from 'twenty-shared/utils';
 
-import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const client = request(`http://localhost:${APP_PORT}`);
@@ -24,7 +23,6 @@ export type CoreWorkflowVersion<
   status: string;
   trigger: Record<string, unknown> | null;
   steps: TStep[] | null;
-  workspaceWorkflowVersionId: string | null;
 };
 
 const CORE_WORKFLOW_VERSION_FIELDS = `
@@ -33,7 +31,6 @@ const CORE_WORKFLOW_VERSION_FIELDS = `
   status
   trigger
   steps
-  workspaceWorkflowVersionId
 `;
 
 export const coreWorkflowGraphqlRequest = async <TData>({
@@ -100,15 +97,9 @@ export const createCoreWorkflow = async ({
 
 export const linkCoreWorkflowToLegacyWorkspaceIds = async ({
   coreWorkflowId,
-  withWorkspaceRecords = false,
 }: {
   coreWorkflowId: string;
-  withWorkspaceRecords?: boolean;
-}): Promise<{
-  workspaceWorkflowId: string;
-  workspaceWorkflowVersionIds: string[];
-}> => {
-  const workspaceSchema = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
+}): Promise<{ workspaceWorkflowId: string }> => {
   const workspaceWorkflowId = randomUUID();
 
   await global.testDataSource.query(
@@ -116,67 +107,17 @@ export const linkCoreWorkflowToLegacyWorkspaceIds = async ({
     [coreWorkflowId, workspaceWorkflowId],
   );
 
-  const coreVersions: {
-    id: string;
-    status: string;
-    triggers: object[] | null;
-    steps: object[] | null;
-  }[] = await global.testDataSource.query(
-    `SELECT id, status, triggers, steps FROM core."workflowVersion" WHERE "coreWorkflowId" = $1 ORDER BY "createdAt"`,
-    [coreWorkflowId],
+  await global.testDataSource.query(
+    `UPDATE core."workflowVersion" SET "workflowId" = $2 WHERE "coreWorkflowId" = $1`,
+    [coreWorkflowId, workspaceWorkflowId],
   );
-
-  const workspaceWorkflowVersionIds: string[] = [];
-
-  for (const coreVersion of coreVersions) {
-    const workspaceWorkflowVersionId = randomUUID();
-
-    await global.testDataSource.query(
-      `UPDATE core."workflowVersion" SET "workflowId" = $2, "workspaceWorkflowVersionId" = $3 WHERE id = $1`,
-      [coreVersion.id, workspaceWorkflowId, workspaceWorkflowVersionId],
-    );
-
-    if (withWorkspaceRecords) {
-      await global.testDataSource.query(
-        `INSERT INTO "${workspaceSchema}"."workflowVersion" (id, name, status, trigger, steps, "coreWorkflowVersionId")
-         VALUES ($1, $2, $3, $4, $5, $6)`,
-        [
-          workspaceWorkflowVersionId,
-          `v${workspaceWorkflowVersionIds.length + 1}`,
-          coreVersion.status,
-          isDefined(coreVersion.triggers?.[0])
-            ? JSON.stringify(coreVersion.triggers[0])
-            : null,
-          isDefined(coreVersion.steps)
-            ? JSON.stringify(coreVersion.steps)
-            : null,
-          coreVersion.id,
-        ],
-      );
-    }
-
-    workspaceWorkflowVersionIds.push(workspaceWorkflowVersionId);
-  }
 
   await global.workflowTestServices.workspaceCache.invalidateAndRecompute(
     SEED_APPLE_WORKSPACE_ID,
     ['flatWorkflowMaps', 'flatWorkflowVersionMaps'],
   );
 
-  return { workspaceWorkflowId, workspaceWorkflowVersionIds };
-};
-
-export const deleteLegacyWorkspaceWorkflowRecords = async ({
-  workspaceWorkflowVersionIds,
-}: {
-  workspaceWorkflowVersionIds: string[];
-}): Promise<void> => {
-  const workspaceSchema = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
-
-  await global.testDataSource.query(
-    `DELETE FROM "${workspaceSchema}"."workflowVersion" WHERE id = ANY($1::uuid[])`,
-    [workspaceWorkflowVersionIds],
-  );
+  return { workspaceWorkflowId };
 };
 
 export const findCoreWorkflowVersions = async ({

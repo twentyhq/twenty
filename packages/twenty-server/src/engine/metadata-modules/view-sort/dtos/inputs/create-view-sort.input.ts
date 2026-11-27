@@ -29,6 +29,11 @@ export class CreateViewSortInput {
   @Field(() => String, { nullable: true })
   subFieldName?: string | null;
 
+  @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  relationTargetFieldMetadataId?: string;
+
   @IsUUID()
   @Field(() => UUIDScalarType, { nullable: false })
   viewId: string;

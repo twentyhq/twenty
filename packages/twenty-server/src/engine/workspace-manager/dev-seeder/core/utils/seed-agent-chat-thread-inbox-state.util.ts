@@ -12,7 +12,7 @@ export const seedAgentChatThreadInboxState = async ({
   context: { manager, table },
   workspaceId,
 }: {
-  context: AgentHistoryStorageContext;
+  context: Pick<AgentHistoryStorageContext, 'manager' | 'table'>;
   workspaceId: string;
 }): Promise<void> => {
   await manager.query(

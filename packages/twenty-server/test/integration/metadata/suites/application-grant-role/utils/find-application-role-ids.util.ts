@@ -6,7 +6,7 @@ import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/m
 
 export type ApplicationRoleIds = {
   id: string;
-  defaultRoleId: string | null;
+  requestedRoleId: string | null;
   grantRoleId: string | null;
 };
 
@@ -22,7 +22,7 @@ export const findApplicationRoleIds = async ({
       input,
       gqlFields: `
         id
-        defaultRoleId
+        requestedRoleId
         grantRoleId
       `,
     }),

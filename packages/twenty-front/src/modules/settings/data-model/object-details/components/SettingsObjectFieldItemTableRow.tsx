@@ -21,7 +21,11 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import { FieldMetadataType, SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import {
+  getSettingsPath,
+  isDefined,
+  isFormulaFieldMetadata,
+} from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { IconChevronRight, IconMinus, IconPlus } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
@@ -165,6 +169,15 @@ export const SettingsObjectFieldItemTableRow = ({
       ? relationObjectMetadataItem?.labelSingular
       : relationObjectMetadataItem?.labelPlural;
 
+  const getLabelDetail = () => {
+    if (isFormulaFieldMetadata(fieldMetadataItem)) {
+      return t`Formula`;
+    }
+
+    return fieldMetadataItem.settings?.type === 'percentage' ? '%' : undefined;
+  };
+  const labelDetail = getLabelDetail();
+
   return (
     <TableRow
       gridTemplateColumns={OBJECT_FIELD_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
@@ -218,9 +231,7 @@ export const SettingsObjectFieldItemTableRow = ({
         <SettingsObjectFieldDataType
           Icon={RelationIcon}
           label={label}
-          labelDetail={
-            fieldMetadataItem.settings?.type === 'percentage' ? '%' : undefined
-          }
+          labelDetail={labelDetail}
           to={
             isRelatedObjectLinkable
               ? getSettingsPath(SettingsPath.Objects, {
@@ -264,7 +275,7 @@ export const SettingsObjectFieldItemTableRow = ({
         ) : mode === 'view' ? (
           <SettingsObjectFieldInactiveActionDropdown
             isCustomField={getIsMetadataItemCustom(fieldMetadataItem)}
-            isSystemField={fieldMetadataItem.isSystem === true}
+            isSystemField={fieldMetadataItem.isSystem ?? false}
             readonly={readonly}
             fieldMetadataItemId={fieldMetadataItem.id}
             onEdit={navigateToFieldEdit}

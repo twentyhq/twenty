@@ -22,6 +22,7 @@ import {
   SDK_CLIENT_MODULE_NO_STORE_CACHE_CONTROL,
 } from 'src/engine/core-modules/sdk-client/constants/sdk-client-module-cache-control';
 import { SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
+import { buildServedSdkClientCoreChecksum } from 'src/engine/core-modules/sdk-client/utils/build-served-sdk-client-core-checksum.util';
 import { getInstalledSdkMetadataModule } from 'src/engine/core-modules/sdk-client/utils/get-installed-sdk-metadata-module.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ApplicationTargetParam } from 'src/engine/decorators/auth/application-target-param.decorator';
@@ -115,7 +116,9 @@ export class SdkClientController {
                 applicationUniversalIdentifier: application.universalIdentifier,
                 moduleName,
               }),
-            checksum: application.sdkClientCoreChecksum,
+            checksum: buildServedSdkClientCoreChecksum(
+              application.sdkClientCoreChecksum,
+            ),
           };
 
     this.sendSdkModule({

@@ -51,4 +51,8 @@ export class MarketplaceAppDTO {
   @IsBoolean()
   @Field(() => Boolean)
   isListed: boolean;
+
+  @IsBoolean()
+  @Field(() => Boolean)
+  hasMcpServers: boolean;
 }

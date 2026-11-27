@@ -1,4 +1,4 @@
-import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 import { filterInboxThreadsWithinLoadedPages } from '@/inbox/utils/filterInboxThreadsWithinLoadedPages';
 
 const buildThread = ({
@@ -30,7 +30,7 @@ const THREADS = [
 
 const getIds = (threads: AiChatThreadRecord[]) => threads.map(({ id }) => id);
 
-describe('filterAiChatThreadsWithinLoadedPages', () => {
+describe('filterInboxThreadsWithinLoadedPages', () => {
   it('keeps every chat once all pages are loaded', () => {
     expect(
       getIds(

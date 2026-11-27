@@ -37,6 +37,7 @@ const updateAgentInputSchema = z.object({
 
 @DefineTool({
   name: 'update_agent',
+  isDestructive: true,
   category: ToolCategory.AGENT,
   accessPolicy: {
     ...AGENT_WRITE_ACCESS_POLICY,
@@ -85,12 +86,18 @@ export class UpdateAgentTool extends BaseTool<typeof updateAgentInputSchema> {
         ...(isDefined(triggers) && { triggers: toAgentTriggers(triggers) }),
       },
       workspaceId: context.workspaceId,
+      authContext: context.authContext,
     });
 
     return {
       success: true,
       message: `Agent "${agent.label}" updated`,
-      result: toAgentSummary(agent),
+      result: toAgentSummary(
+        await this.agentService.toAgentDto({
+          flatAgentWithRoleId: agent,
+          workspaceId: context.workspaceId,
+        }),
+      ),
     };
   }
 }

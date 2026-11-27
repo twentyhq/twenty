@@ -18,7 +18,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { buildSystemRelationFlatFieldMetadatasForObject } from 'src/engine/metadata-modules/object-metadata/utils/build-system-relation-flat-field-metadatas-for-object.util';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
+import { computeTwentyStandardApplicationAllFlatEntityMapsWithLegacyAgentChatNames } from 'src/database/commands/upgrade-version-command/2-42/utils/compute-twenty-standard-application-all-flat-entity-maps-with-legacy-agent-chat-names.util';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
 
@@ -118,11 +118,14 @@ export class ProvisionAgentChatThreadTargetCommand extends ProvisionedWorkspaceC
     const {
       allFlatEntityMaps: standard,
       idByUniversalIdentifierByMetadataName,
-    } = computeTwentyStandardApplicationAllFlatEntityMaps({
-      now: new Date().toISOString(),
-      workspaceId,
-      twentyStandardApplicationId: twentyStandardFlatApplication.id,
-    });
+    } =
+      computeTwentyStandardApplicationAllFlatEntityMapsWithLegacyAgentChatNames(
+        {
+          now: new Date().toISOString(),
+          workspaceId,
+          twentyStandardApplicationId: twentyStandardFlatApplication.id,
+        },
+      );
 
     const { objects, fields, indexes } =
       getAgentChatThreadTargetSchemaAdditions({ existing, standard });

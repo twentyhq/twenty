@@ -51,6 +51,8 @@ export const fromAgentManifestToUniversalFlatAgent = ({
     ),
     isSystem: agentManifest.isSystem ?? false,
     isActive: true,
+    isPrivate: false,
+    createdByUserWorkspaceId: null,
     overrides: null,
     navigationMenuItemUniversalIdentifiers: [],
     createdAt: now,

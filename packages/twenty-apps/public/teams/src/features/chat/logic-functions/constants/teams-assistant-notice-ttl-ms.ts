@@ -1,0 +1,1 @@
+export const TEAMS_ASSISTANT_NOTICE_TTL_MS = 60 * 60 * 1000;

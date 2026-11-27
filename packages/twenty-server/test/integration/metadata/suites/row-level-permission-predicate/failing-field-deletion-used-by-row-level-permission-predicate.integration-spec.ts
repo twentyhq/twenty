@@ -4,7 +4,7 @@ import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
-import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
+import { upsertRowLevelPermissionRules } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-rules.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import {
   FieldMetadataType,
@@ -72,19 +72,22 @@ describe('Field deletion used by a row-level permission predicate', () => {
     roleId = roleData?.createOneRole?.id;
     jestExpectToBeDefined(roleId);
 
-    await upsertRowLevelPermissionPredicates({
+    await upsertRowLevelPermissionRules({
       expectToFail: false,
       input: {
         roleId,
         objectMetadataId: companyObjectMetadataId,
-        predicates: [
+        rules: [
           {
-            fieldMetadataId: territoryFieldMetadataId,
-            operand: RowLevelPermissionPredicateOperand.CONTAINS,
-            value: 'EU',
+            predicates: [
+              {
+                fieldMetadataId: territoryFieldMetadataId,
+                operand: RowLevelPermissionPredicateOperand.CONTAINS,
+                value: 'EU',
+              },
+            ],
           },
         ],
-        predicateGroups: [],
       },
     });
 
@@ -117,13 +120,12 @@ describe('Field deletion used by a row-level permission predicate', () => {
       'is used by 1 row-level permission predicate',
     );
 
-    await upsertRowLevelPermissionPredicates({
+    await upsertRowLevelPermissionRules({
       expectToFail: false,
       input: {
         roleId,
         objectMetadataId: companyObjectMetadataId,
-        predicates: [],
-        predicateGroups: [],
+        rules: [],
       },
     });
 

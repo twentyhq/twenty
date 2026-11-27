@@ -1,32 +1,46 @@
+import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
-import { type IconComponent } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
-
-import { Separator } from 'src/front-components/components/Separator';
+import { type ReactNode, useId } from 'react';
+import { useTranslate } from 'twenty-sdk/front-component';
+import { isDefined } from 'twenty-sdk/utils';
 import {
-  StyledSettingsCardContent,
+  NumberStepper,
+  type NumberStepperProps,
+} from 'twenty-ui/components/input';
+import { type IconComponent } from 'twenty-ui/icon';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
+import { themeCssVariables } from 'twenty-ui/theme';
+
+import { SettingsCardSeparator } from 'src/front-components/components/SettingsCardSeparator';
+import {
   StyledSettingsCardDescription,
   StyledSettingsCardIcon,
+  StyledSettingsCardRow,
   StyledSettingsCardTextContainer,
   StyledSettingsCardTitle,
 } from 'src/front-components/components/SettingsCardContentBase';
-import { SettingsCounter } from 'src/front-components/components/SettingsCounter';
 import { SettingsOptionIconCustomizer } from 'src/front-components/components/SettingsOptionIconCustomizer';
-import { StyledSettingsError } from 'src/front-components/components/StyledSettingsError';
+
+const StyledCounterContainer = styled.div`
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  margin-left: auto;
+  width: ${() => themeCssVariables.spacing[30]};
+`;
 
 type SettingsOptionCardContentCounterProps = {
   Icon?: IconComponent;
-  title: React.ReactNode;
+  title: ReactNode;
   description?: string;
   divider?: boolean;
   disabled?: boolean;
-  errorMessage?: string;
-  inputId?: string;
-  value: string;
-  onChange: (value: string, changeType: 'input' | 'button') => void;
-  onBlur?: () => void;
+  value: number | null;
   minValue?: number;
   maxValue?: number;
+  onValueChange: NonNullable<NumberStepperProps['onValueChange']>;
+  onBlur?: () => void;
 };
 
 export const SettingsOptionCardContentCounter = ({
@@ -35,53 +49,54 @@ export const SettingsOptionCardContentCounter = ({
   description,
   divider,
   disabled = false,
-  errorMessage,
-  inputId,
   value,
-  onChange,
-  onBlur,
-  minValue,
+  minValue = 0,
   maxValue,
+  onValueChange,
+  onBlur,
 }: SettingsOptionCardContentCounterProps) => {
-  const hasError = isNonEmptyString(errorMessage);
-  const errorMessageId = hasError && inputId ? `${inputId}-error` : undefined;
+  const { t } = useTranslate();
+  const counterId = useId();
+  const titleId = `${counterId}-title`;
+  const descriptionId = `${counterId}-description`;
+  const hasDescription = isNonEmptyString(description);
 
   return (
     <>
-      <StyledSettingsCardContent>
-        {Icon && (
-          <StyledSettingsCardIcon>
-            <SettingsOptionIconCustomizer Icon={Icon} />
-          </StyledSettingsCardIcon>
-        )}
-        <StyledSettingsCardTextContainer>
-          <StyledSettingsCardTitle>
-            <label htmlFor={inputId}>{title}</label>
-          </StyledSettingsCardTitle>
-          {description && (
-            <StyledSettingsCardDescription>
-              <OverflowingTextWithTooltip text={description} />
-            </StyledSettingsCardDescription>
+      <Card.Content>
+        <StyledSettingsCardRow>
+          {isDefined(Icon) && (
+            <StyledSettingsCardIcon>
+              <SettingsOptionIconCustomizer Icon={Icon} />
+            </StyledSettingsCardIcon>
           )}
-          {hasError && (
-            <StyledSettingsError id={errorMessageId} role="alert">
-              {errorMessage}
-            </StyledSettingsError>
-          )}
-        </StyledSettingsCardTextContainer>
-        <SettingsCounter
-          inputId={inputId}
-          value={value}
-          onChange={onChange}
-          onBlur={onBlur}
-          minValue={minValue}
-          maxValue={maxValue}
-          disabled={disabled}
-          errorMessageId={errorMessageId}
-          isInvalid={hasError}
-        />
-      </StyledSettingsCardContent>
-      {divider && <Separator />}
+          <StyledSettingsCardTextContainer>
+            <StyledSettingsCardTitle id={titleId}>
+              {title}
+            </StyledSettingsCardTitle>
+            {hasDescription && (
+              <StyledSettingsCardDescription id={descriptionId}>
+                <OverflowingTextWithTooltip text={description} />
+              </StyledSettingsCardDescription>
+            )}
+          </StyledSettingsCardTextContainer>
+          <StyledCounterContainer>
+            <NumberStepper
+              aria-labelledby={titleId}
+              aria-describedby={hasDescription ? descriptionId : undefined}
+              value={value}
+              min={minValue}
+              max={maxValue}
+              disabled={disabled}
+              decrementLabel={t('Decrease value')}
+              incrementLabel={t('Increase value')}
+              onValueChange={onValueChange}
+              onBlur={onBlur}
+            />
+          </StyledCounterContainer>
+        </StyledSettingsCardRow>
+      </Card.Content>
+      {divider && <SettingsCardSeparator />}
     </>
   );
 };

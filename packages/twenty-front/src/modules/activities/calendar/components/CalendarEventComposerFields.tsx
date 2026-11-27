@@ -1,3 +1,4 @@
+import { CalendarEventComposerRecurrenceFields } from '@/activities/calendar/components/CalendarEventComposerRecurrenceFields';
 import { CalendarEventComposerTargetsInput } from '@/activities/calendar/components/CalendarEventComposerTargetsInput';
 import { CalendarEventLocationInput } from '@/activities/calendar/components/CalendarEventLocationInput';
 import { type useCalendarEventComposer } from '@/activities/calendar/hooks/useCalendarEventComposer';
@@ -57,6 +58,7 @@ export const CalendarEventComposerFields = ({
     composerState.accountOptions.length === 0 ||
     composerState.missingScopes.length > 0 ||
     !composerState.hasValidDateRange ||
+    !composerState.hasValidRecurrenceEndDate ||
     composerState.hasTooManyAttendees;
 
   return (
@@ -187,6 +189,7 @@ export const CalendarEventComposerFields = ({
             onChange={composerState.setTimeZone}
           />
         </ComposerFieldRow>
+        <CalendarEventComposerRecurrenceFields composerState={composerState} />
         <ComposerFieldRow
           label={t`Invitations`}
           onClick={() =>
@@ -283,6 +286,13 @@ export const CalendarEventComposerFields = ({
                   ? t`The end date must be later than the start date.`
                   : t`The end time must be after the start time.`
               }
+            />
+          )}
+          {!composerState.hasValidRecurrenceEndDate && (
+            <Callout
+              status="warning"
+              title={t`Check when the event stops repeating`}
+              description={t`The end date can't be before the first event.`}
             />
           )}
           {composerState.hasTooManyAttendees && (

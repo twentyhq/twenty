@@ -406,8 +406,6 @@ describe('cleanupOrphanedRecallBots', () => {
   });
 
   it('ejects an orphaned bot that already joined when deletion is rejected', async () => {
-    // 409s are retryable, so fake timers skip the cancel backoff sleeps.
-    vi.useFakeTimers();
     stubRecallApi({
       bots: [
         buildCurrentWorkspaceBot({
@@ -415,18 +413,16 @@ describe('cleanupOrphanedRecallBots', () => {
           twentyCallRecordingId: 'call-recording-gone',
         }),
       ],
-      cancelStatus: 409,
+      cancelStatus: 405,
     });
 
-    const resultPromise = cleanupOrphanedRecallBots({
+    const result = await cleanupOrphanedRecallBots({
       client: buildClient([]),
       joinAtAfter: JOIN_AT_AFTER,
       joinAtBefore: JOIN_AT_BEFORE,
     });
 
-    await vi.runAllTimersAsync();
-
-    expect(await resultPromise).toEqual({
+    expect(result).toEqual({
       scannedBotCount: 1,
       truncatedBotList: false,
       canceledExternalBotIds: ['in-call-orphan'],

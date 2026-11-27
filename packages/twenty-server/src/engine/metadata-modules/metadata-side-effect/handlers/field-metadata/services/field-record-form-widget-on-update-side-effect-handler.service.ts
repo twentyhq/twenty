@@ -119,7 +119,7 @@ export class FieldRecordFormWidgetOnUpdateSideEffectHandlerService extends Metad
     if (
       !isEligible &&
       isDefined(existingFlatPageLayoutWidget) &&
-      existingFlatPageLayoutWidget.isSystemSideEffect === true
+      existingFlatPageLayoutWidget.isSystemSideEffect
     ) {
       return {
         status: 'success',

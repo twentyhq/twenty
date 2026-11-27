@@ -6,7 +6,6 @@ import { DEFAULT_TOOL_INPUT_SCHEMA } from 'twenty-shared/logic-function';
 import { type AgentResponseSchema } from 'twenty-shared/ai';
 import { createOneAgent } from 'test/integration/metadata/suites/agent/utils/create-one-agent.util';
 import { deleteOneAgent } from 'test/integration/metadata/suites/agent/utils/delete-one-agent.util';
-import { findAgents } from 'test/integration/metadata/suites/agent/utils/find-agents.util';
 import { updateOneAgent } from 'test/integration/metadata/suites/agent/utils/update-one-agent.util';
 
 describe('Agent update should succeed', () => {
@@ -322,61 +321,54 @@ describe('Agent update should succeed', () => {
     });
   });
 
-  it('should store edits and the archive of another application agent as workspace overrides', async () => {
-    const { data } = await findAgents({
+  it('should store a trigger condition as a tree and return it as text', async () => {
+    const trigger = {
+      id: '2c7e9d41-5b8a-4f0e-9d3c-6a1b2c3d4e55',
+      type: 'DATABASE_EVENT' as const,
+      isActive: true,
+      instructions: null,
+      settings: {
+        eventName: 'company.updated',
+        condition: 'employees > 100 and previous.employees <= 100',
+      },
+    };
+
+    const { data: updateData } = await updateOneAgent({
       expectToFail: false,
-      input: undefined,
-      gqlFields: 'id name label',
+      input: { id: testAgentId, triggers: [trigger] },
     });
 
-    const helperAgent = data.findManyAgents.find(
-      (agent) => agent.name === 'helper',
+    expect(updateData.updateOneAgent.triggers).toEqual([
+      {
+        ...trigger,
+        settings: {
+          eventName: 'company.updated',
+          condition: 'employees > 100 and previous.employees <= 100',
+        },
+      },
+    ]);
+
+    const [{ triggers: storedTriggers }] = await global.testDataSource.query(
+      `SELECT triggers FROM core."agent" WHERE id = $1`,
+      [testAgentId],
     );
 
-    expect(helperAgent).toBeDefined();
+    expect(storedTriggers[0].settings).not.toHaveProperty('condition');
+    expect(storedTriggers[0].settings.conditionTree).toMatchObject({
+      type: 'GROUP',
+      logicalOperator: 'AND',
+    });
 
-    try {
-      const { data: editData } = await updateOneAgent({
-        expectToFail: false,
-        input: {
-          id: helperAgent!.id,
-          label: 'Workspace helper',
-          isActive: false,
-        },
-        gqlFields: 'id label isActive',
-      });
+    const { data: resentData } = await updateOneAgent({
+      expectToFail: false,
+      input: {
+        id: testAgentId,
+        triggers: updateData.updateOneAgent.triggers,
+      },
+    });
 
-      expect(editData.updateOneAgent).toMatchObject({
-        label: 'Workspace helper',
-        isActive: false,
-      });
-
-      const [agentRow] = await global.testDataSource.query(
-        `SELECT label, "isActive", overrides FROM core."agent" WHERE id = $1`,
-        [helperAgent!.id],
-      );
-
-      expect(agentRow.label).toBe(helperAgent!.label);
-      expect(agentRow.isActive).toBe(true);
-      expect(Object.values(agentRow.overrides)).toEqual([
-        { label: 'Workspace helper', isActive: false },
-      ]);
-    } finally {
-      // Every spec shares the helper agent, so a failed assertion must not leave it archived
-      const { data: revertData } = await updateOneAgent({
-        expectToFail: false,
-        input: {
-          id: helperAgent!.id,
-          label: helperAgent!.label,
-          isActive: true,
-        },
-        gqlFields: 'id label isActive',
-      });
-
-      expect(revertData.updateOneAgent).toMatchObject({
-        label: helperAgent!.label,
-        isActive: true,
-      });
-    }
+    expect(resentData.updateOneAgent.triggers).toEqual(
+      updateData.updateOneAgent.triggers,
+    );
   });
 });

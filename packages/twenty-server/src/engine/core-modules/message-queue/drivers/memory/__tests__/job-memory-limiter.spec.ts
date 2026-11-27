@@ -20,18 +20,15 @@ const usedKeyOf = (groupKey: string) => `${KEY_PREFIX}:jobmem:used:${groupKey}`;
 const jobsKeyOf = (groupKey: string) => `${KEY_PREFIX}:jobmem:jobs:${groupKey}`;
 
 const buildConfig = ({
-  isEnabled,
   workspaceShare,
   applicationShare,
   reserve,
 }: {
-  isEnabled: boolean;
   workspaceShare: number;
   applicationShare: number;
   reserve: number;
 }) => {
   const configValues: Record<string, unknown> = {
-    IS_REDIS_MEMORY_FAIRNESS_ENABLED: isEnabled,
     JOB_QUEUE_MEMORY_SHARE_BY_WORKSPACE_ID: workspaceShare,
     JOB_QUEUE_MEMORY_SHARE_BY_APPLICATION_UNIVERSAL_IDENTIFIER:
       applicationShare,
@@ -42,14 +39,12 @@ const buildConfig = ({
 };
 
 const createLimiter = async ({
-  isEnabled = true,
   maxMemoryBytes = 10_000,
   usedMemoryBytes = 0,
   workspaceShare = 0.1,
   applicationShare = 0.4,
   reserve = 0,
 }: {
-  isEnabled?: boolean;
   maxMemoryBytes?: number;
   usedMemoryBytes?: number;
   workspaceShare?: number;
@@ -100,7 +95,6 @@ const createLimiter = async ({
     keyPrefix: KEY_PREFIX,
     metricsService: metricsService as never,
     twentyConfigService: buildConfig({
-      isEnabled,
       workspaceShare,
       applicationShare,
       reserve,
@@ -296,7 +290,6 @@ describe('JobMemoryLimiter', () => {
       keyPrefix: KEY_PREFIX,
       metricsService: { incrementCounterForEvent: jest.fn() } as never,
       twentyConfigService: buildConfig({
-        isEnabled: true,
         workspaceShare: 0.1,
         applicationShare: 0.4,
         reserve: 0,
@@ -382,11 +375,8 @@ describe('JobMemoryLimiter', () => {
     expect(await redis.ttl(jobsKeyOf(WORKSPACE_1))).toBe(-1);
   });
 
-  it.each<{ name: string; options: Parameters<typeof createLimiter>[0] }>([
-    { name: 'disabled', options: { isEnabled: false } },
-    { name: 'maxmemory is unset', options: { maxMemoryBytes: 0 } },
-  ])('does not charge when $name', async ({ options }) => {
-    const { redis, limiter } = await createLimiter(options);
+  it('does not charge when maxmemory is unset', async () => {
+    const { redis, limiter } = await createLimiter({ maxMemoryBytes: 0 });
 
     const admission = await limiter.admit({
       queueName: QUEUE,
@@ -453,14 +443,6 @@ describe('JobMemoryLimiter', () => {
         { groupKey: WORKSPACE_2, usedBytes: 900 },
         { groupKey: WORKSPACE_1, usedBytes: 300 },
       ]);
-    });
-
-    it('reports nothing when memory fairness is disabled', async () => {
-      const { redis, limiter } = await createLimiter({ isEnabled: false });
-
-      await redis.set(usedKeyOf(WORKSPACE_1), 300);
-
-      expect(await limiter.getTopGroupKeyMemoryUsages(QUEUE)).toEqual([]);
     });
   });
 

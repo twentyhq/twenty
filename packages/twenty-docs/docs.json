@@ -257,7 +257,8 @@
                   {
                     "group": "How-Tos",
                     "pages": [
-                      "user-guide/ai/how-tos/ai-faq"
+                      "user-guide/ai/how-tos/ai-faq",
+                      "user-guide/ai/how-tos/inbox-notifications"
                     ]
                   }
                 ]
@@ -1371,7 +1372,8 @@
                   {
                     "group": "الإرشادات",
                     "pages": [
-                      "ar/user-guide/ai/how-tos/ai-faq"
+                      "ar/user-guide/ai/how-tos/ai-faq",
+                      "ar/user-guide/ai/how-tos/inbox-notifications"
                     ]
                   }
                 ]
@@ -3599,7 +3601,8 @@
                   {
                     "group": "Guide pratiche",
                     "pages": [
-                      "it/user-guide/ai/how-tos/ai-faq"
+                      "it/user-guide/ai/how-tos/ai-faq",
+                      "it/user-guide/ai/how-tos/inbox-notifications"
                     ]
                   }
                 ]
@@ -5617,7 +5620,8 @@
                   {
                     "group": "How-Tos",
                     "pages": [
-                      "ro/user-guide/ai/how-tos/ai-faq"
+                      "ro/user-guide/ai/how-tos/ai-faq",
+                      "ro/user-guide/ai/how-tos/inbox-notifications"
                     ]
                   }
                 ]

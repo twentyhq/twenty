@@ -14,7 +14,7 @@ import { PageBanner } from "/snippets/page-banner.mdx"
 * **إمكانات الوسائط** *(اختياري)*: الوصول إلى الميكروفون أو الكاميرا الذي تطلبه مكوّنات الواجهة، ويُوافق عليه بشكل منفصل عن أذونات الدور.
 * **المتغيرات** *(اختياري)* — أزواج مفتاح–قيمة تُتاح لكودك كمتغيرات بيئة.
 * **خطافات ما قبل التثبيت/ما بعد التثبيت/إلغاء التثبيت** *(اختياري)* — راجع [Logic Functions](/ar/developers/extend/apps/logic/logic-functions).
-* **الفوترة** *(اختياري)* — `billing.recurring` لرسوم الاشتراك التي تفرضها المنصة تلقائيًا، و`billing.operations` لما تفرض عليه تطبيقك أرصدة، و`billing.description` للسوق؛ راجع [فرض الأرصدة](/ar/developers/extend/apps/logic/credits).
+* **الفوترة** *(اختياري)* — `billing.prices` لتحديد تكلفة تطبيقك بالعملة الحقيقية، و`billing.operations` لتحديد العمليات التي يفرض تطبيقك مقابلها أرصدة، و`billing.description` للسوق؛ راجع [فرض رسوم على الأرصدة](/ar/developers/extend/apps/logic/credits).
 
 ```ts src/application-config.ts
 import { defineApplication } from 'twenty-sdk/define';

@@ -105,6 +105,7 @@ const computeObjectPermissions = ({
       fieldPermissions: fieldPermissions.map((fieldPermission) => ({
         ...fieldPermission,
         objectMetadataId: OBJECT_METADATA_ID,
+        sourceFieldMetadataId: null,
       })),
       rowLevelPermissionRules,
       rowLevelPermissionPredicates: [
@@ -264,7 +265,7 @@ describe('computeRoleRecordsPermissions', () => {
     ]);
   });
 
-  it('should keep the label identifier readable on an RLS rule', () => {
+  it('should let an RLS rule make the label identifier unreadable', () => {
     expect(
       findRule({
         objectPermissions: computeObjectPermissions({
@@ -278,7 +279,7 @@ describe('computeRoleRecordsPermissions', () => {
         }),
         ruleId: RLS_RULE_ID,
       })?.unreadableFields,
-    ).toEqual([]);
+    ).toEqual([LABEL_FIELD_ID]);
   });
 
   it('should give each rule the field lists of its own field permissions', () => {
@@ -311,5 +312,109 @@ describe('computeRoleRecordsPermissions', () => {
       [RLS_RULE_ID, ['first-rls-rule-field-id']],
       [OTHER_RLS_RULE_ID, ['other-rls-rule-field-id']],
     ]);
+  });
+});
+
+describe('computeRoleRecordsPermissions on a system object', () => {
+  const SYSTEM_OBJECT_METADATA_ID = 'system-object-id';
+
+  const computeSystemObjectPermissions = ({
+    hasAllObjectsPermissions,
+    objectPermissions = [],
+    areSystemObjectsReadableByDefault,
+  }: {
+    hasAllObjectsPermissions: boolean;
+    objectPermissions?: RoleDefinition['objectPermissions'];
+    areSystemObjectsReadableByDefault?: boolean;
+  }) =>
+    computeRoleRecordsPermissions({
+      roleDefinition: {
+        canCreateAllObjectRecords: hasAllObjectsPermissions,
+        canReadAllObjectRecords: hasAllObjectsPermissions,
+        canUpdateAllObjectRecords: hasAllObjectsPermissions,
+        canSoftDeleteAllObjectRecords: hasAllObjectsPermissions,
+        canDestroyAllObjectRecords: hasAllObjectsPermissions,
+        isPermissionFlagGranted: () => true,
+        areSystemObjectsReadableByDefault,
+        objectPermissions,
+        fieldPermissions: [],
+        rowLevelPermissionRules: [],
+        rowLevelPermissionPredicates: [],
+        rowLevelPermissionPredicateGroups: [],
+      },
+      objectMetadataCollection: [
+        {
+          id: SYSTEM_OBJECT_METADATA_ID,
+          isSystem: true,
+          universalIdentifier: 'system-object-universal-identifier',
+          labelIdentifierFieldMetadataId: null,
+        },
+      ],
+      resolveMorphRelationPermissionFieldIds: (fieldMetadataId) => [
+        fieldMetadataId,
+      ],
+    }).objects[SYSTEM_OBJECT_METADATA_ID];
+
+  it('should follow a deny-all role when no override exists', () => {
+    expect(
+      computeSystemObjectPermissions({ hasAllObjectsPermissions: false }),
+    ).toMatchObject({
+      canCreateAllRecords: false,
+      canReadAllRecords: false,
+      canUpdateAllRecords: false,
+      canSoftDeleteAllRecords: false,
+      canDestroyAllRecords: false,
+    });
+  });
+
+  it('should follow a role granting all objects when no override exists', () => {
+    expect(
+      computeSystemObjectPermissions({ hasAllObjectsPermissions: true }),
+    ).toMatchObject({
+      canCreateAllRecords: true,
+      canReadAllRecords: true,
+      canUpdateAllRecords: true,
+      canSoftDeleteAllRecords: true,
+      canDestroyAllRecords: true,
+    });
+  });
+
+  it('should take an explicit override over the role defaults', () => {
+    expect(
+      computeSystemObjectPermissions({
+        hasAllObjectsPermissions: true,
+        objectPermissions: [
+          {
+            objectMetadataId: SYSTEM_OBJECT_METADATA_ID,
+            canCreateObjectRecords: false,
+            canReadObjectRecords: true,
+            canUpdateObjectRecords: false,
+            canSoftDeleteObjectRecords: false,
+            canDestroyObjectRecords: false,
+          },
+        ],
+      }),
+    ).toMatchObject({
+      canCreateAllRecords: false,
+      canReadAllRecords: true,
+      canUpdateAllRecords: false,
+      canSoftDeleteAllRecords: false,
+      canDestroyAllRecords: false,
+    });
+  });
+
+  it('should only keep reading when system objects are readable by default', () => {
+    expect(
+      computeSystemObjectPermissions({
+        hasAllObjectsPermissions: false,
+        areSystemObjectsReadableByDefault: true,
+      }),
+    ).toMatchObject({
+      canCreateAllRecords: false,
+      canReadAllRecords: true,
+      canUpdateAllRecords: false,
+      canSoftDeleteAllRecords: false,
+      canDestroyAllRecords: false,
+    });
   });
 });

@@ -32,6 +32,7 @@ const listRecordPageLayoutsSchema = z.object({
 
 @DefineTool({
   name: 'list_record_page_layouts',
+  isReadOnly: true,
   description:
     'Find existing record-page layouts and active tabs for an object by its singular or plural name. Returns tab IDs, layout modes and widget positions for place_front_component. These layouts are shared by records of that object.',
   category: ToolCategory.PAGE_LAYOUT,

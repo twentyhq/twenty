@@ -61,6 +61,7 @@ export const createStandardRoleFlatMetadata = ({
     description,
     icon,
     isEditable,
+    isSystemSideEffect: false,
     canUpdateAllSettings,
     canAccessAllTools,
     canAccessAllAgentChatChannels,

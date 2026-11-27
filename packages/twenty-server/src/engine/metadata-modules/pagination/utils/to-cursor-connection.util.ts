@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { encodeCursorData } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
+import { encodeCursorData } from 'src/engine/api/common/utils/cursors.util';
 import { type CursorConnection } from 'src/engine/metadata-modules/pagination/dtos/cursor-connection-type.factory';
 import { type MetadataCursorPage } from 'src/engine/metadata-modules/pagination/types/metadata-cursor-page.type';
 

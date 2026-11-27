@@ -14,7 +14,7 @@ Every app must have exactly one `defineApplication` call. It declares:
 - **Media capabilities** *(optional)*: microphone or camera access requested by front components, approved separately from role permissions.
 - **Variables** *(optional)* — key–value pairs exposed to your code as environment variables.
 - **Pre-install / post-install / uninstall hooks** *(optional)* — see [Logic Functions](/developers/extend/apps/logic/logic-functions).
-- **Billing** *(optional)* — `billing.recurring` for subscription fees the platform raises automatically, `billing.operations` for what your app charges credits for, and `billing.description` for the marketplace; see [Charging Credits](/developers/extend/apps/logic/credits).
+- **Billing** *(optional)* — `billing.prices` for what your app costs in real currency, `billing.operations` for what your app charges credits for, and `billing.description` for the marketplace; see [Charging Credits](/developers/extend/apps/logic/credits).
 
 ```ts src/application-config.ts
 import { defineApplication } from 'twenty-sdk/define';

@@ -76,7 +76,7 @@ const classifyFlatEntity = ({
         reason: 'runtime configuration',
       };
     case 'role':
-      return 'isEditable' in flatEntity && flatEntity.isEditable === false
+      return 'isEditable' in flatEntity && !flatEntity.isEditable
         ? {
             status: ApplicationExportCoverageStatus.EXCLUDED,
             reason: 'non-editable role',

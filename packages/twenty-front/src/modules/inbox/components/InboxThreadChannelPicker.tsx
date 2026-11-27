@@ -5,8 +5,8 @@ import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconFolderSymlink } from 'twenty-ui/icon';
 
 import { useMoveInboxThreadToChannel } from '@/inbox/hooks/useMoveInboxThreadToChannel';
-import { aiChatAccessibleChannelsSelector } from '@/ai/states/selectors/aiChatAccessibleChannelsSelector';
-import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
+import { aiChatAccessibleChannelsSelector } from '@/ai-chat/threads/states/selectors/aiChatAccessibleChannelsSelector';
+import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -16,7 +16,6 @@ type InboxThreadChannelPickerProps = {
   dropdownId: string;
 };
 
-// A chat without an owner has no one to fall back to, so it stays in a channel
 export const InboxThreadChannelPicker = ({
   thread,
   dropdownId,
@@ -25,7 +24,7 @@ export const InboxThreadChannelPicker = ({
   const aiChatAccessibleChannels = useAtomStateValue(
     aiChatAccessibleChannelsSelector,
   );
-  const { moveAgentChatThreadToChannel } = useMoveInboxThreadToChannel();
+  const { moveInboxThreadToChannel } = useMoveInboxThreadToChannel();
   const currentChannelId = thread.channelId ?? null;
   const canLeaveChannels = isDefined(thread.workspaceMemberId);
 
@@ -59,7 +58,7 @@ export const InboxThreadChannelPicker = ({
               selected={id === currentChannelId}
               onSelect={() => {
                 if (id !== currentChannelId) {
-                  void moveAgentChatThreadToChannel({
+                  void moveInboxThreadToChannel({
                     threadId: thread.id,
                     channelId: id,
                   });

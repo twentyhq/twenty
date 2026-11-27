@@ -1,0 +1,1 @@
+export const AI_CHAT_ASSISTANT_RECIPIENT_SUGGESTION_ID = 'assistant';

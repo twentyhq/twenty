@@ -1,4 +1,7 @@
 import { NavigationDrawerInboxContent } from '@/inbox/components/NavigationDrawerInboxContent';
+import { LegacyAiChatNavigationDrawerContent } from '@/legacy-ai-chat/components/LegacyAiChatNavigationDrawerContent';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
@@ -17,6 +20,10 @@ export const NavigationDrawerTabbedContent = ({
   shouldMountAiChatContent,
   navigationContent,
 }: NavigationDrawerTabbedContentProps) => {
+  const isAiChatInboxEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+  );
+
   return (
     <>
       <StyledTabContent isHidden={showAiChatContent}>
@@ -24,7 +31,11 @@ export const NavigationDrawerTabbedContent = ({
       </StyledTabContent>
       {shouldMountAiChatContent && (
         <StyledTabContent isHidden={!showAiChatContent}>
-          <NavigationDrawerInboxContent />
+          {isAiChatInboxEnabled ? (
+            <NavigationDrawerInboxContent />
+          ) : (
+            <LegacyAiChatNavigationDrawerContent />
+          )}
         </StyledTabContent>
       )}
     </>

@@ -1,7 +1,8 @@
-export type WidgetVisibilityContext = {
-  device: 'MOBILE' | 'DESKTOP';
-  selectedRecords: Record<string, unknown>[];
-  featureFlags: Record<string, boolean>;
-  // TODO: remove with the workspace workflow and workflowVersion objects once the core migration owns them.
-  hiddenFieldMetadataIdsOrNames?: string[];
-};
+import { type ConditionalAvailabilityCurrentUserContext } from '@/conditional-availability/conditional-availability-user-context/types/ConditionalAvailabilityCurrentUserContext';
+import { type ConditionalEvaluationDevice } from 'twenty-shared/conditional-evaluation';
+
+export type WidgetVisibilityContext =
+  ConditionalAvailabilityCurrentUserContext & {
+    device: ConditionalEvaluationDevice;
+    selectedRecords: Record<string, unknown>[];
+  };

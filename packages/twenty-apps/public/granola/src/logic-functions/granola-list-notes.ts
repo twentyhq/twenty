@@ -12,7 +12,7 @@ import { GRANOLA_NOT_CONNECTED_ERROR_MESSAGE } from 'src/logic-functions/constan
 import { GRANOLA_PAGE_PARAMETERS_SCHEMA } from 'src/logic-functions/schemas/granola-page-parameters.schema';
 import { GRANOLA_DATE_TIME_SCHEMA } from 'src/logic-functions/types/granola-api.type';
 import { isGranolaApiKeySet } from 'src/logic-functions/utils/is-granola-api-key-set.util';
-import { createGranolaClientOrThrow } from 'src/logic-functions/utils/create-granola-client-or-throw.util';
+import { createWorkspaceGranolaClientOrThrow } from 'src/logic-functions/utils/create-workspace-granola-client-or-throw.util';
 import { isDefined } from 'twenty-sdk/utils';
 
 const GRANOLA_LIST_NOTES_INPUT_SCHEMA: InputJsonSchema = {
@@ -63,7 +63,7 @@ export const granolaListNotesHandler = async (parameters: unknown) => {
     return { success: false, error: GRANOLA_NOT_CONNECTED_ERROR_MESSAGE };
   }
 
-  const page = await createGranolaClientOrThrow().listNotes({
+  const page = await createWorkspaceGranolaClientOrThrow().listNotes({
     folder_id: parsed.data.folderId,
     created_after: parsed.data.createdAfter,
     created_before: parsed.data.createdBefore,

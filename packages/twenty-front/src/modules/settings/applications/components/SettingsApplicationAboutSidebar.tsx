@@ -47,7 +47,7 @@ type SettingsApplicationAboutSidebarProps = {
   installCount?: number;
   category?: string;
   pricingDescription?: string;
-  billsCredits?: boolean;
+  isPaid?: boolean;
   developerLinks?: DeveloperLinks;
   contentLink?: ApplicationContentLink;
 };
@@ -167,7 +167,7 @@ export const SettingsApplicationAboutSidebar = ({
   installCount,
   category,
   pricingDescription,
-  billsCredits = false,
+  isPaid = false,
   developerLinks,
   contentLink,
 }: SettingsApplicationAboutSidebarProps) => {
@@ -217,11 +217,11 @@ export const SettingsApplicationAboutSidebar = ({
     ...(isDefined(trimmedCategory)
       ? [{ Icon: IconTag, label: trimmedCategory }]
       : []),
-    ...(billsCredits
+    ...(isPaid
       ? [
           {
             Icon: IconCurrencyDollar,
-            label: t`Bills credits`,
+            label: t`Paid app`,
             tooltip: trimmedPricingDescription,
           },
         ]

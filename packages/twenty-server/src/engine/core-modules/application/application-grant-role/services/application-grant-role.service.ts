@@ -243,9 +243,9 @@ export class ApplicationGrantRoleService {
         })
       : undefined;
 
-    const requestedFlatRole = isDefined(flatApplication.defaultRoleId)
+    const requestedFlatRole = isDefined(flatApplication.requestedRoleId)
       ? findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: flatApplication.defaultRoleId,
+          flatEntityId: flatApplication.requestedRoleId,
           flatEntityMaps: flatEntityMaps.flatRoleMaps,
         })
       : undefined;

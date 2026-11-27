@@ -10,7 +10,6 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 
 export const HASH_KEYED_WORKSPACE_CACHE_KEYS = {
   GraphQLTypeDefs: 'graphql:type-defs',
-  GraphQLUsedScalarNames: 'graphql:used-scalar-names',
 } as const;
 export const WORKSPACE_CACHE_KEYS = {
   MetadataVersion: 'metadata:workspace-metadata-version',
@@ -80,33 +79,6 @@ export class WorkspaceCacheStorageService {
 
     return this.cacheStorageService.get<string>(
       `${HASH_KEYED_WORKSPACE_CACHE_KEYS.GraphQLTypeDefs}:${workspaceId}:${metadataCacheHash}${applicationSuffix}`,
-    );
-  }
-
-  setGraphQLUsedScalarNames(
-    workspaceId: string,
-    metadataCacheHash: string,
-    usedScalarNames: string[],
-    applicationId?: string,
-  ): Promise<void> {
-    const applicationSuffix = applicationId ? `:${applicationId}` : '';
-
-    return this.cacheStorageService.set<string[]>(
-      `${HASH_KEYED_WORKSPACE_CACHE_KEYS.GraphQLUsedScalarNames}:${workspaceId}:${metadataCacheHash}${applicationSuffix}`,
-      usedScalarNames,
-      TTL_ONE_WEEK,
-    );
-  }
-
-  getGraphQLUsedScalarNames(
-    workspaceId: string,
-    metadataCacheHash: string,
-    applicationId?: string,
-  ): Promise<string[] | undefined> {
-    const applicationSuffix = applicationId ? `:${applicationId}` : '';
-
-    return this.cacheStorageService.get<string[]>(
-      `${HASH_KEYED_WORKSPACE_CACHE_KEYS.GraphQLUsedScalarNames}:${workspaceId}:${metadataCacheHash}${applicationSuffix}`,
     );
   }
 

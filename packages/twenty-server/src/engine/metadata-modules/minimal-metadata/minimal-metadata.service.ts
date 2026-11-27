@@ -5,7 +5,6 @@ import {
   type AllMetadataName,
 } from 'twenty-shared/metadata';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
-import { ViewVisibility } from 'twenty-shared/types';
 import { isDefined, uncapitalize } from 'twenty-shared/utils';
 
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
@@ -18,6 +17,7 @@ import { getWorkspaceCustomApplicationUniversalIdentifierOrThrow } from 'src/eng
 import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
 import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
+import { isViewVisibleToCaller } from 'src/engine/metadata-modules/view/utils/is-view-visible-to-caller.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 
@@ -43,12 +43,10 @@ export class MinimalMetadataService {
   async getMinimalMetadata({
     workspaceId,
     workspaceCustomApplicationId,
-    userWorkspaceId,
     locale,
   }: {
     workspaceId: string;
     workspaceCustomApplicationId: string;
-    userWorkspaceId?: string;
     locale?: string;
   }): Promise<MinimalMetadataDTO> {
     const [
@@ -91,16 +89,15 @@ export class MinimalMetadataService {
       flatObjectMetadataMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
-      .filter(
-        (flatObjectMetadata) =>
-          resolveEffectiveFlatEntityProperty({
-            metadataName: 'objectMetadata',
-            flatEntity: flatObjectMetadata,
-            property: 'isActive',
-            authorContext: {
-              workspaceCustomApplicationUniversalIdentifier,
-            },
-          }) === true,
+      .filter((flatObjectMetadata) =>
+        resolveEffectiveFlatEntityProperty({
+          metadataName: 'objectMetadata',
+          flatEntity: flatObjectMetadata,
+          property: 'isActive',
+          authorContext: {
+            workspaceCustomApplicationUniversalIdentifier,
+          },
+        }),
       )
       .map((flatObjectMetadata) => {
         const isStandardApp = belongsToTwentyStandardApp(flatObjectMetadata);
@@ -145,14 +142,7 @@ export class MinimalMetadataService {
     )
       .filter(isDefined)
       .filter((flatView) => flatView.workspaceId === workspaceId)
-      .filter((flatView) => flatView.deletedAt === null)
-      .filter(
-        (flatView) =>
-          flatView.visibility === ViewVisibility.WORKSPACE ||
-          (flatView.visibility === ViewVisibility.UNLISTED &&
-            isDefined(userWorkspaceId) &&
-            flatView.createdByUserWorkspaceId === userWorkspaceId),
-      )
+      .filter((flatView) => isViewVisibleToCaller({ view: flatView }))
       .map((flatView) => ({
         id: flatView.id,
         type: flatView.type,

@@ -16,10 +16,14 @@ import { stopAgentChatStreamOperationFactory } from 'test/integration/graphql/ut
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
+import {
+  grantRoleWideAccessToChannelObjects,
+  revokeRoleWideAccessToChannelObjects,
+} from 'test/integration/utils/role-wide-access-to-channel-objects.util';
 import { FeatureFlagKey, RecordShareAccessLevel } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { DatabaseEventAction } from 'src/engine/workspace-event-emitter/enums/database-event-action';
 import { type RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { type AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { type AgentChatQueueService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-queue.service';
@@ -42,6 +46,10 @@ beforeAll(() => setRecordSharingEnabled(true));
 afterAll(() => setRecordSharingEnabled(false));
 
 describe('Shared conversation API boundaries', () => {
+  beforeAll(async () => {
+    await grantRoleWideAccessToChannelObjects();
+  });
+
   let context: Awaited<ReturnType<typeof createChatParticipationTestContext>>;
   let models: ReturnType<typeof configureChatParticipationModels>;
   let queue: AgentChatQueueService;
@@ -410,11 +418,9 @@ describe('Shared conversation API boundaries', () => {
         expect.objectContaining({
           id: messageId,
           senderWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-          senderUserWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
         }),
         expect.objectContaining({
           senderWorkspaceMemberId: null,
-          senderUserWorkspaceId: null,
         }),
       ]),
     );
@@ -578,5 +584,9 @@ describe('Shared conversation API boundaries', () => {
     expect(response.body.errors).toBeUndefined();
     expect(response.body.data.stopAgentChatStream).toBe(true);
     expect((await context.readThread(threadId)).activeStreamId).toBeNull();
+  });
+
+  afterAll(async () => {
+    await revokeRoleWideAccessToChannelObjects();
   });
 });

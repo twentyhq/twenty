@@ -1,4 +1,4 @@
-import { type AiChatChannel } from '@/ai/types/AiChatChannel';
+import { type AiChatChannel } from '@/ai-chat/threads/types/AiChatChannel';
 import { type InboxSelectedThreadListSource } from '@/inbox/types/InboxSelectedThreadListSource';
 
 export const isInboxSelectedThreadListSourceAccessible = ({

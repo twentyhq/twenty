@@ -1,3 +1,4 @@
+import { MARKETPLACE_CONNECT_LISTING_UNIVERSAL_IDENTIFIERS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-connect-listing-universal-identifiers.constant';
 import { isVerifiedOAuthClientUniversalIdentifier } from 'src/engine/core-modules/application/application-oauth/verified-oauth-client/utils/is-verified-oauth-client-universal-identifier.util';
 import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-cli-application-registration.constant';
 
@@ -6,6 +7,15 @@ describe('isVerifiedOAuthClientUniversalIdentifier', () => {
     TWENTY_CLI_APPLICATION_REGISTRATION.universalIdentifier,
     TWENTY_CLI_APPLICATION_REGISTRATION.universalIdentifier.toUpperCase(),
   ])('should match the Twenty CLI identifier %s', (universalIdentifier) => {
+    expect(isVerifiedOAuthClientUniversalIdentifier(universalIdentifier)).toBe(
+      true,
+    );
+  });
+
+  it.each([
+    MARKETPLACE_CONNECT_LISTING_UNIVERSAL_IDENTIFIERS.CLAUDE,
+    MARKETPLACE_CONNECT_LISTING_UNIVERSAL_IDENTIFIERS.CHATGPT,
+  ])('should match the store card identifier %s', (universalIdentifier) => {
     expect(isVerifiedOAuthClientUniversalIdentifier(universalIdentifier)).toBe(
       true,
     );

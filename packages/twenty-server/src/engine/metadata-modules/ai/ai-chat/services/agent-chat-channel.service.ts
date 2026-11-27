@@ -13,13 +13,14 @@ import { AgentChatChannelGrantService } from 'src/engine/metadata-modules/ai/ai-
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { type AgentInboxCallerAuthContext } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-caller-auth-context.type';
 import { buildAgentChatChannelDeletionLockKey } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-channel-deletion-lock-key.util';
-import { isAgentChatChannelOpenToRole } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-agent-chat-channel-open-to-role.util';
+import { isAgentChatChannelOpenToRoles } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-agent-chat-channel-open-to-roles.util';
 import { lockAgentChatChannelForThreadWriteOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/lock-agent-chat-channel-for-thread-write-or-throw.util';
 import { throwAgentChatChannelBusy } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-channel-busy.util';
 import { throwAgentChatChannelsUnavailable } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-channels-unavailable.util';
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { InboxObjectNamesResolverService } from 'src/engine/metadata-modules/ai/ai-history/services/inbox-object-names-resolver.service';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import {
   AiException,
@@ -56,6 +57,7 @@ export class AgentChatChannelService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     @InjectWorkspaceScopedRepository(AgentChatChannelEntity)
     private readonly channelRepository: WorkspaceScopedRepository<AgentChatChannelEntity>,
+    private readonly inboxObjectNamesResolverService: InboxObjectNamesResolverService,
   ) {}
 
   async findChannels({
@@ -65,15 +67,15 @@ export class AgentChatChannelService {
     authContext: AgentInboxCallerAuthContext;
     canManageChannels: boolean;
   }): Promise<(FlatAgentChatChannelWithRoleIds & { isAccessible: boolean })[]> {
-    const [channels, role] = await Promise.all([
+    const [channels, roles] = await Promise.all([
       this.channelMetadataService.findChannels(authContext.workspace.id),
-      this.channelAccessService.findCallerRole(authContext),
+      this.channelAccessService.findCallerRoles(authContext),
     ]);
 
     return channels
       .map((channel) => ({
         ...channel,
-        isAccessible: isAgentChatChannelOpenToRole({ channel, role }),
+        isAccessible: isAgentChatChannelOpenToRoles({ channel, roles }),
       }))
       .filter(({ isAccessible }) => canManageChannels || isAccessible);
   }
@@ -263,6 +265,9 @@ export class AgentChatChannelService {
       );
     }
 
+    const { agentChatThread: threadObjectName } =
+      await this.inboxObjectNamesResolverService.resolve(workspaceId);
+
     const { threadsBefore, threadsAfter } =
       await this.workspaceOrmManager.executeTransactionInWorkspaceContext(
         async (transactionScope) => {
@@ -275,7 +280,7 @@ export class AgentChatChannelService {
 
           const threadRepository =
             transactionScope.getRepositoryWithoutPermissionChecks<AgentChatThreadWorkspaceEntity>(
-              'agentChatThread',
+              threadObjectName,
               { shouldSkipEventEmission: true },
             );
           const threadsBefore = await threadRepository.find({

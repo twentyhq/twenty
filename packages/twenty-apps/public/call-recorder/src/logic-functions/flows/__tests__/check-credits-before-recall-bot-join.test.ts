@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { CAMERA_TILE_FONT_ASSET_PATH } from 'src/logic-functions/constants/camera-tile-asset-paths';
 import { checkCreditsBeforeRecallBotJoin } from 'src/logic-functions/flows/check-credits-before-recall-bot-join.util';
 
 const getCreditAvailabilityMock = vi.hoisted(() => vi.fn());
@@ -8,11 +9,25 @@ vi.mock('twenty-sdk/billing', () => ({
   getCreditAvailability: getCreditAvailabilityMock,
 }));
 
+vi.mock('twenty-sdk/utils', async (importOriginal) => ({
+  ...(await importOriginal<object>()),
+  getPublicAssetUrl: (path: string) => `https://assets.test/${path}`,
+}));
+
+vi.mock('twenty-client-sdk/metadata', () => ({
+  MetadataApiClient: class {
+    query = async () => ({
+      currentWorkspace: { logo: null, displayName: 'Acme Inc.' },
+    });
+  },
+}));
+
 const fetchMock = vi.fn();
 
 const MEETING_STARTS_AT = '2026-01-01T13:00:00.000Z';
 const JOIN_AT = '2026-01-01T12:59:00.000Z';
 const TEN_MINUTES_BEFORE_JOIN = new Date('2026-01-01T12:49:00.000Z');
+const TWENTY_MINUTES_BEFORE_JOIN = new Date('2026-01-01T12:39:00.000Z');
 const RECALL_BOT_URL = 'https://us-west-2.recall.ai/api/v1/bot/recall-bot-1/';
 
 type CallRecordingNode = {
@@ -117,6 +132,7 @@ const checkCredits = ({
   checkCreditsBeforeRecallBotJoin({
     client,
     callRecordingId: 'call-recording-1',
+    bookedJoinAt: JOIN_AT,
     now,
   });
 
@@ -141,7 +157,7 @@ describe('checkCreditsBeforeRecallBotJoin', () => {
     vi.restoreAllMocks();
   });
 
-  it('leaves the bot alone when the workspace has credits', async () => {
+  it('leaves the bot alone when the workspace has credits and the join is too close for a settings update', async () => {
     getCreditAvailabilityMock.mockResolvedValue({ hasAvailableCredits: true });
     const client = new FakeCoreApiClient();
 
@@ -151,6 +167,39 @@ describe('checkCreditsBeforeRecallBotJoin', () => {
     expect(fetchMock).not.toHaveBeenCalled();
     expect(client.callRecording.status).toBe('SCHEDULED');
     expect(client.callRecording.externalBotId).toBe('recall-bot-1');
+  });
+
+  it('sends the settings update without a camera tile when the workspace tile cannot be built', async () => {
+    vi.stubEnv('CALL_RECORDER_STYLE', 'WORKSPACE');
+    getCreditAvailabilityMock.mockResolvedValue({ hasAvailableCredits: true });
+    fetchMock.mockImplementation(async (url: string) =>
+      url === RECALL_BOT_URL
+        ? Response.json({ id: 'recall-bot-1' })
+        : new Response(null, { status: 503 }),
+    );
+    const client = new FakeCoreApiClient();
+
+    const result = await checkCredits({
+      client,
+      now: TWENTY_MINUTES_BEFORE_JOIN,
+    });
+
+    const recallRequests = fetchMock.mock.calls.filter(
+      ([url]) => url === RECALL_BOT_URL,
+    );
+
+    expect(result).toEqual({ status: 'allowed' });
+    expect(fetchMock).toHaveBeenCalledWith(
+      `https://assets.test/${CAMERA_TILE_FONT_ASSET_PATH}`,
+      expect.anything(),
+    );
+    expect(recallRequests).toHaveLength(1);
+    expect(recallRequests[0][1].method).toBe('PATCH');
+    expect(JSON.parse(recallRequests[0][1].body)).toHaveProperty('bot_name');
+    expect(JSON.parse(recallRequests[0][1].body)).not.toHaveProperty(
+      'automatic_video_output',
+    );
+    expect(client.callRecording.status).toBe('SCHEDULED');
   });
 
   it('cancels the bot and marks the recording not recorded when the workspace is out of credits', async () => {

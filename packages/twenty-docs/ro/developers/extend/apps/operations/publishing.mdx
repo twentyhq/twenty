@@ -42,7 +42,7 @@ twenty app build
 
 Aceasta verifică tipurile și împachetează aplicația într-un snapshot CLI temporar. Folosește `--json` pentru a inspecta manifestul și metadatele artefactului. `twenty app publish` creează pachetul propriu-zis; nu este necesară o compilare separată a arhivei tarball.
 
-Buildurile păstrează fișierele de intrare pentru frontend și funcțiile logice, fișierele ajutătoare locale și tipurile importate de acestea, configurația TypeScript locală, precum și CSS-ul și resursele imbricate. Căile și octeții originali sunt păstrați într-un inventar al surselor. Dependențele din `node_modules`, fișierele fără legătură și importurile din afara directorului aplicației (inclusiv țintele legăturilor simbolice) sunt excluse din inventar. Aceste excluderi nu împiedică buildurile aplicațiilor existente. Dacă utilizați `package.json#files`, includeți aceste surse păstrate, altfel publicarea raportează fișierele lipsă. Pachetele instalate mai vechi trebuie reconstruite și publicate pentru a obține acest inventar. Acest lucru nu extinde încă fișierele pe care `twenty app pull` le restaurează.
+Buildurile păstrează fișierele de intrare pentru frontend și funcțiile logice, fișierele ajutătoare locale și tipurile importate de acestea, configurația TypeScript locală, precum și CSS-ul și resursele imbricate. Căile și octeții originali sunt păstrați într-un inventar al surselor. Dependențele din `node_modules`, fișierele fără legătură și importurile din afara directorului aplicației (inclusiv țintele legăturilor simbolice) sunt excluse din inventar. Aceste excluderi nu împiedică buildurile aplicațiilor existente. Dacă utilizați `package.json#files`, includeți aceste surse păstrate, altfel publicarea raportează fișierele lipsă. Pachetele instalate mai vechi trebuie reconstruite și publicate pentru a obține acest inventar. `twenty app pull` restabilește componentele frontend, funcțiile logice și dependențele locale inventariate ale acestora pe serverele care acceptă acele exporturi. Funcțiile logice necesită un inventar actualizat pentru fiecare funcție; reconstruiți și aplicați sau publicați aplicațiile mai vechi înainte de a extrage sursele acestora.
 
 ### Compatibilitatea inventarului sursă
 
@@ -247,6 +247,8 @@ Publicarea pe npm face ca aplicația ta să fie eligibilă pentru marketplace-ul
   "keywords": ["twenty-app"]
 }
 ```
+
+Rolurile dvs. trebuie să respecte și [regulile pentru rolurile din afara aplicației personalizate din spațiul de lucru](/ro/developers/extend/apps/config/roles#roles-outside-the-workspace-custom-application): numai agenții le pot deține și nu declară permisiuni la nivel de câmp sau rând. În caz contrar, `twenty app publish` eșuează cu `INVALID_INPUT` și listează rolurile problematice.
 
 ### Metadate pentru marketplace
 

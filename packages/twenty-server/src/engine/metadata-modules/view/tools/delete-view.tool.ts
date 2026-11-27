@@ -15,6 +15,7 @@ const deleteViewInputSchema = z.object({
 
 @DefineTool({
   name: 'delete_view',
+  isDestructive: true,
   category: ToolCategory.VIEW,
   accessPolicy: VIEW_WRITE_BY_VISIBILITY_ACCESS_POLICY,
   description: 'Delete a view by its ID.',

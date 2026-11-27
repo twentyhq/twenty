@@ -11,6 +11,7 @@ export const ALL_METADATA_SIDE_EFFECT_COMPANION_METADATA_NAMES = {
     'view',
     'viewField',
     'viewFieldGroup',
+    'viewSort',
     'pageLayoutTab',
     'pageLayoutWidget',
   ],

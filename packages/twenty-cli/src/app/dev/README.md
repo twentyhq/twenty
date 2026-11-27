@@ -26,7 +26,19 @@ unrelated ancestor directories.
 Inputs have stamps captured before reads; after attaching the watcher, changed
 stamps invalidate the result. A successful graph replaces the previous graph; a
 failure watches the last successful graph plus only that attempt's inputs.
-External directory observation is shallow.
+Existing external inputs use native events. Each event reattaches the watcher
+to handle file replacement. Missing files and deleted directories use exact-path
+recovery checks once per second, stopped as soon as native watching resumes.
+Directory stamps include the directory identity and immediate entries. A
+one-time check after attachment catches changes before native events are ready.
+Home and temporary directory roots, their ancestors and filesystem roots are
+excluded from external directory observation; symlink aliases use the same
+restriction. Known files there remain watched, and dev warns when missing-import
+recovery would require an excluded directory.
+
+`app dev --verbose` reports the effective scope after updates. Reports include
+retained successful inputs after failures and appear only when paths change.
+NDJSON exposes the same paths in `watch-scope` progress events.
 
 ## Apply and client generation
 

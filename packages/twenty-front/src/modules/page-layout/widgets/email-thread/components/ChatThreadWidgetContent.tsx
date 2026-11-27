@@ -20,14 +20,12 @@ import {
   StyledWidgetScrollContainer,
 } from '@/ui/layout/components/WidgetContentContainer';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { styled } from '@linaria/react';
 import { useApolloClient } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 import {
-  FeatureFlagKey,
   MyConnectedAccountsDocument,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
@@ -38,6 +36,12 @@ const StyledChatThreadBody = styled.div`
   flex-direction: column;
   min-height: 0;
   padding: 0 ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[2]};
+`;
+
+const StyledChatThreadScrollContent = styled.div`
+  display: flex;
+  flex: 1 0 auto;
+  flex-direction: column;
 `;
 
 type ChatThreadWidgetContentProps = {
@@ -66,14 +70,9 @@ export const ChatThreadWidgetContent = ({
   const hasSendPermission = useHasPermissionFlag(
     PermissionFlagType.SEND_EMAIL_TOOL,
   );
-  const isMessageAttachmentEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_MESSAGE_ATTACHMENT_ENABLED,
-  );
   const counterparts = useChatThreadCounterparts(messages);
-  const firstCounterpart = counterparts?.[0];
-  const { scrollContainerRef, handleScroll } = useStickToBottomScroll(
-    messages.length,
-  );
+  const soleCounterpart = counterparts?.length === 1 ? counterparts[0] : null;
+  const { scrollContainerRef, scrollContentRef } = useStickToBottomScroll();
 
   const connectionProvider = applicationsWithPreferences
     .flatMap(({ connectionProviders }) => connectionProviders)
@@ -116,15 +115,14 @@ export const ChatThreadWidgetContent = ({
         )}
       <WidgetRelationsHeader />
       <StyledChatThreadBody>
-        <StyledWidgetScrollContainer
-          ref={scrollContainerRef}
-          onScroll={handleScroll}
-        >
-          <ChatThreadMessages messages={messages} />
-          <CustomResolverFetchMoreLoader
-            loading={loading}
-            onLastRowVisible={onFetchMoreMessages}
-          />
+        <StyledWidgetScrollContainer ref={scrollContainerRef}>
+          <StyledChatThreadScrollContent ref={scrollContentRef}>
+            <ChatThreadMessages messages={messages} />
+            <CustomResolverFetchMoreLoader
+              loading={loading}
+              onLastRowVisible={onFetchMoreMessages}
+            />
+          </StyledChatThreadScrollContent>
         </StyledWidgetScrollContainer>
         {hasSendPermission &&
           canChannelSend &&
@@ -133,14 +131,13 @@ export const ChatThreadWidgetContent = ({
               key={messageThreadId}
               channelName={connectionProvider.displayName}
               recipientName={
-                isDefined(firstCounterpart)
+                isDefined(soleCounterpart)
                   ? getDisplayNameFromParticipant({
-                      participant: firstCounterpart,
+                      participant: soleCounterpart,
                     })
                   : null
               }
               isDisconnected={isDisconnected}
-              canAttachFiles={isMessageAttachmentEnabled}
               draftKey={
                 isDefined(currentWorkspaceMember)
                   ? `${currentWorkspaceMember.id}:${messageThreadId}`

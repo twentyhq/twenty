@@ -1,9 +1,8 @@
-import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { type ApplicationLogEntry } from 'src/engine/core-modules/event-logs/producers/application-log/application-log-entry.interface';
-import { buildApplicationPlatformLogEntry } from 'src/engine/core-modules/event-logs/producers/application-log/build-application-platform-log-entry';
 import { ServerRouteTriggerExceptionCode } from 'src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception';
+import { type ServerRouteLogResolver } from 'src/engine/core-modules/server-route-trigger/types/server-route-log-resolver.type';
+import { buildServerRouteLogEntry } from 'src/engine/core-modules/server-route-trigger/utils/build-server-route-log-entry.util';
 import { isAppFacingServerRouteError } from 'src/engine/core-modules/server-route-trigger/utils/is-app-facing-server-route-error.util';
-import { type LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 
 const getServerRouteFailureDetails = (
   error: unknown,
@@ -26,21 +25,13 @@ export const buildServerRouteFailureLogEntry = ({
   applicationRegistrationId,
   error,
 }: {
-  resolver: Pick<
-    LogicFunctionEntity,
-    'id' | 'name' | 'workspaceId' | 'applicationId'
-  > & { application?: Pick<ApplicationEntity, 'version'> };
+  resolver: ServerRouteLogResolver;
   applicationRegistrationId: string;
   error: unknown;
 }): ApplicationLogEntry =>
-  buildApplicationPlatformLogEntry({
-    workspaceId: resolver.workspaceId,
-    applicationId: resolver.applicationId,
+  buildServerRouteLogEntry({
+    resolver,
     applicationRegistrationId,
-    applicationVersion: resolver.application?.version ?? '',
-    source: 'SERVER_ROUTE',
-    logicFunctionId: resolver.id,
-    logicFunctionName: resolver.name,
     level: 'ERROR',
     ...getServerRouteFailureDetails(error),
   });

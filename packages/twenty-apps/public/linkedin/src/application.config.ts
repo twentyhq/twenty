@@ -1,6 +1,9 @@
 import { defineApplication } from 'twenty-sdk/define';
 
-import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import {
+  APPLICATION_UNIVERSAL_IDENTIFIER,
+  LINKEDIN_CONNECTED_ACCOUNT_PRICE_UNIVERSAL_IDENTIFIER,
+} from 'src/constants/universal-identifiers';
 
 export default defineApplication({
   universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
@@ -14,7 +17,20 @@ export default defineApplication({
   termsUrl: 'https://github.com/twentyhq/twenty?tab=License-1-ov-file#readme',
   websiteUrl: 'https://www.twenty.com',
   billing: {
-    description: '$10 per month per connection',
+    description: '$7 per month per connected LinkedIn account',
+    prices: [
+      {
+        universalIdentifier:
+          LINKEDIN_CONNECTED_ACCOUNT_PRICE_UNIVERSAL_IDENTIFIER,
+        label: 'Per connected account',
+        description: 'Monthly price per connected LinkedIn account',
+        type: 'RECURRING',
+        billingPeriod: 'MONTHLY',
+        amountCents: 700,
+        currency: 'USD',
+        per: 'CONNECTED_ACCOUNT',
+      },
+    ],
   },
   serverVariables: {
     UNIPILE_API_KEY: {

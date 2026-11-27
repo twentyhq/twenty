@@ -8,6 +8,7 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { ApplicationContentDTO } from 'src/engine/core-modules/application/application-content/dtos/application-content.dto';
 import { ApplicationContentService } from 'src/engine/core-modules/application/application-content/application-content.service';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
+import { findMarketplaceConnectListing } from 'src/engine/core-modules/application/application-marketplace/utils/find-marketplace-connect-listing.util';
 import { ApplicationGrantRoleLookupService } from 'src/engine/core-modules/application/application-grant-role-lookup/services/application-grant-role-lookup.service';
 import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop/application-stop.service';
 import { ApplicationVariableEntityDTO } from 'src/engine/core-modules/application/application-variable/dtos/application-variable.dto';
@@ -19,10 +20,12 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { buildPublicAssetLogoUrl } from 'src/engine/core-modules/application/utils/build-public-asset-logo-url.util';
+import { buildApplicationLogoUrl } from 'src/engine/core-modules/application/utils/build-application-logo-url.util';
 import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
+import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { ForbiddenError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { SdkClientChecksumsDTO } from 'src/engine/core-modules/sdk-client/dtos/sdk-client-checksums.dto';
+import { buildServedSdkClientCoreChecksum } from 'src/engine/core-modules/sdk-client/utils/build-served-sdk-client-core-checksum.util';
 import { getInstalledSdkMetadataModule } from 'src/engine/core-modules/sdk-client/utils/get-installed-sdk-metadata-module.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -36,26 +39,28 @@ import { SettingsMenuItemDTO } from 'src/engine/metadata-modules/settings-menu-i
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { isPrivatableEntityVisibleToCaller } from 'src/engine/permissions/metadata-permissions/utils/is-privatable-entity-visible-to-caller.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 
-@UseGuards(
-  AccessPolicyGuard({
-    authPrincipals: {
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: true,
+const APPLICATION_READ_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
     },
-    requiredPermissionFlags: [],
-  }),
-)
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  },
+  requiredPermissionFlags: [],
+};
+
 @MetadataResolver(() => ApplicationDTO)
 @UseFilters(ApplicationExceptionFilter)
 export class ApplicationResolver {
@@ -66,10 +71,14 @@ export class ApplicationResolver {
     private readonly applicationService: ApplicationService,
     private readonly applicationContentService: ApplicationContentService,
     private readonly applicationGrantRoleLookupService: ApplicationGrantRoleLookupService,
+    private readonly domainServerConfigService: DomainServerConfigService,
   ) {}
 
   @Query(() => SdkClientChecksumsDTO, { nullable: true })
-  @UseGuards(ApplicationTargetGuard)
+  @UseGuards(
+    AccessPolicyGuard(APPLICATION_READ_ACCESS_POLICY),
+    ApplicationTargetGuard,
+  )
   async applicationSdkClientChecksums(
     @ApplicationTargetArg(
       'applicationId',
@@ -91,7 +100,7 @@ export class ApplicationResolver {
     }
 
     return {
-      core: application.sdkClientCoreChecksum,
+      core: buildServedSdkClientCoreChecksum(application.sdkClientCoreChecksum),
       metadata: (await getInstalledSdkMetadataModule()).checksum,
     };
   }
@@ -100,7 +109,10 @@ export class ApplicationResolver {
   // temporarily stopped and behaving in a degraded way. Kept as a dedicated
   // query so listing applications does not trigger one Redis read per app.
   @Query(() => Boolean)
-  @UseGuards(ApplicationTargetGuard)
+  @UseGuards(
+    AccessPolicyGuard(APPLICATION_READ_ACCESS_POLICY),
+    ApplicationTargetGuard,
+  )
   async isApplicationStopped(
     @ApplicationTargetArg('applicationUniversalIdentifier', {
       kind: 'applicationUniversalIdentifier',
@@ -113,22 +125,41 @@ export class ApplicationResolver {
     );
   }
 
-  // Resolves the display url of the logo bundled in the installed
-  // application's public assets, so clients never build file urls themselves.
   @ResolveField(() => String, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   logoUrl(
-    @Parent() application: Pick<ApplicationDTO, 'id' | 'logo'>,
+    @Parent()
+    application: Pick<ApplicationDTO, 'id' | 'logo' | 'universalIdentifier'>,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): string | null {
-    return buildPublicAssetLogoUrl({
-      logo: application.logo,
-      serverUrl: this.twentyConfigService.get('SERVER_URL'),
+    return buildApplicationLogoUrl({
+      application: {
+        id: application.id,
+        logo: application.logo ?? null,
+        universalIdentifier: application.universalIdentifier,
+      },
       workspaceId: workspace.id,
-      applicationId: application.id,
+      serverUrl: this.twentyConfigService.get('SERVER_URL'),
+      frontBaseUrl: this.domainServerConfigService.getBaseUrl().toString(),
     });
   }
 
+  @ResolveField(() => String, { nullable: true })
+  @UseGuards(NoPermissionGuard)
+  description(
+    @Parent()
+    application: Pick<ApplicationDTO, 'description' | 'universalIdentifier'>,
+  ): string | null {
+    return (
+      findMarketplaceConnectListing(application.universalIdentifier)
+        ?.description ??
+      application.description ??
+      null
+    );
+  }
+
   @ResolveField(() => UUIDScalarType, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   async grantRoleId(
     @Parent() application: Pick<ApplicationDTO, 'id'>,
     @AuthWorkspace() { id: workspaceId }: Pick<WorkspaceEntity, 'id'>,
@@ -151,7 +182,19 @@ export class ApplicationResolver {
     );
   }
 
+  @ResolveField(() => String, {
+    nullable: true,
+    deprecationReason: 'Use requestedRoleId instead',
+  })
+  @UseGuards(NoPermissionGuard)
+  defaultRoleId(
+    @Parent() application: Pick<ApplicationDTO, 'requestedRoleId'>,
+  ): string | null {
+    return application.requestedRoleId ?? null;
+  }
+
   @ResolveField(() => Boolean)
+  @UseGuards(NoPermissionGuard)
   runHealthCheckOnUserPreferences(
     @Parent()
     application: Partial<
@@ -167,6 +210,7 @@ export class ApplicationResolver {
   }
 
   @ResolveField(() => Boolean)
+  @UseGuards(NoPermissionGuard)
   isUninstallBlockedByOtherWorkspaceInstallations(
     @Parent()
     application: Pick<ApplicationDTO, 'id' | 'applicationRegistrationId'>,
@@ -182,7 +226,8 @@ export class ApplicationResolver {
   }
 
   @ResolveField(() => [AgentDTO])
-  agents(
+  @UseGuards(NoPermissionGuard)
+  async agents(
     @Parent() application: Pick<ApplicationDTO, 'id'>,
     @AuthWorkspace()
     { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
@@ -201,13 +246,18 @@ export class ApplicationResolver {
       return [];
     }
 
-    return context.loaders.agentsByApplicationIdLoader.load({
+    const agents = await context.loaders.agentsByApplicationIdLoader.load({
       workspaceId,
       applicationId: application.id,
     });
+
+    return agents.filter((agent) =>
+      isPrivatableEntityVisibleToCaller({ privatableEntity: agent }),
+    );
   }
 
   @ResolveField(() => [FrontComponentDTO])
+  @UseGuards(NoPermissionGuard)
   frontComponents(
     @Parent() application: Pick<ApplicationDTO, 'id'>,
     @AuthWorkspace()
@@ -234,6 +284,7 @@ export class ApplicationResolver {
   }
 
   @ResolveField(() => [CommandMenuItemDTO])
+  @UseGuards(NoPermissionGuard)
   commandMenuItems(
     @Parent() application: Pick<ApplicationDTO, 'id'>,
     @AuthWorkspace()
@@ -260,6 +311,7 @@ export class ApplicationResolver {
   }
 
   @ResolveField(() => [SettingsMenuItemDTO], { nullable: true })
+  @UseGuards(NoPermissionGuard)
   settingsMenuItems(
     @Parent() application: Pick<ApplicationDTO, 'id'>,
     @AuthWorkspace()
@@ -286,6 +338,7 @@ export class ApplicationResolver {
   }
 
   @ResolveField(() => [LogicFunctionDTO])
+  @UseGuards(NoPermissionGuard)
   logicFunctions(
     @Parent() application: Pick<ApplicationDTO, 'id'>,
     @AuthWorkspace()
@@ -312,6 +365,7 @@ export class ApplicationResolver {
   }
 
   @ResolveField(() => [ObjectMetadataDTO])
+  @UseGuards(NoPermissionGuard)
   objects(
     @Parent() application: Pick<ApplicationDTO, 'id'>,
     @AuthWorkspace()
@@ -338,6 +392,7 @@ export class ApplicationResolver {
   }
 
   @ResolveField(() => ApplicationContentDTO, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   async content(
     @Parent()
     application: Pick<ApplicationDTO, 'id' | 'applicationRegistrationId'>,
@@ -368,6 +423,7 @@ export class ApplicationResolver {
   }
 
   @ResolveField(() => [ApplicationVariableEntityDTO])
+  @UseGuards(NoPermissionGuard)
   applicationVariables(
     @Parent() application: Pick<ApplicationDTO, 'id'>,
     @AuthWorkspace() workspace: WorkspaceEntity,

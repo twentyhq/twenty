@@ -19,12 +19,14 @@ import { duplicateViewFiltersAndViewFilterGroups } from '@/views/utils/duplicate
 import { mapRecordFilterGroupToViewFilterGroup } from '@/views/utils/mapRecordFilterGroupToViewFilterGroup';
 import { mapRecordFilterToViewFilter } from '@/views/utils/mapRecordFilterToViewFilter';
 import { mapRecordSortToViewSort } from '@/views/utils/mapRecordSortToViewSort';
+import { mapViewSortToCreateViewSortMutationVariables } from '@/views/utils/mapViewSortToCreateViewSortMutationVariables';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { v4 } from 'uuid';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
+import { removeTypenames } from '~/utils/removeTypenames';
 
 export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
   const { performViewApiCreate } = usePerformViewApiPersist();
@@ -77,7 +79,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
         calendarFieldMetadataId,
         calendarEndFieldMetadataId,
         type,
-        visibility,
+        isPrivate,
       }: Partial<
         Pick<
           GraphQLView,
@@ -88,7 +90,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
           | 'calendarFieldMetadataId'
           | 'calendarEndFieldMetadataId'
           | 'type'
-          | 'visibility'
+          | 'isPrivate'
         >
       >,
       shouldCopyFiltersAndSortsAndAggregate?: boolean,
@@ -141,6 +143,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
             type: viewType,
             objectMetadataId: sourceView.objectMetadataId,
             anyFieldFilterValue: anyFieldFilterValue,
+            presetFilter: sourceView.presetFilter,
             calendarLayout:
               viewType === ViewType.CALENDAR
                 ? ViewCalendarLayout.MONTH
@@ -153,7 +156,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
               viewType === ViewType.CALENDAR
                 ? calendarEndFieldMetadataId
                 : undefined,
-            visibility,
+            isPrivate,
           },
         },
         objectMetadataItem.id,
@@ -186,6 +189,10 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
             size: viewField.size,
             aggregateOperation: viewField.aggregateOperation,
             viewFieldGroupId: viewField.viewFieldGroupId,
+            relationTargetFieldMetadataId:
+              viewField.relationTargetFieldMetadataId,
+            relationScope: removeTypenames(viewField.relationScope),
+            label: viewField.label,
             viewId: newViewId,
           })),
       });
@@ -258,14 +265,12 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
           return undefined;
         }
 
-        const createViewSortInputs = viewSortsToCreate.map((viewSort) => ({
-          input: {
-            id: viewSort.id,
-            fieldMetadataId: viewSort.fieldMetadataId,
+        const createViewSortInputs = viewSortsToCreate.map((viewSort) =>
+          mapViewSortToCreateViewSortMutationVariables({
+            viewSort,
             viewId: newViewId,
-            direction: viewSort.direction,
-          },
-        }));
+          }),
+        );
 
         const sortResult = await performViewSortApiCreate(createViewSortInputs);
 

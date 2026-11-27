@@ -1,10 +1,12 @@
 'use client';
 
+import { styled } from '@linaria/react';
 import dynamic from 'next/dynamic';
-import { type ReactNode } from 'react';
+import { type ReactNode, useCallback, useState } from 'react';
 
 import { type HalftoneInitialPose } from '../halftone/halftone-interaction-state';
 import { type HalftoneSceneSettingsOverrides } from '../halftone/halftone-settings';
+import { type HalftoneModelSceneProps } from '../halftone/HalftoneModelScene';
 import { type LoadGlbGeometryOptions } from '../three-runtime/load-glb-geometry';
 import { VisualMount } from '../engine/VisualMount';
 
@@ -17,6 +19,32 @@ const HalftoneModelScene = dynamic(
     ),
   { ssr: false },
 );
+
+const ModelLayers = styled.div`
+  display: grid;
+  grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+  height: 100%;
+  width: 100%;
+
+  & > * {
+    grid-area: 1 / 1;
+  }
+`;
+
+function ModelSceneWithPoster({
+  poster,
+  ...sceneProps
+}: HalftoneModelSceneProps & { poster: ReactNode }) {
+  const [hasFrame, setHasFrame] = useState(false);
+  const onFirstFrame = useCallback(() => setHasFrame(true), []);
+
+  return (
+    <ModelLayers>
+      {!hasFrame && poster}
+      <HalftoneModelScene {...sceneProps} onFirstFrame={onFirstFrame} />
+    </ModelLayers>
+  );
+}
 
 export type HalftoneModelProps = {
   modelUrl: string;
@@ -41,6 +69,8 @@ export function HalftoneModel({
   loading = 'lazy',
   reducedMotionMode = 'designed',
 }: HalftoneModelProps) {
+  const sceneProps = { geometryOptions, initialPose, modelUrl, settings };
+
   return (
     <VisualMount
       loading={loading}
@@ -48,12 +78,11 @@ export function HalftoneModel({
       priority={priority}
       reducedMotion={reducedMotionMode}
     >
-      <HalftoneModelScene
-        geometryOptions={geometryOptions}
-        initialPose={initialPose}
-        modelUrl={modelUrl}
-        settings={settings}
-      />
+      {poster === null ? (
+        <HalftoneModelScene {...sceneProps} />
+      ) : (
+        <ModelSceneWithPoster key={modelUrl} {...sceneProps} poster={poster} />
+      )}
     </VisualMount>
   );
 }

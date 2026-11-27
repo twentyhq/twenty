@@ -1,5 +1,45 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should fail with a too long option description 1`] = `
+[
+  {
+    "extensions": {
+      "code": "METADATA_VALIDATION_FAILED",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option "Option 1" description exceeds 255 characters",
+                "userFriendlyMessage": "Option "Option 1" description exceeds 255 characters",
+                "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "name": "testField",
+              "objectMetadataUniversalIdentifier": Any<String>,
+              "universalIdentifier": Any<String>,
+            },
+            "metadataName": "fieldMetadata",
+            "status": "fail",
+            "type": "update",
+          },
+        ],
+      },
+      "message": "Validation failed for 1 fieldMetadata",
+      "summary": {
+        "fieldMetadata": 1,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Option "Option 1" description exceeds 255 characters",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
 exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should fail with an invalid default value 1`] = `
 [
   {
@@ -1504,6 +1544,46 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
         "totalErrors": 1,
       },
       "userFriendlyMessage": "Default value "'UNKNOWN_OPTION'" must be one of the option values",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata SELECT tests suite v2 Update should fail with a too long option description 1`] = `
+[
+  {
+    "extensions": {
+      "code": "METADATA_VALIDATION_FAILED",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option "Option 1" description exceeds 255 characters",
+                "userFriendlyMessage": "Option "Option 1" description exceeds 255 characters",
+                "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "name": "testField",
+              "objectMetadataUniversalIdentifier": Any<String>,
+              "universalIdentifier": Any<String>,
+            },
+            "metadataName": "fieldMetadata",
+            "status": "fail",
+            "type": "update",
+          },
+        ],
+      },
+      "message": "Validation failed for 1 fieldMetadata",
+      "summary": {
+        "fieldMetadata": 1,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Option "Option 1" description exceeds 255 characters",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",

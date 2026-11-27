@@ -16,22 +16,15 @@ export const buildWorkflowVersionDependenciesDeleteOperations = ({
   const deletedCoreVersionIds = new Set(
     deletedWorkflowVersions.map(({ id }) => id),
   );
-  const deletedWorkspaceVersionIds = new Set(
-    deletedWorkflowVersions
-      .map(({ workspaceWorkflowVersionId }) => workspaceWorkflowVersionId)
-      .filter(isDefined),
-  );
 
   const deletedCommandMenuItems = Object.values(
     flatCommandMenuItemMaps.byUniversalIdentifier,
   )
     .filter(isDefined)
     .filter(
-      ({ coreWorkflowVersionId, workflowVersionId }) =>
-        (isDefined(coreWorkflowVersionId) &&
-          deletedCoreVersionIds.has(coreWorkflowVersionId)) ||
-        (isDefined(workflowVersionId) &&
-          deletedWorkspaceVersionIds.has(workflowVersionId)),
+      ({ coreWorkflowVersionId }) =>
+        isDefined(coreWorkflowVersionId) &&
+        deletedCoreVersionIds.has(coreWorkflowVersionId),
     );
 
   return {

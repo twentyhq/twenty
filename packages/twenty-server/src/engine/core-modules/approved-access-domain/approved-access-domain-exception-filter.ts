@@ -19,6 +19,7 @@ export class ApprovedAccessDomainExceptionFilter implements ExceptionFilter {
       case ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_VALIDATION_TOKEN_INVALID:
       case ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_ALREADY_VALIDATED:
       case ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_MUST_BE_A_COMPANY_DOMAIN:
+      case ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_RATE_LIMIT_EXCEEDED:
         throw new ForbiddenError(exception);
       default: {
         assertUnreachable(exception.code);

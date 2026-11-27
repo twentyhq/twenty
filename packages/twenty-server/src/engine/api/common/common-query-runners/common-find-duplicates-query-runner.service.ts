@@ -7,9 +7,8 @@ import {
 } from 'twenty-shared/constants';
 import { ObjectRecord, OrderByDirection } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { FindOptionsRelations, In, ObjectLiteral } from 'typeorm';
+import { In } from 'typeorm';
 
-import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
 import {
   CommonQueryRunnerException,
@@ -18,6 +17,7 @@ import {
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import { computeMaxFieldCountPerRecord } from 'src/engine/api/common/common-query-runners/utils/compute-max-field-count-per-record.util';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
+import { type CommonQueryRunResult } from 'src/engine/api/common/types/common-query-result.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import { CommonFindDuplicatesOutputItem } from 'src/engine/api/common/types/common-find-duplicates-output-item.type';
 import {
@@ -28,13 +28,11 @@ import {
 } from 'src/engine/api/common/types/common-query-args.type';
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { getPageInfo } from 'src/engine/api/common/utils/get-page-info.util';
-import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
+import { buildColumnsToSelect } from 'src/engine/api/common/utils/build-columns-to-select';
 import { buildDuplicateSourceColumnsToSelect } from 'src/engine/api/common/common-query-runners/utils/build-duplicate-source-columns-to-select.util';
 import { buildDuplicateConditions } from 'src/engine/api/utils/build-duplicate-conditions.util';
-import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
-import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type CommonQueryResultProcessingArgs } from 'src/engine/api/common/types/common-query-result-processing-args.type';
 
 @Injectable()
 export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunnerService<
@@ -46,13 +44,12 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
   async run(
     args: CommonExtendedInput<FindDuplicatesQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
-  ): Promise<CommonFindDuplicatesOutputItem[]> {
+  ): Promise<CommonQueryRunResult<CommonFindDuplicatesOutputItem[]>> {
     const {
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       commonQueryParser,
-      authContext,
       permissionsPrincipals,
     } = queryRunnerContext;
 
@@ -65,8 +62,7 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
     let objectRecords: Partial<ObjectRecord>[] = [];
 
     const columnsToSelect = buildColumnsToSelect({
-      select: args.selectedFieldsResult.select,
-      relations: args.selectedFieldsResult.relations,
+      selection: args.selectedFieldsResult,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -127,11 +123,11 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
           const duplicateRecordsQueryBuilder =
             readRepository.createQueryBuilder(flatObjectMetadata.nameSingular);
 
-          commonQueryParser.applyFilterToBuilder(
-            duplicateRecordsQueryBuilder,
-            flatObjectMetadata.nameSingular,
-            duplicateConditions,
-          );
+          commonQueryParser.applyFilterToBuilder({
+            queryBuilder: duplicateRecordsQueryBuilder,
+            objectNameSingular: flatObjectMetadata.nameSingular,
+            recordFilter: duplicateConditions,
+          });
 
           const duplicates = (await duplicateRecordsQueryBuilder
             .setFindOptions({
@@ -165,29 +161,13 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
         }),
       );
 
-    if (isDefined(args.selectedFieldsResult.relations)) {
-      await this.processNestedRelationsHelper.processNestedRelations({
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-        parentObjectMetadataItem: flatObjectMetadata,
-        parentObjectRecords: findDuplicatesOutput.flatMap(
-          (item) => item.records,
-        ),
-        parentObjectRecordsAggregatedValues: {},
-        relations: args.selectedFieldsResult.relations as Record<
-          string,
-          FindOptionsRelations<ObjectLiteral>
-        >,
-        limit: QUERY_MAX_RECORDS_FROM_RELATION,
-        authContext,
-        selectedFields: args.selectedFieldsResult.select,
-        nestedRelationQueryArgsByFieldName:
-          args.selectedFieldsResult.nestedRelationQueryArgsByFieldName,
-        ...this.getNestedRelationsReadPathOptions(),
-      });
-    }
+    const relationAggregatedValues = await this.processNestedRelations({
+      records: findDuplicatesOutput.flatMap((item) => item.records),
+      selection: args.selectedFieldsResult,
+      queryRunnerContext,
+    });
 
-    return findDuplicatesOutput;
+    return { result: findDuplicatesOutput, relationAggregatedValues };
   }
 
   async computeArgs(
@@ -236,24 +216,28 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
     return results.flatMap((duplicates) => duplicates.records);
   }
 
-  async processQueryResult(
-    queryResult: CommonFindDuplicatesOutputItem[],
-    flatObjectMetadata: FlatObjectMetadata,
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
-    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
-    authContext: WorkspaceAuthContext,
-  ): Promise<CommonFindDuplicatesOutputItem[]> {
+  async processQueryResult({
+    queryResult,
+    flatObjectMetadata,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
+    workspaceId,
+    selection,
+  }: CommonQueryResultProcessingArgs<
+    CommonFindDuplicatesOutputItem[]
+  >): Promise<CommonFindDuplicatesOutputItem[]> {
     const processedResults = await Promise.all(
       queryResult.map(async (result) => {
         return {
           ...result,
-          records: await this.commonResultGettersService.processRecordArray(
-            result.records,
+          records: await this.commonResultGettersService.processRecordArray({
+            records: result.records,
             flatObjectMetadata,
             flatObjectMetadataMaps,
             flatFieldMetadataMaps,
-            authContext.workspace.id,
-          ),
+            workspaceId,
+            selection,
+          }),
         };
       }),
     );
@@ -309,7 +293,7 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
       inputRecordCount *
       QUERY_MAX_RECORDS *
       computeMaxFieldCountPerRecord({
-        selectedFieldsResult,
+        selection: selectedFieldsResult,
         flatObjectMetadata,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
