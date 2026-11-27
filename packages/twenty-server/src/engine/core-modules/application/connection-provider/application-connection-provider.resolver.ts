@@ -1,10 +1,15 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Parent, Query, ResolveField } from '@nestjs/graphql';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
-import { ApplicationConnectionProviderDTO } from 'src/engine/core-modules/application/connection-provider/dtos/application-connection-provider.dto';
+import {
+  ApplicationConnectionProviderDTO,
+  ApplicationConnectionProviderViaDTO,
+} from 'src/engine/core-modules/application/connection-provider/dtos/application-connection-provider.dto';
 import { ConnectionProviderService } from 'src/engine/core-modules/application/connection-provider/connection-provider.service';
 import { buildPublicAssetLogoUrl } from 'src/engine/core-modules/application/utils/build-public-asset-logo-url.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -72,5 +77,34 @@ export class ApplicationConnectionProviderResolver {
       workspaceId: workspace.id,
       applicationId: connectionProvider.applicationId,
     });
+  }
+
+  @ResolveField(() => ApplicationConnectionProviderViaDTO, { nullable: true })
+  @UseGuards(NoPermissionGuard)
+  via(
+    @Parent()
+    connectionProvider: Pick<
+      ApplicationConnectionProviderDTO,
+      'applicationId' | 'storedVia'
+    >,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): ApplicationConnectionProviderViaDTO | null {
+    const { storedVia } = connectionProvider;
+
+    if (!isDefined(storedVia)) {
+      return null;
+    }
+
+    return {
+      name: storedVia.name,
+      description: storedVia.description,
+      url: storedVia.url,
+      logoUrl: buildPublicAssetLogoUrl({
+        logo: storedVia.logo,
+        serverUrl: this.twentyConfigService.get('SERVER_URL'),
+        workspaceId: workspace.id,
+        applicationId: connectionProvider.applicationId,
+      }),
+    };
   }
 }

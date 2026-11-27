@@ -89,6 +89,7 @@ const meta: Meta<PageDecoratorArgs> = {
                   displayName: 'Teams',
                   scope: 'WORKSPACE',
                   logoUrl: null,
+                  via: null,
                   oauth: {
                     __typename: 'ApplicationConnectionProviderOAuthConfig',
                     scopes: GRANTED_SCOPES,

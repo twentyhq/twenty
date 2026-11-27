@@ -39,6 +39,7 @@ describe('fromConnectionProviderManifestToUniversalFlatConnectionProvider', () =
       name: 'linear',
       displayName: 'Linear',
       logo: null,
+      via: null,
       type: 'oauth',
       scope: 'WORKSPACE',
       oauthConfig: {
@@ -84,6 +85,24 @@ describe('fromConnectionProviderManifestToUniversalFlatConnectionProvider', () =
       });
 
     expect(result.logo).toBe('public/linear-logomark.svg');
+  });
+
+  it('stores the via with unset fields as null', () => {
+    const result =
+      fromConnectionProviderManifestToUniversalFlatConnectionProvider({
+        connectionProviderManifest: buildManifest({
+          via: { name: 'Unipile', logo: 'public/unipile-logo.svg' },
+        }),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+    expect(result.via).toEqual({
+      name: 'Unipile',
+      description: null,
+      logo: 'public/unipile-logo.svg',
+      url: null,
+    });
   });
 
   it('moves the custom flow logic functions into the customConfig blob', () => {

@@ -21,6 +21,7 @@ const connectedAccountFromCallbackSchema = z.object({
     .min(1)
     .max(EXTERNAL_ACCOUNT_ID_MAX_LENGTH),
   handle: z.string().trim().min(1).nullish(),
+  name: z.string().trim().min(1).nullish(),
   accessToken: z.string().min(1).pipe(plaintextStringSchema).nullish(),
 });
 
@@ -47,13 +48,14 @@ export const parseConnectionCallbackResult = (
     };
   }
 
-  const { externalAccountId, handle, accessToken } = parsed.data;
+  const { externalAccountId, handle, name, accessToken } = parsed.data;
 
   return {
     isValid: true,
     connectedAccount: {
       externalAccountId,
       ...(isDefined(handle) ? { handle } : {}),
+      ...(isDefined(name) ? { name } : {}),
       ...(isDefined(accessToken) ? { accessToken } : {}),
     },
   };

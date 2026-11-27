@@ -2273,6 +2273,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     logo: { toCompare: true, toStringify: false, universalProperty: undefined },
+    via: { toCompare: true, toStringify: true, universalProperty: undefined },
     type: { toCompare: true, toStringify: false, universalProperty: undefined },
     scope: {
       toCompare: true,

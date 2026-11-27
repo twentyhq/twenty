@@ -35,6 +35,7 @@ export const buildMcpServerSignInFlatConnectionProvider = ({
     }),
     displayName: mcpServer.label,
     logo: null,
+    via: null,
     type: 'oauth-discovery',
     scope,
     oauthConfig: null,

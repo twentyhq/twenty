@@ -3,6 +3,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import {
   type ConnectionProviderScope,
   type ConnectionProviderType,
+  type StoredConnectionProviderVia,
 } from 'twenty-shared/application';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -18,6 +19,21 @@ export class ApplicationConnectionProviderOAuthConfigDTO {
   // disable "Add connection" and surface a "needs server admin" hint.
   @Field()
   isClientCredentialsConfigured: boolean;
+}
+
+@ObjectType('ApplicationConnectionProviderVia')
+export class ApplicationConnectionProviderViaDTO {
+  @Field()
+  name: string;
+
+  @Field(() => String, { nullable: true })
+  description: string | null;
+
+  @Field(() => String, { nullable: true })
+  logoUrl: string | null;
+
+  @Field(() => String, { nullable: true })
+  url: string | null;
 }
 
 @ObjectType('ApplicationConnectionProvider')
@@ -43,6 +59,8 @@ export class ApplicationConnectionProviderDTO {
   scope: ConnectionProviderScope;
 
   logo: string | null;
+
+  storedVia: StoredConnectionProviderVia | null;
 
   @Field(() => ApplicationConnectionProviderOAuthConfigDTO, { nullable: true })
   oauth: ApplicationConnectionProviderOAuthConfigDTO | null;

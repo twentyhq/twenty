@@ -99,6 +99,42 @@ describe('defineConnectionProvider', () => {
     );
   });
 
+  it('accepts a via with a name, description, logo and url', () => {
+    const result = defineConnectionProvider({
+      ...baseValidConfig,
+      via: {
+        name: 'Unipile',
+        description: 'Messaging API',
+        logo: 'public/unipile-logo.svg',
+        url: 'https://www.unipile.com',
+      },
+    });
+
+    expect(result.success).toBe(true);
+  });
+
+  it('rejects a via without a name', () => {
+    const result = defineConnectionProvider({
+      ...baseValidConfig,
+      via: { name: '' },
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain('Connection provider via must have a name');
+  });
+
+  it('rejects a via url that is not HTTP', () => {
+    const result = defineConnectionProvider({
+      ...baseValidConfig,
+      via: { name: 'Unipile', url: 'ftp://unipile.com' },
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      'Connection provider via.url must be an HTTP or HTTPS URL',
+    );
+  });
+
   const lifecycleHookKeys = [
     'identifyAccountLogicFunction',
     'onConnectLogicFunction',

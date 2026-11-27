@@ -1,14 +1,10 @@
 import { useLingui } from '@lingui/react/macro';
-import { isNonEmptyString } from '@sniptt/guards';
 import { type ReactNode } from 'react';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
-import { Avatar } from 'twenty-ui/primitives/data-display';
-import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 type SettingsApplicationConnectionProviderSectionProps = {
   providerDisplayName: string;
-  providerLogoUrl?: string | null;
   description: string;
   shouldShowMissingCredentialsBanner: boolean;
   children: ReactNode;
@@ -16,7 +12,6 @@ type SettingsApplicationConnectionProviderSectionProps = {
 
 export const SettingsApplicationConnectionProviderSection = ({
   providerDisplayName,
-  providerLogoUrl,
   description,
   shouldShowMissingCredentialsBanner,
   children,
@@ -25,20 +20,7 @@ export const SettingsApplicationConnectionProviderSection = ({
 
   return (
     <Section.Root>
-      <Section.Header
-        title={providerDisplayName}
-        description={description}
-        actions={
-          isNonEmptyString(providerLogoUrl) ? (
-            <Avatar
-              shape="square"
-              variant="outline"
-              src={getAbsoluteImageUrl(providerLogoUrl)}
-              name={providerDisplayName}
-            />
-          ) : undefined
-        }
-      />
+      <Section.Header title={providerDisplayName} description={description} />
       {shouldShowMissingCredentialsBanner && (
         <InlineBanner
           layout="compact"

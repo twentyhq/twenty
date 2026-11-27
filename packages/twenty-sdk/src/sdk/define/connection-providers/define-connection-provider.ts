@@ -9,6 +9,7 @@ import {
   normalizeConnectionProviderManifest,
   withDeprecatedConnectionProviderReferences,
 } from 'twenty-shared/application';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isHttpUrl } from 'twenty-shared/utils';
 
 const SUPPORTED_TYPES = [
@@ -111,6 +112,16 @@ export const defineConnectionProvider: DefineEntity<
 
     if (isDefined(referenceError)) {
       errors.push(referenceError);
+    }
+  }
+
+  if (isDefined(config.via)) {
+    if (!isNonEmptyString(config.via.name)) {
+      errors.push('Connection provider via must have a name');
+    }
+
+    if (isDefined(config.via.url) && !isHttpUrl(config.via.url)) {
+      errors.push('Connection provider via.url must be an HTTP or HTTPS URL');
     }
   }
 

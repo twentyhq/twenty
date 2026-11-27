@@ -75,6 +75,14 @@ export const fromConnectionProviderManifestToUniversalFlatConnectionProvider =
       name: connectionProviderManifest.name,
       displayName: connectionProviderManifest.displayName,
       logo: connectionProviderManifest.logo ?? null,
+      via: isDefined(connectionProviderManifest.via)
+        ? {
+            name: connectionProviderManifest.via.name,
+            description: connectionProviderManifest.via.description ?? null,
+            logo: connectionProviderManifest.via.logo ?? null,
+            url: connectionProviderManifest.via.url ?? null,
+          }
+        : null,
       type: connectionProviderManifest.type,
       scope:
         connectionProviderManifest.scope ?? DEFAULT_CONNECTION_PROVIDER_SCOPE,

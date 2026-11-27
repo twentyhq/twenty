@@ -57,6 +57,7 @@ describe('SettingsApplicationConnectionsSection', () => {
           displayName: 'Google Calendar',
           scope: 'WORKSPACE',
           logoUrl: null,
+          via: null,
           oauth: {
             scopes: ['calendar.readonly'],
             isClientCredentialsConfigured: false,
@@ -124,6 +125,7 @@ describe('SettingsApplicationConnectionsSection', () => {
           displayName: 'Google Calendar',
           scope: 'WORKSPACE',
           logoUrl: null,
+          via: null,
           oauth: {
             scopes: ['calendar.readonly'],
             isClientCredentialsConfigured: true,
@@ -170,6 +172,7 @@ describe('SettingsApplicationConnectionsSection', () => {
           displayName: 'LinkedIn',
           scope: 'WORKSPACE',
           logoUrl: null,
+          via: null,
           oauth: null,
         },
       ],
@@ -215,6 +218,7 @@ describe('SettingsApplicationConnectionsSection', () => {
     displayName: 'Google Calendar',
     scope,
     logoUrl: null,
+    via: null,
     oauth: {
       scopes: ['calendar.readonly'],
       isClientCredentialsConfigured,

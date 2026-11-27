@@ -11,6 +11,13 @@ export type FrontendApplicationConnectionProviderOAuthConfig = {
   isClientCredentialsConfigured: boolean;
 };
 
+export type FrontendApplicationConnectionProviderVia = {
+  name: string;
+  description: string | null;
+  logoUrl: string | null;
+  url: string | null;
+};
+
 export type FrontendApplicationConnectionProvider = {
   id: string;
   applicationId: string;
@@ -19,5 +26,6 @@ export type FrontendApplicationConnectionProvider = {
   displayName: string;
   scope: ConnectionProviderScope;
   logoUrl: string | null;
+  via: FrontendApplicationConnectionProviderVia | null;
   oauth: FrontendApplicationConnectionProviderOAuthConfig | null;
 };
