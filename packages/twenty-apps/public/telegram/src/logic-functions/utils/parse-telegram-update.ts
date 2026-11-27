@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-sdk/utils';
 import { TELEGRAM_ASSISTANT_FEEDBACK } from 'src/logic-functions/constants/telegram-assistant-feedback';
 import { TELEGRAM_DISCONNECT_COMMAND } from 'src/logic-functions/constants/telegram-disconnect-command';
 import { TELEGRAM_FEEDBACK_CALLBACK_PREFIX } from 'src/logic-functions/constants/telegram-feedback-callback-prefix';
+import { getTelegramInboundAttachment } from 'src/logic-functions/utils/get-telegram-inbound-attachment';
 import { type TelegramInboundEvent } from 'src/logic-functions/types/telegram-inbound-event.type';
 import { type TelegramUpdate } from 'src/logic-functions/types/telegram-update.type';
 import { type TelegramUser } from 'src/logic-functions/types/telegram-user.type';
@@ -64,7 +65,7 @@ export const parseTelegramUpdate = (
   }
 
   const sender = { chatId: message.chat.id, user: message.from };
-  const text = message.text?.trim() ?? '';
+  const text = (message.text ?? message.caption)?.trim() ?? '';
   const token = START_WITH_TOKEN_PATTERN.exec(text)?.[1];
 
   if (isDefined(token)) {
@@ -80,5 +81,6 @@ export const parseTelegramUpdate = (
     ...sender,
     messageId: message.message_id,
     text,
+    attachment: getTelegramInboundAttachment(message),
   };
 };

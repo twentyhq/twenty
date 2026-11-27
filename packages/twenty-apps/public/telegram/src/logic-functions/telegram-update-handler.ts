@@ -7,6 +7,7 @@ import { isDefined } from 'twenty-sdk/utils';
 import { TELEGRAM_UPDATE_HANDLER_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { TELEGRAM_ASSISTANT_AGENT_BUDGET_SECONDS } from 'src/logic-functions/constants/telegram-assistant-agent-budget-seconds';
 import { TELEGRAM_ASSISTANT_DELIVERY_BUDGET_SECONDS } from 'src/logic-functions/constants/telegram-assistant-delivery-budget-seconds';
+import { TELEGRAM_ASSISTANT_ATTACHMENT_REFUSED_TEXT } from 'src/logic-functions/constants/telegram-assistant-attachment-refused-text';
 import { TELEGRAM_ASSISTANT_HELP_TEXT } from 'src/logic-functions/constants/telegram-assistant-help-text';
 import { TELEGRAM_ASSISTANT_REQUEST_TIMEOUT_SECONDS } from 'src/logic-functions/constants/telegram-assistant-request-timeout-seconds';
 import { TELEGRAM_ASSISTANT_TEXT_ONLY_TEXT } from 'src/logic-functions/constants/telegram-assistant-text-only-text';
@@ -26,6 +27,7 @@ import { callTelegramApiOrThrow } from 'src/logic-functions/utils/call-telegram-
 import { completeTelegramUserLink } from 'src/logic-functions/utils/complete-telegram-user-link';
 import { disconnectTelegramUser } from 'src/logic-functions/utils/disconnect-telegram-user';
 import { getTelegramBotCredentialsOrThrow } from 'src/logic-functions/utils/get-telegram-bot-credentials-or-throw';
+import { isTelegramAttachmentReadable } from 'src/logic-functions/utils/is-telegram-attachment-readable';
 import { parseTelegramUpdate } from 'src/logic-functions/utils/parse-telegram-update';
 import { sendTelegramMessage } from 'src/logic-functions/utils/send-telegram-message';
 
@@ -117,7 +119,15 @@ export const telegramUpdateHandler = async (
     return { outcome: 'NOT_CONNECTED' };
   }
 
-  if (!isNonEmptyString(event.text)) {
+  const { attachment } = event;
+
+  if (isDefined(attachment) && !isTelegramAttachmentReadable(attachment)) {
+    await reply(TELEGRAM_ASSISTANT_ATTACHMENT_REFUSED_TEXT);
+
+    return { outcome: 'ATTACHMENT_REFUSED' };
+  }
+
+  if (!isNonEmptyString(event.text) && !isDefined(attachment)) {
     await reply(TELEGRAM_ASSISTANT_TEXT_ONLY_TEXT);
 
     return { outcome: 'TEXT_ONLY' };
@@ -136,7 +146,10 @@ export const telegramUpdateHandler = async (
     messageId: event.messageId,
     telegramUserId,
     workspaceMemberId,
-    requestText: event.text,
+    requestText: isNonEmptyString(event.text)
+      ? event.text
+      : (attachment?.fileName ?? ''),
+    attachment,
     agentDeadlineAtMs:
       startedAtMs + TELEGRAM_ASSISTANT_AGENT_BUDGET_SECONDS * 1000,
     deliveryDeadlineAtMs:
@@ -150,7 +163,7 @@ export default defineLogicFunction({
   universalIdentifier: TELEGRAM_UPDATE_HANDLER_UNIVERSAL_IDENTIFIER,
   name: 'telegram-update-handler',
   description:
-    'Receives a verified Telegram update from the updates route, in the workspace that claimed its sender or its connection link. Completes a connection started from Twenty, removes it on /disconnect or when the user blocks the bot, saves a thumbs up or down tapped under an answer on its request, and otherwise records the message as a Telegram Assistant Request, once per chat and message id, runs the Telegram Assistant agent as the linked member and sends the answer back to the chat.',
+    'Receives a verified Telegram update from the updates route, in the workspace that claimed its sender or its connection link. Completes a connection started from Twenty, removes it on /disconnect or when the user blocks the bot, saves a thumbs up or down tapped under an answer on its request, reads one attached photo or PDF, and otherwise records the message as a Telegram Assistant Request, once per chat and message id, runs the Telegram Assistant agent as the linked member and sends the answer back to the chat.',
   timeoutSeconds: TELEGRAM_ASSISTANT_REQUEST_TIMEOUT_SECONDS,
   handler: telegramUpdateHandler,
 });

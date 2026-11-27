@@ -8,6 +8,7 @@ export type TelegramUpdateHandlerResult = {
     | 'NOT_CONNECTED'
     | 'CONNECTED'
     | 'TEXT_ONLY'
+    | 'ATTACHMENT_REFUSED'
     | 'ANSWERED'
     | 'FEEDBACK_SAVED'
     | 'FEEDBACK_NOT_SAVED'

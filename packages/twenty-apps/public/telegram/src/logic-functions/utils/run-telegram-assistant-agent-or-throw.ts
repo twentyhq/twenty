@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-sdk/utils';
 import { TELEGRAM_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { TelegramAssistantDeadlineError } from 'src/logic-functions/types/telegram-assistant-deadline-error';
 import { TelegramAssistantEmptyResponseError } from 'src/logic-functions/types/telegram-assistant-empty-response-error';
+import { type TelegramAssistantAttachment } from 'src/logic-functions/types/telegram-assistant-attachment.type';
 import { type TelegramAssistantTurn } from 'src/logic-functions/types/telegram-assistant-turn.type';
 import { buildTelegramAssistantInstructions } from 'src/logic-functions/utils/build-telegram-assistant-instructions';
 import { buildTelegramAssistantRequestName } from 'src/logic-functions/utils/build-telegram-assistant-request-name';
@@ -19,6 +20,8 @@ export const runTelegramAssistantAgentOrThrow = async ({
   history,
   workspaceMemberId,
   workspaceBaseUrl,
+  attachment,
+  unreadFileName,
   deadlineAtMs,
 }: {
   requestId: string;
@@ -26,6 +29,8 @@ export const runTelegramAssistantAgentOrThrow = async ({
   history: TelegramAssistantTurn[];
   workspaceMemberId: string;
   workspaceBaseUrl: string | undefined;
+  attachment: TelegramAssistantAttachment | undefined;
+  unreadFileName: string | undefined;
   deadlineAtMs: number;
 }): Promise<string> => {
   const remainingMs = deadlineAtMs - Date.now();
@@ -42,11 +47,14 @@ export const runTelegramAssistantAgentOrThrow = async ({
         key: requestId,
         title: buildTelegramAssistantRequestName(requestText),
       },
-      input: requestText,
+      input: isDefined(attachment)
+        ? [{ role: 'user', content: requestText, attachments: [attachment] }]
+        : requestText,
       additionalInstructions: buildTelegramAssistantInstructions({
         history,
         workspaceMemberId,
         workspaceBaseUrl,
+        unreadFileName,
         timeoutSeconds: Math.ceil(remainingMs / 1000),
       }),
     }),

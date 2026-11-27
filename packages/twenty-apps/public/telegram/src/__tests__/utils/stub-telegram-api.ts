@@ -20,7 +20,23 @@ export const stubTelegramApi = ({
 
   vi.stubGlobal(
     'fetch',
-    vi.fn(async (url: string, init: { body: string }) => {
+    vi.fn(async (url: string, init: { method?: string; body: string }) => {
+      if (init.method === 'PUT') {
+        calls.push({ method: 'uploadFile', params: { url } });
+
+        return { ok: true, status: 200 };
+      }
+
+      if (url.includes('/file/bot')) {
+        calls.push({ method: 'downloadFile', params: { url } });
+
+        return {
+          ok: true,
+          status: 200,
+          arrayBuffer: async () => new Uint8Array(3).buffer,
+        };
+      }
+
       const method = url.split('/').pop() ?? '';
       const failure = failures[method]?.shift();
 

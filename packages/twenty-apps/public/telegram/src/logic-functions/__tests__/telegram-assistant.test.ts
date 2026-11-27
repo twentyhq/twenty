@@ -7,6 +7,7 @@ import {
   TELEGRAM_LATE_ANSWER_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 import { TELEGRAM_ASSISTANT_AGENT_BUDGET_SECONDS } from 'src/logic-functions/constants/telegram-assistant-agent-budget-seconds';
+import { TELEGRAM_ASSISTANT_ATTACHMENT_REFUSED_TEXT } from 'src/logic-functions/constants/telegram-assistant-attachment-refused-text';
 import { TELEGRAM_ASSISTANT_DEADLINE_FAILURE_TEXT } from 'src/logic-functions/constants/telegram-assistant-deadline-failure-text';
 import { TELEGRAM_ASSISTANT_EMPTY_RESPONSE_FAILURE_TEXT } from 'src/logic-functions/constants/telegram-assistant-empty-response-failure-text';
 import { TELEGRAM_ASSISTANT_FAILURE_TEXT } from 'src/logic-functions/constants/telegram-assistant-failure-text';
@@ -44,6 +45,23 @@ vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
 vi.mock('twenty-client-sdk/core', () => ({
   CoreApiClient: vi.fn(function () {
     return clientHolder.client;
+  }),
+}));
+
+vi.mock('twenty-client-sdk/metadata', () => ({
+  MetadataApiClient: vi.fn(function () {
+    return {
+      mutation: async (mutation: object) =>
+        'createFileUpload' in mutation
+          ? {
+              createFileUpload: {
+                fileId: 'file-1',
+                uploadUrl: 'https://twenty.example/file-upload/file-1',
+                contentType: 'application/octet-stream',
+              },
+            }
+          : { completeFileUpload: { id: 'file-1' } },
+    };
   }),
 }));
 
@@ -540,6 +558,97 @@ describe('answering a question from Telegram', () => {
         TELEGRAM_FEEDBACK_NOT_SAVED_TEXT,
       );
     });
+  });
+
+  describe('reading an attached photo or PDF', () => {
+    const PDF = {
+      file_id: 'doc-1',
+      file_name: 'invoice.pdf',
+      mime_type: 'application/pdf',
+      file_size: 20_000,
+    };
+
+    const sendFile = (message: object) =>
+      telegramUpdateHandler(
+        {
+          update: {
+            message: {
+              message_id: 1,
+              chat: { id: CHAT_ID, type: 'private' },
+              from: { id: CHAT_ID, first_name: 'Ada' },
+              ...message,
+            },
+          },
+        },
+        { workspaceId: 'workspace-1' },
+      );
+
+    it('gives the agent the file along with the caption', async () => {
+      telegramCalls = stubTelegramApi({
+        results: { getFile: { file_path: 'documents/file_1.pdf' } },
+      });
+
+      await expect(
+        sendFile({ caption: 'What is the total?', document: PDF }),
+      ).resolves.toEqual({ outcome: 'ANSWERED' });
+      expect(callsTo('getFile').map((call) => call.params)).toEqual([
+        { file_id: 'doc-1' },
+      ]);
+      expect(callsTo('uploadFile')).toHaveLength(1);
+      expect(runAgentMock.mock.calls[0][0].input).toEqual([
+        {
+          role: 'user',
+          content: 'What is the total?',
+          attachments: [{ fileId: 'file-1', filename: 'invoice.pdf' }],
+        },
+      ]);
+    });
+
+    it('records a file sent without a caption under its name', async () => {
+      telegramCalls = stubTelegramApi({
+        results: { getFile: { file_path: 'photos/file_2.jpg' } },
+      });
+
+      await sendFile({ photo: [{ file_id: 'photo-1', file_size: 5000 }] });
+
+      expect(coreFake.state.requests[0]).toMatchObject({
+        status: 'DONE',
+        name: 'photo.jpg',
+      });
+    });
+
+    it('still answers from the text when the file cannot be fetched', async () => {
+      telegramCalls = stubTelegramApi({
+        failures: {
+          getFile: [{ error_code: 400, description: 'Bad Request: file' }],
+        },
+      });
+
+      await expect(
+        sendFile({ caption: 'What is the total?', document: PDF }),
+      ).resolves.toEqual({ outcome: 'ANSWERED' });
+      expect(runAgentMock.mock.calls[0][0]).toMatchObject({
+        input: 'What is the total?',
+        additionalInstructions: expect.stringContaining('invoice.pdf'),
+      });
+    });
+
+    it.each([
+      { ...PDF, mime_type: 'application/zip' },
+      { ...PDF, file_size: 11 * 1024 * 1024 },
+    ])(
+      'refuses a file of another type or over the size limit',
+      async (document) => {
+        await expect(sendFile({ document })).resolves.toEqual({
+          outcome: 'ATTACHMENT_REFUSED',
+        });
+        expect(callsTo('sendMessage').map((call) => call.params.text)).toEqual([
+          TELEGRAM_ASSISTANT_ATTACHMENT_REFUSED_TEXT,
+        ]);
+        expect(runAgentMock).not.toHaveBeenCalled();
+        expect(coreFake.state.requests).toEqual([]);
+      },
+    );
   });
 
   it('answers a command with the help text, without running the agent', async () => {

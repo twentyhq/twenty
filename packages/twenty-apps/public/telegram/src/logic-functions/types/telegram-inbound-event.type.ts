@@ -1,4 +1,5 @@
 import { type TelegramAssistantFeedback } from 'src/logic-functions/types/telegram-assistant-feedback.type';
+import { type TelegramInboundAttachment } from 'src/logic-functions/types/telegram-inbound-attachment.type';
 import { type TelegramUser } from 'src/logic-functions/types/telegram-user.type';
 
 export type TelegramInboundEvent =
@@ -10,6 +11,7 @@ export type TelegramInboundEvent =
       user: TelegramUser;
       messageId: number;
       text: string;
+      attachment: TelegramInboundAttachment | undefined;
     }
   | {
       kind: 'FEEDBACK';
