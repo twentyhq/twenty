@@ -1,4 +1,4 @@
-export type LinkedinImportHistoryJobPayload = {
+export type LinkedinLegacyImportHistoryJobPayload = {
   connectedAccountId: string;
   runId: string;
   chunkIndex: number;
