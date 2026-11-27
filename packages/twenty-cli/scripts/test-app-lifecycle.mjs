@@ -9,6 +9,7 @@ import {
   symlink,
   writeFile,
 } from 'node:fs/promises';
+import { findPackageJSON } from 'node:module';
 import { tmpdir } from 'node:os';
 import { basename, dirname, join } from 'node:path';
 import { test } from 'node:test';
@@ -130,7 +131,6 @@ await test(
         'react-dom',
         '@types',
         'vitest',
-        'vite-tsconfig-paths',
       ]) {
         await symlink(
           join(WORKSPACE_DIRECTORY, 'node_modules', name),
@@ -138,6 +138,11 @@ await test(
           'dir',
         );
       }
+      await symlink(
+        dirname(findPackageJSON('vite-tsconfig-paths', import.meta.url)),
+        join(modules, 'vite-tsconfig-paths'),
+        'dir',
+      );
       const client = join(modules, 'twenty-client-sdk');
       await mkdir(client);
       for (const name of ['dist', 'package.json']) {
