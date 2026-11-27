@@ -1,4 +1,4 @@
-import { type ConditionalAvailabilityCurrentUserContext } from '@/conditional-availability/conditional-availability-user-context/types/ConditionalAvailabilityCurrentUserContext';
+import { type ConditionalAvailabilityCurrentUserContext } from '@/conditional-availability/types/ConditionalAvailabilityCurrentUserContext';
 import { type WidgetVisibilityContext } from '@/page-layout/types/WidgetVisibilityContext';
 import { isDefined } from 'twenty-shared/utils';
 

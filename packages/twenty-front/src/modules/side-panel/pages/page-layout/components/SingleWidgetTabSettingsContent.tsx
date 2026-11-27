@@ -4,7 +4,6 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { TabSettingsPlacementSection } from '@/side-panel/pages/page-layout/components/TabSettingsPlacementSection';
-import { WidgetVisibilitySettingItem } from '@/side-panel/pages/page-layout/components/WidgetVisibilitySettingItem';
 import { WidgetVisibilityOptionsList } from '@/side-panel/pages/page-layout/components/dropdown-content/WidgetVisibilityOptionsList';
 import { TAB_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/TabSettingsSelectableItemIds';
 import { useTranslatedVisibilityLabel } from '@/side-panel/pages/page-layout/hooks/useTranslatedVisibilityLabel';
@@ -16,11 +15,9 @@ import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDi
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { IconEyeX, IconRefreshDot, IconTrash } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const RESET_TAB_TO_DEFAULT_MODAL_ID =
   'reset-single-widget-tab-to-default-modal';
@@ -66,10 +63,6 @@ export const SingleWidgetTabSettingsContent = ({
 
   const visibilityLabel = useTranslatedVisibilityLabel(singleWidget);
 
-  const isWidgetConditionalAvailabilityEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_WIDGET_CONDITIONAL_AVAILABILITY_ENABLED,
-  );
-
   const handleResetToDefault = () => {
     if (isResetToDefaultDisabled) {
       return;
@@ -100,48 +93,40 @@ export const SingleWidgetTabSettingsContent = ({
       <SidePanelList selectableItemIds={selectableItemIds}>
         <TabSettingsPlacementSection items={placementItems} />
         <SidePanelGroup heading={t`Manage`}>
-          {isWidgetConditionalAvailabilityEnabled && (
-            <WidgetVisibilitySettingItem
-              itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION}
-              widget={singleWidget}
-            />
-          )}
-          {!isWidgetConditionalAvailabilityEnabled && (
-            <SelectableListItem
-              itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION}
-              onEnter={() =>
-                openDropdown({
-                  dropdownComponentInstanceIdFromProps:
-                    TAB_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION,
-                })
+          <SelectableListItem
+            itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION}
+            onEnter={() =>
+              openDropdown({
+                dropdownComponentInstanceIdFromProps:
+                  TAB_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION,
+              })
+            }
+          >
+            <DropdownRoot
+              dropdownId={
+                TAB_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION
               }
+              type="picker"
             >
-              <DropdownRoot
-                dropdownId={
-                  TAB_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION
-                }
-                type="picker"
+              <CommandMenuItemDropdownTrigger
+                id={TAB_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION}
+                label={t`Visibility restriction`}
+                Icon={IconEyeX}
+                description={visibilityLabel}
+                contextualTextPosition="right"
+              />
+              <DropdownContent
+                side="bottom"
+                align="end"
+                collisionPadding={{ left: 0, right: 0 }}
               >
-                <CommandMenuItemDropdownTrigger
-                  id={TAB_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION}
-                  label={t`Visibility restriction`}
-                  Icon={IconEyeX}
-                  description={visibilityLabel}
-                  contextualTextPosition="right"
+                <WidgetVisibilityOptionsList
+                  pageLayoutId={pageLayoutId}
+                  widget={singleWidget}
                 />
-                <DropdownContent
-                  side="bottom"
-                  align="end"
-                  collisionPadding={{ left: 0, right: 0 }}
-                >
-                  <WidgetVisibilityOptionsList
-                    pageLayoutId={pageLayoutId}
-                    widget={singleWidget}
-                  />
-                </DropdownContent>
-              </DropdownRoot>
-            </SelectableListItem>
-          )}
+              </DropdownContent>
+            </DropdownRoot>
+          </SelectableListItem>
           <Tooltip
             delay={TooltipDelay.mediumDelay}
             content={t`No default configuration available for this tab`}

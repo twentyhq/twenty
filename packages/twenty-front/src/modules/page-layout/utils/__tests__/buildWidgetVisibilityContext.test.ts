@@ -1,4 +1,4 @@
-import { EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT } from '@/conditional-availability/conditional-availability-user-context/constants/EmptyConditionalAvailabilityCurrentUserContext';
+import { EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT } from '@/conditional-availability/constants/EmptyConditionalAvailabilityCurrentUserContext';
 import { buildWidgetVisibilityContext } from '@/page-layout/utils/buildWidgetVisibilityContext';
 
 describe('buildWidgetVisibilityContext', () => {

@@ -3,7 +3,6 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { WIDGET_VISIBILITY_DEVICES } from '@/side-panel/pages/page-layout/constants/WidgetVisibilityDevices';
 import { useVisibilityLabels } from '@/side-panel/pages/page-layout/hooks/useVisibilityLabels';
 import { type WidgetVisibilityDevice } from '@/side-panel/pages/page-layout/types/WidgetVisibilityDevice';
-import { getWidgetConditionalAvailabilityUpdate } from '@/side-panel/pages/page-layout/utils/getWidgetConditionalAvailabilityUpdate';
 import { getWidgetVisibilityDevice } from '@/side-panel/pages/page-layout/utils/getWidgetVisibilityDevice';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
@@ -39,15 +38,15 @@ export const WidgetVisibilityOptionsList = ({
       return;
     }
 
-    updatePageLayoutWidget(
-      widget.id,
-      getWidgetConditionalAvailabilityUpdate({
-        conditionalAvailability:
-          device === 'ANY_DEVICE'
-            ? null
-            : buildDeviceConditionalEvaluationNode(device),
-      }),
-    );
+    updatePageLayoutWidget(widget.id, {
+      conditionalAvailability:
+        device === 'ANY_DEVICE'
+          ? null
+          : buildDeviceConditionalEvaluationNode(device),
+      // TODO(@neo773): a widget holds its rule in one place, so a new tree empties the two legacy fields; stop one release after stored rules are converted to trees
+      conditionalAvailabilityExpression: null,
+      conditionalDisplay: null,
+    });
   };
 
   return (

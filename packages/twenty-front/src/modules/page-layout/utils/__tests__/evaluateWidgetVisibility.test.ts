@@ -1,6 +1,6 @@
 import { type AdditionalOperation, type RulesLogic } from 'json-logic-js';
 
-import { EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT } from '@/conditional-availability/conditional-availability-user-context/constants/EmptyConditionalAvailabilityCurrentUserContext';
+import { EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT } from '@/conditional-availability/constants/EmptyConditionalAvailabilityCurrentUserContext';
 import { evaluateWidgetVisibility } from '@/page-layout/utils/evaluateWidgetVisibility';
 
 describe('evaluateWidgetVisibility', () => {

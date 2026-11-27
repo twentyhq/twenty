@@ -1,4 +1,4 @@
-import { useConditionalAvailabilityCurrentUserContext } from '@/conditional-availability/conditional-availability-user-context/hooks/useConditionalAvailabilityCurrentUserContext';
+import { useConditionalAvailabilityCurrentUserContext } from '@/conditional-availability/hooks/useConditionalAvailabilityCurrentUserContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type WidgetVisibilityContext } from '@/page-layout/types/WidgetVisibilityContext';
 import { buildWidgetVisibilityContext } from '@/page-layout/utils/buildWidgetVisibilityContext';
