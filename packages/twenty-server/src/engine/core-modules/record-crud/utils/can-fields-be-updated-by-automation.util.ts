@@ -1,9 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
-import {
-  canObjectBeManagedByAutomation,
-  isObjectSyncedFromConnectedAccounts,
-} from 'twenty-shared/workflow';
+import { canObjectBeManagedByAutomation } from 'twenty-shared/workflow';
 
+import { isFieldUpdatableByAutomation } from 'src/engine/core-modules/record-crud/utils/is-field-updatable-by-automation.util';
 import { resolveFilterKeyFieldMetadata } from 'src/engine/record-filter/utils/resolve-filter-key-field-metadata.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -14,12 +12,10 @@ export const canFieldsBeUpdatedByAutomation = ({
   flatObjectMetadata,
   flatFieldMetadataMaps,
   fieldNames,
-  workspaceCustomApplicationId,
 }: {
   flatObjectMetadata: FlatObjectMetadata;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   fieldNames: string[];
-  workspaceCustomApplicationId: string;
 }): boolean => {
   if (
     canObjectBeManagedByAutomation({
@@ -29,12 +25,7 @@ export const canFieldsBeUpdatedByAutomation = ({
     return true;
   }
 
-  if (
-    !isObjectSyncedFromConnectedAccounts({
-      nameSingular: flatObjectMetadata.nameSingular,
-    }) ||
-    fieldNames.length === 0
-  ) {
+  if (fieldNames.length === 0) {
     return false;
   }
 
@@ -54,7 +45,10 @@ export const canFieldsBeUpdatedByAutomation = ({
 
     return (
       isDefined(fieldMetadata) &&
-      fieldMetadata.applicationId === workspaceCustomApplicationId
+      isFieldUpdatableByAutomation({
+        flatObjectMetadata,
+        flatFieldMetadata: fieldMetadata,
+      })
     );
   });
 };
