@@ -48,9 +48,24 @@ describe('searchSettingsDestinations', () => {
     ]);
   });
 
-  it('tolerates one typo in longer words', () => {
+  it('tolerates one typo in words of five letters or more', () => {
     expect(search('limts')).toEqual(['Workspace/Billing/Limits']);
-    expect(search('translaton')).toHaveLength(2);
+    expect(search('people translaton')).toEqual([
+      'Workspace/Data model/People/Translations',
+    ]);
+    expect(search('people transslation')).toEqual([
+      'Workspace/Data model/People/Translations',
+    ]);
+    expect(search('date')).toEqual([]);
+  });
+
+  it('matches inside words for scripts written without spaces', () => {
+    expect(
+      searchSettingsDestinations({
+        destinations: [createDestination('数据模型', ['工作区'])],
+        search: '模型',
+      }),
+    ).toHaveLength(1);
   });
 
   it('ignores case and accents', () => {
