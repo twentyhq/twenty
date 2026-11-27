@@ -113,7 +113,7 @@ const mapUniversalFlatEntityMaps = <
       .filter(isDefined),
   );
 
-const findRolePermissionUniversalFlatEntityMaps = ({
+export const findRolePermissionUniversalFlatEntityMaps = ({
   flatRole,
   flatEntityMaps,
   mappers,

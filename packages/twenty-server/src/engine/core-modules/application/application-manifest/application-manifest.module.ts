@@ -24,6 +24,7 @@ import { ApplicationTranslationModule } from 'src/engine/core-modules/applicatio
 import { SdkClientModule } from 'src/engine/core-modules/sdk-client/sdk-client.module';
 import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/workflow-version-core.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
@@ -35,6 +36,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
       ApplicationEntity,
       FrontComponentEntity,
       FileEntity,
+      WorkspaceEntity,
     ]),
     ApplicationGrantRoleModule,
     ApplicationLookupModule,
