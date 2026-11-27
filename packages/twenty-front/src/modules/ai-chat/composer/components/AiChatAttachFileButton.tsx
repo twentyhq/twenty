@@ -23,6 +23,8 @@ export const AiChatAttachFileButton = ({
         variant="ghost"
         size="sm"
         aria-label={t`Attach files`}
+        tooltip={t`Attach files`}
+        tooltipPlace="top"
         onClick={() => {
           editor?.view.focus();
           fileInputRef.current?.click();
