@@ -2,7 +2,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-const StyledBillingContentSkeleton = styled.div`
+const StyledPageContentSkeleton = styled.div`
   background: linear-gradient(
     90deg,
     ${themeCssVariables.background.transparent.light} 0%,
@@ -14,8 +14,8 @@ const StyledBillingContentSkeleton = styled.div`
   width: 160px;
 `;
 
-export const SettingsBillingContentSkeleton = () => (
+export const SettingsPageContentSkeleton = () => (
   <SettingsPageContainer>
-    <StyledBillingContentSkeleton />
+    <StyledPageContentSkeleton />
   </SettingsPageContainer>
 );
