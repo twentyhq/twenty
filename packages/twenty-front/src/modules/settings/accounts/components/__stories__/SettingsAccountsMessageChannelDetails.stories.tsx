@@ -19,6 +19,7 @@ const mockedMessageChannel = {
   excludeNonProfessionalEmails: true,
   excludeGroupEmails: false,
   isSyncEnabled: true,
+  canStartConversation: false,
   visibility: MessageChannelVisibility.SHARE_EVERYTHING,
   messageFolderImportPolicy: MessageFolderImportPolicy.ALL_FOLDERS,
 };

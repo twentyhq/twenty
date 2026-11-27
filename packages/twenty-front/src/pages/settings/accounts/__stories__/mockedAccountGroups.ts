@@ -84,6 +84,7 @@ const buildMessageChannel = (
   excludeNonProfessionalEmails: false,
   excludeGroupEmails: false,
   isSyncEnabled: true,
+  canStartConversation: false,
   messagingProviderUniversalIdentifier: null,
   syncStatus: 'ACTIVE',
   syncStage: 'MESSAGE_LIST_FETCH_PENDING',

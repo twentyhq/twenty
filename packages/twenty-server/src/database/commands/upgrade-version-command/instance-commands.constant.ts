@@ -354,6 +354,7 @@ import { PurgeExpiredRefreshTokensSlowInstanceCommand } from 'src/database/comma
 import { AddNavigationMenuItemVisibleItemLimitFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-fast-1795772817031-add-navigation-menu-item-visible-item-limit';
 import { BackfillRecentChatsSectionVisibleItemLimitSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-slow-1795772818031-backfill-recent-chats-section-visible-item-limit';
 import { AddEventMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-66/2-66-instance-command-fast-1795792442166-add-event-metadata';
+import { AddStartConversationLogicFunctionToMessagingProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-66/2-66-instance-command-fast-1795809856924-add-start-conversation-logic-function-to-messaging-provider';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -710,4 +711,5 @@ export const INSTANCE_COMMANDS = [
   AddNavigationMenuItemVisibleItemLimitFastInstanceCommand,
   BackfillRecentChatsSectionVisibleItemLimitSlowInstanceCommand,
   AddEventMetadataFastInstanceCommand,
+  AddStartConversationLogicFunctionToMessagingProviderFastInstanceCommand,
 ];

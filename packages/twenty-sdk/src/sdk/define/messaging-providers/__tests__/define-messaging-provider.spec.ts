@@ -15,6 +15,8 @@ const baseValidConfig = {
   markThreadAsReadLogicFunction: {
     universalIdentifier: '6b1f0a52-4d8e-4c4e-9b0a-2f5d8a7c1e05',
   },
+  startConversationLogicFunctionUniversalIdentifier:
+    '6b1f0a52-4d8e-4c4e-9b0a-2f5d8a7c1e04',
 };
 
 describe('defineMessagingProvider', () => {
@@ -29,6 +31,8 @@ describe('defineMessagingProvider', () => {
     const {
       sendMessageLogicFunction: _sendMessageLogicFunction,
       markThreadAsReadLogicFunction: _markThreadAsReadLogicFunction,
+      startConversationLogicFunctionUniversalIdentifier:
+        _startConversationLogicFunctionUniversalIdentifier,
       ...ingestOnlyConfig
     } = baseValidConfig;
 
@@ -50,9 +54,10 @@ describe('defineMessagingProvider', () => {
       connectionProvider: { universalIdentifier: 'unipile' },
       sendMessageLogicFunction: { universalIdentifier: 'send-message' },
       markThreadAsReadLogicFunction: { universalIdentifier: 'mark-as-read' },
+      startConversationLogicFunctionUniversalIdentifier: 'start-conversation',
     });
 
-    expect(result.errors).toHaveLength(3);
+    expect(result.errors).toHaveLength(4);
   });
 
   it('accepts a chat conversation style', () => {
