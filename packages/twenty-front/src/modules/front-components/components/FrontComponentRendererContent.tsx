@@ -46,7 +46,6 @@ export const FrontComponentRendererContent = ({
     componentUrl,
     sdkClientUrls,
     sharedDependenciesUrl,
-    hasSharedDependencies,
     preloadedSourcesPromise,
   } = useFrontComponentRendererPrerequisitesOrThrow();
 
@@ -59,6 +58,7 @@ export const FrontComponentRendererContent = ({
     applicationId,
     applicationName,
     usesSdkClient,
+    frontComponentSharedDependenciesChecksum,
   } = frontComponent;
 
   const {
@@ -144,7 +144,9 @@ export const FrontComponentRendererContent = ({
           sdkClientUrls={sdkClientUrls}
           sharedDependenciesUrl={sharedDependenciesUrl}
           shouldPrefetchSdkClientSources={usesSdkClient}
-          shouldPrefetchSharedDependenciesSource={hasSharedDependencies}
+          shouldPrefetchSharedDependenciesSource={isDefined(
+            frontComponentSharedDependenciesChecksum,
+          )}
           preloadedSourcesPromise={preloadedSourcesPromise}
           executionContext={executionContext}
           frontComponentHostCommunicationApi={

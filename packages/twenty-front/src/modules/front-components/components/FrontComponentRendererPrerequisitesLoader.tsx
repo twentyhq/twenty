@@ -70,18 +70,16 @@ export const FrontComponentRendererPrerequisitesLoader = ({
       <FrontComponentLoadErrorToastEffect
         errorMessage={frontComponentApplicationTokenPairLoadError?.message}
       />
-      {canStartFetchingSources &&
-        !isReadyToRender &&
-        !doPreloadedSourcesMatchCurrentUrls && (
-          <FrontComponentSourcesPreloadEffect
-            componentUrl={componentUrl}
-            sdkClientUrls={sdkClientUrls}
-            sharedDependenciesUrl={sharedDependenciesUrl}
-            applicationAccessToken={frontComponentInitialApplicationAccessToken}
-            shouldPrefetchSdkClientSources={usesSdkClient}
-            shouldPrefetchSharedDependenciesSource={hasSharedDependencies}
-          />
-        )}
+      {canStartFetchingSources && !isReadyToRender && (
+        <FrontComponentSourcesPreloadEffect
+          componentUrl={componentUrl}
+          sdkClientUrls={sdkClientUrls}
+          sharedDependenciesUrl={sharedDependenciesUrl}
+          applicationAccessToken={frontComponentInitialApplicationAccessToken}
+          shouldPrefetchSdkClientSources={usesSdkClient}
+          shouldPrefetchSharedDependenciesSource={hasSharedDependencies}
+        />
+      )}
       {isDefined(frontComponentApplicationTokenPairLoadError) &&
         unavailableFallback}
       {!isDefined(frontComponentApplicationTokenPairLoadError) &&
@@ -95,7 +93,6 @@ export const FrontComponentRendererPrerequisitesLoader = ({
             componentUrl,
             sdkClientUrls,
             sharedDependenciesUrl,
-            hasSharedDependencies,
             preloadedSourcesPromise: doPreloadedSourcesMatchCurrentUrls
               ? frontComponentSourcesPreload.sourcesPromise
               : undefined,

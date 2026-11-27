@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 
+import { convertUnknownToError } from '@/error-handler/utils/convertUnknownToError';
 import { useFrontComponentApplicationTokenPair } from '@/front-components/hooks/useFrontComponentApplicationTokenPair';
 import { frontComponentApplicationTokenPairLoadErrorComponentState } from '@/front-components/states/frontComponentApplicationTokenPairLoadErrorComponentState';
 import { frontComponentInitialApplicationAccessTokenComponentState } from '@/front-components/states/frontComponentInitialApplicationAccessTokenComponentState';
@@ -47,7 +48,7 @@ export const FrontComponentApplicationTokenPairEffect = ({
         }
 
         setFrontComponentApplicationTokenPairLoadError(
-          error instanceof Error ? error : new Error(String(error)),
+          convertUnknownToError(error),
         );
       }
     };
