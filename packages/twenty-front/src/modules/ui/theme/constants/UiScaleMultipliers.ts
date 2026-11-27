@@ -5,6 +5,7 @@ import { type UiScale } from '@/ui/theme/types/UiScale';
 export const UI_SCALE_MULTIPLIERS: Record<UiScale, number> = {
   Smaller: 0.9,
   Default: 1,
+  Normal: 1,
   Large: 1.1,
   Larger: 1.25,
 };

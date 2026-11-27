@@ -1,47 +1,39 @@
-import { UI_SCALE_MULTIPLIERS } from '@/ui/theme/constants/UiScaleMultipliers';
-import { useUiScale } from '@/workspace-member/hooks/useUiScale';
+import {
+  DEFAULT_WORKSPACE_UI_SCALE,
+  isWorkspaceUiScale,
+} from 'twenty-shared/workspace';
+
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { Select } from '@/ui/input/components/Select';
-import { useLingui } from '@lingui/react/macro';
+import { useUiScaleSelectOptions } from '@/ui/theme/hooks/useUiScaleSelectOptions';
 import { type UiScale } from '@/ui/theme/types/UiScale';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useUiScale } from '@/workspace-member/hooks/useUiScale';
 
 export const UiScalePicker = () => {
-  const { t } = useLingui();
   const { uiScaleStep, setUiScaleStep } = useUiScale();
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const { scaleOptions, workspaceDefaultOption } = useUiScaleSelectOptions(
+    isWorkspaceUiScale(currentWorkspace?.uiScale)
+      ? currentWorkspace.uiScale
+      : DEFAULT_WORKSPACE_UI_SCALE,
+  );
 
   const handleChange = (step: UiScale) => {
     void setUiScaleStep(step);
   };
 
   return (
-    <Select
+    <Select<UiScale>
       dropdownId="ui-scale-picker"
-      label={t`Scale`}
       dropdownWidth={218}
       dropdownWidthAuto
       fullWidth
+      needIconCheck
+      selectSizeVariant="small"
       value={uiScaleStep}
-      options={[
-        {
-          label: t`Smaller`,
-          value: 'Smaller' as const,
-          contextualText: `${Math.round(UI_SCALE_MULTIPLIERS.Smaller * 100)}%`,
-        },
-        {
-          label: t`Default`,
-          value: 'Default' as const,
-          contextualText: `${Math.round(UI_SCALE_MULTIPLIERS.Default * 100)}%`,
-        },
-        {
-          label: t`Large`,
-          value: 'Large' as const,
-          contextualText: `${Math.round(UI_SCALE_MULTIPLIERS.Large * 100)}%`,
-        },
-        {
-          label: t`Larger`,
-          value: 'Larger' as const,
-          contextualText: `${Math.round(UI_SCALE_MULTIPLIERS.Larger * 100)}%`,
-        },
-      ]}
+      pinnedOption={workspaceDefaultOption}
+      options={scaleOptions}
       onChange={handleChange}
     />
   );

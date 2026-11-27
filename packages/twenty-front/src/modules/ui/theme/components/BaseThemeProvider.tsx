@@ -7,6 +7,7 @@ import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState
 import { SalesfarceTheme } from '@/salesfarce/components/SalesfarceTheme';
 import { salesfarceIsActiveState } from '@/salesfarce/states/salesfarceIsActiveState';
 import { UI_SCALE_MULTIPLIERS } from '@/ui/theme/constants/UiScaleMultipliers';
+import { getEffectiveUiScale } from '@/ui/theme/utils/getEffectiveUiScale';
 import { useSystemColorScheme } from '@/ui/theme/hooks/useSystemColorScheme';
 import { persistedColorSchemeState } from '@/ui/theme/states/persistedColorSchemeState';
 import { persistedUiScaleStepState } from '@/ui/theme/states/persistedUiScaleStepState';
@@ -41,6 +42,10 @@ export const BaseThemeProvider = ({ children }: BaseThemeProviderProps) => {
     currentWorkspace?.accentColor ??
     workspacePublicData?.accentColor ??
     persistedWorkspaceAccentColor;
+  const uiScale = getEffectiveUiScale(
+    persistedUiScaleStep,
+    currentWorkspace?.uiScale ?? workspacePublicData?.uiScale,
+  );
   const systemColorScheme = useSystemColorScheme();
   const effectiveColorScheme =
     persistedColorScheme === 'System'
@@ -64,7 +69,7 @@ export const BaseThemeProvider = ({ children }: BaseThemeProviderProps) => {
             ? workspaceAccentColor
             : undefined
         }
-        scale={UI_SCALE_MULTIPLIERS[persistedUiScaleStep]}
+        scale={UI_SCALE_MULTIPLIERS[uiScale]}
       >
         {children}
       </ThemeProvider>

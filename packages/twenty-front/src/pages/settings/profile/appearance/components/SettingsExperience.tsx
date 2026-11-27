@@ -1,5 +1,6 @@
-import { styled } from '@linaria/react';
-
+import { SETTINGS_ROW_CONTROL_WIDTH } from '@/settings/constants/SettingsRowControlWidth';
+import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
+import { StyledSettingsSelectGroup } from '@/settings/components/SettingsOptions/StyledSettingsSelectGroup';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { FormatPreferencesSettings } from '@/settings/experience/components/FormatPreferencesSettings';
@@ -10,15 +11,10 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { IconLanguage, IconTextSize } from 'twenty-ui/icon';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { SettingsAppearance } from '~/pages/settings/profile/appearance/components/SettingsAppearance';
 import { LocalePicker } from '~/pages/settings/profile/appearance/components/LocalePicker';
-
-const StyledInterfaceControls = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[4]};
-`;
 
 export const SettingsExperience = () => {
   const { t } = useLingui();
@@ -42,10 +38,25 @@ export const SettingsExperience = () => {
             title={t`Interface`}
             description={t`Select your language and adjust the size of the interface`}
           />
-          <StyledInterfaceControls>
-            <LocalePicker />
-            <UiScalePicker />
-          </StyledInterfaceControls>
+          <StyledSettingsSelectGroup controlWidth={SETTINGS_ROW_CONTROL_WIDTH}>
+            <Card.Root>
+              <SettingsOptionCardContentSelect
+                Icon={IconLanguage}
+                title={t`Language`}
+                description={t`Used across the interface for you`}
+                divider
+              >
+                <LocalePicker />
+              </SettingsOptionCardContentSelect>
+              <SettingsOptionCardContentSelect
+                Icon={IconTextSize}
+                title={t`Scale`}
+                description={t`Size of the interface, or the workspace default`}
+              >
+                <UiScalePicker />
+              </SettingsOptionCardContentSelect>
+            </Card.Root>
+          </StyledSettingsSelectGroup>
         </Section.Root>
 
         <Section.Root>

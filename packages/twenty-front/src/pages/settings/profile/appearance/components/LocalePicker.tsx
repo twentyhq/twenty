@@ -1,5 +1,3 @@
-import { styled } from '@linaria/react';
-
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { getDateFnsLocale } from '@/ui/field/display/utils/getDateFnsLocale';
@@ -9,25 +7,16 @@ import { useUpdateWorkspaceMemberSettings } from '@/workspace-member/hooks/useUp
 import { useInvalidateToolIndex } from '@/ai/hooks/useInvalidateToolIndex';
 import { useInvalidateMetadataStore } from '@/metadata-store/hooks/useInvalidateMetadataStore';
 import { useStore } from 'jotai';
-import { useLingui } from '@lingui/react/macro';
 import { enUS } from 'date-fns/locale';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { useLocaleOptions } from '@/localization/hooks/useLocaleOptions';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
-import { themeCssVariables } from 'twenty-ui/theme';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { logError } from '~/utils/logError';
 
-const StyledContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[4]};
-`;
-
 export const LocalePicker = () => {
-  const { t } = useLingui();
   const store = useStore();
   const [currentWorkspaceMember, setCurrentWorkspaceMember] = useAtomState(
     currentWorkspaceMemberState,
@@ -84,19 +73,18 @@ export const LocalePicker = () => {
   };
 
   return (
-    <StyledContainer>
-      <Select
-        dropdownId="preferred-locale"
-        label={t`Language`}
-        dropdownWidthAuto
-        fullWidth
-        withSearchInput
-        value={currentWorkspaceMember.locale}
-        options={localeOptions}
-        onChange={(value) =>
-          handleLocaleChange(value as keyof typeof APP_LOCALES)
-        }
-      />
-    </StyledContainer>
+    <Select
+      dropdownId="preferred-locale"
+      dropdownWidth={218}
+      dropdownWidthAuto
+      fullWidth
+      withSearchInput
+      selectSizeVariant="small"
+      value={currentWorkspaceMember.locale}
+      options={localeOptions}
+      onChange={(value) =>
+        handleLocaleChange(value as keyof typeof APP_LOCALES)
+      }
+    />
   );
 };

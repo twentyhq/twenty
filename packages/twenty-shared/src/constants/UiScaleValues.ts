@@ -1,6 +1,7 @@
 export const UI_SCALE_VALUES = [
-  'Smaller',
   'Default',
+  'Smaller',
+  'Normal',
   'Large',
   'Larger',
 ] as const;
