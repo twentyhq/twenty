@@ -1,3 +1,4 @@
+import { type VIEW_METADATA_ENTITY_KEYS } from '@/metadata-store/constants/ViewMetadataEntityKeys';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type FlatView } from '@/metadata-store/types/FlatView';
 import { type MetadataEntityTypeMap } from '@/metadata-store/types/MetadataEntityTypeMap';
@@ -6,13 +7,10 @@ import { type splitViewWithRelated } from '@/metadata-store/utils/splitViewWithR
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
-type ViewChildEntityKey =
-  | 'viewFields'
-  | 'viewFilters'
-  | 'viewSorts'
-  | 'viewGroups'
-  | 'viewFilterGroups'
-  | 'viewFieldGroups';
+type ViewChildEntityKey = Exclude<
+  (typeof VIEW_METADATA_ENTITY_KEYS)[number],
+  'views'
+>;
 
 export type AddedViewChildren = Omit<
   ReturnType<typeof splitViewWithRelated>,
