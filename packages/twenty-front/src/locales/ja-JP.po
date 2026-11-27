@@ -14579,6 +14579,11 @@ msgstr "受信トレイを開くにはレイアウトの編集を完了してく
 msgid "Finish editing the layout to open Settings"
 msgstr "設定を開くには、レイアウトの編集を完了してください"
 
+#. js-lingui-id: aFsDUw
+#: src/modules/navigation/components/MultiWorkspaceDropdown/MultiWorkspaceDropdownButton.tsx
+msgid "Finish editing the layout to open this menu"
+msgstr ""
+
 #. js-lingui-id: SNdnlf
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "Finish flow with errors"

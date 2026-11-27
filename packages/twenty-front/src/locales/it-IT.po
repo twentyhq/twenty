@@ -14579,6 +14579,11 @@ msgstr "Termina la modifica del layout per aprire la posta in arrivo"
 msgid "Finish editing the layout to open Settings"
 msgstr "Termina la modifica del layout per aprire le Impostazioni"
 
+#. js-lingui-id: aFsDUw
+#: src/modules/navigation/components/MultiWorkspaceDropdown/MultiWorkspaceDropdownButton.tsx
+msgid "Finish editing the layout to open this menu"
+msgstr ""
+
 #. js-lingui-id: SNdnlf
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "Finish flow with errors"

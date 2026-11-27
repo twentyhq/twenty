@@ -14579,6 +14579,11 @@ msgstr "Voltooi het bewerken van de lay-out om Inbox te openen"
 msgid "Finish editing the layout to open Settings"
 msgstr "Voltooi het bewerken van de lay-out om Instellingen te openen"
 
+#. js-lingui-id: aFsDUw
+#: src/modules/navigation/components/MultiWorkspaceDropdown/MultiWorkspaceDropdownButton.tsx
+msgid "Finish editing the layout to open this menu"
+msgstr ""
+
 #. js-lingui-id: SNdnlf
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "Finish flow with errors"

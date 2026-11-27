@@ -14579,6 +14579,11 @@ msgstr "받은 편지함을 열려면 레이아웃 편집을 완료하세요"
 msgid "Finish editing the layout to open Settings"
 msgstr "설정을 열려면 레이아웃 편집을 완료하세요"
 
+#. js-lingui-id: aFsDUw
+#: src/modules/navigation/components/MultiWorkspaceDropdown/MultiWorkspaceDropdownButton.tsx
+msgid "Finish editing the layout to open this menu"
+msgstr ""
+
 #. js-lingui-id: SNdnlf
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "Finish flow with errors"
