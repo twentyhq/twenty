@@ -45,6 +45,8 @@ A connection link works once and expires after 10 minutes.
 - **Slow answers arrive late.** After about three and a half minutes the bot
   says it is still working, then sends the answer when the run ends, for up to
   30 minutes.
+- **Answers can be rated.** Each answer has a thumbs up and a thumbs down
+  button. The rating is saved on the request and can be changed.
 - **Requests are saved.** Each question and its answer is kept as a Telegram
   Assistant Request in the workspace.
 - **One workspace per Telegram account.** An account connected to one
