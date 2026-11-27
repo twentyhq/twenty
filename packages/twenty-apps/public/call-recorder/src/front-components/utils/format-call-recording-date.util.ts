@@ -1,5 +1,6 @@
 import { isUndefined } from '@sniptt/guards';
 
+import { createDateTimeFormat } from 'src/front-components/utils/create-date-time-format.util';
 import { getTimestamp } from 'src/front-components/utils/get-timestamp.util';
 
 const CURRENT_YEAR_DATE_FORMAT_OPTIONS: Intl.DateTimeFormatOptions = {
@@ -14,21 +15,6 @@ const OTHER_YEAR_DATE_FORMAT_OPTIONS: Intl.DateTimeFormatOptions = {
 };
 
 const dateTimeFormatByKey = new Map<string, Intl.DateTimeFormat>();
-
-const createDateTimeFormat = ({
-  locale,
-  formatOptions,
-}: {
-  locale: string | undefined;
-  formatOptions: Intl.DateTimeFormatOptions;
-}) => {
-  try {
-    return new Intl.DateTimeFormat(locale, formatOptions);
-  } catch {
-    // Host locales such as pseudo-locales are not always valid BCP 47 tags.
-    return new Intl.DateTimeFormat(undefined, formatOptions);
-  }
-};
 
 const getDateTimeFormat = ({
   locale,

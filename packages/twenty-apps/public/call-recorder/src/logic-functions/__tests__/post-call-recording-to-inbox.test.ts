@@ -59,6 +59,26 @@ const buildSummaryUpdateEvent = ({
   },
 });
 
+const MEETING_CARD_INPUT = {
+  callRecordingId: 'call-recording-1',
+  calendarEventId: 'calendar-event-1',
+  startsAt: '2026-11-27T10:00:00.000Z',
+  endsAt: '2026-11-27T10:45:00.000Z',
+};
+
+const buildMeetingCardMessage = (workspaceMemberId: string) => ({
+  workspaceMemberIds: [workspaceMemberId],
+  threadKey: `call-recording-recap-call-recording-1-${workspaceMemberId}`,
+  idempotencyKey: `call-recording-meeting-card-call-recording-1-${workspaceMemberId}`,
+  title: 'Weekly sync',
+  text: 'Your call on Nov 27, 2026, 10:00 AM UTC was recorded.',
+  toolCall: {
+    logicFunctionUniversalIdentifier: '8313058f-27fe-4281-b5a4-f5ee3cc54955',
+    input: MEETING_CARD_INPUT,
+    output: MEETING_CARD_INPUT,
+  },
+});
+
 const buildCalendarChannelId = (workspaceMemberId: string): string =>
   `calendar-channel-of-${workspaceMemberId}`;
 
@@ -89,6 +109,8 @@ const seed = ({
   const calendarEvent = {
     id: 'calendar-event-1',
     title: calendarEventTitle,
+    startsAt: '2026-11-27T10:00:00.000Z',
+    endsAt: '2026-11-27T10:45:00.000Z',
     calendarChannelEventAssociations: {
       edges: calendarOwnerWorkspaceMemberIds.map((workspaceMemberId) => ({
         node: { calendarChannelId: buildCalendarChannelId(workspaceMemberId) },
@@ -243,12 +265,10 @@ describe('post-call-recording-to-inbox logic function', () => {
       await postCallRecordingToInboxHandler(buildSummaryUpdateEvent()),
     ).toMatchObject({ workspaceMemberCount: 3, recapWorkspaceMemberCount: 2 });
 
-    const recap = {
-      title: 'Weekly sync',
-      text: 'Good call.\n\n[[record:call-recording-1]]',
-    };
+    const recap = { title: 'Weekly sync', text: 'Good call.' };
 
     expect(sendInboxMessageMock.mock.calls).toEqual([
+      [buildMeetingCardMessage('member-1')],
       [
         {
           ...recap,
@@ -257,6 +277,7 @@ describe('post-call-recording-to-inbox logic function', () => {
           idempotencyKey: 'call-recording-recap-call-recording-1-member-1',
         },
       ],
+      [buildMeetingCardMessage('member-3')],
       [
         {
           ...recap,
@@ -318,7 +339,7 @@ describe('post-call-recording-to-inbox logic function', () => {
 
     expect(sendInboxMessageMock).toHaveBeenCalledWith(
       expect.objectContaining({
-        text: 'Good call.\n\n**Action items**\n\n**Alex**\n- Send the pricing deck\n\n[[record:call-recording-1]]',
+        text: 'Good call.\n\n**Action items**\n\n**Alex**\n- Send the pricing deck',
         toolCall: expect.objectContaining({
           input: expect.objectContaining({
             options: [
@@ -347,7 +368,7 @@ describe('post-call-recording-to-inbox logic function', () => {
 
     expect(sendInboxMessageMock).toHaveBeenCalledWith(
       expect.objectContaining({
-        text: '**Action items**\n\n**Alex**\n- Send the pricing deck\n\n[[record:call-recording-1]]',
+        text: '**Action items**\n\n**Alex**\n- Send the pricing deck',
       }),
     );
   });
@@ -366,7 +387,7 @@ describe('post-call-recording-to-inbox logic function', () => {
     );
   });
 
-  it('sends a recap without a gist when the summary has none', async () => {
+  it('sends the meeting card alone when the summary has no gist and no action items', async () => {
     seed({
       callRecording: {
         ...CALL_RECORDING,
@@ -378,11 +399,58 @@ describe('post-call-recording-to-inbox logic function', () => {
 
     await postCallRecordingToInboxHandler(buildSummaryUpdateEvent());
 
-    expect(sendInboxMessageMock).toHaveBeenCalledWith(
-      expect.objectContaining({
-        text: 'Your call was recorded: [[record:call-recording-1]].',
-      }),
-    );
+    expect(sendInboxMessageMock.mock.calls).toEqual([
+      [buildMeetingCardMessage('member-1')],
+    ]);
+  });
+
+  it('reads no link to the recording when every recipient gets a recap', async () => {
+    seed({
+      calendarOwnerWorkspaceMemberIds: ['member-1'],
+      recapsValueByWorkspaceMemberId: { 'member-1': 'true' },
+    });
+
+    await postCallRecordingToInboxHandler(buildSummaryUpdateEvent());
+
+    expect(inboxReferenceRecordMock).not.toHaveBeenCalled();
+  });
+
+  it('skips a member who cannot receive the meeting card, recap included', async () => {
+    seed({
+      calendarOwnerWorkspaceMemberIds: ['member-1'],
+      recapsValueByWorkspaceMemberId: { 'member-1': 'true' },
+    });
+    sendInboxMessageMock.mockRejectedValueOnce(MEMBER_CANNOT_RECEIVE_ERROR);
+
+    expect(
+      await postCallRecordingToInboxHandler(buildSummaryUpdateEvent()),
+    ).toMatchObject({ outcome: 'sent', skippedWorkspaceMemberCount: 1 });
+    expect(sendInboxMessageMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('holds back the recap when the meeting card fails, so a retry keeps them in order', async () => {
+    seed({
+      calendarOwnerWorkspaceMemberIds: ['member-1', 'member-3'],
+      recapsValueByWorkspaceMemberId: {
+        'member-1': 'true',
+        'member-3': 'true',
+      },
+    });
+    sendInboxMessageMock.mockRejectedValueOnce(new Error('503'));
+
+    await expect(
+      postCallRecordingToInboxHandler(buildSummaryUpdateEvent()),
+    ).rejects.toBeInstanceOf(RetryableLogicFunctionError);
+    expect(
+      sendInboxMessageMock.mock.calls.map(([message]) => [
+        message.workspaceMemberIds[0],
+        message.idempotencyKey,
+      ]),
+    ).toEqual([
+      ['member-1', 'call-recording-meeting-card-call-recording-1-member-1'],
+      ['member-3', 'call-recording-meeting-card-call-recording-1-member-3'],
+      ['member-3', 'call-recording-recap-call-recording-1-member-3'],
+    ]);
   });
 
   it('sends when a summary replaces an unavailable one', async () => {
