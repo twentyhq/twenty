@@ -9,9 +9,9 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-@RegisteredWorkspaceCommand('2.65.0', 1795788354200)
+@RegisteredWorkspaceCommand('2.66.0', 1795791151025)
 @Command({
-  name: 'upgrade:2-65:remove-twenty-standard-application-role',
+  name: 'upgrade:2-66:remove-twenty-standard-application-role',
   description:
     'Clear the requested role of twenty-standard and delete its grant role',
 })
