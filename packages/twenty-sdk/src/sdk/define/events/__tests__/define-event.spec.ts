@@ -1,20 +1,22 @@
 import { describe, expect, it } from 'vitest';
 
-import { defineEvent } from '@/sdk/define';
+import { defineEvent, type EventManifest } from '@/sdk/define';
 
-const baseValidConfig = {
+const baseValidConfig: EventManifest = {
   universalIdentifier: '3c1d2a4b-5e6f-4a7b-8c9d-0e1f2a3b4c5d',
   name: 'messageAdded',
   label: 'Message added',
-  properties: [
-    {
-      name: 'conversationId',
-      type: 'RECORD_REFERENCE' as const,
-      objectUniversalIdentifier: '3c1d2a4b-5e6f-4a7b-8c9d-0e1f2a3b4c5e',
-      isRequired: true,
+  schema: {
+    type: 'object',
+    properties: {
+      conversationId: {
+        type: 'record',
+        objectUniversalIdentifier: '3c1d2a4b-5e6f-4a7b-8c9d-0e1f2a3b4c5e',
+      },
+      text: { type: 'string' },
     },
-    { name: 'text', type: 'TEXT' as const },
-  ],
+    required: ['conversationId'],
+  },
 };
 
 describe('defineEvent', () => {
@@ -34,13 +36,21 @@ describe('defineEvent', () => {
     expect(result.success).toBe(false);
   });
 
-  it('rejects a property declared twice', () => {
+  it('accepts an event without a schema', () => {
+    const { schema: _schema, ...configWithoutSchema } = baseValidConfig;
+
+    expect(defineEvent(configWithoutSchema).success).toBe(true);
+  });
+
+  it('rejects a nested property', () => {
     const result = defineEvent({
       ...baseValidConfig,
-      properties: [
-        { name: 'text', type: 'TEXT' },
-        { name: 'text', type: 'NUMBER' },
-      ],
+      schema: {
+        type: 'object',
+        properties: {
+          author: { type: 'object', properties: { name: { type: 'string' } } },
+        },
+      },
     });
 
     expect(result.success).toBe(false);

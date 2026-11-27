@@ -43,7 +43,7 @@ export class ApplicationEventEmitterService {
 
     const propertyErrors = getEventPropertyValuesErrors({
       eventName: event,
-      properties: flatEventMetadata.properties,
+      schema: flatEventMetadata.schema,
       values: properties,
     });
 

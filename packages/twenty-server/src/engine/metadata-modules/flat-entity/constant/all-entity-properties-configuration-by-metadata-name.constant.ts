@@ -2371,7 +2371,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     icon: { toCompare: true, toStringify: false, universalProperty: undefined },
-    properties: {
+    schema: {
       toCompare: true,
       toStringify: true,
       universalProperty: undefined,

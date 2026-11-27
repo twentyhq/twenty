@@ -1,15 +1,88 @@
+import { isObject } from '@sniptt/guards';
+
 import { EVENT_LIMITS } from '@/application/constants/EventLimits';
 import { EVENT_NAME_PATTERN } from '@/application/constants/EventNamePattern';
-import { EVENT_PROPERTY_TYPES } from '@/application/constants/EventPropertyTypes';
-import { type EventPropertyManifest } from '@/application/eventManifestType';
+import { EVENT_SCHEMA_PROPERTY_TYPES } from '@/application/constants/EventSchemaPropertyTypes';
+import { EVENT_SCHEMA_STRING_FORMATS } from '@/application/constants/EventSchemaStringFormats';
 import { isValidUniversalIdentifier } from '@/application/utils/isValidUniversalIdentifier';
+import { type InputJsonSchema } from '@/logic-function/input-json-schema.type';
+import { isDefined } from '@/utils/validation/isDefined';
+
+const NESTED_SCHEMA_KEYWORDS = [
+  'properties',
+  'items',
+  'additionalProperties',
+] as const;
+
+const getEventSchemaPropertyErrors = ({
+  eventName,
+  propertyName,
+  propertySchema,
+}: {
+  eventName: string;
+  propertyName: string;
+  propertySchema: InputJsonSchema;
+}): string[] => {
+  const errors: string[] = [];
+  const label = `Event "${eventName}" property "${propertyName}"`;
+
+  if (!EVENT_NAME_PATTERN.test(propertyName)) {
+    errors.push(`${label} must be camelCase and match ${EVENT_NAME_PATTERN}`);
+  }
+
+  if (!isObject(propertySchema)) {
+    errors.push(`${label} must be described by a schema object`);
+
+    return errors;
+  }
+
+  const { type, format, objectUniversalIdentifier } = propertySchema;
+
+  if (
+    isDefined(type) &&
+    !(EVENT_SCHEMA_PROPERTY_TYPES as readonly string[]).includes(type)
+  ) {
+    errors.push(
+      `${label} type must be one of: ${EVENT_SCHEMA_PROPERTY_TYPES.join(', ')}, or left out to accept any JSON value`,
+    );
+  }
+
+  for (const keyword of NESTED_SCHEMA_KEYWORDS) {
+    if (isDefined(propertySchema[keyword])) {
+      errors.push(
+        `${label} cannot use "${keyword}": event properties are flat`,
+      );
+    }
+  }
+
+  if (
+    isDefined(format) &&
+    (type !== 'string' ||
+      !(EVENT_SCHEMA_STRING_FORMATS as readonly string[]).includes(format))
+  ) {
+    errors.push(
+      `${label} format must be one of: ${EVENT_SCHEMA_STRING_FORMATS.join(', ')}, on a string property`,
+    );
+  }
+
+  if (
+    type === 'record' &&
+    !isValidUniversalIdentifier(objectUniversalIdentifier ?? '')
+  ) {
+    errors.push(
+      `${label} must set objectUniversalIdentifier to the universalIdentifier of an object`,
+    );
+  }
+
+  return errors;
+};
 
 export const getEventDefinitionErrors = ({
   name,
-  properties,
+  schema,
 }: {
   name: string;
-  properties: EventPropertyManifest[];
+  schema: InputJsonSchema;
 }): string[] => {
   const errors: string[] = [];
 
@@ -19,47 +92,43 @@ export const getEventDefinitionErrors = ({
     );
   }
 
-  if (!Array.isArray(properties)) {
-    errors.push(`Event "${name}" properties must be an array`);
+  // Manifests reach the server as JSON, so the declared type is not a guarantee
+  if (!isObject(schema) || schema.type !== 'object') {
+    errors.push(`Event "${name}" schema must be an object schema`);
 
     return errors;
   }
 
-  if (properties.length > EVENT_LIMITS.MAX_PROPERTIES_PER_EVENT) {
+  const properties = schema.properties ?? {};
+
+  if (!isObject(properties)) {
+    errors.push(`Event "${name}" schema properties must be an object`);
+
+    return errors;
+  }
+
+  const propertyEntries = Object.entries(properties);
+
+  if (propertyEntries.length > EVENT_LIMITS.MAX_PROPERTIES_PER_EVENT) {
     errors.push(
       `Event "${name}" cannot have more than ${EVENT_LIMITS.MAX_PROPERTIES_PER_EVENT} properties`,
     );
   }
 
-  const propertyNames = new Set<string>();
+  for (const [propertyName, propertySchema] of propertyEntries) {
+    errors.push(
+      ...getEventSchemaPropertyErrors({
+        eventName: name,
+        propertyName,
+        propertySchema,
+      }),
+    );
+  }
 
-  for (const property of properties) {
-    if (!EVENT_NAME_PATTERN.test(property.name)) {
+  for (const requiredName of schema.required ?? []) {
+    if (!Object.prototype.hasOwnProperty.call(properties, requiredName)) {
       errors.push(
-        `Event "${name}" property "${property.name}" must be camelCase and match ${EVENT_NAME_PATTERN}`,
-      );
-    }
-
-    if (propertyNames.has(property.name)) {
-      errors.push(
-        `Event "${name}" declares property "${property.name}" more than once`,
-      );
-    }
-
-    propertyNames.add(property.name);
-
-    if (!EVENT_PROPERTY_TYPES.includes(property.type)) {
-      errors.push(
-        `Event "${name}" property "${property.name}" type must be one of: ${EVENT_PROPERTY_TYPES.join(', ')}`,
-      );
-    }
-
-    if (
-      property.type === 'RECORD_REFERENCE' &&
-      !isValidUniversalIdentifier(property.objectUniversalIdentifier ?? '')
-    ) {
-      errors.push(
-        `Event "${name}" property "${property.name}" must set objectUniversalIdentifier to the universalIdentifier of an object`,
+        `Event "${name}" requires "${requiredName}", which is not one of its properties`,
       );
     }
   }

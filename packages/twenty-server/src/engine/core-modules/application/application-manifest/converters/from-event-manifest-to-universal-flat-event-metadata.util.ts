@@ -1,4 +1,7 @@
-import { type EventManifest } from 'twenty-shared/application';
+import {
+  EMPTY_EVENT_SCHEMA,
+  type EventManifest,
+} from 'twenty-shared/application';
 
 import { type UniversalFlatEventMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-event-metadata.type';
 
@@ -17,7 +20,7 @@ export const fromEventManifestToUniversalFlatEventMetadata = ({
   label: eventManifest.label,
   description: eventManifest.description ?? null,
   icon: eventManifest.icon ?? null,
-  properties: eventManifest.properties ?? [],
+  schema: eventManifest.schema ?? EMPTY_EVENT_SCHEMA,
   createdAt: now,
   updatedAt: now,
 });

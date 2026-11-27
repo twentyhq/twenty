@@ -98,10 +98,13 @@ export { ASSETS_DIR } from './constants/AssetDirectory';
 export { CONNECTION_PROVIDER_SCOPES } from './constants/ConnectionProviderScopes';
 export { DEFAULT_CONNECTION_PROVIDER_SCOPE } from './constants/DefaultConnectionProviderScope';
 export { DEFAULT_SETTINGS_MENU_ITEM_POSITION } from './constants/DefaultSettingsMenuItemPosition';
+export { EMPTY_EVENT_SCHEMA } from './constants/EmptyEventSchema';
 export { EMPTY_YARN_LOCK_CONTENT } from './constants/EmptyYarnLockContent';
 export { EVENT_LIMITS } from './constants/EventLimits';
 export { EVENT_NAME_PATTERN } from './constants/EventNamePattern';
-export { EVENT_PROPERTY_TYPES } from './constants/EventPropertyTypes';
+export { EVENT_OCCURRENCE_ID_PATTERN } from './constants/EventOccurrenceIdPattern';
+export { EVENT_SCHEMA_PROPERTY_TYPES } from './constants/EventSchemaPropertyTypes';
+export { EVENT_SCHEMA_STRING_FORMATS } from './constants/EventSchemaStringFormats';
 export { FRONT_COMPONENT_SHARED_DEPENDENCIES_BUILT_PATH } from './constants/FrontComponentSharedDependenciesBuiltPath';
 export { FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from './constants/FrontComponentSharedDependenciesImportSpecifier';
 export { FRONT_COMPONENT_WIDGET_PAGE_LAYOUT_TYPES } from './constants/FrontComponentWidgetPageLayoutTypes';
@@ -196,11 +199,7 @@ export type {
   JobStatusResult,
 } from './enqueueJobType';
 export { SyncableEntity } from './enums/syncable-entities.enum';
-export type {
-  EventPropertyType,
-  EventPropertyManifest,
-  EventManifest,
-} from './eventManifestType';
+export type { EventManifest } from './eventManifestType';
 export type { EventOccurrence } from './eventOccurrenceType';
 export type { EventTriggerManifestSettings } from './eventTriggerManifestSettingsType';
 export type { FieldManifestOptions } from './fieldManifestOptionsType';
@@ -396,6 +395,7 @@ export {
 } from './utils/getEffectiveObjectPermissionsFromRoleManifest';
 export { getEventDefinitionErrors } from './utils/getEventDefinitionErrors';
 export { getEventPropertyValuesErrors } from './utils/getEventPropertyValuesErrors';
+export { getEventSchemaRecordProperties } from './utils/getEventSchemaRecordProperties';
 export { getReachableObjectPermissionsFromRoleManifest } from './utils/getReachableObjectPermissionsFromRoleManifest';
 export { getRecordsPermissionsFromRoleManifest } from './utils/getRecordsPermissionsFromRoleManifest';
 export { getRoleManifestGrantsNotCoveredBy } from './utils/getRoleManifestGrantsNotCoveredBy';

@@ -1,4 +1,5 @@
-import { type EventPropertyManifest } from 'twenty-shared/application';
+import { EMPTY_EVENT_SCHEMA } from 'twenty-shared/application';
+import { type InputJsonSchema } from 'twenty-shared/logic-function';
 import {
   Column,
   CreateDateColumn,
@@ -12,6 +13,7 @@ import {
 import { ADD_EVENT_METADATA_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-66/add-event-metadata-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
 @Entity({ name: 'eventMetadata', schema: 'core' })
 @WasIntroducedInUpgrade({
@@ -38,8 +40,8 @@ export class EventMetadataEntity
   @Column({ nullable: true, type: 'varchar' })
   icon: string | null;
 
-  @Column({ nullable: false, type: 'jsonb', default: [] })
-  properties: EventPropertyManifest[];
+  @Column({ nullable: false, type: 'jsonb', default: EMPTY_EVENT_SCHEMA })
+  schema: JsonbProperty<InputJsonSchema>;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

@@ -54,7 +54,11 @@ export class UpdateEventMetadataActionHandlerService extends WorkspaceMigrationR
         EventMetadataEntity,
       );
 
-    await eventMetadataRepository.update({ id: entityId, workspaceId }, update);
+    // TypeORM's deep partial type cannot express the schema's unknown[] enum
+    await eventMetadataRepository.update(
+      { id: entityId, workspaceId },
+      update as Parameters<typeof eventMetadataRepository.update>[1],
+    );
   }
 
   async executeForWorkspaceSchema(

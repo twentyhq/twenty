@@ -2,6 +2,7 @@ import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type'
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
 import { isValidPostgresUuid } from '@/sdk/define/common/utils/is-valid-postgres-uuid';
 import {
+  EMPTY_EVENT_SCHEMA,
   type EventManifest,
   getEventDefinitionErrors,
 } from 'twenty-shared/application';
@@ -24,7 +25,7 @@ export const defineEvent: DefineEntity<EventManifest> = (config) => {
     errors.push(
       ...getEventDefinitionErrors({
         name: config.name,
-        properties: config.properties ?? [],
+        schema: config.schema ?? EMPTY_EVENT_SCHEMA,
       }),
     );
   }

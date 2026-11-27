@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { getEventDefinitionErrors } from 'twenty-shared/application';
+import {
+  getEventDefinitionErrors,
+  getEventSchemaRecordProperties,
+} from 'twenty-shared/application';
 import { type ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -24,7 +27,7 @@ const validateEventMetadataDefinition = ({
 }: {
   flatEventMetadata: Pick<
     UniversalFlatEventMetadata,
-    'name' | 'label' | 'properties'
+    'name' | 'label' | 'schema'
   >;
   flatObjectMetadataMaps: MetadataUniversalFlatEntityMaps<'objectMetadata'>;
 }): FlatEntityValidationError[] => {
@@ -48,10 +51,12 @@ const validateEventMetadataDefinition = ({
     });
   }
 
-  for (const definitionError of getEventDefinitionErrors({
+  const definitionErrors = getEventDefinitionErrors({
     name: flatEventMetadata.name,
-    properties: flatEventMetadata.properties,
-  })) {
+    schema: flatEventMetadata.schema,
+  });
+
+  for (const definitionError of definitionErrors) {
     errors.push({
       code: EventMetadataExceptionCode.INVALID_EVENT_METADATA_INPUT,
       message: definitionError,
@@ -59,19 +64,25 @@ const validateEventMetadataDefinition = ({
     });
   }
 
-  for (const property of flatEventMetadata.properties) {
+  if (definitionErrors.length > 0) {
+    return errors;
+  }
+
+  for (const {
+    name: propertyName,
+    objectUniversalIdentifier,
+  } of getEventSchemaRecordProperties(flatEventMetadata.schema)) {
     if (
-      property.type === 'RECORD_REFERENCE' &&
       !isDefined(
         findFlatEntityByUniversalIdentifier({
           flatEntityMaps: flatObjectMetadataMaps,
-          universalIdentifier: property.objectUniversalIdentifier,
+          universalIdentifier: objectUniversalIdentifier,
         }),
       )
     ) {
       errors.push({
         code: EventMetadataExceptionCode.INVALID_EVENT_METADATA_INPUT,
-        message: t`Event property "${property.name}" references object "${property.objectUniversalIdentifier}", which was not found`,
+        message: t`Event property "${propertyName}" references object "${objectUniversalIdentifier}", which was not found`,
         userFriendlyMessage: msg`An event property references an object that does not exist`,
       });
     }

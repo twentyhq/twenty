@@ -161,11 +161,7 @@ export { defineMessagingProvider } from '@/sdk/define/messaging-providers/define
 export { defineMcpServer } from '@/sdk/define/mcp-servers/define-mcp-server';
 
 export { defineEvent } from '@/sdk/define/events/define-event';
-export type {
-  EventManifest,
-  EventPropertyManifest,
-  EventPropertyType,
-} from 'twenty-shared/application';
+export type { EventManifest } from 'twenty-shared/application';
 
 export { defineNavigationMenuItem } from '@/sdk/define/navigation-menu-items/define-navigation-menu-item';
 

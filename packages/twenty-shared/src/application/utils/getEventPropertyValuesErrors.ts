@@ -1,76 +1,112 @@
 import { isBoolean, isNumber, isString } from '@sniptt/guards';
 import { validate as uuidValidate } from 'uuid';
 
-import {
-  type EventPropertyManifest,
-  type EventPropertyType,
-} from '@/application/eventManifestType';
+import { type InputJsonSchema } from '@/logic-function/input-json-schema.type';
 import { isDefined } from '@/utils/validation/isDefined';
 
-const isValueOfPropertyType = ({
+const isValueOfPropertySchema = ({
   value,
-  type,
+  propertySchema,
 }: {
   value: unknown;
-  type: EventPropertyType;
+  propertySchema: InputJsonSchema;
 }): boolean => {
-  switch (type) {
-    case 'TEXT':
-      return isString(value);
-    case 'NUMBER':
+  switch (propertySchema.type) {
+    case 'string':
+      if (!isString(value)) {
+        return false;
+      }
+
+      if (propertySchema.format === 'date-time') {
+        return !Number.isNaN(Date.parse(value));
+      }
+
+      return propertySchema.format === 'uuid' ? uuidValidate(value) : true;
+    case 'number':
       return isNumber(value) && Number.isFinite(value);
-    case 'BOOLEAN':
+    case 'integer':
+      return isNumber(value) && Number.isInteger(value);
+    case 'boolean':
       return isBoolean(value);
-    case 'DATE_TIME':
-      return isString(value) && !Number.isNaN(Date.parse(value));
-    case 'UUID':
-    case 'RECORD_REFERENCE':
+    case 'record':
       return isString(value) && uuidValidate(value);
-    case 'RAW_JSON':
+    default:
       return true;
   }
 };
 
+const getPropertyConstraintErrors = ({
+  value,
+  propertySchema,
+  label,
+}: {
+  value: unknown;
+  propertySchema: InputJsonSchema;
+  label: string;
+}): string[] => {
+  const errors: string[] = [];
+  const { enum: allowedValues, minimum, maximum } = propertySchema;
+
+  if (isDefined(allowedValues) && !allowedValues.includes(value)) {
+    errors.push(`${label} must be one of: ${allowedValues.join(', ')}`);
+  }
+
+  if (isNumber(value) && isDefined(minimum) && value < minimum) {
+    errors.push(`${label} must be at least ${minimum}`);
+  }
+
+  if (isNumber(value) && isDefined(maximum) && value > maximum) {
+    errors.push(`${label} must be at most ${maximum}`);
+  }
+
+  return errors;
+};
+
 export const getEventPropertyValuesErrors = ({
   eventName,
-  properties,
+  schema,
   values,
 }: {
   eventName: string;
-  properties: EventPropertyManifest[];
+  schema: InputJsonSchema;
   values: Record<string, unknown>;
 }): string[] => {
   const errors: string[] = [];
-  const propertiesByName = new Map(
-    properties.map((property) => [property.name, property]),
-  );
+  const properties = schema.properties ?? {};
+  const requiredNames = new Set(schema.required ?? []);
+  const isDeclared = (name: string) =>
+    Object.prototype.hasOwnProperty.call(properties, name);
 
   for (const valueName of Object.keys(values)) {
-    if (!propertiesByName.has(valueName)) {
+    if (!isDeclared(valueName)) {
       errors.push(`Event "${eventName}" has no property "${valueName}"`);
     }
   }
 
-  for (const property of properties) {
+  for (const [propertyName, propertySchema] of Object.entries(properties)) {
+    const label = `Event "${eventName}" property "${propertyName}"`;
     // Inherited members such as constructor are not part of the payload
-    const value = Object.prototype.hasOwnProperty.call(values, property.name)
-      ? values[property.name]
+    const value = Object.prototype.hasOwnProperty.call(values, propertyName)
+      ? values[propertyName]
       : undefined;
 
     if (!isDefined(value)) {
-      if (property.isRequired) {
-        errors.push(
-          `Event "${eventName}" property "${property.name}" is required`,
-        );
+      if (requiredNames.has(propertyName)) {
+        errors.push(`${label} is required`);
       }
       continue;
     }
 
-    if (!isValueOfPropertyType({ value, type: property.type })) {
+    if (!isValueOfPropertySchema({ value, propertySchema })) {
       errors.push(
-        `Event "${eventName}" property "${property.name}" must be a ${property.type} value`,
+        `${label} must be a ${propertySchema.format ?? propertySchema.type} value`,
       );
+      continue;
     }
+
+    errors.push(
+      ...getPropertyConstraintErrors({ value, propertySchema, label }),
+    );
   }
 
   return errors;
