@@ -1,3 +1,4 @@
+import { TEAMS_ASSISTANT_ANSWER_MARKERS } from 'src/features/chat/logic-functions/constants/teams-assistant-answer-markers';
 import { isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
@@ -10,7 +11,6 @@ import { findTeamsAssistantHistory } from 'src/features/chat/logic-functions/dat
 import { updateTeamsAssistantRequest } from 'src/features/chat/logic-functions/data/update-teams-assistant-request';
 import { type TeamsAssistantAnswerResult } from 'src/features/chat/logic-functions/types/teams-assistant-answer-result.type';
 import { type TeamsAssistantRequestRecord } from 'src/features/chat/logic-functions/types/teams-assistant-request-record.type';
-import { buildTeamsAssistantAnswerMarkers } from 'src/features/chat/logic-functions/utils/build-teams-assistant-answer-markers';
 import { buildTeamsAssistantAnswerText } from 'src/features/chat/logic-functions/utils/build-teams-assistant-answer-text';
 import { buildTeamsAssistantRequestName } from 'src/features/chat/logic-functions/utils/build-teams-assistant-request-name';
 import { fetchWorkspaceBaseUrl } from 'src/features/chat/logic-functions/utils/fetch-workspace-base-url';
@@ -123,7 +123,7 @@ export const answerTeamsAssistantRequest = async ({
         requestId: request.id,
         workspaceBaseUrl,
       }),
-      answerMarkers: buildTeamsAssistantAnswerMarkers(),
+      answerMarkers: TEAMS_ASSISTANT_ANSWER_MARKERS,
     });
     await updateTeamsAssistantRequest({
       client,

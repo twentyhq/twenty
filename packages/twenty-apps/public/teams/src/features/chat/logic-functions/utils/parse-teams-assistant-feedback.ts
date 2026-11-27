@@ -18,7 +18,6 @@ const parseFeedbackRating = (
   }
 };
 
-// Teams sends the comment as a JSON string such as {"feedbackText":"Nice!"}.
 const parseFeedbackText = (feedback: string | undefined): string => {
   if (!isNonEmptyString(feedback)) {
     return '';

@@ -3,7 +3,7 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { findTeamsAssistantRequestByAnswerActivity } from 'src/features/chat/logic-functions/data/find-teams-assistant-request-by-answer-activity';
-import { updateTeamsAssistantRequestFeedback } from 'src/features/chat/logic-functions/data/update-teams-assistant-request-feedback';
+import { updateTeamsAssistantRequest } from 'src/features/chat/logic-functions/data/update-teams-assistant-request';
 import { type TeamsActivitiesDispatchPayload } from 'src/features/chat/logic-functions/types/teams-activities-dispatch-payload.type';
 import { type TeamsAssistantFeedbackResult } from 'src/features/chat/logic-functions/types/teams-assistant-feedback-result.type';
 import { parseTeamsAssistantFeedback } from 'src/features/chat/logic-functions/utils/parse-teams-assistant-feedback';
@@ -57,7 +57,7 @@ export const teamsAssistantFeedbackHandler = async ({
     };
   }
 
-  await updateTeamsAssistantRequestFeedback({
+  await updateTeamsAssistantRequest({
     client,
     id: request.id,
     ...feedback,

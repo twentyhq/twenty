@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { buildTeamsAssistantAnswerMarkers } from 'src/features/chat/logic-functions/utils/build-teams-assistant-answer-markers';
+import { TEAMS_ASSISTANT_ANSWER_MARKERS } from 'src/features/chat/logic-functions/constants/teams-assistant-answer-markers';
 import { startTeamsAssistantStream } from 'src/features/chat/logic-functions/utils/start-teams-assistant-stream';
 
 const { sendActivityMock, requestConnectorMock } = vi.hoisted(() => ({
@@ -110,16 +110,18 @@ describe('startTeamsAssistantStream', () => {
       ...CONVERSATION,
       text: 'Thinking…',
     });
-    const answerMarkers = buildTeamsAssistantAnswerMarkers();
 
-    await writer.finish({ text: 'Acme has 3 open deals.', answerMarkers });
+    await writer.finish({
+      text: 'Acme has 3 open deals.',
+      answerMarkers: TEAMS_ASSISTANT_ANSWER_MARKERS,
+    });
 
     expect(streamedActivities()).toEqual([
       {
         type: 'message',
         textFormat: 'extendedmarkdown',
         text: 'Acme has 3 open deals.',
-        channelData: answerMarkers.channelData,
+        channelData: TEAMS_ASSISTANT_ANSWER_MARKERS.channelData,
         entities: [
           { type: 'streaminfo', streamId: 'stream-1', streamType: 'final' },
         ],

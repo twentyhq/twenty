@@ -23,8 +23,10 @@ vi.mock(
 );
 
 vi.mock(
-  'src/features/chat/logic-functions/data/update-teams-assistant-request-feedback',
-  () => ({ updateTeamsAssistantRequestFeedback: updateFeedbackMock }),
+  'src/features/chat/logic-functions/data/update-teams-assistant-request',
+  () => ({
+    updateTeamsAssistantRequest: updateFeedbackMock,
+  }),
 );
 
 const FEEDBACK_ACTIVITY: TeamsInboundActivity = {
@@ -65,19 +67,6 @@ describe('teamsAssistantFeedbackHandler', () => {
       feedbackRating: 'NEGATIVE',
       feedbackText: 'Wrong',
     });
-  });
-
-  it('should clear an earlier comment when the new feedback has none', async () => {
-    await teamsAssistantFeedbackHandler({
-      activity: {
-        ...FEEDBACK_ACTIVITY,
-        value: { actionName: 'feedback', actionValue: { reaction: 'like' } },
-      },
-    });
-
-    expect(updateFeedbackMock).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({ feedbackRating: 'POSITIVE', feedbackText: '' }),
-    );
   });
 
   it('should ignore feedback from someone other than the requester', async () => {

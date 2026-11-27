@@ -1,11 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { TEAMS_ASSISTANT_ANSWER_MARKERS } from 'src/features/chat/logic-functions/constants/teams-assistant-answer-markers';
 import { TEAMS_ASSISTANT_AGENT_BUDGET_SECONDS } from 'src/features/chat/logic-functions/constants/teams-assistant-agent-budget-seconds';
 import {
   TEAMS_ASSISTANT_INITIAL_STATUS,
   TEAMS_ASSISTANT_STATUS_STEPS,
 } from 'src/features/chat/logic-functions/constants/teams-assistant-status-steps';
-import { buildTeamsAssistantAnswerMarkers } from 'src/features/chat/logic-functions/utils/build-teams-assistant-answer-markers';
 import { startTeamsAssistantStatus } from 'src/features/chat/logic-functions/utils/start-teams-assistant-status';
 
 const {
@@ -86,18 +86,20 @@ describe('startTeamsAssistantStatus', () => {
       TEAMS_ASSISTANT_STATUS_STEPS.slice(0, 2).map((step) => step.text),
     );
 
-    const answerMarkers = buildTeamsAssistantAnswerMarkers();
     finishMock.mockResolvedValue('stream-1');
 
     await expect(
-      status.finish({ text: 'Acme has 3 open deals.', answerMarkers }),
+      status.finish({
+        text: 'Acme has 3 open deals.',
+        answerMarkers: TEAMS_ASSISTANT_ANSWER_MARKERS,
+      }),
     ).resolves.toBe('stream-1');
     await vi.runAllTimersAsync();
 
     expect(updateMock).toHaveBeenCalledTimes(2);
     expect(finishMock).toHaveBeenCalledExactlyOnceWith({
       text: 'Acme has 3 open deals.',
-      answerMarkers,
+      answerMarkers: TEAMS_ASSISTANT_ANSWER_MARKERS,
     });
     expect(sendActivityMock).not.toHaveBeenCalled();
   });
@@ -128,10 +130,11 @@ describe('startTeamsAssistantStatus', () => {
 
     const status = await startTeamsAssistantStatus(PERSONAL);
 
-    const answerMarkers = buildTeamsAssistantAnswerMarkers();
-
     await expect(
-      status.finish({ text: 'Acme has 3 open deals.', answerMarkers }),
+      status.finish({
+        text: 'Acme has 3 open deals.',
+        answerMarkers: TEAMS_ASSISTANT_ANSWER_MARKERS,
+      }),
     ).resolves.toBe('activity-1');
 
     expect(
@@ -141,7 +144,7 @@ describe('startTeamsAssistantStatus', () => {
         type: 'message',
         textFormat: 'extendedmarkdown',
         text: 'Acme has 3 open deals.',
-        ...answerMarkers,
+        ...TEAMS_ASSISTANT_ANSWER_MARKERS,
       },
     ]);
 

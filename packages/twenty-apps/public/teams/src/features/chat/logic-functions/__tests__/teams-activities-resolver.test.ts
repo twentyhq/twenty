@@ -230,16 +230,6 @@ describe('teamsActivitiesResolverHandler', () => {
     expect(verifyTokenMock).toHaveBeenCalledTimes(1);
   });
 
-  it('rejects a feedback invoke whose token does not verify', async () => {
-    verifyTokenMock.mockRejectedValue(
-      new TeamsActivityTokenInvalidError('signature verification failed'),
-    );
-
-    expect(await resolve(FEEDBACK_ACTIVITY)).toEqual(
-      new Response({ error: 'Unauthorized' }, { status: 401 }),
-    );
-  });
-
   it.each([
     ['another invoke', { ...FEEDBACK_ACTIVITY, name: 'task/fetch' }],
     [

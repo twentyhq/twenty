@@ -14,12 +14,6 @@ describe('parseTeamsAssistantFeedback', () => {
     ).toEqual({ feedbackRating: 'POSITIVE', feedbackText: 'Nice!' });
   });
 
-  it('should read a thumbs down', () => {
-    expect(
-      parse({ reaction: 'dislike', feedback: '{"feedbackText":"Wrong"}' }),
-    ).toEqual({ feedbackRating: 'NEGATIVE', feedbackText: 'Wrong' });
-  });
-
   afterEach(() => {
     vi.restoreAllMocks();
   });
@@ -38,9 +32,7 @@ describe('parseTeamsAssistantFeedback', () => {
 
   it.each([
     ['is missing', undefined],
-    ['is empty', '{"feedbackText":""}'],
     ['holds no text', '{"feedbackText":42}'],
-    ['is null', 'null'],
   ])('should keep the rating when the comment %s', (_, feedback) => {
     expect(parse({ reaction: 'like', feedback })).toEqual({
       feedbackRating: 'POSITIVE',

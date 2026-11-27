@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { TEAMS_ASSISTANT_ANSWER_MARKERS } from 'src/features/chat/logic-functions/constants/teams-assistant-answer-markers';
 import { TEAMS_ASSISTANT_INITIAL_STATUS } from 'src/features/chat/logic-functions/constants/teams-assistant-status-steps';
-import { buildTeamsAssistantAnswerMarkers } from 'src/features/chat/logic-functions/utils/build-teams-assistant-answer-markers';
 import { startTeamsAssistantPlaceholder } from 'src/features/chat/logic-functions/utils/start-teams-assistant-placeholder';
 
 const { sendActivityMock, updateActivityMock, deleteActivityMock } = vi.hoisted(
@@ -127,15 +127,17 @@ describe('startTeamsAssistantPlaceholder', () => {
 
   it('should add feedback buttons to the answer that replaces the placeholder and return its activity id', async () => {
     const status = await startPlaceholder();
-    const answerMarkers = buildTeamsAssistantAnswerMarkers();
 
-    await expect(status.finish({ text: ANSWER, answerMarkers })).resolves.toBe(
-      'placeholder-1',
-    );
+    await expect(
+      status.finish({
+        text: ANSWER,
+        answerMarkers: TEAMS_ASSISTANT_ANSWER_MARKERS,
+      }),
+    ).resolves.toBe('placeholder-1');
 
     expect(updateActivityMock).toHaveBeenCalledExactlyOnceWith({
       ...PLACEHOLDER,
-      activity: { ...message(ANSWER), ...answerMarkers },
+      activity: { ...message(ANSWER), ...TEAMS_ASSISTANT_ANSWER_MARKERS },
     });
   });
 
@@ -146,16 +148,18 @@ describe('startTeamsAssistantPlaceholder', () => {
       .mockResolvedValueOnce({ id: 'answer-1' });
 
     const status = await startPlaceholder();
-    const answerMarkers = buildTeamsAssistantAnswerMarkers();
 
-    await expect(status.finish({ text: ANSWER, answerMarkers })).resolves.toBe(
-      'answer-1',
-    );
+    await expect(
+      status.finish({
+        text: ANSWER,
+        answerMarkers: TEAMS_ASSISTANT_ANSWER_MARKERS,
+      }),
+    ).resolves.toBe('answer-1');
 
     expect(sendActivityMock).toHaveBeenLastCalledWith({
       ...CONVERSATION,
       accessToken: 'token',
-      activity: { ...message(ANSWER), ...answerMarkers },
+      activity: { ...message(ANSWER), ...TEAMS_ASSISTANT_ANSWER_MARKERS },
     });
   });
 
