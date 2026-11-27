@@ -40,6 +40,7 @@ export const buildMcpServerSignInFlatConnectionProvider = ({
     oauthConfig: null,
     customConfig: null,
     oauthDiscoveryConfig: { resourceUrl: mcpServer.url },
+    interactiveConfig: null,
     identifyAccountLogicFunctionUniversalIdentifier: null,
     onConnectLogicFunctionUniversalIdentifier: null,
     onDisconnectLogicFunctionUniversalIdentifier: null,

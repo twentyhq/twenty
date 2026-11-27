@@ -87,6 +87,14 @@ export const fromConnectionProviderManifestToUniversalFlatConnectionProvider =
                 connectionProviderManifest.oauthDiscovery.resourceUrl,
             }
           : null,
+      interactiveConfig:
+        connectionProviderManifest.type === 'interactive'
+          ? {
+              stepLogicFunctionUniversalIdentifier:
+                connectionProviderManifest.interactive
+                  .stepLogicFunctionUniversalIdentifier,
+            }
+          : null,
       identifyAccountLogicFunctionUniversalIdentifier:
         normalizedManifest.identifyAccountLogicFunctionUniversalIdentifier ??
         null,

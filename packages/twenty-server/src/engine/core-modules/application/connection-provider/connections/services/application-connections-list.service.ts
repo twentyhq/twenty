@@ -272,10 +272,10 @@ export class ApplicationConnectionsListService {
         };
       }
 
-      if (provider.type === 'custom') {
+      if (provider.type === 'custom' || provider.type === 'interactive') {
         return {
           ...connectionFields,
-          providerType: 'custom',
+          providerType: provider.type,
           accessToken: isDefined(account.accessToken)
             ? await this.decryptAccessToken({ account, workspaceId })
             : null,

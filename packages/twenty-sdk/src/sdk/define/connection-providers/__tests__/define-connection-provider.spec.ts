@@ -232,6 +232,66 @@ describe('defineConnectionProvider', () => {
     });
   });
 
+  describe('interactive type', () => {
+    const baseInteractiveConfig = {
+      universalIdentifier: '99fcd8e8-fbb1-4d2c-bc16-7c61ef3edddd',
+      name: 'linkedin',
+      displayName: 'LinkedIn',
+      type: 'interactive' as const,
+      interactive: {
+        stepLogicFunctionUniversalIdentifier:
+          'b648f87b-1d26-4961-b974-0908fd991063',
+      },
+    };
+
+    it('returns success for a valid config', () => {
+      const result = defineConnectionProvider(baseInteractiveConfig);
+
+      expect(result.success).toBe(true);
+      expect(result.errors).toEqual([]);
+    });
+
+    it('reports a missing interactive config block', () => {
+      const result = defineConnectionProvider({
+        ...baseInteractiveConfig,
+        interactive: undefined as never,
+      });
+
+      expect(result.success).toBe(false);
+      expect(result.errors).toContain(
+        "Connection provider with type 'interactive' must declare an `interactive` config block",
+      );
+    });
+
+    it('reports a missing step logic function', () => {
+      const result = defineConnectionProvider({
+        ...baseInteractiveConfig,
+        interactive: {
+          stepLogicFunctionUniversalIdentifier: undefined as never,
+        },
+      });
+
+      expect(result.success).toBe(false);
+      expect(result.errors).toContain(
+        'Interactive connection provider must declare interactive.stepLogicFunctionUniversalIdentifier',
+      );
+    });
+
+    it('rejects a non-UUID step logic function reference', () => {
+      const result = defineConnectionProvider({
+        ...baseInteractiveConfig,
+        interactive: { stepLogicFunctionUniversalIdentifier: 'linkedin-step' },
+      });
+
+      expect(result.success).toBe(false);
+      expect(
+        result.errors.some((error) =>
+          error.includes('interactive.stepLogicFunctionUniversalIdentifier'),
+        ),
+      ).toBe(true);
+    });
+  });
+
   describe('api-key type', () => {
     const baseApiKeyConfig = {
       universalIdentifier: '99fcd8e8-fbb1-4d2c-bc16-7c61ef3ecccc',

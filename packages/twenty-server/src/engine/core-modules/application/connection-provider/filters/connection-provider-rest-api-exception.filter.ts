@@ -25,6 +25,7 @@ const connectionProviderExceptionCodeToHttpStatus = (
     case ConnectionProviderExceptionCode.IDENTIFY_ACCOUNT_LOGIC_FUNCTION_NOT_FOUND:
     case ConnectionProviderExceptionCode.AUTHORIZE_LOGIC_FUNCTION_NOT_FOUND:
     case ConnectionProviderExceptionCode.CALLBACK_LOGIC_FUNCTION_NOT_FOUND:
+    case ConnectionProviderExceptionCode.STEP_LOGIC_FUNCTION_NOT_FOUND:
       return 404;
     case ConnectionProviderExceptionCode.FORBIDDEN:
       return 403;
@@ -36,6 +37,7 @@ const connectionProviderExceptionCodeToHttpStatus = (
     case ConnectionProviderExceptionCode.API_KEY_NOT_VERIFIED:
     case ConnectionProviderExceptionCode.API_KEY_MISSING:
     case ConnectionProviderExceptionCode.APPLICATION_CHARGE_DECLINED:
+    case ConnectionProviderExceptionCode.INTERACTIVE_CONNECTION_EXPIRED:
       return 400;
     case ConnectionProviderExceptionCode.CLIENT_CREDENTIALS_NOT_CONFIGURED:
     case ConnectionProviderExceptionCode.TOKEN_EXCHANGE_FAILED:
@@ -44,6 +46,7 @@ const connectionProviderExceptionCodeToHttpStatus = (
     case ConnectionProviderExceptionCode.IDENTIFY_ACCOUNT_LOGIC_FUNCTION_FAILED:
     case ConnectionProviderExceptionCode.AUTHORIZE_LOGIC_FUNCTION_FAILED:
     case ConnectionProviderExceptionCode.CALLBACK_LOGIC_FUNCTION_FAILED:
+    case ConnectionProviderExceptionCode.STEP_LOGIC_FUNCTION_FAILED:
       return 500;
     default:
       return assertUnreachable(code);

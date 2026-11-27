@@ -113,6 +113,20 @@ export class FlatConnectionProviderValidatorService {
       }
     }
 
+    if (
+      flatConnectionProvider.type === 'interactive' &&
+      !isNonEmptyString(
+        flatConnectionProvider.interactiveConfig
+          ?.stepLogicFunctionUniversalIdentifier,
+      )
+    ) {
+      validationResult.errors.push({
+        code: ConnectionProviderExceptionCode.INVALID_CONNECTION_PROVIDER_INPUT,
+        message: t`Connection provider with type 'interactive' must reference a step logic function`,
+        userFriendlyMessage: msg`Interactive connection provider is missing its step logic function`,
+      });
+    }
+
     const existingByName = Object.values(
       optimisticFlatConnectionProviderMaps.byUniversalIdentifier,
     ).find(

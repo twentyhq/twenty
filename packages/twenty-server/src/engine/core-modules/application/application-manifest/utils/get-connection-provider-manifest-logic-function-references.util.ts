@@ -9,7 +9,8 @@ type ConnectionProviderLogicFunctionHook =
   | 'onConnect'
   | 'onDisconnect'
   | 'authorize'
-  | 'callback';
+  | 'callback'
+  | 'step';
 
 export const getConnectionProviderManifestLogicFunctionReferences = (
   connectionProvider: ConnectionProviderManifest,
@@ -51,6 +52,14 @@ export const getConnectionProviderManifestLogicFunctionReferences = (
     {
       hook: 'callback',
       universalIdentifier: custom?.callbackLogicFunctionUniversalIdentifier,
+    },
+    {
+      hook: 'step',
+      universalIdentifier:
+        normalizedConnectionProvider.type === 'interactive'
+          ? normalizedConnectionProvider.interactive
+              .stepLogicFunctionUniversalIdentifier
+          : undefined,
     },
   ];
 

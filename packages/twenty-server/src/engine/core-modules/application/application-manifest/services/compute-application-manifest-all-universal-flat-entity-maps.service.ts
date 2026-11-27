@@ -65,6 +65,7 @@ const CONNECTION_FLOW_HOOKS = new Set([
   'identifyAccount',
   'authorize',
   'callback',
+  'step',
 ]);
 
 @Injectable()
