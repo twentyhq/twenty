@@ -195,6 +195,28 @@ export class ApplicationService {
     return findActiveFlatApplicationById(flatApplicationMaps, applicationId);
   }
 
+  async findInstalledFlatApplicationOrThrow({
+    applicationId,
+    workspaceId,
+  }: {
+    applicationId: string;
+    workspaceId: string;
+  }): Promise<FlatApplication> {
+    const flatApplication = await this.findInstalledFlatApplication({
+      applicationId,
+      workspaceId,
+    });
+
+    if (!isDefined(flatApplication)) {
+      throw new ApplicationException(
+        `Application with id ${applicationId} not found`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    return flatApplication;
+  }
+
   async findReadableInstalledFlatApplication({
     applicationId,
     workspaceId,
