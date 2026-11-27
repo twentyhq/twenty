@@ -383,24 +383,6 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TOKENS_DURATION,
-    description: 'Duration for which the refresh token is valid',
-    type: ConfigVariableType.STRING,
-  })
-  @IsOptional()
-  REFRESH_TOKEN_EXPIRES_IN = '60d';
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.TOKENS_DURATION,
-    description:
-      'Grace period allowing concurrent refresh token use (e.g. two tabs refreshing simultaneously). Reuse after this window triggers suspicious activity detection.',
-    type: ConfigVariableType.STRING,
-  })
-  @IsNonNegativeDuration()
-  @IsOptional()
-  REFRESH_TOKEN_REUSE_GRACE_PERIOD = '1m';
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.TOKENS_DURATION,
     description:
       'Absolute lifetime of a cookie-based user session, set at sign-in and never extended',
     type: ConfigVariableType.STRING,

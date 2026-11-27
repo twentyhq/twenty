@@ -23,7 +23,6 @@ import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { AGENT_CHAT_PENDING_INPUT_THREAD_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/agent-chat-seeds.constant';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { COMPANY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/company-data-seeds.constant';
 import { OPPORTUNITY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/opportunity-data-seeds.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
@@ -42,15 +41,12 @@ const AGENT_CHAT_PENDING_INPUT_SEED_NAMESPACE =
 const MEMBERS = {
   TIM: {
     workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
-    userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.TIM,
   },
   JONY: {
     workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-    userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
   },
   PHIL: {
     workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
-    userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.PHIL,
   },
 } as const;
 
@@ -441,7 +437,7 @@ export class DevSeederAgentChatPendingInputWorkspaceService {
       turnId: questionTurnId,
       role: AgentMessageRole.USER,
       agentId: null,
-      senderUserWorkspaceId: askedBy.userWorkspaceId,
+      senderWorkspaceMemberId: askedBy.workspaceMemberId,
       parts: [{ type: 'text', text: conversation.prompt }],
     });
 
@@ -465,7 +461,7 @@ export class DevSeederAgentChatPendingInputWorkspaceService {
       turnId: questionTurnId,
       role: AgentMessageRole.ASSISTANT,
       agentId: null,
-      senderUserWorkspaceId: null,
+      senderWorkspaceMemberId: null,
       parts: mapAiStepsToUIMessageParts([
         {
           content: [
@@ -514,7 +510,7 @@ export class DevSeederAgentChatPendingInputWorkspaceService {
       turnId: answerTurnId,
       role: AgentMessageRole.USER,
       agentId: null,
-      senderUserWorkspaceId: askedBy.userWorkspaceId,
+      senderWorkspaceMemberId: askedBy.workspaceMemberId,
       parts: [{ type: 'text', text: completion.answerText }],
     });
 
@@ -525,7 +521,7 @@ export class DevSeederAgentChatPendingInputWorkspaceService {
       turnId: answerTurnId,
       role: AgentMessageRole.ASSISTANT,
       agentId: null,
-      senderUserWorkspaceId: null,
+      senderWorkspaceMemberId: null,
       parts: [{ type: 'text', text: conversation.answer.reply }],
     });
   }

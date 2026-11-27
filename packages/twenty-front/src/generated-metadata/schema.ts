@@ -215,7 +215,6 @@ export type AgentMessage = {
   reactions: Array<AgentMessageReactionSummary>;
   role: Scalars['String']['output'];
   senderApplicationId?: Maybe<Scalars['UUID']['output']>;
-  senderUserWorkspaceId?: Maybe<Scalars['UUID']['output']>;
   senderWorkspaceMemberId?: Maybe<Scalars['UUID']['output']>;
   status: Scalars['String']['output'];
   threadId: Scalars['UUID']['output'];
@@ -1061,7 +1060,8 @@ export type AuthToken = {
 export type AuthTokenPair = {
   __typename?: 'AuthTokenPair';
   accessOrWorkspaceAgnosticToken: AuthToken;
-  refreshToken: AuthToken;
+  /** @deprecated Always null. Will be removed. */
+  refreshToken?: Maybe<AuthToken>;
 };
 
 export type AuthTokens = {
@@ -1898,6 +1898,7 @@ export type CreateEmailingDomainInput = {
 export type CreateFieldInput = {
   defaultValue?: InputMaybe<Scalars['JSON']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
+  formula?: InputMaybe<Scalars['JSON']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
   isActive?: InputMaybe<Scalars['Boolean']['input']>;
   isAuditLogged?: InputMaybe<Scalars['Boolean']['input']>;
@@ -1988,6 +1989,7 @@ export type CreateNavigationMenuItemInput = {
   type: NavigationMenuItemType;
   userWorkspaceId?: InputMaybe<Scalars['UUID']['input']>;
   viewId?: InputMaybe<Scalars['UUID']['input']>;
+  visibleItemLimit?: InputMaybe<Scalars['Int']['input']>;
   workflowId?: InputMaybe<Scalars['UUID']['input']>;
 };
 
@@ -2181,6 +2183,7 @@ export type CreateViewInput = {
   kanbanAggregateOperationFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   kanbanColumnWidth?: InputMaybe<Scalars['Int']['input']>;
   key?: InputMaybe<ViewKey>;
+  listPinnedFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   mainGroupByFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   name: Scalars['String']['input'];
   objectMetadataId: Scalars['UUID']['input'];
@@ -2692,6 +2695,7 @@ export type FeatureFlag = {
 };
 
 export enum FeatureFlagKey {
+  IS_ADMIN_CHANNEL_WRITE_ACCESS_RESTORED = 'IS_ADMIN_CHANNEL_WRITE_ACCESS_RESTORED',
   IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED = 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED',
   IS_AI_CHAT_COMPONENT_BUILDER_ENABLED = 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED',
   IS_AI_CHAT_INBOX_ENABLED = 'IS_AI_CHAT_INBOX_ENABLED',
@@ -2718,6 +2722,7 @@ export type Field = {
   defaultValue?: Maybe<Scalars['JSON']['output']>;
   description?: Maybe<Scalars['String']['output']>;
   disabledFieldPermissionActions?: Maybe<Array<Scalars['String']['output']>>;
+  formula?: Maybe<Scalars['JSON']['output']>;
   icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['UUID']['output'];
   isActive?: Maybe<Scalars['Boolean']['output']>;
@@ -3955,6 +3960,7 @@ export type Mutation = {
   removeRecordShare: RecordSharingDto;
   removeRoleFromAgent: Scalars['Boolean']['output'];
   renewApplicationToken: ApplicationTokenPair;
+  /** @deprecated Refresh tokens are no longer issued; this is removed once the last one expires. */
   renewToken: AuthTokens;
   reopenAgentChatThreadInChannel: Scalars['Boolean']['output'];
   reportAppConnectionAuthFailure: Scalars['Boolean']['output'];
@@ -5149,11 +5155,6 @@ export type MutationSignInArgs = {
 };
 
 
-export type MutationSignOutArgs = {
-  refreshToken?: InputMaybe<Scalars['String']['input']>;
-};
-
-
 export type MutationSignUpArgs = {
   affiliatePartnerName?: InputMaybe<Scalars['String']['input']>;
   captchaToken?: InputMaybe<Scalars['String']['input']>;
@@ -5713,6 +5714,7 @@ export type NavigationMenuItem = {
   updatedAt: Scalars['DateTime']['output'];
   userWorkspaceId?: Maybe<Scalars['UUID']['output']>;
   viewId?: Maybe<Scalars['UUID']['output']>;
+  visibleItemLimit?: Maybe<Scalars['Int']['output']>;
   workflowId?: Maybe<Scalars['UUID']['output']>;
 };
 
@@ -7161,6 +7163,7 @@ export type Role = {
   agents: Array<Agent>;
   apiKeys: Array<ApiKeyForRole>;
   applicationId: Scalars['UUID']['output'];
+  areRecordPermissionsEditable: Scalars['Boolean']['output'];
   canAccessAllAgentChatChannels: Scalars['Boolean']['output'];
   canAccessAllTools: Scalars['Boolean']['output'];
   canBeAssignedToAgents: Scalars['Boolean']['output'];
@@ -7477,7 +7480,7 @@ export type SendInboxMessageInput = {
   text: Scalars['String']['input'];
   threadKey: Scalars['String']['input'];
   title: Scalars['String']['input'];
-  toolCall?: InputMaybe<Scalars['JSON']['input']>;
+  toolCalls?: InputMaybe<Array<Scalars['JSON']['input']>>;
   workspaceMemberIds: Array<Scalars['UUID']['input']>;
 };
 
@@ -8003,6 +8006,7 @@ export type UpdateEmailGroupChannelInput = {
 export type UpdateFieldInput = {
   defaultValue?: InputMaybe<Scalars['JSON']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
+  formula?: InputMaybe<Scalars['JSON']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
   isActive?: InputMaybe<Scalars['Boolean']['input']>;
   isAuditLogged?: InputMaybe<Scalars['Boolean']['input']>;
@@ -8126,6 +8130,7 @@ export type UpdateNavigationMenuItemInput = {
   pageLayoutId?: InputMaybe<Scalars['UUID']['input']>;
   parentId?: InputMaybe<Scalars['UUID']['input']>;
   position?: InputMaybe<Scalars['Float']['input']>;
+  visibleItemLimit?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type UpdateObjectPayload = {
@@ -8383,6 +8388,7 @@ export type UpdateViewInput = {
   kanbanAggregateOperation?: InputMaybe<AggregateOperations>;
   kanbanAggregateOperationFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   kanbanColumnWidth?: InputMaybe<Scalars['Int']['input']>;
+  listPinnedFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   mainGroupByFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   /** Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
@@ -8925,6 +8931,7 @@ export type View = {
   kanbanAggregateOperationFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
   kanbanColumnWidth?: Maybe<Scalars['Int']['output']>;
   key?: Maybe<ViewKey>;
+  listPinnedFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
   mainGroupByFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
   name: Scalars['String']['output'];
   objectMetadataId: Scalars['UUID']['output'];

@@ -1197,13 +1197,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
               "canSoftDeleteAllRecords": false,
               "canUpdateAllRecords": true,
               "objectUniversalIdentifier": "54b589ca-eeed-4950-a176-358418b85c05",
-              "uneditableFields": [
-                "58a0a314-d7ea-4865-9850-7fb84e72f30b",
-              ],
               "universalIdentifier": "fab82874-880a-556f-93d9-626610bb0770",
-              "unreadableFields": [
-                "58a0a314-d7ea-4865-9850-7fb84e72f30b",
-              ],
             },
             {
               "canDestroyAllRecords": false,
@@ -1220,7 +1214,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
       {
         "canBeAssignedToAgents": false,
         "canBeAssignedToApiKeys": false,
-        "canBeAssignedToUsers": true,
+        "canBeAssignedToUsers": false,
         "canUpdateAllSettings": false,
         "description": "A simple root-level role",
         "label": "Root role",

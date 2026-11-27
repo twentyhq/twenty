@@ -17,6 +17,7 @@ import { buildNextAgentChatLastMentionedAt } from 'src/engine/metadata-modules/a
 import { buildNextAgentChatThreadParticipantUpdatedAt } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-next-agent-chat-thread-participant-updated-at.util';
 import { findAgentChatFlatObjectMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-flat-object-metadata.util';
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
+import { InboxObjectNamesResolverService } from 'src/engine/metadata-modules/ai/ai-history/services/inbox-object-names-resolver.service';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -32,6 +33,7 @@ export class AgentChatInboxParticipantWriterService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordShareSystemWriteService: RecordShareSystemWriteService,
     private readonly privateRecordSystemWriteService: PrivateRecordSystemWriteService,
+    private readonly inboxObjectNamesResolverService: InboxObjectNamesResolverService,
   ) {}
 
   async writeParticipantInboxState({
@@ -131,9 +133,11 @@ export class AgentChatInboxParticipantWriterService {
     reason: AgentChatInboxDeliveryReason;
     participantObjectMetadata: FlatObjectMetadata;
   }): Promise<AgentChatThreadParticipantWrite[]> {
+    const { agentChatThreadParticipant: participantObjectName } =
+      await this.inboxObjectNamesResolverService.resolve(workspaceId);
     const participantRepository =
       scope.getRepositoryWithoutPermissionChecks<AgentChatThreadParticipantRow>(
-        'agentChatThreadParticipant',
+        participantObjectName,
         { shouldSkipEventEmission: true },
       );
     const findParticipants = () =>

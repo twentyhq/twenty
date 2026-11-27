@@ -106,6 +106,7 @@ type ChatExecutionProfile = {
   >;
   isWorkspaceSetupKickoffTurn: boolean;
   canAttachConversationToRecords: boolean;
+  hasFileTools: boolean;
 };
 
 @Injectable()
@@ -215,6 +216,7 @@ export class ChatExecutionService {
             browsingContext: executionProfile.browsingContext,
             workspaceMemberId: authContext.workspaceMemberId,
             timezone: userContext.timezone,
+            hasFileTools: executionProfile.hasFileTools,
           },
         );
         const { contexts, conversation } = splitContextInstructions(
@@ -252,10 +254,12 @@ export class ChatExecutionService {
             toolCatalog: toolset.toolCatalog,
             ...skillContext,
             preloadedTools: toolset.directToolNames,
-            uploadedFilesContext: {
-              uploadedFiles: collectUploadedFileReferences(messages),
-              codeInterpreterFiles,
-            },
+            uploadedFilesContext: executionProfile.hasFileTools
+              ? {
+                  uploadedFiles: collectUploadedFileReferences(messages),
+                  codeInterpreterFiles,
+                }
+              : undefined,
             workspaceInstructions:
               workspace.aiAdditionalInstructions ?? undefined,
             userContext,
@@ -346,6 +350,7 @@ export class ChatExecutionService {
           Promise.resolve({ skillCatalog: [], referencedSkills: [] }),
         isWorkspaceSetupKickoffTurn: false,
         canAttachConversationToRecords: false,
+        hasFileTools: false,
       };
     }
 
@@ -411,6 +416,7 @@ export class ChatExecutionService {
       }),
       isWorkspaceSetupKickoffTurn,
       canAttachConversationToRecords,
+      hasFileTools: true,
     };
   }
 
@@ -421,6 +427,7 @@ export class ChatExecutionService {
     browsingContext,
     workspaceMemberId,
     timezone,
+    hasFileTools,
   }: {
     workspace: WorkspaceEntity;
     messages: ExtendedUIMessage[];
@@ -428,11 +435,13 @@ export class ChatExecutionService {
     browsingContext: BrowsingContextType | null;
     workspaceMemberId: string;
     timezone: string | null;
+    hasFileTools: boolean;
   }): {
     preparedMessages: ExtendedUIMessage[];
     codeInterpreterFiles: UploadedFileReference[];
   } {
-    const isCodeInterpreterEnabled = this.codeInterpreterService.isEnabled();
+    const isCodeInterpreterEnabled =
+      hasFileTools && this.codeInterpreterService.isEnabled();
 
     let processedMessages = replaceUnsupportedFileParts(
       messages,

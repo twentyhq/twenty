@@ -6,6 +6,7 @@ import { aiChatThreadViewVisitFamilyState } from '@/ai-chat/states/view/aiChatTh
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
 import { isAiChatMessageOwn } from '@/ai-chat/messages/utils/isAiChatMessageOwn';
 import { isSilentAiChatMessage } from '@/ai-chat/messages/utils/isSilentAiChatMessage';
+import { isToolsOnlyAiChatMessage } from '@/ai-chat/messages/utils/isToolsOnlyAiChatMessage';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 
@@ -42,7 +43,8 @@ export const aiChatFirstUnreadMessageIdFamilySelector =
 
           if (
             message.role === AGENT_MESSAGE_ROLE.SYSTEM ||
-            !isDefined(createdAt)
+            !isDefined(createdAt) ||
+            isToolsOnlyAiChatMessage(message)
           ) {
             return false;
           }

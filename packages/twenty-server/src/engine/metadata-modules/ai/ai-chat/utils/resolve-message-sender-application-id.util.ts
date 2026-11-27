@@ -5,10 +5,10 @@ import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storag
 
 export const resolveMessageSenderApplicationId = ({
   workspaceId,
-  userWorkspaceId,
+  workspaceMemberId,
 }: {
   workspaceId: string;
-  userWorkspaceId?: string;
+  workspaceMemberId?: string;
 }): string | null => {
   const context = workspaceAuthContextStorage.getStore();
 
@@ -18,7 +18,7 @@ export const resolveMessageSenderApplicationId = ({
 
   if (
     context.workspace.id !== workspaceId ||
-    context.userWorkspaceId !== userWorkspaceId
+    context.workspaceMemberId !== workspaceMemberId
   ) {
     return null;
   }

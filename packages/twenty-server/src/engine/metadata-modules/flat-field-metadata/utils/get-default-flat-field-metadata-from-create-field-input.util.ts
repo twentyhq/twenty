@@ -83,6 +83,7 @@ export const getDefaultFlatFieldMetadata = ({
     calendarEndViewUniversalIdentifiers: [],
     mainGroupByFieldMetadataViewUniversalIdentifiers: [],
     universalSettings: settings ?? null,
+    formula: createFieldInput.formula ?? null,
     viewSortUniversalIdentifiers: [],
     searchFieldMetadataUniversalIdentifiers: [],
     fieldMetadataOptionUniversalIdentifiers: [],

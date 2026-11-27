@@ -140,6 +140,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: true,
       universalProperty: 'universalSettings',
     },
+    formula: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
     objectMetadataId: {
       toCompare: false,
       toStringify: false,
@@ -346,7 +351,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     },
     key: { toCompare: false, toStringify: false, universalProperty: undefined },
     deletedAt: {
-      toCompare: true,
+      toCompare: false,
       toStringify: false,
       universalProperty: undefined,
     },
@@ -431,6 +436,12 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: 'calendarEndFieldMetadataUniversalIdentifier',
+      isOverridable: true,
+    },
+    listPinnedFieldMetadataId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: 'listPinnedFieldMetadataUniversalIdentifier',
       isOverridable: true,
     },
     isPrivate: {
@@ -529,7 +540,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     deletedAt: {
       toStringify: false,
       universalProperty: undefined,
-      toCompare: true,
+      toCompare: false,
     },
     createdAt: {
       toCompare: false,
@@ -610,7 +621,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       isOverridable: true,
     },
     deletedAt: {
-      toCompare: true,
+      toCompare: false,
       toStringify: false,
       universalProperty: undefined,
     },
@@ -663,7 +674,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     deletedAt: {
-      toCompare: true,
+      toCompare: false,
       toStringify: false,
       universalProperty: undefined,
     },
@@ -831,7 +842,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: 'viewUniversalIdentifier',
     },
     deletedAt: {
-      toCompare: true,
+      toCompare: false,
       toStringify: false,
       universalProperty: undefined,
     },
@@ -1520,6 +1531,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
+    visibleItemLimit: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     icon: { toCompare: true, toStringify: false, universalProperty: undefined },
     color: {
       toCompare: true,
@@ -1998,7 +2014,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: 'viewUniversalIdentifier',
     },
     deletedAt: {
-      toCompare: true,
+      toCompare: false,
       toStringify: false,
       universalProperty: undefined,
     },
@@ -2010,7 +2026,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: 'viewUniversalIdentifier',
     },
     deletedAt: {
-      toCompare: true,
+      toCompare: false,
       toStringify: false,
       universalProperty: undefined,
     },
@@ -2624,12 +2640,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
-    expression: {
-      toCompare: true,
-      toStringify: false,
-      universalProperty: undefined,
-    },
-    bindings: {
+    tree: {
       toCompare: true,
       toStringify: true,
       universalProperty: undefined,

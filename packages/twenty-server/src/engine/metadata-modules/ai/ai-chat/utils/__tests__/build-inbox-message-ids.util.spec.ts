@@ -11,6 +11,12 @@ describe('buildInboxMessageIds', () => {
     expect(buildInboxMessageIds(INPUT)).toEqual(buildInboxMessageIds(INPUT));
   });
 
+  it('names the tool call after the message', () => {
+    const { messageId, toolCallId } = buildInboxMessageIds(INPUT);
+
+    expect(toolCallId).toBe(`call_${messageId.replace(/-/g, '')}`);
+  });
+
   it('returns distinct ids for each record of one message', () => {
     const ids = Object.values(buildInboxMessageIds(INPUT));
 

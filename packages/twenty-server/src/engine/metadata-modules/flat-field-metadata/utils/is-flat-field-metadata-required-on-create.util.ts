@@ -5,5 +5,6 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 export const isFlatFieldMetadataRequiredOnCreate = (
   flatFieldMetadata: Pick<FlatFieldMetadata, 'isNullable' | 'defaultValue'>,
 ): boolean =>
-  flatFieldMetadata.isNullable === false &&
+  isDefined(flatFieldMetadata.isNullable) &&
+  !flatFieldMetadata.isNullable &&
   !isDefined(flatFieldMetadata.defaultValue);

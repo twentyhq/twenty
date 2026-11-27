@@ -24,8 +24,13 @@ const previewTooltipClass = css`
 `;
 
 export const SidePanelSearchRecordsPage = () => {
-  const { searchResultItems, loading, noResults, error } =
-    useSidePanelSearchRecords();
+  const {
+    searchResultItems,
+    loading,
+    isWaitingForDebouncedSearch,
+    noResults,
+    error,
+  } = useSidePanelSearchRecords();
   const { readableObjectMetadataItems } = useReadableObjectMetadataItems();
   const isMobile = useIsMobile();
 
@@ -69,7 +74,7 @@ export const SidePanelSearchRecordsPage = () => {
 
       <SidePanelList
         selectableItemIds={selectableItemIds}
-        loading={loading}
+        loading={loading || isWaitingForDebouncedSearch}
         noResults={noResults}
       >
         {searchResultItemGroups.map((searchResultItemGroup) => (

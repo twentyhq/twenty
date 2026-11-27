@@ -146,6 +146,8 @@ Altri comandi dell'app:
 
 Per impostazione predefinita, le definizioni mancanti dal codice sorgente vengono eliminate dallo spazio di lavoro. Passa `--no-prune` per mantenerli. L'applicazione Custom dell'area di lavoro li mantiene a meno che non passi `--prune`. L'eliminazione di oggetti o campi elimina anche i relativi dati, quindi richiede conferma. Per i dettagli, consulta [Sincronizzazione e ripristino](/it/developers/extend/apps/operations/sync-and-recovery).
 
+Al di fuori dell'applicazione personalizzata dell'area di lavoro, `plan`, `apply`, `dev` e `publish` rifiutano i ruoli che i membri dell'area di lavoro o le chiavi API possono detenere, nonché le autorizzazioni a livello di campo o di riga. Consulta [Ruoli al di fuori dell'applicazione personalizzata dell'area di lavoro](/it/developers/extend/apps/config/roles#roles-outside-the-workspace-custom-application).
+
 ## Esecuzione di funzioni
 
 Esegui una funzione logica distribuita senza attivarla tramite un percorso, un cron o un evento del database. Prima sincronizza le modifiche locali con `app apply` o `app dev`.

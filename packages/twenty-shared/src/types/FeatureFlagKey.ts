@@ -6,6 +6,8 @@ export enum FeatureFlagKey {
   IS_AI_CHAT_INBOX_ENABLED = 'IS_AI_CHAT_INBOX_ENABLED',
   IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED = 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED',
   IS_MCP_SERVERS_ENABLED = 'IS_MCP_SERVERS_ENABLED',
+  // TODO(@charlesBochet): remove after 2026-12-27. Temporary channel write access for admins and API keys, only to unblock customers who reported broken links, merges and deletes
+  IS_ADMIN_CHANNEL_WRITE_ACCESS_RESTORED = 'IS_ADMIN_CHANNEL_WRITE_ACCESS_RESTORED',
   // TODO(@charlesBochet): remove the API key channel visibility exemption after 2026-11-30
   IS_CHANNEL_VISIBILITY_ENFORCED_ON_API_KEYS = 'IS_CHANNEL_VISIBILITY_ENFORCED_ON_API_KEYS',
   IS_AI_DATA_POLICY_ENABLED = 'IS_AI_DATA_POLICY_ENABLED',

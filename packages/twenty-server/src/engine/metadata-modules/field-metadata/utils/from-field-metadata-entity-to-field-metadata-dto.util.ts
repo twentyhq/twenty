@@ -50,6 +50,7 @@ export const fromFieldMetadataEntityToFieldMetadataDto = (
     entity.options ??
     undefined,
   settings: entity.settings ?? undefined,
+  formula: entity.formula ?? null,
   workspaceId: entity.workspaceId,
   objectMetadataId: entity.objectMetadataId,
   isLabelSyncedWithName: entity.isLabelSyncedWithName,

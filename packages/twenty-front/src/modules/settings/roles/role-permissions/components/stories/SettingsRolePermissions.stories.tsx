@@ -24,7 +24,8 @@ const SettingsRolePermissionsWrapper = (
   return (
     <SettingsRolePermissions
       roleId={args.roleId}
-      isEditable={args.isEditable}
+      areRecordPermissionsEditable={args.areRecordPermissionsEditable}
+      arePermissionFlagsEditable={args.arePermissionFlagsEditable}
     />
   );
 };
@@ -41,20 +42,23 @@ type Story = StoryObj<typeof SettingsRolePermissionsWrapper>;
 export const Default: Story = {
   args: {
     roleId: mockedRoles[0].id,
-    isEditable: true,
+    areRecordPermissionsEditable: true,
+    arePermissionFlagsEditable: true,
   },
 };
 
 export const ReadOnly: Story = {
   args: {
     roleId: mockedRoles[0].id,
-    isEditable: false,
+    areRecordPermissionsEditable: false,
+    arePermissionFlagsEditable: false,
   },
 };
 
 export const PendingRole: Story = {
   args: {
     roleId: 'newRoleId',
-    isEditable: true,
+    areRecordPermissionsEditable: true,
+    arePermissionFlagsEditable: true,
   },
 };

@@ -195,6 +195,30 @@ Changes to `isNullable` are applied on every sync, including syncs that update a
 }
 ```
 
+## Formula fields
+
+A `formula` makes a field computed: its value comes from an expression over other fields, and records cannot write it. It is a property of the field, next to `universalSettings`, not inside it, and it applies to `TEXT`, `NUMBER`, `BOOLEAN`, `DATE`, `DATE_TIME`, `SELECT`, `RATING` and `CURRENCY` fields.
+
+- `formula.expression` reads fields of the record by name (`price * quantity`), composite parts with a dot (`amount.amountMicros`), fields of a many-to-one related record (`company.name`), and aggregates over a one-to-many relation (`count(tasks)`, `sum(deals.amount.amountMicros, deals.stage == 'WON')`).
+- A `CURRENCY` formula computes the amount in micros, and also needs `formula.currencyCodeExpression`, such as `"USD"` or `amount.currencyCode`.
+- A formula field cannot be unique, searchable or the object's label identifier.
+
+```ts
+{
+  universalIdentifier: 'c2b8d1ef-5678-4a11-8bcd-111111111111',
+  name: 'total',
+  type: FieldType.NUMBER,
+  label: 'Total',
+  formula: { expression: 'price * quantity' },
+}
+```
+
+<Note>
+  Formula fields are behind the `IS_FORMULA_FIELD_ENABLED` feature flag. Syncing
+  a formula to a workspace without the flag fails with `Formula fields are not
+  enabled for this workspace`.
+</Note>
+
 ## What's next
 
 - **Connect this object to others** — see [Relations](/developers/extend/apps/data/relations) for the bidirectional relation pattern.

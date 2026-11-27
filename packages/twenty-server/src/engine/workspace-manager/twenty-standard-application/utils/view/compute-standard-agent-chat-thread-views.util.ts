@@ -1,7 +1,8 @@
 import { msg } from '@lingui/core/macro';
-import { ViewPresetFilter, ViewType } from 'twenty-shared/types';
+import { ViewPresetFilter } from 'twenty-shared/types';
 
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
+import { INBOX_THREAD_LIST_VIEW_SETTINGS } from 'src/engine/workspace-manager/twenty-standard-application/constants/inbox-thread-list-view-settings.constant';
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 import {
   createStandardViewFlatMetadata,
@@ -18,7 +19,7 @@ export const computeStandardAgentChatThreadViews = (
       context: {
         viewName: 'open',
         name: i18nLabel(msg({ message: `Open`, context: 'view.name' })),
-        type: ViewType.INBOX,
+        ...INBOX_THREAD_LIST_VIEW_SETTINGS,
         key: null,
         position: 0,
         icon: 'IconCircleDashed',
@@ -31,7 +32,7 @@ export const computeStandardAgentChatThreadViews = (
       context: {
         viewName: 'needsInput',
         name: i18nLabel(msg({ message: `Needs input`, context: 'view.name' })),
-        type: ViewType.INBOX,
+        ...INBOX_THREAD_LIST_VIEW_SETTINGS,
         key: null,
         position: 1,
         icon: 'IconHandClick',
@@ -44,7 +45,7 @@ export const computeStandardAgentChatThreadViews = (
       context: {
         viewName: 'mentions',
         name: i18nLabel(msg({ message: `Mentions`, context: 'view.name' })),
-        type: ViewType.INBOX,
+        ...INBOX_THREAD_LIST_VIEW_SETTINGS,
         key: null,
         position: 2,
         icon: 'IconAt',
@@ -59,7 +60,7 @@ export const computeStandardAgentChatThreadViews = (
         name: i18nLabel(
           msg({ message: `Assigned to me`, context: 'view.name' }),
         ),
-        type: ViewType.INBOX,
+        ...INBOX_THREAD_LIST_VIEW_SETTINGS,
         key: null,
         position: 3,
         icon: 'IconUserCircle',
@@ -72,7 +73,7 @@ export const computeStandardAgentChatThreadViews = (
       context: {
         viewName: 'snoozed',
         name: i18nLabel(msg({ message: `Snoozed`, context: 'view.name' })),
-        type: ViewType.INBOX,
+        ...INBOX_THREAD_LIST_VIEW_SETTINGS,
         key: null,
         position: 4,
         icon: 'IconZzz',
@@ -85,7 +86,7 @@ export const computeStandardAgentChatThreadViews = (
       context: {
         viewName: 'done',
         name: i18nLabel(msg({ message: `Done`, context: 'view.name' })),
-        type: ViewType.INBOX,
+        ...INBOX_THREAD_LIST_VIEW_SETTINGS,
         key: null,
         position: 5,
         icon: 'IconCircleCheck',

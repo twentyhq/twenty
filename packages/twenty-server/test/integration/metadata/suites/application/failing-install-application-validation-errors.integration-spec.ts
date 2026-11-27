@@ -32,6 +32,8 @@ const buildManifestWithCrossEntityIdentifierConflict = (
       {
         universalIdentifier: duplicatedUniversalIdentifier,
         label: 'Second Role',
+        canBeAssignedToUsers: false,
+        canBeAssignedToApiKeys: false,
         description: 'Second role',
         objectPermissions: [
           {
