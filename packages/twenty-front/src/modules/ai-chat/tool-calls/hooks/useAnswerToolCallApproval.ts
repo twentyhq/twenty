@@ -21,8 +21,6 @@ export const useAnswerToolCallApproval = ({
   const { answerAiChatToolCall } = useAnswerAiChatToolCall();
   const [pendingResponse, setPendingResponse] =
     useState<ToolCallApprovalResponse | null>(null);
-  const [isFeedbackShown, setIsFeedbackShown] = useState(false);
-  const [feedback, setFeedback] = useState('');
 
   const answerToolCallApproval = async (response: ToolCallApprovalResponse) => {
     setPendingResponse(response);
@@ -32,10 +30,7 @@ export const useAnswerToolCallApproval = ({
       response,
       optimisticToolOutput:
         response.decision === 'reject'
-          ? buildRejectedToolCallOutput({
-              proposal,
-              feedback: response.feedback,
-            })
+          ? buildRejectedToolCallOutput({ proposal })
           : undefined,
     });
 
@@ -52,34 +47,22 @@ export const useAnswerToolCallApproval = ({
     }
   };
 
-  const trimmedFeedback = feedback.trim();
-  const feedbackFields =
-    trimmedFeedback.length > 0 ? { feedback: trimmedFeedback } : {};
-
   const approve = (
     approval: Omit<
       Extract<ToolCallApprovalResponse, { decision: 'approve' }>,
       'decision' | 'feedback'
     >,
   ) => {
-    void answerToolCallApproval({
-      decision: 'approve',
-      ...approval,
-      ...feedbackFields,
-    });
+    void answerToolCallApproval({ decision: 'approve', ...approval });
   };
 
   const reject = () => {
-    void answerToolCallApproval({ decision: 'reject', ...feedbackFields });
+    void answerToolCallApproval({ decision: 'reject' });
   };
 
   return {
     pendingResponse,
     isAnswering: isDefined(pendingResponse),
-    isFeedbackShown,
-    showFeedback: () => setIsFeedbackShown(true),
-    feedback,
-    setFeedback,
     approve,
     reject,
   };

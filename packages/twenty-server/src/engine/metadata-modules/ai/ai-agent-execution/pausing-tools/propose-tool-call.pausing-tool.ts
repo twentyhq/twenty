@@ -386,7 +386,7 @@ export const PROPOSE_TOOL_CALL_PAUSING_TOOL = definePausingTool<
   toSkippedToolResult: (input, pendingToolOutput) => ({
     success: true,
     message:
-      'User sent another message instead of deciding on the proposed call. It was not run.',
+      'The user cancelled the proposed call by sending a new message instead of deciding on it. It was not run. The new message is not an approval: do not run the call unless the user asks for it again.',
     result: {
       status: 'skipped',
       proposal: readProposal(input, pendingToolOutput).proposal,

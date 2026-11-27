@@ -16,6 +16,8 @@ import {
 import { type LinkedinConnectionHookPayload } from 'src/logic-functions/types/linkedin-connection-hook-payload.type';
 import { bindLinkedinMessagingProvider } from 'src/logic-functions/utils/bind-linkedin-messaging-provider.util';
 import { buildLinkedinProfileHandle } from 'src/logic-functions/utils/build-linkedin-profile-handle.util';
+import { getLinkedinSettings } from 'src/logic-functions/utils/get-linkedin-settings.util';
+import { restartLinkedinHistoryImport } from 'src/logic-functions/utils/restart-linkedin-history-import.util';
 import { getUnipileAccountClaimKey } from 'src/unipile/utils/get-unipile-account-claim-key.util';
 import { getUnipileUser } from 'src/unipile/utils/get-unipile-user.util';
 
@@ -62,6 +64,11 @@ export const linkedinOnConnectHandler = async ({
     scope: 'SERVER',
   });
 
+  await restartLinkedinHistoryImport({
+    connectedAccountId,
+    settings: await getLinkedinSettings(connectedAccountId),
+  });
+
   return { messageChannelId: channel.id };
 };
 
@@ -69,7 +76,7 @@ export default defineLogicFunction({
   universalIdentifier: LINKEDIN_ON_CONNECT_UNIVERSAL_IDENTIFIER,
   name: 'linkedin-on-connect',
   description:
-    'Creates the message channel of a new LinkedIn connection, lets members reply through it and routes its Unipile webhooks to this workspace.',
+    'Creates the message channel of a LinkedIn connection and imports its most recent conversations.',
   timeoutSeconds: 30,
   handler: linkedinOnConnectHandler,
 });

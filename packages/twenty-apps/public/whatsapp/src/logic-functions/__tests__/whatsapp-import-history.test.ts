@@ -205,6 +205,24 @@ describe('whatsappImportHistoryHandler', () => {
     );
   });
 
+  it('logs each conversation as it is imported', async () => {
+    await whatsappImportHistoryHandler(PAYLOAD);
+
+    expect(
+      vi
+        .mocked(console.log)
+        .mock.calls.map(([message]) => String(message))
+        .filter((message) => message.includes('conversation chat-'))
+        .map((message) => message.replace(/^.*chunk 2: /, '')),
+    ).toEqual([
+      'start importing 1 messages from conversation chat-1',
+      '12 messages imported from conversation chat-1',
+      'conversation chat-1 imported',
+      'start importing 1 messages from conversation chat-2',
+      '0 messages imported from conversation chat-2',
+      'conversation chat-2 skipped (NO_CONTACT)',
+    ]);
+  });
   it('ingests a long chat page by page and records its cursor', async () => {
     mocks.listUnipileChatMessagesPage
       .mockReset()

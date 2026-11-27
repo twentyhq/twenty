@@ -42,7 +42,7 @@ export class CalendarGetCalendarEventsService {
       | 'workspaceId'
     >;
     syncCursor?: string;
-    recurringEventHorizon?: Date;
+    recurringEventHorizon: Date;
   }): Promise<GetCalendarEventsResponse> {
     switch (connectedAccount.provider) {
       case ConnectedAccountProvider.GOOGLE:

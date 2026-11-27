@@ -3,7 +3,6 @@ import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerT
 
 const flags = {
   hasAiPermission: true,
-  hasAiChatSectionInSidebar: false,
   isCustomizableSidebarEnabled: true,
 };
 
@@ -18,24 +17,28 @@ describe('isNavigationDrawerTabShown', () => {
     ).toBe(true);
   });
 
-  it('should show Inbox only with AI access and no chat section in the sidebar', () => {
+  it('should show Inbox only with AI access while the customizable sidebar is off', () => {
     expect(
       isNavigationDrawerTabShown({
         ...flags,
+        isCustomizableSidebarEnabled: false,
         tab: NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
       }),
     ).toBe(true);
     expect(
       isNavigationDrawerTabShown({
         ...flags,
-        hasAiChatSectionInSidebar: true,
+        isCustomizableSidebarEnabled: false,
+        hasAiPermission: false,
         tab: NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
       }),
     ).toBe(false);
+  });
+
+  it('should never show Inbox once the customizable sidebar is on', () => {
     expect(
       isNavigationDrawerTabShown({
         ...flags,
-        hasAiPermission: false,
         tab: NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
       }),
     ).toBe(false);

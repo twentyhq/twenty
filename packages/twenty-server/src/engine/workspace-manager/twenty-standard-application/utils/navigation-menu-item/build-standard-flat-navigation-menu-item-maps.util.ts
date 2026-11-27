@@ -88,6 +88,10 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
           universalIdentifier: sectionDefinition.universalIdentifier,
           name: null,
           builtInSectionKey: sectionDefinition.builtInSectionKey,
+          visibleItemLimit:
+            'visibleItemLimit' in sectionDefinition
+              ? sectionDefinition.visibleItemLimit
+              : null,
           position: sectionDefinition.position,
           parent,
           navigationMenuItemId: v4(),

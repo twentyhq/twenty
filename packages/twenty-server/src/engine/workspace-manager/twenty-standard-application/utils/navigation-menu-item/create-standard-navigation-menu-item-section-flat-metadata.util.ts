@@ -6,12 +6,14 @@ import { createStandardNavigationMenuItemFolderFlatMetadata } from 'src/engine/w
 
 export const createStandardNavigationMenuItemSectionFlatMetadata = ({
   builtInSectionKey = null,
+  visibleItemLimit = null,
   ...args
 }: Omit<
   Parameters<typeof createStandardNavigationMenuItemFolderFlatMetadata>[0],
   'color'
 > & {
   builtInSectionKey?: BuiltInSectionKey | null;
+  visibleItemLimit?: number | null;
 }): FlatNavigationMenuItem => ({
   ...createStandardNavigationMenuItemFolderFlatMetadata({
     ...args,
@@ -19,4 +21,5 @@ export const createStandardNavigationMenuItemSectionFlatMetadata = ({
   }),
   type: NavigationMenuItemType.SECTION,
   builtInSectionKey,
+  visibleItemLimit,
 });

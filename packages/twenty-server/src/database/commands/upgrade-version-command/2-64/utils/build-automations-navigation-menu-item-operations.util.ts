@@ -135,6 +135,7 @@ export const buildAutomationsNavigationMenuItemOperations = ({
     color: null,
     link: null,
     builtInSectionKey: null,
+    visibleItemLimit: null,
     isActive: true,
     overrides: null,
     userWorkspaceId: null,

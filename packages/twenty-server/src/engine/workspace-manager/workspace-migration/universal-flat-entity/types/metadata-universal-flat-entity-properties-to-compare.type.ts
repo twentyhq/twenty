@@ -38,6 +38,7 @@ type Assertions = [
       | 'defaultValue'
       | 'overrides'
       | 'options'
+      | 'formula'
       | 'isUnique'
       | 'isSearchable'
       | 'isAuditLogged'
@@ -54,7 +55,6 @@ type Assertions = [
       MetadataUniversalFlatEntityPropertiesToCompare<'view'>,
       | 'name'
       | 'icon'
-      | 'deletedAt'
       | 'type'
       | 'position'
       | 'isCompact'
@@ -64,6 +64,7 @@ type Assertions = [
       | 'calendarLayout'
       | 'calendarFieldMetadataUniversalIdentifier'
       | 'calendarEndFieldMetadataUniversalIdentifier'
+      | 'listPinnedFieldMetadataUniversalIdentifier'
       | 'mainGroupByFieldMetadataUniversalIdentifier'
       | 'shouldHideEmptyGroups'
       | 'shouldDisplayGroupsAsTabs'

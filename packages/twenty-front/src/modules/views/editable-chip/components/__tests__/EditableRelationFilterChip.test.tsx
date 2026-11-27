@@ -19,6 +19,30 @@ if (!isDefined(morphRelationFieldMetadataItem)) {
   throw new Error('Missing morph relation field on timelineActivity');
 }
 
+const companyRelationFieldMetadataItem = getMockObjectMetadataItemOrThrow(
+  'opportunity',
+).fields.find((field) => field.name === 'company');
+
+if (!isDefined(companyRelationFieldMetadataItem)) {
+  throw new Error('Missing company relation field on opportunity');
+}
+
+const currentRecordFilter: RecordFilter = {
+  id: 'record-filter-current-record',
+  fieldMetadataId: companyRelationFieldMetadataItem.id,
+  operand: ViewFilterOperand.IS,
+  value: JSON.stringify({
+    selectedRecordIds: [],
+    isCurrentRecordSelected: true,
+  }),
+  displayValue: JSON.stringify({
+    selectedRecordIds: [],
+    isCurrentRecordSelected: true,
+  }),
+  type: 'RELATION',
+  label: companyRelationFieldMetadataItem.label,
+};
+
 const morphRecordFilter: RecordFilter = {
   id: 'record-filter-morph',
   fieldMetadataId: morphRelationFieldMetadataItem.id,
@@ -57,5 +81,22 @@ describe('EditableRelationFilterChip', () => {
       screen.getByText(morphRelationFieldMetadataItem.label),
     ).toBeInTheDocument();
     expect(screen.getByText(/NotEmpty/)).toBeInTheDocument();
+  });
+
+  it('should render a current record filter as This record', () => {
+    render(
+      <EditableRelationFilterChip
+        recordFilter={currentRecordFilter}
+        onRemove={jest.fn()}
+      />,
+      {
+        wrapper: Wrapper,
+      },
+    );
+
+    expect(screen.getByText(/This record/)).toBeInTheDocument();
+    expect(
+      screen.queryByText(/isCurrentRecordSelected/),
+    ).not.toBeInTheDocument();
   });
 });

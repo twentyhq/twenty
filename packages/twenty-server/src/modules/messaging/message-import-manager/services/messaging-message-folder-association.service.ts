@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { type ActorMetadata } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -20,7 +18,6 @@ export class MessagingMessageFolderAssociationService {
     workspaceId: string,
     transactionScope: WorkspaceTransactionScope,
     associationIdsToReplaceLinks: string[],
-    createdBy?: ActorMetadata,
   ): Promise<string[]> {
     const associationIds = [
       ...new Set(
@@ -55,11 +52,7 @@ export class MessagingMessageFolderAssociationService {
         });
 
         if (recordsToInsert.length > 0) {
-          await repository.insert(
-            isDefined(createdBy)
-              ? recordsToInsert.map((record) => ({ ...record, createdBy }))
-              : recordsToInsert,
-          );
+          await repository.insert(recordsToInsert);
         }
 
         const staleRecords = existingRecords.filter(

@@ -27,6 +27,7 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
+import { WORKSPACE_CUSTOM_APPLICATION_ROLE_LABEL } from 'src/engine/core-modules/application/constants/workspace-custom-application-role.constant';
 
 const client = request(`http://localhost:${APP_PORT}`);
 
@@ -53,6 +54,7 @@ async function assertPermissionDeniedForMemberWithMemberRole({
 describe('roles permissions', () => {
   let adminRoleId: string;
   let guestRoleId: string;
+  let nonEditableRoleId: string;
 
   beforeAll(async () => {
     await grantRoleWideAccessToChannelObjects();
@@ -80,6 +82,11 @@ describe('roles permissions', () => {
     guestRoleId = resp.body.data.getRoles.find(
       // @ts-expect-error legacy noImplicitAny
       (role) => role.label === 'Guest',
+    ).id;
+
+    nonEditableRoleId = resp.body.data.getRoles.find(
+      // @ts-expect-error legacy noImplicitAny
+      (role) => role.label === WORKSPACE_CUSTOM_APPLICATION_ROLE_LABEL,
     ).id;
   });
 
@@ -813,7 +820,7 @@ describe('roles permissions', () => {
         const query = {
           query: upsertObjectPermissionMutation({
             objectMetadataId: listingObjectId,
-            roleId: adminRoleId,
+            roleId: nonEditableRoleId,
           }),
         };
 

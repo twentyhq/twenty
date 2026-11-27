@@ -8,21 +8,19 @@ import { useTheme } from 'twenty-ui/theme';
 import { AiChatApprovalReviewDeck } from '@/ai-chat/tool-calls/components/AiChatApprovalReviewDeck';
 import { AiChatRecordApprovalReview } from '@/ai-chat/tool-calls/components/AiChatRecordApprovalReview';
 import { useAnswerAiChatToolCall } from '@/ai-chat/tool-calls/hooks/useAnswerAiChatToolCall';
+import { aiChatRecordApprovalAnsweringToolCallIdsFamilyState } from '@/ai-chat/tool-calls/states/aiChatRecordApprovalAnsweringToolCallIdsFamilyState';
 import { type AiChatPendingRecordApproval } from '@/ai-chat/tool-calls/types/AiChatPendingRecordApproval';
 import { getAiChatRecordApprovalGroupId } from '@/ai-chat/tool-calls/utils/getAiChatRecordApprovalGroupId';
 import { buildRejectedToolCallOutput } from '@/ai-chat/tool-calls/utils/buildRejectedToolCallOutput';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
 
 type AiChatRecordApprovalDeckProps = {
   recordApprovals: AiChatPendingRecordApproval[];
-  answeringToolCallIds: string[];
-  onAnsweringToolCallIdsChange: (toolCallIds: string[]) => void;
 };
 
 export const AiChatRecordApprovalDeck = ({
   recordApprovals,
-  answeringToolCallIds,
-  onAnsweringToolCallIdsChange,
 }: AiChatRecordApprovalDeckProps) => {
   const { t } = useLingui();
   const theme = useTheme();
@@ -30,6 +28,12 @@ export const AiChatRecordApprovalDeck = ({
   const { objectMetadataItems } = useObjectMetadataItems();
   const { answerAiChatToolCall } = useAnswerAiChatToolCall();
   const { threadId } = useAiChatInstanceOrThrow();
+  const [
+    aiChatRecordApprovalAnsweringToolCallIds,
+    setAiChatRecordApprovalAnsweringToolCallIds,
+  ] = useAtomFamilyState(aiChatRecordApprovalAnsweringToolCallIdsFamilyState, {
+    threadId,
+  });
   const [activeIndex, setActiveIndex] = useState(0);
   const [skippedToolCallIds, setSkippedToolCallIds] = useState<string[]>([]);
 
@@ -37,7 +41,7 @@ export const AiChatRecordApprovalDeck = ({
     ...new Set(recordApprovals.map(getAiChatRecordApprovalGroupId)),
   ];
   const isAnswering = recordApprovals.some(({ toolCallId }) =>
-    answeringToolCallIds.includes(toolCallId),
+    aiChatRecordApprovalAnsweringToolCallIds.includes(toolCallId),
   );
 
   const getGroupRecordApprovals = (groupId: string) =>
@@ -57,7 +61,7 @@ export const AiChatRecordApprovalDeck = ({
       getGroupRecordApprovals,
     );
 
-    onAnsweringToolCallIdsChange(
+    setAiChatRecordApprovalAnsweringToolCallIds(
       recordApprovalsToAnswer.map(({ toolCallId }) => toolCallId),
     );
 
@@ -75,7 +79,7 @@ export const AiChatRecordApprovalDeck = ({
       });
 
       if (!isAnswered) {
-        onAnsweringToolCallIdsChange([]);
+        setAiChatRecordApprovalAnsweringToolCallIds([]);
 
         return;
       }
@@ -128,7 +132,7 @@ export const AiChatRecordApprovalDeck = ({
       selectedCount,
       skippedCount: recordCount - selectedCount,
       status: toolCallIds.some((toolCallId) =>
-        answeringToolCallIds.includes(toolCallId),
+        aiChatRecordApprovalAnsweringToolCallIds.includes(toolCallId),
       )
         ? ('running' as const)
         : ('pending' as const),

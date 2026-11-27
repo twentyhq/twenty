@@ -248,6 +248,8 @@ Publicarea pe npm face ca aplicația ta să fie eligibilă pentru marketplace-ul
 }
 ```
 
+Rolurile dvs. trebuie să respecte și [regulile pentru rolurile din afara aplicației personalizate din spațiul de lucru](/ro/developers/extend/apps/config/roles#roles-outside-the-workspace-custom-application): numai agenții le pot deține și nu declară permisiuni la nivel de câmp sau rând. În caz contrar, `twenty app publish` eșuează cu `INVALID_INPUT` și listează rolurile problematice.
+
 ### Metadate pentru marketplace
 
 Configurația `defineApplication()` acceptă câmpuri opționale care controlează modul în care aplicația ta apare în marketplace. Folosește `logo` și `galleryImages` pentru a face referire la imaginile din folderul `public/`:

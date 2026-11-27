@@ -285,6 +285,11 @@ describe('compileFormulaFieldToSql', () => {
       expression: 'roundTo(price)',
       errorMessage: 'roundTo takes 2 argument(s), but got 1',
     },
+    {
+      type: FieldMetadataType.TEXT,
+      expression: '(coalesce(name, "")).firstName',
+      errorMessage: '".firstName" can only follow a field',
+    },
   ])(
     'should refuse $expression as $type',
     ({ type, expression, errorMessage }) => {

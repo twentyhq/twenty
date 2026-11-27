@@ -43,6 +43,7 @@ export const buildBaseUniversalFlatView = ({
     presetFilter: null,
     calendarFieldMetadataUniversalIdentifier: null,
     calendarEndFieldMetadataUniversalIdentifier: null,
+    listPinnedFieldMetadataUniversalIdentifier: null,
     calendarLayout: null,
     isCompact: isViewCompactByDefault(type),
     shouldHideEmptyGroups: false,

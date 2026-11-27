@@ -7,7 +7,7 @@
 - **LinkedIn messages in Twenty**: every message you send or receive lands on the matching Person and Company, next to their emails
 - **Shared files included**: images, videos, voice notes and documents up to 25 MB are attached to their message
 - **Replies from Twenty**: answer a LinkedIn conversation from its thread in Twenty, sent from your own LinkedIn account
-- **One connection per member**: each teammate connects their own LinkedIn account in a few clicks
+- **Your own accounts**: each teammate connects their own LinkedIn accounts in a few clicks, a personal and a company one alike
 
 ## 💳 Billing
 
@@ -16,16 +16,16 @@
 ## 🚀 Get started
 
 1. Install **LinkedIn** from **Settings → Applications**.
-2. Each member opens **Settings → App preferences → LinkedIn**, clicks **Add connection** and signs in to LinkedIn.
+2. Each member opens **Settings → App preferences → LinkedIn**, clicks **Add connection** and signs in to LinkedIn. Click it again to connect another LinkedIn account.
 
 ## 📌 Heads up
 
 - **Replies go to existing conversations.** You can reply from Twenty to any imported conversation, with files of up to 25 MB each once message attachments are enabled on your workspace. Starting a new conversation happens on LinkedIn.
-- **Only recent history is imported.** LinkedIn allows about 100 profile lookups a day per account, so **Sync now** imports only your most recent conversations. Pick 10, 20 (default) or 50 in **Past conversations**, or **None** to skip history and only receive new messages.
+- **Recent history is imported on its own.** Connecting your account imports your 50 most recent conversations, most recent first, and so does reconnecting it or changing what gets imported (import, contact auto-creation, people matching). LinkedIn allows about 100 profile lookups a day per account: the import keeps part of them for new messages and, once its share is used, resumes the next day.
 - **You can pick the conversations to import.** In **Import**, choose **Selected chats** and tick the conversations Twenty should bring in: only those are imported, new messages and history alike, whoever is in them. The list shows your 200 most recent conversations at most, and up to 200 can be selected.
 - **Contacts only and group chats start from names.** There, a participant's LinkedIn profile is first looked up only when a Person has the same first and last name, so a contact saved under another name is not recognized until their LinkedIn URL is known. Once a contact is found and contact auto-creation applies, the other participants are looked up too, so they can be created.
-- **A group conversation shows on every member.** Each message of a group is linked to all its members, so the conversation appears on the record of each of them. Run **Sync now** again to link the members of groups imported earlier.
+- **A group conversation shows on every member.** Each message of a group is linked to all its members, so the conversation appears on the record of each of them. Members of groups imported earlier are linked the next time the history is imported.
 - **Namesakes are not guessed.** When several People share a participant's name, nobody is linked: add the LinkedIn URL to the right Person and their messages link to it.
-- **Settings are per member.** Import, visibility, contact auto-creation and people matching live in **Settings → App preferences → LinkedIn → Sync** and apply to your own connection.
+- **Settings are per connection.** Import, visibility, contact auto-creation and people matching live in **Settings → App preferences → LinkedIn → Sync** and apply to one of your connections: with several, pick the one to configure at the top of the page.
 
 Self-hosting or developing the app? See [SETUP.md](./SETUP.md).

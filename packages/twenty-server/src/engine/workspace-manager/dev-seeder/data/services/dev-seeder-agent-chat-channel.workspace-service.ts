@@ -14,7 +14,6 @@ import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { AGENT_CHAT_CHANNEL_THREAD_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/agent-chat-seeds.constant';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { STANDARD_AGENT_CHAT_CHANNEL } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-agent-chat-channel.constant';
 
@@ -26,7 +25,6 @@ type ChannelConversationToSeed = {
   title: string;
   askedBy: {
     workspaceMemberId: string;
-    userWorkspaceId: string;
   };
   assigneeId: string | null;
   prompt: string;
@@ -39,7 +37,6 @@ const GENERAL_CONVERSATIONS_TO_SEED: ChannelConversationToSeed[] = [
     title: 'Weekend support coverage',
     askedBy: {
       workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
-      userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.PHIL,
     },
     assigneeId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
     prompt: 'Who is on call for customer support this weekend?',
@@ -51,7 +48,6 @@ const GENERAL_CONVERSATIONS_TO_SEED: ChannelConversationToSeed[] = [
     title: "This week's new deals",
     askedBy: {
       workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
-      userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.TIM,
     },
     assigneeId: null,
     prompt: 'Summarize the opportunities created this week.',
@@ -63,7 +59,6 @@ const GENERAL_CONVERSATIONS_TO_SEED: ChannelConversationToSeed[] = [
     title: 'October newsletter',
     askedBy: {
       workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-      userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
     },
     assigneeId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
     prompt: 'Draft the outline of the October customer newsletter.',
@@ -157,7 +152,7 @@ export class DevSeederAgentChatChannelWorkspaceService {
       turnId,
       role: AgentMessageRole.USER,
       agentId: null,
-      senderUserWorkspaceId: conversation.askedBy.userWorkspaceId,
+      senderWorkspaceMemberId: conversation.askedBy.workspaceMemberId,
       parts: [{ type: 'text', text: conversation.prompt }],
     });
 
@@ -168,7 +163,7 @@ export class DevSeederAgentChatChannelWorkspaceService {
       turnId,
       role: AgentMessageRole.ASSISTANT,
       agentId: null,
-      senderUserWorkspaceId: null,
+      senderWorkspaceMemberId: null,
       parts: [{ type: 'text', text: conversation.reply }],
     });
   }

@@ -187,7 +187,6 @@ type AgentMessage {
   reactions: [AgentMessageReactionSummary!]!
   role: String!
   senderApplicationId: UUID
-  senderUserWorkspaceId: UUID
   senderWorkspaceMemberId: UUID
   status: String!
   threadId: UUID!
@@ -984,7 +983,7 @@ type AuthToken {
 
 type AuthTokenPair {
   accessOrWorkspaceAgnosticToken: AuthToken!
-  refreshToken: AuthToken!
+  refreshToken: AuthToken @deprecated(reason: "Always null. Will be removed.")
 }
 
 type AuthTokens {
@@ -1779,6 +1778,7 @@ input CreateEmailingDomainInput {
 input CreateFieldInput {
   defaultValue: JSON
   description: String
+  formula: JSON
   icon: String
   isActive: Boolean
   isAuditLogged: Boolean
@@ -1870,6 +1870,7 @@ input CreateNavigationMenuItemInput {
   type: NavigationMenuItemType!
   userWorkspaceId: UUID
   viewId: UUID
+  visibleItemLimit: Int
   workflowId: UUID
 }
 
@@ -2063,6 +2064,7 @@ input CreateViewInput {
   kanbanAggregateOperationFieldMetadataId: UUID
   kanbanColumnWidth: Int
   key: ViewKey
+  listPinnedFieldMetadataId: UUID
   mainGroupByFieldMetadataId: UUID
   name: String!
   objectMetadataId: UUID!
@@ -2563,12 +2565,11 @@ type FeatureFlag {
 }
 
 enum FeatureFlagKey {
+  IS_ADMIN_CHANNEL_WRITE_ACCESS_RESTORED
   IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED
   IS_AI_CHAT_COMPONENT_BUILDER_ENABLED
   IS_AI_CHAT_INBOX_ENABLED
   IS_AI_DATA_POLICY_ENABLED
-  IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED
-  IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED
   IS_CHANNEL_VISIBILITY_ENFORCED_ON_API_KEYS
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
   IS_CUSTOMIZABLE_SIDEBAR_ENABLED
@@ -2591,6 +2592,7 @@ type Field {
   defaultValue: JSON
   description: String
   disabledFieldPermissionActions: [String!]
+  formula: JSON
   icon: String
   id: UUID!
   isActive: Boolean
@@ -3773,7 +3775,7 @@ type Mutation {
   removeRecordShare(principal: RecordSharePrincipalInput!, target: RecordTargetInput!): RecordSharingDTO!
   removeRoleFromAgent(agentId: UUID!): Boolean!
   renewApplicationToken(applicationRefreshToken: String!): ApplicationTokenPair!
-  renewToken(appToken: String!): AuthTokens!
+  renewToken(appToken: String!): AuthTokens! @deprecated(reason: "Refresh tokens are no longer issued; this is removed once the last one expires.")
   reopenAgentChatThreadInChannel(threadId: UUID!): Boolean!
   reportAppConnectionAuthFailure(input: ReportAppConnectionAuthFailureInput!): Boolean!
   resendEmailVerificationToken(affiliatePartnerName: String, email: String!, origin: String!): ResendEmailVerificationToken!
@@ -3810,7 +3812,7 @@ type Mutation {
   setRecordShare(accessLevel: RecordShareAccessLevel!, principal: RecordSharePrincipalInput!, target: RecordTargetInput!): RecordSharingDTO!
   setResourceCreditSubscriptionPrice(priceId: String!): BillingUpdate!
   signIn(captchaToken: String, email: String!, locale: String, password: String!, verifyEmailRedirectPath: String): AvailableWorkspacesAndAccessTokens!
-  signOut(refreshToken: String): Boolean!
+  signOut(refreshToken: String @deprecated(reason: "Refresh tokens are no longer issued; this is removed once the last one expires.")): Boolean!
   signUp(affiliatePartnerName: String, captchaToken: String, email: String!, locale: String, password: String!, verifyEmailRedirectPath: String): AvailableWorkspacesAndAccessTokens!
   signUpInNewWorkspace(input: SignUpInNewWorkspaceInput): SignUp!
   signUpInWorkspace(captchaToken: String, email: String!, locale: String, password: String!, verifyEmailRedirectPath: String, workspaceId: UUID, workspaceInviteHash: String, workspacePersonalInviteToken: String): SignUp!
@@ -3942,6 +3944,7 @@ type NavigationMenuItem {
   updatedAt: DateTime!
   userWorkspaceId: UUID
   viewId: UUID
+  visibleItemLimit: Int
   workflowId: UUID
 }
 
@@ -4798,6 +4801,7 @@ type Role {
   agents: [Agent!]!
   apiKeys: [ApiKeyForRole!]!
   applicationId: UUID!
+  areRecordPermissionsEditable: Boolean!
   canAccessAllAgentChatChannels: Boolean!
   canAccessAllTools: Boolean!
   canBeAssignedToAgents: Boolean!
@@ -5101,7 +5105,8 @@ input SendInboxMessageInput {
   text: String!
   threadKey: String!
   title: String!
-  toolCall: JSON
+  toolCall: JSON @deprecated(reason: "Use toolCalls instead.")
+  toolCalls: [JSON!]
   workspaceMemberIds: [UUID!]!
 }
 
@@ -5565,6 +5570,7 @@ input UpdateEmailGroupChannelInput {
 input UpdateFieldInput {
   defaultValue: JSON
   description: String
+  formula: JSON
   icon: String
   isActive: Boolean
   isAuditLogged: Boolean
@@ -5691,6 +5697,7 @@ input UpdateNavigationMenuItemInput {
   pageLayoutId: UUID
   parentId: UUID
   position: Float
+  visibleItemLimit: Int
 }
 
 input UpdateObjectPayload {
@@ -5954,6 +5961,7 @@ input UpdateViewInput {
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID
   kanbanColumnWidth: Int
+  listPinnedFieldMetadataId: UUID
   mainGroupByFieldMetadataId: UUID
   name: String
 
@@ -6506,6 +6514,7 @@ type View {
   kanbanAggregateOperationFieldMetadataId: UUID
   kanbanColumnWidth: Int
   key: ViewKey
+  listPinnedFieldMetadataId: UUID
   mainGroupByFieldMetadataId: UUID
   name: String!
   objectMetadataId: UUID!

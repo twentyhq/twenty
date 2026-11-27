@@ -2515,11 +2515,6 @@ msgstr "Dodaj imejl kanal"
 msgid "Add embedded website"
 msgstr "Dodaj ugrađenu veb-lokaciju"
 
-#. js-lingui-id: 6kC3KJ
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalCardLayout.tsx
-msgid "Add feedback"
-msgstr "Dodaj povratne informacije"
-
 #. js-lingui-id: Va3xJe
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderLabelIdentifierCellPlusButton.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
@@ -2604,6 +2599,11 @@ msgstr "Dodaj stavku nakon"
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
 msgid "Add item before"
 msgstr "Dodaj stavku pre"
+
+#. js-lingui-id: /kLKYB
+#: src/modules/navigation/components/MainNavigationDrawerContextMenuContent.tsx
+msgid "Add item to {targetSectionName}"
+msgstr "Dodaj stavku u {targetSectionName}"
 
 #. js-lingui-id: VzGJRl
 #: src/modules/advanced-text-editor/components/EditLinkDropdown.tsx
@@ -2764,6 +2764,7 @@ msgstr "Dodaj grupu pravila"
 #. js-lingui-id: RxFV0G
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
+#: src/modules/navigation/components/MainNavigationDrawerContextMenuContent.tsx
 msgid "Add section"
 msgstr "Dodaj odeljak"
 
@@ -2851,11 +2852,6 @@ msgstr "Dodajte na crnu listu"
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 msgid "Add to Favorite"
 msgstr "Dodajte u omiljene"
-
-#. js-lingui-id: pBsoKL
-#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
-msgid "Add to favorites"
-msgstr "Dodaj u omiljene"
 
 #. js-lingui-id: A7duaz
 #: src/modules/side-panel/hooks/useOpenAddToMessageListInSidePanel.ts
@@ -3036,6 +3032,11 @@ msgstr "Administrator"
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Admin & Member"
 msgstr "Administrator i član"
+
+#. js-lingui-id: ZHWySn
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Admin channel write access"
+msgstr "Pristup za pisanje na administratorskom kanalu"
 
 #. js-lingui-id: SsHJsm
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
@@ -4920,6 +4921,8 @@ msgstr "Priloži datoteku"
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
 #: src/modules/ai-chat/composer/components/AiChatAddMenu.tsx
+#: src/modules/ai-chat/composer/components/AiChatAttachFileButton.tsx
+#: src/modules/ai-chat/composer/components/AiChatAttachFileButton.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
 #: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
 msgid "Attach files"
@@ -6174,6 +6177,7 @@ msgstr "Otkazano u"
 
 #. js-lingui-id: vv7kpg
 #: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 #: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 msgid "Cancelled"
 msgstr "Otkazano"
@@ -7116,6 +7120,11 @@ msgstr "Zatvori stranicu"
 msgid "Close preview"
 msgstr "Zatvori pregled"
 
+#. js-lingui-id: QBOwbf
+#: src/modules/navigation/components/NavigationDrawerCloseSettingsButton.tsx
+msgid "Close settings"
+msgstr "Zatvori podešavanja"
+
 #. js-lingui-id: saip/v
 #: src/modules/side-panel/components/SidePanelCloseButton.tsx
 msgid "Close side panel"
@@ -7244,6 +7253,11 @@ msgstr "Skupi"
 #: src/modules/command-menu-item/display/components/CommandMenuItemCollapsibleSectionHeading.tsx
 msgid "Collapse {heading}"
 msgstr "Skupi {heading}"
+
+#. js-lingui-id: LeVkuA
+#: src/modules/navigation/components/MainNavigationDrawerContextMenuContent.tsx
+msgid "Collapse all sections"
+msgstr "Sažmi sve odeljke"
 
 #. js-lingui-id: kBUgVh
 #: src/modules/object-record/record-board/record-board-card/components/RecordBoardCardHeader.tsx
@@ -7612,6 +7626,7 @@ msgid "Configurable search fields"
 msgstr "Podesiva polja za pretragu"
 
 #. js-lingui-id: ywFj2D
+#: src/modules/settings/applications/components/SettingsApplicationConfigurationSection.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
 msgid "Configuration"
 msgstr "Konfiguracija"
@@ -9616,7 +9631,7 @@ msgid "Customize record page"
 msgstr "Prilagodite stranicu zapisa"
 
 #. js-lingui-id: hxjpaE
-#: src/modules/navigation/components/MainNavigationDrawerContextMenu.tsx
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuCustomizeSidebarMenuContent.tsx
 #: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
 #: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
 msgid "Customize sidebar"
@@ -10865,11 +10880,6 @@ msgstr "Direktne poruke"
 #: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
 msgid "Direct messages and mentions"
 msgstr "Direktne poruke i pominjanja"
-
-#. js-lingui-id: Rz4s9r
-#: src/modules/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage.ts
-msgid "Direct messages don't support attachments."
-msgstr "Direktne poruke ne podržavaju priloge."
 
 #. js-lingui-id: +ILAOG
 #: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
@@ -13202,6 +13212,11 @@ msgstr "Proširi"
 msgid "Expand {heading}"
 msgstr "Proširi {heading}"
 
+#. js-lingui-id: m2n9ZO
+#: src/modules/navigation/components/MainNavigationDrawerContextMenuContent.tsx
+msgid "Expand all sections"
+msgstr "Proširi sve odeljke"
+
 #. js-lingui-id: JjrOSL
 #: src/modules/object-record/record-board/record-board-card/components/RecordBoardCardHeader.tsx
 msgid "Expand card"
@@ -14125,12 +14140,6 @@ msgstr "Funkcionalnosti"
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Features active until"
 msgstr "Funkcije su aktivne do"
-
-#. js-lingui-id: YirHq7
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalFeedbackInput.tsx
-#: src/modules/workflow/workflow-variables/utils/generate/computeStepOutputSchema.ts
-msgid "Feedback"
-msgstr "Povratne informacije"
 
 #. js-lingui-id: 2lOBKV
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -15105,7 +15114,6 @@ msgstr "Gemini CLI"
 #: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
-#: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
@@ -16382,11 +16390,6 @@ msgstr "Uvezi nove e-poruke sa ovog naloga"
 msgid "Import new events from this account"
 msgstr "Uvezi nove događaje sa ovog naloga"
 
-#. js-lingui-id: 4Ljmum
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Import occurrences of recurring Google Calendar meetings up to 90 days ahead only, and import later occurrences as they come within 90 days."
-msgstr "Uvezite pojavljivanja ponavljajućih Google Calendar sastanaka samo do 90 dana unapred, a kasnija pojavljivanja uvezite kada budu u okviru 90 dana."
-
 #. js-lingui-id: D5QSQM
 #: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx
 msgid "Import only selected folders/labels"
@@ -16396,11 +16399,6 @@ msgstr "Uvezi samo izabrane fascikle/oznake"
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
 msgid "Import or add the MCP configuration from JetBrains settings."
 msgstr "Uvezite ili dodajte MCP konfiguraciju iz JetBrains podešavanja."
-
-#. js-lingui-id: 8zGGat
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Import recurring meetings 90 days ahead"
-msgstr "Uvezite ponavljajuće sastanke 90 dana unapred"
 
 #. js-lingui-id: LHHO6e
 #: src/modules/getting-started/constants/GettingStartedImportPrompt.ts
@@ -20644,7 +20642,7 @@ msgid "Next record"
 msgstr "Sledeći zapis"
 
 #. js-lingui-id: +VXdSO
-#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingToolCallRequests.tsx
 msgid "Next request"
 msgstr "Sledeći zahtev"
 
@@ -21803,6 +21801,8 @@ msgstr "Podešavanja čvora"
 #: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
 #: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
 #: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownListPinnedFieldContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterAggregateOperationMenuItems.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
@@ -23183,6 +23183,7 @@ msgstr "Izuzeci"
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/object-core/workflows/components/CoreWorkflowShowPageTabList.tsx
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/data-model/SettingsObjectOverview.tsx
 #: src/pages/settings/layout/SettingsLayout.tsx
 msgid "Overview"
@@ -23520,7 +23521,7 @@ msgid "Pending"
 msgstr "Na čekanju"
 
 #. js-lingui-id: 2B0V9T
-#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingToolCallRequests.tsx
 msgid "Pending requests"
 msgstr "Zahtevi na čekanju"
 
@@ -23826,6 +23827,12 @@ msgstr "Roze"
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 msgid "Pinned"
 msgstr "Zakačeno"
+
+#. js-lingui-id: eLzh58
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownListPinnedFieldContent.tsx
+msgid "Pinned field"
+msgstr "Zakačeno polje"
 
 #. js-lingui-id: OFY07S
 #: src/modules/page-layout/components/PageLayoutRecordIdentifierBar.tsx
@@ -24168,7 +24175,7 @@ msgid "Previous record"
 msgstr "Prethodni zapis"
 
 #. js-lingui-id: ToM1t/
-#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingToolCallRequests.tsx
 msgid "Previous request"
 msgstr "Prethodni zahtev"
 
@@ -25479,7 +25486,6 @@ msgid "Remove from blocklist"
 msgstr "Ukloni sa liste blokiranih"
 
 #. js-lingui-id: T/pF0Z
-#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 #: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderContent.tsx
 #: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
 #: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
@@ -25615,10 +25621,10 @@ msgstr "Ukloni sortiranje"
 msgid "Remove sorting?"
 msgstr "Ukloni sortiranje?"
 
-#. js-lingui-id: J8gtSc
+#. js-lingui-id: koiY9C
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Remove the message and calendar access of API keys on roles assignable to users. While off, those API keys read them as a member who doesn't own the channel would."
-msgstr "Uklonite pristup porukama i kalendaru za API ključeve na ulogama koje se mogu dodeliti korisnicima. Kada je isključeno, ti API ključevi ih čitaju kao što bi ih čitao član koji nije vlasnik kanala."
+msgid "Remove the message and calendar access of API keys on roles assignable to users. While off, those API keys read them as a member who doesn't own the channel would, and keep their role's write access to them."
+msgstr "Uklonite pristup porukama i kalendaru za API ključeve u ulogama koje se mogu dodeliti korisnicima. Kada je isključeno, ti API ključevi ih čitaju kao što bi ih čitao član koji nije vlasnik kanala i zadržavaju pristup za pisanje svoje uloge u njima."
 
 #. js-lingui-id: yBC05U
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -25772,7 +25778,7 @@ msgid "Request"
 msgstr "Zahtev"
 
 #. js-lingui-id: tZ7Xci
-#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingToolCallRequests.tsx
 msgid "Request {requestNumber} of {requestCount}"
 msgstr "Zahtev {requestNumber} od {requestCount}"
 
@@ -26965,6 +26971,7 @@ msgstr "metapodaci polja za pretragu"
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectMenu.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownListPinnedFieldContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -27158,6 +27165,11 @@ msgstr "Pretraživanje {objectLabel}"
 msgid "Searching chats..."
 msgstr "Pretraživanje četova..."
 
+#. js-lingui-id: xrtPMt
+#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
+msgid "Searching records..."
+msgstr "Pretraživanje zapisa..."
+
 #. js-lingui-id: KhCAL1
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
 msgid "Searching the help center"
@@ -27326,14 +27338,18 @@ msgstr "Vidi podešavanja modela podataka"
 msgid "See function"
 msgstr "Pogledajte funkciju"
 
+#. js-lingui-id: kuQBTx
+#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
+msgid "See in search results"
+msgstr "Prikaži u rezultatima pretrage"
+
 #. js-lingui-id: 1HzZ+y
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 msgid "See installed applications"
 msgstr "Pogledajte instalirane aplikacije"
 
 #. js-lingui-id: uPo3PQ
-#: src/modules/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiChatRecentsSection.tsx
-#: src/modules/navigation-menu-item/display/containers/components/NavigationMenuSection.tsx
+#: src/modules/navigation-menu-item/display/sections/components/NavigationMenuSectionSeeMore.tsx
 msgid "See less"
 msgstr "Prikaži manje"
 
@@ -27343,16 +27359,10 @@ msgid "See matching {objectLabelPlural}"
 msgstr "Pogledaj podudarne {objectLabelPlural}"
 
 #. js-lingui-id: V1fa9u
-#: src/modules/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiChatRecentsSection.tsx
-#: src/modules/navigation-menu-item/display/containers/components/NavigationMenuSection.tsx
+#: src/modules/navigation-menu-item/display/sections/components/NavigationMenuSectionSeeMore.tsx
 #: src/modules/settings/applications/components/SettingsApplicationContentSummarySection.tsx
 msgid "See more"
 msgstr "Prikaži više"
-
-#. js-lingui-id: ssRcpB
-#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
-msgid "See more results"
-msgstr "Prikaži više rezultata"
 
 #. js-lingui-id: V7TecA
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
@@ -28115,6 +28125,11 @@ msgstr "Postavite potrebne serverske promenljive"
 msgid "Set the required server variables: {missingVariableKeys}"
 msgstr "Postavite potrebne serverske promenljive: {missingVariableKeys}"
 
+#. js-lingui-id: L/hdCR
+#: src/modules/settings/applications/components/SettingsApplicationConfigurationSection.tsx
+msgid "Set up {applicationName} for your workspace"
+msgstr "Podesite {applicationName} za svoj radni prostor"
+
 #. js-lingui-id: tG3Y2G
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "Set up a Date field on {objectLabel} to create a Calendar"
@@ -28173,6 +28188,7 @@ msgstr "Podešavamo vašu <0>bazu podataka</0>..."
 #. js-lingui-id: Tz0i8g
 #: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReviewContent.tsx
 #: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
+#: src/modules/command-menu-item/utils/getCommandMenuItemSubtitle.ts
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
@@ -28722,20 +28738,10 @@ msgstr "Preskoči"
 msgid "Skip anyway"
 msgstr "Ipak preskoči"
 
-#. js-lingui-id: 5jWe/6
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Skip calendar events with no participant outside the workspace domain, unless internal import is turned on."
-msgstr "Preskočite događaje u kalendaru bez učesnika van domena radnog prostora, osim ako je uključen interni uvoz."
-
 #. js-lingui-id: TyudBs
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Skip creating a Name field "
 msgstr "Preskočite kreiranje polja Ime "
-
-#. js-lingui-id: pmVASU
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Skip internal meetings"
-msgstr "Preskočite interne sastanke"
 
 #. js-lingui-id: PlF+NA
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
@@ -28744,7 +28750,6 @@ msgstr "Preskočite vezni objekat (slično relacijama mnogo-na-mnogo)"
 
 #. js-lingui-id: 9NyAH9
 #: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsPart.tsx
 msgid "Skipped"
 msgstr "Preskočeno"
@@ -30131,11 +30136,6 @@ msgstr "Članovi tima"
 msgid "Teammates see who you talk to, not what you write."
 msgstr "Članovi tima vide sa kim razgovarate, a ne šta pišete."
 
-#. js-lingui-id: XpPpz7
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalFeedbackInput.tsx
-msgid "Tell the agent what to change"
-msgstr "Recite agentu šta da promeni"
-
 #. js-lingui-id: lKXcJz
 #: src/modules/settings/emailing-domains/utils/getEmailingDomainStatusDisplay.ts
 msgid "Temporary Failure"
@@ -31255,6 +31255,7 @@ msgstr "Ovaj pružalac usluga je ugrađen. Postavite njegov API ključ na njegov
 
 #. js-lingui-id: qfpz3J
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
+#: src/modules/views/utils/computeRelationFilterDisplayValue.ts
 msgid "This record"
 msgstr "Ovaj zapis"
 
@@ -32143,6 +32144,11 @@ msgstr "Turski"
 #: src/modules/advanced-text-editor/components/TurnIntoBlockDropdown.tsx
 msgid "Turn into"
 msgstr "Pretvori u"
+
+#. js-lingui-id: rjkNOe
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Turn on for a workspace that reported broken links, merges or deletes. Gives the Admin role back its write access to messages and calendar events, without letting it see more of them."
+msgstr "Uključite za radni prostor koji je prijavio neispravne veze, spajanja ili brisanja. Vraća ulozi administratora pristup za pisanje poruka i događaja u kalendaru, bez omogućavanja da ih vidi više."
 
 #. js-lingui-id: Njwcqh
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
@@ -34069,6 +34075,7 @@ msgid "Wait for Event"
 msgstr "Sačekaj događaj"
 
 #. js-lingui-id: 3wIkaN
+#: src/modules/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage.ts
 #: src/modules/ai-chat/composer/hooks/useSendAiChatMessage.ts
 msgid "Wait for the attachments to finish uploading."
 msgstr "Sačekajte da se otpremanje priloga završi."

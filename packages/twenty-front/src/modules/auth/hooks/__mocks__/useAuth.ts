@@ -50,10 +50,7 @@ export const results = {
     },
   },
   getAuthTokensFromLoginToken: {
-    tokens: {
-      accessOrWorkspaceAgnosticToken: { token, expiresAt: 'expiresAt' },
-      refreshToken: { token, expiresAt: 'expiresAt' },
-    },
+    __typename: 'AuthTokens',
   },
   signUp: { loginToken: { token, expiresAt: 'expiresAt' } },
   signUpInWorkspace: {

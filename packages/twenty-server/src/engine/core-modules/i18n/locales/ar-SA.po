@@ -366,6 +366,28 @@ msgstr "رابط يتم تتبعه في حملة إعلانية"
 msgid "A marketing email can only be sent to one recipient at a time, so each person gets their own unsubscribe link."
 msgstr "لا يمكن إرسال رسالة بريد إلكتروني تسويقية إلا إلى مستلم واحد في كل مرة، بحيث يحصل كل شخص على رابط إلغاء الاشتراك الخاص به."
 
+#. js-lingui-id: TS5uum
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-restriction-errors.util.ts
+msgid "A marketplace application cannot declare row-level rules or field permissions"
+msgstr "لا يمكن لتطبيق من السوق الإعلان عن قواعد على مستوى الصف أو أذونات الحقول"
+
+#. js-lingui-id: bH9jpk
+#: src/engine/permissions/permissions.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-restriction-errors.util.ts
+msgid "A marketplace application cannot declare row-level rules or field permissions."
+msgstr "لا يمكن لتطبيق من السوق الإعلان عن قواعد على مستوى الصف أو أذونات الحقول."
+
+#. js-lingui-id: +//ajp
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-assignability-errors.util.ts
+msgid "A marketplace application role can only be assigned to agents"
+msgstr "لا يمكن إسناد دور تطبيق من السوق إلا إلى الوكلاء"
+
+#. js-lingui-id: BRZH6M
+#: src/engine/permissions/permissions.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-assignability-errors.util.ts
+msgid "A marketplace application role can only be assigned to agents."
+msgstr "لا يمكن إسناد دور تطبيق من السوق إلا إلى الوكلاء."
+
 #. js-lingui-id: Spm4/x
 #: src/engine/metadata-modules/message-channel/services/application-message-send.service.ts
 msgid "A message needs text or at least one attachment."
@@ -786,6 +808,18 @@ msgstr "حدث خطأ في مجموعة العرض."
 #: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
 msgid "A view sort error occurred."
 msgstr "حدث خطأ في ترتيب العرض."
+
+#. js-lingui-id: r0+ZZA
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A visibleItemLimit is only allowed on SECTION type"
+msgstr "يُسمح بـ visibleItemLimit فقط في النوع SECTION"
+
+#. js-lingui-id: +DI2pX
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A visibleItemLimit must be an integer between {NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MIN} and {NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MAX}"
+msgstr "يجب أن يكون visibleItemLimit عددًا صحيحًا بين {NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MIN} و {NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MAX}"
 
 #. js-lingui-id: SMhyGZ
 #: src/engine/metadata-modules/webhook/webhook.exception.ts
@@ -6604,11 +6638,11 @@ msgctxt "commandMenuItem.label"
 msgid "Go to {objectLabelPlural}"
 msgstr "انتقل إلى {objectLabelPlural}"
 
-#. js-lingui-id: tKVJbL
+#. js-lingui-id: RQG1+p
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Admin Panel Settings"
-msgstr "انتقل إلى إعدادات لوحة الإدارة"
+msgid "Go to Admin Panel"
+msgstr "انتقل إلى لوحة الإدارة"
 
 #. js-lingui-id: zPVvLp
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -6616,11 +6650,17 @@ msgctxt "commandMenuItem.label"
 msgid "Go to Agents"
 msgstr "الانتقال إلى الوكلاء"
 
-#. js-lingui-id: iLqs3S
+#. js-lingui-id: EiL/A6
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to AI Settings"
-msgstr "انتقل إلى إعدادات AI"
+msgid "Go to AI"
+msgstr "انتقل إلى الذكاء الاصطناعي"
+
+#. js-lingui-id: OVO+nS
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Go to Apps"
+msgstr "انتقل إلى التطبيقات"
 
 #. js-lingui-id: TndVqR
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -6628,71 +6668,65 @@ msgctxt "commandMenuItem.label"
 msgid "Go to Apps preferences"
 msgstr "الانتقال إلى تفضيلات التطبيقات"
 
-#. js-lingui-id: 60o/+J
+#. js-lingui-id: zsFm1q
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Apps Settings"
-msgstr "انتقل إلى إعدادات التطبيقات"
+msgid "Go to Billing"
+msgstr "انتقل إلى الفوترة"
 
-#. js-lingui-id: tlIbgN
+#. js-lingui-id: xk8nZG
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Billing Settings"
-msgstr "انتقل إلى إعدادات الفوترة"
+msgid "Go to Community"
+msgstr "انتقل إلى المجتمع"
 
-#. js-lingui-id: u5u/QJ
+#. js-lingui-id: TMv4vU
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Community Settings"
-msgstr "انتقل إلى إعدادات المجتمع"
+msgid "Go to Data Model"
+msgstr "انتقل إلى نموذج البيانات"
 
-#. js-lingui-id: dZPXqH
+#. js-lingui-id: nvVoDQ
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Data Model Settings"
-msgstr "انتقل إلى إعدادات نموذج البيانات"
+msgid "Go to Developers"
+msgstr "انتقل إلى المطورين"
 
-#. js-lingui-id: SNbGsK
+#. js-lingui-id: YTMzOA
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Developers Settings"
-msgstr "الانتقال إلى إعدادات المطورين"
+msgid "Go to Domains"
+msgstr "انتقل إلى النطاقات"
 
-#. js-lingui-id: OLopIl
+#. js-lingui-id: 8V43iD
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Domains Settings"
-msgstr "انتقل إلى إعدادات النطاقات"
+msgid "Go to Experience"
+msgstr "انتقل إلى الخبرة"
 
-#. js-lingui-id: 46ZD9h
+#. js-lingui-id: YA1mxo
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Experience Settings"
-msgstr "انتقل إلى إعدادات التجربة"
+msgid "Go to General"
+msgstr "انتقل إلى عام"
 
-#. js-lingui-id: gfZlPy
+#. js-lingui-id: bSctn/
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to General Settings"
-msgstr "انتقل إلى الإعدادات العامة"
+msgid "Go to Members"
+msgstr "انتقل إلى الأعضاء"
 
-#. js-lingui-id: vPl+B/
+#. js-lingui-id: F15zBM
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Members Settings"
-msgstr "انتقل إلى إعدادات الأعضاء"
+msgid "Go to Roles"
+msgstr "اذهب إلى الأدوار"
 
-#. js-lingui-id: qN3wNQ
+#. js-lingui-id: R1fbZB
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Roles Settings"
-msgstr "انتقل إلى إعدادات الأدوار"
-
-#. js-lingui-id: xAAHTC
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "Go to Security Settings"
-msgstr "انتقل إلى إعدادات الأمان"
+msgid "Go to Security"
+msgstr "انتقل إلى الأمان"
 
 #. js-lingui-id: Rrvufq
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -7475,6 +7509,11 @@ msgstr "عامل تصفية غير صالح: استخدم \"{joinColumnName}\" �
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-formula.util.ts
 msgid "Invalid formula: {errorMessage}"
 msgstr "صيغة غير صالحة: {errorMessage}"
+
+#. js-lingui-id: uJjrgd
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-formula.util.ts
+msgid "Invalid formula: write it as text"
+msgstr "صيغة غير صالحة: اكتبها كنص"
 
 #. js-lingui-id: rFH0az
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
@@ -8632,6 +8671,22 @@ msgctxt "fieldMetadata.description"
 msgid "List of opportunities for which that person is the point of contact"
 msgstr "قائمة الفرص التي يكون فيها الشخص نقطة الاتصال"
 
+#. js-lingui-id: rbXxvc
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-list-pinned-field.util.ts
+msgid "List pinned field metadata not found"
+msgstr "بيانات وصف حقل القائمة المثبتة غير موجودة"
+
+#. js-lingui-id: j3iJjW
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-list-pinned-field.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-list-pinned-field.util.ts
+msgid "List pinned field must belong to the view object"
+msgstr "يجب أن ينتمي حقل القائمة المثبتة إلى كائن العرض"
+
+#. js-lingui-id: ucNAgC
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-list-pinned-field.util.ts
+msgid "List pinned field not found"
+msgstr "حقل القائمة المثبتة غير موجود"
+
 #. js-lingui-id: Lgr7Gd
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-list-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -9561,6 +9616,11 @@ msgstr "الاسم"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{name}\" is not available"
 msgstr "الاسم \"{name}\" غير متاح"
+
+#. js-lingui-id: 2tJW5E
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-composite-flat-field-metadata-column-names-availability.util.ts
+msgid "Name \"{name}\" is not available as \"{columnName}\" is already used by another field"
+msgstr "الاسم \"{name}\" غير متاح لأن \"{columnName}\" مستخدم بالفعل من قبل حقل آخر"
 
 #. js-lingui-id: U8mbyw
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
@@ -14403,9 +14463,14 @@ msgid "The condition of a database event trigger must be text"
 msgstr "يجب أن يكون شرط مشغّل أحداث قاعدة البيانات نصًا"
 
 #. js-lingui-id: kxzWhP
-#: src/engine/metadata-modules/ai/ai-agent-trigger/utils/add-agent-trigger-condition-bindings-or-throw.util.ts
+#: src/engine/metadata-modules/ai/ai-agent-trigger/utils/add-agent-trigger-condition-trees-or-throw.util.ts
 msgid "The condition of an agent trigger is invalid"
 msgstr "شرط مشغّل الوكيل غير صالح"
+
+#. js-lingui-id: 2l+SMV
+#: src/engine/metadata-modules/logic-function/services/logic-function-from-source.service.ts
+msgid "The condition of the database event trigger is invalid"
+msgstr "شرط مشغّل حدث قاعدة البيانات غير صالح"
 
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider

@@ -184,23 +184,16 @@ describe('AiChatToolCallApprovalCard for an email', () => {
     );
   });
 
-  it('discards the email with the feedback the person wrote', async () => {
+  it('discards the email', async () => {
     const user = userEvent.setup();
     answerAiChatToolCall.mockResolvedValue(true);
 
     renderCard();
 
-    await user.click(screen.getByRole('button', { name: 'Add feedback' }));
-    await user.type(
-      screen.getByRole('textbox', { name: 'Feedback' }),
-      'Too formal',
-    );
     await user.click(screen.getByRole('button', { name: 'Discard' }));
 
     expect(answerAiChatToolCall).toHaveBeenCalledWith(
-      expect.objectContaining({
-        response: { decision: 'reject', feedback: 'Too formal' },
-      }),
+      expect.objectContaining({ response: { decision: 'reject' } }),
     );
   });
 

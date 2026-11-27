@@ -2515,11 +2515,6 @@ msgstr "Добавить email-канал"
 msgid "Add embedded website"
 msgstr "Добавить встроенный веб-сайт"
 
-#. js-lingui-id: 6kC3KJ
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalCardLayout.tsx
-msgid "Add feedback"
-msgstr "Добавить отзыв"
-
 #. js-lingui-id: Va3xJe
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderLabelIdentifierCellPlusButton.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
@@ -2604,6 +2599,11 @@ msgstr "Добавить элемент после"
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
 msgid "Add item before"
 msgstr "Добавить элемент перед"
+
+#. js-lingui-id: /kLKYB
+#: src/modules/navigation/components/MainNavigationDrawerContextMenuContent.tsx
+msgid "Add item to {targetSectionName}"
+msgstr "Добавить элемент в {targetSectionName}"
 
 #. js-lingui-id: VzGJRl
 #: src/modules/advanced-text-editor/components/EditLinkDropdown.tsx
@@ -2764,6 +2764,7 @@ msgstr "Добавить группу правил"
 #. js-lingui-id: RxFV0G
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
+#: src/modules/navigation/components/MainNavigationDrawerContextMenuContent.tsx
 msgid "Add section"
 msgstr "Добавить раздел"
 
@@ -2850,11 +2851,6 @@ msgstr "Добавить в черный список"
 #. js-lingui-id: yVOmgE
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 msgid "Add to Favorite"
-msgstr "Добавить в избранное"
-
-#. js-lingui-id: pBsoKL
-#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
-msgid "Add to favorites"
 msgstr "Добавить в избранное"
 
 #. js-lingui-id: A7duaz
@@ -3036,6 +3032,11 @@ msgstr "Администратор"
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Admin & Member"
 msgstr "Администратор и участник"
+
+#. js-lingui-id: ZHWySn
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Admin channel write access"
+msgstr "Доступ администратора к записи в канале"
 
 #. js-lingui-id: SsHJsm
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
@@ -4920,6 +4921,8 @@ msgstr "Прикрепить файл"
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
 #: src/modules/ai-chat/composer/components/AiChatAddMenu.tsx
+#: src/modules/ai-chat/composer/components/AiChatAttachFileButton.tsx
+#: src/modules/ai-chat/composer/components/AiChatAttachFileButton.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
 #: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
 msgid "Attach files"
@@ -6174,6 +6177,7 @@ msgstr "Отменено в"
 
 #. js-lingui-id: vv7kpg
 #: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 #: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 msgid "Cancelled"
 msgstr "Отменено"
@@ -7116,6 +7120,11 @@ msgstr "Закрыть страницу"
 msgid "Close preview"
 msgstr "Закрыть предварительный просмотр"
 
+#. js-lingui-id: QBOwbf
+#: src/modules/navigation/components/NavigationDrawerCloseSettingsButton.tsx
+msgid "Close settings"
+msgstr "Закрыть настройки"
+
 #. js-lingui-id: saip/v
 #: src/modules/side-panel/components/SidePanelCloseButton.tsx
 msgid "Close side panel"
@@ -7244,6 +7253,11 @@ msgstr "Свернуть"
 #: src/modules/command-menu-item/display/components/CommandMenuItemCollapsibleSectionHeading.tsx
 msgid "Collapse {heading}"
 msgstr "Свернуть {heading}"
+
+#. js-lingui-id: LeVkuA
+#: src/modules/navigation/components/MainNavigationDrawerContextMenuContent.tsx
+msgid "Collapse all sections"
+msgstr "Свернуть все разделы"
 
 #. js-lingui-id: kBUgVh
 #: src/modules/object-record/record-board/record-board-card/components/RecordBoardCardHeader.tsx
@@ -7612,6 +7626,7 @@ msgid "Configurable search fields"
 msgstr "Настраиваемые поля поиска"
 
 #. js-lingui-id: ywFj2D
+#: src/modules/settings/applications/components/SettingsApplicationConfigurationSection.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
 msgid "Configuration"
 msgstr "Конфигурация"
@@ -9616,7 +9631,7 @@ msgid "Customize record page"
 msgstr "Настроить страницу записи"
 
 #. js-lingui-id: hxjpaE
-#: src/modules/navigation/components/MainNavigationDrawerContextMenu.tsx
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuCustomizeSidebarMenuContent.tsx
 #: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
 #: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
 msgid "Customize sidebar"
@@ -10865,11 +10880,6 @@ msgstr "Личные сообщения"
 #: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
 msgid "Direct messages and mentions"
 msgstr "Личные сообщения и упоминания"
-
-#. js-lingui-id: Rz4s9r
-#: src/modules/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage.ts
-msgid "Direct messages don't support attachments."
-msgstr "Личные сообщения не поддерживают вложения."
 
 #. js-lingui-id: +ILAOG
 #: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
@@ -13202,6 +13212,11 @@ msgstr "Развернуть"
 msgid "Expand {heading}"
 msgstr "Развернуть {heading}"
 
+#. js-lingui-id: m2n9ZO
+#: src/modules/navigation/components/MainNavigationDrawerContextMenuContent.tsx
+msgid "Expand all sections"
+msgstr "Развернуть все разделы"
+
 #. js-lingui-id: JjrOSL
 #: src/modules/object-record/record-board/record-board-card/components/RecordBoardCardHeader.tsx
 msgid "Expand card"
@@ -14125,12 +14140,6 @@ msgstr "Возможности"
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Features active until"
 msgstr "Функции активны до"
-
-#. js-lingui-id: YirHq7
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalFeedbackInput.tsx
-#: src/modules/workflow/workflow-variables/utils/generate/computeStepOutputSchema.ts
-msgid "Feedback"
-msgstr "Обратная связь"
 
 #. js-lingui-id: 2lOBKV
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -15105,7 +15114,6 @@ msgstr "Gemini CLI"
 #: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
-#: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
@@ -16382,11 +16390,6 @@ msgstr "Импортировать новые электронные письм�
 msgid "Import new events from this account"
 msgstr "Импортировать новые события из этой учётной записи"
 
-#. js-lingui-id: 4Ljmum
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Import occurrences of recurring Google Calendar meetings up to 90 days ahead only, and import later occurrences as they come within 90 days."
-msgstr "Импортируйте вхождения повторяющихся встреч Google Calendar только на 90 дней вперёд, а более поздние вхождения импортируйте по мере того, как они будут попадать в 90-дневный период."
-
 #. js-lingui-id: D5QSQM
 #: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx
 msgid "Import only selected folders/labels"
@@ -16396,11 +16399,6 @@ msgstr "Импортировать только выбранные папки/м
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
 msgid "Import or add the MCP configuration from JetBrains settings."
 msgstr "Импортируйте или добавьте конфигурацию MCP из настроек JetBrains."
-
-#. js-lingui-id: 8zGGat
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Import recurring meetings 90 days ahead"
-msgstr "Импортировать повторяющиеся встречи на 90 дней вперёд"
 
 #. js-lingui-id: LHHO6e
 #: src/modules/getting-started/constants/GettingStartedImportPrompt.ts
@@ -20644,7 +20642,7 @@ msgid "Next record"
 msgstr "Следующая запись"
 
 #. js-lingui-id: +VXdSO
-#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingToolCallRequests.tsx
 msgid "Next request"
 msgstr "Следующий запрос"
 
@@ -21803,6 +21801,8 @@ msgstr "Настройки узла"
 #: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
 #: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
 #: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownListPinnedFieldContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterAggregateOperationMenuItems.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
@@ -23183,6 +23183,7 @@ msgstr "Переопределения"
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/object-core/workflows/components/CoreWorkflowShowPageTabList.tsx
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/data-model/SettingsObjectOverview.tsx
 #: src/pages/settings/layout/SettingsLayout.tsx
 msgid "Overview"
@@ -23520,7 +23521,7 @@ msgid "Pending"
 msgstr "Ожидание"
 
 #. js-lingui-id: 2B0V9T
-#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingToolCallRequests.tsx
 msgid "Pending requests"
 msgstr "Ожидающие запросы"
 
@@ -23826,6 +23827,12 @@ msgstr "Розовый"
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 msgid "Pinned"
 msgstr "Закреплено"
+
+#. js-lingui-id: eLzh58
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownListPinnedFieldContent.tsx
+msgid "Pinned field"
+msgstr "Закреплённое поле"
 
 #. js-lingui-id: OFY07S
 #: src/modules/page-layout/components/PageLayoutRecordIdentifierBar.tsx
@@ -24168,7 +24175,7 @@ msgid "Previous record"
 msgstr "Предыдущая запись"
 
 #. js-lingui-id: ToM1t/
-#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingToolCallRequests.tsx
 msgid "Previous request"
 msgstr "Предыдущий запрос"
 
@@ -25479,7 +25486,6 @@ msgid "Remove from blocklist"
 msgstr "Удалить из чёрного списка"
 
 #. js-lingui-id: T/pF0Z
-#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 #: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderContent.tsx
 #: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
 #: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
@@ -25615,10 +25621,10 @@ msgstr "Удалить сортировку"
 msgid "Remove sorting?"
 msgstr "Удалить сортировку?"
 
-#. js-lingui-id: J8gtSc
+#. js-lingui-id: koiY9C
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Remove the message and calendar access of API keys on roles assignable to users. While off, those API keys read them as a member who doesn't own the channel would."
-msgstr "Удалить доступ ключей API к сообщениям и календарю для ролей, которые можно назначать пользователям. Пока параметр отключен, эти ключи API читают их так, как это делал бы участник, не владеющий каналом."
+msgid "Remove the message and calendar access of API keys on roles assignable to users. While off, those API keys read them as a member who doesn't own the channel would, and keep their role's write access to them."
+msgstr "Удаляет доступ к сообщениям и календарю у API-ключей ролей, которые можно назначать пользователям. Пока отключено, эти API-ключи читают их так, как это делал бы участник, не являющийся владельцем канала, и сохраняют доступ своей роли к записи в них."
 
 #. js-lingui-id: yBC05U
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -25772,7 +25778,7 @@ msgid "Request"
 msgstr "Запрос"
 
 #. js-lingui-id: tZ7Xci
-#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingToolCallRequests.tsx
 msgid "Request {requestNumber} of {requestCount}"
 msgstr "Запрос {requestNumber} из {requestCount}"
 
@@ -26965,6 +26971,7 @@ msgstr "метаданные поля поиска"
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectMenu.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownListPinnedFieldContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -27158,6 +27165,11 @@ msgstr "Выполняется поиск {objectLabel}"
 msgid "Searching chats..."
 msgstr "Поиск чатов..."
 
+#. js-lingui-id: xrtPMt
+#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
+msgid "Searching records..."
+msgstr "Поиск записей..."
+
 #. js-lingui-id: KhCAL1
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
 msgid "Searching the help center"
@@ -27326,14 +27338,18 @@ msgstr "Просмотр настроек модели данных"
 msgid "See function"
 msgstr "Просмотреть функцию"
 
+#. js-lingui-id: kuQBTx
+#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
+msgid "See in search results"
+msgstr "Посмотреть в результатах поиска"
+
 #. js-lingui-id: 1HzZ+y
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 msgid "See installed applications"
 msgstr "Посмотреть установленные приложения"
 
 #. js-lingui-id: uPo3PQ
-#: src/modules/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiChatRecentsSection.tsx
-#: src/modules/navigation-menu-item/display/containers/components/NavigationMenuSection.tsx
+#: src/modules/navigation-menu-item/display/sections/components/NavigationMenuSectionSeeMore.tsx
 msgid "See less"
 msgstr "Показать меньше"
 
@@ -27343,16 +27359,10 @@ msgid "See matching {objectLabelPlural}"
 msgstr "Просмотреть соответствующие {objectLabelPlural}"
 
 #. js-lingui-id: V1fa9u
-#: src/modules/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiChatRecentsSection.tsx
-#: src/modules/navigation-menu-item/display/containers/components/NavigationMenuSection.tsx
+#: src/modules/navigation-menu-item/display/sections/components/NavigationMenuSectionSeeMore.tsx
 #: src/modules/settings/applications/components/SettingsApplicationContentSummarySection.tsx
 msgid "See more"
 msgstr "Подробнее"
-
-#. js-lingui-id: ssRcpB
-#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
-msgid "See more results"
-msgstr "Показать больше результатов"
 
 #. js-lingui-id: V7TecA
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
@@ -28115,6 +28125,11 @@ msgstr "Установите необходимые переменные сер�
 msgid "Set the required server variables: {missingVariableKeys}"
 msgstr "Установите необходимые переменные сервера: {missingVariableKeys}"
 
+#. js-lingui-id: L/hdCR
+#: src/modules/settings/applications/components/SettingsApplicationConfigurationSection.tsx
+msgid "Set up {applicationName} for your workspace"
+msgstr "Настройте {applicationName} для вашего рабочего пространства"
+
 #. js-lingui-id: tG3Y2G
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "Set up a Date field on {objectLabel} to create a Calendar"
@@ -28173,6 +28188,7 @@ msgstr "Настройка вашей <0>базы данных</0>..."
 #. js-lingui-id: Tz0i8g
 #: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReviewContent.tsx
 #: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
+#: src/modules/command-menu-item/utils/getCommandMenuItemSubtitle.ts
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
@@ -28722,20 +28738,10 @@ msgstr "Пропустить"
 msgid "Skip anyway"
 msgstr "Всё равно пропустить"
 
-#. js-lingui-id: 5jWe/6
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Skip calendar events with no participant outside the workspace domain, unless internal import is turned on."
-msgstr "Пропускать события календаря без участников за пределами домена рабочего пространства, если не включён внутренний импорт."
-
 #. js-lingui-id: TyudBs
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Skip creating a Name field "
 msgstr "Пропустить создание поля «Имя» "
-
-#. js-lingui-id: pmVASU
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Skip internal meetings"
-msgstr "Пропускать внутренние встречи"
 
 #. js-lingui-id: PlF+NA
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
@@ -28744,7 +28750,6 @@ msgstr "Пропустить объект-связку (аналогично с�
 
 #. js-lingui-id: 9NyAH9
 #: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsPart.tsx
 msgid "Skipped"
 msgstr "Пропущено"
@@ -30131,11 +30136,6 @@ msgstr "Коллеги"
 msgid "Teammates see who you talk to, not what you write."
 msgstr "Коллеги видят, с кем вы общаетесь, но не то, что вы пишете."
 
-#. js-lingui-id: XpPpz7
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalFeedbackInput.tsx
-msgid "Tell the agent what to change"
-msgstr "Сообщите агенту, что изменить"
-
 #. js-lingui-id: lKXcJz
 #: src/modules/settings/emailing-domains/utils/getEmailingDomainStatusDisplay.ts
 msgid "Temporary Failure"
@@ -31255,6 +31255,7 @@ msgstr "Этот провайдер встроен. Установите его 
 
 #. js-lingui-id: qfpz3J
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
+#: src/modules/views/utils/computeRelationFilterDisplayValue.ts
 msgid "This record"
 msgstr "Эта запись"
 
@@ -32143,6 +32144,11 @@ msgstr "Турецкий"
 #: src/modules/advanced-text-editor/components/TurnIntoBlockDropdown.tsx
 msgid "Turn into"
 msgstr "Преобразовать в"
+
+#. js-lingui-id: rjkNOe
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Turn on for a workspace that reported broken links, merges or deletes. Gives the Admin role back its write access to messages and calendar events, without letting it see more of them."
+msgstr "Включите для рабочего пространства, сообщившего о неработающих ссылках, объединениях или удалениях. Возвращает роли администратора доступ к записи в сообщения и события календаря, не позволяя ей видеть больше из них."
 
 #. js-lingui-id: Njwcqh
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
@@ -34069,6 +34075,7 @@ msgid "Wait for Event"
 msgstr "Ожидать событие"
 
 #. js-lingui-id: 3wIkaN
+#: src/modules/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage.ts
 #: src/modules/ai-chat/composer/hooks/useSendAiChatMessage.ts
 msgid "Wait for the attachments to finish uploading."
 msgstr "Дождитесь завершения загрузки вложений."
