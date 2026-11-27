@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { useRef } from 'react';
 import { Input } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -38,6 +39,7 @@ export const AiChatApprovalEmailReview = ({
   disabled = false,
 }: AiChatApprovalEmailReviewProps) => {
   const { t } = useLingui();
+  const subjectInputRef = useRef<HTMLInputElement>(null);
   const updateDraft = (changes: Partial<AiChatApprovalReviewEmailDraft>) => {
     if (disabled) {
       return;
@@ -63,8 +65,15 @@ export const AiChatApprovalEmailReview = ({
           }
           readonly={disabled}
         />
-        <ComposerFieldRow label={t`Subject`} hasDivider={false}>
+        <ComposerFieldRow
+          label={t`Subject`}
+          hasDivider={false}
+          onClick={
+            disabled ? undefined : () => subjectInputRef.current?.focus()
+          }
+        >
           <Input
+            ref={subjectInputRef}
             variant="plain"
             aria-label={t`Subject`}
             placeholder={t`Subject`}

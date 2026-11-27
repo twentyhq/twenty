@@ -87,3 +87,20 @@ export const SharedDraft: Story = {
     await waitFor(() => expect(secondBody).toHaveTextContent('Shared reply'));
   },
 };
+
+export const SubjectLabelFocusesInput: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const [subjectRow] = await canvas.findAllByRole('group', {
+      name: 'Subject',
+    });
+    const subjectInput = within(subjectRow).getByRole('textbox', {
+      name: 'Subject',
+    });
+
+    await userEvent.click(within(subjectRow).getByText('Subject'));
+
+    await expect(subjectInput).toHaveFocus();
+  },
+};
