@@ -1,4 +1,4 @@
-import { isObject } from '@sniptt/guards';
+import { isArray, isNumber, isObject, isString } from '@sniptt/guards';
 
 import { EVENT_LIMITS } from '@/application/constants/EventLimits';
 import { EVENT_NAME_PATTERN } from '@/application/constants/EventNamePattern';
@@ -42,7 +42,8 @@ const getEventSchemaPropertyErrors = ({
     return errors;
   }
 
-  const { type, format, objectUniversalIdentifier } = propertySchema;
+  const { type, format, objectUniversalIdentifier, minimum, maximum } =
+    propertySchema;
 
   if (isDefined(type) && !isEventSchemaPropertyType(type)) {
     errors.push(
@@ -55,6 +56,19 @@ const getEventSchemaPropertyErrors = ({
       errors.push(
         `${label} cannot use "${keyword}": event properties are flat`,
       );
+    }
+  }
+
+  if (isDefined(propertySchema.enum) && !isArray(propertySchema.enum)) {
+    errors.push(`${label} enum must be an array of allowed values`);
+  }
+
+  for (const [keyword, bound] of [
+    ['minimum', minimum],
+    ['maximum', maximum],
+  ] as const) {
+    if (isDefined(bound) && !(isNumber(bound) && Number.isFinite(bound))) {
+      errors.push(`${label} ${keyword} must be a number`);
     }
   }
 
@@ -127,7 +141,15 @@ export const getEventDefinitionErrors = ({
     );
   }
 
-  for (const requiredName of schema.required ?? []) {
+  const required = schema.required ?? [];
+
+  if (!isArray(required) || !required.every(isString)) {
+    errors.push(`Event "${name}" schema required must be a list of names`);
+
+    return errors;
+  }
+
+  for (const requiredName of required) {
     if (!Object.prototype.hasOwnProperty.call(properties, requiredName)) {
       errors.push(
         `Event "${name}" requires "${requiredName}", which is not one of its properties`,

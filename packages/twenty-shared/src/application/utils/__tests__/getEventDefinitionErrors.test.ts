@@ -109,6 +109,20 @@ describe('getEventDefinitionErrors', () => {
     ]);
   });
 
+  it('should reject constraints of the wrong shape', () => {
+    const rawSchema = JSON.parse(
+      '{"type":"object","properties":{"channel":{"type":"string","enum":"email"},"attempts":{"type":"integer","minimum":"1","maximum":3}},"required":"channel"}',
+    );
+
+    expect(
+      getEventDefinitionErrors({ name: 'messageAdded', schema: rawSchema }),
+    ).toEqual([
+      'Event "messageAdded" property "channel" enum must be an array of allowed values',
+      'Event "messageAdded" property "attempts" minimum must be a number',
+      'Event "messageAdded" schema required must be a list of names',
+    ]);
+  });
+
   it('should reject a schema written as the former property list', () => {
     const legacySchema = JSON.parse(
       '{"type":"object","properties":[{"name":"text","type":"TEXT"}]}',

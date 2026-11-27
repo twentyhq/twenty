@@ -172,6 +172,20 @@ describe('app events (e2e)', () => {
     });
   });
 
+  it('refuses an enum that is not a list', async () => {
+    await syncEvents({
+      events: [
+        {
+          ...MESSAGE_ADDED_EVENT,
+          schema: JSON.parse(
+            '{"type":"object","properties":{"channel":{"type":"string","enum":"email"}}}',
+          ),
+        },
+      ],
+      expectToFail: true,
+    });
+  });
+
   it('acknowledges an occurrence that matches the definition', async () => {
     const response = await emit({
       event: 'messageAdded',

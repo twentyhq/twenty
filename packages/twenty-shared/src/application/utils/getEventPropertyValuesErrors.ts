@@ -2,6 +2,7 @@ import { isBoolean, isNumber, isString } from '@sniptt/guards';
 import { validate as uuidValidate } from 'uuid';
 
 import { type InputJsonSchema } from '@/logic-function/input-json-schema.type';
+import { fastDeepEqual } from '@/utils/json/fast-deep-equal';
 import { isDefined } from '@/utils/validation/isDefined';
 
 const isValueOfPropertySchema = ({
@@ -47,8 +48,13 @@ const getPropertyConstraintErrors = ({
   const errors: string[] = [];
   const { enum: allowedValues, minimum, maximum } = propertySchema;
 
-  if (isDefined(allowedValues) && !allowedValues.includes(value)) {
-    errors.push(`${label} must be one of: ${allowedValues.join(', ')}`);
+  if (
+    isDefined(allowedValues) &&
+    !allowedValues.some((allowedValue) => fastDeepEqual(allowedValue, value))
+  ) {
+    errors.push(
+      `${label} must be one of: ${allowedValues.map((allowedValue) => JSON.stringify(allowedValue)).join(', ')}`,
+    );
   }
 
   if (isNumber(value) && isDefined(minimum) && value < minimum) {

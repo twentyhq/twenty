@@ -101,7 +101,37 @@ describe('getEventPropertyValuesErrors', () => {
       }),
     ).toEqual([
       'Event "messageAdded" property "attempts" must be at most 3',
-      'Event "messageAdded" property "channel" must be one of: email, chat',
+      'Event "messageAdded" property "channel" must be one of: "email", "chat"',
+    ]);
+  });
+
+  it('should compare enum values by value', () => {
+    const schema: InputJsonSchema = {
+      properties: { origin: { enum: [{ source: 'widget' }, ['a', 'b']] } },
+    };
+
+    expect(
+      getEventPropertyValuesErrors({
+        eventName: 'messageAdded',
+        schema,
+        values: { origin: { source: 'widget' } },
+      }),
+    ).toEqual([]);
+    expect(
+      getEventPropertyValuesErrors({
+        eventName: 'messageAdded',
+        schema,
+        values: { origin: ['a', 'b'] },
+      }),
+    ).toEqual([]);
+    expect(
+      getEventPropertyValuesErrors({
+        eventName: 'messageAdded',
+        schema,
+        values: { origin: { source: 'email' } },
+      }),
+    ).toEqual([
+      'Event "messageAdded" property "origin" must be one of: {"source":"widget"}, ["a","b"]',
     ]);
   });
 
