@@ -31,6 +31,11 @@ jest.mock('~/hooks/useNavigateApp', () => ({
   useNavigateApp: () => jest.fn(),
 }));
 
+jest.mock('twenty-ui/components/feedback', () => ({
+  ...jest.requireActual('twenty-ui/components/feedback'),
+  useToast: () => ({ enqueueToast: jest.fn() }),
+}));
+
 dynamicActivate(SOURCE_LOCALE);
 
 const renderVerificationStep = () =>
@@ -45,6 +50,11 @@ const renderVerificationStep = () =>
   );
 
 describe('SignInUpTOTPVerification', () => {
+  // jsdom lacks elementFromPoint, which input-otp probes for password manager badges
+  beforeAll(() => {
+    document.elementFromPoint = () => null;
+  });
+
   beforeEach(() => {
     resetJotaiStore();
     jotaiStore.set(loginTokenState.atom, 'login-token');
