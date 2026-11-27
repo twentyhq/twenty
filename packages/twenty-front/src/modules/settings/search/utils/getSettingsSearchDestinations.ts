@@ -164,10 +164,20 @@ export const getSettingsSearchDestinations = ({
         const breadcrumbs = getBreadcrumbs(metadata, objectMetadataItem);
         const isObjectPage =
           metadata.title === SETTINGS_SEARCH_OBJECT_LABEL_TITLE;
-        const tabs = getAvailableSettingsTabs({
+        const [defaultTab, ...otherTabs] = getAvailableSettingsTabs({
           tabs: metadata.tabs ?? [],
           permissionFlagMap: availability.permissionFlagMap,
         });
+
+        const keywords = [
+          ...[
+            ...(metadata.keywords ?? []),
+            ...(isDefined(defaultTab) ? [defaultTab.title] : []),
+          ].map((keyword) => i18n._(keyword)),
+          ...(isObjectPage && isDefined(objectMetadataItem)
+            ? [objectMetadataItem.labelSingular]
+            : []),
+        ];
 
         return [
           {
@@ -175,14 +185,9 @@ export const getSettingsSearchDestinations = ({
             path: pagePath,
             title,
             breadcrumbs,
-            keywords: [
-              ...(metadata.keywords ?? []).map((keyword) => i18n._(keyword)),
-              ...(isObjectPage && isDefined(objectMetadataItem)
-                ? [objectMetadataItem.labelSingular]
-                : []),
-            ],
+            keywords,
           },
-          ...tabs.map((tab) => ({
+          ...otherTabs.map((tab) => ({
             id: `settings-search-${pagePath}#${tab.id}`,
             path: `${pagePath}#${tab.id}`,
             title: i18n._(tab.title),
