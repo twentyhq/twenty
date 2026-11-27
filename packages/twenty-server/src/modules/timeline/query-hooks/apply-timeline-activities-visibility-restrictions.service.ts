@@ -4,6 +4,8 @@ import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { CommonRecordVisibilityService } from 'src/engine/api/common/common-record-visibility/common-record-visibility.service';
+import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type RecordVisibilityRestrictionHandler } from 'src/engine/api/common/common-record-visibility/types/record-visibility-restriction-handler.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
@@ -13,7 +15,10 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildIsTimelineActivityRecordReadable } from 'src/modules/timeline/utils/build-is-timeline-activity-record-readable.util';
 import { omitRestrictedFieldsFromTimelineActivityEvent } from 'src/modules/timeline/utils/omit-restricted-fields-from-timeline-activity-event.util';
-import { omitRestrictedFieldsFromTimelineActivity } from 'src/modules/timeline/utils/omit-restricted-fields-from-timeline-activity.util';
+import {
+  type IsTimelineActivityRecordReadable,
+  omitRestrictedFieldsFromTimelineActivity,
+} from 'src/modules/timeline/utils/omit-restricted-fields-from-timeline-activity.util';
 
 @Injectable()
 export class ApplyTimelineActivitiesVisibilityRestrictionsService
@@ -33,6 +38,7 @@ export class ApplyTimelineActivitiesVisibilityRestrictionsService
 
   public async applyVisibilityRestrictions({
     records,
+    authContext,
     permissionsPrincipals,
     recordReadRestrictions,
     flatObjectMetadataMaps,
@@ -48,15 +54,13 @@ export class ApplyTimelineActivitiesVisibilityRestrictionsService
       return;
     }
 
-    // Without principals the read runs with system access
-    const isRecordReadable = isDefined(permissionsPrincipals)
-      ? await this.buildIsRecordReadable({
-          timelineActivities,
-          permissionsPrincipals,
-          recordReadRestrictions,
-          flatObjectMetadataMaps,
-        })
-      : () => true;
+    const isRecordReadable = await this.buildIsRecordReadableForCaller({
+      timelineActivities,
+      authContext,
+      permissionsPrincipals,
+      recordReadRestrictions,
+      flatObjectMetadataMaps,
+    });
 
     for (const timelineActivity of timelineActivities) {
       timelineActivity.properties = omitRestrictedFieldsFromTimelineActivity({
@@ -106,6 +110,28 @@ export class ApplyTimelineActivitiesVisibilityRestrictionsService
         flatFieldMetadataMaps,
       }),
     );
+  }
+
+  private async buildIsRecordReadableForCaller({
+    authContext,
+    permissionsPrincipals,
+    ...question
+  }: Omit<
+    Parameters<typeof buildIsTimelineActivityRecordReadable>[0],
+    'filterReadableRecordIds'
+  > & {
+    authContext: WorkspaceAuthContext;
+    permissionsPrincipals: PermissionsPrincipalsWithRolesContext | undefined;
+  }): Promise<IsTimelineActivityRecordReadable> {
+    if (isSystemAuthContext(authContext)) {
+      return () => true;
+    }
+
+    if (!isDefined(permissionsPrincipals)) {
+      return () => false;
+    }
+
+    return this.buildIsRecordReadable({ ...question, permissionsPrincipals });
   }
 
   private buildIsRecordReadable({

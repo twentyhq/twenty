@@ -61,7 +61,6 @@ type TimelineActivitySubject = {
   recordId: string | undefined;
 };
 
-// A linked activity describes the linked record (a note, a task), a direct one its target record
 export const resolveTimelineActivitySubject = ({
   timelineActivity,
   flatObjectMetadataMaps,

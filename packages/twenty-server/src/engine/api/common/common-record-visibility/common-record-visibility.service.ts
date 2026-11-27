@@ -86,7 +86,7 @@ export class CommonRecordVisibilityService {
     TEvent extends ObjectRecordEvent,
   >({
     objectNameSingular,
-    ...args
+    ...eventVisibilityRestrictionsInput
   }: {
     objectNameSingular: string;
     events: TEvent[];
@@ -99,11 +99,13 @@ export class CommonRecordVisibilityService {
 
     if (
       !isDefined(handler?.applyEventVisibilityRestrictions) ||
-      args.events.length === 0
+      eventVisibilityRestrictionsInput.events.length === 0
     ) {
-      return args.events;
+      return eventVisibilityRestrictionsInput.events;
     }
 
-    return handler.applyEventVisibilityRestrictions(args);
+    return handler.applyEventVisibilityRestrictions(
+      eventVisibilityRestrictionsInput,
+    );
   }
 }
