@@ -1,39 +1,59 @@
 import { createSettingsRouteObjects } from '@/app/components/SettingsRoutes';
 import { type WorkspaceRouteObject } from '@/app/routing/types/WorkspaceRouteObject';
 import { type SettingsSearchRouteHandle } from '@/settings/search/types/SettingsSearchRouteHandle';
-import { isValidElement, type ReactNode } from 'react';
-import { Navigate } from 'react-router-dom';
+import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-const getLeafRoutes = (
+const getRoutesWithPath = (
   routeObjects: WorkspaceRouteObject[],
 ): WorkspaceRouteObject[] =>
-  routeObjects.flatMap((routeObject) =>
-    isDefined(routeObject.children)
-      ? getLeafRoutes(routeObject.children)
-      : [routeObject],
-  );
-
-const isRedirect = (element: ReactNode) =>
-  isValidElement(element) &&
-  typeof element.type === 'function' &&
-  (element.type === Navigate || element.type.name.endsWith('Redirect'));
+  routeObjects.flatMap((routeObject) => [
+    ...(isDefined(routeObject.path) ? [routeObject] : []),
+    ...getRoutesWithPath(routeObject.children ?? []),
+  ]);
 
 const getSettingsSearch = (handle: SettingsSearchRouteHandle | undefined) =>
   handle?.settingsSearch;
 
+const ROUTES = getRoutesWithPath(
+  createSettingsRouteObjects({ isAdminPageEnabled: true }),
+);
+
+const SEARCHABLE_ROUTES = ROUTES.flatMap(({ path, handle }) => {
+  const settingsSearch = getSettingsSearch(handle);
+
+  return isDefined(settingsSearch) && settingsSearch !== false
+    ? [{ path, settingsSearch }]
+    : [];
+});
+
 describe('settings search route coverage', () => {
-  it('makes every static settings page searchable or explicitly excluded', () => {
-    const undeclaredPaths = getLeafRoutes(
-      createSettingsRouteObjects({ isAdminPageEnabled: true }),
-    )
-      .filter(
-        ({ path, element }) =>
-          isDefined(path) && !path.includes(':') && !isRedirect(element),
-      )
-      .filter(({ handle }) => getSettingsSearch(handle) === undefined)
-      .map(({ path }) => path);
+  it('makes every static settings route searchable or explicitly excluded', () => {
+    const undeclaredPaths = ROUTES.filter(
+      ({ path, handle }) =>
+        !path?.includes(':') && getSettingsSearch(handle) === undefined,
+    ).map(({ path }) => path);
 
     expect(undeclaredPaths).toEqual([]);
+  });
+
+  it('declares search metadata only on settings paths', () => {
+    const settingsPaths: string[] = Object.values(SettingsPath);
+
+    expect(
+      SEARCHABLE_ROUTES.map(({ path }) => path).filter(
+        (path) => !settingsPaths.includes(path ?? ''),
+      ),
+    ).toEqual([]);
+  });
+
+  it('points every parent at a searchable route', () => {
+    const searchablePaths = SEARCHABLE_ROUTES.map(({ path }) => path);
+
+    expect(
+      SEARCHABLE_ROUTES.flatMap(({ settingsSearch }) =>
+        'parentPath' in settingsSearch ? [settingsSearch.parentPath] : [],
+      ).filter((parentPath) => !searchablePaths.includes(parentPath)),
+    ).toEqual([]);
   });
 });
