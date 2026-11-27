@@ -1459,6 +1459,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
         "builtPath": "front-component-shared-dependencies.mjs",
         "dependencies": [
           "react",
+          "react-dom",
           "react-dom/client",
           "react/jsx-runtime",
         ],

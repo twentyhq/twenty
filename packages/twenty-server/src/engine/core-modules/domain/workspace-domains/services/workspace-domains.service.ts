@@ -5,6 +5,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { buildUrlWithPathnameAndSearchParams } from 'src/engine/core-modules/domain/domain-server-config/utils/build-url-with-pathname-and-search-params.util';
 import { WorkspaceDomainConfig } from 'src/engine/core-modules/domain/workspace-domains/types/workspace-domain-config.type';
@@ -103,6 +104,28 @@ export class WorkspaceDomainsService {
     return foundWorkspace;
   }
 
+  private isRegistrablePublicDomain(
+    customDomain: string | null,
+  ): customDomain is string {
+    return (
+      isDefined(customDomain) &&
+      !this.domainServerConfigService.isInstanceHostname(customDomain)
+    );
+  }
+
+  private getUsablePublicDomainWhere() {
+    return this.domainServerConfigService.isPublicDomainValidationEnforced()
+      ? { isValidated: true }
+      : {};
+  }
+
+  private findUsablePublicDomain(domain: string) {
+    return this.publicDomainRepository.findOne({
+      where: { domain, ...this.getUsablePublicDomainWhere() },
+      relations: ['workspace', 'workspace.workspaceSsoIdentityProviders'],
+    });
+  }
+
   async getWorkspaceByOriginOrDefaultWorkspace(origin: string) {
     const { workspace } = await this.resolveWorkspaceAndPublicDomain(origin);
 
@@ -119,10 +142,8 @@ export class WorkspaceDomainsService {
 
     if (!this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED')) {
       // Still resolve the public domain so route triggers can scope by application.
-      const publicDomain = isDefined(customDomain)
-        ? await this.publicDomainRepository.findOne({
-            where: { domain: customDomain },
-          })
+      const publicDomain = this.isRegistrablePublicDomain(customDomain)
+        ? await this.findUsablePublicDomain(customDomain)
         : null;
 
       return {
@@ -133,21 +154,6 @@ export class WorkspaceDomainsService {
     }
 
     if (isUnderPublicDomainUrl) {
-      const hostname = new URL(origin).hostname;
-
-      const registeredPublicDomain = await this.publicDomainRepository.findOne({
-        where: { domain: hostname },
-        relations: ['workspace', 'workspace.workspaceSsoIdentityProviders'],
-      });
-
-      if (isDefined(registeredPublicDomain)) {
-        return {
-          workspace: registeredPublicDomain.workspace ?? undefined,
-          publicDomain: registeredPublicDomain,
-          isPublicDomain: true,
-        };
-      }
-
       const workspaceFromSubdomain = isDefined(subdomain)
         ? ((await this.workspaceRepository.findOne({
             where: { subdomain },
@@ -189,16 +195,63 @@ export class WorkspaceDomainsService {
       };
     }
 
-    const publicDomain = await this.publicDomainRepository.findOne({
-      where: { domain: customDomain },
-      relations: ['workspace', 'workspace.workspaceSsoIdentityProviders'],
-    });
+    const publicDomain = this.isRegistrablePublicDomain(customDomain)
+      ? await this.findUsablePublicDomain(customDomain)
+      : null;
 
     return {
       workspace: publicDomain?.workspace ?? undefined,
       publicDomain: publicDomain ?? null,
       isPublicDomain: isDefined(publicDomain),
     };
+  }
+
+  async hasUnvalidatedPublicDomain(origin: string): Promise<boolean> {
+    const { customDomain } =
+      this.domainServerConfigService.getSubdomainAndCustomDomainFromUrl(origin);
+
+    if (
+      !this.domainServerConfigService.isPublicDomainValidationEnforced() ||
+      !this.isRegistrablePublicDomain(customDomain)
+    ) {
+      return false;
+    }
+
+    return this.publicDomainRepository.exists({
+      where: { domain: customDomain, isValidated: false },
+    });
+  }
+
+  async buildApplicationFunctionsBaseUrl({
+    workspace,
+    flatApplication,
+  }: {
+    workspace: Pick<WorkspaceEntity, 'id' | 'subdomain'>;
+    flatApplication: Pick<FlatApplication, 'id' | 'primaryPublicDomainId'>;
+  }): Promise<string | undefined> {
+    const usablePublicDomains = await this.publicDomainRepository.find({
+      where: {
+        workspaceId: workspace.id,
+        applicationId: flatApplication.id,
+        ...this.getUsablePublicDomainWhere(),
+      },
+      order: { createdAt: 'ASC' },
+    });
+
+    const routablePublicDomains = usablePublicDomains.filter(
+      ({ domain }) =>
+        !this.domainServerConfigService.isInstanceHostname(domain),
+    );
+
+    const functionsPublicDomain =
+      routablePublicDomains.find(
+        ({ id }) => id === flatApplication.primaryPublicDomainId,
+      ) ?? routablePublicDomains[0];
+
+    return this.buildPublicFunctionBaseUrl({
+      workspace,
+      primaryPublicDomain: functionsPublicDomain?.domain,
+    });
   }
 
   buildPublicFunctionBaseUrl({
