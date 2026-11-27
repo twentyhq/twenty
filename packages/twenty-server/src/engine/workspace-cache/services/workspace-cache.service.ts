@@ -517,6 +517,18 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     return invalidatedKeys;
   }
 
+  public async markWorkspaceLocalCacheStale(
+    workspaceId: string,
+  ): Promise<void> {
+    await this.memoizer.clearKeys(`${workspaceId}-`);
+
+    for (const [localKey, entry] of this.localCache) {
+      if (localKey.endsWith(`:${workspaceId}`)) {
+        entry.lastHashCheckedAt = 0;
+      }
+    }
+  }
+
   public async evictWorkspaceFromLocalCache(
     workspaceId: string,
   ): Promise<void> {
