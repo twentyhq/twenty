@@ -7,9 +7,21 @@ import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-appl
 export const buildAdminFlatRole = ({
   workspaceId,
   ownerFlatApplication,
+  overrides = {},
 }: {
   workspaceId: string;
   ownerFlatApplication: Pick<FlatApplication, 'id' | 'universalIdentifier'>;
+  overrides?: Partial<
+    Pick<
+      FlatRole,
+      | 'universalIdentifier'
+      | 'label'
+      | 'description'
+      | 'icon'
+      | 'canBeAssignedToUsers'
+      | 'canBeAssignedToApiKeys'
+    >
+  >;
 }): FlatRole => {
   const now = new Date().toISOString();
 
@@ -54,5 +66,6 @@ export const buildAdminFlatRole = ({
     rowLevelPermissionPredicateGroupUniversalIdentifiers: [],
     agentChatChannelRoleIds: [],
     agentChatChannelRoleUniversalIdentifiers: [],
+    ...overrides,
   };
 };
