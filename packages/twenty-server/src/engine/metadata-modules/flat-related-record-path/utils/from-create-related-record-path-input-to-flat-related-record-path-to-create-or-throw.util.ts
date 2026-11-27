@@ -58,6 +58,8 @@ export const fromCreateRelatedRecordPathInputToFlatRelatedRecordPathToCreateOrTh
       ...foreignKeyValues,
       ...relationUniversalIdentifiers,
       isInherent: createRelatedRecordPathInput.isInherent ?? false,
+      isActive: true,
+      overrides: null,
       createdAt: now,
       updatedAt: now,
     };

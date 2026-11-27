@@ -1,10 +1,10 @@
-import { appendFile, copyFile, writeFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { appendFile, copyFile, realpath, writeFile } from 'node:fs/promises';
+import { isAbsolute, join, relative, resolve, sep } from 'node:path';
 
-import { build } from 'esbuild';
+import { build, type Plugin } from 'esbuild';
 
-import { buildClientWrapperSource } from './client-wrapper';
 import { buildDefaultApiUrlExpression } from './build-default-api-url-expression';
+import { buildClientWrapperSource } from './client-wrapper';
 import { emptyDir, ensureDir, move, remove } from './fs-utils';
 import { generate } from './genql';
 import twentyClientTemplateSource from './twenty-client-template.ts?raw';
@@ -85,9 +85,72 @@ export const replaceCoreClient = async ({
   );
 };
 
+const isInsideDirectory = (directory: string, filePath: string): boolean => {
+  const relativePath = relative(directory, filePath);
+
+  return (
+    relativePath !== '' &&
+    relativePath !== '..' &&
+    !relativePath.startsWith(`..${sep}`) &&
+    !isAbsolute(relativePath)
+  );
+};
+
+const REFUSED_IMPORT = {
+  errors: [
+    {
+      text: 'The generated client may only import files from its own directory',
+    },
+  ],
+};
+
+const confineToDirectory = (directoryRealPath: string): Plugin => ({
+  name: 'confine-to-generated-directory',
+  setup: (pluginBuild) => {
+    let hasRefusedFile = false;
+
+    pluginBuild.onResolve(
+      { filter: /.*/ },
+      async ({ kind, path, resolveDir }) => {
+        if (kind === 'entry-point') {
+          return undefined;
+        }
+
+        const isRelativeImportInsideDirectory =
+          (path.startsWith('./') || path.startsWith('../')) &&
+          resolveDir !== '' &&
+          isInsideDirectory(
+            directoryRealPath,
+            resolve(await realpath(resolveDir), path),
+          );
+
+        return isRelativeImportInsideDirectory ? undefined : REFUSED_IMPORT;
+      },
+    );
+
+    pluginBuild.onLoad({ filter: /.*/ }, async ({ namespace, path }) => {
+      if (
+        namespace === 'file' &&
+        isInsideDirectory(directoryRealPath, await realpath(path))
+      ) {
+        return undefined;
+      }
+
+      if (hasRefusedFile) {
+        return { contents: '', loader: 'empty' };
+      }
+
+      hasRefusedFile = true;
+
+      return REFUSED_IMPORT;
+    });
+  },
+});
+
 const compileGeneratedClient = async (generatedDir: string): Promise<void> => {
   const entryPoint = join(generatedDir, 'index.ts');
   const outfile = join(generatedDir, 'index.mjs');
+  const plugins = [confineToDirectory(await realpath(generatedDir))];
 
   await build({
     entryPoints: [entryPoint],
@@ -98,6 +161,7 @@ const compileGeneratedClient = async (generatedDir: string): Promise<void> => {
     target: 'node18',
     sourcemap: false,
     minify: false,
+    plugins,
   });
 
   await build({
@@ -109,6 +173,7 @@ const compileGeneratedClient = async (generatedDir: string): Promise<void> => {
     target: 'node18',
     sourcemap: false,
     minify: false,
+    plugins,
   });
 
   await writeFile(

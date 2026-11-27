@@ -35,6 +35,7 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 
 // Reads only need the AI flag so the chat composer can list skills
 const SKILL_READ_ACCESS_POLICY: AccessPolicy = {
@@ -83,6 +84,7 @@ export class SkillResolver {
   ) {}
 
   @ResolveField(() => String)
+  @UseGuards(NoPermissionGuard)
   async label(
     @Parent() skill: SkillDTO,
     @Context() context: { loaders: IDataloaders } & I18nContext,
@@ -97,6 +99,7 @@ export class SkillResolver {
   }
 
   @ResolveField(() => String, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   async description(
     @Parent() skill: SkillDTO,
     @Context() context: { loaders: IDataloaders } & I18nContext,
@@ -117,6 +120,7 @@ export class SkillResolver {
   @ResolveField(() => Boolean, {
     deprecationReason: IS_CUSTOM_DEPRECATION_REASON,
   })
+  @UseGuards(NoPermissionGuard)
   isCustom(
     @Parent() skill: SkillDTO,
     @AuthWorkspace() workspace: WorkspaceEntity,

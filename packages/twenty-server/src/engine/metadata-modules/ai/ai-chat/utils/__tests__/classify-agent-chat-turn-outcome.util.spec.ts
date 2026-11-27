@@ -75,6 +75,27 @@ describe('classifyAgentChatTurnOutcome', () => {
     ).toEqual({ kind: 'failed', failurePhase: 'no_text' });
   });
 
+  it('completes a turn that only ran tools rather than failing it', () => {
+    expect(
+      classifyAgentChatTurnOutcome({
+        ...baseTurn,
+        hasText: false,
+        isToolsOnly: true,
+      }),
+    ).toEqual({ kind: 'completed', outcome: 'tools_only' });
+  });
+
+  it('keeps the credits failure of a turn cut off after its tools', () => {
+    expect(
+      classifyAgentChatTurnOutcome({
+        ...baseTurn,
+        hasText: false,
+        isToolsOnly: true,
+        stopReason: 'workspaceAllowance',
+      }),
+    ).toEqual({ kind: 'failed', failurePhase: 'credits_exhausted' });
+  });
+
   it('separates running out of credits from an empty reply', () => {
     expect(
       classifyAgentChatTurnOutcome({

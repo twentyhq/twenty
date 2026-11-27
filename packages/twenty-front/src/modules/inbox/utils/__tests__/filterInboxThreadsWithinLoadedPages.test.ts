@@ -30,7 +30,7 @@ const THREADS = [
 
 const getIds = (threads: AiChatThreadRecord[]) => threads.map(({ id }) => id);
 
-describe('filterAiChatThreadsWithinLoadedPages', () => {
+describe('filterInboxThreadsWithinLoadedPages', () => {
   it('keeps every chat once all pages are loaded', () => {
     expect(
       getIds(

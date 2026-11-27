@@ -25,7 +25,6 @@ import { CoreWorkflowVersionListService } from 'src/engine/core-modules/workflow
 import { type CoreWorkflowReadCaller } from 'src/engine/core-modules/workflow/types/core-workflow-read-caller.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
-import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/permissions/utils/permissions-graphql-api-exception.filter';
 import { type OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
@@ -66,8 +65,6 @@ export class WorkflowBuilderResolver {
 
   @Mutation(() => graphqlTypeJson)
   async computeStepOutputSchema(
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
     @AuthWorkspace()
     { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
     @AuthApplication({ allowUndefined: true })
@@ -80,7 +77,6 @@ export class WorkflowBuilderResolver {
       workspaceId,
       workflowVersionContent: await this.resolveWorkflowVersionContent({
         workspaceId,
-        userWorkspaceId,
         callerApplication,
         workspaceCustomApplicationId,
         coreWorkflowVersionId,
@@ -90,13 +86,11 @@ export class WorkflowBuilderResolver {
 
   private async resolveWorkflowVersionContent({
     workspaceId,
-    userWorkspaceId,
     callerApplication,
     workspaceCustomApplicationId,
     coreWorkflowVersionId,
   }: CoreWorkflowReadCaller & {
     workspaceId: string;
-    userWorkspaceId: string | undefined;
     coreWorkflowVersionId?: string;
   }): Promise<
     | { trigger: WorkflowTrigger | null; steps: WorkflowAction[] | null }
@@ -109,7 +103,6 @@ export class WorkflowBuilderResolver {
     const coreWorkflowVersion =
       await this.coreWorkflowVersionListService.findOneByCoreWorkflowVersionId({
         workspaceId,
-        userWorkspaceId,
         callerApplication,
         workspaceCustomApplicationId,
         coreWorkflowVersionId,

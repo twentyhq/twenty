@@ -14,6 +14,7 @@ import { type RecordVisibilityRestrictionHandler } from 'src/engine/api/common/c
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
+import { isChannelVisibilityEnforcedByIndividualRole } from 'src/engine/permissions/channel-visibility/utils/is-channel-visibility-enforced-by-individual-role.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
@@ -45,6 +46,10 @@ export class ApplyCalendarEventsVisibilityRestrictionsService
     records: ObjectRecord[];
     authContext: WorkspaceAuthContext;
   }): Promise<void> {
+    if (isChannelVisibilityEnforcedByIndividualRole(authContext)) {
+      return;
+    }
+
     const restrictableCalendarEvents = records.filter((calendarEvent) =>
       RESTRICTED_CALENDAR_EVENT_FIELD_NAMES.some(
         (fieldName) => fieldName in calendarEvent,

@@ -84,8 +84,7 @@ export class ObjectRecordPageLabelIdentifierOnUpdateSideEffectHandlerService ext
 
     if (
       !isDefined(recordPageFlatView) ||
-      recordPageFlatView.isSystemSideEffect !== true ||
-      isDefined(recordPageFlatView.deletedAt)
+      !recordPageFlatView.isSystemSideEffect
     ) {
       return { status: 'noop' };
     }
@@ -94,7 +93,7 @@ export class ObjectRecordPageLabelIdentifierOnUpdateSideEffectHandlerService ext
       findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMaps({
         flatEntityMaps: relatedFlatEntityMaps.flatViewFieldMaps,
         universalIdentifiers: recordPageFlatView.viewFieldUniversalIdentifiers,
-      }).filter((flatViewField) => !isDefined(flatViewField.deletedAt));
+      });
 
     const newLabelIdentifierFlatViewFieldToDelete =
       recordPageFlatViewFields.find(

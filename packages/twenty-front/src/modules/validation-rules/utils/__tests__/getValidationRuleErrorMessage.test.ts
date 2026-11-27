@@ -61,6 +61,20 @@ describe('getValidationRuleErrorMessage', () => {
     }
   });
 
+  it('translates an aggregate used outside a formula', () => {
+    const result = compileValidationRuleExpression({
+      expression: 'sum(amount.amountMicros) > 0',
+      fields: OPPORTUNITY_FIELDS,
+    });
+
+    expect(result.isValid).toBe(false);
+    if (!result.isValid) {
+      expect(getValidationRuleErrorMessage(result)).toBe(
+        'sum() reads related records, which only a formula can do',
+      );
+    }
+  });
+
   it('should return the message for a known error code', () => {
     expect(
       getValidationRuleErrorMessage({

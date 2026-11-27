@@ -1,8 +1,8 @@
 import crypto from 'crypto';
 
 import gql from 'graphql-tag';
-import IORedis from 'ioredis';
 import request from 'supertest';
+import { clearOAuthRateLimits } from 'test/integration/oauth/utils/clear-oauth-rate-limits.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { base64UrlEncode } from 'twenty-shared/utils';
@@ -13,8 +13,6 @@ import { findMarketplaceConnectListing } from 'src/engine/core-modules/applicati
 import { CLIENT_ID_METADATA_DOCUMENT_FETCH_RATE_LIMIT_MAX } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/constants/client-id-metadata-document-fetch-rate-limit.constant';
 import { type ClientIdMetadataDocumentService } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/services/client-id-metadata-document.service';
 import { type ClientIdMetadataDocument } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/types/client-id-metadata-document.type';
-import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { TOKEN_BUCKET_THROTTLE_KEY_PREFIX } from 'src/engine/core-modules/throttler/constants/token-bucket-throttle-key-prefix.constant';
 
 const CODE_VERIFIER = 'integration-verifier';
 
@@ -114,22 +112,6 @@ const findManyApplicationsQuery = gql`
     }
   }
 `;
-
-const clearFetchRateLimit = async () => {
-  const redis = new IORedis(process.env.REDIS_URL ?? 'redis://localhost:6379');
-
-  try {
-    const keys = await redis.keys(
-      `${CacheStorageNamespace.IntegrationTests}:${CacheStorageNamespace.EngineWorkspace}:${TOKEN_BUCKET_THROTTLE_KEY_PREFIX}:oauth*`,
-    );
-
-    if (keys.length > 0) {
-      await redis.del(...keys);
-    }
-  } finally {
-    redis.disconnect();
-  }
-};
 
 describe('OAuth client ID metadata documents (integration)', () => {
   const baseUrl = `http://localhost:${APP_PORT}`;
@@ -247,11 +229,11 @@ describe('OAuth client ID metadata documents (integration)', () => {
       );
   });
 
-  beforeEach(clearFetchRateLimit);
+  beforeEach(clearOAuthRateLimits);
 
   afterAll(async () => {
     jest.restoreAllMocks();
-    await clearFetchRateLimit();
+    await clearOAuthRateLimits();
 
     await dataSource.query(
       `DELETE FROM core."application" application

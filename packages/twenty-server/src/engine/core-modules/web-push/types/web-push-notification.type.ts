@@ -4,4 +4,5 @@ export type WebPushNotification = {
   url: string;
   tag: string;
   renotify: boolean;
+  badgeCount: number;
 };

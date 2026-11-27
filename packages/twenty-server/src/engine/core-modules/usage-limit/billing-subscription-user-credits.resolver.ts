@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { Logger, UseFilters, UsePipes } from '@nestjs/common';
+import { Logger, UseFilters, UsePipes, UseGuards } from '@nestjs/common';
 import { Parent, ResolveField } from '@nestjs/graphql';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
@@ -8,6 +8,7 @@ import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entit
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 
 @MetadataResolver(() => BillingSubscriptionEntity)
 @UsePipes(ResolverValidationPipe)
@@ -22,6 +23,7 @@ export class BillingSubscriptionUserCreditsResolver {
   ) {}
 
   @ResolveField(() => Boolean, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   async hasUserCredits(
     @Parent() billingSubscription: BillingSubscriptionEntity,
   ): Promise<boolean> {

@@ -3,7 +3,6 @@ import {
   FieldMetadataType,
   ViewOpenRecordIn,
   ViewType,
-  ViewVisibility,
 } from 'twenty-shared/types';
 
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
@@ -45,13 +44,15 @@ const buildFlatView = ({
   calendarLayout: null,
   calendarFieldMetadataId: null,
   calendarEndFieldMetadataId: null,
+  listPinnedFieldMetadataId: null,
   mainGroupByFieldMetadataId: null,
   shouldHideEmptyGroups: false,
   shouldDisplayGroupsAsTabs: false,
+  presetFilter: null,
   kanbanColumnWidth: null,
   groupLoadLimit: DEFAULT_VIEW_GROUP_LOAD_LIMIT,
   anyFieldFilterValue: null,
-  visibility: ViewVisibility.WORKSPACE,
+  isPrivate: false,
   isActive: true,
   isSystemSideEffect: false,
   createdByUserWorkspaceId: null,
@@ -77,6 +78,7 @@ const buildFlatView = ({
   kanbanAggregateOperationFieldMetadataUniversalIdentifier: null,
   calendarFieldMetadataUniversalIdentifier: null,
   calendarEndFieldMetadataUniversalIdentifier: null,
+  listPinnedFieldMetadataUniversalIdentifier: null,
   mainGroupByFieldMetadataUniversalIdentifier: null,
   universalOverrides: null,
 });

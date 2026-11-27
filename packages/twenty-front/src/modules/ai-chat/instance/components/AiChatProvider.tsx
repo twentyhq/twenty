@@ -1,9 +1,8 @@
 import { type ReactNode, Suspense } from 'react';
 
-import { AiChatRuntimeEffects } from '@/ai-chat/instance/components/AiChatRuntimeEffects';
-import { AiChatThreadParticipantOperationsEffect } from '@/ai-chat/threads/components/AiChatThreadParticipantOperationsEffect';
-import { AiChatRuntimeContext } from '@/ai-chat/contexts/AiChatRuntimeContext';
-import { AiChatToolIndexInvalidationEffect } from '@/ai-chat/tool-calls/components/AiChatToolIndexInvalidationEffect';
+import { AiChatThreadStreamsEffect } from '@/ai-chat/instance/components/AiChatThreadStreamsEffect';
+import { AiChatThreadParticipantsSyncEffect } from '@/ai-chat/instance/components/AiChatThreadParticipantsSyncEffect';
+import { AiChatIsRuntimeMountedContext } from '@/ai-chat/contexts/AiChatIsRuntimeMountedContext';
 
 type AiChatProviderProps = {
   children: ReactNode;
@@ -11,11 +10,10 @@ type AiChatProviderProps = {
 
 export const AiChatProvider = ({ children }: AiChatProviderProps) => (
   <Suspense fallback={null}>
-    <AiChatThreadParticipantOperationsEffect />
-    <AiChatRuntimeEffects />
-    <AiChatToolIndexInvalidationEffect />
-    <AiChatRuntimeContext.Provider value={true}>
+    <AiChatThreadParticipantsSyncEffect />
+    <AiChatThreadStreamsEffect />
+    <AiChatIsRuntimeMountedContext.Provider value={true}>
       {children}
-    </AiChatRuntimeContext.Provider>
+    </AiChatIsRuntimeMountedContext.Provider>
   </Suspense>
 );

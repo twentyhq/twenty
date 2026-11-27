@@ -3,11 +3,10 @@ import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-perm
 import { SETTINGS_ROLE_OBJECT_PERMISSION_KEYS } from '@/settings/roles/role-permissions/object-overrides/constants/SettingsRoleObjectPermissionKeys';
 
 export const getObjectDisabledOperations = (
-  objectMetadataItem: Pick<
-    EnrichedObjectMetadataItem,
-    'disabledObjectPermissionActions'
-  >,
+  objectMetadataItem:
+    | Pick<EnrichedObjectMetadataItem, 'disabledObjectPermissionActions'>
+    | undefined,
 ): SettingsRoleObjectPermissionKey[] =>
   SETTINGS_ROLE_OBJECT_PERMISSION_KEYS.filter((operation) =>
-    objectMetadataItem.disabledObjectPermissionActions?.includes(operation),
+    objectMetadataItem?.disabledObjectPermissionActions?.includes(operation),
   );

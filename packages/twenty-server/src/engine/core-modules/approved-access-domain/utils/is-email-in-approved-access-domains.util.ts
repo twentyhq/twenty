@@ -1,5 +1,6 @@
+import { getDomainFromEmail } from 'twenty-shared/utils';
+
 import { type ApprovedAccessDomainEntity } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
-import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
 
 export const isEmailInApprovedAccessDomains = ({
   email,

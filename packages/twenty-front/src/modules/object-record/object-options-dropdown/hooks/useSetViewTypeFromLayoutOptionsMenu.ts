@@ -143,6 +143,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
           updateCurrentViewParams.mainGroupByFieldMetadataId = null;
           return await updateCurrentView(updateCurrentViewParams);
         }
+        case ViewType.INBOX:
         case ViewType.TABLE_WIDGET:
         case ViewType.KANBAN_WIDGET:
         case ViewType.LIST_WIDGET:

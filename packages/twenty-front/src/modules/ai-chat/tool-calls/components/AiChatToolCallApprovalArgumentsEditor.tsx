@@ -34,7 +34,6 @@ type AiChatToolCallApprovalArgumentsEditorProps = {
   onChange: (toolArguments: Record<string, unknown> | null) => void;
 };
 
-// tools without a dedicated card are edited as their raw arguments
 export const AiChatToolCallApprovalArgumentsEditor = ({
   defaultArguments,
   readonly,

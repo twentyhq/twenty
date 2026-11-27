@@ -1,4 +1,10 @@
 import { HTTPMethod } from 'twenty-shared/types';
+import {
+  CRON_TRIGGER_MAX_SPREAD_MS,
+  CRON_TRIGGER_MIN_SPREAD_MS,
+  isValidCronTriggerSpreadMs,
+  LOGIC_FUNCTION_MAX_RETRY_LIMIT,
+} from 'twenty-shared/logic-function';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type LogicFunctionConfig } from '@/sdk/define/logic-functions/logic-function-config';
@@ -44,9 +50,36 @@ export const defineLogicFunction: DefineEntity<LogicFunctionConfig> = (
     );
   }
 
+  if (
+    isDefined(config.onJobFailure) &&
+    typeof config.onJobFailure !== 'function'
+  ) {
+    errors.push('Logic function onJobFailure must be a function');
+  }
+
+  if (
+    isDefined(config.retryLimit) &&
+    (!Number.isInteger(config.retryLimit) ||
+      config.retryLimit < 0 ||
+      config.retryLimit > LOGIC_FUNCTION_MAX_RETRY_LIMIT)
+  ) {
+    errors.push(
+      `Logic function retryLimit must be an integer between 0 and ${LOGIC_FUNCTION_MAX_RETRY_LIMIT}`,
+    );
+  }
+
   if (config.cronTriggerSettings) {
     if (!config.cronTriggerSettings.pattern) {
       errors.push('Cron trigger must have a pattern');
+    }
+
+    if (
+      isDefined(config.cronTriggerSettings.spreadMs) &&
+      !isValidCronTriggerSpreadMs(config.cronTriggerSettings.spreadMs)
+    ) {
+      errors.push(
+        `Cron trigger spreadMs must be an integer between ${CRON_TRIGGER_MIN_SPREAD_MS} and ${CRON_TRIGGER_MAX_SPREAD_MS}`,
+      );
     }
   }
 

@@ -12,6 +12,7 @@ import {
 } from 'typeorm';
 
 import { ADD_FIELD_METADATA_OPTION_TABLE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-56/add-field-metadata-option-table-upgrade-command-name.constant';
+import { ADD_FIELD_METADATA_OPTION_DESCRIPTION_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-63/add-field-metadata-option-description-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity.type';
@@ -19,6 +20,7 @@ import { OverridableEntity } from 'src/engine/workspace-manager/types/overridabl
 export type FieldMetadataOptionOverrides = {
   label?: string;
   color?: string | null;
+  description?: string | null;
   position?: number;
   isActive?: boolean;
 };
@@ -62,6 +64,13 @@ export class FieldMetadataOptionEntity
 
   @Column({ nullable: true, type: 'varchar' })
   color: string | null;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_FIELD_METADATA_OPTION_DESCRIPTION_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: true, type: 'varchar' })
+  description: string | null;
 
   @Column({ nullable: false, type: 'double precision', default: 0 })
   position: number;

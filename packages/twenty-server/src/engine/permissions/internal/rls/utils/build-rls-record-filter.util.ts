@@ -4,6 +4,7 @@ import { isNonEmptyArray, isString } from '@sniptt/guards';
 import {
   FieldMetadataType,
   RowLevelPermissionPredicateGroupLogicalOperator,
+  RowLevelPermissionPredicateOperand,
   type CompositeFieldSubFieldName,
   type RecordGqlOperationFilter,
   type RowLevelPermissionPredicate,
@@ -12,6 +13,7 @@ import {
   type RowLevelRecordsPermissions,
 } from 'twenty-shared/types';
 import {
+  computeRelationGqlFieldJoinColumnName,
   convertViewFilterValueToString,
   getFilterOperandsForFilterableFieldType,
   getFilterTypeFromFieldType,
@@ -35,6 +37,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { UNSATISFIABLE_RECORD_FILTER } from 'src/engine/permissions/internal/rls/constants/unsatisfiable-record-filter.constant';
 import { type RlsMemberFieldValues } from 'src/engine/permissions/internal/rls/types/rls-member-field-values.type';
 import { buildMemberFieldKey } from 'src/engine/permissions/internal/rls/utils/build-member-field-key.util';
+import { isRlsOneToManyEmptinessPredicate } from 'src/engine/permissions/internal/rls/utils/is-rls-one-to-many-emptiness-predicate.util';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -53,7 +56,6 @@ type BuildRecordFilterForRuleArgs = {
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMapsForOptions;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  isRelationHopEnabled: boolean;
 };
 
 const ENUM_FIELD_TYPES: FieldMetadataType[] = [
@@ -129,7 +131,6 @@ const buildPredicateRecordFilter = ({
   flatFieldMetadataMaps,
   flatFieldMetadataOptionMaps,
   flatObjectMetadataMaps,
-  isRelationHopEnabled,
 }: Omit<BuildRecordFilterForRuleArgs, 'rowLevelPermissionRule'> & {
   predicate: RowLevelPermissionPredicate;
 }): RecordGqlOperationFilter | undefined => {
@@ -156,8 +157,31 @@ const buildPredicateRecordFilter = ({
     );
   }
 
-  if (isDefined(predicate.relationFieldMetadataId) && !isRelationHopEnabled) {
-    return UNSATISFIABLE_RECORD_FILTER;
+  // as a view filter, emptiness on a morph target would require every target empty
+  if (
+    fieldMetadata.type === FieldMetadataType.MORPH_RELATION &&
+    !isDefined(predicate.relationFieldMetadataId) &&
+    (predicate.operand === RowLevelPermissionPredicateOperand.IS_EMPTY ||
+      predicate.operand === RowLevelPermissionPredicateOperand.IS_NOT_EMPTY)
+  ) {
+    return {
+      [computeRelationGqlFieldJoinColumnName({ name: fieldMetadata.name })]: {
+        is:
+          predicate.operand === RowLevelPermissionPredicateOperand.IS_EMPTY
+            ? 'NULL'
+            : 'NOT_NULL',
+      },
+    };
+  }
+
+  if (isRlsOneToManyEmptinessPredicate({ predicate, fieldMetadata })) {
+    const hasRelatedRecordFilter: RecordGqlOperationFilter = {
+      [fieldMetadata.name]: { id: { is: 'NOT_NULL' } },
+    };
+
+    return predicate.operand === RowLevelPermissionPredicateOperand.IS_EMPTY
+      ? { not: hasRelatedRecordFilter }
+      : hasRelatedRecordFilter;
   }
 
   let predicateValue = predicate.value;

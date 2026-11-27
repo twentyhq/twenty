@@ -14,7 +14,7 @@ const StyledContainer = styled.div`
 `;
 
 const meta = {
-  title: 'Modules/AiChat/AiChatQueuedMessageList',
+  title: 'Modules/AI/AiChatQueuedMessageList',
   component: AiChatQueuedMessageList,
   decorators: [
     (Story) => (

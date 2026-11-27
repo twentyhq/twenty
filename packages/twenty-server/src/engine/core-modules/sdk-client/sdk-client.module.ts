@@ -4,8 +4,10 @@ import { WorkspaceGraphqlSchemaSDLModule } from 'src/engine/api/graphql/workspac
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { SdkClientController } from 'src/engine/core-modules/sdk-client/controllers/sdk-client.controller';
+import { SdkClientArchiveBuilderFactory } from 'src/engine/core-modules/sdk-client/sdk-client-archive-builder.factory';
 import { SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
 import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
 import { getInstalledSdkMetadataModule } from 'src/engine/core-modules/sdk-client/utils/get-installed-sdk-metadata-module.util';
@@ -26,11 +28,13 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
     WorkspaceGraphqlSchemaSDLModule,
     ApplicationModule,
     MetricsModule,
+    CacheLockModule,
   ],
   controllers: [SdkClientController],
   providers: [
     SdkClientGenerationService,
     SdkClientArchiveService,
+    SdkClientArchiveBuilderFactory,
     provideWorkspaceScopedRepository(ApplicationEntity),
   ],
   exports: [SdkClientGenerationService, SdkClientArchiveService],

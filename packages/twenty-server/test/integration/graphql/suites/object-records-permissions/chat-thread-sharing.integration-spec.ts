@@ -415,7 +415,7 @@ describe('Conversation sharing through the authenticated API', () => {
           await destroyThreadRecord(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
         ];
         for (const viewerWrite of viewerWrites) {
-          expect(viewerWrite.body.errors[0].extensions.code).toBe('NOT_FOUND');
+          expect(viewerWrite.body.errors[0].extensions.code).toBe('FORBIDDEN');
         }
         expect(await readStoredThreadState(threadId)).toEqual(
           storedBeforeViewerWrites,
@@ -519,7 +519,7 @@ describe('Conversation sharing through the authenticated API', () => {
           APPLE_JONY_MEMBER_ACCESS_TOKEN,
         );
         expect(editorSoftDelete.body.errors[0].extensions.code).toBe(
-          'NOT_FOUND',
+          'FORBIDDEN',
         );
         expect((await readStoredThreadState(threadId))?.deletedAt).toBeNull();
         const stop = await makeMetadataApiRequest(

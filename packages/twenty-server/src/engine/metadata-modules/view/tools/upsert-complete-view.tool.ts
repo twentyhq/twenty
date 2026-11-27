@@ -4,7 +4,6 @@ import {
   ViewCalendarLayout,
   ViewFilterOperand,
   ViewSortDirection,
-  ViewVisibility,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
@@ -103,11 +102,11 @@ const upsertCompleteViewInputSchema = z.object({
     .describe(
       'View type. Defaults to TABLE on create. Use the *_WIDGET variants for views backing a dashboard widget so they stay out of record index view pickers.',
     ),
-  visibility: z
-    .enum([ViewVisibility.WORKSPACE, ViewVisibility.UNLISTED])
+  isPrivate: z
+    .boolean()
     .optional()
     .describe(
-      'View visibility. Defaults to WORKSPACE on create, which is almost always the best fit — it makes the view visible to everyone and is REQUIRED for any view backing a dashboard widget. Only set UNLISTED for a private, personal view a specific user explicitly asked for, AND only when a user identity is available. An UNLISTED view created without an owner is invisible to everyone (its dashboard widget renders blank), so never use UNLISTED for widget-backing views.',
+      'Whether the view is private to its creator. Defaults to false on create, which is almost always the best fit: the view is visible to everyone, as REQUIRED for any view backing a dashboard widget. Only set true for a personal view a specific user explicitly asked for, AND only when a user identity is available. A private view created without a creator is invisible to everyone (its dashboard widget renders blank), so never make widget-backing views private.',
     ),
   mainGroupByFieldName: z
     .string()
@@ -210,7 +209,7 @@ export class UpsertCompleteViewTool extends BaseTool<
 
     if (!isDefined(existingView)) {
       await this.viewAccessService.canUserCreateView({
-        visibility: input.visibility ?? ViewVisibility.WORKSPACE,
+        isPrivate: input.isPrivate ?? false,
         accessContext: { workspaceId, userWorkspaceId, authContext },
       });
     }
@@ -274,13 +273,13 @@ export class UpsertCompleteViewTool extends BaseTool<
 
     const view = await this.completeViewUpsertService.upsertCompleteView({
       workspaceId,
-      userWorkspaceId,
+      authContext,
       existingViewId,
       objectMetadataId,
       name: input.name,
       icon: input.icon,
       type: input.type,
-      visibility: input.visibility,
+      isPrivate: input.isPrivate,
       mainGroupByFieldMetadataId,
       kanbanAggregateOperation: input.kanbanAggregateOperation,
       kanbanAggregateOperationFieldMetadataId,
@@ -301,7 +300,7 @@ export class UpsertCompleteViewTool extends BaseTool<
         objectMetadataId,
         type: view.type,
         icon: view.icon,
-        visibility: view.visibility,
+        isPrivate: view.isPrivate,
         fieldCount: view.viewFields?.length ?? 0,
         filterCount: view.viewFilters?.length ?? 0,
         sortCount: view.viewSorts?.length ?? 0,

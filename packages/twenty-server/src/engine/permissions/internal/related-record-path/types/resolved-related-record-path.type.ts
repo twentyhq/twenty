@@ -4,6 +4,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 
 export type RelatedRecordPathHop = {
   flatObjectMetadata: FlatObjectMetadata;
+  relationFieldMetadataId: string;
   sourceColumnName: string;
   targetColumnName: string;
 };

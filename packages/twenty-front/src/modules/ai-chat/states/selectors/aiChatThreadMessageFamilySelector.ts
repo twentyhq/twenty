@@ -1,7 +1,7 @@
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { type Nullable } from 'twenty-shared/types';
 
-import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
+import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 
 export const aiChatThreadMessageFamilySelector = createAtomFamilySelector<
@@ -12,7 +12,7 @@ export const aiChatThreadMessageFamilySelector = createAtomFamilySelector<
   get:
     ({ threadId, messageId }) =>
     ({ get }) =>
-      get(aiChatMessagesFamilyState, { threadId: threadId ?? null }).find(
-        ({ id }) => id === messageId,
-      ),
+      get(aiChatThreadDisplayedMessagesFamilyState, {
+        threadId: threadId ?? null,
+      }).find(({ id }) => id === messageId),
 });

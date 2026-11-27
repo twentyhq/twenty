@@ -1,5 +1,10 @@
 import { type ViewFieldManifest } from 'twenty-shared/application';
-import { AggregateOperations } from 'twenty-shared/types';
+import {
+  AggregateOperations,
+  ViewFilterGroupLogicalOperator,
+  ViewFilterOperand,
+  ViewSortDirection,
+} from 'twenty-shared/types';
 
 import { fromFlatViewFieldToStandaloneViewFieldManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-view-field-to-standalone-view-field-manifest.util';
 import { fromFlatViewFieldToViewFieldManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-view-field-to-view-field-manifest.util';
@@ -25,6 +30,37 @@ const VIEW_FIELD_MANIFEST: Required<ViewFieldManifest> = {
   isCanonical: false,
   relationTargetFieldMetadataUniversalIdentifier:
     '66666666-6666-4666-8666-666666666666',
+  relationScope: {
+    filters: [
+      {
+        id: '77777777-7777-4777-8777-777777777777',
+        fieldMetadataUniversalIdentifier:
+          '88888888-8888-4888-8888-888888888888',
+        relationTargetFieldMetadataUniversalIdentifier:
+          '99999999-9999-4999-8999-999999999999',
+        operand: ViewFilterOperand.IS_NOT,
+        value: ['DONE'],
+        filterGroupId: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+      },
+    ],
+    filterGroups: [
+      {
+        id: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+        logicalOperator: ViewFilterGroupLogicalOperator.AND,
+      },
+    ],
+    sorts: [
+      {
+        fieldMetadataUniversalIdentifier:
+          '88888888-8888-4888-8888-888888888888',
+        relationTargetFieldMetadataUniversalIdentifier:
+          'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+        direction: ViewSortDirection.ASC,
+      },
+    ],
+    limit: 1,
+  },
+  label: 'Open tasks',
 };
 
 const MINIMAL_VIEW_FIELD_MANIFEST: ViewFieldManifest = {
@@ -71,6 +107,8 @@ describe('fromFlatViewFieldToViewFieldManifest', () => {
       position: 3,
       aggregateOperation: AggregateOperations.SUM,
       relationTargetFieldMetadataUniversalIdentifier: null,
+      universalRelationScope: VIEW_FIELD_MANIFEST.relationScope,
+      label: 'Open tasks',
       isActive: true,
       isSystemSideEffect: false,
       isCanonical: true,
@@ -97,6 +135,8 @@ describe('fromFlatViewFieldToViewFieldManifest', () => {
     expect(viewFieldManifest).not.toHaveProperty(
       'viewFieldGroupUniversalIdentifier',
     );
+    expect(viewFieldManifest).not.toHaveProperty('relationScope');
+    expect(viewFieldManifest).not.toHaveProperty('label');
   });
 });
 

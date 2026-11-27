@@ -156,9 +156,11 @@ export const GettingStartedStepCard = ({
   const description = isCompleted
     ? stepDefinition.doneDescription
     : stepDefinition.description;
-  const DoneAction = isCompleted
-    ? GETTING_STARTED_CUSTOM_STEP_DONE_ACTIONS[stepDefinition.actionKey]
-    : undefined;
+  const hasBody =
+    !isCompleted ||
+    isDefined(
+      GETTING_STARTED_CUSTOM_STEP_DONE_ACTIONS[stepDefinition.actionKey],
+    );
 
   return (
     <StyledCard
@@ -213,14 +215,12 @@ export const GettingStartedStepCard = ({
           </StyledDescription>
         </StyledTitle>
       </StyledHeading>
-      {!isCompleted && (
+      {hasBody && (
         <StyledBody>
-          <GettingStartedStepAction stepDefinition={stepDefinition} />
-        </StyledBody>
-      )}
-      {isDefined(DoneAction) && (
-        <StyledBody>
-          <DoneAction />
+          <GettingStartedStepAction
+            stepDefinition={stepDefinition}
+            isCompleted={isCompleted}
+          />
         </StyledBody>
       )}
     </StyledCard>

@@ -157,7 +157,7 @@ describe('View Group Resolver - Successful Create Many Operations - v2', () => {
           },
         });
 
-        expect(deleteViewGroup.deletedAt).not.toBeNull();
+        expect(deleteViewGroup.id).toBe(viewGroupId);
       }
     }
     createdViewGroupIds = [];

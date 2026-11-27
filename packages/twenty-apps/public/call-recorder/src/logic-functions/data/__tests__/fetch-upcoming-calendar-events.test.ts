@@ -42,7 +42,7 @@ describe('fetchUpcomingCalendarEvents', () => {
       buildPage({ calendarEventNodes: [{ id: 'calendar-event-1' }] }),
     );
 
-    await fetchUpcomingCalendarEvents(CLIENT, NOW);
+    await fetchUpcomingCalendarEvents({ client: CLIENT, now: NOW });
 
     expect(queryMock).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -92,10 +92,10 @@ describe('fetchUpcomingCalendarEvents', () => {
         }),
       );
 
-    const upcomingCalendarEvents = await fetchUpcomingCalendarEvents(
-      CLIENT,
-      NOW,
-    );
+    const upcomingCalendarEvents = await fetchUpcomingCalendarEvents({
+      client: CLIENT,
+      now: NOW,
+    });
 
     expect(queryMock).toHaveBeenCalledTimes(2);
     expect(queryMock.mock.calls[1][0].calendarEvents.__args.after).toBe(
@@ -108,9 +108,42 @@ describe('fetchUpcomingCalendarEvents', () => {
     ]);
   });
 
+  it('looks only among the given events when candidates are passed', async () => {
+    queryMock.mockResolvedValue(
+      buildPage({ calendarEventNodes: [{ id: 'calendar-event-1' }] }),
+    );
+
+    await fetchUpcomingCalendarEvents({
+      client: CLIENT,
+      now: NOW,
+      candidateCalendarEventIds: ['calendar-event-1', 'calendar-event-2'],
+    });
+
+    expect(queryMock.mock.calls[0][0].calendarEvents.__args.filter).toEqual(
+      expect.objectContaining({
+        id: { in: ['calendar-event-1', 'calendar-event-2'] },
+        isCanceled: { eq: false },
+        or: expect.any(Array),
+      }),
+    );
+  });
+
+  it('does not query when the candidate list is empty', async () => {
+    await expect(
+      fetchUpcomingCalendarEvents({
+        client: CLIENT,
+        now: NOW,
+        candidateCalendarEventIds: [],
+      }),
+    ).resolves.toEqual([]);
+    expect(queryMock).not.toHaveBeenCalled();
+  });
+
   it('returns an empty list when no upcoming events exist', async () => {
     queryMock.mockResolvedValue(buildPage({ calendarEventNodes: [] }));
 
-    await expect(fetchUpcomingCalendarEvents(CLIENT, NOW)).resolves.toEqual([]);
+    await expect(
+      fetchUpcomingCalendarEvents({ client: CLIENT, now: NOW }),
+    ).resolves.toEqual([]);
   });
 });

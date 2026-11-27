@@ -3,7 +3,6 @@ import {
   ObjectOpenRecordIn,
   ViewOpenRecordIn,
   ViewType,
-  ViewVisibility,
 } from 'twenty-shared/types';
 
 import { type MetadataUniversalFlatEntityAndRelatedFlatEntityMapsForValidation } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-and-related-flat-entity-maps-for-validation.type';
@@ -91,6 +90,7 @@ describe('deleteUniversalFlatEntityFromUniversalFlatEntityAndRelatedEntityMapsTh
         options: null,
         morphId: null,
         universalSettings: null,
+        formula: null,
         description: 'default flat field metadata description',
         icon: 'icon',
         isActive: true,
@@ -128,6 +128,7 @@ describe('deleteUniversalFlatEntityFromUniversalFlatEntityAndRelatedEntityMapsTh
         fieldMetadataUniversalIdentifier,
       calendarEndFieldMetadataUniversalIdentifier:
         fieldMetadataUniversalIdentifier,
+      listPinnedFieldMetadataUniversalIdentifier: null,
       createdAt: '2024-01-01T00:00:00.000Z',
       updatedAt: '2024-01-01T00:00:00.000Z',
       name: 'Test View',
@@ -138,10 +139,11 @@ describe('deleteUniversalFlatEntityFromUniversalFlatEntityAndRelatedEntityMapsTh
       calendarLayout: null,
       shouldHideEmptyGroups: false,
       shouldDisplayGroupsAsTabs: false,
+      presetFilter: null,
       kanbanColumnWidth: null,
       groupLoadLimit: 20,
       anyFieldFilterValue: null,
-      visibility: ViewVisibility.WORKSPACE,
+      isPrivate: false,
       createdByUserWorkspaceId: null,
       deletedAt: null,
       viewSortUniversalIdentifiers: [],

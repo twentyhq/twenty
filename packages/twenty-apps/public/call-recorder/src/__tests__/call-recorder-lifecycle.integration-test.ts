@@ -68,18 +68,32 @@ const RECALL_BASE_URL = 'https://us-west-2.recall.ai/api/v1';
 const RESTRICTED_TITLE_PLACEHOLDER =
   'FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED';
 
-// The app's generated client only covers the objects the app uses, but test
-// fixture discovery needs fields that are not part of the app schema; this
-// hits the GraphQL APIs directly with the test API key.
-const twentyGraphql = async <TData>(
-  endpointPath: '/graphql' | '/metadata',
-  query: string,
-  variables: Record<string, unknown> = {},
-): Promise<TData> => {
+const readWorkspaceApiKey = (): string => {
+  const workspaceApiKey = process.env[WORKSPACE_API_KEY_ENV];
+
+  if (!isDefined(workspaceApiKey)) {
+    throw new Error(`${WORKSPACE_API_KEY_ENV} must be set`);
+  }
+
+  return workspaceApiKey;
+};
+
+// Fixture discovery needs fields outside the app's generated client.
+const twentyGraphql = async <TData>({
+  endpointPath,
+  query,
+  variables = {},
+  accessToken,
+}: {
+  endpointPath: '/graphql' | '/metadata';
+  query: string;
+  variables?: Record<string, unknown>;
+  accessToken: string;
+}): Promise<TData> => {
   const response = await fetch(`${process.env.TWENTY_API_URL}${endpointPath}`, {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${process.env[WORKSPACE_API_KEY_ENV]}`,
+      Authorization: `Bearer ${accessToken}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ query, variables }),
@@ -106,9 +120,9 @@ const fetchApplicationAccessToken = async (): Promise<string> => {
       id: string;
       oAuthClientId: string;
     } | null;
-  }>(
-    '/metadata',
-    `query FindApplicationRegistration($universalIdentifier: String!) {
+  }>({
+    endpointPath: '/metadata',
+    query: `query FindApplicationRegistration($universalIdentifier: String!) {
       findApplicationRegistrationByUniversalIdentifier(
         universalIdentifier: $universalIdentifier
       ) {
@@ -116,8 +130,9 @@ const fetchApplicationAccessToken = async (): Promise<string> => {
         oAuthClientId
       }
     }`,
-    { universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER },
-  );
+    variables: { universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER },
+    accessToken: readWorkspaceApiKey(),
+  });
 
   if (isNull(applicationRegistration)) {
     throw new Error('Call recorder is not registered');
@@ -127,15 +142,16 @@ const fetchApplicationAccessToken = async (): Promise<string> => {
     rotateApplicationRegistrationClientSecret: { clientSecret },
   } = await twentyGraphql<{
     rotateApplicationRegistrationClientSecret: { clientSecret: string };
-  }>(
-    '/metadata',
-    `mutation RotateApplicationRegistrationClientSecret($id: String!) {
+  }>({
+    endpointPath: '/metadata',
+    query: `mutation RotateApplicationRegistrationClientSecret($id: String!) {
       rotateApplicationRegistrationClientSecret(id: $id) {
         clientSecret
       }
     }`,
-    { id: applicationRegistration.id },
-  );
+    variables: { id: applicationRegistration.id },
+    accessToken: readWorkspaceApiKey(),
+  });
   const response = await fetch(`${process.env.TWENTY_API_URL}/oauth/token`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -158,6 +174,16 @@ const fetchApplicationAccessToken = async (): Promise<string> => {
 
   return tokenResponse.access_token;
 };
+
+// A permission flag the app role just gained takes a few seconds to apply after install.
+const waitForCalendarChannelsAccess = async (applicationAccessToken: string) =>
+  vi.waitFor(
+    () =>
+      new MetadataApiClient({
+        headers: { Authorization: `Bearer ${applicationAccessToken}` },
+      }).query({ calendarChannels: { id: true } }),
+    { timeout: 60_000, interval: 1_000 },
+  );
 
 type CalendarEventFixture = {
   id: string;
@@ -182,16 +208,17 @@ type CalendarEventFixturesPage = {
   };
 };
 
-const discoverVisibleCalendarEventFixtures = async (): Promise<
-  CalendarEventFixture[]
-> => {
+// Handlers reconcile as the application, so a fixture must be fully visible to it.
+const discoverVisibleCalendarEventFixtures = async (
+  applicationAccessToken: string,
+): Promise<CalendarEventFixture[]> => {
   const fixtures: CalendarEventFixture[] = [];
   let after: string | null = null;
 
   do {
-    const eventsData: CalendarEventFixturesPage = await twentyGraphql(
-      '/graphql',
-      `query ($after: String) {
+    const eventsData: CalendarEventFixturesPage = await twentyGraphql({
+      endpointPath: '/graphql',
+      query: `query ($after: String) {
         calendarEvents(first: 200, after: $after) {
           edges {
             node {
@@ -213,8 +240,9 @@ const discoverVisibleCalendarEventFixtures = async (): Promise<
           pageInfo { hasNextPage endCursor }
         }
       }`,
-      { after },
-    );
+      variables: { after },
+      accessToken: applicationAccessToken,
+    });
     const connection = eventsData.calendarEvents;
 
     fixtures.push(
@@ -917,6 +945,7 @@ describe('call recorder app lifecycle (integration)', () => {
   // Built before the fetch interceptor is installed so the shared client's
   // Twenty API traffic always uses the real fetch.
   let client: CoreApiClient;
+  let workspaceApiKeyClient: CoreApiClient;
   let applicationAccessToken: string;
   let workspaceId: string;
   let availableCalendarEventFixtures: CalendarEventFixture[];
@@ -935,11 +964,18 @@ describe('call recorder app lifecycle (integration)', () => {
   };
 
   beforeAll(async () => {
-    client = new CoreApiClient();
     workspaceId = readWorkspaceIdFromApiKey();
-    availableCalendarEventFixtures =
-      await discoverVisibleCalendarEventFixtures();
     applicationAccessToken = await fetchApplicationAccessToken();
+    await waitForCalendarChannelsAccess(applicationAccessToken);
+    client = new CoreApiClient({
+      headers: { Authorization: `Bearer ${applicationAccessToken}` },
+    });
+    workspaceApiKeyClient = new CoreApiClient({
+      headers: { Authorization: `Bearer ${readWorkspaceApiKey()}` },
+    });
+    availableCalendarEventFixtures = await discoverVisibleCalendarEventFixtures(
+      applicationAccessToken,
+    );
   });
 
   beforeEach(() => {
@@ -966,12 +1002,9 @@ describe('call recorder app lifecycle (integration)', () => {
     vi.stubEnv('RECALL_API_KEY', 'recall-api-key');
     vi.stubEnv('RECALL_REGION', 'us-west-2');
     vi.stubEnv('CALL_RECORDER_STYLE', 'NONE');
-    // Logic functions normally run with an app access token; the workspace
-    // API key is a token with the same workspaceId claim.
-    vi.stubEnv(
-      'TWENTY_APP_ACCESS_TOKEN',
-      process.env[WORKSPACE_API_KEY_ENV] ?? '',
-    );
+    // The workspace key can no longer write meetings or their recordings.
+    vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', applicationAccessToken);
+    vi.stubEnv('TWENTY_APP_APPLICATION_ACCESS_TOKEN', applicationAccessToken);
   });
 
   afterEach(async () => {
@@ -1006,15 +1039,38 @@ describe('call recorder app lifecycle (integration)', () => {
     }
   }, REAL_QUEUE_TIMEOUT_MS);
 
+  const warnCleanupFailure =
+    ({ step, callRecordingId }: { step: string; callRecordingId: string }) =>
+    (error: unknown) =>
+      console.warn(
+        `[test cleanup] ${step} failed for call recording ${callRecordingId}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+
+  // The workspace key can only destroy detached recordings; ending them first keeps a failed destroy inert.
   const destroyCallRecordings = async (
     callRecordingIds: string[],
   ): Promise<void> => {
     for (const callRecordingId of callRecordingIds) {
       await client
         .mutation({
+          updateCallRecording: {
+            __args: {
+              id: callRecordingId,
+              data: {
+                calendarEventId: null,
+                status: 'NOT_RECORDED',
+                recordingRequestStatus: 'CANCELED',
+              },
+            },
+            id: true,
+          },
+        })
+        .catch(warnCleanupFailure({ step: 'detach', callRecordingId }));
+      await workspaceApiKeyClient
+        .mutation({
           destroyCallRecording: { __args: { id: callRecordingId }, id: true },
         })
-        .catch(() => {});
+        .catch(warnCleanupFailure({ step: 'destroy', callRecordingId }));
     }
   };
 
@@ -1509,7 +1565,7 @@ describe('call recorder app lifecycle (integration)', () => {
 
         for (const { node } of calendarEvents) {
           expect(node.callRecorderPreference).toBe(
-            failedCalendarEventIds.has(node.id) ? null : 'ON',
+            failedCalendarEventIds.has(node.id) ? null : 'AUTO',
           );
         }
       } finally {
@@ -1600,9 +1656,7 @@ describe('call recorder app lifecycle (integration)', () => {
           JSON.stringify(variables).includes('"id":{"in":')
         ) {
           recordingDeleted = true;
-          await client.mutation({
-            destroyCallRecording: { __args: { id: callRecordingId }, id: true },
-          });
+          await destroyCallRecordings([callRecordingId]);
         }
 
         return response;
@@ -1723,7 +1777,7 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(recordings[0].externalBotId).toBeFalsy();
       expect(recall.deletedBotIds).toEqual([botId]);
       expect(recall.bots.size).toBe(0);
-      expect(await fetchCallRecorderPreference(calendarEventId)).toBeNull();
+      expect(await fetchCallRecorderPreference(calendarEventId)).toBe('ON');
     });
 
     it('cancels the bot of a meeting whose calendar event was destroyed', async () => {
@@ -1825,10 +1879,10 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(canceledRecording.externalBotId).toBeFalsy();
       expect(recall.deletedBotIds).toEqual([canceled.botId]);
       expect(await fetchCallRecorderPreference(createdCalendarEventId)).toBe(
-        'ON',
+        'AUTO',
       );
       expect(await fetchCallRecorderPreference(updated.calendarEventId)).toBe(
-        'ON',
+        'AUTO',
       );
       expect(await fetchCallRecorderPreference(canceled.calendarEventId)).toBe(
         'OFF',
@@ -2581,7 +2635,7 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(callRecording.recordingRequestStatus).toBe('CANCELED');
       expect(callRecording.externalBotId).toBeFalsy();
       expect(recall.deletedBotIds).toContain(botId);
-      expect(await fetchCallRecorderPreference(calendarEventId)).toBeNull();
+      expect(await fetchCallRecorderPreference(calendarEventId)).toBe('ON');
     });
 
     it('cancels a meeting in a mixed batch before active follow-up enqueueing fails', async () => {
@@ -3834,7 +3888,7 @@ describe('call recorder app lifecycle (integration)', () => {
       applicationClient = new CoreApiClient();
     });
 
-    it('marks a blank preference On when it schedules a bot', async () => {
+    it('marks a blank preference Auto when it schedules a bot', async () => {
       const calendarEventId = await createCalendarEvent({
         callRecorderPreference: null,
       });
@@ -3844,7 +3898,7 @@ describe('call recorder app lifecycle (integration)', () => {
         calendarEventIds: [calendarEventId],
       });
 
-      expect(await fetchCallRecorderPreference(calendarEventId)).toBe('ON');
+      expect(await fetchCallRecorderPreference(calendarEventId)).toBe('AUTO');
 
       const callRecording = (
         await findCallRecordings({ calendarEventId: { in: [calendarEventId] } })
@@ -3892,7 +3946,7 @@ describe('call recorder app lifecycle (integration)', () => {
       ).toEqual([]);
     });
 
-    it('marks every blank copy of the same meeting On, past the update batch size in one go', async () => {
+    it('marks every blank copy of the same meeting Auto, past the update batch size in one go', async () => {
       const requiredCalendarEventFixtureCount =
         CALENDAR_EVENT_UPDATE_BATCH_SIZE + 1;
       const availableCalendarEventFixtureCount =
@@ -3939,13 +3993,15 @@ describe('call recorder app lifecycle (integration)', () => {
         ),
       );
 
-      expect(preferences.every((preference) => preference === 'ON')).toBe(true);
+      expect(preferences.every((preference) => preference === 'AUTO')).toBe(
+        true,
+      );
       expect(
         await findCallRecordings({ calendarEventId: { in: calendarEventIds } }),
       ).toHaveLength(1);
     });
 
-    it('marks a blank preference On again when it updates an existing scheduled recording', async () => {
+    it('marks a blank preference Auto again when it updates an existing scheduled recording', async () => {
       const { calendarEventId } =
         await scheduleRecordingThroughCalendarReconciliation(applicationClient);
 
@@ -3963,7 +4019,7 @@ describe('call recorder app lifecycle (integration)', () => {
         calendarEventIds: [calendarEventId],
       });
 
-      expect(await fetchCallRecorderPreference(calendarEventId)).toBe('ON');
+      expect(await fetchCallRecorderPreference(calendarEventId)).toBe('AUTO');
       expect(
         await findCallRecordings({
           calendarEventId: { in: [calendarEventId] },
@@ -3994,7 +4050,7 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(callRecording.externalBotId).toBeTruthy();
     });
 
-    it('does not reconcile again on the echo of its own On write', async () => {
+    it('does not reconcile again on the echo of its own Auto write', async () => {
       const calendarEventId = await createCalendarEvent({
         callRecorderPreference: null,
       });
@@ -4008,7 +4064,7 @@ describe('call recorder app lifecycle (integration)', () => {
         calendarEventId,
         updatedFields: ['callRecorderPreference'],
         before: { callRecorderPreference: null },
-        after: { callRecorderPreference: 'ON' },
+        after: { callRecorderPreference: 'AUTO' },
       });
 
       expect(result).toEqual({
@@ -4017,7 +4073,7 @@ describe('call recorder app lifecycle (integration)', () => {
       });
     });
 
-    it('reconciles every change of a batch except the echo of its own On write', async () => {
+    it('reconciles every change of a batch except the echo of its own Auto write', async () => {
       const echoedCalendarEventId = await createCalendarEvent({
         callRecorderPreference: null,
       });
@@ -4036,7 +4092,7 @@ describe('call recorder app lifecycle (integration)', () => {
           calendarEventId: echoedCalendarEventId,
           updatedFields: ['callRecorderPreference', 'updatedBy'],
           before: { callRecorderPreference: null },
-          after: { callRecorderPreference: 'ON' },
+          after: { callRecorderPreference: 'AUTO' },
         },
         {
           calendarEventId: newlyOnCalendarEventId,
@@ -4140,7 +4196,32 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(callRecording.externalBotId).toBeTruthy();
     });
 
-    it('clears an On set by hand on a meeting that already ended', async () => {
+    it('schedules a bot when the user who sets On cannot create the recording', async () => {
+      const calendarEventId = await createCalendarEvent({
+        callRecorderPreference: 'ON',
+      });
+      // A run a user starts defaults to their token; the workspace key cannot create meeting recordings.
+      vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', readWorkspaceApiKey());
+
+      const result = await deliverCalendarEventUpdates({
+        calendarEventId,
+        updatedFields: ['callRecorderPreference'],
+        before: { callRecorderPreference: null },
+        after: { callRecorderPreference: 'ON' },
+      });
+
+      expect(result).toEqual(expect.objectContaining({ reconciled: true }));
+
+      const callRecording = (
+        await findCallRecordings({ calendarEventId: { in: [calendarEventId] } })
+      )[0];
+
+      expect(callRecording).toBeDefined();
+      expect(callRecording.recordingRequestStatus).toBe('REQUESTED');
+      expect(recall.bots.has(callRecording.externalBotId)).toBe(true);
+    });
+
+    it('keeps an On set by hand on a meeting that already ended', async () => {
       const calendarEventId = await createCalendarEvent({
         startsAt: hoursAgo(3),
         endsAt: hoursAgo(2),
@@ -4155,7 +4236,7 @@ describe('call recorder app lifecycle (integration)', () => {
       });
 
       expect(result).toEqual(expect.objectContaining({ reconciled: true }));
-      expect(await fetchCallRecorderPreference(calendarEventId)).toBeNull();
+      expect(await fetchCallRecorderPreference(calendarEventId)).toBe('ON');
       expect(
         await findCallRecordings({
           calendarEventId: { in: [calendarEventId] },
@@ -4163,7 +4244,7 @@ describe('call recorder app lifecycle (integration)', () => {
       ).toEqual([]);
     });
 
-    it('clears an On set by hand while the workspace recording switch is off', async () => {
+    it('keeps an On set by hand while the workspace recording switch is off', async () => {
       vi.stubEnv(
         CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED_ENV_VAR_NAME,
         'false',
@@ -4181,7 +4262,7 @@ describe('call recorder app lifecycle (integration)', () => {
       });
 
       expect(result).toEqual(expect.objectContaining({ reconciled: true }));
-      expect(await fetchCallRecorderPreference(calendarEventId)).toBeNull();
+      expect(await fetchCallRecorderPreference(calendarEventId)).toBe('ON');
       expect(
         await findCallRecordings({
           calendarEventId: { in: [calendarEventId] },
@@ -4189,7 +4270,7 @@ describe('call recorder app lifecycle (integration)', () => {
       ).toEqual([]);
     });
 
-    it('schedules a bot and marks the event On when a user clears an Off', async () => {
+    it('schedules a bot and marks the event Auto when a user clears an Off', async () => {
       const calendarEventId = await createCalendarEvent({
         callRecorderPreference: 'OFF',
       });
@@ -4212,7 +4293,7 @@ describe('call recorder app lifecycle (integration)', () => {
       });
 
       expect(result).toEqual(expect.objectContaining({ reconciled: true }));
-      expect(await fetchCallRecorderPreference(calendarEventId)).toBe('ON');
+      expect(await fetchCallRecorderPreference(calendarEventId)).toBe('AUTO');
 
       const callRecording = (
         await findCallRecordings({ calendarEventId: { in: [calendarEventId] } })
@@ -4223,11 +4304,21 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(callRecording.externalBotId).toBeTruthy();
     });
 
-    it('clears an On the meeting no longer earns', async () => {
-      const { calendarEventId, callRecordingId } =
-        await scheduleRecordingThroughCalendarReconciliation(applicationClient);
+    it('clears an Auto the meeting no longer earns', async () => {
+      const calendarEventId = await createCalendarEvent({
+        callRecorderPreference: null,
+      });
 
-      expect(await fetchCallRecorderPreference(calendarEventId)).toBe('ON');
+      await reconcileCallRecorderForCalendarEventIds({
+        client: applicationClient,
+        calendarEventIds: [calendarEventId],
+      });
+
+      const [{ id: callRecordingId }] = await findCallRecordings({
+        calendarEventId: { in: [calendarEventId] },
+      });
+
+      expect(await fetchCallRecorderPreference(calendarEventId)).toBe('AUTO');
 
       await client.mutation({
         updateCalendarEvent: {
@@ -4523,11 +4614,17 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(recall.bots.size).toBe(0);
     });
 
-    it('clears the Recording Bot preference of the meetings it paused', async () => {
-      const { calendarEventId } =
-        await scheduleRecordingThroughCalendarReconciliation();
+    it('clears the Auto of the meetings it paused', async () => {
+      const calendarEventId = await createCalendarEvent({
+        callRecorderPreference: null,
+      });
 
-      expect(await fetchCallRecorderPreference(calendarEventId)).toBe('ON');
+      await reconcileCallRecorderForCalendarEventIds({
+        client,
+        calendarEventIds: [calendarEventId],
+      });
+
+      expect(await fetchCallRecorderPreference(calendarEventId)).toBe('AUTO');
 
       turnRecordingOff();
       await syncCalendarBotSchedulingHandler();
@@ -4555,6 +4652,8 @@ describe('call recorder app lifecycle (integration)', () => {
       ).toBe('CANCELED');
 
       vi.unstubAllEnvs();
+      vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', applicationAccessToken);
+      vi.stubEnv('TWENTY_APP_APPLICATION_ACCESS_TOKEN', applicationAccessToken);
 
       await client.mutation({
         updateCalendarEvent: {

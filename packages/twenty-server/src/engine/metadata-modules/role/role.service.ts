@@ -557,7 +557,6 @@ export class RoleService {
 
     await this.applicationService.update(workspaceCustomFlatApplication.id, {
       workspaceId,
-      defaultRoleId: roleId,
       requestedRoleId: roleId,
     });
   }

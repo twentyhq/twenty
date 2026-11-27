@@ -29,12 +29,9 @@ type RequestSelection = {
   threadId: string | null;
   toolCallId: string | null;
   index: number;
-  // the requests pending when one was picked, to tell a later batch from this one
   batchToolCallIds: string[];
 };
 
-// The agent resumes once every paused call is answered. Each call is answered on its own, in any
-// order, and every card stays mounted so what is typed in one survives going to another.
 export const AiChatPendingAskGate = ({
   children,
 }: AiChatPendingAskGateProps) => {
@@ -60,7 +57,6 @@ export const AiChatPendingAskGate = ({
   const pendingRecordApprovals = pendingToolCalls.filter(
     isAiChatPendingRecordApproval,
   );
-  // the deck stays while its last calls are being answered, so they cannot be answered twice
   const isReviewingRecordApprovals =
     pendingRecordApprovals.length === requestCount &&
     (requestCount > 1 ||
@@ -79,9 +75,6 @@ export const AiChatPendingAskGate = ({
   const selectedIndex = pendingToolCalls.findIndex(
     (pendingToolCall) => pendingToolCall.toolCallId === selection.toolCallId,
   );
-  // an answered request leaves the list, so the one taking its place is shown
-  // a selection made in another conversation or for an earlier batch does not carry over, so
-  // each new set of requests opens on its oldest one
   const isSameBatch =
     selection.threadId === threadId &&
     pendingToolCalls.some((pendingToolCall) =>

@@ -1,0 +1,105 @@
+---
+title: Notifiche della posta in arrivo
+description: Ricevi notifiche dei nuovi messaggi in arrivo e risolvi le notifiche che non vengono visualizzate.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+<Warning>
+Posta in arrivo è una funzionalità di Lab: è ancora in accesso anticipato, quindi potrebbe cambiare e presentare alcuni problemi. Per provarla, vai a **Impostazioni → Community**, apri la sezione **Funzionalità** e attiva **Posta in arrivo**. Consulta le [Impostazioni della community](/it/user-guide/settings/capabilities/community-settings).
+</Warning>
+
+Twenty può mostrare i nuovi messaggi della posta in arrivo come notifiche sul tuo computer, anche quando non è aperta alcuna scheda di Twenty.
+
+## Attiva le notifiche
+
+1. Vai a **Impostazioni → Esperienza** e trova la sezione **Notifiche**.
+2. Fai clic su **Consenti**, quindi accetta la richiesta del browser.
+3. Twenty invia subito una notifica di prova. Se la vedi, hai finito.
+4. Scegli per quali messaggi ricevere notifiche: **Tutte le chat che segui**, **Messaggi diretti e menzioni** o **Disattivate**.
+5. Attiva **Mostra anteprima del messaggio** per vedere il mittente e il testo del messaggio nelle notifiche. Lasciala disattivata sugli schermi condivisi.
+
+Buono a sapersi:
+
+* Le notifiche vengono attivate per browser e per spazio di lavoro: fai clic su **Consenti** in ogni browser e in ogni spazio di lavoro che utilizzi.
+* Il livello di notifica e le scelte di anteprima si applicano a tutti i dispositivi.
+* La sezione viene visualizzata solo quando Posta in arrivo è attiva e il tuo ruolo ha accesso all'IA.
+* Usa **Invia prova** dopo ogni modifica qui sotto per verificare che le notifiche vengano visualizzate.
+
+## Perché non vedi le notifiche
+
+### Twenty è aperto davanti a te
+
+Twenty non invia una notifica mentre stai guardando una delle sue schede: stai già vedendo il messaggio. Quando fai una prova con un collega, passa prima a un'altra app o scheda.
+
+### Il messaggio non corrisponde al tuo livello di notifica
+
+Con **Messaggi diretti e menzioni**, gli altri messaggi nelle chat che segui non generano notifiche. Con **Disattivate**, non ne ricevi nessuna. Modificalo in **Impostazioni → Esperienza**.
+
+### Il tuo browser blocca Twenty
+
+Se non è comparsa alcuna richiesta quando hai fatto clic su **Consenti**, cerca un'icona a forma di campanella nella barra degli indirizzi: Chrome ed Edge talvolta mostrano lì una richiesta discreta anziché una finestra popup.
+
+Se la scheda indica che le notifiche sono bloccate, consentile di nuovo, quindi ricarica Twenty:
+
+<Tabs>
+  <Tab title="Chrome, Brave, Opera, Arc">
+    Fai clic sull'icona delle informazioni sul sito a sinistra della barra degli indirizzi, quindi imposta **Notifiche** su **Consenti**.
+  </Tab>
+  <Tab title="Edge">
+    Fai clic sull'icona del lucchetto a sinistra della barra degli indirizzi, apri **Autorizzazioni per questo sito**, quindi imposta **Notifiche** su **Consenti**.
+  </Tab>
+  <Tab title="Firefox">
+    Fai clic sull'icona delle autorizzazioni o sul lucchetto nella barra degli indirizzi e deseleziona **Invio notifiche: bloccato**. Puoi anche andare a **Impostazioni → Privacy e sicurezza → Autorizzazioni → Notifiche**.
+  </Tab>
+  <Tab title="Safari">
+    Vai a **Safari → Impostazioni → Siti web → Notifiche** e imposta Twenty su **Consenti**.
+  </Tab>
+</Tabs>
+
+Le finestre private e in incognito non possono ricevere notifiche.
+
+### Il tuo computer blocca le notifiche del browser
+
+Il browser può consentire Twenty mentre il computer continua a nascondere tutto ciò che invia il browser. Twenty non può rilevarlo, quindi controlla queste impostazioni:
+
+<Tabs>
+  <Tab title="macOS">
+    1. Apri **Impostazioni di Sistema → Notifiche** e seleziona il browser (Google Chrome, Microsoft Edge, Brave Browser o Firefox). Attiva **Consenti notifiche**. Chrome, Edge e Brave potrebbero anche elencare una voce "Helper (Avvisi)": attivala anche tu. Con Safari, ogni sito web ha una voce propria: seleziona quella di Twenty.
+
+       Chrome chiede a macOS questa autorizzazione solo una volta, al primo avvio. Se la richiesta non è stata visualizzata, le notifiche rimangono disattivate finché non le attivi qui.
+    2. Imposta lo stile di avviso su **Banner** o **Avvisi**. Su macOS 26, seleziona **Scrivania**. Con **Nessuno**, le notifiche vengono inviate solo al Centro notifiche.
+    3. Disattiva **Full immersion** o **Non disturbare** (Centro di Controllo nella barra dei menu), oppure aggiungi il browser alle app consentite della tua Full immersion in **Impostazioni di Sistema → Full immersion**. Una modalità Full immersion attivata sul tuo iPhone si applica anche al Mac quando **Condividi su tutti i dispositivi** è attivo.
+    4. macOS nasconde le notifiche mentre condividi o duplichi lo schermo, ad esempio durante una videochiamata. Puoi modificare questa impostazione con **Consenti notifiche durante la duplicazione o la condivisione dello schermo** in **Impostazioni di Sistema → Notifiche**.
+  </Tab>
+  <Tab title="Windows">
+    1. Apri **Impostazioni → Sistema → Notifiche** (Windows 10: **Notifiche e azioni**). Attiva **Notifiche**, quindi il browser (Google Chrome, Microsoft Edge o Firefox), poi **Mostra banner di notifica** per quel browser.
+    2. Disattiva **Non disturbare** (Windows 11) o **Assistente notifiche** (Windows 10), oppure aggiungi il browser alle notifiche prioritarie. Controlla anche le regole automatiche: Windows può attivarlo durante le app a schermo intero, i giochi o quando duplichi lo schermo. Anche le sessioni di concentrazione attivano Non disturbare.
+    3. Per impostazione predefinita, i banner di notifica scompaiono dopo 5 secondi. Quelle perse rimangono nel centro notifiche.
+  </Tab>
+</Tabs>
+
+### Il tuo browser era chiuso
+
+Chrome, Edge, Brave e Firefox ricevono notifiche solo mentre sono in esecuzione. Safari le riceve anche quando è chiuso.
+
+* **Su Mac**, chiudere tutte le finestre va bene, ma uscire dal browser (Cmd+Q) interrompe le notifiche finché non lo riapri.
+* **Su Windows**, Chrome ed Edge si arrestano quando chiudi l'ultima finestra, a meno che tu non attivi:
+  * Chrome: **Impostazioni → Sistema → Continua a eseguire le app in background quando Google Chrome è chiuso**
+  * Edge: **Impostazioni → Sistema e prestazioni → Continua a eseguire estensioni e app in background quando Microsoft Edge è chiuso**
+
+Le notifiche per i messaggi inviati mentre il browser è stato chiuso per più di un'ora vengono ignorate. Troverai comunque i messaggi nella posta in arrivo.
+
+### Utilizzi Brave
+
+Brave disattiva il servizio usato dai browser per recapitare le notifiche. Se Twenty mostra "Questo browser non ha potuto attivare le notifiche", apri `brave://settings/privacy`, attiva **Utilizza i servizi Google per la messaggistica push**, riavvia Brave, quindi fai nuovamente clic su **Invia prova**.
+
+### La tua organizzazione blocca le notifiche
+
+Su un computer di lavoro, il team IT potrebbe bloccare le notifiche o il servizio che le recapita. Il menu del browser mostra quindi "Gestito dalla tua organizzazione". Chiedi al team IT di consentire le notifiche per Twenty.
+
+## Non funziona ancora?
+
+Se **Invia prova** mostra una notifica ma i nuovi messaggi no, controlla il livello di notifica e che Twenty non fosse davanti a te. Altrimenti, contattaci sul [Discord della community](https://discord.gg/cx5n4Jzs57) o rivolgiti all'assistenza.
+
+<PageBanner illustration="card-page-messaging-channels" />

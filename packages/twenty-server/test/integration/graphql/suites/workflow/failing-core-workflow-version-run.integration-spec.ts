@@ -14,7 +14,6 @@ import {
   type EachTestingContext,
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
-import { WorkflowVisibility } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -107,16 +106,16 @@ const targetTestCases: EachTestingContext<TargetTestContext>[] = [
 
 const setCoreWorkflowOwnership = async ({
   coreWorkflowId,
-  visibility,
+  isPrivate,
   createdByUserWorkspaceId,
 }: {
   coreWorkflowId: string;
-  visibility: WorkflowVisibility;
+  isPrivate: boolean;
   createdByUserWorkspaceId: string;
 }) => {
   await global.testDataSource.query(
-    `UPDATE core."workflow" SET visibility = $2, "createdByUserWorkspaceId" = $3 WHERE id = $1`,
-    [coreWorkflowId, visibility, createdByUserWorkspaceId],
+    `UPDATE core."workflow" SET "isPrivate" = $2, "createdByUserWorkspaceId" = $3 WHERE id = $1`,
+    [coreWorkflowId, isPrivate, createdByUserWorkspaceId],
   );
 
   await global.workflowTestServices.workspaceCache.invalidateAndRecompute(
@@ -145,7 +144,7 @@ describe('Core workflow version runs should fail', () => {
 
     await setCoreWorkflowOwnership({
       coreWorkflowId: anotherMemberPrivateWorkflow.coreWorkflowId,
-      visibility: WorkflowVisibility.PRIVATE,
+      isPrivate: true,
       createdByUserWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.TIM,
     });
 
@@ -169,7 +168,7 @@ describe('Core workflow version runs should fail', () => {
       await setCoreWorkflowOwnership({
         coreWorkflowId:
           globalTestContext.anotherMemberPrivateWorkflow.coreWorkflowId,
-        visibility: WorkflowVisibility.WORKSPACE,
+        isPrivate: false,
         createdByUserWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
       });
 

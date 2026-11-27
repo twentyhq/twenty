@@ -10,9 +10,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { AiChatComposerQuote } from '@/ai-chat/composer/components/AiChatComposerQuote';
 import { AiChatMessage } from '@/ai-chat/messages/components/AiChatMessage';
 import { AiChatTestInstance } from '@/ai-chat/testing/AiChatTestInstance';
-import { aiChatQuotedMessageIdFamilyState } from '@/ai-chat/states/aiChatQuotedMessageIdFamilyState';
+import { aiChatComposerQuotedMessageIdFamilyState } from '@/ai-chat/states/composer/aiChatComposerQuotedMessageIdFamilyState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
-import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
+import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { scrollToAiChatMessage } from '@/ai-chat/messages/utils/scrollToAiChatMessage';
@@ -31,20 +31,15 @@ import {
 i18n.load({ [SOURCE_LOCALE]: messages });
 i18n.activate(SOURCE_LOCALE);
 
-jest.mock(
-  '@/ai-chat/messages/components/AiChatAssistantMessageRenderer',
-  () => ({
-    AiChatAssistantMessageRenderer: ({
-      messageParts,
-    }: {
-      messageParts: ExtendedUIMessage['parts'];
-    }) => (
-      <>
-        {messageParts.map((part) => (part.type === 'text' ? part.text : null))}
-      </>
-    ),
-  }),
-);
+jest.mock('@/ai-chat/messages/components/AiChatMessagePartsRenderer', () => ({
+  AiChatMessagePartsRenderer: ({
+    messageParts,
+  }: {
+    messageParts: ExtendedUIMessage['parts'];
+  }) => (
+    <>{messageParts.map((part) => (part.type === 'text' ? part.text : null))}</>
+  ),
+}));
 
 jest.mock('@/ai-chat/message-content/components/LazyMarkdownRenderer', () => ({
   LazyMarkdownRenderer: ({ text }: { text: string }) => <>{text}</>,
@@ -62,8 +57,8 @@ jest.mock('@/ai-chat/messages/components/AiChatErrorRenderer', () => ({
   AiChatErrorRenderer: ({ error }: { error: Error }) => <>{error.message}</>,
 }));
 
-jest.mock('@/ui/input/components/LightCopyIconButton', () => ({
-  LightCopyIconButton: () => null,
+jest.mock('~/hooks/useCopyToClipboard', () => ({
+  useCopyToClipboard: () => ({ copyToClipboard: jest.fn() }),
 }));
 
 jest.mock('@/ai-chat/messages/utils/scrollToAiChatMessage', () => ({
@@ -223,7 +218,9 @@ const renderMessage = ({
   ]);
   jotaiStore.set(newAiChatThreadIdState.atom, THREAD_ID);
   jotaiStore.set(
-    aiChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
+    aiChatThreadDisplayedMessagesFamilyState.atomFamily({
+      threadId: THREAD_ID,
+    }),
     [
       USER_MESSAGE,
       ASSISTANT_MESSAGE,
@@ -278,7 +275,8 @@ describe('AiChatMessage', () => {
     ).toBeInTheDocument();
     expect(screen.queryByText('You')).not.toBeInTheDocument();
     expect(screen.queryByText('Julia Martin')).not.toBeInTheDocument();
-    expect(screen.getAllByText(/ago$/)).toHaveLength(1);
+    expect(screen.getByRole('time')).toBeInTheDocument();
+    expect(screen.queryByText(/ago$/)).not.toBeInTheDocument();
   });
 
   it('lets the current member quote their own inbox message', () => {
@@ -299,7 +297,7 @@ describe('AiChatMessage', () => {
     });
 
     expect(screen.getByText('Julia Martin')).toBeInTheDocument();
-    expect(screen.getAllByText(/ago$/)).toHaveLength(1);
+    expect(screen.getAllByRole('time')).toHaveLength(1);
   });
 
   it('keeps the current member message time outside the inbox', () => {
@@ -356,7 +354,7 @@ describe('AiChatMessage', () => {
       screen.getByText('Draft the October newsletter'),
     ).toBeInTheDocument();
     expect(screen.getByText('Unknown sender')).toBeInTheDocument();
-    expect(screen.getByText(/ago$/)).toBeInTheDocument();
+    expect(screen.getByRole('time')).toBeInTheDocument();
   });
 
   it('hides a reply Ada chose not to send', () => {
@@ -431,7 +429,7 @@ describe('AiChatMessage', () => {
     act(() => {
       jotaiStore.set(newAiChatThreadIdState.atom, 'another-thread');
       jotaiStore.set(
-        aiChatQuotedMessageIdFamilyState.atomFamily({
+        aiChatComposerQuotedMessageIdFamilyState.atomFamily({
           threadId: 'another-thread',
         }),
         USER_MESSAGE.id,
@@ -506,8 +504,30 @@ describe('AiChatMessage', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Reply' }));
 
-    expect(screen.getAllByText('Ada')).toHaveLength(2);
+    expect(screen.getByText('Ada')).toBeInTheDocument();
     expect(screen.getByText('No text content')).toBeInTheDocument();
+  });
+
+  it('drops the author header of an assistant turn that only ran tools', () => {
+    renderMessage({
+      messageId: TOOL_ONLY_ASSISTANT_MESSAGE.id,
+      isAiChatInboxEnabled: true,
+    });
+
+    expect(screen.queryByText('Ada')).not.toBeInTheDocument();
+  });
+
+  it('keeps showing an error on an assistant turn that only ran tools', () => {
+    renderMessage({
+      messageId: TOOL_ONLY_ASSISTANT_MESSAGE.id,
+      isAiChatInboxEnabled: true,
+      error: new Error('The agent failed while running.'),
+    });
+
+    expect(screen.getByText('Ada')).toBeInTheDocument();
+    expect(
+      screen.getByText('The agent failed while running.'),
+    ).toBeInTheDocument();
   });
 
   it('opens the assistant message a reply quotes', async () => {

@@ -163,16 +163,14 @@ export default defineMcpServer({
   name: 'github',
   label: 'GitHub',
   url: 'https://api.githubcopilot.com/mcp/',
-  connectionProvider: {
-    universalIdentifier: GITHUB_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER,
-  },
+  connectionProviderUniversalIdentifier: GITHUB_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER,
 });
 ```
 
 Puncte cheie:
 * `name` este în snake_case (litere mici, cifre și caractere de subliniere, începe cu o literă, maximum 32 de caractere) și este unic în spațiul de lucru. Acesta este prefixul numelor instrumentelor serverului.
 * `url` trebuie să fie un URL HTTP sau HTTPS.
-* `connectionProvider` (opțional) face referire la un [furnizor de conexiune](/ro/developers/extend/apps/logic/connections) declarat de aceeași aplicație. Apelurile trimit tokenul de acces al conexiunii respective ca token Bearer. Omiteți-l pentru un server public. Un server care își publică propriile setări OAuth utilizează un furnizor `oauth-discovery` al cărui `resourceUrl` este URL-ul serverului (Twenty 2.59.0 sau o versiune ulterioară).
+* `connectionProviderUniversalIdentifier` (opțional) face referire la un [furnizor de conexiune](/ro/developers/extend/apps/logic/connections) declarat de aceeași aplicație. Apelurile trimit tokenul de acces al conexiunii respective ca token Bearer. Omiteți-l pentru un server public. Un server care își publică propriile setări OAuth utilizează un furnizor `oauth-discovery` al cărui `resourceUrl` este URL-ul serverului (Twenty 2.59.0 sau o versiune ulterioară).
 * URL-ul nu se poate modifica într-o versiune ulterioară cât timp același furnizor de conexiune rămâne asociat. Modificarea URL-ului înseamnă asocierea unui alt furnizor în același timp, astfel încât tokenurile să nu fie trimise niciodată către o altă gazdă.
 * Spațiile de lucru pot dezactiva serverul; o versiune ulterioară a aplicației păstrează această opțiune.
 * Necesită `"engines": { "twenty": ">=2.53.0" }`.

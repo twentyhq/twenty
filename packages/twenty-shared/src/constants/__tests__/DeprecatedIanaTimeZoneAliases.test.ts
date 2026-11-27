@@ -6,6 +6,7 @@ describe('DEPRECATED_IANA_TIME_ZONE_ALIASES', () => {
     'maps accepted alias %s to a supported terminal timezone %s',
     (alias, canonicalTimeZone) => {
       expect(IANA_TIME_ZONES).toContain(alias);
+      expect(IANA_TIME_ZONES).toContain(canonicalTimeZone);
       expect(DEPRECATED_IANA_TIME_ZONE_ALIASES).not.toHaveProperty(
         canonicalTimeZone,
       );

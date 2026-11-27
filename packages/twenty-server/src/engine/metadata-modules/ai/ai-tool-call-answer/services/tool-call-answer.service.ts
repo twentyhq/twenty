@@ -299,7 +299,7 @@ export class ToolCallAnswerService {
     try {
       const answerMessage = await this.agentChatService.addMessage({
         threadId,
-        userWorkspaceId,
+        workspaceMemberId: args.workspaceMemberId,
         turnStatus:
           isDefined(wakeUp) || !isLastAnswer
             ? AgentTurnStatus.COMPLETED

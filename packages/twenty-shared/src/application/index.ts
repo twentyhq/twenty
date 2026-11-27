@@ -181,6 +181,7 @@ export { getWorkflowCommandMenuItemUniversalIdentifier } from './deterministic-i
 export { getWorkflowVersionUniversalIdentifier } from './deterministic-identifier/get-workflow-version-universal-identifier.util';
 export type {
   EnqueueJobOptions,
+  EnqueueJobsLimiter,
   EnqueueJobInput,
   EnqueueJobResult,
   EnqueueJobItem,
@@ -276,8 +277,8 @@ export type {
   LegacyObjectPermissionManifest,
   LegacyFieldPermissionManifest,
   LegacyRowLevelPermissionPredicateGroupManifest,
-  LegacyRowLevelPermissionPredicateManifest,
   RowLevelPermissionRulePredicateManifest,
+  LegacyRowLevelPermissionPredicateManifest,
   RowLevelPermissionRulePredicateGroupManifest,
   FieldRestrictionsManifest,
   RowLevelRecordsPermissionsManifest,
@@ -354,13 +355,26 @@ export {
   serializeApplicationVariableValue,
   deserializeApplicationVariableValue,
 } from './utils/applicationVariableValueSerialization';
+export type {
+  ApplicationManifestRoleKind,
+  ClassifiedApplicationManifestRoles,
+  ApplicationManifestRoleSources,
+} from './utils/classifyApplicationManifestRoles';
+export { classifyApplicationManifestRoles } from './utils/classifyApplicationManifestRoles';
 export { computeDependencyFileChecksum } from './utils/computeDependencyFileChecksum';
 export { computePackageJsonChecksum } from './utils/computePackageJsonChecksum';
 export type {
   RowLevelPermissionRuleLink,
+  FlattenedRowLevelPermissionPredicateGroupManifest,
+  FlattenedRowLevelPermissionPredicateManifest,
   FlattenedRowLevelPermissionRuleManifests,
 } from './utils/flattenRowLevelPermissionRuleManifests';
 export { flattenRowLevelPermissionRuleManifests } from './utils/flattenRowLevelPermissionRuleManifests';
+export type { ApplicationManifestRoleViolation } from './utils/getApplicationManifestRoleViolations';
+export {
+  getApplicationManifestRoleViolations,
+  formatApplicationManifestRoleViolation,
+} from './utils/getApplicationManifestRoleViolations';
 export { getDeclaredLegacyRoleRecordsPermissionsKeys } from './utils/getDeclaredLegacyRoleRecordsPermissionsKeys';
 export type {
   EffectiveObjectPermissions,
@@ -389,10 +403,17 @@ export { isSourceFileManifestList } from './utils/isSourceFileManifestList';
 export { isValidSettingsMenuItemSlug } from './utils/isValidSettingsMenuItemSlug';
 export { isValidUniversalIdentifier } from './utils/isValidUniversalIdentifier';
 export { nestRowLevelPermissionRuleManifests } from './utils/nestRowLevelPermissionRuleManifests';
+export { normalizeConnectionProviderManifest } from './utils/normalizeConnectionProviderManifest';
 export type { LegacyRoleObjectDefaults } from './utils/normalizeLegacyCompliantRoleManifest';
 export { normalizeLegacyCompliantRoleManifest } from './utils/normalizeLegacyCompliantRoleManifest';
+export { normalizeMcpServerManifest } from './utils/normalizeMcpServerManifest';
+export { normalizeMessagingProviderManifest } from './utils/normalizeMessagingProviderManifest';
 export { normalizeNavigationMenuItemManifest } from './utils/normalizeNavigationMenuItemManifest';
+export { resolveManifestReferenceUniversalIdentifier } from './utils/resolveManifestReferenceUniversalIdentifier';
 export { resolveObjectPermissionValue } from './utils/resolveObjectPermissionValue';
+export { withDeprecatedConnectionProviderReferences } from './utils/withDeprecatedConnectionProviderReferences';
+export { withDeprecatedMcpServerReferences } from './utils/withDeprecatedMcpServerReferences';
+export { withDeprecatedMessagingProviderReferences } from './utils/withDeprecatedMessagingProviderReferences';
 export type { ValidationRuleManifest } from './validationRuleManifestType';
 export type {
   ViewManifestFilterValue,

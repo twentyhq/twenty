@@ -81,6 +81,22 @@ export class CommonQueryParser {
     });
   }
 
+  public applyCursorFilterToBuilder({
+    queryBuilder,
+    objectNameSingular,
+    cursorFilter,
+  }: {
+    queryBuilder: WorkspaceSelectQueryBuilder;
+    objectNameSingular: string;
+    cursorFilter: Partial<ObjectRecordFilter>;
+  }): WorkspaceSelectQueryBuilder {
+    return this.filterConditionParser.parseCursorFilter({
+      queryBuilder,
+      objectNameSingular,
+      cursorFilter,
+    });
+  }
+
   public applyDeletedAtToBuilder({
     queryBuilder,
     recordFilter,

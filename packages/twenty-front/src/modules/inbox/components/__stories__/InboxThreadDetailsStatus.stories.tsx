@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { graphql, HttpResponse } from 'msw';
@@ -18,8 +19,8 @@ import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceSta
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { isSnoozeInboxForChannelComponentState } from '@/side-panel/pages/snooze-ai-chat/states/isSnoozeInboxForChannelComponentState';
-import { snoozeAiChatThreadIdsComponentState } from '@/side-panel/pages/snooze-ai-chat/states/snoozeAiChatThreadIdsComponentState';
+import { isSnoozeInboxForChannelComponentState } from '@/side-panel/states/isSnoozeInboxForChannelComponentState';
+import { snoozeAiChatThreadIdsComponentState } from '@/side-panel/states/snoozeAiChatThreadIdsComponentState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import {
@@ -235,10 +236,12 @@ const seedStatusScenario = (scenario: StatusScenario) => {
       ? null
       : [{ ...CHANNEL, isAccessible: !scenario.isChannelInaccessible }],
   );
-  jotaiStore.set(
-    aiChatThreadParticipantsState.atom,
-    getScenarioParticipants(scenario),
-  );
+  const scenarioParticipants = getScenarioParticipants(scenario);
+
+  jotaiStore.set(aiChatThreadParticipantsState.atom, {
+    isLoaded: isDefined(scenarioParticipants),
+    rowsByThreadId: scenarioParticipants ?? {},
+  });
   setInboxSelectedChannelView(
     jotaiStore,
     scenario.isChannelView
@@ -293,9 +296,8 @@ const meta = {
           return HttpResponse.json({
             data: {
               updateAgentChatThreadInboxState: [
-                jotaiStore.get(aiChatThreadParticipantsState.atom)?.[
-                  THREAD_ID
-                ] ?? PARTICIPANT,
+                jotaiStore.get(aiChatThreadParticipantsState.atom)
+                  .rowsByThreadId[THREAD_ID] ?? PARTICIPANT,
               ],
             },
           });

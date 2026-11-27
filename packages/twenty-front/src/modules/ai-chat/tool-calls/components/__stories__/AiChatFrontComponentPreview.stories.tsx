@@ -11,18 +11,30 @@ import {
   getFrontComponentPreviewMock,
   seedFrontComponentPreviewWorkspace,
 } from '@/ai-chat/tool-calls/components/__mocks__/aiChatFrontComponentPreviewMocks';
-import { AI_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai-chat/constants/AiChatRefetchMessagesEventName';
+import { aiChatThreadFetchedMessagesFamilyState } from '@/ai-chat/states/server/aiChatThreadFetchedMessagesFamilyState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { AiChatInstanceDecorator } from '~/testing/decorators/AiChatInstanceDecorator';
 import { REST_API_BASE_URL } from '@/apollo/constants/RestApiBaseUrl';
-import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
+
+const PREVIEW_STORY_THREAD_ID = 'front-component-preview-story';
+
+const replaceStoryThreadFetchedMessages = () =>
+  jotaiStore.set(
+    aiChatThreadFetchedMessagesFamilyState.atomFamily({
+      threadId: PREVIEW_STORY_THREAD_ID,
+    }),
+    { messages: [], queuedMessages: [] },
+  );
 
 const meta: Meta<typeof AiChatFrontComponentPreview> = {
   title: 'Modules/AI/AiChatFrontComponentPreview',
   component: AiChatFrontComponentPreview,
-  decorators: [RootDecorator, ComponentDecorator],
+  decorators: [AiChatInstanceDecorator, RootDecorator, ComponentDecorator],
   beforeEach: () => seedFrontComponentPreviewWorkspace(),
   args: { draftId: 'current' },
   parameters: {
+    aiChatThreadId: PREVIEW_STORY_THREAD_ID,
     container: { width: 500 },
     msw: { handlers: frontComponentPreviewHandlers },
   },
@@ -167,7 +179,7 @@ export const RetryDraftLoad: Story = {
     await expect(await canvas.findByRole('alert')).toHaveTextContent(
       'Could not load preview.',
     );
-    dispatchBrowserEvent(AI_CHAT_REFETCH_MESSAGES_EVENT_NAME);
+    replaceStoryThreadFetchedMessages();
     await expect(
       await canvas.findByRole(
         'button',
@@ -221,7 +233,7 @@ export const RefreshStatusPreservesInteraction: Story = {
           { once: true },
         ),
       );
-      dispatchBrowserEvent(AI_CHAT_REFETCH_MESSAGES_EVENT_NAME);
+      replaceStoryThreadFetchedMessages();
       await expect(
         await canvas.findByText(
           status === 'saved'
@@ -267,7 +279,7 @@ export const SupersededInitialLoad: Story = {
     await expect(canvas.getByRole('status')).toHaveTextContent(
       'Loading preview',
     );
-    dispatchBrowserEvent(AI_CHAT_REFETCH_MESSAGES_EVENT_NAME);
+    replaceStoryThreadFetchedMessages();
     await canvas.findByRole('button', { name: 'Count: 0' }, { timeout: 30000 });
     completeInitialRequest?.();
     await userEvent.click(canvas.getByRole('button', { name: 'Count: 0' }));

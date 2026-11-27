@@ -4,9 +4,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { INBOX_THREAD_PRESET_FILTER_ICONS } from '@/inbox/constants/InboxThreadPresetFilterIcons';
 import { INBOX_THREAD_PRESET_FILTER_LABELS } from '@/inbox/constants/InboxThreadPresetFilterLabels';
 import { useAiChatChannelIcon } from '@/ai-chat/threads/hooks/useAiChatChannelIcon';
-import { aiChatChannelsState } from '@/ai-chat/threads/states/aiChatChannelsState';
+import { aiChatChannelFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatChannelFamilySelector';
 import { inboxSelectedThreadListSourceState } from '@/inbox/states/inboxSelectedThreadListSourceState';
 import { getInboxChannelViewLabel } from '@/inbox/utils/getInboxChannelViewLabel';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useInboxViewHeading = () => {
@@ -18,10 +19,11 @@ export const useInboxViewHeading = () => {
     inboxSelectedThreadListSource.type === 'channel'
       ? inboxSelectedThreadListSource.channelView
       : undefined;
-  const channel = useAtomStateValue(aiChatChannelsState)?.find(
-    ({ id }) => id === inboxSelectedChannelView?.channelId,
+  const aiChatChannel = useAtomFamilySelectorValue(
+    aiChatChannelFamilySelector,
+    inboxSelectedChannelView?.channelId,
   );
-  const ChannelIcon = useAiChatChannelIcon(channel?.icon);
+  const ChannelIcon = useAiChatChannelIcon(aiChatChannel?.icon);
 
   if (inboxSelectedThreadListSource.type === 'presetFilter') {
     return {
@@ -42,7 +44,7 @@ export const useInboxViewHeading = () => {
     inboxSelectedThreadListSource.channelView,
   );
 
-  if (!isDefined(channel)) {
+  if (!isDefined(aiChatChannel)) {
     return {
       HeadingIcon: ChannelIcon,
       headingLabel: channelViewLabel,
@@ -52,7 +54,7 @@ export const useInboxViewHeading = () => {
 
   return {
     HeadingIcon: ChannelIcon,
-    headingLabel: channel.name,
+    headingLabel: aiChatChannel.name,
     channelViewLabel,
   };
 };

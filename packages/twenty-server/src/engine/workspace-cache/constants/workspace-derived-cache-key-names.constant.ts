@@ -9,4 +9,5 @@ export const WORKSPACE_DERIVED_CACHE_KEY_NAMES = {
   graphQLResolverNameMap: true,
   objectIdByName: true,
   fieldIdByObjectIdAndName: true,
+  coreWorkflowVersionsByCoreWorkflowId: true,
 } as const satisfies Record<WorkspaceDerivedCacheKeyName, true>;

@@ -6,7 +6,7 @@ import { type UniversalFlatFieldMetadataOption } from 'src/engine/workspace-mana
 
 export type FieldMetadataOptionColumns = Pick<
   UniversalFlatFieldMetadataOption,
-  'value' | 'label' | 'color' | 'position' | 'isActive'
+  'value' | 'label' | 'color' | 'description' | 'position' | 'isActive'
 >;
 
 export const getTargetOptionColumnsByUniversalIdentifier = (
@@ -33,6 +33,7 @@ export const getTargetOptionColumnsByUniversalIdentifier = (
       value: option.value,
       label: option.label,
       color: 'color' in option && isDefined(option.color) ? option.color : null,
+      description: isDefined(option.description) ? option.description : null,
       position: option.position,
       isActive: isFieldMetadataOptionActive(option),
     });

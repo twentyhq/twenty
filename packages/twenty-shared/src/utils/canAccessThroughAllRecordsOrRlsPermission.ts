@@ -10,14 +10,27 @@ export const canAccessThroughAllRecordsOrRlsPermission = ({
 }: {
   objectRecordsPermissions: ObjectRecordsPermissions | undefined;
   operationType: ObjectRecordsOperationType;
-}): boolean =>
-  isDefined(objectRecordsPermissions) &&
-  (canAccessThroughAllRecordsPermission({
-    objectRecordsPermissions,
-    operationType,
-  }) ||
+}): boolean => {
+  if (!isDefined(objectRecordsPermissions)) {
+    return false;
+  }
+
+  if (
+    operationType === 'read' &&
+    isDefined(objectRecordsPermissions.canReadSomeRecords)
+  ) {
+    return objectRecordsPermissions.canReadSomeRecords;
+  }
+
+  return (
+    canAccessThroughAllRecordsPermission({
+      objectRecordsPermissions,
+      operationType,
+    }) ||
     canAccessThroughRlsPermission({
       rowLevelRecordsPermissions:
         objectRecordsPermissions.rowLevelRecordsPermissions,
       operationType,
-    }));
+    })
+  );
+};

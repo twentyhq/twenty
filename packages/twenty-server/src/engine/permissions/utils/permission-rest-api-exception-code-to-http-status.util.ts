@@ -16,6 +16,7 @@ export const permissionRestApiExceptionCodeToHttpStatus = (
     case PermissionsExceptionCode.CANNOT_DELETE_LAST_ADMIN_USER:
     case PermissionsExceptionCode.CANNOT_DELETE_LAST_SERVER_ADMIN:
     case PermissionsExceptionCode.ROLE_NOT_EDITABLE:
+    case PermissionsExceptionCode.RECORD_NOT_EDITABLE:
     case PermissionsExceptionCode.DEFAULT_ROLE_CANNOT_BE_DELETED:
     case PermissionsExceptionCode.MEMBER_ROLE_CANNOT_BE_DELETED:
     case PermissionsExceptionCode.CUSTOM_ROLES_NOT_ENTITLED:
@@ -32,6 +33,8 @@ export const permissionRestApiExceptionCodeToHttpStatus = (
     case PermissionsExceptionCode.EMPTY_FIELD_PERMISSION_NOT_ALLOWED:
     case PermissionsExceptionCode.ROLE_MUST_HAVE_AT_LEAST_ONE_TARGET:
     case PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_USERS:
+    case PermissionsExceptionCode.MARKETPLACE_APPLICATION_ROLE_ASSIGNABILITY:
+    case PermissionsExceptionCode.MARKETPLACE_APPLICATION_ROLE_RESTRICTION:
       return 400;
     case PermissionsExceptionCode.ROLE_NOT_FOUND:
     case PermissionsExceptionCode.OBJECT_METADATA_NOT_FOUND:

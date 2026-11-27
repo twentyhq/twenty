@@ -43,10 +43,8 @@ import { type GoogleRequest } from 'src/engine/core-modules/auth/strategies/goog
 import { type MicrosoftRequest } from 'src/engine/core-modules/auth/strategies/microsoft.auth.strategy';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { SsoExchangeTokenService } from 'src/engine/core-modules/auth/token/services/sso-exchange-token.service';
 import { AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import {
   type AuthProviderWithPasswordType,
   type ExistingUserOrNewUser,
@@ -67,6 +65,7 @@ import { IMPERSONATION_EVENT } from 'src/engine/core-modules/event-logs/emit/eve
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import { type ImpersonationLevel } from 'src/engine/core-modules/impersonation/types/impersonation-level.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
 import { UserSessionRevokedReason } from 'src/engine/core-modules/user-session/types/user-session-revoked-reason.type';
@@ -90,7 +89,6 @@ export class AuthService {
     private readonly ssoExchangeTokenService: SsoExchangeTokenService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly domainServerConfigService: DomainServerConfigService,
-    private readonly refreshTokenService: RefreshTokenService,
     private readonly loginTokenService: LoginTokenService,
     private readonly guardRedirectService: GuardRedirectService,
     private readonly userWorkspaceService: UserWorkspaceService,
@@ -437,33 +435,28 @@ export class AuthService {
       workspaceId,
       authProvider,
     });
-    const refreshToken = await this.refreshTokenService.generateRefreshToken({
-      userId: user.id,
-      workspaceId,
-      authProvider,
-      targetedTokenType: JwtTokenTypeEnum.ACCESS,
-    });
 
     return {
       tokens: {
         accessOrWorkspaceAgnosticToken: accessToken,
-        refreshToken,
       },
     };
   }
 
-  async generateImpersonationAccessTokenAndRefreshToken({
+  async generateImpersonationAccessToken({
     workspaceId,
     impersonatorUserWorkspaceId,
     impersonatedUserWorkspaceId,
     _impersonatorUserId,
     impersonatedUserId,
+    impersonationLevel,
   }: {
     workspaceId: string;
     impersonatorUserWorkspaceId: string;
     impersonatedUserWorkspaceId: string;
     _impersonatorUserId: string;
     impersonatedUserId: string;
+    impersonationLevel: ImpersonationLevel;
   }): Promise<AuthTokens> {
     const correlationId = randomUUID();
 
@@ -473,7 +466,7 @@ export class AuthService {
     });
 
     void eventLogContext.insertWorkspaceEvent(IMPERSONATION_EVENT, {
-      level: 'workspace',
+      level: impersonationLevel,
       action: 'attempted',
       message: `correlationId=${correlationId}; impersonatorUserWorkspaceId=${impersonatorUserWorkspaceId}; targetUserWorkspaceId=${impersonatedUserWorkspaceId}; workspaceId=${workspaceId}`,
     });
@@ -486,21 +479,9 @@ export class AuthService {
       impersonatorUserWorkspaceId,
       impersonatedUserWorkspaceId,
     });
-    const refreshToken = await this.refreshTokenService.generateRefreshToken(
-      {
-        userId: impersonatedUserId,
-        workspaceId,
-        authProvider: AuthProviderEnum.Impersonation,
-        targetedTokenType: JwtTokenTypeEnum.ACCESS,
-        isImpersonating: true,
-        impersonatorUserWorkspaceId,
-        impersonatedUserWorkspaceId,
-      },
-      true,
-    );
 
     void eventLogContext.insertWorkspaceEvent(IMPERSONATION_EVENT, {
-      level: 'workspace',
+      level: impersonationLevel,
       action: 'issued',
       message: `correlationId=${correlationId}; impersonatorUserWorkspaceId=${impersonatorUserWorkspaceId}; targetUserWorkspaceId=${impersonatedUserWorkspaceId}; workspaceId=${workspaceId}`,
     });
@@ -508,7 +489,6 @@ export class AuthService {
     return {
       tokens: {
         accessOrWorkspaceAgnosticToken: accessToken,
-        refreshToken,
       },
     };
   }

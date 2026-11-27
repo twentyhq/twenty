@@ -7,7 +7,9 @@ import { isDefined } from 'twenty-sdk/utils';
 
 import { HEALTH_CHECK_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { findTeamsTenantClaimConflicts } from 'src/features/chat/logic-functions/utils/find-teams-tenant-claim-conflicts';
+import { findTeamsUnclaimedConnectedAccountIds } from 'src/features/chat/logic-functions/utils/find-teams-unclaimed-connected-account-ids';
 import { isTeamsChatEnabled } from 'src/features/chat/logic-functions/utils/is-teams-chat-enabled';
+import { isWorkingTeamsWorkspaceConnection } from 'src/features/chat/logic-functions/utils/is-working-teams-workspace-connection';
 import { isTeamsTranscriptImportEnabled } from 'src/features/transcripts/logic-functions/utils/is-teams-transcript-import-enabled';
 import { listTeamsConnections } from 'src/features/transcripts/logic-functions/utils/list-teams-connections';
 
@@ -47,8 +49,7 @@ export const teamsHealthCheckHandler =
     }
 
     const workingWorkspaceConnections = connections.filter(
-      (connection) =>
-        connection.scope === 'WORKSPACE' && !isDefined(connection.authFailedAt),
+      isWorkingTeamsWorkspaceConnection,
     );
 
     if (!isNonEmptyArray(workingWorkspaceConnections)) {
@@ -61,10 +62,11 @@ export const teamsHealthCheckHandler =
       };
     }
 
+    const connectedAccountIds = workingWorkspaceConnections.map(
+      (connection) => connection.id,
+    );
     const claimConflicts = await findTeamsTenantClaimConflicts({
-      connectedAccountIds: workingWorkspaceConnections.map(
-        (connection) => connection.id,
-      ),
+      connectedAccountIds,
     });
 
     if (isNonEmptyArray(claimConflicts)) {
@@ -80,6 +82,19 @@ export const teamsHealthCheckHandler =
       };
     }
 
+    const unclaimedConnectedAccountIds =
+      await findTeamsUnclaimedConnectedAccountIds({ connectedAccountIds });
+
+    if (isNonEmptyArray(unclaimedConnectedAccountIds)) {
+      return {
+        status: 'WARNING',
+        title: 'Microsoft Teams chat is not active',
+        description:
+          'Chat is enabled, but this workspace has not registered its Microsoft organization, so the bot cannot answer Teams messages. Remove the workspace connection and add it again.',
+        action: { label: 'Open connections', location: '#general/connections' },
+      };
+    }
+
     return { status: 'OK' };
   };
 
@@ -87,7 +102,7 @@ export default defineHealthCheck({
   universalIdentifier: HEALTH_CHECK_UNIVERSAL_IDENTIFIER,
   name: 'teams-health-check',
   description:
-    'Warns on the app settings page when no Microsoft Teams account is connected, every connection needs to be reconnected, or another workspace already holds the Microsoft organization chat needs, since transcripts and chat both rely on a connection.',
+    'Warns on the app settings page when no Microsoft Teams account is connected, every connection needs to be reconnected, another workspace already holds the Microsoft organization chat needs, or chat is enabled while a working workspace connection has not claimed its Microsoft organization, since transcripts and chat both rely on a connection.',
   timeoutSeconds: 30,
   handler: teamsHealthCheckHandler,
 });

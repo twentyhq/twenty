@@ -1,9 +1,11 @@
+import { UseGuards } from '@nestjs/common';
 import { Parent, ResolveField } from '@nestjs/graphql';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSummaryDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-summary.dto';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 
 @MetadataResolver(() => ApplicationRegistrationSummaryDTO)
 export class ApplicationRegistrationSummaryResolver {
@@ -12,6 +14,7 @@ export class ApplicationRegistrationSummaryResolver {
   ) {}
 
   @ResolveField(() => String, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   logoUrl(
     @Parent() registration: ApplicationRegistrationEntity,
   ): string | null {

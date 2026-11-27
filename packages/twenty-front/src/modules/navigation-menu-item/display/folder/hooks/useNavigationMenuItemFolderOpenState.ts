@@ -6,7 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
-import { currentNavigationMenuItemFolderIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuItemFolderIdState';
+import { useCurrentNavigationMenuItemFolderId } from '@/navigation-menu-item/common/hooks/useCurrentNavigationMenuItemFolderId';
 import { lastClickedNavigationMenuItemIdState } from '@/navigation-menu-item/common/states/lastClickedNavigationMenuItemIdState';
 import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/common/states/openNavigationMenuItemFolderIdsState';
 import { useIdentifyActiveNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useIdentifyActiveNavigationMenuItems';
@@ -37,9 +37,8 @@ export const useNavigationMenuItemFolderOpenState = ({
 
   const [openNavigationMenuItemFolderIds, setOpenNavigationMenuItemFolderIds] =
     useAtomState(openNavigationMenuItemFolderIdsState);
-  const setCurrentNavigationMenuItemFolderId = useSetAtomState(
-    currentNavigationMenuItemFolderIdState,
-  );
+  const [, setCurrentNavigationMenuItemFolderId] =
+    useCurrentNavigationMenuItemFolderId();
 
   const { activeNavigationMenuItemIds } =
     useIdentifyActiveNavigationMenuItems();

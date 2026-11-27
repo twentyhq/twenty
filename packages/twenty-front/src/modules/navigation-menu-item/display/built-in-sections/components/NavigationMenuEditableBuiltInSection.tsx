@@ -2,7 +2,7 @@ import { useLingui } from '@lingui/react/macro';
 
 import { NAVIGATION_MENU_BUILT_IN_SECTIONS } from '@/navigation-menu-item/common/constants/NavigationMenuBuiltInSections';
 import { NavigationMenuBuiltInSection } from '@/navigation-menu-item/display/built-in-sections/components/NavigationMenuBuiltInSection';
-import { useAreAiChatSectionsAvailable } from '@/navigation-menu-item/display/hooks/useAreAiChatSectionsAvailable';
+import { useNavigationMenuBuiltInSectionAvailability } from '@/navigation-menu-item/display/hooks/useNavigationMenuBuiltInSectionAvailability';
 import { NavigationMenuSectionMenu } from '@/navigation-menu-item/edit/components/NavigationMenuSectionMenu';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
@@ -19,7 +19,8 @@ export const NavigationMenuEditableBuiltInSection = ({
   section,
 }: NavigationMenuEditableBuiltInSectionProps) => {
   const { t } = useLingui();
-  const areAiChatSectionsAvailable = useAreAiChatSectionsAvailable();
+  const { isBuiltInSectionAvailable } =
+    useNavigationMenuBuiltInSectionAvailability();
   const builtInSection = NAVIGATION_MENU_BUILT_IN_SECTIONS.find(
     ({ key }) => key === section.builtInSectionKey,
   );
@@ -30,7 +31,8 @@ export const NavigationMenuEditableBuiltInSection = ({
 
   const sectionMenu = <NavigationMenuSectionMenu section={section} />;
   const canShowContent =
-    builtInSection.key !== 'favorites' && areAiChatSectionsAvailable;
+    builtInSection.key !== 'favorites' &&
+    isBuiltInSectionAvailable(builtInSection.key);
 
   if (canShowContent) {
     return (

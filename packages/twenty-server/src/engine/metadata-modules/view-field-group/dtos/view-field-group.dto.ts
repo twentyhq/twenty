@@ -37,9 +37,6 @@ export class ViewFieldGroupDTO {
   @Field(() => Boolean, { nullable: false })
   isActive: boolean;
 
-  @Field(() => Date, { nullable: true })
-  deletedAt?: Date | null;
-
   @Field(() => [ViewFieldDTO])
   viewFields?: ViewFieldDTO[];
 

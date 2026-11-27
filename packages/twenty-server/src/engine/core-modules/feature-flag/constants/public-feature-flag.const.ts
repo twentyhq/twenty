@@ -23,6 +23,24 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
     },
   },
   {
+    key: FeatureFlagKey.IS_LOOKUP_COLUMNS_ENABLED,
+    metadata: {
+      label: 'Summary columns',
+      description:
+        'Add table columns that count, total or list related records, or show a field of a related record',
+      icon: 'IconStack2',
+    },
+  },
+  {
+    key: FeatureFlagKey.IS_MCP_SERVERS_ENABLED,
+    metadata: {
+      label: 'MCP servers',
+      description:
+        'Connect remote MCP servers so AI chat, agents and workflows can use their tools',
+      icon: 'IconSparkles',
+    },
+  },
+  {
     key: FeatureFlagKey.IS_REST_METADATA_API_NEW_FORMAT_DIRECT,
     metadata: {
       label: 'New REST Metadata API Format',

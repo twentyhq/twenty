@@ -32,9 +32,22 @@ variable to `false` to turn summaries off.
 ## 🤖 The Recording Bot field
 
 Each calendar event has a **Recording Bot** field. It starts blank and the app
-sets it to On when it actually schedules the recorder for that meeting, which
-happens once the meeting is less than a day away. Set it to Off to skip a
-meeting. Past meetings the recorder never joined simply stay blank.
+sets it to Auto when it schedules the recorder for that meeting, which happens
+once the meeting is less than a day away. Set it to On to record a meeting, or
+to Off to skip it. Past meetings the recorder never joined simply stay blank.
+
+## 🙋 Choosing which of your meetings are recorded
+
+Each member chooses which of their meetings are recorded under **Settings →
+Apps preferences → Call Recorder**: all of them (the default), only internal
+ones, only external ones, or none.
+
+## 📥 Recording message in the inbox
+
+When Inbox is turned on, each member gets a one-time message in their inbox
+when a recording of theirs has its summary, with a link to it. Members who turn
+on **Recaps in my inbox** get a recap after each of their recorded calls
+instead, with the action items and an offer to prepare the follow-up.
 
 ## 👥 Calls on record pages
 
@@ -54,9 +67,9 @@ belongs to, so nothing is copied onto the recording.
 
 The **Record my calendar meetings** toggle in the app settings is on
 by default. Turn it off to stop scheduling bots for upcoming meetings and cancel
-every recording that is already scheduled; the Recording Bot field of those
-meetings goes back to blank, and an Off you set yourself is left alone. Turn it
-back on and the app sweeps upcoming meetings to schedule bots again.
+every recording that is already scheduled; an Auto on those meetings goes back
+to blank, and an On or Off you set yourself is left alone. Turn it back on and
+the app sweeps upcoming meetings to schedule bots again.
 
 ## 🎥 Supported meeting platforms
 

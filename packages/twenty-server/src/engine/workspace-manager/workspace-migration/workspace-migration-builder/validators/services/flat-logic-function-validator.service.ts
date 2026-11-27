@@ -17,6 +17,7 @@ import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/wo
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { validateLogicFunctionCronTriggerSpread } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-cron-trigger-spread.util';
 import { validateLogicFunctionForwardedRequestHeaders } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-forwarded-request-headers.util';
 import { validateLogicFunctionServerRouteApplication } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-server-route-application.util';
 
@@ -100,6 +101,9 @@ export class FlatLogicFunctionValidatorService {
     }
 
     validationResult.errors.push(
+      ...validateLogicFunctionCronTriggerSpread({
+        cronTriggerSettings: flatEntityUpdate.cronTriggerSettings,
+      }),
       ...validateLogicFunctionForwardedRequestHeaders({
         httpRouteTriggerSettings: flatEntityUpdate.httpRouteTriggerSettings,
         serverRouteTriggerSettings: flatEntityUpdate.serverRouteTriggerSettings,
@@ -251,6 +255,9 @@ export class FlatLogicFunctionValidatorService {
     }
 
     validationResult.errors.push(
+      ...validateLogicFunctionCronTriggerSpread({
+        cronTriggerSettings: flatLogicFunctionToValidate.cronTriggerSettings,
+      }),
       ...validateLogicFunctionForwardedRequestHeaders({
         httpRouteTriggerSettings:
           flatLogicFunctionToValidate.httpRouteTriggerSettings,

@@ -10,23 +10,22 @@ import { Suspense, useEffect } from 'react';
 import { graphql, HttpResponse } from 'msw';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import {
-  AgentChatThreadConversationType,
   DEFAULT_AI_CHAT_ASSISTANT_PROFILE,
   type AiChatAssistantProfile,
   type ExtendedUIMessage,
 } from 'twenty-shared/ai';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { isDefined } from 'twenty-shared/utils';
 
 import { AiChatMessage } from '@/ai-chat/messages/components/AiChatMessage';
+import { CHAT_MESSAGE_LIST_GAP } from '@/chat/constants/ChatMessageListGap';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
-import { aiChatIsSendingMessageFamilyState } from '@/ai-chat/states/aiChatIsSendingMessageFamilyState';
-import { aiChatThreadReadPositionsFamilyState } from '@/ai-chat/threads/states/aiChatThreadReadPositionsFamilyState';
-import { type AiChatThreadReadPosition } from '@/ai-chat/threads/types/AiChatThreadReadPosition';
-import { aiChatThreadVisitFamilyState } from '@/ai-chat/threads/states/aiChatThreadVisitFamilyState';
-import { aiChatMessageReactionsFamilyState } from '@/ai-chat/messages/states/aiChatMessageReactionsFamilyState';
+import { aiChatThreadReplyIsSendingFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyIsSendingFamilyState';
+import { aiChatThreadViewVisitFamilyState } from '@/ai-chat/states/view/aiChatThreadViewVisitFamilyState';
+import { aiChatMessageReactionsFamilyState } from '@/ai-chat/states/server/aiChatMessageReactionsFamilyState';
 import {
   FeatureFlagKey,
   PermissionFlagType,
@@ -38,12 +37,11 @@ import {
 } from '~/testing/mock-data/users';
 import { MarkdownLoadingSkeleton } from '@/ai-chat/message-content/components/LazyMarkdownRenderer';
 import { PROTECTED_CHAT_REFERENCE_MARKER } from '@/ai-chat/message-content/constants/ProtectedChatReferenceMarker';
-import { type AiChatFileUIPart } from '@/ai-chat/composer/types/AiChatFileUIPart';
+import { type AiChatFileUIPart } from '@/ai-chat/types/AiChatFileUIPart';
 
 import { setAiChatThreadPermissions } from '@/ai-chat/threads/testing/setAiChatThreadPermissions';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
-import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { isAttachmentPreviewEnabledState } from '@/client-config/states/isAttachmentPreviewEnabledState';
@@ -63,6 +61,14 @@ const StyledConversationContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 24px;
+  max-width: 700px;
+  padding: 24px;
+`;
+
+const StyledMessageListContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${CHAT_MESSAGE_LIST_GAP};
   max-width: 700px;
   padding: 24px;
 `;
@@ -279,6 +285,31 @@ const mockThinkingStepsDone: ExtendedUIMessage = {
     createdAt: MOCKED_DATE,
     startedAt: '2026-01-01T10:00:00.000Z',
     finishedAt: '2026-01-01T10:01:23.000Z',
+  },
+};
+
+const mockToolsOnlyTurn: ExtendedUIMessage = {
+  id: 'msg-tools-only',
+  role: 'assistant',
+  parts: [
+    {
+      type: 'reasoning',
+      text: 'The member asked for Acme, so I will create the company.',
+      state: 'done',
+    },
+    {
+      type: 'tool-create_company',
+      toolCallId: 'tool-create-company-done',
+      input: { name: 'Acme' },
+      output: { success: true },
+      state: 'output-available',
+    },
+  ],
+  metadata: {
+    createdAt: MOCKED_DATE,
+    startedAt: '2026-01-01T10:00:00.000Z',
+    finishedAt: '2026-01-01T10:00:09.000Z',
+    isBuiltInAssistant: true,
   },
 };
 
@@ -507,11 +538,11 @@ const AiChatMessagesSetterEffect = ({
     const previousUserWorkspace = store.get(currentUserWorkspaceState.atom);
     const previousMember = store.get(currentWorkspaceMemberState.atom);
     const previousMembers = store.get(currentWorkspaceMembersState.atom);
-    const visitAtom = aiChatThreadVisitFamilyState.atomFamily({
+    const visitAtom = aiChatThreadViewVisitFamilyState.atomFamily({
       threadId: currentThreadId,
     });
     const previousVisit = store.get(visitAtom);
-    const messagesAtom = aiChatMessagesFamilyState.atomFamily({
+    const messagesAtom = aiChatThreadDisplayedMessagesFamilyState.atomFamily({
       threadId: currentThreadId,
     });
     const reactionsAtom = aiChatMessageReactionsFamilyState.atomFamily({
@@ -818,6 +849,30 @@ export const AnsweredForm: Story = {
   render: () => <AiChatMessage messageId={mockAnsweredForm.id} />,
 };
 
+export const ToolsOnlyTurn: Story = {
+  parameters: {
+    isInboxEnabled: true,
+    messages: [mockUserMessage, mockToolsOnlyTurn],
+  },
+  render: () => (
+    <StyledConversationContainer>
+      <AiChatMessage messageId={mockUserMessage.id} />
+      <AiChatMessage messageId={mockToolsOnlyTurn.id} />
+    </StyledConversationContainer>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(
+      await canvas.findByRole('button', { name: /worked for 9s/i }),
+    ).toBeVisible();
+    await expect(canvas.queryByText('Ada')).not.toBeInTheDocument();
+    await expect(
+      canvas.queryByRole('separator', { name: 'New' }),
+    ).not.toBeInTheDocument();
+  },
+};
+
 export const MultiplayerConversation: Story = {
   parameters: {
     isInboxEnabled: true,
@@ -850,145 +905,169 @@ export const MultiplayerConversation: Story = {
     })[1];
     await expect(addReactionButton).toHaveFocus();
     await waitFor(() => expect(addReactionButton).toBeVisible());
-
-    const threadId = CONVERSATION_STORY_THREAD_ID;
-    const threadRecordAtom = recordStoreFamilyState.atomFamily(threadId);
-    const previousThread = jotaiStore.get(threadRecordAtom);
-
-    try {
-      jotaiStore.set(threadRecordAtom, {
-        ...previousThread,
-        id: threadId,
-        __typename: 'AgentChatThread',
-        conversationType: AgentChatThreadConversationType.DIRECT_MESSAGE,
-      });
-      await waitFor(() =>
-        expect(
-          canvas.queryByRole('button', { name: 'Add reaction' }),
-        ).not.toBeInTheDocument(),
-      );
-      await expect(
-        canvas.queryByRole('button', { name: '👍 by You' }),
-      ).not.toBeInTheDocument();
-    } finally {
-      jotaiStore.set(threadRecordAtom, previousThread);
-    }
   },
 };
 
-const seedReadPositions = (readPositions: AiChatThreadReadPosition[]) => {
-  const readPositionsAtom = aiChatThreadReadPositionsFamilyState.atomFamily({
-    threadId: CONVERSATION_STORY_THREAD_ID,
-  });
+const buildGroupedMessage = ({
+  id,
+  text,
+  secondsAgo,
+  senderWorkspaceMemberId = mockedWorkspaceMemberData.id,
+}: {
+  id: string;
+  text: string;
+  secondsAgo: number;
+  senderWorkspaceMemberId?: string;
+}): ExtendedUIMessage => ({
+  id,
+  role: 'user',
+  parts: [{ type: 'text', text }],
+  metadata: {
+    createdAt: getMockedDateWithOffset({ seconds: -secondsAgo }),
+    senderWorkspaceMemberId,
+  },
+});
 
-  jotaiStore.set(readPositionsAtom, readPositions);
+const mockGroupedMessages = [
+  buildGroupedMessage({
+    id: 'msg-grouped-own-1',
+    text: 'Quick question about the Acme renewal',
+    secondsAgo: 600,
+  }),
+  buildGroupedMessage({
+    id: 'msg-grouped-own-2',
+    text: 'Who owns it now?',
+    secondsAgo: 580,
+  }),
+  buildGroupedMessage({
+    id: 'msg-grouped-own-3',
+    text: 'I can take it if nobody does',
+    secondsAgo: 560,
+  }),
+  buildGroupedMessage({
+    id: 'msg-grouped-own-4',
+    text: 'Never mind, found it',
+    secondsAgo: 480,
+  }),
+  buildGroupedMessage({
+    id: 'msg-grouped-teammate-1',
+    text: 'It moved to my pipeline last week',
+    secondsAgo: 360,
+    senderWorkspaceMemberId: mockTeammate.id,
+  }),
+  buildGroupedMessage({
+    id: 'msg-grouped-teammate-2',
+    text: 'I will send you the contract',
+    secondsAgo: 300,
+    senderWorkspaceMemberId: mockTeammate.id,
+  }),
+  buildGroupedMessage({
+    id: 'msg-grouped-own-list',
+    text: 'Then I need:\n\n- the signed contract\n- the renewal date',
+    secondsAgo: 240,
+  }),
+  buildGroupedMessage({
+    id: 'msg-grouped-own-code',
+    text: 'The filter I use:\n\n```\nstage = RENEWAL\n```',
+    secondsAgo: 180,
+  }),
+];
 
-  return () => jotaiStore.set(readPositionsAtom, null);
-};
-
-export const ReadReceipts: Story = {
-  ...MultiplayerConversation,
-  beforeEach: () =>
-    seedReadPositions([
-      {
-        workspaceMemberId: mockedWorkspaceMemberData.id,
-        lastReadAt: MOCKED_DATE,
-      },
-      { workspaceMemberId: mockTeammate.id, lastReadAt: MOCKED_DATE },
-      { workspaceMemberId: 'former-member', lastReadAt: null },
-    ]),
+export const GroupedMessages: Story = {
+  parameters: { isInboxEnabled: true, messages: mockGroupedMessages },
+  render: () => (
+    <StyledMessageListContainer>
+      {mockGroupedMessages.map((message) => (
+        <AiChatMessage key={message.id} messageId={message.id} />
+      ))}
+    </StyledMessageListContainer>
+  ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const receipts = await canvas.findAllByRole('img', { name: 'Read' });
+    const getMessageRow = (text: string) => {
+      const messageRow = canvas
+        .getByText(text)
+        .closest<HTMLElement>('[data-agent-chat-message-id]');
 
-    await expect(receipts).toHaveLength(3);
-    await userEvent.hover(receipts[0]);
-    await expect(
-      await within(document.body).findByText('Read by 1 of 2'),
-    ).toBeVisible();
-    await expect(within(document.body).getByText('Not yet')).toBeVisible();
-  },
-};
+      if (!isDefined(messageRow)) {
+        throw new Error(`No message row for "${text}"`);
+      }
 
-export const SentReceipts: Story = {
-  ...MultiplayerConversation,
-  beforeEach: () =>
-    seedReadPositions([
-      {
-        workspaceMemberId: mockedWorkspaceMemberData.id,
-        lastReadAt: MOCKED_DATE,
-      },
-      { workspaceMemberId: mockTeammate.id, lastReadAt: null },
-    ]),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await expect(
-      await canvas.findByRole('img', { name: 'Sent' }),
-    ).toBeVisible();
-    await expect(canvas.getAllByRole('img', { name: 'Read' })).toHaveLength(2);
-  },
-};
-
-export const SendingThenSentReceipt: Story = {
-  parameters: {
-    isInboxEnabled: true,
-    messages: [mockTeammateMessage, mockUserMessage],
-  },
-  args: { messageId: mockUserMessage.id },
-  beforeEach: () => {
-    const isSendingMessageAtom = aiChatIsSendingMessageFamilyState.atomFamily({
-      threadId: CONVERSATION_STORY_THREAD_ID,
-    });
-    const resetReadPositions = seedReadPositions([
-      { workspaceMemberId: mockTeammate.id, lastReadAt: null },
-    ]);
-
-    jotaiStore.set(isSendingMessageAtom, true);
-
-    return () => {
-      jotaiStore.set(isSendingMessageAtom, false);
-      resetReadPositions();
+      return messageRow;
     };
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+
+    await canvas.findByText('stage = RENEWAL');
+
+    const firstQuickRow = getMessageRow(
+      'Quick question about the Acme renewal',
+    );
+    const secondQuickRow = getMessageRow('Who owns it now?');
+    const lastQuickRow = getMessageRow('I can take it if nobody does');
 
     await expect(
-      await canvas.findByRole('img', { name: 'Sending' }),
+      secondQuickRow.getBoundingClientRect().top -
+        firstQuickRow.getBoundingClientRect().bottom,
+    ).toBe(2);
+    await expect(canvas.getAllByRole('time')).toHaveLength(6);
+    await expect(within(lastQuickRow).getByRole('time')).toBeVisible();
+    await expect(
+      within(getMessageRow('It moved to my pipeline last week')).getByRole(
+        'time',
+      ),
     ).toBeVisible();
+    await expect(lastQuickRow.getBoundingClientRect().height).toBe(
+      secondQuickRow.getBoundingClientRect().height,
+    );
+    await expect(canvas.getAllByText('Marco Rossi')).toHaveLength(1);
 
-    jotaiStore.set(
-      aiChatIsSendingMessageFamilyState.atomFamily({
-        threadId: CONVERSATION_STORY_THREAD_ID,
-      }),
-      false,
+    const listRow = getMessageRow('the renewal date');
+
+    await expect(
+      within(listRow).getByRole('time').getBoundingClientRect().top,
+    ).toBeGreaterThanOrEqual(
+      within(listRow).getByRole('list').getBoundingClientRect().bottom,
     );
 
-    await expect(
-      await canvas.findByRole('img', { name: 'Sent' }),
-    ).toBeVisible();
+    const copyButton = within(secondQuickRow).getByRole('button', {
+      name: 'Copy to Clipboard',
+    });
+
+    copyButton.focus();
+    await waitFor(() => expect(copyButton).toBeVisible());
+    await expect(copyButton.getBoundingClientRect().right).toBeLessThanOrEqual(
+      canvas.getByText('Who owns it now?').getBoundingClientRect().left,
+    );
+    await expect(copyButton.getBoundingClientRect().top).toBeLessThan(
+      secondQuickRow.getBoundingClientRect().top,
+    );
   },
 };
 
-export const LongOwnMessageWithReceipt: Story = {
-  parameters: { isInboxEnabled: true },
+export const LongOwnMessageWithTime: Story = {
+  parameters: { isInboxEnabled: true, messages: [mockLongUserMessage] },
   args: { messageId: mockLongUserMessage.id },
-  beforeEach: () =>
-    seedReadPositions([
-      { workspaceMemberId: mockTeammate.id, lastReadAt: MOCKED_DATE },
-    ]),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const toggle = await canvas.findByRole('button', { name: 'Show more' });
     const text = canvas.getByText(/Help me set up my workspace/);
-    const receipt = await canvas.findByRole('img', { name: 'Read' });
+    const time = await canvas.findByRole('time');
 
     await expect(toggle.getBoundingClientRect().top).toBeGreaterThan(
       text.getBoundingClientRect().top,
     );
     await expect(toggle.getBoundingClientRect().right).toBeLessThanOrEqual(
-      receipt.getBoundingClientRect().left,
+      time.getBoundingClientRect().left,
+    );
+
+    const timeCenterInPx =
+      (time.getBoundingClientRect().top + time.getBoundingClientRect().bottom) /
+      2;
+
+    await expect(timeCenterInPx).toBeGreaterThan(
+      toggle.getBoundingClientRect().top,
+    );
+    await expect(timeCenterInPx).toBeLessThan(
+      toggle.getBoundingClientRect().bottom,
     );
   },
 };
@@ -1395,12 +1474,22 @@ export const MessagesWithImages: Story = {
 
       await expect(image).toBeVisible();
 
-      const ownTextToImageRightEdgeGapInPx =
-        image.getBoundingClientRect().right -
-        canvas.getByText(text).getBoundingClientRect().right;
+      const textElement = canvas.getByText(text);
+      const messageRow = textElement.closest<HTMLElement>(
+        '[data-agent-chat-message-id]',
+      );
+      const times = isDefined(messageRow)
+        ? within(messageRow).queryAllByRole('time')
+        : [];
+      const ownContentRightEdgeInPx = Math.max(
+        textElement.getBoundingClientRect().right,
+        ...times.map((time) => time.getBoundingClientRect().right),
+      );
+      const ownContentToImageRightEdgeGapInPx =
+        image.getBoundingClientRect().right - ownContentRightEdgeInPx;
 
-      await expect(ownTextToImageRightEdgeGapInPx).toBeGreaterThanOrEqual(0);
-      await expect(ownTextToImageRightEdgeGapInPx).toBeLessThan(16);
+      await expect(ownContentToImageRightEdgeGapInPx).toBeGreaterThanOrEqual(0);
+      await expect(ownContentToImageRightEdgeGapInPx).toBeLessThan(16);
     }
 
     const teammateImage = await canvas.findByRole('img', {

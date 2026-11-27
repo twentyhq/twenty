@@ -1,5 +1,4 @@
 import { type LivenessWatchdog } from '@/ai-chat/dictation/types/LivenessWatchdog';
-// iOS can accept start() and then emit nothing, so liveness is measured.
 export const createLivenessWatchdog = ({
   timeoutInMs,
   onSilent,
@@ -28,7 +27,6 @@ export const createLivenessWatchdog = ({
         }
       }, timeoutInMs);
     },
-    // Any sign of life counts, so a slow speaker isn't read as a dead engine.
     noteActivity: () => {
       hasSeenActivity = true;
       clear();

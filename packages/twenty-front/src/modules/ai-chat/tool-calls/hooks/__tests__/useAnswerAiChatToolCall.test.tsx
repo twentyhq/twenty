@@ -5,14 +5,18 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import { isToolUIPart } from 'ai';
 
-import { AI_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai-chat/constants/AiChatRefetchMessagesEventName';
+import { refetchAiChatThreadMessages } from '@/ai-chat/utils/refetchAiChatThreadMessages';
 import { useAnswerAiChatToolCall } from '@/ai-chat/tool-calls/hooks/useAnswerAiChatToolCall';
-import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai-chat/states/aiChatIsAwaitingFirstChunkFamilyState';
-import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
+import { aiChatThreadReplyStatusFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyStatusFamilyState';
+import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
 import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
+
+jest.mock('@/ai-chat/utils/refetchAiChatThreadMessages', () => ({
+  refetchAiChatThreadMessages: jest.fn(),
+}));
 
 const mutate = jest.fn();
 jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
@@ -22,14 +26,13 @@ const enqueueToast = jest.fn();
 jest.mock('twenty-ui/components/feedback', () => ({
   useToast: () => ({ enqueueToast }),
 }));
-jest.mock('@/ai-chat/hooks/useAiChatModelId', () => ({
-  useAiChatModelId: () => ({ modelIdForRequest: 'model-id' }),
+jest.mock('@/ai-chat/utils/getAiChatModelIdForRequest', () => ({
+  getAiChatModelIdForRequest: () => 'model-id',
 }));
 
 const key = { threadId: 'thread-id' };
-const messagesAtom = aiChatMessagesFamilyState.atomFamily(key);
-const isAwaitingFirstChunkAtom =
-  aiChatIsAwaitingFirstChunkFamilyState.atomFamily(key);
+const messagesAtom = aiChatThreadDisplayedMessagesFamilyState.atomFamily(key);
+const replyStatusAtom = aiChatThreadReplyStatusFamilyState.atomFamily(key);
 
 const PENDING_OUTPUT = { result: { questions: [], status: 'pending' } };
 const ANSWERED_OUTPUT = { result: { questions: [], status: 'answered' } };
@@ -103,7 +106,7 @@ describe('useAnswerAiChatToolCall', () => {
       }),
     );
     expect(readToolOutput()).toEqual(ANSWERED_OUTPUT);
-    expect(jotaiStore.get(isAwaitingFirstChunkAtom)).toBe(true);
+    expect(jotaiStore.get(replyStatusAtom)).toBe('awaiting-first-chunk');
   });
 
   it('expects no stream when the answer resumes a workflow run', async () => {
@@ -113,7 +116,7 @@ describe('useAnswerAiChatToolCall', () => {
 
     await answer();
 
-    expect(jotaiStore.get(isAwaitingFirstChunkAtom)).toBe(false);
+    expect(jotaiStore.get(replyStatusAtom)).toBe('idle');
   });
 
   it('puts the tool call back as it was when the answer is refused', async () => {
@@ -121,16 +124,11 @@ describe('useAnswerAiChatToolCall', () => {
 
     expect(await answer()).toBe(false);
     expect(readToolOutput()).toEqual(PENDING_OUTPUT);
-    expect(jotaiStore.get(isAwaitingFirstChunkAtom)).toBe(false);
+    expect(jotaiStore.get(replyStatusAtom)).toBe('idle');
     expect(enqueueToast).toHaveBeenCalled();
   });
 
   it('refetches the conversation instead when the call was already answered elsewhere', async () => {
-    const refetchListener = jest.fn();
-    window.addEventListener(
-      AI_CHAT_REFETCH_MESSAGES_EVENT_NAME,
-      refetchListener,
-    );
     mutate.mockRejectedValue(
       new CombinedGraphQLErrors({
         data: null,
@@ -144,12 +142,7 @@ describe('useAnswerAiChatToolCall', () => {
     );
 
     expect(await answer()).toBe(false);
-    expect(refetchListener).toHaveBeenCalledTimes(1);
+    expect(refetchAiChatThreadMessages).toHaveBeenCalledTimes(1);
     expect(readToolOutput()).toEqual(ANSWERED_OUTPUT);
-
-    window.removeEventListener(
-      AI_CHAT_REFETCH_MESSAGES_EVENT_NAME,
-      refetchListener,
-    );
   });
 });

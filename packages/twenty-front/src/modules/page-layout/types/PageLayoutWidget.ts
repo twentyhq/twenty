@@ -1,4 +1,5 @@
 import { type FieldConfiguration } from '@/page-layout/types/FieldConfiguration';
+import { type ConditionalEvaluationNode } from 'twenty-shared/conditional-evaluation';
 import { type Nullable } from 'twenty-shared/types';
 import {
   type FieldsConfiguration,
@@ -8,9 +9,10 @@ import {
 
 export type PageLayoutWidget = Omit<
   PageLayoutWidgetGenerated,
-  'objectMetadataId' | 'configuration'
+  'objectMetadataId' | 'configuration' | 'conditionalAvailability'
 > & {
   objectMetadataId?: Nullable<string>;
   configuration: WidgetConfiguration | FieldsConfiguration | FieldConfiguration;
   conditionalAvailabilityExpression?: Nullable<string>;
+  conditionalAvailability?: ConditionalEvaluationNode | null;
 };

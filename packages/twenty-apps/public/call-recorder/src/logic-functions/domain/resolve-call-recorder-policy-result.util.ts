@@ -1,4 +1,4 @@
-import { isUndefined } from '@sniptt/guards';
+import { isNonEmptyArray, isUndefined } from '@sniptt/guards';
 
 import { CallRecorderPreference } from 'src/constants/call-recorder-preference';
 import { computeUpcomingCalendarEventHorizonEnd } from 'src/logic-functions/domain/compute-upcoming-calendar-event-horizon-end.util';
@@ -28,6 +28,17 @@ export const resolveCallRecorderPolicyResult = ({
 
   if (input.callRecorderPreference === CallRecorderPreference.OFF) {
     return botNotRequired('PREFERENCE_OFF');
+  }
+
+  const isRecordingForced =
+    input.callRecorderPreference === CallRecorderPreference.ON;
+
+  if (!isRecordingForced && !isNonEmptyArray(input.ownerRecordingPreferences)) {
+    return botNotRequired('NO_OWNER');
+  }
+
+  if (!isRecordingForced && !input.ownerRecordingPreferences.includes('ALL')) {
+    return botNotRequired('OWNERS_OPTED_OUT');
   }
 
   if (!isNonEmptyString(input.conferenceLinkUrl)) {

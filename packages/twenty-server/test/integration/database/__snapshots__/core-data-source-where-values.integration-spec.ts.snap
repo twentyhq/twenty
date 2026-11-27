@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Core data source where values should refuse to find with an undefined where value instead of returning the first row 1`] = `"Undefined value encountered in property 'UserWorkspaceEntity.id' of a where condition. Set 'invalidWhereValuesBehavior.undefined' to 'ignore' in connection options to skip properties with undefined values."`;

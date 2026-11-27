@@ -174,7 +174,6 @@ describe('application workflow manifest updates', () => {
       ] = {
         ...workflow,
         versionDefinitionHash: null,
-        lastPublishedVersionId: 'legacy-workflow-version-id',
         workspaceWorkflowId: LEGACY_WORKFLOW_ID,
       };
 
@@ -197,7 +196,6 @@ describe('application workflow manifest updates', () => {
 
       expect(workflow).toMatchObject({
         versionDefinitionHash: null,
-        lastPublishedVersionId: 'legacy-workflow-version-id',
         lastPublishedCoreWorkflowVersionId: version?.id,
       });
       expect(workflow.flatUniversalWorkflowVersion).toEqual(version);
@@ -231,7 +229,6 @@ describe('application workflow manifest updates', () => {
         workflow.flatUniversalWorkflowVersion?.universalIdentifier,
       ).not.toBe(version?.universalIdentifier);
       expect(workflow).toMatchObject({
-        lastPublishedVersionId: null,
         lastPublishedCoreWorkflowVersionId:
           workflow.flatUniversalWorkflowVersion?.id,
       });

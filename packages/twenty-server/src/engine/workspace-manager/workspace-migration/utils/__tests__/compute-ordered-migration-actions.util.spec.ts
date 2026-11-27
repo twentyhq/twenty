@@ -191,7 +191,6 @@ describe('computeOrderedMigrationActions', () => {
         steps: null,
         workflowId: null,
         coreWorkflowUniversalIdentifier: null,
-        workspaceWorkflowVersionId: null,
         createdAt: '2024-01-01T00:00:00.000Z',
         updatedAt: '2024-01-01T00:00:00.000Z',
       },

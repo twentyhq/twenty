@@ -31,27 +31,29 @@ export class ListAgentsTool extends BaseTool<typeof listAgentsInputSchema> {
   }
 
   async execute({
-    context: { workspaceId, userWorkspaceId, application, authContext },
+    context: { workspaceId, application, authContext },
   }: ToolExecuteArgs<typeof listAgentsInputSchema>): Promise<ToolOutput> {
     const agents = await this.agentService.findManyAgents({
       workspaceId,
-      userWorkspaceId,
     });
 
-    const listedAgents = agents
-      .filter(
-        (agent) =>
-          agent.isActive &&
-          !agent.isSystem &&
-          canCallerReachApplication({
-            callingApplication: application,
-            applicationId: agent.applicationId,
-            operation: 'read',
-            workspaceCustomApplicationId:
-              authContext?.workspace.workspaceCustomApplicationId,
-          }),
-      )
-      .map(toAgentSummary);
+    const listedAgents = (
+      await this.agentService.toAgentDtos({
+        flatAgentsWithRoleId: agents.filter(
+          (agent) =>
+            agent.isActive &&
+            !agent.isSystem &&
+            canCallerReachApplication({
+              callingApplication: application,
+              applicationId: agent.applicationId,
+              operation: 'read',
+              workspaceCustomApplicationId:
+                authContext?.workspace.workspaceCustomApplicationId,
+            }),
+        ),
+        workspaceId,
+      })
+    ).map(toAgentSummary);
 
     return {
       success: true,

@@ -214,7 +214,7 @@ describe('group by with a view holding filters and a search text (integration)',
     const [{ id: standardViewId }] = await globalThis.testDataSource.query(
       `SELECT id FROM core."view"
         WHERE "workspaceId" = $1 AND "objectMetadataId" = $2
-          AND key = 'INDEX' AND "deletedAt" IS NULL`,
+          AND key = 'INDEX'`,
       [SEED_APPLE_WORKSPACE_ID, await findObjectMetadataIdByName('person')],
     );
     const initialViewOverridesRow = await findViewOverridesRow(standardViewId);

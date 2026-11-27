@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ServerAdminIdentityAssertionService } from 'src/engine/core-modules/auth/identity-assertion/services/server-admin-identity-assertion.service';
+import { ApplicationAuthorizationModule } from 'src/engine/core-modules/application/application-authorization/application-authorization.module';
 import { JwtAuthStrategy } from 'src/engine/core-modules/auth/strategies/jwt.auth.strategy';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
@@ -38,6 +39,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     ImpersonationAuthorizationModule,
     UserSessionModule,
     SecureHttpClientModule,
+    ApplicationAuthorizationModule,
   ],
   providers: [
     RenewTokenService,

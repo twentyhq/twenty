@@ -5,6 +5,7 @@ import { getAppPath } from 'twenty-shared/utils';
 
 import { INBOX_INSTANCE_ID } from '@/inbox/constants/InboxInstanceId';
 import { inboxSelectedThreadListSourceState } from '@/inbox/states/inboxSelectedThreadListSourceState';
+import { useRefreshShownInboxThreadList } from '@/inbox/hooks/useRefreshShownInboxThreadList';
 import { type InboxChannelView } from '@/inbox/types/InboxChannelView';
 import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -19,6 +20,7 @@ export const useOpenInboxChannel = () => {
   const store = useStore();
   const navigate = useNavigateApp();
   const { resetRecordSelection } = useResetRecordSelection(INBOX_INSTANCE_ID);
+  const { refreshShownInboxThreadList } = useRefreshShownInboxThreadList();
 
   const openInboxChannel = useCallback(
     ({
@@ -35,6 +37,7 @@ export const useOpenInboxChannel = () => {
         type: 'channel',
         channelView: { channelId, channelStatus, assignment, filter },
       });
+      refreshShownInboxThreadList();
       navigate(AppPath.AiChatInbox, { threadId: null }, undefined, {
         replace: isMatchingPathname(
           window.location.pathname,
@@ -42,7 +45,7 @@ export const useOpenInboxChannel = () => {
         ),
       });
     },
-    [navigate, resetRecordSelection, store],
+    [navigate, refreshShownInboxThreadList, resetRecordSelection, store],
   );
 
   return { openInboxChannel };

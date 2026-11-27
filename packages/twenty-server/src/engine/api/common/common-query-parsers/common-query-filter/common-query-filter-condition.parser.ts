@@ -65,6 +65,27 @@ export class CommonQueryFilterConditionParser {
     return queryBuilder;
   }
 
+  public parseCursorFilter({
+    queryBuilder,
+    objectNameSingular,
+    cursorFilter,
+  }: {
+    queryBuilder: WorkspaceSelectQueryBuilder;
+    objectNameSingular: string;
+    cursorFilter: Partial<ObjectRecordFilter>;
+  }): WorkspaceSelectQueryBuilder {
+    return queryBuilder.andWhereReadingUnreadableColumnsAsNull({
+      condition: new Brackets((whereBracketsBuilder) => {
+        this.applyFilterEntriesToWhereBrackets({
+          innerQueryBuilder: whereBracketsBuilder,
+          outerQueryBuilder: queryBuilder,
+          objectNameSingular,
+          filter: cursorFilter,
+        });
+      }),
+    });
+  }
+
   public applyFilterEntriesToWhereBrackets({
     innerQueryBuilder,
     outerQueryBuilder,

@@ -3,15 +3,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In, IsNull, Not, Repository } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import {
-  BillingException,
-  BillingExceptionCode,
-} from 'src/engine/core-modules/billing/billing.exception';
 import { APPLICATION_PRICE_INTERVALS } from 'src/engine/core-modules/billing/constants/application-price-intervals.constant';
 import { BILLING_SUBSCRIPTION_STATE_LOCK_OPTIONS } from 'src/engine/core-modules/billing/constants/billing-subscription-state-lock-options.constant';
 import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
@@ -37,7 +32,6 @@ import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
 export class BillingApplicationProductService {
@@ -48,7 +42,6 @@ export class BillingApplicationProductService {
     private readonly stripePriceService: StripePriceService,
     private readonly cacheLockService: CacheLockService,
     private readonly billingSeatService: BillingSeatService,
-    private readonly workspaceCacheService: WorkspaceCacheService,
     @InjectRepository(BillingProductEntity)
     private readonly billingProductRepository: Repository<BillingProductEntity>,
     @InjectRepository(BillingPriceEntity)
@@ -62,9 +55,11 @@ export class BillingApplicationProductService {
   async findTargetApplicationProducts({
     workspaceId,
     subscribedStripeProductIds = [],
+    additionalConnectedAccountApplicationId,
   }: {
     workspaceId: string;
     subscribedStripeProductIds?: string[];
+    additionalConnectedAccountApplicationId?: string;
   }): Promise<TargetApplicationProduct[]> {
     const declaredPrices = await this.findDeclaredPrices(workspaceId);
 
@@ -92,16 +87,25 @@ export class BillingApplicationProductService {
         ],
       });
 
-    return catalogEntries.flatMap(
-      ({ declaredPrice, stripeProductId, billingProduct }) => {
-        if (!isDefined(billingProduct)) {
-          if (subscribedStripeProductIds.includes(stripeProductId)) {
-            throw new BillingException(
-              `Application product ${stripeProductId} of workspace ${workspaceId} is on the subscription but its catalog entry is incomplete`,
-              BillingExceptionCode.BILLING_PRODUCT_NOT_FOUND,
-            );
-          }
+    const repairedCatalogEntries = await Promise.all(
+      catalogEntries.map(async (catalogEntry) => {
+        if (
+          isDefined(catalogEntry.billingProduct) ||
+          !subscribedStripeProductIds.includes(catalogEntry.stripeProductId)
+        ) {
+          return catalogEntry;
+        }
 
+        return {
+          ...catalogEntry,
+          billingProduct: await this.createProduct(catalogEntry.declaredPrice),
+        };
+      }),
+    );
+
+    return repairedCatalogEntries.flatMap(
+      ({ declaredPrice, billingProduct }) => {
+        if (!isDefined(billingProduct)) {
           this.logger.warn(
             `Application price ${declaredPrice.price.universalIdentifier} of workspace ${workspaceId} has no catalog entry yet`,
           );
@@ -113,9 +117,13 @@ export class BillingApplicationProductService {
           per: declaredPrice.price.per,
           workspaceMemberCount,
           connectedAccountCount:
-            connectedAccountCountByApplicationId.get(
+            (connectedAccountCountByApplicationId.get(
               declaredPrice.applicationId,
-            ) ?? 0,
+            ) ?? 0) +
+            (declaredPrice.applicationId ===
+            additionalConnectedAccountApplicationId
+              ? 1
+              : 0),
         });
 
         return quantity > 0 ? [{ billingProduct, quantity }] : [];
@@ -139,24 +147,9 @@ export class BillingApplicationProductService {
     }
   }
 
-  async isApplicationPriceBillingEnabled(
-    workspaceId: string,
-  ): Promise<boolean> {
-    const { featureFlagsMap } = await this.workspaceCacheService.getOrRecompute(
-      workspaceId,
-      ['featureFlagsMap'],
-    );
-
-    return featureFlagsMap[FeatureFlagKey.IS_APPLICATION_PRICE_BILLING_ENABLED];
-  }
-
   private async findDeclaredPrices(
     workspaceId: string,
   ): Promise<DeclaredApplicationPrice[]> {
-    if (!(await this.isApplicationPriceBillingEnabled(workspaceId))) {
-      return [];
-    }
-
     const applications = await this.applicationRepository.find(workspaceId, {
       where: { version: Not(IsNull()) },
     });

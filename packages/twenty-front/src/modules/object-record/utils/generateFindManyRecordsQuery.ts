@@ -2,6 +2,7 @@ import gql from 'graphql-tag';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
+import { getReadableRelationsWithArguments } from '@/object-record/graphql/utils/getReadableRelationsWithArguments';
 import {
   type ObjectRecordsPermissions,
   type QueryCursorDirection,
@@ -23,14 +24,24 @@ export const generateFindManyRecordsQuery = ({
   computeReferences?: boolean;
   cursorDirection?: QueryCursorDirection;
   objectPermissionsByObjectMetadataId: Record<string, ObjectRecordsPermissions>;
-}) => gql`
+}) => {
+  const readableRelationsWithArguments = getReadableRelationsWithArguments({
+    objectMetadataItem,
+    objectMetadataItems,
+    recordGqlFields,
+    objectPermissionsByObjectMetadataId,
+  });
+
+  const query = gql`
 query FindMany${capitalize(
-  objectMetadataItem.namePlural,
-)}($filter: ${capitalize(
-  objectMetadataItem.nameSingular,
-)}FilterInput, $orderBy: [${capitalize(
-  objectMetadataItem.nameSingular,
-)}OrderByInput], $lastCursor: String, $limit: Int, $offset: Int) {
+    objectMetadataItem.namePlural,
+  )}($filter: ${capitalize(
+    objectMetadataItem.nameSingular,
+  )}FilterInput, $orderBy: [${capitalize(
+    objectMetadataItem.nameSingular,
+  )}OrderByInput], $lastCursor: String, $limit: Int, $offset: Int${readableRelationsWithArguments
+    .map(({ variableDefinitions }) => variableDefinitions)
+    .join('')}) {
   ${objectMetadataItem.namePlural}(filter: $filter, orderBy: $orderBy, ${
     cursorDirection === 'before'
       ? 'last: $limit, before: $lastCursor'
@@ -43,6 +54,7 @@ query FindMany${capitalize(
         recordGqlFields,
         computeReferences,
         objectPermissionsByObjectMetadataId,
+        readableRelationsWithArguments,
       })}
       cursor
     }
@@ -56,3 +68,11 @@ query FindMany${capitalize(
   }
 }
 `;
+
+  const variables: Record<string, unknown> = Object.assign(
+    {},
+    ...readableRelationsWithArguments.map(({ variables }) => variables),
+  );
+
+  return { query, variables };
+};

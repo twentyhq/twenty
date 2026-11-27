@@ -1,7 +1,5 @@
-import {
-  evaluateConditionalAvailabilityExpression,
-  isDefined,
-} from 'twenty-shared/utils';
+import { evaluateConditionalEvaluationExpression } from 'twenty-shared/conditional-evaluation';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   CHAT_OR_RECORD_SHARING_FLAG_EXPRESSION,
@@ -56,7 +54,7 @@ const isAvailable = (
   featureFlags: Record<string, boolean>,
   objectMetadataItem: Record<string, unknown>,
 ) =>
-  evaluateConditionalAvailabilityExpression(expression, {
+  evaluateConditionalEvaluationExpression(expression, {
     featureFlags,
     objectMetadataItem,
     numberOfSelectedRecords: 1,

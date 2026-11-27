@@ -1,4 +1,4 @@
-import { UseFilters, UseInterceptors } from '@nestjs/common';
+import { UseFilters, UseInterceptors, UseGuards } from '@nestjs/common';
 import { Context, Parent, ResolveField } from '@nestjs/graphql';
 
 import { isNonEmptyString } from '@sniptt/guards';
@@ -13,6 +13,7 @@ import { ApplicationTranslationCatalogService } from 'src/engine/metadata-module
 import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
 import { SettingsMenuItemDTO } from 'src/engine/metadata-modules/settings-menu-item/dtos/settings-menu-item.dto';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 
 @UseInterceptors(WorkspaceMigrationGraphqlApiExceptionInterceptor)
 @MetadataResolver(() => SettingsMenuItemDTO)
@@ -23,6 +24,7 @@ export class SettingsMenuItemResolver {
   ) {}
 
   @ResolveField(() => String)
+  @UseGuards(NoPermissionGuard)
   async title(
     @Parent() settingsMenuItem: SettingsMenuItemDTO,
     @Context() context: { loaders: IDataloaders } & I18nContext,

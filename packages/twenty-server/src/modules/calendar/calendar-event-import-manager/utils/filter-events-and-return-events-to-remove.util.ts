@@ -1,7 +1,8 @@
+import { isWorkEmail } from 'twenty-shared/utils';
+
 import { filterOutBlocklistedEvents } from 'src/modules/calendar/calendar-event-import-manager/utils/filter-out-blocklisted-events.util';
 import { filterOutInternalEvents } from 'src/modules/calendar/calendar-event-import-manager/utils/filter-out-internal-events.util';
 import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event.type';
-import { isWorkEmail } from 'src/utils/is-work-email';
 
 export const filterEventsAndReturnEventsToRemove = ({
   primaryHandle,
@@ -9,7 +10,6 @@ export const filterEventsAndReturnEventsToRemove = ({
   events,
   blocklist,
   excludePrivateEvents,
-  isInternalEventsFilterEnabled,
   isInternalMessagesImportEnabled,
 }: {
   primaryHandle: string;
@@ -17,7 +17,6 @@ export const filterEventsAndReturnEventsToRemove = ({
   events: FetchedCalendarEvent[];
   blocklist: string[];
   excludePrivateEvents: boolean;
-  isInternalEventsFilterEnabled: boolean;
   isInternalMessagesImportEnabled: boolean;
 }): {
   filteredEvents: FetchedCalendarEvent[];
@@ -30,9 +29,7 @@ export const filterEventsAndReturnEventsToRemove = ({
   );
 
   const shouldFilterOutInternals =
-    isInternalEventsFilterEnabled &&
-    isWorkEmail(primaryHandle) &&
-    !isInternalMessagesImportEnabled;
+    isWorkEmail(primaryHandle) && !isInternalMessagesImportEnabled;
 
   const eventsWithExternalParticipants = new Set(
     shouldFilterOutInternals

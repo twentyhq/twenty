@@ -1,5 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { ViewKey, ViewType, ViewVisibility } from 'twenty-shared/types';
+import { ViewKey, ViewType } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
@@ -29,8 +29,8 @@ export class MinimalViewDTO {
   @Field()
   position: number;
 
-  @Field(() => ViewVisibility)
-  visibility: ViewVisibility;
+  @Field()
+  isPrivate: boolean;
 
   @Field()
   isActive: boolean;

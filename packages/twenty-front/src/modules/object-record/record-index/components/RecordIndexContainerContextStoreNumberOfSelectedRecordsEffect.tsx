@@ -14,6 +14,7 @@ import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { useCurrentViewPresetFilterAsRecordGqlOperationFilter } from '@/views/hooks/useCurrentViewPresetFilterAsRecordGqlOperationFilter';
 import { useEffect } from 'react';
 
 export const RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect =
@@ -58,6 +59,9 @@ export const RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect =
       flattenedFieldMetadataItemsSelector,
     );
 
+    const currentViewPresetFilterAsRecordGqlOperationFilter =
+      useCurrentViewPresetFilterAsRecordGqlOperationFilter();
+
     const computedFilter = computeContextStoreFilters({
       contextStoreTargetedRecordsRule,
       contextStoreFilters,
@@ -66,6 +70,7 @@ export const RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect =
       fieldMetadataItems: flattenedFieldMetadataItems,
       filterValueDependencies,
       contextStoreAnyFieldFilterValue,
+      currentViewPresetFilterAsRecordGqlOperationFilter,
     });
 
     const { totalCount } = useFindManyRecords({

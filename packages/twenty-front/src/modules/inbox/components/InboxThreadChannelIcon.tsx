@@ -5,9 +5,10 @@ import { VisuallyHidden } from 'twenty-ui/primitives/accessibility';
 import { useTheme } from 'twenty-ui/theme';
 
 import { AiChatChannelIcon } from '@/ai-chat/threads/components/AiChatChannelIcon';
-import { aiChatChannelsState } from '@/ai-chat/threads/states/aiChatChannelsState';
+import { aiChatChannelFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatChannelFamilySelector';
 import { inboxSelectedChannelViewSelector } from '@/inbox/states/selectors/inboxSelectedChannelViewSelector';
 import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledChannelIcon = styled.div`
@@ -24,25 +25,26 @@ export const InboxThreadChannelIcon = ({
 }: InboxThreadChannelIconProps) => {
   const { t } = useLingui();
   const theme = useTheme();
-  const channel = useAtomStateValue(aiChatChannelsState)?.find(
-    ({ id }) => id === thread.channelId,
+  const aiChatChannel = useAtomFamilySelectorValue(
+    aiChatChannelFamilySelector,
+    thread.channelId,
   );
   const inboxSelectedChannelView = useAtomStateValue(
     inboxSelectedChannelViewSelector,
   );
 
   if (
-    !isDefined(channel) ||
-    inboxSelectedChannelView?.channelId === channel.id
+    !isDefined(aiChatChannel) ||
+    inboxSelectedChannelView?.channelId === aiChatChannel.id
   ) {
     return null;
   }
 
-  const channelName = channel.name;
+  const channelName = aiChatChannel.name;
 
   return (
     <StyledChannelIcon title={channelName}>
-      <AiChatChannelIcon channel={channel} size={theme.icon.size.sm} />
+      <AiChatChannelIcon channel={aiChatChannel} size={theme.icon.size.sm} />
       <VisuallyHidden>{t`In ${channelName}`}</VisuallyHidden>
     </StyledChannelIcon>
   );

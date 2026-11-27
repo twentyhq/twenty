@@ -4,7 +4,7 @@ import { Text } from 'twenty-ui/primitives/typography';
 
 import { useIsAiChatThreadShownAsUnread } from '@/ai-chat/threads/hooks/useIsAiChatThreadShownAsUnread';
 import { useFormatAiChatThreadDate } from '@/ai-chat/threads/hooks/useFormatAiChatThreadDate';
-import { aiChatThreadMemberStateFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadMemberStateFamilySelector';
+import { aiChatThreadInboxStatusFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadInboxStatusFamilySelector';
 import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 import { type AiChatThreadRowVariant } from '@/ai-chat/threads/types/AiChatThreadRowVariant';
 import { getAiChatThreadLastActivityAt } from '@/ai-chat/threads/utils/getAiChatThreadLastActivityAt';
@@ -27,7 +27,7 @@ export const AiChatThreadActivityTime = ({
   const { t } = useLingui();
   const isUnread = useIsAiChatThreadShownAsUnread(thread);
   const { event } = useAtomFamilySelectorValue(
-    aiChatThreadMemberStateFamilySelector,
+    aiChatThreadInboxStatusFamilySelector,
     thread.id,
   );
   const { formatAiChatThreadDay } = useFormatAiChatThreadDate();

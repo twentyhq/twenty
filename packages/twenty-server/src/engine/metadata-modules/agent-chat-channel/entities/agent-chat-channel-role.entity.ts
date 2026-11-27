@@ -12,23 +12,29 @@ import {
 } from 'typeorm';
 
 import { ADD_AGENT_CHAT_CHANNEL_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-51/add-agent-chat-channel-upgrade-command-name.constant';
+import { RENAME_AGENT_CHAT_CHANNEL_TABLES_TO_INBOX_CHANNEL_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-64/rename-agent-chat-channel-tables-to-inbox-channel-upgrade-command-name.constant';
 import { AgentChatChannelEntity } from 'src/engine/metadata-modules/agent-chat-channel/entities/agent-chat-channel.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
+import { WasRenamedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-renamed-in-upgrade.decorator';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
-@Entity({ name: 'agentChatChannelRole', schema: 'core' })
+@Entity({ name: 'inboxChannelRole', schema: 'core' })
 @WasIntroducedInUpgrade({
   upgradeCommandName: ADD_AGENT_CHAT_CHANNEL_UPGRADE_COMMAND_NAME,
 })
-@Unique('IDX_AGENT_CHAT_CHANNEL_ROLE_CHANNEL_ID_ROLE_ID_UNIQUE', [
+@WasRenamedInUpgrade([
+  {
+    previousName: 'agentChatChannelRole',
+    upgradeCommandName:
+      RENAME_AGENT_CHAT_CHANNEL_TABLES_TO_INBOX_CHANNEL_UPGRADE_COMMAND_NAME,
+  },
+])
+@Unique('IDX_INBOX_CHANNEL_ROLE_CHANNEL_ID_ROLE_ID_UNIQUE', [
   'channelId',
   'roleId',
 ])
-@Index('IDX_AGENT_CHAT_CHANNEL_ROLE_WORKSPACE_ID_ROLE_ID', [
-  'workspaceId',
-  'roleId',
-])
+@Index('IDX_INBOX_CHANNEL_ROLE_WORKSPACE_ID_ROLE_ID', ['workspaceId', 'roleId'])
 export class AgentChatChannelRoleEntity
   extends SyncableEntity
   implements Required<AgentChatChannelRoleEntity>

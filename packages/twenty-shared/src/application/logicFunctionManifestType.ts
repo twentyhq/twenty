@@ -4,15 +4,17 @@ import { type ServerRouteTriggerSettings } from '@/application/serverRouteTrigge
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 import { type ToolTriggerSettings } from '@/application/toolTriggerSettingsType';
 import { type WorkflowActionTriggerSettings } from '@/application/workflowActionTriggerSettingsType';
-import { type HTTPMethod, type ValidationRuleBindings } from '@/types';
+import { type HTTPMethod, type StoredExpressionTree } from '@/types';
 
 export type LogicFunctionManifest = SyncableEntityOptions & {
   name?: string;
   description?: string;
   timeoutSeconds?: number;
+  retryLimit?: number;
+  jobFailureHandlerName?: string;
   cronTriggerSettings?: CronTriggerSettings;
   eventTriggerSettings?: EventTriggerManifestSettings;
-  // Replaced by eventTriggerSettings; still accepted
+  /** @deprecated Use `eventTriggerSettings` instead. */
   databaseEventTriggerSettings?: DatabaseEventTriggerSettings;
   httpRouteTriggerSettings?: HttpRouteTriggerSettings;
   serverRouteTriggerSettings?: ServerRouteTriggerSettings;
@@ -27,14 +29,16 @@ export type LogicFunctionManifest = SyncableEntityOptions & {
 
 export type CronTriggerSettings = {
   pattern: string;
+  spreadMs?: number;
 };
 
 export type DatabaseEventTriggerSettings = {
   eventName: string;
   updatedFields?: string[];
   batchMode?: boolean;
+  // Text is what clients write and read; the server evaluates the tree when there is one
   condition?: string;
-  conditionBindings?: ValidationRuleBindings;
+  conditionTree?: StoredExpressionTree;
 };
 
 export type HttpRouteTriggerSettings = {

@@ -1,5 +1,11 @@
 import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
 import { formatQueueJobProgressLabel } from '@/queue-job/utils/formatQueueJobProgressLabel';
+import { isOAuthOnlyApplication } from '@/settings/applications/utils/isOAuthOnlyApplication';
+import { SettingsApplicationConnectedMembersSection } from '@/settings/applications/components/SettingsApplicationConnectedMembersSection';
+import {
+  type SettingsApplicationConfigurationLink,
+  SettingsApplicationConfigurationSection,
+} from '@/settings/applications/components/SettingsApplicationConfigurationSection';
 import { SettingsApplicationContentSummarySection } from '@/settings/applications/components/SettingsApplicationContentSummarySection';
 import { useInstalledApplicationContent } from '@/settings/applications/hooks/useInstalledApplicationContent';
 import { SettingsApplicationOverviewCard } from '@/settings/applications/components/SettingsApplicationOverviewCard';
@@ -44,6 +50,7 @@ type SettingsApplicationDetailGeneralTabProps = {
   isMarketplaceApplication: boolean;
   hasUpdate: boolean;
   latestAvailableVersion?: string;
+  configurationLinks: SettingsApplicationConfigurationLink[];
   onUpgrade: () => void;
   isUpgrading: boolean;
   upgradeProgress?: number;
@@ -61,6 +68,7 @@ export const SettingsApplicationDetailGeneralTab = ({
   isMarketplaceApplication,
   hasUpdate,
   latestAvailableVersion,
+  configurationLinks,
   onUpgrade,
   isUpgrading,
   upgradeProgress,
@@ -159,6 +167,12 @@ export const SettingsApplicationDetailGeneralTab = ({
           actions={isNonEmptyArray(actions) ? actions : undefined}
         />
       </Section.Root>
+      {isNonEmptyArray(configurationLinks) && (
+        <SettingsApplicationConfigurationSection
+          applicationName={displayName}
+          links={configurationLinks}
+        />
+      )}
       <ToastOnQueryErrorEffect error={contentError} />
       {isDefined(content) && (
         <SettingsApplicationContentSummarySection
@@ -184,6 +198,11 @@ export const SettingsApplicationDetailGeneralTab = ({
       )}
       {applicationHasHttpTriggeredFunctions(application) && (
         <SettingsApplicationFunctionDomainSection
+          applicationId={application.id}
+        />
+      )}
+      {canManageApplications && isOAuthOnlyApplication(application) && (
+        <SettingsApplicationConnectedMembersSection
           applicationId={application.id}
         />
       )}

@@ -9,7 +9,7 @@ import {
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { AiChatPendingAskGate } from '@/ai-chat/tool-calls/components/AiChatPendingAskGate';
-import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
+import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedPersonRecords } from '~/testing/mock-data/generated/data/people/mock-people-data';
@@ -65,7 +65,7 @@ const RECORD_DELETIONS = [FIRST_PERSON, SECOND_PERSON].map(
 );
 
 const seedPendingProposals = (proposals: ProposedToolCall[]) => {
-  const messagesAtom = aiChatMessagesFamilyState.atomFamily({
+  const messagesAtom = aiChatThreadDisplayedMessagesFamilyState.atomFamily({
     threadId: THREAD_ID,
   });
   const previousMessages = jotaiStore.get(messagesAtom);

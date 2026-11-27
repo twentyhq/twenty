@@ -9,7 +9,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useObjectDisabledOperations = (
-  objectMetadataItem: EnrichedObjectMetadataItem,
+  objectMetadataItem: EnrichedObjectMetadataItem | undefined,
 ) => {
   const { t } = useLingui();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
@@ -18,7 +18,7 @@ export const useObjectDisabledOperations = (
 
   const application = currentWorkspace?.installedApplications.find(
     (installedApplication) =>
-      installedApplication.id === objectMetadataItem.applicationId,
+      installedApplication.id === objectMetadataItem?.applicationId,
   );
 
   const applicationName = isDefined(application)

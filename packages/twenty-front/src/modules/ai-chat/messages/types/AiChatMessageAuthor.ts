@@ -7,7 +7,6 @@ export type AiChatMessageAuthor<
   > = PartialWorkspaceMember,
 > = {
   name: string;
-  // false while the name is a placeholder: a member who left, or an agent not loaded yet
   isNameResolved: boolean;
 } & (
   | { type: 'builtInAssistant' }

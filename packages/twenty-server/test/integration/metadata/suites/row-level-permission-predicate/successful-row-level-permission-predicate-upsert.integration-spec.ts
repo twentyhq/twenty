@@ -2,10 +2,8 @@ import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { upsertRowLevelPermissionRules } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-rules.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import {
-  FeatureFlagKey,
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
@@ -165,33 +163,18 @@ describe('Row Level Permission Predicate upsert should succeed', () => {
       ],
     };
 
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED,
-      value: true,
+    const { data } = await upsertRowLevelPermissionRules({
       expectToFail: false,
+      input,
     });
 
-    try {
-      const { data } = await upsertRowLevelPermissionRules({
-        expectToFail: false,
-        input,
-      });
-
-      expect(data.upsertRowLevelPermissionRules.predicates).toHaveLength(1);
-      expect(data.upsertRowLevelPermissionRules.predicates[0]).toMatchObject({
-        objectMetadataId: personObjectMetadataId,
-        relationFieldMetadataId: personCompanyFieldMetadataId,
-        fieldMetadataId: companyNameFieldMetadataId,
-        value: 'Acme',
-      });
-    } finally {
-      await updateFeatureFlag({
-        featureFlag:
-          FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED,
-        value: false,
-        expectToFail: false,
-      });
-    }
+    expect(data.upsertRowLevelPermissionRules.predicates).toHaveLength(1);
+    expect(data.upsertRowLevelPermissionRules.predicates[0]).toMatchObject({
+      objectMetadataId: personObjectMetadataId,
+      relationFieldMetadataId: personCompanyFieldMetadataId,
+      fieldMetadataId: companyNameFieldMetadataId,
+      value: 'Acme',
+    });
   });
 
   it('should upsert predicates with all fields', async () => {

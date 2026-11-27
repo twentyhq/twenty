@@ -3,7 +3,6 @@
 exports[`View Filter read should succeed should find a view filter among all view filters 1`] = `
 {
   "createdAt": Any<String>,
-  "deletedAt": null,
   "fieldMetadataId": Any<String>,
   "id": Any<String>,
   "operand": "CONTAINS",
@@ -21,7 +20,6 @@ exports[`View Filter read should succeed should find a view filter among all vie
 exports[`View Filter read should succeed should find a view filter among the view filters of its view 1`] = `
 {
   "createdAt": Any<String>,
-  "deletedAt": null,
   "fieldMetadataId": Any<String>,
   "id": Any<String>,
   "operand": "CONTAINS",
@@ -39,7 +37,6 @@ exports[`View Filter read should succeed should find a view filter among the vie
 exports[`View Filter read should succeed should find a view filter by id 1`] = `
 {
   "createdAt": Any<String>,
-  "deletedAt": null,
   "fieldMetadataId": Any<String>,
   "id": Any<String>,
   "operand": "CONTAINS",
@@ -59,7 +56,6 @@ exports[`View Filter read should succeed should return a view filter on GET /met
   "applicationId": Any<String>,
   "applicationUniversalIdentifier": Any<String>,
   "createdAt": Any<String>,
-  "deletedAt": null,
   "fieldMetadataId": Any<String>,
   "fieldMetadataUniversalIdentifier": Any<String>,
   "id": Any<String>,
@@ -84,7 +80,6 @@ exports[`View Filter read should succeed should return a view filter on GET /met
   "applicationId": Any<String>,
   "applicationUniversalIdentifier": Any<String>,
   "createdAt": Any<String>,
-  "deletedAt": null,
   "fieldMetadataId": Any<String>,
   "fieldMetadataUniversalIdentifier": Any<String>,
   "id": Any<String>,
@@ -109,7 +104,6 @@ exports[`View Filter read should succeed should return a view filter on GET /met
   "applicationId": Any<String>,
   "applicationUniversalIdentifier": Any<String>,
   "createdAt": Any<String>,
-  "deletedAt": null,
   "fieldMetadataId": Any<String>,
   "fieldMetadataUniversalIdentifier": Any<String>,
   "id": Any<String>,

@@ -53,7 +53,7 @@ const meta: Meta<PageDecoratorArgs> = {
             return HttpResponse.json({
               data: {
                 findWorkspaceFromInviteHash: {
-                  __typename: 'Workspace',
+                  __typename: 'WorkspaceFromInviteHash',
                   id: '20202020-91f0-46d0-acab-cb5afef3cc3b',
                   displayName: 'Twenty dev',
                   logo: null,

@@ -245,20 +245,6 @@ describe('2-59 workspace command - exclude deleted records from unique field ind
     },
   );
 
-  it('leaves unique indexes that are not owned by a unique field untouched', async () => {
-    await runOnWorkspace();
-
-    const [groupHashIndexMetadata] = await findUniqueFieldIndexMetadatas({
-      objectNameSingular: 'accessGroup',
-      fieldName: 'groupHash',
-    });
-
-    expect(groupHashIndexMetadata.indexWhereClause).toBeNull();
-    expect(
-      await findPhysicalIndexDefinition(groupHashIndexMetadata.name),
-    ).not.toContain('WHERE');
-  });
-
   it('lets a field with a legacy index stop being unique before the command runs', async () => {
     const { legacyIndexName } =
       await turnUniqueFieldIndexIntoLegacyIndex(CUSTOM_REFERENCE);

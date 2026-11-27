@@ -11,12 +11,15 @@ import {
 } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
+import { ApplicationGrantRoleLookupService } from 'src/engine/core-modules/application/application-grant-role-lookup/services/application-grant-role-lookup.service';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { UserWorkspaceSuccessorService } from 'src/engine/core-modules/user-workspace/services/user-workspace-successor.service';
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { RecordPermissionReadRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-permission-read.repository';
 import { type RuleRecordSharesScope } from 'src/engine/permissions/internal/record-permission-repository/utils/build-find-rule-record-shares-query.util';
 import { RecordShareStorageService } from 'src/engine/permissions/internal/record-share/services/record-share-storage.service';
+import { buildApplicationCreatorRecordShare } from 'src/engine/permissions/internal/record-share/utils/build-application-creator-record-share.util';
 import { diffRuleRecordShares } from 'src/engine/permissions/internal/record-share/utils/diff-rule-record-shares.util';
 import { type RuleRecordShareGrant } from 'src/engine/permissions/record-share/types/rule-record-share-grant.type';
 import { isPrivateByDefaultObject } from 'src/engine/permissions/private-record/utils/is-private-by-default-object.util';
@@ -38,7 +41,47 @@ export class RecordShareSystemWriteService {
     private readonly recordShareStorageService: RecordShareStorageService,
     private readonly recordPermissionReadRepository: RecordPermissionReadRepository,
     private readonly userWorkspaceSuccessorService: UserWorkspaceSuccessorService,
+    private readonly applicationGrantRoleLookupService: ApplicationGrantRoleLookupService,
   ) {}
+
+  async grantApplicationCreatorAccess({
+    workspaceId,
+    objectMetadataId,
+    recordId,
+    flatApplication,
+  }: {
+    workspaceId: string;
+    objectMetadataId: string;
+    recordId: string;
+    flatApplication: Pick<
+      FlatApplication,
+      'id' | 'requestedRoleId' | 'sourceType'
+    >;
+  }): Promise<void> {
+    const applicationRoleId =
+      await this.applicationGrantRoleLookupService.findGrantRoleId({
+        workspaceId,
+        flatApplication,
+      });
+
+    if (!isDefined(applicationRoleId)) {
+      return;
+    }
+
+    await this.recordShareStorageService.insertMany({
+      workspaceId,
+      recordShares: [
+        {
+          objectMetadataId,
+          recordId,
+          ...buildApplicationCreatorRecordShare({
+            applicationRoleId,
+            applicationId: flatApplication.id,
+          }),
+        },
+      ],
+    });
+  }
 
   async transferRecordSharesToSuccessor({
     removedUserWorkspace,

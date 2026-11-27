@@ -7,7 +7,7 @@ import {
 import { Text } from 'twenty-ui/primitives/typography';
 
 import { AiModelPicker } from '@/ai/components/AiModelPicker';
-import { SettingsAgentModelCapabilities } from '@/ai/components/SettingsAgentModelCapabilities';
+import { AiModelCapabilityToggles } from '@/ai/components/AiModelCapabilityToggles';
 import { MODEL_STORY_MODELS } from '@/ai/components/__stories__/modelStoryModels';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { aiModelTiersState } from '@/client-config/states/aiModelTiersState';
@@ -76,7 +76,7 @@ export const AiModelPickerExample = ({
         disabled={disabled}
       />
       {shouldShowCapabilities && (
-        <SettingsAgentModelCapabilities
+        <AiModelCapabilityToggles
           selectedModelId={modelId}
           modelConfiguration={modelConfiguration}
           onConfigurationChange={handleConfigurationChange}

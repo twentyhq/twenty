@@ -7,61 +7,33 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { WorkflowVersionStatus as CoreWorkflowVersionStatus } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
-import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { CoreWorkflowTriggerService } from 'src/engine/core-modules/workflow/services/core-workflow-trigger.service';
 import { CoreWorkflowRunnerService } from 'src/modules/workflow/workflow-runner/services/core-workflow-runner.service';
 import { buildWorkflowRunSource } from 'src/modules/workflow/workflow-trigger/utils/build-workflow-run-source.util';
-import {
-  type QueuedWorkflowTriggerDispatchIds,
-  resolveWorkflowTriggerDispatchMode,
-} from 'src/modules/workflow/workflow-trigger/utils/resolve-workflow-trigger-dispatch-mode.util';
 
 export type WorkflowTriggerJobData = {
   workspaceId: string;
   workflowId: string;
+  coreWorkflowVersionId: string;
   payload: object;
-} & QueuedWorkflowTriggerDispatchIds;
+};
 
 @Processor({ queueName: MessageQueue.workflowQueue, scope: Scope.REQUEST })
 export class WorkflowTriggerJob {
   private readonly logger = new Logger(WorkflowTriggerJob.name);
   constructor(
     private readonly coreWorkflowRunnerService: CoreWorkflowRunnerService,
-    private readonly workflowCoreSyncService: WorkflowCoreSyncService,
     private readonly coreWorkflowTriggerService: CoreWorkflowTriggerService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   @Process(WorkflowTriggerJob.name)
-  async handle(data: WorkflowTriggerJobData): Promise<void> {
-    const dispatchMode = resolveWorkflowTriggerDispatchMode(data);
-
-    if (dispatchMode.mode === 'CORE') {
-      return this.handleFromCore({
-        workflowId: data.workflowId,
-        workspaceId: data.workspaceId,
-        coreWorkflowVersionId: dispatchMode.coreWorkflowVersionId,
-        workspaceWorkflowVersionId: dispatchMode.workspaceWorkflowVersionId,
-        payload: data.payload,
-      });
-    }
-
-    return this.handleLegacyDispatch(data);
-  }
-
-  private async handleFromCore({
+  async handle({
     workflowId,
     workspaceId,
     coreWorkflowVersionId,
-    workspaceWorkflowVersionId,
     payload,
-  }: {
-    workflowId: string;
-    workspaceId: string;
-    coreWorkflowVersionId: string;
-    workspaceWorkflowVersionId?: string;
-    payload: object;
-  }): Promise<void> {
+  }: WorkflowTriggerJobData): Promise<void> {
     const coreWorkflowVersion =
       await this.coreWorkflowTriggerService.findCoreVersionById(
         workspaceId,
@@ -75,34 +47,29 @@ export class WorkflowTriggerJob {
       return;
     }
 
+    const droppedDispatchMessage = `Core workflow version ${coreWorkflowVersionId} does not belong to workflow ${workflowId} in workspace ${workspaceId}`;
+
+    if (!isDefined(coreWorkflowVersion.coreWorkflowId)) {
+      this.captureDroppedDispatch(droppedDispatchMessage);
+      return;
+    }
+
     const coreWorkflow =
-      await this.workflowCoreSyncService.findCoreWorkflowByIdOrWorkspaceWorkflowId(
+      await this.coreWorkflowTriggerService.findCoreWorkflowById({
         workspaceId,
-        workflowId,
-      );
+        coreWorkflowId: coreWorkflowVersion.coreWorkflowId,
+      });
 
     if (
       !isDefined(coreWorkflow) ||
-      coreWorkflowVersion.coreWorkflowId !== coreWorkflow.id
+      (workflowId !== coreWorkflow.id &&
+        workflowId !== coreWorkflow.workspaceWorkflowId)
     ) {
-      this.captureDroppedDispatch(
-        `Core workflow version ${coreWorkflowVersionId} does not belong to workflow ${workflowId} in workspace ${workspaceId}`,
-      );
+      this.captureDroppedDispatch(droppedDispatchMessage);
       return;
     }
 
     if (coreWorkflowVersion.status !== CoreWorkflowVersionStatus.ACTIVE) {
-      return;
-    }
-
-    if (
-      isDefined(workspaceWorkflowVersionId) &&
-      coreWorkflowVersion.workspaceWorkflowVersionId !==
-        workspaceWorkflowVersionId
-    ) {
-      this.captureDroppedDispatch(
-        `Workspace version ${workspaceWorkflowVersionId} conflicts with core version ${coreWorkflowVersionId} in workspace ${workspaceId}`,
-      );
       return;
     }
 
@@ -111,38 +78,6 @@ export class WorkflowTriggerJob {
       coreWorkflowVersionId,
       payload,
       source: buildWorkflowRunSource(coreWorkflow.name),
-    });
-  }
-
-  private async handleLegacyDispatch(
-    data: WorkflowTriggerJobData,
-  ): Promise<void> {
-    const coreWorkflow =
-      await this.workflowCoreSyncService.findCoreWorkflowByIdOrWorkspaceWorkflowId(
-        data.workspaceId,
-        data.workflowId,
-      );
-    const coreWorkflowVersionId =
-      await this.coreWorkflowTriggerService.resolveDispatchedCoreVersionId({
-        workspaceId: data.workspaceId,
-        workspaceWorkflowVersionId: data.workspaceWorkflowVersionId,
-        lastPublishedCoreWorkflowVersionId:
-          coreWorkflow?.lastPublishedCoreWorkflowVersionId,
-      });
-
-    if (!isDefined(coreWorkflowVersionId)) {
-      this.captureDroppedDispatch(
-        `Legacy workflow trigger for ${data.workflowId} has no core version mapping in workspace ${data.workspaceId}`,
-      );
-      return;
-    }
-
-    await this.handleFromCore({
-      workflowId: data.workflowId,
-      workspaceId: data.workspaceId,
-      coreWorkflowVersionId,
-      workspaceWorkflowVersionId: data.workspaceWorkflowVersionId ?? undefined,
-      payload: data.payload,
     });
   }
 

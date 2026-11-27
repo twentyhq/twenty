@@ -35,6 +35,7 @@ const connectionProviderExceptionCodeToHttpStatus = (
     case ConnectionProviderExceptionCode.RECONNECT_ACCOUNT_MISMATCH:
     case ConnectionProviderExceptionCode.API_KEY_NOT_VERIFIED:
     case ConnectionProviderExceptionCode.API_KEY_MISSING:
+    case ConnectionProviderExceptionCode.APPLICATION_CHARGE_DECLINED:
       return 400;
     case ConnectionProviderExceptionCode.CLIENT_CREDENTIALS_NOT_CONFIGURED:
     case ConnectionProviderExceptionCode.TOKEN_EXCHANGE_FAILED:

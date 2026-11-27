@@ -39,9 +39,8 @@ describe('buildMcpServerBundledApplication', () => {
       name: 'stripe',
       label: 'Stripe',
       url: 'https://mcp.stripe.com',
-      connectionProvider: {
-        universalIdentifier: connectionProvider.universalIdentifier,
-      },
+      connectionProviderUniversalIdentifier:
+        connectionProvider.universalIdentifier,
     });
   });
 

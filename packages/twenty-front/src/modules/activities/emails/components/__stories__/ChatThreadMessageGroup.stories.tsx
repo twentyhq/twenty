@@ -52,6 +52,7 @@ export const OutgoingText: Story = {
     group: {
       id: 'group-id',
       isOutgoing: true,
+      isFirstOfDay: false,
       messages: [
         {
           ...buildVoiceNoteMessage(''),
@@ -77,10 +78,10 @@ export const OutgoingText: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await expect(await canvas.findAllByText(/\d{1,2}:52/)).toHaveLength(3);
+    await expect(await canvas.findAllByText(/\d{1,2}:52/)).toHaveLength(1);
     await expect(
       await canvas.findAllByRole('img', { name: 'Sent' }),
-    ).toHaveLength(3);
+    ).toHaveLength(1);
   },
 };
 
@@ -89,6 +90,7 @@ export const VoiceNote: Story = {
     group: {
       id: 'group-id',
       isOutgoing: false,
+      isFirstOfDay: false,
       messages: [buildVoiceNoteMessage(MOCK_CALL_RECORDING_AUDIO_DATA_URI)],
     },
   },
@@ -108,6 +110,7 @@ export const UnplayableVoiceNote: Story = {
     group: {
       id: 'group-id',
       isOutgoing: false,
+      isFirstOfDay: false,
       messages: [buildVoiceNoteMessage('data:audio/wav,not-a-recording')],
     },
   },
@@ -130,6 +133,7 @@ export const SeveralImages: Story = {
     group: {
       id: 'group-id',
       isOutgoing: false,
+      isFirstOfDay: false,
       messages: [
         {
           ...buildVoiceNoteMessage(''),
@@ -178,6 +182,7 @@ export const Reactions: Story = {
     group: {
       id: 'group-id',
       isOutgoing: true,
+      isFirstOfDay: false,
       messages: [
         {
           ...buildVoiceNoteMessage(''),

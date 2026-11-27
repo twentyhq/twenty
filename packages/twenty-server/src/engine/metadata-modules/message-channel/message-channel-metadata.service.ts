@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
+import { getDomainFromEmail, isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
 import {
@@ -17,6 +17,7 @@ import {
   MessageChannelVisibility,
 } from 'twenty-shared/types';
 
+import { ChannelVisibilityRuleSyncSchedulerService } from 'src/engine/permissions/channel-visibility/services/channel-visibility-rule-sync-scheduler.service';
 import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
 import { EmailingDomainService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain.service';
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces/file-storage.interface';
@@ -35,7 +36,6 @@ import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/worksp
 import { INBOUND_EMAIL_LOCAL_PART_PREFIX } from 'src/modules/messaging/message-import-manager/drivers/inbound-email/constants/inbound-email-local-part-prefix.constant';
 import { INBOUND_EMAIL_LOCAL_PART_RANDOM_BYTES } from 'src/modules/messaging/message-import-manager/drivers/inbound-email/constants/inbound-email-local-part-random-bytes.constant';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
-import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
 
 @Injectable()
 export class MessageChannelMetadataService {
@@ -46,6 +46,7 @@ export class MessageChannelMetadataService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly emailingDomainService: EmailingDomainService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+    private readonly channelVisibilityRuleSyncSchedulerService: ChannelVisibilityRuleSyncSchedulerService,
     private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
   ) {}
 
@@ -240,8 +241,13 @@ export class MessageChannelMetadataService {
     },
   ): Promise<MessageChannelDTO> {
     const entity = this.repository.create(data);
+    const savedEntity = await this.repository.save(entity);
 
-    return this.repository.save(entity);
+    await this.channelVisibilityRuleSyncSchedulerService.scheduleSync(
+      data.workspaceId,
+    );
+
+    return savedEntity;
   }
 
   async update({
@@ -257,6 +263,12 @@ export class MessageChannelMetadataService {
       { id, workspaceId },
       data as Record<string, unknown>,
     );
+
+    if ('visibility' in data) {
+      await this.channelVisibilityRuleSyncSchedulerService.scheduleSync(
+        workspaceId,
+      );
+    }
 
     return this.repository.findOneOrFail({ where: { id, workspaceId } });
   }
@@ -394,6 +406,10 @@ export class MessageChannelMetadataService {
     });
 
     await this.repository.delete({ id, workspaceId });
+
+    await this.channelVisibilityRuleSyncSchedulerService.scheduleSync(
+      workspaceId,
+    );
 
     this.workspaceEventEmitter.emitCustomBatchEvent<MessageChannelDeletedEvent>(
       MESSAGE_CHANNEL_DELETED_EVENT,

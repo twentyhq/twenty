@@ -9,6 +9,7 @@ import { AppPath } from 'twenty-shared/types';
 import { AppConnectionHeader } from '@/applications/components/AppConnectionHeader';
 import { AuthorizeActionButtons } from '@/applications/components/AuthorizeActionButtons';
 import { AuthorizeClientIdentityNotice } from '@/applications/components/AuthorizeClientIdentityNotice';
+import { OAUTH_SCOPE_LABELS } from '@/applications/constants/OAuthScopeLabels';
 import { getKnownOAuthClientLogoUrl } from '@/applications/utils/getKnownOAuthClientLogoUrl';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
@@ -165,11 +166,6 @@ export const Authorize = () => {
   const [searchParam] = useSearchParams();
   const { redirect } = useRedirect();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-
-  const oauthScopeLabels: { [scope: string]: string | undefined } = {
-    api: t`Access your workspace data`,
-    profile: t`Read your profile`,
-  };
 
   // Support both camelCase (legacy) and standard OAuth snake_case params
   const clientId = searchParam.get('client_id') ?? searchParam.get('clientId');
@@ -349,7 +345,11 @@ export const Authorize = () => {
                           stroke={theme.icon.stroke.sm}
                         />
                       </StyledScopeIcon>
-                      <span>{oauthScopeLabels[scope] ?? scope}</span>
+                      <span>
+                        {isDefined(OAUTH_SCOPE_LABELS[scope])
+                          ? t(OAUTH_SCOPE_LABELS[scope])
+                          : scope}
+                      </span>
                     </StyledScopeItem>
                   );
                 })}

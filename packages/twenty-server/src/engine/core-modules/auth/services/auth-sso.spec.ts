@@ -3,6 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { type Repository } from 'typeorm';
 
+import { AuthExceptionCode } from 'src/engine/core-modules/auth/auth.exception';
 import { AuthSsoService } from 'src/engine/core-modules/auth/services/auth-sso.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -95,6 +96,18 @@ describe('AuthSsoService', () => {
           'approvedAccessDomains',
         ],
       });
+    });
+
+    it('should throw instead of picking any workspace when single-workspace mode gets no workspaceId', async () => {
+      jest.spyOn(twentyConfigService, 'get').mockReturnValue(false);
+
+      await expect(
+        authSsoService.findWorkspaceFromWorkspaceIdOrAuthProvider({
+          authProvider: AuthProviderEnum.Google,
+          email: 'test@example.com',
+        }),
+      ).rejects.toMatchObject({ code: AuthExceptionCode.WORKSPACE_NOT_FOUND });
+      expect(workspaceRepository.findOne).not.toHaveBeenCalled();
     });
 
     it('should return undefined if no workspace is found when multi-workspace mode is enabled', async () => {

@@ -16,6 +16,8 @@ import { PageBanner } from "/snippets/page-banner.mdx"
 | **السحابة**           | `https://{your-workspace-url}/mcp` (على سبيل المثال: `https://mycompany.twenty.com/mcp`) |
 | **الاستضافة الذاتية** | `https://{your-domain}/mcp`                                                              |
 
+تتحدث نقطة النهاية بروتوكول MCP ‏`2026-07-28` والإصدارات السابقة وصولًا إلى ‏`2024-11-05` عبر HTTP قابل للبث. يستدعي العملاء على ‏`2026-07-28` ‏`server/discover` ويرسلون كل طلب بشكل مستقل؛ ويبدأ العملاء الأقدم بـ ‏`initialize` كما كان من قبل.
+
 ## طرق المصادقة
 
 لديك طريقتان لمصادقة عميل MCP: **OAuth** (مُوصى بها) أو **مفتاح API**.

@@ -6,7 +6,7 @@ import { DeleteAgentChatChannelDocument } from '~/generated-metadata/graphql';
 export const useDeleteInboxChannel = () => {
   const { runInboxChannelMutation } = useRunInboxChannelMutation();
 
-  const deleteAgentChatChannel = useCallback(
+  const deleteInboxChannel = useCallback(
     ({
       channelId,
       destinationChannelId,
@@ -21,5 +21,5 @@ export const useDeleteInboxChannel = () => {
     [runInboxChannelMutation],
   );
 
-  return { deleteAgentChatChannel };
+  return { deleteInboxChannel };
 };

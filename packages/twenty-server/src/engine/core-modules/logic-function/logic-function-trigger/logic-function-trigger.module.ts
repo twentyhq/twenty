@@ -7,6 +7,7 @@ import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace
 import { EventLogEmitterModule } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.module';
 import { ApplicationLifecycleHookJob } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/application-lifecycle-hook.job';
 import { LogicFunctionTriggerJob } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
+import { LogicFunctionFailedJobListener } from 'src/engine/core-modules/logic-function/logic-function-trigger/listeners/logic-function-failed-job.listener';
 import { LogicFunctionJobRunnerService } from 'src/engine/core-modules/logic-function/logic-function-trigger/logic-function-job-runner.service';
 import { CronTriggerCronCommand } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/cron/cron-trigger.cron.command';
 import { CronTriggerCronJob } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/cron/cron-trigger.cron.job';
@@ -38,6 +39,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     LogicFunctionTriggerJob,
     ApplicationLifecycleHookJob,
     LogicFunctionJobRunnerService,
+    LogicFunctionFailedJobListener,
     CronTriggerCronJob,
     CronTriggerCronCommand,
     CallDatabaseEventTriggerJobsJob,

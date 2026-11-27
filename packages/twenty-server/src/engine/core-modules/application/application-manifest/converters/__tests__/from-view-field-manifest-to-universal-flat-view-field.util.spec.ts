@@ -27,6 +27,7 @@ describe('fromViewFieldManifestToUniversalFlatViewField', () => {
     expect(result.position).toBe(0);
     expect(result.aggregateOperation).toBeNull();
     expect(result.viewFieldGroupUniversalIdentifier).toBeNull();
+    expect(result.label).toBeNull();
   });
 
   it('should respect explicit values', () => {
@@ -51,4 +52,27 @@ describe('fromViewFieldManifestToUniversalFlatViewField', () => {
     expect(result.aggregateOperation).toBe(AggregateOperations.COUNT);
     expect(result.viewFieldGroupUniversalIdentifier).toBe('vfg-uuid-1');
   });
+
+  it.each([
+    { label: '  Open   tasks ', expectedLabel: 'Open tasks' },
+    { label: '   ', expectedLabel: null },
+    { label: '', expectedLabel: null },
+  ])(
+    'should store the label "$label" as $expectedLabel',
+    ({ label, expectedLabel }) => {
+      const result = fromViewFieldManifestToUniversalFlatViewField({
+        viewFieldManifest: {
+          universalIdentifier: 'vf-uuid-3',
+          fieldMetadataUniversalIdentifier: 'field-uuid-3',
+          position: 0,
+          label,
+        },
+        viewUniversalIdentifier,
+        applicationUniversalIdentifier,
+        now,
+      });
+
+      expect(result.label).toBe(expectedLabel);
+    },
+  );
 });

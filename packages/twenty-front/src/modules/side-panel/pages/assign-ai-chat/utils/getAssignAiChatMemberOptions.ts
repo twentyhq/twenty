@@ -13,15 +13,18 @@ export type AssignAiChatMemberOption = {
 export const getAssignAiChatMemberOptions = ({
   workspaceMembers,
   currentWorkspaceMemberId,
+  excludedWorkspaceMemberIds = [],
   search,
 }: {
   workspaceMembers: PartialWorkspaceMember[];
   currentWorkspaceMemberId: string | undefined;
+  excludedWorkspaceMemberIds?: string[];
   search: string;
 }): AssignAiChatMemberOption[] => {
   const normalizedSearch = search.trim().toLowerCase();
 
   return workspaceMembers
+    .filter(({ id }) => !excludedWorkspaceMemberIds.includes(id))
     .map((workspaceMember) => ({
       workspaceMember,
       label: getWorkspaceMemberNameOrEmail(workspaceMember),

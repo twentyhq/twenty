@@ -1,7 +1,9 @@
 import { useLingui } from '@lingui/react/macro';
 import { type ReactElement, type ReactNode, useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { Collapsible } from 'twenty-ui/primitives/layout';
 
+import { NavigationDrawerInboxCountBadge } from '@/inbox/components/NavigationDrawerInboxCountBadge';
 import { AiChatChannelIcon } from '@/ai-chat/threads/components/AiChatChannelIcon';
 import { INBOX_CHANNEL_NAVIGATION_ITEMS } from '@/inbox/constants/InboxChannelNavigationItems';
 import { useOpenInboxChannel } from '@/inbox/hooks/useOpenInboxChannel';
@@ -15,13 +17,13 @@ import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/componen
 import { NavigationDrawerItemGroup } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemGroup';
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
+import { NavigationMenuTabFirstItemOpenEffect } from '@/navigation-menu-item/display/effect-components/NavigationMenuTabFirstItemOpenEffect';
 
 type NavigationDrawerInboxChannelNavigationProps = {
   channel: AiChatChannel;
   summary?: InboxChannelSummary;
   channelView: InboxChannelView | null;
   isActive: boolean;
-  isExpandable?: boolean;
   icon?: ReactElement;
   rightOptions?: ReactNode;
   isRightOptionsDropdownOpen?: boolean;
@@ -32,7 +34,6 @@ export const NavigationDrawerInboxChannelNavigation = ({
   summary,
   channelView,
   isActive,
-  isExpandable = true,
   icon,
   rightOptions,
   isRightOptionsDropdownOpen,
@@ -57,9 +58,8 @@ export const NavigationDrawerInboxChannelNavigation = ({
   }
 
   const isChannelAccessible = channel.isAccessible ?? false;
-  const isChannelExpandable = isChannelAccessible && isExpandable;
   const canShowChildren =
-    isChannelExpandable && isNavigationDrawerContentExpanded;
+    isChannelAccessible && isNavigationDrawerContentExpanded;
   const areChildrenVisible =
     canShowChildren && isActive && collapsedChannelViewKey !== channelViewKey;
   const selectedItem =
@@ -89,6 +89,9 @@ export const NavigationDrawerInboxChannelNavigation = ({
 
   return (
     <NavigationDrawerItemGroup>
+      {isChannelAccessible && (
+        <NavigationMenuTabFirstItemOpenEffect onOpen={handleClick} />
+      )}
       <NavigationDrawerItem
         label={channel.name}
         secondaryLabel={isChannelAccessible ? undefined : t`Not open to you`}
@@ -102,26 +105,25 @@ export const NavigationDrawerInboxChannelNavigation = ({
         aria-expanded={canShowChildren ? areChildrenVisible : undefined}
         aria-controls={areChildrenVisible ? childrenId : undefined}
         trailingIcon={
-          isChannelExpandable ? (
+          isChannelAccessible ? (
             <NavigationMenuItemFolderChevron isOpen={areChildrenVisible} />
           ) : undefined
         }
         rightOptions={rightOptions}
         isRightOptionsDropdownOpen={isRightOptionsDropdownOpen}
       />
-      {areChildrenVisible && (
-        <div id={childrenId}>
+      <Collapsible.Root open={areChildrenVisible}>
+        <Collapsible.Panel id={childrenId} dimension="height">
           {INBOX_CHANNEL_NAVIGATION_ITEMS.map(
             ({ channelStatus, label, Icon, countKey, unreadKey }, index) => {
               const count = summary?.[countKey];
+              const hasCount = isDefined(count) && count > 0;
 
               return (
                 <NavigationDrawerItem
                   key={channelStatus}
                   label={t(label)}
-                  secondaryLabel={
-                    isDefined(count) && count > 0 ? `${count}` : undefined
-                  }
+                  accessibleSecondaryLabel={hasCount ? `${count}` : undefined}
                   Icon={Icon}
                   isUnread={isDefined(unreadKey) ? summary?.[unreadKey] : false}
                   active={index === selectedIndex}
@@ -139,12 +141,18 @@ export const NavigationDrawerInboxChannelNavigation = ({
                     })
                   }
                   triggerEvent="CLICK"
+                  rightOptions={
+                    hasCount ? (
+                      <NavigationDrawerInboxCountBadge count={count} />
+                    ) : undefined
+                  }
+                  alwaysShowRightOptions={hasCount}
                 />
               );
             },
           )}
-        </div>
-      )}
+        </Collapsible.Panel>
+      </Collapsible.Root>
     </NavigationDrawerItemGroup>
   );
 };

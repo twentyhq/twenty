@@ -217,6 +217,10 @@ export const getUnsupportedPageLayoutWidgetReason = ({
     return 'page layout widget with a conditional availability expression';
   }
 
+  if (isDefined(flatPageLayoutWidget.conditionalAvailability)) {
+    return 'page layout widget with a conditional availability tree';
+  }
+
   const unresolvableObjectReason = getUnresolvableReferenceReason({
     metadataName: 'pageLayoutWidget',
     referenceMetadataName: 'objectMetadata',

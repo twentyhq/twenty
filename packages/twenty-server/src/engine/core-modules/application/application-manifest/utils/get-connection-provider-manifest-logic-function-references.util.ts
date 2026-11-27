@@ -1,6 +1,6 @@
 import {
   type ConnectionProviderManifest,
-  type SyncableEntityOptions,
+  normalizeConnectionProviderManifest,
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -17,31 +17,44 @@ export const getConnectionProviderManifestLogicFunctionReferences = (
   hook: ConnectionProviderLogicFunctionHook;
   universalIdentifier: string;
 }[] => {
+  const normalizedConnectionProvider =
+    normalizeConnectionProviderManifest(connectionProvider);
+
   const custom =
-    connectionProvider.type === 'custom'
-      ? connectionProvider.custom
+    normalizedConnectionProvider.type === 'custom'
+      ? normalizedConnectionProvider.custom
       : undefined;
 
   const references: {
     hook: ConnectionProviderLogicFunctionHook;
-    reference: SyncableEntityOptions | undefined;
+    universalIdentifier: string | undefined;
   }[] = [
     {
       hook: 'identifyAccount',
-      reference: connectionProvider.identifyAccountLogicFunction,
+      universalIdentifier:
+        normalizedConnectionProvider.identifyAccountLogicFunctionUniversalIdentifier,
     },
-    { hook: 'onConnect', reference: connectionProvider.onConnectLogicFunction },
+    {
+      hook: 'onConnect',
+      universalIdentifier:
+        normalizedConnectionProvider.onConnectLogicFunctionUniversalIdentifier,
+    },
     {
       hook: 'onDisconnect',
-      reference: connectionProvider.onDisconnectLogicFunction,
+      universalIdentifier:
+        normalizedConnectionProvider.onDisconnectLogicFunctionUniversalIdentifier,
     },
-    { hook: 'authorize', reference: custom?.authorizeLogicFunction },
-    { hook: 'callback', reference: custom?.callbackLogicFunction },
+    {
+      hook: 'authorize',
+      universalIdentifier: custom?.authorizeLogicFunctionUniversalIdentifier,
+    },
+    {
+      hook: 'callback',
+      universalIdentifier: custom?.callbackLogicFunctionUniversalIdentifier,
+    },
   ];
 
-  return references.flatMap(({ hook, reference }) =>
-    isDefined(reference)
-      ? [{ hook, universalIdentifier: reference.universalIdentifier }]
-      : [],
+  return references.flatMap(({ hook, universalIdentifier }) =>
+    isDefined(universalIdentifier) ? [{ hook, universalIdentifier }] : [],
   );
 };

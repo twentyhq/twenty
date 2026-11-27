@@ -1,0 +1,1 @@
+export const TEAMS_CONNECTOR_RETRYABLE_STATUSES = new Set([412, 429, 503]);

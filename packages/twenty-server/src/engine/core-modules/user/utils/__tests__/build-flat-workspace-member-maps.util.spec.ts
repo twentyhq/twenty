@@ -33,6 +33,8 @@ const buildWorkspaceMember = ({
   messageParticipants: [],
   blocklist: [],
   calendarEventParticipants: [],
+  accountOwnerForCalendarChannelEventAssociations: [],
+  accountOwnerForMessageChannelMessageAssociations: [],
   timelineActivities: [],
   agentMessages: [],
   agentChatThreads: [],

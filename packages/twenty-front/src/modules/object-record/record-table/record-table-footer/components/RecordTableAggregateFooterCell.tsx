@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 
-import { useRecordFieldLookupTarget } from '@/object-record/record-column-lookup/hooks/useRecordFieldLookupTarget';
+import { useRecordFieldColumnKind } from '@/object-record/record-column-scope/hooks/useRecordFieldColumnKind';
 import { RECORD_TABLE_FIRST_COLUMN_LEFT_CSS_VAR } from '@/object-record/record-table/components/RecordTableStyleWrapper';
 import { RECORD_TABLE_CELL_CONTENT_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableCellContentClassName';
 import { getRecordTableColumnFieldWidthCSSVariableName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthCSSVariableName';
@@ -106,18 +106,15 @@ export const RecordTableAggregateFooterCell = ({
 
   const recordField = visibleRecordFields.find(findById(viewFieldId));
 
-  // A total over a lookup counts a related record once per row that links to it
-  const isLookup = isDefined(
-    useRecordFieldLookupTarget({
-      fieldMetadataItemId: fieldMetadataId,
-      relationTargetFieldMetadataId: recordField?.relationTargetFieldMetadataId,
-    }),
-  );
+  const { kind: columnKind } = useRecordFieldColumnKind(viewFieldId);
+
+  // A total over a lookup or a summary would count related records, not add up what the cells show
+  const isComputedColumn = columnKind === 'lookup' || columnKind === 'summary';
 
   const isFooterReadOnly =
     (useIsRecordTableWidgetAggregateNonInteractive() ??
       !isRecordTableColumnResizable) ||
-    isLookup;
+    isComputedColumn;
 
   const isFirstCell = columnIndex === 0;
 
@@ -139,7 +136,7 @@ export const RecordTableAggregateFooterCell = ({
         className={RECORD_TABLE_CELL_CONTENT_CLASS_NAME}
       >
         {isFooterReadOnly ? (
-          hasAggregateOperationForViewField && !isLookup ? (
+          hasAggregateOperationForViewField && !isComputedColumn ? (
             <RecordTableColumnAggregateFooterValue
               fieldMetadataId={fieldMetadataId}
               dropdownId={`${viewFieldId}-footer-readonly`}

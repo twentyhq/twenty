@@ -14,7 +14,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { msg } from '@lingui/core/macro';
 import { generateServiceProviderMetadata } from '@node-saml/node-saml';
 import { isNonEmptyString } from '@sniptt/guards';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import {
   ApiPath,
   AppPath,
@@ -70,8 +70,9 @@ export class SsoAuthController {
     PublicEndpointGuard,
     NoPermissionGuard,
   )
-  // oxlint-disable-next-line typescript/no-explicit-any
-  async generateMetadata(@Req() req: any): Promise<string | void> {
+  async generateMetadata(
+    @Req() req: Pick<Request, 'params'>,
+  ): Promise<string | void> {
     return generateServiceProviderMetadata({
       wantAssertionsSigned: true,
       issuer: this.ssoService.buildIssuerURL({

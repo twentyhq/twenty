@@ -10,6 +10,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { LambdaDriver } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda.driver';
 import { LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
+import { LambdaLayerManagerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-layer-manager.service';
+import { getWorkflowCodeStepLogicFunctionId } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/get-workflow-code-step-logic-function-id.util';
 import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
   LogicFunctionException,
@@ -130,6 +132,13 @@ describe('LambdaDriver', () => {
             state = 'Pending';
             return { response: {}, output: { State: state, $metadata: {} } };
           }
+          if (
+            commandName === 'DeleteFunctionCommand' &&
+            'FunctionName' in input
+          ) {
+            functionNames.push(input.FunctionName);
+            return { response: {}, output: { $metadata: {} } };
+          }
           if (commandName === 'InvokeCommand' && 'Payload' in input) {
             expect(state).toBe('Active');
             const payload = JSON.parse(String(input.Payload));
@@ -234,6 +243,37 @@ describe('LambdaDriver', () => {
       expect(functionNames[1]).toBe('workspace-builder');
     },
   );
+
+  it('deletes an application code step executor under its prefixed name', async () => {
+    jest
+      .spyOn(LambdaLayerManagerService.prototype, 'deleteSdkLayer')
+      .mockResolvedValue();
+    const codeStepExecutorId = getWorkflowCodeStepLogicFunctionId({
+      workspaceId: 'workspace-id',
+      applicationUniversalIdentifier: 'application-universal-identifier',
+    });
+
+    await driver.deleteApplicationResources({
+      workspaceId: 'workspace-id',
+      applicationUniversalIdentifier: 'application-universal-identifier',
+    });
+
+    expect(functionNames).toEqual([`workflow-code-step-${codeStepExecutorId}`]);
+  });
+
+  it('warms up an executor without naming a handler to run', async () => {
+    state = 'Active';
+
+    await driver.warmUp({
+      flatLogicFunction: { id: 'logic-function-id' },
+      env: { MY_VARIABLE: 'value' },
+    });
+
+    expect(functionNames).toEqual(['logic-function-id']);
+    expect(payloads).toEqual([
+      { isWarmUp: true, env: { MY_VARIABLE: 'value' } },
+    ]);
+  });
 
   it('rejects oversized browser requests before provisioning or invoking Lambda', async () => {
     await expect(

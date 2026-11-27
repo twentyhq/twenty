@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AiChatSkeletonLoader } from '@/ai-chat/components/internal/AiChatSkeletonLoader';
+import { AiChatSkeletonLoader } from '@/ai-chat/components/AiChatSkeletonLoader';
 import { useAiChatPageThreadId } from '@/ai-chat/hooks/useAiChatPageThreadId';
 import { useAiChatThreadClick } from '@/ai-chat/threads/hooks/useAiChatThreadClick';
 import { InboxThreadListFetchMoreTrigger } from '@/inbox/components/InboxThreadListFetchMoreTrigger';
@@ -65,7 +65,6 @@ export const LegacyAiChatNavigationDrawerContent = () => {
       <StyledThreadList>
         <StyledSectionsContainer>
           <NavigationDrawerInboxFavoritesSection
-            channels={[]}
             threads={inboxFavoriteThreads}
             currentThreadId={aiChatPageThreadId}
             onThreadClick={handleThreadClick}

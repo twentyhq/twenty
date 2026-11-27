@@ -190,6 +190,61 @@ describe('Manifest update - page layout widgets (standalone)', () => {
     expect(await findStandardPersonHomeTabWidgets()).toHaveLength(0);
   }, 60000);
 
+  it('should store the tree of a json-logic rule and keep it on a second sync', async () => {
+    const conditionalDisplay = {
+      in: [{ var: 'selectedRecords.0.city' }, ['Paris', 'Lyon']],
+    };
+
+    const buildEveryEqualsCityNode = (city: string) => ({
+      type: 'FUNCTION_CALL',
+      functionName: 'everyEquals',
+      arguments: [
+        { type: 'VARIABLE', path: 'selectedRecords' },
+        { type: 'LITERAL', value: 'city' },
+        { type: 'LITERAL', value: city },
+      ],
+    });
+
+    const expectedRule = {
+      conditionalDisplay,
+      conditionalAvailability: {
+        type: 'GROUP',
+        logicalOperator: 'OR',
+        children: [
+          buildEveryEqualsCityNode('Paris'),
+          buildEveryEqualsCityNode('Lyon'),
+        ],
+      },
+    };
+
+    const manifest = buildManifest({
+      pageLayoutWidgets: [
+        {
+          ...buildTimelineWidget({ title: 'Activity', index: 1000 }),
+          conditionalDisplay,
+        },
+      ],
+    });
+
+    const readWidgetRule = async () => {
+      const [widgetRule] = await globalThis.testDataSource.query(
+        `SELECT "conditionalDisplay", "conditionalAvailability"
+         FROM core."pageLayoutWidget" WHERE "universalIdentifier" = $1`,
+        [TEST_WIDGET_ID],
+      );
+
+      return widgetRule;
+    };
+
+    await syncApplication({ manifest, expectToFail: false });
+
+    expect(await readWidgetRule()).toEqual(expectedRule);
+
+    await syncApplication({ manifest, expectToFail: false });
+
+    expect(await readWidgetRule()).toEqual(expectedRule);
+  }, 60000);
+
   it('should fail to sync when a standalone widget references a non-existent tab', async () => {
     const { errors } = await syncApplication({
       manifest: buildManifest({

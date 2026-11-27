@@ -2,7 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import {
   FieldMetadataType,
   RelationType,
-  type ValidationRuleBindings,
+  type StoredExpressionTree,
   type ValidationRuleFieldDescriptor,
 } from 'twenty-shared/types';
 import {
@@ -12,7 +12,7 @@ import {
   getValidationRulePreviousValueFieldPath,
   getValidationRuleRecordsFromDatabaseEvent,
   isDefined,
-  renameValidationRuleExpressionToCurrentFieldNames,
+  printValidationRuleExpression,
 } from 'twenty-shared/utils';
 
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
@@ -101,7 +101,7 @@ export const filterEventsMatchingDatabaseEventTrigger = async <
   eventName,
   watchedFields,
   condition: storedCondition,
-  conditionBindings,
+  conditionTree,
   fields,
   findRelatedRecords,
 }: {
@@ -109,7 +109,7 @@ export const filterEventsMatchingDatabaseEventTrigger = async <
   eventName: string;
   watchedFields?: string[];
   condition?: string;
-  conditionBindings?: ValidationRuleBindings;
+  conditionTree?: StoredExpressionTree;
   fields: ValidationRuleFieldDescriptor[];
   findRelatedRecords?: FindDatabaseEventRelatedRecords;
 }): Promise<DatabaseEventTriggerMatch<TEvent>> => {
@@ -119,17 +119,13 @@ export const filterEventsMatchingDatabaseEventTrigger = async <
     watchedFields,
   });
 
-  if (!isNonEmptyString(storedCondition)) {
+  if (!isDefined(conditionTree) && !isNonEmptyString(storedCondition)) {
     return { events: eventsWithWatchedFields };
   }
 
-  const condition = isDefined(conditionBindings)
-    ? renameValidationRuleExpressionToCurrentFieldNames({
-        expression: storedCondition,
-        bindings: conditionBindings,
-        fields,
-      })
-    : storedCondition;
+  const condition = isDefined(conditionTree)
+    ? (printValidationRuleExpression({ tree: conditionTree, fields }) ?? '')
+    : (storedCondition ?? '');
 
   // Compiling against the object's fields also rejects a field a wildcard trigger's object lacks
   const compilation = compileValidationRuleExpression({

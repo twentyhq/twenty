@@ -30,7 +30,7 @@ import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { buildViewNameObjectLabels } from 'src/engine/metadata-modules/view/utils/build-view-name-object-labels.util';
 import { fromFlatViewToViewDto } from 'src/engine/metadata-modules/view/utils/from-flat-view-to-view-dto.util';
-import { isViewAvailableToUser } from 'src/engine/metadata-modules/view/utils/is-view-available-to-user.util';
+import { isViewVisibleToCaller } from 'src/engine/metadata-modules/view/utils/is-view-visible-to-caller.util';
 import { resolveViewName } from 'src/engine/metadata-modules/view/utils/resolve-view-name.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
@@ -68,12 +68,10 @@ export class MinimalMetadataService {
   async getMinimalMetadata({
     workspaceId,
     workspaceCustomApplicationId,
-    userWorkspaceId,
     locale,
   }: {
     workspaceId: string;
     workspaceCustomApplicationId: string;
-    userWorkspaceId?: string;
     locale?: string;
   }): Promise<MinimalMetadataDTO> {
     const [
@@ -174,9 +172,7 @@ export class MinimalMetadataService {
     )
       .filter(isDefined)
       .filter((flatView) => flatView.workspaceId === workspaceId)
-      .filter((flatView) =>
-        isViewAvailableToUser({ flatView, userWorkspaceId }),
-      );
+      .filter((flatView) => isViewVisibleToCaller({ view: flatView }));
 
     const views = await this.buildMinimalViews({
       flatViews: availableFlatViews,
@@ -302,7 +298,7 @@ export class MinimalMetadataService {
         key: viewDto.key,
         objectMetadataId: viewDto.objectMetadataId,
         position: viewDto.position,
-        visibility: viewDto.visibility,
+        isPrivate: viewDto.isPrivate,
         isActive: viewDto.isActive,
       };
     });

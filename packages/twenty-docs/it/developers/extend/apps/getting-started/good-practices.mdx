@@ -9,26 +9,18 @@ import { PageBanner } from "/snippets/page-banner.mdx"
 
 L'API di Twenty accetta **500 richieste al minuto per registrazione dell'applicazione** per le richieste effettuate da un'app a proprio nome: esecuzioni senza una persona alle spalle (cron, webhook, hook di installazione) e client creati con `runAs: 'application'`. Il budget è condiviso da ogni spazio di lavoro che ha installato l'app e le richieste che lo superano vengono rifiutate con un `429`. Le richieste effettuate in qualità della persona che ha attivato un'esecuzione vengono invece conteggiate rispetto ai limiti di quella persona. Le pratiche riportate di seguito mantengono un'app entro tale budget man mano che aumenta il numero di installazioni, e entro i limiti dei servizi che chiama.
 
-* **Distribuisci i cron di scansione con un ritardo casuale.** Un trigger cron si avvia in ogni area di lavoro nello stesso minuto, quindi ogni installazione attinge contemporaneamente al budget condiviso. Limita il gestore cron a un accodamento, con un valore `delayMs` casuale su un'ampia finestra temporale, ad esempio un'ora. Gli accodamenti di job sono inoltre limitati a 2.000 al minuto per registrazione dell'applicazione, e un tick cron oltre tale limite viene ignorato nelle aree di lavoro rimanenti; pertanto, mantieni una scansione idempotente e lascia che il tick successivo recuperi.
+* **Distribuisci le esecuzioni cron con `spreadMs`.** Un trigger cron si avvia in ogni workspace nello stesso minuto, quindi ogni installazione attinge contemporaneamente al budget condiviso. Imposta `spreadMs` su un intervallo ampio, ad esempio un'ora, e ogni workspace viene eseguito con il proprio offset stabile all'interno di tale intervallo. Gli accodamenti di job sono inoltre limitati a 2.000 al minuto per registrazione dell'applicazione, e un tick cron oltre tale limite viene ignorato nelle aree di lavoro rimanenti; pertanto, mantieni una scansione idempotente e lascia che il tick successivo recuperi. Consulta [Distribuire un cron tra i workspace](/it/developers/extend/apps/logic/logic-functions#spread-a-cron-across-workspaces).
 
-```ts src/logic-functions/enqueue-nightly-sweep.ts
+```ts src/logic-functions/nightly-sweep.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { enqueueJobs } from 'twenty-sdk/logic-function';
-
-const NIGHTLY_SWEEP = '3f9d1c02-8a44-4f0e-b1d7-9c2e5a7b4f10';
-const SPREAD_WINDOW_MS = 60 * 60 * 1000;
 
 export default defineLogicFunction({
   universalIdentifier: 'b7c2e4d1-0f5a-4c3e-9d8b-6a1f2e3c4d5b',
-  name: 'enqueue-nightly-sweep',
+  name: 'nightly-sweep',
   timeoutSeconds: 30,
-  cronTriggerSettings: { pattern: '0 3 * * *' },
+  cronTriggerSettings: { pattern: '0 3 * * *', spreadMs: 60 * 60 * 1000 },
   handler: async () => {
-    await enqueueJobs({
-      logicFunctionUniversalIdentifier: NIGHTLY_SWEEP,
-      jobs: [{ payload: {} }],
-      delayMs: Math.floor(Math.random() * SPREAD_WINDOW_MS),
-    });
+    // ...
   },
 });
 ```
@@ -47,10 +39,10 @@ export default defineLogicFunction({
                                    N × calls  →  429
 ```
 
-Con un ritardo casuale su una finestra di un'ora, le stesse esecuzioni vengono distribuite:
+Con `spreadMs` impostato su un'ora, le stesse esecuzioni vengono distribuite:
 
 ```text
-   pattern "0 3 * * *"  +  random delayMs in [0, 60 min)
+   pattern "0 3 * * *"  +  spreadMs: 60 min
                                                   │
               ┌───────────────┬───────────────────┼───────────────┐
               ▼               ▼                   ▼               ▼
@@ -73,7 +65,7 @@ Con un ritardo casuale su una finestra di un'ora, le stesse esecuzioni vengono d
 
 * **Comprimi i picchi in un unico job ritardato.** Quando gli eventi rivelano un lavoro più grande dell'evento stesso, accodarlo una volta per evento lo moltiplica per la dimensione del picco. Accoda un job con `delayMs` e un `jobId` deterministico che include una finestra temporale; la coda ignora un ID già presente. Consulta [Scegli il tuo ID job](/it/developers/extend/apps/logic/background-jobs#choose-your-own-job-id).
 
-* **Scagliona i fan-out con `delayMs`.** I job accodati senza ritardo diventano tutti eseguibili contemporaneamente e consumano il budget nello stesso minuto. Raggruppali in slot per minuto e ritarda la pagina successiva in base agli slot utilizzati. Vedi [Job in background](/it/developers/extend/apps/logic/background-jobs).
+* **Regola il ritmo delle distribuzioni con un `limiter`.** I job accodati senza uno diventano tutti idonei contemporaneamente e consumano il budget nello stesso minuto. Passa `limiter: { max, durationMs }` a `enqueueJobs` e le esecuzioni vengono distribuite uniformemente, anche tra chiamate diverse. Consulta [Regolare il ritmo delle esecuzioni con un limitatore](/it/developers/extend/apps/logic/background-jobs#pace-runs-with-a-limiter).
 
 * **Riprova un `429` con backoff oppure riaccoda con un ritardo.** L'SDK client genera un errore per qualsiasi risposta non 2xx, e un'esecuzione che attende al suo interno consuma il proprio timeout. Riprova con backoff esponenziale e un limite di tentativi, oppure restituisci il lavoro alla coda con un ritardo.
 

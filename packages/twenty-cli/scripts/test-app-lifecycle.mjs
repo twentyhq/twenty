@@ -12,12 +12,15 @@ import {
 import { tmpdir } from 'node:os';
 import { basename, dirname, join } from 'node:path';
 import { test } from 'node:test';
+import { setTimeout } from 'node:timers/promises';
 import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
 
 const PACKAGE_DIRECTORY = fileURLToPath(new URL('..', import.meta.url));
 const WORKSPACE_DIRECTORY = join(PACKAGE_DIRECTORY, '../..');
 const execute = promisify(execFile);
+const DEFERRED_OPERATIONS_TIMEOUT_MS = 300_000;
+const DEFERRED_OPERATIONS_POLL_INTERVAL_MS = 5_000;
 
 await test(
   'standalone CLI app lifecycle',
@@ -61,14 +64,37 @@ await test(
       if (!allowFailure) assert.equal(result.ok, true, output.stdout);
       return result;
     };
+    const uninstall = async ({ appPath, allowFailure = false }) => {
+      const deadline = Date.now() + DEFERRED_OPERATIONS_TIMEOUT_MS;
+
+      for (;;) {
+        const result = await cli(appPath, ['uninstall', '--yes'], {
+          allowFailure: true,
+        });
+        const isWaitingForDeferredOperations =
+          !result.ok &&
+          result.error?.message?.includes(
+            'deferred schema operation(s) are still running',
+          );
+
+        if (isWaitingForDeferredOperations && Date.now() < deadline) {
+          await setTimeout(DEFERRED_OPERATIONS_POLL_INTERVAL_MS);
+          continue;
+        }
+
+        if (!allowFailure) {
+          assert.equal(result.ok, true, JSON.stringify(result));
+        }
+
+        return result;
+      }
+    };
     context.after(async () => {
       try {
         const failures = [];
         for (const appPath of installedApps) {
           try {
-            const result = await cli(appPath, ['uninstall', '--yes'], {
-              allowFailure: true,
-            });
+            const result = await uninstall({ appPath, allowFailure: true });
             assert.ok(
               result.ok || result.error.code === 'APP_NOT_INSTALLED',
               JSON.stringify(result),
@@ -260,7 +286,7 @@ await test(
         const applied = await cli(appPath, ['apply', '--create', '--yes']);
         const identifier = applied.data.application.universalIdentifier;
         await assertInstalled(identifier, true);
-        await cli(appPath, ['uninstall', '--yes']);
+        await uninstall({ appPath });
         installedApps.delete(appPath);
         await assertInstalled(identifier, false);
         installedApps.add(appPath);

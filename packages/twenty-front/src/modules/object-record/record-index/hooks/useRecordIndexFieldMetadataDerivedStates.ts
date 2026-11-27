@@ -4,6 +4,7 @@ import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/uti
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useRecordIndexFieldMetadataDerivedStates = (
@@ -12,11 +13,16 @@ export const useRecordIndexFieldMetadataDerivedStates = (
 ) => {
   const fieldMetadataItems = objectMetadataItem?.fields ?? [];
 
-  const fieldMetadataItemByFieldMetadataItemId = Object.fromEntries(
-    fieldMetadataItems.map((fieldMetadataItem) => [
-      fieldMetadataItem.id,
-      fieldMetadataItem,
-    ]),
+  // Kept stable so the scoped relation aliases built from it are not recomputed on every render
+  const fieldMetadataItemByFieldMetadataItemId = useMemo(
+    () =>
+      Object.fromEntries(
+        (objectMetadataItem?.fields ?? []).map((fieldMetadataItem) => [
+          fieldMetadataItem.id,
+          fieldMetadataItem,
+        ]),
+      ),
+    [objectMetadataItem?.fields],
   );
 
   const currentRecordFields = useAtomComponentStateValue(

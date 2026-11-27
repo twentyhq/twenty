@@ -4,7 +4,6 @@ const SYSTEM_TIME_ZONE = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 describe('getAiChatThreadSnoozeOptions', () => {
   it('should offer the evening, later today, tomorrow and next week in the afternoon', () => {
-    // Thursday 3:40 pm
     const now = new Date(2026, 8, 3, 15, 40);
 
     const options = getAiChatThreadSnoozeOptions({
@@ -25,7 +24,6 @@ describe('getAiChatThreadSnoozeOptions', () => {
   });
 
   it('should drop the evening once it has passed and later today once it leaves the day', () => {
-    // Thursday 9:30 pm
     const now = new Date(2026, 8, 3, 21, 30);
 
     const options = getAiChatThreadSnoozeOptions({
@@ -40,7 +38,6 @@ describe('getAiChatThreadSnoozeOptions', () => {
   });
 
   it('should list later today before the evening in the morning', () => {
-    // Thursday 9:20 am, so later today lands at 1 pm
     const now = new Date(2026, 8, 3, 9, 20);
 
     const options = getAiChatThreadSnoozeOptions({
@@ -58,7 +55,6 @@ describe('getAiChatThreadSnoozeOptions', () => {
   });
 
   it('should not offer the same moment twice', () => {
-    // Thursday 2:10 pm, so later today rounds onto the evening slot
     const now = new Date(2026, 8, 3, 14, 10);
 
     const options = getAiChatThreadSnoozeOptions({
@@ -74,7 +70,6 @@ describe('getAiChatThreadSnoozeOptions', () => {
   });
 
   it('should round later today down when rounding up would leave the day', () => {
-    // Thursday 8:30 pm
     const now = new Date(2026, 8, 3, 20, 30);
 
     const options = getAiChatThreadSnoozeOptions({
@@ -91,7 +86,6 @@ describe('getAiChatThreadSnoozeOptions', () => {
   });
 
   it('should offer next week on a Sunday', () => {
-    // Sunday 3:40 pm
     const now = new Date(2026, 8, 6, 15, 40);
 
     const options = getAiChatThreadSnoozeOptions({
@@ -110,7 +104,6 @@ describe('getAiChatThreadSnoozeOptions', () => {
   });
 
   it("should land on the member's morning when their time zone differs from the browser's", () => {
-    // Thursday 11:40 am in New York
     const now = new Date('2026-09-03T15:40:00.000Z');
 
     const options = getAiChatThreadSnoozeOptions({
@@ -127,7 +120,6 @@ describe('getAiChatThreadSnoozeOptions', () => {
   });
 
   it("should keep the member's morning across their clock change", () => {
-    // Saturday 9 am in New York, the day before daylight saving time ends
     const now = new Date('2026-10-31T13:00:00.000Z');
 
     const options = getAiChatThreadSnoozeOptions({

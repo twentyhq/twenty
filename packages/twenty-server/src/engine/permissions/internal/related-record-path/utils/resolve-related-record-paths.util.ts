@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatRelatedRecordPath } from 'src/engine/metadata-modules/flat-related-record-path/types/flat-related-record-path.type';
+import { resolveEffectiveRelatedRecordPath } from 'src/engine/metadata-modules/flat-related-record-path/utils/resolve-effective-related-record-path.util';
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
 import {
   type RelatedRecordPathHop,
@@ -57,6 +58,7 @@ const resolveRelatedRecordPath = ({
 
     hops.push({
       flatObjectMetadata,
+      relationFieldMetadataId: flatFieldMetadata.id,
       ...findRelationJoinColumnsOrThrow({
         relationFieldMetadata: flatFieldMetadata,
         flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
@@ -80,6 +82,8 @@ export const resolveRelatedRecordPaths = (
     metadataMaps.flatRelatedRecordPathMaps?.byUniversalIdentifier ?? {},
   )
     .filter(isDefined)
+    .map(resolveEffectiveRelatedRecordPath)
+    .filter(({ isActive }) => isActive)
     .map((flatRelatedRecordPath) =>
       resolveRelatedRecordPath({ flatRelatedRecordPath, metadataMaps }),
     )

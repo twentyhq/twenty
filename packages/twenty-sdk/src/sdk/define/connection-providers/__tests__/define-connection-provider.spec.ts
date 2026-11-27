@@ -209,7 +209,7 @@ describe('defineConnectionProvider', () => {
 
         expect(result.success).toBe(false);
         expect(result.errors).toContain(
-          `Custom connection provider must declare custom.${logicFunctionKey}`,
+          `Custom connection provider must declare custom.${logicFunctionKey}UniversalIdentifier`,
         );
       },
     );
@@ -226,7 +226,7 @@ describe('defineConnectionProvider', () => {
       expect(result.success).toBe(false);
       expect(
         result.errors.some((error) =>
-          error.includes('custom.callbackLogicFunction.universalIdentifier'),
+          error.includes('custom.callbackLogicFunctionUniversalIdentifier'),
         ),
       ).toBe(true);
     });
@@ -248,6 +248,40 @@ describe('defineConnectionProvider', () => {
 
       expect(result.success).toBe(true);
       expect(result.errors).toEqual([]);
+    });
+  });
+
+  describe('flat logic function references', () => {
+    const flatCustomConfig = {
+      universalIdentifier: '99fcd8e8-fbb1-4d2c-bc16-7c61ef3edddd',
+      name: 'linkedin',
+      displayName: 'LinkedIn',
+      type: 'custom' as const,
+      custom: {
+        authorizeLogicFunctionUniversalIdentifier:
+          'b648f87b-1d26-4961-b974-0908fd991061',
+        callbackLogicFunctionUniversalIdentifier:
+          'b648f87b-1d26-4961-b974-0908fd991062',
+      },
+      onConnectLogicFunctionUniversalIdentifier:
+        'b648f87b-1d26-4961-b974-0908fd991063',
+    };
+
+    it('accepts references written as universal identifiers', () => {
+      const result = defineConnectionProvider(flatCustomConfig);
+
+      expect(result.errors).toEqual([]);
+    });
+
+    it('rejects a flat reference that is not a UUID', () => {
+      const result = defineConnectionProvider({
+        ...flatCustomConfig,
+        onConnectLogicFunctionUniversalIdentifier: 'on-connect',
+      });
+
+      expect(result.errors).toEqual([
+        'Connection provider onConnectLogicFunctionUniversalIdentifier "on-connect" must be the UUID universalIdentifier of a logic function in this app.',
+      ]);
     });
   });
 });

@@ -3,7 +3,7 @@ import {
   isPausingToolPart,
 } from 'twenty-shared/ai';
 
-import { type AssistantMessageRenderItem } from '@/ai-chat/messages/types/AssistantMessageRenderItem';
+import { type AiChatMessageRenderItem } from '@/ai-chat/messages/types/AiChatMessageRenderItem';
 
 import { isThinkingStepPart } from '@/ai-chat/thinking-steps/utils/isThinkingStepPart';
 import { type ThinkingStepPart } from '@/ai-chat/thinking-steps/types/ThinkingStepPart';
@@ -12,8 +12,8 @@ export const groupContiguousThinkingStepParts = (
   parts: ExtendedUIMessagePart[],
   shouldRenderStandalone: (part: ExtendedUIMessagePart) => boolean = () =>
     false,
-): AssistantMessageRenderItem[] => {
-  const renderItems: AssistantMessageRenderItem[] = [];
+): AiChatMessageRenderItem[] => {
+  const renderItems: AiChatMessageRenderItem[] = [];
   let currentThinkingParts: ThinkingStepPart[] = [];
 
   const flushThinkingParts = () => {

@@ -15,7 +15,6 @@ import {
   PageLayoutTabLayoutMode,
   PageLayoutType,
   ViewType,
-  ViewVisibility,
   WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
@@ -112,7 +111,7 @@ const sourceRecordTableViewSnapshot: RecordTableWidgetViewSnapshot = {
     type: ViewType.TABLE_WIDGET,
     isCompact: false,
     position: 0,
-    visibility: ViewVisibility.WORKSPACE,
+    isPrivate: false,
     shouldHideEmptyGroups: false,
     isActive: true,
   },

@@ -3,7 +3,7 @@ import {
   type AiChatUsageMetadata,
 } from 'twenty-shared/ai';
 
-import { type AiChatUsageState } from '@/ai-chat/usage/states/aiChatUsageFamilyState';
+import { type AiChatUsageState } from '@/ai-chat/usage/states/aiChatThreadUsageFamilyState';
 
 export const accumulateAiChatUsage = (
   previousUsage: AiChatUsageState | null,

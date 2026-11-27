@@ -34,7 +34,6 @@ import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 const SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
@@ -183,7 +182,9 @@ describe('Inbox thread mutations for members and applications', () => {
     return threadId;
   };
 
-  const createApplicationThread = async (): Promise<string> => {
+  const createApplicationThread = async (
+    token = applicationToken,
+  ): Promise<string> => {
     const response = await makeMetadataApiRequest(
       {
         query: SEND_INBOX_MESSAGE,
@@ -197,7 +198,7 @@ describe('Inbox thread mutations for members and applications', () => {
           },
         },
       },
-      applicationToken,
+      token,
     );
 
     if (isDefined(response.body.errors)) {
@@ -235,7 +236,7 @@ describe('Inbox thread mutations for members and applications', () => {
       turnId,
       role: AgentMessageRole.USER,
       agentId: null,
-      senderUserWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+      senderWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
       senderApplicationId: application.id,
       parts: [{ type: 'text', text: 'Summarize the renewal call' }],
     });
@@ -365,6 +366,18 @@ describe('Inbox thread mutations for members and applications', () => {
     expect(await readCompanyLinks(threadId)).toEqual([{ deletedAt: null }]);
   });
 
+  it('grants the application a creator share on the conversation it opens', async () => {
+    const threadId = await createApplicationThread();
+
+    expect(
+      await global.testDataSource.query(
+        `SELECT "accessLevel", "rowCause" FROM ${SCHEMA}."recordShare"
+         WHERE "recordId" = $1 AND "principalId" = $2`,
+        [threadId, applicationRoleId],
+      ),
+    ).toEqual([{ accessLevel: 'FULL', rowCause: 'APPLICATION' }]);
+  });
+
   it('attaches and detaches as the application that wrote in the conversation', async () => {
     const threadId = await createApplicationThread();
 
@@ -379,6 +392,35 @@ describe('Inbox thread mutations for members and applications', () => {
     expect(await readCompanyLinks(threadId)).toEqual([
       { deletedAt: expect.anything() },
     ]);
+  });
+
+  it('refuses to attach a record the authoring application cannot read', async () => {
+    const restrictedApplication = await setupApplicationWithResources({
+      name: 'Restricted Inbox Thread Application',
+      permissionFlagUniversalIdentifiers: [SystemPermissionFlag.AI],
+    });
+    jest.useRealTimers();
+
+    try {
+      const token = (
+        await generateApplicationTokenPair({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          applicationId: restrictedApplication.id,
+        })
+      ).applicationAccessToken.token;
+      const threadId = await createApplicationThread(token);
+
+      expectNotFound(
+        await attachRecord({ threadId, token }),
+        AiExceptionCode.RECORD_NOT_FOUND,
+      );
+      expect(await readCompanyLinks(threadId)).toEqual([]);
+    } finally {
+      await cleanupApplicationAndAppRegistration({
+        applicationUniversalIdentifier:
+          restrictedApplication.universalIdentifier,
+      });
+    }
   });
 
   it('refuses an application that neither wrote in the conversation nor reaches it through its role', async () => {

@@ -16,6 +16,8 @@ Folosește **URL-ul spațiului de lucru** (URL-ul pe care îl folosești pentru 
 | **Cloud**            | `https://{your-workspace-url}/mcp` (de ex. `https://mycompany.twenty.com/mcp`) |
 | **Găzduire proprie** | `https://{your-domain}/mcp`                                                    |
 
+Endpointul utilizează protocolul MCP `2026-07-28` și revizuirile anterioare până la `2024-11-05` prin HTTP streamabil. Clienții pe `2026-07-28` apelează `server/discover` și trimit fiecare solicitare separat; clienții mai vechi încep cu `initialize`, ca înainte.
+
 ## Metode de autentificare
 
 Ai două moduri de a-ți autentifica clientul MCP: **OAuth** (recomandat) sau **Cheie API**.

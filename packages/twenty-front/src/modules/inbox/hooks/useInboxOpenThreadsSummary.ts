@@ -1,4 +1,5 @@
 import { useQuery } from '@apollo/client/react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -21,8 +22,6 @@ const EMPTY_INBOX_OPEN_THREADS_SUMMARY = {
   hasUnreadAssignedThread: false,
 };
 
-// Counted by the server over every chat, past the pages loaded here; it is
-// read again wherever the member's inbox state changes
 export const useInboxOpenThreadsSummary = () => {
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
   const isAiChatInboxEnabled = useIsFeatureEnabled(
@@ -33,5 +32,8 @@ export const useInboxOpenThreadsSummary = () => {
     fetchPolicy: 'cache-and-network',
   });
 
-  return data?.agentChatOpenThreadsSummary ?? EMPTY_INBOX_OPEN_THREADS_SUMMARY;
+  return {
+    ...(data?.agentChatOpenThreadsSummary ?? EMPTY_INBOX_OPEN_THREADS_SUMMARY),
+    isOpenThreadsSummaryLoaded: isDefined(data),
+  };
 };

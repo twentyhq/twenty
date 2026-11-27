@@ -282,4 +282,12 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
       boundedShutdownDrain: false,
     },
   },
+  [MessageQueue.storedFormulaFieldQueue]: {
+    workerOptions: {
+      concurrency: 2,
+      lockDuration: 30_000,
+      maxStalledCount: 1,
+      boundedShutdownDrain: false,
+    },
+  },
 };

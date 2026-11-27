@@ -226,12 +226,8 @@ export default defineMessagingProvider({
   universalIdentifier: '8a9b0c1d-2e3f-4a5b-8c6d-7e8f9a0b1c2d',
   name: 'linkedin-messaging',
   displayName: 'LinkedIn Messages',
-  connectionProvider: {
-    universalIdentifier: '5b0e6f3a-2c4d-4e8f-9a1b-7c6d5e4f3a2b',
-  },
-  sendMessageLogicFunction: {
-    universalIdentifier: 'f7d4b5e6-9a8c-4d0e-1f2a-3b4c5d6e7f80',
-  },
+  connectionProviderUniversalIdentifier: '5b0e6f3a-2c4d-4e8f-9a1b-7c6d5e4f3a2b',
+  sendMessageLogicFunctionUniversalIdentifier: 'f7d4b5e6-9a8c-4d0e-1f2a-3b4c5d6e7f80',
   conversationStyle: 'chat',
 });
 ```
@@ -297,18 +293,16 @@ const files = await Promise.all(
 
 تعمل الدالة ضمن طلب `sendAppChannelMessage`. إذا أطلقت استثناءً أو لم تُرجع `externalId`، تفشل الطفرة ولا يُسجّل شيء.
 
-بمجرد أن تُرجع دالتك، يحتفظ Twenty بالتسليم لمدة 24 ساعة ضمن العضو والقناة والمحادثة و`idempotencyKey`. إذا فشل تسجيل الرد بعد ذلك، تفشل الطفرة، وتؤدي إعادة محاولتها بالمفتاح نفسه إلى تسجيل الرد المُسلَّم دون استدعاء دالتك مجددًا؛ وتُرجع إعادة محاولة رد مسجّل بالفعل ذلك الرد. تنتظر إعادة المحاولة بينما لا يزال الاستدعاء الأول يرسل حتى ينتهي. المفتاح الجديد يعني ردًا جديدًا. قد تظل دالتك تُستدعى مرتين لرد واحد إذا أعاد العميل المحاولة بمفتاح جديد أو بعد انقضاء 24 ساعة، أو إذا فشلت دالتك نفسها بعد أن قبل الموفّر الرسالة، لذا مرّر `idempotencyKey` إلى الموفّر عندما تدعم واجهة API الخاصة به عمليات الإرسال المتكررة الآمنة. ترفض قناة تحتوي على `isSyncEnabled: false` الردود دون استدعاء دالتك. لا يمكن لقناة ليس لها موفّر مراسلة، أو لموفّرها الذي ليس لديه `sendMessageLogicFunction` أو لم يعد موجودًا، الإرسال؛ وتبقى محادثاتها كما هي. يتطلب `"engines": { "twenty": ">=2.52.0" }`.
+بمجرد أن تُرجع دالتك، يحتفظ Twenty بالتسليم لمدة 24 ساعة ضمن العضو والقناة والمحادثة و`idempotencyKey`. إذا فشل تسجيل الرد بعد ذلك، تفشل الطفرة، وتؤدي إعادة محاولتها بالمفتاح نفسه إلى تسجيل الرد المُسلَّم دون استدعاء دالتك مجددًا؛ وتُرجع إعادة محاولة رد مسجّل بالفعل ذلك الرد. تنتظر إعادة المحاولة بينما لا يزال الاستدعاء الأول يرسل حتى ينتهي. المفتاح الجديد يعني ردًا جديدًا. قد تظل دالتك تُستدعى مرتين لرد واحد إذا أعاد العميل المحاولة بمفتاح جديد أو بعد انقضاء 24 ساعة، أو إذا فشلت دالتك نفسها بعد أن قبل الموفّر الرسالة، لذا مرّر `idempotencyKey` إلى الموفّر عندما تدعم واجهة API الخاصة به عمليات الإرسال المتكررة الآمنة. ترفض قناة تحتوي على `isSyncEnabled: false` الردود دون استدعاء دالتك. لا يمكن لقناة لا تضم موفر مراسلة، أو يكون موفرها بلا `sendMessageLogicFunctionUniversalIdentifier` أو لم يعد موجودًا، الإرسال؛ وتبقى محادثاتها كما هي. يتطلب `"engines": { "twenty": ">=2.52.0" }`.
 
 ## وضع علامة على سلاسل الرسائل كمقروءة
 
-لا يحتفظ Twenty بحالة قراءة لرسائل التطبيق، لكنه يستطيع إبلاغ موفّر الخدمة لديك عندما يقرأ عضو محادثة في Twenty لكي يضع موفّر الخدمة علامة عليها كمقروءة في المصدر. صرّح بالدالة `markThreadAsReadLogicFunction` لدى موفّر رسائل التطبيق:
+لا يحتفظ Twenty بحالة قراءة لرسائل التطبيق، لكنه يستطيع إبلاغ موفّر الخدمة لديك عندما يقرأ عضو محادثة في Twenty لكي يضع موفّر الخدمة علامة عليها كمقروءة في المصدر. عرّف `markThreadAsReadLogicFunctionUniversalIdentifier` على موفر المراسلة:
 
 ```ts src/messaging-providers/linkedin-messaging.ts
 export default defineMessagingProvider({
   // ...
-  markThreadAsReadLogicFunction: {
-    universalIdentifier: '2c3d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e6f',
-  },
+  markThreadAsReadLogicFunctionUniversalIdentifier: '2c3d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e6f',
 });
 ```
 
@@ -326,7 +320,7 @@ export const linkedinMarkThreadAsReadHandler = async ({
 };
 ```
 
-عندما يفتح مالك حساب القناة إحدى سلاسل رسائلها، يستدعي Twenty طفرة `markAppChannelThreadAsRead`، التي تشغّل دالتك باستخدام `messagingProviderName` و`connectedAccountId` و`messageChannelId` و`threadExternalId` الخاص بالمحادثة. يتم تجاهل قيمة الإرجاع الخاصة بها. الأعضاء الذين لا تتم مشاركة الحساب إلا معهم لا يشغّلونه مطلقًا، ويتم تخطي الاستدعاءات للعضو والمحادثة نفسيهما لمدة 30 ثانية، لذا فإن إعادة فتح محادثة لا تستدعي موفر الخدمة لديك مجددًا. يُنفَّذ الاستدعاء على أساس أفضل جهد: تُفتح المحادثة مهما كانت نتيجة تنفيذ دالتك. لا يتم استدعاء موفر خدمة لا يحتوي على `markThreadAsReadLogicFunction` مطلقًا. يتطلب `"engines": { "twenty": ">=2.59.0" }`.
+عندما يفتح مالك حساب القناة إحدى سلاسل رسائلها، يستدعي Twenty طفرة `markAppChannelThreadAsRead`، التي تشغّل دالتك باستخدام `messagingProviderName` و`connectedAccountId` و`messageChannelId` و`threadExternalId` الخاص بالمحادثة. يتم تجاهل قيمة الإرجاع الخاصة بها. الأعضاء الذين لا تتم مشاركة الحساب إلا معهم لا يشغّلونه مطلقًا، ويتم تخطي الاستدعاءات للعضو والمحادثة نفسيهما لمدة 30 ثانية، لذا فإن إعادة فتح محادثة لا تستدعي موفر الخدمة لديك مجددًا. يُنفَّذ الاستدعاء على أساس أفضل جهد: تُفتح المحادثة مهما كانت نتيجة تنفيذ دالتك. لا يتم استدعاء موفر بلا `markThreadAsReadLogicFunctionUniversalIdentifier` مطلقًا. يتطلب `"engines": { "twenty": ">=2.59.0" }`.
 
 ## إدراج القنوات وتحديثها
 
@@ -387,9 +381,7 @@ export default defineConnectionProvider({
   oauth: {
     /* ... */
   },
-  onConnectLogicFunction: {
-    universalIdentifier: HELPDESK_ON_CONNECT_UNIVERSAL_IDENTIFIER,
-  },
+  onConnectLogicFunctionUniversalIdentifier: HELPDESK_ON_CONNECT_UNIVERSAL_IDENTIFIER,
 });
 ```
 

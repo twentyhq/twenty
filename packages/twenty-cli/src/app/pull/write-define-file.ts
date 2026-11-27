@@ -23,7 +23,6 @@ import {
   ViewOpenRecordIn,
   ViewSortDirection,
   ViewType,
-  ViewVisibility,
   WidgetType,
 } from 'twenty-shared/types';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
@@ -150,13 +149,34 @@ const buildAggregateOperationBinding = (path: string[]): EnumBinding => ({
   members: AggregateOperations,
 });
 
+const buildViewFieldRelationScopeEnumBindings = (
+  prefix: string[],
+): EnumBinding[] => [
+  {
+    path: [...prefix, 'filters', '[]', 'operand'],
+    symbol: 'ViewFilterOperand',
+    members: ViewFilterOperand,
+  },
+  {
+    path: [...prefix, 'filterGroups', '[]', 'logicalOperator'],
+    symbol: 'ViewFilterGroupLogicalOperator',
+    members: ViewFilterGroupLogicalOperator,
+  },
+  {
+    path: [...prefix, 'sorts', '[]', 'direction'],
+    symbol: 'ViewSortDirection',
+    members: ViewSortDirection,
+  },
+  buildAggregateOperationBinding([...prefix, 'aggregateOperation']),
+];
+
 export const VIEW_FIELD_ENUM_BINDINGS: EnumBinding[] = [
   buildAggregateOperationBinding(['aggregateOperation']),
+  ...buildViewFieldRelationScopeEnumBindings(['relationScope']),
 ];
 
 export const VIEW_ENUM_BINDINGS: EnumBinding[] = [
   { path: ['type'], symbol: 'ViewType', members: ViewType },
-  { path: ['visibility'], symbol: 'ViewVisibility', members: ViewVisibility },
   {
     path: ['openRecordIn'],
     symbol: 'ViewOpenRecordIn',
@@ -169,6 +189,7 @@ export const VIEW_ENUM_BINDINGS: EnumBinding[] = [
     members: ViewCalendarLayout,
   },
   buildAggregateOperationBinding(['fields', '[]', 'aggregateOperation']),
+  ...buildViewFieldRelationScopeEnumBindings(['fields', '[]', 'relationScope']),
   {
     path: ['filters', '[]', 'operand'],
     symbol: 'ViewFilterOperand',

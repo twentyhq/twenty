@@ -106,7 +106,6 @@ export const ManyRecordsAreTruncated: Story = {
       displayName: `Company ${index + 1}`,
     })),
   },
-  // Storybook renders a pseudo locale, so assert the link count, not the translated label.
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 

@@ -2,15 +2,17 @@
 import { GraphQLArgument, GraphQLEnumValue, GraphQLField, GraphQLInputField, GraphQLNamedType } from 'graphql'
 
 
+const escapeCommentClose = (s: string) => s.replace(/\*\//g, '*\\/')
+
 export const comment = (comment: { text?: string | null; deprecated?: string | null }) => {
   const lines: string[] = []
 
   if (comment.deprecated) {
-    lines.push(`@deprecated ${comment.deprecated.replace(/\s/g, ' ')}`)
+    lines.push(`@deprecated ${escapeCommentClose(comment.deprecated.replace(/\s/g, ' '))}`)
   }
 
   if (comment.text) {
-    lines.push(...comment.text.split('\n'))
+    lines.push(...comment.text.split('\n').map(escapeCommentClose))
   }
 
   return lines.length > 0

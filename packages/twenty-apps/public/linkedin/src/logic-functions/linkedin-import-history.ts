@@ -8,6 +8,7 @@ import {
 } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
+import { LINKEDIN_HISTORY_IMPORT_DAILY_PROFILE_LOOKUP_LIMIT } from 'src/constants/linkedin-history-import-daily-profile-lookup-limit.constant';
 import { LINKEDIN_ATTACHMENT_DEADLINE_MARGIN_MILLISECONDS } from 'src/constants/linkedin-attachment-deadline-margin-milliseconds.constant';
 import { LINKEDIN_IMPORT_HISTORY_TIMEOUT_SECONDS } from 'src/constants/linkedin-import-history-timeout-seconds.constant';
 import { LINKEDIN_IMPORT_HISTORY_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
@@ -31,7 +32,7 @@ import {
 } from 'src/logic-functions/utils/linkedin-history-import-kv.util';
 import { type LinkedinSettings } from 'src/types/linkedin-settings.type';
 import { type UnipileChat } from 'src/unipile/types/unipile-chat.type';
-import { getUnipileChat } from 'src/unipile/utils/get-unipile-chat.util';
+import { getUnipileChatIfExists } from 'src/unipile/utils/get-unipile-chat-if-exists.util';
 import { listUnipileChatMessagesPage } from 'src/unipile/utils/list-unipile-chat-messages-page.util';
 import { UnipileRateLimitError } from 'src/unipile/utils/request-unipile.util';
 
@@ -114,6 +115,7 @@ export const linkedinImportHistoryHandler = async (
     LINKEDIN_IMPORT_HISTORY_TIMEOUT_SECONDS * 1000 -
     LINKEDIN_ATTACHMENT_DEADLINE_MARGIN_MILLISECONDS;
   const jobId = getLinkedinImportHistoryJobId(payload);
+  const logPrefix = `[linkedin] history run ${runId} chunk ${chunkIndex}`;
   let importedConversationCount = startProgress.currentChunkImportedCount ?? 0;
   let processedChatCount = startProgress.currentChunkProcessedCount;
   let chatCursor = startProgress.currentChatCursor;
@@ -123,7 +125,11 @@ export const linkedinImportHistoryHandler = async (
     matchedPersonCount: 0,
     createdPersonCount: 0,
     attachmentCount: 0,
-    skippedChatCounts: { GROUP_CHATS_OFF: 0, NO_MESSAGES: 0, NO_CONTACT: 0 },
+    skippedChatCounts: {
+      NOT_SELECTED: 0,
+      NO_MESSAGES: 0,
+      NO_CONTACT: 0,
+    },
   };
 
   const buildCurrentProgress = (): LinkedinHistoryImportProgress => ({
@@ -186,6 +192,18 @@ export const linkedinImportHistoryHandler = async (
     return { status: 'PAUSED' };
   };
 
+  const finishChat = async (): Promise<void> => {
+    if (isChatImported) {
+      importedConversationCount += 1;
+    }
+
+    processedChatCount += 1;
+    isChatImported = false;
+    chatCursor = undefined;
+
+    await saveCurrentProgress();
+  };
+
   const importChat = async ({
     listedChat,
     unipileAccountId,
@@ -202,12 +220,23 @@ export const linkedinImportHistoryHandler = async (
     const chat =
       getLinkedinChatCounterparts(listedChat).length > 0
         ? listedChat
-        : await getUnipileChat({
+        : await getUnipileChatIfExists({
             accountId: unipileAccountId,
             chatId: listedChat.id,
           });
+
+    if (!isDefined(chat)) {
+      console.log(
+        `${logPrefix}: conversation ${listedChat.id} skipped, it no longer exists`,
+      );
+      await finishChat();
+
+      return;
+    }
+
     const counterparts = getLinkedinChatCounterparts(chat);
     const seenCursors = new Set<string>();
+    let skippedReason: LinkedinIngestResult['skippedReason'];
 
     do {
       if (
@@ -222,6 +251,11 @@ export const linkedinImportHistoryHandler = async (
         chatId: chat.id,
         cursor: chatCursor,
       });
+
+      console.log(
+        `${logPrefix}: start importing ${page.items.length} messages from conversation ${chat.id}`,
+      );
+
       const ingestResult = await ingestLinkedinMessages({
         unipileAccountId,
         attachmentDeadlineAtMs,
@@ -233,6 +267,11 @@ export const linkedinImportHistoryHandler = async (
         messages: page.items,
       });
 
+      console.log(
+        `${logPrefix}: ${ingestResult.ingestedMessageCount} messages imported from conversation ${chat.id}`,
+      );
+
+      skippedReason = ingestResult.skippedReason;
       totals.messageCount += ingestResult.ingestedMessageCount;
       totals.matchedPersonCount += ingestResult.matchedPersonCount;
       totals.createdPersonCount += ingestResult.createdPersonCount;
@@ -260,14 +299,10 @@ export const linkedinImportHistoryHandler = async (
       }
     } while (isDefined(chatCursor));
 
-    if (isChatImported) {
-      importedConversationCount += 1;
-    }
-
-    processedChatCount += 1;
-    isChatImported = false;
-
-    await saveCurrentProgress();
+    console.log(
+      `${logPrefix}: conversation ${chat.id} ${isChatImported ? 'imported' : `skipped (${skippedReason ?? 'NO_MESSAGES'})`}`,
+    );
+    await finishChat();
   };
 
   try {
@@ -290,8 +325,10 @@ export const linkedinImportHistoryHandler = async (
     }
 
     const settings = await getLinkedinSettings(connectedAccountId);
-    const resolveCounterpart =
-      createLinkedinCounterpartResolver(unipileAccountId);
+    const resolveCounterpart = createLinkedinCounterpartResolver(
+      unipileAccountId,
+      { dailyLookupLimit: LINKEDIN_HISTORY_IMPORT_DAILY_PROFILE_LOOKUP_LIMIT },
+    );
 
     for (const listedChat of chats.slice(processedChatCount)) {
       await importChat({
@@ -345,7 +382,7 @@ export const linkedinImportHistoryHandler = async (
       `${chats.length} chats (last messages ${chats[0]?.last_message_timestamp ?? '-'} to ${chats[chats.length - 1]?.last_message_timestamp ?? '-'}), ` +
       `${importedConversationCount} conversations imported, ${totals.messageCount} messages, ` +
       `${totals.matchedPersonCount} people matched, ${totals.createdPersonCount} people created, ${totals.attachmentCount} attachments, ` +
-      `skipped ${totals.skippedChatCounts.NO_CONTACT} without contact, ${totals.skippedChatCounts.GROUP_CHATS_OFF} group chats, ${totals.skippedChatCounts.NO_MESSAGES} without messages, ` +
+      `skipped ${totals.skippedChatCounts.NO_CONTACT} without contact, ${totals.skippedChatCounts.NO_MESSAGES} without messages, ` +
       `in ${Math.round((Date.now() - startedAt) / 1000)}s`,
   );
 

@@ -4,6 +4,7 @@ import {
   type ObjectRecordsOperationType,
 } from 'twenty-shared/types';
 
+import { type RlsWorkspaceMemberRelationValueMaps } from 'src/engine/permissions/internal/rls/types/rls-workspace-member-relation-value-maps.type';
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatRelatedRecordPathMaps } from 'src/engine/metadata-modules/flat-related-record-path/types/flat-related-record-path-maps.type';
@@ -15,6 +16,7 @@ import { type PrivateRecordState } from 'src/engine/permissions/internal/private
 import { type RecordShareGrant } from 'src/engine/permissions/internal/record-share/types/record-share-grant.type';
 import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
+import { type TemporaryChannelWriteAccess } from 'src/engine/permissions/channel-visibility/types/temporary-channel-write-access.type';
 
 export type PermissionsMetadataMaps = {
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
@@ -23,7 +25,10 @@ export type PermissionsMetadataMaps = {
   featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
   rolesPermissions: Record<string, RoleRecordsPermissions>;
   flatWorkspaceMemberMaps?: FlatWorkspaceMemberMaps;
+  rlsWorkspaceMemberRelationValueMaps?: RlsWorkspaceMemberRelationValueMaps;
   flatRelatedRecordPathMaps?: FlatRelatedRecordPathMaps;
+  // TODO(@charlesBochet): remove after 2026-12-27. Temporary channel write access for admins and API keys, only to unblock customers who reported broken links, merges and deletes
+  temporaryChannelWriteAccess?: TemporaryChannelWriteAccess;
 };
 
 export type PermissionsRowAccessRequest = {

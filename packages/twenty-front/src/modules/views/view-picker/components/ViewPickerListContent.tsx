@@ -23,7 +23,6 @@ import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/sta
 import { computeViewPickerVisibleViews } from '@/views/view-picker/utils/computeViewPickerVisibleViews';
 import { useLingui } from '@lingui/react/macro';
 import { IconPlus } from 'twenty-ui/icon';
-import { ViewVisibility } from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 
 export const ViewPickerListContent = () => {
@@ -43,13 +42,9 @@ export const ViewPickerListContent = () => {
     currentViewId: currentView?.id,
   });
 
-  const workspaceViews = visibleViews.filter(
-    (view) => view.visibility === ViewVisibility.WORKSPACE,
-  );
+  const workspaceViews = visibleViews.filter((view) => !view.isPrivate);
 
-  const unlistedViews = visibleViews.filter(
-    (view) => view.visibility === ViewVisibility.UNLISTED,
-  );
+  const unlistedViews = visibleViews.filter((view) => view.isPrivate);
 
   const isLastView = visibleViews.length <= 1;
 

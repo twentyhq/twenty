@@ -89,6 +89,7 @@ const ENQUEUE_JOBS = gql`
       jobs {
         jobId
         sizeBytes
+        scheduledAt
       }
       availableBytes
     }
@@ -103,6 +104,7 @@ const GET_JOBS = gql`
       attemptsMade
       failedReason
       enqueuedAt
+      scheduledAt
       startedAt
       finishedAt
     }
@@ -485,6 +487,7 @@ describe('enqueueJob (e2e)', () => {
       jobs: markerUrls.map(() => ({
         jobId: expect.any(String),
         sizeBytes: expect.any(Number),
+        scheduledAt: expect.any(Number),
       })),
       availableBytes: null,
     });
@@ -660,6 +663,144 @@ describe('enqueueJob (e2e)', () => {
     expect(otherWorkspaceResponse.body.errors).toBeUndefined();
     expect(otherWorkspaceResponse.body.data.getJobs).toEqual([]);
   }, 120_000);
+
+  it('paces a limited call and keeps each job scheduledAt through its whole life', async () => {
+    const markerUrl = markerServer.markerUrl('paced');
+    const jobIds = [1, 2, 3].map((index) => `paced-${index}-${uuidv4()}`);
+    const variables = {
+      input: {
+        logicFunctionUniversalIdentifier:
+          appendingLogicFunctionUniversalIdentifier,
+        jobs: jobIds.map((jobId) => ({ payload: { markerUrl }, jobId })),
+        limiter: { max: 2, durationMs: 1_000 },
+      },
+    };
+    const before = Date.now();
+
+    const firstResponse = await makeMetadataApiRequest(
+      { query: ENQUEUE_JOBS, variables },
+      customApplicationToken,
+    );
+
+    expect(firstResponse.body.errors).toBeUndefined();
+
+    const scheduledAts: number[] = firstResponse.body.data.enqueueJobs.jobs.map(
+      (job: { scheduledAt: number }) => job.scheduledAt,
+    );
+
+    expect(scheduledAts[0]).toBeGreaterThanOrEqual(before);
+    expect(scheduledAts[1] - scheduledAts[0]).toBeGreaterThanOrEqual(499);
+    expect(scheduledAts[1] - scheduledAts[0]).toBeLessThanOrEqual(501);
+    expect(scheduledAts[2] - scheduledAts[1]).toBeGreaterThanOrEqual(499);
+    expect(scheduledAts[2] - scheduledAts[1]).toBeLessThanOrEqual(501);
+
+    const secondResponse = await makeMetadataApiRequest(
+      { query: ENQUEUE_JOBS, variables },
+      customApplicationToken,
+    );
+
+    expect(secondResponse.body.errors).toBeUndefined();
+    expect(
+      secondResponse.body.data.enqueueJobs.jobs.map(
+        (job: { scheduledAt: number }) => job.scheduledAt,
+      ),
+    ).toEqual(scheduledAts);
+
+    await waitForAllJobsToFinish();
+
+    await expectEventually(() => {
+      expect(markerServer.readMarker(markerUrl).trim().split('\n')).toEqual([
+        'ran',
+        'ran',
+        'ran',
+      ]);
+    });
+
+    const statusResponse = await makeMetadataApiRequest(
+      { query: GET_JOBS, variables: { jobIds } },
+      customApplicationToken,
+    );
+
+    expect(statusResponse.body.errors).toBeUndefined();
+    expect(
+      statusResponse.body.data.getJobs.map(
+        (job: { scheduledAt: number }) => job.scheduledAt,
+      ),
+    ).toEqual(scheduledAts);
+  }, 60_000);
+
+  it('keeps the scheduledAt of a job across its retries', async () => {
+    const markerUrl = markerServer.markerUrl('scheduled-retry');
+    const jobId = `scheduled-retry-${uuidv4()}`;
+
+    const enqueueResponse = await makeMetadataApiRequest(
+      {
+        query: ENQUEUE_JOBS,
+        variables: {
+          input: {
+            logicFunctionUniversalIdentifier:
+              retryableLogicFunctionUniversalIdentifier,
+            jobs: [{ payload: { markerUrl, shouldRetry: true }, jobId }],
+            retryLimit: 1,
+            delayMs: 200,
+          },
+        },
+      },
+      customApplicationToken,
+    );
+
+    expect(enqueueResponse.body.errors).toBeUndefined();
+
+    const [{ scheduledAt }] = enqueueResponse.body.data.enqueueJobs.jobs;
+
+    await waitForAllJobsToFinish();
+
+    const statusResponse = await makeMetadataApiRequest(
+      { query: GET_JOBS, variables: { jobIds: [jobId] } },
+      customApplicationToken,
+    );
+
+    expect(statusResponse.body.errors).toBeUndefined();
+    expect(statusResponse.body.data.getJobs[0]).toMatchObject({
+      attemptsMade: 2,
+      scheduledAt,
+    });
+    expect(scheduledAt - statusResponse.body.data.getJobs[0].enqueuedAt).toBe(
+      200,
+    );
+  }, 60_000);
+
+  it.each([0, 1_000])(
+    'rejects delayMs %s combined with a limiter without enqueuing anything',
+    async (delayMs) => {
+      const jobId = `delay-and-limiter-${uuidv4()}`;
+
+      const response = await makeMetadataApiRequest(
+        {
+          query: ENQUEUE_JOBS,
+          variables: {
+            input: {
+              logicFunctionUniversalIdentifier,
+              jobs: [{ payload: {}, jobId }],
+              delayMs,
+              limiter: { max: 1, durationMs: 1_000 },
+            },
+          },
+        },
+        customApplicationToken,
+      );
+
+      expect(response.body.errors).toBeDefined();
+      expect(response.body.errors[0].message).toContain('not both');
+
+      const statusResponse = await makeMetadataApiRequest(
+        { query: GET_JOBS, variables: { jobIds: [jobId] } },
+        customApplicationToken,
+      );
+
+      expect(statusResponse.body.data.getJobs).toEqual([]);
+    },
+  );
 
   it('rejects a batch that repeats a caller-supplied job id', async () => {
     const jobId = `duplicate-${uuidv4()}`;

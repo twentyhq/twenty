@@ -5,14 +5,7 @@ import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace
 import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-lifecycle.service';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
-import {
-  Args,
-  Float,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-} from '@nestjs/graphql';
+import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import GraphQLJSON from 'graphql-type-json';
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -20,7 +13,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -29,7 +21,6 @@ import { AgentChatThreadDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/
 import { FileAttachmentInput } from 'src/engine/metadata-modules/ai/ai-chat/dtos/file-attachment.input';
 import { AiSystemPromptPreviewDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/ai-system-prompt-preview.dto';
 import { SendChatMessageResultDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/send-chat-message-result.dto';
-import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { AgentChatTurnPreflightService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-turn-preflight.service';
@@ -310,30 +301,5 @@ export class AgentChatResolver {
       workspaceInstructions: workspace.aiAdditionalInstructions ?? undefined,
       assistantProfile: workspace.aiChatAssistantProfile,
     });
-  }
-
-  @ResolveField(() => Date)
-  createdAt(@Parent() thread: AgentChatThreadWorkspaceEntity): Date {
-    return new Date(thread.createdAt);
-  }
-
-  @ResolveField(() => Date)
-  updatedAt(@Parent() thread: AgentChatThreadWorkspaceEntity): Date {
-    return new Date(thread.updatedAt);
-  }
-
-  @ResolveField(() => Date, { nullable: true })
-  deletedAt(@Parent() thread: AgentChatThreadWorkspaceEntity): Date | null {
-    return isDefined(thread.deletedAt) ? new Date(thread.deletedAt) : null;
-  }
-
-  @ResolveField(() => Float)
-  totalInputCredits(@Parent() thread: AgentChatThreadWorkspaceEntity): number {
-    return toDisplayCredits(Number(thread.totalInputCredits));
-  }
-
-  @ResolveField(() => Float)
-  totalOutputCredits(@Parent() thread: AgentChatThreadWorkspaceEntity): number {
-    return toDisplayCredits(Number(thread.totalOutputCredits));
   }
 }

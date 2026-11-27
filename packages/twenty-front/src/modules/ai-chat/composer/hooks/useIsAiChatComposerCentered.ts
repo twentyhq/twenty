@@ -10,7 +10,6 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 
 export const useIsAiChatComposerCentered = () => {
   const aiChatSurface = useContext(AiChatSurfaceContext);
-  // The workspace setup preamble is its own intro; centering would fight it.
   const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
   const shouldShowAiChatEmptyState = useShouldShowAiChatEmptyState();
   const { threadId } = useAiChatInstanceOrThrow();

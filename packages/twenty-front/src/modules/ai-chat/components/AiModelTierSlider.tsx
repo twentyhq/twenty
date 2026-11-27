@@ -53,7 +53,6 @@ const StyledTrack = styled.div<{ disabled: boolean }>`
   }
 `;
 
-// The handle centre sits on a dot, so the fill runs half a handle past it.
 const StyledFill = styled.div`
   background: ${themeCssVariables.color.blue};
   border-radius: ${themeCssVariables.border.radius.sm};
@@ -128,15 +127,12 @@ const StyledInput = styled.input`
 type AiModelTierSliderProps = {
   selectedTier: AiModelTier;
   onTierChange: (tier: AiModelTier) => void;
-  // Shown instead of the tier name, for an agent pinned to a specific model.
-  title?: string;
   disabled?: boolean;
 };
 
 export const AiModelTierSlider = ({
   selectedTier,
   onTierChange,
-  title,
   disabled = false,
 }: AiModelTierSliderProps) => {
   const { t } = useLingui();
@@ -155,7 +151,7 @@ export const AiModelTierSlider = ({
   return (
     <StyledContainer>
       <StyledHeader>
-        <StyledTitle>{title ?? resolvedTier.label}</StyledTitle>
+        <StyledTitle>{resolvedTier.label}</StyledTitle>
         <AiModelTierInformationButton resolvedTier={resolvedTier} />
       </StyledHeader>
       <StyledTrack

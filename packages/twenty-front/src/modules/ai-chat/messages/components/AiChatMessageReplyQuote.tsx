@@ -13,7 +13,6 @@ import { type AiChatMessageQuote } from '@/ai-chat/messages/types/AiChatMessageQ
 import { scrollToAiChatMessage } from '@/ai-chat/messages/utils/scrollToAiChatMessage';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 
-// width 0 with min-width 100% keeps the one-line excerpt from widening a fit-content bubble
 const StyledReplyLine = styled.div<{ isClickable: boolean }>`
   border-radius: ${themeCssVariables.border.radius.sm};
   cursor: ${({ isClickable }) => (isClickable ? 'pointer' : 'default')};

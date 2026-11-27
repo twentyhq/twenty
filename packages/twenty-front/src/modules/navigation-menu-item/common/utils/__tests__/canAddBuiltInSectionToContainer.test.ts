@@ -20,12 +20,19 @@ describe('canAddBuiltInSectionToContainer', () => {
     ).toBe(true);
   });
 
-  it('should refuse Favorites on Home only', () => {
+  it('should offer Favorites on Home once no Favorites section is there', () => {
     expect(
       canAddBuiltInSectionToContainer({
         builtInSectionKey: 'favorites',
         containerId: null,
         items: [],
+      }),
+    ).toBe(true);
+    expect(
+      canAddBuiltInSectionToContainer({
+        builtInSectionKey: 'favorites',
+        containerId: null,
+        items: [{ builtInSectionKey: 'favorites', parentId: null }],
       }),
     ).toBe(false);
     expect(

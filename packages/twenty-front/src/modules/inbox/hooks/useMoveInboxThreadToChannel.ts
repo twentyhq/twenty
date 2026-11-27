@@ -18,7 +18,7 @@ export const useMoveInboxThreadToChannel = () => {
     useApplyOptimisticAiChatThreadUpdate();
   const { refreshInboxChannelSummaries } = useRefreshInboxChannelSummaries();
 
-  const moveAgentChatThreadToChannel = useCallback(
+  const moveInboxThreadToChannel = useCallback(
     async ({
       threadId,
       channelId,
@@ -61,5 +61,5 @@ export const useMoveInboxThreadToChannel = () => {
     ],
   );
 
-  return { moveAgentChatThreadToChannel };
+  return { moveInboxThreadToChannel };
 };

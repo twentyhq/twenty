@@ -38,10 +38,6 @@ export default defineRole({
         canUpdateAllRecords: true,
         canSoftDeleteAllRecords: false,
         canDestroyAllRecords: false,
-        unreadableFields: [
-          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name
-            .universalIdentifier,
-        ],
       },
     ],
   },
@@ -58,6 +54,32 @@ export default defineRole({
   `unreadableFields` și `uneditableFields` (identificatori universali ai câmpurilor; un câmp care nu poate fi
   citit nu poate fi nici editat), precum și [permisiunile pentru înregistrări la nivel de rând](#row-level-security).
 
+## Roluri în afara aplicației personalizate a spațiului de lucru
+
+O aplicație instalată din marketplace, dintr-o arhivă tar sau cu `twenty app dev` rulează în spațiile de lucru ale altor
+persoane, astfel că rolurile sale descriu doar ce pot face aplicația și agenții săi:
+
+* **Doar agenții le dețin.** Twenty stochează [rolul funcțional implicit](#the-default-function-role)
+  și rolurile [agenților](#agent-roles) dvs. cu `canBeAssignedToUsers` și
+  `canBeAssignedToApiKeys` setate la `false`, indiferent de ce spune sursa. Orice alt `defineRole()` trebuie
+  să le seteze pe ambele la `false`.
+* **Fără permisiuni la nivel de câmp sau rând.** `unreadableFields`, `uneditableFields`,
+  `rowLevelRecordsPermissions` și formele lor depreciate (`fieldPermissions`,
+  `rowLevelPermissionPredicates`, `rowLevelPermissionPredicateGroups`) sunt respinse. Spațiul de lucru
+  le configurează pentru propriile roluri.
+
+`twenty app build` și `dev` semnalează ca avertisment un rol care încalcă aceste reguli. Apoi, `plan`, `apply`
+și `dev` eșuează, cu excepția cazului în care ținta este aplicația personalizată a spațiului de lucru, iar `publish`
+eșuează întotdeauna. O sincronizare trimisă direct la API este respinsă cu `MARKETPLACE_APPLICATION_ROLE_ASSIGNABILITY`
+sau `MARKETPLACE_APPLICATION_ROLE_RESTRICTION`. O aplicație instalată care este anterioară acestor reguli poate
+fi actualizată prin eliminarea elementelor pe care acestea le resping: dezactivarea unui indicator sau eliminarea unei
+permisiuni la nivel de câmp sau rând este acceptată.
+
+Aplicația personalizată a spațiului de lucru, proiectul pe care `twenty app pull` îl creează pentru un spațiu de lucru (consultați
+[Readucerea unei aplicații instalate la sursă](/ro/developers/extend/apps/operations/sync-and-recovery#pulling-an-installed-app-back-to-source)),
+este locul pentru rolurile destinate membrilor spațiului de lucru sau cheilor API și pentru permisiunile la nivel de câmp și rând
+descrise mai jos.
+
 <Note>
   `SystemPermissionFlag.USER_APPS` și `SystemPermissionFlag.WORKSPACE_APPS`
   sunt disponibile începând cu versiunea 2.54 a `twenty-sdk`; versiunile anterioare le denumesc
@@ -69,6 +91,11 @@ export default defineRole({
 </Note>
 
 ## Securitate la nivel de rând
+
+<Note>
+  Doar aplicația personalizată a spațiului de lucru poate declara permisiuni la nivel de rând și câmp. Consultați
+  [Roluri în afara aplicației personalizate a spațiului de lucru](#roles-outside-the-workspace-custom-application).
+</Note>
 
 Permisiunile la nivel de rând necesită **planul Organization sau unul superior** — consultați
 [pagina de prețuri](https://twenty.com/pricing). Ce se întâmplă într-un plan fără acest drept este prezentat în
@@ -87,8 +114,10 @@ este omisă. O regulă poate avea și propriile `unreadableFields` și
 
 Un predicat face referire la un câmp prin `universalIdentifier`, un `operand` și (opțional) un
 câmp workspaceMember a cărui valoare este injectată în momentul interogării — astfel încât poți exprima „relația de proprietar
-a înregistrării **este** membrul curent al spațiului de lucru”. Acest rol poate crea orice companie, dar citește și
-actualizează doar companiile pe care le deține:
+a înregistrării **este** membrul curent al spațiului de lucru”. Cu `relationFieldUniversalIdentifier`, un predicat
+compară în schimb un câmp al înregistrărilor corelate prin acel câmp de relație, de exemplu
+`messageChannelId` al asocierilor de canal ale unui mesaj. Acest rol poate crea orice companie, dar citește
+și actualizează numai companiile pe care le deține:
 
 ```ts src/roles/partner-role.ts
 import {
@@ -286,12 +315,12 @@ Notițe:
 
 ### Roluri agent
 
-Rolul aplicației este cel pe care un spațiu de lucru îl examinează atunci când îți instalează aplicația, deci trebuie să acopere tot ceea ce poate face aplicația însăși. Orice rol pe care îl atribui unui agent prin `roleUniversalIdentifier` în `defineAgent()` nu trebuie să acorde mai mult decât rolul aplicației: nicio acțiune asupra obiectelor, niciun acces la câmpuri, niciun indicator de permisiune sau domeniu de aplicare la nivel de rând pe care rolul aplicației nu le are. Dacă o face, compilarea eșuează cu o eroare care enumeră permisiunile acordate în exces. Rolurile pe care aplicația ta le furnizează pentru membrii spațiului de lucru sau cheile API nu sunt supuse acestei reguli, deoarece aplicația nu rulează niciodată cu acestea. Verificarea necesită rolul aplicației în sursa aplicației dvs., așadar este omisă atunci când rolul implicit este definit în altă parte.
+Rolul aplicației este cel pe care un spațiu de lucru îl examinează atunci când îți instalează aplicația, deci trebuie să acopere tot ceea ce poate face aplicația însăși. Orice rol pe care îl atribui unui agent prin `roleUniversalIdentifier` în `defineAgent()` nu trebuie să acorde mai mult decât rolul aplicației: nicio acțiune asupra obiectelor, niciun acces la câmpuri, niciun indicator de permisiune sau domeniu de aplicare la nivel de rând pe care rolul aplicației nu le are. Dacă o face, compilarea eșuează cu o eroare care enumeră permisiunile acordate în exces. Rolurile pe care aplicația personalizată a spațiului de lucru le furnizează pentru membrii spațiului de lucru sau cheile API nu sunt supuse acestei reguli, deoarece aplicația nu rulează niciodată cu acestea. Verificarea necesită rolul aplicației în sursa aplicației dvs., așadar este omisă atunci când rolul implicit este definit în altă parte.
 
 ## Cele mai bune practici
 
 * Porniți de la rolul generat de scaffolding, apoi restrângeți-l progresiv — rolul implicit acordă acces larg la citire, ceea ce rareori este de dorit în producție.
-* Listează în `recordsPermissions.objects` doar obiectele de care funcțiile tale au nevoie efectiv și folosește `unreadableFields` și `uneditableFields` pentru a ascunde sau bloca câmpurile de care acestea nu au nevoie.
+* Enumerați în `recordsPermissions.objects` doar obiectele de care funcțiile dvs. au nevoie efectiv.
 * `permissionFlagUniversalIdentifiers` controlează accesul la capabilități la nivelul platformei. Mențineți-le la minimum.
 * Un indicator de permisiune pe care aplicația dvs. îl declară cu `definePermissionFlag()` are un `permissionType`: `'tool'` (implicit) pentru o capabilitate care poate fi acordată unui agent sau unui utilizator și `'settings'` pentru un indicator care deblochează o zonă de setări.
 * Vedeți un exemplu funcțional: [`examples/hello-world/src/roles/default-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/hello-world/src/roles/default-role.ts).

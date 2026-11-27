@@ -38,6 +38,15 @@ export class RowLevelPermissionPredicateDTO {
   workspaceMemberSubFieldName?: string | null;
 
   @Field(() => String, { nullable: true })
+  workspaceMemberRelationFieldMetadataId?: string | null;
+
+  @Field(() => String, { nullable: true })
+  workspaceMemberRelationFilterFieldMetadataId?: string | null;
+
+  @Field(() => [String], { nullable: true })
+  workspaceMemberRelationFilterValues?: string[] | null;
+
+  @Field(() => String, { nullable: true })
   rowLevelPermissionPredicateGroupId?: string | null;
 
   @Field(() => Number, { nullable: true })

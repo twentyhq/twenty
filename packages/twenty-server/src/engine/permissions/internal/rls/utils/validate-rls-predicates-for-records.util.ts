@@ -2,6 +2,7 @@
 
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
@@ -40,8 +41,13 @@ export const validateRlsPredicatesForRecords = async <T extends ObjectRecord>({
     return;
   }
 
+  // The id defaults in the database, and no record can point at a new one yet
+  const recordsWithId = records.map((record) =>
+    isDefined(record.id) ? record : { ...record, id: v4() },
+  );
+
   const matchingRecords = await findRecordsMatchingRecordFilter({
-    records,
+    records: recordsWithId,
     recordFilter,
     flatObjectMetadata: objectMetadata,
     metadataMaps,

@@ -52,13 +52,13 @@ export default defineConnectionProvider({
   // Optional: a logic function in this app that returns a stable id for the
   // upstream account, run before the tokens are saved. See "Identify the
   // connected account".
-  // identifyAccountLogicFunction: { universalIdentifier: '2f1e0d9c-...-...' },
+  // identifyAccountLogicFunctionUniversalIdentifier: '2f1e0d9c-...-...',
   // Optional: a logic function in this app to run right after a connection is
   // established. See "Run a logic function on connect".
-  // onConnectLogicFunction: { universalIdentifier: '3a2b1c0d-...-...' },
+  // onConnectLogicFunctionUniversalIdentifier: '3a2b1c0d-...-...',
   // Optional: a logic function in this app to run right after a connection is
   // removed. See "Run a logic function on disconnect".
-  // onDisconnectLogicFunction: { universalIdentifier: '4d5e6f70-...-...' },
+  // onDisconnectLogicFunctionUniversalIdentifier: '4d5e6f70-...-...',
 });
 ```
 
@@ -121,18 +121,14 @@ export default defineConnectionProvider({
   displayName: 'Front',
   type: 'api-key',
   scope: 'WORKSPACE',
-  identifyAccountLogicFunction: {
-    universalIdentifier: '16801854-29d2-4a90-9d56-333210647bcd',
-  },
-  onConnectLogicFunction: {
-    universalIdentifier: '53bc562a-2932-4452-bbda-4de8345a2cef',
-  },
+  identifyAccountLogicFunctionUniversalIdentifier: '16801854-29d2-4a90-9d56-333210647bcd',
+  onConnectLogicFunctionUniversalIdentifier: '53bc562a-2932-4452-bbda-4de8345a2cef',
 });
 ```
 
 يفتح **إضافة اتصال** و**إعادة الاتصال** صفحة إعدادات حيث يلصق العضو المفتاح. يخزّن Twenty المفتاح مشفّراً في الاتصال، ويُرجعه `getConnection` باعتباره `accessToken`، مع `providerType: 'api-key'`. لا يقوم Twenty أبداً بتجديده أو إبطاله: عندما ترفضه الخدمة، استدعِ `reportConnectionAuthFailure` حتى يُطلب من العضو إعادة الاتصال باستخدام مفتاح جديد.
 
-صرّح بدالة `identifyAccountLogicFunction` (انظر "تحديد الحساب المتصل"). تعمل باستخدام المفتاح الملصق باعتباره `accessToken` قبل حفظ أي شيء، لذا فإن استدعاء واحداً لنقطة نهاية "من أنا" الخاصة بالخدمة يتحقق من المفتاح ويسمّي الاتصال في آن واحد. إذا أطلقت استثناءً، يُرفض المفتاح ويرى العضو الخطأ. من دونها، يُحفظ أي مفتاح غير فارغ ويُسمّى الاتصال باسم بريد العضو الإلكتروني.
+عرّف `identifyAccountLogicFunctionUniversalIdentifier` (راجع "تحديد الحساب المتصل"). تعمل باستخدام المفتاح الملصق باعتباره `accessToken` قبل حفظ أي شيء، لذا فإن استدعاء واحداً لنقطة نهاية "من أنا" الخاصة بالخدمة يتحقق من المفتاح ويسمّي الاتصال في آن واحد. إذا أطلقت استثناءً، يُرفض المفتاح ويرى العضو الخطأ. من دونها، يُحفظ أي مفتاح غير فارغ ويُسمّى الاتصال باسم بريد العضو الإلكتروني.
 
 تتوفر موفرو مفتاح API مع Twenty 2.59.0: صرّح بـ `"engines": { "twenty": ">=2.59.0" }` في `package.json` الخاص بتطبيقك.
 
@@ -152,20 +148,18 @@ export default defineConnectionProvider({
   type: 'custom',
   scope: 'USER',
   custom: {
-    authorizeLogicFunction: {
-      universalIdentifier: 'c4a1e2b3-6d5f-4a7b-8c9d-0e1f2a3b4c5d',
-    },
-    callbackLogicFunction: {
-      universalIdentifier: 'd5b2f3c4-7e6a-4b8c-9d0e-1f2a3b4c5d6e',
-    },
+    authorizeLogicFunctionUniversalIdentifier: 'c4a1e2b3-6d5f-4a7b-8c9d-0e1f2a3b4c5d',
+    callbackLogicFunctionUniversalIdentifier: 'd5b2f3c4-7e6a-4b8c-9d0e-1f2a3b4c5d6e',
   },
-  onConnectLogicFunction: {
-    universalIdentifier: 'e6c3a4d5-8f7b-4c9d-0e1f-2a3b4c5d6e7f',
-  },
+  onConnectLogicFunctionUniversalIdentifier: 'e6c3a4d5-8f7b-4c9d-0e1f-2a3b4c5d6e7f',
 });
 ```
 
-يعمل **إضافة اتصال** و**إعادة الاتصال** كما في OAuth. يتحقق Twenty من إمكانية اتصال العضو، ويوقّع حالة قصيرة العمر للمحاولة، ويشغّل `authorizeLogicFunction` باستخدام `callbackUrl` يحملها. أعِد المكان الذي يجب إرسال المستخدم إليه:
+<Note>
+تُكتب الإشارات إلى دالة منطقية أو موفّر اتصال بالشكل `...UniversalIdentifier: '\<uuid>'`. صيغة الكائن السابقة `{ universalIdentifier: '\<uuid>' }` (على سبيل المثال `onConnectLogicFunction: { universalIdentifier }`) مهجورة: لا تزال مقبولة، ولكن ستُزال في إصدار مستقبلي.
+</Note>
+
+يعمل **إضافة اتصال** و**إعادة الاتصال** كما في OAuth. يتحقق Twenty من إمكانية اتصال العضو، ويوقّع حالة قصيرة الأجل للمحاولة، ويشغّل دالة منطق التفويض مع `callbackUrl` يحملها. أعِد المكان الذي يجب إرسال المستخدم إليه:
 
 ```ts src/logic-functions/handlers/linkedin-authorize-handler.ts
 import { type AuthorizeConnectionPayload } from 'twenty-sdk/logic-function';
@@ -200,7 +194,7 @@ export const linkedinAuthorizeHandler = async ({
 };
 ```
 
-مرّر `callbackUrl` إلى الخدمة دون تغيير. يقبله Twenty كإعادة توجيه من المتصفح (`GET`) وكإشعار من الخادم (`POST`)، ويشغّل `callbackLogicFunction` لكل طلب باستخدام طريقته ومعلمات الاستعلام (من دون `state`) والرؤوس والنص المُحلل و`rawBody` (بايتات الطلب الدقيقة، و`null` في `GET`). أعِد الحساب الذي يثبته الطلب، أو `null` عندما لا يحمل أي حساب — وعادةً ما يكون ذلك عند عودة المتصفح بينما ينتقل معرّف الحساب عبر إشعار:
+مرّر `callbackUrl` إلى الخدمة دون تغيير. يقبل Twenty ذلك كإعادة توجيه من المتصفح (`GET`) وكإشعار من الخادم (`POST`)، ويشغّل دالة منطق معاودة الاتصال لكل طلب باستخدام طريقته ومعلمات الاستعلام الخاصة به (من دون `state`) والرؤوس والنص المحلّل و`rawBody` (بايتات الطلب الدقيقة، و`null` عند `GET`). أعِد الحساب الذي يثبته الطلب، أو `null` عندما لا يحمل أي حساب — وعادةً ما يكون ذلك عند عودة المتصفح بينما ينتقل معرّف الحساب عبر إشعار:
 
 ```ts src/logic-functions/handlers/linkedin-callback-handler.ts
 import { type ConnectionCallbackPayload } from 'twenty-sdk/logic-function';
@@ -261,9 +255,9 @@ export const hostedCallbackHandler = async ({
 | `معالجة`            | تسمية اختيارية معروضة للاتصال. تكون القيمة الافتراضية بريد العضو الإلكتروني.                                                            |
 | `accessToken`       | رمز مميز اختياري لكل حساب، يُخزَّن مشفراً ويُعاد بواسطة `getConnection`. اتركه خارجاً عندما يستدعي تطبيقك الخدمة باستخدام مفتاحه الخاص. |
 
-تعمل كلتا الدالتين بينما ينتظر العضو إعادة التوجيه، لذا يقتصر مهلة انتهائهما على 10 ثوانٍ. يؤدي الفشل أو الإرجاع غير الصالح إلى إلغاء الاتصال: لا يُحفظ شيء ولا تعمل `onConnectLogicFunction`. تعمل `onConnectLogicFunction` عند إنشاء اتصال أو إعادة اتصاله أو استعادته، ولا تعمل مجدداً عندما تُبلغ الخدمة عن حساب متصل بالفعل. تنتهي صلاحية الحالة بعد ساعة، لذا يُرفض الإشعار الذي يصل لاحقاً. تعيد الخدمات عادةً محاولة الإشعارات: يؤدي تكرار لحساب متصل بالفعل إلى تحديث ذلك الاتصال، لذا من الآمن إعادة الحساب نفسه مرة أخرى.
+تعمل كلتا الدالتين بينما ينتظر العضو إعادة التوجيه، لذا يقتصر مهلة انتهائهما على 10 ثوانٍ. يؤدي الفشل أو الإرجاع غير الصالح إلى إلغاء الاتصال: لا يُحفظ شيء ولا تُشغّل دالة منطق الاتصال. تعمل دالة منطق الاتصال عند إنشاء اتصال أو إعادة اتصاله أو استعادته، ولا تعمل مجددًا عندما تُبلغ الخدمة عن حساب متصل بالفعل. تنتهي صلاحية الحالة بعد ساعة، لذا يُرفض الإشعار الذي يصل لاحقاً. تعيد الخدمات عادةً محاولة الإشعارات: يؤدي تكرار لحساب متصل بالفعل إلى تحديث ذلك الاتصال، لذا من الآمن إعادة الحساب نفسه مرة أخرى.
 
-لا يقوم Twenty بتحديث الاتصالات المخصصة أو إلغائها. حرّر ما تحتفظ به الخدمة للحساب في `onDisconnectLogicFunction`.
+لا يقوم Twenty بتحديث الاتصالات المخصصة أو إلغائها. حرّر ما تحتفظ به الخدمة للحساب في دالة المنطق المعيّنة كـ `onDisconnectLogicFunctionUniversalIdentifier`.
 
 لا يمكن تغيير `type` الخاص بالموفر، مثل `scope` الخاص به، بمجرد مزامنته: لنقل خدمة بين `oauth` و`oauth-discovery` و`custom` و`api-key`، صرّح بموفر جديد ذي `universalIdentifier` جديد.
 
@@ -275,7 +269,7 @@ export const hostedCallbackHandler = async ({
 
 عندما ينقر مستخدم على **Reconnect**، لا شيء يمنعه من تفويض حساب مصدر مختلف عن الحساب الذي أُنشئ الاتصال به: مساحة عمل Slack B بدلًا من مساحة العمل A، أو مؤسسة GitHub أخرى، أو حساب Google آخر. من دون طريقة للتمييز بينهما، سيستبدل Twenty رموز A المميزة برموز B، وسيبدأ كل ما أنشأه تطبيقك اعتمادًا على ذلك الاتصال بالتواصل مع B بصمت.
 
-عيّن `identifyAccountLogicFunction` إلى دالة منطقية في التطبيق نفسه تُرجع معرّفًا ثابتًا للحساب المرتبط بالرمز المميز الصادر حديثًا:
+عيّن `identifyAccountLogicFunctionUniversalIdentifier` إلى دالة منطق في التطبيق نفسه تُرجع معرّفًا ثابتًا للحساب المرتبط بالرمز المميّز الصادر حديثًا:
 
 ```ts src/connection-providers/slack-connection.ts
 import { defineConnectionProvider } from 'twenty-sdk/define';
@@ -290,9 +284,7 @@ export default defineConnectionProvider({
   oauth: {
     /* ... */
   },
-  identifyAccountLogicFunction: {
-    universalIdentifier: SLACK_IDENTIFY_ACCOUNT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-  },
+  identifyAccountLogicFunctionUniversalIdentifier: SLACK_IDENTIFY_ACCOUNT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -367,7 +359,7 @@ export default defineLogicFunction({
 
 <Accordion title="تشغيل دالة منطقية عند الاتصال" description="التفاعل فور إنشاء الاتصال">
 
-بعض المزوّدين يسلّمونك بيانات وقت الاتصال تحتاج إلى الاحتفاظ بها قبل أن يصبح الاتصال قابلاً للاستخدام — المثال الكلاسيكي هو Slack، حيث يحدّد رد OAuth معرّف الفريق `team_id` الخاص بمساحة العمل الذي ستُربط به الأحداث الواردة. عيِّن `onConnectLogicFunction` للإشارة إلى دالة منطقية في التطبيق نفسه (حسب `universalIdentifier` الخاص بها)، وسيتم تشغيلها مباشرة بعد إنشاء `ConnectedAccount`.
+بعض المزوّدين يسلّمونك بيانات وقت الاتصال تحتاج إلى الاحتفاظ بها قبل أن يصبح الاتصال قابلاً للاستخدام — المثال الكلاسيكي هو Slack، حيث يحدّد رد OAuth معرّف الفريق `team_id` الخاص بمساحة العمل الذي ستُربط به الأحداث الواردة. عيِّن `onConnectLogicFunctionUniversalIdentifier` للإشارة إلى دالة منطقية في التطبيق نفسه (حسب `universalIdentifier` الخاص بها)، وسيتم تشغيلها مباشرة بعد إنشاء `ConnectedAccount`.
 
 ```ts src/connection-providers/slack-connection.ts
 export default defineConnectionProvider({
@@ -379,9 +371,7 @@ export default defineConnectionProvider({
     /* ... */
   },
   // Runs claimSlackTeam after every successful Slack connection.
-  onConnectLogicFunction: {
-    universalIdentifier: '3a2b1c0d-1111-4222-8333-444455556666',
-  },
+  onConnectLogicFunctionUniversalIdentifier: '3a2b1c0d-1111-4222-8333-444455556666',
 });
 ```
 
@@ -401,7 +391,7 @@ type OnConnectPayload = {
 
 <Accordion title="تشغيل دالة منطقية عند قطع الاتصال" description="نظّف عند فصل اتصال أو إزالته">
 
-أي شيء يطالب به تطبيق ما وقت الاتصال يجب تحريره عندما يزول الاتصال. على سبيل المثال، يجب على تكامل Slack الذي يطالب بـ `team_id` عند الاتصال تحرير تلك المطالبة حتى تتمكن مساحة عمل أخرى من ربط فريق Slack نفسه. عيّن `onDisconnectLogicFunction` للإشارة إلى دالة منطقية في التطبيق نفسه، ويتم تشغيلها عند فصل الاتصال ومرة أخرى عند حذفه.
+أي شيء يطالب به تطبيق ما وقت الاتصال يجب تحريره عندما يزول الاتصال. على سبيل المثال، يجب على تكامل Slack الذي يطالب بـ `team_id` عند الاتصال تحرير تلك المطالبة حتى تتمكن مساحة عمل أخرى من ربط فريق Slack نفسه. عيِّن `onDisconnectLogicFunctionUniversalIdentifier` للإشارة إلى دالة منطقية في التطبيق نفسه، وتعمل عند قطع الاتصال ومجددًا عند حذفه.
 
 ```ts src/connection-providers/slack-connection.ts
 export default defineConnectionProvider({
@@ -413,9 +403,7 @@ export default defineConnectionProvider({
     /* ... */
   },
   // Runs releaseSlackTeam after every Slack disconnection.
-  onDisconnectLogicFunction: {
-    universalIdentifier: '4470aba8-5ff5-4800-88db-2a427cd8677c',
-  },
+  onDisconnectLogicFunctionUniversalIdentifier: '4470aba8-5ff5-4800-88db-2a427cd8677c',
 });
 ```
 
@@ -550,7 +538,7 @@ await reportConnectionAuthFailure({
 
 للموفّر نطاق واحد فقط. إذا كان تطبيقك يحتاج إلى بيانات اعتماد مشتركة وأخرى لكل عضو للخدمة نفسها (مثل رمز بوت وحساب كل عضو الخاص)، فأعلن عن موفّرين.
 
-يكون للاتصال دائمًا نطاق موفره، ويُعد نطاق الموفر جزءًا من هويته: لا يمكن لإصدار لاحق تغيير `scope` لموفر موجود، ويُرفض التحديث إذا حاول ذلك. لنقل خدمة من نطاق إلى آخر، عرّف موفرًا جديدًا باستخدام `universalIdentifier` جديد وأزل الموفر القديم. يؤدي التحديث بعد ذلك إلى حذف الموفر القديم وكل اتصال أُنشئ به عبر مسار قطع الاتصال المعتاد (`onDisconnectLogicFunction`، وإلغاء الرمز المميز، وتنظيف القناة)، ثم يعيد الأعضاء الاتصال عبر الموفر الجديد.
+يكون للاتصال دائمًا نطاق موفره، ويُعد نطاق الموفر جزءًا من هويته: لا يمكن لإصدار لاحق تغيير `scope` لموفر موجود، ويُرفض التحديث إذا حاول ذلك. لنقل خدمة من نطاق إلى آخر، عرّف موفرًا جديدًا باستخدام `universalIdentifier` جديد وأزل الموفر القديم. تؤدي الترقية بعد ذلك إلى حذف الموفّر القديم وكل اتصال أُجري من خلاله عبر مسار قطع الاتصال المعتاد (`onDisconnectLogicFunctionUniversalIdentifier`، وإبطال الرمز المميّز، وتنظيف القناة)، ويتصل الأعضاء مجددًا عبر الموفّر الجديد.
 
 تتطلب إضافة اتصال **لي فقط** أو إعادة ربطه إذن تطبيقات المستخدم، بينما تتطلب إضافة اتصال **مشترك لمساحة العمل** أو إعادة ربطه إذن تطبيقات مساحة العمل.
 

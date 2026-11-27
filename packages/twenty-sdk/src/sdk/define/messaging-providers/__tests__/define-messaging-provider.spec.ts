@@ -71,4 +71,48 @@ describe('defineMessagingProvider', () => {
 
     expect(result.success).toBe(false);
   });
+
+  it('accepts references written as universal identifiers', () => {
+    const result = defineMessagingProvider({
+      universalIdentifier: baseValidConfig.universalIdentifier,
+      name: baseValidConfig.name,
+      displayName: baseValidConfig.displayName,
+      connectionProviderUniversalIdentifier:
+        '6b1f0a52-4d8e-4c4e-9b0a-2f5d8a7c1e02',
+      sendMessageLogicFunctionUniversalIdentifier:
+        '6b1f0a52-4d8e-4c4e-9b0a-2f5d8a7c1e03',
+    });
+
+    expect(result.errors).toEqual([]);
+  });
+
+  it('requires a connection provider in either spelling', () => {
+    const result = defineMessagingProvider({
+      universalIdentifier: baseValidConfig.universalIdentifier,
+      name: baseValidConfig.name,
+      displayName: baseValidConfig.displayName,
+    });
+
+    expect(result.errors).toEqual([
+      'Messaging provider must declare the connectionProviderUniversalIdentifier it uses',
+    ]);
+  });
+
+  it('returns both spellings so a manifest built by an older CLI still reads on older servers', () => {
+    const result = defineMessagingProvider({
+      universalIdentifier: baseValidConfig.universalIdentifier,
+      name: baseValidConfig.name,
+      displayName: baseValidConfig.displayName,
+      connectionProviderUniversalIdentifier:
+        '6b1f0a52-4d8e-4c4e-9b0a-2f5d8a7c1e02',
+    });
+
+    expect(result.config).toMatchObject({
+      connectionProviderUniversalIdentifier:
+        '6b1f0a52-4d8e-4c4e-9b0a-2f5d8a7c1e02',
+      connectionProvider: {
+        universalIdentifier: '6b1f0a52-4d8e-4c4e-9b0a-2f5d8a7c1e02',
+      },
+    });
+  });
 });

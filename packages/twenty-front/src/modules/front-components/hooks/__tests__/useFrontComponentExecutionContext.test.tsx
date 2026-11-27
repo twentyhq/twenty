@@ -95,6 +95,12 @@ jest.mock(
   }),
 );
 
+jest.mock('@/ai-chat/composer/hooks/useOpenAskAiPageWithPreprompt', () => ({
+  useOpenAskAiPageWithPreprompt: () => ({
+    openAskAiPageWithPreprompt: jest.fn(),
+  }),
+}));
+
 jest.mock('@/side-panel/hooks/useNavigateSidePanel', () => ({
   useNavigateSidePanel: () => ({
     navigateSidePanel: mockNavigateSidePanel,

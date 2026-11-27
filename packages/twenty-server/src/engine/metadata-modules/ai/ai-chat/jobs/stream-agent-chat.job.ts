@@ -4,12 +4,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { type CodeExecutionData } from 'twenty-shared/ai';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { type MessageQueueJobContext } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 
 import { buildActorMetadataFromAuthContext } from 'src/engine/core-modules/actor/utils/build-actor-metadata-from-auth-context.util';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -66,6 +68,7 @@ export class StreamAgentChatJob {
     private readonly actorService: AgentChatActorService,
     private readonly turnRecorderService: AgentTurnRecorderService,
     private readonly workspaceAiDataPolicyService: WorkspaceAiDataPolicyService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   @Process(STREAM_AGENT_CHAT_JOB_NAME)
@@ -218,6 +221,11 @@ export class StreamAgentChatJob {
           })
           .catch(() => null);
 
+    const isAiChatInboxEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+      data.workspaceId,
+    );
+
     const { finish } = await this.turnStreamService.streamTurn({
       workspaceId: data.workspaceId,
       claim,
@@ -225,6 +233,7 @@ export class StreamAgentChatJob {
       agentId: null,
       isBuiltInAssistant: true,
       abortSignal,
+      canEndWithToolsOnly: isAiChatInboxEnabled,
       startTurn: async (writer) => {
         const turn = await this.chatExecutionService.streamChat({
           workspace,

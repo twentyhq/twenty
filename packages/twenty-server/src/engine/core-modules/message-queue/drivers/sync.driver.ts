@@ -70,6 +70,7 @@ export class SyncDriver implements MessageQueueDriver {
       addedJobs.push({
         jobId: job.id,
         sizeBytes: computeJobSizeBytes({ data, options: {} }),
+        scheduledAt: Date.now(),
       });
 
       try {
@@ -118,14 +119,16 @@ export class SyncDriver implements MessageQueueDriver {
     const worker = this.workersMap[queueName];
 
     if (worker) {
+      const timestamp = Date.now();
       const details: QueueJobDetails<MessageQueueJobData> = {
         id: job.id,
         data: job.data ?? {},
         state: 'active',
         attemptsMade: 0,
         progress: 0,
-        timestamp: Date.now(),
-        processedOn: Date.now(),
+        timestamp,
+        scheduledAt: timestamp,
+        processedOn: timestamp,
       };
       this.jobs.set(`${queueName}:${job.id}`, details);
       job.updateData = async (data) => {

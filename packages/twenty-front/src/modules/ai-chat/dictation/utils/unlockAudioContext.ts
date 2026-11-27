@@ -6,7 +6,6 @@ declare global {
   }
 }
 
-// close() rejects on a context that never finished opening.
 const closeQuietly = async (audioContext: AudioContext): Promise<void> => {
   try {
     await audioContext.close();
@@ -15,7 +14,6 @@ const closeQuietly = async (audioContext: AudioContext): Promise<void> => {
   }
 };
 
-// iOS suspends AudioContexts created outside a gesture, which blocks speech capture.
 export const unlockAudioContext = async (): Promise<void> => {
   const AudioContextConstructor: typeof AudioContext | undefined =
     window.AudioContext ?? window.webkitAudioContext;
@@ -33,9 +31,7 @@ export const unlockAudioContext = async (): Promise<void> => {
       await audioContext.resume();
     }
   } catch {
-    // A failed unlock only lowers the odds of a clean start.
   } finally {
-    // Closed in finally: resume() routinely rejects here (the gesture can expire during warm-up), and browsers allow only a few live contexts.
     if (isDefined(audioContext)) {
       await closeQuietly(audioContext);
     }

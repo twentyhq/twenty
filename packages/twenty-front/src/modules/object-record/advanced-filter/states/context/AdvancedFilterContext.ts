@@ -8,6 +8,7 @@ type AdvancedFilterContextType = {
   readonly?: boolean;
   VariablePicker?: VariablePickerComponent;
   objectMetadataItem: EnrichedObjectMetadataItem;
+  shouldHideRelationFields?: boolean;
 };
 
 export const AdvancedFilterContext = createContext<AdvancedFilterContextType>(

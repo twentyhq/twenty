@@ -38,10 +38,6 @@ export default defineRole({
         canUpdateAllRecords: true,
         canSoftDeleteAllRecords: false,
         canDestroyAllRecords: false,
-        unreadableFields: [
-          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name
-            .universalIdentifier,
-        ],
       },
     ],
   },
@@ -58,6 +54,30 @@ export default defineRole({
   `unreadableFields` و`uneditableFields` (المعرّفات العامة للحقول؛ الحقل الذي لا يمكن
   قراءته لا يمكن تحريره أيضًا)، و[أذونات السجلات على مستوى الصف](#row-level-security).
 
+## الأدوار خارج التطبيق المخصص لمساحة العمل
+
+يعمل تطبيق مثبّت من المتجر، أو من أرشيف tarball، أو باستخدام `twenty app dev` داخل مساحات عمل أشخاص
+آخرين، لذا لا تصف أدواره إلا ما يمكن للتطبيق ووكلائه القيام به:
+
+* **لا يحملها إلا الوكلاء.** يخزّن Twenty [دور الدالة الافتراضي](#the-default-function-role)
+  وأدوار [وكلائك](#agent-roles) مع ضبط `canBeAssignedToUsers` و
+  `canBeAssignedToApiKeys` على `false`، بغض النظر عما يقوله المصدر. يجب أن يضبط أي `defineRole()` آخر
+  كليهما على `false` بنفسه.
+* **لا أذونات على مستوى الحقل أو الصف.** يتم رفض `unreadableFields` و`uneditableFields`،
+  و`rowLevelRecordsPermissions` وصيغها المهجورة (`fieldPermissions`،
+  `rowLevelPermissionPredicates`، `rowLevelPermissionPredicateGroups`). تضبط مساحة العمل
+  هذه الأذونات على أدوارها الخاصة.
+
+يبلّغ `twenty app build` و`dev` عن الدور الذي يخالف هذه القواعد كتحذير. ثم يفشل `plan` و`apply`
+و`dev` ما لم يكن الهدف هو التطبيق المخصص لمساحة العمل، ويفشل `publish` دائمًا. تُرفض المزامنة المُرسلة مباشرةً إلى واجهة API مع `MARKETPLACE_APPLICATION_ROLE_ASSIGNABILITY`
+أو `MARKETPLACE_APPLICATION_ROLE_RESTRICTION`. يمكن لتطبيق مثبّت يسبق هذه القواعد أن
+يُرقّى بإزالة ما ترفضه: يُقبل إيقاف علامة أو إزالة إذن على مستوى الحقل أو الصف.
+
+التطبيق المخصص لمساحة العمل، وهو المشروع الذي ينشئه `twenty app pull` لمساحة عمل (راجع
+[إرجاع تطبيق مثبّت إلى المصدر](/ar/developers/extend/apps/operations/sync-and-recovery#pulling-an-installed-app-back-to-source))،
+هو المكان المخصص للأدوار المعدّة لأعضاء مساحة العمل أو مفاتيح API، ولأذونات الحقول والصفوف
+الموضحة أدناه.
+
 <Note>
   يتوفر `SystemPermissionFlag.USER_APPS` و`SystemPermissionFlag.WORKSPACE_APPS`
   بدءًا من الإصدار 2.54 من `twenty-sdk`؛ وتُسمّى في الإصدارات الأقدم
@@ -69,6 +89,11 @@ export default defineRole({
 </Note>
 
 ## أمن على مستوى الصف
+
+<Note>
+  لا يمكن إلا للتطبيق المخصص لمساحة العمل الإعلان عن أذونات على مستوى الصفوف والحقول. راجع
+  [الأدوار خارج التطبيق المخصص لمساحة العمل](#roles-outside-the-workspace-custom-application).
+</Note>
 
 تتطلب أذونات على مستوى الصف **خطة Organization أو أعلى** — راجع
 [الأسعار](https://twenty.com/pricing). ما يحدث في خطة لا تتضمن الاستحقاق مشروح في
@@ -84,8 +109,7 @@ export default defineRole({
 `uneditableFields` خاصين بها، وينطبقان على السجلات التي تطابقها؛ وتحتاج هذه القاعدة إلى مجموعة
 محددات واحدة على الأقل.
 
-يشير المحدِّد إلى حقل باستخدام `universalIdentifier` الخاص به، و`operand`، وحقل workspaceMember (اختياري) تُحقن قيمته وقت الاستعلام — بحيث يمكنك التعبير عن "علاقة مالك السجل **هي** عضو مساحة العمل الحالي". يمكن لهذا الدور إنشاء أي شركة، لكنه يقرأ
-ويحدّث الشركات التي يملكها فقط:
+يشير المحدِّد إلى حقل باستخدام `universalIdentifier` الخاص به، و`operand`، وحقل workspaceMember (اختياري) تُحقن قيمته وقت الاستعلام — بحيث يمكنك التعبير عن "علاقة مالك السجل **هي** عضو مساحة العمل الحالي". باستخدام `relationFieldUniversalIdentifier`، يقارن المُحدِّد بدلاً من ذلك حقلاً من السجلات المرتبطة عبر حقل العلاقة هذا، مثل `messageChannelId` لارتباطات قناة الرسالة. يمكن لهذا الدور إنشاء أي شركة، لكنه يقرأ ويحدّث الشركات التي يملكها فقط:
 
 ```ts src/roles/partner-role.ts
 import {
@@ -282,12 +306,12 @@ export default defineApplicationRole({
 
 ### أدوار الوكلاء
 
-دور التطبيق هو ما تراجعه مساحة العمل عند تثبيت تطبيقك، لذا يجب أن يغطي كل ما يمكن للتطبيق نفسه القيام به. يجب ألا يمنح أي دور تُسنده إلى وكيل عبر `roleUniversalIdentifier` في `defineAgent()` صلاحيات أكثر من دور التطبيق: فلا إجراء على كائن، ولا وصول إلى حقل، ولا علامة إذن، ولا نطاق على مستوى الصف يفتقر إليه دور التطبيق. إذا حدث ذلك، يفشل الإصدار مع ظهور خطأ يسرد الصلاحيات الزائدة. لا تخضع الأدوار التي يوفرها تطبيقك لأعضاء مساحة العمل أو مفاتيح API لهذه القاعدة، لأن التطبيق لا يعمل بها مطلقًا. يتطلب التحقق دور التطبيق في مصدر تطبيقك، لذا يتم تخطيه عندما يُعرَّف الدور الافتراضي في مكان آخر.
+دور التطبيق هو ما تراجعه مساحة العمل عند تثبيت تطبيقك، لذا يجب أن يغطي كل ما يمكن للتطبيق نفسه القيام به. يجب ألا يمنح أي دور تُسنده إلى وكيل عبر `roleUniversalIdentifier` في `defineAgent()` صلاحيات أكثر من دور التطبيق: فلا إجراء على كائن، ولا وصول إلى حقل، ولا علامة إذن، ولا نطاق على مستوى الصف يفتقر إليه دور التطبيق. إذا حدث ذلك، يفشل الإصدار مع ظهور خطأ يسرد الصلاحيات الزائدة. لا تخضع الأدوار التي يوفّرها التطبيق المخصص لمساحة العمل لأعضاء مساحة العمل أو مفاتيح API لهذه القاعدة، لأن التطبيق لا يعمل بها مطلقًا. يتطلب التحقق دور التطبيق في مصدر تطبيقك، لذا يتم تخطيه عندما يُعرَّف الدور الافتراضي في مكان آخر.
 
 ## أفضل الممارسات
 
 * ابدأ من الدور المُنشأ تلقائيًا، ثم قم بتقييده تدريجيًا — إذ يمنح الإعداد الافتراضي صلاحيات قراءة واسعة، وهو ما نادرًا ما تريده في بيئة الإنتاج.
-* أدرج في `recordsPermissions.objects` فقط الكائنات التي تحتاجها دوالك فعليًا، واستخدم `unreadableFields` و`uneditableFields` لإخفاء الحقول التي لا تحتاجها أو قفلها.
+* أدرج في `recordsPermissions.objects` الكائنات التي تحتاجها دوالك فعليًا فقط.
 * `permissionFlagUniversalIdentifiers` تتحكم في الوصول إلى القدرات على مستوى المنصة. اجعلها في حدّها الأدنى.
 * تحمل علامة إذن يعرّفها تطبيقك باستخدام `definePermissionFlag()` قيمة `permissionType`: وهي `'tool'` (القيمة الافتراضية) لإمكانية يمكن منحها لوكيل أو لمستخدم، و`'settings'` لعلامة تفتح منطقة الإعدادات.
 * اطّلع على مثال عملي: [`examples/hello-world/src/roles/default-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/hello-world/src/roles/default-role.ts).

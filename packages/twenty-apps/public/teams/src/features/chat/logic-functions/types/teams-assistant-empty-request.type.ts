@@ -2,5 +2,8 @@ import { type TeamsAssistantRequestDraft } from 'src/features/chat/logic-functio
 
 export type TeamsAssistantEmptyRequest = Pick<
   TeamsAssistantRequestDraft,
-  'teamsServiceUrl' | 'teamsConversationId' | 'teamsActivityId'
+  | 'teamsServiceUrl'
+  | 'teamsConversationId'
+  | 'teamsConversationType'
+  | 'teamsActivityId'
 >;

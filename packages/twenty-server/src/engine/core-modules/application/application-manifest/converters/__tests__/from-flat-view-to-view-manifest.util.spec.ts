@@ -15,9 +15,9 @@ import {
   ViewFilterOperand,
   ViewKey,
   ViewOpenRecordIn,
+  ViewPresetFilter,
   ViewSortDirection,
   ViewType,
-  ViewVisibility,
 } from 'twenty-shared/types';
 
 import { fromFlatViewToViewManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-view-to-view-manifest.util';
@@ -59,11 +59,11 @@ const VIEW_MANIFEST: Required<
   icon: 'IconLayoutKanban',
   position: 3,
   isCompact: true,
-  visibility: ViewVisibility.UNLISTED,
   openRecordIn: ViewOpenRecordIn.RECORD_PAGE,
   mainGroupByFieldMetadataUniversalIdentifier: STAGE_FIELD_UID,
   shouldHideEmptyGroups: true,
   shouldDisplayGroupsAsTabs: false,
+  presetFilter: ViewPresetFilter.INBOX_OPEN,
   groupLoadLimit: 25,
   anyFieldFilterValue: 'acme',
   kanbanColumnWidth: 240,
@@ -72,6 +72,7 @@ const VIEW_MANIFEST: Required<
   calendarLayout: ViewCalendarLayout.WEEK,
   calendarFieldMetadataUniversalIdentifier: START_DATE_FIELD_UID,
   calendarEndFieldMetadataUniversalIdentifier: END_DATE_FIELD_UID,
+  listPinnedFieldMetadataUniversalIdentifier: START_DATE_FIELD_UID,
 };
 
 const MINIMAL_VIEW_MANIFEST: ViewManifest = {
@@ -127,6 +128,7 @@ const NULLABLE_VIEW_MANIFEST_PROPERTIES: (keyof ViewManifest)[] = [
   'calendarLayout',
   'calendarFieldMetadataUniversalIdentifier',
   'calendarEndFieldMetadataUniversalIdentifier',
+  'listPinnedFieldMetadataUniversalIdentifier',
 ];
 
 const VIEW_CHILD_COLLECTION_PROPERTIES_OTHER_THAN_FIELDS: (keyof ViewManifest)[] =
@@ -163,7 +165,7 @@ describe('fromFlatViewToViewManifest', () => {
       icon: 'IconCalendar',
       position: 1,
       isCompact: false,
-      visibility: ViewVisibility.WORKSPACE,
+      isPrivate: false,
       openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
       key: null,
       kanbanAggregateOperation: null,
@@ -171,9 +173,11 @@ describe('fromFlatViewToViewManifest', () => {
       calendarLayout: ViewCalendarLayout.MONTH,
       calendarFieldMetadataUniversalIdentifier: START_DATE_FIELD_UID,
       calendarEndFieldMetadataUniversalIdentifier: null,
+      listPinnedFieldMetadataUniversalIdentifier: null,
       mainGroupByFieldMetadataUniversalIdentifier: null,
       shouldHideEmptyGroups: false,
       shouldDisplayGroupsAsTabs: false,
+      presetFilter: null,
       groupLoadLimit: DEFAULT_VIEW_GROUP_LOAD_LIMIT,
       kanbanColumnWidth: null,
       anyFieldFilterValue: null,
@@ -207,7 +211,6 @@ describe('fromFlatViewToViewManifest', () => {
       icon: 'IconList',
       position: 0,
       isCompact: false,
-      visibility: ViewVisibility.WORKSPACE,
       openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
       shouldHideEmptyGroups: false,
       shouldDisplayGroupsAsTabs: false,

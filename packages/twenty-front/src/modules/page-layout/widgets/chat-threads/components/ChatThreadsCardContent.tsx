@@ -1,6 +1,5 @@
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
-import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { IconRefresh } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
@@ -10,13 +9,10 @@ import { InboxThreadList } from '@/inbox/components/InboxThreadList';
 import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
-import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
-import { useCurrentSidePanelRoutedPath } from '@/side-panel/routing/hooks/useCurrentSidePanelRoutedPath';
-import { getRecordShowParamsFromPath } from '@/side-panel/routing/utils/getRecordShowParamsFromPath';
-import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
+import { useAiChatThreadClick } from '@/ai-chat/threads/hooks/useAiChatThreadClick';
+import { useSidePanelAiChatThreadId } from '@/side-panel/hooks/useSidePanelAiChatThreadId';
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { ErrorState } from '@/ui/feedback/empty-state/components/ErrorState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 
 const StyledThreadsContainer = styled.div`
@@ -49,18 +45,10 @@ export const ChatThreadsCardContent = ({
   pagination,
 }: ChatThreadsCardContentProps) => {
   const { t } = useLingui();
-  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
-  const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
-  const sidePanelRoutedPath = useCurrentSidePanelRoutedPath();
-  const sidePanelRecord = isDefined(sidePanelRoutedPath)
-    ? getRecordShowParamsFromPath(sidePanelRoutedPath)
-    : null;
-  const sidePanelThreadId =
-    isSidePanelOpened &&
-    sidePanelRecord?.objectNameSingular ===
-      StandardObjectNameSingular.AgentChatThread
-      ? sidePanelRecord.objectRecordId
-      : undefined;
+  const { handleThreadClick } = useAiChatThreadClick({
+    resetNavigationStack: false,
+  });
+  const sidePanelThreadId = useSidePanelAiChatThreadId();
   const isThreadsEmpty = !isNonEmptyArray(threads);
 
   if (loading && isThreadsEmpty) {
@@ -110,12 +98,7 @@ export const ChatThreadsCardContent = ({
         selectedThreadIds={
           isDefined(sidePanelThreadId) ? [sidePanelThreadId] : []
         }
-        onThreadClick={({ id }) =>
-          openRecordInSidePanel({
-            recordId: id,
-            objectNameSingular: StandardObjectNameSingular.AgentChatThread,
-          })
-        }
+        onThreadClick={handleThreadClick}
         onDetachThread={onDetachThread}
       />
       {pagination}

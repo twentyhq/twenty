@@ -3,7 +3,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type PermissionsRowAccessSqlRequest } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
-import { buildRecordAccessGroupsSQLCondition } from 'src/engine/permissions/internal/access-group/utils/build-record-access-groups-sql-condition.util';
+import { buildPrincipalsAccessGroupsSQLCondition } from 'src/engine/permissions/internal/access-group/utils/build-principals-access-groups-sql-condition.util';
 import { canRlsAccessOperation } from 'src/engine/permissions/internal/rls/utils/can-rls-access-operation.util';
 import { renderRlsRecordFilterToSql } from 'src/engine/permissions/internal/rls/utils/render-rls-record-filter-to-sql.util';
 import { resolveRlsRuleRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-rls-rule-record-filter.util';
@@ -19,7 +19,7 @@ const buildRlsRulesSQLCondition = (
   }
 
   if (isDefined(request.principalsAccessGroupCompactIds)) {
-    return buildRecordAccessGroupsSQLCondition({
+    return buildPrincipalsAccessGroupsSQLCondition({
       tableAlias: request.tableAlias,
       principalsAccessGroupCompactIds: request.principalsAccessGroupCompactIds,
     });

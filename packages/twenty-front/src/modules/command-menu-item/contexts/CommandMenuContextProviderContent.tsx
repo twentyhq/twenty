@@ -23,12 +23,12 @@ import {
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useContext, useMemo } from 'react';
 import { isString } from '@sniptt/guards';
+import { evaluateConditionalEvaluationExpression } from 'twenty-shared/conditional-evaluation';
 import {
   ContextStorePageType,
   StandardObjectNameSingular,
   type CommandMenuContextApi,
 } from 'twenty-shared/types';
-import { evaluateConditionalAvailabilityExpression } from 'twenty-shared/utils';
 import { EngineComponentKey } from '~/generated-metadata/graphql';
 
 const WORKSPACE_DEFINITION_COMMANDS = new Set<EngineComponentKey>([
@@ -142,7 +142,7 @@ export const CommandMenuContextProviderContent = ({
       .filter(doesCommandMenuItemMatchSelectionState(hasSelectedRecords))
       .filter(doesCommandMenuItemMatchPageLayoutId(effectivePageLayoutId))
       .filter((item) =>
-        evaluateConditionalAvailabilityExpression(
+        evaluateConditionalEvaluationExpression(
           item.conditionalAvailabilityExpression,
           commandMenuContextApiForAvailability,
         ),

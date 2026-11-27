@@ -108,6 +108,9 @@ export const STANDARD_OBJECTS = {
       eventExternalIdIndex: {
         universalIdentifier: 'b14d63d0-c1ab-470f-927d-9c0c05277caa',
       },
+      accountOwnerIdIndex: {
+        universalIdentifier: '740776d1-fe14-41b9-80b9-11c610765f0c',
+      },
     },
     views: {
       allCalendarChannelEventAssociations: buildStandardObjectIndexView({
@@ -541,6 +544,9 @@ export const STANDARD_OBJECTS = {
       },
       messageChannelIdMessageIdUniqueIndex: {
         universalIdentifier: '1b86ece8-7ce3-4df3-8771-fd4b5d45b2f2',
+      },
+      accountOwnerIdIndex: {
+        universalIdentifier: '0797b417-8f87-4df1-b838-d85fbb663110',
       },
     },
     views: {
@@ -1402,6 +1408,42 @@ export const STANDARD_OBJECTS = {
       },
       channelLastActivityIndex: {
         universalIdentifier: 'bd129bd1-db66-4c74-a64e-819d2edd3062',
+      },
+    },
+    views: {
+      open: {
+        universalIdentifier: 'e9a3781b-db78-41bb-a0e4-f6324770432a',
+        viewFields: {},
+      },
+      needsInput: {
+        universalIdentifier: '0b97f7e4-423a-4e2f-93b9-7a5bcde62c03',
+        viewFields: {},
+        viewFilters: {
+          pendingQuestionMessageIdIsNotEmpty: {
+            universalIdentifier: '05baa741-58a6-4641-abe2-267a1268e53b',
+          },
+        },
+      },
+      mentions: {
+        universalIdentifier: '0a5d7727-2263-46b1-a795-9227559faf6f',
+        viewFields: {},
+      },
+      assignedToMe: {
+        universalIdentifier: '1cddfa2c-38c0-4fda-80f3-cd01e37bf8e3',
+        viewFields: {},
+        viewFilters: {
+          assigneeIsMe: {
+            universalIdentifier: 'defbcad5-d91f-4e9a-90c6-9bac578ef374',
+          },
+        },
+      },
+      snoozed: {
+        universalIdentifier: '31e8f41f-53ed-4dfd-aaa7-6d0d5dd2d56d',
+        viewFields: {},
+      },
+      done: {
+        universalIdentifier: '81ee1b41-8035-46d1-85ae-18a75616954a',
+        viewFields: {},
       },
     },
   },

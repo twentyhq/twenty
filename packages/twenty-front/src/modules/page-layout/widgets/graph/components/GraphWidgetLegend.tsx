@@ -76,7 +76,7 @@ const StyledLegendItem = styled.div<{
   display: flex;
   flex-shrink: ${({ canShrink }) => (canShrink ? 1 : 0)};
   font-size: ${themeCssVariables.font.size.xs};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
+  font-weight: ${themeCssVariables.font.weight.regular};
   gap: ${themeCssVariables.spacing[1]};
   min-width: 0;
 `;

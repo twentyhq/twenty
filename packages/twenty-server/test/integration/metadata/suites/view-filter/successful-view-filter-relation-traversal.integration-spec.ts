@@ -20,7 +20,6 @@ const RELATION_TRAVERSAL_GQL_FIELDS = `
     relationTargetFieldMetadataId
     createdAt
     updatedAt
-    deletedAt
 `;
 
 describe('View Filter relation-traversal round-trip should succeed', () => {

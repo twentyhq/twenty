@@ -22,26 +22,11 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 
 @MetadataResolver(() => ApplicationDTO)
 @UsePipes(ResolverValidationPipe)
 @UseFilters(ApplicationExceptionFilter, AuthGraphqlApiExceptionFilter)
-@UseGuards(
-  AccessPolicyGuard({
-    authPrincipals: {
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: false,
-        workspaceAgnostic: false,
-      },
-      apiKey: false,
-      oauthClient: false,
-      application: false,
-    },
-    requiredPermissionFlags: [PermissionFlagType.APPLICATIONS],
-  }),
-)
 export class ApplicationIframeMediaPermissionResolver {
   constructor(
     private readonly applicationIframeMediaPermissionService: ApplicationIframeMediaPermissionService,
@@ -49,6 +34,7 @@ export class ApplicationIframeMediaPermissionResolver {
   ) {}
 
   @ResolveField(() => [IframeMediaPermissionDTO])
+  @UseGuards(NoPermissionGuard)
   async requestedIframeMediaPermissions(
     @Parent() application: Pick<ApplicationDTO, 'id'>,
     @AuthWorkspace()
@@ -77,6 +63,7 @@ export class ApplicationIframeMediaPermissionResolver {
   }
 
   @ResolveField(() => [IframeMediaPermissionDTO])
+  @UseGuards(NoPermissionGuard)
   async grantedIframeMediaPermissions(
     @Parent() application: Pick<ApplicationDTO, 'id'>,
     @AuthWorkspace()
@@ -98,6 +85,22 @@ export class ApplicationIframeMediaPermissionResolver {
   }
 
   @Mutation(() => ApplicationDTO)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: false,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [PermissionFlagType.APPLICATIONS],
+    }),
+  )
   approveApplicationIframeMediaPermissions(
     @Args('applicationId', { type: () => UUIDScalarType })
     applicationId: string,

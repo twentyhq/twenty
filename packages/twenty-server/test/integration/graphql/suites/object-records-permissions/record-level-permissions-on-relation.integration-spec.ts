@@ -18,6 +18,7 @@ import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delet
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
+import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import {
   FieldMetadataType,
@@ -298,6 +299,7 @@ describe('row-level permission predicates comparing two relation fields', () => 
         workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
       },
     });
+    await waitForAllJobsToFinish();
   });
 
   afterAll(async () => {

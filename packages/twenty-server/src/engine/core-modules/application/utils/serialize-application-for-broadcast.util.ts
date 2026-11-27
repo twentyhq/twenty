@@ -1,4 +1,5 @@
 import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { buildServedSdkClientCoreChecksum } from 'src/engine/core-modules/sdk-client/utils/build-served-sdk-client-core-checksum.util';
 
 type SerializableApplication = Pick<
   ApplicationEntity,
@@ -20,5 +21,7 @@ export const serializeApplicationForBroadcast = (
   description: application.description ?? null,
   version: application.version ?? null,
   applicationRegistrationId: application.applicationRegistrationId ?? null,
-  sdkClientCoreChecksum: application.sdkClientCoreChecksum ?? null,
+  sdkClientCoreChecksum: buildServedSdkClientCoreChecksum(
+    application.sdkClientCoreChecksum,
+  ),
 });

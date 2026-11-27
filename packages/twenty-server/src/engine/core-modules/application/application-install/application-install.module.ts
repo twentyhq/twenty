@@ -26,11 +26,13 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.module';
 import { ApplicationRegistrationVersionModule } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.module';
+import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 
 @Module({
   imports: [
     ApplicationRegistrationLookupModule,
     ApplicationRegistrationVersionModule,
+    BillingModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     TypeOrmModule.forFeature([
       ApplicationEntity,

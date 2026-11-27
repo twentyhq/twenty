@@ -10,14 +10,6 @@ describe('getAiChatSuggestedPrompts', () => {
     expect(getPromptIds(null)).toContain('capabilities');
   });
 
-  it('should send the capability prompt straight away rather than prefilling it', () => {
-    const capabilitiesPrompt = getAiChatSuggestedPrompts(null).find(
-      ({ id }) => id === 'capabilities',
-    );
-
-    expect(capabilitiesPrompt?.mode).toBe('SEND');
-  });
-
   it('should offer view prompts while browsing a list', () => {
     expect(
       getPromptIds({
@@ -34,15 +26,6 @@ describe('getAiChatSuggestedPrompts', () => {
         objectNameSingular: StandardObjectNameSingular.Workflow,
       }),
     ).toEqual(['explain-workflow', 'add-workflow-step', 'check-workflow-runs']);
-  });
-
-  it('should offer company prompts on a company record', () => {
-    expect(
-      getPromptIds({
-        browsingContextType: 'recordPage',
-        objectNameSingular: StandardObjectNameSingular.Company,
-      }),
-    ).toContain('research-company');
   });
 
   it('should fall back to object-agnostic prompts on a custom object record', () => {

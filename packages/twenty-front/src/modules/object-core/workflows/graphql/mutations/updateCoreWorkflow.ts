@@ -5,6 +5,8 @@ export const UPDATE_CORE_WORKFLOW = gql`
     updateCoreWorkflow(input: $input) {
       id
       name
+      isPrivate
+      canChangeVisibility
       updatedAt
     }
   }

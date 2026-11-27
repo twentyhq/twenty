@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
-import { type VerifyCallback } from 'passport-google-oauth20';
+import { type Request } from 'express';
+import {
+  type AuthenticateOptionsGoogle,
+  type VerifyCallback,
+} from 'passport-google-oauth20';
 
 import { MicrosoftAPIsOauthCommonStrategy } from 'src/engine/core-modules/auth/strategies/microsoft-apis-oauth-common.auth.strategy';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -11,8 +15,7 @@ export class MicrosoftAPIsOauthRequestCodeStrategy extends MicrosoftAPIsOauthCom
     super(twentyConfigService);
   }
 
-  // oxlint-disable-next-line typescript/no-explicit-any
-  authenticate(req: any, options: any) {
+  authenticate(req: Request, options: AuthenticateOptionsGoogle) {
     options = {
       ...options,
       accessType: 'offline',

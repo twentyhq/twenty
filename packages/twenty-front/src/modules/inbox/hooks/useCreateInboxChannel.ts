@@ -6,7 +6,7 @@ import { CreateAgentChatChannelDocument } from '~/generated-metadata/graphql';
 export const useCreateInboxChannel = () => {
   const { runInboxChannelMutation } = useRunInboxChannelMutation();
 
-  const createAgentChatChannel = useCallback(
+  const createInboxChannel = useCallback(
     async (name: string) =>
       (
         await runInboxChannelMutation({
@@ -17,5 +17,5 @@ export const useCreateInboxChannel = () => {
     [runInboxChannelMutation],
   );
 
-  return { createAgentChatChannel };
+  return { createInboxChannel };
 };

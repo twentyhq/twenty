@@ -8,7 +8,7 @@ import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { SendInviteLinkEmail, renderEmail } from 'twenty-emails';
 import { AppPath, FileFolder } from 'twenty-shared/types';
-import { getAppPath, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import {
   In,
   IsNull,
@@ -306,14 +306,6 @@ export class WorkspaceInvitationService {
     isOnboardingInviteRewardOverride?: boolean;
     appTokenIdToInvalidate?: string;
   }): Promise<SendInvitationsDTO> {
-    if (!workspace?.inviteHash) {
-      return {
-        success: false,
-        errors: ['Workspace invite hash not found'],
-        result: [],
-      };
-    }
-
     if (isDefined(roleId)) {
       await this.roleAssignmentWriteService.assertRoleAssignableToUsersOrThrow({
         roleId,
@@ -362,9 +354,7 @@ export class WorkspaceInvitationService {
       if (invitation.status === 'fulfilled') {
         const link = this.workspaceDomainsService.buildWorkspaceURL({
           workspace,
-          pathname: getAppPath(AppPath.Invite, {
-            workspaceInviteHash: workspace?.inviteHash,
-          }),
+          pathname: AppPath.SignInUp,
           searchParams: {
             inviteToken: invitation.value.appToken.value,
             email: invitation.value.email,
@@ -412,7 +402,10 @@ export class WorkspaceInvitationService {
         const subject = i18n._(joinTeamMsg);
 
         await this.emailService.send({
-          from: `${senderName.firstName} ${senderName.lastName} (via Twenty) <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,
+          from: {
+            name: `${senderName.firstName} ${senderName.lastName} (via Twenty)`,
+            address: this.twentyConfigService.get('EMAIL_FROM_ADDRESS'),
+          },
           to: invitation.value.email,
           subject,
           text,

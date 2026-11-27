@@ -2,6 +2,10 @@ import { executeToolThroughMcp } from 'test/integration/ai/utils/execute-tool-th
 import { callMcpTool } from 'test/integration/graphql/suites/application-role-intersection/utils/call-mcp-tool.util';
 import { findObjectMetadataIdByName } from 'test/integration/utils/find-object-metadata-id-by-name.util';
 import { getMcpToolCatalog } from 'test/integration/graphql/suites/application-role-intersection/utils/get-mcp-tool-catalog.util';
+import {
+  grantRoleWideAccessToChannelObjects,
+  revokeRoleWideAccessToChannelObjects,
+} from 'test/integration/utils/role-wide-access-to-channel-objects.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { ToolCategory } from 'twenty-shared/ai';
 
@@ -32,6 +36,10 @@ const listRolesThroughMcp = async (): Promise<RoleSummary[]> => {
 };
 
 describe('MCP role tools (integration)', () => {
+  beforeAll(async () => {
+    await grantRoleWideAccessToChannelObjects();
+  });
+
   afterAll(async () => {
     const leakedRoles = (await listRolesThroughMcp()).filter(({ label }) =>
       label.startsWith(ROLE_LABEL),
@@ -43,6 +51,7 @@ describe('MCP role tools (integration)', () => {
         toolArguments: { roleId: id },
       });
     }
+    await revokeRoleWideAccessToChannelObjects();
   });
 
   it('should describe the role tools to the model', async () => {

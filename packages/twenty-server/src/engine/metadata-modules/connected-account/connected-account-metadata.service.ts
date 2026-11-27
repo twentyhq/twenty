@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { ChannelVisibilityRuleSyncSchedulerService } from 'src/engine/permissions/channel-visibility/services/channel-visibility-rule-sync-scheduler.service';
 import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { In, IsNull, Repository } from 'typeorm';
 
@@ -60,6 +61,7 @@ export class ConnectedAccountMetadataService {
     private readonly connectionProviderLifecycleHookService: ConnectionProviderLifecycleHookService,
     private readonly settingPermissionsService: SettingPermissionsService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+    private readonly channelVisibilityRuleSyncSchedulerService: ChannelVisibilityRuleSyncSchedulerService,
     private readonly calendarWebhookSubscriptionService: CalendarWebhookSubscriptionService,
     private readonly messagingWebhookSubscriptionService: MessagingWebhookSubscriptionService,
   ) {}
@@ -526,6 +528,9 @@ export class ConnectedAccountMetadataService {
     });
 
     this.emitConnectionChanged({ connectedAccounts, workspaceId });
+    await this.channelVisibilityRuleSyncSchedulerService.scheduleSync(
+      workspaceId,
+    );
 
     for (const latestConnectedAccount of latestConnectedAccounts) {
       await this.appOAuthRevokeService.revokeIfApp(latestConnectedAccount);
@@ -720,6 +725,10 @@ export class ConnectedAccountMetadataService {
     }
 
     await this.repository.delete({ id: In(connectedAccountIds), workspaceId });
+
+    await this.channelVisibilityRuleSyncSchedulerService.scheduleSync(
+      workspaceId,
+    );
 
     this.workspaceEventEmitter.emitCustomBatchEvent<MessageChannelDeletedEvent>(
       MESSAGE_CHANNEL_DELETED_EVENT,

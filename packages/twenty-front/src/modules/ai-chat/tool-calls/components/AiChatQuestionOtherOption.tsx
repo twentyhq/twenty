@@ -1,13 +1,11 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type KeyboardEvent, useId, useRef } from 'react';
+import { type KeyboardEvent, useRef } from 'react';
 import { type IconComponent } from 'twenty-ui/icon';
 import { Textarea } from 'twenty-ui/primitives/input';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
-import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
-import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
-import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { useAiChatAskCardFieldFocus } from '@/ai-chat/tool-calls/hooks/useAiChatAskCardFieldFocus';
 
 const StyledContainer = styled.div<{ isHighlighted: boolean }>`
   background: ${({ isHighlighted }) =>
@@ -65,32 +63,11 @@ export const AiChatQuestionOtherOption = ({
   const { t } = useLingui();
   const theme = useTheme();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const textAreaFocusId = useId();
-
-  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
-  const { removeFocusItemFromFocusStackById } =
-    useRemoveFocusItemFromFocusStackById();
+  const { handleFieldFocus, handleFieldBlur } = useAiChatAskCardFieldFocus();
 
   const selectAndFocus = () => {
     onSelect();
     textareaRef.current?.focus();
-  };
-
-  const handleTextareaFocus = () => {
-    pushFocusItemToFocusStack({
-      focusId: textAreaFocusId,
-      component: {
-        type: FocusComponentType.TEXT_AREA,
-        instanceId: textAreaFocusId,
-      },
-      globalHotkeysConfig: {
-        enableGlobalHotkeysConflictingWithKeyboard: false,
-      },
-    });
-  };
-
-  const handleTextareaBlur = () => {
-    removeFocusItemFromFocusStackById({ focusId: textAreaFocusId });
   };
 
   return (
@@ -127,8 +104,8 @@ export const AiChatQuestionOtherOption = ({
         }}
         onChange={(event) => onChange(event.target.value)}
         onKeyDown={onTextareaKeyDown}
-        onFocus={handleTextareaFocus}
-        onBlur={handleTextareaBlur}
+        onFocus={handleFieldFocus}
+        onBlur={handleFieldBlur}
       />
     </StyledContainer>
   );

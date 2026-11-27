@@ -37,6 +37,7 @@ import { DuplicateMessageListSingleRecordCommand } from '@/command-menu-item/eng
 import { EditDashboardSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/dashboard/components/EditDashboardSingleRecordCommand';
 import { SaveDashboardSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/dashboard/components/SaveDashboardSingleRecordCommand';
 import { ReplyToEmailThreadCommand } from '@/command-menu-item/engine-command/record/single-record/message-thread/components/ReplyToEmailThreadCommand';
+import { ManageAiChatParticipantsCommand } from '@/command-menu-item/engine-command/record/components/ManageAiChatParticipantsCommand';
 import { InboxThreadInboxCommand } from '@/command-menu-item/engine-command/record/components/InboxThreadInboxCommand';
 import { ShareRecordCommand } from '@/command-menu-item/engine-command/record/components/ShareRecordCommand';
 import { SeeWorkflowWorkflowRunSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow-runs/components/SeeWorkflowWorkflowRunSingleRecordCommand';
@@ -219,6 +220,7 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
       page={SidePanelPages.SearchRecords}
       pageTitle={msg`Search`}
       pageIcon={IconSearch}
+      shouldResetSearchObjectFilter={true}
     />
   ),
   [EngineComponentKey.ASK_AI]: (
@@ -292,6 +294,9 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   ),
   [EngineComponentKey.ASSIGN_AI_CHAT]: (
     <InboxThreadInboxCommand action="assign" />
+  ),
+  [EngineComponentKey.MANAGE_AI_CHAT_PARTICIPANTS]: (
+    <ManageAiChatParticipantsCommand />
   ),
   [EngineComponentKey.COMPOSE_EMAIL]: <ComposeEmailCommand />,
   [EngineComponentKey.COMPOSE_CAMPAIGN]: <ComposeCampaignCommand />,

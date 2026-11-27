@@ -7,6 +7,7 @@ import {
   assertUnreachable,
   isDefined,
   isNonEmptyArray,
+  isWorkEmail,
 } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { type DataSource, type QueryRunner, Repository } from 'typeorm';
@@ -36,7 +37,6 @@ import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { OnboardingInviteSuggestionsService } from 'src/modules/onboarding-invite-suggestions/services/onboarding-invite-suggestions.service';
-import { isWorkEmail } from 'src/utils/is-work-email';
 
 export enum OnboardingStepKeys {
   ONBOARDING_CONNECT_ACCOUNT_PENDING = 'ONBOARDING_CONNECT_ACCOUNT_PENDING',

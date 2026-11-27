@@ -2,7 +2,7 @@ import { groupNavigationMenuItemsByContainer } from '@/navigation-menu-item/comm
 import { useNavigationMenuItemSectionItems } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemSectionItems';
 import { useReadableNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useReadableNavigationMenuItems';
 
-export const useNavigationMenuContainerItems = (containerId: string) => {
+export const useNavigationMenuContainerItems = (containerId: string | null) => {
   const items = useNavigationMenuItemSectionItems({ containerId });
 
   const { displayTopLevelItems, displayFolderChildrenById } =

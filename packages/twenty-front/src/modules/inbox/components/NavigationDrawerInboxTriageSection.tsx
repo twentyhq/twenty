@@ -6,14 +6,15 @@ import { AGENT_CHAT_THREAD_PRESET_FILTER } from 'twenty-shared/ai';
 import { NavigationDrawerInboxTriageItem } from '@/inbox/components/NavigationDrawerInboxTriageItem';
 import { useInboxOpenThreadsSummary } from '@/inbox/hooks/useInboxOpenThreadsSummary';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
-
-const INBOX_TRIAGE_NAVIGATION_SECTION_ID = 'AiChatTriage';
+import { INBOX_TRIAGE_NAVIGATION_SECTION_ID } from '@/inbox/constants/InboxTriageNavigationSectionId';
 
 type NavigationDrawerInboxTriageSectionProps = {
+  label?: string;
   headerAction?: ReactNode;
 };
 
 export const NavigationDrawerInboxTriageSection = ({
+  label,
   headerAction,
 }: NavigationDrawerInboxTriageSectionProps) => {
   const { t } = useLingui();
@@ -22,7 +23,7 @@ export const NavigationDrawerInboxTriageSection = ({
   return (
     <CollapsibleNavigationDrawerSection
       sectionId={INBOX_TRIAGE_NAVIGATION_SECTION_ID}
-      label={t`Triage`}
+      label={label ?? t`Triage`}
       rightIcon={headerAction}
       alwaysShowRightIcon={isDefined(headerAction)}
     >

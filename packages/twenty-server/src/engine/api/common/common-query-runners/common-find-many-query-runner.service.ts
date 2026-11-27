@@ -74,7 +74,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
 
     const aggregateQueryBuilder = queryBuilder.clone();
 
-    let appliedFilters = args.filter ?? ({} as ObjectRecordFilter);
+    const appliedFilters: Partial<ObjectRecordFilter> = args.filter ?? {};
 
     commonQueryParser.applyFilterToBuilder({
       queryBuilder: aggregateQueryBuilder,
@@ -102,6 +102,12 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
 
     const isForwardPagination = !isDefined(args.before);
 
+    commonQueryParser.applyFilterToBuilder({
+      queryBuilder,
+      objectNameSingular: flatObjectMetadata.nameSingular,
+      recordFilter: appliedFilters,
+    });
+
     const cursor = getCursor(args);
 
     if (cursor) {
@@ -115,20 +121,13 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       });
 
       if (cursorArgFilter.length > 0) {
-        appliedFilters =
-          args.filter && Object.keys(args.filter).length > 0
-            ? {
-                and: [args.filter, { or: cursorArgFilter }],
-              }
-            : { or: cursorArgFilter };
+        commonQueryParser.applyCursorFilterToBuilder({
+          queryBuilder,
+          objectNameSingular: flatObjectMetadata.nameSingular,
+          cursorFilter: { or: cursorArgFilter },
+        });
       }
     }
-
-    commonQueryParser.applyFilterToBuilder({
-      queryBuilder,
-      objectNameSingular: flatObjectMetadata.nameSingular,
-      recordFilter: appliedFilters,
-    });
 
     const parsedOrderBy = commonQueryParser.applyOrderToBuilder({
       queryBuilder,

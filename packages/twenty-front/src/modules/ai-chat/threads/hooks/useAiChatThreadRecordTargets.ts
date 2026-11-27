@@ -6,8 +6,8 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { useAttachChatThreadToRecord } from '@/ai-chat/threads/hooks/useAttachChatThreadToRecord';
-import { useDetachChatThreadFromRecord } from '@/ai-chat/threads/hooks/useDetachChatThreadFromRecord';
+import { useAttachAiChatThreadToRecord } from '@/ai-chat/threads/hooks/useAttachAiChatThreadToRecord';
+import { useDetachAiChatThreadFromRecord } from '@/ai-chat/threads/hooks/useDetachAiChatThreadFromRecord';
 import { aiChatThreadPermissionsFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadPermissionsFamilySelector';
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -70,7 +70,6 @@ export const useAiChatThreadRecordTargets = ({
     skip: isThreadQuerySkipped,
   });
 
-  // The chat model links conversations through its own server tool, so links are reread on any write.
   const linksOperationSignature = useMemo(
     () => ({
       objectNameSingular: StandardObjectNameSingular.AgentChatThreadTarget,
@@ -103,7 +102,6 @@ export const useAiChatThreadRecordTargets = ({
     relationValue: junctionRecords,
     junctionConfig: { targetFields: junctionConfig?.targetFields ?? [] },
   });
-  // A chat can hold several links to the same record
   const targetRecords = uniqBy(
     junctionTargetRecords,
     ({ record, objectNameSingular }) => `${objectNameSingular}-${record.id}`,
@@ -113,8 +111,8 @@ export const useAiChatThreadRecordTargets = ({
     aiChatThreadPermissionsFamilySelector,
     threadId,
   );
-  const { attachChatThreadToRecord } = useAttachChatThreadToRecord();
-  const { detachChatThreadFromRecord } = useDetachChatThreadFromRecord();
+  const { attachChatThreadToRecord } = useAttachAiChatThreadToRecord();
+  const { detachChatThreadFromRecord } = useDetachAiChatThreadFromRecord();
   const { openJunctionRelationPicker } = useOpenJunctionRelationPicker();
 
   const openRecordPicker = () => {

@@ -20,7 +20,7 @@ import { SettingsOptionIconCustomizer } from 'src/front-components/components/Se
 const StyledSelectContainer = styled.div`
   flex-shrink: 0;
   margin-left: auto;
-  max-width: ${() => themeCssVariables.spacing[30]};
+  max-width: calc(${() => themeCssVariables.spacing[20]} * 2);
 `;
 
 type SettingsOptionCardContentSelectProps = {

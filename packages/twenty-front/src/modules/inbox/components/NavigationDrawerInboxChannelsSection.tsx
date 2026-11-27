@@ -14,13 +14,10 @@ import { aiChatAccessibleChannelsSelector } from '@/ai-chat/threads/states/selec
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
-import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
-import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
-
-const INBOX_CHANNELS_NAVIGATION_SECTION_ID = 'AiChatChannels';
+import { INBOX_CHANNELS_NAVIGATION_SECTION_ID } from '@/inbox/constants/InboxChannelsNavigationSectionId';
 
 type NavigationDrawerInboxChannelsSectionProps = {
   headerAction?: ReactNode;
@@ -38,20 +35,17 @@ export const NavigationDrawerInboxChannelsSection = ({
   const { openNavigationSection } = useNavigationSection(
     INBOX_CHANNELS_NAVIGATION_SECTION_ID,
   );
-  const { createAgentChatChannel } = useCreateInboxChannel();
+  const { createInboxChannel } = useCreateInboxChannel();
   const canManageChannels = useHasPermissionFlag(
     PermissionFlagType.AI_SETTINGS,
   );
   const { openInboxChannel } = useOpenInboxChannel();
-  const isNavigationDrawerContentExpanded =
-    useIsNavigationDrawerContentExpanded();
   const [newChannelName, setNewChannelName] = useState<string | null>(null);
 
   if (!isDefined(aiChatChannels) && !isDefined(headerAction)) {
     return null;
   }
 
-  // Listed only for who manages channels, so they keep a way to set them up
   const inaccessibleChannels = (aiChatChannels ?? []).filter(
     ({ isAccessible }) => !isAccessible,
   );
@@ -70,7 +64,7 @@ export const NavigationDrawerInboxChannelsSection = ({
       return;
     }
 
-    const channelId = await createAgentChatChannel(trimmedName);
+    const channelId = await createInboxChannel(trimmedName);
 
     if (isDefined(channelId)) {
       openInboxChannel({ channelId });
@@ -117,7 +111,7 @@ export const NavigationDrawerInboxChannelsSection = ({
           canManage={canManageChannels}
         />
       ))}
-      {isDefined(newChannelName) ? (
+      {isDefined(newChannelName) && (
         <NavigationDrawerInput
           Icon={IconHash}
           value={newChannelName}
@@ -127,17 +121,6 @@ export const NavigationDrawerInboxChannelsSection = ({
           onClickOutside={(_event, name) => void commitCreate(name)}
           placeholder={t`Channel name`}
         />
-      ) : (
-        canManageChannels &&
-        isNavigationDrawerContentExpanded && (
-          <NavigationDrawerItem
-            label={t`Add channel`}
-            Icon={IconPlus}
-            variant="tertiary"
-            onClick={startCreate}
-            triggerEvent="CLICK"
-          />
-        )
       )}
     </CollapsibleNavigationDrawerSection>
   );

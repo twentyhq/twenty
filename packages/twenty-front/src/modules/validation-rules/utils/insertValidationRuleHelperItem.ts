@@ -23,6 +23,12 @@ export const insertValidationRuleHelperItem = ({
     replaceFromOffset,
   );
   const range = { from, to: editor.state.selection.from };
+  // Text typed right against a chip would merge with its name
+  const separator =
+    editor.state.doc.resolve(from).nodeBefore?.type.name ===
+    VALIDATION_RULE_FIELD_NODE_NAME
+      ? ' '
+      : '';
 
   switch (item.kind) {
     case 'field':
@@ -42,9 +48,11 @@ export const insertValidationRuleHelperItem = ({
         .chain()
         .focus()
         .insertContentAt(range, [
-          { type: 'text', text: `${item.definition.name}()` },
+          { type: 'text', text: `${separator}${item.definition.name}()` },
         ])
-        .setTextSelection(from + item.definition.name.length + 1)
+        .setTextSelection(
+          from + separator.length + item.definition.name.length + 1,
+        )
         .run();
       return;
     case 'keyword':
@@ -54,7 +62,7 @@ export const insertValidationRuleHelperItem = ({
         .insertContentAt(range, [
           {
             type: 'text',
-            text: item.definition.insertText ?? `${item.definition.name} `,
+            text: `${separator}${item.definition.insertText ?? `${item.definition.name} `}`,
           },
         ])
         .run();

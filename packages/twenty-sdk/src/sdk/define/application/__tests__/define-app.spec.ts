@@ -360,7 +360,7 @@ describe('defineApplication', () => {
     expect(result.success).toBe(true);
     expect(result.errors).toEqual([]);
     expect(result.warnings).toEqual([
-      '`billing.recurring` is deprecated in favor of `billing.prices`. Prices are not billed yet: keep your recurring charges until they are.',
+      '`billing.recurring` is no longer charged. Declare `billing.prices` instead.',
     ]);
   });
 

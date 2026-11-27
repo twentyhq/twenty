@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { AiChatErrorMessage } from '@/ai-chat/components/AiChatErrorMessage';
 import { useAiChatUserCreditsUsage } from '@/ai-chat/usage/hooks/useAiChatUserCreditsUsage';
 import { useCanRetryCurrentAiChatTurn } from '@/ai-chat/messages/hooks/useCanRetryCurrentAiChatTurn';
-import { useRetryChatMessage } from '@/ai-chat/messages/hooks/useRetryChatMessage';
+import { useRetryAiChatMessage } from '@/ai-chat/messages/hooks/useRetryAiChatMessage';
 import { type AiChatError } from '@/ai-chat/types/AiChatError';
 
 type AiChatUserCreditsExhaustedMessageProps = {
@@ -17,7 +17,7 @@ export const AiChatUserCreditsExhaustedMessage = ({
 }: AiChatUserCreditsExhaustedMessageProps) => {
   const { t } = useLingui();
 
-  const { retryChatMessage } = useRetryChatMessage();
+  const { retryChatMessage } = useRetryAiChatMessage();
   const canRetry = useCanRetryCurrentAiChatTurn();
 
   const { userCreditsUsage } = useAiChatUserCreditsUsage();

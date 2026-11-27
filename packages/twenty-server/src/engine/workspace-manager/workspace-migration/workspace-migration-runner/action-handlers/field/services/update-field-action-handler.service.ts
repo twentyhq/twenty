@@ -5,7 +5,11 @@ import {
   FieldMetadataType,
   RelationType,
 } from 'twenty-shared/types';
-import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
+import {
+  getFieldMetadataFormulaEvaluation,
+  isDefined,
+  isMorphRelationHead,
+} from 'twenty-shared/utils';
 import { ColumnType, type QueryRunner } from 'typeorm';
 
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
@@ -14,6 +18,8 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
+import { PROVISIONED_COMPOSITE_PROPERTIES } from 'src/engine/metadata-modules/field-metadata/constants/provisioned-composite-properties.constant';
+import { getCompositePropertiesWithColumns } from 'src/engine/metadata-modules/field-metadata/utils/get-composite-properties-with-columns.util';
 import { getCompositeTypeOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/get-composite-type-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
@@ -24,6 +30,7 @@ import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-f
 import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { resolveSearchVectorAsExpressionForTsVectorField } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/resolve-search-vector-as-expression-for-ts-vector-field.util';
 import { isFieldMetadataOptionEntityAvailable } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/is-field-metadata-option-entity-available.util';
 import { FieldMetadataOptionEnumSchemaService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/field-metadata-option-enum-schema.service';
@@ -38,7 +45,9 @@ import {
   UniversalUpdateFieldAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action.type';
 import { serializeDefaultValue } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/utils/serialize-default-value.util';
+import { isFieldMetadataFormulaUnchanged } from 'src/engine/metadata-modules/formula-field/utils/is-field-metadata-formula-unchanged.util';
 import { computeForeignKeyOnDelete } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/compute-foreign-key-on-delete.util';
+import { getDeferredStoredFormulaFieldsComputation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/get-deferred-stored-formula-fields-computation.util';
 import { fromUniversalSettingsToFlatFieldMetadataSettings } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/from-universal-settings-to-flat-field-metadata-settings.util';
 import {
   WorkspaceMigrationActionExecutionException,
@@ -49,7 +58,10 @@ import {
   type WorkspaceMigrationActionRunnerContext,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { fieldMetadataTypeToColumnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/field-metadata-type-to-column-type.util';
-import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util';
+import {
+  generateColumnDefinitions,
+  generateCompositeColumnDefinition,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
 import {
   collectEnumOperationsForField,
@@ -70,6 +82,8 @@ type UpdateFieldPropertyHandlerArgs<
 type NameUpdateHandlerArgs<T extends FieldMetadataType = FieldMetadataType> =
   UpdateFieldPropertyHandlerArgs<T> & {
     toName: string;
+    flatObjectMetadata: FlatObjectMetadata;
+    workspaceId: string;
   };
 
 type DefaultValueUpdateHandlerArgs<
@@ -133,6 +147,41 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       update,
       rebuildSearchVector: action.rebuildSearchVector,
     };
+  }
+
+  override getDeferredOperation({
+    flatAction: { entityId, update },
+    allFlatEntityMaps: { flatFieldMetadataMaps },
+  }: WorkspaceMigrationActionRunnerContext<FlatUpdateFieldAction>) {
+    if (!isDefined(update.formula)) {
+      return undefined;
+    }
+
+    // The maps still hold the field as it was before this update
+    const existingFlatFieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow(
+      {
+        flatEntityId: entityId,
+        flatEntityMaps: flatFieldMetadataMaps,
+      },
+    );
+
+    if (
+      isFieldMetadataFormulaUnchanged({
+        formula: update.formula,
+        existingFormula: existingFlatFieldMetadata.formula,
+      }) &&
+      getFieldMetadataFormulaEvaluation({ formula: update.formula }) ===
+        getFieldMetadataFormulaEvaluation(existingFlatFieldMetadata)
+    ) {
+      return undefined;
+    }
+
+    return getDeferredStoredFormulaFieldsComputation({
+      flatFieldMetadata: {
+        ...existingFlatFieldMetadata,
+        formula: update.formula,
+      },
+    });
   }
 
   async executeForMetadata(
@@ -217,6 +266,8 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         flatFieldMetadata: optimisticFlatFieldMetadata,
         update,
         toName: update.name,
+        flatObjectMetadata,
+        workspaceId,
       });
       optimisticFlatFieldMetadata.name = update.name;
     }
@@ -433,13 +484,33 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     schemaName,
     tableName,
     toName,
+    flatObjectMetadata,
+    workspaceId,
   }: NameUpdateHandlerArgs) {
     const fromName = flatFieldMetadata.name;
 
     if (isCompositeFlatFieldMetadata(flatFieldMetadata)) {
-      const compositeType = getCompositeTypeOrThrow(flatFieldMetadata.type);
+      // A workspace its provisioning command has not reached lacks these columns, and renaming a missing column fails.
+      await this.workspaceSchemaManagerService.columnManager.addColumns({
+        queryRunner,
+        schemaName,
+        tableName,
+        columnDefinitions: (
+          PROVISIONED_COMPOSITE_PROPERTIES[flatFieldMetadata.type] ?? []
+        ).map((compositeProperty) =>
+          generateCompositeColumnDefinition({
+            compositeProperty,
+            parentFlatFieldMetadata: flatFieldMetadata,
+            flatObjectMetadata,
+            workspaceId,
+          }),
+        ),
+        shouldSkipExistingColumns: true,
+      });
 
-      for (const property of compositeType.properties) {
+      for (const property of getCompositePropertiesWithColumns(
+        flatFieldMetadata.type,
+      )) {
         if (isMorphOrRelationFieldMetadataType(property.type)) {
           throw new WorkspaceMigrationActionExecutionException({
             message:

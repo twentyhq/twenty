@@ -3,6 +3,7 @@ import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { Tooltip } from '@ui/primitives/surfaces/Tooltip/Tooltip';
 import { Text } from '@ui/primitives/typography/Text/Text';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
@@ -97,6 +98,29 @@ export const Keyboard: Story = {
     await expect(reaction).toHaveTextContent('2');
     await userEvent.tab();
     await expect(canvas.getByRole('button', { name: 'Reset' })).toHaveFocus();
+  },
+};
+
+export const EmojiRendersWhole: Story = {
+  args: { emoji: '🥹' },
+  play: async ({ canvasElement }) => {
+    const reaction = within(canvasElement).getByRole('button', {
+      name: 'Helpful',
+    });
+    const emoji = within(reaction).getByText('🥹');
+    const clippingAncestors: HTMLElement[] = [];
+
+    for (
+      let element = emoji.parentElement;
+      isDefined(element) && element !== reaction;
+      element = element.parentElement
+    ) {
+      if (getComputedStyle(element).overflow !== 'visible') {
+        clippingAncestors.push(element);
+      }
+    }
+
+    await expect(clippingAncestors).toHaveLength(0);
   },
 };
 

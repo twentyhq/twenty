@@ -33,6 +33,7 @@ const buildFlatFieldMetadataOption = ({
   value,
   label: value,
   color: 'green',
+  description: null,
   position: 0,
   isActive: true,
   overrides: null,

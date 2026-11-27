@@ -639,6 +639,7 @@ export class PageLayoutUpdateService {
           conditionalDisplay: widgetInput.conditionalDisplay ?? null,
           conditionalAvailabilityExpression:
             widgetInput.conditionalAvailabilityExpression ?? null,
+          conditionalAvailability: widgetInput.conditionalAvailability ?? null,
           overrides: null,
           universalOverrides: null,
           isActive: true,
@@ -788,6 +789,11 @@ export class PageLayoutUpdateService {
     if (widgetInput.conditionalAvailabilityExpression !== undefined) {
       editableProperties.conditionalAvailabilityExpression =
         widgetInput.conditionalAvailabilityExpression ?? null;
+    }
+
+    if (widgetInput.conditionalAvailability !== undefined) {
+      editableProperties.conditionalAvailability =
+        widgetInput.conditionalAvailability ?? null;
     }
 
     const { overrides, updatedEditableProperties } =

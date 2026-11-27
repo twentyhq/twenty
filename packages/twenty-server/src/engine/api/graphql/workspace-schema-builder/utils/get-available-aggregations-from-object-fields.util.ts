@@ -19,7 +19,7 @@ export type AggregationField = {
 };
 
 export const getAvailableAggregationsFromObjectFields = (
-  fields: OrmFlatFieldMetadata[],
+  fields: Pick<OrmFlatFieldMetadata, 'name' | 'type'>[],
 ): Record<string, AggregationField> => {
   return fields.reduce<Record<string, AggregationField>>(
     (acc, field) => {

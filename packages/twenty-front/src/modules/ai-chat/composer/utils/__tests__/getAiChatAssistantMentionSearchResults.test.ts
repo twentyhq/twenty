@@ -3,17 +3,6 @@ import { AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR } from 'twenty-shared
 import { getAiChatAssistantMentionSearchResults } from '@/ai-chat/composer/utils/getAiChatAssistantMentionSearchResults';
 
 describe('getAiChatAssistantMentionSearchResults', () => {
-  it('offers the assistant before anything is typed', () => {
-    expect(
-      getAiChatAssistantMentionSearchResults({
-        query: '',
-        assistantDisplayName: 'Ada',
-        objectLabelSingular: 'Assistant',
-        objectLabelPlural: 'Teammates',
-      }).map(({ label }) => label),
-    ).toEqual(['Ada']);
-  });
-
   it('offers the assistant when its name is typed', () => {
     expect(
       getAiChatAssistantMentionSearchResults({

@@ -32,6 +32,7 @@ import { ADD_HEALTH_CHECK_TO_APPLICATION_UPGRADE_COMMAND_NAME } from 'src/databa
 import { ENABLE_USER_HEALTH_CHECK_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-55/enable-user-health-check-upgrade-command-name.constant';
 import { ADD_REQUESTED_ROLE_ID_TO_APPLICATION_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-60/add-requested-role-id-to-application-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
+import { type WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { SettingsMenuItemEntity } from 'src/engine/metadata-modules/settings-menu-item/entities/settings-menu-item.entity';
@@ -158,8 +159,9 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   @Column({ nullable: true, type: 'uuid' })
   logicFunctionLayerId: string | null;
 
+  // Replaced by requestedRoleId; kept mapped for the upgrade commands up to 2.60 that use it
   @Column({ nullable: true, type: 'uuid' })
-  defaultRoleId: string | null;
+  defaultRoleId: WasRemovedInUpgrade<string | null>;
 
   @WasIntroducedInUpgrade({
     upgradeCommandName:

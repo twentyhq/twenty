@@ -1,7 +1,5 @@
 import { isAiChatUserCreditsExhausted } from '@/ai-chat/usage/utils/isAiChatUserCreditsExhausted';
 
-const periodEnd = '2026-10-26T00:00:00.000Z';
-
 describe('isAiChatUserCreditsExhausted', () => {
   it.each<[number | null, boolean]>([
     [1000000, false],
@@ -12,7 +10,6 @@ describe('isAiChatUserCreditsExhausted', () => {
       isAiChatUserCreditsExhausted({
         limitValue: 4160000,
         consumedValue,
-        periodEnd,
       }),
     ).toBe(expected);
   });

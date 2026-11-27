@@ -13,6 +13,7 @@ import { createLinkedinPerson } from 'src/logic-functions/utils/create-linkedin-
 import { hasPersonNamedLikeLinkedinUser } from 'src/logic-functions/utils/has-person-named-like-linkedin-user.util';
 import { importLinkedinMessageAttachments } from 'src/logic-functions/utils/import-linkedin-message-attachments.util';
 import { isLinkedinContactCreationAllowed } from 'src/logic-functions/utils/is-linkedin-contact-creation-allowed.util';
+import { isLinkedinChatSelected } from 'src/logic-functions/utils/is-linkedin-chat-selected.util';
 import { isLinkedinGroupChat } from 'src/logic-functions/utils/is-linkedin-group-chat.util';
 import { mapUnipileMessageToIngestMessage } from 'src/logic-functions/utils/map-unipile-message-to-ingest-message.util';
 import { matchLinkedinParticipantPersonId } from 'src/logic-functions/utils/match-linkedin-participant-person-id.util';
@@ -47,7 +48,8 @@ const resolvePersonIdByHandle = async ({
   | undefined
 > => {
   const isContactRequired =
-    settings.importPolicy === 'CONTACTS_ONLY' || isGroupChat;
+    settings.importPolicy === 'CONTACTS_ONLY' ||
+    (isGroupChat && settings.importPolicy !== 'SELECTED');
   const resolvedCounterparts = await Promise.all(
     counterparts.map((counterpart) =>
       resolveCounterpart({
@@ -177,8 +179,8 @@ export const ingestLinkedinMessages = async ({
     importedAttachmentCount: 0,
   };
 
-  if (isGroupChat && !settings.areGroupChatsImported) {
-    return { ...emptyResult, skippedReason: 'GROUP_CHATS_OFF' };
+  if (!isLinkedinChatSelected({ settings, chatId: chat.id })) {
+    return { ...emptyResult, skippedReason: 'NOT_SELECTED' };
   }
 
   const ingestableMessages = messages.filter(

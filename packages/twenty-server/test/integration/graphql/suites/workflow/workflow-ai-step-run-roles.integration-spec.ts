@@ -224,11 +224,6 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
       settings: { outputSchema: {} },
       nextStepIds: [step.id],
     };
-    const [{ workspaceWorkflowVersionId }] = await global.testDataSource.query(
-      `SELECT "workspaceWorkflowVersionId" FROM core."workflowVersion" WHERE id = $1`,
-      [coreWorkflowVersionId],
-    );
-
     await global.testDataSource.query(
       `UPDATE core."workflowVersion" SET triggers = $2, steps = $3, status = 'ACTIVE' WHERE id = $1`,
       [
@@ -238,8 +233,8 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
       ],
     );
     await global.testDataSource.query(
-      `UPDATE core.workflow SET "lastPublishedCoreWorkflowVersionId" = $2, "lastPublishedVersionId" = $3 WHERE id = $1`,
-      [coreWorkflowId, coreWorkflowVersionId, workspaceWorkflowVersionId],
+      `UPDATE core.workflow SET "lastPublishedCoreWorkflowVersionId" = $2 WHERE id = $1`,
+      [coreWorkflowId, coreWorkflowVersionId],
     );
 
     return coreWorkflowVersionId;

@@ -16,6 +16,7 @@ import {
   CommonInput,
   CommonQueryNames,
   UpdateManyQueryArgs,
+  UpdateOneQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
@@ -37,6 +38,23 @@ export class CommonUpdateManyQueryRunnerService extends CommonRecordQueryRunnerS
       selection: args.selectedFieldsResult,
       kind: 'update',
       data: args.data,
+    });
+  }
+
+  async runOnOneRecord(
+    args: Pick<
+      CommonExtendedInput<UpdateOneQueryArgs>,
+      'id' | 'data' | 'selectedFieldsResult'
+    >,
+    queryRunnerContext: CommonExtendedQueryRunnerContext,
+  ): Promise<CommonQueryRunResult<ObjectRecord[]>> {
+    return this.runFilteredMutation({
+      queryRunnerContext,
+      filter: { id: { eq: args.id } },
+      selection: args.selectedFieldsResult,
+      kind: 'update',
+      data: args.data,
+      shouldWriteAtLeastOneRecord: true,
     });
   }
 

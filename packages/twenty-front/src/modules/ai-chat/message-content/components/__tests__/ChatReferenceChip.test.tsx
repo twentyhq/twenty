@@ -12,7 +12,7 @@ import { ChatReferenceChip } from '@/ai-chat/message-content/components/ChatRefe
 import { TextWithChatReferences } from '@/ai-chat/message-content/components/TextWithChatReferences';
 import { ChatReferenceNavigationEnabledContext } from '@/ai-chat/message-content/contexts/ChatReferenceNavigationEnabledContext';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
-import { shouldOpenAiChatAfterOnboardingState } from '@/ai-chat/states/shouldOpenAiChatAfterOnboardingState';
+import { isWorkspaceSetupChatActiveState } from '@/ai-chat/states/isWorkspaceSetupChatActiveState';
 import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
 import {
   FindManySkillsForSuggestionDocument,
@@ -199,10 +199,7 @@ const renderWithReferences = (
         twoFactorAuthenticationMethodSummary: [],
         objectRecordsPermissions: [],
       });
-      store.set(
-        shouldOpenAiChatAfterOnboardingState.atom,
-        isWorkspaceSetupChat,
-      );
+      store.set(isWorkspaceSetupChatActiveState.atom, isWorkspaceSetupChat);
     },
   });
 

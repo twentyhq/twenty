@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/constants/no-role-records-permissions.constant';
-import { followUpdateWhenCreatePermissionIsDisabled } from 'src/engine/permissions/internal/role/utils/follow-update-when-create-permission-is-disabled.util';
 import { computePrincipalsRecordsPermissions } from 'src/engine/permissions/internal/role/utils/compute-principals-records-permissions.util';
+import { buildTemporaryChannelWriteAccess } from 'src/engine/permissions/channel-visibility/utils/build-temporary-channel-write-access.util';
 import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -36,21 +36,21 @@ export class SettingPermissionsService {
     workspaceId: string;
   }): Promise<UserWorkspacePermissions> {
     const {
-      featureFlagsMap,
       userWorkspaceRoleMap,
       flatRoleMaps,
       flatRolePermissionFlagMaps,
       rolesPermissions,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
+      featureFlagsMap,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-      'featureFlagsMap',
       'userWorkspaceRoleMap',
       'flatRoleMaps',
       'flatRolePermissionFlagMaps',
       'rolesPermissions',
       'flatObjectMetadataMaps',
       'flatFieldMetadataMaps',
+      'featureFlagsMap',
     ]);
 
     const roleIds = findUserWorkspaceRoleIdsOrThrow({
@@ -74,17 +74,20 @@ export class SettingPermissionsService {
 
     return {
       permissionFlags,
-      recordsPermissions: followUpdateWhenCreatePermissionIsDisabled({
-        recordsPermissions: computePrincipalsRecordsPermissions({
-          principals: buildRolePermissionsPrincipals({
-            workspaceId,
-            roleIds,
-          }),
-          rolesPermissions,
-          flatObjectMetadataMaps,
-          flatFieldMetadataMaps,
+      recordsPermissions: computePrincipalsRecordsPermissions({
+        principals: buildRolePermissionsPrincipals({
+          workspaceId,
+          roleIds,
         }),
-        featureFlagsMap,
+        rolesPermissions,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        // TODO(@charlesBochet): remove after 2026-12-27. Temporary channel write access for admins and API keys, only to unblock customers who reported broken links, merges and deletes
+        temporaryChannelWriteAccess: buildTemporaryChannelWriteAccess({
+          featureFlagsMap,
+          flatRoleMaps,
+          flatObjectMetadataMaps,
+        }),
       }),
     };
   }

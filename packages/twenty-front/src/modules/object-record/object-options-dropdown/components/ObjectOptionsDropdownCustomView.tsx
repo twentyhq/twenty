@@ -176,9 +176,7 @@ export const ObjectOptionsDropdownCustomView = ({
               onClick={() => onContentChange('visibility')}
               startIcon={<IconShare />}
               description={
-                customViewData?.visibility === 'UNLISTED'
-                  ? t`Unlisted`
-                  : t`Workspace`
+                customViewData?.isPrivate ? t`Unlisted` : t`Workspace`
               }
               descriptionPlacement="end"
               hasSubmenu

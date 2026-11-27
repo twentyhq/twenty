@@ -7,6 +7,7 @@ import {
 } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { WORKSPACE_MIGRATION_ACTION_COUNT_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/workspace-migration-action-count-bucket-boundaries.constant';
@@ -44,6 +45,7 @@ type ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs = {
   allFlatEntityOperationByMetadataName: AllFlatEntityOperationByMetadataName;
   isSystemBuild?: boolean;
   applicationUniversalIdentifier: string;
+  authContext?: WorkspaceAuthContext;
   dryRun?: boolean;
   shouldDeferActions?: boolean;
 };
@@ -54,7 +56,9 @@ type ValidateBuildAndRunWorkspaceMigrationFromRecordArgs = {
   isSystemBuild?: boolean;
   applicationUniversalIdentifier: string;
   applicationDefaultRoleUniversalIdentifier?: string;
+  isMarketplaceApplication?: boolean;
   idByUniversalIdentifierByMetadataName?: IdByUniversalIdentifierByMetadataName;
+  authContext?: WorkspaceAuthContext;
   dryRun?: boolean;
   shouldDeferActions?: boolean;
 };
@@ -72,7 +76,9 @@ type ComputeAndRunWorkspaceMigrationFromResolvedOperationsArgs = {
   isSystemBuild: boolean;
   applicationUniversalIdentifier: string;
   applicationDefaultRoleUniversalIdentifier?: string;
+  isMarketplaceApplication?: boolean;
   providedIdByUniversalIdentifierByMetadataName?: IdByUniversalIdentifierByMetadataName;
+  authContext?: WorkspaceAuthContext;
   dryRun?: boolean;
   shouldDeferActions?: boolean;
 } & FlatEntityMapsBundle;
@@ -250,6 +256,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     workspaceId,
     isSystemBuild = false,
     applicationUniversalIdentifier,
+    authContext,
     dryRun,
     shouldDeferActions,
   }: ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs): Promise<
@@ -266,6 +273,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       workspaceId,
       isSystemBuild,
       applicationUniversalIdentifier,
+      authContext,
       dryRun,
       shouldDeferActions,
     });
@@ -298,6 +306,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     workspaceId,
     isSystemBuild = false,
     applicationUniversalIdentifier,
+    authContext,
     dryRun,
     shouldDeferActions,
   }: ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs): Promise<
@@ -314,6 +323,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       workspaceId,
       isSystemBuild,
       applicationUniversalIdentifier,
+      authContext,
       dryRun,
       shouldDeferActions,
       skipSideEffectExpandEngine: true,
@@ -326,7 +336,9 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     isSystemBuild = false,
     applicationUniversalIdentifier,
     applicationDefaultRoleUniversalIdentifier,
+    isMarketplaceApplication,
     idByUniversalIdentifierByMetadataName,
+    authContext,
     dryRun,
     shouldDeferActions,
     skipSideEffectExpandEngine,
@@ -385,8 +397,10 @@ export class WorkspaceMigrationValidateBuildAndRunService {
         isSystemBuild,
         applicationUniversalIdentifier,
         applicationDefaultRoleUniversalIdentifier,
+        isMarketplaceApplication,
         providedIdByUniversalIdentifierByMetadataName:
           idByUniversalIdentifierByMetadataName,
+        authContext,
         dryRun,
         shouldDeferActions,
         flatApplicationMaps,
@@ -407,7 +421,9 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     isSystemBuild,
     applicationUniversalIdentifier,
     applicationDefaultRoleUniversalIdentifier,
+    isMarketplaceApplication,
     providedIdByUniversalIdentifierByMetadataName,
+    authContext,
     dryRun,
     shouldDeferActions,
     flatApplicationMaps,
@@ -457,6 +473,8 @@ export class WorkspaceMigrationValidateBuildAndRunService {
         inferDeletionFromMissingEntities,
         applicationUniversalIdentifier,
         applicationDefaultRoleUniversalIdentifier,
+        isMarketplaceApplication,
+        authContext,
       },
       fromToAllFlatEntityMaps,
       workspaceId,
