@@ -1,5 +1,7 @@
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { useAvailableSettingsTabs } from '@/settings/hooks/useAvailableSettingsTabs';
+import { SETTINGS_APPLICATIONS_TABS } from '@/settings/applications/constants/SettingsApplicationsTabs';
 import { SETTINGS_DEVELOPERS_TABS } from '@/settings/developers/constants/SettingsDevelopersTabs';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
@@ -9,13 +11,12 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
-import { IconApps, IconShoppingBag, IconSparkle2 } from 'twenty-ui/icon';
+import { IconSparkle2 } from 'twenty-ui/icon';
 import coverDark from '~/pages/settings/applications/assets/cover-dark.png';
 import coverLight from '~/pages/settings/applications/assets/cover-light.png';
 import { SettingsApplicationsAvailableTab } from '~/pages/settings/applications/tabs/SettingsApplicationsAvailableTab';
 import { SettingsApplicationsInstalledAppsSection } from '@/settings/applications/components/SettingsApplicationsInstalledAppsSection';
 
-const APPLICATIONS_TAB_LIST_ID = 'applications-tab-list';
 const APPLICATIONS_HERO_INSTANCE_ID_PREFIX = 'settings-applications-hero';
 // Docs and older links still point to the developer tab that moved to the Developers page
 const LEGACY_DEVELOPER_TAB_HASH = '#developer';
@@ -24,26 +25,18 @@ export const SettingsApplications = () => {
   const { t } = useLingui();
   const location = useLocation();
 
-  const tabs = [
-    {
-      id: 'marketplace',
-      title: t`Marketplace`,
-      Icon: IconShoppingBag,
-      pill: t`Beta`,
-    },
-    { id: 'installed', title: t`Installed`, Icon: IconApps },
-  ];
+  const tabs = useAvailableSettingsTabs(SETTINGS_APPLICATIONS_TABS.TABS);
 
   const activeTabId = useSettingsActiveTabId(
-    APPLICATIONS_TAB_LIST_ID,
+    SETTINGS_APPLICATIONS_TABS.COMPONENT_INSTANCE_ID,
     tabs.map((tab) => tab.id),
   );
 
   const renderActiveTabContent = () => {
     switch (activeTabId) {
-      case 'marketplace':
+      case SETTINGS_APPLICATIONS_TABS.TABS_IDS.MARKETPLACE:
         return <SettingsApplicationsAvailableTab />;
-      case 'installed':
+      case SETTINGS_APPLICATIONS_TABS.TABS_IDS.INSTALLED:
         return <SettingsApplicationsInstalledAppsSection />;
       default:
         return <SettingsApplicationsAvailableTab />;
@@ -66,7 +59,7 @@ export const SettingsApplications = () => {
         <SettingsTabBar
           aria-label={t`Applications`}
           tabs={tabs}
-          componentInstanceId={APPLICATIONS_TAB_LIST_ID}
+          componentInstanceId={SETTINGS_APPLICATIONS_TABS.COMPONENT_INSTANCE_ID}
         />
       }
       links={[

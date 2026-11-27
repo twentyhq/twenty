@@ -99,6 +99,7 @@ export const getSettingsSearchDestinations = ({
         const [defaultTab, ...otherTabs] = getAvailableSettingsTabs({
           tabs: metadata.tabs ?? [],
           permissionFlagMap: availability.permissionFlagMap,
+          featureFlagsMap: availability.featureFlagsMap,
         });
 
         const keywords = [

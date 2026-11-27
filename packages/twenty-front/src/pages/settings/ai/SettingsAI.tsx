@@ -1,5 +1,4 @@
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
-import { getSettingsAiTabs } from '@/settings/ai/utils/getSettingsAiTabs';
 import { SettingsAiWorkspaceAssistantSection } from '~/pages/settings/ai/components/SettingsAiWorkspaceAssistantSection';
 
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
@@ -8,7 +7,6 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
@@ -18,6 +16,7 @@ import { SettingsAgentSkillsTab } from '~/pages/settings/ai/components/SettingsA
 import { SettingsAgentToolsTab } from '~/pages/settings/ai/components/SettingsAgentToolsTab';
 import { SettingsAiModelsTab } from '~/pages/settings/ai/components/SettingsAiModelsTab';
 import { SettingsAiUsageTab } from '~/pages/settings/ai/components/SettingsAiUsageTab';
+import { useAvailableSettingsTabs } from '@/settings/hooks/useAvailableSettingsTabs';
 import { SETTINGS_AI_TABS } from '@/settings/ai/constants/SettingsAiTabs';
 import McpCoverDark from '@/settings/mcp/assets/mcp-cover-dark.png';
 import McpCoverLight from '@/settings/mcp/assets/mcp-cover-light.png';
@@ -29,10 +28,7 @@ import { SettingsAiWorkspaceBehaviorSection } from '~/pages/settings/ai/componen
 import { SettingsAiMcpSection } from '~/pages/settings/ai/components/SettingsAiMcpSection';
 import { SettingsAiWorkspaceInstructionsSection } from '~/pages/settings/ai/components/SettingsAiWorkspaceInstructionsSection';
 import { SettingsAiSystemPromptsSection } from '~/pages/settings/ai/components/SettingsAiSystemPromptsSection';
-import {
-  FeatureFlagKey,
-  PermissionFlagType,
-} from '~/generated-metadata/graphql';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { useLingui } from '@lingui/react/macro';
 
 const AI_HERO_LIGHT = '/images/ai/ai-tools-cover-light.png';
@@ -44,10 +40,7 @@ export const SettingsAI = () => {
   const { t } = useLingui();
   const { handleCreateTool, isCreatingTool } = useCreateTool();
   const canReadSystemPrompts = useHasPermissionFlag(PermissionFlagType.AI);
-  const isInboxEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
-  );
-  const tabs = getSettingsAiTabs(isInboxEnabled);
+  const tabs = useAvailableSettingsTabs(SETTINGS_AI_TABS.TABS);
   const activeTabId = useSettingsActiveTabId(
     SETTINGS_AI_TABS.COMPONENT_INSTANCE_ID,
     tabs.map((tab) => tab.id),

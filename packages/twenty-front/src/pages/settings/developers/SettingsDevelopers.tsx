@@ -10,6 +10,7 @@ import PlaygroundCoverLight from '@/settings/developers/assets/cover-light.png';
 import { PlaygroundSetupForm } from '@/settings/developers/components/PlaygroundSetupForm';
 import { SettingsApiKeysTable } from '@/settings/developers/components/SettingsApiKeysTable';
 import { SettingsWebhooksTable } from '@/settings/developers/components/SettingsWebhooksTable';
+import { useAvailableSettingsTabs } from '@/settings/hooks/useAvailableSettingsTabs';
 import { SETTINGS_DEVELOPERS_TABS } from '@/settings/developers/constants/SettingsDevelopersTabs';
 import { TableFooter } from '@/ui/layout/table/components/TableFooter';
 import { styled } from '@linaria/react';
@@ -46,13 +47,9 @@ const StyledTableContainer = styled.div<{ isMobile?: boolean }>`
 
 export const SettingsDevelopers = () => {
   const isMobile = useIsMobile();
-  const { t, i18n } = useLingui();
+  const { t } = useLingui();
 
-  const tabs = SETTINGS_DEVELOPERS_TABS.TABS.map(({ id, title, Icon }) => ({
-    id,
-    title: i18n._(title),
-    Icon,
-  }));
+  const tabs = useAvailableSettingsTabs(SETTINGS_DEVELOPERS_TABS.TABS);
 
   const activeTab: TabKey =
     (useSettingsActiveTabId(

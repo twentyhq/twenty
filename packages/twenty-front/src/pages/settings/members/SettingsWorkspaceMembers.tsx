@@ -9,10 +9,8 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
+import { useAvailableSettingsTabs } from '@/settings/hooks/useAvailableSettingsTabs';
 import { SETTINGS_WORKSPACE_MEMBERS_TABS } from '@/settings/members/constants/SettingsWorkspaceMembersTabs';
-import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
-import { getAvailableSettingsTabs } from '@/settings/utils/getAvailableSettingsTabs';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import coverDark from '~/pages/settings/members/assets/cover-dark.png';
 import coverLight from '~/pages/settings/members/assets/cover-light.png';
 import { SettingsWorkspaceMembersInviteTab } from '~/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab';
@@ -22,14 +20,9 @@ import { SettingsWorkspaceMembersTeamTab } from '~/pages/settings/members/tabs/S
 const SETTINGS_MEMBERS_HERO_INSTANCE_ID_PREFIX = 'settings-members-hero';
 
 export const SettingsWorkspaceMembers = () => {
-  const { t, i18n } = useLingui();
+  const { t } = useLingui();
 
-  const permissionFlagMap = useAtomStateValue(permissionFlagMapSelector);
-
-  const tabs = getAvailableSettingsTabs({
-    tabs: SETTINGS_WORKSPACE_MEMBERS_TABS.TABS,
-    permissionFlagMap,
-  }).map(({ id, title, Icon }) => ({ id, title: i18n._(title), Icon }));
+  const tabs = useAvailableSettingsTabs(SETTINGS_WORKSPACE_MEMBERS_TABS.TABS);
 
   const activeTabId = useSettingsActiveTabId(
     SETTINGS_WORKSPACE_MEMBERS_TABS.COMPONENT_INSTANCE_ID,

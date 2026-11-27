@@ -79,13 +79,18 @@ describe('getSettingsSearchDestinations', () => {
   });
 
   it('hides billing destinations when billing is disabled', () => {
-    const titles = getTitles(
-      getDestinations({ ...FULL_AVAILABILITY, isBillingEnabled: false }),
+    expect(getDestinations().map(({ path }) => path)).toContain(
+      '/settings/billing/limits',
     );
 
-    for (const title of ['Billing', 'Plans', 'Limits', 'Usage']) {
-      expect(titles).not.toContain(title);
-    }
+    const paths = getDestinations({
+      ...FULL_AVAILABILITY,
+      isBillingEnabled: false,
+    }).map(({ path }) => path);
+
+    expect(
+      paths.filter((path) => path.startsWith('/settings/billing')),
+    ).toEqual([]);
   });
 
   it('lists the admin panel only when its routes exist', () => {
@@ -175,5 +180,18 @@ describe('getSettingsSearchDestinations', () => {
       searchSettingsDestinations({ destinations: getDestinations(), search })[0]
         ?.path,
     ).toBe(path);
+  });
+
+  it('applies the tab feature flag on top of the page guard', () => {
+    const getAiTabPaths = (featureFlagsMap: Record<string, boolean>) =>
+      getDestinations({ ...FULL_AVAILABILITY, featureFlagsMap })
+        .map(({ path }) => path)
+        .filter((path) => path.startsWith('/settings/ai#'));
+
+    expect(getAiTabPaths({})).not.toContain('/settings/ai#mcp');
+    expect(getAiTabPaths({})).toContain('/settings/ai#models');
+    expect(getAiTabPaths({ IS_AI_CHAT_INBOX_ENABLED: true })).toContain(
+      '/settings/ai#mcp',
+    );
   });
 });
