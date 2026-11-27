@@ -1,3 +1,4 @@
+import { LEGACY_INBOX_NAMES_BY_LEGACY_NAME } from '@/ai-chat/constants/LegacyInboxNamesByLegacyName';
 import { AiChatTestInstance } from '@/ai-chat/testing/AiChatTestInstance';
 import { type MockedResponse } from '@apollo/client/testing';
 import { useApolloClient } from '@apollo/client/react';
@@ -397,7 +398,7 @@ describe('useSendAiChatMessage', () => {
         getMockObjectMetadataItemOrThrow('company'),
         {
           ...getMockObjectMetadataItemOrThrow('note'),
-          nameSingular: StandardObjectNameSingular.AgentChatThread,
+          nameSingular: LEGACY_INBOX_NAMES_BY_LEGACY_NAME.agentChatThread,
           namePlural: 'agentChatThreads',
         },
       ],

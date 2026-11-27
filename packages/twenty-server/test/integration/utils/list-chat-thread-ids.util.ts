@@ -9,8 +9,8 @@ export const listChatThreadIds = async (
 ): Promise<string[]> => {
   const response = await makeGraphqlApiRequest(
     findManyOperationFactory({
-      objectMetadataSingularName: 'agentChatThread',
-      objectMetadataPluralName: 'agentChatThreads',
+      objectMetadataSingularName: 'inboxThread',
+      objectMetadataPluralName: 'inboxThreads',
       gqlFields: 'id',
       filter: {
         or: [{ deletedAt: { is: 'NULL' } }, { deletedAt: { is: 'NOT_NULL' } }],
@@ -27,7 +27,7 @@ export const listChatThreadIds = async (
     );
   }
 
-  return response.body.data.agentChatThreads.edges.map(
+  return response.body.data.inboxThreads.edges.map(
     ({ node }: { node: { id: string } }) => node.id,
   );
 };

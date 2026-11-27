@@ -65,7 +65,7 @@ export const readAssigneeId = async (
 ): Promise<string | null> => {
   const [{ assigneeId }]: { assigneeId: string | null }[] =
     await global.testDataSource.query(
-      `SELECT "assigneeId" FROM ${SCHEMA}."agentChatThread" WHERE id = $1`,
+      `SELECT "assigneeId" FROM ${SCHEMA}."inboxThread" WHERE id = $1`,
       [threadId],
     );
 
@@ -172,8 +172,8 @@ export const findThreadParticipants = async (
 ): Promise<(Participant & { workspaceMemberId: string })[] | undefined> => {
   const response = await makeGraphqlApiRequest(
     findManyOperationFactory({
-      objectMetadataSingularName: 'agentChatThread',
-      objectMetadataPluralName: 'agentChatThreads',
+      objectMetadataSingularName: 'inboxThread',
+      objectMetadataPluralName: 'inboxThreads',
       gqlFields: `id participants { edges { node { ${PARTICIPANT_FIELDS} workspaceMemberId } } }`,
       filter: { id: { eq: threadId } },
     }),
@@ -182,7 +182,7 @@ export const findThreadParticipants = async (
 
   expect(response.body.errors).toBeUndefined();
 
-  const [thread] = response.body.data.agentChatThreads.edges;
+  const [thread] = response.body.data.inboxThreads.edges;
 
   return thread?.node.participants.edges.map(
     ({ node }: { node: Participant & { workspaceMemberId: string } }) => node,
@@ -211,7 +211,7 @@ export const readThreadActivity = async (threadId: string) => {
     writerWorkspaceMemberIds: string[] | null;
   }[] = await global.testDataSource.query(
     `SELECT "lastActivityAt", "lastMessageText", "lastMessageSenderWorkspaceMemberId", "writerWorkspaceMemberIds"
-     FROM ${SCHEMA}."agentChatThread" WHERE id = $1`,
+     FROM ${SCHEMA}."inboxThread" WHERE id = $1`,
     [threadId],
   );
 
@@ -250,7 +250,7 @@ export const findParticipantEvents = (
     .map(([batchEvent]) => batchEvent)
     .filter(
       (batchEvent) =>
-        batchEvent?.objectMetadataNameSingular === 'agentChatThreadParticipant',
+        batchEvent?.objectMetadataNameSingular === 'inboxThreadParticipant',
     )
     .flatMap((batchEvent) =>
       (
@@ -272,8 +272,8 @@ export const listParticipantRecordIds = async (
 ): Promise<string[]> => {
   const response = await makeGraphqlApiRequest(
     findManyOperationFactory({
-      objectMetadataSingularName: 'agentChatThreadParticipant',
-      objectMetadataPluralName: 'agentChatThreadParticipants',
+      objectMetadataSingularName: 'inboxThreadParticipant',
+      objectMetadataPluralName: 'inboxThreadParticipants',
       gqlFields: 'id',
       first: 200,
     }),
@@ -282,7 +282,7 @@ export const listParticipantRecordIds = async (
 
   expect(response.body.errors).toBeUndefined();
 
-  return response.body.data.agentChatThreadParticipants.edges.map(
+  return response.body.data.inboxThreadParticipants.edges.map(
     ({ node }: { node: { id: string } }) => node.id,
   );
 };

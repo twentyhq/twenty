@@ -926,6 +926,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'agentMessages',
+      name: 'inboxMessages',
       label: i18nLabel(
         msg({ message: `Chat messages`, context: 'fieldMetadata.label' }),
       ),
@@ -956,6 +957,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'agentChatThreads',
+      name: 'inboxThreads',
       label: i18nLabel(
         msg({ message: `Chat threads`, context: 'fieldMetadata.label' }),
       ),
@@ -986,6 +988,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'agentChatThreadParticipants',
+      name: 'inboxThreadParticipants',
       label: i18nLabel(
         msg({
           message: `Chat thread participations`,
@@ -1019,6 +1022,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'agentMessageReactions',
+      name: 'inboxMessageReactions',
       label: i18nLabel(
         msg({
           message: `Chat message reactions`,
@@ -1052,6 +1056,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'assignedAgentChatThreads',
+      name: 'assignedInboxThreads',
       label: i18nLabel(
         msg({
           message: `Assigned chat threads`,

@@ -94,7 +94,7 @@ const insertMessage = async ({
   const messageId = randomUUID();
 
   await global.testDataSource.query(
-    `INSERT INTO ${SCHEMA}."agentMessage" (id, "threadId", role, status, "senderWorkspaceMemberId", "processedAt")
+    `INSERT INTO ${SCHEMA}."inboxMessage" (id, "threadId", role, status, "senderWorkspaceMemberId", "processedAt")
      VALUES ($1, $2, $3, 'sent', $4, now())`,
     [messageId, threadId, role, WORKSPACE_MEMBER_DATA_SEED_IDS.JANE],
   );
@@ -105,7 +105,7 @@ const insertMessage = async ({
 const readThreadActivity = async (threadId: string) => {
   const [row]: { lastActivityAt: Date; updatedAt: Date }[] =
     await global.testDataSource.query(
-      `SELECT "lastActivityAt", "updatedAt" FROM ${SCHEMA}."agentChatThread" WHERE id = $1`,
+      `SELECT "lastActivityAt", "updatedAt" FROM ${SCHEMA}."inboxThread" WHERE id = $1`,
       [threadId],
     );
 
@@ -390,7 +390,7 @@ describe('Chat message reactions through the authenticated API', () => {
 
     const [{ reactionCount }]: { reactionCount: number }[] =
       await global.testDataSource.query(
-        `SELECT COUNT(*)::int AS "reactionCount" FROM ${SCHEMA}."agentMessageReaction"
+        `SELECT COUNT(*)::int AS "reactionCount" FROM ${SCHEMA}."inboxMessageReaction"
          WHERE "messageId" = $1 AND "deletedAt" IS NULL`,
         [messageId],
       );

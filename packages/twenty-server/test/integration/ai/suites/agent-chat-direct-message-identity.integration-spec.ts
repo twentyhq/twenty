@@ -76,7 +76,7 @@ describe('Canonical direct message identity', () => {
         '"lastActivityAt"',
         '"deletedAt"',
       ])
-      .from(`${context.schema}.agentChatThread`, 'thread')
+      .from(`${context.schema}.inboxThread`, 'thread')
       .where('id = :threadId', { threadId })
       .getRawOne<DirectMessageIdentity>();
 
@@ -102,7 +102,7 @@ describe('Canonical direct message identity', () => {
     const storedThreads = await global.testDataSource
       .createQueryBuilder()
       .select('id')
-      .from(`${context.schema}.agentChatThread`, 'thread')
+      .from(`${context.schema}.inboxThread`, 'thread')
       .where(
         '"directMessageFirstWorkspaceMemberId" = :firstWorkspaceMemberId',
         {
@@ -146,7 +146,7 @@ describe('Canonical direct message identity', () => {
         .createQueryBuilder()
         .delete()
         .from(
-          `${getWorkspaceSchemaName(SEED_YCOMBINATOR_WORKSPACE_ID)}.agentChatThread`,
+          `${getWorkspaceSchemaName(SEED_YCOMBINATOR_WORKSPACE_ID)}.inboxThread`,
         )
         .where('id = :threadId', { threadId: otherWorkspacePair })
         .execute();
@@ -158,7 +158,7 @@ describe('Canonical direct message identity', () => {
     const identity = await global.testDataSource
       .createQueryBuilder()
       .select(`thread."${IS_PRIVATE_COLUMN_NAME}"`, 'isPrivate')
-      .from(`${context.schema}.agentChatThread`, 'thread')
+      .from(`${context.schema}.inboxThread`, 'thread')
       .where('thread.id = :threadId', { threadId })
       .getRawOne<{ isPrivate: boolean }>();
 
@@ -189,13 +189,13 @@ describe('Canonical direct message identity', () => {
       global.testDataSource
         .createQueryBuilder()
         .select('id')
-        .from(`${context.schema}.agentChatThreadParticipant`, 'participant')
+        .from(`${context.schema}.inboxThreadParticipant`, 'participant')
         .where('"threadId" = :threadId', { threadId })
         .getRawMany<{ id: string }>(),
       global.testDataSource
         .createQueryBuilder()
         .select('id')
-        .from(`${context.schema}.agentMessage`, 'message')
+        .from(`${context.schema}.inboxMessage`, 'message')
         .where('"threadId" = :threadId', { threadId })
         .getRawMany<{ id: string }>(),
       global.testDataSource
@@ -223,7 +223,7 @@ describe('Canonical direct message identity', () => {
       global.testDataSource
         .createQueryBuilder()
         .insert()
-        .into(`${context.schema}.agentChatThread`)
+        .into(`${context.schema}.inboxThread`)
         .values({
           id: randomUUID(),
           conversationType: AgentChatThreadConversationType.DIRECT_MESSAGE,
@@ -241,7 +241,7 @@ describe('Canonical direct message identity', () => {
 
     await global.testDataSource
       .createQueryBuilder()
-      .update(`${context.schema}.agentChatThread`)
+      .update(`${context.schema}.inboxThread`)
       .set({ deletedAt: new Date() })
       .where('id = :threadId', { threadId })
       .execute();
@@ -257,7 +257,7 @@ describe('Canonical direct message identity', () => {
 
     await global.testDataSource
       .createQueryBuilder()
-      .update(`${context.schema}.agentChatThread`)
+      .update(`${context.schema}.inboxThread`)
       .set({ isAssistantParticipant: true })
       .where('id = :threadId', { threadId })
       .execute();
@@ -356,7 +356,7 @@ describe('Canonical direct message identity', () => {
     const threadId = await context.createThread();
     const response = await makeGraphqlApiRequest(
       updateOneOperationFactory({
-        objectMetadataSingularName: 'agentChatThread',
+        objectMetadataSingularName: 'inboxThread',
         gqlFields: 'id',
         recordId: threadId,
         data: { [fieldName]: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY },

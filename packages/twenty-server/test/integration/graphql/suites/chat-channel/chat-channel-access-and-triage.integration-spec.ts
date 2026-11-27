@@ -289,7 +289,7 @@ describe('Chat channel access and triage through the authenticated API', () => {
     });
 
     await queryRunner.query(
-      `UPDATE ${SCHEMA}."agentChatThread" SET "channelId" = $1 WHERE id = $2`,
+      `UPDATE ${SCHEMA}."inboxThread" SET "channelId" = $1 WHERE id = $2`,
       [channelId, threadId],
     );
     await insertChannelGrant({
@@ -416,7 +416,7 @@ describe('Chat channel access and triage through the authenticated API', () => {
     });
 
     await queryRunner.query(
-      `UPDATE ${SCHEMA}."agentChatThread" SET "channelId" = $1 WHERE id = $2`,
+      `UPDATE ${SCHEMA}."inboxThread" SET "channelId" = $1 WHERE id = $2`,
       [channelId, threadId],
     );
     await insertChannelGrant({
@@ -809,7 +809,7 @@ describe('Chat channel access and triage through the authenticated API', () => {
     const snoozedUntil = new Date(Date.now() - 1000);
 
     await global.testDataSource.query(
-      `UPDATE ${SCHEMA}."agentChatThread" SET "channelSnoozedUntil" = $2 WHERE id = $1`,
+      `UPDATE ${SCHEMA}."inboxThread" SET "channelSnoozedUntil" = $2 WHERE id = $1`,
       [threadId, snoozedUntil],
     );
 

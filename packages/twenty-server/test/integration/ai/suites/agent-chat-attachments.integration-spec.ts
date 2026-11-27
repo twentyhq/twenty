@@ -78,7 +78,7 @@ describe('Chat message attachments with real storage', () => {
     expect(
       await global.testDataSource.query(
         `SELECT "fileId", "fileFilename"
-         FROM "${context.schema}"."agentMessagePart"
+         FROM "${context.schema}"."inboxMessagePart"
          WHERE "messageId" = $1 AND type = 'file'`,
         [messageId],
       ),
@@ -108,7 +108,7 @@ describe('Chat message attachments with real storage', () => {
       );
       expect(
         await global.testDataSource.query(
-          `SELECT id FROM "${context.schema}"."agentMessage" WHERE "threadId" = $1`,
+          `SELECT id FROM "${context.schema}"."inboxMessage" WHERE "threadId" = $1`,
           [threadId],
         ),
       ).toEqual([]);
@@ -132,7 +132,7 @@ describe('Chat message attachments with real storage', () => {
     expect(response.body.errors?.[0]?.extensions?.code).toBe('BAD_USER_INPUT');
     expect(
       await global.testDataSource.query(
-        `SELECT id FROM "${context.schema}"."agentChatThread" WHERE id = $1`,
+        `SELECT id FROM "${context.schema}"."inboxThread" WHERE id = $1`,
         [threadId],
       ),
     ).toEqual([]);
@@ -143,7 +143,7 @@ describe('Chat message attachments with real storage', () => {
     const deletedAt = new Date('2026-01-01T00:00:00.000Z');
 
     await global.testDataSource.query(
-      `UPDATE "${context.schema}"."agentChatThread" SET "deletedAt" = $2 WHERE id = $1`,
+      `UPDATE "${context.schema}"."inboxThread" SET "deletedAt" = $2 WHERE id = $1`,
       [threadId, deletedAt],
     );
 
@@ -199,7 +199,7 @@ describe('Chat message attachments with real storage', () => {
       ] as never,
     });
     await global.testDataSource.query(
-      `UPDATE "${context.schema}"."agentChatThread" SET "pendingQuestionMessageId" = $2 WHERE id = $1`,
+      `UPDATE "${context.schema}"."inboxThread" SET "pendingQuestionMessageId" = $2 WHERE id = $1`,
       [threadId, assistantMessageId],
     );
 
@@ -213,9 +213,9 @@ describe('Chat message attachments with real storage', () => {
     expect(
       await global.testDataSource.query(
         `SELECT thread."pendingQuestionMessageId", turn.status, part."toolOutput"
-         FROM "${context.schema}"."agentChatThread" thread
+         FROM "${context.schema}"."inboxThread" thread
          JOIN "${context.schema}"."agentTurn" turn ON turn.id = $2
-         JOIN "${context.schema}"."agentMessagePart" part ON part."messageId" = $3
+         JOIN "${context.schema}"."inboxMessagePart" part ON part."messageId" = $3
          WHERE thread.id = $1`,
         [threadId, userMessage.turnId, assistantMessageId],
       ),

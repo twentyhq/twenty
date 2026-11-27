@@ -40,7 +40,7 @@ describe('buildHideAskAiInSidePanelCommandMenuItemUpdate', () => {
     expect(
       STANDARD_COMMAND_MENU_ITEMS.askAi.conditionalAvailabilityExpression,
     ).toBe(
-      'permissionFlags.AI and not isInSidePanel and objectMetadataItem.nameSingular != "agentChatThread"',
+      'permissionFlags.AI and not isInSidePanel and objectMetadataItem.nameSingular != "inboxThread"',
     );
   });
 

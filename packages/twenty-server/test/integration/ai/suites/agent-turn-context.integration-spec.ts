@@ -153,7 +153,7 @@ describe('what an agent turn offers the model (integration)', () => {
 
     await expectEventually(async () => {
       const [assistantMessage] = await global.testDataSource.query(
-        `SELECT id FROM "${schema}"."agentMessage" WHERE "threadId" = $1 AND role = 'assistant'`,
+        `SELECT id FROM "${schema}"."inboxMessage" WHERE "threadId" = $1 AND role = 'assistant'`,
         [threadId],
       );
 

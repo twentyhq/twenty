@@ -69,12 +69,12 @@ describe('Record API chat creation initializes personal inbox state', () => {
     threadAction: DatabaseEventAction;
   }) => {
     const participantCreatedIndex = events.indexOf(
-      `agentChatThreadParticipant ${DatabaseEventAction.CREATED}`,
+      `inboxThreadParticipant ${DatabaseEventAction.CREATED}`,
     );
 
     expect(participantCreatedIndex).toBeGreaterThanOrEqual(0);
     expect(participantCreatedIndex).toBeLessThan(
-      events.lastIndexOf(`agentChatThread ${threadAction}`),
+      events.lastIndexOf(`inboxThread ${threadAction}`),
     );
   };
 
@@ -98,7 +98,7 @@ describe('Record API chat creation initializes personal inbox state', () => {
     const readCreationEvents = observeCreationEvents();
     const response = await makeGraphqlApiRequest(
       createOneOperationFactory({
-        objectMetadataSingularName: 'agentChatThread',
+        objectMetadataSingularName: 'inboxThread',
         gqlFields: 'id',
         data: { title: 'Created through the record API' },
       }),
@@ -106,7 +106,7 @@ describe('Record API chat creation initializes personal inbox state', () => {
 
     expect(response.body.errors).toBeUndefined();
     const threadId = context.registerThread(
-      response.body.data.createAgentChatThread.id,
+      response.body.data.createInboxThread.id,
     );
 
     await expectCreatorInboxState(threadId);
@@ -119,8 +119,8 @@ describe('Record API chat creation initializes personal inbox state', () => {
   it('initializes each conversation returned by createMany', async () => {
     const response = await makeGraphqlApiRequest(
       createManyOperationFactory({
-        objectMetadataSingularName: 'agentChatThread',
-        objectMetadataPluralName: 'agentChatThreads',
+        objectMetadataSingularName: 'inboxThread',
+        objectMetadataPluralName: 'inboxThreads',
         gqlFields: 'id',
         data: [
           { title: 'Created in a batch' },
@@ -132,7 +132,7 @@ describe('Record API chat creation initializes personal inbox state', () => {
     expect(response.body.errors).toBeUndefined();
 
     const createdThreads: { id: string }[] =
-      response.body.data.createAgentChatThreads;
+      response.body.data.createInboxThreads;
     const threadIds = createdThreads.map(({ id }) =>
       context.registerThread(id),
     );

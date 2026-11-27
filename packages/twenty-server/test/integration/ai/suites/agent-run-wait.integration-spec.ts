@@ -104,8 +104,8 @@ const findSuspensionEventually = async (
 
 const findWaitCallStatus = async (threadId: string) => {
   const [part] = await global.testDataSource.query(
-    `SELECT part."toolOutput"->'result'->>'status' AS status FROM "${schema}"."agentMessagePart" part
-     JOIN "${schema}"."agentMessage" message ON message.id = part."messageId"
+    `SELECT part."toolOutput"->'result'->>'status' AS status FROM "${schema}"."inboxMessagePart" part
+     JOIN "${schema}"."inboxMessage" message ON message.id = part."messageId"
      WHERE message."threadId" = $1 AND part."toolName" IN ('wait_for_duration', 'wait_for_event')`,
     [threadId],
   );
@@ -131,8 +131,8 @@ const findWaiters = async (threadId: string) =>
 const findUserMessageTexts = async (threadId: string) =>
   (
     await global.testDataSource.query(
-      `SELECT part."textContent" AS text FROM "${schema}"."agentMessagePart" part
-       JOIN "${schema}"."agentMessage" message ON message.id = part."messageId"
+      `SELECT part."textContent" AS text FROM "${schema}"."inboxMessagePart" part
+       JOIN "${schema}"."inboxMessage" message ON message.id = part."messageId"
        WHERE message."threadId" = $1 AND message.role = 'user' AND part.type = 'text'
        ORDER BY message."createdAt"`,
       [threadId],
@@ -142,7 +142,7 @@ const findUserMessageTexts = async (threadId: string) =>
 const getStoredThread = async (threadId: string) => {
   const [thread]: AgentChatThreadWorkspaceEntity[] =
     await global.testDataSource.query(
-      `SELECT * FROM "${schema}"."agentChatThread" WHERE id = $1`,
+      `SELECT * FROM "${schema}"."inboxThread" WHERE id = $1`,
       [threadId],
     );
 
@@ -156,7 +156,7 @@ const holdConversation = async (threadId: string): Promise<string> => {
     'AgentChatStreamHeartbeatService',
   ).markClaimed(streamId);
   await global.testDataSource.query(
-    `UPDATE "${schema}"."agentChatThread" SET "activeStreamId" = $2 WHERE id = $1`,
+    `UPDATE "${schema}"."inboxThread" SET "activeStreamId" = $2 WHERE id = $1`,
     [threadId, streamId],
   );
 

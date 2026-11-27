@@ -138,12 +138,12 @@ describe('Chat participation through the authenticated API', () => {
         .addSelect(`message."${IS_PRIVATE_COLUMN_NAME}"`, 'messageIsPrivate')
         .addSelect('part.id', 'partId')
         .addSelect(`part."${IS_PRIVATE_COLUMN_NAME}"`, 'partIsPrivate')
-        .from(`${context.schema}.agentMessage`, 'message')
+        .from(`${context.schema}.inboxMessage`, 'message')
         .leftJoin(
           (queryBuilder) =>
             queryBuilder
               .select('*')
-              .from(`${context.schema}.agentMessagePart`, 'messagePart'),
+              .from(`${context.schema}.inboxMessagePart`, 'messagePart'),
           'part',
           'part."messageId" = message.id',
         )
@@ -205,7 +205,7 @@ describe('Chat participation through the authenticated API', () => {
     const message = await global.testDataSource
       .createQueryBuilder()
       .select('message."turnId"', 'turnId')
-      .from(`${context.schema}.agentMessage`, 'message')
+      .from(`${context.schema}.inboxMessage`, 'message')
       .where('message.id = :messageId', { messageId })
       .getRawOne<{ turnId: string }>();
 
@@ -345,7 +345,7 @@ describe('Chat participation through the authenticated API', () => {
       const hasCreatedThreadEvent = emit.mock.calls.some(
         ([event]) =>
           isDefined(event) &&
-          event.objectMetadataNameSingular === 'agentChatThread' &&
+          event.objectMetadataNameSingular === 'inboxThread' &&
           event.action === DatabaseEventAction.CREATED &&
           event.events.some(({ recordId }) => recordId === threadId),
       );
@@ -377,7 +377,7 @@ describe('Chat participation through the authenticated API', () => {
     const participant = await global.testDataSource
       .createQueryBuilder()
       .select('participant.id', 'id')
-      .from(`${context.schema}.agentChatThreadParticipant`, 'participant')
+      .from(`${context.schema}.inboxThreadParticipant`, 'participant')
       .where('participant."threadId" = :threadId', { threadId })
       .andWhere('participant."workspaceMemberId" = :workspaceMemberId', {
         workspaceMemberId,
@@ -389,7 +389,7 @@ describe('Chat participation through the authenticated API', () => {
       .filter(
         ([event]) =>
           isDefined(event) &&
-          event.objectMetadataNameSingular === 'agentChatThreadParticipant' &&
+          event.objectMetadataNameSingular === 'inboxThreadParticipant' &&
           event.events.some(({ recordId }) => recordId === participant.id),
       )
       .map(([event]) => event?.action);

@@ -107,8 +107,8 @@ const findThreads = async (
 ): Promise<LoadedThread[]> => {
   const response = await makeGraphqlApiRequest(
     findManyOperationFactory({
-      objectMetadataSingularName: 'agentChatThread',
-      objectMetadataPluralName: 'agentChatThreads',
+      objectMetadataSingularName: 'inboxThread',
+      objectMetadataPluralName: 'inboxThreads',
       gqlFields:
         'id conversationType lastActivityAt participants { edges { node { workspaceMemberId lastReadAt archivedAt snoozedUntil isSubscribed lastMentionedAt mentionsResolvedAt } } }',
       filter,
@@ -119,7 +119,7 @@ const findThreads = async (
 
   expect(response.body.errors).toBeUndefined();
 
-  return response.body.data.agentChatThreads.edges.map(
+  return response.body.data.inboxThreads.edges.map(
     ({ node }: { node: LoadedThread }) => node,
   );
 };

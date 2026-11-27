@@ -75,7 +75,7 @@ describe('Shared conversation API boundaries', () => {
     );
   const markDeleted = (threadId: string) =>
     global.testDataSource.query(
-      `UPDATE "${context.schema}"."agentChatThread" SET "deletedAt" = now() WHERE id = $1`,
+      `UPDATE "${context.schema}"."inboxThread" SET "deletedAt" = now() WHERE id = $1`,
       [threadId],
     );
   const observeRestores = (threadId: string) => {
@@ -88,7 +88,7 @@ describe('Shared conversation API boundaries', () => {
       emit.mock.calls.filter(
         ([event]) =>
           isDefined(event) &&
-          event.objectMetadataNameSingular === 'agentChatThread' &&
+          event.objectMetadataNameSingular === 'inboxThread' &&
           event.action === DatabaseEventAction.RESTORED &&
           event.events.some(({ recordId }) => recordId === threadId),
       );
@@ -188,7 +188,7 @@ describe('Shared conversation API boundaries', () => {
       accessLevel: RecordShareAccessLevel.READ,
     });
     await global.testDataSource.query(
-      `UPDATE "${context.schema}"."agentChatThread" SET "activeStreamId" = $2 WHERE id = $1`,
+      `UPDATE "${context.schema}"."inboxThread" SET "activeStreamId" = $2 WHERE id = $1`,
       [threadId, streamId],
     );
     const redis =
@@ -234,7 +234,7 @@ describe('Shared conversation API boundaries', () => {
     ).rejects.toBeDefined();
     expect((await context.readThread(threadId)).deletedAt).not.toBeNull();
     await global.testDataSource.query(
-      `UPDATE "${context.schema}"."agentChatThread" SET "deletedAt" = NULL, "activeStreamId" = NULL WHERE id = $1`,
+      `UPDATE "${context.schema}"."inboxThread" SET "deletedAt" = NULL, "activeStreamId" = NULL WHERE id = $1`,
       [threadId],
     );
     await context.share({
@@ -308,7 +308,7 @@ describe('Shared conversation API boundaries', () => {
     expect((await context.readThread(threadId)).deletedAt).not.toBeNull();
     expect(restores()).toHaveLength(0);
     const messages = await global.testDataSource.query(
-      `SELECT id FROM "${context.schema}"."agentMessage" WHERE id = $1`,
+      `SELECT id FROM "${context.schema}"."inboxMessage" WHERE id = $1`,
       [messageId],
     );
 
@@ -473,7 +473,7 @@ describe('Shared conversation API boundaries', () => {
     const [{ backendProcessId }]: { backendProcessId: number }[] =
       await runner.query('SELECT pg_backend_pid() AS "backendProcessId"');
     await runner.query(
-      `INSERT INTO "${context.schema}"."agentChatThread" (id, "workspaceMemberId", "_isPrivate") VALUES ($1, $2, true)`,
+      `INSERT INTO "${context.schema}"."inboxThread" (id, "workspaceMemberId", "_isPrivate") VALUES ($1, $2, true)`,
       [threadId, context.workspaceMemberId],
     );
     const sending = sendChatParticipationMessage({

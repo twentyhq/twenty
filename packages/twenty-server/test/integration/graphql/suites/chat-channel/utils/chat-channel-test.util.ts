@@ -183,7 +183,7 @@ export const readMemberCopy = async (
     snoozedUntil: Date | null;
   }[] = await global.testDataSource.query(
     `SELECT "isSubscribed", "archivedAt", "snoozedUntil"
-     FROM ${SCHEMA}."agentChatThreadParticipant"
+     FROM ${SCHEMA}."inboxThreadParticipant"
      WHERE "threadId" = $1 AND "workspaceMemberId" = $2`,
     [threadId, workspaceMemberId],
   );
@@ -198,7 +198,7 @@ export const readChannelState = async (threadId: string) => {
     channelSnoozedUntil: Date | null;
   }[] = await global.testDataSource.query(
     `SELECT "channelId", "channelArchivedAt", "channelSnoozedUntil"
-     FROM ${SCHEMA}."agentChatThread" WHERE id = $1`,
+     FROM ${SCHEMA}."inboxThread" WHERE id = $1`,
     [threadId],
   );
 
@@ -305,7 +305,7 @@ export const countThreadsInChannel = async (
   channelId: string,
 ): Promise<number> => {
   const [{ count }]: { count: number }[] = await global.testDataSource.query(
-    `SELECT count(*)::int AS count FROM ${SCHEMA}."agentChatThread" WHERE "channelId" = $1`,
+    `SELECT count(*)::int AS count FROM ${SCHEMA}."inboxThread" WHERE "channelId" = $1`,
     [channelId],
   );
 
@@ -316,7 +316,7 @@ const countThreadsInDeletedChannels = async (
   channelIds: string[],
 ): Promise<number> => {
   const [{ count }]: { count: number }[] = await global.testDataSource.query(
-    `SELECT count(*)::int AS count FROM ${SCHEMA}."agentChatThread" thread
+    `SELECT count(*)::int AS count FROM ${SCHEMA}."inboxThread" thread
      WHERE thread."channelId" = ANY($1::uuid[])
        AND NOT EXISTS (
          SELECT 1 FROM core."inboxChannel" channel
@@ -337,7 +337,7 @@ export const watchThreadEvents = () => {
   const findEmittedThreadEvent = (threadId: string) =>
     eventSpy.mock.calls
       .flatMap(([batchEvent]) =>
-        batchEvent?.objectMetadataNameSingular === 'agentChatThread'
+        batchEvent?.objectMetadataNameSingular === 'inboxThread'
           ? batchEvent.events
           : [],
       )
@@ -405,7 +405,7 @@ export const insertChannelGrant = ({
 
 export const simulateNewMessageActivity = (threadId: string) =>
   global.testDataSource.query(
-    `UPDATE ${SCHEMA}."agentChatThread" SET "lastActivityAt" = clock_timestamp() WHERE id = $1`,
+    `UPDATE ${SCHEMA}."inboxThread" SET "lastActivityAt" = clock_timestamp() WHERE id = $1`,
     [threadId],
   );
 
@@ -544,7 +544,7 @@ export const setUpChatChannelTests = () => {
       ],
     );
     await queryRunner.query(
-      `UPDATE ${SCHEMA}."agentChatThread" SET "channelId" = $1 WHERE id = $2`,
+      `UPDATE ${SCHEMA}."inboxThread" SET "channelId" = $1 WHERE id = $2`,
       [channelId, threadId],
     );
 

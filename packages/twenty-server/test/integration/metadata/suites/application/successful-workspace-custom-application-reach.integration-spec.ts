@@ -138,7 +138,7 @@ describe('The workspace custom application reads and triggers every application'
       [threadIds],
     );
     await globalThis.testDataSource.query(
-      `DELETE FROM "${WORKSPACE_SCHEMA}"."agentChatThread" WHERE id = ANY($1)`,
+      `DELETE FROM "${WORKSPACE_SCHEMA}"."inboxThread" WHERE id = ANY($1)`,
       [threadIds],
     );
 

@@ -8,12 +8,12 @@ import { escapeLiteral } from 'src/engine/workspace-manager/workspace-migration/
 const CHAT_WRITE_REJECTION_PREFIX = 'reject_chat_write_';
 const CHAT_WRITE_REJECTION_OPERATIONS = {
   message: {
-    tableName: 'agentMessage',
+    tableName: 'inboxMessage',
     triggerOperations: 'INSERT',
     condition: 'NEW."threadId" = TG_ARGV[0]::uuid',
   },
   restore: {
-    tableName: 'agentChatThread',
+    tableName: 'inboxThread',
     triggerOperations: 'UPDATE',
     condition:
       'NEW.id = TG_ARGV[0]::uuid AND OLD."deletedAt" IS NOT NULL AND NEW."deletedAt" IS NULL',

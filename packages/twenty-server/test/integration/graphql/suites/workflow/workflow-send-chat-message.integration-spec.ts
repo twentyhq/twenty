@@ -74,13 +74,13 @@ describe('Send chat message workflow step', () => {
       });
 
       const [thread] = await global.testDataSource.query(
-        `SELECT title, "workspaceMemberId" FROM "${SCHEMA}"."agentChatThread" WHERE id = $1`,
+        `SELECT title, "workspaceMemberId" FROM "${SCHEMA}"."inboxThread" WHERE id = $1`,
         [threadId],
       );
       const messages = await global.testDataSource.query(
         `SELECT m.role, p."textContent"
-         FROM "${SCHEMA}"."agentMessage" m
-         JOIN "${SCHEMA}"."agentMessagePart" p ON p."messageId" = m.id
+         FROM "${SCHEMA}"."inboxMessage" m
+         JOIN "${SCHEMA}"."inboxMessagePart" p ON p."messageId" = m.id
          WHERE m."threadId" = $1
          ORDER BY m."processedAt" ASC`,
         [threadId],
@@ -193,8 +193,8 @@ describe('Send chat message workflow step', () => {
 
       const [part] = await global.testDataSource.query(
         `SELECT p."toolCallId", p."toolOutput"
-         FROM "${SCHEMA}"."agentMessagePart" p
-         JOIN "${SCHEMA}"."agentMessage" m ON m.id = p."messageId"
+         FROM "${SCHEMA}"."inboxMessagePart" p
+         JOIN "${SCHEMA}"."inboxMessage" m ON m.id = p."messageId"
          WHERE m."threadId" = $1 AND p."toolName" = 'propose_tool_call'
            AND p."toolOutput"->'result'->>'status' = 'pending'`,
         [threadId],
@@ -494,8 +494,8 @@ describe('Send chat message workflow step', () => {
 
             const readCall = async () => {
               const [part] = await global.testDataSource.query(
-                `SELECT p."toolCallId", p."toolOutput" FROM "${SCHEMA}"."agentMessagePart" p
-                 JOIN "${SCHEMA}"."agentMessage" m ON m.id = p."messageId"
+                `SELECT p."toolCallId", p."toolOutput" FROM "${SCHEMA}"."inboxMessagePart" p
+                 JOIN "${SCHEMA}"."inboxMessage" m ON m.id = p."messageId"
                  WHERE m."threadId" = $1 AND p."toolName" = 'propose_tool_call'`,
                 [threadId],
               );
@@ -578,8 +578,8 @@ describe('Send chat message workflow step', () => {
       });
 
       const proposalStatuses = await global.testDataSource.query(
-        `SELECT p."toolOutput"->'result'->>'status' AS status FROM "${SCHEMA}"."agentMessagePart" p
-         JOIN "${SCHEMA}"."agentMessage" m ON m.id = p."messageId"
+        `SELECT p."toolOutput"->'result'->>'status' AS status FROM "${SCHEMA}"."inboxMessagePart" p
+         JOIN "${SCHEMA}"."inboxMessage" m ON m.id = p."messageId"
          WHERE m."threadId" = $1 AND p."toolName" = 'propose_tool_call'
          ORDER BY m."createdAt"`,
         [postedThreadId],
@@ -626,12 +626,12 @@ describe('Send chat message workflow step', () => {
       });
 
       const [thread] = await global.testDataSource.query(
-        `SELECT "pendingQuestionMessageId" FROM "${SCHEMA}"."agentChatThread" WHERE id = $1`,
+        `SELECT "pendingQuestionMessageId" FROM "${SCHEMA}"."inboxThread" WHERE id = $1`,
         [postedThreadId],
       );
       const [part] = await global.testDataSource.query(
-        `SELECT p."toolOutput" FROM "${SCHEMA}"."agentMessagePart" p
-         JOIN "${SCHEMA}"."agentMessage" m ON m.id = p."messageId"
+        `SELECT p."toolOutput" FROM "${SCHEMA}"."inboxMessagePart" p
+         JOIN "${SCHEMA}"."inboxMessage" m ON m.id = p."messageId"
          WHERE m."threadId" = $1 AND p."toolName" = 'propose_tool_call'`,
         [postedThreadId],
       );

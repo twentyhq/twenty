@@ -507,7 +507,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       async () => {
         const [turn] = await global.testDataSource.query(
           `SELECT turn.status, thread."activeStreamId" FROM "${schema}"."agentTurn" turn
-           JOIN "${schema}"."agentChatThread" thread ON thread.id = turn."threadId"
+           JOIN "${schema}"."inboxThread" thread ON thread.id = turn."threadId"
            WHERE turn."threadId" = $1 ORDER BY turn."createdAt" DESC LIMIT 1`,
           [threadId],
         );
@@ -914,11 +914,11 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
 
     const getToolCalls = async (threadId: string) => {
       const [thread] = await global.testDataSource.query(
-        `SELECT "pendingQuestionMessageId" FROM "${schema}"."agentChatThread" WHERE id = $1`,
+        `SELECT "pendingQuestionMessageId" FROM "${schema}"."inboxThread" WHERE id = $1`,
         [threadId],
       );
       const parts = await global.testDataSource.query(
-        `SELECT part."toolCallId", part."toolOutput" FROM "${schema}"."agentMessagePart" part JOIN "${schema}"."agentMessage" message ON message.id = part."messageId" WHERE message."threadId" = $1 AND part."toolName" = 'ask_question' ORDER BY part."toolCallId"`,
+        `SELECT part."toolCallId", part."toolOutput" FROM "${schema}"."inboxMessagePart" part JOIN "${schema}"."inboxMessage" message ON message.id = part."messageId" WHERE message."threadId" = $1 AND part."toolName" = 'ask_question' ORDER BY part."toolCallId"`,
         [threadId],
       );
 
@@ -939,11 +939,11 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
 
     const getConversation = async (threadId: string) => {
       const messages = await global.testDataSource.query(
-        `SELECT id, role FROM "${schema}"."agentMessage" WHERE "threadId" = $1 ORDER BY "processedAt", "createdAt"`,
+        `SELECT id, role FROM "${schema}"."inboxMessage" WHERE "threadId" = $1 ORDER BY "processedAt", "createdAt"`,
         [threadId],
       );
       const [questionPart] = await global.testDataSource.query(
-        `SELECT "toolOutput" FROM "${schema}"."agentMessagePart" WHERE "toolCallId" = 'ask-1' AND "messageId" = ANY($1::uuid[])`,
+        `SELECT "toolOutput" FROM "${schema}"."inboxMessagePart" WHERE "toolCallId" = 'ask-1' AND "messageId" = ANY($1::uuid[])`,
         [messages.map(({ id }: { id: string }) => id)],
       );
 
@@ -979,8 +979,8 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         `SELECT thread."workspaceMemberId", thread."lastMessageText",
            participant."archivedAt" IS NOT NULL AS "isArchived",
            thread."lastActivityAt" > participant."archivedAt" AS "isBackInInbox"
-         FROM "${schema}"."agentChatThread" thread
-         LEFT JOIN "${schema}"."agentChatThreadParticipant" participant
+         FROM "${schema}"."inboxThread" thread
+         LEFT JOIN "${schema}"."inboxThreadParticipant" participant
            ON participant."threadId" = thread.id AND participant."workspaceMemberId" = thread."workspaceMemberId"
          WHERE thread.id = $1`,
         [threadId],
@@ -1070,8 +1070,8 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
 
       await expectEventually(async () => {
         const [message] = await global.testDataSource.query(
-          `SELECT message.status FROM "${schema}"."agentMessage" message
-           JOIN "${schema}"."agentMessagePart" part ON part."messageId" = message.id
+          `SELECT message.status FROM "${schema}"."inboxMessage" message
+           JOIN "${schema}"."inboxMessagePart" part ON part."messageId" = message.id
            WHERE message."threadId" = $1 AND part."textContent" = 'Any news?'`,
           [threadId],
         );
@@ -1251,7 +1251,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       const run = await waitForPausedAgentStep(runId, agent.id);
       const threadId: string = run.stepLogs[agent.id].details.threadId;
       const [conversation] = await global.testDataSource.query(
-        `SELECT "workspaceMemberId" FROM "${schema}"."agentChatThread" WHERE id = $1`,
+        `SELECT "workspaceMemberId" FROM "${schema}"."inboxThread" WHERE id = $1`,
         [threadId],
       );
 
@@ -1355,7 +1355,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       const runTurn = mockAgent();
       const { runId, agent, finalStep, threadId } = await startAskingRun();
       const [{ activeStreamId }] = await global.testDataSource.query(
-        `SELECT "activeStreamId" FROM "${schema}"."agentChatThread" WHERE id = $1`,
+        `SELECT "activeStreamId" FROM "${schema}"."inboxThread" WHERE id = $1`,
         [threadId],
       );
 
@@ -1435,7 +1435,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       const run = await waitForPausedAgentStep(runId, agent.id);
       const threadId: string = run.stepLogs[agent.id].details.threadId;
       const prompts = await global.testDataSource.query(
-        `SELECT "senderWorkspaceMemberId", "senderApplicationId" FROM "${schema}"."agentMessage" WHERE "threadId" = $1 AND role = 'user'`,
+        `SELECT "senderWorkspaceMemberId", "senderApplicationId" FROM "${schema}"."inboxMessage" WHERE "threadId" = $1 AND role = 'user'`,
         [threadId],
       );
 

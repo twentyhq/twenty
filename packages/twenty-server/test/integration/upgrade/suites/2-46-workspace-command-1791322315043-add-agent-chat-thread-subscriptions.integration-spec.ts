@@ -61,7 +61,7 @@ describe('2-46 workspace command - add agent chat thread subscriptions (integrat
     const columns: { column_name: string }[] =
       await global.testDataSource.query(
         `SELECT column_name FROM information_schema.columns
-         WHERE table_schema = $1 AND table_name = 'agentChatThreadParticipant'
+         WHERE table_schema = $1 AND table_name = 'inboxThreadParticipant'
            AND column_name IN ('isSubscribed', 'lastMentionedAt')
          ORDER BY column_name`,
         [getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)],
@@ -103,7 +103,7 @@ describe('2-46 workspace command - add agent chat thread subscriptions (integrat
 
     const [{ unsubscribedCount }] = await global.testDataSource.query(
       `SELECT count(*)::int AS "unsubscribedCount"
-       FROM ${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}."agentChatThreadParticipant"
+       FROM ${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}."inboxThreadParticipant"
        WHERE "isSubscribed" IS NOT TRUE`,
     );
 

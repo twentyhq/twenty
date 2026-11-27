@@ -8,6 +8,7 @@ import {
 } from 'twenty-shared/types';
 import { Badge } from 'twenty-ui/primitives/data-display';
 
+import { LEGACY_INBOX_NAMES_BY_LEGACY_NAME } from '@/ai-chat/constants/LegacyInboxNamesByLegacyName';
 import { EMPTY_COMMAND_MENU_CONTEXT_API } from '@/command-menu-item/constants/EmptyCommandMenuContextApi';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { CommandMenuContextProviderContent } from '@/command-menu-item/contexts/CommandMenuContextProviderContent';
@@ -35,7 +36,7 @@ const CHAT_SHARING_CONTEXT_API: CommandMenuContextApi = {
   selectedRecords: [{ id: 'chat' }],
   objectMetadataItem: {
     id: 'agent-chat-thread-object',
-    nameSingular: StandardObjectNameSingular.AgentChatThread,
+    nameSingular: LEGACY_INBOX_NAMES_BY_LEGACY_NAME.agentChatThread,
   },
   featureFlags: { IS_AI_CHAT_INBOX_ENABLED: true },
 };

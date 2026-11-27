@@ -121,7 +121,7 @@ export const createChatParticipationTestContext = async () => {
     isAssistantParticipant: boolean;
   }) =>
     global.testDataSource.query(
-      `UPDATE "${schema}"."agentChatThread"
+      `UPDATE "${schema}"."inboxThread"
        SET "isAssistantParticipant" = $2 WHERE id = $1`,
       [threadId, isAssistantParticipant],
     );
@@ -133,7 +133,7 @@ export const createChatParticipationTestContext = async () => {
     conversationType: AgentChatThreadConversationType;
   }) =>
     global.testDataSource.query(
-      `UPDATE "${schema}"."agentChatThread"
+      `UPDATE "${schema}"."inboxThread"
        SET "conversationType" = $2 WHERE id = $1`,
       [threadId, conversationType],
     );
@@ -189,7 +189,7 @@ export const createChatParticipationTestContext = async () => {
       activeStreamId: string | null;
     }[] = await global.testDataSource.query(
       `SELECT "isAssistantParticipant", "conversationType", "channelId", "workspaceMemberId", "lastActivityAt", "deletedAt", "activeStreamId"
-       FROM "${schema}"."agentChatThread" WHERE id = $1`,
+       FROM "${schema}"."inboxThread" WHERE id = $1`,
       [threadId],
     );
 
@@ -208,7 +208,7 @@ export const createChatParticipationTestContext = async () => {
   > =>
     global.testDataSource.query(
       `SELECT "workspaceMemberId", "lastReadAt", "archivedAt", "isSubscribed", "lastMentionedAt"
-     FROM "${schema}"."agentChatThreadParticipant" WHERE "threadId" = $1`,
+     FROM "${schema}"."inboxThreadParticipant" WHERE "threadId" = $1`,
       [threadId],
     );
   const share = async ({
@@ -297,17 +297,17 @@ export const createChatParticipationTestContext = async () => {
       await waitForAllJobsToFinish();
       await global.testDataSource.query(
         `DELETE FROM "${schema}"."recordShare" WHERE "recordId" IN (
-          SELECT id FROM "${schema}"."agentChatThread" WHERE id = ANY($1::uuid[])
+          SELECT id FROM "${schema}"."inboxThread" WHERE id = ANY($1::uuid[])
           UNION ALL SELECT id FROM "${schema}"."agentTurn" WHERE "threadId" = ANY($1::uuid[])
-          UNION ALL SELECT id FROM "${schema}"."agentMessage" WHERE "threadId" = ANY($1::uuid[])
-          UNION ALL SELECT part.id FROM "${schema}"."agentMessagePart" part
-            JOIN "${schema}"."agentMessage" message ON message.id = part."messageId"
+          UNION ALL SELECT id FROM "${schema}"."inboxMessage" WHERE "threadId" = ANY($1::uuid[])
+          UNION ALL SELECT part.id FROM "${schema}"."inboxMessagePart" part
+            JOIN "${schema}"."inboxMessage" message ON message.id = part."messageId"
             WHERE message."threadId" = ANY($1::uuid[])
         )`,
         [[...threadIds]],
       );
       await global.testDataSource.query(
-        `DELETE FROM "${schema}"."agentChatThread" WHERE id = ANY($1::uuid[])`,
+        `DELETE FROM "${schema}"."inboxThread" WHERE id = ANY($1::uuid[])`,
         [[...threadIds]],
       );
       await featureFlagService.upsertWorkspaceFeatureFlag({

@@ -17,10 +17,10 @@ type SeedAgentsQueryRunner = {
   manager: Pick<QueryRunner['manager'], 'createQueryBuilder'>;
 };
 
-const agentChatThreadTableName = 'agentChatThread';
+const agentChatThreadTableName = 'inboxThread';
 const agentTurnTableName = 'agentTurn';
-const agentMessageTableName = 'agentMessage';
-const agentMessagePartTableName = 'agentMessagePart';
+const agentMessageTableName = 'inboxMessage';
+const agentMessagePartTableName = 'inboxMessagePart';
 
 export const AGENT_DATA_SEED_IDS = {
   APPLE_DEFAULT_AGENT: '20202020-0000-4000-8000-000000000001',

@@ -698,7 +698,7 @@ describe('Assistant reply selection with stored conversation participants', () =
     }
 
     await global.testDataSource.query(
-      `UPDATE "${context.schema}"."agentMessage" message
+      `UPDATE "${context.schema}"."inboxMessage" message
        SET "processedAt" = $2::timestamptz + source.ordinality * interval '1 second',
            "createdAt" = $2::timestamptz + source.ordinality * interval '1 second'
        FROM unnest($1::uuid[]) WITH ORDINALITY AS source(id, ordinality)
@@ -727,7 +727,7 @@ describe('Assistant reply selection with stored conversation participants', () =
       },
     });
     await global.testDataSource.query(
-      `UPDATE "${context.schema}"."agentMessage"
+      `UPDATE "${context.schema}"."inboxMessage"
        SET status = $2, "processedAt" = NULL WHERE id = $1`,
       [queuedMessage.id, AgentMessageStatus.QUEUED],
     );

@@ -3,7 +3,7 @@ import { randomUUID } from 'crypto';
 
 import { gql } from 'graphql-tag';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-import { type AgentHistoryUpgradeStorageService } from 'src/database/commands/agent-history/agent-history-upgrade-storage.service';
+import { type AgentHistoryWorkspaceStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { type AgentHistoryObjectName } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-object-name.type';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
@@ -40,7 +40,7 @@ const GET_ADMIN_CHAT_THREAD_MESSAGES = gql`
 `;
 
 describe('Admin panel chat thread messages (integration)', () => {
-  let storage: AgentHistoryUpgradeStorageService;
+  let storage: AgentHistoryWorkspaceStorageService;
   let workspaceMemberId: string;
   let kickoffThreadId: string;
   const seededThreadIds: string[] = [];
@@ -163,8 +163,8 @@ describe('Admin panel chat thread messages (integration)', () => {
   };
 
   beforeAll(async () => {
-    storage = getAppProviderByClassName<AgentHistoryUpgradeStorageService>(
-      'AgentHistoryUpgradeStorageService',
+    storage = getAppProviderByClassName<AgentHistoryWorkspaceStorageService>(
+      'AgentHistoryWorkspaceStorageService',
     );
 
     const [firstUserWorkspace] = await global.testDataSource.query(

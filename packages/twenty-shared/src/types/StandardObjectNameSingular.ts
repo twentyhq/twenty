@@ -1,7 +1,7 @@
 export enum StandardObjectNameSingular {
-  AgentChatThread = 'agentChatThread',
-  AgentChatThreadParticipant = 'agentChatThreadParticipant',
-  AgentChatThreadTarget = 'agentChatThreadTarget',
+  AgentChatThread = 'inboxThread',
+  AgentChatThreadParticipant = 'inboxThreadParticipant',
+  AgentChatThreadTarget = 'inboxThreadTarget',
   Attachment = 'attachment',
   Blocklist = 'blocklist',
   CalendarEvent = 'calendarEvent',

@@ -13,7 +13,7 @@ export const destroyAgentChatThread = async ({
 }): Promise<void> => {
   const response = await makeGraphqlApiRequest(
     destroyOneOperationFactory({
-      objectMetadataSingularName: 'agentChatThread',
+      objectMetadataSingularName: 'inboxThread',
       gqlFields: 'id',
       recordId: threadId,
     }),

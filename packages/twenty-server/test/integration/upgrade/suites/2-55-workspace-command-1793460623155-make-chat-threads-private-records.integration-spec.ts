@@ -27,7 +27,7 @@ describe('2-55 workspace command - make chat threads private records (integratio
   const findPrivateThreadIds = async (): Promise<string[]> =>
     (
       await global.testDataSource.query(
-        `SELECT id FROM "${SCHEMA}"."agentChatThread" WHERE "_isPrivate" AND id = ANY($1)`,
+        `SELECT id FROM "${SCHEMA}"."inboxThread" WHERE "_isPrivate" AND id = ANY($1)`,
         [[privateThreadId, sharedThreadId]],
       )
     ).map(({ id }: { id: string }) => id);
@@ -48,13 +48,13 @@ describe('2-55 workspace command - make chat threads private records (integratio
     );
 
     [{ id: threadObjectMetadataId }] = await global.testDataSource.query(
-      `SELECT id FROM core."objectMetadata" WHERE "workspaceId" = $1 AND "nameSingular" = 'agentChatThread'`,
+      `SELECT id FROM core."objectMetadata" WHERE "workspaceId" = $1 AND "nameSingular" = 'inboxThread'`,
       [SEED_APPLE_WORKSPACE_ID],
     );
     privateThreadId = randomUUID();
     sharedThreadId = randomUUID();
     await global.testDataSource.query(
-      `INSERT INTO "${SCHEMA}"."agentChatThread" (id) VALUES ($1), ($2)`,
+      `INSERT INTO "${SCHEMA}"."inboxThread" (id) VALUES ($1), ($2)`,
       [privateThreadId, sharedThreadId],
     );
     await global.testDataSource.query(
@@ -76,7 +76,7 @@ describe('2-55 workspace command - make chat threads private records (integratio
       [[privateThreadId, sharedThreadId]],
     );
     await global.testDataSource.query(
-      `DELETE FROM "${SCHEMA}"."agentChatThread" WHERE id = ANY($1)`,
+      `DELETE FROM "${SCHEMA}"."inboxThread" WHERE id = ANY($1)`,
       [[privateThreadId, sharedThreadId]],
     );
   });

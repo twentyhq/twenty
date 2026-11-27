@@ -94,7 +94,7 @@ describe('Answering a chat tool call', () => {
     });
 
     await global.testDataSource.query(
-      `UPDATE "${schema}"."agentChatThread" SET "pendingQuestionMessageId" = $1 WHERE id = $2`,
+      `UPDATE "${schema}"."inboxThread" SET "pendingQuestionMessageId" = $1 WHERE id = $2`,
       [assistantMessageId, threadId],
     );
 
@@ -104,7 +104,7 @@ describe('Answering a chat tool call', () => {
   const pauseOnProposal = async (toolCallId: string) => {
     await pauseOnQuestions(toolCallId);
     await global.testDataSource.query(
-      `UPDATE "${schema}"."agentMessagePart"
+      `UPDATE "${schema}"."inboxMessagePart"
        SET "toolName" = 'propose_tool_call', "toolInput" = $2::jsonb,
          "toolOutput" = $3::jsonb
        WHERE "toolCallId" = $1`,
@@ -129,7 +129,7 @@ describe('Answering a chat tool call', () => {
   const readPendingQuestionMessageId = async () =>
     (
       await global.testDataSource.query(
-        `SELECT "pendingQuestionMessageId" FROM "${schema}"."agentChatThread" WHERE id = $1`,
+        `SELECT "pendingQuestionMessageId" FROM "${schema}"."inboxThread" WHERE id = $1`,
         [threadId],
       )
     )[0].pendingQuestionMessageId;
@@ -137,7 +137,7 @@ describe('Answering a chat tool call', () => {
   const readToolCallStatus = async (toolCallId: string) =>
     (
       await global.testDataSource.query(
-        `SELECT "toolOutput" FROM "${schema}"."agentMessagePart" WHERE "toolCallId" = $1`,
+        `SELECT "toolOutput" FROM "${schema}"."inboxMessagePart" WHERE "toolCallId" = $1`,
         [toolCallId],
       )
     )[0]?.toolOutput?.result?.status;
@@ -166,7 +166,7 @@ describe('Answering a chat tool call', () => {
       lastMentionedAt: Date | null;
       mentionsResolvedAt: Date | null;
     }[] = await global.testDataSource.query(
-      `SELECT "lastMentionedAt", "mentionsResolvedAt" FROM "${schema}"."agentChatThreadParticipant"
+      `SELECT "lastMentionedAt", "mentionsResolvedAt" FROM "${schema}"."inboxThreadParticipant"
        WHERE "threadId" = $1 AND "workspaceMemberId" = $2`,
       [threadId, memberId],
     );
