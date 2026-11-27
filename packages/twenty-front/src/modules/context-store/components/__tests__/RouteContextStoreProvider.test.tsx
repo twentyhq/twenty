@@ -26,50 +26,53 @@ jest.mock('@/views/states/selectors/viewsSelector', () => ({
 }));
 
 jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue', () => ({
-  useAtomStateValue: ({ key }: { key: string }) =>
-    key === 'inbox-names-by-legacy-name'
-      ? { agentChatThread: 'agentChatThread' }
-      : key === 'object-metadata-items'
-        ? [
-            {
-              id: 'company-object',
-              namePlural: 'companies',
-              nameSingular: 'company',
-            },
-            {
-              id: 'person-object',
-              namePlural: 'people',
-              nameSingular: 'person',
-            },
-            {
-              id: 'new-object',
-              namePlural: 'new',
-              nameSingular: 'new',
-            },
-            {
-              id: 'chat-object',
-              namePlural: 'agentChatThreads',
-              nameSingular: 'agentChatThread',
-            },
-          ]
-        : [
-            {
-              id: 'company-view',
-              objectMetadataId: 'company-object',
-              type: 'TABLE',
-            },
-            {
-              id: 'company-index-view',
-              objectMetadataId: 'company-object',
-              type: 'TABLE',
-              key: 'INDEX',
-            },
-            {
-              id: 'person-view',
-              objectMetadataId: 'person-object',
-              type: 'TABLE',
-            },
-          ],
+  useAtomStateValue: ({ key }: { key: string }) => {
+    if (key === 'inbox-names-by-legacy-name') {
+      return { agentChatThread: 'agentChatThread' };
+    }
+
+    return key === 'object-metadata-items'
+      ? [
+          {
+            id: 'company-object',
+            namePlural: 'companies',
+            nameSingular: 'company',
+          },
+          {
+            id: 'person-object',
+            namePlural: 'people',
+            nameSingular: 'person',
+          },
+          {
+            id: 'new-object',
+            namePlural: 'new',
+            nameSingular: 'new',
+          },
+          {
+            id: 'chat-object',
+            namePlural: 'agentChatThreads',
+            nameSingular: 'agentChatThread',
+          },
+        ]
+      : [
+          {
+            id: 'company-view',
+            objectMetadataId: 'company-object',
+            type: 'TABLE',
+          },
+          {
+            id: 'company-index-view',
+            objectMetadataId: 'company-object',
+            type: 'TABLE',
+            key: 'INDEX',
+          },
+          {
+            id: 'person-view',
+            objectMetadataId: 'person-object',
+            type: 'TABLE',
+          },
+        ];
+  },
 }));
 
 jest.mock('@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue', () => ({
