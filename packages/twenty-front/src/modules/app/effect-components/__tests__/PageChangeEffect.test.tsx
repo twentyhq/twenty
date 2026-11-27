@@ -9,6 +9,7 @@ import { IconSettings } from 'twenty-ui/icon';
 
 import { PageChangeEffect } from '@/app/effect-components/PageChangeEffect';
 import { WorkspaceRouteObjectsContext } from '@/app/routing/components/WorkspaceRouteObjectsProvider';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useCommandMenuHotKeys } from '@/command-menu/hooks/useCommandMenuHotKeys';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
@@ -26,7 +27,9 @@ import { currentGlobalHotkeysConfigSelector } from '@/ui/utilities/focus/states/
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
 jest.mock('@/app/hooks/usePageChangeEffectNavigateLocation', () => ({
   usePageChangeEffectNavigateLocation: () => undefined,
@@ -330,4 +333,40 @@ describe('PageChangeEffect', () => {
     });
     expect(jotaiStore.get(isRecordSelectedAtom)).toBe(true);
   });
+
+  it.each([
+    { isCustomizableSidebarEnabled: true, isSidePanelOpened: true },
+    { isCustomizableSidebarEnabled: false, isSidePanelOpened: false },
+  ])(
+    'should open the command menu with Cmd+K on settings only with the customizable sidebar (enabled: $isCustomizableSidebarEnabled)',
+    async ({ isCustomizableSidebarEnabled, isSidePanelOpened }) => {
+      renderPageChangeEffect();
+
+      act(() => {
+        jotaiStore.set(currentWorkspaceState.atom, {
+          ...mockCurrentWorkspace,
+          featureFlags: [
+            {
+              key: FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
+              value: isCustomizableSidebarEnabled,
+            },
+          ],
+        });
+      });
+      act(() => navigateMainPage?.('/settings/profile'));
+      await waitFor(() => {
+        expect(jotaiStore.get(focusStackState.atom).at(-1)?.focusId).toBe(
+          PageFocusId.Settings,
+        );
+      });
+
+      await userEvent.keyboard('{Meta>}k{/Meta}');
+
+      await waitFor(() => {
+        expect(jotaiStore.get(isSidePanelOpenedState.atom)).toBe(
+          isSidePanelOpened,
+        );
+      });
+    },
+  );
 });

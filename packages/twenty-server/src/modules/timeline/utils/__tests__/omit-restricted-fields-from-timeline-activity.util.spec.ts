@@ -165,6 +165,26 @@ describe('omitRestrictedFieldsFromTimelineActivity', () => {
     ).toEqual({ diff: {} });
   });
 
+  it('should keep no field of a target object the role cannot read', () => {
+    expect(
+      omitRestrictedFields({
+        timelineActivity: {
+          linkedObjectMetadataId: null,
+          targetPersonId: 'person-id',
+          properties: DIFF,
+        },
+        recordsPermissions: {
+          objects: {
+            ...PERSON_JOB_TITLE_DENIED.objects,
+            [PERSON_OBJECT.id]: buildObjectRecordsPermissions({
+              canReadAllRecords: false,
+            }),
+          },
+        },
+      }),
+    ).toEqual({ diff: {} });
+  });
+
   it('should keep no field when the activity object cannot be found', () => {
     expect(
       omitRestrictedFields({ timelineActivity: { properties: DIFF } }),

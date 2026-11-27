@@ -419,25 +419,15 @@ export class TwoFactorAuthenticationRecoveryService {
       entityManager,
     });
 
-    await appTokenRepository
-      .createQueryBuilder()
-      .update()
-      // Tokens already rotated are still renewable within the reuse grace period, so they need the reason too
-      .set({
-        revokedAt: () => `COALESCE("revokedAt", now())`,
-        context: () =>
-          `COALESCE("context", '{}'::jsonb) || jsonb_build_object('revokedReason', :revokedReason::text)`,
-      })
-      .where({
+    await appTokenRepository.update(
+      {
         userId,
         workspaceId: workspace.id,
         type: AppTokenType.RefreshToken,
-        expiresAt: MoreThan(new Date()),
-      })
-      .setParameters({
-        revokedReason: UserSessionRevokedReason.TwoFactorAuthenticationReset,
-      })
-      .execute();
+        revokedAt: IsNull(),
+      },
+      { revokedAt: new Date() },
+    );
 
     if (!workspace.isTwoFactorAuthenticationEnforced) {
       return {

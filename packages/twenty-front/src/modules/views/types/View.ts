@@ -34,6 +34,7 @@ export type View = {
   groupLoadLimit?: number | null;
   calendarFieldMetadataId?: string | null;
   calendarEndFieldMetadataId?: string | null;
+  listPinnedFieldMetadataId?: string | null;
   calendarLayout?: ViewCalendarLayout | null;
   position: number;
   icon: string;

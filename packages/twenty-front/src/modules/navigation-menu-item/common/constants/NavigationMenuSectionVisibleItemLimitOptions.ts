@@ -1,0 +1,3 @@
+export const NAVIGATION_MENU_SECTION_VISIBLE_ITEM_LIMIT_OPTIONS = [
+  1, 2, 3, 4, 5, 10, 15, 20, 25, 30, 40, 50, 100,
+];

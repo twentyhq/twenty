@@ -1,7 +1,6 @@
 import { createOneOperation } from 'test/integration/graphql/utils/create-one-operation.util';
 import { destroyOneOperation } from 'test/integration/graphql/utils/destroy-one-operation.util';
 import { findOneOperation } from 'test/integration/graphql/utils/find-one-operation.util';
-import { updateOneOperation } from 'test/integration/graphql/utils/update-one-operation.util';
 import { executeDatabaseToolThroughMcp } from 'test/integration/metadata/suites/application-grant-role/utils/execute-database-tool-through-mcp.util';
 import { findApplicationRoleIds } from 'test/integration/metadata/suites/application-grant-role/utils/find-application-role-ids.util';
 import { removeApplicationGrantRoleTarget } from 'test/integration/metadata/suites/application-grant-role/utils/remove-application-grant-role-target.util';
@@ -45,12 +44,6 @@ const readCompanyTestCases: EachTestingContext<ReadCompanyTestContext>[] = [
     },
   },
   {
-    title: 'twenty-standard acting for an Admin member',
-    context: {
-      getToken: ({ tokens }) => tokens.twentyStandardForAdminMember,
-    },
-  },
-  {
     title: 'the workspace custom application acting alone',
     context: {
       getToken: ({ tokens }) => tokens.workspaceCustomApplicationAlone,
@@ -85,11 +78,11 @@ const grantRoleIdTestCases: EachTestingContext<GrantRoleIdTestContext>[] = [
     },
   },
   {
-    title: 'its grant role for twenty-standard',
+    title: 'no role for twenty-standard',
     context: {
       getApplicationId: ({ twentyStandardApplicationId }) =>
         twentyStandardApplicationId,
-      expectedRole: 'grant',
+      expectedRole: 'none',
     },
   },
   {
@@ -222,32 +215,6 @@ describe('Applications acting with their grant role should succeed', () => {
 
     expect(errors).toBeUndefined();
     expect(data.destroyOneResponse).toEqual({ id: invoiceId });
-  });
-
-  it('should let twenty-standard acting for an Admin member update a company', async () => {
-    const updatedCompanyName = `${COMPANY_NAME} updated`;
-
-    const { data, errors } = await updateOneOperation({
-      objectMetadataSingularName: 'company',
-      recordId: companyId,
-      input: { name: updatedCompanyName },
-      gqlFields: 'id name',
-      token: applications.tokens.twentyStandardForAdminMember,
-      expectToFail: false,
-    });
-
-    expect(errors).toBeUndefined();
-    expect(data.updateOneResponse).toEqual({
-      id: companyId,
-      name: updatedCompanyName,
-    });
-
-    await updateOneOperation({
-      objectMetadataSingularName: 'company',
-      recordId: companyId,
-      input: { name: COMPANY_NAME },
-      expectToFail: false,
-    });
   });
 
   it.each(eachTestingContextFilter(grantRoleIdTestCases))(

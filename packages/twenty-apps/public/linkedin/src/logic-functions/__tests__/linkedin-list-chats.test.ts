@@ -110,6 +110,45 @@ describe('linkedinListChatsHandler', () => {
     );
   });
 
+  it('lists the conversations of the requested connection when the member has several', async () => {
+    mocks.listConnections.mockResolvedValue([
+      {
+        id: 'connection-id',
+        name: 'Ada Lovelace',
+        externalAccountId: 'acc_1',
+        userWorkspaceId: 'member-user-workspace-id',
+      },
+      {
+        id: 'company-connection-id',
+        name: 'Ada at Analytical Engines',
+        externalAccountId: 'acc_2',
+        userWorkspaceId: 'member-user-workspace-id',
+      },
+    ]);
+
+    await listChats({ connectedAccountId: 'connection-id' });
+
+    expect(mocks.listMostRecentUnipileChats).toHaveBeenCalledWith(
+      expect.objectContaining({ accountId: 'acc_1' }),
+    );
+  });
+
+  it('refuses a connection of another member', async () => {
+    mocks.listConnections.mockResolvedValue([
+      {
+        id: 'other-connection-id',
+        name: 'Grace Hopper',
+        externalAccountId: 'acc_3',
+        userWorkspaceId: 'other-user-workspace-id',
+      },
+    ]);
+
+    await expect(
+      listChats({ connectedAccountId: 'other-connection-id' }),
+    ).rejects.toThrow('Connect your LinkedIn account first.');
+    expect(mocks.listMostRecentUnipileChats).not.toHaveBeenCalled();
+  });
+
   it('refuses a member without a LinkedIn connection', async () => {
     mocks.listConnections.mockResolvedValue([]);
 

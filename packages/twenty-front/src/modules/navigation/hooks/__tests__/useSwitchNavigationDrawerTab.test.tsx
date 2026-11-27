@@ -269,7 +269,9 @@ describe('useSwitchNavigationDrawerTab', () => {
     expect(result.current.location.pathname).toBe(DEFAULT_HOME_PAGE_PATH);
   });
 
-  it('returns from the chat page without navigating itself', () => {
+  it('returns from the chat page without navigating itself while the customizable sidebar is off', () => {
+    jest.mocked(useIsFeatureEnabled).mockReturnValue(false);
+
     const { result, store } = renderSwitchNavigationDrawerMode({
       pathname: AI_CHAT_PATH,
     });
@@ -386,7 +388,8 @@ describe('useSwitchNavigationDrawerTab', () => {
     },
   );
 
-  it('stays collapsed through Home → Settings → AI → Home', () => {
+  it('stays collapsed through Home → Settings → AI → Home while the customizable sidebar is off', () => {
+    jest.mocked(useIsFeatureEnabled).mockReturnValue(false);
     jest.mocked(useSwitchToNewAiChat).mockImplementation(
       jest.requireActual<{
         useSwitchToNewAiChat: typeof useSwitchToNewAiChat;

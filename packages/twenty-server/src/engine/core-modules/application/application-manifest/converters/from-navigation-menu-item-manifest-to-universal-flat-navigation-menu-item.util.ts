@@ -28,6 +28,7 @@ export const fromNavigationMenuItemManifestToUniversalFlatNavigationMenuItem =
       link: navigationMenuItemManifest.link ?? null,
       nativePageKey: navigationMenuItemManifest.nativePageKey ?? null,
       builtInSectionKey: navigationMenuItemManifest.builtInSectionKey ?? null,
+      visibleItemLimit: navigationMenuItemManifest.visibleItemLimit ?? null,
       parentUniversalIdentifier:
         normalizeNavigationMenuItemManifest(navigationMenuItemManifest)
           .parentUniversalIdentifier ?? null,

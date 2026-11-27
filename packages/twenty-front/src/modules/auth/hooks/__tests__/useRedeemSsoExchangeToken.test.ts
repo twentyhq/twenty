@@ -37,17 +37,6 @@ const renderHooks = () => {
   return { result };
 };
 
-const freshTokenPair = {
-  accessOrWorkspaceAgnosticToken: {
-    token: 'fresh-access-token',
-    expiresAt: '2100-01-01T00:00:00.000Z',
-  },
-  refreshToken: {
-    token: 'fresh-refresh-token',
-    expiresAt: '2100-01-01T00:00:00.000Z',
-  },
-};
-
 describe('useRedeemSsoExchangeToken', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -57,7 +46,7 @@ describe('useRedeemSsoExchangeToken', () => {
 
     mockGetAuthTokensFromSsoExchangeToken.mockResolvedValue({
       data: {
-        getAuthTokensFromSSOExchangeToken: { tokens: freshTokenPair },
+        getAuthTokensFromSSOExchangeToken: { __typename: 'AuthTokens' },
       },
     });
   });
@@ -71,7 +60,9 @@ describe('useRedeemSsoExchangeToken', () => {
       );
 
       return Promise.resolve({
-        data: { getAuthTokensFromSSOExchangeToken: { tokens: freshTokenPair } },
+        data: {
+          getAuthTokensFromSSOExchangeToken: { __typename: 'AuthTokens' },
+        },
       });
     });
 

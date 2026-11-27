@@ -355,6 +355,12 @@ export {
   serializeApplicationVariableValue,
   deserializeApplicationVariableValue,
 } from './utils/applicationVariableValueSerialization';
+export type {
+  ApplicationManifestRoleKind,
+  ClassifiedApplicationManifestRoles,
+  ApplicationManifestRoleSources,
+} from './utils/classifyApplicationManifestRoles';
+export { classifyApplicationManifestRoles } from './utils/classifyApplicationManifestRoles';
 export { computeDependencyFileChecksum } from './utils/computeDependencyFileChecksum';
 export { computePackageJsonChecksum } from './utils/computePackageJsonChecksum';
 export type {
@@ -364,6 +370,11 @@ export type {
   FlattenedRowLevelPermissionRuleManifests,
 } from './utils/flattenRowLevelPermissionRuleManifests';
 export { flattenRowLevelPermissionRuleManifests } from './utils/flattenRowLevelPermissionRuleManifests';
+export type { ApplicationManifestRoleViolation } from './utils/getApplicationManifestRoleViolations';
+export {
+  getApplicationManifestRoleViolations,
+  formatApplicationManifestRoleViolation,
+} from './utils/getApplicationManifestRoleViolations';
 export { getDeclaredLegacyRoleRecordsPermissionsKeys } from './utils/getDeclaredLegacyRoleRecordsPermissionsKeys';
 export type {
   EffectiveObjectPermissions,
@@ -399,7 +410,6 @@ export { normalizeMcpServerManifest } from './utils/normalizeMcpServerManifest';
 export { normalizeMessagingProviderManifest } from './utils/normalizeMessagingProviderManifest';
 export { normalizeNavigationMenuItemManifest } from './utils/normalizeNavigationMenuItemManifest';
 export { resolveManifestReferenceUniversalIdentifier } from './utils/resolveManifestReferenceUniversalIdentifier';
-export { resolveObjectPermissionValue } from './utils/resolveObjectPermissionValue';
 export { withDeprecatedConnectionProviderReferences } from './utils/withDeprecatedConnectionProviderReferences';
 export { withDeprecatedMcpServerReferences } from './utils/withDeprecatedMcpServerReferences';
 export { withDeprecatedMessagingProviderReferences } from './utils/withDeprecatedMessagingProviderReferences';

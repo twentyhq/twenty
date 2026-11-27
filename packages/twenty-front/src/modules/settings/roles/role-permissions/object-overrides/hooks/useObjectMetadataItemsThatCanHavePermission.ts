@@ -1,7 +1,7 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 
 export const useObjectMetadataItemsThatCanHavePermission = () => {
-  const { alphaSortedActiveNonSystemObjectMetadataItems: objectMetadataItems } =
+  const { activeObjectMetadataItems: objectMetadataItems } =
     useFilteredObjectMetadataItems();
 
   const objectMetadataItemsThatCanHavePermission = objectMetadataItems.filter(

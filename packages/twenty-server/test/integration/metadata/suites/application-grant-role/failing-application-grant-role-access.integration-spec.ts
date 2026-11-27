@@ -127,13 +127,25 @@ const testCases: EachTestingContext<TestContext>[] = [
     },
   },
   {
-    title:
-      'twenty-standard acting for an Admin member creating an agent turn, where creating is disabled',
+    title: 'an Admin member creating an agent turn, where creating is disabled',
     context: {
-      attempt: ({ applications }) =>
+      attempt: () =>
         createOneOperation({
           objectMetadataSingularName: 'agentTurn',
           input: { id: randomUUID() },
+          expectToFail: true,
+        }),
+    },
+  },
+  {
+    title:
+      'twenty-standard, which has no role, acting for an Admin member reading a company',
+    context: {
+      attempt: ({ applications, companyId }) =>
+        findOneOperation({
+          objectMetadataSingularName: 'company',
+          gqlFields: 'id',
+          filter: { id: { eq: companyId } },
           token: applications.tokens.twentyStandardForAdminMember,
           expectToFail: true,
         }),

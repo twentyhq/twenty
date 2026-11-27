@@ -237,6 +237,49 @@ describe('validateNavigationMenuItemTypeRequiredProperties', () => {
     ]);
   });
 
+  it('should accept a visible item limit on a section', () => {
+    expect(
+      validateNavigationMenuItemTypeRequiredProperties({
+        flatNavigationMenuItem: buildFlatNavigationMenuItem({
+          type: NavigationMenuItemType.SECTION,
+          name: 'Section',
+          visibleItemLimit: 5,
+        }),
+      }),
+    ).toEqual([]);
+  });
+
+  it('should report an error when a visible item limit is set on another type', () => {
+    const errors = validateNavigationMenuItemTypeRequiredProperties({
+      flatNavigationMenuItem: buildFlatNavigationMenuItem({
+        type: NavigationMenuItemType.FOLDER,
+        name: 'Folder',
+        visibleItemLimit: 5,
+      }),
+    });
+
+    expect(errors.map(({ message }) => message)).toEqual([
+      'A visibleItemLimit is only allowed on SECTION type',
+    ]);
+  });
+
+  it.each([0, 101, 2.5])(
+    'should report an error when the visible item limit is %s',
+    (visibleItemLimit) => {
+      const errors = validateNavigationMenuItemTypeRequiredProperties({
+        flatNavigationMenuItem: buildFlatNavigationMenuItem({
+          type: NavigationMenuItemType.SECTION,
+          name: 'Section',
+          visibleItemLimit,
+        }),
+      });
+
+      expect(errors.map(({ message }) => message)).toEqual([
+        'A visibleItemLimit must be an integer between 1 and 100',
+      ]);
+    },
+  );
+
   it('should return an error when type is unknown', () => {
     const errors = validateNavigationMenuItemTypeRequiredProperties({
       flatNavigationMenuItem: buildFlatNavigationMenuItem({

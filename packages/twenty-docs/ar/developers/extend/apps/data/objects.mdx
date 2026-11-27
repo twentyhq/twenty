@@ -185,6 +185,30 @@ export default defineObject({
 }
 ```
 
+## حقول الصيغ
+
+يجعل `formula` الحقل محسوبًا: تأتي قيمته من تعبير يعتمد على حقول أخرى، ولا يمكن للسجلات الكتابة إليه. إنها خاصية للحقل، بجانب `universalSettings` وليست داخله، وتنطبق على حقول `TEXT` و`NUMBER` و`BOOLEAN` و`DATE` و`DATE_TIME` و`SELECT` و`RATING` و`CURRENCY`.
+
+* يقرأ `formula.expression` حقول السجل حسب الاسم (`price * quantity`)، والأجزاء المركبة باستخدام نقطة (`amount.amountMicros`)، وحقول سجل ذي صلة بعلاقة متعدد إلى واحد (`company.name`)، ويحسب التجميعات عبر علاقة واحد إلى متعدد (`count(tasks)`, `sum(deals.amount.amountMicros, deals.stage == 'WON')`).
+* تحسب صيغة `CURRENCY` المبلغ بالميكرو، وتحتاج أيضًا إلى `formula.currencyCodeExpression`، مثل `"USD"` أو `amount.currencyCode`.
+* لا يمكن أن يكون حقل الصيغة فريدًا أو قابلاً للبحث أو معرّف تسمية الكائن.
+
+```ts
+{
+  universalIdentifier: 'c2b8d1ef-5678-4a11-8bcd-111111111111',
+  name: 'total',
+  type: FieldType.NUMBER,
+  label: 'Total',
+  formula: { expression: 'price * quantity' },
+}
+```
+
+<Note>
+  تخضع حقول الصيغة لعلامة الميزة `IS_FORMULA_FIELD_ENABLED`. تفشل مزامنة
+  صيغة مع مساحة عمل لا تحتوي على العلامة مع ظهور `Formula fields are not
+    enabled for this workspace`.
+</Note>
+
 ## ماذا بعد؟
 
 * **اربط هذا الكائن بغيره من الكائنات** — راجع صفحة [Relations](/ar/developers/extend/apps/data/relations) لمعرفة نمط العلاقة ثنائية الاتجاه.

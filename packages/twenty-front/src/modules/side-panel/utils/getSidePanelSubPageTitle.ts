@@ -16,6 +16,8 @@ export const getSidePanelSubPageTitle = (
       return t`Sorts`;
     case SidePanelSubPages.PageLayoutFieldRelationTableFields:
       return t`Fields`;
+    case SidePanelSubPages.PageLayoutWidgetVisibility:
+      return t`Visibility`;
     default:
       assertUnreachable(subPage);
   }

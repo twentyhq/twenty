@@ -3,5 +3,7 @@ import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/
 // Runs in a participant write's transaction, after the participant row is
 // locked, in the order member activity takes the two locks
 export type AgentChatThreadWriteStep = (
-  context: AgentHistoryStorageContext & { threadId: string },
+  context: Pick<AgentHistoryStorageContext, 'manager' | 'table'> & {
+    threadId: string;
+  },
 ) => Promise<void>;

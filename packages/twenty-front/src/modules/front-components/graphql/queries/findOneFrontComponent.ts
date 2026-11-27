@@ -7,6 +7,7 @@ export const FIND_ONE_FRONT_COMPONENT = gql`
       name
       applicationId
       applicationName
+      applicationFunctionsBaseUrl
       applicationGrantedCapabilities
       applicationGrantedIframeMediaPermissions {
         origin
