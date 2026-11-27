@@ -192,7 +192,7 @@ export class FlatRoleValidatorService {
       ...getRoleNotEditableErrors({
         flatRole: fromFlatRole,
         buildOptions,
-        isRecordPermission: isRoleWideRecordPermissionsUpdate,
+        isRecordPermissionsChange: isRoleWideRecordPermissionsUpdate,
       }),
     );
 
@@ -200,7 +200,7 @@ export class FlatRoleValidatorService {
       ...validateRoleBelongsToCallerApplication({
         referencedRole: fromFlatRole,
         buildOptions,
-        isRecordPermission: isRoleWideRecordPermissionsUpdate,
+        isRecordPermissionsChange: isRoleWideRecordPermissionsUpdate,
       }),
     );
 

@@ -101,7 +101,7 @@ export class FlatRowLevelPermissionPredicateGroupValidatorService {
         ...getRoleNotEditableErrors({
           flatRole: role,
           buildOptions,
-          isRecordPermission: true,
+          isRecordPermissionsChange: true,
         }),
       );
     }
@@ -283,7 +283,7 @@ export class FlatRowLevelPermissionPredicateGroupValidatorService {
         ...getRoleNotEditableErrors({
           flatRole: role,
           buildOptions,
-          isRecordPermission: true,
+          isRecordPermissionsChange: true,
         }),
       );
     }

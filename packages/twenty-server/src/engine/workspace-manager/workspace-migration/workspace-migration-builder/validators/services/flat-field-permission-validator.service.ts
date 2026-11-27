@@ -80,7 +80,7 @@ export class FlatFieldPermissionValidatorService {
         ...validateRoleBelongsToCallerApplication({
           referencedRole,
           buildOptions,
-          isRecordPermission: true,
+          isRecordPermissionsChange: true,
         }),
       );
 
@@ -88,7 +88,7 @@ export class FlatFieldPermissionValidatorService {
         ...getRoleNotEditableErrors({
           flatRole: referencedRole,
           buildOptions,
-          isRecordPermission: true,
+          isRecordPermissionsChange: true,
         }),
       );
     }
@@ -238,7 +238,7 @@ export class FlatFieldPermissionValidatorService {
         ...validateRoleBelongsToCallerApplication({
           referencedRole,
           buildOptions,
-          isRecordPermission: true,
+          isRecordPermissionsChange: true,
         }),
       );
 
@@ -246,7 +246,7 @@ export class FlatFieldPermissionValidatorService {
         ...getRoleNotEditableErrors({
           flatRole: referencedRole,
           buildOptions,
-          isRecordPermission: true,
+          isRecordPermissionsChange: true,
         }),
       );
     }
@@ -376,7 +376,7 @@ export class FlatFieldPermissionValidatorService {
           ...getRoleNotEditableErrors({
             flatRole: referencedRole,
             buildOptions,
-            isRecordPermission: true,
+            isRecordPermissionsChange: true,
           }),
         );
       }

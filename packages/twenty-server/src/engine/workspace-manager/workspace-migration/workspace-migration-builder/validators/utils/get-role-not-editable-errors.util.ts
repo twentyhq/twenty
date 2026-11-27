@@ -15,7 +15,7 @@ import { isWorkspaceEditingAdminRecordPermissions } from 'src/engine/workspace-m
 export const getRoleNotEditableErrors = ({
   flatRole,
   buildOptions,
-  isRecordPermission = false,
+  isRecordPermissionsChange = false,
 }: {
   flatRole: UniversalFlatRole;
   buildOptions: WorkspaceMigrationBuilderOptions &
@@ -25,12 +25,12 @@ export const getRoleNotEditableErrors = ({
         'workspaceCustomApplicationUniversalIdentifier'
       >
     >;
-  isRecordPermission?: boolean;
+  isRecordPermissionsChange?: boolean;
 }): FlatEntityValidationError[] => {
   const errors: FlatEntityValidationError[] = [];
 
   if (
-    isRecordPermission &&
+    isRecordPermissionsChange &&
     isWorkspaceEditingAdminRecordPermissions({ flatRole, buildOptions })
   ) {
     return errors;

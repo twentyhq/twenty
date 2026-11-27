@@ -12,7 +12,7 @@ import { isWorkspaceEditingAdminRecordPermissions } from 'src/engine/workspace-m
 export const validateRoleBelongsToCallerApplication = ({
   referencedRole,
   buildOptions,
-  isRecordPermission = false,
+  isRecordPermissionsChange = false,
 }: {
   referencedRole: UniversalFlatRole;
   buildOptions: WorkspaceMigrationBuilderOptions &
@@ -22,10 +22,10 @@ export const validateRoleBelongsToCallerApplication = ({
         'workspaceCustomApplicationUniversalIdentifier'
       >
     >;
-  isRecordPermission?: boolean;
+  isRecordPermissionsChange?: boolean;
 }): FlatEntityValidationError[] => {
   if (
-    isRecordPermission &&
+    isRecordPermissionsChange &&
     isWorkspaceEditingAdminRecordPermissions({
       flatRole: referencedRole,
       buildOptions,
