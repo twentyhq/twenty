@@ -141,6 +141,13 @@ An upgrade command is frozen once released: self-hosters can jump several versio
 
 A command should also not reach into runtime services to do its work. Their behavior changes with every release; the command's must not.
 
+## Keeping workspace commands cheap
+
+A workspace command runs once per workspace (about 6k on cloud), one after another, on the primary database while it serves traffic. Whatever it costs per workspace is paid 6k times: 10 ms is a minute of writer time, 200 ms is twenty.
+
+- **Prefer idempotent DDL to reading first.** `ADD COLUMN IF NOT EXISTS` and `DROP COLUMN IF EXISTS` (`WorkspaceSchemaColumnManagerService`, `shouldSkipExistingColumns`) need no lookup at all.
+- **Scope every catalog lookup to named tables.** The command already knows its tables from the workspace cache. Filter `pg_class` with `relname = ANY(...)` or `pg_attribute` with `attrelid = to_regclass(...)`, as `2-38/utils/read-existing-column-names-by-table-name.util.ts` does. Never filter `information_schema` or `pg_class` by schema alone: there is no index on the schema, so each call scans the catalog of every workspace, and it grows with each one. In 2.65 that cost about 200 ms per workspace and held the writer at 80% CPU for 30 minutes. The `twenty/no-unscoped-catalog-query` lint rule rejects these queries.
+
 ## Adding a sub-field to a composite type
 
 Every read of a composite field selects the columns of all the sub-fields its composite type declares. Code that declares a sub-field serves every workspace as soon as it deploys, while a workspace command adds the column one workspace at a time. Split the change across two releases:
