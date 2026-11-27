@@ -1,3 +1,5 @@
+import { type TAG_COLORS } from '@/constants/TagColors';
+
 export const WORKSPACE_ACCENT_COLORS = [
   'blue',
   'iris',
@@ -14,4 +16,4 @@ export const WORKSPACE_ACCENT_COLORS = [
   'jade',
   'turquoise',
   'cyan',
-] as const;
+] as const satisfies readonly (typeof TAG_COLORS)[number][];

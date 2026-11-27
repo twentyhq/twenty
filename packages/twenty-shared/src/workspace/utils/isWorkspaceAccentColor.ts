@@ -4,4 +4,4 @@ import { type WorkspaceAccentColor } from '@/workspace/types/WorkspaceAccentColo
 export const isWorkspaceAccentColor = (
   value: unknown,
 ): value is WorkspaceAccentColor =>
-  WORKSPACE_ACCENT_COLORS.includes(value as WorkspaceAccentColor);
+  WORKSPACE_ACCENT_COLORS.some((accentColor) => accentColor === value);
