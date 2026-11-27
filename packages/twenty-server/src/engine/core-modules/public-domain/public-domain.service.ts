@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
-import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
@@ -110,20 +109,14 @@ export class PublicDomainService {
       );
     }
 
-    const publicDomain = {
-      domain: formattedDomain,
-      workspaceId: workspace.id,
-      applicationId,
-    } as PublicDomainEntity;
-
     await this.dnsManagerService.registerHostname(formattedDomain, {
       isPublicDomain: true,
     });
 
     try {
-      await this.publicDomainRepository.insert(
+      return await this.publicDomainRepository.insertAndReturnOne(
         workspace.id,
-        publicDomain as QueryDeepPartialEntity<PublicDomainEntity>,
+        { domain: formattedDomain, applicationId },
       );
     } catch (error) {
       await this.dnsManagerService.deleteHostnameSilently(formattedDomain, {
@@ -132,8 +125,6 @@ export class PublicDomainService {
 
       throw error;
     }
-
-    return publicDomain;
   }
 
   async checkPublicDomainValidRecords(
