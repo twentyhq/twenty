@@ -1,5 +1,6 @@
 import { type SettingsSearchDestination } from '@/settings/search/types/SettingsSearchDestination';
 import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 import { getEditDistance } from 'twenty-shared/workflow';
 import { normalizeSearchText } from 'twenty-ui/utilities';
 
@@ -11,6 +12,7 @@ const PREFIX_MATCH_QUALITY = 3;
 const SUBSTRING_MATCH_QUALITY = 2;
 const TYPO_MATCH_QUALITY = 1;
 const MINIMUM_TYPO_TOLERANT_LENGTH = 5;
+const CURRENT_OBJECT_BOOST_FACTOR = 2;
 
 type WeightedWords = { words: string[]; weight: number };
 
@@ -98,9 +100,11 @@ const getDestinationScore = ({
 export const searchSettingsDestinations = ({
   destinations,
   search,
+  boostedObjectNamePlural,
 }: {
   destinations: SettingsSearchDestination[];
   search: string;
+  boostedObjectNamePlural?: string;
 }): SettingsSearchDestination[] => {
   const searchWords = splitIntoWords([search]);
 
@@ -111,7 +115,12 @@ export const searchSettingsDestinations = ({
   return destinations
     .map((destination) => ({
       destination,
-      score: getDestinationScore({ destination, searchWords }),
+      score:
+        getDestinationScore({ destination, searchWords }) *
+        (isDefined(boostedObjectNamePlural) &&
+        destination.objectNamePlural === boostedObjectNamePlural
+          ? CURRENT_OBJECT_BOOST_FACTOR
+          : 1),
     }))
     .filter(({ score }) => score > 0)
     .sort(

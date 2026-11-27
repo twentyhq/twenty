@@ -186,6 +186,7 @@ export const getSettingsSearchDestinations = ({
             title,
             breadcrumbs,
             keywords,
+            objectNamePlural: objectMetadataItem?.namePlural,
           },
           ...otherTabs.map((tab) => ({
             id: `settings-search-${pagePath}#${tab.id}`,
@@ -193,6 +194,7 @@ export const getSettingsSearchDestinations = ({
             title: i18n._(tab.title),
             breadcrumbs: [...breadcrumbs, title],
             keywords: [],
+            objectNamePlural: objectMetadataItem?.namePlural,
           })),
         ];
       }),
