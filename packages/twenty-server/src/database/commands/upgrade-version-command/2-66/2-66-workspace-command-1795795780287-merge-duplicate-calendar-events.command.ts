@@ -6,16 +6,16 @@ import { isDefined } from 'twenty-shared/utils';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { buildCalendarEventDuplicatePairsQuery } from 'src/database/commands/upgrade-version-command/2-65/utils/build-calendar-event-duplicate-pairs-query.util';
-import { buildCalendarEventMergeQueries } from 'src/database/commands/upgrade-version-command/2-65/utils/build-calendar-event-merge-queries.util';
+import { buildCalendarEventDuplicatePairsQuery } from 'src/database/commands/upgrade-version-command/2-66/utils/build-calendar-event-duplicate-pairs-query.util';
+import { buildCalendarEventMergeQueries } from 'src/database/commands/upgrade-version-command/2-66/utils/build-calendar-event-merge-queries.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
 const MERGE_BATCH_SIZE = 500;
 
-@RegisteredWorkspaceCommand('2.65.0', 1795789417462)
+@RegisteredWorkspaceCommand('2.66.0', 1795795780287)
 @Command({
-  name: 'upgrade:2-65:merge-duplicate-calendar-events',
+  name: 'upgrade:2-66:merge-duplicate-calendar-events',
   description:
     'Merge calendar events synced once per channel into one shared event, without emitting record events',
 })
