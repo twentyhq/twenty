@@ -44,6 +44,7 @@ import {
   isDefined,
   isEmptyObject,
   isMorphRelationHead,
+  getFieldMetadataFormulaEvaluation,
   printFieldMetadataFormula,
 } from 'twenty-shared/utils';
 import { buildFormulaFieldEditorInputs } from '@/settings/data-model/fields/forms/formula/utils/buildFormulaFieldEditorInputs';
@@ -179,6 +180,9 @@ export const SettingsObjectFieldEdit = () => {
       defaultValue,
       formula: formulaExpression ?? '',
       formulaCurrencyCode: currencyCodeExpression ?? '',
+      formulaEvaluation: getFieldMetadataFormulaEvaluation({
+        formula: fieldMetadataItem?.formula,
+      }),
     },
   });
 

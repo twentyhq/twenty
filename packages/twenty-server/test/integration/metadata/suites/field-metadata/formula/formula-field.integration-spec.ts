@@ -637,8 +637,7 @@ describe('Formula fields', () => {
       reason: 'now in a formula that aggregates related records',
       type: FieldMetadataType.NUMBER,
       expression: 'count(noteTargets) + datePart(now, "DAY")',
-      message:
-        'Invalid formula: A formula that aggregates related records is stored, so it cannot read "now"',
+      message: 'Invalid formula: A stored formula cannot read "now"',
     },
     {
       reason: 'a sum of values that are not numbers',

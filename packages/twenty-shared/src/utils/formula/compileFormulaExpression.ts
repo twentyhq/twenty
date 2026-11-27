@@ -54,7 +54,7 @@ export const compileFormulaExpression = ({
 }: {
   expression: string;
   fields: ValidationRuleFieldDescriptor[];
-  // The field's evaluation, which the other expression of a currency formula can make stored
+  // Left out, the evaluation follows from the expression
   evaluation?: FieldMetadataFormulaEvaluation;
 }): ValidationRuleCompilationResult => {
   const compilation = compileExpression({
@@ -99,12 +99,22 @@ export const compileFormulaExpression = ({
     };
   }
 
-  const isStored =
-    evaluation === 'STORED' ||
+  const isAggregating =
     getFormulaEvaluationFromBindings({
       bindings: compilation.bindings,
       fields,
     }) === 'STORED';
+
+  if (isAggregating && evaluation === 'QUERY_TIME') {
+    return {
+      isValid: false,
+      errorMessage:
+        'A formula that aggregates related records must be stored, as it is too costly to compute on every read',
+      errorCode: 'AGGREGATE_IN_LIVE_FORMULA',
+    };
+  }
+
+  const isStored = evaluation === 'STORED' || isAggregating;
   // `now` moves without any record changing, so a stored value reading it would go stale
   const unsupportedPath = isStored
     ? paths.find((path) => path === VALIDATION_RULE_NOW_VARIABLE_NAME)
@@ -124,7 +134,7 @@ export const compileFormulaExpression = ({
   if (isDefined(unsupportedPath)) {
     return {
       isValid: false,
-      errorMessage: `A formula that aggregates related records is stored, so it cannot read "${unsupportedPath}". Aggregate in this field and read it from another formula.`,
+      errorMessage: `A stored formula cannot read "${unsupportedPath}". Read it from a live formula instead.`,
       errorCode: 'NOT_SUPPORTED_IN_STORED_FORMULA',
       errorParams: { path: unsupportedPath },
     };

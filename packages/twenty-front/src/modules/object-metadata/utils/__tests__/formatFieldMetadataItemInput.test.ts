@@ -71,6 +71,15 @@ describe('formatFieldMetadataItemInput', () => {
     });
   });
 
+  it('should send the chosen evaluation with the formula', () => {
+    expect(
+      formatFieldMetadataItemInput({
+        formula: 'price * 2',
+        formulaEvaluation: 'STORED',
+      }).formula,
+    ).toEqual({ expression: 'price * 2', evaluation: 'STORED' });
+  });
+
   it('should remove the formula when it is emptied', () => {
     expect(formatFieldMetadataItemInput({ formula: ' ' }).formula).toBeNull();
   });

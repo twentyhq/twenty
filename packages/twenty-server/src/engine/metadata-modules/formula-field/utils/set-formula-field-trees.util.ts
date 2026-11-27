@@ -4,6 +4,7 @@ import {
 } from 'twenty-shared/types';
 import {
   compileFormulaExpression,
+  getFieldMetadataFormulaEvaluation,
   getFieldMetadataFormulaCurrencyCodeExpression,
   getFieldMetadataFormulaExpression,
   getFormulaEvaluationFromBindings,
@@ -123,14 +124,22 @@ export const setFormulaFieldTrees = <
     ...compiledExpression.bindings,
     ...compiledCurrencyCodeExpression?.bindings,
   };
+  const existingFormula =
+    universalFlatFieldMetadataMaps.byUniversalIdentifier[universalIdentifier]
+      ?.formula;
+  // Left out, the evaluation stays stored once stored, so formulas reading this one keep reading it
+  const evaluation =
+    writtenFormula?.evaluation ??
+    (getFormulaEvaluationFromBindings({ bindings, fields }) === 'STORED' ||
+    getFieldMetadataFormulaEvaluation({ formula: existingFormula }) === 'STORED'
+      ? 'STORED'
+      : 'QUERY_TIME');
   const formula: FieldMetadataFormula = {
     tree: compiledExpression.tree,
     ...(isDefined(compiledCurrencyCodeExpression)
       ? { currencyCodeTree: compiledCurrencyCodeExpression.tree }
       : {}),
-    ...keepStoredFormulaEvaluation(
-      getFormulaEvaluationFromBindings({ bindings, fields }),
-    ),
+    ...keepStoredFormulaEvaluation(evaluation),
   };
 
   return { ...universalFlatFieldMetadata, formula };

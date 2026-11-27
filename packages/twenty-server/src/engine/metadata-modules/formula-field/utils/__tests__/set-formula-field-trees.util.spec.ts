@@ -66,10 +66,7 @@ describe('setFormulaFieldTrees', () => {
           type: FieldMetadataType.NUMBER,
           objectMetadataId: 'supplier-object',
           objectMetadataUniversalIdentifier: 'supplier-object-uid',
-          formula: {
-            expression: 'avg(gadgets.price)',
-            evaluation: 'QUERY_TIME',
-          },
+          formula: { expression: 'avg(gadgets.price)' },
         }),
         universalFlatObjectMetadataMaps: FORMULA_FLAT_OBJECT_METADATA_MAPS_MOCK,
         universalFlatFieldMetadataMaps: FORMULA_FLAT_FIELD_METADATA_MAPS_MOCK,
@@ -117,6 +114,49 @@ describe('setFormulaFieldTrees', () => {
         universalFlatFieldMetadataMaps: FORMULA_FLAT_FIELD_METADATA_MAPS_MOCK,
       }).formula,
     ).toEqual({ tree, evaluation: 'STORED' });
+  });
+
+  it('should keep the evaluation that was written, for the validator to check', () => {
+    expect(
+      setGadgetFormulaTrees({ expression: 'price', evaluation: 'STORED' }),
+    ).toMatchObject({ evaluation: 'STORED' });
+    expect(
+      setFormulaFieldTrees({
+        universalFlatFieldMetadata: getFlatFieldMetadataMock({
+          universalIdentifier: 'supplier-average-price-uid',
+          name: 'averagePrice',
+          type: FieldMetadataType.NUMBER,
+          objectMetadataId: 'supplier-object',
+          objectMetadataUniversalIdentifier: 'supplier-object-uid',
+          formula: {
+            expression: 'avg(gadgets.price)',
+            evaluation: 'QUERY_TIME',
+          },
+        }),
+        universalFlatObjectMetadataMaps: FORMULA_FLAT_OBJECT_METADATA_MAPS_MOCK,
+        universalFlatFieldMetadataMaps: FORMULA_FLAT_FIELD_METADATA_MAPS_MOCK,
+      }).formula,
+    ).not.toHaveProperty('evaluation');
+  });
+
+  it('should keep a stored formula stored when its new expression leaves the evaluation out', () => {
+    expect(
+      setFormulaFieldTrees({
+        universalFlatFieldMetadata: getFlatFieldMetadataMock({
+          universalIdentifier: 'supplier-gadget-count-uid',
+          name: 'gadgetCount',
+          type: FieldMetadataType.NUMBER,
+          objectMetadataId: 'supplier-object',
+          objectMetadataUniversalIdentifier: 'supplier-object-uid',
+          formula: { expression: '5' },
+        }),
+        universalFlatObjectMetadataMaps: FORMULA_FLAT_OBJECT_METADATA_MAPS_MOCK,
+        universalFlatFieldMetadataMaps: FORMULA_FLAT_FIELD_METADATA_MAPS_MOCK,
+      }).formula,
+    ).toEqual({
+      tree: { type: 'LITERAL', value: 5 },
+      evaluation: 'STORED',
+    });
   });
 
   it('should leave a field without formula untouched', () => {

@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 import {
   FORMULA_CURRENCY_CODE_EXPRESSION_DESCRIPTION,
+  FORMULA_EVALUATION_DESCRIPTION,
   FORMULA_DESCRIPTION,
   FORMULA_EXPRESSION_DESCRIPTION,
 } from 'src/engine/metadata-modules/field-metadata/tools/constants/formula-description.constant';
@@ -45,6 +46,10 @@ export const fieldMetadataFormulaInputSchema = z
       .string()
       .optional()
       .describe(FORMULA_CURRENCY_CODE_EXPRESSION_DESCRIPTION),
+    evaluation: z
+      .enum(['QUERY_TIME', 'STORED'])
+      .optional()
+      .describe(FORMULA_EVALUATION_DESCRIPTION),
   })
   .nullable()
   .meta({ type: ['object', 'null'] })

@@ -1,4 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { type FieldMetadataFormulaEvaluation } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
@@ -21,6 +22,7 @@ export const formatFieldMetadataItemInput = (
   > & {
     formula?: string;
     formulaCurrencyCode?: string;
+    formulaEvaluation?: FieldMetadataFormulaEvaluation;
   },
 ) => {
   const formulaExpression = input.formula?.trim();
@@ -35,12 +37,15 @@ export const formatFieldMetadataItemInput = (
       return null;
     }
 
-    return isNonEmptyString(formulaCurrencyCodeExpression)
-      ? {
-          expression: formulaExpression,
-          currencyCodeExpression: formulaCurrencyCodeExpression,
-        }
-      : { expression: formulaExpression };
+    return {
+      expression: formulaExpression,
+      ...(isNonEmptyString(formulaCurrencyCodeExpression)
+        ? { currencyCodeExpression: formulaCurrencyCodeExpression }
+        : {}),
+      ...(isDefined(input.formulaEvaluation)
+        ? { evaluation: input.formulaEvaluation }
+        : {}),
+    };
   };
 
   return {
