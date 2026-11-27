@@ -301,9 +301,6 @@ const foldMeeting = (
   }
 };
 
-// Aggregates every message (email or app chat) and meeting interaction of the given people into one
-// last-contact snapshot per person, resolving the owning team member and the
-// inbound/outbound direction from the participants and channel associations.
 export const buildPersonAggregates = async (
   client: CoreApiClient,
   personIds: string[],
