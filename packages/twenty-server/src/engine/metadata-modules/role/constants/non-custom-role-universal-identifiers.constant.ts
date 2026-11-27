@@ -1,8 +1,9 @@
-import { MEMBER_ROLE_UNIVERSAL_IDENTIFIER } from 'twenty-shared/constants';
-
-import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
+import {
+  ADMIN_ROLE_UNIVERSAL_IDENTIFIER,
+  MEMBER_ROLE_UNIVERSAL_IDENTIFIER,
+} from 'twenty-shared/constants';
 
 export const NON_CUSTOM_ROLE_UNIVERSAL_IDENTIFIERS = [
-  STANDARD_ROLE.admin.universalIdentifier,
+  ADMIN_ROLE_UNIVERSAL_IDENTIFIER,
   MEMBER_ROLE_UNIVERSAL_IDENTIFIER,
 ];

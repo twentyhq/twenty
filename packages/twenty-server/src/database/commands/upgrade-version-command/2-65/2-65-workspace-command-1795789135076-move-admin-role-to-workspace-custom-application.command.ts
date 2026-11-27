@@ -3,6 +3,7 @@ import { Command } from 'nest-commander';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
+import { ADMIN_ROLE_UNIVERSAL_IDENTIFIER } from 'twenty-shared/constants';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
@@ -13,7 +14,6 @@ import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 
 const ADMIN_ROLE_TABLES = [
   { metadataName: 'role', tableName: 'role', roleIdColumnName: 'id' },
@@ -89,7 +89,7 @@ export class MoveAdminRoleToWorkspaceCustomApplicationCommand extends Provisione
     );
 
     const adminFlatRole = findFlatEntityByUniversalIdentifier({
-      universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
+      universalIdentifier: ADMIN_ROLE_UNIVERSAL_IDENTIFIER,
       flatEntityMaps: flatRoleMaps,
     });
 

@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
+import { ADMIN_ROLE_UNIVERSAL_IDENTIFIER } from 'twenty-shared/constants';
 
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import {
@@ -14,7 +15,6 @@ import {
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { RoleTargetService } from 'src/engine/metadata-modules/role-target/services/role-target.service';
 import { RolePermissionsService } from 'src/engine/permissions/role-permissions.service';
-import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { validateFlatRoleTargetRoleIsEntitled } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-role-is-entitled.util';
 import { type FlatWorkspaceMember } from 'src/engine/core-modules/user/types/flat-workspace-member.type';
@@ -282,8 +282,7 @@ export class RoleAssignmentWriteService {
 
       if (
         isDefined(currentRole) &&
-        currentRole.universalIdentifier ===
-          STANDARD_ROLE.admin.universalIdentifier
+        currentRole.universalIdentifier === ADMIN_ROLE_UNIVERSAL_IDENTIFIER
       ) {
         adminRoleIdToValidate = currentRole.id;
       }
@@ -327,7 +326,7 @@ export class RoleAssignmentWriteService {
 
     if (
       roleOfUserWorkspace.universalIdentifier ===
-      STANDARD_ROLE.admin.universalIdentifier
+      ADMIN_ROLE_UNIVERSAL_IDENTIFIER
     ) {
       const adminRole = roleOfUserWorkspace;
 

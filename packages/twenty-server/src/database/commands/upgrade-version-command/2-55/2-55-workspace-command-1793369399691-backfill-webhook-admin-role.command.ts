@@ -1,5 +1,6 @@
 import { Command } from 'nest-commander';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { ADMIN_ROLE_UNIVERSAL_IDENTIFIER } from 'twenty-shared/constants';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
@@ -11,7 +12,6 @@ import { fromCreateRoleTargetInputToFlatRoleTargetToCreate } from 'src/engine/me
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
-import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 
 @RegisteredWorkspaceCommand('2.55.0', 1793369399691)
 @Command({
@@ -58,7 +58,7 @@ export class BackfillWebhookAdminRoleCommand extends ProvisionedWorkspaceCommand
     }
 
     const adminFlatRole = findFlatEntityByUniversalIdentifier({
-      universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
+      universalIdentifier: ADMIN_ROLE_UNIVERSAL_IDENTIFIER,
       flatEntityMaps: flatRoleMaps,
     });
 

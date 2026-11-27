@@ -1,7 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
-import { PermissionFlagType } from 'twenty-shared/constants';
+import {
+  ADMIN_ROLE_UNIVERSAL_IDENTIFIER,
+  PermissionFlagType,
+} from 'twenty-shared/constants';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { DataSource } from 'typeorm';
 
@@ -29,7 +32,6 @@ import {
   USER_WORKSPACE_DATA_SEED_IDS,
 } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { API_KEY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/api-key-data-seeds.constant';
-import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 
 @Injectable()
 export class DevSeederPermissionsService {
@@ -65,7 +67,7 @@ export class DevSeederPermissionsService {
   }) {
     const adminRole = await this.roleRepository.findOne(workspaceId, {
       where: {
-        universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
+        universalIdentifier: ADMIN_ROLE_UNIVERSAL_IDENTIFIER,
       },
     });
 

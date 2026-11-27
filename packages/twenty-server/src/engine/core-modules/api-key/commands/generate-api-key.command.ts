@@ -5,6 +5,7 @@ import { addDays } from 'date-fns';
 import { Command, CommandRunner, Option } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
+import { ADMIN_ROLE_UNIVERSAL_IDENTIFIER } from 'twenty-shared/constants';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
@@ -15,7 +16,6 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 
 type GenerateApiKeyCommandOptions = {
   workspaceId: string;
@@ -108,7 +108,7 @@ export class GenerateApiKeyCommand extends CommandRunner {
 
     const adminRole = await this.roleRepository.findOne(workspace.id, {
       where: {
-        universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
+        universalIdentifier: ADMIN_ROLE_UNIVERSAL_IDENTIFIER,
       },
     });
 

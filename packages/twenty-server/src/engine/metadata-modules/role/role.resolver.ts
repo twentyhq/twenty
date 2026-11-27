@@ -14,6 +14,7 @@ import {
 } from '@nestjs/graphql';
 
 import { isDefined } from 'twenty-shared/utils';
+import { ADMIN_ROLE_UNIVERSAL_IDENTIFIER } from 'twenty-shared/constants';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -59,7 +60,6 @@ import {
 } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { UpdateRoleInput } from 'src/engine/metadata-modules/role/dtos/update-role.input';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
-import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 import { UpsertRowLevelPermissionRulesInput } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/inputs/upsert-row-level-permission-rules.input';
 import { RowLevelPermissionPredicateGroupDTO } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/row-level-permission-predicate-group.dto';
 import { RowLevelPermissionRuleDTO } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/row-level-permission-rule.dto';
@@ -362,7 +362,7 @@ export class RoleResolver {
   getAreRecordPermissionsEditable(@Parent() role: RoleDTO): boolean {
     return (
       role.isEditable ||
-      role.universalIdentifier === STANDARD_ROLE.admin.universalIdentifier
+      role.universalIdentifier === ADMIN_ROLE_UNIVERSAL_IDENTIFIER
     );
   }
 

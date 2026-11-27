@@ -9,6 +9,7 @@ import { DataSource, Repository } from 'typeorm';
 import { ViewKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
+import { ADMIN_ROLE_UNIVERSAL_IDENTIFIER } from 'twenty-shared/constants';
 
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -59,7 +60,6 @@ import { DevSeederWorkflowPendingInputWorkspaceService } from 'src/engine/worksp
 import { DevSeederMetadataService } from 'src/engine/workspace-manager/dev-seeder/metadata/services/dev-seeder-metadata.service';
 import { PrefillFrontComponentService } from 'src/engine/workspace-manager/standard-objects-prefill-data/services/prefill-front-component.service';
 import { getSeedFrontComponentDefinitions } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-front-component-definitions.util';
-import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 import { TwentyStandardApplicationService } from 'src/engine/workspace-manager/twenty-standard-application/services/twenty-standard-application.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-cli-application-registration.constant';
@@ -213,7 +213,7 @@ export class DevSeederWorkspaceService {
       }),
       this.coreDataSource.getRepository(RoleEntity).findOneByOrFail({
         workspaceId,
-        universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
+        universalIdentifier: ADMIN_ROLE_UNIVERSAL_IDENTIFIER,
       }),
     ]);
 

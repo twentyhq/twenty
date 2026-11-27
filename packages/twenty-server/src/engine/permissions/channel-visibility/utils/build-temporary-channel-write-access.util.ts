@@ -1,5 +1,6 @@
 import { type FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { ADMIN_ROLE_UNIVERSAL_IDENTIFIER } from 'twenty-shared/constants';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -9,7 +10,6 @@ import { type TemporaryChannelWriteAccess } from 'src/engine/permissions/channel
 import { isAdminChannelWriteAccessRestored } from 'src/engine/permissions/channel-visibility/utils/is-admin-channel-write-access-restored.util';
 import { isApiKeyExemptFromChannelVisibility } from 'src/engine/permissions/channel-visibility/utils/is-api-key-exempt-from-channel-visibility.util';
 import { getWorkspaceMemberIndividualRoleUniversalIdentifier } from 'src/engine/permissions/workspace-member-individual-role/utils/get-workspace-member-individual-role-universal-identifier.util';
-import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 
 // TODO(@charlesBochet): remove after 2026-12-27. Temporary channel write access for admins and API keys, only to unblock customers who reported broken links, merges and deletes
 export const buildTemporaryChannelWriteAccess = ({
@@ -25,7 +25,7 @@ export const buildTemporaryChannelWriteAccess = ({
   >;
 }): TemporaryChannelWriteAccess | undefined => {
   const adminFlatRole =
-    flatRoleMaps.byUniversalIdentifier[STANDARD_ROLE.admin.universalIdentifier];
+    flatRoleMaps.byUniversalIdentifier[ADMIN_ROLE_UNIVERSAL_IDENTIFIER];
   const isRestoredForAdminMembers =
     isAdminChannelWriteAccessRestored(featureFlagsMap);
   const apiKeysIndividualRoleId = isApiKeyExemptFromChannelVisibility(

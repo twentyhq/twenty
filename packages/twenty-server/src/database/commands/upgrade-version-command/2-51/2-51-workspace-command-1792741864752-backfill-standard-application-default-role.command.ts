@@ -1,5 +1,6 @@
 import { Command } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
+import { ADMIN_ROLE_UNIVERSAL_IDENTIFIER } from 'twenty-shared/constants';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
@@ -8,7 +9,6 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 
 @RegisteredWorkspaceCommand('2.51.0', 1792741864752)
 @Command({
@@ -44,7 +44,7 @@ export class BackfillStandardApplicationDefaultRoleCommand extends ProvisionedWo
     );
 
     const adminFlatRole = findFlatEntityByUniversalIdentifier({
-      universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
+      universalIdentifier: ADMIN_ROLE_UNIVERSAL_IDENTIFIER,
       flatEntityMaps: flatRoleMaps,
     });
 

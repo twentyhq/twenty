@@ -1,33 +1,21 @@
+import { ADMIN_ROLE_UNIVERSAL_IDENTIFIER } from 'twenty-shared/constants';
 import { v4 } from 'uuid';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
-import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 
-export const buildWorkspaceCustomApplicationAdminFlatRole = ({
+export const buildWorkspaceAdminFlatRole = ({
   workspaceId,
   ownerFlatApplication,
-  overrides = {},
 }: {
   workspaceId: string;
   ownerFlatApplication: Pick<FlatApplication, 'id' | 'universalIdentifier'>;
-  overrides?: Partial<
-    Pick<
-      FlatRole,
-      | 'universalIdentifier'
-      | 'label'
-      | 'description'
-      | 'icon'
-      | 'canBeAssignedToUsers'
-      | 'canBeAssignedToApiKeys'
-    >
-  >;
 }): FlatRole => {
   const now = new Date().toISOString();
 
   return {
     id: v4(),
-    universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
+    universalIdentifier: ADMIN_ROLE_UNIVERSAL_IDENTIFIER,
     label: 'Admin',
     description: 'Admin role',
     icon: 'IconUserCog',
@@ -66,6 +54,5 @@ export const buildWorkspaceCustomApplicationAdminFlatRole = ({
     rowLevelPermissionPredicateGroupUniversalIdentifiers: [],
     agentChatChannelRoleIds: [],
     agentChatChannelRoleUniversalIdentifiers: [],
-    ...overrides,
   };
 };

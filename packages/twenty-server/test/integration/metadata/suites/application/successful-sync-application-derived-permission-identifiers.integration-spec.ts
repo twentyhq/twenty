@@ -9,13 +9,13 @@ import { createOneRole } from 'test/integration/metadata/suites/role/utils/creat
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import {
+  ADMIN_ROLE_UNIVERSAL_IDENTIFIER,
   PermissionFlagType,
   SystemPermissionFlag,
 } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { WORKSPACE_CUSTOM_APPLICATION_NAME } from 'src/engine/core-modules/application/constants/workspace-custom-application.constant';
-import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 
 const ROLE_LABEL = 'Derived Permission Identifiers Role';
 
@@ -121,7 +121,7 @@ describe('Sync application should derive the permission identifiers the metadata
       const dryRun = await syncApplication({
         manifest: buildBaseManifest({
           appId: customApplication.universalIdentifier,
-          roleId: STANDARD_ROLE.admin.universalIdentifier,
+          roleId: ADMIN_ROLE_UNIVERSAL_IDENTIFIER,
           overrides: {
             roles: [
               {

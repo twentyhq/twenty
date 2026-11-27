@@ -6,6 +6,7 @@ import { Injectable } from '@nestjs/common';
 import { type Manifest } from 'twenty-shared/application';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
+import { ADMIN_ROLE_UNIVERSAL_IDENTIFIER } from 'twenty-shared/constants';
 
 import { fromFlatApplicationToApplicationManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-application-to-application-manifest.util';
 import { ApplicationFrontComponentExportService } from 'src/engine/core-modules/application/application-manifest/services/application-front-component-export.service';
@@ -37,10 +38,9 @@ import { findActiveFlatApplicationByUniversalIdentifier } from 'src/engine/core-
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 
 const PLACEHOLDER_DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
-  STANDARD_ROLE.admin.universalIdentifier;
+  ADMIN_ROLE_UNIVERSAL_IDENTIFIER;
 
 const findUniversalIdentifierById = ({
   flatEntityMaps,

@@ -5,6 +5,7 @@ import { msg } from '@lingui/core/macro';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
+import { ADMIN_ROLE_UNIVERSAL_IDENTIFIER } from 'twenty-shared/constants';
 
 import { type UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.dto';
 import {
@@ -22,7 +23,6 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { RolePermissionsService } from 'src/engine/permissions/role-permissions.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 
 @Injectable()
 export class AdminPanelUserLookupService {
@@ -76,8 +76,7 @@ export class AdminPanelUserLookupService {
             .get(workspaceUser.id)
             ?.some(
               (role) =>
-                role.universalIdentifier ===
-                STANDARD_ROLE.admin.universalIdentifier,
+                role.universalIdentifier === ADMIN_ROLE_UNIVERSAL_IDENTIFIER,
             ),
         )
         .map((workspaceUser) => workspaceUser.user.id),

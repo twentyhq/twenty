@@ -3,10 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
 import { Not, Repository } from 'typeorm';
+import { ADMIN_ROLE_UNIVERSAL_IDENTIFIER } from 'twenty-shared/constants';
 
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { RolePermissionsService } from 'src/engine/permissions/role-permissions.service';
-import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 
 @Injectable()
 export class UserWorkspaceSuccessorService {
@@ -57,8 +57,7 @@ export class UserWorkspaceSuccessorService {
           .get(otherUserWorkspace.id)
           ?.some(
             (role) =>
-              role.universalIdentifier ===
-              STANDARD_ROLE.admin.universalIdentifier,
+              role.universalIdentifier === ADMIN_ROLE_UNIVERSAL_IDENTIFIER,
           ),
     );
 
