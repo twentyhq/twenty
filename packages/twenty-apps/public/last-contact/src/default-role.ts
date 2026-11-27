@@ -12,7 +12,7 @@ export default defineApplicationRole({
   universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: `${APP_DISPLAY_NAME} function role`,
   description:
-    'Reads synced email and calendar interactions, then updates last-contact fields on people, companies, and opportunities.',
+    'Reads synced messages (email, LinkedIn, WhatsApp...) and calendar interactions, then updates last-contact fields on people, companies, and opportunities.',
   canReadAllObjectRecords: false,
   canUpdateAllObjectRecords: false,
   canSoftDeleteAllObjectRecords: false,
@@ -36,6 +36,8 @@ export default defineApplicationRole({
     ...[
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.message.universalIdentifier,
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageParticipant
+        .universalIdentifier,
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageChannelMessageAssociation
         .universalIdentifier,
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarEvent.universalIdentifier,
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarEventParticipant

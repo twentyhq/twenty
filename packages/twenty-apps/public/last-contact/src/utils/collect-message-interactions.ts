@@ -1,4 +1,5 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { chunk } from 'src/utils/chunk';
 import { executeWithRetry } from 'src/utils/execute-with-retry';
@@ -6,19 +7,46 @@ import {
   pickContactTeamMemberId,
   type Participant,
 } from 'src/utils/pick-contact-team-member';
-import { type InteractionDirection } from 'src/utils/update-person-last-contact';
+import {
+  type InteractionDirection,
+  type MessageInteractionKind,
+} from 'src/utils/update-person-last-contact';
 
 const PAGE_SIZE = 200;
 
+// Messages ingested by an app channel (LinkedIn, WhatsApp...) get this headerMessageId prefix server-side
+const APP_MESSAGE_HEADER_MESSAGE_ID_PREFIX = 'app:';
+
 export type MessageInteraction = {
+  kind: MessageInteractionKind;
   receivedAt: string;
   workspaceMemberId: string | null;
   direction: InteractionDirection;
 };
 
-type MessageParticipantNode = Participant & {
+export type MessageNode = {
+  receivedAt?: string | null;
+  isDraft?: boolean | null;
+  headerMessageId?: string | null;
+  messageChannelMessageAssociations?: {
+    edges: {
+      node: { direction?: string | null; accountOwnerId?: string | null };
+    }[];
+  } | null;
+};
+
+export type MessageParticipantNode = Participant & {
   messageId?: string | null;
-  message?: { receivedAt: string | null; isDraft?: boolean | null } | null;
+  message?: MessageNode | null;
+};
+
+export const MESSAGE_SELECTION = {
+  receivedAt: true,
+  isDraft: true,
+  headerMessageId: true,
+  messageChannelMessageAssociations: {
+    edges: { node: { direction: true, accountOwnerId: true } },
+  },
 };
 
 const collectSenderAndTeamMemberParticipants = async (
@@ -54,7 +82,7 @@ const collectSenderAndTeamMemberParticipants = async (
                 messageId: true,
                 role: true,
                 workspaceMemberId: true,
-                message: { receivedAt: true, isDraft: true },
+                message: MESSAGE_SELECTION,
               },
             },
             pageInfo: { hasNextPage: true, endCursor: true },
@@ -87,32 +115,74 @@ const collectSenderAndTeamMemberParticipants = async (
   return participantsByMessageId;
 };
 
-const collectReceivedAtByMessageId = async (
+const collectMessagesById = async (
   client: CoreApiClient,
   messageIds: string[],
-): Promise<Map<string, string>> => {
-  const receivedAtByMessageId = new Map<string, string>();
+): Promise<Map<string, MessageNode>> => {
+  const messageById = new Map<string, MessageNode>();
 
   for (const ids of chunk(messageIds, PAGE_SIZE)) {
     const { messages } = await executeWithRetry(() =>
       client.query({
         messages: {
           __args: { filter: { id: { in: ids } }, first: PAGE_SIZE },
-          edges: { node: { id: true, receivedAt: true, isDraft: true } },
+          edges: { node: { id: true, ...MESSAGE_SELECTION } },
         },
       }),
     );
 
     for (const edge of messages?.edges ?? []) {
-      const { id, receivedAt, isDraft } = edge.node;
+      const { id, ...message } = edge.node as MessageNode & {
+        id?: string | null;
+      };
 
-      if (id && receivedAt && !isDraft) {
-        receivedAtByMessageId.set(id, receivedAt);
+      if (id) {
+        messageById.set(id, message);
       }
     }
   }
 
-  return receivedAtByMessageId;
+  return messageById;
+};
+
+// Participants of app channels are not matched to team members, so the
+// channel association supplies the direction and owner they cannot.
+export const buildMessageInteraction = (
+  message: MessageNode | null | undefined,
+  participants: MessageParticipantNode[],
+): MessageInteraction | undefined => {
+  const receivedAt = message?.receivedAt;
+
+  if (!isDefined(receivedAt) || message?.isDraft) {
+    return undefined;
+  }
+
+  const associations = (
+    message?.messageChannelMessageAssociations?.edges ?? []
+  ).map((edge) => edge.node);
+  const outgoingAssociation = associations.find(
+    (association) => association.direction === 'OUTGOING',
+  );
+  const fromParticipant = participants.find(
+    (participant) => participant.role === 'FROM',
+  );
+  const isOutbound =
+    isDefined(fromParticipant?.workspaceMemberId) ||
+    isDefined(outgoingAssociation);
+
+  return {
+    kind: message?.headerMessageId?.startsWith(
+      APP_MESSAGE_HEADER_MESSAGE_ID_PREFIX,
+    )
+      ? 'message'
+      : 'email',
+    receivedAt,
+    workspaceMemberId:
+      pickContactTeamMemberId(participants, { role: 'FROM' }) ??
+      (outgoingAssociation ?? associations[0])?.accountOwnerId ??
+      null,
+    direction: isOutbound ? 'outbound' : 'inbound',
+  };
 };
 
 export const collectMessageInteractions = async (
@@ -126,24 +196,14 @@ export const collectMessageInteractions = async (
   const interactionByMessageId = new Map<string, MessageInteraction>();
 
   for (const [messageId, participants] of participantsByMessageId) {
-    const message = participants[0]?.message;
-    const receivedAt = message?.receivedAt ?? null;
-
-    if (!receivedAt || message?.isDraft) {
-      continue;
-    }
-
-    const fromParticipant = participants.find(
-      (participant) => participant.role === 'FROM',
+    const interaction = buildMessageInteraction(
+      participants[0]?.message,
+      participants,
     );
 
-    interactionByMessageId.set(messageId, {
-      receivedAt,
-      workspaceMemberId: pickContactTeamMemberId(participants, {
-        role: 'FROM',
-      }),
-      direction: fromParticipant?.workspaceMemberId ? 'outbound' : 'inbound',
-    });
+    if (interaction) {
+      interactionByMessageId.set(messageId, interaction);
+    }
   }
 
   const messageIdsWithoutSenderOrTeamMember = messageIds.filter(
@@ -154,17 +214,17 @@ export const collectMessageInteractions = async (
     return interactionByMessageId;
   }
 
-  const receivedAtByMessageId = await collectReceivedAtByMessageId(
+  const messageById = await collectMessagesById(
     client,
     messageIdsWithoutSenderOrTeamMember,
   );
 
-  for (const [messageId, receivedAt] of receivedAtByMessageId) {
-    interactionByMessageId.set(messageId, {
-      receivedAt,
-      workspaceMemberId: null,
-      direction: 'inbound',
-    });
+  for (const [messageId, message] of messageById) {
+    const interaction = buildMessageInteraction(message, []);
+
+    if (interaction) {
+      interactionByMessageId.set(messageId, interaction);
+    }
   }
 
   return interactionByMessageId;

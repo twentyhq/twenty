@@ -8,45 +8,25 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { BATCH_HANDLER_TIMEOUT_SECONDS } from 'src/constants/batch-handler-timeout-seconds';
 import { EMAIL_INTERACTION_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import {
-  applyEmailInteractions,
-  type MessageParticipantLink,
-} from 'src/utils/apply-email-interactions';
-
-type MessageParticipantUpdate = {
-  personId?: string | null;
-  messageId?: string | null;
-};
+  applyMessageParticipantEvents,
+  type MessageParticipantEventRecord,
+} from 'src/utils/apply-message-interactions';
 
 const handler = async (
   batch: DatabaseEventBatchPayload<
-    ObjectRecordUpdateEvent<MessageParticipantUpdate>
+    ObjectRecordUpdateEvent<MessageParticipantEventRecord>
   >,
 ): Promise<void> => {
   console.log('on-email-interaction started', { eventCount: batch.events.length });
 
-  const linkByKey = new Map<string, MessageParticipantLink>();
-
-  for (const event of batch.events) {
-    const personId = event.properties.after.personId;
-    const messageId = event.properties.after.messageId;
-
-    if (personId && messageId) {
-      linkByKey.set(`${personId}:${messageId}`, { personId, messageId });
-    }
-  }
-
-  if (linkByKey.size === 0) {
-    return;
-  }
-
-  await applyEmailInteractions(new CoreApiClient(), [...linkByKey.values()]);
+  await applyMessageParticipantEvents(new CoreApiClient(), batch.events);
 };
 
 export default defineLogicFunction({
   universalIdentifier: EMAIL_INTERACTION_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'on-email-interaction',
   description:
-    "Updates a person's last-contacted fields, and the last contact on their company and opportunities, when a new email participant is created.",
+    "Updates a person's last-contacted fields, and the last contact on their company and opportunities, when a message participant (email, LinkedIn, WhatsApp...) is linked to them.",
   timeoutSeconds: BATCH_HANDLER_TIMEOUT_SECONDS,
   databaseEventTriggerSettings: {
     eventName: 'messageParticipant.updated',

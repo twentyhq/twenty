@@ -18,7 +18,7 @@ export default defineField({
   type: FieldType.RELATION,
   name: 'lastContactForPeople',
   label: 'Last contact for',
-  description: 'People whose most recent contact was this email.',
+  description: 'People whose most recent contact was this message.',
   icon: 'IconUser',
   isNullable: true,
   relationTargetObjectMetadataUniversalIdentifier:

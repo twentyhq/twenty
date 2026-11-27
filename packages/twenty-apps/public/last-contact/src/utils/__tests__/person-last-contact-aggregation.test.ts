@@ -1,11 +1,15 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { pickSelectedFields } from 'src/__tests__/pick-selected-fields';
-import { buildPersonAggregates } from 'src/utils/person-last-contact-aggregation';
+import {
+  buildPersonAggregates,
+  buildPersonUpdateData,
+} from 'src/utils/person-last-contact-aggregation';
 
 const PERSON_ID = '11111111-1111-1111-1111-111111111111';
 const SENT_MESSAGE_ID = '22222222-2222-2222-2222-222222222222';
 const DRAFT_MESSAGE_ID = '33333333-3333-3333-3333-333333333333';
+const MEMBER_ID = '44444444-4444-4444-4444-444444444444';
 const SENT_AT = '2026-06-01T09:00:00.000Z';
 const DRAFTED_AT = '2026-06-10T09:00:00.000Z';
 
@@ -67,6 +71,65 @@ describe('buildPersonAggregates', () => {
       lastContactAt: SENT_AT,
       lastEmail: { at: SENT_AT, id: SENT_MESSAGE_ID },
       item: { kind: 'email', id: SENT_MESSAGE_ID },
+    });
+  });
+
+  it('counts an app channel message as a contact but not as the last email', async () => {
+    const client = {
+      query: vi.fn((query) => {
+        if (query.messageParticipants?.edges.node.personId) {
+          return Promise.resolve({
+            messageParticipants: buildPage([
+              pickSelectedFields({
+                record: {
+                  personId: PERSON_ID,
+                  message: {
+                    id: SENT_MESSAGE_ID,
+                    receivedAt: SENT_AT,
+                    isDraft: false,
+                    headerMessageId: 'app:linkedin:channel:external-1',
+                    messageChannelMessageAssociations: {
+                      edges: [
+                        {
+                          node: {
+                            direction: 'OUTGOING',
+                            accountOwnerId: MEMBER_ID,
+                          },
+                        },
+                      ],
+                    },
+                  },
+                },
+                selection: query.messageParticipants.edges.node,
+              }),
+            ]),
+          });
+        }
+
+        if (query.messageParticipants) {
+          return Promise.resolve({ messageParticipants: buildPage([]) });
+        }
+
+        return Promise.resolve({
+          calendarEventParticipants: buildPage([]),
+          calendarEvents: buildPage([]),
+        });
+      }),
+    };
+
+    const aggregate = (
+      await buildPersonAggregates(client as never, [PERSON_ID])
+    ).get(PERSON_ID);
+
+    expect(aggregate).toEqual({
+      lastContactAt: SENT_AT,
+      lastContactById: MEMBER_ID,
+      lastOutboundAt: SENT_AT,
+      item: { kind: 'message', id: SENT_MESSAGE_ID },
+    });
+    expect(buildPersonUpdateData(aggregate)).toMatchObject({
+      lastEmailId: null,
+      lastContactItemMessageId: SENT_MESSAGE_ID,
     });
   });
 });

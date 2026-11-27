@@ -294,4 +294,72 @@ describe('on-email-interaction handler', () => {
       },
     ]);
   });
+
+  it('counts an inbound app channel message as a contact but not as the last email', async () => {
+    setupQueryMock([
+      {
+        messageId: MESSAGE_ID,
+        role: 'FROM',
+        workspaceMemberId: null,
+        message: {
+          receivedAt: RECEIVED_AT,
+          headerMessageId: 'app:linkedin:channel:external-1',
+          messageChannelMessageAssociations: {
+            edges: [
+              { node: { direction: 'INCOMING', accountOwnerId: MEMBER_ID } },
+            ],
+          },
+        },
+      },
+    ]);
+
+    await handler(
+      buildBatch([{ personId: PERSON_ID, messageId: MESSAGE_ID }]),
+    );
+
+    expect(mutationMock.mock.calls[0][0].createPeople.__args.data).toEqual([
+      {
+        id: PERSON_ID,
+        lastContactAt: RECEIVED_AT,
+        lastContactById: MEMBER_ID,
+        lastContactItemMessageId: MESSAGE_ID,
+        lastContactItemCalendarEventId: null,
+        lastInboundAt: RECEIVED_AT,
+      },
+    ]);
+  });
+
+  it('takes the direction of an app channel message from its channel association', async () => {
+    setupQueryMock([
+      {
+        messageId: MESSAGE_ID,
+        role: 'FROM',
+        workspaceMemberId: null,
+        message: {
+          receivedAt: RECEIVED_AT,
+          headerMessageId: 'app:whatsapp:channel:external-2',
+          messageChannelMessageAssociations: {
+            edges: [
+              { node: { direction: 'OUTGOING', accountOwnerId: MEMBER_ID } },
+            ],
+          },
+        },
+      },
+    ]);
+
+    await handler(
+      buildBatch([{ personId: PERSON_ID, messageId: MESSAGE_ID }]),
+    );
+
+    expect(mutationMock.mock.calls[0][0].createPeople.__args.data).toEqual([
+      {
+        id: PERSON_ID,
+        lastContactAt: RECEIVED_AT,
+        lastContactById: MEMBER_ID,
+        lastContactItemMessageId: MESSAGE_ID,
+        lastContactItemCalendarEventId: null,
+        lastOutboundAt: RECEIVED_AT,
+      },
+    ]);
+  });
 });

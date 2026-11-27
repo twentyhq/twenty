@@ -32,7 +32,7 @@ const buildData = ({
   kind,
 }: RelatedInteraction): Record<string, string | null> => ({
   lastContactAt: occurredAt,
-  lastContactItemMessageId: kind === 'email' ? itemId : null,
+  lastContactItemMessageId: kind === 'meeting' ? null : itemId,
   lastContactItemCalendarEventId: kind === 'meeting' ? itemId : null,
 });
 

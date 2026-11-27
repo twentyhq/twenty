@@ -6,14 +6,19 @@ import { type RecordUpsert } from 'src/utils/upsert-records-in-batches';
 
 const PAGE_SIZE = 200;
 
-export type InteractionKind = 'email' | 'meeting';
+// 'message' is a chat from an app channel (LinkedIn, WhatsApp...), never counted as Last email
+export type MessageInteractionKind = 'email' | 'message';
+export type InteractionKind = MessageInteractionKind | 'meeting';
 export type InteractionDirection = 'outbound' | 'inbound';
 
 export type Interaction = {
   occurredAt: string;
   itemId: string;
   workspaceMemberId: string | null;
-} & ({ kind: 'email'; direction: InteractionDirection } | { kind: 'meeting' });
+} & (
+  | { kind: MessageInteractionKind; direction: InteractionDirection }
+  | { kind: 'meeting' }
+);
 
 export type RelatedLastContact = { id: string; lastContactAt: string | null };
 
@@ -128,12 +133,12 @@ export const buildPersonLastContactUpdate = (
   if (isNewer(occurredAt, current.lastContactAt)) {
     data.lastContactAt = occurredAt;
     data.lastContactById = latestContact.workspaceMemberId ?? null;
-    if (latestContact.kind === 'email') {
-      data.lastContactItemMessageId = latestContact.itemId;
-      data.lastContactItemCalendarEventId = null;
-    } else {
+    if (latestContact.kind === 'meeting') {
       data.lastContactItemCalendarEventId = latestContact.itemId;
       data.lastContactItemMessageId = null;
+    } else {
+      data.lastContactItemMessageId = latestContact.itemId;
+      data.lastContactItemCalendarEventId = null;
     }
   }
 
