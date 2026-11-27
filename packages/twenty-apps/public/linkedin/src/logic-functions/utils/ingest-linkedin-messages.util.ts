@@ -176,7 +176,7 @@ export const setLinkedinChatPersonAvatars = ({
     deadlineAtMs,
   });
 
-const isIngestableLinkedinMessage = (message: UnipileMessage): boolean =>
+export const isIngestableLinkedinMessage = (message: UnipileMessage): boolean =>
   !message.is_event && !message.is_deleted;
 
 export const ingestLinkedinChatMessages = async ({

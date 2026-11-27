@@ -107,6 +107,66 @@ describe('refreshLinkedinHistoryImportState', () => {
     );
   });
 
+  it('fails a run whose planner from before this format already finished', async () => {
+    mocks.kvStore.set(PLANNING_KEY, {
+      plannedChunkCount: 3,
+      plannedConversationCount: 45,
+      chunkCount: 3,
+      planJobId: 'linkedin-history-plan-run-1-0',
+    });
+    mockJobStates({ 'linkedin-history-plan-run-1-0': 'COMPLETED' });
+
+    await expect(
+      refreshLinkedinHistoryImportState('connection-id'),
+    ).resolves.toEqual(
+      expect.objectContaining({
+        status: 'FAILED',
+        error: expect.objectContaining({ code: 'STALLED' }),
+      }),
+    );
+  });
+
+  it('does not count conversations still waiting for their contacts', async () => {
+    setChats({
+      'chat-1': { status: 'IMPORTED' },
+      'chat-3': { status: 'IMPORTING', job: buildContactsJob('chat-3') },
+      'chat-4': { status: 'PENDING', chat: { id: 'chat-4' } },
+    });
+
+    await expect(
+      refreshLinkedinHistoryImportState('connection-id'),
+    ).resolves.toEqual(
+      expect.objectContaining({
+        status: 'IMPORTING',
+        processedConversationCount: 1,
+        totalConversationCount: 3,
+      }),
+    );
+    expect(mocks.enqueueJobs).not.toHaveBeenCalled();
+  });
+
+  it('restarts the contacts with the next waiting conversation once no contact job is left', async () => {
+    mockJobStates({ 'linkedin-history-contacts-run-1-chat-1-0': 'FAILED' });
+    setChats({
+      'chat-1': { status: 'IMPORTING', job: buildContactsJob('chat-1') },
+      'chat-2': { status: 'PENDING', chat: { id: 'chat-2' } },
+      'chat-3': { status: 'PENDING', chat: { id: 'chat-3' } },
+    });
+
+    await refreshLinkedinHistoryImportState('connection-id');
+
+    expect(mocks.enqueueJobs).toHaveBeenCalledTimes(1);
+    expect(mocks.enqueueJobs).toHaveBeenCalledWith(
+      expect.objectContaining({
+        jobs: [
+          expect.objectContaining({
+            jobId: 'linkedin-history-contacts-run-1-chat-2-0',
+          }),
+        ],
+      }),
+    );
+  });
+
   it('counts the conversations each job finished', async () => {
     setChats({
       'chat-1': { status: 'IMPORTED' },

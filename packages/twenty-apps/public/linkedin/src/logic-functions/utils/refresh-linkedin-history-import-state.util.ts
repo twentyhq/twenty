@@ -16,6 +16,7 @@ import {
 } from 'src/logic-functions/utils/linkedin-history-import-kv.util';
 import { saveLinkedinHistoryImportState } from 'src/logic-functions/utils/save-linkedin-history-import-state.util';
 import { scheduleLinkedinHistoryImportChatJob } from 'src/logic-functions/utils/schedule-linkedin-history-import-chat-job.util';
+import { scheduleNextLinkedinHistoryImportContacts } from 'src/logic-functions/utils/schedule-next-linkedin-history-import-contacts.util';
 import { type LinkedinHistoryImportState } from 'src/types/linkedin-history-import-state.type';
 
 const LINKEDIN_HISTORY_IMPORT_MAX_RECOVERIES = 3;
@@ -58,7 +59,8 @@ const getPlanningError = async (
     planning.planJobId ?? getLinkedinPlanHistoryImportJobId({ runId });
   const [planJob] = await getJobs([planJobId]);
 
-  if (!isDefined(planJob)) {
+  // A finished planner always lists its conversations, unless it is one from before this format
+  if (!isDefined(planJob) || planJob.state === 'COMPLETED') {
     return STALLED_ERROR;
   }
 
@@ -86,7 +88,6 @@ const failChat = async ({
   return progress;
 };
 
-// A job that ended without scheduling its successor or finishing its conversation is enqueued again
 const checkImportingChat = async ({
   run,
   chatId,
@@ -248,18 +249,30 @@ export const refreshLinkedinHistoryImportState = async (
   const importingProgresses = progresses.filter(
     (progress) => progress.status === 'IMPORTING',
   );
+  const pendingCount = progresses.filter(
+    (progress) => progress.status === 'PENDING',
+  ).length;
+
+  if (
+    pendingCount > 0 &&
+    !importingProgresses.some((progress) => progress.job?.kind === 'CONTACTS')
+  ) {
+    await scheduleNextLinkedinHistoryImportContacts(run);
+  }
+
   const importedConversationCount = progresses.filter(
     (progress) => progress.status === 'IMPORTED',
   ).length;
   const currentState: LinkedinHistoryImportState = {
     ...state,
     importedConversationCount,
-    processedConversationCount: progresses.length - importingProgresses.length,
+    processedConversationCount:
+      progresses.length - importingProgresses.length - pendingCount,
     totalConversationCount: progresses.length,
     resumeAt: getEarliestResumeAt(importingProgresses),
   };
 
-  if (importingProgresses.length > 0) {
+  if (importingProgresses.length > 0 || pendingCount > 0) {
     return currentState;
   }
 

@@ -5,6 +5,7 @@ import { type LinkedinHistoryImportChatJobResult } from 'src/logic-functions/typ
 import { failLinkedinHistoryImportJob } from 'src/logic-functions/utils/fail-linkedin-history-import-job.util';
 import { finishLinkedinHistoryImportChat } from 'src/logic-functions/utils/finish-linkedin-history-import-chat.util';
 import { scheduleLinkedinHistoryImportChatJob } from 'src/logic-functions/utils/schedule-linkedin-history-import-chat-job.util';
+import { scheduleNextLinkedinHistoryImportContacts } from 'src/logic-functions/utils/schedule-next-linkedin-history-import-contacts.util';
 import { UnipileRateLimitError } from 'src/unipile/utils/request-unipile.util';
 
 export const handleLinkedinHistoryImportChatJobError = async ({
@@ -39,6 +40,14 @@ export const handleLinkedinHistoryImportChatJobError = async ({
     error,
     context,
     onFinalFailure: async (importError) => {
+      if (job.kind === 'CONTACTS') {
+        await scheduleNextLinkedinHistoryImportContacts({
+          connectedAccountId,
+          runId,
+          afterChatId: chat.id,
+        });
+      }
+
       await finishLinkedinHistoryImportChat({
         connectedAccountId,
         runId,

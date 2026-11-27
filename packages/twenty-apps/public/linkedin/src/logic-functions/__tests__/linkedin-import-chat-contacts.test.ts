@@ -1,6 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import type * as IngestLinkedinMessagesUtil from 'src/logic-functions/utils/ingest-linkedin-messages.util';
 import { type LinkedinHistoryImportState } from 'src/types/linkedin-history-import-state.type';
+
+type IngestLinkedinMessagesModule = typeof IngestLinkedinMessagesUtil;
 
 const mocks = vi.hoisted(() => ({
   getConnection: vi.fn(),
@@ -37,10 +40,16 @@ vi.mock('src/unipile/utils/list-unipile-chat-messages-page.util', () => ({
   listUnipileChatMessagesPage: mocks.listUnipileChatMessagesPage,
 }));
 
-vi.mock('src/logic-functions/utils/ingest-linkedin-messages.util', () => ({
-  resolveLinkedinChatPersons: mocks.resolveLinkedinChatPersons,
-  setLinkedinChatPersonAvatars: mocks.setLinkedinChatPersonAvatars,
-}));
+vi.mock(
+  'src/logic-functions/utils/ingest-linkedin-messages.util',
+  async (importOriginal) => ({
+    isIngestableLinkedinMessage: (
+      await importOriginal<IngestLinkedinMessagesModule>()
+    ).isIngestableLinkedinMessage,
+    resolveLinkedinChatPersons: mocks.resolveLinkedinChatPersons,
+    setLinkedinChatPersonAvatars: mocks.setLinkedinChatPersonAvatars,
+  }),
+);
 
 const { UnipileRateLimitError } =
   await import('src/unipile/utils/request-unipile.util');
@@ -50,6 +59,8 @@ const { linkedinImportChatContactsHandler } =
 
 const STATE_KEY = 'linkedin-history-import:connection-id';
 const CHAT_KEY = 'linkedin-history-import-chat:connection-id:run-1:chat-1';
+const NEXT_CHAT_KEY = 'linkedin-history-import-chat:connection-id:run-1:chat-2';
+const PLANNING_KEY = 'linkedin-history-import-planning:connection-id:run-1';
 
 const RUNNING_STATE: LinkedinHistoryImportState = {
   runId: 'run-1',
@@ -88,6 +99,11 @@ describe('linkedinImportChatContactsHandler', () => {
     vi.spyOn(console, 'log').mockImplementation(() => {});
     mocks.kvStore.clear();
     mocks.kvStore.set(STATE_KEY, RUNNING_STATE);
+    mocks.kvStore.set(PLANNING_KEY, { chatIds: ['chat-1', 'chat-2'] });
+    mocks.kvStore.set(NEXT_CHAT_KEY, {
+      status: 'PENDING',
+      chat: { ...CHAT, id: 'chat-2' },
+    });
     mocks.getConnection.mockResolvedValue({ externalAccountId: 'acc_1' });
     mocks.resolveLinkedinChatPersons.mockResolvedValue({
       counterparts: [RESOLVED_ADA],
@@ -113,6 +129,13 @@ describe('linkedinImportChatContactsHandler', () => {
     };
 
     expect(getEnqueueInputs()).toEqual([
+      expect.objectContaining({
+        jobs: [
+          expect.objectContaining({
+            jobId: 'linkedin-history-contacts-run-1-chat-2-0',
+          }),
+        ],
+      }),
       expect.objectContaining({
         limiter: { max: 30, durationMs: 60_000 },
         jobs: [
@@ -143,8 +166,15 @@ describe('linkedinImportChatContactsHandler', () => {
     await expect(linkedinImportChatContactsHandler(PAYLOAD)).resolves.toEqual({
       status: 'SKIPPED',
     });
-    expect(mocks.enqueueJobs).not.toHaveBeenCalled();
+    expect(
+      getEnqueueInputs().flatMap((input) =>
+        input.jobs.map((job: { jobId: string }) => job.jobId),
+      ),
+    ).toEqual(['linkedin-history-contacts-run-1-chat-2-0']);
     expect(mocks.kvStore.get(CHAT_KEY)).toEqual({ status: 'SKIPPED' });
+    expect(mocks.kvStore.get(NEXT_CHAT_KEY)).toEqual(
+      expect.objectContaining({ status: 'IMPORTING' }),
+    );
   });
 
   it('skips a conversation the member did not select without calling LinkedIn', async () => {
@@ -177,6 +207,23 @@ describe('linkedinImportChatContactsHandler', () => {
       accountId: 'acc_1',
       chatId: 'chat-1',
     });
+  });
+
+  it.each([
+    ['an event', { id: 'message-1', is_sender: true, is_event: true }],
+    [
+      'a deleted message',
+      { id: 'message-1', is_sender: true, is_deleted: true },
+    ],
+  ])('does not count %s as a message the member sent', async (_, message) => {
+    mocks.listUnipileChatMessagesPage.mockResolvedValue({ items: [message] });
+
+    await linkedinImportChatContactsHandler(PAYLOAD);
+
+    const [{ hasUserSentMessage }] =
+      mocks.resolveLinkedinChatPersons.mock.calls[0];
+
+    await expect(hasUserSentMessage()).resolves.toBe(false);
   });
 
   it('fetches a listed conversation that came without its participants', async () => {
@@ -216,6 +263,7 @@ describe('linkedinImportChatContactsHandler', () => {
 
     const [enqueueInput] = getEnqueueInputs();
 
+    expect(getEnqueueInputs()).toHaveLength(1);
     expect(enqueueInput.delayMs).toBe(3_600_000);
     expect(enqueueInput.limiter).toBeUndefined();
     expect(enqueueInput.jobs[0].jobId).toBe(
@@ -242,6 +290,9 @@ describe('linkedinImportChatContactsHandler', () => {
       status: 'FAILED',
       error: { code: 'UNKNOWN', message: 'Boom' },
     });
+    expect(mocks.kvStore.get(NEXT_CHAT_KEY)).toEqual(
+      expect.objectContaining({ status: 'IMPORTING' }),
+    );
   });
 
   it('does nothing once the run is cancelled', async () => {

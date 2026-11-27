@@ -13,9 +13,7 @@ import { LINKEDIN_CHAT_OPTIONS_MAX_COUNT } from 'src/constants/linkedin-chat-opt
 import { LINKEDIN_HISTORY_CONVERSATION_LIMIT } from 'src/constants/linkedin-history-conversation-limit.constant';
 import { LINKEDIN_HISTORY_IMPORT_TIMEOUT_SECONDS } from 'src/constants/linkedin-history-import-timeout-seconds.constant';
 import { LINKEDIN_PLAN_HISTORY_IMPORT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { type LinkedinHistoryImportChatJob } from 'src/logic-functions/types/linkedin-history-import-chat-job.type';
 import { type LinkedinPlanHistoryImportJobPayload } from 'src/logic-functions/types/linkedin-plan-history-import-job-payload.type';
-import { enqueueLinkedinHistoryImportChatJobs } from 'src/logic-functions/utils/enqueue-linkedin-history-import-chat-jobs.util';
 import { failLinkedinHistoryImportJob } from 'src/logic-functions/utils/fail-linkedin-history-import-job.util';
 import { getActiveLinkedinHistoryImportState } from 'src/logic-functions/utils/get-active-linkedin-history-import-state.util';
 import { getLinkedinPlanHistoryImportJobId } from 'src/logic-functions/utils/get-linkedin-history-import-job-id.util';
@@ -25,6 +23,7 @@ import {
   saveLinkedinHistoryImportChatProgress,
   saveLinkedinHistoryImportPlanning,
 } from 'src/logic-functions/utils/linkedin-history-import-kv.util';
+import { scheduleNextLinkedinHistoryImportContacts } from 'src/logic-functions/utils/schedule-next-linkedin-history-import-contacts.util';
 import { orderSelectedLinkedinChatsByRecency } from 'src/logic-functions/utils/order-selected-linkedin-chats-by-recency.util';
 import { setLinkedinAccountOwnerAvatar } from 'src/logic-functions/utils/set-linkedin-account-owner-avatar.util';
 import { type LinkedinHistoryImportState } from 'src/types/linkedin-history-import-state.type';
@@ -151,22 +150,17 @@ const planHistoryImport = async ({
     return pausePlanning({ payload, delayMs: error.retryAfterSeconds * 1000 });
   }
 
-  const jobs: LinkedinHistoryImportChatJob[] = chats.map((chat) => ({
-    kind: 'CONTACTS',
-    payload: { connectedAccountId, runId, chat },
-  }));
-
   if ((await getActiveLinkedinHistoryImportState(payload)) === null) {
     return { status: 'CANCELLED' };
   }
 
   await Promise.all(
-    jobs.map((job) =>
+    chats.map((chat) =>
       saveLinkedinHistoryImportChatProgress({
         connectedAccountId,
         runId,
-        chatId: job.payload.chat.id,
-        progress: { status: 'IMPORTING', job },
+        chatId: chat.id,
+        progress: { status: 'PENDING', chat },
       }),
     ),
   );
@@ -177,8 +171,10 @@ const planHistoryImport = async ({
       planJobId: getLinkedinPlanHistoryImportJobId(payload),
     },
   });
-  // Enqueued most recent first, so the latest contacts show up first
-  await enqueueLinkedinHistoryImportChatJobs({ jobs });
+  await scheduleNextLinkedinHistoryImportContacts({
+    connectedAccountId,
+    runId,
+  });
 
   console.log(
     `[linkedin] history run ${runId}: ${chats.length} conversations listed (last messages ${chats[0]?.last_message_timestamp ?? '-'} to ${chats[chats.length - 1]?.last_message_timestamp ?? '-'})`,
@@ -225,7 +221,7 @@ export default defineLogicFunction({
   universalIdentifier: LINKEDIN_PLAN_HISTORY_IMPORT_UNIVERSAL_IDENTIFIER,
   name: 'linkedin-plan-history-import',
   description:
-    'Lists the past LinkedIn conversations of a connection, most recent first, and queues one contact import job per conversation.',
+    'Lists the past LinkedIn conversations of a connection, most recent first, and starts importing their contacts one conversation after another.',
   timeoutSeconds: LINKEDIN_HISTORY_IMPORT_TIMEOUT_SECONDS,
   handler: linkedinPlanHistoryImportHandler,
 });

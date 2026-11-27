@@ -109,7 +109,7 @@ describe('linkedinPlanHistoryImportHandler', () => {
     mocks.listUnipileChats.mockReset();
   });
 
-  it('queues one rate-limited contact job per conversation, most recent first', async () => {
+  it('lists the conversations most recent first and starts their contacts with the latest one only', async () => {
     mockChatPages([25, 25, 10]);
 
     await expect(linkedinPlanHistoryImportHandler(PAYLOAD)).resolves.toEqual({
@@ -117,17 +117,18 @@ describe('linkedinPlanHistoryImportHandler', () => {
       conversationCount: 50,
     });
 
-    const [enqueueInput] = getEnqueueInputs();
     const chatIds = Array.from({ length: 50 }, (_, index) => `chat-${index}`);
 
-    expect(getEnqueueInputs()).toHaveLength(1);
-    expect(enqueueInput.limiter).toEqual({ max: 60, durationMs: 60_000 });
-    expect(enqueueInput.delayMs).toBeUndefined();
-    expect(
-      enqueueInput.jobs.map((job: { jobId: string }) => job.jobId),
-    ).toEqual(
-      chatIds.map((chatId) => `linkedin-history-contacts-run-1-${chatId}-0`),
-    );
+    expect(getEnqueueInputs()).toEqual([
+      expect.objectContaining({
+        limiter: { max: 60, durationMs: 60_000 },
+        jobs: [
+          expect.objectContaining({
+            jobId: 'linkedin-history-contacts-run-1-chat-0-0',
+          }),
+        ],
+      }),
+    ]);
     expect(mocks.kvStore.get(PLANNING_KEY)).toEqual({
       chatIds,
       planJobId: 'linkedin-history-plan-run-1-0',
@@ -136,15 +137,25 @@ describe('linkedinPlanHistoryImportHandler', () => {
       mocks.kvStore.get(
         'linkedin-history-import-chat:connection-id:run-1:chat-0',
       ),
-    ).toEqual({
-      status: 'IMPORTING',
-      job: {
-        kind: 'CONTACTS',
-        payload: {
-          ...PAYLOAD,
-          chat: expect.objectContaining({ id: 'chat-0' }),
+    ).toEqual(
+      expect.objectContaining({
+        status: 'IMPORTING',
+        job: {
+          kind: 'CONTACTS',
+          payload: {
+            ...PAYLOAD,
+            chat: expect.objectContaining({ id: 'chat-0' }),
+          },
         },
-      },
+      }),
+    );
+    expect(
+      mocks.kvStore.get(
+        'linkedin-history-import-chat:connection-id:run-1:chat-1',
+      ),
+    ).toEqual({
+      status: 'PENDING',
+      chat: expect.objectContaining({ id: 'chat-1' }),
     });
     expect(mocks.setLinkedinAccountOwnerAvatar).toHaveBeenCalledTimes(1);
   });

@@ -19,12 +19,14 @@ import { getLinkedinChatCounterparts } from 'src/logic-functions/utils/get-linke
 import { getLinkedinSettings } from 'src/logic-functions/utils/get-linkedin-settings.util';
 import { handleLinkedinHistoryImportChatJobError } from 'src/logic-functions/utils/handle-linkedin-history-import-chat-job-error.util';
 import {
+  isIngestableLinkedinMessage,
   resolveLinkedinChatPersons,
   setLinkedinChatPersonAvatars,
 } from 'src/logic-functions/utils/ingest-linkedin-messages.util';
 import { isLinkedinChatSelected } from 'src/logic-functions/utils/is-linkedin-chat-selected.util';
 import { isLinkedinGroupChat } from 'src/logic-functions/utils/is-linkedin-group-chat.util';
 import { scheduleLinkedinHistoryImportChatJob } from 'src/logic-functions/utils/schedule-linkedin-history-import-chat-job.util';
+import { scheduleNextLinkedinHistoryImportContacts } from 'src/logic-functions/utils/schedule-next-linkedin-history-import-contacts.util';
 import { getUnipileChatIfExists } from 'src/unipile/utils/get-unipile-chat-if-exists.util';
 import { listUnipileChatMessagesPage } from 'src/unipile/utils/list-unipile-chat-messages-page.util';
 
@@ -41,6 +43,12 @@ const importChatContacts = async ({
     reason: string,
   ): Promise<LinkedinHistoryImportChatJobResult> => {
     console.log(`${logPrefix}: skipped, ${reason}`);
+
+    await scheduleNextLinkedinHistoryImportContacts({
+      connectedAccountId,
+      runId,
+      afterChatId: payload.chat.id,
+    });
 
     const isActive = await finishLinkedinHistoryImportChat({
       connectedAccountId,
@@ -93,7 +101,9 @@ const importChatContacts = async ({
         chatId: chat.id,
       });
 
-      return items.some((message) => message.is_sender);
+      return items.some(
+        (message) => isIngestableLinkedinMessage(message) && message.is_sender,
+      );
     },
     isGroupChat: isLinkedinGroupChat(chat),
   });
@@ -111,6 +121,12 @@ const importChatContacts = async ({
   console.log(
     `${logPrefix}: ${chatPersons.matchedPersonCount} people matched, ${chatPersons.createdPersonCount} people created`,
   );
+
+  await scheduleNextLinkedinHistoryImportContacts({
+    connectedAccountId,
+    runId,
+    afterChatId: chat.id,
+  });
 
   const isScheduled = await scheduleLinkedinHistoryImportChatJob({
     job: {
@@ -160,7 +176,7 @@ export default defineLogicFunction({
   universalIdentifier: LINKEDIN_IMPORT_CHAT_CONTACTS_UNIVERSAL_IDENTIFIER,
   name: 'linkedin-import-chat-contacts',
   description:
-    'Matches or creates the people of one past LinkedIn conversation, then queues the import of its messages when it has at least one person.',
+    'Matches or creates the people of one past LinkedIn conversation, queues the import of its messages when it has at least one person, then moves on to the next conversation.',
   timeoutSeconds: LINKEDIN_HISTORY_IMPORT_TIMEOUT_SECONDS,
   handler: linkedinImportChatContactsHandler,
 });
