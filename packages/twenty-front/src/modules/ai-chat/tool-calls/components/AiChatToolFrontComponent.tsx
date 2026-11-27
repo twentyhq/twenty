@@ -18,6 +18,10 @@ const StyledContainer = styled.div`
   overflow: hidden;
 `;
 
+const StyledLoaderContainer = styled.div`
+  height: ${themeCssVariables.spacing[20]};
+`;
+
 type AiChatToolFrontComponentProps = {
   frontComponentId: string;
   toolCall: FrontComponentToolCall;
@@ -32,17 +36,25 @@ export const AiChatToolFrontComponent = ({
   onToolCallArgumentsChange,
   unavailableFallback,
   errorFallback,
-}: AiChatToolFrontComponentProps) => (
-  <StyledContainer>
-    <Suspense fallback={<FrontComponentSkeletonLoader />}>
-      <FrontComponentRenderer
-        frontComponentId={frontComponentId}
-        toolCall={toolCall}
-        onToolCallArgumentsChange={onToolCallArgumentsChange}
-        loadingFallback={<FrontComponentSkeletonLoader />}
-        unavailableFallback={unavailableFallback}
-        errorFallback={errorFallback}
-      />
-    </Suspense>
-  </StyledContainer>
-);
+}: AiChatToolFrontComponentProps) => {
+  const loadingFallback = (
+    <StyledLoaderContainer>
+      <FrontComponentSkeletonLoader />
+    </StyledLoaderContainer>
+  );
+
+  return (
+    <StyledContainer>
+      <Suspense fallback={loadingFallback}>
+        <FrontComponentRenderer
+          frontComponentId={frontComponentId}
+          toolCall={toolCall}
+          onToolCallArgumentsChange={onToolCallArgumentsChange}
+          loadingFallback={loadingFallback}
+          unavailableFallback={unavailableFallback}
+          errorFallback={errorFallback}
+        />
+      </Suspense>
+    </StyledContainer>
+  );
+};
