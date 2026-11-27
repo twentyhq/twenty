@@ -121,6 +121,7 @@ export class WorkspaceEntity {
   @JoinColumn({ name: 'logoFileId' })
   logoFile: Relation<FileEntity>;
 
+  @Field(() => String)
   @WasIntroducedInUpgrade({
     upgradeCommandName:
       ADD_ACCENT_COLOR_AND_UI_SCALE_TO_WORKSPACE_UPGRADE_COMMAND_NAME,
@@ -132,6 +133,7 @@ export class WorkspaceEntity {
   })
   accentColor: WorkspaceAccentColor;
 
+  @Field(() => String)
   @WasIntroducedInUpgrade({
     upgradeCommandName:
       ADD_ACCENT_COLOR_AND_UI_SCALE_TO_WORKSPACE_UPGRADE_COMMAND_NAME,

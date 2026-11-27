@@ -11530,6 +11530,9 @@ export default {
             ]
         },
         "PublicWorkspaceData": {
+            "accentColor": [
+                4
+            ],
             "authBypassProviders": [
                 103
             ],
@@ -11543,6 +11546,9 @@ export default {
                 573
             ],
             "logo": [
+                4
+            ],
+            "uiScale": [
                 4
             ],
             "workspaceUrls": [
@@ -15854,6 +15860,9 @@ export default {
             ]
         },
         "UpdateWorkspaceInput": {
+            "accentColor": [
+                4
+            ],
             "aiAdditionalInstructions": [
                 4
             ],
@@ -15949,6 +15958,9 @@ export default {
             ],
             "trashRetentionDays": [
                 9
+            ],
+            "uiScale": [
+                4
             ],
             "workspaceDiscoverability": [
                 727
@@ -17515,6 +17527,9 @@ export default {
             ]
         },
         "Workspace": {
+            "accentColor": [
+                4
+            ],
             "activationStatus": [
                 722
             ],
@@ -17667,6 +17682,9 @@ export default {
             ],
             "trashRetentionDays": [
                 9
+            ],
+            "uiScale": [
+                4
             ],
             "updatedAt": [
                 233
