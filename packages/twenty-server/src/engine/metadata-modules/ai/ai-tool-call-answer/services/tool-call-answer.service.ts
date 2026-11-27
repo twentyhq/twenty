@@ -496,10 +496,15 @@ export class ToolCallAnswerService {
           threadId,
         });
 
-        return this.toolRegistryService.resolveAndExecute(toolName, args, {
-          ...(await toolContext),
-          approvedToolName: toolName,
-        });
+        return this.toolRegistryService.resolveAndExecute(
+          toolName,
+          args,
+          {
+            ...(await toolContext),
+            approvedToolName: toolName,
+          },
+          { addChatReferences: true },
+        );
       },
     };
   }

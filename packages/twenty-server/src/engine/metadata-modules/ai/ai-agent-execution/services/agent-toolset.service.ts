@@ -198,10 +198,18 @@ export class AgentToolsetService {
           directTools: await this.toolRegistry.getToolsByName(
             preloadedToolNames.filter(isToolAllowed),
             toolContext,
-            { compactOutput: true, spillLargeOutput: true },
+            {
+              addChatReferences: true,
+              compactOutput: true,
+              spillLargeOutput: true,
+            },
           ),
           metaTools: {
-            ...this.buildMetaTools(toolContext, isToolAllowed),
+            ...this.buildMetaTools({
+              toolContext,
+              isToolAllowed,
+              addChatReferences: true,
+            }),
             [LOAD_SKILL_TOOL_NAME]: createLoadSkillTool(
               (skillNames) =>
                 this.skillService.findFlatSkillsByNames(
@@ -238,7 +246,11 @@ export class AgentToolsetService {
 
         return {
           directTools: {},
-          metaTools: this.buildMetaTools(toolContext, isToolAllowed),
+          metaTools: this.buildMetaTools({
+            toolContext,
+            isToolAllowed,
+            addChatReferences: false,
+          }),
           toolCatalog,
           isToolAllowed,
         };
@@ -268,10 +280,15 @@ export class AgentToolsetService {
     }
   }
 
-  private buildMetaTools(
-    toolContext: ToolContext,
-    isToolAllowed: (toolName: string) => boolean,
-  ): ToolSet {
+  private buildMetaTools({
+    toolContext,
+    isToolAllowed,
+    addChatReferences,
+  }: {
+    toolContext: ToolContext;
+    isToolAllowed: (toolName: string) => boolean;
+    addChatReferences: boolean;
+  }): ToolSet {
     return {
       [LEARN_TOOLS_TOOL_NAME]: createLearnToolsTool(
         this.toolRegistry,
@@ -281,7 +298,12 @@ export class AgentToolsetService {
       [EXECUTE_TOOL_TOOL_NAME]: createExecuteToolTool(
         this.toolRegistry,
         toolContext,
-        { isToolAllowed, compactOutput: true, spillLargeOutput: true },
+        {
+          isToolAllowed,
+          addChatReferences,
+          compactOutput: true,
+          spillLargeOutput: true,
+        },
       ),
     };
   }

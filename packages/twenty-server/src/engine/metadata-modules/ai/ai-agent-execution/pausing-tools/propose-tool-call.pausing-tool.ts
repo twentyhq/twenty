@@ -9,10 +9,11 @@ import {
   type ProposedToolCall,
   type ToolCallApprovalResponse,
 } from 'twenty-shared/ai';
-import { isDefined, isPlainObject } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray, isPlainObject } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { EmailToolInputZodSchema } from 'src/engine/core-modules/tool/tools/email-tool/email-tool.schema';
+import { type RecordReference } from 'src/engine/core-modules/tool/types/record-reference.type';
 import { definePausingTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/define-pausing-tool.util';
 import { readRecordFieldValues } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/read-record-field-values.util';
 
@@ -219,10 +220,12 @@ export const PROPOSE_TOOL_CALL_PAUSING_TOOL = definePausingTool<
       success,
       message,
       result,
+      recordReferences,
     }: {
       success: boolean;
       message: string;
       result: Omit<ProposeToolCallToolResult, 'feedback'>;
+      recordReferences?: RecordReference[];
     }) => ({
       toolResult: {
         success,
@@ -233,6 +236,7 @@ export const PROPOSE_TOOL_CALL_PAUSING_TOOL = definePausingTool<
           ...result,
           ...(hasFeedback ? { feedback } : {}),
         } satisfies ProposeToolCallToolResult,
+        ...(isNonEmptyArray(recordReferences) ? { recordReferences } : {}),
       },
       answerText,
     });
@@ -334,6 +338,7 @@ export const PROPOSE_TOOL_CALL_PAUSING_TOOL = definePausingTool<
                 proposal: approvedProposal,
                 output: toolOutput.result,
               },
+              recordReferences: toolOutput.recordReferences,
             }
           : {
               success: false,

@@ -4,8 +4,7 @@ import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types
 export type ToolRetrievalOptions = ToolCatalogOptions & {
   isToolOffered?: (tool: ToolIndexEntry) => boolean;
   // Apply output compaction (strip nulls/empty values) to dispatch results
-  // before returning, and give each recordReferences entry its chatReference
-  // string. Chat enables this to reduce token usage in the
+  // before returning. Chat enables this to reduce token usage in the
   // conversation context; MCP and workflow agents leave raw output intact.
   compactOutput?: boolean;
   // Spill oversized dispatch results to a file and return a compact
