@@ -199,7 +199,7 @@ export class AgentToolsetService {
             preloadedToolNames.filter(isToolAllowed),
             toolContext,
             {
-              addChatReferences: true,
+              shouldAddChatReferences: true,
               compactOutput: true,
               spillLargeOutput: true,
             },
@@ -208,7 +208,7 @@ export class AgentToolsetService {
             ...this.buildMetaTools({
               toolContext,
               isToolAllowed,
-              addChatReferences: true,
+              shouldAddChatReferences: true,
             }),
             [LOAD_SKILL_TOOL_NAME]: createLoadSkillTool(
               (skillNames) =>
@@ -249,7 +249,7 @@ export class AgentToolsetService {
           metaTools: this.buildMetaTools({
             toolContext,
             isToolAllowed,
-            addChatReferences: false,
+            shouldAddChatReferences: false,
           }),
           toolCatalog,
           isToolAllowed,
@@ -283,11 +283,11 @@ export class AgentToolsetService {
   private buildMetaTools({
     toolContext,
     isToolAllowed,
-    addChatReferences,
+    shouldAddChatReferences,
   }: {
     toolContext: ToolContext;
     isToolAllowed: (toolName: string) => boolean;
-    addChatReferences: boolean;
+    shouldAddChatReferences: boolean;
   }): ToolSet {
     return {
       [LEARN_TOOLS_TOOL_NAME]: createLearnToolsTool(
@@ -300,7 +300,7 @@ export class AgentToolsetService {
         toolContext,
         {
           isToolAllowed,
-          addChatReferences,
+          shouldAddChatReferences,
           compactOutput: true,
           spillLargeOutput: true,
         },

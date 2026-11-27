@@ -1,5 +1,5 @@
 export type ToolOutputTransformOptions = {
-  addChatReferences?: boolean;
+  shouldAddChatReferences?: boolean;
   compactOutput?: boolean;
   spillLargeOutput?: boolean;
 };

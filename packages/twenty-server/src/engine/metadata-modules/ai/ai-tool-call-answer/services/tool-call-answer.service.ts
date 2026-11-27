@@ -503,7 +503,7 @@ export class ToolCallAnswerService {
             ...(await toolContext),
             approvedToolName: toolName,
           },
-          { addChatReferences: true },
+          { shouldAddChatReferences: true },
         );
       },
     };

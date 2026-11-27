@@ -451,7 +451,7 @@ export class ToolRegistryService {
     workspaceId: string;
     options?: ToolOutputTransformOptions;
   }): Promise<ToolOutput> {
-    const withChatReferences = options?.addChatReferences
+    const withChatReferences = options?.shouldAddChatReferences
       ? addChatReferencesToToolOutput(output)
       : output;
 

@@ -78,7 +78,7 @@ export const createExecuteToolTool = (
     }
 
     return toolRegistry.resolveAndExecute(toolName, args, context, {
-      addChatReferences: options?.addChatReferences,
+      shouldAddChatReferences: options?.shouldAddChatReferences,
       compactOutput: options?.compactOutput,
       spillLargeOutput: options?.spillLargeOutput,
     });
