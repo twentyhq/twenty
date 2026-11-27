@@ -7,8 +7,10 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatAskCard } from '@/ai-chat/tool-calls/components/AiChatAskCard';
 import { AiChatRecordApprovalDeck } from '@/ai-chat/tool-calls/components/AiChatRecordApprovalDeck';
+import { aiChatRecordApprovalAnsweringToolCallIdsFamilyState } from '@/ai-chat/tool-calls/states/aiChatRecordApprovalAnsweringToolCallIdsFamilyState';
 import { type AiChatPendingToolCall } from '@/ai-chat/tool-calls/types/AiChatPendingToolCall';
 import { isAiChatPendingRecordApproval } from '@/ai-chat/tool-calls/utils/isAiChatPendingRecordApproval';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
 const StyledRequests = styled.div`
   display: flex;
@@ -44,8 +46,9 @@ export const AiChatPendingToolCallRequests = ({
     batchToolCallIds: [],
   });
 
-  const [answeringToolCallIds, setAnsweringToolCallIds] = useState<string[]>(
-    [],
+  const aiChatRecordApprovalAnsweringToolCallIds = useAtomFamilyStateValue(
+    aiChatRecordApprovalAnsweringToolCallIdsFamilyState,
+    { threadId },
   );
 
   const requestCount = pendingToolCalls.length;
@@ -55,15 +58,13 @@ export const AiChatPendingToolCallRequests = ({
   const isReviewingRecordApprovals =
     pendingRecordApprovals.length === requestCount &&
     (requestCount > 1 ||
-      answeringToolCallIds.includes(pendingToolCalls[0].toolCallId));
+      aiChatRecordApprovalAnsweringToolCallIds.includes(
+        pendingToolCalls[0].toolCallId,
+      ));
 
   if (isReviewingRecordApprovals) {
     return (
-      <AiChatRecordApprovalDeck
-        recordApprovals={pendingRecordApprovals}
-        answeringToolCallIds={answeringToolCallIds}
-        onAnsweringToolCallIdsChange={setAnsweringToolCallIds}
-      />
+      <AiChatRecordApprovalDeck recordApprovals={pendingRecordApprovals} />
     );
   }
 
