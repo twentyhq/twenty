@@ -8,6 +8,8 @@ export const fromWorkspaceEntityToFlat = (
   displayName: entity.displayName,
   logo: entity.logo,
   logoFileId: entity.logoFileId,
+  accentColor: entity.accentColor,
+  uiScale: entity.uiScale,
   inviteHash: entity.inviteHash,
   allowImpersonation: entity.allowImpersonation,
   isPublicInviteLinkEnabled: entity.isPublicInviteLinkEnabled,

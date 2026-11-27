@@ -354,6 +354,7 @@ import { PurgeExpiredRefreshTokensSlowInstanceCommand } from 'src/database/comma
 import { AddNavigationMenuItemVisibleItemLimitFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-fast-1795772817031-add-navigation-menu-item-visible-item-limit';
 import { BackfillRecentChatsSectionVisibleItemLimitSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-slow-1795772818031-backfill-recent-chats-section-visible-item-limit';
 
+import { AddAccentColorAndUiScaleToWorkspaceSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-66/2-66-instance-command-slow-1795793649487-add-accent-color-and-ui-scale-to-workspace';
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
   MigrateMessagingCalendarToCoreFastInstanceCommand,
@@ -708,4 +709,5 @@ export const INSTANCE_COMMANDS = [
   PurgeExpiredRefreshTokensSlowInstanceCommand,
   AddNavigationMenuItemVisibleItemLimitFastInstanceCommand,
   BackfillRecentChatsSectionVisibleItemLimitSlowInstanceCommand,
+  AddAccentColorAndUiScaleToWorkspaceSlowInstanceCommand,
 ];

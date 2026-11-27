@@ -1,5 +1,6 @@
 import { ADD_WORKSPACE_ASSISTANT_PROFILE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-56/add-workspace-assistant-profile-upgrade-command-name.constant';
 import { ADD_AI_DATA_POLICY_TO_WORKSPACE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-57/add-ai-data-policy-to-workspace-upgrade-command-name.constant';
+import { ADD_ACCENT_COLOR_AND_UI_SCALE_TO_WORKSPACE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-66/add-accent-color-and-ui-scale-to-workspace-upgrade-command-name.constant';
 import { resolveEntityShapeAtUpgradeCursor } from 'src/engine/core-modules/upgrade/utils/resolve-entity-shape-at-upgrade-cursor.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -49,6 +50,30 @@ describe('WorkspaceEntity assistant profile upgrade shape', () => {
       resolveWorkspaceUpgradeShape([
         ADD_WORKSPACE_ASSISTANT_PROFILE_UPGRADE_COMMAND_NAME,
       ]).hiddenPropertyNames,
+    ).toEqual(new Set());
+  });
+});
+
+describe('WorkspaceEntity accent color and UI scale upgrade shape', () => {
+  const resolveHiddenPropertyNames = (appliedSteps: string[]) =>
+    resolveEntityShapeAtUpgradeCursor({
+      entityClass: WorkspaceEntity,
+      currentTableName: 'workspace',
+      currentColumns: [
+        { propertyName: 'accentColor', databaseName: 'accentColor' },
+        { propertyName: 'uiScale', databaseName: 'uiScale' },
+      ],
+      isStepApplied: (stepName) => appliedSteps.includes(stepName),
+    }).hiddenPropertyNames;
+
+  it('hides the accent color and UI scale columns until their upgrade command has run', () => {
+    expect(resolveHiddenPropertyNames([])).toEqual(
+      new Set(['accentColor', 'uiScale']),
+    );
+    expect(
+      resolveHiddenPropertyNames([
+        ADD_ACCENT_COLOR_AND_UI_SCALE_TO_WORKSPACE_UPGRADE_COMMAND_NAME,
+      ]),
     ).toEqual(new Set());
   });
 });
