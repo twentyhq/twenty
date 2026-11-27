@@ -61,6 +61,14 @@ const CHANNEL_SETTINGS = {
   },
 } satisfies HalftoneModelProps['settings'];
 
+// The pointer thickens the dashes under it, as on the partners' icons.
+const HERO_HOVER = {
+  hoverHalftoneEnabled: true,
+  hoverHalftoneRadius: 0.22,
+  hoverHalftonePowerShift: 0.5,
+  hoverHalftoneWidthShift: 0.4,
+};
+
 // The three, composed into one model (creator-channels.glb: the middle one large,
 // the sides smaller and turned in), so the hero holds two canvases and
 // leaves the page's budget to the sections below.
@@ -97,12 +105,15 @@ const HEAP_BUILD_MS = 2400;
 // It starts once the coin model has had time to load, so the fall is seen.
 const HEAP_START_MS = 1200;
 const HEAP_COIN_SIZE = { scaleTarget: 0.9 };
+// The same line spacing as the row above (its cells are larger, as the
+// camera stands farther back), and the same hover.
 const PILE_SETTINGS = {
   ...CHANNEL_SETTINGS,
   previewDistance: 9,
-  halftone: { ...CHANNEL_SETTINGS.halftone, scale: 9 },
+  halftone: { ...CHANNEL_SETTINGS.halftone, scale: 13.5 },
   animation: {
     ...CHANNEL_SETTINGS.animation,
+    ...HERO_HOVER,
     floatEnabled: false,
   },
 } satisfies HalftoneModelProps['settings'];
@@ -113,6 +124,13 @@ const ROW_SETTINGS = {
   // the camera sits closer to the wide composition: smaller cells keep the
   // same line spacing as the single models had
   halftone: { ...CHANNEL_SETTINGS.halftone, scale: 4.5 },
+  // each channel floats on its own (the model holds one mesh per channel),
+  // as far as a single one did: the row's model is three channels wide
+  animation: {
+    ...CHANNEL_SETTINGS.animation,
+    ...HERO_HOVER,
+    floatAmplitude: 0.12,
+  },
 } satisfies HalftoneModelProps['settings'];
 
 // The hero's backdrop: the banner's room under the copy.

@@ -5,6 +5,8 @@ import {
   type VisualFrame,
 } from '../engine/create-visual-frame-loop';
 import { createVisualRenderer } from '../three-runtime/create-visual-renderer';
+import { readGeometryParts } from '../three-runtime/load-glb-geometry';
+import { createPartFloat } from '../three-runtime/part-float';
 import { createRenderTarget } from './create-render-target';
 import { HALFTONE_CONSTANTS } from './halftone-constants';
 import { createVirtualSize } from './virtual-size';
@@ -217,7 +219,11 @@ export async function createBandSession({
   renderer.setSize(getVirtualWidth(), getVirtualHeight(), false);
 
   const canvas = renderer.domElement;
-  canvas.style.cursor = reducedMotion ? 'default' : 'grab';
+  // a grab hand only where the model can be dragged
+  const canDrag =
+    !reducedMotion &&
+    (animation.followDragEnabled || animation.autoRotateEnabled);
+  canvas.style.cursor = canDrag ? 'grab' : 'default';
   canvas.style.display = 'block';
   canvas.style.height = '100%';
   canvas.style.touchAction = 'none';
@@ -262,7 +268,14 @@ export async function createBandSession({
   const material = halftoneMaterials.create();
   halftoneMaterials.applySettings(material, settings.material, materialAssets);
 
-  const mesh = new THREE.Mesh(geometry, material);
+  // A composed model (several meshes in one GLB) floats piece by piece, on
+  // a copy of the geometry, since the loader's is cached and shared.
+  const parts = readGeometryParts(geometry);
+  const meshGeometry = parts.length > 0 ? geometry.clone() : geometry;
+  const floatParts =
+    parts.length > 0 ? createPartFloat(meshGeometry, parts) : null;
+
+  const mesh = new THREE.Mesh(meshGeometry, material);
   scene3d.add(mesh);
 
   const sceneTarget = createRenderTarget(getVirtualWidth(), getVirtualHeight());
@@ -435,7 +448,30 @@ export async function createBandSession({
     interaction.mouseY = 0.5;
   };
 
+  // Hover also reads the pointer from the window: a model drawn in a
+  // section's background, under its content layer, never gets the canvas's
+  // own events. Drags stay canvas-scoped.
+  const handleWindowPointerMove = (event: PointerEvent) => {
+    if (interaction.dragging) {
+      return;
+    }
+    const rect = canvas.getBoundingClientRect();
+    const isInside =
+      event.clientX >= rect.left &&
+      event.clientX <= rect.right &&
+      event.clientY >= rect.top &&
+      event.clientY <= rect.bottom;
+    if (isInside) {
+      handlePointerMove(event);
+    } else if (interaction.pointerInside) {
+      handlePointerLeave();
+    }
+  };
+
   if (!reducedMotion) {
+    window.addEventListener('pointermove', handleWindowPointerMove, {
+      passive: true,
+    });
     canvas.addEventListener('pointerdown', handlePointerDown);
     canvas.addEventListener('pointermove', handlePointerMove);
     canvas.addEventListener('pointerleave', handlePointerLeave);
@@ -489,7 +525,11 @@ export async function createBandSession({
     if (animation.floatEnabled) {
       const floatPhase = elapsedTime * animation.floatSpeed;
       const driftAmount = (animation.driftAmount * Math.PI) / 180;
-      meshOffsetY += Math.sin(floatPhase) * animation.floatAmplitude;
+      if (floatParts === null) {
+        meshOffsetY += Math.sin(floatPhase) * animation.floatAmplitude;
+      } else {
+        floatParts(floatPhase, animation.floatAmplitude);
+      }
       baseRotationX += Math.sin(floatPhase * 0.72) * driftAmount * 0.45;
       baseRotationZ += Math.cos(floatPhase * 0.93) * driftAmount * 0.3;
     }
@@ -707,6 +747,9 @@ export async function createBandSession({
     halftoneMaterial.dispose();
     fullScreenGeometry.dispose();
     material.dispose();
+    if (meshGeometry !== geometry) {
+      meshGeometry.dispose();
+    }
     sceneTarget.dispose();
     transmissionBacksideTarget.dispose();
     transmissionTarget.dispose();
@@ -738,6 +781,7 @@ export async function createBandSession({
     dispose() {
       frameLoop.dispose();
       sizeObserver?.disconnect();
+      window.removeEventListener('pointermove', handleWindowPointerMove);
       canvas.removeEventListener('pointerdown', handlePointerDown);
       canvas.removeEventListener('pointermove', handlePointerMove);
       canvas.removeEventListener('pointerleave', handlePointerLeave);
