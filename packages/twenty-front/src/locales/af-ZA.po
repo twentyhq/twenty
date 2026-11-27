@@ -197,8 +197,6 @@ msgid "(selected: {selectedIconKey})"
 msgstr "(gekies: {selectedIconKey})"
 
 #. js-lingui-id: ZBGbuw
-#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
-#: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
@@ -206,6 +204,7 @@ msgstr "(gekies: {selectedIconKey})"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
 #: src/modules/settings/event-logs/components/EventLogJsonCell.tsx
+#: src/modules/ui/layout/details/components/JsonSection.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
@@ -310,6 +309,12 @@ msgstr "{0, plural, one {# objek} other {# objekte}}"
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 msgid "{0, plural, one {# Object} other {# Objects}}"
 msgstr "{0, plural, one {# Voorwerp} other {# Voorwerpe}}"
+
+#. js-lingui-id: BPBz8e
+#. placeholder {0}: recordReferences.length
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRecordsDetail.tsx
+msgid "{0, plural, one {# record} other {# records}}"
+msgstr ""
 
 #. js-lingui-id: zHa4lw
 #. placeholder {0}: parts.length
@@ -4066,11 +4071,6 @@ msgstr "en"
 msgid "And"
 msgstr "En"
 
-#. js-lingui-id: U/Q98U
-#: src/modules/ai-chat/thinking-steps/components/ToolRecordsWidget.tsx
-msgid "and {hiddenCount} more"
-msgstr "en nog {hiddenCount}"
-
 #. js-lingui-id: 2qLe/y
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
@@ -4093,7 +4093,6 @@ msgid "Answered"
 msgstr "Beantwoord"
 
 #. js-lingui-id: +qygei
-#: src/modules/ai-chat/tool-calls/components/AiChatQuestionStatusRenderer.tsx
 #: src/modules/workflow/workflow-variables/utils/generate/generateClassifyOutputSchema.ts
 msgid "Answers"
 msgstr "Antwoorde"
@@ -4441,20 +4440,10 @@ msgstr "Keur al {pendingCardCount} goed"
 msgid "Approve media access for {applicationName}?"
 msgstr "Keur mediatoegang vir {applicationName} goed?"
 
-#. js-lingui-id: 7kb4LU
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
-msgid "Approved"
-msgstr "Goedgekeur"
-
 #. js-lingui-id: UDlRcx
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect.tsx
 msgid "Approved access domain validated"
 msgstr "Goedgekeurde toegangsdomein bevestig"
-
-#. js-lingui-id: nfUdWT
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
-msgid "Approved but it failed"
-msgstr "Goedgekeur, maar dit het misluk"
 
 #. js-lingui-id: 9tggYj
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
@@ -5967,6 +5956,11 @@ msgstr "Kalender aansig"
 msgid "Calendar widget"
 msgstr "Kalenderwidget"
 
+#. js-lingui-id: oQhLzs
+#: src/modules/side-panel/pages/ai-chat-tool-call/components/SidePanelAiChatToolCallPageContent.tsx
+msgid "Call ID"
+msgstr ""
+
 #. js-lingui-id: cHma9m
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
 msgid "Call recorder"
@@ -7247,9 +7241,7 @@ msgid "collapse"
 msgstr "vou in"
 
 #. js-lingui-id: H86f9p
-#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/log-console/components/LogConsole.tsx
-#: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
@@ -7257,6 +7249,7 @@ msgstr "vou in"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
 #: src/modules/settings/event-logs/components/EventLogJsonCell.tsx
+#: src/modules/ui/layout/details/components/JsonSection.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
@@ -7528,6 +7521,7 @@ msgstr "voltooi"
 #: src/modules/object-core/components/CoreObjectRunsPerDayChart.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
+#: src/modules/side-panel/pages/ai-chat-tool-call/components/SidePanelAiChatToolCallPageContent.tsx
 #: src/modules/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps.ts
 #: src/pages/settings/admin-panel/SettingsAdminInstanceStatus.tsx
 msgid "Completed"
@@ -8230,6 +8224,11 @@ msgstr "Cook"
 msgid "Cookie"
 msgstr "Koekie"
 
+#. js-lingui-id: XQVCXB
+#: src/modules/ui/layout/details/components/JsonSection.tsx
+msgid "Copied as JSON"
+msgstr ""
+
 #. js-lingui-id: FxVG/l
 #: src/hooks/useCopyToClipboard.tsx
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
@@ -8244,7 +8243,6 @@ msgid "Copies a Cloudflare setup prompt for your AI coding tool"
 msgstr "Kopieer 'n Cloudflare-opstelboodskap vir jou KI-koderingshulpmiddel"
 
 #. js-lingui-id: he3ygx
-#: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/hooks/useGetSecondaryFieldButton.ts
 #: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuItem.tsx
 #: src/modules/settings/developers/components/ApiKeyInput.tsx
@@ -8254,12 +8252,13 @@ msgstr "Kopieer 'n Cloudflare-opstelboodskap vir jou KI-koderingshulpmiddel"
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesDisplay.tsx
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeDisplay.tsx
+#: src/modules/ui/layout/details/components/DetailMessageCard.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "Copy"
 msgstr "Kopieer"
 
 #. js-lingui-id: Qv14oC
-#: src/modules/log-console/components/LogConsoleDetailPanel.tsx
+#: src/modules/ui/layout/details/components/JsonSection.tsx
 msgid "Copy as JSON"
 msgstr "Kopieer as JSON"
 
@@ -10801,6 +10800,7 @@ msgstr "besonderhede"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
 #: src/modules/settings/event-logs/utils/getColumnsForEventLogTable.tsx
+#: src/modules/side-panel/pages/ai-chat-tool-call/components/SidePanelAiChatToolCallPageContent.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
@@ -11312,7 +11312,7 @@ msgid "Draft an email to this company about "
 msgstr "Stel 'n e-poskonsep aan hierdie maatskappy op oor "
 
 #. js-lingui-id: DbAw4C
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalEmailCard.tsx
+#: src/modules/ai-chat/tool-calls/utils/getProposedToolCallLabel.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Draft email"
 msgstr "Konsep-e-pos"
@@ -12101,8 +12101,6 @@ msgid "Empty"
 msgstr "Leeg"
 
 #. js-lingui-id: OMbipf
-#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
-#: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
@@ -12110,6 +12108,7 @@ msgstr "Leeg"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
 #: src/modules/settings/event-logs/components/EventLogJsonCell.tsx
+#: src/modules/ui/layout/details/components/JsonSection.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
@@ -12120,8 +12119,6 @@ msgid "Empty Array"
 msgstr "Leë Reeks"
 
 #. js-lingui-id: 3hSGoJ
-#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
-#: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
@@ -12129,6 +12126,7 @@ msgstr "Leë Reeks"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
 #: src/modules/settings/event-logs/components/EventLogJsonCell.tsx
+#: src/modules/ui/layout/details/components/JsonSection.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
@@ -12711,6 +12709,7 @@ msgstr "Easy wiping van rekords wat sag verwyder is"
 #: src/modules/object-core/workflows/components/CoreWorkflowRecentFailedRuns.tsx
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetErrorDisplay.tsx
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringIssuesTable.tsx
+#: src/modules/side-panel/pages/ai-chat-tool-call/components/SidePanelAiChatToolCallPageContent.tsx
 #: src/modules/ui/feedback/toast/utils/getLocalizedToastProps.ts
 #: src/modules/validation-rules/components/SettingsValidationRuleForm.tsx
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
@@ -13230,8 +13229,6 @@ msgid "Exit import flow"
 msgstr "Verlaat invoerstroom"
 
 #. js-lingui-id: 1A3EXy
-#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
-#: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
@@ -13239,6 +13236,7 @@ msgstr "Verlaat invoerstroom"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
 #: src/modules/settings/event-logs/components/EventLogJsonCell.tsx
+#: src/modules/ui/layout/details/components/JsonSection.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
@@ -13500,6 +13498,7 @@ msgstr "Gesig"
 #: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
 #: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
 #: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 #: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 #: src/modules/object-core/components/CoreObjectRunsPerDayChart.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspacesTable.tsx
@@ -13513,6 +13512,7 @@ msgstr "Gesig"
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringFunctionsTable.tsx
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringVersionsTable.tsx
 #: src/modules/settings/emailing-domains/utils/getEmailingDomainStatusDisplay.ts
+#: src/modules/side-panel/pages/ai-chat-tool-call/components/SidePanelAiChatToolCallPageContent.tsx
 #: src/modules/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminInstanceStatus.tsx
@@ -14182,6 +14182,11 @@ msgstr "Kenmerke"
 msgid "Features active until"
 msgstr "Funksies aktief tot"
 
+#. js-lingui-id: vi29BX
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalDecidedDetails.tsx
+msgid "Feedback: {feedback}"
+msgstr ""
+
 #. js-lingui-id: 2lOBKV
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "field"
@@ -14824,11 +14829,6 @@ msgstr "Vormdata"
 #: src/modules/ai-chat/tool-calls/components/AiChatFormStatusRenderer.tsx
 msgid "Form skipped"
 msgstr "Vorm oorgeslaan"
-
-#. js-lingui-id: 6vS9Zq
-#: src/modules/ai-chat/tool-calls/components/AiChatFormStatusRenderer.tsx
-msgid "Form submitted"
-msgstr "Vorm ingedien"
 
 #. js-lingui-id: kI1qVD
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
@@ -16674,11 +16674,11 @@ msgid "Initial values"
 msgstr "Aanvanklike waardes"
 
 #. js-lingui-id: XU5AOg
-#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
+#: src/modules/side-panel/pages/ai-chat-tool-call/components/SidePanelAiChatToolCallPageContent.tsx
 #: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
@@ -18675,11 +18675,6 @@ msgstr "Sluit diagram"
 msgid "Log a new deal (company, amount, stage, expected close). Details: "
 msgstr "Teken 'n nuwe transaksie aan (maatskappy, bedrag, stadium, verwagte sluiting). Besonderhede: "
 
-#. js-lingui-id: RV6CK8
-#: src/modules/log-console/components/LogConsoleDetailPanel.tsx
-msgid "Log copied as JSON"
-msgstr "Logboek as JSON gekopieer"
-
 #. js-lingui-id: FgAxTj
 #: src/modules/auth/sign-in-up/components/WorkspaceSelectionFooter.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
@@ -19830,6 +19825,11 @@ msgstr "Meer"
 #: src/modules/page-layout/widgets/fields/components/FieldsWidget.tsx
 msgid "More ({0})"
 msgstr "Meer ({0})"
+
+#. js-lingui-id: 5iROXL
+#: src/modules/ui/layout/details/components/DetailMessageCard.tsx
+msgid "More ({hiddenMessageStackLineCount})"
+msgstr ""
 
 #. js-lingui-id: f0jmdR
 #: src/modules/page-layout/widgets/field/components/FieldWidgetShowMoreButton.tsx
@@ -22002,10 +22002,10 @@ msgstr "Nie opgeneem nie"
 msgid "Not Recorded"
 msgstr "Nie opgeneem nie"
 
-#. js-lingui-id: gnnpkq
+#. js-lingui-id: +05x1/
 #: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
-msgid "Not run: the record changed since it was proposed"
-msgstr "Nie uitgevoer nie: die rekord het verander sedert dit voorgestel is"
+msgid "Not run: the record changed"
+msgstr ""
 
 #. js-lingui-id: MTqQMG
 #: src/modules/settings/emailing-domains/utils/getVerificationRecordGroupStatusDisplay.ts
@@ -23190,9 +23190,9 @@ msgstr "Vooruitsig"
 #. js-lingui-id: gh06VD
 #: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
 #: src/modules/ai-chat/message-content/components/TerminalOutput.tsx
-#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/logic-functions/components/LogicFunctionExecutionResult.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
+#: src/modules/side-panel/pages/ai-chat-tool-call/components/SidePanelAiChatToolCallPageContent.tsx
 #: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx
 #: src/modules/workflow/components/WorkflowStepExecutionResult.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentOutputSchemaBuilder.tsx
@@ -25126,6 +25126,7 @@ msgstr "Filter op rekordvlak"
 
 #. js-lingui-id: jdetKb
 #: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalArgumentsCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalDecidedDetails.tsx
 msgid "Record:"
 msgstr "Rekord:"
 
@@ -25166,6 +25167,7 @@ msgstr "rekords"
 #: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
+#: src/modules/side-panel/pages/ai-chat-tool-call/components/SidePanelAiChatToolCallRecords.tsx
 #: src/modules/workflow/workflow-variables/utils/generate/computeStepOutputSchema.ts
 #: src/modules/workflow/workflow-variables/utils/generate/generateFindRecordsOutputSchema.ts
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
@@ -25847,6 +25849,11 @@ msgstr "Versoek {requestNumber} van {requestCount}"
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
 msgid "Request Failed"
 msgstr "Versoek het misluk"
+
+#. js-lingui-id: yYlEZs
+#: src/modules/ai-chat/tool-calls/components/AiChatFormStatusRenderer.tsx
+msgid "Request form"
+msgstr ""
 
 #. js-lingui-id: Vhxipp
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
@@ -27888,6 +27895,8 @@ msgid "Select your language and adjust the size of the interface"
 msgstr "Kies jou taal en pas die grootte van die koppelvlak aan"
 
 #. js-lingui-id: ylXj1N
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionAnsweredDetails.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionAnsweredDetails.tsx
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
 msgid "Selected"
 msgstr "Geselekteer"
@@ -27941,7 +27950,7 @@ msgstr "Stuur veldtog"
 
 #. js-lingui-id: 65dxv8
 #: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReviewDeck.tsx
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalEmailCard.tsx
+#: src/modules/ai-chat/tool-calls/utils/getProposedToolCallLabel.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Send email"
 msgstr "Stuur e-pos"
@@ -28532,6 +28541,11 @@ msgstr "Wys alle items"
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 msgid "Show API values"
 msgstr "Wys API-waardes"
+
+#. js-lingui-id: BowKyI
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
+msgid "Show details"
+msgstr ""
 
 #. js-lingui-id: tAUYYP
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationFieldEditor.tsx
@@ -29396,6 +29410,7 @@ msgstr "Statistiek"
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection.tsx
 #: src/modules/settings/mcp-servers/components/SettingsMcpServersTable.tsx
+#: src/modules/side-panel/pages/ai-chat-tool-call/components/SidePanelAiChatToolCallPageContent.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminInstanceStatus.tsx
@@ -30670,6 +30685,11 @@ msgstr "Die PDF is vooraf deur Twenty onderteken en uitgevoer met jou regs-entit
 msgid "The priority record keeps its identity"
 msgstr "Die prioriteitrekord behou sy identiteit"
 
+#. js-lingui-id: cXfCXQ
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalDecidedDetails.tsx
+msgid "The record changed since it was proposed, so nothing was run."
+msgstr ""
+
 #. js-lingui-id: Ir4tSJ
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "The recorder is joining the call…"
@@ -31815,6 +31835,7 @@ msgstr "Te veel rekords. Tot {maxRecordsString} toegelaat"
 #. js-lingui-id: LYzbQ2
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
+#: src/modules/side-panel/pages/ai-chat-tool-call/components/SidePanelAiChatToolCallPageContent.tsx
 msgid "Tool"
 msgstr "Gereedskap"
 
@@ -31845,11 +31866,6 @@ msgstr "Hulpmiddel geskep"
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 msgid "Tool deleted"
 msgstr "Hulpmiddel verwyder"
-
-#. js-lingui-id: RO68oO
-#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
-msgid "Tool details: {displayMessage}"
-msgstr "Gereedskapbesonderhede: {displayMessage}"
 
 #. js-lingui-id: YsAptn
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx

@@ -197,8 +197,6 @@ msgid "(selected: {selectedIconKey})"
 msgstr "(נבחר: {selectedIconKey})"
 
 #. js-lingui-id: ZBGbuw
-#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
-#: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
@@ -206,6 +204,7 @@ msgstr "(נבחר: {selectedIconKey})"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
 #: src/modules/settings/event-logs/components/EventLogJsonCell.tsx
+#: src/modules/ui/layout/details/components/JsonSection.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
@@ -310,6 +309,12 @@ msgstr "{0, plural, one {# אובייקט} two {# אובייקטים} other {# �
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 msgid "{0, plural, one {# Object} other {# Objects}}"
 msgstr "{0, plural, one {# אובייקט} two {# אובייקטים} many {# אובייקטים} other {# אובייקטים}}"
+
+#. js-lingui-id: BPBz8e
+#. placeholder {0}: recordReferences.length
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRecordsDetail.tsx
+msgid "{0, plural, one {# record} other {# records}}"
+msgstr ""
 
 #. js-lingui-id: zHa4lw
 #. placeholder {0}: parts.length
@@ -4066,11 +4071,6 @@ msgstr "וגם"
 msgid "And"
 msgstr "וגם"
 
-#. js-lingui-id: U/Q98U
-#: src/modules/ai-chat/thinking-steps/components/ToolRecordsWidget.tsx
-msgid "and {hiddenCount} more"
-msgstr "ועוד {hiddenCount}"
-
 #. js-lingui-id: 2qLe/y
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
@@ -4093,7 +4093,6 @@ msgid "Answered"
 msgstr "עם מענה"
 
 #. js-lingui-id: +qygei
-#: src/modules/ai-chat/tool-calls/components/AiChatQuestionStatusRenderer.tsx
 #: src/modules/workflow/workflow-variables/utils/generate/generateClassifyOutputSchema.ts
 msgid "Answers"
 msgstr "תשובות"
@@ -4441,20 +4440,10 @@ msgstr "אשר את כל {pendingCardCount}"
 msgid "Approve media access for {applicationName}?"
 msgstr "לאשר גישה למדיה עבור {applicationName}?"
 
-#. js-lingui-id: 7kb4LU
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
-msgid "Approved"
-msgstr "אושר"
-
 #. js-lingui-id: UDlRcx
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect.tsx
 msgid "Approved access domain validated"
 msgstr "הדומיין המאושר גישה אומת"
-
-#. js-lingui-id: nfUdWT
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
-msgid "Approved but it failed"
-msgstr "אושר אך נכשל"
 
 #. js-lingui-id: 9tggYj
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
@@ -5967,6 +5956,11 @@ msgstr "תצוגת לוח שנה"
 msgid "Calendar widget"
 msgstr "וידג'ט לוח שנה"
 
+#. js-lingui-id: oQhLzs
+#: src/modules/side-panel/pages/ai-chat-tool-call/components/SidePanelAiChatToolCallPageContent.tsx
+msgid "Call ID"
+msgstr ""
+
 #. js-lingui-id: cHma9m
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
 msgid "Call recorder"
@@ -7247,9 +7241,7 @@ msgid "collapse"
 msgstr "צמצם"
 
 #. js-lingui-id: H86f9p
-#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/log-console/components/LogConsole.tsx
-#: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
@@ -7257,6 +7249,7 @@ msgstr "צמצם"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
 #: src/modules/settings/event-logs/components/EventLogJsonCell.tsx
+#: src/modules/ui/layout/details/components/JsonSection.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
@@ -7528,6 +7521,7 @@ msgstr "הושלם"
 #: src/modules/object-core/components/CoreObjectRunsPerDayChart.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
+#: src/modules/side-panel/pages/ai-chat-tool-call/components/SidePanelAiChatToolCallPageContent.tsx
 #: src/modules/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps.ts
 #: src/pages/settings/admin-panel/SettingsAdminInstanceStatus.tsx
 msgid "Completed"
@@ -8230,6 +8224,11 @@ msgstr "Cook"
 msgid "Cookie"
 msgstr "עוגייה"
 
+#. js-lingui-id: XQVCXB
+#: src/modules/ui/layout/details/components/JsonSection.tsx
+msgid "Copied as JSON"
+msgstr ""
+
 #. js-lingui-id: FxVG/l
 #: src/hooks/useCopyToClipboard.tsx
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
@@ -8244,7 +8243,6 @@ msgid "Copies a Cloudflare setup prompt for your AI coding tool"
 msgstr "מעתיק בקשת הגדרה של Cloudflare עבור כלי הקידוד שלך מבוסס AI"
 
 #. js-lingui-id: he3ygx
-#: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/hooks/useGetSecondaryFieldButton.ts
 #: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuItem.tsx
 #: src/modules/settings/developers/components/ApiKeyInput.tsx
@@ -8254,12 +8252,13 @@ msgstr "מעתיק בקשת הגדרה של Cloudflare עבור כלי הקיד�
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesDisplay.tsx
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeDisplay.tsx
+#: src/modules/ui/layout/details/components/DetailMessageCard.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "Copy"
 msgstr "העתק"
 
 #. js-lingui-id: Qv14oC
-#: src/modules/log-console/components/LogConsoleDetailPanel.tsx
+#: src/modules/ui/layout/details/components/JsonSection.tsx
 msgid "Copy as JSON"
 msgstr "העתק כ-JSON"
 
@@ -10801,6 +10800,7 @@ msgstr "פרטים"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
 #: src/modules/settings/event-logs/utils/getColumnsForEventLogTable.tsx
+#: src/modules/side-panel/pages/ai-chat-tool-call/components/SidePanelAiChatToolCallPageContent.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
@@ -11312,7 +11312,7 @@ msgid "Draft an email to this company about "
 msgstr "צור טיוטת אימייל לחברה זו בנושא "
 
 #. js-lingui-id: DbAw4C
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalEmailCard.tsx
+#: src/modules/ai-chat/tool-calls/utils/getProposedToolCallLabel.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Draft email"
 msgstr "טיוטת דוא\"ל"
@@ -12101,8 +12101,6 @@ msgid "Empty"
 msgstr "ריק"
 
 #. js-lingui-id: OMbipf
-#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
-#: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
@@ -12110,6 +12108,7 @@ msgstr "ריק"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
 #: src/modules/settings/event-logs/components/EventLogJsonCell.tsx
+#: src/modules/ui/layout/details/components/JsonSection.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
@@ -12120,8 +12119,6 @@ msgid "Empty Array"
 msgstr "מערך ריק"
 
 #. js-lingui-id: 3hSGoJ
-#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
-#: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
@@ -12129,6 +12126,7 @@ msgstr "מערך ריק"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
 #: src/modules/settings/event-logs/components/EventLogJsonCell.tsx
+#: src/modules/ui/layout/details/components/JsonSection.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
@@ -12711,6 +12709,7 @@ msgstr "מחיקת רשומות שנמחקו ברכות"
 #: src/modules/object-core/workflows/components/CoreWorkflowRecentFailedRuns.tsx
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetErrorDisplay.tsx
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringIssuesTable.tsx
+#: src/modules/side-panel/pages/ai-chat-tool-call/components/SidePanelAiChatToolCallPageContent.tsx
 #: src/modules/ui/feedback/toast/utils/getLocalizedToastProps.ts
 #: src/modules/validation-rules/components/SettingsValidationRuleForm.tsx
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
@@ -13230,8 +13229,6 @@ msgid "Exit import flow"
 msgstr "יציאה מתהליך הייבוא"
 
 #. js-lingui-id: 1A3EXy
-#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
-#: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
@@ -13239,6 +13236,7 @@ msgstr "יציאה מתהליך הייבוא"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
 #: src/modules/settings/event-logs/components/EventLogJsonCell.tsx
+#: src/modules/ui/layout/details/components/JsonSection.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
@@ -13500,6 +13498,7 @@ msgstr "פנים"
 #: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
 #: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
 #: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 #: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 #: src/modules/object-core/components/CoreObjectRunsPerDayChart.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspacesTable.tsx
@@ -13513,6 +13512,7 @@ msgstr "פנים"
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringFunctionsTable.tsx
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringVersionsTable.tsx
 #: src/modules/settings/emailing-domains/utils/getEmailingDomainStatusDisplay.ts
+#: src/modules/side-panel/pages/ai-chat-tool-call/components/SidePanelAiChatToolCallPageContent.tsx
 #: src/modules/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminInstanceStatus.tsx
@@ -14182,6 +14182,11 @@ msgstr "תכונות"
 msgid "Features active until"
 msgstr "התכונות פעילות עד"
 
+#. js-lingui-id: vi29BX
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalDecidedDetails.tsx
+msgid "Feedback: {feedback}"
+msgstr ""
+
 #. js-lingui-id: 2lOBKV
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "field"
@@ -14824,11 +14829,6 @@ msgstr "נתוני טופס"
 #: src/modules/ai-chat/tool-calls/components/AiChatFormStatusRenderer.tsx
 msgid "Form skipped"
 msgstr "הטופס דולג"
-
-#. js-lingui-id: 6vS9Zq
-#: src/modules/ai-chat/tool-calls/components/AiChatFormStatusRenderer.tsx
-msgid "Form submitted"
-msgstr "הטופס נשלח"
 
 #. js-lingui-id: kI1qVD
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
@@ -16674,11 +16674,11 @@ msgid "Initial values"
 msgstr "ערכים ראשוניים"
 
 #. js-lingui-id: XU5AOg
-#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
+#: src/modules/side-panel/pages/ai-chat-tool-call/components/SidePanelAiChatToolCallPageContent.tsx
 #: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
@@ -18675,11 +18675,6 @@ msgstr "נעל תרשים"
 msgid "Log a new deal (company, amount, stage, expected close). Details: "
 msgstr "רשום עסקה חדשה (חברה, סכום, שלב, תאריך סגירה צפוי). פרטים: "
 
-#. js-lingui-id: RV6CK8
-#: src/modules/log-console/components/LogConsoleDetailPanel.tsx
-msgid "Log copied as JSON"
-msgstr "היומן הועתק כ-JSON"
-
 #. js-lingui-id: FgAxTj
 #: src/modules/auth/sign-in-up/components/WorkspaceSelectionFooter.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
@@ -19830,6 +19825,11 @@ msgstr "עוד"
 #: src/modules/page-layout/widgets/fields/components/FieldsWidget.tsx
 msgid "More ({0})"
 msgstr "עוד ({0})"
+
+#. js-lingui-id: 5iROXL
+#: src/modules/ui/layout/details/components/DetailMessageCard.tsx
+msgid "More ({hiddenMessageStackLineCount})"
+msgstr ""
 
 #. js-lingui-id: f0jmdR
 #: src/modules/page-layout/widgets/field/components/FieldWidgetShowMoreButton.tsx
@@ -22002,10 +22002,10 @@ msgstr "לא הוקלט"
 msgid "Not Recorded"
 msgstr "לא הוקלט"
 
-#. js-lingui-id: gnnpkq
+#. js-lingui-id: +05x1/
 #: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
-msgid "Not run: the record changed since it was proposed"
-msgstr "לא הופעל: הרשומה השתנתה מאז שהוצעה"
+msgid "Not run: the record changed"
+msgstr ""
 
 #. js-lingui-id: MTqQMG
 #: src/modules/settings/emailing-domains/utils/getVerificationRecordGroupStatusDisplay.ts
@@ -23190,9 +23190,9 @@ msgstr "אאוטלוק"
 #. js-lingui-id: gh06VD
 #: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
 #: src/modules/ai-chat/message-content/components/TerminalOutput.tsx
-#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/logic-functions/components/LogicFunctionExecutionResult.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
+#: src/modules/side-panel/pages/ai-chat-tool-call/components/SidePanelAiChatToolCallPageContent.tsx
 #: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx
 #: src/modules/workflow/components/WorkflowStepExecutionResult.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentOutputSchemaBuilder.tsx
@@ -25126,6 +25126,7 @@ msgstr "מסנן ברמת הרשומה"
 
 #. js-lingui-id: jdetKb
 #: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalArgumentsCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalDecidedDetails.tsx
 msgid "Record:"
 msgstr "רשומה:"
 
@@ -25166,6 +25167,7 @@ msgstr "רישומים"
 #: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
+#: src/modules/side-panel/pages/ai-chat-tool-call/components/SidePanelAiChatToolCallRecords.tsx
 #: src/modules/workflow/workflow-variables/utils/generate/computeStepOutputSchema.ts
 #: src/modules/workflow/workflow-variables/utils/generate/generateFindRecordsOutputSchema.ts
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
@@ -25847,6 +25849,11 @@ msgstr "בקשה {requestNumber} מתוך {requestCount}"
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
 msgid "Request Failed"
 msgstr "הבקשה נכשלה"
+
+#. js-lingui-id: yYlEZs
+#: src/modules/ai-chat/tool-calls/components/AiChatFormStatusRenderer.tsx
+msgid "Request form"
+msgstr ""
 
 #. js-lingui-id: Vhxipp
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
@@ -27888,6 +27895,8 @@ msgid "Select your language and adjust the size of the interface"
 msgstr "בחר את השפה שלך והתאם את גודל הממשק"
 
 #. js-lingui-id: ylXj1N
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionAnsweredDetails.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionAnsweredDetails.tsx
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
 msgid "Selected"
 msgstr "נבחר"
@@ -27941,7 +27950,7 @@ msgstr "שלח קמפיין"
 
 #. js-lingui-id: 65dxv8
 #: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReviewDeck.tsx
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalEmailCard.tsx
+#: src/modules/ai-chat/tool-calls/utils/getProposedToolCallLabel.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Send email"
 msgstr "שליחת דוא\"ל"
@@ -28532,6 +28541,11 @@ msgstr "הצג את כל הפריטים"
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 msgid "Show API values"
 msgstr "הצג ערכי API"
+
+#. js-lingui-id: BowKyI
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
+msgid "Show details"
+msgstr ""
 
 #. js-lingui-id: tAUYYP
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationFieldEditor.tsx
@@ -29396,6 +29410,7 @@ msgstr "סטטיסטיקות"
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection.tsx
 #: src/modules/settings/mcp-servers/components/SettingsMcpServersTable.tsx
+#: src/modules/side-panel/pages/ai-chat-tool-call/components/SidePanelAiChatToolCallPageContent.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminInstanceStatus.tsx
@@ -30670,6 +30685,11 @@ msgstr "ה-PDF נחתם מראש על ידי Twenty ומבוצע עם הישות
 msgid "The priority record keeps its identity"
 msgstr "רשומת העדיפות שומרת על הזהות שלה"
 
+#. js-lingui-id: cXfCXQ
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalDecidedDetails.tsx
+msgid "The record changed since it was proposed, so nothing was run."
+msgstr ""
+
 #. js-lingui-id: Ir4tSJ
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "The recorder is joining the call…"
@@ -31815,6 +31835,7 @@ msgstr "יותר מדי רשומות. מותר עד {maxRecordsString}"
 #. js-lingui-id: LYzbQ2
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
+#: src/modules/side-panel/pages/ai-chat-tool-call/components/SidePanelAiChatToolCallPageContent.tsx
 msgid "Tool"
 msgstr "כלי"
 
@@ -31845,11 +31866,6 @@ msgstr "הכלי נוצר"
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 msgid "Tool deleted"
 msgstr "הכלי נמחק"
-
-#. js-lingui-id: RO68oO
-#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
-msgid "Tool details: {displayMessage}"
-msgstr "פרטי כלי: {displayMessage}"
 
 #. js-lingui-id: YsAptn
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
