@@ -1426,17 +1426,17 @@ msgstr "오류가 발생했습니다."
 #. js-lingui-id: tu7jLy
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 msgid "An event property references an object that does not exist"
-msgstr ""
+msgstr "이벤트 속성이 존재하지 않는 객체를 참조합니다"
 
 #. js-lingui-id: o/4JpS
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 msgid "An event with this name already exists for this application"
-msgstr ""
+msgstr "이 애플리케이션에 해당 이름의 이벤트가 이미 존재합니다"
 
 #. js-lingui-id: pb8I0K
 #: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
 msgid "An event with this name already exists for this application."
-msgstr ""
+msgstr "이 이름의 이벤트가 이 애플리케이션에 이미 존재합니다."
 
 #. js-lingui-id: CKXJCD
 #: src/engine/core-modules/record-export/__tests__/record-export-exception-filter.spec.ts
@@ -5531,13 +5531,13 @@ msgstr "이벤트 ID"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 msgid "Event label is required"
-msgstr ""
+msgstr "이벤트 레이블이 필요합니다"
 
 #. js-lingui-id: WZZzB6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 msgid "Event name is required"
-msgstr ""
+msgstr "이벤트 이름이 필요합니다"
 
 #. js-lingui-id: ElR3MZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
@@ -5545,12 +5545,12 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 msgid "Event not found"
-msgstr ""
+msgstr "이벤트를 찾을 수 없습니다"
 
 #. js-lingui-id: ed1R08
 #: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
 msgid "Event not found."
-msgstr ""
+msgstr "이벤트를 찾을 수 없습니다."
 
 #. js-lingui-id: irEsRo
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -5567,7 +5567,7 @@ msgstr "이벤트 참가자"
 #. js-lingui-id: h6h6j+
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 msgid "Event property \"{propertyName}\" references object \"{objectUniversalIdentifier}\", which was not found"
-msgstr ""
+msgstr "이벤트 속성 \"{propertyName}\"이(가) 찾을 수 없는 객체 \"{objectUniversalIdentifier}\"을(를) 참조합니다"
 
 #. js-lingui-id: lr7Nsq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -5593,7 +5593,7 @@ msgstr "이벤트 유형"
 #. js-lingui-id: zIUq08
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 msgid "Event with name {name} already exists for this application"
-msgstr ""
+msgstr "{name}라는 이름의 이벤트가 이 애플리케이션에 이미 존재합니다"
 
 #. js-lingui-id: NZy2VR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -7419,12 +7419,12 @@ msgstr "잘못된 이메일 또는 도메인."
 #. js-lingui-id: q96eTT
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 msgid "Invalid event definition"
-msgstr ""
+msgstr "잘못된 이벤트 정의"
 
 #. js-lingui-id: VAifIo
 #: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
 msgid "Invalid event definition."
-msgstr ""
+msgstr "잘못된 이벤트 정의."
 
 #. js-lingui-id: 8knMLv
 #: src/engine/core-modules/event-logs/emit/event-log-emitter.exception.ts
@@ -11115,7 +11115,7 @@ msgstr "부분"
 #. js-lingui-id: x5aPy7
 #: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
 msgid "Pass either the event name or its universal identifier."
-msgstr ""
+msgstr "이벤트 이름 또는 범용 식별자 중 하나를 전달하세요."
 
 #. js-lingui-id: /GJDxy
 #: src/engine/core-modules/auth/services/auth.service.ts
@@ -14651,7 +14651,7 @@ msgstr "이메일 콘텐츠가 유효하지 않습니다."
 #. js-lingui-id: JmTVCB
 #: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
 msgid "The event properties do not match its definition."
-msgstr ""
+msgstr "이벤트 속성이 해당 정의와 일치하지 않습니다."
 
 #. js-lingui-id: hY1mx5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts

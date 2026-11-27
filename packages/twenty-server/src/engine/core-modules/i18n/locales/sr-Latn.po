@@ -1426,17 +1426,17 @@ msgstr "Došlo je do greške."
 #. js-lingui-id: tu7jLy
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 msgid "An event property references an object that does not exist"
-msgstr ""
+msgstr "Svojstvo događaja upućuje na objekat koji ne postoji"
 
 #. js-lingui-id: o/4JpS
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 msgid "An event with this name already exists for this application"
-msgstr ""
+msgstr "Događaj sa ovim nazivom već postoji za ovu aplikaciju"
 
 #. js-lingui-id: pb8I0K
 #: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
 msgid "An event with this name already exists for this application."
-msgstr ""
+msgstr "Događaj sa ovim nazivom već postoji za ovu aplikaciju."
 
 #. js-lingui-id: CKXJCD
 #: src/engine/core-modules/record-export/__tests__/record-export-exception-filter.spec.ts
@@ -5531,13 +5531,13 @@ msgstr "ID događaja"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 msgid "Event label is required"
-msgstr ""
+msgstr "Etiketa događaja je obavezna"
 
 #. js-lingui-id: WZZzB6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 msgid "Event name is required"
-msgstr ""
+msgstr "Naziv događaja je obavezan"
 
 #. js-lingui-id: ElR3MZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
@@ -5545,12 +5545,12 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 msgid "Event not found"
-msgstr ""
+msgstr "Događaj nije pronađen"
 
 #. js-lingui-id: ed1R08
 #: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
 msgid "Event not found."
-msgstr ""
+msgstr "Događaj nije pronađen."
 
 #. js-lingui-id: irEsRo
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -5567,7 +5567,7 @@ msgstr "Učesnici događaja"
 #. js-lingui-id: h6h6j+
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 msgid "Event property \"{propertyName}\" references object \"{objectUniversalIdentifier}\", which was not found"
-msgstr ""
+msgstr "Svojstvo događaja \"{propertyName}\" referencira objekat \"{objectUniversalIdentifier}\", koji nije pronađen"
 
 #. js-lingui-id: lr7Nsq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -5593,7 +5593,7 @@ msgstr "Tip događaja"
 #. js-lingui-id: zIUq08
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 msgid "Event with name {name} already exists for this application"
-msgstr ""
+msgstr "Događaj sa nazivom {name} već postoji za ovu aplikaciju"
 
 #. js-lingui-id: NZy2VR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -7419,12 +7419,12 @@ msgstr "Nevalidan imejl ili domen."
 #. js-lingui-id: q96eTT
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 msgid "Invalid event definition"
-msgstr ""
+msgstr "Nevažeća definicija događaja"
 
 #. js-lingui-id: VAifIo
 #: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
 msgid "Invalid event definition."
-msgstr ""
+msgstr "Nevažeća definicija događaja."
 
 #. js-lingui-id: 8knMLv
 #: src/engine/core-modules/event-logs/emit/event-log-emitter.exception.ts
@@ -11115,7 +11115,7 @@ msgstr "Delovi"
 #. js-lingui-id: x5aPy7
 #: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
 msgid "Pass either the event name or its universal identifier."
-msgstr ""
+msgstr "Prosledite ili naziv događaja ili njegov univerzalni identifikator."
 
 #. js-lingui-id: /GJDxy
 #: src/engine/core-modules/auth/services/auth.service.ts
@@ -14651,7 +14651,7 @@ msgstr "Sadržaj e-poruke nije ispravan."
 #. js-lingui-id: JmTVCB
 #: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
 msgid "The event properties do not match its definition."
-msgstr ""
+msgstr "Svojstva događaja ne odgovaraju njegovoj definiciji."
 
 #. js-lingui-id: hY1mx5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts

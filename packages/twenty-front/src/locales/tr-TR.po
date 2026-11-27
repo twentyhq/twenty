@@ -314,7 +314,7 @@ msgstr "{0, plural, one {# Nesne} other {# Nesneler}}"
 #. placeholder {0}: recordReferences.length
 #: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRecordsDetail.tsx
 msgid "{0, plural, one {# record} other {# records}}"
-msgstr ""
+msgstr "{0, plural, one {# kayıt} other {# kayıt}}"
 
 #. js-lingui-id: zHa4lw
 #. placeholder {0}: parts.length
@@ -5959,7 +5959,7 @@ msgstr "Takvim bileşeni"
 #. js-lingui-id: oQhLzs
 #: src/modules/side-panel/pages/ai-chat-tool-call/components/SidePanelAiChatToolCallPageContent.tsx
 msgid "Call ID"
-msgstr ""
+msgstr "Çağrı ID"
 
 #. js-lingui-id: cHma9m
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
@@ -8227,7 +8227,7 @@ msgstr "Kurabiye"
 #. js-lingui-id: XQVCXB
 #: src/modules/ui/layout/details/components/JsonSection.tsx
 msgid "Copied as JSON"
-msgstr ""
+msgstr "JSON olarak kopyalandı"
 
 #. js-lingui-id: FxVG/l
 #: src/hooks/useCopyToClipboard.tsx
@@ -12920,7 +12920,7 @@ msgstr "Değerlendirme"
 #. js-lingui-id: acLjIx
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "event"
-msgstr ""
+msgstr "event"
 
 #. js-lingui-id: 0pC/y6
 #: src/modules/log-console/constants/LogConsoleSecurityEventColumn.tsx
@@ -14190,7 +14190,7 @@ msgstr "Özelliklerin etkin kalacağı tarih"
 #. js-lingui-id: vi29BX
 #: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalDecidedDetails.tsx
 msgid "Feedback: {feedback}"
-msgstr ""
+msgstr "Geri bildirim: {feedback}"
 
 #. js-lingui-id: 2lOBKV
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -18819,7 +18819,7 @@ msgstr "döngü"
 #. js-lingui-id: VKHG/4
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
 msgid "Lost your authenticator?"
-msgstr ""
+msgstr "Kimlik doğrulayıcınızı mı kaybettiniz?"
 
 #. js-lingui-id: GpMARg
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
@@ -19834,7 +19834,7 @@ msgstr "Daha fazla ({0})"
 #. js-lingui-id: 5iROXL
 #: src/modules/ui/layout/details/components/DetailMessageCard.tsx
 msgid "More ({hiddenMessageStackLineCount})"
-msgstr ""
+msgstr "Daha fazla ({hiddenMessageStackLineCount})"
 
 #. js-lingui-id: f0jmdR
 #: src/modules/page-layout/widgets/field/components/FieldWidgetShowMoreButton.tsx
@@ -22010,7 +22010,7 @@ msgstr "Kaydedilmedi"
 #. js-lingui-id: +05x1/
 #: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Not run: the record changed"
-msgstr ""
+msgstr "Çalıştırılmadı: kayıt değişti"
 
 #. js-lingui-id: MTqQMG
 #: src/modules/settings/emailing-domains/utils/getVerificationRecordGroupStatusDisplay.ts
@@ -25858,7 +25858,7 @@ msgstr "İstek Başarısız"
 #. js-lingui-id: yYlEZs
 #: src/modules/ai-chat/tool-calls/components/AiChatFormStatusRenderer.tsx
 msgid "Request form"
-msgstr ""
+msgstr "İstek formu"
 
 #. js-lingui-id: Vhxipp
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
@@ -28550,7 +28550,7 @@ msgstr "API değerlerini göster"
 #. js-lingui-id: BowKyI
 #: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 msgid "Show details"
-msgstr ""
+msgstr "Ayrıntıları göster"
 
 #. js-lingui-id: tAUYYP
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationFieldEditor.tsx
@@ -30693,7 +30693,7 @@ msgstr "Öncelikli kayıt kimliğini korur"
 #. js-lingui-id: cXfCXQ
 #: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalDecidedDetails.tsx
 msgid "The record changed since it was proposed, so nothing was run."
-msgstr ""
+msgstr "Kayıt önerildiğinden beri değiştiği için hiçbir şey çalıştırılmadı."
 
 #. js-lingui-id: Ir4tSJ
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts

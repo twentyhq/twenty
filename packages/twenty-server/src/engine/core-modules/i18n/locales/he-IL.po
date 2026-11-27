@@ -1426,17 +1426,17 @@ msgstr "אירעה שגיאה."
 #. js-lingui-id: tu7jLy
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 msgid "An event property references an object that does not exist"
-msgstr ""
+msgstr "מאפיין אירוע מפנה לאובייקט שאינו קיים"
 
 #. js-lingui-id: o/4JpS
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 msgid "An event with this name already exists for this application"
-msgstr ""
+msgstr "אירוע בשם זה כבר קיים עבור יישום זה"
 
 #. js-lingui-id: pb8I0K
 #: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
 msgid "An event with this name already exists for this application."
-msgstr ""
+msgstr "אירוע בשם זה כבר קיים עבור יישום זה."
 
 #. js-lingui-id: CKXJCD
 #: src/engine/core-modules/record-export/__tests__/record-export-exception-filter.spec.ts
@@ -5531,13 +5531,13 @@ msgstr "מזהה אירוע"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 msgid "Event label is required"
-msgstr ""
+msgstr "נדרשת תווית אירוע"
 
 #. js-lingui-id: WZZzB6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 msgid "Event name is required"
-msgstr ""
+msgstr "שם האירוע נדרש"
 
 #. js-lingui-id: ElR3MZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
@@ -5545,12 +5545,12 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 msgid "Event not found"
-msgstr ""
+msgstr "אירוע לא נמצא"
 
 #. js-lingui-id: ed1R08
 #: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
 msgid "Event not found."
-msgstr ""
+msgstr "אירוע לא נמצא."
 
 #. js-lingui-id: irEsRo
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -5567,7 +5567,7 @@ msgstr "משתתפי אירוע"
 #. js-lingui-id: h6h6j+
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 msgid "Event property \"{propertyName}\" references object \"{objectUniversalIdentifier}\", which was not found"
-msgstr ""
+msgstr "מאפיין האירוע \"{propertyName}\" מפנה לאובייקט \"{objectUniversalIdentifier}\", שלא נמצא"
 
 #. js-lingui-id: lr7Nsq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -5593,7 +5593,7 @@ msgstr "סוג אירוע"
 #. js-lingui-id: zIUq08
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 msgid "Event with name {name} already exists for this application"
-msgstr ""
+msgstr "אירוע בשם {name} כבר קיים עבור יישום זה"
 
 #. js-lingui-id: NZy2VR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -7419,12 +7419,12 @@ msgstr "דוא\"ל או דומיין לא חוקי."
 #. js-lingui-id: q96eTT
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 msgid "Invalid event definition"
-msgstr ""
+msgstr "הגדרת אירוע לא תקינה"
 
 #. js-lingui-id: VAifIo
 #: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
 msgid "Invalid event definition."
-msgstr ""
+msgstr "הגדרת אירוע לא תקינה."
 
 #. js-lingui-id: 8knMLv
 #: src/engine/core-modules/event-logs/emit/event-log-emitter.exception.ts
@@ -11115,7 +11115,7 @@ msgstr "חלקים"
 #. js-lingui-id: x5aPy7
 #: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
 msgid "Pass either the event name or its universal identifier."
-msgstr ""
+msgstr "העבר את שם האירוע או את המזהה האוניברסלי שלו."
 
 #. js-lingui-id: /GJDxy
 #: src/engine/core-modules/auth/services/auth.service.ts
@@ -14651,7 +14651,7 @@ msgstr "תוכן האימייל אינו תקין."
 #. js-lingui-id: JmTVCB
 #: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
 msgid "The event properties do not match its definition."
-msgstr ""
+msgstr "מאפייני האירוע אינם תואמים להגדרתו."
 
 #. js-lingui-id: hY1mx5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts

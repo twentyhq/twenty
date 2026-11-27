@@ -314,7 +314,7 @@ msgstr "{0, plural, one {# Voorwerp} other {# Voorwerpe}}"
 #. placeholder {0}: recordReferences.length
 #: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRecordsDetail.tsx
 msgid "{0, plural, one {# record} other {# records}}"
-msgstr ""
+msgstr "{0, plural, one {# rekord} other {# rekords}}"
 
 #. js-lingui-id: zHa4lw
 #. placeholder {0}: parts.length
@@ -5959,7 +5959,7 @@ msgstr "Kalenderwidget"
 #. js-lingui-id: oQhLzs
 #: src/modules/side-panel/pages/ai-chat-tool-call/components/SidePanelAiChatToolCallPageContent.tsx
 msgid "Call ID"
-msgstr ""
+msgstr "Oproep-ID"
 
 #. js-lingui-id: cHma9m
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
@@ -8227,7 +8227,7 @@ msgstr "Koekie"
 #. js-lingui-id: XQVCXB
 #: src/modules/ui/layout/details/components/JsonSection.tsx
 msgid "Copied as JSON"
-msgstr ""
+msgstr "As JSON gekopieer"
 
 #. js-lingui-id: FxVG/l
 #: src/hooks/useCopyToClipboard.tsx
@@ -12920,7 +12920,7 @@ msgstr "Evaluering"
 #. js-lingui-id: acLjIx
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "event"
-msgstr ""
+msgstr "geleentheid"
 
 #. js-lingui-id: 0pC/y6
 #: src/modules/log-console/constants/LogConsoleSecurityEventColumn.tsx
@@ -14190,7 +14190,7 @@ msgstr "Funksies aktief tot"
 #. js-lingui-id: vi29BX
 #: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalDecidedDetails.tsx
 msgid "Feedback: {feedback}"
-msgstr ""
+msgstr "Terugvoer: {feedback}"
 
 #. js-lingui-id: 2lOBKV
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -18819,7 +18819,7 @@ msgstr "lus"
 #. js-lingui-id: VKHG/4
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
 msgid "Lost your authenticator?"
-msgstr ""
+msgstr "Het jy jou outentiseerder verloor?"
 
 #. js-lingui-id: GpMARg
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
@@ -19834,7 +19834,7 @@ msgstr "Meer ({0})"
 #. js-lingui-id: 5iROXL
 #: src/modules/ui/layout/details/components/DetailMessageCard.tsx
 msgid "More ({hiddenMessageStackLineCount})"
-msgstr ""
+msgstr "Meer ({hiddenMessageStackLineCount})"
 
 #. js-lingui-id: f0jmdR
 #: src/modules/page-layout/widgets/field/components/FieldWidgetShowMoreButton.tsx
@@ -22010,7 +22010,7 @@ msgstr "Nie opgeneem nie"
 #. js-lingui-id: +05x1/
 #: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Not run: the record changed"
-msgstr ""
+msgstr "Nie uitgevoer nie: die rekord het verander"
 
 #. js-lingui-id: MTqQMG
 #: src/modules/settings/emailing-domains/utils/getVerificationRecordGroupStatusDisplay.ts
@@ -25858,7 +25858,7 @@ msgstr "Versoek het misluk"
 #. js-lingui-id: yYlEZs
 #: src/modules/ai-chat/tool-calls/components/AiChatFormStatusRenderer.tsx
 msgid "Request form"
-msgstr ""
+msgstr "Versoekvorm"
 
 #. js-lingui-id: Vhxipp
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
@@ -28550,7 +28550,7 @@ msgstr "Wys API-waardes"
 #. js-lingui-id: BowKyI
 #: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 msgid "Show details"
-msgstr ""
+msgstr "Wys besonderhede"
 
 #. js-lingui-id: tAUYYP
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationFieldEditor.tsx
@@ -30693,7 +30693,7 @@ msgstr "Die prioriteitrekord behou sy identiteit"
 #. js-lingui-id: cXfCXQ
 #: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalDecidedDetails.tsx
 msgid "The record changed since it was proposed, so nothing was run."
-msgstr ""
+msgstr "Die rekord het verander sedert dit voorgestel is, dus is niks uitgevoer nie."
 
 #. js-lingui-id: Ir4tSJ
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts

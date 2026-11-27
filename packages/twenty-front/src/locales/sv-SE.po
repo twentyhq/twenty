@@ -314,7 +314,7 @@ msgstr "{0, plural, one {# Föremål} other {# Föremål}}"
 #. placeholder {0}: recordReferences.length
 #: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRecordsDetail.tsx
 msgid "{0, plural, one {# record} other {# records}}"
-msgstr ""
+msgstr "{0, plural, one {# post} other {# poster}}"
 
 #. js-lingui-id: zHa4lw
 #. placeholder {0}: parts.length
@@ -5959,7 +5959,7 @@ msgstr "Kalenderwidget"
 #. js-lingui-id: oQhLzs
 #: src/modules/side-panel/pages/ai-chat-tool-call/components/SidePanelAiChatToolCallPageContent.tsx
 msgid "Call ID"
-msgstr ""
+msgstr "Samtals-ID"
 
 #. js-lingui-id: cHma9m
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
@@ -8227,7 +8227,7 @@ msgstr "Kaka"
 #. js-lingui-id: XQVCXB
 #: src/modules/ui/layout/details/components/JsonSection.tsx
 msgid "Copied as JSON"
-msgstr ""
+msgstr "Kopierat som JSON"
 
 #. js-lingui-id: FxVG/l
 #: src/hooks/useCopyToClipboard.tsx
@@ -12920,7 +12920,7 @@ msgstr "Utvärdering"
 #. js-lingui-id: acLjIx
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "event"
-msgstr ""
+msgstr "händelse"
 
 #. js-lingui-id: 0pC/y6
 #: src/modules/log-console/constants/LogConsoleSecurityEventColumn.tsx
@@ -14190,7 +14190,7 @@ msgstr "Funktioner aktiva till"
 #. js-lingui-id: vi29BX
 #: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalDecidedDetails.tsx
 msgid "Feedback: {feedback}"
-msgstr ""
+msgstr "Feedback: {feedback}"
 
 #. js-lingui-id: 2lOBKV
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -18819,7 +18819,7 @@ msgstr "loop"
 #. js-lingui-id: VKHG/4
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
 msgid "Lost your authenticator?"
-msgstr ""
+msgstr "Har du förlorat din autentiseringsapp?"
 
 #. js-lingui-id: GpMARg
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
@@ -19836,7 +19836,7 @@ msgstr "Fler ({0})"
 #. js-lingui-id: 5iROXL
 #: src/modules/ui/layout/details/components/DetailMessageCard.tsx
 msgid "More ({hiddenMessageStackLineCount})"
-msgstr ""
+msgstr "Mer ({hiddenMessageStackLineCount})"
 
 #. js-lingui-id: f0jmdR
 #: src/modules/page-layout/widgets/field/components/FieldWidgetShowMoreButton.tsx
@@ -22012,7 +22012,7 @@ msgstr "Inte inspelat"
 #. js-lingui-id: +05x1/
 #: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Not run: the record changed"
-msgstr ""
+msgstr "Inte körd: posten ändrades"
 
 #. js-lingui-id: MTqQMG
 #: src/modules/settings/emailing-domains/utils/getVerificationRecordGroupStatusDisplay.ts
@@ -25860,7 +25860,7 @@ msgstr "Begäran misslyckades"
 #. js-lingui-id: yYlEZs
 #: src/modules/ai-chat/tool-calls/components/AiChatFormStatusRenderer.tsx
 msgid "Request form"
-msgstr ""
+msgstr "Begärandeformulär"
 
 #. js-lingui-id: Vhxipp
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
@@ -28554,7 +28554,7 @@ msgstr "Visa API-värden"
 #. js-lingui-id: BowKyI
 #: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 msgid "Show details"
-msgstr ""
+msgstr "Visa detaljer"
 
 #. js-lingui-id: tAUYYP
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationFieldEditor.tsx
@@ -30699,7 +30699,7 @@ msgstr "Prioritetsposten behåller sin identitet"
 #. js-lingui-id: cXfCXQ
 #: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalDecidedDetails.tsx
 msgid "The record changed since it was proposed, so nothing was run."
-msgstr ""
+msgstr "Posten ändrades sedan den föreslogs, så inget kördes."
 
 #. js-lingui-id: Ir4tSJ
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts

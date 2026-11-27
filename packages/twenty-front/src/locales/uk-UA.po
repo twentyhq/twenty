@@ -314,7 +314,7 @@ msgstr "{0, plural, one {# Об'єкт} few {# Об'єкти} many {# Об'єк�
 #. placeholder {0}: recordReferences.length
 #: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRecordsDetail.tsx
 msgid "{0, plural, one {# record} other {# records}}"
-msgstr ""
+msgstr "{0, plural, one {# запис} few {# записи} many {# записів} other {# запису}}"
 
 #. js-lingui-id: zHa4lw
 #. placeholder {0}: parts.length
@@ -5959,7 +5959,7 @@ msgstr "Віджет календаря"
 #. js-lingui-id: oQhLzs
 #: src/modules/side-panel/pages/ai-chat-tool-call/components/SidePanelAiChatToolCallPageContent.tsx
 msgid "Call ID"
-msgstr ""
+msgstr "ID виклику"
 
 #. js-lingui-id: cHma9m
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
@@ -8227,7 +8227,7 @@ msgstr "Печиво"
 #. js-lingui-id: XQVCXB
 #: src/modules/ui/layout/details/components/JsonSection.tsx
 msgid "Copied as JSON"
-msgstr ""
+msgstr "Скопійовано як JSON"
 
 #. js-lingui-id: FxVG/l
 #: src/hooks/useCopyToClipboard.tsx
@@ -12920,7 +12920,7 @@ msgstr "Оцінювання"
 #. js-lingui-id: acLjIx
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "event"
-msgstr ""
+msgstr "подія"
 
 #. js-lingui-id: 0pC/y6
 #: src/modules/log-console/constants/LogConsoleSecurityEventColumn.tsx
@@ -14190,7 +14190,7 @@ msgstr "Функції активні до"
 #. js-lingui-id: vi29BX
 #: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalDecidedDetails.tsx
 msgid "Feedback: {feedback}"
-msgstr ""
+msgstr "Відгук: {feedback}"
 
 #. js-lingui-id: 2lOBKV
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -18819,7 +18819,7 @@ msgstr "цикл"
 #. js-lingui-id: VKHG/4
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
 msgid "Lost your authenticator?"
-msgstr ""
+msgstr "Втратили свій автентифікатор?"
 
 #. js-lingui-id: GpMARg
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
@@ -19834,7 +19834,7 @@ msgstr "Більше ({0})"
 #. js-lingui-id: 5iROXL
 #: src/modules/ui/layout/details/components/DetailMessageCard.tsx
 msgid "More ({hiddenMessageStackLineCount})"
-msgstr ""
+msgstr "Більше ({hiddenMessageStackLineCount})"
 
 #. js-lingui-id: f0jmdR
 #: src/modules/page-layout/widgets/field/components/FieldWidgetShowMoreButton.tsx
@@ -22010,7 +22010,7 @@ msgstr "Не записано"
 #. js-lingui-id: +05x1/
 #: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Not run: the record changed"
-msgstr ""
+msgstr "Не виконано: запис змінився"
 
 #. js-lingui-id: MTqQMG
 #: src/modules/settings/emailing-domains/utils/getVerificationRecordGroupStatusDisplay.ts
@@ -25858,7 +25858,7 @@ msgstr "Запит не вдався"
 #. js-lingui-id: yYlEZs
 #: src/modules/ai-chat/tool-calls/components/AiChatFormStatusRenderer.tsx
 msgid "Request form"
-msgstr ""
+msgstr "Форма запиту"
 
 #. js-lingui-id: Vhxipp
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
@@ -28550,7 +28550,7 @@ msgstr "Показати значення API"
 #. js-lingui-id: BowKyI
 #: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 msgid "Show details"
-msgstr ""
+msgstr "Показати деталі"
 
 #. js-lingui-id: tAUYYP
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationFieldEditor.tsx
@@ -30693,7 +30693,7 @@ msgstr "Пріоритетний запис зберігає свою ідент
 #. js-lingui-id: cXfCXQ
 #: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalDecidedDetails.tsx
 msgid "The record changed since it was proposed, so nothing was run."
-msgstr ""
+msgstr "Запис змінився з моменту його пропозиції, тому нічого не було виконано."
 
 #. js-lingui-id: Ir4tSJ
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts

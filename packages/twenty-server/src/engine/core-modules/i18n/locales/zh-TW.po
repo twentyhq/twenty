@@ -1426,17 +1426,17 @@ msgstr "發生錯誤。"
 #. js-lingui-id: tu7jLy
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 msgid "An event property references an object that does not exist"
-msgstr ""
+msgstr "事件屬性參照了不存在的物件"
 
 #. js-lingui-id: o/4JpS
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 msgid "An event with this name already exists for this application"
-msgstr ""
+msgstr "此應用程式中已存在具有此名稱的事件"
 
 #. js-lingui-id: pb8I0K
 #: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
 msgid "An event with this name already exists for this application."
-msgstr ""
+msgstr "此應用程式中已存在具有此名稱的事件。"
 
 #. js-lingui-id: CKXJCD
 #: src/engine/core-modules/record-export/__tests__/record-export-exception-filter.spec.ts
@@ -5531,13 +5531,13 @@ msgstr "事件 ID"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 msgid "Event label is required"
-msgstr ""
+msgstr "需要事件標籤"
 
 #. js-lingui-id: WZZzB6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 msgid "Event name is required"
-msgstr ""
+msgstr "需要事件名稱"
 
 #. js-lingui-id: ElR3MZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
@@ -5545,12 +5545,12 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 msgid "Event not found"
-msgstr ""
+msgstr "找不到事件"
 
 #. js-lingui-id: ed1R08
 #: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
 msgid "Event not found."
-msgstr ""
+msgstr "找不到事件。"
 
 #. js-lingui-id: irEsRo
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -5567,7 +5567,7 @@ msgstr "事件參與者"
 #. js-lingui-id: h6h6j+
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 msgid "Event property \"{propertyName}\" references object \"{objectUniversalIdentifier}\", which was not found"
-msgstr ""
+msgstr "事件屬性 \"{propertyName}\" 參照了找不到的物件 \"{objectUniversalIdentifier}\""
 
 #. js-lingui-id: lr7Nsq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -5593,7 +5593,7 @@ msgstr "事件類型"
 #. js-lingui-id: zIUq08
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 msgid "Event with name {name} already exists for this application"
-msgstr ""
+msgstr "此應用程式已存在名為 {name} 的事件"
 
 #. js-lingui-id: NZy2VR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -7419,12 +7419,12 @@ msgstr "無效的電子郵件或網域。"
 #. js-lingui-id: q96eTT
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 msgid "Invalid event definition"
-msgstr ""
+msgstr "無效的事件定義"
 
 #. js-lingui-id: VAifIo
 #: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
 msgid "Invalid event definition."
-msgstr ""
+msgstr "無效的事件定義。"
 
 #. js-lingui-id: 8knMLv
 #: src/engine/core-modules/event-logs/emit/event-log-emitter.exception.ts
@@ -11115,7 +11115,7 @@ msgstr "部分"
 #. js-lingui-id: x5aPy7
 #: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
 msgid "Pass either the event name or its universal identifier."
-msgstr ""
+msgstr "請提供事件名稱或其通用識別碼其中之一。"
 
 #. js-lingui-id: /GJDxy
 #: src/engine/core-modules/auth/services/auth.service.ts
@@ -14651,7 +14651,7 @@ msgstr "電子郵件內容無效。"
 #. js-lingui-id: JmTVCB
 #: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
 msgid "The event properties do not match its definition."
-msgstr ""
+msgstr "事件屬性與其定義不相符。"
 
 #. js-lingui-id: hY1mx5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts

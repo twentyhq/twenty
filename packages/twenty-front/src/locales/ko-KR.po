@@ -314,7 +314,7 @@ msgstr "{0, plural, other {# 객체}}"
 #. placeholder {0}: recordReferences.length
 #: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRecordsDetail.tsx
 msgid "{0, plural, one {# record} other {# records}}"
-msgstr ""
+msgstr "{0, plural, other {#개 레코드}}"
 
 #. js-lingui-id: zHa4lw
 #. placeholder {0}: parts.length
@@ -5959,7 +5959,7 @@ msgstr "캘린더 위젯"
 #. js-lingui-id: oQhLzs
 #: src/modules/side-panel/pages/ai-chat-tool-call/components/SidePanelAiChatToolCallPageContent.tsx
 msgid "Call ID"
-msgstr ""
+msgstr "호출 ID"
 
 #. js-lingui-id: cHma9m
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
@@ -8227,7 +8227,7 @@ msgstr "쿠키"
 #. js-lingui-id: XQVCXB
 #: src/modules/ui/layout/details/components/JsonSection.tsx
 msgid "Copied as JSON"
-msgstr ""
+msgstr "JSON으로 복사됨"
 
 #. js-lingui-id: FxVG/l
 #: src/hooks/useCopyToClipboard.tsx
@@ -12920,7 +12920,7 @@ msgstr "평가"
 #. js-lingui-id: acLjIx
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "event"
-msgstr ""
+msgstr "event"
 
 #. js-lingui-id: 0pC/y6
 #: src/modules/log-console/constants/LogConsoleSecurityEventColumn.tsx
@@ -14190,7 +14190,7 @@ msgstr "기능 활성 유지 기한"
 #. js-lingui-id: vi29BX
 #: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalDecidedDetails.tsx
 msgid "Feedback: {feedback}"
-msgstr ""
+msgstr "피드백: {feedback}"
 
 #. js-lingui-id: 2lOBKV
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -18819,7 +18819,7 @@ msgstr "반복"
 #. js-lingui-id: VKHG/4
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
 msgid "Lost your authenticator?"
-msgstr ""
+msgstr "인증 앱을 분실하셨나요?"
 
 #. js-lingui-id: GpMARg
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
@@ -19834,7 +19834,7 @@ msgstr "더보기 ({0})"
 #. js-lingui-id: 5iROXL
 #: src/modules/ui/layout/details/components/DetailMessageCard.tsx
 msgid "More ({hiddenMessageStackLineCount})"
-msgstr ""
+msgstr "더 보기 ({hiddenMessageStackLineCount})"
 
 #. js-lingui-id: f0jmdR
 #: src/modules/page-layout/widgets/field/components/FieldWidgetShowMoreButton.tsx
@@ -22010,7 +22010,7 @@ msgstr "녹음되지 않음"
 #. js-lingui-id: +05x1/
 #: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Not run: the record changed"
-msgstr ""
+msgstr "실행되지 않음: 레코드가 변경됨"
 
 #. js-lingui-id: MTqQMG
 #: src/modules/settings/emailing-domains/utils/getVerificationRecordGroupStatusDisplay.ts
@@ -25858,7 +25858,7 @@ msgstr "요청 실패"
 #. js-lingui-id: yYlEZs
 #: src/modules/ai-chat/tool-calls/components/AiChatFormStatusRenderer.tsx
 msgid "Request form"
-msgstr ""
+msgstr "요청 양식"
 
 #. js-lingui-id: Vhxipp
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
@@ -28550,7 +28550,7 @@ msgstr "API 값 표시"
 #. js-lingui-id: BowKyI
 #: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 msgid "Show details"
-msgstr ""
+msgstr "세부 정보 표시"
 
 #. js-lingui-id: tAUYYP
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationFieldEditor.tsx
@@ -30693,7 +30693,7 @@ msgstr "우선순위 레코드는 식별 정보를 유지합니다"
 #. js-lingui-id: cXfCXQ
 #: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalDecidedDetails.tsx
 msgid "The record changed since it was proposed, so nothing was run."
-msgstr ""
+msgstr "제안된 후 레코드가 변경되어 아무것도 실행되지 않았습니다."
 
 #. js-lingui-id: Ir4tSJ
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts

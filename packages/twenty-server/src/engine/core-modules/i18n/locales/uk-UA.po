@@ -1426,17 +1426,17 @@ msgstr "Сталася помилка."
 #. js-lingui-id: tu7jLy
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 msgid "An event property references an object that does not exist"
-msgstr ""
+msgstr "Властивість події посилається на об’єкт, якого не існує"
 
 #. js-lingui-id: o/4JpS
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 msgid "An event with this name already exists for this application"
-msgstr ""
+msgstr "Подія з такою назвою вже існує для цього застосунку"
 
 #. js-lingui-id: pb8I0K
 #: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
 msgid "An event with this name already exists for this application."
-msgstr ""
+msgstr "Подія з такою назвою вже існує для цього застосунку."
 
 #. js-lingui-id: CKXJCD
 #: src/engine/core-modules/record-export/__tests__/record-export-exception-filter.spec.ts
@@ -5531,13 +5531,13 @@ msgstr "ID події"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 msgid "Event label is required"
-msgstr ""
+msgstr "Мітка події є обов'язковою"
 
 #. js-lingui-id: WZZzB6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 msgid "Event name is required"
-msgstr ""
+msgstr "Назва події є обов'язковою"
 
 #. js-lingui-id: ElR3MZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
@@ -5545,12 +5545,12 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 msgid "Event not found"
-msgstr ""
+msgstr "Подію не знайдено"
 
 #. js-lingui-id: ed1R08
 #: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
 msgid "Event not found."
-msgstr ""
+msgstr "Подію не знайдено."
 
 #. js-lingui-id: irEsRo
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -5567,7 +5567,7 @@ msgstr "Учасники події"
 #. js-lingui-id: h6h6j+
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 msgid "Event property \"{propertyName}\" references object \"{objectUniversalIdentifier}\", which was not found"
-msgstr ""
+msgstr "Властивість події \"{propertyName}\" посилається на об'єкт \"{objectUniversalIdentifier}\", який не знайдено"
 
 #. js-lingui-id: lr7Nsq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -5593,7 +5593,7 @@ msgstr "Тип події"
 #. js-lingui-id: zIUq08
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 msgid "Event with name {name} already exists for this application"
-msgstr ""
+msgstr "Подія з назвою {name} вже існує для цього застосунку"
 
 #. js-lingui-id: NZy2VR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -7419,12 +7419,12 @@ msgstr "Недійсна електронна адреса або домен."
 #. js-lingui-id: q96eTT
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
 msgid "Invalid event definition"
-msgstr ""
+msgstr "Некоректне визначення події"
 
 #. js-lingui-id: VAifIo
 #: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
 msgid "Invalid event definition."
-msgstr ""
+msgstr "Некоректне визначення події."
 
 #. js-lingui-id: 8knMLv
 #: src/engine/core-modules/event-logs/emit/event-log-emitter.exception.ts
@@ -11115,7 +11115,7 @@ msgstr "Частини"
 #. js-lingui-id: x5aPy7
 #: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
 msgid "Pass either the event name or its universal identifier."
-msgstr ""
+msgstr "Передайте або назву події, або її універсальний ідентифікатор."
 
 #. js-lingui-id: /GJDxy
 #: src/engine/core-modules/auth/services/auth.service.ts
@@ -14651,7 +14651,7 @@ msgstr "Вміст електронного листа недійсний."
 #. js-lingui-id: JmTVCB
 #: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
 msgid "The event properties do not match its definition."
-msgstr ""
+msgstr "Властивості події не відповідають її визначенню."
 
 #. js-lingui-id: hY1mx5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
