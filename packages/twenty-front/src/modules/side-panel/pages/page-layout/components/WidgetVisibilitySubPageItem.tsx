@@ -1,7 +1,6 @@
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { useSidePanelSubPageHistory } from '@/side-panel/hooks/useSidePanelSubPageHistory';
-import { WIDGET_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/WidgetSettingsSelectableItemIds';
-import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { SidePanelSubPages } from '@/side-panel/types/SidePanelSubPages';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useLingui } from '@lingui/react/macro';
@@ -9,31 +8,27 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconEye, IconEyeX } from 'twenty-ui/icon';
 
 type WidgetVisibilitySubPageItemProps = {
-  pageLayoutId: string;
+  itemId: string;
+  widget: Pick<PageLayoutWidget, 'conditionalAvailability'> | undefined;
 };
 
 export const WidgetVisibilitySubPageItem = ({
-  pageLayoutId,
+  itemId,
+  widget,
 }: WidgetVisibilitySubPageItemProps) => {
   const { t } = useLingui();
   const { navigateToSidePanelSubPage } = useSidePanelSubPageHistory();
-  const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
-  const hasConditionalAvailability = isDefined(
-    widgetInEditMode?.conditionalAvailability,
-  );
+  const hasConditionalAvailability = isDefined(widget?.conditionalAvailability);
 
   const handleClick = () => {
     navigateToSidePanelSubPage(SidePanelSubPages.PageLayoutWidgetVisibility);
   };
 
   return (
-    <SelectableListItem
-      itemId={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION}
-      onEnter={handleClick}
-    >
+    <SelectableListItem itemId={itemId} onEnter={handleClick}>
       <CommandMenuItem
-        id={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION}
+        id={itemId}
         label={t`Visibility`}
         Icon={hasConditionalAvailability ? IconEyeX : IconEye}
         hasSubMenu

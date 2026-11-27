@@ -99,7 +99,10 @@ export const WidgetSettingsManageSection = ({
     <>
       <SidePanelGroup heading={t`Manage`}>
         {isWidgetConditionalAvailabilityEnabled && (
-          <WidgetVisibilitySubPageItem pageLayoutId={pageLayoutId} />
+          <WidgetVisibilitySubPageItem
+            itemId={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION}
+            widget={widgetInEditMode}
+          />
         )}
         {!isWidgetConditionalAvailabilityEnabled && (
           <SelectableListItem
