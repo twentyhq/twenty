@@ -136,9 +136,9 @@ it('ships the export map needed to compile another component against the uploade
   }
 });
 
-it('keeps React DOM and Twenty UI available when rebuilding a workspace app with a sparse shared dependency declaration', async () => {
+it('shares React DOM with react-dom/client and leaves an installed Twenty UI to each component', async () => {
   const appPath = await mkdtemp(
-    join(tmpdir(), 'workspace-shared-dependencies-'),
+    join(tmpdir(), 'app-shared-dependencies-'),
   );
   try {
     await symlink(
@@ -150,14 +150,14 @@ it('keeps React DOM and Twenty UI available when rebuilding a workspace app with
       JSON.stringify({
         dependencies: { react: '19.2.0' },
         devDependencies: { 'react-dom': '19.2.0', 'twenty-ui': '2.50.0' },
-        frontComponentSharedDependencies: ['react'],
+        frontComponentSharedDependencies: ['react', 'react-dom/client'],
       }),
     );
     const context = await buildSharedDependenciesBundle({
       appPath,
       outputDir: 'output',
       sharedDependencies: {
-        dependencies: ['react'],
+        dependencies: ['react', 'react-dom/client'],
         builtPath: 'shared.mjs',
         builtChecksum: null,
       },
@@ -166,21 +166,16 @@ it('keeps React DOM and Twenty UI available when rebuilding a workspace app with
     const manifest: SharedDependenciesBuildManifest = JSON.parse(
       await readFile(join(appPath, 'output/shared.mjs.json'), 'utf8'),
     );
-    expect(manifest.exports['react-dom'].namedExports).toContain(
-      'createPortal',
-    );
-    expect(manifest.exports['react-dom/client'].namedExports).toContain(
-      'createRoot',
-    );
-    expect(
-      manifest.exports['twenty-ui/primitives/input'].namedExports,
-    ).toContain('Button');
-    expect(manifest.exports['react/jsx-runtime'].namedExports).toContain('jsx');
+    expect(Object.keys(manifest.exports).sort()).toEqual([
+      'react',
+      'react-dom',
+      'react-dom/client',
+      'react/jsx-runtime',
+    ]);
     const component = await build({
       stdin: {
         contents: `export { createPortal } from 'react-dom';
-export { createRoot } from 'react-dom/client';
-export { Button } from 'twenty-ui/primitives/input';`,
+export { createRoot } from 'react-dom/client';`,
       },
       bundle: true,
       write: false,
@@ -214,7 +209,6 @@ export { Button } from 'twenty-ui/primitives/input';`,
     });
     expect(module.exports.createPortal).toBeTypeOf('function');
     expect(module.exports.createRoot).toBeTypeOf('function');
-    expect(module.exports.Button).toBeDefined();
   } finally {
     await rm(appPath, { recursive: true, force: true });
   }

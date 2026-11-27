@@ -21,5 +21,9 @@ export const normalizeFrontComponentSharedDependencies = ({
     normalizedDependencies.add('react/jsx-runtime');
   }
 
+  if (normalizedDependencies.has('react-dom/client')) {
+    normalizedDependencies.add('react-dom');
+  }
+
   return [...normalizedDependencies].sort();
 };
