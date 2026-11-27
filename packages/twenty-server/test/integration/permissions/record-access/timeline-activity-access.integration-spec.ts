@@ -33,7 +33,7 @@ const findTimelineActivityIdsOrThrow = ({
   fixture,
   record,
 }: {
-  fixture: PermissionTestTimelineFixture;
+  fixture: Pick<PermissionTestTimelineFixture, 'timelineActivityIdsByRecord'>;
   record: PermissionTestTimelineRecordName;
 }): string[] => {
   const timelineActivityIds = fixture.timelineActivityIdsByRecord.get(record);
