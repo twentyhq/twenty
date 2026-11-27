@@ -1,0 +1,42 @@
+name: Restore Nx cache
+description: Restores Nx task outputs from earlier runs and serves them to Nx as a self-hosted remote cache, so any runner can reuse them
+inputs:
+  key:
+    required: true
+    description: Cache name, scoped to the current branch with a fallback to main
+outputs:
+  cache-primary-key:
+    description: Key to pass to save-nx-cache
+    value: ${{ steps.restore.outputs.cache-primary-key }}
+
+runs:
+  using: composite
+  steps:
+    - name: Restore Nx cache directory
+      id: restore
+      uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0 (restore)
+      with:
+        key: v4-nx-${{ inputs.key }}-${{ github.ref_name }}-${{ github.sha }}
+        restore-keys: |
+          v4-nx-${{ inputs.key }}-${{ github.ref_name }}-
+          v4-nx-${{ inputs.key }}-main-
+        path: ${{ runner.temp }}/nx-remote-cache
+    # Nx is only pointed at the server once it answers, otherwise every Nx command would fail.
+    - name: Start Nx cache server
+      shell: bash
+      env:
+        NX_CACHE_SERVER_DIRECTORY: ${{ runner.temp }}/nx-remote-cache
+        SERVER_LOG: ${{ runner.temp }}/nx-cache-server.log
+      run: |
+        nohup npx tsx packages/twenty-utils/nx-cache-server/start-nx-cache-server.ts > "$SERVER_LOG" 2>&1 &
+        for attempt in $(seq 1 40); do
+          url=$(grep -m 1 '^http://' "$SERVER_LOG" 2>/dev/null || true)
+          if [[ "$url" == http://* ]] && [ "$(curl -s -o /dev/null -w '%{http_code}' "$url/v1/cache/healthcheck")" = "404" ]; then
+            echo "NX_SELF_HOSTED_REMOTE_CACHE_SERVER=$url" >> "$GITHUB_ENV"
+            echo "Nx cache server listening on $url"
+            exit 0
+          fi
+          sleep 0.5
+        done
+        echo "::warning::Nx cache server did not start, Nx runs without it"
+        cat "$SERVER_LOG" || true

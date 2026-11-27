@@ -40,11 +40,21 @@ jobs:
         with:
           path: packages/twenty-front/node_modules/.cache/storybook
           key: v4-storybook-vitest-deps-twenty-front-${{ inputs.scope }}-${{ hashFiles('yarn.lock', 'packages/twenty-front/vite.config.ts', 'packages/twenty-front/vitest.config.ts', 'packages/twenty-front/.storybook/main.ts') }}
+      - name: Restore Nx cache
+        id: restore-nx-cache
+        uses: ./.github/actions/restore-nx-cache
+        with:
+          key: storybook-test-dependencies
       - name: Build dependencies
         run: |
           npx nx build twenty-shared
           npx nx build twenty-ui
           npx nx build twenty-front-component-renderer
+      - name: Save Nx cache
+        if: inputs.scope == 'modules' && inputs.shard == 1
+        uses: ./.github/actions/save-nx-cache
+        with:
+          key: ${{ steps.restore-nx-cache.outputs.cache-primary-key }}
       - name: Resolve Playwright version
         id: playwright-version
         run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"

@@ -1,0 +1,34 @@
+name: Save Nx cache
+description: Saves the Nx task outputs this job read or produced, only when it produced new ones
+inputs:
+  key:
+    required: true
+    description: cache-primary-key output of restore-nx-cache
+
+runs:
+  using: composite
+  steps:
+    - name: Keep only the Nx task outputs this job used
+      id: prune
+      shell: bash
+      env:
+        CACHE_DIRECTORY: ${{ runner.temp }}/nx-remote-cache
+      run: |
+        usage="$CACHE_DIRECTORY/.usage"
+        if ! grep -q '^write ' "$usage" 2>/dev/null; then
+          echo "No new Nx task outputs, nothing to save"
+          exit 0
+        fi
+        used=$(awk '$1 == "hit" || $1 == "write" { print $2 }' "$usage" | sort -u)
+        find "$CACHE_DIRECTORY" -maxdepth 1 -type f | while read -r file; do
+          grep -qxF "$(basename "$file")" <<< "$used" || rm -f "$file"
+        done
+        echo "save=true" >> "$GITHUB_OUTPUT"
+    # Fork PRs on pull_request already can't write to the base repo's cache (GitHub built-in).
+    # The fork guard is defense-in-depth for pull_request_target, which does have write access.
+    - name: Save Nx cache directory
+      if: ${{ steps.prune.outputs.save == 'true' && format('{0}', github.event.pull_request.head.repo.fork) != 'true' }}
+      uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0 (save)
+      with:
+        key: ${{ inputs.key }}
+        path: ${{ runner.temp }}/nx-remote-cache

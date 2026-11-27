@@ -35,6 +35,9 @@ jobs:
         !packages/twenty-sdk/package.json
         .github/workflows/ci-front.yaml
         .github/workflows/ci-front-storybook-test.yaml
+        .github/actions/restore-nx-cache/**
+        .github/actions/save-nx-cache/**
+        packages/twenty-utils/nx-cache-server/**
   pick-runner:
     permissions:
       actions: read
