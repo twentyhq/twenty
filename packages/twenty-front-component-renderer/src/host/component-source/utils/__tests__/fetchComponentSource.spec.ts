@@ -349,8 +349,35 @@ describe('fetchComponentSource', () => {
     expect(cache.put).not.toHaveBeenCalled();
   });
 
-  it('never touches the cache for a legacy md5-fingerprinted URL', async () => {
+  it('caches a legacy md5-fingerprinted source and serves the verified hit', async () => {
     const cache = new FakeCache();
+
+    setupCaches(cache);
+
+    const fetchMock = jest.fn(async () =>
+      createFakeJsResponse(COMPONENT_SOURCE),
+    );
+
+    globalThis.fetch = fetchMock;
+
+    await fetchComponentSource({ url: LEGACY_MD5_URL });
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    const cachedSource = await fetchComponentSource({ url: LEGACY_MD5_URL });
+
+    expect(cachedSource).toBe(COMPONENT_SOURCE);
+    expect(cache.put).toHaveBeenCalledTimes(1);
+    expect(cache.put.mock.calls[0][0]).toBe(LEGACY_MD5_URL);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('evicts a poisoned legacy md5 cache entry and refetches from the network', async () => {
+    const cache = new FakeCache();
+
+    await cache.put(LEGACY_MD5_URL, {
+      text: async () => 'globalThis.injectedByAnotherComponent = true;',
+    });
 
     setupCaches(cache);
 
@@ -363,7 +390,22 @@ describe('fetchComponentSource', () => {
     const source = await fetchComponentSource({ url: LEGACY_MD5_URL });
 
     expect(source).toBe(COMPONENT_SOURCE);
-    expect(cache.match).not.toHaveBeenCalled();
+    expect(cache.delete).toHaveBeenCalledWith(LEGACY_MD5_URL);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('rejects a network response that does not match a legacy md5 checksum', async () => {
+    const cache = new FakeCache();
+
+    setupCaches(cache);
+
+    globalThis.fetch = jest.fn(async () =>
+      createFakeJsResponse('some other build output'),
+    );
+
+    await expect(fetchComponentSource({ url: LEGACY_MD5_URL })).rejects.toThrow(
+      CHECKSUM_MISMATCH_MESSAGE,
+    );
     expect(cache.put).not.toHaveBeenCalled();
   });
 

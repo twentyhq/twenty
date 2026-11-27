@@ -45623,6 +45623,7 @@ __metadata:
     "@emotion/styled": "npm:^11.14.0"
     "@monaco-editor/react": "npm:^4.7.0"
     "@mui/material": "npm:^7.3.8"
+    "@noble/hashes": "npm:^1.8.0"
     "@quilted/threads": "npm:^4.0.1"
     "@remote-dom/core": "npm:^1.10.1"
     "@remote-dom/react": "npm:^1.2.2"

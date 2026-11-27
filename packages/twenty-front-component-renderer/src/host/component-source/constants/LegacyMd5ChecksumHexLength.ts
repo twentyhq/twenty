@@ -1,0 +1,1 @@
+export const LEGACY_MD5_CHECKSUM_HEX_LENGTH = 32;

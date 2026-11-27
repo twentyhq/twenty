@@ -30,6 +30,7 @@ export const fetchComponentSource = async ({
     if (isDefined(cachedSource)) {
       const cachedSourceChecksum = await computeComponentSourceChecksum({
         source: cachedSource,
+        expectedChecksum,
       });
 
       if (cachedSourceChecksum === expectedChecksum) {
@@ -52,7 +53,10 @@ export const fetchComponentSource = async ({
     return source;
   }
 
-  const sourceChecksum = await computeComponentSourceChecksum({ source });
+  const sourceChecksum = await computeComponentSourceChecksum({
+    source,
+    expectedChecksum,
+  });
 
   if (!isDefined(sourceChecksum)) {
     return source;
