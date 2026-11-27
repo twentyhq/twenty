@@ -27,6 +27,7 @@ export type CreateStandardMorphOrRelationFieldContext<
 > = {
   type: F;
   fieldName: AllStandardObjectFieldName<O>;
+  name?: string;
   label: string;
   description: string;
   icon: string;
@@ -58,6 +59,7 @@ export const createStandardRelationFieldFlatMetadata = <
   workspaceId,
   context: {
     fieldName,
+    name = fieldName.toString(),
     label,
     description,
     icon,
@@ -95,7 +97,7 @@ export const createStandardRelationFieldFlatMetadata = <
     workspaceId,
     objectMetadataId: standardObjectMetadataRelatedEntityIds[objectName].id,
     type,
-    name: fieldName.toString(),
+    name,
     label,
     description,
     icon,

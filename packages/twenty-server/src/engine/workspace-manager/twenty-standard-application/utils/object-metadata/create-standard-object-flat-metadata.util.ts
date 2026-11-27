@@ -12,7 +12,7 @@ import { type StandardBuilderArgs } from 'src/engine/workspace-manager/twenty-st
 
 export type CreateStandardObjectContext<O extends AllStandardObjectName> = {
   universalIdentifier: string;
-  nameSingular: O;
+  nameSingular: string;
   namePlural: string;
   labelSingular: string;
   labelPlural: string;
@@ -76,6 +76,7 @@ export const createStandardObjectFlatMetadata = <
     labelIdentifierFieldMetadataName,
     imageIdentifierFieldMetadataName,
   },
+  objectName,
   workspaceId,
   standardObjectMetadataRelatedEntityIds,
   twentyStandardApplicationId,
@@ -83,14 +84,14 @@ export const createStandardObjectFlatMetadata = <
 }: CreateStandardObjectArgs<O>): FlatObjectMetadata => {
   const labelIdentifierFieldMetadataUniversalIdentifier =
     getStandardFieldUniversalIdentifier({
-      objectName: nameSingular,
+      objectName,
       fieldName: labelIdentifierFieldMetadataName,
     });
 
   const imageIdentifierFieldMetadataUniversalIdentifier =
     imageIdentifierFieldMetadataName
       ? getStandardFieldUniversalIdentifier({
-          objectName: nameSingular,
+          objectName,
           fieldName: imageIdentifierFieldMetadataName,
         })
       : null;
@@ -120,11 +121,11 @@ export const createStandardObjectFlatMetadata = <
     duplicateCriteria,
     shortcut,
     labelIdentifierFieldMetadataId:
-      standardObjectMetadataRelatedEntityIds[nameSingular].fields[
+      standardObjectMetadataRelatedEntityIds[objectName].fields[
         labelIdentifierFieldMetadataName
       ].id,
     imageIdentifierFieldMetadataId: imageIdentifierFieldMetadataName
-      ? standardObjectMetadataRelatedEntityIds[nameSingular].fields[
+      ? standardObjectMetadataRelatedEntityIds[objectName].fields[
           imageIdentifierFieldMetadataName
         ].id
       : null,
@@ -141,7 +142,7 @@ export const createStandardObjectFlatMetadata = <
     pageLayoutIds: [],
     createdAt: now,
     updatedAt: now,
-    id: standardObjectMetadataRelatedEntityIds[nameSingular].id,
+    id: standardObjectMetadataRelatedEntityIds[objectName].id,
     applicationUniversalIdentifier:
       TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
     fieldUniversalIdentifiers: [],
