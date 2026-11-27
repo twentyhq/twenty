@@ -113,4 +113,24 @@ describe('fetchFrontComponentSources', () => {
       sharedDependenciesSource: undefined,
     });
   });
+
+  it('should retry a failed hinted fetch the component source needs', async () => {
+    mockedFetchComponentSource.mockResolvedValue(SOURCE_IMPORTING_SDK_CLIENT);
+    mockedFetchSdkClientSources
+      .mockRejectedValueOnce(new Error('unreachable'))
+      .mockResolvedValueOnce(SDK_CLIENT_SOURCES);
+
+    await expect(
+      fetchFrontComponentSources({
+        componentUrl: COMPONENT_URL,
+        sdkClientUrls: SDK_CLIENT_URLS,
+        usesSdkClient: true,
+      }),
+    ).resolves.toEqual({
+      componentSource: SOURCE_IMPORTING_SDK_CLIENT,
+      sdkClientSources: SDK_CLIENT_SOURCES,
+      sharedDependenciesSource: undefined,
+    });
+    expect(mockedFetchSdkClientSources).toHaveBeenCalledTimes(2);
+  });
 });

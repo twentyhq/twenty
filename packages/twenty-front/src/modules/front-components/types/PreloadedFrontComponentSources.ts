@@ -7,5 +7,5 @@ export type PreloadedFrontComponentSources = {
   componentUrl: string;
   sdkClientUrls: SdkClientUrls;
   sharedDependenciesUrl: string;
-  sourcesPromise: Promise<FrontComponentSources>;
+  sourcesPromise: Promise<FrontComponentSources | undefined>;
 };

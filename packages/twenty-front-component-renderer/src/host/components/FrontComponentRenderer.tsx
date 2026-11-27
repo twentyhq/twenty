@@ -56,7 +56,7 @@ type FrontComponentRendererProps = {
   sharedDependenciesUrl?: string;
   usesSdkClient?: boolean;
   usesSharedDependencies?: boolean;
-  preloadedSources?: Promise<FrontComponentSources>;
+  preloadedSources?: Promise<FrontComponentSources | undefined>;
   applicationVariables?: Record<string, string>;
   storageNamespace?: string;
   executionContext: FrontComponentExecutionContext;

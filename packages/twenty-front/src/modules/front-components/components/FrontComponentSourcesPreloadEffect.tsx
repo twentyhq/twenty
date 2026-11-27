@@ -28,22 +28,26 @@ export const FrontComponentSourcesPreloadEffect = ({
   onSourcesPreloadStarted,
 }: FrontComponentSourcesPreloadEffectProps) => {
   useEffect(() => {
-    const sourcesPromise = fetchFrontComponentSources({
-      componentUrl,
-      sdkClientUrls,
-      sharedDependenciesUrl,
-      applicationAccessToken,
-      usesSdkClient,
-      usesSharedDependencies,
-    });
-
-    sourcesPromise.catch(() => undefined);
+    const fetchSourcesOrUndefined = async () => {
+      try {
+        return await fetchFrontComponentSources({
+          componentUrl,
+          sdkClientUrls,
+          sharedDependenciesUrl,
+          applicationAccessToken,
+          usesSdkClient,
+          usesSharedDependencies,
+        });
+      } catch {
+        return undefined;
+      }
+    };
 
     onSourcesPreloadStarted({
       componentUrl,
       sdkClientUrls,
       sharedDependenciesUrl,
-      sourcesPromise,
+      sourcesPromise: fetchSourcesOrUndefined(),
     });
   }, [
     componentUrl,

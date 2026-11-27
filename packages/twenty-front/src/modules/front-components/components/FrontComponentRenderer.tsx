@@ -87,7 +87,7 @@ type FrontComponentRendererContentProps = {
   sdkClientUrls: SdkClientUrls;
   sharedDependenciesUrl: string;
   usesSharedDependencies: boolean;
-  preloadedSources?: Promise<FrontComponentSources>;
+  preloadedSources?: Promise<FrontComponentSources | undefined>;
   commandMenuItemId?: string;
   selectedRecordIds?: string[];
   selectedRecordsFilter?: RecordGqlOperationFilter | null;

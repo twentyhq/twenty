@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { buildAuthorizationHeadersFromAccessToken } from '@/host/component-source/utils/buildAuthorizationHeadersFromAccessToken';
 import { fetchComponentSource } from '@/host/component-source/utils/fetchComponentSource';
 import { fetchSdkClientSources } from '@/host/component-source/utils/fetchSdkClientSources';
+import { resolveToUndefinedOnRejection } from '@/host/component-source/utils/resolveToUndefinedOnRejection';
 import { type FrontComponentSources } from '@/types/FrontComponentSources';
 import { type SdkClientSources } from '@/types/SdkClientSources';
 import { type SdkClientUrls } from '@/types/SdkClientUrls';
@@ -40,24 +41,25 @@ export const fetchFrontComponentSources = async ({
     usesSdkClient &&
     isDefined(sdkClientUrls) &&
     !isDefined(providedSdkClientSources)
-      ? fetchSdkClientSources({ sdkClientUrls, headers })
+      ? resolveToUndefinedOnRejection(
+          fetchSdkClientSources({ sdkClientUrls, headers }),
+        )
       : undefined;
 
   const earlySharedDependenciesSourcePromise =
     usesSharedDependencies &&
     isDefined(sharedDependenciesUrl) &&
     !isDefined(providedSharedDependenciesSource)
-      ? fetchComponentSource({ url: sharedDependenciesUrl, headers })
+      ? resolveToUndefinedOnRejection(
+          fetchComponentSource({ url: sharedDependenciesUrl, headers }),
+        )
       : undefined;
-
-  earlySdkClientSourcesPromise?.catch(() => undefined);
-  earlySharedDependenciesSourcePromise?.catch(() => undefined);
 
   const componentSource =
     providedComponentSource ??
     (await fetchComponentSource({ url: componentUrl, headers }));
 
-  const resolveSdkClientSources = () => {
+  const resolveSdkClientSources = async () => {
     if (isDefined(providedSdkClientSources)) {
       return providedSdkClientSources;
     }
@@ -70,12 +72,12 @@ export const fetchFrontComponentSources = async ({
     }
 
     return (
-      earlySdkClientSourcesPromise ??
+      (await earlySdkClientSourcesPromise) ??
       fetchSdkClientSources({ sdkClientUrls, headers })
     );
   };
 
-  const resolveSharedDependenciesSource = () => {
+  const resolveSharedDependenciesSource = async () => {
     if (isDefined(providedSharedDependenciesSource)) {
       return providedSharedDependenciesSource;
     }
@@ -88,7 +90,7 @@ export const fetchFrontComponentSources = async ({
     }
 
     return (
-      earlySharedDependenciesSourcePromise ??
+      (await earlySharedDependenciesSourcePromise) ??
       fetchComponentSource({ url: sharedDependenciesUrl, headers })
     );
   };

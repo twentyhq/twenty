@@ -41,7 +41,7 @@ type FrontComponentWorkerEffectProps = {
   sharedDependenciesUrl?: string;
   usesSdkClient?: boolean;
   usesSharedDependencies?: boolean;
-  preloadedSources?: Promise<FrontComponentSources>;
+  preloadedSources?: Promise<FrontComponentSources | undefined>;
   applicationVariables?: Record<string, string>;
   storageNamespace?: string;
   initialExecutionContext: FrontComponentExecutionContext;
@@ -148,18 +148,18 @@ export const FrontComponentWorkerEffect = ({
     const resolveComponentSourceAndRender = async () => {
       try {
         const { componentSource, sdkClientSources, sharedDependenciesSource } =
-          await (preloadedSources ??
-            fetchFrontComponentSources({
-              componentUrl,
-              componentSource: providedComponentSource,
-              sdkClientUrls,
-              sdkClientSources: providedSdkClientSources,
-              sharedDependenciesUrl,
-              sharedDependenciesSource: providedSharedDependenciesSource,
-              applicationAccessToken,
-              usesSdkClient,
-              usesSharedDependencies,
-            }));
+          (await preloadedSources) ??
+          (await fetchFrontComponentSources({
+            componentUrl,
+            componentSource: providedComponentSource,
+            sdkClientUrls,
+            sdkClientSources: providedSdkClientSources,
+            sharedDependenciesUrl,
+            sharedDependenciesSource: providedSharedDependenciesSource,
+            applicationAccessToken,
+            usesSdkClient,
+            usesSharedDependencies,
+          }));
 
         if (isCancelled) {
           return;
