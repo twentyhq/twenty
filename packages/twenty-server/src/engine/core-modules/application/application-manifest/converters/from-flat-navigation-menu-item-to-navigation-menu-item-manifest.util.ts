@@ -29,6 +29,9 @@ export const fromFlatNavigationMenuItemToNavigationMenuItemManifest = ({
   ...(isDefined(flatNavigationMenuItem.builtInSectionKey)
     ? { builtInSectionKey: flatNavigationMenuItem.builtInSectionKey }
     : {}),
+  ...(isDefined(flatNavigationMenuItem.visibleItemLimit)
+    ? { visibleItemLimit: flatNavigationMenuItem.visibleItemLimit }
+    : {}),
   ...(isDefined(flatNavigationMenuItem.parentUniversalIdentifier)
     ? {
         parentUniversalIdentifier:
