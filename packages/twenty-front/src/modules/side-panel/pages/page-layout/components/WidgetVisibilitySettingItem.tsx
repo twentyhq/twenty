@@ -7,15 +7,15 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconEye, IconEyeX } from 'twenty-ui/icon';
 
-type WidgetVisibilitySubPageItemProps = {
+type WidgetVisibilitySettingItemProps = {
   itemId: string;
   widget: Pick<PageLayoutWidget, 'conditionalAvailability'> | undefined;
 };
 
-export const WidgetVisibilitySubPageItem = ({
+export const WidgetVisibilitySettingItem = ({
   itemId,
   widget,
-}: WidgetVisibilitySubPageItemProps) => {
+}: WidgetVisibilitySettingItemProps) => {
   const { t } = useLingui();
   const { navigateToSidePanelSubPage } = useSidePanelSubPageHistory();
 

@@ -5,7 +5,7 @@ import { useDeletePageLayoutWidget } from '@/page-layout/hooks/useDeletePageLayo
 import { useResetPageLayoutWidgetToDefault } from '@/page-layout/hooks/useResetPageLayoutWidgetToDefault';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
-import { WidgetVisibilitySubPageItem } from '@/side-panel/pages/page-layout/components/WidgetVisibilitySubPageItem';
+import { WidgetVisibilitySettingItem } from '@/side-panel/pages/page-layout/components/WidgetVisibilitySettingItem';
 import { WidgetVisibilityDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/WidgetVisibilityDropdownContent';
 import { WIDGET_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/WidgetSettingsSelectableItemIds';
 import { useOpenReplaceWidgetPicker } from '@/side-panel/pages/page-layout/hooks/useOpenReplaceWidgetPicker';
@@ -99,7 +99,7 @@ export const WidgetSettingsManageSection = ({
     <>
       <SidePanelGroup heading={t`Manage`}>
         {isWidgetConditionalAvailabilityEnabled && (
-          <WidgetVisibilitySubPageItem
+          <WidgetVisibilitySettingItem
             itemId={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION}
             widget={widgetInEditMode}
           />

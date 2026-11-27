@@ -4,7 +4,7 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { TabSettingsPlacementSection } from '@/side-panel/pages/page-layout/components/TabSettingsPlacementSection';
-import { WidgetVisibilitySubPageItem } from '@/side-panel/pages/page-layout/components/WidgetVisibilitySubPageItem';
+import { WidgetVisibilitySettingItem } from '@/side-panel/pages/page-layout/components/WidgetVisibilitySettingItem';
 import { WidgetVisibilityOptionsList } from '@/side-panel/pages/page-layout/components/dropdown-content/WidgetVisibilityOptionsList';
 import { TAB_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/TabSettingsSelectableItemIds';
 import { useTranslatedVisibilityLabel } from '@/side-panel/pages/page-layout/hooks/useTranslatedVisibilityLabel';
@@ -101,7 +101,7 @@ export const SingleWidgetTabSettingsContent = ({
         <TabSettingsPlacementSection items={placementItems} />
         <SidePanelGroup heading={t`Manage`}>
           {isWidgetConditionalAvailabilityEnabled && (
-            <WidgetVisibilitySubPageItem
+            <WidgetVisibilitySettingItem
               itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION}
               widget={singleWidget}
             />
