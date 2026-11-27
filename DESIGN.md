@@ -262,6 +262,7 @@ The side panel is where secondary work happens: record previews, AI chat outside
 - An affordance appears only with its action: a chevron only on items that open or navigate, a hover state only on what is clickable or editable, select styling only where a dropdown opens.
 - In pickers and option lists, an unavailable option stays visible but disabled, after the available ones, with a short reason in its description or tooltip. A control that a mode blocks is disabled, with a tooltip that says why.
 - New illustrations match the existing set. Reuse one before drawing one.
+- In the app, halftone appears only inside illustrations, like the marketplace illustrations and settings covers. Never on icons, tiles, avatars, backgrounds, empty states or controls.
 - Centered empty placeholders are for lists outside tables; tables show their single tertiary row.
 
 ## Copy
