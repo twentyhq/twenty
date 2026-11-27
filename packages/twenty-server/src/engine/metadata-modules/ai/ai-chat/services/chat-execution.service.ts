@@ -586,7 +586,7 @@ export class ChatExecutionService {
   private buildSettingsPageContext(
     workspace: WorkspaceEntity,
     path: string,
-    draft: unknown,
+    draft: Extract<BrowsingContextType, { type: 'settingsPage' }>['draft'],
   ): string {
     const resourceUrl = this.workspaceDomainsService.buildWorkspaceURL({
       workspace,

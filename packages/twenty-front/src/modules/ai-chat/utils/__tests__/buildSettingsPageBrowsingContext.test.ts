@@ -1,7 +1,11 @@
 import { buildSettingsPageBrowsingContext } from '@/ai-chat/utils/buildSettingsPageBrowsingContext';
 
 const path = '/settings/objects/companies/validation-rules/new';
-const draft = { kind: 'validationRule' as const, expression: 'amount > 0' };
+const draft = {
+  kind: 'validationRule' as const,
+  expression: 'amount > 0',
+  path,
+};
 
 describe('buildSettingsPageBrowsingContext', () => {
   it('should leave the draft out when the flag is off', () => {
@@ -10,13 +14,17 @@ describe('buildSettingsPageBrowsingContext', () => {
     ).toEqual({ type: 'settingsPage', path });
   });
 
-  it('should include the draft when the flag is on', () => {
+  it('should include the draft typed on the current page', () => {
     expect(
       buildSettingsPageBrowsingContext({ path, draft, isDraftEnabled: true }),
-    ).toEqual({ type: 'settingsPage', path, draft });
+    ).toEqual({
+      type: 'settingsPage',
+      path,
+      draft: { kind: 'validationRule', expression: 'amount > 0' },
+    });
   });
 
-  it('should leave the draft out when there is none or it is blank', () => {
+  it('should leave out a missing draft or one typed on another page', () => {
     expect(
       buildSettingsPageBrowsingContext({
         path,
@@ -26,10 +34,10 @@ describe('buildSettingsPageBrowsingContext', () => {
     ).toEqual({ type: 'settingsPage', path });
     expect(
       buildSettingsPageBrowsingContext({
-        path,
-        draft: { ...draft, expression: '  ' },
+        path: '/settings/objects/companies',
+        draft,
         isDraftEnabled: true,
       }),
-    ).toEqual({ type: 'settingsPage', path });
+    ).toEqual({ type: 'settingsPage', path: '/settings/objects/companies' });
   });
 });

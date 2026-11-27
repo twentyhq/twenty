@@ -1,4 +1,3 @@
-import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type BrowsingContext } from '@/ai-chat/types/BrowsingContext';
@@ -10,16 +9,16 @@ export const buildSettingsPageBrowsingContext = ({
   isDraftEnabled,
 }: {
   path: string;
-  draft: SettingsExpressionDraft | null;
+  draft: (SettingsExpressionDraft & { path: string }) | null;
   isDraftEnabled: boolean;
 }): BrowsingContext => {
-  if (
-    !isDraftEnabled ||
-    !isDefined(draft) ||
-    !isNonEmptyString(draft.expression.trim())
-  ) {
+  if (!isDraftEnabled || !isDefined(draft) || draft.path !== path) {
     return { type: 'settingsPage', path };
   }
 
-  return { type: 'settingsPage', path, draft };
+  return {
+    type: 'settingsPage',
+    path,
+    draft: { kind: draft.kind, expression: draft.expression },
+  };
 };

@@ -1,12 +1,23 @@
 import { isNonEmptyString, isObject } from '@sniptt/guards';
 
-const SETTINGS_EXPRESSION_DRAFT_LABELS: Record<string, string> = {
+import { type SettingsExpressionDraftKind } from 'src/engine/metadata-modules/ai/ai-agent/types/browsing-context.type';
+
+const SETTINGS_EXPRESSION_DRAFT_LABELS: Record<
+  SettingsExpressionDraftKind,
+  string
+> = {
   validationRule: 'validation rule',
   formula: 'formula field',
   agentTriggerCondition: 'agent trigger condition',
 };
 
 const SETTINGS_EXPRESSION_DRAFT_MAX_LENGTH = 2000;
+
+const isSettingsExpressionDraftKind = (
+  kind: unknown,
+): kind is SettingsExpressionDraftKind =>
+  isNonEmptyString(kind) &&
+  Object.keys(SETTINGS_EXPRESSION_DRAFT_LABELS).includes(kind);
 
 export const buildSettingsExpressionDraftContextLine = (
   draft: unknown,
@@ -16,11 +27,8 @@ export const buildSettingsExpressionDraftContextLine = (
   }
 
   const { kind, expression } = draft as Record<string, unknown>;
-  const label = isNonEmptyString(kind)
-    ? SETTINGS_EXPRESSION_DRAFT_LABELS[kind]
-    : undefined;
 
-  if (!isNonEmptyString(label) || !isNonEmptyString(expression)) {
+  if (!isSettingsExpressionDraftKind(kind) || !isNonEmptyString(expression)) {
     return null;
   }
 
@@ -36,5 +44,5 @@ export const buildSettingsExpressionDraftContextLine = (
     trimmedExpression.slice(0, SETTINGS_EXPRESSION_DRAFT_MAX_LENGTH),
   );
 
-  return `The user is editing an unsaved ${label}. Its current expression is ${quotedExpression}${isTruncated ? ' (truncated)' : ''}. When they ask to fix or explain "this" expression, they mean this draft, not a saved one.`;
+  return `The user is editing a ${SETTINGS_EXPRESSION_DRAFT_LABELS[kind]} on this page, possibly not saved yet. Its current expression in the editor is ${quotedExpression}${isTruncated ? ' (truncated)' : ''}. When they ask to fix or explain "this" expression, they mean this text.`;
 };

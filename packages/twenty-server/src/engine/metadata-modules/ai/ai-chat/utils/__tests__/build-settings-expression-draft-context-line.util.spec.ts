@@ -8,7 +8,7 @@ describe('buildSettingsExpressionDraftContextLine', () => {
         expression: ' amount * "2" ',
       }),
     ).toBe(
-      'The user is editing an unsaved formula field. Its current expression is "amount * \\"2\\"". When they ask to fix or explain "this" expression, they mean this draft, not a saved one.',
+      'The user is editing a formula field on this page, possibly not saved yet. Its current expression in the editor is "amount * \\"2\\"". When they ask to fix or explain "this" expression, they mean this text.',
     );
   });
 
@@ -27,6 +27,7 @@ describe('buildSettingsExpressionDraftContextLine', () => {
     null,
     'amount > 0',
     { kind: 'unknownKind', expression: 'amount > 0' },
+    { kind: 'constructor', expression: 'amount > 0' },
     { kind: 'validationRule', expression: '   ' },
     { kind: 'validationRule', expression: 42 },
   ])('returns null for an invalid draft %p', (draft) => {

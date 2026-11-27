@@ -18,11 +18,12 @@ import { Field } from 'twenty-ui/primitives/input';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { settingsExpressionDraftState } from '@/ai-chat/states/settingsExpressionDraftState';
 import { type SettingsExpressionDraftKind } from '@/ai-chat/types/SettingsExpressionDraft';
 import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/ui/input/constants/FormFieldPlaceholderStyles';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { SettingsValidationRuleAskAiButton } from '@/validation-rules/components/SettingsValidationRuleAskAiButton';
 import { SettingsValidationRuleHelperPanel } from '@/validation-rules/components/SettingsValidationRuleHelperPanel';
-import { useSettingsExpressionDraft } from '@/validation-rules/hooks/useSettingsExpressionDraft';
 import { VALIDATION_RULE_HIGHLIGHT_COLORS } from '@/validation-rules/constants/ValidationRuleHighlightColors';
 import { ValidationRuleExpressionExtension } from '@/validation-rules/extensions/ValidationRuleExpressionExtension';
 import { ValidationRuleFieldNode } from '@/validation-rules/extensions/ValidationRuleFieldNode';
@@ -137,7 +138,9 @@ export const ValidationRuleExpressionEditor = ({
   ariaLabel,
 }: ValidationRuleExpressionEditorProps) => {
   const { t } = useLingui();
-  const { setExpressionDraft } = useSettingsExpressionDraft(draftKind);
+  const setSettingsExpressionDraft = useSetAtomState(
+    settingsExpressionDraftState,
+  );
 
   const [helperContext, setHelperContext] =
     useState<ValidationRuleHelperContext>(() =>
@@ -212,11 +215,16 @@ export const ValidationRuleExpressionEditor = ({
       }),
     ],
     content: initialContent,
+    onCreate: () => setSettingsExpressionDraft(null),
     onUpdate: ({ editor: updatedEditor }) => {
       const expression = getValidationRuleEditorText(updatedEditor.state.doc);
 
       onChange(expression);
-      setExpressionDraft(expression);
+      setSettingsExpressionDraft({
+        kind: draftKind,
+        expression,
+        path: window.location.pathname,
+      });
       refreshHelperContext(updatedEditor);
     },
     onSelectionUpdate: ({ editor: updatedEditor }) =>
