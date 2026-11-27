@@ -12,6 +12,7 @@ export const getEventMetadataExceptionHttpStatus = (
       return HttpStatus.NOT_FOUND;
     case EventMetadataExceptionCode.INVALID_EVENT_METADATA_INPUT:
     case EventMetadataExceptionCode.INVALID_EVENT_PROPERTIES:
+    case EventMetadataExceptionCode.INVALID_EVENT_TARGET:
     case EventMetadataExceptionCode.INVALID_VISITOR_EVENT_TOKEN_INPUT:
     case EventMetadataExceptionCode.INVALID_EVENT_SUBSCRIPTION:
       return HttpStatus.BAD_REQUEST;

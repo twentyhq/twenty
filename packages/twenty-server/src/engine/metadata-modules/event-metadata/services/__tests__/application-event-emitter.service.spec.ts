@@ -25,7 +25,11 @@ const FLAT_EVENT_METADATA: FlatEventMetadata = {
   label: 'Agent typing',
   description: null,
   icon: null,
-  properties: [{ name: 'isTyping', type: 'BOOLEAN', isRequired: true }],
+  schema: {
+    type: 'object',
+    properties: { isTyping: { type: 'boolean' } },
+    required: ['isTyping'],
+  },
   capabilities: { realtime: { scopes: [{ kind: 'visitor' }] } },
   createdAt: '2026-10-27T00:00:00.000Z',
   updatedAt: '2026-10-27T00:00:00.000Z',
@@ -34,9 +38,11 @@ const FLAT_EVENT_METADATA: FlatEventMetadata = {
 describe('ApplicationEventEmitterService', () => {
   let service: ApplicationEventEmitterService;
   const publish = jest.fn();
+  const claimOccurrenceId = jest.fn();
 
   beforeEach(async () => {
     publish.mockReset();
+    claimOccurrenceId.mockReset().mockResolvedValue(null);
 
     const flatEventMetadataMaps = createEmptyFlatEntityMaps();
 
@@ -57,7 +63,10 @@ describe('ApplicationEventEmitterService', () => {
             }),
           },
         },
-        { provide: EventRealtimeService, useValue: { publish } },
+        {
+          provide: EventRealtimeService,
+          useValue: { publish, claimOccurrenceId },
+        },
       ],
     }).compile();
 
@@ -84,6 +93,45 @@ describe('ApplicationEventEmitterService', () => {
         properties: { isTyping: true },
       }),
     });
+  });
+
+  it('should publish an occurrence whose caller id is new under that id', async () => {
+    const result = await service.emit({
+      workspaceId: WORKSPACE_ID,
+      applicationId: APPLICATION_ID,
+      event: 'agentTyping',
+      id: 'typing-1',
+      properties: { isTyping: true },
+      anonymousId: 'visitor-1',
+    });
+
+    expect(result.id).toBe('typing-1');
+    expect(claimOccurrenceId).toHaveBeenCalledWith({
+      workspaceId: WORKSPACE_ID,
+      applicationId: APPLICATION_ID,
+      occurrenceId: 'typing-1',
+      occurredAt: result.occurredAt,
+    });
+    expect(publish).toHaveBeenCalledTimes(1);
+  });
+
+  it('should return the first occurrence and publish nothing for an id already emitted', async () => {
+    claimOccurrenceId.mockResolvedValue('2026-10-27T10:00:00.000Z');
+
+    const result = await service.emit({
+      workspaceId: WORKSPACE_ID,
+      applicationId: APPLICATION_ID,
+      event: 'agentTyping',
+      id: 'typing-1',
+      properties: { isTyping: true },
+      anonymousId: 'visitor-1',
+    });
+
+    expect(result).toEqual({
+      id: 'typing-1',
+      occurredAt: '2026-10-27T10:00:00.000Z',
+    });
+    expect(publish).not.toHaveBeenCalled();
   });
 
   it('should refuse an event declared by another application', async () => {

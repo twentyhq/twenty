@@ -4,6 +4,7 @@ import { type EventOccurrence } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
+import { EVENT_OCCURRENCE_ID_RETENTION_MS } from 'src/engine/metadata-modules/event-metadata/constants/event-occurrence-id-retention-ms.constant';
 
 @Injectable()
 export class EventRealtimeService {
@@ -22,6 +23,32 @@ export class EventRealtimeService {
     await Promise.all(
       channels.map((channel) => pubSubClient.publish(channel, payload)),
     );
+  }
+
+  // Returns when the id was first emitted, or null when this emission is the first
+  async claimOccurrenceId({
+    workspaceId,
+    applicationId,
+    occurrenceId,
+    occurredAt,
+  }: {
+    workspaceId: string;
+    applicationId: string;
+    occurrenceId: string;
+    occurredAt: string;
+  }): Promise<string | null> {
+    const redisClient = this.redisClientService.getClient();
+    const key = `appEventOccurrence:${workspaceId}:${applicationId}:${occurrenceId}`;
+
+    const claimed = await redisClient.set(
+      key,
+      occurredAt,
+      'PX',
+      EVENT_OCCURRENCE_ID_RETENTION_MS,
+      'NX',
+    );
+
+    return claimed === 'OK' ? null : await redisClient.get(key);
   }
 
   // Resolves once Redis has acknowledged every subscription, so nothing published afterwards is missed

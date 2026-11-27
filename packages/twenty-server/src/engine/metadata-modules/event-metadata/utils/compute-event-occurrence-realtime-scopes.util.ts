@@ -13,7 +13,7 @@ export const computeEventOccurrenceRealtimeScopes = ({
   properties,
   anonymousId,
 }: {
-  flatEventMetadata: Pick<FlatEventMetadata, 'properties' | 'capabilities'>;
+  flatEventMetadata: Pick<FlatEventMetadata, 'schema' | 'capabilities'>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   properties: Record<string, unknown>;
   anonymousId: string | null;

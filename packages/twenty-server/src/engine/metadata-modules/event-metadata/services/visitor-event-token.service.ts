@@ -19,7 +19,7 @@ import {
   EventMetadataExceptionCode,
 } from 'src/engine/metadata-modules/event-metadata/event-metadata.exception';
 import { buildEventRealtimeChannel } from 'src/engine/metadata-modules/event-metadata/utils/build-event-realtime-channel.util';
-import { findApplicationFlatEventMetadataByNameOrThrow } from 'src/engine/metadata-modules/event-metadata/utils/find-application-flat-event-metadata-by-name-or-throw.util';
+import { findApplicationFlatEventMetadataOrThrow } from 'src/engine/metadata-modules/event-metadata/utils/find-application-flat-event-metadata-or-throw.util';
 import { hasVisitorRealtimeScope } from 'src/engine/metadata-modules/event-metadata/utils/has-visitor-realtime-scope.util';
 import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -57,7 +57,7 @@ export class VisitorEventTokenService {
       ]);
 
     const eventMetadataIds = [...new Set(events)].map((event) => {
-      const flatEventMetadata = findApplicationFlatEventMetadataByNameOrThrow({
+      const flatEventMetadata = findApplicationFlatEventMetadataOrThrow({
         flatEventMetadataMaps,
         applicationId,
         name: event,

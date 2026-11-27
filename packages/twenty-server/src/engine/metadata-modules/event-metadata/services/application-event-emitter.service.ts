@@ -6,6 +6,7 @@ import {
   type EventOccurrence,
   getEventPropertyValuesErrors,
 } from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import {
@@ -83,6 +84,21 @@ export class ApplicationEventEmitterService {
         `An event occurrence cannot exceed ${EVENT_LIMITS.MAX_PAYLOAD_BYTES} bytes`,
         EventMetadataExceptionCode.INVALID_EVENT_PROPERTIES,
       );
+    }
+
+    if (isDefined(id)) {
+      const firstOccurredAt = await this.eventRealtimeService.claimOccurrenceId(
+        {
+          workspaceId,
+          applicationId,
+          occurrenceId: id,
+          occurredAt: occurrence.occurredAt,
+        },
+      );
+
+      if (isDefined(firstOccurredAt)) {
+        return { id, occurredAt: firstOccurredAt };
+      }
     }
 
     const channels = computeEventOccurrenceRealtimeScopes({

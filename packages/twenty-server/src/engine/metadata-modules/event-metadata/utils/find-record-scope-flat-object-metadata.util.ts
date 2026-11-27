@@ -8,18 +8,16 @@ export const findRecordScopeFlatObjectMetadata = ({
   scopeProperty,
   flatObjectMetadataMaps,
 }: {
-  flatEventMetadata: Pick<FlatEventMetadata, 'properties'>;
+  flatEventMetadata: Pick<FlatEventMetadata, 'schema'>;
   scopeProperty: string;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
 }): FlatObjectMetadata | undefined => {
-  const property = flatEventMetadata.properties.find(
-    (eventProperty) => eventProperty.name === scopeProperty,
-  );
+  const propertySchema = flatEventMetadata.schema.properties?.[scopeProperty];
 
-  return property?.type === 'RECORD_REFERENCE'
+  return propertySchema?.type === 'record'
     ? findFlatEntityByUniversalIdentifier({
         flatEntityMaps: flatObjectMetadataMaps,
-        universalIdentifier: property.objectUniversalIdentifier,
+        universalIdentifier: propertySchema.objectUniversalIdentifier ?? '',
       })
     : undefined;
 };

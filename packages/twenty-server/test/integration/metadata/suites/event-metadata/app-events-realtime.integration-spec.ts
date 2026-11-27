@@ -59,15 +59,18 @@ const MESSAGE_ADDED_EVENT: EventManifest = {
   universalIdentifier: MESSAGE_ADDED_EVENT_ID,
   name: 'messageAdded',
   label: 'Message added',
-  properties: [
-    {
-      name: 'companyId',
-      type: 'RECORD_REFERENCE',
-      objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company,
-      isRequired: true,
+  schema: {
+    type: 'object',
+    properties: {
+      companyId: {
+        type: 'record',
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company,
+      },
+      text: { type: 'string' },
     },
-    { name: 'text', type: 'TEXT' },
-  ],
+    required: ['companyId'],
+  },
   capabilities: {
     realtime: {
       scopes: [{ kind: 'record', property: 'companyId' }, { kind: 'visitor' }],
@@ -278,20 +281,61 @@ describe('app events realtime (e2e)', () => {
 
   it('stores the declared event', async () => {
     const storedEvents = await globalThis.testDataSource.query(
-      `SELECT name, properties, capabilities FROM core."eventMetadata" WHERE "universalIdentifier" = $1`,
+      `SELECT name, schema, capabilities FROM core."eventMetadata" WHERE "universalIdentifier" = $1`,
       [MESSAGE_ADDED_EVENT_ID],
     );
 
     expect(storedEvents).toEqual([
       {
         name: 'messageAdded',
-        properties: MESSAGE_ADDED_EVENT.properties,
+        schema: MESSAGE_ADDED_EVENT.schema,
         capabilities: MESSAGE_ADDED_EVENT.capabilities,
       },
     ]);
   });
 
-  it('refuses a record scope on a property that is not a record reference', async () => {
+  it('refuses a record property pointing at an object that does not exist', async () => {
+    await syncEvents({
+      events: [
+        {
+          ...MESSAGE_ADDED_EVENT,
+          schema: {
+            type: 'object',
+            properties: {
+              companyId: {
+                type: 'record',
+                objectUniversalIdentifier: uuidv4(),
+              },
+            },
+          },
+        },
+      ],
+      expectToFail: true,
+    });
+  });
+
+  it('refuses a nested property', async () => {
+    await syncEvents({
+      events: [
+        {
+          ...MESSAGE_ADDED_EVENT,
+          schema: {
+            type: 'object',
+            properties: {
+              author: {
+                type: 'object',
+                properties: { name: { type: 'string' } },
+              },
+            },
+          },
+          capabilities: undefined,
+        },
+      ],
+      expectToFail: true,
+    });
+  });
+
+  it('refuses a record scope on a property that is not a record', async () => {
     await syncEvents({
       events: [
         {
@@ -368,6 +412,37 @@ describe('app events realtime (e2e)', () => {
     expect(response.body.errors?.[0]?.extensions?.code).toBe('BAD_USER_INPUT');
   });
 
+  it('finds the event by universal identifier and keeps the id the caller chose', async () => {
+    const response = await emit({
+      eventUniversalIdentifier: MESSAGE_ADDED_EVENT_ID,
+      id: `message-added-${uuidv4()}`,
+      properties: { companyId },
+    });
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.emitAppEvent.id).toMatch(/^message-added-/);
+  });
+
+  it('refuses an id outside the allowed characters', async () => {
+    const response = await emit({
+      event: 'messageAdded',
+      id: 'not allowed!',
+      properties: { companyId },
+    });
+
+    expect(response.body.errors?.[0]?.extensions?.code).toBe('BAD_USER_INPUT');
+  });
+
+  it('refuses both an event name and a universal identifier', async () => {
+    const response = await emit({
+      event: 'messageAdded',
+      eventUniversalIdentifier: MESSAGE_ADDED_EVENT_ID,
+      properties: { companyId },
+    });
+
+    expect(response.body.errors?.[0]?.extensions?.code).toBe('BAD_USER_INPUT');
+  });
+
   it('refuses an event the application did not declare', async () => {
     const response = await emit({ event: 'somethingElse' });
 
@@ -415,6 +490,40 @@ describe('app events realtime (e2e)', () => {
 
     visitorStream.close();
     otherVisitorStream.close();
+  });
+
+  it('delivers an occurrence emitted twice under the same id only once', async () => {
+    const visitorStream = await openVisitorStream(
+      await createVisitorToken('visitor-retry'),
+    );
+    const occurrenceId = `message-added-${uuidv4()}`;
+    const emitOnce = () =>
+      emit({
+        event: 'messageAdded',
+        id: occurrenceId,
+        properties: { companyId, text: 'Hello once' },
+        anonymousId: 'visitor-retry',
+      });
+
+    const firstResponse = await emitOnce();
+    const retriedResponse = await emitOnce();
+
+    await emit({
+      event: 'messageAdded',
+      properties: { companyId, text: 'After the retry' },
+      anonymousId: 'visitor-retry',
+    });
+
+    await visitorStream.readOccurrences(2);
+
+    expect(retriedResponse.body.data.emitAppEvent).toEqual(
+      firstResponse.body.data.emitAppEvent,
+    );
+    expect(
+      visitorStream.getOccurrences().map(({ properties }) => properties.text),
+    ).toEqual(['Hello once', 'After the retry']);
+
+    visitorStream.close();
   });
 
   it('refuses a missing or tampered visitor token', async () => {

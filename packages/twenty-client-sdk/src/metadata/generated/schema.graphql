@@ -496,6 +496,23 @@ type AppConnection {
   workspaceMemberId: String
 }
 
+type AppEventOccurrence {
+  id: UUID!
+  occurredAt: String!
+  properties: JSON!
+  type: String!
+}
+
+type AppEventStreamPayload {
+  occurrence: AppEventOccurrence
+}
+
+input AppEventSubscriptionInput {
+  event: String!
+  property: String
+  recordId: UUID!
+}
+
 type AppKeyValue {
   key: String!
   scope: AppKeyValueScope!
@@ -1695,6 +1712,17 @@ input CreateAppMessageChannelInput {
   visibility: MessageChannelVisibility!
 }
 
+input CreateAppVisitorEventTokenInput {
+  anonymousId: String!
+  events: [String!]!
+  expiresInSeconds: Int
+}
+
+type CreateAppVisitorEventTokenOutput {
+  expiresAt: String!
+  token: String!
+}
+
 type CreateApplicationFileUploadsResult {
   errors: [ApplicationFileUploadError!]!
   targets: [ApplicationFileUploadTarget!]!
@@ -2329,6 +2357,7 @@ type EmailsConfiguration {
 }
 
 input EmitAppEventInput {
+  anonymousId: String
   event: String
   eventUniversalIdentifier: String
   id: String
@@ -3643,6 +3672,7 @@ type Mutation {
   createAgentChatChannel(input: CreateAgentChatChannelInput!): AgentChatChannel!
   createApiKey(input: CreateApiKeyInput!): ApiKey!
   createAppMessageChannel(input: CreateAppMessageChannelInput!): MessageChannel!
+  createAppVisitorEventToken(input: CreateAppVisitorEventTokenInput!): CreateAppVisitorEventTokenOutput!
   createApplicationFileUploads(applicationUniversalIdentifier: String!, files: [ApplicationFileUploadRequestInput!]!): CreateApplicationFileUploadsResult!
   createApplicationRegistration(input: CreateApplicationRegistrationInput!): CreateApplicationRegistration!
   createApprovedAccessDomain(input: CreateApprovedAccessDomainInput!): ApprovedAccessDomain!
@@ -4156,6 +4186,10 @@ type ObjectRecordsPermissions {
   rowLevelRecordsPermissions: [RowLevelRecordsPermissions!]
   uneditableFields: [UUID!]!
   unreadableFields: [UUID!]!
+}
+
+input OnAppEventInput {
+  subscriptions: [AppEventSubscriptionInput!]!
 }
 
 """Onboarding status"""
@@ -5265,6 +5299,7 @@ type Subscription {
   exportRecords(input: CreateRecordExportInput!): RecordExport!
   logicFunctionLogs(input: LogicFunctionLogsInput!): LogicFunctionLogs!
   onAgentChatEvent(agentUniversalIdentifier: UUID, runId: UUID, threadId: UUID, threadKey: String): AgentChatEvent!
+  onAppEvent(input: OnAppEventInput!): AppEventStreamPayload!
   onEventSubscription(eventStreamId: String!): EventSubscription
 }
 

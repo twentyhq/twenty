@@ -535,6 +535,25 @@ export type AppConnection = {
   workspaceMemberId?: Maybe<Scalars['String']['output']>;
 };
 
+export type AppEventOccurrence = {
+  __typename?: 'AppEventOccurrence';
+  id: Scalars['UUID']['output'];
+  occurredAt: Scalars['String']['output'];
+  properties: Scalars['JSON']['output'];
+  type: Scalars['String']['output'];
+};
+
+export type AppEventStreamPayload = {
+  __typename?: 'AppEventStreamPayload';
+  occurrence?: Maybe<AppEventOccurrence>;
+};
+
+export type AppEventSubscriptionInput = {
+  event: Scalars['String']['input'];
+  property?: InputMaybe<Scalars['String']['input']>;
+  recordId: Scalars['UUID']['input'];
+};
+
 export type AppKeyValue = {
   __typename?: 'AppKeyValue';
   key: Scalars['String']['output'];
@@ -1812,6 +1831,18 @@ export type CreateAppMessageChannelInput = {
   visibility: MessageChannelVisibility;
 };
 
+export type CreateAppVisitorEventTokenInput = {
+  anonymousId: Scalars['String']['input'];
+  events: Array<Scalars['String']['input']>;
+  expiresInSeconds?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type CreateAppVisitorEventTokenOutput = {
+  __typename?: 'CreateAppVisitorEventTokenOutput';
+  expiresAt: Scalars['String']['output'];
+  token: Scalars['String']['output'];
+};
+
 export type CreateApplicationFileUploadsResult = {
   __typename?: 'CreateApplicationFileUploadsResult';
   errors: Array<ApplicationFileUploadError>;
@@ -2452,6 +2483,7 @@ export type EmailsConfiguration = {
 };
 
 export type EmitAppEventInput = {
+  anonymousId?: InputMaybe<Scalars['String']['input']>;
   event?: InputMaybe<Scalars['String']['input']>;
   eventUniversalIdentifier?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['String']['input']>;
@@ -3830,6 +3862,7 @@ export type Mutation = {
   createAgentChatChannel: AgentChatChannel;
   createApiKey: ApiKey;
   createAppMessageChannel: MessageChannel;
+  createAppVisitorEventToken: CreateAppVisitorEventTokenOutput;
   createApplicationFileUploads: CreateApplicationFileUploadsResult;
   createApplicationRegistration: CreateApplicationRegistration;
   createApprovedAccessDomain: ApprovedAccessDomain;
@@ -4268,6 +4301,11 @@ export type MutationCreateApiKeyArgs = {
 
 export type MutationCreateAppMessageChannelArgs = {
   input: CreateAppMessageChannelInput;
+};
+
+
+export type MutationCreateAppVisitorEventTokenArgs = {
+  input: CreateAppVisitorEventTokenInput;
 };
 
 
@@ -5946,6 +5984,10 @@ export type ObjectRecordsPermissions = {
   rowLevelRecordsPermissions?: Maybe<Array<RowLevelRecordsPermissions>>;
   uneditableFields: Array<Scalars['UUID']['output']>;
   unreadableFields: Array<Scalars['UUID']['output']>;
+};
+
+export type OnAppEventInput = {
+  subscriptions: Array<AppEventSubscriptionInput>;
 };
 
 /** Onboarding status */
@@ -7662,6 +7704,7 @@ export type Subscription = {
   exportRecords: RecordExport;
   logicFunctionLogs: LogicFunctionLogs;
   onAgentChatEvent: AgentChatEvent;
+  onAppEvent: AppEventStreamPayload;
   onEventSubscription?: Maybe<EventSubscription>;
 };
 
@@ -7687,6 +7730,11 @@ export type SubscriptionOnAgentChatEventArgs = {
   runId?: InputMaybe<Scalars['UUID']['input']>;
   threadId?: InputMaybe<Scalars['UUID']['input']>;
   threadKey?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type SubscriptionOnAppEventArgs = {
+  input: OnAppEventInput;
 };
 
 

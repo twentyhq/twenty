@@ -9,27 +9,27 @@ const CONVERSATION_OBJECT_UNIVERSAL_IDENTIFIER =
 const CONVERSATION_OBJECT_ID = '11111111-2222-4333-8444-555555555555';
 const RECORD_ID = '0f5c2c1e-4b7a-4f3e-9d2a-6c8b1e0a7d34';
 
-const FLAT_EVENT_METADATA: Pick<
-  FlatEventMetadata,
-  'properties' | 'capabilities'
-> = {
-  properties: [
-    {
-      name: 'conversationId',
-      type: 'RECORD_REFERENCE',
-      objectUniversalIdentifier: CONVERSATION_OBJECT_UNIVERSAL_IDENTIFIER,
+const FLAT_EVENT_METADATA: Pick<FlatEventMetadata, 'schema' | 'capabilities'> =
+  {
+    schema: {
+      type: 'object',
+      properties: {
+        conversationId: {
+          type: 'record',
+          objectUniversalIdentifier: CONVERSATION_OBJECT_UNIVERSAL_IDENTIFIER,
+        },
+        text: { type: 'string' },
+      },
     },
-    { name: 'text', type: 'TEXT' },
-  ],
-  capabilities: {
-    realtime: {
-      scopes: [
-        { kind: 'record', property: 'conversationId' },
-        { kind: 'visitor' },
-      ],
+    capabilities: {
+      realtime: {
+        scopes: [
+          { kind: 'record', property: 'conversationId' },
+          { kind: 'visitor' },
+        ],
+      },
     },
-  },
-};
+  };
 
 const buildFlatObjectMetadataMaps = () => {
   const flatObjectMetadataMaps = createEmptyFlatEntityMaps();

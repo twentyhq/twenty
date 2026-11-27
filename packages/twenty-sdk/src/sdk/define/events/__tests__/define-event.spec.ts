@@ -19,7 +19,10 @@ const baseValidConfig: EventManifest = {
   },
   capabilities: {
     realtime: {
-      scopes: [{ kind: 'record', property: 'conversationId' }, { kind: 'visitor' }],
+      scopes: [
+        { kind: 'record', property: 'conversationId' },
+        { kind: 'visitor' },
+      ],
     },
   },
 };
