@@ -10,9 +10,10 @@ import {
 } from 'twenty-ui/icon';
 import { Avatar, Chip } from 'twenty-ui/primitives/data-display';
 import { Button, Checkbox } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getWorkspaceAvatarColorSeed } from '@/workspace/utils/getWorkspaceAvatarColorSeed';
@@ -129,7 +130,7 @@ const StyledBar = styled.div`
 `;
 
 const StyledPageBar = styled(StyledBar)`
-  height: 40px;
+  height: ${themeCssVariables.spacing[10]};
   padding-inline: ${themeCssVariables.spacing[2]};
 `;
 
@@ -151,7 +152,7 @@ const StyledTableRow = styled.div<{ isSelected: boolean }>`
       3,
       minmax(0, 1fr)
     );
-  height: 32px;
+  height: ${RECORD_TABLE_ROW_HEIGHT}px;
 
   &:last-child {
     border-bottom: none;
@@ -180,6 +181,7 @@ const StyledCell = styled.div`
 
 export const WorkspaceAccentColorPreview = () => {
   const { t } = useLingui();
+  const theme = useTheme();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   return (
@@ -214,15 +216,15 @@ export const WorkspaceAccentColorPreview = () => {
             <Checkbox size="sm" indeterminate readOnly tabIndex={-1} />
           </StyledCell>
           <StyledCell>
-            <IconBuildingSkyscraper size={14} />
+            <IconBuildingSkyscraper size={theme.icon.size.sm} />
             {t`Name`}
           </StyledCell>
           <StyledCell>
-            <IconLink size={14} />
+            <IconLink size={theme.icon.size.sm} />
             {t`Domain`}
           </StyledCell>
           <StyledCell>
-            <IconUserCircle size={14} />
+            <IconUserCircle size={theme.icon.size.sm} />
             {t`Account Owner`}
           </StyledCell>
         </StyledTableRow>
