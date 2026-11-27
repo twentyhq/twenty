@@ -57,7 +57,7 @@ const STANDARD_OPEN_VIEW_FIELDS = [
 ];
 
 describe('buildInboxViewToListViewOperations', () => {
-  it('should turn inbox views into list views and give them their view fields, grouped by owner', () => {
+  it('should turn inbox views into list views and give them their view fields, written by their owner', () => {
     const standardInboxView = buildInboxFlatView({
       universalIdentifier: STANDARD_OPEN_VIEW,
       applicationUniversalIdentifier:
@@ -70,8 +70,9 @@ describe('buildInboxViewToListViewOperations', () => {
 
     const operations = buildInboxViewToListViewOperations({
       flatViews: [standardInboxView, channelInboxView],
-      flatViewFields: [],
       standardFlatViewFields: STANDARD_OPEN_VIEW_FIELDS,
+      workspaceCustomApplicationUniversalIdentifier:
+        WORKSPACE_CUSTOM_APPLICATION,
       now: NOW,
     });
 
@@ -119,34 +120,7 @@ describe('buildInboxViewToListViewOperations', () => {
     ]);
   });
 
-  it('should only add the view fields a standard thread view that is already a list does not have', () => {
-    const operations = buildInboxViewToListViewOperations({
-      flatViews: [
-        {
-          ...buildInboxFlatView({
-            universalIdentifier: STANDARD_OPEN_VIEW,
-            applicationUniversalIdentifier:
-              TWENTY_STANDARD_APPLICATION.universalIdentifier,
-          }),
-          ...LIST_VIEW_PROPERTIES,
-        },
-      ],
-      flatViewFields: [STANDARD_OPEN_VIEW_FIELDS[0]],
-      standardFlatViewFields: STANDARD_OPEN_VIEW_FIELDS,
-      now: NOW,
-    });
-
-    expect(operations).toEqual([
-      {
-        writerApplicationUniversalIdentifier:
-          TWENTY_STANDARD_APPLICATION.universalIdentifier,
-        viewsToUpdate: [],
-        viewFieldsToCreate: [STANDARD_OPEN_VIEW_FIELDS[1]],
-      },
-    ]);
-  });
-
-  it('should do nothing once every inbox view is a list view with its view fields', () => {
+  it('should do nothing once every inbox view is a list view', () => {
     expect(
       buildInboxViewToListViewOperations({
         flatViews: [
@@ -166,8 +140,9 @@ describe('buildInboxViewToListViewOperations', () => {
             ...LIST_VIEW_PROPERTIES,
           },
         ],
-        flatViewFields: STANDARD_OPEN_VIEW_FIELDS,
         standardFlatViewFields: STANDARD_OPEN_VIEW_FIELDS,
+        workspaceCustomApplicationUniversalIdentifier:
+          WORKSPACE_CUSTOM_APPLICATION,
         now: NOW,
       }),
     ).toEqual([]);

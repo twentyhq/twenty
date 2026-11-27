@@ -35,11 +35,10 @@ export class ConvertInboxViewsToListViewsCommand extends ProvisionedWorkspaceCom
     workspaceId,
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
-    const { flatObjectMetadataMaps, flatViewMaps, flatViewFieldMaps } =
+    const { flatObjectMetadataMaps, flatViewMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',
         'flatViewMaps',
-        'flatViewFieldMaps',
       ]);
 
     const hasInboxThreadObject = isDefined(
@@ -58,7 +57,7 @@ export class ConvertInboxViewsToListViewsCommand extends ProvisionedWorkspaceCom
       return;
     }
 
-    const { twentyStandardFlatApplication } =
+    const { twentyStandardFlatApplication, workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
       );
@@ -76,18 +75,13 @@ export class ConvertInboxViewsToListViewsCommand extends ProvisionedWorkspaceCom
       flatViews: Object.values(flatViewMaps.byUniversalIdentifier).filter(
         isDefined,
       ),
-      flatViewFields: Object.values(
-        flatViewFieldMaps.byUniversalIdentifier,
-      ).filter(isDefined),
       standardFlatViewFields: Object.values(
         standardAllFlatEntityMaps.flatViewFieldMaps.byUniversalIdentifier,
       ).filter(isDefined),
+      workspaceCustomApplicationUniversalIdentifier:
+        workspaceCustomFlatApplication.universalIdentifier,
       now,
     });
-
-    if (inboxViewToListViewOperations.length === 0) {
-      return;
-    }
 
     const isDryRun = options.dryRun ?? false;
 
