@@ -42,9 +42,21 @@ export class RecordReadCustomPermissionsService implements OnModuleInit {
         metatype,
       );
 
-      if (isNonEmptyString(objectNameSingular)) {
-        this.handlersByObjectNameSingular.set(objectNameSingular, instance);
+      if (!isNonEmptyString(objectNameSingular)) {
+        continue;
       }
+
+      if (
+        !RECORD_READ_CUSTOM_PERMISSION_OBJECT_NAME_SINGULARS.has(
+          objectNameSingular,
+        )
+      ) {
+        throw new Error(
+          `Read custom permission handler for "${objectNameSingular}" is missing from RECORD_READ_CUSTOM_PERMISSION_OBJECT_NAME_SINGULARS`,
+        );
+      }
+
+      this.handlersByObjectNameSingular.set(objectNameSingular, instance);
     }
   }
 
