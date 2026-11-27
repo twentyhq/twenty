@@ -76,10 +76,7 @@ export const startTeamsAssistantStream = async ({
         activity: buildTeamsMessageActivity({
           text,
           ...answerMarkers,
-          entities: [
-            ...(answerMarkers?.entities ?? []),
-            { type: 'streaminfo', streamId, streamType: 'final' },
-          ],
+          entities: [{ type: 'streaminfo', streamId, streamType: 'final' }],
         }),
       });
 

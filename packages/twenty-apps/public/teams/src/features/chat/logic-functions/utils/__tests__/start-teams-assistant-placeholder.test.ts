@@ -125,7 +125,7 @@ describe('startTeamsAssistantPlaceholder', () => {
     expect(sendActivityMock).toHaveBeenLastCalledWith(sentMessage(ANSWER));
   });
 
-  it('should label the answer that replaces the placeholder and return its activity id', async () => {
+  it('should add feedback buttons to the answer that replaces the placeholder and return its activity id', async () => {
     const status = await startPlaceholder();
     const answerMarkers = buildTeamsAssistantAnswerMarkers();
 
@@ -139,7 +139,7 @@ describe('startTeamsAssistantPlaceholder', () => {
     });
   });
 
-  it('should label the answer sent as a new message and return the id of that message', async () => {
+  it('should add feedback buttons to the answer sent as a new message and return the id of that message', async () => {
     updateActivityMock.mockRejectedValue(new Error('404'));
     sendActivityMock
       .mockResolvedValueOnce({ id: 'placeholder-1' })

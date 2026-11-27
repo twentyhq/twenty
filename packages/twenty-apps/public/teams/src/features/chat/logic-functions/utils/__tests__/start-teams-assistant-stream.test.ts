@@ -105,7 +105,7 @@ describe('startTeamsAssistantStream', () => {
     ]);
   });
 
-  it('should label the final message as AI generated with feedback buttons when it is an answer', async () => {
+  it('should add feedback buttons to the final message when it is an answer', async () => {
     const writer = await startTeamsAssistantStream({
       ...CONVERSATION,
       text: 'Thinking…',
@@ -121,7 +121,6 @@ describe('startTeamsAssistantStream', () => {
         text: 'Acme has 3 open deals.',
         channelData: answerMarkers.channelData,
         entities: [
-          ...answerMarkers.entities,
           { type: 'streaminfo', streamId: 'stream-1', streamType: 'final' },
         ],
       },
