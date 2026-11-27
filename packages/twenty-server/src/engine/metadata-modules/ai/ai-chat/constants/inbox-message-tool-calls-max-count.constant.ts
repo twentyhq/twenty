@@ -1,0 +1,1 @@
+export const INBOX_MESSAGE_TOOL_CALLS_MAX_COUNT = 10;
