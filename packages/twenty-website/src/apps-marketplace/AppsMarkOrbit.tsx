@@ -109,6 +109,9 @@ const MARK_MODEL_SETTINGS = {
     springStrength: 0.06,
   },
 } satisfies HalftoneModelProps['settings'];
+// Half an app's logo on screen (its 34px at most), the margin it keeps
+// from the logo when it passes behind.
+const APP_HALF_PX = 17;
 // At that distance the logo fills about this share of its frame.
 const MARK_MODEL_FILL = 0.6;
 
@@ -282,11 +285,17 @@ export function AppsMarkOrbit({ apps }: AppsMarkOrbitProps) {
     // where the mark sits on screen, for its canvas
     const markCentre = new THREE.Vector3();
     const markEdge = new THREE.Vector3();
+    // where the logo sits on screen, in the banner's pixels
+    const markOnScreen = { x: 0, y: 0, half: 0 };
+    const projected = new THREE.Vector3();
     const placeMarkLayer = () => {
       const bounds = frame.getBoundingClientRect();
       markCentre.set(0, 0, 0).project(stage.camera);
       markEdge.set((SIDE / 2) * MARK_SCALE, 0, 0).project(stage.camera);
       const sidePx = Math.abs(markEdge.x - markCentre.x) * bounds.width;
+      markOnScreen.x = (markCentre.x * 0.5 + 0.5) * bounds.width;
+      markOnScreen.y = (-markCentre.y * 0.5 + 0.5) * bounds.height;
+      markOnScreen.half = sidePx / 2;
       frame.style.setProperty(
         '--mark-x',
         `${((markCentre.x * 0.5 + 0.5) * bounds.width).toFixed(1)}px`,
@@ -382,6 +391,7 @@ export function AppsMarkOrbit({ apps }: AppsMarkOrbitProps) {
       stage.tone.updateMatrixWorld(true);
       stage.crisp.updateMatrixWorld(true);
 
+      const bounds = frame.getBoundingClientRect();
       const placed = slots.map((slot, index) => {
         const { config, group } = rings[slot.ring];
         const angle = slot.angle + spin * config.speed;
@@ -392,17 +402,28 @@ export function AppsMarkOrbit({ apps }: AppsMarkOrbitProps) {
           Math.cos(angle) * config.radius,
         ).applyMatrix4(group.matrixWorld);
         const depth = Math.cos(angle);
+        // how far the app sits outside the logo on screen, in pixels (its
+        // own half width counted): an app behind the logo must not show
+        // over it
+        projected.copy(position).project(stage.camera);
+        const gapPx =
+          Math.max(
+            Math.abs((projected.x * 0.5 + 0.5) * bounds.width - markOnScreen.x),
+            Math.abs(
+              (-projected.y * 0.5 + 0.5) * bounds.height - markOnScreen.y,
+            ),
+          ) -
+          markOnScreen.half -
+          APP_HALF_PX;
         return {
           index,
           position,
           depth,
-          // the far side stays readable, lighter; only the stretch right
-          // behind the mark clears
+          // the far side stays readable, lighter; it clears where it runs
+          // behind the logo
           opacity:
             (0.45 + 0.55 * THREE.MathUtils.smoothstep(depth, -0.6, 0.3)) *
-            (depth < 0
-              ? THREE.MathUtils.smoothstep(Math.abs(Math.sin(angle)), 0.18, 0.4)
-              : 1),
+            (depth < 0 ? THREE.MathUtils.smoothstep(gapPx, 0, APP_HALF_PX) : 1),
         };
       });
       placed.forEach((entry) => {
