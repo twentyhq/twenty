@@ -18,9 +18,11 @@ import { Field } from 'twenty-ui/primitives/input';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { type SettingsExpressionDraftKind } from '@/ai-chat/types/SettingsExpressionDraft';
 import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/ui/input/constants/FormFieldPlaceholderStyles';
 import { SettingsValidationRuleAskAiButton } from '@/validation-rules/components/SettingsValidationRuleAskAiButton';
 import { SettingsValidationRuleHelperPanel } from '@/validation-rules/components/SettingsValidationRuleHelperPanel';
+import { useSettingsExpressionDraft } from '@/validation-rules/hooks/useSettingsExpressionDraft';
 import { VALIDATION_RULE_HIGHLIGHT_COLORS } from '@/validation-rules/constants/ValidationRuleHighlightColors';
 import { ValidationRuleExpressionExtension } from '@/validation-rules/extensions/ValidationRuleExpressionExtension';
 import { ValidationRuleFieldNode } from '@/validation-rules/extensions/ValidationRuleFieldNode';
@@ -112,6 +114,7 @@ type ValidationRuleExpressionEditorProps = {
   fields: ValidationRuleFieldDescriptor[];
   editorFields: ValidationRuleEditorField[];
   onChange: (expression: string) => void;
+  draftKind: SettingsExpressionDraftKind;
   compileExpression?: typeof compileValidationRuleExpression;
   functionDefinitions?: ValidationRuleSyntaxDefinition[];
   keywordDefinitions?: ValidationRuleSyntaxDefinition[];
@@ -125,6 +128,7 @@ export const ValidationRuleExpressionEditor = ({
   fields,
   editorFields,
   onChange,
+  draftKind,
   compileExpression = compileValidationRuleExpression,
   functionDefinitions,
   keywordDefinitions,
@@ -133,6 +137,7 @@ export const ValidationRuleExpressionEditor = ({
   ariaLabel,
 }: ValidationRuleExpressionEditorProps) => {
   const { t } = useLingui();
+  const { setExpressionDraft } = useSettingsExpressionDraft(draftKind);
 
   const [helperContext, setHelperContext] =
     useState<ValidationRuleHelperContext>(() =>
@@ -208,7 +213,10 @@ export const ValidationRuleExpressionEditor = ({
     ],
     content: initialContent,
     onUpdate: ({ editor: updatedEditor }) => {
-      onChange(getValidationRuleEditorText(updatedEditor.state.doc));
+      const expression = getValidationRuleEditorText(updatedEditor.state.doc);
+
+      onChange(expression);
+      setExpressionDraft(expression);
       refreshHelperContext(updatedEditor);
     },
     onSelectionUpdate: ({ editor: updatedEditor }) =>

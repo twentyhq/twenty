@@ -103,6 +103,7 @@ export const SettingsDataModelFieldFormulaForm = ({
             fields={fields}
             editorFields={editorFields}
             onChange={onChange}
+            draftKind="formula"
             compileExpression={compileFormulaExpression}
             functionDefinitions={FORMULA_FUNCTION_DEFINITIONS}
             keywordDefinitions={FORMULA_KEYWORD_DEFINITIONS}

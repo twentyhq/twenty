@@ -43,6 +43,7 @@ import { type AgentChatSender } from 'src/engine/metadata-modules/ai/ai-chat/typ
 import { type AgentChatAuthorizedConversation } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-authorized-conversation.type';
 import { type UploadedFileReference } from 'src/engine/metadata-modules/ai/ai-chat/types/uploaded-file-reference.type';
 import { buildFullSystemPrompt } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-full-system-prompt.util';
+import { buildSettingsExpressionDraftContextLine } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-settings-expression-draft-context-line.util';
 import { buildWorkspaceSetupChatThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-chat-thread-id.util';
 import { collectReferencedSkillIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/collect-referenced-skill-ids.util';
 import { collectUploadedFileReferences } from 'src/engine/metadata-modules/ai/ai-chat/utils/collect-uploaded-file-references.util';
@@ -522,7 +523,11 @@ export class ChatExecutionService {
       case 'listView':
         return this.buildListViewContext(browsingContext);
       case 'settingsPage':
-        return this.buildSettingsPageContext(workspace, browsingContext.path);
+        return this.buildSettingsPageContext(
+          workspace,
+          browsingContext.path,
+          browsingContext.draft,
+        );
       default:
         // browsing context comes from unvalidated client JSON
         return '';
@@ -581,12 +586,18 @@ export class ChatExecutionService {
   private buildSettingsPageContext(
     workspace: WorkspaceEntity,
     path: string,
+    draft: unknown,
   ): string {
     const resourceUrl = this.workspaceDomainsService.buildWorkspaceURL({
       workspace,
       pathname: path,
     });
 
-    return `The user is on the settings page ${resourceUrl}. When they talk about what this page shows (for example "this rule" or "my rule"), they mean the item at this path.`;
+    const pageContext = `The user is on the settings page ${resourceUrl}. When they talk about what this page shows (for example "this rule" or "my rule"), they mean the item at this path.`;
+    const draftContextLine = buildSettingsExpressionDraftContextLine(draft);
+
+    return isDefined(draftContextLine)
+      ? `${pageContext}\n${draftContextLine}`
+      : pageContext;
   }
 }

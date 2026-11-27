@@ -16,4 +16,8 @@ export type BrowsingContextType =
   | {
       type: 'settingsPage';
       path: string;
+      draft?: {
+        kind: 'validationRule' | 'formula' | 'agentTriggerCondition';
+        expression: string;
+      };
     };

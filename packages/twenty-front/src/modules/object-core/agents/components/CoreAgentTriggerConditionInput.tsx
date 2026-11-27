@@ -42,6 +42,7 @@ export const CoreAgentTriggerConditionInput = ({
             fields={fields}
             editorFields={editorFields}
             onChange={onConditionChange}
+            draftKind="agentTriggerCondition"
           />
         </Card.Root>
       )}

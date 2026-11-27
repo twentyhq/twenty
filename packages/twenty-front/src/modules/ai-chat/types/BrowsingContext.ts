@@ -1,3 +1,5 @@
+import { type SettingsExpressionDraft } from '@/ai-chat/types/SettingsExpressionDraft';
+
 export type BrowsingContext =
   | {
       type: 'recordPage';
@@ -16,4 +18,5 @@ export type BrowsingContext =
   | {
       type: 'settingsPage';
       path: string;
+      draft?: SettingsExpressionDraft;
     };
