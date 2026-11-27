@@ -132,6 +132,9 @@ export default defineLogicFunction({
 محسوسة) ويسقط في نظيف، صفحة قابلة للطباعة تعرض فقط محتوى القالب- نفس مظهر PDF والمعاينة داخل التطبيق.
   [انظر المساعد](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/utils/render-document.ts).
 
+تُعرَض الصفحة باستخدام سياسة بيئة معزولة ما لم تكن واردة من نطاق مخصص لتطبيقك: يمكنها تشغيل البرامج النصية واتباع الروابط، لكنها لا تستطيع استخدام ملفات تعريف الارتباط أو التخزين. لا تتأثر صفحة ثابتة مثل هذه. راجع
+[مكان تشغيل صفحات المسارات](/ar/developers/extend/apps/logic/logic-functions#where-route-pages-run).
+
 ## جرب ذلك
 
 باستخدام قالب وشخص في مساحة العمل الخاصة بك، استدعِ المسار (احصل على رمز من
