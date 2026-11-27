@@ -4,7 +4,7 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 
-export const buildAdminFlatRole = ({
+export const buildWorkspaceCustomApplicationAdminFlatRole = ({
   workspaceId,
   ownerFlatApplication,
   overrides = {},

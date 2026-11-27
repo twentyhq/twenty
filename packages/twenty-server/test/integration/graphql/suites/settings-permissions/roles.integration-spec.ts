@@ -27,7 +27,7 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
-import { WORKSPACE_CUSTOM_APPLICATION_ROLE_LABEL } from 'src/engine/core-modules/application/constants/workspace-custom-application-role.constant';
+import { WORKSPACE_CUSTOM_APPLICATION_GRANTED_ROLE_LABEL } from 'src/engine/core-modules/application/constants/workspace-custom-application-granted-role.constant';
 
 const client = request(`http://localhost:${APP_PORT}`);
 
@@ -86,7 +86,7 @@ describe('roles permissions', () => {
 
     nonEditableRoleId = resp.body.data.getRoles.find(
       // @ts-expect-error legacy noImplicitAny
-      (role) => role.label === WORKSPACE_CUSTOM_APPLICATION_ROLE_LABEL,
+      (role) => role.label === WORKSPACE_CUSTOM_APPLICATION_GRANTED_ROLE_LABEL,
     ).id;
   });
 

@@ -15,7 +15,7 @@ import { expectEventually } from 'test/integration/utils/expect-eventually.util'
 import { isDefined } from 'twenty-shared/utils';
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
-import { WORKSPACE_CUSTOM_APPLICATION_ROLE_UNIVERSAL_IDENTIFIER } from 'src/engine/core-modules/application/constants/workspace-custom-application-role.constant';
+import { WORKSPACE_CUSTOM_APPLICATION_GRANTED_ROLE_UNIVERSAL_IDENTIFIER } from 'src/engine/core-modules/application/constants/workspace-custom-application-granted-role.constant';
 
 type WorkflowRun = {
   status: string;
@@ -112,7 +112,7 @@ describe('An automated workflow run acts with the default role of its workflow a
     });
 
     expect(customApplicationDefaultRole?.universalIdentifier).toBe(
-      WORKSPACE_CUSTOM_APPLICATION_ROLE_UNIVERSAL_IDENTIFIER,
+      WORKSPACE_CUSTOM_APPLICATION_GRANTED_ROLE_UNIVERSAL_IDENTIFIER,
     );
 
     const response = await workflowGraphqlRequest(

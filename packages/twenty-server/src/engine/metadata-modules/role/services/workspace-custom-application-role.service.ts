@@ -8,8 +8,8 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
-import { buildAdminFlatRole } from 'src/engine/metadata-modules/flat-role/utils/build-admin-flat-role.util';
-import { buildWorkspaceCustomApplicationFlatRole } from 'src/engine/metadata-modules/flat-role/utils/build-workspace-custom-application-flat-role.util';
+import { buildWorkspaceCustomApplicationAdminFlatRole } from 'src/engine/metadata-modules/flat-role/utils/build-workspace-custom-application-admin-flat-role.util';
+import { buildWorkspaceCustomApplicationGrantedFlatRole } from 'src/engine/metadata-modules/flat-role/utils/build-workspace-custom-application-granted-flat-role.util';
 import { type RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { MEMBER_ROLE_LABEL } from 'src/engine/permissions/role/constants/member-role-label.constants';
@@ -34,7 +34,7 @@ export class WorkspaceCustomApplicationRoleService {
   }): Promise<string> {
     const grantedRoleId = await this.findOrCreateFlatRoleOrThrow({
       workspaceId,
-      flatRoleToCreate: buildWorkspaceCustomApplicationFlatRole({
+      flatRoleToCreate: buildWorkspaceCustomApplicationGrantedFlatRole({
         workspaceId,
         workspaceCustomFlatApplication,
       }),
@@ -59,7 +59,7 @@ export class WorkspaceCustomApplicationRoleService {
   }): Promise<string> {
     return this.findOrCreateFlatRoleOrThrow({
       workspaceId,
-      flatRoleToCreate: buildAdminFlatRole({
+      flatRoleToCreate: buildWorkspaceCustomApplicationAdminFlatRole({
         workspaceId,
         ownerFlatApplication: workspaceCustomFlatApplication,
       }),
