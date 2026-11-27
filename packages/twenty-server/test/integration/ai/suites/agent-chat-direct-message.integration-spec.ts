@@ -3,11 +3,18 @@ import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.
 import { randomUUID } from 'node:crypto';
 
 import gql from 'graphql-tag';
+import { configureChatParticipationModels } from 'test/integration/ai/utils/configure-chat-participation-models.util';
 import { createChatParticipationTestContext } from 'test/integration/ai/utils/create-chat-participation-test-context.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
+import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { sendChatParticipationMessage } from 'test/integration/graphql/utils/send-chat-participation-message.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { FileFolder } from 'twenty-shared/types';
 
+import { type CodeInterpreterService } from 'src/engine/core-modules/code-interpreter/code-interpreter.service';
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { type AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { type RecordShareSystemWriteService } from 'src/engine/permissions/record-share/services/record-share-system-write.service';
@@ -26,6 +33,20 @@ const READ_DIRECT_MESSAGE = gql`
     chatMessages(threadId: $threadId) {
       parts {
         textContent
+      }
+    }
+  }
+`;
+
+const READ_DIRECT_MESSAGE_FILES = gql`
+  query ReadDirectMessageFiles($threadId: UUID!) {
+    chatMessages(threadId: $threadId) {
+      parts {
+        type
+        fileId
+        fileFilename
+        fileMediaType
+        fileUrl
       }
     }
   }
@@ -312,7 +333,7 @@ describe('Private text direct messages', () => {
           id: messageId,
           role: AgentMessageRole.ASSISTANT,
           agentId: null,
-          senderUserWorkspaceId: null,
+          senderWorkspaceMemberId: null,
           parts: [{ type: 'text', text: 'Uncommitted reply' }],
         }),
       ).rejects.toThrow(sharingFailure.message);
@@ -404,11 +425,140 @@ describe('Private text direct messages', () => {
     );
   });
 
-  it('rejects unsupported file payloads before creating a message', async () => {
+  it('shares an attached file with the pair only', async () => {
+    const threadId = await openDirectMessage();
+    const fileId = randomUUID();
+    const filename = 'private.txt';
+    const messageId = randomUUID();
+    const fileRepository = getCoreRepository<FileEntity>(FileEntity);
+
+    await fileRepository.insert({
+      id: fileId,
+      workspaceId: context.workspaceId,
+      path: `${FileFolder.AgentChat}/${fileId}/${filename}`,
+      size: 0,
+      mimeType: 'text/plain',
+      status: FILE_STATUS.UPLOADED,
+    });
+
+    try {
+      const sent = await sendChatParticipationMessage({
+        threadId,
+        messageId,
+        text: 'See attached',
+        attachments: [{ id: fileId, filename }],
+      });
+
+      expect(sent.body.errors).toBeUndefined();
+
+      const peerHistory = await makeMetadataApiRequest(
+        { query: READ_DIRECT_MESSAGE_FILES, variables: { threadId } },
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+
+      expect(peerHistory.body.errors).toBeUndefined();
+      expect(peerHistory.body.data.chatMessages).toEqual([
+        {
+          parts: [
+            expect.objectContaining({ type: 'text' }),
+            expect.objectContaining({
+              type: 'file',
+              fileId,
+              fileFilename: filename,
+              fileMediaType: 'text/plain',
+              fileUrl: expect.any(String),
+            }),
+          ],
+        },
+      ]);
+
+      const parts = await readParts(messageId);
+
+      expect(parts).toHaveLength(2);
+      for (const { id, isPrivate } of parts) {
+        expect(isPrivate).toBe(true);
+        expect(
+          (await readShares([id])).map(({ principalId }) => principalId),
+        ).toEqual(
+          [
+            WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+            WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+          ].sort(),
+        );
+      }
+    } finally {
+      await fileRepository.delete({ id: fileId });
+    }
+  });
+
+  it('shows Ada an attachment she cannot read as a placeholder, without file tool instructions', async () => {
+    const models = configureChatParticipationModels();
+    const isCodeInterpreterEnabled = jest
+      .spyOn(
+        getAppProviderByClassName<CodeInterpreterService>(
+          'CodeInterpreterService',
+        ),
+        'isEnabled',
+      )
+      .mockReturnValue(true);
+    const threadId = await openDirectMessage();
+    const fileId = randomUUID();
+    const filename = 'pipeline.csv';
+    const fileRepository = getCoreRepository<FileEntity>(FileEntity);
+
+    await fileRepository.insert({
+      id: fileId,
+      workspaceId: context.workspaceId,
+      path: `${FileFolder.AgentChat}/${fileId}/${filename}`,
+      size: 0,
+      mimeType: 'text/csv',
+      status: FILE_STATUS.UPLOADED,
+    });
+
+    try {
+      const sent = await sendChatParticipationMessage({
+        threadId,
+        text: 'Can you summarize this?',
+        isAssistantMentioned: true,
+        attachments: [{ id: fileId, filename }],
+      });
+
+      expect(sent.body.errors).toBeUndefined();
+      expect(sent.body.data.sendChatMessage.streamId).toEqual(
+        expect.any(String),
+      );
+
+      await waitForAllJobsToFinish();
+
+      const prompts = models.languageModelCalls.map(({ prompt }) =>
+        JSON.stringify(prompt),
+      );
+
+      expect(
+        prompts.some((prompt) =>
+          prompt.includes(`${filename} (type: text/csv)`),
+        ),
+      ).toBe(true);
+      for (const prompt of prompts) {
+        expect(prompt).not.toContain(
+          'Use the code_interpreter tool to analyze these files',
+        );
+        expect(prompt).not.toContain(
+          'The user has uploaded the following files',
+        );
+      }
+    } finally {
+      isCodeInterpreterEnabled.mockRestore();
+      models.restore();
+      await fileRepository.delete({ id: fileId });
+    }
+  });
+
+  it('rejects a channel before creating a message', async () => {
     const threadId = await openDirectMessage();
     const response = await sendChatParticipationMessage({
       threadId,
-      attachments: [{ id: randomUUID(), filename: 'private.txt' }],
+      channelId: randomUUID(),
     });
 
     expect(response.body.errors?.[0]?.extensions).toMatchObject({

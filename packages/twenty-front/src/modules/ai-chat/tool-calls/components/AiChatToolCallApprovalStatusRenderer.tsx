@@ -46,7 +46,7 @@ export const AiChatToolCallApprovalStatusRenderer = ({
     rejected: t`Rejected`,
     failed: t`Approved but it failed`,
     conflict: t`Not run: the record changed since it was proposed`,
-    skipped: t`Skipped`,
+    skipped: t`Cancelled`,
   };
   const message = hasFailedToPropose
     ? t`Could not be proposed`
@@ -58,7 +58,7 @@ export const AiChatToolCallApprovalStatusRenderer = ({
       pending: summary,
       running: summary,
       approved: summary,
-      rejected: result?.feedback,
+      rejected: result?.feedback ?? summary,
       failed: result?.error,
       conflict: summary,
       skipped: summary,

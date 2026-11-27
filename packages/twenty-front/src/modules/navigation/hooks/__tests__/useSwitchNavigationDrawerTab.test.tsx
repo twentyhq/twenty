@@ -1,5 +1,6 @@
 import { MemoryRouterAppNavigatorProvider } from '~/testing/components/MemoryRouterAppNavigatorProvider';
 import { useReturnFromExpandedAiChat } from '@/ai-chat/hooks/useReturnFromExpandedAiChat';
+import { isAiChatHandoffSkipped } from '@/ai-chat/utils/isAiChatHandoffSkipped';
 import { useSwitchToNewAiChat } from '@/ai-chat/composer/hooks/useSwitchToNewAiChat';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { currentNavigationMenuTabIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuTabIdState';
@@ -162,6 +163,18 @@ describe('useSwitchNavigationDrawerTab', () => {
     );
   });
 
+  it('does not hand the chat it leaves off to the side panel when switching back to Home', () => {
+    const { result } = renderSwitchNavigationDrawerMode({
+      pathname: '/inbox/20202020-0687-4c41-b707-ed1bfca972a7',
+      currentNavigationMenuTabId: 'chats-tab-id',
+    });
+
+    act(() => result.current.switchToNavigationMenuTab(null));
+
+    expect(result.current.location.pathname).toBe(DEFAULT_HOME_PAGE_PATH);
+    expect(isAiChatHandoffSkipped(result.current.location.state)).toBe(true);
+  });
+
   it('opens the default home page when switching back to Home', () => {
     const { result } = renderSwitchNavigationDrawerMode({
       pathname: '/chat',
@@ -256,7 +269,9 @@ describe('useSwitchNavigationDrawerTab', () => {
     expect(result.current.location.pathname).toBe(DEFAULT_HOME_PAGE_PATH);
   });
 
-  it('returns from the chat page without navigating itself', () => {
+  it('returns from the chat page without navigating itself while the customizable sidebar is off', () => {
+    jest.mocked(useIsFeatureEnabled).mockReturnValue(false);
+
     const { result, store } = renderSwitchNavigationDrawerMode({
       pathname: AI_CHAT_PATH,
     });
@@ -373,7 +388,8 @@ describe('useSwitchNavigationDrawerTab', () => {
     },
   );
 
-  it('stays collapsed through Home → Settings → AI → Home', () => {
+  it('stays collapsed through Home → Settings → AI → Home while the customizable sidebar is off', () => {
+    jest.mocked(useIsFeatureEnabled).mockReturnValue(false);
     jest.mocked(useSwitchToNewAiChat).mockImplementation(
       jest.requireActual<{
         useSwitchToNewAiChat: typeof useSwitchToNewAiChat;

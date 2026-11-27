@@ -60,6 +60,7 @@ describe('navigation record search duplicates', () => {
     };
     jest.mocked(useObjectRecordSearchRecords).mockReturnValue({
       loading: false,
+      hasNextPage: false,
       searchRecords: [
         {
           ...record,
@@ -70,7 +71,6 @@ describe('navigation record search duplicates', () => {
         },
       ],
       error: undefined,
-      hasNextPage: false,
       fetchMoreRecords: jest.fn(),
     });
     const existingItem: NavigationMenuItem = {

@@ -28,14 +28,14 @@ describe('removeLinkedinConnectionResources', () => {
     mocks.kvGet.mockResolvedValue(null);
   });
 
-  it('clears the pages and progress of the last import run', async () => {
+  it('clears the listed conversations of the last import run', async () => {
     mocks.kvGet.mockImplementation(async (key: string) => {
       if (key === 'linkedin-history-import:connection-id') {
         return { runId: 'run-1' };
       }
 
       return key.startsWith('linkedin-history-import-planning:')
-        ? { plannedChunkCount: 2, plannedConversationCount: 40 }
+        ? { chatIds: ['chat-1', 'chat-2'] }
         : null;
     });
 
@@ -46,11 +46,39 @@ describe('removeLinkedinConnectionResources', () => {
 
     expect(mocks.kvDelete.mock.calls.map(([key]) => key)).toEqual(
       expect.arrayContaining([
-        'linkedin-history-import-progress:connection-id:run-1',
         'linkedin-history-import-planning:connection-id:run-1',
+        'linkedin-history-import-chat:connection-id:run-1:chat-1',
+        'linkedin-history-import-chat:connection-id:run-1:chat-2',
+      ]),
+    );
+  });
+
+  it('clears the progress and listed chunks of a run started before 0.9', async () => {
+    mocks.kvGet.mockImplementation(async (key: string) => {
+      if (key === 'linkedin-history-import:connection-id') {
+        return { runId: 'run-1' };
+      }
+
+      return key.startsWith('linkedin-history-import-planning:')
+        ? { plannedChunkCount: 3, chunkCount: 2 }
+        : null;
+    });
+
+    await removeLinkedinConnectionResources({
+      connectedAccountId: 'connection-id',
+      unipileAccountId: null,
+    });
+
+    expect(mocks.kvDelete.mock.calls.map(([key]) => key)).toEqual(
+      expect.arrayContaining([
+        'linkedin-history-import-planning:connection-id:run-1',
+        'linkedin-history-import-progress:connection-id:run-1',
         'linkedin-history-import-chats:connection-id:run-1:0',
         'linkedin-history-import-chats:connection-id:run-1:1',
       ]),
+    );
+    expect(mocks.kvDelete).not.toHaveBeenCalledWith(
+      'linkedin-history-import-chats:connection-id:run-1:2',
     );
   });
 
@@ -69,6 +97,7 @@ describe('removeLinkedinConnectionResources', () => {
     expect(mocks.kvDelete.mock.calls).toEqual([
       ['linkedin-settings:connection-id'],
       ['linkedin-history-import:connection-id'],
+      ['linkedin-profile-lookups:acc_1'],
       ['unipile-account:acc_1', { scope: 'SERVER' }],
     ]);
   });

@@ -1,6 +1,7 @@
 import { type ReactNode } from 'react';
-import { StandardObjectNameSingular } from 'twenty-shared/types';
 
+import { inboxNamesByLegacyNameSelector } from '@/ai-chat/states/selectors/inboxNamesByLegacyNameSelector';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { RecordShowPageContent } from '@/object-record/record-show/components/RecordShowPageContent';
 
 type AiChatThreadPageContentProps = {
@@ -15,16 +16,22 @@ export const AiChatThreadPageContent = ({
   headerActions,
   headerTitle,
   headerTitlePrefix,
-}: AiChatThreadPageContentProps) => (
-  <RecordShowPageContent
-    parameters={{
-      objectNameSingular: StandardObjectNameSingular.AgentChatThread,
-      objectRecordId: threadId,
-    }}
-    headerActions={headerActions}
-    headerTitle={headerTitle}
-    headerTitlePrefix={headerTitlePrefix}
-    headerTitleMode="record-title"
-    isRecordIdentifierBarHidden
-  />
-);
+}: AiChatThreadPageContentProps) => {
+  const inboxNamesByLegacyName = useAtomStateValue(
+    inboxNamesByLegacyNameSelector,
+  );
+
+  return (
+    <RecordShowPageContent
+      parameters={{
+        objectNameSingular: inboxNamesByLegacyName.agentChatThread,
+        objectRecordId: threadId,
+      }}
+      headerActions={headerActions}
+      headerTitle={headerTitle}
+      headerTitlePrefix={headerTitlePrefix}
+      headerTitleMode="record-title"
+      isRecordIdentifierBarHidden
+    />
+  );
+};

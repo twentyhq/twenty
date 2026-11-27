@@ -14,11 +14,22 @@ import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/wo
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { getMarketplaceApplicationRoleAssignabilityErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-assignability-errors.util';
 import { getRoleNotEditableErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-not-editable-errors.util';
 import { validateRoleBelongsToCallerApplication } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util';
 import { validateRoleLabelUniqueness } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-label-uniqueness.util';
 import { validateRoleReadWritePermissionsConsistency } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-read-write-permissions-consistency.util';
 import { validateRoleRequiredPropertiesAreDefined } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-required-properties-are-defined.util';
+
+// TODO(@charlesBochet): temporary Admin record permissions exception, remove once the workspace owns Admin's record permissions
+const ROLE_WIDE_RECORD_PERMISSION_KEYS: string[] = [
+  'canReadAllObjectRecords',
+  'canCreateAllObjectRecords',
+  'canUpdateAllObjectRecords',
+  'canSoftDeleteAllObjectRecords',
+  'canDestroyAllObjectRecords',
+  'updatedAt',
+];
 
 @Injectable()
 export class FlatRoleValidatorService {
@@ -61,6 +72,13 @@ export class FlatRoleValidatorService {
       ...validateRoleLabelUniqueness({
         label: flatEntityToValidate.label,
         existingFlatRoles: existingRoles,
+      }),
+    );
+
+    validationResult.errors.push(
+      ...getMarketplaceApplicationRoleAssignabilityErrors({
+        flatRole: flatEntityToValidate,
+        buildOptions,
       }),
     );
 
@@ -167,10 +185,16 @@ export class FlatRoleValidatorService {
       return validationResult;
     }
 
+    // TODO(@charlesBochet): temporary Admin record permissions exception, remove once the workspace owns Admin's record permissions
+    const isRoleWideRecordPermissionsUpdate = Object.keys(
+      flatEntityUpdate,
+    ).every((key) => ROLE_WIDE_RECORD_PERMISSION_KEYS.includes(key));
+
     validationResult.errors.push(
       ...getRoleNotEditableErrors({
         flatRole: fromFlatRole,
         buildOptions,
+        isRecordPermissionsChange: isRoleWideRecordPermissionsUpdate,
       }),
     );
 
@@ -178,6 +202,7 @@ export class FlatRoleValidatorService {
       ...validateRoleBelongsToCallerApplication({
         referencedRole: fromFlatRole,
         buildOptions,
+        isRecordPermissionsChange: isRoleWideRecordPermissionsUpdate,
       }),
     );
 
@@ -185,6 +210,14 @@ export class FlatRoleValidatorService {
       ...fromFlatRole,
       ...flatEntityUpdate,
     };
+
+    validationResult.errors.push(
+      ...getMarketplaceApplicationRoleAssignabilityErrors({
+        flatRole: toFlatRole,
+        fromFlatRole,
+        buildOptions,
+      }),
+    );
 
     validationResult.errors.push(
       ...validateRoleRequiredPropertiesAreDefined({

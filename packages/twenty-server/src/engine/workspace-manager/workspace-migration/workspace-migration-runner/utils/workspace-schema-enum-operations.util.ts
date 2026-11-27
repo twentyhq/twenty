@@ -2,9 +2,9 @@ import { type FieldMetadataType } from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
 import { type QueryRunner } from 'typeorm';
 
+import { getCompositePropertiesWithColumns } from 'src/engine/metadata-modules/field-metadata/utils/get-composite-properties-with-columns.util';
 import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/composite-field-metadata-type.type';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
-import { getCompositeTypeOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/get-composite-type-or-throw.util';
 import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
@@ -106,9 +106,7 @@ const collectEnumOperationsForCompositeField = ({
   operation: EnumOperation;
   options?: { newTableName?: string; newFieldName?: string };
 }): EnumOperationSpec[] => {
-  const compositeType = getCompositeTypeOrThrow(flatFieldMetadata.type);
-
-  return compositeType.properties
+  return getCompositePropertiesWithColumns(flatFieldMetadata.type)
     .filter((property) => isEnumFieldMetadataType(property.type))
     .map((property) => {
       const columnName = computeCompositeColumnName(

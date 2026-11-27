@@ -6,9 +6,11 @@ import { seedBuiltFrontComponentSharedDependenciesFile } from 'test/integration/
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { uploadApplicationFile } from 'test/integration/metadata/suites/application/utils/upload-application-file.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { v4 as uuidv4 } from 'uuid';
 
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 export type ApplicationWithResources = {
@@ -233,6 +235,9 @@ export const setupApplicationWithResources = async ({
      WHERE id = $3`,
     [SHARED_DEPENDENCIES_BUILT_PATH, 'a'.repeat(64), application.id],
   );
+  await getAppProviderByClassName<WorkspaceCacheService>(
+    'WorkspaceCacheService',
+  ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, ['flatApplicationMaps']);
 
   const [
     logicFunctionId,

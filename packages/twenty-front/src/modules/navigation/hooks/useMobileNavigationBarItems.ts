@@ -5,7 +5,6 @@ import { currentNavigationMenuTabIdState } from '@/navigation-menu-item/common/s
 import { type InboxChatAttention } from '@/inbox/types/InboxChatAttention';
 import { getNavigationMenuTabFolderKey } from '@/navigation-menu-item/common/utils/getNavigationMenuTabFolderKey';
 import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
-import { useHasAiChatSectionInSidebar } from '@/navigation-menu-item/display/hooks/useHasAiChatSectionInSidebar';
 import { useGetNavigationMenuTabLabel } from '@/navigation-menu-item/display/hooks/useGetNavigationMenuTabLabel';
 import { useGetNavigationMenuTabAttentionLabel } from '@/navigation-menu-item/display/hooks/useGetNavigationMenuTabAttentionLabel';
 import { useNavigationMenuChatAttention } from '@/navigation-menu-item/display/hooks/useNavigationMenuChatAttention';
@@ -82,7 +81,6 @@ export const useMobileNavigationBarItems = (): {
   const isCustomizableSidebarEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
   );
-  const hasAiChatSectionInSidebar = useHasAiChatSectionInSidebar();
   const { getIcon } = useIcons();
   const navigationMenuTabs = useWorkspaceNavigationMenuContainers({
     type: NavigationMenuItemType.TAB,
@@ -149,7 +147,6 @@ export const useMobileNavigationBarItems = (): {
     navigate(AppPath.Home, { replace: isSettingsDrawer });
   };
 
-  const homeChatAttention = getTabChatAttention(null);
   const isOnInboxPage = isInboxPath(pathname);
   const inboxAttention: InboxChatAttention | null =
     unreadOpenThreadCount > 0 && !isOnInboxPage ? 'unread' : null;
@@ -176,8 +173,12 @@ export const useMobileNavigationBarItems = (): {
       : 'home';
   };
 
+  const activeItemName = getActiveItemName();
+  const homeChatAttention =
+    activeItemName === 'home' ? null : getTabChatAttention(null);
+
   return {
-    activeItemName: getActiveItemName(),
+    activeItemName,
     items: [
       {
         name: 'home',
@@ -193,7 +194,6 @@ export const useMobileNavigationBarItems = (): {
       isNavigationDrawerTabShown({
         tab: NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
         hasAiPermission,
-        hasAiChatSectionInSidebar,
         isCustomizableSidebarEnabled,
       })
         ? [
@@ -210,7 +210,10 @@ export const useMobileNavigationBarItems = (): {
           ]
         : []),
       ...navigationMenuTabs.map((tab, index): MobileNavigationBarItem => {
-        const attention = getTabChatAttention(tab.id);
+        const attention =
+          activeItemName === `tab-${tab.id}`
+            ? null
+            : getTabChatAttention(tab.id);
 
         return {
           name: `tab-${tab.id}`,

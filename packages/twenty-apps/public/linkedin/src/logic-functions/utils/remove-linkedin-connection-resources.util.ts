@@ -10,6 +10,7 @@ import { isDefined } from 'twenty-sdk/utils';
 import { getLinkedinHistoryImportState } from 'src/logic-functions/utils/get-linkedin-history-import-state.util';
 import { deleteLinkedinHistoryImportData } from 'src/logic-functions/utils/linkedin-history-import-kv.util';
 import { getLinkedinConnectionKvKey } from 'src/logic-functions/utils/get-linkedin-connection-kv-key.util';
+import { getLinkedinProfileLookupsKey } from 'src/logic-functions/utils/get-linkedin-profile-lookups-key.util';
 import { deleteUnipileAccountOrThrow } from 'src/unipile/utils/delete-unipile-account-or-throw.util';
 import { getUnipileAccountClaimKey } from 'src/unipile/utils/get-unipile-account-claim-key.util';
 
@@ -43,6 +44,7 @@ export const removeLinkedinConnectionResources = async ({
 
   if (isNonEmptyString(unipileAccountId)) {
     await deleteUnipileAccountOrThrow(unipileAccountId);
+    await kv.delete(getLinkedinProfileLookupsKey(unipileAccountId));
     await kv.delete(getUnipileAccountClaimKey(unipileAccountId), {
       scope: 'SERVER',
     });

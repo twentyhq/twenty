@@ -10,7 +10,7 @@ import { AddDefaultLayoutNavigationMenuItemsCommand } from 'src/database/command
 import { BackfillBillingCustomerStripeCustomerEmailCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-workspace-command-1795601305717-backfill-billing-customer-stripe-customer-email.command';
 import { AddInboxChannelViewsCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-workspace-command-1795619804236-add-inbox-channel-views.command';
 import { RevokeRoleWideAccessToChannelObjectsUpgradeCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-workspace-command-1795648952060-revoke-role-wide-access-to-channel-objects.command';
-import { AddAiChatChannelAndRecordLinkCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-workspace-command-1795689950740-add-ai-chat-channel-and-record-link-command-menu-items.command';
+import { BackfillListViewIsCompactCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-workspace-command-1795688864238-backfill-list-view-is-compact.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
 import { AgentChatChannelModule } from 'src/engine/metadata-modules/agent-chat-channel/agent-chat-channel.module';
@@ -40,7 +40,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     BackfillBillingCustomerStripeCustomerEmailCommand,
     AddInboxChannelViewsCommand,
     RevokeRoleWideAccessToChannelObjectsUpgradeCommand,
-    AddAiChatChannelAndRecordLinkCommandMenuItemsCommand,
+    BackfillListViewIsCompactCommand,
   ],
 })
 export class V2_64_UpgradeVersionCommandModule {}

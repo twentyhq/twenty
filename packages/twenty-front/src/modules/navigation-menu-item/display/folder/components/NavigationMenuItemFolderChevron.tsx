@@ -4,6 +4,7 @@ import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 const StyledContainer = styled.span<{ isOpen: boolean }>`
   display: inline-flex;
+  flex-shrink: 0;
   transform: rotate(${({ isOpen }) => (isOpen ? 90 : 0)}deg);
   transition: transform
     calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
@@ -23,7 +24,7 @@ export const NavigationMenuItemFolderChevron = ({
   const theme = useTheme();
 
   return (
-    <StyledContainer isOpen={isOpen}>
+    <StyledContainer isOpen={isOpen} aria-hidden>
       <IconChevronRight
         size={theme.icon.size.sm}
         stroke={theme.icon.stroke.sm}

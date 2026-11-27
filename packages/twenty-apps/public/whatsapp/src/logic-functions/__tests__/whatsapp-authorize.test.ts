@@ -31,11 +31,13 @@ describe('whatsappAuthorizeHandler', () => {
       authorizationUrl: 'https://account.unipile.com/qr-page',
     });
 
-    expect(mocks.createAuthLink.mock.calls[0][0].body).toMatchObject({
+    const { body } = mocks.createAuthLink.mock.calls[0][0];
+
+    expect(body).toMatchObject({
       providers: ['whatsapp'],
-      redirect_uri: 'https://twenty.example/apps/callback',
-      state: 'signed-state',
+      redirect_uri: 'https://twenty.example/apps/callback?state=signed-state',
       config: { whatsapp: { allow_methods: ['qr'] } },
     });
+    expect(body).not.toHaveProperty('state');
   });
 });

@@ -33,7 +33,7 @@
   {
     "name": "primitives/data-display",
     "path": "dist/primitives/data-display.mjs",
-    "limit": "170 kB"
+    "limit": "60 kB"
   },
   {
     "name": "primitives/feedback",

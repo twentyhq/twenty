@@ -4,17 +4,20 @@ import { WIDGET_TYPE_TO_RELATION_FIELD_NAME } from '@/page-layout/constants/Widg
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { type WidgetType } from '~/generated-metadata/graphql';
 
 type GetTabsRenderableForTargetObjectParams = {
   tabs: PageLayoutTab[];
   targetObjectFields:
     | Pick<FieldMetadataItem, 'name' | 'isActive' | 'type'>[]
     | undefined;
+  relationFieldNameByWidgetType?: Partial<Record<WidgetType, string>>;
 };
 
 export const getTabsRenderableForTargetObject = ({
   tabs,
   targetObjectFields,
+  relationFieldNameByWidgetType = WIDGET_TYPE_TO_RELATION_FIELD_NAME,
 }: GetTabsRenderableForTargetObjectParams): PageLayoutTab[] => {
   if (!isDefined(targetObjectFields)) {
     return tabs;
@@ -32,7 +35,7 @@ export const getTabsRenderableForTargetObject = ({
 
   return tabs.filter((tab) =>
     tab.widgets.every((widget) => {
-      const relationFieldName = WIDGET_TYPE_TO_RELATION_FIELD_NAME[widget.type];
+      const relationFieldName = relationFieldNameByWidgetType[widget.type];
 
       if (!isDefined(relationFieldName)) {
         return true;

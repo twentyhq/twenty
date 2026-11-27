@@ -1395,7 +1395,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     universalIdentifier: 'bceb0328-c018-48ba-80d8-a1a97dc0a8ba',
     label: i18nLabel(
       msg({
-        message: `Go to Experience Settings`,
+        message: `Go to Experience`,
         context: 'commandMenuItem.label',
       }),
     ),
@@ -1442,7 +1442,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     universalIdentifier: 'ad68e516-96ea-455a-a838-c59788e88c23',
     label: i18nLabel(
       msg({
-        message: `Go to General Settings`,
+        message: `Go to General`,
         context: 'commandMenuItem.label',
       }),
     ),
@@ -1464,7 +1464,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     universalIdentifier: '9302bfeb-f6cd-4858-ab5b-5f70f4d358c4',
     label: i18nLabel(
       msg({
-        message: `Go to Data Model Settings`,
+        message: `Go to Data Model`,
         context: 'commandMenuItem.label',
       }),
     ),
@@ -1486,7 +1486,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     universalIdentifier: 'fb4d9f1b-5b13-49d9-8353-80041719d411',
     label: i18nLabel(
       msg({
-        message: `Go to Members Settings`,
+        message: `Go to Members`,
         context: 'commandMenuItem.label',
       }),
     ),
@@ -1508,7 +1508,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     universalIdentifier: '4050f307-c592-4c9f-ad91-89cde330fbf7',
     label: i18nLabel(
       msg({
-        message: `Go to Roles Settings`,
+        message: `Go to Roles`,
         context: 'commandMenuItem.label',
       }),
     ),
@@ -1530,7 +1530,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     universalIdentifier: '2d071684-fb5e-4222-b560-4c7ab2597fb4',
     label: i18nLabel(
       msg({
-        message: `Go to Domains Settings`,
+        message: `Go to Domains`,
         context: 'commandMenuItem.label',
       }),
     ),
@@ -1552,7 +1552,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     universalIdentifier: 'f46a0fb9-14e9-4d48-801d-c33bdd543f74',
     label: i18nLabel(
       msg({
-        message: `Go to Billing Settings`,
+        message: `Go to Billing`,
         context: 'commandMenuItem.label',
       }),
     ),
@@ -1574,7 +1574,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     universalIdentifier: 'ed2c2fde-1e7a-4a42-ba63-221eaa7c9759',
     label: i18nLabel(
       msg({
-        message: `Go to Developers Settings`,
+        message: `Go to Developers`,
         context: 'commandMenuItem.label',
       }),
     ),
@@ -1595,7 +1595,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   goToSettingsApplications: {
     universalIdentifier: '44db6d7a-79ac-485e-b3da-da8776bd7777',
     label: i18nLabel(
-      msg({ message: `Go to Apps Settings`, context: 'commandMenuItem.label' }),
+      msg({ message: `Go to Apps`, context: 'commandMenuItem.label' }),
     ),
     icon: 'IconApps',
     isPinned: false,
@@ -1614,7 +1614,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   goToSettingsAI: {
     universalIdentifier: '3eaec228-809d-452d-b5ef-7b777398c538',
     label: i18nLabel(
-      msg({ message: `Go to AI Settings`, context: 'commandMenuItem.label' }),
+      msg({ message: `Go to AI`, context: 'commandMenuItem.label' }),
     ),
     icon: 'IconSparkles',
     isPinned: false,
@@ -1634,7 +1634,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     universalIdentifier: '358e69b2-0789-44e2-add7-bdef68413be8',
     label: i18nLabel(
       msg({
-        message: `Go to Security Settings`,
+        message: `Go to Security`,
         context: 'commandMenuItem.label',
       }),
     ),
@@ -1656,7 +1656,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     universalIdentifier: 'dd22798b-fca6-42af-ba3b-0d48f263afbd',
     label: i18nLabel(
       msg({
-        message: `Go to Admin Panel Settings`,
+        message: `Go to Admin Panel`,
         context: 'commandMenuItem.label',
       }),
     ),
@@ -1679,7 +1679,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     universalIdentifier: '5d1ba354-0090-4a42-9a43-601461b26068',
     label: i18nLabel(
       msg({
-        message: `Go to Community Settings`,
+        message: `Go to Community`,
         context: 'commandMenuItem.label',
       }),
     ),

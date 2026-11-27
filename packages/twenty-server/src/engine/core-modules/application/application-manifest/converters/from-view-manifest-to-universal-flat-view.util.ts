@@ -4,7 +4,11 @@ import {
   VIEW_GROUP_LOAD_LIMIT_OPTIONS,
 } from 'twenty-shared/constants';
 import { ViewOpenRecordIn, ViewType } from 'twenty-shared/types';
-import { isDefined, isSupportedViewGroupLoadLimit } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isSupportedViewGroupLoadLimit,
+  isViewCompactByDefault,
+} from 'twenty-shared/utils';
 
 import {
   ApplicationException,
@@ -43,15 +47,17 @@ export const fromViewManifestToUniversalFlatView = ({
   applicationUniversalIdentifier: string;
   now: string;
 }): UniversalFlatView => {
+  const viewType = viewManifest.type ?? ViewType.TABLE;
+
   return {
     universalIdentifier: viewManifest.universalIdentifier,
     applicationUniversalIdentifier,
     name: viewManifest.name,
     objectMetadataUniversalIdentifier: viewManifest.objectUniversalIdentifier,
-    type: viewManifest.type ?? ViewType.TABLE,
+    type: viewType,
     icon: viewManifest.icon ?? 'IconList',
     position: viewManifest.position ?? 0,
-    isCompact: viewManifest.isCompact ?? false,
+    isCompact: viewManifest.isCompact ?? isViewCompactByDefault(viewType),
     isPrivate: false,
     openRecordIn: viewManifest.openRecordIn ?? ViewOpenRecordIn.SIDE_PANEL,
     key: null,
@@ -64,6 +70,8 @@ export const fromViewManifestToUniversalFlatView = ({
       viewManifest.calendarFieldMetadataUniversalIdentifier ?? null,
     calendarEndFieldMetadataUniversalIdentifier:
       viewManifest.calendarEndFieldMetadataUniversalIdentifier ?? null,
+    listPinnedFieldMetadataUniversalIdentifier:
+      viewManifest.listPinnedFieldMetadataUniversalIdentifier ?? null,
     mainGroupByFieldMetadataUniversalIdentifier:
       viewManifest.mainGroupByFieldMetadataUniversalIdentifier ?? null,
     shouldHideEmptyGroups: viewManifest.shouldHideEmptyGroups ?? false,

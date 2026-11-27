@@ -5,4 +5,4 @@ import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/fl
 export const isSystemSideEffectFlatEntity = <T extends AllMetadataName>(
   flatEntity: MetadataUniversalFlatEntity<T>,
 ): boolean =>
-  'isSystemSideEffect' in flatEntity && flatEntity.isSystemSideEffect === true;
+  'isSystemSideEffect' in flatEntity && flatEntity.isSystemSideEffect;

@@ -61,7 +61,7 @@ describe('Chat channel access and triage through the authenticated API', () => {
     const channelId = await createChannel();
 
     const [channel]: { name: string }[] = await global.testDataSource.query(
-      `SELECT name FROM core."agentChatChannel" WHERE id = $1`,
+      `SELECT name FROM core."inboxChannel" WHERE id = $1`,
       [channelId],
     );
 
@@ -319,7 +319,7 @@ describe('Chat channel access and triage through the authenticated API', () => {
     });
 
     await queryRunner.query(
-      `DELETE FROM core."agentChatChannelRole" WHERE "channelId" = $1 AND "roleId" = $2`,
+      `DELETE FROM core."inboxChannelRole" WHERE "channelId" = $1 AND "roleId" = $2`,
       [channelId, memberRoleId],
     );
     markChannelCacheStale();

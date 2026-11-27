@@ -13,7 +13,6 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { type UserSessionRevokedReason } from 'src/engine/core-modules/user-session/types/user-session-revoked-reason.type';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { type AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -71,7 +70,7 @@ export class AppTokenEntity {
   @Column({ nullable: true, type: 'uuid' })
   workspaceId: string | null;
 
-  @Column({ nullable: false, type: 'text', default: AppTokenType.RefreshToken })
+  @Column({ nullable: false, type: 'text' })
   type: AppTokenType;
 
   @Column({ nullable: true, type: 'text' })
@@ -110,7 +109,6 @@ export class AppTokenEntity {
     scope?: string;
     resource?: string;
     authProvider?: AuthProviderEnum;
-    revokedReason?: UserSessionRevokedReason;
     issuedByUserId?: string;
     twoFactorAuthenticationMethodId?: string;
   } | null;

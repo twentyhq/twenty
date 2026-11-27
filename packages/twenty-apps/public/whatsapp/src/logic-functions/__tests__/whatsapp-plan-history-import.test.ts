@@ -1,10 +1,11 @@
-import { isArray, isObject } from '@sniptt/guards';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { type WhatsappHistoryImportState } from 'src/types/whatsapp-history-import-state.type';
+import { getWhatsappChatJobIdSegment } from 'src/logic-functions/utils/get-whatsapp-history-import-job-id.util';
 
 const mocks = vi.hoisted(() => ({
   getConnection: vi.fn(),
+  listMessageChannels: vi.fn(),
   enqueueJobs: vi.fn(),
   kvStore: new Map<string, unknown>(),
   listUnipileChats: vi.fn(),
@@ -18,6 +19,7 @@ vi.mock('twenty-sdk/logic-function', () => ({
   AppConnectionAuthFailedError: class extends Error {},
   RetryableLogicFunctionError: class RetryableLogicFunctionError extends Error {},
   getConnection: mocks.getConnection,
+  listMessageChannels: mocks.listMessageChannels,
   enqueueJobs: mocks.enqueueJobs,
   kv: {
     get: async (key: string) => mocks.kvStore.get(key) ?? null,
@@ -52,201 +54,167 @@ const RUNNING_STATE: WhatsappHistoryImportState = {
 
 const PAYLOAD = { connectedAccountId: 'connection-id', runId: 'run-1' };
 
-const buildChatIds = ({
-  count,
-  offset = 0,
-}: {
-  count: number;
-  offset?: number;
-}) => Array.from({ length: count }, (_, index) => `chat-${offset + index}`);
-
+// Newest first across pages, but shuffled inside each page as Unipile may return them
 const mockChatPages = (pageSizes: number[]) => {
-  pageSizes.forEach((pageSize, pageIndex) =>
+  let chatIndex = 0;
+
+  pageSizes.forEach((pageSize, pageIndex) => {
+    const items = Array.from({ length: pageSize }, () => {
+      const index = chatIndex++;
+
+      return {
+        id: `chat-${index}`,
+        last_message_timestamp: new Date(
+          Date.UTC(2026, 0, 1) - index * 60_000,
+        ).toISOString(),
+      };
+    }).reverse();
+
     mocks.listUnipileChats.mockResolvedValueOnce({
-      items: buildChatIds({ count: pageSize, offset: pageIndex * 20 }).map(
-        (id, index) => ({
-          id,
-          last_message_timestamp: new Date(
-            Date.UTC(2026, 0, 1) - (pageIndex * 20 + index) * 60_000,
-          ).toISOString(),
-        }),
-      ),
+      items,
       nextCursor:
         pageIndex < pageSizes.length - 1
           ? `cursor-${pageIndex + 1}`
           : undefined,
-    }),
-  );
+    });
+  });
 };
 
-const getEnqueuedJobIds = (): string[] =>
-  mocks.enqueueJobs.mock.calls.flatMap(([input]) =>
-    input.jobs.map((job: { jobId: string }) => job.jobId),
-  );
-
-const getStoredChatIds = (chunkIndex: number) => {
-  const chats = mocks.kvStore.get(
-    `whatsapp-history-import-chats:connection-id:run-1:${chunkIndex}`,
-  );
-
-  return isArray(chats)
-    ? chats.map((chat) => (isObject(chat) && 'id' in chat ? chat.id : chat))
-    : undefined;
-};
+const getEnqueueInputs = () =>
+  mocks.enqueueJobs.mock.calls.map(([input]) => input);
 
 describe('whatsappPlanHistoryImportHandler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.useRealTimers();
     vi.spyOn(console, 'log').mockImplementation(() => {});
-    mocks.listUnipileChats.mockReset();
     mocks.kvStore.clear();
     mocks.kvStore.set(STATE_KEY, RUNNING_STATE);
     mocks.getConnection.mockResolvedValue({ externalAccountId: 'acc_1' });
+    mocks.listMessageChannels.mockResolvedValue([
+      { id: 'channel-id', handle: '+33600000000' },
+    ]);
+    mocks.listUnipileChats.mockReset();
   });
 
-  it('stores the most recent conversations for the import jobs, 20 at a time', async () => {
-    mockChatPages([20, 20, 5]);
+  it('lists the conversations most recent first and starts their contacts with the latest one only', async () => {
+    mockChatPages([25, 25, 10]);
 
     await expect(whatsappPlanHistoryImportHandler(PAYLOAD)).resolves.toEqual({
       status: 'PLANNED',
-      chunkCount: 3,
+      conversationCount: 50,
     });
 
-    expect(getStoredChatIds(0)).toEqual(buildChatIds({ count: 20 }));
-    expect(getStoredChatIds(2)).toEqual(buildChatIds({ count: 5, offset: 40 }));
-    expect(mocks.kvStore.get(STATE_KEY)).toEqual(RUNNING_STATE);
+    const chatIds = Array.from({ length: 50 }, (_, index) => `chat-${index}`);
+
+    expect(getEnqueueInputs()).toEqual([
+      expect.objectContaining({
+        limiter: { max: 60, durationMs: 60_000 },
+        jobs: [
+          expect.objectContaining({
+            jobId: `whatsapp-history-contacts-run-1-${getWhatsappChatJobIdSegment('chat-0')}-0`,
+          }),
+        ],
+      }),
+    ]);
     expect(mocks.kvStore.get(PLANNING_KEY)).toEqual({
-      plannedChunkCount: 3,
-      plannedConversationCount: 45,
-      reportedConversationCount: 45,
-      chunkCount: 3,
+      chatIds,
       planJobId: 'whatsapp-history-plan-run-1-0',
     });
-  });
-
-  it('asks WhatsApp for no more conversations than the member chose', async () => {
-    mocks.kvStore.set(STATE_KEY, { ...RUNNING_STATE, conversationLimit: 20 });
-    mockChatPages([15, 5]);
-
-    await whatsappPlanHistoryImportHandler(PAYLOAD);
-
     expect(
-      mocks.listUnipileChats.mock.calls.map(([input]) => [
-        input.limit,
-        input.cursor,
-      ]),
-    ).toEqual([
-      [20, undefined],
-      [5, 'cursor-1'],
-    ]);
-    expect(getStoredChatIds(0)).toHaveLength(20);
-    expect(getStoredChatIds(1)).toBeUndefined();
+      mocks.kvStore.get(
+        'whatsapp-history-import-chat:connection-id:run-1:chat-0',
+      ),
+    ).toEqual(
+      expect.objectContaining({
+        status: 'IMPORTING',
+        job: {
+          kind: 'CONTACTS',
+          payload: {
+            ...PAYLOAD,
+            chat: expect.objectContaining({ id: 'chat-0' }),
+          },
+        },
+      }),
+    );
+    expect(
+      mocks.kvStore.get(
+        'whatsapp-history-import-chat:connection-id:run-1:chat-1',
+      ),
+    ).toEqual({
+      status: 'PENDING',
+      chat: expect.objectContaining({ id: 'chat-1' }),
+    });
   });
 
-  it('hands the conversations the member selected to the import jobs without reading them', async () => {
+  it('queues only the conversations the member selected, most recent first', async () => {
     mocks.kvStore.set(STATE_KEY, {
       ...RUNNING_STATE,
       importPolicy: 'SELECTED',
     });
     mocks.kvStore.set('whatsapp-settings:connection-id', {
       importPolicy: 'SELECTED',
-      selectedChats: buildChatIds({ count: 25 }).map((id) => ({
+      selectedChats: ['chat-old', 'chat-1', 'chat-3'].map((id) => ({
         id,
         name: id,
       })),
     });
-
-    await expect(whatsappPlanHistoryImportHandler(PAYLOAD)).resolves.toEqual({
-      status: 'PLANNED',
-      chunkCount: 2,
-    });
-
-    expect(getStoredChatIds(0)).toEqual(buildChatIds({ count: 20 }));
-    expect(getStoredChatIds(1)).toEqual(buildChatIds({ count: 5, offset: 20 }));
-    expect(mocks.listUnipileChats).not.toHaveBeenCalled();
-  });
-
-  it('starts the import chain on the first page only', async () => {
-    mockChatPages([20, 20, 5]);
-
-    await whatsappPlanHistoryImportHandler(PAYLOAD);
-
-    expect(getEnqueuedJobIds()).toEqual(['whatsapp-history-chunk-run-1-0']);
-  });
-
-  it('restarts the import chain when it caught up with the listing', async () => {
-    mocks.kvStore.set('whatsapp-history-import-progress:connection-id:run-1', {
-      completedChunkCount: 1,
-      completedConversationCount: 20,
-      importedConversationCount: 12,
-      currentChunkProcessedCount: 0,
-    });
-    mockChatPages([20, 20]);
-
-    await whatsappPlanHistoryImportHandler(PAYLOAD);
-
-    expect(getEnqueuedJobIds()).toEqual(['whatsapp-history-chunk-run-1-1']);
-  });
-
-  it('stops waiting on Unipile before the planning job runs out of time', async () => {
-    vi.useFakeTimers({ now: 0 });
     mockChatPages([5]);
 
     await whatsappPlanHistoryImportHandler(PAYLOAD);
 
-    expect(mocks.listUnipileChats).toHaveBeenCalledWith(
-      expect.objectContaining({ deadlineAtMs: 10 * 60 * 1000 }),
+    expect(mocks.kvStore.get(PLANNING_KEY)).toEqual(
+      expect.objectContaining({ chatIds: ['chat-1', 'chat-3', 'chat-old'] }),
     );
   });
 
-  it('lists again once the rate limit resets', async () => {
-    vi.useFakeTimers({ now: 0 });
-    mocks.listUnipileChats.mockRejectedValueOnce(
-      new UnipileRateLimitError('Retry in 2 hours.', 2 * 60 * 60 + 1),
+  it('records a run with no conversations as fully listed', async () => {
+    mockChatPages([0]);
+
+    await expect(whatsappPlanHistoryImportHandler(PAYLOAD)).resolves.toEqual({
+      status: 'PLANNED',
+      conversationCount: 0,
+    });
+    expect(mocks.enqueueJobs).not.toHaveBeenCalled();
+    expect(mocks.kvStore.get(PLANNING_KEY)).toEqual(
+      expect.objectContaining({ chatIds: [] }),
+    );
+  });
+
+  it('pauses the listing until the limit resets', async () => {
+    vi.useFakeTimers({ now: Date.UTC(2026, 0, 1) });
+    mocks.listUnipileChats.mockRejectedValue(
+      new UnipileRateLimitError('Too many requests', 120),
     );
 
     await expect(whatsappPlanHistoryImportHandler(PAYLOAD)).resolves.toEqual({
-      status: 'CONTINUED',
+      status: 'PAUSED',
     });
-
-    expect(mocks.enqueueJobs.mock.lastCall?.[0]).toEqual(
+    expect(getEnqueueInputs()).toEqual([
       expect.objectContaining({
+        delayMs: 120_000,
         jobs: [
           {
             jobId: 'whatsapp-history-plan-run-1-1',
             payload: { ...PAYLOAD, continuationIndex: 1 },
           },
         ],
-        delayMs: (2 * 60 * 60 + 1) * 1000,
       }),
-    );
+    ]);
     expect(mocks.kvStore.get(PLANNING_KEY)).toEqual({
-      plannedChunkCount: 0,
-      plannedConversationCount: 0,
       planJobId: 'whatsapp-history-plan-run-1-1',
-      resumeAt: new Date((2 * 60 * 60 + 1) * 1000).toISOString(),
+      resumeAt: '2026-01-01T00:02:00.000Z',
     });
+    vi.useRealTimers();
   });
 
-  it('records a run with no conversations as fully listed', async () => {
-    mockChatPages([0]);
-
-    await whatsappPlanHistoryImportHandler(PAYLOAD);
-
-    expect(mocks.enqueueJobs).not.toHaveBeenCalled();
-    expect(mocks.kvStore.get(PLANNING_KEY)).toEqual(
-      expect.objectContaining({ chunkCount: 0 }),
-    );
-  });
-
-  it('lists nothing for a cancelled run', async () => {
+  it('does nothing once the run is cancelled', async () => {
     mocks.kvStore.set(STATE_KEY, { ...RUNNING_STATE, status: 'CANCELLED' });
 
     await expect(whatsappPlanHistoryImportHandler(PAYLOAD)).resolves.toEqual({
       status: 'CANCELLED',
     });
     expect(mocks.listUnipileChats).not.toHaveBeenCalled();
+    expect(mocks.enqueueJobs).not.toHaveBeenCalled();
   });
 
   it('records a listing error Twenty will not retry', async () => {

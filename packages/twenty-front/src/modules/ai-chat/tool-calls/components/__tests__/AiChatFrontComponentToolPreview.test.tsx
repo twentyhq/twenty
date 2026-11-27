@@ -48,6 +48,7 @@ const approval = (
     template: 'frontComponent',
     arguments: { draftId, checksum: 'a'.repeat(64) },
   },
+  isPostedByWorkflow: false,
 });
 
 describe('AiChatFrontComponentToolPreview', () => {

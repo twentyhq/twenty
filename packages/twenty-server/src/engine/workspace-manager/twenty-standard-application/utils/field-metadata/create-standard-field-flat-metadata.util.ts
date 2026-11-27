@@ -147,5 +147,6 @@ export const createStandardFieldFlatMetadata = <
     relationRowLevelPermissionPredicateUniversalIdentifiers: [],
     workspaceMemberRowLevelPermissionPredicateUniversalIdentifiers: [],
     universalSettings: settings ?? null,
+    formula: null,
   };
 };

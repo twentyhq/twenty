@@ -17,6 +17,7 @@ export type RecordFormCandidateFlatFieldMetadata = Pick<
   | 'isUIEditable'
   | 'isSystemSideEffect'
   | 'universalSettings'
+  | 'formula'
   | 'applicationUniversalIdentifier'
   | 'overrides'
 >;
@@ -41,7 +42,7 @@ export const isFlatFieldMetadataEligibleForRecordForm = (
     isSystem: flatFieldMetadata.isSystem,
     isUIEditable: isFieldMetadataUIEditable({
       isUIEditable: flatFieldMetadata.isUIEditable,
-      settings: universalSettings,
+      formula: flatFieldMetadata.formula,
     }),
     relationType:
       isDefined(universalSettings) && 'relationType' in universalSettings

@@ -4,6 +4,7 @@ import {
   extractAndSanitizeObjectStringFields,
   isDefined,
   isNonEmptyArray,
+  isViewCompactByDefault,
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 
@@ -101,9 +102,26 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
   const { groupLoadLimit, ...updateViewInputWithoutGroupLoadLimit } =
     updateViewInputWithoutTranslations;
 
+  const effectiveExistingFlatView = resolveEffectiveFlatEntity({
+    metadataName: 'view',
+    flatEntity: existingFlatViewToUpdate,
+  });
+
+  const { type: updatedViewType, isCompact: updatedIsCompact } =
+    updateViewInputWithoutGroupLoadLimit;
+
+  const isViewCompactDefaultChanging =
+    isDefined(updatedViewType) &&
+    isViewCompactByDefault(updatedViewType) !==
+      isViewCompactByDefault(effectiveExistingFlatView.type);
+
   const editableProperties = extractAndSanitizeObjectStringFields(
     {
       ...updateViewInputWithoutGroupLoadLimit,
+      ...(isViewCompactDefaultChanging &&
+        !isDefined(updatedIsCompact) && {
+          isCompact: isViewCompactByDefault(updatedViewType),
+        }),
       ...(groupLoadLimit !== undefined && {
         groupLoadLimit: groupLoadLimit ?? DEFAULT_VIEW_GROUP_LOAD_LIMIT,
       }),
@@ -198,6 +216,20 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
       calendarEndFieldMetadataUniversalIdentifier;
   }
 
+  if (updatedEditableProperties.listPinnedFieldMetadataId !== undefined) {
+    const { listPinnedFieldMetadataUniversalIdentifier } =
+      resolveEntityRelationUniversalIdentifiers({
+        metadataName: 'view',
+        foreignKeyValues: {
+          listPinnedFieldMetadataId: mergedRecord.listPinnedFieldMetadataId,
+        },
+        flatEntityMaps: { flatFieldMetadataMaps },
+      });
+
+    flatViewToUpdate.listPinnedFieldMetadataUniversalIdentifier =
+      listPinnedFieldMetadataUniversalIdentifier;
+  }
+
   if (updatedEditableProperties.mainGroupByFieldMetadataId !== undefined) {
     const { mainGroupByFieldMetadataUniversalIdentifier } =
       resolveEntityRelationUniversalIdentifiers({
@@ -223,11 +255,6 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
   } else {
     flatViewToUpdate.universalOverrides = null;
   }
-
-  const effectiveExistingFlatView = resolveEffectiveFlatEntity({
-    metadataName: 'view',
-    flatEntity: existingFlatViewToUpdate,
-  });
 
   const effectiveFlatViewToUpdate = resolveEffectiveFlatEntity({
     metadataName: 'view',

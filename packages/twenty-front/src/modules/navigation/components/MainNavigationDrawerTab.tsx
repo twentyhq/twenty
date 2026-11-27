@@ -1,7 +1,11 @@
 import { NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerCollapsedButtonSize';
 import { styled } from '@linaria/react';
 import { motion, useReducedMotion } from 'framer-motion';
-import { type ReactNode } from 'react';
+import {
+  type ComponentPropsWithRef,
+  type MouseEvent,
+  type ReactNode,
+} from 'react';
 import { type IconComponent } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
@@ -11,7 +15,9 @@ import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 const StyledMode = styled.button<{
   isActive: boolean;
   isExpanded: boolean;
+  isLabelHidden: boolean;
   isLabelShown: boolean;
+  isSelectedInEditMode: boolean;
 }>`
   align-items: center;
   background: ${({ isActive }) =>
@@ -35,15 +41,22 @@ const StyledMode = styled.button<{
   font-weight: ${themeCssVariables.font.weight.medium};
   gap: ${({ isLabelShown }) =>
     isLabelShown ? themeCssVariables.spacing[1] : '0'};
-  height: ${({ isExpanded }) =>
-    isExpanded
+  height: ${({ isExpanded, isLabelHidden }) =>
+    isExpanded && !isLabelHidden
       ? themeCssVariables.spacing[7]
       : `${NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE}px`};
   justify-content: ${({ isExpanded }) =>
     isExpanded ? 'flex-start' : 'center'};
   min-width: 0;
-  padding: ${({ isExpanded }) =>
-    isExpanded ? `0 ${themeCssVariables.spacing['1.5']}` : '0'};
+  outline: ${({ isSelectedInEditMode }) =>
+    isSelectedInEditMode
+      ? `1px solid ${themeCssVariables.color.blue}`
+      : 'none'};
+  outline-offset: -1px;
+  padding: ${({ isExpanded, isLabelHidden }) =>
+    isExpanded
+      ? `0 ${isLabelHidden ? themeCssVariables.spacing[2] : themeCssVariables.spacing['1.5']}`
+      : '0'};
   transition:
     background calc(${themeCssVariables.animation.duration.fast} * 1s) ease,
     color calc(${themeCssVariables.animation.duration.fast} * 1s) ease,
@@ -90,7 +103,10 @@ const StyledModeLabelBase = styled.span`
 
 const StyledModeLabel = motion.create(StyledModeLabelBase);
 
-type MainNavigationDrawerTabProps = {
+type MainNavigationDrawerTabProps = Omit<
+  ComponentPropsWithRef<'button'>,
+  'onClick'
+> & {
   Icon: IconComponent;
   label: string;
   isActive: boolean;
@@ -98,10 +114,11 @@ type MainNavigationDrawerTabProps = {
   isDisabled: boolean;
   tooltip: string;
   shouldShowTooltip: boolean;
-  onClick: () => void;
+  onClick: (event: MouseEvent<HTMLButtonElement>) => void;
   ariaLabel?: string;
   iconAccessory?: ReactNode;
   isLabelHidden?: boolean;
+  isSelectedInEditMode?: boolean;
 };
 
 export const MainNavigationDrawerTab = ({
@@ -116,33 +133,47 @@ export const MainNavigationDrawerTab = ({
   ariaLabel,
   iconAccessory,
   isLabelHidden = false,
+  isSelectedInEditMode = false,
+  ...buttonProps
 }: MainNavigationDrawerTabProps) => {
   const theme = useTheme();
   const shouldReduceMotion = useReducedMotion();
   const isLabelShown = isExpanded && isActive && !isLabelHidden;
+
+  const getTooltipSide = () => {
+    if (!isExpanded) {
+      return 'right';
+    }
+
+    return isLabelHidden ? 'top' : 'bottom';
+  };
 
   return (
     <Tooltip
       content={tooltip}
       disabled={!shouldShowTooltip && !isDisabled}
       delay={TooltipDelay.noDelay}
-      side={isExpanded ? 'bottom' : 'right'}
+      side={getTooltipSide()}
       positionMethod="fixed"
     >
       <StyledMode
+        // oxlint-disable-next-line react/jsx-props-no-spreading
+        {...buttonProps}
         type="button"
         isActive={isActive}
         isExpanded={isExpanded}
+        isLabelHidden={isLabelHidden}
         isLabelShown={isLabelShown}
+        isSelectedInEditMode={isSelectedInEditMode}
         aria-label={ariaLabel ?? label}
         aria-current={isActive || undefined}
         aria-disabled={isDisabled}
-        onClick={() => {
+        onClick={(event) => {
           if (isDisabled) {
             return;
           }
 
-          onClick();
+          onClick(event);
         }}
       >
         <StyledModeIcon>

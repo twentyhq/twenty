@@ -92,6 +92,25 @@ describe('useActiveNavigationDrawerTab', () => {
     expect(result.current).toBe(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
   });
 
+  it('is the navigation menu mode on the AI chat and inbox pages with the customizable sidebar enabled', () => {
+    jest.mocked(useIsFeatureEnabled).mockReturnValue(true);
+
+    expect(
+      renderActiveNavigationDrawerMode({ pathname: '/inbox' }).result.current,
+    ).toBe(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
+    expect(
+      renderActiveNavigationDrawerMode({
+        pathname: '/chat/20202020-0687-4c41-b707-ed1bfca972a7',
+      }).result.current,
+    ).toBe(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
+    expect(
+      renderActiveNavigationDrawerMode({
+        pathname: '/objects/people',
+        activeTab: NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
+      }).result.current,
+    ).toBe(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
+  });
+
   it('keeps the chat history while customizing with the customizable sidebar disabled', () => {
     const { result } = renderActiveNavigationDrawerMode({
       pathname: '/objects/people',

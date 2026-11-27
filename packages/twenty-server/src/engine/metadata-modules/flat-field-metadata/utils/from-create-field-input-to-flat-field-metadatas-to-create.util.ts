@@ -23,7 +23,6 @@ import { getDefaultFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fi
 import { sanitizeSelectOptions } from 'src/engine/metadata-modules/flat-field-metadata/utils/sanitize-select-options.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
-import { keepFormulaSettings } from 'src/engine/metadata-modules/formula-field/utils/keep-formula-settings.util';
 
 export type FromCreateFieldInputToFlatObjectMetadataArgs = {
   createFieldInput: Omit<CreateFieldInput, 'workspaceId'>;
@@ -118,9 +117,7 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
               type: createFieldInput.type,
               defaultValue: commonFlatFieldMetadata.defaultValue as string, // Could this be improved ?
               options: generateRatingOptions(),
-              universalSettings: keepFormulaSettings(
-                commonFlatFieldMetadata.universalSettings,
-              ),
+              universalSettings: null,
             } satisfies UniversalFlatFieldMetadata<
               typeof createFieldInput.type
             >,
@@ -154,12 +151,7 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
               type: createFieldInput.type,
               options,
               defaultValue: commonFlatFieldMetadata.defaultValue as string, // Could this be improved ?
-              universalSettings:
-                createFieldInput.type === FieldMetadataType.MULTI_SELECT
-                  ? null
-                  : keepFormulaSettings(
-                      commonFlatFieldMetadata.universalSettings,
-                    ),
+              universalSettings: null,
             } satisfies UniversalFlatFieldMetadata<
               typeof createFieldInput.type
             >,

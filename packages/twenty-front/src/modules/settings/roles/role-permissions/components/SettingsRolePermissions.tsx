@@ -20,13 +20,16 @@ const StyledRolePermissionsContainer = styled.div`
 
 type SettingsRolePermissionsProps = {
   roleId: string;
-  isEditable: boolean;
+  // TODO(@charlesBochet): temporary Admin record permissions exception, remove once the workspace owns Admin's record permissions
+  areRecordPermissionsEditable: boolean;
+  arePermissionFlagsEditable: boolean;
   fromAgentId?: string;
 };
 
 export const SettingsRolePermissions = ({
   roleId,
-  isEditable,
+  areRecordPermissionsEditable,
+  arePermissionFlagsEditable,
   fromAgentId,
 }: SettingsRolePermissionsProps) => {
   const isAiChatInboxEnabled = useIsFeatureEnabled(
@@ -47,20 +50,20 @@ export const SettingsRolePermissions = ({
       <SettingsRoleDraftSyncEffect roleId={roleId} />
       <SettingsRolePermissionsObjectsSection
         roleId={roleId}
-        isEditable={isEditable}
+        isEditable={areRecordPermissionsEditable}
       />
       <SettingsRolePermissionsSettingsSection
         roleId={roleId}
-        isEditable={isEditable}
+        isEditable={arePermissionFlagsEditable}
       />
       <SettingsRolePermissionsToolSection
         roleId={roleId}
-        isEditable={isEditable}
+        isEditable={arePermissionFlagsEditable}
       />
       {shouldShowInboxChannelsSection && (
         <SettingsRolePermissionsInboxChannelsSection
           roleId={roleId}
-          isEditable={isEditable}
+          isEditable={arePermissionFlagsEditable}
         />
       )}
     </StyledRolePermissionsContainer>
