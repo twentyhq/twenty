@@ -1,5 +1,5 @@
 /* @license Enterprise */
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isObject, isString } from '@sniptt/guards';
 
 import { styled } from '@linaria/react';
 import { useContext, useMemo } from 'react';
@@ -13,8 +13,6 @@ import {
   isDefined,
   type RelativeDateFilter,
 } from 'twenty-shared/utils';
-import { IconEraser } from 'twenty-ui/icon';
-import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { type JsonValue } from 'type-fest';
 
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
@@ -27,6 +25,8 @@ import { configurableViewFilterOperands } from '@/object-record/object-filter-dr
 import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
+import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
+import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import { FormRelativeDatePicker } from '@/object-record/record-field/ui/form-types/components/FormRelativeDatePicker';
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
@@ -34,10 +34,12 @@ import { type RLSDynamicValue } from '@/object-record/record-filter/types/Record
 import { isValidSubFieldName } from '@/settings/data-model/utils/isValidSubFieldName';
 import { SettingsRoleRuleConditionVariablePicker } from '@/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionVariablePicker';
 import { RuleConditionVariablePickerContext } from '@/settings/roles/role-permissions/rule-conditions/contexts/RuleConditionVariablePickerContext';
+import { BaseChip } from '@/ui/input/components/BaseChip';
+import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/stringifyRelativeDateFilter';
-import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { useLingui } from '@lingui/react/macro';
 
 const StyledContainer = styled.div`
@@ -49,51 +51,11 @@ const StyledContainer = styled.div`
   min-width: 0;
 `;
 
-const StyledIconContainer = styled.div`
+const StyledChipContainer = styled.div`
   align-items: center;
-  background-color: ${themeCssVariables.background.transparent.lighter};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-bottom-right-radius: ${themeCssVariables.border.radius.sm};
-  border-left: none;
-  border-top-right-radius: ${themeCssVariables.border.radius.sm};
-  color: ${themeCssVariables.font.color.tertiary};
-  cursor: pointer;
   display: flex;
-  justify-content: center;
-  padding: ${themeCssVariables.spacing[2]};
-
-  &:hover {
-    background-color: ${themeCssVariables.background.transparent.light};
-  }
-`;
-
-const StyledReadOnlyInput = styled.div`
-  align-items: center;
-  background-color: ${themeCssVariables.background.secondary};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-bottom-left-radius: ${themeCssVariables.border.radius.sm};
-  border-top-left-radius: ${themeCssVariables.border.radius.sm};
-  box-sizing: border-box;
-  color: ${themeCssVariables.font.color.primary};
-  display: flex;
-  flex: 1;
-  font-size: ${themeCssVariables.font.size.md};
-  gap: ${themeCssVariables.spacing[1]};
-  height: 32px;
-  overflow: hidden;
-  padding: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledMeText = styled.span`
-  color: ${themeCssVariables.color.blue};
-  flex-shrink: 0;
-`;
-
-const StyledFieldLabel = styled.span`
+  margin-left: ${themeCssVariables.spacing[2]};
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 `;
 
 const StyledFormFieldInputWrapper = styled.div`
@@ -112,11 +74,11 @@ const StyledRelativeDateContainer = styled.div`
 `;
 
 const getConditionValueAsString = (value: JsonValue) => {
-  if (typeof value === 'string') {
+  if (isString(value)) {
     return value;
   }
 
-  if (Array.isArray(value) || (typeof value === 'object' && value !== null)) {
+  if (Array.isArray(value) || isObject(value)) {
     return JSON.stringify(value);
   }
 
@@ -167,7 +129,6 @@ export const SettingsRoleRuleConditionValueInput = ({
   recordFilterId,
 }: SettingsRoleRuleConditionValueInputProps) => {
   const { t } = useLingui();
-  const theme = useTheme();
   const { objectMetadataItem } = useContext(AdvancedFilterContext);
 
   const currentRecordFilters = useAtomComponentStateValue(
@@ -272,32 +233,38 @@ export const SettingsRoleRuleConditionValueInput = ({
   };
 
   if (isDynamicMode) {
-    const tooltipId = `rule-condition-value-${recordFilterId}`;
-    const fullLabel = isDefined(workspaceMemberFieldLabel)
+    const meLabel = isDefined(workspaceMemberFieldLabel)
       ? t`Me / ${workspaceMemberFieldLabel}`
       : t`Me`;
+    const instanceId = `rule-condition-value-${recordFilterId}`;
 
     return (
       <StyledContainer>
-        <Tooltip
-          content={fullLabel}
-          delay={TooltipDelay.shortDelay}
-          side="bottom"
-          positionMethod="fixed"
+        <RuleConditionVariablePickerContext.Provider
+          value={{ recordFilterId, onSelect: handleSelectDynamicValue }}
         >
-          <StyledReadOnlyInput id={tooltipId}>
-            <StyledMeText>{t`Me`}</StyledMeText>
-            {isDefined(workspaceMemberFieldLabel) && (
-              <StyledFieldLabel>{` / ${workspaceMemberFieldLabel}`}</StyledFieldLabel>
-            )}
-          </StyledReadOnlyInput>
-        </Tooltip>
-        <StyledIconContainer
-          onClick={handleResetToStaticValue}
-          aria-label={t`Reset to static value`}
-        >
-          <IconEraser size={theme.icon.size.sm} />
-        </StyledIconContainer>
+          <StyledFormFieldInputWrapper>
+            <FormFieldInputContainer>
+              <FormFieldInputRowContainer>
+                <FormFieldInputInnerContainer
+                  formFieldInputInstanceId={instanceId}
+                  hasRightElement
+                >
+                  <StyledChipContainer>
+                    <BaseChip
+                      label={meLabel}
+                      onRemove={handleResetToStaticValue}
+                      removeAriaLabel={t`Remove Me value`}
+                    />
+                  </StyledChipContainer>
+                </FormFieldInputInnerContainer>
+                <SettingsRoleRuleConditionVariablePicker
+                  instanceId={instanceId}
+                />
+              </FormFieldInputRowContainer>
+            </FormFieldInputContainer>
+          </StyledFormFieldInputWrapper>
+        </RuleConditionVariablePickerContext.Provider>
       </StyledContainer>
     );
   }
@@ -361,7 +328,7 @@ export const SettingsRoleRuleConditionValueInput = ({
           onChange={handleChange}
           options={fieldMetadataItem?.options ?? []}
           VariablePicker={SettingsRoleRuleConditionVariablePicker}
-          dropdownWidth={200}
+          dropdownWidth={GenericDropdownContentWidth.Medium}
         />
       );
     }

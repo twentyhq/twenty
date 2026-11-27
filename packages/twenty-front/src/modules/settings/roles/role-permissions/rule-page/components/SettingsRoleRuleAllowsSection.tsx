@@ -4,6 +4,7 @@ import {
   SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG,
   type SettingsRoleObjectPermissionKey,
 } from '@/settings/roles/role-permissions/object-overrides/constants/SettingsRoleObjectPermissionIconConfig';
+import { SettingsRolePermissionsObjectFieldsSelect } from '@/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect';
 import { SETTINGS_ROLE_OBJECT_PERMISSION_KEYS } from '@/settings/roles/role-permissions/object-overrides/constants/SettingsRoleObjectPermissionKeys';
 import { useObjectDisabledOperations } from '@/settings/roles/role-permissions/object-overrides/hooks/useObjectDisabledOperations';
 import { useRowLevelPermissionRulesInDraftRole } from '@/settings/roles/role-permissions/object-overrides/hooks/useRowLevelPermissionRulesInDraftRole';
@@ -12,11 +13,22 @@ import { getObjectOperationsWithReadDependency } from '@/settings/roles/role-per
 import { getRecordsGrantOperations } from '@/settings/roles/role-permissions/object-overrides/utils/getRecordsGrantOperations';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { type RowLevelPermissionRule } from '~/generated-metadata/graphql';
+
+const FIELDS_SELECT_WIDTH = 200;
+
+const StyledFieldsSelectContainer = styled.div`
+  width: ${FIELDS_SELECT_WIDTH}px;
+
+  &:empty {
+    display: none;
+  }
+`;
 
 type SettingsRoleRuleAllowsSectionProps = {
   roleId: string;
@@ -58,6 +70,46 @@ export const SettingsRoleRuleAllowsSection = ({
     recordsGrant: rule,
     disabledOperations,
   });
+
+  const rootPredicateGroupId = (
+    settingsDraftRole.rowLevelPermissionPredicateGroups ?? []
+  ).find(
+    (predicateGroup) =>
+      predicateGroup.rowLevelPermissionRuleId === rule.id &&
+      !isDefined(predicateGroup.parentRowLevelPermissionPredicateGroupId),
+  )?.id;
+
+  const renderFieldsSelect = (operation: SettingsRoleObjectPermissionKey) => {
+    if (
+      objectMetadataItem.isSystem ||
+      (operation !== 'canReadObjectRecords' &&
+        operation !== 'canUpdateObjectRecords')
+    ) {
+      return undefined;
+    }
+
+    const isAllowedOnAllRecords = allRecordsOperations.includes(operation);
+
+    return (
+      <StyledFieldsSelectContainer>
+        <SettingsRolePermissionsObjectFieldsSelect
+          roleId={roleId}
+          objectMetadataItem={objectMetadataItem}
+          mode={operation === 'canReadObjectRecords' ? 'read' : 'update'}
+          rowLevelPermissionPredicateGroupId={
+            isAllowedOnAllRecords ? undefined : rootPredicateGroupId
+          }
+          disabled={
+            !settingsDraftRole.areRecordPermissionsEditable ||
+            isAllowedOnAllRecords ||
+            !ruleOperations.includes(operation) ||
+            !isDefined(rootPredicateGroupId)
+          }
+          shouldHideWhenDisabledWithAllFields
+        />
+      </StyledFieldsSelectContainer>
+    );
+  };
 
   const getDescription = (operation: SettingsRoleObjectPermissionKey) => {
     const disabledReason = getDisabledOperationReason(operation);
@@ -107,7 +159,7 @@ export const SettingsRoleRuleAllowsSection = ({
     <Section.Root>
       <Section.Header
         title={t`Allows`}
-        description={t`What ${roleLabel} can do on ${objectLabelPlural} matching this rule.`}
+        description={t`What ${roleLabel} can do on ${objectLabelPlural} matching this record-level permission.`}
       />
       <Card.Root>
         {SETTINGS_ROLE_OBJECT_PERMISSION_KEYS.map((operation, index) => {
@@ -133,6 +185,7 @@ export const SettingsRoleRuleAllowsSection = ({
                 !isOperationEnabled(operation)
               }
               onChange={() => toggleOperation(operation)}
+              adornment={renderFieldsSelect(operation)}
             />
           );
         })}

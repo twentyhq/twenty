@@ -11,8 +11,10 @@ export const getFieldPermissionsToUpsert = ({
 }): FieldPermission[] =>
   dirtyFieldPermissions.filter((dirtyFieldPermission) => {
     const persistedFieldPermission = persistedFieldPermissions.find(
-      ({ fieldMetadataId }) =>
-        fieldMetadataId === dirtyFieldPermission.fieldMetadataId,
+      ({ fieldMetadataId, rowLevelPermissionPredicateGroupId }) =>
+        fieldMetadataId === dirtyFieldPermission.fieldMetadataId &&
+        (rowLevelPermissionPredicateGroupId ?? null) ===
+          (dirtyFieldPermission.rowLevelPermissionPredicateGroupId ?? null),
     );
 
     if (!isDefined(persistedFieldPermission)) {

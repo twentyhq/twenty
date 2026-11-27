@@ -8,5 +8,6 @@ export const FIELD_PERMISSION_FRAGMENT = gql`
     canUpdateFieldValue
     id
     roleId
+    rowLevelPermissionPredicateGroupId
   }
 `;

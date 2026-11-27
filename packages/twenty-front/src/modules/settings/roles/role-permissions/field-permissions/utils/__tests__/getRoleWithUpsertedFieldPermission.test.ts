@@ -111,4 +111,32 @@ describe('getRoleWithUpsertedFieldPermission', () => {
     );
     expect(updatedRole.fieldPermissions?.length).toBe(2);
   });
+
+  it('should keep a rule field permission apart from the object field permission of the same field', () => {
+    const objectFieldPermission: FieldPermission = {
+      ...BASE_FIELD_PERMISSION_TO_UPSERT,
+    };
+
+    const ruleFieldPermission: FieldPermission = {
+      ...BASE_FIELD_PERMISSION_TO_UPSERT,
+      id: 'field-permission-2',
+      rowLevelPermissionPredicateGroupId: 'predicate-group-1',
+      canReadFieldValue: null,
+    };
+
+    const role: Role = {
+      ...BASE_ROLE_MOCK,
+      fieldPermissions: [objectFieldPermission],
+    };
+
+    const updatedRole = getRoleWithUpsertedFieldPermission(
+      role,
+      ruleFieldPermission,
+    );
+
+    expect(updatedRole.fieldPermissions).toEqual([objectFieldPermission]);
+    expect(updatedRole.rowLevelPermissionFieldPermissions).toEqual([
+      ruleFieldPermission,
+    ]);
+  });
 });

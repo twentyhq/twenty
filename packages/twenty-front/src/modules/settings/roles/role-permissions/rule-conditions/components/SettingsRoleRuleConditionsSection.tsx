@@ -21,11 +21,6 @@ const StyledContent = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledCardContainer = styled.div`
-  margin-top: ${themeCssVariables.spacing[4]};
-  overflow: hidden;
-`;
-
 type SettingsRoleRuleConditionsSectionProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
   roleId: string;
@@ -50,33 +45,31 @@ export const SettingsRoleRuleConditionsSection = ({
       <Section.Root>
         <Section.Header
           title={t`Condition`}
-          description={t`Which ${objectLabelPlural} this rule applies to. Me is the person viewing.`}
+          description={t`Which ${objectLabelPlural} this record-level permission applies to. Me is the person viewing.`}
           actions={<OrganizationAdornment />}
         />
-        <StyledCardContainer>
-          <Card.Root>
-            <SettingsOptionCardContentButton
-              Icon={IconLock}
-              title={t`Upgrade to access`}
-              description={t`This feature is part of the Organization plan`}
-              Button={
-                <Button
-                  size="sm"
-                  startIcon={<IconArrowUp />}
-                  onClick={() =>
-                    navigateSettings(
-                      isBillingEnabled
-                        ? SettingsPath.BillingPlans
-                        : SettingsPath.AdminPanelOrganization,
-                    )
-                  }
-                  variant="solid"
-                  color="accent"
-                >{t`Upgrade`}</Button>
-              }
-            />
-          </Card.Root>
-        </StyledCardContainer>
+        <Card.Root>
+          <SettingsOptionCardContentButton
+            Icon={IconLock}
+            title={t`Upgrade to access`}
+            description={t`This feature is part of the Organization plan`}
+            Button={
+              <Button
+                size="sm"
+                startIcon={<IconArrowUp />}
+                onClick={() =>
+                  navigateSettings(
+                    isBillingEnabled
+                      ? SettingsPath.BillingPlans
+                      : SettingsPath.AdminPanelOrganization,
+                  )
+                }
+                variant="solid"
+                color="accent"
+              >{t`Upgrade`}</Button>
+            }
+          />
+        </Card.Root>
       </Section.Root>
     );
   }
@@ -85,7 +78,7 @@ export const SettingsRoleRuleConditionsSection = ({
     <Section.Root>
       <Section.Header
         title={t`Condition`}
-        description={t`Which ${objectLabelPlural} this rule applies to. Me is the person viewing.`}
+        description={t`Which ${objectLabelPlural} this record-level permission applies to. Me is the person viewing.`}
       />
       <StyledContent>
         <SettingsRoleRuleConditionFilterBuilder

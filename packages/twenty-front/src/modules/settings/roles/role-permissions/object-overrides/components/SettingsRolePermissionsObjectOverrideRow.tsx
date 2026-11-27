@@ -16,6 +16,7 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { styled } from '@linaria/react';
+import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
 import { Collapsible } from 'twenty-ui/primitives/layout';
@@ -90,7 +91,10 @@ export const SettingsRolePermissionsObjectOverrideRow = ({
 
   const getRulesHint = () => {
     if (rules.length > 1) {
-      return t`${rules.length} rules`;
+      return plural(rules.length, {
+        one: `# record-level permission`,
+        other: `# record-level permissions`,
+      });
     }
 
     const [singleRule] = rules;

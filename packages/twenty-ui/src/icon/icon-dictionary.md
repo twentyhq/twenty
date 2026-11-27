@@ -24,6 +24,7 @@ import { IconHierarchy } from 'twenty-ui/icon';
 | --- | --- | --- | --- | --- | --- |
 | Data Model | `IconHierarchy` | `hierarchy` | Representing the data model or schema as a whole. | Representing one object, one field, or an organization chart. | schema, data model, objects and fields |
 | Object | `IconBox` | `box` | Representing an individual data-model object. | Representing a record instance or the complete data model. | object metadata, entity, data object |
+| All Objects | `IconDatabase` | `database` | Representing a setting that applies to every object at once. | Representing one object or the data model schema. | all objects, every object, object defaults |
 | Field | `IconListSearch` | `list-search` | Representing a field or field metadata. | Representing a list of records or a generic menu. | field metadata, property, attribute, column |
 | Record | `IconAddressBook` | `address-book` | Representing a record or record-oriented content. | Representing the object definition that records belong to. | record, record instance, CRM entry |
 

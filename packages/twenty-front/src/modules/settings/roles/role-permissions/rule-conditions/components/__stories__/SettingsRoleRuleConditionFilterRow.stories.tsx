@@ -203,7 +203,6 @@ export const MePickerSurvivesRerender: Story = {
     await userEvent.click(
       reopened.getByRole('button', { name: 'Name / First Name' }),
     );
-    expect(await canvas.findByText('Me')).toBeVisible();
-    expect(await canvas.findByText('/ Name / First Name')).toBeVisible();
+    expect(await canvas.findByText('Me / Name / First Name')).toBeVisible();
   },
 };

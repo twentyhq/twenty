@@ -1,15 +1,14 @@
-import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
+import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useSettingsRoleObjectOverrides } from '@/settings/roles/role-permissions/object-overrides/hooks/useSettingsRoleObjectOverrides';
-import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useLingui } from '@lingui/react/macro';
-import { isNonEmptyArray } from '@sniptt/guards';
+import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { Dropdown } from 'twenty-ui/components/navigation';
-import { IconPlus } from 'twenty-ui/icon';
+import { IconPlus, IconSettings } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 
 type SettingsRolePermissionsAddObjectDropdownProps = {
@@ -24,14 +23,37 @@ export const SettingsRolePermissionsAddObjectDropdown = ({
   const { t } = useLingui();
   const [searchInputValue, setSearchInputValue] = useState('');
   const { addObjectOverride } = useSettingsRoleObjectOverrides(roleId);
-  const { getSelectIconPropsFromObjectMetadataItem } =
-    useObjectMetadataSelectHelpers();
+
+  const isSearching = isNonEmptyString(searchInputValue);
 
   const matchingObjectMetadataItems = objectMetadataItems.filter(
     (objectMetadataItem) =>
       objectMetadataItem.labelPlural
         .toLowerCase()
         .includes(searchInputValue.toLowerCase()),
+  );
+
+  const listedObjectMetadataItems = isSearching
+    ? matchingObjectMetadataItems
+    : objectMetadataItems.filter(
+        (objectMetadataItem) => !objectMetadataItem.isSystem,
+      );
+
+  const systemObjectMetadataItems = objectMetadataItems.filter(
+    (objectMetadataItem) => objectMetadataItem.isSystem,
+  );
+
+  const hasAdvancedSubmenu =
+    !isSearching && isNonEmptyArray(systemObjectMetadataItems);
+
+  const renderObjectItem = (objectMetadataItem: EnrichedObjectMetadataItem) => (
+    <Dropdown.ActionItem
+      key={objectMetadataItem.id}
+      startIcon={<ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />}
+      onClick={() => addObjectOverride(objectMetadataItem)}
+    >
+      {objectMetadataItem.labelPlural}
+    </Dropdown.ActionItem>
   );
 
   return (
@@ -69,26 +91,32 @@ export const SettingsRolePermissionsAddObjectDropdown = ({
         />
         <Dropdown.Separator />
         <Dropdown.Section scrollable>
-          {matchingObjectMetadataItems.map((objectMetadataItem) => {
-            const { Icon, iconThemeColor } =
-              getSelectIconPropsFromObjectMetadataItem(objectMetadataItem);
-
-            return (
-              <Dropdown.ActionItem
-                key={objectMetadataItem.id}
-                startIcon={
-                  <SelectOptionIcon Icon={Icon} color={iconThemeColor} />
-                }
-                onClick={() => addObjectOverride(objectMetadataItem)}
-              >
-                {objectMetadataItem.labelPlural}
-              </Dropdown.ActionItem>
-            );
-          })}
-          {!isNonEmptyArray(matchingObjectMetadataItems) && (
-            <Dropdown.Empty>{t`No objects found`}</Dropdown.Empty>
-          )}
+          {listedObjectMetadataItems.map(renderObjectItem)}
+          {!isNonEmptyArray(listedObjectMetadataItems) &&
+            !hasAdvancedSubmenu && (
+              <Dropdown.Empty>{t`No objects found`}</Dropdown.Empty>
+            )}
         </Dropdown.Section>
+        {hasAdvancedSubmenu && (
+          <>
+            <Dropdown.Separator />
+            <Dropdown.Section>
+              <Dropdown.Submenu>
+                <Dropdown.SubmenuTrigger startIcon={<IconSettings />}>
+                  {t`Advanced`}
+                </Dropdown.SubmenuTrigger>
+                <Dropdown.Content
+                  width={GenericDropdownContentWidth.Large}
+                  aria-label={t`Advanced objects`}
+                >
+                  <Dropdown.Section scrollable>
+                    {systemObjectMetadataItems.map(renderObjectItem)}
+                  </Dropdown.Section>
+                </Dropdown.Content>
+              </Dropdown.Submenu>
+            </Dropdown.Section>
+          </>
+        )}
       </DropdownContent>
     </DropdownRoot>
   );

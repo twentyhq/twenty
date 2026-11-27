@@ -19,6 +19,7 @@ export const DEFAULT_SETTINGS_DRAFT_ROLE: RoleWithPartialMembers = {
   permissionFlags: [],
   objectPermissions: [],
   fieldPermissions: [],
+  rowLevelPermissionFieldPermissions: [],
   rowLevelPermissionPredicates: [],
   rowLevelPermissionPredicateGroups: [],
   canBeAssignedToAgents: false,

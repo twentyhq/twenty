@@ -1,6 +1,9 @@
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { isDefined } from 'twenty-shared/utils';
-import { type RowLevelPermissionRule } from '~/generated-metadata/graphql';
+import {
+  type FieldPermission,
+  type RowLevelPermissionRule,
+} from '~/generated-metadata/graphql';
 
 export const getRoleWithoutRowLevelPermissionRules = ({
   role,
@@ -27,6 +30,12 @@ export const getRoleWithoutRowLevelPermissionRules = ({
       .map(({ id }) => id),
   );
 
+  const isNotOfRemovedRule = ({
+    rowLevelPermissionPredicateGroupId,
+  }: Pick<FieldPermission, 'rowLevelPermissionPredicateGroupId'>) =>
+    !isDefined(rowLevelPermissionPredicateGroupId) ||
+    !removedPredicateGroupIds.has(rowLevelPermissionPredicateGroupId);
+
   return {
     ...role,
     rowLevelPermissionRules: role.rowLevelPermissionRules?.filter(
@@ -39,10 +48,8 @@ export const getRoleWithoutRowLevelPermissionRules = ({
       role.rowLevelPermissionPredicateGroups?.filter(
         (predicateGroup) => !removedPredicateGroupIds.has(predicateGroup.id),
       ),
-    fieldPermissions: role.fieldPermissions?.filter(
-      ({ rowLevelPermissionPredicateGroupId }) =>
-        !isDefined(rowLevelPermissionPredicateGroupId) ||
-        !removedPredicateGroupIds.has(rowLevelPermissionPredicateGroupId),
-    ),
+    fieldPermissions: role.fieldPermissions?.filter(isNotOfRemovedRule),
+    rowLevelPermissionFieldPermissions:
+      role.rowLevelPermissionFieldPermissions?.filter(isNotOfRemovedRule),
   };
 };

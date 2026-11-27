@@ -7,11 +7,12 @@ import { MultiSelectControl } from '@/ui/input/components/MultiSelectControl';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useState } from 'react';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconEye, IconEyeOff, IconPencil, IconPencilOff } from 'twenty-ui/icon';
@@ -24,6 +25,8 @@ type SettingsRolePermissionsObjectFieldsSelectProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
   mode: 'read' | 'update';
   disabled?: boolean;
+  rowLevelPermissionPredicateGroupId?: string;
+  shouldHideWhenDisabledWithAllFields?: boolean;
 };
 
 export const SettingsRolePermissionsObjectFieldsSelect = ({
@@ -31,6 +34,8 @@ export const SettingsRolePermissionsObjectFieldsSelect = ({
   objectMetadataItem,
   mode,
   disabled = false,
+  rowLevelPermissionPredicateGroupId,
+  shouldHideWhenDisabledWithAllFields = false,
 }: SettingsRolePermissionsObjectFieldsSelectProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
@@ -48,14 +53,50 @@ export const SettingsRolePermissionsObjectFieldsSelect = ({
     .filter(filterUserFacingFieldMetadataItems)
     .sort((fieldA, fieldB) => fieldA.label.localeCompare(fieldB.label));
 
+  const scopedFieldPermissions = isDefined(rowLevelPermissionPredicateGroupId)
+    ? settingsDraftRole.rowLevelPermissionFieldPermissions
+    : settingsDraftRole.fieldPermissions;
+
   const getFieldPermission = (fieldMetadataId: string) =>
-    settingsDraftRole.fieldPermissions?.find(
+    scopedFieldPermissions?.find(
+      (fieldPermission) =>
+        fieldPermission.fieldMetadataId === fieldMetadataId &&
+        (fieldPermission.rowLevelPermissionPredicateGroupId ?? null) ===
+          (rowLevelPermissionPredicateGroupId ?? null),
+    );
+
+  const isRuleScoped = isDefined(rowLevelPermissionPredicateGroupId);
+
+  const getObjectLevelLockedReason = (fieldMetadataId: string) => {
+    if (!isRuleScoped) {
+      return undefined;
+    }
+
+    const objectLevelFieldPermission = settingsDraftRole.fieldPermissions?.find(
       (fieldPermission) =>
         fieldPermission.fieldMetadataId === fieldMetadataId &&
         !isDefined(fieldPermission.rowLevelPermissionPredicateGroupId),
     );
 
+    if (objectLevelFieldPermission?.canReadFieldValue === false) {
+      return t`Can't be seen on any record`;
+    }
+
+    if (
+      mode === 'update' &&
+      objectLevelFieldPermission?.canUpdateFieldValue === false
+    ) {
+      return t`Can't be edited on any record`;
+    }
+
+    return undefined;
+  };
+
   const isFieldAllowed = (fieldMetadataId: string) => {
+    if (isDefined(getObjectLevelLockedReason(fieldMetadataId))) {
+      return false;
+    }
+
     const fieldPermission = getFieldPermission(fieldMetadataId);
 
     if (fieldPermission?.canReadFieldValue === false) {
@@ -66,8 +107,17 @@ export const SettingsRolePermissionsObjectFieldsSelect = ({
   };
 
   const getFieldLockedReason = (
-    field: Pick<FieldMetadataItem, 'id' | 'isUIEditable'>,
+    field: Pick<
+      FieldMetadataItem,
+      'id' | 'isUIEditable' | 'isNullable' | 'type'
+    >,
   ) => {
+    const objectLevelLockedReason = getObjectLevelLockedReason(field.id);
+
+    if (isDefined(objectLevelLockedReason)) {
+      return objectLevelLockedReason;
+    }
+
     const hasReadRestriction =
       getFieldPermission(field.id)?.canReadFieldValue === false;
 
@@ -80,6 +130,15 @@ export const SettingsRolePermissionsObjectFieldsSelect = ({
     }
 
     if (
+      isRuleScoped &&
+      (field.isNullable === false ||
+        field.type === FieldMetadataType.MORPH_RELATION)
+    ) {
+      return mode === 'read' ? t`Always visible` : t`Always editable`;
+    }
+
+    if (
+      !isRuleScoped &&
       mode === 'read' &&
       objectMetadataItem.labelIdentifierFieldMetadataId === field.id
     ) {
@@ -115,6 +174,7 @@ export const SettingsRolePermissionsObjectFieldsSelect = ({
       fieldMetadataId,
       objectMetadataId: objectMetadataItem.id,
       roleId,
+      rowLevelPermissionPredicateGroupId,
     };
 
     if (mode === 'read') {
@@ -186,7 +246,10 @@ export const SettingsRolePermissionsObjectFieldsSelect = ({
       return singleAllowedField.label;
     }
 
-    return t`${allowedFieldCount} of ${fieldCount} fields`;
+    return plural(fieldCount, {
+      one: `${allowedFieldCount} of # field`,
+      other: `${allowedFieldCount} of # fields`,
+    });
   };
 
   const isControlShowingRestriction =
@@ -204,6 +267,15 @@ export const SettingsRolePermissionsObjectFieldsSelect = ({
     field.label.toLowerCase().includes(searchInputValue.toLowerCase()),
   );
 
+  const orderedMatchingFieldMetadataItems = [
+    ...matchingFieldMetadataItems.filter(
+      (field) => !isDefined(getFieldLockedReason(field)),
+    ),
+    ...matchingFieldMetadataItems.filter((field) =>
+      isDefined(getFieldLockedReason(field)),
+    ),
+  ];
+
   const selectControl = (
     <MultiSelectControl
       selectedOptions={[]}
@@ -214,13 +286,17 @@ export const SettingsRolePermissionsObjectFieldsSelect = ({
     />
   );
 
+  if (disabled && shouldHideWhenDisabledWithAllFields && areAllFieldsAllowed) {
+    return null;
+  }
+
   if (disabled) {
     return selectControl;
   }
 
   return (
     <DropdownRoot
-      dropdownId={`settings-role-object-fields-${mode}-${objectMetadataItem.id}`}
+      dropdownId={`settings-role-object-fields-${mode}-${objectMetadataItem.id}-${rowLevelPermissionPredicateGroupId ?? 'object'}`}
       type="picker"
       onOpenChange={(open) => {
         if (!open) {
@@ -232,8 +308,9 @@ export const SettingsRolePermissionsObjectFieldsSelect = ({
         {selectControl}
       </Dropdown.Trigger>
       <DropdownContent
-        width={GenericDropdownContentWidth.ExtraLarge}
+        width="var(--anchor-width)"
         align="end"
+        sideOffset={4}
         aria-label={mode === 'read' ? t`Fields to see` : t`Fields to edit`}
       >
         <Dropdown.Search
@@ -263,7 +340,7 @@ export const SettingsRolePermissionsObjectFieldsSelect = ({
             onValueChange={handleAllowedFieldIdsChange}
           >
             <Dropdown.Section scrollable>
-              {matchingFieldMetadataItems.map((field) => {
+              {orderedMatchingFieldMetadataItems.map((field) => {
                 const lockedReason = getFieldLockedReason(field);
 
                 return (

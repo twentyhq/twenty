@@ -8,10 +8,10 @@ import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDr
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useLingui } from '@lingui/react/macro';
-import { IconHierarchy } from 'twenty-ui/icon';
+import { IconDatabase } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
 
-const ALL_OBJECTS_SELECT_WIDTH = 240;
+const ALL_OBJECTS_SELECT_WIDTH = 312;
 
 type SettingsRolePermissionsAllObjectsCardProps = {
   roleId: string;
@@ -56,7 +56,7 @@ export const SettingsRolePermissionsAllObjectsCard = ({
     <StyledSettingsSelectGroup controlWidth={ALL_OBJECTS_SELECT_WIDTH}>
       <Card.Root>
         <SettingsOptionCardContentSelect
-          Icon={IconHierarchy}
+          Icon={IconDatabase}
           title={t`All objects`}
           description={t`Applies to all objects before overrides`}
         >

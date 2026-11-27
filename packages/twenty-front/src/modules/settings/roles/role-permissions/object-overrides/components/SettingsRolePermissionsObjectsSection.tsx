@@ -7,6 +7,7 @@ import { hasObjectPermissionOverride } from '@/settings/roles/role-permissions/o
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { Table } from '@/ui/layout/table/components/Table';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableFooter } from '@/ui/layout/table/components/TableFooter';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -18,11 +19,6 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledOverridesTable = styled.div`
   margin-top: ${themeCssVariables.spacing[4]};
-`;
-
-const StyledTableRows = styled.div`
-  padding-bottom: ${themeCssVariables.spacing[2]};
-  padding-top: ${themeCssVariables.spacing[2]};
 `;
 
 type SettingsRolePermissionsObjectsSectionProps = {
@@ -77,7 +73,7 @@ export const SettingsRolePermissionsObjectsSection = ({
             <TableHeader>{t`Access`}</TableHeader>
             <TableHeader />
           </TableRow>
-          <StyledTableRows>
+          <TableBody>
             {overriddenObjectMetadataItems.length > 0 ? (
               overriddenObjectMetadataItems.map((objectMetadataItem) => (
                 <SettingsRolePermissionsObjectOverrideRow
@@ -92,7 +88,7 @@ export const SettingsRolePermissionsObjectsSection = ({
                 {t`Every object follows the all objects access.`}
               </TableCell>
             )}
-          </StyledTableRows>
+          </TableBody>
         </Table>
         {isEditable && (
           <TableFooter>

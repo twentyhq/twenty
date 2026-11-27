@@ -18,14 +18,14 @@ const StyledText = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
   display: flex;
   height: ${themeCssVariables.spacing[8]};
-  padding-left: ${themeCssVariables.spacing[2]};
+  padding-left: 9px;
 `;
 
 const StyledContainer = styled.div`
   align-items: start;
   color: ${themeCssVariables.font.color.tertiary};
   display: flex;
-  min-width: ${themeCssVariables.spacing[16]};
+  min-width: ${themeCssVariables.spacing[20]};
 `;
 
 type SettingsRoleRuleConditionLogicalOperatorCellProps = {

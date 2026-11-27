@@ -2,6 +2,7 @@ import {
   SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG,
   type SettingsRoleObjectPermissionKey,
 } from '@/settings/roles/role-permissions/object-overrides/constants/SettingsRoleObjectPermissionIconConfig';
+import { SETTINGS_ROLE_OBJECT_OPERATION_COUNT_ICONS } from '@/settings/roles/role-permissions/object-overrides/constants/SettingsRoleObjectOperationCountIcons';
 import { SETTINGS_ROLE_OBJECT_PERMISSION_KEYS } from '@/settings/roles/role-permissions/object-overrides/constants/SettingsRoleObjectPermissionKeys';
 import { i18n } from '@lingui/core';
 import { t } from '@lingui/core/macro';
@@ -44,10 +45,12 @@ export const getObjectOperationsSummary = ({
     return { label, Icon: IconAdjustments };
   }
 
-  const highestOperation = orderedOperations[orderedOperations.length - 1];
+  const [firstOperation] = orderedOperations;
 
   return {
     label,
-    Icon: SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG[highestOperation].Icon,
+    Icon:
+      SETTINGS_ROLE_OBJECT_OPERATION_COUNT_ICONS[orderedOperations.length] ??
+      SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG[firstOperation].Icon,
   };
 };

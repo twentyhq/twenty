@@ -137,6 +137,14 @@
   gap: var(--t-spacing-2);
   min-block-size: 33px;
   padding-inline: var(--t-spacing-2);
+
+  &:has(> button:first-child) {
+    padding-inline-start: var(--t-spacing-1);
+  }
+
+  &:has(> button:last-child) {
+    padding-inline-end: var(--t-spacing-1);
+  }
 }
 
 .title {

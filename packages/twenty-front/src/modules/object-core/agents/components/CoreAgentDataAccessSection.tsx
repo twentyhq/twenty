@@ -65,7 +65,7 @@ export const CoreAgentDataAccessSection = ({
       getCoreAgentObjectRules({ role, objectMetadataId });
 
     return [
-      hasRule ? t`Record-level filter` : undefined,
+      hasRule ? t`Record-level permission` : undefined,
       unreadableFieldCount > 0
         ? plural(unreadableFieldCount, {
             one: `Can't see # field`,

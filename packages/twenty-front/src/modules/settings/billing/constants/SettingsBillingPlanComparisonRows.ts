@@ -315,7 +315,7 @@ export const SETTINGS_BILLING_PLAN_COMPARISON_ROWS = [
     type: 'feature',
   },
   {
-    featureLabel: msg`Row-level permissions`,
+    featureLabel: msg`Record-level permissions`,
     plans: {
       [BillingPlanKey.ENTERPRISE]: { kind: 'text', text: msg`Unlimited` },
       [BillingPlanKey.ORGANIZATION_V2]: { kind: 'text', text: msg`Unlimited` },
