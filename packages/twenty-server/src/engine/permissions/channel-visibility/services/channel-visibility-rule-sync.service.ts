@@ -7,12 +7,13 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import {
+  buildWorkspaceLockKey,
+  WORKSPACE_LOCK_OPTIONS,
+} from 'src/engine/core-modules/workspace/constants/workspace-lock.constant';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
-import {
-  buildChannelVisibilityRuleSyncLockKey,
-  CHANNEL_VISIBILITY_RULE_SYNC_LOCK_OPTIONS,
-} from 'src/engine/permissions/channel-visibility/constants/channel-visibility-rule-sync-lock.constant';
 import { CHANNEL_CHILD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'src/engine/permissions/channel-visibility/constants/channel-child-object-universal-identifiers.constant';
 import { buildChannelVisibilityObjectRecordsPermissions } from 'src/engine/permissions/channel-visibility/utils/build-channel-visibility-object-records-permissions.util';
 import { type WorkspaceMemberIndividualRoleHolder } from 'src/engine/permissions/workspace-member-individual-role/types/workspace-member-individual-role.type';
@@ -28,6 +29,8 @@ export class ChannelVisibilityRuleSyncService {
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
     @InjectRepository(CalendarChannelEntity)
     private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceMemberIndividualRoleService: WorkspaceMemberIndividualRoleService,
     private readonly cacheLockService: CacheLockService,
@@ -36,12 +39,20 @@ export class ChannelVisibilityRuleSyncService {
   async syncWorkspace(workspaceId: string): Promise<void> {
     await this.cacheLockService.withLock(
       () => this.syncWorkspaceWithLock(workspaceId),
-      buildChannelVisibilityRuleSyncLockKey(workspaceId),
-      CHANNEL_VISIBILITY_RULE_SYNC_LOCK_OPTIONS,
+      buildWorkspaceLockKey(workspaceId),
+      WORKSPACE_LOCK_OPTIONS,
     );
   }
 
   private async syncWorkspaceWithLock(workspaceId: string): Promise<void> {
+    const workspace = await this.workspaceRepository.findOneBy({
+      id: workspaceId,
+    });
+
+    if (!isDefined(workspace)) {
+      return;
+    }
+
     await this.writeOrRemoveRules(workspaceId);
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'rolesPermissions',
