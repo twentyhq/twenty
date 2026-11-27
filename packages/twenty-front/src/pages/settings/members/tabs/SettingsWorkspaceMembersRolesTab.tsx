@@ -1,3 +1,4 @@
+import { SettingsPageContentSkeleton } from '@/settings/components/SettingsPageContentSkeleton';
 import { SettingsRolesList } from '@/settings/roles/components/SettingsRolesList';
 import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
 import { settingsRolesIsLoadingState } from '@/settings/roles/states/settingsRolesIsLoadingState';
@@ -9,7 +10,11 @@ export const SettingsWorkspaceMembersRolesTab = () => {
   return (
     <>
       <SettingsRolesQueryEffect />
-      {!settingsRolesIsLoading && <SettingsRolesList />}
+      {settingsRolesIsLoading ? (
+        <SettingsPageContentSkeleton />
+      ) : (
+        <SettingsRolesList />
+      )}
     </>
   );
 };

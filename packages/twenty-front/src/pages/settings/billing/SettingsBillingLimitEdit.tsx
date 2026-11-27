@@ -1,6 +1,7 @@
 import { useParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 
+import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsBillingLimitEditForm } from '@/settings/billing/components/SettingsBillingLimitEditForm';
 import { useUsageQuotasWithConsumption } from '@/settings/billing/hooks/useUsageQuotasWithConsumption';
 import { NotFound } from '~/pages/not-found/NotFound';
@@ -11,7 +12,7 @@ export const SettingsBillingLimitEdit = () => {
     useUsageQuotasWithConsumption();
 
   if (loading) {
-    return null;
+    return <SettingsSkeletonLoader />;
   }
 
   const quota = usageQuotasWithConsumption.find(
