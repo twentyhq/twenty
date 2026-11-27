@@ -1073,7 +1073,7 @@ msgstr "{label}, {unreadOpenThreadCount} sin leer"
 #. js-lingui-id: B+e4L5
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenuContent.tsx
 msgid "{limit, plural, one {# item} other {# items}}"
-msgstr ""
+msgstr "{limit, plural, one {# elemento} other {# elementos}}"
 
 #. js-lingui-id: 1DrH/j
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
@@ -3635,7 +3635,7 @@ msgstr "Solo se necesita su correo electrónico."
 #. js-lingui-id: J3EsIX
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenuContent.tsx
 msgid "All items"
-msgstr ""
+msgstr "Todos los elementos"
 
 #. js-lingui-id: 623MHa
 #: src/modules/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions.ts
@@ -9382,7 +9382,7 @@ msgstr "Estado actual de la suscripción y partidas"
 #. js-lingui-id: GvB/Ni
 #: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterFieldSelect.tsx
 msgid "Current user"
-msgstr ""
+msgstr "Usuario actual"
 
 #. js-lingui-id: 6YzXhC
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
@@ -9551,7 +9551,7 @@ msgstr "Roles personalizados"
 #: src/modules/side-panel/pages/page-layout/components/WidgetVisibilitySettingItem.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetVisibilitySettings.tsx
 msgid "Custom rule"
-msgstr ""
+msgstr "Regla personalizada"
 
 #. js-lingui-id: 2jzCZZ
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
@@ -10858,7 +10858,7 @@ msgstr "Instancia de desarrollo"
 #: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterFieldSelect.tsx
 #: src/modules/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterFields.tsx
 msgid "Device"
-msgstr ""
+msgstr "Dispositivo"
 
 #. js-lingui-id: le4Hch
 #: src/modules/settings/profile/devices/components/SettingsDeviceSessionRowDropdownMenu.tsx
@@ -14614,7 +14614,7 @@ msgstr "Termina de editar el diseño para abrir Configuración"
 #. js-lingui-id: aFsDUw
 #: src/modules/navigation/components/MultiWorkspaceDropdown/MultiWorkspaceDropdownButton.tsx
 msgid "Finish editing the layout to open this menu"
-msgstr ""
+msgstr "Termina de editar el diseño para abrir este menú"
 
 #. js-lingui-id: SNdnlf
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
@@ -17182,7 +17182,7 @@ msgstr "Es posterior o igual a"
 #. js-lingui-id: RPm4Rj
 #: src/modules/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterOperatorLabel.ts
 msgid "Is any of"
-msgstr ""
+msgstr "Es uno de"
 
 #. js-lingui-id: NgIlDJ
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -17207,7 +17207,7 @@ msgstr "Está en el pasado"
 #. js-lingui-id: T9KiSu
 #: src/modules/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterOperatorLabel.ts
 msgid "Is none of"
-msgstr ""
+msgstr "No es ninguno de"
 
 #. js-lingui-id: 5pz6vU
 #: src/modules/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterOperatorLabel.ts
@@ -18816,10 +18816,10 @@ msgstr "Columnas de búsqueda"
 msgid "loop"
 msgstr "bucle"
 
-#. js-lingui-id: UeVuJ/
+#. js-lingui-id: VKHG/4
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
-msgid "Lost your authenticator? Use a backup or recovery code"
-msgstr "¿Perdiste tu autenticador? Usa un código de respaldo o de recuperación"
+msgid "Lost your authenticator?"
+msgstr ""
 
 #. js-lingui-id: GpMARg
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
@@ -26434,12 +26434,12 @@ msgstr "Regla habilitada."
 #. js-lingui-id: N/BlR5
 #: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterOptionsDropdown.tsx
 msgid "Rule group options"
-msgstr ""
+msgstr "Opciones del grupo de reglas"
 
 #. js-lingui-id: 9Ggzqm
 #: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterOptionsDropdown.tsx
 msgid "Rule options"
-msgstr ""
+msgstr "Opciones de reglas"
 
 #. js-lingui-id: sBTDyi
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
@@ -27172,7 +27172,7 @@ msgstr "Buscar relaciones"
 #. js-lingui-id: pzfKRn
 #: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterValueInput.tsx
 msgid "Search roles"
-msgstr ""
+msgstr "Buscar roles"
 
 #. js-lingui-id: BlLxpG
 #: src/modules/ai-chat/composer/components/AiChatAddMenuSkillsPage.tsx
@@ -27578,7 +27578,7 @@ msgstr "Seleccione una fecha y hora"
 #. js-lingui-id: cggcog
 #: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterValueInput.tsx
 msgid "Select a device"
-msgstr ""
+msgstr "Selecciona un dispositivo"
 
 #. js-lingui-id: 1YV5aa
 #: src/modules/object-core/filters/components/CoreObjectFilterFieldSelect.tsx
@@ -27615,7 +27615,7 @@ msgstr "Selecciona un proveedor conocido o crea uno personalizado"
 #. js-lingui-id: E5eC82
 #: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterValueInput.tsx
 msgid "Select a member"
-msgstr ""
+msgstr "Selecciona un miembro"
 
 #. js-lingui-id: KQtk7u
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemInsertionPreview.tsx
@@ -27782,7 +27782,7 @@ msgstr "Selecciona el campo coincidente"
 #. js-lingui-id: 76TVV2
 #: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterValueInput.tsx
 msgid "Select members"
-msgstr ""
+msgstr "Seleccionar miembros"
 
 #. js-lingui-id: ezY8Ut
 #: src/modules/ui/input/components/internal/date/components/DateTimePickerHeader.tsx
@@ -27817,7 +27817,7 @@ msgstr "Seleccionar registros"
 #. js-lingui-id: 1Ky5Mj
 #: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterValueInput.tsx
 msgid "Select roles"
-msgstr ""
+msgstr "Seleccionar roles"
 
 #. js-lingui-id: 9c44h0
 #: src/modules/object-core/components/CoreObjectTable.tsx
@@ -31387,7 +31387,7 @@ msgstr "Este rol está asignado a estos {roleTargetDisplayName}."
 #. js-lingui-id: 0bjsKH
 #: src/modules/side-panel/pages/page-layout/components/WidgetVisibilitySettings.tsx
 msgid "This rule cannot be edited here. Select Everyone to remove it."
-msgstr ""
+msgstr "Esta regla no se puede editar aquí. Selecciona Todos para eliminarla."
 
 #. js-lingui-id: 9IqK24
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
@@ -32704,7 +32704,7 @@ msgstr "Archivo desconocido"
 #. js-lingui-id: rIOkYf
 #: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterValueInput.tsx
 msgid "Unknown member"
-msgstr ""
+msgstr "Miembro desconocido"
 
 #. js-lingui-id: num3KD
 #: src/modules/mention/components/MentionRecordChip.tsx

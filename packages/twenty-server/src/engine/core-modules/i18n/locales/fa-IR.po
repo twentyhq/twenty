@@ -14919,6 +14919,11 @@ msgstr "ارائه‌دهنده موقتاً در دسترس نیست. لطفا�
 msgid "The received email content is no longer available."
 msgstr "محتوای ایمیل دریافتی دیگر در دسترس نیست."
 
+#. js-lingui-id: b84VDO
+#: src/engine/api/common/common-query-runners/common-create-one-query-runner.service.ts
+msgid "The record was created, but you do not have permission to see it."
+msgstr "رکورد ایجاد شد، اما شما اجازه مشاهده آن را ندارید."
+
 #. js-lingui-id: dXHirT
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
@@ -15533,7 +15538,7 @@ msgstr "این دامنه از قبل گرفته شده است."
 #. js-lingui-id: IBjn2S
 #: src/engine/core-modules/public-domain/public-domain.exception.ts
 msgid "This domain is used by Twenty itself and cannot be a public domain."
-msgstr ""
+msgstr "این دامنه توسط خود Twenty استفاده می‌شود و نمی‌تواند یک دامنه عمومی باشد."
 
 #. js-lingui-id: Ukfndw
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
