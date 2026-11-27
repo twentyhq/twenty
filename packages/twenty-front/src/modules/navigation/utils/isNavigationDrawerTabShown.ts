@@ -6,17 +6,15 @@ import {
 export const isNavigationDrawerTabShown = ({
   tab,
   hasAiPermission,
-  hasAiChatSectionInSidebar,
   isCustomizableSidebarEnabled,
 }: {
   tab: NavigationDrawerActiveTab;
   hasAiPermission: boolean;
-  hasAiChatSectionInSidebar: boolean;
   isCustomizableSidebarEnabled: boolean;
 }) => {
   switch (tab) {
     case NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY:
-      return hasAiPermission && !hasAiChatSectionInSidebar;
+      return hasAiPermission && !isCustomizableSidebarEnabled;
     case NAVIGATION_DRAWER_TABS.SETTINGS:
       return !isCustomizableSidebarEnabled;
     default:

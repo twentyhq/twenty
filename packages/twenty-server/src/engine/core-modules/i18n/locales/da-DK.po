@@ -16075,11 +16075,6 @@ msgstr "Denne bruger er allerede medlem af arbejdsområdet."
 msgid "This user is not a member of the workspace."
 msgstr "Denne bruger er ikke medlem af arbejdsområdet."
 
-#. js-lingui-id: BFSoo/
-#: src/engine/metadata-modules/validation-rule/validation-rule.service.ts
-msgid "This validation rule is being upgraded. Try again in a few minutes."
-msgstr "Denne valideringsregel opgraderes. Prøv igen om et par minutter."
-
 #. js-lingui-id: LtsBYU
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
 msgid "This variable can only be set via environment."
