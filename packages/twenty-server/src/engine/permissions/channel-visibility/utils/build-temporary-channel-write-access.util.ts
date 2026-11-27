@@ -24,11 +24,10 @@ export const buildTemporaryChannelWriteAccess = ({
     'byUniversalIdentifier'
   >;
 }): TemporaryChannelWriteAccess | undefined => {
-  const adminRoleId = isAdminChannelWriteAccessRestored(featureFlagsMap)
-    ? flatRoleMaps.byUniversalIdentifier[
-        STANDARD_ROLE.admin.universalIdentifier
-      ]?.id
-    : undefined;
+  const adminFlatRole =
+    flatRoleMaps.byUniversalIdentifier[STANDARD_ROLE.admin.universalIdentifier];
+  const isRestoredForAdminMembers =
+    isAdminChannelWriteAccessRestored(featureFlagsMap);
   const apiKeysIndividualRoleId = isApiKeyExemptFromChannelVisibility(
     featureFlagsMap,
   )
@@ -39,7 +38,10 @@ export const buildTemporaryChannelWriteAccess = ({
       ]?.id
     : undefined;
 
-  if (!isDefined(adminRoleId) && !isDefined(apiKeysIndividualRoleId)) {
+  if (
+    !isDefined(adminFlatRole) ||
+    (!isRestoredForAdminMembers && !isDefined(apiKeysIndividualRoleId))
+  ) {
     return undefined;
   }
 
@@ -48,20 +50,14 @@ export const buildTemporaryChannelWriteAccess = ({
       (universalIdentifier) =>
         flatObjectMetadataMaps.byUniversalIdentifier[universalIdentifier]?.id,
     ).filter(isDefined),
-    adminRoleId,
+    adminRoleId: adminFlatRole.id,
+    adminWriteAccess: {
+      canCreateAllRecords: adminFlatRole.canCreateAllObjectRecords,
+      canUpdateAllRecords: adminFlatRole.canUpdateAllObjectRecords,
+      canSoftDeleteAllRecords: adminFlatRole.canSoftDeleteAllObjectRecords,
+      canDestroyAllRecords: adminFlatRole.canDestroyAllObjectRecords,
+    },
+    isRestoredForAdminMembers,
     apiKeysIndividualRoleId,
-    writeAccessByRoleId: Object.fromEntries(
-      Object.values(flatRoleMaps.byUniversalIdentifier)
-        .filter(isDefined)
-        .map((flatRole) => [
-          flatRole.id,
-          {
-            canCreateAllRecords: flatRole.canCreateAllObjectRecords,
-            canUpdateAllRecords: flatRole.canUpdateAllObjectRecords,
-            canSoftDeleteAllRecords: flatRole.canSoftDeleteAllObjectRecords,
-            canDestroyAllRecords: flatRole.canDestroyAllObjectRecords,
-          },
-        ]),
-    ),
   };
 };

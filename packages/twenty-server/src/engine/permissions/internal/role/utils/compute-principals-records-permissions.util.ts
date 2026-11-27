@@ -65,16 +65,10 @@ export const computePrincipalsRecordsPermissions = ({
       return roleRecordsPermissions;
     }
 
-    const writeAccess = temporaryChannelWriteAccess.writeAccessByRoleId[roleId];
-
-    if (!isDefined(writeAccess)) {
-      return roleRecordsPermissions;
-    }
-
     return restoreChannelWriteAccess({
       recordsPermissions: roleRecordsPermissions,
       objectMetadataIds: temporaryChannelWriteAccess.objectMetadataIds,
-      writeAccess,
+      writeAccess: temporaryChannelWriteAccess.adminWriteAccess,
     });
   };
 

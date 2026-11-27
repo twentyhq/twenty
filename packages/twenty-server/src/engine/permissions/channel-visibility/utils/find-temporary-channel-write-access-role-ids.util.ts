@@ -11,20 +11,19 @@ export const findTemporaryChannelWriteAccessRoleIds = ({
   mainPrincipal: PermissionsMainPrincipalWithRole;
   temporaryChannelWriteAccess: Pick<
     TemporaryChannelWriteAccess,
-    'adminRoleId' | 'apiKeysIndividualRoleId'
+    'adminRoleId' | 'isRestoredForAdminMembers' | 'apiKeysIndividualRoleId'
   >;
 }): string[] => {
-  const { adminRoleId, apiKeysIndividualRoleId } = temporaryChannelWriteAccess;
+  const { adminRoleId, isRestoredForAdminMembers, apiKeysIndividualRoleId } =
+    temporaryChannelWriteAccess;
 
-  if (
-    mainPrincipal.type === 'apiKey' &&
-    isDefined(apiKeysIndividualRoleId) &&
-    mainPrincipal.roleIds.includes(apiKeysIndividualRoleId)
-  ) {
-    return mainPrincipal.roleIds.filter(
-      (roleId) => roleId !== apiKeysIndividualRoleId,
-    );
-  }
+  const isRestored =
+    mainPrincipal.type === 'apiKey'
+      ? isDefined(apiKeysIndividualRoleId) &&
+        mainPrincipal.roleIds.includes(apiKeysIndividualRoleId)
+      : isRestoredForAdminMembers;
 
-  return mainPrincipal.roleIds.filter((roleId) => roleId === adminRoleId);
+  return isRestored && mainPrincipal.roleIds.includes(adminRoleId)
+    ? [adminRoleId]
+    : [];
 };
