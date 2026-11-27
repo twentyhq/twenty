@@ -7,7 +7,6 @@ import {
 } from 'twenty-shared/application';
 import {
   getSharedDependenciesTypeReferencesPath,
-  FRONT_COMPONENT_REQUIRED_SHARED_DEPENDENCIES,
   getSharedDependenciesBuildManifestPath,
   type SharedDependenciesBuildManifest,
 } from 'twenty-shared/front-component-build';
@@ -25,6 +24,7 @@ import {
   BUILD_LOCK_RETRY_MS,
   YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
+import { AI_FRONT_COMPONENT_SHARED_DEPENDENCIES } from 'src/engine/metadata-modules/ai/ai-front-component/constants/ai-front-component-shared-dependencies.constant';
 import { FRONT_COMPONENT_MAX_BUILD_OUTPUT_BYTES } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-max-build-output-bytes.constant';
 import { frontComponentSharedDependenciesManifestSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-shared-dependencies-manifest.schema';
 import { computeTypeReferencesChecksum } from 'src/engine/metadata-modules/ai/ai-front-component/utils/compute-type-references-checksum.util';
@@ -75,7 +75,7 @@ export class WorkspaceFrontComponentDependenciesService {
         const canReuseBuild =
           isDefined(existingManifest) &&
           isDefined(existingManifest.typeReferencesChecksum) &&
-          FRONT_COMPONENT_REQUIRED_SHARED_DEPENDENCIES.every((specifier) =>
+          AI_FRONT_COMPONENT_SHARED_DEPENDENCIES.every((specifier) =>
             isDefined(existingManifest.exports[specifier]),
           ) &&
           existingManifest.checksum === dependencies.builtChecksum &&

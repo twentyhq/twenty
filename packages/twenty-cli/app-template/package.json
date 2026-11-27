@@ -9,6 +9,10 @@
   },
   "keywords": [],
   "packageManager": "yarn@4.18.1",
+  "frontComponentSharedDependencies": [
+    "react",
+    "react-dom/client"
+  ],
   "scripts": {
     "twenty": "twenty",
     "lint": "oxlint -c .oxlintrc.json .",
