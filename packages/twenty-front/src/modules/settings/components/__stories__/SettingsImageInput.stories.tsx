@@ -3,12 +3,13 @@ import { expect, fn, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { SettingsImageInput } from '@/settings/components/SettingsImageInput';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { workspaceLogoUrl } from '~/testing/mock-data/users';
 
 const meta: Meta<typeof SettingsImageInput> = {
   title: 'Modules/Settings/SettingsImageInput',
   component: SettingsImageInput,
-  decorators: [ComponentDecorator],
+  decorators: [ComponentDecorator, ToastDecorator],
   args: { onFileSelect: fn(), onRemove: fn() },
 };
 
