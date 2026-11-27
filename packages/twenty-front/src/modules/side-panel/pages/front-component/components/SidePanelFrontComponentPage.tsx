@@ -29,7 +29,7 @@ export const SidePanelFrontComponentPage = () => {
   return (
     <Suspense fallback={<FrontComponentSkeletonLoader />}>
       <LazyFrontComponentRenderer
-        instanceId={`side-panel-page-${sidePanelPageInstanceId}`}
+        hostInstanceId={`side-panel-page-${sidePanelPageInstanceId}`}
         frontComponentId={viewableFrontComponentId}
         selectedRecordIds={
           viewableFrontComponentRecordContext?.selectedRecordIds

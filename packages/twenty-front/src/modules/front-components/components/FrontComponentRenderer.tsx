@@ -19,7 +19,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { FindOneFrontComponentDocument } from '~/generated-metadata/graphql';
 
 type FrontComponentRendererProps = {
-  instanceId: string;
+  hostInstanceId: string;
   frontComponentId: string;
   commandMenuItemId?: string;
   selectedRecordIds?: string[];
@@ -35,7 +35,7 @@ type FrontComponentRendererProps = {
 };
 
 export const FrontComponentRenderer = ({
-  instanceId,
+  hostInstanceId,
   frontComponentId,
   commandMenuItemId,
   selectedRecordIds,
@@ -49,7 +49,7 @@ export const FrontComponentRenderer = ({
   errorFallback,
   shouldPreventPageZoom,
 }: FrontComponentRendererProps) => {
-  const frontComponentInstanceId = `${instanceId}-${frontComponentId}`;
+  const frontComponentInstanceId = `${hostInstanceId}-${frontComponentId}`;
 
   const { data, loading, error } = useQuery(FindOneFrontComponentDocument, {
     variables: { id: frontComponentId },

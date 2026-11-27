@@ -27,7 +27,7 @@ export const HeadlessFrontComponentRendererEngineCommand = () => {
   return (
     <Suspense fallback={null}>
       <LazyFrontComponentRenderer
-        instanceId={`command-menu-item-${commandMenuItemId}`}
+        hostInstanceId={`command-menu-item-${commandMenuItemId}`}
         frontComponentId={context.frontComponentId}
         commandMenuItemId={commandMenuItemId}
         selectedRecordIds={selectedRecordIds}

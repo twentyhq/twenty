@@ -64,7 +64,7 @@ export const SettingsApplicationFrontComponentPreviewTab = ({
           <StyledRendererContainer>
             <Suspense fallback={<FrontComponentSkeletonLoader />}>
               <LazyFrontComponentRenderer
-                instanceId="settings-application-front-component-preview"
+                hostInstanceId="settings-application-front-component-preview"
                 frontComponentId={frontComponentId}
                 loadingFallback={<FrontComponentSkeletonLoader />}
               />
