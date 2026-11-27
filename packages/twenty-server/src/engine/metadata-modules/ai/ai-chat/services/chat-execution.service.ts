@@ -523,11 +523,11 @@ export class ChatExecutionService {
       case 'listView':
         return this.buildListViewContext(browsingContext);
       case 'settingsPage':
-        return this.buildSettingsPageContext(
+        return this.buildSettingsPageContext({
           workspace,
-          browsingContext.path,
-          browsingContext.draft,
-        );
+          path: browsingContext.path,
+          draft: browsingContext.draft,
+        });
       default:
         // browsing context comes from unvalidated client JSON
         return '';
@@ -583,11 +583,15 @@ export class ChatExecutionService {
     return context;
   }
 
-  private buildSettingsPageContext(
-    workspace: WorkspaceEntity,
-    path: string,
-    draft: Extract<BrowsingContextType, { type: 'settingsPage' }>['draft'],
-  ): string {
+  private buildSettingsPageContext({
+    workspace,
+    path,
+    draft,
+  }: {
+    workspace: WorkspaceEntity;
+    path: string;
+    draft: Extract<BrowsingContextType, { type: 'settingsPage' }>['draft'];
+  }): string {
     const resourceUrl = this.workspaceDomainsService.buildWorkspaceURL({
       workspace,
       pathname: path,

@@ -22,11 +22,11 @@ const isSettingsExpressionDraftKind = (
 export const buildSettingsExpressionDraftContextLine = (
   draft: unknown,
 ): string | null => {
-  if (!isObject(draft)) {
+  if (!isObject(draft) || !('kind' in draft) || !('expression' in draft)) {
     return null;
   }
 
-  const { kind, expression } = draft as Record<string, unknown>;
+  const { kind, expression } = draft;
 
   if (!isSettingsExpressionDraftKind(kind) || !isNonEmptyString(expression)) {
     return null;
