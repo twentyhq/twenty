@@ -56,6 +56,7 @@ export { DEFAULT_AI_CHAT_MODEL_TIER } from './constants/default-ai-chat-model-ti
 export { INBOX_OBJECT_NAMES_BY_LEGACY_NAME } from './constants/inbox-object-names-by-legacy-name.const';
 export { JEV_MODEL_ID } from './constants/jev-model-id.const';
 export { LEGACY_INBOX_OBJECT_NAMES_BY_LEGACY_NAME } from './constants/legacy-inbox-object-names-by-legacy-name.const';
+export { LIST_THREAD_MEMBERS_TOOL_NAME } from './constants/list-thread-members-tool-name.const';
 export { NO_REPLY_TOOL_NAME } from './constants/no-reply-tool-name.const';
 export { PAUSING_TOOL_NAMES } from './constants/pausing-tool-names.const';
 export { PREVIEW_FRONT_COMPONENT_TOOL_NAME } from './constants/preview-front-component-tool-name.const';

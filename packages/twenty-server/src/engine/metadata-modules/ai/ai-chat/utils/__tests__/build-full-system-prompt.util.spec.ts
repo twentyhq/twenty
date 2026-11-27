@@ -179,6 +179,34 @@ describe('buildFullSystemPrompt', () => {
     expect(buildPrompt(false)).not.toContain('attach_conversation_to_records');
   });
 
+  it('should list the thread members only when someone else is in the conversation', () => {
+    const buildPromptWithMembers = (memberNames: string[]) =>
+      buildFullSystemPrompt({
+        toolCatalog: [],
+        skillCatalog: [],
+        preloadedTools: [],
+        userWorkspaceId: USER_WORKSPACE_ID,
+        workspaceId: EVEN_WORKSPACE_ID,
+        threadMembers: {
+          members: memberNames.map((name, index) => ({
+            workspaceMemberId: `member-${index}`,
+            name,
+            isCurrentSender: index === 0,
+          })),
+          totalCount: memberNames.length,
+          canMentionMembers: true,
+          canListMembers: true,
+        },
+      });
+
+    expect(buildPromptWithMembers(['Félix', 'Etienne Jouan'])).toContain(
+      '"name":"Etienne Jouan"',
+    );
+    expect(buildPromptWithMembers(['Félix'])).not.toContain(
+      '## People in this conversation',
+    );
+  });
+
   it('should end by scoping actions to the current participant', () => {
     expect(buildPrompt(false)).toMatch(
       /\n\nThis conversation can have multiple participants\. .*workspace membership user-workspace-id;.*$/,

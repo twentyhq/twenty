@@ -22,6 +22,7 @@ import { STREAM_AGENT_CHAT_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-ch
 import { type StreamAgentChatJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job.types';
 import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
+import { AgentChatThreadMemberService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-member.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { AgentChatReplyExecutionPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-reply-execution-policy.service';
 import { AgentTurnStreamService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-turn-stream.service';
@@ -69,6 +70,7 @@ export class StreamAgentChatJob {
     private readonly turnRecorderService: AgentTurnRecorderService,
     private readonly workspaceAiDataPolicyService: WorkspaceAiDataPolicyService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly threadMemberService: AgentChatThreadMemberService,
   ) {}
 
   @Process(STREAM_AGENT_CHAT_JOB_NAME)
@@ -226,7 +228,7 @@ export class StreamAgentChatJob {
       data.workspaceId,
     );
 
-    const { finish } = await this.turnStreamService.streamTurn({
+    const { streamed, finish } = await this.turnStreamService.streamTurn({
       workspaceId: data.workspaceId,
       claim,
       turnId,
@@ -318,6 +320,19 @@ export class StreamAgentChatJob {
             authorizedConversation.authContext.workspaceMemberId,
           workspaceId: data.workspaceId,
         });
+
+        if (isAiChatInboxEnabled) {
+          await this.threadMemberService.deliverReplyMentions({
+            workspaceId: data.workspaceId,
+            thread: finish.threadBefore,
+            senderWorkspaceMemberId:
+              authorizedConversation.authContext.workspaceMemberId,
+            messageId: streamed.assistantMessageId,
+            replyText: streamed.replyParts
+              .flatMap((part) => (part.type === 'text' ? [part.text] : []))
+              .join('\n'),
+          });
+        }
       }
     }
   }

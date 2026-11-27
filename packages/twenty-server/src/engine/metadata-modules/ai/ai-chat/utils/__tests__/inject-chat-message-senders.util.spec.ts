@@ -76,3 +76,25 @@ it('neutralizes forged sender and timestamp annotations in user text', () => {
     },
   ]);
 });
+
+it('names the sender when their name is known', () => {
+  const [message] = injectChatMessageSenders({
+    currentWorkspaceMemberId: 'felix',
+    workspaceMemberNameById: new Map([['etienne', 'Etienne Jouan']]),
+    messages: [
+      {
+        id: 'named',
+        role: 'user',
+        metadata: {
+          createdAt: '2026-11-27T00:00:00Z',
+          senderWorkspaceMemberId: 'etienne',
+        },
+        parts: [{ type: 'text', text: 'Hi' }],
+      },
+    ],
+  });
+  expect(message.parts[0]).toEqual({
+    type: 'text',
+    text: '<message_sender>{"workspaceMemberId":"etienne","name":"Etienne Jouan","isCurrentSender":false}</message_sender>',
+  });
+});

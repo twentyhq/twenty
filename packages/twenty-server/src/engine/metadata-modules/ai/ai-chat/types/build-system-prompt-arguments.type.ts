@@ -1,5 +1,6 @@
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { type UserContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
+import { type AgentChatThreadMembersContext } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-members-context.type';
 import { type ReferencedSkill } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-referenced-skills-section.util';
 import { type UploadedFileReference } from 'src/engine/metadata-modules/ai/ai-chat/types/uploaded-file-reference.type';
 import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/flat-skill.type';
@@ -16,6 +17,7 @@ export type BuildSystemPromptArguments = {
   };
   workspaceInstructions?: string;
   userContext?: UserContext;
+  threadMembers?: AgentChatThreadMembersContext;
   userWorkspaceId: string;
   workspaceId: string;
   isWorkspaceSetupThread?: boolean;
