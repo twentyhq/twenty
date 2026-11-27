@@ -20,10 +20,11 @@ import {
 import { v4 } from 'uuid';
 
 import { type UpsertRowLevelPermissionRulesInput } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/inputs/upsert-row-level-permission-rules.input';
+import { WORKSPACE_CUSTOM_APPLICATION_ROLE_LABEL } from 'src/engine/core-modules/application/constants/workspace-custom-application-role.constant';
 
 type TestSetup = {
   createdRoleId: string;
-  adminRoleId: string;
+  nonEditableRoleId: string;
   companyObjectMetadataId: string;
   companyNameFieldMetadataId: string;
   companyPeopleFieldMetadataId: string;
@@ -276,7 +277,7 @@ const failingRowLevelPermissionPredicateUpsertTestCases: EachTestingContext<Test
       title: 'when adding a predicate to a non-editable role',
       context: {
         input: (testSetup) => ({
-          roleId: testSetup.adminRoleId,
+          roleId: testSetup.nonEditableRoleId,
           objectMetadataId: testSetup.companyObjectMetadataId,
           rules: [
             {
@@ -296,7 +297,7 @@ const failingRowLevelPermissionPredicateUpsertTestCases: EachTestingContext<Test
       title: 'when adding a predicate group to a non-editable role',
       context: {
         input: (testSetup) => ({
-          roleId: testSetup.adminRoleId,
+          roleId: testSetup.nonEditableRoleId,
           objectMetadataId: testSetup.companyObjectMetadataId,
           rules: [
             {
@@ -315,7 +316,7 @@ const failingRowLevelPermissionPredicateUpsertTestCases: EachTestingContext<Test
 
 describe('Row Level Permission Predicate upsert should fail', () => {
   let createdRoleId: string;
-  let adminRoleId: string;
+  let nonEditableRoleId: string;
   let companyObjectMetadataId: string;
   let companyNameFieldMetadataId: string;
   let companyPeopleFieldMetadataId: string;
@@ -426,7 +427,11 @@ describe('Row Level Permission Predicate upsert should fail', () => {
     createdRoleId = roleData?.createOneRole?.id;
     jestExpectToBeDefined(createdRoleId);
 
-    adminRoleId = (await findOneRoleByLabel({ label: 'Admin' })).id;
+    nonEditableRoleId = (
+      await findOneRoleByLabel({
+        label: WORKSPACE_CUSTOM_APPLICATION_ROLE_LABEL,
+      })
+    ).id;
   });
 
   afterAll(async () => {
@@ -463,7 +468,7 @@ describe('Row Level Permission Predicate upsert should fail', () => {
       expectToFail: true,
       input: context.input({
         createdRoleId,
-        adminRoleId,
+        nonEditableRoleId,
         companyObjectMetadataId,
         companyNameFieldMetadataId,
         companyPeopleFieldMetadataId,

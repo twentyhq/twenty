@@ -291,7 +291,7 @@ export class ObjectPermissionService {
       const hasReadPermissionAfterUpdate =
         resolvedCanRead ?? flatRole.canReadAllObjectRecords;
 
-      if (hasReadPermissionAfterUpdate === false) {
+      if (!hasReadPermissionAfterUpdate) {
         const resolvedCanUpdate =
           newObjectPermission.canUpdateObjectRecords !== undefined
             ? newObjectPermission.canUpdateObjectRecords

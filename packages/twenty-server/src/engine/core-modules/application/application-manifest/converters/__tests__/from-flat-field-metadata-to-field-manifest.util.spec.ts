@@ -50,6 +50,7 @@ const exportFieldWithWorkspaceAddedOption = ({
   defaultValue: string | string[];
 }) =>
   fromFlatFieldMetadataToFieldManifest({
+    formulaFields: [],
     flatFieldMetadata: getFlatFieldMetadataMock({
       universalIdentifier: FIELD_UID,
       objectMetadataId: 'object-metadata-id',
@@ -79,6 +80,7 @@ const TEXT_FIELD_MANIFEST: Required<
   icon: 'IconAbc',
   options: null,
   universalSettings: null,
+  formula: null,
   defaultValue: "'untitled'",
   isNullable: false,
   isUIEditable: false,
@@ -125,6 +127,7 @@ const roundTripFlatFieldMetadata = (
     fromUniversalFlatEntity: flatFieldMetadata,
     toUniversalFlatEntity: fromFieldManifestToUniversalFlatFieldMetadata({
       fieldManifest: fromFlatFieldMetadataToFieldManifest({
+        formulaFields: [],
         flatFieldMetadata,
         flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
       }),
@@ -145,6 +148,7 @@ describe('fromFlatFieldMetadataToFieldManifest', () => {
 
     expect(
       fromFlatFieldMetadataToFieldManifest({
+        formulaFields: [],
         flatFieldMetadata: universalFlatFieldMetadata,
         flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
       }),
@@ -161,6 +165,7 @@ describe('fromFlatFieldMetadataToFieldManifest', () => {
 
     expect(
       fromFlatFieldMetadataToFieldManifest({
+        formulaFields: [],
         flatFieldMetadata: universalFlatFieldMetadata,
         flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
       }),
@@ -205,6 +210,7 @@ describe('fromFlatFieldMetadataToFieldManifest', () => {
     });
 
     const fieldManifest = fromFlatFieldMetadataToFieldManifest({
+      formulaFields: [],
       flatFieldMetadata,
       flatFieldMetadataOptionMaps: {
         ...createEmptyFlatEntityMaps(),
@@ -254,6 +260,7 @@ describe('fromFlatFieldMetadataToFieldManifest', () => {
 
     expect(
       fromFlatFieldMetadataToFieldManifest({
+        formulaFields: [],
         flatFieldMetadata,
         flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
       }).universalSettings,

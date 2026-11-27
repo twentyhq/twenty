@@ -174,7 +174,7 @@ const handler = async (event: RoutePayload) => {
 };
 ```
 
-For security reasons, response headers are restricted to an allow-list. Any header that is not on the list (e.g. `Set-Cookie`, CORS headers such as `Access-Control-Allow-Origin`, or custom `X-*` headers) is silently dropped before the response is sent. The allowed response headers are:
+On the workspace host (`/s/`) and on server routes, response headers are restricted to an allow-list for security reasons. Any header that is not on the list (e.g. `Set-Cookie`, CORS headers such as `Access-Control-Allow-Origin`, or custom `X-*` headers) is silently dropped before the response is sent. On a [public domain](#where-route-pages-run), every header is kept. The allowed response headers are:
 
 - `content-type`
 - `content-language`
@@ -185,6 +185,30 @@ For security reasons, response headers are restricted to an allow-list. Any head
 <Note>
   The status code must be a valid HTTP status code (between 100 and 599).
   Response header names are matched case-insensitively.
+</Note>
+
+#### Where route pages run
+
+Every route response carries `X-Content-Type-Options: nosniff`, so a route loaded as a script or stylesheet must declare a JavaScript or CSS content type. Most also carry a sandbox policy, which isolates the pages your routes return from the Twenty app and from other applications:
+
+```
+Content-Security-Policy: sandbox allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-modals allow-downloads
+```
+
+A sandboxed page keeps scripts, forms, popups, modals and downloads, but runs with an opaque origin: `document.cookie`, `localStorage` and `sessionStorage` throw, and its requests, even to your own routes, are cross-origin. Browser libraries that need a real origin, such as Stripe.js, do not work there.
+
+| Where the route is served | Response headers | Sandbox |
+| --- | --- | --- |
+| `/s/` on the workspace host, and server routes | Allow-list above | Yes |
+| The workspace functions domain (`https://<workspace>.withtwenty.com` on Twenty Cloud) | All | Yes |
+| A validated custom domain of your application | All | No |
+
+A custom domain belongs to one application. Register it in **Settings → Applications → your application → Custom Domain**, add the DNS records shown there and wait until it is validated. From then on, `TWENTY_FUNCTIONS_URL` points at it (the oldest validated one when there are several), so links built with `RestApiClient` or `resolveUrl` use that domain.
+
+<Note>
+  Custom domains are validated through Cloudflare. On an instance without
+  Cloudflare configured, a custom domain serves routes as soon as its
+  `core.publicDomain` row exists.
 </Note>
 
 #### Platform error responses
@@ -812,7 +836,7 @@ export default defineFrontComponent({
 
 The component mounts as soon as the agent has finished streaming its arguments, so it owns the whole call, not just the result. `toolCall.status` walks through `input-available`, the approval states when the tool needs one, and then `output-available`, `output-denied` or `output-error`; `input` is what the agent proposed, `output` what your handler returned. Render each state you care about, since the step row is no longer there to cover them.
 
-When the agent proposes a call that waits for a person's approval, the approval card shows the same component in place of the raw JSON arguments. The card keeps its header, **Reject**, **Approve** and feedback. While `toolCall.status` is `approval-requested`, `input` holds the arguments **Approve** will submit, and the component can change them with `setToolCallArguments`:
+When the agent proposes a call that waits for a person's approval, the approval card shows the same component in place of the raw JSON arguments. The card keeps its header, **Reject** and **Approve**. While `toolCall.status` is `approval-requested`, `input` holds the arguments **Approve** will submit, and the component can change them with `setToolCallArguments`:
 
 ```tsx
 import { setToolCallArguments, useToolCall } from 'twenty-sdk/front-component';

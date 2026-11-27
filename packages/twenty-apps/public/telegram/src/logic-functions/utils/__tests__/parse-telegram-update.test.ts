@@ -38,7 +38,38 @@ describe('parseTelegramUpdate', () => {
         kind: 'MESSAGE',
         chatId: 42,
         user: USER,
+        messageId: 1,
+        text: text ?? '',
       });
+    },
+  );
+
+  it('reads a thumbs up or down tapped under an answer', () => {
+    expect(
+      parseTelegramUpdate({
+        callback_query: {
+          id: 'callback-1',
+          from: USER,
+          data: 'feedback:NEGATIVE:8f4e2c1a-0b7d-4c3e-9a51-6d2f8b0c7e14',
+        },
+      }),
+    ).toEqual({
+      kind: 'FEEDBACK',
+      user: USER,
+      callbackQueryId: 'callback-1',
+      requestId: '8f4e2c1a-0b7d-4c3e-9a51-6d2f8b0c7e14',
+      feedback: 'NEGATIVE',
+    });
+  });
+
+  it.each(['feedback:MAYBE:request-1', 'other:POSITIVE:request-1', undefined])(
+    'ignores a button tap carrying %j',
+    (data) => {
+      expect(
+        parseTelegramUpdate({
+          callback_query: { id: 'callback-1', from: USER, data },
+        }),
+      ).toBeUndefined();
     },
   );
 

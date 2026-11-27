@@ -534,9 +534,6 @@ export default {
             "senderApplicationId": [
                 573
             ],
-            "senderUserWorkspaceId": [
-                573
-            ],
             "senderWorkspaceMemberId": [
                 573
             ],
@@ -3217,9 +3214,6 @@ export default {
             "isAttachmentPreviewEnabled": [
                 1
             ],
-            "isBookCallOnboardingStepEnabled": [
-                1
-            ],
             "isClickHouseConfigured": [
                 1
             ],
@@ -3851,6 +3845,9 @@ export default {
             "description": [
                 4
             ],
+            "formula": [
+                350
+            ],
             "icon": [
                 4
             ],
@@ -4095,6 +4092,9 @@ export default {
             ],
             "viewId": [
                 573
+            ],
+            "visibleItemLimit": [
+                2
             ],
             "workflowId": [
                 573
@@ -4585,6 +4585,9 @@ export default {
             ],
             "key": [
                 707
+            ],
+            "listPinnedFieldMetadataId": [
+                573
             ],
             "mainGroupByFieldMetadataId": [
                 573
@@ -5393,6 +5396,9 @@ export default {
             "disabledFieldPermissionActions": [
                 4
             ],
+            "formula": [
+                350
+            ],
             "icon": [
                 4
             ],
@@ -5745,6 +5751,9 @@ export default {
             ]
         },
         "FrontComponent": {
+            "applicationFunctionsBaseUrl": [
+                4
+            ],
             "applicationGrantedCapabilities": [
                 4
             ],
@@ -7557,19 +7566,6 @@ export default {
                     "fileIds": [
                         573,
                         "[UUID!]!"
-                    ]
-                }
-            ],
-            "completeBookCallOnboardingStep": [
-                431,
-                {
-                    "hasBookedCall": [
-                        1,
-                        "Boolean!"
-                    ],
-                    "isAutoSkipped": [
-                        1,
-                        "Boolean!"
                     ]
                 }
             ],
@@ -10555,6 +10551,9 @@ export default {
             "viewId": [
                 573
             ],
+            "visibleItemLimit": [
+                2
+            ],
             "workflowId": [
                 573
             ],
@@ -13080,6 +13079,9 @@ export default {
             "applicationId": [
                 573
             ],
+            "areRecordPermissionsEditable": [
+                1
+            ],
             "canAccessAllAgentChatChannels": [
                 1
             ],
@@ -13773,6 +13775,9 @@ export default {
                 4
             ],
             "toolCall": [
+                350
+            ],
+            "toolCalls": [
                 350
             ],
             "workspaceMemberIds": [
@@ -14821,6 +14826,9 @@ export default {
             "description": [
                 4
             ],
+            "formula": [
+                350
+            ],
             "icon": [
                 4
             ],
@@ -15120,6 +15128,9 @@ export default {
             ],
             "position": [
                 9
+            ],
+            "visibleItemLimit": [
+                2
             ],
             "__typename": [
                 4
@@ -15729,6 +15740,9 @@ export default {
             ],
             "kanbanColumnWidth": [
                 2
+            ],
+            "listPinnedFieldMetadataId": [
+                573
             ],
             "mainGroupByFieldMetadataId": [
                 573
@@ -16881,6 +16895,9 @@ export default {
             "key": [
                 707
             ],
+            "listPinnedFieldMetadataId": [
+                573
+            ],
             "mainGroupByFieldMetadataId": [
                 573
             ],
@@ -17710,9 +17727,6 @@ export default {
         "WorkspaceCompanyEnrichmentResult": {
             "enrichment": [
                 350
-            ],
-            "isBookCallOnboardingStepPending": [
-                1
             ],
             "outcome": [
                 724

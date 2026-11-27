@@ -2,52 +2,53 @@ import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { NavigationDrawerInboxChannelItem } from '@/inbox/components/NavigationDrawerInboxChannelItem';
+import { INBOX_FAVORITES_NAVIGATION_SECTION_ID } from '@/inbox/constants/InboxFavoritesNavigationSectionId';
 import { NavigationDrawerInboxThreadItem } from '@/inbox/components/NavigationDrawerInboxThreadItem';
-import { inboxChannelSummariesState } from '@/inbox/states/inboxChannelSummariesState';
-import { aiChatAccessibleChannelsSelector } from '@/ai-chat/threads/states/selectors/aiChatAccessibleChannelsSelector';
 import { type InboxThreadListItemData } from '@/inbox/types/InboxThreadListItemData';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { NavigationMenuSectionSeeMore } from '@/navigation-menu-item/display/sections/components/NavigationMenuSectionSeeMore';
+import { StyledNavigationMenuSectionHiddenItems } from '@/navigation-menu-item/display/sections/components/StyledNavigationMenuSectionHiddenItems';
+import { getNavigationSectionVisibleItems } from '@/navigation-menu-item/display/utils/getNavigationSectionVisibleItems';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { type AiChatChannel } from '@/ai-chat/threads/types/AiChatChannel';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
-
-const INBOX_FAVORITES_NAVIGATION_SECTION_ID = 'AiChatFavorites';
 
 type NavigationDrawerInboxFavoritesSectionProps = {
   label?: string;
-  channels: AiChatChannel[];
   threads: InboxThreadListItemData[];
   currentThreadId: string | null;
   onThreadClick: (thread: InboxThreadListItemData) => void;
+  visibleItemLimit?: number | null;
   headerAction?: ReactNode;
 };
 
 export const NavigationDrawerInboxFavoritesSection = ({
   label,
-  channels,
   threads,
   currentThreadId,
   onThreadClick,
+  visibleItemLimit,
   headerAction,
 }: NavigationDrawerInboxFavoritesSectionProps) => {
   const { t } = useLingui();
-  const aiChatAccessibleChannels = useAtomStateValue(
-    aiChatAccessibleChannelsSelector,
-  );
-  const inboxChannelSummaries = useAtomStateValue(inboxChannelSummariesState);
-  const canManageChannels = useHasPermissionFlag(
-    PermissionFlagType.AI_SETTINGS,
-  );
+  const {
+    visibleItems: visibleThreads,
+    hiddenItems: hiddenThreads,
+    hasHiddenItems,
+  } = getNavigationSectionVisibleItems({
+    items: threads,
+    visibleItemLimit,
+  });
 
-  if (
-    channels.length === 0 &&
-    threads.length === 0 &&
-    !isDefined(headerAction)
-  ) {
+  if (threads.length === 0 && !isDefined(headerAction)) {
     return null;
   }
+
+  const renderThread = (thread: InboxThreadListItemData) => (
+    <NavigationDrawerInboxThreadItem
+      key={thread.id}
+      thread={thread}
+      isActive={currentThreadId === thread.id}
+      onClick={onThreadClick}
+    />
+  );
 
   return (
     <CollapsibleNavigationDrawerSection
@@ -56,26 +57,17 @@ export const NavigationDrawerInboxFavoritesSection = ({
       rightIcon={headerAction}
       alwaysShowRightIcon={isDefined(headerAction)}
     >
-      {channels.map((channel) => (
-        <NavigationDrawerInboxChannelItem
-          key={channel.id}
-          channel={channel}
-          summary={inboxChannelSummaries[channel.id]}
-          destinationChannels={aiChatAccessibleChannels.filter(
-            ({ id }) => id !== channel.id,
-          )}
-          canManage={canManageChannels}
-          isExpandable={false}
+      {visibleThreads.map(renderThread)}
+      {hasHiddenItems && (
+        <NavigationMenuSectionSeeMore
+          sectionId={INBOX_FAVORITES_NAVIGATION_SECTION_ID}
+          hiddenItems={
+            <StyledNavigationMenuSectionHiddenItems>
+              {hiddenThreads.map(renderThread)}
+            </StyledNavigationMenuSectionHiddenItems>
+          }
         />
-      ))}
-      {threads.map((thread) => (
-        <NavigationDrawerInboxThreadItem
-          key={thread.id}
-          thread={thread}
-          isActive={currentThreadId === thread.id}
-          onClick={onThreadClick}
-        />
-      ))}
+      )}
     </CollapsibleNavigationDrawerSection>
   );
 };

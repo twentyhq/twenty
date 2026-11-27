@@ -172,4 +172,64 @@ describe('computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate', () => {
       relatedFlatFieldMetadatasFromTo[0].fromFlatFieldMetadata,
     );
   });
+  describe('formula', () => {
+    const flatObjectMetadata = getFlatObjectMetadataMock({
+      universalIdentifier: 'object-uid',
+      id: 'object-id',
+      applicationUniversalIdentifier: CUSTOM,
+    });
+    const formula = { expression: 'weight * 2' };
+    const formulaFlatFieldMetadata = getFlatFieldMetadataMock({
+      universalIdentifier: 'formula-uid',
+      id: 'formula-id',
+      objectMetadataId: flatObjectMetadata.id,
+      type: FieldMetadataType.NUMBER,
+      settings: { decimals: 0 },
+      universalSettings: { decimals: 0 },
+      formula,
+      applicationUniversalIdentifier: CUSTOM,
+    });
+
+    const update = (
+      rawUpdateFieldInput: Omit<
+        Parameters<
+          typeof computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate
+        >[0]['rawUpdateFieldInput'],
+        'id' | 'workspaceId'
+      >,
+    ) =>
+      computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate({
+        rawUpdateFieldInput: {
+          id: formulaFlatFieldMetadata.id,
+          workspaceId: 'workspace-id',
+          ...rawUpdateFieldInput,
+        },
+        fromFlatFieldMetadata: formulaFlatFieldMetadata,
+        flatObjectMetadata,
+        flatFieldMetadataMaps: addFlatEntityToFlatEntityMapsOrThrow({
+          flatEntity: formulaFlatFieldMetadata,
+          flatEntityMaps: createEmptyFlatEntityMaps(),
+        }),
+        flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
+        isSystemBuild: false,
+        workspaceCustomApplicationUniversalIdentifier: CUSTOM,
+      }).flatFieldMetadataFromTo.toFlatFieldMetadata;
+
+    it('keeps the formula when only the settings change', () => {
+      expect(update({ settings: { decimals: 2 } })).toMatchObject({
+        settings: { decimals: 2 },
+        formula,
+      });
+    });
+
+    it('replaces the formula when the update sends one', () => {
+      expect(update({ formula: { expression: 'weight * 3' } }).formula).toEqual(
+        { expression: 'weight * 3' },
+      );
+    });
+
+    it('removes the formula when the update sends null', () => {
+      expect(update({ formula: null }).formula).toBeNull();
+    });
+  });
 });

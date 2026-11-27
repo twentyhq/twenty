@@ -17,7 +17,6 @@ export { decodeFrontComponentTypeReferences } from './decode-front-component-typ
 export { encodeFrontComponentTypeReferencesOrThrow } from './encode-front-component-type-references-or-throw';
 export { enumerateSharedDependenciesExportNames } from './enumerate-shared-dependencies-export-names';
 export { FRONT_COMPONENT_REACT_IMPORTS } from './front-component-react-imports';
-export { FRONT_COMPONENT_REQUIRED_SHARED_DEPENDENCIES } from './front-component-required-shared-dependencies';
 export { FRONT_COMPONENT_TYPE_REFERENCES_MAX_BYTES } from './front-component-type-references-max-bytes';
 export { FRONT_COMPONENT_UI_IMPORTS } from './front-component-ui-imports';
 export { getCommonFrontComponentBuildOptions } from './get-common-front-component-build-options';

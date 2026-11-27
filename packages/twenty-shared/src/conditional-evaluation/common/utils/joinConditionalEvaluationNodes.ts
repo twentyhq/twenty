@@ -1,4 +1,4 @@
-import { type ConditionalEvaluationLogicalOperator } from '@/conditional-evaluation/common/types/ConditionalEvaluationLogicalOperator';
+import { type ExpressionLogicalOperator } from '@/expression/types/ExpressionLogicalOperator';
 import { type ConditionalEvaluationNode } from '@/conditional-evaluation/common/types/ConditionalEvaluationNode';
 import { isDefined } from '@/utils/validation/isDefined';
 
@@ -7,7 +7,7 @@ export const joinConditionalEvaluationNodes = ({
   logicalOperator,
 }: {
   nodes: ConditionalEvaluationNode[];
-  logicalOperator: ConditionalEvaluationLogicalOperator;
+  logicalOperator: ExpressionLogicalOperator;
 }): ConditionalEvaluationNode => {
   const [onlyNode] = nodes;
 

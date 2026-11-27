@@ -16,14 +16,14 @@ export const DEFAULT_MODELS_BY_TIER: Record<AiModelTier, string[]> = {
     'google/gemini-3.8-flash@medium',
     'anthropic/claude-haiku-5-5',
     'xai/grok-4.5@medium',
-    'mistral/mistral-medium-latest',
+    'mistral/mistral-small-latest@high',
   ],
   balanced: [
     'openai/gpt-6-luna@max',
     'google/gemini-3.8-flash@high',
     'anthropic/claude-haiku-5-5',
     'xai/grok-4.6@medium',
-    'mistral/mistral-medium-latest',
+    'mistral/mistral-small-latest@high',
   ],
   smart: [
     'openai/gpt-6.1-sol',

@@ -53,7 +53,9 @@ export { DATABASE_CRUD_OPERATIONS } from './constants/database-crud-operation.co
 export { DEFAULT_AI_AGENT_MODEL_TIER } from './constants/default-ai-agent-model-tier.const';
 export { DEFAULT_AI_CHAT_ASSISTANT_PROFILE } from './constants/default-ai-chat-assistant-profile.const';
 export { DEFAULT_AI_CHAT_MODEL_TIER } from './constants/default-ai-chat-model-tier.const';
+export { INBOX_OBJECT_NAMES_BY_LEGACY_NAME } from './constants/inbox-object-names-by-legacy-name.const';
 export { JEV_MODEL_ID } from './constants/jev-model-id.const';
+export { LEGACY_INBOX_OBJECT_NAMES_BY_LEGACY_NAME } from './constants/legacy-inbox-object-names-by-legacy-name.const';
 export { NO_REPLY_TOOL_NAME } from './constants/no-reply-tool-name.const';
 export { PAUSING_TOOL_NAMES } from './constants/pausing-tool-names.const';
 export { PREVIEW_FRONT_COMPONENT_TOOL_NAME } from './constants/preview-front-component-tool-name.const';
@@ -122,6 +124,8 @@ export type {
   ExtendedUIMessage,
 } from './types/ExtendedUIMessage';
 export type { ExtendedUIMessagePart } from './types/ExtendedUIMessagePart';
+export type { InboxObjectNamesByLegacyName } from './types/InboxObjectNamesByLegacyName';
+export type { LegacyInboxObjectName } from './types/LegacyInboxObjectName';
 export type { ModelConfiguration } from './types/ModelConfiguration';
 export type { PersonalInboxViewPresetFilter } from './types/PersonalInboxViewPresetFilter';
 export type { ProposedToolCall } from './types/ProposedToolCall';
@@ -185,6 +189,7 @@ export { isPausingToolPart } from './utils/is-pausing-tool-part.util';
 export { isSilentAgentChatMessageParts } from './utils/is-silent-agent-chat-message-parts.util';
 export { isSnakeCaseToolName } from './utils/is-snake-case-tool-name.util';
 export { isSucceededCompleteWorkspaceSetupToolPart } from './utils/is-succeeded-complete-workspace-setup-tool-part.util';
+export { isToolsOnlyAgentChatMessageParts } from './utils/is-tools-only-agent-chat-message-parts.util';
 export { isValidAgentMessageReactionEmoji } from './utils/is-valid-agent-message-reaction-emoji.util';
 export { isValidAgentResponseSchemaPropertyKey } from './utils/is-valid-agent-response-schema-property-key.util';
 export { isValidChatReferenceLabel } from './utils/is-valid-chat-reference-label.util';

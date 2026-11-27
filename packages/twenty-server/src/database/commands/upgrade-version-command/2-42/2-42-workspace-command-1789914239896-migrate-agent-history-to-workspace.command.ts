@@ -11,13 +11,13 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
-import { AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
-import { type AgentChatThreadLastStreamError } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-last-stream-error.type';
+import { STREAM_INTERRUPTED_ERROR_CODE } from 'src/database/commands/upgrade-version-command/2-42/constants/stream-interrupted-error-code.constant';
+import { LegacyAgentChatEventPublisherService } from 'src/database/commands/upgrade-version-command/2-42/services/legacy-agent-chat-event-publisher.service';
+import { LegacyAgentChatStreamHeartbeatService } from 'src/database/commands/upgrade-version-command/2-42/services/legacy-agent-chat-stream-heartbeat.service';
+import { type AgentChatThreadLastStreamError } from 'src/database/commands/upgrade-version-command/2-42/types/agent-chat-thread-last-stream-error.type';
 import { AGENT_HISTORY_TABLES } from 'src/database/commands/agent-history/agent-history-tables.constant';
 import { AgentHistoryMigrationStateService } from 'src/database/commands/agent-history/agent-history-migration-state.service';
 import { type AgentHistoryMigrationState } from 'src/database/commands/agent-history/agent-history-migration-state.type';
-import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
 @RegisteredWorkspaceCommand('2.42.0', 1789914239896)
@@ -32,8 +32,8 @@ export class MigrateAgentHistoryToWorkspaceCommand extends ProvisionedWorkspaceC
     private readonly schema: AgentHistorySchemaService,
     private readonly migration: AgentHistoryMigrationService,
     private readonly storage: AgentHistoryMigrationStateService,
-    private readonly streamHeartbeatService: AgentChatStreamHeartbeatService,
-    private readonly eventPublisherService: AgentChatEventPublisherService,
+    private readonly streamHeartbeatService: LegacyAgentChatStreamHeartbeatService,
+    private readonly eventPublisherService: LegacyAgentChatEventPublisherService,
     private readonly metricsService: MetricsService,
   ) {
     super(workspaceIteratorService);
@@ -165,7 +165,7 @@ export class MigrateAgentHistoryToWorkspaceCommand extends ProvisionedWorkspaceC
     }
 
     const interruptedError: AgentChatThreadLastStreamError = {
-      code: AiExceptionCode.STREAM_INTERRUPTED,
+      code: STREAM_INTERRUPTED_ERROR_CODE,
       message: 'The response was interrupted before it could finish.',
       failedAt: new Date().toISOString(),
     };

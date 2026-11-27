@@ -1,0 +1,621 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Marketplace application roles on dev sync of a LOCAL application refuses a standalone role assignable to members and writes nothing 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "role": [
+        {
+          "errors": [
+            {
+              "code": "MARKETPLACE_APPLICATION_ROLE_ASSIGNABILITY",
+              "message": "A marketplace application role can only be assigned to agents",
+              "userFriendlyMessage": "A marketplace application role can only be assigned to agents.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "label": "Member role",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "role",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 role",
+    "summary": {
+      "role": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "A marketplace application role can only be assigned to agents.",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Marketplace application roles on dev sync of a LOCAL application refuses them on a dry run too 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldPermission": [
+        {
+          "errors": [
+            {
+              "code": "MARKETPLACE_APPLICATION_ROLE_RESTRICTION",
+              "message": "A marketplace application cannot declare row-level rules or field permissions",
+              "userFriendlyMessage": "A marketplace application cannot declare row-level rules or field permissions.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataUniversalIdentifier": Any<String>,
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "roleUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldPermission",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 fieldPermission",
+    "summary": {
+      "fieldPermission": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "A marketplace application cannot declare row-level rules or field permissions.",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Marketplace application roles on dev sync of a LOCAL application with field permissions in recordsPermissions refuses them on the agent role and writes nothing 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldPermission": [
+        {
+          "errors": [
+            {
+              "code": "MARKETPLACE_APPLICATION_ROLE_RESTRICTION",
+              "message": "A marketplace application cannot declare row-level rules or field permissions",
+              "userFriendlyMessage": "A marketplace application cannot declare row-level rules or field permissions.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataUniversalIdentifier": Any<String>,
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "roleUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldPermission",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 fieldPermission",
+    "summary": {
+      "fieldPermission": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "A marketplace application cannot declare row-level rules or field permissions.",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Marketplace application roles on dev sync of a LOCAL application with field permissions in recordsPermissions refuses them on the application role and writes nothing 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldPermission": [
+        {
+          "errors": [
+            {
+              "code": "MARKETPLACE_APPLICATION_ROLE_RESTRICTION",
+              "message": "A marketplace application cannot declare row-level rules or field permissions",
+              "userFriendlyMessage": "A marketplace application cannot declare row-level rules or field permissions.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataUniversalIdentifier": Any<String>,
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "roleUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldPermission",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 fieldPermission",
+    "summary": {
+      "fieldPermission": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "A marketplace application cannot declare row-level rules or field permissions.",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Marketplace application roles on dev sync of a LOCAL application with legacy field permissions refuses them on the agent role and writes nothing 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldPermission": [
+        {
+          "errors": [
+            {
+              "code": "MARKETPLACE_APPLICATION_ROLE_RESTRICTION",
+              "message": "A marketplace application cannot declare row-level rules or field permissions",
+              "userFriendlyMessage": "A marketplace application cannot declare row-level rules or field permissions.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataUniversalIdentifier": Any<String>,
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "roleUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldPermission",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 fieldPermission",
+    "summary": {
+      "fieldPermission": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "A marketplace application cannot declare row-level rules or field permissions.",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Marketplace application roles on dev sync of a LOCAL application with legacy field permissions refuses them on the application role and writes nothing 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldPermission": [
+        {
+          "errors": [
+            {
+              "code": "MARKETPLACE_APPLICATION_ROLE_RESTRICTION",
+              "message": "A marketplace application cannot declare row-level rules or field permissions",
+              "userFriendlyMessage": "A marketplace application cannot declare row-level rules or field permissions.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataUniversalIdentifier": Any<String>,
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "roleUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldPermission",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 fieldPermission",
+    "summary": {
+      "fieldPermission": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "A marketplace application cannot declare row-level rules or field permissions.",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Marketplace application roles on dev sync of a LOCAL application with legacy row-level predicates refuses them on the agent role and writes nothing 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "rowLevelPermissionPredicate": [
+        {
+          "errors": [
+            {
+              "code": "MARKETPLACE_APPLICATION_ROLE_RESTRICTION",
+              "message": "A marketplace application cannot declare row-level rules or field permissions",
+              "userFriendlyMessage": "A marketplace application cannot declare row-level rules or field permissions.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "rowLevelPermissionPredicate",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+      "rowLevelPermissionRule": [
+        {
+          "errors": [
+            {
+              "code": "MARKETPLACE_APPLICATION_ROLE_RESTRICTION",
+              "message": "A marketplace application cannot declare row-level rules or field permissions",
+              "userFriendlyMessage": "A marketplace application cannot declare row-level rules or field permissions.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "rowLevelPermissionRule",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 rowLevelPermissionPredicate, 1 rowLevelPermissionRule",
+    "summary": {
+      "rowLevelPermissionPredicate": 1,
+      "rowLevelPermissionRule": 1,
+      "totalErrors": 2,
+    },
+    "userFriendlyMessage": "Many validation errors",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Marketplace application roles on dev sync of a LOCAL application with legacy row-level predicates refuses them on the application role and writes nothing 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "rowLevelPermissionPredicate": [
+        {
+          "errors": [
+            {
+              "code": "MARKETPLACE_APPLICATION_ROLE_RESTRICTION",
+              "message": "A marketplace application cannot declare row-level rules or field permissions",
+              "userFriendlyMessage": "A marketplace application cannot declare row-level rules or field permissions.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "rowLevelPermissionPredicate",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+      "rowLevelPermissionRule": [
+        {
+          "errors": [
+            {
+              "code": "MARKETPLACE_APPLICATION_ROLE_RESTRICTION",
+              "message": "A marketplace application cannot declare row-level rules or field permissions",
+              "userFriendlyMessage": "A marketplace application cannot declare row-level rules or field permissions.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "rowLevelPermissionRule",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 rowLevelPermissionPredicate, 1 rowLevelPermissionRule",
+    "summary": {
+      "rowLevelPermissionPredicate": 1,
+      "rowLevelPermissionRule": 1,
+      "totalErrors": 2,
+    },
+    "userFriendlyMessage": "Many validation errors",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Marketplace application roles on dev sync of a LOCAL application with row-level rules in recordsPermissions refuses them on the agent role and writes nothing 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "rowLevelPermissionPredicate": [
+        {
+          "errors": [
+            {
+              "code": "MARKETPLACE_APPLICATION_ROLE_RESTRICTION",
+              "message": "A marketplace application cannot declare row-level rules or field permissions",
+              "userFriendlyMessage": "A marketplace application cannot declare row-level rules or field permissions.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "rowLevelPermissionPredicate",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+      "rowLevelPermissionRule": [
+        {
+          "errors": [
+            {
+              "code": "MARKETPLACE_APPLICATION_ROLE_RESTRICTION",
+              "message": "A marketplace application cannot declare row-level rules or field permissions",
+              "userFriendlyMessage": "A marketplace application cannot declare row-level rules or field permissions.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "rowLevelPermissionRule",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 rowLevelPermissionPredicate, 1 rowLevelPermissionRule",
+    "summary": {
+      "rowLevelPermissionPredicate": 1,
+      "rowLevelPermissionRule": 1,
+      "totalErrors": 2,
+    },
+    "userFriendlyMessage": "Many validation errors",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Marketplace application roles on dev sync of a LOCAL application with row-level rules in recordsPermissions refuses them on the application role and writes nothing 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "rowLevelPermissionPredicate": [
+        {
+          "errors": [
+            {
+              "code": "MARKETPLACE_APPLICATION_ROLE_RESTRICTION",
+              "message": "A marketplace application cannot declare row-level rules or field permissions",
+              "userFriendlyMessage": "A marketplace application cannot declare row-level rules or field permissions.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "rowLevelPermissionPredicate",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+      "rowLevelPermissionRule": [
+        {
+          "errors": [
+            {
+              "code": "MARKETPLACE_APPLICATION_ROLE_RESTRICTION",
+              "message": "A marketplace application cannot declare row-level rules or field permissions",
+              "userFriendlyMessage": "A marketplace application cannot declare row-level rules or field permissions.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "rowLevelPermissionRule",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 rowLevelPermissionPredicate, 1 rowLevelPermissionRule",
+    "summary": {
+      "rowLevelPermissionPredicate": 1,
+      "rowLevelPermissionRule": 1,
+      "totalErrors": 2,
+    },
+    "userFriendlyMessage": "Many validation errors",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Marketplace application roles on install of a tarball application refuses field permissions in recordsPermissions and installs no role 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldPermission": [
+        {
+          "errors": [
+            {
+              "code": "MARKETPLACE_APPLICATION_ROLE_RESTRICTION",
+              "message": "A marketplace application cannot declare row-level rules or field permissions",
+              "userFriendlyMessage": "A marketplace application cannot declare row-level rules or field permissions.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataUniversalIdentifier": Any<String>,
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "roleUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldPermission",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 fieldPermission",
+    "summary": {
+      "fieldPermission": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "A marketplace application cannot declare row-level rules or field permissions.",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Marketplace application roles on install of a tarball application refuses legacy field permissions and installs no role 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldPermission": [
+        {
+          "errors": [
+            {
+              "code": "MARKETPLACE_APPLICATION_ROLE_RESTRICTION",
+              "message": "A marketplace application cannot declare row-level rules or field permissions",
+              "userFriendlyMessage": "A marketplace application cannot declare row-level rules or field permissions.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataUniversalIdentifier": Any<String>,
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "roleUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldPermission",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 fieldPermission",
+    "summary": {
+      "fieldPermission": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "A marketplace application cannot declare row-level rules or field permissions.",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Marketplace application roles on install of a tarball application refuses legacy row-level predicates and installs no role 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "rowLevelPermissionPredicate": [
+        {
+          "errors": [
+            {
+              "code": "MARKETPLACE_APPLICATION_ROLE_RESTRICTION",
+              "message": "A marketplace application cannot declare row-level rules or field permissions",
+              "userFriendlyMessage": "A marketplace application cannot declare row-level rules or field permissions.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "rowLevelPermissionPredicate",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+      "rowLevelPermissionRule": [
+        {
+          "errors": [
+            {
+              "code": "MARKETPLACE_APPLICATION_ROLE_RESTRICTION",
+              "message": "A marketplace application cannot declare row-level rules or field permissions",
+              "userFriendlyMessage": "A marketplace application cannot declare row-level rules or field permissions.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "rowLevelPermissionRule",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 rowLevelPermissionPredicate, 1 rowLevelPermissionRule",
+    "summary": {
+      "rowLevelPermissionPredicate": 1,
+      "rowLevelPermissionRule": 1,
+      "totalErrors": 2,
+    },
+    "userFriendlyMessage": "Many validation errors",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Marketplace application roles on install of a tarball application refuses row-level rules in recordsPermissions and installs no role 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "rowLevelPermissionPredicate": [
+        {
+          "errors": [
+            {
+              "code": "MARKETPLACE_APPLICATION_ROLE_RESTRICTION",
+              "message": "A marketplace application cannot declare row-level rules or field permissions",
+              "userFriendlyMessage": "A marketplace application cannot declare row-level rules or field permissions.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "rowLevelPermissionPredicate",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+      "rowLevelPermissionRule": [
+        {
+          "errors": [
+            {
+              "code": "MARKETPLACE_APPLICATION_ROLE_RESTRICTION",
+              "message": "A marketplace application cannot declare row-level rules or field permissions",
+              "userFriendlyMessage": "A marketplace application cannot declare row-level rules or field permissions.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "rowLevelPermissionRule",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 rowLevelPermissionPredicate, 1 rowLevelPermissionRule",
+    "summary": {
+      "rowLevelPermissionPredicate": 1,
+      "rowLevelPermissionRule": 1,
+      "totalErrors": 2,
+    },
+    "userFriendlyMessage": "Many validation errors",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;

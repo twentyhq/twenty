@@ -51,7 +51,11 @@ export const useComputeRecordRelationFilterDisplayValue = ({
     );
   }, [fieldMetadataItem, objectMetadataItems]);
 
-  const { isCurrentWorkspaceMemberSelected, selectedRecordIds } = useMemo(
+  const {
+    isCurrentWorkspaceMemberSelected,
+    isCurrentRecordSelected,
+    selectedRecordIds,
+  } = useMemo(
     () =>
       jsonRelationFilterValueSchema
         .catch({
@@ -91,6 +95,7 @@ export const useComputeRecordRelationFilterDisplayValue = ({
     targetObjectMetadataItems,
     selectedRecordsByObjectNamePlural: result,
     isCurrentWorkspaceMemberSelected: isCurrentWorkspaceMemberSelected ?? false,
+    isCurrentRecordSelected: isCurrentRecordSelected ?? false,
   });
 
   return { displayValue, loading };

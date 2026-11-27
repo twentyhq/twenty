@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { AgentHistoryStorageException } from 'src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception';
 import { AgentChatDirectMessageConversationPrivacyService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-chat-direct-message-conversation-privacy.service';
+import { InboxObjectNamesResolverService } from 'src/engine/metadata-modules/ai/ai-history/services/inbox-object-names-resolver.service';
 import { type AgentHistoryObjectName } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-object-name.type';
 import { type AgentHistoryTransactionScope } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-transaction-scope.type';
 import { deleteAgentHistoryRecordsWithShares } from 'src/engine/metadata-modules/ai/ai-history/utils/delete-agent-history-records-with-shares.util';
@@ -24,6 +25,11 @@ export class AgentHistoryTransactionService {
       | 'makeConversationRecordsPrivateToPair'
       | 'deletePairSharesOfConversationRecords'
     >,
+    @Inject(InboxObjectNamesResolverService)
+    private readonly inboxObjectNamesResolverService: Pick<
+      InboxObjectNamesResolverService,
+      'resolve'
+    >,
   ) {}
 
   async run<TResult>({
@@ -35,12 +41,16 @@ export class AgentHistoryTransactionService {
     threadId: string | null;
     work: (scope: AgentHistoryTransactionScope) => Promise<TResult>;
   }): Promise<TResult> {
+    const inboxObjectNamesByLegacyName =
+      await this.inboxObjectNamesResolverService.resolve(workspaceId);
+
     return this.workspaceOrmManager.executeTransactionInWorkspaceContext(
       (transactionScope) => {
         const getRepository = (name: AgentHistoryObjectName) =>
-          transactionScope.getRepositoryWithoutPermissionChecks(name, {
-            shouldSkipEventEmission: true,
-          });
+          transactionScope.getRepositoryWithoutPermissionChecks(
+            inboxObjectNamesByLegacyName[name],
+            { shouldSkipEventEmission: true },
+          );
 
         const writtenMessageIds = new Set<string>();
         let directMessagePair: Promise<readonly [string, string] | null>;
@@ -162,6 +172,7 @@ export class AgentHistoryTransactionService {
             return deleteAgentHistoryRecordsWithShares({
               workspaceId,
               transactionScope,
+              inboxObjectNamesByLegacyName,
               name,
               where,
               deleteShares: (records) =>
