@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
 import gql from 'graphql-tag';
-import { AGENT_CHAT_OBJECT_PERMISSIONS } from 'test/integration/constants/agent-chat-object-permissions.constants';
+import { AGENT_CHAT_OBJECT_PERMISSIONS } from 'test/integration/constants/agent-chat-object-permissions.constant';
 import { TEST_AI_MODEL_ID } from 'test/integration/constants/test-ai-model-ids.constants';
 import { findWorkspaceCustomApplicationId } from 'test/integration/metadata/suites/application-default-role/utils/find-application-default-role.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';

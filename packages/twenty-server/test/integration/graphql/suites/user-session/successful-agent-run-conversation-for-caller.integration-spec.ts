@@ -1,7 +1,7 @@
 import { type StepResult, type ToolSet } from 'ai';
 import { ATTACH_CONVERSATION_TO_RECORDS_TOOL_NAME } from 'twenty-shared/ai';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { AGENT_CHAT_OBJECT_PERMISSIONS } from 'test/integration/constants/agent-chat-object-permissions.constants';
+import { AGENT_CHAT_OBJECT_PERMISSIONS } from 'test/integration/constants/agent-chat-object-permissions.constant';
 import { buildToolCallStepResult } from 'test/utils/mock-agent-run-turns.util';
 import { randomUUID } from 'node:crypto';
 import { parse } from 'graphql';

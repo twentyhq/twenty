@@ -4,7 +4,7 @@ import { parse } from 'graphql';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
-import { AGENT_CHAT_OBJECT_PERMISSIONS } from 'test/integration/constants/agent-chat-object-permissions.constants';
+import { AGENT_CHAT_OBJECT_PERMISSIONS } from 'test/integration/constants/agent-chat-object-permissions.constant';
 import { assertGraphQLSuccessfulResponse } from 'test/integration/graphql/utils/graphql-test-assertions.util';
 import { findApplicationRoleIds } from 'test/integration/metadata/suites/application-grant-role/utils/find-application-role-ids.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';

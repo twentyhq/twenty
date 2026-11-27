@@ -9,7 +9,7 @@ import {
 } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
-import { AGENT_CHAT_OBJECT_PERMISSIONS } from 'test/integration/constants/agent-chat-object-permissions.constants';
+import { AGENT_CHAT_OBJECT_PERMISSIONS } from 'test/integration/constants/agent-chat-object-permissions.constant';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { type GraphQLResponse } from 'test/integration/graphql/utils/graphql-test-assertions.util';
