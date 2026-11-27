@@ -436,6 +436,7 @@ export enum AllMetadataName {
   applicationVariable = 'applicationVariable',
   commandMenuItem = 'commandMenuItem',
   connectionProvider = 'connectionProvider',
+  eventMetadata = 'eventMetadata',
   fieldMetadata = 'fieldMetadata',
   fieldMetadataOption = 'fieldMetadataOption',
   fieldPermission = 'fieldPermission',
@@ -2450,6 +2451,19 @@ export type EmailsConfiguration = {
   configurationType: WidgetConfigurationType;
 };
 
+export type EmitAppEventInput = {
+  event?: InputMaybe<Scalars['String']['input']>;
+  eventUniversalIdentifier?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  properties?: InputMaybe<Scalars['JSON']['input']>;
+};
+
+export type EmitAppEventOutput = {
+  __typename?: 'EmitAppEventOutput';
+  id: Scalars['String']['output'];
+  occurredAt: Scalars['String']['output'];
+};
+
 export enum EngineComponentKey {
   ACTIVATE_WORKFLOW = 'ACTIVATE_WORKFLOW',
   ADD_NODE_WORKFLOW = 'ADD_NODE_WORKFLOW',
@@ -3921,6 +3935,7 @@ export type Mutation = {
   duplicateMessageList: DuplicatedMessageList;
   editSSOIdentityProvider: EditSso;
   emailPasswordResetLink: EmailPasswordResetLink;
+  emitAppEvent: EmitAppEventOutput;
   endSubscriptionTrialPeriod: BillingEndTrialPeriod;
   /** @deprecated Use enqueueJobs instead. */
   enqueueJob: EnqueueJobResult;
@@ -4783,6 +4798,11 @@ export type MutationEmailPasswordResetLinkArgs = {
   captchaToken?: InputMaybe<Scalars['String']['input']>;
   email: Scalars['String']['input'];
   workspaceId?: InputMaybe<Scalars['UUID']['input']>;
+};
+
+
+export type MutationEmitAppEventArgs = {
+  input: EmitAppEventInput;
 };
 
 

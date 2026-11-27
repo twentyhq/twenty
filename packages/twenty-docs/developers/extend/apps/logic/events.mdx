@@ -1,0 +1,85 @@
+---
+title: Events (beta)
+description: Declare your app's own events and emit them from logic functions.
+---
+
+## Overview
+
+An **event** is something your app declares once and emits from a logic function each time it happens.
+
+<Note>
+**Beta.** Events can be declared and emitted, and Twenty checks each occurrence against its definition. Nothing receives an occurrence yet: realtime delivery, storage, and triggering logic functions, agents or workflows from events are planned.
+</Note>
+
+## Declaring an event
+
+An event describes its properties with the same schema format as a tool trigger's `inputSchema`: an object schema, with `type: 'record'` and `objectUniversalIdentifier` for a reference to a record.
+
+```ts src/events/message-added.event.ts
+import { defineEvent } from 'twenty-sdk/define';
+
+import { CONVERSATION_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/objects/conversation.object';
+
+export const MESSAGE_ADDED_EVENT_UNIVERSAL_IDENTIFIER =
+  '3c1d2a4b-5e6f-4a7b-8c9d-0e1f2a3b4c5d';
+
+export default defineEvent({
+  universalIdentifier: MESSAGE_ADDED_EVENT_UNIVERSAL_IDENTIFIER,
+  name: 'messageAdded',
+  label: 'Message added',
+  schema: {
+    type: 'object',
+    properties: {
+      conversationId: {
+        type: 'record',
+        objectUniversalIdentifier: CONVERSATION_OBJECT_UNIVERSAL_IDENTIFIER,
+      },
+      messageId: { type: 'string', format: 'uuid' },
+      text: { type: 'string' },
+    },
+    required: ['conversationId', 'messageId'],
+  },
+});
+```
+
+`name` and property names are camelCase. An event name is unique within your app. Dotted names are reserved for events Twenty itself emits.
+
+Properties are flat: nested objects and arrays are refused.
+
+| Property schema | Accepted value |
+|---|---|
+| `{ type: 'string' }` | string |
+| `{ type: 'string', format: 'date-time' }` | ISO 8601 string |
+| `{ type: 'string', format: 'uuid' }` | UUID string |
+| `{ type: 'number' }` | finite number |
+| `{ type: 'integer' }` | integer |
+| `{ type: 'boolean' }` | boolean |
+| `{ type: 'record', objectUniversalIdentifier }` | UUID of a record of that object (any object, including standard ones) |
+| `{}` (no `type`) | any JSON value |
+
+`enum`, `minimum` and `maximum` are checked too. `label` and `description` document a property.
+
+## Emitting
+
+```ts src/logic-functions/handlers/post-message-handler.ts
+import { emitEvent } from 'twenty-sdk/logic-function';
+
+const { id, occurredAt } = await emitEvent({
+  event: 'messageAdded',
+  id: `message-added-${messageId}`,
+  properties: { conversationId, messageId, text },
+});
+```
+
+Name the event with `event` or with `eventUniversalIdentifier: MESSAGE_ADDED_EVENT_UNIVERSAL_IDENTIFIER`, not both. Either way, only events your app declares can be emitted.
+
+`id` is optional. Set it when a retried logic function could emit the same occurrence twice, so both emissions carry the same id. It follows the same rules as a background job's `jobId`: letters, digits, `_`, `.` and `-`, up to 128 characters. Without it, Twenty generates one.
+
+The server checks the properties against the schema and refuses anything undeclared or mistyped. It returns the occurrence `id` and the time it was recorded.
+
+## Limits
+
+| Limit | Value |
+|---|---|
+| Properties per event | 50 |
+| Occurrence payload | 32 KB |

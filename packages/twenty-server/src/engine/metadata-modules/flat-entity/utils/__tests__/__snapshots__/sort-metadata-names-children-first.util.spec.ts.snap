@@ -27,6 +27,7 @@ exports[`sortMetadataNamesChildrenFirst should return metadata names sorted with
   "workflowVersion",
   "applicationVariable",
   "connectionProvider",
+  "eventMetadata",
   "frontComponent",
   "logicFunction",
   "messagingProvider",
