@@ -10,7 +10,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { type WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
+import { DROP_VIEW_DELETED_AT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-66/drop-view-deleted-at-upgrade-command-name.constant';
+import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
@@ -43,6 +44,9 @@ export class ViewGroupEntity
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 
+  @WasRemovedInUpgrade({
+    upgradeCommandName: DROP_VIEW_DELETED_AT_UPGRADE_COMMAND_NAME,
+  })
   @Column({
     nullable: true,
     type: 'timestamptz',

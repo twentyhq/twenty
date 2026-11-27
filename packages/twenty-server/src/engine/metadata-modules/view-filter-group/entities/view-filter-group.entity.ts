@@ -10,7 +10,8 @@ import {
   type Relation,
   UpdateDateColumn,
 } from 'typeorm';
-import { type WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
+import { DROP_VIEW_DELETED_AT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-66/drop-view-deleted-at-upgrade-command-name.constant';
+import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 import { ViewFilterGroupLogicalOperator } from 'twenty-shared/types';
 
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
@@ -48,6 +49,9 @@ export class ViewFilterGroupEntity extends SyncableEntity {
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 
+  @WasRemovedInUpgrade({
+    upgradeCommandName: DROP_VIEW_DELETED_AT_UPGRADE_COMMAND_NAME,
+  })
   @Column({
     nullable: true,
     type: 'timestamptz',

@@ -3,15 +3,43 @@ import { randomUUID } from 'node:crypto';
 import { type QueryRunner } from 'typeorm';
 
 import { RelaxViewDeletedAtSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-slow-1795715543417-relax-view-deleted-at';
+import { DropViewDeletedAtFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-66/2-66-instance-command-fast-1795795870500-drop-view-deleted-at';
 
 jest.useRealTimers();
 
 describe('2-65 instance command 1795715543417 - relax view deletedAt (integration)', () => {
   const relaxDeletedAtCommand = new RelaxViewDeletedAtSlowInstanceCommand();
+  const dropDeletedAtCommand = new DropViewDeletedAtFastInstanceCommand();
+
+  const runOnTestDataSource = async (
+    run: (queryRunner: QueryRunner) => Promise<void>,
+  ): Promise<void> => {
+    const queryRunner = globalThis.testDataSource.createQueryRunner();
+
+    await queryRunner.connect();
+
+    try {
+      await run(queryRunner);
+    } finally {
+      await queryRunner.release();
+    }
+  };
 
   describe('runDataMigration', () => {
     let createdViewIds: string[] = [];
     let createdViewFieldIds: string[] = [];
+
+    beforeAll(async () => {
+      await runOnTestDataSource((queryRunner) =>
+        dropDeletedAtCommand.down(queryRunner),
+      );
+    });
+
+    afterAll(async () => {
+      await runOnTestDataSource((queryRunner) =>
+        dropDeletedAtCommand.up(queryRunner),
+      );
+    });
 
     const findLiveViewField = async (): Promise<{
       id: string;
@@ -168,6 +196,7 @@ describe('2-65 instance command 1795715543417 - relax view deletedAt (integratio
       queryRunner = globalThis.testDataSource.createQueryRunner();
       await queryRunner.connect();
       await queryRunner.startTransaction();
+      await dropDeletedAtCommand.down(queryRunner);
       await relaxDeletedAtCommand.down(queryRunner);
     });
 

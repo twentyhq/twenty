@@ -24,6 +24,7 @@ import {
   ViewVisibility,
 } from 'twenty-shared/types';
 
+import { DROP_VIEW_DELETED_AT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-66/drop-view-deleted-at-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -276,6 +277,9 @@ export class ViewEntity
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 
+  @WasRemovedInUpgrade({
+    upgradeCommandName: DROP_VIEW_DELETED_AT_UPGRADE_COMMAND_NAME,
+  })
   @Column({
     nullable: true,
     type: 'timestamptz',
