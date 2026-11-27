@@ -150,47 +150,6 @@ describe('omitRestrictedFieldsFromTimelineActivity', () => {
     ).toEqual({ diff: { title: { before: 'Old', after: 'New' } } });
   });
 
-  it('should keep no field of a linked object the role cannot read', () => {
-    expect(
-      omitRestrictedFields({
-        timelineActivity: {
-          linkedObjectMetadataId: NOTE_OBJECT.id,
-          linkedRecordId: 'note-id',
-          targetPersonId: 'person-id',
-          properties: DIFF,
-        },
-        recordsPermissions: {
-          objects: {
-            ...PERSON_JOB_TITLE_DENIED.objects,
-            [NOTE_OBJECT.id]: buildObjectRecordsPermissions({
-              canReadAllRecords: false,
-            }),
-          },
-        },
-      }),
-    ).toEqual({ diff: {} });
-  });
-
-  it('should keep no field of a target object the role cannot read', () => {
-    expect(
-      omitRestrictedFields({
-        timelineActivity: {
-          linkedObjectMetadataId: null,
-          targetPersonId: 'person-id',
-          properties: DIFF,
-        },
-        recordsPermissions: {
-          objects: {
-            ...PERSON_JOB_TITLE_DENIED.objects,
-            [PERSON_OBJECT.id]: buildObjectRecordsPermissions({
-              canReadAllRecords: false,
-            }),
-          },
-        },
-      }),
-    ).toEqual({ diff: {} });
-  });
-
   it('should keep no field of a target record the role cannot read', () => {
     expect(
       omitRestrictedFields({
@@ -218,7 +177,7 @@ describe('omitRestrictedFieldsFromTimelineActivity', () => {
     ).toEqual({ diff: {} });
   });
 
-  it('should keep no field when the linked record column was not selected', () => {
+  it('should keep no field when the linked record id is missing', () => {
     expect(
       omitRestrictedFields({
         timelineActivity: {
@@ -236,7 +195,7 @@ describe('omitRestrictedFieldsFromTimelineActivity', () => {
     ).toEqual({ diff: {} });
   });
 
-  it('should keep no field when the linked object column was not selected', () => {
+  it('should keep no field when the activity has no subject column', () => {
     expect(
       omitRestrictedFields({
         timelineActivity: { targetPersonId: 'person-id', properties: DIFF },

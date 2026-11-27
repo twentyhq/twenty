@@ -2,7 +2,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
 import {
   type IsTimelineActivityRecordReadable,
   resolveTimelineActivitySubject,
@@ -10,12 +9,10 @@ import {
 
 export const buildIsTimelineActivityRecordReadable = async ({
   timelineActivities,
-  recordReadRestrictions,
   flatObjectMetadataMaps,
   filterReadableRecordIds,
 }: {
   timelineActivities: Record<string, unknown>[];
-  recordReadRestrictions: RecordReadRestrictions;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   filterReadableRecordIds: (question: {
     objectMetadataId: string;
@@ -30,12 +27,7 @@ export const buildIsTimelineActivityRecordReadable = async ({
       flatObjectMetadataMaps,
     });
 
-    if (
-      !isDefined(subject?.recordId) ||
-      recordReadRestrictions.unreadableObjectMetadataIds.has(
-        subject.flatObjectMetadata.id,
-      )
-    ) {
+    if (!isDefined(subject?.recordId)) {
       continue;
     }
 

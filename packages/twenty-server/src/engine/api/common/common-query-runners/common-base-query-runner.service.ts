@@ -75,7 +75,6 @@ import { type MutationKind } from 'src/engine/twenty-orm/sql/utils/build-mutatio
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { addTimelineActivityObjectColumnsToSelect } from 'src/modules/timeline/utils/add-timeline-activity-object-columns-to-select.util';
 import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
 import { RecordFieldPermissionsReadService } from 'src/engine/permissions/record-field-permissions-read.service';
 
@@ -279,23 +278,10 @@ export abstract class CommonBaseQueryRunnerService<
         queryRunnerContext,
       );
 
-    const { result, relationAggregatedValues } = await this.run(
-      {
-        ...processedArgs,
-        selectedFieldsResult: addTimelineActivityObjectColumnsToSelect({
-          selection: processedArgs.selectedFieldsResult,
-          flatObjectMetadata: queryRunnerContext.flatObjectMetadata,
-          recordReadRestrictions:
-            extendedQueryRunnerContext.recordReadRestrictions,
-          flatObjectMetadataMaps: queryRunnerContext.flatObjectMetadataMaps,
-          flatFieldMetadataMaps: queryRunnerContext.flatFieldMetadataMaps,
-        }),
-      },
-      {
-        ...extendedQueryRunnerContext,
-        commonQueryParser,
-      },
-    );
+    const { result, relationAggregatedValues } = await this.run(processedArgs, {
+      ...extendedQueryRunnerContext,
+      commonQueryParser,
+    });
 
     const enrichedResult = await this.enrichResultsWithGettersAndHooks({
       results: result,

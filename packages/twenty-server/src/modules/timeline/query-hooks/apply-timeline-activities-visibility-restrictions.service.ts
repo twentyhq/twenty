@@ -1,19 +1,25 @@
 import { Injectable, type OnModuleInit } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
+import { In } from 'typeorm';
 
 import { CommonRecordVisibilityService } from 'src/engine/api/common/common-record-visibility/common-record-visibility.service';
-import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type RecordVisibilityRestrictionHandler } from 'src/engine/api/common/common-record-visibility/types/record-visibility-restriction-handler.type';
-import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
-import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
-import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
+import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
+import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
+import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildIsTimelineActivityRecordReadable } from 'src/modules/timeline/utils/build-is-timeline-activity-record-readable.util';
+import { findTimelineActivitySubjectColumnNames } from 'src/modules/timeline/utils/find-timeline-activity-subject-column-names.util';
 import { omitRestrictedFieldsFromTimelineActivityEvent } from 'src/modules/timeline/utils/omit-restricted-fields-from-timeline-activity-event.util';
 import {
   type IsTimelineActivityRecordReadable,
@@ -27,6 +33,7 @@ export class ApplyTimelineActivitiesVisibilityRestrictionsService
   constructor(
     private readonly commonRecordVisibilityService: CommonRecordVisibilityService,
     private readonly recordPermissionsReadService: RecordPermissionsReadService,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
   onModuleInit() {
@@ -54,18 +61,30 @@ export class ApplyTimelineActivitiesVisibilityRestrictionsService
       return;
     }
 
-    const isRecordReadable = await this.buildIsRecordReadableForCaller({
-      timelineActivities,
-      authContext,
-      permissionsPrincipals,
-      recordReadRestrictions,
-      flatObjectMetadataMaps,
-    });
+    // The columns linking an activity to its record may be unreadable to the caller, so they are read here
+    const subjectColumnsByTimelineActivityId =
+      await this.findSubjectColumnsByTimelineActivityId({
+        workspaceId: authContext.workspace.id,
+        timelineActivityIds: timelineActivities
+          .map(({ id }) => id)
+          .filter(isNonEmptyString),
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      });
+
+    const isRecordReadable = isSystemAuthContext(authContext)
+      ? () => true
+      : await this.buildIsRecordReadable({
+          timelineActivities: [...subjectColumnsByTimelineActivityId.values()],
+          permissionsPrincipals,
+          flatObjectMetadataMaps,
+        });
 
     for (const timelineActivity of timelineActivities) {
       timelineActivity.properties = omitRestrictedFieldsFromTimelineActivity({
         properties: timelineActivity.properties,
-        timelineActivity,
+        timelineActivity:
+          subjectColumnsByTimelineActivityId.get(timelineActivity.id) ?? {},
         recordReadRestrictions,
         isRecordReadable,
         flatObjectMetadataMaps,
@@ -97,7 +116,6 @@ export class ApplyTimelineActivitiesVisibilityRestrictionsService
         ].filter(isPlainObject),
       ),
       permissionsPrincipals,
-      recordReadRestrictions,
       flatObjectMetadataMaps,
     });
 
@@ -112,40 +130,21 @@ export class ApplyTimelineActivitiesVisibilityRestrictionsService
     );
   }
 
-  private async buildIsRecordReadableForCaller({
-    authContext,
+  private async buildIsRecordReadable({
+    timelineActivities,
     permissionsPrincipals,
-    ...question
-  }: Omit<
-    Parameters<typeof buildIsTimelineActivityRecordReadable>[0],
-    'filterReadableRecordIds'
-  > & {
-    authContext: WorkspaceAuthContext;
+    flatObjectMetadataMaps,
+  }: {
+    timelineActivities: Record<string, unknown>[];
     permissionsPrincipals: PermissionsPrincipalsWithRolesContext | undefined;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   }): Promise<IsTimelineActivityRecordReadable> {
-    if (isSystemAuthContext(authContext)) {
-      return () => true;
-    }
-
     if (!isDefined(permissionsPrincipals)) {
       return () => false;
     }
 
-    return this.buildIsRecordReadable({ ...question, permissionsPrincipals });
-  }
-
-  private buildIsRecordReadable({
-    timelineActivities,
-    permissionsPrincipals,
-    recordReadRestrictions,
-    flatObjectMetadataMaps,
-  }: Omit<
-    Parameters<typeof buildIsTimelineActivityRecordReadable>[0],
-    'filterReadableRecordIds'
-  > & { permissionsPrincipals: PermissionsPrincipalsWithRolesContext }) {
     return buildIsTimelineActivityRecordReadable({
       timelineActivities,
-      recordReadRestrictions,
       flatObjectMetadataMaps,
       filterReadableRecordIds: ({ objectMetadataId, recordIds }) =>
         this.recordPermissionsReadService.filterGrantedRecordIds({
@@ -155,5 +154,58 @@ export class ApplyTimelineActivitiesVisibilityRestrictionsService
           recordIds,
         }),
     });
+  }
+
+  private async findSubjectColumnsByTimelineActivityId({
+    workspaceId,
+    timelineActivityIds,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
+  }: {
+    workspaceId: string;
+    timelineActivityIds: string[];
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+  }): Promise<Map<string, ObjectRecord>> {
+    const timelineActivityFlatObjectMetadata =
+      flatObjectMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.timelineActivity.universalIdentifier
+      ];
+
+    if (
+      !isDefined(timelineActivityFlatObjectMetadata) ||
+      timelineActivityIds.length === 0
+    ) {
+      return new Map();
+    }
+
+    const timelineActivities =
+      await this.workspaceOrmManager.executeInWorkspaceContext(
+        () =>
+          this.workspaceOrmManager
+            .getRepositoryWithoutPermissionChecks<ObjectRecord>(
+              'timelineActivity',
+            )
+            .find({
+              select: [
+                'id',
+                ...findTimelineActivitySubjectColumnNames({
+                  timelineActivityFlatObjectMetadata,
+                  flatFieldMetadataMaps,
+                }),
+              ],
+              where: { id: In(timelineActivityIds) },
+              withDeleted: true,
+            }),
+        buildSystemAuthContext(workspaceId),
+        { lite: true },
+      );
+
+    return new Map(
+      timelineActivities.map((timelineActivity) => [
+        timelineActivity.id,
+        timelineActivity,
+      ]),
+    );
   }
 }

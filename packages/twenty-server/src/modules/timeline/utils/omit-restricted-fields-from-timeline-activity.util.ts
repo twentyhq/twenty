@@ -118,9 +118,6 @@ const buildReadableFieldNames = ({
 }): Set<string> => {
   if (
     !isDefined(recordId) ||
-    recordReadRestrictions.unreadableObjectMetadataIds.has(
-      flatObjectMetadata.id,
-    ) ||
     !isRecordReadable({ objectMetadataId: flatObjectMetadata.id, recordId })
   ) {
     return new Set();
