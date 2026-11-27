@@ -55,19 +55,26 @@ export const computePrincipalsRecordsPermissions = ({
     roleId: string,
   ): RoleRecordsPermissions | undefined => {
     const roleRecordsPermissions = rolesPermissions[roleId];
-    const writeAccess =
-      temporaryChannelWriteAccess?.writeAccessByRoleId[roleId];
 
-    return isDefined(roleRecordsPermissions) &&
-      isDefined(temporaryChannelWriteAccess) &&
-      isDefined(writeAccess) &&
-      temporaryChannelWriteAccessRoleIds.includes(roleId)
-      ? restoreChannelWriteAccess({
-          recordsPermissions: roleRecordsPermissions,
-          objectMetadataIds: temporaryChannelWriteAccess.objectMetadataIds,
-          writeAccess,
-        })
-      : roleRecordsPermissions;
+    if (
+      !isDefined(roleRecordsPermissions) ||
+      !isDefined(temporaryChannelWriteAccess) ||
+      !temporaryChannelWriteAccessRoleIds.includes(roleId)
+    ) {
+      return roleRecordsPermissions;
+    }
+
+    const writeAccess = temporaryChannelWriteAccess.writeAccessByRoleId[roleId];
+
+    if (!isDefined(writeAccess)) {
+      return roleRecordsPermissions;
+    }
+
+    return restoreChannelWriteAccess({
+      recordsPermissions: roleRecordsPermissions,
+      objectMetadataIds: temporaryChannelWriteAccess.objectMetadataIds,
+      writeAccess,
+    });
   };
 
   const restrictToDisabledActions = ({
