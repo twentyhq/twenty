@@ -132,6 +132,11 @@ export default defineLogicFunction({
 sanitizat) şi îl introduce într-o curată, pagina printabilă care afișează doar conținutul șablonului- aceeași imagine ca PDF și previzualizarea in-app.
   [Vezi ajutorul](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/utils/render-document.ts).
 
+Pagina este servită cu o politică de sandbox, cu excepția cazului în care provine de pe un domeniu personalizat al
+aplicației tale: poate rula scripturi și poate urma linkuri, dar nu poate utiliza cookie-uri sau
+stocare. O pagină statică precum aceasta nu este afectată. Consultați
+[unde rulează paginile de rută](/ro/developers/extend/apps/logic/logic-functions#where-route-pages-run).
+
 ## Încearcă-l
 
 Cu un șablon și o Persoană în spațiul tău de lucru, apelează ruta (obține un token din

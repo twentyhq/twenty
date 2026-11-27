@@ -41,7 +41,12 @@ describe('extractFrontComponentSharedDependencies', () => {
 
     expect(errors).toEqual([]);
     expect(sharedDependencies).toEqual({
-      dependencies: ['react', 'react-dom/client', 'react/jsx-runtime'],
+      dependencies: [
+        'react',
+        'react-dom',
+        'react-dom/client',
+        'react/jsx-runtime',
+      ],
       builtPath: FRONT_COMPONENT_SHARED_DEPENDENCIES_BUILT_PATH,
       builtChecksum: null,
     });

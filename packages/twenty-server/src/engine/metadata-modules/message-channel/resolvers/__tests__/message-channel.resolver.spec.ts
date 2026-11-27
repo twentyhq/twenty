@@ -45,6 +45,7 @@ describe('MessageChannelResolver connectedAccount', () => {
       applicationMessageChannelsService as never,
       {} as never,
       {} as never,
+      {} as never,
     );
 
     return {
@@ -192,5 +193,80 @@ describe('MessageChannelResolver connectedAccount', () => {
       id: CONNECTED_ACCOUNT_ID,
       workspaceId: WORKSPACE_ID,
     });
+  });
+});
+
+describe('MessageChannelResolver canStartConversation', () => {
+  const workspace = { id: WORKSPACE_ID } as WorkspaceEntity;
+
+  // DataLoader dispatches its batch on a real tick
+  beforeEach(() => {
+    jest.useRealTimers();
+  });
+
+  afterEach(() => {
+    jest.useFakeTimers();
+  });
+
+  const aChannel = (id: string): MessageChannelDTO =>
+    ({
+      id,
+      type: MessageChannelType.APP,
+      connectedAccountId: CONNECTED_ACCOUNT_ID,
+    }) as MessageChannelDTO;
+
+  const buildResolver = () => {
+    const findStartableMessageChannelIds = jest
+      .fn()
+      .mockResolvedValue(new Set(['channel-1']));
+
+    const resolver = new MessageChannelResolver(
+      {} as never,
+      {} as never,
+      {} as never,
+      {} as never,
+      {} as never,
+      { findStartableMessageChannelIds } as never,
+    );
+
+    return { resolver, findStartableMessageChannelIds };
+  };
+
+  it('resolves every channel of one request with a single lookup', async () => {
+    const { resolver, findStartableMessageChannelIds } = buildResolver();
+    const requestContext = {};
+
+    const results = await Promise.all(
+      ['channel-1', 'channel-2'].map((id) =>
+        resolver.canStartConversation(
+          aChannel(id),
+          workspace,
+          requestContext,
+          USER_WORKSPACE_ID,
+        ),
+      ),
+    );
+
+    expect(results).toEqual([true, false]);
+    expect(findStartableMessageChannelIds).toHaveBeenCalledTimes(1);
+    expect(findStartableMessageChannelIds).toHaveBeenCalledWith({
+      messageChannels: [aChannel('channel-1'), aChannel('channel-2')],
+      userWorkspaceId: USER_WORKSPACE_ID,
+      workspaceId: WORKSPACE_ID,
+    });
+  });
+
+  it('is false for a caller with no member behind it', async () => {
+    const { resolver, findStartableMessageChannelIds } = buildResolver();
+
+    expect(
+      await resolver.canStartConversation(
+        aChannel('channel-1'),
+        workspace,
+        {},
+        undefined,
+      ),
+    ).toBe(false);
+    expect(findStartableMessageChannelIds).not.toHaveBeenCalled();
   });
 });

@@ -65,23 +65,11 @@ export class CompanyEnrichmentResolver {
     ]);
 
     if (enrichmentResult.outcome === 'matched') {
-      await this.onboardingService.setOnboardingBookCallPendingIfQualified({
-        userId: user.id,
-        workspaceId: workspace.id,
-        employeeCount: enrichmentResult.enrichment.employeeCount,
-      });
-
       await this.onboardingService.creditEnrichmentQualificationReward({
         workspaceId: workspace.id,
         employeeCount: enrichmentResult.enrichment.employeeCount,
       });
     }
-
-    const isBookCallOnboardingStepPending =
-      await this.onboardingService.isOnboardingBookCallPending({
-        userId: user.id,
-        workspaceId: workspace.id,
-      });
 
     return {
       ...enrichmentResult,
@@ -89,7 +77,6 @@ export class CompanyEnrichmentResolver {
       personOutcome:
         WorkspacePersonEnrichmentOutcome[personEnrichmentResult.outcome],
       personEnrichment: personEnrichmentResult.enrichment,
-      isBookCallOnboardingStepPending,
     };
   }
 }

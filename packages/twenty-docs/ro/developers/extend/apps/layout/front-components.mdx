@@ -684,7 +684,7 @@ Următoarele variabile de sistem sunt întotdeauna disponibile prin `process.env
 
 Twenty injectează, de asemenea, `TWENTY_FUNCTIONS_URL` în front components și în funcțiile logice: URL-ul de bază de la care sunt deservite funcțiile logice ale aplicației tale declanșate prin HTTP.
 
-Există deoarece acel URL nu este întotdeauna chiar serverul Twenty. În Twenty Cloud, rutele aplicației sunt deservite pe un domeniu dedicat pentru fiecare spațiu de lucru (`https://\<your-workspace-subdomain>.withtwenty.com` sau domeniul public principal al aplicației atunci când este configurat unul), astfel încât răspunsurile create de aplicație să ruleze pe propria lor origine, nu pe originea aplicației Twenty. Instanțele self-hosted și locale deservesc rutele aplicației sub prefixul `/s` chiar pe server și este posibil să nu seteze deloc variabila. Deoarece URL-ul de bază variază în funcție de spațiul de lucru și de instanță, codul tău nu îl poate hardcoda — serverul injectează valoarea corectă la runtime.
+Există deoarece acel URL nu este întotdeauna chiar serverul Twenty. În Twenty Cloud, rutele aplicației sunt deservite pe un domeniu dedicat pentru fiecare spațiu de lucru (`https://\<your-workspace-subdomain>.withtwenty.com` sau domeniul personalizat validat al aplicației atunci când aceasta are unul, consultați [unde rulează paginile de rute](/ro/developers/extend/apps/logic/logic-functions#where-route-pages-run)), astfel încât răspunsurile create de aplicație să ruleze pe propria lor origine, nu pe originea aplicației Twenty. Instanțele self-hosted și locale deservesc rutele aplicației sub prefixul `/s` chiar pe server și este posibil să nu seteze deloc variabila. Deoarece URL-ul de bază variază în funcție de spațiul de lucru și de instanță, codul tău nu îl poate hardcoda — serverul injectează valoarea corectă la runtime.
 
 Rareori ai nevoie să o citești direct. Apelează-ți rutele prin `RestApiClient` folosind o cale prefixată cu `/s/`, iar clientul îți rezolvă URL-ul: elimină prefixul `/s` și țintește `TWENTY_FUNCTIONS_URL`, folosind `\<TWENTY_API_URL>/s` ca rezervă atunci când variabila nu este setată. Folosește `resolveUrl('/s/\<path>')` pentru a obține URL-ul absolut fără a trimite o cerere, de exemplu pentru un link. Citește variabila direct doar atunci când construiești manual un URL:
 
@@ -907,7 +907,7 @@ Consultați [secțiunea despre resurse publice](/ro/developers/extend/apps/confi
 
 ## Partajare dependențe între componentele din față
 
-În mod implicit, fiecare componentă din față grupează propria copie a bibliotecilor pe care le importă, astfel încât o aplicație cu cinci componente expediază React de cinci ori. Declară dependențe partajate în fișierul `package.json` pentru a construi acele biblioteci o dată și a avea fiecare componentă a aplicației să le încarce dintr-un singur fișier cache:
+Fără dependențe partajate, fiecare componentă front își include propria copie a bibliotecilor pe care le importă, astfel încât o aplicație cu cinci componente livrează React de cinci ori. Declară dependențe partajate în fișierul `package.json` pentru a construi acele biblioteci o dată și a avea fiecare componentă a aplicației să le încarce dintr-un singur fișier cache. Aplicațiile create cu `twenty app init` partajează deja `react` și `react-dom/client`; adăugați orice alt pachet pe care îl importă componentele dvs., cum ar fi o familie Twenty UI:
 
 ```json package.json
 {
@@ -941,7 +941,7 @@ export default defineFrontComponent({
 Câteva lucruri de știut:
 
 * **Un pachet de dependențe partajate pentru fiecare aplicație.** Pachetul este construit din propriile dependențe ale aplicației dvs., așa că țineți controlul deplin asupra versiunilor pe care le expediați.
-* **Enumerați specificatorii exacți pe care îi importați.** `twenty-ui/primitives/input` și `twenty-ui/primitives/data-display` sunt două intrări; un singur nume de pachet nu acoperă subcăile acestuia. Listarea `react` acoperă automat `react/jsx-runtime`.
+* **Enumerați specificatorii exacți pe care îi importați.** `twenty-ui/primitives/input` și `twenty-ui/primitives/data-display` sunt două intrări; un singur nume de pachet nu acoperă subcăile acestuia. Listarea `react` partajează și `react/jsx-runtime`, iar listarea `react-dom/client` partajează și `react-dom`.
 * **Distribuie `react-dom/client` alături de `react`.** Fiecare componentă redă prin `createRoot`, astfel lăsând-o înseamnă că fiecare componentă încă lipsește React DOM.
 * \*\*Pachetul este cacheat. \* Este servită sub un URL content-hash cu o geocutie mutabilă de lungă durată, astfel încât acesta este descărcat o dată și reutilizat pe toate componentele aplicației până când una dintre dependențele sale se schimbă.
 * **Componente care importă niciunul dintre pachetele partajate nu îl descarcă niciodată.**

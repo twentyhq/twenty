@@ -54,10 +54,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Channel visibility on API keys`,
     description: msg`Remove the message and calendar access of API keys on roles assignable to users. While off, those API keys read them as a member who doesn't own the channel would, and keep their role's write access to them.`,
   },
-  [FeatureFlagKey.IS_GETTING_STARTED_ENABLED]: {
-    label: msg`Getting started`,
-    description: msg`Show the Getting started page and sidebar card, and open it on landing during the trial.`,
-  },
   [FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED]: {
     label: msg`Private records`,
     description: msg`Apply private records on objects that aren't private by default. Always on for workspaces that have set record sharing. Turning this off makes records set as private on those objects visible again.`,

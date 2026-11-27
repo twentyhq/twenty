@@ -14925,6 +14925,11 @@ msgstr "Leverantören är tillfälligt otillgänglig. Försök igen senare."
 msgid "The received email content is no longer available."
 msgstr "Det mottagna e-postinnehållet är inte längre tillgängligt."
 
+#. js-lingui-id: b84VDO
+#: src/engine/api/common/common-query-runners/common-create-one-query-runner.service.ts
+msgid "The record was created, but you do not have permission to see it."
+msgstr "Posten skapades, men du har inte behörighet att se den."
+
 #. js-lingui-id: dXHirT
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
@@ -15535,6 +15540,11 @@ msgstr "Denna domän är redan registrerad."
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "This domain is already taken."
 msgstr "Denna domän är redan upptagen."
+
+#. js-lingui-id: IBjn2S
+#: src/engine/core-modules/public-domain/public-domain.exception.ts
+msgid "This domain is used by Twenty itself and cannot be a public domain."
+msgstr "Den här domänen används av Twenty självt och kan inte vara en offentlig domän."
 
 #. js-lingui-id: Ukfndw
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts

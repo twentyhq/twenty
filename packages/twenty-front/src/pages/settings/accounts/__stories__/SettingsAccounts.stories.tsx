@@ -174,6 +174,7 @@ export const AccountsGroupedByEmail: Story = {
     expect(
       timRow.queryByRole('img', { name: 'Granola' }),
     ).not.toBeInTheDocument();
+    expect(await timRow.findByText('Synced')).toBeVisible();
     expect(canvas.getByRole('link', { name: 'tim@apple.dev' })).toHaveAttribute(
       'href',
       `/settings/app-preferences/accounts/${GOOGLE_ACCOUNT_ID}`,
@@ -187,6 +188,7 @@ export const AccountsGroupedByEmail: Story = {
     const notesRow = getTableRow(canvasElement, 'notes@apple.dev');
 
     expect(notesRow.getByRole('img', { name: 'Fathom' })).toBeVisible();
+    expect(notesRow.getByText('Connected')).toBeVisible();
     expect(
       notesRow.queryByRole('img', { name: 'Gmail and Calendar' }),
     ).not.toBeInTheDocument();

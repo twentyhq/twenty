@@ -1,9 +1,6 @@
 import { mkdtemp, rm, writeFile } from 'fs/promises';
 import { z } from 'zod';
-import {
-  parseFrontComponentSharedDependencies,
-  normalizeFrontComponentSharedDependencies,
-} from 'twenty-shared/front-component-build';
+import { parseFrontComponentSharedDependencies } from 'twenty-shared/front-component-build';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { tmpdir } from 'os';
 import { join } from 'path';
@@ -11,6 +8,7 @@ import { installYarnDependencies } from 'src/engine/core-modules/application/app
 
 import { FrontComponentBuildException } from 'src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception';
 import { buildFrontComponentSharedDependencies } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-shared-dependencies.util';
+import { getAiFrontComponentSharedDependencies } from 'src/engine/metadata-modules/ai/ai-front-component/utils/get-ai-front-component-shared-dependencies.util';
 
 const INSTALL_TIMEOUT_MS = 240_000;
 
@@ -62,9 +60,9 @@ export const installAndBuildFrontComponentSharedDependencies = async ({
 
     return await buildFrontComponentSharedDependencies({
       resolveDirectory: directory,
-      dependencies: normalizeFrontComponentSharedDependencies({
-        dependencies: dependencies ?? [],
-        packageNames: Object.keys({
+      dependencies: getAiFrontComponentSharedDependencies({
+        declaredDependencies: dependencies ?? [],
+        installedPackageNames: Object.keys({
           ...packageJsonContent.dependencies,
           ...packageJsonContent.devDependencies,
         }),

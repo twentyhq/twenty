@@ -89,3 +89,43 @@ export const BuiltInSectionHasNoAddItem: Story = {
     ).not.toBeInTheDocument();
   },
 };
+
+export const ShowSetsTheVisibleItemLimit: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'Section actions' }),
+    );
+    await userEvent.click(await body.findByRole('menuitem', { name: /Show/ }));
+    await userEvent.click(await body.findByText('3 items'));
+
+    await waitFor(() =>
+      expect(
+        jotaiStore
+          .get(navigationMenuItemsDraftState.atom)
+          ?.find(({ id }) => id === CUSTOM_SECTION.id)?.visibleItemLimit,
+      ).toBe(3),
+    );
+  },
+};
+
+export const FavoritesSectionHasNoShow: Story = {
+  args: { section: BUILT_IN_SECTION },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'Section actions' }),
+    );
+
+    await expect(
+      await body.findByRole('menuitem', { name: 'Remove section' }),
+    ).toBeVisible();
+    await expect(
+      body.queryByRole('menuitem', { name: /Show/ }),
+    ).not.toBeInTheDocument();
+  },
+};

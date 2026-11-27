@@ -339,13 +339,24 @@ describe('RLS rules through a relation (integration)', () => {
       `DELETE FROM ${COMPANY_TABLE} WHERE "id" = ANY($1)`,
       [[company.id, otherCompany.id]],
     );
-    await global.testDataSource.query(
-      `UPDATE ${PERSON_TABLE} SET "_accessGroupIds" = NULL`,
-    );
-    await global.testDataSource.query(
-      `UPDATE ${COMPANY_TABLE} SET "_accessGroupIds" = NULL`,
-    );
-    await global.testDataSource.query(`DELETE FROM ${SCHEMA}."accessGroup"`);
+    // The sync stamped group ids on every object, so wiping the groups would orphan them
+    await getAppProviderByClassName<AccessGroupSyncService>(
+      'AccessGroupSyncService',
+    ).syncAccessGroups({ workspaceId: SEED_APPLE_WORKSPACE_ID });
+
+    for (const objectMetadataId of [
+      personObjectMetadataId,
+      companyObjectMetadataId,
+    ]) {
+      await getAppProviderByClassName<RecordAccessGroupComputationService>(
+        'RecordAccessGroupComputationService',
+      ).recomputeRecordAccessGroupIdsOfAllObjectRecords({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        objectMetadataId,
+      });
+    }
+
+    await waitForAllJobsToFinish();
   });
 
   it('should follow a many to one relation and its related record changes', async () => {

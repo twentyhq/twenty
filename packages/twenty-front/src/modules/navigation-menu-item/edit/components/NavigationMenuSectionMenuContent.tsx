@@ -1,7 +1,9 @@
+import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { Dropdown, useDropdownPage } from 'twenty-ui/components/navigation';
 import {
+  IconEye,
   IconFolderSymlink,
   IconHome,
   IconPlus,
@@ -10,6 +12,7 @@ import {
 import { useIcons } from 'twenty-ui/icon/provider';
 import { isDefined } from 'twenty-shared/utils';
 
+import { NAVIGATION_MENU_SECTION_VISIBLE_ITEM_LIMIT_OPTIONS } from '@/navigation-menu-item/common/constants/NavigationMenuSectionVisibleItemLimitOptions';
 import { NAVIGATION_MENU_TAB_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/NavigationMenuTabIconDefault';
 import { canMoveBuiltInSectionToContainer } from '@/navigation-menu-item/common/utils/canMoveBuiltInSectionToContainer';
 import { isNavigationMenuItemBuiltInSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemBuiltInSection';
@@ -19,6 +22,7 @@ import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/dis
 import { NavigationMenuItemContainerNameEditor } from '@/navigation-menu-item/edit/components/NavigationMenuItemContainerNameEditor';
 import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
 import { useNavigationMenuContainerReorderOptions } from '@/navigation-menu-item/edit/hooks/useNavigationMenuContainerReorderOptions';
+import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 import { useNavigationMenuItemMoveRemove } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemMoveRemove';
 import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
@@ -26,7 +30,13 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 type NavigationMenuSectionMenuContentProps = {
   section: Pick<
     NavigationMenuItem,
-    'id' | 'name' | 'icon' | 'parentId' | 'type' | 'builtInSectionKey'
+    | 'id'
+    | 'name'
+    | 'icon'
+    | 'parentId'
+    | 'type'
+    | 'builtInSectionKey'
+    | 'visibleItemLimit'
   >;
   onAddItem?: () => void;
   onClose: () => void;
@@ -43,6 +53,7 @@ export const NavigationMenuSectionMenuContent = ({
   const { goToPage } = useDropdownPage();
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
   const { remove, moveToFolder } = useNavigationMenuItemMoveRemove('workspace');
+  const { updateItem } = useNavigationMenuItemEditController('workspace');
   const tabs = useWorkspaceNavigationMenuContainers({
     type: NavigationMenuItemType.TAB,
     containerId: null,
@@ -56,6 +67,18 @@ export const NavigationMenuSectionMenuContent = ({
   });
 
   const isBuiltInSection = isNavigationMenuItemBuiltInSection(section);
+  const isVisibleItemLimitEditable = section.builtInSectionKey !== 'favorites';
+  const visibleItemLimit = section.visibleItemLimit ?? null;
+
+  const getVisibleItemLimitLabel = (limit: number | null) =>
+    isDefined(limit)
+      ? plural(limit, { one: '# item', other: '# items' })
+      : t`All items`;
+
+  const setVisibleItemLimit = (limit: number | null) => {
+    void updateItem(section.id, { visibleItemLimit: limit });
+    onClose();
+  };
 
   const canMoveTo = (containerId: string | null) =>
     containerId !== currentContainerId &&
@@ -101,18 +124,32 @@ export const NavigationMenuSectionMenuContent = ({
             <Dropdown.Separator />
           </>
         )}
-        {isDefined(onAddItem) && (
+        {(isDefined(onAddItem) || isVisibleItemLimitEditable) && (
           <>
             <Dropdown.Section>
-              <NavigationMenuItemSelectableItem
-                item={{
-                  id: 'add-item',
-                  label: t`Add item`,
-                  Icon: IconPlus,
-                  hasSubMenu: true,
-                  onClick: onAddItem,
-                }}
-              />
+              {isDefined(onAddItem) && (
+                <NavigationMenuItemSelectableItem
+                  item={{
+                    id: 'add-item',
+                    label: t`Add item`,
+                    Icon: IconPlus,
+                    hasSubMenu: true,
+                    onClick: onAddItem,
+                  }}
+                />
+              )}
+              {isVisibleItemLimitEditable && (
+                <NavigationMenuItemSelectableItem
+                  item={{
+                    id: 'visible-item-limit',
+                    label: t`Show`,
+                    Icon: IconEye,
+                    contextualText: getVisibleItemLimitLabel(visibleItemLimit),
+                    hasSubMenu: true,
+                    onClick: () => goToPage('visible-item-limit'),
+                  }}
+                />
+              )}
             </Dropdown.Section>
             <Dropdown.Separator />
           </>
@@ -145,6 +182,25 @@ export const NavigationMenuSectionMenuContent = ({
           />
         </Dropdown.Section>
       </Dropdown.Page>
+      {isVisibleItemLimitEditable && (
+        <Dropdown.Page id="visible-item-limit">
+          <Dropdown.Back>{t`Show`}</Dropdown.Back>
+          <Dropdown.Section scrollable>
+            {[...NAVIGATION_MENU_SECTION_VISIBLE_ITEM_LIMIT_OPTIONS, null].map(
+              (visibleItemLimitOption) => (
+                <Dropdown.OptionItem
+                  key={visibleItemLimitOption ?? 'all'}
+                  selected={visibleItemLimitOption === visibleItemLimit}
+                  indicator="check"
+                  onSelect={() => setVisibleItemLimit(visibleItemLimitOption)}
+                >
+                  {getVisibleItemLimitLabel(visibleItemLimitOption)}
+                </Dropdown.OptionItem>
+              ),
+            )}
+          </Dropdown.Section>
+        </Dropdown.Page>
+      )}
       <Dropdown.Page id="tabs">
         <Dropdown.Back>{t`Move to tab`}</Dropdown.Back>
         <Dropdown.Section scrollable>

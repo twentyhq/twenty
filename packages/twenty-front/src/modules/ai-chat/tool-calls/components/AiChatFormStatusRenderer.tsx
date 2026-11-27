@@ -1,16 +1,15 @@
 import { useLingui } from '@lingui/react/macro';
-import { isString } from '@sniptt/guards';
 import { type DynamicToolUIPart, type ToolUIPart } from 'ai';
 import {
   type RequestFormToolInput,
   type RequestFormToolResult,
 } from 'twenty-shared/ai';
-import { isDefined } from 'twenty-shared/utils';
 import { IconListDetails } from 'twenty-ui/icon';
 
+import { ThinkingStepRowLayout } from '@/ai-chat/thinking-steps/components/ThinkingStepRowLayout';
 import { AiChatAskStatusRow } from '@/ai-chat/tool-calls/components/AiChatAskStatusRow';
+import { AiChatFormSubmittedDetails } from '@/ai-chat/tool-calls/components/AiChatFormSubmittedDetails';
 import { useIsAiChatToolCallAskedInComposer } from '@/ai-chat/tool-calls/hooks/useIsAiChatToolCallAskedInComposer';
-import { StyledAiChatAskStatusDetail } from '@/ai-chat/tool-calls/components/StyledAiChatAskStatusDetail';
 
 export const AiChatFormStatusRenderer = ({
   toolPart,
@@ -34,7 +33,6 @@ export const AiChatFormStatusRenderer = ({
 
   const messageByStatus = {
     pending: t`Waiting for a form to be filled in`,
-    answered: t`Form submitted`,
     skipped: t`Form skipped`,
   };
 
@@ -42,23 +40,22 @@ export const AiChatFormStatusRenderer = ({
     return null;
   }
 
+  if (status === 'answered') {
+    return (
+      <ThinkingStepRowLayout
+        icon={<IconListDetails size={14} />}
+        label={t`Request form`}
+        isActive={false}
+        details={<AiChatFormSubmittedDetails fields={fields} values={values} />}
+      />
+    );
+  }
+
   return (
     <AiChatAskStatusRow
       Icon={IconListDetails}
       message={messageByStatus[status]}
       isShimmering={isStreaming && status === 'pending'}
-    >
-      {fields
-        .filter((field) => isDefined(values[field.name]))
-        .map((field) => {
-          const value = values[field.name];
-
-          return (
-            <StyledAiChatAskStatusDetail key={field.name}>
-              {`${field.label}: ${isString(value) ? value : JSON.stringify(value)}`}
-            </StyledAiChatAskStatusDetail>
-          );
-        })}
-    </AiChatAskStatusRow>
+    />
   );
 };

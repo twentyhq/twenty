@@ -60,6 +60,7 @@ export const ALL_METADATA_SERIALIZED_RELATION = {
   applicationVariable: {},
   connectionProvider: {},
   messagingProvider: {},
+  eventMetadata: {},
   timelineActivityType: {},
   fieldMetadataOption: {},
   relatedRecordPath: {},

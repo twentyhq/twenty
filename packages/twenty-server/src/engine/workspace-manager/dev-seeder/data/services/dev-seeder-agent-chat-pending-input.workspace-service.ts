@@ -90,6 +90,20 @@ const ONBOARDING_OWNER_QUESTIONS: AskQuestionItem[] = [
   },
 ];
 
+const NEWSLETTER_SEGMENT_QUESTIONS: AskQuestionItem[] = [
+  {
+    header: 'Segments',
+    question: 'Which segments should get the November newsletter?',
+    allowMultiSelect: true,
+    options: [
+      { label: 'Customers', isRecommended: true },
+      { label: 'Open opportunities' },
+      { label: 'Churned accounts' },
+      { label: 'Partners' },
+    ],
+  },
+];
+
 const AIRBNB_FOLLOW_UP_EMAIL: SeededEmail = {
   to: 'partnerships@airbnb.com',
   cc: 'tim@apple.dev',
@@ -144,6 +158,55 @@ const STALE_DEAL_DELETION_CALL = proposeRecordCall({
   objectNameSingular: 'opportunity',
   recordId: OPPORTUNITY_DATA_SEED_IDS.ID_7,
   arguments: { id: OPPORTUNITY_DATA_SEED_IDS.ID_7 },
+});
+
+const MICROSOFT_CONTACT_CALL = proposeRecordCall({
+  toolName: 'create_one_person',
+  toolLabel: 'Create person',
+  summary: 'Add Dana Whitfield, Microsoft’s new procurement lead',
+  template: 'recordCreate',
+  objectNameSingular: 'person',
+  arguments: {
+    name: { firstName: 'Dana', lastName: 'Whitfield' },
+    emails: { primaryEmail: 'dana.whitfield@microsoft.example' },
+    jobTitle: 'Procurement Lead',
+    companyId: COMPANY_DATA_SEED_IDS.ID_2,
+  },
+});
+
+const MACBOOK_DEAL_STAGE = { stage: 'MEETING' };
+
+const MACBOOK_DEAL_PROPOSAL_CALL = proposeRecordCall({
+  toolName: 'update_one_opportunity',
+  toolLabel: 'Update opportunity',
+  summary: 'Move the MacBook Pro fleet deal to Proposal',
+  template: 'recordUpdate',
+  objectNameSingular: 'opportunity',
+  recordId: OPPORTUNITY_DATA_SEED_IDS.ID_2,
+  arguments: { id: OPPORTUNITY_DATA_SEED_IDS.ID_2, stage: 'PROPOSAL' },
+  currentValues: MACBOOK_DEAL_STAGE,
+});
+
+const DUPLICATE_DEAL_DELETION_CALL = proposeRecordCall({
+  toolName: 'delete_one_opportunity',
+  toolLabel: 'Delete opportunity',
+  summary: 'Delete the duplicate Apple One bundle deal',
+  template: 'recordDelete',
+  objectNameSingular: 'opportunity',
+  recordId: OPPORTUNITY_DATA_SEED_IDS.ID_9,
+  arguments: { id: OPPORTUNITY_DATA_SEED_IDS.ID_9 },
+});
+
+const ONBOARDING_WEBHOOK_CALL = proposeRecordCall({
+  toolName: 'http_request',
+  toolLabel: 'HTTP Request',
+  summary: 'Tell the onboarding tool that Linear signed',
+  template: 'generic',
+  arguments: {
+    url: 'https://hooks.example.com/onboarding',
+    method: 'POST',
+    body: { customer: 'Linear', plan: 'Organization', seats: 40 },
+  },
 });
 
 const AIRBNB_EXPANSION_FIELDS: RequestFormField[] = [
@@ -206,8 +269,35 @@ type ConversationToSeed = {
   answer?: {
     response: Record<string, unknown>;
     reply: string;
+    executedTool?: {
+      message: string;
+      result?: Record<string, unknown>;
+      recordSnapshot?: Record<string, unknown>;
+    };
   };
   sharedWith?: { member: Member; accessLevel: RecordShareAccessLevel };
+};
+
+const buildSeededToolOutput = ({
+  toolName,
+  executedTool,
+}: {
+  toolName: string;
+  executedTool: NonNullable<ConversationToSeed['answer']>['executedTool'];
+}) => {
+  if (toolName.startsWith('find_one_')) {
+    return {
+      success: true,
+      message: 'Found record',
+      result: { records: [executedTool?.recordSnapshot] },
+    };
+  }
+
+  return {
+    success: true,
+    message: executedTool?.message ?? 'Email sent successfully',
+    result: executedTool?.result,
+  };
 };
 
 const CONVERSATIONS_TO_SEED: ConversationToSeed[] = [
@@ -342,6 +432,96 @@ const CONVERSATIONS_TO_SEED: ConversationToSeed[] = [
         'Logged the call on Figma with a note. I also created a task for Phil to schedule the SSO setup next week.',
     },
   },
+  {
+    threadId:
+      AGENT_CHAT_PENDING_INPUT_THREAD_DATA_SEED_IDS.APPROVED_RECORD_CREATE,
+    title: 'Add Microsoft’s procurement lead',
+    askedBy: 'TIM',
+    prompt:
+      'Dana Whitfield now runs procurement at Microsoft, dana.whitfield@microsoft.example. Add her to the CRM.',
+    intro: 'Check the contact before I create it:',
+    calls: [MICROSOFT_CONTACT_CALL],
+    answer: {
+      response: { decision: 'approve' },
+      reply:
+        'Dana Whitfield is in the CRM, linked to Microsoft. Want me to add her to the renewal thread?',
+      executedTool: {
+        message: 'Created person record',
+        result: { name: { firstName: 'Dana', lastName: 'Whitfield' } },
+      },
+    },
+  },
+  {
+    threadId:
+      AGENT_CHAT_PENDING_INPUT_THREAD_DATA_SEED_IDS.APPROVED_RECORD_UPDATE,
+    title: 'Move the MacBook deal to Proposal',
+    askedBy: 'TIM',
+    prompt:
+      'The MacBook Pro fleet meeting went well. Move the deal to Proposal.',
+    intro: 'Here is the change. Approve it and I will update the deal:',
+    calls: [MACBOOK_DEAL_PROPOSAL_CALL],
+    answer: {
+      response: { decision: 'approve' },
+      reply:
+        'The MacBook Pro Fleet Upgrade deal is now in Proposal. I can draft the quote when you are ready.',
+      executedTool: {
+        message: 'Updated opportunity record',
+        result: { id: OPPORTUNITY_DATA_SEED_IDS.ID_2, stage: 'PROPOSAL' },
+        recordSnapshot: MACBOOK_DEAL_STAGE,
+      },
+    },
+  },
+  {
+    threadId:
+      AGENT_CHAT_PENDING_INPUT_THREAD_DATA_SEED_IDS.APPROVED_RECORD_DELETE,
+    title: 'Remove the duplicate Apple One deal',
+    askedBy: 'TIM',
+    prompt:
+      'The Apple One bundle deal was entered twice. Remove the duplicate.',
+    intro: 'This is the duplicate. Delete it?',
+    calls: [DUPLICATE_DEAL_DELETION_CALL],
+    answer: {
+      response: { decision: 'approve' },
+      reply: 'The duplicate is deleted. The original deal is untouched.',
+      executedTool: {
+        message: 'Deleted opportunity record',
+        result: { id: OPPORTUNITY_DATA_SEED_IDS.ID_9 },
+      },
+    },
+  },
+  {
+    threadId:
+      AGENT_CHAT_PENDING_INPUT_THREAD_DATA_SEED_IDS.APPROVED_GENERIC_CALL,
+    title: 'Notify the onboarding tool about Linear',
+    askedBy: 'TIM',
+    prompt: 'Linear signed for 40 seats. Let the onboarding tool know.',
+    intro: 'This is the request I would send. Approve it and it goes out:',
+    calls: [ONBOARDING_WEBHOOK_CALL],
+    answer: {
+      response: { decision: 'approve' },
+      reply:
+        'The onboarding tool accepted the request. Linear’s kickoff is now on its list.',
+      executedTool: {
+        message:
+          'HTTP POST request to https://hooks.example.com/onboarding succeeded',
+        result: { status: 202 },
+      },
+    },
+  },
+  {
+    threadId:
+      AGENT_CHAT_PENDING_INPUT_THREAD_DATA_SEED_IDS.ANSWERED_MULTI_SELECT_QUESTION,
+    title: 'Pick the newsletter segments',
+    askedBy: 'TIM',
+    prompt: 'Prepare the November newsletter send.',
+    intro: 'One question before I build the recipient list:',
+    calls: NEWSLETTER_SEGMENT_QUESTIONS.map(askQuestionCall),
+    answer: {
+      response: { selectedOptionIndices: [0, 3] },
+      reply:
+        'Customers and partners it is. I will build the recipient list and show you the count before anything is sent.',
+    },
+  },
 ];
 
 @Injectable()
@@ -446,10 +626,11 @@ export class DevSeederAgentChatPendingInputWorkspaceService {
           output: conversation.answer.response,
           context: {
             // Seeds never send anything; the email reads as sent
-            executeTool: async () => ({
-              success: true,
-              message: 'Email sent successfully',
-            }),
+            executeTool: async ({ toolName }) =>
+              buildSeededToolOutput({
+                toolName,
+                executedTool: conversation.answer?.executedTool,
+              }),
           },
         })
       : undefined;

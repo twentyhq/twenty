@@ -80,11 +80,18 @@ export class FlatFieldPermissionValidatorService {
         ...validateRoleBelongsToCallerApplication({
           referencedRole,
           buildOptions,
+          // TODO(@charlesBochet): temporary Admin record permissions exception, remove once the workspace owns Admin's record permissions
+          isRecordPermissionsChange: true,
         }),
       );
 
       validationResult.errors.push(
-        ...getRoleNotEditableErrors({ flatRole: referencedRole, buildOptions }),
+        ...getRoleNotEditableErrors({
+          flatRole: referencedRole,
+          buildOptions,
+          // TODO(@charlesBochet): temporary Admin record permissions exception, remove once the workspace owns Admin's record permissions
+          isRecordPermissionsChange: true,
+        }),
       );
     }
 
@@ -233,11 +240,18 @@ export class FlatFieldPermissionValidatorService {
         ...validateRoleBelongsToCallerApplication({
           referencedRole,
           buildOptions,
+          // TODO(@charlesBochet): temporary Admin record permissions exception, remove once the workspace owns Admin's record permissions
+          isRecordPermissionsChange: true,
         }),
       );
 
       validationResult.errors.push(
-        ...getRoleNotEditableErrors({ flatRole: referencedRole, buildOptions }),
+        ...getRoleNotEditableErrors({
+          flatRole: referencedRole,
+          buildOptions,
+          // TODO(@charlesBochet): temporary Admin record permissions exception, remove once the workspace owns Admin's record permissions
+          isRecordPermissionsChange: true,
+        }),
       );
     }
 
@@ -366,6 +380,8 @@ export class FlatFieldPermissionValidatorService {
           ...getRoleNotEditableErrors({
             flatRole: referencedRole,
             buildOptions,
+            // TODO(@charlesBochet): temporary Admin record permissions exception, remove once the workspace owns Admin's record permissions
+            isRecordPermissionsChange: true,
           }),
         );
       }

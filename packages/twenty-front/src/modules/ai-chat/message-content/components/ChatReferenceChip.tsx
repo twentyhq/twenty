@@ -1,4 +1,4 @@
-import { type ChatReferenceMatch } from 'twenty-shared/ai';
+import { type ChatReferenceIdentity } from 'twenty-shared/ai';
 import { getChipLabel } from '@/ui/field/display/utils/getChipLabel';
 import { LinkChip } from '@/ui/navigation/link/components/LinkChip/LinkChip';
 import { useContext } from 'react';
@@ -10,7 +10,7 @@ import { ChatReferenceNavigationEnabledContext } from '@/ai-chat/message-content
 import { useChatReferenceTarget } from '@/ai-chat/message-content/hooks/useChatReferenceTarget';
 
 type ChatReferenceChipProps = {
-  reference: ChatReferenceMatch;
+  reference: ChatReferenceIdentity & { displayName: string };
 };
 
 export const ChatReferenceChip = ({ reference }: ChatReferenceChipProps) => {

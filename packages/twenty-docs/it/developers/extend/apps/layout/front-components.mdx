@@ -684,7 +684,7 @@ Le seguenti variabili di sistema sono sempre disponibili tramite `process.env`:
 
 Twenty inserisce anche `TWENTY_FUNCTIONS_URL` nei front component e nelle funzioni di logica: la base URL da cui vengono servite le funzioni di logica attivate tramite HTTP della tua app.
 
-Esiste perché quell’URL non coincide sempre con il server di Twenty stesso. Su Twenty Cloud, le route dell’app sono servite su un dominio dedicato per ogni workspace (`https://\<your-workspace-subdomain>.withtwenty.com`, oppure il dominio pubblico primario dell’applicazione quando è configurato) in modo che le risposte create dall’app vengano eseguite sulla propria origine anziché sull’origine dell’app Twenty. Le istanze self-hosted e locali servono le route dell’app con il prefisso `/s` direttamente sul server e potrebbero non impostare affatto la variabile. Dato che la base URL varia per workspace e per istanza, il tuo codice non può codificarla in modo statico — il server inserisce il valore corretto a runtime.
+Esiste perché quell’URL non coincide sempre con il server di Twenty stesso. Su Twenty Cloud, le route dell’app vengono servite su un dominio dedicato per ogni workspace (`https://\<your-workspace-subdomain>.withtwenty.com`, oppure il dominio personalizzato convalidato dell’applicazione quando ne ha uno; vedi [dove vengono eseguite le pagine delle route](/it/developers/extend/apps/logic/logic-functions#where-route-pages-run)) affinché le risposte create dall’app vengano eseguite sulla propria origine anziché sull’origine dell’app Twenty. Le istanze self-hosted e locali servono le route dell’app con il prefisso `/s` direttamente sul server e potrebbero non impostare affatto la variabile. Dato che la base URL varia per workspace e per istanza, il tuo codice non può codificarla in modo statico — il server inserisce il valore corretto a runtime.
 
 Raramente devi leggerla direttamente. Chiama le tue route tramite `RestApiClient` con un percorso con prefisso `/s/` e il client risolve l’URL per te: rimuove il prefisso `/s` e punta a `TWENTY_FUNCTIONS_URL`, usando `\<TWENTY_API_URL>/s` come fallback quando la variabile non è impostata. Usa `resolveUrl('/s/\<path>')` per ottenere l’URL assoluto senza inviare una richiesta, ad esempio per un link. Leggi direttamente la variabile solo quando costruisci manualmente un URL:
 
@@ -907,7 +907,7 @@ Vedi la [sezione sugli asset pubblici](/it/developers/extend/apps/config/public-
 
 ## Condivisione delle dipendenze tra front component
 
-Per impostazione predefinita, ogni front component include nel bundle la propria copia delle librerie che importa, quindi un'app con cinque componenti distribuisce React cinque volte. Dichiara le dipendenze condivise nel `package.json` della tua app per creare il bundle di queste librerie una sola volta e fare in modo che ogni componente dell'app le carichi da un unico file in cache:
+Senza dipendenze condivise, ogni componente front-end raggruppa la propria copia delle librerie che importa, quindi un'app con cinque componenti include React cinque volte. Dichiara le dipendenze condivise nel `package.json` della tua app per compilare tali librerie una sola volta e fare in modo che ogni componente dell'app le carichi da un singolo file memorizzato nella cache. Le app create con `twenty app init` condividono già `react` e `react-dom/client`; aggiungi qualsiasi altro pacchetto importato dai tuoi componenti, ad esempio una famiglia UI di Twenty:
 
 ```json package.json
 {
@@ -941,7 +941,7 @@ export default defineFrontComponent({
 Alcune cose da sapere:
 
 * **Un solo bundle di dipendenze condivise per app.** Il bundle è costruito a partire dalle dipendenze della tua app, così mantieni il pieno controllo delle versioni che distribuisci.
-* **Elenca gli specificatori esatti che importi.** `twenty-ui/primitives/input` e `twenty-ui/primitives/data-display` sono due voci; il solo nome di un pacchetto non include i relativi sottopercorsi. L'elenco di `react` copre automaticamente `react/jsx-runtime`.
+* **Elenca gli specificatori esatti che importi.** `twenty-ui/primitives/input` e `twenty-ui/primitives/data-display` sono due voci; il solo nome di un pacchetto non include i relativi sottopercorsi. L'inclusione di `react` condivide anche `react/jsx-runtime`, mentre l'inclusione di `react-dom/client` condivide anche `react-dom`.
 * **Condividi `react-dom/client` insieme a `react`.** Ogni componente effettua il rendering tramite `createRoot`, quindi ometterlo significa che ogni componente include ancora nel bundle React DOM.
 * **Il bundle è in cache.** È servito tramite un URL con content-hash con una cache immutabile a lunga durata, quindi viene scaricato una sola volta e riutilizzato in tutti i componenti dell'app finché una delle sue dipendenze non cambia.
 * **I componenti che non importano nessuno dei pacchetti condivisi non lo scaricano mai.**

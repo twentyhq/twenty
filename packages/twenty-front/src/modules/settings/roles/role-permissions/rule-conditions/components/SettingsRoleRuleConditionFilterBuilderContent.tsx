@@ -112,6 +112,7 @@ export const SettingsRoleRuleConditionFilterBuilderContent = ({
     currentRecordFilters,
     currentRecordFilterGroups,
     hasInitialized,
+    filterableFieldMetadataItems,
   });
 
   const { handleCreateFirstFilter, handleAddFilter } =

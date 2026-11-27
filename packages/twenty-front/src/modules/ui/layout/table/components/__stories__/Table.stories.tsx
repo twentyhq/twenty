@@ -5,6 +5,7 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
+import { TableSkeletonRows } from '@/ui/layout/table/components/TableSkeletonRows';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof Table> = {
@@ -46,6 +47,25 @@ export const Default: Story = {
           <TableCell align="right">42</TableCell>
         </TableRow>
       </TableSection>
+    </Table>
+  ),
+};
+
+const LOADING_GRID_TEMPLATE_COLUMNS = '110px 150px minmax(0, 1fr) 90px';
+
+export const Loading: Story = {
+  render: () => (
+    <Table>
+      <TableRow gridTemplateColumns={LOADING_GRID_TEMPLATE_COLUMNS}>
+        <TableHeader>Status</TableHeader>
+        <TableHeader>Started</TableHeader>
+        <TableHeader>Input</TableHeader>
+        <TableHeader align="right">Tokens</TableHeader>
+      </TableRow>
+      <TableSkeletonRows
+        gridTemplateColumns={LOADING_GRID_TEMPLATE_COLUMNS}
+        columnCount={4}
+      />
     </Table>
   ),
 };

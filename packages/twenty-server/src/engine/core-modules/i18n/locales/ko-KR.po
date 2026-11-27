@@ -14919,6 +14919,11 @@ msgstr "제공자를 일시적으로 사용할 수 없습니다. 나중에 다�
 msgid "The received email content is no longer available."
 msgstr "수신된 이메일 내용은 더 이상 사용할 수 없습니다."
 
+#. js-lingui-id: b84VDO
+#: src/engine/api/common/common-query-runners/common-create-one-query-runner.service.ts
+msgid "The record was created, but you do not have permission to see it."
+msgstr "레코드는 생성되었지만, 이를 볼 권한이 없습니다."
+
 #. js-lingui-id: dXHirT
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
@@ -15529,6 +15534,11 @@ msgstr "이 도메인은 이미 등록되어 있습니다."
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "This domain is already taken."
 msgstr "이 도메인은 이미 사용 중입니다."
+
+#. js-lingui-id: IBjn2S
+#: src/engine/core-modules/public-domain/public-domain.exception.ts
+msgid "This domain is used by Twenty itself and cannot be a public domain."
+msgstr "이 도메인은 Twenty 자체에서 사용되며 공개 도메인이 될 수 없습니다."
 
 #. js-lingui-id: Ukfndw
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts

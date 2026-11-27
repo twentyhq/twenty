@@ -14919,6 +14919,11 @@ msgstr "El proveedor no está disponible temporalmente. Vuelve a intentarlo más
 msgid "The received email content is no longer available."
 msgstr "El contenido del correo electrónico recibido ya no está disponible."
 
+#. js-lingui-id: b84VDO
+#: src/engine/api/common/common-query-runners/common-create-one-query-runner.service.ts
+msgid "The record was created, but you do not have permission to see it."
+msgstr "El registro se creó, pero no tienes permiso para verlo."
+
 #. js-lingui-id: dXHirT
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
@@ -15529,6 +15534,11 @@ msgstr "Este dominio ya está registrado."
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "This domain is already taken."
 msgstr "Este dominio ya está en uso."
+
+#. js-lingui-id: IBjn2S
+#: src/engine/core-modules/public-domain/public-domain.exception.ts
+msgid "This domain is used by Twenty itself and cannot be a public domain."
+msgstr "Este dominio lo utiliza Twenty y no puede ser un dominio público."
 
 #. js-lingui-id: Ukfndw
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts

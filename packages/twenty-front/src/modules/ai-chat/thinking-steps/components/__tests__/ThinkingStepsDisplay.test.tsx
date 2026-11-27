@@ -1,15 +1,11 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { createStore, Provider as JotaiProvider } from 'jotai';
 import { ThemeProvider } from 'twenty-ui/theme';
 
+import { AiChatInstanceContext } from '@/ai-chat/contexts/AiChatInstanceContext';
 import { ThinkingStepsDisplay } from '@/ai-chat/thinking-steps/components/ThinkingStepsDisplay';
 import { type ThinkingStepPart } from '@/ai-chat/thinking-steps/types/ThinkingStepPart';
-
-jest.mock('~/hooks/useCopyToClipboard', () => ({
-  useCopyToClipboard: () => ({
-    copyToClipboard: jest.fn(),
-  }),
-}));
 
 jest.mock('@/ai/hooks/useGetToolIndex', () => ({
   useGetToolIndex: () => ({
@@ -19,38 +15,18 @@ jest.mock('@/ai/hooks/useGetToolIndex', () => ({
   }),
 }));
 
-jest.mock('@/ui/layout/tab-list/components/TabList', () => ({
-  TabList: ({ tabs }: { tabs: Array<{ id: string; title: string }> }) => (
-    <div>
-      {tabs.map((tab) => (
-        <button key={tab.id} type="button">
-          {tab.title}
-        </button>
-      ))}
-    </div>
-  ),
-}));
-
 jest.mock('@/ai-chat/message-content/components/LazyMarkdownRenderer', () => ({
   LazyMarkdownRenderer: ({ text }: { text: string }) => (
     <div data-testid="markdown-renderer">{text}</div>
   ),
 }));
 
-jest.mock('@/ai-chat/thinking-steps/components/ToolRecordsWidget', () => ({
-  ToolRecordsWidget: ({
-    recordReferences,
+jest.mock('@/ai-chat/message-content/components/ChatReferenceChip', () => ({
+  ChatReferenceChip: ({
+    reference,
   }: {
-    recordReferences: Array<{ displayName: string }>;
-  }) => (
-    <div>
-      {recordReferences.map((recordReference) => (
-        <span key={recordReference.displayName}>
-          {recordReference.displayName}
-        </span>
-      ))}
-    </div>
-  ),
+    reference: { displayName: string };
+  }) => <span>{reference.displayName}</span>,
 }));
 
 const createReasoningPart = ({
@@ -88,27 +64,57 @@ const createToolPart = ({
     errorText,
   }) as ThinkingStepPart;
 
-const renderThinkingStepsDisplay = ({
-  isLastMessageStreaming,
-  parts,
-  isTrailingWhileStreaming = false,
-  workDurationMs,
-}: {
+const AI_CHAT_INSTANCE = {
+  instanceId: 'thinking-steps-test-instance',
+  threadId: 'thinking-steps-test-thread',
+  onThreadChange: () => {},
+};
+
+type ThinkingStepsDisplayTestProps = {
   parts: ThinkingStepPart[];
   isLastMessageStreaming: boolean;
   isTrailingWhileStreaming?: boolean;
   workDurationMs?: number | null;
-}) => {
-  return render(
+};
+
+const buildThinkingStepsDisplay = ({
+  store,
+  isLastMessageStreaming,
+  parts,
+  isTrailingWhileStreaming = false,
+  workDurationMs,
+}: ThinkingStepsDisplayTestProps & {
+  store: ReturnType<typeof createStore>;
+}) => (
+  <JotaiProvider store={store}>
     <ThemeProvider colorScheme="light">
-      <ThinkingStepsDisplay
-        parts={parts}
-        isLastMessageStreaming={isLastMessageStreaming}
-        isTrailingWhileStreaming={isTrailingWhileStreaming}
-        workDurationMs={workDurationMs}
-      />
-    </ThemeProvider>,
-  );
+      <AiChatInstanceContext.Provider value={AI_CHAT_INSTANCE}>
+        <ThinkingStepsDisplay
+          messageId="thinking-steps-test-message"
+          renderItemIndex={0}
+          parts={parts}
+          isLastMessageStreaming={isLastMessageStreaming}
+          isTrailingWhileStreaming={isTrailingWhileStreaming}
+          workDurationMs={workDurationMs}
+        />
+      </AiChatInstanceContext.Provider>
+    </ThemeProvider>
+  </JotaiProvider>
+);
+
+const renderThinkingStepsDisplay = ({
+  store = createStore(),
+  ...props
+}: ThinkingStepsDisplayTestProps & {
+  store?: ReturnType<typeof createStore>;
+}) => {
+  const renderResult = render(buildThinkingStepsDisplay({ store, ...props }));
+
+  return {
+    ...renderResult,
+    rerenderThinkingStepsDisplay: (nextProps: ThinkingStepsDisplayTestProps) =>
+      renderResult.rerender(buildThinkingStepsDisplay({ store, ...nextProps })),
+  };
 };
 
 describe('ThinkingStepsDisplay', () => {
@@ -184,22 +190,18 @@ describe('ThinkingStepsDisplay', () => {
         text: 'Completed reasoning content',
       }),
     ];
-    const { rerender } = renderThinkingStepsDisplay({
+    const { rerenderThinkingStepsDisplay } = renderThinkingStepsDisplay({
       isLastMessageStreaming: true,
       parts,
     });
 
     const line = screen.getByRole('button', { name: '2 steps' });
 
-    rerender(
-      <ThemeProvider colorScheme="light">
-        <ThinkingStepsDisplay
-          parts={parts}
-          isLastMessageStreaming={false}
-          workDurationMs={83_000}
-        />
-      </ThemeProvider>,
-    );
+    rerenderThinkingStepsDisplay({
+      parts,
+      isLastMessageStreaming: false,
+      workDurationMs: 83_000,
+    });
 
     expect(screen.getByRole('button', { name: 'Worked for 1m 23s' })).toBe(
       line,
@@ -281,62 +283,56 @@ describe('ThinkingStepsDisplay', () => {
     ).toBeInTheDocument();
   });
 
-  it('should toggle tool details and display output/input tabs', async () => {
+  it('should offer the details of a tool step from its row', async () => {
     renderThinkingStepsDisplay({
       isLastMessageStreaming: false,
-      parts: [
-        createToolPart(),
-        createReasoningPart({
-          state: 'done',
-          text: 'Completed reasoning content',
-        }),
-      ],
+      parts: [createToolPart()],
     });
 
-    const summaryButton = screen.getByRole('button', { name: /2 steps/i });
-    await userEvent.click(summaryButton);
+    await userEvent.click(screen.getByRole('button', { name: /1 step/i }));
 
-    const toolButton = screen.getByRole('button', {
-      name: /searched the web for crm software/i,
-    });
-
-    expect(toolButton).toHaveAttribute('aria-expanded', 'false');
+    expect(
+      screen.getByRole('button', { name: 'Show details' }),
+    ).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Output' })).toBeNull();
     expect(screen.queryByRole('button', { name: 'Input' })).toBeNull();
-
-    await userEvent.click(toolButton);
-
-    expect(toolButton).toHaveAttribute('aria-expanded', 'true');
-    expect(screen.getByRole('button', { name: 'Output' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Input' })).toBeInTheDocument();
-
-    await userEvent.click(toolButton);
-
-    expect(toolButton).toHaveAttribute('aria-expanded', 'false');
-    await waitFor(() => {
-      expect(screen.queryByRole('button', { name: 'Output' })).toBeNull();
-      expect(screen.queryByRole('button', { name: 'Input' })).toBeNull();
-    });
   });
 
-  it('should display output/input tabs for a tool step loaded from history', async () => {
+  it('should stay expanded when the message mounts again', async () => {
+    const store = createStore();
+    const props = {
+      isLastMessageStreaming: false,
+      parts: [createToolPart()],
+    };
+    const { unmount } = renderThinkingStepsDisplay({ ...props, store });
+
+    await userEvent.click(screen.getByRole('button', { name: /1 step/i }));
+    unmount();
+    renderThinkingStepsDisplay({ ...props, store });
+
+    expect(screen.getByRole('button', { name: /1 step/i })).toHaveAttribute(
+      'aria-expanded',
+      'true',
+    );
+    expect(
+      screen.getByRole('button', { name: 'Show details' }),
+    ).toBeInTheDocument();
+  });
+
+  it('should offer the details of a tool step loaded from history', async () => {
     renderThinkingStepsDisplay({
       isLastMessageStreaming: false,
       parts: [createToolPart({ errorText: '' })],
     });
 
     await userEvent.click(screen.getByRole('button', { name: /1 step/i }));
-    await userEvent.click(
-      screen.getByRole('button', {
-        name: /searched the web for crm software/i,
-      }),
-    );
 
-    expect(screen.getByRole('button', { name: 'Output' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Input' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Show details' }),
+    ).toBeInTheDocument();
   });
 
-  it('should display the error of a failed tool step', async () => {
+  it('should display the error of a failed tool step in its row', async () => {
     renderThinkingStepsDisplay({
       isLastMessageStreaming: false,
       parts: [
@@ -349,17 +345,11 @@ describe('ThinkingStepsDisplay', () => {
     });
 
     await userEvent.click(screen.getByRole('button', { name: /1 step/i }));
-    await userEvent.click(
-      screen.getByRole('button', {
-        name: /searched the web for crm software/i,
-      }),
-    );
 
     expect(screen.getByText('Search provider unavailable')).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Output' })).toBeNull();
   });
 
-  it('should show the records a tool step found when its row is expanded', async () => {
+  it('should show the record of a tool step in its row', async () => {
     renderThinkingStepsDisplay({
       isLastMessageStreaming: false,
       parts: [
@@ -380,14 +370,42 @@ describe('ThinkingStepsDisplay', () => {
       ],
     });
 
-    await userEvent.click(screen.getByRole('button', { name: /1 step/i }));
-
     expect(screen.queryByText('Clearstreet')).toBeNull();
 
-    await userEvent.click(
-      screen.getByRole('button', { name: /find_many_companies/i }),
-    );
+    await userEvent.click(screen.getByRole('button', { name: /1 step/i }));
 
     expect(screen.getByText('Clearstreet')).toBeInTheDocument();
+  });
+
+  it('should count the records of a tool step that returned several', async () => {
+    renderThinkingStepsDisplay({
+      isLastMessageStreaming: false,
+      parts: [
+        createToolPart({
+          type: 'tool-find_many_companies',
+          input: {},
+          output: {
+            message: 'Found 2 company records',
+            recordReferences: [
+              {
+                objectNameSingular: 'company',
+                recordId: '20202020-0000-4000-8000-000000000001',
+                displayName: 'Clearstreet',
+              },
+              {
+                objectNameSingular: 'company',
+                recordId: '20202020-0000-4000-8000-000000000002',
+                displayName: 'Northwind',
+              },
+            ],
+          },
+        }),
+      ],
+    });
+
+    await userEvent.click(screen.getByRole('button', { name: /1 step/i }));
+
+    expect(screen.getByText('2 records')).toBeInTheDocument();
+    expect(screen.queryByText('Clearstreet')).toBeNull();
   });
 });

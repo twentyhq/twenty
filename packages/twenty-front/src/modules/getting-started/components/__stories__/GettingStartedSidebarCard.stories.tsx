@@ -13,7 +13,6 @@ import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNaviga
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { themeCssVariables } from 'twenty-ui/theme';
 import {
-  FeatureFlagKey,
   GettingStartedProgressDocument,
   PermissionFlagType,
   SubscriptionStatus,
@@ -33,9 +32,6 @@ import {
 
 const buildTrialingWorkspace = (hasPaymentMethod: boolean) => ({
   ...mockCurrentWorkspace,
-  featureFlags: [
-    { key: FeatureFlagKey.IS_GETTING_STARTED_ENABLED, value: true },
-  ],
   currentBillingSubscription: {
     ...mockCurrentWorkspace.currentBillingSubscription,
     status: SubscriptionStatus.Trialing,
