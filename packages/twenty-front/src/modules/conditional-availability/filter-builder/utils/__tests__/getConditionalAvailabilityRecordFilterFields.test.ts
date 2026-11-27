@@ -1,5 +1,6 @@
 import { getConditionalAvailabilityRecordFilterFields } from '@/conditional-availability/filter-builder/utils/getConditionalAvailabilityRecordFilterFields';
 import { CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID } from '@/object-record/object-filter-dropdown/constants/CurrentWorkspaceMemberSelectableItemId';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { IconUser } from 'twenty-ui/icon';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
@@ -115,7 +116,50 @@ describe('getConditionalAvailabilityRecordFilterFields', () => {
     expect(keys).not.toContain(
       getFieldUniversalIdentifierOrThrow({
         objectMetadataItem: companyObjectMetadataItem,
-        name: 'name',
+        name: 'address',
+      }),
+    );
+  });
+
+  it('should offer a number field and read the amount of a currency field', () => {
+    const employeesFieldUniversalIdentifier =
+      getFieldUniversalIdentifierOrThrow({
+        objectMetadataItem: companyObjectMetadataItem,
+        name: 'employees',
+      });
+    const annualRecurringRevenueFieldUniversalIdentifier =
+      getFieldUniversalIdentifierOrThrow({
+        objectMetadataItem: companyObjectMetadataItem,
+        name: 'annualRecurringRevenue',
+      });
+
+    const filterFields = getConditionalAvailabilityRecordFilterFields({
+      objectMetadataId: companyObjectMetadataItem.id,
+      objectMetadataItems,
+      workspaceMembers: [],
+      getIcon: () => IconUser,
+    });
+
+    expect(filterFields).toContainEqual(
+      expect.objectContaining({
+        key: employeesFieldUniversalIdentifier,
+        type: FieldMetadataType.NUMBER,
+        field: {
+          type: 'FIELD',
+          fieldUniversalIdentifier: employeesFieldUniversalIdentifier,
+        },
+      }),
+    );
+    expect(filterFields).toContainEqual(
+      expect.objectContaining({
+        key: annualRecurringRevenueFieldUniversalIdentifier,
+        type: FieldMetadataType.CURRENCY,
+        field: {
+          type: 'FIELD',
+          fieldUniversalIdentifier:
+            annualRecurringRevenueFieldUniversalIdentifier,
+          subFieldName: 'amountMicros',
+        },
       }),
     );
   });

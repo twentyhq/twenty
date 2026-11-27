@@ -283,10 +283,33 @@ describe('convertConditionalAvailabilityNodeToFilterGroup', () => {
     ]);
   });
 
+  it('should read a record field compared with a number, keeping the number', () => {
+    const filterGroup = getFilterGroupOrThrow({
+      ...STAGE_IS_WON,
+      operator: 'GREATER_THAN_OR_EQUAL',
+      right: { type: 'LITERAL', value: 500 },
+    });
+
+    expect(filterGroup.children).toMatchObject([
+      { field: STAGE_FIELD, operator: 'greaterThanOrEqual', values: [500] },
+    ]);
+  });
+
+  it('should read a record field compared with false', () => {
+    const filterGroup = getFilterGroupOrThrow({
+      ...STAGE_IS_WON,
+      right: { type: 'LITERAL', value: false },
+    });
+
+    expect(filterGroup.children).toMatchObject([
+      { field: STAGE_FIELD, operator: 'is', values: [false] },
+    ]);
+  });
+
   it.each<{ title: string; node: ConditionalEvaluationNode }>([
     {
-      title: 'a record field compared with a number',
-      node: { ...STAGE_IS_WON, right: { type: 'LITERAL', value: 3 } },
+      title: 'a record field compared with an empty text',
+      node: { ...STAGE_IS_WON, right: { type: 'LITERAL', value: '' } },
     },
     {
       title: 'a record field compared with another variable',

@@ -7,7 +7,14 @@ import { msg } from '@lingui/core/macro';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { type ExpressionFieldNode } from 'twenty-shared/expression';
-import { IconPhone, IconTag, IconUser, IconUserCircle } from 'twenty-ui/icon';
+import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  IconPhone,
+  IconTag,
+  IconUser,
+  IconUserCircle,
+  IconUsers,
+} from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 import { ComponentDecorator } from 'twenty-ui/testing';
@@ -69,11 +76,17 @@ const ACCOUNT_OWNER_FIELD: ExpressionFieldNode = {
   fieldUniversalIdentifier: 'workspace-member-id-universal-identifier',
 };
 
+const EMPLOYEES_FIELD: ExpressionFieldNode = {
+  type: 'FIELD',
+  fieldUniversalIdentifier: 'employees-universal-identifier',
+};
+
 const FILTER_FIELDS_WITH_RECORD_FIELDS: ConditionalAvailabilityFilterField[] = [
   ...FILTER_FIELDS,
   {
     key: 'account-owner-universal-identifier',
     field: ACCOUNT_OWNER_FIELD,
+    type: FieldMetadataType.RELATION,
     objectLabelSingular: 'Company',
     label: 'Account owner',
     Icon: IconUser,
@@ -85,6 +98,7 @@ const FILTER_FIELDS_WITH_RECORD_FIELDS: ConditionalAvailabilityFilterField[] = [
   {
     key: 'stage-universal-identifier',
     field: STAGE_FIELD,
+    type: FieldMetadataType.SELECT,
     objectLabelSingular: 'Company',
     label: 'Stage',
     Icon: IconTag,
@@ -92,6 +106,15 @@ const FILTER_FIELDS_WITH_RECORD_FIELDS: ConditionalAvailabilityFilterField[] = [
       { value: 'NEW', label: 'New' },
       { value: 'WON', label: 'Won' },
     ],
+  },
+  {
+    key: 'employees-universal-identifier',
+    field: EMPLOYEES_FIELD,
+    type: FieldMetadataType.NUMBER,
+    objectLabelSingular: 'Company',
+    label: 'Employees',
+    Icon: IconUsers,
+    options: [],
   },
 ];
 
@@ -290,6 +313,34 @@ export const PickRecordField: Story = {
         }),
       ),
     );
+  },
+};
+
+export const NumberFieldGreaterThanOrEqual: Story = {
+  args: {
+    instanceId: 'number-field-greater-than-or-equal',
+    filterFields: FILTER_FIELDS_WITH_RECORD_FIELDS,
+    defaultValue: {
+      ...EMPTY_FILTER_GROUP,
+      children: [
+        {
+          type: 'filter',
+          id: 'employees-filter',
+          field: EMPLOYEES_FIELD,
+          operator: 'greaterThanOrEqual',
+          values: [500],
+        },
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(await canvas.findByText('Employees')).toBeVisible();
+    await expect(
+      await canvas.findByText('Greater than or equal'),
+    ).toBeVisible();
+    await expect(await canvas.findByDisplayValue('500')).toBeVisible();
   },
 };
 
