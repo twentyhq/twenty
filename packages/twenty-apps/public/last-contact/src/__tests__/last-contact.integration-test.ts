@@ -873,6 +873,8 @@ describe('last contact handlers', () => {
       'lastOutboundAt',
       'lastEmail',
       'lastEmailId',
+      'lastMessage',
+      'lastMessageId',
     ]) {
       expect(timelineFieldNames).not.toContain(fieldName);
     }

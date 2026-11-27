@@ -111,6 +111,7 @@ describe('on-message-participant-created handler', () => {
         lastContactItemMessageId: MESSAGE_ID,
         lastContactItemCalendarEventId: null,
         lastInboundAt: RECEIVED_AT,
+        lastMessageId: MESSAGE_ID,
       },
     ]);
   });

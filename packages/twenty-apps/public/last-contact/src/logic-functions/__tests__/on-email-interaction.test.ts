@@ -295,7 +295,7 @@ describe('on-email-interaction handler', () => {
     ]);
   });
 
-  it('counts an inbound app channel message as a contact but not as the last email', async () => {
+  it('counts an inbound app channel message as the last message, not the last email', async () => {
     setupQueryMock([
       {
         messageId: MESSAGE_ID,
@@ -325,6 +325,7 @@ describe('on-email-interaction handler', () => {
         lastContactItemMessageId: MESSAGE_ID,
         lastContactItemCalendarEventId: null,
         lastInboundAt: RECEIVED_AT,
+        lastMessageId: MESSAGE_ID,
       },
     ]);
   });
@@ -359,6 +360,7 @@ describe('on-email-interaction handler', () => {
         lastContactItemMessageId: MESSAGE_ID,
         lastContactItemCalendarEventId: null,
         lastOutboundAt: RECEIVED_AT,
+        lastMessageId: MESSAGE_ID,
       },
     ]);
   });

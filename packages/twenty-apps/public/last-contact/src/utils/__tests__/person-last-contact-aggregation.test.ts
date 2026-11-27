@@ -74,7 +74,7 @@ describe('buildPersonAggregates', () => {
     });
   });
 
-  it('counts an app channel message as a contact but not as the last email', async () => {
+  it('counts an app channel message as the last message, not the last email', async () => {
     const client = {
       query: vi.fn((query) => {
         if (query.messageParticipants?.edges.node.personId) {
@@ -125,10 +125,12 @@ describe('buildPersonAggregates', () => {
       lastContactAt: SENT_AT,
       lastContactById: MEMBER_ID,
       lastOutboundAt: SENT_AT,
+      lastMessage: { at: SENT_AT, id: SENT_MESSAGE_ID },
       item: { kind: 'message', id: SENT_MESSAGE_ID },
     });
     expect(buildPersonUpdateData(aggregate)).toMatchObject({
       lastEmailId: null,
+      lastMessageId: SENT_MESSAGE_ID,
       lastContactItemMessageId: SENT_MESSAGE_ID,
     });
   });

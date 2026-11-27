@@ -34,6 +34,7 @@ export type PersonAgg = {
   lastOutboundAt?: string;
   lastInboundAt?: string;
   lastEmail?: { at: string; id: string };
+  lastMessage?: { at: string; id: string };
   lastMeeting?: { at: string; id: string };
 };
 
@@ -265,6 +266,12 @@ const foldMessage = (
   ) {
     agg.lastEmail = { at: receivedAt, id: email.messageId };
   }
+  if (
+    interaction.kind === 'message' &&
+    (!agg.lastMessage || receivedAt > agg.lastMessage.at)
+  ) {
+    agg.lastMessage = { at: receivedAt, id: email.messageId };
+  }
   if (interaction.direction === 'outbound') {
     if (!agg.lastOutboundAt || receivedAt > agg.lastOutboundAt) {
       agg.lastOutboundAt = receivedAt;
@@ -365,6 +372,7 @@ export const buildPersonUpdateData = (
   lastOutboundAt: agg?.lastOutboundAt ?? null,
   lastInboundAt: agg?.lastInboundAt ?? null,
   lastEmailId: agg?.lastEmail?.id ?? null,
+  lastMessageId: agg?.lastMessage?.id ?? null,
   lastMeetingId: agg?.lastMeeting?.id ?? null,
   lastContactItemMessageId:
     isDefined(agg?.item) && agg.item.kind !== 'meeting' ? agg.item.id : null,

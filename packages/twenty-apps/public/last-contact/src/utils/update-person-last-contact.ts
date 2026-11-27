@@ -6,7 +6,7 @@ import { type RecordUpsert } from 'src/utils/upsert-records-in-batches';
 
 const PAGE_SIZE = 200;
 
-// 'message' is a chat from an app channel (LinkedIn, WhatsApp...), never counted as Last email
+// 'message' is a chat from an app channel (LinkedIn, WhatsApp...): Last message, never Last email
 export type MessageInteractionKind = 'email' | 'message';
 export type InteractionKind = MessageInteractionKind | 'meeting';
 export type InteractionDirection = 'outbound' | 'inbound';
@@ -27,6 +27,7 @@ export type PersonLastContactState = {
   lastOutboundAt?: string | null;
   lastInboundAt?: string | null;
   lastEmail?: { receivedAt: string | null } | null;
+  lastMessage?: { receivedAt: string | null } | null;
   lastMeeting?: { startsAt: string | null } | null;
   company?: RelatedLastContact | null;
   pointOfContactForOpportunities?: {
@@ -84,6 +85,7 @@ export const collectPersonLastContactState = async (
                 lastOutboundAt: true,
                 lastInboundAt: true,
                 lastEmail: { receivedAt: true },
+                lastMessage: { receivedAt: true },
                 lastMeeting: { startsAt: true },
                 company: { id: true, lastContactAt: true },
                 pointOfContactForOpportunities: {
@@ -148,6 +150,10 @@ export const buildPersonLastContactUpdate = (
     interactions,
     (interaction) => interaction.kind === 'email',
   );
+  const latestMessage = pickLatest(
+    interactions,
+    (interaction) => interaction.kind === 'message',
+  );
   const latestMeeting = pickLatest(
     interactions,
     (interaction) => interaction.kind === 'meeting',
@@ -170,6 +176,12 @@ export const buildPersonLastContactUpdate = (
     isNewer(latestEmail.occurredAt, current.lastEmail?.receivedAt)
   ) {
     data.lastEmailId = latestEmail.itemId;
+  }
+  if (
+    latestMessage &&
+    isNewer(latestMessage.occurredAt, current.lastMessage?.receivedAt)
+  ) {
+    data.lastMessageId = latestMessage.itemId;
   }
   if (
     latestMeeting &&
