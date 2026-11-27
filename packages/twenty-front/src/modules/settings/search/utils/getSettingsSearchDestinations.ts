@@ -32,6 +32,11 @@ const getRouteGuard = (
     ? routeObject.element.props
     : undefined;
 
+const SETTINGS_PATHS = new Set<string>(Object.values(SettingsPath));
+
+const isSettingsPathValue = (path: string): path is SettingsPath =>
+  SETTINGS_PATHS.has(path);
+
 const getSettingsSearchMetadata = (
   handle: SettingsSearchRouteHandle | undefined,
 ) => handle?.settingsSearch;
@@ -47,15 +52,17 @@ const collectSettingsSearchRoutes = ({
     const guard = getRouteGuard(routeObject);
     const guards = isDefined(guard) ? [...parentGuards, guard] : parentGuards;
     const metadata = getSettingsSearchMetadata(routeObject.handle);
-    const path = Object.values(SettingsPath).find(
-      (settingsPath) => settingsPath === routeObject.path,
-    );
+    const path = routeObject.path;
     const childRoutes = collectSettingsSearchRoutes({
       routeObjects: routeObject.children ?? [],
       parentGuards: guards,
     });
 
-    if (!isDefined(metadata) || !isDefined(path)) {
+    if (
+      !isDefined(metadata) ||
+      !isDefined(path) ||
+      !isSettingsPathValue(path)
+    ) {
       return childRoutes;
     }
 
