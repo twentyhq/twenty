@@ -14,4 +14,10 @@ describe('transformRichTextFieldValue', () => {
       transformRichTextFieldValue({ markdown: 'Notes' }),
     ).not.toHaveProperty('files');
   });
+
+  it('should leave the text out of a value that lists only files', () => {
+    expect(transformRichTextFieldValue({ files: FILES })).toEqual({
+      files: FILES,
+    });
+  });
 });

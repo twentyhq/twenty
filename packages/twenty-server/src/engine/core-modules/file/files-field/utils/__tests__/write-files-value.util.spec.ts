@@ -8,20 +8,20 @@ describe('writeFilesValue', () => {
   it('should replace the value of a files field', () => {
     expect(
       writeFilesValue({
-        record: { name: 'Meeting', documents: [] },
-        field: { name: 'documents', type: FieldMetadataType.FILES },
+        fieldValue: [],
+        field: { type: FieldMetadataType.FILES },
         filesValue: FILES,
       }),
-    ).toEqual({ name: 'Meeting', documents: FILES });
+    ).toEqual(FILES);
   });
 
   it('should replace the files sub-field of a rich text field and keep its text', () => {
     expect(
       writeFilesValue({
-        record: { body: { markdown: 'Notes', files: [] } },
-        field: { name: 'body', type: FieldMetadataType.RICH_TEXT },
+        fieldValue: { markdown: 'Notes', files: [] },
+        field: { type: FieldMetadataType.RICH_TEXT },
         filesValue: FILES,
       }),
-    ).toEqual({ body: { markdown: 'Notes', files: FILES } });
+    ).toEqual({ markdown: 'Notes', files: FILES });
   });
 });
