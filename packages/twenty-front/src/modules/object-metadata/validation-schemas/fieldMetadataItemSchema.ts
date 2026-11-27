@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 import { metadataLabelSchema } from '@/object-metadata/validation-schemas/metadataLabelSchema';
-import { themeColorSchema } from '@/object-metadata/validation-schemas/themeColorSchema';
+import { themeColorSchema } from 'twenty-ui/utilities';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 import { camelCaseStringSchema } from '~/utils/validation-schemas/camelCaseStringSchema';
 

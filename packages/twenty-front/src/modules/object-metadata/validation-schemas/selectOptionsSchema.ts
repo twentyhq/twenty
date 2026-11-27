@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { t } from '@lingui/core/macro';
 
 import { OPTION_DESCRIPTION_MAX_CHAR_LENGTH } from 'twenty-shared/metadata';
-import { themeColorSchema } from '@/object-metadata/validation-schemas/themeColorSchema';
+import { themeColorSchema } from 'twenty-ui/utilities';
 import { computeOptionValueFromLabel } from '@/object-metadata/utils/computeOptionValueFromLabel';
 
 const selectOptionSchema = z

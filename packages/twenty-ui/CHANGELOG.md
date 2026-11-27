@@ -4,8 +4,6 @@
 
 ### Breaking changes
 
-Removed `themeColorSchema` from `twenty-ui/utilities`, and `twenty-ui` no longer depends on zod. Applications that validated theme colors with it can define `z.enum(MAIN_COLOR_NAMES)` with `MAIN_COLOR_NAMES` from `twenty-ui/theme`. `parseThemeColor` is unchanged.
-
 `IconsProvider`, `useIcons`, `Icon` (the by-name icon) and `IconProps` moved from `twenty-ui/icon` (and the root `twenty-ui` entry) to `twenty-ui/icon/provider`. The provider loads the full Tabler catalog, so `twenty-ui/icon` now ships only the named icons and icon types. Change `import { IconsProvider, useIcons } from 'twenty-ui/icon'` to `import { IconsProvider, useIcons } from 'twenty-ui/icon/provider'`.
 
 `Text` and `OverflowingTextWithTooltip` now offer optional theme `size`, `weight` and `color` props. Omitted props preserve inherited typography. Native `color` strings must move to `style={{ color: customColor }}`; `color` accepts `primary`, `secondary`, `tertiary` and `light`.

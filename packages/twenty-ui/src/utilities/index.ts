@@ -13,6 +13,7 @@ export {
   stringToThemeColor,
   stringToThemeColorP3String,
 } from './color/utils/stringToThemeColorP3String';
+export { themeColorSchema } from './color/utils/themeColorSchema';
 export { getOsControlSymbol } from './device/getOsControlSymbol';
 export { getUserDevice } from './device/getUserDevice';
 export { MOBILE_MEDIA_QUERY } from './responsive/constants/MobileMediaQuery';

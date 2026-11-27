@@ -1300,6 +1300,7 @@
       "preventDismissingClickActivation": "utilities/utils/preventDismissingClickActivation",
       "stringToThemeColor": "utilities/color/utils/stringToThemeColorP3String",
       "stringToThemeColorP3String": "utilities/color/utils/stringToThemeColorP3String",
+      "themeColorSchema": "utilities/color/utils/themeColorSchema",
       "TOUCH_DEVICE_MEDIA_QUERY": "utilities/responsive/constants/TouchDeviceMediaQuery",
       "useIsMobile": "utilities/responsive/hooks/useIsMobile",
       "useIsTouchDevice": "utilities/responsive/hooks/useIsTouchDevice",

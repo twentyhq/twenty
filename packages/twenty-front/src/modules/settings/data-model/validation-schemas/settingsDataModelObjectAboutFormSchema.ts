@@ -1,6 +1,6 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { t } from '@lingui/core/macro';
-import { themeColorSchema } from '@/object-metadata/validation-schemas/themeColorSchema';
+import { themeColorSchema } from 'twenty-ui/utilities';
 import { type ZodType, z } from 'zod';
 import { type ReadonlyKeysArray } from '~/types/ReadonlyKeysArray';
 import { zodNonEmptyString } from '~/types/ZodNonEmptyString';
