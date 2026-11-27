@@ -10,13 +10,15 @@ const convertError = (error: unknown) =>
     timeoutMilliseconds: 30_000,
   });
 
-describe('certificate error diagnostics', () => {
+describe('toTransportError', () => {
   it.each([
     'SELF_SIGNED_CERT_IN_CHAIN',
     'DEPTH_ZERO_SELF_SIGNED_CERT',
     'UNABLE_TO_GET_ISSUER_CERT_LOCALLY',
     'UNABLE_TO_VERIFY_LEAF_SIGNATURE',
     'CERT_HAS_EXPIRED',
+    'CERT_NOT_YET_VALID',
+    'UNABLE_TO_GET_ISSUER_CERT',
     'ERR_TLS_CERT_ALTNAME_INVALID',
   ])('identifies %s without reporting the server as down', (code) => {
     const cause = Object.assign(new Error('certificate verification failed'), {

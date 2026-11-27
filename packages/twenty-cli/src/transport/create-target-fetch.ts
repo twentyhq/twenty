@@ -6,6 +6,7 @@ import { EXIT_CODE } from '@/output/constants/exit-code.constant';
 import { type ProxyHeaders } from '@/proxy-headers/types/proxy-headers.type';
 import { type ResolvedTarget } from '@/target/types/resolved-target.type';
 import { assertUrlWithinTarget } from '@/transport/assert-url-within-target';
+import { CERTIFICATE_ERROR_MESSAGES } from '@/transport/constants/certificate-error-messages.constant';
 import { REQUEST_TIMEOUT_MILLISECONDS } from '@/transport/constants/request-timeout-milliseconds.constant';
 import { RESPONSE_BYTE_LIMIT } from '@/transport/constants/response-byte-limit.constant';
 import { fetchWithProxy } from '@/transport/fetch-with-proxy';
@@ -15,16 +16,6 @@ import { readBoundedBody } from '@/transport/read-bounded-body';
 import { sendWithProxyHeaderRenewal } from '@/transport/send-with-proxy-header-renewal';
 
 const NULL_BODY_STATUSES = new Set([101, 204, 205, 304]);
-const CERTIFICATE_ERROR_CODES = new Set([
-  'CERT_HAS_EXPIRED',
-  'CERT_NOT_YET_VALID',
-  'DEPTH_ZERO_SELF_SIGNED_CERT',
-  'ERR_TLS_CERT_ALTNAME_INVALID',
-  'SELF_SIGNED_CERT_IN_CHAIN',
-  'UNABLE_TO_GET_ISSUER_CERT',
-  'UNABLE_TO_GET_ISSUER_CERT_LOCALLY',
-  'UNABLE_TO_VERIFY_LEAF_SIGNATURE',
-]);
 
 const isRedirectStatus = (status: number) => status >= 300 && status < 400;
 
@@ -71,7 +62,10 @@ export const toTransportError = ({
       ? cause.code
       : undefined;
 
-  if (isDefined(networkCode) && CERTIFICATE_ERROR_CODES.has(networkCode)) {
+  if (
+    isDefined(networkCode) &&
+    Object.hasOwn(CERTIFICATE_ERROR_MESSAGES, networkCode)
+  ) {
     return new CliError({
       code: 'NETWORK_ERROR',
       message: `Could not verify the TLS certificate for ${url.origin} (${networkCode}).`,

@@ -69,7 +69,7 @@ const startServer = async (
   return `https://127.0.0.1:${getListeningPort(server)}`;
 };
 
-const request = (url: string, servername?: string) =>
+const request = ({ url, servername }: { url: string; servername?: string }) =>
   new Promise<number | undefined>((resolve, reject) => {
     get(url, { agent: false, servername }, (response) => {
       response.resume();
@@ -116,13 +116,13 @@ describe('system certificate trust', () => {
   };
 
   it('trusts OS certificates for both HTTPS and fetch while retaining existing roots', async () => {
-    await expect(request(trustedUrl)).rejects.toMatchObject({
+    await expect(request({ url: trustedUrl })).rejects.toMatchObject({
       code: 'DEPTH_ZERO_SELF_SIGNED_CERT',
     });
 
     initializeWithSystemCertificate();
 
-    expect(await request(trustedUrl)).toBe(200);
+    expect(await request({ url: trustedUrl })).toBe(200);
     const response = await fetch(trustedUrl);
 
     expect(await response.text()).toBe('verified');
@@ -144,7 +144,7 @@ describe('system certificate trust', () => {
   it('still rejects certificates outside the trusted stores', async () => {
     initializeWithSystemCertificate();
 
-    await expect(request(untrustedUrl)).rejects.toMatchObject({
+    await expect(request({ url: untrustedUrl })).rejects.toMatchObject({
       code: 'DEPTH_ZERO_SELF_SIGNED_CERT',
     });
     await expect(fetch(untrustedUrl)).rejects.toMatchObject({
@@ -155,7 +155,9 @@ describe('system certificate trust', () => {
   it('still validates the hostname of a trusted certificate', async () => {
     initializeWithSystemCertificate();
 
-    await expect(request(trustedUrl, 'wrong.example')).rejects.toMatchObject({
+    await expect(
+      request({ url: trustedUrl, servername: 'wrong.example' }),
+    ).rejects.toMatchObject({
       code: 'ERR_TLS_CERT_ALTNAME_INVALID',
     });
   });
