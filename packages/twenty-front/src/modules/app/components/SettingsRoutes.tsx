@@ -19,6 +19,8 @@ import { SettingsLegacyAccountsRedirect } from '@/settings/app-preferences/compo
 import { APP_PREFERENCES_PATH_BY_LEGACY_ACCOUNTS_PATH } from '@/settings/app-preferences/constants/AppPreferencesPathByLegacyAccountsPath';
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
+import { type SettingsSearchRouteMetadata } from '@/settings/search/types/SettingsSearchRouteMetadata';
+import { msg } from '@lingui/core/macro';
 import { SettingPublicDomain } from '@/settings/domains/components/SettingPublicDomain';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -799,6 +801,10 @@ type CreateSettingsRouteObjectsArgs = {
 
 type SettingsRouteHandle = WorkspaceRouteHandle;
 
+const MAIN_SETTINGS_ROUTE_HANDLE: SettingsRouteHandle = {
+  workspaceSurfaces: ['main'],
+};
+
 const MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE: SettingsRouteHandle = {
   workspaceSurfaces: ['main', 'side-panel'],
 };
@@ -820,16 +826,38 @@ const MEMBERS_LIST_SETTINGS_ROUTE_HANDLE: SettingsRouteHandle = {
   },
 };
 
+const withSettingsSearch = (
+  settingsSearch: SettingsSearchRouteMetadata,
+  handle: SettingsRouteHandle = MAIN_SETTINGS_ROUTE_HANDLE,
+): SettingsRouteHandle => ({ ...handle, settingsSearch });
+
+const USER_SECTION = msg`User`;
+const WORKSPACE_SECTION = msg`Workspace`;
+
 const createSettingsRouteElements = ({
   isAdminPageEnabled,
 }: CreateSettingsRouteObjectsArgs) => (
   <>
-    <Route path={SettingsPath.ProfilePage} element={<SettingsProfile />} />
+    <Route
+      path={SettingsPath.ProfilePage}
+      element={<SettingsProfile />}
+      handle={withSettingsSearch({
+        title: msg`Profile`,
+        section: USER_SECTION,
+      })}
+    />
     <Route
       path={SettingsPath.TwoFactorAuthenticationStrategyConfig}
       element={<SettingsTwoFactorAuthenticationMethod />}
     />
-    <Route path={SettingsPath.Experience} element={<SettingsExperience />} />
+    <Route
+      path={SettingsPath.Experience}
+      element={<SettingsExperience />}
+      handle={withSettingsSearch({
+        title: msg`Experience`,
+        section: USER_SECTION,
+      })}
+    />
     {/* Reached from both the Applications and Accounts settings; the mutation checks the caller per provider scope */}
     <Route
       path={SettingsPath.ApplicationConnectWithApiKey}
@@ -887,7 +915,14 @@ const createSettingsRouteElements = ({
         />
       }
     >
-      <Route path={SettingsPath.General} element={<SettingsGeneral />} />
+      <Route
+        path={SettingsPath.General}
+        element={<SettingsGeneral />}
+        handle={withSettingsSearch({
+          title: msg`General`,
+          section: WORKSPACE_SECTION,
+        })}
+      />
       <Route
         path={SettingsPath.WorkspaceCommunications}
         element={<SettingsWorkspaceCommunications />}
@@ -916,7 +951,15 @@ const createSettingsRouteElements = ({
         path={SettingsPath.WorkspaceBlocklist}
         element={<SettingsWorkspaceBlocklist />}
       />
-      <Route path={SettingsPath.Usage} element={<SettingsUsage />} />
+      <Route
+        path={SettingsPath.Usage}
+        element={<SettingsUsage />}
+        handle={withSettingsSearch({
+          title: msg`Usage`,
+          parentPath: SettingsPath.Billing,
+          isBillingRequired: true,
+        })}
+      />
       <Route
         path={SettingsPath.UsageUserDetail}
         element={<SettingsUsageUserDetail />}
@@ -924,6 +967,12 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.BillingLimits}
         element={<SettingsBillingLimits />}
+        handle={withSettingsSearch({
+          title: msg`Limits`,
+          parentPath: SettingsPath.Billing,
+          keywords: [msg`Usage limits`],
+          isBillingRequired: true,
+        })}
       />
       <Route
         path={SettingsPath.BillingNewLimit}
@@ -963,10 +1012,23 @@ const createSettingsRouteElements = ({
         />
       }
     >
-      <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
+      <Route
+        path={SettingsPath.Billing}
+        element={<SettingsBilling />}
+        handle={withSettingsSearch({
+          title: msg`Billing`,
+          section: WORKSPACE_SECTION,
+          isBillingRequired: true,
+        })}
+      />
       <Route
         path={SettingsPath.BillingPlans}
         element={<SettingsBillingPlans />}
+        handle={withSettingsSearch({
+          title: msg`Plans`,
+          parentPath: SettingsPath.Billing,
+          isBillingRequired: true,
+        })}
       />
     </Route>
     <Route
@@ -1018,7 +1080,10 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.WorkspaceMembersPage}
         element={<SettingsWorkspaceMembers />}
-        handle={MEMBERS_LIST_SETTINGS_ROUTE_HANDLE}
+        handle={withSettingsSearch(
+          { title: msg`Members`, section: WORKSPACE_SECTION },
+          MEMBERS_LIST_SETTINGS_ROUTE_HANDLE,
+        )}
       />
       <Route
         path={SettingsPath.WorkspaceMemberPage}
@@ -1035,7 +1100,10 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.Objects}
         element={<SettingsObjects />}
-        handle={EXPANDABLE_SETTINGS_ROUTE_HANDLE}
+        handle={withSettingsSearch(
+          { title: msg`Data model`, section: WORKSPACE_SECTION },
+          EXPANDABLE_SETTINGS_ROUTE_HANDLE,
+        )}
       />
       <Route
         path={SettingsPath.ObjectOverview}
@@ -1145,7 +1213,14 @@ const createSettingsRouteElements = ({
           element={<LegacySettingsPathRedirect to={to} />}
         />
       ))}
-      <Route path={SettingsPath.Developers} element={<SettingsDevelopers />} />
+      <Route
+        path={SettingsPath.Developers}
+        element={<SettingsDevelopers />}
+        handle={withSettingsSearch({
+          title: msg`Developers`,
+          section: WORKSPACE_SECTION,
+        })}
+      />
       <Route
         path={SettingsPath.ApplicationRegistrationDetail}
         element={<SettingsApplicationRegistrationDetails />}
