@@ -1,11 +1,15 @@
 import { type SettingsSearchDestination } from '@/settings/search/types/SettingsSearchDestination';
 import { searchSettingsDestinations } from '@/settings/search/utils/searchSettingsDestinations';
 
-const createDestination = (
-  title: string,
-  breadcrumbs: string[],
-  keywords: string[] = [],
-): SettingsSearchDestination => ({
+const createDestination = ({
+  title,
+  breadcrumbs,
+  keywords = [],
+}: {
+  title: string;
+  breadcrumbs: string[];
+  keywords?: string[];
+}): SettingsSearchDestination => ({
   id: [...breadcrumbs, title].join('/'),
   path: `/settings/${title}`,
   title,
@@ -14,13 +18,26 @@ const createDestination = (
 });
 
 const DESTINATIONS = [
-  createDestination('Billing', ['Workspace']),
-  createDestination('Usage', ['Workspace', 'Billing']),
-  createDestination('Limits', ['Workspace', 'Billing'], ['Usage limits']),
-  createDestination('Data model', ['Workspace']),
-  createDestination('People', ['Workspace', 'Data model']),
-  createDestination('Translations', ['Workspace', 'Data model', 'People']),
-  createDestination('Translations', ['Workspace', 'Data model', 'Companies']),
+  createDestination({ title: 'Billing', breadcrumbs: ['Workspace'] }),
+  createDestination({ title: 'Usage', breadcrumbs: ['Workspace', 'Billing'] }),
+  createDestination({
+    title: 'Limits',
+    breadcrumbs: ['Workspace', 'Billing'],
+    keywords: ['Usage limits'],
+  }),
+  createDestination({ title: 'Data model', breadcrumbs: ['Workspace'] }),
+  createDestination({
+    title: 'People',
+    breadcrumbs: ['Workspace', 'Data model'],
+  }),
+  createDestination({
+    title: 'Translations',
+    breadcrumbs: ['Workspace', 'Data model', 'People'],
+  }),
+  createDestination({
+    title: 'Translations',
+    breadcrumbs: ['Workspace', 'Data model', 'Companies'],
+  }),
 ];
 
 const search = (query: string) =>
@@ -62,7 +79,9 @@ describe('searchSettingsDestinations', () => {
   it('matches inside words for scripts written without spaces', () => {
     expect(
       searchSettingsDestinations({
-        destinations: [createDestination('数据模型', ['工作区'])],
+        destinations: [
+          createDestination({ title: '数据模型', breadcrumbs: ['工作区'] }),
+        ],
         search: '模型',
       }),
     ).toHaveLength(1);
