@@ -6,16 +6,39 @@ import {
 } from 'src/engine/permissions/permissions.exception';
 import { type UniversalFlatRole } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-role.type';
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
-import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-builder-options.type';
+import {
+  type WorkspaceMigrationBuilderOptions,
+  type WorkspaceMigrationValidationBuildOptions,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-builder-options.type';
+import { isAdminRoleChangedByCustomApplication } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/is-admin-role-changed-by-custom-application.util';
 
 export const getRoleNotEditableErrors = ({
   flatRole,
   buildOptions,
+  isRecordPermissionsChange = false,
 }: {
   flatRole: UniversalFlatRole;
-  buildOptions: WorkspaceMigrationBuilderOptions;
+  buildOptions: Pick<
+    WorkspaceMigrationBuilderOptions,
+    'isSystemBuild' | 'applicationUniversalIdentifier'
+  > &
+    Partial<
+      Pick<
+        WorkspaceMigrationValidationBuildOptions,
+        'workspaceCustomApplicationUniversalIdentifier'
+      >
+    >;
+  isRecordPermissionsChange?: boolean;
 }): FlatEntityValidationError[] => {
   const errors: FlatEntityValidationError[] = [];
+
+  if (
+    // TODO(@charlesBochet): temporary Admin record permissions exception, remove once the workspace owns Admin's record permissions
+    isRecordPermissionsChange &&
+    isAdminRoleChangedByCustomApplication({ flatRole, buildOptions })
+  ) {
+    return errors;
+  }
 
   if (
     !buildOptions.isSystemBuild &&

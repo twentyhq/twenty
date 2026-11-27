@@ -53,7 +53,7 @@ export const fromUserWorkspacePermissionsToUserWorkspacePermissionsDto = ({
 
   const permissionFlags = (
     Object.keys(rawSettingsPermissions) as PermissionFlagType[]
-  ).filter((feature) => rawSettingsPermissions[feature] === true);
+  ).filter((feature) => rawSettingsPermissions[feature]);
 
   return {
     objectRecordsPermissions,

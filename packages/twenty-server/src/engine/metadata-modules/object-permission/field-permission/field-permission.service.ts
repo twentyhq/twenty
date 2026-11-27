@@ -102,7 +102,7 @@ export class FieldPermissionService {
         ),
         this.workspaceCacheService.getOrRecompute(workspaceId, [
           'flatFieldPermissionMaps',
-        ] as unknown as Parameters<WorkspaceCacheService['getOrRecompute']>[1]),
+        ]),
       ]);
     const flatRoleMaps = flatMapsForRoleObjectField.flatRoleMaps;
     const flatObjectMetadataMaps =
@@ -111,11 +111,8 @@ export class FieldPermissionService {
       flatMapsForRoleObjectField.flatFieldMetadataMaps;
     const flatRowLevelPermissionPredicateGroupMaps =
       flatMapsForRoleObjectField.flatRowLevelPermissionPredicateGroupMaps;
-    const flatFieldPermissionMapsResolved: FlatFieldPermissionMaps = (
-      flatFieldPermissionMapsResult as unknown as {
-        flatFieldPermissionMaps: FlatFieldPermissionMaps;
-      }
-    ).flatFieldPermissionMaps;
+    const flatFieldPermissionMapsResolved: FlatFieldPermissionMaps =
+      flatFieldPermissionMapsResult.flatFieldPermissionMaps;
 
     const { rolesPermissions } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -332,13 +329,10 @@ export class FieldPermissionService {
       'rolesPermissions',
     ]);
 
-    const freshFlatFieldPermissionMaps: FlatFieldPermissionMaps = (
-      (await this.workspaceCacheService.getOrRecompute(workspaceId, [
+    const { flatFieldPermissionMaps: freshFlatFieldPermissionMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatFieldPermissionMaps',
-      ] as unknown as Parameters<
-        WorkspaceCacheService['getOrRecompute']
-      >[1])) as unknown as { flatFieldPermissionMaps: FlatFieldPermissionMaps }
-    ).flatFieldPermissionMaps;
+      ]);
 
     const resultFieldPermissions = Object.values(
       freshFlatFieldPermissionMaps.byUniversalIdentifier,

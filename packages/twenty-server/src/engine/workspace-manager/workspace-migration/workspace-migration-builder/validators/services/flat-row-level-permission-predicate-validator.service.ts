@@ -234,7 +234,12 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       });
     } else {
       validationResult.errors.push(
-        ...getRoleNotEditableErrors({ flatRole: role, buildOptions }),
+        ...getRoleNotEditableErrors({
+          flatRole: role,
+          buildOptions,
+          // TODO(@charlesBochet): temporary Admin record permissions exception, remove once the workspace owns Admin's record permissions
+          isRecordPermissionsChange: true,
+        }),
       );
     }
 
@@ -506,7 +511,12 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       });
     } else {
       validationResult.errors.push(
-        ...getRoleNotEditableErrors({ flatRole: role, buildOptions }),
+        ...getRoleNotEditableErrors({
+          flatRole: role,
+          buildOptions,
+          // TODO(@charlesBochet): temporary Admin record permissions exception, remove once the workspace owns Admin's record permissions
+          isRecordPermissionsChange: true,
+        }),
       );
     }
 

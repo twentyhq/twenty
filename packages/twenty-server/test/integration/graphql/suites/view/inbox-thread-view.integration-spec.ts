@@ -21,7 +21,14 @@ type InboxThreadView = {
   name: string;
   type: ViewType;
   position: number;
+  isCompact: boolean;
+  listPinnedFieldMetadataId: string | null;
   presetFilter: ViewPresetFilter | null;
+  viewFields: {
+    fieldMetadataId: string;
+    position: number;
+    isVisible: boolean;
+  }[];
   viewFilters: {
     fieldMetadataId: string;
     operand: ViewFilterOperand;
@@ -34,7 +41,14 @@ const INBOX_THREAD_VIEW_GQL_FIELDS = `
   name
   type
   position
+  isCompact
+  listPinnedFieldMetadataId
   presetFilter
+  viewFields {
+    fieldMetadataId
+    position
+    isVisible
+  }
   viewFilters {
     fieldMetadataId
     operand
@@ -52,6 +66,32 @@ const findInboxThreadViews = async (objectMetadataId: string) => {
   return data.getViews;
 };
 
+const INBOX_THREAD_VIEW_FIELDS = [
+  { fieldName: 'title', isVisible: true },
+  { fieldName: 'channelId', isVisible: true },
+  { fieldName: 'lastMessageSenderWorkspaceMemberId', isVisible: true },
+  { fieldName: 'lastMessageText', isVisible: true },
+  { fieldName: 'assignee', isVisible: false },
+  { fieldName: 'createdAt', isVisible: false },
+];
+
+const toInboxThreadViewListSettings = ({
+  type,
+  isCompact,
+  listPinnedFieldMetadataId,
+  viewFields,
+}: Pick<
+  InboxThreadView,
+  'type' | 'isCompact' | 'listPinnedFieldMetadataId' | 'viewFields'
+>) => ({
+  type,
+  isCompact,
+  listPinnedFieldMetadataId,
+  viewFields: [...viewFields]
+    .sort((viewFieldA, viewFieldB) => viewFieldA.position - viewFieldB.position)
+    .map(({ fieldMetadataId, isVisible }) => ({ fieldMetadataId, isVisible })),
+});
+
 const findInboxChannelViews = async ({
   objectMetadataId,
   channelId,
@@ -68,37 +108,55 @@ const findInboxChannelViews = async ({
       ),
     )
     .sort((viewA, viewB) => viewA.position - viewB.position)
-    .map(({ name, type, presetFilter }) => ({ name, type, presetFilter }));
+    .map((view) => ({
+      name: view.name,
+      presetFilter: view.presetFilter,
+      ...toInboxThreadViewListSettings(view),
+    }));
 
-const EXPECTED_INBOX_CHANNEL_VIEWS = [
-  {
-    name: 'Open',
-    type: ViewType.INBOX,
-    presetFilter: ViewPresetFilter.INBOX_CHANNEL_OPEN,
-  },
-  {
-    name: 'Mentions',
-    type: ViewType.INBOX,
-    presetFilter: ViewPresetFilter.INBOX_MENTIONS,
-  },
-  {
-    name: 'Snoozed',
-    type: ViewType.INBOX,
-    presetFilter: ViewPresetFilter.INBOX_CHANNEL_SNOOZED,
-  },
-  {
-    name: 'Done',
-    type: ViewType.INBOX,
-    presetFilter: ViewPresetFilter.INBOX_CHANNEL_DONE,
-  },
+const INBOX_CHANNEL_VIEWS = [
+  { name: 'Open', presetFilter: ViewPresetFilter.INBOX_CHANNEL_OPEN },
+  { name: 'Mentions', presetFilter: ViewPresetFilter.INBOX_MENTIONS },
+  { name: 'Snoozed', presetFilter: ViewPresetFilter.INBOX_CHANNEL_SNOOZED },
+  { name: 'Done', presetFilter: ViewPresetFilter.INBOX_CHANNEL_DONE },
 ];
 
 describe('Inbox thread views', () => {
   let inboxThreadObjectMetadataId: string;
+  let expectedInboxThreadViewListSettings: ReturnType<
+    typeof toInboxThreadViewListSettings
+  >;
+  let expectedInboxChannelViews: Awaited<
+    ReturnType<typeof findInboxChannelViews>
+  >;
 
   beforeAll(async () => {
     inboxThreadObjectMetadataId =
       await findObjectMetadataIdByName('agentChatThread');
+
+    const findInboxThreadFieldMetadataId = (fieldName: string) =>
+      findFieldMetadataIdByName({
+        objectMetadataId: inboxThreadObjectMetadataId,
+        fieldName,
+      });
+
+    expectedInboxThreadViewListSettings = {
+      type: ViewType.LIST,
+      isCompact: false,
+      listPinnedFieldMetadataId:
+        await findInboxThreadFieldMetadataId('lastActivityAt'),
+      viewFields: await Promise.all(
+        INBOX_THREAD_VIEW_FIELDS.map(async ({ fieldName, isVisible }) => ({
+          fieldMetadataId: await findInboxThreadFieldMetadataId(fieldName),
+          isVisible,
+        })),
+      ),
+    };
+
+    expectedInboxChannelViews = INBOX_CHANNEL_VIEWS.map((channelView) => ({
+      ...channelView,
+      ...expectedInboxThreadViewListSettings,
+    }));
   });
 
   it('should seed the standard inbox views with their presets and saved filters', async () => {
@@ -129,65 +187,64 @@ describe('Inbox thread views', () => {
             ),
         )
         .sort((viewA, viewB) => viewA.position - viewB.position)
-        .map(({ name, type, presetFilter, viewFilters }) => ({
-          name,
-          type,
-          presetFilter,
-          viewFilters,
+        .map((view) => ({
+          name: view.name,
+          presetFilter: view.presetFilter,
+          viewFilters: view.viewFilters,
+          ...toInboxThreadViewListSettings(view),
         })),
-    ).toEqual([
-      {
-        name: 'Open',
-        type: ViewType.INBOX,
-        presetFilter: ViewPresetFilter.INBOX_OPEN,
-        viewFilters: [],
-      },
-      {
-        name: 'Needs input',
-        type: ViewType.INBOX,
-        presetFilter: ViewPresetFilter.INBOX_OPEN,
-        viewFilters: [
-          {
-            fieldMetadataId: pendingQuestionMessageIdFieldMetadataId,
-            operand: ViewFilterOperand.IS_NOT_EMPTY,
-            value: '',
-          },
-        ],
-      },
-      {
-        name: 'Mentions',
-        type: ViewType.INBOX,
-        presetFilter: ViewPresetFilter.INBOX_MENTIONS,
-        viewFilters: [],
-      },
-      {
-        name: 'Assigned to me',
-        type: ViewType.INBOX,
-        presetFilter: ViewPresetFilter.INBOX_OPEN,
-        viewFilters: [
-          {
-            fieldMetadataId: assigneeFieldMetadataId,
-            operand: ViewFilterOperand.IS,
-            value: JSON.stringify({
-              isCurrentWorkspaceMemberSelected: true,
-              selectedRecordIds: [],
-            }),
-          },
-        ],
-      },
-      {
-        name: 'Snoozed',
-        type: ViewType.INBOX,
-        presetFilter: ViewPresetFilter.INBOX_SNOOZED,
-        viewFilters: [],
-      },
-      {
-        name: 'Done',
-        type: ViewType.INBOX,
-        presetFilter: ViewPresetFilter.INBOX_DONE,
-        viewFilters: [],
-      },
-    ]);
+    ).toEqual(
+      [
+        {
+          name: 'Open',
+          presetFilter: ViewPresetFilter.INBOX_OPEN,
+          viewFilters: [],
+        },
+        {
+          name: 'Needs input',
+          presetFilter: ViewPresetFilter.INBOX_OPEN,
+          viewFilters: [
+            {
+              fieldMetadataId: pendingQuestionMessageIdFieldMetadataId,
+              operand: ViewFilterOperand.IS_NOT_EMPTY,
+              value: '',
+            },
+          ],
+        },
+        {
+          name: 'Mentions',
+          presetFilter: ViewPresetFilter.INBOX_MENTIONS,
+          viewFilters: [],
+        },
+        {
+          name: 'Assigned to me',
+          presetFilter: ViewPresetFilter.INBOX_OPEN,
+          viewFilters: [
+            {
+              fieldMetadataId: assigneeFieldMetadataId,
+              operand: ViewFilterOperand.IS,
+              value: JSON.stringify({
+                isCurrentWorkspaceMemberSelected: true,
+                selectedRecordIds: [],
+              }),
+            },
+          ],
+        },
+        {
+          name: 'Snoozed',
+          presetFilter: ViewPresetFilter.INBOX_SNOOZED,
+          viewFilters: [],
+        },
+        {
+          name: 'Done',
+          presetFilter: ViewPresetFilter.INBOX_DONE,
+          viewFilters: [],
+        },
+      ].map((standardView) => ({
+        ...standardView,
+        ...expectedInboxThreadViewListSettings,
+      })),
+    );
   });
 
   it('should create, read and destroy an inbox thread view with a preset filter', async () => {
@@ -196,7 +253,7 @@ describe('Inbox thread views', () => {
         name: 'My done threads',
         objectMetadataId: inboxThreadObjectMetadataId,
         icon: 'IconCircleCheck',
-        type: ViewType.INBOX,
+        type: ViewType.LIST,
         presetFilter: ViewPresetFilter.INBOX_DONE,
       },
       gqlFields: 'id presetFilter',
@@ -212,7 +269,7 @@ describe('Inbox thread views', () => {
       ),
     ).toMatchObject({
       name: 'My done threads',
-      type: ViewType.INBOX,
+      type: ViewType.LIST,
       presetFilter: ViewPresetFilter.INBOX_DONE,
     });
 
@@ -235,7 +292,7 @@ describe('Inbox thread views', () => {
         objectMetadataId: inboxThreadObjectMetadataId,
         channelId: generalChannel?.id ?? '',
       }),
-    ).toEqual(EXPECTED_INBOX_CHANNEL_VIEWS);
+    ).toEqual(expectedInboxChannelViews);
 
     const createChannelResponse = await makeMetadataApiRequest({
       query: CREATE_CHANNEL,
@@ -252,7 +309,7 @@ describe('Inbox thread views', () => {
         objectMetadataId: inboxThreadObjectMetadataId,
         channelId,
       }),
-    ).toEqual(EXPECTED_INBOX_CHANNEL_VIEWS);
+    ).toEqual(expectedInboxChannelViews);
 
     assertGraphQLSuccessfulResponse(
       await makeMetadataApiRequest({

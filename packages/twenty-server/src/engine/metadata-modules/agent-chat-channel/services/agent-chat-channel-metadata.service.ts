@@ -321,7 +321,7 @@ export class AgentChatChannelMetadataService {
         },
       );
 
-    const { viewsToCreate, viewFiltersToCreate } =
+    const { viewsToCreate, viewFiltersToCreate, viewFieldsToCreate } =
       buildAgentChatChannelViewsToCreateForChannels({
         channelIds: Object.values(
           flatAgentChatChannelMaps.byUniversalIdentifier,
@@ -344,6 +344,7 @@ export class AgentChatChannelMetadataService {
         workspaceCustomFlatApplication.universalIdentifier,
       viewsToCreate,
       viewFiltersToCreate,
+      viewFieldsToCreate,
     });
   }
 
@@ -371,6 +372,7 @@ export class AgentChatChannelMetadataService {
     navigationMenuItemsToDelete = [],
     viewsToCreate = [],
     viewFiltersToCreate = [],
+    viewFieldsToCreate = [],
     viewsToDelete = [],
   }: {
     workspaceId: string;
@@ -383,6 +385,7 @@ export class AgentChatChannelMetadataService {
     navigationMenuItemsToDelete?: FlatNavigationMenuItem[];
     viewsToCreate?: FlatEntityToCreateDeleteUpdate<'view'>['flatEntityToCreate'];
     viewFiltersToCreate?: FlatEntityToCreateDeleteUpdate<'viewFilter'>['flatEntityToCreate'];
+    viewFieldsToCreate?: FlatEntityToCreateDeleteUpdate<'viewField'>['flatEntityToCreate'];
     viewsToDelete?: FlatView[];
   }): Promise<void> {
     const result =
@@ -411,6 +414,11 @@ export class AgentChatChannelMetadataService {
             },
             viewFilter: {
               flatEntityToCreate: viewFiltersToCreate,
+              flatEntityToUpdate: [],
+              flatEntityToDelete: [],
+            },
+            viewField: {
+              flatEntityToCreate: viewFieldsToCreate,
               flatEntityToUpdate: [],
               flatEntityToDelete: [],
             },

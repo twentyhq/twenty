@@ -6,8 +6,6 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { isBookCallOnboardingStepEnabledState } from '@/client-config/states/isBookCallOnboardingStepEnabledState';
-import { isCompanyEnrichmentEnabledState } from '@/client-config/states/isCompanyEnrichmentEnabledState';
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { useInviteTeam } from '@/onboarding/hooks/useInviteTeam';
 import { onboardingFreeCreditsFamilyState } from '@/onboarding/states/onboardingFreeCreditsFamilyState';
@@ -20,7 +18,6 @@ import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
 const mockSendInvitation = jest.fn();
 const mockSetNextOnboardingStatus = jest.fn();
-const mockWaitForCompanyEnrichmentSettlement = jest.fn();
 
 jest.mock('@/workspace-invitation/hooks/useCreateWorkspaceInvitation', () => ({
   useCreateWorkspaceInvitation: () => ({
@@ -30,11 +27,6 @@ jest.mock('@/workspace-invitation/hooks/useCreateWorkspaceInvitation', () => ({
 
 jest.mock('@/onboarding/hooks/useSetNextOnboardingStatus', () => ({
   useSetNextOnboardingStatus: () => mockSetNextOnboardingStatus,
-}));
-
-jest.mock('@/onboarding/utils/waitForCompanyEnrichmentSettlement', () => ({
-  waitForCompanyEnrichmentSettlement: (...args: unknown[]) =>
-    mockWaitForCompanyEnrichmentSettlement(...args),
 }));
 
 jest.mock('@apollo/client/react', () => ({
@@ -71,89 +63,6 @@ describe('useInviteTeam', () => {
     jotaiStore.set(currentWorkspaceState.atom, mockCurrentWorkspace);
     jest.clearAllMocks();
     mockSendInvitation.mockResolvedValue({});
-    mockWaitForCompanyEnrichmentSettlement.mockResolvedValue(undefined);
-    jotaiStore.set(isBookCallOnboardingStepEnabledState.atom, true);
-    jotaiStore.set(isCompanyEnrichmentEnabledState.atom, true);
-  });
-
-  it('should not wait for an enrichment that will never run', async () => {
-    jotaiStore.set(isCompanyEnrichmentEnabledState.atom, false);
-
-    const { result } = renderInviteTeam();
-
-    await act(async () => {
-      await result.current.handleSkip();
-    });
-
-    expect(mockWaitForCompanyEnrichmentSettlement).not.toHaveBeenCalled();
-    expect(mockSetNextOnboardingStatus).toHaveBeenCalled();
-  });
-
-  it('should not wait for the enrichment when the book-call step is disabled', async () => {
-    jotaiStore.set(isBookCallOnboardingStepEnabledState.atom, false);
-
-    const { result } = renderInviteTeam();
-
-    await act(async () => {
-      await result.current.handleSkip();
-    });
-
-    expect(mockWaitForCompanyEnrichmentSettlement).not.toHaveBeenCalled();
-    expect(mockSetNextOnboardingStatus).toHaveBeenCalled();
-  });
-
-  it('should wait for the enrichment answer before advancing', async () => {
-    let resolveCompanyEnrichmentSettlement: () => void = () => {};
-
-    mockWaitForCompanyEnrichmentSettlement.mockReturnValue(
-      new Promise<void>((resolve) => {
-        resolveCompanyEnrichmentSettlement = resolve;
-      }),
-    );
-
-    const { result } = renderInviteTeam();
-
-    let hasSkipResolved = false;
-
-    await act(async () => {
-      void result.current.handleSkip().then(() => {
-        hasSkipResolved = true;
-      });
-    });
-
-    expect(mockWaitForCompanyEnrichmentSettlement).toHaveBeenCalled();
-    expect(hasSkipResolved).toBe(false);
-    expect(mockSetNextOnboardingStatus).not.toHaveBeenCalled();
-
-    await act(async () => {
-      resolveCompanyEnrichmentSettlement();
-    });
-
-    expect(hasSkipResolved).toBe(true);
-    expect(mockSetNextOnboardingStatus).toHaveBeenCalled();
-  });
-
-  it('should start waiting for the enrichment before the invitation resolves', async () => {
-    let resolveInvitation: (value: unknown) => void = () => {};
-
-    mockSendInvitation.mockReturnValue(
-      new Promise((resolve) => {
-        resolveInvitation = resolve;
-      }),
-    );
-
-    const { result } = renderInviteTeam();
-
-    act(() => {
-      void result.current.handleSkip();
-    });
-
-    expect(mockWaitForCompanyEnrichmentSettlement).toHaveBeenCalled();
-    expect(mockSetNextOnboardingStatus).not.toHaveBeenCalled();
-
-    await act(async () => {
-      resolveInvitation({});
-    });
   });
 
   it('should disable the form while the submission is still in flight', async () => {
