@@ -39,6 +39,24 @@ export const SettingsAppPreferencesGeneralTab = ({
     application,
   });
 
+  const actions = canManageApplications
+    ? [
+        <Button
+          key="workspace-settings"
+          startIcon={<IconSettings />}
+          variant="outline"
+          size="sm"
+          onClick={() =>
+            navigateSettings(SettingsPath.ApplicationDetail, {
+              applicationId: application.id,
+            })
+          }
+        >
+          {t`Open workspace settings`}
+        </Button>,
+      ]
+    : undefined;
+
   return (
     <>
       <Section.Root>
@@ -47,25 +65,7 @@ export const SettingsAppPreferencesGeneralTab = ({
           displayName={displayName}
           description={description}
           coverImageUrl={coverImageUrl}
-          actions={
-            canManageApplications
-              ? [
-                  <Button
-                    key="workspace-settings"
-                    startIcon={<IconSettings />}
-                    variant="outline"
-                    size="sm"
-                    onClick={() =>
-                      navigateSettings(SettingsPath.ApplicationDetail, {
-                        applicationId: application.id,
-                      })
-                    }
-                  >
-                    {t`Open workspace settings`}
-                  </Button>,
-                ]
-              : undefined
-          }
+          actions={actions}
         />
       </Section.Root>
       {healthCheckBanner}

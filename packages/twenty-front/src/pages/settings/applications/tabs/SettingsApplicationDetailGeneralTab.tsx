@@ -97,7 +97,7 @@ export const SettingsApplicationDetailGeneralTab = ({
   );
 
   const { applicationsWithPreferences } = useApplicationsWithPreferences({
-    skip: !canAccessApplicationPreferences,
+    shouldSkip: !canAccessApplicationPreferences,
   });
 
   const hasApplicationPreferences =

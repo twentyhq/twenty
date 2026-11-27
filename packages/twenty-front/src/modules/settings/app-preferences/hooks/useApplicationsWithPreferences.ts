@@ -6,14 +6,14 @@ import { isDefined } from 'twenty-shared/utils';
 import { MyApplicationPreferencesDocument } from '~/generated-metadata/graphql';
 
 export const useApplicationsWithPreferences = ({
-  skip = false,
-}: { skip?: boolean } = {}) => {
+  shouldSkip = false,
+}: { shouldSkip?: boolean } = {}) => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const { data, loading, error, refetch } = useQuery(
     MyApplicationPreferencesDocument,
     {
       fetchPolicy: 'cache-and-network',
-      skip,
+      skip: shouldSkip,
     },
   );
 
