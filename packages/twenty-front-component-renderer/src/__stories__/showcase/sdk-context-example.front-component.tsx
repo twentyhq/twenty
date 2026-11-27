@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
   getObjectMetadata,
@@ -85,7 +86,7 @@ const SdkContextComponent = () => {
       </div>
 
       <button onClick={loadStageLabel}>Load stage options</button>
-      {stageLabel && <span>{stageLabel}</span>}
+      {isDefined(stageLabel) && <span>{stageLabel}</span>}
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
         <button

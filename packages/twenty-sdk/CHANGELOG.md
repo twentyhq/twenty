@@ -8,7 +8,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Added
 
-- **`getObjectMetadata(nameSingular)` in `twenty-sdk/front-component`.** Front components can read object and field labels and select options from the workspace schema already loaded by Twenty. Hosts without this lookup return `null`.
+- **`getObjectMetadata(nameSingular)` in `twenty-sdk/front-component`.** Front components can read object and field labels and select options from the workspace schema already loaded by Twenty. Requires Twenty 2.65. Older hosts return `null`.
 
 - **`spreadMs` on `cronTriggerSettings`.** Each workspace runs the cron at its own stable offset in `[0, spreadMs)`, whole minutes, instead of every install firing at the same minute. It shifts the cron's phase, not its frequency. `spreadMs` is an integer between 2 minutes and 24 hours. Requires Twenty 2.64.
 

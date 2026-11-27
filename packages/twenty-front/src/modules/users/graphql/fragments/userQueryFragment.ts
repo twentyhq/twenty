@@ -1,3 +1,4 @@
+import { WORKSPACE_INSTALLED_APPLICATION_FRAGMENT } from '@/applications/graphql/fragments/workspaceInstalledApplicationFragment';
 import {
   AVAILABLE_WORKSPACE_FOR_AUTH_FRAGMENT,
   AVAILABLE_WORKSPACES_FOR_AUTH_FRAGMENT,
@@ -103,13 +104,7 @@ export const USER_QUERY_FRAGMENT = gql`
         id
       }
       installedApplications {
-        runHealthCheckOnUserPreferences
-        id
-        name
-        description
-        universalIdentifier
-        logoUrl
-        createdAt
+        ...WorkspaceInstalledApplication
       }
       isCustomDomainEnabled
       iframeMediaPermissions {
@@ -187,4 +182,5 @@ export const USER_QUERY_FRAGMENT = gql`
   ${AVAILABLE_WORKSPACE_FOR_AUTH_FRAGMENT}
   ${CURRENT_BILLING_SUBSCRIPTION_FRAGMENT}
   ${BILLING_SUBSCRIPTION_FRAGMENT}
+  ${WORKSPACE_INSTALLED_APPLICATION_FRAGMENT}
 `;

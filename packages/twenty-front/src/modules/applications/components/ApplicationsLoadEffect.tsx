@@ -1,4 +1,6 @@
+import { useRefreshWorkspaceInstalledApplications } from '@/applications/hooks/useRefreshWorkspaceInstalledApplications';
 import { applicationBroadcastEventCountState } from '@/applications/states/applicationBroadcastEventCountState';
+import { workspaceInstalledApplicationsVersionState } from '@/applications/states/workspaceInstalledApplicationsRefreshState';
 import { applicationsLoadSequenceState } from '@/applications/states/applicationsLoadSequenceState';
 import { useIsOnAuthOrOnboardingPage } from '@/auth/hooks/useIsOnAuthOrOnboardingPage';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
@@ -18,8 +20,19 @@ import {
 
 const APPLICATIONS_LOAD_MAX_ATTEMPTS = 3;
 
+const INSTALLED_APPLICATION_MUTABLE_FIELDS = [
+  'name',
+  'description',
+  'logo',
+  'isUserHealthCheckEnabled',
+  'universalIdentifier',
+  'deletedAt',
+];
+
 export const ApplicationsLoadEffect = () => {
   const client = useApolloClient();
+  const refreshWorkspaceInstalledApplications =
+    useRefreshWorkspaceInstalledApplications();
   const store = useStore();
   const { replaceDraft, applyChanges } = useUpdateMetadataStoreDraft();
 
@@ -29,16 +42,31 @@ export const ApplicationsLoadEffect = () => {
 
   const isOnAuthOrOnboardingPage = useIsOnAuthOrOnboardingPage();
 
-  const invalidateApplications = useCallback(() => {
+  const refreshInstalledApplications = useCallback(() => {
     store.set(
-      applicationBroadcastEventCountState.atom,
-      (eventCount) => eventCount + 1,
+      workspaceInstalledApplicationsVersionState.atom,
+      (version) => version + 1,
     );
-  }, [store]);
+    void refreshWorkspaceInstalledApplications();
+  }, [store, refreshWorkspaceInstalledApplications]);
 
   useListenToMetadataOperationBrowserEvent<FlatApplication>({
     metadataName: 'application',
-    onMetadataOperationBrowserEvent: invalidateApplications,
+    onMetadataOperationBrowserEvent: ({ operation }) => {
+      store.set(
+        applicationBroadcastEventCountState.atom,
+        (eventCount) => eventCount + 1,
+      );
+      if (
+        operation.type !== 'update' ||
+        !isDefined(operation.updatedFields) ||
+        operation.updatedFields.some((field) =>
+          INSTALLED_APPLICATION_MUTABLE_FIELDS.includes(field),
+        )
+      ) {
+        refreshInstalledApplications();
+      }
+    },
   });
 
   const loadApplications = useCallback(async () => {
@@ -118,7 +146,7 @@ export const ApplicationsLoadEffect = () => {
   useListenToBrowserEvent({
     eventName: SSE_CLIENT_RECONNECTED_EVENT_NAME,
     onBrowserEvent: () => {
-      invalidateApplications();
+      refreshInstalledApplications();
       void loadApplications();
     },
   });
