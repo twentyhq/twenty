@@ -23,11 +23,6 @@ export abstract class CommonRecordQueryRunnerService<
       })) as Output;
     }
 
-    // A created record the caller cannot read is not returned by the read after the insert
-    if (!isDefined(queryResult)) {
-      return queryResult;
-    }
-
     return (await this.commonResultGettersService.processRecord({
       record: queryResult,
       ...resultGettersArgs,

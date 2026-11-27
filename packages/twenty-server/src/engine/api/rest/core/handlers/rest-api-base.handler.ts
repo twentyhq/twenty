@@ -39,7 +39,7 @@ export interface PageInfo {
 
 export interface FormatResult {
   data?: {
-    [operation: string]: object | null;
+    [operation: string]: object;
   };
   pageInfo?: PageInfo;
   totalCount?: number;

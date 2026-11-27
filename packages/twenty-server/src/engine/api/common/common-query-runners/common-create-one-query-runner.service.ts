@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { type ObjectRecord } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { CommonRecordQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-record-query-runner.service';
 import { CommonCreateManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/common-create-many-query-runner.service';
@@ -19,6 +20,11 @@ import {
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
+} from 'src/engine/permissions/permissions.exception';
 
 @Injectable()
 export class CommonCreateOneQueryRunnerService extends CommonRecordQueryRunnerService<
@@ -46,7 +52,17 @@ export class CommonCreateOneQueryRunnerService extends CommonRecordQueryRunnerSe
         queryRunnerContext,
       );
 
-    return { result: result[0], relationAggregatedValues };
+    const [createdRecord] = result;
+
+    // The read after the insert applies the caller's read rules, which can hide the created record
+    if (!isDefined(createdRecord)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
+    }
+
+    return { result: createdRecord, relationAggregatedValues };
   }
 
   async computeArgs(

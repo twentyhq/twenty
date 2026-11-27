@@ -2,7 +2,6 @@ import { randomUUID } from 'crypto';
 
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
-import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import {
   type AccountOwnerRlsRoleSetup,
@@ -68,7 +67,7 @@ describe('creating a record the caller cannot read back', () => {
     );
   });
 
-  it('creates the record and returns null instead of an error', async () => {
+  it('answers forbidden instead of a server error', async () => {
     const response = await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'company',
@@ -82,18 +81,6 @@ describe('creating a record the caller cannot read back', () => {
       APPLE_JONY_MEMBER_ACCESS_TOKEN,
     );
 
-    expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.createCompany).toBeNull();
-
-    const adminResponse = await makeGraphqlApiRequest(
-      findManyOperationFactory({
-        objectMetadataSingularName: 'company',
-        objectMetadataPluralName: 'companies',
-        gqlFields: 'id',
-        filter: { id: { eq: COMPANY_ID } },
-      }),
-    );
-
-    expect(adminResponse.body.data.companies.edges).toHaveLength(1);
+    expect(response.body.errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
   });
 });
