@@ -27148,6 +27148,11 @@ msgstr "מחפש {objectLabel}"
 msgid "Searching chats..."
 msgstr "מחפש צ'אטים..."
 
+#. js-lingui-id: xrtPMt
+#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
+msgid "Searching records..."
+msgstr ""
+
 #. js-lingui-id: KhCAL1
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
 msgid "Searching the help center"
@@ -27316,6 +27321,11 @@ msgstr "צפייה בהגדרות מודל הנתונים"
 msgid "See function"
 msgstr "צפה בפונקציה"
 
+#. js-lingui-id: kuQBTx
+#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
+msgid "See in search results"
+msgstr ""
+
 #. js-lingui-id: 1HzZ+y
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 msgid "See installed applications"
@@ -27336,11 +27346,6 @@ msgstr "הצגת {objectLabelPlural} תואמים"
 #: src/modules/settings/applications/components/SettingsApplicationContentSummarySection.tsx
 msgid "See more"
 msgstr "הצג עוד"
-
-#. js-lingui-id: ssRcpB
-#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
-msgid "See more results"
-msgstr "הצג תוצאות נוספות"
 
 #. js-lingui-id: V7TecA
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx

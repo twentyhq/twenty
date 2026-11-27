@@ -27143,6 +27143,11 @@ msgstr "Searching {objectLabel}"
 msgid "Searching chats..."
 msgstr "Searching chats..."
 
+#. js-lingui-id: xrtPMt
+#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
+msgid "Searching records..."
+msgstr "Searching records..."
+
 #. js-lingui-id: KhCAL1
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
 msgid "Searching the help center"
@@ -27311,6 +27316,11 @@ msgstr "See data model settings"
 msgid "See function"
 msgstr "See function"
 
+#. js-lingui-id: kuQBTx
+#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
+msgid "See in search results"
+msgstr "See in search results"
+
 #. js-lingui-id: 1HzZ+y
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 msgid "See installed applications"
@@ -27331,11 +27341,6 @@ msgstr "See matching {objectLabelPlural}"
 #: src/modules/settings/applications/components/SettingsApplicationContentSummarySection.tsx
 msgid "See more"
 msgstr "See more"
-
-#. js-lingui-id: ssRcpB
-#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
-msgid "See more results"
-msgstr "See more results"
 
 #. js-lingui-id: V7TecA
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx

@@ -27148,6 +27148,11 @@ msgstr "{objectLabel} 검색 중"
 msgid "Searching chats..."
 msgstr "채팅 검색 중..."
 
+#. js-lingui-id: xrtPMt
+#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
+msgid "Searching records..."
+msgstr ""
+
 #. js-lingui-id: KhCAL1
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
 msgid "Searching the help center"
@@ -27316,6 +27321,11 @@ msgstr "데이터 모델 설정 보기"
 msgid "See function"
 msgstr "함수 보기"
 
+#. js-lingui-id: kuQBTx
+#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
+msgid "See in search results"
+msgstr ""
+
 #. js-lingui-id: 1HzZ+y
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 msgid "See installed applications"
@@ -27336,11 +27346,6 @@ msgstr "일치하는 {objectLabelPlural} 보기"
 #: src/modules/settings/applications/components/SettingsApplicationContentSummarySection.tsx
 msgid "See more"
 msgstr "더 보기"
-
-#. js-lingui-id: ssRcpB
-#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
-msgid "See more results"
-msgstr "더 많은 결과 보기"
 
 #. js-lingui-id: V7TecA
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
