@@ -17,6 +17,8 @@ export type {
 } from './agentTriggerType';
 export type { AiRunUsage } from './aiRunUsageType';
 export type { AppConnection } from './appConnectionType';
+export type { AppEventTriggerManifestSettings } from './appEventTriggerManifestSettingsType';
+export type { AppEventTriggerSettings } from './appEventTriggerSettingsType';
 export type { AppKeyValueScope } from './appKeyValueScopeType';
 export type { AppKeyValue } from './appKeyValueType';
 export type { ApplicationBillingPrice } from './applicationBillingPriceType';
@@ -228,6 +230,7 @@ export type {
 export type { InboxThreadRecordInput } from './inboxThreadRecordInputType';
 export type { IndexFieldManifest } from './indexFieldManifestType';
 export type { IndexManifest } from './indexManifestType';
+export { isAppEventTriggerManifestSettings } from './isAppEventTriggerManifestSettings';
 export { isApplicationBillingPrice } from './isApplicationBillingPrice';
 export { isApplicationBillingPriceAmount } from './isApplicationBillingPriceAmount';
 export { isApplicationBillingPriceCurrency } from './isApplicationBillingPriceCurrency';

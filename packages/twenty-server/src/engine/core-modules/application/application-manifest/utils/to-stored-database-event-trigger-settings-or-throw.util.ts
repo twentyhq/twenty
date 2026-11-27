@@ -1,7 +1,7 @@
 import { msg } from '@lingui/core/macro';
 import {
   type DatabaseEventTriggerSettings,
-  type EventTriggerManifestSettings,
+  type RecordEventTriggerManifestSettings,
   isRecordEventTriggerManifestSettings,
 } from 'twenty-shared/application';
 
@@ -11,7 +11,7 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 
 export const toStoredDatabaseEventTriggerSettingsOrThrow = (
-  settings: EventTriggerManifestSettings | DatabaseEventTriggerSettings,
+  settings: RecordEventTriggerManifestSettings | DatabaseEventTriggerSettings,
 ): DatabaseEventTriggerSettings => {
   if (isRecordEventTriggerManifestSettings(settings)) {
     throw new ApplicationException(

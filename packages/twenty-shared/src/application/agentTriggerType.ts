@@ -1,9 +1,9 @@
-import { type EventTriggerManifestSettings } from '@/application/eventTriggerManifestSettingsType';
 import {
   type CronTriggerSettings,
   type DatabaseEventTriggerSettings,
 } from '@/application/logicFunctionManifestType';
 import { type AGENT_TRIGGER_TYPES } from '@/application/constants/AgentTriggerTypes';
+import { type RecordEventTriggerManifestSettings } from '@/application/recordEventTriggerManifestSettingsType';
 
 export type AgentTriggerType = (typeof AGENT_TRIGGER_TYPES)[number];
 
@@ -35,7 +35,8 @@ type AgentTriggerManifestBase = {
 export type AgentTriggerManifest =
   | (AgentTriggerManifestBase & {
       type: 'EVENT';
-      settings: EventTriggerManifestSettings;
+      // Agents react to record events only
+      settings: RecordEventTriggerManifestSettings;
     })
   // Replaced by EVENT; still accepted
   | (AgentTriggerManifestBase & {

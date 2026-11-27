@@ -5,10 +5,12 @@ import {
   isValidCronTriggerSpreadMs,
   LOGIC_FUNCTION_MAX_RETRY_LIMIT,
 } from 'twenty-shared/logic-function';
+import { isAppEventTriggerManifestSettings } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type LogicFunctionConfig } from '@/sdk/define/logic-functions/logic-function-config';
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
+import { getAppEventTriggerSettingsErrors } from '@/sdk/define/common/utils/get-app-event-trigger-settings-errors';
 import { getDatabaseEventTriggerSettingsErrors } from '@/sdk/define/common/utils/get-database-event-trigger-settings-errors';
 import { getRecordEventTriggerSettingsErrors } from '@/sdk/define/common/utils/get-record-event-trigger-settings-errors';
 import type { DefineEntity } from '@/sdk/define/common/types/define-entity.type';
@@ -94,10 +96,15 @@ export const defineLogicFunction: DefineEntity<LogicFunctionConfig> = (
 
   if (isDefined(config.eventTriggerSettings)) {
     errors.push(
-      ...getRecordEventTriggerSettingsErrors({
-        settings: config.eventTriggerSettings,
-        subject: 'Event trigger',
-      }),
+      ...(isAppEventTriggerManifestSettings(config.eventTriggerSettings)
+        ? getAppEventTriggerSettingsErrors({
+            settings: config.eventTriggerSettings,
+            subject: 'Event trigger',
+          })
+        : getRecordEventTriggerSettingsErrors({
+            settings: config.eventTriggerSettings,
+            subject: 'Event trigger',
+          })),
     );
   }
 

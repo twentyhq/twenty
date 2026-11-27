@@ -1,0 +1,2 @@
+export const ADD_APP_EVENT_TRIGGER_SETTINGS_TO_LOGIC_FUNCTION_UPGRADE_COMMAND_NAME =
+  '2.66.0_AddAppEventTriggerSettingsToLogicFunctionFastInstanceCommand_1795793443171';

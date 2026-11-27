@@ -11,6 +11,7 @@ import { LogicFunctionFailedJobListener } from 'src/engine/core-modules/logic-fu
 import { LogicFunctionJobRunnerService } from 'src/engine/core-modules/logic-function/logic-function-trigger/logic-function-job-runner.service';
 import { CronTriggerCronCommand } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/cron/cron-trigger.cron.command';
 import { CronTriggerCronJob } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/cron/cron-trigger.cron.job';
+import { AppEventTriggerService } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/app-event/app-event-trigger.service';
 import { CallDatabaseEventTriggerJobsJob } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/call-database-event-trigger-jobs.job';
 import { LogicFunctionTriggerService } from 'src/engine/core-modules/logic-function/logic-function-trigger/logic-function-trigger.service';
 import { RouteTriggerService } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/route-trigger.service';
@@ -43,10 +44,12 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     CronTriggerCronJob,
     CronTriggerCronCommand,
     CallDatabaseEventTriggerJobsJob,
+    AppEventTriggerService,
     LogicFunctionTriggerService,
     RouteTriggerService,
   ],
   exports: [
+    AppEventTriggerService,
     CronTriggerCronCommand,
     LogicFunctionTriggerService,
     RouteTriggerService,

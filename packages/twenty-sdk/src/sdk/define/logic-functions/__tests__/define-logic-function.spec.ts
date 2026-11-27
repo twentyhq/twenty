@@ -66,6 +66,36 @@ describe('defineLogicFunction', () => {
     expect(result.success).toBe(true);
   });
 
+  it('should accept an app event trigger', () => {
+    const result = defineLogicFunction({
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      name: 'On Message Added',
+      handler: mockHandler,
+      eventTriggerSettings: {
+        on: 'appEvent',
+        eventUniversalIdentifier: '3c1d2a4b-5e6f-4a7b-8c9d-0e1f2a3b4c5d',
+      },
+    });
+
+    expect(result.success).toBe(true);
+  });
+
+  it('should error when an app event trigger does not name an event', () => {
+    const result = defineLogicFunction({
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      name: 'On Message Added',
+      handler: mockHandler,
+      eventTriggerSettings: {
+        on: 'appEvent',
+        eventUniversalIdentifier: 'messageAdded',
+      },
+    });
+
+    expect(result.errors).toEqual([
+      'Event trigger eventUniversalIdentifier must be the universalIdentifier of an event the app declares',
+    ]);
+  });
+
   it('should error when eventTriggerSettings does not set on', () => {
     const result = defineLogicFunction({
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',

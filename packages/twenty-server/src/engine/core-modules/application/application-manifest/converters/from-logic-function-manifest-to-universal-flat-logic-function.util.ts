@@ -1,7 +1,10 @@
 import { parse } from 'path';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { type LogicFunctionManifest } from 'twenty-shared/application';
+import {
+  isAppEventTriggerManifestSettings,
+  type LogicFunctionManifest,
+} from 'twenty-shared/application';
 import { LOGIC_FUNCTION_MAX_RETRY_LIMIT } from 'twenty-shared/logic-function';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -100,9 +103,19 @@ export const fromLogicFunctionManifestToUniversalFlatLogicFunction = ({
     handlerName: logicFunctionManifest.handlerName,
     checksum: logicFunctionManifest.builtHandlerChecksum,
     cronTriggerSettings: logicFunctionManifest.cronTriggerSettings ?? null,
-    databaseEventTriggerSettings: isDefined(eventTriggerSettings)
-      ? toStoredDatabaseEventTriggerSettingsOrThrow(eventTriggerSettings)
-      : null,
+    databaseEventTriggerSettings:
+      isDefined(eventTriggerSettings) &&
+      !isAppEventTriggerManifestSettings(eventTriggerSettings)
+        ? toStoredDatabaseEventTriggerSettingsOrThrow(eventTriggerSettings)
+        : null,
+    appEventTriggerSettings:
+      isDefined(eventTriggerSettings) &&
+      isAppEventTriggerManifestSettings(eventTriggerSettings)
+        ? {
+            eventUniversalIdentifier:
+              eventTriggerSettings.eventUniversalIdentifier,
+          }
+        : null,
     httpRouteTriggerSettings:
       logicFunctionManifest.httpRouteTriggerSettings ?? null,
     serverRouteTriggerSettings:

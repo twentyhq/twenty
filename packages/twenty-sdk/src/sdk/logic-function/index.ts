@@ -19,6 +19,7 @@ export type {
   UninstallPayload,
 } from '@/sdk/define/logic-functions/uninstall-payload-type';
 
+export type { AppEventPayload } from '@/sdk/define/logic-functions/triggers/app-event-payload-type';
 export type { CronPayload } from '@/sdk/define/logic-functions/triggers/cron-payload-type';
 
 export type {
