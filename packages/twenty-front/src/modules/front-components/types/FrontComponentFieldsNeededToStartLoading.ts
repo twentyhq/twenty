@@ -1,6 +1,6 @@
 import { type FlatFrontComponent } from '@/metadata-store/types/FlatFrontComponent';
 
-export type LoadableFrontComponent = Pick<
+export type FrontComponentFieldsNeededToStartLoading = Pick<
   FlatFrontComponent,
   | 'id'
   | 'applicationId'

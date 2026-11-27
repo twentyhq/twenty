@@ -3,7 +3,7 @@ import {
   type SdkClientUrls,
 } from 'twenty-front-component-renderer';
 
-export type PreloadedFrontComponentSources = {
+export type FrontComponentSourcesPreload = {
   componentUrl: string;
   sdkClientUrls: SdkClientUrls;
   sharedDependenciesUrl: string;

@@ -138,11 +138,12 @@ export const PageLayoutTabsRenderer = () => {
   const workspaceSurface = useWorkspaceSurface();
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
 
-  const hasFrontComponentWidget = currentPageLayout.tabs.some((tab) =>
-    tab.widgets.some((widget) => widget.type === WidgetType.FRONT_COMPONENT),
+  const doesPageLayoutContainFrontComponentWidget = currentPageLayout.tabs.some(
+    (tab) =>
+      tab.widgets.some((widget) => widget.type === WidgetType.FRONT_COMPONENT),
   );
 
-  if (hasFrontComponentWidget) {
+  if (doesPageLayoutContainFrontComponentWidget) {
     LazyFrontComponentRenderer.preload();
   }
 

@@ -56,7 +56,7 @@ type FrontComponentRendererProps = {
   sharedDependenciesUrl?: string;
   usesSdkClient?: boolean;
   usesSharedDependencies?: boolean;
-  preloadedSources?: Promise<FrontComponentSources | undefined>;
+  preloadedSourcesPromise?: Promise<FrontComponentSources | undefined>;
   applicationVariables?: Record<string, string>;
   storageNamespace?: string;
   executionContext: FrontComponentExecutionContext;
@@ -83,7 +83,7 @@ export const FrontComponentRenderer = ({
   sharedDependenciesUrl,
   usesSdkClient,
   usesSharedDependencies,
-  preloadedSources,
+  preloadedSourcesPromise,
   applicationVariables,
   storageNamespace,
   executionContext,
@@ -164,7 +164,7 @@ export const FrontComponentRenderer = ({
           sharedDependenciesUrl={sharedDependenciesUrl}
           usesSdkClient={usesSdkClient}
           usesSharedDependencies={usesSharedDependencies}
-          preloadedSources={preloadedSources}
+          preloadedSourcesPromise={preloadedSourcesPromise}
           applicationVariables={applicationVariables}
           storageNamespace={storageNamespace}
           initialExecutionContext={initialExecutionContext}

@@ -41,7 +41,7 @@ type FrontComponentWorkerEffectProps = {
   sharedDependenciesUrl?: string;
   usesSdkClient?: boolean;
   usesSharedDependencies?: boolean;
-  preloadedSources?: Promise<FrontComponentSources | undefined>;
+  preloadedSourcesPromise?: Promise<FrontComponentSources | undefined>;
   applicationVariables?: Record<string, string>;
   storageNamespace?: string;
   initialExecutionContext: FrontComponentExecutionContext;
@@ -72,7 +72,7 @@ export const FrontComponentWorkerEffect = ({
   sharedDependenciesUrl,
   usesSdkClient,
   usesSharedDependencies,
-  preloadedSources,
+  preloadedSourcesPromise,
   applicationVariables,
   storageNamespace,
   initialExecutionContext,
@@ -148,7 +148,7 @@ export const FrontComponentWorkerEffect = ({
     const resolveComponentSourceAndRender = async () => {
       try {
         const { componentSource, sdkClientSources, sharedDependenciesSource } =
-          (await preloadedSources) ??
+          (await preloadedSourcesPromise) ??
           (await fetchFrontComponentSources({
             componentUrl,
             componentSource: providedComponentSource,
@@ -237,7 +237,7 @@ export const FrontComponentWorkerEffect = ({
     sharedDependenciesUrl,
     usesSdkClient,
     usesSharedDependencies,
-    preloadedSources,
+    preloadedSourcesPromise,
     applicationVariables,
     storageNamespace,
     initialExecutionContext,

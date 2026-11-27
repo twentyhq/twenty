@@ -3,7 +3,7 @@ import { FrontComponentLoadErrorToastEffect } from '@/front-components/component
 import { FrontComponentSourcesPreloadEffect } from '@/front-components/components/FrontComponentSourcesPreloadEffect';
 import { useOnApplicationSdkClientChecksumsUpdated } from '@/front-components/hooks/useOnApplicationSdkClientChecksumsUpdated';
 import { type FrontComponentApplicationTokenPair } from '@/front-components/types/FrontComponentApplicationTokenPair';
-import { type PreloadedFrontComponentSources } from '@/front-components/types/PreloadedFrontComponentSources';
+import { type FrontComponentSourcesPreload } from '@/front-components/types/FrontComponentSourcesPreload';
 import { getFingerprintedRestUrl } from '@/front-components/utils/getFingerprintedRestUrl';
 import { getSdkClientUrls } from '@/front-components/utils/getSdkClientUrls';
 import { useQuery } from '@apollo/client/react';
@@ -12,13 +12,13 @@ import { type FrontComponentToolCall } from 'twenty-sdk/front-component';
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type ResolvedFrontComponent } from '@/front-components/types/ResolvedFrontComponent';
-import { type LoadableFrontComponent } from '@/front-components/types/LoadableFrontComponent';
+import { type FrontComponentFieldsNeededToStartLoading } from '@/front-components/types/FrontComponentFieldsNeededToStartLoading';
 import { FrontComponentRendererContent } from '@/front-components/components/FrontComponentRendererContent';
 import { GetApplicationSdkClientChecksumsDocument } from '~/generated-metadata/graphql';
 
-type FrontComponentRendererLoaderProps = {
-  loadableFrontComponent: LoadableFrontComponent;
-  fetchedFrontComponent?: ResolvedFrontComponent;
+type FrontComponentRendererPrerequisitesLoaderProps = {
+  frontComponentFieldsNeededToStartLoading: FrontComponentFieldsNeededToStartLoading;
+  frontComponentFromFindOneQuery?: ResolvedFrontComponent;
   commandMenuItemId?: string;
   selectedRecordIds?: string[];
   selectedRecordsFilter?: RecordGqlOperationFilter | null;
@@ -32,9 +32,9 @@ type FrontComponentRendererLoaderProps = {
   shouldPreventPageZoom?: boolean;
 };
 
-export const FrontComponentRendererLoader = ({
-  loadableFrontComponent,
-  fetchedFrontComponent,
+export const FrontComponentRendererPrerequisitesLoader = ({
+  frontComponentFieldsNeededToStartLoading,
+  frontComponentFromFindOneQuery,
   commandMenuItemId,
   selectedRecordIds,
   selectedRecordsFilter,
@@ -46,21 +46,21 @@ export const FrontComponentRendererLoader = ({
   unavailableFallback,
   errorFallback,
   shouldPreventPageZoom,
-}: FrontComponentRendererLoaderProps) => {
+}: FrontComponentRendererPrerequisitesLoaderProps) => {
   const {
     id: frontComponentId,
     applicationId,
     builtComponentChecksum,
     usesSdkClient,
     frontComponentSharedDependenciesChecksum,
-  } = loadableFrontComponent;
+  } = frontComponentFieldsNeededToStartLoading;
 
   const [initialApplicationTokenPair, setInitialApplicationTokenPair] =
     useState<FrontComponentApplicationTokenPair | null>(null);
   const [applicationTokenPairLoadError, setApplicationTokenPairLoadError] =
     useState<Error | null>(null);
-  const [preloadedSources, setPreloadedSources] =
-    useState<PreloadedFrontComponentSources | null>(null);
+  const [sourcesPreload, setSourcesPreload] =
+    useState<FrontComponentSourcesPreload | null>(null);
 
   const handleApplicationTokenPairLoaded = useCallback(
     (loadedApplicationTokenPair: FrontComponentApplicationTokenPair) => {
@@ -108,15 +108,16 @@ export const FrontComponentRendererLoader = ({
   });
 
   const isSdkClientReady = !usesSdkClient || !sdkClientChecksumsLoading;
-  const canFetchSources =
+  const canStartFetchingSources =
     isDefined(initialApplicationTokenPair) && isSdkClientReady;
-  const isReadyToRender = canFetchSources && isDefined(fetchedFrontComponent);
+  const isReadyToRender =
+    canStartFetchingSources && isDefined(frontComponentFromFindOneQuery);
 
-  const arePreloadedSourcesCurrent =
-    isDefined(preloadedSources) &&
-    preloadedSources.componentUrl === componentUrl &&
-    preloadedSources.sdkClientUrls === sdkClientUrls &&
-    preloadedSources.sharedDependenciesUrl === sharedDependenciesUrl;
+  const doPreloadedSourcesMatchCurrentUrls =
+    isDefined(sourcesPreload) &&
+    sourcesPreload.componentUrl === componentUrl &&
+    sourcesPreload.sdkClientUrls === sdkClientUrls &&
+    sourcesPreload.sharedDependenciesUrl === sharedDependenciesUrl;
 
   return (
     <>
@@ -128,26 +129,28 @@ export const FrontComponentRendererLoader = ({
       <FrontComponentLoadErrorToastEffect
         errorMessage={applicationTokenPairLoadError?.message}
       />
-      {canFetchSources && !isReadyToRender && !arePreloadedSourcesCurrent && (
-        <FrontComponentSourcesPreloadEffect
-          componentUrl={componentUrl}
-          sdkClientUrls={sdkClientUrls}
-          sharedDependenciesUrl={sharedDependenciesUrl}
-          applicationAccessToken={
-            initialApplicationTokenPair.applicationAccessToken.token
-          }
-          usesSdkClient={usesSdkClient}
-          usesSharedDependencies={usesSharedDependencies}
-          onSourcesPreloadStarted={setPreloadedSources}
-        />
-      )}
+      {canStartFetchingSources &&
+        !isReadyToRender &&
+        !doPreloadedSourcesMatchCurrentUrls && (
+          <FrontComponentSourcesPreloadEffect
+            componentUrl={componentUrl}
+            sdkClientUrls={sdkClientUrls}
+            sharedDependenciesUrl={sharedDependenciesUrl}
+            applicationAccessToken={
+              initialApplicationTokenPair.applicationAccessToken.token
+            }
+            usesSdkClient={usesSdkClient}
+            usesSharedDependencies={usesSharedDependencies}
+            onSourcesPreloadStarted={setSourcesPreload}
+          />
+        )}
       {isDefined(applicationTokenPairLoadError) && unavailableFallback}
       {!isDefined(applicationTokenPairLoadError) &&
         !isReadyToRender &&
         loadingFallback}
       {isReadyToRender && (
         <FrontComponentRendererContent
-          frontComponent={fetchedFrontComponent}
+          frontComponent={frontComponentFromFindOneQuery}
           applicationAccessToken={
             initialApplicationTokenPair.applicationAccessToken.token
           }
@@ -155,9 +158,9 @@ export const FrontComponentRendererLoader = ({
           sdkClientUrls={sdkClientUrls}
           sharedDependenciesUrl={sharedDependenciesUrl}
           usesSharedDependencies={usesSharedDependencies}
-          preloadedSources={
-            arePreloadedSourcesCurrent
-              ? preloadedSources.sourcesPromise
+          preloadedSourcesPromise={
+            doPreloadedSourcesMatchCurrentUrls
+              ? sourcesPreload.sourcesPromise
               : undefined
           }
           commandMenuItemId={commandMenuItemId}

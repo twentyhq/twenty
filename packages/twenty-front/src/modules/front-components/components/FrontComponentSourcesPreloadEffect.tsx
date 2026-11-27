@@ -4,7 +4,7 @@ import {
   type SdkClientUrls,
 } from 'twenty-front-component-renderer';
 
-import { type PreloadedFrontComponentSources } from '@/front-components/types/PreloadedFrontComponentSources';
+import { type FrontComponentSourcesPreload } from '@/front-components/types/FrontComponentSourcesPreload';
 
 type FrontComponentSourcesPreloadEffectProps = {
   componentUrl: string;
@@ -14,7 +14,7 @@ type FrontComponentSourcesPreloadEffectProps = {
   usesSdkClient: boolean;
   usesSharedDependencies: boolean;
   onSourcesPreloadStarted: (
-    preloadedSources: PreloadedFrontComponentSources,
+    sourcesPreload: FrontComponentSourcesPreload,
   ) => void;
 };
 
@@ -28,7 +28,7 @@ export const FrontComponentSourcesPreloadEffect = ({
   onSourcesPreloadStarted,
 }: FrontComponentSourcesPreloadEffectProps) => {
   useEffect(() => {
-    const fetchSourcesOrUndefined = async () => {
+    const fetchSourcesOrUndefinedOnFailure = async () => {
       try {
         return await fetchFrontComponentSources({
           componentUrl,
@@ -47,7 +47,7 @@ export const FrontComponentSourcesPreloadEffect = ({
       componentUrl,
       sdkClientUrls,
       sharedDependenciesUrl,
-      sourcesPromise: fetchSourcesOrUndefined(),
+      sourcesPromise: fetchSourcesOrUndefinedOnFailure(),
     });
   }, [
     componentUrl,

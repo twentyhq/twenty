@@ -7,7 +7,7 @@ import { type ReactNode } from 'react';
 import { type FrontComponentToolCall } from 'twenty-sdk/front-component';
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { FrontComponentRendererLoader } from '@/front-components/components/FrontComponentRendererLoader';
+import { FrontComponentRendererPrerequisitesLoader } from '@/front-components/components/FrontComponentRendererPrerequisitesLoader';
 import { FindOneFrontComponentDocument } from '~/generated-metadata/graphql';
 
 type FrontComponentRendererProps = {
@@ -47,42 +47,49 @@ export const FrontComponentRenderer = ({
     frontComponentId,
   });
 
-  const storedFrontComponent = useAtomStateValue(frontComponentsSelector).find(
-    (frontComponent) => frontComponent.id === frontComponentId,
-  );
+  const frontComponentFromMetadataStore = useAtomStateValue(
+    frontComponentsSelector,
+  ).find((frontComponent) => frontComponent.id === frontComponentId);
 
-  const fetchedFrontComponent =
+  const frontComponentFromFindOneQuery =
     loading || isDefined(error)
       ? undefined
       : (data?.frontComponent ?? undefined);
 
-  const isUnavailable = !loading && !isDefined(fetchedFrontComponent);
+  const isFrontComponentUnavailable =
+    !loading && !isDefined(frontComponentFromFindOneQuery);
 
-  const loadableFrontComponent = fetchedFrontComponent ?? storedFrontComponent;
+  const frontComponentFieldsNeededToStartLoading =
+    frontComponentFromFindOneQuery ?? frontComponentFromMetadataStore;
 
   return (
     <>
       <FrontComponentLoadErrorToastEffect errorMessage={error?.message} />
-      {!isUnavailable && !isDefined(loadableFrontComponent) && loadingFallback}
-      {isUnavailable && unavailableFallback}
-      {!isUnavailable && isDefined(loadableFrontComponent) && (
-        <FrontComponentRendererLoader
-          key={loadableFrontComponent.id}
-          loadableFrontComponent={loadableFrontComponent}
-          fetchedFrontComponent={fetchedFrontComponent}
-          commandMenuItemId={commandMenuItemId}
-          selectedRecordIds={selectedRecordIds}
-          selectedRecordsFilter={selectedRecordsFilter}
-          objectNameSingular={objectNameSingular}
-          timelineActivityId={timelineActivityId}
-          toolCall={toolCall}
-          onToolCallArgumentsChange={onToolCallArgumentsChange}
-          loadingFallback={loadingFallback}
-          unavailableFallback={unavailableFallback}
-          errorFallback={errorFallback}
-          shouldPreventPageZoom={shouldPreventPageZoom}
-        />
-      )}
+      {!isFrontComponentUnavailable &&
+        !isDefined(frontComponentFieldsNeededToStartLoading) &&
+        loadingFallback}
+      {isFrontComponentUnavailable && unavailableFallback}
+      {!isFrontComponentUnavailable &&
+        isDefined(frontComponentFieldsNeededToStartLoading) && (
+          <FrontComponentRendererPrerequisitesLoader
+            key={frontComponentFieldsNeededToStartLoading.id}
+            frontComponentFieldsNeededToStartLoading={
+              frontComponentFieldsNeededToStartLoading
+            }
+            frontComponentFromFindOneQuery={frontComponentFromFindOneQuery}
+            commandMenuItemId={commandMenuItemId}
+            selectedRecordIds={selectedRecordIds}
+            selectedRecordsFilter={selectedRecordsFilter}
+            objectNameSingular={objectNameSingular}
+            timelineActivityId={timelineActivityId}
+            toolCall={toolCall}
+            onToolCallArgumentsChange={onToolCallArgumentsChange}
+            loadingFallback={loadingFallback}
+            unavailableFallback={unavailableFallback}
+            errorFallback={errorFallback}
+            shouldPreventPageZoom={shouldPreventPageZoom}
+          />
+        )}
     </>
   );
 };

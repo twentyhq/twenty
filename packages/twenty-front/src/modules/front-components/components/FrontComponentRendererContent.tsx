@@ -26,7 +26,7 @@ type FrontComponentRendererContentProps = {
   sdkClientUrls: SdkClientUrls;
   sharedDependenciesUrl: string;
   usesSharedDependencies: boolean;
-  preloadedSources?: Promise<FrontComponentSources | undefined>;
+  preloadedSourcesPromise?: Promise<FrontComponentSources | undefined>;
   commandMenuItemId?: string;
   selectedRecordIds?: string[];
   selectedRecordsFilter?: RecordGqlOperationFilter | null;
@@ -46,7 +46,7 @@ export const FrontComponentRendererContent = ({
   sdkClientUrls,
   sharedDependenciesUrl,
   usesSharedDependencies,
-  preloadedSources,
+  preloadedSourcesPromise,
   commandMenuItemId,
   selectedRecordIds,
   selectedRecordsFilter,
@@ -153,7 +153,7 @@ export const FrontComponentRendererContent = ({
           sharedDependenciesUrl={sharedDependenciesUrl}
           usesSdkClient={usesSdkClient}
           usesSharedDependencies={usesSharedDependencies}
-          preloadedSources={preloadedSources}
+          preloadedSourcesPromise={preloadedSourcesPromise}
           executionContext={executionContext}
           frontComponentHostCommunicationApi={
             frontComponentHostCommunicationApi
