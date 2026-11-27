@@ -2,6 +2,9 @@ import { isNonEmptyString, isObject } from '@sniptt/guards';
 
 import { type CallRecordingMeetingCardInput } from 'src/logic-functions/types/call-recording-meeting-card-input.type';
 
+const readField = (value: object, fieldName: string): unknown =>
+  Reflect.get(value, fieldName);
+
 const getOptionalString = (value: unknown): string | undefined =>
   isNonEmptyString(value) ? value : undefined;
 
@@ -12,8 +15,8 @@ export const parseCallRecordingMeetingCardInput = (
     return undefined;
   }
 
-  const { callRecordingId, calendarEventId, startsAt, endsAt } =
-    value as Record<string, unknown>;
+  const callRecordingId = readField(value, 'callRecordingId');
+  const calendarEventId = readField(value, 'calendarEventId');
 
   if (
     !isNonEmptyString(callRecordingId) ||
@@ -25,7 +28,7 @@ export const parseCallRecordingMeetingCardInput = (
   return {
     callRecordingId,
     calendarEventId,
-    startsAt: getOptionalString(startsAt),
-    endsAt: getOptionalString(endsAt),
+    startsAt: getOptionalString(readField(value, 'startsAt')),
+    endsAt: getOptionalString(readField(value, 'endsAt')),
   };
 };
