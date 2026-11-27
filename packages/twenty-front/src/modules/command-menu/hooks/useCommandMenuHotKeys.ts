@@ -6,7 +6,9 @@ import { useOpenRecordsSearchPageInSidePanel } from '@/side-panel/hooks/useOpenR
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { Key } from 'ts-key-enum';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const useCommandMenuHotKeys = () => {
   const { toggleSidePanelMenu } = useSidePanelMenu();
@@ -19,6 +21,10 @@ export const useCommandMenuHotKeys = () => {
 
   const { closeKeyboardShortcutMenu } = useKeyboardShortcutMenu();
 
+  const isCustomizableSidebarEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
+  );
+
   useGlobalHotkeys({
     keys: ['ctrl+k', 'meta+k'],
     callback: () => {
@@ -26,7 +32,12 @@ export const useCommandMenuHotKeys = () => {
       toggleSidePanelMenu();
     },
     containsModifier: true,
-    dependencies: [closeKeyboardShortcutMenu, toggleSidePanelMenu],
+    enableOnSettingsPage: isCustomizableSidebarEnabled,
+    dependencies: [
+      closeKeyboardShortcutMenu,
+      toggleSidePanelMenu,
+      isCustomizableSidebarEnabled,
+    ],
   });
 
   useGlobalHotkeys({
