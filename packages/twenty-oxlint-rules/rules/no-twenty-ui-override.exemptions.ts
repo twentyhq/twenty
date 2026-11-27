@@ -62,11 +62,6 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   },
   {
     filePath:
-      'packages/twenty-front/src/modules/navigation/components/MultiWorkspaceDropdown/MultiWorkspaceDropdownButton.tsx',
-    reason: 'Dropdown.Content fades and scales in from the workspace avatar',
-  },
-  {
-    filePath:
       'packages/twenty-front/src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsForm.tsx',
     reason: 'Section.Root laid out as the padded column of bulk edit fields',
   },
