@@ -1,11 +1,11 @@
 import { t } from '@lingui/core/macro';
-import { type ConditionalEvaluationLogicalOperator } from 'twenty-shared/conditional-evaluation';
+import { type ExpressionLogicalOperator } from 'twenty-shared/expression';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 export const getConditionalAvailabilityLogicalOperatorLabel = ({
   logicalOperator,
 }: {
-  logicalOperator: ConditionalEvaluationLogicalOperator;
+  logicalOperator: ExpressionLogicalOperator;
 }): string => {
   switch (logicalOperator) {
     case 'AND':
