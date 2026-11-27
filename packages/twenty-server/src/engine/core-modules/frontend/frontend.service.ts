@@ -173,8 +173,10 @@ export class FrontendService {
     );
 
     try {
+      const origin = getRequestBaseUrl(request);
+
       const { workspace, publicDomainType } = await this.workspaceDomainsService
-        .resolveWorkspaceAndPublicDomain(getRequestBaseUrl(request))
+        .resolveWorkspaceAndPublicDomain(origin)
         .catch((error: unknown) => {
           if (error === WorkspaceNotFoundDefaultError) {
             return { workspace: undefined, publicDomainType: null };
@@ -183,7 +185,11 @@ export class FrontendService {
           throw error;
         });
 
-      if (isDefined(publicDomainType)) {
+      // A member signed in on a pending domain would keep that session once it validates.
+      if (
+        isDefined(publicDomainType) ||
+        (await this.workspaceDomainsService.hasUnvalidatedPublicDomain(origin))
+      ) {
         response.status(404).end();
 
         return;

@@ -212,6 +212,19 @@ export class WorkspaceDomainsService {
     };
   }
 
+  async hasUnvalidatedPublicDomain(origin: string): Promise<boolean> {
+    const { customDomain } =
+      this.domainServerConfigService.getSubdomainAndCustomDomainFromUrl(origin);
+
+    if (!isDefined(customDomain)) {
+      return false;
+    }
+
+    return this.publicDomainRepository.exists({
+      where: { domain: customDomain, isValidated: false },
+    });
+  }
+
   async buildApplicationFunctionsBaseUrl({
     workspace,
     flatApplication,
