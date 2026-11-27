@@ -1,18 +1,19 @@
 import { isUndefined } from '@sniptt/guards';
-import { MetadataApiClient } from 'twenty-client-sdk/metadata';
-
-import { TELEGRAM_ASSISTANT_ATTACHMENT_UPLOAD_TIMEOUT_MS } from 'src/logic-functions/constants/telegram-assistant-attachment-upload-timeout-ms';
+import { type MetadataApiClient } from 'twenty-client-sdk/metadata';
 
 const AGENT_CHAT_FILE_FOLDER = 'AgentChat';
 
-export const uploadFileToAgentChat = async ({
+export const uploadFileToAgentChatOrThrow = async ({
+  metadataClient,
   fileName,
   bytes,
+  timeoutMs,
 }: {
+  metadataClient: Pick<InstanceType<typeof MetadataApiClient>, 'mutation'>;
   fileName: string;
   bytes: Uint8Array<ArrayBuffer>;
+  timeoutMs: number;
 }): Promise<string> => {
-  const metadataClient = new MetadataApiClient();
   const createResult = await metadataClient.mutation({
     createFileUpload: {
       __args: {
@@ -35,9 +36,7 @@ export const uploadFileToAgentChat = async ({
     method: 'PUT',
     headers: { 'Content-Type': uploadTarget.contentType },
     body: new Blob([bytes], { type: uploadTarget.contentType }),
-    signal: AbortSignal.timeout(
-      TELEGRAM_ASSISTANT_ATTACHMENT_UPLOAD_TIMEOUT_MS,
-    ),
+    signal: AbortSignal.timeout(timeoutMs),
   });
 
   if (!uploadResponse.ok) {

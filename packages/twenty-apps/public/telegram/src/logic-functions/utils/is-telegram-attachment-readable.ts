@@ -8,7 +8,7 @@ import { type TelegramInboundAttachment } from 'src/logic-functions/types/telegr
 export const isTelegramAttachmentReadable = ({
   mimeType,
   sizeBytes,
-}: TelegramInboundAttachment): boolean =>
+}: Pick<TelegramInboundAttachment, 'mimeType' | 'sizeBytes'>): boolean =>
   isDefined(mimeType) &&
   TELEGRAM_ASSISTANT_ATTACHMENT_MIME_TYPES.includes(mimeType) &&
   (!isNumber(sizeBytes) ||
