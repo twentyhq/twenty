@@ -2003,7 +2003,7 @@ export class ConfigVariables {
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
-  MESSAGE_CAMPAIGN_TEST_SEND_RATE_LIMITING_LIMIT = 3;
+  MESSAGE_CAMPAIGN_TEST_SEND_RATE_LIMITING_LIMIT = 10;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,
